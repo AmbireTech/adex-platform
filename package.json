@@ -28,13 +28,16 @@
     "jest": "20.0.4",
     "object-assign": "4.1.1",
     "postcss": "^6.0.9",
+    "postcss-cssnext": "^3.0.2",
     "postcss-flexbugs-fixes": "3.2.0",
-    "postcss-loader": "2.0.6",
+    "postcss-loader": "^2.0.6",
     "promise": "8.0.1",
     "react": "^15.6.1",
     "react-dev-utils": "^3.1.0",
     "react-dom": "^15.6.1",
     "react-error-overlay": "^1.0.10",
+    "react-router": "^4.1.2",
+    "react-router-dom": "^4.1.2",
     "style-loader": "0.18.2",
     "sw-precache-webpack-plugin": "0.11.4",
     "url-loader": "0.5.9",
@@ -46,52 +49,13 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom",
-    "toolbox": "react-toolbox-themr"
+    "test": "node scripts/test.js --env=jsdom"
   },
   "devDependencies": {
-    "react-toolbox": "^2.0.0-beta.12",
-    "react-toolbox-themr": "^1.0.2"
-  },
-  "reactToolbox": {
-    "include": [
-      "APP_BAR",
-      "AUTOCOMPLETE",
-      "AVATAR",
-      "BUTTON",
-      "CARD",
-      "CHIP",
-      "CHECKBOX",
-      "DATE_PICKER",
-      "DIALOG",
-      "DRAWER",
-      "DROPDOWN",
-      "INPUT",
-      "LAYOUT",
-      "LINK",
-      "LIST",
-      "MENU",
-      "NAVIGATION",
-      "OVERLAY",
-      "PROGRESS_BAR",
-      "RADIO",
-      "RIPPLE",
-      "SLIDER",
-      "SNACKBAR",
-      "SWITCH",
-      "TABLE",
-      "TABS",
-      "TOOLTIP",
-      "TIME_PICKER"
-    ],
-    "customProperties": {
-      "animation-duration": "0.3s",
-      "color-accent": "var(--palette-pink-a200)",
-      "color-accent-dark": "var(--palette-pink-700)",
-      "color-primary-contrast": "var(--color-dark-contrast)",
-      "color-accent-contrast": "var(--color-dark-contrast)"
-    },
-    "output": "src/assets/react-toolbox"
+    "postcss-each": "^0.10.0",
+    "postcss-import": "^10.0.0",
+    "postcss-mixins": "^6.1.0",
+    "react-toolbox": "^2.0.0-beta.12"
   },
   "jest": {
     "collectCoverageFrom": [

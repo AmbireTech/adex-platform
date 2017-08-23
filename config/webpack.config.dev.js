@@ -167,7 +167,10 @@ module.exports = {
               {
                 loader: require.resolve('css-loader'),
                 options: {
+                  modules: true,
+                  sourceMap: true,
                   importLoaders: 1,
+                  localIdentName: "[name]--[local]--[hash:base64:8]"
                 },
               },
               {
@@ -178,15 +181,18 @@ module.exports = {
                   ident: 'postcss',
                   plugins: () => [
                     require('postcss-flexbugs-fixes'),
-                    autoprefixer({
-                      browsers: [
-                        '>1%',
-                        'last 4 versions',
-                        'Firefox ESR',
-                        'not ie < 9', // React doesn't support IE8 anyway
-                      ],
-                      flexbox: 'no-2009',
-                    }),
+                    // autoprefixer({
+                    //   browsers: [
+                    //     '>1%',
+                    //     'last 4 versions',
+                    //     'Firefox ESR',
+                    //     'not ie < 9', // React doesn't support IE8 anyway
+                    //   ],
+                    //   flexbox: 'no-2009',
+                    // }),
+                    require('postcss-mixins'),
+                    require('postcss-each'),
+                    require('postcss-cssnext'),
                   ],
                 },
               },
