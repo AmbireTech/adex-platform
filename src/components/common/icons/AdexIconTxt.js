@@ -9,7 +9,7 @@ const AdexIcon = ({width, height}) => {
   }
 
   return (
-    <svg 
+    <svg {...this.props}
       viewBox="0 0 185 72"
       width={(width || defautSize.width) + 'px'} 
       height={(height || defautSize.height) + 'px'} >

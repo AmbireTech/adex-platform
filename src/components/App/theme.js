@@ -1,6 +1,7 @@
 import RTAppBar from './../../styles/RTAppBar.css';
 import RTAutocomplete from './../../styles/RTAutocomplete.css';
 import RTAvatar from './../../styles/RTAvatar.css';
+import RTButton from './../../styles/RTButton.css';
 import RTCard from './../../styles/RTCard.css';
 import RTChip from './../../styles/RTChip.css';
 import RTCheckbox from './../../styles/RTCheckbox.css';
@@ -25,11 +26,12 @@ import RTTable from './../../styles/RTTable.css';
 import RTTabs from './../../styles/RTTabs.css';
 import RTTooltip from './../../styles/RTTooltip.css';
 import RTTimePicker from './../../styles/RTTimePicker.css';
- 
+
 export default {
     RTAppBar: RTAppBar,
     RTAutocomplete: RTAutocomplete,
     RTAvatar: RTAvatar,
+    RTButton: RTButton,
     RTCard: RTCard,
     RTChip: RTChip,
     RTCheckbox: RTCheckbox,

@@ -1,1 +1,45 @@
+@import './variables.css';
 
+.primary:not([disabled]) {
+  &.raised,
+  &.floating {
+    color: var(--color-nav-item) !important;
+  }
+
+  &.flat,
+  &.toggle {
+    color: var(--color-nav-item) !important;
+
+    &:focus:not(:active) {
+      background: var(--color-accent) !important;
+    }
+  }
+
+  &.flat:hover {
+    background: var(--color-accent) !important;
+  }
+}
+
+.neutral:not([disabled]) {
+  &.raised,
+  &.floating {
+    color: #1b75bc !important;
+  }
+
+  &.flat,
+  &.toggle {
+    color: #1b75bc !important;
+  }
+
+  &.inverse {
+    &.raised,
+    &.floating {
+      color: #1b75bc !important;
+    }
+
+    &.flat,
+    &.toggle {
+      color: #1b75bc !important;
+    }
+  }
+}
