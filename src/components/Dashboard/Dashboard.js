@@ -1,9 +1,9 @@
 import React from 'react';
 import { Checkbox } from 'react-toolbox/lib/checkbox';
 import { Layout, Panel, NavDrawer } from 'react-toolbox/lib/layout';
-import SideNav from './SideNav/SideNav';
-import TopBar from './TopBar/TopBar';
-import theme from './Dashboard.css'
+import SideNav from './side_nav/SideNav';
+import TopBar from './top_bar/TopBar';
+import theme from './theme.css'
 
 import { Route, Switch } from 'react-router-dom';
 
@@ -35,21 +35,28 @@ class Dashboard extends React.Component {
 
     render() {
         return (
-            <Layout>
+            <Layout theme={theme} >
                 <NavDrawer pinned={true} theme={theme}>
                     <SideNav />
                 </NavDrawer >
            
-                <Panel style={{ top: '100px' }}>
+                <Panel theme={theme} scrollY={true}>
                     <TopBar />
-                    <div style={{ flex: 1, overflowY: 'auto', padding: '1.8rem' }}>
+      
             
                         <Switch>
                             <Route exact path="/dashboard">
                                 <h1>home dashboard</h1>
                             </Route>
                             <Route path="/dashboard/campaigns">
-                                <h1>campaigns</h1>
+                                <div>
+                                    <h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1>
+                                    <h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1>
+                                    <h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1>
+                                    <h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1>
+                                    <h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1>
+                                    <h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1>
+                                </div>
                             </Route>
                             <Route path="/dashboard/items">
                                 <h1>items</h1>
@@ -58,7 +65,7 @@ class Dashboard extends React.Component {
                                 <h1>slots</h1>
                             </Route>
                         </Switch>
-                    </div>
+       
                 </Panel>
             </Layout>
         );

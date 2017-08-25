@@ -2,5 +2,10 @@
     padding-top: 64px;
     background-color: #333;
     color: #fff;
-  }
+}
   
+.panel {
+  bottom: 0;
+  overflow-y: auto;
+  top: 64px;
+}

@@ -1,0 +1,23 @@
+.appBar {
+    background-color: #eee;
+}
+
+.title {
+  color: #333
+}
+
+.leftIcon {
+  width: 123px;
+
+  & > svg {
+    width: 123px;
+  }
+}
+
+.menuItem {
+  background-color: yellow;
+
+  &.selected {
+    background-color: rgba(#000, 0.3)
+  }
+}

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
-import Dashboard from './../Dashboard/Dashboard';
-import Signin from './../Signin/Signin';
-import PageNotFound from './../PageNotFound/PageNotFound';
+import Dashboard from './../dashboard/Dashboard';
+import Signin from './../signin/Signin';
+import PageNotFound from './../page_not_found/PageNotFound';
 
 class App extends Component {
 
@@ -11,9 +11,11 @@ class App extends Component {
     return (
       <Router basename="/">
         <div>
-          <Route exact path="/" component={Signin} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route path="*" component={PageNotFound} />
+          <Switch>
+            <Route exact path="/" component={Signin} />
+            <Route path="/dashboard" component={Dashboard} />
+            <Route component={PageNotFound} />
+          </Switch>
         </div>
       </Router>
     );

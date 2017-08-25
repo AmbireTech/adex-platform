@@ -1,0 +1,11 @@
+.listItem, .item, .itemText {
+  color: #fff !important;
+  
+  & .active {
+    background-color: green;
+  }
+}
+
+.active {
+  background-color: green;
+}
