@@ -3,5 +3,16 @@
 }
 
 .title {
-  color: #333
+  color: #333;
+  margin-bottom: 2px;
+  font-weight: 300;
+}
+
+.leftIcon {
+  width: 92px;
+  margin-right: 10px;
+
+  & > svg {
+    width: 92px;
+  }
 }

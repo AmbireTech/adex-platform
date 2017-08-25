@@ -4,6 +4,7 @@ import { Layout, Panel, NavDrawer } from 'react-toolbox/lib/layout';
 import SideNav from './side_nav/SideNav';
 import TopBar from './top_bar/TopBar';
 import theme from './theme.css'
+import AdexIconTxt from './../common/icons/AdexIconTxt';
 
 import { Route, Switch } from 'react-router-dom';
 
@@ -59,7 +60,10 @@ class Dashboard extends React.Component {
                                 </div>
                             </Route>
                             <Route path="/dashboard/items">
+                                <div>
                                 <h1>items</h1>
+                                <AdexIconTxt />
+                                </div>
                             </Route>
                             <Route path="/dashboard/slots">
                                 <h1>slots</h1>

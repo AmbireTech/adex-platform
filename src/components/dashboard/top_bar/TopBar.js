@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import theme from './theme.css';
 import { AppBar } from 'react-toolbox/lib/app_bar';
 import AdexIcon from './../../common/icons/AdexIcon';
+import AdexIconTxt from './../../common/icons/AdexIconTxt';
 import {Navigation} from 'react-toolbox/lib/navigation';
 import {Link} from 'react-toolbox/lib/link';
 import { IconMenu, MenuItem, MenuDivider, Menu } from 'react-toolbox/lib/menu';
@@ -15,7 +16,7 @@ class TopNav extends Component {
   render() {
     console.log('theme', theme) 
     return (
-      <AppBar title="Publisher" onLeftIconClick={() => alert('hoi')} leftIcon={<AdexIcon />} fixed={true} theme={theme} flat={false} >
+      <AppBar title="Publisher" onLeftIconClick={() => alert('test')} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={false} >
         <Navigation type='horizontal'>
 
           <IconMenu selected='help' selectable icon='notifications' position='auto' menuRipple >
