@@ -8,30 +8,32 @@ import { IconMenu, MenuItem, MenuDivider, Menu } from 'react-toolbox/lib/menu';
 import ButtonMenu from './../../common/button_menu/ButtonMenu'
 import {Button} from 'react-toolbox/lib/button';
 
+let testNotifications = [{name: 'test notif 1', seen: true}, {name: 'test notif 2', seen: false}, {name: 'test notif 3', seen: true}]
+
 class TopNav extends Component {
 
   render() {
-    console.log('theme', theme)
+    console.log('theme', theme) 
     return (
-      <AppBar title="Publisher" leftIcon={<AdexIcon />} fixed={true} theme={theme} flat={false} >
+      <AppBar title="Publisher" onLeftIconClick={() => alert('hoi')} leftIcon={<AdexIcon />} fixed={true} theme={theme} flat={false} >
         <Navigation type='horizontal'>
 
-          <IconMenu selected='help' selectable icon='notifications' position='auto' menuRipple theme={theme}>
-            <MenuItem  selectable value='download' icon='get_app' caption='Download' theme={theme}/>
-            <MenuItem selectable value='help' selected={true}  icon='favorite' caption='Favorite' />
-            <MenuItem selectable value='settings' icon='open_in_browser' caption='Open in app' />
+          <IconMenu selected='help' selectable icon='notifications' position='auto' menuRipple >
+            {testNotifications.map((notif, index) => 
+              <MenuItem shortcut={notif.name} selectable value={index} icon={notif.seen ? 'done' : 'info' } caption={notif.name} />
+            )}
             <MenuDivider />
-            <MenuItem selectable value='signout' icon='delete' caption='Delete' disabled />
+            <MenuItem selectable value='signout' icon='weekend' caption='Mark all as seen' disabled />
           </IconMenu>
 
           <Link href='http://' active icon='mail' />
           
-          <ButtonMenu icon='expand_more' label="John Smith" position='auto' menuRipple active={true} iconRight={true} iconStyle={{marginTop: -2, marginLeft: 10, fontSize: 20}}>
+          <ButtonMenu selectable selected='help' icon='expand_more' label="John Smith" position='auto' menuRipple active={true} iconRight={true} iconStyle={{marginTop: -2, marginLeft: 10, fontSize: 20}}>
             <MenuItem value='download' icon='get_app' caption='Download' />
-            <MenuItem value='help' icon='favorite' caption='Favorite' />
+            <MenuItem value='help' selected={true} selectable icon='favorite' caption='Favorite' />
             <MenuItem value='settings' icon='open_in_browser' caption='Open in app' />
             <MenuDivider />
-            <MenuItem value='signout' icon='delete' caption='HOI' disabled />
+            <MenuItem value='signout' icon='weekend' caption='HOI' disabled />
           </ButtonMenu>
 
         </Navigation>

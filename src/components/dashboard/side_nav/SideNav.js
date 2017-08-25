@@ -11,7 +11,7 @@ class SideNav extends Component {
   render () {
 
       return (
-        <Navigation >
+        <div className="Navigation">
             <List selectable selected="2" ripple >
                 <Link to="/dashboard/campaigns" className="side-nav-link" >
                     <ListItem selectable value="1" caption='campaigns' theme={theme} className="side-nav-link"/>
@@ -24,7 +24,7 @@ class SideNav extends Component {
                 </Link>
                 <ToolboxLink href='http://'  label='Profile' icon='person' />
             </List>
-        </Navigation>
+        </div >
       );
   }
 }

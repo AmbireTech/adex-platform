@@ -1,0 +1,11 @@
+.menuItem {
+  &.selected {
+    background-color: #0000007D !important;
+  }
+}
+
+.menu {
+  &.topRight {
+    top: 100% !important;
+  }
+}
