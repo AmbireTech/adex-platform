@@ -4,4 +4,12 @@
     min-height: 100vh;
     background-repeat: no-repeat;
     background-size: cover;
+    position: relative;
+}
+
+.container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%)
 }

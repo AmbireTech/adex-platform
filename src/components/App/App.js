@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import './App.css';
 import theme from './theme';
 import Dashboard from './../dashboard/Dashboard';
@@ -16,8 +16,10 @@ class App extends Component {
         <Router basename="/">
           <div className="adex-dapp">
             <Switch>
-              <Route exact path="/" component={Signin} />
-              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/dashboard/:side/" component={Dashboard} />
+              <Redirect from="/dashboard" to="/side-select"/>
+              <Route path="/" component={Signin} />
+              
               <Route component={PageNotFound} />
             </Switch>
           </div>

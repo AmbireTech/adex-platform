@@ -35,21 +35,22 @@ class Dashboard extends React.Component {
     };
 
     render() {
+        console.log('this.props.match.params', this.props.match.params)
         return (
             <Layout theme={theme} >
                 <NavDrawer pinned={true} theme={theme}>
-                    <SideNav />
+                    <SideNav side={this.props.match.params.side}/>
                 </NavDrawer >
            
                 <Panel theme={theme} scrollY={true}>
-                    <TopBar />
+                    <TopBar side={this.props.match.params.side}/>
       
             
                         <Switch>
-                            <Route exact path="/dashboard">
+                            <Route exact path="/dashboard/:side">
                                 <h1>home dashboard</h1>
                             </Route>
-                            <Route path="/dashboard/campaigns">
+                            <Route path="/dashboard/:side/campaigns">
                                 <div>
                                     <h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1>
                                     <h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1>
@@ -59,13 +60,13 @@ class Dashboard extends React.Component {
                                     <h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1><h1>campaigns</h1>
                                 </div>
                             </Route>
-                            <Route path="/dashboard/items">
+                            <Route path="/dashboard/:side/items">
                                 <div>
                                 <h1>items</h1>
                                 <AdexIconTxt />
                                 </div>
                             </Route>
-                            <Route path="/dashboard/slots">
+                            <Route path="/dashboard/:side/slots">
                                 <h1>slots</h1>
                             </Route>
                         </Switch>

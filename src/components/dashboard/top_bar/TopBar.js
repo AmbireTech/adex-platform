@@ -16,12 +16,12 @@ class TopNav extends Component {
   render() {
     console.log('theme', theme) 
     return (
-      <AppBar title="Publisher" onLeftIconClick={() => alert('test')} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={false} >
+      <AppBar title={this.props.side || 'hoi'} onLeftIconClick={() => alert('test')} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={false} >
         <Navigation type='horizontal'>
 
           <IconMenu selected='help' selectable icon='notifications' position='auto' menuRipple >
             {testNotifications.map((notif, index) => 
-              <MenuItem shortcut={notif.name} selectable value={index} icon={notif.seen ? 'done' : 'info' } caption={notif.name} />
+              <MenuItem key={index} shortcut={notif.name} selectable value={index} icon={notif.seen ? 'done' : 'info' } caption={notif.name} />
             )}
             <MenuDivider />
             <MenuItem selectable value='signout' icon='weekend' caption='Mark all as seen' disabled />

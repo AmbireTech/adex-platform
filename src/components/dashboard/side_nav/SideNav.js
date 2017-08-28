@@ -13,13 +13,16 @@ class SideNav extends Component {
       return (
         <div className="Navigation">
             <List selectable selected="2" ripple >
-                <Link to="/dashboard/campaigns" className="side-nav-link" >
+                <Link to={{ pathname: '/dashboard/' + this.props.side + "/campaigns"  }} 
+                    className="side-nav-link" >
                     <ListItem selectable value="1" caption='campaigns' theme={theme} className="side-nav-link"/>
                 </Link>
-                <Link to="/dashboard/items" className="side-nav-link">
+                <Link to={{ pathname: '/dashboard/' + this.props.side + "/items"  }} 
+                    className="side-nav-link">
                     <ListItem selectable value="3" caption='items' theme={theme} />
                 </Link>
-                <Link active to="/dashboard/slots" className="active">
+                <Link to={{ pathname: '/dashboard/' + this.props.side + "/slots"  }} 
+                    className="active">
                     <ListItem active selected selectable value="2" caption='slots' theme={theme}/>
                 </Link>
                 <ToolboxLink href='http://'  label='Profile' icon='person' />
