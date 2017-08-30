@@ -1,0 +1,22 @@
+.sideBox{
+    display: inline-block;
+    width: 400px;
+    height: 500px;
+
+    .icon {
+        width: 110px;
+        height: 110px;
+
+    }
+
+    .title {
+        color: #1b75bc,
+    }
+
+    .sale-points{
+        li {
+            display: block;
+            color: greenyellow;
+        }
+    }
+}

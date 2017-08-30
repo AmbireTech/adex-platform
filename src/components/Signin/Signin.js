@@ -7,6 +7,7 @@ import PageNotFound from './../page_not_found/PageNotFound';
 import SideSelect from './side-select/SideSelect'
 
 class Signin extends Component {
+
   renderDefault = () => {
     return (
       <div>
