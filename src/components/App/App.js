@@ -11,12 +11,14 @@ class App extends Component {
 
   render() {
     console.log(theme)
+
+    const { location } = this.props;
     return (
       <ThemeProvider theme={theme}>
-        <Router basename="/">
+        <Router >
           <div className="adex-dapp">
-            <Switch>
-              <Route path="/dashboard/:side/" component={Dashboard} />
+            <Switch location={location}>
+              <Route path="/dashboard/:side"  component={Dashboard} />
               <Redirect from="/dashboard" to="/side-select"/>
               <Route path="/" component={Signin} />
               
