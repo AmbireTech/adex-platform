@@ -3,7 +3,7 @@
 .primary:not([disabled]) {
   &.raised,
   &.floating {
-    color: var(--color-nav-item) !important;
+    color: #fff !important;
   }
 
   &.flat,

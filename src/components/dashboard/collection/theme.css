@@ -1,0 +1,13 @@
+.card {
+    display: inline-block;
+    margin: 10px;
+}
+
+.cardTitle, 
+.cardMedia {
+    cursor: pointer;
+}
+
+.cardActions {
+    justify-content: space-between;
+}

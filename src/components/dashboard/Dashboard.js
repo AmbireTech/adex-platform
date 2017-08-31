@@ -6,7 +6,9 @@ import theme from './theme.css'
 import AdexIconTxt from './../common/icons/AdexIconTxt';
 
 import { Route, Switch, Link } from 'react-router-dom';
-import { advertiserData } from './test-data'
+import { advertiserData } from './test-data';
+
+import Card from './collection/Card'
 
 const Campaign = ({match, location}) => {
     console.log('match', match)
@@ -61,13 +63,7 @@ const Campaigns = ({match, location}) => {
             <h1>All campaigns </h1>
 
             {advertiserData.cmpaigns.map((camp, i) => {
-                return(
-                    <div>
-                        <h3> {camp.name} </h3>
-                        <img src={camp.logo} style={{width: 200, height: 200}} alt={camp.name}/>
-                        <Link to={'/dashboard/' + side + '/' + camp.name }> {camp.name}</Link>
-                    </div>
-                )
+                return( <Card name={camp.name} side={side} logo={camp.logo}/>)
             })}
         </div>
     )
