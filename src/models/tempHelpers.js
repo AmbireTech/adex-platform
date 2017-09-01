@@ -7,6 +7,14 @@ class Helper {
           });
     }
 
+    getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    getRandomPropFromObj(obj) {
+        var keys = Object.keys(obj)
+        return obj[keys[keys.length * Math.random() << 0]];
+    }
 }
 
 module.exports = new Helper()

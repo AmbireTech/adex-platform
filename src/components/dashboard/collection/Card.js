@@ -21,7 +21,7 @@ const TooltipIconButton = Tooltip(IconButton)
 class MyCard extends Component {
     render () {
         let name = this.props.name
-        let to = '/dashboard/' + this.props.side + '/' + name
+        let to = '/dashboard/' + this.props.side + '/' + this.props.item.id
         return (
             <Card style={{width: '300px'}} raised={true} theme={theme}>
                 <RRCardTitle

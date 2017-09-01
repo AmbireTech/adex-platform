@@ -3,7 +3,6 @@ import { Layout, Panel, NavDrawer } from 'react-toolbox/lib/layout';
 import SideNav from './side_nav/SideNav';
 import TopBar from './top_bar/TopBar';
 import theme from './theme.css'
-import AdexIconTxt from './../common/icons/AdexIconTxt';
 
 import { Route, Switch, Link } from 'react-router-dom';
 import { advertiserData } from './test-data';
@@ -11,37 +10,27 @@ import { advertiserData } from './test-data';
 import Card from './collection/Card';
 import Rows from './collection/Rows';
 
+import { ItemTypes } from './../../models/DummyData'
+
 const Campaign = ({match, location}) => {
-    console.log('match', match)
     let side = match.params.side;
     let campaign = match.params.campaign;
+
+    let item = advertiserData().items.filter((i) => i.id === campaign)[0]
+
+    if(!item) return (<h1>'404'</h1>)
 
     return (
         <div>
             <div>
-                <h2>Campaign name: {campaign} </h2>
+                <h2>Campaign name: {item.name} </h2>
             </div>
-
-            {advertiserData.cmpaigns.filter((c) => c.name === campaign).map((camp, i) => {
-
-                return(
-                    camp.data.units.map((u, i) => {
-                        return (
-                            <div key={i}>
-                                <h3> {u.name} </h3>
-                                <div> {u.type} </div>
-                                <div> {u.size} </div>
-                                <Link to={'/dashboard/' + side + '/' + camp.name + '/' + u.name }> {u.name}</Link>
-                            </div>
-                        )
-                    })
-                )
-            })}       
+            <Rows side={side} item={item}/>
         </div>
     )
 }
 
-const Unite = ({match, location}) => {
+const Unit = ({match, location}) => {
     console.log('match', match)
     let campaign = match.params.campaign;
     let unite = match.params.unite;
@@ -63,8 +52,8 @@ const Campaigns = ({match, location}) => {
         <div>
             <h1>All campaigns </h1>
 
-            {advertiserData.cmpaigns.map((camp, i) => {
-                return( <Card name={camp.name} side={side} logo={camp.logo}/>)
+            {advertiserData().items.filter((i) => i.type === ItemTypes.Campaign).map((camp, i) => {
+                return( <Card item={camp} name={camp.name} side={side} logo={camp.img}/>)
             })}
         </div>
     )
@@ -94,20 +83,19 @@ class Dashboard extends React.Component {
         return (
             <Layout theme={theme} >
                 <NavDrawer pinned={true} theme={theme}>
-                    <SideNav side={side} data={advertiserData}/>
+                    <SideNav side={side} data={advertiserData()}/>
                 </NavDrawer >
            
                 <Panel theme={theme} scrollY={true}>
                     <TopBar side={side}/>            
                         <Switch>
                             <Route exact path="/dashboard/:side/campaigns" component={Campaigns}/>
-                            <Route exact path="/dashboard/:side/:campaign/:unite" component={Unite}/>
-                            <Route exact path="/dashboard/:side/:campaign" component={Rows}/>
+                            <Route exact path="/dashboard/:side/:campaign/:unite" component={Unit}/>
+                            <Route exact path="/dashboard/:side/:campaign" component={Campaign}/>
                             <Route exact path="/dashboard/:side">
                                 <h1>Welcome to the {side} side</h1>
                             </Route>
                         </Switch>
-       
                 </Panel>
             </Layout>
         );

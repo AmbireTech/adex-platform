@@ -24,27 +24,27 @@ const TooltipIconButton = Tooltip(IconButton)
 
 class Rows extends Component {
     render () {
-        let side = this.props.match.params.side;
-        let campaign = this.props.match.params.campaign;
-        let camp = advertiserData.cmpaigns.filter((c) => c.name === campaign)[0] || {}
+        let side = this.props.side //this.props.match.params.side;
+        let campaign = this.props.campaign // this.props.match.params.campaign;
+        let camp = this.props.item // advertiserData.cmpaigns.filter((c) => c.name === campaign)[0] || {}
 
         let name = this.props.name
         
         return (
             <div>
-                <h1> {campaign} </h1>
+                <h1> {camp.name} </h1>
                 <div>
                 <Table theme={theme}>
                     <TableHead>
-                        <TableCell> Name </TableCell>
+                        <TableCell> Img </TableCell>
                         <TableCell> Name </TableCell>
                         <TableCell> Type </TableCell>
                         <TableCell> Size </TableCell>
                         <TableCell> Actions </TableCell> 
                     </TableHead>
 
-                            {camp.data.units.map((u, i) => {
-                                let to = '/dashboard/' + side + '/' + camp.name + '/' + u.name 
+                            {camp.meta.units.map((u, i) => {
+                                let to = '/dashboard/' + side + '/' + camp.id + '/' + u.id 
                                 return (
                                     <TableRow key={i} theme={theme}>
                                         <RRTableCell className={theme.link} to={to} theme={theme}> 

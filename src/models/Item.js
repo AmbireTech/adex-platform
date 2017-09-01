@@ -1,8 +1,5 @@
 import Helper from './tempHelpers'
 
-const ItemTypes = { AdUnit: 'AdUnit', AdSlot: 'AdSlot', Campaign: 'Campaign', Channel: 'Channel' }
-const Sizes = { 1: '300x300', 2: '200x200', 3: '100x100', 4: '728x90' }
-
 class Item {
     constructor(owner, type, name){
         this._id = Helper.getGuid()
@@ -12,13 +9,15 @@ class Item {
         this._meta = {}  
     }
 
-    static types() {
-        return ItemTypes
-    }
+    get id() { return this._id }
+    get owner() { return this._owner }
+    get type() { return this._type }
 
-    static sizes() {
-        return Sizes
-    }
+    get name() { return this._name }
+    set name(value) { this._name = value }
+
+    get meta() { return this._meta }
+    // set meta(value) { this._meta = value }
 }
 
-module.exports = Item
+export default Item

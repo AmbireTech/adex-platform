@@ -25,7 +25,7 @@ export const withReactRouterLink = Component => {
 
     isActive = (toLocation, nextProps) => {
       const currProps = nextProps || this.props
-      const { location, to } = currProps
+      const { location } = currProps
       return toLocation === location.pathname
     }
     handleClick = event => {
@@ -46,8 +46,8 @@ export const withReactRouterLink = Component => {
       }
     }
     shouldComponentUpdate(nextProps, nextState) {
-      const { to } = this.props;
-      return this.state.active != nextState.active
+      // const { to } = this.props;
+      return this.state.active !== nextState.active
     }
     render () {
       const { activeClassName, className, to,  ...rest } = this.props;
