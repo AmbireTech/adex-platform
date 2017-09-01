@@ -8,7 +8,8 @@ import AdexIconTxt from './../common/icons/AdexIconTxt';
 import { Route, Switch, Link } from 'react-router-dom';
 import { advertiserData } from './test-data';
 
-import Card from './collection/Card'
+import Card from './collection/Card';
+import Rows from './collection/Rows';
 
 const Campaign = ({match, location}) => {
     console.log('match', match)
@@ -101,7 +102,7 @@ class Dashboard extends React.Component {
                         <Switch>
                             <Route exact path="/dashboard/:side/campaigns" component={Campaigns}/>
                             <Route exact path="/dashboard/:side/:campaign/:unite" component={Unite}/>
-                            <Route exact path="/dashboard/:side/:campaign" component={Campaign}/>
+                            <Route exact path="/dashboard/:side/:campaign" component={Rows}/>
                             <Route exact path="/dashboard/:side">
                                 <h1>Welcome to the {side} side</h1>
                             </Route>

@@ -11,3 +11,17 @@
 .cardActions {
     justify-content: space-between;
 }
+
+.rowCell {
+    height: 100px !important;
+}
+
+.link{
+    cursor: pointer !important;
+}
+
+
+.img {
+    width: auto;
+    height: 100%;
+}
