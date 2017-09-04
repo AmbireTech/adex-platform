@@ -1,4 +1,5 @@
 import Account from './../models/Account'
+import objectAssign from 'object-assign';
 
 let cache = null;
 
@@ -7,9 +8,12 @@ function GenerateAccount() {
 
     let acc = new Account('John Smith')
     acc.fillAccountWithRandItems()
-    console.log('acc', acc)
-    cache = acc
-    return acc
+    let clean = objectAssign({}, acc)
+    let cleanItems = [...clean._items]
+    clean._items = cleanItems
+
+    cache = clean
+    return clean
 }
 
 export default {

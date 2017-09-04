@@ -8,3 +8,15 @@ export function addCampaign(campaign) {
         })        
     }
 }
+
+export function deleteCampaign(campaign) {
+    console.log('campaign', campaign)
+    return function (dispatch) {
+        return dispatch({
+        // return {
+            type: types.DELETE_CAMPAIGN,
+            id: campaign
+        // }
+        })        
+    }
+}

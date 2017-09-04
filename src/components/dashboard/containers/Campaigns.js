@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import * as actions from './../../../actions/campaignActions';
 import { ItemTypes } from './../../../models/DummyData';
 import Card from './../collection/Card';
+import NewCampaignForm from './NewCampaignForm';
 
 
 
@@ -18,8 +19,10 @@ export const Campaigns = (props) => {
         <div>
             <h1>All campaigns </h1>
 
-            {account.items.filter((i) => i.type === ItemTypes.Campaign).map((camp, i) => {
-                return (<Card item={camp} name={camp.name} side={side} logo={camp.img} />)
+            <NewCampaignForm addCampaign={props.actions.addCampaign}/>
+
+            {account._items.filter((i) => i._type === ItemTypes.Campaign).map((camp, i) => {
+                return (<Card key={camp._id} item={camp} name={camp._name} side={side} logo={camp._meta.img} delete={props.actions.deleteCampaign} />)
             })}
         </div>
     )

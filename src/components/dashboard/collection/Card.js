@@ -19,9 +19,16 @@ const TooltipIconButton = Tooltip(IconButton)
 
 
 class MyCard extends Component {
+
+    delete() {
+        this.props.delete(this.props.item._id)
+    }
+
     render () {
-        let name = this.props.name
-        let to = '/dashboard/' + this.props.side + '/' + this.props.item.id
+        let meta = this.props.item._meta
+        let name = this.props.item._name
+        let id = this.props.item._id
+        let to = '/dashboard/' + this.props.side + '/' + this.id
         return (
             <Card style={{width: '300px'}} raised={true} theme={theme}>
                 <RRCardTitle
@@ -32,8 +39,11 @@ class MyCard extends Component {
                 <RRCardMedia
                     to={to}
                     aspectRatio='wide'
-                    image={this.props.logo}
+                    image={meta.img}
                     theme={theme}
+                />
+                <CardTitle
+                    title={id}
                 />
                 <CardActions theme={theme}>
                     <TooltipRRButton 
@@ -54,6 +64,7 @@ class MyCard extends Component {
                             icon='delete' 
                             label='delete' 
                             raised accent 
+                            onMouseUp={this.delete.bind(this)}
                             tooltip='Delete here to delete' 
                             tooltipDelay={1000} 
                             tooltipPosition='top'/>

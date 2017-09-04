@@ -23,12 +23,12 @@ class Account {
     }
 
     fillAccountWithRandItems() {
-        for (let i = 1; i < Helper.getRandomInt(3, 20); i++) {
+        for (let i = 1; i <= Helper.getRandomInt(2, 20); i++) {
             let camp = Campaign.getRandCampaignInst(this.id, i)
 
             this.addItem(camp)
 
-            for (let j = 1; j < Helper.getRandomInt(3, 20); j++) {
+            for (let j = 1; j <= Helper.getRandomInt(2, 20); j++) {
                 let unit = AdUnit.getRandAdUnitInst(this.id, j)
                 camp.addUnit(unit)
                 this.addItem(unit)

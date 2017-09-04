@@ -33,7 +33,7 @@ class Campaign extends Item {
     }
 
     static getRandCampaignInst(owner, i) {
-        i = i || Helper.getRandomInt(1, 100)
+        i = i || Helper.getRandomInt(10, 10)
         
         let campaign = new Campaign(
             owner, 
