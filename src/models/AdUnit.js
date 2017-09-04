@@ -8,6 +8,7 @@ class AdUnit extends Item {
         let meta = this._meta
         meta.img = img
         meta.description = description
+        meta.size = size
         meta.adType = adType
         meta.gender = gender
     }
@@ -17,6 +18,9 @@ class AdUnit extends Item {
 
     get description() { return this._meta.description }
     set description(value) { this._meta.description = value }
+
+    get size() { return this._meta.size }
+    set size(value) { this._meta.size = value }
 
     get adType() { return this._meta.adType }
     set adType(value) { this._meta.adType = value }

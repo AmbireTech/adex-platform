@@ -1,0 +1,2 @@
+export const ADD_CAMPAIGN = 'ADD_CAMPAIGN'
+export const DELETE_CAMPAIGN = 'DELETE_CAMPAIGN'

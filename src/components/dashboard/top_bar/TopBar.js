@@ -14,7 +14,7 @@ let testNotifications = [{name: 'test notif 1', seen: true}, {name: 'test notif 
 class TopNav extends Component {
 
   render() {
-    console.log('theme', theme) 
+    // console.log('theme', theme) 
     return (
       <AppBar title={this.props.side || 'hoi'} onLeftIconClick={() => alert('test')} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={false} >
         <Navigation type='horizontal'>

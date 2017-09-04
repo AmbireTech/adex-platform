@@ -48,7 +48,7 @@ class Rows extends Component {
                                 return (
                                     <TableRow key={i} theme={theme}>
                                         <RRTableCell className={theme.link} to={to} theme={theme}> 
-                                            <img className={theme.img} src={camp.logo} alt={u.name}/>
+                                            <img className={theme.img} src={u.img} alt={u.name}/>
                                         </RRTableCell>                                        
                                         <RRTableCell className={theme.link} to={to}> {u.name} </RRTableCell>
                                         <TableCell> {u.type} </TableCell>

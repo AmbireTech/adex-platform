@@ -10,27 +10,34 @@ import { advertiserData } from './test-data';
 import Card from './collection/Card';
 import Rows from './collection/Rows';
 
-import { ItemTypes } from './../../models/DummyData'
+import { ItemTypes } from './../../models/DummyData';
 
-const Campaign = ({match, location}) => {
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from './../../actions/campaignActions';
+
+import Campaigns from './containers/Campaigns'
+
+const Campaign = ({ match, location }) => {
     let side = match.params.side;
     let campaign = match.params.campaign;
 
     let item = advertiserData().items.filter((i) => i.id === campaign)[0]
 
-    if(!item) return (<h1>'404'</h1>)
+    if (!item) return (<h1>'404'</h1>)
 
     return (
         <div>
             <div>
                 <h2>Campaign name: {item.name} </h2>
             </div>
-            <Rows side={side} item={item}/>
+            <Rows side={side} item={item} />
         </div>
     )
 }
 
-const Unit = ({match, location}) => {
+const Unit = ({ match, location }) => {
     console.log('match', match)
     let campaign = match.params.campaign;
     let unite = match.params.unite;
@@ -45,19 +52,19 @@ const Unit = ({match, location}) => {
     )
 }
 
-const Campaigns = ({match, location}) => {
-    let side = match.params.side;
+// const Campaigns = ({ match, location, account }) => {
+//     let side = match.params.side;
 
-    return (
-        <div>
-            <h1>All campaigns </h1>
+//     return (
+//         <div>
+//             <h1>All campaigns </h1>
 
-            {advertiserData().items.filter((i) => i.type === ItemTypes.Campaign).map((camp, i) => {
-                return( <Card item={camp} name={camp.name} side={side} logo={camp.img}/>)
-            })}
-        </div>
-    )
-}
+//             {account.items.filter((i) => i.type === ItemTypes.Campaign).map((camp, i) => {
+//                 return (<Card item={camp} name={camp.name} side={side} logo={camp.img} />)
+//             })}
+//         </div>
+//     )
+// }
 
 class Dashboard extends React.Component {
     state = {
@@ -80,26 +87,53 @@ class Dashboard extends React.Component {
 
     render() {
         let side = this.props.side || this.props.match.params.side;
+
+
         return (
             <Layout theme={theme} >
                 <NavDrawer pinned={true} theme={theme}>
-                    <SideNav side={side} data={advertiserData()}/>
+                    <SideNav side={side} data={this.props.account} />
                 </NavDrawer >
-           
+
                 <Panel theme={theme} scrollY={true}>
-                    <TopBar side={side}/>            
-                        <Switch>
-                            <Route exact path="/dashboard/:side/campaigns" component={Campaigns}/>
-                            <Route exact path="/dashboard/:side/:campaign/:unite" component={Unit}/>
-                            <Route exact path="/dashboard/:side/:campaign" component={Campaign}/>
-                            <Route exact path="/dashboard/:side">
-                                <h1>Welcome to the {side} side</h1>
-                            </Route>
-                        </Switch>
+                    <TopBar side={side} />
+                    <Switch>
+                        <Route exact path="/dashboard/:side/campaigns" component={Campaigns} />
+                        <Route exact path="/dashboard/:side/:campaign/:unite" component={Unit} />
+                        <Route exact path="/dashboard/:side/:campaign" component={Campaign} />
+                        <Route exact path="/dashboard/:side">
+                            <h1>Welcome to the {side} side</h1>
+                        </Route>
+                    </Switch>
                 </Panel>
             </Layout>
         );
     }
 }
 
-export default Dashboard;
+Dashboard.propTypes = {
+    actions: PropTypes.object.isRequired,
+    account: PropTypes.object.isRequired
+};
+
+function mapStateToProps(state) {
+
+    console.log('mapStateToProps', state)
+    return {
+        account: state.account
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        actions: bindActionCreators(actions, dispatch)
+    };
+}
+
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Dashboard);
+
+//export default Dashboard;
