@@ -9,8 +9,24 @@ export function addCampaign(campaign) {
     }
 }
 
+export function updateNewCampaign(campaign) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.UPDATE_NEW_CAMPAIGN,
+            campaign: campaign
+        })        
+    }
+}
+
+export function resetNewCampaign() {
+    return function (dispatch) {
+        return dispatch({
+            type: types.RESET_NEW_CAMPAIGN
+        })        
+    }
+}
+
 export function deleteCampaign(campaign) {
-    console.log('campaign', campaign)
     return function (dispatch) {
         return dispatch({
         // return {

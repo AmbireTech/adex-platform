@@ -4,10 +4,10 @@ import moment from 'moment'
 import {ItemTypes, Images} from './DummyData'
 
 class Campaign extends Item {
-    constructor(owner, name, from, to, img, description){
+    constructor(owner, name = '', from, to, img = '', description = ''){
         super(owner, ItemTypes.Campaign, name)
         this._meta.units = []
-        this._meta.img = img
+        this._meta.img = img 
         this._meta.description = description
         this._meta.from = from
         this._meta.to = to

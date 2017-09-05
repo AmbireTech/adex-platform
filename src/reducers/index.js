@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux';
-import campaigns from './campaignsReducer';
+import account from './accountReducer';
+import newItem from './itemsReducer';
 import {routerReducer} from 'react-router-redux';
 
 const rootReducer = combineReducers({
-    campaigns,
+    account: account,
+    newItem: newItem,
     routing: routerReducer
 });
 

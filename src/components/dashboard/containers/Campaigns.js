@@ -13,7 +13,7 @@ import NewCampaignForm from './NewCampaignForm';
 export const Campaigns = (props) => {
     let side = props.match.params.side;
     let account = props.account
-    console.log('Campaigns props', props)
+    // console.log('Campaigns props', props)
 
     return (
         <div>
@@ -34,9 +34,9 @@ Campaigns.propTypes = {
 };
 
 function mapStateToProps(state) {
-    console.log('mapStateToProps Campaigns', state)
+    // console.log('mapStateToProps Campaigns', state)
     return {
-        account: state.campaigns
+        account: state.account
     };
 }
 

@@ -118,7 +118,7 @@ Dashboard.propTypes = {
 
 function mapStateToProps(state) {
 
-    console.log('mapStateToProps', state)
+    // console.log('mapStateToProps', state)
     return {
         account: state.account
     };

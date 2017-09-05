@@ -3,7 +3,7 @@ import objectAssign from 'object-assign';
 import initialState from './../store/tempInitialState';
 import Campaign from './../models/Campaign'
 
-export default function campaignsReducer(state = initialState.account, action){
+export default function accountReducer(state = initialState.account, action){
     let newState
     let newItems
     
@@ -12,7 +12,12 @@ export default function campaignsReducer(state = initialState.account, action){
             newState = objectAssign({}, state) 
 
             let campaign = objectAssign({}, action.campaign)
-            let newCampaign = new Campaign(newState.id, campaign.name, campaign.from, campaign.to, campaign.img, campaign.description)
+            let newCampaign = new Campaign(newState.id, 
+                campaign._name, 
+                campaign._meta.from, 
+                campaign._meta.to, 
+                campaign._meta.img, 
+                campaign._meta.description)
             newItems = [...newState._items, newCampaign]
             newState._items = newItems
             return newState
@@ -22,7 +27,7 @@ export default function campaignsReducer(state = initialState.account, action){
             newItems = [...newState._items]
             newItems = newItems
                 .filter((i)=> i._id !== action.id)
-                .map((i)=> objectAssign({}, i))
+                // .map((i)=> objectAssign({}, i))
             
             newState._items = newItems
 
