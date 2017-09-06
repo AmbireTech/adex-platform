@@ -28,7 +28,7 @@ class MyCard extends Component {
         let meta = this.props.item._meta
         let name = this.props.item._name
         let id = this.props.item._id
-        let to = '/dashboard/' + this.props.side + '/' + this.id
+        let to = '/dashboard/' + this.props.side + '/' + this.props.item._id
         return (
             <Card style={{width: '300px'}} raised={true} theme={theme}>
                 <RRCardTitle

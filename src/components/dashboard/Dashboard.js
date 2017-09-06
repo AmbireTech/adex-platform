@@ -18,27 +18,9 @@ import { bindActionCreators } from 'redux';
 import * as actions from './../../actions/campaignActions';
 
 import Campaigns from './containers/Campaigns'
-
-const Campaign = ({ match, location }) => {
-    let side = match.params.side;
-    let campaign = match.params.campaign;
-
-    let item = advertiserData().items.filter((i) => i.id === campaign)[0]
-
-    if (!item) return (<h1>'404'</h1>)
-
-    return (
-        <div>
-            <div>
-                <h2>Campaign name: {item.name} </h2>
-            </div>
-            <Rows side={side} item={item} />
-        </div>
-    )
-}
+import Campaign from './containers/Campaign'
 
 const Unit = ({ match, location }) => {
-    console.log('match', match)
     let campaign = match.params.campaign;
     let unite = match.params.unite;
 
@@ -51,20 +33,6 @@ const Unit = ({ match, location }) => {
         </div>
     )
 }
-
-// const Campaigns = ({ match, location, account }) => {
-//     let side = match.params.side;
-
-//     return (
-//         <div>
-//             <h1>All campaigns </h1>
-
-//             {account.items.filter((i) => i.type === ItemTypes.Campaign).map((camp, i) => {
-//                 return (<Card item={camp} name={camp.name} side={side} logo={camp.img} />)
-//             })}
-//         </div>
-//     )
-// }
 
 class Dashboard extends React.Component {
     state = {
