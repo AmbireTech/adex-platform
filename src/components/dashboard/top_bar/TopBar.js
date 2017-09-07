@@ -27,7 +27,7 @@ class TopNav extends Component {
 
           <Link href='http://' active icon='mail' />
           
-          <ButtonMenu selectable={true} selected='help' icon='expand_more' label="John Smith" position='auto' menuRipple active={true} iconRight={true} iconStyle={{marginTop: -2, marginLeft: 10, fontSize: 20}}>
+          <ButtonMenu selectable={true} selected='help' icon='expand_more' label="Ivo Georgiev" position='auto' menuRipple active={true} iconRight={true} iconStyle={{marginTop: -2, marginLeft: 10, fontSize: 20}}>
             <MenuItem value='download' icon='get_app' caption='Download' />
             <MenuItem value='help' selected={true} icon='favorite' caption='Favorite' />
             <MenuItem value='settings' icon='open_in_browser' caption='Open in app' />

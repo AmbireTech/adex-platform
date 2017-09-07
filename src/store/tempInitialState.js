@@ -19,7 +19,7 @@ function GenerateAccount() {
     let acc = new Account('Ivo Georgiev')
     acc.fillAccountWithRandItems()
     let clean = objectAssign({}, acc)
-    let cleanItems = [...clean._items]
+    let cleanItems = {...clean._items}
     clean._items = cleanItems
 
     account = clean

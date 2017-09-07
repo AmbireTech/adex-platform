@@ -18,12 +18,8 @@ const TooltipIconButton = Tooltip(IconButton)
 
 class Rows extends Component {
     render () {
-        let side = this.props.side //this.props.match.params.side;
-        // let campaign = this.props.campaign // this.props.match.params.campaign;
-        let item = this.props.item // advertiserData.cmpaigns.filter((c) => c.name === campaign)[0] || {}
-
-        // let name = this.props.name
-        
+        let side = this.props.side
+        let item = this.props.item 
         return (
             <div>
                 <h1> {item._name} </h1>

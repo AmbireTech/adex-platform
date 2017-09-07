@@ -1,11 +1,12 @@
 import Helper from './tempHelpers'
 import Item from './Item'
 import moment from 'moment'
-import {ItemTypes, Images} from './DummyData'
+import {ItemsTypes} from './../constants/itemsTypes'
+import {Images} from './DummyData'
 
 class Campaign extends Item {
-    constructor(owner, name = '', from, to, img = '', description = ''){
-        super(owner, ItemTypes.Campaign, name)
+    constructor(owner, id ,name = '', from, to, img = '', description = ''){
+        super(owner, id, ItemsTypes.Campaign.id, name, img, description)
         this._meta.units = []
         this._meta.from = from
         this._meta.to = to
@@ -25,10 +26,10 @@ class Campaign extends Item {
     }
 
     static getRandCampaignInst(owner, i) {
-        i = i || Helper.getRandomInt(10, 10)
-        
+
         let campaign = new Campaign(
             owner, 
+            i,
             'Campaign ' + i, 
             moment().add(i, 'd'),
             moment().add(i + Helper.getRandomInt(3, 10), 'd'),

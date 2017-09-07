@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from './../../../actions/campaignActions';
+import { ItemsTypes } from './../../../constants/itemsTypes';
 
 export const Unit = (props) => {
     // let side = props.match.params.side;
@@ -11,7 +12,7 @@ export const Unit = (props) => {
     let unit = props.match.params.unit;
 
     let account = props.account
-    let item = account._items.filter((i) => i._id === unit)[0]
+    let item = account._items[ItemsTypes.AdUnit.id][unit]
 
     if (!item) return (<h1>Unit '404'</h1>)
 

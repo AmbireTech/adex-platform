@@ -50,7 +50,7 @@ class Dashboard extends React.Component {
                     <TopBar side={side} />
                     <Switch>
                         <Route exact path="/dashboard/:side/campaigns" component={Campaigns} />
-                        <Route exact path="/dashboard/:side/units" component={Units} />
+                        {/* <Route exact path="/dashboard/:side/units" component={Units} /> */}
                         <Route exact path="/dashboard/:side/:campaign/:unit" component={Unit} />
                         <Route exact path="/dashboard/:side/:campaign" component={Campaign} />
                         <Route exact path="/dashboard/:side">

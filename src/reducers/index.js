@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
-import account from './accountReducer';
+// import account from './accountReducer';
+import account from './advertiserReducer';
 import newItem from './itemsReducer';
 import {routerReducer} from 'react-router-redux';
 

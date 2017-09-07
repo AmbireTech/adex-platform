@@ -5,13 +5,19 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from './../../../actions/campaignActions';
 import Rows from './../collection/Rows';
+import { ItemsTypes } from './../../../constants/itemsTypes';
 
 export const Campaign = (props) => {
     let side = props.match.params.side;
-    let campaign = props.match.params.campaign;
+    let campaignId = props.match.params.campaign;
+
+    console.log('props.match.params.campaign', props.match.params.campaign)
 
     let account = props.account
-    let item = account._items.filter((i) => i._id === campaign)[0]
+    let item = account._items[ItemsTypes.Campaign.id][campaignId]
+
+    console.log('props.match.params.campaign', props.match.params.campaign)
+    
 
     if (!item) return (<h1>'404'</h1>)
 

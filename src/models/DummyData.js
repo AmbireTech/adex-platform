@@ -1,4 +1,3 @@
-const ItemTypes = { AdUnit: 'AdUnit', AdSlot: 'AdSlot', Campaign: 'Campaign', Channel: 'Channel' }
 const Sizes = { 1: '300x300', 2: '200x200', 3: '100x100', 4: '728x90' }
 const Locations = { bg: 'Bulgaria', cn: 'China', ru: 'Russia', mn: 'Moon', mr: "Mars" }
 const Genders = { male: "Male", female: 'Female', apacheHelicopter: 'Apache helicopter', other: 'Other' }
@@ -16,7 +15,6 @@ const Images = ['https://www.strem.io/3.0/stremio-purple-small.png',
 
 
 export  {
-    ItemTypes,
     Sizes,
     Locations,
     Genders,

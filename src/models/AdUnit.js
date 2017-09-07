@@ -1,13 +1,12 @@
 import Helper from './tempHelpers'
 import Item from './Item'
-import {ItemTypes, Sizes, Images, AdTypes, Locations, Genders} from './DummyData'
+import {ItemsTypes} from './../constants/itemsTypes'
+import {Sizes, Images, AdTypes, Locations, Genders} from './DummyData'
 
 class AdUnit extends Item {
-    constructor(owner, name, img, description, size, adType, location, gender){
-        super(owner, ItemTypes.AdUnit, name)
+    constructor(owner, id, name, img, description, size, adType, location, gender){
+        super(owner, id,ItemsTypes.AdUnit.id, name, img, description)
         let meta = this._meta
-        meta.img = img
-        meta.description = description
         meta.size = size
         meta.adType = adType
         meta.gender = gender
@@ -29,10 +28,9 @@ class AdUnit extends Item {
     set gender(value) { this._meta.gender = value }
 
     static getRandAdUnitInst(owner, i) {
-        i = i || Helper.getRandomInt(1, 100)
-
         let unit = new AdUnit(
             owner, 
+            i,
             'AdUnit ' + i, 
             Images[Helper.getRandomInt(0, Images.length - 1)],
             'AdUnit Description ' + i,

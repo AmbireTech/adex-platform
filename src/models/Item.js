@@ -1,4 +1,4 @@
-import Helper from './tempHelpers'
+// import Helper from './tempHelpers'
 
 class Item {
     constructor(owner, id, type, name, img, description){
