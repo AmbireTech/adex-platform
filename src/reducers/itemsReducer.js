@@ -1,7 +1,7 @@
-import { UPDATE_NEW_CAMPAIGN, RESET_NEW_CAMPAIGN, UPDATE_NEW_UNIT, RESET_NEW_UNIT } from '../constants/actionTypes';
+import { UPDATE_NEW_CAMPAIGN, RESET_NEW_CAMPAIGN, UPDATE_NEW_UNIT } from '../constants/actionTypes';
 import objectAssign from 'object-assign';
 import initialState from './../store/tempInitialState';
-import Campaign from './../models/Campaign'
+// import Campaign from './../models/Campaign'
 
 export default function accountReducer(state = initialState.newItem, action) {
     let newState
@@ -22,7 +22,7 @@ export default function accountReducer(state = initialState.newItem, action) {
 
             newCampaign._meta = meta
 
-            console.log('newCampaign name', newCampaign)
+            // console.log('newCampaign name', newCampaign)
             newState.campaign = newCampaign
             return newState
 

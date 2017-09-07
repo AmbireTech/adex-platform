@@ -12,12 +12,12 @@ class ButtonMenu extends Component {
 
         return (
             this.props.iconRight ?
-                <Button {...this.props} label="" icon="" onClick={this.handleButtonClick} onHide={this.handleMenuHide}>
+                <Button  label="" icon="" onClick={this.handleButtonClick} >
                     {this.props.label}
                     <FontIcon style={this.props.iconStyle} value={this.props.icon} />  
                 </Button>
                 :
-                <Button {...this.props} onClick={this.handleButtonClick} onHide={this.handleMenuHide}/>
+                <Button onClick={this.handleButtonClick} />
         )
     }
 

@@ -6,6 +6,7 @@
     color: #fff !important;
   }
 
+  /*
   &.flat,
   &.toggle {
     color: var(--color-nav-item) !important;
@@ -18,6 +19,7 @@
   &.flat:hover {
     background: var(--color-accent) !important;
   }
+  */
 }
 
 .neutral:not([disabled]) {

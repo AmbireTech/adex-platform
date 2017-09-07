@@ -51,6 +51,12 @@ export const withReactRouterLink = Component => {
     }
     render () {
       const { activeClassName, className, to,  ...rest } = this.props;
+      // TODO: do we need these props here
+      delete rest.history
+      delete rest.location
+      delete rest.match
+      delete rest.staticContext
+      
       const toLocation = this.resolveToLocation(to);
       const _className = this.state.active ? `${className} ${activeClassName}` : className;
       return (

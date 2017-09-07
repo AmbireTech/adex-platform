@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import theme from './theme.css';
 import PublisherLogo from './../../common/icons/AdexPublisher';
 import AdvertiserLogo from './../../common/icons/AdexAdvertiser';
-import { BrowserRouter as Router, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Dialog from 'react-toolbox/lib/dialog';
 
 const SideBox = ({salePoints, linkTo, linkTitle, icon, title}) => (

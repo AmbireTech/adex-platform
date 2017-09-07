@@ -4,13 +4,9 @@ import SideNav from './side_nav/SideNav';
 import TopBar from './top_bar/TopBar';
 import theme from './theme.css'
 
-import { Route, Switch, Link } from 'react-router-dom';
-import { advertiserData } from './test-data';
+import { Route, Switch } from 'react-router-dom';
 
-import Card from './collection/Card';
-import Rows from './collection/Rows';
-
-import { ItemTypes } from './../../models/DummyData';
+// import { ItemTypes } from './../../models/DummyData';
 
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -20,20 +16,6 @@ import * as actions from './../../actions/campaignActions';
 import Campaigns from './containers/Campaigns'
 import Campaign from './containers/Campaign'
 import Unit from './containers/Unit'
-
-// const Unit = ({ match, location }) => {
-//     let campaign = match.params.campaign;
-//     let unite = match.params.unite;
-
-//     return (
-//         <div>
-//             <div>
-//                 <h2>Campaign {campaign} </h2>
-//                 <h2>Unite: {unite} </h2>
-//             </div>
-//         </div>
-//     )
-// }
 
 class Dashboard extends React.Component {
     state = {
@@ -64,7 +46,7 @@ class Dashboard extends React.Component {
                     <SideNav side={side} data={this.props.account} />
                 </NavDrawer >
 
-                <Panel theme={theme} scrollY={true}>
+                <Panel theme={theme} >
                     <TopBar side={side} />
                     <Switch>
                         <Route exact path="/dashboard/:side/campaigns" component={Campaigns} />

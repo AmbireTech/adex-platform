@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import theme from './Signin.css';
 import Logo from './../common/icons/AdexIconTxt';
-import { BrowserRouter as Router, Link, Switch, Route } from 'react-router-dom';
+import { Link, Switch, Route } from 'react-router-dom';
 
 import PageNotFound from './../page_not_found/PageNotFound';
 import SideSelect from './side-select/SideSelect'
@@ -19,13 +19,12 @@ class Signin extends Component {
   }
 
   render() {
-    console.log('theme.signinContainer', theme);
+    // console.log('theme.signinContainer', theme);
     return (
       <div className={theme.signinContainer} style={{backgroundImage: `url(${require('./../../resources/background.png')})`}}>
         <div className={theme.container}>
           <h1> Signin </h1>
 
-          {/* <Router basename="/"> */}
             <div className="adex-dapp">
               <Switch>
                 <Route exact path="/" render={this.renderDefault}  />
@@ -33,7 +32,6 @@ class Signin extends Component {
                 <Route component={PageNotFound} />
               </Switch>
             </div>
-          {/* </Router> */}
 
         </div>
       </div>

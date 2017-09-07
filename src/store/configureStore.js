@@ -3,7 +3,7 @@ import reduxImmutableStateInvariant from 'redux-immutable-state-invariant';
 import thunk from 'redux-thunk';
 import rootReducer from '../reducers';
 import history from './history'
-import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux';
+import { routerMiddleware } from 'react-router-redux';
 
 const reduxRouterMiddleware = routerMiddleware(history)
 

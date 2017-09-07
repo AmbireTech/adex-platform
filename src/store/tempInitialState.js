@@ -4,13 +4,14 @@ import Unit from './../models/AdUnit'
 // import Channel from './../models/Channel'
 // import Slot from './../models/AdSlot'
 import objectAssign from 'object-assign';
+// import itemsHelpers from './../helpers/itemsHelpers'
 
 // cached
 let account = null;
 let campaign = null;
 let unit = null;
-let channel = null;
-let slot = null;
+// let channel = null;
+// let slot = null;
 
 function GenerateAccount() {
     if(account) return account
@@ -47,6 +48,7 @@ export default {
     account: GenerateAccount(),
     newItem: {
         campaign: GenerateCampaign(),
-        unit: GenerateUnit()
-    }
+        unit: GenerateUnit(),
+    },
+    // collections: itemsHelpers.sortCollections(GenerateAccount()._items)
 }

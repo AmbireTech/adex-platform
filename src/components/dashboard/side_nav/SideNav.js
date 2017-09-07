@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { List, ListItem } from 'react-toolbox/lib/list';
 import { Link } from 'react-router-dom';
 import {Link as ToolboxLink} from 'react-toolbox/lib/link';
-import {Navigation} from 'react-toolbox/lib/navigation';
+// import {Navigation} from 'react-toolbox/lib/navigation';
 import theme from './theme.css'
 
 
