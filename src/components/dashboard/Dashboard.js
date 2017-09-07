@@ -19,20 +19,21 @@ import * as actions from './../../actions/campaignActions';
 
 import Campaigns from './containers/Campaigns'
 import Campaign from './containers/Campaign'
+import Unit from './containers/Unit'
 
-const Unit = ({ match, location }) => {
-    let campaign = match.params.campaign;
-    let unite = match.params.unite;
+// const Unit = ({ match, location }) => {
+//     let campaign = match.params.campaign;
+//     let unite = match.params.unite;
 
-    return (
-        <div>
-            <div>
-                <h2>Campaign {campaign} </h2>
-                <h2>Unite: {unite} </h2>
-            </div>
-        </div>
-    )
-}
+//     return (
+//         <div>
+//             <div>
+//                 <h2>Campaign {campaign} </h2>
+//                 <h2>Unite: {unite} </h2>
+//             </div>
+//         </div>
+//     )
+// }
 
 class Dashboard extends React.Component {
     state = {
@@ -67,7 +68,7 @@ class Dashboard extends React.Component {
                     <TopBar side={side} />
                     <Switch>
                         <Route exact path="/dashboard/:side/campaigns" component={Campaigns} />
-                        <Route exact path="/dashboard/:side/:campaign/:unite" component={Unit} />
+                        <Route exact path="/dashboard/:side/:campaign/:unit" component={Unit} />
                         <Route exact path="/dashboard/:side/:campaign" component={Campaign} />
                         <Route exact path="/dashboard/:side">
                             <h1>Welcome to the {side} side</h1>

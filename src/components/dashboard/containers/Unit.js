@@ -4,28 +4,26 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from './../../../actions/campaignActions';
-import Rows from './../collection/Rows';
 
-export const Campaign = (props) => {
-    let side = props.match.params.side;
+export const Unit = (props) => {
+    // let side = props.match.params.side;
     let campaign = props.match.params.campaign;
+    let unit = props.match.params.unit;
 
     let account = props.account
-    let item = account._items.filter((i) => i._id === campaign)[0]
+    let item = account._items.filter((i) => i._id === unit)[0]
 
-    if (!item) return (<h1>'404'</h1>)
+    if (!item) return (<h1>Unit '404'</h1>)
 
     return (
         <div>
-            <div>
-                <h2>Campaign name: {item.name} </h2>
-            </div>
-            <Rows side={side} item={item} />
+              <h2>Campaign {campaign} </h2>
+              <h2>Unite: {item._name} </h2>
         </div>
     )
 }
 
-Campaign.propTypes = {
+Unit.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired
 };
@@ -46,4 +44,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Campaign);
+)(Unit);
