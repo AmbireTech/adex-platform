@@ -20,13 +20,13 @@ class Rows extends Component {
     render () {
         let side = this.props.side //this.props.match.params.side;
         // let campaign = this.props.campaign // this.props.match.params.campaign;
-        let camp = this.props.item // advertiserData.cmpaigns.filter((c) => c.name === campaign)[0] || {}
+        let item = this.props.item // advertiserData.cmpaigns.filter((c) => c.name === campaign)[0] || {}
 
         // let name = this.props.name
         
         return (
             <div>
-                <h1> {camp.name} </h1>
+                <h1> {item._name} </h1>
                 <div>
                 <Table theme={theme}>
                     <TableHead>
@@ -37,14 +37,14 @@ class Rows extends Component {
                         <TableCell> Actions </TableCell> 
                     </TableHead>
 
-                            {camp.meta.units.map((u, i) => {
-                                let to = '/dashboard/' + side + '/' + camp.id + '/' + u.id 
+                            {item._meta.units.map((u, i) => {
+                                let to = '/dashboard/' + side + '/' + item._id + '/' + u.id 
                                 return (
                                     <TableRow key={i} theme={theme}>
                                         <RRTableCell className={theme.link} to={to} theme={theme}> 
-                                            <img className={theme.img} src={u.img} alt={u.name}/>
+                                            <img className={theme.img} src={u.img} alt={u._name}/>
                                         </RRTableCell>                                        
-                                        <RRTableCell className={theme.link} to={to}> {u.name} </RRTableCell>
+                                        <RRTableCell className={theme.link} to={to}> {u._name} </RRTableCell>
                                         <TableCell> {u.type} </TableCell>
                                         <TableCell> {u.size} </TableCell>
                                         <TableCell> 

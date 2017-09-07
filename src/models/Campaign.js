@@ -7,19 +7,11 @@ class Campaign extends Item {
     constructor(owner, name = '', from, to, img = '', description = ''){
         super(owner, ItemTypes.Campaign, name)
         this._meta.units = []
-        this._meta.img = img 
-        this._meta.description = description
         this._meta.from = from
         this._meta.to = to
     }
 
     get units() { return this._meta.units}
-
-    get img() { return this._meta.img }
-    set img(value) { this._meta.img = value }
-
-    get description() { return this._meta.description }
-    set description(value) { this._meta.description = value }
 
     get from() { return this._meta.from }
     set from(value) { this._meta.from = value }

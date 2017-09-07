@@ -16,7 +16,7 @@ let unit = null;
 function GenerateAccount() {
     if(account) return account
 
-    let acc = new Account('John Smith')
+    let acc = new Account('Ivo Georgiev')
     acc.fillAccountWithRandItems()
     let clean = objectAssign({}, acc)
     let cleanItems = [...clean._items]

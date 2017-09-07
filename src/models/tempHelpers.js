@@ -1,3 +1,5 @@
+import slug from 'slug'
+import unidecode from 'unidecode'
 class Helper {
 
     getGuid(){
@@ -14,6 +16,10 @@ class Helper {
     getRandomPropFromObj(obj) {
         var keys = Object.keys(obj)
         return obj[keys[keys.length * Math.random() << 0]];
+    }
+
+    slugify(str = ''){
+        return slug(unidecode(str)).substring(0, 32);
     }
 }
 
