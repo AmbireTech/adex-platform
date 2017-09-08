@@ -13,9 +13,6 @@ import NewCampaignForm from './../forms/NewCampaignForm'
 import NewUnitForm from './../forms/NewUnitForm'
 
 const RRListItem = withReactRouterLink(ListItem)
-const RRNewCampaignForm = withReactRouterLink(NewCampaignForm)
-const RRNewUnitForm = withReactRouterLink(NewUnitForm)
-
 
 class SideNav extends Component {
 

@@ -1,24 +1,26 @@
-import React, { Component } from 'react';
-import theme from './theme.css';
-import PublisherLogo from './../../common/icons/AdexPublisher';
-import AdvertiserLogo from './../../common/icons/AdexAdvertiser';
-import { Link } from 'react-router-dom'
-import Dialog from 'react-toolbox/lib/dialog';
+import React, { Component } from 'react'
+import theme from './theme.css'
+import PublisherLogo from './../../common/icons/AdexPublisher'
+import AdvertiserLogo from './../../common/icons/AdexAdvertiser'
+// import { Link } from 'react-router-dom'
+import Dialog from 'react-toolbox/lib/dialog'
+import { withReactRouterLink } from './../../common/rr_hoc/RRHoc.js'
 
-const SideBox = ({salePoints, linkTo, linkTitle, icon, title}) => (
-    <div className={theme.sideBox}>
-      <div>
-        {icon}
-      </div>
-      <h2>{title}</h2>
-      <ul>
-      {salePoints.map(function(point, key){
+const SideBox = ({ salePoints, linkTitle, icon, title, ...other }) => (
+  <div {...other} className={theme.sideBox}>
+    <div className={theme.icon}>
+      {icon}
+    </div>
+    <h2>{title}</h2>
+    <ul className={theme.salePoints}>
+      {salePoints.map(function (point, key) {
         return (<li key={key}> {point} </li>)
       })}
-      </ul>
-      <Link to={linkTo} > {linkTitle} </Link>
-    </div>
+    </ul>
+  </div>
 )
+
+const RRSideBox = withReactRouterLink(SideBox)
 
 class SideSelect extends Component {
 
@@ -31,20 +33,20 @@ class SideSelect extends Component {
           title='Choose a your side'
         >
 
-        <SideBox 
-          title="Advertiser" 
-          icon={<AdvertiserLogo />} 
-          salePoints={['Have Something to sell', 'Transparency', 'Hoi']}
-          linkTo="/dashboard/advertiser"
-          linkTitle="Go to advertiser to advertise"
+          <RRSideBox
+            title="Advertiser"
+            icon={<AdvertiserLogo />}
+            salePoints={['Have Something to sell', 'Have ADX']}
+            to="/dashboard/advertiser"
+            linkTitle="Go to advertiser to advertise"
           />
 
-          <SideBox 
-          title="Publisher" 
-          icon={<PublisherLogo />} 
-          salePoints={['Decentralization', 'Transparency', 'Kor']}
-          linkTo="/dashboard/publisher"
-          linkTitle="Go to publisher to publish"
+          <RRSideBox
+            title="Publisher"
+            icon={<PublisherLogo />}
+            salePoints={['Decentralization', 'Want ADX']}
+            to="/dashboard/publisher"
+            linkTitle="Go to publisher to publish"
           />
 
         </Dialog>
