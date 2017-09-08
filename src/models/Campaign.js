@@ -22,19 +22,19 @@ class Campaign extends Item {
 
     addUnit (unit) {
         // TODO: validate everywhere
-        this._meta.units.push(unit)
+        this._meta.units.push(unit._id)
     }
 
-    static getRandCampaignInst(owner, i) {
+    static getRandCampaignInst(owner, id) {
 
         let campaign = new Campaign(
             owner, 
-            i,
-            'Campaign ' + i, 
-            moment().add(i, 'd'),
-            moment().add(i + Helper.getRandomInt(3, 10), 'd'),
+            id,
+            'Campaign ' +  id, 
+            moment().add( id, 'd').valueOf(),
+            moment().add( id + Helper.getRandomInt(3, 10), 'd').valueOf(),
             Images[Helper.getRandomInt(0, Images.length - 1)],
-            'Campaign Description ' + i            
+            'Campaign Description ' +  id            
          )
 
          return campaign

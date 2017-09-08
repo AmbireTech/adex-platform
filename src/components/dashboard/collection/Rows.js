@@ -4,6 +4,8 @@ import theme from './theme.css';
 import {withReactRouterLink} from './../../common/rr_hoc/RRHoc.js';
 import Tooltip from 'react-toolbox/lib/tooltip';
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib//table';
+import {NO_IMAGE_URL} from './../../../constants/misc.js';
+
 
 // import classnames from 'classnames';
 
@@ -38,7 +40,7 @@ class Rows extends Component {
                                 return (
                                     <TableRow key={i} theme={theme}>
                                         <RRTableCell className={theme.link} to={to} theme={theme}> 
-                                            <img className={theme.img} src={u.img} alt={u._name}/>
+                                            <img className={theme.img} src={u.img || NO_IMAGE_URL} alt={u._name}/>
                                         </RRTableCell>                                        
                                         <RRTableCell className={theme.link} to={to}> {u._name} </RRTableCell>
                                         <TableCell> {u.type} </TableCell>

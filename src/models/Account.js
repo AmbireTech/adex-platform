@@ -19,8 +19,7 @@ class Account extends Base {
             }
         }
 
-
-        console.log('accoount', this)
+        // console.log('accoount', this)
     }
 
     get addr() { return this._addr }
@@ -32,11 +31,12 @@ class Account extends Base {
     get meta() { return this._meta }
 
     addItem(item) {
-        this._items[item._type][item.id] = item
+        this._items[item._type].push(item._id)
     }
 
     fillAccountWithRandItems() {
         
+        // IMPORTANT: 
         for (let i = 1; i <= Helper.getRandomInt(2, 20); i++) {
             let camp = Campaign.getRandCampaignInst(this.addr, i)
 

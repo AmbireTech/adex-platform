@@ -27,13 +27,13 @@ class AdUnit extends Item {
     get gender() { return this._meta.gender }
     set gender(value) { this._meta.gender = value }
 
-    static getRandAdUnitInst(owner, i) {
+    static getRandAdUnitInst(owner,  id) {
         let unit = new AdUnit(
             owner, 
-            i,
-            'AdUnit ' + i, 
+            id,
+            'AdUnit ' +  id, 
             Images[Helper.getRandomInt(0, Images.length - 1)],
-            'AdUnit Description ' + i,
+            'AdUnit Description ' +  id,
             Helper.getRandomPropFromObj(Sizes),   
             Helper.getRandomPropFromObj(AdTypes),   
             Helper.getRandomPropFromObj(Locations),          

@@ -25,6 +25,12 @@ class SideNav extends Component {
                         caption='Campaigns'
                         theme={theme}
                         className="side-nav-link" />
+                    <RRListItem to={{ pathname: '/dashboard/' + this.props.side + "/units" }}
+                        selectable={true}
+                        value="3"
+                        caption='Units'
+                        theme={theme}
+                        className="side-nav-link" />
                 </List>
             </div >
         );

@@ -25,6 +25,11 @@ class Base {
     get meta() { return this._meta }
     // Can we change all meta or validate each with setter ?
     // set meta(value) { this._meta = value }  
+
+    // To use for react reducer when updated in order to not mutate the state
+    getClone(){
+        return Object.assign(Object.create(this), this)
+    }
 }
 
 export default Base

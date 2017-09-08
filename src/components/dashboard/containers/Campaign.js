@@ -14,7 +14,8 @@ export const Campaign = (props) => {
     console.log('props.match.params.campaign', props.match.params.campaign)
 
     let account = props.account
-    let item = account._items[ItemsTypes.Campaign.id][campaignId]
+    let campaigns = props.campaigns
+    let item = campaigns[campaignId]
 
     console.log('props.match.params.campaign', props.match.params.campaign)
     
@@ -33,13 +34,15 @@ export const Campaign = (props) => {
 
 Campaign.propTypes = {
     actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired
+    account: PropTypes.object.isRequired,
+    campaigns: PropTypes.array.isRequired,
 };
 
 function mapStateToProps(state) {
     // console.log('mapStateToProps Campaign', state)
     return {
-        account: state.account
+        account: state.account,
+        campaigns: state.campaigns
     };
 }
 
