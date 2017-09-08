@@ -13,6 +13,8 @@ import NewCampaignForm from './../forms/NewCampaignForm'
 import NewUnitForm from './../forms/NewUnitForm'
 
 const RRListItem = withReactRouterLink(ListItem)
+const RRNewCampaignForm = withReactRouterLink(NewCampaignForm)
+const RRNewUnitForm = withReactRouterLink(NewUnitForm)
 
 
 class SideNav extends Component {
@@ -22,39 +24,48 @@ class SideNav extends Component {
         return (
             <div className="Navigation">
                 <List selectable={true} selected="2" ripple >
-                    <RRListItem to={{ pathname: '/dashboard/' + this.props.side }}
+                    <RRListItem
+                        to={{ pathname: '/dashboard/' + this.props.side }}
                         selectable={true}
                         value="1"
                         caption='Dashboard'
                         theme={theme}
                         className="side-nav-link"
                     />
-                    <RRListItem to={{ pathname: '/dashboard/' + this.props.side + "/campaigns" }}
+                    <RRListItem
+                        to={{ pathname: '/dashboard/' + this.props.side + "/campaigns" }}
                         selectable={true}
                         value="2"
                         caption='Campaigns'
                         theme={theme}
                         className="side-nav-link"
                     />
-                    <ListItem
+                    <RRListItem
+                        to={{ pathname: '/dashboard/' + this.props.side + "/campaigns" }}
                         selectable={false}
                         ripple={false}
                     >
-                        <NewCampaignForm addCampaign={this.props.campaignActions.addCampaign} flat={true} />
-                    </ListItem>
-                    <RRListItem to={{ pathname: '/dashboard/' + this.props.side + "/units" }}
+                        <NewCampaignForm
+                            addCampaign={this.props.campaignActions.addCampaign}
+                            flat={true} />
+                    </RRListItem>
+                    <RRListItem
+                        to={{ pathname: '/dashboard/' + this.props.side + "/units" }}
                         selectable={true}
                         value="3"
                         caption='Units'
                         theme={theme}
                         className="side-nav-link"
                     />
-                    <ListItem
+                    <RRListItem
+                        to={'/dashboard/' + this.props.side + "/units"}
                         selectable={false}
                         ripple={false}
                     >
-                        <NewUnitForm addCampaign={this.props.unitActions.addUnit} accent={true} flat={true} />
-                    </ListItem>
+                        <NewUnitForm
+                            addCampaign={this.props.unitActions.addUnit}
+                            accent={true} flat={true} />
+                    </RRListItem>
                 </List>
             </div >
         );

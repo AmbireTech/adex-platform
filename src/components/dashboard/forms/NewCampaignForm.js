@@ -32,7 +32,6 @@ class NewCampaignForm extends Component {
         this.handleToggle()
     }
 
-
     render() {
 
         let campaign = this.props.newCampaign;

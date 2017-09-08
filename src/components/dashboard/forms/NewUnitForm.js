@@ -32,7 +32,6 @@ class NewUnitForm extends Component {
         this.handleToggle()
     }
 
-
     render() {
 
         let unit = this.props.newUnit;
