@@ -19,7 +19,7 @@ export default function unitsReducer(state = initialState.adUnits, action) {
     switch (action.type) {
         case ADD_UNIT:
             let unit = action.unit
-            let id = state.length + 1
+            let id = state.length
 
             //TODO: Handle account address correctly
             newUnit = new Unit(initialState.account._addr,
@@ -35,7 +35,7 @@ export default function unitsReducer(state = initialState.adUnits, action) {
             return newState
 
         case DELETE_UNIT:
-            newUnit = { ...state[action.id] }  //TODO: check for possible memory leak
+            newUnit = state[action.id].getClone()  //TODO: check for possible memory leak
             newMeta = { ...newUnit._meta }
             newMeta.deleted = true
             newUnit._meta = newMeta

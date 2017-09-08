@@ -1,24 +1,19 @@
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import * as actions from './../../../actions/campaignActions';
-import Rows from './../collection/Rows';
-import { ItemsTypes } from './../../../constants/itemsTypes';
+import React from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import * as actions from './../../../actions/campaignActions'
+import Rows from './../collection/Rows'
+// import { ItemsTypes } from './../../../constants/itemsTypes'
 
 export const Campaign = (props) => {
     let side = props.match.params.side;
     let campaignId = props.match.params.campaign;
 
-    console.log('props.match.params.campaign', props.match.params.campaign)
-
-    let account = props.account
+    // let account = props.account
     let campaigns = props.campaigns
     let item = campaigns[campaignId]
-
-    console.log('props.match.params.campaign', props.match.params.campaign)
-    
 
     if (!item) return (<h1>'404'</h1>)
 

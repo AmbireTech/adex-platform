@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import * as actions from './../../../actions/campaignActions';
-import Input from 'react-toolbox/lib/input';
-import DatePicker from 'react-toolbox/lib/date_picker';
-import { Button } from 'react-toolbox/lib/button';
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import * as actions from './../../../actions/campaignActions'
+import Input from 'react-toolbox/lib/input'
+import DatePicker from 'react-toolbox/lib/date_picker'
+import { Button } from 'react-toolbox/lib/button'
 import Dialog from 'react-toolbox/lib/dialog'
 
 class NewCampaignForm extends Component {
@@ -39,7 +39,7 @@ class NewCampaignForm extends Component {
 
         return (
             <div>
-                <Button icon='add' label='Add new Campaign' onClick={this.handleToggle}  primary={this.props.primary} raised={this.props.raised} ripple={this.props.ripple} accent={this.props.accent} />
+                <Button icon='add' label='Add new Campaign' onClick={this.handleToggle}  primary={this.props.primary} raised={this.props.raised} ripple={this.props.ripple} accent={this.props.accent} flat={this.props.flat} />
                 <Dialog
                     active={this.state.active}
                     onEscKeyDown={this.handleToggle}

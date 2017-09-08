@@ -40,7 +40,7 @@ class SideNav extends Component {
                         selectable={false}
                         ripple={false}
                     >
-                        <NewCampaignForm addCampaign={this.props.campaignActions.addCampaign} />
+                        <NewCampaignForm addCampaign={this.props.campaignActions.addCampaign} flat={true} />
                     </ListItem>
                     <RRListItem to={{ pathname: '/dashboard/' + this.props.side + "/units" }}
                         selectable={true}
@@ -53,7 +53,7 @@ class SideNav extends Component {
                         selectable={false}
                         ripple={false}
                     >
-                        <NewUnitForm addCampaign={this.props.unitActions.addUnit} accent={true} />
+                        <NewUnitForm addCampaign={this.props.unitActions.addUnit} accent={true} flat={true} />
                     </ListItem>
                 </List>
             </div >

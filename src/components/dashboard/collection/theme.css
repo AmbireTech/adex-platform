@@ -25,3 +25,16 @@
     width: auto;
     height: 100%;
 }
+
+.content {
+    & > img {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        min-width: 50%;
+        min-height: 50%;
+    }
+}

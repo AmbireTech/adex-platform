@@ -1,17 +1,16 @@
-import React from 'react';
-import { Layout, Panel, NavDrawer } from 'react-toolbox/lib/layout';
-import SideNav from './side_nav/SideNav';
-import TopBar from './top_bar/TopBar';
+import React from 'react'
+import { Layout, Panel, NavDrawer } from 'react-toolbox/lib/layout'
+import SideNav from './side_nav/SideNav'
+import TopBar from './top_bar/TopBar'
 import theme from './theme.css'
 
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom'
+// import { ItemTypes } from './../../models/DummyData'
 
-// import { ItemTypes } from './../../models/DummyData';
-
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import * as actions from './../../actions/campaignActions';
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import * as actions from './../../actions/campaignActions'
 
 import Campaigns from './containers/Campaigns'
 import Campaign from './containers/Campaign'
@@ -26,19 +25,19 @@ class Dashboard extends React.Component {
     };
 
     toggleDrawerActive = () => {
-        this.setState({ drawerActive: !this.state.drawerActive });
+        this.setState({ drawerActive: !this.state.drawerActive })
     };
 
     toggleDrawerPinned = () => {
-        this.setState({ drawerPinned: !this.state.drawerPinned });
+        this.setState({ drawerPinned: !this.state.drawerPinned })
     }
 
     toggleSidebar = () => {
-        this.setState({ sidebarPinned: !this.state.sidebarPinned });
+        this.setState({ sidebarPinned: !this.state.sidebarPinned })
     };
 
     render() {
-        let side = this.props.side || this.props.match.params.side;
+        let side = this.props.side || this.props.match.params.side
 
 
         return (
@@ -50,10 +49,11 @@ class Dashboard extends React.Component {
                 <Panel theme={theme} >
                     <TopBar side={side} />
                     <Switch>
+                        {/* TODO: Make things dynamic if easier */}
                         <Route exact path="/dashboard/:side/campaigns" component={Campaigns} />
                         <Route exact path="/dashboard/:side/units" component={Units} />
-                        <Route exact path="/dashboard/:side/:campaign/:unit" component={Unit} />
-                        <Route exact path="/dashboard/:side/:campaign" component={Campaign} />
+                        <Route exact path="/dashboard/:side/Campaign/:campaign" component={Campaign} />
+                        <Route exact path="/dashboard/:side/AdUnit/:unit" component={Unit} />
                         <Route exact path="/dashboard/:side">
                             <h1>Welcome to the {side} side</h1>
                         </Route>

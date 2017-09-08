@@ -19,7 +19,7 @@ export default function advertiserReducer(state = initialState.campaigns, action
     switch (action.type) {
         case ADD_CAMPAIGN:
             let campaign = action.campaign
-            let id = state.length + 1
+            let id = state.length
 
             newCampaign = new Campaign(state._addr,
                 id,
@@ -36,7 +36,7 @@ export default function advertiserReducer(state = initialState.campaigns, action
             return newState
 
         case DELETE_CAMPAIGN:
-            newCampaign = { ...state[action.id] }  //TODO: check for possible memory leak
+            newCampaign = state[action.id].getClone()  //TODO: check for possible memory leak
             newMeta = { ...newCampaign._meta }
             newMeta.deleted = true
             newCampaign._meta = newMeta

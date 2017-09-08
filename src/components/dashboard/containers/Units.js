@@ -1,35 +1,60 @@
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import * as actions from './../../../actions/unitActions';
-// import { ItemsTypes } from './../../../constants/ItemsTypes';
-import Card from './../collection/Card';
-import NewUnitForm from './../forms/NewUnitForm';
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import * as actions from './../../../actions/unitActions'
+// import { ItemsTypes } from './../../../constants/ItemsTypes'
+import Card from './../collection/Card'
+import NewUnitForm from './../forms/NewUnitForm'
+import Rows from './../collection/Rows'
+import { IconButton } from 'react-toolbox/lib/button'
 
+class Units extends Component {
+    constructor(props, context) {
+        super(props, context);
+        this.toggleView = this.toggleView.bind(this);
 
+        // TODO: keep this state in the store
+        this.state = {
+            rowsView: false
+        };
+    }
 
-export const Units = (props) => {
-    let side = props.match.params.side;
-    let account = props.account
-    let units = props.units
-    // console.log('Campaigns props', props)
+    toggleView() {
+        this.setState({ rowsView: !this.state.rowsView })
+    }
 
-    return (
-        <div>
-            <h1>All units </h1>
+    render() {
+        let side = this.props.match.params.side;
+        // let account = this.props.account
+        let units = this.props.units
+            .filter((i) => !!i && !!i._meta && !i._meta.deleted)
+            .sort((a, b) => b._id - a._id)
+        console.log('Units no filtered', units)
+        console.log('Units', this.props.units)
 
-            <NewUnitForm addCampaign={props.actions.addCampaign} />
+        return (
+            <div>
+                <h1>All units </h1>
+                <div>
+                    <NewUnitForm addCampaign={this.props.actions.addCampaign} />
+                    <IconButton icon='view_module' primary onClick={this.toggleView} />
+                    <IconButton icon='view_list' primary onClick={this.toggleView} />
+                </div>
 
-            {units
-                .filter((i) => !!i && !!i._meta && !i._meta.deleted)
-                .sort((a, b) => b._id - a._id)
-                .map((camp, i) => {
-                    return (<Card key={camp._id} item={camp} name={camp._name} side={side} logo={camp._meta.img} delete={props.actions.deleteUnit} />)
-                })}
-        </div>
-    )
+                {this.state.rowsView ?
+                    <Rows side={side} item={units} delete={this.props.actions.deleteUnit} />
+                    :
+
+                    units
+                        .map((camp, i) => {
+                            return (<Card key={camp._id} item={camp} name={camp._name} side={side} logo={camp._meta.img} delete={this.props.actions.deleteUnit} />)
+                        })
+                }
+            </div>
+        )
+    }
 }
 
 Units.propTypes = {
