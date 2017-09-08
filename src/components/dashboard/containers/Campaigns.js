@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import * as actions from './../../../actions/campaignActions';
 // import { ItemsTypes } from './../../../constants/itemsTypes';
 import Card from './../collection/Card';
-import NewCampaignForm from './NewCampaignForm';
+import NewCampaignForm from './../forms/NewCampaignForm';
 
 
 

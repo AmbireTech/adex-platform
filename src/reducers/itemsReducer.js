@@ -37,11 +37,15 @@ export default function accountReducer(state = initialState.newItem, action) {
             newState = objectAssign({}, state)
             let newUnit = objectAssign({}, state.unit)
             let unit = action.unit
+            console.log('action.unit', unit)
+            
             meta = objectAssign({}, newUnit._meta)
 
             newUnit._name = unit.name || newUnit._name
             meta.img = unit.img || newUnit._meta.img
             meta.description = unit.description || newUnit._meta.description
+
+            newUnit._meta = meta
 
             newState.unit = newUnit
             return newState
