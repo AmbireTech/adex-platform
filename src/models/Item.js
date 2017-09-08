@@ -1,4 +1,4 @@
-// import Helper from './tempHelpers'
+// import Helper from './../helpers/miscHelpers'
 import Base from './Base'
 class Item extends Base {
     constructor(owner, id, type, name, img, description) {

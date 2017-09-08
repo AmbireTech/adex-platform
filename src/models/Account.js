@@ -1,5 +1,5 @@
 import Base from './Base'
-import Helper from './tempHelpers'
+import Helper from './../helpers/miscHelpers'
 import Campaign from './Campaign'
 import AdUnit from './AdUnit'
 import {ItemsTypes} from './../constants/itemsTypes'
@@ -36,13 +36,14 @@ class Account extends Base {
     }
 
     fillAccountWithRandItems() {
+        
         for (let i = 1; i <= Helper.getRandomInt(2, 20); i++) {
             let camp = Campaign.getRandCampaignInst(this.addr, i)
 
             this.addItem(camp)
 
             for (let j = 1; j <= Helper.getRandomInt(2, 20); j++) {
-                let id = this._items[ItemsTypes.AdUnit.id].length + 1
+                let id = this._items[ItemsTypes.AdUnit.id].length || 1
                 let unit = AdUnit.getRandAdUnitInst(this.addr, id)
                 camp.addUnit(unit)
                 this.addItem(unit)

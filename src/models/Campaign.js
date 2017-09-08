@@ -1,4 +1,4 @@
-import Helper from './tempHelpers'
+import Helper from './../helpers/miscHelpers'
 import Item from './Item'
 import moment from 'moment'
 import {ItemsTypes} from './../constants/itemsTypes'
