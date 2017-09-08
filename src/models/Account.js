@@ -1,12 +1,16 @@
+import Base from './Base'
 import Helper from './tempHelpers'
 import Campaign from './Campaign'
 import AdUnit from './AdUnit'
 import {ItemsTypes} from './../constants/itemsTypes'
 
-class Account {
+class Account extends Base {
     // TODO: accept addr and wallet
-    constructor(name){
+    constructor(name, addr, wallet){
+        super(name)
         this._addr = Helper.getGuid()
+        this._wallet = Helper.getGuid()
+
         this._items = {}
 
         for (var key in ItemsTypes) {
@@ -15,24 +19,16 @@ class Account {
             }
         }
 
-        this._addr = Helper.getGuid()
-        this._wallet = Helper.getGuid()
-        this._name = name
-        this._meta = {
-            fullName: name
-        }
 
-        console.log(this)
+        console.log('accoount', this)
     }
 
     get addr() { return this._addr }
-    get items() { return this._items }
-
-    get name() { return this._name }
-
-    get fullName() { return this._meta.fullName }
-    set fullName(value) { this._meta.fullName = value }
-
+    get allItems() { return this._items }
+    get campaigns() { return this._items[ItemsTypes.Campaign.id] }
+    get adUnits() { return this._items[ItemsTypes.AdUnit.id] }
+    get channels() { return this._items[ItemsTypes.Channel.id] }
+    get adSlots() { return this._items[ItemsTypes.AdSlot.id] }
     get meta() { return this._meta }
 
     addItem(item) {
@@ -46,7 +42,7 @@ class Account {
             this.addItem(camp)
 
             for (let j = 1; j <= Helper.getRandomInt(2, 20); j++) {
-                let id = this.items[ItemsTypes.AdUnit.id].length + 1
+                let id = this._items[ItemsTypes.AdUnit.id].length + 1
                 let unit = AdUnit.getRandAdUnitInst(this.addr, id)
                 camp.addUnit(unit)
                 this.addItem(unit)

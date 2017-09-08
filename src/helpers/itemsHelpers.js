@@ -19,6 +19,11 @@ function sortCollections(items) {
     return collections
 }
 
+function cloneObject(obj){
+    return Object.assign(Object.create(obj), obj)
+}
+
 export default {
-    sortCollections: sortCollections
+    sortCollections: sortCollections,
+    cloneObject: cloneObject
 }
