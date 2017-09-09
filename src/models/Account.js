@@ -2,11 +2,11 @@ import Base from './Base'
 import Helper from './../helpers/miscHelpers'
 import Campaign from './Campaign'
 import AdUnit from './AdUnit'
-import {ItemsTypes} from './../constants/itemsTypes'
+import { ItemsTypes } from './../constants/itemsTypes'
 
 class Account extends Base {
     // TODO: accept addr and wallet
-    constructor(name, addr, wallet){
+    constructor(name, addr, wallet) {
         super(name)
         this._addr = Helper.getGuid()
         this._wallet = Helper.getGuid()
@@ -35,7 +35,7 @@ class Account extends Base {
     }
 
     fillAccountWithRandItems() {
-        
+
         // IMPORTANT: 
         for (let i = 1; i <= Helper.getRandomInt(2, 20); i++) {
             let camp = Campaign.getRandCampaignInst(this.addr, i)
@@ -47,7 +47,7 @@ class Account extends Base {
                 let unit = AdUnit.getRandAdUnitInst(this.addr, id)
                 camp.addUnit(unit)
                 this.addItem(unit)
-            }     
+            }
         }
     }
 

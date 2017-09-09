@@ -18,7 +18,7 @@ export const Unit = (props) => {
 
     return (
         <div>
-            <h2>Campaign {campaign} </h2>
+            <h2>AdUnit</h2>
             <h2>Unite: {item._name} </h2>
         </div>
     )

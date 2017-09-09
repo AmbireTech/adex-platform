@@ -1,9 +1,9 @@
 import Helper from './../helpers/miscHelpers'
 import Item from './Item'
-import {ItemTypes, Sizes, Images, AdTypes, Locations, Genders} from './DummyData'
+import { ItemTypes, Sizes, Images, AdTypes, Locations, Genders } from './DummyData'
 
 class AdSlot extends Item {
-    constructor(owner, name, img, description, size, adType, location, gender){
+    constructor(owner, name, img, description, size, adType, location, gender) {
         super(owner, ItemTypes.AdUnit, name)
         let meta = this._meta
         meta.img = img
@@ -32,17 +32,17 @@ class AdSlot extends Item {
         i = i || Helper.getRandomInt(1, 100)
 
         let unit = new AdSlot(
-            owner, 
-            'AdUnit ' + i, 
+            owner,
+            'AdUnit ' + i,
             Images[Helper.getRandomInt(0, Images.length - 1)],
             'AdUnit Description ' + i,
-            Helper.getRandomPropFromObj(Sizes),   
-            Helper.getRandomPropFromObj(AdTypes),   
-            Helper.getRandomPropFromObj(Locations),          
+            Helper.getRandomPropFromObj(Sizes),
+            Helper.getRandomPropFromObj(AdTypes),
+            Helper.getRandomPropFromObj(Locations),
             Helper.getRandomPropFromObj(Genders)
-         )
+        )
 
-         return unit
+        return unit
     }
 
 }

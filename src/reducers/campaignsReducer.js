@@ -1,4 +1,4 @@
-import { ADD_CAMPAIGN, DELETE_CAMPAIGN } from '../constants/actionTypes';
+import { ADD_CAMPAIGN, DELETE_CAMPAIGN, REMOVE_UNIT_FROM_CAMPAIGN } from '../constants/actionTypes';
 import initialState from './../store/tempInitialState';
 import Campaign from './../models/Campaign';
 
@@ -40,6 +40,26 @@ export default function advertiserReducer(state = initialState.campaigns, action
             newMeta = { ...newCampaign._meta }
             newMeta.deleted = true
             newCampaign._meta = newMeta
+
+            newState = campaigns(state, { ...action, campaign: newCampaign })
+
+            return newState
+
+        case REMOVE_UNIT_FROM_CAMPAIGN:
+
+            newCampaign = state[action.campaign].getClone()
+            newMeta = { ...newCampaign._meta }
+
+            let unitIndex = newMeta.units.indexOf(action.unit)
+
+            if (unitIndex === -1) return state
+                
+            let newUnits = [...newMeta.units]
+
+            newUnits.splice(unitIndex, 1)
+            newMeta.units = newUnits
+            newCampaign._meta = newMeta
+            action.id = action.campaign
 
             newState = campaigns(state, { ...action, campaign: newCampaign })
 

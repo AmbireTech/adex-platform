@@ -1,11 +1,11 @@
 import Helper from './../helpers/miscHelpers'
 import Item from './Item'
-import {ItemsTypes} from './../constants/itemsTypes'
-import {Sizes, Images, AdTypes, Locations, Genders} from './DummyData'
+import { ItemsTypes } from './../constants/itemsTypes'
+import { Sizes, Images, AdTypes, Locations, Genders } from './DummyData'
 
 class AdUnit extends Item {
-    constructor(owner, id, name, img, description, size, adType, location, gender){
-        super(owner, id,ItemsTypes.AdUnit.id, name, img, description)
+    constructor(owner, id, name, img, description, size, adType, location, gender) {
+        super(owner, id, ItemsTypes.AdUnit.id, name, img, description)
         let meta = this._meta
         meta.size = size
         meta.adType = adType
@@ -27,20 +27,20 @@ class AdUnit extends Item {
     get gender() { return this._meta.gender }
     set gender(value) { this._meta.gender = value }
 
-    static getRandAdUnitInst(owner,  id) {
+    static getRandAdUnitInst(owner, id) {
         let unit = new AdUnit(
-            owner, 
+            owner,
             id,
-            'AdUnit ' +  id, 
+            'AdUnit ' + id,
             Images[Helper.getRandomInt(0, Images.length - 1)],
-            'AdUnit Description ' +  id,
-            Helper.getRandomPropFromObj(Sizes),   
-            Helper.getRandomPropFromObj(AdTypes),   
-            Helper.getRandomPropFromObj(Locations),          
+            'AdUnit Description ' + id,
+            Helper.getRandomPropFromObj(Sizes),
+            Helper.getRandomPropFromObj(AdTypes),
+            Helper.getRandomPropFromObj(Locations),
             Helper.getRandomPropFromObj(Genders)
-         )
+        )
 
-         return unit
+        return unit
     }
 
 }

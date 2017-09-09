@@ -27,7 +27,7 @@ class Base {
     // set meta(value) { this._meta = value }  
 
     // To use for react reducer when updated in order to not mutate the state
-    getClone(){
+    getClone() {
         return Object.assign(Object.create(this), this)
     }
 }

@@ -36,3 +36,15 @@ export function deleteCampaign(campaign) {
         })        
     }
 }
+
+export function removeUnitFromCampaign(campaign, unit) {
+    return function (dispatch) {
+        return dispatch({
+        // return {
+            type: types.REMOVE_UNIT_FROM_CAMPAIGN,
+            campaign: campaign,
+            unit: unit,
+        // }
+        })        
+    }
+}

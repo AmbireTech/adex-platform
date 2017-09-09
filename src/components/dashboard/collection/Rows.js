@@ -6,7 +6,6 @@ import Tooltip from 'react-toolbox/lib/tooltip'
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib//table'
 import Img from './../../common/img/Img'
 
-
 // import classnames from 'classnames';
 
 // const RRButton = withReactRouterLink(Button)
@@ -16,13 +15,24 @@ const RRTableCell = withReactRouterLink(TableCell)
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))
 const TooltipIconButton = Tooltip(IconButton)
 
-
-
 class Rows extends Component {
+
+    // TEMP
+    onTrashClick(campaign, unit) {
+        if (this.props.delete) {
+            this.props.delete(unit)
+            return
+        }
+
+        if (this.props.remove) {
+            this.props.remove(campaign, unit)
+        }
+    }
+
     render() {
         let side = this.props.side
         let item = this.props.item
-        let units = item._meta && item._meta.units ? item._meta.units : item || [] // Temp
+        let units = this.props.rows ? this.props.rows : (item._meta && item._meta.units ? item._meta.units : (item || [])) // Temp
         console.log('Rows units', units)
         return (
             <div>
@@ -38,9 +48,9 @@ class Rows extends Component {
                         </TableHead>
 
                         {units.map((u, i) => {
-                            let to = '/dashboard/' + side + '/' + item._id + '/' + u.id
+                            let to = '/dashboard/' + side + '/' + u.typeName + '/' + u.id
                             return (
-                                <TableRow key={u.id} theme={theme}>
+                                <TableRow key={u.id || i} theme={theme}>
                                     <RRTableCell className={theme.link} to={to} theme={theme}>
                                         <Img className={theme.img} src={u.img} alt={u._name} />
                                     </RRTableCell>
@@ -65,7 +75,7 @@ class Rows extends Component {
                                             icon='delete'
                                             label='delete'
                                             accent
-                                            onClick={this.props.delete.bind(u, u.id)}
+                                            onClick={this.onTrashClick.bind(this, item.id, u.id)}
                                             tooltip='Delete'
                                             tooltipDelay={1000}
                                             tooltipPosition='top' />

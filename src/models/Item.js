@@ -1,5 +1,5 @@
 // import Helper from './../helpers/miscHelpers'
-import {ItemsTypes} from './../constants/itemsTypes'
+import { ItemsTypes } from './../constants/itemsTypes'
 import Base from './Base'
 class Item extends Base {
     constructor(owner, id, type, name, img, description) {
@@ -17,7 +17,7 @@ class Item extends Base {
     get owner() { return this._owner }
     get type() { return this._type }
 
-    get typeName() {return this.getTypeName() }
+    get typeName() { return this.getTypeName() }
 
     get img() { return this._meta.img }
     set img(value) { this._meta.img = value }
@@ -31,10 +31,10 @@ class Item extends Base {
     get deleted() { return this._meta.deleted }
     set deleted(value) { this._meta.deleted = value }
 
-    getTypeName(){
+    getTypeName() {
         for (var key in ItemsTypes) {
             if (ItemsTypes.hasOwnProperty(key)) {
-                if(ItemsTypes[key].id === this.type){
+                if (ItemsTypes[key].id === this.type) {
                     return ItemsTypes[key].name
                 }
             }
