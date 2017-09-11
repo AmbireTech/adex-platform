@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as actions from './../../../actions/campaignActions'
-import * as itemActions from './../../../actions/itemActions'
+import * as actions from './../../../actions/itemActions'
 import Input from 'react-toolbox/lib/input'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import { Button } from 'react-toolbox/lib/button'
@@ -28,7 +27,7 @@ class NewCampaignForm extends Component {
     };
 
     save() {
-        this.props.itemActions.addItem(Object.assign({}, this.props.newCampaign));
+        this.props.actions.addItem(Object.assign({}, this.props.newCampaign));
         this.props.actions.resetNewCampaign()
         this.handleToggle()
     }
@@ -53,7 +52,7 @@ class NewCampaignForm extends Component {
                         <DatePicker label='Start date' minDate={new Date()} onChange={this.handleChange.bind(this, 'from')} value={campaign._meta.from} />
                         <DatePicker label='End date' minDate={new Date()} onChange={this.handleChange.bind(this, 'to')} value={campaign._meta.to} />
                         <br />
-                        <Button icon='save' label='Save' raised primary onMouseUp={this.save} />
+                        <Button icon='save' label='Save' raised primary onClick={this.save} />
                     </section>
                 </Dialog>
             </div>
@@ -64,7 +63,6 @@ class NewCampaignForm extends Component {
 
 NewCampaignForm.propTypes = {
     actions: PropTypes.object.isRequired,
-    itemActions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
 };
 
@@ -78,8 +76,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        actions: bindActionCreators(actions, dispatch),
-        itemActions: bindActionCreators(itemActions, dispatch)
+        actions: bindActionCreators(actions, dispatch)
     };
 }
 

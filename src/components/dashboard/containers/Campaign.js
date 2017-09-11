@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from './../../../actions/itemActions'
-import * as unitActions from './../../../actions/unitActions'
 import Rows from './../collection/Rows'
 import { ItemsTypes } from './../../../constants/itemsTypes'
 
@@ -37,7 +36,6 @@ export const Campaign = (props) => {
 
 Campaign.propTypes = {
     actions: PropTypes.object.isRequired,
-    unitActions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     campaigns: PropTypes.array.isRequired,
     units: PropTypes.array.isRequired,
@@ -54,8 +52,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        actions: bindActionCreators(actions, dispatch),
-        unitActions: bindActionCreators(unitActions, dispatch),
+        actions: bindActionCreators(actions, dispatch)
     };
 }
 

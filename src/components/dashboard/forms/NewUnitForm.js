@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as actions from './../../../actions/unitActions'
+import * as actions from './../../../actions/itemActions'
 import Input from 'react-toolbox/lib/input'
 // import DatePicker from 'react-toolbox/lib/date_picker'
 import { Button } from 'react-toolbox/lib/button'
@@ -27,7 +27,7 @@ class NewUnitForm extends Component {
     };
 
     save() {
-        this.props.actions.addUnit(Object.assign({}, this.props.newUnit));
+        this.props.actions.addItem(Object.assign({}, this.props.newUnit));
         this.props.actions.resetNewUnit()
         this.handleToggle()
     }

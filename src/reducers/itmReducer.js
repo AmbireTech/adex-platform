@@ -5,7 +5,6 @@ import { ItemsTypes } from './../constants/itemsTypes'
 export default function itemsReducer(state = initialState.items, action) {
     let newState
     let newCollection
-    let newCampaign
     let newMeta
     let newItem
     let collectionId
@@ -24,7 +23,7 @@ export default function itemsReducer(state = initialState.items, action) {
         case ADD_ITEM:
             newState = { ...state }
             item = action.item
-            collectionId = item.type
+            collectionId = item._type
             let id = newState[collectionId].length
             let owner = item._owner
             newItem = new item.item_type(owner, id, item._name, item._meta)
@@ -38,7 +37,7 @@ export default function itemsReducer(state = initialState.items, action) {
         case DELETE_ITEM:
             newState = { ...state }
             item = action.item
-            collectionId = item.type
+            collectionId = item._type
             newItem = newState[collectionId][item.id].getClone()  //TODO: check for possible memory leak
             newMeta = { ...newItem._meta }
             newMeta.deleted = true
@@ -50,10 +49,10 @@ export default function itemsReducer(state = initialState.items, action) {
         case REMOVE_ITEM_FROM_ITEM:
             newState = { ...state }
             item = action.item
-            collectionId = item.type
+            collectionId = item._type
             newItem = newState[collectionId][item.id].getClone()
             let toRemoveId = action.toRemove.id || action.toRemove
-            newItem.removeItem(action.toRemove)
+            newItem.removeItem(toRemoveId)
             action.id = item.id
 
             newCollection = collection(newState[collectionId], { ...action, item: newItem })

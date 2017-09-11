@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as campaignActions from './../../../actions/campaignActions'
-import * as unitActions from './../../../actions/unitActions'
+import * as actions from './../../../actions/itemActions'
 
 import { List, ListItem } from 'react-toolbox/lib/list'
 // import {Navigation} from 'react-toolbox/lib/navigation'
@@ -43,7 +42,7 @@ class SideNav extends Component {
                         ripple={false}
                     >
                         <NewCampaignForm
-                            addCampaign={this.props.campaignActions.addCampaign}
+                            addCampaign={this.props.actions.addItem}
                             flat={true} />
                     </RRListItem>
                     <RRListItem
@@ -60,7 +59,7 @@ class SideNav extends Component {
                         ripple={false}
                     >
                         <NewUnitForm
-                            addCampaign={this.props.unitActions.addUnit}
+                            addCampaign={this.props.actions.additem}
                             accent={true} flat={true} />
                     </RRListItem>
                 </List>
@@ -71,8 +70,7 @@ class SideNav extends Component {
 
 
 SideNav.propTypes = {
-    campaignActions: PropTypes.object.isRequired,
-    unitActions: PropTypes.object.isRequired,
+    actions: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
@@ -85,8 +83,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        campaignActions: bindActionCreators(campaignActions, dispatch),
-        unitActions: bindActionCreators(unitActions, dispatch)
+        actions: bindActionCreators(actions, dispatch)
     };
 }
 

@@ -48,3 +48,39 @@ export function removeItemFromItem({item, toRemove} = {}) {
         })        
     }
 }
+
+
+// TEMP 
+export function updateNewUnit(unit) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.UPDATE_NEW_UNIT,
+            unit: unit
+        })        
+    }
+}
+
+export function resetNewUnit() {
+    return function (dispatch) {
+        return dispatch({
+            type: types.RESET_NEW_UNIT
+        })        
+    }
+}
+
+export function updateNewCampaign(campaign) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.UPDATE_NEW_CAMPAIGN,
+            campaign: campaign
+        })        
+    }
+}
+
+export function resetNewCampaign() {
+    return function (dispatch) {
+        return dispatch({
+            type: types.RESET_NEW_CAMPAIGN
+        })        
+    }
+}
