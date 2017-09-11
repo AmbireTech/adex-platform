@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import theme from './Signin.css'
 import Logo from './../common/icons/AdexIconTxt'
-import { Link, Switch, Route } from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
 import { Button } from 'react-toolbox/lib/button'
 import { withReactRouterLink } from './../common/rr_hoc/RRHoc.js'
 

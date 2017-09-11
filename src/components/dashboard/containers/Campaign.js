@@ -22,8 +22,6 @@ export const Campaign = (props) => {
         units.push(props.units[item._meta.items[index]])
     }
 
-    console.log('units', units)
-
     return (
         <div>
             <div>

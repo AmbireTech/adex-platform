@@ -1,4 +1,4 @@
-import { UPDATE_NEW_CAMPAIGN, RESET_NEW_CAMPAIGN, UPDATE_NEW_UNIT, RESET_NEW_UNIT, UPDATE_NEW_ITEM } from '../constants/actionTypes';
+import { UPDATE_NEW_CAMPAIGN, RESET_NEW_CAMPAIGN, UPDATE_NEW_UNIT, RESET_NEW_UNIT } from '../constants/actionTypes';
 import objectAssign from 'object-assign';
 import initialState from './../store/tempInitialState';
 // import Campaign from './../models/Campaign'

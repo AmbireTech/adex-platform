@@ -31,8 +31,6 @@ class Units extends Component {
         let units = this.props.units
             .filter((i) => !!i && !!i._meta && !i._meta.deleted)
             .sort((a, b) => b._id - a._id)
-        console.log('Units no filtered', units)
-        console.log('Units', this.props.units)
 
         return (
             <div>
@@ -44,7 +42,7 @@ class Units extends Component {
                 </div>
 
                 {this.state.rowsView ?
-                    <Rows side={side} item={units} delete={this.props.actions.deleteItem} />
+                    <Rows side={side} item={units} rows={units} delete={this.props.actions.deleteItem} />
                     :
 
                     units

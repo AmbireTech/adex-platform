@@ -32,8 +32,7 @@ class Rows extends Component {
     render() {
         let side = this.props.side
         let item = this.props.item
-        let units = this.props.rows ? this.props.rows : (item._meta && item._meta.units ? item._meta.units : (item || [])) // Temp
-        console.log('Rows units', units)
+        let rows = this.props.rows
         return (
             <div>
                 <h1> {item._name} </h1>
@@ -47,7 +46,7 @@ class Rows extends Component {
                             <TableCell> Actions </TableCell>
                         </TableHead>
 
-                        {units.map((u, i) => {
+                        {rows.map((u, i) => {
                             let to = '/dashboard/' + side + '/' + u.typeName + '/' + u.id
                             return (
                                 <TableRow key={u.id || i} theme={theme}>

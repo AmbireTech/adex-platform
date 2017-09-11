@@ -1,6 +1,5 @@
 import { ADD_ITEM, DELETE_ITEM, REMOVE_ITEM_FROM_ITEM } from '../constants/actionTypes'
 import initialState from './../store/tempInitialState'
-import { ItemsTypes } from './../constants/itemsTypes'
 
 export default function itemsReducer(state = initialState.items, action) {
     let newState

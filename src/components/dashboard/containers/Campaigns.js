@@ -14,7 +14,7 @@ export const Campaigns = (props) => {
     let side = props.match.params.side;
     // let account = props.account
     let campaigns = props.campaigns
-    console.log('Campaigns props', campaigns)
+    // console.log('Campaigns props', campaigns)
 
     return (
         <div>

@@ -4,11 +4,11 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from './../../../actions/itemActions'
-// import { ItemsTypes } from './../../../constants/itemsTypes'
+import { ItemsTypes } from './../../../constants/itemsTypes'
 
 export const Unit = (props) => {
     // let side = props.match.params.side;
-    let campaign = props.match.params.campaign;
+    // let campaign = props.match.params.campaign;
     let unit = props.match.params.unit;
 
     // let account = props.account
@@ -27,14 +27,14 @@ export const Unit = (props) => {
 Unit.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    units: PropTypes.object.isRequired,
+    units: PropTypes.array.isRequired,
 };
 
 function mapStateToProps(state) {
     // console.log('mapStateToProps Campaign', state)
     return {
         account: state.account,
-        units: state.units
+        units: state.items[ItemsTypes.AdUnit.id]
     };
 }
 
