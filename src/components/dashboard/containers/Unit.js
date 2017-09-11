@@ -1,27 +1,57 @@
 
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from './../../../actions/itemActions'
-import { ItemsTypes } from './../../../constants/itemsTypes'
+import { ItemsTypes, AdTypes, Sizes } from './../../../constants/itemsTypes'
+import Img from './../../common/img/Img'
+import Dropdown from 'react-toolbox/lib/dropdown'
 
-export const Unit = (props) => {
+export class Unit extends Component {
     // let side = props.match.params.side;
     // let campaign = props.match.params.campaign;
-    let unit = props.match.params.unit;
 
-    // let account = props.account
-    let item = props.units[unit]
+    handleChangeAdType(item, value) {
+        this.props.actions.updateItem(item, {adType: value})
+    }
 
-    if (!item) return (<h1>Unit '404'</h1>)
+    handleChangeAdSize(item, value) {
+        this.props.actions.updateItem(item, {size: value})
+    }
 
-    return (
-        <div>
-            <h2>AdUnit</h2>
-            <h2>Unite: {item._name} </h2>
-        </div>
-    )
+    render() {
+        let unit = this.props.match.params.unit;
+
+        // let account = props.account
+        let item = this.props.units[unit]
+
+        if (!item) return (<h1>Unit '404'</h1>)
+
+        return (
+            <div>
+                <h2>AdUnit</h2>
+                <h2>Unite: {item._name} </h2>
+                <div>
+                    <Img width='100' height='100' src={item.img} alt={item.fullName} />
+                </div>
+                <div>
+                    <Dropdown
+                        onChange={this.handleChangeAdType.bind(this, item)}
+                        source={AdTypes}
+                        value={item.adType}
+                    />
+                </div>
+                <div>
+                    <Dropdown
+                        onChange={this.handleChangeAdSize.bind(this, item)}
+                        source={Sizes}
+                        value={item.size}
+                    />
+                </div>
+            </div>
+        )
+    }
 }
 
 Unit.propTypes = {

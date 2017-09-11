@@ -29,10 +29,8 @@ export function resetNewItem() {
 export function deleteItem(item) {
     return function (dispatch) {
         return dispatch({
-        // return {
             type: types.DELETE_ITEM,
             item: item
-        // }
         })        
     }
 }
@@ -40,15 +38,32 @@ export function deleteItem(item) {
 export function removeItemFromItem({item, toRemove} = {}) {
     return function (dispatch) {
         return dispatch({
-        // return {
             type: types.REMOVE_ITEM_FROM_ITEM,
             item: item,
             toRemove: toRemove,
-        // }
         })        
     }
 }
 
+export function addItemFromItem({item, toAdd} = {}) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.ADD_ITEM_TO_ITEM,
+            item: item,
+            toAdd: toAdd,
+        })        
+    }
+}
+
+export function updateItem(item, newMeta) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.UPDATE_ITEM,
+            item: item,
+            meta: newMeta
+        })        
+    }
+}
 
 // TEMP 
 export function updateNewUnit(unit) {

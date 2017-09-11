@@ -102,8 +102,10 @@ export default {
         campaign: GenerateCampaign(),
         unit: GenerateUnit(),
     },
-    campaigns: addUnitsToCampaigns(),
-    adUnits: GenerateItems(ItemsTypes.AdUnit, GenerateAccount()),
+    currentItem: {
+        campaign: GenerateCampaign(),
+        unit: GenerateUnit(), 
+    },
     items: {
         [ItemsTypes.Campaign.id]: addUnitsToCampaigns(),
         [ItemsTypes.AdUnit.id]: GenerateItems(ItemsTypes.AdUnit, GenerateAccount())

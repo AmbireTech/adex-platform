@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 import account from './accountReducer'
-import items from './itmReducer'
+import items from './itemsReducer'
 import newItem from './newItemsReducer'
 import {routerReducer} from 'react-router-redux'
 
