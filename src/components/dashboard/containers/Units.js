@@ -3,8 +3,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as actions from './../../../actions/unitActions'
-// import { ItemsTypes } from './../../../constants/ItemsTypes'
+import * as actions from './../../../actions/itemActions'
+import { ItemsTypes } from './../../../constants/itemsTypes'
 import Card from './../collection/Card'
 import NewUnitForm from './../forms/NewUnitForm'
 import Rows from './../collection/Rows'
@@ -44,12 +44,12 @@ class Units extends Component {
                 </div>
 
                 {this.state.rowsView ?
-                    <Rows side={side} item={units} delete={this.props.actions.deleteUnit} />
+                    <Rows side={side} item={units} delete={this.props.actions.deleteItem} />
                     :
 
                     units
-                        .map((camp, i) => {
-                            return (<Card key={camp._id} item={camp} name={camp._name} side={side} logo={camp._meta.img} delete={this.props.actions.deleteUnit} />)
+                        .map((unt, i) => {
+                            return (<Card key={unt._id} item={unt} name={unt._name} side={side} logo={unt._meta.img} delete={this.props.actions.deleteItem.bind(this, unt)} />)
                         })
                 }
             </div>
@@ -67,7 +67,7 @@ function mapStateToProps(state) {
     // console.log('mapStateToProps Campaigns', state)
     return {
         account: state.account,
-        units: state.units
+        units: state.items[ItemsTypes.AdUnit.id]
     };
 }
 

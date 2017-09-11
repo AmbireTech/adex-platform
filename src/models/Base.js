@@ -1,7 +1,7 @@
 import Helper from './../helpers/miscHelpers'
 
 class Base {
-    constructor(name) {
+    constructor(name = '') {
         this._name = Helper.slugify(name)
 
         this._meta = {

@@ -25,7 +25,7 @@ class Rows extends Component {
         }
 
         if (this.props.remove) {
-            this.props.remove(campaign, unit)
+            this.props.remove({item: campaign, toRemove: unit.id})
         }
     }
 
@@ -75,7 +75,7 @@ class Rows extends Component {
                                             icon='delete'
                                             label='delete'
                                             accent
-                                            onClick={this.onTrashClick.bind(this, item.id, u.id)}
+                                            onClick={this.onTrashClick.bind(this, item, u)}
                                             tooltip='Delete'
                                             tooltipDelay={1000}
                                             tooltipPosition='top' />

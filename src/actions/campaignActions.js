@@ -27,6 +27,7 @@ export function resetNewCampaign() {
 }
 
 export function deleteCampaign(campaign) {
+    console.log('deleteCampaign', campaign)
     return function (dispatch) {
         return dispatch({
         // return {

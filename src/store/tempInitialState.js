@@ -72,7 +72,7 @@ function addUnitsToCampaigns() {
         for (let j = 1; j < Helper.getRandomInt(1, adUnits.length); j++) {
             if (used.indexOf(adUnits[j]) > -1) continue
 
-            campaigns[i].addUnit(adUnits[j])
+            campaigns[i].addItem(adUnits[j])
             used.push(adUnits[j])
         }
     }
@@ -84,13 +84,15 @@ function addUnitsToCampaigns() {
 
 function GenerateCampaign() {
     if (campaign) return campaign
-    let camp = new Campaign(GenerateAccount()._id, '', null, null, '', '')
+    let camp = new Campaign(GenerateAccount().addr, '', '', { from: null, to: null, img: '', description: '' })
+    camp.item_type = Campaign
     return camp
 }
 
 function GenerateUnit() {
     if (unit) return unit
-    let unt = new AdUnit(GenerateAccount()._id, '', '', '', '', '', '', '')
+    let unt = new AdUnit(GenerateAccount().addr, '', '', '', '', '', '', '')
+    unt.item_type = AdUnit
     return unt
 }
 
@@ -101,5 +103,9 @@ export default {
         unit: GenerateUnit(),
     },
     campaigns: addUnitsToCampaigns(),
-    adUnits: GenerateItems(ItemsTypes.AdUnit, GenerateAccount())
+    adUnits: GenerateItems(ItemsTypes.AdUnit, GenerateAccount()),
+    items: {
+        [ItemsTypes.Campaign.id]: addUnitsToCampaigns(),
+        [ItemsTypes.AdUnit.id]: GenerateItems(ItemsTypes.AdUnit, GenerateAccount())
+    }
 }

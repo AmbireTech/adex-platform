@@ -57,7 +57,7 @@ class MyCard extends Component {
                             icon='delete'
                             label='delete'
                             accent
-                            onMouseUp={this.props.delete.bind(this, this.props.item.id)}
+                            onClick={this.props.delete}
                             tooltip='Delete here to delete'
                             tooltipDelay={1000}
                             tooltipPosition='top' />

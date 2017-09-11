@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from './../../../actions/campaignActions'
+import * as itemActions from './../../../actions/itemActions'
 import Input from 'react-toolbox/lib/input'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import { Button } from 'react-toolbox/lib/button'
@@ -27,7 +28,7 @@ class NewCampaignForm extends Component {
     };
 
     save() {
-        this.props.actions.addCampaign(Object.assign({}, this.props.newCampaign));
+        this.props.itemActions.addItem(Object.assign({}, this.props.newCampaign));
         this.props.actions.resetNewCampaign()
         this.handleToggle()
     }
@@ -63,7 +64,8 @@ class NewCampaignForm extends Component {
 
 NewCampaignForm.propTypes = {
     actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired
+    itemActions: PropTypes.object.isRequired,
+    account: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -76,7 +78,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        actions: bindActionCreators(actions, dispatch)
+        actions: bindActionCreators(actions, dispatch),
+        itemActions: bindActionCreators(itemActions, dispatch)
     };
 }
 
