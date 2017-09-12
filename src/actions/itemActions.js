@@ -1,6 +1,6 @@
 import * as types from '../constants/actionTypes'
 
-export function addItem(item) {
+export function addItem(item, { success, error }) {
     return function (dispatch) {
         return dispatch({
             type: types.ADD_ITEM,
@@ -55,13 +55,16 @@ export function addItemFromItem({ item, toAdd } = {}) {
     }
 }
 
-export function updateItem(item, newMeta) {
+export function updateItem(item, newMeta, { success, error }) {
     return function (dispatch) {
-        return dispatch({
-            type: types.UPDATE_ITEM,
-            item: item,
-            meta: newMeta
-        })
+        setTimeout(() => {
+            dispatch({
+                type: types.UPDATE_ITEM,
+                item: item,
+                meta: newMeta
+            })
+
+        }, 1000)
     }
 }
 

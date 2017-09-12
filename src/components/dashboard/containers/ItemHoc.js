@@ -9,6 +9,16 @@ export default function ItemHoc(Decorated) {
             this.save = this.save.bind(this)
         }
 
+        componentWillReceiveProps(nextProps){
+            let item = this.props.items[this.props.match.params.itemId]
+            let nextitem = nextProps.items[this.props.match.params.itemId]
+
+            console.log('componentWillReceiveProps', item != nextitem)
+            if(item != nextitem){
+                this.setCurrentItem()
+            }
+        }
+
         componentWillMount() {
             this.setCurrentItem()
         }
@@ -19,11 +29,12 @@ export default function ItemHoc(Decorated) {
         }
 
         save() {
-            this.props.actions.updateItem(this.props.item, this.props.item.meta)
+            var that = this
+            this.props.actions.updateItem(this.props.item, this.props.item.meta, {success: that.setCurrentItem.bind(that)})
             // TODO: Handle on success or something like that and add spinner while saving!!!
-            setTimeout(() => {
-                this.setCurrentItem()
-            }, 200)
+            // setTimeout(() => {
+            //     this.setCurrentItem()
+            // }, 200)
         }
 
         isDirtyProp(prop) {

@@ -12,6 +12,10 @@ import ItemHoc from './ItemHoc'
 
 export class Unit extends Component {
 
+    componentWillReceiveProps(nextProps){
+        console.log('nextProps', nextProps)
+
+    }
     handleChangeAdType(item, value) {
         this.props.actions.updateCurrentItem(item, { adType: value })
     }
