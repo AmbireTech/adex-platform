@@ -98,3 +98,13 @@ export function updateSpinner(item, value) {
         })
     }
 }
+
+export function updateUi(item, value) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.UPDATE_UI,
+            item: item,
+            value: value
+        })
+    }
+}

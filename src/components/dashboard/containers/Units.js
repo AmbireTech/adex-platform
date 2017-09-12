@@ -10,19 +10,16 @@ import NewUnitForm from './../forms/NewUnitForm'
 import Rows from './../collection/Rows'
 import { IconButton } from 'react-toolbox/lib/button'
 
+const VIEW_MODE = 'unitsRowsView'
+
 class Units extends Component {
     constructor(props, context) {
         super(props, context);
         this.toggleView = this.toggleView.bind(this);
-
-        // TODO: keep this state in the store
-        this.state = {
-            rowsView: false
-        };
     }
 
     toggleView() {
-        this.setState({ rowsView: !this.state.rowsView })
+        this.props.actions.updateUi(VIEW_MODE, !this.props.rowsView)  
     }
 
     render() {
@@ -41,7 +38,7 @@ class Units extends Component {
                     <IconButton icon='view_list' primary onClick={this.toggleView} />
                 </div>
 
-                {this.state.rowsView ?
+                {this.props.rowsView ?
                     <Rows side={side} item={units} rows={units} delete={this.props.actions.deleteItem} />
                     :
 
@@ -58,14 +55,16 @@ class Units extends Component {
 Units.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    units: PropTypes.array.isRequired
+    units: PropTypes.array.isRequired,
+    rowsView: PropTypes.bool.isRequired
 };
 
 function mapStateToProps(state) {
     // console.log('mapStateToProps Campaigns', state)
     return {
         account: state.account,
-        units: state.items[ItemsTypes.AdUnit.id]
+        units: state.items[ItemsTypes.AdUnit.id],
+        rowsView: !!state.ui[VIEW_MODE]
     };
 }
 

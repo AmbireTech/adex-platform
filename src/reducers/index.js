@@ -4,6 +4,7 @@ import items from './itemsReducer'
 import newItem from './newItemsReducer'
 import currentItem from './currentItemsReducer'
 import spinners from './spinnersReducer'
+import ui from './uiReducer'
 import { routerReducer } from 'react-router-redux'
 
 const rootReducer = combineReducers({
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
     newItem: newItem,
     currentItem: currentItem,
     spinners: spinners,
+    ui: ui,
     routing: routerReducer
 });
 

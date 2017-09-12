@@ -95,5 +95,6 @@ export default {
         [ItemsTypes.Campaign.id]: addUnitsToCampaigns(),
         [ItemsTypes.AdUnit.id]: GenerateItems(ItemsTypes.AdUnit, AdUnit, GenerateAccount())
     },
-    spinners: {}
+    spinners: {},
+    ui: {}
 }

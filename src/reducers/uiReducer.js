@@ -1,13 +1,13 @@
-import { UPDATE_SPINNER } from '../constants/actionTypes'
+import { UPDATE_UI } from '../constants/actionTypes'
 import initialState from './../store/initialState'
 
-export default function spinnersReducer(state = initialState.spinners, action) {
+export default function uiReducer(state = initialState.ui, action) {
     let newState
     
     switch (action.type) {
-        case UPDATE_SPINNER:
+        case UPDATE_UI:
             newState = { ...state }
-            newState[action.spinner] = action.value
+            newState[action.item] = action.value
             break
 
         default:
