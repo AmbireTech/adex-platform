@@ -36,6 +36,7 @@ export class Unit extends Component {
                         onChange={this.handleChangeAdType.bind(this, item)}
                         source={AdTypes}
                         value={item.adType}
+                        label='adType'
                     />
                 </div>
                 <div>
@@ -43,6 +44,7 @@ export class Unit extends Component {
                         onChange={this.handleChangeAdSize.bind(this, item)}
                         source={Sizes}
                         value={item.size}
+                        label='size'
                     />
                 </div>
             </div>

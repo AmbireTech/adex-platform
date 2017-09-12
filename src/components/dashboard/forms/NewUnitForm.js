@@ -19,11 +19,13 @@ class NewUnitForm extends Component {
                     onChange={this.props.handleChange.bind(this, 'adType')}
                     source={AdTypes}
                     value={item._meta.adType}
+                    label="adType"
                 />
                 <Dropdown
                     onChange={this.props.handleChange.bind(this, 'size')}
                     source={Sizes}
                     value={item._meta.size}
+                    label="size"
                 />
             </div>
 
