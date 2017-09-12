@@ -18,14 +18,14 @@ const TooltipIconButton = Tooltip(IconButton)
 class Rows extends Component {
 
     // TEMP
-    onTrashClick(campaign, unit) {
+    onTrashClick(item, itemToRemove) {
         if (this.props.delete) {
-            this.props.delete(unit)
+            this.props.delete(itemToRemove)
             return
         }
 
         if (this.props.remove) {
-            this.props.remove({item: campaign, toRemove: unit.id})
+            this.props.remove({ item: item, toRemove: itemToRemove.id })
         }
     }
 

@@ -38,12 +38,12 @@ export const Campaign = (props) => {
             </div>
 
             {props.rowsView ?
-                <Rows side={side} item={item} rows={units} delete={props.actions.removeItemFromItem} />
+                <Rows side={side} item={item} rows={units} remove={props.actions.removeItemFromItem} />
                 :
 
                 units
                     .map((unt, i) => {
-                        return (<Card key={unt._id} item={unt} name={unt._name} side={side} logo={unt._meta.img} delete={props.actions.deleteItem.bind(this, unt)} />)
+                        return (<Card key={unt._id} item={unt} name={unt._name} side={side} logo={unt._meta.img} delete={props.actions.removeItemFromItem.bind(this, { item: item, toRemove: unt._id })} />)
                     })
             }
         </div>
