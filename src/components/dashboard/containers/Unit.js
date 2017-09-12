@@ -7,24 +7,21 @@ import * as actions from './../../../actions/itemActions'
 import { ItemsTypes, AdTypes, Sizes } from './../../../constants/itemsTypes'
 import Img from './../../common/img/Img'
 import Dropdown from 'react-toolbox/lib/dropdown'
+import { Button } from 'react-toolbox/lib/button'
+import ItemHoc from './ItemHoc'
 
 export class Unit extends Component {
-    // let side = props.match.params.side;
-    // let campaign = props.match.params.campaign;
 
     handleChangeAdType(item, value) {
-        this.props.actions.updateItem(item, {adType: value})
+        this.props.actions.updateCurrentItem(item, { adType: value })
     }
 
     handleChangeAdSize(item, value) {
-        this.props.actions.updateItem(item, {size: value})
+        this.props.actions.updateCurrentItem(item, { size: value })
     }
 
     render() {
-        let unit = this.props.match.params.unit;
-
-        // let account = props.account
-        let item = this.props.units[unit]
+        let item = this.props.item
 
         if (!item) return (<h1>Unit '404'</h1>)
 
@@ -49,6 +46,7 @@ export class Unit extends Component {
                         value={item.size}
                     />
                 </div>
+                <Button icon='bookmark' label='Save' onClick={this.props.save} raised primary />
             </div>
         )
     }
@@ -57,14 +55,16 @@ export class Unit extends Component {
 Unit.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    units: PropTypes.array.isRequired,
+    items: PropTypes.array.isRequired,
+    item: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
     // console.log('mapStateToProps Campaign', state)
     return {
         account: state.account,
-        units: state.items[ItemsTypes.AdUnit.id]
+        items: state.items[ItemsTypes.AdUnit.id],
+        item: state.currentItem,
     };
 }
 
@@ -74,7 +74,8 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
+const UnitItem = ItemHoc(Unit)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Unit);
+)(UnitItem);

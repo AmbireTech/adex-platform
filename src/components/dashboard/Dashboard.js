@@ -39,7 +39,6 @@ class Dashboard extends React.Component {
     render() {
         let side = this.props.side || this.props.match.params.side
 
-
         return (
             <Layout theme={theme} >
                 <NavDrawer pinned={true} theme={theme}>
@@ -53,7 +52,7 @@ class Dashboard extends React.Component {
                         <Route exact path="/dashboard/:side/campaigns" component={Campaigns} />
                         <Route exact path="/dashboard/:side/units" component={Units} />
                         <Route exact path="/dashboard/:side/Campaign/:campaign" component={Campaign} />
-                        <Route exact path="/dashboard/:side/AdUnit/:unit" component={Unit} />
+                        <Route exact path="/dashboard/:side/AdUnit/:itemId" component={Unit} />
                         <Route exact path="/dashboard/:side">
                             <h1>Welcome to the {side} side</h1>
                         </Route>
