@@ -2,12 +2,12 @@
 import { ItemsTypes } from './../constants/itemsTypes'
 import Base from './Base'
 class Item extends Base {
-    constructor(owner, id, type, name = '', img, description) {
+    constructor(owner, id, type, name = '', img = '', description = '') {
         super(name)
         this._id = id
         this._owner = owner
         this._type = type
-        // this._meta.itemsType = itemsType
+        // this._meta.itemsType = itemsType //TODO: set prop
         this._meta.items = []
         this._meta.img = img
         this._meta.description = description
@@ -21,7 +21,7 @@ class Item extends Base {
 
     get typeName() { return this.getTypeName() }
 
-    get itemsType() { return this._meta.itemsType }
+    // get itemsType() { return this._meta.itemsType }
     get items() { return this._meta.items }
 
     get img() { return this._meta.img }
@@ -57,7 +57,7 @@ class Item extends Base {
         let itemIndex = this.items.indexOf(itemId)
         if (itemIndex < 0) return
 
-        //Beacause of the redux and state mutation
+        //Because of the redux and state mutation
         let newMeta = { ...this.meta }
         let newItems = [...this.items]
         newItems.splice(itemIndex, 1)

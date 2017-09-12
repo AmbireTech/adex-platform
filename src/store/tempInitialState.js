@@ -4,7 +4,6 @@ import AdUnit from './../models/AdUnit'
 // import Channel from './../models/Channel'
 // import Slot from './../models/AdSlot'
 // import objectAssign from 'object-assign';
-// import itemsHelpers from './../helpers/itemsHelpers'
 import { ItemsTypes } from './../constants/itemsTypes'
 import Helper from './../helpers/miscHelpers'
 
@@ -23,11 +22,14 @@ let items = {
     [ItemsTypes.Channel.id]: []
 }
 
+let newItems = {
+    [ItemsTypes.AdUnit.id]: null,
+    [ItemsTypes.AdSlot.id]: null,
+    [ItemsTypes.Campaign.id]: null,
+    [ItemsTypes.Channel.id]: null
+}
+
 let account = null;
-let campaign = null;
-let unit = null;
-// let channel = null;
-// let slot = null;
 
 function GenerateAccount() {
     if (account) return account
@@ -36,22 +38,13 @@ function GenerateAccount() {
     return acc
 }
 
-function GenerateItems(type, acc) {
+function GenerateItems(type, itemClass, acc) {
     if (items[type.id].length) return items[type.id]
     for (let i = 1; i <= Helper.getRandomInt(5, 20); i++) {
         let id = ++counts[type.id]
         let item
 
-        switch (type.id) {
-            case ItemsTypes.Campaign.id:
-                item = Campaign.getRandCampaignInst(acc.addr, id)
-                break
-            case ItemsTypes.AdUnit.id:
-                item = AdUnit.getRandAdUnitInst(acc.addr, id)
-                break
-            default:
-                continue
-        }
+        item = itemClass.getRandomInstance(acc.addr, id)
 
         items[type.id][item._id] = item
         acc.addItem(item)
@@ -63,8 +56,8 @@ function GenerateItems(type, acc) {
 function addUnitsToCampaigns() {
     if (items[ItemsTypes.Campaign.id].length) return items[ItemsTypes.Campaign.id]
 
-    let campaigns = GenerateItems(ItemsTypes.Campaign, GenerateAccount())
-    let adUnits = GenerateItems(ItemsTypes.AdUnit, GenerateAccount())
+    let campaigns = GenerateItems(ItemsTypes.Campaign, Campaign, GenerateAccount())
+    let adUnits = GenerateItems(ItemsTypes.AdUnit, AdUnit, GenerateAccount())
 
     for (let i = 1; i < campaigns.length; i++) {
         let used = []
@@ -82,30 +75,25 @@ function addUnitsToCampaigns() {
     return items[ItemsTypes.Campaign.id]
 }
 
-function GenerateCampaign() {
-    if (campaign) return campaign
-    let camp = new Campaign(GenerateAccount().addr, '', '', { from: null, to: null, img: '', description: '' })
-    camp.item_type = Campaign
-    return camp
-}
+function GenerateNewItem(itemType, itemClass) {
+    if (newItems[itemType]) return newItems[itemType]
 
-function GenerateUnit() {
-    if (unit) return unit
-    let unt = new AdUnit(GenerateAccount().addr, '', '', '', '', '', '', '')
-    unt.item_type = AdUnit
-    return unt
+    let newItem = new itemClass(GenerateAccount().addr, '', '', {})
+    newItem.item_type = itemClass
+    newItems[itemType] = newItem
+    return newItem
 }
 
 export default {
     account: GenerateAccount(),
     newItem: {
-        campaign: GenerateCampaign(),
-        unit: GenerateUnit(),
+        [ItemsTypes.Campaign.id]: GenerateNewItem(ItemsTypes.Campaign.id, Campaign),
+        [ItemsTypes.AdUnit.id]: GenerateNewItem(ItemsTypes.AdUnit.id, AdUnit),
     },
     currentItem: {},
     items: {
         [ItemsTypes.Campaign.id]: addUnitsToCampaigns(),
-        [ItemsTypes.AdUnit.id]: GenerateItems(ItemsTypes.AdUnit, GenerateAccount())
+        [ItemsTypes.AdUnit.id]: GenerateItems(ItemsTypes.AdUnit, AdUnit, GenerateAccount())
     },
     spinners: {}
 }

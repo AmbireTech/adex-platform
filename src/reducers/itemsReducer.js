@@ -40,7 +40,7 @@ export default function itemsReducer(state = initialState.items, action) {
         case ADD_ITEM:
             let id = newState[collectionId].length
             let owner = item._owner
-            newItem = new item.item_type(owner, id, item._name, item._meta)
+            newItem = new item.item_type(owner, id, item._name || item._meta.fullName, item._meta)
             action.id = id
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection

@@ -1,59 +1,38 @@
-import { UPDATE_NEW_CAMPAIGN, RESET_NEW_CAMPAIGN, UPDATE_NEW_UNIT, RESET_NEW_UNIT } from '../constants/actionTypes';
-import objectAssign from 'object-assign';
+import { UPDATE_NEW_ITEM, RESET_NEW_ITEM } from '../constants/actionTypes';
 import initialState from './../store/tempInitialState';
-// import Campaign from './../models/Campaign'
 
 export default function newItemsReducer(state = initialState.newItem, action) {
+
     let newState
-    let meta
-    // let newItems
+    let newItem
+    let newMeta
+
+    const meta = (state = {}, action) => {
+        // TODO: Validate if used with array value
+        for (var key in action) {
+            if (action.hasOwnProperty(key) && state.hasOwnProperty(key)) {
+                state[key] = action[key] || state[key]
+            }
+        }
+
+        return state
+    }
 
     switch (action.type) {
-        case UPDATE_NEW_CAMPAIGN:
-            newState = objectAssign({}, state)
-            let newCampaign = objectAssign({}, newState.campaign)
-            let campaign = action.campaign
-            meta = objectAssign({}, newCampaign._meta)
+        case UPDATE_NEW_ITEM:
+            newState = { ...state }
+            newItem = { ...newState[action.item._type] }
+            newMeta = { ...newItem._meta }
+            newItem._meta = meta(newMeta, action.meta)
+            newState[action.item._type] = newItem
 
-            newCampaign._name = campaign.name || newCampaign._name
-            meta.from = campaign.from || newCampaign._meta.from
-            meta.to = campaign.to || newCampaign._meta.to
-            meta.img = campaign.img || newCampaign._meta.img
-            meta.description = campaign.description || newCampaign._meta.description
-
-            newCampaign._meta = meta
-
-            // console.log('newCampaign name', newCampaign)
-            newState.campaign = newCampaign
             return newState
 
-        case RESET_NEW_CAMPAIGN:
-            newState = objectAssign({}, state)
-            let newCamp = initialState.newItem.campaign
-            newState.campaign = newCamp
-            return newState
+        case RESET_NEW_ITEM:
+            newState = { ...state }
+            newItem = initialState.newItem[action.item._type]
+            newState[action.item._type] = newItem
 
-        case UPDATE_NEW_UNIT:
-            newState = objectAssign({}, state)
-            let newUnit = objectAssign({}, state.unit)
-            let unit = action.unit
-            // console.log('action.unit', unit)
-            
-            meta = objectAssign({}, newUnit._meta)
-
-            newUnit._name = unit.name || newUnit._name
-            meta.img = unit.img || newUnit._meta.img
-            meta.description = unit.description || newUnit._meta.description
-
-            newUnit._meta = meta
-
-            newState.unit = newUnit
-            return newState
-
-        case RESET_NEW_UNIT:
-            newState = objectAssign({}, state)
-            let newUnt = initialState.newItem.unit
-            newState.unit = newUnt
             return newState
 
         default:

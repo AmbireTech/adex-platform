@@ -14,5 +14,9 @@
         vertical-align: middle; 
         margin-left: 10px;
         color: #ff4081;
+        cursor: default;
+        & div, & span {
+            cursor: default; 
+        }
     }
 }

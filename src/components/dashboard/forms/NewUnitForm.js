@@ -7,6 +7,7 @@ import Input from 'react-toolbox/lib/input'
 // import DatePicker from 'react-toolbox/lib/date_picker'
 import { Button } from 'react-toolbox/lib/button'
 import Dialog from 'react-toolbox/lib/dialog'
+import { ItemsTypes } from './../../../constants/itemsTypes'
 
 class NewUnitForm extends Component {
     constructor(props, context) {
@@ -23,12 +24,12 @@ class NewUnitForm extends Component {
     }
 
     handleChange = (name, value) => {
-        this.props.actions.updateNewUnit({ [name]: value })
+        this.props.actions.updateNewItem(this.props.newUnit, { [name]: value })
     };
 
     save() {
         this.props.actions.addItem(Object.assign({}, this.props.newUnit));
-        this.props.actions.resetNewUnit()
+        this.props.actions.resetNewItem(this.props.newUnit)
         this.handleToggle()
     }
 
@@ -48,7 +49,7 @@ class NewUnitForm extends Component {
                     title='Add new Unit'
                 >
                     <section>
-                        <Input type='text' label='Name' name='name' value={unit._name} onChange={this.handleChange.bind(this, 'name')} maxLength={128} />
+                        <Input type='text' label='Name' name='name' value={unit._meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                         <Input type='text' label='Image url' name='img' value={unit._meta.img} onChange={this.handleChange.bind(this, 'img')} maxLength={1024} />
                         <Input type='text' multiline rows={5} label='Description' name='desctiption' value={unit._meta.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
                         {/* <DatePicker label='Start date' minDate={new Date()} onChange={this.handleChange.bind(this, 'from')} value={campaign._meta.from} />
@@ -72,7 +73,7 @@ function mapStateToProps(state) {
     // console.log('mapStateToProps Campaigns', state)
     return {
         account: state.account,
-        newUnit: state.newItem.unit
+        newUnit: state.newItem[ItemsTypes.AdUnit.id]
     };
 }
 

@@ -18,7 +18,7 @@ class Campaign extends Item {
     get to() { return this._meta.to }
     set to(value) { this._meta.to = value }
 
-    static getRandCampaignInst(owner, id) {
+    static getRandomInstance(owner, id) {
 
         let campaign = new Campaign(
             owner,
