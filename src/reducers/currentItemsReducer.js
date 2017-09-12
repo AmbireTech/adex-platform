@@ -1,7 +1,7 @@
 import { SET_CURRENT_ITEM, UPDATE_CURRENT_ITEM } from '../constants/actionTypes'
 import initialState from './../store/tempInitialState'
 
-export default function newItemsReducer(state = initialState.currentItem, action) {
+export default function currentItemReducer(state = initialState.currentItem, action) {
     let newState
     let newMeta
 
@@ -23,6 +23,7 @@ export default function newItemsReducer(state = initialState.currentItem, action
     }
 
     if (!action.item) return state
+    if(!action.item.getClone) return {}
 
     switch (action.type) {
         case SET_CURRENT_ITEM:

@@ -1,0 +1,18 @@
+.circular{
+    width: 36px;
+    height: 36px;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+
+.itemStatus {
+    display: inline-block;
+    vertical-align: middle;
+
+    & > span, & > div{
+        display: inline-block;
+        vertical-align: middle; 
+        margin-left: 10px;
+        color: #ff4081;
+    }
+}

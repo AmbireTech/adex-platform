@@ -1,6 +1,13 @@
 
 import React, { Component } from 'react'
-import Chip from 'react-toolbox/lib/chip';
+import Chip from 'react-toolbox/lib/chip'
+import { Button } from 'react-toolbox/lib/button'
+import ProgressBar from 'react-toolbox/lib/progress_bar'
+import theme from './theme.css'
+import FontIcon from 'react-toolbox/lib/font_icon'
+import Tooltip from 'react-toolbox/lib/tooltip'
+
+const TooltipFontIcon = Tooltip(FontIcon)
 
 export default function ItemHoc(Decorated) {
     return class Item extends Component {
@@ -9,12 +16,13 @@ export default function ItemHoc(Decorated) {
             this.save = this.save.bind(this)
         }
 
-        componentWillReceiveProps(nextProps){
-            let item = this.props.items[this.props.match.params.itemId]
-            let nextitem = nextProps.items[this.props.match.params.itemId]
+        componentDidUpdate(prevProps, prevState) {
+            let itemId = this.props.match.params.itemId
+            let item = this.props.items[itemId]
+            let prevItem = prevProps.items[itemId]
 
-            console.log('componentWillReceiveProps', item != nextitem)
-            if(item != nextitem){
+            if (item !== prevItem) {
+                //TODO: Some kind of toast notifications?
                 this.setCurrentItem()
             }
         }
@@ -23,18 +31,19 @@ export default function ItemHoc(Decorated) {
             this.setCurrentItem()
         }
 
-        setCurrentItem() {
-            let item = this.props.items[this.props.match.params.itemId]
+        componentWillUnmount() {
+            this.setCurrentItem({})
+        }
+
+        setCurrentItem(nexItem) {
+            let item = nexItem || this.props.items[this.props.match.params.itemId]
             this.props.actions.setCurrentItem(item)
+            this.props.actions.updateSpinner(this.props.item.typeName, false)
         }
 
         save() {
-            var that = this
-            this.props.actions.updateItem(this.props.item, this.props.item.meta, {success: that.setCurrentItem.bind(that)})
-            // TODO: Handle on success or something like that and add spinner while saving!!!
-            // setTimeout(() => {
-            //     this.setCurrentItem()
-            // }, 200)
+            this.props.actions.updateItem(this.props.item, this.props.item.meta)
+            this.props.actions.updateSpinner(this.props.item.typeName, true)
         }
 
         isDirtyProp(prop) {
@@ -46,17 +55,28 @@ export default function ItemHoc(Decorated) {
             return (
                 <div>
                     <Decorated {...this.props} save={this.save} />
-                    {this.props.item.dirty ?
-                        (
-                            <div>
-                                <h1> Unsaved changes there are!!! To know! </h1>
-                                <div>
-                                    {this.props.item.dirtyProps.map((p) => {
-                                        return (<Chip key={p}>{p}</Chip>)
-                                    })}
-                                </div>
-                            </div>
-                        ) : ''}
+                    <div>
+
+                        <Button icon='bookmark' label='Save' onClick={this.save} raised primary />
+                        {
+                            !!this.props.spinner ?
+                                <ProgressBar type="circular" mode="indeterminate" multicolor theme={theme} />
+                                : (
+                                    this.props.item.dirty ?
+                                        (
+                                            <div className={theme.itemStatus}>
+                                                <TooltipFontIcon value='info_outline' tooltip='Unsaved changes' />
+                                                {this.props.item.dirtyProps.map((p) => {
+                                                    return (<Chip key={p}>{p}</Chip>)
+                                                })}
+
+                                            </div>
+                                        ) : ''
+                                )
+
+                        }
+
+                    </div>
 
                 </div>
             )

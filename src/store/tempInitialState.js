@@ -10,17 +10,17 @@ import Helper from './../helpers/miscHelpers'
 
 // cached
 let counts = {
-    0: 0,
-    1: 0,
-    2: 0,
-    3: 0
+    [ItemsTypes.AdUnit.id]: 0,
+    [ItemsTypes.AdSlot.id]: 0,
+    [ItemsTypes.Campaign.id]: 0,
+    [ItemsTypes.Channel.id]: 0
 }
 
 let items = {
-    0: [],
-    1: [],
-    2: [],
-    3: []
+    [ItemsTypes.AdUnit.id]: [],
+    [ItemsTypes.AdSlot.id]: [],
+    [ItemsTypes.Campaign.id]: [],
+    [ItemsTypes.Channel.id]: []
 }
 
 let account = null;
@@ -106,5 +106,6 @@ export default {
     items: {
         [ItemsTypes.Campaign.id]: addUnitsToCampaigns(),
         [ItemsTypes.AdUnit.id]: GenerateItems(ItemsTypes.AdUnit, GenerateAccount())
-    }
+    },
+    spinners: {}
 }

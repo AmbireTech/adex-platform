@@ -55,7 +55,7 @@ export function addItemFromItem({ item, toAdd } = {}) {
     }
 }
 
-export function updateItem(item, newMeta, { success, error }) {
+export function updateItem(item, newMeta) {
     return function (dispatch) {
         setTimeout(() => {
             dispatch({
@@ -64,7 +64,7 @@ export function updateItem(item, newMeta, { success, error }) {
                 meta: newMeta
             })
 
-        }, 1000)
+        }, 2000)
     }
 }
 
@@ -83,6 +83,16 @@ export function updateCurrentItem(item, newMeta) {
             type: types.UPDATE_CURRENT_ITEM,
             item: item,
             meta: newMeta
+        })
+    }
+}
+
+export function updateSpinner(item, value) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.UPDATE_SPINNER,
+            spinner: item,
+            value: value
         })
     }
 }

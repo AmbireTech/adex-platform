@@ -12,10 +12,6 @@ import ItemHoc from './ItemHoc'
 
 export class Unit extends Component {
 
-    componentWillReceiveProps(nextProps){
-        console.log('nextProps', nextProps)
-
-    }
     handleChangeAdType(item, value) {
         this.props.actions.updateCurrentItem(item, { adType: value })
     }
@@ -50,7 +46,6 @@ export class Unit extends Component {
                         value={item.size}
                     />
                 </div>
-                <Button icon='bookmark' label='Save' onClick={this.props.save} raised primary />
             </div>
         )
     }
@@ -60,7 +55,8 @@ Unit.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     items: PropTypes.array.isRequired,
-    item: PropTypes.object.isRequired
+    item: PropTypes.object.isRequired,
+    spinner: PropTypes.bool
 };
 
 function mapStateToProps(state) {
@@ -69,6 +65,7 @@ function mapStateToProps(state) {
         account: state.account,
         items: state.items[ItemsTypes.AdUnit.id],
         item: state.currentItem,
+        spinner: state.spinners[ItemsTypes.AdUnit.name]
     };
 }
 
