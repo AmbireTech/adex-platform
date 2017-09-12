@@ -36,7 +36,7 @@ class Units extends Component {
             <div>
                 <h1>All units </h1>
                 <div>
-                    <NewUnitForm addCampaign={this.props.actions.addCampaign} />
+                    <NewUnitForm addCampaign={this.props.actions.addCampaign} btnLabel="Add new Unit" title="Add new unit" />
                     <IconButton icon='view_module' primary onClick={this.toggleView} />
                     <IconButton icon='view_list' primary onClick={this.toggleView} />
                 </div>

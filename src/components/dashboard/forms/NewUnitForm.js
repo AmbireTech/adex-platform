@@ -3,61 +3,28 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from './../../../actions/itemActions'
-import Input from 'react-toolbox/lib/input'
+// import Input from 'react-toolbox/lib/input'
 // import DatePicker from 'react-toolbox/lib/date_picker'
-import { Button } from 'react-toolbox/lib/button'
-import Dialog from 'react-toolbox/lib/dialog'
-import { ItemsTypes } from './../../../constants/itemsTypes'
+import { ItemsTypes, AdTypes, Sizes } from './../../../constants/itemsTypes'
+import NewItemHoc from './NewItemHoc'
+import Dropdown from 'react-toolbox/lib/dropdown'
 
 class NewUnitForm extends Component {
-    constructor(props, context) {
-        super(props, context);
-        this.save = this.save.bind(this);
-
-        this.state = {
-            active: false
-        };
-    }
-
-    handleToggle = () => {
-        this.setState({ active: !this.state.active });
-    }
-
-    handleChange = (name, value) => {
-        this.props.actions.updateNewItem(this.props.newUnit, { [name]: value })
-    };
-
-    save() {
-        this.props.actions.addItem(Object.assign({}, this.props.newUnit));
-        this.props.actions.resetNewItem(this.props.newUnit)
-        this.handleToggle()
-    }
 
     render() {
-
-        let unit = this.props.newUnit;
-
-        // console.log('NewUnitForm unit', unit)
-
+        let item = this.props.newItem
         return (
             <div>
-                <Button icon='add' label='Add new Unit' onClick={this.handleToggle} primary={this.props.primary} raised={this.props.raised} accent={this.props.accent} flat={this.props.flat} />
-                <Dialog
-                    active={this.state.active}
-                    onEscKeyDown={this.handleToggle}
-                    onOverlayClick={this.handleToggle}
-                    title='Add new Unit'
-                >
-                    <section>
-                        <Input type='text' label='Name' name='name' value={unit._meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
-                        <Input type='text' label='Image url' name='img' value={unit._meta.img} onChange={this.handleChange.bind(this, 'img')} maxLength={1024} />
-                        <Input type='text' multiline rows={5} label='Description' name='desctiption' value={unit._meta.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
-                        {/* <DatePicker label='Start date' minDate={new Date()} onChange={this.handleChange.bind(this, 'from')} value={campaign._meta.from} />
-                        <DatePicker label='End date' minDate={new Date()} onChange={this.handleChange.bind(this, 'to')} value={campaign._meta.to} /> */}
-                        <br />
-                        <Button icon='save' label='Save' raised primary onClick={this.save} />
-                    </section>
-                </Dialog>
+                <Dropdown
+                    onChange={this.props.handleChange.bind(this, 'adType')}
+                    source={AdTypes}
+                    value={item._meta.adType}
+                />
+                <Dropdown
+                    onChange={this.props.handleChange.bind(this, 'size')}
+                    source={Sizes}
+                    value={item._meta.size}
+                />
             </div>
 
         )
@@ -66,14 +33,16 @@ class NewUnitForm extends Component {
 
 NewUnitForm.propTypes = {
     actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired
+    account: PropTypes.object.isRequired,
+    btnLabel: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired
 };
 
 function mapStateToProps(state) {
     // console.log('mapStateToProps Campaigns', state)
     return {
         account: state.account,
-        newUnit: state.newItem[ItemsTypes.AdUnit.id]
+        newItem: state.newItem[ItemsTypes.AdUnit.id]
     };
 }
 
@@ -83,7 +52,8 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
+const ItemNewUnitForm = NewItemHoc(NewUnitForm)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(NewUnitForm);
+)(ItemNewUnitForm);

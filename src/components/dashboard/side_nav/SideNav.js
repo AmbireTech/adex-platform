@@ -43,7 +43,9 @@ class SideNav extends Component {
                     >
                         <NewCampaignForm
                             addCampaign={this.props.actions.addItem}
-                            flat={true} />
+                            flat={true}
+                            btnLabel="Add new campaign" title="Add new campaign"
+                        />
                     </RRListItem>
                     <RRListItem
                         to={{ pathname: '/dashboard/' + this.props.side + "/units" }}
@@ -60,7 +62,9 @@ class SideNav extends Component {
                     >
                         <NewUnitForm
                             addCampaign={this.props.actions.additem}
-                            accent={true} flat={true} />
+                            accent={true} flat={true}
+                            btnLabel="Add new Unit" title="Add new unit"
+                        />
                     </RRListItem>
                 </List>
             </div >

@@ -7,7 +7,6 @@ import * as actions from './../../../actions/itemActions'
 import { ItemsTypes, AdTypes, Sizes } from './../../../constants/itemsTypes'
 import Img from './../../common/img/Img'
 import Dropdown from 'react-toolbox/lib/dropdown'
-import { Button } from 'react-toolbox/lib/button'
 import ItemHoc from './ItemHoc'
 
 export class Unit extends Component {

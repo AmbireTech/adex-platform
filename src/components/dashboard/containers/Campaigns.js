@@ -20,7 +20,7 @@ export const Campaigns = (props) => {
         <div>
             <h1>All campaigns </h1>
 
-            <NewCampaignForm addCampaign={props.actions.addItem} />
+            <NewCampaignForm addCampaign={props.actions.addItem} btnLabel="Add new campaign" title="Add new campaign" />
 
             {campaigns
                 .filter((c) => !!c && c._meta && !c._meta.deleted)

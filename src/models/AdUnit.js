@@ -4,7 +4,7 @@ import { ItemsTypes } from './../constants/itemsTypes'
 import { Sizes, Images, AdTypes, Locations, Genders } from './DummyData'
 
 class AdUnit extends Item {
-    constructor(owner, id, name, { img, description, size, adType, location, gender }) {
+    constructor(owner, id, name, { img, description, size = '', adType = '', location = '', gender = '' }) {
         super(owner, id, ItemsTypes.AdUnit.id, name, img, description)
         let meta = this._meta
         meta.size = size
