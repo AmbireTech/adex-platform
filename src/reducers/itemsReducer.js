@@ -1,7 +1,7 @@
-import { ADD_ITEM, DELETE_ITEM, UPDATE_ITEM, REMOVE_ITEM_FROM_ITEM, ADD_ITEM_TO_ITEM } from '../constants/actionTypes'
+import { ADD_ITEM, DELETE_ITEM, UPDATE_ITEM, REMOVE_ITEM_FROM_ITEM, ADD_ITEM_TO_ITEM } from '../constants/actionTypes' // eslint-disable-line no-unused-vars
 import initialState from './../store/initialState'
 
-export default function itemsReducer(state = initialState.items, action) {
+export default function itemsReducer(state = initialState.items, action) { 
 
     let newState
     let newCollection

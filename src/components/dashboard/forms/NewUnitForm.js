@@ -36,6 +36,7 @@ class NewUnitForm extends Component {
 NewUnitForm.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
+    newItem: PropTypes.object.isRequired,
     btnLabel: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired
 };

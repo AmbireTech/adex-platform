@@ -19,7 +19,7 @@ class Units extends Component {
     }
 
     toggleView() {
-        this.props.actions.updateUi(VIEW_MODE, !this.props.rowsView)  
+        this.props.actions.updateUi(VIEW_MODE, !this.props.rowsView)
     }
 
     render() {

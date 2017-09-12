@@ -34,6 +34,7 @@ class NewCampaignForm extends Component {
 NewCampaignForm.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
+    newItem: PropTypes.object.isRequired,
     btnLabel: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired
 };
