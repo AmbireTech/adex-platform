@@ -1,16 +1,11 @@
 
 
 import React, { Component } from 'react'
-import Chip from 'react-toolbox/lib/chip'
 import { Button } from 'react-toolbox/lib/button'
-import ProgressBar from 'react-toolbox/lib/progress_bar'
+// import ProgressBar from 'react-toolbox/lib/progress_bar'
 // import theme from './theme.css'
-import FontIcon from 'react-toolbox/lib/font_icon'
-import Tooltip from 'react-toolbox/lib/tooltip'
 import Dialog from 'react-toolbox/lib/dialog'
 import Input from 'react-toolbox/lib/input'
-
-const TooltipFontIcon = Tooltip(FontIcon)
 
 export default function NewItemHoc(Decorated) {
     return class ItemForm extends Component {

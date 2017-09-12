@@ -1,5 +1,5 @@
 import { UPDATE_NEW_ITEM, RESET_NEW_ITEM } from '../constants/actionTypes';
-import initialState from './../store/tempInitialState';
+import initialState from './../store/initialState';
 
 export default function newItemsReducer(state = initialState.newItem, action) {
 

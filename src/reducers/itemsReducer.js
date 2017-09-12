@@ -1,5 +1,5 @@
-import { ADD_ITEM, DELETE_ITEM, UPDATE_ITEM, REMOVE_ITEM_FROM_ITEM, ADD_ITEM_TO_ITEM, UPDATE_CURRENT_ITEM } from '../constants/actionTypes'
-import initialState from './../store/tempInitialState'
+import { ADD_ITEM, DELETE_ITEM, UPDATE_ITEM, REMOVE_ITEM_FROM_ITEM, ADD_ITEM_TO_ITEM } from '../constants/actionTypes'
+import initialState from './../store/initialState'
 
 export default function itemsReducer(state = initialState.items, action) {
 

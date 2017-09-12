@@ -1,5 +1,5 @@
 import { UPDATE_SPINNER } from '../constants/actionTypes'
-import initialState from './../store/tempInitialState'
+import initialState from './../store/initialState'
 
 export default function itemsReducer(state = initialState.spinners, action) {
     let newState

@@ -9,13 +9,10 @@ import { ThemeProvider } from 'react-css-themr';
 import { Provider } from 'react-redux';
 import configureStore from './../../store/configureStore';
 import history from './../../store/history';
-import initialState from './../../store/tempInitialState';
 import { ConnectedRouter } from 'react-router-redux'
 
-console.log('initial sate', initialState)
-
 const store = configureStore()
-console.log('store', store.getState())
+console.log('initial store', store.getState())
 
 class App extends Component {
 

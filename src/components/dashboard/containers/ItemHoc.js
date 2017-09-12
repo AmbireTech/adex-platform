@@ -41,6 +41,7 @@ export default function ItemHoc(Decorated) {
             this.props.actions.updateSpinner(this.props.item.typeName, false)
         }
 
+        //TODO: Do not save if not dirty!
         save() {
             this.props.actions.updateItem(this.props.item, this.props.item.meta)
             this.props.actions.updateSpinner(this.props.item.typeName, true)

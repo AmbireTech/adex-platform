@@ -1,5 +1,5 @@
 import { SET_CURRENT_ITEM, UPDATE_CURRENT_ITEM } from '../constants/actionTypes'
-import initialState from './../store/tempInitialState'
+import initialState from './../store/initialState'
 
 export default function currentItemReducer(state = initialState.currentItem, action) {
     let newState
