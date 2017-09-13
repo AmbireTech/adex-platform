@@ -22,7 +22,8 @@ export default function ItemHoc(Decorated) {
             let prevItem = prevProps.items[itemId]
 
             if (item !== prevItem) {
-                //TODO: Some kind of toast notifications?
+                //TODO: Make notifications to trigger on store changed!
+                this.props.actions.addToast({type: 'accept', action: 'Ok', label: item._name + ' has been updated!', timeout: 5000})
                 this.setCurrentItem()
             }
         }

@@ -41,7 +41,6 @@ export default function itemsReducer(state = initialState.items, action) {
             let id = newState[collectionId].length
             let owner = item._owner
             newItem = new item.item_type(owner, id, item._name || item._meta.fullName, item._meta)
-            action.id = id
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
             return newState
@@ -59,7 +58,6 @@ export default function itemsReducer(state = initialState.items, action) {
             newItem = newState[collectionId][item.id].getClone()
             let toRemoveId = action.toRemove.id || action.toRemove
             newItem.removeItem(toRemoveId)
-            action.id = item.id
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
             return newState

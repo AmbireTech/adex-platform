@@ -96,5 +96,6 @@ export default {
         [ItemsTypes.AdUnit.id]: GenerateItems(ItemsTypes.AdUnit, AdUnit, GenerateAccount())
     },
     spinners: {},
-    ui: {}
+    ui: {},
+    toasts: []
 }

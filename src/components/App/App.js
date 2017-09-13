@@ -10,6 +10,7 @@ import { Provider } from 'react-redux';
 import configureStore from './../../store/configureStore';
 import history from './../../store/history';
 import { ConnectedRouter } from 'react-router-redux'
+import Toast from './../toast/Toast'
 
 const store = configureStore()
 console.log('initial store', store.getState())
@@ -26,12 +27,13 @@ class App extends Component {
           <ConnectedRouter history={history} >
             <div className="adex-dapp">
               <Switch location={location}>
-                <Route path="/dashboard/:side"  component={Dashboard} />
-                <Redirect from="/dashboard" to="/side-select"/>
+                <Route path="/dashboard/:side" component={Dashboard} />
+                <Redirect from="/dashboard" to="/side-select" />
                 <Route path="/" component={Signin} />
-                
+
                 <Route component={PageNotFound} />
               </Switch>
+              <Toast />
             </div>
           </ConnectedRouter>
         </Provider>

@@ -66,7 +66,7 @@ export function updateItem(item, newMeta) {
                 meta: newMeta
             })
 
-        }, 2000)
+        }, 1000)
     }
 }
 
@@ -105,6 +105,24 @@ export function updateUi(item, value) {
             type: types.UPDATE_UI,
             item: item,
             value: value
+        })
+    }
+}
+
+export function addToast({ type, action, label = '', timeout = false }) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.ADD_TOAST,
+            toast: { type: type, action: action, label, timeout: timeout }
+        })
+    }
+}
+
+export function removeToast(toastId) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.REMOVE_TOAST,
+            toast: toastId
         })
     }
 }

@@ -8,12 +8,10 @@ export default function spinnersReducer(state = initialState.spinners, action) {
         case UPDATE_SPINNER:
             newState = { ...state }
             newState[action.spinner] = action.value
-            break
+            
+            return newState
 
         default:
-            newState = state
-            break
+            return state
     }
-
-    return newState
 }
