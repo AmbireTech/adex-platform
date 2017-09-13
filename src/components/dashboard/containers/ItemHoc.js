@@ -5,7 +5,6 @@ import ProgressBar from 'react-toolbox/lib/progress_bar'
 import theme from './theme.css'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Tooltip from 'react-toolbox/lib/tooltip'
-import classnames from 'classnames'
 
 const TooltipFontIcon = Tooltip(FontIcon)
 
@@ -23,7 +22,7 @@ export default function ItemHoc(Decorated) {
 
             if (item !== prevItem) {
                 //TODO: Make notifications to trigger on store changed!
-                this.props.actions.addToast({ type: 'accept', action: 'Ok', label: item._name + ' has been updated!', timeout: 5000 })
+                // this.props.actions.addToast({ type: 'accept', action: 'Ok', label: item._name + ' has been updated!', timeout: 5000 })
                 this.setCurrentItem()
             }
         }
