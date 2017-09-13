@@ -26,11 +26,11 @@ export class Unit extends Component {
 
         return (
             <div>
-                <h2>AdUnit</h2>
+                {/* <h2>AdUnit</h2>
                 <h2>Unite: {item._name} </h2>
                 <div>
                     <Img width='100' height='100' src={item.img} alt={item.fullName} />
-                </div>
+                </div> */}
                 <div>
                     <Dropdown
                         onChange={this.handleChangeAdType.bind(this, item)}

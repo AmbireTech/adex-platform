@@ -2,7 +2,7 @@
     width: 36px;
     height: 36px;
     vertical-align: middle;
-    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .itemStatus {
@@ -12,11 +12,32 @@
     & > span, & > div{
         display: inline-block;
         vertical-align: middle; 
-        margin-left: 10px;
+        margin-right: 10px;
         color: #ff4081;
         cursor: default;
         & div, & span {
             cursor: default; 
         }
+    }
+}
+
+
+
+.top {
+    display: inline-block;
+    vertical-align: top;
+
+    & h2 {
+        margin-top: 0;
+    }
+
+    &.left{
+        width: 70%;
+        text-align: left;
+    }
+
+    &.right {
+        width: 30%;
+        text-align: right;
     }
 }

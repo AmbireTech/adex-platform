@@ -8,7 +8,7 @@ export default function uiReducer(state = initialState.ui, action) {
         case UPDATE_UI:
             newState = { ...state }
             newState[action.item] = action.value
-            break
+            return newState
 
         default:
             return state
