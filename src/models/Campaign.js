@@ -5,7 +5,6 @@ import { ItemsTypes } from './../constants/itemsTypes'
 import { Images } from './DummyData'
 
 class Campaign extends Item {
-    // constructor(owner, id, name = '', from, to, img = '', description = '') {
     constructor(owner, id, name = '', { from, to, img = '', description = '' } = {}) {
         super(owner, id, ItemsTypes.Campaign.id, name, img, description)
         this._meta.from = from

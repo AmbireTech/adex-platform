@@ -28,7 +28,7 @@ export class Toast extends Component {
             this.setState({ active: false}, () =>{
                 setTimeout(()=>{
                     this.setState({ active: true, toast: nextToast })
-                }, 1000)
+                }, 800)
             })
         }
     }

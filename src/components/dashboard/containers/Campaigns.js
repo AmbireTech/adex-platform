@@ -8,8 +8,6 @@ import { ItemsTypes } from './../../../constants/itemsTypes'
 import Card from './../collection/Card'
 import NewCampaignForm from './../forms/NewCampaignForm'
 
-
-
 export const Campaigns = (props) => {
     let side = props.match.params.side;
     // let account = props.account

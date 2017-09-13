@@ -23,7 +23,18 @@ function cloneObject(obj){
     return Object.assign(Object.create(obj), obj)
 }
 
+function getTypeName(id) {
+    for (var key in ItemsTypes) {
+        if (ItemsTypes.hasOwnProperty(key)) {
+            if (ItemsTypes[key].id === id) {
+                return ItemsTypes[key].name
+            }
+        }
+    }
+}
+
 export default {
     sortCollections: sortCollections,
-    cloneObject: cloneObject
+    cloneObject: cloneObject,
+    getTypeName: getTypeName
 }
