@@ -12,16 +12,15 @@ export class Toast extends Component {
 
         this.state = {
             active: false,
-            toast: null
+            toast: {}
         }
-
     }
 
     componentWillReceiveProps(nextProps) {
         let toast = this.state.toast
         let nextToast = nextProps.toasts[0]
 
-        let isNewToast = !!nextToast && (!toast || (toast.id !== nextToast.id))
+        let isNewToast = !!nextToast && (toast.id !== nextToast.id)
 
         if(isNewToast){
             // this.setState({ active: true, toast: nextToast })
