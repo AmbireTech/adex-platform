@@ -31,8 +31,7 @@ export default function uiReducer(state = initialState.toasts, action) {
         case REMOVE_TOAST:
             newState = state.filter((t) => t.id !== action.toast)
             return newState
-        // TODO: Consider this as place for setting notifications and use common function
-        // This way we lose the chance for custom callback on click on the toaster (undo some delete for example) (DO we need such thing?)
+            
         case UPDATE_ITEM:
             return toasts(state, { label: action.item.typeName + ' ' + action.item.fullName + ' has been updated!', type: 'warning', action: 'X', timeout: 5000 })
         case ADD_ITEM:

@@ -20,12 +20,12 @@ export default function NewItemHoc(Decorated) {
         }
 
         handleToggle = () => {
-            this.setState({ active: !this.state.active });
+            this.setState({ active: !this.state.active })
         }
 
         handleChange = (name, value) => {
             this.props.actions.updateNewItem(this.props.newItem, { [name]: value })
-        };
+        }
 
         save() {
             this.props.actions.addItem(Object.assign({}, this.props.newItem))
