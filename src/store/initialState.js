@@ -1,4 +1,5 @@
 import Account from './../models/Account'
+import Item from './../models/Item'
 import Campaign from './../models/Campaign'
 import AdUnit from './../models/AdUnit'
 // import Channel from './../models/Channel'
@@ -40,11 +41,11 @@ function GenerateAccount() {
 
 function GenerateItems(type, itemClass, acc) {
     if (items[type.id].length) return items[type.id]
-    for (let i = 1; i <= Helper.getRandomInt(5, 20); i++) {
+    for (let i = 1; i <= Helper.getRandomInt(500, 500); i++) {
         let id = ++counts[type.id]
         let item
 
-        item = itemClass.getRandomInstance(acc.addr, id)
+        item = itemClass.getRandomInstance(acc.addr, id).plainObj()
 
         items[type.id][item._id] = item
         acc.addItem(item)
@@ -65,7 +66,7 @@ function addUnitsToCampaigns() {
         for (let j = 1; j < Helper.getRandomInt(1, adUnits.length); j++) {
             if (used.indexOf(adUnits[j]) > -1) continue
 
-            campaigns[i].addItem(adUnits[j])
+            campaigns[i] = Item.addItem(campaigns[i], adUnits[j])
             used.push(adUnits[j])
         }
     }

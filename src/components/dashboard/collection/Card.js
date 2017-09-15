@@ -5,6 +5,8 @@ import theme from './theme.css'
 import { withReactRouterLink } from './../../common/rr_hoc/RRHoc'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Img from './../../common/img/Img'
+import { ItemTypesNames } from './../../../constants/itemsTypes'
+
 
 // const RRButton = withReactRouterLink(Button)
 const RRCardTitle = withReactRouterLink(CardTitle)
@@ -21,7 +23,7 @@ class MyCard extends Component {
         let meta = this.props.item._meta
         let name = this.props.item._name
         let id = this.props.item._id
-        let to = '/dashboard/' + this.props.side + '/' + this.props.item.typeName + '/' + id
+        let to = '/dashboard/' + this.props.side + '/' + ItemTypesNames[this.props.item._type] + '/' + id
         return (
             <Card style={{ width: '300px' }} raised={true} theme={theme}>
                 <RRCardTitle

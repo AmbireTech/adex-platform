@@ -19,7 +19,7 @@ class Item extends Base {
     get owner() { return this._owner }
     get type() { return this._type }
 
-    get typeName() { return this.getTypeName() }
+    // get typeName() { return this.getTypeName() }
 
     // get itemsType() { return this._meta.itemsType }
     get items() { return this._meta.items }
@@ -37,42 +37,38 @@ class Item extends Base {
     set deleted(value) { this._meta.deleted = value }
 
     //TODO: item type when add/remove ?
-    addItem(itemId) {
-        if (itemId.id) itemId = itemId.id
+    static addItem(item, toAdd) {
+        if (toAdd._id) toAdd = toAdd._id
 
-        let itemIndex = this.items.indexOf(itemId)
+        let itemIndex = item._meta.items.indexOf(toAdd)
         if (itemIndex > -1) return
 
-        //Beacause of the redux and state mutation
-        let newMeta = { ...this.meta }
-        let newItems = [...this.items]
-        newItems.push(itemId)
+        let newItem = { ...item }
+        let newMeta = { ...newItem._meta }
+        let newItems = [...newItem._meta.items]
+        newItems.push(toAdd)
         newMeta.items = newItems
-        this._meta = newMeta
+        newMeta.modifiedOn = Date.now()
+        newItem._meta = newMeta
+
+        return newItem
     }
 
-    removeItem(itemId) {
-        if (itemId.id) itemId = itemId.id
+    static removeItem(item, toRemove) {
+        if (toRemove._id) toRemove = toRemove._id
 
-        let itemIndex = this.items.indexOf(itemId)
+        let itemIndex = item._meta.items.indexOf(toRemove)        
         if (itemIndex < 0) return
 
-        //Because of the redux and state mutation
-        let newMeta = { ...this.meta }
-        let newItems = [...this.items]
+        let newItem = { ...item }
+        let newMeta = { ...newItem._meta }
+        let newItems = [...newItem._meta.items]
         newItems.splice(itemIndex, 1)
         newMeta.items = newItems
-        this._meta = newMeta
-    }
+        newMeta.modifiedOn = Date.now()
+        newItem._meta = newMeta
 
-    getTypeName() {
-        for (var key in ItemsTypes) {
-            if (ItemsTypes.hasOwnProperty(key)) {
-                if (ItemsTypes[key].id === this.type) {
-                    return ItemsTypes[key].name
-                }
-            }
-        }
+        return newItem
     }
 }
 

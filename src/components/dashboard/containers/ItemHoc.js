@@ -6,6 +6,7 @@ import theme from './theme.css'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Input from 'react-toolbox/lib/input'
+import { ItemTypesNames } from './../../../constants/itemsTypes'
 
 const TooltipFontIcon = Tooltip(FontIcon)
 
@@ -51,13 +52,13 @@ export default function ItemHoc(Decorated) {
         setCurrentItem(nexItem) {
             let item = nexItem || this.props.items[this.props.match.params.itemId]
             this.props.actions.setCurrentItem(item)
-            this.props.actions.updateSpinner(this.props.item.typeName, false)
+            this.props.actions.updateSpinner(ItemTypesNames[this.props.item._type], false)
         }
 
         //TODO: Do not save if not dirty!
         save() {
             this.props.actions.updateItem(this.props.item, this.props.item.meta)
-            this.props.actions.updateSpinner(this.props.item.typeName, true)
+            this.props.actions.updateSpinner(ItemTypesNames[this.props.item._type], true)
         }
 
         isDirtyProp(prop) {
@@ -67,24 +68,26 @@ export default function ItemHoc(Decorated) {
 
         render() {
 
+            let meta = this.props.item._meta || {}
+
             return (
                 <div>
                     <div>
                         <div className={theme.top + ' ' + theme.left}>
                             {this.state.activeFields.fullName ?
-                                <Input type='text' label='fullName' name='fullName' value={this.props.item.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={32} />
+                                <Input type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={32} />
                                 :
                                 <h2>
-                                    <span> {this.props.item.fullName} </span>
+                                    <span> {meta.fullName} </span>
                                     <IconButton style={{ float: 'right' }} icon='edit' accent onClick={this.setActiveFields.bind(this, 'fullName', true)} />
                                 </h2>
                             }
 
                             {this.state.activeFields.description ?
-                                <Input multiline rows={3} type='text' label='description' name='description' value={this.props.item.description} onChange={this.handleChange.bind(this, 'description')} maxLength={32} />
+                                <Input multiline rows={3} type='text' label='description' name='description' value={meta.description} onChange={this.handleChange.bind(this, 'description')} maxLength={32} />
                                 :
                                 <div>
-                                    <p> {this.props.item.description} </p>
+                                    <p> {meta.description} </p>
                                     <IconButton style={{ float: 'right' }} icon='edit' accent onClick={this.setActiveFields.bind(this, 'description', true)} />
                                 </div>
                             }

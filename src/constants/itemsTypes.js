@@ -5,16 +5,23 @@ export const ItemsTypes = {
   Channel: { id: 3, name: 'Channel' }
 }
 
+export const ItemTypesNames = {
+  [ItemsTypes.AdUnit.id]: ItemsTypes.AdUnit.name,
+  [ItemsTypes.AdSlot.id]: ItemsTypes.AdSlot.name,
+  [ItemsTypes.Campaign.id]: ItemsTypes.Campaign.name,
+  [ItemsTypes.Channel.id]: ItemsTypes.Channel.name,
+}
+
 export const Sizes = [
   { value: '300x300', label: '300 x 300 px' },
   { value: '200x200', label: '200 x 200 px' },
   { value: '100x100', label: '100 x 100 px' },
   { value: '728x90', label: '728 x 90 px' }
-];
+]
 
 export const AdTypes = [
   { value: 'html', label: 'HTML' },
   { value: 'flash', label: 'Flash' },
   { value: 'other', label: 'Other' },
   { value: 'vr', label: 'VR' }
-];
+]

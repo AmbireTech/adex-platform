@@ -5,6 +5,7 @@ import { withReactRouterLink } from './../../common/rr_hoc/RRHoc.js'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib//table'
 import Img from './../../common/img/Img'
+import { ItemTypesNames } from './../../../constants/itemsTypes'
 
 // import classnames from 'classnames';
 
@@ -47,7 +48,7 @@ class Rows extends Component {
                         </TableHead>
 
                         {rows.map((u, i) => {
-                            let to = '/dashboard/' + side + '/' + u.typeName + '/' + u.id
+                            let to = '/dashboard/' + side + '/' + ItemTypesNames[u._type] + '/' + u._id
                             return (
                                 <TableRow key={u.id || i} theme={theme}>
                                     <RRTableCell className={theme.link} to={to} theme={theme}>

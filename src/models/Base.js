@@ -4,6 +4,7 @@ class Base {
     constructor(name = '') {
         this._name = Helper.slugify(name)
 
+        // TODO: add _ipfs prop!!!!
         this._meta = {
             fullName: name,
             createdOn: Date.now(), // TODO: fix date format
@@ -29,6 +30,32 @@ class Base {
     // To use for react reducer when updated in order to not mutate the state
     getClone() {
         return Object.assign(Object.create(this), this)
+    }
+
+    plainObj() {
+        return { ...this }
+    }
+
+    static updateMeta(item, meta, dirtyProps) {
+        let newItem = { ...item }
+        let newMeta = { ...newItem._meta }
+        let hasDirtyProps = Array.isArray(dirtyProps)
+        if (hasDirtyProps) dirtyProps = [...dirtyProps]
+
+        // TODO: Handle remove key value
+        for (var key in meta) {
+            if (meta.hasOwnProperty(key) && newMeta.hasOwnProperty(key)) {
+                newMeta[key] = meta[key] || newMeta[key]
+
+                if (hasDirtyProps && dirtyProps.indexOf(key) < 0) {
+                    dirtyProps.push(key)
+                }
+            }
+        }
+
+        newItem._meta = newMeta
+
+        return newItem
     }
 }
 

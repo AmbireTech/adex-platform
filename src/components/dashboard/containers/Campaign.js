@@ -23,7 +23,7 @@ export const Campaign = (props) => {
     if (!item) return (<h1>'404'</h1>)
 
     for (var index = 0; index < item._meta.items.length; index++) {
-        units.push(props.units[item._meta.items[index]])
+        if(props.units[item._meta.items[index]]) units.push(props.units[item._meta.items[index]])
     }
 
     return (
@@ -59,7 +59,7 @@ Campaign.propTypes = {
 };
 
 function mapStateToProps(state) {
-    // console.log('mapStateToProps Campaign', state)
+    console.log('mapStateToProps Campaign', state)
     return {
         account: state.account,
         campaigns: state.items[ItemsTypes.Campaign.id],
