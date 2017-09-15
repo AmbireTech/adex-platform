@@ -1,5 +1,5 @@
 // import Helper from './../helpers/miscHelpers'
-import { ItemsTypes } from './../constants/itemsTypes'
+// import { ItemsTypes } from './../constants/itemsTypes'
 import Base from './Base'
 class Item extends Base {
     constructor(owner, id, type, name = '', img = '', description = '') {

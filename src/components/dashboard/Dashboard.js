@@ -51,7 +51,7 @@ class Dashboard extends React.Component {
                         {/* TODO: Make things dynamic if easier */}
                         <Route exact path="/dashboard/:side/campaigns" component={Campaigns} />
                         <Route exact path="/dashboard/:side/units" component={Units} />
-                        <Route exact path="/dashboard/:side/Campaign/:campaign" component={Campaign} />
+                        <Route exact path="/dashboard/:side/Campaign/:itemId" component={Campaign} />
                         <Route exact path="/dashboard/:side/AdUnit/:itemId" component={Unit} />
                         <Route exact path="/dashboard/:side">
                             <h1>Welcome to the {side} side</h1>

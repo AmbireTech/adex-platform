@@ -7,6 +7,7 @@ import FontIcon from 'react-toolbox/lib/font_icon'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Input from 'react-toolbox/lib/input'
 import { ItemTypesNames } from './../../../constants/itemsTypes'
+import Base from './../../../models/Base'
 
 const TooltipFontIcon = Tooltip(FontIcon)
 
@@ -16,7 +17,9 @@ export default function ItemHoc(Decorated) {
             super(props)
             this.save = this.save.bind(this)
             this.state = {
-                activeFields: {}
+                activeFields: {},
+                item: {},
+                dirtyProps: []
             }
         }
 
@@ -25,22 +28,23 @@ export default function ItemHoc(Decorated) {
             let item = this.props.items[itemId]
             let prevItem = prevProps.items[itemId]
 
-            if (item !== prevItem) {
-                this.setCurrentItem()
-                this.setState({ activeFields: {} })
+            if (item._meta.modifiedOn !== prevItem._meta.modifiedOn) {
+                this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], false)
+                this.setState({ activeFields: {}, dirtyProps: [] })
             }
         }
 
         componentWillMount() {
-            this.setCurrentItem()
+            this.setState({ item: this.props.items[this.props.match.params.itemId] })
         }
 
         componentWillUnmount() {
-            this.setCurrentItem({})
+            this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], false)
         }
 
         handleChange = (name, value) => {
-            this.props.actions.updateCurrentItem(this.props.item, { [name]: value })
+            let newItem = Base.updateMeta(this.state.item, { [name]: value }, this.state.dirtyProps || [])
+            this.setState({ item: newItem, dirtyProps: newItem.dirtyProps })
         }
 
         setActiveFields(field, value) {
@@ -49,26 +53,20 @@ export default function ItemHoc(Decorated) {
             this.setState({ activeFields: newActiveFields })
         }
 
-        setCurrentItem(nexItem) {
-            let item = nexItem || this.props.items[this.props.match.params.itemId]
-            this.props.actions.setCurrentItem(item)
-            this.props.actions.updateSpinner(ItemTypesNames[this.props.item._type], false)
-        }
-
         //TODO: Do not save if not dirty!
         save() {
-            this.props.actions.updateItem(this.props.item, this.props.item.meta)
-            this.props.actions.updateSpinner(ItemTypesNames[this.props.item._type], true)
+            this.props.actions.updateItem(this.state.item, this.state.item._meta)
+            this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], true)
         }
 
         isDirtyProp(prop) {
-            return this.item.dirtyProps.indexOf(prop) > -1
+            return this.state.item.dirtyProps.indexOf(prop) > -1
 
         }
 
         render() {
 
-            let meta = this.props.item._meta || {}
+            let meta = this.state.item._meta || {}
 
             return (
                 <div>
@@ -98,10 +96,10 @@ export default function ItemHoc(Decorated) {
                             {!!this.props.spinner ?
                                 <ProgressBar type="circular" mode="indeterminate" multicolor theme={theme} />
                                 : (
-                                    this.props.item.dirty ?
+                                    this.state.dirtyProps.length ?
                                         (
                                             <div className={theme.itemStatus}>
-                                                {this.props.item.dirtyProps.map((p) => {
+                                                {this.state.dirtyProps.map((p) => {
                                                     return (<Chip key={p}>{p}</Chip>)
                                                 })}
                                                 <TooltipFontIcon value='info_outline' tooltip='Unsaved changes' />
@@ -116,7 +114,7 @@ export default function ItemHoc(Decorated) {
 
 
                     <div>
-                        <Decorated {...this.props} save={this.save} />
+                        <Decorated {...this.props} item={this.state.item} save={this.save} handleChange={this.handleChange} />
                     </div>
 
                 </div>

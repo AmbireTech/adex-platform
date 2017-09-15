@@ -8,29 +8,26 @@ import Rows from './../collection/Rows'
 import Card from './../collection/Card'
 import { ItemsTypes } from './../../../constants/itemsTypes'
 import { IconButton } from 'react-toolbox/lib/button'
+import ItemHoc from './ItemHoc'
 
 const VIEW_MODE = 'campaignRowsView'
 
 export const Campaign = (props) => {
     let side = props.match.params.side;
-    let campaignId = props.match.params.campaign;
 
-    // let account = props.account
-    let campaigns = props.campaigns
-    let item = campaigns[campaignId]
+    let item = props.item
+    let meta = item._meta
     let units = []
 
     if (!item) return (<h1>'404'</h1>)
 
-    for (var index = 0; index < item._meta.items.length; index++) {
-        if(props.units[item._meta.items[index]]) units.push(props.units[item._meta.items[index]])
+    for (var index = 0; index < meta.items.length; index++) {
+        if (props.units[meta.items[index]]) units.push(props.units[meta.items[index]])
     }
 
     return (
         <div>
             <div>
-                <h2>Campaign name: {item.name} </h2>
-                <div>Campaign units: </div>
                 <div>
                     <IconButton icon='view_module' primary onClick={props.actions.updateUi.bind(this, VIEW_MODE, !props.rowsView)} />
                     <IconButton icon='view_list' primary onClick={props.actions.updateUi.bind(this, VIEW_MODE, !props.rowsView)} />
@@ -53,17 +50,19 @@ export const Campaign = (props) => {
 Campaign.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    campaigns: PropTypes.array.isRequired,
+    items: PropTypes.array.isRequired,
     units: PropTypes.array.isRequired,
+    spinner: PropTypes.bool,
     rowsView: PropTypes.bool.isRequired
 };
 
 function mapStateToProps(state) {
-    console.log('mapStateToProps Campaign', state)
+    // console.log('mapStateToProps Campaign', state)
     return {
         account: state.account,
-        campaigns: state.items[ItemsTypes.Campaign.id],
+        items: state.items[ItemsTypes.Campaign.id],
         units: state.items[ItemsTypes.AdUnit.id],
+        spinner: state.spinners[ItemsTypes.Campaign.name],
         rowsView: !!state.ui[VIEW_MODE]
     };
 }
@@ -74,7 +73,8 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
+const CampaignItem = ItemHoc(Campaign)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Campaign);
+)(CampaignItem);

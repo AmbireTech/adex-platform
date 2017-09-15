@@ -53,6 +53,7 @@ class Base {
             }
         }
 
+        newItem.dirtyProps = dirtyProps
         newItem._meta = newMeta
 
         return newItem
