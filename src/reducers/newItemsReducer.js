@@ -1,29 +1,16 @@
-import { UPDATE_NEW_ITEM, RESET_NEW_ITEM } from '../constants/actionTypes';
-import initialState from './../store/initialState';
+import { UPDATE_NEW_ITEM, RESET_NEW_ITEM } from '../constants/actionTypes'
+import initialState from './../store/initialState'
+import Base from './../models/Base'
 
 export default function newItemsReducer(state = initialState.newItem, action) {
 
     let newState
     let newItem
-    let newMeta
-
-    const meta = (state = {}, action) => {
-        // TODO: Validate if used with array value
-        for (var key in action) {
-            if (action.hasOwnProperty(key) && state.hasOwnProperty(key)) {
-                state[key] = action[key] || state[key]
-            }
-        }
-
-        return state
-    }
 
     switch (action.type) {
         case UPDATE_NEW_ITEM:
             newState = { ...state }
-            newItem = { ...newState[action.item._type] }
-            newMeta = { ...newItem._meta }
-            newItem._meta = meta(newMeta, action.meta)
+            newItem =  Base.updateMeta(action.item, action.meta)
             newState[action.item._type] = newItem
 
             return newState

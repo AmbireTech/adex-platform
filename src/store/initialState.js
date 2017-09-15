@@ -41,7 +41,7 @@ function GenerateAccount() {
 
 function GenerateItems(type, itemClass, acc) {
     if (items[type.id].length) return items[type.id]
-    for (let i = 1; i <= Helper.getRandomInt(500, 500); i++) {
+    for (let i = 1; i <= Helper.getRandomInt(50, 50); i++) {
         let id = ++counts[type.id]
         let item
 
@@ -79,7 +79,7 @@ function addUnitsToCampaigns() {
 function GenerateNewItem(itemType, itemClass) {
     if (newItems[itemType]) return newItems[itemType]
 
-    let newItem = new itemClass(GenerateAccount().addr, '', '', {})
+    let newItem = new itemClass(GenerateAccount().addr, '', '', {}).plainObj()
     newItem.item_type = itemClass
     newItems[itemType] = newItem
     return newItem

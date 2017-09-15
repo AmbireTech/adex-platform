@@ -1,7 +1,8 @@
 import { ADD_TOAST, REMOVE_TOAST, UPDATE_ITEM, ADD_ITEM, DELETE_ITEM } from '../constants/actionTypes'
 import initialState from './../store/initialState'
 import Helper from './../helpers/miscHelpers'
-import ItemsHelper from './../helpers/itemsHelpers'
+import { ItemTypesNames } from './../constants/itemsTypes'
+
 
 export default function uiReducer(state = initialState.toasts, action) {
     let newState
@@ -33,11 +34,11 @@ export default function uiReducer(state = initialState.toasts, action) {
             return newState
             
         case UPDATE_ITEM:
-            return toasts(state, { label: action.item.typeName + ' ' + action.item.fullName + ' has been updated!', type: 'warning', action: 'X', timeout: 5000 })
+            return toasts(state, { label: ItemTypesNames[action.item._type] + ' ' + action.item._meta.fullName + ' has been updated!', type: 'warning', action: 'X', timeout: 5000 })
         case ADD_ITEM:
-            return toasts(state, { label: ItemsHelper.getTypeName(action.item._type) + ' ' + action.item._meta.fullName + ' has been added!', type: 'accept', action: 'X', timeout: 5000 })
+            return toasts(state, { label: ItemTypesNames[action.item._type] + ' ' + action.item._meta.fullName + ' has been added!', type: 'accept', action: 'X', timeout: 5000 })
         case DELETE_ITEM:
-            return toasts(state, { label: action.item.typeName + ' ' + action.item.fullName + ' has been DELETED!', type: 'cancel', action: 'X', timeout: 5000 })
+            return toasts(state, { label: ItemTypesNames[action.item._type] + ' ' + action.item._meta.fullName + ' has been DELETED!', type: 'cancel', action: 'X', timeout: 5000 })
 
         default:
             return state
