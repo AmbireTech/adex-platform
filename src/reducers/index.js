@@ -6,6 +6,7 @@ import newItem from './newItemsReducer'
 import spinners from './spinnersReducer'
 import ui from './uiReducer'
 import toasts from './toastsReducer'
+import confirm from './confirmReducer'
 import { routerReducer, LOCATION_CHANGE, CALL_HISTORY_METHOD } from 'react-router-redux'
 import { filterActions } from 'redux-ignore'
 import * as types from './../constants/actionTypes'
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
     spinners: filterActions(spinners, [types.UPDATE_SPINNER]), //spinners,
     ui: filterActions(ui, [types.UPDATE_UI]), //ui,
     toasts: toasts,
+    confirm: filterActions(confirm, [types.CONFIRM_ACTION]),
     routing: filterActions(routerReducer, [LOCATION_CHANGE, CALL_HISTORY_METHOD]), //routerReducer
 });
 

@@ -126,3 +126,22 @@ export function removeToast(toastId) {
         })
     }
 }
+
+export function confirmAction(onConfirm, onCancel,
+    { confirmLabel = '', cancelLabel = '', title = '', text = '' } = {}) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.CONFIRM_ACTION,
+            confirm: {
+                onConfirm: onConfirm,
+                onCancel: onCancel,
+                data: {
+                    confirmLabel: confirmLabel,
+                    cancelLabel: cancelLabel,
+                    title: title,
+                    text: text
+                }
+            }
+        })
+    }
+}

@@ -98,5 +98,8 @@ export default {
     },
     spinners: {},
     ui: {},
-    toasts: []
+    toasts: [],
+    confirm: {
+        data: {}
+    }
 }

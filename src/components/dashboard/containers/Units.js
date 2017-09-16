@@ -45,7 +45,21 @@ class Units extends Component {
 
                     units
                         .map((unt, i) => {
-                            return (<Card key={unt._id} item={unt} name={unt._name} side={side} logo={unt._meta.img} delete={this.props.actions.deleteItem.bind(this, unt)} />)
+                            return (<Card key={unt._id}
+                                item={unt}
+                                name={unt._name}
+                                side={side}
+                                logo={unt._meta.img}
+                                delete={this.props.actions.confirmAction.bind(this,
+                                    this.props.actions.deleteItem.bind(this, unt),
+                                    null,
+                                    {
+                                        confirmLabel: 'Yes',
+                                        cancelLabel: 'No',
+                                        title: 'Delete AdUnit - ' + unt._name,
+                                        text: 'Are you sure?'
+                                    })}
+                            />)
                         })
                 }
             </div>
