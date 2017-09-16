@@ -38,6 +38,10 @@ export default function ItemHoc(Decorated) {
             this.setState({ item: this.props.items[this.props.match.params.itemId] })
         }
 
+        componentWillReceiveProps(nextProps){
+            this.setState({ item: nextProps.items[nextProps.match.params.itemId] })
+        }
+
         componentWillUnmount() {
             this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], false)
         }

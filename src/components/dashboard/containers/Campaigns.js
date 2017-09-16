@@ -23,6 +23,7 @@ export const Campaigns = (props) => {
             {campaigns
                 .filter((c) => !!c && c._meta && !c._meta.deleted)
                 .sort((a, b) => b._id - a._id)
+                .slice(0, 5)
                 .map((camp, i) => {
                     return (<Card key={camp._id} item={camp} name={camp._name} side={side} logo={camp._meta.img} delete={props.actions.deleteItem.bind(this, camp)} />)
                 })}

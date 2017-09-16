@@ -66,7 +66,7 @@ function addUnitsToCampaigns() {
         for (let j = 1; j < Helper.getRandomInt(1, adUnits.length); j++) {
             if (used.indexOf(adUnits[j]) > -1) continue
 
-            campaigns[i] = Item.addItem(campaigns[i], adUnits[j])
+            campaigns[i]._meta.items.push(adUnits[j]._id) // = Item.addItem(campaigns[i], adUnits[j])
             used.push(adUnits[j])
         }
     }

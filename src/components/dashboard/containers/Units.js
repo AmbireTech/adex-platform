@@ -28,6 +28,7 @@ class Units extends Component {
         let units = this.props.units
             .filter((i) => !!i && !!i._meta && !i._meta.deleted)
             .sort((a, b) => b._id - a._id)
+            .slice(0, 50)
 
         return (
             <div>

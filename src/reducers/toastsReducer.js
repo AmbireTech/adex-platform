@@ -3,8 +3,7 @@ import initialState from './../store/initialState'
 import Helper from './../helpers/miscHelpers'
 import { ItemTypesNames } from './../constants/itemsTypes'
 
-
-export default function uiReducer(state = initialState.toasts, action) {
+export default function toastsReducer(state = initialState.toasts, action) {
     let newState
     let newToast
 
@@ -32,7 +31,7 @@ export default function uiReducer(state = initialState.toasts, action) {
         case REMOVE_TOAST:
             newState = state.filter((t) => t.id !== action.toast)
             return newState
-            
+
         case UPDATE_ITEM:
             return toasts(state, { label: ItemTypesNames[action.item._type] + ' ' + action.item._meta.fullName + ' has been updated!', type: 'warning', action: 'X', timeout: 5000 })
         case ADD_ITEM:

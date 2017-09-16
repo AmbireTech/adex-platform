@@ -30,25 +30,9 @@ class Account extends Base {
     get adSlots() { return this._items[ItemsTypes.AdSlot.id] }
     get meta() { return this._meta }
 
+    // TODO
     addItem(item) {
         this._items[item._type].push(item._id)
-    }
-
-    fillAccountWithRandItems() {
-
-        // IMPORTANT: 
-        for (let i = 1; i <= Helper.getRandomInt(2, 20); i++) {
-            let camp = Campaign.getRandCampaignInst(this.addr, i)
-
-            this.addItem(camp)
-
-            for (let j = 1; j <= Helper.getRandomInt(2, 20); j++) {
-                let id = this._items[ItemsTypes.AdUnit.id].length || 1
-                let unit = AdUnit.getRandAdUnitInst(this.addr, id)
-                camp.addUnit(unit)
-                this.addItem(unit)
-            }
-        }
     }
 
 }

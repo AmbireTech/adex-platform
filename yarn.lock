@@ -1060,6 +1060,18 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
+boxart-batch@^0.0.14:
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/boxart-batch/-/boxart-batch-0.0.14.tgz#265e4d63c28a9c2403d3d469cde4d194c87311cf"
+
+boxart@^0.0.14:
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/boxart/-/boxart-0.0.14.tgz#afa67f622cb36b404a15ba23d5dcfdb81060d4f5"
+  dependencies:
+    core-js "^2.4.0"
+    react-addons-css-transition-group "^15.0.2"
+    react-addons-transition-group "^15.0.2"
+
 boxen@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/boxen/-/boxen-0.6.0.tgz#8364d4248ac34ff0ef1b2f2bf49a6c60ce0d81b6"
@@ -2519,6 +2531,18 @@ fb-watchman@^2.0.0:
   resolved "https://registry.yarnpkg.com/fb-watchman/-/fb-watchman-2.0.0.tgz#54e9abf7dfa2f26cd9b1636c588c1afc05de5d58"
   dependencies:
     bser "^2.0.0"
+
+fbjs@^0.8.4:
+  version "0.8.15"
+  resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.8.15.tgz#4f0695fdfcc16c37c0b07facec8cb4c4091685b9"
+  dependencies:
+    core-js "^1.0.0"
+    isomorphic-fetch "^2.1.1"
+    loose-envify "^1.0.0"
+    object-assign "^4.1.0"
+    promise "^7.1.1"
+    setimmediate "^1.0.5"
+    ua-parser-js "^0.7.9"
 
 fbjs@^0.8.9:
   version "0.8.14"
@@ -5381,6 +5405,32 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.1.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+react-addons-css-transition-group@^15.0.2:
+  version "15.6.0"
+  resolved "https://registry.yarnpkg.com/react-addons-css-transition-group/-/react-addons-css-transition-group-15.6.0.tgz#69887cf6e4874d25cd66e22a699e29f0d648aba0"
+  dependencies:
+    react-transition-group "^1.2.0"
+
+react-addons-perf@^15.4.2:
+  version "15.4.2"
+  resolved "https://registry.yarnpkg.com/react-addons-perf/-/react-addons-perf-15.4.2.tgz#110bdcf5c459c4f77cb85ed634bcd3397536383b"
+  dependencies:
+    fbjs "^0.8.4"
+    object-assign "^4.1.0"
+
+react-addons-transition-group@^15.0.2:
+  version "15.6.0"
+  resolved "https://registry.yarnpkg.com/react-addons-transition-group/-/react-addons-transition-group-15.6.0.tgz#0f220b9f9597db3a80a88dbd6fe805fc644ce21c"
+  dependencies:
+    react-transition-group "^1.2.0"
+
+react-batch@^0.0.14:
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/react-batch/-/react-batch-0.0.14.tgz#84b84fa1eb31bc1a5ca6f72d401d128102d4c00e"
+  dependencies:
+    boxart "^0.0.14"
+    boxart-batch "^0.0.14"
+
 react-css-themr@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/react-css-themr/-/react-css-themr-2.1.2.tgz#e017514e471c232f43a754a55b49d81faf5dafb8"
@@ -5489,7 +5539,7 @@ react-toolbox@^2.0.0-beta.12:
     react-style-proptype "^3.0.0"
     react-transition-group "^1.1.3"
 
-react-transition-group@^1.1.3:
+react-transition-group@^1.1.3, react-transition-group@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-1.2.0.tgz#b51fc921b0c3835a7ef7c571c79fc82c73e9204f"
   dependencies:
@@ -5616,6 +5666,12 @@ reduce-function-call@^1.0.1, reduce-function-call@^1.0.2:
   dependencies:
     balanced-match "^0.4.2"
 
+redux-ignore@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/redux-ignore/-/redux-ignore-1.2.4.tgz#5369f1cd033c08358cb4965539f0b4dea65743a2"
+  dependencies:
+    redux "^3.3.1"
+
 redux-immutable-state-invariant@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/redux-immutable-state-invariant/-/redux-immutable-state-invariant-2.0.0.tgz#2954debe7a09ceb65cbe398cff785858c8f30404"
@@ -5627,7 +5683,7 @@ redux-thunk@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/redux-thunk/-/redux-thunk-2.2.0.tgz#e615a16e16b47a19a515766133d1e3e99b7852e5"
 
-redux@^3.7.2:
+redux@^3.3.1, redux@^3.7.2:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/redux/-/redux-3.7.2.tgz#06b73123215901d25d065be342eb026bc1c8537b"
   dependencies:
