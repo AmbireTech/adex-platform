@@ -68,6 +68,7 @@ Confirm.propTypes = {
     confirm: PropTypes.func,
     cancel: PropTypes.func,
     visible: PropTypes.bool,
+    calledOn: PropTypes.number
 };
 
 function mapStateToProps(state) {
@@ -79,6 +80,7 @@ function mapStateToProps(state) {
         confirm: state.confirm.onConfirm,
         cancel: state.confirm.onCancel,
         visible: state.confirm.active || false,
+        calledOn: state.confirm.calledOn
     };
 }
 
