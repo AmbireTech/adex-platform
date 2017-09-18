@@ -9,6 +9,8 @@ import Card from './../collection/Card'
 import NewUnitForm from './../forms/NewUnitForm'
 import Rows from './../collection/Rows'
 import { IconButton } from 'react-toolbox/lib/button'
+import SomeList from './../../list/SomeList'
+import ReactList from 'react-list';
 
 const VIEW_MODE = 'unitsRowsView'
 
@@ -16,19 +18,61 @@ class Units extends Component {
     constructor(props, context) {
         super(props, context);
         this.toggleView = this.toggleView.bind(this);
+        this.goAtIndex = this.goAtIndex.bind(this);
+    }
+
+    goAtIndex() {
+        this.list.scrollTo(100);
+    }
+
+    componentDidUpdate(){
+        // this.goAtIndex()
+    }
+
+    componentDidMount(){
+        this.goAtIndex()
     }
 
     toggleView() {
         this.props.actions.updateUi(VIEW_MODE, !this.props.rowsView)
     }
 
+    renderItem(index, key) {
+
+        // console.log('this.props.units', this.props.units)
+        let unt = this.props.units[index]
+        // console.log('unt', unt)
+        return (
+            <div key={key}>
+            <Card
+                key={unt._id}
+                item={unt}
+                name={unt._name}
+                logo={unt._meta.img}
+                delete={this.props.actions.confirmAction.bind(this,
+                    this.props.actions.deleteItem.bind(this, unt),
+                    null,
+                    {
+                        confirmLabel: 'Yes',
+                        cancelLabel: 'No',
+                        title: 'Delete AdUnit - ' + unt._name,
+                        text: 'Are you sure?'
+                    })}
+            />
+            </div>
+
+
+        )
+
+    }
+
     render() {
         let side = this.props.match.params.side;
         // let account = this.props.account
         let units = this.props.units
-            .filter((i) => !!i && !!i._meta && !i._meta.deleted)
-            .sort((a, b) => b._id - a._id)
-            .slice(0, 50)
+        // .filter((i) => !!i && !!i._meta && !i._meta.deleted)
+        // .sort((a, b) => b._id - a._id)
+        // .slice(0, 50)
 
         return (
             <div>
@@ -37,9 +81,25 @@ class Units extends Component {
                     <NewUnitForm addCampaign={this.props.actions.addCampaign} btnLabel="Add new Unit" title="Add new unit" />
                     <IconButton icon='view_module' primary onClick={this.toggleView} />
                     <IconButton icon='view_list' primary onClick={this.toggleView} />
+                    <IconButton icon='remove_red_eye' primary onClick={this.goAtIndex} />
                 </div>
 
-                {this.props.rowsView ?
+                <div style={{ overflowY: 'scroll', maxHeight: 800 }}>
+                    <ReactList
+                        ref={c => this.list = c}
+                        itemRenderer={this.renderItem.bind(this)}
+                        length={this.props.units.length}
+                        type='variable'
+                        useTranslate3d={true}
+                        initialIndex={100}
+                        itemSizeGetter={() => { return 372 }}
+                        pageSize={20}
+
+                    />
+                </div>
+
+                {/* <SomeList items={units} /> */}
+                {/* {this.props.rowsView ?
                     <Rows side={side} item={units} rows={units} delete={this.props.actions.deleteItem} />
                     :
 
@@ -61,7 +121,7 @@ class Units extends Component {
                                     })}
                             />)
                         })
-                }
+                } */}
             </div>
         )
     }
@@ -78,7 +138,7 @@ function mapStateToProps(state) {
     // console.log('mapStateToProps Campaigns', state)
     return {
         account: state.account,
-        units: state.items[ItemsTypes.AdUnit.id],
+        units: state.items[ItemsTypes.AdUnit.id].slice(1),
         rowsView: !!state.ui[VIEW_MODE]
     };
 }
