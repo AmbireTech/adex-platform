@@ -38,11 +38,6 @@ class SomeList extends Component {
         }
     }
 
-    onPaginatedSearch(e) {
-        console.log('e-hoi', e)
-        this.setState({ page: this.state.page + 1 })
-    }
-
     toggleView() {
         // this.props.actions.updateUi(VIEW_MODE, !this.props.rowsView)
     }
@@ -56,31 +51,20 @@ class SomeList extends Component {
     }
 
     goToPage(page) {
-        this.setState({ page: page })
+        this.setState({ page: parseInt(page) })
     }
 
     handleChange = (name, value) => {
-        this.setState({ [name]: value });
+        let newStateValue = { [name]: value }
+        if (name === 'search') newStateValue.page = 0
+        this.setState(newStateValue);
     }
 
     changePageSize = (name, { itemsLength, page, pages }, newPageSize) => {
-        console.log('itemsLength', itemsLength)
-        console.log('newPageSize', newPageSize)
         let currentPageSize = this.state.pageSize
         let currentFirstIndex = page * currentPageSize // To have at least the first item on current page on the next page
-
-        console.log('currentFirstIndex', currentFirstIndex)
-        // let newPages = Math.floor(itemsLength / newPageSize)
-
-        // console.log('newPages', newPages)
-
-
-        let nextPage = Math.round(currentFirstIndex / newPageSize)
-        console.log('nextPage', nextPage)
-
-
+        let nextPage = Math.floor(currentFirstIndex / newPageSize)
         this.setState({ page: nextPage, pageSize: newPageSize })
-
     }
 
     filterItems(items) {
@@ -121,6 +105,7 @@ class SomeList extends Component {
         // TODO: optimise and make methods
         let data = this.filterItems(this.props.items)
         let items = data.items
+        console.log('data.pages', data.pages)
 
         return (
 
@@ -142,36 +127,18 @@ class SomeList extends Component {
                     value={this.state.pageSize}
                 />
 
-                <div>
-                    {
-                        data.page > 0 && data.pages > data.page ?
-                            <IconButton icon='chevron_left' onClick={this.goToPrevPage.bind(this)} /> : null
-                    }
-
-                    <span> </span>
-                    <span> {data.page + 1} </span>
-                    <span> of </span>
-                    <span> {data.pages} </span>
-
-                    {
-                        (data.page + 1) < data.pages ?
-                            <IconButton icon='chevron_right' onClick={this.goToNextPage.bind(this)} /> : null
-                    }
-                </div>
-                <div>
-                    <span> Go to page </span>
-                    <span> {data.page + 1} </span>
-                    <span> of </span>
-                    <span> {data.pages} </span>
-                </div>
-
                 <AdvancedList
                     itemRenderer={this.props.itemRenderer}
                     list={items}
                     isError={this.state.isError}
                     isLoading={this.state.isLoading}
-                    page={this.state.page}
-                    onPaginatedSearch={this.onPaginatedSearch.bind(this)}
+                    page={data.page}
+                    pages={data.pages}
+                    goToPage={this.goToPage.bind(this)}
+                    goToLastPage={this.goToPage.bind(this, data.pages - 1)}
+                    goToNextPage={this.goToPage.bind(this, data.page + 1)}
+                    goToFirstPage={this.goToPage.bind(this, 0)}
+                    goToPrevPage={this.goToPage.bind(this, data.page - 1)}
                 />
             </div >
         )
@@ -196,27 +163,58 @@ const withLoading = (conditionFn) => (Component) => (props) =>
 
 const withPaginated = (conditionFn) => (Component) => (props) =>
     <div>
-
-
         <div className="interactions">
             {
                 conditionFn(props) &&
                 <div>
-                    {/* <div>
-                        Something went wrong...
-                     </div> */}
-                    <button
-                        type="button"
-                        onClick={props.onPaginatedSearch}
-                    >
-                        Try Again
-                    </button>
+                    <div>
+                        <IconButton
+                            disabled={!(props.page > 0 && props.pages > props.page)}
+                            icon='first_page'
+                            onClick={props.goToFirstPage} />
+                        <IconButton
+                            disabled={!(props.page > 0 && props.pages > props.page)}
+                            icon='chevron_left'
+                            onClick={props.goToPrevPage} />
+                        <span> {props.page + 1} </span>
+                        <span> of </span>
+                        <span> {props.pages} </span>
+                        <IconButton
+                            disabled={!(props.page < (props.pages - 1))}
+                            icon='chevron_right'
+                            onClick={props.goToNextPage} />
+                        <IconButton
+                            disabled={!(props.page < (props.pages - 1))}
+                            icon='last_page'
+                            onClick={props.goToLastPage} />
+                    </div>
+                    <Autocomplete
+                        direction="down"
+                        label="Go to page"
+                        hint="Type or select the page you want go"
+                        multiple={true}
+                        onChange={props.goToPage}
+                        source={getAllPagedValues(props.page, props.pages)}
+                        value={[props.page + '']}
+                    />
                 </div>
             }
         </div>
 
         <Component {...props} />
     </div>
+
+const getAllPagedValues = (current, max) => {
+    let pages = {}
+
+    for (var index = 0; index < max; index++) {
+        if (index !== current) {
+            pages[index + ''] = index + 1 + ''
+        }
+    }
+
+    return pages
+}
 
 const paginatedCondition = props =>
     props.page !== null //&& !props.isLoading && props.isError;
