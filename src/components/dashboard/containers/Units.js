@@ -15,9 +15,8 @@ const VIEW_MODE = 'unitsRowsView'
 
 class Units extends Component {
     constructor(props, context) {
-        super(props, context);
-        this.toggleView = this.toggleView.bind(this);
-        this.goAtIndex = this.goAtIndex.bind(this);
+        super(props, context)
+        this.toggleView = this.toggleView.bind(this)
     }
 
     toggleView() {
@@ -60,7 +59,6 @@ class Units extends Component {
                     <NewUnitForm addCampaign={this.props.actions.addCampaign} btnLabel="Add new Unit" title="Add new unit" />
                     <IconButton icon='view_module' primary onClick={this.toggleView} />
                     <IconButton icon='view_list' primary onClick={this.toggleView} />
-                    <IconButton icon='remove_red_eye' primary onClick={this.goAtIndex} />
                 </div>
 
                 <SomeList items={units} itemRenderer={this.renderItem.bind(this)} />

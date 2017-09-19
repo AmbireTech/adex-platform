@@ -12,6 +12,7 @@ import { IconButton } from 'react-toolbox/lib/button'
 import { compose } from 'recompose'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import Input from 'react-toolbox/lib/input'
+import Autocomplete from 'react-toolbox/lib/autocomplete'
 
 const VIEW_MODE = 'unitsRowsView'
 
@@ -62,8 +63,28 @@ class SomeList extends Component {
         this.setState({ [name]: value });
     }
 
+    changePageSize = (name, { itemsLength, page, pages }, newPageSize) => {
+        console.log('itemsLength', itemsLength)
+        console.log('newPageSize', newPageSize)
+        let currentPageSize = this.state.pageSize
+        let currentFirstIndex = page * currentPageSize // To have at least the first item on current page on the next page
+
+        console.log('currentFirstIndex', currentFirstIndex)
+        // let newPages = Math.floor(itemsLength / newPageSize)
+
+        // console.log('newPages', newPages)
+
+
+        let nextPage = Math.round(currentFirstIndex / newPageSize)
+        console.log('nextPage', nextPage)
+
+
+        this.setState({ page: nextPage, pageSize: newPageSize })
+
+    }
+
     filterItems(items) {
-        console.log('filterItems', items)
+        // TODO: cache filter
         let filtered = (items || [])
             .filter((i) => {
                 let isItem = (!!i && !!i._meta && !i._meta.deleted)
@@ -76,15 +97,30 @@ class SomeList extends Component {
                     (i._meta.description || ''))
                 return !!match
             })
-            .sort((a, b) => b._id - a._id)
-            .slice(this.state.page * this.state.pageSize, (this.state.page * this.state.pageSize) + this.state.pageSize)
+        // .sort((a, b) => b._id - a._id)
+        let filteredLength = filtered.length
 
-        return filtered
+        let page = this.state.page
+        let pageSize = this.state.pageSize
+        let maxPages = Math.ceil(filteredLength / pageSize)
+
+        let paged = filtered.slice(
+            page * pageSize,
+            (page * pageSize) + pageSize
+        )
+
+        return {
+            items: paged,
+            page: page,
+            pages: maxPages,
+            itemsLength: filteredLength
+        }
     }
 
     render() {
         // TODO: optimise and make methods
-        let items = this.filterItems(this.props.items)
+        let data = this.filterItems(this.props.items)
+        let items = data.items
 
         return (
 
@@ -101,10 +137,33 @@ class SomeList extends Component {
                 <Dropdown
                     auto
                     label='Page size'
-                    onChange={this.handleChange.bind(this, 'pageSize')}
+                    onChange={this.changePageSize.bind(this, 'pageSize', { page: data.page, pages: data.pages, itemsLength: data.itemsLength })}
                     source={PAGE_SIZES}
                     value={this.state.pageSize}
                 />
+
+                <div>
+                    {
+                        data.page > 0 && data.pages > data.page ?
+                            <IconButton icon='chevron_left' onClick={this.goToPrevPage.bind(this)} /> : null
+                    }
+
+                    <span> </span>
+                    <span> {data.page + 1} </span>
+                    <span> of </span>
+                    <span> {data.pages} </span>
+
+                    {
+                        (data.page + 1) < data.pages ?
+                            <IconButton icon='chevron_right' onClick={this.goToNextPage.bind(this)} /> : null
+                    }
+                </div>
+                <div>
+                    <span> Go to page </span>
+                    <span> {data.page + 1} </span>
+                    <span> of </span>
+                    <span> {data.pages} </span>
+                </div>
 
                 <AdvancedList
                     itemRenderer={this.props.itemRenderer}
@@ -114,7 +173,7 @@ class SomeList extends Component {
                     page={this.state.page}
                     onPaginatedSearch={this.onPaginatedSearch.bind(this)}
                 />
-            </div>
+            </div >
         )
     }
 }
