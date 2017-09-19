@@ -1,175 +1,201 @@
 
-// import React, { Component } from 'react'
-// import PropTypes from 'prop-types'
-// import { connect } from 'react-redux'
-// import { bindActionCreators } from 'redux'
-// import * as actions from './../../actions/itemActions'
-// import { ItemsTypes } from './../../constants/itemsTypes'
-// // import Card from './../collection/Card'
-// // import NewUnitForm from './../forms/NewUnitForm'
-// // import Rows from './../collection/Rows'
-// import { IconButton } from 'react-toolbox/lib/button'
-// import { compose } from 'recompose'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import * as actions from './../../actions/itemActions'
+import { ItemsTypes } from './../../constants/itemsTypes'
+// import Card from './../collection/Card'
+// import NewUnitForm from './../forms/NewUnitForm'
+// import Rows from './../collection/Rows'
+import { IconButton } from 'react-toolbox/lib/button'
+import { compose } from 'recompose'
+import Dropdown from 'react-toolbox/lib/dropdown'
+import Input from 'react-toolbox/lib/input'
 
-// const VIEW_MODE = 'unitsRowsView'
+const VIEW_MODE = 'unitsRowsView'
 
-// class SomeList extends Component {
-//     constructor(props, context) {
-//         super(props, context);
+const PAGE_SIZES = [
+    { value: 5, label: 5 },
+    { value: 10, label: 10 },
+    { value: 20, label: 20 },
+    { value: 46, label: 46 },
+]
 
-//         this.state = {
-//             items: [],
-//             page: 0,
-//             isLoading: false,
-//             isError: false,
-//         }
-//     }
+class SomeList extends Component {
+    constructor(props, context) {
+        super(props, context);
 
-//     onPaginatedSearch(e) {
-//         console.log('e-hoi', e)
-//         this.setState({ page: this.state.page + 1 })
-//     }
+        this.state = {
+            items: [],
+            page: 0,
+            pageSize: PAGE_SIZES[1].value,
+            isLoading: false,
+            isError: false,
+            search: '',
+            filteredItems: []
+        }
+    }
 
-//     toggleView() {
-//         // this.props.actions.updateUi(VIEW_MODE, !this.props.rowsView)
-//     }
+    onPaginatedSearch(e) {
+        console.log('e-hoi', e)
+        this.setState({ page: this.state.page + 1 })
+    }
 
-//     render() {
-//         let items = this.props.items
-//             .filter((i) => !!i && !!i._meta && !i._meta.deleted)
-//             // .sort((a, b) => b._id - a._id)
-//             .slice(this.state.page * 10, (this.state.page * 10) + 10)
+    toggleView() {
+        // this.props.actions.updateUi(VIEW_MODE, !this.props.rowsView)
+    }
 
-//         console.log('items', items)
+    goToNextPage() {
+        this.goToPage(this.state.page + 1)
+    }
 
-//         return (
-//             <div>
-//                 <h1>All units </h1>
-//                 <div>
-//                     {/* <NewUnitForm addCampaign={this.props.actions.addCampaign} btnLabel="Add new Unit" title="Add new unit" /> */}
-//                     <IconButton icon='view_module' primary onClick={this.toggleView} />
-//                     <IconButton icon='view_list' primary onClick={this.toggleView} />
-//                 </div>
+    goToPrevPage() {
+        this.goToPage(this.state.page - 1)
+    }
 
-//                 <AdvancedList
-//                     list={items}
-//                     isError={this.state.isError}
-//                     isLoading={this.state.isLoading}
-//                     page={this.state.page}
-//                     onPaginatedSearch={this.onPaginatedSearch.bind(this)}
-//                 />
-//             </div>
-//         )
-//     }
-// }
+    goToPage(page) {
+        this.setState({ page: page })
+    }
 
-// SomeList.propTypes = {
-//     // actions: PropTypes.object.isRequired,
-//     // account: PropTypes.object.isRequired,
-//     items: PropTypes.array.isRequired,
-//     // rowsView: PropTypes.bool.isRequired
-// };
+    handleChange = (name, value) => {
+        this.setState({ [name]: value });
+    }
 
-// const List = ({ list }) =>
-//     <div className="list">
-//         {list.map(item => <div className="list-row" key={item._id}>
-//             <h3 >{item._name}</h3>
-//         </div>)}
-//     </div>
+    filterItems(items) {
+        console.log('filterItems', items)
+        let filtered = (items || [])
+            .filter((i) => {
+                let isItem = (!!i && !!i._meta && !i._meta.deleted)
+                if (!isItem) return isItem
+                let hasSearch = !!this.state.search
+                if (!hasSearch) return isItem
+                let regex = new RegExp(this.state.search, 'i')
+                let match = regex.exec((i._name || '') +
+                    (i._meta.fullName || '') +
+                    (i._meta.description || ''))
+                return !!match
+            })
+            .sort((a, b) => b._id - a._id)
+            .slice(this.state.page * this.state.pageSize, (this.state.page * this.state.pageSize) + this.state.pageSize)
 
-// const withLoading = (conditionFn) => (Component) => (props) =>
-//     <div>
-//         <Component {...props} />
+        return filtered
+    }
 
-//         <div className="interactions">
-//             {conditionFn(props) && <span>Loading...</span>}
-//         </div>
-//     </div>
+    render() {
+        // TODO: optimise and make methods
+        let items = this.filterItems(this.props.items)
 
-// const withPaginated = (conditionFn) => (Component) => (props) =>
-//     <div>
+        return (
 
+            <div>
+                <h1>All units </h1>
+                <div>
+                    {/* <NewUnitForm addCampaign={this.props.actions.addCampaign} btnLabel="Add new Unit" title="Add new unit" /> */}
+                    <IconButton icon='view_module' primary onClick={this.toggleView} />
+                    <IconButton icon='view_list' primary onClick={this.toggleView} />
+                </div>
 
-//         <div className="interactions">
-//             {
-//                 conditionFn(props) &&
-//                 <div>
-//                     {/* <div>
-//                         Something went wrong...
-//                      </div> */}
-//                     <button
-//                         type="button"
-//                         onClick={props.onPaginatedSearch}
-//                     >
-//                         Try Again
-//                     </button>
-//                 </div>
-//             }
-//         </div>
+                <Input type='text' label='Search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} maxLength={160} />
 
-//         <Component {...props} />
-//     </div>
+                <Dropdown
+                    auto
+                    label='Page size'
+                    onChange={this.handleChange.bind(this, 'pageSize')}
+                    source={PAGE_SIZES}
+                    value={this.state.pageSize}
+                />
 
-// const withInfiniteScroll = (conditionFn) => (Component) =>
-//     class WithInfiniteScroll extends React.Component {
-//         componentDidMount() {
-//             window.addEventListener('scroll', this.onScroll, true);
-//         }
-
-//         componentWillUnmount() {
-//             window.removeEventListener('scroll', this.onScroll, true);
-//         }
-
-//         onScroll = () => {
-//             console.log('onScroll')
-//             conditionFn(this.props) && this.props.onPaginatedSearch();
-
-//         }
-
-//         render() {
-//             return <Component {...this.props} />;
-//         }
-//     }
-
-// const paginatedCondition = props =>
-//     props.page !== null //&& !props.isLoading && props.isError;
-
-// const infiniteScrollCondition = props => {
-//     console.log('window.innerHeight', window.innerHeight)
-//     console.log('window.scrollY', window.scrollY)
-//     console.log('document.body.offsetHeight ', document.body.offsetHeight)
-//     return (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 500)
-//         && props.list.length
-//     // && !props.isLoading
-//     // && !props.isError;
-// }
-
-// const loadingCondition = props =>
-//     props.isLoading;
-
-// const AdvancedList = compose(
-//     withPaginated(paginatedCondition),
-//     withInfiniteScroll(infiniteScrollCondition),
-//     // withLoading(loadingCondition),
-// )(List);
+                <AdvancedList
+                    itemRenderer={this.props.itemRenderer}
+                    list={items}
+                    isError={this.state.isError}
+                    isLoading={this.state.isLoading}
+                    page={this.state.page}
+                    onPaginatedSearch={this.onPaginatedSearch.bind(this)}
+                />
+            </div>
+        )
+    }
+}
 
 
-// function mapStateToProps(state) {
-//     // console.log('mapStateToProps Campaigns', state)
-//     return {
-//         // account: state.account,
-//         items: state.items[ItemsTypes.AdUnit.id],
-//         // rowsView: !!state.ui[VIEW_MODE]
-//     };
-// }
+const List = ({ list, itemRenderer }) => {
+    return (<div className="list">
+        {list.map((item, index) => itemRenderer(item, index))}
+    </div>)
+}
 
-// function mapDispatchToProps(dispatch) {
-//     return {
-//         actions: bindActionCreators(actions, dispatch)
-//     };
-// }
+const withLoading = (conditionFn) => (Component) => (props) =>
+    <div>
+        <Component {...props} />
 
-// export default connect(
-//     mapStateToProps,
-//     mapDispatchToProps
-// )(SomeList);
+        <div className="interactions">
+            {conditionFn(props) && <span>Loading...</span>}
+        </div>
+    </div>
+
+const withPaginated = (conditionFn) => (Component) => (props) =>
+    <div>
+
+
+        <div className="interactions">
+            {
+                conditionFn(props) &&
+                <div>
+                    {/* <div>
+                        Something went wrong...
+                     </div> */}
+                    <button
+                        type="button"
+                        onClick={props.onPaginatedSearch}
+                    >
+                        Try Again
+                    </button>
+                </div>
+            }
+        </div>
+
+        <Component {...props} />
+    </div>
+
+const paginatedCondition = props =>
+    props.page !== null //&& !props.isLoading && props.isError;
+
+
+const loadingCondition = props =>
+    props.isLoading;
+
+const AdvancedList = compose(
+    withPaginated(paginatedCondition),
+    // withLoading(loadingCondition),
+)(List);
+
+SomeList.propTypes = {
+    // actions: PropTypes.object.isRequired,
+    // account: PropTypes.object.isRequired,
+    items: PropTypes.array.isRequired,
+    // rowsView: PropTypes.bool.isRequired,
+    itemRenderer: PropTypes.func
+};
+
+
+function mapStateToProps(state) {
+    // console.log('mapStateToProps Campaigns', state)
+    return {
+        // account: state.account,
+        // items: state.items[ItemsTypes.AdUnit.id],
+        // rowsView: !!state.ui[VIEW_MODE],
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        actions: bindActionCreators(actions, dispatch)
+    };
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SomeList);

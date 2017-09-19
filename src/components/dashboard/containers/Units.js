@@ -10,7 +10,6 @@ import NewUnitForm from './../forms/NewUnitForm'
 import Rows from './../collection/Rows'
 import { IconButton } from 'react-toolbox/lib/button'
 import SomeList from './../../list/SomeList'
-import ReactList from 'react-list';
 
 const VIEW_MODE = 'unitsRowsView'
 
@@ -21,29 +20,12 @@ class Units extends Component {
         this.goAtIndex = this.goAtIndex.bind(this);
     }
 
-    goAtIndex() {
-        this.list.scrollTo(100);
-    }
-
-    componentDidUpdate(){
-        // this.goAtIndex()
-    }
-
-    componentDidMount(){
-        this.goAtIndex()
-    }
-
     toggleView() {
         this.props.actions.updateUi(VIEW_MODE, !this.props.rowsView)
     }
 
-    renderItem(index, key) {
-
-        // console.log('this.props.units', this.props.units)
-        let unt = this.props.units[index]
-        // console.log('unt', unt)
+    renderItem(unt, index) {
         return (
-            <div key={key}>
             <Card
                 key={unt._id}
                 item={unt}
@@ -59,9 +41,6 @@ class Units extends Component {
                         text: 'Are you sure?'
                     })}
             />
-            </div>
-
-
         )
 
     }
@@ -84,21 +63,7 @@ class Units extends Component {
                     <IconButton icon='remove_red_eye' primary onClick={this.goAtIndex} />
                 </div>
 
-                <div style={{ overflowY: 'scroll', maxHeight: 800 }}>
-                    <ReactList
-                        ref={c => this.list = c}
-                        itemRenderer={this.renderItem.bind(this)}
-                        length={this.props.units.length}
-                        type='variable'
-                        useTranslate3d={true}
-                        initialIndex={100}
-                        itemSizeGetter={() => { return 372 }}
-                        pageSize={20}
-
-                    />
-                </div>
-
-                {/* <SomeList items={units} /> */}
+                <SomeList items={units} itemRenderer={this.renderItem.bind(this)} />
                 {/* {this.props.rowsView ?
                     <Rows side={side} item={units} rows={units} delete={this.props.actions.deleteItem} />
                     :

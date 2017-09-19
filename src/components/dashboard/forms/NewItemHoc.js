@@ -49,9 +49,8 @@ export default function NewItemHoc(Decorated) {
 
         save() {
             this.props.actions.addItem(this.state.item)
+            this.handleToggle()
             this.props.actions.resetNewItem(this.state.item)
-            this.setState({ item: {} }, () => this.handleToggle())
-
         }
 
         render() {

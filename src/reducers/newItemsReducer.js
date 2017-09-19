@@ -10,14 +10,14 @@ export default function newItemsReducer(state = initialState.newItem, action) {
     switch (action.type) {
         case UPDATE_NEW_ITEM:
             newState = { ...state }
-            newItem =  Base.updateMeta(action.item, action.meta)
+            newItem = Base.updateMeta(action.item, action.meta)
             newState[action.item._type] = newItem
 
             return newState
 
         case RESET_NEW_ITEM:
             newState = { ...state }
-            newItem = initialState.newItem[action.item._type]
+            newItem = { ...initialState.newItem[action.item._type] }
             newState[action.item._type] = newItem
 
             return newState

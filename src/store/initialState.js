@@ -41,7 +41,7 @@ function GenerateAccount() {
 
 function GenerateItems(type, itemClass, acc) {
     if (items[type.id].length) return items[type.id]
-    for (let i = 1; i <= Helper.getRandomInt(50000, 50000); i++) {
+    for (let i = 1; i <= Helper.getRandomInt(500, 500); i++) {
         let id = ++counts[type.id]
         let item
 
