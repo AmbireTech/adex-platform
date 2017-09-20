@@ -8,7 +8,7 @@ import { ItemsTypes } from './../../constants/itemsTypes'
 // import Card from './../collection/Card'
 // import NewUnitForm from './../forms/NewUnitForm'
 // import Rows from './../collection/Rows'
-import { IconButton } from 'react-toolbox/lib/button'
+import { IconButton, Button } from 'react-toolbox/lib/button'
 import { compose } from 'recompose'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import Input from 'react-toolbox/lib/input'
@@ -22,6 +22,52 @@ const PAGE_SIZES = [
     { value: 20, label: 20 },
     { value: 46, label: 46 },
 ]
+
+const List = ({ list, itemRenderer }) => {
+    return (<div className="list">
+        {list.map((item, index) => itemRenderer(item, index))}
+    </div>)
+}
+
+// const Table = (props) = {
+
+// }
+
+const Actions = (props) => {
+
+    return (
+        <div style={{ display: 'inline-block' }}>
+
+            <IconButton
+                disabled={!(props.page > 0 && props.pages > props.page)}
+                icon='chevron_left'
+                onClick={props.goToPrevPage} />
+
+            <div style={{ display: 'inline-block', width: 70 }}>
+                <Autocomplete
+                    allowCreate={false}
+                    direction="down"
+                    label='page'
+                    multiple={false}
+                    onChange={props.goToPage}
+                    source={getAllPagedValues(props.page, props.pages)}
+                    hint={props.page + 1 + ''}
+                    value={props.page + ''}
+                    suggestionMatch='anywhere'
+                    showSuggestionsWhenValueIsSet={true}
+                />
+            </div>
+
+            <IconButton
+                disabled={!(props.page < (props.pages - 1))}
+                icon='chevron_right'
+                onClick={props.goToNextPage} />
+
+            <span> of </span>
+            <span> {props.pages} </span>
+        </div >)
+
+}
 
 class SomeList extends Component {
     constructor(props, context) {
@@ -51,6 +97,7 @@ class SomeList extends Component {
     }
 
     goToPage(page) {
+        console.log('page', page)
         this.setState({ page: parseInt(page) })
     }
 
@@ -101,6 +148,8 @@ class SomeList extends Component {
         }
     }
 
+
+
     render() {
         // TODO: optimise and make methods
         let data = this.filterItems(this.props.items)
@@ -110,123 +159,64 @@ class SomeList extends Component {
         return (
 
             <div>
-                <h1>All units </h1>
                 <div>
                     {/* <NewUnitForm addCampaign={this.props.actions.addCampaign} btnLabel="Add new Unit" title="Add new unit" /> */}
                     <IconButton icon='view_module' primary onClick={this.toggleView} />
                     <IconButton icon='view_list' primary onClick={this.toggleView} />
                 </div>
 
-                <Input type='text' label='Search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} maxLength={160} />
+                <Input type='text' label='Search' icon='search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} maxLength={160} />
 
-                <Dropdown
-                    auto
-                    label='Page size'
-                    onChange={this.changePageSize.bind(this, 'pageSize', { page: data.page, pages: data.pages, itemsLength: data.itemsLength })}
-                    source={PAGE_SIZES}
-                    value={this.state.pageSize}
-                />
 
-                <AdvancedList
-                    itemRenderer={this.props.itemRenderer}
-                    list={items}
-                    isError={this.state.isError}
-                    isLoading={this.state.isLoading}
+                <Actions
                     page={data.page}
                     pages={data.pages}
+                    itemsLength={data.itemsLength}
+                    changePageSize={this.changePageSize}
                     goToPage={this.goToPage.bind(this)}
                     goToLastPage={this.goToPage.bind(this, data.pages - 1)}
                     goToNextPage={this.goToPage.bind(this, data.page + 1)}
                     goToFirstPage={this.goToPage.bind(this, 0)}
-                    goToPrevPage={this.goToPage.bind(this, data.page - 1)}
+                    goToPrevPage={this.goToPage.bind(this, data.page - 1)} />
+
+                <span>  / Page size: </span>
+                {
+                    PAGE_SIZES.map((page) =>
+                        <Button
+                            floating
+                            mini
+                            label={page.value}
+                            onClick={this.changePageSize.bind(this, 'pageSize',
+                                { page: data.page, pages: data.pages, itemsLength: data.itemsLength }, page.value)}
+                            accent={page.value === this.state.pageSize}
+
+                        />)
+                }
+
+                <List
+                    itemRenderer={this.props.itemRenderer}
+                    list={items}
+                    isError={this.state.isError}
+                    isLoading={this.state.isLoading}
+
                 />
             </div >
         )
     }
+
 }
 
-
-const List = ({ list, itemRenderer }) => {
-    return (<div className="list">
-        {list.map((item, index) => itemRenderer(item, index))}
-    </div>)
-}
-
-const withLoading = (conditionFn) => (Component) => (props) =>
-    <div>
-        <Component {...props} />
-
-        <div className="interactions">
-            {conditionFn(props) && <span>Loading...</span>}
-        </div>
-    </div>
-
-const withPaginated = (conditionFn) => (Component) => (props) =>
-    <div>
-        <div className="interactions">
-            {
-                conditionFn(props) &&
-                <div>
-                    <div>
-                        <IconButton
-                            disabled={!(props.page > 0 && props.pages > props.page)}
-                            icon='first_page'
-                            onClick={props.goToFirstPage} />
-                        <IconButton
-                            disabled={!(props.page > 0 && props.pages > props.page)}
-                            icon='chevron_left'
-                            onClick={props.goToPrevPage} />
-                        <span> {props.page + 1} </span>
-                        <span> of </span>
-                        <span> {props.pages} </span>
-                        <IconButton
-                            disabled={!(props.page < (props.pages - 1))}
-                            icon='chevron_right'
-                            onClick={props.goToNextPage} />
-                        <IconButton
-                            disabled={!(props.page < (props.pages - 1))}
-                            icon='last_page'
-                            onClick={props.goToLastPage} />
-                    </div>
-                    <Autocomplete
-                        direction="down"
-                        label="Go to page"
-                        hint="Type or select the page you want go"
-                        multiple={true}
-                        onChange={props.goToPage}
-                        source={getAllPagedValues(props.page, props.pages)}
-                        value={[props.page + '']}
-                    />
-                </div>
-            }
-        </div>
-
-        <Component {...props} />
-    </div>
 
 const getAllPagedValues = (current, max) => {
     let pages = {}
 
     for (var index = 0; index < max; index++) {
-        if (index !== current) {
-            pages[index + ''] = index + 1 + ''
-        }
+        pages[index + ''] = index + 1 + ''
     }
 
     return pages
 }
 
-const paginatedCondition = props =>
-    props.page !== null //&& !props.isLoading && props.isError;
-
-
-const loadingCondition = props =>
-    props.isLoading;
-
-const AdvancedList = compose(
-    withPaginated(paginatedCondition),
-    // withLoading(loadingCondition),
-)(List);
 
 SomeList.propTypes = {
     // actions: PropTypes.object.isRequired,
