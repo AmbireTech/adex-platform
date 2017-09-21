@@ -50,13 +50,13 @@ class Rows extends Component {
                         {rows.map((u, i) => {
                             let to = '/dashboard/' + side + '/' + ItemTypesNames[u._type] + '/' + u._id
                             return (
-                                <TableRow key={u.id || i} theme={theme}>
+                                <TableRow key={u._id || i} theme={theme}>
                                     <RRTableCell className={theme.link} to={to} theme={theme}>
-                                        <Img className={theme.img} src={u.img} alt={u._name} />
+                                        <Img className={theme.img} src={u._meta.img} alt={u._name} />
                                     </RRTableCell>
                                     <RRTableCell className={theme.link} to={to}> {u._name} </RRTableCell>
-                                    <TableCell> {u.type} </TableCell>
-                                    <TableCell> {u.size} </TableCell>
+                                    <TableCell> {u._type} </TableCell>
+                                    <TableCell> {u._size} </TableCell>
                                     <TableCell>
 
                                         <TooltipRRButton

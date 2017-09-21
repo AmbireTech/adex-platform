@@ -9,13 +9,11 @@ import { ItemsTypes } from './../../constants/itemsTypes'
 // import NewUnitForm from './../forms/NewUnitForm'
 // import Rows from './../collection/Rows'
 import { IconButton, Button } from 'react-toolbox/lib/button'
-import { compose } from 'recompose'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import Input from 'react-toolbox/lib/input'
-import Autocomplete from 'react-toolbox/lib/autocomplete'
 import { Pagination, PAGE_SIZES } from './ListControls'
-
-const VIEW_MODE = 'unitsRowsView'
+import Rows from './../dashboard/collection/Rows'
+import Card from './../dashboard/collection/Card'
 
 const SORT_PROPERTIES = [
     { value: '_id', label: 'Id' },
@@ -25,13 +23,11 @@ const SORT_PROPERTIES = [
     { value: 'createdOn', label: 'Date created' }
 ]
 
-
 const List = ({ list, itemRenderer }) => {
     return (<div className="list">
         {list.map((item, index) => itemRenderer(item, index))}
     </div>)
 }
-
 
 class SomeList extends Component {
     constructor(props, context) {
@@ -48,20 +44,21 @@ class SomeList extends Component {
             sortProperty: SORT_PROPERTIES[0].value,
             filteredItems: []
         }
+
+        this.renderCard = this.renderCard.bind(this)
     }
 
-    toggleView() {
-        // this.props.actions.updateUi(VIEW_MODE, !this.props.rowsView)
+    toggleView(value) {
+        if (value !== this.props.rowsView) {
+            this.props.actions.updateUi(this.props.viewModeId, !!value)
+        }
     }
 
     goToPage(page) {
-        console.log('page', page)
-        this.setState({ page: parseInt(page) })
+        this.setState({ page: parseInt(page, 10) })
     }
 
     handleChange = (name, value) => {
-        console.log(name, name)
-        console.log(value, value)
         let newStateValue = { [name]: value }
         if (name === 'search') newStateValue.page = 0
         this.setState(newStateValue);
@@ -70,11 +67,31 @@ class SomeList extends Component {
     changePageSize = (name, { itemsLength, page, pages } = {}, ev) => {
         ev.preventDefault()
         ev.stopPropagation()
-        let newPageSize = parseInt(ev.target.value)
+        let newPageSize = parseInt(ev.target.value, 10)
         let currentPageSize = this.state.pageSize
         let currentFirstIndex = page * currentPageSize // To have at least the first item on current page on the next page
         let nextPage = Math.floor(currentFirstIndex / newPageSize)
         this.setState({ page: nextPage, pageSize: newPageSize })
+    }
+
+    renderCard(unt, index) {
+        return (
+            <Card
+                key={unt._id}
+                item={unt}
+                name={unt._name}
+                logo={unt._meta.img}
+                delete={this.props.actions.confirmAction.bind(this,
+                    this.props.actions.deleteItem.bind(this, unt),
+                    null,
+                    {
+                        confirmLabel: 'Yes',
+                        cancelLabel: 'No',
+                        title: 'Delete Item - ' + unt._name,
+                        text: 'Are you sure?'
+                    })}
+            />
+        )
     }
 
     filterItems(items) {
@@ -126,12 +143,6 @@ class SomeList extends Component {
         return (
 
             <div>
-                <div>
-                    {/* <NewUnitForm addCampaign={this.props.actions.addCampaign} btnLabel="Add new Unit" title="Add new unit" /> */}
-                    <IconButton icon='view_module' primary onClick={this.toggleView} />
-                    <IconButton icon='view_list' primary onClick={this.toggleView} />
-                </div>
-
                 <Input type='text' label='Search' icon='search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} maxLength={160} />
 
                 <Dropdown
@@ -143,9 +154,13 @@ class SomeList extends Component {
                 />
 
                 <div>
-                    {/* <NewUnitForm addCampaign={this.props.actions.addCampaign} btnLabel="Add new Unit" title="Add new unit" /> */}
                     <IconButton icon='arrow_upward' accent={this.state.sortOrder === 1} onClick={this.handleChange.bind(this, 'sortOrder', 1)} />
                     <IconButton icon='arrow_downward' accent={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
+                </div>
+
+                <div>
+                    <IconButton icon='view_module' accent={!this.props.rowsView} onClick={this.toggleView.bind(this, false)} />
+                    <IconButton icon='view_list' accent={this.props.rowsView} onClick={this.toggleView.bind(this, true)} />
                 </div>
 
                 <Pagination
@@ -162,34 +177,34 @@ class SomeList extends Component {
                         { page: data.page, pages: data.pages, itemsLength: data.itemsLength })}
                 />
 
-                <List
-                    itemRenderer={this.props.itemRenderer}
-                    list={items}
-                    isError={this.state.isError}
-                    isLoading={this.state.isLoading}
+                {!!this.props.rowsView ?
+                    <Rows side={'side'} item={items} rows={items} delete={this.props.actions.deleteItem} />
+                    :
 
-                />
+                    <List
+                        itemRenderer={this.props.itemRenderer || this.renderCard}
+                        list={items}
+                        isError={this.state.isError}
+                        isLoading={this.state.isLoading}
+
+                    />
+                }
             </div >
         )
     }
-
 }
 
 
 SomeList.propTypes = {
-    // actions: PropTypes.object.isRequired,
-    // account: PropTypes.object.isRequired,
+    actions: PropTypes.object.isRequired,
     items: PropTypes.array.isRequired,
-    // rowsView: PropTypes.bool.isRequired,
+    rowsView: PropTypes.bool.isRequired,
     itemRenderer: PropTypes.func
 }
 
-function mapStateToProps(state) {
-    // console.log('mapStateToProps Campaigns', state)
+function mapStateToProps(state, props) {
     return {
-        // account: state.account,
-        // items: state.items[ItemsTypes.AdUnit.id],
-        // rowsView: !!state.ui[VIEW_MODE],
+        rowsView: !!state.ui[props.viewModeId]
     };
 }
 

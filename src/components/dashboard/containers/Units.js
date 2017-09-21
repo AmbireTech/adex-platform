@@ -23,68 +23,19 @@ class Units extends Component {
         this.props.actions.updateUi(VIEW_MODE, !this.props.rowsView)
     }
 
-    renderItem(unt, index) {
-        return (
-            <Card
-                key={unt._id}
-                item={unt}
-                name={unt._name}
-                logo={unt._meta.img}
-                delete={this.props.actions.confirmAction.bind(this,
-                    this.props.actions.deleteItem.bind(this, unt),
-                    null,
-                    {
-                        confirmLabel: 'Yes',
-                        cancelLabel: 'No',
-                        title: 'Delete AdUnit - ' + unt._name,
-                        text: 'Are you sure?'
-                    })}
-            />
-        )
-
-    }
-
     render() {
         let side = this.props.match.params.side;
-        // let account = this.props.account
+
         let units = this.props.units
-        // .filter((i) => !!i && !!i._meta && !i._meta.deleted)
-        // .sort((a, b) => b._id - a._id)
-        // .slice(0, 50)
 
         return (
             <div>
                 <h1>All units </h1>
                 <div>
                     <NewUnitForm addCampaign={this.props.actions.addCampaign} btnLabel="Add new Unit" title="Add new unit" />
-                    <IconButton icon='view_module' primary onClick={this.toggleView} />
-                    <IconButton icon='view_list' primary onClick={this.toggleView} />
                 </div>
 
-                <SomeList items={units} itemRenderer={this.renderItem.bind(this)} />
-                {/* {this.props.rowsView ?
-                    <Rows side={side} item={units} rows={units} delete={this.props.actions.deleteItem} />
-                    :
-
-                    units
-                        .map((unt, i) => {
-                            return (<Card key={unt._id}
-                                item={unt}
-                                name={unt._name}
-                                side={side}
-                                logo={unt._meta.img}
-                                delete={this.props.actions.confirmAction.bind(this,
-                                    this.props.actions.deleteItem.bind(this, unt),
-                                    null,
-                                    {
-                                        confirmLabel: 'Yes',
-                                        cancelLabel: 'No',
-                                        title: 'Delete AdUnit - ' + unt._name,
-                                        text: 'Are you sure?'
-                                    })}
-                            />)
-                        })
-                } */}
+                <SomeList items={units} viewModeId={VIEW_MODE} />
             </div>
         )
     }
@@ -93,16 +44,14 @@ class Units extends Component {
 Units.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    units: PropTypes.array.isRequired,
-    rowsView: PropTypes.bool.isRequired
+    units: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {
     // console.log('mapStateToProps Campaigns', state)
     return {
         account: state.account,
-        units: state.items[ItemsTypes.AdUnit.id].slice(1),
-        rowsView: !!state.ui[VIEW_MODE]
+        units: state.items[ItemsTypes.AdUnit.id]
     };
 }
 

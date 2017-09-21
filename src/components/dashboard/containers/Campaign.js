@@ -9,6 +9,7 @@ import Card from './../collection/Card'
 import { ItemsTypes } from './../../../constants/itemsTypes'
 import { IconButton } from 'react-toolbox/lib/button'
 import ItemHoc from './ItemHoc'
+import SomeList from './../../list/SomeList'
 
 const VIEW_MODE = 'campaignRowsView'
 
@@ -29,22 +30,7 @@ export const Campaign = (props) => {
 
     return (
         <div>
-            <div>
-                <div>
-                    <IconButton icon='view_module' primary onClick={props.actions.updateUi.bind(this, VIEW_MODE, !props.rowsView)} />
-                    <IconButton icon='view_list' primary onClick={props.actions.updateUi.bind(this, VIEW_MODE, !props.rowsView)} />
-                </div>
-            </div>
-
-            {props.rowsView ?
-                <Rows side={side} item={item} rows={units} remove={props.actions.removeItemFromItem} />
-                :
-
-                units
-                    .map((unt, i) => {
-                        return (<Card key={unt._id} item={unt} name={unt._name} side={side} logo={unt._meta.img} delete={props.actions.removeItemFromItem.bind(this, { item: item, toRemove: unt._id })} />)
-                    })
-            }
+            <SomeList items={units} viewModeId={VIEW_MODE} />
         </div>
     )
 }

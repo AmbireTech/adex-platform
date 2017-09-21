@@ -7,6 +7,9 @@ import * as actions from './../../../actions/itemActions'
 import { ItemsTypes } from './../../../constants/itemsTypes'
 import Card from './../collection/Card'
 import NewCampaignForm from './../forms/NewCampaignForm'
+import SomeList from './../../list/SomeList'
+
+const VIEW_MODE = 'campaignsRowsView'
 
 export const Campaigns = (props) => {
     let side = props.match.params.side;
@@ -19,14 +22,7 @@ export const Campaigns = (props) => {
             <h1>All campaigns </h1>
 
             <NewCampaignForm addCampaign={props.actions.addItem} btnLabel="Add new campaign" title="Add new campaign" />
-
-            {campaigns
-                .filter((c) => !!c && c._meta && !c._meta.deleted)
-                .sort((a, b) => b._id - a._id)
-                .slice(0, 5)
-                .map((camp, i) => {
-                    return (<Card key={camp._id} item={camp} name={camp._name} side={side} logo={camp._meta.img} delete={props.actions.deleteItem.bind(this, camp)} />)
-                })}
+            <SomeList items={campaigns} viewModeId={VIEW_MODE} />
         </div>
     )
 }

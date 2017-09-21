@@ -52,6 +52,7 @@ export const Pagination = (props) => {
                         value={page.value}
                         onClick={props.changePageSize}
                         accent={page.value === props.pageSize}
+                        style={(page.value === props.pageSize) && (page.value === 46) ? {background: '#0000cf', color: '#D4FF00'} : null}
                     />
                 )
             }
