@@ -38,8 +38,9 @@ export default function ItemHoc(Decorated) {
             this.setState({ item: this.props.items[this.props.match.params.itemId] })
         }
 
-        componentWillReceiveProps(nextProps){
-            this.setState({ item: nextProps.items[nextProps.match.params.itemId] })
+        componentWillReceiveProps(nextProps) {
+            // TODO: check if really need it
+            // this.setState({ item: nextProps.items[nextProps.match.params.itemId] })
         }
 
         componentWillUnmount() {
@@ -59,8 +60,10 @@ export default function ItemHoc(Decorated) {
 
         //TODO: Do not save if not dirty!
         save() {
-            this.props.actions.updateItem(this.state.item, this.state.item._meta)
-            this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], true)
+            if (this.state.dirtyProps.length) {
+                this.props.actions.updateItem(this.state.item, this.state.item._meta)
+                this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], true)
+            }
         }
 
         isDirtyProp(prop) {

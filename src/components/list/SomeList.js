@@ -149,6 +149,7 @@ class SomeList extends Component {
                 <Dropdown
                     auto
                     icon='sort'
+                    label='Sort by'
                     onChange={this.handleChange.bind(this, 'sortProperty')}
                     source={SORT_PROPERTIES}
                     value={this.state.sortProperty}
@@ -179,9 +180,12 @@ class SomeList extends Component {
                 />
 
                 {!!this.props.rowsView ?
-                    <Rows side={this.props.side} item={items} rows={items} delete={this.props.actions.deleteItem} />
+                    <Rows
+                        side={this.props.side}
+                        item={items}
+                        rows={items}
+                        delete={this.props.actions.deleteItem} />
                     :
-
                     <List
                         itemRenderer={this.props.itemRenderer || this.renderCard}
                         list={items}
