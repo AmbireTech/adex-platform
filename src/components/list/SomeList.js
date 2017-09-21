@@ -78,7 +78,7 @@ class SomeList extends Component {
     }
 
     filterItems(items) {
-        // TODO: cache filter
+        // TODO: optimize filter
         let filtered = (items || [])
             .filter((i) => {
                 let isItem = (!!i && !!i._meta && !i._meta.deleted)
@@ -97,7 +97,7 @@ class SomeList extends Component {
                 let propA = a[sortProperty] || a._meta[sortProperty]
                 let propB = b[sortProperty] || b._meta[sortProperty]
 
-                return (propA - propB) * this.state.sortOrder
+                return (propA < propB ? -1 : (propA > propB ? 1 : 0)) * this.state.sortOrder
             })
         let filteredLength = filtered.length
 
@@ -120,7 +120,6 @@ class SomeList extends Component {
     }
 
     render() {
-        // TODO: optimise and make methods
         let data = this.filterItems(this.props.items)
         let items = data.items
 
