@@ -101,5 +101,8 @@ export default {
     toasts: [],
     confirm: {
         data: {}
+    },
+    nav: {
+        side: ''
     }
 }

@@ -145,3 +145,13 @@ export function confirmAction(onConfirm, onCancel,
         })
     }
 }
+
+export function updateNav(item, value) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.UPDATE_NAV,
+            item: item,
+            value: value
+        })
+    }
+}

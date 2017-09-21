@@ -13,3 +13,5 @@ export const UPDATE_UI = 'UPDATE_UI'
 export const ADD_TOAST = 'ADD_TOAST'
 export const REMOVE_TOAST = 'REMOVE_TOAST'
 export const CONFIRM_ACTION = 'CONFIRM_ACTION'
+export const UPDATE_NAV = 'UPDATE_NAV'
+

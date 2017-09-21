@@ -1,5 +1,5 @@
 .card {
-    display: inline-block;
+    display: inline-block !important;
     margin: 20px;
     margin-left: 0;
     margin-bottom: 0;
@@ -11,7 +11,7 @@
 }
 
 .cardActions {
-    justify-content: space-between;
+    justify-content: space-between !important;
 }
 
 .rowCell {

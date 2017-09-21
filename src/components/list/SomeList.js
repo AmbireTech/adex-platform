@@ -81,6 +81,7 @@ class SomeList extends Component {
                 item={unt}
                 name={unt._name}
                 logo={unt._meta.img}
+                side={this.props.side}
                 delete={this.props.actions.confirmAction.bind(this,
                     this.props.actions.deleteItem.bind(this, unt),
                     null,
@@ -178,7 +179,7 @@ class SomeList extends Component {
                 />
 
                 {!!this.props.rowsView ?
-                    <Rows side={'side'} item={items} rows={items} delete={this.props.actions.deleteItem} />
+                    <Rows side={this.props.side} item={items} rows={items} delete={this.props.actions.deleteItem} />
                     :
 
                     <List
@@ -186,6 +187,7 @@ class SomeList extends Component {
                         list={items}
                         isError={this.state.isError}
                         isLoading={this.state.isLoading}
+                        side={this.props.side}
 
                     />
                 }
@@ -199,12 +201,14 @@ SomeList.propTypes = {
     actions: PropTypes.object.isRequired,
     items: PropTypes.array.isRequired,
     rowsView: PropTypes.bool.isRequired,
-    itemRenderer: PropTypes.func
+    itemRenderer: PropTypes.func,
+    side: PropTypes.string.isRequired
 }
 
 function mapStateToProps(state, props) {
     return {
-        rowsView: !!state.ui[props.viewModeId]
+        rowsView: !!state.ui[props.viewModeId],
+        side: state.nav.side
     };
 }
 
