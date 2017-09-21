@@ -83,9 +83,8 @@ class Dashboard extends React.Component {
                         <Route exact path="/dashboard/advertiser/units" component={this.renderAdUnits} />
                         <Route exact path="/dashboard/advertiser/Campaign/:itemId" component={Campaign} />
                         <Route exact path="/dashboard/advertiser/AdUnit/:itemId" component={Unit} />
-                        <Route exact path="/dashboard/:side">
-                            <h1>Welcome to the {side} side</h1>
-                        </Route>
+                        <Route exact path="/dashboard/:side" component={() => <h1>Welcome to the {side} side</h1>} />
+                        <Route component={() => <h1>404 at {side} side</h1>} />
                     </Switch>
                 </Panel>
             </Layout>
