@@ -13,15 +13,18 @@ import { compose } from 'recompose'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import Input from 'react-toolbox/lib/input'
 import Autocomplete from 'react-toolbox/lib/autocomplete'
+import { Pagination, PAGE_SIZES } from './ListControls'
 
 const VIEW_MODE = 'unitsRowsView'
 
-const PAGE_SIZES = [
-    { value: 5, label: 5 },
-    { value: 10, label: 10 },
-    { value: 20, label: 20 },
-    { value: 46, label: 46 },
+const SORT_PROPERTIES = [
+    { value: '_id', label: 'Id' },
+    { value: '_name', label: 'Short Name' },
+    { value: 'fullName', label: 'Full name' },
+    { value: 'modifiedOn', label: 'Date modified' },
+    { value: 'createdOn', label: 'Date created' }
 ]
+
 
 const List = ({ list, itemRenderer }) => {
     return (<div className="list">
@@ -29,45 +32,6 @@ const List = ({ list, itemRenderer }) => {
     </div>)
 }
 
-// const Table = (props) = {
-
-// }
-
-const Actions = (props) => {
-
-    return (
-        <div style={{ display: 'inline-block' }}>
-
-            <IconButton
-                disabled={!(props.page > 0 && props.pages > props.page)}
-                icon='chevron_left'
-                onClick={props.goToPrevPage} />
-
-            <div style={{ display: 'inline-block', width: 70 }}>
-                <Autocomplete
-                    allowCreate={false}
-                    direction="down"
-                    label='page'
-                    multiple={false}
-                    onChange={props.goToPage}
-                    source={getAllPagedValues(props.page, props.pages)}
-                    hint={props.page + 1 + ''}
-                    value={props.page + ''}
-                    suggestionMatch='anywhere'
-                    showSuggestionsWhenValueIsSet={true}
-                />
-            </div>
-
-            <IconButton
-                disabled={!(props.page < (props.pages - 1))}
-                icon='chevron_right'
-                onClick={props.goToNextPage} />
-
-            <span> of </span>
-            <span> {props.pages} </span>
-        </div >)
-
-}
 
 class SomeList extends Component {
     constructor(props, context) {
@@ -80,6 +44,8 @@ class SomeList extends Component {
             isLoading: false,
             isError: false,
             search: '',
+            sortOrder: -1,
+            sortProperty: SORT_PROPERTIES[0].value,
             filteredItems: []
         }
     }
@@ -88,26 +54,23 @@ class SomeList extends Component {
         // this.props.actions.updateUi(VIEW_MODE, !this.props.rowsView)
     }
 
-    goToNextPage() {
-        this.goToPage(this.state.page + 1)
-    }
-
-    goToPrevPage() {
-        this.goToPage(this.state.page - 1)
-    }
-
     goToPage(page) {
         console.log('page', page)
         this.setState({ page: parseInt(page) })
     }
 
     handleChange = (name, value) => {
+        console.log(name, name)
+        console.log(value, value)
         let newStateValue = { [name]: value }
         if (name === 'search') newStateValue.page = 0
         this.setState(newStateValue);
     }
 
-    changePageSize = (name, { itemsLength, page, pages }, newPageSize) => {
+    changePageSize = (name, { itemsLength, page, pages } = {}, ev) => {
+        ev.preventDefault()
+        ev.stopPropagation()
+        let newPageSize = parseInt(ev.target.value)
         let currentPageSize = this.state.pageSize
         let currentFirstIndex = page * currentPageSize // To have at least the first item on current page on the next page
         let nextPage = Math.floor(currentFirstIndex / newPageSize)
@@ -128,7 +91,14 @@ class SomeList extends Component {
                     (i._meta.description || ''))
                 return !!match
             })
-        // .sort((a, b) => b._id - a._id)
+            .sort((a, b) => {
+                let sortProperty = this.state.sortProperty
+
+                let propA = a[sortProperty] || a._meta[sortProperty]
+                let propB = b[sortProperty] || b._meta[sortProperty]
+
+                return (propA - propB) * this.state.sortOrder
+            })
         let filteredLength = filtered.length
 
         let page = this.state.page
@@ -144,17 +114,15 @@ class SomeList extends Component {
             items: paged,
             page: page,
             pages: maxPages,
-            itemsLength: filteredLength
+            itemsLength: filteredLength,
+            pageSize: pageSize
         }
     }
-
-
 
     render() {
         // TODO: optimise and make methods
         let data = this.filterItems(this.props.items)
         let items = data.items
-        console.log('data.pages', data.pages)
 
         return (
 
@@ -167,31 +135,33 @@ class SomeList extends Component {
 
                 <Input type='text' label='Search' icon='search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} maxLength={160} />
 
+                <Dropdown
+                    auto
+                    icon='sort'
+                    onChange={this.handleChange.bind(this, 'sortProperty')}
+                    source={SORT_PROPERTIES}
+                    value={this.state.sortProperty}
+                />
 
-                <Actions
+                <div>
+                    {/* <NewUnitForm addCampaign={this.props.actions.addCampaign} btnLabel="Add new Unit" title="Add new unit" /> */}
+                    <IconButton icon='arrow_upward' accent={this.state.sortOrder === 1} onClick={this.handleChange.bind(this, 'sortOrder', 1)} />
+                    <IconButton icon='arrow_downward' accent={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
+                </div>
+
+                <Pagination
                     page={data.page}
                     pages={data.pages}
+                    pageSize={this.state.pageSize}
                     itemsLength={data.itemsLength}
-                    changePageSize={this.changePageSize}
                     goToPage={this.goToPage.bind(this)}
                     goToLastPage={this.goToPage.bind(this, data.pages - 1)}
                     goToNextPage={this.goToPage.bind(this, data.page + 1)}
                     goToFirstPage={this.goToPage.bind(this, 0)}
-                    goToPrevPage={this.goToPage.bind(this, data.page - 1)} />
-
-                <span>  / Page size: </span>
-                {
-                    PAGE_SIZES.map((page) =>
-                        <Button
-                            floating
-                            mini
-                            label={page.value}
-                            onClick={this.changePageSize.bind(this, 'pageSize',
-                                { page: data.page, pages: data.pages, itemsLength: data.itemsLength }, page.value)}
-                            accent={page.value === this.state.pageSize}
-
-                        />)
-                }
+                    goToPrevPage={this.goToPage.bind(this, data.page - 1)}
+                    changePageSize={this.changePageSize.bind(this, 'pageSize',
+                        { page: data.page, pages: data.pages, itemsLength: data.itemsLength })}
+                />
 
                 <List
                     itemRenderer={this.props.itemRenderer}
@@ -207,25 +177,13 @@ class SomeList extends Component {
 }
 
 
-const getAllPagedValues = (current, max) => {
-    let pages = {}
-
-    for (var index = 0; index < max; index++) {
-        pages[index + ''] = index + 1 + ''
-    }
-
-    return pages
-}
-
-
 SomeList.propTypes = {
     // actions: PropTypes.object.isRequired,
     // account: PropTypes.object.isRequired,
     items: PropTypes.array.isRequired,
     // rowsView: PropTypes.bool.isRequired,
     itemRenderer: PropTypes.func
-};
-
+}
 
 function mapStateToProps(state) {
     // console.log('mapStateToProps Campaigns', state)

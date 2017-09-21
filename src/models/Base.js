@@ -4,11 +4,13 @@ class Base {
     constructor(name = '') {
         this._name = Helper.slugify(name)
 
+        let now = Date.now()
+
         // TODO: add _ipfs prop!!!!
         this._meta = {
             fullName: name,
-            createdOn: Date.now(), // TODO: fix date format
-            modifiedOn: null, //
+            createdOn: now, // TODO: fix date format
+            modifiedOn: now, // 
         }
     }
 
