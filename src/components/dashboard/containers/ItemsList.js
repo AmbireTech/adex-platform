@@ -3,8 +3,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as actions from './../../actions/itemActions'
-import { ItemsTypes } from './../../constants/itemsTypes'
+import * as actions from './../../../actions/itemActions'
+import { ItemsTypes } from './../../../constants/itemsTypes'
 // import Card from './../collection/Card'
 // import NewUnitForm from './../forms/NewUnitForm'
 // import Rows from './../collection/Rows'
@@ -12,8 +12,8 @@ import { IconButton, Button } from 'react-toolbox/lib/button'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import Input from 'react-toolbox/lib/input'
 import { Pagination, PAGE_SIZES } from './ListControls'
-import Rows from './../dashboard/collection/Rows'
-import Card from './../dashboard/collection/Card'
+import Rows from './../collection/Rows'
+import Card from './../collection/Card'
 
 const SORT_PROPERTIES = [
     { value: '_id', label: 'Id' },
@@ -29,7 +29,7 @@ const List = ({ list, itemRenderer }) => {
     </div>)
 }
 
-class SomeList extends Component {
+class ItemsList extends Component {
     constructor(props, context) {
         super(props, context);
 
@@ -201,7 +201,7 @@ class SomeList extends Component {
 }
 
 
-SomeList.propTypes = {
+ItemsList.propTypes = {
     actions: PropTypes.object.isRequired,
     items: PropTypes.array.isRequired,
     rowsView: PropTypes.bool.isRequired,
@@ -225,4 +225,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(SomeList);
+)(ItemsList);

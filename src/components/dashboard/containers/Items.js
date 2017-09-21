@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from './../../../actions/itemActions'
-import SomeList from './../../list/SomeList'
+import ItemsList from './ItemsList'
 
 class Items extends Component {
     render() {
@@ -19,7 +19,7 @@ class Items extends Component {
                     {this.props.newItemBtn()}
                 </div>
 
-                <SomeList items={items} viewModeId={this.props.viewModeId} />
+                <ItemsList items={items} viewModeId={this.props.viewModeId} />
             </div>
         )
     }

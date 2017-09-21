@@ -9,7 +9,7 @@ import Card from './../collection/Card'
 import { ItemsTypes } from './../../../constants/itemsTypes'
 import { IconButton } from 'react-toolbox/lib/button'
 import ItemHoc from './ItemHoc'
-import SomeList from './../../list/SomeList'
+import ItemsList from './ItemsList'
 
 const VIEW_MODE = 'campaignRowsView'
 
@@ -30,7 +30,7 @@ export const Campaign = (props) => {
 
     return (
         <div>
-            <SomeList items={units} viewModeId={VIEW_MODE} />
+            <ItemsList items={units} viewModeId={VIEW_MODE} />
         </div>
     )
 }
