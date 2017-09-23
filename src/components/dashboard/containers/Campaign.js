@@ -42,7 +42,7 @@ Campaign.propTypes = {
     units: PropTypes.array.isRequired,
     spinner: PropTypes.bool,
     rowsView: PropTypes.bool.isRequired
-};
+}
 
 function mapStateToProps(state) {
     // console.log('mapStateToProps Campaign', state)
@@ -52,17 +52,17 @@ function mapStateToProps(state) {
         units: state.items[ItemsTypes.AdUnit.id],
         spinner: state.spinners[ItemsTypes.Campaign.name],
         rowsView: !!state.ui[VIEW_MODE]
-    };
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
 const CampaignItem = ItemHoc(Campaign)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(CampaignItem);
+)(CampaignItem)

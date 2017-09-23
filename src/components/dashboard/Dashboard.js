@@ -49,7 +49,7 @@ class Dashboard extends React.Component {
                 viewModeId="rowsViewUnits"
                 itemsType={ItemsTypes.AdUnit.id}
                 newItemBtn={() =>
-                    <NewUnitForm addCampaign={this.props.actions.addCampaign} btnLabel="Add new Unit" title="Add new unit" />
+                    <NewUnitForm floating accent addCampaign={this.props.actions.addCampaign} btnLabel="Add new Unit" title="Add new unit"  />
                 } />
         )
     }
@@ -61,7 +61,7 @@ class Dashboard extends React.Component {
                 viewModeId="rowsViewCampaigns"
                 itemsType={ItemsTypes.Campaign.id}
                 newItemBtn={() =>
-                    <NewCampaignForm addCampaign={this.props.actions.addCampaign} btnLabel="Add new Campaign" title="Add new Campaign" />
+                    <NewCampaignForm floating accent addCampaign={this.props.actions.addCampaign} btnLabel="Add new Campaign" title="Add new Campaign" />
                 } />
         )
     }

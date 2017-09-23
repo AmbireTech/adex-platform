@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import Chip from 'react-toolbox/lib/chip'
 import { Button, IconButton } from 'react-toolbox/lib/button'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
@@ -12,7 +13,7 @@ import Base from './../../../models/Base'
 const TooltipFontIcon = Tooltip(FontIcon)
 
 export default function ItemHoc(Decorated) {
-    return class Item extends Component {
+    class Item extends Component {
         constructor(props) {
             super(props)
             this.save = this.save.bind(this)
@@ -128,4 +129,13 @@ export default function ItemHoc(Decorated) {
             )
         }
     }
+
+    Item.propTypes = {
+        actions: PropTypes.object.isRequired,
+        account: PropTypes.object.isRequired,
+        items: PropTypes.array.isRequired,
+        spinner: PropTypes.bool
+    }
+
+    return Item
 }

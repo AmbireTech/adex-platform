@@ -39,7 +39,7 @@ NewUnitForm.propTypes = {
     newItem: PropTypes.object.isRequired,
     btnLabel: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired
-};
+}
 
 function mapStateToProps(state) {
     // console.log('mapStateToProps Campaigns', state)

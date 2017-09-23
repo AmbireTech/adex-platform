@@ -1,15 +1,18 @@
 
 
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { Button } from 'react-toolbox/lib/button'
 // import ProgressBar from 'react-toolbox/lib/progress_bar'
 // import theme from './theme.css'
 import Dialog from 'react-toolbox/lib/dialog'
 import Input from 'react-toolbox/lib/input'
 import Base from './../../../models/Base'
+import theme from './theme.css'
 
 export default function NewItemHoc(Decorated) {
-    return class ItemForm extends Component {
+
+    class ItemForm extends Component {
         constructor(props) {
             super(props)
 
@@ -60,7 +63,17 @@ export default function NewItemHoc(Decorated) {
 
             return (
                 <div>
-                    <Button icon='add' label={this.props.btnLabel} onClick={this.handleToggle} primary={this.props.primary} raised={this.props.raised} accent={this.props.accent} flat={this.props.flat} />
+                    <Button
+                        floating={this.props.floating}
+                        icon='add'
+                        label={this.props.floating ? '' : this.props.btnLabel}
+                        onClick={this.handleToggle}
+                        primary={this.props.primary}
+                        raised={this.props.raised}
+                        accent={this.props.accent}
+                        flat={this.props.flat}
+                        className={this.props.floating ? theme.floating : ''}
+                    />
                     <Dialog
                         active={this.state.active}
                         onEscKeyDown={this.handleToggle}
@@ -80,4 +93,16 @@ export default function NewItemHoc(Decorated) {
             )
         }
     }
+
+    ItemForm.propTypes = {
+        actions: PropTypes.object.isRequired,
+        account: PropTypes.object.isRequired,
+        newItem: PropTypes.object.isRequired,
+        btnLabel: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+        floating: PropTypes.bool
+    }
+
+    return ItemForm
 }
+
