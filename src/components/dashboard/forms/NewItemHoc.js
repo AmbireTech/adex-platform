@@ -58,7 +58,7 @@ export default function NewItemHoc(Decorated) {
 
         render() {
 
-            let item = this.state.item
+            let item = this.state.item || {}
             item._meta = item._meta || {}
 
             return (

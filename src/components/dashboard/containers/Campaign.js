@@ -26,10 +26,9 @@ export const Campaign = (props) => {
         if (props.units[meta.items[index]]) units.push(props.units[meta.items[index]])
     }
 
-    units = units.slice(0, 5)
-
     return (
         <div>
+            <h2>Ad units in this campaign </h2>
             <ItemsList items={units} viewModeId={VIEW_MODE} />
         </div>
     )

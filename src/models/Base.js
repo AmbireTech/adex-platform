@@ -29,11 +29,6 @@ class Base {
     // Can we change all meta or validate each with setter ?
     // set meta(value) { this._meta = value }  
 
-    // To use for react reducer when updated in order to not mutate the state
-    getClone() {
-        return Object.assign(Object.create(this), this)
-    }
-
     plainObj() {
         return { ...this }
     }
@@ -47,7 +42,7 @@ class Base {
         // TODO: Handle remove key value
         for (var key in meta) {
             if (meta.hasOwnProperty(key) && newMeta.hasOwnProperty(key)) {
-                newMeta[key] = meta[key] || newMeta[key]
+                newMeta[key] = meta[key] //|| newMeta[key]
 
                 if (hasDirtyProps && dirtyProps.indexOf(key) < 0) {
                     dirtyProps.push(key)
