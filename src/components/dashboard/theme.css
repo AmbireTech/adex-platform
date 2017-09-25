@@ -6,7 +6,8 @@
   
 .panel {
   bottom: 0;
-  overflow-y: auto;
+  overflow-y: auto;  
+  overflow-y: overlay;
   top: 64px;
   padding: 20px;
 }

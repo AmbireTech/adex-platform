@@ -23,7 +23,7 @@ export const Campaign = (props) => {
     if (!item) return (<h1>'404'</h1>)
 
     for (var index = 0; index < meta.items.length; index++) {
-        if (props.units[meta.items[index]]) units.push(props.units[meta.items[index]])
+        if (props.units[meta.items[index]] && !props.units[meta.items[index]]._meta.deleted) units.push(props.units[meta.items[index]])
     }
 
     return (

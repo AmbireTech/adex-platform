@@ -7,6 +7,7 @@ import Dialog from 'react-toolbox/lib/dialog'
 import Input from 'react-toolbox/lib/input'
 import Base from './../../../models/Base'
 import theme from './theme.css'
+import { Tab, Tabs } from 'react-toolbox'
 
 export default function NewItemHoc(Decorated) {
 
@@ -18,7 +19,8 @@ export default function NewItemHoc(Decorated) {
 
             this.state = {
                 active: false,
-                item: {}
+                item: {},
+                tabIndex: 0
             }
         }
 
@@ -54,6 +56,10 @@ export default function NewItemHoc(Decorated) {
             this.props.actions.resetNewItem(this.state.item)
         }
 
+        handleTabChange = (index) => {
+            this.setState({ index })
+        }
+
         render() {
 
             let item = this.state.item || {}
@@ -61,6 +67,7 @@ export default function NewItemHoc(Decorated) {
 
             return (
                 <div>
+
                     <Button
                         floating={this.props.floating}
                         icon='add'
@@ -78,15 +85,24 @@ export default function NewItemHoc(Decorated) {
                         onOverlayClick={this.handleToggle}
                         title={this.props.title}
                     >
-                        <section>
-                            <Input type='text' label='Name' name='name' value={item._meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
-                            <Input type='text' label='Image url' name='img' value={item._meta.img} onChange={this.handleChange.bind(this, 'img')} maxLength={1024} />
-                            <Input type='text' multiline rows={5} label='Description' name='desctiption' value={item._meta.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
-                            <Decorated {...this.props} save={this.save} handleChange={this.handleChange} />
-                            <br />
-                            <Button icon='save' label='Save' raised primary onClick={this.save} />
-                        </section>
+                        <Tabs index={this.state.index} onChange={this.handleTabChange} fixed inverse>
+                            <Tab label='New'>
+                                <section>
+                                    <Input type='text' label='Name' name='name' value={item._meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
+                                    <Input type='text' label='Image url' name='img' value={item._meta.img} onChange={this.handleChange.bind(this, 'img')} maxLength={1024} />
+                                    <Input type='text' multiline rows={5} label='Description' name='desctiption' value={item._meta.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
+                                    <Decorated {...this.props} save={this.save} handleChange={this.handleChange} />
+                                    <br />
+                                    <Button icon='save' label='Save' raised primary onClick={this.save} />
+                                </section>
+                            </Tab>
+                            <Tab label='Add existing'>
+                                <small>Add existing</small>
+
+                            </Tab>
+                        </Tabs>
                     </Dialog>
+
                 </div>
             )
         }

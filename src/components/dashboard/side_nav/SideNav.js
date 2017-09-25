@@ -10,6 +10,7 @@ import theme from './theme.css'
 import { withReactRouterLink } from './../../common/rr_hoc/RRHoc.js'
 import NewCampaignForm from './../forms/NewCampaignForm'
 import NewUnitForm from './../forms/NewUnitForm'
+import NewItemWithDialog from './../forms/NewItemWithDialog'
 
 const RRListItem = withReactRouterLink(ListItem)
 
@@ -61,11 +62,18 @@ class SideNav extends Component {
                         selectable={false}
                         ripple={false}
                     >
-                        <NewUnitForm
+                        <NewItemWithDialog
+                            btnLabel="Add new Unit"
+                            title="Add new unit"
+                            accent={true}
+                            flat={true}
                             raised
-                            addCampaign={this.props.actions.additem}
-                            accent={true} flat={true}
-                            btnLabel="Add new Unit" title="Add new unit"
+                            newForm={(props) =>
+                                <NewUnitForm
+                                    {...props}
+                                    addCampaign={this.props.actions.addItem}
+                                />
+                            }
                         />
                     </RRListItem>
                 </List>

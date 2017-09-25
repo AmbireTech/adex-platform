@@ -15,6 +15,7 @@ import { Pagination, PAGE_SIZES } from './ListControls'
 import Rows from './../collection/Rows'
 import Card from './../collection/Card'
 import { Grid, Row, Col } from 'react-flexbox-grid'
+import theme from './theme.css'
 
 const SORT_PROPERTIES = [
     { value: '_id', label: 'Id' },
@@ -141,9 +142,9 @@ class ItemsList extends Component {
 
         return (
 
-            <div>
-                <Grid fluid>
-                    <Row middle='md'>
+            <div >
+                <Grid fluid >
+                    <Row middle='md' className={theme.itemsListControls}>
                         <Col md={3}>
                             <Input type='text' label='Search' icon='search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} maxLength={160} />
                         </Col>
@@ -189,23 +190,25 @@ class ItemsList extends Component {
                         </Col>
                     </Row>
                 </Grid>
+                {/* <Grid fluid> */}
 
-                {!!this.props.rowsView ?
-                    <Rows
-                        side={this.props.side}
-                        item={items}
-                        rows={items}
-                        delete={this.props.actions.deleteItem} />
-                    :
-                    <List
-                        itemRenderer={this.props.itemRenderer || this.renderCard}
-                        list={items}
-                        isError={this.state.isError}
-                        isLoading={this.state.isLoading}
-                        side={this.props.side}
+                    {!!this.props.rowsView ?
+                        <Rows
+                            side={this.props.side}
+                            item={items}
+                            rows={items}
+                            delete={this.props.actions.deleteItem} />
+                        :
+                        <List
+                            itemRenderer={this.props.itemRenderer || this.renderCard}
+                            list={items}
+                            isError={this.state.isError}
+                            isLoading={this.state.isLoading}
+                            side={this.props.side}
 
-                    />
-                }
+                        />
+                    }
+                {/* </Grid> */}
             </div >
         )
     }

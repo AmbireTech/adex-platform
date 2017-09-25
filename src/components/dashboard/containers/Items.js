@@ -16,7 +16,7 @@ class Items extends Component {
             <div>
                 <h1> {this.props.header} </h1>
                 <div>
-                    {this.props.newItemBtn()}
+                    {this.props.newItemBtn ? this.props.newItemBtn() : null}
                 </div>
 
                 <ItemsList items={items} viewModeId={this.props.viewModeId} />

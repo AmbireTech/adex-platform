@@ -6,7 +6,7 @@ import * as actions from './../../../actions/itemActions'
 // import Input from 'react-toolbox/lib/input'
 // import DatePicker from 'react-toolbox/lib/date_picker'
 import { ItemsTypes, AdTypes, Sizes } from './../../../constants/itemsTypes'
-import NewItemHoc from './NewItemHoc'
+import NewItemHoc from './NewItem'
 import Dropdown from 'react-toolbox/lib/dropdown'
 
 class NewUnitForm extends Component {
@@ -37,8 +37,7 @@ NewUnitForm.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     newItem: PropTypes.object.isRequired,
-    btnLabel: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired
+    title: PropTypes.string
 }
 
 function mapStateToProps(state) {

@@ -18,6 +18,7 @@ import Campaign from './containers/Campaign'
 import Unit from './containers/Unit'
 import Items from './containers/Items'
 import { ItemsTypes } from './../../constants/itemsTypes'
+import NewItemWithDialog from './forms/NewItemWithDialog'
 
 class Dashboard extends React.Component {
     state = {
@@ -49,7 +50,19 @@ class Dashboard extends React.Component {
                 viewModeId="rowsViewUnits"
                 itemsType={ItemsTypes.AdUnit.id}
                 newItemBtn={() =>
-                    <NewUnitForm floating accent addCampaign={this.props.actions.addCampaign} btnLabel="Add new Unit" title="Add new unit"  />
+                    <NewItemWithDialog
+                        btnLabel="Add new Unit"
+                        title="Add new unit"
+                        accent
+                        floating
+                        newForm={(props) =>
+                            <NewUnitForm
+                                {...props}
+                                addCampaign={this.props.actions.addItem}
+                            />
+                        }
+                    />
+
                 } />
         )
     }
