@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import * as actions from './../../../actions/itemActions'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import { ItemsTypes } from './../../../constants/itemsTypes'
-import NewItemHoc from './NewItemHoc'
+import NewItemHoc from './NewItem'
 
 class NewCampaignForm extends Component {
 
@@ -35,8 +35,7 @@ NewCampaignForm.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     newItem: PropTypes.object.isRequired,
-    btnLabel: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired
+    title: PropTypes.string
 };
 
 function mapStateToProps(state) {

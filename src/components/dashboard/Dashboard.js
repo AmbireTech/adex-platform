@@ -58,7 +58,6 @@ class Dashboard extends React.Component {
                         newForm={(props) =>
                             <NewUnitForm
                                 {...props}
-                                addCampaign={this.props.actions.addItem}
                             />
                         }
                     />
@@ -74,7 +73,19 @@ class Dashboard extends React.Component {
                 viewModeId="rowsViewCampaigns"
                 itemsType={ItemsTypes.Campaign.id}
                 newItemBtn={() =>
-                    <NewCampaignForm floating accent addCampaign={this.props.actions.addCampaign} btnLabel="Add new Campaign" title="Add new Campaign" />
+                    <NewItemWithDialog
+                        floating
+                        accent
+                        addCampaign={this.props.actions.addCampaign}
+                        btnLabel="Add new Campaign"
+                        title="Add new Campaign"
+                        newForm={(props) =>
+                            <NewCampaignForm
+                                {...props}
+                            />
+                        }
+
+                    />
                 } />
         )
     }

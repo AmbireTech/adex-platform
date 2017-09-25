@@ -42,11 +42,16 @@ class SideNav extends Component {
                         selectable={false}
                         ripple={false}
                     >
-                        <NewCampaignForm
+                        <NewItemWithDialog
+                            btnLabel="Add new campaign"
+                            title="Add new campaign"
+                            flat
                             raised
-                            addCampaign={this.props.actions.addItem}
-                            flat={true}
-                            btnLabel="Add new campaign" title="Add new campaign"
+                            newForm={(props) =>
+                                <NewCampaignForm
+                                    {...props}
+                                />
+                            }
                         />
                     </RRListItem>
                     <RRListItem
@@ -71,7 +76,6 @@ class SideNav extends Component {
                             newForm={(props) =>
                                 <NewUnitForm
                                     {...props}
-                                    addCampaign={this.props.actions.addItem}
                                 />
                             }
                         />
