@@ -41,6 +41,7 @@
     "react-dev-utils": "^3.1.0",
     "react-dom": "^15.6.1",
     "react-error-overlay": "^1.0.10",
+    "react-flexbox-grid": "^1.1.5",
     "react-list": "^0.8.7",
     "react-redux": "^5.0.6",
     "react-router": "^4.1.2",

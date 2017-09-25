@@ -42,6 +42,7 @@ class SideNav extends Component {
                         ripple={false}
                     >
                         <NewCampaignForm
+                            raised
                             addCampaign={this.props.actions.addItem}
                             flat={true}
                             btnLabel="Add new campaign" title="Add new campaign"
@@ -61,6 +62,7 @@ class SideNav extends Component {
                         ripple={false}
                     >
                         <NewUnitForm
+                            raised
                             addCampaign={this.props.actions.additem}
                             accent={true} flat={true}
                             btnLabel="Add new Unit" title="Add new unit"

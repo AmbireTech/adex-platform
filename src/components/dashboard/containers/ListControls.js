@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import Autocomplete from 'react-toolbox/lib/autocomplete'
 import { IconButton, Button } from 'react-toolbox/lib/button'
+import Slider from 'react-toolbox/lib/slider'
+import { Grid, Row, Col } from 'react-flexbox-grid'
+import theme from './theme.css'
 
 export const PAGE_SIZES = [
     { value: 5, label: 5 },
@@ -12,51 +15,50 @@ export const PAGE_SIZES = [
 export const Pagination = (props) => {
 
     return (
-        <div style={{ display: 'inline-block' }}>
 
-            <IconButton
-                disabled={!(props.page > 0 && props.pages > props.page)}
-                icon='chevron_left'
-                onClick={props.goToPrevPage} />
+        <Grid fluid>
+            <Row middle='md'>
+                <Col md={6}>
 
-            <div style={{ display: 'inline-block', width: 70 }}>
-                <Autocomplete
-                    allowCreate={false}
-                    direction="down"
-                    label='page'
-                    multiple={false}
-                    onChange={props.goToPage}
-                    source={getAllPagedValues(props.page, props.pages)}
-                    hint={props.page + 1 + ''}
-                    value={props.page + ''}
-                    suggestionMatch='anywhere'
-                    showSuggestionsWhenValueIsSet={true}
-                />
-            </div>
+                    <IconButton
+                        disabled={!(props.page > 0 && props.pages > props.page)}
+                        icon='chevron_left'
+                        onClick={props.goToPrevPage} />
 
-            <IconButton
-                disabled={!(props.page < (props.pages - 1))}
-                icon='chevron_right'
-                onClick={props.goToNextPage} />
+                    <div style={{ display: 'inline-block', width: 70 }}>
+                        <Autocomplete
+                            allowCreate={false}
+                            direction="down"
+                            label='page'
+                            multiple={false}
+                            onChange={props.goToPage}
+                            source={getAllPagedValues(props.page, props.pages)}
+                            hint={props.page + 1 + ''}
+                            value={props.page + ''}
+                            suggestionMatch='anywhere'
+                            showSuggestionsWhenValueIsSet={true}
+                        />
+                    </div>
 
-            <span> of </span>
-            <span> {props.pages} </span>
-            <span>  / Page size: </span>
-            {
-                PAGE_SIZES.map((page, index) =>
-                    <Button
-                        key={index}
-                        floating
-                        mini
-                        label={page.value + ''}
-                        value={page.value}
-                        onClick={props.changePageSize}
-                        accent={page.value === props.pageSize}
-                        style={(page.value === props.pageSize) && (page.value === 46) ? {background: '#0000cf', color: '#D4FF00'} : null}
-                    />
-                )
-            }
-        </div >)
+                    <IconButton
+                        disabled={!(props.page < (props.pages - 1))}
+                        icon='chevron_right'
+                        onClick={props.goToNextPage} />
+
+                    <span> of </span>
+                    <span> {props.pages} </span>
+                </Col>
+
+                <Col md={6} style={{ position: 'relative' }}>
+                    <label className={theme.sliderLabel}> Page size </label>
+                    <Slider pinned snaps min={5} max={25} step={5} value={props.pageSize} onChange={props.changePageSize} />
+
+                </Col>
+
+            </Row>
+        </Grid>
+
+    )
 
 }
 

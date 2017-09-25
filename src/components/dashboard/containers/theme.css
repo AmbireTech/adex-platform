@@ -21,6 +21,16 @@
     }
 }
 
+.sliderLabel {
+    line-height: 16px;
+    font-size: 12px;
+    opacity: 0.26;
+    position: absolute;
+    left: 24px;
+    bottom: 100%;
+
+}
+
 
 
 .top {

@@ -14,6 +14,7 @@ import Input from 'react-toolbox/lib/input'
 import { Pagination, PAGE_SIZES } from './ListControls'
 import Rows from './../collection/Rows'
 import Card from './../collection/Card'
+import { Grid, Row, Col } from 'react-flexbox-grid'
 
 const SORT_PROPERTIES = [
     { value: '_id', label: 'Id' },
@@ -36,7 +37,7 @@ class ItemsList extends Component {
         this.state = {
             items: [],
             page: 0,
-            pageSize: PAGE_SIZES[1].value,
+            pageSize: 10,
             isLoading: false,
             isError: false,
             search: '',
@@ -64,10 +65,7 @@ class ItemsList extends Component {
         this.setState(newStateValue);
     }
 
-    changePageSize = (name, { itemsLength, page, pages } = {}, ev) => {
-        ev.preventDefault()
-        ev.stopPropagation()
-        let newPageSize = parseInt(ev.target.value, 10)
+    changePageSize = (name, { itemsLength, page, pages } = {}, newPageSize) => {
         let currentPageSize = this.state.pageSize
         let currentFirstIndex = page * currentPageSize // To have at least the first item on current page on the next page
         let nextPage = Math.floor(currentFirstIndex / newPageSize)
@@ -144,40 +142,53 @@ class ItemsList extends Component {
         return (
 
             <div>
-                <Input type='text' label='Search' icon='search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} maxLength={160} />
+                <Grid fluid>
+                    <Row middle='md'>
+                        <Col md={3}>
+                            <Input type='text' label='Search' icon='search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} maxLength={160} />
+                        </Col>
+                        <Col md={2}>
+                            <Dropdown
+                                auto
+                                icon='sort'
+                                label='Sort by'
+                                onChange={this.handleChange.bind(this, 'sortProperty')}
+                                source={SORT_PROPERTIES}
+                                value={this.state.sortProperty}
+                            />
+                        </Col>
+                        <Col md={1}>
+                            <div>
+                                <IconButton icon='arrow_upward' accent={this.state.sortOrder === 1} onClick={this.handleChange.bind(this, 'sortOrder', 1)} />
+                                <IconButton icon='arrow_downward' accent={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
+                            </div>
+                        </Col>
 
-                <Dropdown
-                    auto
-                    icon='sort'
-                    label='Sort by'
-                    onChange={this.handleChange.bind(this, 'sortProperty')}
-                    source={SORT_PROPERTIES}
-                    value={this.state.sortProperty}
-                />
 
-                <div>
-                    <IconButton icon='arrow_upward' accent={this.state.sortOrder === 1} onClick={this.handleChange.bind(this, 'sortOrder', 1)} />
-                    <IconButton icon='arrow_downward' accent={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
-                </div>
 
-                <div>
-                    <IconButton icon='view_module' accent={!this.props.rowsView} onClick={this.toggleView.bind(this, false)} />
-                    <IconButton icon='view_list' accent={this.props.rowsView} onClick={this.toggleView.bind(this, true)} />
-                </div>
-
-                <Pagination
-                    page={data.page}
-                    pages={data.pages}
-                    pageSize={this.state.pageSize}
-                    itemsLength={data.itemsLength}
-                    goToPage={this.goToPage.bind(this)}
-                    goToLastPage={this.goToPage.bind(this, data.pages - 1)}
-                    goToNextPage={this.goToPage.bind(this, data.page + 1)}
-                    goToFirstPage={this.goToPage.bind(this, 0)}
-                    goToPrevPage={this.goToPage.bind(this, data.page - 1)}
-                    changePageSize={this.changePageSize.bind(this, 'pageSize',
-                        { page: data.page, pages: data.pages, itemsLength: data.itemsLength })}
-                />
+                        <Col md={5}>
+                            <Pagination
+                                page={data.page}
+                                pages={data.pages}
+                                pageSize={this.state.pageSize}
+                                itemsLength={data.itemsLength}
+                                goToPage={this.goToPage.bind(this)}
+                                goToLastPage={this.goToPage.bind(this, data.pages - 1)}
+                                goToNextPage={this.goToPage.bind(this, data.page + 1)}
+                                goToFirstPage={this.goToPage.bind(this, 0)}
+                                goToPrevPage={this.goToPage.bind(this, data.page - 1)}
+                                changePageSize={this.changePageSize.bind(this, 'pageSize',
+                                    { page: data.page, pages: data.pages, itemsLength: data.itemsLength })}
+                            />
+                        </Col>
+                        <Col md={1}>
+                            <div>
+                                <IconButton icon='view_module' accent={!this.props.rowsView} onClick={this.toggleView.bind(this, false)} />
+                                <IconButton icon='view_list' accent={this.props.rowsView} onClick={this.toggleView.bind(this, true)} />
+                            </div>
+                        </Col>
+                    </Row>
+                </Grid>
 
                 {!!this.props.rowsView ?
                     <Rows
