@@ -145,7 +145,7 @@ class ItemsList extends Component {
             <div >
                 <Grid fluid >
                     <Row middle='md' className={theme.itemsListControls}>
-                        <Col md={3}>
+                        <Col lg={3}>
                             <Input type='text' label='Search' icon='search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} maxLength={160} />
                         </Col>
                         <Col md={2}>
@@ -158,7 +158,7 @@ class ItemsList extends Component {
                                 value={this.state.sortProperty}
                             />
                         </Col>
-                        <Col md={1}>
+                        <Col lg={1}>
                             <div>
                                 <IconButton icon='arrow_upward' accent={this.state.sortOrder === 1} onClick={this.handleChange.bind(this, 'sortOrder', 1)} />
                                 <IconButton icon='arrow_downward' accent={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
@@ -167,7 +167,7 @@ class ItemsList extends Component {
 
 
 
-                        <Col md={5}>
+                        <Col lg={5}>
                             <Pagination
                                 page={data.page}
                                 pages={data.pages}
@@ -182,7 +182,7 @@ class ItemsList extends Component {
                                     { page: data.page, pages: data.pages, itemsLength: data.itemsLength })}
                             />
                         </Col>
-                        <Col md={1}>
+                        <Col lg={1}>
                             <div>
                                 <IconButton icon='view_module' accent={!this.props.rowsView} onClick={this.toggleView.bind(this, false)} />
                                 <IconButton icon='view_list' accent={this.props.rowsView} onClick={this.toggleView.bind(this, true)} />

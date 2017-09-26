@@ -18,7 +18,7 @@ export const Pagination = (props) => {
 
         <Grid fluid>
             <Row middle='md'>
-                <Col md={6}>
+                <Col lg={6}>
 
                     <IconButton
                         disabled={!(props.page > 0 && props.pages > props.page)}
@@ -49,7 +49,7 @@ export const Pagination = (props) => {
                     <span> {props.pages} </span>
                 </Col>
 
-                <Col md={6} style={{ position: 'relative' }}>
+                <Col lg={6} style={{ position: 'relative' }}>
                     <label className={theme.sliderLabel}> Page size </label>
                     <Slider pinned snaps min={5} max={25} step={5} value={props.pageSize} onChange={props.changePageSize} />
 

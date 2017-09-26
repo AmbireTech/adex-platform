@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -13,6 +12,7 @@ import ItemsList from './ItemsList'
 import NewUnitForm from './../forms/NewUnitForm'
 import NewItemWithDialog from './../forms/NewItemWithDialog'
 import { Tab, Tabs } from 'react-toolbox'
+import theme from './theme.css'
 
 const VIEW_MODE = 'campaignRowsView'
 
@@ -30,15 +30,14 @@ export class Campaign extends Component {
         this.setState({ tabIndex: index })
     }
 
-    renderTabs() {
+    renderTabs({ units, ...other }) {
         return (
             <section>
-                <Tabs index={this.state.tabIndex} onChange={this.handleTabChange.bind(this)}>
-                    <Tab label='Primary'><small>Primary content</small></Tab>
-                    <Tab label='Secondary' onActive={this.handleActive}><small>Secondary content</small></Tab>
-                    <Tab label='Third' disabled><small>Disabled content</small></Tab>
-                    <Tab label='Fourth' hidden><small>Fourth content hidden</small></Tab>
-                    <Tab label='Fifth'><small>Fifth content</small></Tab>
+                <Tabs theme={theme} fixed index={this.state.tabIndex} onChange={this.handleTabChange.bind(this)}>
+                    <Tab label='New Ad Unit'>
+                        <NewUnitForm {...other} />
+                    </Tab>
+                    <Tab theme={theme} label='Add existing Ad Unit'><section style={{ overflowY: 'scroll', height: '100%' }}><ItemsList items={units} viewModeId={VIEW_MODE} /></section></Tab>
                 </Tabs>
             </section>
         )
@@ -50,27 +49,32 @@ export class Campaign extends Component {
         let item = this.props.item
         let meta = item._meta
         let units = []
+        let otherUnits = this.props.units.slice(0)
 
         if (!item) return (<h1>'404'</h1>)
 
         for (var index = 0; index < meta.items.length; index++) {
-            if (this.props.units[meta.items[index]] && !this.props.units[meta.items[index]]._meta.deleted) units.push(this.props.units[meta.items[index]])
+            if (this.props.units[meta.items[index]] && !this.props.units[meta.items[index]]._meta.deleted) {
+                units.push(this.props.units[meta.items[index]])
+                otherUnits[meta.items[index]].used = true
+            }
         }
 
         return (
             <div>
                 <h2>Ad units in this campaign </h2>
-                <div><NewItemWithDialog
-                    floating
-                    accent
-                    addCampaign={this.props.actions.addCampaign}
-                    btnLabel="Add new Unit to campaign"
-                    title="Add new Unit to campaign"
-                    newForm={
-                        this.renderTabs.bind(this)
-                    }
+                <div>
+                    <NewItemWithDialog
+                        accent
+                        addCampaign={this.props.actions.addCampaign}
+                        btnLabel="Add new Unit to campaign"
+                        title="Add new Unit to campaign"
+                        newForm={
+                            this.renderTabs.bind(this, { units: otherUnits })
+                        }
 
-                /> </div>
+                    />
+                </div>
                 <ItemsList items={units} viewModeId={VIEW_MODE} />
             </div>
         )

@@ -53,3 +53,7 @@
         text-align: right;
     }
 }
+
+.tab{
+    max-height: 70vh;
+}
