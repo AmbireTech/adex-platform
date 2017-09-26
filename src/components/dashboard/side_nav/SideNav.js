@@ -40,8 +40,7 @@ class SideNav extends Component {
                         theme={theme}
                         className="side-nav-link"
                     />
-                    <RRListItem
-                        to={{ pathname: '/dashboard/' + this.props.side + "/campaigns" }}
+                    <ListItem
                         selectable={false}
                         ripple={false}
                     >
@@ -51,7 +50,7 @@ class SideNav extends Component {
                             flat
                             raised
                         />
-                    </RRListItem>
+                    </ListItem>
                     <RRListItem
                         to={{ pathname: '/dashboard/' + this.props.side + "/units" }}
                         selectable={true}
@@ -60,8 +59,7 @@ class SideNav extends Component {
                         theme={theme}
                         className="side-nav-link"
                     />
-                    <RRListItem
-                        to={'/dashboard/' + this.props.side + "/units"}
+                    <ListItem
                         selectable={false}
                         ripple={false}
                     >
@@ -72,7 +70,7 @@ class SideNav extends Component {
                             flat={true}
                             raised
                         />
-                    </RRListItem>
+                    </ListItem>
                 </List>
             </div >
         );

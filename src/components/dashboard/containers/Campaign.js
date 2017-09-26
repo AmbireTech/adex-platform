@@ -13,6 +13,7 @@ import NewUnitForm from './../forms/NewUnitForm'
 import NewItemWithDialog from './../forms/NewItemWithDialog'
 import { Tab, Tabs } from 'react-toolbox'
 import theme from './theme.css'
+import AddItemDialog from './AddItemDialog'
 
 const VIEW_MODE = 'campaignRowsView'
 
@@ -64,16 +65,14 @@ export class Campaign extends Component {
             <div>
                 <h2>Ad units in this campaign </h2>
                 <div>
-                    <NewItemWithDialog
+                    <AddItemDialog
                         accent
                         addCampaign={this.props.actions.addCampaign}
                         btnLabel="Add new Unit to campaign"
-                        title="Add new Unit to campaign"
-                        newForm={
-                            this.renderTabs.bind(this, { units: otherUnits })
-                        }
-
-                    />
+                        title=""
+                    >
+                        {this.renderTabs({ units: otherUnits })}
+                    </AddItemDialog>
                 </div>
                 <ItemsList items={units} viewModeId={VIEW_MODE} />
             </div>

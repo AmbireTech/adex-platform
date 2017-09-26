@@ -55,7 +55,7 @@
 }
 
 .tab {
-    max-height: 70vh;
+    max-height: calc(70vh - 100px);
     outline: none;
 }
 
@@ -70,4 +70,12 @@
 
 .icon {
     line-height: normal !important;
+}
+
+.wrapper{
+    z-index: 400;
+}
+
+.dialog{
+    min-height: 70vh;
 }

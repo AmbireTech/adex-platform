@@ -40,9 +40,20 @@ export default function NewItemHoc(Decorated) {
 
         save() {
             this.props.actions.addItem(this.state.item)
+
+            // TODO:.....
             if (typeof this.props.onSave === 'function') {
                 this.props.onSave()
             }
+
+            if (Array.isArray(this.props.onSave)) {
+                for (var index = 0; index < this.props.onSave.length; index++) {
+                    if (typeof this.props.onSave[index] === 'function') {
+                        this.props.onSave[index].onSave()
+                    }
+                }
+            }
+
             this.props.actions.resetNewItem(this.state.item)
         }
 

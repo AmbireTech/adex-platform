@@ -3,3 +3,11 @@
     top: 90px;
     right: 40px;
 }
+
+.wrapper{
+    z-index: 400;
+}
+
+.dialog{
+    min-height: 70vh;
+}

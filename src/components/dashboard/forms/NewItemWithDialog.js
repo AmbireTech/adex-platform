@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Button } from 'react-toolbox/lib/button'
+import { Button, IconButton } from 'react-toolbox/lib/button'
 // import theme from './theme.css'
 import Dialog from 'react-toolbox/lib/dialog'
 import theme from './theme.css'
@@ -34,11 +34,19 @@ export default function ItemHoc(Decorated) {
                         className={this.props.floating ? theme.floating : ''}
                     />
                     <Dialog
+                        theme={theme}
                         active={this.state.active}
                         onEscKeyDown={this.handleToggle}
                         onOverlayClick={this.handleToggle}
                         title={this.props.title}
+                        type={this.props.type || 'fullscreen'}
                     >
+                        <IconButton
+                            icon='close'
+                            onClick={this.handleToggle}
+                            primary
+                            style={{position: 'absolute', top: 20, right: 20}}
+                        />
                         <Decorated {...this.props} onSave={this.handleToggle} />
                     </Dialog>
 
