@@ -20,6 +20,9 @@ import Items from './containers/Items'
 import { ItemsTypes } from './../../constants/itemsTypes'
 import NewItemWithDialog from './forms/NewItemWithDialog'
 
+const NewUnitFormWithDialog = NewItemWithDialog(NewUnitForm)
+const NewCampaignFormWithDialog = NewItemWithDialog(NewCampaignForm)
+
 class Dashboard extends React.Component {
     state = {
         drawerActive: false,
@@ -50,18 +53,12 @@ class Dashboard extends React.Component {
                 viewModeId="rowsViewUnits"
                 itemsType={ItemsTypes.AdUnit.id}
                 newItemBtn={() =>
-                    <NewItemWithDialog
+                    <NewUnitFormWithDialog
                         btnLabel="Add new Unit"
                         title="Add new unit"
                         accent
                         floating
-                        newForm={(props) =>
-                            <NewUnitForm
-                                {...props}
-                            />
-                        }
                     />
-
                 } />
         )
     }
@@ -73,18 +70,12 @@ class Dashboard extends React.Component {
                 viewModeId="rowsViewCampaigns"
                 itemsType={ItemsTypes.Campaign.id}
                 newItemBtn={() =>
-                    <NewItemWithDialog
+                    <NewCampaignFormWithDialog
                         floating
                         accent
                         addCampaign={this.props.actions.addCampaign}
                         btnLabel="Add new Campaign"
                         title="Add new Campaign"
-                        newForm={(props) =>
-                            <NewCampaignForm
-                                {...props}
-                            />
-                        }
-
                     />
                 } />
         )

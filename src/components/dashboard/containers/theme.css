@@ -54,6 +54,20 @@
     }
 }
 
-.tab{
+.tab {
     max-height: 70vh;
+    outline: none;
+}
+
+.button {
+    color: #000 !important;
+}
+
+.accent {
+    line-height: normal !important;
+    height: auto !important;
+}
+
+.icon {
+    line-height: normal !important;
 }

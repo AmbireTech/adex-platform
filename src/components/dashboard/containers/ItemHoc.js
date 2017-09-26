@@ -81,20 +81,25 @@ export default function ItemHoc(Decorated) {
                     <div>
                         <div className={theme.top + ' ' + theme.left}>
                             {this.state.activeFields.fullName ?
-                                <Input type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={32} />
+                                <Input type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                                 :
                                 <h2>
                                     <span> {meta.fullName} </span>
-                                    <IconButton style={{ float: 'right' }} icon='edit' accent onClick={this.setActiveFields.bind(this, 'fullName', true)} />
+                                    <span><IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'fullName', true)} /></span>
                                 </h2>
                             }
 
                             {this.state.activeFields.description ?
-                                <Input multiline rows={3} type='text' label='description' name='description' value={meta.description} onChange={this.handleChange.bind(this, 'description')} maxLength={32} />
+                                <Input multiline rows={3} type='text' label='description' name='description' value={meta.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
                                 :
                                 <div>
-                                    <p> {meta.description} </p>
-                                    <IconButton style={{ float: 'right' }} icon='edit' accent onClick={this.setActiveFields.bind(this, 'description', true)} />
+                                    <p>
+                                        {meta.description}
+                                        <span>
+                                            <IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'description', true)} />
+                                        </span>
+                                    </p>
+
                                 </div>
                             }
 
@@ -118,8 +123,6 @@ export default function ItemHoc(Decorated) {
                         </div>
 
                     </div>
-
-
 
                     <div>
                         <Decorated {...this.props} item={this.state.item} save={this.save} handleChange={this.handleChange} />

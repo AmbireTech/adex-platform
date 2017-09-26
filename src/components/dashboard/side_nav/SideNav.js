@@ -12,6 +12,9 @@ import NewCampaignForm from './../forms/NewCampaignForm'
 import NewUnitForm from './../forms/NewUnitForm'
 import NewItemWithDialog from './../forms/NewItemWithDialog'
 
+const NewUnitFormWithDialog = NewItemWithDialog(NewUnitForm)
+const NewCampaignFormWithDialog = NewItemWithDialog(NewCampaignForm)
+
 const RRListItem = withReactRouterLink(ListItem)
 
 class SideNav extends Component {
@@ -42,16 +45,11 @@ class SideNav extends Component {
                         selectable={false}
                         ripple={false}
                     >
-                        <NewItemWithDialog
+                        <NewCampaignFormWithDialog
                             btnLabel="Add new campaign"
                             title="Add new campaign"
                             flat
                             raised
-                            newForm={(props) =>
-                                <NewCampaignForm
-                                    {...props}
-                                />
-                            }
                         />
                     </RRListItem>
                     <RRListItem
@@ -67,17 +65,12 @@ class SideNav extends Component {
                         selectable={false}
                         ripple={false}
                     >
-                        <NewItemWithDialog
+                        <NewUnitFormWithDialog
                             btnLabel="Add new Unit"
                             title="Add new unit"
                             accent={true}
                             flat={true}
                             raised
-                            newForm={(props) =>
-                                <NewUnitForm
-                                    {...props}
-                                />
-                            }
                         />
                     </RRListItem>
                 </List>

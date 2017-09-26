@@ -3,11 +3,8 @@ import PropTypes from 'prop-types'
 import { Button } from 'react-toolbox/lib/button'
 // import ProgressBar from 'react-toolbox/lib/progress_bar'
 // import theme from './theme.css'
-import Dialog from 'react-toolbox/lib/dialog'
 import Input from 'react-toolbox/lib/input'
 import Base from './../../../models/Base'
-import theme from './theme.css'
-import { Tab, Tabs } from 'react-toolbox'
 
 export default function NewItemHoc(Decorated) {
 
@@ -33,17 +30,8 @@ export default function NewItemHoc(Decorated) {
         }
 
         componentWillUnmount() {
-            this.props.actions.updateNewItem(this.state.item, this.state.item._meta)
+            this.updateItemInStore()
         }
-
-        // handleToggle = () => {
-        //     let active = this.state.active
-        //     this.setState({ active: !active })
-
-        //     if (active) {
-        //         this.props.actions.updateNewItem(this.state.item, this.state.item._meta)
-        //     }
-        // }
 
         handleChange = (name, value) => {
             let newItem = Base.updateMeta(this.state.item, { [name]: value })
@@ -51,17 +39,15 @@ export default function NewItemHoc(Decorated) {
         }
 
         save() {
-
-            console.log('save this.props', this.props)
             this.props.actions.addItem(this.state.item)
-            if(typeof this.props.onSave === 'function'){
+            if (typeof this.props.onSave === 'function') {
                 this.props.onSave()
             }
-
-            // if (this.props.handleToggle) {
-            //     this.props.handleToggle()
-            // }
             this.props.actions.resetNewItem(this.state.item)
+        }
+
+        updateItemInStore() {
+            this.props.actions.updateNewItem(this.state.item, this.state.item._meta)
         }
 
         render() {
