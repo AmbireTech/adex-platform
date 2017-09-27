@@ -28,9 +28,17 @@ export default function itemsReducer(state = initialState.items, action) {
 
     switch (action.type) {
         case ADD_ITEM:
-            let id = newState[collectionId].length
+            // TODO: the item should come here ready (with id from bc and ipsf)
+            // id is going to be set when it comes here
+            let id = action.item.tempId //newState[collectionId].length
             let owner = item._owner
             newItem = new item.item_type(owner, id, item._name || item._meta.fullName, item._meta).plainObj()
+            newCollection = collection(newState[collectionId], { ...action, item: newItem })
+            newState[collectionId] = newCollection
+            return newState
+
+        case ADD_ITEM_TO_ITEM:
+            newItem = Item.addItem(newState[collectionId][item._id], action.toAdd)
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
             return newState

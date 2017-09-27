@@ -116,6 +116,7 @@ class ItemsList extends Component {
 
                 return (propA < propB ? -1 : (propA > propB ? 1 : 0)) * this.state.sortOrder
             })
+
         let filteredLength = filtered.length
 
         let page = this.state.page
@@ -164,9 +165,6 @@ class ItemsList extends Component {
                                 <IconButton icon='arrow_downward' accent={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
                             </div>
                         </Col>
-
-
-
                         <Col lg={5}>
                             <Pagination
                                 page={data.page}
@@ -192,22 +190,22 @@ class ItemsList extends Component {
                 </Grid>
                 {/* <Grid fluid> */}
 
-                    {!!this.props.rowsView ?
-                        <Rows
-                            side={this.props.side}
-                            item={items}
-                            rows={items}
-                            delete={this.props.actions.deleteItem} />
-                        :
-                        <List
-                            itemRenderer={this.props.itemRenderer || this.renderCard}
-                            list={items}
-                            isError={this.state.isError}
-                            isLoading={this.state.isLoading}
-                            side={this.props.side}
+                {!!this.props.rowsView ?
+                    <Rows
+                        side={this.props.side}
+                        item={items}
+                        rows={items}
+                        delete={this.props.actions.deleteItem} />
+                    :
+                    <List
+                        itemRenderer={this.props.itemRenderer || this.renderCard}
+                        list={items}
+                        isError={this.state.isError}
+                        isLoading={this.state.isLoading}
+                        side={this.props.side}
 
-                        />
-                    }
+                    />
+                }
                 {/* </Grid> */}
             </div >
         )

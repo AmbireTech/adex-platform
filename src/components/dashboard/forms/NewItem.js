@@ -29,6 +29,7 @@ export default function NewItemHoc(Decorated) {
             this.setState({ item: this.props.newItem })
         }
 
+        // Works when inside dialog because when no active its content is unmounted
         componentWillUnmount() {
             this.updateItemInStore()
         }
@@ -39,7 +40,10 @@ export default function NewItemHoc(Decorated) {
         }
 
         save() {
-            this.props.actions.addItem(this.state.item)
+            let item = {...this.state.item}
+            // TODO: !!! this tempId should not be used - temp until web3 services !!!
+            item.tempId = this.props.items.length
+            this.props.actions.addItem(item, this.props.addTo)
 
             // TODO:.....
             if (typeof this.props.onSave === 'function') {
@@ -67,9 +71,9 @@ export default function NewItemHoc(Decorated) {
             item._meta = item._meta || {}
 
             return (
-                <div>
+                <div style={{textAlign: 'center'}}>
 
-                    <section>
+                    <section style={{maxWidth: 640, margin: 'auto'}}>
                         <Input type='text' label='Name' name='name' value={item._meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                         <Input type='text' label='Image url' name='img' value={item._meta.img} onChange={this.handleChange.bind(this, 'img')} maxLength={1024} />
                         <Input type='text' multiline rows={5} label='Description' name='desctiption' value={item._meta.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
@@ -87,6 +91,8 @@ export default function NewItemHoc(Decorated) {
         account: PropTypes.object.isRequired,
         newItem: PropTypes.object.isRequired,
         title: PropTypes.string,
+        items: PropTypes.array.isRequired,
+        addTo: PropTypes.object
     }
 
     return ItemForm

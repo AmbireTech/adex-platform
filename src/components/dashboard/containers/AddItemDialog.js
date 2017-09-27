@@ -4,13 +4,20 @@ import { Button, IconButton } from 'react-toolbox/lib/button'
 // import theme from './theme.css'
 import Dialog from 'react-toolbox/lib/dialog'
 import theme from './theme.css'
+import { Tab, Tabs } from 'react-toolbox'
+import ItemsList from './ItemsList'
 
 export class AddItemDialog extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            active: false
+            active: false,
+            tabIndex: 0
         }
+    }
+
+    handleTabChange = (index) => {
+        this.setState({ tabIndex: index })
     }
 
     handleToggle = () => {
@@ -44,9 +51,17 @@ export class AddItemDialog extends Component {
                         icon='close'
                         onClick={this.handleToggle}
                         primary
-                        style={{ position: 'absolute', top: 20, right: 20 }}
+                        style={{ position: 'absolute', top: 5, right: 5 }}
                     />
-                    {this.props.children}
+
+                    <Tabs theme={theme} fixed index={this.state.tabIndex} onChange={this.handleTabChange.bind(this)}>
+                        <Tab label='New Ad Unit'>
+                            {this.props.newForm({ onSave: this.handleToggle.bind(this) })}
+                        </Tab>
+                        <Tab theme={theme} label='Add existing Ad Unit'><section style={{ overflowY: 'scroll', height: '100%' }}>
+                            <ItemsList items={this.props.items} viewModeId={'VIEW_MODE'} /></section>
+                        </Tab>
+                    </Tabs>
                 </Dialog>
 
             </div>

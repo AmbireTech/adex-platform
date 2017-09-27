@@ -41,7 +41,7 @@ export default function ItemHoc(Decorated) {
 
         componentWillReceiveProps(nextProps) {
             // TODO: check if really need it
-            // this.setState({ item: nextProps.items[nextProps.match.params.itemId] })
+            this.setState({ item: nextProps.items[nextProps.match.params.itemId] })
         }
 
         componentWillUnmount() {

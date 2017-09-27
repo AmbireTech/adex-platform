@@ -19,12 +19,46 @@ export function resetNewItem(item) {
     }
 }
 
-export function addItem(item) {
+export function addItem(item, itemToAddTo) {
+
+    /**  
+     *  Add item to bc and data ipsf here
+        kind like that:
+
+        web3services.addItem(item)
+            .then(
+                response => {
+                    dispatch({
+                        type: types.ADD_ITEM,
+                        item: response
+                    })
+
+                    return dispatch({
+                        type: types.ADD_ITEM_TO_ITEM,
+                        item: itemToAddTo,
+                        toAdd: response._id,
+                    })
+                }
+            )
+
+            etc...
+    */
+
     return function (dispatch) {
-        return dispatch({
+        dispatch({
             type: types.ADD_ITEM,
             item: item
         })
+
+        if (itemToAddTo) {
+            return dispatch({
+                type: types.ADD_ITEM_TO_ITEM,
+                item: itemToAddTo,
+                toAdd: item.tempId, // TODO!!!
+            })
+        } else {
+            return
+        }
     }
 }
 
@@ -47,7 +81,7 @@ export function removeItemFromItem({ item, toRemove } = {}) {
     }
 }
 
-export function addItemFromItem({ item, toAdd } = {}) {
+export function addItemToItem({ item, toAdd } = {}) {
     return function (dispatch) {
         return dispatch({
             type: types.ADD_ITEM_TO_ITEM,

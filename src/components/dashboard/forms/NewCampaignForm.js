@@ -35,14 +35,16 @@ NewCampaignForm.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     newItem: PropTypes.object.isRequired,
-    title: PropTypes.string
+    title: PropTypes.string,
+    items: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {
     // console.log('mapStateToProps Campaigns', state)
     return {
         account: state.account,
-        newItem: state.newItem[ItemsTypes.Campaign.id]
+        newItem: state.newItem[ItemsTypes.Campaign.id],
+        items: state.items[ItemsTypes.Campaign.id],
     };
 }
 

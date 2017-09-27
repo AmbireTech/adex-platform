@@ -3,14 +3,14 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from './../../../actions/itemActions'
-import Rows from './../collection/Rows'
-import Card from './../collection/Card'
+// import Rows from './../collection/Rows'
+// import Card from './../collection/Card'
 import { ItemsTypes } from './../../../constants/itemsTypes'
-import { IconButton } from 'react-toolbox/lib/button'
+// import { IconButton } from 'react-toolbox/lib/button'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
 import NewUnitForm from './../forms/NewUnitForm'
-import NewItemWithDialog from './../forms/NewItemWithDialog'
+// import NewItemWithDialog from './../forms/NewItemWithDialog'
 import { Tab, Tabs } from 'react-toolbox'
 import theme from './theme.css'
 import AddItemDialog from './AddItemDialog'
@@ -38,7 +38,9 @@ export class Campaign extends Component {
                     <Tab label='New Ad Unit'>
                         <NewUnitForm {...other} />
                     </Tab>
-                    <Tab theme={theme} label='Add existing Ad Unit'><section style={{ overflowY: 'scroll', height: '100%' }}><ItemsList items={units} viewModeId={VIEW_MODE} /></section></Tab>
+                    <Tab theme={theme} label='Add existing Ad Unit'><section style={{ overflowY: 'scroll', height: '100%' }}>
+                        <ItemsList items={units} viewModeId={VIEW_MODE} /></section>
+                    </Tab>
                 </Tabs>
             </section>
         )
@@ -57,7 +59,7 @@ export class Campaign extends Component {
         for (var index = 0; index < meta.items.length; index++) {
             if (this.props.units[meta.items[index]] && !this.props.units[meta.items[index]]._meta.deleted) {
                 units.push(this.props.units[meta.items[index]])
-                otherUnits[meta.items[index]].used = true
+                otherUnits[meta.items[index]] = null
             }
         }
 
@@ -70,9 +72,11 @@ export class Campaign extends Component {
                         addCampaign={this.props.actions.addCampaign}
                         btnLabel="Add new Unit to campaign"
                         title=""
-                    >
-                        {this.renderTabs({ units: otherUnits })}
-                    </AddItemDialog>
+                        items={otherUnits}
+                        newForm={(props)=>
+                        <NewUnitForm {...props} addTo={item}/>
+                        }
+                    />
                 </div>
                 <ItemsList items={units} viewModeId={VIEW_MODE} />
             </div>
