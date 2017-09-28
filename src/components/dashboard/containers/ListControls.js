@@ -57,9 +57,7 @@ export const Pagination = (props) => {
 
             </Row>
         </Grid>
-
     )
-
 }
 
 const getAllPagedValues = (current, max) => {

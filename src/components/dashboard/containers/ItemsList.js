@@ -203,6 +203,17 @@ class ItemsList extends Component {
                                 text: 'Are you sure?'
                             })}
                     /> : null}
+
+                {this.props.addToItem ?
+                    <TooltipIconButton
+                        icon='add_circle_outline'
+                        label={'add to ' + this.props.parentItem._name}
+                        accent
+                        tooltip={'Add to ' + this.props.parentItem._name}
+                        tooltipDelay={1000}
+                        tooltipPosition='top'
+                        onClick={this.props.actions.addItemToItem.bind(this, { item: this.props.parentItem, toAdd: item._id })}
+                    /> : null}
             </span>
         )
 

@@ -31,21 +31,6 @@ export class Campaign extends Component {
         this.setState({ tabIndex: index })
     }
 
-    renderTabs({ units, ...other }) {
-        return (
-            <section>
-                <Tabs theme={theme} fixed index={this.state.tabIndex} onChange={this.handleTabChange.bind(this)}>
-                    <Tab label='New Ad Unit'>
-                        <NewUnitForm {...other} />
-                    </Tab>
-                    <Tab theme={theme} label='Add existing Ad Unit'><section style={{ overflowY: 'scroll', height: '100%' }}>
-                        <ItemsList items={units} viewModeId={VIEW_MODE} /></section>
-                    </Tab>
-                </Tabs>
-            </section>
-        )
-    }
-
     render() {
         let side = this.props.match.params.side;
 
@@ -75,6 +60,7 @@ export class Campaign extends Component {
                         items={otherUnits}
                         viewMode={VIEW_MODE_UNITS}
                         listMode='rows'
+                        addTo={item}
                         newForm={(props) =>
                             <NewUnitForm {...props} addTo={item} />
                         }
