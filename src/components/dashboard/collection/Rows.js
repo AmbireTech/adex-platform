@@ -3,7 +3,7 @@ import { Button, IconButton } from 'react-toolbox/lib/button'
 import theme from './theme.css'
 import { withReactRouterLink } from './../../common/rr_hoc/RRHoc.js'
 import Tooltip from 'react-toolbox/lib/tooltip'
-import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib//table'
+import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import Img from './../../common/img/Img'
 import { ItemTypesNames } from './../../../constants/itemsTypes'
 
@@ -15,8 +15,25 @@ const RRTableCell = withReactRouterLink(TableCell)
 
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))
 const TooltipIconButton = Tooltip(IconButton)
+const TooltipButton = Tooltip(Button)
 
 class Rows extends Component {
+    constructor(props, context) {
+        super(props, context);
+
+        this.state = {
+            // TODO: maybe in the store?
+            selected: []
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        // Reset selected
+        // TODO: make better check because this will always  return true
+        if (nextProps.rows !== this.props.rows) {
+            this.setState({ selected: [] })
+        }
+    }
 
     // TEMP
     onTrashClick(item, itemToRemove) {
@@ -30,6 +47,11 @@ class Rows extends Component {
         }
     }
 
+    handleRowSelect = (selected) => {
+        let newSelected = selected.map((index) => this.props.rows[index]._id)
+        this.setState({ selected: newSelected });
+    }
+
     render() {
         let side = this.props.side
         let item = this.props.item
@@ -38,9 +60,26 @@ class Rows extends Component {
             <div>
                 <h1> {item._name} </h1>
                 <div>
-                    <Table theme={theme}>
+                    <Table
+                        theme={theme}
+                        multiSelectable
+                        onRowSelect={this.handleRowSelect}
+                    >
                         <TableHead>
-                            <TableCell> Img </TableCell>
+                            <TableCell>
+                                {this.state.selected.length ?
+                                    <TooltipButton
+                                        icon='delete'
+                                        label='delete selected'
+                                        accent
+                                        onClick={null}
+                                        tooltip='Delete all'
+                                        tooltipDelay={1000}
+                                        tooltipPosition='top' />
+                                    :
+                                    'Select all'
+                                }
+                            </TableCell>
                             <TableCell> Name </TableCell>
                             <TableCell> Type </TableCell>
                             <TableCell> Size </TableCell>
@@ -50,7 +89,7 @@ class Rows extends Component {
                         {rows.map((u, i) => {
                             let to = '/dashboard/' + side + '/' + ItemTypesNames[u._type] + '/' + u._id
                             return (
-                                <TableRow key={u._id || i} theme={theme}>
+                                <TableRow key={u._id || i} theme={theme} selected={this.state.selected.indexOf(u._id) !== -1}>
                                     <RRTableCell className={theme.link} to={to} theme={theme}>
                                         <Img className={theme.img} src={u._meta.img} alt={u._name} />
                                     </RRTableCell>

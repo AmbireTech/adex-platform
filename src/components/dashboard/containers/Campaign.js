@@ -25,7 +25,6 @@ export class Campaign extends Component {
         this.state = {
             tabIndex: 0
         }
-
     }
 
     handleTabChange = (index) => {
