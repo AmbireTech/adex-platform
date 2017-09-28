@@ -50,7 +50,7 @@ export class Campaign extends Component {
 
         return (
             <div>
-                <h2>Ad units in this campaign </h2>
+                <h2>Ad units in this campaign {'(' + (units.length) + ')'}</h2>
                 <div>
                     <AddItemDialog
                         accent

@@ -10,11 +10,11 @@ class Items extends Component {
     render() {
         // let side = this.props.match.params.side // set side in state ?
 
-        let items = this.props.items
+        let items = this.props.items || []
 
         return (
             <div>
-                <h1> {this.props.header} </h1>
+                <h1> {this.props.header} {'(' + (items.filter((i) => !!i && !!i._meta && !i._meta.deleted).length) + ')'} </h1>
                 <div>
                     {this.props.newItemBtn ? this.props.newItemBtn() : null}
                 </div>

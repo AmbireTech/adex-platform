@@ -50,7 +50,7 @@ export const Pagination = (props) => {
                 </Col>
 
                 <Col lg={6} style={{ position: 'relative' }}>
-                    <label className={theme.sliderLabel}> Page size </label>
+                    <label className={theme.sliderLabel}> Page size <strong>{props.pageSize}</strong> </label>
                     <Slider pinned snaps min={5} max={25} step={5} value={props.pageSize} onChange={props.changePageSize} />
 
                 </Col>

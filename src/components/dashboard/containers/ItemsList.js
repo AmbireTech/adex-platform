@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -161,12 +160,14 @@ class ItemsList extends Component {
     renderActions(item) {
         return (
             <span>
-                <TooltipIconButton
-                    icon='archive'
-                    label='archive'
-                    tooltip='Archive'
-                    tooltipDelay={1000}
-                    tooltipPosition='top' />
+                {this.props.archive ?
+                    <TooltipIconButton
+                        icon='archive'
+                        label='archive'
+                        tooltip='Archive'
+                        tooltipDelay={1000}
+                        tooltipPosition='top'
+                    /> : null}
                 {this.props.delete ?
                     <TooltipIconButton
                         icon='delete'
@@ -187,10 +188,10 @@ class ItemsList extends Component {
                     /> : null}
                 {this.props.removeFromItem ?
                     <TooltipIconButton
-                        icon='delete'
-                        label='delete'
+                        icon='remove_circle_outline'
+                        label={'Remove to ' + this.props.parentItem._name}
                         accent
-                        tooltip='Delete'
+                        tooltip={'Remove to ' + this.props.parentItem._name}
                         tooltipDelay={1000}
                         tooltipPosition='top'
                         onClick={this.props.actions.confirmAction.bind(this,
@@ -207,7 +208,7 @@ class ItemsList extends Component {
                 {this.props.addToItem ?
                     <TooltipIconButton
                         icon='add_circle_outline'
-                        label={'add to ' + this.props.parentItem._name}
+                        label={'Add to ' + this.props.parentItem._name}
                         accent
                         tooltip={'Add to ' + this.props.parentItem._name}
                         tooltipDelay={1000}
@@ -216,11 +217,11 @@ class ItemsList extends Component {
                     /> : null}
             </span>
         )
-
     }
 
     filterItems({ items, search, sortProperty, sortOrder, page, pageSize }) {
         // TODO: optimize filter
+        // TODO: maybe filter deleted before this?
         let filtered = (items || [])
             .filter((i) => {
                 let isItem = (!!i && !!i._meta && !i._meta.deleted)
