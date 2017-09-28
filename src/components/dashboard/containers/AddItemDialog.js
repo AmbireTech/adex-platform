@@ -59,7 +59,7 @@ export class AddItemDialog extends Component {
                             {this.props.newForm({ onSave: this.handleToggle.bind(this) })}
                         </Tab>
                         <Tab theme={theme} label='Add existing Ad Unit'><section style={{ overflowY: 'scroll', height: '100%' }}>
-                            <ItemsList items={this.props.items} viewModeId={'VIEW_MODE'} /></section>
+                            <ItemsList items={this.props.items} viewModeId={this.props.viewMode} listMode={this.props.listMode} /></section>
                         </Tab>
                     </Tabs>
                 </Dialog>
@@ -72,7 +72,8 @@ export class AddItemDialog extends Component {
 AddItemDialog.propTypes = {
     btnLabel: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    floating: PropTypes.bool
+    floating: PropTypes.bool,
+    listMode: PropTypes.string
 }
 
 export default AddItemDialog

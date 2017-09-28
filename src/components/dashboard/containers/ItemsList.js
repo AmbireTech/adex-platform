@@ -137,9 +137,37 @@ class ItemsList extends Component {
         }
     }
 
+    renderRows = (items) =>
+        <Rows
+            side={this.props.side}
+            item={items}
+            rows={items}
+            delete={this.props.actions.deleteItem}
+        />
+
+    renderCards = (items) =>
+        <List
+            itemRenderer={this.props.itemRenderer || this.renderCard}
+            list={items}
+            isError={this.state.isError}
+            isLoading={this.state.isLoading}
+            side={this.props.side}
+        />
+
     render() {
         let data = this.filterItems(this.props.items)
         let items = data.items
+        let renderItems
+
+        if (this.props.listMode === 'rows') {
+            renderItems = this.renderRows
+        } else if (this.props.listMode === 'cards') {
+            renderItems = this.renderCards
+        } else if (!!this.props.rowsView) {
+            renderItems = this.renderRows
+        } else {
+            renderItems = this.renderCards
+        }
 
         return (
 
@@ -180,33 +208,23 @@ class ItemsList extends Component {
                                     { page: data.page, pages: data.pages, itemsLength: data.itemsLength })}
                             />
                         </Col>
-                        <Col lg={1}>
-                            <div>
-                                <IconButton icon='view_module' accent={!this.props.rowsView} onClick={this.toggleView.bind(this, false)} />
-                                <IconButton icon='view_list' accent={this.props.rowsView} onClick={this.toggleView.bind(this, true)} />
-                            </div>
-                        </Col>
+                        {!this.props.listMode ?
+                            <Col lg={1}>
+                                <div>
+                                    <IconButton icon='view_module' accent={!this.props.rowsView} onClick={this.toggleView.bind(this, false)} />
+                                    <IconButton icon='view_list' accent={this.props.rowsView} onClick={this.toggleView.bind(this, true)} />
+                                </div>
+                            </Col>
+                            :
+                            null
+                        }
                     </Row>
                 </Grid>
-                {/* <Grid fluid> */}
+                <Grid fluid>
 
-                {!!this.props.rowsView ?
-                    <Rows
-                        side={this.props.side}
-                        item={items}
-                        rows={items}
-                        delete={this.props.actions.deleteItem} />
-                    :
-                    <List
-                        itemRenderer={this.props.itemRenderer || this.renderCard}
-                        list={items}
-                        isError={this.state.isError}
-                        isLoading={this.state.isLoading}
-                        side={this.props.side}
+                    {renderItems(items)}
 
-                    />
-                }
-                {/* </Grid> */}
+                </Grid>
             </div >
         )
     }
@@ -218,7 +236,8 @@ ItemsList.propTypes = {
     items: PropTypes.array.isRequired,
     rowsView: PropTypes.bool.isRequired,
     itemRenderer: PropTypes.func,
-    side: PropTypes.string.isRequired
+    side: PropTypes.string.isRequired,
+    listMode: PropTypes.string
 }
 
 function mapStateToProps(state, props) {

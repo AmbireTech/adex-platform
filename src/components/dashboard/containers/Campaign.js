@@ -16,6 +16,7 @@ import theme from './theme.css'
 import AddItemDialog from './AddItemDialog'
 
 const VIEW_MODE = 'campaignRowsView'
+const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
 
 export class Campaign extends Component {
     constructor(props, context) {
@@ -70,11 +71,13 @@ export class Campaign extends Component {
                     <AddItemDialog
                         accent
                         addCampaign={this.props.actions.addCampaign}
-                        btnLabel="Add new Unit to campaign"
-                        title=""
+                        btnLabel='Add new Unit to campaign'
+                        title=''
                         items={otherUnits}
-                        newForm={(props)=>
-                        <NewUnitForm {...props} addTo={item}/>
+                        viewMode={VIEW_MODE_UNITS}
+                        listMode='rows'
+                        newForm={(props) =>
+                            <NewUnitForm {...props} addTo={item} />
                         }
                     />
                 </div>
