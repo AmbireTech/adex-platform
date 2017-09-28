@@ -49,20 +49,7 @@ class MyCard extends Component {
                         tooltipDelay={1000}
                         tooltipPosition='top' />
                     <div>
-                        <TooltipIconButton
-                            icon='archive'
-                            label='archive'
-                            tooltip='Archive here to archive'
-                            tooltipDelay={1000}
-                            tooltipPosition='top' />
-                        <TooltipIconButton
-                            icon='delete'
-                            label='delete'
-                            accent
-                            onClick={this.props.delete}
-                            tooltip='Delete here to delete'
-                            tooltipDelay={1000}
-                            tooltipPosition='top' />
+                        {this.props.actionsRenderer}
                     </div>
                 </CardActions>
             </Card>

@@ -62,7 +62,6 @@ export const Pagination = (props) => {
 
 }
 
-
 const getAllPagedValues = (current, max) => {
     let pages = {}
 

@@ -80,7 +80,7 @@ export class Campaign extends Component {
                         }
                     />
                 </div>
-                <ItemsList items={units} viewModeId={VIEW_MODE} />
+                <ItemsList parentItem={item} removeFromItem items={units} viewModeId={VIEW_MODE} />
             </div>
         )
     }

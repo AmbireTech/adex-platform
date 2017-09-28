@@ -35,18 +35,6 @@ class Rows extends Component {
         }
     }
 
-    // TEMP
-    onTrashClick(item, itemToRemove) {
-        if (this.props.delete) {
-            this.props.delete(itemToRemove)
-            return
-        }
-
-        if (this.props.remove) {
-            this.props.remove({ item: item, toRemove: itemToRemove.id })
-        }
-    }
-
     handleRowSelect = (selected) => {
         let newSelected = selected.map((index) => this.props.rows[index]._id)
         this.setState({ selected: newSelected });
@@ -65,62 +53,13 @@ class Rows extends Component {
                         multiSelectable
                         onRowSelect={this.handleRowSelect}
                     >
-                        <TableHead>
-                            <TableCell>
-                                {this.state.selected.length ?
-                                    <TooltipButton
-                                        icon='delete'
-                                        label='delete selected'
-                                        accent
-                                        onClick={null}
-                                        tooltip='Delete all'
-                                        tooltipDelay={1000}
-                                        tooltipPosition='top' />
-                                    :
-                                    'Select all'
-                                }
-                            </TableCell>
-                            <TableCell> Name </TableCell>
-                            <TableCell> Type </TableCell>
-                            <TableCell> Size </TableCell>
-                            <TableCell> Actions </TableCell>
-                        </TableHead>
+                        {this.props.tableHeadRenderer({ selected: this.state.selected })}
 
                         {rows.map((u, i) => {
                             let to = '/dashboard/' + side + '/' + ItemTypesNames[u._type] + '/' + u._id
+                            let selected = this.state.selected.indexOf(u._id) !== -1
                             return (
-                                <TableRow key={u._id || i} theme={theme} selected={this.state.selected.indexOf(u._id) !== -1}>
-                                    <RRTableCell className={theme.link} to={to} theme={theme}>
-                                        <Img className={theme.img} src={u._meta.img} alt={u._name} />
-                                    </RRTableCell>
-                                    <RRTableCell className={theme.link} to={to}> {u._name} </RRTableCell>
-                                    <TableCell> {u._type} </TableCell>
-                                    <TableCell> {u._size} </TableCell>
-                                    <TableCell>
-
-                                        <TooltipRRButton
-                                            to={to} label='view'
-                                            raised primary
-                                            tooltip='View'
-                                            tooltipDelay={1000}
-                                            tooltipPosition='top' />
-                                        <TooltipIconButton
-                                            icon='archive'
-                                            label='archive'
-                                            tooltip='Archive'
-                                            tooltipDelay={1000}
-                                            tooltipPosition='top' />
-                                        <TooltipIconButton
-                                            icon='delete'
-                                            label='delete'
-                                            accent
-                                            onClick={this.onTrashClick.bind(this, item, u)}
-                                            tooltip='Delete'
-                                            tooltipDelay={1000}
-                                            tooltipPosition='top' />
-
-                                    </TableCell>
-                                </TableRow>
+                                this.props.rowRenderer(u, i, { to: to, selected: selected })
                             )
                         })
                         })}

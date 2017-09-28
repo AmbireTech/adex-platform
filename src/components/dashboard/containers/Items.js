@@ -19,7 +19,7 @@ class Items extends Component {
                     {this.props.newItemBtn ? this.props.newItemBtn() : null}
                 </div>
 
-                <ItemsList items={items} viewModeId={this.props.viewModeId} />
+                <ItemsList items={items} viewModeId={this.props.viewModeId} delete />
             </div>
         )
     }

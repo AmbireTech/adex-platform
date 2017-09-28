@@ -15,7 +15,18 @@ import { Pagination, PAGE_SIZES } from './ListControls'
 import Rows from './../collection/Rows'
 import Card from './../collection/Card'
 import { Grid, Row, Col } from 'react-flexbox-grid'
+import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import theme from './theme.css'
+import tableTheme from './../collection/theme.css'
+
+import { withReactRouterLink } from './../../common/rr_hoc/RRHoc.js'
+import Tooltip from 'react-toolbox/lib/tooltip'
+import Img from './../../common/img/Img'
+
+const RRTableCell = withReactRouterLink(TableCell)
+const TooltipRRButton = withReactRouterLink(Tooltip(Button))
+const TooltipIconButton = Tooltip(IconButton)
+const TooltipButton = Tooltip(Button)
 
 const SORT_PROPERTIES = [
     { value: '_id', label: 'Id' },
@@ -73,54 +84,153 @@ class ItemsList extends Component {
         this.setState({ page: nextPage, pageSize: newPageSize })
     }
 
-    renderCard(unt, index) {
+    renderCard(item, index) {
         return (
             <Card
-                key={unt._id}
-                item={unt}
-                name={unt._name}
-                logo={unt._meta.img}
+                key={item._id}
+                item={item}
+                name={item._name}
+                logo={item._meta.img}
                 side={this.props.side}
                 delete={this.props.actions.confirmAction.bind(this,
-                    this.props.actions.deleteItem.bind(this, unt),
+                    this.props.actions.deleteItem.bind(this, item),
                     null,
                     {
                         confirmLabel: 'Yes',
                         cancelLabel: 'No',
-                        title: 'Delete Item - ' + unt._name,
+                        title: 'Delete Item - ' + item._name,
                         text: 'Are you sure?'
                     })}
+                remove={null}
+                actionsRenderer={this.renderActions(item)}
+
             />
         )
     }
 
-    filterItems(items) {
+    renderTableHead({ selected }) {
+        return (
+            <TableHead>
+                <TableCell>
+                    {selected.length ?
+                        <TooltipButton
+                            icon='delete'
+                            label='delete selected'
+                            accent
+                            onClick={null}
+                            tooltip='Delete all'
+                            tooltipDelay={1000}
+                            tooltipPosition='top' />
+                        :
+                        'Select all'
+                    }
+                </TableCell>
+                <TableCell> Name </TableCell>
+                <TableCell> Type </TableCell>
+                <TableCell> Size </TableCell>
+                <TableCell> Actions </TableCell>
+            </TableHead>
+        )
+
+    }
+
+    renderTableRow(item, index, { to, selected }) {
+        return (
+            <TableRow key={item._id || index} theme={tableTheme} selected={selected}>
+                <RRTableCell className={tableTheme.link} to={to} theme={tableTheme}>
+                    <Img className={tableTheme.img} src={item._meta.img} alt={item._name} />
+                </RRTableCell>
+                <RRTableCell className={tableTheme.link} to={to}> {item._name} </RRTableCell>
+                <TableCell> {item._type} </TableCell>
+                <TableCell> {item._size} </TableCell>
+                <TableCell>
+
+                    <TooltipRRButton
+                        to={to} label='view'
+                        raised primary
+                        tooltip='View'
+                        tooltipDelay={1000}
+                        tooltipPosition='top' />
+                    {this.renderActions(item)}
+
+                </TableCell>
+            </TableRow>
+        )
+    }
+
+    renderActions(item) {
+        return (
+            <span>
+                <TooltipIconButton
+                    icon='archive'
+                    label='archive'
+                    tooltip='Archive'
+                    tooltipDelay={1000}
+                    tooltipPosition='top' />
+                {this.props.delete ?
+                    <TooltipIconButton
+                        icon='delete'
+                        label='delete'
+                        accent
+                        tooltip='Delete'
+                        tooltipDelay={1000}
+                        tooltipPosition='top'
+                        onClick={this.props.actions.confirmAction.bind(this,
+                            this.props.actions.deleteItem.bind(this, item),
+                            null,
+                            {
+                                confirmLabel: 'Yes',
+                                cancelLabel: 'No',
+                                title: 'Delete Item - ' + item._name,
+                                text: 'Are you sure?'
+                            })}
+                    /> : null}
+                {this.props.removeFromItem ?
+                    <TooltipIconButton
+                        icon='delete'
+                        label='delete'
+                        accent
+                        tooltip='Delete'
+                        tooltipDelay={1000}
+                        tooltipPosition='top'
+                        onClick={this.props.actions.confirmAction.bind(this,
+                            this.props.actions.removeItemFromItem.bind(this, { item: this.props.parentItem, toRemove: item._id }),
+                            null,
+                            {
+                                confirmLabel: 'Yes',
+                                cancelLabel: 'No',
+                                title: 'Remove Item - ' + item._name + ' from ' + this.props.parentItem._name,
+                                text: 'Are you sure?'
+                            })}
+                    /> : null}
+            </span>
+        )
+
+    }
+
+    filterItems({ items, search, sortProperty, sortOrder, page, pageSize }) {
         // TODO: optimize filter
         let filtered = (items || [])
             .filter((i) => {
                 let isItem = (!!i && !!i._meta && !i._meta.deleted)
                 if (!isItem) return isItem
-                let hasSearch = !!this.state.search
+                let hasSearch = !!search
                 if (!hasSearch) return isItem
-                let regex = new RegExp(this.state.search, 'i')
+                let regex = new RegExp(search, 'i')
                 let match = regex.exec((i._name || '') +
                     (i._meta.fullName || '') +
                     (i._meta.description || ''))
                 return !!match
             })
             .sort((a, b) => {
-                let sortProperty = this.state.sortProperty
-
                 let propA = a[sortProperty] || a._meta[sortProperty]
                 let propB = b[sortProperty] || b._meta[sortProperty]
 
-                return (propA < propB ? -1 : (propA > propB ? 1 : 0)) * this.state.sortOrder
+                return (propA < propB ? -1 : (propA > propB ? 1 : 0)) * sortOrder
             })
 
         let filteredLength = filtered.length
 
-        let page = this.state.page
-        let pageSize = this.state.pageSize
         let maxPages = Math.ceil(filteredLength / pageSize)
 
         let paged = filtered.slice(
@@ -142,7 +252,8 @@ class ItemsList extends Component {
             side={this.props.side}
             item={items}
             rows={items}
-            delete={this.props.actions.deleteItem}
+            rowRenderer={this.renderTableRow.bind(this)}
+            tableHeadRenderer={this.renderTableHead.bind(this)}
         />
 
     renderCards = (items) =>
@@ -155,7 +266,15 @@ class ItemsList extends Component {
         />
 
     render() {
-        let data = this.filterItems(this.props.items)
+        let data = this.filterItems({
+            items: this.props.items,
+            search: this.state.search,
+            sortProperty: this.state.sortProperty,
+            sortOrder: this.state.sortOrder,
+            page: this.state.page,
+            pageSize: this.state.pageSize
+        })
+
         let items = data.items
         let renderItems
 
@@ -175,7 +294,7 @@ class ItemsList extends Component {
                 <Grid fluid >
                     <Row middle='md' className={theme.itemsListControls}>
                         <Col lg={3}>
-                            <Input type='text' label='Search' icon='search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} maxLength={160} />
+                            <Input type='text' label='Search' icon='search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} />
                         </Col>
                         <Col md={2}>
                             <Dropdown
