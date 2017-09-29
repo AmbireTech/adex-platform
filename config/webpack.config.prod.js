@@ -190,8 +190,11 @@ module.exports = {
                         ident: 'postcss',
                         plugins: () => [
                           require('postcss-flexbugs-fixes'),
+                          require('postcss-import'),
                           require('postcss-mixins'),
                           require('postcss-each'),
+                          require('postcss-apply'),
+                          require('postcss-nesting'),
                           require('postcss-cssnext')
                         ],
                       },
