@@ -11,6 +11,8 @@ import { withReactRouterLink } from './../../common/rr_hoc/RRHoc.js'
 import NewCampaignForm from './../forms/NewCampaignForm'
 import NewUnitForm from './../forms/NewUnitForm'
 import NewItemWithDialog from './../forms/NewItemWithDialog'
+import CampaignIcon from './../../common/icons/CampaignIcon'
+
 
 const NewUnitFormWithDialog = NewItemWithDialog(NewUnitForm)
 const NewCampaignFormWithDialog = NewItemWithDialog(NewCampaignForm)
@@ -40,6 +42,7 @@ class SideNav extends Component {
                         caption='Campaigns'
                         theme={theme}
                         className="side-nav-link"
+                        leftIcon={<CampaignIcon color='rgb(117, 117, 117)' />}
                     />
                     <ListItem
                         selectable={false}
