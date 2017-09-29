@@ -31,6 +31,7 @@ class SideNav extends Component {
                         caption='Dashboard'
                         theme={theme}
                         className="side-nav-link"
+                        leftIcon='dashboard'
                     />
                     <RRListItem
                         to={{ pathname: '/dashboard/' + this.props.side + "/campaigns" }}
@@ -48,7 +49,6 @@ class SideNav extends Component {
                             btnLabel="Add new campaign"
                             title="Add new campaign"
                             flat
-                            raised
                         />
                     </ListItem>
                     <RRListItem
@@ -58,6 +58,7 @@ class SideNav extends Component {
                         caption='Units'
                         theme={theme}
                         className="side-nav-link"
+                        leftIcon='format_list_bulleted'
                     />
                     <ListItem
                         selectable={false}
@@ -68,7 +69,6 @@ class SideNav extends Component {
                             title="Add new unit"
                             accent={true}
                             flat={true}
-                            raised
                         />
                     </ListItem>
                 </List>

@@ -52,6 +52,7 @@ class Dashboard extends React.Component {
                 header="All Units"
                 viewModeId="rowsViewUnits"
                 itemsType={ItemsTypes.AdUnit.id}
+                headingColor='#CDDC39'
                 newItemBtn={() =>
                     <NewUnitFormWithDialog
                         btnLabel="Add new Unit"
@@ -69,6 +70,7 @@ class Dashboard extends React.Component {
                 header="All Campaigns"
                 viewModeId="rowsViewCampaigns"
                 itemsType={ItemsTypes.Campaign.id}
+                headingColor='#00BCD4'
                 newItemBtn={() =>
                     <NewCampaignFormWithDialog
                         floating

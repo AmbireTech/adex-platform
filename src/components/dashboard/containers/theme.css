@@ -31,8 +31,8 @@
 }
 
 .itemsListControls{
-    border-top: 1px solid rgba(0,0,0, 0.2);
-    border-bottom: 1px solid rgba(0,0,0, 0.2);
+    // border-top: 1px solid rgba(0,0,0, 0.2);
+    // border-bottom: 1px solid rgba(0,0,0, 0.2);
 }
 
 .top {
@@ -52,6 +52,12 @@
         width: 30%;
         text-align: right;
     }
+}
+
+.headeingLeft{
+    width: 70%;
+    text-align: left;
+    color: #fff;
 }
 
 .tab {
@@ -78,4 +84,28 @@
 
 .dialog{
     min-height: 70vh;
+}
+
+.heading {
+    background-color: #1b75bc;
+    position: fixed;
+    top: 64px;
+    left: 256px;
+    right: 0;
+    color: #fff;
+    padding-left: 22px;
+    padding-right: 22px;
+    height: 100px;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    margin: 0;
+    z-index: 100;
+}
+
+.floating {
+    position: fixed;
+    top: 136px;
+    right: 40px;
+    z-index: 110;
 }

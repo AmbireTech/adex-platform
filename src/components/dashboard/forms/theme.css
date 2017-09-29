@@ -1,7 +1,8 @@
 .floating {
     position: fixed;
-    top: 90px;
+    top: 136px;
     right: 40px;
+    z-index: 110;
 }
 
 .wrapper{

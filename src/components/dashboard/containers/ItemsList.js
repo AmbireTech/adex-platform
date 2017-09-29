@@ -149,7 +149,8 @@ class ItemsList extends Component {
                         raised primary
                         tooltip='View'
                         tooltipDelay={1000}
-                        tooltipPosition='top' />
+                        tooltipPosition='top'
+                    />
                     {this.renderActions(item)}
 
                 </TableCell>

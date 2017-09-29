@@ -88,7 +88,8 @@ function mapStateToProps(state) {
         items: state.items[ItemsTypes.Campaign.id],
         units: state.items[ItemsTypes.AdUnit.id],
         spinner: state.spinners[ItemsTypes.Campaign.name],
-        rowsView: !!state.ui[VIEW_MODE]
+        rowsView: !!state.ui[VIEW_MODE],
+        headingColor: '#4DD0E1' // TODO: temp
     }
 }
 

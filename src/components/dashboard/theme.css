@@ -2,12 +2,14 @@
     padding-top: 64px;
     background-color: #333;
     color: #fff;
+    border-right: 0 !important;
 }
   
 .panel {
   bottom: 0;
   overflow-y: auto;  
   overflow-y: overlay;
-  top: 64px;
+  top: 164px;
   padding: 20px;
+
 }

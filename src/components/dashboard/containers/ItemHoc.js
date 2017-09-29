@@ -9,6 +9,7 @@ import Tooltip from 'react-toolbox/lib/tooltip'
 import Input from 'react-toolbox/lib/input'
 import { ItemTypesNames } from './../../../constants/itemsTypes'
 import Base from './../../../models/Base'
+import { Grid, Row, Col } from 'react-flexbox-grid'
 
 const TooltipFontIcon = Tooltip(FontIcon)
 
@@ -78,16 +79,21 @@ export default function ItemHoc(Decorated) {
 
             return (
                 <div>
-                    <div>
-                        <div className={theme.top + ' ' + theme.left}>
+                    <div className={theme.heading} style={{ backgroundColor: this.props.headingColor }}>
+                        <div className={theme.headeingLeft}>
                             {this.state.activeFields.fullName ?
-                                <Input type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
+                                <Input style={{color: '#fff'}} type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                                 :
                                 <h2>
                                     <span> {meta.fullName} </span>
                                     <span><IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'fullName', true)} /></span>
                                 </h2>
                             }
+                        </div>
+                    </div>
+                    <div>
+                        <div className={theme.top + ' ' + theme.left}>
+
 
                             {this.state.activeFields.description ?
                                 <Input multiline rows={3} type='text' label='description' name='description' value={meta.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
@@ -119,7 +125,7 @@ export default function ItemHoc(Decorated) {
                                             </div>
                                         ) : ''
                                 )}
-                            <Button icon='save' onClick={this.save} floating primary />
+                            <Button theme={theme} icon={!!this.props.spinner ? 'sync' : 'save' } onClick={this.save} floating primary />
                         </div>
 
                     </div>
