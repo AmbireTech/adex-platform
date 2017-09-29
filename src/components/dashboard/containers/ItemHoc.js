@@ -119,10 +119,10 @@ export default function ItemHoc(Decorated) {
                                     this.state.dirtyProps.length ?
                                         (
                                             <div className={theme.itemStatus}>
+                                                <TooltipFontIcon value='info_outline' tooltip='Unsaved changes' />
                                                 {this.state.dirtyProps.map((p) => {
                                                     return (<Chip key={p}>{p}</Chip>)
                                                 })}
-                                                <TooltipFontIcon value='info_outline' tooltip='Unsaved changes' />
                                             </div>
                                         ) : ''
                                 )}

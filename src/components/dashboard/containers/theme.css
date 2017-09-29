@@ -6,13 +6,16 @@
 }
 
 .itemStatus {
-    display: inline-block;
-    vertical-align: middle;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
 
     & > span, & > div{
         display: inline-block;
         vertical-align: middle; 
         margin-right: 10px;
+        margin-bottom: 10px;
         color: #ff4081;
         cursor: default;
         & div, & span {
@@ -51,6 +54,7 @@
     &.right {
         width: 30%;
         text-align: right;
+        padding: 15px;
     }
 }
 
