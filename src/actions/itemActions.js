@@ -100,7 +100,7 @@ export function updateItem(item, newMeta) {
                 meta: newMeta
             })
 
-        }, 1000)
+        }, 3000)
     }
 }
 

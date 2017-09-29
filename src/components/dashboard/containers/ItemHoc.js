@@ -10,6 +10,7 @@ import Input from 'react-toolbox/lib/input'
 import { ItemTypesNames } from './../../../constants/itemsTypes'
 import Base from './../../../models/Base'
 import { Grid, Row, Col } from 'react-flexbox-grid'
+import FloatingProgressButton from './../../common/floating_btn_progress/FloatingProgressButton'
 
 const TooltipFontIcon = Tooltip(FontIcon)
 
@@ -62,7 +63,7 @@ export default function ItemHoc(Decorated) {
 
         //TODO: Do not save if not dirty!
         save() {
-            if (this.state.dirtyProps.length) {
+            if (this.state.dirtyProps.length && !this.props.spinner) {
                 this.props.actions.updateItem(this.state.item, this.state.item._meta)
                 this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], true)
             }
@@ -82,7 +83,7 @@ export default function ItemHoc(Decorated) {
                     <div className={theme.heading} style={{ backgroundColor: this.props.headingColor }}>
                         <div className={theme.headeingLeft}>
                             {this.state.activeFields.fullName ?
-                                <Input style={{color: '#fff'}} type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
+                                <Input style={{ color: '#fff' }} type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                                 :
                                 <h2>
                                     <span> {meta.fullName} </span>
@@ -113,7 +114,7 @@ export default function ItemHoc(Decorated) {
                         <div className={theme.top + ' ' + theme.right}>
 
                             {!!this.props.spinner ?
-                                <ProgressBar type="circular" mode="indeterminate" multicolor theme={theme} />
+                                null
                                 : (
                                     this.state.dirtyProps.length ?
                                         (
@@ -125,7 +126,7 @@ export default function ItemHoc(Decorated) {
                                             </div>
                                         ) : ''
                                 )}
-                            <Button theme={theme} icon={!!this.props.spinner ? 'sync' : 'save' } onClick={this.save} floating primary />
+                            <FloatingProgressButton inProgress={!!this.props.spinner} theme={theme} icon='save' onClick={this.save} floating primary />
                         </div>
 
                     </div>

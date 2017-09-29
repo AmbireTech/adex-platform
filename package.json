@@ -31,9 +31,11 @@
     "moment": "^2.18.1",
     "object-assign": "^4.1.1",
     "postcss": "^6.0.9",
+    "postcss-apply": "^0.8.0",
     "postcss-cssnext": "^3.0.2",
     "postcss-flexbugs-fixes": "3.2.0",
     "postcss-loader": "^2.0.6",
+    "postcss-nesting": "^4.2.1",
     "promise": "8.0.1",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
@@ -69,7 +71,7 @@
   },
   "devDependencies": {
     "postcss-each": "^0.10.0",
-    "postcss-import": "^10.0.0",
+    "postcss-import": "^11.0.0",
     "postcss-mixins": "^6.1.0",
     "react-toolbox": "^2.0.0-beta.12"
   },

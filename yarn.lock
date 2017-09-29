@@ -4920,11 +4920,10 @@ postcss-image-set-polyfill@^0.3.5:
     postcss "^6.0.1"
     postcss-media-query-parser "^0.2.3"
 
-postcss-import@^10.0.0:
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/postcss-import/-/postcss-import-10.0.0.tgz#4c85c97b099136cc5ea0240dc1dfdbfde4e2ebbe"
+postcss-import@^11.0.0:
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/postcss-import/-/postcss-import-11.0.0.tgz#a962e2df82d3bc5a6da6a386841747204f41ef5b"
   dependencies:
-    object-assign "^4.0.1"
     postcss "^6.0.1"
     postcss-value-parser "^3.2.3"
     read-cache "^1.0.0"
@@ -5090,6 +5089,12 @@ postcss-nesting@^4.0.1:
   dependencies:
     postcss "^6.0.1"
 
+postcss-nesting@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/postcss-nesting/-/postcss-nesting-4.2.1.tgz#0483bce338b3f0828ced90ff530b29b98b00300d"
+  dependencies:
+    postcss "^6.0.11"
+
 postcss-normalize-charset@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/postcss-normalize-charset/-/postcss-normalize-charset-1.1.1.tgz#ef9ee71212d7fe759c78ed162f61ed62b5cb93f1"
@@ -5225,6 +5230,14 @@ postcss@^6.0.0, postcss@^6.0.1, postcss@^6.0.2, postcss@^6.0.3, postcss@^6.0.5, 
     chalk "^2.1.0"
     source-map "^0.5.6"
     supports-color "^4.2.1"
+
+postcss@^6.0.11:
+  version "6.0.12"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-6.0.12.tgz#6b0155089d2d212f7bd6a0cecd4c58c007403535"
+  dependencies:
+    chalk "^2.1.0"
+    source-map "^0.5.7"
+    supports-color "^4.4.0"
 
 prelude-ls@~1.1.2:
   version "1.1.2"
@@ -6115,6 +6128,10 @@ source-map@^0.4.4:
   dependencies:
     amdefine ">=0.0.4"
 
+source-map@^0.5.7:
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
+
 source-map@~0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.2.0.tgz#dab73fbcfc2ba819b4de03bd6f6eaa48164b3f9d"
@@ -6298,6 +6315,12 @@ supports-color@^3.1.1, supports-color@^3.1.2, supports-color@^3.2.3:
 supports-color@^4.0.0, supports-color@^4.2.1:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-4.2.1.tgz#65a4bb2631e90e02420dba5554c375a4754bb836"
+  dependencies:
+    has-flag "^2.0.0"
+
+supports-color@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-4.4.0.tgz#883f7ddabc165142b2a61427f3352ded195d1a3e"
   dependencies:
     has-flag "^2.0.0"
 
