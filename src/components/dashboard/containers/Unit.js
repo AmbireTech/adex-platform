@@ -53,8 +53,7 @@ function mapStateToProps(state) {
         account: state.account,
         items: state.items[ItemsTypes.AdUnit.id],
         // item: state.currentItem,
-        spinner: state.spinners[ItemsTypes.AdUnit.name],
-        headingColor: '#DCE775' // TODO: temp
+        spinner: state.spinners[ItemsTypes.AdUnit.name]
     };
 }
 

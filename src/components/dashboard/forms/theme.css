@@ -11,4 +11,11 @@
 
 .dialog{
     min-height: 70vh;
+    
+    &.AdUnit{
+        background-color: #F9FBE7;
+    }
+    &.Campaign{
+        background-color: #E0F7FA;
+    }
 }

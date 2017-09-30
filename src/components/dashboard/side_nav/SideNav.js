@@ -12,7 +12,7 @@ import NewCampaignForm from './../forms/NewCampaignForm'
 import NewUnitForm from './../forms/NewUnitForm'
 import NewItemWithDialog from './../forms/NewItemWithDialog'
 import CampaignIcon from './../../common/icons/CampaignIcon'
-
+import { ItemsTypes } from './../../../constants/itemsTypes'
 
 const NewUnitFormWithDialog = NewItemWithDialog(NewUnitForm)
 const NewCampaignFormWithDialog = NewItemWithDialog(NewCampaignForm)
@@ -52,6 +52,7 @@ class SideNav extends Component {
                             btnLabel="Add new campaign"
                             title="Add new campaign"
                             flat
+                            itemType={ItemsTypes.Campaign.name}
                         />
                     </ListItem>
                     <RRListItem
@@ -72,6 +73,7 @@ class SideNav extends Component {
                             title="Add new unit"
                             accent={true}
                             flat={true}
+                            itemType={ItemsTypes.AdUnit.name}
                         />
                     </ListItem>
                 </List>

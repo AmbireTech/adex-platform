@@ -58,7 +58,7 @@
     }
 }
 
-.headeingLeft{
+.headingLeft{
     width: 70%;
     text-align: left;
     color: #fff;
@@ -105,6 +105,25 @@
     justify-content: center;
     margin: 0;
     z-index: 100;
+    &.Campaign{
+        background-color: #4DD0E1;
+        &.items{
+            background-color: #00BCD4;
+        }
+        & input{
+            color: #fff;
+        }
+    }
+    &.AdUnit{
+        background-color: #DCE775;
+        &.items{
+            background-color: #CDDC39;
+        }
+        & input{
+            color: #fff;
+        }
+    }
+
 }
 
 .floating {

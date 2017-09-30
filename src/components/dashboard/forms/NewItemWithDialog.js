@@ -40,6 +40,7 @@ export default function ItemHoc(Decorated) {
                         onOverlayClick={this.handleToggle}
                         title={this.props.title}
                         type={this.props.type || 'fullscreen'}
+                        className={theme[this.props.itemType]}
                     >
                         <IconButton
                             icon='close'

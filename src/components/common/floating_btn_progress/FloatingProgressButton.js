@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button } from 'react-toolbox/lib/button';
 import progressBarTheme from 'react-toolbox/lib/progress_bar/theme.css';
 import theme from './theme.css'
+import classnames from 'classnames'
 
 class FloatingProgressButton extends Component {
 
@@ -19,7 +20,7 @@ class FloatingProgressButton extends Component {
       <div>
         <Button {...other} className={theme.Button}>
           {inProgress ?
-            <div className={theme.circular + ' ' + theme.indeterminate + ' ' + theme.multicolor}>
+            <div className={classnames(theme.circular, theme.indeterminate, theme.multicolor)}>
               {this.renderCircular()}
             </div>
             : null}

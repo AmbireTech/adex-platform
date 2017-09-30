@@ -11,6 +11,7 @@ import { ItemTypesNames } from './../../../constants/itemsTypes'
 import Base from './../../../models/Base'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import FloatingProgressButton from './../../common/floating_btn_progress/FloatingProgressButton'
+import classnames from 'classnames'
 
 const TooltipFontIcon = Tooltip(FontIcon)
 
@@ -80,10 +81,10 @@ export default function ItemHoc(Decorated) {
 
             return (
                 <div>
-                    <div className={theme.heading} style={{ backgroundColor: this.props.headingColor }}>
-                        <div className={theme.headeingLeft}>
+                    <div className={classnames(theme.heading, theme[ItemTypesNames[this.state.item._type]])}>
+                        <div className={theme.headingLeft}>
                             {this.state.activeFields.fullName ?
-                                <Input style={{ color: '#fff' }} type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
+                                <Input type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                                 :
                                 <h2>
                                     <span> {meta.fullName} </span>
@@ -93,7 +94,7 @@ export default function ItemHoc(Decorated) {
                         </div>
                     </div>
                     <div>
-                        <div className={theme.top + ' ' + theme.left}>
+                        <div className={classnames(theme.top, theme.left)}>
 
 
                             {this.state.activeFields.description ?
@@ -111,7 +112,7 @@ export default function ItemHoc(Decorated) {
                             }
 
                         </div>
-                        <div className={theme.top + ' ' + theme.right}>
+                        <div className={classnames(theme.top, theme.right)}>
 
                             {!!this.props.spinner ?
                                 null

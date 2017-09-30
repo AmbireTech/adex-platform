@@ -6,6 +6,8 @@ import { bindActionCreators } from 'redux'
 import * as actions from './../../../actions/itemActions'
 import ItemsList from './ItemsList'
 import theme from './theme.css'
+import classnames from 'classnames'
+import { ItemTypesNames } from './../../../constants/itemsTypes'
 
 class Items extends Component {
     render() {
@@ -15,7 +17,7 @@ class Items extends Component {
 
         return (
             <div>
-                <div className={theme.heading} style={{ backgroundColor: this.props.headingColor }}>
+                <div className={classnames(theme.heading, theme[ItemTypesNames[this.props.itemsType]], theme.items)}>
                     <h1 > {this.props.header} {'(' + (items.filter((i) => !!i && !!i._meta && !i._meta.deleted).length) + ')'} </h1>
                 </div>
                 <div className={theme.panelContent}>
