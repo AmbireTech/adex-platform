@@ -51,10 +51,12 @@ export function addItem(item, itemToAddTo) {
         })
 
         if (itemToAddTo) {
+            item = {...item}
+            item._id = item.tempId
             return dispatch({
                 type: types.ADD_ITEM_TO_ITEM,
                 item: itemToAddTo,
-                toAdd: item.tempId, // TODO!!!
+                toAdd: item, // TODO!!!
             })
         } else {
             return

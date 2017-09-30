@@ -49,8 +49,8 @@ class SideNav extends Component {
                         ripple={false}
                     >
                         <NewCampaignFormWithDialog
-                            btnLabel="Add new campaign"
-                            title="Add new campaign"
+                            btnLabel="New campaign"
+                            title="Create new campaign"
                             flat
                             itemType={ItemsTypes.Campaign.name}
                         />
@@ -69,8 +69,8 @@ class SideNav extends Component {
                         ripple={false}
                     >
                         <NewUnitFormWithDialog
-                            btnLabel="Add new Unit"
-                            title="Add new unit"
+                            btnLabel="New Unit"
+                            title="Create new unit"
                             accent={true}
                             flat={true}
                             itemType={ItemsTypes.AdUnit.name}

@@ -38,7 +38,7 @@ export default function itemsReducer(state = initialState.items, action) {
             return newState
 
         case ADD_ITEM_TO_ITEM:
-            newItem = Item.addItem(newState[collectionId][item._id], action.toAdd._id)
+            newItem = Item.addItem(newState[collectionId][item._id], action.toAdd)
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
             return newState
@@ -50,7 +50,7 @@ export default function itemsReducer(state = initialState.items, action) {
             return newState
 
         case REMOVE_ITEM_FROM_ITEM:
-            newItem = Item.removeItem(newState[collectionId][item._id], action.toRemove._id)
+            newItem = Item.removeItem(newState[collectionId][item._id], action.toRemove)
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
             return newState

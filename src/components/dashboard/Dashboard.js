@@ -54,8 +54,8 @@ class Dashboard extends React.Component {
                 itemsType={ItemsTypes.AdUnit.id}
                 newItemBtn={() =>
                     <NewUnitFormWithDialog
-                        btnLabel="Add new Unit"
-                        title="Add new unit"
+                        btnLabel="New Unit"
+                        title="Create new unit"
                         accent
                         floating
                         itemType={ItemsTypes.AdUnit.name}
@@ -75,8 +75,8 @@ class Dashboard extends React.Component {
                         floating
                         accent
                         addCampaign={this.props.actions.addCampaign}
-                        btnLabel="Add new Campaign"
-                        title="Add new Campaign"
+                        btnLabel="New Campaign"
+                        title="Create new Campaign"
                         itemType={ItemsTypes.Campaign.name}
                     />
                 } />

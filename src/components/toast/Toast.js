@@ -22,11 +22,14 @@ export class Toast extends Component {
 
         let isNewToast = !!nextToast && (toast.id !== nextToast.id)
 
-        if(isNewToast){
+        if (isNewToast) {
             // this.setState({ active: true, toast: nextToast })
-            this.setState({ active: false}, () =>{
-                setTimeout(()=>{
+            this.setState({ active: false }, () => {
+                setTimeout(() => {
                     this.setState({ active: true, toast: nextToast })
+                    setTimeout(() => {
+                        this.props.actions.removeToast(nextToast.id)
+                    }, 800)
                 }, 800)
             })
         }
