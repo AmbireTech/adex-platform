@@ -196,7 +196,7 @@ class ItemsList extends Component {
                         tooltipDelay={1000}
                         tooltipPosition='top'
                         onClick={this.props.actions.confirmAction.bind(this,
-                            this.props.actions.removeItemFromItem.bind(this, { item: this.props.parentItem, toRemove: item._id }),
+                            this.props.actions.removeItemFromItem.bind(this, { item: this.props.parentItem, toRemove: item }),
                             null,
                             {
                                 confirmLabel: 'Yes',
@@ -214,7 +214,7 @@ class ItemsList extends Component {
                         tooltip={'Add to ' + this.props.parentItem._name}
                         tooltipDelay={1000}
                         tooltipPosition='top'
-                        onClick={this.props.actions.addItemToItem.bind(this, { item: this.props.parentItem, toAdd: item._id })}
+                        onClick={this.props.actions.addItemToItem.bind(this, { item: this.props.parentItem, toAdd: item })}
                     /> : null}
             </span>
         )

@@ -3,10 +3,10 @@
 .primary:not([disabled]) {
   &.raised,
   &.floating {
-    color: #fff !important;
+    background: var(--color-primary) !important;
+    color: var(--color-primary-contrast) !important;
   }
 
-  /*
   &.flat,
   &.toggle {
     color: var(--color-nav-item) !important;
@@ -19,13 +19,13 @@
   &.flat:hover {
     background: var(--color-accent) !important;
   }
-  */
 }
 
 .neutral:not([disabled]) {
   &.raised,
   &.floating {
-    color: #1b75bc !important;
+    background: var(--color-primary) !important;
+    color: var(--color-primary-contrast) !important;
   }
 
   &.flat,
