@@ -6,11 +6,12 @@ import * as actions from './../../../actions/itemActions'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import { ItemsTypes } from './../../../constants/itemsTypes'
 import NewItemHoc from './NewItem'
+import theme from './theme.css'
 
 class NewCampaignForm extends Component {
 
     render() {
-        let item = this.props.newItem
+        let item = this.props.item
         return (
             <div>
                 <DatePicker
@@ -18,15 +19,16 @@ class NewCampaignForm extends Component {
                     minDate={new Date()}
                     onChange={this.props.handleChange.bind(this, 'from')}
                     value={item._meta.from}
+                    className={theme.datepicker}
                 />
                 <DatePicker
                     label='End date'
                     minDate={new Date()}
                     onChange={this.props.handleChange.bind(this, 'to')}
                     value={item._meta.to}
+                    className={theme.datepicker}
                 />
             </div>
-
         )
     }
 }

@@ -5,10 +5,6 @@
     z-index: 110;
 }
 
-.wrapper{
-    z-index: 400;
-}
-
 .dialog{
     min-height: 70vh;
     
@@ -18,4 +14,8 @@
     &.Campaign{
         background-color: #E0F7FA;
     }
+}
+
+.datepicker{
+    z-index: 410; 
 }

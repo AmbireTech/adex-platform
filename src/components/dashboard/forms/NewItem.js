@@ -40,7 +40,7 @@ export default function NewItemHoc(Decorated) {
         }
 
         save() {
-            let item = {...this.state.item}
+            let item = { ...this.state.item }
             // TODO: !!! this tempId should not be used - temp until web3 services !!!
             item.tempId = this.props.items.length
             this.props.actions.addItem(item, this.props.addTo)
@@ -71,13 +71,13 @@ export default function NewItemHoc(Decorated) {
             item._meta = item._meta || {}
 
             return (
-                <div style={{textAlign: 'center'}}>
+                <div style={{ textAlign: 'center' }}>
 
-                    <section style={{maxWidth: 640, margin: 'auto'}}>
+                    <section style={{ maxWidth: 640, margin: 'auto' }}>
                         <Input type='text' label='Name' name='name' value={item._meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                         <Input type='text' label='Image url' name='img' value={item._meta.img} onChange={this.handleChange.bind(this, 'img')} maxLength={1024} />
                         <Input type='text' multiline rows={5} label='Description' name='desctiption' value={item._meta.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
-                        <Decorated {...this.props} save={this.save} handleChange={this.handleChange} />
+                        <Decorated {...this.props} item={item} save={this.save} handleChange={this.handleChange} />
                         <br />
                         <Button icon='save' label='Save' raised primary onClick={this.save} />
                     </section>

@@ -82,10 +82,6 @@
     line-height: normal !important;
 }
 
-.wrapper{
-    z-index: 400;
-}
-
 .dialog{
     min-height: 70vh;
 }

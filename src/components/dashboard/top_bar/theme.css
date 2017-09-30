@@ -1,5 +1,6 @@
 .appBar {
     background-color: #eee;
+    z-index: 200 !important;
 }
 
 .title {

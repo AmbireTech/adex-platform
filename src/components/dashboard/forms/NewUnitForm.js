@@ -12,7 +12,7 @@ import Dropdown from 'react-toolbox/lib/dropdown'
 class NewUnitForm extends Component {
 
     render() {
-        let item = this.props.newItem
+        let item = this.props.item
         return (
             <div>
                 <Dropdown
