@@ -14,7 +14,7 @@ class TopNav extends Component {
   render() {
     // console.log('theme', theme) 
     return (
-      <AppBar title={this.props.side || 'hoi'} onLeftIconClick={() => alert('test')} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={false} >
+      <AppBar title={this.props.side} onLeftIconClick={() => alert('test')} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={true} >
         <Navigation type='horizontal'>
 
           <IconMenu selected='help' icon='notifications' position='auto' menuRipple >

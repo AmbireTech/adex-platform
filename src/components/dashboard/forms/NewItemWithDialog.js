@@ -39,7 +39,7 @@ export default function ItemHoc(Decorated) {
                         onEscKeyDown={this.handleToggle}
                         onOverlayClick={this.handleToggle}
                         title={this.props.title}
-                        type={this.props.type || 'fullscreen'}
+                        type={this.props.type || 'normal'}
                         className={theme[this.props.itemType]}
                     >
                         <IconButton
