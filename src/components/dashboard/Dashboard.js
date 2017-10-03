@@ -19,7 +19,7 @@ import Unit from './containers/Unit'
 import Items from './containers/Items'
 import { ItemsTypes } from './../../constants/itemsTypes'
 import NewItemWithDialog from './forms/NewItemWithDialog'
-import StepperTest from './StepperTest'
+import MaterialStepper from './../stepper/MaterialStepper'
 
 const NewUnitFormWithDialog = NewItemWithDialog(NewUnitForm)
 const NewCampaignFormWithDialog = NewItemWithDialog(NewCampaignForm)
@@ -84,6 +84,27 @@ class Dashboard extends React.Component {
         )
     }
 
+    StepperTest = () => {
+        return (
+            <MaterialStepper pages={[
+                {
+                    title: 'Step one',
+                    component: () => <div> HOI 1 </div>,
+                },
+                {
+                    title: 'Step two',
+                    component: () => <div> HOI 2 </div>,
+                    subTitle: 'optional'
+                },
+                {
+                    title: 'Step three',
+                    component: () => <div> HOI 3 </div>,
+                    optional: true
+                },
+            ]} />
+        )
+    }
+
     render() {
         let side = this.props.side || this.props.match.params.side
 
@@ -101,7 +122,7 @@ class Dashboard extends React.Component {
                         <Route exact path="/dashboard/advertiser/units" component={this.renderAdUnits} />
                         <Route exact path="/dashboard/advertiser/Campaign/:itemId" component={Campaign} />
                         <Route exact path="/dashboard/advertiser/AdUnit/:itemId" component={Unit} />
-                        <Route exact path="/dashboard/:side" component={StepperTest} />
+                        <Route exact path="/dashboard/:side" component={this.StepperTest} />
                         <Route component={() => <h1>404 at {side} side</h1>} />
                     </Switch>
                 </Panel>
