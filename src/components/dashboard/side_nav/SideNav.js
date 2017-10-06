@@ -8,14 +8,17 @@ import { List, ListItem } from 'react-toolbox/lib/list'
 // import {Navigation} from 'react-toolbox/lib/navigation'
 import theme from './theme.css'
 import { withReactRouterLink } from './../../common/rr_hoc/RRHoc.js'
-import NewCampaignForm from './../forms/NewCampaignForm'
-import NewUnitForm from './../forms/NewUnitForm'
+// import NewCampaignForm from './../forms/NewCampaignForm'
+// import NewUnitForm from './../forms/NewUnitForm'
 import NewItemWithDialog from './../forms/NewItemWithDialog'
 import CampaignIcon from './../../common/icons/CampaignIcon'
 import { ItemsTypes } from './../../../constants/itemsTypes'
 
-const NewUnitFormWithDialog = NewItemWithDialog(NewUnitForm)
-const NewCampaignFormWithDialog = NewItemWithDialog(NewCampaignForm)
+import NewItemSteps from './../forms/NewItemSteps'
+import NewUnitFormS from './../forms/NewUnitFormS'
+import NewCampaignFormS from './../forms/NewCampaignFormS'
+
+const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
 
 const RRListItem = withReactRouterLink(ListItem)
 
@@ -48,11 +51,12 @@ class SideNav extends Component {
                         selectable={false}
                         ripple={false}
                     >
-                        <NewCampaignFormWithDialog
+                        <NewItemStepsWithDialog
                             btnLabel="New campaign"
                             title="Create new campaign"
                             flat
                             itemType={ItemsTypes.Campaign.name}
+                            pageTwo={NewCampaignFormS}
                         />
                     </ListItem>
                     <RRListItem
@@ -68,12 +72,13 @@ class SideNav extends Component {
                         selectable={false}
                         ripple={false}
                     >
-                        <NewUnitFormWithDialog
+                        <NewItemStepsWithDialog
                             btnLabel="New Unit"
                             title="Create new unit"
                             accent={true}
                             flat={true}
                             itemType={ItemsTypes.AdUnit.name}
+                            pageTwo={NewUnitFormS}                            
                         />
                     </ListItem>
                 </List>

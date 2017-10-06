@@ -3,8 +3,8 @@ import { Layout, Panel, NavDrawer } from 'react-toolbox/lib/layout'
 import SideNav from './side_nav/SideNav'
 import TopBar from './top_bar/TopBar'
 import theme from './theme.css'
-import NewUnitForm from './forms/NewUnitForm'
-import NewCampaignForm from './forms/NewCampaignForm'
+// import NewUnitForm from './forms/NewUnitForm'
+// import NewCampaignForm from './forms/NewCampaignForm'
 
 import { Route, Switch } from 'react-router-dom'
 // import { ItemTypes } from './../../models/DummyData'
@@ -19,10 +19,13 @@ import Unit from './containers/Unit'
 import Items from './containers/Items'
 import { ItemsTypes } from './../../constants/itemsTypes'
 import NewItemWithDialog from './forms/NewItemWithDialog'
-import MaterialStepper from './../stepper/MaterialStepper'
+import NewItemSteps from './forms/NewItemSteps'
+import NewUnitFormS from './forms/NewUnitFormS'
+import NewCampaignFormS from './forms/NewCampaignFormS'
 
-const NewUnitFormWithDialog = NewItemWithDialog(NewUnitForm)
-const NewCampaignFormWithDialog = NewItemWithDialog(NewCampaignForm)
+const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
+// const NewUnitFormWithDialog = NewItemWithDialog(NewItemSteps)
+// const NewCampaignFormWithDialog = NewItemWithDialog(NewCampaignForm)
 
 class Dashboard extends React.Component {
     state = {
@@ -31,6 +34,9 @@ class Dashboard extends React.Component {
         sidebarPinned: false
     }
 
+    componentDidMount() {
+        console.log('reff', this._unitSteps)
+    }
     componentWillMount(nextProps) {
         this.props.actions.updateNav('side', this.props.match.params.side)
     }
@@ -54,12 +60,13 @@ class Dashboard extends React.Component {
                 viewModeId="rowsViewUnits"
                 itemsType={ItemsTypes.AdUnit.id}
                 newItemBtn={() =>
-                    <NewUnitFormWithDialog
+                    <NewItemStepsWithDialog
                         btnLabel="New Unit"
                         title="Create new unit"
                         accent
                         floating
                         itemType={ItemsTypes.AdUnit.name}
+                        pageTwo={NewUnitFormS}
                     />
                 } />
         )
@@ -72,36 +79,25 @@ class Dashboard extends React.Component {
                 viewModeId="rowsViewCampaigns"
                 itemsType={ItemsTypes.Campaign.id}
                 newItemBtn={() =>
-                    <NewCampaignFormWithDialog
+                    <NewItemStepsWithDialog
                         floating
                         accent
                         addCampaign={this.props.actions.addCampaign}
                         btnLabel="New Campaign"
                         title="Create new Campaign"
                         itemType={ItemsTypes.Campaign.name}
+                        pageTwo={NewCampaignFormS}
                     />
                 } />
         )
     }
 
     StepperTest = () => {
+
         return (
-            <MaterialStepper pages={[
-                {
-                    title: 'Step one',
-                    component: () => <div> HOI 1 </div>,
-                },
-                {
-                    title: 'Step two',
-                    component: () => <div> HOI 2 </div>,
-                    subTitle: 'optional'
-                },
-                {
-                    title: 'Step three',
-                    component: () => <div> HOI 3 </div>,
-                    optional: true
-                },
-            ]} />
+            <div>
+                <NewItemSteps pageTwo={NewUnitFormS} />
+            </div>
         )
     }
 

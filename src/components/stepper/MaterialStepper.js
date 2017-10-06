@@ -26,7 +26,6 @@ const Step = ({ page, active, index, children, theme, canAdvance, canFinish, can
             )}
             {...other}
             onClick={() => setPageIndex(index)}
-            
         >
             {children}
 
@@ -72,9 +71,11 @@ const MaterialStepper = ({ ...props }) => {
                 {page.render ? page.render() : <page.component />}
             </div>
             <div>
-                <Button label='Continue' primary flat raised onClick={() =>
-                    props.setPageIndex(props.currentPage + 1)
-                } />
+                {props.canAdvance ?
+                    <Button label='Continue' primary flat raised onClick={() =>
+                        props.setPageIndex(props.currentPage + 1)
+                    } />
+                    : ''}
                 <Button label='Cancel' accent />
             </div>
         </div>
@@ -82,7 +83,6 @@ const MaterialStepper = ({ ...props }) => {
 }
 
 const WithMaterialStepper = withStepper(MaterialStepper)
-
 
 class MyMaterialStepper extends React.Component {
 

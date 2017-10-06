@@ -6,8 +6,9 @@ import * as actions from './../../../actions/itemActions'
 // import Input from 'react-toolbox/lib/input'
 // import DatePicker from 'react-toolbox/lib/date_picker'
 import { ItemsTypes, AdTypes, Sizes } from './../../../constants/itemsTypes'
-import NewItemHoc from './NewItem'
+import NewItemHoc from './NewItemHocStep'
 import Dropdown from 'react-toolbox/lib/dropdown'
+import { Button } from 'react-toolbox/lib/button'
 
 class NewUnitForm extends Component {
 
@@ -27,6 +28,8 @@ class NewUnitForm extends Component {
                     value={item._meta.size}
                     label="size"
                 />
+                <br />
+                <Button icon='save' label='Save' raised primary onClick={this.props.save} />
             </div>
         )
     }
@@ -46,17 +49,17 @@ function mapStateToProps(state) {
         account: state.account,
         newItem: state.newItem[ItemsTypes.AdUnit.id],
         items: state.items[ItemsTypes.AdUnit.id]
-    };
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
 const ItemNewUnitForm = NewItemHoc(NewUnitForm)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ItemNewUnitForm);
+)(ItemNewUnitForm)

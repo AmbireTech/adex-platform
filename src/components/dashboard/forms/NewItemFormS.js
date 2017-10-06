@@ -6,8 +6,9 @@ import * as actions from './../../../actions/itemActions'
 // import Input from 'react-toolbox/lib/input'
 // import DatePicker from 'react-toolbox/lib/date_picker'
 import { ItemsTypes, AdTypes, Sizes } from './../../../constants/itemsTypes'
-import NewItemHoc from './NewItem'
+import NewItemHoc from './NewItemHocStep'
 import Dropdown from 'react-toolbox/lib/dropdown'
+import Input from 'react-toolbox/lib/input'
 
 class NewUnitForm extends Component {
 
@@ -15,18 +16,9 @@ class NewUnitForm extends Component {
         let item = this.props.item
         return (
             <div>
-                <Dropdown
-                    onChange={this.props.handleChange.bind(this, 'adType')}
-                    source={AdTypes}
-                    value={item._meta.adType}
-                    label="adType"
-                />
-                <Dropdown
-                    onChange={this.props.handleChange.bind(this, 'size')}
-                    source={Sizes}
-                    value={item._meta.size}
-                    label="size"
-                />
+                <Input type='text' label='Name' name='name' value={item._meta.fullName} onChange={this.props.handleChange.bind(this, 'fullName')} maxLength={128} />
+                <Input type='text' label='Image url' name='img' value={item._meta.img} onChange={this.props.handleChange.bind(this, 'img')} maxLength={1024} />
+                <Input type='text' multiline rows={5} label='Description' name='desctiption' value={item._meta.description} onChange={this.props.handleChange.bind(this, 'description')} maxLength={1024} />
             </div>
         )
     }
