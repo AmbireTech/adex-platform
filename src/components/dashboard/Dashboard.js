@@ -20,8 +20,8 @@ import Items from './containers/Items'
 import { ItemsTypes } from './../../constants/itemsTypes'
 import NewItemWithDialog from './forms/NewItemWithDialog'
 import NewItemSteps from './forms/NewItemSteps'
-import NewUnitFormS from './forms/NewUnitFormS'
-import NewCampaignFormS from './forms/NewCampaignFormS'
+import NewUnitForm from './forms/NewUnitForm'
+import NewCampaignForm from './forms/NewCampaignForm'
 
 const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
 // const NewUnitFormWithDialog = NewItemWithDialog(NewItemSteps)
@@ -66,7 +66,7 @@ class Dashboard extends React.Component {
                         accent
                         floating
                         itemType={ItemsTypes.AdUnit.id}
-                        pageTwo={NewUnitFormS}
+                        pageTwo={NewUnitForm}
                     />
                 } />
         )
@@ -86,7 +86,7 @@ class Dashboard extends React.Component {
                         btnLabel="New Campaign"
                         title="Create new Campaign"
                         itemType={ItemsTypes.Campaign.id}
-                        pageTwo={NewCampaignFormS}
+                        pageTwo={NewCampaignForm}
                     />
                 } />
         )
@@ -96,7 +96,7 @@ class Dashboard extends React.Component {
 
         return (
             <div>
-                <NewItemSteps itemType={ItemsTypes.AdUnit.id} pageTwo={NewUnitFormS} from="dashboard"/>
+                <NewItemSteps itemType={ItemsTypes.AdUnit.id} pageTwo={NewUnitForm} from="dashboard"/>
             </div>
         )
     }

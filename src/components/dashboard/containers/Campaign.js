@@ -14,9 +14,7 @@ import NewUnitForm from './../forms/NewUnitForm'
 import { Tab, Tabs } from 'react-toolbox'
 import theme from './theme.css'
 import AddItemDialog from './AddItemDialog'
-
 import NewItemSteps from './../forms/NewItemSteps'
-import NewUnitFormS from './../forms/NewUnitFormS'
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
@@ -65,7 +63,7 @@ export class Campaign extends Component {
                         listMode='rows'
                         addTo={item}
                         newForm={(props) =>
-                            <NewItemSteps {...props} addTo={item} pageTwo={NewUnitFormS} />
+                            <NewItemSteps {...props} addTo={item} pageTwo={NewUnitForm} itemType={ItemsTypes.AdUnit.id} />
                         }
                     />
                 </div>

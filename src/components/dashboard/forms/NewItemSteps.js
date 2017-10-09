@@ -7,11 +7,8 @@ import { ItemsTypes, AdTypes, Sizes } from './../../../constants/itemsTypes'
 import { Button } from 'react-toolbox/lib/button'
 // import ProgressBar from 'react-toolbox/lib/progress_bar'
 // import theme from './theme.css'
-import Input from 'react-toolbox/lib/input'
-import Base from './../../../models/Base'
 import MaterialStepper from './../../stepper/MaterialStepper'
-import NewItemFormS from './NewItemFormS'
-import NewUnitFormS from './NewUnitFormS'
+import NewItemForm from './NewItemForm'
 
 class NewItemSteps extends Component {
 
@@ -22,7 +19,7 @@ class NewItemSteps extends Component {
                 <MaterialStepper pages={[
                     {
                         title: 'Basic info',
-                        component: () => <NewItemFormS itemType={this.props.itemType} onSave={this.props.onSave} />
+                        component: () => <NewItemForm itemType={this.props.itemType} onSave={this.props.onSave} />
                     }, {
                         title: 'Additional info',
                         component: () => <this.props.pageTwo itemType={this.props.itemType} onSave={this.props.onSave} />

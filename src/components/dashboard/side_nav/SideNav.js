@@ -15,8 +15,8 @@ import CampaignIcon from './../../common/icons/CampaignIcon'
 import { ItemsTypes } from './../../../constants/itemsTypes'
 
 import NewItemSteps from './../forms/NewItemSteps'
-import NewUnitFormS from './../forms/NewUnitFormS'
-import NewCampaignFormS from './../forms/NewCampaignFormS'
+import NewUnitForm from './../forms/NewUnitForm'
+import NewCampaignForm from './../forms/NewCampaignForm'
 
 const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
 
@@ -56,7 +56,7 @@ class SideNav extends Component {
                             title="Create new campaign"
                             flat
                             itemType={ItemsTypes.Campaign.id}
-                            pageTwo={NewCampaignFormS}
+                            pageTwo={NewCampaignForm}
                             from="sidenav"                            
                         />
                     </ListItem>
@@ -79,7 +79,7 @@ class SideNav extends Component {
                             accent={true}
                             flat={true}
                             itemType={ItemsTypes.AdUnit.id}
-                            pageTwo={NewUnitFormS}    
+                            pageTwo={NewUnitForm}    
                             from="sidenav"
                         
                         />

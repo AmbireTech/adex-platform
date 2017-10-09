@@ -5,8 +5,9 @@ import { bindActionCreators } from 'redux'
 import * as actions from './../../../actions/itemActions'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import { ItemsTypes } from './../../../constants/itemsTypes'
-import NewItemHoc from './NewItem'
+import NewItemHoc from './NewItemHocStep'
 import theme from './theme.css'
+import { Button } from 'react-toolbox/lib/button'
 
 class NewCampaignForm extends Component {
 
@@ -28,6 +29,7 @@ class NewCampaignForm extends Component {
                     value={item._meta.to}
                     className={theme.datepicker}
                 />
+                <Button icon='save' label='Save' raised primary onClick={this.props.save} />
             </div>
         )
     }
