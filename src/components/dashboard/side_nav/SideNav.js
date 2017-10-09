@@ -55,8 +55,9 @@ class SideNav extends Component {
                             btnLabel="New campaign"
                             title="Create new campaign"
                             flat
-                            itemType={ItemsTypes.Campaign.name}
+                            itemType={ItemsTypes.Campaign.id}
                             pageTwo={NewCampaignFormS}
+                            from="sidenav"                            
                         />
                     </ListItem>
                     <RRListItem
@@ -77,8 +78,10 @@ class SideNav extends Component {
                             title="Create new unit"
                             accent={true}
                             flat={true}
-                            itemType={ItemsTypes.AdUnit.name}
-                            pageTwo={NewUnitFormS}                            
+                            itemType={ItemsTypes.AdUnit.id}
+                            pageTwo={NewUnitFormS}    
+                            from="sidenav"
+                        
                         />
                     </ListItem>
                 </List>

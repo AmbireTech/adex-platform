@@ -65,7 +65,7 @@ class Dashboard extends React.Component {
                         title="Create new unit"
                         accent
                         floating
-                        itemType={ItemsTypes.AdUnit.name}
+                        itemType={ItemsTypes.AdUnit.id}
                         pageTwo={NewUnitFormS}
                     />
                 } />
@@ -85,7 +85,7 @@ class Dashboard extends React.Component {
                         addCampaign={this.props.actions.addCampaign}
                         btnLabel="New Campaign"
                         title="Create new Campaign"
-                        itemType={ItemsTypes.Campaign.name}
+                        itemType={ItemsTypes.Campaign.id}
                         pageTwo={NewCampaignFormS}
                     />
                 } />
@@ -96,7 +96,7 @@ class Dashboard extends React.Component {
 
         return (
             <div>
-                <NewItemSteps pageTwo={NewUnitFormS} />
+                <NewItemSteps itemType={ItemsTypes.AdUnit.id} pageTwo={NewUnitFormS} from="dashboard"/>
             </div>
         )
     }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Button, IconButton } from 'react-toolbox/lib/button'
+import { ItemTypesNames } from './../../../constants/itemsTypes'
 // import theme from './theme.css'
 import Dialog from 'react-toolbox/lib/dialog'
 import theme from './theme.css'
@@ -40,7 +41,7 @@ export default function ItemHoc(Decorated) {
                         onOverlayClick={this.handleToggle}
                         title={this.props.title}
                         type={this.props.type || 'normal'}
-                        className={theme[this.props.itemType]}
+                        className={theme[ItemTypesNames[this.props.itemType]]}
                     >
                         <IconButton
                             icon='close'

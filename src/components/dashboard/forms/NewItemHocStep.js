@@ -17,7 +17,8 @@ export default function NewItemHoc(Decorated) {
             this.state = {
                 active: false,
                 item: {},
-                tabIndex: 0
+                tabIndex: 0,
+                saved: false
             }
         }
 
@@ -43,27 +44,28 @@ export default function NewItemHoc(Decorated) {
             let item = { ...this.state.item }
             // TODO: !!! this tempId should not be used - temp until web3 services !!!
             item.tempId = this.props.items.length
-            this.props.actions.addItem(item, this.props.addTo)
 
-            // TODO:.....
-            if (typeof this.props.onSave === 'function') {
-                this.props.onSave()
-            }
+            this.setState({ saved: true }, () => {
+                this.props.actions.addItem(item, this.props.addTo)
+                this.props.actions.resetNewItem(this.state.item)
 
-            if (Array.isArray(this.props.onSave)) {
-                for (var index = 0; index < this.props.onSave.length; index++) {
-                    if (typeof this.props.onSave[index] === 'function') {
-                        this.props.onSave[index].onSave()
+                // TODO:.....
+                if (typeof this.props.onSave === 'function') {
+                    this.props.onSave()
+                }
+
+                if (Array.isArray(this.props.onSave)) {
+                    for (var index = 0; index < this.props.onSave.length; index++) {
+                        if (typeof this.props.onSave[index] === 'function') {
+                            this.props.onSave[index].onSave()
+                        }
                     }
                 }
-            }
-
-            this.props.actions.resetNewItem(this.state.item)
-            this.setState({ item: null })
+            })
         }
 
         updateItemInStore() {
-            if (this.state.item) {
+            if (!this.state.saved && this.state.item) {
                 this.props.actions.updateNewItem(this.state.item, this.state.item._meta)
             }
         }

@@ -29,15 +29,16 @@ NewUnitForm.propTypes = {
     account: PropTypes.object.isRequired,
     newItem: PropTypes.object.isRequired,
     title: PropTypes.string,
-    items: PropTypes.array.isRequired
+    items: PropTypes.array.isRequired,
+    itemType: PropTypes.number.isRequired
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
     // console.log('mapStateToProps Campaigns', state)
     return {
         account: state.account,
-        newItem: state.newItem[ItemsTypes.AdUnit.id],
-        items: state.items[ItemsTypes.AdUnit.id]
+        newItem: state.newItem[props.itemType],
+        items: state.items[props.itemType]
     };
 }
 
