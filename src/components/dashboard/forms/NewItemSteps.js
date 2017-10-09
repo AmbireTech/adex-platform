@@ -19,10 +19,10 @@ class NewItemSteps extends Component {
                 <MaterialStepper pages={[
                     {
                         title: 'Basic info',
-                        component: () => <NewItemForm itemType={this.props.itemType} onSave={this.props.onSave} />
+                        component: () => <NewItemForm itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />
                     }, {
                         title: 'Additional info',
-                        component: () => <this.props.pageTwo itemType={this.props.itemType} onSave={this.props.onSave} />
+                        component: () => <this.props.pageTwo itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />
                     }
                 ]} />
             </div>

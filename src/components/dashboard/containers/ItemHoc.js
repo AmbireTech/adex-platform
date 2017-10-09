@@ -48,7 +48,9 @@ export default function ItemHoc(Decorated) {
         }
 
         componentWillUnmount() {
-            this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], false)
+            if (this.state.item) {
+                this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], false)
+            }
         }
 
         handleChange = (name, value) => {
@@ -76,12 +78,16 @@ export default function ItemHoc(Decorated) {
         }
 
         render() {
+            if (!this.state.item) {
+                return (<h1> No item found! </h1>)
+            }
 
-            let meta = this.state.item._meta || {}
+            let item = this.state.item || {}
+            let meta = item._meta || {}
 
             return (
                 <div>
-                    <div className={classnames(theme.heading, theme[ItemTypesNames[this.state.item._type]])}>
+                    <div className={classnames(theme.heading, theme[ItemTypesNames[item._type]])}>
                         <div className={theme.headingLeft}>
                             {this.state.activeFields.fullName ?
                                 <Input type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
@@ -133,7 +139,7 @@ export default function ItemHoc(Decorated) {
                     </div>
 
                     <div>
-                        <Decorated {...this.props} item={this.state.item} save={this.save} handleChange={this.handleChange} />
+                        <Decorated {...this.props} item={item} save={this.save} handleChange={this.handleChange} />
                     </div>
 
                 </div>

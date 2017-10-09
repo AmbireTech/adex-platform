@@ -34,9 +34,6 @@ class Dashboard extends React.Component {
         sidebarPinned: false
     }
 
-    componentDidMount() {
-        console.log('reff', this._unitSteps)
-    }
     componentWillMount(nextProps) {
         this.props.actions.updateNav('side', this.props.match.params.side)
     }
