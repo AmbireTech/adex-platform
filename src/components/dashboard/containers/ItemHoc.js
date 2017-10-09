@@ -6,12 +6,14 @@ import ProgressBar from 'react-toolbox/lib/progress_bar'
 import theme from './theme.css'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Tooltip from 'react-toolbox/lib/tooltip'
+import Avatar from 'react-toolbox/lib/avatar'
 import Input from 'react-toolbox/lib/input'
 import { ItemTypesNames } from './../../../constants/itemsTypes'
 import Base from './../../../models/Base'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import FloatingProgressButton from './../../common/floating_btn_progress/FloatingProgressButton'
 import classnames from 'classnames'
+import Img from './../../common/img/Img'
 
 const TooltipFontIcon = Tooltip(FontIcon)
 
@@ -89,10 +91,11 @@ export default function ItemHoc(Decorated) {
                 <div>
                     <div className={classnames(theme.heading, theme[ItemTypesNames[item._type]])}>
                         <div className={theme.headingLeft}>
+                            <Avatar image={meta.img} title={meta.fullName} cover/>
                             {this.state.activeFields.fullName ?
-                                <Input type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
+                                <Input className={theme.itemName} type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                                 :
-                                <h2>
+                                <h2 className={theme.itemName}>
                                     <span> {meta.fullName} </span>
                                     <span><IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'fullName', true)} /></span>
                                 </h2>
