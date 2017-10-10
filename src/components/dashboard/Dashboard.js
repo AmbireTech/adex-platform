@@ -3,17 +3,11 @@ import { Layout, Panel, NavDrawer } from 'react-toolbox/lib/layout'
 import SideNav from './side_nav/SideNav'
 import TopBar from './top_bar/TopBar'
 import theme from './theme.css'
-// import NewUnitForm from './forms/NewUnitForm'
-// import NewCampaignForm from './forms/NewCampaignForm'
-
 import { Route, Switch } from 'react-router-dom'
-// import { ItemTypes } from './../../models/DummyData'
-
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from './../../actions/itemActions'
-
 import Campaign from './containers/Campaign'
 import Unit from './containers/Unit'
 import Items from './containers/Items'
@@ -24,8 +18,6 @@ import NewUnitForm from './forms/NewUnitForm'
 import NewCampaignForm from './forms/NewCampaignForm'
 
 const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
-// const NewUnitFormWithDialog = NewItemWithDialog(NewItemSteps)
-// const NewCampaignFormWithDialog = NewItemWithDialog(NewCampaignForm)
 
 class Dashboard extends React.Component {
     state = {
@@ -89,11 +81,11 @@ class Dashboard extends React.Component {
         )
     }
 
-    StepperTest = () => {
+    Dash = () => {
 
         return (
             <div>
-                <NewItemSteps itemType={ItemsTypes.AdUnit.id} pageTwo={NewUnitForm} from="dashboard"/>
+                Dashboard
             </div>
         )
     }
@@ -115,7 +107,7 @@ class Dashboard extends React.Component {
                         <Route exact path="/dashboard/advertiser/units" component={this.renderAdUnits} />
                         <Route exact path="/dashboard/advertiser/Campaign/:itemId" component={Campaign} />
                         <Route exact path="/dashboard/advertiser/AdUnit/:itemId" component={Unit} />
-                        <Route exact path="/dashboard/:side" component={this.StepperTest} />
+                        <Route exact path="/dashboard/:side" component={this.Dash} />
                         <Route component={() => <h1>404 at {side} side</h1>} />
                     </Switch>
                 </Panel>

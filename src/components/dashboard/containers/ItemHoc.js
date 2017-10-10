@@ -45,8 +45,9 @@ export default function ItemHoc(Decorated) {
         }
 
         componentWillReceiveProps(nextProps) {
-            // TODO: check if really need it
-            this.setState({ item: nextProps.items[nextProps.match.params.itemId] })
+            if (!nextProps.spinner) {
+                this.setState({ item: nextProps.items[nextProps.match.params.itemId] })
+            }
         }
 
         componentWillUnmount() {
@@ -91,7 +92,7 @@ export default function ItemHoc(Decorated) {
                 <div>
                     <div className={classnames(theme.heading, theme[ItemTypesNames[item._type]])}>
                         <div className={theme.headingLeft}>
-                            <Avatar image={meta.img} title={meta.fullName} cover/>
+                            <Avatar image={meta.img} title={meta.fullName} cover />
                             {this.state.activeFields.fullName ?
                                 <Input className={theme.itemName} type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                                 :
