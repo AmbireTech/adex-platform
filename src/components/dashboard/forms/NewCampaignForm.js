@@ -29,7 +29,7 @@ class NewCampaignForm extends Component {
                     value={item._meta.to}
                     className={theme.datepicker}
                 />
-                <Button icon='save' label='Save' raised primary onClick={this.props.save} />
+                {/* <Button icon='save' label='Save' raised primary onClick={this.props.save} /> */}
             </div>
         )
     }

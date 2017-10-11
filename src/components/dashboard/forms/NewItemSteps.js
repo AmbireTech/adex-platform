@@ -7,22 +7,35 @@ import { ItemsTypes, AdTypes, Sizes } from './../../../constants/itemsTypes'
 import { Button } from 'react-toolbox/lib/button'
 // import ProgressBar from 'react-toolbox/lib/progress_bar'
 // import theme from './theme.css'
-import MaterialStepper from './../../stepper/MaterialStepper'
+import MaterialStepper from './stepper/MaterialStepper'
 import NewItemForm from './NewItemForm'
+import NewItemFormPreview from './NewItemFormPreview'
+import NewItemHoc from './NewItemHocStep'
+
+const saveBtn = ({ ...props }) => {
+    return (
+        <Button icon='save' label='Save' primary onClick={props.save} />
+    )
+}
+
+const SaveBtnWithItem = NewItemHoc(saveBtn)
 
 class NewItemSteps extends Component {
-
     render() {
         return (
             <div style={{ textAlign: 'center' }}>
 
                 <MaterialStepper pages={[
                     {
-                        title: 'Basic info',
+                        title: 'Step one',
                         component: () => <NewItemForm itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />
                     }, {
-                        title: 'Additional info',
+                        title: 'Step two',
                         component: () => <this.props.pageTwo itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />
+                    }, {
+                        title: 'Preview and save',
+                        completeBtn: () => <SaveBtnWithItem itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
+                        component: () => <NewItemFormPreview itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />
                     }
                 ]} />
             </div>
@@ -40,12 +53,12 @@ NewItemSteps.propTypes = {
     pageTwo: PropTypes.func
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
     // console.log('mapStateToProps Campaigns', state)
     return {
         account: state.account,
-        // newItem: state.newItem[ItemsTypes.AdUnit.id],
-        items: state.items[ItemsTypes.AdUnit.id]
+        // newItem: state.newItem[props.itemType],
+        items: state.items[props.itemType]
     }
 }
 

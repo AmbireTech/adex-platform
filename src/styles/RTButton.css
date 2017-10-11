@@ -20,28 +20,3 @@
     background: var(--color-accent) !important;
   }
 }
-
-.neutral:not([disabled]) {
-  &.raised,
-  &.floating {
-    background: var(--color-primary) !important;
-    color: var(--color-primary-contrast) !important;
-  }
-
-  &.flat,
-  &.toggle {
-    color: #1b75bc !important;
-  }
-
-  &.inverse {
-    &.raised,
-    &.floating {
-      color: #1b75bc !important;
-    }
-
-    &.flat,
-    &.toggle {
-      color: #1b75bc !important;
-    }
-  }
-}

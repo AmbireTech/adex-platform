@@ -3,7 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as actions from './../../actions/itemActions'
+import * as actions from './../../../../actions/itemActions'
 import { Stepper } from 'react-step/lib/stepper'
 import { withStepper } from 'react-step/lib/with-stepper'
 import stepperTheme from './stepperTheme.css'
@@ -59,27 +59,56 @@ const StepperNav = ({ pages, currentPage, ...other }) => {
     )
 }
 
-const MaterialStepper = ({ ...props }) => {
+class MaterialStepper extends React.Component {
 
-    let page = props.pages[props.currentPage]
+    onComplete() {
+        console.log('currPage', this.currPage)
+        let props = this.props
+        let page = props.pages[props.currentPage]
 
-    return (
-        <div>
-            <StepperNav  {...props} />
+        console.log('props.pages[props.currentPage]', page.component)
+    }
 
-            <div>
-                {page.render ? page.render() : <page.component />}
+    render() {
+        let props = this.props
+        let page = props.pages[props.currentPage]
+
+
+        return (
+            <div className={stepperTheme.stepper}>
+                <StepperNav  {...props} />
+
+                <div className={stepperTheme.page}>
+                    <div className={stepperTheme.pageContent}>
+                        {<page.component ref={(hoi) => { this.currPage = hoi }} />}
+                    </div>
+
+                    <div className={stepperTheme.controls}>
+                        <div className={stepperTheme.left}>
+                            {props.canReverse ?
+                                <Button label='Back' onClick={() =>
+                                    props.setPageIndex(props.currentPage - 1)
+                                } />
+                                : ''}
+                        </div>
+
+                        <div className={stepperTheme.right} >
+                            <Button label='Cancel' accent />
+                            {props.canAdvance ?
+                                <Button label='Continue' primary onClick={() =>
+                                    props.setPageIndex(props.currentPage + 1)
+                                } />
+                                : ''}
+                            {page.completeBtn ?
+                                <page.completeBtn />
+                                : ''}
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <div>
-                {props.canAdvance ?
-                    <Button label='Continue' primary flat raised onClick={() =>
-                        props.setPageIndex(props.currentPage + 1)
-                    } />
-                    : ''}
-                <Button label='Cancel' accent />
-            </div>
-        </div>
-    )
+        )
+    }
 }
 
 const WithMaterialStepper = withStepper(MaterialStepper)

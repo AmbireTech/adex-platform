@@ -16,11 +16,20 @@
     }
 
     & .body{
-        overflow-y: auto;
-        overflow-y: overlay;
+        // overflow-y: auto;
+        // overflow-y: overlay;
+        position: relative;
     }
 }
 
 .datepicker{
     z-index: 410; 
+}
+
+.textLeft {
+    text-align: left;
+}
+
+.textRight {
+    text-align: right;
 }

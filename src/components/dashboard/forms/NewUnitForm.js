@@ -29,7 +29,7 @@ class NewUnitForm extends Component {
                     label="size"
                 />
                 <br />
-                <Button icon='save' label='Save' raised primary onClick={this.props.save} />
+                {/* <Button icon='save' label='Save' raised primary onClick={this.props.save} /> */}
             </div>
         )
     }
@@ -38,17 +38,18 @@ class NewUnitForm extends Component {
 NewUnitForm.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    newItem: PropTypes.object.isRequired,
+    // newItem: PropTypes.object.isRequired,
     title: PropTypes.string,
-    items: PropTypes.array.isRequired
+    // items: PropTypes.array.isRequired
 }
 
 function mapStateToProps(state) {
     // console.log('mapStateToProps Campaigns', state)
     return {
         account: state.account,
-        newItem: state.newItem[ItemsTypes.AdUnit.id],
-        items: state.items[ItemsTypes.AdUnit.id]
+        // newItem: state.newItem[ItemsTypes.AdUnit.id],
+        // items: state.items[ItemsTypes.AdUnit.id],
+        itemType: ItemsTypes.AdUnit.id
     }
 }
 

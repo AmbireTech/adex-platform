@@ -55,6 +55,7 @@ class SideNav extends Component {
                             btnLabel="New campaign"
                             title="Create new campaign"
                             flat
+                            primary
                             itemType={ItemsTypes.Campaign.id}
                             pageTwo={NewCampaignForm}
                             from="sidenav"                            
@@ -76,8 +77,8 @@ class SideNav extends Component {
                         <NewItemStepsWithDialog
                             btnLabel="New Unit"
                             title="Create new unit"
-                            accent={true}
-                            flat={true}
+                            accent
+                            flat
                             itemType={ItemsTypes.AdUnit.id}
                             pageTwo={NewUnitForm}    
                             from="sidenav"

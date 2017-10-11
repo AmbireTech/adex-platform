@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Button } from 'react-toolbox/lib/button'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import * as actions from './../../../actions/itemActions'
 // import ProgressBar from 'react-toolbox/lib/progress_bar'
 // import theme from './theme.css'
 import Input from 'react-toolbox/lib/input'
@@ -17,7 +20,6 @@ export default function NewItemHoc(Decorated) {
             this.state = {
                 active: false,
                 item: {},
-                tabIndex: 0,
                 saved: false
             }
         }
@@ -31,21 +33,23 @@ export default function NewItemHoc(Decorated) {
         }
 
         // Works when inside dialog because when no active its content is unmounted
-        componentWillUnmount() {
-            this.updateItemInStore()
-        }
+        // componentWillUnmount() {
+        //     this.updateItemInStore()
+        // }
 
         handleChange = (name, value) => {
-            let newItem = Base.updateMeta(this.state.item, { [name]: value })
-            this.setState({ item: newItem })
+            // let newItem = Base.updateMeta(this.state.item, { [name]: value })
+            // this.setState({ item: newItem })
+            this.props.actions.updateNewItem(this.props.newItem, { [name]: value })
+
         }
 
         save() {
-            let item = { ...this.state.item }
+            let item = { ...this.props.newItem }
             // TODO: !!! this tempId should not be used - temp until web3 services !!!
             item.tempId = this.props.items.length
 
-            this.setState({ saved: true }, () => {
+            // this.setState({ saved: true }, () => {
                 this.props.actions.addItem(item, this.props.addTo)
                 this.props.actions.resetNewItem(this.state.item)
 
@@ -61,27 +65,23 @@ export default function NewItemHoc(Decorated) {
                         }
                     }
                 }
-            })
+            // })
         }
 
-        updateItemInStore() {
-            if (!this.state.saved && this.state.item) {
-                this.props.actions.updateNewItem(this.state.item, this.state.item._meta)
-            }
-        }
+        // updateItemInStore() {
+        //     if (!this.state.saved && this.state.item) {
+        //         this.props.actions.updateNewItem(this.state.item, this.state.item._meta)
+        //     }
+        // }
 
         render() {
 
-            let item = this.state.item || {}
+            let item = this.props.newItem || {}
             item._meta = item._meta || {}
+            const props = this.props
 
             return (
-                <div style={{ textAlign: 'center' }}>
-
-                    <section style={{ maxWidth: 640, margin: 'auto' }}>
-                        <Decorated {...this.props} item={item} save={this.save} handleChange={this.handleChange} />
-                    </section>
-                </div>
+                <Decorated {...props} item={item} save={this.save} handleChange={this.handleChange} />
             )
         }
     }
@@ -95,6 +95,25 @@ export default function NewItemHoc(Decorated) {
         addTo: PropTypes.object
     }
 
-    return ItemForm
+    // return ItemForm
+
+    function mapStateToProps(state, props) {
+        return {
+            account: state.account,
+            newItem: state.newItem[props.itemType],
+            items: state.items[props.itemType]
+        }
+    }
+
+    function mapDispatchToProps(dispatch) {
+        return {
+            actions: bindActionCreators(actions, dispatch)
+        }
+    }
+
+    return connect(
+        mapStateToProps,
+        mapDispatchToProps
+    )(ItemForm)
 }
 
