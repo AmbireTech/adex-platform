@@ -37,8 +37,20 @@ class NewItemFormPreview extends Component {
                         <Col xs={12} lg={3} className={theme.textRight}>Image url:</Col>
                         <Col xs={12} lg={3} className={theme.textLeft}>{item._meta.img}</Col>
                     </Row>
+                    {
+                        Object
+                            .keys(item._meta)
+                            .filter((key) => !/fullName|description|items|img|createdOn|modifiedOn|deleted|archived/.test(key))
+                            .map(key =>
+                                <Row key={key}>
+                                    <Col xs={12} lg={3} className={theme.textRight}>{key}:</Col>
+                                    <Col xs={12} lg={3} className={theme.textLeft}>{item._meta[key]}</Col>
+                                </Row>
+                            )
+                    }
                 </Grid>
                 <br />
+
                 {/* <Button icon='save' label='Save' raised primary onClick={this.props.save} /> */}
             </div>
         )
