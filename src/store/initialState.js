@@ -1,12 +1,12 @@
-import Account from './../models/Account'
-import Item from './../models/Item'
-import Campaign from './../models/Campaign'
-import AdUnit from './../models/AdUnit'
-// import Channel from './../models/Channel'
-// import Slot from './../models/AdSlot'
+import Account from 'models/Account'
+import Item from 'models/Item'
+import Campaign from 'models/Campaign'
+import AdUnit from 'models/AdUnit'
+// import Channel from 'models/Channel'
+// import Slot from 'models/AdSlot'
 // import objectAssign from 'object-assign';
-import { ItemsTypes } from './../constants/itemsTypes'
-import Helper from './../helpers/miscHelpers'
+import { ItemsTypes } from 'constants/itemsTypes'
+import Helper from 'helpers/miscHelpers'
 
 // cached
 let counts = {

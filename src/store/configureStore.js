@@ -1,7 +1,7 @@
 import {createStore, compose, applyMiddleware} from 'redux';
 import reduxImmutableStateInvariant from 'redux-immutable-state-invariant';
 import thunk from 'redux-thunk';
-import rootReducer from '../reducers';
+import rootReducer from 'reducers';
 import history from './history'
 import { routerMiddleware } from 'react-router-redux';
 

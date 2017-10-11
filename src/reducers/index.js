@@ -10,7 +10,7 @@ import confirm from './confirmReducer'
 import nav from './navReducer'
 import { routerReducer, LOCATION_CHANGE, CALL_HISTORY_METHOD } from 'react-router-redux'
 import { filterActions } from 'redux-ignore'
-import * as types from './../constants/actionTypes'
+import * as types from 'constants/actionTypes'
 
 const rootReducer = combineReducers({
     account: account,

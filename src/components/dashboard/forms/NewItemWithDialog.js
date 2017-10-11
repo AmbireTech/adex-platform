@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Button, IconButton } from 'react-toolbox/lib/button'
-import { ItemTypesNames } from './../../../constants/itemsTypes'
+import { ItemTypesNames } from 'constants/itemsTypes'
 // import theme from './theme.css'
 import Dialog from 'react-toolbox/lib/dialog'
 import theme from './theme.css'

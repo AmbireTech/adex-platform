@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import AdexIcon from './../common/icons/AdexIcon';
+import AdexIcon from 'components/common/icons/AdexIcon';
 
 class PageNotFound extends React.Component {
 

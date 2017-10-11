@@ -1,5 +1,5 @@
-import { UPDATE_SPINNER } from '../constants/actionTypes'
-import initialState from './../store/initialState'
+import { UPDATE_SPINNER } from 'constants/actionTypes'
+import initialState from 'store/initialState'
 
 export default function spinnersReducer(state = initialState.spinners, action) {
     let newState

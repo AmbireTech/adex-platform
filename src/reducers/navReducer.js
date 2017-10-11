@@ -1,5 +1,5 @@
-import { UPDATE_NAV } from '../constants/actionTypes'
-import initialState from './../store/initialState'
+import { UPDATE_NAV } from 'constants/actionTypes'
+import initialState from 'store/initialState'
 
 export default function navReducer(state = initialState.nav, action) {
     let newState

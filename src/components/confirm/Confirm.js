@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as actions from './../../actions/itemActions'
+import * as actions from 'actions/itemActions'
 import Dialog from 'react-toolbox/lib/dialog'
 
 export class Confirm extends Component {

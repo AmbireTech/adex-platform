@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import NO_IMAGE from './../../../resources/no-image-box.png'
+import NO_IMAGE from 'resources/no-image-box.png'
 
 const Img = ({ src, fallbackSrc, alt, ...other }) => {
     let element

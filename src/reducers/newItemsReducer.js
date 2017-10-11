@@ -1,6 +1,6 @@
-import { UPDATE_NEW_ITEM, RESET_NEW_ITEM } from '../constants/actionTypes'
-import initialState from './../store/initialState'
-import Base from './../models/Base'
+import { UPDATE_NEW_ITEM, RESET_NEW_ITEM } from 'constants/actionTypes'
+import initialState from 'store/initialState'
+import Base from 'models/Base'
 
 export default function newItemsReducer(state = initialState.newItem, action) {
 

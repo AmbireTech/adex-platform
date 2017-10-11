@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import Logo from './components/icons/AdexLogo';
+import Logo from 'components/icons/AdexLogo';
 import { BrowserRouter as Router, Link } from 'react-router-dom'
 
 class Signin extends Component {
   render() {
     return (
-      <div className="App" style={{backgroundImage: `url(${require('./../../resources/background.png')})`}}>
+      <div className="App" style={{backgroundImage: `url(${require('resources/background.png')})`}}>
 
         <div className="App-header">
           <img src={<Logo />} className="App-logo" alt="logo" />

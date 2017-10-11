@@ -1,4 +1,4 @@
-import Helper from './../helpers/miscHelpers'
+import Helper from 'helpers/miscHelpers'
 import Item from './Item'
 import { ItemTypes, Sizes, Images, AdTypes, Locations, Genders } from './DummyData'
 

@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { Button, IconButton } from 'react-toolbox/lib/button'
 import theme from './theme.css'
-import { withReactRouterLink } from './../../common/rr_hoc/RRHoc.js'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
-import Img from './../../common/img/Img'
-import { ItemTypesNames } from './../../../constants/itemsTypes'
+import Img from 'components/common/img/Img'
+import { ItemTypesNames } from 'constants/itemsTypes'
 
 // import classnames from 'classnames';
 

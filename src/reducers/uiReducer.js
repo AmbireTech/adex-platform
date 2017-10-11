@@ -1,5 +1,5 @@
-import { UPDATE_UI } from '../constants/actionTypes'
-import initialState from './../store/initialState'
+import { UPDATE_UI } from 'constants/actionTypes'
+import initialState from 'store/initialState'
 
 export default function uiReducer(state = initialState.ui, action) {
     let newState

@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import theme from './Signin.css'
-import Logo from './../common/icons/AdexIconTxt'
+import Logo from 'components/common/icons/AdexIconTxt'
 import { Switch, Route } from 'react-router-dom'
 import { Button } from 'react-toolbox/lib/button'
-import { withReactRouterLink } from './../common/rr_hoc/RRHoc.js'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 
-import PageNotFound from './../page_not_found/PageNotFound'
+import PageNotFound from 'components/page_not_found/PageNotFound'
 import SideSelect from './side-select/SideSelect'
 
 const RRButton = withReactRouterLink(Button)
@@ -29,7 +29,7 @@ class Signin extends Component {
   render() {
     // console.log('theme.signinContainer', theme);
     return (
-      <div className={theme.signinContainer} style={{ backgroundImage: `url(${require('./../../resources/background.png')})` }}>
+      <div className={theme.signinContainer} style={{ backgroundImage: `url(${require('resources/background.png')})` }}>
         <div className={theme.container}>
           <div className="adex-dapp">
             <Switch>

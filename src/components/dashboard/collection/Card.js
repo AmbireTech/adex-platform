@@ -2,10 +2,10 @@ import React, { Component } from 'react'
 import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
 import { Button, IconButton } from 'react-toolbox/lib/button'
 import theme from './theme.css'
-import { withReactRouterLink } from './../../common/rr_hoc/RRHoc'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import Tooltip from 'react-toolbox/lib/tooltip'
-import Img from './../../common/img/Img'
-import { ItemTypesNames } from './../../../constants/itemsTypes'
+import Img from 'components/common/img/Img'
+import { ItemTypesNames } from 'constants/itemsTypes'
 
 
 // const RRButton = withReactRouterLink(Button)

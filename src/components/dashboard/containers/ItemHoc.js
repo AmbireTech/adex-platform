@@ -8,12 +8,12 @@ import FontIcon from 'react-toolbox/lib/font_icon'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Avatar from 'react-toolbox/lib/avatar'
 import Input from 'react-toolbox/lib/input'
-import { ItemTypesNames } from './../../../constants/itemsTypes'
-import Base from './../../../models/Base'
+import { ItemTypesNames } from 'constants/itemsTypes'
+import Base from 'models/Base'
 import { Grid, Row, Col } from 'react-flexbox-grid'
-import FloatingProgressButton from './../../common/floating_btn_progress/FloatingProgressButton'
+import FloatingProgressButton from 'components/common/floating_btn_progress/FloatingProgressButton'
 import classnames from 'classnames'
-import Img from './../../common/img/Img'
+import Img from 'components/common/img/Img'
 
 const TooltipFontIcon = Tooltip(FontIcon)
 

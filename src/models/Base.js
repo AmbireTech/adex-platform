@@ -1,4 +1,4 @@
-import Helper from './../helpers/miscHelpers'
+import Helper from 'helpers/miscHelpers'
 
 class Base {
     constructor(name = '') {

@@ -1,8 +1,8 @@
 import Base from './Base'
-import Helper from './../helpers/miscHelpers'
+import Helper from 'helpers/miscHelpers'
 import Campaign from './Campaign'
 import AdUnit from './AdUnit'
-import { ItemsTypes } from './../constants/itemsTypes'
+import { ItemsTypes } from 'constants/itemsTypes'
 
 class Account extends Base {
     // TODO: accept addr and wallet

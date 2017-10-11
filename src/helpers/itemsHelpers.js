@@ -1,4 +1,4 @@
-import { ItemsTypes } from './../constants/itemsTypes'
+import { ItemsTypes } from 'constants/itemsTypes'
 
 function sortCollections(items) {
     let collections = {

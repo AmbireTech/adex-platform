@@ -1,7 +1,7 @@
-import Helper from './../helpers/miscHelpers'
+import Helper from 'helpers/miscHelpers'
 import Item from './Item'
 import moment from 'moment'
-import { ItemsTypes } from './../constants/itemsTypes'
+import { ItemsTypes } from 'constants/itemsTypes'
 import { Images } from './DummyData'
 
 class Campaign extends Item {

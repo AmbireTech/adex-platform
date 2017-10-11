@@ -1,5 +1,5 @@
-import { CONFIRM_ACTION } from '../constants/actionTypes'
-import initialState from './../store/initialState'
+import { CONFIRM_ACTION } from 'constants/actionTypes'
+import initialState from 'store/initialState'
 // import Helper from './../helpers/miscHelpers'
 // import { ItemTypesNames } from './../constants/itemsTypes'
 

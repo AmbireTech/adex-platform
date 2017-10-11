@@ -3,11 +3,11 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as actions from './../../../actions/itemActions'
+import * as actions from 'actions/itemActions'
 import ItemsList from './ItemsList'
 import theme from './theme.css'
 import classnames from 'classnames'
-import { ItemTypesNames } from './../../../constants/itemsTypes'
+import { ItemTypesNames } from 'constants/itemsTypes'
 
 class Items extends Component {
     render() {

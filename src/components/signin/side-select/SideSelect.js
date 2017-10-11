@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import theme from './theme.css'
-import PublisherLogo from './../../common/icons/AdexPublisher'
-import AdvertiserLogo from './../../common/icons/AdexAdvertiser'
+import PublisherLogo from 'components/common/icons/AdexPublisher'
+import AdvertiserLogo from 'components/common/icons/AdexAdvertiser'
 // import { Link } from 'react-router-dom'
 import Dialog from 'react-toolbox/lib/dialog'
-import { withReactRouterLink } from './../../common/rr_hoc/RRHoc.js'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 
 const SideBox = ({ salePoints, linkTitle, icon, title, ...other }) => (
   <div {...other} className={theme.sideBox}>

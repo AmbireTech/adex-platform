@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import theme from './theme.css'
 import { AppBar } from 'react-toolbox/lib/app_bar'
-import AdexIconTxt from './../../common/icons/AdexIconTxt'
+import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import { Navigation } from 'react-toolbox/lib/navigation'
 import { Link } from 'react-toolbox/lib/link'
 import { IconMenu, MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
-import ButtonMenu from './../../common/button_menu/ButtonMenu'
+import ButtonMenu from 'components/common/button_menu/ButtonMenu'
 
 let testNotifications = [{ name: 'test notif 1', seen: true }, { name: 'test notif 2', seen: false }, { name: 'test notif 3', seen: true }]
 
