@@ -17,6 +17,6 @@
   }
 
   &.flat:hover {
-    background: var(--color-accent) !important;
+    background: var(--color-primary) !important;
   }
 }

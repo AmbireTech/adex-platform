@@ -13,20 +13,22 @@ class NewCampaignForm extends Component {
 
     render() {
         let item = this.props.item
+        let from = item._meta.from ? new Date(item._meta.from) : null
+        let to = item._meta.to ? new Date(item._meta.to ) : null
         return (
             <div>
                 <DatePicker
                     label='Start date'
                     minDate={new Date()}
                     onChange={this.props.handleChange.bind(this, 'from')}
-                    value={item._meta.from}
+                    value={from}
                     className={theme.datepicker}
                 />
                 <DatePicker
                     label='End date'
                     minDate={new Date()}
                     onChange={this.props.handleChange.bind(this, 'to')}
-                    value={item._meta.to}
+                    value={to}
                     className={theme.datepicker}
                 />
             </div>

@@ -5,6 +5,19 @@
     margin-bottom: 0;
 }
 
+.cardTitle {
+    overflow: hidden;
+    & > div {
+        overflow: hidden;
+        & h5 {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    }
+}
+
 .cardTitle, 
 .cardMedia {
     cursor: pointer;

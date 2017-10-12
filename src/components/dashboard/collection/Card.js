@@ -26,11 +26,6 @@ class MyCard extends Component {
         let to = '/dashboard/' + this.props.side + '/' + ItemTypesNames[this.props.item._type] + '/' + id
         return (
             <Card style={{ width: '300px' }} raised={true} theme={theme}>
-                <RRCardTitle
-                    to={to}
-                    title={meta.fullName}
-                    theme={theme}
-                />
                 <RRCardMedia
                     to={to}
                     aspectRatio='wide'
@@ -39,18 +34,19 @@ class MyCard extends Component {
                     <Img src={meta.img} alt={name} />
                 </RRCardMedia>
                 <CardTitle
-                    title={name}
+                    title={meta.fullName}
+                    theme={theme}
                 />
                 <CardActions theme={theme}>
-                    <TooltipRRButton
-                        to={to} label='view'
-                        raised primary
-                        tooltip='Click here to click'
-                        tooltipDelay={1000}
-                        tooltipPosition='top' />
                     <div>
                         {this.props.actionsRenderer}
                     </div>
+                    <TooltipRRButton
+                        to={to} label='view'
+                        primary
+                        tooltip='Click here to click'
+                        tooltipDelay={1000}
+                        tooltipPosition='top' />
                 </CardActions>
             </Card>
         );

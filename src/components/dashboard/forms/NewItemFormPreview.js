@@ -7,6 +7,7 @@ import { ItemsTypes } from 'constants/itemsTypes'
 import NewItemHoc from './NewItemHocStep'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './theme.css'
+import moment from 'moment'
 
 class NewItemFormPreview extends Component {
     constructor(props) {
@@ -36,12 +37,21 @@ class NewItemFormPreview extends Component {
                         Object
                             .keys(item._meta)
                             .filter((key) => !/fullName|description|items|img|createdOn|modifiedOn|deleted|archived/.test(key))
-                            .map(key =>
-                                <Row key={key}>
-                                    <Col xs={12} lg={3} className={theme.textRight}>{key}:</Col>
-                                    <Col xs={12} lg={3} className={theme.textLeft}>{item._meta[key]}</Col>
-                                </Row>
-                            )
+                            .map(key => {
+                                let keyName = key
+                                let value = item._meta[key]
+
+                                if (!!value && moment(value).isValid()) {
+                                    value = moment(value).format('D MMMM YYYY')
+                                }
+
+                                return (
+                                    <Row key={key}>
+                                        <Col xs={12} lg={3} className={theme.textRight}>{keyName}:</Col>
+                                        <Col xs={12} lg={3} className={theme.textLeft}>{value}</Col>
+                                    </Row>
+                                )
+                            })
                     }
                 </Grid>
                 <br />

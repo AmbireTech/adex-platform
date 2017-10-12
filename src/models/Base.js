@@ -42,7 +42,14 @@ class Base {
         // TODO: Handle remove key value
         for (var key in meta) {
             if (meta.hasOwnProperty(key) && newMeta.hasOwnProperty(key)) {
-                newMeta[key] = meta[key] //|| newMeta[key]
+
+                let value = meta[key] //|| newMeta[key]
+
+                if (value instanceof Date) {
+                    value = value.getTime()
+                }
+
+                newMeta[key] = value
 
                 if (hasDirtyProps && dirtyProps.indexOf(key) < 0) {
                     dirtyProps.push(key)
