@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { FontIcon } from 'react-toolbox/lib/font_icon';
-import { Menu } from 'react-toolbox/lib/menu';
-import { Button } from 'react-toolbox/lib/button';
+import React, { Component } from 'react'
+import { FontIcon } from 'react-toolbox/lib/font_icon'
+import { Menu } from 'react-toolbox/lib/menu'
+import { Button } from 'react-toolbox/lib/button'
 
 class ButtonMenu extends Component {
     state = { active: false };

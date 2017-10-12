@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
-import { Button } from 'react-toolbox/lib/button';
-import progressBarTheme from 'react-toolbox/lib/progress_bar/theme.css';
+import React, { Component } from 'react'
+import { Button } from 'react-toolbox/lib/button'
 import theme from './theme.css'
 import classnames from 'classnames'
 

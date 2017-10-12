@@ -3,11 +3,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from 'actions/itemActions'
-// import Input from 'react-toolbox/lib/input'
-// import DatePicker from 'react-toolbox/lib/date_picker'
-import { ItemsTypes, AdTypes, Sizes, ItemTypesNames } from 'constants/itemsTypes'
+import { ItemTypesNames } from 'constants/itemsTypes'
 import NewItemHoc from './NewItemHocStep'
-import Dropdown from 'react-toolbox/lib/dropdown'
 import Input from 'react-toolbox/lib/input'
 
 class NewUnitForm extends Component {
@@ -34,7 +31,6 @@ NewUnitForm.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-    // console.log('mapStateToProps Campaigns', state)
     return {
         account: state.account,
         newItem: state.newItem[props.itemType],

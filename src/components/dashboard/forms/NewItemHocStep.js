@@ -1,13 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Button } from 'react-toolbox/lib/button'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from 'actions/itemActions'
-// import ProgressBar from 'react-toolbox/lib/progress_bar'
-// import theme from './theme.css'
-import Input from 'react-toolbox/lib/input'
-import Base from 'models/Base'
 
 export default function NewItemHoc(Decorated) {
 

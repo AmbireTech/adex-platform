@@ -47,7 +47,6 @@ Unit.propTypes = {
 };
 
 function mapStateToProps(state) {
-    // console.log('mapStateToProps Unit', state)
     return {
         account: state.account,
         items: state.items[ItemsTypes.AdUnit.id],

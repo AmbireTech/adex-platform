@@ -3,12 +3,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from 'actions/itemActions'
-// import Input from 'react-toolbox/lib/input'
-// import DatePicker from 'react-toolbox/lib/date_picker'
-import { ItemsTypes, AdTypes, Sizes } from 'constants/itemsTypes'
+import { ItemsTypes } from 'constants/itemsTypes'
 import NewItemHoc from './NewItemHocStep'
-import Dropdown from 'react-toolbox/lib/dropdown'
-import { Button } from 'react-toolbox/lib/button'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './theme.css'
 
@@ -17,7 +13,6 @@ class NewItemFormPreview extends Component {
         super(props)
 
         this.save = props.save
-        // console.log('props', props)
     }
 
     render() {
@@ -66,7 +61,6 @@ NewItemFormPreview.propTypes = {
 }
 
 function mapStateToProps(state) {
-    // console.log('mapStateToProps Campaigns', state)
     return {
         account: state.account,
         newItem: state.newItem[ItemsTypes.AdUnit.id],

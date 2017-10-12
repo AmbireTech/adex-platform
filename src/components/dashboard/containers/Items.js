@@ -11,8 +11,6 @@ import { ItemTypesNames } from 'constants/itemsTypes'
 
 class Items extends Component {
     render() {
-        // let side = this.props.match.params.side // set side in state ?
-
         let items = this.props.items || []
 
         return (
@@ -39,7 +37,6 @@ Items.propTypes = {
 };
 
 function mapStateToProps(state, props) {
-    // console.log('mapStateToProps Items', state)
     return {
         account: state.account,
         items: state.items[props.itemsType]
