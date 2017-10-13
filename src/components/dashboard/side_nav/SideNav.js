@@ -14,6 +14,7 @@ import { ItemsTypes } from 'constants/itemsTypes'
 import NewItemSteps from 'components/dashboard/forms/NewItemSteps'
 import NewUnitForm from 'components/dashboard/forms/NewUnitForm'
 import NewCampaignForm from 'components/dashboard/forms/NewCampaignForm'
+import Translate from 'components/translate/Translate'
 
 const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
 
@@ -110,5 +111,5 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(SideNav);
+)(Translate(SideNav));
 

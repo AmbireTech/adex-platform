@@ -5,6 +5,7 @@ import AdvertiserLogo from 'components/common/icons/AdexAdvertiser'
 // import { Link } from 'react-router-dom'
 import Dialog from 'react-toolbox/lib/dialog'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
+import Translate from 'components/translate/Translate'
 
 const SideBox = ({ salePoints, linkTitle, icon, title, ...other }) => (
   <div {...other} className={theme.sideBox}>
@@ -25,7 +26,7 @@ const RRSideBox = withReactRouterLink(SideBox)
 class SideSelect extends Component {
 
   render() {
-    console.log('theme.signinContainer', theme);
+    console.log('SideSelect', this.props);
     return (
       <div >
         <Dialog
@@ -34,7 +35,7 @@ class SideSelect extends Component {
         >
 
           <RRSideBox
-            title="Advertiser"
+            title={this.props.t("ADVERTISER")}
             icon={<AdvertiserLogo />}
             salePoints={['Have Something to sell', 'Have ADX']}
             to="/dashboard/advertiser"
@@ -55,4 +56,4 @@ class SideSelect extends Component {
   }
 }
 
-export default SideSelect;
+export default Translate(SideSelect)

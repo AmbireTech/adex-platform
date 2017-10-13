@@ -8,20 +8,22 @@ import ui from './uiReducer'
 import toasts from './toastsReducer'
 import confirm from './confirmReducer'
 import nav from './navReducer'
+import translations from './translationsReducer'
 import { routerReducer, LOCATION_CHANGE, CALL_HISTORY_METHOD } from 'react-router-redux'
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
 
 const rootReducer = combineReducers({
     account: account,
-    items: filterActions(items, (action => action.type.match(/_ITEM/)) ),
-    newItem: filterActions(newItem, (action => action.type.match(/_NEWITEM/)) ),
+    items: filterActions(items, (action => action.type.match(/_ITEM/))),
+    newItem: filterActions(newItem, (action => action.type.match(/_NEWITEM/))),
     spinners: filterActions(spinners, [types.UPDATE_SPINNER]),
     ui: filterActions(ui, [types.UPDATE_UI]),
     toasts: toasts,
     confirm: filterActions(confirm, [types.CONFIRM_ACTION]),
     nav: filterActions(nav, [types.UPDATE_NAV]),
     routing: filterActions(routerReducer, [LOCATION_CHANGE, CALL_HISTORY_METHOD]),
+    translations: translations 
 });
 
 export default rootReducer;
