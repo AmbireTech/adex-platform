@@ -1,6 +1,6 @@
 import initialState from 'store/initialState'
 
-export default function translationsReducer(state = initialState.translations, action) {
+export default function languageReducer(state = initialState.language, action) {
     let newState
 
     switch (action.type) {

@@ -16,6 +16,7 @@ import NewItemWithDialog from './forms/NewItemWithDialog'
 import NewItemSteps from './forms/NewItemSteps'
 import NewUnitForm from './forms/NewUnitForm'
 import NewCampaignForm from './forms/NewCampaignForm'
+import Translate from 'components/translate/Translate'
 
 const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
 
@@ -85,7 +86,7 @@ class Dashboard extends React.Component {
 
         return (
             <div>
-                Dashboard
+                {this.props.t("DASHBOARD")}
             </div>
         )
     }
@@ -136,4 +137,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Dashboard)
+)(Translate(Dashboard))

@@ -106,7 +106,7 @@ function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
     };
-}
+} 
 
 export default connect(
     mapStateToProps,

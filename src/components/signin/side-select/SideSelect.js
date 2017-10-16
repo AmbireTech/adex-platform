@@ -43,7 +43,7 @@ class SideSelect extends Component {
           />
 
           <RRSideBox
-            title="Publisher"
+            title={this.props.t("PUBLISHER")}
             icon={<PublisherLogo />}
             salePoints={['Decentralization', 'Want ADX']}
             to="/dashboard/publisher"

@@ -12,7 +12,6 @@ let testNotifications = [{ name: 'test notif 1', seen: true }, { name: 'test not
 class TopNav extends Component {
 
   render() {
-    // console.log('theme', theme) 
     return (
       <AppBar title={this.props.side} onLeftIconClick={() => alert('test')} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={true} >
         <Navigation type='horizontal'>
@@ -37,8 +36,8 @@ class TopNav extends Component {
 
         </Navigation>
       </AppBar>
-    );
+    )
   }
 }
 
-export default TopNav;
+export default TopNav

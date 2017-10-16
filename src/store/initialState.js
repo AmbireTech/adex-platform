@@ -110,5 +110,5 @@ export default {
     nav: {
         side: ''
     },
-    translations: translations()['en-US']
+    language: 'en-US'
 }

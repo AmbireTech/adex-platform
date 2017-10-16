@@ -3,22 +3,15 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from 'actions/itemActions'
-import adexTranslations from 'adex-translations'
 
-const translations = adexTranslations()
 
-export default function Translate(Decorated) {
-  class Translated extends Component {
-
-    t(key) {
-      return translations[this.props.language][key] || key
-    }
+  class ChangeLang extends Component {
 
     render() {
       return (
         <div>
           <div>
-            <Decorated {...this.props} t={this.t.bind(this)} />
+            
           </div>
 
         </div>
@@ -26,14 +19,14 @@ export default function Translate(Decorated) {
     }
   }
 
-  Translated.propTypes = {
+  ChangeLang.propTypes = {
     actions: PropTypes.object.isRequired,
-    language: PropTypes.string.isRequired
+    translations: PropTypes.object.isRequired
   }
 
   function mapStateToProps(state, props) {
     return {
-      language: state.language
+      translations: state.translations
     }
   }
 
@@ -46,5 +39,4 @@ export default function Translate(Decorated) {
   return connect(
     mapStateToProps,
     mapDispatchToProps
-  )(Translated)
-}
+  )(ChangeLang)
