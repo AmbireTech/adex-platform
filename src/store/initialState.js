@@ -8,11 +8,6 @@ import AdUnit from 'models/AdUnit'
 import { ItemsTypes } from 'constants/itemsTypes'
 import Helper from 'helpers/miscHelpers'
 
-// Temp here for testing
-import translations from 'adex-translations'
-
-console.log(translations)
-
 // cached
 let counts = {
     [ItemsTypes.AdUnit.id]: 0,

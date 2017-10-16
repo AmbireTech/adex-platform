@@ -3,40 +3,52 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from 'actions/itemActions'
+import { IconMenu, MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
+import FlagIconFactory from 'react-flag-icon-css'
+import adexTranslations from 'adex-translations'
 
+const allLangs = adexTranslations.all
 
-  class ChangeLang extends Component {
+const FlagIcon = FlagIconFactory(React)
 
-    render() {
-      return (
-        <div>
-          <div>
-            
-          </div>
+class ChangeLang extends Component {
 
-        </div>
-      )
+  changeLanguage(newLng) {
+    if (this.props.language !== newLng) {
+      this.props.actions.changeLanguage(newLng)
     }
   }
 
-  ChangeLang.propTypes = {
-    actions: PropTypes.object.isRequired,
-    translations: PropTypes.object.isRequired
-  }
+  render() {
+    return (
+      <IconMenu icon={<FlagIcon code={this.props.language.split('-')[1].toLowerCase()} />} position='topRight' menuRipple>
+        {allLangs.sort((a, b)=> a.split('-')[1].localeCompare(b.split('-')[1]) ).map((lng) =>
+          <MenuItem key={lng} value={lng} icon={<FlagIcon code={lng.split('-')[1].toLowerCase()} />} caption={lng} onClick={this.changeLanguage.bind(this, lng)} />
+        )}
 
-  function mapStateToProps(state, props) {
-    return {
-      translations: state.translations
-    }
+      </IconMenu>
+    )
   }
+}
 
-  function mapDispatchToProps(dispatch) {
-    return {
-      actions: bindActionCreators(actions, dispatch)
-    }
+ChangeLang.propTypes = {
+  actions: PropTypes.object.isRequired,
+  language: PropTypes.string.isRequired
+}
+
+function mapStateToProps(state, props) {
+  return {
+    language: state.language
   }
+}
 
-  return connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(ChangeLang)
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ChangeLang)

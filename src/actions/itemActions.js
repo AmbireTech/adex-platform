@@ -51,7 +51,7 @@ export function addItem(item, itemToAddTo) {
         })
 
         if (itemToAddTo) {
-            item = {...item}
+            item = { ...item }
             item._id = item.tempId
             return dispatch({
                 type: types.ADD_ITEM_TO_ITEM,
@@ -188,6 +188,15 @@ export function updateNav(item, value) {
             type: types.UPDATE_NAV,
             item: item,
             value: value
+        })
+    }
+}
+
+export function changeLanguage(lang) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.CHANGE_LANGUAGE,
+            lang: lang
         })
     }
 }

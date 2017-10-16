@@ -8,24 +8,25 @@ import { ItemsTypes } from 'constants/itemsTypes'
 import NewItemHoc from './NewItemHocStep'
 import theme from './theme.css'
 import { Button } from 'react-toolbox/lib/button'
+import Translate from 'components/translate/Translate'
 
 class NewCampaignForm extends Component {
 
     render() {
         let item = this.props.item
         let from = item._meta.from ? new Date(item._meta.from) : null
-        let to = item._meta.to ? new Date(item._meta.to ) : null
+        let to = item._meta.to ? new Date(item._meta.to) : null
         return (
             <div>
                 <DatePicker
-                    label='Start date'
+                    label={this.props.t('from', { isProp: true })}
                     minDate={new Date()}
                     onChange={this.props.handleChange.bind(this, 'from')}
                     value={from}
                     className={theme.datepicker}
                 />
                 <DatePicker
-                    label='End date'
+                    label={this.props.t('to', { isProp: true })}
                     minDate={new Date()}
                     onChange={this.props.handleChange.bind(this, 'to')}
                     value={to}
@@ -63,4 +64,4 @@ const ItemNewCampaignForm = NewItemHoc(NewCampaignForm)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ItemNewCampaignForm);
+)(Translate(ItemNewCampaignForm))

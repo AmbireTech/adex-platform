@@ -6,6 +6,7 @@ import * as actions from 'actions/itemActions'
 import { ItemTypesNames } from 'constants/itemsTypes'
 import NewItemHoc from './NewItemHocStep'
 import Input from 'react-toolbox/lib/input'
+import Translate from 'components/translate/Translate'
 
 class NewUnitForm extends Component {
 
@@ -13,9 +14,28 @@ class NewUnitForm extends Component {
         let item = this.props.item
         return (
             <div>
-                <Input type='text' label={ItemTypesNames[item._type] + ' Name'} name='name' value={item._meta.fullName} onChange={this.props.handleChange.bind(this, 'fullName')} maxLength={128} />
-                <Input type='text' label='Image url' name='img' value={item._meta.img} onChange={this.props.handleChange.bind(this, 'img')} maxLength={1024} />
-                <Input type='text' multiline rows={5} label='Description' name='desctiption' value={item._meta.description} onChange={this.props.handleChange.bind(this, 'description')} maxLength={1024} />
+                <Input
+                    type='text'
+                    label={ItemTypesNames[item._type] + ' ' + this.props.t('name', { isProp: true })}
+                    name='name'
+                    value={item._meta.fullName}
+                    onChange={this.props.handleChange.bind(this, 'fullName')}
+                    maxLength={128} />
+                <Input
+                    type='text'
+                    label={this.props.t('img', { isProp: true })}
+                    name='img'
+                    value={item._meta.img}
+                    onChange={this.props.handleChange.bind(this, 'img')}
+                    maxLength={1024} />
+                <Input
+                    type='text'
+                    multiline
+                    rows={5}
+                    label={this.props.t('description', { isProp: true })}
+                    value={item._meta.description}
+                    onChange={this.props.handleChange.bind(this, 'description')}
+                    maxLength={1024} />
             </div>
         )
     }
@@ -48,4 +68,4 @@ const ItemNewUnitForm = NewItemHoc(NewUnitForm)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ItemNewUnitForm);
+)(Translate(ItemNewUnitForm))

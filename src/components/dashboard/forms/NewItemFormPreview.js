@@ -8,6 +8,7 @@ import NewItemHoc from './NewItemHocStep'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './theme.css'
 import moment from 'moment'
+import Translate from 'components/translate/Translate'
 
 class NewItemFormPreview extends Component {
     constructor(props) {
@@ -22,15 +23,15 @@ class NewItemFormPreview extends Component {
             <div>
                 <Grid fluid>
                     <Row>
-                        <Col xs={12} lg={3} className={theme.textRight}>Name:</Col>
+                        <Col xs={12} lg={3} className={theme.textRight}>{this.props.t('fullName', { isProp: true })}</Col>
                         <Col xs={12} lg={3} className={theme.textLeft}>{item._meta.fullName}</Col>
                     </Row>
                     <Row>
-                        <Col xs={12} lg={3} className={theme.textRight}>Description:</Col>
+                        <Col xs={12} lg={3} className={theme.textRight}>{this.props.t('description', { isProp: true })}</Col>
                         <Col xs={12} lg={3} className={theme.textLeft}>{item._meta.description}</Col>
                     </Row>
                     <Row>
-                        <Col xs={12} lg={3} className={theme.textRight}>Image url:</Col>
+                        <Col xs={12} lg={3} className={theme.textRight}>{this.props.t('img', { isProp: true })}</Col>
                         <Col xs={12} lg={3} className={theme.textLeft}>{item._meta.img}</Col>
                     </Row>
                     {
@@ -47,7 +48,7 @@ class NewItemFormPreview extends Component {
 
                                 return (
                                     <Row key={key}>
-                                        <Col xs={12} lg={3} className={theme.textRight}>{keyName}:</Col>
+                                        <Col xs={12} lg={3} className={theme.textRight}>{this.props.t(keyName, { isProp: true })}:</Col>
                                         <Col xs={12} lg={3} className={theme.textLeft}>{value}</Col>
                                     </Row>
                                 )
@@ -88,4 +89,4 @@ const NewItemPreview = NewItemHoc(NewItemFormPreview)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(NewItemPreview)
+)(Translate(NewItemPreview))

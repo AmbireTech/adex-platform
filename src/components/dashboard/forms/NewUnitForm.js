@@ -6,6 +6,7 @@ import * as actions from 'actions/itemActions'
 import { ItemsTypes, AdTypes, Sizes } from 'constants/itemsTypes'
 import NewItemHoc from './NewItemHocStep'
 import Dropdown from 'react-toolbox/lib/dropdown'
+import Translate from 'components/translate/Translate'
 
 class NewUnitForm extends Component {
 
@@ -17,13 +18,13 @@ class NewUnitForm extends Component {
                     onChange={this.props.handleChange.bind(this, 'adType')}
                     source={AdTypes}
                     value={item._meta.adType}
-                    label="adType"
+                    label={this.props.t('adType', { isProp: true })}
                 />
                 <Dropdown
                     onChange={this.props.handleChange.bind(this, 'size')}
                     source={Sizes}
                     value={item._meta.size}
-                    label="size"
+                    label={this.props.t('size', { isProp: true })}
                 />
             </div>
         )
@@ -58,4 +59,4 @@ const ItemNewUnitForm = NewItemHoc(NewUnitForm)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ItemNewUnitForm)
+)(Translate(ItemNewUnitForm))

@@ -6,6 +6,7 @@ import { Navigation } from 'react-toolbox/lib/navigation'
 import { Link } from 'react-toolbox/lib/link'
 import { IconMenu, MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
 import ButtonMenu from 'components/common/button_menu/ButtonMenu'
+import ChangeLang from 'components/translate/ChangeLang'
 
 let testNotifications = [{ name: 'test notif 1', seen: true }, { name: 'test notif 2', seen: false }, { name: 'test notif 3', seen: true }]
 
@@ -15,6 +16,8 @@ class TopNav extends Component {
     return (
       <AppBar title={this.props.side} onLeftIconClick={() => alert('test')} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={true} >
         <Navigation type='horizontal'>
+          {/* At the moment we use translations only for proper items properties display names */}
+          {/* <ChangeLang /> */}
 
           <IconMenu selected='help' icon='notifications' position='auto' menuRipple >
             {testNotifications.map((notif, index) =>

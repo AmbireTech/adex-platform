@@ -2662,6 +2662,10 @@ find-up@^2.0.0, find-up@^2.1.0:
   dependencies:
     locate-path "^2.0.0"
 
+flag-icon-css@^2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/flag-icon-css/-/flag-icon-css-2.8.0.tgz#ec10c20fe417ade787a095200630069ca436a569"
+
 flat-cache@^1.2.1:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/flat-cache/-/flat-cache-1.2.2.tgz#fa86714e72c21db88601761ecf2f555d1abc6b96"
@@ -5497,6 +5501,14 @@ react-error-overlay@^1.0.10:
     react-dev-utils "^3.1.0"
     settle-promise "1.0.0"
     source-map "0.5.6"
+
+react-flag-icon-css@^1.0.19:
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/react-flag-icon-css/-/react-flag-icon-css-1.0.19.tgz#e1f717010880f2528d2096165de685e9100e13a3"
+  dependencies:
+    classnames "^2.2.5"
+    flag-icon-css "^2.8.0"
+    prop-types "^15.5.8"
 
 react-flexbox-grid@^1.1.5:
   version "1.1.5"
