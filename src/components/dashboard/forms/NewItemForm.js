@@ -7,6 +7,7 @@ import { ItemTypesNames } from 'constants/itemsTypes'
 import NewItemHoc from './NewItemHocStep'
 import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
+import ImgForm from './ImgForm'
 
 class NewUnitForm extends Component {
 
@@ -14,6 +15,7 @@ class NewUnitForm extends Component {
         let item = this.props.item
         return (
             <div>
+                <ImgForm />
                 <Input
                     type='text'
                     label={ItemTypesNames[item._type] + ' ' + this.props.t('name', { isProp: true })}
