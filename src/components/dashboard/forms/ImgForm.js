@@ -17,7 +17,7 @@ class ImgForm extends Component {
     super(props)
 
     this.state = {
-      imgSrc: '#'
+      imgSrc: ''
     }
   }
 
@@ -42,7 +42,10 @@ class ImgForm extends Component {
             label="Select file"
             onChange={this.handleFileChange}
           />
-          <img src={this.state.imgSrc} alt={'name'} style={{ maxWidth: 120, maxHeight: 80 }} />
+          {this.state.imgSrc ?
+            <img src={this.state.imgSrc} alt={'name'} style={{ maxWidth: 120, maxHeight: 80 }} />
+            : null
+          }
           <Button icon='file_upload' label='Test upload to ipfs' accent onClick={this.testUpload} />
 
         </div>
