@@ -22,6 +22,7 @@ class ImgForm extends Component {
   }
 
   testUpload = e => {
+    console.log('this.state.imgSrc', this.state.imgSrc)
     addImgFromObjectURL(this.state.imgSrc)
   }
 

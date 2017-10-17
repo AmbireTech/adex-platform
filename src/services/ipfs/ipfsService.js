@@ -2,17 +2,14 @@ import ipfsAPI from 'ipfs-api'
 const ipfs = ipfsAPI('localhost', '5001')
 
 export function addImgFromObjectURL(objectUrl) {
-
     var xhr = new XMLHttpRequest()
     xhr.open('GET', objectUrl, true)
     xhr.responseType = 'arraybuffer'
     xhr.onload = function (e) {
         if (this.status === 200) {
-            var imbBlob = this.imbBlob
-            console.log('imbBlob', imbBlob)
+            var imbBlob = this.response
 
             const buf = Buffer.from(imbBlob)
-            console.log('buf', buf)
             ipfs.add(buf, (err, result) => {
                 if (err) {
                     console.error(err)
