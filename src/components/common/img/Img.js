@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import NO_IMAGE from 'resources/no-image-box.png'
+import ProgressBar from 'react-toolbox/lib/progress_bar'
+import theme from './theme.css'
 
 class Img extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            imgSrc: props.fallbackSrc || NO_IMAGE
+            imgSrc: null
         };
         this.setDisplayImage = this.setDisplayImage.bind(this)
     }
@@ -47,14 +49,20 @@ class Img extends Component {
     }
 
     render() {
+        let { alt, ...other } = this.props
         return (
-            <img alt={this.props.alt} src={this.state.imgSrc} />
+            this.state.imgSrc ?
+                <img {...other} alt={alt} src={this.state.imgSrc} />
+                :
+                <div className={theme.imgLoading}>
+                    <ProgressBar theme={theme} type='circular' mode='indeterminate' />
+                </div>
         )
     }
 }
 
 Img.propTypes = {
-    src: PropTypes.string,
+    src: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
     fallbackSrc: PropTypes.string,
     alt: PropTypes.string
 }

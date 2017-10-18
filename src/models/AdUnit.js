@@ -32,7 +32,7 @@ class AdUnit extends Item {
             id,
             'AdUnit ' + id,
             {
-                img: Images[Helper.getRandomInt(0, Images.length - 1)],
+                img: { url: Images[Helper.getRandomInt(0, Images.length - 1)] },
                 description: 'AdUnit Description ' + id,
                 size: Helper.getRandomPropFromObj(Sizes),
                 adType: Helper.getRandomPropFromObj(AdTypes),

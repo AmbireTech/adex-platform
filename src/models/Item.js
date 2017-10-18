@@ -2,13 +2,14 @@
 // import { ItemsTypes } from './../constants/itemsTypes'
 import Base from './Base'
 class Item extends Base {
-    constructor(owner, id, type, name = '', img = '', description = '') {
+    constructor(owner, id, type, name = '', img = { url: null, ipfs: null, type: null, type_id: null }, description = '') {
         super(name)
         this._id = id
         this._owner = owner
         this._type = type
         // this._meta.itemsType = itemsType //TODO: set prop
         this._meta.items = []
+        // img.type and img.type_id if at some point we have something different than url ot ipfs and to use type and id to generate the url
         this._meta.img = img
         this._meta.description = description
         this._meta.archived = false
@@ -27,6 +28,10 @@ class Item extends Base {
     get img() { return this._meta.img }
     set img(value) { this._meta.img = value }
 
+    get imgUrl() {
+        this.imgUrlStr(this.img)
+    }
+
     get description() { return this._meta.description }
     set description(value) { this._meta.description = value }
 
@@ -35,6 +40,19 @@ class Item extends Base {
 
     get deleted() { return this._meta.deleted }
     set deleted(value) { this._meta.deleted = value }
+
+    static getImgUrl = img => {
+        // TODO: GET ipfs gateway from some config!!!
+        if (img.url) return img.url
+        if (img.ipfs) return `http://localhost:8080/ipfs/${img.ipfs}`
+        if (img.type && img.type_id) {
+            switch (img.type) {
+                case 'ipfs':
+                    return `http://localhost:8080/ipfs/${img.type_id}`
+                default: return ''
+            }
+        }
+    }
 
     //TODO: item type when add/remove ?
     static addItem(item, toAdd) {
@@ -57,7 +75,7 @@ class Item extends Base {
     static removeItem(item, toRemove) {
         if (toRemove._id) toRemove = toRemove._id
 
-        let itemIndex = item._meta.items.indexOf(toRemove)        
+        let itemIndex = item._meta.items.indexOf(toRemove)
         if (itemIndex < 0) return
 
         let newItem = { ...item }

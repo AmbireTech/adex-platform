@@ -14,6 +14,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid'
 import FloatingProgressButton from 'components/common/floating_btn_progress/FloatingProgressButton'
 import classnames from 'classnames'
 import Img from 'components/common/img/Img'
+import ItemModel from 'models/Item'
 
 const TooltipFontIcon = Tooltip(FontIcon)
 
@@ -92,7 +93,7 @@ export default function ItemHoc(Decorated) {
                 <div>
                     <div className={classnames(theme.heading, theme[ItemTypesNames[item._type]])}>
                         <div className={theme.headingLeft}>
-                            <Avatar image={meta.img} title={meta.fullName} cover />
+                            <Avatar image={ItemModel.getImgUrl(meta.img)} title={meta.fullName} cover />
                             {this.state.activeFields.fullName ?
                                 <Input className={theme.itemName} type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                                 :

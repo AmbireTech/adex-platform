@@ -33,3 +33,8 @@
 .textRight {
     text-align: right;
 }
+
+.imgPreview {
+    max-height: 80px;
+    width: auto;
+}

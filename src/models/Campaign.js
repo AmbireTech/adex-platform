@@ -5,7 +5,7 @@ import { ItemsTypes } from 'constants/itemsTypes'
 import { Images } from './DummyData'
 
 class Campaign extends Item {
-    constructor(owner, id, name = '', { from, to, img = '', description = '' } = {}) {
+    constructor(owner, id, name = '', { from, to, img = {}, description = '' } = {}) {
         super(owner, id, ItemsTypes.Campaign.id, name, img, description)
         this._meta.from = from
         this._meta.to = to
@@ -26,7 +26,7 @@ class Campaign extends Item {
             {
                 from: moment().add(id, 'd').valueOf(),
                 to: moment().add(id + Helper.getRandomInt(3, 10), 'd').valueOf(),
-                img: Images[Helper.getRandomInt(0, Images.length - 1)],
+                img: { url: Images[Helper.getRandomInt(0, Images.length - 1)] },
                 description: 'Campaign Description ' + id
             }
         )

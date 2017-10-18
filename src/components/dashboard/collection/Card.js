@@ -6,6 +6,7 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Img from 'components/common/img/Img'
 import { ItemTypesNames } from 'constants/itemsTypes'
+import Item from 'models/Item'
 
 
 // const RRButton = withReactRouterLink(Button)
@@ -31,7 +32,7 @@ class MyCard extends Component {
                     aspectRatio='wide'
                     theme={theme}
                 >
-                    <Img src={meta.img} alt={name} />
+                    <Img src={Item.getImgUrl(meta.img)} alt={name} />
                 </RRCardMedia>
                 <CardTitle
                     title={meta.fullName}
