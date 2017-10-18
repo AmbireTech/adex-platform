@@ -35,6 +35,19 @@
 }
 
 .imgPreview {
-    max-height: 80px;
+    height: 80px;
     width: auto;
+    margin-right: 10px;
+}
+
+.imgForm {
+    text-align: left;
+    height: 80px;
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+}
+
+.imgUploadBtn {
+    margin-right: 10px;
 }

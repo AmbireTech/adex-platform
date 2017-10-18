@@ -25,16 +25,16 @@ class NewItemFormPreview extends Component {
             <div>
                 <Grid fluid>
                     <Row>
-                        <Col xs={12} lg={3} className={theme.textRight}>{this.props.t('fullName', { isProp: true })}</Col>
+                        <Col xs={12} lg={3} className={theme.textRight}>{this.props.t('img', { isProp: true })}:</Col>
+                        <Col xs={12} lg={3} className={theme.textLeft}>{<Img className={theme.imgPreview} src={meta.img || ''} alt={meta.fullName} />} </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={12} lg={3} className={theme.textRight}>{this.props.t('fullName', { isProp: true })}:</Col>
                         <Col xs={12} lg={3} className={theme.textLeft}>{meta.fullName}</Col>
                     </Row>
                     <Row>
-                        <Col xs={12} lg={3} className={theme.textRight}>{this.props.t('description', { isProp: true })}</Col>
+                        <Col xs={12} lg={3} className={theme.textRight}>{this.props.t('description', { isProp: true })}:</Col>
                         <Col xs={12} lg={3} className={theme.textLeft}>{meta.description}</Col>
-                    </Row>
-                    <Row>
-                        <Col xs={12} lg={3} className={theme.textRight}>{this.props.t('img', { isProp: true })}</Col>
-                        <Col xs={12} lg={3} className={theme.textLeft}>{<Img className={theme.imgPreview} src={Item.getImgUrl(meta.img)} alt={meta.fullName} />} </Col>
                     </Row>
                     {
                         Object

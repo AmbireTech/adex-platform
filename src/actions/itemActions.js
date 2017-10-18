@@ -1,4 +1,5 @@
 import * as types from 'constants/actionTypes'
+import { addImgFromObjectURL } from 'services/ipfs/ipfsService'
 
 export function updateNewItem(item, newMeta) {
     return function (dispatch) {
@@ -45,22 +46,32 @@ export function addItem(item, itemToAddTo) {
     */
 
     return function (dispatch) {
-        dispatch({
-            type: types.ADD_ITEM,
-            item: item
-        })
 
-        if (itemToAddTo) {
-            item = { ...item }
-            item._id = item.tempId
-            return dispatch({
-                type: types.ADD_ITEM_TO_ITEM,
-                item: itemToAddTo,
-                toAdd: item, // TODO!!!
-            })
-        } else {
-            return
-        }
+        addImgFromObjectURL(item._meta.img)
+            .then(
+            response => {
+
+                console.log('response on dispatch', response)
+                item = { ...item }
+                item._meta.img = { ipfs: response[0].hash }
+                dispatch({
+                    type: types.ADD_ITEM,
+                    item: item
+                })
+
+                if (itemToAddTo) {
+                    item = { ...item }
+                    item._id = item.tempId
+                    return dispatch({
+                        type: types.ADD_ITEM_TO_ITEM,
+                        item: itemToAddTo,
+                        toAdd: item, // TODO!!!
+                    })
+                } else {
+                    return
+                }
+            }
+            )
     }
 }
 

@@ -15,7 +15,7 @@ class NewUnitForm extends Component {
         let item = this.props.item
         return (
             <div>
-                <ImgForm />
+
                 <Input
                     type='text'
                     label={ItemTypesNames[item._type] + ' ' + this.props.t('name', { isProp: true })}
@@ -25,19 +25,13 @@ class NewUnitForm extends Component {
                     maxLength={128} />
                 <Input
                     type='text'
-                    label={this.props.t('img', { isProp: true })}
-                    name='img'
-                    value={item._meta.img}
-                    onChange={this.props.handleChange.bind(this, 'img')}
-                    maxLength={1024} />
-                <Input
-                    type='text'
                     multiline
                     rows={5}
                     label={this.props.t('description', { isProp: true })}
                     value={item._meta.description}
                     onChange={this.props.handleChange.bind(this, 'description')}
                     maxLength={1024} />
+                <ImgForm onChange={this.props.handleChange.bind(this, 'img')} />
             </div>
         )
     }

@@ -8,6 +8,8 @@ import ipfsAPI from 'ipfs-api'
 import Img from 'components/common/img/Img'
 import { addImgFromObjectURL } from 'services/ipfs/ipfsService'
 import { Button, IconButton } from 'react-toolbox/lib/button'
+import theme from './theme.css'
+import debounce from 'debounce'
 
 const ipfs = ipfsAPI('localhost', '5001')
 
@@ -17,8 +19,12 @@ class ImgForm extends Component {
     super(props)
 
     this.state = {
-      imgSrc: ''
+      imgSrc: '',
+      imgName: ''
     }
+
+    // Temp until react toolbox update or make own file upload btn
+    this.debauncedHandleFileChange = debounce(this.handleFileChange, 200, true)
   }
 
   testUpload = e => {
@@ -28,29 +34,33 @@ class ImgForm extends Component {
 
   handleFileChange = e => {
     let that = this
+    let file = e.target.files[0]
+    console.log('file', file)
+    if (!file) return
     let objectUrl = URL.createObjectURL(e.target.files[0])
     console.log('objectUrl', objectUrl)
 
-    that.setState({ imgSrc: objectUrl })
+    that.setState({ imgSrc: objectUrl, imgName: file.name })
+    this.props.onChange(objectUrl)
   }
 
   render() {
     return (
-      <div>
-        <div>
-          <BrowseButton
-            icon="add"
-            label="Select file"
-            onChange={this.handleFileChange}
-          />
-          {this.state.imgSrc ?
-            <img src={this.state.imgSrc} alt={'name'} style={{ maxWidth: 120, maxHeight: 80 }} />
-            : null
-          }
-          <Button icon='file_upload' label='Test upload to ipfs' accent onClick={this.testUpload} />
-
-        </div>
-
+      <div className={theme.imgForm}>
+        <BrowseButton
+          floating
+          icon="file_upload"
+          mini
+          accent
+          onChange={this.debauncedHandleFileChange}
+          className={theme.imgUploadBtn}
+        />
+        {this.state.imgSrc ?
+          <img src={this.state.imgSrc} alt={'name'} className={theme.imgPreview} />
+          : null
+        }
+        <span> {this.state.imgName || 'Upload image'} </span>
+        {/* <Button icon='file_upload' label='Test upload to ipfs' accent onClick={this.testUpload} /> */}
       </div>
     )
   }

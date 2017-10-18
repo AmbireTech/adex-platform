@@ -36,7 +36,6 @@ export default function NewItemHoc(Decorated) {
             // let newItem = Base.updateMeta(this.state.item, { [name]: value })
             // this.setState({ item: newItem })
             this.props.actions.updateNewItem(this.props.newItem, { [name]: value })
-
         }
 
         save() {
