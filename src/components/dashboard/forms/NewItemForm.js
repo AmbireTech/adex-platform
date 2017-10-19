@@ -26,12 +26,12 @@ class NewUnitForm extends Component {
                 <Input
                     type='text'
                     multiline
-                    rows={5}
+                    rows={3}
                     label={this.props.t('description', { isProp: true })}
                     value={item._meta.description}
                     onChange={this.props.handleChange.bind(this, 'description')}
                     maxLength={1024} />
-                <ImgForm onChange={this.props.handleChange.bind(this, 'img')} />
+                <ImgForm imgSrc={item._meta.img} onChange={this.props.handleChange.bind(this, 'img')} />
             </div>
         )
     }

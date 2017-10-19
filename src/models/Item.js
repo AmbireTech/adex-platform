@@ -52,6 +52,9 @@ class Item extends Base {
                 default: return ''
             }
         }
+        if(typeof img === 'string'){
+            return img
+        }
     }
 
     //TODO: item type when add/remove ?

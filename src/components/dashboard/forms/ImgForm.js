@@ -19,7 +19,7 @@ class ImgForm extends Component {
     super(props)
 
     this.state = {
-      imgSrc: '',
+      imgSrc: props.imgSrc || '',
       imgName: ''
     }
 
@@ -44,22 +44,34 @@ class ImgForm extends Component {
     this.props.onChange(objectUrl)
   }
 
+  // TODO: CLEAR IMG BLOB!!!!
   render() {
     return (
       <div className={theme.imgForm}>
-        <BrowseButton
-          floating
-          icon="file_upload"
-          mini
-          accent
-          onChange={this.debauncedHandleFileChange}
-          className={theme.imgUploadBtn}
-        />
-        {this.state.imgSrc ?
-          <img src={this.state.imgSrc} alt={'name'} className={theme.imgPreview} />
-          : null
-        }
-        <span> {this.state.imgName || 'Upload image'} </span>
+        <div className={theme.imgHeader}>
+
+          {this.state.imgSrc && this.state.imgName ?
+            <span> Image: {this.state.imgName} </span>
+            :
+            <span> Upload image</span>
+          }
+
+          <BrowseButton
+            floating
+            icon="file_upload"
+            mini
+            accent
+            onChange={this.debauncedHandleFileChange}
+            className={theme.imgUploadBtn}
+          />
+        </div>
+
+        <div className={theme.imgHolder}>
+          {this.state.imgSrc ?
+            <Img src={this.state.imgSrc} alt={'name'} className={theme.imgPreview} />
+            : null
+          }
+        </div>
         {/* <Button icon='file_upload' label='Test upload to ipfs' accent onClick={this.testUpload} /> */}
       </div>
     )

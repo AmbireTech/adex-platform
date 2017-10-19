@@ -7,8 +7,6 @@
 }
 .stepperNav {
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    padding-left: 12px;
-    padding-right: 12px;
     display: flex;
     flex: 1 0 0px;
     margin-bottom: 2px;
@@ -118,7 +116,9 @@
     left: 20px;
     right: 20px;
     bottom: 80px;
+    padding: 20px;
     overflow-y: auto;
+    overflow-y: overlay;
 }
 
 .controls {

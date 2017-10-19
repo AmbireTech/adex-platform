@@ -50,8 +50,6 @@ export function addItem(item, itemToAddTo) {
         addImgFromObjectURL(item._meta.img)
             .then(
             response => {
-
-                console.log('response on dispatch', response)
                 item = { ...item }
                 item._meta.img = { ipfs: response[0].hash }
                 dispatch({

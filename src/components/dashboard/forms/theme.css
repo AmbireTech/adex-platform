@@ -35,19 +35,46 @@
 }
 
 .imgPreview {
-    height: 80px;
+    height: 150px;
+    // margin: 20px;
     width: auto;
-    margin-right: 10px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
 }
 
 .imgForm {
     text-align: left;
-    height: 80px;
-    display: flex;
-    flex-flow: row;
-    align-items: center;
 }
 
 .imgUploadBtn {
-    margin-right: 10px;
+    position: absolute;
+    right: 20px;
+    bottom: -20px;
+}
+
+.imgHeader {
+    background-color: #ccc;
+    position: relative;
+    width: 100%;
+    min-height: 60px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    margin: 20px 0;
+}
+
+.imgHolder {
+
+}
+
+@media (height <= 1000px) {
+    .dialog {
+        min-height: 95vh;
+    }
+}
+
+@media (height <= 1200px) {
+    .dialog {
+        min-height: 90vh;
+    }
 }

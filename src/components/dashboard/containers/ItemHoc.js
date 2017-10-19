@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Chip from 'react-toolbox/lib/chip'
 import { Button, IconButton } from 'react-toolbox/lib/button'
-import ProgressBar from 'react-toolbox/lib/progress_bar'
 import theme from './theme.css'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Tooltip from 'react-toolbox/lib/tooltip'
@@ -10,11 +9,11 @@ import Avatar from 'react-toolbox/lib/avatar'
 import Input from 'react-toolbox/lib/input'
 import { ItemTypesNames } from 'constants/itemsTypes'
 import Base from 'models/Base'
-import { Grid, Row, Col } from 'react-flexbox-grid'
 import FloatingProgressButton from 'components/common/floating_btn_progress/FloatingProgressButton'
 import classnames from 'classnames'
-import Img from 'components/common/img/Img'
 import ItemModel from 'models/Item'
+import ImgDialog from './ImgDialog'
+import { Prompt } from 'react-router'
 
 const TooltipFontIcon = Tooltip(FontIcon)
 
@@ -26,7 +25,8 @@ export default function ItemHoc(Decorated) {
             this.state = {
                 activeFields: {},
                 item: {},
-                dirtyProps: []
+                dirtyProps: [],
+                editImg: false
             }
         }
 
@@ -78,7 +78,11 @@ export default function ItemHoc(Decorated) {
 
         isDirtyProp(prop) {
             return this.state.item.dirtyProps.indexOf(prop) > -1
+        }
 
+        handleToggle = () => {
+            let active = this.state.editImg
+            this.setState({ editImg: !active })
         }
 
         render() {
@@ -88,12 +92,19 @@ export default function ItemHoc(Decorated) {
 
             let item = this.state.item || {}
             let meta = item._meta || {}
+            let imgSrc = ItemModel.getImgUrl(meta.img)
 
             return (
                 <div>
+                    <Prompt
+                        when={!!this.state.dirtyProps.length}
+                        message="There are unsaved changes!!! Are you sure you want to leave the page?"
+                    />
+
                     <div className={classnames(theme.heading, theme[ItemTypesNames[item._type]])}>
                         <div className={theme.headingLeft}>
-                            <Avatar image={ItemModel.getImgUrl(meta.img)} title={meta.fullName} cover />
+                            <Avatar image={imgSrc} title={meta.fullName} cover onClick={this.handleToggle.bind(this)} />
+                            <ImgDialog imgSrc={imgSrc} handleToggle={this.handleToggle} active={this.state.editImg} onChange={this.handleChange.bind(this, 'img')} />
                             {this.state.activeFields.fullName ?
                                 <Input className={theme.itemName} type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                                 :

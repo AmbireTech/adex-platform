@@ -135,3 +135,15 @@
     right: 40px;
     z-index: 110;
 }
+
+@media (height <= 1000px) {
+    .dialog {
+        min-height: 95vh;
+    }
+}
+
+@media (height <= 1200px) {
+    .dialog {
+        min-height: 85vh;
+    }
+}
