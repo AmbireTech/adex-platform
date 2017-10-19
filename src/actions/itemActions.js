@@ -47,7 +47,7 @@ export function addItem(item, itemToAddTo) {
 
     return function (dispatch) {
 
-        addImgFromObjectURL(item._meta.img)
+        addImgFromObjectURL(item._meta.img.tempUrl)
             .then(
             response => {
                 item = { ...item }

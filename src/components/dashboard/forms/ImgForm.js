@@ -27,11 +27,6 @@ class ImgForm extends Component {
     this.debauncedHandleFileChange = debounce(this.handleFileChange, 200, true)
   }
 
-  testUpload = e => {
-    console.log('this.state.imgSrc', this.state.imgSrc)
-    addImgFromObjectURL(this.state.imgSrc)
-  }
-
   handleFileChange = e => {
     let that = this
     let file = e.target.files[0]
@@ -41,7 +36,7 @@ class ImgForm extends Component {
     console.log('objectUrl', objectUrl)
 
     that.setState({ imgSrc: objectUrl, imgName: file.name })
-    this.props.onChange(objectUrl)
+    this.props.onChange({ tempUrl: objectUrl })
   }
 
   // TODO: CLEAR IMG BLOB!!!!
@@ -51,9 +46,9 @@ class ImgForm extends Component {
         <div className={theme.imgHeader}>
 
           {this.state.imgSrc && this.state.imgName ?
-            <span> Image: {this.state.imgName} </span>
+            <span> {this.props.label || 'Image'}: {this.state.imgName} </span>
             :
-            <span> Upload image</span>
+            <span> {this.props.label || 'Upload image'} </span>
           }
 
           <BrowseButton
@@ -80,7 +75,9 @@ class ImgForm extends Component {
 
 ImgForm.propTypes = {
   actions: PropTypes.object.isRequired,
-  language: PropTypes.string.isRequired
+  language: PropTypes.string.isRequired,
+  imgSrc: PropTypes.string,
+  label: PropTypes.string
 }
 
 function mapStateToProps(state, props) {

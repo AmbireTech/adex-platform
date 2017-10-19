@@ -31,7 +31,7 @@ class NewUnitForm extends Component {
                     value={item._meta.description}
                     onChange={this.props.handleChange.bind(this, 'description')}
                     maxLength={1024} />
-                <ImgForm imgSrc={item._meta.img} onChange={this.props.handleChange.bind(this, 'img')} />
+                <ImgForm label={this.props.t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item._meta.img.tempUrl || 'nourl'} onChange={this.props.handleChange.bind(this, 'img')} />
             </div>
         )
     }
@@ -43,7 +43,8 @@ NewUnitForm.propTypes = {
     newItem: PropTypes.object.isRequired,
     title: PropTypes.string,
     items: PropTypes.array.isRequired,
-    itemType: PropTypes.number.isRequired
+    itemType: PropTypes.number.isRequired,
+    imgLabel: PropTypes.string
 }
 
 function mapStateToProps(state, props) {

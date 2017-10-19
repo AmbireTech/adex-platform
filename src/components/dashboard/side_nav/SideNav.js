@@ -56,7 +56,7 @@ class SideNav extends Component {
                             primary
                             itemType={ItemsTypes.Campaign.id}
                             pageTwo={NewCampaignForm}
-                            from="sidenav"                            
+                            imgLabel="CAMPAIGN_LOGO"                        
                         />
                     </ListItem>
                     <RRListItem
@@ -78,9 +78,8 @@ class SideNav extends Component {
                             accent
                             flat
                             itemType={ItemsTypes.AdUnit.id}
-                            pageTwo={NewUnitForm}    
-                            from="sidenav"
-                        
+                            pageTwo={NewUnitForm}
+                            imgLabel="ADUNIT_BANNER"                        
                         />
                     </ListItem>
                 </List>

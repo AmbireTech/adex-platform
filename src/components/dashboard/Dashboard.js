@@ -57,6 +57,7 @@ class Dashboard extends React.Component {
                         floating
                         itemType={ItemsTypes.AdUnit.id}
                         pageTwo={NewUnitForm}
+                        imgLabel="ADUNIT_BANNER"
                     />
                 } />
         )
@@ -77,6 +78,7 @@ class Dashboard extends React.Component {
                         title="Create new Campaign"
                         itemType={ItemsTypes.Campaign.id}
                         pageTwo={NewCampaignForm}
+                        imgLabel="CAMPAIGN_LOGO"
                     />
                 } />
         )

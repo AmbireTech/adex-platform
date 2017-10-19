@@ -39,14 +39,14 @@ export default function ItemHoc(Decorated) {
                         onEscKeyDown={this.handleToggle}
                         onOverlayClick={this.handleToggle}
                         title={this.props.title}
-                        type={this.props.type || 'large'}
+                        type={this.props.type || 'normal'}
                         className={theme[ItemTypesNames[this.props.itemType]]}
                     >
                         <IconButton
                             icon='close'
                             onClick={this.handleToggle}
                             primary
-                            style={{position: 'absolute', top: 20, right: 20}}
+                            style={{ position: 'absolute', top: 20, right: 20 }}
                         />
                         <Decorated {...this.props} onSave={this.handleToggle} />
                     </Dialog>

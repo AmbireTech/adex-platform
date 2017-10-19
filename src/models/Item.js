@@ -52,12 +52,16 @@ class Item extends Base {
                 default: return ''
             }
         }
-        if(typeof img === 'string'){
+        if (typeof img === 'string') {
             return img
+        }
+        // TEMP
+        if (img.tempUrl) {
+            return img.tempUrl
         }
     }
 
-    //TODO: item type when add/remove ?
+    // TODO: item type when add/remove ?
     static addItem(item, toAdd) {
         if (toAdd._id) toAdd = toAdd._id
 

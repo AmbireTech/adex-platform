@@ -25,8 +25,8 @@ class NewItemFormPreview extends Component {
             <div>
                 <Grid fluid>
                     <Row>
-                        <Col xs={12} lg={3} className={theme.textRight}>{this.props.t('img', { isProp: true })}:</Col>
-                        <Col xs={12} lg={3} className={theme.textLeft}>{<Img className={theme.imgPreview} src={meta.img || ''} alt={meta.fullName} />} </Col>
+                        <Col xs={12} lg={3} className={theme.textRight}>{this.props.t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}:</Col>
+                        <Col xs={12} lg={3} className={theme.textLeft}>{<Img className={theme.imgPreview} src={meta.img.tempUrl || ''} alt={meta.fullName} />} </Col>
                     </Row>
                     <Row>
                         <Col xs={12} lg={3} className={theme.textRight}>{this.props.t('fullName', { isProp: true })}:</Col>

@@ -25,14 +25,14 @@ class NewItemSteps extends Component {
                 <MaterialStepper pages={[
                     {
                         title: 'Step one',
-                        component: () => <NewItemForm itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />
+                        component: () => <NewItemForm {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />
                     }, {
                         title: 'Step two',
-                        component: () => <this.props.pageTwo itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />
+                        component: () => <this.props.pageTwo {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />
                     }, {
                         title: 'Preview and save',
                         completeBtn: () => <SaveBtnWithItem itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
-                        component: () => <NewItemFormPreview itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />
+                        component: () => <NewItemFormPreview {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />
                     }
                 ]} />
             </div>

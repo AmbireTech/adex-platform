@@ -7,6 +7,8 @@
 
 .dialog{
     min-height: 70vh;
+    min-width: 800px;
+    max-width: 95%;
     
     &.AdUnit{
         background-color: #F9FBE7;
@@ -65,6 +67,12 @@
 
 .imgHolder {
 
+}
+
+@media (width <= 1000px) {
+    .dialog {
+        min-width: 95%;
+    }
 }
 
 @media (height <= 1000px) {
