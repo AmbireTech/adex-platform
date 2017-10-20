@@ -2,8 +2,8 @@
 // import { ItemsTypes } from './../constants/itemsTypes'
 import Base from './Base'
 class Item extends Base {
-    constructor(owner, id, type, name = '', img = { url: null, ipfs: null, type: null, type_id: null }, description = '') {
-        super(name)
+    constructor(owner, id, ipfs = '', type, name = '', img = { url: null, ipfs: null, type: null, type_id: null }, description = '') {
+        super(name, ipfs)
         this._id = id
         this._owner = owner
         this._type = type
@@ -41,25 +41,6 @@ class Item extends Base {
     get deleted() { return this._meta.deleted }
     set deleted(value) { this._meta.deleted = value }
 
-    static getImgUrl = img => {
-        // TODO: GET ipfs gateway from some config!!!
-        if (img.url) return img.url
-        if (img.ipfs) return `http://localhost:8080/ipfs/${img.ipfs}`
-        if (img.type && img.type_id) {
-            switch (img.type) {
-                case 'ipfs':
-                    return `http://localhost:8080/ipfs/${img.type_id}`
-                default: return ''
-            }
-        }
-        if (typeof img === 'string') {
-            return img
-        }
-        // TEMP
-        if (img.tempUrl) {
-            return img.tempUrl
-        }
-    }
 
     // TODO: item type when add/remove ?
     static addItem(item, toAdd) {

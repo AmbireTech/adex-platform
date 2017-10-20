@@ -1,5 +1,5 @@
 import * as types from 'constants/actionTypes'
-import { addImgFromObjectURL } from 'services/ipfs/ipfsService'
+import { addImgFromObjectURL, getFileIpfsHash } from 'services/ipfs/ipfsService'
 
 export function updateNewItem(item, newMeta) {
     return function (dispatch) {
@@ -21,37 +21,20 @@ export function resetNewItem(item) {
 }
 
 export function addItem(item, itemToAddTo) {
-
-    /**  
-     *  Add item to bc and data ipsf here
-        kind like that:
-
-        web3services.addItem(item)
-            .then(
-                response => {
-                    dispatch({
-                        type: types.ADD_ITEM,
-                        item: response
-                    })
-
-                    return dispatch({
-                        type: types.ADD_ITEM_TO_ITEM,
-                        item: itemToAddTo,
-                        toAdd: response._id,
-                    })
-                }
-            )
-
-            etc...
-    */
-
+    item = { ...item }
     return function (dispatch) {
-
         addImgFromObjectURL(item._meta.img.tempUrl)
-            .then(
-            response => {
+            .then(function (imgIpfs) {
                 item = { ...item }
-                item._meta.img = { ipfs: response[0].hash }
+                item._meta.img.ipfs = imgIpfs
+                return getFileIpfsHash(JSON.stringify(item._meta))
+            })
+            .then(function (metaIpfs) {
+                console.log('metaIpfs', metaIpfs)
+                item._ipfs = metaIpfs
+            })
+            .then(function () {
+                // Web3 service here
                 dispatch({
                     type: types.ADD_ITEM,
                     item: item
@@ -68,8 +51,10 @@ export function addItem(item, itemToAddTo) {
                 } else {
                     return
                 }
-            }
-            )
+            })
+            .catch(function (e) {
+                console.error(e)
+            })
     }
 }
 

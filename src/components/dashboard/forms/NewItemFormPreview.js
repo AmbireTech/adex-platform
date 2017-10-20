@@ -39,7 +39,7 @@ class NewItemFormPreview extends Component {
                     {
                         Object
                             .keys(meta)
-                            .filter((key) => !/fullName|description|items|img|createdOn|modifiedOn|deleted|archived/.test(key))
+                            .filter((key) => !/fullName|description|items|img|createdOn|modifiedOn|deleted|archived|banner/.test(key))
                             .map(key => {
                                 let keyName = key
                                 let value = item._meta[key]

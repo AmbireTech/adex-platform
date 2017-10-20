@@ -58,6 +58,7 @@ class Dashboard extends React.Component {
                         itemType={ItemsTypes.AdUnit.id}
                         pageTwo={NewUnitForm}
                         imgLabel="ADUNIT_BANNER"
+                        noDefaultImg
                     />
                 } />
         )

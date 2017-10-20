@@ -79,7 +79,8 @@ class SideNav extends Component {
                             flat
                             itemType={ItemsTypes.AdUnit.id}
                             pageTwo={NewUnitForm}
-                            imgLabel="ADUNIT_BANNER"                        
+                            imgLabel="ADUNIT_BANNER"  
+                            noDefaultImg                      
                         />
                     </ListItem>
                 </List>

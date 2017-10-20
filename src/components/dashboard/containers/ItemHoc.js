@@ -157,6 +157,7 @@ export default function ItemHoc(Decorated) {
                     <div>
                         <Decorated {...this.props} item={item} save={this.save} handleChange={this.handleChange} />
                     </div>
+                    <pre> {JSON.stringify(item, null, 2)} </pre>
 
                 </div>
             )

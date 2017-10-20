@@ -1,10 +1,14 @@
 import Helper from 'helpers/miscHelpers'
 
 class Base {
-    constructor(name = '') {
+    constructor(name = '', ipfs = '') {
+        console.log('name', name)
+        console.log('ipfs', ipfs)
         this._name = Helper.slugify(name)
 
         let now = Date.now()
+
+        this._ipfs = ipfs;
 
         // TODO: add _ipfs prop!!!!
         this._meta = {
@@ -15,6 +19,9 @@ class Base {
     }
 
     get name() { return this._name }
+
+    get ipfs() { return this._ipfs }
+    set ipfs(value) { this._ipfs = value }
 
     get fullName() { return this._meta.fullName }
     set fullName(value) { this._meta.fullName = value }
@@ -31,6 +38,27 @@ class Base {
 
     plainObj() {
         return { ...this }
+    }
+
+    static getImgUrl = img => {
+        // TODO: GET ipfs gateway from some config!!!
+        if (!img) return null
+        if (img.url) return img.url
+        if (img.ipfs) return `http://localhost:8080/ipfs/${img.ipfs}`
+        if (img.type && img.type_id) {
+            switch (img.type) {
+                case 'ipfs':
+                    return `http://localhost:8080/ipfs/${img.type_id}`
+                default: return ''
+            }
+        }
+        if (typeof img === 'string') {
+            return img
+        }
+        // TEMP
+        if (img.tempUrl) {
+            return img.tempUrl
+        }
     }
 
     static updateMeta(item, meta, dirtyProps) {

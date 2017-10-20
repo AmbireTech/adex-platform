@@ -31,7 +31,11 @@ class NewUnitForm extends Component {
                     value={item._meta.description}
                     onChange={this.props.handleChange.bind(this, 'description')}
                     maxLength={1024} />
-                <ImgForm label={this.props.t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item._meta.img.tempUrl || 'nourl'} onChange={this.props.handleChange.bind(this, 'img')} />
+
+                {this.props.noDefaultImg ?
+                    null :
+                    <ImgForm label={this.props.t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item._meta.img.tempUrl || 'nourl'} onChange={this.props.handleChange.bind(this, 'img')} />
+                }
             </div>
         )
     }

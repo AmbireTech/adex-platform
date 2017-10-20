@@ -32,7 +32,7 @@ export default function itemsReducer(state = initialState.items, action) {
             // id is going to be set when it comes here
             let id = action.item.tempId //newState[collectionId].length
             let owner = item._owner
-            newItem = new item.item_type(owner, id, item._name || item._meta.fullName, item._meta).plainObj()
+            newItem = new item.item_type(owner, id, item._ipfs ,item._name || item._meta.fullName, item._meta).plainObj()
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
             return newState

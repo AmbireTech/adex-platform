@@ -2,31 +2,39 @@ import Promise from 'promise'
 import ipfsAPI from 'ipfs-api'
 const ipfs = ipfsAPI('localhost', '5001')
 
+export function getFileIpfsHash(file) {
+    return new Promise(function (resolve, reject) {
+        let buffer = Buffer.from(file)
+        ipfs.files.add(buffer)
+            .then(function (result) {
+                // console.log('getFileIpfsHash result', result)
+                return resolve(result[0].hash)
+            })
+            .catch(function (err) {
+                console.log(err)
+                return resolve('error')
+            })
+    })
+}
+
 export function addImgFromObjectURL(objectUrl) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest()
-        console.log('objectUrl from addImgFromObjectURL -> ', objectUrl)
+        // console.log('objectUrl from addImgFromObjectURL -> ', objectUrl)
         xhr.open('GET', objectUrl, true)
         xhr.responseType = 'arraybuffer'
         xhr.onload = function (e) {
             if (this.status === 200) {
-                var imbBlob = this.response
-                const buf = Buffer.from(imbBlob)
-
-                ipfs.files.add(buf, (err, result) => {
-                    if (err) {
-                        console.error(err)
-                        return reject(err)
-                    }
-                    let url = `http://localhost:8080/ipfs/${result[0].hash}`
-                    console.log(`Url --> ${url}`)
-                    console.log('result --> ', result)
-                    return resolve(result)
-                })
+                var imgBlob = this.response
+                // TODO: WHY return here to work???
+                return resolve(getFileIpfsHash(imgBlob))
+            } else {
+                // TODO: handle errorsS
+                return resolve('error')
             }
         }
         xhr.onerror = function (err) {
-            return reject(err)
+            return resolve('error')
         }
         xhr.send()
     })
