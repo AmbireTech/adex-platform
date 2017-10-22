@@ -13,6 +13,7 @@ import { ItemsTypes } from 'constants/itemsTypes'
 
 import NewItemSteps from 'components/dashboard/forms/NewItemSteps'
 import NewUnitForm from 'components/dashboard/forms/NewUnitForm'
+import NewUnitFormBasic from 'components/dashboard/forms/NewUnitFormBasic'
 import NewCampaignForm from 'components/dashboard/forms/NewCampaignForm'
 import Translate from 'components/translate/Translate'
 
@@ -55,8 +56,8 @@ class SideNav extends Component {
                             flat
                             primary
                             itemType={ItemsTypes.Campaign.id}
-                            pageTwo={NewCampaignForm}
-                            imgLabel="CAMPAIGN_LOGO"                        
+                            itemPages={[NewCampaignForm]}
+                            imgLabel="CAMPAIGN_LOGO"
                         />
                     </ListItem>
                     <RRListItem
@@ -78,38 +79,38 @@ class SideNav extends Component {
                             accent
                             flat
                             itemType={ItemsTypes.AdUnit.id}
-                            pageTwo={NewUnitForm}
-                            imgLabel="ADUNIT_BANNER"  
-                            noDefaultImg                      
+                            itemPages={[NewUnitFormBasic, NewUnitForm]}
+                            imgLabel="ADUNIT_BANNER"
+                            noDefaultImg
                         />
                     </ListItem>
                 </List>
             </div >
-        );
+        )
     }
 }
 
 
 SideNav.propTypes = {
     actions: PropTypes.object.isRequired
-};
+}
 
 function mapStateToProps(state) {
     // console.log('mapStateToProps Campaigns', state)
     return {
         account: state.account,
         campaigns: state.campaigns
-    };
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
-} 
+    }
+}
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(SideNav));
+)(Translate(SideNav))
 

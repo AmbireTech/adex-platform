@@ -15,6 +15,7 @@ import { ItemsTypes } from 'constants/itemsTypes'
 import NewItemWithDialog from './forms/NewItemWithDialog'
 import NewItemSteps from './forms/NewItemSteps'
 import NewUnitForm from './forms/NewUnitForm'
+import NewUnitFormBasic from 'components/dashboard/forms/NewUnitFormBasic'
 import NewCampaignForm from './forms/NewCampaignForm'
 import Translate from 'components/translate/Translate'
 
@@ -56,7 +57,7 @@ class Dashboard extends React.Component {
                         accent
                         floating
                         itemType={ItemsTypes.AdUnit.id}
-                        pageTwo={NewUnitForm}
+                        itemPages={[NewUnitFormBasic, NewUnitForm]}
                         imgLabel="ADUNIT_BANNER"
                         noDefaultImg
                     />
@@ -78,7 +79,7 @@ class Dashboard extends React.Component {
                         btnLabel="New Campaign"
                         title="Create new Campaign"
                         itemType={ItemsTypes.Campaign.id}
-                        pageTwo={NewCampaignForm}
+                        itemPages={[NewCampaignForm]}
                         imgLabel="CAMPAIGN_LOGO"
                     />
                 } />

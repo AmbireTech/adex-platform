@@ -19,8 +19,7 @@ class Helper {
     }
 
     slugify(str) {
-        if(!str || (typeof str !== 'string')) return ''
-        console.log('slugify str', str)
+        if (!str || (typeof str !== 'string')) return ''
         return slug(unidecode(str), { lower: true }).substring(0, 32);
     }
 }

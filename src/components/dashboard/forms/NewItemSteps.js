@@ -18,23 +18,32 @@ const saveBtn = ({ ...props }) => {
 const SaveBtnWithItem = NewItemHoc(saveBtn)
 
 class NewItemSteps extends Component {
+
+
     render() {
+        let pages = [{
+            title: 'Step 1',
+            component: () => <NewItemForm {...this.props} />
+        }]
+
+        this.props.itemPages.map((itemPage, index) => {
+            pages.push({
+                title: 'Step ' + (index + 2),
+                component: () => React.createElement(itemPage, { ...this.props })
+            })
+        })
+
+        pages.push(
+            {
+                title: 'Preview and save',
+                completeBtn: () => <SaveBtnWithItem itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
+                component: () => <NewItemFormPreview {...this.props} />
+            }
+        )
+
         return (
             <div style={{ textAlign: 'center' }}>
-
-                <MaterialStepper pages={[
-                    {
-                        title: 'Step one',
-                        component: () => <NewItemForm {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />
-                    }, {
-                        title: 'Step two',
-                        component: () => <this.props.pageTwo {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />
-                    }, {
-                        title: 'Preview and save',
-                        completeBtn: () => <SaveBtnWithItem itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
-                        component: () => <NewItemFormPreview {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />
-                    }
-                ]} />
+                <MaterialStepper pages={pages} />
             </div>
         )
     }
@@ -47,7 +56,8 @@ NewItemSteps.propTypes = {
     title: PropTypes.string,
     items: PropTypes.array.isRequired,
     addTo: PropTypes.object,
-    pageTwo: PropTypes.func
+    pageTwo: PropTypes.func,
+    itemPages: PropTypes.arrayOf(PropTypes.func)
 }
 
 function mapStateToProps(state, props) {

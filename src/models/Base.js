@@ -2,8 +2,6 @@ import Helper from 'helpers/miscHelpers'
 
 class Base {
     constructor(name = '', ipfs = '') {
-        console.log('name', name)
-        console.log('ipfs', ipfs)
         this._name = Helper.slugify(name)
 
         let now = Date.now()

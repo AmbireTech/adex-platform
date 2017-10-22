@@ -4,13 +4,14 @@ import { ItemsTypes } from 'constants/itemsTypes'
 import { Sizes, Images, AdTypes, Locations, Genders } from './DummyData'
 
 class AdUnit extends Item {
-    constructor(owner, id, ipfs = '', name, { img, description, size = '', adType = '', location = '', gender = '' }) {
+    constructor(owner, id, ipfs = '', name, { ad_url = '', img, description, size = '', adType = '', location = '', gender = '' }) {
         super(owner, id, ipfs, ItemsTypes.AdUnit.id, name, img, description)
         let meta = this._meta
         meta.banner = img
         meta.size = size
         meta.adType = adType
         meta.gender = gender
+        meta.ad_url = ad_url
     }
 
     get banner() { return this._meta.banner }
@@ -37,7 +38,8 @@ class AdUnit extends Item {
                 size: Helper.getRandomPropFromObj(Sizes),
                 adType: Helper.getRandomPropFromObj(AdTypes),
                 location: Helper.getRandomPropFromObj(Locations),
-                gender: Helper.getRandomPropFromObj(Genders)
+                gender: Helper.getRandomPropFromObj(Genders),
+                ad_url: 'https://adex.network'
             }
         )
 

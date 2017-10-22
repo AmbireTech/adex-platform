@@ -69,6 +69,10 @@
 
 }
 
+.grid {
+    padding: 0 !important; /* suka */
+}
+
 @media (width <= 1000px) {
     .dialog {
         min-width: 95%;
