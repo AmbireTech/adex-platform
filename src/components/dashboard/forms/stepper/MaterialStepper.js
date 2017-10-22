@@ -69,9 +69,14 @@ class MaterialStepper extends React.Component {
         console.log('props.pages[props.currentPage]', page.component)
     }
 
+    advancePage() {
+        this.props.setPageIndex(this.props.currentPage + 1)
+    }
+
     render() {
         let props = this.props
         let page = props.pages[props.currentPage]
+        let Comp = page.component
 
 
         return (
@@ -80,7 +85,7 @@ class MaterialStepper extends React.Component {
 
                 <div className={stepperTheme.page}>
                     <div className={stepperTheme.pageContent}>
-                        {<page.component ref={(hoi) => { this.currPage = hoi }} />}
+                        {<Comp {...page.props} />}
                     </div>
 
                     <div className={stepperTheme.controls}>
@@ -95,9 +100,7 @@ class MaterialStepper extends React.Component {
                         <div className={stepperTheme.right} >
                             <Button label='Cancel' accent />
                             {props.canAdvance ?
-                                <Button label='Continue' primary onClick={() =>
-                                    props.setPageIndex(props.currentPage + 1)
-                                } />
+                                <Button label='Continue' primary onClick={this.advancePage.bind(this)} />
                                 : ''}
                             {page.completeBtn ?
                                 <page.completeBtn />

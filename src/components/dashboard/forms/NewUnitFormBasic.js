@@ -16,14 +16,16 @@ class NewUnitForm extends Component {
 
     render() {
         let item = this.props.item
+        let ad_url = item._meta.ad_url
         return (
             <div>
                 <Input
                     type='text'
                     label={this.props.t('ad_url', { isProp: true })}
-                    value={item._meta.ad_url}
+                    value={ad_url}
                     onChange={this.props.handleChange.bind(this, 'ad_url')}
-                    maxLength={1024} />
+                    maxLength={1024}
+                />
                 <div>
                     <Grid fluid className={theme.grid}>
                         <Row middle='md'>

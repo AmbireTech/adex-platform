@@ -23,13 +23,15 @@ class NewItemSteps extends Component {
     render() {
         let pages = [{
             title: 'Step 1',
-            component: () => <NewItemForm {...this.props} />
+            component: NewItemForm,
+            props: {...this.props, kor: true}
         }]
 
         this.props.itemPages.map((itemPage, index) => {
             pages.push({
                 title: 'Step ' + (index + 2),
-                component: () => React.createElement(itemPage, { ...this.props })
+                component: itemPage,
+                props: {...this.props}
             })
         })
 
@@ -37,7 +39,8 @@ class NewItemSteps extends Component {
             {
                 title: 'Preview and save',
                 completeBtn: () => <SaveBtnWithItem itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
-                component: () => <NewItemFormPreview {...this.props} />
+                component: NewItemFormPreview,
+                props: {...this.props}
             }
         )
 
