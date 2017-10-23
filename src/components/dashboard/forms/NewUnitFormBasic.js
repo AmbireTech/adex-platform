@@ -15,6 +15,13 @@ import { validUrl } from 'helpers/validators'
 
 class NewUnitForm extends Component {
 
+    componentDidMount() {
+        /* TODO: make it understandable
+        * Now it forces to add invalid property for the required filed without setting prop error msg in order not to show the error yet
+        */
+        this.props.validate('ad_url', this.props.item._meta.ad_url, validUrl, '')
+    }
+
     render() {
         let item = this.props.item
         let ad_url = item._meta.ad_url
@@ -23,6 +30,7 @@ class NewUnitForm extends Component {
             <div>
                 <Input
                     type='text'
+                    required
                     label={t('ad_url', { isProp: true })}
                     value={ad_url}
                     onChange={this.props.handleChange.bind(this, 'ad_url')}
@@ -63,17 +71,12 @@ class NewUnitForm extends Component {
 NewUnitForm.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    // newItem: PropTypes.object.isRequired,
-    title: PropTypes.string,
-    // items: PropTypes.array.isRequired
+    title: PropTypes.string
 }
 
 function mapStateToProps(state) {
-    // console.log('mapStateToProps Campaigns', state)
     return {
         account: state.account,
-        // newItem: state.newItem[ItemsTypes.AdUnit.id],
-        // items: state.items[ItemsTypes.AdUnit.id],
         itemType: ItemsTypes.AdUnit.id
     }
 }

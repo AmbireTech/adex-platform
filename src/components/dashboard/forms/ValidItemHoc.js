@@ -13,6 +13,8 @@ export default function NewItemHoc(Decorated) {
             this.state = {
                 invalidFields: {}
             }
+
+            this.validate = this.validate.bind(this)
         }
 
         componentWillReceiveProps(nextProps) {

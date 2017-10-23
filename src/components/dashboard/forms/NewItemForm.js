@@ -11,30 +11,56 @@ import ImgForm from './ImgForm'
 
 class NewUnitForm extends Component {
 
+    componentDidMount() {
+        /* TODO: make it understandable
+        * Now it forces to add invalid property for the required filed without setting prop error msg in order not to show the error yet
+        */
+        this.props.validate('fullName', this.props.item._meta.ad_url, () => false, '')
+    }
+
+    validateName(name, reset) {
+        let msg = ''
+        if (!name) {
+            msg = 'REQUIRED_FIELD'
+        } else if (name.length < 4) {
+            msg = 'MIN_LENGTH_4'
+        } else if (name.length > 128) {
+            msg = 'MAX_LENGTH_128'
+        }
+
+        this.props.validate('fullName', this.props.item._meta.ad_url, () => !msg, reset ? '' : msg)
+    }
+
+
     render() {
         let item = this.props.item
+        let t = this.props.t
         return (
             <div>
 
                 <Input
                     type='text'
+                    required
                     label={ItemTypesNames[item._type] + ' ' + this.props.t('name', { isProp: true })}
                     name='name'
                     value={item._meta.fullName}
                     onChange={this.props.handleChange.bind(this, 'fullName')}
+                    onBlur={this.validateName.bind(this, item._meta.fullName, false)}
+                    onFocus={this.validateName.bind(this, item._meta.fullName, true)}
+                    error={this.props.invalidFields['fullName'] ? <span> {t(this.props.invalidFields['fullName'])} </span> : null}
                     maxLength={128} />
                 <Input
                     type='text'
                     multiline
                     rows={3}
-                    label={this.props.t('description', { isProp: true })}
+                    label={t('description', { isProp: true })}
                     value={item._meta.description}
                     onChange={this.props.handleChange.bind(this, 'description')}
                     maxLength={1024} />
 
                 {this.props.noDefaultImg ?
                     null :
-                    <ImgForm label={this.props.t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item._meta.img.tempUrl || 'nourl'} onChange={this.props.handleChange.bind(this, 'img')} />
+                    <ImgForm label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item._meta.img.tempUrl || 'nourl'} onChange={this.props.handleChange.bind(this, 'img')} />
                 }
             </div>
         )

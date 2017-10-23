@@ -12,7 +12,7 @@ import classnames from 'classnames'
 import Ripple from 'react-toolbox/lib/ripple'
 import { Button } from 'react-toolbox/lib/button'
 
-const Step = ({ page, active, index, children, theme, canAdvance, canFinish, canReverse, setPageIndex, ...other }) => {
+const Step = ({ page, active, index, children, theme, canAdvance, canFinish, canReverse, setPageIndex, canAdvanceToPage, currentPage, goToPage, ...other }) => {
     let warning = page.status === 'warning'
     let done = page.status === 'done'
     theme = stepperTheme
@@ -25,26 +25,28 @@ const Step = ({ page, active, index, children, theme, canAdvance, canFinish, can
                 { [theme.done]: done }
             )}
             {...other}
-            onClick={() => setPageIndex(index)}
+            onClick={() => goToPage(index)
+            }
         >
             {children}
 
-            <div className={classnames(theme.circle)}>
-                {warning ?
-                    <FontIcon value='warning' />
-                    : (
-                        done ?
-                            <FontIcon value='done' style={{ fontSize: '20px', lineHeight: '24px' }} />
-                            :
-                            <span>{index + 1}</span>
-                    )
+            < div className={classnames(theme.circle)} >
+                {
+                    warning ?
+                        <FontIcon value='warning' />
+                        : (
+                            done ?
+                                <FontIcon value='done' style={{ fontSize: '20px', lineHeight: '24px' }} />
+                                :
+                                <span>{index + 1}</span>
+                        )
                 }
-            </div>
+            </div >
             <div className={theme.barLeft}></div>
             <div className={theme.barRight}></div>
             <div className={theme.label}> {page.title} </div>
             <div className={theme.subLabel}> {page.optional === true ? 'hij' : ''} </div>
-        </div>
+        </div >
     )
 }
 
@@ -54,7 +56,7 @@ const StepperNav = ({ pages, currentPage, ...other }) => {
     return (
         <div className={stepperTheme.stepperNav}>
             {pages.map((page, i) =>
-                <RippleStep key={i} page={page} active={i === currentPage} index={i} {...other} />)}
+                <RippleStep key={i} page={page} active={i === currentPage} index={i} {...other} currentPage={currentPage} />)}
         </div>
     )
 }
@@ -69,8 +71,25 @@ class MaterialStepper extends React.Component {
         console.log('props.pages[props.currentPage]', page.component)
     }
 
-    advancePage() {
-        this.props.setPageIndex(this.props.currentPage + 1)
+    goToPage(nexStep) {
+        let canAdvance = (nexStep > this.props.currentPage) && this.canAdvanceNextToPage()
+        let canGoBack = nexStep < this.props.currentPage
+
+        if (canAdvance || canGoBack) {
+            this.props.setPageIndex(nexStep)
+        }
+    }
+
+    canAdvanceNextToPage() {
+        /* TODO: add check for optional steps that can be skipped
+            * fix duplicated code here and in render
+        */
+        let page = this.props.pages[this.props.currentPage]
+        if (this.props.canAdvance && !Object.keys(this.props.validations[page.props.validateId] || {}).length) {
+            return true
+        } else {
+            return false
+        }
     }
 
     render() {
@@ -80,7 +99,7 @@ class MaterialStepper extends React.Component {
 
         return (
             <div className={stepperTheme.stepper}>
-                <StepperNav  {...props} pages={pages} currentPage={currentPage} />
+                <StepperNav  {...props} pages={pages} currentPage={currentPage} goToPage={this.goToPage.bind(this)} />
 
                 <div className={stepperTheme.page}>
                     <div className={stepperTheme.pageContent}>
@@ -98,8 +117,8 @@ class MaterialStepper extends React.Component {
 
                         <div className={stepperTheme.right} >
                             <Button label='Cancel' accent />
-                            {props.canAdvance && !Object.keys(validations[page.props.validateId] || {}).length ?
-                                <Button label='Continue' primary onClick={this.advancePage.bind(this)} />
+                            {this.canAdvanceNextToPage() ?
+                                <Button label='Continue' primary onClick={this.goToPage.bind(this, currentPage + 1)} />
                                 : ''}
                             {page.completeBtn ?
                                 <page.completeBtn />
