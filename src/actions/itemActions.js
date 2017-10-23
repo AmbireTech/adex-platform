@@ -194,3 +194,22 @@ export function changeLanguage(lang) {
         })
     }
 }
+
+export function updateValidationErrors(item, newErrors) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.UPDATE_ITEM_VALIDATION,
+            item: item,
+            errors: newErrors
+        })
+    }
+}
+
+export function resetValidationErrors(item) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.RESET_ITEM_VALIDATION,
+            item: item
+        })
+    }
+}

@@ -99,7 +99,7 @@ class MaterialStepper extends React.Component {
 
                         <div className={stepperTheme.right} >
                             <Button label='Cancel' accent />
-                            {props.canAdvance ?
+                            {props.canAdvance && page.isValid() ?
                                 <Button label='Continue' primary onClick={this.advancePage.bind(this)} />
                                 : ''}
                             {page.completeBtn ?

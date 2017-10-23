@@ -1,9 +1,7 @@
-import slug from 'slug'
-import unidecode from 'unidecode'
-
+// TODO: check the regex
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
 
-export function validateUrl(url) {
+export function validUrl(url) {
     let isValid = urlRegex.test(url)
     return isValid
 }

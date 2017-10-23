@@ -9,6 +9,7 @@ import toasts from './toastsReducer'
 import confirm from './confirmReducer'
 import nav from './navReducer'
 import language from './languageReducer'
+import validations from './validateItemsReducer'
 import { routerReducer, LOCATION_CHANGE, CALL_HISTORY_METHOD } from 'react-router-redux'
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
@@ -23,7 +24,8 @@ const rootReducer = combineReducers({
     confirm: filterActions(confirm, [types.CONFIRM_ACTION]),
     nav: filterActions(nav, [types.UPDATE_NAV]),
     routing: filterActions(routerReducer, [LOCATION_CHANGE, CALL_HISTORY_METHOD]),
-    language: language 
+    language: language,
+    validations: validations
 })
 
 export default rootReducer

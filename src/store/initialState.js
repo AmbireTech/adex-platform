@@ -105,5 +105,6 @@ export default {
     nav: {
         side: ''
     },
-    language: 'en-US'
+    language: 'en-US',
+    validations: {}
 }

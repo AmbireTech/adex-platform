@@ -11,20 +11,25 @@ import Translate from 'components/translate/Translate'
 import ImgForm from './ImgForm'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './theme.css'
+import { validUrl } from 'helpers/validators'
 
 class NewUnitForm extends Component {
 
     render() {
         let item = this.props.item
         let ad_url = item._meta.ad_url
+        let t = this.props.t
         return (
             <div>
                 <Input
                     type='text'
-                    label={this.props.t('ad_url', { isProp: true })}
+                    label={t('ad_url', { isProp: true })}
                     value={ad_url}
                     onChange={this.props.handleChange.bind(this, 'ad_url')}
                     maxLength={1024}
+                    onBlur={this.props.validate.bind(this, 'ad_url', ad_url, validUrl, 'INVALID_URL')}
+                    /* onFocus={this.props.validate.bind(this, 'ad_url', ad_url, validUrl, 'INVALID_URL')} */
+                    error={this.props.invalidFields['ad_url'] ? <span> {t(this.props.invalidFields['ad_url'])} </span> : null}
                 />
                 <div>
                     <Grid fluid className={theme.grid}>
@@ -34,7 +39,7 @@ class NewUnitForm extends Component {
                                     onChange={this.props.handleChange.bind(this, 'adType')}
                                     source={AdTypes}
                                     value={item._meta.adType}
-                                    label={this.props.t('adType', { isProp: true })}
+                                    label={t('adType', { isProp: true })}
                                 />
                             </Col>
                             <Col sm={12} lg={6}>
@@ -42,14 +47,14 @@ class NewUnitForm extends Component {
                                     onChange={this.props.handleChange.bind(this, 'size')}
                                     source={Sizes}
                                     value={item._meta.size}
-                                    label={this.props.t('size', { isProp: true })}
+                                    label={t('size', { isProp: true })}
                                 />
                             </Col>
                         </Row>
                     </Grid>
                 </div>
 
-                <ImgForm label={this.props.t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item._meta.img.tempUrl || 'nourl'} onChange={this.props.handleChange.bind(this, 'img')} />
+                <ImgForm label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item._meta.img.tempUrl || 'nourl'} onChange={this.props.handleChange.bind(this, 'img')} />
             </div>
         )
     }
