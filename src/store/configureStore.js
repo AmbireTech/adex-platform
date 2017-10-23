@@ -1,4 +1,4 @@
-import {createStore, compose, applyMiddleware} from 'redux';
+import { createStore, compose, applyMiddleware } from 'redux';
 import reduxImmutableStateInvariant from 'redux-immutable-state-invariant';
 import thunk from 'redux-thunk';
 import rootReducer from 'reducers';
@@ -8,6 +8,10 @@ import { routerMiddleware } from 'react-router-redux';
 const reduxRouterMiddleware = routerMiddleware(history)
 
 const logger = store => next => action => {
+  // if (action.type === 'UPDATE_NEWITEM') {
+  //   return next(action)
+  // }
+
   console.groupCollapsed(action.type)
   console.info('dispatching', action)
   let result = next(action)
@@ -28,7 +32,7 @@ function configureStoreProd(initialState) {
 
   return createStore(rootReducer, initialState, compose(
     applyMiddleware(...middlewares)
-    )
+  )
   );
 }
 
@@ -49,7 +53,7 @@ function configureStoreDev(initialState) {
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // add support for Redux dev tools
   const store = createStore(rootReducer, initialState, composeEnhancers(
     applyMiddleware(...middlewares)
-    )
+  )
   );
 
   if (module.hot) {

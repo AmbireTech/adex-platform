@@ -28,7 +28,7 @@ class NewUnitForm extends Component {
                     onChange={this.props.handleChange.bind(this, 'ad_url')}
                     maxLength={1024}
                     onBlur={this.props.validate.bind(this, 'ad_url', ad_url, validUrl, 'INVALID_URL')}
-                    /* onFocus={this.props.validate.bind(this, 'ad_url', ad_url, validUrl, 'INVALID_URL')} */
+                    onFocus={this.props.validate.bind(this, 'ad_url', ad_url, validUrl, '')}
                     error={this.props.invalidFields['ad_url'] ? <span> {t(this.props.invalidFields['ad_url'])} </span> : null}
                 />
                 <div>

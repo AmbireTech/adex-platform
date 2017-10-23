@@ -74,14 +74,13 @@ class MaterialStepper extends React.Component {
     }
 
     render() {
-        let props = this.props
-        let page = props.pages[props.currentPage]
+        let { pages, component, validations, currentPage, ...props } = { ...this.props }
+        let page = pages[currentPage]
         let Comp = page.component
-
 
         return (
             <div className={stepperTheme.stepper}>
-                <StepperNav  {...props} />
+                <StepperNav  {...props} pages={pages} currentPage={currentPage} />
 
                 <div className={stepperTheme.page}>
                     <div className={stepperTheme.pageContent}>
@@ -92,14 +91,14 @@ class MaterialStepper extends React.Component {
                         <div className={stepperTheme.left}>
                             {props.canReverse ?
                                 <Button label='Back' onClick={() =>
-                                    props.setPageIndex(props.currentPage - 1)
+                                    props.setPageIndex(currentPage - 1)
                                 } />
                                 : ''}
                         </div>
 
                         <div className={stepperTheme.right} >
                             <Button label='Cancel' accent />
-                            {props.canAdvance && page.isValid() ?
+                            {props.canAdvance && !Object.keys(validations[page.props.validateId] || {}).length ?
                                 <Button label='Continue' primary onClick={this.advancePage.bind(this)} />
                                 : ''}
                             {page.completeBtn ?
@@ -121,7 +120,7 @@ class MyMaterialStepper extends React.Component {
     render() {
         return (
             <Stepper pages={this.props.pages}>
-                <WithMaterialStepper />
+                <WithMaterialStepper validations={this.props.validations} />
             </Stepper>
         )
     }
@@ -135,7 +134,8 @@ MyMaterialStepper.propTypes = {
 
 function mapStateToProps(state, props) {
     return {
-        account: state.account
+        account: state.account,
+        validations: state.validations
     }
 }
 

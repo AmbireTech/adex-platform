@@ -29,11 +29,10 @@ export default function NewItemHoc(Decorated) {
             if (!isValid) {
                 let errors = {}
                 errors[key] = errorMsg
-
                 this.props.actions.updateValidationErrors(this.props.validateId, errors)
-            } else (
+            } else {
                 this.props.actions.resetValidationErrors(this.props.validateId)
-            )
+            }
         }
 
         render() {

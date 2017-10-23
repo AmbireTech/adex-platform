@@ -22,19 +22,18 @@ class NewItemSteps extends Component {
 
 
     render() {
+
         let pages = [{
             title: 'Step 1',
             component: ValidItemHoc(NewItemForm),
-            props: { ...this.props, kor: true, validateId: this.props.itemType + '' + 0 },
-            isValid: () => !Object.keys(this.props.validations[this.props.itemType + '' + 0] || {}).length
+            props: { ...this.props, validateId: this.props.itemType + '' + 0 }
         }]
 
         this.props.itemPages.map((itemPage, index) => {
             pages.push({
                 title: 'Step ' + (index + 2),
                 component: ValidItemHoc(itemPage),
-                props: { ...this.props, validateId: this.props.itemType + '' + (index + 1) },
-                isValid: () => !Object.keys(this.props.validations[this.props.itemType + '' + (index + 1)] || {}).length
+                props: { ...this.props, validateId: this.props.itemType + '' + (index + 1) }
             })
         })
 
@@ -58,21 +57,18 @@ class NewItemSteps extends Component {
 NewItemSteps.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    // newItem: PropTypes.object.isRequired,
     title: PropTypes.string,
     items: PropTypes.array.isRequired,
     addTo: PropTypes.object,
     pageTwo: PropTypes.func,
-    itemPages: PropTypes.arrayOf(PropTypes.func),
-    validations: PropTypes.object.isRequired
+    itemPages: PropTypes.arrayOf(PropTypes.func)
 
 }
 
 function mapStateToProps(state, props) {
     return {
         account: state.account,
-        items: state.items[props.itemType],
-        validations: state.validations
+        items: state.items[props.itemType]
     }
 }
 
