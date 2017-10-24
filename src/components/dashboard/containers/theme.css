@@ -136,6 +136,36 @@
     z-index: 110;
 }
 
+.itemPropTop {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.img {
+    height: 100%;
+    max-width: 300px;
+    width: auto;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+.imgHolder, .bannerProps{
+    display: inline-block;
+    vertical-align: top;
+}
+
+.imgHolder {
+    height: 300px;
+    margin-right: 20px;
+}
+
+.bannerProps {
+    max-width: calc(100% - 400px)
+}
+.targetsHead {
+    border-bottom: 1px solid #666;
+    padding-bottom: 5px;
+}
+
 @media (height <= 1000px) {
     .dialog {
         min-height: 95vh;

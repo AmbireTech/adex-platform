@@ -8,15 +8,12 @@ import Img from 'components/common/img/Img'
 import { ItemTypesNames } from 'constants/itemsTypes'
 import Item from 'models/Item'
 
-
 // const RRButton = withReactRouterLink(Button)
 const RRCardTitle = withReactRouterLink(CardTitle)
 const RRCardMedia = withReactRouterLink(CardMedia)
 
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))
 const TooltipIconButton = Tooltip(IconButton)
-
-
 
 class MyCard extends Component {
 

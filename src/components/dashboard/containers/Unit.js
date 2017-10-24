@@ -4,11 +4,27 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from 'actions/itemActions'
-import { ItemsTypes, AdTypes, Sizes } from 'constants/itemsTypes'
+import { ItemsTypes, AdTypes, Sizes, TargetsWeight } from 'constants/itemsTypes'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import ItemHoc from './ItemHoc'
+import { Grid, Row, Col } from 'react-flexbox-grid'
+import Img from 'components/common/img/Img'
+import Item from 'models/Item'
+import Input from 'react-toolbox/lib/input'
+import theme from './theme.css'
+import { Locations } from 'models/DummyData' // Temp
+
+const avLocations = Object.keys(Locations).map((key) => { return { value: key, label: Locations[key] } })
 
 export class Unit extends Component {
+    renderLocationTarget = (target) =>
+        <Dropdown
+            source={avLocations}
+            value={target.value}
+            label={this.props.t('location', { isProp: true })}
+        />
+
+
     render() {
         let item = this.props.item
         let meta = item._meta
@@ -18,23 +34,73 @@ export class Unit extends Component {
 
         return (
             <div>
-                <div>
-                    <Dropdown
-                        onChange={this.props.handleChange.bind(this, 'adType')}
-                        source={AdTypes}
-                        value={meta.adType}
-                        label={t('adType', { isProp: true })}
-                    />
+                <div className={theme.itemPropTop}>
+                    <div className={theme.imgHolder}>
+                        <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} className={theme.img} />
+                    </div>
+                    <div className={theme.bannerProps}>
+                        <div>
+                            <Dropdown
+                                onChange={this.props.handleChange.bind(this, 'adType')}
+                                source={AdTypes}
+                                value={meta.adType}
+                                label={t('adType', { isProp: true })}
+                            />
+                        </div>
+                        <div>
+                            <Dropdown
+                                onChange={this.props.handleChange.bind(this, 'size')}
+                                source={Sizes}
+                                value={meta.size}
+                                label={t('size', { isProp: true })}
+                            />
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <Dropdown
-                        onChange={this.props.handleChange.bind(this, 'size')}
-                        source={Sizes}
-                        value={meta.size}
-                        label={t('size', { isProp: true })}
-                    />
-                </div>
+
+                <Grid fluid>
+                    <Row>
+                        <Col lg={6}>
+                            <Row className={theme.targetsHead}>
+                                <Col lg={7}>
+                                    TARGET
+                                </Col>
+                                <Col lg={5}>
+                                    Weight
+                                </Col>
+                            </Row>
+
+
+                            {
+                                meta.targets.map((target) => {
+                                    return (<Row>
+                                        <Col lg={7}>
+                                            {target.name === 'location' ?
+                                                this.renderLocationTarget(target)
+                                                : null
+                                            }
+                                        </Col>
+                                        <Col lg={5}>
+                                            <Dropdown
+                                                source={TargetsWeight}
+                                                value={target.weight}
+                                                label={t('weight', { isProp: true })}
+                                            />
+                                        </Col>
+
+                                    </Row>
+                                    )
+                                })
+                            }
+
+                        </Col>
+                        <Col lg={6}>
+                        </Col>
+                    </Row>
+
+                </Grid>
             </div>
+
         )
     }
 }
