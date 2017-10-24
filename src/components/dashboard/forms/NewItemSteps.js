@@ -19,8 +19,6 @@ const saveBtn = ({ ...props }) => {
 const SaveBtnWithItem = NewItemHoc(saveBtn)
 
 class NewItemSteps extends Component {
-
-
     render() {
 
         let pages = [{

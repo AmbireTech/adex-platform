@@ -7,7 +7,7 @@ import { ItemsTypes } from 'constants/itemsTypes'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
 import NewUnitForm from 'components/dashboard/forms/NewUnitForm'
-import theme from './theme.css'
+// import theme from './theme.css'
 import AddItemDialog from './AddItemDialog'
 import NewItemSteps from 'components/dashboard/forms/NewItemSteps'
 
@@ -34,6 +34,7 @@ export class Campaign extends Component {
         let meta = item._meta
         let units = []
         let otherUnits = this.props.units.slice(0)
+        let t = this.props.t
 
         if (!item) return (<h1>'404'</h1>)
 

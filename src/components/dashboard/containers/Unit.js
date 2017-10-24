@@ -12,6 +12,7 @@ export class Unit extends Component {
     render() {
         let item = this.props.item
         let meta = item._meta
+        let t = this.props.t
 
         if (!item) return (<h1>Unit '404'</h1>)
 
@@ -22,7 +23,7 @@ export class Unit extends Component {
                         onChange={this.props.handleChange.bind(this, 'adType')}
                         source={AdTypes}
                         value={meta.adType}
-                        label='adType'
+                        label={t('adType', { isProp: true })}
                     />
                 </div>
                 <div>
@@ -30,7 +31,7 @@ export class Unit extends Component {
                         onChange={this.props.handleChange.bind(this, 'size')}
                         source={Sizes}
                         value={meta.size}
-                        label='size'
+                        label={t('size', { isProp: true })}
                     />
                 </div>
             </div>

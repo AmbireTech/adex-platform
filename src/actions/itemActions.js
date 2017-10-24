@@ -25,16 +25,19 @@ export function addItem(item, itemToAddTo) {
     return function (dispatch) {
         addImgFromObjectURL(item._meta.img.tempUrl)
             .then(function (imgIpfs) {
+                // TODO: make function for this and check for ipfs errors
                 item = { ...item }
-                item._meta.img.ipfs = imgIpfs
+                let meta = { ...item._meta }
+                meta.img = { ipfs: imgIpfs }
+                item._meta = meta
                 return getFileIpfsHash(JSON.stringify(item._meta))
             })
             .then(function (metaIpfs) {
-                console.log('metaIpfs', metaIpfs)
+                // console.log('metaIpfs', metaIpfs)
                 item._ipfs = metaIpfs
             })
             .then(function () {
-                // Web3 service here
+                // TODO: Web3 service here
                 dispatch({
                     type: types.ADD_ITEM,
                     item: item

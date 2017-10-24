@@ -14,6 +14,7 @@ import classnames from 'classnames'
 import ItemModel from 'models/Item'
 import ImgDialog from './ImgDialog'
 import { Prompt } from 'react-router'
+import Translate from 'components/translate/Translate'
 
 const TooltipFontIcon = Tooltip(FontIcon)
 
@@ -93,6 +94,7 @@ export default function ItemHoc(Decorated) {
             let item = this.state.item || {}
             let meta = item._meta || {}
             let imgSrc = ItemModel.getImgUrl(meta.img)
+            let t = this.props.t
 
             return (
                 <div>
@@ -106,7 +108,7 @@ export default function ItemHoc(Decorated) {
                             <Avatar image={imgSrc} title={meta.fullName} cover onClick={this.handleToggle.bind(this)} />
                             <ImgDialog imgSrc={imgSrc} handleToggle={this.handleToggle} active={this.state.editImg} onChange={this.handleChange.bind(this, 'img')} />
                             {this.state.activeFields.fullName ?
-                                <Input className={theme.itemName} type='text' label='fullName' name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
+                                <Input className={theme.itemName} type='text' label={t('fullName', { isProp: true })} name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                                 :
                                 <h2 className={theme.itemName}>
                                     <span> {meta.fullName} </span>
@@ -120,11 +122,15 @@ export default function ItemHoc(Decorated) {
 
 
                             {this.state.activeFields.description ?
-                                <Input multiline rows={3} type='text' label='description' name='description' value={meta.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
+                                <Input multiline rows={3} type='text' label={t('description', { isProp: true })} name='description' value={meta.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
                                 :
                                 <div>
                                     <p>
-                                        {meta.description}
+                                        {meta.description ?
+                                            meta.description
+                                            :
+                                            <span> {t('NO_DESCRIPTION_YET')}</span>
+                                        }
                                         <span>
                                             <IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'description', true)} />
                                         </span>
@@ -171,5 +177,5 @@ export default function ItemHoc(Decorated) {
         spinner: PropTypes.bool
     }
 
-    return Item
+    return Translate(Item)
 }

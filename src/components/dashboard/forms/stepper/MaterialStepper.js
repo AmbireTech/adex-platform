@@ -119,7 +119,10 @@ class MaterialStepper extends React.Component {
                             <Button label='Cancel' accent />
                             {this.canAdvanceNextToPage() && !page.completeBtn ?
                                 <Button label='Continue' primary onClick={this.goToPage.bind(this, currentPage + 1)} />
-                                : <Button label='Continue' disabled />}
+                                :
+                                !page.completeBtn ?
+                                    <Button label='Continue' disabled />
+                                    : null}
                             {page.completeBtn ?
                                 <page.completeBtn />
                                 : ''}
