@@ -1,4 +1,21 @@
 
+import countryData from 'country-data'
+
+let allCountries = countryData.countries.all.map((cnt) => {
+  return {
+    value: cnt.alpha2,
+    label: cnt.name
+  }
+})
+
+let allRegions = Object.keys(countryData.regions).map((key) => {
+  return {
+    value: key,
+    label: countryData.regions[key].name
+  }
+})
+
+let allLocations = allRegions.concat(allCountries)
 
 export const ItemsTypes = {
   AdUnit: { id: 0, name: 'AdUnit' },
@@ -54,3 +71,5 @@ export const Targets = [
   { name: 'location' },
   { name: 'age' }
 ]
+
+export const Locations = allLocations

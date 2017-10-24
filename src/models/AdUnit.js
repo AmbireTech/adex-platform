@@ -31,7 +31,7 @@ class AdUnit extends Item {
         // TODO: This is only for testing data
         // Decide how to handle targets
         for (var index = 0; index < Targets.length; index++) {
-            if (Helper.getRandomBool()) {
+            // if (Helper.getRandomBool()) {
                 var target = Targets[index]
                 let value = null
                 if (target.values) {
@@ -49,7 +49,7 @@ class AdUnit extends Item {
                     value: value,
                     weight: getRandomPropValue(TargetsWeight)
                 })
-            }
+            // }
         }
 
         let unit = new AdUnit(

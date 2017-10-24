@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from 'actions/itemActions'
-import { ItemsTypes, AdTypes, Sizes, TargetsWeight } from 'constants/itemsTypes'
+import { ItemsTypes, AdTypes, Sizes, TargetsWeight, Locations } from 'constants/itemsTypes'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import ItemHoc from './ItemHoc'
 import { Grid, Row, Col } from 'react-flexbox-grid'
@@ -12,18 +12,33 @@ import Img from 'components/common/img/Img'
 import Item from 'models/Item'
 import Input from 'react-toolbox/lib/input'
 import theme from './theme.css'
-import { Locations } from 'models/DummyData' // Temp
+import Autocomplete from 'react-toolbox/lib/autocomplete'
+// import { Locations } from 'models/DummyData' // Temp
 
-const avLocations = Object.keys(Locations).map((key) => { return { value: key, label: Locations[key] } })
+
+const autocompleteLocations = () => {
+    let locs = {}
+    Locations.map((loc) => {
+        locs[loc.value] = loc.label
+    })
+
+    return locs
+}
+
+const AcLocations = autocompleteLocations()
 
 export class Unit extends Component {
     renderLocationTarget = (target) =>
-        <Dropdown
-            source={avLocations}
-            value={target.value}
-            label={this.props.t('location', { isProp: true })}
+        <Autocomplete
+            direction="auto"
+            multiple={false}
+            onChange={this.handleMultipleChange}
+            label="Choose countries"
+            source={AcLocations}
+            value={null}
+            suggestionMatch='anywhere'
+            showSuggestionsWhenValueIsSet={true}
         />
-
 
     render() {
         let item = this.props.item
@@ -73,7 +88,7 @@ export class Unit extends Component {
 
                             {
                                 meta.targets.map((target) => {
-                                    return (<Row>
+                                    return (<Row key={target.name}>
                                         <Col lg={7}>
                                             {target.name === 'location' ?
                                                 this.renderLocationTarget(target)
