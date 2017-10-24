@@ -1,7 +1,3 @@
-const Sizes = { 1: '300x300', 2: '200x200', 3: '100x100', 4: '728x90' }
-const Locations = { bg: 'Bulgaria', cn: 'China', ru: 'Russia', mn: 'Moon', mr: "Mars" }
-const Genders = { male: "Male", female: 'Female', apacheHelicopter: 'Apache helicopter', other: 'Other' }
-const AdTypes = { html: 'html', flash: 'flash', other: 'other' }
 const Images = ['https://www.strem.io/3.0/stremio-purple-small.png',
     'https://www.snip.today/static/img/snip_logo_rect.4099c1f945bb.png',
     'http://ia.media-imdb.com/images/M/MV5BMTczNjM0NDY0Ml5BMl5BcG5nXkFtZTgwMTk1MzQ2OTE@._V1_.png',
@@ -13,11 +9,9 @@ const Images = ['https://www.strem.io/3.0/stremio-purple-small.png',
     'http://www.elmonteexaminer.com/wp-content/uploads/2015/09/walmart.jpg',
     'https://neo.org/Images/neo_logo.svg']
 
+const Locations = { bg: 'Bulgaria', cn: 'China', ru: 'Russia', mn: 'Moon', mr: "Mars" }
 
 export {
-    Sizes,
-    Locations,
-    Genders,
-    AdTypes,
-    Images
+    Images,
+    Locations
 }

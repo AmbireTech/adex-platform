@@ -13,9 +13,18 @@ class Helper {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
+    getRandomBool() {
+        return !!this.getRandomInt(0, 1)
+    }
+
     getRandomPropFromObj(obj) {
         var keys = Object.keys(obj)
         return obj[keys[keys.length * Math.random() << 0]];
+    }
+
+    getRandomKeyFromObj(obj) {
+        var keys = Object.keys(obj)
+        return keys[keys.length * Math.random() << 0]
     }
 
     slugify(str) {

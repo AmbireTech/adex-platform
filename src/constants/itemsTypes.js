@@ -1,3 +1,5 @@
+
+
 export const ItemsTypes = {
   AdUnit: { id: 0, name: 'AdUnit' },
   AdSlot: { id: 1, name: 'AdSlot' },
@@ -5,12 +7,17 @@ export const ItemsTypes = {
   Channel: { id: 3, name: 'Channel' }
 }
 
-export const ItemTypesNames = {
-  [ItemsTypes.AdUnit.id]: ItemsTypes.AdUnit.name,
-  [ItemsTypes.AdSlot.id]: ItemsTypes.AdSlot.name,
-  [ItemsTypes.Campaign.id]: ItemsTypes.Campaign.name,
-  [ItemsTypes.Channel.id]: ItemsTypes.Channel.name,
+function getItemTypesNames() {
+  let names = {}
+  Object.keys(ItemsTypes).map((key) => {
+    let type = ItemsTypes[key]
+    names[type.id] = type.name
+  })
+
+  return names
 }
+
+export const ItemTypesNames = getItemTypesNames()
 
 export const Sizes = [
   { value: '300x300', label: '300 x 300 px' },
@@ -24,4 +31,26 @@ export const AdTypes = [
   { value: 'flash', label: 'Flash' },
   { value: 'other', label: 'Other' },
   { value: 'vr', label: 'VR' }
+]
+
+export const TargetsWeight = [
+  { value: 'low', label: 'Low' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'high', label: 'High' }
+]
+
+export const Genders = [
+  { value: 'female', label: 'Female' },
+  { value: 'male', label: 'Male' },
+  { value: 'other', label: 'Other' }
+]
+
+export function getRandomPropValue(constants) {
+  return constants[constants.length * Math.random() << 0].value
+}
+
+export const Targets = [
+  { name: 'gender', values: Genders },
+  { name: 'location' },
+  { name: 'age' }
 ]
