@@ -15,7 +15,9 @@ class NewUnitForm extends Component {
         /* TODO: make it understandable
         * Now it forces to add invalid property for the required filed without setting prop error msg in order not to show the error yet
         */
-        this.props.validate('fullName', this.props.item._meta.ad_url, () => false, '')
+        if (!this.props.item._meta.fullName) {
+            this.props.validate('fullName', this.props.item._meta.fullName, () => false, '')
+        }
     }
 
     validateName(name, reset) {
