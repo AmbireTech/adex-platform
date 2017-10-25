@@ -38,6 +38,12 @@
     position: absolute;
     left: 24px;
     bottom: 100%;
+    &.weightLabel {
+        top: 0;
+        bottom: auto;
+        font-size: 16px;
+        opacity: 0.46;
+    }
 }
 
 .itemsListControls{
@@ -165,10 +171,32 @@
     border-bottom: 1px solid #666;
     padding-bottom: 5px;
 }
+.weightSlider {
+    padding-top: 16px;
+}
+
+.sliderWrapper {
+    position: absolute;
+    bottom: 8px;
+    width: 100%;
+    padding: 8px 0;
+}
+
+.targetRow {
+    margin-top: 10px;
+}
+
+.weightCol {
+    position: realtive;
+}
+
+.agesGrid {
+    padding: 0;
+}
 
 @media (height <= 1000px) {
     .dialog {
-        min-height: 95vh;
+        min-height: 95vh; 
     }
 }
 

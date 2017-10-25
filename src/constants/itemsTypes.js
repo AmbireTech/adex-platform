@@ -16,7 +16,7 @@ let allRegions = Object.keys(countryData.regions).map((key) => {
 })
 
 let allLocations = allRegions.concat(allCountries)
-
+console.log('alllocations', allLocations)
 export const ItemsTypes = {
   AdUnit: { id: 0, name: 'AdUnit' },
   AdSlot: { id: 1, name: 'AdSlot' },
@@ -51,10 +51,21 @@ export const AdTypes = [
 ]
 
 export const TargetsWeight = [
-  { value: 'low', label: 'Low' },
-  { value: 'medium', label: 'Medium' },
-  { value: 'high', label: 'High' }
+  { value: 0, label: 'None' },
+  { value: 1, label: 'Low' },
+  { value: 2, label: 'Medium' },
+  { value: 3, label: 'High' },
+  { value: 4, label: 'Highest' },
 ]
+
+export const TargetWeightLabels = (function () {
+  let labels = {}
+  TargetsWeight.map((target) => {
+    labels[target.value] = target.label
+  })
+
+  return labels
+}())
 
 export const Genders = [
   { value: 'female', label: 'Female' },

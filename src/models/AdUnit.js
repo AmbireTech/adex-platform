@@ -1,7 +1,7 @@
 import Helper from 'helpers/miscHelpers'
 import Item from './Item'
-import { ItemsTypes, Genders, AdTypes, Sizes, Targets, TargetsWeight, getRandomPropValue } from 'constants/itemsTypes'
-import { Images, Locations } from './DummyData'
+import { ItemsTypes, Genders, AdTypes, Sizes, Targets, TargetsWeight, getRandomPropValue, Locations } from 'constants/itemsTypes'
+import { Images } from './DummyData'
 
 class AdUnit extends Item {
     constructor(owner, id, ipfs = '', name, { ad_url = '', img, description = '', size = '', adType = '', targets = [] }) {
@@ -25,6 +25,53 @@ class AdUnit extends Item {
 
     set targets(value) { this._meta.targets = value }
 
+    static updateTargets(targets, target, newValue, newWeight) {
+        // TODO: validate target
+        target = { ...target }
+        target.value = newValue
+        if (!!newWeight || (newWeight === 0)) {
+            target.weight = newWeight
+        }
+
+        targets = [...targets]
+        let hasThisTarget = false
+
+        for (let i = 0; i < targets.length; i++) {
+            let currentTarget = targets[i]
+            if (currentTarget.name === target.name) {
+                targets[i] = target
+                hasThisTarget = true
+                break
+            }
+        }
+
+        if (!hasThisTarget) targets.push(target)
+
+        return targets
+    }
+
+    static updateTargetsWeight(targets, target, newWeight) {
+        // TODO: validate target
+        target = { ...target }
+        target.weight = newWeight
+
+        targets = [...targets]
+        let hasThisTarget = false
+
+        for (let i = 0; i < targets.length; i++) {
+            let currentTarget = targets[i]
+            if (currentTarget.name === target.name) {
+                targets[i] = target
+                hasThisTarget = true
+                break
+            }
+        }
+
+        if (!hasThisTarget) targets.push(target)
+
+        return targets
+    }
+
     static getRandomInstance(owner, id) {
         let targets = []
 
@@ -32,23 +79,23 @@ class AdUnit extends Item {
         // Decide how to handle targets
         for (var index = 0; index < Targets.length; index++) {
             // if (Helper.getRandomBool()) {
-                var target = Targets[index]
-                let value = null
-                if (target.values) {
-                    value = target.values[Helper.getRandomInt(0, target.values.length - 1)]
-                } else if (target.name === 'location') {
-                    let locationKey = Helper.getRandomPropFromObj(Locations)
-                    value = { value: locationKey, label: Locations[locationKey] }
-                } else if (target.name === 'age') {
-                    let from = Helper.getRandomInt(0, 100)
-                    let to = Helper.getRandomInt(from, 100)
-                    value = { from: from, to: to }
-                }
-                targets.push({
-                    name: target.name,
-                    value: value,
-                    weight: getRandomPropValue(TargetsWeight)
-                })
+            var target = Targets[index]
+            let value = null
+            if (target.values) {
+                value = target.values[Helper.getRandomInt(0, target.values.length - 1)]
+            } else if (target.name === 'location') {
+                let locationKey = getRandomPropValue(Locations)
+                value = { value: [locationKey], label: Locations[locationKey] }
+            } else if (target.name === 'age') {
+                let from = Helper.getRandomInt(0, 100)
+                let to = Helper.getRandomInt(from, 100)
+                value = { from: from, to: to }
+            }
+            targets.push({
+                name: target.name,
+                value: value.value ? [value.value] : value,
+                weight: getRandomPropValue(TargetsWeight)
+            })
             // }
         }
 
