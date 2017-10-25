@@ -28,17 +28,33 @@ const autocompleteLocations = () => {
 const AcLocations = autocompleteLocations()
 
 export class Unit extends Component {
+    state = {
+        location: []
+    }
+
+    handleMultipleChange = (value) => {
+        this.setState({ location: value });
+    }
+
     renderLocationTarget = (target) =>
         <Autocomplete
-            direction="auto"
-            multiple={false}
+            direction="down"
+            multiple={true}
             onChange={this.handleMultipleChange}
-            label="Choose countries"
+            label="Location"
             source={AcLocations}
-            value={null}
+            value={this.state.location}
             suggestionMatch='anywhere'
             showSuggestionsWhenValueIsSet={true}
+            allowCreate={false}
         />
+
+    renderGendersTarget = (target) => {
+        return (
+            <div>
+            </div>
+        )
+    }
 
     render() {
         let item = this.props.item
@@ -91,16 +107,20 @@ export class Unit extends Component {
                                     return (<Row key={target.name}>
                                         <Col lg={7}>
                                             {target.name === 'location' ?
-                                                this.renderLocationTarget(target)
+                                                <div>
+                                                    {this.renderLocationTarget(target)}
+                                                </div>
                                                 : null
                                             }
                                         </Col>
                                         <Col lg={5}>
-                                            <Dropdown
-                                                source={TargetsWeight}
-                                                value={target.weight}
-                                                label={t('weight', { isProp: true })}
-                                            />
+                                            <div>
+                                                <Dropdown
+                                                    source={TargetsWeight}
+                                                    value={target.weight}
+                                                    label={t('weight', { isProp: true })}
+                                                />
+                                            </div>
                                         </Col>
 
                                     </Row>
