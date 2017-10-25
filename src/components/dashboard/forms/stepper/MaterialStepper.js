@@ -11,15 +11,17 @@ import FontIcon from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 import Ripple from 'react-toolbox/lib/ripple'
 import { Button } from 'react-toolbox/lib/button'
+import { ItemTypesNames } from 'constants/itemsTypes'
 
 const Step = ({ page, active, index, children, theme, canAdvance, canFinish, canReverse, setPageIndex, canAdvanceToPage, currentPage, goToPage, ...other }) => {
     let warning = page.status === 'warning'
     let done = page.status === 'done'
     theme = stepperTheme
+
     return (
         <div
             className={classnames(theme.step,
-                { [page.optional]: theme.optional },
+                { [theme.optional]: page.optional },
                 { [theme.warning]: warning },
                 { [theme.active]: active },
                 { [theme.done]: done }
@@ -30,7 +32,8 @@ const Step = ({ page, active, index, children, theme, canAdvance, canFinish, can
         >
             {children}
 
-            < div className={classnames(theme.circle)} >
+            < div className={classnames(theme.circle,
+                theme[ItemTypesNames[other.itemType]])} >
                 {
                     warning ?
                         <FontIcon value='warning' />
@@ -142,7 +145,7 @@ class MyMaterialStepper extends React.Component {
     render() {
         return (
             <Stepper pages={this.props.pages}>
-                <WithMaterialStepper validations={this.props.validations} />
+                <WithMaterialStepper itemType={this.props.itemType} validations={this.props.validations} />
             </Stepper>
         )
     }

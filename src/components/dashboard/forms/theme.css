@@ -9,13 +9,16 @@
     min-height: 70vh;
     min-width: 800px;
     max-width: 95%;
-    
+    background-color: #eee;
+
+   /*
     &.AdUnit{
-        background-color: #F9FBE7;
+        background-color: #0f0;
     }
     &.Campaign{
         background-color: #E0F7FA;
     }
+    */
 
     & .body{
         // overflow-y: auto;
