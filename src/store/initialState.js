@@ -79,7 +79,7 @@ function addUnitsToCampaigns() {
 function GenerateNewItem(itemType, itemClass) {
     if (newItems[itemType]) return newItems[itemType]
 
-    let newItem = new itemClass(GenerateAccount().addr, '', '', '', {}).plainObj()
+    let newItem = new itemClass({ owner: GenerateAccount().addr }).plainObj()
     newItem.item_type = itemClass
     newItems[itemType] = newItem
     return newItem

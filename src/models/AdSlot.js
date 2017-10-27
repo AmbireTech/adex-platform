@@ -1,16 +1,18 @@
 import Helper from 'helpers/miscHelpers'
 import Item from './Item'
-import { ItemTypes, Sizes, Images, AdTypes, Locations, Genders } from './DummyData'
+import { ItemsTypes, AdTypes, Sizes, getRandomPropValue } from 'constants/itemsTypes'
+import { Images } from './DummyData'
 
 class AdSlot extends Item {
-    constructor(owner, name, img, description, size, adType, location, gender) {
-        super(owner, ItemTypes.AdUnit, name)
+    constructor({ owner, id, name, img, description, size, adType, location, gender }) {
+        super(owner, id, ipfs, ItemsTypes.AdUnit.id, name, img, description)
         let meta = this._meta
         meta.img = img
         meta.description = description
         meta.size = size
         meta.adType = adType
         meta.gender = gender
+        meta.bids = []
     }
 
     get img() { return this._meta.img }
@@ -25,24 +27,23 @@ class AdSlot extends Item {
     get adType() { return this._meta.adType }
     set adType(value) { this._meta.adType = value }
 
-    get gender() { return this._meta.gender }
-    set gender(value) { this._meta.gender = value }
+    static getRandAdSlotInst(owner, id) {
+        id = id || Helper.getRandomInt(1, 100)
 
-    static getRandAdUnitInst(owner, i) {
-        i = i || Helper.getRandomInt(1, 100)
-
-        let unit = new AdSlot(
-            owner,
-            'AdUnit ' + i,
-            Images[Helper.getRandomInt(0, Images.length - 1)],
-            'AdUnit Description ' + i,
-            Helper.getRandomPropFromObj(Sizes),
-            Helper.getRandomPropFromObj(AdTypes),
-            Helper.getRandomPropFromObj(Locations),
-            Helper.getRandomPropFromObj(Genders)
+        let slot = new AdSlot(
+            {
+                owner: owner,
+                id: id,
+                ipfs: '',
+                name: 'Slot ' + id,
+                img: { url: Images[Helper.getRandomInt(0, Images.length - 1)] },
+                description: 'Slot Description ' + id,
+                size: getRandomPropValue(Sizes),
+                adType: getRandomPropValue(AdTypes)
+            }
         )
 
-        return unit
+        return slot
     }
 
 }
