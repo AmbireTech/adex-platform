@@ -9,6 +9,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from 'actions/itemActions'
 import Campaign from './containers/Campaign'
+import Channel from './containers/Channel'
 import Unit from './containers/Unit'
 import Items from './containers/Items'
 import { ItemsTypes } from 'constants/itemsTypes'
@@ -86,6 +87,47 @@ class Dashboard extends React.Component {
         )
     }
 
+    renderAdSlots = () => {
+        return (
+            <Items
+                header="All Slots"
+                viewModeId="rowsViewSlots"
+                itemsType={ItemsTypes.AdSlot.id}
+                newItemBtn={() =>
+                    <NewItemStepsWithDialog
+                        btnLabel="New Slot"
+                        title="Create new slot"
+                        accent
+                        floating
+                        itemType={ItemsTypes.AdSlot.id}
+                        itemPages={[NewUnitFormBasic, NewUnitForm]}
+                        imgLabel="SLOT_LOGO"
+                    />
+                } />
+        )
+    }
+
+    renderChannels = () => {
+        return (
+            <Items
+                header="All Channels"
+                viewModeId="rowsViewChannels"
+                itemsType={ItemsTypes.Channel.id}
+                newItemBtn={() =>
+                    <NewItemStepsWithDialog
+                        floating
+                        accent
+                        addCampaign={this.props.actions.addCampaign}
+                        btnLabel="New Channel"
+                        title="Create new Channel"
+                        itemType={ItemsTypes.Channel.id}
+                        itemPages={[NewCampaignForm]}
+                        imgLabel="CHANNEL_LOGO"
+                    />
+                } />
+        )
+    }
+
     Dash = () => {
 
         return (
@@ -112,6 +154,12 @@ class Dashboard extends React.Component {
                         <Route exact path="/dashboard/advertiser/units" component={this.renderAdUnits} />
                         <Route exact path="/dashboard/advertiser/Campaign/:itemId" component={Campaign} />
                         <Route exact path="/dashboard/advertiser/AdUnit/:itemId" component={Unit} />
+
+                        <Route exact path="/dashboard/publisher/channels" component={this.renderChannels} />
+                        <Route exact path="/dashboard/publisher/slots" component={this.renderAdSlots} />
+                        <Route exact path="/dashboard/publisher/Channel/:itemId" component={Channel} />
+                        <Route exact path="/dashboard/publisher/AdSlot/:itemId" component={Unit} />
+
                         <Route exact path="/dashboard/:side" component={this.Dash} />
                         <Route component={() => <h1>404 at {side} side</h1>} />
                     </Switch>

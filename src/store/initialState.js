@@ -54,10 +54,6 @@ function GenerateItems(type, itemClass, acc) {
 }
 
 function addItemsToItems(collectionType, collectionClass, itemType, itemClass) {
-    console.log('collectionType', collectionType)
-    console.log('collectionClass', collectionClass)
-    console.log('itemType', itemType)
-    console.log('itemClass', itemClass)
     if (items[collectionType.id].length) return items[collectionType.id]
 
     let collection = GenerateItems(collectionType, collectionClass, GenerateAccount())

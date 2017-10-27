@@ -5,7 +5,7 @@ import { Images } from './DummyData'
 
 class AdSlot extends Item {
     constructor({ owner, id, ipfs, name, img, description, size, adType, location, gender }) {
-        super(owner, id, ipfs, ItemsTypes.AdUnit.id, name, img, description)
+        super(owner, id, ipfs, ItemsTypes.AdSlot.id, name, img, description)
         let meta = this._meta
         meta.img = img
         meta.description = description

@@ -9,6 +9,7 @@ import theme from './theme.css'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
+import ChannelIcon from 'components/common/icons/ChannelIcon'
 import { ItemsTypes } from 'constants/itemsTypes'
 
 import NewItemSteps from 'components/dashboard/forms/NewItemSteps'
@@ -23,68 +24,140 @@ const RRListItem = withReactRouterLink(ListItem)
 
 class SideNav extends Component {
 
+    renderAdvertiser() {
+        return (
+            <List selectable={true} selected="2" ripple >
+                <RRListItem
+                    to={{ pathname: '/dashboard/' + this.props.side }}
+                    selectable={true}
+                    value="1"
+                    caption='Dashboard'
+                    theme={theme}
+                    className="side-nav-link"
+                    leftIcon='dashboard'
+                />
+                <RRListItem
+                    to={{ pathname: '/dashboard/' + this.props.side + "/campaigns" }}
+                    selectable={true}
+                    value="2"
+                    caption='Campaigns'
+                    theme={theme}
+                    className="side-nav-link"
+                    leftIcon={<CampaignIcon color='rgb(117, 117, 117)' />}
+                />
+                <ListItem
+                    selectable={false}
+                    ripple={false}
+                >
+                    <NewItemStepsWithDialog
+                        btnLabel="New campaign"
+                        title="Create new campaign"
+                        flat
+                        primary
+                        itemType={ItemsTypes.Campaign.id}
+                        itemPages={[NewCampaignForm]}
+                        imgLabel="CAMPAIGN_LOGO"
+                    />
+                </ListItem>
+                <RRListItem
+                    to={{ pathname: '/dashboard/' + this.props.side + "/units" }}
+                    selectable={true}
+                    value="3"
+                    caption='Units'
+                    theme={theme}
+                    className="side-nav-link"
+                    leftIcon='format_list_bulleted'
+                />
+                <ListItem
+                    selectable={false}
+                    ripple={false}
+                >
+                    <NewItemStepsWithDialog
+                        btnLabel="New Unit"
+                        title="Create new unit"
+                        accent
+                        flat
+                        itemType={ItemsTypes.AdUnit.id}
+                        itemPages={[NewUnitFormBasic, NewUnitForm]}
+                        imgLabel="ADUNIT_BANNER"
+                        noDefaultImg
+                    />
+                </ListItem>
+            </List>
+        )
+    }
+
+    renderPublisher() {
+        return (
+            <List selectable={true} selected="2" ripple >
+                <RRListItem
+                    to={{ pathname: '/dashboard/' + this.props.side }}
+                    selectable={true}
+                    value="1"
+                    caption='Dashboard'
+                    theme={theme}
+                    className="side-nav-link"
+                    leftIcon='dashboard'
+                />
+                <RRListItem
+                    to={{ pathname: '/dashboard/' + this.props.side + "/channels" }}
+                    selectable={true}
+                    value="2"
+                    caption='Channels'
+                    theme={theme}
+                    className="side-nav-link"
+                    leftIcon={<ChannelIcon color='rgb(117, 117, 117)' />}
+                />
+                <ListItem
+                    selectable={false}
+                    ripple={false}
+                >
+                    <NewItemStepsWithDialog
+                        btnLabel="New channel"
+                        title="Create new channel"
+                        flat
+                        primary
+                        itemType={ItemsTypes.Campaign.id}
+                        itemPages={[NewCampaignForm]}
+                        imgLabel="CAMPAIGN_LOGO"
+                    />
+                </ListItem>
+                <RRListItem
+                    to={{ pathname: '/dashboard/' + this.props.side + "/slots" }}
+                    selectable={true}
+                    value="3"
+                    caption='Slots'
+                    theme={theme}
+                    className="side-nav-link"
+                    leftIcon='format_list_bulleted'
+                />
+                <ListItem
+                    selectable={false}
+                    ripple={false}
+                >
+                    <NewItemStepsWithDialog
+                        btnLabel="New Slot"
+                        title="Create new slot"
+                        accent
+                        flat
+                        itemType={ItemsTypes.AdUnit.id}
+                        itemPages={[NewUnitFormBasic, NewUnitForm]}
+                        imgLabel="SLOT_LOGO"
+                    />
+                </ListItem>
+            </List>
+        )
+    }
+
     render() {
 
         return (
             <div className="Navigation">
-                <List selectable={true} selected="2" ripple >
-                    <RRListItem
-                        to={{ pathname: '/dashboard/' + this.props.side }}
-                        selectable={true}
-                        value="1"
-                        caption='Dashboard'
-                        theme={theme}
-                        className="side-nav-link"
-                        leftIcon='dashboard'
-                    />
-                    <RRListItem
-                        to={{ pathname: '/dashboard/' + this.props.side + "/campaigns" }}
-                        selectable={true}
-                        value="2"
-                        caption='Campaigns'
-                        theme={theme}
-                        className="side-nav-link"
-                        leftIcon={<CampaignIcon color='rgb(117, 117, 117)' />}
-                    />
-                    <ListItem
-                        selectable={false}
-                        ripple={false}
-                    >
-                        <NewItemStepsWithDialog
-                            btnLabel="New campaign"
-                            title="Create new campaign"
-                            flat
-                            primary
-                            itemType={ItemsTypes.Campaign.id}
-                            itemPages={[NewCampaignForm]}
-                            imgLabel="CAMPAIGN_LOGO"
-                        />
-                    </ListItem>
-                    <RRListItem
-                        to={{ pathname: '/dashboard/' + this.props.side + "/units" }}
-                        selectable={true}
-                        value="3"
-                        caption='Units'
-                        theme={theme}
-                        className="side-nav-link"
-                        leftIcon='format_list_bulleted'
-                    />
-                    <ListItem
-                        selectable={false}
-                        ripple={false}
-                    >
-                        <NewItemStepsWithDialog
-                            btnLabel="New Unit"
-                            title="Create new unit"
-                            accent
-                            flat
-                            itemType={ItemsTypes.AdUnit.id}
-                            itemPages={[NewUnitFormBasic, NewUnitForm]}
-                            imgLabel="ADUNIT_BANNER"
-                            noDefaultImg
-                        />
-                    </ListItem>
-                </List>
+                {/* TEMP */}
+                {this.props.side === 'publisher' ?
+                    this.renderPublisher() : null}
+                {this.props.side === 'advertiser' ?
+                    this.renderAdvertiser() : null}
             </div >
         )
     }
