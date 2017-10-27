@@ -2,9 +2,8 @@ import Account from 'models/Account'
 import Item from 'models/Item'
 import Campaign from 'models/Campaign'
 import AdUnit from 'models/AdUnit'
-// import Channel from 'models/Channel'
-// import Slot from 'models/AdSlot'
-// import objectAssign from 'object-assign';
+import Channel from 'models/Channel'
+import AdSlot from 'models/AdSlot'
 import { ItemsTypes } from 'constants/itemsTypes'
 import Helper from 'helpers/miscHelpers'
 
@@ -54,26 +53,30 @@ function GenerateItems(type, itemClass, acc) {
     return items[type.id]
 }
 
-function addUnitsToCampaigns() {
-    if (items[ItemsTypes.Campaign.id].length) return items[ItemsTypes.Campaign.id]
+function addItemsToItems(collectionType, collectionClass, itemType, itemClass) {
+    console.log('collectionType', collectionType)
+    console.log('collectionClass', collectionClass)
+    console.log('itemType', itemType)
+    console.log('itemClass', itemClass)
+    if (items[collectionType.id].length) return items[collectionType.id]
 
-    let campaigns = GenerateItems(ItemsTypes.Campaign, Campaign, GenerateAccount())
-    let adUnits = GenerateItems(ItemsTypes.AdUnit, AdUnit, GenerateAccount())
+    let collection = GenerateItems(collectionType, collectionClass, GenerateAccount())
+    let collectionItems = GenerateItems(itemType, itemClass, GenerateAccount())
 
-    for (let i = 1; i < campaigns.length; i++) {
+    for (let i = 1; i < collection.length; i++) {
         let used = []
 
-        for (let j = 1; j < Helper.getRandomInt(1, adUnits.length); j++) {
-            if (used.indexOf(adUnits[j]) > -1) continue
+        for (let j = 1; j < Helper.getRandomInt(1, collectionItems.length); j++) {
+            if (used.indexOf(collectionItems[j]) > -1) continue
 
-            campaigns[i]._meta.items.push(adUnits[j]._id) // = Item.addItem(campaigns[i], adUnits[j])
-            used.push(adUnits[j])
+            collection[i]._meta.items.push(collectionItems[j]._id) // = Item.addItem(campaigns[i], adUnits[j])
+            used.push(collectionItems[j])
         }
     }
 
-    items[ItemsTypes.Campaign.id] = campaigns
+    items[collectionType.id] = collection
 
-    return items[ItemsTypes.Campaign.id]
+    return items[collectionType.id]
 }
 
 function GenerateNewItem(itemType, itemClass) {
@@ -90,11 +93,15 @@ export default {
     newItem: {
         [ItemsTypes.Campaign.id]: GenerateNewItem(ItemsTypes.Campaign.id, Campaign),
         [ItemsTypes.AdUnit.id]: GenerateNewItem(ItemsTypes.AdUnit.id, AdUnit),
+        [ItemsTypes.AdSlot.id]: GenerateNewItem(ItemsTypes.AdSlot.id, AdSlot),
+        [ItemsTypes.Channel.id]: GenerateNewItem(ItemsTypes.Channel.id, Channel),
     },
     currentItem: {},
     items: {
-        [ItemsTypes.Campaign.id]: addUnitsToCampaigns(),
-        [ItemsTypes.AdUnit.id]: GenerateItems(ItemsTypes.AdUnit, AdUnit, GenerateAccount())
+        [ItemsTypes.Campaign.id]: addItemsToItems(ItemsTypes.Campaign, Campaign, ItemsTypes.AdUnit, AdUnit),
+        [ItemsTypes.AdUnit.id]: GenerateItems(ItemsTypes.AdUnit, AdUnit, GenerateAccount()),
+        [ItemsTypes.Channel.id]: addItemsToItems(ItemsTypes.Channel, Channel, ItemsTypes.AdSlot, AdSlot),
+        [ItemsTypes.AdSlot.id]: GenerateItems(ItemsTypes.AdSlot, AdSlot, GenerateAccount())
     },
     spinners: {},
     ui: {},

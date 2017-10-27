@@ -4,7 +4,7 @@ import { ItemsTypes, AdTypes, Sizes, getRandomPropValue } from 'constants/itemsT
 import { Images } from './DummyData'
 
 class AdSlot extends Item {
-    constructor({ owner, id, name, img, description, size, adType, location, gender }) {
+    constructor({ owner, id, ipfs, name, img, description, size, adType, location, gender }) {
         super(owner, id, ipfs, ItemsTypes.AdUnit.id, name, img, description)
         let meta = this._meta
         meta.img = img
@@ -27,7 +27,7 @@ class AdSlot extends Item {
     get adType() { return this._meta.adType }
     set adType(value) { this._meta.adType = value }
 
-    static getRandAdSlotInst(owner, id) {
+    static getRandomInstance(owner, id) {
         id = id || Helper.getRandomInt(1, 100)
 
         let slot = new AdSlot(
