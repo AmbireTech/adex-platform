@@ -7,18 +7,10 @@ import * as actions from 'actions/itemActions'
 import { List, ListItem } from 'react-toolbox/lib/list'
 import theme from './theme.css'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
-import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
 import ChannelIcon from 'components/common/icons/ChannelIcon'
-import { ItemsTypes } from 'constants/itemsTypes'
-
-import NewItemSteps from 'components/dashboard/forms/NewItemSteps'
-import NewUnitForm from 'components/dashboard/forms/NewUnitForm'
-import NewUnitFormBasic from 'components/dashboard/forms/NewUnitFormBasic'
-import NewCampaignForm from 'components/dashboard/forms/NewCampaignForm'
 import Translate from 'components/translate/Translate'
-
-const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
+import { NewUnit, NewCampaign, NewSlot, NewChannel } from 'components/dashboard/forms/NewItems'
 
 const RRListItem = withReactRouterLink(ListItem)
 
@@ -49,15 +41,7 @@ class SideNav extends Component {
                     selectable={false}
                     ripple={false}
                 >
-                    <NewItemStepsWithDialog
-                        btnLabel="New campaign"
-                        title="Create new campaign"
-                        flat
-                        primary
-                        itemType={ItemsTypes.Campaign.id}
-                        itemPages={[NewCampaignForm]}
-                        imgLabel="CAMPAIGN_LOGO"
-                    />
+                    <NewCampaign flat primary />
                 </ListItem>
                 <RRListItem
                     to={{ pathname: '/dashboard/' + this.props.side + "/units" }}
@@ -72,16 +56,7 @@ class SideNav extends Component {
                     selectable={false}
                     ripple={false}
                 >
-                    <NewItemStepsWithDialog
-                        btnLabel="New Unit"
-                        title="Create new unit"
-                        accent
-                        flat
-                        itemType={ItemsTypes.AdUnit.id}
-                        itemPages={[NewUnitFormBasic, NewUnitForm]}
-                        imgLabel="ADUNIT_BANNER"
-                        noDefaultImg
-                    />
+                    <NewUnit flat accent />
                 </ListItem>
             </List>
         )
@@ -112,15 +87,8 @@ class SideNav extends Component {
                     selectable={false}
                     ripple={false}
                 >
-                    <NewItemStepsWithDialog
-                        btnLabel="New channel"
-                        title="Create new channel"
-                        flat
-                        primary
-                        itemType={ItemsTypes.Campaign.id}
-                        itemPages={[NewCampaignForm]}
-                        imgLabel="CAMPAIGN_LOGO"
-                    />
+                    <NewChannel flat primary />
+
                 </ListItem>
                 <RRListItem
                     to={{ pathname: '/dashboard/' + this.props.side + "/slots" }}
@@ -135,15 +103,7 @@ class SideNav extends Component {
                     selectable={false}
                     ripple={false}
                 >
-                    <NewItemStepsWithDialog
-                        btnLabel="New Slot"
-                        title="Create new slot"
-                        accent
-                        flat
-                        itemType={ItemsTypes.AdUnit.id}
-                        itemPages={[NewUnitFormBasic, NewUnitForm]}
-                        imgLabel="SLOT_LOGO"
-                    />
+                    <NewSlot flat accent />
                 </ListItem>
             </List>
         )

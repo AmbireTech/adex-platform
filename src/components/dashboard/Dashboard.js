@@ -14,14 +14,9 @@ import Unit from './containers/Unit'
 import Slot from './containers/Slot'
 import Items from './containers/Items'
 import { ItemsTypes } from 'constants/itemsTypes'
-import NewItemWithDialog from './forms/NewItemWithDialog'
-import NewItemSteps from './forms/NewItemSteps'
-import NewUnitForm from './forms/NewUnitForm'
-import NewUnitFormBasic from 'components/dashboard/forms/NewUnitFormBasic'
-import NewCampaignForm from './forms/NewCampaignForm'
-import Translate from 'components/translate/Translate'
 
-const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
+import Translate from 'components/translate/Translate'
+import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
 
 class Dashboard extends React.Component {
     state = {
@@ -52,18 +47,8 @@ class Dashboard extends React.Component {
                 header="All Units"
                 viewModeId="rowsViewUnits"
                 itemsType={ItemsTypes.AdUnit.id}
-                newItemBtn={() =>
-                    <NewItemStepsWithDialog
-                        btnLabel="New Unit"
-                        title="Create new unit"
-                        accent
-                        floating
-                        itemType={ItemsTypes.AdUnit.id}
-                        itemPages={[NewUnitFormBasic, NewUnitForm]}
-                        imgLabel="ADUNIT_BANNER"
-                        noDefaultImg
-                    />
-                } />
+                newItemBtn={() => <NewUnit floating accent />}
+            />
         )
     }
 
@@ -73,18 +58,8 @@ class Dashboard extends React.Component {
                 header="All Campaigns"
                 viewModeId="rowsViewCampaigns"
                 itemsType={ItemsTypes.Campaign.id}
-                newItemBtn={() =>
-                    <NewItemStepsWithDialog
-                        floating
-                        accent
-                        addCampaign={this.props.actions.addCampaign}
-                        btnLabel="New Campaign"
-                        title="Create new Campaign"
-                        itemType={ItemsTypes.Campaign.id}
-                        itemPages={[NewCampaignForm]}
-                        imgLabel="CAMPAIGN_LOGO"
-                    />
-                } />
+                newItemBtn={() => <NewCampaign floating accent />}
+            />
         )
     }
 
@@ -94,17 +69,8 @@ class Dashboard extends React.Component {
                 header="All Slots"
                 viewModeId="rowsViewSlots"
                 itemsType={ItemsTypes.AdSlot.id}
-                newItemBtn={() =>
-                    <NewItemStepsWithDialog
-                        btnLabel="New Slot"
-                        title="Create new slot"
-                        accent
-                        floating
-                        itemType={ItemsTypes.AdSlot.id}
-                        itemPages={[NewUnitFormBasic, NewUnitForm]}
-                        imgLabel="SLOT_LOGO"
-                    />
-                } />
+                newItemBtn={() => <NewSlot floating accent/>}
+            />
         )
     }
 
@@ -114,18 +80,8 @@ class Dashboard extends React.Component {
                 header="All Channels"
                 viewModeId="rowsViewChannels"
                 itemsType={ItemsTypes.Channel.id}
-                newItemBtn={() =>
-                    <NewItemStepsWithDialog
-                        floating
-                        accent
-                        addCampaign={this.props.actions.addCampaign}
-                        btnLabel="New Channel"
-                        title="Create new Channel"
-                        itemType={ItemsTypes.Channel.id}
-                        itemPages={[NewCampaignForm]}
-                        imgLabel="CHANNEL_LOGO"
-                    />
-                } />
+                newItemBtn={() => <NewChannel floating accent/>}
+            />
         )
     }
 
