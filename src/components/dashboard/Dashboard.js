@@ -11,6 +11,7 @@ import * as actions from 'actions/itemActions'
 import Campaign from './containers/Campaign'
 import Channel from './containers/Channel'
 import Unit from './containers/Unit'
+import Slot from './containers/Slot'
 import Items from './containers/Items'
 import { ItemsTypes } from 'constants/itemsTypes'
 import NewItemWithDialog from './forms/NewItemWithDialog'
@@ -158,7 +159,7 @@ class Dashboard extends React.Component {
                         <Route exact path="/dashboard/publisher/channels" component={this.renderChannels} />
                         <Route exact path="/dashboard/publisher/slots" component={this.renderAdSlots} />
                         <Route exact path="/dashboard/publisher/Channel/:itemId" component={Channel} />
-                        <Route exact path="/dashboard/publisher/AdSlot/:itemId" component={Unit} />
+                        <Route exact path="/dashboard/publisher/AdSlot/:itemId" component={Slot} />
 
                         <Route exact path="/dashboard/:side" component={this.Dash} />
                         <Route component={() => <h1>404 at {side} side</h1>} />

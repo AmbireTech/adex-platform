@@ -114,19 +114,19 @@
     justify-content: center;
     margin: 0;
     z-index: 100;
-    &.Campaign{
-        background-color: #4DD0E1;
+    &.Campaign, &.Channel{
+        background-color:#03a9f4;
         &.items{
-            background-color: #00BCD4;
+            background-color: #0277bd;
         }
         & input{
             color: #fff;
         }
     }
-    &.AdUnit{
-        background-color: #DCE775;
+    &.AdUnit, &.AdSlot{
+        background-color: #ffd740;
         &.items{
-            background-color: #CDDC39;
+            background-color: #ffab00;
         }
         & input{
             color: #fff;

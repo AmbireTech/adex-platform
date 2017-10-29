@@ -33,7 +33,7 @@ export class Channel extends Component {
         let item = this.props.item
         let meta = item._meta
         let slots = []
-        let otherUnits = this.props.slots.slice(0)
+        let otherSlots = this.props.slots.slice(0)
         let t = this.props.t
 
         if (!item) return (<h1>'404'</h1>)
@@ -41,7 +41,7 @@ export class Channel extends Component {
         for (var index = 0; index < meta.items.length; index++) {
             if (this.props.slots[meta.items[index]] && !this.props.slots[meta.items[index]]._meta.deleted) {
                 slots.push(this.props.slots[meta.items[index]])
-                otherUnits[meta.items[index]] = null
+                otherSlots[meta.items[index]] = null
             }
         }
 
@@ -54,12 +54,12 @@ export class Channel extends Component {
                         addCampaign={this.props.actions.addCampaign}
                         btnLabel='Add new Unit to campaign'
                         title=''
-                        items={otherUnits}
+                        items={otherSlots}
                         viewMode={VIEW_MODE_UNITS}
                         listMode='rows'
                         addTo={item}
                         newForm={(props) =>
-                            <NewItemSteps {...props} addTo={item} pageTwo={NewUnitForm} itemType={ItemsTypes.AdUnit.id} />
+                            <NewItemSteps {...props} addTo={item} pageTwo={NewUnitForm} itemType={ItemsTypes.AdSlot.id} />
                         }
                     />
                 </div>
