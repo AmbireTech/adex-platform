@@ -6,6 +6,11 @@
 }
 
 .itemStatus {
+    position: fixed;
+    right: 40px;
+    top: 200px;
+    z-index: 100;
+    width: 25%;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
