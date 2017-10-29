@@ -6,7 +6,7 @@ import * as actions from 'actions/itemActions'
 import { ItemsTypes } from 'constants/itemsTypes'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
-import NewUnitForm from 'components/dashboard/forms/NewUnitForm'
+import NewSlotForm from 'components/dashboard/forms/NewSlotForm'
 // import theme from './theme.css'
 import AddItemDialog from './AddItemDialog'
 import NewItemSteps from 'components/dashboard/forms/NewItemSteps'
@@ -52,14 +52,14 @@ export class Channel extends Component {
                     <AddItemDialog
                         accent
                         addCampaign={this.props.actions.addCampaign}
-                        btnLabel='Add new Unit to campaign'
+                        btnLabel='Add new Slot to the channel'
                         title=''
                         items={otherSlots}
                         viewMode={VIEW_MODE_UNITS}
                         listMode='rows'
                         addTo={item}
                         newForm={(props) =>
-                            <NewItemSteps {...props} addTo={item} pageTwo={NewUnitForm} itemType={ItemsTypes.AdSlot.id} />
+                            <NewItemSteps {...props} addTo={item} itemPages={[NewSlotForm]} itemType={ItemsTypes.AdSlot.id} />
                         }
                     />
                 </div>

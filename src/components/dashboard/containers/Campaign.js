@@ -59,7 +59,7 @@ export class Campaign extends Component {
                         listMode='rows'
                         addTo={item}
                         newForm={(props) =>
-                            <NewItemSteps {...props} addTo={item} pageTwo={NewUnitForm} itemType={ItemsTypes.AdUnit.id} />
+                            <NewItemSteps {...props} addTo={item} itemPages={[NewUnitForm]} itemType={ItemsTypes.AdUnit.id} />
                         }
                     />
                 </div>
