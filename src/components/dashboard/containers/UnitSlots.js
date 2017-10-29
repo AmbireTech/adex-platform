@@ -4,22 +4,16 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from 'actions/itemActions'
-import { ItemsTypes, AdTypes, Sizes, TargetsWeight, Locations, TargetWeightLabels, Genders } from 'constants/itemsTypes'
-import Dropdown from 'react-toolbox/lib/dropdown'
-import ItemHoc from './ItemHoc'
-import { Grid, Row, Col } from 'react-flexbox-grid'
-import Img from 'components/common/img/Img'
-import Item from 'models/Item'
-import Input from 'react-toolbox/lib/input'
+import { ItemsTypes } from 'constants/itemsTypes'
+
 import theme from './theme.css'
-import Autocomplete from 'react-toolbox/lib/autocomplete'
-import Slider from 'react-toolbox/lib/slider'
-import classnames from 'classnames'
-import AdUnit from 'models/AdUnit'
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import { IconButton, Button } from 'react-toolbox/lib/button'
 import ItemsList from './ItemsList'
 import Rows from 'components/dashboard/collection/Rows'
+import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
+import BidForm from 'components/dashboard/forms/BidForm'
+import Dialog from 'react-toolbox/lib/dialog'
 
 const SORT_PROPERTIES = [
     { value: '_id', label: 'Id' },
@@ -29,6 +23,14 @@ const SORT_PROPERTIES = [
 ]
 
 export class UnitSlots extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            bidding: false,
+            activeSlot: {}
+        }
+    }
     renderTableHead() {
         return (
             <TableHead>
@@ -45,7 +47,7 @@ export class UnitSlots extends Component {
                 <TableCell> {item._name} </TableCell>
                 <TableCell> {index * 1000} </TableCell>
                 <TableCell>
-                    <Button accent raised label='PLACE_BIT' onClick={() => { }} />
+                    <Button accent raised label='PLACE_BIT' onClick={this.bid.bind(this, item, !this.state.bidding)} />
                 </TableCell>
             </TableRow >
         )
@@ -63,6 +65,36 @@ export class UnitSlots extends Component {
             tableHeadRenderer={this.renderTableHead.bind(this)}
         />
 
+    renderDialog = () => {
+        return (
+            <span>
+            <Dialog
+                theme={theme}
+                active={this.state.bidding}
+                onEscKeyDown={this.bid.bind(this, {}, !this.state.bidding)}
+                onOverlayClick={this.bid.bind(this, {}, !this.state.bidding)}
+                title={'Place bid for ' + this.state.activeSlot._name}
+                type={this.props.type || 'normal'}
+            >
+                <IconButton
+                    icon='close'
+                    onClick={this.bid.bind(this, {}, !this.state.bidding)}
+                    primary
+                    style={{ position: 'absolute', top: 20, right: 20 }}
+                />
+
+                <BidForm slot={this.state.slot} />
+
+            </Dialog>
+        </span>
+
+        )
+    }
+
+    bid = (slot, active)=> {
+        this.setState({slot: slot, bidding: active})
+
+    }
     render() {
         let item = this.props.item
         let meta = item._meta
@@ -72,7 +104,10 @@ export class UnitSlots extends Component {
         })
 
         return (
+            <div>
             <ItemsList items={slots} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} />
+            {this.renderDialog()}
+            </div>
         )
     }
 }

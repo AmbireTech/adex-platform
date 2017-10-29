@@ -43,17 +43,11 @@ export class ImgDialog extends Component {
 ImgDialog.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    items: PropTypes.array.isRequired,
-    // item: PropTypes.object.isRequired,
-    spinner: PropTypes.bool
 };
 
 function mapStateToProps(state) {
     return {
-        account: state.account,
-        items: state.items[ItemsTypes.AdUnit.id],
-        // item: state.currentItem,
-        spinner: state.spinners[ItemsTypes.AdUnit.name]
+        account: state.account
     };
 }
 
