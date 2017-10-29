@@ -16,6 +16,9 @@ import Autocomplete from 'react-toolbox/lib/autocomplete'
 import Slider from 'react-toolbox/lib/slider'
 import classnames from 'classnames'
 import AdUnit from 'models/AdUnit'
+import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
+import { IconButton, Button } from 'react-toolbox/lib/button'
+import UnitSlots from './UnitSlots'
 
 const autocompleteLocations = () => {
     let locs = {}
@@ -181,7 +184,6 @@ export class Unit extends Component {
                                 </Col>
                             </Row>
 
-
                             {
                                 meta.targets.map((target) => {
                                     return (<Row key={target.name} className={theme.targetRow}>
@@ -224,6 +226,7 @@ export class Unit extends Component {
 
                         </Col>
                         <Col lg={6}>
+                            <UnitSlots item={item} />
                         </Col>
                     </Row>
 
@@ -239,6 +242,7 @@ Unit.propTypes = {
     account: PropTypes.object.isRequired,
     items: PropTypes.array.isRequired,
     item: PropTypes.object.isRequired,
+    slots: PropTypes.array.isRequired,
     spinner: PropTypes.bool
 };
 
@@ -246,6 +250,7 @@ function mapStateToProps(state) {
     return {
         account: state.account,
         items: state.items[ItemsTypes.AdUnit.id],
+        slots: state.items[ItemsTypes.AdSlot.id],
         // item: state.currentItem,
         spinner: state.spinners[ItemsTypes.AdUnit.name]
     };

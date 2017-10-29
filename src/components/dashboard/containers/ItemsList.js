@@ -49,7 +49,7 @@ class ItemsList extends Component {
             isError: false,
             search: '',
             sortOrder: -1,
-            sortProperty: SORT_PROPERTIES[0].value,
+            sortProperty: (props.sortProperties || SORT_PROPERTIES)[0].value,
             filteredItems: []
         }
 
@@ -261,6 +261,8 @@ class ItemsList extends Component {
             side={this.props.side}
             item={items}
             rows={items}
+            multiSelectable
+            selectable
             rowRenderer={this.renderTableRow.bind(this)}
             tableHeadRenderer={this.renderTableHead.bind(this)}
         />
@@ -288,13 +290,13 @@ class ItemsList extends Component {
         let renderItems
 
         if (this.props.listMode === 'rows') {
-            renderItems = this.renderRows
+            renderItems = this.props.renderRows || this.renderRows
         } else if (this.props.listMode === 'cards') {
-            renderItems = this.renderCards
+            renderItems = this.props.renderCards || this.renderCards
         } else if (!!this.props.rowsView) {
-            renderItems = this.renderRows
+            renderItems = this.props.renderRows || this.renderRows
         } else {
-            renderItems = this.renderCards
+            renderItems = this.props.renderCards || this.renderCards
         }
 
         return (
@@ -311,7 +313,7 @@ class ItemsList extends Component {
                                 icon='sort'
                                 label='Sort by'
                                 onChange={this.handleChange.bind(this, 'sortProperty')}
-                                source={SORT_PROPERTIES}
+                                source={this.props.sortProperties || SORT_PROPERTIES}
                                 value={this.state.sortProperty}
                             />
                         </Col>

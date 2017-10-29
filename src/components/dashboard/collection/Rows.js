@@ -50,7 +50,8 @@ class Rows extends Component {
                 <div>
                     <Table
                         theme={theme}
-                        multiSelectable
+                        multiSelectable={this.props.multiSelectable === true}
+                        selectable={this.props.selectable === true}
                         onRowSelect={this.handleRowSelect}
                     >
                         {this.props.tableHeadRenderer({ selected: this.state.selected })}
