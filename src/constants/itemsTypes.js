@@ -16,7 +16,7 @@ let allRegions = Object.keys(countryData.regions).map((key) => {
 })
 
 let allLocations = allRegions.concat(allCountries)
-console.log('alllocations', allLocations)
+// console.log('alllocations', allLocations)
 export const ItemsTypes = {
   AdUnit: { id: 0, name: 'AdUnit' },
   AdSlot: { id: 1, name: 'AdSlot' },
@@ -84,3 +84,6 @@ export const Targets = [
 ]
 
 export const Locations = allLocations
+
+export const TARGET_MIN_AGE = 0
+export const TARGET_MAX_AGE = 100
