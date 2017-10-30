@@ -47,7 +47,7 @@ export class UnitSlots extends Component {
                 <TableCell> {item._name} </TableCell>
                 <TableCell> {index * 1000} </TableCell>
                 <TableCell>
-                    <Button accent raised label='PLACE_BIT' onClick={this.bid.bind(this, item, !this.state.bidding)} />
+                    <Button accent raised label='PLACE_BID' onClick={this.bid.bind(this, item, !this.state.bidding)} />
                 </TableCell>
             </TableRow >
         )

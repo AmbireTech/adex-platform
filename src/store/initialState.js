@@ -34,7 +34,7 @@ let account = null;
 function GenerateAccount() {
     if (account) return account
 
-    let acc = new Account('Ivo Georgiev')
+    let acc = new Account('Test User')
     return acc
 }
 

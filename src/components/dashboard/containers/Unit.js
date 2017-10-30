@@ -19,6 +19,7 @@ import AdUnit from 'models/AdUnit'
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import { IconButton, Button } from 'react-toolbox/lib/button'
 import UnitSlots from './UnitSlots'
+import { Tab, Tabs } from 'react-toolbox'
 
 const autocompleteLocations = () => {
     let locs = {}
@@ -52,6 +53,13 @@ const ages = (() => {
 })()
 
 export class Unit extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            tabIndex: 0
+        }
+    }
+
     handleTargetChange = (target, valueKey, newValue) => {
         let newWeight
         if (valueKey === 'updateWeight') {
@@ -66,6 +74,10 @@ export class Unit extends Component {
 
         let newTargets = AdUnit.updateTargets(this.props.item._meta.targets, target, newValue, newWeight)
         this.props.handleChange('targets', newTargets)
+    }
+
+    handleTabChange = (index) => {
+        this.setState({ tabIndex: index })
     }
 
     renderLocationTarget = (target) => {
@@ -139,6 +151,87 @@ export class Unit extends Component {
         )
     }
 
+    BasicProps = ({ meta, t }) => {
+        return (<div className={theme.itemPropTop}>
+            <div className={theme.imgHolder}>
+                <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} className={theme.img} />
+            </div>
+            <div className={theme.bannerProps}>
+                <div>
+                    <Dropdown
+                        onChange={this.props.handleChange.bind(this, 'adType')}
+                        source={AdTypes}
+                        value={meta.adType}
+                        label={t('adType', { isProp: true })}
+                    />
+                </div>
+                <div>
+                    <Dropdown
+                        onChange={this.props.handleChange.bind(this, 'size')}
+                        source={Sizes}
+                        value={meta.size}
+                        label={t('size', { isProp: true })}
+                    />
+                </div>
+            </div>
+        </div>
+        )
+    }
+
+    Targets = ({ meta, t }) => {
+        return (
+            <Grid fluid>
+                <Row className={theme.targetsHead}>
+                    <Col lg={7}>
+                        TARGET
+                    </Col>
+                    <Col lg={5}>
+                        Weight
+                    </Col>
+                </Row>
+                {
+                    meta.targets.map((target) => {
+                        return (<Row key={target.name} className={theme.targetRow}>
+                            <Col lg={7}>
+                                {(() => {
+                                    switch (target.name) {
+                                        case 'location':
+                                            return this.renderLocationTarget(target)
+                                        case 'gender':
+                                            return this.renderGendersTarget(target)
+                                        case 'age':
+                                            return this.renderAgeTarget(target)
+                                        default: null
+                                    }
+                                })()}
+                            </Col>
+                            <Col lg={5} style={{ position: 'relative' }}>
+                                <div className={classnames(theme.sliderWrapper)}>
+                                    <label className={classnames(theme.sliderLabel, theme.weightLabel)}>
+                                        {target.name}  weight:
+                                <strong> {target.weight} </strong>
+                                        ({TargetWeightLabels[target.weight]})
+                            </label>
+                                    <Slider className={theme.weightSlider}
+                                        pinned
+                                        snaps
+                                        min={0}
+                                        max={4}
+                                        step={1}
+                                        value={target.weight}
+                                        onChange={this.handleTargetChange.bind(this, target, 'updateWeight')}
+                                    />
+                                </div>
+                            </Col>
+
+                        </Row>
+                        )
+                    })
+                }
+            </Grid>
+        )
+    }
+
     render() {
         let item = this.props.item
         let meta = item._meta
@@ -148,91 +241,31 @@ export class Unit extends Component {
 
         return (
             <div>
-                <div className={theme.itemPropTop}>
-                    <div className={theme.imgHolder}>
-                        <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} className={theme.img} />
-                    </div>
-                    <div className={theme.bannerProps}>
-                        <div>
-                            <Dropdown
-                                onChange={this.props.handleChange.bind(this, 'adType')}
-                                source={AdTypes}
-                                value={meta.adType}
-                                label={t('adType', { isProp: true })}
-                            />
-                        </div>
-                        <div>
-                            <Dropdown
-                                onChange={this.props.handleChange.bind(this, 'size')}
-                                source={Sizes}
-                                value={meta.size}
-                                label={t('size', { isProp: true })}
-                            />
-                        </div>
-                    </div>
+                <this.BasicProps meta={meta} t={t} />
+                <div>
+                    <Tabs
+                        theme={theme}
+                        fixed
+                        index={this.state.tabIndex}
+                        onChange={this.handleTabChange.bind(this)}
+                        inverse
+                    >
+                        <Tab label='TARGETS'>
+                            <div>
+                                <this.Targets meta={meta} t={t} />
+                            </div>
+                        </Tab>
+                        <Tab theme={theme} label='SLOTS'>
+                            <div>
+                                <UnitSlots item={item} />
+                            </div>
+                        </Tab>
+                        <Tab label='BIDS'>
+                            <div> render bids here </div>
+                        </Tab>
+                    </Tabs>
                 </div>
-
-                <Grid fluid>
-                    <Row>
-                        <Col lg={6}>
-                            <Row className={theme.targetsHead}>
-                                <Col lg={7}>
-                                    TARGET
-                                </Col>
-                                <Col lg={5}>
-                                    Weight
-                                </Col>
-                            </Row>
-
-                            {
-                                meta.targets.map((target) => {
-                                    return (<Row key={target.name} className={theme.targetRow}>
-                                        <Col lg={7}>
-                                            {(() => {
-                                                switch (target.name) {
-                                                    case 'location':
-                                                        return this.renderLocationTarget(target)
-                                                    case 'gender':
-                                                        return this.renderGendersTarget(target)
-                                                    case 'age':
-                                                        return this.renderAgeTarget(target)
-                                                    default: null
-                                                }
-                                            })()}
-                                        </Col>
-                                        <Col lg={5} style={{ position: 'relative' }}>
-                                            <div className={classnames(theme.sliderWrapper)}>
-                                                <label className={classnames(theme.sliderLabel, theme.weightLabel)}>
-                                                    {target.name}  weight:
-                                                    <strong> {target.weight} </strong>
-                                                    ({TargetWeightLabels[target.weight]})
-                                                </label>
-                                                <Slider className={theme.weightSlider}
-                                                    pinned
-                                                    snaps
-                                                    min={0}
-                                                    max={4}
-                                                    step={1}
-                                                    value={target.weight}
-                                                    onChange={this.handleTargetChange.bind(this, target, 'updateWeight')}
-                                                />
-                                            </div>
-                                        </Col>
-
-                                    </Row>
-                                    )
-                                })
-                            }
-
-                        </Col>
-                        <Col lg={6}>
-                            <UnitSlots item={item} />
-                        </Col>
-                    </Row>
-
-                </Grid>
             </div>
-
         )
     }
 }
