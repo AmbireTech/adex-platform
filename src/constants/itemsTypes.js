@@ -87,3 +87,11 @@ export const Locations = allLocations
 
 export const TARGET_MIN_AGE = 0
 export const TARGET_MAX_AGE = 100
+
+export const BID_STATUS = {
+  placed: { value: 'placed', label: 'BID_PLACED' },
+  accepted: { value: 'accepted', label: 'BID_ACCEPTED' },
+  rejected: { value: 'rejected', label: 'BID_REJECTED' },
+  canceled: { value: 'canceled', label: 'BID_CANCELED' },
+  completed: { value: 'completed', label: 'BID_COMPLETED' }
+}

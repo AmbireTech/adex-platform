@@ -4,8 +4,10 @@ import Campaign from 'models/Campaign'
 import AdUnit from 'models/AdUnit'
 import Channel from 'models/Channel'
 import AdSlot from 'models/AdSlot'
+import Bid, { BidState } from 'models/Bid'
 import { ItemsTypes } from 'constants/itemsTypes'
 import Helper from 'helpers/miscHelpers'
+import moment from 'moment'
 
 // cached
 let counts = {
@@ -29,7 +31,11 @@ let newItems = {
     [ItemsTypes.Channel.id]: null
 }
 
-let account = null;
+let account = null
+
+let bidsById = [null]
+let bidsByAdunit = []
+let bidsByAdslot = []
 
 function GenerateAccount() {
     if (account) return account
@@ -84,20 +90,86 @@ function GenerateNewItem(itemType, itemClass) {
     return newItem
 }
 
+function generateBids(adUnits, adSlots) {
+    // console.log('adUnits', adUnits)
+    // console.log('adSlots', adSlots)
+    for (let i = 1; i < adUnits.length; i++) {
+        let unit = adUnits[i]
+
+        for (var j = 0; j < Helper.getRandomInt(2, 10); j++) {
+            let slot = adSlots[Helper.getRandomInt(1, adSlots.length - 1)]
+
+            let bidId = bidsById.length
+            let state = Helper.getRandomPropFromObj(BidState)
+            let confirmedByPublisher = false
+            let confirmedByAdvertiser = false
+            let acceptedTime = null
+
+            if (state === BidState.Accepted) {
+                acceptedTime = Date.now()
+            } else if (state === BidState.Completed) {
+                confirmedByPublisher = true
+                confirmedByAdvertiser = true
+            }
+
+            let bid = new Bid({
+                id: bidId,
+                state: Helper.getRandomInt(0, 5),
+                advertiser: account,
+                adUnit: unit._id,
+                adUnitIpfs: unit._ipfs,
+                publisher: account,
+                adSlot: slot._id,
+                adSlotIpfs: slot._ipfs,
+                acceptedTime: acceptedTime,
+                requiredPoints: Helper.getRandomInt(1, 1000),
+                requiredExecTime: moment().add(Helper.getRandomInt(2, 10), 'd').valueOf(),
+                confirmedByPublisher: confirmedByPublisher,
+                confirmedByAdvertiser: confirmedByAdvertiser,
+                publisherReportIpfs: '',
+                advertiserReportIpfs: ''
+            })
+
+            bid = bid.plainObj()
+
+            bidsById.push(bid)
+
+            let bySlot = (bidsByAdslot[slot._id] || [])
+            bySlot.push(bid.id)
+            bidsByAdslot[slot._id] = bySlot // TODO: check if already have this bid
+
+            let byUnit = (bidsByAdunit[unit._id] || [])
+            byUnit.push(bid.id)
+            bidsByAdunit[unit._id] = byUnit
+        }
+    }
+}
+
+let newCampaign = GenerateNewItem(ItemsTypes.Campaign.id, Campaign)
+let newAdUnit = GenerateNewItem(ItemsTypes.AdUnit.id, AdUnit)
+let newAdSlot = GenerateNewItem(ItemsTypes.AdSlot.id, AdSlot)
+let newChannel = GenerateNewItem(ItemsTypes.Channel.id, Channel)
+let campaigns = addItemsToItems(ItemsTypes.Campaign, Campaign, ItemsTypes.AdUnit, AdUnit)
+let adUnits = GenerateItems(ItemsTypes.AdUnit, AdUnit, GenerateAccount())
+let channels = addItemsToItems(ItemsTypes.Channel, Channel, ItemsTypes.AdSlot, AdSlot)
+let adSlots = GenerateItems(ItemsTypes.AdSlot, AdSlot, GenerateAccount())
+
+generateBids(adUnits, adSlots)
+
 export default {
     account: GenerateAccount(),
     newItem: {
-        [ItemsTypes.Campaign.id]: GenerateNewItem(ItemsTypes.Campaign.id, Campaign),
-        [ItemsTypes.AdUnit.id]: GenerateNewItem(ItemsTypes.AdUnit.id, AdUnit),
-        [ItemsTypes.AdSlot.id]: GenerateNewItem(ItemsTypes.AdSlot.id, AdSlot),
-        [ItemsTypes.Channel.id]: GenerateNewItem(ItemsTypes.Channel.id, Channel),
+        [ItemsTypes.Campaign.id]: newCampaign,
+        [ItemsTypes.AdUnit.id]: newAdUnit,
+        [ItemsTypes.AdSlot.id]: newAdSlot,
+        [ItemsTypes.Channel.id]: newChannel,
     },
     currentItem: {},
     items: {
-        [ItemsTypes.Campaign.id]: addItemsToItems(ItemsTypes.Campaign, Campaign, ItemsTypes.AdUnit, AdUnit),
-        [ItemsTypes.AdUnit.id]: GenerateItems(ItemsTypes.AdUnit, AdUnit, GenerateAccount()),
-        [ItemsTypes.Channel.id]: addItemsToItems(ItemsTypes.Channel, Channel, ItemsTypes.AdSlot, AdSlot),
-        [ItemsTypes.AdSlot.id]: GenerateItems(ItemsTypes.AdSlot, AdSlot, GenerateAccount())
+        [ItemsTypes.Campaign.id]: campaigns,
+        [ItemsTypes.AdUnit.id]: adUnits,
+        [ItemsTypes.Channel.id]: channels,
+        [ItemsTypes.AdSlot.id]: adSlots
     },
     spinners: {},
     ui: {},
@@ -109,5 +181,10 @@ export default {
         side: ''
     },
     language: 'en-US',
-    validations: {}
+    validations: {},
+    bids: {
+        bidsById: bidsById,
+        bidsByAdslot: bidsByAdslot,
+        bidsByAdunit: bidsByAdunit
+    }
 }

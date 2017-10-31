@@ -66,7 +66,7 @@ class Base {
         if (hasDirtyProps) dirtyProps = [...dirtyProps]
 
         // TODO: Handle remove key value
-        for (var key in meta) {
+        for (let key in meta) {
             if (meta.hasOwnProperty(key) && newMeta.hasOwnProperty(key)) {
 
                 let value = meta[key] //|| newMeta[key]
