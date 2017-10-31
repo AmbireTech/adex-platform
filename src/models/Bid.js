@@ -13,6 +13,7 @@ class Bid {
     constructor({
         id = null,
         state = BidState.Open,
+        amount = 0,
         advertiser = null,
         advertiserWallet = null,
         adUnit = null,
@@ -32,6 +33,7 @@ class Bid {
     }) {
         this.id = id
         this.state = state
+        this.amount = amount
         this.advertiser = advertiser
         this.advertiserWallet = advertiserWallet
         this.adUnit = adUnit

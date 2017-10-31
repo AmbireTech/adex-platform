@@ -14,8 +14,21 @@ import theme from './theme.css'
 import Autocomplete from 'react-toolbox/lib/autocomplete'
 import Slider from 'react-toolbox/lib/slider'
 import classnames from 'classnames'
+import { Tab, Tabs } from 'react-toolbox'
+import SlotBids from './SlotBids'
 
 export class Slot extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            tabIndex: 0
+        }
+    }
+
+    handleTabChange = (index) => {
+        this.setState({ tabIndex: index })
+    }
+    
     render() {
         let item = this.props.item
         let meta = item._meta
@@ -47,6 +60,21 @@ export class Slot extends Component {
                             />
                         </div>
                     </div>
+                </div>
+                <div>
+                    <Tabs
+                        theme={theme}
+                        fixed
+                        index={this.state.tabIndex}
+                        onChange={this.handleTabChange.bind(this)}
+                        inverse
+                    >
+                        <Tab label='BIDS'>
+                            <div>
+                                <SlotBids {...this.props} meta={meta} t={t} />
+                            </div>
+                        </Tab>
+                    </Tabs>
                 </div>
             </div>
 

@@ -41,6 +41,7 @@ function GenerateAccount() {
     if (account) return account
 
     let acc = new Account('Test User')
+    account = acc
     return acc
 }
 
@@ -112,17 +113,20 @@ function generateBids(adUnits, adSlots) {
                 confirmedByAdvertiser = true
             }
 
+            let amount = Helper.getRandomInt(0, 1000)
+
             let bid = new Bid({
                 id: bidId,
                 state: Helper.getRandomInt(0, 5),
-                advertiser: account,
+                amount: amount,
+                advertiser: account._meta.fullName,
                 adUnit: unit._id,
                 adUnitIpfs: unit._ipfs,
                 publisher: account,
                 adSlot: slot._id,
                 adSlotIpfs: slot._ipfs,
                 acceptedTime: acceptedTime,
-                requiredPoints: Helper.getRandomInt(1, 1000),
+                requiredPoints: amount * Helper.getRandomInt(100, 200),
                 requiredExecTime: moment().add(Helper.getRandomInt(2, 10), 'd').valueOf(),
                 confirmedByPublisher: confirmedByPublisher,
                 confirmedByAdvertiser: confirmedByAdvertiser,
@@ -157,7 +161,7 @@ let adSlots = GenerateItems(ItemsTypes.AdSlot, AdSlot, GenerateAccount())
 generateBids(adUnits, adSlots)
 
 export default {
-    account: GenerateAccount(),
+    account: account,
     newItem: {
         [ItemsTypes.Campaign.id]: newCampaign,
         [ItemsTypes.AdUnit.id]: newAdUnit,

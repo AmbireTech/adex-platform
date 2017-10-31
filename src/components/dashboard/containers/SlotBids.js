@@ -5,21 +5,18 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { ItemsTypes } from 'constants/itemsTypes'
-
 import theme from './theme.css'
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import { IconButton, Button } from 'react-toolbox/lib/button'
 import ItemsList from './ItemsList'
 import Rows from 'components/dashboard/collection/Rows'
-import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
-import BidForm from 'components/dashboard/forms/BidForm'
-import Dialog from 'react-toolbox/lib/dialog'
+import moment from 'moment'
 
 const SORT_PROPERTIES = [
-    { value: '_id', label: 'Id' },
-    { value: '_name', label: 'Short Name' },
-    { value: 'fullName', label: 'Full name' },
-    /** traffic, etc. */
+    { value: 'id', label: 'Id' },
+    { value: 'advertiser', label: 'Advertiser' },
+    { value: 'amount', label: 'Total reward' },
+    { value: 'requiredExecTime', label: 'Expiration date' }
 ]
 
 export class SlotBids extends Component {
@@ -31,7 +28,7 @@ export class SlotBids extends Component {
             activeSlot: {}
         }
     }
-    
+
     renderTableHead() {
         return (
             <TableHead>
@@ -44,14 +41,14 @@ export class SlotBids extends Component {
         )
     }
 
-    renderTableRow(item, index, { to, selected }) {
+    renderTableRow(bid, index, { to, selected }) {
         return (
-            <TableRow key={item._id}>
-                <TableCell> {item._name} </TableCell>
-                <TableCell> {index * 1000} </TableCell>
-                <TableCell>
-                    <Button accent raised label='PLACE_BID' onClick={this.bid.bind(this, item, !this.state.bidding)} />
-                </TableCell>
+            <TableRow key={bid.id}>
+                <TableCell> {bid.amount} </TableCell>
+                <TableCell> {bid.requiredPoints} </TableCell>
+                <TableCell> {bid.advertiser} </TableCell>
+                <TableCell> {moment(bid.requiredExecTime).format('DD.MM.YYYY')} </TableCell>
+                <TableCell> <Button label='ACCEPT' primary raised/> <Button label='REJECT' /> </TableCell>
             </TableRow >
         )
 
@@ -68,48 +65,18 @@ export class SlotBids extends Component {
             tableHeadRenderer={this.renderTableHead.bind(this)}
         />
 
-    renderDialog = () => {
-        return (
-            <span>
-                <Dialog
-                    theme={theme}
-                    active={this.state.bidding}
-                    onEscKeyDown={this.bid.bind(this, {}, !this.state.bidding)}
-                    onOverlayClick={this.bid.bind(this, {}, !this.state.bidding)}
-                    title={'Place bid for ' + this.state.activeSlot._name}
-                    type={this.props.type || 'normal'}
-                >
-                    <IconButton
-                        icon='close'
-                        onClick={this.bid.bind(this, {}, !this.state.bidding)}
-                        primary
-                        style={{ position: 'absolute', top: 20, right: 20 }}
-                    />
-
-                    <BidForm slot={this.state.slot} />
-
-                </Dialog>
-            </span>
-
-        )
-    }
-
-    bid = (slot, active) => {
-        this.setState({ slot: slot, bidding: active })
-
-    }
     render() {
-        let item = this.props.item
-        let meta = item._meta
-        let t = this.props.t
-        let slots = this.props.slots.filter((slot) => {
-            return slot._meta.adType === item._meta.adType && slot._meta.size === item._meta.size
-        })
+        let bidsIds = this.props.bidsIds
+        let bids = []
+
+        for (let i = 0; i < bidsIds.length; i++) {
+            let bid = this.props.bids[bidsIds[i]]
+            bids.push(bid)
+        }
 
         return (
             <div>
-                <ItemsList items={slots} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} />
-                {this.renderDialog()}
+                <ItemsList items={bids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} />
             </div>
         )
     }
@@ -124,13 +91,14 @@ SlotBids.propTypes = {
     spinner: PropTypes.bool
 };
 
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
     return {
         account: state.account,
-        // items: state.items[ItemsTypes.AdUnit.id],
         slots: state.items[ItemsTypes.AdSlot.id],
         // item: state.currentItem,
-        spinner: state.spinners[ItemsTypes.AdUnit.name]
+        spinner: state.spinners[ItemsTypes.AdUnit.name],
+        bidsIds: state.bids.bidsByAdslot[props.item._id],
+        bids: state.bids.bidsById
     };
 }
 
@@ -140,7 +108,6 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-// const UnitItem = ItemHoc(UnitSlots)
 export default connect(
     mapStateToProps,
     mapDispatchToProps

@@ -221,14 +221,15 @@ class ItemsList extends Component {
         // TODO: maybe filter deleted before this?
         let filtered = (items || [])
             .filter((i) => {
-                let isItem = (!!i && !!i._meta && !i._meta.deleted)
+                let isItem = ((!!i && !!i._meta && !i._meta.deleted) || i.id)
                 if (!isItem) return isItem
                 let hasSearch = !!search
                 if (!hasSearch) return isItem
                 let regex = new RegExp(search, 'i')
+                let meta = i._meta || {}
                 let match = regex.exec((i._name || '') +
-                    (i._meta.fullName || '') +
-                    (i._meta.description || ''))
+                    (meta.fullName || '') +
+                    (meta.description || ''))
                 return !!match
             })
             .sort((a, b) => {
