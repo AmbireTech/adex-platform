@@ -7,7 +7,7 @@ import { Route, Switch } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as actions from 'actions/itemActions'
+import actions from 'actions'
 import Campaign from './containers/Campaign'
 import Channel from './containers/Channel'
 import Unit from './containers/Unit'
@@ -18,6 +18,8 @@ import { ItemsTypes } from 'constants/itemsTypes'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
 
+
+console.log('actions', actions)
 class Dashboard extends React.Component {
     state = {
         drawerActive: false,
@@ -69,7 +71,7 @@ class Dashboard extends React.Component {
                 header="All Slots"
                 viewModeId="rowsViewSlots"
                 itemsType={ItemsTypes.AdSlot.id}
-                newItemBtn={() => <NewSlot floating accent/>}
+                newItemBtn={() => <NewSlot floating accent />}
             />
         )
     }
@@ -80,7 +82,7 @@ class Dashboard extends React.Component {
                 header="All Channels"
                 viewModeId="rowsViewChannels"
                 itemsType={ItemsTypes.Channel.id}
-                newItemBtn={() => <NewChannel floating accent/>}
+                newItemBtn={() => <NewChannel floating accent />}
             />
         )
     }

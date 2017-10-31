@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as actions from 'actions/itemActions'
+import actions from 'actions'
 import { ItemTypesNames } from 'constants/itemsTypes'
 import NewItemHoc from './NewItemHocStep'
 import Input from 'react-toolbox/lib/input'
