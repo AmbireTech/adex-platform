@@ -219,6 +219,7 @@ class ItemsList extends Component {
     filterItems({ items, search, sortProperty, sortOrder, page, pageSize }) {
         // TODO: optimize filter
         // TODO: maybe filter deleted before this?
+        // console.log('filterItems', items)
         let filtered = (items || [])
             .filter((i) => {
                 let isItem = ((!!i && !!i._meta && !i._meta.deleted) || i.id)

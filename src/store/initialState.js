@@ -97,7 +97,7 @@ function generateBids(adUnits, adSlots) {
     for (let i = 1; i < adUnits.length; i++) {
         let unit = adUnits[i]
 
-        for (var j = 0; j < Helper.getRandomInt(2, 10); j++) {
+        for (var j = 1; j < Helper.getRandomInt(50, 200); j++) {
             let slot = adSlots[Helper.getRandomInt(1, adSlots.length - 1)]
 
             let bidId = bidsById.length
@@ -117,7 +117,7 @@ function generateBids(adUnits, adSlots) {
 
             let bid = new Bid({
                 id: bidId,
-                state: Helper.getRandomInt(0, 5),
+                state: state,
                 amount: amount,
                 advertiser: account._meta.fullName,
                 adUnit: unit._id,

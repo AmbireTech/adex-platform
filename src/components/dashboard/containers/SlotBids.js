@@ -11,6 +11,8 @@ import { IconButton, Button } from 'react-toolbox/lib/button'
 import ItemsList from './ItemsList'
 import Rows from 'components/dashboard/collection/Rows'
 import moment from 'moment'
+import { BidState } from 'models/Bid'
+import { Tab, Tabs } from 'react-toolbox'
 
 const SORT_PROPERTIES = [
     { value: 'id', label: 'Id' },
@@ -25,18 +27,23 @@ export class SlotBids extends Component {
         super(props)
         this.state = {
             bidding: false,
-            activeSlot: {}
+            activeSlot: {},
+            tabIndex: 0
         }
+    }
+
+    handleTabChange = (index) => {
+        this.setState({ tabIndex: index })
     }
 
     renderTableHead() {
         return (
             <TableHead>
-                <TableCell> Total reward </TableCell>
-                <TableCell> Conversion goals </TableCell>
-                <TableCell> Advertiser </TableCell>
-                <TableCell> Expiration date </TableCell>
-                <TableCell> Actions </TableCell>
+                <TableCell> {this.props.t('TOTAL_REWARD')} </TableCell>
+                <TableCell> {this.props.t('CONVERSION_GOALS')} </TableCell>
+                <TableCell> {this.props.t('ADVERTISER')} </TableCell>
+                <TableCell> {this.props.t('EXPIRATION_DATE')} </TableCell>
+                <TableCell> {this.props.t('ACTIONS')} </TableCell>
             </TableHead>
         )
     }
@@ -48,10 +55,9 @@ export class SlotBids extends Component {
                 <TableCell> {bid.requiredPoints} </TableCell>
                 <TableCell> {bid.advertiser} </TableCell>
                 <TableCell> {moment(bid.requiredExecTime).format('DD.MM.YYYY')} </TableCell>
-                <TableCell> <Button label='ACCEPT' primary raised/> <Button label='REJECT' /> </TableCell>
+                <TableCell> <Button label='ACCEPT' primary raised /> <Button label='REJECT' /> </TableCell>
             </TableRow >
         )
-
     }
 
     renderRows = (items) =>
@@ -67,16 +73,43 @@ export class SlotBids extends Component {
 
     render() {
         let bidsIds = this.props.bidsIds
-        let bids = []
+        let openBids = []
+        let otherBids = []
+        let allBids = []
+
+
 
         for (let i = 0; i < bidsIds.length; i++) {
             let bid = this.props.bids[bidsIds[i]]
-            bids.push(bid)
+            if (bid.state === BidState.Open) {
+                openBids.push(bid)
+            } else {
+                otherBids.push(bid)
+            }
+
+            allBids.push(bid)
         }
 
         return (
             <div>
-                <ItemsList items={bids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} />
+                <Tabs
+                    theme={theme}
+                    fixed
+                    index={this.state.tabIndex}
+                    onChange={this.handleTabChange.bind(this)}
+                    inverse
+                >
+                    <Tab label='BIDS'>
+                        <div>
+                            <ItemsList items={openBids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} />
+                        </div>
+                    </Tab>
+                    <Tab label='BIDS_HISTORY'>
+                        <div>
+                            <ItemsList items={otherBids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} />
+                        </div>
+                    </Tab>
+                </Tabs>
             </div>
         )
     }
