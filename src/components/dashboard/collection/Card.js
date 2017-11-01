@@ -23,7 +23,7 @@ class MyCard extends Component {
         let id = this.props.item._id
         let to = '/dashboard/' + this.props.side + '/' + ItemTypesNames[this.props.item._type] + '/' + id
         return (
-            <Card style={{ width: '300px' }} raised={true} theme={theme}>
+            <Card style={{ width: '300px' }} raised={false} theme={theme}>
                 <RRCardMedia
                     to={to}
                     aspectRatio='wide'

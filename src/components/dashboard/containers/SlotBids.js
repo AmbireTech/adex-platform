@@ -94,10 +94,8 @@ export class SlotBids extends Component {
             <div>
                 <Tabs
                     theme={theme}
-                    fixed
                     index={this.state.tabIndex}
                     onChange={this.handleTabChange.bind(this)}
-                    inverse
                 >
                     <Tab label='BIDS'>
                         <div>

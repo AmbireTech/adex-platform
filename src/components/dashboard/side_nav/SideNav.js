@@ -41,7 +41,7 @@ class SideNav extends Component {
                     selectable={false}
                     ripple={false}
                 >
-                    <NewCampaign flat primary />
+                    <NewCampaign flat primary raised />
                 </ListItem>
                 <RRListItem
                     to={{ pathname: '/dashboard/' + this.props.side + "/units" }}
@@ -56,7 +56,7 @@ class SideNav extends Component {
                     selectable={false}
                     ripple={false}
                 >
-                    <NewUnit flat accent />
+                    <NewUnit flat accent raised />
                 </ListItem>
             </List>
         )

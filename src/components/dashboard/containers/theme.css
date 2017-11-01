@@ -82,9 +82,27 @@
     color: #fff;
 }
 
-.tab {
-    max-height: calc(70vh - 100px);
-    outline: none;
+.tabs {
+    & .navigation {
+        background-color: #eee;
+        & .label {
+            color: #0277BD;
+            opacity: 0.4;
+            &.active {
+                opacity: 1
+            }
+        }
+    }
+
+    & .pointer {
+        background-color: #0277bd;
+    } 
+
+    & .tab {
+        // max-height: calc(70vh - 100px);
+        outline: none;
+        max-width: 1200px;
+    }
 }
 
 .button {
@@ -113,7 +131,7 @@
     color: #fff;
     padding-left: 22px;
     padding-right: 22px;
-    height: 100px;
+    height: 64px;
     display: flex;
     flex-flow: column;
     justify-content: center;
@@ -142,7 +160,7 @@
 
 .floating {
     position: fixed;
-    top: 136px;
+    top: 100px;
     right: 40px;
     z-index: 110;
 }
@@ -165,7 +183,6 @@
 }
 
 .imgHolder {
-    height: 300px;
     margin-right: 20px;
 }
 
@@ -197,6 +214,34 @@
 
 .agesGrid {
     padding: 0;
+}
+
+.img {
+    width: auto;
+    height: 100%;
+}
+
+.content {
+    & > img {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        min-width: 50%;
+        min-height: 50%;
+    }
+}
+
+.itemDetailCard {
+    &.card {
+        width: 320px;
+
+        & .cardActions {
+            justify-content: flex-end;
+        }
+    }
 }
 
 @media (height <= 1000px) {

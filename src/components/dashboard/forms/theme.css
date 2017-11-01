@@ -1,6 +1,6 @@
 .floating {
     position: fixed;
-    top: 136px;
+    top: 100px;
     right: 40px;
     z-index: 110;
 }

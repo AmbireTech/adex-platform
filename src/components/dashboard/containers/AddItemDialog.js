@@ -54,7 +54,7 @@ export class AddItemDialog extends Component {
                         style={{ position: 'absolute', top: 5, right: 5 }}
                     />
 
-                    <Tabs theme={theme} fixed index={this.state.tabIndex} onChange={this.handleTabChange.bind(this)}>
+                    <Tabs theme={theme} index={this.state.tabIndex} onChange={this.handleTabChange.bind(this)}>
                         <Tab label='New Ad Unit'>
                             {this.props.newForm({ onSave: this.handleToggle.bind(this) })}
                         </Tab>

@@ -11,10 +11,14 @@ import ItemHoc from './ItemHoc'
 import Img from 'components/common/img/Img'
 import Item from 'models/Item'
 import theme from './theme.css'
-// import { IconButton, Button } from 'react-toolbox/lib/button'
+import { IconButton, Button } from 'react-toolbox/lib/button'
 import UnitSlots from './UnitSlots'
 import { Tab, Tabs } from 'react-toolbox'
 import UnitTargets from './UnitTargets'
+import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
+import Tooltip from 'react-toolbox/lib/tooltip'
+
+const TooltipButton = Tooltip(Button)
 
 export class Unit extends Component {
     constructor(props) {
@@ -29,29 +33,47 @@ export class Unit extends Component {
     }
 
     BasicProps = ({ meta, t }) => {
-        return (<div className={theme.itemPropTop}>
-            <div className={theme.imgHolder}>
-                <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} className={theme.img} />
-            </div>
-            <div className={theme.bannerProps}>
-                <div>
-                    <Dropdown
-                        onChange={this.props.handleChange.bind(this, 'adType')}
-                        source={AdTypes}
-                        value={meta.adType}
-                        label={t('adType', { isProp: true })}
-                    />
+        return (
+            <div className={theme.itemPropTop}>
+                <div className={theme.imgHolder}>
+                    <Card className={theme.itemDetailCard} raised={false} theme={theme}>
+                        <CardMedia
+                            aspectRatio='wide'
+                            theme={theme}
+                        >
+                            <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} />
+                        </CardMedia>
+                        <CardActions theme={theme} >
+
+                            <IconButton
+                                /* theme={theme} */
+                                icon='edit'
+                                accent
+                                onClick={this.props.toggleImgEdit}
+                            />
+                        </CardActions>
+                    </Card>
+
                 </div>
-                <div>
-                    <Dropdown
-                        onChange={this.props.handleChange.bind(this, 'size')}
-                        source={Sizes}
-                        value={meta.size}
-                        label={t('size', { isProp: true })}
-                    />
+                <div className={theme.bannerProps}>
+                    <div>
+                        <Dropdown
+                            onChange={this.props.handleChange.bind(this, 'adType')}
+                            source={AdTypes}
+                            value={meta.adType}
+                            label={t('adType', { isProp: true })}
+                        />
+                    </div>
+                    <div>
+                        <Dropdown
+                            onChange={this.props.handleChange.bind(this, 'size')}
+                            source={Sizes}
+                            value={meta.size}
+                            label={t('size', { isProp: true })}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
         )
     }
 
@@ -68,10 +90,8 @@ export class Unit extends Component {
                 <div>
                     <Tabs
                         theme={theme}
-                        fixed
                         index={this.state.tabIndex}
                         onChange={this.handleTabChange.bind(this)}
-                        inverse
                     >
                         <Tab label='TARGETS'>
                             <div>
