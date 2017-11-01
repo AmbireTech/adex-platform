@@ -307,26 +307,26 @@ class ItemsList extends Component {
             <div >
                 <Grid fluid >
                     <Row middle='md' className={theme.itemsListControls}>
-                        <Col lg={3}>
+                        <Col sm={6} md={6} lg={3}>
                             <Input type='text' label='Search' icon='search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} />
                         </Col>
-                        <Col md={2}>
-                            <Dropdown
-                                auto
-                                icon='sort'
-                                label='Sort by'
-                                onChange={this.handleChange.bind(this, 'sortProperty')}
-                                source={this.props.sortProperties || SORT_PROPERTIES}
-                                value={this.state.sortProperty}
-                            />
-                        </Col>
-                        <Col lg={1}>
-                            <div>
+                        <Col sm={6} md={6} lg={3}>
+                            <div style={{ display: 'inline-block', width: 'calc(100% - 76px)' }}>
+                                <Dropdown
+                                    auto
+                                    icon='sort'
+                                    label='Sort by'
+                                    onChange={this.handleChange.bind(this, 'sortProperty')}
+                                    source={this.props.sortProperties || SORT_PROPERTIES}
+                                    value={this.state.sortProperty}
+                                />
+                            </div>
+                            <div style={{ display: 'inline-block' }}>
                                 <IconButton icon='arrow_upward' accent={this.state.sortOrder === 1} onClick={this.handleChange.bind(this, 'sortOrder', 1)} />
                                 <IconButton icon='arrow_downward' accent={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
                             </div>
                         </Col>
-                        <Col lg={5}>
+                        <Col sm={10} md={10} lg={5}>
                             <Pagination
                                 page={data.page}
                                 pages={data.pages}
@@ -342,7 +342,7 @@ class ItemsList extends Component {
                             />
                         </Col>
                         {!this.props.listMode ?
-                            <Col lg={1}>
+                            <Col sm={2} md={2} lg={1}>
                                 <div>
                                     <IconButton icon='view_module' accent={!this.props.rowsView} onClick={this.toggleView.bind(this, false)} />
                                     <IconButton icon='view_list' accent={this.props.rowsView} onClick={this.toggleView.bind(this, true)} />

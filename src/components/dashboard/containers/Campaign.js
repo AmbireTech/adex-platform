@@ -29,7 +29,6 @@ export class Campaign extends Component {
 
     render() {
         let side = this.props.match.params.side;
-
         let item = this.props.item
         let meta = item._meta
         let units = []
