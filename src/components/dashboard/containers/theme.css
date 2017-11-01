@@ -8,7 +8,7 @@
 .itemStatus {
     position: fixed;
     right: 40px;
-    top: 200px;
+    top: 164px;
     z-index: 100;
     width: 25%;
     display: flex;
@@ -120,6 +120,20 @@
 
 .dialog{
     min-height: 70vh;
+    max-width: 1280px;
+}
+
+.dialogItemsListContainer {
+    position: absolute;
+    top: 85px;
+    left: 25px;
+    right: 25px;
+    bottom: 25px;
+    & .scrollable {
+        overflow: scroll;
+        overflow:  overlay;
+        height: 100%;
+    }
 }
 
 .heading {

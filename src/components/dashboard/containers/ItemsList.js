@@ -17,6 +17,7 @@ import tableTheme from 'components/dashboard/collection/theme.css'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Img from 'components/common/img/Img'
+import Item from 'models/Item'
 
 const RRTableCell = withReactRouterLink(TableCell)
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))
@@ -133,7 +134,7 @@ class ItemsList extends Component {
         return (
             <TableRow key={item._id || index} theme={tableTheme} selected={selected}>
                 <RRTableCell className={tableTheme.link} to={to} theme={tableTheme}>
-                    <Img className={tableTheme.img} src={item._meta.img} alt={item._name} />
+                    <Img className={tableTheme.img} src={Item.getImgUrl(item._meta.img)} alt={item._name} />
                 </RRTableCell>
                 <RRTableCell className={tableTheme.link} to={to}> {item._name} </RRTableCell>
                 <TableCell> {item._type} </TableCell>
@@ -222,7 +223,7 @@ class ItemsList extends Component {
         // console.log('filterItems', items)
         let filtered = (items || [])
             .filter((i) => {
-                let isItem = ((!!i && !!i._meta && !i._meta.deleted) || i.id)
+                let isItem = (!!i && ((!!i._meta && !i._meta.deleted) || i.id))
                 if (!isItem) return isItem
                 let hasSearch = !!search
                 if (!hasSearch) return isItem

@@ -51,20 +51,25 @@ export class AddItemDialog extends Component {
                         icon='close'
                         onClick={this.handleToggle}
                         primary
-                        style={{ position: 'absolute', top: 5, right: 5 }}
+                        style={{ position: 'absolute', top: 2, right: 2 }}
                     />
 
-                    <Tabs theme={theme} index={this.state.tabIndex} onChange={this.handleTabChange.bind(this)}>
+                    <Tabs theme={theme} className={theme.dialogTabs} index={this.state.tabIndex} onChange={this.handleTabChange.bind(this)}>
                         <Tab label='New Ad Unit'>
                             {this.props.newForm({ onSave: this.handleToggle.bind(this) })}
                         </Tab>
-                        <Tab theme={theme} label='Add existing Ad Unit'><section style={{ overflowY: 'scroll', height: '100%' }}>
-                            <ItemsList parentItem={this.props.addTo} addToItem items={this.props.items} viewModeId={this.props.viewMode} listMode={this.props.listMode} /></section>
+                        <Tab theme={theme} label='Add existing Ad Unit'>
+                            <div className={theme.dialogItemsListContainer}>
+                                <section className={theme.scrollable}>
+                                    <ItemsList parentItem={this.props.addTo} addToItem items={this.props.items} viewModeId={this.props.viewMode} listMode={this.props.listMode} />
+                                </section>
+                            </div>
                         </Tab>
                     </Tabs>
+                    {/* </div> */}
                 </Dialog>
 
-            </div>
+            </div >
         )
     }
 }
