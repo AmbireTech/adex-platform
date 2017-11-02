@@ -127,7 +127,6 @@ class ItemsList extends Component {
                 <TableCell> Actions </TableCell>
             </TableHead>
         )
-
     }
 
     renderTableRow(item, index, { to, selected }) {
@@ -217,10 +216,9 @@ class ItemsList extends Component {
         )
     }
 
-    filterItems({ items, search, sortProperty, sortOrder, page, pageSize }) {
+    filterItems({ items, search, sortProperty, sortOrder, page, pageSize, searchMatch }) {
         // TODO: optimize filter
         // TODO: maybe filter deleted before this?
-        // console.log('filterItems', items)
         let filtered = (items || [])
             .filter((i) => {
                 let isItem = (!!i && ((!!i._meta && !i._meta.deleted) || i.id))
@@ -229,9 +227,18 @@ class ItemsList extends Component {
                 if (!hasSearch) return isItem
                 let regex = new RegExp(search, 'i')
                 let meta = i._meta || {}
-                let match = regex.exec((i._name || '') +
-                    (meta.fullName || '') +
-                    (meta.description || ''))
+                let matchString = null
+                if (typeof searchMatch === 'function') {
+                    matchString = searchMatch(i)
+                } else if (typeof searchMatch === 'string' && !!searchMatch) {
+                    matchString = searchMatch
+                } else {
+                    matchString = (i._name || '') +
+                        (meta.fullName || '') +
+                        (meta.description || '')
+                }
+
+                let match = regex.exec(matchString)
                 return !!match
             })
             .sort((a, b) => {
@@ -286,7 +293,8 @@ class ItemsList extends Component {
             sortProperty: this.state.sortProperty,
             sortOrder: this.state.sortOrder,
             page: this.state.page,
-            pageSize: this.state.pageSize
+            pageSize: this.state.pageSize,
+            searchMatch: this.props.searchMatch
         })
 
         let items = data.items
@@ -305,8 +313,8 @@ class ItemsList extends Component {
         return (
 
             <div >
-                <Grid fluid >
-                    <Row middle='md' className={theme.itemsListControls}>
+                <Grid fluid style={{ padding: 0 }} >
+                    <Row middle='xs' className={theme.itemsListControls}>
                         <Col sm={6} md={6} lg={3}>
                             <Input type='text' label='Search' icon='search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} />
                         </Col>
@@ -353,11 +361,9 @@ class ItemsList extends Component {
                         }
                     </Row>
                 </Grid>
-                <Grid fluid>
-
+                <section>
                     {renderItems(items)}
-
-                </Grid>
+                </section>
             </div >
         )
     }

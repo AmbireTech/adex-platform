@@ -71,13 +71,19 @@ export class SlotBids extends Component {
             tableHeadRenderer={this.renderTableHead.bind(this)}
         />
 
+    searchMatch = (bid) => {
+        return (bid.name || '') +
+            (bid.advertiser || '') +
+            (bid.amount || '') + 
+            (bid.requiredPoints || '')
+    }
+
+
     render() {
         let bidsIds = this.props.bidsIds
         let openBids = []
         let otherBids = []
         let allBids = []
-
-
 
         for (let i = 0; i < bidsIds.length; i++) {
             let bid = this.props.bids[bidsIds[i]]
@@ -99,12 +105,12 @@ export class SlotBids extends Component {
                 >
                     <Tab label='BIDS'>
                         <div>
-                            <ItemsList items={openBids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} />
+                            <ItemsList items={openBids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
                         </div>
                     </Tab>
                     <Tab label='BIDS_HISTORY'>
                         <div>
-                            <ItemsList items={otherBids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} />
+                            <ItemsList items={otherBids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
                         </div>
                     </Tab>
                 </Tabs>

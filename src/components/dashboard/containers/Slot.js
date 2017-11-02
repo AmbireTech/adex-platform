@@ -16,6 +16,8 @@ import Slider from 'react-toolbox/lib/slider'
 import classnames from 'classnames'
 import { Tab, Tabs } from 'react-toolbox'
 import SlotBids from './SlotBids'
+import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
+import { IconButton, Button } from 'react-toolbox/lib/button'
 
 export class Slot extends Component {
     render() {
@@ -29,7 +31,24 @@ export class Slot extends Component {
             <div>
                 <div className={theme.itemPropTop}>
                     <div className={theme.imgHolder}>
-                        <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} className={theme.img} />
+                        <Card className={theme.itemDetailCard} raised={false} theme={theme}>
+                            <CardMedia
+                                aspectRatio='wide'
+                                theme={theme}
+                            >
+                                <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} />
+                            </CardMedia>
+                            <CardActions theme={theme} >
+
+                                <IconButton
+                                    /* theme={theme} */
+                                    icon='edit'
+                                    accent
+                                    onClick={this.props.toggleImgEdit}
+                                />
+                            </CardActions>
+                        </Card>
+                        {/* <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} className={theme.img} /> */}
                     </div>
                     <div className={theme.bannerProps}>
                         <div>

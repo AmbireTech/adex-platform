@@ -15,49 +15,41 @@ export const PAGE_SIZES = [
 export const Pagination = (props) => {
 
     return (
+        <div>
+            <div style={{ display: 'inline-block', width: 220 }}>
+                <IconButton
+                    disabled={!(props.page > 0 && props.pages > props.page)}
+                    icon='chevron_left'
+                    onClick={props.goToPrevPage} />
 
-        <Grid fluid style={{ padding: 0 }}>
-            <Row middle='md'>
-                <Col xs={12} sm={6} md={6} lg={7}>
+                <div style={{ display: 'inline-block', width: 70 }}>
+                    <Autocomplete
+                        allowCreate={false}
+                        direction="down"
+                        label='page'
+                        multiple={false}
+                        onChange={props.goToPage}
+                        source={getAllPagedValues(props.page, props.pages)}
+                        hint={props.page + 1 + ''}
+                        value={props.page + ''}
+                        suggestionMatch='anywhere'
+                        showSuggestionsWhenValueIsSet={true}
+                    />
+                </div>
 
-                    <IconButton
-                        disabled={!(props.page > 0 && props.pages > props.page)}
-                        icon='chevron_left'
-                        onClick={props.goToPrevPage} />
+                <IconButton
+                    disabled={!(props.page < (props.pages - 1))}
+                    icon='chevron_right'
+                    onClick={props.goToNextPage} />
 
-                    <div style={{ display: 'inline-block', width: 70 }}>
-                        <Autocomplete
-                            allowCreate={false}
-                            direction="down"
-                            label='page'
-                            multiple={false}
-                            onChange={props.goToPage}
-                            source={getAllPagedValues(props.page, props.pages)}
-                            hint={props.page + 1 + ''}
-                            value={props.page + ''}
-                            suggestionMatch='anywhere'
-                            showSuggestionsWhenValueIsSet={true}
-                        />
-                    </div>
-
-                    <IconButton
-                        disabled={!(props.page < (props.pages - 1))}
-                        icon='chevron_right'
-                        onClick={props.goToNextPage} />
-
-                    <span> of </span>
-                    <span> {props.pages} </span>
-                </Col>
-
-                <Col xs={12} sm={6} md={6} lg={5} >
-                    <div style={{ position: 'relative', height: 35 }}>
-                        <label className={theme.sliderLabel}> Page size <strong>{props.pageSize}</strong> </label>
-                        <Slider pinned snaps min={5} max={25} step={5} value={props.pageSize} onChange={props.changePageSize} />
-                    </div>
-                </Col>
-
-            </Row>
-        </Grid>
+                <span> of </span>
+                <span> {props.pages} </span>
+            </div>
+            <div style={{ position: 'relative', display: 'inline-block', width: 'calc(100% - 220px)', minWidth: 140 }}>
+                <label className={theme.sliderLabel}> Page size <strong>{props.pageSize}</strong> </label>
+                <Slider pinned snaps min={5} max={25} step={5} value={props.pageSize} onChange={props.changePageSize} />
+            </div>
+        </div>
     )
 }
 
