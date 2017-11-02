@@ -4,8 +4,8 @@ import { ItemsTypes, Genders, AdTypes, Sizes, Targets, TargetsWeight, getRandomP
 import { Images } from './DummyData'
 
 class AdUnit extends Item {
-    constructor({ owner, id, ipfs = '', name, ad_url = '', img, description = '', size = '', adType = '', targets = [] }) {
-        super(owner, id, ipfs, ItemsTypes.AdUnit.id, name, img, description)
+    constructor({ owner, id, ipfs = '', name, ad_url = '', img, description = '', size = '', adType = '', targets = [], txTime }) {
+        super(owner, id, ipfs, ItemsTypes.AdUnit.id, name, img, description, txTime)
         let meta = this._meta
         meta.banner = img
         meta.size = size
@@ -110,7 +110,8 @@ class AdUnit extends Item {
                 size: getRandomPropValue(Sizes),
                 adType: getRandomPropValue(AdTypes),
                 ad_url: 'https://adex.network',
-                targets: targets
+                targets: targets,
+                txTime: Helper.geRandomMoment(60, 60).valueOf()
             }
         )
 

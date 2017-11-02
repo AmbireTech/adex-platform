@@ -96,22 +96,34 @@ function generateBids(adUnits, adSlots) {
     // console.log('adSlots', adSlots)
     for (let i = 1; i < adUnits.length; i++) {
         let unit = adUnits[i]
+        let unitTxTime = moment(unit._meta.createdOn)
 
         for (var j = 1; j < Helper.getRandomInt(50, 200); j++) {
             let slot = adSlots[Helper.getRandomInt(1, adSlots.length - 1)]
+            let slotTxTime = moment(slot._meta.createdOn)
 
             let bidId = bidsById.length
             let state = Helper.getRandomPropFromObj(BidState)
             let confirmedByPublisher = false
             let confirmedByAdvertiser = false
+            let txTime = null
             let acceptedTime = null
+            let expireTime = null
+
+            if (unitTxTime.isBefore(slotTxTime)) {
+                txTime = Helper.geRandomMoment(0, 60, slotTxTime)
+            } else {
+                txTime = Helper.geRandomMoment(0, 60, unitTxTime)
+            }
 
             if (state === BidState.Accepted) {
-                acceptedTime = Date.now()
+                acceptedTime = Helper.geRandomMoment(0, 30, txTime)
             } else if (state === BidState.Completed) {
                 confirmedByPublisher = true
                 confirmedByAdvertiser = true
             }
+
+            expireTime = Helper.geRandomMoment(0, 30, acceptedTime || txTime)
 
             let amount = Helper.getRandomInt(0, 1000)
 
@@ -127,12 +139,12 @@ function generateBids(adUnits, adSlots) {
                 adSlotIpfs: slot._ipfs,
                 acceptedTime: acceptedTime,
                 requiredPoints: amount * Helper.getRandomInt(100, 200),
-                requiredExecTime: moment().add(Helper.getRandomInt(2, 10), 'd').valueOf(),
+                requiredExecTime: expireTime,
                 confirmedByPublisher: confirmedByPublisher,
                 confirmedByAdvertiser: confirmedByAdvertiser,
                 publisherReportIpfs: '',
                 advertiserReportIpfs: '',
-                txTime: Date.now()
+                txTime: txTime
             })
 
             bid = bid.plainObj()

@@ -1,18 +1,15 @@
 import Helper from 'helpers/miscHelpers'
 
 class Base {
-    constructor(name = '', ipfs = '') {
+    constructor({name = '', ipfs = '', txTime = Date.now()} = {}) {
         this._name = Helper.slugify(name)
-
-        let now = Date.now()
-
         this._ipfs = ipfs;
 
-        // TODO: add _ipfs prop!!!!
         this._meta = {
             fullName: name,
-            createdOn: now, // TODO: fix date format
-            modifiedOn: now, // 
+            txTime: txTime,
+            createdOn: txTime, // TODO: use this or txTime ?
+            modifiedOn: txTime
         }
     }
 

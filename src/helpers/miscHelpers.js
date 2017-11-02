@@ -1,5 +1,6 @@
 import slug from 'slug'
 import unidecode from 'unidecode'
+import moment from 'moment'
 class Helper {
 
     getGuid() {
@@ -30,6 +31,17 @@ class Helper {
     slugify(str) {
         if (!str || (typeof str !== 'string')) return ''
         return slug(unidecode(str), { lower: true }).substring(0, 32);
+    }
+
+    geRandomMoment(maxDaysPast, maxDaysAhead, initialMoment) {
+        // TODO: fix +/- 1 day bug
+        let initial = moment.isMoment(initialMoment) ?
+            initialMoment.valueOf() : undefined
+
+        return moment(initial)
+            .add(this.getRandomInt(-maxDaysPast, maxDaysAhead), 'd')
+            .add(this.getRandomInt(-24, 24), 'h')
+            .add(this.getRandomInt(-60, 60), 'm')
     }
 }
 

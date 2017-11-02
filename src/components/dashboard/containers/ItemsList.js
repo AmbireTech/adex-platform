@@ -18,6 +18,7 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Img from 'components/common/img/Img'
 import Item from 'models/Item'
+import moment from 'moment'
 
 const RRTableCell = withReactRouterLink(TableCell)
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))
@@ -124,6 +125,7 @@ class ItemsList extends Component {
                 <TableCell> Name </TableCell>
                 <TableCell> Type </TableCell>
                 <TableCell> Size </TableCell>
+                <TableCell> Created </TableCell>
                 <TableCell> Actions </TableCell>
             </TableHead>
         )
@@ -138,6 +140,7 @@ class ItemsList extends Component {
                 <RRTableCell className={tableTheme.link} to={to}> {item._name} </RRTableCell>
                 <TableCell> {item._type} </TableCell>
                 <TableCell> {item._size} </TableCell>
+                <TableCell> {moment(item._meta.createdOn).format('DD-MM-YYYY')} </TableCell>
                 <TableCell>
 
                     <TooltipRRButton

@@ -7,7 +7,7 @@ import { ItemsTypes } from 'constants/itemsTypes'
 class Account extends Base {
     // TODO: accept addr and wallet
     constructor(name, addr, wallet) {
-        super(name)
+        super({name: name})
         this._addr = Helper.getGuid()
         this._wallet = Helper.getGuid()
 
