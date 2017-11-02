@@ -11,8 +11,12 @@ import { IconButton, Button } from 'react-toolbox/lib/button'
 import ItemsList from './ItemsList'
 import Rows from 'components/dashboard/collection/Rows'
 import moment from 'moment'
-import { BidState } from 'models/Bid'
+import { BidState, BidStateNames } from 'models/Bid'
 import { Tab, Tabs } from 'react-toolbox'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar } from 'recharts'
+// import d3 from 'd3'
+
+// const cardinal = d3.curveCardinal.tension(0.2)
 
 const SORT_PROPERTIES = [
     { value: 'id', label: 'Id' },
@@ -34,6 +38,36 @@ export class SlotBids extends Component {
 
     handleTabChange = (index) => {
         this.setState({ tabIndex: index })
+    }
+
+    getNonOpenedBidsChartData = (bids) => {
+    }
+
+    renderNonOpenedBidsChart(bids, range) {
+        let data = bids.reduce((memo, bid) => {
+            if (bid) {
+                let state = bid.state
+
+                let val = memo[state] || { state: state, count: 0, name: BidStateNames[state] }
+                val.count = val.count + 1
+                memo[state] = val
+                return memo
+            } else {
+                return memo
+            }
+        }, [])
+
+        return (
+            <BarChart width={600} height={400} data={data}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                <XAxis dataKey="name" />
+                <YAxis dataKey="count" />
+                {<CartesianGrid  />}
+                <Tooltip />
+                {<Bar type='monotone' dataKey='count' stroke='#ffd740' fill='#ffd740' fillOpacity={0.3} />}
+            </BarChart>
+        )
+
     }
 
     renderTableHead() {
@@ -74,7 +108,7 @@ export class SlotBids extends Component {
     searchMatch = (bid) => {
         return (bid.name || '') +
             (bid.advertiser || '') +
-            (bid.amount || '') + 
+            (bid.amount || '') +
             (bid.requiredPoints || '')
     }
 
@@ -103,7 +137,7 @@ export class SlotBids extends Component {
                     index={this.state.tabIndex}
                     onChange={this.handleTabChange.bind(this)}
                 >
-                    <Tab label='BIDS'>
+                    <Tab label='OPEN_BIDS'>
                         <div>
                             <ItemsList items={openBids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
                         </div>
@@ -111,6 +145,11 @@ export class SlotBids extends Component {
                     <Tab label='BIDS_HISTORY'>
                         <div>
                             <ItemsList items={otherBids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
+                        </div>
+                    </Tab>
+                    <Tab label='BIDS_STATISTICS'>
+                        <div>
+                            {this.renderNonOpenedBidsChart(allBids)}
                         </div>
                     </Tab>
                 </Tabs>

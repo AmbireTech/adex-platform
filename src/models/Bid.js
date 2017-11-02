@@ -9,6 +9,13 @@ export const BidState = {
     Claimed: 5
 }
 
+export const BidStateNames = (() => {
+    return Object.keys(BidState).reduce((memo, state) => {
+        memo[BidState[state]] = state
+        return memo
+    }, {})
+})()
+
 class Bid {
     constructor({
         id = null,
