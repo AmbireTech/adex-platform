@@ -29,7 +29,8 @@ class Bid {
         confirmedByPublisher = false,
         confirmedByAdvertiser = false,
         publisherReportIpfs = '',
-        advertiserReportIpfs = ''
+        advertiserReportIpfs = '',
+        txTime = null // TODO: Maybe prop name dateOpened || createdOn here
     }) {
         this.id = id
         this.state = state
@@ -50,6 +51,7 @@ class Bid {
         this.confirmedByAdvertiser = confirmedByAdvertiser
         this.publisherReportIpfs = publisherReportIpfs
         this.advertiserReportIpfs = advertiserReportIpfs
+        this.txTime = txTime
     }
 
     plainObj() {

@@ -131,7 +131,8 @@ function generateBids(adUnits, adSlots) {
                 confirmedByPublisher: confirmedByPublisher,
                 confirmedByAdvertiser: confirmedByAdvertiser,
                 publisherReportIpfs: '',
-                advertiserReportIpfs: ''
+                advertiserReportIpfs: '',
+                txTime: Date.now()
             })
 
             bid = bid.plainObj()
