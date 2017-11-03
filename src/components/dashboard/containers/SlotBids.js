@@ -27,6 +27,9 @@ import {
     Pie,
     Cell
 } from 'recharts'
+
+import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
+
 // import d3 from 'd3'
 
 // const cardinal = d3.curveCardinal.tension(0.2)
@@ -47,7 +50,7 @@ export class SlotBids extends Component {
         this.state = {
             bidding: false,
             activeSlot: {},
-            tabIndex: 0
+            tabIndex: 2
         }
     }
 
@@ -56,6 +59,27 @@ export class SlotBids extends Component {
     }
 
     getNonOpenedBidsChartData = (bids) => {
+    }
+
+    renderSlotsClicksCharts({ bids }) {
+        let data = BidsStatsGenerator.getRandomStatsForSlot(null, bids)
+        return (
+            <div style={{ width: 550, height: 300, display: 'inline-block' }}>
+                <ResponsiveContainer>
+                    <AreaChart data={data}
+                        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                        <XAxis dataKey="name" />
+                        <YAxis yAxisId="left" />
+                        <YAxis yAxisId="right" orientation="right" />
+
+                        {/* {<CartesianGrid />} */}
+                        <Tooltip />
+                        <Area yAxisId="left" type='monotone' dataKey='clicks' stroke='#ffd740' fill='#ffd740' fillOpacity={0.8} strokeOpacity={0.8} />
+                        <Area yAxisId="right" type='monotone' dataKey='amount' stroke='#1b75bc' fill='#1b75bc' fillOpacity={0.8} strokeOpacity={0.8} />
+                    </AreaChart>
+                </ResponsiveContainer>
+            </div>
+        )
     }
 
     renderNonOpenedBidsChart(bids, range) {
@@ -74,6 +98,7 @@ export class SlotBids extends Component {
 
         return (
             <div>
+                {this.renderSlotsClicksCharts({ bids: this.props.bidsIds })}
                 <div style={{ width: 550, height: 300, display: 'inline-block' }}>
                     <ResponsiveContainer>
                         <BarChart data={data}
@@ -93,7 +118,7 @@ export class SlotBids extends Component {
                             <Pie
                                 data={data}
                                 dataKey={'count'}
-                
+
                                 fillOpacity={1}
                                 innerRadius={80}
                                 outerRadius={110}

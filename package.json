@@ -34,6 +34,7 @@
     "ipfs-api": "^14.3.5",
     "jest": "20.0.4",
     "moment": "^2.18.1",
+    "moment-range": "^3.0.3",
     "object-assign": "^4.1.1",
     "postcss": "^6.0.9",
     "postcss-apply": "^0.8.0",

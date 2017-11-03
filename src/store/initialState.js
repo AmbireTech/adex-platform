@@ -8,6 +8,7 @@ import Bid, { BidState } from 'models/Bid'
 import { ItemsTypes } from 'constants/itemsTypes'
 import Helper from 'helpers/miscHelpers'
 import moment from 'moment'
+import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
 
 // cached
 let counts = {
@@ -36,6 +37,8 @@ let account = null
 let bidsById = [null]
 let bidsByAdunit = []
 let bidsByAdslot = []
+let bidsByAdunitObjs = []
+let bidsByAdslotObjs = []
 
 function GenerateAccount() {
     if (account) return account
@@ -116,11 +119,13 @@ function generateBids(adUnits, adSlots) {
                 txTime = Helper.geRandomMoment(0, 60, unitTxTime)
             }
 
-            if (state === BidState.Accepted) {
+            if (state === BidState.Accepted || state === BidState.Claimed || state === BidState.Completed) {
                 acceptedTime = Helper.geRandomMoment(0, 30, txTime)
-            } else if (state === BidState.Completed) {
-                confirmedByPublisher = true
-                confirmedByAdvertiser = true
+
+                if (state === BidState.Completed) {
+                    confirmedByPublisher = true
+                    confirmedByAdvertiser = true
+                }
             }
 
             expireTime = Helper.geRandomMoment(0, 30, acceptedTime || txTime)
@@ -137,27 +142,29 @@ function generateBids(adUnits, adSlots) {
                 publisher: account,
                 adSlot: slot._id,
                 adSlotIpfs: slot._ipfs,
-                acceptedTime: acceptedTime,
+                acceptedTime: acceptedTime ? acceptedTime.valueOf() : acceptedTime,
                 requiredPoints: amount * Helper.getRandomInt(100, 200),
-                requiredExecTime: expireTime,
+                requiredExecTime: expireTime ? expireTime.valueOf() : expireTime,
                 confirmedByPublisher: confirmedByPublisher,
                 confirmedByAdvertiser: confirmedByAdvertiser,
                 publisherReportIpfs: '',
                 advertiserReportIpfs: '',
-                txTime: txTime
+                txTime: txTime ? txTime.valueOf() : txTime
             })
 
-            bid = bid.plainObj()
+            let plainBid = bid.plainObj()
 
-            bidsById.push(bid)
+            bidsById.push(plainBid)
 
             let bySlot = (bidsByAdslot[slot._id] || [])
-            bySlot.push(bid.id)
+            bySlot.push(plainBid.id)
             bidsByAdslot[slot._id] = bySlot // TODO: check if already have this bid
+            bidsByAdslotObjs[slot] = bySlot
 
             let byUnit = (bidsByAdunit[unit._id] || [])
-            byUnit.push(bid.id)
+            byUnit.push(plainBid.id)
             bidsByAdunit[unit._id] = byUnit
+            bidsByAdunitObjs[unit] = byUnit
         }
     }
 }
@@ -172,6 +179,10 @@ let channels = addItemsToItems(ItemsTypes.Channel, Channel, ItemsTypes.AdSlot, A
 let adSlots = GenerateItems(ItemsTypes.AdSlot, AdSlot, GenerateAccount())
 
 generateBids(adUnits, adSlots)
+
+let bidsGenerator = BidsStatsGenerator
+bidsGenerator.setBids(bidsById)
+// bidsGenerator.getRandomStatsForSlot(5, bidsByAdslot[5])
 
 export default {
     account: account,
