@@ -87,7 +87,7 @@ class SideNav extends Component {
                     selectable={false}
                     ripple={false}
                 >
-                    <NewChannel flat primary />
+                    <NewChannel flat primary raised />
 
                 </ListItem>
                 <RRListItem
@@ -103,7 +103,7 @@ class SideNav extends Component {
                     selectable={false}
                     ripple={false}
                 >
-                    <NewSlot flat accent />
+                    <NewSlot flat accent raised />
                 </ListItem>
             </List>
         )

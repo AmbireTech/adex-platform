@@ -13,7 +13,20 @@ import Rows from 'components/dashboard/collection/Rows'
 import moment from 'moment'
 import { BidState, BidStateNames } from 'models/Bid'
 import { Tab, Tabs } from 'react-toolbox'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar } from 'recharts'
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    BarChart,
+    Bar,
+    ResponsiveContainer,
+    PieChart,
+    Pie,
+    Cell
+} from 'recharts'
 // import d3 from 'd3'
 
 // const cardinal = d3.curveCardinal.tension(0.2)
@@ -24,6 +37,8 @@ const SORT_PROPERTIES = [
     { value: 'amount', label: 'Total reward' },
     { value: 'requiredExecTime', label: 'Expiration date' }
 ]
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
 
 export class SlotBids extends Component {
 
@@ -48,7 +63,7 @@ export class SlotBids extends Component {
             if (bid) {
                 let state = bid.state
 
-                let val = memo[state] || { state: state, count: 0, name: BidStateNames[state] }
+                let val = memo[state] || { state: state, value: state, count: 0, name: BidStateNames[state] }
                 val.count = val.count + 1
                 memo[state] = val
                 return memo
@@ -58,14 +73,41 @@ export class SlotBids extends Component {
         }, [])
 
         return (
-            <BarChart width={600} height={400} data={data}
-                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                <XAxis dataKey="name" />
-                <YAxis dataKey="count" />
-                {<CartesianGrid  />}
-                <Tooltip />
-                {<Bar type='monotone' dataKey='count' stroke='#ffd740' fill='#ffd740' fillOpacity={0.3} />}
-            </BarChart>
+            <div>
+                <div style={{ width: 550, height: 300, display: 'inline-block' }}>
+                    <ResponsiveContainer>
+                        <BarChart data={data}
+                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                            <XAxis dataKey="name" />
+                            <YAxis dataKey="count" />
+                            {/* {<CartesianGrid />} */}
+                            <Tooltip />
+                            {<Bar type='monotone' dataKey='count' stroke='#ffd740' fill='#ffd740' fillOpacity={1} />}
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+                <div style={{ width: 550, height: 300, display: 'inline-block' }}>
+                    <ResponsiveContainer>
+                        <PieChart data={data}
+                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                            <Pie
+                                data={data}
+                                dataKey={'count'}
+                
+                                fillOpacity={1}
+                                innerRadius={80}
+                                outerRadius={110}
+                                paddingAngle={0}
+                            >
+                                {
+                                    data.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]} />)
+                                }
+                            </Pie>
+                            <Tooltip />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
         )
 
     }
