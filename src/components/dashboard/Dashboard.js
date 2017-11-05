@@ -10,6 +10,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Campaign from './containers/Campaign'
 import Channel from './containers/Channel'
+import DashboardStats from './containers/DashboardStats'
 import Unit from './containers/Unit'
 import Slot from './containers/Slot'
 import Items from './containers/Items'
@@ -19,7 +20,7 @@ import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
 
 
-console.log('actions', actions)
+// console.log('actions', actions)
 class Dashboard extends React.Component {
     state = {
         drawerActive: false,
@@ -119,7 +120,7 @@ class Dashboard extends React.Component {
                         <Route exact path="/dashboard/publisher/Channel/:itemId" component={Channel} />
                         <Route exact path="/dashboard/publisher/AdSlot/:itemId" component={Slot} />
 
-                        <Route exact path="/dashboard/:side" component={this.Dash} />
+                        <Route exact path="/dashboard/:side" component={DashboardStats} />
                         <Route component={() => <h1>404 at {side} side</h1>} />
                     </Switch>
                 </Panel>

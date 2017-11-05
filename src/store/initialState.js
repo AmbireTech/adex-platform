@@ -35,6 +35,7 @@ let newItems = {
 let account = null
 
 let bidsById = [null]
+let bidsIds = [null]
 let bidsByAdunit = []
 let bidsByAdslot = []
 let bidsByAdunitObjs = []
@@ -155,6 +156,7 @@ function generateBids(adUnits, adSlots) {
             let plainBid = bid.plainObj()
 
             bidsById.push(plainBid)
+            bidsIds.push(bidId)
 
             let bySlot = (bidsByAdslot[slot._id] || [])
             bySlot.push(plainBid.id)
@@ -212,6 +214,7 @@ export default {
     validations: {},
     bids: {
         bidsById: bidsById,
+        bidsIds: bidsIds,
         bidsByAdslot: bidsByAdslot,
         bidsByAdunit: bidsByAdunit
     }

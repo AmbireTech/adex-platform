@@ -62,7 +62,7 @@ export class SlotBids extends Component {
     }
 
     renderSlotsClicksCharts({ bids }) {
-        let data = BidsStatsGenerator.getRandomStatsForSlot(null, bids)
+        let data = BidsStatsGenerator.getRandomStatsForSlots(bids, 'days')
         return (
             <div style={{ width: 550, height: 300, display: 'inline-block' }}>
                 <ResponsiveContainer>

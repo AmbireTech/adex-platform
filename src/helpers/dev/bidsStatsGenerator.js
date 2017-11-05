@@ -14,29 +14,64 @@ class BidsStatsGenerator {
         this.claimedBids = {}
         this.completedBids = {}
         this.activeBids = {}
+        this.openedBids = {}
+        this.canceledBids = {}
+        this.expiredBids = {}
+        this.inactiveBids = {}
+        this.bidsStatesStats = {}
     }
 
+    // We set the bids one
     setBids(bids) {
-        this.allBids = [...bids]
-        let activeBids = [...this.allBids].reduce((memo, bid) => {
-            if (bid && (bid.state === BidState.Accepted)) {
-                memo.accepted[bid.id] = bid
-                memo.active[bid.id] = bid
-            } else if (bid && (bid.state === BidState.Claimed)) {
-                memo.accepted[bid.id] = bid
-                memo.active[bid.id] = bid
-            } else if (bid && (bid.state === BidState.Completed)) {
-                memo.accepted[bid.id] = bid
-                memo.active[bid.id] = bid
+        let allBids = this.allBids = [...bids]
+        let activeBids = { accepted: {}, completed: {}, claimed: {}, active: {} }
+        let inactiveBids = { opened: {}, canceled: {}, expired: {}, inactive: {} }
+        for (let i = 0; i < this.allBids.length; i++) {
+            let bid = this.allBids[i]
+
+            if (!bid) {
+                continue
             }
 
-            return memo
-        }, { accepted: {}, completed: {}, claimed: {}, active: {} })
+            if (bid.state === BidState.Accepted) {
+                activeBids.accepted[bid.id] = bid
+                activeBids.active[bid.id] = bid
+            } else if (bid.state === BidState.Claimed) {
+                activeBids.claimed[bid.id] = bid
+                activeBids.active[bid.id] = bid
+            } else if (bid.state === BidState.Completed) {
+                activeBids.completed[bid.id] = bid
+                activeBids.active[bid.id] = bid
+            } else if (bid.state === BidState.Canceled) {
+                inactiveBids.canceled[bid.id] = bid
+                inactiveBids.inactive[bid.id] = bid
+            } else if (bid.state === BidState.Expired) {
+                inactiveBids.expired[bid.id] = bid
+                inactiveBids.inactive[bid.id] = bid
+            } else if (bid.state === BidState.Open) {
+                inactiveBids.opened[bid.id] = bid
+                inactiveBids.inactive[bid.id] = bid
+            }
+
+        }
 
         this.acceptedBids = activeBids.accepted
         this.claimedBids = activeBids.claimed
         this.completedBids = activeBids.completed
         this.activeBids = activeBids.active
+        this.canceledBids = inactiveBids.canceled
+        this.expiredBids = inactiveBids.expired
+        this.openedBids = inactiveBids.opened
+        this.inactiveBids = inactiveBids.inactive
+
+        this.bidsStatesStats = {
+            Open: Object.keys(this.openedBids).length,
+            Accepted: Object.keys(this.acceptedBids).length,
+            Canceled: Object.keys(this.canceledBids).length,
+            Expired: Object.keys(this.expiredBids).length,
+            Completed: Object.keys(this.completedBids).length,
+            Claimed: Object.keys(this.claimedBids).length
+        }
     }
 
     getBidsDateRange(bids = []) {
@@ -80,7 +115,12 @@ class BidsStatsGenerator {
 
     }
 
-    getRandomStatsForSlot(slotId, bidsIds) {
+    getBidsStateStats() {
+        return this.bidsStatesStats
+    }
+
+    getRandomStatsForSlots(bidsIds, zoom) {
+        zoom = zoom || 'days'
         let slotActiveBids = bidsIds.reduce((memo, bidId) => {
             if (this.activeBids[bidId]) {
                 memo.push(this.activeBids[bidId])
@@ -99,19 +139,19 @@ class BidsStatsGenerator {
         let days = momentRangeCompleted.length
         let rate = amount / clicks
 
-        let dates = Array.from(momentRangeCompleted.by('d')).map(m => {
+        let dates = Array.from(momentRangeCompleted.by(zoom)).map(m => {
             let cl = Helper.getRandomInt(parseInt(clicks * 0.01), parseInt(clicks * 0.1))
             clicks -= cl
             return {
-                name: m.format('DD-MM-YYYY'),
+                name: m.format('MMM DD'),
                 amount: cl * rate * Math.random() * 2,
                 clicks: cl
             }
         })
 
-        console.log('momentRangeCompleted', momentRangeCompleted)
-        console.log('dates', dates)
-        console.log('ranges', bitsDateRanges)
+        // console.log('momentRangeCompleted', momentRangeCompleted)
+        // console.log('dates', dates)
+        // console.log('ranges', bitsDateRanges)
 
         return dates
     }
