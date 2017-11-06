@@ -9,33 +9,39 @@ export const SlotsClicksAndRevenue = ({ data, options }) => {
         memo.clicks.push(item.clicks)
         memo.amounts.push(item.amount)
 
+        memo.stepClicks.min = Math.min(memo.stepClicks.min, item.clicks)
+        memo.stepClicks.max = Math.max(memo.stepClicks.max, item.clicks)
+        memo.stepAmounts.min = Math.min(memo.stepAmounts.min, item.amount)
+        memo.stepAmounts.max = Math.max(memo.stepAmounts.max, item.amount)
+
         return memo
 
-    }, { labels: [], clicks: [], amounts: [] })
+    }, { labels: [], clicks: [], amounts: [], stepClicks: { min: 0, max: 0 }, stepAmounts: { min: 0, max: 0 } })
+
+    let commonDsProps = {
+        fill: true,
+        lineTension: 0.4,
+        borderWidth: 0,
+        pointRadius: 1,
+        pointHitRadius: 10,
+    }
 
     let chartData = {
         labels: data.labels,
+        stacked: false,
         datasets: [
             {
+                ...commonDsProps,
                 label: 'Clicks',
                 data: data.clicks,
-                fill: true,
-                lineTension: 0.1,
-                backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[0], 0.7),
-                borderWidth: 0,
-                pointRadius: 1,
-                pointHitRadius: 10,
+                backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[0], 0.6),
                 yAxisID: 'y-axis-2'
             },
             {
+                ...commonDsProps,
                 label: 'Revenue',
-                data: data.amounts,                
-                fill: true,
-                lineTension: 0.1,
-                backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 0.7),
-                borderWidth: 0,
-                pointRadius: 1,
-                pointHitRadius: 10,
+                data: data.amounts,
+                backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[2], 0.6),
                 yAxisID: 'y-axis-1'
             }
         ]
@@ -55,7 +61,8 @@ export const SlotsClicksAndRevenue = ({ data, options }) => {
                 {
                     display: true,
                     gridLines: {
-                        display: false
+                        display: true,
+                        beginAtZero: true
                     },
                     // labels: {
                     //     show: true
@@ -64,25 +71,37 @@ export const SlotsClicksAndRevenue = ({ data, options }) => {
             ],
             yAxes: [
                 {
+                    //stacked: false,
                     type: 'linear',
                     display: true,
                     position: 'left',
                     id: 'y-axis-1',
-                    // gridLines: {
-                    //     display: false
-                    // },
+                    gridLines: {
+                        display: true,
+                        borderDash: [4, 4],
+                        color: Helper.hexToRgbaColorString(CHARTS_COLORS[0], 0.5)
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
                     // labels: {
                     //     show: true
                     // }
                 },
                 {
+                    // stacked: true,
                     type: 'linear',
                     display: true,
                     position: 'right',
                     id: 'y-axis-2',
-                    // gridLines: {
-                    //     display: false
-                    // },
+                    gridLines: {
+                        display: true,
+                        borderDash: [4, 4],
+                        color: Helper.hexToRgbaColorString(CHARTS_COLORS[2], 0.5)
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
                     // labels: {
                     //     show: true
                     // }
