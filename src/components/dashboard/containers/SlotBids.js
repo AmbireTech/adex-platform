@@ -13,22 +13,9 @@ import Rows from 'components/dashboard/collection/Rows'
 import moment from 'moment'
 import { BidState, BidStateNames } from 'models/Bid'
 import { Tab, Tabs } from 'react-toolbox'
-import {
-    AreaChart,
-    Area,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    BarChart,
-    Bar,
-    ResponsiveContainer,
-    PieChart,
-    Pie,
-    Cell
-} from 'recharts'
-
+import { Grid, Row, Col } from 'react-flexbox-grid'
 import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
+import { BidsStatusBars, BidsStatusPie, SlotsClicksAndRevenue } from 'components/dashboard/charts/slot'
 
 // import d3 from 'd3'
 
@@ -64,21 +51,7 @@ export class SlotBids extends Component {
     renderSlotsClicksCharts({ bids }) {
         let data = BidsStatsGenerator.getRandomStatsForSlots(bids, 'days')
         return (
-            <div style={{ width: 550, height: 300, display: 'inline-block' }}>
-                <ResponsiveContainer>
-                    <AreaChart data={data}
-                        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                        <XAxis dataKey="name" />
-                        <YAxis yAxisId="left" />
-                        <YAxis yAxisId="right" orientation="right" />
-
-                        {/* {<CartesianGrid />} */}
-                        <Tooltip />
-                        <Area yAxisId="left" type='monotone' dataKey='clicks' stroke='#ffd740' fill='#ffd740' fillOpacity={0.8} strokeOpacity={0.8} />
-                        <Area yAxisId="right" type='monotone' dataKey='amount' stroke='#1b75bc' fill='#1b75bc' fillOpacity={0.8} strokeOpacity={0.8} />
-                    </AreaChart>
-                </ResponsiveContainer>
-            </div>
+            <SlotsClicksAndRevenue data={data} />
         )
     }
 
@@ -86,52 +59,44 @@ export class SlotBids extends Component {
         let data = bids.reduce((memo, bid) => {
             if (bid) {
                 let state = bid.state
+                let statistics = memo.statistics
+                let states = memo.states
 
-                let val = memo[state] || { state: state, value: state, count: 0, name: BidStateNames[state] }
+                let val = statistics[state] || { state: state, value: state, count: 0, name: BidStateNames[state] }
                 val.count = val.count + 1
-                memo[state] = val
-                return memo
+                statistics[state] = val
+
+                if (states[BidStateNames[state]] === undefined) {
+                    states[BidStateNames[state]] = 1
+                } else {
+                    states[BidStateNames[state]] = (states[BidStateNames[state]] + 1)
+                }
+
+                return {
+                    statistics: statistics,
+                    states: states
+                }
             } else {
                 return memo
             }
-        }, [])
+        }, { statistics: [], states: {} })
 
         return (
             <div>
-                {this.renderSlotsClicksCharts({ bids: this.props.bidsIds })}
-                <div style={{ width: 550, height: 300, display: 'inline-block' }}>
-                    <ResponsiveContainer>
-                        <BarChart data={data}
-                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                            <XAxis dataKey="name" />
-                            <YAxis dataKey="count" />
-                            {/* {<CartesianGrid />} */}
-                            <Tooltip />
-                            {<Bar type='monotone' dataKey='count' stroke='#ffd740' fill='#ffd740' fillOpacity={1} />}
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-                <div style={{ width: 550, height: 300, display: 'inline-block' }}>
-                    <ResponsiveContainer>
-                        <PieChart data={data}
-                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                            <Pie
-                                data={data}
-                                dataKey={'count'}
+                <Grid fluid >
+                    <Row middle='xs' className={theme.itemsListControls}>
+                        <Col xs={12} sm={12} md={6}>
+                            {this.renderSlotsClicksCharts({ bids: this.props.bidsIds })}
+                        </Col>
+                        <Col xs={12} sm={12} md={6}>
+                            <BidsStatusBars data={data.states} />
+                        </Col>
+                        <Col xs={12} sm={12} md={6}>
+                            <BidsStatusPie data={data.states} />
+                        </Col>
+                    </Row>
+                </Grid>
 
-                                fillOpacity={1}
-                                innerRadius={80}
-                                outerRadius={110}
-                                paddingAngle={0}
-                            >
-                                {
-                                    data.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]} />)
-                                }
-                            </Pie>
-                            <Tooltip />
-                        </PieChart>
-                    </ResponsiveContainer>
-                </div>
             </div>
         )
 
