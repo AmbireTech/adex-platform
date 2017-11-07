@@ -82,4 +82,3 @@ AddItemDialog.propTypes = {
 }
 
 export default AddItemDialog
-

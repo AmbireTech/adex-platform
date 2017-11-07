@@ -1,3 +1,5 @@
+@import '../../../../styles/variables.css';
+
 .stepper {
     position: absolute;
     left: 25px;
@@ -47,10 +49,16 @@
             & .circle{
                 background-color: #2196F3;
                 &.AdUnit{
-                    background-color: #0f0;
+                    background-color: var(--color-second);
                 }
                 &.Campaign{
-                    background-color: #e6b;
+                    background-color: var(--color-first);
+                }
+                &.AdSlot{
+                    background-color: var(--color-second);
+                }
+                &.Channel{
+                    background-color: var(--color-first);
                 }
             }
         }

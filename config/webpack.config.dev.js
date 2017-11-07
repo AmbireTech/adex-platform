@@ -11,6 +11,7 @@ const eslintFormatter = require('react-dev-utils/eslintFormatter');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
+const stylesConfig = require('./styles.config')
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
@@ -195,7 +196,13 @@ module.exports = {
                     require('postcss-each'),
                     require('postcss-apply'),
                     require('postcss-nesting'),
-                    require('postcss-cssnext'),
+                    require('postcss-cssnext')({
+                      features: {
+                        customProperties: {
+                          variables: stylesConfig.reactToolboxVariables
+                        }
+                      }
+                    })
                   ],
                 },
               },

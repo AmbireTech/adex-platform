@@ -9,3 +9,7 @@
 .active {
   background-color: green;
 }
+
+.button {
+  width: 220px;
+}

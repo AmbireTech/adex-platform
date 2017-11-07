@@ -18,6 +18,7 @@ export const Pagination = (props) => {
         <div>
             <div style={{ display: 'inline-block', width: 220 }}>
                 <IconButton
+                    primary
                     disabled={!(props.page > 0 && props.pages > props.page)}
                     icon='chevron_left'
                     onClick={props.goToPrevPage} />
@@ -38,6 +39,7 @@ export const Pagination = (props) => {
                 </div>
 
                 <IconButton
+                    primary
                     disabled={!(props.page < (props.pages - 1))}
                     icon='chevron_right'
                     onClick={props.goToNextPage} />

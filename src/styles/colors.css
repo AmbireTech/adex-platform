@@ -1,0 +1,34 @@
+:root {
+    --color-divider: #666;
+    --color-background: #fff;
+    --color-text: #333;
+    --color-text-secondary: #999;
+
+    --color-primary: #1b75bc;
+    --color-primary-dark: #800080;
+    --color-accent: #302060;
+    --color-accent-dark: #102080;
+    --color-primary-contrast: #fff;
+    --color-accent-contrast: #000;
+
+    --color-nav-item: rgba(40, 20, 200);
+
+    /*AdEx Blue*/
+    --color-adex-primary: #0277BD; /* LightBlue 800 */
+    --color-adex-primary-lighter: #03a9f4; /* LightBlue 500 */
+    --color-adex-primary-accent: #00E5FF; /* LightBlue 800 */
+    --color-adex-primary-contrast: #FFFFFF; 
+
+    /*AdEx Yellow*/
+    --color-adex-alt-primary-button: #FFAB00; /* Amber 700 */
+    --color-adex-alt-primary-header: #FFC107; /* Amber 500 */
+    --color-adex-alt-lighter: #FFD740; /* Amber A200 */
+    --color-adex-alt-primary: #FF5722; /* Deep Orange 500 */
+    --color-adex-alt-contrast: #FFFFFF; 
+
+
+    /*AdEx Green*/
+    --color-adex-accent-primary: #00E676; /* Green A400 */
+    --color-adex-accent-accent: #00ffbf; /* Teal A400-custo */
+    --color-adex-accent-contrast: #FFFFFF;     
+}

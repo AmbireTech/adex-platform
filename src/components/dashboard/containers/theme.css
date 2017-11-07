@@ -1,3 +1,5 @@
+@import '../../../styles/variables.css';
+
 .circular{
     width: 36px;
     height: 36px;
@@ -106,9 +108,9 @@
     }
 }
 
-.button {
+/*.button {
     color: #000 !important;
-}
+}*/
 
 .accent {
     line-height: normal !important;
@@ -153,24 +155,23 @@
     margin: 0;
     z-index: 100;
     &.Campaign, &.Channel{
-        background-color:#03a9f4;
+        background-color: var(--color-adex-first);
         &.items{
-            background-color: #0277bd;
+            background-color: var(--color-adex-first);
         }
         & input{
             color: #fff;
         }
     }
     &.AdUnit, &.AdSlot{
-        background-color: #ffd740;
+        background-color: var(--color-adex-second);
         &.items{
-            background-color: #ffab00;
+            background-color: var(--color-adex-second);
         }
         & input{
             color: #fff;
         }
     }
-
 }
 
 .floating {

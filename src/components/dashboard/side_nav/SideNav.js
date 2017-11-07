@@ -41,7 +41,7 @@ class SideNav extends Component {
                     selectable={false}
                     ripple={false}
                 >
-                    <NewCampaign flat primary raised />
+                    <NewCampaign theme={theme} flat color='first' raised />
                 </ListItem>
                 <RRListItem
                     to={{ pathname: '/dashboard/' + this.props.side + "/units" }}
@@ -56,7 +56,7 @@ class SideNav extends Component {
                     selectable={false}
                     ripple={false}
                 >
-                    <NewUnit flat accent raised />
+                    <NewUnit theme={theme} flat color='second' raised />
                 </ListItem>
             </List>
         )
@@ -87,7 +87,7 @@ class SideNav extends Component {
                     selectable={false}
                     ripple={false}
                 >
-                    <NewChannel flat primary raised />
+                    <NewChannel theme={theme} flat color='first' raised />
 
                 </ListItem>
                 <RRListItem
@@ -103,7 +103,7 @@ class SideNav extends Component {
                     selectable={false}
                     ripple={false}
                 >
-                    <NewSlot flat accent raised />
+                    <NewSlot theme={theme} flat color='second' raised />
                 </ListItem>
             </List>
         )

@@ -12,6 +12,7 @@ const eslintFormatter = require('react-dev-utils/eslintFormatter');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
+const stylesConfig = require('./styles.config')
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -195,7 +196,13 @@ module.exports = {
                           require('postcss-each'),
                           require('postcss-apply'),
                           require('postcss-nesting'),
-                          require('postcss-cssnext')
+                          require('postcss-cssnext')({
+                            features: {
+                              customProperties: {
+                                variables: stylesConfig.reactToolboxVariables
+                              }
+                            }
+                          })
                         ],
                       },
                     },

@@ -1,15 +1,19 @@
+@import './colors.css';
+
 :root {
-    --color-divider: #666;
-    --color-background: #fff;
-    --color-text: #333;
-    --color-text-secondary: #999;
+    /*Butoon colors*/
+        /* RT levels colors */
+    --color-adex-button-primary: var(--color-adex-primary);
+    --color-adex-button-primary-contrast: var(--color-adex-primary-contrast);
+    --color-adex-button-accent: var(--color-adex-alt-primary);
+    --color-adex-button-accent-contrast: var(--color-adex-alt-contrast);
+        /* AdEx button colors */
+    --color-adex-button-first: var(--color-adex-primary);
+    --color-adex-button-first-contrast: var(--color-adex-primary-contrast);
+    --color-adex-button-second: var(--color-adex-primary);
+    --color-adex-button-second-contrast: var(--color-adex-primary-contrast);
 
-    --color-primary: #1b75bc;
-    --color-primary-dark: #800080;
-    --color-accent: #302060;
-    --color-accent-dark: #102080;
-    --color-primary-contrast: #fff;
-    --color-accent-contrast: #000;
-
-    --color-nav-item: rgba(40, 20, 200)
+    /* Sections colors */
+    --color-adex-first: var(--color-adex-primary);
+    --color-adex-second: var(--color-adex-alt-primary-header);
 }

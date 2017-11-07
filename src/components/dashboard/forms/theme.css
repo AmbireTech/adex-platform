@@ -1,8 +1,21 @@
+@import './../../../../node_modules/react-toolbox/lib/variables.css';
+@import '../../../styles/variables.css';
+
 .floating {
     position: fixed;
     top: 100px;
     right: 40px;
     z-index: 110;
+}
+
+.first {
+    background: var(--color-adex-first) !important;
+    color: var(--color-adex-accent-contrast) !important;
+}
+
+.second {
+    background: var(--color-adex-second) !important;
+    color: var(--color-adex-accent-contrast) !important;
 }
 
 .dialog{
@@ -43,7 +56,7 @@
     height: 150px;
     // margin: 20px;
     width: auto;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    box-shadow: var(--shadow-2p);  /* 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);*/
 }
 
 .imgForm {
@@ -52,7 +65,7 @@
 
 .imgUploadBtn {
     position: absolute;
-    left: 20px;
+    right: 20px;
     bottom: -20px;
 }
 

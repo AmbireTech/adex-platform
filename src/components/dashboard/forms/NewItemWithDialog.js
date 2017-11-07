@@ -4,6 +4,7 @@ import { Button, IconButton } from 'react-toolbox/lib/button'
 import { ItemTypesNames } from 'constants/itemsTypes'
 import Dialog from 'react-toolbox/lib/dialog'
 import theme from './theme.css'
+import classnames from 'classnames'
 
 export default function ItemHoc(Decorated) {
     class NewItemWithDialog extends Component {
@@ -20,6 +21,8 @@ export default function ItemHoc(Decorated) {
         }
 
         render() {
+
+            console.log('theme', this.props.theme)
             return (
                 <div>
                     <Button
@@ -31,7 +34,11 @@ export default function ItemHoc(Decorated) {
                         raised={this.props.raised}
                         accent={this.props.accent}
                         flat={this.props.flat}
-                        className={this.props.floating ? theme.floating : ''}
+                        theme={this.props.theme}
+                        className={classnames( 
+                            {[theme.floating]: this.props.floating},
+                            {[theme[this.props.color]]: !!this.props.color}
+                        )}
                     />
                     <Dialog
                         theme={theme}

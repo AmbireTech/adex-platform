@@ -333,8 +333,8 @@ class ItemsList extends Component {
                                 />
                             </div>
                             <div style={{ display: 'inline-block' }}>
-                                <IconButton icon='arrow_upward' accent={this.state.sortOrder === 1} onClick={this.handleChange.bind(this, 'sortOrder', 1)} />
-                                <IconButton icon='arrow_downward' accent={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
+                                <IconButton icon='arrow_upward' primary={this.state.sortOrder === 1} onClick={this.handleChange.bind(this, 'sortOrder', 1)} />
+                                <IconButton icon='arrow_downward' primary={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
                             </div>
                         </Col>
                         <Col sm={10} md={10} lg={5}>
@@ -355,8 +355,8 @@ class ItemsList extends Component {
                         {!this.props.listMode ?
                             <Col sm={2} md={2} lg={1}>
                                 <div>
-                                    <IconButton icon='view_module' accent={!this.props.rowsView} onClick={this.toggleView.bind(this, false)} />
-                                    <IconButton icon='view_list' accent={this.props.rowsView} onClick={this.toggleView.bind(this, true)} />
+                                    <IconButton icon='view_module' primary={!this.props.rowsView} onClick={this.toggleView.bind(this, false)} />
+                                    <IconButton icon='view_list' primary={this.props.rowsView} onClick={this.toggleView.bind(this, true)} />
                                 </div>
                             </Col>
                             :

@@ -1,22 +1,43 @@
-@import './variables.css';
+/*@import './variables.css';
 
 .primary:not([disabled]) {
   &.raised,
   &.floating {
-    background: var(--color-primary) !important;
+    background: var(--color-primary-lighter) !important;
     color: var(--color-primary-contrast) !important;
   }
 
   &.flat,
   &.toggle {
-    color: var(--color-nav-item) !important;
+    color: var(--color-primary-lighter) !important;
 
     &:focus:not(:active) {
-      background: var(--color-accent) !important;
+      background: var(--color-primary-lighter) !important;
     }
   }
 
   &.flat:hover {
-    background: var(--color-primary) !important;
+    background: var(--color-primary-contrast) !important;
   }
 }
+
+.accent:not([disabled]) {
+  &.raised,
+  &.floating {
+    background: var(--color-accent-primary) !important;
+    color: var(--color-accent-contrast) !important;
+  }
+
+  &.flat,
+  &.toggle {
+    color: var(--color-accent-primary) !important;
+
+    &:focus:not(:active) {
+      background: var(--color-accent-primary) !important;
+    }
+  }
+
+  &.flat:hover {
+    background: var(--color-accent-primary-contrast) !important;
+  }
+}*/
