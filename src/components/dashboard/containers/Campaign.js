@@ -46,10 +46,13 @@ export class Campaign extends Component {
 
         return (
             <div>
-                <h2>Ad units in this campaign {'(' + (units.length) + ')'}</h2>
-                <div>
+                <h2>
+                    <span> Units in this campaign {'(' + (units.length) + ')'}</span>
+                    
+                <span>
+                    <div style={{display: 'inline-block', marginLeft: 20}}>
                     <AddItemDialog
-                        accent
+                        color='second'
                         addCampaign={this.props.actions.addCampaign}
                         btnLabel='Add new Unit to campaign'
                         title=''
@@ -61,7 +64,9 @@ export class Campaign extends Component {
                             <NewItemSteps {...props} addTo={item} itemPages={[NewUnitForm]} itemType={ItemsTypes.AdUnit.id} />
                         }
                     />
-                </div>
+                    </div>
+                </span>
+                </h2>
                 <ItemsList parentItem={item} removeFromItem items={units} viewModeId={VIEW_MODE} />
             </div>
         )

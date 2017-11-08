@@ -23,7 +23,7 @@
         vertical-align: middle; 
         margin-right: 10px;
         margin-bottom: 10px;
-        color: #ff4081;
+        color: var(--color-adex-danger-primary);
         cursor: default;
         & div, & span {
             cursor: default; 
@@ -59,6 +59,11 @@
     max-width: 1200px
 }
 
+.listTools {
+    border-bottom: 1px solid var(--color-divider);
+    margin-bottom: 10px;
+}
+
 .top {
     display: inline-block;
     vertical-align: top;
@@ -70,6 +75,7 @@
     &.left{
         width: 70%;
         text-align: left;
+        border-bottom: 1px solid var(--color-divider);
     }
 
     &.right {

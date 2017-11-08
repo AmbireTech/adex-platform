@@ -6,6 +6,8 @@ import Dialog from 'react-toolbox/lib/dialog'
 import theme from './theme.css'
 import { Tab, Tabs } from 'react-toolbox'
 import ItemsList from './ItemsList'
+import classnames from 'classnames'
+import RTButtonTheme from 'styles/RTButton.css'
 
 export class AddItemDialog extends Component {
     constructor(props) {
@@ -37,7 +39,10 @@ export class AddItemDialog extends Component {
                     raised={this.props.raised}
                     accent={this.props.accent}
                     flat={this.props.flat}
-                    className={this.props.floating ? theme.floating : ''}
+                    className={classnames( 
+                        {[theme.floating]: this.props.floating},
+                        {[RTButtonTheme[this.props.color]]: !!this.props.color}
+                    )}
                 />
                 <Dialog
                     active={this.state.active}

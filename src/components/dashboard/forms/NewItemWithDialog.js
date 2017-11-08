@@ -5,6 +5,7 @@ import { ItemTypesNames } from 'constants/itemsTypes'
 import Dialog from 'react-toolbox/lib/dialog'
 import theme from './theme.css'
 import classnames from 'classnames'
+import RTButtonTheme from 'styles/RTButton.css'
 
 export default function ItemHoc(Decorated) {
     class NewItemWithDialog extends Component {
@@ -35,11 +36,9 @@ export default function ItemHoc(Decorated) {
                         accent={this.props.accent}
                         flat={this.props.flat}
                         theme={this.props.theme}
-                        className={classnames( 
-                            theme.new,
-                            theme.special,
+                        className={classnames(
                             {[theme.floating]: this.props.floating},
-                            {[theme[this.props.color]]: !!this.props.color}
+                            {[RTButtonTheme[this.props.color]]: !!this.props.color}
                         )}
                     />
                     <Dialog

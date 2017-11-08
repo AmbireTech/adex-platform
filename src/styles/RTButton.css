@@ -1,6 +1,9 @@
 @import './variables.css';
 :root {
-  --button-neutral-color-hover: color(var(--color-adex-neutral-contrast) a(20%))
+  --button-neutral-color-hover: color(var(--color-adex-neutral-contrast) a(20%));
+  --button-danger-color-hover: color(var(--color-adex-danger-contrast) a(20%));
+  --button-first-color-hover: color(var(--color-adex-primary-lighter) a(20%));
+  --button-second-color-hover: color(var(--color-adex-alt-primary-button) a(20%));
 }
 
 .toggle {
@@ -49,5 +52,74 @@
     &.flat:hover {
       background: var(--button-neutral-color-hover) !important;
     }
+  }
+}
+
+.danger:not([disabled]) {
+  &.raised,
+  &.floating {
+    background: var(--color-adex-danger-primary) !important;
+    color: var(--color-adex-danger-contrast) !important;
+  }
+
+  &.flat,
+  &.toggle {
+    color: var(--color-adex-danger-primary) !important;
+
+    &:focus:not(:active) {
+      background: var(--button-danger-color-hover) !important;
+    }
+  }
+
+  &.flat:hover {
+    background: var(--button-danger-color-hover) !important;
+  }
+}
+
+.first:not([disabled]) {
+  &.raised,
+  &.floating {
+    background: var(--gradient-adex-first) !important;
+    color: var(--color-adex-danger-contrast) !important;
+    & > span {
+        font-weight: 600;
+      }
+  }
+
+  &.flat,
+  &.toggle {
+    color: var(--color-adex-primary-lighter) !important;
+
+    &:focus:not(:active) {
+      background: var(--button-first-color-hover) !important;
+    }
+  }
+
+  &.flat:hover {
+    background: var(--button-first-color-hover) !important;
+  }
+}
+
+.second:not([disabled]) {
+  &.raised,
+  &.floating {
+    background: var(--gradient-adex-second) !important;
+    color: var(--color-adex-dark-primary) !important;
+    & > span {
+        font-weight: 600;
+      }
+  }
+
+  &.flat,
+  &.toggle {
+    color: var(--color-adex-alt-primary-button) !important;
+
+    &:focus:not(:active) {
+      background: var(--button-second-color-hover) !important;
+    }
+  }
+
+  &.flat:hover {
+    background: var(--button-second-color-hover) !important;
   }
 }

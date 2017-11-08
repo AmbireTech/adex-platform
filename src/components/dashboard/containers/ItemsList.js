@@ -13,6 +13,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid'
 import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import theme from './theme.css'
 import tableTheme from 'components/dashboard/collection/theme.css'
+import RTButtonTheme from 'styles/RTButton.css'
 
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Tooltip from 'react-toolbox/lib/tooltip'
@@ -113,11 +114,12 @@ class ItemsList extends Component {
                         <TooltipButton
                             icon='delete'
                             label='delete selected'
-                            accent
                             onClick={null}
                             tooltip='Delete all'
                             tooltipDelay={1000}
-                            tooltipPosition='top' />
+                            tooltipPosition='top' 
+                            className={RTButtonTheme.danger}
+                            />
                         :
                         'Select all'
                     }
@@ -172,10 +174,10 @@ class ItemsList extends Component {
                     <TooltipIconButton
                         icon='delete'
                         label='delete'
-                        accent
                         tooltip='Delete'
                         tooltipDelay={1000}
                         tooltipPosition='top'
+                        className={RTButtonTheme.danger}
                         onClick={this.props.actions.confirmAction.bind(this,
                             this.props.actions.deleteItem.bind(this, item),
                             null,
@@ -190,10 +192,10 @@ class ItemsList extends Component {
                     <TooltipIconButton
                         icon='remove_circle_outline'
                         label={'Remove to ' + this.props.parentItem._name}
-                        accent
                         tooltip={'Remove to ' + this.props.parentItem._name}
                         tooltipDelay={1000}
                         tooltipPosition='top'
+                        className={RTButtonTheme.danger}
                         onClick={this.props.actions.confirmAction.bind(this,
                             this.props.actions.removeItemFromItem.bind(this, { item: this.props.parentItem, toRemove: item }),
                             null,
@@ -314,56 +316,57 @@ class ItemsList extends Component {
         }
 
         return (
-
-            <div >
-                <Grid fluid style={{ padding: 0 }} >
-                    <Row middle='xs' className={theme.itemsListControls}>
-                        <Col sm={6} md={6} lg={3}>
-                            <Input type='text' label='Search' icon='search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} />
-                        </Col>
-                        <Col sm={6} md={6} lg={3}>
-                            <div style={{ display: 'inline-block', width: 'calc(100% - 76px)' }}>
-                                <Dropdown
-                                    auto
-                                    icon='sort'
-                                    label='Sort by'
-                                    onChange={this.handleChange.bind(this, 'sortProperty')}
-                                    source={this.props.sortProperties || SORT_PROPERTIES}
-                                    value={this.state.sortProperty}
-                                />
-                            </div>
-                            <div style={{ display: 'inline-block' }}>
-                                <IconButton icon='arrow_upward' primary={this.state.sortOrder === 1} onClick={this.handleChange.bind(this, 'sortOrder', 1)} />
-                                <IconButton icon='arrow_downward' primary={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
-                            </div>
-                        </Col>
-                        <Col sm={10} md={10} lg={5}>
-                            <Pagination
-                                page={data.page}
-                                pages={data.pages}
-                                pageSize={this.state.pageSize}
-                                itemsLength={data.itemsLength}
-                                goToPage={this.goToPage.bind(this)}
-                                goToLastPage={this.goToPage.bind(this, data.pages - 1)}
-                                goToNextPage={this.goToPage.bind(this, data.page + 1)}
-                                goToFirstPage={this.goToPage.bind(this, 0)}
-                                goToPrevPage={this.goToPage.bind(this, data.page - 1)}
-                                changePageSize={this.changePageSize.bind(this, 'pageSize',
-                                    { page: data.page, pages: data.pages, itemsLength: data.itemsLength })}
-                            />
-                        </Col>
-                        {!this.props.listMode ?
-                            <Col sm={2} md={2} lg={1}>
-                                <div>
-                                    <IconButton icon='view_module' primary={!this.props.rowsView} onClick={this.toggleView.bind(this, false)} />
-                                    <IconButton icon='view_list' primary={this.props.rowsView} onClick={this.toggleView.bind(this, true)} />
+            <div>
+                <div className={theme.listTools}>
+                    <Grid fluid style={{ padding: 0 }} >
+                        <Row middle='xs' className={theme.itemsListControls}>
+                            <Col sm={6} md={6} lg={3}>
+                                <Input type='text' label='Search' icon='search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} />
+                            </Col>
+                            <Col sm={6} md={6} lg={3}>
+                                <div style={{ display: 'inline-block', width: 'calc(100% - 76px)' }}>
+                                    <Dropdown
+                                        auto
+                                        icon='sort'
+                                        label='Sort by'
+                                        onChange={this.handleChange.bind(this, 'sortProperty')}
+                                        source={this.props.sortProperties || SORT_PROPERTIES}
+                                        value={this.state.sortProperty}
+                                    />
+                                </div>
+                                <div style={{ display: 'inline-block' }}>
+                                    <IconButton icon='arrow_upward' primary={this.state.sortOrder === 1} onClick={this.handleChange.bind(this, 'sortOrder', 1)} />
+                                    <IconButton icon='arrow_downward' primary={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
                                 </div>
                             </Col>
-                            :
-                            null
-                        }
-                    </Row>
-                </Grid>
+                            <Col sm={10} md={10} lg={5}>
+                                <Pagination
+                                    page={data.page}
+                                    pages={data.pages}
+                                    pageSize={this.state.pageSize}
+                                    itemsLength={data.itemsLength}
+                                    goToPage={this.goToPage.bind(this)}
+                                    goToLastPage={this.goToPage.bind(this, data.pages - 1)}
+                                    goToNextPage={this.goToPage.bind(this, data.page + 1)}
+                                    goToFirstPage={this.goToPage.bind(this, 0)}
+                                    goToPrevPage={this.goToPage.bind(this, data.page - 1)}
+                                    changePageSize={this.changePageSize.bind(this, 'pageSize',
+                                        { page: data.page, pages: data.pages, itemsLength: data.itemsLength })}
+                                />
+                            </Col>
+                            {!this.props.listMode ?
+                                <Col sm={2} md={2} lg={1}>
+                                    <div>
+                                        <IconButton icon='view_module' primary={!this.props.rowsView} onClick={this.toggleView.bind(this, false)} />
+                                        <IconButton icon='view_list' primary={this.props.rowsView} onClick={this.toggleView.bind(this, true)} />
+                                    </div>
+                                </Col>
+                                :
+                                null
+                            }
+                        </Row>
+                    </Grid>
+                </div >
                 <section>
                     {renderItems(items)}
                 </section>
