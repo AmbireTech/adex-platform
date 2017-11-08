@@ -1,6 +1,36 @@
 @import './../../../../node_modules/react-toolbox/lib/variables.css';
 @import '../../../styles/variables.css';
 
+
+.dropzone {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1;
+    width: 100%;
+    height: 150px;
+    border: 2px dashed #ccc ;
+    background: #f7f7f7;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+
+    & .droppedImgContainer {
+        text-align: center;
+        align-self: stretch;
+        flex: 1 1;
+        justify-content: center;
+        flex-direction: row;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        & .imgDropzonePreview {
+            height: 126px;
+            width: auto;
+            border: 1px solid var(--color-adex-dark-primary)
+        }
+    }
+}
 .floating {
     position: fixed;
     top: 116px;

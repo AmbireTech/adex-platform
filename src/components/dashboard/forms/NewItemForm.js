@@ -62,7 +62,7 @@ class NewUnitForm extends Component {
 
                 {this.props.noDefaultImg ?
                     null :
-                    <ImgForm label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item._meta.img.tempUrl || 'nourl'} onChange={this.props.handleChange.bind(this, 'img')} />
+                    <ImgForm label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item._meta.img.tempUrl} onChange={this.props.handleChange.bind(this, 'img')} />
                 }
             </div>
         )

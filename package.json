@@ -51,6 +51,7 @@
     "react-css-themr": "^2.1.2",
     "react-dev-utils": "^3.1.0",
     "react-dom": "^15.6.1",
+    "react-dropzone": "^4.2.1",
     "react-error-overlay": "^1.0.10",
     "react-flag-icon-css": "^1.0.19",
     "react-flexbox-grid": "^1.1.5",
