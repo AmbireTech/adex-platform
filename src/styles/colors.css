@@ -20,8 +20,8 @@
     --color-adex-primary-contrast: #FFFFFF; 
 
     /*AdEx Yellow*/
-    --color-adex-alt-primary-button: #FFAB00; /* Amber 700 */
-    --color-adex-alt-primary-header: #FFC107; /* Amber 500 */
+    --color-adex-alt-primary-button: #ffae00; /* FFAB00 Amber 700 */
+    --color-adex-alt-primary-header: #ffae00; /* FFC107 Amber 500 */
     --color-adex-alt-lighter: #FFD740; /* Amber A200 */
     --color-adex-alt-primary: #FF5722; /* Deep Orange 500 */
     --color-adex-alt-contrast: #FFFFFF; 
@@ -31,4 +31,8 @@
     --color-adex-accent-primary: #00E676; /* Green A400 */
     --color-adex-accent-accent: #00ffbf; /* Teal A400-custo */
     --color-adex-accent-contrast: #FFFFFF;     
+
+    /* Sections gradients */
+    --gradient-adex-first: linear-gradient(to left, #34b3f8, #1a75ed);
+    --gradient-adex-second: linear-gradient(to left, #FFD740, #FFAB00);
 }

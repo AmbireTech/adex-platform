@@ -47,18 +47,18 @@
         &.active:not(.warning){
             color: rgba(0,0,0, 87%);
             & .circle{
-                background-color: #2196F3;
+                background-color: var(--color-adex-primary);
                 &.AdUnit{
-                    background-color: var(--color-second);
+                    background: var(--gradient-adex-second);
                 }
                 &.Campaign{
-                    background-color: var(--color-first);
+                    background: var(--gradient-adex-first);
                 }
                 &.AdSlot{
-                    background-color: var(--color-second);
+                    background: var(--gradient-adex-second);
                 }
                 &.Channel{
-                    background-color: var(--color-first);
+                    background: var(--gradient-adex-first);
                 }
             }
         }

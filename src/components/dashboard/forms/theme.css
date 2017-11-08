@@ -3,18 +3,18 @@
 
 .floating {
     position: fixed;
-    top: 100px;
+    top: 116px;
     right: 40px;
     z-index: 110;
 }
 
 .first {
-    background: var(--color-adex-first) !important;
+    background: var(--gradient-adex-first) !important;
     color: var(--color-adex-accent-contrast) !important;
 }
 
 .second {
-    background: var(--color-adex-second) !important;
+    background: var(--gradient-adex-second) !important;
     color: var(--color-adex-accent-contrast) !important;
 }
 

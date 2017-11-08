@@ -6,10 +6,9 @@
 }
   
 .panel {
-  bottom: 0;
-  overflow-y: auto;  
-  overflow-y: overlay;
-  top: 128px;
-  padding: 20px;
-
+    bottom: 0;
+    overflow-y: auto;  
+    overflow-y: overlay;
+    top: 144px;
+    padding: 20px;
 }

@@ -148,25 +148,25 @@
     color: #fff;
     padding-left: 22px;
     padding-right: 22px;
-    height: 64px;
+    height: 80px;
     display: flex;
     flex-flow: column;
     justify-content: center;
     margin: 0;
     z-index: 100;
     &.Campaign, &.Channel{
-        background-color: var(--color-adex-first);
+        background: var(--gradient-adex-first);
         &.items{
-            background-color: var(--color-adex-first);
+            background: var(--gradient-adex-first);
         }
         & input{
             color: #fff;
         }
     }
     &.AdUnit, &.AdSlot{
-        background-color: var(--color-adex-second);
+        background: var(--gradient-adex-second);
         &.items{
-            background-color: var(--color-adex-second);
+            background: var(--gradient-adex-second);
         }
         & input{
             color: #fff;
@@ -176,7 +176,7 @@
 
 .floating {
     position: fixed;
-    top: 100px;
+    top: 116px;
     right: 40px;
     z-index: 110;
 }

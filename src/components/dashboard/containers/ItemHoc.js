@@ -110,10 +110,10 @@ export default function ItemHoc(Decorated) {
                             {this.state.activeFields.fullName ?
                                 <Input className={theme.itemName} type='text' label={t('fullName', { isProp: true })} name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                                 :
-                                <h2 className={theme.itemName}>
+                                <h3 className={theme.itemName}>
                                     <span> {meta.fullName} </span>
                                     <span><IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'fullName', true)} /></span>
-                                </h2>
+                                </h3>
                             }
                         </div>
                     </div>

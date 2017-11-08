@@ -16,7 +16,7 @@ class Items extends Component {
         return (
             <div>
                 <div className={classnames(theme.heading, theme[ItemTypesNames[this.props.itemsType]], theme.items)}>
-                    <h1 > {this.props.header} {'(' + (items.filter((i) => !!i && !!i._meta && !i._meta.deleted).length) + ')'} </h1>
+                    <h2 > {this.props.header} {'(' + (items.filter((i) => !!i && !!i._meta && !i._meta.deleted).length) + ')'} </h2>
                 </div>
                 <div className={theme.panelContent}>
                     {this.props.newItemBtn ? this.props.newItemBtn() : null}
