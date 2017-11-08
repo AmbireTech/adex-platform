@@ -8,14 +8,24 @@
     z-index: 110;
 }
 
-.first {
-    background: var(--gradient-adex-first) !important;
-    color: var(--color-adex-accent-contrast) !important;
-}
+/* Some ugly css specificity to oferride the !important of the button theme*/
+.new.special:not([disabled]) {
+    &.first {
+        background: var(--gradient-adex-first) !important;
+        color: var(--color-adex-accent-contrast) !important;
+        & > span {
+            font-weight: 600;
+        }
+    }
 
-.second {
-    background: var(--gradient-adex-second) !important;
-    color: var(--color-adex-accent-contrast) !important;
+    &.second {
+        background: var(--gradient-adex-second) !important;
+        color: var(--color-adex-dark-primary) !important;
+        font-weight: 600;
+        & > span {
+            font-weight: 600;
+        }
+    }
 }
 
 .dialog{

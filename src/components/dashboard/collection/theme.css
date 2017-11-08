@@ -1,8 +1,7 @@
 .card {
     display: inline-block !important;
-    margin: 20px;
-    margin-left: 0;
-    margin-bottom: 0;
+    margin: 10px;
+    width: 270px !important;
 }
 
 .cardTitle {

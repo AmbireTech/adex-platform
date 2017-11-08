@@ -10,7 +10,7 @@
 .itemStatus {
     position: fixed;
     right: 40px;
-    top: 164px;
+    top: 180px;
     z-index: 100;
     width: 25%;
     display: flex;

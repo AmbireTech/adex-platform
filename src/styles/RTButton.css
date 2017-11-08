@@ -1,43 +1,53 @@
-/*@import './variables.css';
+@import './variables.css';
+:root {
+  --button-neutral-color-hover: color(var(--color-adex-neutral-contrast) a(20%))
+}
 
-.primary:not([disabled]) {
-  &.raised,
-  &.floating {
-    background: var(--color-primary-lighter) !important;
-    color: var(--color-primary-contrast) !important;
-  }
-
-  &.flat,
-  &.toggle {
-    color: var(--color-primary-lighter) !important;
-
-    &:focus:not(:active) {
-      background: var(--color-primary-lighter) !important;
-    }
-  }
-
-  &.flat:hover {
-    background: var(--color-primary-contrast) !important;
+.toggle {
+  & > .icon,
+  & svg {
+    font-size: 24px !important;
   }
 }
 
-.accent:not([disabled]) {
+.neutral:not([disabled]) {
   &.raised,
   &.floating {
-    background: var(--color-accent-primary) !important;
-    color: var(--color-accent-contrast) !important;
+    background-color: var(--color-adex-neutral-primary) !important;
+    color: var(--color-adex-neutral-contrast) !important;
   }
 
   &.flat,
   &.toggle {
-    color: var(--color-accent-primary) !important;
+    color: var(--color-adex-neutral-contrast) !important;
 
     &:focus:not(:active) {
-      background: var(--color-accent-primary) !important;
+      background: var(--button-neutral-color-hover) !important;
     }
   }
 
   &.flat:hover {
-    background: var(--color-accent-primary-contrast) !important;
+    background: var(--button-neutral-color-hover) !important;
   }
-}*/
+
+  &.inverse {
+    &.raised,
+    &.floating {
+      background-color: var(--color-adex-neutral-contrast) !important;
+      color: var(--color-adex-neutral-primary) !important;
+    }
+
+    &.flat,
+    &.toggle {
+      color: var(--color-adex-neutral-primary) !important;
+
+      &:focus:not(:active) {
+        background: var(--button-neutral-color-hover) !important;
+      }
+    }
+
+    &.flat:hover {
+      background: var(--button-neutral-color-hover) !important;
+    }
+  }
+}

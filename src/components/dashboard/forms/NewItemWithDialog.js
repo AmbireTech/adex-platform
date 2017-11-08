@@ -36,6 +36,8 @@ export default function ItemHoc(Decorated) {
                         flat={this.props.flat}
                         theme={this.props.theme}
                         className={classnames( 
+                            theme.new,
+                            theme.special,
                             {[theme.floating]: this.props.floating},
                             {[theme[this.props.color]]: !!this.props.color}
                         )}

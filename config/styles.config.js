@@ -7,7 +7,7 @@ const reactToolboxVariables  = {
     'color-accent':  '#97D40E',
     'color-accent-dark': '#00FFBF',
     'color-primary-contrast': '#FFFFFF',
-    'color-accent-contrast': '#FFFFFF',
+    'color-accent-contrast': '#FFFFFF'
 }
 
 module.exports = {

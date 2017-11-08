@@ -1,16 +1,4 @@
 :root {
-    --color-divider: #666;
-    --color-background: #fff;
-    --color-text: #333;
-    --color-text-secondary: #999;
-
-    --color-primary: #1b75bc;
-    --color-primary-dark: #800080;
-    --color-accent: #302060;
-    --color-accent-dark: #102080;
-    --color-primary-contrast: #fff;
-    --color-accent-contrast: #000;
-
     --color-nav-item: rgba(40, 20, 200);
 
     /*AdEx Blue*/
@@ -30,7 +18,18 @@
     /*AdEx Green*/
     --color-adex-accent-primary: #00E676; /* Green A400 */
     --color-adex-accent-accent: #00ffbf; /* Teal A400-custo */
-    --color-adex-accent-contrast: #FFFFFF;     
+    --color-adex-accent-contrast: #FFFFFF;    
+
+    /*Adex Dark*/
+    --color-adex-dark-primary: #3C3C3c;
+
+    /*AdEx danger*/
+    --color-adex-danger-primary: #FF5722; /* Deep Orange 500 */
+    --color-adex-danger-contrast: #FFFFFF;        
+
+    /*AdEx neutral*/
+    --color-adex-neutral-primary: #FFFFFF;  /* Deep Orange 500 */
+    --color-adex-neutral-contrast: #787878;     
 
     /* Sections gradients */
     --gradient-adex-first: linear-gradient(to left, #34b3f8, #1a75ed);
