@@ -33,7 +33,6 @@ class NewUnitForm extends Component {
         this.props.validate('fullName', this.props.item._meta.ad_url, () => !msg, reset ? '' : msg)
     }
 
-
     render() {
         let item = this.props.item
         let t = this.props.t
@@ -50,7 +49,11 @@ class NewUnitForm extends Component {
                     onBlur={this.validateName.bind(this, item._meta.fullName, false)}
                     onFocus={this.validateName.bind(this, item._meta.fullName, true)}
                     error={this.props.invalidFields['fullName'] ? <span> {t(this.props.invalidFields['fullName'])} </span> : null}
-                    maxLength={128} />
+                    maxLength={128} >
+                    <span className>
+                        Put full name here
+                    </span>
+                </Input>
                 <Input
                     type='text'
                     multiline

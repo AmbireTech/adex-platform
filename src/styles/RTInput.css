@@ -1,0 +1,10 @@
+@import './variables.css';
+
+.input {
+    & > span:not(.counter):not(.error):not(.label):not(.bar) {
+        position: absolute;
+        left: 0;
+        font-size: 12px;
+        bottom: 0;
+    }
+}
