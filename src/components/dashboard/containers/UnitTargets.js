@@ -149,48 +149,49 @@ export class UnitTargets extends Component {
             <Grid fluid>
                 <Row className={theme.targetsHead}>
                     <Col lg={7}>
-                        TARGET
+                        {t('TARGET')}
                     </Col>
                     <Col lg={5}>
-                        Weight
+                        {t('WEIGHT')}
                     </Col>
                 </Row>
                 {
                     meta.targets.map((target) => {
-                        return (<Row key={target.name} className={theme.targetRow}>
-                            <Col lg={7}>
-                                {(() => {
-                                    switch (target.name) {
-                                        case 'location':
-                                            return this.renderLocationTarget(target)
-                                        case 'gender':
-                                            return this.renderGendersTarget(target)
-                                        case 'age':
-                                            return this.renderAgeTarget(target)
-                                        default: null
-                                    }
-                                })()}
-                            </Col>
-                            <Col lg={5} style={{ position: 'relative' }}>
-                                <div className={classnames(theme.sliderWrapper)}>
-                                    <label className={classnames(theme.sliderLabel, theme.weightLabel)}>
-                                        {target.name}  weight:
-                                <strong> {target.weight} </strong>
-                                        ({TargetWeightLabels[target.weight]})
-                            </label>
-                                    <Slider className={theme.weightSlider}
-                                        pinned
-                                        snaps
-                                        min={0}
-                                        max={4}
-                                        step={1}
-                                        value={target.weight}
-                                        onChange={this.handleTargetChange.bind(this, target, 'updateWeight')}
-                                    />
-                                </div>
-                            </Col>
+                        return (
+                            <Row key={target.name} className={theme.targetRow}>
+                                <Col lg={7}>
+                                    {(() => {
+                                        switch (target.name) {
+                                            case 'location':
+                                                return this.renderLocationTarget(target)
+                                            case 'gender':
+                                                return this.renderGendersTarget(target)
+                                            case 'age':
+                                                return this.renderAgeTarget(target)
+                                            default: null
+                                        }
+                                    })()}
+                                </Col>
+                                <Col lg={5} style={{ position: 'relative' }}>
+                                    <div className={classnames(theme.sliderWrapper)}>
+                                        <label className={classnames(theme.sliderLabel, theme.weightLabel)}>
+                                            {target.name}  weight:
+                                            <strong> {target.weight} </strong>
+                                            ({TargetWeightLabels[target.weight]})
+                                        </label>
+                                        <Slider className={theme.weightSlider}
+                                            pinned
+                                            snaps
+                                            min={0}
+                                            max={4}
+                                            step={1}
+                                            value={target.weight}
+                                            onChange={this.handleTargetChange.bind(this, target, 'updateWeight')}
+                                        />
+                                    </div>
+                                </Col>
 
-                        </Row>
+                            </Row>
                         )
                     })
                 }

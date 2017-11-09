@@ -14,6 +14,7 @@ import Rows from 'components/dashboard/collection/Rows'
 import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import BidForm from 'components/dashboard/forms/BidForm'
 import Dialog from 'react-toolbox/lib/dialog'
+import Translate from 'components/translate/Translate'
 
 const SORT_PROPERTIES = [
     { value: '_id', label: 'Id' },
@@ -34,9 +35,9 @@ export class UnitSlots extends Component {
     renderTableHead() {
         return (
             <TableHead>
-                <TableCell> Slot </TableCell>
-                <TableCell> Traffic </TableCell>
-                <TableCell>  </TableCell>
+                <TableCell> {this.props.t('PUBLISHER')} </TableCell>
+                <TableCell> {this.props.t('SLOT')} </TableCell>
+                <TableCell> {this.props.t('ACTIONS')} </TableCell>
             </TableHead>
         )
     }
@@ -44,8 +45,8 @@ export class UnitSlots extends Component {
     renderTableRow(item, index, { to, selected }) {
         return (
             <TableRow key={item._id}>
+                <TableCell> {item._owner} </TableCell>
                 <TableCell> {item._name} </TableCell>
-                <TableCell> {index * 1000} </TableCell>
                 <TableCell>
                     <Button accent raised label='PLACE_BID' onClick={this.bid.bind(this, item, !this.state.bidding)} />
                 </TableCell>
@@ -68,31 +69,31 @@ export class UnitSlots extends Component {
     renderDialog = () => {
         return (
             <span>
-            <Dialog
-                theme={theme}
-                active={this.state.bidding}
-                onEscKeyDown={this.bid.bind(this, {}, !this.state.bidding)}
-                onOverlayClick={this.bid.bind(this, {}, !this.state.bidding)}
-                title={'Place bid for ' + this.state.activeSlot._name}
-                type={this.props.type || 'normal'}
-            >
-                <IconButton
-                    icon='close'
-                    onClick={this.bid.bind(this, {}, !this.state.bidding)}
-                    primary
-                    style={{ position: 'absolute', top: 20, right: 20 }}
-                />
+                <Dialog
+                    theme={theme}
+                    active={this.state.bidding}
+                    onEscKeyDown={this.bid.bind(this, {}, !this.state.bidding)}
+                    onOverlayClick={this.bid.bind(this, {}, !this.state.bidding)}
+                    title={'Place bid for ' + this.state.activeSlot._name}
+                    type={this.props.type || 'normal'}
+                >
+                    <IconButton
+                        icon='close'
+                        onClick={this.bid.bind(this, {}, !this.state.bidding)}
+                        primary
+                        style={{ position: 'absolute', top: 20, right: 20 }}
+                    />
 
-                <BidForm slot={this.state.slot} />
+                    <BidForm slot={this.state.slot} />
 
-            </Dialog>
-        </span>
+                </Dialog>
+            </span>
 
         )
     }
 
-    bid = (slot, active)=> {
-        this.setState({slot: slot, bidding: active})
+    bid = (slot, active) => {
+        this.setState({ slot: slot, bidding: active })
 
     }
     render() {
@@ -105,8 +106,8 @@ export class UnitSlots extends Component {
 
         return (
             <div>
-            <ItemsList items={slots} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} />
-            {this.renderDialog()}
+                <ItemsList items={slots} listMode='rows' delete renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} />
+                {this.renderDialog()}
             </div>
         )
     }
@@ -141,4 +142,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(UnitSlots);
+)(Translate(UnitSlots));

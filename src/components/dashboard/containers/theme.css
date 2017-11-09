@@ -159,7 +159,7 @@
     flex-flow: column;
     justify-content: center;
     margin: 0;
-    z-index: 100;
+    z-index: 110;
     &.Campaign, &.Channel{
         background: var(--gradient-adex-first);
         &.items{
@@ -212,7 +212,8 @@
     max-width: calc(100% - 400px)
 }
 .targetsHead {
-    border-bottom: 1px solid #666;
+    border-bottom: 1px solid var(--color-adex-neutral-contrast);
+    color: var(--color-adex-neutral-contrast);
     padding-bottom: 5px;
 }
 .weightSlider {
@@ -228,6 +229,7 @@
 
 .targetRow {
     margin-top: 10px;
+    border-bottom: 1px solid var(--color-adex-neutral-contrast);
 }
 
 .weightCol {

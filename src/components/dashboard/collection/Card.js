@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
-import { Button, IconButton } from 'react-toolbox/lib/button'
+import { Button } from 'react-toolbox/lib/button'
 import theme from './theme.css'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import Tooltip from 'react-toolbox/lib/tooltip'
@@ -8,12 +8,8 @@ import Img from 'components/common/img/Img'
 import { ItemTypesNames } from 'constants/itemsTypes'
 import Item from 'models/Item'
 
-// const RRButton = withReactRouterLink(Button)
-const RRCardTitle = withReactRouterLink(CardTitle)
 const RRCardMedia = withReactRouterLink(CardMedia)
-
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))
-const TooltipIconButton = Tooltip(IconButton)
 
 class MyCard extends Component {
 

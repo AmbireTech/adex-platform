@@ -14,12 +14,12 @@ import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import theme from './theme.css'
 import tableTheme from 'components/dashboard/collection/theme.css'
 import RTButtonTheme from 'styles/RTButton.css'
-
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Img from 'components/common/img/Img'
 import Item from 'models/Item'
 import moment from 'moment'
+import Translate from 'components/translate/Translate'
 
 const RRTableCell = withReactRouterLink(TableCell)
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))
@@ -117,9 +117,9 @@ class ItemsList extends Component {
                             onClick={null}
                             tooltip='Delete all'
                             tooltipDelay={1000}
-                            tooltipPosition='top' 
+                            tooltipPosition='top'
                             className={RTButtonTheme.danger}
-                            />
+                        />
                         :
                         'Select all'
                     }
@@ -401,4 +401,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ItemsList);
+)(Translate(ItemsList));
