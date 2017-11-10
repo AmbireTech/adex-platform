@@ -53,8 +53,6 @@ export default function ItemHoc(Decorated) {
                         <IconButton
                             icon='close'
                             onClick={this.handleToggle}
-                            primary
-                            style={{ position: 'absolute', top: 20, right: 20 }}
                         />
                         <Decorated {...this.props} onSave={this.handleToggle} />
                     </Dialog>

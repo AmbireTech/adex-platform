@@ -14,19 +14,19 @@ const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
 export const NewUnit = (props) =>
     <NewItemStepsWithDialog
         {...props}
-        btnLabel="New Unit"
-        title="Create new unit"
+        btnLabel="LABEL_NEW_UNIT"
+        title="LABEL_CREATE_NEW_UNIT"
         itemType={ItemsTypes.AdUnit.id}
         itemPages={[NewUnitFormBasic]}
-        imgLabel="ADUNIT_BANNER"
+        imgLabel="UNIT_BANNER"
         noDefaultImg
     />
 
 export const NewCampaign = (props) =>
     <NewItemStepsWithDialog
         {...props}
-        btnLabel="New Campaign"
-        title="Create new Campaign"
+        btnLabel="LABEL_NEW_CAMPAIGN"
+        title="LABEL_CREATE_NEW_CAMPAIGN"
         itemType={ItemsTypes.Campaign.id}
         itemPages={[NewCampaignForm]}
         imgLabel="CAMPAIGN_LOGO"
@@ -35,20 +35,21 @@ export const NewCampaign = (props) =>
 export const NewSlot = (props) =>
     <NewItemStepsWithDialog
         {...props}
-        btnLabel="New Slot"
-        title="Create new slot"
+        btnLabel="LABEL_NEW_SLOT"
+        title="LABEL_CREATE_NEW_SLOT"
         itemType={ItemsTypes.AdSlot.id}
         itemPages={[NewSlotForm]}
         imgLabel="SLOT_LOGO"
-        noDefaultImg        
+        noDefaultImg
+        descriptionHelperTxt="SLOT_DESCRIPTION_HELPER"    
     />
 
 export const NewChannel = (props) =>
     <NewItemStepsWithDialog
         {...props}
-        btnLabel="New Channel"
-        title="Create new Channel"
+        btnLabel="LABEL_NEW_CHANNEL"
+        title="LABEL_CREATE_NEW_CHANNEL"
         itemType={ItemsTypes.Channel.id}
-        itemPages={[]}
+        itemPages={[NewChannelForm]}
         imgLabel="CHANNEL_LOGO"
     />

@@ -5,10 +5,12 @@
     --input-text-required-color: var(--color-adex-danger-primary);
     --input-text-highlight-color: var(--color-primary);
     --underline-margin-bottom: 8px;
+    --input-padding: calc(2 * var(--unit));
 }
 
 .input {
     text-align: left;
+    
     & > div {
         font-size: 12px;
         top: calc(100% - 17px);
@@ -23,7 +25,6 @@
 .counter {
     display: inline-block;
     margin-top: var(--underline-margin-bottom);
-    margin-bottom: 0;
     line-height: inherit !important;
     max-width: calc(100% - 60px);
 }
@@ -37,6 +38,8 @@
 }
 
 .inputElement {
+    resize: vertical;
+
     &:focus:not([disabled]):not([readonly]) {
         & ~ .label:not(.fixed) {
             color: var(--input-text-highlight-color) !important;
@@ -57,6 +60,8 @@
 }
 
 .errored {
+    padding-bottom: var(--input-padding);
+
     & > .inputElement {
         border-bottom-color: var(--input-text-error-color) !important;
     }

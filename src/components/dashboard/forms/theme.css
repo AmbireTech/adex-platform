@@ -1,7 +1,6 @@
 @import './../../../../node_modules/react-toolbox/lib/variables.css';
 @import '../../../styles/variables.css';
 
-
 .dropzone {
     display: flex;
     flex-direction: column;
@@ -13,24 +12,25 @@
     align-items: center;
     justify-content: center;
     padding: 10px;
+    cursor: pointer;
+    overflow: hidden;
 
     & .droppedImgContainer {
         text-align: center;
         align-self: stretch;
         flex: 1 1;
-        justify-content: center;
         flex-direction: row;
         display: flex;
-        justify-content: center;
+        justify-content: space-around;
         align-items: center;
 
         & .imgDropzonePreview {
             height: 126px;
             width: auto;
-            border: 1px solid var(--color-adex-dark-primary)
         }
     }
 }
+
 .floating {
     position: fixed;
     top: 116px;
@@ -101,8 +101,12 @@
     margin: 30px 0;
 }
 
-.imgHolder {
-
+.uploadInfo {
+    text-align: left;
+    cursor: pointer;
+    margin: 10px;
+    overflow: hidden;
+    max-height: 100%;
 }
 
 .grid {

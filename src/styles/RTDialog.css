@@ -1,1 +1,9 @@
+.body {
+    padding-top: 36px !important;
 
+    & > button {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+}

@@ -49,9 +49,9 @@ class NewUnitForm extends Component {
                     onFocus={this.validateName.bind(this, item._meta.fullName, true)}
                     error={this.props.invalidFields['fullName'] ? <span> {t(this.props.invalidFields['fullName'])} </span> : null}
                     maxLength={128} >
-                    {!this.props.invalidFields['fullName'] ?
+                    {this.props.nameHelperTxt && !this.props.invalidFields['fullName'] ?
                         <div>
-                            Put full name here
+                            {this.props.nameHelperTxt}
                         </div> : null}
                 </Input>
                 <Input
@@ -61,7 +61,12 @@ class NewUnitForm extends Component {
                     label={t('description', { isProp: true })}
                     value={item._meta.description}
                     onChange={this.props.handleChange.bind(this, 'description')}
-                    maxLength={1024} />
+                    maxLength={1024} >
+                    {this.props.descriptionHelperTxt && !this.props.invalidFields['description'] ?
+                        <div>
+                            {this.props.descriptionHelperTxt}
+                        </div> : null}
+                </Input>
 
                 {this.props.noDefaultImg ?
                     null :
@@ -79,7 +84,9 @@ NewUnitForm.propTypes = {
     title: PropTypes.string,
     items: PropTypes.array.isRequired,
     itemType: PropTypes.number.isRequired,
-    imgLabel: PropTypes.string
+    imgLabel: PropTypes.string,
+    descriptionHelperTxt: PropTypes.string,
+    nameHelperTxt: PropTypes.string,
 }
 
 function mapStateToProps(state, props) {

@@ -3,17 +3,12 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { BrowseButton } from 'react-toolbox/lib/button'
-import ipfsAPI from 'ipfs-api'
 import Img from 'components/common/img/Img'
-import { addImgFromObjectURL } from 'services/ipfs/ipfsService'
-import { Button, IconButton } from 'react-toolbox/lib/button'
 import theme from './theme.css'
 import debounce from 'debounce'
 import Dropzone from 'react-dropzone'
 import { FontIcon } from 'react-toolbox/lib/font_icon'
-
-const ipfs = ipfsAPI('localhost', '5001')
+import Translate from 'components/translate/Translate'
 
 class ImgForm extends Component {
 
@@ -24,9 +19,6 @@ class ImgForm extends Component {
       imgSrc: props.imgSrc || '',
       imgName: ''
     }
-
-    // Temp until react toolbox update or make own file upload btn
-    this.debauncedHandleFileChange = debounce(this.handleFileChange, 200, true)
   }
 
   onDrop = (acceptedFiles, rejectedFiles) => {
@@ -41,16 +33,18 @@ class ImgForm extends Component {
     this.props.onChange({ tempUrl: objectUrl })
   }
 
-  handleFileChange = e => {
-    let that = this
-    let file = e.target.files[0]
-    console.log('file', file)
-    if (!file) return
-    let objectUrl = URL.createObjectURL(e.target.files[0])
-    console.log('objectUrl', objectUrl)
-
-    that.setState({ imgSrc: objectUrl, imgName: file.name })
-    this.props.onChange({ tempUrl: objectUrl })
+  UploadInfo = () => {
+    return (
+      <div className={theme.uploadInfo}>
+        <FontIcon value='file_upload' />
+        <div>
+          <span> {this.props.t('DRAG_AND_DROP_TO_UPLOAD')} </span>
+        </div>
+        <div>
+          <small> (max 2MB; .jpeg, .jpg, .png)  </small>
+        </div>
+      </div>
+    )
   }
 
   // TODO: CLEAR IMG BLOB!!!!
@@ -65,41 +59,16 @@ class ImgForm extends Component {
             <span> {this.props.label || 'Upload image'} </span>
           }
 
-          {/* <BrowseButton
-            floating
-            icon="file_upload"
-            mini
-            accent
-            onChange={this.debauncedHandleFileChange}
-            className={theme.imgUploadBtn}
-          /> */}
-
         </div>
         <div>
-          <Dropzone accept='.jpeg,.png' onDrop={this.onDrop} className={theme.dropzone} >
+          <Dropzone accept='.jpeg,.jpg,.png' onDrop={this.onDrop} className={theme.dropzone} >
             <div className={theme.droppedImgContainer}>
-              {this.state.imgSrc ?
                 <Img src={this.state.imgSrc} alt={'name'} className={theme.imgDropzonePreview} />
-                :
-                <div>
-                    <FontIcon value='cloud_upload' />
-                  <div>
-                    <span> Drag and drop file here or click </span>
-                  </div>
-                </div>
-              }
+                <this.UploadInfo />
             </div>
 
           </Dropzone>
         </div>
-
-        {/* <div className={theme.imgHolder}>
-          {this.state.imgSrc ?
-            <Img src={this.state.imgSrc} alt={'name'} className={theme.imgPreview} />
-            : null
-          }
-        </div> */}
-        {/* <Button icon='file_upload' label='Test upload to ipfs' accent onClick={this.testUpload} /> */}
       </div>
     )
   }
@@ -127,4 +96,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ImgForm)
+)(Translate(ImgForm))

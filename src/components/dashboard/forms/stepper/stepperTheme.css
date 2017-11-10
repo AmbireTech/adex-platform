@@ -4,7 +4,7 @@
     position: absolute;
     left: 25px;
     right: 25px;
-    top: 85px;
+    top: 100px;
     bottom: 25px;
 }
 .stepperNav {
@@ -19,7 +19,7 @@
         flex: 1 0 0px;
         text-align: center;
         padding: 12px;
-        padding-bottom: 24px;
+        padding-bottom: 25px;
         font-size: 14px;
         color: rgba(0,0,0, 38%);
         overflow: hidden;
@@ -128,7 +128,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    top: 110px;
+    top: 100px;
 }
 
 .pageContent {
