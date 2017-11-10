@@ -38,7 +38,6 @@ class NewUnitForm extends Component {
         let t = this.props.t
         return (
             <div>
-
                 <Input
                     type='text'
                     required
@@ -50,9 +49,10 @@ class NewUnitForm extends Component {
                     onFocus={this.validateName.bind(this, item._meta.fullName, true)}
                     error={this.props.invalidFields['fullName'] ? <span> {t(this.props.invalidFields['fullName'])} </span> : null}
                     maxLength={128} >
-                    <span className>
-                        Put full name here
-                    </span>
+                    {!this.props.invalidFields['fullName'] ?
+                        <div>
+                            Put full name here
+                        </div> : null}
                 </Input>
                 <Input
                     type='text'

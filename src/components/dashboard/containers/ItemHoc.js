@@ -169,7 +169,7 @@ export default function ItemHoc(Decorated) {
                             toggleImgEdit={this.handleToggle.bind(this)}
                         />
                     </div>
-                    <pre> {JSON.stringify(item, null, 2)} </pre>
+                    {/* <pre> {JSON.stringify(item, null, 2)} </pre> */}
 
                 </div>
             )
