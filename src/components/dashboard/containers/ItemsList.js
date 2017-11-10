@@ -375,7 +375,6 @@ class ItemsList extends Component {
     }
 }
 
-
 ItemsList.propTypes = {
     actions: PropTypes.object.isRequired,
     items: PropTypes.array.isRequired,

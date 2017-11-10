@@ -10,6 +10,7 @@ import NewSlotForm from 'components/dashboard/forms/NewSlotForm'
 // import theme from './theme.css'
 import AddItemDialog from './AddItemDialog'
 import NewItemSteps from 'components/dashboard/forms/NewItemSteps'
+import theme from './theme.css'
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
@@ -47,22 +48,26 @@ export class Channel extends Component {
 
         return (
             <div>
-                <h2>Ad slots in this channel {'(' + (slots.length) + ')'}</h2>
-                <div>
-                    <AddItemDialog
-                        accent
-                        addCampaign={this.props.actions.addCampaign}
-                        btnLabel='Add new Slot to the channel'
-                        title=''
-                        items={otherSlots}
-                        viewMode={VIEW_MODE_UNITS}
-                        listMode='rows'
-                        addTo={item}
-                        newForm={(props) =>
-                            <NewItemSteps {...props} addTo={item} itemPages={[NewSlotForm]} itemType={ItemsTypes.AdSlot.id} />
-                        }
-                    />
-                </div>
+                <h2>
+                    <span> Slots in this channel {'(' + (slots.length) + ')'} </span>
+                    <span>
+                        <div className={theme.newIemToItemBtn} >
+                            <AddItemDialog
+                                color='second'
+                                addCampaign={this.props.actions.addCampaign}
+                                btnLabel='Add new Slot to the channel'
+                                title=''
+                                items={otherSlots}
+                                viewMode={VIEW_MODE_UNITS}
+                                listMode='rows'
+                                addTo={item}
+                                newForm={(props) =>
+                                    <NewItemSteps {...props} addTo={item} itemPages={[NewSlotForm]} itemType={ItemsTypes.AdSlot.id} />
+                                }
+                            />
+                        </div>
+                    </span>
+                </h2>
                 <ItemsList parentItem={item} removeFromItem items={slots} viewModeId={VIEW_MODE} />
             </div>
         )

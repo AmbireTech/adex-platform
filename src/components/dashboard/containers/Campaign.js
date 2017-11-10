@@ -60,7 +60,7 @@ export class Campaign extends Component {
                     <span> Units in this campaign {'(' + (units.length) + ')'}</span>
 
                     <span>
-                        <div style={{ display: 'inline-block', marginLeft: 20 }}>
+                        <div className={theme.newIemToItemBtn}>
                             <AddItemDialog
                                 color='second'
                                 addCampaign={this.props.actions.addCampaign}
