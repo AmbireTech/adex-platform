@@ -10,13 +10,24 @@ const translations = adexTranslations()
 export default function Translate(Decorated) {
   class Translated extends Component {
 
-    t(val, { isProp = false } = {}) {
+    interpolate(tpl, args) {
+      return tpl.replace(/\${(\w+)}/g, function (_, v) { return args[v] })
+    }
+
+    t(val, { isProp = false, args = [] } = {}) {
       let key = val + ''
       if (isProp) {
         key = 'PROP_' + key
       }
       key = key.toUpperCase()
-      return translations[this.props.language][key] || val
+
+      let translation = translations[this.props.language][key] || val
+
+      if(args.length && Array.isArray(args)){
+        translation = this.interpolate(translation, args)
+      }
+
+      return translation
     }
 
     render() {
