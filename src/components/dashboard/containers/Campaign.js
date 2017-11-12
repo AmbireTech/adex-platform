@@ -13,6 +13,7 @@ import AddItemDialog from './AddItemDialog'
 import NewItemSteps from 'components/dashboard/forms/NewItemSteps'
 import moment from 'moment'
 import FontIcon from 'react-toolbox/lib/font_icon'
+import Translate from 'components/translate/Translate'
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
@@ -57,19 +58,20 @@ export class Campaign extends Component {
         return (
             <div>
                 <h2>
-                    <span> Units in this campaign {'(' + (units.length) + ')'}</span>
-
+                    <span>{this.props.t('UNITS_IN_CAMPAIGN', {args: [units.length]})}</span>
                     <span>
                         <div className={theme.newIemToItemBtn}>
                             <AddItemDialog
                                 color='second'
                                 addCampaign={this.props.actions.addCampaign}
-                                btnLabel='Add new Unit to campaign'
+                                btnLabel={this.props.t('NEW_UNIT_TO_CAMPAIGN')}
                                 title=''
                                 items={otherUnits}
                                 viewMode={VIEW_MODE_UNITS}
                                 listMode='rows'
                                 addTo={item}
+                                tabNewLabel={this.props.t('NEW_UNIT')}
+                                tabExsLabel={this.props.t('EXISTING_UNIT')}
                                 newForm={(props) =>
                                     <NewItemSteps {...props} addTo={item} itemPages={[NewUnitForm]} itemType={ItemsTypes.AdUnit.id} />
                                 }
@@ -137,4 +139,4 @@ const CampaignItem = ItemHoc(Campaign)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(CampaignItem)
+)(Translate(CampaignItem))

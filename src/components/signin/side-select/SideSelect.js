@@ -26,28 +26,29 @@ const RRSideBox = withReactRouterLink(SideBox)
 class SideSelect extends Component {
 
   render() {
-    console.log('SideSelect', this.props);
+    // console.log('SideSelect', this.props)
+    let t = this.props.t
     return (
       <div >
         <Dialog
           active={true}
-          title='Choose a your side'
+          title={t('CHOOSE_SIDE')}
         >
 
           <RRSideBox
-            title={this.props.t("ADVERTISER")}
+            title={t('ADVERTISER')}
             icon={<AdvertiserLogo />}
-            salePoints={['Have Something to sell', 'Have ADX']}
-            to="/dashboard/advertiser"
-            linkTitle="Go to advertiser to advertise"
+            salePoints={[t('SALE_POINT_ADV_1'), t('SALE_POINT_ADV_2'), t('SALE_POINT_ADV_3')]}
+            to='/dashboard/advertiser'
+            linkTitle={t('GO_ADVERTISER')}
           />
 
           <RRSideBox
-            title={this.props.t("PUBLISHER")}
+            title={t('PUBLISHER')}
             icon={<PublisherLogo />}
-            salePoints={['Decentralization', 'Want ADX']}
-            to="/dashboard/publisher"
-            linkTitle="Go to publisher to publish"
+            salePoints={[t('SALE_POINT_PUB_1'), t('SALE_POINT_PUB_2'), t('SALE_POINT_PUB_3')]}
+            to='/dashboard/publisher'
+            linkTitle={t('GO_PUBLISHER')}
           />
 
         </Dialog>

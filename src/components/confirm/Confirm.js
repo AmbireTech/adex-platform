@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Dialog from 'react-toolbox/lib/dialog'
+import Translate from 'components/translate/Translate'
 
 export class Confirm extends Component {
     constructor(props) {
@@ -41,8 +42,8 @@ export class Confirm extends Component {
         return (
             <Dialog
                 actions={[
-                    { label: this.props.cancelLabel, onClick: this.cancel },
-                    { label: this.props.confirmLabel, onClick: this.confirm }
+                    { label: this.props.cancelLabel || this.props.t('CANCEL'), onClick: this.cancel },
+                    { label: this.props.confirmLabel || this.props.t('OK'), onClick: this.confirm }
                 ]}
                 active={this.state.active}
                 onEscKeyDown={this.cancel}
@@ -73,10 +74,10 @@ Confirm.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        cancelLabel: state.confirm.data.cancelLabel || 'Cancel',
-        confirmLabel: state.confirm.data.confirmLabel || 'Ok',
-        title: state.confirm.data.title || 'Title',
-        text: state.confirm.data.text || 'Text',
+        cancelLabel: state.confirm.data.cancelLabel,
+        confirmLabel: state.confirm.data.confirmLabel,
+        title: state.confirm.data.title || '',
+        text: state.confirm.data.text || '',
         confirm: state.confirm.onConfirm,
         cancel: state.confirm.onCancel,
         visible: state.confirm.active || false,
@@ -93,4 +94,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Confirm);
+)(Translate(Confirm))

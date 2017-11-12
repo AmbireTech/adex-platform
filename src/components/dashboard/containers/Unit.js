@@ -17,6 +17,7 @@ import { Tab, Tabs } from 'react-toolbox'
 import UnitTargets from './UnitTargets'
 import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
 import Tooltip from 'react-toolbox/lib/tooltip'
+import Translate from 'components/translate/Translate'
 
 const TooltipButton = Tooltip(Button)
 
@@ -93,17 +94,17 @@ export class Unit extends Component {
                         index={this.state.tabIndex}
                         onChange={this.handleTabChange.bind(this)}
                     >
-                        <Tab label='TARGETS'>
+                        <Tab label={t('TARGETS')}>
                             <div>
                                 <UnitTargets {...this.props} meta={meta} t={t} />
                             </div>
                         </Tab>
-                        <Tab theme={theme} label='SLOTS'>
+                        <Tab theme={theme} label={t('SLOTS')}>
                             <div>
                                 <UnitSlots item={item} />
                             </div>
                         </Tab>
-                        <Tab label='BIDS'>
+                        <Tab label={t('BIDS')}>
                             <div> render bids here </div>
                         </Tab>
                     </Tabs>
@@ -142,4 +143,4 @@ const UnitItem = ItemHoc(Unit)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(UnitItem);
+)(Translate(UnitItem))

@@ -47,8 +47,8 @@ class Dashboard extends React.Component {
     renderAdUnits = () => {
         return (
             <Items
-                header="All Units"
-                viewModeId="rowsViewUnits"
+                header={this.props.t('ALL_UNITS')}
+                viewModeId='rowsViewUnits'
                 itemsType={ItemsTypes.AdUnit.id}
                 newItemBtn={() => <NewUnit floating accent />}
             />
@@ -58,8 +58,8 @@ class Dashboard extends React.Component {
     renderCampaigns = () => {
         return (
             <Items
-                header="All Campaigns"
-                viewModeId="rowsViewCampaigns"
+                header={this.props.t('ALL_CAMPAIGNS')}
+                viewModeId='rowsViewCampaigns'
                 itemsType={ItemsTypes.Campaign.id}
                 newItemBtn={() => <NewCampaign floating accent />}
             />
@@ -69,8 +69,8 @@ class Dashboard extends React.Component {
     renderAdSlots = () => {
         return (
             <Items
-                header="All Slots"
-                viewModeId="rowsViewSlots"
+                header={this.props.t('ALL_SLOTS')}
+                viewModeId='rowsViewSlots'
                 itemsType={ItemsTypes.AdSlot.id}
                 newItemBtn={() => <NewSlot floating accent />}
             />
@@ -80,8 +80,8 @@ class Dashboard extends React.Component {
     renderChannels = () => {
         return (
             <Items
-                header="All Channels"
-                viewModeId="rowsViewChannels"
+                header={this.props.t('ALL_CHANNELS')}
+                viewModeId='rowsViewChannels'
                 itemsType={ItemsTypes.Channel.id}
                 newItemBtn={() => <NewChannel floating accent />}
             />
@@ -92,7 +92,7 @@ class Dashboard extends React.Component {
 
         return (
             <div>
-                {this.props.t("DASHBOARD")}
+                {this.props.t('DASHBOARD')}
             </div>
         )
     }
@@ -110,17 +110,17 @@ class Dashboard extends React.Component {
                     <TopBar side={side} />
                     <Switch>
                         {/* TODO: Make things dynamic if easier */}
-                        <Route exact path="/dashboard/advertiser/campaigns" component={this.renderCampaigns} />
-                        <Route exact path="/dashboard/advertiser/units" component={this.renderAdUnits} />
-                        <Route exact path="/dashboard/advertiser/Campaign/:itemId" component={Campaign} />
-                        <Route exact path="/dashboard/advertiser/AdUnit/:itemId" component={Unit} />
+                        <Route exact path='/dashboard/advertiser/campaigns' component={this.renderCampaigns} />
+                        <Route exact path='/dashboard/advertiser/units' component={this.renderAdUnits} />
+                        <Route exact path='/dashboard/advertiser/Campaign/:itemId' component={Campaign} />
+                        <Route exact path='/dashboard/advertiser/AdUnit/:itemId' component={Unit} />
 
-                        <Route exact path="/dashboard/publisher/channels" component={this.renderChannels} />
-                        <Route exact path="/dashboard/publisher/slots" component={this.renderAdSlots} />
-                        <Route exact path="/dashboard/publisher/Channel/:itemId" component={Channel} />
-                        <Route exact path="/dashboard/publisher/AdSlot/:itemId" component={Slot} />
+                        <Route exact path='/dashboard/publisher/channels' component={this.renderChannels} />
+                        <Route exact path='/dashboard/publisher/slots' component={this.renderAdSlots} />
+                        <Route exact path='/dashboard/publisher/Channel/:itemId' component={Channel} />
+                        <Route exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
 
-                        <Route exact path="/dashboard/:side" component={DashboardStats} />
+                        <Route exact path='/dashboard/:side' component={DashboardStats} />
                         <Route component={() => <h1>404 at {side} side</h1>} />
                     </Switch>
                 </Panel>

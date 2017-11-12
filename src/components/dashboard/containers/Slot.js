@@ -25,7 +25,7 @@ export class Slot extends Component {
         let meta = item._meta
         let t = this.props.t
 
-        if (!item) return (<h1>Unit '404'</h1>)
+        if (!item) return (<h1>Slot '404'</h1>)
 
         return (
             <div>

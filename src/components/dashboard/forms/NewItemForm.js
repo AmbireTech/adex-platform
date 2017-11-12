@@ -21,6 +21,7 @@ class NewUnitForm extends Component {
     }
 
     validateName(name, reset) {
+        // TODO: make msg to accept args for translation
         let msg = ''
         if (!name) {
             msg = 'REQUIRED_FIELD'

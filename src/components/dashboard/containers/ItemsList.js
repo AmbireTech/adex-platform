@@ -27,11 +27,11 @@ const TooltipIconButton = Tooltip(IconButton)
 const TooltipButton = Tooltip(Button)
 
 const SORT_PROPERTIES = [
-    { value: '_id', label: 'Id' },
-    { value: '_name', label: 'Short Name' },
-    { value: 'fullName', label: 'Full name' },
-    { value: 'modifiedOn', label: 'Date modified' },
-    { value: 'createdOn', label: 'Date created' }
+    { value: '_id' },
+    { value: '_name' },
+    { value: 'fullName' },
+    { value: 'modifiedOn' },
+    { value: 'createdOn' }
 ]
 
 const List = ({ list, itemRenderer }) => {
@@ -57,6 +57,19 @@ class ItemsList extends Component {
         }
 
         this.renderCard = this.renderCard.bind(this)
+    }
+
+    mapSortProperties = (sortProps) => {
+        return sortProps.map((prop) => {
+            if (prop.label) {
+                return prop
+            } else {
+                return {
+                    value: prop.value,
+                    label: this.props.t(prop.value, { isProp: true })
+                }
+            }
+        })
     }
 
     toggleView(value) {
@@ -330,7 +343,7 @@ class ItemsList extends Component {
                                         icon='sort'
                                         label='Sort by'
                                         onChange={this.handleChange.bind(this, 'sortProperty')}
-                                        source={this.props.sortProperties || SORT_PROPERTIES}
+                                        source={this.mapSortProperties(this.props.sortProperties || SORT_PROPERTIES)}
                                         value={this.state.sortProperty}
                                     />
                                 </div>

@@ -76,10 +76,10 @@ export class UnitTargets extends Component {
     renderLocationTarget = (target) => {
         return (
             <Autocomplete
-                direction="down"
+                direction="auto"
                 multiple={true}
                 onChange={this.handleTargetChange.bind(this, target, null)}
-                label="Location"
+                label={this.props.t('TARGET_LOCATION')}
                 source={AcLocations}
                 value={target.value}
                 suggestionMatch='anywhere'
@@ -92,10 +92,10 @@ export class UnitTargets extends Component {
     renderGendersTarget = (target) => {
         return (
             <Autocomplete
-                direction="down"
+                direction="auto"
                 multiple={true}
                 onChange={this.handleTargetChange.bind(this, target, null)}
-                label="Genders"
+                label={this.props.t('TARGET_GENDERS')}
                 source={AcGenders}
                 value={target.value}
                 suggestionMatch='anywhere'
@@ -113,10 +113,10 @@ export class UnitTargets extends Component {
                         <Col lg={6}>
 
                             <Autocomplete
-                                direction="down"
+                                direction="auto"
                                 multiple={false}
                                 onChange={this.handleTargetChange.bind(this, target, 'from')}
-                                label="Age from"
+                                label={this.props.t('TARGET_AGE_FROM')}
                                 source={ages.slice(0, (target.value.to | 0) + 1)}
                                 value={target.value.from + ''}
                                 suggestionMatch='anywhere'
@@ -127,10 +127,10 @@ export class UnitTargets extends Component {
                         <Col lg={6}>
 
                             <Autocomplete
-                                direction="down"
+                                direction="auto"
                                 multiple={false}
                                 onChange={this.handleTargetChange.bind(this, target, 'to')}
-                                label="Age to"
+                                label={this.props.t('TARGET_AGE_TO')}
                                 source={ages.slice(target.value.from | 0)}
                                 value={target.value.to + ''}
                                 suggestionMatch='anywhere'

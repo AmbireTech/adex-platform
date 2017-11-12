@@ -22,13 +22,13 @@ const mapStatsData = (data) => {
     return chartData
 }
 
-export const BidsStatusBars = ({ data, options }) => {
+export const BidsStatusBars = ({ data, options, t }) => {
     let mappedData = mapStatsData(data)
     let chartData = {
         labels: mappedData.labels,
         datasets: [
             {
-                label: 'Bids',
+                label: t('CHART_LABEL_BIDS'),
                 backgroundColor: CHARTS_COLORS[0],
                 // borderColor: CHARTS_COLORS[3],
                 hoverBackgroundColor: CHARTS_COLORS[0],
@@ -66,14 +66,14 @@ export const BidsStatusBars = ({ data, options }) => {
     )
 }
 
-export const BidsStatusPie = ({ data, options }) => {
+export const BidsStatusPie = ({ data, options, t }) => {
     let mappedData = mapStatsData(data)
     // let colors = hexColorsToRgbaArray(CHARTS_COLORS, 1)
     let chartData = {
         labels: mappedData.labels,
         datasets: [
             {
-                label: 'Bids',
+                label: t('CHART_LABEL_BIDS'),
                 backgroundColor: CHARTS_COLORS,
                 // borderColor: CHARTS_COLORS,
                 hoverBackgroundColor: CHARTS_COLORS,

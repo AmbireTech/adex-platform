@@ -6,6 +6,7 @@ import Dialog from 'react-toolbox/lib/dialog'
 import theme from './theme.css'
 import classnames from 'classnames'
 import RTButtonTheme from 'styles/RTButton.css'
+import Translate from 'components/translate/Translate'
 
 export default function ItemHoc(Decorated) {
     class NewItemWithDialog extends Component {
@@ -29,7 +30,7 @@ export default function ItemHoc(Decorated) {
                     <Button
                         floating={this.props.floating}
                         icon='add'
-                        label={this.props.floating ? '' : this.props.btnLabel}
+                        label={this.props.floating ? '' : this.props.t(this.props.btnLabel)}
                         onClick={this.handleToggle}
                         primary={this.props.primary}
                         raised={this.props.raised}
@@ -46,7 +47,7 @@ export default function ItemHoc(Decorated) {
                         active={this.state.active}
                         onEscKeyDown={this.handleToggle}
                         onOverlayClick={this.handleToggle}
-                        title={this.props.title}
+                        title={this.props.t(this.props.title)}
                         type={this.props.type || 'normal'}
                         className={theme[ItemTypesNames[this.props.itemType]]}
                     >
@@ -68,6 +69,6 @@ export default function ItemHoc(Decorated) {
         floating: PropTypes.bool
     }
 
-    return NewItemWithDialog
+    return Translate(NewItemWithDialog)
 }
 

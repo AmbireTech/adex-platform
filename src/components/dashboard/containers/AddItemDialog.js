@@ -8,6 +8,7 @@ import { Tab, Tabs } from 'react-toolbox'
 import ItemsList from './ItemsList'
 import classnames from 'classnames'
 import RTButtonTheme from 'styles/RTButton.css'
+import Translate from 'components/translate/Translate'
 
 export class AddItemDialog extends Component {
     constructor(props) {
@@ -29,7 +30,7 @@ export class AddItemDialog extends Component {
 
     render() {
         return (
-            <div>
+            <span>
                 <Button
                     floating={this.props.floating}
                     icon='add'
@@ -39,9 +40,9 @@ export class AddItemDialog extends Component {
                     raised={this.props.raised}
                     accent={this.props.accent}
                     flat={this.props.flat}
-                    className={classnames( 
-                        {[theme.floating]: this.props.floating},
-                        {[RTButtonTheme[this.props.color]]: !!this.props.color}
+                    className={classnames(
+                        { [theme.floating]: this.props.floating },
+                        { [RTButtonTheme[this.props.color]]: !!this.props.color }
                     )}
                 />
                 <Dialog
@@ -60,10 +61,10 @@ export class AddItemDialog extends Component {
                     />
 
                     <Tabs theme={theme} className={theme.dialogTabs} index={this.state.tabIndex} onChange={this.handleTabChange.bind(this)}>
-                        <Tab label='New Ad Unit'>
+                        <Tab label={this.props.tabNewLabel}>
                             {this.props.newForm({ onSave: this.handleToggle.bind(this) })}
                         </Tab>
-                        <Tab theme={theme} label='Add existing Ad Unit'>
+                        <Tab theme={theme} label={this.props.tabExsLabel}>
                             <div className={theme.dialogItemsListContainer}>
                                 <section className={theme.scrollable}>
                                     <ItemsList parentItem={this.props.addTo} addToItem items={this.props.items} viewModeId={this.props.viewMode} listMode={this.props.listMode} />
@@ -74,7 +75,7 @@ export class AddItemDialog extends Component {
                     {/* </div> */}
                 </Dialog>
 
-            </div >
+            </span >
         )
     }
 }
@@ -83,7 +84,9 @@ AddItemDialog.propTypes = {
     btnLabel: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     floating: PropTypes.bool,
-    listMode: PropTypes.string
+    listMode: PropTypes.string,
+    tabNewLabel: PropTypes.string.isRequired,
+    tabExsLabel: PropTypes.string.isRequired,
 }
 
-export default AddItemDialog
+export default Translate(AddItemDialog)

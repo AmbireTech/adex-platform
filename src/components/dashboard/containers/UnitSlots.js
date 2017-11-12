@@ -48,7 +48,7 @@ export class UnitSlots extends Component {
                 <TableCell> {item._owner} </TableCell>
                 <TableCell> {item._name} </TableCell>
                 <TableCell>
-                    <Button accent raised label='PLACE_BID' onClick={this.bid.bind(this, item, !this.state.bidding)} />
+                    <Button accent raised label={this.props.t('PLACE_BID')} onClick={this.bid.bind(this, item, !this.state.bidding)} />
                 </TableCell>
             </TableRow >
         )
@@ -74,7 +74,7 @@ export class UnitSlots extends Component {
                     active={this.state.bidding}
                     onEscKeyDown={this.bid.bind(this, {}, !this.state.bidding)}
                     onOverlayClick={this.bid.bind(this, {}, !this.state.bidding)}
-                    title={'Place bid for ' + this.state.activeSlot._name}
+                    title={this.props.t('PLACE_BID_FOR', {args: [this.state.activeSlot._name]})}
                     type={this.props.type || 'normal'}
                 >
                     <IconButton
@@ -84,7 +84,7 @@ export class UnitSlots extends Component {
                         style={{ position: 'absolute', top: 20, right: 20 }}
                     />
 
-                    <BidForm slot={this.state.slot} />
+                    <BidForm slot={this.state.activeSlot} />
 
                 </Dialog>
             </span>
@@ -93,7 +93,7 @@ export class UnitSlots extends Component {
     }
 
     bid = (slot, active) => {
-        this.setState({ slot: slot, bidding: active })
+        this.setState({ activeSlot: slot, bidding: active })
 
     }
     render() {

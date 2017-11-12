@@ -3,7 +3,7 @@ import { Bar, Doughnut, Line } from 'react-chartjs-2'
 import { CHARTS_COLORS, hexColorsToRgbaArray } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
 
-export const SlotsClicksAndRevenue = ({ data, options }) => {
+export const SlotsClicksAndRevenue = ({ data, options, t }) => {
     data = data.reduce((memo, item) => {
         memo.labels.push(item.name)
         memo.clicks.push(item.clicks)
@@ -32,14 +32,14 @@ export const SlotsClicksAndRevenue = ({ data, options }) => {
         datasets: [
             {
                 ...commonDsProps,
-                label: 'Clicks',
+                label: t('CHART_LABEL_CLICKS'),
                 data: data.clicks,
                 backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[0], 0.6),
                 yAxisID: 'y-axis-2'
             },
             {
                 ...commonDsProps,
-                label: 'Revenue',
+                label: t('CHART_LABEL_REVENUE'),
                 data: data.amounts,
                 backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[2], 0.6),
                 yAxisID: 'y-axis-1'

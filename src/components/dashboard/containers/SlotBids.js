@@ -16,16 +16,17 @@ import { Tab, Tabs } from 'react-toolbox'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
 import { BidsStatusBars, BidsStatusPie, SlotsClicksAndRevenue } from 'components/dashboard/charts/slot'
+import Translate from 'components/translate/Translate'
 
 // import d3 from 'd3'
 
 // const cardinal = d3.curveCardinal.tension(0.2)
 
 const SORT_PROPERTIES = [
-    { value: 'id', label: 'Id' },
-    { value: 'advertiser', label: 'Advertiser' },
-    { value: 'amount', label: 'Total reward' },
-    { value: 'requiredExecTime', label: 'Expiration date' }
+    { value: 'id', label: '' },
+    { value: 'advertiser', label: '' },
+    { value: 'amount', label: '' },
+    { value: 'requiredExecTime', label: '' }
 ]
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
@@ -51,7 +52,7 @@ export class SlotBids extends Component {
     renderSlotsClicksCharts({ bids }) {
         let data = BidsStatsGenerator.getRandomStatsForSlots(bids, 'days')
         return (
-            <SlotsClicksAndRevenue data={data} />
+            <SlotsClicksAndRevenue data={data} t={this.props.t} />
         )
     }
 
@@ -89,10 +90,10 @@ export class SlotBids extends Component {
                             {this.renderSlotsClicksCharts({ bids: this.props.bidsIds })}
                         </Col>
                         <Col xs={12} sm={12} md={6}>
-                            <BidsStatusBars data={data.states} />
+                            <BidsStatusBars data={data.states} t={this.props.t} />
                         </Col>
                         <Col xs={12} sm={12} md={6}>
-                            <BidsStatusPie data={data.states} />
+                            <BidsStatusPie data={data.states} t={this.props.t} />
                         </Col>
                     </Row>
                 </Grid>
@@ -103,25 +104,27 @@ export class SlotBids extends Component {
     }
 
     renderTableHead() {
+        let t = this.props.t
         return (
             <TableHead>
-                <TableCell> {this.props.t('TOTAL_REWARD')} </TableCell>
-                <TableCell> {this.props.t('CONVERSION_GOALS')} </TableCell>
-                <TableCell> {this.props.t('ADVERTISER')} </TableCell>
-                <TableCell> {this.props.t('EXPIRATION_DATE')} </TableCell>
-                <TableCell> {this.props.t('ACTIONS')} </TableCell>
+                <TableCell> {t('TOTAL_REWARD')} </TableCell>
+                <TableCell> {t('CONVERSION_GOALS')} </TableCell>
+                <TableCell> {t('ADVERTISER')} </TableCell>
+                <TableCell> {t('EXPIRATION_DATE')} </TableCell>
+                <TableCell> {t('ACTIONS')} </TableCell>
             </TableHead>
         )
     }
 
     renderTableRow(bid, index, { to, selected }) {
+        let t = this.props.t
         return (
             <TableRow key={bid.id}>
                 <TableCell> {bid.amount} </TableCell>
                 <TableCell> {bid.requiredPoints} </TableCell>
                 <TableCell> {bid.advertiser} </TableCell>
                 <TableCell> {moment(bid.requiredExecTime).format('DD.MM.YYYY')} </TableCell>
-                <TableCell> <Button label='ACCEPT' primary raised /> <Button label='REJECT' /> </TableCell>
+                <TableCell> <Button label={t('ACCEPT')} primary raised /> <Button label={t('REJECT')} /> </TableCell>
             </TableRow >
         )
     }
@@ -162,6 +165,8 @@ export class SlotBids extends Component {
             allBids.push(bid)
         }
 
+        let t = this.props.t
+
         return (
             <div>
                 <Tabs
@@ -169,17 +174,17 @@ export class SlotBids extends Component {
                     index={this.state.tabIndex}
                     onChange={this.handleTabChange.bind(this)}
                 >
-                    <Tab label='OPEN_BIDS'>
+                    <Tab label={t('OPEN_BIDS')}>
                         <div>
                             <ItemsList items={openBids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
                         </div>
                     </Tab>
-                    <Tab label='BIDS_HISTORY'>
+                    <Tab label={t('BIDS_HISTORY')}>
                         <div>
                             <ItemsList items={otherBids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
                         </div>
                     </Tab>
-                    <Tab label='BIDS_STATISTICS'>
+                    <Tab label={t('BIDS_STATISTICS')}>
                         <div>
                             {this.renderNonOpenedBidsChart(allBids)}
                         </div>
@@ -219,4 +224,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(SlotBids);
+)(Translate(SlotBids))

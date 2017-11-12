@@ -17,8 +17,9 @@ export default function Translate(Decorated) {
     t(val, { isProp = false, args = [] } = {}) {
       let key = val + ''
       if (isProp) {
-        key = 'PROP_' + key
+        key = 'PROP_' + (key.replace(/^_/, ''))
       }
+      
       key = key.toUpperCase()
 
       let translation = translations[this.props.language][key] || val
@@ -32,12 +33,9 @@ export default function Translate(Decorated) {
 
     render() {
       return (
-        <div>
-          <div>
+          <span>
             <Decorated {...this.props} t={this.t.bind(this)} />
-          </div>
-
-        </div>
+          </span>
       )
     }
   }

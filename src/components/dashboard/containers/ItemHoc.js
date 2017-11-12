@@ -100,7 +100,7 @@ export default function ItemHoc(Decorated) {
                 <div>
                     <Prompt
                         when={!!this.state.dirtyProps.length}
-                        message="There are unsaved changes!!! Are you sure you want to leave the page?"
+                        message={t('UNSAVED_CHANGES_ALERT')}
                     />
 
                     <div className={classnames(theme.heading, theme[ItemTypesNames[item._type]])}>
@@ -148,9 +148,9 @@ export default function ItemHoc(Decorated) {
                                     this.state.dirtyProps.length ?
                                         (
                                             <div className={theme.itemStatus}>
-                                                <TooltipFontIcon value='info_outline' tooltip='Unsaved changes' />
+                                                <TooltipFontIcon value='info_outline' tooltip={t('UNSAVED_CHANGES')} />
                                                 {this.state.dirtyProps.map((p) => {
-                                                    return (<Chip key={p}>{p}</Chip>)
+                                                    return (<Chip key={p}>{t(p, {isProp: true})}</Chip>)
                                                 })}
                                             </div>
                                         ) : ''

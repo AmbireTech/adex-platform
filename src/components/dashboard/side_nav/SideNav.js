@@ -23,7 +23,7 @@ class SideNav extends Component {
                     to={{ pathname: '/dashboard/' + this.props.side }}
                     selectable={true}
                     value="1"
-                    caption='Dashboard'
+                    caption={this.props.t('DASHBOARD')}
                     theme={theme}
                     className="side-nav-link"
                     leftIcon='dashboard'
@@ -32,7 +32,7 @@ class SideNav extends Component {
                     to={{ pathname: '/dashboard/' + this.props.side + "/campaigns" }}
                     selectable={true}
                     value="2"
-                    caption='Campaigns'
+                    caption={this.props.t('CAMPAIGNS')}
                     theme={theme}
                     className="side-nav-link"
                     leftIcon={<CampaignIcon color='rgb(117, 117, 117)' />}
@@ -47,7 +47,7 @@ class SideNav extends Component {
                     to={{ pathname: '/dashboard/' + this.props.side + "/units" }}
                     selectable={true}
                     value="3"
-                    caption='Units'
+                    caption={this.props.t('UNITS')}
                     theme={theme}
                     className="side-nav-link"
                     leftIcon='format_list_bulleted'
@@ -69,7 +69,7 @@ class SideNav extends Component {
                     to={{ pathname: '/dashboard/' + this.props.side }}
                     selectable={true}
                     value="1"
-                    caption='Dashboard'
+                    caption={this.props.t('DASHBOARD')}
                     theme={theme}
                     className="side-nav-link"
                     leftIcon='dashboard'
@@ -78,7 +78,7 @@ class SideNav extends Component {
                     to={{ pathname: '/dashboard/' + this.props.side + "/channels" }}
                     selectable={true}
                     value="2"
-                    caption='Channels'
+                    caption={this.props.t('CHANNELS')}
                     theme={theme}
                     className="side-nav-link"
                     leftIcon={<ChannelIcon color='rgb(117, 117, 117)' />}
@@ -94,7 +94,7 @@ class SideNav extends Component {
                     to={{ pathname: '/dashboard/' + this.props.side + "/slots" }}
                     selectable={true}
                     value="3"
-                    caption='Slots'
+                    caption={this.props.t('SLOTS')}
                     theme={theme}
                     className="side-nav-link"
                     leftIcon='format_list_bulleted'

@@ -15,8 +15,8 @@ import { BidState, BidStateNames } from 'models/Bid'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import { Line, Doughnut } from 'react-chartjs-2'
 import { BidsStatusPie, SlotsClicksAndRevenue } from 'components/dashboard/charts/slot'
-
 import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
+import Translate from 'components/translate/Translate'
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
 
@@ -47,10 +47,10 @@ export class DashboardStats extends Component {
                 <Grid fluid >
                     <Row middle='xs' className={theme.itemsListControls}>
                         <Col xs={12} sm={12} md={6}>
-                            <SlotsClicksAndRevenue data={this.state.bidsData} />
+                            <SlotsClicksAndRevenue data={this.state.bidsData} t={this.props.t} />
                         </Col>
                         <Col xs={12} sm={12} md={6}>
-                            <BidsStatusPie data={this.state.bidsStats} />
+                            <BidsStatusPie data={this.state.bidsStats} t={this.props.t} />
                         </Col>
                         <Col xs={12} sm={12} md={6}>
 
@@ -86,4 +86,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(DashboardStats);
+)(Translate(DashboardStats))

@@ -11,6 +11,7 @@ import NewSlotForm from 'components/dashboard/forms/NewSlotForm'
 import AddItemDialog from './AddItemDialog'
 import NewItemSteps from 'components/dashboard/forms/NewItemSteps'
 import theme from './theme.css'
+import Translate from 'components/translate/Translate'
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
@@ -49,18 +50,20 @@ export class Channel extends Component {
         return (
             <div>
                 <h2>
-                    <span> Slots in this channel {'(' + (slots.length) + ')'} </span>
+                    <span>{this.props.t('SLOTS_IN_CHANNEL', {args: [slots.length]})}</span>
                     <span>
                         <div className={theme.newIemToItemBtn} >
                             <AddItemDialog
                                 color='second'
                                 addCampaign={this.props.actions.addCampaign}
-                                btnLabel='Add new Slot to the channel'
+                                btnLabel={this.props.t('NEW_SLOT_TO_CHANNEL')}
                                 title=''
                                 items={otherSlots}
                                 viewMode={VIEW_MODE_UNITS}
                                 listMode='rows'
                                 addTo={item}
+                                tabNewLabel={this.props.t('NEW_SLOT')}
+                                tabExsLabel={this.props.t('EXISTING_SLOT')}
                                 newForm={(props) =>
                                     <NewItemSteps {...props} addTo={item} itemPages={[NewSlotForm]} itemType={ItemsTypes.AdSlot.id} />
                                 }
@@ -104,4 +107,4 @@ const ChannelItem = ItemHoc(Channel)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ChannelItem)
+)(Translate(ChannelItem))
