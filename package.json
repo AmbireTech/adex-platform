@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "adex-translations": "git+ssh://git@bitbucket.org:stremio/adex-translations.git#9f62410ff660d732db5f60f20c3892c9e151ad73",
+    "adex-translations": "git+ssh://git@bitbucket.org:stremio/adex-translations.git#9e1df7e74bf60478ea898a570fb0fbb67242590a",
     "autoprefixer": "7.1.2",
     "babel-core": "6.25.0",
     "babel-eslint": "7.2.3",
