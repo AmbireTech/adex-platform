@@ -22,7 +22,7 @@ import { IconButton, Button } from 'react-toolbox/lib/button'
 export class Slot extends Component {
 
     integrationCode = () => {
-        let src = `adview.adex.network/${this.props.item._id}` //TODO: Set som real src with config !!!
+        let src = `adview.adex.network/${this.props.item._id}` //TODO: Set real src with config !!!
         let sizes = this.props.item._meta.size.split('x')
         sizes = {
             width: sizes[0],
@@ -37,9 +37,10 @@ export class Slot extends Component {
             `   style="border: 0;"\n` +
             `></iframe>`
 
+        // TODO: Add copy to clipboard and tooltip or description how to use it
         return (
             <div>
-                <span className={theme.integrationLabel}> {this.props.t('INTEGRATION_CODE')}</span>
+                <div className={theme.integrationLabel}> {this.props.t('INTEGRATION_CODE')}</div>
                 <pre className={theme.integrationCode}>
                     {iframeStr}
                 </pre>
