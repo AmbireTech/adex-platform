@@ -65,9 +65,9 @@ address@1.0.2, address@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/address/-/address-1.0.2.tgz#480081e82b587ba319459fef512f516fe03d58af"
 
-"adex-translations@git+ssh://git@bitbucket.org:stremio/adex-translations.git#9f62410ff660d732db5f60f20c3892c9e151ad73":
+"adex-translations@git+ssh://git@bitbucket.org:stremio/adex-translations.git#9e1df7e74bf60478ea898a570fb0fbb67242590a":
   version "0.0.1"
-  resolved "git+ssh://git@bitbucket.org/stremio/adex-translations.git#9f62410ff660d732db5f60f20c3892c9e151ad73"
+  resolved "git+ssh://git@bitbucket.org:stremio/adex-translations.git#9e1df7e74bf60478ea898a570fb0fbb67242590a"
 
 ajv-keywords@^1.0.0:
   version "1.5.1"
