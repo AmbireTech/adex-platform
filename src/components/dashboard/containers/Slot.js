@@ -20,6 +20,30 @@ import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
 import { IconButton, Button } from 'react-toolbox/lib/button'
 
 export class Slot extends Component {
+
+    integrationCode = () => {
+        let src = `adview.adex.network/${this.props.item._id}` //TODO: Set som real src with config !!!
+        let sizes = this.props.item._meta.size.split('x')
+        sizes = {
+            width: sizes[0],
+            height: sizes[1]
+        }
+        let iframeStr =
+            `<iframe src="${src}"\n` +
+            `   width="${sizes.width}"\n` +
+            `   height="${sizes.height}"\n` +
+            `   scrolling="no"\n` +
+            `   frameborder="0"\n` +
+            `   style="border: 0;"\n` +
+            `></iframe>`
+
+        return (
+            <pre className={theme.integrationCode}>
+                {iframeStr}
+            </pre>
+        )
+    }
+
     render() {
         let item = this.props.item
         let meta = item._meta
@@ -68,6 +92,7 @@ export class Slot extends Component {
                             />
                         </div>
                     </div>
+                    <this.integrationCode />
                 </div>
                 <div>
                     <SlotBids {...this.props} meta={meta} t={t} />

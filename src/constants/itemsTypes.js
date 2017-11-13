@@ -45,9 +45,10 @@ export const Sizes = [
 
 export const AdTypes = [
   { value: 'html', label: 'HTML' },
-  { value: 'flash', label: 'Flash' },
-  { value: 'other', label: 'Other' },
-  { value: 'vr', label: 'VR' }
+  // Only html at this point
+  // { value: 'flash', label: 'Flash' },
+  // { value: 'other', label: 'Other' },
+  // { value: 'vr', label: 'VR' }
 ]
 
 export const TargetsWeight = [
