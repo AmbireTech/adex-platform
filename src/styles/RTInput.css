@@ -1,6 +1,6 @@
 @import './variables.css';
 :root {
-    --input-text-label-color: color(var(--color-black) a(46%));
+    --input-text-label-color: var(--label-color);
     --input-text-error-color: var(--color-adex-danger-primary);
     --input-text-required-color: var(--color-adex-danger-primary);
     --input-text-highlight-color: var(--color-primary);

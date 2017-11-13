@@ -16,4 +16,6 @@
     /* Sections colors */
     --color-adex-first: var(--color-adex-primary);
     --color-adex-second: var(--color-adex-alt-primary-header);
+    /* Common colors*/
+    --label-color: color(var(--color-black) a(46%));
 }

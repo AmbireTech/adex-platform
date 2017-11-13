@@ -38,9 +38,12 @@ export class Slot extends Component {
             `></iframe>`
 
         return (
-            <pre className={theme.integrationCode}>
-                {iframeStr}
-            </pre>
+            <div>
+                <span className={theme.integrationLabel}> {this.props.t('INTEGRATION_CODE')}</span>
+                <pre className={theme.integrationCode}>
+                    {iframeStr}
+                </pre>
+            </div>
         )
     }
 
@@ -54,45 +57,53 @@ export class Slot extends Component {
         return (
             <div>
                 <div className={theme.itemPropTop}>
-                    <div className={theme.imgHolder}>
-                        <Card className={theme.itemDetailCard} raised={false} theme={theme}>
-                            <CardMedia
-                                aspectRatio='wide'
-                                theme={theme}
-                            >
-                                <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} />
-                            </CardMedia>
-                            <CardActions theme={theme} >
+                    <Grid fluid style={{ padding: 0 }}>
+                        <Row top='xs'>
+                            <Col xs={12} sm={12} md={12} lg={7}>
+                                <div className={theme.imgHolder}>
+                                    <Card className={theme.itemDetailCard} raised={false} theme={theme}>
+                                        <CardMedia
+                                            aspectRatio='wide'
+                                            theme={theme}
+                                        >
+                                            <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} />
+                                        </CardMedia>
+                                        <CardActions theme={theme} >
 
-                                <IconButton
-                                    /* theme={theme} */
-                                    icon='edit'
-                                    accent
-                                    onClick={this.props.toggleImgEdit}
-                                />
-                            </CardActions>
-                        </Card>
-                        {/* <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} className={theme.img} /> */}
-                    </div>
-                    <div className={theme.bannerProps}>
-                        <div>
-                            <Dropdown
-                                onChange={this.props.handleChange.bind(this, 'adType')}
-                                source={AdTypes}
-                                value={meta.adType}
-                                label={t('adType', { isProp: true })}
-                            />
-                        </div>
-                        <div>
-                            <Dropdown
-                                onChange={this.props.handleChange.bind(this, 'size')}
-                                source={Sizes}
-                                value={meta.size}
-                                label={t('size', { isProp: true })}
-                            />
-                        </div>
-                    </div>
-                    <this.integrationCode />
+                                            <IconButton
+                                                /* theme={theme} */
+                                                icon='edit'
+                                                accent
+                                                onClick={this.props.toggleImgEdit}
+                                            />
+                                        </CardActions>
+                                    </Card>
+                                    {/* <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} className={theme.img} /> */}
+                                </div>
+                                <div className={theme.bannerProps}>
+                                    <div>
+                                        <Dropdown
+                                            onChange={this.props.handleChange.bind(this, 'adType')}
+                                            source={AdTypes}
+                                            value={meta.adType}
+                                            label={t('adType', { isProp: true })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Dropdown
+                                            onChange={this.props.handleChange.bind(this, 'size')}
+                                            source={Sizes}
+                                            value={meta.size}
+                                            label={t('size', { isProp: true })}
+                                        />
+                                    </div>
+                                </div>
+                            </Col>
+                            <Col xs={12} sm={12} md={12} lg={5}>
+                                <this.integrationCode />
+                            </Col>
+                        </Row>
+                    </Grid>
                 </div>
                 <div>
                     <SlotBids {...this.props} meta={meta} t={t} />
@@ -130,4 +141,4 @@ const SlotItem = ItemHoc(Slot)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(SlotItem);
+)(SlotItem)
