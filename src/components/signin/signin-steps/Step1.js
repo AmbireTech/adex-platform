@@ -7,12 +7,59 @@ import { ItemTypesNames } from 'constants/itemsTypes'
 import SigninStepHocStep from './SigninStepHocStep'
 import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
+import { validEmail } from 'helpers/validators'
 
 class Step1 extends Component {
+
+    validateName(name, dirty) {
+        let msg = ''
+        let errMsgArgs = []
+        if (!name) {
+            msg = 'ERR_REQUIRED_FIELD'
+        } else if (name.length < 4) {
+            msg = 'ERR_MIN_LENGTH'
+            errMsgArgs.push(4)
+        } else if (name.length > 128) {
+            msg = 'ERR_MAX_LENGTH'
+            errMsgArgs.push(128)
+        }
+
+        this.props.validate('name', { isValid: !msg, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
+    }
+
+    validatePassword(pass, dirty) {
+        let msg = ''
+        let errMsgArgs = []
+        if (!pass) {
+            msg = 'ERR_REQUIRED_FIELD'
+        } else if (pass.length < 4) {
+            msg = 'ERR_MIN_LENGTH'
+            errMsgArgs.push(4)
+        } else if (pass.length > 128) {
+            msg = 'ERR_MAX_LENGTH'
+            errMsgArgs.push(128)
+        }
+
+        this.props.validate('password', { isValid: !msg, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
+    }
+
+    validatePasswordConfirm(confirm, dirty) {
+        let msg = ''
+        let errMsgArgs = []
+        if ((!!confirm || !!this.props.signin.password) && (confirm !== this.props.signin.password)) {
+            msg = 'ERR_PASSWORDS_NOT_MATCH'
+        }
+
+        this.props.validate('passConfirm', { isValid: !msg, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
+    }
 
     render() {
         let signin = this.props.signin
         let t = this.props.t
+        let errName = this.props.invalidFields['name']
+        let errEmail = this.props.invalidFields['email']
+        let errPassword = this.props.invalidFields['password']
+        let errPassConfirm = this.props.invalidFields['passConfirm']
         return (
             <div>
                 <Input
@@ -20,28 +67,55 @@ class Step1 extends Component {
                     label='Name'
                     value={signin.name}
                     onChange={this.props.handleChange.bind(this, 'name')}
-                    maxLength={128} >
+                    maxLength={128}
+                    onBlur={this.validateName.bind(this, signin.name, true)}
+                    onFocus={this.validateName.bind(this, signin.name, false)}
+                    error={errName && !!errName.dirty ?
+                        <span> {errName.errMsg} </span> : null}
+                >
                 </Input>
                 <Input
                     type='email'
                     label='Email'
                     value={signin.email}
                     onChange={this.props.handleChange.bind(this, 'email')}
-                    maxLength={128} >
+                    maxLength={128}
+                    onBlur={this.props.validate.bind(this, 'email', { isValid: validEmail(signin.email), err: { msg: 'INVALID_EMAIL' }, dirty: true })}
+                    onFocus={this.props.validate.bind(this, 'email', { isValid: validEmail(signin.email), err: { msg: 'INVALID_EMAIL' }, dirty: false })}
+                    error={errEmail && !!errEmail.dirty ? <span> {errEmail.errMsg} </span> : null}
+                >
                 </Input>
                 <Input
                     type='password'
                     label='Password'
                     value={signin.password}
                     onChange={this.props.handleChange.bind(this, 'password')}
-                    maxLength={128} >
+                    maxLength={128}
+                    onBlur={this.validatePassword.bind(this, signin.password, true)}
+                    onFocus={this.validatePassword.bind(this, signin.password, false)}
+                    error={errPassword && !!errPassword.dirty ?
+                        <span> {errPassword.errMsg} </span> : null}
+                >
+                    {!errPassword ?
+                        <div>
+                            {t('HELPER_PASSWORD')}
+                        </div> : null}
                 </Input>
                 <Input
                     type='password'
                     label='Confirm password'
                     value={signin.passConfirm}
                     onChange={this.props.handleChange.bind(this, 'passConfirm')}
-                    maxLength={128} >
+                    maxLength={128}
+                    onBlur={this.validatePasswordConfirm.bind(this, signin.passConfirm, true)}
+                    onFocus={this.validatePasswordConfirm.bind(this, signin.passConfirm, false)}
+                    error={errPassConfirm && !!errPassConfirm.dirty ?
+                        <span> {errPassConfirm.errMsg} </span> : null}
+                >
+                    {!errPassConfirm ?
+                        <div>
+                            {t('HELPER_PASSWORD_CONFIRM')}
+                        </div> : null}
                 </Input>
             </div>
         )

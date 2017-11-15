@@ -17,9 +17,12 @@ import Helper from 'helpers/miscHelpers'
 import Step1 from 'components/signin/signin-steps/Step1'
 import Step2 from 'components/signin/signin-steps/Step2'
 import Step3 from 'components/signin/signin-steps/Step3'
+import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 
 const RRButton = withReactRouterLink(Button)
 const keystore = lightwallet.keystore
+
+const ValidationIdBase = "SignInStep"
 
 class Signin extends Component {
   constructor(props) {
@@ -39,18 +42,18 @@ class Signin extends Component {
 
     let pages = [{
       title: 'Step 1',
-      component: Step1,
-      props: { ...this.props }
+      component: ValidItemHoc(Step1),
+      props: { ...this.props, validateId: ValidationIdBase + 1 }
     },
     {
       title: 'Step 2',
-      component: Step2,
-      props: { ...this.props }
+      component: ValidItemHoc(Step2),
+      props: { ...this.props, validateId: ValidationIdBase + 2 }
     },
     {
       title: 'Step 3',
-      component: Step3,
-      props: { ...this.props }
+      component: ValidItemHoc(Step3),
+      props: { ...this.props, validateId: ValidationIdBase + 3 }
     }]
 
     return (
