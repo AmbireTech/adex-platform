@@ -52,7 +52,6 @@ class BidsStatsGenerator {
                 inactiveBids.opened[bid.id] = bid
                 inactiveBids.inactive[bid.id] = bid
             }
-
         }
 
         this.acceptedBids = activeBids.accepted

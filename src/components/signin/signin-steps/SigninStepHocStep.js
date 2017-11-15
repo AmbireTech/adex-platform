@@ -21,15 +21,15 @@ export default function SigninStepHocStep(Decorated) {
         }
 
         componentWillReceiveProps(nextProps) {
-            this.setState({ item: nextProps.newItem })
+            this.setState({ item: nextProps.signin })
         }
 
         componentWillMount() {
-            this.setState({ item: this.props.newItem })
+            this.setState({ item: this.props.signin })
         }
 
         handleChange = (name, value) => {
-            this.props.actions.updateSignin(this.props.newItem, { [name]: value })
+            this.props.actions.updateSignin(name, value)
         }
 
         save() {
@@ -66,8 +66,6 @@ export default function SigninStepHocStep(Decorated) {
         signin: PropTypes.object.isRequired,
         title: PropTypes.string
     }
-
-    // return ItemForm
 
     function mapStateToProps(state, props) {
         return {

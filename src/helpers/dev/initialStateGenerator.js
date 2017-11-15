@@ -200,7 +200,7 @@ class InitialStateGenerator {
                     publicKey: '',
                     privateKey: '',
                     encryptedPrivateKey: '',
-                    seedCheck: null
+                    seedCheck: []
                 }
             },
             newItem: {
