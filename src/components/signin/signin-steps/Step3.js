@@ -7,6 +7,8 @@ import SigninStepHocStep from './SigninStepHocStep'
 import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
 import Helper from 'helpers/miscHelpers'
+import { Button } from 'react-toolbox/lib/button'
+import RTButtonTheme from 'styles/RTButton.css'
 
 class Step3 extends Component {
 
@@ -34,6 +36,21 @@ class Step3 extends Component {
         }
     }
 
+    validateSeedCheck = () => {
+        let hasError = false
+        let seedCheck = this.props.signin.seedCheck
+
+        for (let i = 0; i < seedCheck.length; i++) {
+            let check = seedCheck[i]
+            if (check.value !== check.checkValue) {
+                hasError = true
+                break
+            }
+        }
+
+        this.props.validate('seedCheck', { isValid: !hasError, err: { msg: 'ERR_SEED_CHECK', }, dirty: true })
+    }
+
     handleChange = (index, value) => {
         let newSeedCheck = [...this.props.signin.seedCheck]
         let newValue = { ...newSeedCheck[index] }
@@ -46,6 +63,7 @@ class Step3 extends Component {
         let signin = this.props.signin
         let seedCheck = signin.seedCheck || []
         let t = this.props.t
+        let errSeedCheck = this.props.invalidFields['seedCheck']
         return (
             <div>
                 {
@@ -54,7 +72,7 @@ class Step3 extends Component {
                             <Input
                                 key={seed.value + index}
                                 type='text'
-                                label={'Position ' + seed.index}
+                                label={'Position ' + (seed.index + 1)}
                                 value={seedCheck[index].checkValue}
                                 onChange={this.handleChange.bind(this, index)}
                                 maxLength={seed.value.length} >
@@ -62,6 +80,13 @@ class Step3 extends Component {
                         )
                     })
                 }
+
+                {errSeedCheck ?
+                    <Button label={t(errSeedCheck.errMsg)} onClick={this.validateSeedCheck} raised className={RTButtonTheme.danger} />
+                    :
+                    <Button label={t('CHECK_SEED')} onClick={this.validateSeedCheck} raised primary />
+                }
+
             </div>
         )
     }
