@@ -12,6 +12,5 @@ export default function uiReducer(state = initialState.ui, action) {
 
         default:
             return state
-
     }
 }

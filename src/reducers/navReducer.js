@@ -12,6 +12,5 @@ export default function navReducer(state = initialState.nav, action) {
 
         default:
             return state
-
     }
 }

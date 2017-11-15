@@ -187,10 +187,22 @@ class InitialStateGenerator {
 
         let bidsGenerator = BidsStatsGenerator
         bidsGenerator.setBids(this.bidsById)
-        // bidsGenerator.getRandomStatsForSlot(5, bidsByAdslot[5])
 
         return {
-            account: this.account,
+            account: {
+                account: this.account,
+                signin: {
+                    name: '',
+                    email: '',
+                    password: '',
+                    passConfirm: '',
+                    seed: [],
+                    publicKey: '',
+                    privateKey: '',
+                    encryptedPrivateKey: '',
+                    seedCheck: null
+                }
+            },
             newItem: {
                 [ItemsTypes.Campaign.id]: newCampaign,
                 [ItemsTypes.AdUnit.id]: newAdUnit,

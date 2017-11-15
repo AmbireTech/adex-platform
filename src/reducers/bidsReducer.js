@@ -12,6 +12,5 @@ export default function bidsReducer(state = initialState.bids, action) {
 
         default:
             return state
-
     }
 }

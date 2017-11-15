@@ -53,7 +53,6 @@ export class DashboardStats extends Component {
                             <BidsStatusPie data={this.state.bidsStats} t={this.props.t} />
                         </Col>
                         <Col xs={12} sm={12} md={6}>
-
                         </Col>
                     </Row>
                 </Grid>

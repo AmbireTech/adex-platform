@@ -17,7 +17,6 @@ export default function toastsReducer(state = initialState.toasts, action) {
         } else {
             return [newToast, ...state]
         }
-
     }
 
     switch (action.type) {
@@ -45,6 +44,5 @@ export default function toastsReducer(state = initialState.toasts, action) {
 
         default:
             return state
-
     }
 }
