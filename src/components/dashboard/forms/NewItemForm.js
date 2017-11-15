@@ -13,30 +13,37 @@ class NewUnitForm extends Component {
 
     componentDidMount() {
         /* TODO: make it understandable
-        * Now it forces to add invalid property for the required filed without setting prop error msg in order not to show the error yet
+        * Now it forces to add invalid property for the required filed to prevent to go to the next step
         */
         if (!this.props.item._meta.fullName) {
-            this.props.validate('fullName', this.props.item._meta.fullName, () => false, '')
+            this.props.validate('fullName', {
+                isValid: false,
+                err: { msg: 'ERR_REQUIRED_FIELD' },
+                dirty: false
+            })
         }
     }
 
-    validateName(name, reset) {
-        // TODO: make msg to accept args for translation
+    validateName(name, dirty) {
         let msg = ''
+        let errMsgArgs = []
         if (!name) {
-            msg = 'REQUIRED_FIELD'
+            msg = 'ERR_REQUIRED_FIELD'
         } else if (name.length < 4) {
-            msg = 'MIN_LENGTH_4'
+            msg = 'ERR_MIN_LENGTH'
+            errMsgArgs.push(4)
         } else if (name.length > 128) {
-            msg = 'MAX_LENGTH_128'
+            msg = 'ERR_MAX_LENGTH'
+            errMsgArgs.push(128)
         }
 
-        this.props.validate('fullName', this.props.item._meta.ad_url, () => !msg, reset ? '' : msg)
+        this.props.validate('fullName', { isValid: !msg, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
     }
 
     render() {
         let item = this.props.item
         let t = this.props.t
+        let errFullName = this.props.invalidFields['fullName']
         return (
             <div>
                 <Input
@@ -46,11 +53,12 @@ class NewUnitForm extends Component {
                     name='name'
                     value={item._meta.fullName}
                     onChange={this.props.handleChange.bind(this, 'fullName')}
-                    onBlur={this.validateName.bind(this, item._meta.fullName, false)}
-                    onFocus={this.validateName.bind(this, item._meta.fullName, true)}
-                    error={this.props.invalidFields['fullName'] ? <span> {t(this.props.invalidFields['fullName'])} </span> : null}
+                    onBlur={this.validateName.bind(this, item._meta.fullName, true)}
+                    onFocus={this.validateName.bind(this, item._meta.fullName, false)}
+                    error={errFullName && !!errFullName.dirty ?
+                        <span> {errFullName.errMsg} </span> : null}
                     maxLength={128} >
-                    {this.props.nameHelperTxt && !this.props.invalidFields['fullName'] ?
+                    {this.props.nameHelperTxt && errFullName.dirty ?
                         <div>
                             {this.props.nameHelperTxt}
                         </div> : null}
@@ -63,7 +71,7 @@ class NewUnitForm extends Component {
                     value={item._meta.description}
                     onChange={this.props.handleChange.bind(this, 'description')}
                     maxLength={1024} >
-                    {this.props.descriptionHelperTxt && !this.props.invalidFields['description'] ?
+                    {this.props.descriptionHelperTxt ?
                         <div>
                             {this.props.descriptionHelperTxt}
                         </div> : null}

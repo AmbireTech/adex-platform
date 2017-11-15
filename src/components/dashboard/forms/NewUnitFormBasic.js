@@ -17,15 +17,20 @@ class NewUnitForm extends Component {
 
     componentDidMount() {
         /* TODO: make it understandable
-        * Now it forces to add invalid property for the required filed without setting prop error msg in order not to show the error yet
+        * Now it forces to add invalid property for the required filed to prevent to go to the next step
         */
-        this.props.validate('ad_url', this.props.item._meta.ad_url, validUrl, '')
+        this.props.validate('ad_url', {
+            isValid: validUrl(this.props.item._meta.ad_url),
+            err: { msg: 'ERR_REQUIRED_FIELD' },
+            dirty: false
+        })
     }
 
     render() {
         let item = this.props.item
         let ad_url = item._meta.ad_url
         let t = this.props.t
+        let errUrl = this.props.invalidFields['ad_url']
         return (
             <div>
                 <Input
@@ -35,9 +40,9 @@ class NewUnitForm extends Component {
                     value={ad_url}
                     onChange={this.props.handleChange.bind(this, 'ad_url')}
                     maxLength={1024}
-                    onBlur={this.props.validate.bind(this, 'ad_url', ad_url, validUrl, 'INVALID_URL')}
-                    onFocus={this.props.validate.bind(this, 'ad_url', ad_url, validUrl, '')}
-                    error={this.props.invalidFields['ad_url'] ? <span> {t(this.props.invalidFields['ad_url'])} </span> : null}
+                    onBlur={this.props.validate.bind(this, 'ad_url', { isValid: validUrl(ad_url), err: { msg: 'INVALID_URL' }, dirty: true })}
+                    onFocus={this.props.validate.bind(this, 'ad_url', { isValid: validUrl(ad_url), err: { msg: 'INVALID_URL' }, dirty: false })}
+                    error={errUrl && !!errUrl.dirty ? <span> {errUrl.errMsg} </span> : null}
                 />
                 <div>
                     <Grid fluid className={theme.grid}>

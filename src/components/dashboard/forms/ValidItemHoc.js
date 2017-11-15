@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
+import Translate from 'components/translate/Translate'
 
 export default function NewItemHoc(Decorated) {
 
@@ -25,12 +26,14 @@ export default function NewItemHoc(Decorated) {
             this.setState({ invalidFields: this.props.validations || {} })
         }
 
-        validate(key, value, validator, errorMsg) {
-            let isValid = validator(value)
-
+        validate(key, { isValid = true, err = { msg: '', args: [] }, dirty = false }) {
             if (!isValid) {
                 let errors = {}
-                errors[key] = errorMsg
+                errors[key] = {
+                    errMsg: this.props.t(err.msg, { args: err.args }),
+                    dirty: dirty
+                }
+
                 this.props.actions.updateValidationErrors(this.props.validateId, errors)
             } else {
                 this.props.actions.resetValidationErrors(this.props.validateId)
@@ -66,6 +69,6 @@ export default function NewItemHoc(Decorated) {
     return connect(
         mapStateToProps,
         mapDispatchToProps
-    )(ValidItemHoc)
+    )(Translate(ValidItemHoc))
 }
 
