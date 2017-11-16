@@ -17,7 +17,15 @@ export default function validateItemsReducer(state = initialState.validations, a
 
         case RESET_ITEM_VALIDATION:
             newState = { ...state }
-            newState[action.item] = {}
+            newErrors = newState[action.item]
+            if (action.key) {
+                // TODO: Keep it like that or change canAdvance function
+                delete newErrors[action.key]
+            } else {
+                newErrors = {}
+            }
+
+            newState[action.item] = newErrors
 
             return newState
 

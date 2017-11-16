@@ -86,11 +86,12 @@ export function updateValidationErrors(item, newErrors) {
     }
 }
 
-export function resetValidationErrors(item) {
+export function resetValidationErrors(item, key) {
     return function (dispatch) {
         return dispatch({
             type: types.RESET_ITEM_VALIDATION,
-            item: item
+            item: item,
+            key: key
         })
     }
 }
