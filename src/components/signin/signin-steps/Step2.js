@@ -33,8 +33,8 @@ class Step2 extends Component {
         let t = this.props.t
         return (
             <div>
-                <h2> This is your seed, please write it on paper or memorize it.</h2>
-                <h4> We will check that on the next step :) </h4>
+                <h2>{t('MEMORIZE_SEED')}</h2>
+                <h4>{t('MEMORIZE_SEED_WARNING')}</h4>
                 {
                     signin.seed.map((seed, index) => {
                         return (

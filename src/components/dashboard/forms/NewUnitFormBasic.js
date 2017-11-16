@@ -40,8 +40,8 @@ class NewUnitForm extends Component {
                     value={ad_url}
                     onChange={this.props.handleChange.bind(this, 'ad_url')}
                     maxLength={1024}
-                    onBlur={this.props.validate.bind(this, 'ad_url', { isValid: validUrl(ad_url), err: { msg: 'INVALID_URL' }, dirty: true })}
-                    onFocus={this.props.validate.bind(this, 'ad_url', { isValid: validUrl(ad_url), err: { msg: 'INVALID_URL' }, dirty: false })}
+                    onBlur={this.props.validate.bind(this, 'ad_url', { isValid: validUrl(ad_url), err: { msg: 'ERR_INVALID_URL' }, dirty: true })}
+                    onFocus={this.props.validate.bind(this, 'ad_url', { isValid: validUrl(ad_url), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
                     error={errUrl && !!errUrl.dirty ? <span> {errUrl.errMsg} </span> : null}
                 />
                 <div>

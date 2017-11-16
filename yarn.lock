@@ -65,9 +65,9 @@ address@1.0.2, address@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/address/-/address-1.0.2.tgz#480081e82b587ba319459fef512f516fe03d58af"
 
-"adex-translations@git+ssh://git@bitbucket.org:stremio/adex-translations.git#9e1df7e74bf60478ea898a570fb0fbb67242590a":
+"adex-translations@git+ssh://git@bitbucket.org:stremio/adex-translations.git#2d9555defec8dffec4efc7c948ae377ef6413ccb":
   version "0.0.1"
-  resolved "git+ssh://git@bitbucket.org:stremio/adex-translations.git#9e1df7e74bf60478ea898a570fb0fbb67242590a"
+  resolved "git+ssh://git@bitbucket.org:stremio/adex-translations.git#2d9555defec8dffec4efc7c948ae377ef6413ccb"
 
 ajv-keywords@^1.0.0:
   version "1.5.1"
@@ -865,7 +865,7 @@ babel-plugin-transform-react-jsx@6.24.1, babel-plugin-transform-react-jsx@^6.24.
     babel-plugin-syntax-jsx "^6.8.0"
     babel-runtime "^6.22.0"
 
-babel-plugin-transform-regenerator@6.24.1, babel-plugin-transform-regenerator@^6.22.0, babel-plugin-transform-regenerator@^6.24.1:
+babel-plugin-transform-regenerator@6.24.1, babel-plugin-transform-regenerator@^6.22.0:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-regenerator/-/babel-plugin-transform-regenerator-6.24.1.tgz#b8da305ad43c3c99b4848e4fe4037b770d23c418"
   dependencies:

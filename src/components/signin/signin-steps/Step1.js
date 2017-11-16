@@ -9,7 +9,7 @@ import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
 import { validEmail } from 'helpers/validators'
 
-const DISABLE_VALIDATION = false
+const DISABLE_VALIDATION = true
 
 class Step1 extends Component {
 
@@ -55,6 +55,12 @@ class Step1 extends Component {
         }
 
         this.props.validate('name', { isValid: !msg, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
+    }
+
+    validateEmail(email, dirty) {
+        if (DISABLE_VALIDATION) return
+
+        this.props.validate.bind(this, 'email', { isValid: validEmail(email), err: { msg: 'ERR_INVALID_EMAIL' }, dirty: dirty })
     }
 
     validatePassword(pass, dirty) {
@@ -114,8 +120,8 @@ class Step1 extends Component {
                     value={signin.email}
                     onChange={this.props.handleChange.bind(this, 'email')}
                     maxLength={128}
-                    onBlur={this.props.validate.bind(this, 'email', { isValid: validEmail(signin.email), err: { msg: 'INVALID_EMAIL' }, dirty: true })}
-                    onFocus={this.props.validate.bind(this, 'email', { isValid: validEmail(signin.email), err: { msg: 'INVALID_EMAIL' }, dirty: false })}
+                    onBlur={this.validateEmail.bind(this, signin.email, true)}
+                    onFocus={this.validateEmail.bind(this, signin.email, false)}
                     error={errEmail && !!errEmail.dirty ? <span> {errEmail.errMsg} </span> : null}
                 >
                 </Input>
@@ -132,7 +138,7 @@ class Step1 extends Component {
                 >
                     {!errPassword ?
                         <div>
-                            {t('HELPER_PASSWORD')}
+                            {t('HELPER_PASSWORD', { args: [4, 1, 1] })}
                         </div> : null}
                 </Input>
                 <Input
