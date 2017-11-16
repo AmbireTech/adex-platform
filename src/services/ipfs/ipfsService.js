@@ -1,6 +1,11 @@
 import Promise from 'promise'
 import ipfsAPI from 'ipfs-api'
+
+import wallet from 'eth-lightwallet'
+
 const ipfs = ipfsAPI('localhost', '5001')
+
+console.log(wallet)
 
 export function getFileIpfsHash(file) {
     return new Promise(function (resolve, reject) {
