@@ -5,10 +5,19 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import SigninStepHocStep from './SigninStepHocStep'
 import Chip from 'react-toolbox/lib/chip'
+import Avatar from 'react-toolbox/lib/avatar'
 import Translate from 'components/translate/Translate'
 import lightwallet from 'eth-lightwallet'
 
 const keystore = lightwallet.keystore
+
+const TextIcon = ({ txt }) => (
+    <svg viewBox="0 0 32 32" width="32px" height="32px">
+        <g>
+            <text x="50%" y="50%" textAnchor="middle" fontSize="18">{txt}</text>
+        </g>
+    </svg>
+)
 
 class Step2 extends Component {
 
@@ -38,7 +47,10 @@ class Step2 extends Component {
                 {
                     signin.seed.map((seed, index) => {
                         return (
-                            <Chip key={index + seed}> {seed} </Chip>
+                            <Chip key={index + seed}>
+                                <Avatar icon={<TextIcon txt={(index + 1).toString()} />} />
+                                <span> {seed} </span>
+                            </Chip>
                         )
                     })
                 }
