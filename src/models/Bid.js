@@ -59,6 +59,8 @@ class Bid {
         this.publisherReportIpfs = publisherReportIpfs
         this.advertiserReportIpfs = advertiserReportIpfs
         this.txTime = txTime
+
+        return this
     }
 
     plainObj() {

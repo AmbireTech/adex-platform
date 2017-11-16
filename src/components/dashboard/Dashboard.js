@@ -15,6 +15,7 @@ import Unit from './containers/Unit'
 import Slot from './containers/Slot'
 import Items from './containers/Items'
 import { ItemsTypes } from 'constants/itemsTypes'
+import Auction from './Ink/Auction'
 
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
@@ -119,6 +120,8 @@ class Dashboard extends React.Component {
                         <Route exact path='/dashboard/publisher/slots' component={this.renderAdSlots} />
                         <Route exact path='/dashboard/publisher/Channel/:itemId' component={Channel} />
                         <Route exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
+
+                        <Route exact path={'/dashboard/' + side + "/Ink-auction"} component={Auction} />
 
                         <Route exact path='/dashboard/:side' component={DashboardStats} />
                         <Route component={() => <h1>404 at {side} side</h1>} />

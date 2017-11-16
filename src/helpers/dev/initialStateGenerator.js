@@ -41,6 +41,8 @@ class InitialStateGenerator {
         this.bidsByAdslot = []
         this.bidsByAdunitObjs = []
         this.bidsByAdslotObjs = []
+
+        this.InkBits = []
     }
 
     GenerateAccount() {
