@@ -17,12 +17,20 @@ import Helper from 'helpers/miscHelpers'
 import Step1 from 'components/signin/signin-steps/Step1'
 import Step2 from 'components/signin/signin-steps/Step2'
 import Step3 from 'components/signin/signin-steps/Step3'
+import Step4 from 'components/signin/signin-steps/Step4'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
+import Translate from 'components/translate/Translate'
 
 const RRButton = withReactRouterLink(Button)
 const keystore = lightwallet.keystore
 
 const ValidationIdBase = "SignInStep"
+
+const CompleteBtn = ({ ...props }) => {
+  return (
+    <RRButton to={props.to} label={props.t('CHOOSE_SIDE')} primary />
+  )
+}
 
 class Signin extends Component {
   constructor(props) {
@@ -36,7 +44,6 @@ class Signin extends Component {
     let active = this.state.dialogActive
     this.setState({ dialogActive: !active })
   }
-
 
   renderDialog = () => {
 
@@ -54,6 +61,12 @@ class Signin extends Component {
       title: 'Step 3',
       component: ValidItemHoc(Step3),
       props: { ...this.props, validateId: ValidationIdBase + 3 }
+    },
+    {
+      title: 'Step 4',
+      completeBtn: () => <CompleteBtn {...this.props} to="/side-select" />,
+      component: ValidItemHoc(Step4),
+      props: { ...this.props, validateId: ValidationIdBase + 4 }
     }]
 
     return (
@@ -83,16 +96,11 @@ class Signin extends Component {
         <br />
         <Button icon='create' onClick={this.handleToggle} accent raised label="Create new account" />
         <this.renderDialog />
-        {/* 
-        <RRButton to="/dashboard" icon='directions_walk' label='Go to dashboard' accent />
-        <RRButton to="/side-select" icon='wc' label='Choose you side' /> 
-        */}
       </div>
     )
   }
 
   render() {
-    // console.log('theme.signinContainer', theme);
     return (
       <div className={theme.signinContainer} style={{ backgroundImage: `url(${require('resources/background.png')})` }}>
         <div className={theme.container}>
@@ -103,11 +111,10 @@ class Signin extends Component {
               <Route component={PageNotFound} />
             </Switch>
           </div>
-
         </div>
       </div>
     );
   }
 }
 
-export default Signin;
+export default Translate(Signin)

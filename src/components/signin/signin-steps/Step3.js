@@ -10,6 +10,9 @@ import Helper from 'helpers/miscHelpers'
 import { Button } from 'react-toolbox/lib/button'
 import RTButtonTheme from 'styles/RTButton.css'
 
+const SEED_WORDS_CHECK_COUNT = 0
+const DISABLE_VALIDATION = false
+
 class Step3 extends Component {
 
     componentDidMount() {
@@ -18,7 +21,7 @@ class Step3 extends Component {
 
         let randomSeedChecks = [...(signin.seedCheck || [])]
         if (!randomSeedChecks.length) {
-            while (true) {
+            while (SEED_WORDS_CHECK_COUNT && true) {
                 let randIndex = Helper.getRandomInt(0, signin.seed.length - 1)
                 let hasThisCheck = !!randomSeedChecks.filter((check) => check.index === randIndex).length
                 if (!hasThisCheck) {
@@ -28,15 +31,21 @@ class Step3 extends Component {
                         checkValue: ''
                     })
                 }
-                if (randomSeedChecks.length === 4) {
+                if (randomSeedChecks.length === SEED_WORDS_CHECK_COUNT) {
                     this.props.handleChange('seedCheck', randomSeedChecks)
                     break
                 }
             }
         }
+
+        if (DISABLE_VALIDATION) return
+
+        this.props.validate('seedCheck', { isValid: false, err: { msg: 'ERR_SEED_CHECK', }, dirty: false })
     }
 
     validateSeedCheck = () => {
+        if (DISABLE_VALIDATION) return
+
         let hasError = false
         let seedCheck = this.props.signin.seedCheck
 
@@ -81,7 +90,7 @@ class Step3 extends Component {
                     })
                 }
 
-                {errSeedCheck ?
+                {errSeedCheck && errSeedCheck.dirty ?
                     <Button label={t(errSeedCheck.errMsg)} onClick={this.validateSeedCheck} raised className={RTButtonTheme.danger} />
                     :
                     <Button label={t('CHECK_SEED')} onClick={this.validateSeedCheck} raised primary />

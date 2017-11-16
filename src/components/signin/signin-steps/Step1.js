@@ -9,9 +9,39 @@ import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
 import { validEmail } from 'helpers/validators'
 
+const DISABLE_VALIDATION = false
+
 class Step1 extends Component {
 
+    componentDidMount() {
+        if (DISABLE_VALIDATION) return
+
+        if (!this.props.signin.name) {
+            this.props.validate('name', {
+                isValid: false,
+                err: { msg: 'ERR_REQUIRED_FIELD' },
+                dirty: false
+            })
+        }
+        if (!this.props.signin.email) {
+            this.props.validate('email', {
+                isValid: false,
+                err: { msg: 'ERR_REQUIRED_FIELD' },
+                dirty: false
+            })
+        }
+        if (!this.props.signin.password) {
+            this.props.validate('password', {
+                isValid: false,
+                err: { msg: 'ERR_REQUIRED_FIELD' },
+                dirty: false
+            })
+        }
+    }
+
     validateName(name, dirty) {
+        if (DISABLE_VALIDATION) return
+
         let msg = ''
         let errMsgArgs = []
         if (!name) {
@@ -28,6 +58,8 @@ class Step1 extends Component {
     }
 
     validatePassword(pass, dirty) {
+        if (DISABLE_VALIDATION) return
+
         let msg = ''
         let errMsgArgs = []
         if (!pass) {
@@ -44,6 +76,8 @@ class Step1 extends Component {
     }
 
     validatePasswordConfirm(confirm, dirty) {
+        if (DISABLE_VALIDATION) return
+
         let msg = ''
         let errMsgArgs = []
         if ((!!confirm || !!this.props.signin.password) && (confirm !== this.props.signin.password)) {
