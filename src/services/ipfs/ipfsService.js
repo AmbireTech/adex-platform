@@ -1,5 +1,6 @@
 import Promise from 'promise'
 import ipfsAPI from 'ipfs-api'
+
 const ipfs = ipfsAPI('localhost', '5001')
 
 export function getFileIpfsHash(file) {
