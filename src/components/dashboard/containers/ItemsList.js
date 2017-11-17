@@ -52,14 +52,14 @@ class ItemsList extends Component {
             isError: false,
             search: '',
             sortOrder: -1,
-            sortProperty: (props.sortProperties || SORT_PROPERTIES)[0].value,
+            sortProperty: (props.sortProperties || SORT_PROPERTIES)[0] ? (props.sortProperties || SORT_PROPERTIES)[0].value : null, // TODO: fix this
             filteredItems: []
         }
 
         this.renderCard = this.renderCard.bind(this)
     }
 
-    mapSortProperties = (sortProps) => {
+    mapSortProperties = (sortProps = []) => {
         return sortProps.map((prop) => {
             if (prop.label) {
                 return prop
@@ -259,12 +259,15 @@ class ItemsList extends Component {
                 let match = regex.exec(matchString)
                 return !!match
             })
-            .sort((a, b) => {
+
+        if (sortProperty) {
+            filtered = filtered.sort((a, b) => {
                 let propA = a[sortProperty] || a._meta[sortProperty]
                 let propB = b[sortProperty] || b._meta[sortProperty]
 
                 return (propA < propB ? -1 : (propA > propB ? 1 : 0)) * sortOrder
             })
+        }
 
         let filteredLength = filtered.length
 

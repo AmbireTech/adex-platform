@@ -147,7 +147,6 @@ export class SlotBids extends Component {
             (bid.requiredPoints || '')
     }
 
-
     render() {
         let bidsIds = this.props.bidsIds
         let openBids = []

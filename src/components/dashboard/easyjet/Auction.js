@@ -10,41 +10,38 @@ import theme from './theme.css'
 import Translate from 'components/translate/Translate'
 import { IconButton, Button } from 'react-toolbox/lib/button'
 import Dialog from 'react-toolbox/lib/dialog'
+import BidsGenerator from 'helpers/dev/InkBidsStatsGenerator'
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
 
+const AVAILABLE_SLOTS = 2000000
+
 const SORT_PROPERTIES = [
-    { value: 'id', label: 'Id' },
-    { value: 'bidder', label: 'Bidder Name' },
-    { value: 'bidPerSlot', label: 'Bid per slot' }
+    // { value: 'price', label: 'Price' },
+    // { value: 'count', label: 'Count' },
+    // { value: 'wonNumber', label: 'Won number' },
+    // { value: 'wonPriceTotal', label: 'Won Price Total' }
 ]
 
-// TEMP: for fast test
-let BIDS = [
-    {
-        id: 1,
-        bidder: 'eToro',
-        slotsAmaount: 2000000,
+const searchMatch = (bid) => {
+    return ((bid.id + '') || '') +
+        ((bid.name + '') || '') +
+        ((bid.price + '') || '') +
+        ((bid.count + '') || '') +
+        ((bid.wonNumber + '') || '')
+}
 
-        bidPerSlot: 0.05
-    }, {
-        id: 2,
-        bidder: 'eToro-2',
-        slotsAmaount: 200000,
-        bidPerSlot: 0.08
-    }, {
-        id: 3,
-        bidder: 'eToro-3',
-        slotsAmaount: 500000,
-        bidPerSlot: 0.15
-    }, {
-        id: 4,
-        bidder: 'eToro-4',
-        slotsAmaount: 1000000,
-        bidPerSlot: 0.25
-    }
-]
+let BID_MODEL = {
+    id: 0,
+    name: 'Advertiser name',
+    count: 100, // Slots(boarding passes)
+    price: 5, // in USD cents
+    total: 500, // in USD cents - for sorting purpose 
+    wonNumber: 500,
+    wonPriceTotal: 500, // in USD cents - for sorting purpose 
+    execution: ''
+}
 
 export class Auction extends Component {
     constructor(props, context) {
@@ -52,18 +49,82 @@ export class Auction extends Component {
 
         this.state = {
             bidding: false,
-            activeSlot: {}
+            activeSlot: {},
+            bids: this.mapBids(BidsGenerator.getSomeRandomBids())
         }
+    }
+
+    mapBids(bids) {
+        return bids
+            .sort((a, b) => {
+                if (a.adUnitIpfs < b.adUnitIpfs) {
+                    return 1
+                } else if (a.adUnitIpfs > b.adUnitIpfs) {
+                    return -1
+                } else {
+                    if (a.requiredPoints < b.requiredPoints) {
+                        return 1
+                    } else if (a.requiredPoints > b.requiredPoints) {
+                        return -1
+                    } else {
+                        if (a.id < b.id) {
+                            return -1
+                        } else if (a.id > b.id) {
+                            return 1
+                        } else {
+                            return 0
+                        }
+                    }
+                }
+            })
+            .reduce((memo, bid, index) => {
+                let usedSlots = memo.usedSlots
+                let leftSlots = AVAILABLE_SLOTS - usedSlots
+                let wonNumber = bid.requiredPoints
+                let execution = 'full'
+                let bids = memo.bids
+
+                if (leftSlots <= 0) {
+                    execution = 'none'
+                } else if ((leftSlots - wonNumber) < 0) {
+                    wonNumber = leftSlots
+                    execution = 'partial'
+                }
+
+                usedSlots = usedSlots + wonNumber
+
+                let mappedBid = {
+                    id: bid.id,
+                    name: bid.id,
+                    price: bid.adUnitIpfs,
+                    count: bid.requiredPoints,
+                    total: bid.adUnitIpfs * bid.requiredPoints,
+                    wonNumber: wonNumber,
+                    wonPriceTotal: wonNumber * bid.adUnitIpfs,
+                    execution: execution
+                }
+
+                bids.push(mappedBid)
+
+                return {
+                    bids: bids,
+                    usedSlots: usedSlots
+                }
+
+            }, { bids: [], usedSlots: 0 })
+            .bids
     }
 
     renderTableHead() {
         return (
             <TableHead>
-                <TableCell> {this.props.t('BIDDER')} </TableCell>
-                <TableCell> {this.props.t('SLOTS')} </TableCell>
-                <TableCell> {this.props.t('BID_PER_SLOT')} </TableCell>
-                <TableCell> {this.props.t('BID_TOTAL_AMOUNT')} </TableCell>
-                <TableCell> {this.props.t('ACTIONS')} </TableCell>
+                <TableCell> {this.props.t('NAME')} </TableCell>
+                <TableCell> {this.props.t('PRICE')} </TableCell>
+                <TableCell> {this.props.t('COUNT')} </TableCell>
+                <TableCell> {this.props.t('TOTAL')} </TableCell>
+                <TableCell> {this.props.t('WON_NUMBER')} </TableCell>
+                <TableCell> {this.props.t('WON_TOTAL_PRICE')} </TableCell>
+                <TableCell> {this.props.t('EXECUTION')} </TableCell>
             </TableHead>
         )
     }
@@ -71,13 +132,13 @@ export class Auction extends Component {
     renderTableRow(item, index, { to, selected }) {
         return (
             <TableRow key={item.id}>
-                <TableCell> {item.bidder} </TableCell>
-                <TableCell> {item.slotsAmaount} </TableCell>
-                <TableCell> {item.bidPerSlot} </TableCell>
-                <TableCell> {item.bidPerSlot} </TableCell>
-                <TableCell>
-                    <Button accent raised label={this.props.t('PLACE_BID')} onClick={this.bid.bind(this, item, !this.state.bidding)} />
-                </TableCell>
+                <TableCell> {item.name} </TableCell>
+                <TableCell> {(item.price / 100) + ' $'} </TableCell>
+                <TableCell> {item.count} </TableCell>
+                <TableCell> {((item.price * item.count) / 100) + ' $'} </TableCell>
+                <TableCell> {item.wonNumber} </TableCell>
+                <TableCell> {item.wonPriceTotal} </TableCell>
+                <TableCell> {item.execution} </TableCell>
             </TableRow >
         )
     }
@@ -126,7 +187,7 @@ export class Auction extends Component {
         return (
             <div>
                 Ink auction
-                <ItemsList items={BIDS} listMode='rows' delete renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} />
+                <ItemsList items={this.state.bids} listMode='rows' delete renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} searchMatch={searchMatch} />
                 <this.renderDialog />
             </div>
         )
