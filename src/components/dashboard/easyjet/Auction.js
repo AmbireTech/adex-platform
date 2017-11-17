@@ -11,6 +11,7 @@ import Translate from 'components/translate/Translate'
 import { IconButton, Button } from 'react-toolbox/lib/button'
 import Dialog from 'react-toolbox/lib/dialog'
 import BidsGenerator from 'helpers/dev/InkBidsStatsGenerator'
+import { BidsStatisticsChart } from './bidsStatistics'
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
@@ -187,6 +188,9 @@ export class Auction extends Component {
         return (
             <div>
                 Ink auction
+                <div>
+                    <BidsStatisticsChart data={this.state.bids} t={this.props.t} />
+                </div>
                 <ItemsList items={this.state.bids} listMode='rows' delete renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} searchMatch={searchMatch} />
                 <this.renderDialog />
             </div>
@@ -201,7 +205,6 @@ Auction.propTypes = {
 }
 
 function mapStateToProps(state) {
-    // console.log('mapStateToProps ChannelItem', state)
     return {
         account: state.account,
         rowsView: !!state.ui[VIEW_MODE]

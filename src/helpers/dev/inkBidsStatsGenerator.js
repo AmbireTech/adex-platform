@@ -6,11 +6,11 @@ import { extendMoment } from 'moment-range'
 const moment = extendMoment(Moment)
 
 const AVAILABLE_SLOTS = 2000000 // 2 000 000
-const BID_STEP_SLOTS = 1000 // 1 000 (Just for the random data)
+const BID_STEP_SLOTS = 10000 // 10 000 (Just for the random data)
 const BID_PER_SLOT_AMOUNT_STEP = 1
 const MIN_BID_PER_SLOT_AMOUNT = BID_PER_SLOT_AMOUNT_STEP * 5 // 5 cents
-const TOTAL_BIDS = 46
-const MAX_BID_PER_SLOT_AMOUNT = MIN_BID_PER_SLOT_AMOUNT * 46 // Just for the random data
+const TOTAL_BIDS = 10
+const MAX_BID_PER_SLOT_AMOUNT = MIN_BID_PER_SLOT_AMOUNT * 20 // Just for the random data
 
 class InkBidsGenerator {
     constructor() {
