@@ -21,7 +21,7 @@ const TextIcon = ({ txt }) => (
 
 class Step2 extends Component {
 
-    componentDidMount() {
+    generateSeed() {
         let signin = this.props.signin
         let seed = signin.seed
 
@@ -34,6 +34,10 @@ class Step2 extends Component {
         } else {
             randomSeed = signin.seed
         }
+    }
+
+    componentWillMount() {
+        this.generateSeed()
     }
 
     render() {

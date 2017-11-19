@@ -17,3 +17,12 @@ export function resetSignin() {
         })
     }
 }
+
+export function createAccount(acc) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.CREATE_ACCOUNT,
+            account: acc
+        })
+    }
+}

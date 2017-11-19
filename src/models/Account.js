@@ -1,15 +1,13 @@
 import Base from './Base'
 import Helper from 'helpers/miscHelpers'
-import Campaign from './Campaign'
-import AdUnit from './AdUnit'
 import { ItemsTypes } from 'constants/itemsTypes'
 
 class Account extends Base {
     // TODO: accept addr and wallet
-    constructor(name, addr, wallet) {
+    constructor({name, addr, wallet, meta}) {
         super({name: name})
-        this._addr = Helper.getGuid()
-        this._wallet = Helper.getGuid()
+        this._addr = addr || Helper.getGuid() 
+        this._wallet = wallet || addr
 
         this._items = {}
 

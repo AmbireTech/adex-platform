@@ -15,7 +15,7 @@ const DISABLE_VALIDATION = true
 
 class Step3 extends Component {
 
-    componentDidMount() {
+    componentWillMount() {
         let signin = this.props.signin
         let seed = signin.seed
 
@@ -46,8 +46,9 @@ class Step3 extends Component {
     validateSeedCheck = () => {
         if (DISABLE_VALIDATION) return
 
+        let signin = this.props.signin
         let hasError = false
-        let seedCheck = this.props.signin.seedCheck
+        let seedCheck = signin.seedCheck
 
         for (let i = 0; i < seedCheck.length; i++) {
             let check = seedCheck[i]
