@@ -60,7 +60,7 @@ class Step1 extends Component {
     validateEmail(email, dirty) {
         if (DISABLE_VALIDATION) return
 
-        this.props.validate.bind(this, 'email', { isValid: validEmail(email), err: { msg: 'ERR_INVALID_EMAIL' }, dirty: dirty })
+        this.props.validate('email', { isValid: validEmail(email), err: { msg: 'ERR_INVALID_EMAIL' }, dirty: dirty })
     }
 
     validatePassword(pass, dirty) {
