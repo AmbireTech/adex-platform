@@ -1,11 +1,21 @@
-import { createStore, compose, applyMiddleware } from 'redux';
-import reduxImmutableStateInvariant from 'redux-immutable-state-invariant';
-import thunk from 'redux-thunk';
-import rootReducer from 'reducers';
+import { createStore, compose, applyMiddleware, combineReducers } from 'redux'
+import reduxImmutableStateInvariant from 'redux-immutable-state-invariant'
+import thunk from 'redux-thunk'
+import reducers from 'reducers'
 import history from './history'
-import { routerMiddleware } from 'react-router-redux';
+import { routerMiddleware } from 'react-router-redux'
+import { persistStore, persistCombineReducers } from 'redux-persist'
+import storage from 'redux-persist/es/storage'
 
 const reduxRouterMiddleware = routerMiddleware(history)
+
+const config = {
+  key: 'root',
+  storage,
+}
+
+// const rootReducer = combineReducers(reducers)
+const rootReducer = persistCombineReducers(config, reducers)
 
 const logger = store => next => action => {
   // if (action.type === 'UPDATE_NEWITEM') {
@@ -28,12 +38,15 @@ function configureStoreProd(initialState) {
     // https://github.com/gaearon/redux-thunk#injecting-a-custom-argument
     thunk,
     reduxRouterMiddleware
-  ];
+  ]
 
-  return createStore(rootReducer, initialState, compose(
+  let store = createStore(rootReducer, initialState, compose(
     applyMiddleware(...middlewares)
-  )
-  );
+  ))
+
+  let persistor = persistStore(store)
+
+  return { persistor, store }
 }
 
 function configureStoreDev(initialState) {
@@ -60,13 +73,14 @@ function configureStoreDev(initialState) {
     // Enable Webpack hot module replacement for reducers
     module.hot.accept('../reducers', () => {
       const nextReducer = require('../reducers').default; // eslint-disable-line global-require
-      store.replaceReducer(nextReducer);
-    });
+      store.replaceReducer(nextReducer)
+    })
   }
 
-  return store;
+  let persistor = persistStore(store)
+  return { persistor, store }
 }
 
-const configureStore = process.env.NODE_ENV === 'production' ? configureStoreProd : configureStoreDev;
+const configureStore = process.env.NODE_ENV === 'production' ? configureStoreProd : configureStoreDev
 
-export default configureStore;
+export default configureStore

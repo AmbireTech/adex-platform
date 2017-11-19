@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux'
 import account from './accountReducer'
 import items from './itemsReducer'
 import newItem from './newItemsReducer'
@@ -15,7 +14,7 @@ import { routerReducer, LOCATION_CHANGE, CALL_HISTORY_METHOD } from 'react-route
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
 
-const rootReducer = combineReducers({
+const reducers = {
     account: account,
     items: filterActions(items, (action => action.type.match(/_ITEM/))),
     newItem: filterActions(newItem, (action => action.type.match(/_NEWITEM/))),
@@ -28,6 +27,6 @@ const rootReducer = combineReducers({
     language: language,
     validations: validations,
     bids: bids
-})
+}
 
-export default rootReducer
+export default reducers

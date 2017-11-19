@@ -12,9 +12,14 @@ import history from 'store/history'
 import { ConnectedRouter } from 'react-router-redux'
 import Toast from 'components/toast/Toast'
 import Confirm from 'components/confirm/Confirm'
+import { PersistGate } from 'redux-persist/es/integration/react'
 
-const store = configureStore()
+const { persistor, store } = configureStore()
 console.log('initial store', store.getState())
+
+const onBeforeLift = () => {
+  // take some action before the gate lifts
+}
 
 class App extends Component {
 
@@ -25,19 +30,24 @@ class App extends Component {
     return (
       <ThemeProvider theme={theme}>
         <Provider store={store}>
-          <ConnectedRouter history={history} >
-            <div className="adex-dapp">
-              <Switch location={location}>
-                <Route path="/dashboard/:side" component={Dashboard} />
-                <Redirect from="/dashboard" to="/side-select" />
-                <Route path="/" component={Signin} />
+          <PersistGate
+            onBeforeLift={onBeforeLift}
+            persistor={persistor}>
+            <ConnectedRouter history={history} >
+              <div className="adex-dapp">
+                <Switch location={location}>
+                  <Route path="/dashboard/:side" component={Dashboard} />
+                  <Redirect from="/dashboard" to="/side-select" />
+                  <Route path="/" component={Signin} />
 
-                <Route component={PageNotFound} />
-              </Switch>
-              <Toast />
-              <Confirm />
-            </div>
-          </ConnectedRouter>
+                  <Route component={PageNotFound} />
+                </Switch>
+                <Toast />
+                <Confirm />
+              </div>
+            </ConnectedRouter>
+
+          </PersistGate>
         </Provider>
       </ThemeProvider>
     );
