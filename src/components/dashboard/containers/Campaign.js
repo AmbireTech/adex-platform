@@ -119,7 +119,7 @@ Campaign.propTypes = {
 }
 
 function mapStateToProps(state) {
-    // console.log('mapStateToProps Campaign', state)
+    state = state.storage
     return {
         account: state.account,
         items: state.items[ItemsTypes.Campaign.id],

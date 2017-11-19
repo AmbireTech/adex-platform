@@ -68,7 +68,7 @@ Step2.propTypes = {
 
 function mapStateToProps(state, props) {
     return {
-        account: state.account
+        account: state.storage.account
     };
 }
 

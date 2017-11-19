@@ -147,7 +147,7 @@ SideNav.propTypes = {
 }
 
 function mapStateToProps(state) {
-    // console.log('mapStateToProps Campaigns', state)
+    state = state.storage
     return {
         account: state.account,
         campaigns: state.campaigns

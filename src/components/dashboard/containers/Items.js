@@ -37,6 +37,7 @@ Items.propTypes = {
 };
 
 function mapStateToProps(state, props) {
+    state = state.storage
     return {
         account: state.account,
         items: state.items[props.itemsType]

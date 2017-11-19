@@ -46,6 +46,7 @@ export default function Translate(Decorated) {
   }
 
   function mapStateToProps(state, props) {
+    state = state.storage
     return {
       language: state.language
     }

@@ -109,9 +109,11 @@ Step4.propTypes = {
 }
 
 function mapStateToProps(state, props) {
+    let storage = state.storage
+    let session = state.session
     return {
-        account: state.account,
-        spinner: state.spinners[SPINNER_KEY]
+        account: storage.account,
+        spinner: storage.spinners[SPINNER_KEY]
     };
 }
 

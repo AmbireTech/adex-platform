@@ -57,6 +57,7 @@ NewSlotForm.propTypes = {
 }
 
 function mapStateToProps(state) {
+    state = state.storage
     return {
         account: state.account,
         itemType: ItemsTypes.AdSlot.id

@@ -34,17 +34,13 @@ class NewUnitForm extends Component {
 NewUnitForm.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    // newItem: PropTypes.object.isRequired,
     title: PropTypes.string,
-    // items: PropTypes.array.isRequired
 }
 
 function mapStateToProps(state) {
-    // console.log('mapStateToProps Campaigns', state)
+    state = state.storage
     return {
         account: state.account,
-        // newItem: state.newItem[ItemsTypes.AdUnit.id],
-        // items: state.items[ItemsTypes.AdUnit.id],
         itemType: ItemsTypes.AdUnit.id
     }
 }

@@ -56,6 +56,7 @@ export default function NewItemHoc(Decorated) {
     }
 
     function mapStateToProps(state, props) {
+        state = state.storage
         return {
             account: state.account,
             validations: state.validations[props.validateId]

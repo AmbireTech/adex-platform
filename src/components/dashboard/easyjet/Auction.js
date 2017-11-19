@@ -205,6 +205,7 @@ Auction.propTypes = {
 }
 
 function mapStateToProps(state) {
+    state = state.storage
     return {
         account: state.account,
         rowsView: !!state.ui[VIEW_MODE]

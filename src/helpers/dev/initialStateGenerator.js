@@ -193,17 +193,17 @@ class InitialStateGenerator {
         return {
             account: {
                 account: this.account,
-                signin: {
-                    name: '',
-                    email: '',
-                    password: '',
-                    passConfirm: '',
-                    seed: [],
-                    publicKey: '',
-                    privateKey: '',
-                    encryptedPrivateKey: '',
-                    seedCheck: []
-                }
+            },
+            signin: {
+                name: '',
+                email: '',
+                password: '',
+                passConfirm: '',
+                seed: [],
+                publicKey: '',
+                privateKey: '',
+                encryptedPrivateKey: '',
+                seedCheck: []
             },
             newItem: {
                 [ItemsTypes.Campaign.id]: newCampaign,

@@ -124,6 +124,7 @@ Slot.propTypes = {
 };
 
 function mapStateToProps(state) {
+    state = state.storage
     return {
         account: state.account,
         items: state.items[ItemsTypes.AdSlot.id],

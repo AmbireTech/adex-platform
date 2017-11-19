@@ -92,6 +92,7 @@ export default function NewItemHoc(Decorated) {
     // return ItemForm
 
     function mapStateToProps(state, props) {
+        state = state.storage
         return {
             account: state.account,
             newItem: state.newItem[props.itemType],

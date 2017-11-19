@@ -29,6 +29,7 @@ NewChannelForm.propTypes = {
 };
 
 function mapStateToProps(state) {
+    state = state.storage
     return {
         account: state.account,
         newItem: state.newItem[ItemsTypes.Channel.id],

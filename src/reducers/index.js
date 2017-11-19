@@ -1,4 +1,5 @@
 import account from './accountReducer'
+import signin from './signinReducer'
 import items from './itemsReducer'
 import newItem from './newItemsReducer'
 // import currentItem from './currentItemsReducer'
@@ -14,7 +15,7 @@ import { routerReducer, LOCATION_CHANGE, CALL_HISTORY_METHOD } from 'react-route
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
 
-const reducers = {
+export  const storageReducers = {
     account: account,
     items: filterActions(items, (action => action.type.match(/_ITEM/))),
     newItem: filterActions(newItem, (action => action.type.match(/_NEWITEM/))),
@@ -29,4 +30,11 @@ const reducers = {
     bids: bids
 }
 
-export default reducers
+export const sessionReducers = {
+    signin: signin
+}
+
+export default {
+    storageReducers: storageReducers,
+    sessionReducers: sessionReducers
+}

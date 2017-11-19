@@ -1,21 +1,33 @@
 import { createStore, compose, applyMiddleware, combineReducers } from 'redux'
 import reduxImmutableStateInvariant from 'redux-immutable-state-invariant'
 import thunk from 'redux-thunk'
-import reducers from 'reducers'
+import { storageReducers, sessionReducers } from 'reducers'
 import history from './history'
 import { routerMiddleware } from 'react-router-redux'
-import { persistStore, persistCombineReducers } from 'redux-persist'
+import { persistStore, persistCombineReducers, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/es/storage'
+import session from 'redux-persist/lib/storage/session'
 
 const reduxRouterMiddleware = routerMiddleware(history)
 
-const config = {
+const configStorage = {
   key: 'root',
-  storage,
+  storage: storage,
+  // blacklist: ['account']
+}
+
+const configSession = {
+  key: 'session',
+  storage: session,
 }
 
 // const rootReducer = combineReducers(reducers)
-const rootReducer = persistCombineReducers(config, reducers)
+
+
+const rootReducer = combineReducers({
+  storage: persistCombineReducers(configStorage, storageReducers),
+  session: persistCombineReducers(configSession, sessionReducers),
+})
 
 const logger = store => next => action => {
   // if (action.type === 'UPDATE_NEWITEM') {

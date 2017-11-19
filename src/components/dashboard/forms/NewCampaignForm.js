@@ -46,7 +46,7 @@ NewCampaignForm.propTypes = {
 };
 
 function mapStateToProps(state) {
-    // console.log('mapStateToProps Campaigns', state)
+    state = state.storage
     return {
         account: state.account,
         newItem: state.newItem[ItemsTypes.Campaign.id],

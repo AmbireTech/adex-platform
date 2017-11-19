@@ -80,6 +80,7 @@ NewUnitForm.propTypes = {
 }
 
 function mapStateToProps(state) {
+    state = state.storage
     return {
         account: state.account,
         itemType: ItemsTypes.AdUnit.id

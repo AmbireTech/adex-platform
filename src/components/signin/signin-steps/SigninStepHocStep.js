@@ -68,9 +68,11 @@ export default function SigninStepHocStep(Decorated) {
     }
 
     function mapStateToProps(state, props) {
+        let storage = state.storage
+        let session = state.session
         return {
-            account: state.account,
-            signin: state.account.signin
+            account: storage.account,
+            signin: session.signin
         }
     }
 

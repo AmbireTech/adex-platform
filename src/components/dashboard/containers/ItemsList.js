@@ -401,6 +401,7 @@ ItemsList.propTypes = {
 }
 
 function mapStateToProps(state, props) {
+    state = state.storage
     return {
         rowsView: !!state.ui[props.viewModeId],
         side: state.nav.side

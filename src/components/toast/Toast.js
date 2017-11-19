@@ -66,6 +66,7 @@ Toast.propTypes = {
 };
 
 function mapStateToProps(state) {
+    state = state.storage
     return {
         toasts: state.toasts || []
     };

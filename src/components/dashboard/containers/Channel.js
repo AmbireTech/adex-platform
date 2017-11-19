@@ -87,7 +87,7 @@ Channel.propTypes = {
 }
 
 function mapStateToProps(state) {
-    // console.log('mapStateToProps ChannelItem', state)
+    state = state.storage
     return {
         account: state.account,
         items: state.items[ItemsTypes.Channel.id],
