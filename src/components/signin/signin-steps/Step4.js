@@ -69,13 +69,15 @@ class Step4 extends Component {
     }
 
     componentWillMount() {
+        this.props.validate('createVault', { isValid: false, err: { msg: 'ERR_CREATE_VAULT', }, dirty: false })
         this.props.actions.updateSpinner(SPINNER_KEY, true)
         this.createVault()
-        this.props.validate('createVault', { isValid: false, err: { msg: 'ERR_CREATE_VAULT', }, dirty: false })
     }
 
     componentWillReceiveProps(nextProps) {
-        this.props.validate('createVault', { isValid: !!nextProps.spinner, err: { msg: 'ERR_CREATE_VAULT', }, dirty: false })
+        if (!nextProps.spinner) {
+            this.props.validate('createVault', { isValid: true, err: { msg: 'ERR_CREATE_VAULT', }, dirty: false })
+        }
     }
 
     componentDidMount() {

@@ -94,7 +94,7 @@ function mapStateToProps(state) {
         items: persist.items[ItemsTypes.Channel.id],
         slots: persist.items[ItemsTypes.AdSlot.id],
         spinner: memory.spinners[ItemsTypes.Channel.name],
-        rowsView: !!memory.ui[VIEW_MODE]
+        rowsView: !!persist.ui[VIEW_MODE]
     }
 }
 

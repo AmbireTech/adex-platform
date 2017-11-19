@@ -10,8 +10,8 @@ import Helper from 'helpers/miscHelpers'
 import { Button } from 'react-toolbox/lib/button'
 import RTButtonTheme from 'styles/RTButton.css'
 
-const SEED_WORDS_CHECK_COUNT = 0
-const DISABLE_VALIDATION = false
+const SEED_WORDS_CHECK_COUNT = 4
+const DISABLE_VALIDATION = true
 
 class Step3 extends Component {
 

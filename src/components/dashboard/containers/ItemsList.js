@@ -401,10 +401,10 @@ ItemsList.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-    // let persist = state.persist
+    let persist = state.persist
     let memory = state.memory
     return {
-        rowsView: !!memory.ui[props.viewModeId],
+        rowsView: !!persist.ui[props.viewModeId],
         side: memory.nav.side
     };
 }

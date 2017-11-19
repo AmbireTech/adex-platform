@@ -126,7 +126,7 @@ function mapStateToProps(state) {
         items: persist.items[ItemsTypes.Campaign.id],
         units: persist.items[ItemsTypes.AdUnit.id],
         spinner: memory.spinners[ItemsTypes.Campaign.name],
-        rowsView: !!memory.ui[VIEW_MODE]
+        rowsView: !!persist.ui[VIEW_MODE]
     }
 }
 

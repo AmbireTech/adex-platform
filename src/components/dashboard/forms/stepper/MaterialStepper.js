@@ -85,7 +85,6 @@ class MaterialStepper extends React.Component {
 
     canAdvanceNextToPage() {
         /* TODO: add check for optional steps that can be skipped
-            * fix duplicated code here and in render
         */
         let page = this.props.pages[this.props.currentPage]
         if (this.props.canAdvance && !Object.keys(this.props.validations[page.props.validateId] || {}).length) {
@@ -93,6 +92,12 @@ class MaterialStepper extends React.Component {
         } else {
             return false
         }
+    }
+
+    isValidPage() {
+        let page = this.props.pages[this.props.currentPage]
+        console.log('isvalid-page', page)
+        return !Object.keys(this.props.validations[page.props.validateId] || {}).length
     }
 
     render() {
@@ -126,7 +131,7 @@ class MaterialStepper extends React.Component {
                                 !page.completeBtn ?
                                     <Button label='Continue' disabled />
                                     : null}
-                            {page.completeBtn ?
+                            {page.completeBtn && this.isValidPage() ?
                                 <page.completeBtn />
                                 : ''}
                         </div>
