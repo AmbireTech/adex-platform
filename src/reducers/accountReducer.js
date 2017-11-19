@@ -1,4 +1,4 @@
-import { UPDATE_SIGNIN, RESET_SIGNIN } from '../constants/actionTypes'
+import { UPDATE_SIGNIN, RESET_SIGNIN, CREATE_ACCOUNT } from '../constants/actionTypes'
 import initialState from 'store/initialState'
 
 export default function accountReducer(state = initialState.account, action) {
@@ -6,6 +6,7 @@ export default function accountReducer(state = initialState.account, action) {
     let newState
     let newCollection
     let newSignin
+    let newAccount
 
     const collection = (state = [], action) => {
         if (!action.item) return state
@@ -34,6 +35,10 @@ export default function accountReducer(state = initialState.account, action) {
         case RESET_SIGNIN:
             newSignin = { ...initialState.account.signin }
             newState.signin = newSignin
+            return newState
+        case CREATE_ACCOUNT:
+            newAccount = { ...action.account }
+            newState.account = newAccount
             return newState
 
         default:

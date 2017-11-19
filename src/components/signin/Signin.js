@@ -28,7 +28,7 @@ const ValidationIdBase = "SignInStep"
 
 const CompleteBtn = ({ ...props }) => {
   return (
-    <RRButton to={props.to} label={props.t('CHOOSE_SIDE')} primary />
+    <RRButton to={props.to} onClick={() => alert('test')} label={props.t('CHOOSE_SIDE')} primary />
   )
 }
 

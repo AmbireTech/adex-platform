@@ -11,6 +11,7 @@ import { Button } from 'react-toolbox/lib/button'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
 import RTButtonTheme from 'styles/RTButton.css'
 import lightwallet from 'eth-lightwallet'
+import Account from 'models/Account'
 
 const keyStore = lightwallet.keystore
 const HD_PATH = "m/0'/0'/0'" // TODO: check this
@@ -30,15 +31,21 @@ class Step4 extends Component {
             salt: signin.name,
             hdPathString: HD_PATH // TODO: check it
         }, function (err, ks) {
-            if (err) throw err // TODO: make global error handler!!!
+            if (err) {
+                console.log('err', err)
+                throw err // TODO: make global error handler!!!
+            }
 
             ks.keyFromPassword(password, function (err, pwDerivedKey) {
-                if (err) throw err
+                if (err) {
+                    console.log('err', err)
+                    throw err
+                }
 
                 ks.generateNewAddress(pwDerivedKey, 1);
                 var addr = ks.getAddresses()
 
-                that.onVaultCreated({ addr: addr })
+                that.onVaultCreated({ addr: addr[0] })
 
                 ks.passwordProvider = function (callback) {
                     var pw = prompt("Please enter password", "Password");
@@ -49,9 +56,14 @@ class Step4 extends Component {
     }
 
     onVaultCreated({ addr }) {
-        this.props.handleChange('publicKey', addr[0])
+        this.props.handleChange('publicKey', addr)
         this.props.actions.updateSpinner(SPINNER_KEY, false)
-        this.props.actions.resetSignin()
+
+        let acc = new Account({ addr: addr, name: this.props.signin.name })
+
+        this.props.actions.createAccount(acc)
+
+        // this.props.actions.resetSignin()
     }
 
     componentWillMount() {

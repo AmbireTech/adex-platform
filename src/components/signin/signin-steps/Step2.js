@@ -23,17 +23,14 @@ class Step2 extends Component {
 
     generateSeed() {
         let signin = this.props.signin
-        let seed = signin.seed
+        let seed = signin
 
         let randomSeed = []
-        if (!seed.length) {
-            let extraEntropy = signin.name + signin.email + signin.password + Date.now()
-            randomSeed = keystore.generateRandomSeed(extraEntropy)
-            randomSeed = randomSeed.split(' ')
-            this.props.handleChange('seed', randomSeed)
-        } else {
-            randomSeed = signin.seed
-        }
+
+        let extraEntropy = signin.name + signin.email + signin.password + Date.now()
+        randomSeed = keystore.generateRandomSeed(extraEntropy)
+        randomSeed = randomSeed.split(' ')
+        this.props.handleChange('seed', randomSeed)
     }
 
     componentWillMount() {
