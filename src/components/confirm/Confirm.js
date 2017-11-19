@@ -73,7 +73,7 @@ Confirm.propTypes = {
 };
 
 function mapStateToProps(state) {
-    state = state.storage
+    state = state.memory
     return {
         cancelLabel: state.confirm.data.cancelLabel,
         confirmLabel: state.confirm.data.confirmLabel,

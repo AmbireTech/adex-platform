@@ -11,7 +11,7 @@ import { Button } from 'react-toolbox/lib/button'
 import RTButtonTheme from 'styles/RTButton.css'
 
 const SEED_WORDS_CHECK_COUNT = 0
-const DISABLE_VALIDATION = true
+const DISABLE_VALIDATION = false
 
 class Step3 extends Component {
 
@@ -102,26 +102,5 @@ class Step3 extends Component {
     }
 }
 
-Step3.propTypes = {
-    actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired,
-    title: PropTypes.string,
-}
-
-function mapStateToProps(state, props) {
-    return {
-        account: state.storage.account
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    };
-}
-
 const SigninStep3 = SigninStepHocStep(Step3)
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Translate(SigninStep3))
+export default Translate(SigninStep3)

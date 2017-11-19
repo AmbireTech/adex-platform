@@ -204,14 +204,15 @@ SlotBids.propTypes = {
 };
 
 function mapStateToProps(state, props) {
-    state = state.storage
+    let persist = state.persist
+    let memory = state.memory
     return {
-        account: state.account,
-        slots: state.items[ItemsTypes.AdSlot.id],
+        account: persist.account,
+        slots: persist.items[ItemsTypes.AdSlot.id],
         // item: state.currentItem,
-        spinner: state.spinners[ItemsTypes.AdUnit.name],
-        bidsIds: state.bids.bidsByAdslot[props.item._id],
-        bids: state.bids.bidsById
+        spinner: memory.spinners[ItemsTypes.AdUnit.name],
+        bidsIds: persist.bids.bidsByAdslot[props.item._id],
+        bids: persist.bids.bidsById
     };
 }
 

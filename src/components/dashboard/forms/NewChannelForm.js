@@ -29,11 +29,12 @@ NewChannelForm.propTypes = {
 };
 
 function mapStateToProps(state) {
-    state = state.storage
+    let persist = state.persist
+    let memory = state.memory
     return {
-        account: state.account,
-        newItem: state.newItem[ItemsTypes.Channel.id],
-        items: state.items[ItemsTypes.Channel.id],
+        account: persist.account,
+        newItem: memory.newItem[ItemsTypes.Channel.id],
+        items: persist.items[ItemsTypes.Channel.id],
     };
 }
 

@@ -37,9 +37,10 @@ ChangeLang.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-  state = state.storage
+  let persist = state.persist
+  // let memory = state.memory
   return {
-    language: state.language
+    language: persist.language
   }
 }
 

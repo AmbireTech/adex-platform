@@ -9,7 +9,7 @@ import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
 import { validEmail } from 'helpers/validators'
 
-const DISABLE_VALIDATION = true
+const DISABLE_VALIDATION = false
 
 class Step1 extends Component {
 
@@ -162,26 +162,6 @@ class Step1 extends Component {
     }
 }
 
-Step1.propTypes = {
-    actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired,
-    title: PropTypes.string,
-}
-
-function mapStateToProps(state, props) {
-    return {
-        account: state.storage.account
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    };
-}
 
 const SigninStep1 = SigninStepHocStep(Step1)
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Translate(SigninStep1))
+export default Translate(SigninStep1)

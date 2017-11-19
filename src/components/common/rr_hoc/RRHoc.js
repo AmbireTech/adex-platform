@@ -5,9 +5,9 @@ import { withRouter } from 'react-router-dom'
 export const withReactRouterLink = Component => {
 
   class Decorated extends React.Component {
-    constructor(props,context) {
-      super(props,context)
-      this.state = {active: false}
+    constructor(props, context) {
+      super(props, context)
+      this.state = { active: false }
     }
     static propTypes = {
       activeClassName: PropTypes.string,
@@ -30,34 +30,39 @@ export const withReactRouterLink = Component => {
     }
     handleClick = event => {
       event.preventDefault();
-      const { to } = this.props;
+      const { to, beforeTo } = this.props
+
+      if (typeof beforeTo === 'function') {
+        beforeTo()
+      }
+
       this.props.history.push(to)
-      this.setState({active: this.isActive(to)})
+      this.setState({ active: this.isActive(to) })
     }
 
     componentWillMount() {
       const { to } = this.props;
-      this.setState({active: this.isActive(to)})
+      this.setState({ active: this.isActive(to) })
     }
     componentWillReceiveProps(nextProps) {
       const { to } = this.props;
-      if (this.state.active !== this.isActive(to,nextProps)) {
-        this.setState({active: this.isActive(to,nextProps)})
+      if (this.state.active !== this.isActive(to, nextProps)) {
+        this.setState({ active: this.isActive(to, nextProps) })
       }
     }
     shouldComponentUpdate(nextProps, nextState) {
       // const { to } = this.props;
       return this.state.active !== nextState.active
     }
-    render () {
-      const { activeClassName, className, to,  ...rest } = this.props;
+    render() {
+      const { activeClassName, className, to, beforeTo, ...rest } = this.props;
 
       // TODO: do we need these props here
       delete rest.history
       delete rest.location
       delete rest.match
       delete rest.staticContext
-      
+
       const toLocation = this.resolveToLocation(to);
       const _className = this.state.active ? `${className} ${activeClassName}` : className;
       return (

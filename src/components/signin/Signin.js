@@ -28,7 +28,7 @@ const ValidationIdBase = "SignInStep"
 
 const CompleteBtn = ({ ...props }) => {
   return (
-    <RRButton to={props.to} onClick={() => alert('test')} label={props.t('CHOOSE_SIDE')} primary />
+    <RRButton to={props.to} beforeTo={props.onSuccess} label={props.t('CHOOSE_SIDE')} primary />
   )
 }
 
@@ -43,6 +43,11 @@ class Signin extends Component {
   handleToggle = () => {
     let active = this.state.dialogActive
     this.setState({ dialogActive: !active })
+  }
+
+  onSuccess = () => {
+    this.props.actions.resetSignin()
+    this.handleToggle()
   }
 
   renderDialog = () => {
@@ -64,7 +69,7 @@ class Signin extends Component {
     },
     {
       title: 'Step 4',
-      completeBtn: () => <CompleteBtn {...this.props} to="/side-select" />,
+      completeBtn: () => <CompleteBtn {...this.props} to="/side-select" onSuccess={this.onSuccess} />,
       component: ValidItemHoc(Step4),
       props: { ...this.props, validateId: ValidationIdBase + 4 }
     }]

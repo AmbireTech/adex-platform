@@ -124,13 +124,14 @@ Unit.propTypes = {
 };
 
 function mapStateToProps(state) {
-    state = state.storage
+    let persist = state.persist
+    let memory = state.memory
     return {
-        account: state.account,
-        items: state.items[ItemsTypes.AdUnit.id],
-        slots: state.items[ItemsTypes.AdSlot.id],
+        account: persist.account,
+        items: persist.items[ItemsTypes.AdUnit.id],
+        slots: persist.items[ItemsTypes.AdSlot.id],
         // item: state.currentItem,
-        spinner: state.spinners[ItemsTypes.AdUnit.name]
+        spinner: memory.spinners[ItemsTypes.AdUnit.name]
     };
 }
 

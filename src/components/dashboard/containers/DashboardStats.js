@@ -70,10 +70,11 @@ DashboardStats.propTypes = {
 };
 
 function mapStateToProps(state, props) {
-    state = state.storage
+    let persist = state.persist
+    // let memory = state.memory
     return {
-        account: state.account,
-        bidsIds: state.bids.bidsIds
+        account: persist.account,
+        bidsIds: persist.bids.bidsIds
     };
 }
 

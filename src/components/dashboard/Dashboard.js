@@ -138,9 +138,10 @@ Dashboard.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-    state = state.storage
+    let persist = state.persist
+    // let memory = state.memory
     return {
-        account: state.account
+        account: persist.account
     }
 }
 

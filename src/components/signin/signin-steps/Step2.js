@@ -60,26 +60,5 @@ class Step2 extends Component {
     }
 }
 
-Step2.propTypes = {
-    actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired,
-    title: PropTypes.string,
-}
-
-function mapStateToProps(state, props) {
-    return {
-        account: state.storage.account
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    };
-}
-
 const SigninStep2 = SigninStepHocStep(Step2)
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Translate(SigninStep2))
+export default Translate(SigninStep2)

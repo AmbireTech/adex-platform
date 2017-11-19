@@ -119,13 +119,14 @@ Campaign.propTypes = {
 }
 
 function mapStateToProps(state) {
-    state = state.storage
+    let persist = state.persist
+    let memory = state.memory
     return {
-        account: state.account,
-        items: state.items[ItemsTypes.Campaign.id],
-        units: state.items[ItemsTypes.AdUnit.id],
-        spinner: state.spinners[ItemsTypes.Campaign.name],
-        rowsView: !!state.ui[VIEW_MODE]
+        account: persist.account,
+        items: persist.items[ItemsTypes.Campaign.id],
+        units: persist.items[ItemsTypes.AdUnit.id],
+        spinner: memory.spinners[ItemsTypes.Campaign.name],
+        rowsView: !!memory.ui[VIEW_MODE]
     }
 }
 

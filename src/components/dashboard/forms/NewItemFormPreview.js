@@ -74,11 +74,12 @@ NewItemFormPreview.propTypes = {
 }
 
 function mapStateToProps(state) {
-    state = state.storage
+    let persist = state.persist
+    let memory = state.memory
     return {
-        account: state.account,
-        newItem: state.newItem[ItemsTypes.AdUnit.id],
-        items: state.items[ItemsTypes.AdUnit.id]
+        account: persist.account,
+        newItem: memory.newItem[ItemsTypes.AdUnit.id],
+        items: persist.items[ItemsTypes.AdUnit.id]
     }
 }
 

@@ -74,7 +74,7 @@ export class UnitSlots extends Component {
                     active={this.state.bidding}
                     onEscKeyDown={this.bid.bind(this, {}, !this.state.bidding)}
                     onOverlayClick={this.bid.bind(this, {}, !this.state.bidding)}
-                    title={this.props.t('PLACE_BID_FOR', {args: [this.state.activeSlot._name]})}
+                    title={this.props.t('PLACE_BID_FOR', { args: [this.state.activeSlot._name] })}
                     type={this.props.type || 'normal'}
                 >
                     <IconButton
@@ -95,7 +95,7 @@ export class UnitSlots extends Component {
     bid = (slot, active) => {
         this.setState({ activeSlot: slot, bidding: active })
     }
-    
+
     render() {
         let item = this.props.item
         let meta = item._meta
@@ -123,13 +123,12 @@ UnitSlots.propTypes = {
 };
 
 function mapStateToProps(state) {
-    state = state.storage
+    let persist = state.persist
+    let memory = state.memory
     return {
-        account: state.account,
-        // items: state.items[ItemsTypes.AdUnit.id],
-        slots: state.items[ItemsTypes.AdSlot.id],
-        // item: state.currentItem,
-        spinner: state.spinners[ItemsTypes.AdUnit.name]
+        account: persist.account,
+        slots: persist.items[ItemsTypes.AdSlot.id],
+        spinner: memory.spinners[ItemsTypes.AdUnit.name]
     };
 }
 

@@ -46,11 +46,12 @@ NewCampaignForm.propTypes = {
 };
 
 function mapStateToProps(state) {
-    state = state.storage
+    let persist = state.persist
+    let memory = state.memory
     return {
-        account: state.account,
-        newItem: state.newItem[ItemsTypes.Campaign.id],
-        items: state.items[ItemsTypes.Campaign.id],
+        account: persist.account,
+        newItem: memory.newItem[ItemsTypes.Campaign.id],
+        items: persist.items[ItemsTypes.Campaign.id],
     };
 }
 

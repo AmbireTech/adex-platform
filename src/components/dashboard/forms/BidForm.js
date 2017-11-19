@@ -35,14 +35,14 @@ class BidForm extends Component {
 
 BidForm.propTypes = {
   actions: PropTypes.object.isRequired,
-  language: PropTypes.string.isRequired,
   label: PropTypes.string
 }
 
 function mapStateToProps(state, props) {
-  state = state.storage
+  let persist = state.persist
+  // let memory = state.memory
   return {
-    language: state.language
+    language: persist.language
   }
 }
 

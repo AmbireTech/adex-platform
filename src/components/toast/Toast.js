@@ -66,9 +66,10 @@ Toast.propTypes = {
 };
 
 function mapStateToProps(state) {
-    state = state.storage
+    // let persist = state.persist
+    let memory = state.memory
     return {
-        toasts: state.toasts || []
+        toasts: memory.toasts || []
     };
 }
 

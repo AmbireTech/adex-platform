@@ -87,13 +87,14 @@ Channel.propTypes = {
 }
 
 function mapStateToProps(state) {
-    state = state.storage
+    let persist = state.persist
+    let memory = state.memory
     return {
-        account: state.account,
-        items: state.items[ItemsTypes.Channel.id],
-        slots: state.items[ItemsTypes.AdSlot.id],
-        spinner: state.spinners[ItemsTypes.Channel.name],
-        rowsView: !!state.ui[VIEW_MODE]
+        account: persist.account,
+        items: persist.items[ItemsTypes.Channel.id],
+        slots: persist.items[ItemsTypes.AdSlot.id],
+        spinner: memory.spinners[ItemsTypes.Channel.name],
+        rowsView: !!memory.ui[VIEW_MODE]
     }
 }
 

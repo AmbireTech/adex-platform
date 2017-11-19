@@ -205,10 +205,11 @@ Auction.propTypes = {
 }
 
 function mapStateToProps(state) {
-    state = state.storage
+    let persist = state.persist
+    // let memory = state.memory
     return {
-        account: state.account,
-        rowsView: !!state.ui[VIEW_MODE]
+        account: persist.account,
+        rowsView: !!persist.ui[VIEW_MODE]
     }
 }
 

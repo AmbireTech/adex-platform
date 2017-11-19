@@ -147,10 +147,10 @@ SideNav.propTypes = {
 }
 
 function mapStateToProps(state) {
-    state = state.storage
+    let persist = state.persist
+    let memory = state.memory
     return {
-        account: state.account,
-        campaigns: state.campaigns
+        account: persist.account
     }
 }
 

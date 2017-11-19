@@ -1,19 +1,18 @@
 import { createStore, compose, applyMiddleware, combineReducers } from 'redux'
 import reduxImmutableStateInvariant from 'redux-immutable-state-invariant'
 import thunk from 'redux-thunk'
-import { storageReducers, sessionReducers } from 'reducers'
+import { persistReducers, memoryReducers } from 'reducers'
 import history from './history'
 import { routerMiddleware } from 'react-router-redux'
 import { persistStore, persistCombineReducers, persistReducer } from 'redux-persist'
-import storage from 'redux-persist/es/storage'
+import localStorage from 'redux-persist/es/storage'
 import session from 'redux-persist/lib/storage/session'
 
 const reduxRouterMiddleware = routerMiddleware(history)
 
 const configStorage = {
-  key: 'root',
-  storage: storage,
-  // blacklist: ['account']
+  key: 'persist',
+  storage: localStorage,
 }
 
 const configSession = {
@@ -23,10 +22,10 @@ const configSession = {
 
 // const rootReducer = combineReducers(reducers)
 
-
+// TODO: make session reducer(signin) - RAM reducer (no persist)
 const rootReducer = combineReducers({
-  storage: persistCombineReducers(configStorage, storageReducers),
-  session: persistCombineReducers(configSession, sessionReducers),
+  persist: persistCombineReducers(configStorage, persistReducers),
+  memory: combineReducers(memoryReducers), // persistCombineReducers(configSession, sessionReducers), //
 })
 
 const logger = store => next => action => {

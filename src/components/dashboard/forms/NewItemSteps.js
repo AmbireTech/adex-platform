@@ -64,10 +64,11 @@ NewItemSteps.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-    state = state.storage
+    let persist = state.persist
+    // let memory = state.memory
     return {
-        account: state.account,
-        items: state.items[props.itemType]
+        account: persist.account,
+        items: persist.items[props.itemType]
     }
 }
 

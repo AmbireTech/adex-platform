@@ -92,11 +92,12 @@ export default function NewItemHoc(Decorated) {
     // return ItemForm
 
     function mapStateToProps(state, props) {
-        state = state.storage
+        let persist = state.persist
+        let memory = state.memory
         return {
-            account: state.account,
-            newItem: state.newItem[props.itemType],
-            items: state.items[props.itemType]
+            account: persist.account,
+            newItem: memory.newItem[props.itemType],
+            items: persist.items[props.itemType]
         }
     }
 
