@@ -22,12 +22,12 @@ class Step3 extends Component {
         let randomSeedChecks = [...(signin.seedCheck || [])]
         if (!randomSeedChecks.length) {
             while (SEED_WORDS_CHECK_COUNT && true) {
-                let randIndex = Helper.getRandomInt(0, signin.seed.length - 1)
+                let randIndex = Helper.getRandomInt(0, seed.length - 1)
                 let hasThisCheck = !!randomSeedChecks.filter((check) => check.index === randIndex).length
                 if (!hasThisCheck) {
                     randomSeedChecks.push({
                         index: randIndex,
-                        value: signin.seed[randIndex],
+                        value: seed[randIndex],
                         checkValue: ''
                     })
                 }

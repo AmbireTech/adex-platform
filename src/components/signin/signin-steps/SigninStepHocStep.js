@@ -29,6 +29,10 @@ export default function SigninStepHocStep(Decorated) {
         }
 
         handleChange = (name, value) => {
+            if(typeof value === 'string'){
+                value = value.trim()
+            }
+
             this.props.actions.updateSignin(name, value)
         }
 

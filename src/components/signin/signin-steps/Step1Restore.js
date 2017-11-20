@@ -118,8 +118,8 @@ class Step1Restore extends Component {
                     value={signin.seed}
                     onChange={this.props.handleChange.bind(this, 'seed')}
                     maxLength={256}
-                    onBlur={this.validateName.bind(this, signin.name, true)}
-                    onFocus={this.validateName.bind(this, signin.name, false)}
+                    onBlur={this.validateSeed.bind(this, signin.seed, true)}
+                    onFocus={this.validateSeed.bind(this, signin.seed, false)}
                     error={errSeed && !!errSeed.dirty ?
                         <span> {errSeed.errMsg} </span> : null}
                 >
