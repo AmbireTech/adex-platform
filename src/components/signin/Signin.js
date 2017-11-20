@@ -22,6 +22,7 @@ import Step1 from 'components/signin/signin-steps/Step1'
 import Step2 from 'components/signin/signin-steps/Step2'
 import Step3 from 'components/signin/signin-steps/Step3'
 import Step4, { SPINNER_KEY } from 'components/signin/signin-steps/Step4'
+import Step1Restore from 'components/signin/signin-steps/Step1Restore'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Translate from 'components/translate/Translate'
 
@@ -40,7 +41,8 @@ class Signin extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      dialogActive: false
+      dialogActive: false,
+      method: ''
     }
   }
 
@@ -52,9 +54,9 @@ class Signin extends Component {
     this.props.actions.resetSignin()
   }
 
-  handleToggle = () => {
+  handleToggle = (method) => {
     let active = this.state.dialogActive
-    this.setState({ dialogActive: !active })
+    this.setState({ dialogActive: !active, method: method })
   }
 
   onSuccess = () => {
@@ -67,7 +69,7 @@ class Signin extends Component {
   renderDialog = () => {
 
     // TODO: make stepper keep step in the router
-    let pages = [{
+    let pagesCreate = [{
       title: 'Step 1',
       component: ValidItemHoc(Step1),
       props: { ...this.props, validateId: ValidationIdBase + 1 }
@@ -88,6 +90,26 @@ class Signin extends Component {
       component: ValidItemHoc(Step4),
       props: { ...this.props, validateId: ValidationIdBase + 4 }
     }]
+
+    let pagesRecover = [{
+      title: 'Step 1',
+      component: ValidItemHoc(Step1Restore),
+      props: { ...this.props, validateId: ValidationIdBase + 1 + 'Recover' }
+    },
+    {
+      title: 'Step 2',
+      completeBtn: () => <CompleteBtn {...this.props} to="/side-select" onSuccess={this.onSuccess} />,
+      component: ValidItemHoc(Step4),
+      props: { ...this.props, validateId: ValidationIdBase + 2 + 'Recover' }
+    }]
+
+    let pages
+
+    if (this.state.method === 'create') {
+      pages = pagesCreate
+    } else {
+      pages = pagesRecover
+    }
 
     return (
       <Dialog
@@ -114,7 +136,10 @@ class Signin extends Component {
           <Logo width={370} height={144} />
         </div>
         <br />
-        <Button icon='create' onClick={this.handleToggle} accent raised label="Create new account" />
+        <Button icon='create' onClick={() => this.handleToggle('create')} accent raised label="Create new account" />
+        <br />
+        <br />
+        <Button icon='import_export' onClick={() => this.handleToggle('restore')} primary raised label="Restore account" />
         <this.renderDialog />
       </div>
     )

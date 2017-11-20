@@ -35,7 +35,7 @@ class Step2 extends Component {
 
         let extraEntropy = signin.name + signin.email + signin.password + Date.now()
         let seedString = KeyStore.keystore.generateRandomSeed(extraEntropy)
-        randomSeed = seedString.split(' ')
+        randomSeed = seedString
         this.props.handleChange('seed', randomSeed)
     }
 
@@ -45,14 +45,14 @@ class Step2 extends Component {
 
     render() {
         let signin = this.props.signin
-        let seedString = signin.seed.join(' ')
+        let seedString = signin.seed
         let t = this.props.t
         return (
             <div>
                 <h2>{t('MEMORIZE_SEED')}</h2>
                 <h4>{t('MEMORIZE_SEED_WARNING')}</h4>
                 {
-                    signin.seed.map((seed, index) => {
+                    seedString.split(' ').map((seed, index) => {
                         return (
                             <Chip key={index + seed}>
                                 <Avatar icon={<TextIcon txt={(index + 1).toString()} />} />

@@ -17,7 +17,7 @@ class Step3 extends Component {
 
     componentWillMount() {
         let signin = this.props.signin
-        let seed = signin.seed
+        let seed = signin.seed.split(' ')
 
         let randomSeedChecks = [...(signin.seedCheck || [])]
         if (!randomSeedChecks.length) {

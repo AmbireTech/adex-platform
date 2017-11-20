@@ -27,7 +27,7 @@ class Step4 extends Component {
         let that = this
         let signin = this.props.signin
         let password = signin.password
-        let seed = signin.seed.join(' ')
+        let seed = signin.seed
 
         KeyStore.createVault({
             password: password,
@@ -50,6 +50,9 @@ class Step4 extends Component {
                 // NOTE: because of the way web3 works, it needs key prefixed with 0x
                 // see https://github.com/ethereum/web3.js/issues/1094
                 let privateKey = '0x' + ks.exportPrivateKey(addr[0], pwDerivedKey)
+
+                console.log('privateKey', privateKey)
+
                 let acc = web3.eth.accounts.privateKeyToAccount(privateKey)
                 let wallet = web3.eth.accounts.wallet
                 wallet.add(acc)

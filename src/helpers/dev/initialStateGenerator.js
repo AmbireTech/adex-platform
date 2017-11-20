@@ -199,7 +199,7 @@ class InitialStateGenerator {
                 email: '',
                 password: '',
                 passConfirm: '',
-                seed: [],
+                seed: '',
                 publicKey: '',
                 // privateKey: '',
                 // encryptedPrivateKey: '',

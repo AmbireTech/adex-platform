@@ -14,7 +14,7 @@ let initialState = {
         email: '',
         password: '',
         passConfirm: '',
-        seed: [],
+        seed: '',
         publicKey: '',
         seedCheck: [],
         authenticated: false
