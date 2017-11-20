@@ -44,9 +44,9 @@ class Signin extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log('nextProps', nextProps)
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   console.log('nextProps', nextProps)
+  // }
 
   componentWillMount() {
     this.props.actions.resetSignin()

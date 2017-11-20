@@ -137,7 +137,6 @@ class Dashboard extends React.Component {
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/:side' component={DashboardStats} />
                         <PrivateRoute auth={this.props.auth} component={() => <h1>404 at {side} side</h1>} />
                     </Switch>
-                    }
                 </Panel>
             </Layout>
         );
@@ -153,10 +152,11 @@ Dashboard.propTypes = {
 function mapStateToProps(state, props) {
     let persist = state.persist
     let memory = state.memory
+    let account = persist.account
     return {
-        account: persist.account,
+        account: account,
         // TODO: temp until we decide how to handle the logged in state
-        auth: !!persist.account._temp.pwDerivedKey || !!persist.account._temp.password // !!memory.signin.publicKey
+        auth: !!account._temp && (!!account._temp.pwDerivedKey || !!account._temp.password) // !!memory.signin.publicKey
     }
 }
 

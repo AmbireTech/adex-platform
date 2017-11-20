@@ -5,7 +5,16 @@ import { Images } from './DummyData'
 
 class Channel extends Item {
     constructor({ owner, id, ipfs = '', name = '', from, to, img = {}, description = '', txTime } = {}) {
-        super(owner, id, ipfs, ItemsTypes.Channel.id, name, img, description, txTime)
+        super({
+            owner: owner,
+            id: id,
+            ipfs: ipfs,
+            type: ItemsTypes.Channel.id,
+            name: name,
+            img: img,
+            description: description,
+            txTime: txTime
+        })
     }
 
     static getRandomInstance(owner, id) {

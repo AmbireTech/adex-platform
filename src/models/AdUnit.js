@@ -4,8 +4,17 @@ import { ItemsTypes, Genders, AdTypes, Sizes, Targets, TargetsWeight, getRandomP
 import { Images } from './DummyData'
 
 class AdUnit extends Item {
-    constructor({ owner, id, ipfs = '', name, ad_url = '', img, description = '', size = '', adType = '', targets = [], txTime }) {
-        super(owner, id, ipfs, ItemsTypes.AdUnit.id, name, img, description, txTime)
+    constructor({ owner, id, ipfs = '', name, ad_url = '', img, description = '', size = '', adType = '', targets = [], txTime } = {}) {
+        super({
+            owner: owner,
+            id: id,
+            ipfs: ipfs,
+            type: ItemsTypes.AdUnit.id,
+            name: name,
+            img: img,
+            description: description,
+            txTime: txTime
+        })
         let meta = this._meta
         meta.banner = img
         meta.size = size

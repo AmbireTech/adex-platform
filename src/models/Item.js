@@ -2,7 +2,7 @@
 // import { ItemsTypes } from './../constants/itemsTypes'
 import Base from './Base'
 class Item extends Base {
-    constructor(owner, id, ipfs = '', type, name = '', img = { url: null, ipfs: null, type: null, type_id: null }, description = '', txTime) {
+    constructor({ owner = '', id, ipfs = '', type, name = '', img = { url: null, ipfs: null, type: null, type_id: null }, description = '', txTime } = {}) {
         super({ name: name, ipfs: ipfs, txTime: txTime })
         this._id = id
         this._owner = owner
@@ -23,7 +23,7 @@ class Item extends Base {
     // get typeName() { return this.getTypeName() }
 
     // get itemsType() { return this._meta.itemsType }
-    get items() { return this._meta.items }     
+    get items() { return this._meta.items }
 
     get img() { return this._meta.img }
     set img(value) { this._meta.img = value }

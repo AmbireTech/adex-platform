@@ -6,7 +6,17 @@ import { Images } from './DummyData'
 
 class Campaign extends Item {
     constructor({ owner, id, ipfs = '', name = '', from, to, img = {}, description = '', txTime } = {}) {
-        super(owner, id, ipfs, ItemsTypes.Campaign.id, name, img, description, txTime)
+        super({
+            owner: owner,
+            id: id,
+            ipfs: ipfs,
+            type: ItemsTypes.Campaign.id,
+            name: name,
+            img: img,
+            description: description,
+            txTime: txTime
+        })
+        
         this._meta.from = from
         this._meta.to = to
     }
