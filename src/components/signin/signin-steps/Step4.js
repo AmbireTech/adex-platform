@@ -10,13 +10,14 @@ import Helper from 'helpers/miscHelpers'
 import { Button } from 'react-toolbox/lib/button'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
 import RTButtonTheme from 'styles/RTButton.css'
-import lightwallet from 'eth-lightwallet'
+// import lightwallet from 'eth-lightwallet'
 import Account from 'models/Account'
+import KeyStore from 'services/key-store/keyStore'
 
 import { web3 } from 'services/smart-contracts/ADX'
 
-const keyStore = lightwallet.keystore
-const HD_PATH = "m/44'/60'/0'/0"
+// const keyStore = lightwallet.keystore
+// const HD_PATH = "m/44'/60'/0'/0"
 export const SPINNER_KEY = 'SIGNIN_STEP_4'
 
 
@@ -28,18 +29,14 @@ class Step4 extends Component {
         let password = signin.password
         let seed = signin.seed.join(' ')
 
-        keyStore.createVault({
+        KeyStore.createVault({
             password: password,
             seedPhrase: seed,
             salt: signin.name,
-            hdPathString: HD_PATH
-        }, function (err, ks) {
-            if (err) {
-                console.log('err', err)
-                throw err // TODO: make global error handler!!!
-            }
-
-            // TODO: Should we keep ks object global?
+            // hdPathString: HD_PATH
+        })
+        .then((ks)=>{
+            // TODO: Should we keep ks object global? - it is now
             ks.keyFromPassword(password, function (err, pwDerivedKey) {
                 if (err) {
                     console.log('err', err)

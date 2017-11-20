@@ -7,9 +7,7 @@ import SigninStepHocStep from './SigninStepHocStep'
 import Chip from 'react-toolbox/lib/chip'
 import Avatar from 'react-toolbox/lib/avatar'
 import Translate from 'components/translate/Translate'
-import lightwallet from 'eth-lightwallet'
-
-const keystore = lightwallet.keystore
+import KeyStore from 'services/key-store/keyStore'
 
 const TextIcon = ({ txt }) => (
     <svg viewBox="0 0 32 32" width="32px" height="32px">
@@ -36,7 +34,7 @@ class Step2 extends Component {
         let randomSeed = []
 
         let extraEntropy = signin.name + signin.email + signin.password + Date.now()
-        let seedString = keystore.generateRandomSeed(extraEntropy)
+        let seedString = KeyStore.keystore.generateRandomSeed(extraEntropy)
         randomSeed = seedString.split(' ')
         this.props.handleChange('seed', randomSeed)
     }
