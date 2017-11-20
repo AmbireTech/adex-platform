@@ -12,11 +12,23 @@ import { IconButton, Button } from 'react-toolbox/lib/button'
 import Dialog from 'react-toolbox/lib/dialog'
 import BidsGenerator from 'helpers/dev/InkBidsStatsGenerator'
 import { BidsStatisticsChart } from './bidsStatistics'
+import * as sc from 'services/smart-contracts/ADX'
+
+
+sc.token.methods.balanceOf('0xd874b82fd6a1c8bc0911bd025ae7ab2ca448740f')
+.call()
+.then(function(bal) {
+    console.log(bal)
+})
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
 
 const AVAILABLE_SLOTS = 2000000
+
+// Can be changed. The ad unit representing the eJ advertising space
+const MAGIC_ADUNIT = 2
+
 
 const SORT_PROPERTIES = [
     // { value: 'price', label: 'Price' },
