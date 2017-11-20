@@ -16,7 +16,7 @@ import Account from 'models/Account'
 import { web3 } from 'services/smart-contracts/ADX'
 
 const keyStore = lightwallet.keystore
-const HD_PATH = "m/0'/0'/0'" // TODO: check this
+const HD_PATH = "m/44'/60'/0'/0"
 const SPINNER_KEY = 'SIGNIN_STEP_4'
 
 
