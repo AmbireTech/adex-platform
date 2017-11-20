@@ -12,7 +12,14 @@ export function updateNewBid({ bidId, key, value }) {
     }
 }
 
-// TODO: Add reset new bid
+export function resetNewBid({ bidId }) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.RESET_NEW_BID,
+            bidId: bidId
+        })
+    }
+}
 
 // PERSISTENT STORAGE
 export function placeBid(bid, slot) {
