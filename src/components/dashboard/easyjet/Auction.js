@@ -14,6 +14,8 @@ import BidsGenerator from 'helpers/dev/InkBidsStatsGenerator'
 import { BidsStatisticsChart } from './bidsStatistics'
 import * as sc from 'services/smart-contracts/ADX'
 
+// TODO: add persisted account to web3.eth.accounts
+console.log(sc.web3.eth.accounts.wallet)
 
 sc.token.methods.balanceOf('0xd874b82fd6a1c8bc0911bd025ae7ab2ca448740f')
 .call()

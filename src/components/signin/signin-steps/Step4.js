@@ -13,9 +13,12 @@ import RTButtonTheme from 'styles/RTButton.css'
 import lightwallet from 'eth-lightwallet'
 import Account from 'models/Account'
 
+import { web3 } from 'services/smart-contracts/ADX'
+
 const keyStore = lightwallet.keystore
 const HD_PATH = "m/0'/0'/0'" // TODO: check this
 const SPINNER_KEY = 'SIGNIN_STEP_4'
+
 
 class Step4 extends Component {
 
@@ -29,7 +32,7 @@ class Step4 extends Component {
             password: password,
             seedPhrase: seed,
             salt: signin.name,
-            hdPathString: HD_PATH // TODO: check it
+            hdPathString: HD_PATH
         }, function (err, ks) {
             if (err) {
                 console.log('err', err)
@@ -47,6 +50,12 @@ class Step4 extends Component {
                 var addr = ks.getAddresses()
 
                 that.onVaultCreated({ addr: addr[0] })
+
+                // Add to web3
+                var acc = web3.eth.accounts.privateKeyToAccount(ks.exportPrivateKey(addr[0], pwDerivedKey))
+
+                console.log(acc)
+                // TODO: add to web3
 
                 // TODO: make some dialog some day 
                 ks.passwordProvider = function (callback) {

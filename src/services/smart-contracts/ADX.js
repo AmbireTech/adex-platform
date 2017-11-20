@@ -30,6 +30,7 @@ const registry = new web3.eth.Contract(registryAbi, cfg.addr.registry)
 const exchange = new web3.eth.Contract(exchangeAbi, cfg.addr.exchange)
 
 export {
+	web3,
 	token,
 	registry,
 	exchange
