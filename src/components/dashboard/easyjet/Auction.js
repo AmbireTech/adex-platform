@@ -14,9 +14,7 @@ import BidsGenerator from 'helpers/dev/InkBidsStatsGenerator'
 import { BidsStatisticsChart } from './bidsStatistics'
 import * as sc from 'services/smart-contracts/ADX'
 
-const VIEW_MODE = 'campaignRowsView'
-const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
-
+const VIEW_MODE = 'auctionRowsView'
 const AVAILABLE_SLOTS = 2000000
 
 // Can be changed. The ad unit representing the eJ advertising space
@@ -206,7 +204,14 @@ export class Auction extends Component {
                 <div>
                     <BidsStatisticsChart data={this.state.bids} t={this.props.t} />
                 </div>
-                <ItemsList items={this.state.bids} listMode='rows' delete renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} searchMatch={searchMatch} />
+                <ItemsList
+                    items={this.state.bids}
+                    listMode='rows'
+                    renderRows={this.renderRows.bind(this)}
+                    sortProperties={SORT_PROPERTIES}
+                    searchMatch={searchMatch}
+                    rowsView={VIEW_MODE}
+                />
                 <this.renderDialog />
             </div>
         )

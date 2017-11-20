@@ -26,7 +26,7 @@ class App extends Component {
   render() {
     // console.log(theme)
 
-    const { location } = this.props;
+    const { location } = this.props
     return (
       <ThemeProvider theme={theme}>
         <Provider store={store}>
@@ -50,8 +50,8 @@ class App extends Component {
           </PersistGate>
         </Provider>
       </ThemeProvider>
-    );
+    )
   }
 }
 
-export default App;
+export default App

@@ -203,7 +203,8 @@ class InitialStateGenerator {
                 publicKey: '',
                 // privateKey: '',
                 // encryptedPrivateKey: '',
-                seedCheck: []
+                seedCheck: [],
+                authenticated: false
             },
             newItem: {
                 [ItemsTypes.Campaign.id]: newCampaign,

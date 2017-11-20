@@ -64,7 +64,8 @@ class Step2 extends Component {
                     })
                 }
                 <br />
-                <small> {seedString}</small>
+                <br />
+                <small> {`( ${seedString} )`}</small>
             </div>
         )
     }

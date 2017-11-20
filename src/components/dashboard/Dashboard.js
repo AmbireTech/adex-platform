@@ -3,7 +3,7 @@ import { Layout, Panel, NavDrawer } from 'react-toolbox/lib/layout'
 import SideNav from './side_nav/SideNav'
 import TopBar from './top_bar/TopBar'
 import theme from './theme.css'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -16,10 +16,21 @@ import Slot from './containers/Slot'
 import Items from './containers/Items'
 import { ItemsTypes } from 'constants/itemsTypes'
 import Auction from './Ink/Auction'
+import Signin from 'components/signin/Signin'
 
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
 
+function PrivateRoute({ component: Component, auth, ...other }) {
+    return (
+        <Route
+            {...other}
+            render={(props) => auth === true
+                ? <Component {...props} />
+                : <Redirect to={{ pathname: '/', state: { from: props.location } }} />}
+        />
+    )
+}
 
 // console.log('actions', actions)
 class Dashboard extends React.Component {
@@ -111,21 +122,22 @@ class Dashboard extends React.Component {
                     <TopBar side={side} />
                     <Switch>
                         {/* TODO: Make things dynamic if easier */}
-                        <Route exact path='/dashboard/advertiser/campaigns' component={this.renderCampaigns} />
-                        <Route exact path='/dashboard/advertiser/units' component={this.renderAdUnits} />
-                        <Route exact path='/dashboard/advertiser/Campaign/:itemId' component={Campaign} />
-                        <Route exact path='/dashboard/advertiser/AdUnit/:itemId' component={Unit} />
+                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/campaigns' component={this.renderCampaigns} />
+                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/units' component={this.renderAdUnits} />
+                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/Campaign/:itemId' component={Campaign} />
+                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/AdUnit/:itemId' component={Unit} />
 
-                        <Route exact path='/dashboard/publisher/channels' component={this.renderChannels} />
-                        <Route exact path='/dashboard/publisher/slots' component={this.renderAdSlots} />
-                        <Route exact path='/dashboard/publisher/Channel/:itemId' component={Channel} />
-                        <Route exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
+                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/channels' component={this.renderChannels} />
+                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/slots' component={this.renderAdSlots} />
+                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/Channel/:itemId' component={Channel} />
+                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
 
-                        <Route exact path={'/dashboard/' + side + "/Ink-auction"} component={Auction} />
+                        <PrivateRoute auth={this.props.auth} exact path={'/dashboard/' + side + "/Ink-auction"} component={Auction} />
 
-                        <Route exact path='/dashboard/:side' component={DashboardStats} />
-                        <Route component={() => <h1>404 at {side} side</h1>} />
+                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/:side' component={DashboardStats} />
+                        <PrivateRoute auth={this.props.auth} component={() => <h1>404 at {side} side</h1>} />
                     </Switch>
+                    }
                 </Panel>
             </Layout>
         );
@@ -134,14 +146,17 @@ class Dashboard extends React.Component {
 
 Dashboard.propTypes = {
     actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired
+    account: PropTypes.object.isRequired,
+    auth: PropTypes.bool.isRequired
 }
 
 function mapStateToProps(state, props) {
     let persist = state.persist
-    // let memory = state.memory
+    let memory = state.memory
     return {
-        account: persist.account
+        account: persist.account,
+        // TODO: temp until we decide how to handle the logged in state
+        auth: !!persist.account._temp.pwDerivedKey || !!persist.account._temp.password // !!memory.signin.publicKey
     }
 }
 
