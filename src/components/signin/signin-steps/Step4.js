@@ -52,10 +52,14 @@ class Step4 extends Component {
                 that.onVaultCreated({ addr: addr[0] })
 
                 // Add to web3
-                var acc = web3.eth.accounts.privateKeyToAccount(ks.exportPrivateKey(addr[0], pwDerivedKey))
+                // NOTE: because of the way web3 works, it needs key prefixed with 0x
+                // see https://github.com/ethereum/web3.js/issues/1094
+                var acc = web3.eth.accounts.privateKeyToAccount('0x'+ks.exportPrivateKey(addr[0], pwDerivedKey))
 
-                console.log(acc)
-                // TODO: add to web3
+                var wallet = web3.eth.accounts.wallet
+                wallet.add(acc)
+
+                //console.log(acc)
 
                 // TODO: make some dialog some day 
                 ks.passwordProvider = function (callback) {
