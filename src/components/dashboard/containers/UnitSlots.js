@@ -120,7 +120,7 @@ UnitSlots.propTypes = {
     item: PropTypes.object.isRequired,
     slots: PropTypes.array.isRequired,
     spinner: PropTypes.bool
-};
+}
 
 function mapStateToProps(state) {
     let persist = state.persist
@@ -129,17 +129,17 @@ function mapStateToProps(state) {
         account: persist.account,
         slots: persist.items[ItemsTypes.AdSlot.id],
         spinner: memory.spinners[ItemsTypes.AdUnit.name]
-    };
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
 // const UnitItem = ItemHoc(UnitSlots)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(UnitSlots));
+)(Translate(UnitSlots))

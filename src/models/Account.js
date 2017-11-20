@@ -3,8 +3,7 @@ import Helper from 'helpers/miscHelpers'
 import { ItemsTypes } from 'constants/itemsTypes'
 
 class Account extends Base {
-    // TODO: accept addr and wallet
-    constructor({name, addr, wallet, meta}) {
+    constructor({name, addr, wallet, meta, temp}) {
         super({name: name})
         this._addr = addr || Helper.getGuid() 
         this._wallet = wallet || addr
@@ -16,6 +15,9 @@ class Account extends Base {
                 this._items[ItemsTypes[key].id] = []
             }
         }
+
+        // Temp we will keep here some addr data 
+        this._temp = temp
 
         // console.log('accoount', this)
     }

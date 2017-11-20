@@ -17,7 +17,7 @@ import { web3 } from 'services/smart-contracts/ADX'
 
 const keyStore = lightwallet.keystore
 const HD_PATH = "m/44'/60'/0'/0"
-const SPINNER_KEY = 'SIGNIN_STEP_4'
+export const SPINNER_KEY = 'SIGNIN_STEP_4'
 
 
 class Step4 extends Component {
@@ -47,36 +47,44 @@ class Step4 extends Component {
                 }
 
                 ks.generateNewAddress(pwDerivedKey, 1);
-                var addr = ks.getAddresses()
-
-                that.onVaultCreated({ addr: addr[0] })
+                let addr = ks.getAddresses()
 
                 // Add to web3
                 // NOTE: because of the way web3 works, it needs key prefixed with 0x
                 // see https://github.com/ethereum/web3.js/issues/1094
-                var acc = web3.eth.accounts.privateKeyToAccount('0x'+ks.exportPrivateKey(addr[0], pwDerivedKey))
-
-                var wallet = web3.eth.accounts.wallet
+                let privateKey = '0x' + ks.exportPrivateKey(addr[0], pwDerivedKey)
+                let acc = web3.eth.accounts.privateKeyToAccount(privateKey)
+                let wallet = web3.eth.accounts.wallet
                 wallet.add(acc)
+
+                // Temp we will persist this data in the account until existing account login is ready
+                let tempForRecovery = {
+                    seed: seed,
+                    pwDerivedKey: pwDerivedKey,
+                    password: password
+                }
+
+                that.onVaultCreated({ addr: addr[0], temp: tempForRecovery })
 
                 //console.log(acc)
 
                 // TODO: make some dialog some day 
                 ks.passwordProvider = function (callback) {
-                    var pw = prompt("Please enter password", "Password");
+                    let pw = prompt("Please enter password", "Password");
                     callback(null, pw)
                 }
             })
         })
     }
 
-    onVaultCreated({ addr }) {
+    onVaultCreated({ addr, temp }) {
         this.props.handleChange('publicKey', addr)
         this.props.actions.updateSpinner(SPINNER_KEY, false)
 
-        let acc = new Account({ addr: addr, name: this.props.signin.name })
+        let acc = new Account({ addr: addr, name: this.props.signin.name, temp: temp })
 
         this.props.actions.createAccount(acc)
+        this.props.validate('createVault', { isValid: true, err: { msg: 'ERR_CREATE_VAULT', }, dirty: false })
 
         // this.props.actions.resetSignin()
     }
@@ -88,7 +96,7 @@ class Step4 extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (!nextProps.spinner) {
+        if (!nextProps.spinner && this.props.spinner) {
             this.props.validate('createVault', { isValid: true, err: { msg: 'ERR_CREATE_VAULT', }, dirty: false })
         }
     }

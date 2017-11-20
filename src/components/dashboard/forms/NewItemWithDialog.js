@@ -24,7 +24,7 @@ export default function ItemHoc(Decorated) {
 
         render() {
 
-            console.log('theme', this.props.theme)
+            // console.log('theme', this.props.theme)
             return (
                 <div>
                     <Button

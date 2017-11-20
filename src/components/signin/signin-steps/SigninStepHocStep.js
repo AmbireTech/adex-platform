@@ -51,7 +51,7 @@ export default function SigninStepHocStep(Decorated) {
 
         render() {
 
-            let item = this.props.signin || {}
+            let item = this.state.item || {}
             const props = this.props
 
             return (
@@ -62,16 +62,16 @@ export default function SigninStepHocStep(Decorated) {
 
     SigninForm.propTypes = {
         actions: PropTypes.object.isRequired,
-        account: PropTypes.object.isRequired,
+        // account: PropTypes.object.isRequired,
         signin: PropTypes.object.isRequired,
         title: PropTypes.string
     }
 
     function mapStateToProps(state, props) {
-        let persist = state.persist
+        // let persist = state.persist
         let memory = state.memory
         return {
-            account: persist.account,
+            // account: persist.account,
             signin: memory.signin
         }
     }

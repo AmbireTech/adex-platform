@@ -28,16 +28,16 @@ class Step2 extends Component {
         /* TODO: Are we gonna make new seed if the user can not confirm the seed
             and return to this step or keep the prev seed ot to make btn to start again?
         */
-        
-        if(seed && seed.length){
+
+        if (seed && seed.length) {
             return
         }
 
         let randomSeed = []
 
         let extraEntropy = signin.name + signin.email + signin.password + Date.now()
-        randomSeed = keystore.generateRandomSeed(extraEntropy)
-        randomSeed = randomSeed.split(' ')
+        let seedString = keystore.generateRandomSeed(extraEntropy)
+        randomSeed = seedString.split(' ')
         this.props.handleChange('seed', randomSeed)
     }
 
@@ -47,7 +47,7 @@ class Step2 extends Component {
 
     render() {
         let signin = this.props.signin
-
+        let seedString = signin.seed.join(' ')
         let t = this.props.t
         return (
             <div>
@@ -63,6 +63,8 @@ class Step2 extends Component {
                         )
                     })
                 }
+                <br />
+                <small> {seedString}</small>
             </div>
         )
     }

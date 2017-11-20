@@ -1,4 +1,8 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import actions from 'actions'
 import theme from './Signin.css'
 import Logo from 'components/common/icons/AdexIconTxt'
 import { Switch, Route } from 'react-router-dom'
@@ -17,7 +21,7 @@ import Helper from 'helpers/miscHelpers'
 import Step1 from 'components/signin/signin-steps/Step1'
 import Step2 from 'components/signin/signin-steps/Step2'
 import Step3 from 'components/signin/signin-steps/Step3'
-import Step4 from 'components/signin/signin-steps/Step4'
+import Step4, { SPINNER_KEY } from 'components/signin/signin-steps/Step4'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Translate from 'components/translate/Translate'
 
@@ -40,18 +44,29 @@ class Signin extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log('nextProps', nextProps)
+  }
+
+  componentWillMount() {
+    this.props.actions.resetSignin()
+  }
+
   handleToggle = () => {
     let active = this.state.dialogActive
     this.setState({ dialogActive: !active })
   }
 
   onSuccess = () => {
-    this.props.actions.resetSignin()
+    // There is no need to reset the data as it is not persistent
+    // The signin should be cleared on mount
+    // this.props.actions.resetSignin()
     this.handleToggle()
   }
 
   renderDialog = () => {
 
+    // TODO: make stepper keep step in the router
     let pages = [{
       title: 'Step 1',
       component: ValidItemHoc(Step1),
@@ -118,8 +133,34 @@ class Signin extends Component {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default Translate(Signin)
+Signin.propTypes = {
+  actions: PropTypes.object.isRequired,
+}
+
+// 
+function mapStateToProps(state) {
+  // let persist = state.persist
+  // let memory = state.memory
+  return {
+    // account: persist.account,
+    // signin: memory.signin,
+    // TODO: make spinner to be obj with status and msg and use it while stepper loads
+    // TODO: !!! fix the state update of the stepper bug in order to use the spinner it
+    // spinner: memory.spinners[SPINNER_KEY] 
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Translate(Signin))

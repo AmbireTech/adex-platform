@@ -201,8 +201,8 @@ class InitialStateGenerator {
                 passConfirm: '',
                 seed: [],
                 publicKey: '',
-                privateKey: '',
-                encryptedPrivateKey: '',
+                // privateKey: '',
+                // encryptedPrivateKey: '',
                 seedCheck: []
             },
             newItem: {
