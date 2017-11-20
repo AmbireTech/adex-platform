@@ -11,11 +11,12 @@ import nav from './navReducer'
 import language from './languageReducer'
 import validations from './validateItemsReducer'
 import bids from './bidsReducer'
+import newBid from './newBidsReducer'
 import { routerReducer, LOCATION_CHANGE, CALL_HISTORY_METHOD } from 'react-router-redux'
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
 
-export  const persistReducers = {
+export const persistReducers = {
     // signin: signin,
     account: account,
     items: filterActions(items, (action => action.type.match(/_ITEM/))),
@@ -44,5 +45,6 @@ export const memoryReducers = {
     routing: filterActions(routerReducer, [LOCATION_CHANGE, CALL_HISTORY_METHOD]),
     // language: language,
     validations: validations,
-    // bids: bids
+    // bids: bids,
+    newBid: newBid
 }

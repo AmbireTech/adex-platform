@@ -4,6 +4,7 @@ import Campaign from 'models/Campaign'
 import AdUnit from 'models/AdUnit'
 import Channel from 'models/Channel'
 import AdSlot from 'models/AdSlot'
+import Bid from 'models/Bid'
 
 let initialState = {
     account: {
@@ -48,6 +49,9 @@ let initialState = {
         bidsIds: [],
         bidsByAdslot: [],
         bidsByAdunit: []
+    },
+    newBid: {
+        empty: new Bid().plainObj()
     }
 }
 

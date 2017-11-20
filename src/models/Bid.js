@@ -38,7 +38,7 @@ class Bid {
         publisherReportIpfs = '',
         advertiserReportIpfs = '',
         txTime = null // TODO: Maybe prop name dateOpened || createdOn here
-    }) {
+    } = {}) {
         this.id = id
         this.state = state
         this.amount = amount
@@ -67,11 +67,17 @@ class Bid {
         return { ...this }
     }
 
-    static updateBid(bid, propKey, value) {
+    static updateBid(bid, key, value, dirtyProps) {
         let newBid = { ...bid }
+        let hasDirtyProps = Array.isArray(dirtyProps)
+        if (hasDirtyProps) dirtyProps = [...dirtyProps]
         // TODO: Validate bid props
-        if (newBid.hasOwnProperty(propKey)) {
-            newBid[propKey] = value
+        if (newBid.hasOwnProperty(key)) {
+            newBid[key] = value
+
+            if (hasDirtyProps && dirtyProps.indexOf(key) < 0) {
+                dirtyProps.push(key)
+            }
         }
 
         return newBid

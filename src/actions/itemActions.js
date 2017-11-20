@@ -121,13 +121,3 @@ export function updateCurrentItem(item, newMeta) {
         })
     }
 }
-
-export function placeBid(bid, slot) {
-    return function (dispatch) {
-        return dispatch({
-            type: types.UNIT_PLACE_BID,
-            bid: bid,
-            slot: slot
-        })
-    }
-}

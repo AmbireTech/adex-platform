@@ -6,6 +6,7 @@ import actions from 'actions'
 import { Button, IconButton } from 'react-toolbox/lib/button'
 import theme from './theme.css'
 import Input from 'react-toolbox/lib/input'
+import Bid from 'models/Bid'
 
 const EJ_MAX_SPACES = 2000000
 const SPACES_COUNT_STEP = 10000
@@ -21,7 +22,13 @@ class BidForm extends Component {
     }
   }
 
+  handleChange = (name, value) => {
+    this.props.actions.updateNewBid({ bidId: this.props.bidId, key: name, value: value })
+  }
+
   render() {
+    let bid = this.props.bid || {}
+
     return (
       <div>
         <h1> {'EJ BID'} </h1>
@@ -32,8 +39,8 @@ class BidForm extends Component {
           name='bidPerSpace'
           step='0.01'
           min={MIN_BID_PRICE}
-          value={this.state.bidPerSpace}
-          onChange={(value) => this.setState({ bidPerSpace: value })}
+          value={bid.adUnitIpfs || MIN_BID_PRICE}
+          onChange={(value) => this.handleChange('adUnitIpfs', value)}
         />
         <Input
           type='number'
@@ -43,8 +50,8 @@ class BidForm extends Component {
           step={SPACES_COUNT_STEP}
           max={EJ_MAX_SPACES}
           min={SPACES_COUNT_STEP}
-          value={this.state.spaces}
-          onChange={(value) => this.setState({ spaces: value })}
+          value={bid.requiredPoints || SPACES_COUNT_STEP}
+          onChange={(value) => this.handleChange('requiredPoints', value)}
         />
       </div>
     )
@@ -53,16 +60,18 @@ class BidForm extends Component {
 
 BidForm.propTypes = {
   actions: PropTypes.object.isRequired,
-  label: PropTypes.string
+  label: PropTypes.string,
+  bid: PropTypes.object,
+  bidId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
 }
 
-// function mapStateToProps(state, props) {
-//   let persist = state.persist
-//   let memory = state.memory
-//   return {
-
-//   }
-// }
+function mapStateToProps(state, props) {
+  let persist = state.persist
+  let memory = state.memory
+  return {
+    bid: memory.newBid[props.bidId] || new Bid().plainObj()
+  }
+}
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -71,6 +80,6 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(
-  //   mapStateToProps,
+  mapStateToProps,
   mapDispatchToProps
 )(BidForm)

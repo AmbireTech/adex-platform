@@ -8,9 +8,9 @@
 }
   
 .panel {
-    bottom: 0;
     top: 144px;
     padding: 20px;
+    padding-bottom: 64px;
     max-width: 1200px;
     margin: auto;
 }

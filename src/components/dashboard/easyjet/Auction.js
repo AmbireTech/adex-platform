@@ -187,7 +187,7 @@ export class Auction extends Component {
                         style={{ position: 'absolute', top: 20, right: 20 }}
                     />
 
-                    <BidForm />
+                    <BidForm bidId='EJBID' />
 
                 </Dialog>
             </span>
