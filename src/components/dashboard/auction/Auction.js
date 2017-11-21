@@ -7,9 +7,10 @@ import ItemsList from 'components/dashboard/containers/ItemsList'
 import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import Rows from 'components/dashboard/collection/Rows'
 import theme from './theme.css'
+import containerTheme from 'components/dashboard/containers/theme.css'
 import Translate from 'components/translate/Translate'
 import { IconButton, Button } from 'react-toolbox/lib/button'
-import Dialog from 'react-toolbox/lib/dialog'
+import classnames from 'classnames'
 import BidsGenerator from 'helpers/dev/auctionBidsStatsGenerator'
 import { BidsStatisticsChart } from './bidsStatistics'
 import NewBidSteps from './NewBidSteps'
@@ -149,8 +150,16 @@ export class Auction extends Component {
     }
 
     renderTableRow(item, index, { to, selected }) {
+        let bgcolor = ''
+        if (item.execution === 'full') {
+            bgcolor = '#00E676'
+        } else if (item.execution === 'partial') {
+            bgcolor = '#FFAB00'
+        }
+
+
         return (
-            <TableRow key={item.id}>
+            <TableRow key={item.id} style={{ backgroundColor: bgcolor }}>
                 <TableCell> {item.name} </TableCell>
                 <TableCell> {numeral(item.price / 100).format('$ 0,0.00')} </TableCell>
                 <TableCell> {numeral(item.count).format('0,0')} </TableCell>
@@ -181,14 +190,22 @@ export class Auction extends Component {
         let t = this.props.t
         return (
             <div>
-
-                <h1> {t('INC_AUCTION')}</h1>
+                <div className={containerTheme.heading}>
+                    <h1 className={containerTheme.itemName}>
+                        {t('INC_AUCTION')}
+                    </h1>
+                </div>
+                <div className={classnames(containerTheme.top)}>
+                    <p>
+                        {t('INC_AUCTION_DESCRIPTION')}
+                    </p>
+                </div>
                 <div>
                     <BidFormWithDialog
                         btnLabel='PLACE_BID'
                         title={this.props.t('PLACE_BID_FOR', { args: ['Inc'] })}
                         accent
-                        raised
+                        floating
                         bidId='EJBID'
                     />
                 </div>
