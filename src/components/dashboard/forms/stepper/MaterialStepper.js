@@ -96,7 +96,6 @@ class MaterialStepper extends React.Component {
 
     isValidPage() {
         let page = this.props.pages[this.props.currentPage]
-        console.log('isvalid-page', page)
         return !Object.keys(this.props.validations[page.props.validateId] || {}).length
     }
 

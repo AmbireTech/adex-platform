@@ -4,50 +4,42 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Button, IconButton } from 'react-toolbox/lib/button'
-import theme from './theme.css'
+import theme from 'components/dashboard/forms/theme.css'
 import Input from 'react-toolbox/lib/input'
 import Bid from 'models/Bid'
 import Translate from 'components/translate/Translate'
 // import ValidItemHoc from './ValidItemHoc'
 import NewBidHoc from './NewBidHoc'
+import { Grid, Row, Col } from 'react-flexbox-grid'
 
-const EJ_MAX_SPACES = 2000000
-const SPACES_COUNT_STEP = 10000
-const MIN_BID_PRICE = 0.05
-
-class BidForm extends Component {
+class BidFormPreview extends Component {
   render() {
     let bid = this.props.bid || {}
 
     return (
       <div>
-        <Input
-          type='number'
-          required
-          label='Bid per space in $'
-          name='bidPerSpace'
-          step='0.01'
-          min={MIN_BID_PRICE}
-          value={bid.adUnitIpfs || MIN_BID_PRICE}
-          onChange={(value) => this.props.handleChange('adUnitIpfs', value)}
-        />
-        <Input
-          type='number'
-          required
-          label='Spaces count'
-          name='spaces'
-          step={SPACES_COUNT_STEP}
-          max={EJ_MAX_SPACES}
-          min={SPACES_COUNT_STEP}
-          value={bid.requiredPoints || SPACES_COUNT_STEP}
-          onChange={(value) => this.props.handleChange('requiredPoints', value)}
-        />
+        {/* TODO: Add translations and format the numbers */}
+        <Grid fluid>
+          <Row>
+            <Col xs={12} lg={4} className={theme.textRight}> {'SPACEC_COUNT'}:</Col>
+            <Col xs={12} lg={8} className={theme.textLeft}>{bid.requiredPoints} </Col>
+          </Row>
+          <Row>
+            <Col xs={12} lg={4} className={theme.textRight}>{'PRICE_PER_SPACE'}:</Col>
+            <Col xs={12} lg={8} className={theme.textLeft}>{bid.adUnitIpfs + ' $'}</Col>
+          </Row>
+          <Row>
+            <Col xs={12} lg={4} className={theme.textRight}>{'TOTAL_BID_AMOUNT'}:</Col>
+            <Col xs={12} lg={8} className={theme.textLeft}>{(bid.adUnitIpfs * bid.requiredPoints) + ' $'}</Col>
+          </Row>
+
+        </Grid>
       </div>
     )
   }
 }
 
-BidForm.propTypes = {
+BidFormPreview.propTypes = {
   actions: PropTypes.object.isRequired,
   label: PropTypes.string,
   bid: PropTypes.object,
@@ -71,8 +63,8 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-let NewBidForm = NewBidHoc(BidForm)
+let BidFormPreviewForm = NewBidHoc(BidFormPreview)
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(NewBidForm)
+)(BidFormPreviewForm)

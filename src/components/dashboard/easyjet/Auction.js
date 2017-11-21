@@ -12,8 +12,11 @@ import { IconButton, Button } from 'react-toolbox/lib/button'
 import Dialog from 'react-toolbox/lib/dialog'
 import BidsGenerator from 'helpers/dev/InkBidsStatsGenerator'
 import { BidsStatisticsChart } from './bidsStatistics'
-import BidForm from './BidForm'
+import NewBidSteps from './NewBidSteps'
+import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import * as sc from 'services/smart-contracts/ADX'
+
+const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
 
 const VIEW_MODE = 'auctionRowsView'
 const AVAILABLE_SLOTS = 2000000
@@ -169,31 +172,6 @@ export class Auction extends Component {
             tableHeadRenderer={this.renderTableHead.bind(this)}
         />
 
-    renderDialog = () => {
-        return (
-            <span>
-                <Dialog
-                    theme={theme}
-                    active={this.state.bidding}
-                    onEscKeyDown={this.bid.bind(this, {}, !this.state.bidding)}
-                    onOverlayClick={this.bid.bind(this, {}, !this.state.bidding)}
-                    title={this.props.t('PLACE_BID_FOR', { args: 'EJ' })}
-                    type={this.props.type || 'normal'}
-                >
-                    <IconButton
-                        icon='close'
-                        onClick={this.bid.bind(this, {}, !this.state.bidding)}
-                        primary
-                        style={{ position: 'absolute', top: 20, right: 20 }}
-                    />
-
-                    <BidForm bidId='EJBID' onSave={this.bid.bind(this, 'EJ', !this.state.bidding)} />
-
-                </Dialog>
-            </span>
-        )
-    }
-
     bid = (slot, active) => {
         this.setState({ bid: slot, bidding: active })
     }
@@ -204,7 +182,13 @@ export class Auction extends Component {
 
                 <h1> EJ auction </h1>
                 <div>
-                    <Button accent raised label={this.props.t('PLACE_BID')} onClick={this.bid.bind(this, 'EJ', !this.state.bidding)} />
+                    <BidFormWithDialog
+                        btnLabel='PLACE_BID'
+                        title={this.props.t('PLACE_BID_FOR', { args: ['EJ'] })}
+                        accent
+                        raised
+                        bidId='EJBID'
+                    />
                 </div>
                 <div>
                     <BidsStatisticsChart data={this.state.bids} t={this.props.t} />
@@ -217,7 +201,6 @@ export class Auction extends Component {
                     searchMatch={searchMatch}
                     rowsView={VIEW_MODE}
                 />
-                <this.renderDialog />
             </div>
         )
     }

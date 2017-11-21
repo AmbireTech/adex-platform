@@ -29,7 +29,7 @@ export default function ItemHoc(Decorated) {
                 <div>
                     <Button
                         floating={this.props.floating}
-                        icon='add'
+                        icon={this.props.icon || 'add'}
                         label={this.props.floating ? '' : this.props.t(this.props.btnLabel)}
                         onClick={this.handleToggle}
                         primary={this.props.primary}

@@ -58,7 +58,6 @@ NewItemSteps.propTypes = {
     title: PropTypes.string,
     items: PropTypes.array.isRequired,
     addTo: PropTypes.object,
-    pageTwo: PropTypes.func,
     itemPages: PropTypes.arrayOf(PropTypes.func)
 
 }
