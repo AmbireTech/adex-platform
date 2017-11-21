@@ -22,12 +22,14 @@ export function resetNewBid({ bidId }) {
 }
 
 // PERSISTENT STORAGE
-export function placeBid(bid, slot) {
+export function placeBid({bid, slot, unit}) {
     return function (dispatch) {
+        // NOTE: Add here to web3, get the id etc...
         return dispatch({
             type: types.UNIT_PLACE_BID,
             bid: bid,
-            slot: slot
+            slot: slot,
+            unit: unit
         })
     }
 }

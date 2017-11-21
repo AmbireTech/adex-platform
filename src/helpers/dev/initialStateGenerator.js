@@ -35,14 +35,15 @@ class InitialStateGenerator {
 
         this.account = null
 
+        /* TODO: make bids collections objects and iterate through thr props where needed! 
+        (fix the components and mak some obj prototype functions for that purpose)
+        */
         this.bidsById = [null]
         this.bidsIds = [null]
         this.bidsByAdunit = []
         this.bidsByAdslot = []
         this.bidsByAdunitObjs = []
         this.bidsByAdslotObjs = []
-
-        this.InkBits = []
     }
 
     GenerateAccount() {
@@ -235,6 +236,9 @@ class InitialStateGenerator {
                 bidsIds: this.bidsIds,
                 bidsByAdslot: this.bidsByAdslot,
                 bidsByAdunit: this.bidsByAdunit
+            },
+            newBid: {
+                empty: new Bid().plainObj()
             }
         }
     }

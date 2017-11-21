@@ -7,6 +7,7 @@ import { Button, IconButton } from 'react-toolbox/lib/button'
 import theme from './theme.css'
 import Input from 'react-toolbox/lib/input'
 import Bid from 'models/Bid'
+import Translate from 'components/translate/Translate'
 
 const EJ_MAX_SPACES = 2000000
 const SPACES_COUNT_STEP = 10000
@@ -22,8 +23,42 @@ class BidForm extends Component {
     }
   }
 
+  componentWillMount() {
+    // NOTE: force update the props if the user decide to use the min values
+    this.handleChange('adUnitIpfs', MIN_BID_PRICE)
+    this.handleChange('requiredPoints', SPACES_COUNT_STEP)
+  }
+
   handleChange = (name, value) => {
     this.props.actions.updateNewBid({ bidId: this.props.bidId, key: name, value: value })
+  }
+
+
+  placeBid = () => {
+
+    let bid = { ...this.props.bid }
+    // NOTE: convert to cents
+    bid.adUnitIpfs = parseInt(bid.adUnitIpfs * 100, 10)
+    // TODO: this ids (id, adSLot, adUnit) are temp for testing the reducer
+    bid.id = this.props.bidsIds.length || 1
+    bid.adSlot = 1
+    bid.adUnit = 1
+
+    this.props.actions.placeBid({ bid: bid })
+    this.props.actions.resetNewBid({ bidId: this.props.bidId })
+
+    // TODO: fix this and make something common to use here and in NewItemsHocStep...
+    if (typeof this.props.onSave === 'function') {
+      this.props.onSave()
+    }
+
+    if (Array.isArray(this.props.onSave)) {
+      for (var index = 0; index < this.props.onSave.length; index++) {
+        if (typeof this.props.onSave[index] === 'function') {
+          this.props.onSave[index].onSave()
+        }
+      }
+    }
   }
 
   render() {
@@ -53,6 +88,9 @@ class BidForm extends Component {
           value={bid.requiredPoints || SPACES_COUNT_STEP}
           onChange={(value) => this.handleChange('requiredPoints', value)}
         />
+        <br />
+        <br />
+        <Button primary flat label={this.props.t('PLACE_BID')} onClick={this.placeBid} />
       </div>
     )
   }
@@ -62,14 +100,16 @@ BidForm.propTypes = {
   actions: PropTypes.object.isRequired,
   label: PropTypes.string,
   bid: PropTypes.object,
-  bidId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
+  bidId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  bidsIds: PropTypes.array
 }
 
 function mapStateToProps(state, props) {
   let persist = state.persist
   let memory = state.memory
   return {
-    bid: memory.newBid[props.bidId] || new Bid().plainObj()
+    bid: memory.newBid[props.bidId] || new Bid().plainObj(),
+    bidsIds: persist.bids.bidsIds
   }
 }
 
@@ -82,4 +122,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(BidForm)
+)(Translate(BidForm))

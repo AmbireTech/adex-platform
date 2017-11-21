@@ -45,10 +45,10 @@ let initialState = {
     language: 'en-US',
     validations: {},
     bids: {
-        bidsById: [],
-        bidsIds: [],
-        bidsByAdslot: [],
-        bidsByAdunit: []
+        bidsById: {},
+        bidsIds: [null],
+        bidsByAdslot: {},
+        bidsByAdunit: {}
     },
     newBid: {
         empty: new Bid().plainObj()
@@ -56,7 +56,9 @@ let initialState = {
 }
 
 if (process.env.NODE_ENV === 'development') {
-    // TODO: fix the initial state
+    /* TODO: fix the initial state
+    * Make it to load the test data after initial state and persistance rehidration!
+    */
     // initialState = DevInitialStateGenerator.getDevInitialState()
 }
 

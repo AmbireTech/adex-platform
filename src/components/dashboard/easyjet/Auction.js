@@ -187,7 +187,7 @@ export class Auction extends Component {
                         style={{ position: 'absolute', top: 20, right: 20 }}
                     />
 
-                    <BidForm bidId='EJBID' />
+                    <BidForm bidId='EJBID' onSave={this.bid.bind(this, 'EJ', !this.state.bidding)} />
 
                 </Dialog>
             </span>
@@ -204,8 +204,8 @@ export class Auction extends Component {
 
                 <h1> EJ auction </h1>
                 <div>
-                <Button accent raised label={this.props.t('PLACE_BID')} onClick={this.bid.bind(this, 'EJ', !this.state.bidding)} />
-                    </div>
+                    <Button accent raised label={this.props.t('PLACE_BID')} onClick={this.bid.bind(this, 'EJ', !this.state.bidding)} />
+                </div>
                 <div>
                     <BidsStatisticsChart data={this.state.bids} t={this.props.t} />
                 </div>
