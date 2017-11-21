@@ -10,11 +10,12 @@ import theme from './theme.css'
 import Translate from 'components/translate/Translate'
 import { IconButton, Button } from 'react-toolbox/lib/button'
 import Dialog from 'react-toolbox/lib/dialog'
-import BidsGenerator from 'helpers/dev/InkBidsStatsGenerator'
+import BidsGenerator from 'helpers/dev/auctionBidsStatsGenerator'
 import { BidsStatisticsChart } from './bidsStatistics'
 import NewBidSteps from './NewBidSteps'
 import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import * as sc from 'services/smart-contracts/ADX'
+import numeral from 'numeral'
 
 const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
 
@@ -151,11 +152,11 @@ export class Auction extends Component {
         return (
             <TableRow key={item.id}>
                 <TableCell> {item.name} </TableCell>
-                <TableCell> {(item.price / 100) + ' $'} </TableCell>
-                <TableCell> {item.count} </TableCell>
-                <TableCell> {((item.price * item.count) / 100) + ' $'} </TableCell>
-                <TableCell> {item.wonNumber} </TableCell>
-                <TableCell> {item.wonPriceTotal} </TableCell>
+                <TableCell> {numeral(item.price / 100).format('$ 0,0.00')} </TableCell>
+                <TableCell> {numeral(item.count).format('0,0')} </TableCell>
+                <TableCell> {numeral((item.price * item.count) / 100).format('$ 0,0.00')} </TableCell>
+                <TableCell> {numeral(item.wonNumber).format('0,0')} </TableCell>
+                <TableCell> {numeral(item.wonPriceTotal).format('$ 0,0.00')} </TableCell>
                 <TableCell> {item.execution} </TableCell>
             </TableRow >
         )
@@ -177,14 +178,15 @@ export class Auction extends Component {
     }
 
     render() {
+        let t = this.props.t
         return (
             <div>
 
-                <h1> EJ auction </h1>
+                <h1> {t('INC_AUCTION')}</h1>
                 <div>
                     <BidFormWithDialog
                         btnLabel='PLACE_BID'
-                        title={this.props.t('PLACE_BID_FOR', { args: ['EJ'] })}
+                        title={this.props.t('PLACE_BID_FOR', { args: ['Inc'] })}
                         accent
                         raised
                         bidId='EJBID'

@@ -9,6 +9,7 @@ import BidForm from './BidForm'
 import BidFormPreview from './BidFormPreview'
 import NewBidHoc from './NewBidHoc'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
+import Translate from 'components/translate/Translate'
 
 const saveBtn = ({ ...props }) => {
     return (
@@ -21,19 +22,20 @@ const SaveBtnWithItem = NewBidHoc(saveBtn)
 class NewBidSteps extends Component {
 
     render() {
+        let t  =this.props.t
         let pages = [{
-            title: 'Step 1',
+            title: t('STEP_N', {args: [1]}),
             component: ValidItemHoc(BidForm),
             props: { ...this.props, validateId: this.props.bidId }
         }, {
-            title: 'Preview and bid',
+            title: t('PREVIEW_AND_BID'),
             completeBtn: () => <SaveBtnWithItem {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
             component: ValidItemHoc(BidFormPreview),
             props: { ...this.props, validateId: this.props.bidId }
         }]
 
         return (
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'left' }}>
                 <MaterialStepper pages={pages} />
             </div>
         )
@@ -64,4 +66,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(NewBidSteps)
+)(Translate(NewBidSteps))

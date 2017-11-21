@@ -59,10 +59,10 @@ class SideNav extends Component {
                     <NewUnit theme={theme} flat color='second' raised />
                 </ListItem>
                 <RRListItem
-                    to={{ pathname: '/dashboard/' + this.props.side + "/Ink-auction" }}
+                    to={{ pathname: '/dashboard/' + this.props.side + "/inc-auction" }}
                     selectable={true}
                     value="3"
-                    caption={this.props.t('INK_AUCTION')}
+                    caption={this.props.t('INC_AUCTION')}
                     theme={theme}
                     className="side-nav-link"
                     leftIcon='local_airport'
@@ -115,10 +115,10 @@ class SideNav extends Component {
                     <NewSlot theme={theme} flat color='second' raised />
                 </ListItem>
                 <RRListItem
-                    to={{ pathname: '/dashboard/' + this.props.side + "/Ink-auction" }}
+                    to={{ pathname: '/dashboard/' + this.props.side + "/inc-auction" }}
                     selectable={true}
                     value="3"
-                    caption={this.props.t('INK_AUCTION')}
+                    caption={this.props.t('INC_AUCTION')}
                     theme={theme}
                     className="side-nav-link"
                     leftIcon='local_airport'
