@@ -22,6 +22,7 @@ const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
 
 const VIEW_MODE = 'auctionRowsView'
 const AVAILABLE_SLOTS = 2000000
+const AUCTION_SLOT_ID = 1
 
 // Can be changed. The ad unit representing the eJ advertising space
 const MAGIC_ADUNIT = 2
@@ -59,8 +60,21 @@ export class Auction extends Component {
         this.state = {
             bidding: false,
             bid: {},
-            bids: this.mapBids(BidsGenerator.getSomeRandomBids())
+            bids: [] //this.mapBids(BidsGenerator.getSomeRandomBids())
         }
+    }
+
+    getAuctionBids(allBids, auctionBidsIds) {
+        let bids = []
+
+        for (let i = 0; i < auctionBidsIds.length; i++) {
+            let bid = allBids[auctionBidsIds[i]]
+            if (bid) {
+                bids.push(bid)
+            }
+        }
+
+        return this.mapBids(bids)
     }
 
     componentWillMount() {
@@ -72,6 +86,17 @@ export class Auction extends Component {
             .then(function (bal) {
                 console.log('bal', bal)
             })
+
+        let bids = this.getAuctionBids(this.props.bidsById, this.props.auctionBidsIds)
+
+        this.setState({ bids: bids })
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.auctionBidsIds.length !== this.props.auctionBidsIds.leng) {
+            let bids = this.getAuctionBids(nextProps.bidsById, nextProps.auctionBidsIds)
+            this.setState({ bids: this.getAuctionBids(nextProps.bidsById, nextProps.auctionBidsIds) })
+        }
     }
 
     mapBids(bids) {
@@ -228,7 +253,9 @@ export class Auction extends Component {
 Auction.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    rowsView: PropTypes.bool.isRequired
+    rowsView: PropTypes.bool.isRequired,
+    bidsById: PropTypes.object.isRequired,
+    auctionBidsIds: PropTypes.array.isRequired
 }
 
 function mapStateToProps(state) {
@@ -236,7 +263,9 @@ function mapStateToProps(state) {
     // let memory = state.memory
     return {
         account: persist.account,
-        rowsView: !!persist.ui[VIEW_MODE]
+        rowsView: !!persist.ui[VIEW_MODE],
+        bidsById: persist.bids.bidsById || {},
+        auctionBidsIds: persist.bids.bidsByAdslot[AUCTION_SLOT_ID] || []
     }
 }
 

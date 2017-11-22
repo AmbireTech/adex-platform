@@ -24,35 +24,36 @@ class Bid {
         advertiser = null,
         advertiserWallet = null,
         adUnit = null,
-        adUnitIpfs = '',
+        adUnitIpfs = null,
         publisher = null,
         publisherWallet = null,
         adSlot = null,
-        adSlotIpfs = '',
-        publisherPeer = '',
+        adSlotIpfs = null,
+        publisherPeer = null,
         acceptedTime = null,
         requiredPoints = null,
         requiredExecTime = null,
         confirmedByPublisher = false,
         confirmedByAdvertiser = false,
-        publisherReportIpfs = '',
-        advertiserReportIpfs = '',
+        publisherReportIpfs = null,
+        advertiserReportIpfs = null,
         txTime = null // TODO: Maybe prop name dateOpened || createdOn here
     } = {}) {
+        // TODO: validate types!!!
         this.id = id
         this.state = state
-        this.amount = amount
-        this.advertiser = advertiser
+        this.amount = parseInt(amount)
+        this.advertiser = parseInt(advertiser)
         this.advertiserWallet = advertiserWallet
         this.adUnit = adUnit
-        this.adUnitIpfs = adUnitIpfs
+        this.adUnitIpfs = parseInt(adUnitIpfs)
         this.publisher = publisher
         this.publisherWallet = publisherWallet
-        this.adSlot = adSlot
-        this.adSlotIpfs = adSlotIpfs
+        this.adSlot = parseInt(adSlot)
+        this.adSlotIpfs = parseInt(adSlotIpfs)
         this.publisherPeer = publisherPeer
         this.acceptedTime = acceptedTime
-        this.requiredPoints = requiredPoints
+        this.requiredPoints = parseInt(requiredPoints)
         this.requiredExecTime = requiredExecTime
         this.confirmedByPublisher = confirmedByPublisher
         this.confirmedByAdvertiser = confirmedByAdvertiser
@@ -68,6 +69,7 @@ class Bid {
     }
 
     static updateBid(bid, key, value, dirtyProps) {
+        // TODO: handle prop types
         let newBid = { ...bid }
         let hasDirtyProps = Array.isArray(dirtyProps)
         if (hasDirtyProps) dirtyProps = [...dirtyProps]
