@@ -29,8 +29,7 @@ class BidForm extends Component {
           label={t('BIDS_PER_SPACE', { args: [numeral(bid.adUnitIpfs).format('$ 0,0.00')] })}
           name='bidPerSpace'
           step='0.01'
-          min={MIN_BID_PRICE}
-          value={bid.adUnitIpfs || MIN_BID_PRICE}
+          value={bid.adUnitIpfs}
           onChange={(value) => this.props.handleChange('adUnitIpfs', parseFloat(value, 10))}
         />
         <Input
@@ -40,8 +39,7 @@ class BidForm extends Component {
           name='spaces'
           step={SPACES_COUNT_STEP}
           max={EJ_MAX_SPACES}
-          min={SPACES_COUNT_STEP}
-          value={bid.requiredPoints || SPACES_COUNT_STEP}
+          value={bid.requiredPoints}
           onChange={(value) => this.props.handleChange('requiredPoints', parseInt(value, 10))}
         />
         <br />

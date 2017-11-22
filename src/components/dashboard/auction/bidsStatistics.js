@@ -2,6 +2,7 @@ import React from 'react'
 import { Bar, Doughnut, Line, HorizontalBar } from 'react-chartjs-2'
 import { CHARTS_COLORS, hexColorsToRgbaArray } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
+import numeral from 'numeral'
 
 export const BidsStatisticsChart = ({ data, options, t }) => {
     let datasets = data.reduce((memo, bid, index) => {
@@ -10,10 +11,10 @@ export const BidsStatisticsChart = ({ data, options, t }) => {
             color = Helper.hexToRgbaColorString(CHARTS_COLORS[CHARTS_COLORS.length - 1], index % 2 === 0 ? 0.9 : 0.6)
         }
 
-        let label = (bid.price / 100) + ' $'
+        let label = numeral(bid.price).format('$ 0,0.00')
 
         if (bid.execution === 'partial') {
-            label = label + ' (' + bid.wonNumber + ')'
+            label = label + ' (' + numeral(bid.wonNumber).format('0,0') + ')'
         }
 
         let dataset = {

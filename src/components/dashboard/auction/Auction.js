@@ -142,14 +142,15 @@ export class Auction extends Component {
 
                 usedSlots = usedSlots + wonNumber
 
+                let price = parseFloat(decrypt(bid.adUnitIpfs), 10) / 100
                 let mappedBid = {
                     id: bid.id,
                     name: bid.id,
-                    price: parseFloat(decrypt(bid.adUnitIpfs), 10),
+                    price: price,
                     count: bid.requiredPoints,
-                    total: bid.adUnitIpfs * bid.requiredPoints,
+                    total: price * bid.requiredPoints,
                     wonNumber: wonNumber,
-                    wonPriceTotal: wonNumber * bid.adUnitIpfs,
+                    wonPriceTotal: wonNumber * price,
                     execution: execution
                 }
 
@@ -190,9 +191,9 @@ export class Auction extends Component {
         return (
             <TableRow key={item.id} style={{ backgroundColor: bgcolor }}>
                 <TableCell> {item.name} </TableCell>
-                <TableCell> {numeral(item.price / 100).format('$ 0,0.00')} </TableCell>
+                <TableCell> {numeral(item.price).format('$ 0,0.00')} </TableCell>
                 <TableCell> {numeral(item.count).format('0,0')} </TableCell>
-                <TableCell> {numeral((item.price * item.count) / 100).format('$ 0,0.00')} </TableCell>
+                <TableCell> {numeral((item.price * item.count)).format('$ 0,0.00')} </TableCell>
                 <TableCell> {numeral(item.wonNumber).format('0,0')} </TableCell>
                 <TableCell> {numeral(item.wonPriceTotal).format('$ 0,0.00')} </TableCell>
                 <TableCell> {item.execution} </TableCell>
