@@ -48,7 +48,8 @@ let initialState = {
         bidsById: {},
         bidsIds: [null],
         bidsByAdslot: {},
-        bidsByAdunit: {}
+        bidsByAdunit: {},
+        auctionBids: {} //temp
     },
     newBid: {
         empty: new Bid().plainObj()

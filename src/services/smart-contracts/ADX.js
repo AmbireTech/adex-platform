@@ -5,7 +5,7 @@ import registryAbi from './abi/ADXRegistry'
 import exchangeAbi from './abi/ADXExchange'
 
 const mainnetCfg = {
-	node: 'https://mainnet.infura.io/W0a3PCAj1UfQZxo5AIrv',
+	node: 'https://parity.wings.ai',
 	addr: {
 		token: '0x4470BB87d77b963A013DB939BE332f927f2b992e',
 		registry: '0xeaf503fd64d0cf9278f29775b78c6f31001ffebc',

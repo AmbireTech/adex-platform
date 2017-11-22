@@ -18,6 +18,7 @@ import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import * as sc from 'services/smart-contracts/ADX'
 import numeral from 'numeral'
 import { decrypt } from 'services/crypto/crypto'
+import { web3 } from '../../../services/smart-contracts/ADX';
 
 const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
 
@@ -43,6 +44,11 @@ const searchMatch = (bid) => {
         ((bid.wonNumber + '') || '')
 }
 
+const getEnctiptedPrice = (enc) => {
+    let nolatz = enc.replace(/^0x0*|0+$/g, '')
+    return nolatz
+}
+
 let BID_MODEL = {
     id: 0,
     name: 'Advertiser name',
@@ -61,7 +67,8 @@ export class Auction extends Component {
         this.state = {
             bidding: false,
             bid: {},
-            bids: [] //this.mapBids(BidsGenerator.getSomeRandomBids())
+            bids: [], //this.mapBids(BidsGenerator.getSomeRandomBids())
+            bidsWeb3: []
         }
     }
 
@@ -80,31 +87,71 @@ export class Auction extends Component {
 
     componentWillMount() {
         // TODO: add persisted account to web3.eth.accounts
-        console.log(sc.web3.eth.accounts.wallet)
+        // console.log(sc.web3.eth.accounts.wallet)
 
-        sc.token.methods.balanceOf('0xd874b82fd6a1c8bc0911bd025ae7ab2ca448740f')
+        // sc.token.methods.balanceOf('0xd874b82fd6a1c8bc0911bd025ae7ab2ca448740f')
+        //     .call()
+        //     .then(function (bal) {
+        //         console.log('bal', bal)
+        //     })
+
+        let that = this
+
+        // TODO: make service
+        sc.exchange.methods.bidsCount()
             .call()
-            .then(function (bal) {
-                console.log('bal', bal)
+            .then((count) => {
+                console.log('count', count)
+                let bidsIds = []
+                for (let i = 1; i <= count; i++) {
+                    bidsIds.push(sc.exchange.methods.getBid(i).call())
+                }
+
+                // return sc.exchange.methods.getBid(1).call()
+
+                return Promise.all(bidsIds)
+            })
+            .then((allbids) => {
+                console.log('allbids', allbids)
+
+                let mappedFromWeb3 = that.mapWeb3Bids(allbids)
+                let bids = that.mapBids(mappedFromWeb3)
+
+                console.log('bids', bids)
+
+                this.setState({ bids: bids })
             })
 
-        let bids = this.getAuctionBids(this.props.bidsById, this.props.auctionBidsIds)
 
-        this.setState({ bids: bids })
+        // let bids = this.getAuctionBids(this.props.bidsById, this.props.auctionBidsIds)
+
+        // this.setState({ bids: bids })
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.auctionBidsIds.length !== this.props.auctionBidsIds.leng) {
-            let bids = this.getAuctionBids(nextProps.bidsById, nextProps.auctionBidsIds)
-            this.setState({ bids: this.getAuctionBids(nextProps.bidsById, nextProps.auctionBidsIds) })
-        }
+    // componentWillReceiveProps(nextProps) {
+    //     if (nextProps.auctionBidsIds.length !== this.props.auctionBidsIds.leng) {
+    //         let bids = this.getAuctionBids(nextProps.bidsById, nextProps.auctionBidsIds)
+    //         this.setState({ bids: this.getAuctionBids(nextProps.bidsById, nextProps.auctionBidsIds) })
+    //     }
+    // }
+
+    mapWeb3Bids(bids) {
+        let mapped = bids.map((bid, index) => {
+            return {
+                id: index + 1,
+                advertiserPeer: parseFloat(decrypt(getEnctiptedPrice(bid[7])), 10),
+                requiredPoints: parseInt(bid[1], 10)
+            }
+        })
+
+        return mapped
     }
 
     mapBids(bids) {
         return bids
             .sort((a, b) => {
-                let aPrice = parseInt(decrypt(a.advertiserPeer), 10)
-                let bPrice = parseInt(decrypt(b.advertiserPeer), 10)
+                let aPrice = a.advertiserPeer
+                let bPrice = b.advertiserPeer
 
                 if (aPrice < bPrice) {
                     return 1
@@ -140,9 +187,7 @@ export class Auction extends Component {
                     execution = 'partial'
                 }
 
-                usedSlots = usedSlots + wonNumber
-
-                let price = parseFloat(decrypt(bid.advertiserPeer), 10) / 100
+                let price = bid.advertiserPeer
                 let mappedBid = {
                     id: bid.id,
                     name: bid.id,
@@ -154,7 +199,10 @@ export class Auction extends Component {
                     execution: execution
                 }
 
-                bids.push(mappedBid)
+                if (!isNaN(price)) {
+                    bids.push(mappedBid)
+                    usedSlots = usedSlots + wonNumber
+                }
 
                 return {
                     bids: bids,
