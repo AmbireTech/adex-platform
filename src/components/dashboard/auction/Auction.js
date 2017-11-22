@@ -103,8 +103,8 @@ export class Auction extends Component {
     mapBids(bids) {
         return bids
             .sort((a, b) => {
-                let aPrice = parseInt(decrypt(a.adUnitIpfs), 10)
-                let bPrice = parseInt(decrypt(b.adUnitIpfs), 10)
+                let aPrice = parseInt(decrypt(a.advertiserPeer), 10)
+                let bPrice = parseInt(decrypt(b.advertiserPeer), 10)
 
                 if (aPrice < bPrice) {
                     return 1
@@ -142,7 +142,7 @@ export class Auction extends Component {
 
                 usedSlots = usedSlots + wonNumber
 
-                let price = parseFloat(decrypt(bid.adUnitIpfs), 10) / 100
+                let price = parseFloat(decrypt(bid.advertiserPeer), 10) / 100
                 let mappedBid = {
                     id: bid.id,
                     name: bid.id,

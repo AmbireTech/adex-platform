@@ -19,8 +19,8 @@ export default function NewBidHoc(Decorated) {
   class BidForm extends Component {
     componentWillMount() {
       // NOTE: force update the props if the user decide to use the min values
-      if (!this.props.bid.adUnitIpfs && !this.props.bid.SPACES_COUNT_STEP) {
-        this.handleChange('adUnitIpfs', MIN_BID_PRICE)
+      if (!this.props.bid.advertiserPeer && !this.props.bid.SPACES_COUNT_STEP) {
+        this.handleChange('advertiserPeer', MIN_BID_PRICE)
         this.handleChange('requiredPoints', SPACES_COUNT_STEP)
       }
     }
@@ -32,14 +32,14 @@ export default function NewBidHoc(Decorated) {
     save = () => {
       let bid = { ...this.props.bid }
       // NOTE: convert to cents
-      bid.adUnitIpfs = parseInt(bid.adUnitIpfs * 100, 10)
+      bid.advertiserPeer = parseInt(bid.advertiserPeer * 100, 10)
       // TODO: this ids (id, adSLot, adUnit) are temp for testing the reducer
       
       // TODO: handle id - some tem for the UI and then sync with web3 somehow 
       bid.id = this.props.bidsIds.length || 1
       bid.adSlot = AUCTION_SLOT_ID
 
-      bid.adUnitIpfs = encrypt(bid.adUnitIpfs + '')
+      bid.advertiserPeer = encrypt(bid.advertiserPeer + '')
 
       this.props.actions.placeBid({ bid: bid })
       this.props.actions.resetNewBid({ bidId: this.props.bidId })

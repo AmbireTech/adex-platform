@@ -25,6 +25,7 @@ class Bid {
         advertiserWallet = null,
         adUnit = null,
         adUnitIpfs = null,
+        advertiserPeer = null,
         publisher = null,
         publisherWallet = null,
         adSlot = null,
@@ -47,6 +48,7 @@ class Bid {
         this.advertiserWallet = advertiserWallet
         this.adUnit = adUnit
         this.adUnitIpfs = parseInt(adUnitIpfs)
+        this.advertiserPeer = parseInt(advertiserPeer)
         this.publisher = publisher
         this.publisherWallet = publisherWallet
         this.adSlot = parseInt(adSlot)

@@ -4,6 +4,7 @@ var crypto = require('crypto'),
     password = 'kaipahH5';
 
 export const encrypt = (text) => {
+    if(!text) return ''
     var cipher = crypto.createCipher(algorithm, password)
     var crypted = cipher.update(text, 'utf8', 'hex')
     crypted += cipher.final('hex');
@@ -11,6 +12,7 @@ export const encrypt = (text) => {
 }
 
 export const decrypt = (text) => {
+    if(!text) return ''
     var decipher = crypto.createDecipher(algorithm, password)
     var dec = decipher.update(text, 'hex', 'utf8')
     dec += decipher.final('utf8');

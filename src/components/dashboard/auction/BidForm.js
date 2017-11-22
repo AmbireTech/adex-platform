@@ -26,11 +26,11 @@ class BidForm extends Component {
         <Input
           type='number'
           required
-          label={t('BIDS_PER_SPACE', { args: [numeral(bid.adUnitIpfs).format('$ 0,0.00')] })}
+          label={t('BIDS_PER_SPACE', { args: [numeral(bid.advertiserPeer).format('$ 0,0.00')] })}
           name='bidPerSpace'
           step='0.01'
-          value={bid.adUnitIpfs}
-          onChange={(value) => this.props.handleChange('adUnitIpfs', parseFloat(value, 10))}
+          value={bid.advertiserPeer}
+          onChange={(value) => this.props.handleChange('advertiserPeer', parseFloat(value, 10))}
         />
         <Input
           type='number'
@@ -45,7 +45,7 @@ class BidForm extends Component {
         <br />
         <div>
           <span> {t('TOTAL_BID_AMOUNT')} </span>
-          <strong> {numeral(bid.adUnitIpfs * bid.requiredPoints).format('$ 0,0.00')} </strong>
+          <strong> {numeral(bid.advertiserPeer * bid.requiredPoints).format('$ 0,0.00')} </strong>
         </div>
       </div>
     )

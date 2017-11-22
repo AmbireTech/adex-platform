@@ -25,11 +25,11 @@ class BidFormPreview extends Component {
           </Row>
           <Row>
             <Col xs={12} lg={4} className={theme.textRight}>{t('PRICE_PER_SPACE')}:</Col>
-            <Col xs={12} lg={8} className={theme.textLeft}>{numeral(bid.adUnitIpfs).format('$ 0,0.00')}</Col>
+            <Col xs={12} lg={8} className={theme.textLeft}>{numeral(bid.advertiserPeer).format('$ 0,0.00')}</Col>
           </Row>
           <Row>
             <Col xs={12} lg={4} className={theme.textRight}>{t('TOTAL_BID_AMOUNT')}:</Col>
-            <Col xs={12} lg={8} className={theme.textLeft}>{numeral(bid.adUnitIpfs * bid.requiredPoints).format('$ 0,0.00')}</Col>
+            <Col xs={12} lg={8} className={theme.textLeft}>{numeral(bid.advertiserPeer * bid.requiredPoints).format('$ 0,0.00')}</Col>
           </Row>
 
         </Grid>
