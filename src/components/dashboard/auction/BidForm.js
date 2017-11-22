@@ -10,6 +10,7 @@ import Bid from 'models/Bid'
 import Translate from 'components/translate/Translate'
 // import ValidItemHoc from './ValidItemHoc'
 import NewBidHoc from './NewBidHoc'
+import numeral from 'numeral'
 
 const EJ_MAX_SPACES = 2000000
 const SPACES_COUNT_STEP = 10000
@@ -18,13 +19,14 @@ const MIN_BID_PRICE = 0.05
 class BidForm extends Component {
   render() {
     let bid = this.props.bid || {}
+    let t = this.props.t
 
     return (
       <div>
         <Input
           type='number'
           required
-          label='Bid per space in $'
+          label={t('BIDS_PER_SPACE', { args: [numeral(bid.adUnitIpfs).format('$ 0,0.00')] })}
           name='bidPerSpace'
           step='0.01'
           min={MIN_BID_PRICE}
@@ -34,7 +36,7 @@ class BidForm extends Component {
         <Input
           type='number'
           required
-          label='Spaces count'
+          label={t('SPACES_COUNT_N', { args: [numeral(bid.requiredPoints).format('0,0')] })}
           name='spaces'
           step={SPACES_COUNT_STEP}
           max={EJ_MAX_SPACES}
@@ -42,6 +44,11 @@ class BidForm extends Component {
           value={bid.requiredPoints || SPACES_COUNT_STEP}
           onChange={(value) => this.props.handleChange('requiredPoints', value)}
         />
+        <br />
+        <div>
+          <span> {t('TOTAL_BID_AMOUNT')} </span>
+          <strong> {numeral(bid.adUnitIpfs * bid.requiredPoints).format('$ 0,0.00')} </strong>
+        </div>
       </div>
     )
   }

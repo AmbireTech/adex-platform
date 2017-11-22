@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "adex-translations": "git+ssh://git@bitbucket.org:stremio/adex-translations.git#2d9555defec8dffec4efc7c948ae377ef6413ccb",
+    "adex-translations": "git+ssh://git@bitbucket.org:stremio/adex-translations.git#6d1755163dc0f902561895d25414e48681f783f3",
     "autoprefixer": "7.1.2",
     "babel-core": "6.25.0",
     "babel-eslint": "7.2.3",
@@ -37,6 +37,7 @@
     "lodash.merge": "^4.6.0",
     "moment": "^2.18.1",
     "moment-range": "^3.0.3",
+    "numeral": "^2.0.6",
     "object-assign": "^4.1.1",
     "postcss": "^6.0.9",
     "postcss-apply": "^0.8.0",

@@ -7,14 +7,16 @@ import ItemsList from 'components/dashboard/containers/ItemsList'
 import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import Rows from 'components/dashboard/collection/Rows'
 import theme from './theme.css'
+import containerTheme from 'components/dashboard/containers/theme.css'
 import Translate from 'components/translate/Translate'
 import { IconButton, Button } from 'react-toolbox/lib/button'
-import Dialog from 'react-toolbox/lib/dialog'
-import BidsGenerator from 'helpers/dev/InkBidsStatsGenerator'
+import classnames from 'classnames'
+import BidsGenerator from 'helpers/dev/auctionBidsStatsGenerator'
 import { BidsStatisticsChart } from './bidsStatistics'
 import NewBidSteps from './NewBidSteps'
 import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import * as sc from 'services/smart-contracts/ADX'
+import numeral from 'numeral'
 
 const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
 
@@ -148,14 +150,22 @@ export class Auction extends Component {
     }
 
     renderTableRow(item, index, { to, selected }) {
+        let bgcolor = ''
+        if (item.execution === 'full') {
+            bgcolor = '#00E676'
+        } else if (item.execution === 'partial') {
+            bgcolor = '#FFAB00'
+        }
+
+
         return (
-            <TableRow key={item.id}>
+            <TableRow key={item.id} style={{ backgroundColor: bgcolor }}>
                 <TableCell> {item.name} </TableCell>
-                <TableCell> {(item.price / 100) + ' $'} </TableCell>
-                <TableCell> {item.count} </TableCell>
-                <TableCell> {((item.price * item.count) / 100) + ' $'} </TableCell>
-                <TableCell> {item.wonNumber} </TableCell>
-                <TableCell> {item.wonPriceTotal} </TableCell>
+                <TableCell> {numeral(item.price / 100).format('$ 0,0.00')} </TableCell>
+                <TableCell> {numeral(item.count).format('0,0')} </TableCell>
+                <TableCell> {numeral((item.price * item.count) / 100).format('$ 0,0.00')} </TableCell>
+                <TableCell> {numeral(item.wonNumber).format('0,0')} </TableCell>
+                <TableCell> {numeral(item.wonPriceTotal).format('$ 0,0.00')} </TableCell>
                 <TableCell> {item.execution} </TableCell>
             </TableRow >
         )
@@ -177,16 +187,25 @@ export class Auction extends Component {
     }
 
     render() {
+        let t = this.props.t
         return (
             <div>
-
-                <h1> EJ auction </h1>
+                <div className={containerTheme.heading}>
+                    <h1 className={containerTheme.itemName}>
+                        {t('INC_AUCTION')}
+                    </h1>
+                </div>
+                <div className={classnames(containerTheme.top)}>
+                    <p>
+                        {t('INC_AUCTION_DESCRIPTION')}
+                    </p>
+                </div>
                 <div>
                     <BidFormWithDialog
                         btnLabel='PLACE_BID'
-                        title={this.props.t('PLACE_BID_FOR', { args: ['EJ'] })}
+                        title={this.props.t('PLACE_BID_FOR', { args: ['Inc'] })}
                         accent
-                        raised
+                        floating
                         bidId='EJBID'
                     />
                 </div>

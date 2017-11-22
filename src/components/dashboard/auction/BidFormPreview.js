@@ -3,34 +3,33 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { Button, IconButton } from 'react-toolbox/lib/button'
 import theme from 'components/dashboard/forms/theme.css'
-import Input from 'react-toolbox/lib/input'
 import Bid from 'models/Bid'
 import Translate from 'components/translate/Translate'
-// import ValidItemHoc from './ValidItemHoc'
 import NewBidHoc from './NewBidHoc'
 import { Grid, Row, Col } from 'react-flexbox-grid'
+import numeral from 'numeral'
 
 class BidFormPreview extends Component {
   render() {
     let bid = this.props.bid || {}
+    let t = this.props.t
 
     return (
       <div>
         {/* TODO: Add translations and format the numbers */}
         <Grid fluid>
           <Row>
-            <Col xs={12} lg={4} className={theme.textRight}> {'SPACEC_COUNT'}:</Col>
-            <Col xs={12} lg={8} className={theme.textLeft}>{bid.requiredPoints} </Col>
+            <Col xs={12} lg={4} className={theme.textRight}> {t('SPACES_COUNT')}:</Col>
+            <Col xs={12} lg={8} className={theme.textLeft}>{numeral(bid.requiredPoints).format('0,0')} </Col>
           </Row>
           <Row>
-            <Col xs={12} lg={4} className={theme.textRight}>{'PRICE_PER_SPACE'}:</Col>
-            <Col xs={12} lg={8} className={theme.textLeft}>{bid.adUnitIpfs + ' $'}</Col>
+            <Col xs={12} lg={4} className={theme.textRight}>{t('PRICE_PER_SPACE')}:</Col>
+            <Col xs={12} lg={8} className={theme.textLeft}>{numeral(bid.adUnitIpfs).format('$ 0,0.00')}</Col>
           </Row>
           <Row>
-            <Col xs={12} lg={4} className={theme.textRight}>{'TOTAL_BID_AMOUNT'}:</Col>
-            <Col xs={12} lg={8} className={theme.textLeft}>{(bid.adUnitIpfs * bid.requiredPoints) + ' $'}</Col>
+            <Col xs={12} lg={4} className={theme.textRight}>{t('TOTAL_BID_AMOUNT')}:</Col>
+            <Col xs={12} lg={8} className={theme.textLeft}>{numeral(bid.adUnitIpfs * bid.requiredPoints).format('$ 0,0.00')}</Col>
           </Row>
 
         </Grid>

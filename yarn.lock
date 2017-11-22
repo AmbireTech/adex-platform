@@ -72,9 +72,9 @@ address@1.0.2, address@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/address/-/address-1.0.2.tgz#480081e82b587ba319459fef512f516fe03d58af"
 
-"adex-translations@git+ssh://git@bitbucket.org:stremio/adex-translations.git#2d9555defec8dffec4efc7c948ae377ef6413ccb":
+"adex-translations@git+ssh://git@bitbucket.org:stremio/adex-translations.git#6d1755163dc0f902561895d25414e48681f783f3":
   version "0.0.1"
-  resolved "git+ssh://git@bitbucket.org:stremio/adex-translations.git#2d9555defec8dffec4efc7c948ae377ef6413ccb"
+  resolved "git+ssh://git@bitbucket.org:stremio/adex-translations.git#6d1755163dc0f902561895d25414e48681f783f3"
 
 ajv-keywords@^1.0.0:
   version "1.5.1"
@@ -5460,6 +5460,10 @@ number-to-bn@1.7.0:
   dependencies:
     bn.js "4.11.6"
     strip-hex-prefix "1.0.0"
+
+numeral@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/numeral/-/numeral-2.0.6.tgz#4ad080936d443c2561aed9f2197efffe25f4e506"
 
 "nwmatcher@>= 1.3.9 < 2.0.0":
   version "1.4.1"
