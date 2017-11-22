@@ -17,6 +17,7 @@ import NewBidSteps from './NewBidSteps'
 import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import * as sc from 'services/smart-contracts/ADX'
 import numeral from 'numeral'
+import { decrypt } from 'services/crypto/crypto'
 
 const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
 
@@ -102,9 +103,12 @@ export class Auction extends Component {
     mapBids(bids) {
         return bids
             .sort((a, b) => {
-                if (a.adUnitIpfs < b.adUnitIpfs) {
+                let aPrice = parseInt(decrypt(a.adUnitIpfs), 10)
+                let bPrice = parseInt(decrypt(b.adUnitIpfs), 10)
+
+                if (aPrice < bPrice) {
                     return 1
-                } else if (a.adUnitIpfs > b.adUnitIpfs) {
+                } else if (aPrice > bPrice) {
                     return -1
                 } else {
                     if (a.requiredPoints < b.requiredPoints) {
@@ -141,7 +145,7 @@ export class Auction extends Component {
                 let mappedBid = {
                     id: bid.id,
                     name: bid.id,
-                    price: bid.adUnitIpfs,
+                    price: parseFloat(decrypt(bid.adUnitIpfs), 10),
                     count: bid.requiredPoints,
                     total: bid.adUnitIpfs * bid.requiredPoints,
                     wonNumber: wonNumber,

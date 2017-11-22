@@ -8,10 +8,13 @@ import theme from './theme.css'
 import Input from 'react-toolbox/lib/input'
 import Bid from 'models/Bid'
 import Translate from 'components/translate/Translate'
+import { encrypt } from 'services/crypto/crypto'
+
 
 const EJ_MAX_SPACES = 2000000
 const SPACES_COUNT_STEP = 10000
 const MIN_BID_PRICE = 0.05
+const AUCTION_SLOT_ID = 1
 export default function NewBidHoc(Decorated) {
   class BidForm extends Component {
     componentWillMount() {
@@ -31,9 +34,12 @@ export default function NewBidHoc(Decorated) {
       // NOTE: convert to cents
       bid.adUnitIpfs = parseInt(bid.adUnitIpfs * 100, 10)
       // TODO: this ids (id, adSLot, adUnit) are temp for testing the reducer
+      
+      // TODO: handle id - some tem for the UI and then sync with web3 somehow 
       bid.id = this.props.bidsIds.length || 1
-      bid.adSlot = 1
-      bid.adUnit = 1
+      bid.adSlot = AUCTION_SLOT_ID
+
+      bid.adUnitIpfs = encrypt(bid.adUnitIpfs + '')
 
       this.props.actions.placeBid({ bid: bid })
       this.props.actions.resetNewBid({ bidId: this.props.bidId })
