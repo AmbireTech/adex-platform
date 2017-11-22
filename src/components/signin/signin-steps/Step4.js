@@ -52,7 +52,7 @@ class Step4 extends Component {
                     // see https://github.com/ethereum/web3.js/issues/1094
                     let privateKey = '0x' + ks.exportPrivateKey(addr[0], pwDerivedKey)
 
-                    console.log('privateKey', privateKey)
+                    // console.log('privateKey', privateKey)
 
                     let acc = web3.eth.accounts.privateKeyToAccount(privateKey)
                     let wallet = web3.eth.accounts.wallet

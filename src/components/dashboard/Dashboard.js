@@ -132,7 +132,7 @@ class Dashboard extends React.Component {
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/Channel/:itemId' component={Channel} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
 
-                        <PrivateRoute auth={this.props.auth} exact path={'/dashboard/' + side + "/inc-auction"} component={Auction} />
+                        <PrivateRoute auth={this.props.auth} exact path={'/dashboard/auction/ink'} component={Auction} />
 
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/:side' component={DashboardStats} />
                         <PrivateRoute auth={this.props.auth} component={() => <h1>404 at {side} side</h1>} />

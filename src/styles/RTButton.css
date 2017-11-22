@@ -4,6 +4,21 @@
   --button-danger-color-hover: color(var(--color-adex-danger-contrast) a(20%));
   --button-first-color-hover: color(var(--color-adex-primary-lighter) a(20%));
   --button-second-color-hover: color(var(--color-adex-alt-primary-button) a(20%));
+  --button-disabled-text-color: color(var(--color-adex-neutral-contrast) a(80%));
+  --button-disabled-background-color: color(var(--color-adex-neutral-primary) a(80%));
+}
+
+.button{
+  &[disabled] {
+    color: var(--button-disabled-text-color) !important;
+  }
+}
+
+
+.solid {
+  &[disabled] {
+    background-color: var(--button-disabled-background-color) !important;
+  }
 }
 
 .toggle {

@@ -18,7 +18,8 @@ import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import * as sc from 'services/smart-contracts/ADX'
 import numeral from 'numeral'
 import { decrypt } from 'services/crypto/crypto'
-import { web3 } from '../../../services/smart-contracts/ADX';
+import { web3 } from '../../../services/smart-contracts/ADX'
+import ProgressBar from 'react-toolbox/lib/progress_bar'
 
 const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
 
@@ -101,7 +102,7 @@ export class Auction extends Component {
         sc.exchange.methods.bidsCount()
             .call()
             .then((count) => {
-                console.log('count', count)
+                // console.log('count', count)
                 let bidsIds = []
                 for (let i = 1; i <= count; i++) {
                     bidsIds.push(sc.exchange.methods.getBid(i).call())
@@ -112,12 +113,12 @@ export class Auction extends Component {
                 return Promise.all(bidsIds)
             })
             .then((allbids) => {
-                console.log('allbids', allbids)
+                // console.log('allbids', allbids)
 
                 let mappedFromWeb3 = that.mapWeb3Bids(allbids)
                 let bids = that.mapBids(mappedFromWeb3)
 
-                console.log('bids', bids)
+                // console.log('bids', bids)
 
                 this.setState({ bids: bids })
             })
@@ -140,7 +141,9 @@ export class Auction extends Component {
             return {
                 id: index + 1,
                 advertiserPeer: parseFloat(decrypt(getEnctiptedPrice(bid[7])), 10),
-                requiredPoints: parseInt(bid[1], 10)
+                requiredPoints: parseInt(bid[1], 10),
+                adUnit: bid[5]
+
             }
         })
 
@@ -188,9 +191,22 @@ export class Auction extends Component {
                 }
 
                 let price = bid.advertiserPeer
+                let name = bid.id
+                switch (bid.adUnit) {
+                    case '1': name = 'Stremio'
+                        break
+                    case '2': name = 'propy'
+                        break
+                    case '3': name = 'eToro'
+                        break
+                    case '4': name = 'Orion'
+                        break
+                    default:
+                        break
+                }
                 let mappedBid = {
                     id: bid.id,
-                    name: bid.id,
+                    name: name,
                     price: price,
                     count: bid.requiredPoints,
                     total: price * bid.requiredPoints,
@@ -270,34 +286,43 @@ export class Auction extends Component {
             <div>
                 <div className={containerTheme.heading}>
                     <h1 className={containerTheme.itemName}>
-                        {t('INC_AUCTION')}
+                        {t('INK_AUCTION')}
                     </h1>
                 </div>
                 <div className={classnames(containerTheme.top)}>
                     <p>
-                        {t('INC_AUCTION_DESCRIPTION')}
+                        {t('INK_AUCTION_DESCRIPTION')}
                     </p>
                 </div>
-                <div>
-                    <BidFormWithDialog
-                        btnLabel='PLACE_BID'
-                        title={this.props.t('PLACE_BID_FOR', { args: ['Inc'] })}
-                        accent
-                        floating
-                        bidId='EJBID'
-                    />
-                </div>
-                <div>
-                    <BidsStatisticsChart data={this.state.bids} t={this.props.t} />
-                </div>
-                <ItemsList
-                    items={this.state.bids}
-                    listMode='rows'
-                    renderRows={this.renderRows.bind(this)}
-                    sortProperties={SORT_PROPERTIES}
-                    searchMatch={searchMatch}
-                    rowsView={VIEW_MODE}
-                />
+                {this.state.bids.length > 0 ?
+                    <div>
+                        <div>
+                            <BidFormWithDialog
+                                btnLabel='PLACE_BID'
+                                title={this.props.t('PLACE_BID_FOR', { args: ['Ink'] })}
+                                accent
+                                disabled
+                                floating
+                                bidId='INKBID'
+                            />
+                        </div>
+                        <div>
+                            <BidsStatisticsChart data={this.state.bids} t={this.props.t} />
+                        </div>
+                        <ItemsList
+                            items={this.state.bids}
+                            listMode='rows'
+                            renderRows={this.renderRows.bind(this)}
+                            sortProperties={SORT_PROPERTIES}
+                            searchMatch={searchMatch}
+                            rowsView={VIEW_MODE}
+                        />
+                    </div>
+                    :
+                    <div style={{ textAlign: 'center' }}>
+                        <ProgressBar type='circular' mode='indeterminate' multicolor />
+                    </div>
+                }
             </div>
         )
     }

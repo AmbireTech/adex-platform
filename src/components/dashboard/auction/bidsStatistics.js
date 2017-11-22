@@ -88,6 +88,6 @@ export const BidsStatisticsChart = ({ data, options, t }) => {
     }
 
     return (
-        <HorizontalBar data={chartData} options={linesOptions} height={30} />
+        <HorizontalBar data={chartData} options={linesOptions} height={55} />
     )
 }

@@ -28,6 +28,7 @@ export default function ItemHoc(Decorated) {
             return (
                 <div>
                     <Button
+                        disabled={this.props.disabled}
                         floating={this.props.floating}
                         icon={this.props.icon || 'add'}
                         label={this.props.floating ? '' : this.props.t(this.props.btnLabel)}
@@ -38,8 +39,8 @@ export default function ItemHoc(Decorated) {
                         flat={this.props.flat}
                         theme={this.props.theme}
                         className={classnames(
-                            {[theme.floating]: this.props.floating},
-                            {[RTButtonTheme[this.props.color]]: !!this.props.color}
+                            { [theme.floating]: this.props.floating },
+                            { [RTButtonTheme[this.props.color]]: !!this.props.color }
                         )}
                     />
                     <Dialog
