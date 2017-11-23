@@ -1,6 +1,6 @@
 
 # Node 6.x
-FROM node:boron
+FROM node:6
 
 # Meta
 MAINTAINER Ivo Paunov <paunov@strem.io>

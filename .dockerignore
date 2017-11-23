@@ -1,0 +1,9 @@
+.git
+dist-desktop
+node_modules*
+bower_components*
+.dockerignore
+Dockerfile
+shell*
+build-*
+src
