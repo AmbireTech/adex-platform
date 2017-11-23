@@ -9,7 +9,7 @@ LABEL Description="AdEx dapp" Vendor="Smart Code ltd" Version="0.0.0"
 #------------------------------------ Setup -----------------------------------
 
 WORKDIR /var/www/adex
-COPY build/static . 
+COPY build . 
 
 RUN npm install -g http-server
 
