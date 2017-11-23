@@ -15,5 +15,5 @@ RUN npm install -g http-server
 
 #-------------------------------------- Run ------------------------------------
 
-EXPOSE 800
+EXPOSE 8080
 CMD ["http-server"]
