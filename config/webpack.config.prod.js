@@ -217,7 +217,7 @@ module.exports = {
           // When you `import` an asset, you get its filename.
           // This loader don't uses a "test" so it will catch all modules
           // that fall through the other loaders.
-          {
+	  {
             loader: require.resolve('file-loader'),
             // Exclude `js` files to keep "css" loader working as it injects
             // it's runtime that would otherwise processed through "file" loader.
