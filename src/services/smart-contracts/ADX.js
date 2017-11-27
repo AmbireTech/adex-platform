@@ -13,10 +13,23 @@ const mainnetCfg = {
 	}
 }
 
-
+const testrpcCfg = {
+	node: '//192.168.10.23:8545/',
+	addr: {
+		token: '0x7de0f894759b958dde809b3bd78a675706fa6398',
+		registry: '0xcc5afdfa305ae1cb9459706b0d20d4e04d5c11ef',
+		exchange: '0x1181e82c00ed49ef61a29d28404c32905b4aee48',
+	}
+}
 
 // TEMP
-const cfg = mainnetCfg
+let cfg
+
+if (process.env.NODE_ENV === 'production') {
+	cfg = mainnetCfg
+} else {
+	cfg = testrpcCfg
+}
 
 const web3 = new Web3()
 web3.setProvider(new Web3.providers.HttpProvider(cfg.node))

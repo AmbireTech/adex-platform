@@ -42,23 +42,24 @@ export default function NewItemHoc(Decorated) {
             let item = { ...this.props.newItem }
             // TODO: !!! this tempId should not be used - temp until web3 services !!!
             item.tempId = this.props.items.length
+            item.item_type = this.props.itemModel
 
             // this.setState({ saved: true }, () => {
-                this.props.actions.addItem(item, this.props.addTo)
-                this.props.actions.resetNewItem(this.state.item)
+            this.props.actions.addItem(item, this.props.addTo)
+            this.props.actions.resetNewItem(this.state.item)
 
-                // TODO:.....
-                if (typeof this.props.onSave === 'function') {
-                    this.props.onSave()
-                }
+            // TODO:.....
+            if (typeof this.props.onSave === 'function') {
+                this.props.onSave()
+            }
 
-                if (Array.isArray(this.props.onSave)) {
-                    for (var index = 0; index < this.props.onSave.length; index++) {
-                        if (typeof this.props.onSave[index] === 'function') {
-                            this.props.onSave[index].onSave()
-                        }
+            if (Array.isArray(this.props.onSave)) {
+                for (var index = 0; index < this.props.onSave.length; index++) {
+                    if (typeof this.props.onSave[index] === 'function') {
+                        this.props.onSave[index].onSave()
                     }
                 }
+            }
             // })
         }
 
@@ -86,7 +87,8 @@ export default function NewItemHoc(Decorated) {
         newItem: PropTypes.object.isRequired,
         title: PropTypes.string,
         items: PropTypes.array.isRequired,
-        addTo: PropTypes.object
+        addTo: PropTypes.object,
+        itemModel: PropTypes.func.isRequired
     }
 
     // return ItemForm

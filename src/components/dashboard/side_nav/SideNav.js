@@ -27,7 +27,7 @@ class SideNav extends Component {
                     theme={theme}
                     className="side-nav-link"
                     leftIcon='dashboard'
-                    disabled
+                    // disabled
                 />
                 <RRListItem
                     to={{ pathname: '/dashboard/' + this.props.side + "/campaigns" }}
@@ -37,13 +37,19 @@ class SideNav extends Component {
                     theme={theme}
                     className="side-nav-link"
                     leftIcon={<CampaignIcon color='rgb(117, 117, 117)' />}
-                    disabled
+                    // disabled
                 />
                 <ListItem
                     selectable={false}
                     ripple={false}
                 >
-                    <NewCampaign theme={theme} flat color='first' raised disabled/>
+                    <NewCampaign
+                        theme={theme}
+                        flat
+                        color='first'
+                        raised
+                        // disabled
+                    />
                 </ListItem>
                 <RRListItem
                     to={{ pathname: '/dashboard/' + this.props.side + "/units" }}
@@ -53,16 +59,22 @@ class SideNav extends Component {
                     theme={theme}
                     className="side-nav-link"
                     leftIcon='format_list_bulleted'
-                    disabled
+                    // disabled
                 />
                 <ListItem
                     selectable={false}
                     ripple={false}
                 >
-                    <NewUnit theme={theme} flat color='second' raised disabled />
+                    <NewUnit
+                        theme={theme}
+                        flat
+                        color='second'
+                        raised
+                        // disabled
+                    />
                 </ListItem>
                 <RRListItem
-                    to={{ pathname: '/dashboard/auction/ink'}}
+                    to={{ pathname: '/dashboard/auction/ink' }}
                     selectable={true}
                     value="3"
                     caption={this.props.t('INK_AUCTION')}
@@ -118,7 +130,7 @@ class SideNav extends Component {
                     <NewSlot theme={theme} flat color='second' raised />
                 </ListItem>
                 <RRListItem
-                    to={{ pathname: '/dashboard/auction/ink'}}
+                    to={{ pathname: '/dashboard/auction/ink' }}
                     selectable={true}
                     value="3"
                     caption={this.props.t('INK_AUCTION')}

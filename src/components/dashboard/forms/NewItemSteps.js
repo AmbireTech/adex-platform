@@ -38,7 +38,7 @@ class NewItemSteps extends Component {
         pages.push(
             {
                 title: 'Preview and save',
-                completeBtn: () => <SaveBtnWithItem itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
+                completeBtn: () => <SaveBtnWithItem  {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
                 component: NewItemFormPreview,
                 props: { ...this.props }
             }

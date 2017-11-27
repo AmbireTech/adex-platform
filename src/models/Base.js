@@ -1,7 +1,7 @@
 import Helper from 'helpers/miscHelpers'
 
 class Base {
-    constructor({name = '', ipfs = '', txTime = Date.now()} = {}) {
+    constructor({ name = '', ipfs = '', txTime = Date.now() } = {}) {
         this._name = Helper.slugify(name)
         this._ipfs = ipfs;
 
@@ -55,6 +55,38 @@ class Base {
             return img.tempUrl
         }
     }
+
+    static updateObject({ item = {}, meta = {}, objectType = Base, dirtyProps } = {}) {
+        let newItem = new objectType(item)
+        let newMeta = { ...newItem._meta }
+        let hasDirtyProps = Array.isArray(dirtyProps)
+        if (hasDirtyProps) dirtyProps = [...dirtyProps]
+
+        // TODO: Handle remove key value
+        for (let key in meta) {
+            if (meta.hasOwnProperty(key) && newMeta.hasOwnProperty(key)) {
+
+                let value = meta[key] //|| newMeta[key]
+
+                if (value instanceof Date) {
+                    value = value.getTime()
+                }
+
+                newMeta[key] = value
+
+                if (hasDirtyProps && dirtyProps.indexOf(key) < 0) {
+                    dirtyProps.push(key)
+                }
+            }
+        }
+
+        newItem.dirtyProps = dirtyProps
+        newItem._meta = newMeta
+
+        return newItem
+    }
+
+
 
     static updateMeta(item, meta, dirtyProps) {
         let newItem = { ...item }

@@ -8,6 +8,10 @@ import NewSlotForm from './NewSlotForm'
 import NewUnitFormBasic from './NewUnitFormBasic'
 import NewCampaignForm from './NewCampaignForm'
 import NewChannelForm from './NewChannelForm'
+import AdUnit from 'models/AdUnit'
+import AdSlot from 'models/AdSlot'
+import Channel from 'models/Channel'
+import Campaign from 'models/Campaign'
 
 const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
 
@@ -20,6 +24,7 @@ export const NewUnit = (props) =>
         itemPages={[NewUnitFormBasic]}
         imgLabel="UNIT_BANNER"
         noDefaultImg
+        itemModel={AdUnit}
     />
 
 export const NewCampaign = (props) =>
@@ -30,6 +35,7 @@ export const NewCampaign = (props) =>
         itemType={ItemsTypes.Campaign.id}
         itemPages={[NewCampaignForm]}
         imgLabel="CAMPAIGN_LOGO"
+        itemModel={Campaign}
     />
 
 export const NewSlot = (props) =>
@@ -41,7 +47,8 @@ export const NewSlot = (props) =>
         itemPages={[NewSlotForm]}
         imgLabel="SLOT_PREVIEW"
         noDefaultImg
-        descriptionHelperTxt="SLOT_DESCRIPTION_HELPER"    
+        descriptionHelperTxt="SLOT_DESCRIPTION_HELPER"
+        itemModel={AdSlot}
     />
 
 export const NewChannel = (props) =>
@@ -52,4 +59,5 @@ export const NewChannel = (props) =>
         itemType={ItemsTypes.Channel.id}
         itemPages={[NewChannelForm]}
         imgLabel="CHANNEL_LOGO"
+        itemModel={Channel}
     />
