@@ -4,6 +4,7 @@ import Base from './Base'
 class Item extends Base {
     constructor({ owner = '', id, ipfs = '', type, name = '', img = { url: null, ipfs: null, type: null, type_id: null }, description = '', txTime } = {}) {
         super({ name: name, ipfs: ipfs, txTime: txTime })
+
         this._id = id
         this._owner = owner
         this._type = type

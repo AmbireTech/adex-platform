@@ -10,6 +10,7 @@ import ItemHoc from './ItemHoc'
 // import { Grid, Row, Col } from 'react-flexbox-grid'
 import Img from 'components/common/img/Img'
 import Item from 'models/Item'
+import AdUnit from 'models/AdUnit'
 import theme from './theme.css'
 import { IconButton, Button } from 'react-toolbox/lib/button'
 import UnitSlots from './UnitSlots'
@@ -131,7 +132,8 @@ function mapStateToProps(state) {
         items: persist.items[ItemsTypes.AdUnit.id],
         slots: persist.items[ItemsTypes.AdSlot.id],
         // item: state.currentItem,
-        spinner: memory.spinners[ItemsTypes.AdUnit.name]
+        spinner: memory.spinners[ItemsTypes.AdUnit.name],
+        objModel: AdUnit
     };
 }
 

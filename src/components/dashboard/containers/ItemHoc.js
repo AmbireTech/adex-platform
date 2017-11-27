@@ -58,8 +58,18 @@ export default function ItemHoc(Decorated) {
             }
         }
 
+        // handleChange = (name, value) => {
+        //     let newItem = Base.updateMeta(this.state.item, { [name]: value }, this.state.dirtyProps || [])
+        //     this.setState({ item: newItem, dirtyProps: newItem.dirtyProps })
+        // }
+
         handleChange = (name, value) => {
-            let newItem = Base.updateMeta(this.state.item, { [name]: value }, this.state.dirtyProps || [])
+            let newItem = Base.updateObject({
+                item: this.state.item,
+                meta: { [name]: value },
+                dirtyProps: this.state.dirtyProps || [],
+                objModel: this.props.objModel
+            })
             this.setState({ item: newItem, dirtyProps: newItem.dirtyProps })
         }
 
@@ -150,7 +160,7 @@ export default function ItemHoc(Decorated) {
                                             <div className={theme.itemStatus}>
                                                 <TooltipFontIcon value='info_outline' tooltip={t('UNSAVED_CHANGES')} />
                                                 {this.state.dirtyProps.map((p) => {
-                                                    return (<Chip key={p}>{t(p, {isProp: true})}</Chip>)
+                                                    return (<Chip key={p}>{t(p, { isProp: true })}</Chip>)
                                                 })}
                                             </div>
                                         ) : ''

@@ -56,15 +56,16 @@ class Base {
         }
     }
 
-    static updateObject({ item = {}, meta = {}, objectType = Base, dirtyProps } = {}) {
-        let newItem = new objectType(item)
+    static updateObject({ item = {}, ownProps = { key: null, value: null }, meta = {}, objModel = Base, dirtyProps } = {}) {
+        let newItem = new objModel(item)
+
         let newMeta = { ...newItem._meta }
         let hasDirtyProps = Array.isArray(dirtyProps)
         if (hasDirtyProps) dirtyProps = [...dirtyProps]
 
         // TODO: Handle remove key value
         for (let key in meta) {
-            if (meta.hasOwnProperty(key) && newMeta.hasOwnProperty(key)) {
+            if (meta.hasOwnProperty(key) && newItem._meta.hasOwnProperty(key)) {
 
                 let value = meta[key] //|| newMeta[key]
 
@@ -72,7 +73,7 @@ class Base {
                     value = value.getTime()
                 }
 
-                newMeta[key] = value
+                newItem[key] = value
 
                 if (hasDirtyProps && dirtyProps.indexOf(key) < 0) {
                     dirtyProps.push(key)
@@ -81,12 +82,11 @@ class Base {
         }
 
         newItem.dirtyProps = dirtyProps
-        newItem._meta = newMeta
 
-        return newItem
+        let plainObj = newItem.plainObj()
+
+        return plainObj
     }
-
-
 
     static updateMeta(item, meta, dirtyProps) {
         let newItem = { ...item }
