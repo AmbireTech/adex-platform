@@ -20,7 +20,6 @@ import { web3 } from 'services/smart-contracts/ADX'
 // const HD_PATH = "m/44'/60'/0'/0"
 export const SPINNER_KEY = 'SIGNIN_STEP_4'
 
-
 class Step4 extends Component {
 
     createVault() {

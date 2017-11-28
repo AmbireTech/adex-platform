@@ -5,7 +5,7 @@ import { ItemsTypes } from 'constants/itemsTypes'
 import { Images } from './DummyData'
 
 class Campaign extends Item {
-    constructor({ _owner, _id, _ipfs, _name, from, to, img, description = '', txTime, _meta = {} } = {}) {
+    constructor({ _owner, _id, _ipfs, _name, from, to, img, description = '', _txTime, _txId, _meta = {} } = {}) {
         super({
             _owner: _owner,
             _id: _id,
@@ -14,7 +14,9 @@ class Campaign extends Item {
             _name: _name,
             img: img,
             description: description,
-            txTime: txTime
+            _txTime: _txTime,
+            _txId: _txId,
+            _meta: _meta
         })
 
         this.from = _meta.from || from

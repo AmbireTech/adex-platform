@@ -5,19 +5,30 @@ import Helper from 'helpers/miscHelpers'
  * and use validations with setters but keep plain object in redux store
  */
 class Base {
-    constructor({ _name = '', _ipfs = '', txTime = Date.now(), _meta = {} } = {}) {
+    constructor({ _name = '', _ipfs = '', _txTime, _txId, _meta = {} } = {}) {
         let name = _name || _meta.fullName || ''
         this.name = name
         this._ipfs = _ipfs
 
         this._meta = {}
 
+        this.txId = _txId
+        this.txTime = _txTime
         this.fullName = _meta.fullName || _name
-        this.txTime = _meta.txTime || txTime
-        this.createdOn = _meta.createdOn || txTime
-        this.modifiedOn = _meta.modifiedOn || txTime
-
+        this.createdOn = _meta.createdOn || _txTime
+        this.modifiedOn = _meta.modifiedOn || _txTime
     }
+
+    /**
+     * NOTE: We use this meta prop to track the items when they are synced with web3 and ipfs.
+     * The UI is updated before the sync and Id's are unknown until the sync
+     * TODO: Use txId from web3 submit (Temp helper guid)
+     */
+    get txId() { return this._txId }
+    set txId(value) { this._txId = value || Helper.getGuid() }
+
+    get txTime() { return this._txTime }
+    set txTime(value) { this._txTime = value || Date.now() }
 
     get name() { return this._name }
     set name(value) { this._name = Helper.slugify(value) }
@@ -27,9 +38,6 @@ class Base {
 
     get fullName() { return this._meta.fullName }
     set fullName(value) { this._meta.fullName = value }
-
-    get txTime() { return this._meta.txTime }
-    set txTime(value) { this._meta.txTime = value }
 
     get createdOn() { return this._meta.createdOn }
     set createdOn(value) { this._meta.createdOn = value }
