@@ -124,8 +124,8 @@ function mapStateToProps(state) {
     let memory = state.memory
     return {
         account: persist.account,
-        items: persist.items[ItemsTypes.Campaign.id],
-        units: persist.items[ItemsTypes.AdUnit.id],
+        items: Array.from(Object.values(persist.items[ItemsTypes.Campaign.id])),
+        units: Array.from(Object.values(persist.items[ItemsTypes.AdUnit.id])),
         spinner: memory.spinners[ItemsTypes.Campaign.name],
         rowsView: !!persist.ui[VIEW_MODE],
         objModel: CampaignModel

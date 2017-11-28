@@ -28,10 +28,10 @@ let initialState = {
     },
     currentItem: {},
     items: {
-        [ItemsTypes.Campaign.id]: [],
-        [ItemsTypes.AdUnit.id]: [],
-        [ItemsTypes.Channel.id]: [],
-        [ItemsTypes.AdSlot.id]: []
+        [ItemsTypes.Campaign.id]: {},
+        [ItemsTypes.AdUnit.id]: {},
+        [ItemsTypes.Channel.id]: {},
+        [ItemsTypes.AdSlot.id]: {}
     },
     spinners: {},
     ui: {},

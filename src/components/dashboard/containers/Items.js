@@ -34,24 +34,24 @@ Items.propTypes = {
     items: PropTypes.array.isRequired,
     viewModeId: PropTypes.string.isRequired,
     header: PropTypes.string.isRequired,
-};
+}
 
 function mapStateToProps(state, props) {
     let persist = state.persist
     // let memory = state.memory
     return {
         account: persist.account,
-        items: persist.items[props.itemsType]
-    };
+        items: Array.from(Object.values(persist.items[props.itemsType]))
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Items);
+)(Items)

@@ -46,8 +46,6 @@ class Base {
     set modifiedOn(value) { this._meta.modifiedOn = value }
 
     get meta() { return this._meta }
-    // Can we change all meta or validate each with setter ?
-    // set meta(value) { this._meta = value }  
 
     plainObj() {
         return { ...this }
@@ -136,8 +134,6 @@ class Base {
 
         newItem.dirtyProps = dirtyProps
         newItem._meta = newMeta
-
-        console.log('mewmata', newMeta)
 
         return newItem
     }

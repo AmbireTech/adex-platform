@@ -129,8 +129,8 @@ function mapStateToProps(state) {
     let memory = state.memory
     return {
         account: persist.account,
-        items: persist.items[ItemsTypes.AdUnit.id],
-        slots: persist.items[ItemsTypes.AdSlot.id],
+        items: Array.from(Object.values(persist.items[ItemsTypes.AdUnit.id])),
+        slots: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
         // item: state.currentItem,
         spinner: memory.spinners[ItemsTypes.AdUnit.name],
         objModel: AdUnit

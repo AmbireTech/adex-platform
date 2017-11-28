@@ -51,7 +51,7 @@ export class Channel extends Component {
         return (
             <div>
                 <h2>
-                    <span>{this.props.t('SLOTS_IN_CHANNEL', {args: [slots.length]})}</span>
+                    <span>{this.props.t('SLOTS_IN_CHANNEL', { args: [slots.length] })}</span>
                     <span>
                         <div className={theme.newIemToItemBtn} >
                             <AddItemDialog
@@ -92,8 +92,8 @@ function mapStateToProps(state) {
     let memory = state.memory
     return {
         account: persist.account,
-        items: persist.items[ItemsTypes.Channel.id],
-        slots: persist.items[ItemsTypes.AdSlot.id],
+        items: Array.from(Object.values(persist.items[ItemsTypes.Channel.id])),
+        slots: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
         spinner: memory.spinners[ItemsTypes.Channel.name],
         rowsView: !!persist.ui[VIEW_MODE],
         objModel: ChannelModel
