@@ -90,13 +90,14 @@ export function addItemToItem({ item, toAdd } = {}) {
     }
 }
 
-export function updateItem(item, newMeta) {
+export function updateItem({ item, newMeta, objModel } = {}) {
     return function (dispatch) {
         setTimeout(() => {
             dispatch({
                 type: types.UPDATE_ITEM,
                 item: item,
-                meta: newMeta
+                meta: newMeta,
+                objModel: objModel
             })
 
         }, 3000)

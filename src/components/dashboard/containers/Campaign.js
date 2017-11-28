@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { ItemsTypes } from 'constants/itemsTypes'
+import CampaignModel from 'models/Campaign'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
 import NewUnitForm from 'components/dashboard/forms/NewUnitForm'
@@ -58,7 +59,7 @@ export class Campaign extends Component {
         return (
             <div>
                 <h2>
-                    <span>{this.props.t('UNITS_IN_CAMPAIGN', {args: [units.length]})}</span>
+                    <span>{this.props.t('UNITS_IN_CAMPAIGN', { args: [units.length] })}</span>
                     <span>
                         <div className={theme.newIemToItemBtn}>
                             <AddItemDialog
@@ -126,7 +127,8 @@ function mapStateToProps(state) {
         items: persist.items[ItemsTypes.Campaign.id],
         units: persist.items[ItemsTypes.AdUnit.id],
         spinner: memory.spinners[ItemsTypes.Campaign.name],
-        rowsView: !!persist.ui[VIEW_MODE]
+        rowsView: !!persist.ui[VIEW_MODE],
+        objModel: CampaignModel
     }
 }
 

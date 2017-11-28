@@ -2,19 +2,19 @@
 // import { ItemsTypes } from './../constants/itemsTypes'
 import Base from './Base'
 class Item extends Base {
-    constructor({ owner = '', id, ipfs = '', type, name = '', img = { url: null, ipfs: null, type: null, type_id: null }, description = '', txTime } = {}) {
-        super({ name: name, ipfs: ipfs, txTime: txTime })
+    constructor({ _owner = '', _id, _ipfs = '', _type, _name = '', img = { url: null, ipfs: null, type: null, type_id: null }, description = '', txTime, _meta = {} } = {}) {
+        super({ _name: _name, _ipfs: _ipfs, txTime: txTime, _meta: _meta })
 
-        this._id = id
-        this._owner = owner
-        this._type = type
+        this._id = _id
+        this._owner = _owner
+        this._type = _type
         // this._meta.itemsType = itemsType //TODO: set prop
-        this._meta.items = []
+        this.items = _meta.items || []
         // img.type and img.type_id if at some point we have something different than url ot ipfs and to use type and id to generate the url
-        this._meta.img = img
-        this._meta.description = description
-        this._meta.archived = false
-        this._meta.deleted = false
+        this.img = _meta.img || img
+        this.description = _meta.description || description
+        this.archived = _meta.archived || false
+        this.deleted = _meta.deleted || false
     }
 
     get id() { return this._id }
@@ -25,6 +25,8 @@ class Item extends Base {
 
     // get itemsType() { return this._meta.itemsType }
     get items() { return this._meta.items }
+    set items(value) { this._meta.items = value }
+
 
     get img() { return this._meta.img }
     set img(value) { this._meta.img = value }

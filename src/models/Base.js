@@ -1,25 +1,35 @@
 import Helper from 'helpers/miscHelpers'
 
+/**
+ * NOTE: We use _meta as constructor argument in order to make new instances of the object from plain objects
+ * and use validations with setters but keep plain object in redux store
+ */
 class Base {
-    constructor({ name = '', ipfs = '', txTime = Date.now() } = {}) {
-        this._name = Helper.slugify(name)
-        this._ipfs = ipfs;
+    constructor({ _name = '', _ipfs = '', txTime = Date.now(), _meta = {} } = {}) {
+        let name = _name || _meta.fullName || ''
+        this.name = name
+        this._ipfs = _ipfs
 
-        this._meta = {
-            fullName: name,
-            txTime: txTime,
-            createdOn: txTime, // TODO: use this or txTime ?
-            modifiedOn: txTime
-        }
+        this._meta = {}
+
+        this.fullName = _meta.fullName || _name
+        this.txTime = _meta.txTime || txTime
+        this.createdOn = _meta.createdOn || txTime
+        this.modifiedOn = _meta.modifiedOn || txTime
+
     }
 
     get name() { return this._name }
+    set name(value) { this._name = Helper.slugify(value) }
 
     get ipfs() { return this._ipfs }
     set ipfs(value) { this._ipfs = value }
 
     get fullName() { return this._meta.fullName }
     set fullName(value) { this._meta.fullName = value }
+
+    get txTime() { return this._meta.txTime }
+    set txTime(value) { this._meta.txTime = value }
 
     get createdOn() { return this._meta.createdOn }
     set createdOn(value) { this._meta.createdOn = value }
@@ -57,9 +67,9 @@ class Base {
     }
 
     static updateObject({ item = {}, ownProps = { key: null, value: null }, meta = {}, objModel = Base, dirtyProps } = {}) {
+
         let newItem = new objModel(item)
 
-        let newMeta = { ...newItem._meta }
         let hasDirtyProps = Array.isArray(dirtyProps)
         if (hasDirtyProps) dirtyProps = [...dirtyProps]
 
@@ -67,7 +77,7 @@ class Base {
         for (let key in meta) {
             if (meta.hasOwnProperty(key) && newItem._meta.hasOwnProperty(key)) {
 
-                let value = meta[key] //|| newMeta[key]
+                let value = meta[key]
 
                 if (value instanceof Date) {
                     value = value.getTime()
@@ -80,6 +90,10 @@ class Base {
                 }
             }
         }
+
+        // TODO: update no meta props
+
+        newItem.modifiedOn = Date.now()
 
         newItem.dirtyProps = dirtyProps
 
@@ -114,6 +128,8 @@ class Base {
 
         newItem.dirtyProps = dirtyProps
         newItem._meta = newMeta
+
+        console.log('mewmata', newMeta)
 
         return newItem
     }

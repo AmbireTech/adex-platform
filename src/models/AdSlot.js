@@ -4,21 +4,22 @@ import { ItemsTypes, AdTypes, Sizes, getRandomPropValue } from 'constants/itemsT
 import { Images } from './DummyData'
 
 class AdSlot extends Item {
-    constructor({ owner, id, ipfs, name, img, description, size, adType, txTime } = {}) {
+    constructor({ _owner, _id, _ipfs, _name, img, description, size, adType, txTime, _meta = {} } = {}) {
         super({
-            owner: owner,
-            id: id,
-            ipfs: ipfs,
-            type: ItemsTypes.AdSlot.id,
-            name: name,
+            owner: _owner,
+            _id: _id,
+            _ipfs: _ipfs,
+            _type: ItemsTypes.AdSlot.id,
+            _name: _name,
             img: img,
             description: description,
-            txTime: txTime
+            txTime: txTime,
+            _meta: _meta
         })
-        let meta = this._meta
-        meta.size = size
-        meta.adType = adType
-        meta.bids = []
+
+        this.size = _meta.size || size
+        this.adType = _meta.adType || adType
+        this.bids = _meta.bids || []
     }
 
     get size() { return this._meta.size }
@@ -27,15 +28,18 @@ class AdSlot extends Item {
     get adType() { return this._meta.adType }
     set adType(value) { this._meta.adType = value }
 
+    get bids() { return this._meta.bids }
+    set bids(value) { this._meta.bids = value }
+
     static getRandomInstance(owner, id) {
         id = id || Helper.getRandomInt(1, 100)
 
         let slot = new AdSlot(
             {
-                owner: owner,
-                id: id,
-                ipfs: '',
-                name: 'Slot ' + id,
+                _owner: owner,
+                _id: id,
+                _ipfs: '',
+                _name: 'Slot ' + id,
                 img: { url: Images[Helper.getRandomInt(0, Images.length - 1)] },
                 description: 'Slot Description ' + id,
                 size: getRandomPropValue(Sizes),

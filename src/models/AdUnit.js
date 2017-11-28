@@ -4,25 +4,24 @@ import { ItemsTypes, Genders, AdTypes, Sizes, Targets, TargetsWeight, getRandomP
 import { Images } from './DummyData'
 
 class AdUnit extends Item {
-    constructor({ owner, id, ipfs = '', name, ad_url = '', img, description = '', size = '', adType = '', targets = [], txTime, _meta = {} } = {}) {
+    constructor({ _owner, _id, _ipfs, _name, ad_url = '', img, description = '', size = '', adType = '', targets = [], txTime, _meta = {} } = {}) {
         super({
-            owner: owner,
-            id: id,
-            ipfs: ipfs,
-            type: ItemsTypes.AdUnit.id,
-            name: name,
+            _owner: _owner,
+            _id: _id,
+            _ipfs: _ipfs,
+            _type: ItemsTypes.AdUnit.id,
+            _name: _name,
             img: img,
             description: description,
             txTime: txTime,
             _meta: _meta
         })
-        let meta = this._meta
-        this._meta = _meta
-        meta.banner = img
-        meta.size = size
-        meta.adType = adType
-        meta.ad_url = ad_url
-        meta.targets = targets
+
+        this.banner = _meta.banner || img
+        this.size = _meta.size || size
+        this.adType = _meta.adType || adType
+        this.ad_url = _meta.ad_url || ad_url
+        this.targets = _meta.targets || targets
     }
 
     get banner() { return this._meta.banner }
@@ -34,6 +33,10 @@ class AdUnit extends Item {
     get adType() { return this._meta.adType }
     set adType(value) { this._meta.adType = value }
 
+    get ad_url() { return this._meta.ad_url }
+    set ad_url(value) { this._meta.ad_url = value }
+
+    get targets() { return this._meta.targets }
     set targets(value) { this._meta.targets = value }
 
     static updateTargets(targets, target, newValue, newWeight) {
@@ -112,10 +115,10 @@ class AdUnit extends Item {
 
         let unit = new AdUnit(
             {
-                owner: owner,
-                id: id,
-                ipfs: '',
-                name: 'AdUnit ' + id,
+                _owner: owner,
+                _id: id,
+                _ipfs: '',
+                _name: 'AdUnit ' + id,
                 img: { url: Images[Helper.getRandomInt(0, Images.length - 1)] },
                 description: 'AdUnit Description ' + id,
                 size: getRandomPropValue(Sizes),

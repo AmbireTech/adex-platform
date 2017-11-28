@@ -5,20 +5,20 @@ import { ItemsTypes } from 'constants/itemsTypes'
 import { Images } from './DummyData'
 
 class Campaign extends Item {
-    constructor({ owner, id, ipfs = '', name = '', from, to, img = {}, description = '', txTime } = {}) {
+    constructor({ _owner, _id, _ipfs, _name, from, to, img, description = '', txTime, _meta = {} } = {}) {
         super({
-            owner: owner,
-            id: id,
-            ipfs: ipfs,
-            type: ItemsTypes.Campaign.id,
-            name: name,
+            _owner: _owner,
+            _id: _id,
+            _ipfs: _ipfs,
+            _type: ItemsTypes.Campaign.id,
+            _name: _name,
             img: img,
             description: description,
             txTime: txTime
         })
-        
-        this._meta.from = from
-        this._meta.to = to
+
+        this.from = _meta.from || from
+        this.to = _meta.to || to
     }
 
     get from() { return this._meta.from }
@@ -31,10 +31,10 @@ class Campaign extends Item {
 
         let campaign = new Campaign(
             {
-                owner: owner,
-                id: id,
-                ipfs: '',
-                name: 'Campaign ' + id,
+                _owner: owner,
+                _id: id,
+                _ipfs: '',
+                _name: 'Campaign ' + id,
                 from: moment().add(id, 'd').valueOf(),
                 to: moment().add(id + Helper.getRandomInt(3, 10), 'd').valueOf(),
                 img: { url: Images[Helper.getRandomInt(0, Images.length - 1)] },

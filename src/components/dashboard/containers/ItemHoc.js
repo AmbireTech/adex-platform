@@ -82,7 +82,11 @@ export default function ItemHoc(Decorated) {
         //TODO: Do not save if not dirty!
         save() {
             if (this.state.dirtyProps.length && !this.props.spinner) {
-                this.props.actions.updateItem(this.state.item, this.state.item._meta)
+                this.props.actions.updateItem({
+                    item: this.state.item,
+                    newMeta: this.state.item._meta,
+                    objModel: this.props.objModel
+                })
                 this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], true)
             }
         }
@@ -190,8 +194,10 @@ export default function ItemHoc(Decorated) {
         actions: PropTypes.object.isRequired,
         account: PropTypes.object.isRequired,
         items: PropTypes.array.isRequired,
-        spinner: PropTypes.bool
+        spinner: PropTypes.bool,
+        objModel: PropTypes.func.isRequired
     }
+
 
     return Translate(Item)
 }

@@ -4,13 +4,13 @@ import { ItemsTypes } from 'constants/itemsTypes'
 import { Images } from './DummyData'
 
 class Channel extends Item {
-    constructor({ owner, id, ipfs = '', name = '', from, to, img = {}, description = '', txTime } = {}) {
+    constructor({ _owner, _id, _ipfs, _name, img, description = '', txTime, _meta = {} } = {}) {
         super({
-            owner: owner,
-            id: id,
-            ipfs: ipfs,
-            type: ItemsTypes.Channel.id,
-            name: name,
+            _owner: _owner,
+            _id: _id,
+            _ipfs: _ipfs,
+            _type: ItemsTypes.Channel.id,
+            _name: _name,
             img: img,
             description: description,
             txTime: txTime
@@ -20,10 +20,10 @@ class Channel extends Item {
     static getRandomInstance(owner, id) {
         let channel = new Channel(
             {
-                owner: owner,
-                id: id,
-                ipfs: '',
-                name: 'Channel ' + id,
+                _owner: owner,
+                _id: id,
+                _ipfs: '',
+                _name: 'Channel ' + id,
                 img: { url: Images[Helper.getRandomInt(0, Images.length - 1)] },
                 description: 'Channel Description ' + id,
                 txTime: Helper.geRandomMoment(60, 60).valueOf()

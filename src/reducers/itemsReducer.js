@@ -32,7 +32,7 @@ export default function itemsReducer(state = initialState.items, action) {
             // id is going to be set when it comes here
             let id = action.item.tempId //newState[collectionId].length
             let owner = item._owner
-            newItem = new item.item_type({ owner: owner, id: id, ipfs: item._ipfs, name: item._name || item._meta.fullName, ...item._meta }).plainObj()
+            newItem = new item.item_type({ _owner: owner, _id: id, _ipfs: item._ipfs, _name: item._name || item._meta.fullName, ...item._meta, _meta: item._meta }).plainObj()
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
             return newState
@@ -44,7 +44,8 @@ export default function itemsReducer(state = initialState.items, action) {
             return newState
 
         case DELETE_ITEM:
-            newItem = Base.updateMeta(newState[collectionId][item._id], { deleted: true, modifiedOn: Date.now() })
+            // newItem = Base.updateMeta(newState[collectionId][item._id], { deleted: true, modifiedOn: Date.now() })
+            newItem = Base.updateObject({ item: newState[collectionId][item._id], meta: { deleted: true }, objModel: action.objModel })
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
             return newState
@@ -56,7 +57,7 @@ export default function itemsReducer(state = initialState.items, action) {
             return newState
 
         case UPDATE_ITEM:
-            newItem = Base.updateMeta(newState[collectionId][item._id], { ...action.meta, modifiedOn: Date.now() })
+            newItem = Base.updateObject({ item: newState[collectionId][item._id], meta: { ...action.meta }, objModel: action.objModel })
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
             return newState

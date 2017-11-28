@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { ItemsTypes, AdTypes, Sizes, TargetsWeight, Locations, TargetWeightLabels, Genders } from 'constants/itemsTypes'
+import AdSlot from 'models/AdSlot'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import ItemHoc from './ItemHoc'
 import { Grid, Row, Col } from 'react-flexbox-grid'
@@ -129,7 +130,8 @@ function mapStateToProps(state) {
     return {
         account: persist.account,
         items: persist.items[ItemsTypes.AdSlot.id],
-        spinner: memory.spinners[ItemsTypes.AdSlot.name]
+        spinner: memory.spinners[ItemsTypes.AdSlot.name],
+        objModel: AdSlot
     };
 }
 

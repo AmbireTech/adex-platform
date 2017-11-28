@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { ItemsTypes } from 'constants/itemsTypes'
+import ChannelModel from 'models/Channel'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
 import NewSlotForm from 'components/dashboard/forms/NewSlotForm'
@@ -94,7 +95,8 @@ function mapStateToProps(state) {
         items: persist.items[ItemsTypes.Channel.id],
         slots: persist.items[ItemsTypes.AdSlot.id],
         spinner: memory.spinners[ItemsTypes.Channel.name],
-        rowsView: !!persist.ui[VIEW_MODE]
+        rowsView: !!persist.ui[VIEW_MODE],
+        objModel: ChannelModel
     }
 }
 
