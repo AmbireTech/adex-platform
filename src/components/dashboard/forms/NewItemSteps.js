@@ -56,7 +56,6 @@ NewItemSteps.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     title: PropTypes.string,
-    items: PropTypes.array.isRequired,
     addTo: PropTypes.object,
     itemPages: PropTypes.arrayOf(PropTypes.func)
 
@@ -66,8 +65,7 @@ function mapStateToProps(state, props) {
     let persist = state.persist
     // let memory = state.memory
     return {
-        account: persist.account,
-        items: persist.items[props.itemType]
+        account: persist.account
     }
 }
 

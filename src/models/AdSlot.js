@@ -4,7 +4,7 @@ import { ItemsTypes, AdTypes, Sizes, getRandomPropValue } from 'constants/itemsT
 import { Images } from './DummyData'
 
 class AdSlot extends Item {
-    constructor({ _owner, _id, _ipfs, _name, img, description, size, adType, _txTime, _txId, _meta = {} } = {}) {
+    constructor({ _owner, _id, _ipfs, _name, img, description, size, adType, _txTime, _txId, _meta = {}, newObj } = {}) {
         super({
             owner: _owner,
             _id: _id,
@@ -16,6 +16,7 @@ class AdSlot extends Item {
             _txTime: _txTime,
             _txId: _txId,
             _meta: _meta,
+            newObj: newObj
         })
 
         this.size = _meta.size || size

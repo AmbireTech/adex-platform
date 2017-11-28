@@ -17,6 +17,10 @@ import Items from './containers/Items'
 import { ItemsTypes } from 'constants/itemsTypes'
 import Auction from './auction/Auction'
 import Signin from 'components/signin/Signin'
+import AdUnitModel from 'models/AdUnit'
+import AdSlotModel from 'models/AdSlot'
+import ChannelModel from 'models/Channel'
+import CampaignModel from 'models/Campaign'
 
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
@@ -63,6 +67,7 @@ class Dashboard extends React.Component {
                 viewModeId='rowsViewUnits'
                 itemsType={ItemsTypes.AdUnit.id}
                 newItemBtn={() => <NewUnit floating accent />}
+                objModel={AdUnitModel}
             />
         )
     }
@@ -74,6 +79,7 @@ class Dashboard extends React.Component {
                 viewModeId='rowsViewCampaigns'
                 itemsType={ItemsTypes.Campaign.id}
                 newItemBtn={() => <NewCampaign floating accent />}
+                objModel={CampaignModel}                
             />
         )
     }
@@ -85,6 +91,7 @@ class Dashboard extends React.Component {
                 viewModeId='rowsViewSlots'
                 itemsType={ItemsTypes.AdSlot.id}
                 newItemBtn={() => <NewSlot floating accent />}
+                objModel={AdSlotModel}               
             />
         )
     }
@@ -96,6 +103,7 @@ class Dashboard extends React.Component {
                 viewModeId='rowsViewChannels'
                 itemsType={ItemsTypes.Channel.id}
                 newItemBtn={() => <NewChannel floating accent />}
+                objModel={ChannelModel}                
             />
         )
     }

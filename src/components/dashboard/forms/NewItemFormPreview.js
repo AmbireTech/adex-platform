@@ -69,8 +69,7 @@ NewItemFormPreview.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     newItem: PropTypes.object.isRequired,
-    title: PropTypes.string,
-    items: PropTypes.array.isRequired
+    title: PropTypes.string
 }
 
 function mapStateToProps(state) {
@@ -78,8 +77,7 @@ function mapStateToProps(state) {
     let memory = state.memory
     return {
         account: persist.account,
-        newItem: memory.newItem[ItemsTypes.AdUnit.id],
-        items: persist.items[ItemsTypes.AdUnit.id]
+        newItem: memory.newItem[ItemsTypes.AdUnit.id]
     }
 }
 

@@ -24,24 +24,22 @@ NewChannelForm.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     newItem: PropTypes.object.isRequired,
-    title: PropTypes.string,
-    items: PropTypes.array.isRequired
-};
+    title: PropTypes.string
+}
 
 function mapStateToProps(state) {
     let persist = state.persist
     let memory = state.memory
     return {
         account: persist.account,
-        newItem: memory.newItem[ItemsTypes.Channel.id],
-        items: persist.items[ItemsTypes.Channel.id],
-    };
+        newItem: memory.newItem[ItemsTypes.Channel.id]
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
 const ItemNewChannelForm = NewItemHoc(NewChannelForm)

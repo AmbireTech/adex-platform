@@ -104,7 +104,7 @@ export class Campaign extends Component {
                     />
 
                 </div>
-                <ItemsList parentItem={item} removeFromItem items={units} viewModeId={VIEW_MODE} />
+                <ItemsList {...this.props} parentItem={item} removeFromItem items={units} viewModeId={VIEW_MODE} />
             </div>
         )
     }

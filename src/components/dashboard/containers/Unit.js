@@ -117,10 +117,10 @@ export class Unit extends Component {
 
 Unit.propTypes = {
     actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired,
-    items: PropTypes.array.isRequired,
+    // account: PropTypes.object.isRequired,
+    // items: PropTypes.object.isRequired,
     item: PropTypes.object.isRequired,
-    slots: PropTypes.array.isRequired,
+    // slots: PropTypes.array.isRequired,
     spinner: PropTypes.bool
 };
 
@@ -128,19 +128,20 @@ function mapStateToProps(state) {
     let persist = state.persist
     let memory = state.memory
     return {
-        account: persist.account,
-        items: Array.from(Object.values(persist.items[ItemsTypes.AdUnit.id])),
-        slots: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
+        // account: persist.account,
+        // items: persist.items[ItemsTypes.AdUnit.id],
+        // slots: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
         // item: state.currentItem,
         spinner: memory.spinners[ItemsTypes.AdUnit.name],
-        objModel: AdUnit
-    };
+        objModel: AdUnit,
+        itemType: ItemsTypes.AdUnit.id
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
 const UnitItem = ItemHoc(Unit)

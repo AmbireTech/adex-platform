@@ -61,11 +61,12 @@ export function addItem(item, itemToAddTo) {
     }
 }
 
-export function deleteItem(item) {
+export function deleteItem({ item, objModel } = {}) {
     return function (dispatch) {
         return dispatch({
             type: types.DELETE_ITEM,
-            item: item
+            item: item,
+            objModel: objModel
         })
     }
 }

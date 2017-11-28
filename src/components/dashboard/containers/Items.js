@@ -22,7 +22,7 @@ class Items extends Component {
                     {this.props.newItemBtn ? this.props.newItemBtn() : null}
                 </div>
 
-                <ItemsList items={items} viewModeId={this.props.viewModeId} delete />
+                <ItemsList {...this.props} items={items} viewModeId={this.props.viewModeId} delete />
             </div>
         )
     }
@@ -34,6 +34,7 @@ Items.propTypes = {
     items: PropTypes.array.isRequired,
     viewModeId: PropTypes.string.isRequired,
     header: PropTypes.string.isRequired,
+    objModel: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state, props) {

@@ -72,7 +72,7 @@ export class Channel extends Component {
                         </div>
                     </span>
                 </h2>
-                <ItemsList parentItem={item} removeFromItem items={slots} viewModeId={VIEW_MODE} />
+                <ItemsList {...this.props} parentItem={item} removeFromItem items={slots} viewModeId={VIEW_MODE} />
             </div>
         )
     }

@@ -40,9 +40,8 @@ export default function NewItemHoc(Decorated) {
 
         save() {
             let item = { ...this.props.newItem }
-            // TODO: !!! this tempId should not be used - temp until web3 services !!!
-            item.tempId = this.props.items.length
-            item.item_type = this.props.itemModel
+            item.objModel = this.props.itemModel
+            item.newObj = true
 
             // this.setState({ saved: true }, () => {
             this.props.actions.addItem(item, this.props.addTo)
@@ -86,7 +85,6 @@ export default function NewItemHoc(Decorated) {
         account: PropTypes.object.isRequired,
         newItem: PropTypes.object.isRequired,
         title: PropTypes.string,
-        items: PropTypes.array.isRequired,
         addTo: PropTypes.object,
         itemModel: PropTypes.func.isRequired
     }
@@ -98,8 +96,7 @@ export default function NewItemHoc(Decorated) {
         let memory = state.memory
         return {
             account: persist.account,
-            newItem: memory.newItem[props.itemType],
-            items: persist.items[props.itemType]
+            newItem: memory.newItem[props.itemType]
         }
     }
 

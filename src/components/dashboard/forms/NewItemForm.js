@@ -9,7 +9,7 @@ import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
 import ImgForm from './ImgForm'
 
-class NewUnitForm extends Component {
+class NewItemForm extends Component {
 
     componentDidMount() {
         /* TODO: make it understandable
@@ -86,12 +86,11 @@ class NewUnitForm extends Component {
     }
 }
 
-NewUnitForm.propTypes = {
+NewItemForm.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     newItem: PropTypes.object.isRequired,
     title: PropTypes.string,
-    items: PropTypes.array.isRequired,
     itemType: PropTypes.number.isRequired,
     imgLabel: PropTypes.string,
     descriptionHelperTxt: PropTypes.string,
@@ -103,8 +102,7 @@ function mapStateToProps(state, props) {
     let memory = state.memory
     return {
         account: persist.account,
-        newItem: memory.newItem[props.itemType],
-        items: persist.items[props.itemType]
+        newItem: memory.newItem[props.itemType]
     };
 }
 
@@ -114,8 +112,8 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-const ItemNewUnitForm = NewItemHoc(NewUnitForm)
+const ItemNewItemForm = NewItemHoc(NewItemForm)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(ItemNewUnitForm))
+)(Translate(ItemNewItemForm))

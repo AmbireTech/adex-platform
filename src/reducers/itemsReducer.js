@@ -11,13 +11,12 @@ export default function itemsReducer(state = initialState.items, action) {
     let collectionId
     let item
 
-    const collection = (state = [], action) => {
+    const collection = (state = {}, action) => {
         if (!action.item) return state
-        return [
-            ...state.slice(0, action.item._id),
-            action.item,
-            ...state.slice(action.item._id + 1)
-        ]
+        return {
+            ...state,
+            [action.item._id]: action.item,
+        }
     }
 
     if (action.item) {
@@ -30,9 +29,7 @@ export default function itemsReducer(state = initialState.items, action) {
         case ADD_ITEM:
             // TODO: the item should come here ready (with id from bc and ipsf)
             // id is going to be set when it comes here
-            let id = action.item.tempId //newState[collectionId].length
-            let owner = item._owner
-            newItem = new item.item_type({ _owner: owner, _id: id, _ipfs: item._ipfs, _name: item._name || item._meta.fullName, ...item._meta, _meta: item._meta }).plainObj()
+            newItem = new item.objModel(item).plainObj()
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
             return newState

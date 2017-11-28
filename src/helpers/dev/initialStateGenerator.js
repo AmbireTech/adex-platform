@@ -10,6 +10,7 @@ import Helper from 'helpers/miscHelpers'
 import moment from 'moment'
 import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
 
+// TODO: update generator to work with changed models
 class InitialStateGenerator {
     constructor() {
         this.counts = {
@@ -95,7 +96,7 @@ class InitialStateGenerator {
         if (this.newItems[itemType]) return this.newItems[itemType]
 
         let newItem = new itemClass({ owner: this.GenerateAccount().addr }).plainObj()
-        newItem.item_type = itemClass
+        newItem.objModel = itemClass
         this.newItems[itemType] = newItem
         return newItem
     }

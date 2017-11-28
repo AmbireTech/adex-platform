@@ -5,18 +5,22 @@ import Helper from 'helpers/miscHelpers'
  * and use validations with setters but keep plain object in redux store
  */
 class Base {
-    constructor({ _name = '', _ipfs = '', _txTime, _txId, _meta = {} } = {}) {
+    constructor({ _name = '', _ipfs = '', _txTime, _txId, _meta = {}, newObj } = {}) {
         let name = _name || _meta.fullName || ''
         this.name = name
         this._ipfs = _ipfs
 
         this._meta = {}
 
+        if (newObj) {
+            _txId = _txId || Helper.getGuid()
+            _txTime = _txTime || Date.now()
+        }
         this.txId = _txId
         this.txTime = _txTime
         this.fullName = _meta.fullName || _name
-        this.createdOn = _meta.createdOn || _txTime
-        this.modifiedOn = _meta.modifiedOn || _txTime
+        this.createdOn = _meta.createdOn || this.txTime
+        this.modifiedOn = _meta.modifiedOn || this.txTime
     }
 
     /**
@@ -25,10 +29,10 @@ class Base {
      * TODO: Use txId from web3 submit (Temp helper guid)
      */
     get txId() { return this._txId }
-    set txId(value) { this._txId = value || Helper.getGuid() }
+    set txId(value) { this._txId = value }
 
     get txTime() { return this._txTime }
-    set txTime(value) { this._txTime = value || Date.now() }
+    set txTime(value) { this._txTime = value }
 
     get name() { return this._name }
     set name(value) { this._name = Helper.slugify(value) }
@@ -76,6 +80,7 @@ class Base {
 
         let newItem = new objModel(item)
 
+        // console.log('newItem', newItem)
         let hasDirtyProps = Array.isArray(dirtyProps)
         if (hasDirtyProps) dirtyProps = [...dirtyProps]
 
@@ -104,7 +109,7 @@ class Base {
         newItem.dirtyProps = dirtyProps
 
         let plainObj = newItem.plainObj()
-
+        // console.log('plainObj', plainObj)
         return plainObj
     }
 

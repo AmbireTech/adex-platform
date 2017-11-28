@@ -104,7 +104,7 @@ class ItemsList extends Component {
                 logo={item._meta.img}
                 side={this.props.side}
                 delete={this.props.actions.confirmAction.bind(this,
-                    this.props.actions.deleteItem.bind(this, item),
+                    this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel }),
                     null,
                     {
                         confirmLabel: 'Yes',
@@ -192,7 +192,7 @@ class ItemsList extends Component {
                         tooltipPosition='top'
                         className={RTButtonTheme.danger}
                         onClick={this.props.actions.confirmAction.bind(this,
-                            this.props.actions.deleteItem.bind(this, item),
+                            this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel }),
                             null,
                             {
                                 confirmLabel: 'Yes',
@@ -397,7 +397,8 @@ ItemsList.propTypes = {
     rowsView: PropTypes.bool.isRequired,
     itemRenderer: PropTypes.func,
     side: PropTypes.string.isRequired,
-    listMode: PropTypes.string
+    listMode: PropTypes.string,
+    objModel: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state, props) {

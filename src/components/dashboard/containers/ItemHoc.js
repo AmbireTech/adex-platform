@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import actions from 'actions'
 import Chip from 'react-toolbox/lib/chip'
 import { Button, IconButton } from 'react-toolbox/lib/button'
 import theme from './theme.css'
@@ -193,11 +196,30 @@ export default function ItemHoc(Decorated) {
     Item.propTypes = {
         actions: PropTypes.object.isRequired,
         account: PropTypes.object.isRequired,
-        items: PropTypes.array.isRequired,
+        items: PropTypes.object.isRequired,
         spinner: PropTypes.bool,
         objModel: PropTypes.func.isRequired
     }
 
+    function mapStateToProps(state, props) {
+        let persist = state.persist
+        let memory = state.memory
+        return {
+            account: persist.account,
+            items: persist.items[props.itemType]
+        }
+    }
 
-    return Translate(Item)
+    function mapDispatchToProps(dispatch) {
+        return {
+            actions: bindActionCreators(actions, dispatch)
+        }
+    }
+
+    return connect(
+        mapStateToProps,
+        mapDispatchToProps
+    )(Translate(Item))
+
+    // return Translate(Item)
 }

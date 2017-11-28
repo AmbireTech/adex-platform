@@ -2,10 +2,10 @@
 // import { ItemsTypes } from './../constants/itemsTypes'
 import Base from './Base'
 class Item extends Base {
-    constructor({ _owner = '', _id, _ipfs = '', _type, _name = '', img = { url: null, ipfs: null, type: null, type_id: null }, description = '', txTime, _meta = {} } = {}) {
-        super({ _name: _name, _ipfs: _ipfs, txTime: txTime, _meta: _meta })
+    constructor({ _owner = '', _id, _ipfs = '', _type, _name = '', img = { url: null, ipfs: null, type: null, type_id: null }, description = '', _txTime, _txId, _meta = {}, newObj } = {}) {
+        super({ _name: _name, _ipfs: _ipfs, _txTime, _txId, _meta: _meta, newObj: newObj })
 
-        this._id = _id
+        this.id = _id
         this._owner = _owner
         this._type = _type
         // this._meta.itemsType = itemsType //TODO: set prop
@@ -18,6 +18,7 @@ class Item extends Base {
     }
 
     get id() { return this._id }
+    set id(value) { this._id = value || this.txId }
     get owner() { return this._owner }
     get type() { return this._type }
 
