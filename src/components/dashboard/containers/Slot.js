@@ -119,7 +119,7 @@ export class Slot extends Component {
 Slot.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    items: PropTypes.array.isRequired,
+    // items: PropTypes.array.isRequired,
     item: PropTypes.object.isRequired,
     spinner: PropTypes.bool
 };
@@ -129,9 +129,10 @@ function mapStateToProps(state) {
     let memory = state.memory
     return {
         account: persist.account,
-        items: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
+        // items: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
         spinner: memory.spinners[ItemsTypes.AdSlot.name],
-        objModel: AdSlot
+        objModel: AdSlot,
+        itemType: ItemsTypes.AdSlot.id
     };
 }
 

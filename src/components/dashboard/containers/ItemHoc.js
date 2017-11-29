@@ -198,7 +198,7 @@ export default function ItemHoc(Decorated) {
         account: PropTypes.object.isRequired,
         items: PropTypes.object.isRequired,
         spinner: PropTypes.bool,
-        objModel: PropTypes.func.isRequired
+        // objModel: PropTypes.func.isRequired
     }
 
     function mapStateToProps(state, props) {
@@ -221,5 +221,5 @@ export default function ItemHoc(Decorated) {
         mapDispatchToProps
     )(Translate(Item))
 
-    // return Translate(Item)
+    return Translate(Item)
 }

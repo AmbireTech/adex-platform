@@ -81,7 +81,7 @@ export class Channel extends Component {
 Channel.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    items: PropTypes.array.isRequired,
+    // items: PropTypes.array.isRequired,
     slots: PropTypes.array.isRequired,
     spinner: PropTypes.bool,
     rowsView: PropTypes.bool.isRequired
@@ -92,11 +92,12 @@ function mapStateToProps(state) {
     let memory = state.memory
     return {
         account: persist.account,
-        items: Array.from(Object.values(persist.items[ItemsTypes.Channel.id])),
+        // items: Array.from(Object.values(persist.items[ItemsTypes.Channel.id])),
         slots: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
         spinner: memory.spinners[ItemsTypes.Channel.name],
         rowsView: !!persist.ui[VIEW_MODE],
-        objModel: ChannelModel
+        objModel: ChannelModel,
+        itemTypeL: ItemsTypes.Channel.id
     }
 }
 

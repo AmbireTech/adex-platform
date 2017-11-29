@@ -79,7 +79,7 @@ class Dashboard extends React.Component {
                 viewModeId='rowsViewCampaigns'
                 itemsType={ItemsTypes.Campaign.id}
                 newItemBtn={() => <NewCampaign floating accent />}
-                objModel={CampaignModel}                
+                objModel={CampaignModel}
             />
         )
     }
@@ -91,7 +91,7 @@ class Dashboard extends React.Component {
                 viewModeId='rowsViewSlots'
                 itemsType={ItemsTypes.AdSlot.id}
                 newItemBtn={() => <NewSlot floating accent />}
-                objModel={AdSlotModel}               
+                objModel={AdSlotModel}
             />
         )
     }
@@ -103,7 +103,7 @@ class Dashboard extends React.Component {
                 viewModeId='rowsViewChannels'
                 itemsType={ItemsTypes.Channel.id}
                 newItemBtn={() => <NewChannel floating accent />}
-                objModel={ChannelModel}                
+                objModel={ChannelModel}
             />
         )
     }

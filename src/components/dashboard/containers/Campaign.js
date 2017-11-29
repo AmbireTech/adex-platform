@@ -15,6 +15,7 @@ import NewItemSteps from 'components/dashboard/forms/NewItemSteps'
 import moment from 'moment'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
+import AdUnitModel from 'models/AdUnit'
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
@@ -40,8 +41,9 @@ export class Campaign extends Component {
         let side = this.props.match.params.side;
         let item = this.props.item
         let meta = item._meta
+        let propsUnite = Array.from(Object.values(this.props.units))
         let units = []
-        let otherUnits = this.props.units.slice(0)
+        let otherUnits = propsUnite.slice(0)
         let t = this.props.t
 
         if (!item) return (<h1>'404'</h1>)
@@ -50,7 +52,7 @@ export class Campaign extends Component {
         let to = item._meta.to ? new Date(item._meta.to) : null
 
         for (var index = 0; index < meta.items.length; index++) {
-            if (this.props.units[meta.items[index]] && !this.props.units[meta.items[index]]._meta.deleted) {
+            if (propsUnite[meta.items[index]] && !propsUnite[meta.items[index]]._meta.deleted) {
                 units.push(this.props.units[meta.items[index]])
                 otherUnits[meta.items[index]] = null
             }
@@ -74,7 +76,7 @@ export class Campaign extends Component {
                                 tabNewLabel={this.props.t('NEW_UNIT')}
                                 tabExsLabel={this.props.t('EXISTING_UNIT')}
                                 newForm={(props) =>
-                                    <NewItemSteps {...props} addTo={item} itemPages={[NewUnitForm]} itemType={ItemsTypes.AdUnit.id} />
+                                    <NewItemSteps {...props} addTo={item} itemPages={[NewUnitForm]} itemType={ItemsTypes.AdUnit.id} itemModel={AdUnitModel} />
                                 }
                             />
                         </div>
@@ -113,8 +115,8 @@ export class Campaign extends Component {
 Campaign.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    items: PropTypes.array.isRequired,
-    units: PropTypes.array.isRequired,
+    // items: PropTypes.array.isRequired,
+    units: PropTypes.object.isRequired,
     spinner: PropTypes.bool,
     rowsView: PropTypes.bool.isRequired
 }
@@ -124,11 +126,12 @@ function mapStateToProps(state) {
     let memory = state.memory
     return {
         account: persist.account,
-        items: Array.from(Object.values(persist.items[ItemsTypes.Campaign.id])),
-        units: Array.from(Object.values(persist.items[ItemsTypes.AdUnit.id])),
+        // items: Array.from(Object.values(persist.items[ItemsTypes.Campaign.id])),
+        units: persist.items[ItemsTypes.AdUnit.id],
         spinner: memory.spinners[ItemsTypes.Campaign.name],
         rowsView: !!persist.ui[VIEW_MODE],
-        objModel: CampaignModel
+        objModel: CampaignModel,
+        itemType: ItemsTypes.Campaign.id
     }
 }
 

@@ -11,7 +11,7 @@ import { ItemTypesNames } from 'constants/itemsTypes'
 
 class Items extends Component {
     render() {
-        let items = this.props.items || []
+        let items = Array.from(Object.values(this.props.items)) || []
 
         return (
             <div>
@@ -31,7 +31,7 @@ class Items extends Component {
 Items.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    items: PropTypes.array.isRequired,
+    items: PropTypes.object.isRequired,
     viewModeId: PropTypes.string.isRequired,
     header: PropTypes.string.isRequired,
     objModel: PropTypes.func.isRequired
@@ -42,7 +42,7 @@ function mapStateToProps(state, props) {
     // let memory = state.memory
     return {
         account: persist.account,
-        items: Array.from(Object.values(persist.items[props.itemsType]))
+        items: persist.items[props.itemsType]
     }
 }
 
