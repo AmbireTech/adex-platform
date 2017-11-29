@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { ItemsTypes } from 'constants/itemsTypes'
 import ChannelModel from 'models/Channel'
+import AdSlotModel from 'models/AdSlot'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
 import NewSlotForm from 'components/dashboard/forms/NewSlotForm'
@@ -35,15 +36,16 @@ export class Channel extends Component {
 
         let item = this.props.item
         let meta = item._meta
+        let propsSlots = { ...this.props.slots }
         let slots = []
-        let otherSlots = this.props.slots.slice(0)
+        let otherSlots = Array.from(Object.values(propsSlots))
         let t = this.props.t
 
         if (!item) return (<h1>'404'</h1>)
 
         for (var index = 0; index < meta.items.length; index++) {
-            if (this.props.slots[meta.items[index]] && !this.props.slots[meta.items[index]]._meta.deleted) {
-                slots.push(this.props.slots[meta.items[index]])
+            if (propsSlots[meta.items[index]] && !propsSlots[meta.items[index]]._meta.deleted) {
+                slots.push(propsSlots[meta.items[index]])
                 otherSlots[meta.items[index]] = null
             }
         }
@@ -65,14 +67,15 @@ export class Channel extends Component {
                                 addTo={item}
                                 tabNewLabel={this.props.t('NEW_SLOT')}
                                 tabExsLabel={this.props.t('EXISTING_SLOT')}
+                                objModel={AdSlotModel}
                                 newForm={(props) =>
-                                    <NewItemSteps {...props} addTo={item} itemPages={[NewSlotForm]} itemType={ItemsTypes.AdSlot.id} />
+                                    <NewItemSteps {...props} addTo={item} itemPages={[NewSlotForm]} itemType={ItemsTypes.AdSlot.id} itemModel={AdSlotModel} />
                                 }
                             />
                         </div>
                     </span>
                 </h2>
-                <ItemsList {...this.props} parentItem={item} removeFromItem items={slots} viewModeId={VIEW_MODE} />
+                <ItemsList {...this.props} parentItem={item} removeFromItem items={slots} viewModeId={VIEW_MODE} objModel={AdSlotModel} />
             </div>
         )
     }
@@ -81,7 +84,6 @@ export class Channel extends Component {
 Channel.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    // items: PropTypes.array.isRequired,
     slots: PropTypes.array.isRequired,
     spinner: PropTypes.bool,
     rowsView: PropTypes.bool.isRequired
@@ -92,8 +94,7 @@ function mapStateToProps(state) {
     let memory = state.memory
     return {
         account: persist.account,
-        // items: Array.from(Object.values(persist.items[ItemsTypes.Channel.id])),
-        slots: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
+        slots: persist.items[ItemsTypes.AdSlot.id],
         spinner: memory.spinners[ItemsTypes.Channel.name],
         rowsView: !!persist.ui[VIEW_MODE],
         objModel: ChannelModel,

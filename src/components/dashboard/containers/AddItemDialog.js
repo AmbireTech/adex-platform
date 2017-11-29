@@ -67,7 +67,7 @@ export class AddItemDialog extends Component {
                         <Tab theme={theme} label={this.props.tabExsLabel}>
                             <div className={theme.dialogItemsListContainer}>
                                 <section className={theme.scrollable}>
-                                    <ItemsList parentItem={this.props.addTo} addToItem items={this.props.items} viewModeId={this.props.viewMode} listMode={this.props.listMode} />
+                                    <ItemsList {...this.props} objModel={this.props.objModel} parentItem={this.props.addTo} addToItem items={this.props.items} viewModeId={this.props.viewMode} listMode={this.props.listMode} />
                                 </section>
                             </div>
                         </Tab>
@@ -87,6 +87,7 @@ AddItemDialog.propTypes = {
     listMode: PropTypes.string,
     tabNewLabel: PropTypes.string.isRequired,
     tabExsLabel: PropTypes.string.isRequired,
+    objModel: PropTypes.func.isRequired
 }
 
 export default Translate(AddItemDialog)
