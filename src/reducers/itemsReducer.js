@@ -29,7 +29,7 @@ export default function itemsReducer(state = initialState.items, action) {
         case ADD_ITEM:
             // TODO: the item should come here ready (with id from bc and ipsf)
             // id is going to be set when it comes here
-            newItem = new item.objModel(item).plainObj()
+            newItem = { ...item }
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
             return newState

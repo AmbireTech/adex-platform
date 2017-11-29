@@ -7,7 +7,7 @@ import { ItemsTypes } from 'constants/itemsTypes'
 import CampaignModel from 'models/Campaign'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
-import NewUnitForm from 'components/dashboard/forms/NewUnitForm'
+import NewUnitFormBasic from 'components/dashboard/forms/NewUnitFormBasic'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import theme from './campaign.css'
 import AddItemDialog from './AddItemDialog'
@@ -43,7 +43,7 @@ export class Campaign extends Component {
         let meta = item._meta
         let propsUnits = { ...this.props.units }
         let units = []
-        let otherUnits = Array.from(Object.values(propsUnits))
+        let otherUnits = { ...propsUnits }
 
         let t = this.props.t
 
@@ -58,6 +58,8 @@ export class Campaign extends Component {
                 otherUnits[meta.items[index]] = null
             }
         }
+
+        otherUnits = Array.from(Object.values(otherUnits))
 
         return (
             <div>
@@ -77,8 +79,16 @@ export class Campaign extends Component {
                                 tabNewLabel={this.props.t('NEW_UNIT')}
                                 tabExsLabel={this.props.t('EXISTING_UNIT')}
                                 objModel={AdUnitModel}
+                                itemModel={AdUnitModel}
                                 newForm={(props) =>
-                                    <NewItemSteps {...props} addTo={item} itemPages={[NewUnitForm]} itemType={ItemsTypes.AdUnit.id} itemModel={AdUnitModel} />
+                                    <NewItemSteps {...props}
+                                        addTo={item}
+                                        itemPages={[NewUnitFormBasic]}
+                                        itemType={ItemsTypes.AdUnit.id}
+                                        itemModel={AdUnitModel}
+                                        objModel={AdUnitModel}
+                                        noDefaultImg
+                                    />
                                 }
                             />
                         </div>

@@ -42,6 +42,7 @@ export default function NewItemHoc(Decorated) {
             let item = { ...this.props.newItem }
             item.objModel = this.props.itemModel
             item.newObj = true
+            item = new this.props.itemModel(item).plainObj()
 
             // this.setState({ saved: true }, () => {
             this.props.actions.addItem(item, this.props.addTo)
