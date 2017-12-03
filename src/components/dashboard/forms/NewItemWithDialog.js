@@ -7,6 +7,10 @@ import theme from './theme.css'
 import classnames from 'classnames'
 import RTButtonTheme from 'styles/RTButton.css'
 import Translate from 'components/translate/Translate'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import actions from 'actions'
+import initialState from 'store/initialState'
 
 export default function ItemHoc(Decorated) {
     class NewItemWithDialog extends Component {
@@ -20,6 +24,7 @@ export default function ItemHoc(Decorated) {
         handleToggle = () => {
             let active = this.state.active
             this.setState({ active: !active })
+            this.props.actions.resetNewItem(initialState.newItem[this.props.itemType]);
         }
 
         render() {
@@ -67,9 +72,18 @@ export default function ItemHoc(Decorated) {
     NewItemWithDialog.propTypes = {
         btnLabel: PropTypes.string.isRequired,
         title: PropTypes.string.isRequired,
-        floating: PropTypes.bool
+        floating: PropTypes.bool,
     }
 
-    return Translate(NewItemWithDialog)
+    function mapDispatchToProps(dispatch) {
+        return {
+            actions: bindActionCreators(actions, dispatch)
+        }
+    }
+
+    return connect(
+        null,
+        mapDispatchToProps
+    )(Translate(NewItemWithDialog))
 }
 
