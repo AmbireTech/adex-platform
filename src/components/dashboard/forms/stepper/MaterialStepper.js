@@ -100,7 +100,7 @@ class MaterialStepper extends React.Component {
     }
 
     render() {
-        let { pages, component, validations, currentPage, ...props } = { ...this.props }
+        let { pages, component, validations, currentPage, closeForm, ...props } = { ...this.props }
         let page = pages[currentPage]
         let Comp = page.component
 
@@ -123,7 +123,7 @@ class MaterialStepper extends React.Component {
                         </div>
 
                         <div className={stepperTheme.right} >
-                            <Button label='Cancel' />
+                            <Button label='Cancel' onClick={closeForm} />
                             {this.canAdvanceNextToPage() && !page.completeBtn ?
                                 <Button label='Continue' primary onClick={this.goToPage.bind(this, currentPage + 1)} />
                                 :
@@ -149,7 +149,7 @@ class MyMaterialStepper extends React.Component {
     render() {
         return (
             <Stepper pages={this.props.pages}>
-                <WithMaterialStepper itemType={this.props.itemType} validations={this.props.validations} />
+                <WithMaterialStepper itemType={this.props.itemType} validations={this.props.validations} closeForm={this.props.onCancel} />
             </Stepper>
         )
     }

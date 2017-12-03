@@ -56,7 +56,7 @@ export default function ItemHoc(Decorated) {
                             icon='close'
                             onClick={this.handleToggle}
                         />
-                        <Decorated {...this.props} onSave={this.handleToggle} />
+                        <Decorated {...this.props} onSave={this.handleToggle} onCancel={this.handleToggle.bind(this)} />
                     </Dialog>
 
                 </div>

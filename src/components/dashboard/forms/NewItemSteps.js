@@ -46,7 +46,7 @@ class NewItemSteps extends Component {
 
         return (
             <div style={{ textAlign: 'center' }}>
-                <MaterialStepper pages={pages} itemType={this.props.itemType} />
+                <MaterialStepper pages={pages} itemType={this.props.itemType} onCancel={this.props.onCancel} />
             </div>
         )
     }
