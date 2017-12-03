@@ -9,7 +9,7 @@ import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
 import { validEmail } from 'helpers/validators'
 
-const DISABLE_VALIDATION = false
+const DISABLE_VALIDATION = true
 
 class Step1Restore extends Component {
 

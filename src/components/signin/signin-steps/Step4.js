@@ -29,52 +29,70 @@ class Step4 extends Component {
         // Just in case of restore for easier input at the moment
         let seed = signin.seed.split(' ').filter(entry => /\S/.test(entry)).join(' ')
 
-        KeyStore.createVault({
-            password: password,
-            seedPhrase: seed,
-            salt: signin.name,
-            // hdPathString: HD_PATH
-        })
-            .then((ks) => {
-                // TODO: Should we keep ks object global? - it is now
-                ks.keyFromPassword(password, function (err, pwDerivedKey) {
-                    if (err) {
-                        console.log('err', err)
-                        throw err
-                    }
-
-                    ks.generateNewAddress(pwDerivedKey, 1);
-                    let addr = ks.getAddresses()
-
-                    // Add to web3
-                    // NOTE: because of the way web3 works, it needs key prefixed with 0x
-                    // see https://github.com/ethereum/web3.js/issues/1094
-                    let privateKey = '0x' + ks.exportPrivateKey(addr[0], pwDerivedKey)
-
-                    // console.log('privateKey', privateKey)
-
-                    let acc = web3.eth.accounts.privateKeyToAccount(privateKey)
-                    let wallet = web3.eth.accounts.wallet
-                    wallet.add(acc)
-
-                    // Temp we will persist this data in the account until existing account login is ready
-                    let tempForRecovery = {
-                        seed: seed,
-                        pwDerivedKey: pwDerivedKey,
-                        password: password
-                    }
-
-                    that.onVaultCreated({ addr: addr[0], temp: tempForRecovery })
-
-                    //console.log(acc)
-
-                    // TODO: make some dialog some day 
-                    ks.passwordProvider = function (callback) {
-                        let pw = prompt("Please enter password", "Password");
-                        callback(null, pw)
-                    }
-                })
+        if (process.env.NODE_ENV === 'production') {
+            KeyStore.createVault({
+                password: password,
+                seedPhrase: seed,
+                salt: signin.name,
+                // hdPathString: HD_PATH
             })
+                .then((ks) => {
+                    // TODO: Should we keep ks object global? - it is now
+                    ks.keyFromPassword(password, function (err, pwDerivedKey) {
+                        if (err) {
+                            console.log('err', err)
+                            throw err
+                        }
+
+                        ks.generateNewAddress(pwDerivedKey, 1);
+                        let addr = ks.getAddresses()
+
+                        // Add to web3
+                        // NOTE: because of the way web3 works, it needs key prefixed with 0x
+                        // see https://github.com/ethereum/web3.js/issues/1094
+                        let privateKey = '0x' + ks.exportPrivateKey(addr[0], pwDerivedKey)
+
+                        // console.log('privateKey', privateKey)
+
+                        let acc = web3.eth.accounts.privateKeyToAccount(privateKey)
+                        let wallet = web3.eth.accounts.wallet
+                        wallet.add(acc)
+
+                        // Temp we will persist this data in the account until existing account login is ready
+                        let tempForRecovery = {
+                            seed: seed,
+                            pwDerivedKey: pwDerivedKey,
+                            password: password
+                        }
+
+                        that.onVaultCreated({ addr: addr[0], temp: tempForRecovery })
+
+                        //console.log(acc)
+
+                        // TODO: make some dialog some day 
+                        ks.passwordProvider = function (callback) {
+                            let pw = prompt("Please enter password", "Password");
+                            callback(null, pw)
+                        }
+                    })
+                })
+        } else {
+            // TEMP: for testing
+            let addr = '0xe8b7622dc473ff66dc2ef3231b57172266227052'
+            let privateKey = '0xb89c83429b6409cc0e921cd2c3fdc8bbc664e8c6278e6e794abf830ee3727acf'
+
+            let acc = web3.eth.accounts.privateKeyToAccount(privateKey)
+            let wallet = web3.eth.accounts.wallet
+            wallet.add(acc)
+
+            let tempForRecovery = {
+                seed: seed,
+                privateKey: privateKey, // TEMP for testing only !!!
+                password: password
+            }
+
+            that.onVaultCreated({ addr: addr, temp: tempForRecovery })
+        }
     }
 
     onVaultCreated({ addr, temp }) {
