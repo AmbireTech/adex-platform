@@ -1,34 +1,11 @@
-import { web3, registry } from 'services/smart-contracts/ADX'
+import { registry } from 'services/smart-contracts/ADX'
+import { GAS_PRICE } from 'services/smart-contracts/constants'
+import { getAddrFromPrivateKey, toHexParam } from 'services/smart-contracts/utils'
 
-const web3Utils = web3.utils
-const TO_HEX_PAD_LEFT = 40
 const GAS_LIMIT_REGISTER_ACCOUNT = 150000
 const GAS_LIMIT_REGISTER_ITEM = 180000
-const GAS_PRICE = 3299515020
 
 // NOTE: Actions accepts decoded to ascii string values from models
-
-/**
- * TODO: consider how to do it - keep the account in the web3 obj global obj or create it here on every action
- * and ask for password do decrypt he private key
- */
-const getAddrFromPrivateKey = (prKey) => {
-    let addr
-    let wallet = web3.eth.accounts.wallet
-    if (prKey) {
-        let acc = web3.eth.accounts.privateKeyToAccount(prKey)
-        wallet.add(acc)
-    }
-
-    // TODO: handle err
-    addr = wallet[0].address
-
-    return addr
-}
-
-const toHexParam = (param) => {
-    return web3Utils.padLeft(web3Utils.toHex(param), TO_HEX_PAD_LEFT)
-}
 
 /**
  * can be called over and over to update the data
