@@ -1,6 +1,6 @@
 import { registry } from 'services/smart-contracts/ADX'
 import { GAS_PRICE } from 'services/smart-contracts/constants'
-import { getAddrFromPrivateKey, toHexParam } from 'services/smart-contracts/utils'
+import { toHexParam } from 'services/smart-contracts/utils'
 
 const GAS_LIMIT_REGISTER_ACCOUNT = 150000
 const GAS_LIMIT_REGISTER_ITEM = 180000
@@ -16,19 +16,22 @@ const GAS_LIMIT_REGISTER_ITEM = 180000
  * @param {string} _meta - meta
  * @param {string} prKey - account private key (optional)
  */
-export const registerAccount = ({ _name, _wallet, _ipfs, _sig, _meta, prKey } = {}) => {
+export const registerAccount = ({ _addr, _name = '', _wallet = 0, _ipfs = 0, _sig = 0, _meta = {}, prKey } = {}) => {
 
-    let addr = getAddrFromPrivateKey(prKey)
+    // TODO: fix prKey and addr flow
+    // NOTE: Temp addr is provide because in development mode the address and the private Key of eb3 wallet does not match
+
+    _name = _name || 'no-name'
 
     return new Promise((resolve, reject) => {
         registry.methods.register(
             toHexParam(_name),
-            _wallet,
+            _addr, //_wallet,
             toHexParam(_ipfs),
             toHexParam(_sig),
             toHexParam(_meta)
         )
-            .send({ from: addr, gas: GAS_LIMIT_REGISTER_ACCOUNT, gasPrice: GAS_PRICE })
+            .send({ from: _addr, gas: GAS_LIMIT_REGISTER_ACCOUNT, gasPrice: GAS_PRICE })
             .then((result) => {
                 console.log('registerAccount result', result)
                 resolve(result)
@@ -48,9 +51,7 @@ export const registerAccount = ({ _name, _wallet, _ipfs, _sig, _meta, prKey } = 
  * @param {string} _name - name
  * @param {string} _meta - meta
  */
-export const registerItem = ({ _type, _id, _ipfs, _name, _meta, prKey } = {}) => {
-
-    let addr = getAddrFromPrivateKey(prKey)
+export const registerItem = ({ _type, _id, _ipfs, _name, _meta, prKey, _addr } = {}) => {
 
     return new Promise((resolve, reject) => {
 
@@ -62,7 +63,7 @@ export const registerItem = ({ _type, _id, _ipfs, _name, _meta, prKey } = {}) =>
             toHexParam(_name),
             toHexParam(_meta)
             )
-            .call({ from: addr, gas: GAS_LIMIT_REGISTER_ITEM, gasPrice: GAS_PRICE })
+            .call({ from: _addr, gas: GAS_LIMIT_REGISTER_ITEM, gasPrice: GAS_PRICE })
             .then((result) => {
                 console.log('registerItem result', result)
                 resolve(result)

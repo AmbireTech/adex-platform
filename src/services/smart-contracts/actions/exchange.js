@@ -1,6 +1,6 @@
 import { cfg, exchange, token } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
-import { getAddrFromPrivateKey, toHexParam } from 'services/smart-contracts/utils'
+import { setWalletAndGetAddress, toHexParam } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
 
 const GAS_LIMIT = 450000
@@ -16,14 +16,13 @@ const adxReward = 200
  * @param {string} _peer - meta
  * @param {string} prKey - private key
  */
-export const placeBid = ({ _adunitId, _target, _rewardAmount, _timeout = DEFAULT_TIMEOUT, _peer, prKey } = {}) => {
+export const placeBid = ({ _addr, _adunitId, _target, _rewardAmount, _timeout = DEFAULT_TIMEOUT, _peer, prKey } = {}) => {
 
-    let addr = getAddrFromPrivateKey(prKey)
     let amount = toHexParam(_rewardAmount * MULT)
 
     return new Promise((resolve, reject) => {
         return token.methods.approve(cfg.addr.exchange, _rewardAmount)
-            .send({ from: addr, gas: GAS_LIMIT, gasPrice: GAS_PRICE })
+            .send({ from: _addr, gas: GAS_LIMIT, gasPrice: GAS_PRICE })
             .then((result) => {
                 console.log('token approve @ placeBid', result)
 
@@ -35,7 +34,7 @@ export const placeBid = ({ _adunitId, _target, _rewardAmount, _timeout = DEFAULT
                     toHexParam(_timeout),
                     toHexParam(_peer)
                 )
-                    .send({ from: addr, gas: GAS_LIMIT, gasPrice: GAS_PRICE })
+                    .send({ from: _addr, gas: GAS_LIMIT, gasPrice: GAS_PRICE })
             })
             .then((result) => {
                 console.log('placeBid result', result)

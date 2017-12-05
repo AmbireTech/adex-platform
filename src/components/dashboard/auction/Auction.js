@@ -18,8 +18,9 @@ import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import * as sc from 'services/smart-contracts/ADX'
 import numeral from 'numeral'
 import { decrypt } from 'services/crypto/crypto'
-import { web3 } from '../../../services/smart-contracts/ADX'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
+
+import { registerAccount } from 'services/smart-contracts/actions/registry'
 
 const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
 
@@ -90,19 +91,19 @@ export class Auction extends Component {
         // TODO: add persisted account to web3.eth.accounts
         // console.log(sc.web3.eth.accounts.wallet)
 
-        // sc.token.methods.balanceOf('0xd874b82fd6a1c8bc0911bd025ae7ab2ca448740f')
-        //     .call()
-        //     .then(function (bal) {
-        //         console.log('bal', bal)
+        // registerAccount({ ...this.props.account, prKey: this.props.account._temp.privateKey })
+        //     .then((result) => {
+        //         console.log('registerAccount result in auction', result)
         //     })
 
         let that = this
+
 
         // TODO: make service
         sc.exchange.methods.bidsCount()
             .call()
             .then((count) => {
-                // console.log('count', count)
+                console.log('count', count)
                 let bidsIds = []
                 for (let i = 1; i <= count; i++) {
                     bidsIds.push(sc.exchange.methods.getBid(i).call())
@@ -124,9 +125,9 @@ export class Auction extends Component {
             })
 
 
-        // let bids = this.getAuctionBids(this.props.bidsById, this.props.auctionBidsIds)
+        let bids = this.getAuctionBids(this.props.bidsById, this.props.auctionBidsIds)
 
-        // this.setState({ bids: bids })
+        this.setState({ bids: bids })
     }
 
     // componentWillReceiveProps(nextProps) {
@@ -294,7 +295,7 @@ export class Auction extends Component {
                         {t('INK_AUCTION_DESCRIPTION')}
                     </p>
                 </div>
-                {this.state.bids.length > 0 ?
+                {(this.state.bids.length > 0) || true ?
                     <div>
                         <div>
                             <BidFormWithDialog

@@ -15,6 +15,8 @@ import Account from 'models/Account'
 import KeyStore from 'services/key-store/keyStore'
 
 import { web3 } from 'services/smart-contracts/ADX'
+import { setWallet } from 'services/smart-contracts/actions/web3'
+import { encrypt } from 'services/crypto/crypto'
 
 // const keyStore = lightwallet.keystore
 // const HD_PATH = "m/44'/60'/0'/0"
@@ -54,10 +56,8 @@ class Step4 extends Component {
 
                         // console.log('privateKey', privateKey)
 
-                        let acc = web3.eth.accounts.privateKeyToAccount(privateKey)
-                        let wallet = web3.eth.accounts.wallet
-                        wallet.add(acc)
-
+                        let wallet = setWallet({ prKey: privateKey })
+                        addr = wallet.addr
                         // Temp we will persist this data in the account until existing account login is ready
                         let tempForRecovery = {
                             seed: seed,
@@ -65,7 +65,7 @@ class Step4 extends Component {
                             password: password
                         }
 
-                        that.onVaultCreated({ addr: addr[0], temp: tempForRecovery })
+                        that.onVaultCreated({ addr: addr, temp: tempForRecovery })
 
                         //console.log(acc)
 
@@ -78,17 +78,19 @@ class Step4 extends Component {
                 })
         } else {
             // TEMP: for testing
-            let addr = '0xe8b7622dc473ff66dc2ef3231b57172266227052'
-            let privateKey = '0xb89c83429b6409cc0e921cd2c3fdc8bbc664e8c6278e6e794abf830ee3727acf'
+            let addr = '0x16440668768c3dcb9e395cbf08af92ac6f99a94a'
+            let privateKey = '67153f33be66f525fc005acbea20e9f0446cad75a881e9a5f4ae84216c1b656e'
 
-            let acc = web3.eth.accounts.privateKeyToAccount(privateKey)
-            let wallet = web3.eth.accounts.wallet
-            wallet.add(acc)
+            let wallet = setWallet({ prKey: privateKey, addr: addr })
 
+            privateKey = wallet.prKey
+
+            password = 'devpass' // TEMP
             let tempForRecovery = {
                 seed: seed,
                 privateKey: privateKey, // TEMP for testing only !!!
-                password: password
+                password: password,
+                prKeyEncrypted: encrypt(privateKey, password)
             }
 
             that.onVaultCreated({ addr: addr, temp: tempForRecovery })
