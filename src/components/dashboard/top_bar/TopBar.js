@@ -11,6 +11,11 @@ import { Link } from 'react-toolbox/lib/link'
 import { IconMenu, MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
 import ButtonMenu from 'components/common/button_menu/ButtonMenu'
 import Translate from 'components/translate/Translate'
+import { Button, IconButton } from 'react-toolbox/lib/button'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
+
+
+const RRMenuItem = withReactRouterLink(MenuItem)
 // import ChangeLang from 'components/translate/ChangeLang'
 
 class TopNav extends Component {
@@ -22,8 +27,23 @@ class TopNav extends Component {
           {/* At the moment we use translations only for proper items properties display names */}
           {/* <ChangeLang /> */}
 
-          <ButtonMenu selectable={true} selected='help' icon='expand_more' label={this.props.account._name} position='auto' menuRipple active={true} iconRight={true} iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}>
-            <MenuItem value='settings' icon='settings' caption='Settings' />
+          <ButtonMenu
+            selectable={true}
+            selected='help'
+            icon='expand_more'
+            label={this.props.account._name}
+            position='auto'
+            menuRipple
+            active={true}
+            iconRight={true}
+            iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
+          >
+            <RRMenuItem
+              value='account'
+              to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
+              icon='account_box'
+              caption='Account'
+            />
             <MenuItem value='help' icon='help' caption='Help' />
             <MenuDivider />
             <MenuItem value='logout' icon='exit_to_app' caption='Logout' onClick={() => this.props.actions.resetAccount()} />

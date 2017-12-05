@@ -21,7 +21,7 @@ import AdUnitModel from 'models/AdUnit'
 import AdSlotModel from 'models/AdSlot'
 import ChannelModel from 'models/Channel'
 import CampaignModel from 'models/Campaign'
-
+import Account from './account/Account'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
 import { web3 } from 'services/smart-contracts/ADX'
@@ -148,6 +148,8 @@ class Dashboard extends React.Component {
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
 
                         <PrivateRoute auth={this.props.auth} exact path={'/dashboard/auction/ink'} component={Auction} />
+                        <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/auction/ink'} component={Auction} />
+                        <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/account'} component={Account} />
 
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/:side' component={DashboardStats} />
                         <PrivateRoute auth={this.props.auth} component={() => <h1>404 at {side} side</h1>} />
