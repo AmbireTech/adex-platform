@@ -117,7 +117,7 @@ class Signin extends Component {
         active={this.state.dialogActive}
         onEscKeyDown={this.handleToggle}
         onOverlayClick={this.handleToggle}
-        title="Create account"
+        title={this.state.method === 'create' ? 'Create Account' : 'Restore Account'}
         type={this.props.type || 'normal'}
       >
 
