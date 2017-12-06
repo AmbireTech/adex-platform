@@ -51,7 +51,7 @@ export const registerAccount = ({ _addr, _name = '', _wallet = 0, _ipfs = 0, _si
  * @param {string} _name - name
  * @param {string} _meta - meta
  */
-export const registerItem = ({ _type, _id, _ipfs, _name, _meta, prKey, _addr } = {}) => {
+export const registerItem = ({ _type, _id, _ipfs = 0, _name = '', _meta = 0, prKey, _addr } = {}) => {
 
     return new Promise((resolve, reject) => {
 
@@ -63,7 +63,7 @@ export const registerItem = ({ _type, _id, _ipfs, _name, _meta, prKey, _addr } =
             toHexParam(_name),
             toHexParam(_meta)
             )
-            .call({ from: _addr, gas: GAS_LIMIT_REGISTER_ITEM, gasPrice: GAS_PRICE })
+            .send({ from: _addr, gas: GAS_LIMIT_REGISTER_ITEM, gasPrice: GAS_PRICE })
             .then((result) => {
                 console.log('registerItem result', result)
                 resolve(result)

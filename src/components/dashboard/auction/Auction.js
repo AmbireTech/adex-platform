@@ -302,7 +302,7 @@ export class Auction extends Component {
                                 btnLabel='PLACE_BID'
                                 title={this.props.t('PLACE_BID_FOR', { args: ['Ink'] })}
                                 accent
-                                disabled
+                                // disabled
                                 floating
                                 bidId='INKBID'
                             />

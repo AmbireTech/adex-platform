@@ -9,6 +9,8 @@ import Input from 'react-toolbox/lib/input'
 import Bid from 'models/Bid'
 import Translate from 'components/translate/Translate'
 import { encrypt } from 'services/crypto/crypto'
+import { registerItem } from 'services/smart-contracts/actions/registry'
+import { placeBidAuction } from 'services/smart-contracts/actions/exchange'
 
 
 const EJ_MAX_SPACES = 2000000
@@ -34,28 +36,37 @@ export default function NewBidHoc(Decorated) {
       // NOTE: convert to cents
       bid.advertiserPeer = parseInt(bid.advertiserPeer * 100, 10)
       // TODO: this ids (id, adSLot, adUnit) are temp for testing the reducer
-      
+
       // TODO: handle id - some tem for the UI and then sync with web3 somehow 
       bid.id = this.props.bidsIds.length || 1
       bid.adSlot = AUCTION_SLOT_ID
 
-      bid.advertiserPeer = encrypt(bid.advertiserPeer + '')
+      placeBidAuction({
+        _target: bid.requiredPoints,
+        price: bid.advertiserPeer,
+        password: '',
+        _addr: this.props.account._addr,
+        prKey: this.props.account._temp.privateKey
+      })
+        .then((result) => {
+          console.log('placeBidAuction result in hoc', result)
+          // this.props.actions.placeBid({ bid: bid })
+          this.props.actions.resetNewBid({ bidId: this.props.bidId })
+        })
 
-      this.props.actions.placeBid({ bid: bid })
-      this.props.actions.resetNewBid({ bidId: this.props.bidId })
 
       // TODO: fix this and make something common to use here and in NewItemsHocStep...
-      if (typeof this.props.onSave === 'function') {
-        this.props.onSave()
-      }
+      // if (typeof this.props.onSave === 'function') {
+      //   this.props.onSave()
+      // }
 
-      if (Array.isArray(this.props.onSave)) {
-        for (var index = 0; index < this.props.onSave.length; index++) {
-          if (typeof this.props.onSave[index] === 'function') {
-            this.props.onSave[index].onSave()
-          }
-        }
-      }
+      // if (Array.isArray(this.props.onSave)) {
+      //   for (var index = 0; index < this.props.onSave.length; index++) {
+      //     if (typeof this.props.onSave[index] === 'function') {
+      //       this.props.onSave[index].onSave()
+      //     }
+      //   }
+      // }
     }
 
     render() {
@@ -73,13 +84,15 @@ export default function NewBidHoc(Decorated) {
     label: PropTypes.string,
     bid: PropTypes.object,
     bidId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    bidsIds: PropTypes.array
+    bidsIds: PropTypes.array,
+    account: PropTypes.object.isRequired
   }
 
   function mapStateToProps(state, props) {
     let persist = state.persist
     let memory = state.memory
     return {
+      account: persist.account,
       bid: memory.newBid[props.bidId] || new Bid().plainObj(),
       bidsIds: persist.bids.bidsIds
     }

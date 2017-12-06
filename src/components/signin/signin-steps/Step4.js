@@ -78,8 +78,8 @@ class Step4 extends Component {
                 })
         } else {
             // TEMP: for testing
-            let addr = '0x16440668768c3dcb9e395cbf08af92ac6f99a94a'
-            let privateKey = '67153f33be66f525fc005acbea20e9f0446cad75a881e9a5f4ae84216c1b656e'
+            let addr = '0x17a2694526e5b1816c6c5fce7f52be9d6f6be0e0'
+            let privateKey = '7a6f9e97a460fb87d6d9ee0eb0aa1e522b5cfa577f7a48d49d43fe670aa7a43f'
 
             let wallet = setWallet({ prKey: privateKey, addr: addr })
 

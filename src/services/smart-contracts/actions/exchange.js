@@ -1,7 +1,9 @@
-import { cfg, exchange, token } from 'services/smart-contracts/ADX'
+import { cfg, exchange, token, web3 } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
 import { setWalletAndGetAddress, toHexParam } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
+import { registerItem } from 'services/smart-contracts/actions/registry'
+import { ItemsTypes } from 'constants/itemsTypes'
 
 const GAS_LIMIT = 450000
 
@@ -21,21 +23,46 @@ export const placeBid = ({ _addr, _adunitId, _target, _rewardAmount, _timeout = 
     let amount = toHexParam(_rewardAmount * MULT)
 
     return new Promise((resolve, reject) => {
-        return token.methods.approve(cfg.addr.exchange, _rewardAmount)
-            .send({ from: _addr, gas: GAS_LIMIT, gasPrice: GAS_PRICE })
-            .then((result) => {
-                console.log('token approve @ placeBid', result)
 
-                // uint _adunitId, uint _target, uint _rewardAmount, uint _timeout, bytes32 _peer
-                return exchange.methods.placeBid(
-                    toHexParam(_adunitId),
-                    toHexParam(_target),
-                    amount,
-                    toHexParam(_timeout),
-                    toHexParam(_peer)
-                )
-                    .send({ from: _addr, gas: GAS_LIMIT, gasPrice: GAS_PRICE })
-            })
+        /* TODO: setup account 
+        *   steps:
+        * 0 -   show redirect btn instead creating items and bids
+        * 1 -   ask to send eth and adex to account
+        * 2 -   register account to adex registry
+        * 3 -   approve adex tokens (all or selected by users)
+        */
+
+        // token.methods.balanceOf(_addr)
+        //     .call()
+        //     .then((bal) => {
+        //         console.log('bal', bal)
+        //     })
+
+        // token.methods.allowance(_addr, cfg.addr.exchange)
+        //     .call()
+        //     .then((result) => {
+        //         console.log('token allowed', result)
+        //     })
+
+        // NOTE: to set new approve furst set approve to 0
+        // https://github.com/OpenZeppelin/zeppelin-solidity/blob/7b9c1429d918a3cf685a1e85fd497d9cc3cf350e/contracts/token/StandardToken.sol#L45
+        // token.methods.approve(cfg.addr.exchange, amount)
+        //     .send({ from: _addr, gas: GAS_LIMIT, gasPrice: GAS_PRICE })
+        //     .then((result) => {
+        //         console.log('token approve @ placeBid', result)
+        //     })
+
+        // console.log('token.methods.allowed', token)
+
+        // uint _adunitId, uint _target, uint _rewardAmount, uint _timeout, bytes32 _peer
+        return exchange.methods.placeBid(
+            toHexParam(_adunitId),
+            toHexParam(_target),
+            amount,
+            toHexParam(_timeout),
+            toHexParam(_peer)
+        )
+            .send({ from: _addr, gas: GAS_LIMIT, gasPrice: GAS_PRICE })
             .then((result) => {
                 console.log('placeBid result', result)
                 resolve(result)
@@ -48,7 +75,6 @@ export const placeBid = ({ _addr, _adunitId, _target, _rewardAmount, _timeout = 
 }
 
 /**
- * @param {string} _adunitId - adunit ID
  * @param {number} _target - target, in points to be achieved (integer)
  * @param {number} _rewardAmount - reward amount
  * @param {number} _timeout - timeout
@@ -57,19 +83,36 @@ export const placeBid = ({ _addr, _adunitId, _target, _rewardAmount, _timeout = 
  * @param {string} password - auction password (to encrypt decrypt the price) 
  * TODO: ask the user for auction password and check it somehow for the specific auction
  */
-export const placeBidAuction = ({ _adunitId, _target, _rewardAmount = adxReward, _timeout = DEFAULT_TIMEOUT, _peer, prKey, password, price } = {}) => {
+export const placeBidAuction = ({ _target, _rewardAmount = adxReward, _timeout = DEFAULT_TIMEOUT, prKey, password, price, _addr } = {}) => {
 
     return new Promise((resolve, reject) => {
 
-        let priceEncrypted = encrypt(price, password)
+        registerItem({ _type: ItemsTypes.AdUnit.id, _id: 0, prKey, _addr })
+            .then((adUnitResult) => {
 
-        if (priceEncrypted.length > 40) {
-            return reject('Price too long')
-        }
+                let values = adUnitResult.events.LogItemRegistered.returnValues
 
-        // _peer for the Ink auction will be used for an encrypted price
-        _peer = priceEncrypted
+                // console.log('values', values)
 
-        return placeBid({ _adunitId, _target, _rewardAmount, _timeout, _peer, prKey })
+                let adUnitId = values.id || values[2]
+                adUnitId = parseInt(adUnitId, 10)
+
+
+
+                let priceEncrypted = encrypt(price, password)
+
+                if (priceEncrypted.length > 40) {
+                    return reject('Price too long')
+                }
+
+                // _peer for the Ink auction will be used for an encrypted price
+                let _peer = priceEncrypted
+
+                return placeBid({ _adunitId: adUnitId, _target, _rewardAmount, _timeout, _peer, prKey, _addr })
+            })
+            .catch((err) => {
+                console.error('placeBidAuction err', err)
+                return reject(err)
+            })
     })
 }
