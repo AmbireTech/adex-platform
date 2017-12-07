@@ -111,13 +111,14 @@ class Signin extends Component {
       pages = pagesRecover
     }
 
+    let t = this.props.t
     return (
       <Dialog
         theme={dialogTheme}
         active={this.state.dialogActive}
         onEscKeyDown={this.handleToggle}
         onOverlayClick={this.handleToggle}
-        title={this.state.method === 'create' ? 'Create Account' : 'Restore Account'}
+        title={this.state.method === 'create' ? t('SIGNIN_CREATE_ACCOUNT') : t('SIGNIN_RESTORE_ACCOUNT')}
         type={this.props.type || 'normal'}
       >
 
