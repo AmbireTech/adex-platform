@@ -11,6 +11,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid'
 import { web3 } from 'services/smart-contracts/ADX'
 import { setWallet } from 'services/smart-contracts/actions/web3'
 import { getAccountStats } from 'services/smart-contracts/actions/registry'
+import { MULT } from 'services/smart-contracts/constants'
 
 // console.log('actions', actions)
 class Account extends React.Component {
@@ -27,8 +28,12 @@ class Account extends React.Component {
 
     render() {
         let account = this.props.account
+        let stats = account._stats
 
-        let isRegisterd = false
+        if (!stats) {
+            return null
+        }
+
         return (
             <div>
                 <Grid fluid>
@@ -38,15 +43,15 @@ class Account extends React.Component {
                     </Row>
                     <Row>
                         <Col xs={12} lg={3} className={theme.textRight}>{this.props.t('ACCOUNT_IS_REGISTERED')}:</Col>
-                        <Col xs={12} lg={3} className={theme.textLeft}>{isRegisterd}</Col>
+                        <Col xs={12} lg={3} className={theme.textLeft}>{stats.isRegistered.toString()}</Col>
                     </Row>
                     <Row>
                         <Col xs={12} lg={3} className={theme.textRight}>{this.props.t('ACCOUNT_ETH_BALANCE')}:</Col>
-                        <Col xs={12} lg={3} className={theme.textLeft}>{0}</Col>
+                        <Col xs={12} lg={3} className={theme.textLeft}>{web3.utils.fromWei(stats.balanceEth, 'ether')}</Col>
                     </Row>
                     <Row>
                         <Col xs={12} lg={3} className={theme.textRight}>{this.props.t('ACCOUNT_ADX_BALANCE')}:</Col>
-                        <Col xs={12} lg={3} className={theme.textLeft}>{0}</Col>
+                        <Col xs={12} lg={3} className={theme.textLeft}>{stats.balanceAdx / MULT}</Col>
                     </Row>
                 </Grid>
             </div>
