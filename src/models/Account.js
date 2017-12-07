@@ -3,10 +3,17 @@ import Helper from 'helpers/miscHelpers'
 import { ItemsTypes } from 'constants/itemsTypes'
 
 class Account extends Base {
-    constructor({name, addr, wallet, meta, temp}) {
-        super({name: name})
-        this._addr = addr || Helper.getGuid() 
-        this._wallet = wallet || addr
+    /**
+    * NOTE:
+    *   - _temp prop will be used for easy development at the moment to keep account data
+    *   - _stats will be used only at the client model for easier access to account data from 
+    *   smart contracts (balance of rth/adx, register status, approved adx for transfer etc...)        
+    */
+    constructor({ _name, _addr, _wallet, _ipfs, _meta, _temp, _stats = { balanceEth: 0, balanceAdx: 0, allowence: 0, isRegistered: false } }) {
+        super({ _name, _meta, _ipfs })
+        this._addr = _addr || Helper.getGuid()
+        this._wallet = _wallet || _addr
+        this._stats = _stats
 
         this._items = {}
 
@@ -17,18 +24,27 @@ class Account extends Base {
         }
 
         // Temp we will keep here some addr data 
-        this._temp = temp
+        this._temp = _temp
 
         // console.log('accoount', this)
     }
 
     get addr() { return this._addr }
-    get allItems() { return this._items }
+    set addr(value) { this._addr = value }
+
+    get items() { return this._items }
+    set items(value) { this._items = value }
+
     get campaigns() { return this._items[ItemsTypes.Campaign.id] }
     get adUnits() { return this._items[ItemsTypes.AdUnit.id] }
     get channels() { return this._items[ItemsTypes.Channel.id] }
     get adSlots() { return this._items[ItemsTypes.AdSlot.id] }
-    get meta() { return this._meta }
+
+    get stats() { return this._stats }
+    set stats(value) { this._stats = value }
+
+    get temp() { return this._temp }
+    set temp(value) { this._temp = value }
 
     // TODO
     addItem(item) {

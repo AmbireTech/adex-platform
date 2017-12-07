@@ -26,6 +26,7 @@ import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
 import { web3 } from 'services/smart-contracts/ADX'
 import { setWallet } from 'services/smart-contracts/actions/web3'
+import { getAccountStats } from 'services/smart-contracts/actions/registry'
 
 function PrivateRoute({ component: Component, auth, ...other }) {
     return (
@@ -50,9 +51,14 @@ class Dashboard extends React.Component {
         this.props.actions.updateNav('side', this.props.match.params.side)
 
         // TEMP
-        if(!web3.eth.accounts.wallet[0]){
-            setWallet({ prKey:  this.props.account._temp.privateKey, addr: this.props.account._addr })
+        if (!web3.eth.accounts.wallet[0]) {
+            setWallet({ prKey: this.props.account._temp.privateKey, addr: this.props.account._addr })
         }
+
+        getAccountStats({ _addr: this.props.account._addr })
+            .then((stats) => {
+                this.props.actions.updateAccount({ ownProps: { stats: stats } })
+            })
     }
 
     toggleDrawerActive = () => {

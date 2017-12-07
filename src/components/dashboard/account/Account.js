@@ -10,6 +10,7 @@ import Img from 'components/common/img/Img'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import { web3 } from 'services/smart-contracts/ADX'
 import { setWallet } from 'services/smart-contracts/actions/web3'
+import { getAccountStats } from 'services/smart-contracts/actions/registry'
 
 // console.log('actions', actions)
 class Account extends React.Component {
@@ -17,7 +18,12 @@ class Account extends React.Component {
     }
 
     componentWillMount(nextProps) {
+        getAccountStats({ _addr: this.props.account._addr })
+            .then((stats) => {
+                this.props.actions.updateAccount({ ownProps: { stats: stats } })
+            })
     }
+
 
     render() {
         let account = this.props.account

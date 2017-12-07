@@ -37,8 +37,7 @@ class Base {
     get name() { return this._name }
     set name(value) { this._name = Helper.slugify(value) }
 
-    get ipfs() { return this._ipfs }
-    set ipfs(value) { this._ipfs = value }
+    get ipfs() { return this._ipfs }; set ipfs(value) { this._ipfs = value };
 
     get fullName() { return this._meta.fullName }
     set fullName(value) { this._meta.fullName = value }
@@ -76,7 +75,8 @@ class Base {
         }
     }
 
-    static updateObject({ item = {}, ownProps = { key: null, value: null }, meta = {}, objModel = Base, dirtyProps } = {}) {
+    // TODO: make it recursive for all props
+    static updateObject({ item = {}, ownProps = {}, meta = {}, objModel = Base, dirtyProps } = {}) {
 
         let newItem = new objModel(item)
 
@@ -101,8 +101,26 @@ class Base {
                 }
             }
         }
+        
+        // TODO: check new item for setter
+        for (let key in ownProps) {
 
-        // TODO: update no meta props
+            if (ownProps[key]) {
+
+                let value = ownProps[key]
+
+                if (value instanceof Date) {
+                    value = value.getTime()
+                }
+
+                newItem[key] = value
+
+                // TODO: distinct meta and own props if needed
+                if (hasDirtyProps && dirtyProps.indexOf(key) < 0) {
+                    dirtyProps.push(key)
+                }
+            }
+        }
 
         newItem.modifiedOn = Date.now()
 

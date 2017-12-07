@@ -93,15 +93,15 @@ class Step4 extends Component {
                 prKeyEncrypted: encrypt(privateKey, password)
             }
 
-            that.onVaultCreated({ addr: addr, temp: tempForRecovery })
+            that.onVaultCreated({ addr: addr, temp: tempForRecovery, name: 'Dev' })
         }
     }
 
-    onVaultCreated({ addr, temp }) {
+    onVaultCreated({ addr, temp, name }) {
         this.props.handleChange('publicKey', addr)
         this.props.actions.updateSpinner(SPINNER_KEY, false)
 
-        let acc = new Account({ addr: addr, name: this.props.signin.name, temp: temp })
+        let acc = new Account({ _addr: addr, _name: this.props.signin.name, _temp: temp })
 
         this.props.actions.createAccount(acc)
         this.props.validate('createVault', { isValid: true, err: { msg: 'ERR_CREATE_VAULT', }, dirty: false })

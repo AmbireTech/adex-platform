@@ -1,4 +1,4 @@
-import { registry } from 'services/smart-contracts/ADX'
+import { registry, web3, token, cfg } from 'services/smart-contracts/ADX'
 import { GAS_PRICE } from 'services/smart-contracts/constants'
 import { toHexParam } from 'services/smart-contracts/utils'
 
@@ -70,6 +70,31 @@ export const registerItem = ({ _type, _id, _ipfs = 0, _name = '', _meta = 0, prK
             })
             .catch((err) => {
                 console.log('registerItem err', err)
+                reject(err)
+            })
+    })
+}
+
+export const getAccountStats = ({ _addr }) => {
+    return new Promise((resolve, reject) => {
+        let balanceEth = web3.eth.getBalance(_addr)
+        let balanceAdx = token.methods.balanceOf(_addr).call()
+        let allowence = token.methods.allowance(_addr, cfg.addr.exchange).call()
+        let isRegistered = registry.methods.isRegistered(_addr).call()
+
+        let all = [balanceEth, balanceAdx, allowence, isRegistered]
+
+        Promise.all(all)
+            .then(([balEth, balAdx, allow, isReg]) => {
+                return resolve({
+                    balanceEth: balEth,
+                    balanceAdx: balAdx,
+                    allowence: allow,
+                    isRegistered: isReg
+                })
+            })
+            .catch((err) => {
+                console.log('getAccountStats err', err)
                 reject(err)
             })
     })
