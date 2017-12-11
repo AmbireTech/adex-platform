@@ -20,7 +20,7 @@ import numeral from 'numeral'
 import { decrypt } from 'services/crypto/crypto'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
 
-import { registerAccount } from 'services/smart-contracts/actions/registry'
+import scActions from 'services/smart-contracts/actions'
 
 const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
 
@@ -91,7 +91,7 @@ export class Auction extends Component {
         // TODO: add persisted account to web3.eth.accounts
         // console.log(sc.web3.eth.accounts.wallet)
 
-        // registerAccount({ ...this.props.account, prKey: this.props.account._temp.privateKey })
+        // scActions.registerAccount({ ...this.props.account, prKey: this.props.account._temp.privateKey })
         //     .then((result) => {
         //         console.log('registerAccount result in auction', result)
         //     })

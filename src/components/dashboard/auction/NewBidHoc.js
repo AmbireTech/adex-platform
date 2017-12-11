@@ -9,9 +9,9 @@ import Input from 'react-toolbox/lib/input'
 import Bid from 'models/Bid'
 import Translate from 'components/translate/Translate'
 import { encrypt } from 'services/crypto/crypto'
-import { registerItem } from 'services/smart-contracts/actions/registry'
-import { placeBidAuction } from 'services/smart-contracts/actions/exchange'
+import scActions from 'services/smart-contracts/actions'
 
+const { placeBidAuction } = scActions
 
 const EJ_MAX_SPACES = 2000000
 const SPACES_COUNT_STEP = 10000

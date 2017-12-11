@@ -15,8 +15,10 @@ import Account from 'models/Account'
 import KeyStore from 'services/key-store/keyStore'
 
 import { web3 } from 'services/smart-contracts/ADX'
-import { setWallet } from 'services/smart-contracts/actions/web3'
+import scActions from 'services/smart-contracts/actions'
 import { encrypt } from 'services/crypto/crypto'
+
+const { setWallet } = scActions
 
 // const keyStore = lightwallet.keystore
 // const HD_PATH = "m/44'/60'/0'/0"

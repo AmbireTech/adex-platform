@@ -25,8 +25,9 @@ import Account from './account/Account'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
 import { web3 } from 'services/smart-contracts/ADX'
-import { setWallet } from 'services/smart-contracts/actions/web3'
-import { getAccountStats } from 'services/smart-contracts/actions/registry'
+import scActions from 'services/smart-contracts/actions'
+
+const { setWallet, getAccountStats } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
     return (
