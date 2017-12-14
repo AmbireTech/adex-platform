@@ -14,17 +14,31 @@ import scActions from 'services/smart-contracts/actions'
 import { MULT } from 'services/smart-contracts/constants'
 import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import Input from 'react-toolbox/lib/input'
+import { APPROVE } from 'components/dashboard/account/forms/transactions'
 
 const { getAccountStats, approveTokens } = scActions
 
 // console.log('actions', actions)
 class Account extends React.Component {
-    state = {
-        allowence: 0
+    constructor(props, context) {
+        super(props, context)
+
+        this.state = {
+            allowence: 0
+        }
+
+        this.subscription = null
+        this.syncing = null
+        this.logs = null
     }
+
 
     componentWillMount(nextProps) {
         this.getStats()
+    }
+
+    componentWillUnmount() {
+        web3.eth.clearSubscriptions()
     }
 
     getStats = () => {
@@ -100,7 +114,8 @@ class Account extends React.Component {
                     </Row>
 
                     <Row>
-                        <this.ApproveForm />
+                        <APPROVE />
+                        {/* <this.ApproveForm /> */}
                     </Row>
 
                 </Grid>

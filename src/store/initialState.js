@@ -53,6 +53,9 @@ let initialState = {
     },
     newBid: {
         empty: new Bid().plainObj()
+    },
+    newTransactions: {
+        default: {}
     }
 }
 

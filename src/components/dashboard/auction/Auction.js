@@ -64,7 +64,7 @@ let BID_MODEL = {
 
 export class Auction extends Component {
     constructor(props, context) {
-        super(props, context);
+        super(props, context)
 
         this.state = {
             bidding: false,

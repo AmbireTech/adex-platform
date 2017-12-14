@@ -77,7 +77,7 @@ function mapStateToProps(state) {
     let memory = state.memory
     return {
         account: persist.account,
-        newItem: memory.newItem[ItemsTypes.AdUnit.id]
+        // newItem: memory.newItem[ItemsTypes.AdUnit.id]
     }
 }
 
