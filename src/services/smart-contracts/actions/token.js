@@ -5,10 +5,39 @@ import { encrypt } from 'services/crypto/crypto'
 import { registerItem } from 'services/smart-contracts/actions'
 import { ItemsTypes } from 'constants/itemsTypes'
 
+// TODO: check if that values can be changed
+const GAS_LIMIT_APPROVE_0_WHEN_NO_0 = 15136 + 1
+// const GAS_LIMIT_APPROVE_0_WHEN_0 = 30136 + 1
+const GAS_LIMIT_APPROVE_OVER_0_WHEN_0 = 45821 + 1
+
 const GAS_LIMIT = 450000
 
 // WARNING: hardcoded for now
 const adxReward = 200
+
+// NOTE: We use hrd coded gas values because they are always same 
+export const approveTokensEstimateGas = ({ _addr, amountToApprove, prKey } = {}) => {
+    let amount = toHexParam(amountToApprove * MULT)
+
+    return new Promise((resolve, reject) => {
+        token.methods
+            .allowance(_addr, cfg.addr.exchange)
+            .call()
+            .then((allowance) => {
+                if (toHexParam(parseFloat(allowance)) === amount) {
+                    return 0 // no need to change or GAS_LIMIT_APPROVE_0_WHEN_0
+                } else if (allowance !== 0) {
+                    return GAS_LIMIT_APPROVE_0_WHEN_NO_0 + GAS_LIMIT_APPROVE_OVER_0_WHEN_0
+                } else {
+                    return GAS_LIMIT_APPROVE_OVER_0_WHEN_0
+                }
+            })
+            .catch((err) => {
+                console.log('approveTokensEstimateGas err', err)
+                reject(err)
+            })
+    })
+}
 
 /**
  * @param {string} _adunitId - adunit ID

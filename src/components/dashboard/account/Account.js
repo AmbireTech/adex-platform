@@ -10,12 +10,12 @@ import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import { web3 } from 'services/smart-contracts/ADX'
-import scActions from 'services/smart-contracts/actions'
 import { MULT } from 'services/smart-contracts/constants'
 import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import Input from 'react-toolbox/lib/input'
 import { APPROVE } from 'components/dashboard/account/forms/transactions'
 
+import scActions from 'services/smart-contracts/actions'
 const { getAccountStats, approveTokens } = scActions
 
 // console.log('actions', actions)
@@ -32,13 +32,12 @@ class Account extends React.Component {
         this.logs = null
     }
 
-
     componentWillMount(nextProps) {
         this.getStats()
     }
 
     componentWillUnmount() {
-        web3.eth.clearSubscriptions()
+        // web3.eth.clearSubscriptions()
     }
 
     getStats = () => {
@@ -114,7 +113,7 @@ class Account extends React.Component {
                     </Row>
 
                     <Row>
-                        <APPROVE />
+                        <APPROVE raised accent />
                         {/* <this.ApproveForm /> */}
                     </Row>
 

@@ -10,7 +10,30 @@ import NewTransactionHoc from './TransactionHoc'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import numeral from 'numeral'
 
+import scActions from 'services/smart-contracts/actions'
+const { getAccountStats, approveTokens, approveTokensEstimateGas } = scActions
+
 class TransactionPreview extends Component {
+
+    constructor(props, context) {
+        super(props, context)
+
+        this.state = {
+            gas: 0
+        }
+    }
+
+    componentWillMount() {
+        approveTokensEstimateGas({
+            _addr: this.props.account._addr,
+            amountToApprove: this.props.transaction.allowence,
+            prKey: this.props.account._temp.privateKey
+        })
+            .then(() => {
+                // this.getStats()
+            })
+    }
+
     render() {
         let bid = this.props.bid || {}
         let t = this.props.t
