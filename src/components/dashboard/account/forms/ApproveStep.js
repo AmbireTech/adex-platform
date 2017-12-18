@@ -12,7 +12,28 @@ import numeral from 'numeral'
 import Input from 'react-toolbox/lib/input'
 import { Button, IconButton } from 'react-toolbox/lib/button'
 
+import scActions from 'services/smart-contracts/actions'
+const { getAccountStats, approveTokens, approveTokensEstimateGas } = scActions
+
 class ApproveStep extends Component {
+    estimateGas() {
+        this.props.actions.updateSpinner(this.props.trId, true)
+        approveTokensEstimateGas({
+            _addr: this.props.account._addr,
+            amountToApprove: this.props.transaction.allowence,
+            prKey: this.props.account._temp.privateKey
+        })
+            .then((res) => {
+                this.props.actions.updateNewTransaction({ trId: this.props.trId, key: 'gas', value: res })
+                this.props.actions.updateSpinner(this.props.trId, false)
+            })
+            // TODO: catch
+    }
+
+    componentWillUnmount() {
+        this.estimateGas()
+    }
+
     render() {
         let tr = this.props.transaction
         let t = this.props.t

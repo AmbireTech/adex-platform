@@ -8,10 +8,15 @@ import Bid from 'models/Bid'
 import Translate from 'components/translate/Translate'
 import NewTransactionHoc from './TransactionHoc'
 import { Grid, Row, Col } from 'react-flexbox-grid'
+import Tooltip from 'react-toolbox/lib/tooltip'
 import numeral from 'numeral'
+import ProgressBar from 'react-toolbox/lib/progress_bar'
+import { GAS_PRICE } from 'services/smart-contracts/constants'
+import { web3 } from 'services/smart-contracts/ADX'
 
 import scActions from 'services/smart-contracts/actions'
 const { getAccountStats, approveTokens, approveTokensEstimateGas } = scActions
+const TooltipCol = Tooltip(Col)
 
 class TransactionPreview extends Component {
 
@@ -23,30 +28,51 @@ class TransactionPreview extends Component {
         }
     }
 
-    componentWillMount() {
-        approveTokensEstimateGas({
-            _addr: this.props.account._addr,
-            amountToApprove: this.props.transaction.allowence,
-            prKey: this.props.account._temp.privateKey
-        })
-            .then(() => {
-                // this.getStats()
-            })
-    }
-
     render() {
-        let bid = this.props.bid || {}
+        let transaction = this.props.transaction || {}
         let t = this.props.t
+        let fee
+
+        if (transaction.gas) {
+            fee = web3.utils.fromWei((transaction.gas * GAS_PRICE).toString(), 'ether')
+        }
 
         return (
             <div>
-                {/* TODO: Add translations and format the numbers */}
-                <Grid fluid>
-                    <Row>
-                        {/* <Col xs={12} lg={4} className={theme.textRight}> {t('SPACES_COUNT')}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{numeral(bid.requiredPoints).format('0,0')} </Col> */}
-                    </Row>
-                </Grid>
+                {this.props.spinner ?
+                    <ProgressBar type='circular' mode='indeterminate' multicolor />
+                    :
+
+                    <Grid fluid>
+                        {
+                            Object
+                                .keys(transaction)
+                                .filter((key) => !/gas/.test(key))
+                                .map(key => {
+                                    let keyName = key
+                                    let value = transaction[key]
+                                    
+                                    return (
+                                        <Row key={key}>
+                                            <Col xs={12} lg={4} className={'theme.textRight'}>{this.props.t(keyName, { isProp: true })}:</Col>
+                                            <Col xs={12} lg={8} className={'theme.textLeft'}>{value}</Col>
+                                        </Row>
+                                    )
+                                })
+                        }
+                        {!!fee ?
+                            <Row>
+                                <TooltipCol xs={12} lg={4} className={'theme.textRight'}
+                                    tooltip={this.props.t('OPERATION_FEE_TOOLTIP')}
+                                >
+                                    <strong>  {this.props.t('OPERATION_FEE *', { isProp: true })}:</strong>
+                                </TooltipCol>
+                                <Col xs={12} lg={8} className={'theme.textLeft'}><strong>{fee} ETH</strong></Col>
+                            </Row>
+                            : null}
+                    </Grid>
+                }
+
             </div>
         )
     }
@@ -65,7 +91,8 @@ function mapStateToProps(state, props) {
     let memory = state.memory
     return {
         transaction: memory.newTransactions[props.trId] || {},
-        trId: props.trId
+        trId: props.trId,
+        spinner: memory.spinners[props.trId]
     }
 }
 

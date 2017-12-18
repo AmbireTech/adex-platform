@@ -50,8 +50,8 @@ class NewItemFormPreview extends Component {
 
                                 return (
                                     <Row key={key}>
-                                        <Col xs={12} lg={3} className={theme.textRight}>{this.props.t(keyName, { isProp: true })}:</Col>
-                                        <Col xs={12} lg={3} className={theme.textLeft}>{value}</Col>
+                                        <Col xs={12} lg={4} className={theme.textRight}>{this.props.t(keyName, { isProp: true })}:</Col>
+                                        <Col xs={12} lg={8} className={theme.textLeft}>{value}</Col>
                                     </Row>
                                 )
                             })

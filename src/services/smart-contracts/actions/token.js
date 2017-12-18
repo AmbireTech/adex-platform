@@ -24,13 +24,16 @@ export const approveTokensEstimateGas = ({ _addr, amountToApprove, prKey } = {})
             .allowance(_addr, cfg.addr.exchange)
             .call()
             .then((allowance) => {
+                let gas
                 if (toHexParam(parseFloat(allowance)) === amount) {
-                    return 0 // no need to change or GAS_LIMIT_APPROVE_0_WHEN_0
+                    gas = 0 // no need to change or GAS_LIMIT_APPROVE_0_WHEN_0
                 } else if (allowance !== 0) {
-                    return GAS_LIMIT_APPROVE_0_WHEN_NO_0 + GAS_LIMIT_APPROVE_OVER_0_WHEN_0
+                    gas = GAS_LIMIT_APPROVE_0_WHEN_NO_0 + GAS_LIMIT_APPROVE_OVER_0_WHEN_0
                 } else {
-                    return GAS_LIMIT_APPROVE_OVER_0_WHEN_0
+                    gas = GAS_LIMIT_APPROVE_OVER_0_WHEN_0
                 }
+
+                return resolve(gas)
             })
             .catch((err) => {
                 console.log('approveTokensEstimateGas err', err)
