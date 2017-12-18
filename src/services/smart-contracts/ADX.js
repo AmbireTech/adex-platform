@@ -16,9 +16,9 @@ const mainnetCfg = {
 const testrpcCfg = {
 	node: '//192.168.10.23:8545/',
 	addr: {
-		token: '0x7de0f894759b958dde809b3bd78a675706fa6398',
-		registry: '0xcc5afdfa305ae1cb9459706b0d20d4e04d5c11ef',
-		exchange: '0x1181e82c00ed49ef61a29d28404c32905b4aee48',
+		token: '0x8609e07ad09f97a33fd75553afc779849c952dae',
+		registry: '0x897a214ec2124cb1015846ed83f378e56bbe764c',
+		exchange: '0xc3ec25c840079662777e3aa379f79de1c7533220',
 	}
 }
 
