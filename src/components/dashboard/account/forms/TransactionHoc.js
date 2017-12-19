@@ -23,22 +23,27 @@ export default function NewTransactionHoc(Decorated) {
             this.props.actions.updateNewTransaction({ trId: this.props.trId, key: name, value: value })
         }
 
-        save = () => {
-            console.log('transaction sent', this.props.transaction)
-
-
+        onSave = () => {
             // TODO: fix this and make something common to use here and in NewItemsHocStep...
-            // if (typeof this.props.onSave === 'function') {
-            //   this.props.onSave()
-            // }
+            if (typeof this.props.onSave === 'function') {
+                this.props.onSave()
+            }
 
-            // if (Array.isArray(this.props.onSave)) {
-            //   for (var index = 0; index < this.props.onSave.length; index++) {
-            //     if (typeof this.props.onSave[index] === 'function') {
-            //       this.props.onSave[index].onSave()
-            //     }
-            //   }
-            // }
+            if (Array.isArray(this.props.onSave)) {
+                for (var index = 0; index < this.props.onSave.length; index++) {
+                    if (typeof this.props.onSave[index] === 'function') {
+                        this.props.onSave[index]()
+                    }
+                }
+            }
+        }
+
+        save = () => {
+            this.props.saveFn({ acc: this.props.account, transaction: this.props.transaction })
+                .then((res) => {
+                    this.onSave()
+                })
+
         }
 
         render() {
@@ -46,7 +51,7 @@ export default function NewTransactionHoc(Decorated) {
             let props = this.props
 
             return (
-                <Decorated {...props}transaction={transaction} save={this.save} handleChange={this.handleChange} />
+                <Decorated {...props} transaction={transaction} save={this.save} handleChange={this.handleChange} />
             )
         }
     }
@@ -56,7 +61,8 @@ export default function NewTransactionHoc(Decorated) {
         label: PropTypes.string,
         trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
         transaction: PropTypes.object.isRequired,
-        account: PropTypes.object.isRequired
+        account: PropTypes.object.isRequired,
+        saveFn: PropTypes.func
     }
 
     function mapStateToProps(state, props) {

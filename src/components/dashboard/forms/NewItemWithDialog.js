@@ -22,6 +22,26 @@ export default function ItemHoc(Decorated) {
             this.setState({ active: !active })
         }
 
+        onSave = () => {
+            let onSave = []
+
+            if (typeof this.props.onSave === 'function') {
+                onSave.push(this.props.onSave)
+            }
+
+            if (Array.isArray(this.props.onSave)) {
+                for (var index = 0; index < this.props.onSave.length; index++) {
+                    if (typeof this.props.onSave[index] === 'function') {
+                        onSave.push(this.props.onSave[index])
+                    }
+                }
+            }
+
+            onSave.push(this.handleToggle)
+
+            return onSave
+        }
+
         render() {
 
             // console.log('theme', this.props.theme)
@@ -56,7 +76,7 @@ export default function ItemHoc(Decorated) {
                             icon='close'
                             onClick={this.handleToggle}
                         />
-                        <Decorated {...this.props} onSave={this.handleToggle} />
+                        <Decorated {...this.props} onSave={this.onSave()} />
                     </Dialog>
 
                 </div>

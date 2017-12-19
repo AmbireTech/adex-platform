@@ -56,7 +56,7 @@ export default function NewItemHoc(Decorated) {
             if (Array.isArray(this.props.onSave)) {
                 for (var index = 0; index < this.props.onSave.length; index++) {
                     if (typeof this.props.onSave[index] === 'function') {
-                        this.props.onSave[index].onSave()
+                        this.props.onSave[index]()
                     }
                 }
             }

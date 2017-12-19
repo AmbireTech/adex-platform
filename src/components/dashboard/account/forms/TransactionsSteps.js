@@ -10,9 +10,9 @@ import TransactionHoc from './TransactionHoc'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Translate from 'components/translate/Translate'
 
-const saveBtn = ({ ...props }) => {
+const saveBtn = ({ save, onSave, ...other }) => {
     return (
-        <Button icon='save' label='Place the bid' primary onClick={props.save} />
+        <Button icon='save' label='Place the bid' primary onClick={save} />
     )
 }
 
@@ -31,7 +31,6 @@ class NewTransactionSteps extends Component {
                 props: { ...this.props, validateId: this.props.itemType + '' + (index + 1) }
             })
         })
-
 
         pages.push({
             title: t('PREVIEW_AND_MAKE_TR'),
