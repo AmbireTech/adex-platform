@@ -10,13 +10,13 @@ import TransactionHoc from './TransactionHoc'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Translate from 'components/translate/Translate'
 
-const saveBtn = ({ save, onSave, ...other }) => {
+const saveBtn = ({ save, saveBtnLabel, saveBtnIcon, ...other }) => {
     return (
-        <Button icon='save' label='Place the bid' primary onClick={save} />
+        <Button icon={saveBtnIcon || 'icon'} label={saveBtnLabel || 'DO_IT'} primary onClick={save} />
     )
 }
 
-const SaveBtnWithItem = TransactionHoc(saveBtn)
+const SaveBtnWithTransaction = TransactionHoc(saveBtn)
 
 class NewTransactionSteps extends Component {
 
@@ -34,7 +34,7 @@ class NewTransactionSteps extends Component {
 
         pages.push({
             title: t('PREVIEW_AND_MAKE_TR'),
-            completeBtn: () => <SaveBtnWithItem {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
+            completeBtn: () => <SaveBtnWithTransaction {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
             component: ValidItemHoc(TransactionPreview),
             props: { ...this.props, validateId: this.props.trId }
         })

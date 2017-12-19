@@ -13,7 +13,7 @@ import { web3 } from 'services/smart-contracts/ADX'
 import { MULT } from 'services/smart-contracts/constants'
 // import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 // import Input from 'react-toolbox/lib/input'
-import { APPROVE } from 'components/dashboard/account/forms/transactions'
+import { Approve, RegisterAccount } from 'components/dashboard/account/forms/transactions'
 
 import scActions from 'services/smart-contracts/actions'
 const { getAccountStats } = scActions
@@ -62,7 +62,7 @@ class Account extends React.Component {
 
     render() {
         let account = this.props.account
-        let stats = account._stats
+        let stats = account._stats || {}
 
         if (!stats) {
             return null
@@ -71,6 +71,10 @@ class Account extends React.Component {
         return (
             <div>
                 <Grid fluid>
+                    <Row>
+                        <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_NAME')}:</Col>
+                        <Col xs={12} lg={8} className={theme.textLeft}><strong> {stats.acc ? stats.acc._name : 'No name'} </strong> </Col>
+                    </Row>
                     <Row>
                         <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_ETH_ADDR')}:</Col>
                         <Col xs={12} lg={8} className={theme.textLeft}><strong> {account._addr} </strong> </Col>
@@ -93,7 +97,8 @@ class Account extends React.Component {
                     </Row>
 
                     <Row>
-                        <APPROVE raised accent onSave={this.onSave} />
+                        <Approve raised accent onSave={this.onSave} />
+                        <RegisterAccount raised primary onSave={this.onSave} />
                     </Row>
 
                 </Grid>

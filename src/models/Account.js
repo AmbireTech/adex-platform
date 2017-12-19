@@ -1,6 +1,7 @@
 import Base from './Base'
 import Helper from 'helpers/miscHelpers'
 import { ItemsTypes } from 'constants/itemsTypes'
+import { fromHexParam } from 'services/smart-contracts/utils'
 
 class Account extends Base {
     /**
@@ -51,6 +52,16 @@ class Account extends Base {
         this._items[item._type].push(item._id)
     }
 
+    static decodeFromWeb3(accWeb3) {
+        let acc = {}
+        acc._name = fromHexParam(accWeb3['accountName'] || accWeb3[3], 'string')
+        acc._ipfs = fromHexParam(accWeb3['ipfs'], 'string')
+        acc._metaWeb3 = fromHexParam(accWeb3['meta'] || accWeb3[4], 'string')
+        acc._addr = accWeb3['addr'] || accWeb3[0]
+        acc._wallet = accWeb3['wallet'] || accWeb3[1]
+
+        return acc
+    }
 }
 
 export default Account

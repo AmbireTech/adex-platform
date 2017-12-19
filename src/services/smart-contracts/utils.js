@@ -21,3 +21,13 @@ export const toHexParam = (param) => {
 
     return hexValue
 }
+
+export const fromHexParam = (param, type) => {
+    if (type === 'number') {
+        return web3Utils.hexToNumber(param)
+    } else if (type === 'string') {
+        return web3Utils.hexToUtf8(param)
+    }
+
+    return param
+}
