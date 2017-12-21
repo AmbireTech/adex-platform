@@ -12,12 +12,13 @@ import Input from 'react-toolbox/lib/input'
 // import { Button, IconButton } from 'react-toolbox/lib/button'
 
 import scActions from 'services/smart-contracts/actions'
-const { withdrawEthEstimateGas } = scActions
+const { withdrawAdxEstimateGas } = scActions
 
-class WithdrawEthStep extends Component {
+//TODO: refactor to esc ape code duplication
+class WithdrawAdxStep extends Component {
     estimateGas() {
         this.props.actions.updateSpinner(this.props.trId, true)
-        withdrawEthEstimateGas({
+        withdrawAdxEstimateGas({
             _addr: this.props.account._addr,
             withdrawTo: this.props.transaction.withdrawTo,
             amountToWithdraw: this.props.transaction.amountToWithdraw,
@@ -43,7 +44,7 @@ class WithdrawEthStep extends Component {
                 <Input
                     type='text'
                     required
-                    label={this.props.t('WITHDRAW_ETH_TO')}
+                    label={this.props.t('WITHDRAW_ADX_TO')}
                     name='name'
                     value={tr.withdrawTo || ''}
                     onChange={(value) => this.props.handleChange('withdrawTo', value)}
@@ -51,7 +52,7 @@ class WithdrawEthStep extends Component {
                 <Input
                     type='number'
                     required
-                    label={this.props.t('WITHDRAW_ETH_AMOUNT')}
+                    label={this.props.t('WITHDRAW_ADX_AMOUNT')}
                     name='name'
                     value={tr.amountToWithdraw || 0}
                     onChange={(value) => this.props.handleChange('amountToWithdraw', value)}
@@ -61,7 +62,7 @@ class WithdrawEthStep extends Component {
     }
 }
 
-WithdrawEthStep.propTypes = {
+WithdrawAdxStep.propTypes = {
     actions: PropTypes.object.isRequired,
     label: PropTypes.string,
     trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
@@ -83,8 +84,8 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-let WithdrawEthStepForm = NewTransactionHoc(WithdrawEthStep)
+let WithdrawAdxStepForm = NewTransactionHoc(WithdrawAdxStep)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(WithdrawEthStepForm)
+)(WithdrawAdxStepForm)

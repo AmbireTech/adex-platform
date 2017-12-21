@@ -88,3 +88,48 @@ export const approveTokens = ({ _addr, amountToApprove, prKey } = {}) => {
             })
     })
 }
+
+export const withdrawAdxEstimateGas = ({ _addr, withdrawTo, amountToWithdraw, prKey } = {}) => {
+
+    let amount = parseFloat(amountToWithdraw, 10) * MULT
+
+    return new Promise((resolve, reject) => {
+        token.methods
+            .transfer(withdrawTo, amount)
+            .estimateGas({
+                from: _addr,
+                // to: withdrawTo,
+                // value: amount
+            })
+            .then(function (res) {
+                console.log('withdrawAdxEstimateGas res', res)
+                return resolve(res)
+            })
+            .catch((err) => {
+                console.log('withdrawAdxEstimateGas err', err)
+                reject(err)
+            })
+    })
+}
+
+export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, prKey } = {}) => {
+
+    let amount = toHexParam(amountToWithdraw * MULT)
+
+    return new Promise((resolve, reject) => {
+        token.methods
+            .transfer(withdrawTo, amount)
+            .send({
+                from: _addr,
+                gasPrice: GAS_PRICE
+            })
+            .then(function (res) {
+                console.log('withdrawAdx res', res)
+                return resolve(res)
+            })
+            .catch((err) => {
+                console.log('withdrawAdx err', err)
+                reject(err)
+            })
+    })
+}

@@ -13,7 +13,7 @@ import { web3 } from 'services/smart-contracts/ADX'
 import { MULT } from 'services/smart-contracts/constants'
 // import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 // import Input from 'react-toolbox/lib/input'
-import { Approve, RegisterAccount, WithdrawEth } from 'components/dashboard/account/forms/transactions'
+import { Approve, RegisterAccount, WithdrawEth, WithdrawAdx } from 'components/dashboard/account/forms/transactions'
 
 import scActions from 'services/smart-contracts/actions'
 const { getAccountStats } = scActions
@@ -109,6 +109,11 @@ class Account extends React.Component {
                     <Row>
                         <Col xs={12} >
                             <WithdrawEth raised primary onSave={this.onSave} />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={12} >
+                            <WithdrawAdx raised primary onSave={this.onSave} />
                         </Col>
                     </Row>
                 </Grid>

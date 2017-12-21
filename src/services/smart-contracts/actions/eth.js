@@ -5,13 +5,24 @@ import { toHexParam } from 'services/smart-contracts/utils'
 // import { registerItem } from 'services/smart-contracts/actions'
 // import { ItemsTypes } from 'constants/itemsTypes'
 
-export const withdrawEthEstimateGas = ({ _addr, amountToWithdraw, prKey } = {}) => {
+export const withdrawEthEstimateGas = ({ _addr, withdrawTo, amountToWithdraw, prKey } = {}) => {
 
-    let amount = toHexParam(amountToWithdraw * MULT)
+    let amount = web3.utils.toWei(amountToWithdraw, 'ether')
 
     return new Promise((resolve, reject) => {
-        // TODO: 
-        resolve(10000)
+        web3.eth.estimateGas({
+            from: _addr,
+            to: withdrawTo,
+            value: amount
+        })
+            .then(function (res) {
+                console.log('withdrawEthEstimateGas res', res)
+                return resolve(res)
+            })
+            .catch((err) => {
+                console.log('withdrawEthEstimateGas err', err)
+                reject(err)
+            })
     })
 }
 
@@ -27,6 +38,7 @@ export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, prKey } = {})
         })
             .then(function (res) {
                 console.log('withdrawEth res', res)
+                return resolve(res)
             })
             .catch((err) => {
                 console.log('withdrawEth err', err)

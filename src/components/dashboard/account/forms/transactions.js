@@ -6,8 +6,9 @@ import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import ApproveStep from './ApproveStep'
 import RegisterStep from './RegisterStep'
 import WithdrawEthStep from './WithdrawEthStep'
+import WithdrawAdxStep from './WithdrawAdxStep'
 import scActions from 'services/smart-contracts/actions'
-const { getAccountStats, approveTokens, registerAccount, withdrawEth } = scActions
+const { getAccountStats, approveTokens, registerAccount, withdrawEth, withdrawAdx } = scActions
 
 const TransactionsStepsWithDialog = NewItemWithDialog(TransactionsSteps)
 
@@ -49,6 +50,25 @@ export const WithdrawEth = (props) =>
         trPages={[{ title: 'ACCOUNT_WITHDRAW_ETH_STEP', page: WithdrawEthStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return withdrawEth(
+                {
+                    _addr: acc._addr,
+                    withdrawTo: transaction.withdrawTo,
+                    amountToWithdraw: transaction.amountToWithdraw,
+                    prKey: acc._temp.privateKey
+                })
+        }}
+    />
+
+export const WithdrawAdx = (props) =>
+    <TransactionsStepsWithDialog
+        {...props}
+        btnLabel="ACCOUNT_WITHDRAW_ADX_BTN"
+        saveBtnLabel='ACC_WITHDRAW_ADX_SAVE_BTN'
+        title="ACCOUNT_WITHDRAW_ADX_TITLE"
+        trId='withdrawAdx'
+        trPages={[{ title: 'ACCOUNT_WITHDRAW_ADX_STEP', page: WithdrawAdxStep }]}
+        saveFn={({ acc, transaction } = {}) => {
+            return withdrawAdx(
                 {
                     _addr: acc._addr,
                     withdrawTo: transaction.withdrawTo,
