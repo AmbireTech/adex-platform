@@ -30,7 +30,10 @@ class ApproveStep extends Component {
     }
 
     componentWillUnmount() {
-        this.estimateGas()
+        //TODO: fix this - use it only on stepper continue
+        if (this.props.transaction.allowance) {
+            this.estimateGas()
+        }
     }
 
     render() {
@@ -40,11 +43,11 @@ class ApproveStep extends Component {
         return (
             <div>
                 <Input
-                    type='number'
+                    type='text'
                     required
                     label={this.props.t('TOKENS_TO_APPROVE')}
-                    name='name'
-                    value={tr.allowance || 0}
+                    name='allowance'
+                    value={tr.allowance || ''}
                     onChange={(value) => this.props.handleChange('allowance', value)}
                 />
             </div>

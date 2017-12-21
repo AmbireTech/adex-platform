@@ -11,9 +11,6 @@ import NewTransactionHoc from './TransactionHoc'
 import Input from 'react-toolbox/lib/input'
 // import { Button, IconButton } from 'react-toolbox/lib/button'
 
-import scActions from 'services/smart-contracts/actions'
-const { withdrawEthEstimateGas } = scActions
-
 class WithdrawEthStep extends Component {
     estimateGas() {
         this.props.actions.updateSpinner(this.props.trId, true)
@@ -31,7 +28,11 @@ class WithdrawEthStep extends Component {
     }
 
     componentWillUnmount() {
-        this.estimateGas()
+        //TODO: only on continue and validate inputs
+        let tr = this.props.transaction
+        if (tr.withdrawTo && tr.amountToWithdraw) {
+            this.estimateGas()
+        }
     }
 
     render() {
@@ -44,16 +45,16 @@ class WithdrawEthStep extends Component {
                     type='text'
                     required
                     label={this.props.t('WITHDRAW_TO')}
-                    name='name'
+                    name='withdrawTo'
                     value={tr.withdrawTo || ''}
                     onChange={(value) => this.props.handleChange('withdrawTo', value)}
                 />
                 <Input
-                    type='number'
+                    type='text'
                     required
                     label={this.props.t('WITHDRAW_AMOUNT')}
-                    name='name'
-                    value={tr.amountToWithdraw || 0}
+                    name='amountToWithdraw'
+                    value={tr.amountToWithdraw || ''}
                     onChange={(value) => this.props.handleChange('amountToWithdraw', value)}
                 />
             </div>

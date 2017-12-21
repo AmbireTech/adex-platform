@@ -5,6 +5,8 @@ import { encrypt } from 'services/crypto/crypto'
 import { registerItem } from 'services/smart-contracts/actions'
 import { ItemsTypes } from 'constants/itemsTypes'
 
+const toBN = web3.utils.toBN
+
 // TODO: check if that values can be changed
 const GAS_LIMIT_APPROVE_0_WHEN_NO_0 = 15136 + 1
 // const GAS_LIMIT_APPROVE_0_WHEN_0 = 30136 + 1
@@ -15,9 +17,18 @@ const GAS_LIMIT = 450000
 // WARNING: hardcoded for now
 const adxReward = 200
 
+const getHexAdx = (amountStr, noMultiply) => {
+    let am = toBN(amountStr)
+    if (!noMultiply) {
+        am = am.mul(toBN(MULT))
+    }
+    let amHex = web3.utils.toHex(am)
+    return amHex
+}
+
 // NOTE: We use hrd coded gas values because they are always same 
 export const approveTokensEstimateGas = ({ _addr, amountToApprove, prKey } = {}) => {
-    let amount = toHexParam(amountToApprove * MULT)
+    let amount = getHexAdx(amountToApprove)
 
     return new Promise((resolve, reject) => {
         token.methods
@@ -25,7 +36,7 @@ export const approveTokensEstimateGas = ({ _addr, amountToApprove, prKey } = {})
             .call()
             .then((allowance) => {
                 let gas
-                if (toHexParam(parseFloat(allowance)) === amount) {
+                if (getHexAdx(allowance, true) === amount) {
                     gas = 0 // no need to change or GAS_LIMIT_APPROVE_0_WHEN_0
                 } else if (allowance !== 0) {
                     gas = GAS_LIMIT_APPROVE_0_WHEN_NO_0 + GAS_LIMIT_APPROVE_OVER_0_WHEN_0
@@ -52,7 +63,7 @@ export const approveTokensEstimateGas = ({ _addr, amountToApprove, prKey } = {})
  */
 export const approveTokens = ({ _addr, amountToApprove, prKey } = {}) => {
 
-    let amount = toHexParam(amountToApprove * MULT)
+    let amount = getHexAdx(amountToApprove)
 
     return new Promise((resolve, reject) => {
         // NOTE: to set new approve first set approve to 0
@@ -61,10 +72,10 @@ export const approveTokens = ({ _addr, amountToApprove, prKey } = {}) => {
             .allowance(_addr, cfg.addr.exchange)
             .call()
             .then((allowance) => {
-                if (toHexParam(parseFloat(allowance)) === amount) {
+                if (getHexAdx(allowance, true) === amount) {
                     return false
                 } else if (allowance !== 0) {
-                    return token.methods.approve(cfg.addr.exchange, 0)
+                    return token.methods.approve(cfg.addr.exchange, getHexAdx(0))
                         .send({ from: _addr, gas: GAS_LIMIT, gasPrice: GAS_PRICE })
                 } else {
                     return true
@@ -91,7 +102,7 @@ export const approveTokens = ({ _addr, amountToApprove, prKey } = {}) => {
 
 export const withdrawAdxEstimateGas = ({ _addr, withdrawTo, amountToWithdraw, prKey } = {}) => {
 
-    let amount = parseFloat(amountToWithdraw, 10) * MULT
+    let amount = getHexAdx(amountToWithdraw)
 
     return new Promise((resolve, reject) => {
         token.methods
@@ -114,7 +125,7 @@ export const withdrawAdxEstimateGas = ({ _addr, withdrawTo, amountToWithdraw, pr
 
 export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, prKey } = {}) => {
 
-    let amount = toHexParam(amountToWithdraw * MULT)
+    let amount = getHexAdx(amountToWithdraw)
 
     return new Promise((resolve, reject) => {
         token.methods
