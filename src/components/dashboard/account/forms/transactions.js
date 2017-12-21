@@ -5,10 +5,18 @@ import TransactionsSteps from './TransactionsSteps'
 import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import ApproveStep from './ApproveStep'
 import RegisterStep from './RegisterStep'
-import WithdrawEthStep from './WithdrawEthStep'
-import WithdrawAdxStep from './WithdrawAdxStep'
+import WithdrawStep from './WithdrawStep'
 import scActions from 'services/smart-contracts/actions'
-const { getAccountStats, approveTokens, registerAccount, withdrawEth, withdrawAdx } = scActions
+const {
+    getAccountStats,
+    approveTokens,
+    registerAccount,
+    withdrawEth,
+    withdrawAdx,
+    withdrawAdxEstimateGas,
+    withdrawEthEstimateGas
+
+} = scActions
 
 const TransactionsStepsWithDialog = NewItemWithDialog(TransactionsSteps)
 
@@ -47,7 +55,7 @@ export const WithdrawEth = (props) =>
         saveBtnLabel='ACC_WITHDRAW_ETH_SAVE_BTN'
         title="ACCOUNT_WITHDRAW_ETH_TITLE"
         trId='withdrawEth'
-        trPages={[{ title: 'ACCOUNT_WITHDRAW_ETH_STEP', page: WithdrawEthStep }]}
+        trPages={[{ title: 'ACCOUNT_WITHDRAW_ETH_STEP', page: WithdrawStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return withdrawEth(
                 {
@@ -57,6 +65,7 @@ export const WithdrawEth = (props) =>
                     prKey: acc._temp.privateKey
                 })
         }}
+        estimateGasFn={withdrawEthEstimateGas}
     />
 
 export const WithdrawAdx = (props) =>
@@ -66,7 +75,7 @@ export const WithdrawAdx = (props) =>
         saveBtnLabel='ACC_WITHDRAW_ADX_SAVE_BTN'
         title="ACCOUNT_WITHDRAW_ADX_TITLE"
         trId='withdrawAdx'
-        trPages={[{ title: 'ACCOUNT_WITHDRAW_ADX_STEP', page: WithdrawAdxStep }]}
+        trPages={[{ title: 'ACCOUNT_WITHDRAW_ADX_STEP', page: WithdrawStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return withdrawAdx(
                 {
@@ -76,4 +85,5 @@ export const WithdrawAdx = (props) =>
                     prKey: acc._temp.privateKey
                 })
         }}
+        estimateGasFn={withdrawAdxEstimateGas}
     />

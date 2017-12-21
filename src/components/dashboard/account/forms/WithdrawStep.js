@@ -12,13 +12,12 @@ import Input from 'react-toolbox/lib/input'
 // import { Button, IconButton } from 'react-toolbox/lib/button'
 
 import scActions from 'services/smart-contracts/actions'
-const { withdrawAdxEstimateGas } = scActions
+const { withdrawEthEstimateGas } = scActions
 
-//TODO: refactor to esc ape code duplication
-class WithdrawAdxStep extends Component {
+class WithdrawEthStep extends Component {
     estimateGas() {
         this.props.actions.updateSpinner(this.props.trId, true)
-        withdrawAdxEstimateGas({
+        this.props.estimateGasFn({
             _addr: this.props.account._addr,
             withdrawTo: this.props.transaction.withdrawTo,
             amountToWithdraw: this.props.transaction.amountToWithdraw,
@@ -44,7 +43,7 @@ class WithdrawAdxStep extends Component {
                 <Input
                     type='text'
                     required
-                    label={this.props.t('WITHDRAW_ADX_TO')}
+                    label={this.props.t('WITHDRAW_TO')}
                     name='name'
                     value={tr.withdrawTo || ''}
                     onChange={(value) => this.props.handleChange('withdrawTo', value)}
@@ -52,7 +51,7 @@ class WithdrawAdxStep extends Component {
                 <Input
                     type='number'
                     required
-                    label={this.props.t('WITHDRAW_ADX_AMOUNT')}
+                    label={this.props.t('WITHDRAW_AMOUNT')}
                     name='name'
                     value={tr.amountToWithdraw || 0}
                     onChange={(value) => this.props.handleChange('amountToWithdraw', value)}
@@ -62,12 +61,13 @@ class WithdrawAdxStep extends Component {
     }
 }
 
-WithdrawAdxStep.propTypes = {
+WithdrawEthStep.propTypes = {
     actions: PropTypes.object.isRequired,
     label: PropTypes.string,
     trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     transaction: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired
+    account: PropTypes.object.isRequired,
+    estimateGasFn: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state, props) {
@@ -84,8 +84,8 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-let WithdrawAdxStepForm = NewTransactionHoc(WithdrawAdxStep)
+let WithdrawEthStepForm = NewTransactionHoc(WithdrawEthStep)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(WithdrawAdxStepForm)
+)(WithdrawEthStepForm)
