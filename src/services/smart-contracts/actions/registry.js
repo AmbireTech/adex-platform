@@ -112,13 +112,18 @@ export const getAccountStats = ({ _addr }) => {
 
         Promise.all(all)
             .then(([balEth, balAdx, allow, isReg, account]) => {
-                return resolve({
-                    balanceEth: balEth,
-                    balanceAdx: balAdx,
-                    allowance: allow,
-                    isRegistered: isReg,
-                    acc: Account.decodeFromWeb3(account)
-                })
+
+                let accStats =
+                    {
+                        balanceEth: balEth,
+                        balanceAdx: balAdx,
+                        allowance: allow,
+                        isRegistered: isReg,
+                        acc: Account.decodeFromWeb3(account)
+                    }
+
+                console.log('accStats', accStats)
+                return resolve(accStats)
             })
             .catch((err) => {
                 console.log('getAccountStats err', err)

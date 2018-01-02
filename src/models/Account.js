@@ -53,6 +53,10 @@ class Account extends Base {
     }
 
     static decodeFromWeb3(accWeb3) {
+        if (!accWeb3) {
+            return {}
+        }
+
         let acc = {}
         acc._name = fromHexParam(accWeb3['accountName'] || accWeb3[3], 'string')
         acc._ipfs = fromHexParam(accWeb3['ipfs'], 'string')

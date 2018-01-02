@@ -17,6 +17,7 @@ import KeyStore from 'services/key-store/keyStore'
 import { web3 } from 'services/smart-contracts/ADX'
 import scActions from 'services/smart-contracts/actions'
 import { encrypt } from 'services/crypto/crypto'
+import { testAcc } from 'services/smart-contracts/ADXTestrpcCfg'
 
 const { setWallet } = scActions
 
@@ -80,8 +81,8 @@ class Step4 extends Component {
                 })
         } else {
             // TEMP: for testing
-            let addr = '0xf4b43f7d08ed9285eb29af7923a87b0244007bb1'
-            let privateKey = '031463a56b0f2b3d76c8726d47091e8c00d00588c56e5dd08be3f5c92bcbaa0c'
+            let addr = testAcc.addr
+            let privateKey = testAcc.prKey
 
             let wallet = setWallet({ prKey: privateKey, addr: addr })
 

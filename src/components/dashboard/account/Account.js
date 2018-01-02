@@ -81,7 +81,7 @@ class Account extends React.Component {
                     </Row>
                     <Row>
                         <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_IS_REGISTERED')}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{stats.isRegistered.toString()}</Col>
+                        <Col xs={12} lg={8} className={theme.textLeft}>{(!!stats.isRegistered).toString()}</Col>
                     </Row>
                     <Row>
                         <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_ETH_BALANCE')}:</Col>
@@ -89,11 +89,11 @@ class Account extends React.Component {
                     </Row>
                     <Row>
                         <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_ADX_BALANCE')}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{stats.balanceAdx / MULT}</Col>
+                        <Col xs={12} lg={8} className={theme.textLeft}>{(stats.balanceAdx || 0) / MULT}</Col>
                     </Row>
                     <Row>
                         <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_ADX_ALLOWANCE')}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{stats.allowance / MULT}</Col>
+                        <Col xs={12} lg={8} className={theme.textLeft}>{(stats.allowance || 0) / MULT}</Col>
                     </Row>
 
                     <Row>

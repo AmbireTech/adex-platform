@@ -3,6 +3,7 @@ import Web3 from 'web3'
 import tokenAbi from './abi/ADXToken'
 import registryAbi from './abi/ADXRegistry'
 import exchangeAbi from './abi/ADXExchange'
+import { testrpcCfg } from './ADXTestrpcCfg'
 
 const mainnetCfg = {
 	node: 'https://parity.wings.ai',
@@ -10,15 +11,6 @@ const mainnetCfg = {
 		token: '0x4470BB87d77b963A013DB939BE332f927f2b992e',
 		registry: '0xeaf503fd64d0cf9278f29775b78c6f31001ffebc',
 		exchange: '0x0f6029ebde2ecd9ab4d60dd5d0a297e9e59bf77a',
-	}
-}
-
-const testrpcCfg = {
-	node: '//192.168.10.23:8545/',
-	addr: {
-		token: '0x8609e07ad09f97a33fd75553afc779849c952dae',
-		registry: '0x897a214ec2124cb1015846ed83f378e56bbe764c',
-		exchange: '0xc3ec25c840079662777e3aa379f79de1c7533220',
 	}
 }
 
