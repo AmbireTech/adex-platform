@@ -43,9 +43,10 @@ export default function NewItemHoc(Decorated) {
             item.objModel = this.props.itemModel
             item.newObj = true
             item = new this.props.itemModel(item).plainObj()
+            let acc = this.props.account
 
             // this.setState({ saved: true }, () => {
-            this.props.actions.addItem(item, this.props.addTo)
+            this.props.actions.addItem(item, this.props.addTo, acc._temp.privateKey, acc._addr)
             this.props.actions.resetNewItem(this.state.item)
 
             // TODO:.....

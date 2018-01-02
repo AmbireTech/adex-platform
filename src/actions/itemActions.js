@@ -1,5 +1,6 @@
 import * as types from 'constants/actionTypes'
 import { addImgFromObjectURL, getFileIpfsHash } from 'services/ipfs/ipfsService'
+import { registerItem } from 'services/smart-contracts/actions/registry'
 
 export function updateNewItem(item, newMeta) {
     return function (dispatch) {
@@ -20,11 +21,12 @@ export function resetNewItem(item) {
     }
 }
 
-export function addItem(item, itemToAddTo) {
+// register item
+export function addItem(item, itemToAddTo, prKey, _addr) {
     item = { ...item }
     return function (dispatch) {
         addImgFromObjectURL(item._meta.img.tempUrl)
-            .then(function (imgIpfs) {
+            .then((imgIpfs) => {
                 // TODO: make function for this and check for ipfs errors
                 item = { ...item }
                 let meta = { ...item._meta }
@@ -36,7 +38,10 @@ export function addItem(item, itemToAddTo) {
                 // console.log('metaIpfs', metaIpfs)
                 item._ipfs = metaIpfs
             })
-            .then(function () {
+            .then(() => {
+                return registerItem({ _type: item._type, _ipfs: 0, _name: item._name, _meta: 0, prKey: prKey, _addr: _addr })
+            })
+            .then(() => {
                 // TODO: Web3 service here
                 dispatch({
                     type: types.ADD_ITEM,
@@ -54,8 +59,8 @@ export function addItem(item, itemToAddTo) {
                     return
                 }
             })
-            .catch(function (e) {
-                console.error(e)
+            .catch((e) => {
+                console.error('addItem err', e)
             })
     }
 }

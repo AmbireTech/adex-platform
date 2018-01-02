@@ -76,7 +76,7 @@ export const registerAccount = ({ _addr, _name = '', _wallet = 0, _ipfs = 0, _si
  * @param {string} _name - name
  * @param {string} _meta - meta
  */
-export const registerItem = ({ _type, _id, _ipfs = 0, _name = '', _meta = 0, prKey, _addr } = {}) => {
+export const registerItem = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0, prKey, _addr } = {}) => {
 
     return new Promise((resolve, reject) => {
 
