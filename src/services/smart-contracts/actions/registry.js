@@ -7,6 +7,10 @@ import Item from 'models/Item'
 const GAS_LIMIT_REGISTER_ACCOUNT = 150000
 const GAS_LIMIT_REGISTER_ITEM = 180000
 
+const logTime = (msg, start, end) => {
+    console.log(msg + ' ' + (end - start) + ' ms')
+}
+
 export const registerAccountEstimateGas = ({ _addr, _name = '', _wallet = 0, _ipfs = 0, _sig = 0, _meta = {}, prKey } = {}) => {
     _name = _name || 'no-name'
 
@@ -81,6 +85,8 @@ export const registerItem = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0,
 
     return new Promise((resolve, reject) => {
 
+        let start = Date.now()
+
         registry.methods
             .registerItem(
             toHexParam(_type),
@@ -90,14 +96,38 @@ export const registerItem = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0,
             toHexParam(_meta)
             )
             .send({ from: _addr, gas: GAS_LIMIT_REGISTER_ITEM, gasPrice: GAS_PRICE })
-            .then((result) => {
-                console.log('registerItem result', result)
-                resolve(result)
+            .on('transactionHash', (hash) => {
+                let end = Date.now()
+                logTime('trHshEnd', start, end)
+                console.log('registerItem transactionHash', hash)
             })
-            .catch((err) => {
+            .on('receipt', (receipt) => {
+                let end = Date.now()
+                logTime('receipt', start, end)
+                console.log('registerItem receipt', receipt)
+            })
+            .on('confirmation', (confirmationNumber, receipt) => {
+                let end = Date.now()
+                logTime('confirmation', start, end)
+                console.log('registerItem confirmation confirmationNumber', confirmationNumber)
+                console.log('registerItem confirmation receipt', receipt)
+                resolve(receipt)
+            })
+            .on('error', (err) => {
+                let end = Date.now()
+                logTime('error', start, end)
                 console.log('registerItem err', err)
                 reject(err)
             })
+
+        // .then((result) => {
+        //     console.log('registerItem result', result)
+        //     resolve(result)
+        // })
+        // .catch((err) => {
+        //     console.log('registerItem err', err)
+        //     reject(err)
+        // })
     })
 }
 
