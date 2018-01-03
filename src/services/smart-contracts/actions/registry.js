@@ -2,6 +2,7 @@ import { registry, web3, token, cfg } from 'services/smart-contracts/ADX'
 import { GAS_PRICE } from 'services/smart-contracts/constants'
 import { toHexParam } from 'services/smart-contracts/utils'
 import Account from 'models/Account'
+import Item from 'models/Item'
 
 const GAS_LIMIT_REGISTER_ACCOUNT = 150000
 const GAS_LIMIT_REGISTER_ITEM = 180000
@@ -127,6 +128,48 @@ export const getAccountStats = ({ _addr }) => {
             })
             .catch((err) => {
                 console.log('getAccountStats err', err)
+                reject(err)
+            })
+    })
+}
+
+export const getAccountItems = ({ _addr, _type }) => {
+    return new Promise((resolve, reject) => {
+        registry.methods.getAccountItems(_addr, _type)
+            .call()
+            .then((result) => {
+                console.log('getAccountItems result', result)
+                resolve(result)
+            })
+            .catch((err) => {
+                console.log('getAccountItems err', err)
+                reject(err)
+            })
+    })
+}
+
+export const getItemsByType = ({ _type, itemsIds = [] } = {}) => {
+    return new Promise((resolve, reject) => {
+        let all = []
+
+        for (let i = 0; i < itemsIds.length; i++) {
+            let id = parseInt(itemsIds[i], 10)
+            all.push(registry.methods.getItem(_type, id).call())
+        }
+
+        Promise.all(all)
+            .then((result) => {
+                console.log('getItemsByType result', result)
+                //TODO: map here?
+                let mapped = result.map((item) => {
+                    return Item.decodeFromWeb3GetItem(item, _type)
+                })
+
+                console.log('getItemsByType mapped', mapped)
+                resolve(result)
+            })
+            .catch((err) => {
+                console.log('getItemsByType err', err)
                 reject(err)
             })
     })

@@ -8,8 +8,16 @@ import ItemsList from './ItemsList'
 import theme from './theme.css'
 import classnames from 'classnames'
 import { ItemTypesNames } from 'constants/itemsTypes'
+import { getAccountItems, getItemsByType } from 'services/smart-contracts/actions/registry'
 
 class Items extends Component {
+    componentWillMount() {
+        getAccountItems({ _addr: this.props.account._addr, _type: this.props.itemsType })
+            .then((res) => {
+                getItemsByType({ _type: this.props.itemsType, itemsIds: res })
+            })
+    }
+
     render() {
         let items = Array.from(Object.values(this.props.items)) || []
 
@@ -34,7 +42,8 @@ Items.propTypes = {
     items: PropTypes.object.isRequired,
     viewModeId: PropTypes.string.isRequired,
     header: PropTypes.string.isRequired,
-    objModel: PropTypes.func.isRequired
+    objModel: PropTypes.func.isRequired,
+    itemsType: PropTypes.number.isRequired
 }
 
 function mapStateToProps(state, props) {

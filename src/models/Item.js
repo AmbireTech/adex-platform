@@ -1,5 +1,7 @@
 // import Helper from './../helpers/miscHelpers'
 // import { ItemsTypes } from './../constants/itemsTypes'
+import { fromHexParam } from 'services/smart-contracts/utils'
+
 import Base from './Base'
 class Item extends Base {
     constructor({ _owner = '', _id, _ipfs = '', _type, _name = '', img = { url: null, ipfs: null, type: null, type_id: null }, description = '', _txTime, _txId, _meta = {}, newObj } = {}) {
@@ -78,6 +80,22 @@ class Item extends Base {
         newItem._meta = newMeta
 
         return newItem
+    }
+
+    // Provide type because the registry.getItem does not return the type
+    static decodeFromWeb3GetItem(itemWeb3, type) {
+        if (!itemWeb3) {
+            return {}
+        }
+
+        let item = {}
+        item._owner = itemWeb3[0]
+        item._ipfs = fromHexParam(itemWeb3[1], 'string')
+        item._name = fromHexParam(itemWeb3[2], 'string')
+        item._metaWeb3 = fromHexParam(itemWeb3[3], 'string')
+        item._type = type
+
+        return item
     }
 }
 
