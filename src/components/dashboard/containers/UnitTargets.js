@@ -220,7 +220,7 @@ function mapStateToProps(state) {
     let memory = state.memory
     return {
         account: persist.account,
-        slots: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
+        slots: [], // Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
         spinner: memory.spinners[ItemsTypes.AdUnit.name]
     };
 }

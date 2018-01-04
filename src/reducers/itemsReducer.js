@@ -1,4 +1,4 @@
-import { ADD_ITEM, DELETE_ITEM, UPDATE_ITEM, REMOVE_ITEM_FROM_ITEM, ADD_ITEM_TO_ITEM } from 'constants/actionTypes' // eslint-disable-line no-unused-vars
+import { ADD_ITEM, DELETE_ITEM, UPDATE_ITEM, REMOVE_ITEM_FROM_ITEM, ADD_ITEM_TO_ITEM, UPDATE_ALL_ITEMS } from 'constants/actionTypes' // eslint-disable-line no-unused-vars
 import initialState from 'store/initialState'
 import Base from 'models/Base'
 import Item from 'models/Item'
@@ -57,6 +57,18 @@ export default function itemsReducer(state = initialState.items, action) {
             newItem = Base.updateObject({ item: newState[collectionId][item._id], meta: { ...action.meta }, objModel: action.objModel })
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
+            return newState
+
+        case UPDATE_ALL_ITEMS:
+            //TEMP:
+            newState = {}
+            let newItems = action.items.reduce((memo, item, index) => {
+                let newItem = { ...item }
+                memo[newItem._id] = newItem
+                return memo
+            }, {})
+
+            newState[action.itemsType] = newItems
             return newState
 
         default:

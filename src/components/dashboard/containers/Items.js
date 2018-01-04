@@ -9,17 +9,33 @@ import theme from './theme.css'
 import classnames from 'classnames'
 import { ItemTypesNames } from 'constants/itemsTypes'
 import { getAccountItems, getItemsByType } from 'services/smart-contracts/actions/registry'
+import Item from 'models/Item'
 
 class Items extends Component {
     componentWillMount() {
+        // TODO: make is as service ot util
         getAccountItems({ _addr: this.props.account._addr, _type: this.props.itemsType })
             .then((res) => {
                 getItemsByType({ _type: this.props.itemsType, itemsIds: res })
+                    .then((web3Items) => {
+                        // get meta from ipfs
+                        //TEMP
+                        let items = web3Items.map((w3i) => {
+                            w3i._meta = w3i._metaWeb3
+                            return new Item(w3i)
+                        })
+
+                        this.props.actions.updateItems({ items: items, itemsType: this.props.itemsType })
+
+                    })
             })
     }
 
     render() {
         let items = Array.from(Object.values(this.props.items)) || []
+        // let items = this.props.items || []
+
+        console.log('items', items)
 
         return (
             <div>

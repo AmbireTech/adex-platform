@@ -23,11 +23,19 @@ export const toHexParam = (param) => {
 }
 
 export const fromHexParam = (param, type) => {
-    if (type === 'number') {
-        return web3Utils.hexToNumber(param)
-    } else if (type === 'string') {
-        return web3Utils.hexToUtf8(param)
-    }
+    let decoded = param
 
-    return param
+    // TEMP: in some cases hexToUtf8 throws Invalid UTF-8 detected ...
+    try {
+        if (type === 'number') {
+            decoded = web3Utils.hexToNumber(param)
+        } else if (type === 'string') {
+            decoded = web3Utils.hexToUtf8(param)
+        }
+    } catch (err) {
+        console.log('fromHexParam err', err)
+    }
+    finally {
+        return decoded
+    }
 }

@@ -84,9 +84,7 @@ export const registerAccount = ({ _addr, _name = '', _wallet = 0, _ipfs = 0, _si
 export const registerItem = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0, prKey, _addr } = {}) => {
 
     return new Promise((resolve, reject) => {
-
         let start = Date.now()
-
         registry.methods
             .registerItem(
             toHexParam(_type),
@@ -99,19 +97,20 @@ export const registerItem = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0,
             .on('transactionHash', (hash) => {
                 let end = Date.now()
                 logTime('trHshEnd', start, end)
-                console.log('registerItem transactionHash', hash)
-            })
-            .on('receipt', (receipt) => {
-                let end = Date.now()
-                logTime('receipt', start, end)
-                console.log('registerItem receipt', receipt)
+                // console.log('registerItem transactionHash', hash)
             })
             .on('confirmation', (confirmationNumber, receipt) => {
                 let end = Date.now()
                 logTime('confirmation', start, end)
                 console.log('registerItem confirmation confirmationNumber', confirmationNumber)
                 console.log('registerItem confirmation receipt', receipt)
+
                 resolve(receipt)
+            })
+            .on('receipt', (receipt) => {
+                let end = Date.now()
+                logTime('receipt', start, end)
+                console.log('registerItem receipt', receipt)
             })
             .on('error', (err) => {
                 let end = Date.now()
@@ -191,12 +190,12 @@ export const getItemsByType = ({ _type, itemsIds = [] } = {}) => {
             .then((result) => {
                 console.log('getItemsByType result', result)
                 //TODO: map here?
-                let mapped = result.map((item) => {
-                    return Item.decodeFromWeb3GetItem(item, _type)
+                let mapped = result.map((item, index) => {
+                    return Item.decodeFromWeb3GetItem(item, _type, parseInt(itemsIds[index], 10))
                 })
 
                 console.log('getItemsByType mapped', mapped)
-                resolve(result)
+                resolve(mapped)
             })
             .catch((err) => {
                 console.log('getItemsByType err', err)

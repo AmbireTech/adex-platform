@@ -127,3 +127,13 @@ export function updateCurrentItem(item, newMeta) {
         })
     }
 }
+
+export const updateItems = ({ items, itemsType }) => {
+    return (dispatch) => {
+        return dispatch({
+            type: types.UPDATE_ALL_ITEMS,
+            items: items,
+            itemsType: itemsType
+        })
+    }
+}

@@ -82,8 +82,8 @@ class Item extends Base {
         return newItem
     }
 
-    // Provide type because the registry.getItem does not return the type
-    static decodeFromWeb3GetItem(itemWeb3, type) {
+    // Provide type because registry.getItem does not return the type
+    static decodeFromWeb3GetItem(itemWeb3, type, id) {
         if (!itemWeb3) {
             return {}
         }
@@ -94,8 +94,16 @@ class Item extends Base {
         item._name = fromHexParam(itemWeb3[2], 'string')
         item._metaWeb3 = fromHexParam(itemWeb3[3], 'string')
         item._type = type
+        item._id = id
 
+        // NOTE: return jus data from web3, then we should map the data for the meta from ipfs
         return item
+
+        // TODO: get the meta from ipfs but not here
+        // e.g:
+        // item._meta =  ... ipfs.getMeta(item._ipfs)
+        // let item = new Item(item).plainObj()
+        // return item
     }
 }
 
