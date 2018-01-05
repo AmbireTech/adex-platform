@@ -156,7 +156,7 @@ export class UnitTargets extends Component {
                     </Col>
                 </Row>
                 {
-                    meta.targets.map((target) => {
+                    (meta.targets || []).map((target) => {
                         return (
                             <Row key={target.name} className={theme.targetRow}>
                                 <Col lg={7}>

@@ -1,5 +1,9 @@
 
 import countryData from 'country-data'
+import AdSlot from 'models/AdSlot'
+import AdUnit from 'models/AdUnit'
+import Campaign from 'models/Campaign'
+import Channel from 'models/Channel'
 
 let allCountries = countryData.countries.all.map((cnt) => {
   return {
@@ -18,10 +22,10 @@ let allRegions = Object.keys(countryData.regions).map((key) => {
 let allLocations = allRegions.concat(allCountries)
 // console.log('alllocations', allLocations)
 export const ItemsTypes = {
-  AdUnit: { id: 0, name: 'AdUnit' },
-  AdSlot: { id: 1, name: 'AdSlot' },
-  Campaign: { id: 2, name: 'Campaign' },
-  Channel: { id: 3, name: 'Channel' }
+  AdUnit: { id: 0, name: 'AdUnit', model: AdUnit },
+  AdSlot: { id: 1, name: 'AdSlot', model: AdSlot },
+  Campaign: { id: 2, name: 'Campaign', model: Campaign },
+  Channel: { id: 3, name: 'Channel', model: Channel }
 }
 
 function getItemTypesNames() {
@@ -34,7 +38,18 @@ function getItemTypesNames() {
   return names
 }
 
+function itemsModelsById() {
+  let types = {}
+  Object.keys(ItemsTypes).map((key) => {
+    let type = ItemsTypes[key]
+    types[type.id] = type.model
+  })
+
+  return types
+}
+
 export const ItemTypesNames = getItemTypesNames()
+export const ItemModelsByType = itemsModelsById()
 
 export const Sizes = [
   { value: '300x300', label: '300 x 300 px' },

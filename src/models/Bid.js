@@ -16,6 +16,7 @@ export const BidStateNames = (() => {
     }, {})
 })()
 
+// TODO: extend Base?
 class Bid {
     constructor({
         id = null,

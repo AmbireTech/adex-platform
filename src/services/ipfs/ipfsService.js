@@ -2,11 +2,12 @@
 // import ipfsAPI from 'ipfs-api'
 
 // const ipfs = ipfsAPI('localhost', '5001')
+import Helper from 'helpers/miscHelpers'
 
 export function getFileIpfsHash(file) {
     return new Promise(function (resolve, reject) {
 
-        return resolve('temp-no-ipfs')
+        return resolve(Helper.getRndHash32('tempnoipfs'))
         /*
         let buffer = Buffer.from(file)
         ipfs.files.add(buffer)
@@ -24,7 +25,7 @@ export function getFileIpfsHash(file) {
 
 export function addImgFromObjectURL(objectUrl) {
     return new Promise(function (resolve, reject) {
-        return resolve('temp-no-ipfs')
+        return resolve(Helper.getRndHash32('tempnoipfs'))
         /*
                var xhr = new XMLHttpRequest()
                // console.log('objectUrl from addImgFromObjectURL -> ', objectUrl)

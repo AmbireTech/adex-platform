@@ -1,10 +1,17 @@
 // import Helper from './../helpers/miscHelpers'
-// import { ItemsTypes } from './../constants/itemsTypes'
+import { ItemModelsByType } from 'constants/itemsTypes'
 import { fromHexParam } from 'services/smart-contracts/utils'
 
 import Base from './Base'
+
+//TEMP
+export const itemModelByType = (type) => {
+
+}
+
+
 class Item extends Base {
-    constructor({ _owner = '', _id, _ipfs = '', _type, _name = '', img = { url: null, ipfs: null, type: null, type_id: null }, description = '', _txTime, _txId, _meta = {}, newObj } = {}) {
+    constructor({ _owner = '', _id = '', _ipfs = '', _type, _name = '', img = { url: null, ipfs: null, type: null, type_id: null }, description = '', _txTime, _txId, _meta = {}, newObj } = {}) {
         super({ _name: _name, _ipfs: _ipfs, _txTime, _txId, _meta: _meta, newObj: newObj })
 
         this.id = _id
@@ -20,7 +27,7 @@ class Item extends Base {
     }
 
     get id() { return this._id }
-    set id(value) { this._id = value || this.txId }
+    set id(value) { this._id = value } // || this.txId }
     get owner() { return this._owner }
     get type() { return this._type }
 
@@ -104,6 +111,16 @@ class Item extends Base {
         // item._meta =  ... ipfs.getMeta(item._ipfs)
         // let item = new Item(item).plainObj()
         // return item
+    }
+
+    static syncWithWeb3(storeItem, web3Item) {
+        //TODO: use update object (Base)
+        let item = { ...storeItem }
+        item._id = web3Item._id
+        item._web3Synced = true
+        let synced = new (ItemModelsByType[item._type])(item).plainObj()
+
+        return synced
     }
 }
 

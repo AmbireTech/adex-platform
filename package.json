@@ -32,7 +32,7 @@
     "fs-extra": "3.0.1",
     "history": "^4.7.2",
     "html-webpack-plugin": "2.29.0",
-    "ipfs-api": "^14.3.5",
+    "ipfs-api": "^17.2.6",
     "jest": "20.0.4",
     "lodash.merge": "^4.6.0",
     "moment": "^2.18.1",

@@ -100,7 +100,7 @@ export class UnitSlots extends Component {
         let item = this.props.item
         let meta = item._meta
         let t = this.props.t
-        let slots = this.props.slots.filter((slot) => {
+        let slots = (this.props.slots || []).filter((slot) => {
             return slot._meta.adType === item._meta.adType && slot._meta.size === item._meta.size
         })
 

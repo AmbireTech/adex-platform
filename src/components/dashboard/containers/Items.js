@@ -11,6 +11,20 @@ import { ItemTypesNames } from 'constants/itemsTypes'
 import { getAccountItems, getItemsByType } from 'services/smart-contracts/actions/registry'
 import Item from 'models/Item'
 
+// TEMP
+const syncItems = (web3Items, storeItems) => {
+    let synced = {}
+
+    for (let index = 0; index < web3Items.length; index++) {
+        let web3Item = web3Items[index]
+        let storeItem = storeItems[web3Item._id] || storeItems[web3Item._ipfs]
+
+        if (storeItem) {
+            Item.syncWithWeb3(storeItem, web3Item)
+        }
+    }
+}
+
 class Items extends Component {
     componentWillMount() {
         // TODO: make is as service ot util
@@ -25,6 +39,9 @@ class Items extends Component {
                             return new Item(w3i)
                         })
 
+                        //TODO: !!
+                        syncItems(items, this.props.items)
+
                         this.props.actions.updateItems({ items: items, itemsType: this.props.itemsType })
 
                     })
@@ -32,7 +49,8 @@ class Items extends Component {
     }
 
     render() {
-        let items = Array.from(Object.values(this.props.items)) || []
+        console.log('this.props.items', this.props.items)
+        let items = Array.from(Object.values(this.props.items || {})) || []
         // let items = this.props.items || []
 
         console.log('items', items)

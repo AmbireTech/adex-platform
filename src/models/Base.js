@@ -5,10 +5,10 @@ import Helper from 'helpers/miscHelpers'
  * and use validations with setters but keep plain object in redux store
  */
 class Base {
-    constructor({ _name = '', _ipfs = '', _txTime, _txId, _meta = {}, newObj } = {}) {
+    constructor({ _name = '', _ipfs = '', _txTime, _txId, _meta = {}, newObj, _syncedWeb3 = false, _syncedIpfs = false } = {}) {
         let name = _name || _meta.fullName || ''
         this.name = name
-        this._ipfs = _ipfs
+        this.ipfs = _ipfs
 
         this._meta = {}
 
@@ -21,12 +21,14 @@ class Base {
         this.fullName = _meta.fullName || _name
         this.createdOn = _meta.createdOn || this.txTime
         this.modifiedOn = _meta.modifiedOn || this.txTime
+        this.syncedWeb3 = _syncedWeb3
+        this.syncedIpfs = _syncedIpfs
     }
 
     /**
      * NOTE: We use this meta prop to track the items when they are synced with web3 and ipfs.
      * The UI is updated before the sync and Id's are unknown until the sync
-     * TODO: Use txId from web3 submit (Temp helper guid)
+     * TODO: Use ipfs to track not synced items (Temp helper guid)
      */
     get txId() { return this._txId }
     set txId(value) { this._txId = value }
@@ -34,10 +36,17 @@ class Base {
     get txTime() { return this._txTime }
     set txTime(value) { this._txTime = value }
 
+    get syncedWeb3() { return this._syncedWeb3 }
+    set syncedWeb3(value) { this._syncedWeb3 = value }
+
+    get syncedIpfse() { return this._syncedIpfs }
+    set syncedIpfs(value) { this._syncedIpfs = value }
+
     get name() { return this._name }
     set name(value) { this._name = Helper.slugify(value) }
 
-    get ipfs() { return this._ipfs }; set ipfs(value) { this._ipfs = value };
+    get ipfs() { return this._ipfs };
+    set ipfs(value) { this._ipfs = value }
 
     get fullName() { return this._meta.fullName }
     set fullName(value) { this._meta.fullName = value }
@@ -101,7 +110,7 @@ class Base {
                 }
             }
         }
-        
+
         // TODO: check new item for setter
         for (let key in ownProps) {
 
