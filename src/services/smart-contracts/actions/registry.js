@@ -3,18 +3,29 @@ import { GAS_PRICE } from 'services/smart-contracts/constants'
 import { toHexParam } from 'services/smart-contracts/utils'
 import Account from 'models/Account'
 import Item from 'models/Item'
+import { ItemTypesNames } from 'constants/itemsTypes'
+import Helper from 'helpers/miscHelpers'
 
-const GAS_LIMIT_REGISTER_ACCOUNT = 150000
+const GAS_LIMIT_REGISTER_ACCOUNT = 180000
 const GAS_LIMIT_REGISTER_ITEM = 180000
 
 const logTime = (msg, start, end) => {
     console.log(msg + ' ' + (end - start) + ' ms')
 }
 
+const getDefaultItemName = (itemType) => {
+    let typeName = ItemTypesNames[itemType] || ''
+    let slugified = Helper.slugify('default ' + typeName + ' name')
+    return slugified
+}
+
 export const registerAccountEstimateGas = ({ _addr, _name = '', _wallet = 0, _ipfs = 0, _sig = 0, _meta = {}, prKey } = {}) => {
     _name = _name || 'no-name'
 
     return new Promise((resolve, reject) => {
+        resolve(GAS_LIMIT_REGISTER_ACCOUNT) // TEMP use this because of estimateGas bug
+
+        /*
         registry.methods.register(
             toHexParam(_name),
             _addr, //_wallet,
@@ -31,9 +42,9 @@ export const registerAccountEstimateGas = ({ _addr, _name = '', _wallet = 0, _ip
                 console.log('registerAccountEstimateGas err', err)
                 return reject(err)
             })
+            */
     })
 }
-
 
 // NOTE: Actions accepts decoded to ascii string values from models
 
@@ -46,7 +57,7 @@ export const registerAccountEstimateGas = ({ _addr, _name = '', _wallet = 0, _ip
  * @param {string} _meta - meta
  * @param {string} prKey - account private key (optional)
  */
-export const registerAccount = ({ _addr, _name = '', _wallet = 0, _ipfs = 0, _sig = 0, _meta = {}, prKey } = {}) => {
+export const registerAccount = ({ _addr, _name = '', _wallet = 0, _ipfs = 0, _sig = 0, _meta = {}, prKey, gas } = {}) => {
 
     // TODO: fix prKey and addr flow
     // NOTE: Temp addr is provide because in development mode the address and the private Key of eb3 wallet does not match
@@ -61,7 +72,7 @@ export const registerAccount = ({ _addr, _name = '', _wallet = 0, _ipfs = 0, _si
             toHexParam(_sig),
             toHexParam(_meta)
         )
-            .send({ from: _addr, gas: GAS_LIMIT_REGISTER_ACCOUNT, gasPrice: GAS_PRICE })
+            .send({ from: _addr, gas: gas || GAS_LIMIT_REGISTER_ACCOUNT, gasPrice: GAS_PRICE })
             .then((result) => {
                 console.log('registerAccount result', result)
                 return resolve(result)
@@ -81,8 +92,8 @@ export const registerAccount = ({ _addr, _name = '', _wallet = 0, _ipfs = 0, _si
  * @param {string} _name - name
  * @param {string} _meta - meta
  */
-export const registerItem = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0, prKey, _addr } = {}) => {
-
+export const registerItem = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0, prKey, _addr, gas } = {}) => {
+    _name = _name || getDefaultItemName(_name)
     return new Promise((resolve, reject) => {
         let start = Date.now()
         registry.methods
@@ -91,7 +102,7 @@ export const registerItem = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0,
             toHexParam(_id),
             toHexParam(_ipfs),
             toHexParam(_name),
-            toHexParam(_meta)
+            toHexParam('')
             )
             .send({ from: _addr, gas: GAS_LIMIT_REGISTER_ITEM, gasPrice: GAS_PRICE })
             .on('transactionHash', (hash) => {
@@ -131,8 +142,10 @@ export const registerItem = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0,
 }
 
 export const registerItemEstimateGas = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0, prKey, _addr } = {}) => {
-
+    _name = _name || getDefaultItemName(_name)
     return new Promise((resolve, reject) => {
+        resolve(GAS_LIMIT_REGISTER_ITEM) // TEMP use this because of estimateGas bug
+        /*
         let start = Date.now()
         registry.methods
             .registerItem(
@@ -151,10 +164,9 @@ export const registerItemEstimateGas = ({ _type, _id = 0, _ipfs = 0, _name = '',
                 console.log('registerItemEstimateGas err', err)
                 reject(err)
             })
+        */
     })
 }
-
-
 
 export const getAccountStats = ({ _addr }) => {
     return new Promise((resolve, reject) => {

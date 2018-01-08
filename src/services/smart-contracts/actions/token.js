@@ -61,7 +61,7 @@ export const approveTokensEstimateGas = ({ _addr, amountToApprove, prKey } = {})
  * @param {string} _peer - meta
  * @param {string} prKey - private key
  */
-export const approveTokens = ({ _addr, amountToApprove, prKey } = {}) => {
+export const approveTokens = ({ _addr, amountToApprove, prKey, gas } = {}) => {
 
     let amount = getHexAdx(amountToApprove)
 
@@ -76,7 +76,7 @@ export const approveTokens = ({ _addr, amountToApprove, prKey } = {}) => {
                     return false
                 } else if (allowance !== 0) {
                     return token.methods.approve(cfg.addr.exchange, getHexAdx(0))
-                        .send({ from: _addr, gas: GAS_LIMIT, gasPrice: GAS_PRICE })
+                        .send({ from: _addr, gas: gas || GAS_LIMIT, gasPrice: GAS_PRICE })
                 } else {
                     return true
                 }
@@ -84,7 +84,7 @@ export const approveTokens = ({ _addr, amountToApprove, prKey } = {}) => {
             .then((goApprove) => {
                 if (goApprove) {
                     return token.methods.approve(cfg.addr.exchange, amount)
-                        .send({ from: _addr, gas: GAS_LIMIT, gasPrice: GAS_PRICE })
+                        .send({ from: _addr, gas: gas || GAS_LIMIT, gasPrice: GAS_PRICE })
                 }
 
                 return amountToApprove * MULT
@@ -123,7 +123,7 @@ export const withdrawAdxEstimateGas = ({ _addr, withdrawTo, amountToWithdraw, pr
     })
 }
 
-export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, prKey } = {}) => {
+export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, prKey, gas } = {}) => {
 
     let amount = getHexAdx(amountToWithdraw)
 
@@ -132,7 +132,8 @@ export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, prKey } = {})
             .transfer(withdrawTo, amount)
             .send({
                 from: _addr,
-                gasPrice: GAS_PRICE
+                gasPrice: GAS_PRICE,
+                gas: gas || GAS_LIMIT
             })
             .then(function (res) {
                 console.log('withdrawAdx res', res)

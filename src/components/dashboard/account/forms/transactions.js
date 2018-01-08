@@ -31,7 +31,7 @@ export const Approve = (props) =>
         //TODO: refactor the stepper. This is not cool :)
         // Until the refactor we will use mapping function from account and transaction hoc to specific sc function
         saveFn={({ acc, transaction } = {}) => {
-            return approveTokens({ _addr: acc._addr, amountToApprove: transaction.allowance })
+            return approveTokens({ _addr: acc._addr, amountToApprove: transaction.allowance, gas: transaction.gas })
         }}
     />
 
@@ -44,7 +44,7 @@ export const RegisterAccount = (props) =>
         trId='registerAccount'
         trPages={[{ title: 'ACCOUNT_REGISTER_ACC_STEP', page: RegisterStep }]}
         saveFn={({ acc, transaction } = {}) => {
-            return registerAccount({ _addr: acc._addr, _name: transaction.name, prKey: acc._temp.privateKey })
+            return registerAccount({ _addr: acc._addr, _name: transaction.name, prKey: acc._temp.privateKey, gas: transaction.gas })
         }}
     />
 
@@ -62,7 +62,8 @@ export const WithdrawEth = (props) =>
                     _addr: acc._addr,
                     withdrawTo: transaction.withdrawTo,
                     amountToWithdraw: transaction.amountToWithdraw,
-                    prKey: acc._temp.privateKey
+                    prKey: acc._temp.privateKey,
+                    gas: transaction.gas
                 })
         }}
         estimateGasFn={withdrawEthEstimateGas}
@@ -82,7 +83,8 @@ export const WithdrawAdx = (props) =>
                     _addr: acc._addr,
                     withdrawTo: transaction.withdrawTo,
                     amountToWithdraw: transaction.amountToWithdraw,
-                    prKey: acc._temp.privateKey
+                    prKey: acc._temp.privateKey,
+                    gas: transaction.gas
                 })
         }}
         estimateGasFn={withdrawAdxEstimateGas}

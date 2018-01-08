@@ -35,11 +35,11 @@ class NewItemFormPreview extends Component {
         this.props.actions.updateSpinner(SPINNER_ID, true)
         registerItemEstimateGas({
             ...this.props.item,
+            _ipfs: 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF',// dummy addr for estimation
             _addr: this.props.account._addr,
             prKey: this.props.account._temp.privateKey
         })
             .then((res) => {
-                console.log('estimateGas', res)
                 this.props.handleChange('to', res)
                 this.props.actions.updateSpinner(SPINNER_ID, false)
             })

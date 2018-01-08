@@ -39,7 +39,7 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
                 item._ipfs = metaIpfs
             })
             .then(() => {
-                return registerItem({ _type: item._type, _ipfs: item._ipfs, _name: item._name, _meta: 0, prKey: prKey, _addr: _addr })
+                return registerItem({ _type: item._type, _ipfs: item._ipfs, _name: item._name, _meta: 0, prKey: prKey, _addr: _addr, gas: item._meta.to })
             })
             .then(() => {
                 // TODO: Web3 service here

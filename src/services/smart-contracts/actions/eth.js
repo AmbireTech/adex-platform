@@ -4,6 +4,7 @@ import { toHexParam } from 'services/smart-contracts/utils'
 // import { encrypt } from 'services/crypto/crypto'
 // import { registerItem } from 'services/smart-contracts/actions'
 // import { ItemsTypes } from 'constants/itemsTypes'
+const GAS_LIMIT = 21000
 
 export const withdrawEthEstimateGas = ({ _addr, withdrawTo, amountToWithdraw, prKey } = {}) => {
 
@@ -26,7 +27,7 @@ export const withdrawEthEstimateGas = ({ _addr, withdrawTo, amountToWithdraw, pr
     })
 }
 
-export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, prKey } = {}) => {
+export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, prKey, gas } = {}) => {
 
     let amount = web3.utils.toWei(amountToWithdraw, 'ether')
 
@@ -34,7 +35,8 @@ export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, prKey } = {})
         web3.eth.sendTransaction({
             from: _addr,
             to: withdrawTo,
-            value: amount
+            value: amount,
+            gas: gas || GAS_LIMIT
         })
             .then(function (res) {
                 console.log('withdrawEth res', res)
