@@ -130,6 +130,32 @@ export const registerItem = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0,
     })
 }
 
+export const registerItemEstimateGas = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0, prKey, _addr } = {}) => {
+
+    return new Promise((resolve, reject) => {
+        let start = Date.now()
+        registry.methods
+            .registerItem(
+            toHexParam(_type),
+            toHexParam(_id),
+            toHexParam(_ipfs),
+            toHexParam(_name),
+            toHexParam('')// TODO: Decide what we will keep as meta in web3 obj - short meta or nothing
+            )
+            .estimateGas({ from: _addr })
+            .then((result) => {
+                console.log('registerItemEstimateGas result', result)
+                resolve(result)
+            })
+            .catch((err) => {
+                console.log('registerItemEstimateGas err', err)
+                reject(err)
+            })
+    })
+}
+
+
+
 export const getAccountStats = ({ _addr }) => {
     return new Promise((resolve, reject) => {
         let balanceEth = web3.eth.getBalance(_addr)

@@ -140,6 +140,7 @@ class Base {
         return plainObj
     }
 
+    // TODO: remove this
     static updateMeta(item, meta, dirtyProps) {
         let newItem = { ...item }
         let newMeta = { ...newItem._meta }

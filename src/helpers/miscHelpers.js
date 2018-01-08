@@ -41,7 +41,9 @@ class Helper {
 
     slugify(str) {
         if (!str || (typeof str !== 'string')) return ''
-        return slug(unidecode(str), { lower: true }).substring(0, 32);
+        let slugified = slug(unidecode(str), { lower: true }).substring(0, 32)
+        console.log('slugified', slugified)
+        return slugified
     }
 
     geRandomMoment(maxDaysPast, maxDaysAhead, initialMoment) {

@@ -1,6 +1,7 @@
 import { UPDATE_NEW_ITEM, RESET_NEW_ITEM } from 'constants/actionTypes'
 import initialState from 'store/initialState'
 import Base from 'models/Base'
+import { ItemModelsByType } from 'constants/itemsTypes'
 
 export default function newItemsReducer(state = initialState.newItem, action) {
 
@@ -10,7 +11,9 @@ export default function newItemsReducer(state = initialState.newItem, action) {
     switch (action.type) {
         case UPDATE_NEW_ITEM:
             newState = { ...state }
-            newItem = Base.updateMeta(action.item, action.meta)
+            newItem = { ...action.item }
+            newItem._name = '' // temp bugfix
+            newItem = Base.updateObject({ item: newItem, meta: { ...action.meta }, objModel: ItemModelsByType[newItem._type] })
             newState[action.item._type] = newItem
 
             return newState
