@@ -13,16 +13,17 @@ import ButtonMenu from 'components/common/button_menu/ButtonMenu'
 import Translate from 'components/translate/Translate'
 import { Button, IconButton } from 'react-toolbox/lib/button'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
-
+import GasPrice from 'components/dashboard/account/GasPrice'
+import ChangeLang from 'components/translate/ChangeLang'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
-// import ChangeLang from 'components/translate/ChangeLang'
 
 class TopNav extends Component {
 
   render() {
     return (
       <AppBar title={this.props.side} onLeftIconClick={() => alert('test')} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={true} >
+        <GasPrice />
         <Navigation type='horizontal'>
           {/* At the moment we use translations only for proper items properties display names */}
           {/* <ChangeLang /> */}
