@@ -11,8 +11,7 @@ import Dropdown from 'react-toolbox/lib/dropdown'
 import Translate from 'components/translate/Translate'
 import { web3 } from 'services/smart-contracts/ADX'
 import { getCurrentGasPrice } from 'services/smart-contracts/actions/eth'
-
-const DEFAULT_GAS_PRICE = 20000000000 // 20GWei
+import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
 
 // TODO: translations
 const pricesMap = [

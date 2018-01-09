@@ -11,7 +11,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import numeral from 'numeral'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
-import { GAS_PRICE } from 'services/smart-contracts/constants'
+import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
 import { web3 } from 'services/smart-contracts/ADX'
 
 import scActions from 'services/smart-contracts/actions'
@@ -32,9 +32,10 @@ class TransactionPreview extends Component {
         let transaction = this.props.transaction || {}
         let t = this.props.t
         let fee
+        let gasPrice = this.props.account._settings.gasPrice ? this.props.account._settings.gasPrice : DEFAULT_GAS_PRICE
 
         if (transaction.gas) {
-            fee = web3.utils.fromWei((transaction.gas * GAS_PRICE).toString(), 'ether')
+            fee = web3.utils.fromWei((transaction.gas * gasPrice).toString(), 'ether')
         }
 
         return (
@@ -51,7 +52,7 @@ class TransactionPreview extends Component {
                                 .map(key => {
                                     let keyName = key
                                     let value = transaction[key]
-                                    
+
                                     return (
                                         <Row key={key}>
                                             <Col xs={12} lg={4} className={'theme.textRight'}>{this.props.t(keyName, { isProp: true })}:</Col>
@@ -92,7 +93,8 @@ function mapStateToProps(state, props) {
     return {
         transaction: memory.newTransactions[props.trId] || {},
         trId: props.trId,
-        spinner: memory.spinners[props.trId]
+        spinner: memory.spinners[props.trId],
+        account: persist.account
     }
 }
 

@@ -12,7 +12,7 @@ import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
 import Item from 'models/Item'
 import Tooltip from 'react-toolbox/lib/tooltip'
-import { GAS_PRICE } from 'services/smart-contracts/constants'
+import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
 import { web3 } from 'services/smart-contracts/ADX'
 
 import scActions from 'services/smart-contracts/actions'
@@ -53,10 +53,11 @@ class NewItemFormPreview extends Component {
         let meta = item._meta || {}
 
         let fee
+        let gasPrice = this.props.account._settings.gasPrice ? this.props.account._settings.gasPrice : DEFAULT_GAS_PRICE
 
         // TODO: temp use to as gas param
         if (meta.to) {
-            fee = web3.utils.fromWei((meta.to * GAS_PRICE).toString(), 'ether')
+            fee = web3.utils.fromWei((meta.to * gasPrice).toString(), 'ether')
         }
 
         return (
