@@ -10,6 +10,8 @@ import classnames from 'classnames'
 import { ItemTypesNames } from 'constants/itemsTypes'
 import { getAccountItems, getItemsByType } from 'services/smart-contracts/actions/registry'
 import Item from 'models/Item'
+import Base from 'models/Base'
+import { ItemModelsByType } from 'constants/itemsTypes'
 
 // TEMP
 const syncItems = (web3Items, storeItems) => {
@@ -25,14 +27,32 @@ const syncItems = (web3Items, storeItems) => {
     }
 }
 
+const syncItemsIpfsMeta = (items, metas) => {
+    if (!items || !metas || (items.length !== metas.length)) throw ('Sync ipfs meta err')
+
+    let synced = []
+    for (let index = 0; index < items.length; index++) {
+        let item = items[index]
+        let meta = metas[index]
+        //TODO: add ipf synced prop
+
+        let updated = Base.updateObject({ item: item, meta: { ...meta }, objModel: ItemModelsByType[item._type] })
+        synced.push(updated)
+    }
+
+    return synced
+}
+
 class Items extends Component {
     componentWillMount() {
-        // TODO: make is as service ot util
+        // TODO: make is as service or util
+
+        let web3ItemsMemo
+
         getAccountItems({ _addr: this.props.account._addr, _type: this.props.itemsType })
             .then((res) => {
                 getItemsByType({ _type: this.props.itemsType, itemsIds: res })
                     .then((web3Items) => {
-                        // get meta from ipfs
                         //TEMP
                         let items = web3Items.map((w3i) => {
                             w3i._meta = w3i._metaWeb3
@@ -40,10 +60,35 @@ class Items extends Component {
                         })
 
                         //TODO: !!
-                        syncItems(items, this.props.items)
+                        // syncItems(items, this.props.items)
+                        web3ItemsMemo = items
+                        return items
+                    })
+                    .then((items) => {
+                        let allMetas = []
+                        for (let index = 0; index < items.length; index++) {
+                            const ipfs = items[index]._ipfs
+                            allMetas.push(fetch(Base.getIpfsMetaUrl(ipfs)))
+                        }
 
-                        this.props.actions.updateItems({ items: items, itemsType: this.props.itemsType })
+                        return Promise.all(allMetas)
+                    })
+                    .then((metaas) => {
+                        let mapped = metaas.map((res) => {
+                            let body = res.json()
 
+                            return body
+                        })
+
+                        return Promise.all(mapped)
+                    })
+                    .then((results) => {
+                        let updated = syncItemsIpfsMeta(web3ItemsMemo, results)
+
+                        return updated
+                    })
+                    .then((synced) => {
+                        this.props.actions.updateItems({ items: synced, itemsType: this.props.itemsType })
                     })
             })
     }

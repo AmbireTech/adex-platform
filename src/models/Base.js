@@ -84,6 +84,12 @@ class Base {
         }
     }
 
+    static getIpfsMetaUrl = ipfs => {
+        let url = `http://localhost:8080/ipfs/${ipfs}`
+
+        return url
+    }
+
     // TODO: make it recursive for all props
     static updateObject({ item = {}, ownProps = {}, meta = {}, objModel = Base, dirtyProps } = {}) {
 
