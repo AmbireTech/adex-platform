@@ -1,6 +1,6 @@
 // import Helper from './../helpers/miscHelpers'
 import { ItemModelsByType } from 'constants/itemsTypes'
-import { fromHexParam } from 'services/smart-contracts/utils'
+import { fromHexParam, fromIpfsHex } from 'services/smart-contracts/utils'
 
 import Base from './Base'
 
@@ -91,7 +91,7 @@ class Item extends Base {
 
         let item = {}
         item._owner = itemWeb3[0]
-        item._ipfs = fromHexParam(itemWeb3[1], 'string')
+        item._ipfs = fromIpfsHex(itemWeb3[1])
         item._name = fromHexParam(itemWeb3[2], 'string')
         item._metaWeb3 = fromHexParam(itemWeb3[3], 'string')
         item._type = type

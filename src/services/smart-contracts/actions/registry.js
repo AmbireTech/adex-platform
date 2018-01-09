@@ -1,13 +1,14 @@
 import { registry, web3, token, cfg } from 'services/smart-contracts/ADX'
 import { GAS_PRICE } from 'services/smart-contracts/constants'
-import { toHexParam } from 'services/smart-contracts/utils'
+import { toHexParam, ipfsHashToHex, fromIpfsHex } from 'services/smart-contracts/utils'
 import Account from 'models/Account'
 import Item from 'models/Item'
 import { ItemTypesNames } from 'constants/itemsTypes'
 import Helper from 'helpers/miscHelpers'
+import bs58 from 'bs58'
 
 const GAS_LIMIT_REGISTER_ACCOUNT = 180000
-const GAS_LIMIT_REGISTER_ITEM = 180000
+const GAS_LIMIT_REGISTER_ITEM = 280000
 
 const logTime = (msg, start, end) => {
     console.log(msg + ' ' + (end - start) + ' ms')
@@ -94,13 +95,15 @@ export const registerAccount = ({ _addr, _name = '', _wallet = 0, _ipfs = 0, _si
  */
 export const registerItem = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0, prKey, _addr, gas } = {}) => {
     _name = _name || getDefaultItemName(_name)
+    let ipfsHex = _ipfs ? ipfsHashToHex(_ipfs) : toHexParam(_ipfs)
+    
     return new Promise((resolve, reject) => {
         let start = Date.now()
         registry.methods
             .registerItem(
             toHexParam(_type),
             toHexParam(_id),
-            toHexParam(_ipfs),
+            ipfsHex, //toHexParam(_ipfs),
             toHexParam(_name),
             toHexParam('')
             )

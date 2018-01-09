@@ -10,7 +10,7 @@ class Account extends Base {
     *   - _stats will be used only at the client model for easier access to account data from 
     *   smart contracts (balance of rth/adx, register status, approved adx for transfer etc...)        
     */
-    constructor({ _name, _addr, _wallet, _ipfs, _meta, _temp, _stats = { balanceEth: 0, balanceAdx: 0, allowance: 0, isRegistered: false }, _settings }) {
+    constructor({ _name, _addr, _wallet, _ipfs, _meta, _temp, _stats = { balanceEth: 0, balanceAdx: 0, allowance: 0, isRegistered: false }, _settings = {} }) {
         super({ _name, _meta, _ipfs })
         this._addr = _addr || Helper.getGuid()
         this._wallet = _wallet || _addr
