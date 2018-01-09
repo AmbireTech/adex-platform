@@ -14,6 +14,7 @@ import { getCurrentGasPrice } from 'services/smart-contracts/actions/eth'
 
 const DEFAULT_GAS_PRICE = 20000000000 // 20GWei
 
+// TODO: translations
 const pricesMap = [
     { ratio: 0.75, label: 'Very slow (Maybe not)' },
     { ratio: 0.85, label: 'Slow' },
@@ -36,7 +37,7 @@ class GasPrice extends React.Component {
             let val = pr.ratio * price
             let inGwei = web3.utils.fromWei(val.toString(), 'Gwei')
 
-            return { value: pr.ratio, label: inGwei + ' Gwei - ' + pr.label }
+            return { value: val, label: inGwei + ' Gwei - ' + pr.label }
         })
 
         return prices
@@ -55,25 +56,30 @@ class GasPrice extends React.Component {
     }
 
     changeGasPrice = (val) => {
-        this.props.actions.updateAccount({ ownProps: { gasPrice: val } })
+        let settings = { ...this.props.account._settings }
+        settings.gasPrice = val
+        this.props.actions.updateAccount({ ownProps: { settings: settings } })
     }
 
     render() {
         let account = this.props.account
-        let stats = account._stats || {}
+        let settings = account._settings
+        let gasPrice
 
-        if (!stats) {
-            return null
+        if (settings && settings.gasPrice) {
+            gasPrice = settings.gasPrice
+        } else {
+            gasPrice = this.state.gasPrices[3].value
         }
 
         return (
             <Dropdown
                 theme={theme}
                 auto={false}
-                label='Operations GAS Price'
+                label='GAS_PRICE_LABEL'
                 onChange={this.changeGasPrice}
                 source={this.state.gasPrices}
-                value={account.gasPrice}
+                value={gasPrice}
             />
         )
     }
