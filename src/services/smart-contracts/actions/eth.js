@@ -48,3 +48,7 @@ export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, prKey, gas } 
             })
     })
 }
+
+export const getCurrentGasPrice = () => {
+    return web3.eth.getGasPrice()
+}

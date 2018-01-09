@@ -9,27 +9,51 @@ import actions from 'actions'
 import Slider from 'react-toolbox/lib/slider'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import Translate from 'components/translate/Translate'
-// import Img from 'components/common/img/Img'
 import { web3 } from 'services/smart-contracts/ADX'
-import { MULT } from 'services/smart-contracts/constants'
-// import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
-// import Input from 'react-toolbox/lib/input'
+import { getCurrentGasPrice } from 'services/smart-contracts/actions/eth'
 
-// console.log('actions', actions)
-const G_MULT = 1000000000
-const prices = [
-    { value: 20 * G_MULT, label: '20 Gwei - Very slow' },
-    { value: 25 * G_MULT, label: '25 Gwei - Very slow' },
-    { value: 30 * G_MULT, label: '30 Gwei - Slow' },
-    { value: 35 * G_MULT, label: '35 Gwei - Slow' },
-    { value: 40 * G_MULT, label: '40 Gwei - Normal' },
-    { value: 45 * G_MULT, label: '45 Gwei - Normal' },
-    { value: 50 * G_MULT, label: '50 Gwei - Fast' },
-    { value: 55 * G_MULT, label: '55 Gwei - Fast' },
-    { value: 60 * G_MULT, label: '60 Gwei - Fast' },
+const DEFAULT_GAS_PRICE = 20000000000 // 20GWei
+
+const pricesMap = [
+    { ratio: 0.75, label: 'Very slow (Maybe not)' },
+    { ratio: 0.85, label: 'Slow' },
+    { ratio: 1, label: 'Normal' },
+    { ratio: 1.2, label: 'Fast' },
+    { ratio: 1.5, label: 'Very fast' }
 ]
 
 class GasPrice extends React.Component {
+    constructor(props, context) {
+        super(props, context)
+
+        this.state = {
+            gasPrices: this.mapGasPrices(DEFAULT_GAS_PRICE)
+        }
+    }
+
+    mapGasPrices = (price) => {
+        let prices = pricesMap.map((pr) => {
+            let val = pr.ratio * price
+            let inGwei = web3.utils.fromWei(val.toString(), 'Gwei')
+
+            return { value: pr.ratio, label: inGwei + ' Gwei - ' + pr.label }
+        })
+
+        return prices
+    }
+
+    getGasPrices = () => {
+        getCurrentGasPrice()
+            .then((price) => {
+                let prices = this.mapGasPrices(price)
+                this.setState({ gasPrices: prices })
+            })
+    }
+
+    componentWillMount() {
+        this.getGasPrices()
+    }
+
     changeGasPrice = (val) => {
         this.props.actions.updateAccount({ ownProps: { gasPrice: val } })
     }
@@ -48,10 +72,9 @@ class GasPrice extends React.Component {
                 auto={false}
                 label='Operations GAS Price'
                 onChange={this.changeGasPrice}
-                source={prices}
+                source={this.state.gasPrices}
                 value={account.gasPrice}
             />
-            // <Slider pinned snaps min={20} max={60} step={5} value={account.gasPrice} onChange={this.changeGasPrice} />
         )
     }
 }
