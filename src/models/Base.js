@@ -39,7 +39,7 @@ class Base {
     get syncedWeb3() { return this._syncedWeb3 }
     set syncedWeb3(value) { this._syncedWeb3 = value }
 
-    get syncedIpfse() { return this._syncedIpfs }
+    get syncedIpfs() { return this._syncedIpfs }
     set syncedIpfs(value) { this._syncedIpfs = value }
 
     get name() { return this._name }

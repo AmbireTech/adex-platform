@@ -16,13 +16,19 @@ import { ItemModelsByType } from 'constants/itemsTypes'
 // TEMP
 const syncWeb3ANdStoreItems = (web3Items, storeItems, owner) => {
     let syncedItems = []
+    let length
 
     // TEMP: filter here by owner until we keep the items by user in the local storage
     // TODO: Decide if we should delete the local storage items of one user if other logs in the same browser 
     web3Items = (web3Items || []).filter(item => item._owner.toLowerCase() === owner.toLowerCase())
-    storeItems = (Array.from(Object.values(this.storeItems || {})) || []).filter(item => item._owner.toLowerCase() === owner.toLowerCase())
+    storeItems = (Array.from(Object.values(storeItems || {})) || []).filter(item => item._owner.toLowerCase() === owner.toLowerCase())
+    length = web3Items.length > storeItems.length ? web3Items.length : storeItems.length
 
-    let length = web3Items.length > storeItems.length ? web3Items.length : storeItems.length
+    storeItems = storeItems.reduce((memo, item, index) => {
+        let key = item._id || item._ipfs
+        memo[key] = item
+        return memo
+    }, {})
 
     for (let index = 0; index < length; index++) {
         let web3Item = web3Items[index]
@@ -45,11 +51,12 @@ const syncItemsIpfsMeta = (items, metas) => {
 
     let synced = []
     for (let index = 0; index < items.length; index++) {
-        let item = items[index]
-        let meta = metas[index]
-        //TODO: add ipf synced prop
+        let item = { ...items[index] }
+        let meta = { ...metas[index] }
 
-        let updated = Base.updateObject({ item: item, meta: { ...meta }, objModel: ItemModelsByType[item._type] })
+        let ownProps = { syncedIpfs: true }
+
+        let updated = Base.updateObject({ item: item, ownProps: ownProps, meta: meta, objModel: ItemModelsByType[item._type] })
         synced.push(updated)
     }
 
@@ -60,7 +67,7 @@ class Items extends Component {
     componentWillMount() {
         // TODO: make is as service or util
 
-        let web3ItemsMemo
+        let web3ItemsSyncedMemo
 
         getAccountItems({ _addr: this.props.account._addr, _type: this.props.itemsType })
             .then((res) => {
@@ -76,7 +83,7 @@ class Items extends Component {
                     })
                     .then((web3Items) => {
                         let syncedItemsWithWeb3 = syncWeb3ANdStoreItems(web3Items, this.props.items, this.props.account._addr)
-                        web3ItemsMemo = syncedItemsWithWeb3
+                        web3ItemsSyncedMemo = syncedItemsWithWeb3
                         return syncedItemsWithWeb3
                     })
                     .then((items) => {
@@ -98,7 +105,7 @@ class Items extends Component {
                         return Promise.all(mapped)
                     })
                     .then((results) => {
-                        let updated = syncItemsIpfsMeta(web3ItemsMemo, results)
+                        let updated = syncItemsIpfsMeta(web3ItemsSyncedMemo, results)
 
                         return updated
                     })

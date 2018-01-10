@@ -37,9 +37,19 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
             .then(function (metaIpfs) {
                 // console.log('metaIpfs', metaIpfs)
                 item._ipfs = metaIpfs
+                item._id = metaIpfs // NOTE: use ipfs as tem Id until synced with web3
+                //TODO: again use array for items instead objects ?
             })
             .then(() => {
-                return registerItem({ _type: item._type, _ipfs: item._ipfs, _name: item._name, _meta: 0, prKey: prKey, _addr: _addr, gas: item._meta.to })
+                return registerItem({
+                    _type: item._type,
+                    _ipfs: item._ipfs,
+                    _name: item._name,
+                    _meta: 0,
+                    prKey: prKey,
+                    _addr: _addr,
+                    gas: item._meta.to
+                })
             })
             .then(() => {
                 // TODO: Web3 service here

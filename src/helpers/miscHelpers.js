@@ -39,10 +39,10 @@ class Helper {
         return keys[keys.length * Math.random() << 0]
     }
 
-    slugify(str) {
+    slugify(str, legth = 32) {
         if (!str || (typeof str !== 'string')) return ''
-        let slugified = slug(unidecode(str), { lower: true }).substring(0, 32)
-        console.log('slugified', slugified)
+        let slugified = slug(unidecode(str), { lower: true }).substring(0, legth)
+        // console.log('slugified', slugified)
         return slugified
     }
 

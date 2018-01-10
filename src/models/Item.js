@@ -134,7 +134,7 @@ class Item extends Base {
         //TODO: use update object (Base)
         let item = { ...storeItem }
         item._id = web3Item._id
-        item._web3Synced = true
+        item._syncedWeb3 = true
         let synced = new (ItemModelsByType[item._type])(item).plainObj()
 
         return synced
