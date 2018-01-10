@@ -23,6 +23,7 @@ class Base {
         this.modifiedOn = _meta.modifiedOn || this.txTime
         this.syncedWeb3 = _syncedWeb3
         this.syncedIpfs = _syncedIpfs
+        this.gas = _meta.gas || 0
     }
 
     /**
@@ -56,6 +57,10 @@ class Base {
 
     get modifiedOn() { return this._meta.modifiedOn }
     set modifiedOn(value) { this._meta.modifiedOn = value }
+
+    //TODO: this is TEMP remove it whe no needed for testing!
+    get gas() { return this._meta.gas }
+    set gas(value) { this._meta.gas = value }
 
     get meta() { return this._meta }
 

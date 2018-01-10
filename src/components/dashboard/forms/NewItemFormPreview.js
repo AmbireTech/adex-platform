@@ -40,7 +40,7 @@ class NewItemFormPreview extends Component {
             prKey: this.props.account._temp.privateKey
         })
             .then((res) => {
-                this.props.handleChange('to', res)
+                this.props.handleChange('gas', res)
                 this.props.actions.updateSpinner(SPINNER_ID, false)
             })
             .catch((err) => {
@@ -55,9 +55,9 @@ class NewItemFormPreview extends Component {
         let fee
         let gasPrice = this.props.account._settings.gasPrice ? this.props.account._settings.gasPrice : DEFAULT_GAS_PRICE
 
-        // TODO: temp use to as gas param
-        if (meta.to) {
-            fee = web3.utils.fromWei((meta.to * gasPrice).toString(), 'ether')
+        // TODO: temp use gas param from meta
+        if (meta.gas) {
+            fee = web3.utils.fromWei((meta.gas * gasPrice).toString(), 'ether')
         }
 
         return (
