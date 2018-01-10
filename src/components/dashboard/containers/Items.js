@@ -14,17 +14,30 @@ import Base from 'models/Base'
 import { ItemModelsByType } from 'constants/itemsTypes'
 
 // TEMP
-const syncItems = (web3Items, storeItems) => {
-    let synced = {}
+const syncWeb3ANdStoreItems = (web3Items, storeItems, owner) => {
+    let syncedItems = []
 
-    for (let index = 0; index < web3Items.length; index++) {
+    // TEMP: filter here by owner until we keep the items by user in the local storage
+    // TODO: Decide if we should delete the local storage items of one user if other logs in the same browser 
+    web3Items = (web3Items || []).filter(item => item._owner.toLowerCase() === owner.toLowerCase())
+    storeItems = (Array.from(Object.values(this.storeItems || {})) || []).filter(item => item._owner.toLowerCase() === owner.toLowerCase())
+
+    let length = web3Items.length > storeItems.length ? web3Items.length : storeItems.length
+
+    for (let index = 0; index < length; index++) {
         let web3Item = web3Items[index]
-        let storeItem = storeItems[web3Item._id] || storeItems[web3Item._ipfs]
+        let storeItem = web3Item ? (storeItems[web3Item._id] || storeItems[web3Item._ipfs]) : storeItems[index]
 
         if (storeItem) {
-            Item.syncWithWeb3(storeItem, web3Item)
+            let synced = Item.syncWithWeb3(storeItem, web3Item)
+
+            syncedItems.push(synced)
+        } else if (web3Item) {
+            syncedItems.push(web3Item)
         }
     }
+
+    return syncedItems
 }
 
 const syncItemsIpfsMeta = (items, metas) => {
@@ -59,10 +72,12 @@ class Items extends Component {
                             return new Item(w3i)
                         })
 
-                        //TODO: !!
-                        // syncItems(items, this.props.items)
-                        web3ItemsMemo = items
                         return items
+                    })
+                    .then((web3Items) => {
+                        let syncedItemsWithWeb3 = syncWeb3ANdStoreItems(web3Items, this.props.items, this.props.account._addr)
+                        web3ItemsMemo = syncedItemsWithWeb3
+                        return syncedItemsWithWeb3
                     })
                     .then((items) => {
                         let allMetas = []
