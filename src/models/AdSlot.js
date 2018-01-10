@@ -4,7 +4,21 @@ import { ItemsTypes, AdTypes, Sizes, getRandomPropValue } from 'constants/itemsT
 import { Images } from './DummyData'
 
 class AdSlot extends Item {
-    constructor({ _owner, _id, _ipfs, _name, img, description, size, adType, _txTime, _txId, _meta = {}, newObj } = {}) {
+    constructor({
+        _owner,
+        _id,
+        _ipfs,
+        _name,
+        img,
+        description,
+        size,
+        adType,
+        _txTime,
+        _txId,
+        _meta = {},
+        newObj,
+        _syncedWeb3,
+        _syncedIpfs } = {}) {
         super({
             owner: _owner,
             _id: _id,
@@ -16,7 +30,9 @@ class AdSlot extends Item {
             _txTime: _txTime,
             _txId: _txId,
             _meta: _meta,
-            newObj: newObj
+            newObj: newObj,
+            _syncedWeb3: _syncedWeb3,
+            _syncedIpfs: _syncedIpfs
         })
 
         this.size = _meta.size || size

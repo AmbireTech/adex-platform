@@ -5,8 +5,31 @@ import { fromHexParam, fromIpfsHex } from 'services/smart-contracts/utils'
 import Base from './Base'
 
 class Item extends Base {
-    constructor({ _owner = '', _id = '', _ipfs = '', _type, _name = '', img = { url: null, ipfs: null, type: null, type_id: null }, description = '', _txTime, _txId, _meta = {}, newObj } = {}) {
-        super({ _name: _name, _ipfs: _ipfs, _txTime, _txId, _meta: _meta, newObj: newObj })
+    constructor({
+        _owner = '',
+        _id = '',
+        _ipfs = '',
+        _type,
+        _name = '',
+        img = { url: null, ipfs: null, type: null, type_id: null },
+        description = '',
+        _txTime,
+        _txId,
+        _meta = {},
+        newObj,
+        _syncedWeb3,
+        _syncedIpfs
+        } = {}) {
+        super({
+            _name: _name,
+            _ipfs: _ipfs,
+            _txTime: _txTime,
+            _txId: _txId,
+            _meta: _meta,
+            newObj: newObj,
+            _syncedWeb3: _syncedWeb3,
+            _syncedIpfs: _syncedIpfs
+        })
 
         this.id = _id
         this._owner = _owner
