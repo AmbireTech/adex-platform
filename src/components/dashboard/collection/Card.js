@@ -9,18 +9,22 @@ import Img from 'components/common/img/Img'
 import { ItemTypesNames } from 'constants/itemsTypes'
 import Item from 'models/Item'
 import Translate from 'components/translate/Translate'
+import FontIcon from 'react-toolbox/lib/font_icon'
 
 const RRCardMedia = withReactRouterLink(CardMedia)
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))
+const TooltipFontIcon = Tooltip(FontIcon)
 
 class MyCard extends Component {
 
     render() {
-        let meta = this.props.item._meta
-        let name = this.props.item._name
-        let id = this.props.item._id
-        let itemTypeName = ItemTypesNames[this.props.item._type]
+        let item = this.props.item
+        let meta = item._meta
+        let name = item._name
+        let id = item._id
+        let itemTypeName = ItemTypesNames[item._type]
         let to = '/dashboard/' + this.props.side + '/' + itemTypeName + '/' + id
+        let synced = item._syncedWeb3 && item.syncedIpfs
         return (
             <Card raised={false} theme={theme}>
                 <RRCardMedia
@@ -36,6 +40,12 @@ class MyCard extends Component {
                 />
                 <CardActions theme={theme}>
                     <div>
+                        {/* TODO: fix the sync icon */}
+                        {!synced ?
+                            <TooltipFontIcon
+                                value='sync_problem'
+                                tooltip={this.props.t('ITEM_NOT_SYNCED')}
+                            /> : null}
                         {this.props.actionsRenderer}
                     </div>
                     <TooltipRRButton
