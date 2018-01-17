@@ -24,6 +24,60 @@ export function resetNewItem(item) {
 // register item
 export function addItem(item, itemToAddTo, prKey, _addr) {
     item = { ...item }
+
+    return function (dispatch) {
+
+        let url = 'http://127.0.0.1:7878/registeritem'
+
+
+        //TODO: Provide the blob to the store or request the image from the blob url as is now?
+        var xhr = new XMLHttpRequest()
+        // console.log('objectUrl from addImgFromObjectURL -> ', objectUrl)
+        xhr.open('GET', item._meta.img.tempUrl, true)
+        xhr.responseType = 'blob'
+        xhr.onload = function (e) {
+            if (this.status === 200) {
+                var imgBlob = this.response
+                sendRequest(imgBlob)
+            } else {
+                // TODO: handle errorsS
+                console.log('error')
+            }
+        }
+        xhr.onerror = function (err) {
+            console.log('error')
+        }
+        xhr.send()
+
+
+        function sendRequest(blob) {
+
+            let formData = new FormData()
+            formData.append('meta', JSON.stringify(item))
+            formData.append('image', blob, 'image.png')
+
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+                .then((resp) => {
+                    return resp.json()
+                })
+                .then((item) => {
+                    console.log('usersync item', item)
+                    dispatch({
+                        type: types.ADD_ITEM,
+                        item: item
+                    })
+                })
+                .catch((err) => {
+                    console.log('usersync err', err)
+                })
+        }
+    }
+
+
+    /*
     return function (dispatch) {
         addImgFromObjectURL(item._meta.img.tempUrl)
             .then((imgIpfs) => {
@@ -73,6 +127,7 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
                 console.error('addItem err', e)
             })
     }
+    */
 }
 
 export function deleteItem({ item, objModel } = {}) {

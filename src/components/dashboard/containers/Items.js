@@ -12,10 +12,10 @@ import { syncStoreItemsByType } from 'services/sync/syncItems'
 
 class Items extends Component {
     componentWillMount() {
-        syncStoreItemsByType({ storeItems: this.props.items, type: this.props.itemsType, owner: this.props.account._addr })
-            .then((synced) => {
-                this.props.actions.updateItems({ items: synced, itemsType: this.props.itemsType })
-            })
+        // syncStoreItemsByType({ storeItems: this.props.items, type: this.props.itemsType, owner: this.props.account._addr })
+        //     .then((synced) => {
+        //         this.props.actions.updateItems({ items: synced, itemsType: this.props.itemsType })
+        //     })
     }
 
     render() {
