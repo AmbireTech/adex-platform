@@ -27,51 +27,54 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
 
     return function (dispatch) {
 
-        let url = 'http://127.0.0.1:7878/registeritem'
+        let baseUrl = 'http://127.0.0.1:7878'
 
+        if (item._meta.img.tempUrl) {
+            //TODO: Provide the blob to the store or request the image from the blob url as is now?
 
-        //TODO: Provide the blob to the store or request the image from the blob url as is now?
-        var xhr = new XMLHttpRequest()
-        // console.log('objectUrl from addImgFromObjectURL -> ', objectUrl)
-        xhr.open('GET', item._meta.img.tempUrl, true)
-        xhr.responseType = 'blob'
-        xhr.onload = function (e) {
-            if (this.status === 200) {
-                var imgBlob = this.response
-                sendRequest(imgBlob)
-            } else {
-                // TODO: handle errorsS
-                console.log('error')
-            }
+            fetch(item._meta.img.tempUrl)
+                .then((resp) => {
+                    return resp.blob()
+                })
+                .then((imgBlob) => {
+                    let url = baseUrl + '/uploadimage'
+                    let formData = new FormData()
+                    formData.append('image', imgBlob, 'image.png')
+                    return fetch(url, {
+                        method: 'POST',
+                        body: formData
+                    })
+                })
+                .then((resp) => {
+                    return resp.json()
+                })
+                .then((imgResp) => {
+                    item._meta.img.ipfs = imgResp.ipfs
+                    registerItem(item)
+                })
+                .catch((err) => {
+                    console.log('fetch tempUrl err', err)
+                })
+        } else {
+            registerItem(item)
         }
-        xhr.onerror = function (err) {
-            console.log('error')
-        }
-        xhr.send()
 
-
-        function sendRequest(blob) {
-
-            let formData = new FormData()
-            formData.append('meta', JSON.stringify(item))
-            formData.append('image', blob, 'image.png')
-
-            fetch(url, {
+        function registerItem(item) {
+            fetch(baseUrl + '/registeritem', {
                 method: 'POST',
-                body: formData
+                body: JSON.stringify(item)
             })
                 .then((resp) => {
                     return resp.json()
                 })
                 .then((item) => {
-                    console.log('usersync item', item)
                     dispatch({
                         type: types.ADD_ITEM,
                         item: item
                     })
                 })
                 .catch((err) => {
-                    console.log('usersync err', err)
+                    console.log('registerItem err', err)
                 })
         }
     }
