@@ -24,6 +24,10 @@ export function resetNewItem(item) {
 // register item
 export function addItem(item, itemToAddTo, prKey, _addr) {
     item = { ...item }
+    // TODO: authentication
+    let headers = new Headers({
+        'useraddres': _addr
+    })
 
     return function (dispatch) {
 
@@ -42,7 +46,8 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
                     formData.append('image', imgBlob, 'image.png')
                     return fetch(url, {
                         method: 'POST',
-                        body: formData
+                        body: formData,
+                        headers: headers
                     })
                 })
                 .then((resp) => {
@@ -62,7 +67,8 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
         function registerItem(item) {
             fetch(baseUrl + '/registeritem', {
                 method: 'POST',
-                body: JSON.stringify(item)
+                body: JSON.stringify(item),
+                headers: headers
             })
                 .then((resp) => {
                     return resp.json()
