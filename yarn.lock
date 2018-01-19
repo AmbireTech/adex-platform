@@ -72,9 +72,13 @@ address@1.0.2, address@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/address/-/address-1.0.2.tgz#480081e82b587ba319459fef512f516fe03d58af"
 
-"adex-translations@git+ssh://git@github.com:AdExBlockchain/adex-translations.git#d0bd6977386aa6d2e9ad58fb6d3d1af341212f18":
+"adex-constants@git+https://git@github.com/AdExBlockchain/adex-constants.git#1e90ca839bf000b3ae64c3ab8dd7d5808bff5b80":
+  version "1.0.0"
+  resolved "git+https://git@github.com/AdExBlockchain/adex-constants.git#1e90ca839bf000b3ae64c3ab8dd7d5808bff5b80"
+
+"adex-translations@git+https://git@github.com/AdExBlockchain/adex-translations.git#d0bd6977386aa6d2e9ad58fb6d3d1af341212f18":
   version "0.0.1"
-  resolved "git+ssh://git@github.com:AdExBlockchain/adex-translations.git#d0bd6977386aa6d2e9ad58fb6d3d1af341212f18"
+  resolved "git+https://git@github.com/AdExBlockchain/adex-translations.git#d0bd6977386aa6d2e9ad58fb6d3d1af341212f18"
 
 ajv-keywords@^1.0.0:
   version "1.5.1"
