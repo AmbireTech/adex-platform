@@ -1,5 +1,5 @@
 import requester from './requester'
-// 
+
 export const uploadImage = ({ imageBlob, imageName = '', userAddr }) => {
     let formData = new FormData()
     formData.append('image', imageBlob, imageName)
@@ -20,12 +20,31 @@ export const uploadImage = ({ imageBlob, imageName = '', userAddr }) => {
     })
 }
 
-export const regItem = (item, userAddr) => {
+export const regItem = ({ item, userAddr }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'registeritem',
             method: 'POST',
-            body: JSON.stringify(item)
+            body: JSON.stringify(item),
+            userAddr: userAddr
+        })
+            .then((resp) => {
+                return resolve(resp.json())
+            })
+            .catch((err) => {
+                return reject(err)
+            })
+
+    })
+}
+
+export const getItems = ({ type, userAddr }) => {
+    return new Promise((resolve, reject) => {
+        requester.fetch({
+            route: 'items',
+            method: 'GET',
+            queryParams: { 'type': type },
+            userAddr: userAddr
         })
             .then((resp) => {
                 return resolve(resp.json())

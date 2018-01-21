@@ -8,26 +8,12 @@ import ItemsList from './ItemsList'
 import theme from './theme.css'
 import classnames from 'classnames'
 import { ItemTypesNames } from 'constants/itemsTypes'
-import { syncStoreItemsByType } from 'services/sync/syncItems'
+import { getItems } from 'services/adex-node/actions'
 
 class Items extends Component {
     componentWillMount() {
-        // syncStoreItemsByType({ storeItems: this.props.items, type: this.props.itemsType, owner: this.props.account._addr })
-        //     .then((synced) => {
-        //         this.props.actions.updateItems({ items: synced, itemsType: this.props.itemsType })
-        //     })
-        let baseUrl = 'http://127.0.0.1:7878'
-        let query = '/items?type=' + this.props.itemsType
-        let headers = new Headers({
-            'useraddres': this.props.account._addr
-        })
-        fetch(baseUrl + query, {
-            method: 'GET',
-            headers: headers
-        })
-            .then((resp) => {
-                return resp.json()
-            })
+        //TODO: Decide when to load items
+        getItems({ type: this.props.itemsType, userAddr: this.props.account._addr })
             .then((items) => {
                 items = items.map((item) => {
                     let mapped = { ...item.itemObj }

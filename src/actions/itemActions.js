@@ -1,6 +1,5 @@
 import * as types from 'constants/actionTypes'
 import { addImgFromObjectURL, getFileIpfsHash } from 'services/ipfs/ipfsService'
-// import { registerItem } from 'services/smart-contracts/actions/registry'
 import { uploadImage, regItem } from 'services/adex-node/actions'
 
 export function updateNewItem(item, newMeta) {
@@ -28,9 +27,6 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
     // TODO: authentication
 
     return function (dispatch) {
-
-        let baseUrl = 'http://127.0.0.1:7878'
-
         if (item._meta.img.tempUrl) {
             //TODO: Provide the blob to the store or request the image from the blob url as is now?
 
@@ -53,7 +49,7 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
         }
 
         function registerItem(item) {
-            regItem(item)
+            regItem({ item, userAddr: _addr })
                 .then((item) => {
                     dispatch({
                         type: types.ADD_ITEM,
