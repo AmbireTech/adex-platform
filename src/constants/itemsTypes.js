@@ -4,6 +4,7 @@ import AdSlot from 'models/AdSlot'
 import AdUnit from 'models/AdUnit'
 import Campaign from 'models/Campaign'
 import Channel from 'models/Channel'
+import AdexConstants from 'adex-constants'
 
 let allCountries = countryData.countries.all.map((cnt) => {
   return {
@@ -21,6 +22,7 @@ let allRegions = Object.keys(countryData.regions).map((key) => {
 
 let allLocations = allRegions.concat(allCountries)
 // console.log('alllocations', allLocations)
+//TODO: use adex-constants
 export const ItemsTypes = {
   AdUnit: { id: 0, name: 'AdUnit', model: AdUnit },
   AdSlot: { id: 1, name: 'AdSlot', model: AdSlot },
@@ -51,20 +53,9 @@ function itemsModelsById() {
 export const ItemTypesNames = getItemTypesNames()
 export const ItemModelsByType = itemsModelsById()
 
-export const Sizes = [
-  { value: '300x300', label: '300 x 300 px' },
-  { value: '200x200', label: '200 x 200 px' },
-  { value: '100x100', label: '100 x 100 px' },
-  { value: '728x90', label: '728 x 90 px' }
-]
+export const Sizes = AdexConstants.items.AdSizes
 
-export const AdTypes = [
-  { value: 'html', label: 'HTML' },
-  // Only html at this point
-  // { value: 'flash', label: 'Flash' },
-  // { value: 'other', label: 'Other' },
-  // { value: 'vr', label: 'VR' }
-]
+export const AdTypes = AdexConstants.items.AdTypes
 
 export const TargetsWeight = [
   { value: 0, label: 'None' },
@@ -104,10 +95,4 @@ export const Locations = allLocations
 export const TARGET_MIN_AGE = 0
 export const TARGET_MAX_AGE = 100
 
-export const BID_STATUS = {
-  placed: { value: 'placed', label: 'BID_PLACED' },
-  accepted: { value: 'accepted', label: 'BID_ACCEPTED' },
-  rejected: { value: 'rejected', label: 'BID_REJECTED' },
-  canceled: { value: 'canceled', label: 'BID_CANCELED' },
-  completed: { value: 'completed', label: 'BID_COMPLETED' }
-}
+export const BID_STATUS = AdexConstants.exchange.BID_STATUS

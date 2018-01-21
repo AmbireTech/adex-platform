@@ -16,6 +16,26 @@ class Items extends Component {
         //     .then((synced) => {
         //         this.props.actions.updateItems({ items: synced, itemsType: this.props.itemsType })
         //     })
+        let baseUrl = 'http://127.0.0.1:7878'
+        let query = '/items?type=' + this.props.itemsType
+        let headers = new Headers({
+            'useraddres': this.props.account._addr
+        })
+        fetch(baseUrl + query, {
+            method: 'GET',
+            headers: headers
+        })
+            .then((resp) => {
+                return resp.json()
+            })
+            .then((items) => {
+                items = items.map((item) => {
+                    let mapped = { ...item.itemObj }
+                    mapped._id = item._id
+                    return mapped
+                })
+                this.props.actions.updateItems({ items: items, itemsType: this.props.itemsType })
+            })
     }
 
     render() {
