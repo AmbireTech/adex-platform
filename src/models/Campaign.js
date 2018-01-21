@@ -1,42 +1,41 @@
-// import Helper from 'helpers/miscHelpers'
+import Helper from 'helpers/miscHelpers'
 import Item from './Item'
-// import moment from 'moment'
 import { ItemsTypes } from 'constants/itemsTypes'
 
 class Campaign extends Item {
     constructor({
-        _owner,
+        _meta = {},
+        fullName,
+        owner,
+        img,
+        size,
+        adType,
         _id,
         _ipfs,
-        _name,
-        from,
-        to,
-        img,
-        description = '',
-        _txTime,
-        _txId,
-        _meta = {},
-        newObj,
-        _syncedWeb3,
-        _syncedIpfs } = {}) {
+        _description,
+        _bids,
+        _syncedIpfs,
+        _deleted,
+        _archived,
+        _from,
+        _to,
+    } = {}) {
         super({
-            _owner: _owner,
+            fullName: fullName,
+            owner: owner,
+            type: ItemsTypes.Campaign.id,
+            img: img,
+            size: size,
+            adType: adType,
             _id: _id,
             _ipfs: _ipfs,
-            _type: ItemsTypes.Campaign.id,
-            _name: _name,
-            img: img,
-            description: description,
-            _txTime: _txTime,
-            _txId: _txId,
+            _description: _description,
             _meta: _meta,
-            newObj: newObj,
-            _syncedWeb3: _syncedWeb3,
             _syncedIpfs: _syncedIpfs
         })
 
-        this.from = _meta.from || from
-        this.to = _meta.to || to
+        this.from = _from
+        this.to = _to
     }
 
     get from() { return this._meta.from }
@@ -47,3 +46,4 @@ class Campaign extends Item {
 }
 
 export default Campaign
+

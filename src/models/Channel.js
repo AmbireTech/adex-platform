@@ -1,34 +1,40 @@
-// import Helper from 'helpers/miscHelpers'
+import Helper from 'helpers/miscHelpers'
 import Item from './Item'
 import { ItemsTypes } from 'constants/itemsTypes'
 
+/**
+ * TODO: Make Collection model for Channel andCampaign
+ * They will not have ipfs meta, they will be used only for owners ease of use
+ * TEMP: They will extend Item because teh UI works with that model structure
+ */
+
 class Channel extends Item {
     constructor({
-        _owner,
+        _meta = {},
+        fullName,
+        owner,
+        img,
+        size,
+        adType,
         _id,
         _ipfs,
-        _name,
-        img,
-        description = '',
-        _txTime,
-        _txId,
-        _meta = {},
-        newObj,
-        _syncedWeb3,
-        _syncedIpfs } = {}) {
+        _description,
+        _bids,
+        _syncedIpfs,
+        _deleted,
+        _archived,
+    } = {}) {
         super({
-            _owner: _owner,
+            fullName: fullName,
+            owner: owner,
+            type: ItemsTypes.Channel.id,
+            img: img,
+            size: size,
+            adType: adType,
             _id: _id,
             _ipfs: _ipfs,
-            _type: ItemsTypes.Channel.id,
-            _name: _name,
-            img: img,
-            description: description,
-            _txTime: _txTime,
-            _txId: _txId,
+            _description: _description,
             _meta: _meta,
-            newObj: newObj,
-            _syncedWeb3: _syncedWeb3,
             _syncedIpfs: _syncedIpfs
         })
     }
