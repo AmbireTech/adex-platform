@@ -1,4 +1,3 @@
-import DevInitialStateGenerator from 'helpers/dev/initialStateGenerator'
 import { ItemsTypes } from 'constants/itemsTypes'
 import Campaign from 'models/Campaign'
 import AdUnit from 'models/AdUnit'
@@ -57,13 +56,6 @@ let initialState = {
     newTransactions: {
         default: {}
     }
-}
-
-if (process.env.NODE_ENV === 'development') {
-    /* TODO: fix the initial state
-    * Make it to load the test data after initial state and persistance rehidration!
-    */
-    // initialState = DevInitialStateGenerator.getDevInitialState()
 }
 
 export default initialState

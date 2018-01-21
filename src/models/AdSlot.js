@@ -1,7 +1,6 @@
 import Helper from 'helpers/miscHelpers'
 import Item from './Item'
-import { ItemsTypes, AdTypes, Sizes, getRandomPropValue } from 'constants/itemsTypes'
-import { Images } from './DummyData'
+import { ItemsTypes } from 'constants/itemsTypes'
 
 class AdSlot extends Item {
     constructor({
@@ -38,27 +37,6 @@ class AdSlot extends Item {
 
     get bids() { return this._bids }
     set bids(value) { this._bids = value }
-
-    static getRandomInstance(owner, id) {
-        id = id || Helper.getRandomInt(1, 100)
-
-        let slot = new AdSlot(
-            {
-                _owner: owner,
-                _id: id,
-                _ipfs: '',
-                _name: 'Slot ' + id,
-                img: { url: Images[Helper.getRandomInt(0, Images.length - 1)] },
-                description: 'Slot Description ' + id,
-                size: getRandomPropValue(Sizes),
-                adType: getRandomPropValue(AdTypes),
-                txTime: Helper.geRandomMoment(60, 60).valueOf()
-            }
-        )
-
-        return slot
-    }
-
 }
 
 export default AdSlot

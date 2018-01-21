@@ -1,7 +1,6 @@
-import Helper from 'helpers/miscHelpers'
+// import Helper from 'helpers/miscHelpers'
 import Item from './Item'
-import { ItemsTypes, Genders, AdTypes, Sizes, Targets, TargetsWeight, getRandomPropValue, Locations } from 'constants/itemsTypes'
-import { Images } from './DummyData'
+import { ItemsTypes } from 'constants/itemsTypes'
 
 class AdUnit extends Item {
     constructor({
@@ -95,53 +94,6 @@ class AdUnit extends Item {
 
         return targets
     }
-
-    static getRandomInstance(owner, id) {
-        let targets = []
-
-        // TODO: This is only for testing data
-        // Decide how to handle targets
-        for (var index = 0; index < Targets.length; index++) {
-            // if (Helper.getRandomBool()) {
-            var target = Targets[index]
-            let value = null
-            if (target.values) {
-                value = target.values[Helper.getRandomInt(0, target.values.length - 1)]
-            } else if (target.name === 'location') {
-                let locationKey = getRandomPropValue(Locations)
-                value = { value: [locationKey], label: Locations[locationKey] }
-            } else if (target.name === 'age') {
-                let from = Helper.getRandomInt(0, 100)
-                let to = Helper.getRandomInt(from, 100)
-                value = { from: from, to: to }
-            }
-            targets.push({
-                name: target.name,
-                value: value.value ? [value.value] : value,
-                weight: getRandomPropValue(TargetsWeight)
-            })
-            // }
-        }
-
-        let unit = new AdUnit(
-            {
-                _owner: owner,
-                _id: id,
-                _ipfs: '',
-                _name: 'AdUnit ' + id,
-                img: { url: Images[Helper.getRandomInt(0, Images.length - 1)] },
-                description: 'AdUnit Description ' + id,
-                size: getRandomPropValue(Sizes),
-                adType: getRandomPropValue(AdTypes),
-                ad_url: 'https://adex.network',
-                targets: targets,
-                txTime: Helper.geRandomMoment(60, 60).valueOf()
-            }
-        )
-
-        return unit
-    }
-
 }
 
 export default AdUnit

@@ -1,8 +1,7 @@
-import Helper from 'helpers/miscHelpers'
+// import Helper from 'helpers/miscHelpers'
 import Item from './Item'
-import moment from 'moment'
+// import moment from 'moment'
 import { ItemsTypes } from 'constants/itemsTypes'
-import { Images } from './DummyData'
 
 class Campaign extends Item {
     constructor({
@@ -45,25 +44,6 @@ class Campaign extends Item {
 
     get to() { return this._meta.to }
     set to(value) { this._meta.to = value }
-
-    static getRandomInstance(owner, id) {
-
-        let campaign = new Campaign(
-            {
-                _owner: owner,
-                _id: id,
-                _ipfs: '',
-                _name: 'Campaign ' + id,
-                from: moment().add(id, 'd').valueOf(),
-                to: moment().add(id + Helper.getRandomInt(3, 10), 'd').valueOf(),
-                img: { url: Images[Helper.getRandomInt(0, Images.length - 1)] },
-                description: 'Campaign Description ' + id,
-                txTime: Helper.geRandomMoment(60, 60).valueOf()
-            }
-        )
-
-        return campaign
-    }
 }
 
 export default Campaign
