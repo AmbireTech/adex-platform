@@ -5,64 +5,60 @@ import Helper from 'helpers/miscHelpers'
  * and use validations with setters but keep plain object in redux store
  */
 class Base {
-    constructor({ _name = '', _ipfs = '', _txTime, _txId, _meta = {}, newObj, _syncedWeb3 = false, _syncedIpfs = false } = {}) {
-        let name = _name || _meta.fullName || ''
-        this.name = name
-        this.ipfs = _ipfs
-
+    constructor({ _ipfs = '', _meta = {}, _syncedIpfs = false, _modifiedOn, _deleted, _archived } = {}) {
+        /**
+         * NOTE: The meta field is the one saved into ipfs and it cannot be changed
+         * ipfs field will corresponding to the value of meta field
+         *  meta and ipfs field should not be changed because the exchange bits will keep the ipfs hash of the meta field
+         */
         this._meta = {}
 
-        if (newObj) {
-            _txId = _txId || Helper.getGuid()
-            _txTime = _txTime || Date.now()
-        }
-        this.txId = _txId
-        this.txTime = _txTime
-        this.fullName = _meta.fullName || _name
-        this.createdOn = _meta.createdOn || this.txTime
-        this.modifiedOn = _meta.modifiedOn || this.txTime
-        this.syncedWeb3 = _syncedWeb3
+        this.name = _meta.name
+        this.fullName = _meta.fullName
+        this.createdOn = _meta.createdOn
+
+        /**
+         * NOTE: props only available on the UI/anex-node
+         */
+
+        this.ipfs = _ipfs
+        this.modifiedOn = _modifiedOn
         this.syncedIpfs = _syncedIpfs
-        this.gas = _meta.gas || 0
+        this.archived = _archived || false
+        this.deleted = _deleted || false
     }
 
-    /**
-     * NOTE: We use this meta prop to track the items when they are synced with web3 and ipfs.
-     * The UI is updated before the sync and Id's are unknown until the sync
-     * TODO: Use ipfs to track not synced items (Temp helper guid)
-     */
-    get txId() { return this._txId }
-    set txId(value) { this._txId = value }
-
-    get txTime() { return this._txTime }
-    set txTime(value) { this._txTime = value }
-
-    get syncedWeb3() { return this._syncedWeb3 }
-    set syncedWeb3(value) { this._syncedWeb3 = value }
-
-    get syncedIpfs() { return this._syncedIpfs }
-    set syncedIpfs(value) { this._syncedIpfs = value }
-
-    get name() { return this._name }
-    set name(value) { this._name = Helper.slugify(value) }
-
-    get ipfs() { return this._ipfs };
-    set ipfs(value) { this._ipfs = value }
-
-    get fullName() { return this._meta.fullName }
-    set fullName(value) { this._meta.fullName = value }
+    // Meta (ipfs) props (can NOT be changed)
+    get meta() { return this._meta }
 
     get createdOn() { return this._meta.createdOn }
     set createdOn(value) { this._meta.createdOn = value }
 
-    get modifiedOn() { return this._meta.modifiedOn }
-    set modifiedOn(value) { this._meta.modifiedOn = value }
+    //TODO: Do we need this slugified name?
+    get name() { return this._meta.name }
+    set name(value) { this._meta.name = Helper.slugify(value) }
 
-    //TODO: this is TEMP remove it whe no needed for testing!
-    get gas() { return this._meta.gas }
-    set gas(value) { this._meta.gas = value }
+    get fullName() { return this._meta.fullName }
+    set fullName(value) { this._meta.fullName = value }
 
-    get meta() { return this._meta }
+    // Dapp/adex-node fields (can be changed)
+    get ipfs() { return this._ipfs };
+    set ipfs(value) { this._ipfs = value }
+
+    get modifiedOn() { return this._modifiedOn }
+    set modifiedOn(value) { this._modifiedOn = value }
+
+    get archived() { return this._archived }
+    set archived(value) { this._archived = value }
+
+    get deleted() { return this._deleted }
+    set deleted(value) { this._deleted = value }
+
+    get syncedIpfs() { return this._syncedIpfs }
+    set syncedIpfs(value) { this._syncedIpfs = value }
+
+    // get syncedAdexNode() { return this._syncedAdexNode }
+    // set syncedAdexNode(value) { this._syncedAdexNode = value }
 
     plainObj() {
         return { ...this }
