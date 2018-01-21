@@ -5,49 +5,39 @@ import { Images } from './DummyData'
 
 class AdSlot extends Item {
     constructor({
-        _owner,
-        _id,
-        _ipfs,
-        _name,
+        _meta = {},
+        fullName,
+        owner,
         img,
-        description,
         size,
         adType,
-        _txTime,
-        _txId,
-        _meta = {},
-        newObj,
-        _syncedWeb3,
-        _syncedIpfs } = {}) {
+        _id,
+        _ipfs,
+        _description,
+        _bids,
+        _syncedIpfs,
+        _deleted,
+        _archived
+    } = {}) {
         super({
-            owner: _owner,
+            fullName: fullName,
+            owner: owner,
+            type: ItemsTypes.AdSlot.id,
+            img: img,
+            size: size,
+            adType: adType,
             _id: _id,
             _ipfs: _ipfs,
-            _type: ItemsTypes.AdSlot.id,
-            _name: _name,
-            img: img,
-            description: description,
-            _txTime: _txTime,
-            _txId: _txId,
+            _description: _description,
             _meta: _meta,
-            newObj: newObj,
-            _syncedWeb3: _syncedWeb3,
             _syncedIpfs: _syncedIpfs
         })
 
-        this.size = _meta.size || size
-        this.adType = _meta.adType || adType
         this.bids = _meta.bids || []
     }
 
-    get size() { return this._meta.size }
-    set size(value) { this._meta.size = value }
-
-    get adType() { return this._meta.adType }
-    set adType(value) { this._meta.adType = value }
-
-    get bids() { return this._meta.bids }
-    set bids(value) { this._meta.bids = value }
+    get bids() { return this._bids }
+    set bids(value) { this._bids = value }
 
     static getRandomInstance(owner, id) {
         id = id || Helper.getRandomInt(1, 100)

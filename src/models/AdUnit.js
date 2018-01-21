@@ -5,53 +5,43 @@ import { Images } from './DummyData'
 
 class AdUnit extends Item {
     constructor({
-        _owner,
+        _meta = {},
+        fullName,
+        owner,
+        img,
+        size,
+        adType,
+        ad_url,
+        targets,
         _id,
         _ipfs,
-        _name,
-        ad_url = '',
-        img,
-        description = '',
-        size = '',
-        adType = '',
-        targets = [],
-        _txTime,
-        _txId,
-        _meta = {},
-        newObj,
-        _syncedWeb3,
-        _syncedIpfs } = {}) {
+        _description,
+        _bids,
+        _syncedIpfs,
+        _deleted,
+        _archived
+     } = {}) {
         super({
-            _owner: _owner,
+            fullName: fullName,
+            owner: owner,
+            type: ItemsTypes.AdSlot.id,
+            img: img,
+            size: size,
+            adType: adType,
             _id: _id,
             _ipfs: _ipfs,
-            _type: ItemsTypes.AdUnit.id,
-            _name: _name,
-            img: img,
-            description: description,
-            _txTime: _txTime,
-            _txId: _txId,
+            _description: _description,
             _meta: _meta,
-            newObj: newObj,
-            _syncedWeb3: _syncedWeb3,
             _syncedIpfs: _syncedIpfs
         })
 
         this.banner = _meta.banner || img
-        this.size = _meta.size || size
-        this.adType = _meta.adType || adType
         this.ad_url = _meta.ad_url || ad_url
         this.targets = _meta.targets || targets
     }
 
     get banner() { return this._meta.banner }
     set banner(value) { this._meta.banner = value }
-
-    get size() { return this._meta.size }
-    set size(value) { this._meta.size = value }
-
-    get adType() { return this._meta.adType }
-    set adType(value) { this._meta.adType = value }
 
     get ad_url() { return this._meta.ad_url }
     set ad_url(value) { this._meta.ad_url = value }

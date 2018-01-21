@@ -5,7 +5,7 @@ import Helper from 'helpers/miscHelpers'
  * and use validations with setters but keep plain object in redux store
  */
 class Base {
-    constructor({ _ipfs = '', _meta = {}, _syncedIpfs = false, _modifiedOn, _deleted, _archived } = {}) {
+    constructor({ fullName, _ipfs = '', _meta = {}, _syncedIpfs = false, _modifiedOn, _deleted, _archived } = {}) {
         /**
          * NOTE: The meta field is the one saved into ipfs and it cannot be changed
          * ipfs field will corresponding to the value of meta field
@@ -13,8 +13,8 @@ class Base {
          */
         this._meta = {}
 
-        this.name = _meta.name
-        this.fullName = _meta.fullName
+        this.name = _meta.name || fullName
+        this.fullName = _meta.fullName || fullName
         this.createdOn = _meta.createdOn
 
         /**
@@ -24,8 +24,8 @@ class Base {
         this.ipfs = _ipfs
         this.modifiedOn = _modifiedOn
         this.syncedIpfs = _syncedIpfs
-        this.archived = _archived || false
         this.deleted = _deleted || false
+        this.archived = _archived || false
     }
 
     // Meta (ipfs) props (can NOT be changed)

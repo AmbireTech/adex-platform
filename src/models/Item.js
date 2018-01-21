@@ -3,21 +3,26 @@ import { ItemModelsByType } from 'constants/itemsTypes'
 
 import Base from './Base'
 
+// ITEM will be AdSlot or AdUnit (Channel/Campaign will be collections)
 class Item extends Base {
     constructor({
-        _owner = '',
+        _meta = {},
+        fullName: fullName,
+        owner = '',
+        type,
+        img = { url: null, ipfs: null, type: null, type_id: null }, // TODO: fix img props
+        size,
+        adType,
+        _description = '',
         _id = '',
         _ipfs = '',
-        _type,
-        img = { url: null, ipfs: null, type: null, type_id: null }, // TODO: fix img props
-        _description = '',
-        _meta = {},
         _modifiedOn,
         _syncedIpfs,
         _deleted,
         _archived
         } = {}) {
         super({
+            fullName: fullName,
             _ipfs: _ipfs,
             _meta: _meta,
             _syncedIpfs: _syncedIpfs,
@@ -26,9 +31,11 @@ class Item extends Base {
             _archived: _archived
         })
 
-        this.owner = _owner
-        this.type = _type
+        this.owner = _meta.owner || owner //TODO: set this on the node?
+        this.type = _meta.type || type
         this.img = _meta.img || img
+        this.size = _meta.size || size
+        this.adType = _meta.adType || adType
 
         this.id = _id
         this.items = _meta.items || []
@@ -44,6 +51,12 @@ class Item extends Base {
 
     get img() { return this._meta.img }
     set img(value) { this._meta.img = value }
+
+    get size() { return this._meta.size }
+    set size(value) { this._meta.size = value }
+
+    get adType() { return this._meta.adType }
+    set adType(value) { this._meta.adType = value }
 
     // Dapp/adex-node fields (can be changed)
     get id() { return this._id }
