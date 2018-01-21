@@ -7,7 +7,7 @@ import Base from './Base'
 class Item extends Base {
     constructor({
         _meta = {},
-        fullName: fullName,
+        fullName,
         owner = '',
         type,
         img = { url: null, ipfs: null, type: null, type_id: null }, // TODO: fix img props
@@ -47,7 +47,10 @@ class Item extends Base {
     set owner(value) { this._meta.owner = value }
 
     get type() { return this._meta.type }
-    set type(value) { this._meta.type = value }
+    set type(value) {
+        this._meta.type = value
+        this._type = value // TEMP: to keep the UI working
+    }
 
     get img() { return this._meta.img }
     set img(value) { this._meta.img = value }
@@ -63,8 +66,8 @@ class Item extends Base {
     set id(value) { this._id = value }
 
     // Description only visible for the owner
-    get description() { return this._meta.description }
-    set description(value) { this._meta.description = value }
+    get description() { return this._description }
+    set description(value) { this._description = value }
 
     get collections() { return this._collections }
     set collections(value) { this._collections = value }

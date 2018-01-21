@@ -5,7 +5,7 @@ import Helper from 'helpers/miscHelpers'
  * and use validations with setters but keep plain object in redux store
  */
 class Base {
-    constructor({ fullName, _ipfs = '', _meta = {}, _syncedIpfs = false, _modifiedOn, _deleted, _archived } = {}) {
+    constructor({ fullName = '', _ipfs = '', _meta = {}, _syncedIpfs = false, _modifiedOn, _deleted, _archived } = {}) {
         /**
          * NOTE: The meta field is the one saved into ipfs and it cannot be changed
          * ipfs field will corresponding to the value of meta field
@@ -14,7 +14,7 @@ class Base {
         this._meta = {}
 
         this.name = _meta.name || fullName
-        this.fullName = _meta.fullName || fullName
+        this.fullName = fullName || _meta.fullName
         this.createdOn = _meta.createdOn
 
         /**
@@ -93,6 +93,7 @@ class Base {
 
     // TODO: make it recursive for all props
     static updateObject({ item = {}, ownProps = {}, meta = {}, objModel = Base, dirtyProps } = {}) {
+        meta = { ...meta, ...ownProps } //TEMP
 
         let newItem = new objModel(item)
 
@@ -100,9 +101,11 @@ class Base {
         let hasDirtyProps = Array.isArray(dirtyProps)
         if (hasDirtyProps) dirtyProps = [...dirtyProps]
 
+        newItem['kor'] = 'hoi'
+
         // TODO: Handle remove key value
         for (let key in meta) {
-            if (meta.hasOwnProperty(key) && newItem._meta.hasOwnProperty(key)) {
+            if (meta.hasOwnProperty(key) && key in newItem) {
 
                 let value = meta[key]
 
@@ -118,32 +121,10 @@ class Base {
             }
         }
 
-        // TODO: check new item for setter
-        for (let key in ownProps) {
-
-            if (ownProps[key]) {
-
-                let value = ownProps[key]
-
-                if (value instanceof Date) {
-                    value = value.getTime()
-                }
-
-                newItem[key] = value
-
-                // TODO: distinct meta and own props if needed
-                if (hasDirtyProps && dirtyProps.indexOf(key) < 0) {
-                    dirtyProps.push(key)
-                }
-            }
-        }
-
         newItem.modifiedOn = Date.now()
-
         newItem.dirtyProps = dirtyProps
-
         let plainObj = newItem.plainObj()
-        // console.log('plainObj', plainObj)
+
         return plainObj
     }
 

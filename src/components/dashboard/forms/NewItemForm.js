@@ -68,7 +68,7 @@ class NewItemForm extends Component {
                     multiline
                     rows={3}
                     label={t('description', { isProp: true })}
-                    value={item._meta.description}
+                    value={item._description}
                     onChange={this.props.handleChange.bind(this, 'description')}
                     maxLength={1024} >
                     {this.props.descriptionHelperTxt ?
