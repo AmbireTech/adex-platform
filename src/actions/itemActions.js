@@ -1,6 +1,7 @@
 import * as types from 'constants/actionTypes'
 import { addImgFromObjectURL, getFileIpfsHash } from 'services/ipfs/ipfsService'
-import { registerItem } from 'services/smart-contracts/actions/registry'
+// import { registerItem } from 'services/smart-contracts/actions/registry'
+import { uploadImage, regItem } from 'services/adex-node/actions'
 
 export function updateNewItem(item, newMeta) {
     return function (dispatch) {
@@ -25,9 +26,6 @@ export function resetNewItem(item) {
 export function addItem(item, itemToAddTo, prKey, _addr) {
     item = { ...item }
     // TODO: authentication
-    let headers = new Headers({
-        'useraddres': _addr
-    })
 
     return function (dispatch) {
 
@@ -41,17 +39,7 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
                     return resp.blob()
                 })
                 .then((imgBlob) => {
-                    let url = baseUrl + '/uploadimage'
-                    let formData = new FormData()
-                    formData.append('image', imgBlob, 'image.png')
-                    return fetch(url, {
-                        method: 'POST',
-                        body: formData,
-                        headers: headers
-                    })
-                })
-                .then((resp) => {
-                    return resp.json()
+                    return uploadImage({ imageBlob: imgBlob, imageName: 'image.png', userAddr: _addr })
                 })
                 .then((imgResp) => {
                     item._meta.img.ipfs = imgResp.ipfs
@@ -65,14 +53,7 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
         }
 
         function registerItem(item) {
-            fetch(baseUrl + '/registeritem', {
-                method: 'POST',
-                body: JSON.stringify(item),
-                headers: headers
-            })
-                .then((resp) => {
-                    return resp.json()
-                })
+            regItem(item)
                 .then((item) => {
                     dispatch({
                         type: types.ADD_ITEM,
@@ -84,59 +65,6 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
                 })
         }
     }
-
-
-    /*
-    return function (dispatch) {
-        addImgFromObjectURL(item._meta.img.tempUrl)
-            .then((imgIpfs) => {
-                // TODO: make function for this and check for ipfs errors
-                item = { ...item }
-                let meta = { ...item._meta }
-                meta.img = { ipfs: imgIpfs }
-                item._meta = meta
-                return getFileIpfsHash(JSON.stringify(item._meta))
-            })
-            .then(function (metaIpfs) {
-                // console.log('metaIpfs', metaIpfs)
-                item._ipfs = metaIpfs
-                item._id = metaIpfs // NOTE: use ipfs as tem Id until synced with web3
-                //TODO: again use array for items instead objects ?
-            })
-            .then(() => {
-                return registerItem({
-                    _type: item._type,
-                    _ipfs: item._ipfs,
-                    _name: item._name,
-                    _meta: 0,
-                    prKey: prKey,
-                    _addr: _addr,
-                    gas: item._meta.to
-                })
-            })
-            .then(() => {
-                // TODO: Web3 service here
-                dispatch({
-                    type: types.ADD_ITEM,
-                    item: item
-                })
-
-                if (itemToAddTo) {
-                    item = { ...item }
-                    return dispatch({
-                        type: types.ADD_ITEM_TO_ITEM,
-                        item: itemToAddTo,
-                        toAdd: item, // TODO!!!
-                    })
-                } else {
-                    return
-                }
-            })
-            .catch((e) => {
-                console.error('addItem err', e)
-            })
-    }
-    */
 }
 
 export function deleteItem({ item, objModel } = {}) {
