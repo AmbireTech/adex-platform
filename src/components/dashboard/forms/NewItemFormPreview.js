@@ -3,23 +3,12 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { ItemsTypes } from 'constants/itemsTypes'
 import NewItemHoc from './NewItemHocStep'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './theme.css'
 import moment from 'moment'
 import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
-import Item from 'models/Item'
-import Tooltip from 'react-toolbox/lib/tooltip'
-import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
-import { web3 } from 'services/smart-contracts/ADX'
-
-import scActions from 'services/smart-contracts/actions'
-const { registerItemEstimateGas } = scActions
-const TooltipCol = Tooltip(Col)
-
-const SPINNER_ID = 'register_item_estimate_gas'
 
 class NewItemFormPreview extends Component {
     constructor(props) {
@@ -27,38 +16,9 @@ class NewItemFormPreview extends Component {
         this.save = props.save
     }
 
-    componentWillMount() {
-        this.estimateGas()
-    }
-
-    estimateGas() {
-        this.props.actions.updateSpinner(SPINNER_ID, true)
-        registerItemEstimateGas({
-            ...this.props.item,
-            _ipfs: 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF',// dummy addr for estimation
-            _addr: this.props.account._addr,
-            prKey: this.props.account._temp.privateKey
-        })
-            .then((res) => {
-                this.props.handleChange('gas', res)
-                this.props.actions.updateSpinner(SPINNER_ID, false)
-            })
-            .catch((err) => {
-                console.log('estimateGas', err)
-            })
-    }
-
     render() {
         let item = this.props.item || {}
         let meta = item._meta || {}
-
-        let fee
-        let gasPrice = this.props.account._settings.gasPrice ? this.props.account._settings.gasPrice : DEFAULT_GAS_PRICE
-
-        // TODO: temp use gas param from meta
-        if (meta.gas) {
-            fee = web3.utils.fromWei((meta.gas * gasPrice).toString(), 'ether')
-        }
 
         return (
             <div>
@@ -95,19 +55,6 @@ class NewItemFormPreview extends Component {
                                 )
                             })
                     }
-                    {!!fee ?
-                        <Row>
-
-                            <TooltipCol xs={12} lg={4} className={theme.textRight}
-                                tooltip={this.props.t('OPERATION_FEE_TOOLTIP')}
-                            >
-                                <strong>  {this.props.t('OPERATION_FEE *', { isProp: true })}:</strong>
-                            </TooltipCol>
-                            <Col xs={12} lg={8} className={theme.textLeft}>
-                                <strong>{fee} ETH</strong>
-                            </Col>
-                        </Row>
-                        : null}
                 </Grid>
                 <br />
 
