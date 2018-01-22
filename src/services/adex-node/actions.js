@@ -26,7 +26,8 @@ export const regItem = ({ item, userAddr }) => {
             route: 'registeritem',
             method: 'POST',
             body: JSON.stringify(item),
-            userAddr: userAddr
+            userAddr: userAddr,
+            headers: { 'Content-Type': 'application/json' }
         })
             .then((resp) => {
                 return resolve(resp.json())

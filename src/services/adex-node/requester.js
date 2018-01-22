@@ -14,19 +14,13 @@ class AdexNodeRequester {
     }
 
     getQuery(queryParams) {
-        return Object.keys(queryParams).reduce((memo, key, index) => {
-            let qparam = ''
-            if (index === 0) {
-                qparam += '?'
-            }
-
-            qparam += (key + '=' + queryParams[key])
-            memo += qparam
-            return memo
-        }, '') || ''
+        if (!queryParams) return ''
+        return '?' + Object.keys(queryParams).map((key) => {
+            return encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key])
+        }, '').join('&') || ''
     }
 
-    fetch({ route = '', queryParams = {}, method = 'GET', body, headers = {}, userAddr }) {
+    fetch({ route = '', queryParams, method = 'GET', body, headers = {}, userAddr }) {
         let query = this.getQuery(queryParams)
         let url = this.getUrl(BASE_URL, route, query)
 

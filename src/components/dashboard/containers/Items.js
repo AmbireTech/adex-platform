@@ -16,8 +16,7 @@ class Items extends Component {
         getItems({ type: this.props.itemsType, userAddr: this.props.account._addr })
             .then((items) => {
                 items = items.map((item) => {
-                    let mapped = { ...item.itemObj }
-                    mapped._id = item._id
+                    let mapped = { ...item } // TODO: maybe new instance of item class or make sure to keep consistency with the models on the node (without using the model on the node)
                     return mapped
                 })
                 this.props.actions.updateItems({ items: items, itemsType: this.props.itemsType })
