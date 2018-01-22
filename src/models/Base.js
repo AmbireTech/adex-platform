@@ -101,8 +101,6 @@ class Base {
         let hasDirtyProps = Array.isArray(dirtyProps)
         if (hasDirtyProps) dirtyProps = [...dirtyProps]
 
-        newItem['kor'] = 'hoi'
-
         // TODO: Handle remove key value
         for (let key in meta) {
             if (meta.hasOwnProperty(key) && key in newItem) {

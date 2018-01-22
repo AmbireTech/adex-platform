@@ -72,9 +72,9 @@ address@1.0.2, address@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/address/-/address-1.0.2.tgz#480081e82b587ba319459fef512f516fe03d58af"
 
-"adex-constants@git+https://git@github.com/AdExBlockchain/adex-constants.git#33f59be147199fb67b305a8ad9fc8e89aae8ed47":
+"adex-constants@git+https://git@github.com/AdExBlockchain/adex-constants.git#342db0a3523c80f0c9764d5ea967a8e388b5341a":
   version "1.0.0"
-  resolved "git+https://git@github.com/AdExBlockchain/adex-constants.git#33f59be147199fb67b305a8ad9fc8e89aae8ed47"
+  resolved "git+https://git@github.com/AdExBlockchain/adex-constants.git#342db0a3523c80f0c9764d5ea967a8e388b5341a"
 
 "adex-translations@git+https://git@github.com/AdExBlockchain/adex-translations.git#d0bd6977386aa6d2e9ad58fb6d3d1af341212f18":
   version "0.0.1"
