@@ -19,7 +19,8 @@ class Item extends Base {
         _modifiedOn,
         _syncedIpfs,
         _deleted,
-        _archived
+        _archived,
+        _items
         } = {}) {
         super({
             fullName: fullName,
@@ -38,7 +39,7 @@ class Item extends Base {
         this.adType = _meta.adType || adType
 
         this.id = _id
-        this.items = _meta.items || []
+        this.items = _items || []
         this.description = _description
     }
 
@@ -71,6 +72,9 @@ class Item extends Base {
 
     get collections() { return this._collections }
     set collections(value) { this._collections = value }
+
+    get items() { return this._items }
+    set items(value) { this._items = value }
 
     // UI props    
     get imgUrl() {

@@ -36,6 +36,7 @@ export class Channel extends Component {
 
         let item = this.props.item
         let meta = item._meta
+        let items = item._items || []
         let propsSlots = { ...this.props.slots }
         let slots = []
         let otherSlots = Array.from(Object.values(propsSlots))
@@ -43,10 +44,10 @@ export class Channel extends Component {
 
         if (!item) return (<h1>'404'</h1>)
 
-        for (var index = 0; index < meta.items.length; index++) {
-            if (propsSlots[meta.items[index]] && !propsSlots[meta.items[index]]._meta.deleted) {
-                slots.push(propsSlots[meta.items[index]])
-                otherSlots[meta.items[index]] = null
+        for (var index = 0; index < items.length; index++) {
+            if (propsSlots[items[index]] && !propsSlots[items[index]]._meta.deleted) {
+                slots.push(propsSlots[items[index]])
+                otherSlots[items[index]] = null
             }
         }
 

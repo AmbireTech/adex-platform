@@ -41,6 +41,7 @@ export class Campaign extends Component {
         let side = this.props.match.params.side;
         let item = this.props.item
         let meta = item._meta
+        let items = item._items || []
         let propsUnits = { ...this.props.units }
         let units = []
         let otherUnits = { ...propsUnits }
@@ -52,10 +53,10 @@ export class Campaign extends Component {
         let from = item._meta.from ? new Date(item._meta.from) : null
         let to = item._meta.to ? new Date(item._meta.to) : null
 
-        for (var index = 0; index < meta.items.length; index++) {
-            if (propsUnits[meta.items[index]] && !propsUnits[meta.items[index]]._meta.deleted) {
-                units.push(propsUnits[meta.items[index]])
-                otherUnits[meta.items[index]] = null
+        for (var index = 0; index < items.length; index++) {
+            if (propsUnits[items[index]] && !propsUnits[items[index]]._deleted) {
+                units.push(propsUnits[items[index]])
+                otherUnits[items[index]] = null
             }
         }
 
