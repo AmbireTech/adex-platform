@@ -1,6 +1,6 @@
 import * as types from 'constants/actionTypes'
 import { addImgFromObjectURL, getFileIpfsHash } from 'services/ipfs/ipfsService'
-import { uploadImage, regItem, delItem } from 'services/adex-node/actions'
+import { uploadImage, regItem, delItem, addItmToItm } from 'services/adex-node/actions'
 import { ItemModelsByType } from 'constants/itemsTypes'
 
 export function updateNewItem(item, newMeta) {
@@ -100,11 +100,14 @@ export function removeItemFromItem({ item, toRemove } = {}) {
 
 export function addItemToItem({ item, toAdd } = {}) {
     return function (dispatch) {
-        return dispatch({
-            type: types.ADD_ITEM_TO_ITEM,
-            item: item,
-            toAdd: toAdd,
-        })
+        addItmToItm({ item: toAdd._id || toAdd, collection: item._id, userAddr: item._meta.owner || item.user })
+            .then((res) => {
+                return dispatch({
+                    type: types.ADD_ITEM_TO_ITEM,
+                    item: item,
+                    toAdd: toAdd,
+                })
+            })
     }
 }
 

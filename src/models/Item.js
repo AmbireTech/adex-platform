@@ -86,16 +86,14 @@ class Item extends Base {
     static addItem(item, toAdd) {
         if (toAdd._id) toAdd = toAdd._id
 
-        let itemIndex = item._meta.items.indexOf(toAdd)
+        let itemIndex = item._items.indexOf(toAdd)
         if (itemIndex > -1) return
 
         let newItem = { ...item }
-        let newMeta = { ...newItem._meta }
-        let newItems = [...newItem._meta.items]
+        let newItems = [...newItem._items]
         newItems.push(toAdd)
-        newMeta.items = newItems
-        newMeta.modifiedOn = Date.now()
-        newItem._meta = newMeta
+        newItem.items = newItems
+        newItem.modifiedOn = Date.now()
 
         return newItem
     }

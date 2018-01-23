@@ -73,3 +73,21 @@ export const delItem = ({ id, type, userAddr }) => {
             })
     })
 }
+
+export const addItmToItm = ({ item, type, collection, userAddr }) => {
+    return new Promise((resolve, reject) => {
+        requester.fetch({
+            route: 'add-to-item',
+            method: 'POST',
+            userAddr: userAddr,
+            queryParams: { 'type': type, item: item, collection: collection },
+        })
+            .then((resp) => {
+                return resolve(resp.json())
+            })
+            .catch((err) => {
+                return reject(err)
+            })
+
+    })
+}

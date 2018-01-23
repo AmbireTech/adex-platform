@@ -67,7 +67,7 @@ export default function itemsReducer(state = initialState.items, action) {
 
         case UPDATE_ALL_ITEMS:
             //TEMP:
-            newState = {}
+            newState = { ...state }
             let newItems = action.items.reduce((memo, item, index) => {
                 let newItem = { ...item }
                 memo[newItem._id] = newItem
