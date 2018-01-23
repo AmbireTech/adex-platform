@@ -16,6 +16,7 @@ class Campaign extends Item {
         _bids,
         _syncedIpfs,
         _deleted,
+        _items,
         _archived,
         _from,
         _to,
@@ -30,6 +31,7 @@ class Campaign extends Item {
             _id: _id,
             _ipfs: _ipfs,
             _description: _description,
+            _items: _items,
             _meta: _meta,
             _syncedIpfs: _syncedIpfs
         })

@@ -19,10 +19,16 @@ export default function itemsReducer(state = initialState.items, action) {
         }
     }
 
-    if (action.item) {
+    const removeCollectionProp = (collection = {}, prop) => {
+        let newCol = { ...collection }
+        delete newCol[prop]
+        return newCol
+    }
+
+    if (action.item && action.item._meta) {
         newState = { ...state }
         item = action.item
-        collectionId = item._type
+        collectionId = item._type || item._meta.type
     }
 
     switch (action.type) {
@@ -42,8 +48,8 @@ export default function itemsReducer(state = initialState.items, action) {
 
         case DELETE_ITEM:
             // newItem = Base.updateMeta(newState[collectionId][item._id], { deleted: true, modifiedOn: Date.now() })
-            newItem = Base.updateObject({ item: newState[collectionId][item._id], meta: { deleted: true }, objModel: action.objModel })
-            newCollection = collection(newState[collectionId], { ...action, item: newItem })
+            // newItem = Base.updateObject({ item: newState[collectionId][item._id], meta: { _deleted: true }, objModel: action.objModel })
+            newCollection = removeCollectionProp(newState[collectionId], item._id)
             newState[collectionId] = newCollection
             return newState
 

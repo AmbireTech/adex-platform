@@ -6,7 +6,7 @@ export const uploadImage = ({ imageBlob, imageName = '', userAddr }) => {
 
     return new Promise((resolve, reject) => {
         requester.fetch({
-            route: 'uploadimage',
+            route: 'image',
             method: 'POST',
             body: formData,
             userAddr: userAddr
@@ -23,7 +23,7 @@ export const uploadImage = ({ imageBlob, imageName = '', userAddr }) => {
 export const regItem = ({ item, userAddr }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
-            route: 'registeritem',
+            route: 'items',
             method: 'POST',
             body: JSON.stringify(item),
             userAddr: userAddr,
@@ -54,5 +54,22 @@ export const getItems = ({ type, userAddr }) => {
                 return reject(err)
             })
 
+    })
+}
+
+export const delItem = ({ id, type, userAddr }) => {
+    return new Promise((resolve, reject) => {
+        requester.fetch({
+            route: 'items',
+            method: 'DELETE',
+            queryParams: { 'type': type, id: id },
+            userAddr: userAddr
+        })
+            .then((resp) => {
+                return resolve(resp.json())
+            })
+            .catch((err) => {
+                return reject(err)
+            })
     })
 }
