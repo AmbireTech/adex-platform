@@ -16,6 +16,7 @@ import moment from 'moment'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
 import AdUnitModel from 'models/AdUnit'
+import { groupItemsForCollection } from 'helpers/itemsHelpers'
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
@@ -51,19 +52,11 @@ export class Campaign extends Component {
         let from = item._meta.from ? new Date(item._meta.from) : null
         let to = item._meta.to ? new Date(item._meta.to) : null
 
-        let allUnits = Array.from(Object.values(propsUnits))
-            .reduce((memo, unit, index) => {
-                if (unit._items.indexOf(item._id) > -1) {
-                    memo.units.push(unit)
-                } else {
-                    memo.otherUnits.push(unit)
-                }
+        //TODO: Make it wit HOC for collection (campaing/channel)
+        let groupedUnits = groupItemsForCollection({ collectionId: item._id, allItems: propsUnits })
 
-                return memo
-            }, { units: [], otherUnits: [] })
-
-        let units = allUnits.units
-        let otherUnits = allUnits.otherUnits
+        let units = groupedUnits.items
+        let otherUnits = groupedUnits.otherItems
 
         return (
             <div>

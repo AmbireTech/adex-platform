@@ -14,6 +14,7 @@ import AddItemDialog from './AddItemDialog'
 import NewItemSteps from 'components/dashboard/forms/NewItemSteps'
 import theme from './theme.css'
 import Translate from 'components/translate/Translate'
+import { groupItemsForCollection } from 'helpers/itemsHelpers'
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
@@ -38,18 +39,15 @@ export class Channel extends Component {
         let meta = item._meta
         let items = item._items || []
         let propsSlots = { ...this.props.slots }
-        let slots = []
-        let otherSlots = Array.from(Object.values(propsSlots))
         let t = this.props.t
 
         if (!item) return (<h1>'404'</h1>)
 
-        for (var index = 0; index < items.length; index++) {
-            if (propsSlots[items[index]] && !propsSlots[items[index]]._meta.deleted) {
-                slots.push(propsSlots[items[index]])
-                otherSlots[items[index]] = null
-            }
-        }
+        //TODO: Make it wit HOC for collection (campaing/channel)
+        let groupedSlots = groupItemsForCollection({ collectionId: item._id, allItems: propsSlots })
+
+        let slots = groupedSlots.items
+        let otherSlots = groupedSlots.otherItems
 
         return (
             <div>
