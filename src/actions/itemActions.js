@@ -1,6 +1,6 @@
 import * as types from 'constants/actionTypes'
 import { addImgFromObjectURL, getFileIpfsHash } from 'services/ipfs/ipfsService'
-import { uploadImage, regItem, delItem, addItmToItm } from 'services/adex-node/actions'
+import { uploadImage, regItem, delItem, addItmToItm, removeItmFromItm } from 'services/adex-node/actions'
 import { ItemModelsByType } from 'constants/itemsTypes'
 
 export function updateNewItem(item, newMeta) {
@@ -40,16 +40,17 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
                 })
                 .then((imgResp) => {
                     item._meta.img.ipfs = imgResp.ipfs
-                    registerItem(item)
+                    registerItem(item, itemToAddTo)
                 })
                 .catch((err) => {
                     console.log('fetch tempUrl err', err)
                 })
         } else {
-            registerItem(item)
+            registerItem(item, itemToAddTo)
         }
 
-        function registerItem(item) {
+        function registerItem(item, itemToAddTo) {
+
             regItem({ item, userAddr: _addr })
                 .then((item) => {
                     let registeredItem = new ItemModelsByType[item.type](item)
@@ -57,6 +58,18 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
                         type: types.ADD_ITEM,
                         item: registeredItem
                     })
+
+                    if (itemToAddTo) {
+                        // TODO: How to use addItemToItem action
+                        addItmToItm({ item: registeredItem._id, collection: itemToAddTo._id || itemToAddTo, userAddr: registeredItem._meta.owner || registeredItem.user })
+                            .then((res) => {
+                                return dispatch({
+                                    type: types.ADD_ITEM_TO_ITEM,
+                                    item: registeredItem,
+                                    toAdd: itemToAddTo,
+                                })
+                            })
+                    }
                 })
                 .catch((err) => {
                     console.log('registerItem err', err)
@@ -90,17 +103,20 @@ export function deleteItem({ item, objModel, _addr } = {}) {
 
 export function removeItemFromItem({ item, toRemove } = {}) {
     return function (dispatch) {
-        return dispatch({
-            type: types.REMOVE_ITEM_FROM_ITEM,
-            item: item,
-            toRemove: toRemove,
-        })
+        removeItmFromItm({ item: item._id, collection: toRemove._id || toRemove, userAddr: item._meta.owner || item.user })
+            .then((res) => {
+                return dispatch({
+                    type: types.REMOVE_ITEM_FROM_ITEM,
+                    item: item,
+                    toRemove: toRemove,
+                })
+            })
     }
 }
 
 export function addItemToItem({ item, toAdd } = {}) {
     return function (dispatch) {
-        addItmToItm({ item: toAdd._id || toAdd, collection: item._id, userAddr: item._meta.owner || item.user })
+        addItmToItm({ item: item._id, collection: toAdd._id || toAdd, userAddr: item._meta.owner || item.user })
             .then((res) => {
                 return dispatch({
                     type: types.ADD_ITEM_TO_ITEM,

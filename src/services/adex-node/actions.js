@@ -77,10 +77,10 @@ export const delItem = ({ id, type, userAddr }) => {
 export const addItmToItm = ({ item, type, collection, userAddr }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
-            route: 'add-to-item',
+            route: 'item-to-item',
             method: 'POST',
             userAddr: userAddr,
-            queryParams: { 'type': type, item: item, collection: collection },
+            queryParams: { type: type, item: item, collection: collection },
         })
             .then((resp) => {
                 return resolve(resp.json())
@@ -89,5 +89,40 @@ export const addItmToItm = ({ item, type, collection, userAddr }) => {
                 return reject(err)
             })
 
+    })
+}
+
+export const removeItmFromItm = ({ item, type, collection, userAddr }) => {
+    return new Promise((resolve, reject) => {
+        requester.fetch({
+            route: 'item-to-item',
+            method: 'DELETE',
+            userAddr: userAddr,
+            queryParams: { type: type, item: item, collection: collection },
+        })
+            .then((resp) => {
+                return resolve(resp.json())
+            })
+            .catch((err) => {
+                return reject(err)
+            })
+
+    })
+}
+
+export const getCollectionItems = ({ id, userAddr }) => {
+    return new Promise((resolve, reject) => {
+        requester.fetch({
+            route: 'collection',
+            method: 'GET',
+            userAddr: userAddr,
+            queryParams: { id: id },
+        })
+            .then((resp) => {
+                return resolve(resp.json())
+            })
+            .catch((err) => {
+                return reject(err)
+            })
     })
 }

@@ -210,7 +210,7 @@ class ItemsList extends Component {
                         tooltipPosition='top'
                         className={RTButtonTheme.danger}
                         onClick={this.props.actions.confirmAction.bind(this,
-                            this.props.actions.removeItemFromItem.bind(this, { item: this.props.parentItem, toRemove: item }),
+                            this.props.actions.removeItemFromItem.bind(this, { item: item, toRemove: this.props.parentItem }),
                             null,
                             {
                                 confirmLabel: 'Yes',
@@ -228,7 +228,7 @@ class ItemsList extends Component {
                         tooltip={'Add to ' + this.props.parentItem._name}
                         tooltipDelay={1000}
                         tooltipPosition='top'
-                        onClick={this.props.actions.addItemToItem.bind(this, { item: this.props.parentItem, toAdd: item })}
+                        onClick={this.props.actions.addItemToItem.bind(this, { item: item, toAdd: this.props.parentItem })}
                     /> : null}
             </span>
         )

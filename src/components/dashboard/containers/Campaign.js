@@ -43,8 +43,6 @@ export class Campaign extends Component {
         let meta = item._meta
         let items = item._items || []
         let propsUnits = { ...this.props.units }
-        let units = []
-        let otherUnits = { ...propsUnits }
 
         let t = this.props.t
 
@@ -53,14 +51,19 @@ export class Campaign extends Component {
         let from = item._meta.from ? new Date(item._meta.from) : null
         let to = item._meta.to ? new Date(item._meta.to) : null
 
-        for (var index = 0; index < items.length; index++) {
-            if (propsUnits[items[index]] && !propsUnits[items[index]]._deleted) {
-                units.push(propsUnits[items[index]])
-                otherUnits[items[index]] = null
-            }
-        }
+        let allUnits = Array.from(Object.values(propsUnits))
+            .reduce((memo, unit, index) => {
+                if (unit._items.indexOf(item._id) > -1) {
+                    memo.units.push(unit)
+                } else {
+                    memo.otherUnits.push(unit)
+                }
 
-        otherUnits = Array.from(Object.values(otherUnits))
+                return memo
+            }, { units: [], otherUnits: [] })
+
+        let units = allUnits.units
+        let otherUnits = allUnits.otherUnits
 
         return (
             <div>

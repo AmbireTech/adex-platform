@@ -73,6 +73,7 @@ class Item extends Base {
     get collections() { return this._collections }
     set collections(value) { this._collections = value }
 
+    // NOTE: _items keep the ids of collections Campaign/Channel that thi item is in (as in the db to avoid big arrays there)  
     get items() { return this._items }
     set items(value) { this._items = value }
 
@@ -92,7 +93,7 @@ class Item extends Base {
         let newItem = { ...item }
         let newItems = [...newItem._items]
         newItems.push(toAdd)
-        newItem.items = newItems
+        newItem._items = newItems
         newItem.modifiedOn = Date.now()
 
         return newItem
@@ -101,16 +102,14 @@ class Item extends Base {
     static removeItem(item, toRemove) {
         if (toRemove._id) toRemove = toRemove._id
 
-        let itemIndex = item._meta.items.indexOf(toRemove)
+        let itemIndex = item._items.indexOf(toRemove)
         if (itemIndex < 0) return
 
         let newItem = { ...item }
-        let newMeta = { ...newItem._meta }
-        let newItems = [...newItem._meta.items]
+        let newItems = [...newItem._items]
         newItems.splice(itemIndex, 1)
-        newMeta.items = newItems
-        newMeta.modifiedOn = Date.now()
-        newItem._meta = newMeta
+        newItem._items = newItems
+        newItem.modifiedOn = Date.now()
 
         return newItem
     }
