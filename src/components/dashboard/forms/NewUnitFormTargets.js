@@ -1,9 +1,10 @@
-
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
+import NewItemHoc from './NewItemHocStep'
+import Translate from 'components/translate/Translate'
 import { ItemsTypes, Locations, TargetWeightLabels, Genders, TARGET_MIN_AGE, TARGET_MAX_AGE } from 'constants/itemsTypes'
 import theme from './theme.css'
 import AdUnit from 'models/AdUnit'
@@ -43,7 +44,7 @@ const ages = (() => {
     return ages
 })()
 
-export class UnitTargets extends Component {
+class NewUnitFormTargets extends Component {
 
     handleTargetChange = (target, valueKey, newValue) => {
         let newWeight
@@ -140,93 +141,91 @@ export class UnitTargets extends Component {
 
     Targets = ({ meta, t }) => {
         return (
-            <Grid fluid>
-                <Row className={theme.targetsHead}>
-                    <Col lg={7}>
-                        {t('TARGET')}
-                    </Col>
-                    <Col lg={5}>
-                        {t('WEIGHT')}
-                    </Col>
-                </Row>
-                {
-                    (meta.targets || []).map((target) => {
-                        return (
-                            <Row key={target.name} className={theme.targetRow}>
-                                <Col lg={7}>
-                                    {(() => {
-                                        switch (target.name) {
-                                            case 'location':
-                                                return this.renderLocationTarget(target)
-                                            case 'gender':
-                                                return this.renderGendersTarget(target)
-                                            case 'age':
-                                                return this.renderAgeTarget(target)
-                                            default: null
-                                        }
-                                    })()}
-                                </Col>
-                                <Col lg={5} style={{ position: 'relative' }}>
-                                    <div className={classnames(theme.sliderWrapper)}>
-                                        <label className={classnames(theme.sliderLabel, theme.weightLabel)}>
-                                            {target.name}  weight:
+            <div>
+                <Grid fluid >
+                    <Row className={theme.targetsHead}>
+                        <Col lg={7}>
+                            {t('TARGET')}
+                        </Col>
+                        <Col lg={5}>
+                            {t('WEIGHT')}
+                        </Col>
+                    </Row>
+                    {
+                        (meta.targets || []).map((target) => {
+                            return (
+                                <Row key={target.name} className={theme.targetRow}>
+                                    <Col lg={7}>
+                                        {(() => {
+                                            switch (target.name) {
+                                                case 'location':
+                                                    return this.renderLocationTarget(target)
+                                                case 'gender':
+                                                    return this.renderGendersTarget(target)
+                                                case 'age':
+                                                    return this.renderAgeTarget(target)
+                                                default: null
+                                            }
+                                        })()}
+                                    </Col>
+                                    <Col lg={5} style={{ position: 'relative' }}>
+                                        <div className={classnames(theme.sliderWrapper)}>
+                                            <label className={classnames(theme.sliderLabel, theme.weightLabel)}>
+                                                {target.name}  weight:
                                             <strong> {target.weight} </strong>
-                                            ({TargetWeightLabels[target.weight]})
+                                                ({TargetWeightLabels[target.weight]})
                                         </label>
-                                        <Slider className={theme.weightSlider}
-                                            pinned
-                                            snaps
-                                            min={0}
-                                            max={4}
-                                            step={1}
-                                            value={target.weight}
-                                            onChange={this.handleTargetChange.bind(this, target, 'updateWeight')}
-                                        />
-                                    </div>
-                                </Col>
+                                            <Slider className={theme.weightSlider}
+                                                pinned
+                                                snaps
+                                                min={0}
+                                                max={4}
+                                                step={1}
+                                                value={target.weight}
+                                                onChange={this.handleTargetChange.bind(this, target, 'updateWeight')}
+                                            />
+                                        </div>
+                                    </Col>
 
-                            </Row>
-                        )
-                    })
-                }
-            </Grid>
+                                </Row>
+                            )
+                        })
+                    }
+                </Grid>
+            </div >
         )
     }
 
     render() {
         return (
-            <this.Targets meta={this.props.meta} t={this.props.t} />
+            <this.Targets meta={this.props.item._meta} t={this.props.t} />
         )
     }
 }
 
-UnitTargets.propTypes = {
+NewUnitFormTargets.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    // items: PropTypes.array.isRequired,
-    item: PropTypes.object.isRequired,
-    slots: PropTypes.array.isRequired,
-    spinner: PropTypes.bool
-};
+    title: PropTypes.string,
+}
 
 function mapStateToProps(state) {
     let persist = state.persist
-    let memory = state.memory
+    // let memory = state.memory
     return {
         account: persist.account,
-        slots: [], // Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
-        spinner: memory.spinners[ItemsTypes.AdUnit.name]
-    };
+        itemType: ItemsTypes.AdUnit.id
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
-// const UnitItem = ItemHoc(UnitSlots)
+const ItemNewUnitFormTargets = NewItemHoc(NewUnitFormTargets)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(UnitTargets);
+)(Translate(ItemNewUnitFormTargets))

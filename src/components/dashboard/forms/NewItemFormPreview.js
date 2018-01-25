@@ -16,6 +16,51 @@ class NewItemFormPreview extends Component {
         this.save = props.save
     }
 
+    //TODO: make it beautiful
+    targets = ({ targets }) => {
+        return (
+            <div>
+                {
+                    targets.map((target) => {
+                        return (
+                            <div key={target.name}>
+                                <strong>{target.name} </strong>
+                                <strong> (weight - {target.weight}) : </strong>
+
+                                <span>
+                                    {
+                                        Array.isArray(target.value) ?
+                                            <span>
+                                                {target.value.map((val) => {
+                                                    return (<span key={val}> {val}, </span>)
+                                                })}
+                                            </span>
+                                            : null
+                                    }
+                                </span>
+
+                                <span>
+                                    {
+                                        // TODO: fix it
+                                        (target.value.from || target.value.to) ?
+                                            <span>
+                                                <span> from </span>
+                                                <span> {target.value.from} </span>
+                                                <span> to </span>
+                                                <span> {target.value.to} </span>
+                                            </span>
+                                            : null
+                                    }
+                                </span>
+                            </div>
+                        )
+                    })
+                }
+
+            </div>
+        )
+    }
+
     render() {
         let item = this.props.item || {}
         let meta = item._meta || {}
@@ -38,7 +83,7 @@ class NewItemFormPreview extends Component {
                     {
                         Object
                             .keys(meta)
-                            .filter((key) => !/fullName|description|items|img|createdOn|modifiedOn|deleted|archived|banner|name|owner|type/.test(key))
+                            .filter((key) => !/fullName|description|items|img|createdOn|modifiedOn|deleted|archived|banner|name|owner|type|targets/.test(key))
                             .map(key => {
                                 let keyName = key
                                 let value = item._meta[key]
@@ -55,6 +100,14 @@ class NewItemFormPreview extends Component {
                                 )
                             })
                     }
+                    {meta.targets ?
+                        <Row>
+                            <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('targets', { isProp: true })}:</Col>
+                            <Col xs={12} lg={8} className={theme.textLeft}><this.targets targets={meta.targets} /></Col>
+                        </Row>
+                        : null
+                    }
+
                 </Grid>
                 <br />
 

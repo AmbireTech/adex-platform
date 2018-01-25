@@ -1,3 +1,10 @@
 .knob {
   z-index: 1 !important;
 }
+
+.progress {
+  & .innerprogress {
+    left: 0;
+    right: 0;
+  }
+}

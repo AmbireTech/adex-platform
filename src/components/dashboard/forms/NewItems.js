@@ -6,6 +6,7 @@ import NewItemWithDialog from './NewItemWithDialog'
 // import NewUnitForm from './NewUnitForm'
 import NewSlotForm from './NewSlotForm'
 import NewUnitFormBasic from './NewUnitFormBasic'
+import NewUnitFormTargets from './NewUnitFormTargets'
 import NewCampaignForm from './NewCampaignForm'
 import NewChannelForm from './NewChannelForm'
 import AdUnit from 'models/AdUnit'
@@ -21,7 +22,7 @@ export const NewUnit = (props) =>
         btnLabel="NEW_UNIT"
         title="CREATE_NEW_UNIT"
         itemType={ItemsTypes.AdUnit.id}
-        itemPages={[NewUnitFormBasic]}
+        itemPages={[NewUnitFormBasic, NewUnitFormTargets]}
         imgLabel="UNIT_BANNER"
         noDefaultImg
         itemModel={AdUnit}

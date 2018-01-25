@@ -136,3 +136,36 @@
         min-height: 90vh;
     }
 }
+
+/*  Targets 
+ TODO: Make it commom if needed */
+.targetsHead {
+    border-bottom: 1px solid var(--color-adex-neutral-contrast);
+    color: var(--color-adex-neutral-contrast);
+    padding-bottom: 5px;
+    text-align: left;
+}
+
+.weightSlider {
+    padding-top: 16px;
+}
+
+.sliderWrapper {
+    position: absolute;
+    bottom: 8px;
+    width: 100%;
+    padding: 8px 0;
+}
+
+.targetRow {
+    margin-top: 10px;
+    border-bottom: 1px solid var(--color-adex-neutral-contrast);
+}
+
+.weightCol {
+    position: realtive;
+}
+
+.agesGrid {
+    padding: 0;
+}
