@@ -13,8 +13,8 @@ class Base {
          */
         this._meta = {}
 
-        this.name = _meta.name || fullName
-        this.fullName = fullName || _meta.fullName
+        this.name = _meta.fullName || fullName || _meta.name
+        this.fullName = _meta.fullName || fullName
         this.createdOn = _meta.createdOn
 
         /**

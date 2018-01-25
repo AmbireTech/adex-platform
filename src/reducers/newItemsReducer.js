@@ -12,7 +12,6 @@ export default function newItemsReducer(state = initialState.newItem, action) {
         case UPDATE_NEW_ITEM:
             newState = { ...state }
             newItem = { ...action.item }
-            newItem._name = '' // temp bugfix
             newItem = Base.updateObject({ item: newItem, meta: { ...action.meta }, objModel: ItemModelsByType[newItem._meta.type] })
             newState[action.item._type] = newItem
 
