@@ -69,7 +69,7 @@ export class UnitTargets extends Component {
             newValue = tempValue
         }
 
-        let newTargets = AdUnit.updateTargets(this.props.item._meta.targets, target, newValue, newWeight)
+        let newTargets = AdUnit.updateTargets(this.props.item._meta.targets || [], target, newValue, newWeight)
         this.props.handleChange('targets', newTargets)
     }
 
@@ -106,6 +106,7 @@ export class UnitTargets extends Component {
     }
 
     renderAgeTarget = (target) => {
+        let value = target.value || {}
         return (
             <div>
                 <Grid fluid className={theme.agesGrid}>
@@ -117,8 +118,8 @@ export class UnitTargets extends Component {
                                 multiple={false}
                                 onChange={this.handleTargetChange.bind(this, target, 'from')}
                                 label={this.props.t('TARGET_AGE_FROM')}
-                                source={ages.slice(0, (target.value.to | 0) + 1)}
-                                value={target.value.from + ''}
+                                source={ages.slice(0, (value.to | 0) + 1)}
+                                value={value.from + ''}
                                 suggestionMatch='anywhere'
                                 showSuggestionsWhenValueIsSet={true}
                                 allowCreate={false}
@@ -131,8 +132,8 @@ export class UnitTargets extends Component {
                                 multiple={false}
                                 onChange={this.handleTargetChange.bind(this, target, 'to')}
                                 label={this.props.t('TARGET_AGE_TO')}
-                                source={ages.slice(target.value.from | 0)}
-                                value={target.value.to + ''}
+                                source={ages.slice(value.from | 0)}
+                                value={value.to + ''}
                                 suggestionMatch='anywhere'
                                 showSuggestionsWhenValueIsSet={true}
                                 allowCreate={false}

@@ -1,6 +1,6 @@
 // import Helper from 'helpers/miscHelpers'
 import Item from './Item'
-import { ItemsTypes } from 'constants/itemsTypes'
+import { ItemsTypes, DefaultTargets } from 'constants/itemsTypes'
 
 class AdUnit extends Item {
     constructor({
@@ -48,7 +48,7 @@ class AdUnit extends Item {
     set ad_url(value) { this._meta.ad_url = value }
 
     get targets() { return this._meta.targets }
-    set targets(value) { this._meta.targets = value }
+    set targets(value) { this._meta.targets = value || DefaultTargets }
 
     static updateTargets(targets, target, newValue, newWeight) {
         // TODO: validate target

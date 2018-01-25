@@ -65,6 +65,8 @@ export const TargetsWeight = [
   { value: 4, label: 'Highest' },
 ]
 
+export const DefaultTargetWeightValue = TargetsWeight[0].value
+
 export const TargetWeightLabels = (function () {
   let labels = {}
   TargetsWeight.map((target) => {
@@ -84,15 +86,17 @@ export function getRandomPropValue(constants) {
   return constants[constants.length * Math.random() << 0].value
 }
 
-export const Targets = [
-  { name: 'gender', values: Genders },
-  { name: 'location' },
-  { name: 'age' }
+export const TARGET_MIN_AGE = 0
+export const TARGET_MAX_AGE = 100
+
+export const DefaultTargets = [
+  { name: 'gender', value: [], weight: DefaultTargetWeightValue },
+  { name: 'location', value: [], weight: DefaultTargetWeightValue },
+  { name: 'age', value: { from: TARGET_MIN_AGE, to: TARGET_MAX_AGE }, weight: DefaultTargetWeightValue }
 ]
 
 export const Locations = allLocations
 
-export const TARGET_MIN_AGE = 0
-export const TARGET_MAX_AGE = 100
+
 
 export const BID_STATUS = AdexConstants.exchange.BID_STATUS
