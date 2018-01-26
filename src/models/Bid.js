@@ -21,49 +21,30 @@ class Bid {
     constructor({
         id = null,
         state = BidState.Open,
-        amount = 0,
-        advertiser = null,
-        advertiserWallet = null,
-        adUnit = null,
-        adUnitIpfs = null,
-        advertiserPeer = null,
-        publisher = null,
-        publisherWallet = null,
-        adSlot = null,
-        adSlotIpfs = null,
-        publisherPeer = null,
-        acceptedTime = null,
-        requiredPoints = null,
-        requiredExecTime = null,
-        confirmedByPublisher = false,
-        confirmedByAdvertiser = false,
-        publisherReportIpfs = null,
-        advertiserReportIpfs = null,
-        txTime = null // TODO: Maybe prop name dateOpened || createdOn here
+        advertiser = null, //address
+        adUnit = null,//bytes32 (ipfs hash or node id)
+        publisher = null, //address
+        adSlot = null,//bytes32
+        acceptedTime = null,//uint
+        amount = 0,//uint
+        target = 0,//uint
+        timeout = 0,//uint
+        publisherConfirmation = false,//bytes32
+        advertiserConfirmation = false,//bytes32
     } = {}) {
         // TODO: validate types!!!
         this.id = id
         this.state = state
         this.amount = parseInt(amount)
         this.advertiser = parseInt(advertiser)
-        this.advertiserWallet = advertiserWallet
         this.adUnit = adUnit
-        this.adUnitIpfs = parseInt(adUnitIpfs)
-        this.advertiserPeer = parseInt(advertiserPeer)
         this.publisher = publisher
-        this.publisherWallet = publisherWallet
         this.adSlot = parseInt(adSlot)
-        this.adSlotIpfs = parseInt(adSlotIpfs)
-        this.publisherPeer = publisherPeer
         this.acceptedTime = acceptedTime
-        this.requiredPoints = parseInt(requiredPoints)
-        this.requiredExecTime = requiredExecTime
-        this.confirmedByPublisher = confirmedByPublisher
-        this.confirmedByAdvertiser = confirmedByAdvertiser
-        this.publisherReportIpfs = publisherReportIpfs
-        this.advertiserReportIpfs = advertiserReportIpfs
-        this.txTime = txTime
-
+        this.target = parseInt(target)
+        this.timeout = timeout
+        this.publisherConfirmation = publisherConfirmation
+        this.advertiserConfirmation = advertiserConfirmation
         return this
     }
 

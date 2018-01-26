@@ -13,7 +13,7 @@ import Item from 'models/Item'
 import AdUnit from 'models/AdUnit'
 import theme from './theme.css'
 import { IconButton, Button } from 'react-toolbox/lib/button'
-import UnitSlots from './UnitSlots'
+// import UnitSlots from './UnitSlots'
 import { Tab, Tabs } from 'react-toolbox'
 import UnitTargets from './UnitTargets'
 import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
@@ -100,11 +100,11 @@ export class Unit extends Component {
                                 <UnitTargets {...this.props} meta={meta} t={t} />
                             </div>
                         </Tab>
-                        <Tab theme={theme} label={t('SLOTS')}>
+                        {/* <Tab theme={theme} label={t('SLOTS')}>
                             <div>
                                 <UnitSlots item={item} />
                             </div>
-                        </Tab>
+                        </Tab> */}
                         <Tab label={t('BIDS')}>
                             <div> render bids here </div>
                         </Tab>

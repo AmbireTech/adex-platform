@@ -108,7 +108,7 @@ export class Slot extends Component {
                     </Grid>
                 </div>
                 <div>
-                    <SlotBids {...this.props} meta={meta} t={t} />
+                    {/* <SlotBids {...this.props} meta={meta} t={t} /> */}
                 </div>
             </div>
 
