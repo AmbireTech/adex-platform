@@ -7,7 +7,7 @@ import { ItemTypesNames } from 'constants/itemsTypes'
 import NewItemHoc from './NewItemHocStep'
 import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
-import ImgForm from './ImgForm'
+import ImgForm from './../ImgForm'
 
 class NewItemForm extends Component {
 

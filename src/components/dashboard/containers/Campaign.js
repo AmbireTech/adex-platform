@@ -7,11 +7,12 @@ import { ItemsTypes } from 'constants/itemsTypes'
 import CampaignModel from 'models/Campaign'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
-import NewUnitFormBasic from 'components/dashboard/forms/NewUnitFormBasic'
+import NewUnitFormBasic from 'components/dashboard/forms/items/NewUnitFormBasic'
+import NewUnitFormTargets from 'components/dashboard/forms/items/NewUnitFormTargets'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import theme from './campaign.css'
 import AddItemDialog from './AddItemDialog'
-import NewItemSteps from 'components/dashboard/forms/NewItemSteps'
+import NewItemSteps from 'components/dashboard/forms/items/NewItemSteps'
 import moment from 'moment'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
@@ -78,9 +79,10 @@ export class Campaign extends Component {
                                 objModel={AdUnitModel}
                                 itemModel={AdUnitModel}
                                 newForm={(props) =>
+                                    //TODO: fix it
                                     <NewItemSteps {...props}
                                         addTo={item}
-                                        itemPages={[NewUnitFormBasic]}
+                                        itemPages={[NewUnitFormBasic, NewUnitFormTargets]}
                                         itemType={ItemsTypes.AdUnit.id}
                                         itemModel={AdUnitModel}
                                         objModel={AdUnitModel}

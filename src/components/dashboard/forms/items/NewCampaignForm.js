@@ -6,7 +6,7 @@ import actions from 'actions'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import { ItemsTypes } from 'constants/itemsTypes'
 import NewItemHoc from './NewItemHocStep'
-import theme from './theme.css'
+import theme from './../theme.css'
 import { Button } from 'react-toolbox/lib/button'
 import Translate from 'components/translate/Translate'
 

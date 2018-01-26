@@ -4,11 +4,11 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Button } from 'react-toolbox/lib/button'
-import MaterialStepper from './stepper/MaterialStepper'
+import MaterialStepper from './../stepper/MaterialStepper'
 import NewItemForm from './NewItemForm'
 import NewItemFormPreview from './NewItemFormPreview'
 import NewItemHoc from './NewItemHocStep'
-import ValidItemHoc from './ValidItemHoc'
+import ValidItemHoc from './../ValidItemHoc'
 
 const saveBtn = ({ ...props }) => {
     return (
