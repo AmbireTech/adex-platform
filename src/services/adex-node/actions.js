@@ -35,7 +35,6 @@ export const regItem = ({ item, userAddr }) => {
             .catch((err) => {
                 return reject(err)
             })
-
     })
 }
 
@@ -53,7 +52,6 @@ export const getItems = ({ type, userAddr }) => {
             .catch((err) => {
                 return reject(err)
             })
-
     })
 }
 
@@ -88,7 +86,6 @@ export const addItmToItm = ({ item, type, collection, userAddr }) => {
             .catch((err) => {
                 return reject(err)
             })
-
     })
 }
 
@@ -106,7 +103,6 @@ export const removeItmFromItm = ({ item, type, collection, userAddr }) => {
             .catch((err) => {
                 return reject(err)
             })
-
     })
 }
 
@@ -117,6 +113,24 @@ export const getCollectionItems = ({ id, userAddr }) => {
             method: 'GET',
             userAddr: userAddr,
             queryParams: { id: id },
+        })
+            .then((resp) => {
+                return resolve(resp.json())
+            })
+            .catch((err) => {
+                return reject(err)
+            })
+    })
+}
+
+export const placeBid = ({ bid, userAddr }) => {
+    return new Promise((resolve, reject) => {
+        requester.fetch({
+            route: 'bids',
+            method: 'POST',
+            body: JSON.stringify(bid),
+            userAddr: userAddr,
+            headers: { 'Content-Type': 'application/json' }
         })
             .then((resp) => {
                 return resolve(resp.json())
