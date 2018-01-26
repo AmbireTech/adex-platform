@@ -19,8 +19,11 @@ import UnitTargets from './UnitTargets'
 import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Translate from 'components/translate/Translate'
+import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
+import NewBidSteps from 'components/dashboard/forms/bids/NewBidSteps'
 
 const TooltipButton = Tooltip(Button)
+const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
 
 export class Unit extends Component {
     constructor(props) {
@@ -88,6 +91,15 @@ export class Unit extends Component {
 
         return (
             <div>
+                <BidFormWithDialog
+                    btnLabel='PLACE_BID'
+                    title={this.props.t('PLACE_BID_FOR', { args: [meta.fullName] })}
+                    floating
+                    primary
+                    bidId={item._id}
+                    icon='check_circle'
+                    adUnit={item}
+                />
                 <this.BasicProps meta={meta} t={t} />
                 <div>
                     <Tabs
