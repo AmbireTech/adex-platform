@@ -30,7 +30,7 @@ class BidFormPreview extends Component {
           </Row>
           <Row>
             <Col xs={12} lg={4} className={theme.textRight}>{t('BID_TIMEOUT')}:</Col>
-            <Col xs={12} lg={8} className={theme.textLeft}>{bid.timeout}</Col>
+            <Col xs={12} lg={8} className={theme.textLeft}>{bid.timeout.getTime()}</Col>
           </Row>
         </Grid>
       </div>

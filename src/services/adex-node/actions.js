@@ -123,7 +123,7 @@ export const getCollectionItems = ({ id, userAddr }) => {
     })
 }
 
-export const placeBid = ({ bid, userAddr }) => {
+export const placeBid = ({ bid, unit, userAddr }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'bids',
