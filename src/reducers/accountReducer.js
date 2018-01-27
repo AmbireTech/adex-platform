@@ -1,7 +1,6 @@
 import { CREATE_ACCOUNT, RESET_ACCOUNT, UPDATE_ACCOUNT } from '../constants/actionTypes'
 import initialState from 'store/initialState'
-import Base from 'models/Base'
-import Account from 'models/Account'
+import { Base, Account } from 'adex-models'
 
 export default function accountReducer(state = initialState.account, action) {
 

@@ -1,8 +1,7 @@
 import { registry, web3, token, cfg } from 'services/smart-contracts/ADX'
 import { GAS_PRICE } from 'services/smart-contracts/constants'
-import { toHexParam, ipfsHashToHex, fromIpfsHex } from 'services/smart-contracts/utils'
-import Account from 'models/Account'
-import Item from 'models/Item'
+import { toHexParam, ipfsHashToHex, fromIpfsHex, fromHexParam } from 'services/smart-contracts/utils'
+import { Account, Item } from 'adex-models'
 import { ItemTypesNames } from 'constants/itemsTypes'
 import Helper from 'helpers/miscHelpers'
 import bs58 from 'bs58'
@@ -96,7 +95,7 @@ export const registerAccount = ({ _addr, _name = '', _wallet = 0, _ipfs = 0, _si
 export const registerItem = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0, prKey, _addr, gas } = {}) => {
     _name = _name || getDefaultItemName(_name)
     let ipfsHex = _ipfs ? ipfsHashToHex(_ipfs) : toHexParam(_ipfs)
-    
+
     return new Promise((resolve, reject) => {
         let start = Date.now()
         registry.methods
@@ -171,6 +170,23 @@ export const registerItemEstimateGas = ({ _type, _id = 0, _ipfs = 0, _name = '',
     })
 }
 
+
+const decodeFromWeb3 = (accWeb3) => {
+    if (!accWeb3) {
+        return {}
+    }
+
+    let acc = {}
+    acc._name = fromHexParam(accWeb3['accountName'] || accWeb3[3], 'string')
+    acc._ipfs = fromHexParam(accWeb3['ipfs'], 'string')
+    acc._metaWeb3 = fromHexParam(accWeb3['meta'] || accWeb3[4], 'string')
+    acc._addr = accWeb3['addr'] || accWeb3[0]
+    acc._wallet = accWeb3['wallet'] || accWeb3[1]
+
+    return acc
+}
+
+
 export const getAccountStats = ({ _addr }) => {
     return new Promise((resolve, reject) => {
         let balanceEth = web3.eth.getBalance(_addr)
@@ -190,7 +206,7 @@ export const getAccountStats = ({ _addr }) => {
                         balanceAdx: balAdx,
                         allowance: allow,
                         isRegistered: isReg,
-                        acc: Account.decodeFromWeb3(account)
+                        acc: decodeFromWeb3(account)
                     }
 
                 console.log('accStats', accStats)

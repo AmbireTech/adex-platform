@@ -1,9 +1,5 @@
 import { ItemsTypes } from 'constants/itemsTypes'
-import Campaign from 'models/Campaign'
-import AdUnit from 'models/AdUnit'
-import Channel from 'models/Channel'
-import AdSlot from 'models/AdSlot'
-import Bid from 'models/Bid'
+import { Bid, AdUnit, AdSlot, Campaign, Channel} from 'adex-models'
 
 let initialState = {
     account: {

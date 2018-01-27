@@ -1,6 +1,6 @@
 import { UPDATE_ITEM_VALIDATION, RESET_ITEM_VALIDATION } from 'constants/actionTypes'
 import initialState from 'store/initialState'
-import Base from 'models/Base'
+import { Base } from 'adex-models'
 
 export default function validateItemsReducer(state = initialState.validations, action) {
 

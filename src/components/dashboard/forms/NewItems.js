@@ -9,10 +9,7 @@ import NewUnitFormBasic from './items/NewUnitFormBasic'
 import NewUnitFormTargets from './items/NewUnitFormTargets'
 import NewCampaignForm from './items/NewCampaignForm'
 import NewChannelForm from './items/NewChannelForm'
-import AdUnit from 'models/AdUnit'
-import AdSlot from 'models/AdSlot'
-import Channel from 'models/Channel'
-import Campaign from 'models/Campaign'
+import { AdUnit, AdSlot, Channel, Campaign } from 'adex-models'
 
 const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
 

@@ -17,10 +17,12 @@ import Items from './containers/Items'
 import { ItemsTypes } from 'constants/itemsTypes'
 import Auction from './auction/Auction'
 import Signin from 'components/signin/Signin'
-import AdUnitModel from 'models/AdUnit'
-import AdSlotModel from 'models/AdSlot'
-import ChannelModel from 'models/Channel'
-import CampaignModel from 'models/Campaign'
+import {
+    AdUnit as AdUnitModel,
+    AdSlot as AdSlotModel,
+    Campaign as CampaignModel,
+    Channel as ChannelModel
+} from 'adex-models'
 import Account from './account/Account'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'

@@ -1,9 +1,6 @@
 
 import countryData from 'country-data'
-import AdSlot from 'models/AdSlot'
-import AdUnit from 'models/AdUnit'
-import Campaign from 'models/Campaign'
-import Channel from 'models/Channel'
+import { AdSlot, AdUnit, Campaign, Channel } from 'adex-models'
 import AdexConstants from 'adex-constants'
 
 let allCountries = countryData.countries.all.map((cnt) => {

@@ -17,7 +17,7 @@ import RTButtonTheme from 'styles/RTButton.css'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Img from 'components/common/img/Img'
-import Item from 'models/Item'
+import { Item } from 'adex-models'
 import moment from 'moment'
 import Translate from 'components/translate/Translate'
 

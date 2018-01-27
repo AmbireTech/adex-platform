@@ -1,8 +1,7 @@
 // NOTE: Sync store items
 
 import { getAccountItems, getItemsByType } from 'services/smart-contracts/actions/registry'
-import Item from 'models/Item'
-import Base from 'models/Base'
+import { Item, Base } from 'adex-models'
 import { ItemModelsByType } from 'constants/itemsTypes'
 
 export const syncStoreItemsByType = ({ storeItems, type, owner } = {}) => {

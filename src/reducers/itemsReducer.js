@@ -1,7 +1,6 @@
 import { ADD_ITEM, DELETE_ITEM, UPDATE_ITEM, REMOVE_ITEM_FROM_ITEM, ADD_ITEM_TO_ITEM, UPDATE_ALL_ITEMS } from 'constants/actionTypes' // eslint-disable-line no-unused-vars
 import initialState from 'store/initialState'
-import Base from 'models/Base'
-import Item from 'models/Item'
+import { Base, Item } from 'adex-models'
 
 export default function itemsReducer(state = initialState.items, action) {
 
