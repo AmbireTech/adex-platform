@@ -1,212 +1,21 @@
-import { registry, web3, token, cfg } from 'services/smart-contracts/ADX'
-import { GAS_PRICE } from 'services/smart-contracts/constants'
-import { toHexParam, ipfsHashToHex, fromIpfsHex, fromHexParam } from 'services/smart-contracts/utils'
-import { Account, Item } from 'adex-models'
-import { ItemTypesNames } from 'constants/itemsTypes'
-import Helper from 'helpers/miscHelpers'
-import bs58 from 'bs58'
-
-const GAS_LIMIT_REGISTER_ACCOUNT = 180000
-const GAS_LIMIT_REGISTER_ITEM = 280000
-
-const logTime = (msg, start, end) => {
-    console.log(msg + ' ' + (end - start) + ' ms')
-}
-
-const getDefaultItemName = (itemType) => {
-    let typeName = ItemTypesNames[itemType] || ''
-    let slugified = Helper.slugify('default ' + typeName + ' name')
-    return slugified
-}
-
-export const registerAccountEstimateGas = ({ _addr, _name = '', _wallet = 0, _ipfs = 0, _sig = 0, _meta = {}, prKey } = {}) => {
-    _name = _name || 'no-name'
-
-    return new Promise((resolve, reject) => {
-        resolve(GAS_LIMIT_REGISTER_ACCOUNT) // TEMP use this because of estimateGas bug
-
-        /*
-        registry.methods.register(
-            toHexParam(_name),
-            _addr, //_wallet,
-            toHexParam(_ipfs),
-            toHexParam(_sig),
-            toHexParam(_meta)
-        )
-            .estimateGas({ from: _addr })
-            .then((result) => {
-                console.log('registerAccountEstimateGas result', result)
-                return resolve(result)
-            })
-            .catch((err) => {
-                console.log('registerAccountEstimateGas err', err)
-                return reject(err)
-            })
-            */
-    })
-}
-
-// NOTE: Actions accepts decoded to ascii string values from models
-
-/**
- * can be called over and over to update the data
- * @param {string} _name - name
- * @param {string} _wallet - (eth address) wallet
- * @param {string} _ipfs - ipfs hash
- * @param {string} _sig - signature
- * @param {string} _meta - meta
- * @param {string} prKey - account private key (optional)
- */
-export const registerAccount = ({ _addr, _name = '', _wallet = 0, _ipfs = 0, _sig = 0, _meta = {}, prKey, gas } = {}) => {
-
-    // TODO: fix prKey and addr flow
-    // NOTE: Temp addr is provide because in development mode the address and the private Key of eb3 wallet does not match
-
-    _name = _name || 'no-name'
-
-    return new Promise((resolve, reject) => {
-        registry.methods.register(
-            toHexParam(_name),
-            _addr, //_wallet,
-            toHexParam(_ipfs),
-            toHexParam(_sig),
-            toHexParam(_meta)
-        )
-            .send({ from: _addr, gas: gas || GAS_LIMIT_REGISTER_ACCOUNT, gasPrice: GAS_PRICE })
-            .then((result) => {
-                console.log('registerAccount result', result)
-                return resolve(result)
-            })
-            .catch((err) => {
-                console.log('registerAccount err', err)
-                return reject(err)
-            })
-    })
-}
-
-/**
- * use _id = 0 to create a new item, otherwise modify existing
- * @param {number} _type - type (integer) 
- * @param {number} _id - id (integer)
- * @param {string} _ipfs - ipfs hash
- * @param {string} _name - name
- * @param {string} _meta - meta
- */
-export const registerItem = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0, prKey, _addr, gas } = {}) => {
-    _name = _name || getDefaultItemName(_name)
-    let ipfsHex = _ipfs ? ipfsHashToHex(_ipfs) : toHexParam(_ipfs)
-
-    return new Promise((resolve, reject) => {
-        let start = Date.now()
-        registry.methods
-            .registerItem(
-            toHexParam(_type),
-            toHexParam(_id),
-            ipfsHex, //toHexParam(_ipfs),
-            toHexParam(_name),
-            toHexParam('')
-            )
-            .send({ from: _addr, gas: GAS_LIMIT_REGISTER_ITEM, gasPrice: GAS_PRICE })
-            .on('transactionHash', (hash) => {
-                let end = Date.now()
-                logTime('trHshEnd', start, end)
-                // console.log('registerItem transactionHash', hash)
-            })
-            .on('confirmation', (confirmationNumber, receipt) => {
-                let end = Date.now()
-                logTime('confirmation', start, end)
-                console.log('registerItem confirmation confirmationNumber', confirmationNumber)
-                console.log('registerItem confirmation receipt', receipt)
-
-                resolve(receipt)
-            })
-            .on('receipt', (receipt) => {
-                let end = Date.now()
-                logTime('receipt', start, end)
-                console.log('registerItem receipt', receipt)
-            })
-            .on('error', (err) => {
-                let end = Date.now()
-                logTime('error', start, end)
-                console.log('registerItem err', err)
-                reject(err)
-            })
-
-        // .then((result) => {
-        //     console.log('registerItem result', result)
-        //     resolve(result)
-        // })
-        // .catch((err) => {
-        //     console.log('registerItem err', err)
-        //     reject(err)
-        // })
-    })
-}
-
-export const registerItemEstimateGas = ({ _type, _id = 0, _ipfs = 0, _name = '', _meta = 0, prKey, _addr } = {}) => {
-    _name = _name || getDefaultItemName(_name)
-    return new Promise((resolve, reject) => {
-        resolve(GAS_LIMIT_REGISTER_ITEM) // TEMP use this because of estimateGas bug
-        /*
-        let start = Date.now()
-        registry.methods
-            .registerItem(
-            toHexParam(_type),
-            toHexParam(_id),
-            toHexParam(_ipfs),
-            toHexParam(_name),
-            toHexParam('')// TODO: Decide what we will keep as meta in web3 obj - short meta or nothing
-            )
-            .estimateGas({ from: _addr })
-            .then((result) => {
-                console.log('registerItemEstimateGas result', result)
-                resolve(result)
-            })
-            .catch((err) => {
-                console.log('registerItemEstimateGas err', err)
-                reject(err)
-            })
-        */
-    })
-}
-
-
-const decodeFromWeb3 = (accWeb3) => {
-    if (!accWeb3) {
-        return {}
-    }
-
-    let acc = {}
-    acc._name = fromHexParam(accWeb3['accountName'] || accWeb3[3], 'string')
-    acc._ipfs = fromHexParam(accWeb3['ipfs'], 'string')
-    acc._metaWeb3 = fromHexParam(accWeb3['meta'] || accWeb3[4], 'string')
-    acc._addr = accWeb3['addr'] || accWeb3[0]
-    acc._wallet = accWeb3['wallet'] || accWeb3[1]
-
-    return acc
-}
-
+import {  web3, token, cfg } from 'services/smart-contracts/ADX'
 
 export const getAccountStats = ({ _addr }) => {
     return new Promise((resolve, reject) => {
         let balanceEth = web3.eth.getBalance(_addr)
         let balanceAdx = token.methods.balanceOf(_addr).call()
         let allowance = token.methods.allowance(_addr, cfg.addr.exchange).call()
-        let isRegistered = registry.methods.isRegistered(_addr).call()
-        let acc = registry.methods.accounts(_addr).call()
 
-        let all = [balanceEth, balanceAdx, allowance, isRegistered, acc]
+        let all = [balanceEth, balanceAdx, allowance]
 
         Promise.all(all)
-            .then(([balEth, balAdx, allow, isReg, account]) => {
+            .then(([balEth, balAdx, allow, ]) => {
 
                 let accStats =
                     {
                         balanceEth: balEth,
                         balanceAdx: balAdx,
-                        allowance: allow,
-                        isRegistered: isReg,
-                        acc: decodeFromWeb3(account)
+                        allowance: allow
                     }
 
                 console.log('accStats', accStats)
@@ -214,48 +23,6 @@ export const getAccountStats = ({ _addr }) => {
             })
             .catch((err) => {
                 console.log('getAccountStats err', err)
-                reject(err)
-            })
-    })
-}
-
-export const getAccountItems = ({ _addr, _type }) => {
-    return new Promise((resolve, reject) => {
-        registry.methods.getAccountItems(_addr, _type)
-            .call()
-            .then((result) => {
-                console.log('getAccountItems result', result)
-                resolve(result)
-            })
-            .catch((err) => {
-                console.log('getAccountItems err', err)
-                reject(err)
-            })
-    })
-}
-
-export const getItemsByType = ({ _type, itemsIds = [] } = {}) => {
-    return new Promise((resolve, reject) => {
-        let all = []
-
-        for (let i = 0; i < itemsIds.length; i++) {
-            let id = parseInt(itemsIds[i], 10)
-            all.push(registry.methods.getItem(_type, id).call())
-        }
-
-        Promise.all(all)
-            .then((result) => {
-                console.log('getItemsByType result', result)
-                //TODO: map here?
-                let mapped = result.map((item, index) => {
-                    return Item.decodeFromWeb3GetItem(item, _type, parseInt(itemsIds[index], 10))
-                })
-
-                console.log('getItemsByType mapped', mapped)
-                resolve(mapped)
-            })
-            .catch((err) => {
-                console.log('getItemsByType err', err)
                 reject(err)
             })
     })

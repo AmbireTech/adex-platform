@@ -2,7 +2,6 @@ import { cfg, exchange, token, web3 } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
 import { setWalletAndGetAddress, toHexParam } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
-import { registerItem } from './registry'
 import { ItemsTypes } from 'constants/itemsTypes'
 
 const GAS_LIMIT = 450000
@@ -86,33 +85,7 @@ export const placeBid = ({ _addr, _adunitId, _target, _rewardAmount, _timeout = 
 export const placeBidAuction = ({ _target, _rewardAmount = adxReward, _timeout = DEFAULT_TIMEOUT, prKey, password, price, _addr } = {}) => {
 
     return new Promise((resolve, reject) => {
-
-        registerItem({ _type: ItemsTypes.AdUnit.id, _id: 0, prKey, _addr })
-            .then((adUnitResult) => {
-
-                let values = adUnitResult.events.LogItemRegistered.returnValues
-
-                // console.log('values', values)
-
-                let adUnitId = values.id || values[2]
-                adUnitId = parseInt(adUnitId, 10)
-
-
-
-                let priceEncrypted = encrypt(price, password)
-
-                if (priceEncrypted.length > 40) {
-                    return reject('Price too long')
-                }
-
-                // _peer for the Ink auction will be used for an encrypted price
-                let _peer = priceEncrypted
-
-                return placeBid({ _adunitId: adUnitId, _target, _rewardAmount, _timeout, _peer, prKey, _addr })
-            })
-            .catch((err) => {
-                console.error('placeBidAuction err', err)
-                return reject(err)
-            })
+        //TODO: Remove it
+       return resolve('shunted')
     })
 }

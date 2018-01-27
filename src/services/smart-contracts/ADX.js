@@ -9,8 +9,7 @@ const mainnetCfg = {
 	node: 'https://parity.wings.ai',
 	addr: {
 		token: '0x4470BB87d77b963A013DB939BE332f927f2b992e',
-		registry: '0xeaf503fd64d0cf9278f29775b78c6f31001ffebc',
-		exchange: '0x0f6029ebde2ecd9ab4d60dd5d0a297e9e59bf77a',
+		exchange: '0x0f6029ebde2ecd9ab4d60dd5d0a297e9e59bf77a', // TODO:
 	}
 }
 
@@ -31,13 +30,11 @@ web3.setProvider(new Web3.providers.HttpProvider(cfg.node))
 
 // web3 1.x
 const token = new web3.eth.Contract(tokenAbi, cfg.addr.token)
-const registry = new web3.eth.Contract(registryAbi, cfg.addr.registry)
 const exchange = new web3.eth.Contract(exchangeAbi, cfg.addr.exchange)
 
 export {
 	cfg,
 	web3,
 	token,
-	registry,
 	exchange
 }
