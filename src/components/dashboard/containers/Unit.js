@@ -9,7 +9,7 @@ import Dropdown from 'react-toolbox/lib/dropdown'
 import ItemHoc from './ItemHoc'
 // import { Grid, Row, Col } from 'react-flexbox-grid'
 import Img from 'components/common/img/Img'
-import {Item, AdUnit} from 'adex-models'
+import { Item, AdUnit } from 'adex-models'
 import theme from './theme.css'
 import { IconButton, Button } from 'react-toolbox/lib/button'
 // import UnitSlots from './UnitSlots'
@@ -20,6 +20,7 @@ import Tooltip from 'react-toolbox/lib/tooltip'
 import Translate from 'components/translate/Translate'
 import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
 import NewBidSteps from 'components/dashboard/forms/bids/NewBidSteps'
+import UnitBids from './UnitBids'
 
 const TooltipButton = Tooltip(Button)
 const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
@@ -117,7 +118,7 @@ export class Unit extends Component {
                             </div>
                         </Tab> */}
                         <Tab label={t('BIDS')}>
-                            <div> render bids here </div>
+                            <UnitBids item={item} />
                         </Tab>
                     </Tabs>
                 </div>

@@ -140,3 +140,24 @@ export const placeBid = ({ bid, unit, userAddr }) => {
             })
     })
 }
+
+export const getBids = ({ userAddr, adUnit, adSlot, sizeAndType }) => {
+    return new Promise((resolve, reject) => {
+        requester.fetch({
+            route: 'bids',
+            method: 'GET',
+            userAddr: userAddr,
+            queryParams: {
+                unit: adUnit,
+                slot: adSlot,
+                sizeAndType: sizeAndType
+            }
+        })
+            .then((resp) => {
+                return resolve(resp.json())
+            })
+            .catch((err) => {
+                return reject(err)
+            })
+    })
+}
