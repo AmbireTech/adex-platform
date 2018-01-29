@@ -11,7 +11,7 @@ import { IconButton, Button } from 'react-toolbox/lib/button'
 import ItemsList from './ItemsList'
 import Rows from 'components/dashboard/collection/Rows'
 import Translate from 'components/translate/Translate'
-import { getBids } from 'services/adex-node/actions'
+import { getUnitBids } from 'services/adex-node/actions'
 import { Item } from 'adex-models'
 
 const SORT_PROPERTIES = [
@@ -20,6 +20,9 @@ const SORT_PROPERTIES = [
     { value: 'timeout', label: 'Timeout' },
     /** traffic, etc. */
 ]
+
+// TODO: Higher level component that uses Item to pass instance of the Item in order to use its props through getters instead of plain object props
+// TODO: use plain object only for the store
 
 export class UnitBids extends Component {
 
@@ -33,12 +36,7 @@ export class UnitBids extends Component {
     }
 
     componentWillMount() {
-        getBids({
-            userAddr: this.props.account._addr, adUnit: this.props.item._id, adSlot: null,
-            // TODO: Higher level component that uses Item to pass instance of the Item in order to use its props through getters instead of plain object props
-            // TODO: use plain object only for the store
-            sizeAndType: Item.sizeAndType({ adType: this.props.item.adType, size: this.props.item.size })
-        })
+        getUnitBids({ userAddr: this.props.account._addr, adUnit: this.props.item._id })
             .then((bids) => {
                 console.log('unit bids', bids)
                 this.setState({ bids: bids })

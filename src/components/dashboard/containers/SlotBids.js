@@ -17,16 +17,19 @@ import { Grid, Row, Col } from 'react-flexbox-grid'
 import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
 import { BidsStatusBars, BidsStatusPie, SlotsClicksAndRevenue } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
+import { getSlotBids, getAvailableBids } from 'services/adex-node/actions'
+import { Item } from 'adex-models'
 
 // import d3 from 'd3'
 
 // const cardinal = d3.curveCardinal.tension(0.2)
 
 const SORT_PROPERTIES = [
-    { value: 'id', label: '' },
+    { value: '_id', label: '' },
     { value: 'advertiser', label: '' },
     { value: 'amount', label: '' },
-    { value: 'requiredExecTime', label: '' }
+    { value: 'target', label: '' },
+    { value: 'timeout', label: '' },
 ]
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
@@ -38,8 +41,27 @@ export class SlotBids extends Component {
         this.state = {
             bidding: false,
             activeSlot: {},
-            tabIndex: 2
+            tabIndex: 2,
+            bids: [],
+            openBids: [],
         }
+    }
+
+    componentWillMount() {
+        getSlotBids({ userAddr: this.props.account._addr, adSlot: this.props.item._id })
+            .then((bids) => {
+                // console.log('unit bids', bids)
+                this.setState({ bids: bids })
+            })
+
+        getAvailableBids({
+            userAddr: this.props.account._addr,
+            sizeAndType: Item.sizeAndType({ adType: this.props.item._meta.adType, size: this.props.item._meta.size })
+        })
+            .then((bids) => {
+                // console.log('unit openBids', bids)
+                this.setState({ openBids: bids })
+            })
     }
 
     handleTabChange = (index) => {
@@ -87,7 +109,7 @@ export class SlotBids extends Component {
                 <Grid fluid >
                     <Row middle='xs' className={theme.itemsListControls}>
                         <Col xs={12} sm={12} md={6}>
-                            {this.renderSlotsClicksCharts({ bids: this.props.bidsIds })}
+                            {/* {this.renderSlotsClicksCharts({ bids: this.props.bidsIds })} */}
                         </Col>
                         <Col xs={12} sm={12} md={6}>
                             <BidsStatusBars data={data.states} t={this.props.t} />
@@ -119,7 +141,7 @@ export class SlotBids extends Component {
     renderTableRow(bid, index, { to, selected }) {
         let t = this.props.t
         return (
-            <TableRow key={bid.id}>
+            <TableRow key={bid._id}>
                 <TableCell> {bid.amount} </TableCell>
                 <TableCell> {bid.requiredPoints} </TableCell>
                 <TableCell> {bid.advertiser} </TableCell>
@@ -148,14 +170,14 @@ export class SlotBids extends Component {
     }
 
     render() {
-        let bidsIds = this.props.bidsIds
+        let bids = this.state.bids
         let openBids = []
         let otherBids = []
         let allBids = []
 
-        for (let i = 0; i < bidsIds.length; i++) {
-            let bid = this.props.bids[bidsIds[i]]
-            if (bid.state === BidState.Open) {
+        for (let i = 0; i < bids.length; i++) {
+            let bid = bids[i]
+            if (bid.state === 0) {
                 openBids.push(bid)
             } else {
                 otherBids.push(bid)
