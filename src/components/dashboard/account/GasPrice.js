@@ -72,14 +72,16 @@ class GasPrice extends React.Component {
         }
 
         return (
-            <Dropdown
-                theme={theme}
-                auto={false}
-                label='GAS_PRICE_LABEL'
-                onChange={this.changeGasPrice}
-                source={this.state.gasPrices}
-                value={gasPrice}
-            />
+            <span>
+                <Dropdown
+                    theme={theme}
+                    auto={false}
+                    label='GAS_PRICE_LABEL'
+                    onChange={this.changeGasPrice}
+                    source={this.state.gasPrices}
+                    value={gasPrice}
+                />
+            </span>
         )
     }
 }

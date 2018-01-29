@@ -18,26 +18,54 @@ import ChangeLang from 'components/translate/ChangeLang'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
 
+const SideSwitch = ({ side }) => {
+  return (
+    <div>
+      <ButtonMenu
+        label={side}
+        position='topLeft'
+        menuRipple
+        primary={true}
+      >
+        {/* Keep both if there is no valid side and force react to rerender at the same time */}
+        {side !== 'advertiser' ?
+          <RRMenuItem
+            value='account'
+            to={{ pathname: '/dashboard/advertiser' }}
+            caption='Advertiser'
+          /> : null}
+        {side !== 'publisher' ?
+          <RRMenuItem
+            value='account'
+            to={{ pathname: '/dashboard/publisher' }}
+            caption='Publisher'
+          /> : null}
+      </ButtonMenu>
+    </div>
+  )
+}
+
 class TopNav extends Component {
 
   render() {
     return (
-      <AppBar title={this.props.side} onLeftIconClick={() => alert('test')} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={true} >
-        <GasPrice />
-        <Navigation type='horizontal'>
+      <AppBar title={<SideSwitch side={this.props.side} />} onLeftIconClick={() => alert('test')} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={true} >
+
+        <Navigation type='horizontal' className={theme.rightNavigation}>
           {/* At the moment we use translations only for proper items properties display names */}
           {/* <ChangeLang /> */}
-
+          <GasPrice />
           <ButtonMenu
             selectable={true}
             selected='help'
             icon='expand_more'
-            label={this.props.account._name}
+            label={this.props.account._name || 'some username'}
             position='auto'
             menuRipple
             active={true}
             iconRight={true}
             iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
+            style={{ float: 'right' }}
           >
             <RRMenuItem
               value='account'
