@@ -10,11 +10,13 @@ import NewBidHoc from './NewBidHoc'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import numeral from 'numeral'
 import moment from 'moment'
+import constants from 'adex-constants'
 
 class BidFormPreview extends Component {
   render() {
     let bid = this.props.bid || {}
     let t = this.props.t
+    let timeout = constants.exchange.timeoutsByValue[bid.timeout]
 
     return (
       <div>
@@ -30,7 +32,7 @@ class BidFormPreview extends Component {
           </Row>
           <Row>
             <Col xs={12} lg={4} className={theme.textRight}>{t('BID_TIMEOUT')}:</Col>
-            <Col xs={12} lg={8} className={theme.textLeft}>{bid.timeout.getTime()}</Col>
+            <Col xs={12} lg={8} className={theme.textLeft}>{t(timeout.label, { args: timeout.labelArgs })}</Col>
           </Row>
         </Grid>
       </div>

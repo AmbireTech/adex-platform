@@ -13,12 +13,17 @@ import NewBidHoc from './NewBidHoc'
 import numeral from 'numeral'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import moment from 'moment'
+import Dropdown from 'react-toolbox/lib/dropdown'
+import constants from 'adex-constants'
 
 class BidForm extends Component {
   render() {
     let bid = this.props.bid || {}
     let t = this.props.t
-    let timeout = bid.timeout ? new Date(bid.timeout) : null
+    let timeout = bid.timeout || constants.exchange.TIMEOUTS[0]
+    let timeouts = constants.exchange.TIMEOUTS.map((tmo) => {
+      return { value: tmo.value, label: t(tmo.label, { args: tmo.labelArgs }) }
+    })
 
     return (
       <div>
@@ -41,15 +46,11 @@ class BidForm extends Component {
           value={bid.amount}
           onChange={(value) => this.props.handleChange('amount', value)}
         />
-        <DatePicker
-          minDate={new Date()}
+        <Dropdown
           onChange={(value) => this.props.handleChange('timeout', value)}
+          source={timeouts}
           value={timeout}
-          className={theme.datepicker}
-          theme={theme}
-          inputFormat={this.inputFormat}
           label={t('BID_TIMEOUT')}
-          size={moment(timeout).format('MMMM').length} /** temp fix */
         />
       </div>
     )
