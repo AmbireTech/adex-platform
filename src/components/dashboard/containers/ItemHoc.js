@@ -11,7 +11,7 @@ import Tooltip from 'react-toolbox/lib/tooltip'
 import Avatar from 'react-toolbox/lib/avatar'
 import Input from 'react-toolbox/lib/input'
 import { ItemTypesNames } from 'constants/itemsTypes'
-import { Base, Item as ItemModel } from 'adex-models'
+import { Base, Item as ItemModel, Helper } from 'adex-models'
 import FloatingProgressButton from 'components/common/floating_btn_progress/FloatingProgressButton'
 import classnames from 'classnames'
 import ImgDialog from './ImgDialog'
@@ -106,8 +106,10 @@ export default function ItemHoc(Decorated) {
             if (!this.state.item) {
                 return (<h1> No item found! </h1>)
             }
+            let model = Helper.modelByTypeId(this.state.item._type)
 
-            let item = this.state.item || {}
+            console.log('model', model)
+            let item = new model(this.state.item) || {}
             let meta = item._meta || {}
             let imgSrc = ItemModel.getImgUrl(meta.img)
             let t = this.props.t
