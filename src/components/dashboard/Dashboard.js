@@ -64,6 +64,10 @@ class Dashboard extends React.Component {
             })
     }
 
+    componentWillUpdate(nextProps) {
+        this.props.actions.updateNav('side', nextProps.match.params.side)
+    }
+
     toggleDrawerActive = () => {
         this.setState({ drawerActive: !this.state.drawerActive })
     }
