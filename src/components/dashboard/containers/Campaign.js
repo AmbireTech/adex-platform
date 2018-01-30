@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { ItemsTypes } from 'constants/itemsTypes'
-import { Campaign as CampaignModel } from 'adex-models'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
 import NewUnitFormBasic from 'components/dashboard/forms/items/NewUnitFormBasic'
@@ -16,7 +15,7 @@ import NewItemSteps from 'components/dashboard/forms/items/NewItemSteps'
 import moment from 'moment'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
-import { AdUnit as AdUnitModel } from 'adex-models'
+import { AdUnit as AdUnitModel, Campaign as CampaignModel } from 'adex-models'
 import { groupItemsForCollection } from 'helpers/itemsHelpers'
 
 const VIEW_MODE = 'campaignRowsView'
@@ -41,20 +40,16 @@ export class Campaign extends Component {
 
     render() {
         let side = this.props.match.params.side;
-        let item = this.props.item
-        let meta = item._meta
-        let items = item._items || []
+        let item = new CampaignModel(this.props.item)
+        let meta = item.meta
         let propsUnits = { ...this.props.units }
 
         let t = this.props.t
 
-
-        console.log('item', item)
-
         if (!item) return (<h1>'404'</h1>)
 
-        let from = item._from ? new Date(item._meta.from) : null
-        let to = item._to ? new Date(item._meta.to) : null
+        let from = item.from ? new Date(item.from) : null
+        let to = item.to ? new Date(item.to) : null
 
         //TODO: Make it wit HOC for collection (campaing/channel)
         let groupedUnits = groupItemsForCollection({ collectionId: item._id, allItems: propsUnits })

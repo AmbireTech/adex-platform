@@ -28,6 +28,8 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
     item = { ...item }
     // TODO: authentication
 
+    // console.log('item addItem', item)
+
     return function (dispatch) {
         if (item._meta.img.tempUrl) {
             //TODO: Provide the blob to the store or request the image from the blob url as is now?
@@ -119,6 +121,7 @@ export function addItemToItem({ item, toAdd } = {}) {
     return function (dispatch) {
         addItmToItm({ item: item._id, collection: toAdd._id || toAdd, userAddr: item._meta.owner || item.user })
             .then((res) => {
+                //TODO: use response and UPDATE_ITEM
                 return dispatch({
                     type: types.ADD_ITEM_TO_ITEM,
                     item: item,

@@ -33,7 +33,7 @@ export const getTypeName = (id) => {
     }
 }
 
-export const groupItemsForCollection = ({ collectionId, allItems }) => {
+export const groupItemsForCollection = ({ collectionId, allItems = {} }) => {
 
     let grouped = Array.from(Object.values(allItems))
         .reduce((memo, item, index) => {
