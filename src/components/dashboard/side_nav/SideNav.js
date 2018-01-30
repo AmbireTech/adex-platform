@@ -73,15 +73,6 @@ class SideNav extends Component {
                         // disabled
                     />
                 </ListItem>
-                <RRListItem
-                    to={{ pathname: '/dashboard/auction/ink' }}
-                    selectable={true}
-                    value="3"
-                    caption={this.props.t('INK_AUCTION')}
-                    theme={theme}
-                    className="side-nav-link"
-                    leftIcon='local_airport'
-                />
             </List>
         )
     }
@@ -129,15 +120,6 @@ class SideNav extends Component {
                 >
                     <NewSlot theme={theme} flat color='second' raised />
                 </ListItem>
-                <RRListItem
-                    to={{ pathname: '/dashboard/auction/ink' }}
-                    selectable={true}
-                    value="3"
-                    caption={this.props.t('INK_AUCTION')}
-                    theme={theme}
-                    className="side-nav-link"
-                    leftIcon='local_airport'
-                />
             </List>
         )
     }

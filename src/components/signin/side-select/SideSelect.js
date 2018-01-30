@@ -38,20 +38,12 @@ class SideSelect extends Component {
         >
 
           <RRSideBox
-            title={t('INK_AUCTION')}
-            icon={<AuctionLogo />}
-            // salePoints={[t('SALE_POINT_AUC_1'), t('SALE_POINT_AUC_2'), t('SALE_POINT_AUC_3')]}
-            to='/dashboard/auction/ink'
-            linkTitle={t('GO_ADVERTISER')}
-          />
-
-          <RRSideBox
             title={t('ADVERTISER')}
             icon={<AdvertiserLogo />}
             // salePoints={[t('SALE_POINT_ADV_1'), t('SALE_POINT_ADV_2'), t('SALE_POINT_ADV_3')]}
             to='/dashboard/advertiser'
             linkTitle={t('GO_ADVERTISER')}
-            // disabled
+          // disabled
           />
 
           <RRSideBox
@@ -60,7 +52,7 @@ class SideSelect extends Component {
             // salePoints={[t('SALE_POINT_PUB_1'), t('SALE_POINT_PUB_2'), t('SALE_POINT_PUB_3')]}
             to='/dashboard/publisher'
             linkTitle={t('GO_PUBLISHER')}
-            // disabled
+          // disabled
           />
 
         </Dialog>
