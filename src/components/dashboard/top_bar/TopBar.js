@@ -8,39 +8,34 @@ import { AppBar } from 'react-toolbox/lib/app_bar'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import { Navigation } from 'react-toolbox/lib/navigation'
 import { Link } from 'react-toolbox/lib/link'
-import { IconMenu, MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
+import {  MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
 import ButtonMenu from 'components/common/button_menu/ButtonMenu'
 import Translate from 'components/translate/Translate'
-import { Button, IconButton } from 'react-toolbox/lib/button'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import GasPrice from 'components/dashboard/account/GasPrice'
 import ChangeLang from 'components/translate/ChangeLang'
+import Switch from 'react-toolbox/lib/switch'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
+const RRSwitch = withReactRouterLink((props) => <a {...props}><Switch {...props}  theme={theme} /></a>)
 
 const SideSwitch = ({ side }) => {
   return (
     <div>
-      <ButtonMenu
-        label={side}
-        position='topLeft'
-        menuRipple
-        primary={true}
-      >
-        {/* Keep both if there is no valid side and force react to rerender at the same time */}
-        {side !== 'advertiser' ?
-          <RRMenuItem
-            value='account'
-            to={{ pathname: '/dashboard/advertiser' }}
-            caption='Advertiser'
-          /> : null}
-        {side !== 'publisher' ?
-          <RRMenuItem
-            value='account'
-            to={{ pathname: '/dashboard/publisher' }}
-            caption='Publisher'
-          /> : null}
-      </ButtonMenu>
+      {/* Keep both if there is no valid side and force react to rerender at the same time */}
+      {side !== 'advertiser' ?
+        <RRSwitch
+          checked={true}
+          value='account'
+          to={{ pathname: '/dashboard/advertiser' }}
+          label='Advertiser'
+        /> : null}
+      {side !== 'publisher' ?
+        <RRSwitch
+          checked={false}
+          to={{ pathname: '/dashboard/publisher' }}
+          label='Publisher'
+        /> : null}
     </div>
   )
 }
