@@ -20,7 +20,7 @@ class NewUnitForm extends Component {
         * Now it forces to add invalid property for the required filed to prevent to go to the next step
         */
         this.props.validate('ad_url', {
-            isValid: validUrl(this.props.item._meta.ad_url),
+            isValid: validUrl(this.props.item.ad_url),
             err: { msg: 'ERR_REQUIRED_FIELD' },
             dirty: false
         })
@@ -28,7 +28,7 @@ class NewUnitForm extends Component {
 
     render() {
         let item = this.props.item
-        let ad_url = item._meta.ad_url
+        let ad_url = item.ad_url
         let t = this.props.t
         let errUrl = this.props.invalidFields['ad_url']
         return (
@@ -51,7 +51,7 @@ class NewUnitForm extends Component {
                                 <Dropdown
                                     onChange={this.props.handleChange.bind(this, 'adType')}
                                     source={AdTypes}
-                                    value={item._meta.adType}
+                                    value={item.adType}
                                     label={t('adType', { isProp: true })}
                                 />
                             </Col>
@@ -59,7 +59,7 @@ class NewUnitForm extends Component {
                                 <Dropdown
                                     onChange={this.props.handleChange.bind(this, 'size')}
                                     source={Sizes}
-                                    value={item._meta.size}
+                                    value={item.size}
                                     label={t('size', { isProp: true })}
                                 />
                             </Col>
@@ -67,7 +67,7 @@ class NewUnitForm extends Component {
                     </Grid>
                 </div>
 
-                <ImgForm label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item._meta.img.tempUrl || 'nourl'} onChange={this.props.handleChange.bind(this, 'img')} />
+                <ImgForm label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item.img.tempUrl || 'nourl'} onChange={this.props.handleChange.bind(this, 'img')} />
             </div>
         )
     }

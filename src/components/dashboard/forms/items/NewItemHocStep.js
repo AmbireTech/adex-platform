@@ -70,7 +70,6 @@ export default function NewItemHoc(Decorated) {
         render() {
             let itemType = this.props.newItem._type || this.props.newItem._meta.type || this.props.itemType
             let item = new Models.itemClassByTypeId[itemType](this.props.newItem) || {}
-            item._meta = item._meta || {}
             const props = this.props
 
             return (

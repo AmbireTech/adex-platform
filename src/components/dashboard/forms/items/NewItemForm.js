@@ -15,7 +15,7 @@ class NewItemForm extends Component {
         /* TODO: make it understandable
         * Now it forces to add invalid property for the required filed to prevent to go to the next step
         */
-        if (!this.props.item._meta.fullName) {
+        if (!this.props.item.fullName) {
             this.props.validate('fullName', {
                 isValid: false,
                 err: { msg: 'ERR_REQUIRED_FIELD' },
@@ -52,10 +52,10 @@ class NewItemForm extends Component {
                     required
                     label={ItemTypesNames[item._type] + ' ' + this.props.t('name', { isProp: true })}
                     name='name'
-                    value={item._meta.fullName}
+                    value={item.fullName}
                     onChange={this.props.handleChange.bind(this, 'fullName')}
-                    onBlur={this.validateName.bind(this, item._meta.fullName, true)}
-                    onFocus={this.validateName.bind(this, item._meta.fullName, false)}
+                    onBlur={this.validateName.bind(this, item.fullName, true)}
+                    onFocus={this.validateName.bind(this, item.fullName, false)}
                     error={errFullName && !!errFullName.dirty ?
                         <span> {errFullName.errMsg} </span> : null}
                     maxLength={128} >
@@ -80,7 +80,7 @@ class NewItemForm extends Component {
 
                 {this.props.noDefaultImg ?
                     null :
-                    <ImgForm label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item._meta.img.tempUrl} onChange={this.props.handleChange.bind(this, 'img')} />
+                    <ImgForm label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item.img.tempUrl} onChange={this.props.handleChange.bind(this, 'img')} />
                 }
             </div>
         )

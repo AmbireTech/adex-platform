@@ -17,7 +17,7 @@ class NewSlotForm extends Component {
 
     render() {
         let item = this.props.item
-        let ad_url = item._meta.ad_url
+        let ad_url = item.ad_url
         let t = this.props.t
         return (
             <div>
@@ -28,7 +28,7 @@ class NewSlotForm extends Component {
                                 <Dropdown
                                     onChange={this.props.handleChange.bind(this, 'adType')}
                                     source={AdTypes}
-                                    value={item._meta.adType}
+                                    value={item.adType}
                                     label={t('adType', { isProp: true })}
                                 />
                             </Col>
@@ -36,7 +36,7 @@ class NewSlotForm extends Component {
                                 <Dropdown
                                     onChange={this.props.handleChange.bind(this, 'size')}
                                     source={Sizes}
-                                    value={item._meta.size}
+                                    value={item.size}
                                     label={t('size', { isProp: true })}
                                 />
                             </Col>
@@ -44,7 +44,7 @@ class NewSlotForm extends Component {
                     </Grid>
                 </div>
 
-                {<ImgForm label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item._meta.img.tempUrl || 'nourl'} onChange={this.props.handleChange.bind(this, 'img')} />}
+                {<ImgForm label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item.img.tempUrl || 'nourl'} onChange={this.props.handleChange.bind(this, 'img')} />}
             </div>
         )
     }
