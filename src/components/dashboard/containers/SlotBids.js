@@ -11,7 +11,7 @@ import { IconButton, Button } from 'react-toolbox/lib/button'
 import ItemsList from './ItemsList'
 import Rows from 'components/dashboard/collection/Rows'
 import moment from 'moment'
-import { BidState, BidStateNames } from 'models/Bid'
+import { exchange } from 'adex-constants'
 import { Tab, Tabs } from 'react-toolbox'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
@@ -19,6 +19,8 @@ import { BidsStatusBars, BidsStatusPie, SlotsClicksAndRevenue } from 'components
 import Translate from 'components/translate/Translate'
 import { getSlotBids, getAvailableBids } from 'services/adex-node/actions'
 import { Item } from 'adex-models'
+
+const BidStateNames = exchange.BidStatesLabels
 
 // import d3 from 'd3'
 
