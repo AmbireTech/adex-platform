@@ -95,7 +95,7 @@ function mapStateToProps(state) {
         spinner: memory.spinners[ItemsTypes.Channel.name],
         rowsView: !!persist.ui[VIEW_MODE],
         objModel: ChannelModel,
-        itemTypeL: ItemsTypes.Channel.id
+        itemType: ItemsTypes.Channel.id
     }
 }
 
