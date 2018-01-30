@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { Helper } from 'adex-models'
+import { Models } from 'adex-models'
 
 export default function NewItemHoc(Decorated) {
 
@@ -39,7 +39,7 @@ export default function NewItemHoc(Decorated) {
 
         save() {
             let itemType = this.props.newItem._type || this.props.newItem._meta.type || this.props.itemType
-            let item = new (Helper.modelByTypeId(itemType))(this.props.newItem) || {}
+            let item = new Models.itemClassByTypeId[itemType](this.props.newItem) || {}
             let acc = this.props.account
 
             // this.setState({ saved: true }, () => {
@@ -69,7 +69,7 @@ export default function NewItemHoc(Decorated) {
 
         render() {
             let itemType = this.props.newItem._type || this.props.newItem._meta.type || this.props.itemType
-            let item = new (Helper.modelByTypeId(itemType))(this.props.newItem) || {}
+            let item = new Models.itemClassByTypeId[itemType](this.props.newItem) || {}
             item._meta = item._meta || {}
             const props = this.props
 

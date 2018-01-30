@@ -2,10 +2,10 @@ import * as types from 'constants/actionTypes'
 import { addImgFromObjectURL, getFileIpfsHash } from 'services/ipfs/ipfsService'
 import { uploadImage, regItem, delItem, addItmToItm, removeItmFromItm } from 'services/adex-node/actions'
 import { ItemModelsByType } from 'constants/itemsTypes'
-import { Base, Helper } from 'adex-models'
+import { Base, Models } from 'adex-models'
 
 export function updateNewItem(item, newValues) {
-    item = Base.updateObject({ item: item, newValues: newValues, objModel: Helper.modelByTypeId(item._type || item._meta.type) })
+    item = Base.updateObject({ item: item, newValues: newValues, objModel: Models.itemClassByTypeId[item._type || item._meta.type] })
     return function (dispatch) {
         return dispatch({
             type: types.UPDATE_NEW_ITEM,
