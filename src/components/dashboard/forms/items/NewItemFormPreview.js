@@ -88,7 +88,11 @@ class NewItemFormPreview extends Component {
                                 let keyName = key
                                 let value = item._meta[key]
 
-                                if (!!value && moment(value).isValid()) {
+                                if (!value) {
+                                    return null
+                                }
+
+                                if (!!/from|to/.test(key)) {
                                     value = moment(value).format('D MMMM YYYY')
                                 }
 

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
+import { Helper } from 'adex-models'
 
 export default function NewItemHoc(Decorated) {
 
@@ -32,19 +33,15 @@ export default function NewItemHoc(Decorated) {
         //     this.updateItemInStore()
         // }
 
-        handleChange = (name, value) => {
-            // let newItem = Base.updateMeta(this.state.item, { [name]: value })
-            // this.setState({ item: newItem })
-            this.props.actions.updateNewItem(this.props.newItem, { [name]: value })
+        handleChange = (prop, value) => {
+            this.props.actions.updateNewItem(this.props.newItem, { [prop]: value })
         }
 
         save() {
-            let item = { ...this.props.newItem }
-            item.objModel = this.props.itemModel
-            item.newObj = true
-            item = new this.props.itemModel(item).plainObj()
+            let itemType = this.props.newItem._type || this.props.newItem._meta.type || this.props.itemType
+            let item = new (Helper.modelByTypeId(itemType))(this.props.newItem) || {}
             let acc = this.props.account
-            
+
             // this.setState({ saved: true }, () => {
             this.props.actions.addItem(item, this.props.addTo, acc._temp.privateKey, acc._addr)
             this.props.actions.resetNewItem(this.state.item)
@@ -71,8 +68,8 @@ export default function NewItemHoc(Decorated) {
         // }
 
         render() {
-
-            let item = this.props.newItem || {}
+            let itemType = this.props.newItem._type || this.props.newItem._meta.type || this.props.itemType
+            let item = new (Helper.modelByTypeId(itemType))(this.props.newItem) || {}
             item._meta = item._meta || {}
             const props = this.props
 

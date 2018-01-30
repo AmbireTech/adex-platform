@@ -48,10 +48,13 @@ export class Campaign extends Component {
 
         let t = this.props.t
 
+
+        console.log('item', item)
+
         if (!item) return (<h1>'404'</h1>)
 
-        let from = item._meta.from ? new Date(item._meta.from) : null
-        let to = item._meta.to ? new Date(item._meta.to) : null
+        let from = item._from ? new Date(item._meta.from) : null
+        let to = item._to ? new Date(item._meta.to) : null
 
         //TODO: Make it wit HOC for collection (campaing/channel)
         let groupedUnits = groupItemsForCollection({ collectionId: item._id, allItems: propsUnits })

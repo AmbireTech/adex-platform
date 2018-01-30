@@ -44,6 +44,7 @@ class NewItemForm extends Component {
         let item = this.props.item
         let t = this.props.t
         let errFullName = this.props.invalidFields['fullName']
+
         return (
             <div>
                 <Input

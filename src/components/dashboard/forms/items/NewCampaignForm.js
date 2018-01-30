@@ -9,13 +9,14 @@ import NewItemHoc from './NewItemHocStep'
 import theme from './../theme.css'
 import { Button } from 'react-toolbox/lib/button'
 import Translate from 'components/translate/Translate'
+import { Campaign } from 'adex-models'
 
 class NewCampaignForm extends Component {
 
     render() {
         let item = this.props.item
-        let from = item._meta.from ? new Date(item._meta.from) : null
-        let to = item._meta.to ? new Date(item._meta.to) : null
+        let from = item.from ? new Date(item.from) : null
+        let to = item.to ? new Date(item.to) : null
         return (
             <div>
                 <DatePicker

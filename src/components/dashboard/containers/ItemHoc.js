@@ -107,10 +107,8 @@ export default function ItemHoc(Decorated) {
                 return (<h1> No item found! </h1>)
             }
             let model = Helper.modelByTypeId(this.state.item._type)
-
-            console.log('model', model)
             let item = new model(this.state.item) || {}
-            let meta = item._meta || {}
+            let meta = item.meta || {}
             let imgSrc = ItemModel.getImgUrl(meta.img)
             let t = this.props.t
 
