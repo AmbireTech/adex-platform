@@ -15,7 +15,6 @@ import Unit from './containers/Unit'
 import Slot from './containers/Slot'
 import Items from './containers/Items'
 import { ItemsTypes } from 'constants/itemsTypes'
-import Auction from './auction/Auction'
 import Signin from 'components/signin/Signin'
 import {
     AdUnit as AdUnitModel,
@@ -160,8 +159,6 @@ class Dashboard extends React.Component {
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/Channel/:itemId' component={Channel} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
 
-                        <PrivateRoute auth={this.props.auth} exact path={'/dashboard/auction/ink'} component={Auction} />
-                        <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/auction/ink'} component={Auction} />
                         <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/account'} component={Account} />
 
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/:side' component={DashboardStats} />
