@@ -106,10 +106,13 @@ export default function ItemHoc(Decorated) {
             if (!this.state.item) {
                 return (<h1> No item found! </h1>)
             }
+            /*
+                * NOTE: using instance of the item, the instance is passes to the Unit, Slot, Channel and Campaign components,
+                * in this case there is no need to make instance inside them
+            */
             let model = Models.itemClassByTypeId[this.state.item._type]
             let item = new model(this.state.item) || {}
-            let meta = item.meta || {}
-            let imgSrc = ItemModel.getImgUrl(meta.img)
+            let imgSrc = item.imgUrl
             let t = this.props.t
 
             return (
@@ -121,13 +124,13 @@ export default function ItemHoc(Decorated) {
 
                     <div className={classnames(theme.heading, theme[ItemTypesNames[item._type]])}>
                         <div className={theme.headingLeft}>
-                            <Avatar image={imgSrc} title={meta.fullName} cover onClick={this.handleToggle.bind(this)} />
+                            <Avatar image={imgSrc} title={item.fullName} cover onClick={this.handleToggle.bind(this)} />
                             <ImgDialog imgSrc={imgSrc} handleToggle={this.handleToggle} active={this.state.editImg} onChange={this.handleChange.bind(this, 'img')} />
                             {this.state.activeFields.fullName ?
-                                <Input className={theme.itemName} type='text' label={t('fullName', { isProp: true })} name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
+                                <Input className={theme.itemName} type='text' label={t('fullName', { isProp: true })} name='fullName' value={item.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                                 :
                                 <h3 className={theme.itemName}>
-                                    <span> {meta.fullName} </span>
+                                    <span> {item.fullName} </span>
                                     <span><IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'fullName', true)} /></span>
                                 </h3>
                             }
@@ -138,12 +141,12 @@ export default function ItemHoc(Decorated) {
 
 
                             {this.state.activeFields.description ?
-                                <Input multiline rows={3} type='text' label={t('description', { isProp: true })} name='description' value={meta.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
+                                <Input multiline rows={3} type='text' label={t('description', { isProp: true })} name='description' value={item.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
                                 :
                                 <div>
                                     <p>
-                                        {meta.description ?
-                                            meta.description
+                                        {item.description ?
+                                            item.description
                                             :
                                             <span> {t('NO_DESCRIPTION_YET')}</span>
                                         }

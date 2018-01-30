@@ -35,7 +35,6 @@ export class Channel extends Component {
         let side = this.props.match.params.side;
 
         let item = this.props.item
-        let meta = item._meta
         let items = item._items || []
         let propsSlots = { ...this.props.slots }
         let t = this.props.t

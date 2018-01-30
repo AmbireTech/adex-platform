@@ -37,7 +37,7 @@ export class Unit extends Component {
         this.setState({ tabIndex: index })
     }
 
-    BasicProps = ({ meta, t }) => {
+    BasicProps = ({ item, t }) => {
         return (
             <div className={theme.itemPropTop}>
                 <div className={theme.imgHolder}>
@@ -46,7 +46,7 @@ export class Unit extends Component {
                             aspectRatio='wide'
                             theme={theme}
                         >
-                            <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} />
+                            <Img src={item.imgUrl} alt={item.fullName} />
                         </CardMedia>
                         <CardActions theme={theme} >
 
@@ -65,7 +65,7 @@ export class Unit extends Component {
                         <Dropdown
                             onChange={this.props.handleChange.bind(this, 'adType')}
                             source={AdTypes}
-                            value={meta.adType}
+                            value={item.adType}
                             label={t('adType', { isProp: true })}
                         />
                     </div>
@@ -73,7 +73,7 @@ export class Unit extends Component {
                         <Dropdown
                             onChange={this.props.handleChange.bind(this, 'size')}
                             source={Sizes}
-                            value={meta.size}
+                            value={item.size}
                             label={t('size', { isProp: true })}
                         />
                     </div>
@@ -84,7 +84,6 @@ export class Unit extends Component {
 
     render() {
         let item = this.props.item
-        let meta = item._meta
         let t = this.props.t
 
         if (!item) return (<h1>Unit '404'</h1>)
@@ -93,14 +92,14 @@ export class Unit extends Component {
             <div>
                 <BidFormWithDialog
                     btnLabel='PLACE_BID'
-                    title={this.props.t('PLACE_BID_FOR', { args: [meta.fullName] })}
+                    title={this.props.t('PLACE_BID_FOR', { args: [item.fullName] })}
                     floating
                     primary
                     bidId={item._id}
                     icon='check_circle'
                     adUnit={item}
                 />
-                <this.BasicProps meta={meta} t={t} />
+                <this.BasicProps item={item} t={t} />
                 <div>
                     <Tabs
                         theme={theme}
@@ -109,7 +108,7 @@ export class Unit extends Component {
                     >
                         <Tab label={t('TARGETS')}>
                             <div>
-                                <UnitTargets {...this.props} meta={meta} t={t} />
+                                <UnitTargets {...this.props} meta={item.meta} t={t} />
                             </div>
                         </Tab>
                         {/* <Tab theme={theme} label={t('SLOTS')}>

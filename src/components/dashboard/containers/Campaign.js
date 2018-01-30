@@ -39,9 +39,8 @@ export class Campaign extends Component {
     }
 
     render() {
-        let side = this.props.match.params.side;
-        let item = new CampaignModel(this.props.item)
-        let meta = item.meta
+        let side = this.props.match.params.side
+        let item = this.props.item
         let propsUnits = { ...this.props.units }
 
         let t = this.props.t

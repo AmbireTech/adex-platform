@@ -50,7 +50,6 @@ export class Slot extends Component {
 
     render() {
         let item = this.props.item
-        let meta = item._meta
         let t = this.props.t
 
         if (!item) return (<h1>Slot '404'</h1>)
@@ -67,7 +66,7 @@ export class Slot extends Component {
                                             aspectRatio='wide'
                                             theme={theme}
                                         >
-                                            <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} />
+                                            <Img src={item.ingUrl} alt={item.fullName} />
                                         </CardMedia>
                                         <CardActions theme={theme} >
 
@@ -86,7 +85,7 @@ export class Slot extends Component {
                                         <Dropdown
                                             onChange={this.props.handleChange.bind(this, 'adType')}
                                             source={AdTypes}
-                                            value={meta.adType}
+                                            value={item.adType}
                                             label={t('adType', { isProp: true })}
                                         />
                                     </div>
@@ -94,7 +93,7 @@ export class Slot extends Component {
                                         <Dropdown
                                             onChange={this.props.handleChange.bind(this, 'size')}
                                             source={Sizes}
-                                            value={meta.size}
+                                            value={item.size}
                                             label={t('size', { isProp: true })}
                                         />
                                     </div>
@@ -107,7 +106,7 @@ export class Slot extends Component {
                     </Grid>
                 </div>
                 <div>
-                    <SlotBids {...this.props} meta={meta} t={t} />
+                    <SlotBids {...this.props} meta={item.meta} t={t} />
                 </div>
             </div>
 
