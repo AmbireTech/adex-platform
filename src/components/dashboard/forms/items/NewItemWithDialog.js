@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Button, IconButton } from 'react-toolbox/lib/button'
-import { ItemTypesNames } from 'constants/itemsTypes'
 import Dialog from 'react-toolbox/lib/dialog'
 import theme from './../theme.css'
 import classnames from 'classnames'
 import RTButtonTheme from 'styles/RTButton.css'
 import Translate from 'components/translate/Translate'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemTypesNames } = ItemsConstants
 
 export default function ItemHoc(Decorated) {
     class NewItemWithDialog extends Component {

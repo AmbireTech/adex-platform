@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { ItemsTypes } from 'constants/itemsTypes'
 import TransactionsSteps from './TransactionsSteps'
 import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
 import ApproveStep from './ApproveStep'

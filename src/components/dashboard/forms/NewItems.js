@@ -1,6 +1,4 @@
 import React from 'react'
-
-import { ItemsTypes } from 'constants/itemsTypes'
 import NewItemSteps from './items/NewItemSteps'
 import NewItemWithDialog from './items/NewItemWithDialog'
 // import NewUnitForm from './NewUnitForm'
@@ -10,6 +8,9 @@ import NewUnitFormTargets from './items/NewUnitFormTargets'
 import NewCampaignForm from './items/NewCampaignForm'
 import NewChannelForm from './items/NewChannelForm'
 import { AdUnit, AdSlot, Channel, Campaign } from 'adex-models'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemsTypes } = ItemsConstants
 
 const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
 

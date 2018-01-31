@@ -1,7 +1,6 @@
 import * as types from 'constants/actionTypes'
 import { addImgFromObjectURL, getFileIpfsHash } from 'services/ipfs/ipfsService'
 import { uploadImage, regItem, delItem, addItmToItm, removeItmFromItm } from 'services/adex-node/actions'
-import { ItemModelsByType } from 'constants/itemsTypes'
 import { Base, Models } from 'adex-models'
 
 export function updateNewItem(item, newValues) {
@@ -56,7 +55,7 @@ export function addItem(item, itemToAddTo, prKey, _addr) {
 
             regItem({ item, userAddr: _addr })
                 .then((item) => {
-                    let registeredItem = new ItemModelsByType[item.type](item)
+                    let registeredItem = new Models.itemClassByTypeId[item.type](item)
                     dispatch({
                         type: types.ADD_ITEM,
                         item: registeredItem

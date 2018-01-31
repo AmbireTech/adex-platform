@@ -1,4 +1,6 @@
-import { ItemsTypes } from 'constants/itemsTypes'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemsTypes } = ItemsConstants
 
 export const sortCollections = (items) => {
     let collections = {

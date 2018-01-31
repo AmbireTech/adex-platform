@@ -4,10 +4,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { ItemsTypes, AdTypes, Sizes } from 'constants/itemsTypes'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import ItemHoc from './ItemHoc'
-// import { Grid, Row, Col } from 'react-flexbox-grid'
 import Img from 'components/common/img/Img'
 import { Item, AdUnit } from 'adex-models'
 import theme from './theme.css'
@@ -21,7 +19,9 @@ import Translate from 'components/translate/Translate'
 import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
 import NewBidSteps from 'components/dashboard/forms/bids/NewBidSteps'
 import UnitBids from './UnitBids'
+import { items as ItemsConstants } from 'adex-constants'
 
+const { ItemsTypes, AdTypes, AdSizes } = ItemsConstants
 const TooltipButton = Tooltip(Button)
 const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
 
@@ -72,7 +72,7 @@ export class Unit extends Component {
                     <div>
                         <Dropdown
                             onChange={this.props.handleChange.bind(this, 'size')}
-                            source={Sizes}
+                            source={AdSizes}
                             value={item.size}
                             label={t('size', { isProp: true })}
                         />

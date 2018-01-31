@@ -2,7 +2,6 @@ import { cfg, exchange, token, web3 } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
 import { setWalletAndGetAddress, toHexParam } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
-import { ItemsTypes } from 'constants/itemsTypes'
 
 const GAS_LIMIT = 450000
 

@@ -14,7 +14,6 @@ import DashboardStats from './containers/DashboardStats'
 import Unit from './containers/Unit'
 import Slot from './containers/Slot'
 import Items from './containers/Items'
-import { ItemsTypes } from 'constants/itemsTypes'
 import Signin from 'components/signin/Signin'
 import {
     AdUnit as AdUnitModel,
@@ -27,6 +26,9 @@ import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
 import { web3 } from 'services/smart-contracts/ADX'
 import scActions from 'services/smart-contracts/actions'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemsTypes } = ItemsConstants
 
 const { setWallet, getAccountStats } = scActions
 

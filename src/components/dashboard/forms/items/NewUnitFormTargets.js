@@ -5,13 +5,15 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import NewItemHoc from './NewItemHocStep'
 import Translate from 'components/translate/Translate'
-import { ItemsTypes, Locations, TargetWeightLabels, Genders, TARGET_MIN_AGE, TARGET_MAX_AGE } from 'constants/itemsTypes'
 import theme from './../theme.css'
 import { AdUnit } from 'adex-models'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import Autocomplete from 'react-toolbox/lib/autocomplete'
 import classnames from 'classnames'
 import Slider from 'react-toolbox/lib/slider'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemsTypes, Locations, TargetWeightLabels, Genders, TARGET_MIN_AGE, TARGET_MAX_AGE } = ItemsConstants
 
 const autocompleteLocations = () => {
     let locs = {}

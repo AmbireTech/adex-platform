@@ -1,5 +1,7 @@
-import { ItemsTypes } from 'constants/itemsTypes'
 import { Bid, AdUnit, AdSlot, Campaign, Channel} from 'adex-models'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemsTypes } = ItemsConstants
 
 let initialState = {
     account: {

@@ -6,10 +6,12 @@ import theme from './theme.css'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Img from 'components/common/img/Img'
-import { ItemTypesNames } from 'constants/itemsTypes'
 import { Item } from 'adex-models'
 import Translate from 'components/translate/Translate'
 import FontIcon from 'react-toolbox/lib/font_icon'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemTypesNames } = ItemsConstants
 
 const RRCardMedia = withReactRouterLink(CardMedia)
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))

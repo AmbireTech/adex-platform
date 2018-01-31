@@ -1,7 +1,9 @@
 import { ADD_TOAST, REMOVE_TOAST, UPDATE_ITEM, ADD_ITEM, DELETE_ITEM, ADD_ITEM_TO_ITEM, REMOVE_ITEM_FROM_ITEM, UNIT_PLACE_BID } from 'constants/actionTypes'
 import initialState from 'store/initialState'
 import Helper from 'helpers/miscHelpers'
-import { ItemTypesNames } from 'constants/itemsTypes'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemTypesNames } = ItemsConstants
 
 export default function toastsReducer(state = initialState.toasts, action) {
     let newState

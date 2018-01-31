@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import theme from './theme.css'
 import { Table } from 'react-toolbox/lib/table'
-import { ItemTypesNames } from 'constants/itemsTypes'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemTypesNames } = ItemsConstants
 
 class Rows extends Component {
     constructor(props, context) {

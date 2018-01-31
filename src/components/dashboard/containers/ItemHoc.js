@@ -10,13 +10,15 @@ import FontIcon from 'react-toolbox/lib/font_icon'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Avatar from 'react-toolbox/lib/avatar'
 import Input from 'react-toolbox/lib/input'
-import { ItemTypesNames } from 'constants/itemsTypes'
 import { Base, Item as ItemModel, Models } from 'adex-models'
 import FloatingProgressButton from 'components/common/floating_btn_progress/FloatingProgressButton'
 import classnames from 'classnames'
 import ImgDialog from './ImgDialog'
 import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemTypesNames } = ItemsConstants
 
 const TooltipFontIcon = Tooltip(FontIcon)
 

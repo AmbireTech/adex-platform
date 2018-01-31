@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { ItemsTypes, AdTypes, Sizes, TargetsWeight, Locations, TargetWeightLabels, Genders } from 'constants/itemsTypes'
 import { Item, AdSlot } from 'adex-models'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import ItemHoc from './ItemHoc'
@@ -18,6 +17,9 @@ import { Tab, Tabs } from 'react-toolbox'
 import SlotBids from './SlotBids'
 import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
 import { IconButton, Button } from 'react-toolbox/lib/button'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemsTypes, AdTypes, AdSizes } = ItemsConstants
 
 export class Slot extends Component {
 
@@ -92,7 +94,7 @@ export class Slot extends Component {
                                     <div>
                                         <Dropdown
                                             onChange={this.props.handleChange.bind(this, 'size')}
-                                            source={Sizes}
+                                            source={AdSizes}
                                             value={item.size}
                                             label={t('size', { isProp: true })}
                                         />

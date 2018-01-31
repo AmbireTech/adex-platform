@@ -3,7 +3,6 @@ import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/const
 import { setWalletAndGetAddress, toHexParam } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
 import { registerItem } from 'services/smart-contracts/actions'
-import { ItemsTypes } from 'constants/itemsTypes'
 
 const toBN = web3.utils.toBN
 

@@ -2,7 +2,7 @@
 
 import { getAccountItems, getItemsByType } from 'services/smart-contracts/actions/registry'
 import { Item, Base } from 'adex-models'
-import { ItemModelsByType } from 'constants/itemsTypes'
+import { Models } from 'adex-models'
 
 export const syncStoreItemsByType = ({ storeItems, type, owner } = {}) => {
     return syncStoreItemsWithWebAndIpfs({ storeItems, type, owner })
@@ -102,7 +102,7 @@ const syncItemsIpfsMeta = (items, metas) => {
 
         let ownProps = { syncedIpfs: true }
 
-        let updated = Base.updateObject({ item: item, ownProps: ownProps, meta: meta, objModel: ItemModelsByType[item._type] })
+        let updated = Base.updateObject({ item: item, ownProps: ownProps, meta: meta, objModel: Models.itemClassByTypeId[item._type] })
         synced.push(updated)
     }
 

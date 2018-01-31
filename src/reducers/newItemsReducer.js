@@ -1,7 +1,5 @@
 import { UPDATE_NEW_ITEM, RESET_NEW_ITEM } from 'constants/actionTypes'
 import initialState from 'store/initialState'
-import { Base } from 'adex-models'
-import { ItemModelsByType } from 'constants/itemsTypes'
 
 export default function newItemsReducer(state = initialState.newItem, action) {
 

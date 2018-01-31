@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { ItemsTypes } from 'constants/itemsTypes'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
 import NewUnitFormBasic from 'components/dashboard/forms/items/NewUnitFormBasic'
@@ -17,6 +16,9 @@ import FontIcon from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
 import { AdUnit as AdUnitModel, Campaign as CampaignModel } from 'adex-models'
 import { groupItemsForCollection } from 'helpers/itemsHelpers'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemsTypes } = ItemsConstants
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'

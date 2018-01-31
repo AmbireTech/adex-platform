@@ -11,7 +11,9 @@ import FontIcon from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 import Ripple from 'react-toolbox/lib/ripple'
 import { Button } from 'react-toolbox/lib/button'
-import { ItemTypesNames } from 'constants/itemsTypes'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemTypesNames } = ItemsConstants
 
 const Step = ({ page, active, index, children, theme, canAdvance, canFinish, canReverse, setPageIndex, canAdvanceToPage, currentPage, goToPage, ...other }) => {
     let warning = page.status === 'warning'

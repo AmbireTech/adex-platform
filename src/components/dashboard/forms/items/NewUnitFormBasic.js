@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { ItemsTypes, AdTypes, Sizes } from 'constants/itemsTypes'
 import NewItemHoc from './NewItemHocStep'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import Input from 'react-toolbox/lib/input'
@@ -12,6 +11,10 @@ import ImgForm from './../ImgForm'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './../theme.css'
 import { validUrl } from 'helpers/validators'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemsTypes, AdTypes, AdSizes  } = ItemsConstants
+
 
 class NewUnitForm extends Component {
 
@@ -58,7 +61,7 @@ class NewUnitForm extends Component {
                             <Col sm={12} lg={6}>
                                 <Dropdown
                                     onChange={this.props.handleChange.bind(this, 'size')}
-                                    source={Sizes}
+                                    source={AdSizes}
                                     value={item.size}
                                     label={t('size', { isProp: true })}
                                 />
