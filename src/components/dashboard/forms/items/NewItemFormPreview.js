@@ -9,6 +9,7 @@ import theme from './../theme.css'
 import moment from 'moment'
 import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
+import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
 class NewItemFormPreview extends Component {
     constructor(props) {
@@ -16,68 +17,24 @@ class NewItemFormPreview extends Component {
         this.save = props.save
     }
 
-    //TODO: make it beautiful
-    targets = ({ targets }) => {
-        return (
-            <div>
-                {
-                    targets.map((target) => {
-                        return (
-                            <div key={target.name}>
-                                <strong>{target.name} </strong>
-                                <strong> (weight - {target.weight}) : </strong>
-
-                                <span>
-                                    {
-                                        Array.isArray(target.value) ?
-                                            <span>
-                                                {target.value.map((val) => {
-                                                    return (<span key={val}> {val}, </span>)
-                                                })}
-                                            </span>
-                                            : null
-                                    }
-                                </span>
-
-                                <span>
-                                    {
-                                        // TODO: fix it
-                                        (target.value.from || target.value.to) ?
-                                            <span>
-                                                <span> from </span>
-                                                <span> {target.value.from} </span>
-                                                <span> to </span>
-                                                <span> {target.value.to} </span>
-                                            </span>
-                                            : null
-                                    }
-                                </span>
-                            </div>
-                        )
-                    })
-                }
-
-            </div>
-        )
-    }
-
     render() {
         let item = this.props.item || {}
         let meta = item._meta || {}
+        let t = this.props.t
 
         return (
             <div>
                 <Grid fluid>
                     <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{this.props.t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}:</Col>
+                        <Col xs={12} lg={4} className={theme.textRight}>{t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}:</Col>
                         <Col xs={12} lg={8} className={theme.textLeft}>{<Img className={theme.imgPreview} src={meta.img.tempUrl || ''} alt={meta.fullName} />} </Col>
                     </Row>
                     <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('fullName', { isProp: true })}:</Col>
+                        <Col xs={12} lg={4} className={theme.textRight}>{t('fullName', { isProp: true })}:</Col>
                         <Col xs={12} lg={8} className={theme.textLeft}>{meta.fullName}</Col>
                     </Row>
                     <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('description', { isProp: true })}:</Col>
+                        <Col xs={12} lg={4} className={theme.textRight}>{t('description', { isProp: true })}:</Col>
                         <Col xs={12} lg={8} className={theme.textLeft}>{meta.description}</Col>
                     </Row>
                     {
@@ -98,7 +55,7 @@ class NewItemFormPreview extends Component {
 
                                 return (
                                     <Row key={key}>
-                                        <Col xs={12} lg={4} className={theme.textRight}>{this.props.t(keyName, { isProp: true })}:</Col>
+                                        <Col xs={12} lg={4} className={theme.textRight}>{t(keyName, { isProp: true })}:</Col>
                                         <Col xs={12} lg={8} className={theme.textLeft}>{value}</Col>
                                     </Row>
                                 )
@@ -106,17 +63,14 @@ class NewItemFormPreview extends Component {
                     }
                     {meta.targets ?
                         <Row>
-                            <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('targets', { isProp: true })}:</Col>
-                            <Col xs={12} lg={8} className={theme.textLeft}><this.targets targets={meta.targets} /></Col>
+                            <Col xs={12} lg={4} className={theme.textRight}>{t('targets', { isProp: true })}:</Col>
+                            <Col xs={12} lg={8} className={theme.textLeft}><UnitTargets {...this.props} targets={meta.targets} t={t} /></Col>
                         </Row>
                         : null
                     }
 
                 </Grid>
                 <br />
-
-
-                {/* <Button icon='save' label='Save' raised primary onClick={this.props.save} /> */}
             </div>
         )
     }

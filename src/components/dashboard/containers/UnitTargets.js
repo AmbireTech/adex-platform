@@ -47,16 +47,17 @@ export class UnitTargets extends Component {
                 legend={'from ' + target.value.from + ' to ' + target.value.from}
                 rightIcon={targetWeightIcon[target.weight]}
                 leftIcon='child_care'
+                theme={theme}
             />
             <ListDivider />
         </span>
     )
 
-    TargetsList = ({ meta, t }) => (
+    TargetsList = ({ targets, t }) => (
         <List selectable={false} ripple={false}>
             <ListSubHeader caption='Targets' />
             {
-                (meta.targets || []).map((target) => {
+                (targets || []).map((target) => {
 
                     switch (target.name) {
                         case 'location':
@@ -74,7 +75,7 @@ export class UnitTargets extends Component {
 
     render() {
         return (
-            <this.TargetsList meta={this.props.meta} t={this.props.t} />
+            <this.TargetsList targets={this.props.targets} t={this.props.t} />
         )
     }
 }
@@ -84,7 +85,8 @@ UnitTargets.propTypes = {
     account: PropTypes.object.isRequired,
     item: PropTypes.object.isRequired,
     slots: PropTypes.array.isRequired,
-    spinner: PropTypes.bool
+    spinner: PropTypes.bool,
+    targets: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {
@@ -92,7 +94,6 @@ function mapStateToProps(state) {
     let memory = state.memory
     return {
         account: persist.account,
-        slots: [],
         spinner: memory.spinners[ItemsTypes.AdUnit.name]
     };
 }
