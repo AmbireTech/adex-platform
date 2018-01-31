@@ -18,95 +18,48 @@ import SlotBids from './SlotBids'
 import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
 import { IconButton, Button } from 'react-toolbox/lib/button'
 import { items as ItemsConstants } from 'adex-constants'
+import { BasicProps } from './ItemCommon'
 
 const { ItemsTypes, AdTypes, AdSizes } = ItemsConstants
 
-export class Slot extends Component {
-
-    integrationCode = () => {
-        let src = `adview.adex.network/${this.props.item._id}` //TODO: Set real src with config !!!
-        let sizes = this.props.item._meta.size.split('x')
-        sizes = {
-            width: sizes[0],
-            height: sizes[1]
-        }
-        let iframeStr =
-            `<iframe src="${src}"\n` +
-            `   width="${sizes.width}"\n` +
-            `   height="${sizes.height}"\n` +
-            `   scrolling="no"\n` +
-            `   frameborder="0"\n` +
-            `   style="border: 0;"\n` +
-            `></iframe>`
-
-        // TODO: Add copy to clipboard and tooltip or description how to use it
-        return (
-            <div>
-                <div className={theme.integrationLabel}> {this.props.t('INTEGRATION_CODE')}</div>
-                <pre className={theme.integrationCode}>
-                    {iframeStr}
-                </pre>
-            </div>
-        )
+const IntegrationCode = ({ ipfs, t, size }) => {
+    let src = `adview.adex.network/${ipfs}` //TODO: Set real src with config !!!
+    let sizes = size.split('x')
+    sizes = {
+        width: sizes[0],
+        height: sizes[1]
     }
+    let iframeStr =
+        `<iframe src="${src}"\n` +
+        `   width="${sizes.width}"\n` +
+        `   height="${sizes.height}"\n` +
+        `   scrolling="no"\n` +
+        `   frameborder="0"\n` +
+        `   style="border: 0;"\n` +
+        `></iframe>`
 
+    // TODO: Add copy to clipboard and tooltip or description how to use it
+    return (
+        <div>
+            <div className={theme.integrationLabel}> {t('INTEGRATION_CODE')}</div>
+            <pre className={theme.integrationCode}>
+                {iframeStr}
+            </pre>
+        </div>
+    )
+}
+
+export class Slot extends Component {
     render() {
         let item = this.props.item
         let t = this.props.t
+        console.log('item', item)
 
         if (!item) return (<h1>Slot '404'</h1>)
 
         return (
             <div>
-                <div className={theme.itemPropTop}>
-                    <Grid fluid style={{ padding: 0 }}>
-                        <Row top='xs'>
-                            <Col xs={12} sm={12} md={12} lg={7}>
-                                <div className={theme.imgHolder}>
-                                    <Card className={theme.itemDetailCard} raised={false} theme={theme}>
-                                        <CardMedia
-                                            aspectRatio='wide'
-                                            theme={theme}
-                                        >
-                                            <Img src={item.ingUrl} alt={item.fullName} />
-                                        </CardMedia>
-                                        <CardActions theme={theme} >
-
-                                            <IconButton
-                                                /* theme={theme} */
-                                                icon='edit'
-                                                accent
-                                                onClick={this.props.toggleImgEdit}
-                                            />
-                                        </CardActions>
-                                    </Card>
-                                    {/* <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} className={theme.img} /> */}
-                                </div>
-                                <div className={theme.bannerProps}>
-                                    <div>
-                                        <Dropdown
-                                            onChange={this.props.handleChange.bind(this, 'adType')}
-                                            source={AdTypes}
-                                            value={item.adType}
-                                            label={t('adType', { isProp: true })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <Dropdown
-                                            onChange={this.props.handleChange.bind(this, 'size')}
-                                            source={AdSizes}
-                                            value={item.size}
-                                            label={t('size', { isProp: true })}
-                                        />
-                                    </div>
-                                </div>
-                            </Col>
-                            <Col xs={12} sm={12} md={12} lg={5}>
-                                <this.integrationCode />
-                            </Col>
-                        </Row>
-                    </Grid>
-                </div>
+                <BasicProps item={item} t={t} rightComponent={<IntegrationCode ipfs={item.ipfs} size={item.sizeTxtValue} t={t} />} />
                 <div>
                     <SlotBids {...this.props} meta={item.meta} t={t} />
                 </div>

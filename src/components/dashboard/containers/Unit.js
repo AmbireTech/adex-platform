@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -21,10 +20,7 @@ import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialo
 import NewBidSteps from 'components/dashboard/forms/bids/NewBidSteps'
 import UnitBids from './UnitBids'
 import { items as ItemsConstants } from 'adex-constants'
-
-import { List, ListItem, ListSubHeader, ListDivider, ListCheckbox } from 'react-toolbox/lib/list'
-import FontIcon from 'react-toolbox/lib/font_icon'
-import Avatar from 'react-toolbox/lib/avatar'
+import { BasicProps } from './ItemCommon'
 
 const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue, AdTypesByValue } = ItemsConstants
 const TooltipButton = Tooltip(Button)
@@ -42,60 +38,13 @@ export class Unit extends Component {
         this.setState({ tabIndex: index })
     }
 
-    BasicProps = ({ item, t }) => {
-        return (
-            <div className={theme.itemPropTop}>
-                <div className={theme.imgHolder}>
-                    <Card className={theme.itemDetailCard} raised={false} theme={theme}>
-                        <CardMedia
-                            aspectRatio='wide'
-                            theme={theme}
-                        >
-                            <Img src={item.imgUrl} alt={item.fullName} />
-                        </CardMedia>
-                        <CardActions theme={theme} >
-
-                            <IconButton
-                                /* theme={theme} */
-                                icon='edit'
-                                accent
-                                onClick={this.props.toggleImgEdit}
-                            />
-                        </CardActions>
-                    </Card>
-
-                </div>
-                <div className={theme.bannerProps}>
-                    <div>
-                        {/* TODO: temp use input to use the styles */}
-                        <Input
-                            type='text'
-                            value={AdTypesByValue[item.adType].label}
-                            label={t('adType', { isProp: true })}
-                            disabled
-                        />
-                    </div>
-                    <div className={theme.bannerProps}>
-                        <Input
-                            type='text'
-                            value={AdSizesByValue[item.size].label}
-                            label={t('size', { isProp: true })}
-                            disabled
-                        />
-                    </div>
-                </div>
-                <div className={theme.unitTargets}>
-                    <UnitTargets {...this.props} meta={item.meta} t={t} />
-                </div>
-            </div>
-        )
-    }
-
     render() {
         let item = this.props.item
         let t = this.props.t
 
         if (!item) return (<h1>Unit '404'</h1>)
+
+        console.log('item', item)
 
         return (
             <div>
@@ -108,7 +57,12 @@ export class Unit extends Component {
                     icon='check_circle'
                     adUnit={item}
                 />
-                <this.BasicProps item={item} t={t} />
+                <BasicProps
+                    item={item}
+                    t={t}
+                    url={item.adUrl}
+                    rightComponent={<UnitTargets {...this.props} meta={item.meta} t={t} />}
+                />
                 <div>
                     <Tabs
                         theme={theme}

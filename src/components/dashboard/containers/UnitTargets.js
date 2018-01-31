@@ -14,8 +14,6 @@ import FontIcon from 'react-toolbox/lib/font_icon'
 const { ItemsTypes } = ItemsConstants
 
 export class UnitTargets extends Component {
-
-
     targetArrayValues = (value) => (
         <div>
             {
@@ -40,16 +38,16 @@ export class UnitTargets extends Component {
                     (meta.targets || []).map((target) => {
                         return (
                             <Row key={target.name}>
-                                <Col lg={2}>
+                                <Col lg={3}>
                                     <strong> {target.name} </strong>
                                 </Col>
-                                <Col lg={1}>
+                                <Col lg={2}>
                                     <div>
                                         <FontIcon value='equalizer' style={{ color: 'deepskyblue' }} />
                                         <span>{target.weight} </span>
                                     </div>
                                 </Col>
-                                <Col lg={9}>
+                                <Col lg={7}>
                                     {(() => {
                                         switch (target.name) {
                                             case 'location':
