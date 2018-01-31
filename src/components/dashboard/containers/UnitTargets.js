@@ -7,186 +7,61 @@ import actions from 'actions'
 import theme from './theme.css'
 import { AdUnit } from 'adex-models'
 import { Grid, Row, Col } from 'react-flexbox-grid'
-import Autocomplete from 'react-toolbox/lib/autocomplete'
 import classnames from 'classnames'
-import Slider from 'react-toolbox/lib/slider'
 import { items as ItemsConstants } from 'adex-constants'
+import FontIcon from 'react-toolbox/lib/font_icon'
 
-const { ItemsTypes, Locations, TargetWeightLabels, Genders, TARGET_MIN_AGE, TARGET_MAX_AGE } = ItemsConstants
-
-const autocompleteLocations = () => {
-    let locs = {}
-    Locations.map((loc) => {
-        locs[loc.value] = loc.label
-    })
-
-    return locs
-}
-
-const AcLocations = autocompleteLocations()
-
-const autocompleteGenders = () => {
-    let genders = {}
-    Genders.map((gen) => {
-        genders[gen.value] = gen.label
-    })
-
-    return genders
-}
-
-const AcGenders = autocompleteGenders()
-
-const ages = (() => {
-    let ages = []
-    for (var index = TARGET_MIN_AGE; index <= TARGET_MAX_AGE; index++) {
-        ages.push(index + '')
-    }
-
-    return ages
-})()
+const { ItemsTypes } = ItemsConstants
 
 export class UnitTargets extends Component {
 
-    handleTargetChange = (target, valueKey, newValue) => {
-        let newWeight
-        if (valueKey === 'updateWeight') {
-            newWeight = newValue
-            newValue = target.value
-        }
 
-        else if (valueKey) {
-            let tempValue = { ...target.value }
-            if (valueKey === 'from' || valueKey === 'to') {
-                newValue = newValue | 0
+    targetArrayValues = (value) => (
+        <div>
+            {
+                value.join(', ')
             }
+        </div>
+    )
 
-            tempValue[valueKey] = newValue
-            newValue = tempValue
-        }
+    ageTargets = (value) => (
+        <div>
+            <span> From:  </span>
+            <span> {value.from} </span>
+            <span> To:  </span>
+            <span> {value.to}  </span>
+        </div>
+    )
 
-        let newTargets = AdUnit.updateTargets(this.props.item._meta.targets || [], target, newValue, newWeight)
-        this.props.handleChange('targets', newTargets)
-    }
-
-    renderLocationTarget = (target) => {
-        return (
-            <Autocomplete
-                direction="auto"
-                multiple={true}
-                onChange={this.handleTargetChange.bind(this, target, null)}
-                label={this.props.t('TARGET_LOCATION')}
-                source={AcLocations}
-                value={target.value}
-                suggestionMatch='anywhere'
-                showSuggestionsWhenValueIsSet={true}
-                allowCreate={false}
-            />
-        )
-    }
-
-    renderGendersTarget = (target) => {
-        return (
-            <Autocomplete
-                direction="auto"
-                multiple={true}
-                onChange={this.handleTargetChange.bind(this, target, null)}
-                label={this.props.t('TARGET_GENDERS')}
-                source={AcGenders}
-                value={target.value}
-                suggestionMatch='anywhere'
-                showSuggestionsWhenValueIsSet={true}
-                allowCreate={false}
-            />
-        )
-    }
-
-    renderAgeTarget = (target) => {
-        let value = target.value || {}
-        return (
-            <div>
-                <Grid fluid className={theme.agesGrid}>
-                    <Row>
-                        <Col lg={6}>
-
-                            <Autocomplete
-                                direction="auto"
-                                multiple={false}
-                                onChange={this.handleTargetChange.bind(this, target, 'from')}
-                                label={this.props.t('TARGET_AGE_FROM')}
-                                source={ages.slice(0, (value.to | 0) + 1)}
-                                value={value.from + ''}
-                                suggestionMatch='anywhere'
-                                showSuggestionsWhenValueIsSet={true}
-                                allowCreate={false}
-                            />
-                        </Col>
-                        <Col lg={6}>
-
-                            <Autocomplete
-                                direction="auto"
-                                multiple={false}
-                                onChange={this.handleTargetChange.bind(this, target, 'to')}
-                                label={this.props.t('TARGET_AGE_TO')}
-                                source={ages.slice(value.from | 0)}
-                                value={value.to + ''}
-                                suggestionMatch='anywhere'
-                                showSuggestionsWhenValueIsSet={true}
-                                allowCreate={false}
-                            />
-                        </Col>
-                    </Row>
-                </Grid >
-            </div>
-        )
-    }
-
-    Targets = ({ meta, t }) => {
+    TargetsNoEdit = ({ meta, t }) => {
         return (
             <Grid fluid>
-                <Row className={theme.targetsHead}>
-                    <Col lg={7}>
-                        {t('TARGET')}
-                    </Col>
-                    <Col lg={5}>
-                        {t('WEIGHT')}
-                    </Col>
-                </Row>
                 {
                     (meta.targets || []).map((target) => {
                         return (
-                            <Row key={target.name} className={theme.targetRow}>
-                                <Col lg={7}>
+                            <Row key={target.name}>
+                                <Col lg={2}>
+                                    <strong> {target.name} </strong>
+                                </Col>
+                                <Col lg={1}>
+                                    <div>
+                                        <FontIcon value='equalizer' style={{ color: 'deepskyblue' }} />
+                                        <span>{target.weight} </span>
+                                    </div>
+                                </Col>
+                                <Col lg={9}>
                                     {(() => {
                                         switch (target.name) {
                                             case 'location':
-                                                return this.renderLocationTarget(target)
+                                                return this.targetArrayValues(target.value)
                                             case 'gender':
-                                                return this.renderGendersTarget(target)
+                                                return this.targetArrayValues(target.value)
                                             case 'age':
-                                                return this.renderAgeTarget(target)
+                                                return this.ageTargets(target.value)
                                             default: null
                                         }
                                     })()}
                                 </Col>
-                                <Col lg={5} style={{ position: 'relative' }}>
-                                    <div className={classnames(theme.sliderWrapper)}>
-                                        <label className={classnames(theme.sliderLabel, theme.weightLabel)}>
-                                            {target.name}  weight:
-                                            <strong> {target.weight} </strong>
-                                            ({TargetWeightLabels[target.weight].label})
-                                        </label>
-                                        <Slider className={theme.weightSlider}
-                                            pinned
-                                            snaps
-                                            min={0}
-                                            max={4}
-                                            step={1}
-                                            value={target.weight}
-                                            onChange={this.handleTargetChange.bind(this, target, 'updateWeight')}
-                                        />
-                                    </div>
-                                </Col>
-
                             </Row>
                         )
                     })
@@ -195,9 +70,10 @@ export class UnitTargets extends Component {
         )
     }
 
+
     render() {
         return (
-            <this.Targets meta={this.props.meta} t={this.props.t} />
+            <this.TargetsNoEdit meta={this.props.meta} t={this.props.t} />
         )
     }
 }

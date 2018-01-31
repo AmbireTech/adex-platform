@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Dropdown from 'react-toolbox/lib/dropdown'
+import Input from 'react-toolbox/lib/input'
 import ItemHoc from './ItemHoc'
 import Img from 'components/common/img/Img'
 import { Item, AdUnit } from 'adex-models'
@@ -21,7 +22,11 @@ import NewBidSteps from 'components/dashboard/forms/bids/NewBidSteps'
 import UnitBids from './UnitBids'
 import { items as ItemsConstants } from 'adex-constants'
 
-const { ItemsTypes, AdTypes, AdSizes } = ItemsConstants
+import { List, ListItem, ListSubHeader, ListDivider, ListCheckbox } from 'react-toolbox/lib/list'
+import FontIcon from 'react-toolbox/lib/font_icon'
+import Avatar from 'react-toolbox/lib/avatar'
+
+const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue, AdTypesByValue } = ItemsConstants
 const TooltipButton = Tooltip(Button)
 const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
 
@@ -62,21 +67,25 @@ export class Unit extends Component {
                 </div>
                 <div className={theme.bannerProps}>
                     <div>
-                        <Dropdown
-                            onChange={this.props.handleChange.bind(this, 'adType')}
-                            source={AdTypes}
-                            value={item.adType}
+                        {/* TODO: temp use input to use the styles */}
+                        <Input
+                            type='text'
+                            value={AdTypesByValue[item.adType].label}
                             label={t('adType', { isProp: true })}
+                            disabled
                         />
                     </div>
-                    <div>
-                        <Dropdown
-                            onChange={this.props.handleChange.bind(this, 'size')}
-                            source={AdSizes}
-                            value={item.size}
+                    <div className={theme.bannerProps}>
+                        <Input
+                            type='text'
+                            value={AdSizesByValue[item.size].label}
                             label={t('size', { isProp: true })}
+                            disabled
                         />
                     </div>
+                </div>
+                <div className={theme.unitTargets}>
+                    <UnitTargets {...this.props} meta={item.meta} t={t} />
                 </div>
             </div>
         )
@@ -106,16 +115,6 @@ export class Unit extends Component {
                         index={this.state.tabIndex}
                         onChange={this.handleTabChange.bind(this)}
                     >
-                        <Tab label={t('TARGETS')}>
-                            <div>
-                                <UnitTargets {...this.props} meta={item.meta} t={t} />
-                            </div>
-                        </Tab>
-                        {/* <Tab theme={theme} label={t('SLOTS')}>
-                            <div>
-                                <UnitSlots item={item} />
-                            </div>
-                        </Tab> */}
                         <Tab label={t('BIDS')}>
                             <UnitBids item={item} />
                         </Tab>
