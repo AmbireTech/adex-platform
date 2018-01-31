@@ -294,6 +294,14 @@
     color: var(--label-color);
 }
 
+.itemContentRoot {
+  &.large {
+    height: auto;
+    padding-top: 5px;
+    padding-botom: 5px;
+  }
+}
+
 @media (height <= 1000px) {
     .dialog {
         min-height: 95vh; 

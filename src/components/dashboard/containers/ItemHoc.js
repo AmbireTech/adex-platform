@@ -18,7 +18,7 @@ import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
 import { items as ItemsConstants } from 'adex-constants'
 
-const { ItemTypesNames } = ItemsConstants
+const { ItemTypesNames, ItemTypeByTypeId } = ItemsConstants
 
 const TooltipFontIcon = Tooltip(FontIcon)
 
@@ -116,6 +116,7 @@ export default function ItemHoc(Decorated) {
             let item = new model(this.state.item) || {}
             let imgSrc = item.imgUrl
             let t = this.props.t
+            let canEdit = ItemTypeByTypeId[item.type] === 'collection'
 
             return (
                 <div>
@@ -128,12 +129,14 @@ export default function ItemHoc(Decorated) {
                         <div className={theme.headingLeft}>
                             <Avatar image={imgSrc} title={item.fullName} cover onClick={this.handleToggle.bind(this)} />
                             <ImgDialog imgSrc={imgSrc} handleToggle={this.handleToggle} active={this.state.editImg} onChange={this.handleChange.bind(this, 'img')} />
-                            {this.state.activeFields.fullName ?
+                            {canEdit && this.state.activeFields.fullName ?
                                 <Input className={theme.itemName} type='text' label={t('fullName', { isProp: true })} name='fullName' value={item.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                                 :
                                 <h3 className={theme.itemName}>
                                     <span> {item.fullName} </span>
-                                    <span><IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'fullName', true)} /></span>
+                                    {canEdit ?
+                                        <span><IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'fullName', true)} /></span>
+                                        : null}
                                 </h3>
                             }
                         </div>

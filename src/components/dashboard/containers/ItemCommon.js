@@ -42,7 +42,7 @@ export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
                                     disabled
                                 />
                             </div>
-                            <div className={theme.bannerProps}>
+                            <div>
                                 <Input
                                     type='text'
                                     value={AdSizesByValue[item.size].label}
