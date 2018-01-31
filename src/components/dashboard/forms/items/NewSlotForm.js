@@ -30,7 +30,7 @@ class NewSlotForm extends Component {
                                 <Dropdown
                                     onChange={this.props.handleChange.bind(this, 'adType')}
                                     source={AdTypes}
-                                    value={item.adType}
+                                    value={item.adType + ''}
                                     label={t('adType', { isProp: true })}
                                 />
                             </Col>
@@ -38,7 +38,7 @@ class NewSlotForm extends Component {
                                 <Dropdown
                                     onChange={this.props.handleChange.bind(this, 'size')}
                                     source={AdSizes}
-                                    value={item.size}
+                                    value={item.size + ''}
                                     label={t('size', { isProp: true })}
                                 />
                             </Col>

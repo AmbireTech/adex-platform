@@ -13,7 +13,7 @@ import theme from './../theme.css'
 import { validUrl } from 'helpers/validators'
 import { items as ItemsConstants } from 'adex-constants'
 
-const { ItemsTypes, AdTypes, AdSizes  } = ItemsConstants
+const { ItemsTypes, AdTypes, AdSizes } = ItemsConstants
 
 
 class NewUnitForm extends Component {
@@ -54,7 +54,7 @@ class NewUnitForm extends Component {
                                 <Dropdown
                                     onChange={this.props.handleChange.bind(this, 'adType')}
                                     source={AdTypes}
-                                    value={item.adType}
+                                    value={item.adType + ''}
                                     label={t('adType', { isProp: true })}
                                 />
                             </Col>
@@ -62,7 +62,7 @@ class NewUnitForm extends Component {
                                 <Dropdown
                                     onChange={this.props.handleChange.bind(this, 'size')}
                                     source={AdSizes}
-                                    value={item.size}
+                                    value={item.size + ''}
                                     label={t('size', { isProp: true })}
                                 />
                             </Col>
