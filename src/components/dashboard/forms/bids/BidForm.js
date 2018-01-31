@@ -22,7 +22,7 @@ class BidForm extends Component {
     let t = this.props.t
     let timeout = bid.timeout || constants.exchange.TIMEOUTS[0]
     let timeouts = constants.exchange.TIMEOUTS.map((tmo) => {
-      return { value: tmo.value, label: t(tmo.label, { args: tmo.labelArgs }) }
+      return { value: tmo.value + '', label: t(tmo.label, { args: tmo.labelArgs }) }
     })
 
     return (
@@ -49,7 +49,7 @@ class BidForm extends Component {
         <Dropdown
           onChange={(value) => this.props.handleChange('timeout', value)}
           source={timeouts}
-          value={timeout}
+          value={timeout + ''}
           label={t('BID_TIMEOUT')}
         />
       </div>

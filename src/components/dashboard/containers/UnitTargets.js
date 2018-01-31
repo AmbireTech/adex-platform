@@ -173,7 +173,7 @@ export class UnitTargets extends Component {
                                         <label className={classnames(theme.sliderLabel, theme.weightLabel)}>
                                             {target.name}  weight:
                                             <strong> {target.weight} </strong>
-                                            ({TargetWeightLabels[target.weight]})
+                                            ({TargetWeightLabels[target.weight].label})
                                         </label>
                                         <Slider className={theme.weightSlider}
                                             pinned
