@@ -8,12 +8,12 @@ import actions from 'actions'
 // import { Button, IconButton } from 'react-toolbox/lib/button'
 import Translate from 'components/translate/Translate'
 // import Img from 'components/common/img/Img'
-import { Grid, Row, Col } from 'react-flexbox-grid'
 import { web3 } from 'services/smart-contracts/ADX'
 import { MULT } from 'services/smart-contracts/constants'
 // import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 // import Input from 'react-toolbox/lib/input'
 import { Approve, RegisterAccount, WithdrawEth, WithdrawAdx } from 'components/dashboard/forms/web3/transactions'
+import { List, ListItem, ListSubHeader, ListDivider } from 'react-toolbox/lib/list'
 
 import scActions from 'services/smart-contracts/actions'
 const { getAccountStats } = scActions
@@ -63,6 +63,7 @@ class Account extends React.Component {
     render() {
         let account = this.props.account
         let stats = account._stats || {}
+        let t = this.props.t
 
         if (!stats) {
             return null
@@ -70,53 +71,53 @@ class Account extends React.Component {
 
         return (
             <div>
-                <Grid fluid>
-                    <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_NAME')}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}><strong> {stats.acc ? stats.acc._name : 'No name'} </strong> </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_ETH_ADDR')}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}><strong> {account._addr} </strong> </Col>
-                    </Row>
-                    {/* <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_IS_REGISTERED')}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{(!!stats.isRegistered).toString()}</Col>
-                    </Row> */}
-                    <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_ETH_BALANCE')}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{web3.utils.fromWei(stats.balanceEth, 'ether')}</Col>
-                    </Row>
-                    <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_ADX_BALANCE')}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{(stats.balanceAdx || 0) / MULT}</Col>
-                    </Row>
-                    <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_ADX_ALLOWANCE')}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{(stats.allowance || 0) / MULT}</Col>
-                    </Row>
+                <List selectable={false} ripple={false}>
+                    <ListItem
+                        ripple={false}
+                        legend={t('ACCOUNT_NAME')}
+                        caption={stats.acc ? stats.acc._name : 'No name'}
+                        rightIcon={<Approve raised accent onSave={this.onSave} />}
+                        // leftIcon='account_box'
+                        theme={theme}
+                    />
+                    <ListDivider />
+                    <ListItem
+                        ripple={false}
+                        legend={t('ACCOUNT_ETH_ADDR')}
+                        caption={account._addr}
+                        rightIcon='content_copy'
+                        // leftIcon='compare_arrows'
+                        theme={theme}
+                    />
+                    <ListDivider />
+                    <ListItem
+                        ripple={false}
+                        legend={t('ACCOUNT_ETH_BALANCE')}
+                        caption={web3.utils.fromWei(stats.balanceEth, 'ether')}
+                        rightIcon={<WithdrawEth raised primary onSave={this.onSave} />}
+                        // leftIcon='euro_symbol'
+                        theme={theme}
+                    />
+                    <ListDivider />
+                    <ListItem
+                        ripple={false}
+                        legend={t('ACCOUNT_ADX_BALANCE')}
+                        caption={(stats.balanceAdx || 0) / MULT}
+                        rightIcon={<WithdrawAdx raised primary onSave={this.onSave} />}
+                        // leftIcon='text_format'
+                        theme={theme}
+                    />
+                    <ListDivider />
+                    <ListItem
+                        ripple={false}
+                        legend={t('ACCOUNT_ADX_ALLOWANCE')}
+                        caption={(stats.allowance || 0) / MULT}
+                        rightIcon={<Approve raised accent onSave={this.onSave} />}
+                        // leftIcon='check'
+                        theme={theme}
+                    />
 
-                    <Row>
-                        <Col xs={12} >
-                            <Approve raised accent onSave={this.onSave} />
-                        </Col>
-                    </Row>
-                    {/* <Row>
-                        <Col xs={12} >
-                            <RegisterAccount raised primary onSave={this.onSave} />
-                        </Col>
-                    </Row> */}
-                    <Row>
-                        <Col xs={12} >
-                            <WithdrawEth raised primary onSave={this.onSave} />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={12} >
-                            <WithdrawAdx raised primary onSave={this.onSave} />
-                        </Col>
-                    </Row>
-                </Grid>
+                </List>
             </div>
         )
     }
