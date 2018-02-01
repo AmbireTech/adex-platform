@@ -7,15 +7,16 @@ import actions from 'actions'
 import theme from './theme.css'
 import { items as ItemsConstants } from 'adex-constants'
 import { List, ListItem, ListSubHeader, ListDivider } from 'react-toolbox/lib/list'
+import FontIcon from 'react-toolbox/lib/font_icon'
 
 const { ItemsTypes } = ItemsConstants
 
 const targetWeightIcon = {
-    0: 'exposure_zero',
-    1: 'filter_1',
-    2: 'filter_2',
-    3: 'filter_3',
-    4: 'filter_4',
+    0: { icon: 'exposure_zero', color: '#616161' },
+    1: { icon: 'looks_one', color: '#03A9F4' },
+    2: { icon: 'looks_two', color: '#00E676' },
+    3: { icon: 'looks_3', color: '#FFAB00' },
+    4: { icon: 'looks_4', color: '#FF5722' },
 }
 
 const targetIcon = {
@@ -25,33 +26,39 @@ const targetIcon = {
 }
 
 export class UnitTargets extends Component {
-    targetArrayValues = (target, t) => (
-        <span key={target.name}>
-            <ListItem
-                ripple={false}
-                caption={t(target.name, { isTarget: true })}
-                legend={target.value.join(', ')}
-                rightIcon={targetWeightIcon[target.weight]}
-                leftIcon={targetIcon[target.name]}
-                theme={theme}
-            />
-            <ListDivider />
-        </span>
-    )
+    targetArrayValues = (target, t) => {
+        let icon = targetWeightIcon[target.weight]
+        return (
+            <span key={target.name}>
+                <ListItem
+                    ripple={false}
+                    caption={t(target.name, { isTarget: true })}
+                    legend={target.value.join(', ')}
+                    rightIcon={<FontIcon value={icon.icon} style={{ color: icon.color }} />}
+                    leftIcon={targetIcon[target.name]}
+                    theme={theme}
+                />
+                <ListDivider />
+            </span>
+        )
+    }
 
-    ageTargets = (target, t) => (
-        <span key={target.name}>
-            <ListItem
-                ripple={false}
-                caption={t(target.name, { isTarget: true })}
-                legend={'from ' + target.value.from + ' to ' + target.value.from}
-                rightIcon={targetWeightIcon[target.weight]}
-                leftIcon='child_care'
-                theme={theme}
-            />
-            <ListDivider />
-        </span>
-    )
+    ageTargets = (target, t) => {
+        let icon = targetWeightIcon[target.weight]
+        return (
+            <span key={target.name}>
+                <ListItem
+                    ripple={false}
+                    caption={t(target.name, { isTarget: true })}
+                    legend={'from ' + target.value.from + ' to ' + target.value.to}
+                    rightIcon={<FontIcon value={icon.icon} style={{ color: icon.color }} />}
+                    leftIcon='child_care'
+                    theme={theme}
+                />
+                <ListDivider />
+            </span>
+        )
+    }
 
     TargetsList = ({ targets, t }) => (
         <List selectable={false} ripple={false}>
