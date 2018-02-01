@@ -61,7 +61,7 @@ export class Slot extends Component {
             <div>
                 <BasicProps item={item} t={t} rightComponent={<IntegrationCode ipfs={item.ipfs} size={item.sizeTxtValue} t={t} />} />
                 <div>
-                    <SlotBids {...this.props} meta={item.meta} t={t} />
+                    <SlotBids {...this.props} item={item} t={t} />
                 </div>
             </div>
 
