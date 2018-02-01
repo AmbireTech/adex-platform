@@ -262,8 +262,8 @@ class ItemsList extends Component {
 
         if (sortProperty) {
             filtered = filtered.sort((a, b) => {
-                let propA = a[sortProperty] || a._meta[sortProperty]
-                let propB = b[sortProperty] || b._meta[sortProperty]
+                let propA = a[sortProperty] || (a._meta ? a._meta[sortProperty] : 0)
+                let propB = b[sortProperty] || (b._meta ? b._meta[sortProperty] : 0)
 
                 return (propA < propB ? -1 : (propA > propB ? 1 : 0)) * sortOrder
             })

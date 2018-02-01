@@ -41,6 +41,7 @@ export class UnitBids extends Component {
         getUnitBids({ userAddr: this.props.account._addr, adUnit: this.props.item._id })
             .then((bids) => {
                 console.log('unit bids', bids)
+                // TODO: Maybe map to Bid instances?
                 this.setState({ bids: bids })
             })
     }
@@ -60,10 +61,10 @@ export class UnitBids extends Component {
     renderTableRow(item, index, { to, selected }) {
         return (
             <TableRow key={item._id}>
-                <TableCell> {item.target} </TableCell>
-                <TableCell> {item.amount} </TableCell>
-                <TableCell> {item.state} </TableCell>
-                <TableCell> {item.timeout} </TableCell>
+                <TableCell> {item._target} </TableCell>
+                <TableCell> {item._amount} </TableCell>
+                <TableCell> {item._state} </TableCell>
+                <TableCell> {item._timeout} </TableCell>
                 <TableCell>
                     <Button accent raised label={this.props.t('CANCEL_BID')} />
                 </TableCell>
@@ -85,7 +86,6 @@ export class UnitBids extends Component {
 
     render() {
         let item = this.props.item
-        let meta = item._meta
         let t = this.props.t
         let bids = this.state.bids || []
 
