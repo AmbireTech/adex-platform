@@ -13,7 +13,7 @@ import { web3 } from 'services/smart-contracts/ADX'
 import { MULT } from 'services/smart-contracts/constants'
 // import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 // import Input from 'react-toolbox/lib/input'
-import { Approve, RegisterAccount, WithdrawEth, WithdrawAdx } from 'components/dashboard/account/forms/transactions'
+import { Approve, RegisterAccount, WithdrawEth, WithdrawAdx } from 'components/dashboard/forms/web3/transactions'
 
 import scActions from 'services/smart-contracts/actions'
 const { getAccountStats } = scActions
@@ -79,10 +79,10 @@ class Account extends React.Component {
                         <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_ETH_ADDR')}:</Col>
                         <Col xs={12} lg={8} className={theme.textLeft}><strong> {account._addr} </strong> </Col>
                     </Row>
-                    <Row>
+                    {/* <Row>
                         <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_IS_REGISTERED')}:</Col>
                         <Col xs={12} lg={8} className={theme.textLeft}>{(!!stats.isRegistered).toString()}</Col>
-                    </Row>
+                    </Row> */}
                     <Row>
                         <Col xs={12} lg={4} className={theme.textRight}>{this.props.t('ACCOUNT_ETH_BALANCE')}:</Col>
                         <Col xs={12} lg={8} className={theme.textLeft}>{web3.utils.fromWei(stats.balanceEth, 'ether')}</Col>
@@ -101,11 +101,11 @@ class Account extends React.Component {
                             <Approve raised accent onSave={this.onSave} />
                         </Col>
                     </Row>
-                    <Row>
+                    {/* <Row>
                         <Col xs={12} >
                             <RegisterAccount raised primary onSave={this.onSave} />
                         </Col>
-                    </Row>
+                    </Row> */}
                     <Row>
                         <Col xs={12} >
                             <WithdrawEth raised primary onSave={this.onSave} />

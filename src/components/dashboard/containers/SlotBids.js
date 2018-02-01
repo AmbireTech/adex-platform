@@ -125,7 +125,6 @@ export class SlotBids extends Component {
 
             </div>
         )
-
     }
 
     renderTableHead() {
@@ -135,6 +134,7 @@ export class SlotBids extends Component {
                 <TableCell> {t('TOTAL_REWARD')} </TableCell>
                 <TableCell> {t('CONVERSION_GOALS')} </TableCell>
                 <TableCell> {t('ADVERTISER')} </TableCell>
+                <TableCell> {t('AD_UNIT')} </TableCell>
                 <TableCell> {t('TIMEOUT')} </TableCell>
                 <TableCell> {t('ACTIONS')} </TableCell>
             </TableHead>
@@ -148,6 +148,10 @@ export class SlotBids extends Component {
                 <TableCell> {bid._amount} </TableCell>
                 <TableCell> {bid._target} </TableCell>
                 <TableCell> {bid._advertiser} </TableCell>
+                <TableCell>
+                    {/*TODO: link to the meta or popup on click and the get tha meta or accept bid dialog whic will have the adunit meta info*/}
+                    {bid._adUnit}
+                </TableCell>
                 <TableCell> {moment.duration(bid._timeout, 'ms').humanize()} </TableCell>
                 <TableCell> <Button label={t('ACCEPT')} primary raised /> </TableCell>
             </TableRow >
@@ -166,9 +170,9 @@ export class SlotBids extends Component {
         />
 
     searchMatch = (bid) => {
-        return (bid.name || '') +
-            (bid.advertiser || '') +
-            (bid.amount || '') +
+        return (bid._amount || '') +
+            (bid._advertiser || '') +
+            (bid._timeout || '') +
             (bid.requiredPoints || '')
     }
 

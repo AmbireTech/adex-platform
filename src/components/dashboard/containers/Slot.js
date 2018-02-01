@@ -64,7 +64,6 @@ export class Slot extends Component {
                     <SlotBids {...this.props} item={item} t={t} />
                 </div>
             </div>
-
         )
     }
 }
