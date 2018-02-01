@@ -76,7 +76,7 @@ class Account extends React.Component {
                         ripple={false}
                         legend={t('ACCOUNT_NAME')}
                         caption={stats.acc ? stats.acc._name : 'No name'}
-                        rightIcon={<Approve raised accent onSave={this.onSave} />}
+                        rightIcon={<Approve icon='' raised accent onSave={this.onSave} />}
                         // leftIcon='account_box'
                         theme={theme}
                     />
@@ -94,7 +94,7 @@ class Account extends React.Component {
                         ripple={false}
                         legend={t('ACCOUNT_ETH_BALANCE')}
                         caption={web3.utils.fromWei(stats.balanceEth, 'ether')}
-                        rightIcon={<WithdrawEth raised primary onSave={this.onSave} />}
+                        rightIcon={<WithdrawEth icon='' raised primary onSave={this.onSave} />}
                         // leftIcon='euro_symbol'
                         theme={theme}
                     />
@@ -102,8 +102,8 @@ class Account extends React.Component {
                     <ListItem
                         ripple={false}
                         legend={t('ACCOUNT_ADX_BALANCE')}
-                        caption={(stats.balanceAdx || 0) / MULT}
-                        rightIcon={<WithdrawAdx raised primary onSave={this.onSave} />}
+                        caption={((stats.balanceAdx || 0) / MULT) + ''}
+                        rightIcon={<WithdrawAdx icon='' raised primary onSave={this.onSave} />}
                         // leftIcon='text_format'
                         theme={theme}
                     />
@@ -111,8 +111,8 @@ class Account extends React.Component {
                     <ListItem
                         ripple={false}
                         legend={t('ACCOUNT_ADX_ALLOWANCE')}
-                        caption={(stats.allowance || 0) / MULT}
-                        rightIcon={<Approve raised accent onSave={this.onSave} />}
+                        caption={((stats.allowance || 0) / MULT) + ''}
+                        rightIcon={<Approve icon='' raised accent onSave={this.onSave} />}
                         // leftIcon='check'
                         theme={theme}
                     />

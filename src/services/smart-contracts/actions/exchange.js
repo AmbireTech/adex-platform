@@ -1,90 +1,55 @@
 import { cfg, exchange, token, web3 } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
-import { setWalletAndGetAddress, toHexParam } from 'services/smart-contracts/utils'
+import { setWalletAndGetAddress, toHexParam, ipfsHashToHex } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
 
-const GAS_LIMIT = 450000
+const GAS_LIMIT_ACCEPT_BID = 450000
 
-// WARNING: hardcoded for now
-const adxReward = 200
-
-/**
- * @param {string} _adunitId - adunit ID
- * @param {number} _target - target, in points to be achieved (integer)
- * @param {number} _rewardAmount - reward amount
- * @param {number} _timeout - timeout
- * @param {string} _peer - meta
- * @param {string} prKey - private key
- */
-export const placeBid = ({ _addr, _adunitId, _target, _rewardAmount, _timeout = DEFAULT_TIMEOUT, _peer, prKey } = {}) => {
-
-    let amount = toHexParam(_rewardAmount * MULT)
-
-    return new Promise((resolve, reject) => {
-
-        /* TODO: setup account 
-        *   steps:
-        * 0 -   show redirect btn instead creating items and bids
-        * 1 -   ask to send eth and adex to account
-        * 2 -   register account to adex registry
-        * 3 -   approve adex tokens (all or selected by users)
-        */
-
-        // token.methods.balanceOf(_addr)
-        //     .call()
-        //     .then((bal) => {
-        //         console.log('bal', bal)
-        //     })
-
-        // token.methods.allowance(_addr, cfg.addr.exchange)
-        //     .call()
-        //     .then((result) => {
-        //         console.log('token allowed', result)
-        //     })
-
-        // NOTE: to set new approve furst set approve to 0
-        // https://github.com/OpenZeppelin/zeppelin-solidity/blob/7b9c1429d918a3cf685a1e85fd497d9cc3cf350e/contracts/token/StandardToken.sol#L45
-        // token.methods.approve(cfg.addr.exchange, amount)
-        //     .send({ from: _addr, gas: GAS_LIMIT, gasPrice: GAS_PRICE })
-        //     .then((result) => {
-        //         console.log('token approve @ placeBid', result)
-        //     })
-
-        // console.log('token.methods.allowed', token)
-
-        // uint _adunitId, uint _target, uint _rewardAmount, uint _timeout, bytes32 _peer
-        return exchange.methods.placeBid(
-            toHexParam(_adunitId),
-            toHexParam(_target),
-            amount,
-            toHexParam(_timeout),
-            toHexParam(_peer)
-        )
-            .send({ from: _addr, gas: GAS_LIMIT, gasPrice: GAS_PRICE })
-            .then((result) => {
-                console.log('placeBid result', result)
-                resolve(result)
-            })
-            .catch((err) => {
-                console.log('registerAccount err', err)
-                reject(err)
-            })
-    })
+const logTime = (msg, start, end) => {
+    console.log(msg + ' ' + (end - start) + ' ms')
 }
 
-/**
- * @param {number} _target - target, in points to be achieved (integer)
- * @param {number} _rewardAmount - reward amount
- * @param {number} _timeout - timeout
- * @param {string} _peer - meta
- * @param {string} prKey - private key
- * @param {string} password - auction password (to encrypt decrypt the price) 
- * TODO: ask the user for auction password and check it somehow for the specific auction
- */
-export const placeBidAuction = ({ _target, _rewardAmount = adxReward, _timeout = DEFAULT_TIMEOUT, prKey, password, price, _addr } = {}) => {
-
+export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _timeout = DEFAULT_TIMEOUT, _adslot, v, r, s, _addr, gas, gasPrice }) => {
     return new Promise((resolve, reject) => {
-        //TODO: Remove it
-       return resolve('shunted')
+
+        let start = Date.now()
+
+        exchange.methods.acceptBid(
+            _advertiser,
+            ipfsHashToHex(_adunit),
+            toHexParam(_opened),
+            toHexParam(_target),
+            toHexParam(_amount),
+            toHexParam(_timeout),
+            ipfsHashToHex(_adslot),
+            toHexParam(v),
+            toHexParam(r),
+            toHexParam(s)
+        )
+            .send({ from: _addr, gas: gas || GAS_LIMIT_ACCEPT_BID, gasPrice: GAS_PRICE })
+            .on('transactionHash', (hash) => {
+                let end = Date.now()
+                logTime('trHshEnd', start, end)
+                // console.log('registerItem transactionHash', hash)
+            })
+            .on('confirmation', (confirmationNumber, receipt) => {
+                let end = Date.now()
+                logTime('confirmation', start, end)
+                console.log('acceptBid confirmation confirmationNumber', confirmationNumber)
+                console.log('acceptBid confirmation receipt', receipt)
+
+                resolve(receipt)
+            })
+            .on('receipt', (receipt) => {
+                let end = Date.now()
+                logTime('receipt', start, end)
+                console.log('acceptBid receipt', receipt)
+            })
+            .on('error', (err) => {
+                let end = Date.now()
+                logTime('error', start, end)
+                console.log('acceptBid err', err)
+                reject(err)
+            })
     })
 }

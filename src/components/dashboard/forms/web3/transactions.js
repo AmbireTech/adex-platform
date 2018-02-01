@@ -13,7 +13,8 @@ const {
     withdrawEth,
     withdrawAdx,
     withdrawAdxEstimateGas,
-    withdrawEthEstimateGas
+    withdrawEthEstimateGas,
+    acceptBid
 
 } = scActions
 
@@ -87,4 +88,33 @@ export const WithdrawAdx = (props) =>
                 })
         }}
         estimateGasFn={withdrawAdxEstimateGas}
+    />
+
+export const AcceptBid = (props) =>
+    < TransactionsStepsWithDialog
+        {...props }
+        btnLabel="ACCEPT_BID"
+        saveBtnLabel='ACCEPT_BID_SAVE_BTN'
+        title="ACCEPT_BID_TITLE"
+        trId={'accept_bid_slot_' + props.slotId + '_bid_' + props.bidId}
+        trPages={[{ title: 'ACCEPT_BID_STEP', page: (pr) => (<strong> test </strong>) }]}
+        saveFn={({ acc, transaction } = {}) => {
+            return acceptBid(
+                {
+                    _advertiser: transaction._advertiser,
+                    _adunit: transaction._adunit,
+                    _opened: transaction._opened,
+                    _target: transaction._target,
+                    _amount: transaction._amount,
+                    _timeout: transaction._timeout,
+                    _adslot: transaction._adslot,
+                    v: transaction.v,
+                    r: transaction.r,
+                    s: transaction.s,
+                    _addr: transaction._addr,
+                    gas: transaction.gas,
+                    gasPrice: transaction._gasPrice
+                })
+        }}
+        estimateGasFn={() => 100000}
     />
