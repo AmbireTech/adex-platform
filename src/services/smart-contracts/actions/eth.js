@@ -85,6 +85,10 @@ export const getAccountStatsMetaMask = ({ _addr }) => {
         getWeb3.then(({ cfg2, exchange2, token2, web32 }) => {
             web32.eth.getAccounts((err, accounts) => {
                 let _addr2 = accounts[0]
+
+                console.log(accounts)
+
+
                 let balanceEth = web32.eth.getBalance(_addr2)
                 let balanceAdx = token2.methods.balanceOf(_addr2).call()
                 let allowance = token2.methods.allowance(_addr2, cfg2.addr.exchange).call()

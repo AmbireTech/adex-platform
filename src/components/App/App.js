@@ -13,6 +13,7 @@ import { ConnectedRouter } from 'react-router-redux'
 import Toast from 'components/toast/Toast'
 import Confirm from 'components/confirm/Confirm'
 import { PersistGate } from 'redux-persist/es/integration/react'
+import Root from './Root'
 
 const { persistor, store } = configureStore()
 console.log('initial store', store.getState())
@@ -35,12 +36,8 @@ class App extends Component {
             persistor={persistor}>
             <ConnectedRouter history={history} >
               <div className="adex-dapp">
-                <Switch location={location}>
-                  <Route path="/dashboard/:side" component={Dashboard} />
-                  <Redirect from="/dashboard" to="/side-select" />
-                  <Route path="/" component={Signin} />
-
-                  <Route component={PageNotFound} />
+                <Switch >
+                  <Root location2={location} />
                 </Switch>
                 <Toast />
                 <Confirm />

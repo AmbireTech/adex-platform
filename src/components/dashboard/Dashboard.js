@@ -19,24 +19,28 @@ import {
     AdUnit as AdUnitModel,
     AdSlot as AdSlotModel,
     Campaign as CampaignModel,
-    Channel as ChannelModel
+    Channel as ChannelModel,
+    Account as AccountModel
 } from 'adex-models'
 import Account from './account/Account'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
-import { web3 } from 'services/smart-contracts/ADX'
+import { web3, getWeb3 } from 'services/smart-contracts/ADX'
 import scActions from 'services/smart-contracts/actions'
 import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemsTypes } = ItemsConstants
 
-const { setWallet, getAccountStats } = scActions
+const { setWallet, getAccountStats, getAccountStatsMetaMask } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
+
+    console.log('Component', Component)
+    console.log('auth', auth)
     return (
         <Route
             {...other}
-            render={(props) => auth === true || true
+            render={(props) => auth === true //|| true
                 ? <Component {...props} />
                 : <Redirect to={{ pathname: '/', state: { from: props.location } }} />}
         />
@@ -54,15 +58,27 @@ class Dashboard extends React.Component {
     componentWillMount(nextProps) {
         this.props.actions.updateNav('side', this.props.match.params.side)
 
-        // // TEMP
-        // if (!web3.eth.accounts.wallet[0]) {
-        //     setWallet({ prKey: this.props.account._temp.privateKey, addr: this.props.account._addr })
-        // }
+        //     // // TEMP
+        //     // if (!web3.eth.accounts.wallet[0]) {
+        //     //     setWallet({ prKey: this.props.account._temp.privateKey, addr: this.props.account._addr })
+        //     // }
+        //     getWeb3.then(({ web32 }) => {
 
-        getAccountStats({ _addr: this.props.account._addr })
-            .then((stats) => {
-                this.props.actions.updateAccount({ ownProps: { stats: stats } })
-            })
+        //         web32.eth.getAccounts((err, accounts) => {
+        //             if (err || !accounts[0]) {
+        //                 this.props.actions.resetSignin()
+        //             } else {
+
+        //                 this.props.actions.updateSignin({ addr: accounts[0] })
+
+        //                 getAccountStatsMetaMask({ _addr: this.props.account._addr })
+        //                     .then((stats) => {
+        //                         this.props.actions.updateAccount({ ownProps: { stats: stats } })
+        //                     })
+
+        //             }
+        //         })
+        //     })
     }
 
     componentWillUpdate(nextProps) {
@@ -141,6 +157,7 @@ class Dashboard extends React.Component {
     render() {
         let side = this.props.side || this.props.match.params.side
 
+        console.log('side', side)
         return (
             <Layout theme={theme} >
                 <NavDrawer pinned={true} theme={theme}>
@@ -149,7 +166,7 @@ class Dashboard extends React.Component {
 
                 <Panel theme={theme} >
                     <TopBar side={side} />
-                    <Switch>
+                    <Switch locatiom={this.props.location}>
                         {/* TODO: Make things dynamic if easier */}
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/campaigns' component={this.renderCampaigns} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/units' component={this.renderAdUnits} />
@@ -185,7 +202,7 @@ function mapStateToProps(state, props) {
     return {
         account: account,
         // TODO: temp until we decide how to handle the logged in state
-        auth: !!account._temp && (!!account._temp.pwDerivedKey || !!account._temp.password) // !!memory.signin.publicKey
+        auth: !!account._temp && !!account._temp.addr // !!memory.signin.publicKey
     }
 }
 
