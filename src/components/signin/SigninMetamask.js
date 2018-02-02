@@ -11,7 +11,6 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import lightwallet from 'eth-lightwallet'
 
 import PageNotFound from 'components/page_not_found/PageNotFound'
-import SideSelect from './side-select/SideSelect'
 import Dialog from 'react-toolbox/lib/dialog'
 import Input from 'react-toolbox/lib/input'
 import MaterialStepper from 'components/dashboard/forms/stepper/MaterialStepper'
@@ -26,6 +25,7 @@ import Step1Restore from 'components/signin/signin-steps/Step1Restore'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Translate from 'components/translate/Translate'
 import { web3, getWeb3 } from 'services/smart-contracts/ADX'
+import SideSelect from 'components/signin/side-select/SideSelect'
 
 const RRButton = withReactRouterLink(Button)
 const keystore = lightwallet.keystore
@@ -42,7 +42,8 @@ class SigninMetamask extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      method: ''
+      method: '',
+      sideSelect: false
     }
   }
 
@@ -65,6 +66,7 @@ class SigninMetamask extends Component {
   renderDefault = () => {
 
     console.log('this.props.account', this.props.account)
+    console.log('this.state', this.state)
     let user = this.props.account._temp && this.props.account._temp.addr
 
 
@@ -75,10 +77,11 @@ class SigninMetamask extends Component {
         </div>
         <br />
         {!!user ?
-          <RRButton to='/side-select' label={this.props.t('CHOOSE_SIDE')} primary />
+          <Button onClick={() => { this.setState({ sideSelect: !this.state.sideSelect }) }} label={this.props.t('CHOOSE_SIDE')} primary />
           :
-          <h1> Login to metamsk <Button onClick={this.checkMetamask} label={this.props.t('OK')} primary /></h1>
+          <h1> Login to metamask <Button onClick={this.checkMetamask} label={this.props.t('OK')} primary /></h1>
         }
+        <SideSelect active={this.state.sideSelect} />
       </div>
     )
   }
@@ -88,11 +91,7 @@ class SigninMetamask extends Component {
       <div className={theme.signinContainer} style={{ backgroundImage: `url(${require('resources/background.png')})` }}>
         <div className={theme.container}>
           <div className="adex-dapp">
-            {/* TODO: fix routes */}
-            <Switch>
-              <Route exact path="/" render={this.renderDefault.bind(this)} />
-              <Route path="/side-select" component={SideSelect} />
-            </Switch>
+            <this.renderDefault />
           </div>
         </div>
       </div>

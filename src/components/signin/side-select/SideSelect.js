@@ -31,33 +31,31 @@ class SideSelect extends Component {
     // console.log('SideSelect', this.props)
     let t = this.props.t
     return (
-      <div >
-        <Dialog
-          active={true}
-          title={t('CHOOSE_SIDE')}
-        >
+      <Dialog
+        active={this.props.active}
+        title={t('CHOOSE_SIDE')}
+      >
 
-          <RRSideBox
-            title={t('ADVERTISER')}
-            icon={<AdvertiserLogo />}
-            // salePoints={[t('SALE_POINT_ADV_1'), t('SALE_POINT_ADV_2'), t('SALE_POINT_ADV_3')]}
-            to='/dashboard/advertiser'
-            linkTitle={t('GO_ADVERTISER')}
-          // disabled
-          />
+        <RRSideBox
+          title={t('ADVERTISER')}
+          icon={<AdvertiserLogo />}
+          // salePoints={[t('SALE_POINT_ADV_1'), t('SALE_POINT_ADV_2'), t('SALE_POINT_ADV_3')]}
+          to='/dashboard/advertiser'
+          linkTitle={t('GO_ADVERTISER')}
+        // disabled
+        />
 
-          <RRSideBox
-            title={t('PUBLISHER')}
-            icon={<PublisherLogo />}
-            // salePoints={[t('SALE_POINT_PUB_1'), t('SALE_POINT_PUB_2'), t('SALE_POINT_PUB_3')]}
-            to='/dashboard/publisher'
-            linkTitle={t('GO_PUBLISHER')}
-          // disabled
-          />
+        <RRSideBox
+          title={t('PUBLISHER')}
+          icon={<PublisherLogo />}
+          // salePoints={[t('SALE_POINT_PUB_1'), t('SALE_POINT_PUB_2'), t('SALE_POINT_PUB_3')]}
+          to='/dashboard/publisher'
+          linkTitle={t('GO_PUBLISHER')}
+        // disabled
+        />
 
-        </Dialog>
-      </div>
-    );
+      </Dialog>
+    )
   }
 }
 

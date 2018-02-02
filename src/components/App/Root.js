@@ -59,12 +59,10 @@ class Root extends Component {
     render() {
         console.log('this.props.match.params', this.props.match)
         return (
-            /* TODO: fix routes */
             <div >
                 <PrivateRoute auth={this.props.auth} path="/dashboard/:side" component={Dashboard} />
-                <PrivateRoute auth={this.props.auth} path="/side-select" component={SideSelect} />
-                <Route path="/" component={SigninMetamask} />
-                <Route component={PageNotFound} /> {/*TODO: fix it*/}
+                <Route exact path="/" component={SigninMetamask} />
+                <Route component={PageNotFound} />
             </div>
         )
     }
