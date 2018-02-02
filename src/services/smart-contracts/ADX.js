@@ -32,43 +32,54 @@ web3.setProvider(new Web3.providers.HttpProvider(cfg.node))
 const token = new web3.eth.Contract(tokenAbi, cfg.addr.token)
 const exchange = new web3.eth.Contract(exchangeAbi, cfg.addr.exchange)
 
-let getWeb3 = new Promise(function (resolve, reject) {
+const getWeb3 = new Promise(function (resolve, reject) {
 	// Wait for loading completion to avoid race conditions with web3 injection timing.
 	window.addEventListener('load', function () {
-		var results
-		var web3 = window.web3
+		let results
+		let web32 = window.web3
 
 		// Checking if Web3 has been injected by the browser (Mist/MetaMask)
-		if (typeof web3 !== 'undefined') {
+		if (typeof web32 !== 'undefined') {
 			// Use Mist/MetaMask's provider.
-			web3 = new Web3(web3.currentProvider)
+			web32 = new Web3(web32.currentProvider)
+
+			console.log('web3.currentProvider', web32.currentProvider)
 
 			results = {
-				web3: web3
+				web32: web32
 			}
 
 			console.log('Injected web3 detected.');
 
-			resolve(results)
+			// resolve(results)
 		} else {
 			// Fallback to localhost if no web3 injection. We've configured this to
 			// use the development console's port by default.
-			var provider = new Web3.providers.HttpProvider('http://127.0.0.1:9545')
+			let provider = new Web3.providers.HttpProvider('http://127.0.0.1:9545')
 
-			web3 = new Web3(provider)
+			web32 = new Web3(provider)
 
 			results = {
-				web3: web3
+				web32: web32
 			}
 
 			console.log('No web3 instance injected, using Local web3.');
 
-			resolve(results)
+			// resolve(results)
 		}
+
+		let token2 = new web32.eth.Contract(tokenAbi, cfg.addr.token)
+		let exchange2 = new web32.eth.Contract(exchangeAbi, cfg.addr.exchange)
+
+		results.cfg2 = cfg
+		results.token2 = token2
+		results.exchange2 = exchange2
+
+		resolve(results)
 	})
 })
 
-export {
+export  {
 	cfg,
 	web3,
 	token,

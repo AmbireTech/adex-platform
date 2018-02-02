@@ -16,7 +16,7 @@ import { Approve, RegisterAccount, WithdrawEth, WithdrawAdx } from 'components/d
 import { List, ListItem, ListSubHeader, ListDivider } from 'react-toolbox/lib/list'
 
 import scActions from 'services/smart-contracts/actions'
-const { getAccountStats } = scActions
+const { getAccountStats, getAccountStatsMetaMask } = scActions
 
 // console.log('actions', actions)
 class Account extends React.Component {
@@ -42,7 +42,7 @@ class Account extends React.Component {
 
     getStats = () => {
         // TODO: spinner
-        getAccountStats({ _addr: this.props.account._addr })
+        /*getAccountStats*/ getAccountStatsMetaMask({ _addr: this.props.account._addr })
             .then((stats) => {
                 this.props.actions.updateAccount({ ownProps: { stats: stats } })
             })

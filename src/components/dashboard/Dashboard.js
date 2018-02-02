@@ -54,10 +54,10 @@ class Dashboard extends React.Component {
     componentWillMount(nextProps) {
         this.props.actions.updateNav('side', this.props.match.params.side)
 
-        // TEMP
-        if (!web3.eth.accounts.wallet[0]) {
-            setWallet({ prKey: this.props.account._temp.privateKey, addr: this.props.account._addr })
-        }
+        // // TEMP
+        // if (!web3.eth.accounts.wallet[0]) {
+        //     setWallet({ prKey: this.props.account._temp.privateKey, addr: this.props.account._addr })
+        // }
 
         getAccountStats({ _addr: this.props.account._addr })
             .then((stats) => {

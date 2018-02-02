@@ -1,4 +1,4 @@
-import { cfg, exchange, token, web3 } from 'services/smart-contracts/ADX'
+import { cfg, exchange, token, web3, getWeb3 } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
 import { toHexParam } from 'services/smart-contracts/utils'
 // import { encrypt } from 'services/crypto/crypto'
@@ -61,7 +61,7 @@ export const getAccountStats = ({ _addr }) => {
         let all = [balanceEth, balanceAdx, allowance]
 
         Promise.all(all)
-            .then(([balEth, balAdx, allow, ]) => {
+            .then(([balEth, balAdx, allow,]) => {
 
                 let accStats =
                     {
@@ -77,5 +77,38 @@ export const getAccountStats = ({ _addr }) => {
                 console.log('getAccountStats err', err)
                 reject(err)
             })
+    })
+}
+
+export const getAccountStatsMetaMask = ({ _addr }) => {
+    return new Promise((resolve, reject) => {
+        getWeb3.then(({ cfg2, exchange2, token2, web32 }) => {
+            web32.eth.getAccounts((err, accounts) => {
+                let _addr2 = accounts[0]
+                let balanceEth = web32.eth.getBalance(_addr2)
+                let balanceAdx = token2.methods.balanceOf(_addr2).call()
+                let allowance = token2.methods.allowance(_addr2, cfg2.addr.exchange).call()
+
+                let all = [balanceEth, balanceAdx, allowance]
+
+                Promise.all(all)
+                    .then(([balEth, balAdx, allow,]) => {
+
+                        let accStats =
+                            {
+                                balanceEth: balEth,
+                                balanceAdx: balAdx,
+                                allowance: allow
+                            }
+
+                        console.log('accStats', accStats)
+                        return resolve(accStats)
+                    })
+                    .catch((err) => {
+                        console.log('getAccountStats err', err)
+                        reject(err)
+                    })
+            })
+        })
     })
 }
