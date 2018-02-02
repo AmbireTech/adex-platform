@@ -156,8 +156,6 @@ class Dashboard extends React.Component {
 
     render() {
         let side = this.props.side || this.props.match.params.side
-
-        console.log('side', side)
         return (
             <Layout theme={theme} >
                 <NavDrawer pinned={true} theme={theme}>
