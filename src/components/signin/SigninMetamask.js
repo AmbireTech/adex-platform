@@ -32,7 +32,7 @@ class SigninMetamask extends Component {
         if (err || !user) {
           this.props.actions.resetAccount()
         } else {
-          this.props.actions.updateAccount({ ownProps: { _temp: { addr: user } } })
+          this.props.actions.updateAccount({ ownProps: { addr: user } })
         }
       })
     })

@@ -39,7 +39,7 @@ class Root extends Component {
                     console.log('accounts[0]', user)
 
                     if (user) {
-                        this.props.actions.updateAccount({ ownProps: { _temp: { addr: user } } })
+                        this.props.actions.updateAccount({ ownProps: { addr: user } })
 
                         getAccountStatsMetaMask({})
                             .then((stats) => {
@@ -74,7 +74,7 @@ function mapStateToProps(state) {
     // let memory = state.memory
     return {
         account: account,
-        auth: !!account._temp && !!account._temp.addr // !!memory.signin.publicKey
+        auth: !!account._addr
     }
 }
 

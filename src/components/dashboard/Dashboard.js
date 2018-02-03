@@ -200,7 +200,7 @@ function mapStateToProps(state, props) {
     return {
         account: account,
         // TODO: temp until we decide how to handle the logged in state
-        auth: !!account._temp && !!account._temp.addr // !!memory.signin.publicKey
+        auth: !!account._addr
     }
 }
 
