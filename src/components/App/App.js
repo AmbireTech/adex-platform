@@ -25,10 +25,6 @@ const onBeforeLift = () => {
 class App extends Component {
 
   render() {
-    // console.log(theme)
-
-    console.log('hoi')
-
     const { location } = this.props
     return (
       <ThemeProvider theme={theme}>

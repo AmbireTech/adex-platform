@@ -7,12 +7,9 @@ import { Route, Switch, Redirect } from 'react-router-dom'
 import Dashboard from 'components/dashboard/Dashboard'
 import SigninMetamask from 'components/signin/SigninMetamask'
 import PageNotFound from 'components/page_not_found/PageNotFound'
-import Toast from 'components/toast/Toast'
-import Confirm from 'components/confirm/Confirm'
 import Translate from 'components/translate/Translate'
 import { web3, getWeb3 } from 'services/smart-contracts/ADX'
 import scActions from 'services/smart-contracts/actions'
-import SideSelect from 'components/signin/side-select/SideSelect'
 
 const { setWallet, getAccountStats, getAccountStatsMetaMask } = scActions
 
@@ -48,9 +45,7 @@ class Root extends Component {
                             .then((stats) => {
                                 this.props.actions.updateAccount({ ownProps: { stats: stats } })
                             })
-
                     }
-
                 }
             })
         })
@@ -59,11 +54,11 @@ class Root extends Component {
     render() {
         console.log('this.props.match.params', this.props.match)
         return (
-            <div >
+            <Switch >
                 <PrivateRoute auth={this.props.auth} path="/dashboard/:side" component={Dashboard} />
                 <Route exact path="/" component={SigninMetamask} />
                 <Route component={PageNotFound} />
-            </div>
+            </Switch>
         )
     }
 }
