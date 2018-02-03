@@ -31,7 +31,7 @@ export const Approve = (props) =>
         //TODO: refactor the stepper. This is not cool :)
         // Until the refactor we will use mapping function from account and transaction hoc to specific sc function
         saveFn={({ acc, transaction } = {}) => {
-            return approveTokens({ _addr: acc._addr, amountToApprove: transaction.allowance, gas: transaction.gas })
+            return approveTokens({ _addr: acc._temp.addr, amountToApprove: transaction.allowance, gas: transaction.gas })
         }}
     />
 

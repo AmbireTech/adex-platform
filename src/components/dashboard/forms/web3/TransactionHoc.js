@@ -41,7 +41,11 @@ export default function NewTransactionHoc(Decorated) {
         save = () => {
             this.props.saveFn({ acc: this.props.account, transaction: this.props.transaction })
                 .then((res) => {
+                    console.log('save res', res)
                     this.onSave()
+                })
+                .catch((err) => {
+                    console.log('save err', err)
                 })
 
         }

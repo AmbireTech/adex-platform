@@ -7,14 +7,11 @@ import { registerItem } from 'services/smart-contracts/actions'
 const toBN = web3Utils.toBN
 
 // TODO: check if that values can be changed
-const GAS_LIMIT_APPROVE_0_WHEN_NO_0 = 15136 + 1
+const GAS_LIMIT_APPROVE_0_WHEN_NO_0 = 45136 + 1
 // const GAS_LIMIT_APPROVE_0_WHEN_0 = 30136 + 1
 const GAS_LIMIT_APPROVE_OVER_0_WHEN_0 = 45821 + 1
 
 const GAS_LIMIT = 450000
-
-// WARNING: hardcoded for now
-const adxReward = 200
 
 const getHexAdx = (amountStr, noMultiply) => {
     let am = toBN(amountStr)
@@ -63,15 +60,15 @@ export const approveTokensEstimateGas = ({ _addr, amountToApprove, prKey } = {})
  * @param {string} _peer - meta
  * @param {string} prKey - private key
  */
-export const approveTokens = ({ _addr, amountToApprove, prKey, gas } = {}) => {
+export const approveTokens = ({ _addr, amountToApprove } = {}) => {
 
     let amount = getHexAdx(amountToApprove)
 
-    getWeb3.then(({ web3, exchange, token }) => {
+    return new Promise((resolve, reject) => {
+        // NOTE: to set new approve first set approve to 0
+        // https://github.com/OpenZeppelin/zeppelin-solidity/blob/7b9c1429d918a3cf685a1e85fd497d9cc3cf350e/contracts/token/StandardToken.sol#L45
 
-        return new Promise((resolve, reject) => {
-            // NOTE: to set new approve first set approve to 0
-            // https://github.com/OpenZeppelin/zeppelin-solidity/blob/7b9c1429d918a3cf685a1e85fd497d9cc3cf350e/contracts/token/StandardToken.sol#L45
+        getWeb3.then(({ web3, exchange, token }) => {
             token.methods
                 .allowance(_addr, cfg.addr.exchange)
                 .call()
@@ -80,7 +77,7 @@ export const approveTokens = ({ _addr, amountToApprove, prKey, gas } = {}) => {
                         return false
                     } else if (allowance !== 0) {
                         return token.methods.approve(cfg.addr.exchange, getHexAdx(0))
-                            .send({ from: _addr, gas: gas || GAS_LIMIT, gasPrice: GAS_PRICE })
+                            .send({ from: _addr, gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0 })
                     } else {
                         return true
                     }
@@ -88,7 +85,7 @@ export const approveTokens = ({ _addr, amountToApprove, prKey, gas } = {}) => {
                 .then((goApprove) => {
                     if (goApprove) {
                         return token.methods.approve(cfg.addr.exchange, amount)
-                            .send({ from: _addr, gas: gas || GAS_LIMIT, gasPrice: GAS_PRICE })
+                            .send({ from: _addr, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 })
                     }
 
                     return amountToApprove * MULT
