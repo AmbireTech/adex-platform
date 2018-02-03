@@ -12,7 +12,7 @@ import { web3Utils } from 'services/smart-contracts/ADX'
 import { MULT } from 'services/smart-contracts/constants'
 // import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 // import Input from 'react-toolbox/lib/input'
-import { Approve, RegisterAccount, WithdrawEth, WithdrawAdx } from 'components/dashboard/forms/web3/transactions'
+import { Approve, WithdrawEth, WithdrawAdx } from 'components/dashboard/forms/web3/transactions'
 import { List, ListItem, ListSubHeader, ListDivider } from 'react-toolbox/lib/list'
 
 import scActions from 'services/smart-contracts/actions'

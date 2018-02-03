@@ -15,6 +15,8 @@ import scActions from 'services/smart-contracts/actions'
 const { approveTokensEstimateGas } = scActions
 
 class ApproveStep extends Component {
+    /*
+    * NOTE: we don't need it with metamask but will keep it we 
     estimateGas() {
         this.props.actions.updateSpinner(this.props.trId, true)
         approveTokensEstimateGas({
@@ -32,9 +34,10 @@ class ApproveStep extends Component {
     componentWillUnmount() {
         //TODO: fix this - use it only on stepper continue
         if (this.props.transaction.allowance) {
-            // this.estimateGas()
+            this.estimateGas()
         }
     }
+    */
 
     render() {
         let tr = this.props.transaction

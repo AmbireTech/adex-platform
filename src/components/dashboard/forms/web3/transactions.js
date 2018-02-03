@@ -3,13 +3,11 @@ import React from 'react'
 import TransactionsSteps from './TransactionsSteps'
 import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
 import ApproveStep from './ApproveStep'
-import RegisterStep from './RegisterStep'
 import WithdrawStep from './WithdrawStep'
 import scActions from 'services/smart-contracts/actions'
 const {
     getAccountStats,
     approveTokens,
-    registerAccount,
     withdrawEth,
     withdrawAdx,
     withdrawAdxEstimateGas,
@@ -35,19 +33,6 @@ export const Approve = (props) =>
         }}
     />
 
-export const RegisterAccount = (props) =>
-    <TransactionsStepsWithDialog
-        {...props}
-        btnLabel="ACCOUNT_REGISTER_ACC_BTN"
-        saveBtnLabel='ACC_REGISTER_ACC_SAVE_BTN'
-        title="ACCOUNT_REGISTER_ACC_TITLE"
-        trId='registerAccount'
-        trPages={[{ title: 'ACCOUNT_REGISTER_ACC_STEP', page: RegisterStep }]}
-        saveFn={({ acc, transaction } = {}) => {
-            return registerAccount({ _addr: acc._addr, _name: transaction.name, prKey: acc._temp.privateKey, gas: transaction.gas })
-        }}
-    />
-
 export const WithdrawEth = (props) =>
     <TransactionsStepsWithDialog
         {...props}
@@ -59,7 +44,7 @@ export const WithdrawEth = (props) =>
         saveFn={({ acc, transaction } = {}) => {
             return withdrawEth(
                 {
-                    _addr: acc._addr,
+                    _addr: acc._temp.addr,
                     withdrawTo: transaction.withdrawTo,
                     amountToWithdraw: transaction.amountToWithdraw,
                     prKey: acc._temp.privateKey,
@@ -80,7 +65,7 @@ export const WithdrawAdx = (props) =>
         saveFn={({ acc, transaction } = {}) => {
             return withdrawAdx(
                 {
-                    _addr: acc._addr,
+                    _addr: acc._temp.addr,
                     withdrawTo: transaction.withdrawTo,
                     amountToWithdraw: transaction.amountToWithdraw,
                     prKey: acc._temp.privateKey,
