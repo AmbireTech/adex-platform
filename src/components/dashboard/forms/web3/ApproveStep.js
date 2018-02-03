@@ -32,7 +32,7 @@ class ApproveStep extends Component {
     componentWillUnmount() {
         //TODO: fix this - use it only on stepper continue
         if (this.props.transaction.allowance) {
-            this.estimateGas()
+            // this.estimateGas()
         }
     }
 
@@ -42,6 +42,7 @@ class ApproveStep extends Component {
 
         return (
             <div>
+                <span>Current allowance: {this.props.currentAllowance}  </span>
                 <Input
                     type='text'
                     required

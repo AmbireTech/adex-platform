@@ -33,6 +33,7 @@ class TransactionPreview extends Component {
         let t = this.props.t
         let fee
         let gasPrice = this.props.account._settings.gasPrice ? this.props.account._settings.gasPrice : DEFAULT_GAS_PRICE
+        let previewMsgs = this.props.previewMsgs
 
         if (transaction.gas) {
             fee = web3Utils.fromWei((transaction.gas * gasPrice).toString(), 'ether')
@@ -61,6 +62,11 @@ class TransactionPreview extends Component {
                                     )
                                 })
                         }
+                        {previewMsgs ?
+                            previewMsgs.map((msg, index) =>
+                                <h2 key={index}> {msg} </h2>
+                            )
+                            : null}
                         {!!fee ?
                             <Row>
                                 <TooltipCol xs={12} lg={4} className={'theme.textRight'}
@@ -84,7 +90,8 @@ TransactionPreview.propTypes = {
     label: PropTypes.string,
     trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     transaction: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired
+    account: PropTypes.object.isRequired,
+    previewMsgs: PropTypes.array
 }
 
 function mapStateToProps(state, props) {

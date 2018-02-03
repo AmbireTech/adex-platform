@@ -64,6 +64,7 @@ class Account extends React.Component {
         let account = this.props.account
         let stats = account._stats || {}
         let t = this.props.t
+        let allowance = ((stats.allowance || 0) / MULT) + ''
 
         if (!stats) {
             return null
@@ -111,8 +112,16 @@ class Account extends React.Component {
                     <ListItem
                         ripple={false}
                         legend={t('ACCOUNT_ADX_ALLOWANCE')}
-                        caption={((stats.allowance || 0) / MULT) + ''}
-                        rightIcon={<Approve icon='' raised accent onSave={this.onSave} />}
+                        caption={allowance}
+                        rightIcon={<Approve
+                            icon=''
+                            raised
+                            accent
+                            onSave={this.onSave}
+                            currentAllowance={allowance}
+                            previewMsgs={[t('ACCOUNT_APPROVE_MSG', { args: [allowance] })]}
+                        />
+                        }
                         // leftIcon='check'
                         theme={theme}
                     />
