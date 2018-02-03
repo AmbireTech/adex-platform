@@ -27,9 +27,9 @@ function PrivateRoute({ component: Component, auth, ...other }) {
 class Root extends Component {
 
     componentWillMount() {
-        getWeb3.then(({ web32 }) => {
+        getWeb3.then(({ web3 }) => {
 
-            web32.eth.getAccounts((err, accounts) => {
+            web3.eth.getAccounts((err, accounts) => {
                 let user = accounts[0]
 
                 if (err || !user) {

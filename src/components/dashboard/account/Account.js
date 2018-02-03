@@ -8,7 +8,7 @@ import actions from 'actions'
 // import { Button, IconButton } from 'react-toolbox/lib/button'
 import Translate from 'components/translate/Translate'
 // import Img from 'components/common/img/Img'
-import { web3 } from 'services/smart-contracts/ADX'
+import { web3Utils } from 'services/smart-contracts/ADX'
 import { MULT } from 'services/smart-contracts/constants'
 // import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 // import Input from 'react-toolbox/lib/input'
@@ -93,7 +93,7 @@ class Account extends React.Component {
                     <ListItem
                         ripple={false}
                         legend={t('ACCOUNT_ETH_BALANCE')}
-                        caption={web3.utils.fromWei(stats.balanceEth, 'ether')}
+                        caption={web3Utils.fromWei(stats.balanceEth, 'ether')}
                         rightIcon={<WithdrawEth icon='' raised primary onSave={this.onSave} />}
                         // leftIcon='euro_symbol'
                         theme={theme}

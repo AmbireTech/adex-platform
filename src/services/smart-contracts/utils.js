@@ -1,10 +1,8 @@
-import { web3 } from 'services/smart-contracts/ADX'
+import { web3Utils } from 'services/smart-contracts/ADX'
 import { TO_HEX_PAD } from 'services/smart-contracts/constants'
 import bs58 from 'bs58'
 
 const IPFS_BASE_58_LEADING = '1220'
-
-const web3Utils = web3.utils
 
 // TODO: decide to use this func or set specific params for the specific params
 export const toHexParam = (param) => {

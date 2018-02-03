@@ -9,7 +9,7 @@ import actions from 'actions'
 import Slider from 'react-toolbox/lib/slider'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import Translate from 'components/translate/Translate'
-import { web3 } from 'services/smart-contracts/ADX'
+import { web3Utils } from 'services/smart-contracts/ADX'
 import { getCurrentGasPrice } from 'services/smart-contracts/actions/eth'
 import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
 
@@ -34,7 +34,7 @@ class GasPrice extends React.Component {
     mapGasPrices = (price) => {
         let prices = pricesMap.map((pr) => {
             let val = pr.ratio * price
-            let inGwei = web3.utils.fromWei(val.toString(), 'Gwei')
+            let inGwei = web3Utils.fromWei(val.toString(), 'Gwei')
 
             return { value: val, label: inGwei + ' Gwei - ' + pr.label }
         })

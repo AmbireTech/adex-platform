@@ -22,67 +22,54 @@ if (process.env.NODE_ENV === 'production') {
 	cfg = testrpcCfg
 }
 
-const web3 = new Web3()
-web3.setProvider(new Web3.providers.HttpProvider(cfg.node))
-
-// web3 0.20.x (0.x)
-//const token = web3.eth.contract(tokenAbi).at(cfg.addr.token)
-
-// web3 1.x
-const token = new web3.eth.Contract(tokenAbi, cfg.addr.token)
-const exchange = new web3.eth.Contract(exchangeAbi, cfg.addr.exchange)
-
 const getWeb3 = new Promise(function (resolve, reject) {
 	// Wait for loading completion to avoid race conditions with web3 injection timing.
 	window.addEventListener('load', function () {
 		let results
-		let web32 = window.web3
+		let web3 = window.web3
 
 		// Checking if Web3 has been injected by the browser (Mist/MetaMask)
-		if (typeof web32 !== 'undefined') {
+		if (typeof web3 !== 'undefined') {
 			// Use Mist/MetaMask's provider.
-			web32 = new Web3(web32.currentProvider)
+			web3 = new Web3(web3.currentProvider)
 
-			console.log('web3.currentProvider', web32.currentProvider)
+			console.log('web3.currentProvider', web3.currentProvider)
 
 			results = {
-				web32: web32
+				web3: web3
 			}
 
-			console.log('Injected web3 detected.');
-
-			// resolve(results)
+			console.log('Injected web3 detected.')
 		} else {
 			// Fallback to localhost if no web3 injection. We've configured this to
 			// use the development console's port by default.
 			let provider = new Web3.providers.HttpProvider('http://127.0.0.1:9545')
 
-			web32 = new Web3(provider)
+			web3 = new Web3(provider)
 
 			results = {
-				web32: web32
+				web3: web3
 			}
 
-			console.log('No web3 instance injected, using Local web3.');
-
-			// resolve(results)
+			console.log('No web3 instance injected, using Local web3.')
 		}
 
-		let token2 = new web32.eth.Contract(tokenAbi, cfg.addr.token)
-		let exchange2 = new web32.eth.Contract(exchangeAbi, cfg.addr.exchange)
+		// web3 1.x
+		let token = new web3.eth.Contract(tokenAbi, cfg.addr.token)
+		let exchange = new web3.eth.Contract(exchangeAbi, cfg.addr.exchange)
 
-		results.cfg2 = cfg
-		results.token2 = token2
-		results.exchange2 = exchange2
+		results.cfg = cfg
+		results.token = token
+		results.exchange = exchange
 
 		resolve(results)
 	})
 })
 
+const web3Utils = Web3.utils
+
 export  {
 	cfg,
-	web3,
-	token,
-	exchange,
-	getWeb3
+	getWeb3,
+	web3Utils
 }

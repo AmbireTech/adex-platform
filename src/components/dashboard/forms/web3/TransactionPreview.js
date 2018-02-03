@@ -12,7 +12,7 @@ import Tooltip from 'react-toolbox/lib/tooltip'
 import numeral from 'numeral'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
 import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
-import { web3 } from 'services/smart-contracts/ADX'
+import { web3Utils } from 'services/smart-contracts/ADX'
 
 import scActions from 'services/smart-contracts/actions'
 const { getAccountStats, approveTokens, approveTokensEstimateGas } = scActions
@@ -35,7 +35,7 @@ class TransactionPreview extends Component {
         let gasPrice = this.props.account._settings.gasPrice ? this.props.account._settings.gasPrice : DEFAULT_GAS_PRICE
 
         if (transaction.gas) {
-            fee = web3.utils.fromWei((transaction.gas * gasPrice).toString(), 'ether')
+            fee = web3Utils.fromWei((transaction.gas * gasPrice).toString(), 'ether')
         }
 
         return (
