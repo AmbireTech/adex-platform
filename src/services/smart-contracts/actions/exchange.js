@@ -62,16 +62,6 @@ export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _ti
 export const signBid = ({ typed, userAddr }) => {
     return new Promise((resolve, reject) => {
         getWeb3.then(({ web3, exchange, token, mode }) => {
-            //TODO: set in the model?
-            typed = typed.map((entry) => {
-                //TODO: Fix it
-                if (entry.type === 'bytes32') {
-                    entry.value = ipfsHashToHex(entry.value)
-                }
-
-                return entry
-            })
-
             console.log('typed', typed)
 
             let valuesHash = web3Utils.soliditySha3.apply(null, typed.map((entry) => {
