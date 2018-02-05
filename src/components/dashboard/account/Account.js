@@ -85,7 +85,7 @@ class Account extends React.Component {
                     <ListItem
                         ripple={false}
                         legend={t('ACCOUNT_ETH_ADDR')}
-                        caption={account._temp.addr}
+                        caption={account._addr}
                         rightIcon='content_copy'
                         // leftIcon='compare_arrows'
                         theme={theme}

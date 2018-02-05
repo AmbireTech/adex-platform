@@ -11,7 +11,7 @@ import Translate from 'components/translate/Translate'
 import { web3, getWeb3 } from 'services/smart-contracts/ADX'
 import scActions from 'services/smart-contracts/actions'
 
-const { setWallet, getAccountStats, getAccountStatsMetaMask } = scActions
+const { getAccount, getAccountStats, getAccountStatsMetaMask } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
     return (
@@ -26,33 +26,35 @@ function PrivateRoute({ component: Component, auth, ...other }) {
 
 class Root extends Component {
 
-    componentWillMount() {
-        getWeb3.then(({ web3 }) => {
+    setAccount = () => {
+        getAccount()
+            .then((addr) => {
 
-            web3.eth.getAccounts((err, accounts) => {
-                let user = accounts[0]
-
-                if (err || !user) {
-                    console.log('accounts[0] no', user)
-                    this.props.actions.resetAccount()
+                if (addr) {
+                    this.props.actions.updateAccount({ ownProps: { addr: addr } })
+                    getAccountStatsMetaMask({})
+                        .then((stats) => {
+                            this.props.actions.updateAccount({ ownProps: { stats: stats } })
+                        })
                 } else {
-                    console.log('accounts[0]', user)
-
-                    if (user) {
-                        this.props.actions.updateAccount({ ownProps: { addr: user } })
-
-                        getAccountStatsMetaMask({})
-                            .then((stats) => {
-                                this.props.actions.updateAccount({ ownProps: { stats: stats } })
-                            })
-                    }
+                    this.props.actions.resetAccount()
                 }
             })
-        })
+    }
+
+    componentWillMount() {
+        this.setAccount()
+    }
+
+    //NOTE: On location we check the metamsk user instead as metamask defaut setInterval way
+    //NOTE: On the signin page there will be button to signin manually if you are logged to metamsk
+    componentWillUpdate(nextProps) {
+        if (nextProps.location && nextProps.location.key && (nextProps.location.key !== this.props.location.key)) {
+            this.setAccount()
+        }
     }
 
     render() {
-        console.log('this.props.match.params', this.props.match)
         return (
             <Switch >
                 <PrivateRoute auth={this.props.auth} path="/dashboard/:side" component={Dashboard} />

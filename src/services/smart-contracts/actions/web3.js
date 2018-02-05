@@ -49,3 +49,19 @@ export const setWallet = ({ prKey, addr = '' }) => {
         })
     })
 }
+
+export const getAccount = () => {
+    return new Promise((resolve, reject) => {
+        getWeb3.then(({ web3 }) => {
+            web3.eth.getAccounts((err, accounts) => {
+                if (err || !accounts || !accounts[0]) {
+                    return resolve(null)
+                } else if (accounts && accounts[0]) {
+                    return resolve(accounts[0])
+                } else {
+                    return resolve(null)
+                }
+            })
+        })
+    })
+}

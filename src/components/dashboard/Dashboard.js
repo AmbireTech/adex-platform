@@ -31,12 +31,9 @@ import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemsTypes } = ItemsConstants
 
-const { setWallet, getAccountStats, getAccountStatsMetaMask } = scActions
+const { getAccount, getAccountStats, getAccountStatsMetaMask } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
-
-    console.log('Component', Component)
-    console.log('auth', auth)
     return (
         <Route
             {...other}
@@ -47,7 +44,6 @@ function PrivateRoute({ component: Component, auth, ...other }) {
     )
 }
 
-// console.log('actions', actions)
 class Dashboard extends React.Component {
     state = {
         drawerActive: false,
@@ -57,28 +53,6 @@ class Dashboard extends React.Component {
 
     componentWillMount(nextProps) {
         this.props.actions.updateNav('side', this.props.match.params.side)
-
-        //     // // TEMP
-        //     // if (!web3.eth.accounts.wallet[0]) {
-        //     //     setWallet({ prKey: this.props.account._temp.privateKey, addr: this.props.account._addr })
-        //     // }
-        //     getWeb3.then(({ web32 }) => {
-
-        //         web32.eth.getAccounts((err, accounts) => {
-        //             if (err || !accounts[0]) {
-        //                 this.props.actions.resetSignin()
-        //             } else {
-
-        //                 this.props.actions.updateSignin({ addr: accounts[0] })
-
-        //                 getAccountStatsMetaMask({ _addr: this.props.account._addr })
-        //                     .then((stats) => {
-        //                         this.props.actions.updateAccount({ ownProps: { stats: stats } })
-        //                     })
-
-        //             }
-        //         })
-        //     })
     }
 
     componentWillUpdate(nextProps) {
