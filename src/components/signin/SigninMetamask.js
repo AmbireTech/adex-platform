@@ -24,9 +24,9 @@ class SigninMetamask extends Component {
 
   // TODO: Make it some common function if needed or make timeout as metamask way 
   checkMetamask = () => {
-    getWeb3.then(({ web32 }) => {
+    getWeb3.then(({ web3 }) => {
 
-      web32.eth.getAccounts((err, accounts) => {
+      web3.eth.getAccounts((err, accounts) => {
         let user = accounts[0]
 
         if (err || !user) {
@@ -39,7 +39,7 @@ class SigninMetamask extends Component {
   }
 
   renderDefault = () => {
-    let user = this.props.account._temp && this.props.account._temp.addr
+    let user = this.props.account._addr
 
     return (
       <div>
