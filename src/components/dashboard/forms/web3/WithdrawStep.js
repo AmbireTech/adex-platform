@@ -17,8 +17,7 @@ class WithdrawEthStep extends Component {
         this.props.estimateGasFn({
             _addr: this.props.account._addr,
             withdrawTo: this.props.transaction.withdrawTo,
-            amountToWithdraw: this.props.transaction.amountToWithdraw,
-            prKey: this.props.account._temp.privateKey
+            amountToWithdraw: this.props.transaction.amountToWithdraw
         })
             .then((res) => {
                 this.props.actions.updateNewTransaction({ trId: this.props.trId, key: 'gas', value: res })

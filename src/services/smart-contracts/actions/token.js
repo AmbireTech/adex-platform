@@ -23,7 +23,7 @@ const getHexAdx = (amountStr, noMultiply) => {
 }
 
 // NOTE: We use hrd coded gas values because they are always same 
-export const approveTokensEstimateGas = ({ _addr, amountToApprove, prKey } = {}) => {
+export const approveTokensEstimateGas = ({ _addr, amountToApprove } = {}) => {
     let amount = getHexAdx(amountToApprove)
 
     return new Promise((resolve, reject) => {
@@ -52,14 +52,6 @@ export const approveTokensEstimateGas = ({ _addr, amountToApprove, prKey } = {})
     })
 }
 
-/**
- * @param {string} _adunitId - adunit ID
- * @param {number} _target - target, in points to be achieved (integer)
- * @param {number} _rewardAmount - reward amount
- * @param {number} _timeout - timeout
- * @param {string} _peer - meta
- * @param {string} prKey - private key
- */
 export const approveTokens = ({ _addr, amountToApprove } = {}) => {
 
     let amount = getHexAdx(amountToApprove)
@@ -102,7 +94,7 @@ export const approveTokens = ({ _addr, amountToApprove } = {}) => {
     })
 }
 
-export const withdrawAdxEstimateGas = ({ _addr, withdrawTo, amountToWithdraw, prKey } = {}) => {
+export const withdrawAdxEstimateGas = ({ _addr, withdrawTo, amountToWithdraw } = {}) => {
 
     let amount = getHexAdx(amountToWithdraw)
 
@@ -127,7 +119,7 @@ export const withdrawAdxEstimateGas = ({ _addr, withdrawTo, amountToWithdraw, pr
     })
 }
 
-export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, prKey, gas } = {}) => {
+export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, gas } = {}) => {
 
     let amount = getHexAdx(amountToWithdraw)
 

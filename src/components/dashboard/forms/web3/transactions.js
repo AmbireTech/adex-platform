@@ -47,7 +47,6 @@ export const WithdrawEth = (props) =>
                     _addr: acc._addr,
                     withdrawTo: transaction.withdrawTo,
                     amountToWithdraw: transaction.amountToWithdraw,
-                    prKey: acc._temp.privateKey,
                     gas: transaction.gas
                 })
         }}
@@ -68,7 +67,6 @@ export const WithdrawAdx = (props) =>
                     _addr: acc._addr,
                     withdrawTo: transaction.withdrawTo,
                     amountToWithdraw: transaction.amountToWithdraw,
-                    prKey: acc._temp.privateKey,
                     gas: transaction.gas
                 })
         }}

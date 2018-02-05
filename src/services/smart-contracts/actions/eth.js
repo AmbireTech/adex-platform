@@ -5,7 +5,7 @@ import { toHexParam } from 'services/smart-contracts/utils'
 // import { registerItem } from 'services/smart-contracts/actions'
 const GAS_LIMIT = 21000
 
-export const withdrawEthEstimateGas = ({ _addr, withdrawTo, amountToWithdraw, prKey } = {}) => {
+export const withdrawEthEstimateGas = ({ _addr, withdrawTo, amountToWithdraw } = {}) => {
 
     let amount = web3Utils.toWei(amountToWithdraw, 'ether')
 
@@ -28,7 +28,7 @@ export const withdrawEthEstimateGas = ({ _addr, withdrawTo, amountToWithdraw, pr
     })
 }
 
-export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, prKey, gas } = {}) => {
+export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, gas } = {}) => {
 
     let amount = web3Utils.toWei(amountToWithdraw, 'ether')
 

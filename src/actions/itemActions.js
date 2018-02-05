@@ -23,7 +23,7 @@ export function resetNewItem(item) {
 }
 
 // register item
-export function addItem(item, itemToAddTo, prKey, _addr) {
+export function addItem(item, itemToAddTo, _addr) {
     item = { ...item }
     // TODO: authentication
 

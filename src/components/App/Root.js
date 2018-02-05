@@ -46,8 +46,9 @@ class Root extends Component {
         this.setAccount()
     }
 
-    //NOTE: On location we check the metamsk user instead as metamask defaut setInterval way
-    //NOTE: On the signin page there will be button to signin manually if you are logged to metamsk
+    // NOTE: On location we check the metamsk user instead as metamask defaut setInterval way
+    // NOTE: On the signin page there will be button to signin manually if you are logged to metamsk
+    // TODO: We may need to use setInterval in order to detect metamask account change
     componentWillUpdate(nextProps) {
         if (nextProps.location && nextProps.location.key && (nextProps.location.key !== this.props.location.key)) {
             this.setAccount()
