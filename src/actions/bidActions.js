@@ -34,25 +34,26 @@ export function placeBid({ bid, slot, unit, userAddr }) {
 
     let typed = bidInst.typed
 
-    signBid({ typed: typed, userAddr: userAddr })
-        .then((res) => {
-            console.log('placeBid res', res)
-        })
-
     return function (dispatch) {
-        plsBid({ bid: bid, unit: bid.adUnit || unit._id || unit, userAddr: userAddr })
+        signBid({ typed: typed, userAddr: userAddr })
+            .then((sig) => {
+                bidInst.adUnit = bid.adUnit || unit._id || unit //TODO: use ipfs?
+                bidInst.signature = sig
+
+                return plsBid({ bid: bidInst.plainObj(), userAddr: userAddr })
+            })
             .then((bid) => {
                 console.log(bid)
+                return dispatch({
+                    type: types.UNIT_PLACE_BID,
+                    bid: bid,
+                    slot: slot,
+                    unit: unit
+                })
             })
             .catch((err) => {
-                console.log('registerItem err', err)
+                // TODO: notifications
+                console.log('placeBid err', err)
             })
-
-        // return dispatch({
-        //     type: types.UNIT_PLACE_BID,
-        //     bid: bid,
-        //     slot: slot,
-        //     unit: unit
-        // })
     }
 }

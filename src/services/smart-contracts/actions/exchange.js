@@ -59,6 +59,16 @@ export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _ti
     })
 }
 
+const getRsvFromSig = (sig) => {
+    sig = sig.slice(2)
+
+    var r = '0x' + sig.substring(0, 64)
+    var s = '0x' + sig.substring(64, 128)
+    var v = parseInt(sig.substring(128, 130), 16)
+
+    return { r: r, s: s, v: v }
+}
+
 export const signBid = ({ typed, userAddr }) => {
     return new Promise((resolve, reject) => {
         getWeb3.then(({ web3, exchange, token, mode }) => {
@@ -71,7 +81,6 @@ export const signBid = ({ typed, userAddr }) => {
             let schema = typed.map((entry) => { return entry.type + ' ' + entry.name })
             let schemaHash = web3Utils.soliditySha3.apply(null, schema)
 
-
             let hash = web3Utils.soliditySha3(schemaHash, valuesHash)
 
             // DEBUG
@@ -83,10 +92,17 @@ export const signBid = ({ typed, userAddr }) => {
                     method: 'eth_signTypedData',
                     params: [typed, userAddr],
                     from: userAddr
-                }, (err, resp) => {
-                    console.log('eth_signTypedData resp', resp)
-                    console.log('eth_signTypedData resp.error', resp.error)
-                    console.log('eth_signTypedData err', err)
+                }, (err, res) => {
+                    if (err) {
+                        return reject(err)
+                    }
+
+                    if (res.error) {
+                        return reject(res.error)
+                    }
+
+                    let signature = { sig_mode: mode, ...getRsvFromSig(res.result) }
+                    return resolve(signature)
                 })
             }
         })
