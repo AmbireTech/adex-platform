@@ -28,13 +28,13 @@ const SideSwitch = ({ side }) => {
           checked={true}
           value='account'
           to={{ pathname: '/dashboard/advertiser' }}
-          label='Advertiser'
+          label='Publisher'
         /> : null}
       {side !== 'publisher' ?
         <RRSwitch
           checked={false}
           to={{ pathname: '/dashboard/publisher' }}
-          label='Publisher'
+          label='Advertiser'
         /> : null}
     </div>
   )
@@ -49,7 +49,7 @@ class TopNav extends Component {
         <Navigation type='horizontal' className={theme.rightNavigation}>
           {/* At the moment we use translations only for proper items properties display names */}
           {/* <ChangeLang /> */}
-          <GasPrice />
+          {/* <GasPrice /> */}
           <ButtonMenu
             selectable={true}
             selected='help'
