@@ -21,6 +21,7 @@ import NewBidSteps from 'components/dashboard/forms/bids/NewBidSteps'
 import UnitBids from './UnitBids'
 import { items as ItemsConstants } from 'adex-constants'
 import { BasicProps } from './ItemCommon'
+import { getUnitBids } from 'services/adex-node/actions'
 
 const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue, AdTypesByValue } = ItemsConstants
 const TooltipButton = Tooltip(Button)
@@ -30,7 +31,9 @@ export class Unit extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            tabIndex: 0
+            tabIndex: 0,
+            closeDialog: false,
+            bids: []
         }
     }
 
@@ -38,13 +41,33 @@ export class Unit extends Component {
         this.setState({ tabIndex: index })
     }
 
+    getUnitBids = () => {
+        getUnitBids({ userAddr: this.props.account._addr, adUnit: this.props.item._id })
+            .then((bids) => {
+                // console.log('unit bids', bids)
+                // TODO: Maybe map to Bid instances?
+                this.setState({ bids: bids })
+            })
+    }
+
+    componentWillMount() {
+        this.getUnitBids()
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if ((nextProps.unitsBids[this.props.item._id] || []).length > (this.props.unitsBids[this.props.item._id] || []).length) {
+            this.setState({ closeDialog: true })
+            this.getUnitBids()
+        } else {
+            this.setState({ closeDialog: false })
+        }
+    }
+
     render() {
         let item = this.props.item
         let t = this.props.t
 
         if (!item) return (<h1>Unit '404'</h1>)
-
-        console.log('item', item)
 
         return (
             <div>
@@ -56,6 +79,7 @@ export class Unit extends Component {
                     bidId={item._id}
                     icon='check_circle'
                     adUnit={item}
+                    closeDialog={!!this.state.closeDialog}
                 />
                 <BasicProps
                     item={item}
@@ -70,7 +94,7 @@ export class Unit extends Component {
                         onChange={this.handleTabChange.bind(this)}
                     >
                         <Tab label={t('BIDS')}>
-                            <UnitBids item={item} />
+                            <UnitBids item={item} bids={this.state.bids} />
                         </Tab>
                     </Tabs>
                 </div>
@@ -88,7 +112,7 @@ Unit.propTypes = {
     spinner: PropTypes.bool
 };
 
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
     let persist = state.persist
     let memory = state.memory
     return {
@@ -98,7 +122,8 @@ function mapStateToProps(state) {
         // item: state.currentItem,
         spinner: memory.spinners[ItemsTypes.AdUnit.name],
         objModel: AdUnit,
-        itemType: ItemsTypes.AdUnit.id
+        itemType: ItemsTypes.AdUnit.id,
+        unitsBids: persist.bids.bidsByAdunit
     }
 }
 

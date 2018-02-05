@@ -32,18 +32,8 @@ export class UnitBids extends Component {
         super(props)
         this.state = {
             bidding: false,
-            activeSlot: {},
-            bids: []
+            activeSlot: {}
         }
-    }
-
-    componentWillMount() {
-        getUnitBids({ userAddr: this.props.account._addr, adUnit: this.props.item._id })
-            .then((bids) => {
-                console.log('unit bids', bids)
-                // TODO: Maybe map to Bid instances?
-                this.setState({ bids: bids })
-            })
     }
 
     renderTableHead() {
@@ -87,7 +77,7 @@ export class UnitBids extends Component {
     render() {
         let item = this.props.item
         let t = this.props.t
-        let bids = this.state.bids || []
+        let bids = this.props.bids || []
 
         return (
             <div>
