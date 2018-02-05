@@ -26,11 +26,13 @@ const getWeb3 = new Promise(function (resolve, reject) {
 	// Wait for loading completion to avoid race conditions with web3 injection timing.
 	window.addEventListener('load', function () {
 		let web3 = window.web3
+		let mode = null // metamask, and as some point trezor, ledger, ...
 
 		// Checking if Web3 has been injected by the browser (Mist/MetaMask)
 		if (typeof web3 !== 'undefined') {
 			// Use Mist/MetaMask's provider.
 			web3 = new Web3(web3.currentProvider)
+			mode = 'metamask' // Currently only metamask
 
 			console.log('web3.currentProvider', web3.currentProvider)
 			console.log('Injected web3 detected.')
@@ -50,6 +52,7 @@ const getWeb3 = new Promise(function (resolve, reject) {
 
 		let results = {
 			web3: web3,
+			mode: mode,
 			cfg: cfg,
 			token: token,
 			exchange: exchange

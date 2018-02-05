@@ -91,7 +91,6 @@ UnitTargets.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     item: PropTypes.object.isRequired,
-    slots: PropTypes.array.isRequired,
     spinner: PropTypes.bool,
     targets: PropTypes.array.isRequired
 };

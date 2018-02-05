@@ -1,4 +1,4 @@
-import { cfg, getWeb3 } from 'services/smart-contracts/ADX'
+import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
 import { setWalletAndGetAddress, toHexParam, ipfsHashToHex } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
@@ -55,6 +55,50 @@ export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _ti
                     reject(err)
                 })
 
+        })
+    })
+}
+
+export const signBid = ({ typed, userAddr }) => {
+    return new Promise((resolve, reject) => {
+        getWeb3.then(({ web3, exchange, token, mode }) => {
+            //TODO: set in the model?
+            typed = typed.map((entry) => {
+                //TODO: Fix it
+                if (entry.type === 'bytes32') {
+                    entry.value = ipfsHashToHex(entry.value)
+                }
+
+                return entry
+            })
+
+            console.log('typed', typed)
+
+            let valuesHash = web3Utils.soliditySha3.apply(null, typed.map((entry) => {
+                return entry.value
+            }))
+
+            let schema = typed.map((entry) => { return entry.type + ' ' + entry.name })
+            let schemaHash = web3Utils.soliditySha3.apply(null, schema)
+
+
+            let hash = web3Utils.soliditySha3(schemaHash, valuesHash)
+
+            // DEBUG
+            console.log('schema hash', schemaHash)
+            console.log('bid hash', hash)
+
+            if (mode === 'metamask') {
+                web3.currentProvider.sendAsync({
+                    method: 'eth_signTypedData',
+                    params: [typed, userAddr],
+                    from: userAddr
+                }, (err, resp) => {
+                    console.log('eth_signTypedData resp', resp)
+                    console.log('eth_signTypedData resp.error', resp.error)
+                    console.log('eth_signTypedData err', err)
+                })
+            }
         })
     })
 }

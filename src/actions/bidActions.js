@@ -1,6 +1,8 @@
 import * as types from 'constants/actionTypes'
 import { placeBid as plsBid } from 'services/adex-node/actions'
-
+import { Bid } from 'adex-models'
+import scActions from 'services/smart-contracts/actions'
+const { signBid } = scActions
 
 // MEMORY STORAGE
 export function updateNewBid({ bidId, key, value }) {
@@ -26,6 +28,17 @@ export function resetNewBid({ bidId }) {
 // PERSISTENT STORAGE
 export function placeBid({ bid, slot, unit, userAddr }) {
     bid = { ...bid }
+    let bidInst = new Bid(bid)
+    bidInst.adUnit = unit._ipfs || unit
+    bidInst.advertiser = userAddr
+
+    let typed = bidInst.typed
+
+    signBid({ typed: typed, userAddr: userAddr })
+        .then((res) => {
+            console.log('placeBid res', res)
+        })
+
     return function (dispatch) {
         plsBid({ bid: bid, unit: bid.adUnit || unit._id || unit, userAddr: userAddr })
             .then((bid) => {
@@ -34,7 +47,6 @@ export function placeBid({ bid, slot, unit, userAddr }) {
             .catch((err) => {
                 console.log('registerItem err', err)
             })
-
 
         // return dispatch({
         //     type: types.UNIT_PLACE_BID,
