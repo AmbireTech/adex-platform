@@ -1,4 +1,4 @@
-const BASE_URL = 'http://127.0.0.1:7878/' //TODO: config
+const BASE_URL = 'http://127.0.0.1:9710/' //TODO: config
 
 class AdexNodeRequester {
     getUrl(base, route, query) {
