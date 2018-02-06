@@ -26,6 +26,7 @@ class AdexNodeRequester {
 
         let hdrs = {
             'useraddres': userAddr, //TEMP
+            'usersig': localStorage.getItem('addr-sig-' + userAddr),
             ...headers
         }
 

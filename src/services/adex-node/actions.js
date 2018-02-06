@@ -181,3 +181,40 @@ export const getAvailableBids = ({ userAddr, sizeAndType }) => {
 
     return getBids({ userAddr: userAddr, query: query })
 }
+
+export const getAuthToken = ({ userAddr } = {}) => {
+    return new Promise((resolve, reject) => {
+        requester.fetch({
+            route: 'auth',
+            method: 'GET'
+        })
+            .then((res) => {
+                return resolve(res.text())
+            })
+            .catch((err) => {
+                return reject(err)
+            })
+    })
+}
+
+export const signToken = ({ userid, signature, authToken } = {}) => {
+    let query = {
+        userid: userid,
+        signature: signature,
+        authToken: authToken
+    }
+
+    return new Promise((resolve, reject) => {
+        requester.fetch({
+            route: 'auth',
+            method: 'POST',
+            queryParams: query
+        })
+            .then((res) => {
+                return resolve(res.text())
+            })
+            .catch((err) => {
+                return reject(err)
+            })
+    })
+}

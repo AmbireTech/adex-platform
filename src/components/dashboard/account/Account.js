@@ -12,7 +12,7 @@ import { web3Utils } from 'services/smart-contracts/ADX'
 import { MULT } from 'services/smart-contracts/constants'
 // import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 // import Input from 'react-toolbox/lib/input'
-import { Approve, WithdrawEth, WithdrawAdx } from 'components/dashboard/forms/web3/transactions'
+import { Authenticate, Approve, WithdrawEth, WithdrawAdx } from 'components/dashboard/forms/web3/transactions'
 import { List, ListItem, ListSubHeader, ListDivider } from 'react-toolbox/lib/list'
 
 import scActions from 'services/smart-contracts/actions'
@@ -77,7 +77,7 @@ class Account extends React.Component {
                         ripple={false}
                         legend={t('ACCOUNT_NAME')}
                         caption={stats.acc ? stats.acc._name : 'No name'}
-                        rightIcon={<Approve icon='' raised accent onSave={this.onSave} />}
+                        rightIcon={<Authenticate icon='' raised accent onSave={this.onSave} />}
                         // leftIcon='account_box'
                         theme={theme}
                     />

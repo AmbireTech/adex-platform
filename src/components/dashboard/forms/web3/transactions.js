@@ -4,7 +4,10 @@ import TransactionsSteps from './TransactionsSteps'
 import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
 import ApproveStep from './ApproveStep'
 import WithdrawStep from './WithdrawStep'
+import AuthenticateStepGetToken from './AuthenticateStepGetToken'
 import scActions from 'services/smart-contracts/actions'
+import { signToken } from 'services/adex-node/actions'
+
 const {
     getAccountStats,
     approveTokens,
@@ -12,8 +15,8 @@ const {
     withdrawAdx,
     withdrawAdxEstimateGas,
     withdrawEthEstimateGas,
-    acceptBid
-
+    acceptBid,
+    signAuthToken
 } = scActions
 
 const TransactionsStepsWithDialog = NewItemWithDialog(TransactionsSteps)
@@ -100,4 +103,34 @@ export const AcceptBid = (props) =>
                 })
         }}
         estimateGasFn={() => 100000}
+    />
+
+export const Authenticate = (props) =>
+    <TransactionsStepsWithDialog
+        {...props}
+        btnLabel="ACCOUNT_AUTHENTICATE"
+        saveBtnLabel='ACCOUNT_AUTHENTICATE'
+        title="ACCOUNT_AUTHENTICATE_TITLE"
+        trId='authenticateAcc'
+        trPages={[{ title: 'ACCOUNT_AUTHENTICATE_STEP', page: AuthenticateStepGetToken }]}
+        saveFn={({ acc, transaction } = {}) => {
+            return new Promise((resolve, reject) => {
+                let signature = null
+                signAuthToken({ userAddr: acc._addr, authToken: transaction.authToken })
+                    .then((sig) => {
+                        signature = sig
+                        return signToken({ userid: acc._addr, signature: signature, authToken: transaction.authToken })
+                    })
+                    .then((res) => {
+                        // TEMP
+                        // TODO: keep it here or make it on login?
+                        // TODO: catch
+                        if (res === 'OK') {
+                            localStorage.setItem('addr-sig-' + acc._addr, signature)
+                        }
+
+                        return resolve('OK')
+                    })
+            })
+        }}
     />
