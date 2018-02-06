@@ -17,9 +17,9 @@ import { items as ItemsConstants } from 'adex-constants'
 const { ItemsTypes } = ItemsConstants
 
 const SORT_PROPERTIES = [
-    { value: 'target', label: 'Target' },
-    { value: 'amount', label: 'Amount' },
-    { value: 'timeout', label: 'Timeout' },
+    { value: '_target', label: 'Target' },
+    { value: '_amount', label: 'Amount' },
+    { value: '_timeout', label: 'Timeout' },
     /** traffic, etc. */
 ]
 
