@@ -10,8 +10,10 @@ import PageNotFound from 'components/page_not_found/PageNotFound'
 import Translate from 'components/translate/Translate'
 import { web3, getWeb3 } from 'services/smart-contracts/ADX'
 import scActions from 'services/smart-contracts/actions'
+import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
+import { getSig } from 'services/auth/auth'
 
-const { getAccount, getAccountStats, getAccountStatsMetaMask } = scActions
+const { getAccountMetamask, getAccountStats, getAccountStatsMetaMask } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
     return (
@@ -26,24 +28,39 @@ function PrivateRoute({ component: Component, auth, ...other }) {
 
 class Root extends Component {
 
-    // setAccount = () => {
-    //     getAccount()
-    //         .then((addr) => {
+    checkForMetamaskAccountChange = () => {
+        let acc = this.props.account // come from persistence storage
 
-    //             if (addr) {
-    //                 this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: 'metamask' } })
-    //                 getAccountStatsMetaMask({})
-    //                     .then((stats) => {
-    //                         this.props.actions.updateAccount({ ownProps: { stats: stats } })
-    //                     })
-    //             } else {
-    //                 this.props.actions.resetAccount()
-    //             }
-    //         })
-    // }
+        if (acc) {
+            console.log('is mm')
+            getAccountMetamask()
+                .then(({ addr, mode }) => {
+
+                    if (addr && acc._add && acc._authSig && acc._authMode) {
+                        let accSigCheck = getSig({ addr: acc._addr, mode: acc._authMode })
+                        let mmAddrSigCheck = getSig({ addr: acc._addr, mode: EXCHANGE_CONSTANTS.SIGN_TYPES.Metamask.id })
+
+                        if (!!mmAddrSigCheck && !!accSigCheck && (mmAddrSigCheck === accSigCheck)) {
+                            return // user authenticated and not changed
+                        } else if ((addr !== acc._addr) && !!mmAddrSigCheck) {
+                            //the metamask address is changed but already authenticated, so we load the stats for it
+                            this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: mmAddrSigCheck } })
+                            getAccountStatsMetaMask({})
+                                .then((stats) => {
+                                    this.props.actions.updateAccount({ ownProps: { stats: stats } })
+                                })
+                        } else {
+                            this.props.actions.resetAccount() // logaut
+                        }
+                    }
+                })
+        } else {
+            this.props.actions.resetAccount()
+        }
+    }
 
     componentWillMount() {
-        // this.setAccount()
+        this.checkForMetamaskAccountChange()
     }
 
     // NOTE: On location we check the metamsk user instead as metamask defaut setInterval way
@@ -51,7 +68,7 @@ class Root extends Component {
     // TODO: We may need to use setInterval in order to detect metamask account change
     componentWillUpdate(nextProps) {
         if (nextProps.location && nextProps.location.key && (nextProps.location.key !== this.props.location.key)) {
-            // this.setAccount()
+            this.checkForMetamaskAccountChange()
         }
     }
 

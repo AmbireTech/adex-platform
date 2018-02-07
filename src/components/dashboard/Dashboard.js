@@ -26,12 +26,12 @@ import Account from './account/Account'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
 import { web3, getWeb3 } from 'services/smart-contracts/ADX'
-import scActions from 'services/smart-contracts/actions'
+// import scActions from 'services/smart-contracts/actions'
 import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemsTypes } = ItemsConstants
 
-const { getAccount, getAccountStats, getAccountStatsMetaMask } = scActions
+// const { getAccount, getAccountStats, getAccountStatsMetaMask } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
     return (

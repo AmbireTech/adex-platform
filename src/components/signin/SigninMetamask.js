@@ -11,6 +11,7 @@ import Translate from 'components/translate/Translate'
 import { getWeb3 } from 'services/smart-contracts/ADX'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import AuthMethod from 'components/signin/auth/AuthMethod'
+import { getSig } from 'services/auth/auth'
 
 const RRButton = withReactRouterLink(Button)
 
@@ -23,19 +24,10 @@ class SigninMetamask extends Component {
     }
   }
 
-  checkAuth = ({ addr, mode, exp }) => {
-    if (!addr || !mode) return false
-
-    let lsSig = localStorage.getItem('addr-' + mode + '-' + addr)
-    let hasSig = !!lsSig
-
-    return hasSig
-  }
-
   renderDefault = () => {
     let userAddr = this.props.account._addr
     let authMode = this.props.account._authMode
-    let hasSession = this.checkAuth({ addr: userAddr, mode: authMode })
+    let hasSession = getSig({ addr: userAddr, mode: authMode })
 
     console.log('hassession', hasSession)
 

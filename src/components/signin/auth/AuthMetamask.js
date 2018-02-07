@@ -15,7 +15,7 @@ import scActions from 'services/smart-contracts/actions'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { addSig } from 'services/auth/auth'
 
-const { signAuthToken } = scActions
+const { signAuthToken, getAccountMetamask } = scActions
 
 const RRButton = withReactRouterLink(Button)
 
@@ -32,7 +32,7 @@ class AuthMetamask extends Component {
         let signature = null
         let addr = this.props.account._addr
         let authToken = 'someAuthTOken'
-        let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Personal.id
+        let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Metamask.id // TEMP
 
         signAuthToken({ userAddr: addr, authToken: authToken })
             .then((sig) => {
@@ -46,25 +46,24 @@ class AuthMetamask extends Component {
                 if (res === 'OK') {
                     addSig({ addr: addr, sig: signature, mode: mode })
 
-                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode } })
+                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: signature } })
+                } else {
+                    this.props.actions.resetAccount()
                 }
             })
     }
 
     // TODO: Make it some common function if needed or make timeout as metamask way 
     checkMetamask = () => {
-        getWeb3.then(({ web3 }) => {
+        getAccountMetamask()
+            .then(({ addr, mode }) => {
 
-            web3.eth.getAccounts((err, accounts) => {
-                let user = accounts[0]
-
-                if (err || !user) {
+                if (!addr) {
                     this.props.actions.resetAccount()
                 } else {
-                    this.props.actions.updateAccount({ ownProps: { addr: user, authMode: 'metamask' } })
+                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode } })
                 }
             })
-        })
     }
 
     render() {

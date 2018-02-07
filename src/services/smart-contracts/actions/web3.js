@@ -50,7 +50,7 @@ export const setWallet = ({ prKey, addr = '' }) => {
     })
 }
 
-export const getAccount = () => {
+export const getAccountMetamask = () => {
     return new Promise((resolve, reject) => {
         getWeb3.then(({ web3, mode }) => {
             web3.eth.getAccounts((err, accounts) => {
@@ -72,7 +72,7 @@ export const signAuthToken = ({ authToken, userAddr }) => {
         getWeb3.then(({ web3, exchange, token, mode }) => {
             //TEMP: until metamask way recovery on the node
             console.log('sig authToken', authToken)
-            let sig = web3.eth.accounts.sign(authToken, '0xf8224cb3872936c3fb000693b8c9e5879e2fcf960fac35d0eef8acd96ec6efa9').signature
+            let sig = web3.eth.accounts.sign(authToken, userAddr).signature
 
             console.log('sig', sig)
 
