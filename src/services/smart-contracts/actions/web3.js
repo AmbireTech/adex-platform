@@ -52,14 +52,15 @@ export const setWallet = ({ prKey, addr = '' }) => {
 
 export const getAccount = () => {
     return new Promise((resolve, reject) => {
-        getWeb3.then(({ web3 }) => {
+        getWeb3.then(({ web3, mode }) => {
             web3.eth.getAccounts((err, accounts) => {
+                //TODO: maybe different check for different modes
                 if (err || !accounts || !accounts[0]) {
-                    return resolve(null)
+                    return resolve({ addr: null, mode: mode })
                 } else if (accounts && accounts[0]) {
-                    return resolve(accounts[0])
+                    return resolve({ addr: accounts[0], mode: mode })
                 } else {
-                    return resolve(null)
+                    return resolve({ addr: null, mode: mode })
                 }
             })
         })

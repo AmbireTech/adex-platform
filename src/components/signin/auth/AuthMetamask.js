@@ -12,6 +12,8 @@ import { getWeb3 } from 'services/smart-contracts/ADX'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import { signToken } from 'services/adex-node/actions'
 import scActions from 'services/smart-contracts/actions'
+import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
+import { addSig } from 'services/auth/auth'
 
 const { signAuthToken } = scActions
 
@@ -28,21 +30,23 @@ class AuthMetamask extends Component {
 
     authOnServer = () => {
         let signature = null
-        let acc = this.props.account
+        let addr = this.props.account._addr
         let authToken = 'someAuthTOken'
-        signAuthToken({ userAddr: acc._addr, authToken: authToken })
+        let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Personal.id
+
+        signAuthToken({ userAddr: addr, authToken: authToken })
             .then((sig) => {
                 signature = sig
-                return signToken({ userid: acc._addr, signature: signature, authToken: authToken })
+                return signToken({ userid: addr, signature: signature, authToken: authToken, mode: mode })
             })
             .then((res) => {
                 // TEMP
                 // TODO: keep it here or make it on login?
                 // TODO: catch
                 if (res === 'OK') {
-                    localStorage.setItem('addr-metamask-' + acc._addr, signature)
+                    addSig({ addr: addr, sig: signature, mode: mode })
 
-                    this.props.actions.updateAccount({ ownProps: { addr: acc._addr, authMode: 'metamask' } })
+                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode } })
                 }
             })
     }

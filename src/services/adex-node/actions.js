@@ -197,11 +197,12 @@ export const getAuthToken = ({ userAddr } = {}) => {
     })
 }
 
-export const signToken = ({ userid, signature, authToken } = {}) => {
+export const signToken = ({ userid, signature, authToken, mode } = {}) => {
     let query = {
         userid: userid,
         signature: signature,
-        authToken: authToken
+        authToken: authToken,
+        mode: mode
     }
 
     return new Promise((resolve, reject) => {

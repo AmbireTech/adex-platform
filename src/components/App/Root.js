@@ -26,24 +26,24 @@ function PrivateRoute({ component: Component, auth, ...other }) {
 
 class Root extends Component {
 
-    setAccount = () => {
-        getAccount()
-            .then((addr) => {
+    // setAccount = () => {
+    //     getAccount()
+    //         .then((addr) => {
 
-                if (addr) {
-                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: 'metamask' } })
-                    getAccountStatsMetaMask({})
-                        .then((stats) => {
-                            this.props.actions.updateAccount({ ownProps: { stats: stats } })
-                        })
-                } else {
-                    this.props.actions.resetAccount()
-                }
-            })
-    }
+    //             if (addr) {
+    //                 this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: 'metamask' } })
+    //                 getAccountStatsMetaMask({})
+    //                     .then((stats) => {
+    //                         this.props.actions.updateAccount({ ownProps: { stats: stats } })
+    //                     })
+    //             } else {
+    //                 this.props.actions.resetAccount()
+    //             }
+    //         })
+    // }
 
     componentWillMount() {
-        this.setAccount()
+        // this.setAccount()
     }
 
     // NOTE: On location we check the metamsk user instead as metamask defaut setInterval way
@@ -51,7 +51,7 @@ class Root extends Component {
     // TODO: We may need to use setInterval in order to detect metamask account change
     componentWillUpdate(nextProps) {
         if (nextProps.location && nextProps.location.key && (nextProps.location.key !== this.props.location.key)) {
-            this.setAccount()
+            // this.setAccount()
         }
     }
 
