@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import PropTypes, { node } from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
@@ -10,6 +10,7 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Translate from 'components/translate/Translate'
 import { getWeb3 } from 'services/smart-contracts/ADX'
 import SideSelect from 'components/signin/side-select/SideSelect'
+import AuthMethod from 'components/signin/auth/AuthMethod'
 
 const RRButton = withReactRouterLink(Button)
 
@@ -22,24 +23,21 @@ class SigninMetamask extends Component {
     }
   }
 
-  // TODO: Make it some common function if needed or make timeout as metamask way 
-  checkMetamask = () => {
-    getWeb3.then(({ web3 }) => {
+  checkAuth = ({ addr, mode, exp }) => {
+    if (!addr || !mode) return false
 
-      web3.eth.getAccounts((err, accounts) => {
-        let user = accounts[0]
+    let lsSig = localStorage.getItem('addr-' + mode + '-' + addr)
+    let hasSig = !!lsSig
 
-        if (err || !user) {
-          this.props.actions.resetAccount()
-        } else {
-          this.props.actions.updateAccount({ ownProps: { addr: user } })
-        }
-      })
-    })
+    return hasSig
   }
 
   renderDefault = () => {
-    let user = this.props.account._addr
+    let userAddr = this.props.account._addr
+    let authMode = this.props.account._authMode
+    let hasSession = this.checkAuth({ addr: userAddr, mode: authMode })
+
+    console.log('hassession', hasSession)
 
     return (
       <div>
@@ -47,13 +45,12 @@ class SigninMetamask extends Component {
           <Logo width={370} height={144} />
         </div>
         <br />
-        {!!user ?
-          <Button onClick={() => { this.setState({ sideSelect: !this.state.sideSelect }) }} label={this.props.t('CHOOSE_SIDE')} primary />
+        {hasSession ?
+          <SideSelect active={true} />
           :
-          // TODO: metamask dl nad how to
-          <h1> Login to metamask <Button onClick={this.checkMetamask} label={this.props.t('OK')} primary /></h1>
+          <AuthMethod />
         }
-        <SideSelect active={this.state.sideSelect} />
+
       </div>
     )
   }

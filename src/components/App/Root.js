@@ -31,7 +31,7 @@ class Root extends Component {
             .then((addr) => {
 
                 if (addr) {
-                    this.props.actions.updateAccount({ ownProps: { addr: addr } })
+                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: 'metamask' } })
                     getAccountStatsMetaMask({})
                         .then((stats) => {
                             this.props.actions.updateAccount({ ownProps: { stats: stats } })
