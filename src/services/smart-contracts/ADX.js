@@ -1,7 +1,6 @@
 import Web3 from 'web3'
 
 import tokenAbi from './abi/ADXToken'
-import registryAbi from './abi/ADXRegistry'
 import exchangeAbi from './abi/ADXExchange'
 import { testrpcCfg } from './ADXTestrpcCfg'
 import { exchange as EXCHANGE_CONSTANTS} from 'adex-constants'
