@@ -172,3 +172,11 @@ export const updateItems = ({ items, itemsType }) => {
         })
     }
 }
+
+export const resetAllItems = () => {
+    return (dispatch) => {
+        return dispatch({
+            type: types.RESET_ALL_ITEMS
+        })
+    }
+}

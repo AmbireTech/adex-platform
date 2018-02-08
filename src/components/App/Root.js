@@ -31,30 +31,32 @@ class Root extends Component {
     checkForMetamaskAccountChange = () => {
         let acc = this.props.account // come from persistence storage
 
+        //Maybe dont need it but if for some reason the store account empty is not there
         if (acc) {
             getAccountMetamask()
                 .then(({ addr, mode }) => {
-
                     if (addr && acc._addr && acc._authMode) {
                         let accSigCheck = getSig({ addr: acc._addr, mode: acc._authMode })
                         let mmAddrSigCheck = getSig({ addr: addr, mode: EXCHANGE_CONSTANTS.SIGN_TYPES.Metamask.id })
-
                         if (!!mmAddrSigCheck && !!accSigCheck && (mmAddrSigCheck === accSigCheck)) {
                             return // user authenticated and not changed
                         } else if ((addr !== acc._addr) && !!mmAddrSigCheck) {
                             //the metamask address is changed but already authenticated, so we load the stats for it
                             this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: mmAddrSigCheck } })
+                            this.props.actions.resetAllItems()
                             getAccountStatsMetaMask({})
                                 .then((stats) => {
                                     this.props.actions.updateAccount({ ownProps: { stats: stats } })
                                 })
                         } else {
                             this.props.actions.resetAccount() // logaut
+                            this.props.actions.resetAllItems()
                         }
                     }
                 })
         } else {
             this.props.actions.resetAccount()
+            this.props.actions.resetAllItems()
         }
     }
 
