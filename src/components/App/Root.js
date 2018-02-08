@@ -95,7 +95,7 @@ function mapStateToProps(state) {
     // let memory = state.memory
     return {
         account: account,
-        auth: !!account._addr
+        auth: !!account._addr && !!account._authSig && !!account._authMode
     }
 }
 

@@ -13,7 +13,7 @@ import SideSelect from 'components/signin/side-select/SideSelect'
 import { signToken } from 'services/adex-node/actions'
 import scActions from 'services/smart-contracts/actions'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
-import { addSig } from 'services/auth/auth'
+import { addSig, getSig } from 'services/auth/auth'
 
 const { signAuthToken, getAccountMetamask } = scActions
 
@@ -61,7 +61,7 @@ class AuthMetamask extends Component {
                 if (!addr) {
                     this.props.actions.resetAccount()
                 } else {
-                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode } })
+                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: getSig({ addr: addr, mode: mode }) } })
                 }
             })
     }

@@ -13,8 +13,6 @@ import SideSelect from 'components/signin/side-select/SideSelect'
 import AuthMethod from 'components/signin/auth/AuthMethod'
 import { getSig } from 'services/auth/auth'
 
-const RRButton = withReactRouterLink(Button)
-
 class SigninMetamask extends Component {
   constructor(props) {
     super(props)
@@ -25,11 +23,9 @@ class SigninMetamask extends Component {
   }
 
   renderDefault = () => {
-    let userAddr = this.props.account._addr
-    let authMode = this.props.account._authMode
-    let hasSession = getSig({ addr: userAddr, mode: authMode })
-
-    console.log('hassession', hasSession)
+    let account = this.props.account
+    let lsSig = getSig({ addr: account._addr, mode: account._authMode })
+    let hasSession = !!lsSig && !!account._authSig && (lsSig === account._authSig)
 
     return (
       <div>
