@@ -1,6 +1,6 @@
 import requester from './requester'
 
-export const uploadImage = ({ imageBlob, imageName = '', userAddr }) => {
+export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
     let formData = new FormData()
     formData.append('image', imageBlob, imageName)
 
@@ -9,7 +9,7 @@ export const uploadImage = ({ imageBlob, imageName = '', userAddr }) => {
             route: 'image',
             method: 'POST',
             body: formData,
-            userAddr: userAddr
+            authSig: authSig
         })
             .then((resp) => {
                 return resolve(resp.json())
@@ -20,13 +20,13 @@ export const uploadImage = ({ imageBlob, imageName = '', userAddr }) => {
     })
 }
 
-export const regItem = ({ item, userAddr }) => {
+export const regItem = ({ item, authSig }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'items',
             method: 'POST',
             body: JSON.stringify(item),
-            userAddr: userAddr,
+            authSig: authSig,
             headers: { 'Content-Type': 'application/json' }
         })
             .then((resp) => {
@@ -38,13 +38,13 @@ export const regItem = ({ item, userAddr }) => {
     })
 }
 
-export const getItems = ({ type, userAddr }) => {
+export const getItems = ({ type, authSig }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'items',
             method: 'GET',
             queryParams: { 'type': type },
-            userAddr: userAddr
+            authSig: authSig
         })
             .then((resp) => {
                 return resolve(resp.json())
@@ -55,13 +55,13 @@ export const getItems = ({ type, userAddr }) => {
     })
 }
 
-export const delItem = ({ id, type, userAddr }) => {
+export const delItem = ({ id, type, authSig }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'items',
             method: 'DELETE',
             queryParams: { 'type': type, id: id },
-            userAddr: userAddr
+            authSig: authSig
         })
             .then((resp) => {
                 return resolve(resp.json())
@@ -72,12 +72,12 @@ export const delItem = ({ id, type, userAddr }) => {
     })
 }
 
-export const addItmToItm = ({ item, type, collection, userAddr }) => {
+export const addItmToItm = ({ item, type, collection, authSig }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'item-to-item',
             method: 'POST',
-            userAddr: userAddr,
+            authSig: authSig,
             queryParams: { type: type, item: item, collection: collection },
         })
             .then((resp) => {
@@ -89,12 +89,12 @@ export const addItmToItm = ({ item, type, collection, userAddr }) => {
     })
 }
 
-export const removeItmFromItm = ({ item, type, collection, userAddr }) => {
+export const removeItmFromItm = ({ item, type, collection, authSig }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'item-to-item',
             method: 'DELETE',
-            userAddr: userAddr,
+            authSig: authSig,
             queryParams: { type: type, item: item, collection: collection },
         })
             .then((resp) => {
@@ -106,12 +106,12 @@ export const removeItmFromItm = ({ item, type, collection, userAddr }) => {
     })
 }
 
-export const getCollectionItems = ({ id, userAddr }) => {
+export const getCollectionItems = ({ id, authSig }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'collection',
             method: 'GET',
-            userAddr: userAddr,
+            authSig: authSig,
             queryParams: { id: id },
         })
             .then((resp) => {
@@ -123,13 +123,13 @@ export const getCollectionItems = ({ id, userAddr }) => {
     })
 }
 
-export const placeBid = ({ bid, unit, userAddr }) => {
+export const placeBid = ({ bid, unit, authSig }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'bids',
             method: 'POST',
             body: JSON.stringify(bid),
-            userAddr: userAddr,
+            authSig: authSig,
             headers: { 'Content-Type': 'application/json' }
         })
             .then((resp) => {
@@ -141,12 +141,12 @@ export const placeBid = ({ bid, unit, userAddr }) => {
     })
 }
 
-const getBids = ({ userAddr, query }) => {
+const getBids = ({ authSig, query }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'bids',
             method: 'GET',
-            userAddr: userAddr,
+            authSig: authSig,
             queryParams: query
         })
             .then((resp) => {
@@ -158,31 +158,31 @@ const getBids = ({ userAddr, query }) => {
     })
 }
 
-export const getUnitBids = ({ userAddr, adUnit }) => {
+export const getUnitBids = ({ authSig, adUnit }) => {
     let query = {
         unit: adUnit
     }
 
-    return getBids({ userAddr: userAddr, query: query })
+    return getBids({ authSig: authSig, query: query })
 }
 
-export const getSlotBids = ({ userAddr, adSlot }) => {
+export const getSlotBids = ({ authSig, adSlot }) => {
     let query = {
         slot: adSlot
     }
 
-    return getBids({ userAddr: userAddr, query: query })
+    return getBids({ authSig: authSig, query: query })
 }
 
-export const getAvailableBids = ({ userAddr, sizeAndType }) => {
+export const getAvailableBids = ({ authSig, sizeAndType }) => {
     let query = {
         sizeAndType: sizeAndType
     }
 
-    return getBids({ userAddr: userAddr, query: query })
+    return getBids({ authSig: authSig, query: query })
 }
 
-export const getAuthToken = ({ userAddr } = {}) => {
+export const getAuthToken = ({ authSig } = {}) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'auth',

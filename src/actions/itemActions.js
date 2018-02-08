@@ -23,7 +23,7 @@ export function resetNewItem(item) {
 }
 
 // register item
-export function addItem(item, itemToAddTo, _addr) {
+export function addItem(item, itemToAddTo, authSig) {
     item = { ...item }
     // TODO: authentication
 
@@ -38,7 +38,7 @@ export function addItem(item, itemToAddTo, _addr) {
                     return resp.blob()
                 })
                 .then((imgBlob) => {
-                    return uploadImage({ imageBlob: imgBlob, imageName: 'image.png', userAddr: _addr })
+                    return uploadImage({ imageBlob: imgBlob, imageName: 'image.png', authSig: authSig })
                 })
                 .then((imgResp) => {
                     item._meta.img.ipfs = imgResp.ipfs
@@ -53,7 +53,7 @@ export function addItem(item, itemToAddTo, _addr) {
 
         function registerItem(item, itemToAddTo) {
 
-            regItem({ item, userAddr: _addr })
+            regItem({ item, authSig: authSig })
                 .then((item) => {
                     let registeredItem = new Models.itemClassByTypeId[item.type](item)
                     dispatch({
@@ -80,12 +80,12 @@ export function addItem(item, itemToAddTo, _addr) {
     }
 }
 
-export function deleteItem({ item, objModel, _addr } = {}) {
+export function deleteItem({ item, objModel, authSig } = {}) {
     return function (dispatch) {
         delItem({
             id: item._id,
             type: item._meta.type,
-            userAddr: item._meta.owner //TODO: use user from session
+            authSig: authSig //TODO: use user from session
         })
             .then((res) => {
                 console.log('deleteItem res', res)

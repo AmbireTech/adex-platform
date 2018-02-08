@@ -15,7 +15,7 @@ const { ItemTypesNames } = ItemsConstants
 class Items extends Component {
     componentWillMount() {
         //TODO: Decide when to load items
-        getItems({ type: this.props.itemsType, userAddr: this.props.account._addr })
+        getItems({ type: this.props.itemsType, authSig: this.props.account._authSig })
             .then((items) => {
                 items = items.map((item) => {
                     let mapped = { ...(new Models.itemClassByTypeId[item.type](item)) } // TODO: maybe new instance of item class or make sure to keep consistency with the models on the node (without using the model on the node)
