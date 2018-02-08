@@ -20,13 +20,14 @@ class AdexNodeRequester {
         }, '').join('&') || ''
     }
 
-    fetch({ route = '', queryParams, method = 'GET', body, headers = {}, userAddr, authSig = '' }) {
+    fetch({ route = '', queryParams, method = 'GET', body, headers = {}, userAddr, authSig = '', authToken }) {
         let query = this.getQuery(queryParams)
         let url = this.getUrl(BASE_URL, route, query)
 
         let hdrs = {
-            // 'useraddres': userAddr, //TEMP
-            'usersignature': authSig,
+            'X-User-Address': userAddr,
+            'X-User-Signature': authSig,
+            'X-Auth-Token': authToken,
             ...headers
         }
 
