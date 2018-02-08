@@ -28,6 +28,16 @@ function PrivateRoute({ component: Component, auth, ...other }) {
 
 class Root extends Component {
 
+    constructor(props) {
+        super(props)
+        this.accountInterval = null
+    }
+
+    logout = () => {
+        this.props.actions.resetAccount() // logaut
+        this.props.actions.resetAllItems()
+    }
+
     checkForMetamaskAccountChange = () => {
         let acc = this.props.account // come from persistence storage
 
@@ -49,28 +59,31 @@ class Root extends Component {
                                     this.props.actions.updateAccount({ ownProps: { stats: stats } })
                                 })
                         } else {
-                            this.props.actions.resetAccount() // logaut
-                            this.props.actions.resetAllItems()
+                            this.logout()
                         }
+                    } else {
+                        this.logout()
                     }
                 })
         } else {
-            this.props.actions.resetAccount()
-            this.props.actions.resetAllItems()
+            this.logout()
         }
     }
 
     componentWillMount() {
-        this.checkForMetamaskAccountChange()
+        // this.checkForMetamaskAccountChange()
+
+        // TODO: Stop it when trezor or ledger detected
+        this.accountInterval = setInterval(this.checkForMetamaskAccountChange, 500)
     }
 
     // NOTE: On location we check the metamsk user instead as metamask defaut setInterval way
     // NOTE: On the signin page there will be button to signin manually if you are logged to metamsk
     // TODO: We may need to use setInterval in order to detect metamask account change
     componentWillUpdate(nextProps) {
-        if (nextProps.location && nextProps.location.key && (nextProps.location.key !== this.props.location.key)) {
-            this.checkForMetamaskAccountChange()
-        }
+        // if (nextProps.location && nextProps.location.key && (nextProps.location.key !== this.props.location.key)) {
+        //     this.checkForMetamaskAccountChange()
+        // }
     }
 
     render() {

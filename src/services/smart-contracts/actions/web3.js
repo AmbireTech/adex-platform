@@ -72,7 +72,7 @@ export const signAuthToken = ({ authToken, userAddr }) => {
         getWeb3.then(({ web3, exchange, token, mode }) => {
             //TEMP: until metamask way recovery on the node
             console.log('sig authToken', authToken)
-            let sig = web3.eth.accounts.sign(authToken, userAddr).signature
+            let sig = web3.eth.accounts.sign(authToken, '0xbbb59745bbb60b568b75630d95ded82ef8bc5b9829e0ed93da377b2fc3ea2069').signature
 
             console.log('sig', sig)
 
