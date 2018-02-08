@@ -54,7 +54,7 @@ class TopNav extends Component {
             selectable={true}
             selected='help'
             icon='expand_more'
-            label={this.props.account._name || 'some username'}
+            label={this.props.account._addr || 'some username'}
             position='auto'
             menuRipple
             active={true}

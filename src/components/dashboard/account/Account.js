@@ -94,7 +94,7 @@ class Account extends React.Component {
                     <ListItem
                         ripple={false}
                         legend={t('ACCOUNT_ETH_BALANCE')}
-                        caption={web3Utils.fromWei(stats.balanceEth, 'ether')}
+                        caption={web3Utils.fromWei(stats.balanceEth || 0, 'ether')}
                         rightIcon={<WithdrawEth icon='' raised primary onSave={this.onSave} />}
                         // leftIcon='euro_symbol'
                         theme={theme}

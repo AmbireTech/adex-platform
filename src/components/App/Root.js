@@ -32,13 +32,12 @@ class Root extends Component {
         let acc = this.props.account // come from persistence storage
 
         if (acc) {
-            console.log('is mm')
             getAccountMetamask()
                 .then(({ addr, mode }) => {
 
-                    if (addr && acc._add && acc._authSig && acc._authMode) {
+                    if (addr && acc._addr && acc._authMode) {
                         let accSigCheck = getSig({ addr: acc._addr, mode: acc._authMode })
-                        let mmAddrSigCheck = getSig({ addr: acc._addr, mode: EXCHANGE_CONSTANTS.SIGN_TYPES.Metamask.id })
+                        let mmAddrSigCheck = getSig({ addr: addr, mode: EXCHANGE_CONSTANTS.SIGN_TYPES.Metamask.id })
 
                         if (!!mmAddrSigCheck && !!accSigCheck && (mmAddrSigCheck === accSigCheck)) {
                             return // user authenticated and not changed
