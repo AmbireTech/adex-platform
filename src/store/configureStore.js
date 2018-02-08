@@ -6,7 +6,7 @@ import history from './history'
 import { routerMiddleware } from 'react-router-redux'
 import { persistStore, persistCombineReducers, persistReducer } from 'redux-persist'
 import localStorage from 'redux-persist/es/storage'
-import session from 'redux-persist/lib/storage/session'
+// import session from 'redux-persist/lib/storage/session'
 
 const reduxRouterMiddleware = routerMiddleware(history)
 
@@ -15,10 +15,10 @@ const configStorage = {
   storage: localStorage,
 }
 
-const configSession = {
-  key: 'session',
-  storage: session,
-}
+// const configSession = {
+//   key: 'session',
+//   storage: session,
+// }
 
 // const rootReducer = combineReducers(reducers)
 

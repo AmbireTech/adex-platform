@@ -8,12 +8,11 @@ import Dashboard from 'components/dashboard/Dashboard'
 import SigninMetamask from 'components/signin/SigninMetamask'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import Translate from 'components/translate/Translate'
-import { web3, getWeb3 } from 'services/smart-contracts/ADX'
 import scActions from 'services/smart-contracts/actions'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { getSig } from 'services/auth/auth'
 
-const { getAccountMetamask, getAccountStats, getAccountStatsMetaMask } = scActions
+const { getAccountMetamask, getAccountStatsMetaMask } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
     return (

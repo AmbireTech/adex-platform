@@ -41,7 +41,7 @@ export class Campaign extends Component {
     }
 
     render() {
-        let side = this.props.match.params.side
+        // let side = this.props.match.params.side
         let item = this.props.item
         let propsUnits = { ...this.props.units }
 

@@ -3,18 +3,12 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import Dropdown from 'react-toolbox/lib/dropdown'
-import Input from 'react-toolbox/lib/input'
 import ItemHoc from './ItemHoc'
-import Img from 'components/common/img/Img'
-import { Item, AdUnit } from 'adex-models'
+import {  AdUnit } from 'adex-models'
 import theme from './theme.css'
-import { IconButton, Button } from 'react-toolbox/lib/button'
 // import UnitSlots from './UnitSlots'
 import { Tab, Tabs } from 'react-toolbox'
 import UnitTargets from './UnitTargets'
-import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
-import Tooltip from 'react-toolbox/lib/tooltip'
 import Translate from 'components/translate/Translate'
 import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
 import NewBidSteps from 'components/dashboard/forms/bids/NewBidSteps'
@@ -23,8 +17,7 @@ import { items as ItemsConstants } from 'adex-constants'
 import { BasicProps } from './ItemCommon'
 import { getUnitBids } from 'services/adex-node/actions'
 
-const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue, AdTypesByValue } = ItemsConstants
-const TooltipButton = Tooltip(Button)
+const { ItemsTypes } = ItemsConstants
 const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
 
 export class Unit extends Component {

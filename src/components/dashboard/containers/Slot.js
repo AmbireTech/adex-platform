@@ -3,24 +3,14 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { Item, AdSlot } from 'adex-models'
-import Dropdown from 'react-toolbox/lib/dropdown'
+import { AdSlot } from 'adex-models'
 import ItemHoc from './ItemHoc'
-import { Grid, Row, Col } from 'react-flexbox-grid'
-import Img from 'components/common/img/Img'
-import Input from 'react-toolbox/lib/input'
 import theme from './theme.css'
-import Autocomplete from 'react-toolbox/lib/autocomplete'
-import Slider from 'react-toolbox/lib/slider'
-import classnames from 'classnames'
-import { Tab, Tabs } from 'react-toolbox'
 import SlotBids from './SlotBids'
-import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
-import { IconButton, Button } from 'react-toolbox/lib/button'
 import { items as ItemsConstants } from 'adex-constants'
 import { BasicProps } from './ItemCommon'
 
-const { ItemsTypes, AdTypes, AdSizes } = ItemsConstants
+const { ItemsTypes } = ItemsConstants
 
 const IntegrationCode = ({ ipfs, t, size }) => {
     let src = `adview.adex.network/${ipfs}` //TODO: Set real src with config !!!

@@ -1,6 +1,6 @@
-import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
+import {  getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
-import { setWalletAndGetAddress, toHexParam, ipfsHashToHex } from 'services/smart-contracts/utils'
+import { toHexParam, ipfsHashToHex } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
 
 const GAS_LIMIT_ACCEPT_BID = 450000

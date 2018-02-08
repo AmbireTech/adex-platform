@@ -14,18 +14,15 @@ import DashboardStats from './containers/DashboardStats'
 import Unit from './containers/Unit'
 import Slot from './containers/Slot'
 import Items from './containers/Items'
-import Signin from 'components/signin/Signin'
 import {
     AdUnit as AdUnitModel,
     AdSlot as AdSlotModel,
     Campaign as CampaignModel,
-    Channel as ChannelModel,
-    Account as AccountModel
+    Channel as ChannelModel
 } from 'adex-models'
 import Account from './account/Account'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
-import { web3, getWeb3 } from 'services/smart-contracts/ADX'
 // import scActions from 'services/smart-contracts/actions'
 import { items as ItemsConstants } from 'adex-constants'
 
@@ -169,11 +166,12 @@ Dashboard.propTypes = {
 
 function mapStateToProps(state, props) {
     let persist = state.persist
-    let memory = state.memory
+    // let memory = state.memory
     let account = persist.account
     return {
         account: account,
         // TODO: temp until we decide how to handle the logged in state
+        // TODO: We do not need aut here anymore, the auth is on the root
         auth: !!account._addr
     }
 }

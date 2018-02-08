@@ -34,12 +34,12 @@ export class Channel extends Component {
     }
 
     render() {
-        let side = this.props.match.params.side;
-
+        // let side = this.props.match.params.side
+        // let t = this.props.t
         let item = this.props.item
-        let items = item._items || []
+        // let items = item._items || []
         let propsSlots = { ...this.props.slots }
-        let t = this.props.t
+        
 
         if (!item) return (<h1>'404'</h1>)
 

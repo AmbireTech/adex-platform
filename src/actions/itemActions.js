@@ -1,5 +1,4 @@
 import * as types from 'constants/actionTypes'
-import { addImgFromObjectURL, getFileIpfsHash } from 'services/ipfs/ipfsService'
 import { uploadImage, regItem, delItem, addItmToItm, removeItmFromItm } from 'services/adex-node/actions'
 import { Base, Models } from 'adex-models'
 
