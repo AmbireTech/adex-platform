@@ -39,9 +39,8 @@ class Root extends Component {
 
     checkForMetamaskAccountChange = () => {
         let acc = this.props.account // come from persistence storage
-
         //Maybe dont need it but if for some reason the store account empty is not there
-        if (acc) {
+        if (acc && this.props.location.pathname !== '/') {
             getAccountMetamask()
                 .then(({ addr, mode }) => {
                     if (addr && acc._addr && acc._authMode) {
@@ -64,16 +63,14 @@ class Root extends Component {
                         this.logout()
                     }
                 })
-        } else {
-            this.logout()
-        }
+        } 
     }
 
     componentWillMount() {
         // this.checkForMetamaskAccountChange()
 
         // TODO: Stop it when trezor or ledger detected
-        this.accountInterval = setInterval(this.checkForMetamaskAccountChange, 500)
+        this.accountInterval = setInterval(this.checkForMetamaskAccountChange, 1000)
     }
 
     // NOTE: On location we check the metamsk user instead as metamask defaut setInterval way

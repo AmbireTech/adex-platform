@@ -72,11 +72,42 @@ export const signAuthToken = ({ authToken, userAddr }) => {
         getWeb3.then(({ web3, exchange, token, mode }) => {
             //TEMP: until metamask way recovery on the node
             console.log('sig authToken', authToken)
-            let sig = web3.eth.accounts.sign(authToken, '0xbbb59745bbb60b568b75630d95ded82ef8bc5b9829e0ed93da377b2fc3ea2069').signature
+            let sig = web3.eth.accounts.sign(authToken, '0xa9212d1d1fd949a813119361f3e9bb2cf1bda7dbedbde4a75f4ed3bd93642096').signature
 
             console.log('sig', sig)
 
             return resolve(sig)
+        })
+    })
+}
+
+export const signAuthTokenMetamask = ({ userAddr }) => {
+    return new Promise((resolve, reject) => {
+        let authToken = (Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()
+        let typed = [
+            { type: 'uint', name: 'Auth token', value: authToken }
+        ]
+
+        getWeb3.then(({ web3, exchange, token, mode }) => {
+
+            // if (mode === 'metamask') {
+                web3.currentProvider.sendAsync({
+                    method: 'eth_signTypedData',
+                    params: [typed, userAddr],
+                    from: userAddr
+                }, (err, res) => {
+                    if (err) {
+                        return reject(err)
+                    }
+
+                    if (res.error) {
+                        return reject(res.error)
+                    }
+
+                    let signature = { sig_mode: mode, sig: res.result, authToken: authToken }
+                    return resolve(signature)
+                })
+            // }
         })
     })
 }

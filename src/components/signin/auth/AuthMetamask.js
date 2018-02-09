@@ -15,7 +15,7 @@ import scActions from 'services/smart-contracts/actions'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { addSig, getSig } from 'services/auth/auth'
 
-const { signAuthToken, getAccountMetamask } = scActions
+const { signAuthTokenMetamask, signAuthToken, getAccountMetamask } = scActions
 
 const RRButton = withReactRouterLink(Button)
 
@@ -31,11 +31,11 @@ class AuthMetamask extends Component {
     authOnServer = () => {
         let signature = null
         let addr = this.props.account._addr
-        let authToken = 'someAuthTOken'
-        let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Metamask.id // TEMP
+        // let authToken = 'someAuthTOken'
+        let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Metamask.id // TEMP?
 
-        signAuthToken({ userAddr: addr, authToken: authToken })
-            .then((sig) => {
+        signAuthTokenMetamask({ userAddr: addr })
+            .then(({ sig, sig_mode, authToken }) => {
                 signature = sig
                 return signToken({ userid: addr, signature: signature, authToken: authToken, mode: mode })
             })
