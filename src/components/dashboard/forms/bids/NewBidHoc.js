@@ -26,7 +26,7 @@ export default function NewBidHoc(Decorated) {
 
     save = () => {
       let bid = { ...this.props.bid }
-      this.props.actions.placeBid({ bid: bid, unit: this.props.adUnit, userAddr: this.props.account._addr })
+      this.props.actions.placeBid({ bid: bid, unit: this.props.adUnit, userAddr: this.props.account._addr, authSig: this.props.account._authSig })
 
       // TODO: fix this and make something common to use here and in NewItemsHocStep...
       // if (typeof this.props.onSave === 'function') {

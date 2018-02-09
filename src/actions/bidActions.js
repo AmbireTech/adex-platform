@@ -26,21 +26,21 @@ export function resetNewBid({ bidId }) {
 }
 
 // PERSISTENT STORAGE
-export function placeBid({ bid, slot, unit, userAddr }) {
+export function placeBid({ bid, slot, unit, userAddr, authSig }) {
     bid = { ...bid }
     let bidInst = new Bid(bid)
-    bidInst.adUnit = unit._ipfs || unit
+    bidInst.adUnit = unit._ipfs
+    bidInst.adUnitId = unit._id
     bidInst.advertiser = userAddr
 
     let typed = bidInst.typed
 
     return function (dispatch) {
-        signBid({ typed: typed, userAddr: userAddr })
+        signBid({ typed: typed, userAddr: userAddr, authSig: authSig })
             .then((sig) => {
-                bidInst.adUnit = bid.adUnit || unit._id || unit //TODO: use ipfs?
                 bidInst.signature = sig
 
-                return plsBid({ bid: bidInst.plainObj(), userAddr: userAddr })
+                return plsBid({ bid: bidInst.plainObj(), userAddr: userAddr, authSig: authSig })
             })
             .then((bid) => {
                 console.log(bid)

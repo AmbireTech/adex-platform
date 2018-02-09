@@ -1,7 +1,8 @@
-import {  getWeb3, web3Utils } from 'services/smart-contracts/ADX'
+import { getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
 import { toHexParam, ipfsHashToHex } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
+import { exchange as EXCHANGE_CONSTANTS} from 'adex-constants'
 
 const GAS_LIMIT_ACCEPT_BID = 450000
 
@@ -87,7 +88,7 @@ export const signBid = ({ typed, userAddr }) => {
             console.log('schema hash', schemaHash)
             console.log('bid hash', hash)
 
-            if (mode === 'metamask') {
+            if (mode === EXCHANGE_CONSTANTS.SIGN_TYPES.Metamask.id) {
                 web3.currentProvider.sendAsync({
                     method: 'eth_signTypedData',
                     params: [typed, userAddr],
@@ -101,7 +102,7 @@ export const signBid = ({ typed, userAddr }) => {
                         return reject(res.error)
                     }
 
-                    let signature = { sig_mode: mode, ...getRsvFromSig(res.result) }
+                    let signature = { sig_mode: mode, signature: res.result, ...getRsvFromSig(res.result) }
                     return resolve(signature)
                 })
             }
