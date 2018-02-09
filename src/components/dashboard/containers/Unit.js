@@ -35,7 +35,7 @@ export class Unit extends Component {
     }
 
     getUnitBids = () => {
-        getUnitBids({ userAddr: this.props.account._addr, adUnit: this.props.item._id })
+        getUnitBids({ authSig: this.props.account._authSig, adUnit: this.props.item._id })
             .then((bids) => {
                 // console.log('unit bids', bids)
                 // TODO: Maybe map to Bid instances?

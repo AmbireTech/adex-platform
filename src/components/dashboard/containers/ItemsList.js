@@ -104,7 +104,7 @@ class ItemsList extends Component {
                 logo={item._meta.img}
                 side={this.props.side}
                 delete={this.props.actions.confirmAction.bind(this,
-                    this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel, authSign: this.props.account._authSign }),
+                    this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel, authSig: this.props.account._authSig }),
                     null,
                     {
                         confirmLabel: 'Yes',
@@ -192,7 +192,7 @@ class ItemsList extends Component {
                         tooltipPosition='top'
                         className={RTButtonTheme.danger}
                         onClick={this.props.actions.confirmAction.bind(this,
-                            this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel, authSign: this.props.account._authSign }),
+                            this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel, authSig: this.props.account._authSig }),
                             null,
                             {
                                 confirmLabel: 'Yes',
@@ -210,7 +210,7 @@ class ItemsList extends Component {
                         tooltipPosition='top'
                         className={RTButtonTheme.danger}
                         onClick={this.props.actions.confirmAction.bind(this,
-                            this.props.actions.removeItemFromItem.bind(this, { item: item, toRemove: this.props.parentItem, authSign: this.props.account._authSign }),
+                            this.props.actions.removeItemFromItem.bind(this, { item: item, toRemove: this.props.parentItem, authSig: this.props.account._authSig }),
                             null,
                             {
                                 confirmLabel: 'Yes',
@@ -228,7 +228,7 @@ class ItemsList extends Component {
                         tooltip={'Add to ' + this.props.parentItem._name}
                         tooltipDelay={1000}
                         tooltipPosition='top'
-                        onClick={this.props.actions.addItemToItem.bind(this, { item: item, toAdd: this.props.parentItem, authSign: this.props.account._authSign })}
+                        onClick={this.props.actions.addItemToItem.bind(this, { item: item, toAdd: this.props.parentItem, authSig: this.props.account._authSig })}
                     /> : null}
             </span>
         )

@@ -53,7 +53,7 @@ export class SlotBids extends Component {
 
     componentWillMount() {
         getSlotBids({
-            authSign: this.props.account._authSign,
+            authSig: this.props.account._authSig,
             adSlot: this.props.item._id
         })
             .then((bids) => {
@@ -62,7 +62,7 @@ export class SlotBids extends Component {
             })
 
         getAvailableBids({
-            authSign: this.props.account._authSign,
+            authSig: this.props.account._authSig,
             sizeAndType: this.props.item.sizeAndType
         })
             .then((bids) => {
