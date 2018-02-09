@@ -104,7 +104,7 @@ class ItemsList extends Component {
                 logo={item._meta.img}
                 side={this.props.side}
                 delete={this.props.actions.confirmAction.bind(this,
-                    this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel }),
+                    this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel, authSign: this.props.account._authSign }),
                     null,
                     {
                         confirmLabel: 'Yes',
@@ -192,7 +192,7 @@ class ItemsList extends Component {
                         tooltipPosition='top'
                         className={RTButtonTheme.danger}
                         onClick={this.props.actions.confirmAction.bind(this,
-                            this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel }),
+                            this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel, authSign: this.props.account._authSign }),
                             null,
                             {
                                 confirmLabel: 'Yes',
@@ -210,7 +210,7 @@ class ItemsList extends Component {
                         tooltipPosition='top'
                         className={RTButtonTheme.danger}
                         onClick={this.props.actions.confirmAction.bind(this,
-                            this.props.actions.removeItemFromItem.bind(this, { item: item, toRemove: this.props.parentItem }),
+                            this.props.actions.removeItemFromItem.bind(this, { item: item, toRemove: this.props.parentItem, authSign: this.props.account._authSign }),
                             null,
                             {
                                 confirmLabel: 'Yes',
@@ -228,7 +228,7 @@ class ItemsList extends Component {
                         tooltip={'Add to ' + this.props.parentItem._name}
                         tooltipDelay={1000}
                         tooltipPosition='top'
-                        onClick={this.props.actions.addItemToItem.bind(this, { item: item, toAdd: this.props.parentItem })}
+                        onClick={this.props.actions.addItemToItem.bind(this, { item: item, toAdd: this.props.parentItem, authSign: this.props.account._authSign })}
                     /> : null}
             </span>
         )
@@ -406,7 +406,8 @@ function mapStateToProps(state, props) {
     let memory = state.memory
     return {
         rowsView: !!persist.ui[props.viewModeId],
-        side: memory.nav.side
+        side: memory.nav.side,
+        account: persist.account
     };
 }
 

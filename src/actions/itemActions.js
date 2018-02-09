@@ -62,7 +62,7 @@ export function addItem(item, itemToAddTo, authSig) {
 
                     if (itemToAddTo) {
                         // TODO: How to use addItemToItem action
-                        addItmToItm({ item: registeredItem._id, collection: itemToAddTo._id || itemToAddTo, userAddr: registeredItem._meta.owner || registeredItem.user })
+                        addItmToItm({ item: registeredItem._id, collection: itemToAddTo._id || itemToAddTo, authSig: authSig })
                             .then((res) => {
                                 return dispatch({
                                     type: types.ADD_ITEM_TO_ITEM,
@@ -102,9 +102,9 @@ export function deleteItem({ item, objModel, authSig } = {}) {
     }
 }
 
-export function removeItemFromItem({ item, toRemove } = {}) {
+export function removeItemFromItem({ item, toRemove, authSig } = {}) {
     return function (dispatch) {
-        removeItmFromItm({ item: item._id, collection: toRemove._id || toRemove, userAddr: item._meta.owner || item.user })
+        removeItmFromItm({ item: item._id, collection: toRemove._id || toRemove, authSig: authSig })
             .then((res) => {
                 return dispatch({
                     type: types.REMOVE_ITEM_FROM_ITEM,
@@ -115,9 +115,9 @@ export function removeItemFromItem({ item, toRemove } = {}) {
     }
 }
 
-export function addItemToItem({ item, toAdd } = {}) {
+export function addItemToItem({ item, toAdd, authSig } = {}) {
     return function (dispatch) {
-        addItmToItm({ item: item._id, collection: toAdd._id || toAdd, userAddr: item._meta.owner || item.user })
+        addItmToItm({ item: item._id, collection: toAdd._id || toAdd, authSig: authSig })
             .then((res) => {
                 //TODO: use response and UPDATE_ITEM
                 return dispatch({

@@ -52,14 +52,17 @@ export class SlotBids extends Component {
     }
 
     componentWillMount() {
-        getSlotBids({ userAddr: this.props.account._addr, adSlot: this.props.item._id })
+        getSlotBids({
+            authSign: this.props.account._authSign,
+            adSlot: this.props.item._id
+        })
             .then((bids) => {
                 // console.log('unit bids', bids)
                 this.setState({ bids: bids })
             })
 
         getAvailableBids({
-            userAddr: this.props.account._addr,
+            authSign: this.props.account._authSign,
             sizeAndType: this.props.item.sizeAndType
         })
             .then((bids) => {

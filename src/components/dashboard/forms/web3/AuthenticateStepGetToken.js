@@ -8,24 +8,10 @@ import actions from 'actions'
 import NewTransactionHoc from './TransactionHoc'
 // import { Grid, Row, Col } from 'react-flexbox-grid'
 // import numeral from 'numeral'
-import Input from 'react-toolbox/lib/input'
-import { Button } from 'react-toolbox/lib/button'
-import { getAuthToken } from 'services/adex-node/actions'
 
 class AuthenticateStepGetToken extends Component {
     componentWillMount() {
         this.getToken()
-    }
-
-    getToken = () => {
-        getAuthToken()
-            .then((res) => {
-                console.log('getAuthToken res', res)
-                this.props.handleChange('authToken', res)
-            })
-            .catch((err) => {
-                console.log('getAuthToken err', err)
-            })
     }
 
     render() {
