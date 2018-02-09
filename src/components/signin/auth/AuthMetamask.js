@@ -35,9 +35,9 @@ class AuthMetamask extends Component {
         let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Metamask.id // TEMP?
 
         signAuthTokenMetamask({ userAddr: addr })
-            .then(({ sig, sig_mode, authToken }) => {
+            .then(({ sig, sig_mode, authToken, typedData }) => {
                 signature = sig
-                return signToken({ userid: addr, signature: signature, authToken: authToken, mode: mode })
+                return signToken({ userid: addr, signature: signature, authToken: authToken, mode: mode, typedData: typedData })
             })
             .then((res) => {
                 // TEMP

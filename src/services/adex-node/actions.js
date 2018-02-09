@@ -197,19 +197,21 @@ export const getAuthToken = ({ authSig } = {}) => {
     })
 }
 
-export const signToken = ({ userid, signature, authToken, mode } = {}) => {
-    let query = {
+export const signToken = ({ userid, signature, authToken, mode, typedData } = {}) => {
+    let data = {
         userid: userid,
         signature: signature,
         authToken: authToken,
-        mode: mode
+        mode: mode,
+        typedData: typedData
     }
 
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'auth',
             method: 'POST',
-            queryParams: query
+            body: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' }
         })
             .then((res) => {
                 return resolve(res.text())

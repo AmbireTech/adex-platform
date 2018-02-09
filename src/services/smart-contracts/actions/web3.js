@@ -91,22 +91,24 @@ export const signAuthTokenMetamask = ({ userAddr }) => {
         getWeb3.then(({ web3, exchange, token, mode }) => {
 
             // if (mode === 'metamask') {
-                web3.currentProvider.sendAsync({
-                    method: 'eth_signTypedData',
-                    params: [typed, userAddr],
-                    from: userAddr
-                }, (err, res) => {
-                    if (err) {
-                        return reject(err)
-                    }
+            web3.currentProvider.sendAsync({
+                method: 'eth_signTypedData',
+                params: [typed, userAddr],
+                from: userAddr
+            }, (err, res) => {
+                // console.log('err', err)
+                // console.log('res', res)
+                if (err) {
+                    return reject(err)
+                }
 
-                    if (res.error) {
-                        return reject(res.error)
-                    }
+                if (res.error) {
+                    return reject(res.error)
+                }
 
-                    let signature = { sig_mode: mode, sig: res.result, authToken: authToken }
-                    return resolve(signature)
-                })
+                let signature = { sig_mode: mode, sig: res.result, authToken: authToken, typedData: typed }
+                return resolve(signature)
+            })
             // }
         })
     })
