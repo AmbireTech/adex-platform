@@ -1,0 +1,19 @@
+ .snackbar {
+    border: 3px solid;
+    border-radius: 0;
+}
+
+ .warning {
+    border-color:  #FFAB00;
+    color:  #FFAB00;
+ }
+
+.cancel {
+    border-color:  #FF5722;
+    color:  #FF5722;
+ }
+
+.accept	 {
+    border-color:  #00E676;
+    color:  #00E676;
+ }
