@@ -1,5 +1,16 @@
 import requester from './requester'
 
+const catchErrors = (res) => {
+    return new Promise((resolve, reject) => {
+        console.log('res', res)
+        if (res.status >= 200 && res.status < 400) {
+            return resolve(res)
+        } else {
+            return reject(res.statusText)
+        }
+    })
+}
+
 export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
     let formData = new FormData()
     formData.append('image', imageBlob, imageName)
@@ -11,6 +22,9 @@ export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
             body: formData,
             authSig: authSig
         })
+            .then((resp) => {
+                return catchErrors(resp)
+            })
             .then((resp) => {
                 return resolve(resp.json())
             })
@@ -30,6 +44,9 @@ export const regItem = ({ item, authSig }) => {
             headers: { 'Content-Type': 'application/json' }
         })
             .then((resp) => {
+                return catchErrors(resp)
+            })
+            .then((resp) => {
                 return resolve(resp.json())
             })
             .catch((err) => {
@@ -46,6 +63,9 @@ export const getItems = ({ type, authSig }) => {
             queryParams: { 'type': type },
             authSig: authSig
         })
+            .then((resp) => {
+                return catchErrors(resp)
+            })
             .then((resp) => {
                 return resolve(resp.json())
             })
@@ -64,6 +84,9 @@ export const delItem = ({ id, type, authSig }) => {
             authSig: authSig
         })
             .then((resp) => {
+                return catchErrors(resp)
+            })
+            .then((resp) => {
                 return resolve(resp.json())
             })
             .catch((err) => {
@@ -80,6 +103,9 @@ export const addItmToItm = ({ item, type, collection, authSig }) => {
             authSig: authSig,
             queryParams: { type: type, item: item, collection: collection },
         })
+            .then((resp) => {
+                return catchErrors(resp)
+            })
             .then((resp) => {
                 return resolve(resp.json())
             })
@@ -98,6 +124,9 @@ export const removeItmFromItm = ({ item, type, collection, authSig }) => {
             queryParams: { type: type, item: item, collection: collection },
         })
             .then((resp) => {
+                return catchErrors(resp)
+            })
+            .then((resp) => {
                 return resolve(resp.json())
             })
             .catch((err) => {
@@ -114,6 +143,9 @@ export const getCollectionItems = ({ id, authSig }) => {
             authSig: authSig,
             queryParams: { id: id },
         })
+            .then((resp) => {
+                return catchErrors(resp)
+            })
             .then((resp) => {
                 return resolve(resp.json())
             })
@@ -133,6 +165,9 @@ export const placeBid = ({ bid, unit, authSig }) => {
             headers: { 'Content-Type': 'application/json' }
         })
             .then((resp) => {
+                return catchErrors(resp)
+            })
+            .then((resp) => {
                 return resolve(resp.json())
             })
             .catch((err) => {
@@ -149,6 +184,9 @@ const getBids = ({ authSig, query }) => {
             authSig: authSig,
             queryParams: query
         })
+            .then((resp) => {
+                return catchErrors(resp)
+            })
             .then((resp) => {
                 return resolve(resp.json())
             })
@@ -188,6 +226,9 @@ export const getAuthToken = ({ authSig } = {}) => {
             route: 'auth',
             method: 'GET'
         })
+            .then((resp) => {
+                return catchErrors(resp)
+            })
             .then((res) => {
                 return resolve(res.text())
             })
@@ -213,6 +254,9 @@ export const signToken = ({ userid, signature, authToken, mode, typedData } = {}
             body: JSON.stringify(data),
             headers: { 'Content-Type': 'application/json' }
         })
+            .then((resp) => {
+                return catchErrors(resp)
+            })
             .then((res) => {
                 return resolve(res.text())
             })
