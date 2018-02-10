@@ -1,6 +1,7 @@
 import * as types from 'constants/actionTypes'
 import { uploadImage, regItem, delItem, addItmToItm, removeItmFromItm } from 'services/adex-node/actions'
 import { Base, Models } from 'adex-models'
+import { addActionToast } from './uiActions'
 
 export function updateNewItem(item, newValues) {
     item = Base.updateObject({ item: item, newValues: newValues, objModel: Models.itemClassByTypeId[item._type || item._meta.type] })
@@ -44,7 +45,7 @@ export function addItem(item, itemToAddTo, authSig) {
                     registerItem(item, itemToAddTo)
                 })
                 .catch((err) => {
-                    console.log('fetch tempUrl err', err)
+                    return addActionToast({dispatch: dispatch, type:'warning', action: 'X', label: err, timeout: 5000 })
                 })
         } else {
             registerItem(item, itemToAddTo)
@@ -73,7 +74,7 @@ export function addItem(item, itemToAddTo, authSig) {
                     }
                 })
                 .catch((err) => {
-                    console.log('registerItem err', err)
+                    return  addActionToast({dispatch: dispatch, type:'warning', action: 'X', label: err, timeout: 5000 })                    
                 })
         }
     }

@@ -23,6 +23,9 @@ class Items extends Component {
                 })
                 this.props.actions.updateItems({ items: items, itemsType: this.props.itemsType })
             })
+            .catch((err)=> {
+                this.props.actions.addToast({ type:'warning', action: 'X', label: err, timeout: 5000})
+            })
     }
 
     render() {

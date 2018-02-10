@@ -29,6 +29,13 @@ export function addToast({ type, action, label = '', timeout = false }) {
     }
 }
 
+export function addActionToast({ dispatch, type, action, label = '', timeout = false }) {
+    dispatch({
+        type: types.ADD_TOAST,
+        toast: { type: type, action: action, label, timeout: timeout }
+    })
+}
+
 export function removeToast(toastId) {
     return function (dispatch) {
         return dispatch({

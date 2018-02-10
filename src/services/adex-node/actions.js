@@ -6,7 +6,10 @@ const catchErrors = (res) => {
         if (res.status >= 200 && res.status < 400) {
             return resolve(res)
         } else {
-            return reject(res.statusText)
+            res.text()
+            .then((err)=>{
+                return reject(res.statusText + ' - ' + err )
+            })           
         }
     })
 }
