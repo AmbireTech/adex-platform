@@ -20,11 +20,6 @@ import { getSlotBids, getAvailableBids } from 'services/adex-node/actions'
 import { Item } from 'adex-models'
 import { items as ItemsConstants } from 'adex-constants'
 import { AcceptBid } from 'components/dashboard/forms/web3/transactions'
-import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
-import AcceptBidSteps from 'components/dashboard/forms/bids/AcceptBidSteps'
-
-const BidFormWithDialog = NewItemWithDialog(AcceptBidSteps)
-
 const { ItemsTypes } = ItemsConstants
 
 const BidStateNames = exchange.BidStatesLabels
