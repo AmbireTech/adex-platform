@@ -74,7 +74,7 @@ export class Toast extends Component {
             <Snackbar
                 action={toast.action}
                 active={this.state.active}
-                label={<this.label type={toast.type} label={toast.label} />}
+                label={<this.label type={toast.type} label={(toast.label || '').toString()} />}
                 timeout={toast.timeout || 0}
                 onClick={this.close.bind(this, toast.id)}
                 onTimeout={this.close.bind(this, toast.id)}
