@@ -5,6 +5,7 @@ import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialo
 import ApproveStep from './ApproveStep'
 import WithdrawStep from './WithdrawStep'
 import AuthenticateStepGetToken from './AuthenticateStepGetToken'
+import AcceptBidStep from './AcceptBid'
 import scActions from 'services/smart-contracts/actions'
 import { signToken } from 'services/adex-node/actions'
 
@@ -78,12 +79,12 @@ export const WithdrawAdx = (props) =>
 
 export const AcceptBid = (props) =>
     < TransactionsStepsWithDialog
-        {...props }
+        {...props}
         btnLabel="ACCEPT_BID"
         saveBtnLabel='ACCEPT_BID_SAVE_BTN'
         title="ACCEPT_BID_TITLE"
         trId={'accept_bid_slot_' + props.slotId + '_bid_' + props.bidId}
-        trPages={[{ title: 'ACCEPT_BID_STEP', page: (pr) => (<strong> test </strong>) }]}
+        trPages={[{ title: 'ACCEPT_BID_STEP', page: AcceptBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return acceptBid(
                 {

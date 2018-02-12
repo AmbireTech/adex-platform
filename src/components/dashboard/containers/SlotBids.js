@@ -19,7 +19,7 @@ import Translate from 'components/translate/Translate'
 import { getSlotBids, getAvailableBids } from 'services/adex-node/actions'
 import { Item } from 'adex-models'
 import { items as ItemsConstants } from 'adex-constants'
-// import { AcceptBid } from 'components/dashboard/forms/web3/transactions'
+import { AcceptBid } from 'components/dashboard/forms/web3/transactions'
 import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
 import AcceptBidSteps from 'components/dashboard/forms/bids/AcceptBidSteps'
 
@@ -162,11 +162,12 @@ export class SlotBids extends Component {
                 </TableCell>
                 <TableCell> {moment.duration(bid._timeout, 'ms').humanize()} </TableCell>
                 <TableCell>
-                    <BidFormWithDialog btnLabel='ACCEPT_BID'
-                        title={this.props.t('ACCEPT_BID_FOR', { args: [] })}
+                    <AcceptBid
                         icon='check'
                         adUnitId={bid._adUnitId}
-                        bidId={this.props.item._id + bid._id}
+                        slotId={this.props.item._id}
+                        bidId={bid._id}
+                        placedBid={bid}
                         raised
                         primary
                         onSave={this.onSave}
