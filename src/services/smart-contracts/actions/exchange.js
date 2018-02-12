@@ -15,25 +15,41 @@ export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _ti
 
         getWeb3.then(({ web3, exchange, token }) => {
 
-
             let start = Date.now()
 
             _opened = Date.now()
+            _adunit = ipfsHashToHex(_adunit)
+            _adslot = ipfsHashToHex(_adslot)
+
+            console.log('_advertiser', _advertiser)
+            console.log('_adunit', _adunit)
+            console.log('_opened', _opened)
+            console.log('_target', _target)
+            console.log('_amount', _amount)
+            console.log('_timeout', _timeout)
+            console.log('_adslot', _adslot)
+            console.log('v', v)
+            console.log('r', r)
+            console.log('s', s)
+            console.log('sigMode', sigMode)
+            console.log('_addr', _addr)
+            console.log('gas', gas)
+            console.log('exchange.methods', exchange.methods)
 
             exchange.methods.acceptBid(
                 _advertiser,
-                ipfsHashToHex(_adunit),
-                toHexParam(_opened),
-                toHexParam(_target),
-                toHexParam(_amount),
-                toHexParam(_timeout),
-                ipfsHashToHex(_adslot),
-                toHexParam(v),
-                toHexParam(r),
-                toHexParam(s),
-                toHexParam(sigMode)
+                _adunit,
+                _opened.toString(),
+                _target.toString(),
+                _amount.toString(),
+                _timeout.toString(),
+                _adslot,
+                '0x' + v.toString(16),
+                r,
+                s,
+                sigMode.toString()
             )
-                .send({ from: _addr, gas: gas || GAS_LIMIT_ACCEPT_BID, gasPrice: GAS_PRICE })
+                .send({ from: _addr, gas: gas || GAS_LIMIT_ACCEPT_BID })
                 .on('transactionHash', (hash) => {
                     let end = Date.now()
                     logTime('trHshEnd', start, end)
@@ -55,10 +71,9 @@ export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _ti
                 .on('error', (err) => {
                     let end = Date.now()
                     logTime('error', start, end)
-                    console.log('acceptBid err', err)
+                    // console.log('acceptBid err', err)
                     reject(err)
                 })
-
         })
     })
 }

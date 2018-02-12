@@ -21,8 +21,8 @@ export default function bidsReducer(state = initialState.bids, action) {
             newBidsById[newBid._id] = newBid
             // TODO: check if this bids exist before push
             newBidsIds = [...newBidsIds, newBid._id]
-            newBidsByAdslot[newBid._adSlot] = [...(newBidsByAdslot[newBid._adSlot] || []), newBid._id]
-            newBidsByAdunit[newBid._adUnit] = [...(newBidsByAdunit[newBid._adUnit] || []), newBid._id]
+            newBidsByAdslot[newBid._adSlotId] = [...(newBidsByAdslot[newBid._adSlotId] || []), newBid._id]
+            newBidsByAdunit[newBid._adUnitId] = [...(newBidsByAdunit[newBid._adUnitId] || []), newBid._id]
 
             newState.bidsById = newBidsById
             newState.bidsIds = newBidsIds
