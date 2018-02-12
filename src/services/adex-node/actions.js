@@ -58,6 +58,25 @@ export const regItem = ({ item, authSig }) => {
     })
 }
 
+export const getItem = ({ id, authSig }) => {
+    return new Promise((resolve, reject) => {
+        requester.fetch({
+            route: 'items/' + id,
+            method: 'GET',
+            authSig: authSig
+        })
+            .then((resp) => {
+                return catchErrors(resp)
+            })
+            .then((resp) => {
+                return resolve(resp.json())
+            })
+            .catch((err) => {
+                return reject(err)
+            })
+    })
+}
+
 export const getItems = ({ type, authSig }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
@@ -77,6 +96,7 @@ export const getItems = ({ type, authSig }) => {
             })
     })
 }
+
 
 export const delItem = ({ id, type, authSig }) => {
     return new Promise((resolve, reject) => {

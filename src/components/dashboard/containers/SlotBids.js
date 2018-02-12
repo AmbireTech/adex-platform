@@ -19,7 +19,11 @@ import Translate from 'components/translate/Translate'
 import { getSlotBids, getAvailableBids } from 'services/adex-node/actions'
 import { Item } from 'adex-models'
 import { items as ItemsConstants } from 'adex-constants'
-import { AcceptBid } from 'components/dashboard/forms/web3/transactions'
+// import { AcceptBid } from 'components/dashboard/forms/web3/transactions'
+import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
+import AcceptBidSteps from 'components/dashboard/forms/bids/AcceptBidSteps'
+
+const BidFormWithDialog = NewItemWithDialog(AcceptBidSteps)
 
 const { ItemsTypes } = ItemsConstants
 
@@ -154,10 +158,20 @@ export class SlotBids extends Component {
                 <TableCell> {bid._advertiser} </TableCell>
                 <TableCell>
                     {/*TODO: link to the meta or popup on click and the get tha meta or accept bid dialog whic will have the adunit meta info*/}
-                    {bid._adUnit}
+                    <a target='_blank' href={Item.getIpfsMetaUrl(bid._adUnit)} > {bid._adUnit} </a>
                 </TableCell>
                 <TableCell> {moment.duration(bid._timeout, 'ms').humanize()} </TableCell>
-                <TableCell> <AcceptBid icon='check' raised primary onSave={this.onSave} /></TableCell>
+                <TableCell>
+                    <BidFormWithDialog btnLabel='ACCEPT_BID'
+                        title={this.props.t('ACCEPT_BID_FOR', { args: [] })}
+                        icon='check'
+                        adUnitId={bid._adUnitId}
+                        bidId={this.props.item._id + bid._id}
+                        raised
+                        primary
+                        onSave={this.onSave}
+                    />
+                </TableCell>
             </TableRow >
         )
     }
