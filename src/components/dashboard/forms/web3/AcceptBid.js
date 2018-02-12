@@ -19,6 +19,8 @@ class AcceptBid extends Component {
             .then((unit) => {
                 this.props.handleChange('unit', unit)
                 this.props.handleChange('placedBid', this.props.placedBid)
+                this.props.handleChange('slot', this.props.slot)
+                this.props.handleChange('account', this.props.acc)
             })
     }
 

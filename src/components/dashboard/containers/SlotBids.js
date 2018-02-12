@@ -163,6 +163,8 @@ export class SlotBids extends Component {
                         slotId={this.props.item._id}
                         bidId={bid._id}
                         placedBid={bid}
+                        slot={this.props.item}
+                        acc={this.props.account}
                         raised
                         primary
                         onSave={this.onSave}

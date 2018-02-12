@@ -2,7 +2,7 @@ import { getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
 import { toHexParam, ipfsHashToHex } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
-import { exchange as EXCHANGE_CONSTANTS} from 'adex-constants'
+import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 
 const GAS_LIMIT_ACCEPT_BID = 450000
 
@@ -10,13 +10,15 @@ const logTime = (msg, start, end) => {
     console.log(msg + ' ' + (end - start) + ' ms')
 }
 
-export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _timeout = DEFAULT_TIMEOUT, _adslot, v, r, s, _addr, gas, gasPrice }) => {
+export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _timeout = DEFAULT_TIMEOUT, _adslot, v, r, s, sigMode, _addr, gas, gasPrice }) => {
     return new Promise((resolve, reject) => {
 
         getWeb3.then(({ web3, exchange, token }) => {
 
 
             let start = Date.now()
+
+            _opened = Date.now()
 
             exchange.methods.acceptBid(
                 _advertiser,
@@ -28,7 +30,8 @@ export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _ti
                 ipfsHashToHex(_adslot),
                 toHexParam(v),
                 toHexParam(r),
-                toHexParam(s)
+                toHexParam(s),
+                toHexParam(sigMode)
             )
                 .send({ from: _addr, gas: gas || GAS_LIMIT_ACCEPT_BID, gasPrice: GAS_PRICE })
                 .on('transactionHash', (hash) => {
