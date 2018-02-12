@@ -61,7 +61,7 @@ export class Toast extends Component {
         }
 
         return (
-            <span><FontIcon value={icon} style={{ verticalAlign: 'bottom', marginRight: 10 }} /> {label} </span>
+            <span><FontIcon value={icon} style={{ verticalAlign: 'bottom', marginRight: 10 }} /> <strong> {label} </strong> </span>
         )
     }
 
