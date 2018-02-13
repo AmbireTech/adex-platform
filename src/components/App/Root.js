@@ -43,7 +43,7 @@ class Root extends Component {
         if (acc && this.props.location.pathname !== '/') {
             getAccountMetamask()
                 .then(({ addr, mode }) => {
-                    if (addr && acc._addr && acc._authMode) {
+                    if (addr && acc._addr && acc._authMode !== undefined) {
                         let accSigCheck = getSig({ addr: acc._addr, mode: acc._authMode })
                         let mmAddrSigCheck = getSig({ addr: addr, mode: EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id })
                         if (!!mmAddrSigCheck && !!accSigCheck && (mmAddrSigCheck === accSigCheck)) {
@@ -104,7 +104,7 @@ function mapStateToProps(state) {
     // let memory = state.memory
     return {
         account: account,
-        auth: !!account._addr && !!account._authSig && !!account._authMode
+        auth: !!account._addr && !!account._authSig && account._authMode !== undefined
     }
 }
 

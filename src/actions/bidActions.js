@@ -33,10 +33,8 @@ export function placeBid({ bid, slot, unit, userAddr, authSig }) {
     bidInst.adUnitId = unit._id
     bidInst.advertiser = userAddr
 
-    let typed = bidInst.typed
-
     return function (dispatch) {
-        signBid({ typed: typed, userAddr: userAddr, authSig: authSig })
+        signBid({ userAddr: userAddr, authSig: authSig, bid: bidInst })
             .then((sig) => {
                 bidInst.signature = sig
 

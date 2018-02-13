@@ -92,7 +92,7 @@ export const AcceptBid = (props) =>
                 {
                     _advertiser: transaction.placedBid._advertiser,
                     _adunit: transaction.placedBid._adUnit,
-                    _opened: transaction._opened,
+                    _opened: transaction.placedBid._opened,
                     _target: transaction.placedBid._target,
                     _amount: transaction.placedBid._amount,
                     _timeout: transaction.placedBid._timeout,
