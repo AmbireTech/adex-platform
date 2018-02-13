@@ -32,7 +32,7 @@ const getWeb3 = new Promise(function (resolve, reject) {
 		if (typeof web3 !== 'undefined') {
 			// Use Mist/MetaMask's provider.
 			web3 = new Web3(web3.currentProvider)
-			mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Metamask.id // Currently only metamask
+			mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id // Currently only metamask
 
 			console.log('web3.currentProvider', web3.currentProvider)
 			console.log('Injected web3 detected.')

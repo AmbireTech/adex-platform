@@ -45,7 +45,7 @@ class Root extends Component {
                 .then(({ addr, mode }) => {
                     if (addr && acc._addr && acc._authMode) {
                         let accSigCheck = getSig({ addr: acc._addr, mode: acc._authMode })
-                        let mmAddrSigCheck = getSig({ addr: addr, mode: EXCHANGE_CONSTANTS.SIGN_TYPES.Metamask.id })
+                        let mmAddrSigCheck = getSig({ addr: addr, mode: EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id })
                         if (!!mmAddrSigCheck && !!accSigCheck && (mmAddrSigCheck === accSigCheck)) {
                             return // user authenticated and not changed
                         } else if ((addr !== acc._addr) && !!mmAddrSigCheck) {

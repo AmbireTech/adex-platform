@@ -25,7 +25,7 @@ const logTime = (msg, start, end) => {
     console.log(msg + ' ' + (end - start) + ' ms')
 }
 
-export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _timeout = DEFAULT_TIMEOUT, _adslot, v, r, s, sigMode, _addr, gas, gasPrice }) => {
+export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _timeout = DEFAULT_TIMEOUT, _adslot, v, r, s, sigMode, _addr, gas, gasPrice, bidHash }) => {
     return new Promise((resolve, reject) => {
 
         getWeb3.then(({ web3, exchange, token }) => {
@@ -50,16 +50,17 @@ export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _ti
             console.log('_addr', _addr)
             console.log('gas', gas)
             console.log('exchange.methods', exchange.methods)
+            console.log('bidHash',bidHash)
             //	function didSign(address addr, bytes32 hash, uint8 v, bytes32 r, bytes32 s, uint8 mode)
 
             //	function getBidID(address _advertiser, bytes32 _adunit, uint _opened, uint _target, uint _amount, uint _timeout)
             exchange.methods.getBidID(_advertiser, _adunit, _opened.toString(), _target.toString(), _amount.toString(), _timeout.toString())
-            .call(function(err, res) {
-                console.log(res)
-                exchange.methods.didSign(_advertiser, res, '0x' + v.toString(16), r, s, '0x0').call(function(err, res) {
-                    console.log('didSign', err, res)
+                .call(function (err, res) {
+                    console.log(res)
+                    exchange.methods.didSign(_advertiser, res, '0x' + v.toString(16), r, s, '0').call(function (err, res) {
+                        console.log('didSign', err, res)
+                    })
                 })
-            })
 
             exchange.methods.acceptBid(
                 _advertiser,
@@ -128,10 +129,11 @@ export const signBid = ({ typed, userAddr }) => {
             let hash = web3Utils.soliditySha3(schemaHash, valuesHash)
 
             // DEBUG
+            console.log('schema', schema)
             console.log('schema hash', schemaHash)
             console.log('bid hash', hash)
 
-            if (mode === EXCHANGE_CONSTANTS.SIGN_TYPES.Metamask.id) {
+            if (mode === EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id) {
                 web3.currentProvider.sendAsync({
                     method: 'eth_signTypedData',
                     params: [typed, userAddr],
@@ -145,7 +147,7 @@ export const signBid = ({ typed, userAddr }) => {
                         return reject(res.error)
                     }
 
-                    let signature = { sig_mode: mode, signature: res.result, ...getRsvFromSig(res.result) }
+                    let signature = { sig_mode: mode, signature: res.result, hash: hash, ...getRsvFromSig(res.result) }
                     return resolve(signature)
                 })
             }
@@ -184,7 +186,7 @@ export const depositToExchange = ({ amountToDeposit, _addr, gas }) => {
 
     return new Promise((resolve, reject) => {
         getWeb3.then(({ web3, exchange, token, mode }) => {
-            var p 
+            var p
             token.methods
                 .allowance(_addr, cfg.addr.exchange)
                 .call()

@@ -90,7 +90,6 @@ export const signAuthTokenMetamask = ({ userAddr }) => {
 
         getWeb3.then(({ web3, exchange, token, mode }) => {
 
-            // if (mode === 'metamask') {
             web3.currentProvider.sendAsync({
                 method: 'eth_signTypedData',
                 params: [typed, userAddr],

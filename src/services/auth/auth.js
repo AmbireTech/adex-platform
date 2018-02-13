@@ -1,5 +1,5 @@
 export const addSig = ({ addr, sig, mode }) => {
-    if (!addr || !sig || !mode) {
+    if (!addr || !sig || mode === null || mode === undefined || mode === '' ) {
         throw new Error('addSig - all args are required')
     }
 

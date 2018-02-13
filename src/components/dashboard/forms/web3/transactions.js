@@ -103,7 +103,8 @@ export const AcceptBid = (props) =>
                     sigMode: transaction.placedBid._signature.sig_mode,
                     _addr: transaction.account._addr,
                     gas: transaction.gas,
-                    gasPrice: transaction._gasPrice
+                    gasPrice: transaction._gasPrice,
+                    bidHash: transaction.placedBid._signature.hash
                 })
         }}
         estimateGasFn={() => 100000}

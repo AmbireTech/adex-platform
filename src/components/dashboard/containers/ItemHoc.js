@@ -40,7 +40,7 @@ export default function ItemHoc(Decorated) {
             let item = this.props.items[itemId]
             let prevItem = prevProps.items[itemId]
 
-            if (item._meta.modifiedOn !== prevItem._meta.modifiedOn) {
+            if ((item._meta.modifiedOn && prevItem._meta.modifiedOn) && (item._meta.modifiedOn !== prevItem._meta.modifiedOn)) {
                 this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], false)
                 this.setState({ activeFields: {}, dirtyProps: [] })
             }

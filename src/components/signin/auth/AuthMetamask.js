@@ -32,7 +32,7 @@ class AuthMetamask extends Component {
         let signature = null
         let addr = this.props.account._addr
         // let authToken = 'someAuthTOken'
-        let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Metamask.id // TEMP?
+        let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id // TEMP?
 
         signAuthTokenMetamask({ userAddr: addr })
             .then(({ sig, sig_mode, authToken, typedData }) => {
