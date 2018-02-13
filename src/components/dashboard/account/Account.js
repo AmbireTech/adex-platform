@@ -65,6 +65,7 @@ class Account extends React.Component {
         let stats = account._stats || {}
         let t = this.props.t
         let allowance = ((stats.allowance || 0) / MULT) + ''
+        stats.exchangeBalance = stats.exchangeBalance || {}
 
         if (!stats) {
             return null
