@@ -62,7 +62,7 @@ class Account extends React.Component {
 
     render() {
         let account = this.props.account
-        let stats = account._stats || {}
+        let stats = { ...account._stats } || {}
         let t = this.props.t
         let allowance = ((stats.allowance || 0) / MULT) + ''
         stats.exchangeBalance = stats.exchangeBalance || {}

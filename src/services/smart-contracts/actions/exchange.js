@@ -25,64 +25,29 @@ const logTime = (msg, start, end) => {
     console.log(msg + ' ' + (end - start) + ' ms')
 }
 
-export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _timeout = DEFAULT_TIMEOUT, _adslot, v, r, s, sigMode, _addr, gas, gasPrice, bidHash }) => {
+export const acceptBid = ({ placedBid: { _advertiser, _adUnit, _opened, _target, _amount, _timeout = DEFAULT_TIMEOUT, _signature: { v, r, s, sig_mode } },
+    _adSlot, _addr, gas, gasPrice, bidHash } = {}) => {
     return new Promise((resolve, reject) => {
 
         getWeb3.then(({ web3, exchange, token }) => {
 
             let start = Date.now()
 
-            // _opened = Date.now()
-            _adunit = ipfsHashToHex(_adunit)
-            _adslot = ipfsHashToHex(_adslot)
-
-            console.log('_advertiser', _advertiser)
-            console.log('_adunit', _adunit)
-            console.log('_opened', _opened)
-            console.log('_target', _target)
-            console.log('_amount', _amount)
-            console.log('_timeout', _timeout)
-            console.log('_adslot', _adslot)
-            console.log('v', v)
-            console.log('r', r)
-            console.log('s', s)
-            console.log('sigMode', sigMode)
-            console.log('_addr', _addr)
-            console.log('gas', gas)
-            console.log('exchange.methods', exchange.methods)
-            console.log('bidHash', bidHash)
-            //	function didSign(address addr, bytes32 hash, uint8 v, bytes32 r, bytes32 s, uint8 mode)
-
-            exchange.methods.SCHEMA_HASH().call(function (err, res) {
-                console.log('SCHEMA_HASH', err, res)
-            })
-
-            //	function getBidID(address _advertiser, bytes32 _adunit, uint _opened, uint _target, uint _amount, uint _timeout)
-            console.log(_advertiser, _adunit, _opened.toString(), _target.toString(), _amount.toString(), _timeout.toString())
-            exchange.methods.getBidID(_advertiser, _adunit, _opened.toString(), _target.toString(), _amount.toString(), _timeout.toString())
-                .call(function (err, res) {
-                    console.log(res)
-                    exchange.methods.didSign(_advertiser, res, '0x' + v.toString(16), r, s, '0').call(function (err, res) {
-                        console.log('didSign', err, res)
-                    })
-
-
-
-                })
-
+            _adUnit = ipfsHashToHex(_adUnit)
+            _adSlot = ipfsHashToHex(_adSlot)
 
             exchange.methods.acceptBid(
                 _advertiser,
-                _adunit,
+                _adUnit,
                 _opened.toString(),
                 _target.toString(),
                 _amount.toString(),
                 _timeout.toString(),
-                _adslot,
+                _adSlot,
                 '0x' + v.toString(16),
                 r,
                 s,
-                (0).toString()
+                (sig_mode).toString()
             )
                 .send({ from: _addr, gas: gas || GAS_LIMIT_ACCEPT_BID })
                 .on('transactionHash', (hash) => {
@@ -128,10 +93,8 @@ export const signBid = ({ userAddr, bid }) => {
         getWeb3.then(({ cfg, web3, exchange, token, mode }) => {
             bid.exchangeAddr = cfg.addr.exchange
 
-            console.log('bid', bid)
-
             let typed = bid.typed
-            
+
             let values = typed.map((entry) => {
                 return entry.value.toString().toLowerCase()
             })
@@ -142,19 +105,6 @@ export const signBid = ({ userAddr, bid }) => {
 
             let hash = web3Utils.soliditySha3(schemaHash, valuesHash)
 
-            console.log('schema', schema)
-            console.log('schema hash', schemaHash)
-            console.log('bid hash', hash)
-
-            //	function getBidID(address _advertiser, bytes32 _adunit, uint _opened, uint _target, uint _amount, uint _timeout)
-            console.log(values[0], values[1], values[2], values[3], values[4], values[5])
-            exchange.methods.getBidID(values[0], values[1], values[2], values[3], values[4], values[5])
-            .call(function (err, res) {
-                console.log('fromSC', res)
-
-            })
-
-                        
             if (mode === EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id) {
                 web3.currentProvider.sendAsync({
                     method: 'eth_signTypedData',
@@ -169,6 +119,7 @@ export const signBid = ({ userAddr, bid }) => {
                         return reject(res.error)
                     }
 
+                    //TODO: do it with the Bid model
                     let signature = { sig_mode: mode, signature: res.result, hash: hash, ...getRsvFromSig(res.result) }
                     return resolve(signature)
                 })

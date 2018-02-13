@@ -37,10 +37,12 @@ export default function ItemHoc(Decorated) {
 
         componentDidUpdate(prevProps, prevState) {
             let itemId = this.props.match.params.itemId
-            let item = this.props.items[itemId]
-            let prevItem = prevProps.items[itemId]
+            let item = this.props.items[itemId] || {}
+            let meta = item._meta
+            let prevItem = prevProps.items[itemId] || {}
+            let prevMeta = prevItem._meta
 
-            if ((item._meta.modifiedOn && prevItem._meta.modifiedOn) && (item._meta.modifiedOn !== prevItem._meta.modifiedOn)) {
+            if ((meta && prevMeta) && (meta.modifiedOn !== prevMeta.modifiedOn)) {
                 this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], false)
                 this.setState({ activeFields: {}, dirtyProps: [] })
             }

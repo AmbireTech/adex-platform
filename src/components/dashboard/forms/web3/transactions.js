@@ -90,17 +90,8 @@ export const AcceptBid = (props) =>
         saveFn={({ acc, transaction } = {}) => {
             return acceptBid(
                 {
-                    _advertiser: transaction.placedBid._advertiser,
-                    _adunit: transaction.placedBid._adUnit,
-                    _opened: transaction.placedBid._opened,
-                    _target: transaction.placedBid._target,
-                    _amount: transaction.placedBid._amount,
-                    _timeout: transaction.placedBid._timeout,
-                    _adslot: transaction.slot._ipfs,
-                    v: transaction.placedBid._signature.v,
-                    r: transaction.placedBid._signature.r,
-                    s: transaction.placedBid._signature.s,
-                    sigMode: transaction.placedBid._signature.sig_mode,
+                    placedBid: transaction.placedBid,
+                    _adSlot: transaction.slot._ipfs,
                     _addr: transaction.account._addr,
                     gas: transaction.gas,
                     gasPrice: transaction._gasPrice,
