@@ -253,7 +253,7 @@ export const getAuthToken = ({ authSig } = {}) => {
                 return catchErrors(resp)
             })
             .then((res) => {
-                return resolve(res.text())
+                return resolve(res.json())
             })
             .catch((err) => {
                 return reject(err)
@@ -281,7 +281,7 @@ export const signToken = ({ userid, signature, authToken, mode, typedData } = {}
                 return catchErrors(resp)
             })
             .then((res) => {
-                return resolve(res.text())
+                return resolve(res.json())
             })
             .catch((err) => {
                 return reject(err)

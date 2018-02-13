@@ -43,8 +43,8 @@ class AuthMetamask extends Component {
                 // TEMP
                 // TODO: keep it here or make it on login?
                 // TODO: catch
-                if (res === 'OK') {
-                    addSig({ addr: addr, sig: signature, mode: mode })
+                if (res.status === 'OK') {
+                    addSig({ addr: addr, sig: signature, mode: mode, expiryTime: res.expiryTime })
 
                     this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: signature } })
                 } else {

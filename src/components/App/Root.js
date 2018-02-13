@@ -63,7 +63,7 @@ class Root extends Component {
                         this.logout()
                     }
                 })
-        } 
+        }
     }
 
     componentWillMount() {
