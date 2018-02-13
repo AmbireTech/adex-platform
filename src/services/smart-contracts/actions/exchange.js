@@ -1,10 +1,25 @@
-import { getWeb3, web3Utils } from 'services/smart-contracts/ADX'
+import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
 import { toHexParam, ipfsHashToHex } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 
+
 const GAS_LIMIT_ACCEPT_BID = 450000
+const GAS_LIMIT_APPROVE_0_WHEN_NO_0 = 65136 + 1
+const GAS_LIMIT_APPROVE_OVER_0_WHEN_0 = 65821 + 1
+
+const toBN = web3Utils.toBN
+
+const getHexAdx = (amountStr, noMultiply) => {
+    let am = toBN(amountStr)
+    if (!noMultiply) {
+        am = am.mul(toBN(MULT))
+    }
+    let amHex = web3Utils.toHex(am)
+    return amHex
+}
+
 
 const logTime = (msg, start, end) => {
     console.log(msg + ' ' + (end - start) + ' ms')
@@ -35,6 +50,16 @@ export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _ti
             console.log('_addr', _addr)
             console.log('gas', gas)
             console.log('exchange.methods', exchange.methods)
+            //	function didSign(address addr, bytes32 hash, uint8 v, bytes32 r, bytes32 s, uint8 mode)
+
+            //	function getBidID(address _advertiser, bytes32 _adunit, uint _opened, uint _target, uint _amount, uint _timeout)
+            exchange.methods.getBidID(_advertiser, _adunit, _opened.toString(), _target.toString(), _amount.toString(), _timeout.toString())
+            .call(function(err, res) {
+                console.log(res)
+                exchange.methods.didSign(_advertiser, res, '0x' + v.toString(16), r, s, '0x0').call(function(err, res) {
+                    console.log('didSign', err, res)
+                })
+            })
 
             exchange.methods.acceptBid(
                 _advertiser,
@@ -47,7 +72,7 @@ export const acceptBid = ({ _advertiser, _adunit, _opened, _target, _amount, _ti
                 '0x' + v.toString(16),
                 r,
                 s,
-                sigMode.toString()
+                (0).toString()
             )
                 .send({ from: _addr, gas: gas || GAS_LIMIT_ACCEPT_BID })
                 .on('transactionHash', (hash) => {
@@ -124,6 +149,68 @@ export const signBid = ({ typed, userAddr }) => {
                     return resolve(signature)
                 })
             }
+        })
+    })
+}
+
+function approveTokens({ token, _addr, exchangeAddr, amount, gas }) {
+    return new Promise((resolve, reject) => {
+        token.methods.approve(cfg.addr.exchange, amount)
+            .send({ from: _addr, gas: gas })
+            .on('transactionHash', (hash) => {
+                resolve()
+            })
+            .on('error', (err) => {
+                reject(err)
+            })
+    })
+}
+
+function sendDeposit({ exchange, _addr, amount, gas }) {
+    return new Promise((resolve, reject) => {
+        exchange.methods.deposit(amount)
+            .send({ from: _addr, gas: gas })
+            .on('transactionHash', (hash) => {
+                resolve()
+            })
+            .on('error', (err) => {
+                reject(err)
+            })
+    })
+}
+
+export const depositToExchange = ({ amountToDeposit, _addr, gas }) => {
+    let amount = getHexAdx(amountToDeposit)
+
+    return new Promise((resolve, reject) => {
+        getWeb3.then(({ web3, exchange, token, mode }) => {
+            var p 
+            token.methods
+                .allowance(_addr, cfg.addr.exchange)
+                .call()
+                .then((allowance) => {
+                    if (parseInt(allowance, 10) !== 0) {
+                        p = approveTokens({ token: token, _addr: _addr, exchangeAddr: cfg.addr.exchange, amount: getHexAdx(0), gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0 })
+                            .then(() => {
+                                approveTokens({ token: token, _addr: _addr, exchangeAddr: cfg.addr.exchange, amount: amount, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 })
+                            })
+
+                    } else {
+                        p = approveTokens({ token: token, _addr: _addr, exchangeAddr: cfg.addr.exchange, amount: amount, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 })
+                    }
+
+                    return p.then(() => {
+                        return sendDeposit({ exchange: exchange, _addr: _addr, amount: amount, gas: 60000 })
+                    })
+                })
+                .then((result) => {
+                    console.log('depositToExchange result ', result)
+                    return resolve(result)
+                })
+                .catch((err) => {
+                    console.log('token approve err', err)
+                    reject(err)
+                })
         })
     })
 }

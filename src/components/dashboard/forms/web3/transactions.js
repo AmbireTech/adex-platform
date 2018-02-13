@@ -4,6 +4,7 @@ import TransactionsSteps from './TransactionsSteps'
 import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
 import ApproveStep from './ApproveStep'
 import WithdrawStep from './WithdrawStep'
+import DepositToExchange from './DepositToExchange'
 import AuthenticateStepGetToken from './AuthenticateStepGetToken'
 import AcceptBidStep from './AcceptBid'
 import scActions from 'services/smart-contracts/actions'
@@ -17,7 +18,8 @@ const {
     withdrawAdxEstimateGas,
     withdrawEthEstimateGas,
     acceptBid,
-    signAuthToken
+    signAuthToken,
+    depositToExchange
 } = scActions
 
 const TransactionsStepsWithDialog = NewItemWithDialog(TransactionsSteps)
@@ -134,5 +136,18 @@ export const Authenticate = (props) =>
                         return resolve('OK')
                     })
             })
+        }}
+    />
+
+export const Deposit = (props) =>
+    <TransactionsStepsWithDialog
+        {...props}
+        btnLabel="ACCOUNT_DEPOSIT_TO_EXCHANGE_BTN"
+        saveBtnLabel='ACCOUNT_DEPOSIT_TO_EXCHANGE_SAVE_BTN'
+        title="ACCOUNT_DEPOSIT_TO_EXCHANGE_TITLE"
+        trId='deposit'
+        trPages={[{ title: 'ACCOUNT_DEPOSIT_TO_EXCHANGE_STEP', page: DepositToExchange }]}
+        saveFn={({ acc, transaction } = {}) => {
+            return depositToExchange({ _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
         }}
     />
