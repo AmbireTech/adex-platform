@@ -54,6 +54,7 @@ class AuthMetamask extends Component {
     }
 
     // TODO: Make it some common function if needed or make timeout as metamask way 
+    // TODO: Keep signature expire time, and check again on the node for session 
     checkMetamask = () => {
         getAccountMetamask()
             .then(({ addr, mode }) => {

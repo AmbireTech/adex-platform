@@ -67,17 +67,20 @@ export const getAccountStats = ({ _addr }) => {
             let balanceEth = web3.eth.getBalance(_addr)
             let balanceAdx = token.methods.balanceOf(_addr).call()
             let allowance = token.methods.allowance(_addr, cfg.addr.exchange).call()
+            let exchangeBalance = exchange.methods.getBalance(_addr).call()
 
-            let all = [balanceEth, balanceAdx, allowance]
+            let all = [balanceEth, balanceAdx, allowance, exchangeBalance]
 
             Promise.all(all)
-                .then(([balEth, balAdx, allow,]) => {
+                .then(([balEth, balAdx, allow, exchBal]) => {
 
                     let accStats =
                         {
+
                             balanceEth: balEth,
                             balanceAdx: balAdx,
-                            allowance: allow
+                            allowance: allow,
+                            exchangeBalance: exchBal
                         }
 
                     console.log('accStats', accStats)
@@ -103,17 +106,19 @@ export const getAccountStatsMetaMask = () => {
                 let balanceEth = web3.eth.getBalance(_addr)
                 let balanceAdx = token.methods.balanceOf(_addr).call()
                 let allowance = token.methods.allowance(_addr, cfg.addr.exchange).call()
+                let exchangeBalance = exchange.methods.getBalance(_addr).call()
 
-                let all = [balanceEth, balanceAdx, allowance]
+                let all = [balanceEth, balanceAdx, allowance, exchangeBalance]
 
                 Promise.all(all)
-                    .then(([balEth, balAdx, allow,]) => {
+                    .then(([balEth, balAdx, allow, exchBal]) => {
 
                         let accStats =
                             {
                                 balanceEth: balEth,
                                 balanceAdx: balAdx,
-                                allowance: allow
+                                allowance: allow,
+                                exchangeBalance: exchBal
                             }
 
                         console.log('accStats', accStats)
