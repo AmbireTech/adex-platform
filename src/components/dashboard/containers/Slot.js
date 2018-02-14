@@ -9,16 +9,29 @@ import theme from './theme.css'
 import SlotBids from './SlotBids'
 import { items as ItemsConstants } from 'adex-constants'
 import { BasicProps } from './ItemCommon'
+import Helper from 'helpers/miscHelpers'
 
 const { ItemsTypes } = ItemsConstants
 
-const IntegrationCode = ({ ipfs, t, size }) => {
-    let src = `adview.adex.network/${ipfs}` //TODO: Set real src with config !!!
+const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs }) => {
+
     let sizes = size.split('x')
     sizes = {
         width: sizes[0],
         height: sizes[1]
     }
+
+    let queryParmas = {
+        width: sizes.width,
+        height: sizes.height,
+        slotId: slotId,
+        slotIpfs: slotIpfs
+    }
+
+    let query = Helper.getQuery(queryParmas)
+
+    let src = `http://localhost:15900${query}` //TODO: Set real src with config !!!
+
     let iframeStr =
         `<iframe src="${src}"\n` +
         `   width="${sizes.width}"\n` +
@@ -35,6 +48,11 @@ const IntegrationCode = ({ ipfs, t, size }) => {
             <pre className={theme.integrationCode}>
                 {iframeStr}
             </pre>
+            <div>
+                <br />
+                <div className={theme.integrationLabel}> {t('AD_PREVIEW')}</div>
+                <div dangerouslySetInnerHTML={{ __html: iframeStr }} />
+            </div>
         </div>
     )
 }
@@ -49,7 +67,11 @@ export class Slot extends Component {
 
         return (
             <div>
-                <BasicProps item={item} t={t} rightComponent={<IntegrationCode ipfs={item.ipfs} size={item.sizeTxtValue} t={t} />} />
+                <BasicProps
+                    item={item}
+                    t={t}
+                    rightComponent={<IntegrationCode ipfs={item.ipfs} size={item.sizeTxtValue} t={t} slotId={item.id} slotIpfs={item.ipfs} />}
+                />
                 <div>
                     <SlotBids {...this.props} item={item} t={t} />
                 </div>

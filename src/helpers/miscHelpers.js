@@ -78,6 +78,13 @@ class Helper {
 
         return `rgba(${r},${g},${b},${alpha})`
     }
+
+    getQuery(queryParams) {
+        if (!queryParams) return ''
+        return '?' + Object.keys(queryParams).map((key) => {
+            return encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key])
+        }, '').join('&') || ''
+    }
 }
 
 export default new Helper()
