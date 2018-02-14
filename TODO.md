@@ -1,5 +1,6 @@
-- auth token expire time
-- deposit to exchange
+- auth token expire time - done
+- deposit to exchange - done
 - withdraw from exchange
-- accept bids
+- accept bids - done
 - cancel bids
+- verify bids 

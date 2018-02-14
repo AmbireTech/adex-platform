@@ -12,7 +12,7 @@ import { web3Utils } from 'services/smart-contracts/ADX'
 import { MULT } from 'services/smart-contracts/constants'
 // import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 // import Input from 'react-toolbox/lib/input'
-import { Authenticate, Approve, WithdrawEth, WithdrawAdx, Deposit } from 'components/dashboard/forms/web3/transactions'
+import { WithdrawEth, WithdrawAdx, Deposit } from 'components/dashboard/forms/web3/transactions'
 import { List, ListItem, ListSubHeader, ListDivider } from 'react-toolbox/lib/list'
 
 import scActions from 'services/smart-contracts/actions'
@@ -76,15 +76,6 @@ class Account extends React.Component {
                 <List selectable={false} ripple={false}>
                     <ListItem
                         ripple={false}
-                        legend={t('ACCOUNT_NAME')}
-                        caption={stats.acc ? stats.acc._name : 'No name'}
-                        rightIcon={<Authenticate icon='' raised accent onSave={this.onSave} />}
-                        // leftIcon='account_box'
-                        theme={theme}
-                    />
-                    <ListDivider />
-                    <ListItem
-                        ripple={false}
                         legend={t('ACCOUNT_ETH_ADDR')}
                         caption={account._addr}
                         rightIcon='content_copy'
@@ -128,23 +119,6 @@ class Account extends React.Component {
                         theme={theme}
                     />
                     <ListDivider />
-                    <ListItem
-                        ripple={false}
-                        legend={t('ACCOUNT_ADX_ALLOWANCE')}
-                        caption={allowance}
-                        rightIcon={<Approve
-                            icon=''
-                            raised
-                            accent
-                            onSave={this.onSave}
-                            currentAllowance={allowance}
-                            previewMsgs={[t('ACCOUNT_APPROVE_MSG', { args: [allowance] })]}
-                        />
-                        }
-                        // leftIcon='check'
-                        theme={theme}
-                    />
-
                 </List>
             </div>
         )
