@@ -72,9 +72,11 @@ address@1.0.2, address@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/address/-/address-1.0.2.tgz#480081e82b587ba319459fef512f516fe03d58af"
 
-"adex-constants@git+https://git@github.com/AdExBlockchain/adex-constants.git#342db0a3523c80f0c9764d5ea967a8e388b5341a":
+"adex-constants@git+https://git@github.com/AdExBlockchain/adex-constants.git#880d522940d502b5e99267dfb9368bebe1e4de9c":
   version "1.0.0"
-  resolved "git+https://git@github.com/AdExBlockchain/adex-constants.git#342db0a3523c80f0c9764d5ea967a8e388b5341a"
+  resolved "git+https://git@github.com/AdExBlockchain/adex-constants.git#880d522940d502b5e99267dfb9368bebe1e4de9c"
+  dependencies:
+    country-data "^0.0.31"
 
 "adex-constants@git+https://git@github.com/AdExBlockchain/adex-constants.git#c5b73cae61f4ca0dd96f81fbffa67019aa100a16":
   version "1.0.0"
@@ -82,16 +84,16 @@ address@1.0.2, address@^1.0.1:
   dependencies:
     country-data "^0.0.31"
 
-"adex-models@git+https://git@github.com/AdExBlockchain/adex-models.git#4ca252d74435bc4ceda06ef017ebb73ba7792f22":
+"adex-models@git+https://git@github.com/AdExBlockchain/adex-models.git#80a7c07082098e75227e7ce44fc455121334b555":
   version "1.0.0"
-  resolved "git+https://git@github.com/AdExBlockchain/adex-models.git#4ca252d74435bc4ceda06ef017ebb73ba7792f22"
+  resolved "git+https://git@github.com/AdExBlockchain/adex-models.git#80a7c07082098e75227e7ce44fc455121334b555"
   dependencies:
-    adex-constants "git+https://git@github.com/AdExBlockchain/adex-constants.git#342db0a3523c80f0c9764d5ea967a8e388b5341a"
+    adex-constants "git+https://git@github.com/AdExBlockchain/adex-constants.git#c5b73cae61f4ca0dd96f81fbffa67019aa100a16"
     bs58 "^4.0.1"
 
-"adex-translations@git+https://git@github.com/AdExBlockchain/adex-translations.git#d0bd6977386aa6d2e9ad58fb6d3d1af341212f18":
+"adex-translations@git+https://git@github.com/AdExBlockchain/adex-translations.git#272dfa8a4be6148e3344ef5418081ffa1f439a7b":
   version "0.0.1"
-  resolved "git+https://git@github.com/AdExBlockchain/adex-translations.git#d0bd6977386aa6d2e9ad58fb6d3d1af341212f18"
+  resolved "git+https://git@github.com/AdExBlockchain/adex-translations.git#272dfa8a4be6148e3344ef5418081ffa1f439a7b"
 
 ajv-keywords@^1.0.0:
   version "1.5.1"
