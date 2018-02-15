@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import NewItemHoc from './NewItemHocStep'
 import Dropdown from 'react-toolbox/lib/dropdown'
-// import Input from 'react-toolbox/lib/input'
+import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
 import ImgForm from './../ImgForm'
 import { Grid, Row, Col } from 'react-flexbox-grid'
@@ -13,7 +13,7 @@ import theme from './../theme.css'
 // import { validUrl } from 'helpers/validators'
 import { items as ItemsConstants } from 'adex-constants'
 
-const { ItemsTypes, AdTypes, AdSizes  } = ItemsConstants
+const { ItemsTypes, AdTypes, AdSizes, ItemTypesNames } = ItemsConstants
 
 class NewSlotForm extends Component {
 
@@ -41,6 +41,40 @@ class NewSlotForm extends Component {
                                     value={item.size + ''}
                                     label={t('size', { isProp: true })}
                                 />
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col sm={12}>
+                                <Input
+                                    type='text'
+                                    required
+                                    label={ItemTypesNames[item._type] + ' ' + this.props.t('fallbackImageUrl', { isProp: true })}
+                                    name='fallbackImageUrl'
+                                    value={item.fallbackImageUrl}
+                                    onChange={this.props.handleChange.bind(this, 'fallbackImageUrl')}
+                                    // onBlur={this.validateName.bind(this, item.fullName, true)}
+                                    // onFocus={this.validateName.bind(this, item.fullName, false)}
+                                    // error={errFullName && !!errFullName.dirty ?
+                                    //     <span> {errFullName.errMsg} </span> : null}
+                                    maxLength={128} >
+                                    {/* {this.props.nameHelperTxt && errFullName.dirty ?
+                                    <div>
+                                        {this.props.nameHelperTxt}
+                                    </div> : null} */}
+                                </Input>
+                            </Col>
+                            <Col sm={12}>
+                                <Input
+                                    type='text'
+                                    label={t('fallbackAdUrl', { isProp: true })}
+                                    value={item.fallbackAdUrl}
+                                    onChange={this.props.handleChange.bind(this, 'fallbackAdUrl')}
+                                    maxLength={1024} >
+                                    {/* {this.props.descriptionHelperTxt ?
+                                    <div>
+                                        {this.props.descriptionHelperTxt}
+                                    </div> : null} */}
+                                </Input>
                             </Col>
                         </Row>
                     </Grid>
