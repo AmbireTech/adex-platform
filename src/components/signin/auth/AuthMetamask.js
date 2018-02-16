@@ -28,6 +28,10 @@ class AuthMetamask extends Component {
         }
     }
 
+    componentDidMount() {
+        this.checkMetamask()
+    }
+
     authOnServer = () => {
         let signature = null
         let addr = this.props.account._addr
