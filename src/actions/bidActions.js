@@ -37,7 +37,7 @@ export function placeBid({ bid, slot, unit, userAddr, authSig }) {
         signBid({ userAddr: userAddr, authSig: authSig, bid: bidInst })
             .then((sig) => {
                 bidInst.signature = sig
-                bidInst.contractId = sig.hash
+                bidInst._id = sig.hash
 
                 return plsBid({ bid: bidInst.plainObj(), userAddr: userAddr, authSig: authSig })
             })

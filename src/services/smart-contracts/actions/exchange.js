@@ -87,43 +87,78 @@ const getRsvFromSig = (sig) => {
 
     return { r: r, s: s, v: v }
 }
+// NOTE: works with typed data in format {type: 'solidity data type', name: 'string (label)', value: 'preferable string'} 
+const getTypedDataHash = ({ typedData }) => {
+    let values = typedData.map((entry) => {
+        return entry.value // ? .toString().toLowerCase()
+    })
+    let valuesHash = web3Utils.soliditySha3.apply(null, values)
+
+    let schema = typedData.map((entry) => { return entry.type + ' ' + entry.name })
+    let schemaHash = web3Utils.soliditySha3.apply(null, schema)
+
+    let hash = web3Utils.soliditySha3(schemaHash, valuesHash)
+
+    return hash
+}
+
+// gets the hash (bid id) from adex exchange contract
+const getAdexExchangeBidHash = ({ exchange, typedData }) => {
+    return new Promise((resolve, reject) => {
+        // getBidID(address _advertiser, bytes32 _adunit, uint _opened, uint _target, uint _amount, uint _timeout)
+        exchange.methods.getBidID(typedData[0].value, typedData[1].value, typedData[2].value, typedData[3].value, typedData[4].value, typedData[5].value)
+            .call()
+            .then((scHash) => {
+                return resolve(scHash)
+            })
+            .catch((err) => {
+                return reject(err)
+            })
+    })
+}
 
 export const signBid = ({ userAddr, bid }) => {
     return new Promise((resolve, reject) => {
         getWeb3.then(({ cfg, web3, exchange, token, mode }) => {
-            bid.exchangeAddr = cfg.addr.exchange
+            //NOTE: We need to set the exchangeAddr because it is needed for the hash
+            bid.exchangeAddr = cfg.addr.exchange //Need bid instance
 
             let typed = bid.typed
 
-            let values = typed.map((entry) => {
-                return entry.value.toString().toLowerCase()
-            })
-            let valuesHash = web3Utils.soliditySha3.apply(null, values)
+            let hash = getTypedDataHash({ typedData: typed })
 
-            let schema = typed.map((entry) => { return entry.type + ' ' + entry.name })
-            let schemaHash = web3Utils.soliditySha3.apply(null, schema)
-
-            let hash = web3Utils.soliditySha3(schemaHash, valuesHash)
-
-            if (mode === EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id) {
-                web3.currentProvider.sendAsync({
-                    method: 'eth_signTypedData',
-                    params: [typed, userAddr],
-                    from: userAddr
-                }, (err, res) => {
-                    if (err) {
-                        return reject(err)
+            getAdexExchangeBidHash({ exchange: exchange, typedData: typed })
+                .then((scHash) => {
+                    if (scHash === hash) {
+                        return hash
+                    } else {
+                        throw new Error('Error calculated hash does not match exchange id  ')
                     }
-
-                    if (res.error) {
-                        return reject(res.error)
-                    }
-
-                    //TODO: do it with the Bid model
-                    let signature = { sig_mode: mode, signature: res.result, hash: hash, ...getRsvFromSig(res.result) }
-                    return resolve(signature)
                 })
-            }
+                .then((checkedHash) => {
+                    if (mode === EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id) {
+                        web3.currentProvider.sendAsync({
+                            method: 'eth_signTypedData',
+                            params: [typed, userAddr],
+                            from: userAddr
+                        }, (err, res) => {
+                            if (err) {
+                                throw new Error(err)
+                            }
+
+                            if (res.error) {
+                                throw new Error(res.error)
+                            }
+
+                            //TODO: do it with the Bid model
+                            let signature = { sig_mode: mode, signature: res.result, hash: checkedHash, ...getRsvFromSig(res.result) }
+                            return resolve(signature)
+                        })
+                    }
+                })
+                .catch((err) => {
+                    return reject(err)
+                })
         })
     })
 }
