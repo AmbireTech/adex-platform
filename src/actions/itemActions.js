@@ -42,10 +42,11 @@ export function addItem(item, itemToAddTo, authSig) {
                 })
                 .then((imgResp) => {
                     item._meta.img.ipfs = imgResp.ipfs
+                    delete item._meta.img.tempUrl
                     registerItem(item, itemToAddTo)
                 })
                 .catch((err) => {
-                    return addActionToast({dispatch: dispatch, type:'warning', action: 'X', label: err, timeout: 5000 })
+                    return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label: err, timeout: 5000 })
                 })
         } else {
             registerItem(item, itemToAddTo)
@@ -74,7 +75,7 @@ export function addItem(item, itemToAddTo, authSig) {
                     }
                 })
                 .catch((err) => {
-                    return  addActionToast({dispatch: dispatch, type:'warning', action: 'X', label: err, timeout: 5000 })                    
+                    return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label: err, timeout: 5000 })
                 })
         }
     }
