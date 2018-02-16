@@ -84,9 +84,9 @@ address@1.0.2, address@^1.0.1:
   dependencies:
     country-data "^0.0.31"
 
-"adex-models@git+https://git@github.com/AdExBlockchain/adex-models.git#ebe619f49ce19ccfdbba44d794807b96ca64448a":
+"adex-models@git+https://git@github.com/AdExBlockchain/adex-models.git#87bbebddd37a8448dc429249196fa6bb02da6330":
   version "1.0.0"
-  resolved "git+https://git@github.com/AdExBlockchain/adex-models.git#ebe619f49ce19ccfdbba44d794807b96ca64448a"
+  resolved "git+https://git@github.com/AdExBlockchain/adex-models.git#87bbebddd37a8448dc429249196fa6bb02da6330"
   dependencies:
     adex-constants "git+https://git@github.com/AdExBlockchain/adex-constants.git#c5b73cae61f4ca0dd96f81fbffa67019aa100a16"
     bs58 "^4.0.1"
