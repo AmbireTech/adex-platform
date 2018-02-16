@@ -25,78 +25,110 @@ const logTime = (msg, start, end) => {
     console.log(msg + ' ' + (end - start) + ' ms')
 }
 
-export const acceptBid = ({ placedBid: { _advertiser, _adUnit, _opened, _target, _amount, _timeout = DEFAULT_TIMEOUT, _signature: { v, r, s, sig_mode } },
-    _adSlot, _addr, gas, gasPrice, bidHash } = {}) => {
+export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout = DEFAULT_TIMEOUT, _signature: { v, r, s, sig_mode } },
+    _adSlot, _addr, gas, gasPrice } = {}) => {
     return new Promise((resolve, reject) => {
 
-        getWeb3.then(({ web3, exchange, token }) => {
+        getWeb3
+            .then(({ web3, exchange, token }) => {
 
-            let start = Date.now()
+                let start = Date.now()
 
-            _adUnit = ipfsHashToHex(_adUnit)
-            _adSlot = ipfsHashToHex(_adSlot)
-            _opened = _opened.toString()
-            _target = _target.toString()
-            _amount = _amount.toString()
-            _timeout = _timeout.toString()
-            v = '0x' + v.toString(16)
-            sig_mode = (sig_mode).toString()
+                _adUnit = ipfsHashToHex(_adUnit)
+                _adSlot = ipfsHashToHex(_adSlot)
+                _opened = _opened.toString() // TODO validate - max 365 day in seconds (60 * 60 * 24 * 365)
+                _target = _target.toString()
+                _amount = _amount.toString()
+                _timeout = _timeout.toString()
+                v = '0x' + v.toString(16)
+                sig_mode = (sig_mode).toString()
 
-            exchange.methods.didSign(
-                _advertiser,
-                bidHash,
-                v,
-                r,
-                s,
-                sig_mode
-            )
-                .call()
-                .then((didSign) => {
-                    console.log('didSign', didSign)
-                    if (!didSign) {
-                        return reject('didSign err')
-                    }
+                // TODO: Maybe we dont need to check didSign and getBidID
+                exchange.methods.didSign(
+                    _advertiser,
+                    _id,
+                    v,
+                    r,
+                    s,
+                    sig_mode
+                )
+                    .call()
+                    .then((didSign) => {
+                        return exchange.methods.getBidID(_advertiser, _adUnit, _opened, _target, _amount, _timeout)
+                            .call()
 
-                    exchange.methods.acceptBid(
-                        _advertiser,
-                        _adUnit,
-                        _opened,
-                        _target,
-                        _amount,
-                        _timeout,
-                        _adSlot,
-                        v,
-                        r,
-                        s,
-                        sig_mode
-                    )
-                        .send({ from: _addr, gas: gas || GAS_LIMIT_ACCEPT_BID })
-                        .on('transactionHash', (hash) => {
-                            let end = Date.now()
-                            logTime('trHshEnd', start, end)
-                            // console.log('registerItem transactionHash', hash)
-                        })
-                        .on('confirmation', (confirmationNumber, receipt) => {
-                            let end = Date.now()
-                            logTime('confirmation', start, end)
-                            console.log('acceptBid confirmation confirmationNumber', confirmationNumber)
-                            console.log('acceptBid confirmation receipt', receipt)
+                    })
+                    .then((idCheck) => {
+                        console.log('idCheck', idCheck)
+                        console.log('_id', _id)
+                        if (idCheck !== _id) {
+                            return reject('idChecked err')
+                        }
+                    })
+                    .then(() => {
+                        return exchange.methods.acceptBid(
+                            _advertiser,
+                            _adUnit,
+                            _opened,
+                            _target,
+                            _amount,
+                            _timeout,
+                            _adSlot,
+                            v,
+                            r,
+                            s,
+                            sig_mode
+                        )
+                            .estimateGas({ from: _addr })
 
-                            resolve(receipt)
-                        })
-                        .on('receipt', (receipt) => {
-                            let end = Date.now()
-                            logTime('receipt', start, end)
-                            console.log('acceptBid receipt', receipt)
-                        })
-                        .on('error', (err) => {
-                            let end = Date.now()
-                            logTime('error', start, end)
-                            // console.log('acceptBid err', err)
-                            reject(err)
-                        })
-                })
-        })
+                    })
+                    .then((estimatedGas) => {
+                        // console.log('estimatedGas', estimatedGas)
+
+                        exchange.methods.acceptBid(
+                            _advertiser,
+                            _adUnit,
+                            _opened,
+                            _target,
+                            _amount,
+                            _timeout,
+                            _adSlot,
+                            v,
+                            r,
+                            s,
+                            sig_mode
+                        )
+                            .send({ from: _addr, gas: estimatedGas })
+                            .on('transactionHash', (hash) => {
+                                let end = Date.now()
+                                logTime('trHshEnd', start, end)
+                                // console.log('registerItem transactionHash', hash)
+                            })
+                            .on('confirmation', (confirmationNumber, receipt) => {
+                                let end = Date.now()
+                                logTime('confirmation', start, end)
+                                console.log('acceptBid confirmation confirmationNumber', confirmationNumber)
+                                console.log('acceptBid confirmation receipt', receipt)
+
+                                if (receipt.status === '0x1') {
+                                    resolve(receipt)
+                                } else {
+                                    reject(receipt)
+                                }
+                            })
+                            .on('receipt', (receipt) => {
+                                let end = Date.now()
+                                logTime('receipt', start, end)
+                                console.log('acceptBid receipt', receipt)
+                            })
+                            .on('error', (err) => {
+                                let end = Date.now()
+                                logTime('error', start, end)
+                                // console.log('acceptBid err', err)
+                                reject(err)
+                            })
+                    })
+            })
     })
 }
 
