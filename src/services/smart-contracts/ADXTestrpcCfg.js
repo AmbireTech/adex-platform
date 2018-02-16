@@ -5,9 +5,9 @@
 */
 // ropsten
 export const testrpcCfg = {
-    node: '//127.0.0.1:8545/',
+    node: 'https://ropsten.infura.io/metamask',
     addr: {
         token: '0xD06632e3916776e781d66A7A08ffBb77271742F7',
-        exchange: '0x18d08c0e62523cD613F16d1ba9Eb98666Aeb45E8',
+        exchange: '0x6387622BD50fDDDA242384e34CF4CD45F535a2eF',
     }
 }

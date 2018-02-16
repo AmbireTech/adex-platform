@@ -35,44 +35,66 @@ export const acceptBid = ({ placedBid: { _advertiser, _adUnit, _opened, _target,
 
             _adUnit = ipfsHashToHex(_adUnit)
             _adSlot = ipfsHashToHex(_adSlot)
+            _opened = _opened.toString()
+            _target = _target.toString()
+            _amount = _amount.toString()
+            _timeout = _timeout.toString()
+            v = '0x' + v.toString(16)
+            sig_mode = (sig_mode).toString()
 
-            exchange.methods.acceptBid(
+            exchange.methods.didSign(
                 _advertiser,
-                _adUnit,
-                _opened.toString(),
-                _target.toString(),
-                _amount.toString(),
-                _timeout.toString(),
-                _adSlot,
-                '0x' + v.toString(16),
+                bidHash,
+                v,
                 r,
                 s,
-                (sig_mode).toString()
+                sig_mode
             )
-                .send({ from: _addr, gas: gas || GAS_LIMIT_ACCEPT_BID })
-                .on('transactionHash', (hash) => {
-                    let end = Date.now()
-                    logTime('trHshEnd', start, end)
-                    // console.log('registerItem transactionHash', hash)
-                })
-                .on('confirmation', (confirmationNumber, receipt) => {
-                    let end = Date.now()
-                    logTime('confirmation', start, end)
-                    console.log('acceptBid confirmation confirmationNumber', confirmationNumber)
-                    console.log('acceptBid confirmation receipt', receipt)
+                .call()
+                .then((didSign) => {
+                    console.log('didSign', didSign)
+                    if (!didSign) {
+                        return reject('didSign err')
+                    }
 
-                    resolve(receipt)
-                })
-                .on('receipt', (receipt) => {
-                    let end = Date.now()
-                    logTime('receipt', start, end)
-                    console.log('acceptBid receipt', receipt)
-                })
-                .on('error', (err) => {
-                    let end = Date.now()
-                    logTime('error', start, end)
-                    // console.log('acceptBid err', err)
-                    reject(err)
+                    exchange.methods.acceptBid(
+                        _advertiser,
+                        _adUnit,
+                        _opened,
+                        _target,
+                        _amount,
+                        _timeout,
+                        _adSlot,
+                        v,
+                        r,
+                        s,
+                        sig_mode
+                    )
+                        .send({ from: _addr, gas: gas || GAS_LIMIT_ACCEPT_BID })
+                        .on('transactionHash', (hash) => {
+                            let end = Date.now()
+                            logTime('trHshEnd', start, end)
+                            // console.log('registerItem transactionHash', hash)
+                        })
+                        .on('confirmation', (confirmationNumber, receipt) => {
+                            let end = Date.now()
+                            logTime('confirmation', start, end)
+                            console.log('acceptBid confirmation confirmationNumber', confirmationNumber)
+                            console.log('acceptBid confirmation receipt', receipt)
+
+                            resolve(receipt)
+                        })
+                        .on('receipt', (receipt) => {
+                            let end = Date.now()
+                            logTime('receipt', start, end)
+                            console.log('acceptBid receipt', receipt)
+                        })
+                        .on('error', (err) => {
+                            let end = Date.now()
+                            logTime('error', start, end)
+                            // console.log('acceptBid err', err)
+                            reject(err)
+                        })
                 })
         })
     })
