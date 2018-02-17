@@ -102,6 +102,7 @@ export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
                             .on('transactionHash', (hash) => {
                                 let end = Date.now()
                                 logTime('trHshEnd', start, end)
+                                resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Accepted.id, trHash: hash })
                                 // console.log('registerItem transactionHash', hash)
                             })
                             .on('confirmation', (confirmationNumber, receipt) => {

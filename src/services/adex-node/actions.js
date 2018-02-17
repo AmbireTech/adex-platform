@@ -7,9 +7,9 @@ const catchErrors = (res) => {
             return resolve(res)
         } else {
             res.text()
-            .then((err)=>{
-                return reject(res.statusText + ' - ' + err )
-            })           
+                .then((err) => {
+                    return reject(res.statusText + ' - ' + err)
+                })
         }
     })
 }
@@ -282,6 +282,29 @@ export const signToken = ({ userid, signature, authToken, mode, typedData } = {}
             })
             .then((res) => {
                 return resolve(res.json())
+            })
+            .catch((err) => {
+                return reject(err)
+            })
+    })
+}
+
+export const sendBidState = ({ bidId, state, trHash, authSig }) => {
+    let query = {
+        bidId: bidId, state: state, trHash: trHash,
+    }
+    return new Promise((resolve, reject) => {
+        requester.fetch({
+            route: 'bid-state',
+            method: 'POST',
+            queryParams: query,
+            authSig: authSig
+        })
+            .then((resp) => {
+                return catchErrors(resp)
+            })
+            .then((resp) => {
+                return resolve(resp.json())
             })
             .catch((err) => {
                 return reject(err)

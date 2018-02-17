@@ -4,3 +4,5 @@
 - accept bids - done
 - cancel bids
 - verify bids 
+- handle error
+- add translations

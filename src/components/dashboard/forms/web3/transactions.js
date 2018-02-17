@@ -8,7 +8,7 @@ import DepositToExchange from './DepositToExchange'
 import AuthenticateStepGetToken from './AuthenticateStepGetToken'
 import AcceptBidStep from './AcceptBid'
 import scActions from 'services/smart-contracts/actions'
-import { signToken } from 'services/adex-node/actions'
+import { signToken, sendBidState } from 'services/adex-node/actions'
 
 const {
     getAccountStats,
@@ -88,14 +88,23 @@ export const AcceptBid = (props) =>
         trId={'accept_bid_slot_' + props.slotId + '_bid_' + props.bidId}
         trPages={[{ title: 'ACCEPT_BID_STEP', page: AcceptBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
-            return acceptBid(
-                {
-                    placedBid: transaction.placedBid,
-                    _adSlot: transaction.slot._ipfs,
-                    _addr: transaction.account._addr,
-                    gas: transaction.gas,
-                    gasPrice: transaction._gasPrice
-                })
+            return new Promise((resolve, reject) => {
+                acceptBid(
+                    {
+                        placedBid: transaction.placedBid,
+                        _adSlot: transaction.slot._ipfs,
+                        _addr: transaction.account._addr,
+                        gas: transaction.gas,
+                        gasPrice: transaction._gasPrice
+                    })
+                    .then((res) => {
+                        return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+                    })
+                    .catch((err) => {
+                        console.log('AcceptBid err', err)
+                        //TODO: handle errors
+                    })
+            })
         }}
         estimateGasFn={() => 100000}
     />
