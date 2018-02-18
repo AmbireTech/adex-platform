@@ -19,10 +19,6 @@ const getHexAdx = (amountStr, noMultiply) => {
     return amHex
 }
 
-const logTime = (msg, start, end) => {
-    console.log(msg + ' ' + (end - start) + ' ms')
-}
-
 const checkBidIdAndSign = ({ exchange, _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, v, r, s, sig_mode }) => {
     return new Promise((resolve, reject) => {
         exchange.methods
@@ -48,18 +44,17 @@ const checkBidIdAndSign = ({ exchange, _id, _advertiser, _adUnit, _opened, _targ
     })
 }
 
-export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } },
-    _adSlot, _addr, gas, gasPrice } = {}) => {
+export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } }, _adSlot, _addr, gas, gasPrice } = {}) => {
     return new Promise((resolve, reject) => {
 
         getWeb3
             .then(({ web3, exchange, token }) => {
-
-                let start = Date.now()
-
+                /* TODO: Maybe we should keep _adUnit and _adSlot as it is on the contract (in 32 bytes hex)
+                *   and decode it in the ui when needed
+                * */
                 _adUnit = ipfsHashToHex(_adUnit)
                 _adSlot = ipfsHashToHex(_adSlot)
-                _opened = _opened.toString() // TODO validate - max 365 day in seconds (60 * 60 * 24 * 365)
+                _opened = _opened.toString() // TODO: validate - max 365 day in seconds (60 * 60 * 24 * 365)
                 _target = _target.toString()
                 _amount = _amount.toString()
                 _timeout = _timeout.toString()
@@ -80,14 +75,11 @@ export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
                         return acceptBid
                             .send({ from: _addr, gas: estimatedGas })
                             .on('transactionHash', (hash) => {
-                                let end = Date.now()
-                                logTime('trHshEnd', start, end)
+                                console.log('acceptBid transactionHash', hash)
                                 resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Accepted.id, trHash: hash })
-                                // console.log('registerItem transactionHash', hash)
+
                             })
                             .on('confirmation', (confirmationNumber, receipt) => {
-                                let end = Date.now()
-                                logTime('confirmation', start, end)
                                 console.log('acceptBid confirmation confirmationNumber', confirmationNumber)
                                 console.log('acceptBid confirmation receipt', receipt)
 
@@ -98,14 +90,10 @@ export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
                                 }
                             })
                             .on('receipt', (receipt) => {
-                                let end = Date.now()
-                                logTime('receipt', start, end)
                                 console.log('acceptBid receipt', receipt)
                             })
                             .on('error', (err) => {
-                                let end = Date.now()
-                                logTime('error', start, end)
-                                // console.log('acceptBid err', err)
+                                console.log('acceptBid err', err)
                                 reject(err)
                             })
                     })
@@ -117,12 +105,59 @@ export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
 }
 
 // The bid is canceled by the advertiser
-// function cancelBid(bytes32 _adunit, uint _opened, uint _target, uint _amount, uint _timeout, uint8 v, bytes32 r, bytes32 s, uint8 sigMode)
-const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } },
-    _addr, gas, gasPrice } = {}) => {
+export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } }, _addr, gas, gasPrice } = {}) => {
     return new Promise((resolve, reject) => {
         getWeb3
             .then(({ web3, exchange, token }) => {
+                _adUnit = ipfsHashToHex(_adUnit)
+                _opened = _opened.toString() // TODO: validate - max 365 day in seconds (60 * 60 * 24 * 365)
+                _target = _target.toString()
+                _amount = _amount.toString()
+                _timeout = _timeout.toString()
+                v = '0x' + v.toString(16)
+                sig_mode = (sig_mode).toString()
+
+                let _advertiser = _addr
+
+                // function cancelBid(bytes32 _adunit, uint _opened, uint _target, uint _amount, uint _timeout, uint8 v, bytes32 r, bytes32 s, uint8 sigMode)
+                let cancelBid = exchange.methods
+                    .cancelBid(_adUnit, _opened, _target, _amount, _timeout, v, r, s, sig_mode)
+
+
+                checkBidIdAndSign({ exchange, _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, v, r, s, sig_mode })
+                    .then(() => {
+                        return cancelBid
+                            .estimateGas({ from: _addr })
+                    })
+                    .then((estimatedGas) => {
+                        // console.log('estimatedGas', estimatedGas)
+                        return cancelBid
+                            .send({ from: _addr, gas: estimatedGas })
+                            .on('transactionHash', (hash) => {
+                                console.log('cancelBid transactionHash', hash)
+                                resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Canceled.id, trHash: hash })
+                            })
+                            .on('confirmation', (confirmationNumber, receipt) => {
+                                console.log('cancelBid confirmation confirmationNumber', confirmationNumber)
+                                console.log('cancelBid confirmation receipt', receipt)
+
+                                if (receipt.status === '0x1') {
+                                    resolve(receipt)
+                                } else {
+                                    reject(receipt)
+                                }
+                            })
+                            .on('receipt', (receipt) => {
+                                console.log('cancelBid receipt', receipt)
+                            })
+                            .on('error', (err) => {
+                                console.log('cancelBid err', err)
+                                reject(err)
+                            })
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    })
             })
             .catch((err) => {
                 reject(err)
