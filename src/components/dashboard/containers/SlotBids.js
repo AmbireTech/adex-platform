@@ -10,7 +10,6 @@ import { IconButton, Button } from 'react-toolbox/lib/button'
 import ItemsList from './ItemsList'
 import Rows from 'components/dashboard/collection/Rows'
 import moment from 'moment'
-import { exchange } from 'adex-constants'
 import { Tab, Tabs } from 'react-toolbox'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
@@ -18,11 +17,11 @@ import { BidsStatusBars, BidsStatusPie, SlotsClicksAndRevenue } from 'components
 import Translate from 'components/translate/Translate'
 import { getSlotBids, getAvailableBids } from 'services/adex-node/actions'
 import { Item } from 'adex-models'
-import { items as ItemsConstants } from 'adex-constants'
-import { AcceptBid } from 'components/dashboard/forms/web3/transactions'
-const { ItemsTypes } = ItemsConstants
+import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
+import { AcceptBid, CancelBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
 
-const BidStateNames = exchange.BidStatesLabels
+const { ItemsTypes } = ItemsConstants
+const { BID_STATES, BidStateNames } = ExchangeConstants
 
 // import d3 from 'd3'
 
@@ -53,7 +52,7 @@ export class SlotBids extends Component {
     componentWillMount() {
         getSlotBids({
             authSig: this.props.account._authSig,
-            adSlot: this.props.item._id
+            adSlot: this.props.item._ipfs
         })
             .then((bids) => {
                 // console.log('unit bids', bids)
@@ -136,6 +135,7 @@ export class SlotBids extends Component {
             <TableHead>
                 <TableCell> {t('TOTAL_REWARD')} </TableCell>
                 <TableCell> {t('CONVERSION_GOALS')} </TableCell>
+                <TableCell> {t('STATE')} </TableCell>
                 <TableCell> {t('ADVERTISER')} </TableCell>
                 <TableCell> {t('AD_UNIT')} </TableCell>
                 <TableCell> {t('TIMEOUT')} </TableCell>
@@ -150,6 +150,7 @@ export class SlotBids extends Component {
             <TableRow key={bid._id}>
                 <TableCell> {bid._amount} </TableCell>
                 <TableCell> {bid._target} </TableCell>
+                <TableCell> {bid._state} </TableCell>
                 <TableCell> {bid._advertiser} </TableCell>
                 <TableCell>
                     {/*TODO: link to the meta or popup on click and the get tha meta or accept bid dialog whic will have the adunit meta info*/}
@@ -157,18 +158,38 @@ export class SlotBids extends Component {
                 </TableCell>
                 <TableCell> {moment.duration(bid._timeout, 'ms').humanize()} </TableCell>
                 <TableCell>
-                    <AcceptBid
-                        icon='check'
-                        adUnitId={bid._adUnitId}
-                        slotId={this.props.item._id}
-                        bidId={bid._id}
-                        placedBid={bid}
-                        slot={this.props.item}
-                        acc={this.props.account}
-                        raised
-                        primary
-                        onSave={this.onSave}
-                    />
+
+                    {(() => {
+                        switch (bid._state) {
+                            case BID_STATES.DoesNotExist.id:
+                                return <AcceptBid
+                                    icon='check'
+                                    adUnitId={bid._adUnitId}
+                                    slotId={this.props.item._id}
+                                    bidId={bid._id}
+                                    placedBid={bid}
+                                    slot={this.props.item}
+                                    acc={this.props.account}
+                                    raised
+                                    primary
+                                    onSave={this.onSave}
+                                />
+                            case BID_STATES.Accepted.id:
+                                // TODO: check for unique clicks first
+                                return <VerifyBid
+                                    icon='check_circle'
+                                    itemId={bid._adUnitId}
+                                    bidId={bid._id}
+                                    placedBid={bid}
+                                    acc={this.props.account}
+                                    raised
+                                    primary
+                                    onSave={this.onSave}
+                                />
+                            default:
+                                null
+                        }
+                    })()}
                 </TableCell>
             </TableRow >
         )
@@ -217,7 +238,7 @@ export class SlotBids extends Component {
                     </Tab>
                     <Tab label={t('BIDS_STATISTICS')}>
                         <div>
-                            {this.renderNonOpenedBidsChart(slotBids)}
+                            {/* {this.renderNonOpenedBidsChart(slotBids)} */}
                         </div>
                     </Tab>
                 </Tabs>

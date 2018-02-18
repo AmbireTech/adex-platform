@@ -72,6 +72,7 @@ export class UnitBids extends Component {
                                     onSave={this.onSave}
                                 />
                             case BID_STATES.Accepted.id:
+                                // TODO: check for unique clicks first
                                 return <VerifyBid
                                     icon='check_circle'
                                     itemId={bid._adUnitId}
