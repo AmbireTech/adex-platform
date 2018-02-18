@@ -13,6 +13,7 @@ import Translate from 'components/translate/Translate'
 import { getUnitBids } from 'services/adex-node/actions'
 import { Item } from 'adex-models'
 import { items as ItemsConstants } from 'adex-constants'
+import { CancelBid } from 'components/dashboard/forms/web3/transactions'
 
 const { ItemsTypes } = ItemsConstants
 
@@ -48,15 +49,26 @@ export class UnitBids extends Component {
         )
     }
 
-    renderTableRow(item, index, { to, selected }) {
+    renderTableRow(bid, index, { to, selected }) {
         return (
-            <TableRow key={item._id}>
-                <TableCell> {item._target} </TableCell>
-                <TableCell> {item._amount} </TableCell>
-                <TableCell> {item._state} </TableCell>
-                <TableCell> {item._timeout} </TableCell>
+            <TableRow key={bid._id}>
+                <TableCell> {bid._target} </TableCell>
+                <TableCell> {bid._amount} </TableCell>
+                <TableCell> {bid._state} </TableCell>
+                <TableCell> {bid._timeout} </TableCell>
                 <TableCell>
-                    <Button accent raised label={this.props.t('CANCEL_BID')} />
+                    {bid._state == 0 ?
+                        <CancelBid
+                            icon='cancel'
+                            adUnitId={bid._adUnitId}
+                            bidId={bid._id}
+                            placedBid={bid}
+                            acc={this.props.account}
+                            raised
+                            accent
+                            onSave={this.onSave}
+                        /> : null
+                    }
                 </TableCell>
             </TableRow >
         )

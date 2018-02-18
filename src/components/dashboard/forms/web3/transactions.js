@@ -7,6 +7,7 @@ import WithdrawStep from './WithdrawStep'
 import DepositToExchange from './DepositToExchange'
 import AuthenticateStepGetToken from './AuthenticateStepGetToken'
 import AcceptBidStep from './AcceptBid'
+import CancelBidStep from './CancelBid'
 import scActions from 'services/smart-contracts/actions'
 import { signToken, sendBidState } from 'services/adex-node/actions'
 
@@ -18,6 +19,7 @@ const {
     withdrawAdxEstimateGas,
     withdrawEthEstimateGas,
     acceptBid,
+    cancelBid,
     signAuthToken,
     depositToExchange
 } = scActions
@@ -107,6 +109,36 @@ export const AcceptBid = (props) =>
             })
         }}
         estimateGasFn={() => 100000}
+    />
+
+export const CancelBid = (props) =>
+    < TransactionsStepsWithDialog
+        {...props}
+        btnLabel="CANCEL_BID"
+        saveBtnLabel='CANCEL_BID_SAVE_BTN'
+        title="CANCEL_BID_TITLE"
+        trId={'cancel_bid_adunit_' + props.unitId + '_bid_' + props.bidId}
+        trPages={[{ title: 'CANCEL_BID_STEP', page: CancelBidStep }]}
+        saveFn={({ acc, transaction } = {}) => {
+            return new Promise((resolve, reject) => {
+                cancelBid(
+                    {
+                        placedBid: transaction.placedBid,
+                        _adUnit: transaction.unit._ipfs,
+                        _addr: transaction.account._addr,
+                        gas: transaction.gas,
+                        gasPrice: transaction._gasPrice
+                    })
+                    .then((res) => {
+                        return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+                    })
+                    .catch((err) => {
+                        console.log('CancelBid err', err)
+                        //TODO: handle errors
+                    })
+            })
+        }}
+        estimateGasFn={() => 300000}
     />
 
 export const Authenticate = (props) =>
