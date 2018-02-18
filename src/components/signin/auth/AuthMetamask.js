@@ -29,7 +29,7 @@ class AuthMetamask extends Component {
     }
 
     componentDidMount() {
-        this.checkMetamask()
+        // this.checkMetamask()
     }
 
     authOnServer = () => {
@@ -66,6 +66,7 @@ class AuthMetamask extends Component {
                 if (!addr) {
                     this.props.actions.resetAccount()
                 } else {
+                    addr = addr.toLowerCase()
                     this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: getSig({ addr: addr, mode: mode }) } })
                 }
             })

@@ -18,7 +18,7 @@ import Translate from 'components/translate/Translate'
 import { getSlotBids, getAvailableBids } from 'services/adex-node/actions'
 import { Item } from 'adex-models'
 import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
-import { AcceptBid, CancelBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
+import { AcceptBid, GiveupBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
 
 const { ItemsTypes } = ItemsConstants
 const { BID_STATES, BidStateNames } = ExchangeConstants
@@ -176,18 +176,30 @@ export class SlotBids extends Component {
                                 />
                             case BID_STATES.Accepted.id:
                                 // TODO: check for unique clicks first
-                                return <VerifyBid
-                                    icon='check_circle'
-                                    itemId={bid._adUnitId}
-                                    bidId={bid._id}
-                                    placedBid={bid}
-                                    acc={this.props.account}
-                                    raised
-                                    primary
-                                    onSave={this.onSave}
-                                />
+                                return <span>
+                                    <VerifyBid
+                                        icon='check_circle'
+                                        itemId={bid._adSlotId}
+                                        bidId={bid._id}
+                                        placedBid={bid}
+                                        acc={this.props.account}
+                                        raised
+                                        primary
+                                        onSave={this.onSave}
+                                    />
+                                    <GiveupBid
+                                        icon='cancel'
+                                        slotId={bid._adSlotId}
+                                        bidId={bid._id}
+                                        placedBid={bid}
+                                        acc={this.props.account}
+                                        raised
+                                        accent
+                                        onSave={this.onSave}
+                                    />
+                                </span>
                             default:
-                                null
+                                return null
                         }
                     })()}
                 </TableCell>

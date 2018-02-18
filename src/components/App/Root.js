@@ -44,6 +44,7 @@ class Root extends Component {
         if (acc && this.props.location.pathname !== '/') {
             getAccountMetamask()
                 .then(({ addr, mode }) => {
+                    addr = (addr || '').toLowerCase()
                     if (addr && acc._addr && acc._authMode !== undefined) {
                         let accSigCheck = getSig({ addr: acc._addr, mode: acc._authMode })
                         let mmAddrSigCheck = getSig({ addr: addr, mode: EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id })
@@ -51,7 +52,7 @@ class Root extends Component {
                             return // user authenticated and not changed
                         } else if ((addr !== acc._addr) && !!mmAddrSigCheck) {
                             //the metamask address is changed but already authenticated, so we load the stats for it
-                            this.props.actions.updateAccount({ ownProps: { addr: addr.toLowerCase(), authMode: mode, authSig: mmAddrSigCheck } })
+                            this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: mmAddrSigCheck } })
                             this.props.actions.resetAllItems()
                             getAccountStatsMetaMask({})
                                 .then((stats) => {
