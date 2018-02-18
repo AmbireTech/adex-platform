@@ -8,3 +8,4 @@
 - add translations
 - fix campaigns and channels update
 - fix units and slots description update
+- fix logout

@@ -166,7 +166,7 @@ export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
 }
 
 // TODO: get the report, make some endpoint on the node
-export const verifyBid = ({ placedBid: { _id, _advertiser, publisher }, _report, _addr, gas, gasPrice } = {}) => {
+export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report, _addr, gas, gasPrice } = {}) => {
     return new Promise((resolve, reject) => {
         getWeb3
             .then(({ web3, exchange, token }) => {
@@ -202,6 +202,102 @@ export const verifyBid = ({ placedBid: { _id, _advertiser, publisher }, _report,
                             })
                             .on('error', (err) => {
                                 console.log('verifyBid err', err)
+                                reject(err)
+                            })
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    })
+            })
+    })
+}
+
+// The bid is canceled by the publisher
+export const giveupBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, gas, gasPrice } = {}) => {
+    return new Promise((resolve, reject) => {
+
+        if (_publisher !== _addr) {
+            return resolve('Not your bid')
+        }
+
+        getWeb3
+            .then(({ web3, exchange, token }) => {
+
+                let giveupBid = exchange.methods
+                    .giveupBid(_id)
+
+                giveupBid
+                    .estimateGas({ from: _addr })
+                    .then((estimatedGas) => {
+                        return giveupBid
+                            .send({ from: _addr, gas: estimatedGas })
+                            .on('transactionHash', (hash) => {
+                                console.log('giveupBid transactionHash', hash)
+                                resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Canceled.id, trHash: hash })
+                            })
+                            .on('confirmation', (confirmationNumber, receipt) => {
+                                console.log('giveupBid confirmation confirmationNumber', confirmationNumber)
+                                console.log('giveupBid confirmation receipt', receipt)
+
+                                if (receipt.status === '0x1') {
+                                    resolve(receipt)
+                                } else {
+                                    reject(receipt)
+                                }
+                            })
+                            .on('receipt', (receipt) => {
+                                console.log('giveupBid receipt', receipt)
+                            })
+                            .on('error', (err) => {
+                                console.log('giveupBid err', err)
+                                reject(err)
+                            })
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    })
+            })
+    })
+}
+
+// This can be done if a bid is accepted, but expired
+export const refundBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, gas, gasPrice } = {}) => {
+    return new Promise((resolve, reject) => {
+
+        if (_advertiser !== _addr) {
+            return resolve('Not your bid')
+        }
+
+        getWeb3
+            .then(({ web3, exchange, token }) => {
+
+                let refundBid = exchange.methods
+                    .refundBid(_id)
+
+                    refundBid
+                    .estimateGas({ from: _addr })
+                    .then((estimatedGas) => {
+                        return refundBid
+                            .send({ from: _addr, gas: estimatedGas })
+                            .on('transactionHash', (hash) => {
+                                console.log('refundBid transactionHash', hash)
+                                // resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Completed.id, trHash: hash })
+                            })
+                            .on('confirmation', (confirmationNumber, receipt) => {
+                                console.log('refundBid confirmation confirmationNumber', confirmationNumber)
+                                console.log('refundBid confirmation receipt', receipt)
+
+                                if (receipt.status === '0x1') {
+                                    resolve(receipt)
+                                } else {
+                                    reject(receipt)
+                                }
+                            })
+                            .on('receipt', (receipt) => {
+                                console.log('refundBid receipt', receipt)
+                            })
+                            .on('error', (err) => {
+                                console.log('refundBid err', err)
                                 reject(err)
                             })
                     })

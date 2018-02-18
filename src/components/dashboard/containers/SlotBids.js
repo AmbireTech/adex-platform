@@ -156,7 +156,7 @@ export class SlotBids extends Component {
                     {/*TODO: link to the meta or popup on click and the get tha meta or accept bid dialog whic will have the adunit meta info*/}
                     <a target='_blank' href={Item.getIpfsMetaUrl(bid._adUnit)} > {bid._adUnit} </a>
                 </TableCell>
-                <TableCell> {moment.duration(bid._timeout, 'ms').humanize()} </TableCell>
+                <TableCell> {moment.duration(bid._timeout, 's').humanize()} </TableCell>
                 <TableCell>
 
                     {(() => {

@@ -51,7 +51,7 @@ class Root extends Component {
                             return // user authenticated and not changed
                         } else if ((addr !== acc._addr) && !!mmAddrSigCheck) {
                             //the metamask address is changed but already authenticated, so we load the stats for it
-                            this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: mmAddrSigCheck } })
+                            this.props.actions.updateAccount({ ownProps: { addr: addr.toLowerCase(), authMode: mode, authSig: mmAddrSigCheck } })
                             this.props.actions.resetAllItems()
                             getAccountStatsMetaMask({})
                                 .then((stats) => {
