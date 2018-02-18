@@ -4,7 +4,6 @@ import { toHexParam, ipfsHashToHex } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 
-
 const GAS_LIMIT_ACCEPT_BID = 450000
 const GAS_LIMIT_APPROVE_0_WHEN_NO_0 = 65136 + 1
 const GAS_LIMIT_APPROVE_OVER_0_WHEN_0 = 65821 + 1
@@ -20,12 +19,36 @@ const getHexAdx = (amountStr, noMultiply) => {
     return amHex
 }
 
-
 const logTime = (msg, start, end) => {
     console.log(msg + ' ' + (end - start) + ' ms')
 }
 
-export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout = DEFAULT_TIMEOUT, _signature: { v, r, s, sig_mode } },
+const checkBidIdAndSign = ({ exchange, _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, v, r, s, sig_mode }) => {
+    return new Promise((resolve, reject) => {
+        exchange.methods
+            .didSign(_advertiser, _id, v, r, s, sig_mode)
+            .call()
+            .then((didSign) => {
+                if (!didSign) {
+                    return reject('Invalid signature')
+                }
+
+                return exchange.methods.getBidID(_advertiser, _adUnit, _opened, _target, _amount, _timeout)
+                    .call()
+            })
+            .then((idCheck) => {
+                console.log('idCheck', idCheck)
+                console.log('_id', _id)
+                if (idCheck !== _id) {
+                    return reject('idChecked err')
+                } else {
+                    return resolve(true)
+                }
+            })
+    })
+}
+
+export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } },
     _adSlot, _addr, gas, gasPrice } = {}) => {
     return new Promise((resolve, reject) => {
 
@@ -43,61 +66,18 @@ export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
                 v = '0x' + v.toString(16)
                 sig_mode = (sig_mode).toString()
 
+                let acceptBid = exchange.methods
+                    .acceptBid(_advertiser, _adUnit, _opened, _target, _amount, _timeout, _adSlot, v, r, s, sig_mode)
+
                 // TODO: Maybe we dont need to check didSign and getBidID
-                exchange.methods.didSign(
-                    _advertiser,
-                    _id,
-                    v,
-                    r,
-                    s,
-                    sig_mode
-                )
-                    .call()
-                    .then((didSign) => {
-                        return exchange.methods.getBidID(_advertiser, _adUnit, _opened, _target, _amount, _timeout)
-                            .call()
-
-                    })
-                    .then((idCheck) => {
-                        console.log('idCheck', idCheck)
-                        console.log('_id', _id)
-                        if (idCheck !== _id) {
-                            return reject('idChecked err')
-                        }
-                    })
+                checkBidIdAndSign({ exchange, _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, v, r, s, sig_mode })
                     .then(() => {
-                        return exchange.methods.acceptBid(
-                            _advertiser,
-                            _adUnit,
-                            _opened,
-                            _target,
-                            _amount,
-                            _timeout,
-                            _adSlot,
-                            v,
-                            r,
-                            s,
-                            sig_mode
-                        )
+                        return acceptBid
                             .estimateGas({ from: _addr })
-
                     })
                     .then((estimatedGas) => {
                         // console.log('estimatedGas', estimatedGas)
-
-                        exchange.methods.acceptBid(
-                            _advertiser,
-                            _adUnit,
-                            _opened,
-                            _target,
-                            _amount,
-                            _timeout,
-                            _adSlot,
-                            v,
-                            r,
-                            s,
-                            sig_mode
-                        )
+                        return acceptBid
                             .send({ from: _addr, gas: estimatedGas })
                             .on('transactionHash', (hash) => {
                                 let end = Date.now()
@@ -129,6 +109,23 @@ export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
                                 reject(err)
                             })
                     })
+                    .catch((err) => {
+                        reject(err)
+                    })
+            })
+    })
+}
+
+// The bid is canceled by the advertiser
+// function cancelBid(bytes32 _adunit, uint _opened, uint _target, uint _amount, uint _timeout, uint8 v, bytes32 r, bytes32 s, uint8 sigMode)
+const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } },
+    _addr, gas, gasPrice } = {}) => {
+    return new Promise((resolve, reject) => {
+        getWeb3
+            .then(({ web3, exchange, token }) => {
+            })
+            .catch((err) => {
+                reject(err)
             })
     })
 }
