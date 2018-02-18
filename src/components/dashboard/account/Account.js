@@ -12,7 +12,7 @@ import { web3Utils } from 'services/smart-contracts/ADX'
 import { MULT } from 'services/smart-contracts/constants'
 // import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 // import Input from 'react-toolbox/lib/input'
-import { WithdrawEth, WithdrawAdx, Deposit } from 'components/dashboard/forms/web3/transactions'
+import { WithdrawEth, WithdrawAdx, Deposit, WithdrawFromExchange } from 'components/dashboard/forms/web3/transactions'
 import { List, ListItem, ListSubHeader, ListDivider } from 'react-toolbox/lib/list'
 
 import scActions from 'services/smart-contracts/actions'
@@ -114,7 +114,7 @@ class Account extends React.Component {
                         ripple={false}
                         legend={t('ACCOUNT_ADX_BALANCE_ON_BIDS')}
                         caption={((stats.exchangeBalance[1] || 0) / MULT) + ''}
-                        rightIcon={<WithdrawAdx icon='' raised primary onSave={this.onSave} />}
+                        rightIcon={<WithdrawFromExchange icon='' raised primary onSave={this.onSave} stats={stats} />}
                         // leftIcon='text_format'
                         theme={theme}
                     />

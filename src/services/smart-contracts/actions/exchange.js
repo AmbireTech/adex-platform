@@ -274,7 +274,7 @@ export const refundBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, 
                 let refundBid = exchange.methods
                     .refundBid(_id)
 
-                    refundBid
+                refundBid
                     .estimateGas({ from: _addr })
                     .then((estimatedGas) => {
                         return refundBid
@@ -452,5 +452,23 @@ export const depositToExchange = ({ amountToDeposit, _addr, gas }) => {
                     reject(err)
                 })
         })
+    })
+}
+
+export const withdrawFromExchange = ({ amountToWithdraw, _addr, gas }) => {
+    let amount = getHexAdx(amountToWithdraw)
+
+    return new Promise((resolve, reject) => {
+        getWeb3
+            .then(({ web3, exchange, token, mode }) => {
+                exchange.methods.withdraw(amount)
+                    .send({ from: _addr, gas: 90000 })
+                    .on('transactionHash', (hash) => {
+                        resolve()
+                    })
+                    .on('error', (err) => {
+                        reject(err)
+                    })
+            })
     })
 }

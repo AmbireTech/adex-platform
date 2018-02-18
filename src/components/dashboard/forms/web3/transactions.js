@@ -5,6 +5,7 @@ import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialo
 import ApproveStep from './ApproveStep'
 import WithdrawStep from './WithdrawStep'
 import DepositToExchange from './DepositToExchange'
+import WithdrawFromExchangePage from './WithdrawFromExchange'
 import AuthenticateStepGetToken from './AuthenticateStepGetToken'
 import AcceptBidStep from './AcceptBid'
 import CancelBidStep from './CancelBid'
@@ -27,7 +28,8 @@ const {
     giveupBid,
     refundBid,
     signAuthToken,
-    depositToExchange
+    depositToExchange,
+    withdrawFromExchange
 } = scActions
 
 const TransactionsStepsWithDialog = NewItemWithDialog(TransactionsSteps)
@@ -277,5 +279,18 @@ export const Deposit = (props) =>
         trPages={[{ title: 'ACCOUNT_DEPOSIT_TO_EXCHANGE_STEP', page: DepositToExchange }]}
         saveFn={({ acc, transaction } = {}) => {
             return depositToExchange({ _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
+        }}
+    />
+
+export const WithdrawFromExchange = (props) =>
+    <TransactionsStepsWithDialog
+        {...props}
+        btnLabel="ACCOUNT_WITHDRAW_FROM_EXCHANGE_BTN"
+        saveBtnLabel='ACCOUNT_WITHDRAW_FROM_EXCHANGE_SAVE_BTN'
+        title="ACCOUNT_WITHDRAW_FROM_EXCHANGE_TITLE"
+        trId='withdrawWromExchange'
+        trPages={[{ title: 'ACCOUNT_WITHDRAW_FROM_EXCHANGE_STEP', page: WithdrawFromExchangePage }]}
+        saveFn={({ acc, transaction } = {}) => {
+            return withdrawFromExchange({ _addr: acc._addr, amountToWithdraw: transaction.withdrawAmount, gas: transaction.gas })
         }}
     />
