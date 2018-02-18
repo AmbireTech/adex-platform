@@ -9,6 +9,8 @@ import AuthenticateStepGetToken from './AuthenticateStepGetToken'
 import AcceptBidStep from './AcceptBid'
 import CancelBidStep from './CancelBid'
 import VerifyBidStep from './VerifyBid'
+import GiveupBidStep from './GiveupBid'
+import RefundBidStep from './RefundBid'
 import scActions from 'services/smart-contracts/actions'
 import { signToken, sendBidState } from 'services/adex-node/actions'
 
@@ -22,6 +24,8 @@ const {
     acceptBid,
     cancelBid,
     verifyBid,
+    giveupBid,
+    refundBid,
     signAuthToken,
     depositToExchange
 } = scActions
@@ -149,7 +153,7 @@ export const VerifyBid = (props) =>
         btnLabel="VERIFY_BID"
         saveBtnLabel='VERIFY_BID_SAVE_BTN'
         title="VERIFY_BID_TITLE"
-        trId={'verify_bid_aitem_' + props.itemId + '_bid_' + props.bidId}
+        trId={'verify_bid_item_' + props.itemId + '_bid_' + props.bidId}
         trPages={[{ title: 'VERIFY_BID_STEP', page: VerifyBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return new Promise((resolve, reject) => {
@@ -167,6 +171,65 @@ export const VerifyBid = (props) =>
                     })
                     .catch((err) => {
                         console.log('VerifyBid err', err)
+                        //TODO: handle errors
+                    })
+            })
+        }}
+        estimateGasFn={() => 300000}
+    />
+
+export const GiveupBid = (props) =>
+    < TransactionsStepsWithDialog
+        {...props}
+        btnLabel="GIVEUP_BID"
+        saveBtnLabel='GIVEUP_BID_SAVE_BTN'
+        title="GIVEUP_BID_TITLE"
+        trId={'giveup_bid_slot_' + props.slotId + '_bid_' + props.bidId}
+        trPages={[{ title: 'GIVEUP_BID_STEP', page: GiveupBidStep }]}
+        saveFn={({ acc, transaction } = {}) => {
+            return new Promise((resolve, reject) => {
+                giveupBid(
+                    {
+                        placedBid: transaction.placedBid,
+                        _addr: acc._addr,
+                        gas: transaction.gas,
+                        gasPrice: transaction._gasPrice
+                    })
+                    .then((res) => {
+                        return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+                    })
+                    .catch((err) => {
+                        console.log('GiveupBid err', err)
+                        //TODO: handle errors
+                    })
+            })
+        }}
+        estimateGasFn={() => 300000}
+    />
+
+
+export const RefundBid = (props) =>
+    < TransactionsStepsWithDialog
+        {...props}
+        btnLabel="REFUND_BID"
+        saveBtnLabel='REFUND_BID_SAVE_BTN'
+        title="REFUND_BID_TITLE"
+        trId={'refund_bid_unit_' + props.unitId + '_bid_' + props.bidId}
+        trPages={[{ title: 'VERIFY_BID_STEP', page: RefundBidStep }]}
+        saveFn={({ acc, transaction } = {}) => {
+            return new Promise((resolve, reject) => {
+                refundBid(
+                    {
+                        placedBid: transaction.placedBid,
+                        _addr: acc._addr,
+                        gas: transaction.gas,
+                        gasPrice: transaction._gasPrice
+                    })
+                    .then((res) => {
+                        return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+                    })
+                    .catch((err) => {
+                        console.log('RefundBid err', err)
                         //TODO: handle errors
                     })
             })
