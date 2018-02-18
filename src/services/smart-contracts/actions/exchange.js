@@ -165,6 +165,53 @@ export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
     })
 }
 
+// TODO: get the report, make some endpoint on the node
+export const verifyBid = ({ placedBid: { _id, _advertiser, publisher }, _report, _addr, gas, gasPrice } = {}) => {
+    return new Promise((resolve, reject) => {
+        getWeb3
+            .then(({ web3, exchange, token }) => {
+
+                _report = toHexParam(_report)
+
+                let verifyBid = exchange.methods
+                    .verifyBid(_id, _report)
+
+                verifyBid
+                    .estimateGas({ from: _addr })
+                    .then((estimatedGas) => {
+                        return verifyBid
+                            .send({ from: _addr, gas: estimatedGas })
+                            .on('transactionHash', (hash) => {
+                                console.log('verifyBid transactionHash', hash)
+                                resolve(hash)
+                                // TODO: Send just the report if only one verification
+                                // resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Completed.id, trHash: hash })
+                            })
+                            .on('confirmation', (confirmationNumber, receipt) => {
+                                console.log('verifyBid confirmation confirmationNumber', confirmationNumber)
+                                console.log('verifyBid confirmation receipt', receipt)
+
+                                if (receipt.status === '0x1') {
+                                    resolve(receipt)
+                                } else {
+                                    reject(receipt)
+                                }
+                            })
+                            .on('receipt', (receipt) => {
+                                console.log('verifyBid receipt', receipt)
+                            })
+                            .on('error', (err) => {
+                                console.log('verifyBid err', err)
+                                reject(err)
+                            })
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    })
+            })
+    })
+}
+
 const getRsvFromSig = (sig) => {
     sig = sig.slice(2)
 

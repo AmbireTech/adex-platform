@@ -2,7 +2,9 @@
 - deposit to exchange - done
 - withdraw from exchange
 - accept bids - done
-- cancel bids
+- cancel bids - done
 - verify bids 
 - handle error
 - add translations
+- fix campaigns and channels update
+- fix units and slots description update

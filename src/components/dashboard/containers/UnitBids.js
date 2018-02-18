@@ -12,10 +12,11 @@ import Rows from 'components/dashboard/collection/Rows'
 import Translate from 'components/translate/Translate'
 import { getUnitBids } from 'services/adex-node/actions'
 import { Item } from 'adex-models'
-import { items as ItemsConstants } from 'adex-constants'
-import { CancelBid } from 'components/dashboard/forms/web3/transactions'
+import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
+import { CancelBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
 
 const { ItemsTypes } = ItemsConstants
+const { BID_STATES } = ExchangeConstants
 
 const SORT_PROPERTIES = [
     { value: '_target', label: 'Target' },
@@ -57,18 +58,34 @@ export class UnitBids extends Component {
                 <TableCell> {bid._state} </TableCell>
                 <TableCell> {bid._timeout} </TableCell>
                 <TableCell>
-                    {bid._state == 0 ?
-                        <CancelBid
-                            icon='cancel'
-                            adUnitId={bid._adUnitId}
-                            bidId={bid._id}
-                            placedBid={bid}
-                            acc={this.props.account}
-                            raised
-                            accent
-                            onSave={this.onSave}
-                        /> : null
-                    }
+                    {(() => {
+                        switch (bid._state) {
+                            case BID_STATES.DoesNotExist.id:
+                                return <CancelBid
+                                    icon='cancel'
+                                    adUnitId={bid._adUnitId}
+                                    bidId={bid._id}
+                                    placedBid={bid}
+                                    acc={this.props.account}
+                                    raised
+                                    accent
+                                    onSave={this.onSave}
+                                />
+                            case BID_STATES.Accepted.id:
+                                return <VerifyBid
+                                    icon='check_circle'
+                                    itemId={bid._adUnitId}
+                                    bidId={bid._id}
+                                    placedBid={bid}
+                                    acc={this.props.account}
+                                    raised
+                                    primary
+                                    onSave={this.onSave}
+                                />
+                            default:
+                                null
+                        }
+                    })()}
                 </TableCell>
             </TableRow >
         )

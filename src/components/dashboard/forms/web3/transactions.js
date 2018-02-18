@@ -8,6 +8,7 @@ import DepositToExchange from './DepositToExchange'
 import AuthenticateStepGetToken from './AuthenticateStepGetToken'
 import AcceptBidStep from './AcceptBid'
 import CancelBidStep from './CancelBid'
+import VerifyBidStep from './VerifyBid'
 import scActions from 'services/smart-contracts/actions'
 import { signToken, sendBidState } from 'services/adex-node/actions'
 
@@ -20,6 +21,7 @@ const {
     withdrawEthEstimateGas,
     acceptBid,
     cancelBid,
+    verifyBid,
     signAuthToken,
     depositToExchange
 } = scActions
@@ -134,6 +136,37 @@ export const CancelBid = (props) =>
                     })
                     .catch((err) => {
                         console.log('CancelBid err', err)
+                        //TODO: handle errors
+                    })
+            })
+        }}
+        estimateGasFn={() => 300000}
+    />
+
+export const VerifyBid = (props) =>
+    < TransactionsStepsWithDialog
+        {...props}
+        btnLabel="VERIFY_BID"
+        saveBtnLabel='VERIFY_BID_SAVE_BTN'
+        title="VERIFY_BID_TITLE"
+        trId={'verify_bid_aitem_' + props.itemId + '_bid_' + props.bidId}
+        trPages={[{ title: 'VERIFY_BID_STEP', page: VerifyBidStep }]}
+        saveFn={({ acc, transaction } = {}) => {
+            return new Promise((resolve, reject) => {
+                verifyBid(
+                    {
+                        placedBid: transaction.placedBid,
+                        _report: transaction.report,
+                        _addr: acc._addr,
+                        gas: transaction.gas,
+                        gasPrice: transaction._gasPrice
+                    })
+                    .then((res) => {
+                        return resolve(res)
+                        // return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+                    })
+                    .catch((err) => {
+                        console.log('VerifyBid err', err)
                         //TODO: handle errors
                     })
             })
