@@ -39,6 +39,7 @@ class Img extends Component {
 
     setDisplayImage = ({ image, fallback }) => {
         this.loadTimeout = setTimeout(() => {
+            this.displayImage.src = ''
             this.setState({
                 imgSrc: fallback || null
             })
