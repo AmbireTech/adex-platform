@@ -9,3 +9,4 @@
 - fix campaigns and channels update
 - fix units and slots description update
 - fix logout
+- float precision on placing bids

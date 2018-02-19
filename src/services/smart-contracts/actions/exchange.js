@@ -1,23 +1,14 @@
 import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
-import { toHexParam, ipfsHashToHex } from 'services/smart-contracts/utils'
+import { toHexParam, adxAmountStrToHex } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
+import { helpers } from 'adex-models'
 
+const { ipfsHashTo32BytesHex } = helpers
 const GAS_LIMIT_ACCEPT_BID = 450000
 const GAS_LIMIT_APPROVE_0_WHEN_NO_0 = 65136 + 1
 const GAS_LIMIT_APPROVE_OVER_0_WHEN_0 = 65821 + 1
-
-const toBN = web3Utils.toBN
-
-const getHexAdx = (amountStr, noMultiply) => {
-    let am = toBN(amountStr)
-    if (!noMultiply) {
-        am = am.mul(toBN(MULT))
-    }
-    let amHex = web3Utils.toHex(am)
-    return amHex
-}
 
 const checkBidIdAndSign = ({ exchange, _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, v, r, s, sig_mode }) => {
     return new Promise((resolve, reject) => {
@@ -52,8 +43,8 @@ export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
                 /* TODO: Maybe we should keep _adUnit and _adSlot as it is on the contract (in 32 bytes hex)
                 *   and decode it in the ui when needed
                 * */
-                _adUnit = ipfsHashToHex(_adUnit)
-                _adSlot = ipfsHashToHex(_adSlot)
+                _adUnit = ipfsHashTo32BytesHex(_adUnit)
+                _adSlot = ipfsHashTo32BytesHex(_adSlot)
                 _opened = _opened.toString() // TODO: validate - max 365 day in seconds (60 * 60 * 24 * 365)
                 _target = _target.toString()
                 _amount = _amount.toString()
@@ -109,7 +100,7 @@ export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
     return new Promise((resolve, reject) => {
         getWeb3
             .then(({ web3, exchange, token }) => {
-                _adUnit = ipfsHashToHex(_adUnit)
+                _adUnit = ipfsHashTo32BytesHex(_adUnit)
                 _opened = _opened.toString() // TODO: validate - max 365 day in seconds (60 * 60 * 24 * 365)
                 _target = _target.toString()
                 _amount = _amount.toString()
@@ -420,7 +411,7 @@ function sendDeposit({ exchange, _addr, amount, gas }) {
 }
 
 export const depositToExchange = ({ amountToDeposit, _addr, gas }) => {
-    let amount = getHexAdx(amountToDeposit)
+    let amount = adxAmountStrToHex(amountToDeposit)
 
     return new Promise((resolve, reject) => {
         getWeb3.then(({ web3, exchange, token, mode }) => {
@@ -430,7 +421,7 @@ export const depositToExchange = ({ amountToDeposit, _addr, gas }) => {
                 .call()
                 .then((allowance) => {
                     if (parseInt(allowance, 10) !== 0) {
-                        p = approveTokens({ token: token, _addr: _addr, exchangeAddr: cfg.addr.exchange, amount: getHexAdx(0), gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0 })
+                        p = approveTokens({ token: token, _addr: _addr, exchangeAddr: cfg.addr.exchange, amount: adxAmountStrToHex('0'), gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0 })
                             .then(() => {
                                 approveTokens({ token: token, _addr: _addr, exchangeAddr: cfg.addr.exchange, amount: amount, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 })
                             })
@@ -456,7 +447,7 @@ export const depositToExchange = ({ amountToDeposit, _addr, gas }) => {
 }
 
 export const withdrawFromExchange = ({ amountToWithdraw, _addr, gas }) => {
-    let amount = getHexAdx(amountToWithdraw)
+    let amount = adxAmountStrToHex(amountToWithdraw)
 
     return new Promise((resolve, reject) => {
         getWeb3

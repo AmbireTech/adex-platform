@@ -1,10 +1,8 @@
 import { cfg, web3Utils, getWeb3 } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
-import { setWalletAndGetAddress, toHexParam } from 'services/smart-contracts/utils'
+import { setWalletAndGetAddress, toHexParam, adxAmountStrToHex } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
 import { registerItem } from 'services/smart-contracts/actions'
-
-const toBN = web3Utils.toBN
 
 // TODO: check if that values can be changed
 const GAS_LIMIT_APPROVE_0_WHEN_NO_0 = 45136 + 1
@@ -13,18 +11,9 @@ const GAS_LIMIT_APPROVE_OVER_0_WHEN_0 = 45821 + 1
 
 const GAS_LIMIT = 450000
 
-const getHexAdx = (amountStr, noMultiply) => {
-    let am = toBN(amountStr)
-    if (!noMultiply) {
-        am = am.mul(toBN(MULT))
-    }
-    let amHex = web3Utils.toHex(am)
-    return amHex
-}
-
 // NOTE: We use hrd coded gas values because they are always same 
 export const approveTokensEstimateGas = ({ _addr, amountToApprove } = {}) => {
-    let amount = getHexAdx(amountToApprove)
+    let amount = adxAmountStrToHex(amountToApprove)
 
     return new Promise((resolve, reject) => {
 
@@ -34,7 +23,7 @@ export const approveTokensEstimateGas = ({ _addr, amountToApprove } = {}) => {
                 .call()
                 .then((allowance) => {
                     let gas
-                    if (getHexAdx(allowance, true) === amount) {
+                    if (adxAmountStrToHex(allowance, true) === amount) {
                         gas = 0 // no need to change or GAS_LIMIT_APPROVE_0_WHEN_0
                     } else if (allowance !== 0) {
                         gas = GAS_LIMIT_APPROVE_0_WHEN_NO_0 + GAS_LIMIT_APPROVE_OVER_0_WHEN_0
@@ -54,7 +43,7 @@ export const approveTokensEstimateGas = ({ _addr, amountToApprove } = {}) => {
 
 export const approveTokens = ({ _addr, amountToApprove } = {}) => {
 
-    let amount = getHexAdx(amountToApprove)
+    let amount = adxAmountStrToHex(amountToApprove)
 
     return new Promise((resolve, reject) => {
         // NOTE: to set new approve first set approve to 0
@@ -65,10 +54,10 @@ export const approveTokens = ({ _addr, amountToApprove } = {}) => {
                 .allowance(_addr, cfg.addr.exchange)
                 .call()
                 .then((allowance) => {
-                    if (getHexAdx(allowance, true) === amount) {
+                    if (adxAmountStrToHex(allowance, true) === amount) {
                         return false
                     } else if (allowance !== 0) {
-                        return token.methods.approve(cfg.addr.exchange, getHexAdx(0))
+                        return token.methods.approve(cfg.addr.exchange, adxAmountStrToHex(0))
                             .send({ from: _addr, gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0 })
                     } else {
                         return true
@@ -96,7 +85,7 @@ export const approveTokens = ({ _addr, amountToApprove } = {}) => {
 
 export const withdrawAdxEstimateGas = ({ _addr, withdrawTo, amountToWithdraw } = {}) => {
 
-    let amount = getHexAdx(amountToWithdraw)
+    let amount = adxAmountStrToHex(amountToWithdraw)
 
     return new Promise((resolve, reject) => {
         getWeb3.then(({ web3, exchange, token }) => {
@@ -121,7 +110,7 @@ export const withdrawAdxEstimateGas = ({ _addr, withdrawTo, amountToWithdraw } =
 
 export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, gas } = {}) => {
 
-    let amount = getHexAdx(amountToWithdraw)
+    let amount = adxAmountStrToHex(amountToWithdraw)
 
     return new Promise((resolve, reject) => {
         getWeb3.then(({ web3, exchange, token }) => {

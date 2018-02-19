@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "adex-constants": "git+https://git@github.com/AdExBlockchain/adex-constants.git#bdc1988d5cec36bc9261aff46560afecab864d5c",
-    "adex-models": "git+https://git@github.com/AdExBlockchain/adex-models.git#87bbebddd37a8448dc429249196fa6bb02da6330",
+    "adex-models": "git+https://git@github.com/AdExBlockchain/adex-models.git#8a4d95a15294b16f45b862cce03ac3341ab9b7a5",
     "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#272dfa8a4be6148e3344ef5418081ffa1f439a7b",
     "autoprefixer": "7.1.2",
     "babel-core": "6.25.0",

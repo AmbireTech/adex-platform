@@ -1,6 +1,5 @@
 import { cfg, web3Utils, getWeb3 } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
-import { toHexParam } from 'services/smart-contracts/utils'
 // import { encrypt } from 'services/crypto/crypto'
 // import { registerItem } from 'services/smart-contracts/actions'
 const GAS_LIMIT = 21000
