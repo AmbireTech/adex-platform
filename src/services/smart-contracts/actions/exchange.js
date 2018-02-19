@@ -162,7 +162,7 @@ export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report
         getWeb3
             .then(({ web3, exchange, token }) => {
 
-                _report = toHexParam(_report)
+                _report = ipfsHashTo32BytesHex(_report)
 
                 let verifyBid = exchange.methods
                     .verifyBid(_id, _report)
@@ -200,6 +200,9 @@ export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report
                         reject(err)
                     })
             })
+            .catch((err) => {
+                reject(err)
+            })            
     })
 }
 

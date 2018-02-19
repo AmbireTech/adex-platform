@@ -11,22 +11,17 @@ import NewTransactionHoc from './TransactionHoc'
 // import numeral from 'numeral'
 import Input from 'react-toolbox/lib/input'
 // import { Button, IconButton } from 'react-toolbox/lib/button'
-import { getItem } from 'services/adex-node/actions'
+import { getBidVerificationReport } from 'services/adex-node/actions'
 
 class VerifyBid extends Component {
     componentWillMount() {
-        // getItem({ id: this.props.adUnitId, authSig: this.props.account._authSig })
-        //     .then((unit) => {
-        //         this.props.handleChange('unit', unit)
-        //         this.props.handleChange('placedBid', this.props.placedBid)
-        //         this.props.handleChange('account', this.props.acc)
-        //     })
-
-        //TODO: Get report from node
-        this.props.handleChange('placedBid', this.props.placedBid)
-        this.props.handleChange('account', this.props.acc)
-        this.props.handleChange('report', 'https://wwww.adex.network')
-
+        getBidVerificationReport({ bidId: this.props.placedBid._id, authSig: this.props.account._authSig })
+            .then((report) => {
+                //TODO: Spinner and validation before report ready
+                this.props.handleChange('placedBid', this.props.placedBid)
+                this.props.handleChange('account', this.props.acc)
+                this.props.handleChange('report', report.ipfs)
+            })
     }
 
     row = ({ left, right }) =>
@@ -50,9 +45,8 @@ class VerifyBid extends Component {
                 <Grid fluid>
                     <this.row left={this.props.t('BID_CLICKS')} right={bid._target} />
                     <this.row left={this.props.t('BID_AMOUNT')} right={bid._amount} />
-                    <this.row left={this.props.t('UNIT_TIMEOUT')} right={bid._timeout} />
-                    <this.row left={this.props.t('UNIT_NAME')} right={unitMeta.fullName} />
-                    <this.row left={this.props.t('UNIT_URL')} right={unitMeta.ad_url} />
+                    <this.row left={this.props.t('BID_TIMEOUT')} right={bid._timeout} />
+                    <this.row left={this.props.t('REPORT')} right={tr.report} />
 
                 </Grid>
             </div>

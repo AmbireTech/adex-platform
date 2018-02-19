@@ -3,13 +3,13 @@ import Web3 from 'web3'
 import tokenAbi from './abi/ADXToken'
 import exchangeAbi from './abi/ADXExchange'
 import { testrpcCfg } from './ADXTestrpcCfg'
-import { exchange as EXCHANGE_CONSTANTS} from 'adex-constants'
+import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 
 const mainnetCfg = {
 	node: process.env.WEB3_NODE || 'https://parity.wings.ai',
 	addr: {
 		token: process.env.ADX_TOKEN_ADDR || '0x4470BB87d77b963A013DB939BE332f927f2b992e',
-		exchange: process.env.ADX_EXCHANGE_ADDR ||  '0x0f6029ebde2ecd9ab4d60dd5d0a297e9e59bf77a', // TODO:
+		exchange: process.env.ADX_EXCHANGE_ADDR || '0x0f6029ebde2ecd9ab4d60dd5d0a297e9e59bf77a', // TODO:
 	}
 }
 

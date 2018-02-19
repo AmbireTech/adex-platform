@@ -311,3 +311,26 @@ export const sendBidState = ({ bidId, state, trHash, authSig }) => {
             })
     })
 }
+
+export const getBidVerificationReport = ({ bidId, authSig }) => {
+    let query = {
+        bidId: bidId
+    }
+    return new Promise((resolve, reject) => {
+        requester.fetch({
+            route: 'bid-report',
+            method: 'GET',
+            queryParams: query,
+            authSig: authSig
+        })
+            .then((resp) => {
+                return catchErrors(resp)
+            })
+            .then((resp) => {
+                return resolve(resp.json())
+            })
+            .catch((err) => {
+                return reject(err)
+            })
+    })
+}
