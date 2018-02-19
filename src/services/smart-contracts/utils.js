@@ -46,7 +46,7 @@ export const fromHexParam = (param, type) => {
 }
 
 // NOTE: converts user input string to multiplied integer
-export const adxAmountStrToHex = (amountStr) => {
+export const adxAmountStrToPrecision = (amountStr) => {
     amountStr = amountStr.toString() // OR throw if no string
 
     let isValid = validAmountStr(amountStr)
@@ -61,10 +61,16 @@ export const adxAmountStrToHex = (amountStr) => {
 
     let amount = ints + floats
 
+    return amount
+}
+
+export const adxAmountStrToHex = (amountStr) => {
+    let amount = adxAmountStrToPrecision(amountStr)
+
     return toHex(amount)
 }
 
-const validAmountStr = (amountStr) => {
+export const validAmountStr = (amountStr) => {
     // TODO: maybe more strict test
     let isValid = CHECK_NUMBER_STR.test(amountStr)
     return isValid

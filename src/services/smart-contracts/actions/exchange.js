@@ -1,6 +1,6 @@
 import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
-import { toHexParam, adxAmountStrToHex } from 'services/smart-contracts/utils'
+import { toHexParam, adxAmountStrToHex, adxAmountStrToPrecision } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { helpers } from 'adex-models'
@@ -343,6 +343,7 @@ export const signBid = ({ userAddr, bid }) => {
         getWeb3.then(({ cfg, web3, exchange, token, mode }) => {
             //NOTE: We need to set the exchangeAddr because it is needed for the hash
             bid.exchangeAddr = cfg.addr.exchange //Need bid instance
+            bid.amount = adxAmountStrToPrecision(bid.amount) // * 10 000 but safe
 
             let typed = bid.typed
 
