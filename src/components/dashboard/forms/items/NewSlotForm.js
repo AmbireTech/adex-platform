@@ -17,6 +17,29 @@ const { ItemsTypes, AdTypes, AdSizes, ItemTypesNames } = ItemsConstants
 
 class NewSlotForm extends Component {
 
+    componentDidMount() {
+        if (!this.props.item.img) {
+            this.props.validate('img', {
+                isValid: false,
+                err: { msg: 'ERR_REQUIRED_FIELD' },
+                dirty: false
+            })
+        }
+    }
+
+    validateImg = (propsName, img ) =>{
+        let image = new Image()
+        image.src = img.tempUrl
+        let that = this
+
+        image.onload = function() {
+            //TODO:
+            this.props.validate(propsName, { isValid: false, err: { msg: 'msg', args: ['errMsgArgs'] }, dirty: true })
+
+            this.props.handleChange(propsName, img)
+        }        
+    }
+
     render() {
         let item = this.props.item
         let ad_url = item.ad_url
@@ -80,7 +103,7 @@ class NewSlotForm extends Component {
                     </Grid>
                 </div>
 
-                {<ImgForm label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item.img.tempUrl || 'nourl'} onChange={this.props.handleChange.bind(this, 'img')} />}
+                {<ImgForm label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} imgSrc={item.img.tempUrl || 'nourl'} onChange={this.validateImg.bind(this, 'img')} />}
             </div>
         )
     }
