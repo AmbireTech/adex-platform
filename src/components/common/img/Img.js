@@ -4,14 +4,18 @@ import NO_IMAGE from 'resources/no-image-box.png'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
 import theme from './theme.css'
 
+const MAX_IMG_LOAD_TIME = 3000
+
 class Img extends Component {
 
     constructor(props) {
-        super(props);
+        super(props)
         this.state = {
             imgSrc: null
-        };
-        this.setDisplayImage = this.setDisplayImage.bind(this)
+        }
+
+        this.setDisplayImage = this.setDisplayImage
+        this.loadTimeout = null
     }
 
     componentDidMount() {
@@ -33,13 +37,21 @@ class Img extends Component {
         }
     }
 
-    setDisplayImage({ image, fallback }) {
+    setDisplayImage = ({ image, fallback }) => {
+        this.loadTimeout = setTimeout(() => {
+            this.setState({
+                imgSrc: fallback || null
+            })
+        }, MAX_IMG_LOAD_TIME)
+
         this.displayImage.onerror = () => {
+            clearTimeout(this.loadTimeout)
             this.setState({
                 imgSrc: fallback || null
             })
         }
         this.displayImage.onload = () => {
+            clearTimeout(this.loadTimeout)
             this.setState({
                 imgSrc: image
             })
