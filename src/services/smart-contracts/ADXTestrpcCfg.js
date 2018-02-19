@@ -5,7 +5,7 @@
 */
 // ropsten
 export const testrpcCfg = {
-    node: 'https://ropsten.infura.io/metamask',
+    node: 'https://ropsten.infura.io/TFyhO35Dd1LC2OVKanBJ',
     addr: {
         token: '0xD06632e3916776e781d66A7A08ffBb77271742F7',
         exchange: '0x6387622BD50fDDDA242384e34CF4CD45F535a2eF',
