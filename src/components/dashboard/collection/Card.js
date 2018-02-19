@@ -34,7 +34,7 @@ class MyCard extends Component {
                     aspectRatio='wide'
                     theme={theme}
                 >
-                    <Img src={Item.getImgUrl(meta.img)} alt={name} />
+                    <Img src={Item.getImgUrl(meta.img, process.env.IPFS_GATEWAY)} alt={name} />
                 </RRCardMedia>
                 <CardTitle
                     title={meta.fullName}

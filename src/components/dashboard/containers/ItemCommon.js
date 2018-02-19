@@ -5,6 +5,8 @@ import Input from 'react-toolbox/lib/input'
 import Img from 'components/common/img/Img'
 import theme from './theme.css'
 import { items as ItemsConstants } from 'adex-constants'
+import { Item } from 'adex-models'
+
 const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue, AdTypesByValue } = ItemsConstants
 
 export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
@@ -22,7 +24,7 @@ export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
                                     aspectRatio='wide'
                                     theme={theme}
                                 >
-                                    <Img src={item.imgUrl} alt={item.fullName} />
+                                    <Img src={Item.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)} alt={item.fullName} />
                                 </CardMedia>
                                 <CardTitle theme={theme} >
                                     <a href={url} target='_blank'>
