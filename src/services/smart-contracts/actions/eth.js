@@ -100,8 +100,9 @@ export const getAccountStatsMetaMask = () => {
             web3.eth.getAccounts((err, accounts) => {
                 let _addr = accounts[0]
 
-                console.log(accounts)
-
+                if(!_addr){
+                    reject('No metamask addr!')
+                }
 
                 let balanceEth = web3.eth.getBalance(_addr)
                 let balanceAdx = token.methods.balanceOf(_addr).call()
