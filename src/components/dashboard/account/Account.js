@@ -46,7 +46,6 @@ class Account extends React.Component {
         let adxOnBids = exchBal.onBids / MULT
         let exchangeAvailable = exchBal.available / MULT
 
-
         return (
             <div>
                 <List selectable={false} ripple={false}>
@@ -71,6 +70,9 @@ class Account extends React.Component {
                             // raised
                             primary
                             onSave={this.onSave}
+                            availableAmount={addrBalanceEth}
+                            tokenName='ETH'
+                            accAddr={account._addr}
                         />}
                     />
                     <ListDivider />
@@ -85,6 +87,9 @@ class Account extends React.Component {
                             // raised
                             primary
                             onSave={this.onSave}
+                            availableAmount={addrBalanceAdx}
+                            tokenName='ADX'
+                            accAddr={account._addr}
                         />}
                     />
                     <ListDivider />
