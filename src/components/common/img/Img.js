@@ -46,12 +46,16 @@ class Img extends Component {
     }
 
     onFail = (fallback) => {
-        this.displayImage.onerror = null
-        this.displayImage.onload = null
-        this.displayImage.onabort = null
+        if (this.displayImage) {
+            this.displayImage.onerror = null
+            this.displayImage.onload = null
+            this.displayImage.onabort = null
+
+            this.clearLoadTimeout()
+            this.displayImage.src = fallback
+        }
 
         this.clearLoadTimeout()
-        this.displayImage.src = fallback
 
         this.setState({
             imgSrc: fallback || null

@@ -27,23 +27,24 @@ class NewSlotForm extends Component {
         }
     }
 
-    validateImg = (propsName, img ) =>{
+    validateImg = (propsName, img) => {
         let image = new Image()
         image.src = img.tempUrl
         let that = this
 
-        image.onload = function() {
+        image.onload = function () {
             //TODO:
             that.props.validate(propsName, { isValid: true, err: { msg: 'msg', args: ['errMsgArgs'] }, dirty: false })
 
             that.props.handleChange(propsName, img)
-        }        
+        }
     }
 
     render() {
         let item = this.props.item
         let ad_url = item.ad_url
         let t = this.props.t
+        let errSize = this.props.invalidFields['size'] || { errMsg: 'err' }
         return (
             <div>
                 <div>
@@ -63,6 +64,7 @@ class NewSlotForm extends Component {
                                     source={AdSizes}
                                     value={item.size + ''}
                                     label={t('size', { isProp: true })}
+                                    error={errSize.errMsg}
                                 />
                             </Col>
                         </Row>
