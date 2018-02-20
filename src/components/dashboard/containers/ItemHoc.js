@@ -17,6 +17,7 @@ import ImgDialog from './ImgDialog'
 import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
 import { items as ItemsConstants } from 'adex-constants'
+// import Img from 'components/common/img/Img'
 
 const { ItemTypesNames, ItemTypeByTypeId } = ItemsConstants
 
@@ -116,7 +117,7 @@ export default function ItemHoc(Decorated) {
             */
             let model = Models.itemClassByTypeId[this.state.item._type]
             let item = new model(this.state.item) || {}
-            let imgSrc =  ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)
+            // let imgSrc =  ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)
             let t = this.props.t
             let canEdit = ItemTypeByTypeId[item.type] === 'collection'
 
@@ -129,8 +130,8 @@ export default function ItemHoc(Decorated) {
 
                     <div className={classnames(theme.heading, theme[ItemTypesNames[item._type]])}>
                         <div className={theme.headingLeft}>
-                            <Avatar image={imgSrc} title={item.fullName} cover onClick={this.handleToggle.bind(this)} />
-                            <ImgDialog imgSrc={imgSrc} handleToggle={this.handleToggle} active={this.state.editImg} onChange={this.handleChange.bind(this, 'img')} />
+                            <Avatar title={item.fullName} cover onClick={this.handleToggle.bind(this)} />
+                            {/* <ImgDialog imgSrc={imgSrc} handleToggle={this.handleToggle} active={this.state.editImg} onChange={this.handleChange.bind(this, 'img')} /> */}
                             {canEdit && this.state.activeFields.fullName ?
                                 <Input className={theme.itemName} type='text' label={t('fullName', { isProp: true })} name='fullName' value={item.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                                 :
