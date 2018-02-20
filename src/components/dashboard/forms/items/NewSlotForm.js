@@ -34,9 +34,9 @@ class NewSlotForm extends Component {
 
         image.onload = function() {
             //TODO:
-            this.props.validate(propsName, { isValid: false, err: { msg: 'msg', args: ['errMsgArgs'] }, dirty: true })
+            that.props.validate(propsName, { isValid: true, err: { msg: 'msg', args: ['errMsgArgs'] }, dirty: false })
 
-            this.props.handleChange(propsName, img)
+            that.props.handleChange(propsName, img)
         }        
     }
 

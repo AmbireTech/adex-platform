@@ -28,7 +28,7 @@ class NewTransactionSteps extends Component {
             pages.push({
                 title: trPage.title || 'Step ' + (index + 2),
                 component: ValidItemHoc(trPage.page || trPage),
-                props: { ...this.props, validateId: this.props.itemType + '' + (index + 1) }
+                props: { ...this.props, validateId: this.props.trId + '' + (index + 1) }
             })
         })
 
