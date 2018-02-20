@@ -65,11 +65,13 @@ class AuthMetamask extends Component {
         let sig = null
         let userAddr = null
         let sigMode = null
+        let t = this.props.t
         getAccountMetamask()
             .then(({ addr, mode }) => {
                 sigMode = mode
                 if (!addr) {
                     this.props.actions.resetAccount()
+                    this.props.actions.addToast({ type: 'warning', action: 'X', label: t('AUTH_WARN_NO_METAMASK_ADDR'), timeout: 5000 })
                 } else {
                     userAddr = addr
                     let authSig = getSig({ addr: addr, mode: mode })
@@ -77,21 +79,22 @@ class AuthMetamask extends Component {
                 }
             })
             .then((authSig) => {
-                if(authSig){
+                if (authSig) {
                     sig = authSig
-                    return  checkAuth({ authSig })
-                }else{
-                    this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, authSig: null} })
+                    return checkAuth({ authSig })
+                } else {
+                    this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, authSig: null } })
                     return false
                 }
             })
-            .then((res)=>{
-                if(res){
+            .then((res) => {
+                if (res) {
                     this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, authSig: getSig({ addr: userAddr, mode: sigMode }) } })
                 }
             })
-            .catch((err)=>{
-                this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, authSig: null} })  
+            .catch((err) => {
+                this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, authSig: null } })
+                this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('AUTH_ERR_METAMASK', { args: [err] }), timeout: 5000 })
             })
     }
 
@@ -102,10 +105,13 @@ class AuthMetamask extends Component {
 
         return (
             <div >
+                <h3>
+                    How to work with metamask here:
+                </h3>
                 {userAddr ?
-                    <Button onClick={this.authOnServer} label={t('AUTH_WITH_METAMASK')} raised accent />
+                    <Button onClick={this.authOnServer} label={t('AUTH_WITH_METAMASK', { args: [userAddr] })} raised accent />
                     :
-                    <Button onClick={this.checkMetamask} label={t('CONNECT_WITH_METAMASK')} raised accent />
+                    <Button onClick={this.checkMetamask} label={t('AUTH_CONNECT_WITH_METAMASK')} raised accent />
                 }
             </div>
         )

@@ -15,3 +15,4 @@
 - filter biids actions
 - make some charts
 - He accept, he not accept, but most importantly he validate
+- metamask how to no signin
