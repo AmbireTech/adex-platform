@@ -22,7 +22,7 @@ class DepositToExchange extends Component {
 
         return (
             <div>
-                <span>Current allowance: {this.props.currentAllowance}  </span>
+                <span> {t('EXCHANGE_CURRENT_ADX_BALANCE_AVAILABLE')} {this.props.exchangeAvailable} </span>
                 <Input
                     type='text'
                     required

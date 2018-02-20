@@ -22,7 +22,7 @@ class WithdrawFromExchange extends Component {
 
         return (
             <div>
-                <span>Current balance: {this.props.stats.exchangeBalance[0]}  </span>
+               <span> {t('EXCHANGE_CURRENT_ADX_BALANCE_AVAILABLE')} {this.props.exchangeAvailable} </span>
                 <Input
                     type='text'
                     required

@@ -10,9 +10,9 @@ import TransactionHoc from './TransactionHoc'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Translate from 'components/translate/Translate'
 
-const saveBtn = ({ save, saveBtnLabel, saveBtnIcon, ...other }) => {
+const saveBtn = ({ save, saveBtnLabel, saveBtnIcon, t, ...other }) => {
     return (
-        <Button icon={saveBtnIcon || 'icon'} label={saveBtnLabel || 'DO_IT'} primary onClick={save} />
+        <Button icon={saveBtnIcon || 'icon'} label={t(saveBtnLabel || 'DO_IT')} primary onClick={save} />
     )
 }
 
@@ -26,7 +26,7 @@ class NewTransactionSteps extends Component {
 
         this.props.trPages.map((trPage, index) => {
             pages.push({
-                title: trPage.title || 'Step ' + (index + 2),
+                title: t(trPage.title || 'Step ' + (index + 2)),
                 component: ValidItemHoc(trPage.page || trPage),
                 props: { ...this.props, validateId: this.props.trId + '' + (index + 1) }
             })
@@ -34,7 +34,7 @@ class NewTransactionSteps extends Component {
 
         pages.push({
             title: t('PREVIEW_AND_MAKE_TR'),
-            completeBtn: () => <SaveBtnWithTransaction {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
+            completeBtn: () => <SaveBtnWithTransaction {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} t={t} />,
             component: ValidItemHoc(TransactionPreview),
             props: { ...this.props, validateId: this.props.trId }
         })

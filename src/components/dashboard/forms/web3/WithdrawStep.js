@@ -12,6 +12,7 @@ import Input from 'react-toolbox/lib/input'
 // import { Button, IconButton } from 'react-toolbox/lib/button'
 
 class WithdrawEthStep extends Component {
+    // Until TREZOR and LEDGER integration we don't need this (Coming soon)
     estimateGas() {
         this.props.actions.updateSpinner(this.props.trId, true)
         this.props.estimateGasFn({
@@ -29,9 +30,9 @@ class WithdrawEthStep extends Component {
     componentWillUnmount() {
         //TODO: only on continue and validate inputs
         let tr = this.props.transaction
-        if (tr.withdrawTo && tr.amountToWithdraw) {
-            this.estimateGas()
-        }
+        // if (tr.withdrawTo && tr.amountToWithdraw) {
+        //     this.estimateGas()
+        // }
     }
 
     render() {

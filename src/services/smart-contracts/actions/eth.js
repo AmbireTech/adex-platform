@@ -60,6 +60,18 @@ export const getCurrentGasPrice = () => {
     })
 }
 
+const getExchangeBalances = (exchBal = {}) => {
+    let adxOnExchangeTotal = ((exchBal[0] || 0))
+    let adxOnBids = ((exchBal[1] || 0))
+    let exchangeAvailable = adxOnExchangeTotal - adxOnBids + ''
+
+    return {
+        total: adxOnExchangeTotal,
+        onBids: adxOnBids,
+        available: exchangeAvailable
+    }
+}
+
 export const getAccountStats = ({ _addr }) => {
     return new Promise((resolve, reject) => {
         getWeb3.then(({ cfg, exchange, token, web3 }) => {
@@ -73,14 +85,12 @@ export const getAccountStats = ({ _addr }) => {
             Promise.all(all)
                 .then(([balEth, balAdx, allow, exchBal]) => {
 
-                    let accStats =
-                        {
-
-                            balanceEth: balEth,
-                            balanceAdx: balAdx,
-                            allowance: allow,
-                            exchangeBalance: exchBal
-                        }
+                    let accStats = {
+                        balanceEth: balEth,
+                        balanceAdx: balAdx,
+                        allowance: allow,
+                        exchangeBalance: getExchangeBalances(exchBal)
+                    }
 
                     console.log('accStats', accStats)
                     return resolve(accStats)
@@ -99,7 +109,7 @@ export const getAccountStatsMetaMask = () => {
             web3.eth.getAccounts((err, accounts) => {
                 let _addr = accounts[0]
 
-                if(!_addr){
+                if (!_addr) {
                     reject('No metamask addr!')
                 }
 
@@ -118,7 +128,7 @@ export const getAccountStatsMetaMask = () => {
                                 balanceEth: balEth,
                                 balanceAdx: balAdx,
                                 allowance: allow,
-                                exchangeBalance: exchBal
+                                exchangeBalance: getExchangeBalances(exchBal)
                             }
 
                         console.log('accStats', accStats)

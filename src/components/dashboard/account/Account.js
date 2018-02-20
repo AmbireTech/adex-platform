@@ -64,13 +64,14 @@ class Account extends React.Component {
         let account = this.props.account
         let stats = { ...account._stats } || {}
         let t = this.props.t
+        // TODO: save precision; now the values are strings so fix that too
         let allowance = ((stats.allowance || 0) / MULT) + ''
-        stats.exchangeBalance = stats.exchangeBalance || {}
+        let exchBal = stats.exchangeBalance || {}
+        let adxOnExchangeTotal = exchBal.total / MULT
+        let adxOnBids = exchBal.onBids / MULT
+        let exchangeAvailable = exchBal.available / MULT
 
-        if (!stats) {
-            return null
-        }
-
+        // TODO: add copy to clipboard btn for the address
         return (
             <div>
                 <List selectable={false} ripple={false}>
@@ -103,20 +104,32 @@ class Account extends React.Component {
                     <ListDivider />
                     <ListItem
                         ripple={false}
-                        legend={t('EXCHANHE_ADX_BALANCE_AVAILABLE')}
-                        caption={((stats.exchangeBalance[0] || 0) / MULT) + ''}
-                        rightIcon={<Deposit icon='' raised accent onSave={this.onSave} />}
+                        legend={t('EXCHANGE_ADX_BALANCE_AVAILABLE')}
+                        caption={exchangeAvailable + ''}
                         // leftIcon='text_format'
                         theme={theme}
+                        rightIcon={<Deposit
+                            icon=''
+                            raised
+                            accent
+                            onSave={this.onSave}
+                            exchangeAvailable={exchangeAvailable}
+                        />}
                     />
                     <ListDivider />
                     <ListItem
                         ripple={false}
-                        legend={t('ACCOUNT_ADX_BALANCE_ON_BIDS')}
-                        caption={((stats.exchangeBalance[1] || 0) / MULT) + ''}
-                        rightIcon={<WithdrawFromExchange icon='' raised primary onSave={this.onSave} stats={stats} />}
+                        legend={t('EXCHANGE_ADX_BALANCE_ON_BIDS')}
+                        caption={adxOnBids + ''}
                         // leftIcon='text_format'
                         theme={theme}
+                        rightIcon={<WithdrawFromExchange
+                            icon=''
+                            raised
+                            primary
+                            onSave={this.onSave}
+                            exchangeAvailable={exchangeAvailable}
+                        />}
                     />
                     <ListDivider />
                 </List>
