@@ -14,12 +14,12 @@ class Img extends Component {
             imgSrc: null
         }
 
-        this.setDisplayImage = this.setDisplayImage
+        this.setDisplayImage = this.setDisplayImage.bind(this)
         this.loadTimeout = null
     }
 
     componentDidMount() {
-        this.displayImage = new window.Image()
+        this.displayImage = new Image()
         this.setDisplayImage({ image: this.props.src, fallback: this.props.fallbackSrc || NO_IMAGE })
     }
 
@@ -31,28 +31,42 @@ class Img extends Component {
 
     componentWillUnmount() {
         if (this.displayImage) {
-            this.displayImage.onerror = null;
-            this.displayImage.onload = null;
-            this.displayImage = null;
+            this.displayImage.onerror = null
+            this.displayImage.onload = null
+            this.displayImage.onabort = null
+            this.displayImage = null
         }
+    }
+
+    clearLoadTimeout = () => {
+        if (this.loadTimeout) {
+            clearTimeout(this.loadTimeout)
+            this.loadTimeout = null
+        }
+    }
+
+    onFail = (fallback) => {
+        this.displayImage.onerror = null
+        this.displayImage.onload = null
+        this.displayImage.onabort = null
+
+        this.clearLoadTimeout()
+        this.displayImage.src = fallback
+
+        this.setState({
+            imgSrc: fallback || null
+        })
     }
 
     setDisplayImage = ({ image, fallback }) => {
         this.loadTimeout = setTimeout(() => {
-            this.displayImage.src = ''
-            this.setState({
-                imgSrc: fallback || null
-            })
+            this.onFail(fallback)
         }, MAX_IMG_LOAD_TIME)
 
-        this.displayImage.onerror = () => {
-            clearTimeout(this.loadTimeout)
-            this.setState({
-                imgSrc: fallback || null
-            })
-        }
+        this.displayImage.onerror = this.displayImage.onabort = this.onFail.bind(this, fallback)
+
         this.displayImage.onload = () => {
-            clearTimeout(this.loadTimeout)
+            this.clearLoadTimeout()
             this.setState({
                 imgSrc: image
             })
