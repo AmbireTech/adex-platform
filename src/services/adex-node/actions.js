@@ -334,3 +334,22 @@ export const getBidVerificationReport = ({ bidId, authSig }) => {
             })
     })
 }
+
+export const checkAuth = ({  authSig }) => {
+    return new Promise((resolve, reject) => {
+        requester.fetch({
+            route: 'auth-check',
+            method: 'GET',
+            authSig: authSig
+        })
+            .then((resp) => {
+                return catchErrors(resp)
+            })
+            .then((resp) => {
+                return resolve(resp.json())
+            })
+            .catch((err) => {
+                return reject(err)
+            })
+    })
+}

@@ -58,7 +58,7 @@ export const getAccountMetamask = () => {
                 if (err || !accounts || !accounts[0]) {
                     return resolve({ addr: null, mode: mode })
                 } else if (accounts && accounts[0]) {
-                    return resolve({ addr: accounts[0], mode: mode })
+                    return resolve({ addr: accounts[0].toLowerCase(), mode: mode })
                 } else {
                     return resolve({ addr: null, mode: mode })
                 }

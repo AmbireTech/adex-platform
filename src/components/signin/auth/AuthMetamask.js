@@ -14,6 +14,7 @@ import { signToken } from 'services/adex-node/actions'
 import scActions from 'services/smart-contracts/actions'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { addSig, getSig } from 'services/auth/auth'
+import { checkAuth } from 'services/adex-node/actions'
 
 const { signAuthTokenMetamask, signAuthToken, getAccountMetamask } = scActions
 
@@ -60,15 +61,37 @@ class AuthMetamask extends Component {
     // TODO: Make it some common function if needed or make timeout as metamask way 
     // TODO: Keep signature expire time, and check again on the node for session 
     checkMetamask = () => {
+        // TODO: make it better
+        let sig = null
+        let userAddr = null
+        let sigMode = null
         getAccountMetamask()
             .then(({ addr, mode }) => {
-
+                sigMode = mode
                 if (!addr) {
                     this.props.actions.resetAccount()
                 } else {
-                    addr = addr.toLowerCase()
-                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: getSig({ addr: addr, mode: mode }) } })
+                    userAddr = addr
+                    let authSig = getSig({ addr: addr, mode: mode })
+                    return authSig
                 }
+            })
+            .then((authSig) => {
+                if(authSig){
+                    sig = authSig
+                    return  checkAuth({ authSig })
+                }else{
+                    this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, authSig: null} })
+                    return false
+                }
+            })
+            .then((res)=>{
+                if(res){
+                    this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, authSig: getSig({ addr: userAddr, mode: sigMode }) } })
+                }
+            })
+            .catch((err)=>{
+                this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, authSig: null} })  
             })
     }
 
