@@ -4,40 +4,22 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-// import moment from 'moment'
-// import { Button, IconButton } from 'react-toolbox/lib/button'
 import Translate from 'components/translate/Translate'
-// import Img from 'components/common/img/Img'
 import { web3Utils } from 'services/smart-contracts/ADX'
 import { MULT } from 'services/smart-contracts/constants'
-// import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
-// import Input from 'react-toolbox/lib/input'
 import { WithdrawEth, WithdrawAdx, Deposit, WithdrawFromExchange } from 'components/dashboard/forms/web3/transactions'
-import { List, ListItem, ListSubHeader, ListDivider } from 'react-toolbox/lib/list'
-
+import { List, ListItem, ListDivider } from 'react-toolbox/lib/list'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
+import { Button } from 'react-toolbox/lib/button'
 import scActions from 'services/smart-contracts/actions'
+
 const { getAccountStats, getAccountStatsMetaMask } = scActions
+const RRButton = withReactRouterLink(Button)
 
-// console.log('actions', actions)
 class Account extends React.Component {
-    constructor(props, context) {
-        super(props, context)
-
-        this.state = {
-            allowance: 0
-        }
-
-        this.subscription = null
-        this.syncing = null
-        this.logs = null
-    }
 
     componentWillMount(nextProps) {
         this.getStats()
-    }
-
-    componentWillUnmount() {
-        // web3.eth.clearSubscriptions()
     }
 
     getStats = () => {
@@ -46,14 +28,6 @@ class Account extends React.Component {
             .then((stats) => {
                 this.props.actions.updateAccount({ ownProps: { stats: stats } })
             })
-    }
-
-    stats = () => {
-
-    }
-
-    register = () => {
-
     }
 
     onSave = () => {
@@ -71,7 +45,7 @@ class Account extends React.Component {
         let adxOnBids = exchBal.onBids / MULT
         let exchangeAvailable = exchBal.available / MULT
 
-        // TODO: add copy to clipboard btn for the address
+
         return (
             <div>
                 <List selectable={false} ripple={false}>
@@ -79,7 +53,8 @@ class Account extends React.Component {
                         ripple={false}
                         legend={t('ACCOUNT_ETH_ADDR')}
                         caption={account._addr}
-                        rightIcon='content_copy'
+                        // TODO: add copy to clipboard btn for the address
+                        // rightIcon='content_copy'
                         // leftIcon='compare_arrows'
                         theme={theme}
                     />
@@ -88,18 +63,28 @@ class Account extends React.Component {
                         ripple={false}
                         legend={t('ACCOUNT_ETH_BALANCE')}
                         caption={web3Utils.fromWei(stats.balanceEth || '0', 'ether')}
-                        rightIcon={<WithdrawEth icon='' raised primary onSave={this.onSave} />}
                         // leftIcon='euro_symbol'
                         theme={theme}
+                        rightIcon={<WithdrawEth
+                            icon=''
+                            // raised
+                            primary
+                            onSave={this.onSave}
+                        />}
                     />
                     <ListDivider />
                     <ListItem
                         ripple={false}
                         legend={t('ACCOUNT_ADX_BALANCE')}
                         caption={((stats.balanceAdx || 0) / MULT) + ''}
-                        rightIcon={<WithdrawAdx icon='' raised primary onSave={this.onSave} />}
                         // leftIcon='text_format'
                         theme={theme}
+                        rightIcon={<WithdrawAdx
+                            icon=''
+                            // raised
+                            primary
+                            onSave={this.onSave}
+                        />}
                     />
                     <ListDivider />
                     <ListItem
@@ -108,13 +93,23 @@ class Account extends React.Component {
                         caption={exchangeAvailable + ''}
                         // leftIcon='text_format'
                         theme={theme}
-                        rightIcon={<Deposit
-                            icon=''
-                            raised
-                            accent
-                            onSave={this.onSave}
-                            exchangeAvailable={exchangeAvailable}
-                        />}
+                        rightIcon={
+                            <span>
+                                <Deposit
+                                    icon=''
+                                    // raised
+                                    accent
+                                    onSave={this.onSave}
+                                    exchangeAvailable={exchangeAvailable}
+                                />
+                                <WithdrawFromExchange
+                                    icon=''
+                                    // raised
+                                    primary
+                                    onSave={this.onSave}
+                                    exchangeAvailable={exchangeAvailable}
+                                />
+                            </span>}
                     />
                     <ListDivider />
                     <ListItem
@@ -123,12 +118,10 @@ class Account extends React.Component {
                         caption={adxOnBids + ''}
                         // leftIcon='text_format'
                         theme={theme}
-                        rightIcon={<WithdrawFromExchange
-                            icon=''
-                            raised
-                            primary
-                            onSave={this.onSave}
-                            exchangeAvailable={exchangeAvailable}
+                        rightIcon={<RRButton
+                            to={`/dashboard/${this.props.side}/accepted-bids`}
+                            // TODO: Make this page
+                            label={t('GO_TO_ACCEPTED_BIDS')}
                         />}
                     />
                     <ListDivider />
@@ -145,10 +138,11 @@ Account.propTypes = {
 
 function mapStateToProps(state, props) {
     let persist = state.persist
-    // let memory = state.memory
+    let memory = state.memory
     let account = persist.account
     return {
-        account: account
+        account: account,
+        side: memory.nav.side,
     }
 }
 
