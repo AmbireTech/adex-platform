@@ -61,7 +61,7 @@ class NewItemForm extends Component {
                     error={errFullName && !!errFullName.dirty ?
                         <span> {errFullName.errMsg} </span> : null}
                     maxLength={128} >
-                    {this.props.nameHelperTxt && errFullName.dirty ?
+                    {this.props.nameHelperTxt && errFullName && errFullName.dirty ?
                         <div>
                             {this.props.nameHelperTxt}
                         </div> : null}
