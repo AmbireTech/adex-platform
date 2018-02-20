@@ -39,7 +39,8 @@ class Account extends React.Component {
         let stats = { ...account._stats } || {}
         let t = this.props.t
         // TODO: save precision; now the values are strings so fix that too
-        let allowance = ((stats.allowance || 0) / MULT) + ''
+        let addrBalanceAdx = ((stats.balanceAdx || 0) / MULT)
+        let addrBalanceEth = web3Utils.fromWei(stats.balanceEth || '0', 'ether')
         let exchBal = stats.exchangeBalance || {}
         let adxOnExchangeTotal = exchBal.total / MULT
         let adxOnBids = exchBal.onBids / MULT
@@ -62,7 +63,7 @@ class Account extends React.Component {
                     <ListItem
                         ripple={false}
                         legend={t('ACCOUNT_ETH_BALANCE')}
-                        caption={web3Utils.fromWei(stats.balanceEth || '0', 'ether')}
+                        caption={addrBalanceEth}
                         // leftIcon='euro_symbol'
                         theme={theme}
                         rightIcon={<WithdrawEth
@@ -76,7 +77,7 @@ class Account extends React.Component {
                     <ListItem
                         ripple={false}
                         legend={t('ACCOUNT_ADX_BALANCE')}
-                        caption={((stats.balanceAdx || 0) / MULT) + ''}
+                        caption={addrBalanceAdx + ''}
                         // leftIcon='text_format'
                         theme={theme}
                         rightIcon={<WithdrawAdx
@@ -100,7 +101,7 @@ class Account extends React.Component {
                                     // raised
                                     accent
                                     onSave={this.onSave}
-                                    exchangeAvailable={exchangeAvailable}
+                                    addrBalanceAdx={addrBalanceAdx}
                                 />
                                 <WithdrawFromExchange
                                     icon=''

@@ -6,23 +6,42 @@ import actions from 'actions'
 // import theme from 'components/dashboard/forms/theme.css'
 // import Translate from 'components/translate/Translate'
 import NewTransactionHoc from './TransactionHoc'
-// import { Grid, Row, Col } from 'react-flexbox-grid'
-// import numeral from 'numeral'
 import Input from 'react-toolbox/lib/input'
-// import { Button, IconButton } from 'react-toolbox/lib/button'
-
-import scActions from 'services/smart-contracts/actions'
-const { approveTokensEstimateGas } = scActions
+import { validateNumber } from 'helpers/validators'
 
 class DepositToExchange extends Component {
+
+    componentDidMount() {
+        if (!this.props.transaction.withdrawAmount) {
+            this.props.validate('depositAmount', {
+                isValid: false,
+                err: { msg: 'ERR_REQUIRED_FIELD' },
+                dirty: false
+            })
+        }
+    }
+
+    validateAmount = (numStr, dirty) => {
+        let isValid = validateNumber(numStr)
+        let msg = 'ERR_INVALID_AMOUNT_VALUE'
+        let errMsgArgs = []
+        if (isValid && (parseFloat(numStr) > parseFloat(this.props.addrBalanceAdx))) {
+            isValid = false
+            msg = 'ERR_MAX_AMOUNT_TO_DEPOSIT'
+            errMsgArgs = [this.props.addrBalanceAdx, 'ADX']
+        }
+
+        this.props.validate('depositAmount', { isValid: isValid, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
+    }
 
     render() {
         let tr = this.props.transaction
         let t = this.props.t
+        let errAmount = this.props.invalidFields['depositAmount']
 
         return (
             <div>
-                <span> {t('EXCHANGE_CURRENT_ADX_BALANCE_AVAILABLE')} {this.props.exchangeAvailable} </span>
+                <span> {t('ACCOUNT_CURRENT_ADX_BALANCE_AVAILABLE')} {this.props.addrBalanceAdx} </span>
                 <Input
                     type='text'
                     required
@@ -30,7 +49,16 @@ class DepositToExchange extends Component {
                     name='depositAmount'
                     value={tr.depositAmount || ''}
                     onChange={(value) => this.props.handleChange('depositAmount', value)}
-                />
+                    onBlur={this.validateAmount.bind(this, tr.depositAmount, true)}
+                    onFocus={this.validateAmount.bind(this, tr.depositAmount, false)}
+                    error={errAmount && !!errAmount.dirty ?
+                        <span> {errAmount.errMsg} </span> : null}
+                >
+                    {errAmount && !errAmount.dirty ?
+                        <div>
+                            {t('MAX_AMOUNT_TO_DEPOSIT', { args: [this.props.addrBalanceAdx, 'ADX'] })}
+                        </div> : null}
+                </Input>
             </div>
         )
     }

@@ -6,10 +6,7 @@ import actions from 'actions'
 // import theme from 'components/dashboard/forms/theme.css'
 // import Translate from 'components/translate/Translate'
 import NewTransactionHoc from './TransactionHoc'
-// import { Grid, Row, Col } from 'react-flexbox-grid'
-// import numeral from 'numeral'
 import Input from 'react-toolbox/lib/input'
-// import { Button, IconButton } from 'react-toolbox/lib/button'
 import { validateNumber } from 'helpers/validators'
 
 class WithdrawFromExchange extends Component {
@@ -28,10 +25,10 @@ class WithdrawFromExchange extends Component {
         let isValid = validateNumber(numStr)
         let msg = 'ERR_INVALID_AMOUNT_VALUE'
         let errMsgArgs = []
-        if(isValid && (parseFloat(numStr) > parseFloat(this.props.exchangeAvailable))) {
+        if (isValid && (parseFloat(numStr) > parseFloat(this.props.exchangeAvailable))) {
             isValid = false
             msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'
-            errMsgArgs = [ this.props.exchangeAvailable, 'ADX' ]
+            errMsgArgs = [this.props.exchangeAvailable, 'ADX']
         }
 
         this.props.validate('withdrawAmount', { isValid: isValid, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
@@ -44,7 +41,7 @@ class WithdrawFromExchange extends Component {
 
         return (
             <div>
-               <span> {t('EXCHANGE_CURRENT_ADX_BALANCE_AVAILABLE')} {this.props.exchangeAvailable} </span>
+                <span> {t('EXCHANGE_CURRENT_ADX_BALANCE_AVAILABLE')} {this.props.exchangeAvailable} </span>
                 <Input
                     type='text'
                     required
@@ -59,9 +56,9 @@ class WithdrawFromExchange extends Component {
                 >
                     {errAmount && !errAmount.dirty ?
                         <div>
-                            {t('MAX_AMOUNT_TO_WITHDRAW', {args: [ this.props.exchangeAvailable, 'ADX' ]})}
+                            {t('MAX_AMOUNT_TO_WITHDRAW', { args: [this.props.exchangeAvailable, 'ADX'] })}
                         </div> : null}
-                 </Input>
+                </Input>
             </div>
         )
     }
