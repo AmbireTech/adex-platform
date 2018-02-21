@@ -29,8 +29,10 @@ class AuthMetamask extends Component {
         }
     }
 
-    componentDidMount() {
-        // this.checkMetamask()
+    componentWillMount() {
+        if (!getSig({ addr: this.props.account._addr, mode: this.props.account._authMode })) {
+            this.props.actions.resetAccount()
+        }
     }
 
     authOnServer = () => {
