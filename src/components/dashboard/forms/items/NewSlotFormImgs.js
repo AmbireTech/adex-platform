@@ -24,7 +24,7 @@ class NewSlotFormImgs extends Component {
         let fallbackImg = this.props.item.fallbackAdImg
 
         if (avatarImg.tempUrl) {
-            let isValidAvatar = (avatarImg.width > AVATAR_MAX_WIDTH) || (avatarImg.height > AVATAR_MAX_HEIGHT)
+            let isValidAvatar = (avatarImg.width <= AVATAR_MAX_WIDTH) || (avatarImg.height <= AVATAR_MAX_HEIGHT)
             this.props.validate('img', {
                 isValid: isValidAvatar,
                 err: { msg: 'ERR_IMG_SIZE_MAX', args: [AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT, 'px'] },
