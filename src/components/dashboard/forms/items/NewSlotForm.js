@@ -18,7 +18,7 @@ const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue } = ItemsConstants
 class NewSlotForm extends Component {
 
     componentDidMount() {
-        if (!this.props.item.adType ) {
+        if (!this.props.item.adType) {
             this.props.validate('adType', {
                 isValid: false,
                 err: { msg: 'ERR_REQUIRED_FIELD' },
@@ -32,56 +32,27 @@ class NewSlotForm extends Component {
                 dirty: false
             })
         }
-        if (!this.props.item.img.tempUrl) {
-            this.props.validate('img', {
-                isValid: false,
-                err: { msg: 'ERR_REQUIRED_FIELD' },
-                dirty: false
-            })
-        }
+        // if (!this.props.item.slotUrl) {
+        //     this.props.validate('slotUrl', {
+        //         isValid: false,
+        //         err: { msg: 'ERR_REQUIRED_FIELD' },
+        //         dirty: false
+        //     })
+        // }
     }
 
     validateAndUpdateDD = (dirty, propsName, value) => {
         let isValid = !!value
         let msg = 'ERR_REQUIRED_FIELD'
 
-        if(propsName === 'size' &&
-            (this.props.img.width != AdSizesByValue[value].width ||
-            this.props.img.height != AdSizesByValue[value].height)){
-                //TODO:            
+        if (propsName === 'size' &&
+            (this.props.item.img.width != AdSizesByValue[value].width ||
+                this.props.item.img.height != AdSizesByValue[value].height)) {
+            //TODO:            
         }
-  
+
         this.props.handleChange(propsName, value)
-        this.props.validate(propsName, { isValid: isValid, err: { msg: msg}, dirty: dirty })        
-    }
-
-    validateImg = (propsName, img) => {
-        let image = new Image()
-        image.src = img.tempUrl
-        let that = this
-
-        image.onload = function () {
-            let width = this.width
-            let height = this.height
-            let itemSize = parseInt(that.props.item.size, 10)
-
-            let isValid = true
-            let msg = ''
-            let masgArgs = []
-
-            if(itemSize && 
-                (AdSizesByValue[itemSize].width !== width ||
-                AdSizesByValue[itemSize].height !== height)){
-                isValid = false
-                msg = 'ERR_IMG_SIZE_EXACT'
-                masgArgs = [AdSizesByValue[itemSize].width, AdSizesByValue[itemSize].height, 'px']
-            }
-
-            that.props.validate(propsName, { isValid: isValid, err: { msg: msg, args: masgArgs }, dirty: true })
-            img.width = width
-            img.height = height
-            that.props.handleChange(propsName, img)
-        }
+        this.props.validate(propsName, { isValid: isValid, err: { msg: msg }, dirty: dirty })
     }
 
     render() {
@@ -115,16 +86,39 @@ class NewSlotForm extends Component {
                                 />
                             </Col>
                         </Row>
+                        <Row middle='md'>
+                            <Col sm={12}>
+                                <Input
+                                    required
+                                    type='text'
+                                    label={t('slotUrl', { isProp: true })}
+                                    value={item.slotUrl}
+                                    onChange={this.props.handleChange.bind(this, 'slotUrl')}
+                                    maxLength={1024} >
+                                    {/* {this.props.descriptionHelperTxt ?
+                                    <div>
+                                        {this.props.descriptionHelperTxt}
+                                    </div> : null} */}
+                                </Input>
+                            </Col>
+                            <Col sm={12}>
+                                <Input
+                                    required
+                                    type='text'
+                                    label={t('fallbackAdUrl', { isProp: true })}
+                                    value={item.fallbackAdUrl}
+                                    onChange={this.props.handleChange.bind(this, 'fallbackAdUrl')}
+                                    maxLength={1024} >
+                                    {/* {this.props.descriptionHelperTxt ?
+                                    <div>
+                                        {this.props.descriptionHelperTxt}
+                                    </div> : null} */}
+                                </Input>
+                            </Col>
+                        </Row>
                     </Grid>
                 </div>
 
-                <ImgForm 
-                    label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })} 
-                    imgSrc={item.img.tempUrl || 'nourl'} 
-                    onChange={this.validateImg.bind(this, 'img')}
-                    additionalInfo={errImg ? errImg.errMsg : ''}
-                />
-                
             </div>
         )
     }

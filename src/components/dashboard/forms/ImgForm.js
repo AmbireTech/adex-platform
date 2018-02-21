@@ -43,6 +43,9 @@ class ImgForm extends Component {
         <div>
           <small> (max 2MB; .jpeg, .jpg, .png)  </small>
         </div>
+        <div className={theme.imgErr}>
+          {this.props.errMsg}
+        </div>
       </div>
     )
   }
@@ -63,8 +66,8 @@ class ImgForm extends Component {
         <div>
           <Dropzone accept='.jpeg,.jpg,.png' onDrop={this.onDrop} className={theme.dropzone} >
             <div className={theme.droppedImgContainer}>
-                <Img src={this.state.imgSrc} alt={'name'} className={theme.imgDropzonePreview} />
-                <this.UploadInfo />
+              <Img src={this.state.imgSrc} alt={'name'} className={theme.imgDropzonePreview} />
+              <this.UploadInfo />
             </div>
 
           </Dropzone>

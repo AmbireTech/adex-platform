@@ -3,6 +3,7 @@ import NewItemSteps from './items/NewItemSteps'
 import NewItemWithDialog from './items/NewItemWithDialog'
 // import NewUnitForm from './NewUnitForm'
 import NewSlotForm from './items/NewSlotForm'
+import NewSlotFormImgs from './items/NewSlotFormImgs'
 import NewUnitFormBasic from './items/NewUnitFormBasic'
 import NewUnitFormTargets from './items/NewUnitFormTargets'
 import NewCampaignForm from './items/NewCampaignForm'
@@ -43,7 +44,7 @@ export const NewSlot = (props) =>
         btnLabel="NEW_SLOT"
         title="CREATE_NEW_SLOT"
         itemType={ItemsTypes.AdSlot.id}
-        itemPages={[NewSlotForm]}
+        itemPages={[NewSlotForm, NewSlotFormImgs]}
         imgLabel="SLOT_PREVIEW"
         noDefaultImg
         descriptionHelperTxt="SLOT_DESCRIPTION_HELPER"

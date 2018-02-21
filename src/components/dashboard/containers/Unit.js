@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import ItemHoc from './ItemHoc'
-import {  AdUnit } from 'adex-models'
+import { AdUnit } from 'adex-models'
 import theme from './theme.css'
 // import UnitSlots from './UnitSlots'
 import { Tab, Tabs } from 'react-toolbox'
@@ -16,6 +16,7 @@ import UnitBids from './UnitBids'
 import { items as ItemsConstants } from 'adex-constants'
 import { BasicProps } from './ItemCommon'
 import { getUnitBids } from 'services/adex-node/actions'
+import BidIcon from 'components/common/icons/BidIcon'
 
 const { ItemsTypes } = ItemsConstants
 const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
@@ -70,7 +71,8 @@ export class Unit extends Component {
                     floating
                     primary
                     bidId={item._id}
-                    icon='check_circle'
+                    // TODO: fix icon v align
+                    icon={<BidIcon />}
                     adUnit={item}
                     closeDialog={!!this.state.closeDialog}
                 />

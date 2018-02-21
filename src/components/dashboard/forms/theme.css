@@ -109,6 +109,10 @@
     max-height: 100%;
 }
 
+.imgErr {
+    color: var(--color-adex-danger-primary)
+}
+
 .grid {
     padding: 0 !important; /* suka */
 }

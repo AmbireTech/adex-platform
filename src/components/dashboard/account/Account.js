@@ -67,7 +67,7 @@ class Account extends React.Component {
                         theme={theme}
                         rightIcon={<WithdrawEth
                             icon=''
-                            // raised
+                            raised
                             primary
                             onSave={this.onSave}
                             availableAmount={addrBalanceEth}
@@ -84,7 +84,7 @@ class Account extends React.Component {
                         theme={theme}
                         rightIcon={<WithdrawAdx
                             icon=''
-                            // raised
+                            raised
                             primary
                             onSave={this.onSave}
                             availableAmount={addrBalanceAdx}
@@ -103,14 +103,14 @@ class Account extends React.Component {
                             <span>
                                 <Deposit
                                     icon=''
-                                    // raised
+                                    raised
                                     accent
                                     onSave={this.onSave}
                                     addrBalanceAdx={addrBalanceAdx}
                                 />
                                 <WithdrawFromExchange
                                     icon=''
-                                    // raised
+                                    raised
                                     primary
                                     onSave={this.onSave}
                                     exchangeAvailable={exchangeAvailable}
