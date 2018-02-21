@@ -8,7 +8,7 @@ import NewUnitFormBasic from './items/NewUnitFormBasic'
 import NewUnitFormImg from './items/NewUnitFormImg'
 import NewUnitFormTargets from './items/NewUnitFormTargets'
 import NewCampaignForm from './items/NewCampaignForm'
-import NewChannelForm from './items/NewChannelForm'
+// import NewChannelForm from './items/NewChannelForm'
 import { AdUnit, AdSlot, Channel, Campaign } from 'adex-models'
 import { items as ItemsConstants } from 'adex-constants'
 
@@ -19,11 +19,11 @@ const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
 export const NewUnit = (props) =>
     <NewItemStepsWithDialog
         {...props}
-        btnLabel="NEW_UNIT"
-        title="CREATE_NEW_UNIT"
+        btnLabel='NEW_UNIT'
+        title='CREATE_NEW_UNIT'
         itemType={ItemsTypes.AdUnit.id}
         itemPages={[NewUnitFormBasic, NewUnitFormImg, NewUnitFormTargets]}
-        imgLabel="UNIT_BANNER_IMG_LABEL"
+        imgLabel='UNIT_BANNER_IMG_LABEL'
         noDefaultImg
         itemModel={AdUnit}
     />
@@ -31,34 +31,36 @@ export const NewUnit = (props) =>
 export const NewCampaign = (props) =>
     <NewItemStepsWithDialog
         {...props}
-        btnLabel="NEW_CAMPAIGN"
-        title="CREATE_NEW_CAMPAIGN"
+        btnLabel='NEW_CAMPAIGN'
+        title='CREATE_NEW_CAMPAIGN'
         itemType={ItemsTypes.Campaign.id}
         itemPages={[NewCampaignForm]}
-        imgLabel="CAMPAIGN_LOGO"
+        imgLabel='CAMPAIGN_LOGO'
         itemModel={Campaign}
+        imgAdditionalInfo='CAMPAIGN_IMG_ADDITIONAL_INFO'
     />
 
 export const NewSlot = (props) =>
     <NewItemStepsWithDialog
         {...props}
-        btnLabel="NEW_SLOT"
-        title="CREATE_NEW_SLOT"
+        btnLabel='NEW_SLOT'
+        title='CREATE_NEW_SLOT'
         itemType={ItemsTypes.AdSlot.id}
         itemPages={[NewSlotForm, NewSlotFormImgs]}
-        imgLabel="SLOT_AVATAR_IMG_LABEL"
+        imgLabel='SLOT_AVATAR_IMG_LABEL'
         noDefaultImg
-        descriptionHelperTxt="SLOT_DESCRIPTION_HELPER"
+        descriptionHelperTxt='SLOT_DESCRIPTION_HELPER'
         itemModel={AdSlot}
     />
 
 export const NewChannel = (props) =>
     <NewItemStepsWithDialog
         {...props}
-        btnLabel="NEW_CHANNEL"
-        title="CREATE_NEW_CHANNEL"
+        btnLabel='NEW_CHANNEL'
+        title='CREATE_NEW_CHANNEL'
         itemType={ItemsTypes.Channel.id}
-        itemPages={[NewChannelForm]}
-        imgLabel="CHANNEL_LOGO"
+        itemPages={[]}
+        imgLabel='CHANNEL_LOGO'
         itemModel={Channel}
+        imgAdditionalInfo='CHANNEL_IMG_ADDITIONAL_INFO'
     />

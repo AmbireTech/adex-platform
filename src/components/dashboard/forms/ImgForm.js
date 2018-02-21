@@ -9,6 +9,8 @@ import debounce from 'debounce'
 import Dropzone from 'react-dropzone'
 import { FontIcon } from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
+import { IconButton } from 'react-toolbox/lib/button'
+import RTButtonTheme from 'styles/RTButton.css'
 
 class ImgForm extends Component {
 
@@ -33,10 +35,28 @@ class ImgForm extends Component {
     this.props.onChange({ tempUrl: objectUrl })
   }
 
+  onRemove = (e) => {
+    if (e.stopPropagation) {
+      e.stopPropagation()
+    }
+    if (e.nativeEvent) {
+      e.nativeEvent.stopImmediatePropagation()
+    }
+
+    if (this.state.imgSrc) {
+      URL.revokeObjectURL(this.state.imgSrc)
+      this.setState({ imgSrc: '', imgName: '' })
+      this.props.onChange({ tempUrl: null })
+    }
+  }
+
   UploadInfo = () => {
     return (
       <div className={theme.uploadInfo}>
-        <FontIcon value='file_upload' />
+        {this.state.imgSrc ?
+          <IconButton icon='cancel' className={RTButtonTheme.danger} onClick={this.onRemove} />
+          : <FontIcon value='file_upload' />
+        }
         <div>
           <span> {this.props.t('DRAG_AND_DROP_TO_UPLOAD')} </span>
         </div>

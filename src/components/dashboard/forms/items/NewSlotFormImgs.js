@@ -45,7 +45,12 @@ class NewSlotFormImgs extends Component {
         }
     }
 
-    validateImg = (propsName, widthTarget, heightTarget, msg, exact, img) => {
+    validateImg = (propsName, widthTarget, heightTarget, msg, exact, required, img) => {
+        if (!required && !img.tempUrl) {
+            this.props.validate(propsName, { isValid: true, err: { msg: msg, args: [] }, dirty: true })
+            this.props.handleChange(propsName, img)
+            return
+        }
         let image = new Image()
         image.src = img.tempUrl
         let that = this
@@ -87,8 +92,8 @@ class NewSlotFormImgs extends Component {
                             <Col sm={12}>
                                 <ImgForm
                                     label={t('SLOT_AVATAR_IMG_LABEL')}
-                                    imgSrc={item.img.tempUrl || 'nourl'}
-                                    onChange={this.validateImg.bind(this, 'img', AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT, 'ERR_IMG_SIZE_MAX', false)}
+                                    imgSrc={item.img.tempUrl || ''}
+                                    onChange={this.validateImg.bind(this, 'img', AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT, 'ERR_IMG_SIZE_MAX', false, false)}
                                     additionalInfo={t('SLOT_AVATAR_IMG_INFO')}
                                     errMsg={errImg ? errImg.errMsg : ''}
                                 />
@@ -96,8 +101,8 @@ class NewSlotFormImgs extends Component {
                             <Col sm={12}>
                                 <ImgForm
                                     label={t('SLOT_FALLBACK_IMG_LABEL')}
-                                    imgSrc={item.fallbackAdImg.tempUrl || 'nourl'}
-                                    onChange={this.validateImg.bind(this, 'fallbackAdImg', AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'ERR_IMG_SIZE_EXACT', true)}
+                                    imgSrc={item.fallbackAdImg.tempUrl || ''}
+                                    onChange={this.validateImg.bind(this, 'fallbackAdImg', AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'ERR_IMG_SIZE_EXACT', true, false)}
                                     additionalInfo={t('SLOT_FALLBACK_IMG_INFO', { args: [AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'px'] })}
                                     errMsg={errFallbackAdImg ? errFallbackAdImg.errMsg : ''}
                                 />

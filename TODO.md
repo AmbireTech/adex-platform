@@ -15,4 +15,6 @@
 - filter biids actions
 - make some charts
 - He accept, he not accept, but most importantly he validate
-- metamask how to no signin
+- metamask how to on signin
+- remove img blob after item save
+- hoc for img validation

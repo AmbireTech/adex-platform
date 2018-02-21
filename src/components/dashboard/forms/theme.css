@@ -73,7 +73,7 @@
 }
 
 .imgPreview {
-    height: 150px;
+    height: 120px;
     // margin: 20px;
     width: auto;
     box-shadow: var(--shadow-2p);  /* 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);*/
@@ -93,12 +93,12 @@
     background-color: #ccc;
     position: relative;
     width: 100%;
-    min-height: 60px;
+    min-height: 40px;
     color: #fff;
     display: flex;
     align-items: center;
-    padding-left: 20px;
-    margin: 30px 0;
+    padding-left: 10px;
+    margin: 10px 0;
 }
 
 .uploadInfo {
