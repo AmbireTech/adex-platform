@@ -42,6 +42,13 @@ export default function NewItemHoc(Decorated) {
             let item = new Models.itemClassByTypeId[itemType](this.props.newItem) || {}
             let acc = this.props.account
 
+            if (item.img && item.img.tempUrl) {
+                URL.revokeObjectURL(item.img.tempUrl)
+            }
+            if (item.fallbackAdImg && item.fallbackAdImg.tempUrl) {
+                URL.revokeObjectURL(item.fallbackAdImg.tempUrl)
+            }
+
             // this.setState({ saved: true }, () => {
             this.props.actions.addItem(item, this.props.addTo, acc._authSig)
             this.props.actions.resetNewItem(this.state.item)

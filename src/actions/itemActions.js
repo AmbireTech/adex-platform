@@ -43,6 +43,8 @@ export function addItem(item, itemToAddTo, authSig) {
                 .then((imgResp) => {
                     item._meta.img.ipfs = imgResp.ipfs
                     delete item._meta.img.tempUrl
+                    delete item._meta.img.width
+                    delete item._meta.img.height
                     registerItem(item, itemToAddTo)
                 })
                 .catch((err) => {

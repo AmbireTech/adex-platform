@@ -4,17 +4,20 @@
 - accept bids - done
 - cancel bids - done
 - verify bids - done
+- fix logout - done
+- float precision on placing bids - done
+- remove img blob after item save - done
+
+- hoc for img validation
+- fix cancel on steps (reset the items, clear blob)
+- upload fallback img
 - handle error
 - add translations
 - fix campaigns and channels update
 - fix units and slots description update
-- fix logout - done
-- float precision on placing bids - done
 - when click to accept bid check again the status from the node
 - format bids
-- filter biids actions
+- filter bids actions
 - make some charts
 - He accept, he not accept, but most importantly he validate
 - metamask how to on signin
-- remove img blob after item save
-- hoc for img validation
