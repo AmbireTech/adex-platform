@@ -78,6 +78,7 @@ function getClientEnvironment(publicUrl) {
         WEB3_NODE: process.env.WEB3_NODE,
         ADX_TOKEN_ADDR: process.env.ADX_TOKEN_ADDR,
         ADX_EXCHANGE_ADDR: process.env.ADX_EXCHANGE_ADDR,
+        ADVIEW_HOST: process.env.ADVIEW_HOST
       }
     );
   // Stringify all values so we can feed into Webpack DefinePlugin

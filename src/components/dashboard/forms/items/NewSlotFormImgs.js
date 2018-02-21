@@ -76,9 +76,7 @@ class NewSlotFormImgs extends Component {
 
     render() {
         let item = this.props.item
-        let ad_url = item.ad_url
         let t = this.props.t
-        let errSize = this.props.invalidFields['size'] || { errMsg: 'err' }
         let errImg = this.props.invalidFields['img']
         let errFallbackAdImg = this.props.invalidFields['fallbackAdImg']
         return (

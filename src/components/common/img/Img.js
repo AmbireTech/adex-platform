@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import NO_IMAGE from 'resources/no-image-box-eddie.png'
+import NO_IMAGE from 'resources/no-image-box-eddie.jpg'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
 import theme from './theme.css'
 

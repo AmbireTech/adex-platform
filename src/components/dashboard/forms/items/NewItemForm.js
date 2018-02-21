@@ -76,7 +76,7 @@ class NewItemForm extends Component {
                     maxLength={1024} >
                     {this.props.descriptionHelperTxt ?
                         <div>
-                            {this.props.descriptionHelperTxt}
+                            {t(this.props.descriptionHelperTxt)}
                         </div> : null}
                 </Input>
 

@@ -12,6 +12,7 @@ import { BasicProps } from './ItemCommon'
 import Helper from 'helpers/miscHelpers'
 
 const { ItemsTypes } = ItemsConstants
+const ADVIEW_URL = process.env.ADVIEW_HOST || 'http://localhost:15900'
 
 const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs }) => {
 
@@ -30,7 +31,7 @@ const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs }) => {
 
     let query = Helper.getQuery(queryParmas)
 
-    let src = `http://localhost:15900${query}` //TODO: Set real src with config !!!
+    let src = ADVIEW_URL + query
 
     let iframeStr =
         `<iframe src="${src}"\n` +

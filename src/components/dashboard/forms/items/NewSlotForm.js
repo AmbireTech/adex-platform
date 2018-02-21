@@ -39,12 +39,6 @@ class NewSlotForm extends Component {
         let isValid = !!value
         let msg = 'ERR_REQUIRED_FIELD'
 
-        if (propsName === 'size' &&
-            (this.props.item.img.width != AdSizesByValue[value].width ||
-                this.props.item.img.height != AdSizesByValue[value].height)) {
-            //TODO:            
-        }
-
         this.props.handleChange(propsName, value)
         this.props.validate(propsName, { isValid: isValid, err: { msg: msg }, dirty: dirty })
     }
