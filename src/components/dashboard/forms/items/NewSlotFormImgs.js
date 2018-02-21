@@ -14,29 +14,38 @@ import theme from './../theme.css'
 import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemsTypes, AdSizesByValue } = ItemsConstants
+const AVATAR_MAX_WIDTH = 600
+const AVATAR_MAX_HEIGHT = 400
 
 class NewSlotFormImgs extends Component {
 
     componentDidMount() {
-        if (!this.props.item.img.tempUrl) {
+        let avatarImg = this.props.item.img
+        let fallbackImg = this.props.item.fallbackAdImg
+
+        if (avatarImg.tempUrl) {
+            let isValidAvatar = (avatarImg.width > AVATAR_MAX_WIDTH) || (avatarImg.height > AVATAR_MAX_HEIGHT)
             this.props.validate('img', {
-                isValid: false,
-                err: { msg: 'ERR_REQUIRED_FIELD' },
-                dirty: false
-            })
-        }
-        if (!this.props.item.fallbackAdImg.tempUrl) {
-            this.props.validate('fallbackAdImg', {
-                isValid: false,
-                err: { msg: 'ERR_REQUIRED_FIELD' },
-                dirty: false
+                isValid: isValidAvatar,
+                err: { msg: 'ERR_IMG_SIZE_MAX', args: [AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT, 'px'] },
+                dirty: true
             })
         }
 
-        //TODO: validate sizes if not null
+        if (fallbackImg.tempUrl) {
+            let width = AdSizesByValue[this.props.item.size].width
+            let height = AdSizesByValue[this.props.item.size].height
+            let isValidFallback = (fallbackImg.width === width) && (fallbackImg.height === height)
+
+            this.props.validate('fallbackAdImg', {
+                isValid: isValidFallback,
+                err: { msg: 'ERR_IMG_SIZE_EXACT', args: [width, height, 'px'] },
+                dirty: true
+            })
+        }
     }
 
-    validateImg = (propsName, img) => {
+    validateImg = (propsName, widthTarget, heightTarget, msg, exact, img) => {
         let image = new Image()
         image.src = img.tempUrl
         let that = this
@@ -44,19 +53,19 @@ class NewSlotFormImgs extends Component {
         image.onload = function () {
             let width = this.width
             let height = this.height
-            let itemSize = parseInt(that.props.item.size, 10)
 
             let isValid = true
-            let msg = ''
             let masgArgs = []
 
-            if (itemSize &&
-                (AdSizesByValue[itemSize].width !== width ||
-                    AdSizesByValue[itemSize].height !== height)) {
+            if (exact && (widthTarget !== width || heightTarget !== height)) {
                 isValid = false
-                msg = 'ERR_IMG_SIZE_EXACT'
-                masgArgs = [AdSizesByValue[itemSize].width, AdSizesByValue[itemSize].height, 'px']
+
             }
+            if (!exact && (widthTarget < width || heightTarget < height)) {
+                isValid = false
+            }
+
+            masgArgs = [widthTarget, heightTarget, 'px']
 
             that.props.validate(propsName, { isValid: isValid, err: { msg: msg, args: masgArgs }, dirty: true })
             img.width = width
@@ -79,19 +88,19 @@ class NewSlotFormImgs extends Component {
                         <Row>
                             <Col sm={12}>
                                 <ImgForm
-                                    label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}
+                                    label={t('SLOT_AVATAR_IMG_LABEL')}
                                     imgSrc={item.img.tempUrl || 'nourl'}
-                                    onChange={this.validateImg.bind(this, 'img')}
-                                    additionalInfo={t('IMG_INFO_SIZE')}
+                                    onChange={this.validateImg.bind(this, 'img', AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT, 'ERR_IMG_SIZE_MAX', false)}
+                                    additionalInfo={t('SLOT_AVATAR_IMG_INFO')}
                                     errMsg={errImg ? errImg.errMsg : ''}
                                 />
                             </Col>
                             <Col sm={12}>
                                 <ImgForm
-                                    label={t(this.props.imgLabel || 'fallbackAdImg', { isProp: !this.props.imgLabel })}
+                                    label={t('SLOT_FALLBACK_IMG_LABEL')}
                                     imgSrc={item.fallbackAdImg.tempUrl || 'nourl'}
-                                    onChange={this.validateImg.bind(this, 'fallbackAdImg')}
-                                    additionalInfo={t('IMG_INFO_SIZE', { args: [AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'px'] })}
+                                    onChange={this.validateImg.bind(this, 'fallbackAdImg', AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'ERR_IMG_SIZE_EXACT', true)}
+                                    additionalInfo={t('SLOT_FALLBACK_IMG_INFO', { args: [AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'px'] })}
                                     errMsg={errFallbackAdImg ? errFallbackAdImg.errMsg : ''}
                                 />
                             </Col>

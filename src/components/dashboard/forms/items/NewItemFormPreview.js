@@ -10,11 +10,28 @@ import moment from 'moment'
 import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
+import { items as ItemsConstants } from 'adex-constants'
+const { ItemsTypes, AdSizesByValue, AdTypesByValue } = ItemsConstants
 
 class NewItemFormPreview extends Component {
     constructor(props) {
         super(props)
         this.save = props.save
+    }
+
+    SlotFallback = ({ item, t }) => {
+        return (
+            <div>
+                <Row>
+                    <Col xs={12} lg={4} className={theme.textRight}>{t('SLOT_FALLBACK_IMG_LABEL')}:</Col>
+                    <Col xs={12} lg={8} className={theme.textLeft}>{<Img className={theme.imgPreview} src={item.fallbackAdImg.tempUrl || ''} alt={item.fallbackAdUrl} />} </Col>
+                </Row>
+                <Row>
+                    <Col xs={12} lg={4} className={theme.textRight}>{t('fallbackAdUrl', { isProp: true })}:</Col>
+                    <Col xs={12} lg={8} className={theme.textLeft}><a href={item.fallbackAdUrl} target='_blank'>{item.fallbackAdUrl}</a></Col>
+                </Row>
+            </div>
+        )
     }
 
     render() {
@@ -26,17 +43,22 @@ class NewItemFormPreview extends Component {
             <div>
                 <Grid fluid>
                     <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{<Img className={theme.imgPreview} src={meta.img.tempUrl || ''} alt={meta.fullName} />} </Col>
-                    </Row>
-                    <Row>
                         <Col xs={12} lg={4} className={theme.textRight}>{t('fullName', { isProp: true })}:</Col>
                         <Col xs={12} lg={8} className={theme.textLeft}>{meta.fullName}</Col>
                     </Row>
                     <Row>
                         <Col xs={12} lg={4} className={theme.textRight}>{t('description', { isProp: true })}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{meta.description}</Col>
+                        <Col xs={12} lg={8} className={theme.textLeft}>{item._description}</Col>
                     </Row>
+                    <Row>
+                        <Col xs={12} lg={4} className={theme.textRight}>{t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}:</Col>
+                        <Col xs={12} lg={8} className={theme.textLeft}>{<Img className={theme.imgPreview} src={meta.img.tempUrl || ''} alt={meta.fullName} />} </Col>
+                    </Row>
+                    {
+                        item._type === ItemsTypes.AdSlot.id ?
+                            <this.SlotFallback item={item} t={t} />
+                            : null
+                    }
                     {
                         Object
                             .keys(meta)
@@ -51,6 +73,14 @@ class NewItemFormPreview extends Component {
 
                                 if (!!/from|to/.test(key)) {
                                     value = moment(value).format('D MMMM YYYY')
+                                }
+
+                                if (keyName === 'size') {
+                                    value = AdSizesByValue[value].label
+                                }
+
+                                if (keyName === 'adType') {
+                                    value = AdTypesByValue[value].label
                                 }
 
                                 return (

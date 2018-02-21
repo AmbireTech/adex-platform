@@ -45,7 +45,7 @@ export const NewSlot = (props) =>
         title="CREATE_NEW_SLOT"
         itemType={ItemsTypes.AdSlot.id}
         itemPages={[NewSlotForm, NewSlotFormImgs]}
-        imgLabel="SLOT_PREVIEW"
+        imgLabel="SLOT_AVATAR_IMG_LABEL"
         noDefaultImg
         descriptionHelperTxt="SLOT_DESCRIPTION_HELPER"
         itemModel={AdSlot}

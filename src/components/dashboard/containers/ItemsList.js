@@ -150,7 +150,7 @@ class ItemsList extends Component {
         return (
             <TableRow key={item._id || index} theme={tableTheme} selected={selected}>
                 <RRTableCell className={tableTheme.link} to={to} theme={tableTheme}>
-                    <Img className={tableTheme.img} src={Item.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)} alt={item._name} />
+                    <Img className={tableTheme.img} src={Item.getImgUrl(item._meta.img, process.env.IPFS_GATEWAY)} alt={item._name} />
                 </RRTableCell>
                 <RRTableCell className={tableTheme.link} to={to}> {item._name} </RRTableCell>
                 <TableCell> {item._type} </TableCell>

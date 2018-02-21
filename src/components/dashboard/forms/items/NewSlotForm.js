@@ -12,6 +12,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './../theme.css'
 // import { validUrl } from 'helpers/validators'
 import { items as ItemsConstants } from 'adex-constants'
+import { validUrl } from 'helpers/validators'
 
 const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue } = ItemsConstants
 
@@ -32,13 +33,6 @@ class NewSlotForm extends Component {
                 dirty: false
             })
         }
-        // if (!this.props.item.slotUrl) {
-        //     this.props.validate('slotUrl', {
-        //         isValid: false,
-        //         err: { msg: 'ERR_REQUIRED_FIELD' },
-        //         dirty: false
-        //     })
-        // }
     }
 
     validateAndUpdateDD = (dirty, propsName, value) => {
@@ -60,7 +54,8 @@ class NewSlotForm extends Component {
         let ad_url = item.ad_url
         let t = this.props.t
         let errSize = this.props.invalidFields['size']
-        let errImg = this.props.invalidFields['img']
+        let errSlotUrl = this.props.invalidFields['slotUrl']
+        let errFallbackAdUrl = this.props.invalidFields['fallbackAdUrl']
 
         return (
             <div>
@@ -89,30 +84,20 @@ class NewSlotForm extends Component {
                         <Row middle='md'>
                             <Col sm={12}>
                                 <Input
-                                    required
-                                    type='text'
-                                    label={t('slotUrl', { isProp: true })}
-                                    value={item.slotUrl}
-                                    onChange={this.props.handleChange.bind(this, 'slotUrl')}
-                                    maxLength={1024} >
-                                    {/* {this.props.descriptionHelperTxt ?
-                                    <div>
-                                        {this.props.descriptionHelperTxt}
-                                    </div> : null} */}
-                                </Input>
-                            </Col>
-                            <Col sm={12}>
-                                <Input
-                                    required
+                                    // required
                                     type='text'
                                     label={t('fallbackAdUrl', { isProp: true })}
                                     value={item.fallbackAdUrl}
                                     onChange={this.props.handleChange.bind(this, 'fallbackAdUrl')}
-                                    maxLength={1024} >
-                                    {/* {this.props.descriptionHelperTxt ?
-                                    <div>
-                                        {this.props.descriptionHelperTxt}
-                                    </div> : null} */}
+                                    maxLength={1024}
+                                    onBlur={this.props.validate.bind(this, 'fallbackAdUrl', { isValid: validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true })}
+                                    onFocus={this.props.validate.bind(this, 'fallbackAdUrl', { isValid: validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
+                                    error={errFallbackAdUrl && !!errFallbackAdUrl.dirty ? <span> {errFallbackAdUrl.errMsg} </span> : null}
+                                >
+                                    {!errFallbackAdUrl || !errFallbackAdUrl.dirty ?
+                                        <div>
+                                            {t('SLOT_FALLBACK_AD_URL_DESCRIPTION')}
+                                        </div> : null}
                                 </Input>
                             </Col>
                         </Row>
