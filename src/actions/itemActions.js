@@ -25,19 +25,16 @@ export function resetNewItem(item) {
 // register item
 export function addItem(item, itemToAddTo, authSig) {
     item = { ...item }
-    // TODO: authentication
-
-    // console.log('item addItem', item)
 
     return function (dispatch) {
         if (item._meta.img.tempUrl) {
-            //TODO: Provide the blob to the store or request the image from the blob url as is now?
-
+            // TODO: fix the logic, send both imgs for upload (update the node)
             fetch(item._meta.img.tempUrl)
                 .then((resp) => {
                     return resp.blob()
                 })
                 .then((imgBlob) => {
+                    URL.revokeObjectURL(item._meta.img.tempUrl)
                     return uploadImage({ imageBlob: imgBlob, imageName: 'image.png', authSig: authSig })
                 })
                 .then((imgResp) => {
@@ -45,7 +42,33 @@ export function addItem(item, itemToAddTo, authSig) {
                     delete item._meta.img.tempUrl
                     delete item._meta.img.width
                     delete item._meta.img.height
-                    registerItem(item, itemToAddTo)
+                })
+                .then(() => {
+                    if (item._fallbackAdImg && item._fallbackAdImg.tempUrl) {
+                        return fetch(item._fallbackAdImg.tempUrl)
+                    } else {
+                        registerItem(item, itemToAddTo)
+                    }
+                })
+                .then((resp) => {
+                    if (resp) {
+                        return resp.blob()
+                    }
+                })
+                .then((imgBlob) => {
+                    if (imgBlob) {
+                        URL.revokeObjectURL(item._fallbackAdImg.tempUrl)
+                        return uploadImage({ imageBlob: imgBlob, imageName: 'image.png', authSig: authSig })
+                    }
+                })
+                .then((imgResp) => {
+                    if (imgResp) {
+                        item._fallbackAdImg.ipfs = imgResp.ipfs
+                        delete item._fallbackAdImg.tempUrl
+                        delete item._fallbackAdImg.width
+                        delete item._fallbackAdImg.height
+                        registerItem(item, itemToAddTo)
+                    }
                 })
                 .catch((err) => {
                     return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label: err, timeout: 5000 })
