@@ -69,6 +69,9 @@ class ImgForm extends Component {
 
           </Dropzone>
         </div>
+        <div>
+          <small> {this.props.additionalInfo} </small>
+        </div>
       </div>
     )
   }
