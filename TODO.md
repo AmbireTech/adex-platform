@@ -11,11 +11,11 @@
 - upload fallback img - temp done but must make multi file upload on the node
 - hoc for img validation - done but may handle and the initial validation
 
+- fix add item to  collection
 - metamask how to on signin
 - fix cancel on steps (reset the items, clear blob)
 - handle error
 - add translations
-- fix units and slots description update
 - when click to accept bid check again the status from the node
 - format bids
 - filter bids actions
@@ -23,4 +23,5 @@
 - He accept, he not accept, but most importantly he validate
 - metamask how to on signin
 - use only item._type in production
-- fix campaigns and channels update
+- fix campaigns and channels update (make endpoint to the node node)
+- fix units and slots description update (make endpoint to the node)

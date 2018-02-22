@@ -71,7 +71,7 @@ export function addItem(item, itemToAddTo, authSig) {
                     }
                 })
                 .catch((err) => {
-                    return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label: err, timeout: 5000 })
+                    return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label: 'Err creating item to item: ' + err, timeout: 5000 })
                 })
         } else {
             registerItem(item, itemToAddTo)
@@ -100,7 +100,7 @@ export function addItem(item, itemToAddTo, authSig) {
                     }
                 })
                 .catch((err) => {
-                    return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label: err, timeout: 5000 })
+                    return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label: 'Err creating item to item: ' + err, timeout: 5000 })
                 })
         }
     }
@@ -124,7 +124,7 @@ export function deleteItem({ item, objModel, authSig } = {}) {
 
             })
             .catch((err) => {
-                console.log('deleteItem err', err)
+                return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label:' Err deleting item to item: ' + err, timeout: 5000 })
             })
     }
 }
@@ -139,6 +139,9 @@ export function removeItemFromItem({ item, toRemove, authSig } = {}) {
                     toRemove: toRemove,
                 })
             })
+            .catch((err) => {
+                return addActionToast({ dispatch: dispatch, type: 'cancel', action: 'X', label:'Err removing item to item: ' + err, timeout: 5000 })
+            })
     }
 }
 
@@ -152,6 +155,9 @@ export function addItemToItem({ item, toAdd, authSig } = {}) {
                     item: item,
                     toAdd: toAdd,
                 })
+            })
+            .catch((err) => {
+                return addActionToast({ dispatch: dispatch, type: 'cancel', action: 'X', label: 'Err adding item to item: ' + err, timeout: 5000 })
             })
     }
 }
