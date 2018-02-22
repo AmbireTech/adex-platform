@@ -12,6 +12,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './../theme.css'
 import { validUrl } from 'helpers/validators'
 import { items as ItemsConstants } from 'adex-constants'
+import ValidImageHoc  from 'components/dashboard/forms/ValidImageHoc'
 
 const { ItemsTypes, AdSizesByValue } = ItemsConstants
 
@@ -40,36 +41,6 @@ class NewUnitFormImg extends Component {
         }
     }
 
-    // TODO: make some HOC
-    validateImg = (propsName, widthTarget, heightTarget, msg, exact, img) => {
-        let image = new Image()
-        image.src = img.tempUrl
-        let that = this
-
-        image.onload = function () {
-            let width = this.width
-            let height = this.height
-
-            let isValid = true
-            let masgArgs = []
-
-            if (exact && (widthTarget !== width || heightTarget !== height)) {
-                isValid = false
-
-            }
-            if (!exact && (widthTarget < width || heightTarget < height)) {
-                isValid = false
-            }
-
-            masgArgs = [widthTarget, heightTarget, 'px']
-
-            that.props.validate(propsName, { isValid: isValid, err: { msg: msg, args: masgArgs }, dirty: true })
-            img.width = width
-            img.height = height
-            that.props.handleChange(propsName, img)
-        }
-    }
-
     render() {
         let item = this.props.item
         let t = this.props.t
@@ -83,7 +54,7 @@ class NewUnitFormImg extends Component {
                             <ImgForm
                                 label={t('UNIT_BANNER_IMG_LABEL')}
                                 imgSrc={item.img.tempUrl || 'nourl'}
-                                onChange={this.validateImg.bind(this, 'img', AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'ERR_IMG_SIZE_EXACT', true)}
+                                onChange={this.props.validateImg.bind(this, 'img', AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'ERR_IMG_SIZE_EXACT', true, true)}
                                 additionalInfo={t('UNIT_BANNER_IMG_INFO', { args: [AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'px'] })}
                                 errMsg={errImg ? errImg.errMsg : ''}
                             />
@@ -116,7 +87,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-const NewUnitFormImgForm = NewItemHoc(NewUnitFormImg)
+const NewUnitFormImgForm = NewItemHoc(ValidImageHoc(NewUnitFormImg))
 export default connect(
     mapStateToProps,
     mapDispatchToProps

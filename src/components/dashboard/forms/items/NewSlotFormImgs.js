@@ -12,6 +12,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './../theme.css'
 // import { validUrl } from 'helpers/validators'
 import { items as ItemsConstants } from 'adex-constants'
+import ValidImageHoc  from 'components/dashboard/forms/ValidImageHoc'
 
 const { ItemsTypes, AdSizesByValue } = ItemsConstants
 const AVATAR_MAX_WIDTH = 600
@@ -45,40 +46,6 @@ class NewSlotFormImgs extends Component {
         }
     }
 
-    validateImg = (propsName, widthTarget, heightTarget, msg, exact, required, img) => {
-        if (!required && !img.tempUrl) {
-            this.props.validate(propsName, { isValid: true, err: { msg: msg, args: [] }, dirty: true })
-            this.props.handleChange(propsName, img)
-            return
-        }
-        let image = new Image()
-        image.src = img.tempUrl
-        let that = this
-
-        image.onload = function () {
-            let width = this.width
-            let height = this.height
-
-            let isValid = true
-            let masgArgs = []
-
-            if (exact && (widthTarget !== width || heightTarget !== height)) {
-                isValid = false
-
-            }
-            if (!exact && (widthTarget < width || heightTarget < height)) {
-                isValid = false
-            }
-
-            masgArgs = [widthTarget, heightTarget, 'px']
-
-            that.props.validate(propsName, { isValid: isValid, err: { msg: msg, args: masgArgs }, dirty: true })
-            img.width = width
-            img.height = height
-            that.props.handleChange(propsName, img)
-        }
-    }
-
     render() {
         let item = this.props.item
         let t = this.props.t
@@ -93,7 +60,7 @@ class NewSlotFormImgs extends Component {
                                 <ImgForm
                                     label={t('SLOT_AVATAR_IMG_LABEL')}
                                     imgSrc={item.img.tempUrl || ''}
-                                    onChange={this.validateImg.bind(this, 'img', AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT, 'ERR_IMG_SIZE_MAX', false, false)}
+                                    onChange={this.props.validateImg.bind(this, 'img', AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT, 'ERR_IMG_SIZE_MAX', false, false)}
                                     additionalInfo={t('SLOT_AVATAR_IMG_INFO')}
                                     errMsg={errImg ? errImg.errMsg : ''}
                                 />
@@ -102,7 +69,7 @@ class NewSlotFormImgs extends Component {
                                 <ImgForm
                                     label={t('SLOT_FALLBACK_IMG_LABEL')}
                                     imgSrc={item.fallbackAdImg.tempUrl || ''}
-                                    onChange={this.validateImg.bind(this, 'fallbackAdImg', AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'ERR_IMG_SIZE_EXACT', true, false)}
+                                    onChange={this.props.validateImg.bind(this, 'fallbackAdImg', AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'ERR_IMG_SIZE_EXACT', true, false)}
                                     additionalInfo={t('SLOT_FALLBACK_IMG_INFO', { args: [AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'px'] })}
                                     errMsg={errFallbackAdImg ? errFallbackAdImg.errMsg : ''}
                                 />
@@ -136,7 +103,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-const NewSlotFormImgsForm = NewItemHoc(NewSlotFormImgs)
+const NewSlotFormImgsForm = NewItemHoc(ValidImageHoc(NewSlotFormImgs))
 export default connect(
     mapStateToProps,
     mapDispatchToProps

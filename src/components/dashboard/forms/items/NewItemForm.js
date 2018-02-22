@@ -10,6 +10,7 @@ import theme from './../theme.css'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import ImgForm from './../ImgForm'
 import { items as ItemsConstants } from 'adex-constants'
+import ValidImageHoc  from 'components/dashboard/forms/ValidImageHoc'
 
 const { ItemTypesNames } = ItemsConstants
 const AVATAR_MAX_WIDTH = 600
@@ -44,41 +45,6 @@ class NewItemForm extends Component {
         }
 
         this.props.validate('fullName', { isValid: !msg, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
-    }
-
-    validateImg = (propsName, widthTarget, heightTarget, msg, exact, required, img) => {
-        if(!required && !img.tempUrl){
-            this.props.validate(propsName, { isValid: true, err: { msg: msg, args: [] }, dirty: true })
-            this.props.handleChange(propsName, img)
-            return
-        }
-
-        let image = new Image()
-        image.src = img.tempUrl
-        let that = this
-
-        image.onload = function () {
-            let width = this.width
-            let height = this.height
-
-            let isValid = true
-            let masgArgs = []
-
-            if (exact && (widthTarget !== width || heightTarget !== height)) {
-                isValid = false
-
-            }
-            if (!exact && (widthTarget < width || heightTarget < height)) {
-                isValid = false
-            }
-
-            masgArgs = [widthTarget, heightTarget, 'px']
-
-            that.props.validate(propsName, { isValid: isValid, err: { msg: msg, args: masgArgs }, dirty: true })
-            img.width = width
-            img.height = height
-            that.props.handleChange(propsName, img)
-        }
     }
 
     render() {
@@ -133,7 +99,7 @@ class NewItemForm extends Component {
                                 <ImgForm
                                     label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}
                                     imgSrc={item.img.tempUrl || ''}
-                                    onChange={this.validateImg.bind(this, 'img', AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT, 'ERR_IMG_SIZE_MAX', false, false)}
+                                    onChange={this.props.validateImg.bind(this, 'img', AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT, 'ERR_IMG_SIZE_MAX', false, false)}
                                     additionalInfo={t(this.props.imgAdditionalInfo)}
                                     errMsg={errImg ? errImg.errMsg : ''}
                                 />
@@ -172,7 +138,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-const ItemNewItemForm = NewItemHoc(NewItemForm)
+const ItemNewItemForm = NewItemHoc(ValidImageHoc(NewItemForm))
 export default connect(
     mapStateToProps,
     mapDispatchToProps
