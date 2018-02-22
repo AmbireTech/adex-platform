@@ -81,7 +81,7 @@ export function addItem(item, itemToAddTo, authSig) {
 
             regItem({ item, authSig: authSig })
                 .then((item) => {
-                    let registeredItem = new Models.itemClassByTypeId[item.type](item)
+                    let registeredItem = new Models.itemClassByTypeId[item._type || item._meta.type](item)
                     dispatch({
                         type: types.ADD_ITEM,
                         item: registeredItem

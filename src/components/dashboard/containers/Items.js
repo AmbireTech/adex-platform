@@ -18,13 +18,13 @@ class Items extends Component {
         getItems({ type: this.props.itemsType, authSig: this.props.account._authSig })
             .then((items) => {
                 items = items.map((item) => {
-                    let mapped = { ...(new Models.itemClassByTypeId[item.type](item)) } // TODO: maybe new instance of item class or make sure to keep consistency with the models on the node (without using the model on the node)
+                    let mapped = { ...(new Models.itemClassByTypeId[item._type || item._meta.type](item)) } // TODO: maybe new instance of item class or make sure to keep consistency with the models on the node (without using the model on the node)
                     return mapped
                 })
                 this.props.actions.updateItems({ items: items, itemsType: this.props.itemsType })
             })
-            .catch((err)=> {
-                this.props.actions.addToast({ type:'warning', action: 'X', label: err, timeout: 5000})
+            .catch((err) => {
+                this.props.actions.addToast({ type: 'warning', action: 'X', label: err, timeout: 5000 })
             })
     }
 

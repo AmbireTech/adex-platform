@@ -128,7 +128,7 @@ export default function ItemHoc(Decorated) {
                         message={t('UNSAVED_CHANGES_ALERT')}
                     />
 
-                    <div className={classnames(theme.heading, theme[ItemTypesNames[item._type]])}>
+                    <div className={classnames(theme.heading, theme[ItemTypesNames[item._type || item._meta.type]])}>
                         <div className={theme.headingLeft}>
                             <Avatar title={item.fullName} cover onClick={this.handleToggle.bind(this)} />
                             {/* <ImgDialog imgSrc={imgSrc} handleToggle={this.handleToggle} active={this.state.editImg} onChange={this.handleChange.bind(this, 'img')} /> */}

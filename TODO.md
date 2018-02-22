@@ -21,3 +21,4 @@
 - make some charts
 - He accept, he not accept, but most importantly he validate
 - metamask how to on signin
+- use only item._type in production
