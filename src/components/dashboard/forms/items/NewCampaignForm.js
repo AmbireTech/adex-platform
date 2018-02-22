@@ -19,18 +19,21 @@ class NewCampaignForm extends Component {
         let item = this.props.item
         let from = item.from ? new Date(item.from) : null
         let to = item.to ? new Date(item.to) : null
+        let now = new Date()
+
         return (
             <div>
                 <DatePicker
                     label={this.props.t('from', { isProp: true })}
-                    minDate={new Date()}
+                    minDate={now}
+                    maxDate={to}
                     onChange={this.props.handleChange.bind(this, 'from')}
                     value={from}
                     className={theme.datepicker}
                 />
                 <DatePicker
                     label={this.props.t('to', { isProp: true })}
-                    minDate={new Date()}
+                    minDate={from || now}
                     onChange={this.props.handleChange.bind(this, 'to')}
                     value={to}
                     className={theme.datepicker}

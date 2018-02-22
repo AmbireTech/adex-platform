@@ -1,5 +1,5 @@
 import Helper from 'helpers/miscHelpers'
-const BASE_URL = 'http://127.0.0.1:9710/' //TODO: config
+const BASE_URL = process.env.ADEX_NODE_HOST || 'http://127.0.0.1:9710/' //TODO: config
 
 class AdexNodeRequester {
     getUrl(base, route, query) {

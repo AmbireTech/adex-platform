@@ -51,6 +51,7 @@ export class Campaign extends Component {
 
         let from = item.from ? new Date(item.from) : null
         let to = item.to ? new Date(item.to) : null
+        let now = new Date()
 
         //TODO: Make it wit HOC for collection (campaing/channel)
         let groupedUnits = groupItemsForCollection({ collectionId: item._id, allItems: propsUnits })
@@ -96,7 +97,8 @@ export class Campaign extends Component {
                     <FontIcon value="date_range" />
                     <span>{t('from')} </span>
                     <DatePicker
-                        minDate={new Date()}
+                        minDate={now}
+                        maxDate={to}
                         onChange={this.props.handleChange.bind(this, 'from')}
                         value={from}
                         className={theme.datepicker}
@@ -106,7 +108,7 @@ export class Campaign extends Component {
                     />
                     <span>{t('to')} </span>
                     <DatePicker
-                        minDate={new Date()}
+                        minDate={from || now}
                         onChange={this.props.handleChange.bind(this, 'to')}
                         value={to}
                         className={theme.datepicker}

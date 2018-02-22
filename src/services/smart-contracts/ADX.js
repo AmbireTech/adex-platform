@@ -9,18 +9,18 @@ const mainnetCfg = {
 	node: process.env.WEB3_NODE || 'https://parity.wings.ai',
 	addr: {
 		token: process.env.ADX_TOKEN_ADDR || '0x4470BB87d77b963A013DB939BE332f927f2b992e',
-		exchange: process.env.ADX_EXCHANGE_ADDR || '0x0f6029ebde2ecd9ab4d60dd5d0a297e9e59bf77a', // TODO:
+		exchange: process.env.ADX_EXCHANGE_ADDR || '0x67c9232f2f449f7acd4dd784cc1f20395af5baae',
 	}
 }
 
 // TEMP
 let cfg
 
-if (process.env.NODE_ENV === 'production') {
+// if (process.env.NODE_ENV === 'production') {
 	cfg = mainnetCfg
-} else {
-	cfg = testrpcCfg
-}
+// } else {
+// 	cfg = testrpcCfg
+// }
 
 const getWeb3 = new Promise(function (resolve, reject) {
 	// Wait for loading completion to avoid race conditions with web3 injection timing.
