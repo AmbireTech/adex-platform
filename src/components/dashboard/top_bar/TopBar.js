@@ -67,7 +67,7 @@ class TopNav extends Component {
               icon='account_box'
               caption='Account'
             />
-            <MenuItem value='help' icon='help' caption='Help' />
+            {/* <MenuItem value='help' icon='help' caption='Help' /> */}
             <MenuDivider />
             <MenuItem value='logout' icon='exit_to_app' caption='Logout' onClick={() => this.props.actions.resetAccount()} />
           </ButtonMenu>

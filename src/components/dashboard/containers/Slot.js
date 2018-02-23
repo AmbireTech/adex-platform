@@ -12,9 +12,9 @@ import { BasicProps } from './ItemCommon'
 import Helper from 'helpers/miscHelpers'
 
 const { ItemsTypes } = ItemsConstants
-const ADVIEW_URL = process.env.ADVIEW_HOST || 'http://localhost:15900'
+const ADVIEW_URL = process.env.ADVIEW_HOST || 'https://adview.adex.network'
 
-const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs }) => {
+const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fallbackUrl }) => {
 
     let sizes = size.split('x')
     sizes = {
@@ -26,7 +26,9 @@ const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs }) => {
         width: sizes.width,
         height: sizes.height,
         slotId: slotId,
-        slotIpfs: slotIpfs
+        slotIpfs: slotIpfs,
+        fallbackImgIpfs: fallbackImgIpfs,
+        fallbackUrl: fallbackUrl
     }
 
     let query = Helper.getQuery(queryParmas)
@@ -70,7 +72,15 @@ export class Slot extends Component {
                 <BasicProps
                     item={item}
                     t={t}
-                    rightComponent={<IntegrationCode ipfs={item.ipfs} size={item.sizeTxtValue} t={t} slotId={item.id} slotIpfs={item.ipfs} />}
+                    rightComponent={<IntegrationCode 
+                    ipfs={item.ipfs} 
+                    size={item.sizeTxtValue}
+                    t={t}
+                    slotId={item.id}
+                    slotIpfs={item.ipfs} 
+                    fallbackImgIpfs={(item.fallbackAdImg || {}).ipfs}
+                    fallbackUrl={item.fallbackAdUrl}
+                    />}
                 />
                 <div>
                     <SlotBids {...this.props} item={item} t={t} />

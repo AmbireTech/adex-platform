@@ -9,7 +9,7 @@ const mainnetCfg = {
 	node: process.env.WEB3_NODE || 'https://parity.wings.ai',
 	addr: {
 		token: process.env.ADX_TOKEN_ADDR || '0x4470BB87d77b963A013DB939BE332f927f2b992e',
-		exchange: process.env.ADX_EXCHANGE_ADDR || '0x67c9232f2f449f7acd4dd784cc1f20395af5baae',
+		exchange: process.env.ADX_EXCHANGE_ADDR || '0x912b8f85E28B9ec196b48228159E2f13546836e6',
 	}
 }
 
