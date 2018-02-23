@@ -1,6 +1,6 @@
 
-# Node 6.x
-FROM node:6
+# Node 8.x
+FROM node:8
 
 # Meta
 MAINTAINER Ivo Paunov <paunov@strem.io>
