@@ -53,7 +53,7 @@ class NewUnitFormImg extends Component {
                         <Col sm={12}>
                             <ImgForm
                                 label={t('UNIT_BANNER_IMG_LABEL')}
-                                imgSrc={item.img.tempUrl || 'nourl'}
+                                imgSrc={item.img.tempUrl || ''}
                                 onChange={this.props.validateImg.bind(this, 'img', AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'ERR_IMG_SIZE_EXACT', true, true)}
                                 additionalInfo={t('UNIT_BANNER_IMG_INFO', { args: [AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'px'] })}
                                 errMsg={errImg ? errImg.errMsg : ''}

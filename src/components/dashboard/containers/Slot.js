@@ -40,7 +40,7 @@ const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fal
         `   width="${sizes.width}"\n` +
         `   height="${sizes.height}"\n` +
         `   scrolling="no"\n` +
-        `   frameborder="0"\n` +
+        `   frameBorder="0"\n` +
         `   style="border: 0;"\n` +
         `></iframe>`
 

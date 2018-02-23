@@ -335,7 +335,7 @@ export const getBidVerificationReport = ({ bidId, authSig }) => {
     })
 }
 
-export const checkAuth = ({  authSig }) => {
+export const checkAuth = ({ authSig }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'auth-check',
@@ -346,7 +346,11 @@ export const checkAuth = ({  authSig }) => {
                 return catchErrors(resp)
             })
             .then((resp) => {
-                return resolve(resp.json())
+                if (resp && resp.authenticated) {
+                    return resolve(resp.json())
+                } else {
+                    reject((resp || {}).error || 'Authentication error')
+                }
             })
             .catch((err) => {
                 return reject(err)
