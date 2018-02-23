@@ -5,8 +5,6 @@ import { Exception } from 'handlebars';
 
 const { toBN, toHex, hexToNumber, hexToUtf8, padLeft, padRight } = web3Utils
 const IPFS_BASE_58_LEADING = '1220'
-// NOTE: maybe it shoud work with .32
-const CHECK_NUMBER_STR = new RegExp(/^([0-9]+\.?[0-9]*)$/)
 
 // TODO: decide to use this func or set specific params for the specific params
 export const toHexParam = (param) => {
@@ -45,23 +43,29 @@ export const fromHexParam = (param, type) => {
     }
 }
 
+// NOTE: maybe it shoud work with .32
+const CHECK_NUMBER_STR = new RegExp(/^([0-9]+\.?[0-9]*)$/)
+const LEADING_ZEROS =  /^0+/
 // NOTE: converts user input string to multiplied integer
+// TODO: more tests for this
 export const adxAmountStrToPrecision = (amountStr) => {
     amountStr = amountStr.toString() // OR throw if no string
 
-    let isValid = validAmountStr(amountStr)
+    const isValid = validAmountStr(amountStr)
 
     if (!isValid) throw new Exception('Invalid amount string!')
 
-    let amParts = amountStr.split('.') //In no "." all goes to ints 
-    let ints = amParts[0]
-    let floats = amParts[1] || '0'
-    floats = floats.substr(0, PRECISION) // Cuts the digits after the precision
-    floats = padRight(floats, PRECISION) // Ensures precision
+    const amParts = amountStr.split('.') //In no "." all goes to ints 
+    const ints = amParts[0]
+    const floats = amParts[1] || '0'
+    const floatsToPrecision = floats.substr(0, PRECISION) // Cuts the digits after the precision
+    const floatsEnsuredPrecision = padRight(floatsToPrecision, PRECISION) // Ensures precision
 
-    let amount = ints + floats
+    const amount = ints + floatsEnsuredPrecision
 
-    return amount
+    const amountNoLeadingZeros = amount.replace(LEADING_ZEROS, '')
+
+    return amountNoLeadingZeros || '0'
 }
 
 export const adxAmountStrToHex = (amountStr) => {
