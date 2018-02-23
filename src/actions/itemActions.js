@@ -114,7 +114,7 @@ export function deleteItem({ item, objModel, authSig } = {}) {
             authSig: authSig //TODO: use user from session
         })
             .then((res) => {
-                console.log('deleteItem res', res)
+                // console.log('deleteItem res', res)
 
                 return dispatch({
                     type: types.DELETE_ITEM,

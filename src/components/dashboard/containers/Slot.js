@@ -62,7 +62,6 @@ export class Slot extends Component {
     render() {
         let item = this.props.item
         let t = this.props.t
-        console.log('item', item)
 
         if (!item) return (<h1>Slot '404'</h1>)
 

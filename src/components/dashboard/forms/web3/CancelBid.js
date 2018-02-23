@@ -37,7 +37,7 @@ class CancelBid extends Component {
         let unitMeta = unit._meta || {}
         let bid = this.props.placedBid || {}
 
-        console.log('unitMeta', unitMeta)
+        // console.log('unitMeta', unitMeta)
 
         return (
             <div>

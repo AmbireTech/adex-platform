@@ -44,7 +44,7 @@ class Step4 extends Component {
                     // TODO: Should we keep ks object global? - it is now
                     ks.keyFromPassword(password, function (err, pwDerivedKey) {
                         if (err) {
-                            console.log('err', err)
+                            // console.log('err', err)
                             throw err
                         }
 

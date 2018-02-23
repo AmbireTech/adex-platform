@@ -11,8 +11,6 @@ const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue, AdTypesByValue } = ItemsCo
 
 export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
 
-    console.log('rightComponent', rightComponent)
-
     return (
         <div className={theme.itemPropTop}>
             <Grid fluid style={{ padding: 0 }}>

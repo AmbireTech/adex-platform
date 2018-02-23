@@ -13,7 +13,7 @@ import { PersistGate } from 'redux-persist/es/integration/react'
 import Root from './Root'
 
 const { persistor, store } = configureStore()
-console.log('initial store', store.getState())
+// console.log('initial store', store.getState())
 
 const onBeforeLift = () => {
   // take some action before the gate lifts

@@ -64,7 +64,7 @@ export class SlotBids extends Component {
             sizeAndType: this.props.item.sizeAndType
         })
             .then((bids) => {
-                console.log('unit openBids', bids)
+                // console.log('unit openBids', bids)
                 this.setState({ openBids: bids })
             })
     }

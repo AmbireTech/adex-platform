@@ -26,12 +26,11 @@ class ImgForm extends Component {
   onDrop = (acceptedFiles, rejectedFiles) => {
     let that = this
     let file = acceptedFiles[0]
-    console.log('file', file)
     if (!file) return
     let objectUrl = URL.createObjectURL(file)
-    console.log('objectUrl', objectUrl)
 
     that.setState({ imgSrc: objectUrl, imgName: file.name })
+    // TODO: Maybe get width and height here instead on ing validation hoc
     this.props.onChange({ tempUrl: objectUrl })
   }
 

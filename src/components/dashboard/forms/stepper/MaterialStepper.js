@@ -69,11 +69,11 @@ const StepperNav = ({ pages, currentPage, ...other }) => {
 class MaterialStepper extends React.Component {
 
     onComplete() {
-        console.log('currPage', this.currPage)
+        // console.log('currPage', this.currPage)
         let props = this.props
         let page = props.pages[props.currentPage]
 
-        console.log('props.pages[props.currentPage]', page.component)
+        // console.log('props.pages[props.currentPage]', page.component)
     }
 
     goToPage(nexStep) {

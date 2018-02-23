@@ -21,7 +21,6 @@
 - filter bids actions
 - make some charts
 - He accept, he not accept, but most importantly he validate
-- metamask how to on signin
 - use only item._type in production
 - fix campaigns and channels update (make endpoint to the node node)
 - fix units and slots description update (make endpoint to the node)
