@@ -75,11 +75,11 @@ function getClientEnvironment(publicUrl) {
         // images into the `src` and `import` them in code to get their paths.
         PUBLIC_URL: publicUrl,
         IPFS_GATEWAY: process.env.IPFS_GATEWAY || 'https://gateway.ipfs.io/ipfs/',
-        WEB3_NODE: process.env.WEB3_NODE,
-        ADX_TOKEN_ADDR: process.env.ADX_TOKEN_ADDR,
-        ADX_EXCHANGE_ADDR: process.env.ADX_EXCHANGE_ADDR,
-        ADVIEW_HOST: process.env.ADVIEW_HOST,
-        ADEX_NODE_HOST: process.env.ADEX_NODE_HOST
+        WEB3_NODE: process.env.WEB3_NODE || 'https://parity.wings.ai',
+        ADX_TOKEN_ADDR: process.env.ADX_TOKEN_ADDR || '0x4470BB87d77b963A013DB939BE332f927f2b992e',
+        ADX_EXCHANGE_ADDR: process.env.ADX_EXCHANGE_ADDR || '0x912b8f85E28B9ec196b48228159E2f13546836e6',
+        ADVIEW_HOST: process.env.ADVIEW_HOST || 'https://view.adex.network',
+        ADEX_NODE_HOST: process.env.ADEX_NODE_HOST || 'https://node.adex.network'
       }
     );
   // Stringify all values so we can feed into Webpack DefinePlugin
