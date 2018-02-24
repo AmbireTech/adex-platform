@@ -3,7 +3,7 @@ const BASE_URL = process.env.ADEX_NODE_HOST || 'https://node.adex.network' //TOD
 
 class AdexNodeRequester {
     getUrl(base, route, query) {
-        let url = base
+        let url = base + '/'
         if (route) {
             route = route.replace(/^\//, '')
             url += route
