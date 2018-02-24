@@ -17,7 +17,7 @@ import RTButtonTheme from 'styles/RTButton.css'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Img from 'components/common/img/Img'
-import Item from 'models/Item'
+import { Item } from 'adex-models'
 import moment from 'moment'
 import Translate from 'components/translate/Translate'
 
@@ -104,7 +104,7 @@ class ItemsList extends Component {
                 logo={item._meta.img}
                 side={this.props.side}
                 delete={this.props.actions.confirmAction.bind(this,
-                    this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel }),
+                    this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel, authSig: this.props.account._authSig }),
                     null,
                     {
                         confirmLabel: 'Yes',
@@ -150,7 +150,7 @@ class ItemsList extends Component {
         return (
             <TableRow key={item._id || index} theme={tableTheme} selected={selected}>
                 <RRTableCell className={tableTheme.link} to={to} theme={tableTheme}>
-                    <Img className={tableTheme.img} src={Item.getImgUrl(item._meta.img)} alt={item._name} />
+                    <Img className={tableTheme.img} src={Item.getImgUrl(item._meta.img, process.env.IPFS_GATEWAY)} alt={item._name} />
                 </RRTableCell>
                 <RRTableCell className={tableTheme.link} to={to}> {item._name} </RRTableCell>
                 <TableCell> {item._type} </TableCell>
@@ -192,7 +192,7 @@ class ItemsList extends Component {
                         tooltipPosition='top'
                         className={RTButtonTheme.danger}
                         onClick={this.props.actions.confirmAction.bind(this,
-                            this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel }),
+                            this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel, authSig: this.props.account._authSig }),
                             null,
                             {
                                 confirmLabel: 'Yes',
@@ -210,7 +210,7 @@ class ItemsList extends Component {
                         tooltipPosition='top'
                         className={RTButtonTheme.danger}
                         onClick={this.props.actions.confirmAction.bind(this,
-                            this.props.actions.removeItemFromItem.bind(this, { item: this.props.parentItem, toRemove: item }),
+                            this.props.actions.removeItemFromItem.bind(this, { item: item, toRemove: this.props.parentItem, authSig: this.props.account._authSig }),
                             null,
                             {
                                 confirmLabel: 'Yes',
@@ -228,7 +228,7 @@ class ItemsList extends Component {
                         tooltip={'Add to ' + this.props.parentItem._name}
                         tooltipDelay={1000}
                         tooltipPosition='top'
-                        onClick={this.props.actions.addItemToItem.bind(this, { item: this.props.parentItem, toAdd: item })}
+                        onClick={this.props.actions.addItemToItem.bind(this, { item: item, toAdd: this.props.parentItem, authSig: this.props.account._authSig })}
                     /> : null}
             </span>
         )
@@ -239,7 +239,7 @@ class ItemsList extends Component {
         // TODO: maybe filter deleted before this?
         let filtered = (items || [])
             .filter((i) => {
-                let isItem = (!!i && ((!!i._meta && !i._meta.deleted) || i.id))
+                let isItem = (!!i && ((!!i._meta && !i._deleted) || i.id) || i._id)
                 if (!isItem) return isItem
                 let hasSearch = !!search
                 if (!hasSearch) return isItem
@@ -262,8 +262,8 @@ class ItemsList extends Component {
 
         if (sortProperty) {
             filtered = filtered.sort((a, b) => {
-                let propA = a[sortProperty] || a._meta[sortProperty]
-                let propB = b[sortProperty] || b._meta[sortProperty]
+                let propA = a[sortProperty] || (a._meta ? a._meta[sortProperty] : 0)
+                let propB = b[sortProperty] || (b._meta ? b._meta[sortProperty] : 0)
 
                 return (propA < propB ? -1 : (propA > propB ? 1 : 0)) * sortOrder
             })
@@ -406,7 +406,8 @@ function mapStateToProps(state, props) {
     let memory = state.memory
     return {
         rowsView: !!persist.ui[props.viewModeId],
-        side: memory.nav.side
+        side: memory.nav.side,
+        account: persist.account
     };
 }
 

@@ -1,10 +1,13 @@
 // Generate some random bids reports to use with charts until the AdEx node ready
-import Bid, { BidState } from 'models/Bid'
+import { Bid } from 'adex-models'
+import { exchange } from 'adex-constants'
 import Helper from 'helpers/miscHelpers'
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'
 const moment = extendMoment(Moment)
+const BidState = exchange.BID_STATES
 
+//TODO: FIx it fi there is needed test data
 class BidsStatsGenerator {
     constructor() {
         this.unitsStats = []
@@ -33,22 +36,22 @@ class BidsStatsGenerator {
                 continue
             }
 
-            if (bid.state === BidState.Accepted) {
+            if (bid.state === BidState.Accepted.id) {
                 activeBids.accepted[bid.id] = bid
                 activeBids.active[bid.id] = bid
-            } else if (bid.state === BidState.Claimed) {
+            } else if (bid.state === BidState.Claimed.id) {
                 activeBids.claimed[bid.id] = bid
                 activeBids.active[bid.id] = bid
-            } else if (bid.state === BidState.Completed) {
+            } else if (bid.state === BidState.Completed.id) {
                 activeBids.completed[bid.id] = bid
                 activeBids.active[bid.id] = bid
-            } else if (bid.state === BidState.Canceled) {
+            } else if (bid.state === BidState.Canceled.id) {
                 inactiveBids.canceled[bid.id] = bid
                 inactiveBids.inactive[bid.id] = bid
-            } else if (bid.state === BidState.Expired) {
+            } else if (bid.state === BidState.Expired.id) {
                 inactiveBids.expired[bid.id] = bid
                 inactiveBids.inactive[bid.id] = bid
-            } else if (bid.state === BidState.Open) {
+            } else if (bid.state === BidState.Open.id) {
                 inactiveBids.opened[bid.id] = bid
                 inactiveBids.inactive[bid.id] = bid
             }
@@ -88,15 +91,15 @@ class BidsStatsGenerator {
         }
 
         bids.map((bid, index) => {
-            if (bid.state === BidState.Accepted) {
+            if (bid.state === BidState.Accepted.id) {
                 setRange(accepted, bid.acceptedTime)
                 accepted.totalAmount += bid.amount
                 accepted.totalPoints += bid.requiredPoints
-            } else if (bid.state === BidState.Claimed) {
+            } else if (bid.state === BidState.Claimed.id) {
                 setRange(claimed, bid.acceptedTime)
                 claimed.totalAmount += bid.amount
                 claimed.totalPoints += bid.requiredPoints
-            } else if (bid.state === BidState.Completed) {
+            } else if (bid.state === BidState.Completed.id) {
                 setRange(completed, bid.acceptedTime)
                 completed.totalAmount += bid.amount
                 completed.totalPoints += bid.requiredPoints

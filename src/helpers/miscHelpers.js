@@ -5,9 +5,20 @@ class Helper {
 
     getGuid() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+            var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8) // eslint-disable-line no-mixed-operators
+            return v.toString(16)
+        })
+    }
+
+    getRndHash32(prefix) {
+        let h = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
             var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8); // eslint-disable-line no-mixed-operators
-            return v.toString(16);
-        });
+            return v.toString(16)
+        })
+        if (prefix) {
+            h = prefix + (h.substring(prefix.length))
+        }
+        return h
     }
 
     getRandomInt(min, max) {
@@ -28,9 +39,11 @@ class Helper {
         return keys[keys.length * Math.random() << 0]
     }
 
-    slugify(str) {
+    slugify(str, legth = 32) {
         if (!str || (typeof str !== 'string')) return ''
-        return slug(unidecode(str), { lower: true }).substring(0, 32);
+        let slugified = slug(unidecode(str), { lower: true }).substring(0, legth)
+        // console.log('slugified', slugified)
+        return slugified
     }
 
     geRandomMoment(maxDaysPast, maxDaysAhead, initialMoment) {
@@ -64,6 +77,13 @@ class Helper {
         let b = hexToDec(hex.substr(5, 2))
 
         return `rgba(${r},${g},${b},${alpha})`
+    }
+
+    getQuery(queryParams) {
+        if (!queryParams) return ''
+        return '?' + Object.keys(queryParams).map((key) => {
+            return encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key])
+        }, '').join('&') || ''
     }
 }
 

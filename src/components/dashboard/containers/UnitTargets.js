@@ -4,204 +4,85 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { ItemsTypes, Locations, TargetWeightLabels, Genders, TARGET_MIN_AGE, TARGET_MAX_AGE } from 'constants/itemsTypes'
 import theme from './theme.css'
-// import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
-// import { IconButton, Button } from 'react-toolbox/lib/button'
-// import ItemsList from './ItemsList'
-// import Rows from 'components/dashboard/collection/Rows'
-// import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
-// import BidForm from 'components/dashboard/forms/BidForm'
-// import Dialog from 'react-toolbox/lib/dialog'
-import AdUnit from 'models/AdUnit'
-import { Grid, Row, Col } from 'react-flexbox-grid'
-import Autocomplete from 'react-toolbox/lib/autocomplete'
-import classnames from 'classnames'
-import Slider from 'react-toolbox/lib/slider'
+import { items as ItemsConstants } from 'adex-constants'
+import { List, ListItem, ListSubHeader, ListDivider } from 'react-toolbox/lib/list'
+import FontIcon from 'react-toolbox/lib/font_icon'
 
-const autocompleteLocations = () => {
-    let locs = {}
-    Locations.map((loc) => {
-        locs[loc.value] = loc.label
-    })
+const { ItemsTypes } = ItemsConstants
 
-    return locs
+const targetWeightIcon = {
+    0: { icon: 'exposure_zero', color: '#616161' },
+    1: { icon: 'looks_one', color: '#03A9F4' },
+    2: { icon: 'looks_two', color: '#00E676' },
+    3: { icon: 'looks_3', color: '#FFAB00' },
+    4: { icon: 'looks_4', color: '#FF5722' },
 }
 
-const AcLocations = autocompleteLocations()
-
-const autocompleteGenders = () => {
-    let genders = {}
-    Genders.map((gen) => {
-        genders[gen.value] = gen.label
-    })
-
-    return genders
+const targetIcon = {
+    'location': 'location_on',
+    'gender': 'wc',
+    'age': 'child_care',
 }
-
-const AcGenders = autocompleteGenders()
-
-const ages = (() => {
-    let ages = []
-    for (var index = TARGET_MIN_AGE; index <= TARGET_MAX_AGE; index++) {
-        ages.push(index + '')
-    }
-
-    return ages
-})()
 
 export class UnitTargets extends Component {
+    targetArrayValues = (target, t) => {
+        let icon = targetWeightIcon[target.weight]
+        return (
+            <span key={target.name}>
+                <ListItem
+                    ripple={false}
+                    caption={t(target.name, { isTarget: true })}
+                    legend={target.value.join(', ')}
+                    rightIcon={<FontIcon value={icon.icon} style={{ color: icon.color }} />}
+                    leftIcon={targetIcon[target.name]}
+                    theme={theme}
+                />
+                <ListDivider />
+            </span>
+        )
+    }
 
-    handleTargetChange = (target, valueKey, newValue) => {
-        let newWeight
-        if (valueKey === 'updateWeight') {
-            newWeight = newValue
-            newValue = target.value
-        }
+    ageTargets = (target, t) => {
+        let icon = targetWeightIcon[target.weight]
+        return (
+            <span key={target.name}>
+                <ListItem
+                    ripple={false}
+                    caption={t(target.name, { isTarget: true })}
+                    legend={'from ' + target.value.from + ' to ' + target.value.to}
+                    rightIcon={<FontIcon value={icon.icon} style={{ color: icon.color }} />}
+                    leftIcon='child_care'
+                    theme={theme}
+                />
+                <ListDivider />
+            </span>
+        )
+    }
 
-        else if (valueKey) {
-            let tempValue = { ...target.value }
-            if (valueKey === 'from' || valueKey === 'to') {
-                newValue = newValue | 0
+    TargetsList = ({ targets, t }) => (
+        <List selectable={false} ripple={false}>
+            <ListSubHeader caption='Targets' />
+            {
+                (targets || []).map((target) => {
+
+                    switch (target.name) {
+                        case 'location':
+                            return this.targetArrayValues(target, t)
+                        case 'gender':
+                            return this.targetArrayValues(target, t)
+                        case 'age':
+                            return this.ageTargets(target, t)
+                        default: null
+                    }
+                })
             }
-
-            tempValue[valueKey] = newValue
-            newValue = tempValue
-        }
-
-        let newTargets = AdUnit.updateTargets(this.props.item._meta.targets, target, newValue, newWeight)
-        this.props.handleChange('targets', newTargets)
-    }
-
-    renderLocationTarget = (target) => {
-        return (
-            <Autocomplete
-                direction="auto"
-                multiple={true}
-                onChange={this.handleTargetChange.bind(this, target, null)}
-                label={this.props.t('TARGET_LOCATION')}
-                source={AcLocations}
-                value={target.value}
-                suggestionMatch='anywhere'
-                showSuggestionsWhenValueIsSet={true}
-                allowCreate={false}
-            />
-        )
-    }
-
-    renderGendersTarget = (target) => {
-        return (
-            <Autocomplete
-                direction="auto"
-                multiple={true}
-                onChange={this.handleTargetChange.bind(this, target, null)}
-                label={this.props.t('TARGET_GENDERS')}
-                source={AcGenders}
-                value={target.value}
-                suggestionMatch='anywhere'
-                showSuggestionsWhenValueIsSet={true}
-                allowCreate={false}
-            />
-        )
-    }
-
-    renderAgeTarget = (target) => {
-        return (
-            <div>
-                <Grid fluid className={theme.agesGrid}>
-                    <Row>
-                        <Col lg={6}>
-
-                            <Autocomplete
-                                direction="auto"
-                                multiple={false}
-                                onChange={this.handleTargetChange.bind(this, target, 'from')}
-                                label={this.props.t('TARGET_AGE_FROM')}
-                                source={ages.slice(0, (target.value.to | 0) + 1)}
-                                value={target.value.from + ''}
-                                suggestionMatch='anywhere'
-                                showSuggestionsWhenValueIsSet={true}
-                                allowCreate={false}
-                            />
-                        </Col>
-                        <Col lg={6}>
-
-                            <Autocomplete
-                                direction="auto"
-                                multiple={false}
-                                onChange={this.handleTargetChange.bind(this, target, 'to')}
-                                label={this.props.t('TARGET_AGE_TO')}
-                                source={ages.slice(target.value.from | 0)}
-                                value={target.value.to + ''}
-                                suggestionMatch='anywhere'
-                                showSuggestionsWhenValueIsSet={true}
-                                allowCreate={false}
-                            />
-                        </Col>
-                    </Row>
-                </Grid >
-            </div>
-        )
-    }
-
-    Targets = ({ meta, t }) => {
-        return (
-            <Grid fluid>
-                <Row className={theme.targetsHead}>
-                    <Col lg={7}>
-                        {t('TARGET')}
-                    </Col>
-                    <Col lg={5}>
-                        {t('WEIGHT')}
-                    </Col>
-                </Row>
-                {
-                    meta.targets.map((target) => {
-                        return (
-                            <Row key={target.name} className={theme.targetRow}>
-                                <Col lg={7}>
-                                    {(() => {
-                                        switch (target.name) {
-                                            case 'location':
-                                                return this.renderLocationTarget(target)
-                                            case 'gender':
-                                                return this.renderGendersTarget(target)
-                                            case 'age':
-                                                return this.renderAgeTarget(target)
-                                            default: null
-                                        }
-                                    })()}
-                                </Col>
-                                <Col lg={5} style={{ position: 'relative' }}>
-                                    <div className={classnames(theme.sliderWrapper)}>
-                                        <label className={classnames(theme.sliderLabel, theme.weightLabel)}>
-                                            {target.name}  weight:
-                                            <strong> {target.weight} </strong>
-                                            ({TargetWeightLabels[target.weight]})
-                                        </label>
-                                        <Slider className={theme.weightSlider}
-                                            pinned
-                                            snaps
-                                            min={0}
-                                            max={4}
-                                            step={1}
-                                            value={target.weight}
-                                            onChange={this.handleTargetChange.bind(this, target, 'updateWeight')}
-                                        />
-                                    </div>
-                                </Col>
-
-                            </Row>
-                        )
-                    })
-                }
-            </Grid>
-        )
-    }
+        </List>
+    )
 
     render() {
         return (
-            <this.Targets meta={this.props.meta} t={this.props.t} />
+            <this.TargetsList targets={this.props.targets} t={this.props.t} />
         )
     }
 }
@@ -209,10 +90,9 @@ export class UnitTargets extends Component {
 UnitTargets.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    // items: PropTypes.array.isRequired,
     item: PropTypes.object.isRequired,
-    slots: PropTypes.array.isRequired,
-    spinner: PropTypes.bool
+    spinner: PropTypes.bool,
+    targets: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {
@@ -220,7 +100,6 @@ function mapStateToProps(state) {
     let memory = state.memory
     return {
         account: persist.account,
-        slots: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
         spinner: memory.spinners[ItemsTypes.AdUnit.name]
     };
 }
@@ -231,7 +110,6 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-// const UnitItem = ItemHoc(UnitSlots)
 export default connect(
     mapStateToProps,
     mapDispatchToProps

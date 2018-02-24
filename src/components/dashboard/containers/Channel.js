@@ -3,17 +3,19 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { ItemsTypes } from 'constants/itemsTypes'
-import ChannelModel from 'models/Channel'
-import AdSlotModel from 'models/AdSlot'
+import { Channel as ChannelModel, AdSlot as AdSlotModel } from 'adex-models'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
-import NewSlotForm from 'components/dashboard/forms/NewSlotForm'
+import NewSlotForm from 'components/dashboard/forms/items/NewSlotForm'
 // import theme from './theme.css'
 import AddItemDialog from './AddItemDialog'
-import NewItemSteps from 'components/dashboard/forms/NewItemSteps'
+import NewItemSteps from 'components/dashboard/forms/items/NewItemSteps'
 import theme from './theme.css'
 import Translate from 'components/translate/Translate'
+import { groupItemsForCollection } from 'helpers/itemsHelpers'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemsTypes } = ItemsConstants
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
@@ -32,23 +34,20 @@ export class Channel extends Component {
     }
 
     render() {
-        let side = this.props.match.params.side;
-
+        // let side = this.props.match.params.side
+        // let t = this.props.t
         let item = this.props.item
-        let meta = item._meta
+        // let items = item._items || []
         let propsSlots = { ...this.props.slots }
-        let slots = []
-        let otherSlots = Array.from(Object.values(propsSlots))
-        let t = this.props.t
+        
 
         if (!item) return (<h1>'404'</h1>)
 
-        for (var index = 0; index < meta.items.length; index++) {
-            if (propsSlots[meta.items[index]] && !propsSlots[meta.items[index]]._meta.deleted) {
-                slots.push(propsSlots[meta.items[index]])
-                otherSlots[meta.items[index]] = null
-            }
-        }
+        //TODO: Make it wit HOC for collection (campaing/channel)
+        let groupedSlots = groupItemsForCollection({ collectionId: item._id, allItems: propsSlots })
+
+        let slots = groupedSlots.items
+        let otherSlots = groupedSlots.otherItems
 
         return (
             <div>
@@ -98,7 +97,7 @@ function mapStateToProps(state) {
         spinner: memory.spinners[ItemsTypes.Channel.name],
         rowsView: !!persist.ui[VIEW_MODE],
         objModel: ChannelModel,
-        itemTypeL: ItemsTypes.Channel.id
+        itemType: ItemsTypes.Channel.id
     }
 }
 

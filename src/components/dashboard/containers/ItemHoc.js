@@ -10,14 +10,16 @@ import FontIcon from 'react-toolbox/lib/font_icon'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Avatar from 'react-toolbox/lib/avatar'
 import Input from 'react-toolbox/lib/input'
-import { ItemTypesNames } from 'constants/itemsTypes'
-import Base from 'models/Base'
+import { Base, Item as ItemModel, Models } from 'adex-models'
 import FloatingProgressButton from 'components/common/floating_btn_progress/FloatingProgressButton'
 import classnames from 'classnames'
-import ItemModel from 'models/Item'
 import ImgDialog from './ImgDialog'
 import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
+import { items as ItemsConstants } from 'adex-constants'
+// import Img from 'components/common/img/Img'
+
+const { ItemTypesNames, ItemTypeByTypeId } = ItemsConstants
 
 const TooltipFontIcon = Tooltip(FontIcon)
 
@@ -36,10 +38,12 @@ export default function ItemHoc(Decorated) {
 
         componentDidUpdate(prevProps, prevState) {
             let itemId = this.props.match.params.itemId
-            let item = this.props.items[itemId]
-            let prevItem = prevProps.items[itemId]
+            let item = this.props.items[itemId] || {}
+            let meta = item._meta
+            let prevItem = prevProps.items[itemId] || {}
+            let prevMeta = prevItem._meta
 
-            if (item._meta.modifiedOn !== prevItem._meta.modifiedOn) {
+            if ((meta && prevMeta) && (meta.modifiedOn !== prevMeta.modifiedOn)) {
                 this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], false)
                 this.setState({ activeFields: {}, dirtyProps: [] })
             }
@@ -107,11 +111,15 @@ export default function ItemHoc(Decorated) {
             if (!this.state.item) {
                 return (<h1> No item found! </h1>)
             }
-
-            let item = this.state.item || {}
-            let meta = item._meta || {}
-            let imgSrc = ItemModel.getImgUrl(meta.img)
+            /*
+                * NOTE: using instance of the item, the instance is passes to the Unit, Slot, Channel and Campaign components,
+                * in this case there is no need to make instance inside them
+            */
+            let model = Models.itemClassByTypeId[this.state.item._type]
+            let item = new model(this.state.item) || {}
+            // let imgSrc =  ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)
             let t = this.props.t
+            let canEdit = ItemTypeByTypeId[item.type] === 'collection'
 
             return (
                 <div>
@@ -120,16 +128,18 @@ export default function ItemHoc(Decorated) {
                         message={t('UNSAVED_CHANGES_ALERT')}
                     />
 
-                    <div className={classnames(theme.heading, theme[ItemTypesNames[item._type]])}>
+                    <div className={classnames(theme.heading, theme[ItemTypesNames[item._type || item._meta.type]])}>
                         <div className={theme.headingLeft}>
-                            <Avatar image={imgSrc} title={meta.fullName} cover onClick={this.handleToggle.bind(this)} />
-                            <ImgDialog imgSrc={imgSrc} handleToggle={this.handleToggle} active={this.state.editImg} onChange={this.handleChange.bind(this, 'img')} />
-                            {this.state.activeFields.fullName ?
-                                <Input className={theme.itemName} type='text' label={t('fullName', { isProp: true })} name='fullName' value={meta.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
+                            <Avatar title={item.fullName} cover onClick={this.handleToggle.bind(this)} />
+                            {/* <ImgDialog imgSrc={imgSrc} handleToggle={this.handleToggle} active={this.state.editImg} onChange={this.handleChange.bind(this, 'img')} /> */}
+                            {canEdit && this.state.activeFields.fullName ?
+                                <Input className={theme.itemName} type='text' label={t('fullName', { isProp: true })} name='fullName' value={item.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
                                 :
                                 <h3 className={theme.itemName}>
-                                    <span> {meta.fullName} </span>
-                                    <span><IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'fullName', true)} /></span>
+                                    <span> {item.fullName} </span>
+                                    {canEdit ?
+                                        <span><IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'fullName', true)} /></span>
+                                        : null}
                                 </h3>
                             }
                         </div>
@@ -139,12 +149,12 @@ export default function ItemHoc(Decorated) {
 
 
                             {this.state.activeFields.description ?
-                                <Input multiline rows={3} type='text' label={t('description', { isProp: true })} name='description' value={meta.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
+                                <Input multiline rows={3} type='text' label={t('description', { isProp: true })} name='description' value={item.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
                                 :
                                 <div>
                                     <p>
-                                        {meta.description ?
-                                            meta.description
+                                        {item.description ?
+                                            item.description
                                             :
                                             <span> {t('NO_DESCRIPTION_YET')}</span>
                                         }

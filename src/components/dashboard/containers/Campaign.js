@@ -3,19 +3,22 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { ItemsTypes } from 'constants/itemsTypes'
-import CampaignModel from 'models/Campaign'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
-import NewUnitFormBasic from 'components/dashboard/forms/NewUnitFormBasic'
+import NewUnitFormBasic from 'components/dashboard/forms/items/NewUnitFormBasic'
+import NewUnitFormTargets from 'components/dashboard/forms/items/NewUnitFormTargets'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import theme from './campaign.css'
 import AddItemDialog from './AddItemDialog'
-import NewItemSteps from 'components/dashboard/forms/NewItemSteps'
+import NewItemSteps from 'components/dashboard/forms/items/NewItemSteps'
 import moment from 'moment'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
-import AdUnitModel from 'models/AdUnit'
+import { AdUnit as AdUnitModel, Campaign as CampaignModel } from 'adex-models'
+import { groupItemsForCollection } from 'helpers/itemsHelpers'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemsTypes } = ItemsConstants
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
@@ -38,28 +41,23 @@ export class Campaign extends Component {
     }
 
     render() {
-        let side = this.props.match.params.side;
+        // let side = this.props.match.params.side
         let item = this.props.item
-        let meta = item._meta
         let propsUnits = { ...this.props.units }
-        let units = []
-        let otherUnits = { ...propsUnits }
 
         let t = this.props.t
 
         if (!item) return (<h1>'404'</h1>)
 
-        let from = item._meta.from ? new Date(item._meta.from) : null
-        let to = item._meta.to ? new Date(item._meta.to) : null
+        let from = item.from ? new Date(item.from) : null
+        let to = item.to ? new Date(item.to) : null
+        let now = new Date()
 
-        for (var index = 0; index < meta.items.length; index++) {
-            if (propsUnits[meta.items[index]] && !propsUnits[meta.items[index]]._meta.deleted) {
-                units.push(propsUnits[meta.items[index]])
-                otherUnits[meta.items[index]] = null
-            }
-        }
+        //TODO: Make it wit HOC for collection (campaing/channel)
+        let groupedUnits = groupItemsForCollection({ collectionId: item._id, allItems: propsUnits })
 
-        otherUnits = Array.from(Object.values(otherUnits))
+        let units = groupedUnits.items
+        let otherUnits = groupedUnits.otherItems
 
         return (
             <div>
@@ -81,9 +79,10 @@ export class Campaign extends Component {
                                 objModel={AdUnitModel}
                                 itemModel={AdUnitModel}
                                 newForm={(props) =>
+                                    //TODO: fix it
                                     <NewItemSteps {...props}
                                         addTo={item}
-                                        itemPages={[NewUnitFormBasic]}
+                                        itemPages={[NewUnitFormBasic, NewUnitFormTargets]}
                                         itemType={ItemsTypes.AdUnit.id}
                                         itemModel={AdUnitModel}
                                         objModel={AdUnitModel}
@@ -98,7 +97,8 @@ export class Campaign extends Component {
                     <FontIcon value="date_range" />
                     <span>{t('from')} </span>
                     <DatePicker
-                        minDate={new Date()}
+                        minDate={now}
+                        maxDate={to}
                         onChange={this.props.handleChange.bind(this, 'from')}
                         value={from}
                         className={theme.datepicker}
@@ -108,7 +108,7 @@ export class Campaign extends Component {
                     />
                     <span>{t('to')} </span>
                     <DatePicker
-                        minDate={new Date()}
+                        minDate={from || now}
                         onChange={this.props.handleChange.bind(this, 'to')}
                         value={to}
                         className={theme.datepicker}

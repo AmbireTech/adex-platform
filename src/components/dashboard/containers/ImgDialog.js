@@ -4,11 +4,13 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { ItemsTypes, ItemTypesNames } from 'constants/itemsTypes'
 import { Button, IconButton } from 'react-toolbox/lib/button'
 import Dialog from 'react-toolbox/lib/dialog'
 import theme from './theme.css'
 import ImgForm from 'components/dashboard/forms/ImgForm'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemTypesNames } = ItemsConstants
 
 export class ImgDialog extends Component {
 

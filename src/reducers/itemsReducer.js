@@ -1,7 +1,6 @@
-import { ADD_ITEM, DELETE_ITEM, UPDATE_ITEM, REMOVE_ITEM_FROM_ITEM, ADD_ITEM_TO_ITEM } from 'constants/actionTypes' // eslint-disable-line no-unused-vars
+import { ADD_ITEM, DELETE_ITEM, UPDATE_ITEM, REMOVE_ITEM_FROM_ITEM, ADD_ITEM_TO_ITEM, UPDATE_ALL_ITEMS, RESET_ALL_ITEMS } from 'constants/actionTypes' // eslint-disable-line no-unused-vars
 import initialState from 'store/initialState'
-import Base from 'models/Base'
-import Item from 'models/Item'
+import { Base, Item } from 'adex-models'
 
 export default function itemsReducer(state = initialState.items, action) {
 
@@ -19,10 +18,16 @@ export default function itemsReducer(state = initialState.items, action) {
         }
     }
 
-    if (action.item) {
+    const removeCollectionProp = (collection = {}, prop) => {
+        let newCol = { ...collection }
+        delete newCol[prop]
+        return newCol
+    }
+
+    if (action.item && action.item._meta) {
         newState = { ...state }
         item = action.item
-        collectionId = item._type
+        collectionId = item._type || item._meta.type
     }
 
     switch (action.type) {
@@ -42,8 +47,8 @@ export default function itemsReducer(state = initialState.items, action) {
 
         case DELETE_ITEM:
             // newItem = Base.updateMeta(newState[collectionId][item._id], { deleted: true, modifiedOn: Date.now() })
-            newItem = Base.updateObject({ item: newState[collectionId][item._id], meta: { deleted: true }, objModel: action.objModel })
-            newCollection = collection(newState[collectionId], { ...action, item: newItem })
+            // newItem = Base.updateObject({ item: newState[collectionId][item._id], meta: { _deleted: true }, objModel: action.objModel })
+            newCollection = removeCollectionProp(newState[collectionId], item._id)
             newState[collectionId] = newCollection
             return newState
 
@@ -57,6 +62,21 @@ export default function itemsReducer(state = initialState.items, action) {
             newItem = Base.updateObject({ item: newState[collectionId][item._id], meta: { ...action.meta }, objModel: action.objModel })
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
+            return newState
+
+        case UPDATE_ALL_ITEMS:
+            //TEMP:
+            newState = { ...state }
+            let newItems = action.items.reduce((memo, item, index) => {
+                let newItem = { ...item }
+                memo[newItem._id] = newItem
+                return memo
+            }, {})
+
+            newState[action.itemsType] = newItems
+            return newState
+        case RESET_ALL_ITEMS:
+            newState = { ...initialState.items }
             return newState
 
         default:

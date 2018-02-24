@@ -14,29 +14,33 @@ import DashboardStats from './containers/DashboardStats'
 import Unit from './containers/Unit'
 import Slot from './containers/Slot'
 import Items from './containers/Items'
-import { ItemsTypes } from 'constants/itemsTypes'
-import Auction from './auction/Auction'
-import Signin from 'components/signin/Signin'
-import AdUnitModel from 'models/AdUnit'
-import AdSlotModel from 'models/AdSlot'
-import ChannelModel from 'models/Channel'
-import CampaignModel from 'models/Campaign'
-
+import {
+    AdUnit as AdUnitModel,
+    AdSlot as AdSlotModel,
+    Campaign as CampaignModel,
+    Channel as ChannelModel
+} from 'adex-models'
+import Account from './account/Account'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
+// import scActions from 'services/smart-contracts/actions'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemsTypes } = ItemsConstants
+
+// const { getAccount, getAccountStats, getAccountStatsMetaMask } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
     return (
         <Route
             {...other}
-            render={(props) => auth === true || true
+            render={(props) => auth === true //|| true
                 ? <Component {...props} />
                 : <Redirect to={{ pathname: '/', state: { from: props.location } }} />}
         />
     )
 }
 
-// console.log('actions', actions)
 class Dashboard extends React.Component {
     state = {
         drawerActive: false,
@@ -46,6 +50,10 @@ class Dashboard extends React.Component {
 
     componentWillMount(nextProps) {
         this.props.actions.updateNav('side', this.props.match.params.side)
+    }
+
+    componentWillUpdate(nextProps) {
+        this.props.actions.updateNav('side', nextProps.match.params.side)
     }
 
     toggleDrawerActive = () => {
@@ -119,7 +127,6 @@ class Dashboard extends React.Component {
 
     render() {
         let side = this.props.side || this.props.match.params.side
-
         return (
             <Layout theme={theme} >
                 <NavDrawer pinned={true} theme={theme}>
@@ -128,7 +135,7 @@ class Dashboard extends React.Component {
 
                 <Panel theme={theme} >
                     <TopBar side={side} />
-                    <Switch>
+                    <Switch locatiom={this.props.location}>
                         {/* TODO: Make things dynamic if easier */}
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/campaigns' component={this.renderCampaigns} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/units' component={this.renderAdUnits} />
@@ -140,7 +147,7 @@ class Dashboard extends React.Component {
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/Channel/:itemId' component={Channel} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
 
-                        <PrivateRoute auth={this.props.auth} exact path={'/dashboard/auction/ink'} component={Auction} />
+                        <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/account'} component={Account} />
 
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/:side' component={DashboardStats} />
                         <PrivateRoute auth={this.props.auth} component={() => <h1>404 at {side} side</h1>} />
@@ -159,12 +166,13 @@ Dashboard.propTypes = {
 
 function mapStateToProps(state, props) {
     let persist = state.persist
-    let memory = state.memory
+    // let memory = state.memory
     let account = persist.account
     return {
         account: account,
         // TODO: temp until we decide how to handle the logged in state
-        auth: !!account._temp && (!!account._temp.pwDerivedKey || !!account._temp.password) // !!memory.signin.publicKey
+        // TODO: We do not need aut here anymore, the auth is on the root
+        auth: !!account._addr
     }
 }
 

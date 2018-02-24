@@ -1,4 +1,8 @@
 import * as types from 'constants/actionTypes'
+import { placeBid as plsBid } from 'services/adex-node/actions'
+import { Bid } from 'adex-models'
+import scActions from 'services/smart-contracts/actions'
+const { signBid } = scActions
 
 // MEMORY STORAGE
 export function updateNewBid({ bidId, key, value }) {
@@ -22,14 +26,33 @@ export function resetNewBid({ bidId }) {
 }
 
 // PERSISTENT STORAGE
-export function placeBid({bid, slot, unit}) {
+export function placeBid({ bid, slot, unit, userAddr, authSig }) {
+    bid = { ...bid }
+    let bidInst = new Bid(bid)
+    bidInst.adUnit = unit._ipfs
+    bidInst.adUnitId = unit._id
+    bidInst.advertiser = userAddr
+
     return function (dispatch) {
-        // NOTE: Add here to web3, get the id etc...
-        return dispatch({
-            type: types.UNIT_PLACE_BID,
-            bid: bid,
-            slot: slot,
-            unit: unit
-        })
+        signBid({ userAddr: userAddr, authSig: authSig, bid: bidInst })
+            .then((sig) => {
+                bidInst.signature = sig
+                bidInst._id = sig.hash
+
+                return plsBid({ bid: bidInst.plainObj(), userAddr: userAddr, authSig: authSig })
+            })
+            .then((bid) => {
+                console.log(bid)
+                return dispatch({
+                    type: types.UNIT_PLACE_BID,
+                    bid: bid,
+                    slot: slot,
+                    unit: unit
+                })
+            })
+            .catch((err) => {
+                // TODO: notifications
+                console.log('placeBid err', err)
+            })
     }
 }

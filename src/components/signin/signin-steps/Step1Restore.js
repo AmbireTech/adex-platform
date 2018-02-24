@@ -3,13 +3,12 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { ItemTypesNames } from 'constants/itemsTypes'
 import SigninStepHocStep from './SigninStepHocStep'
 import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
 import { validEmail } from 'helpers/validators'
 
-const DISABLE_VALIDATION = false
+const DISABLE_VALIDATION = true
 
 class Step1Restore extends Component {
 
