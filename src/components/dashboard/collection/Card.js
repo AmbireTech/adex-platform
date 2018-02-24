@@ -6,21 +6,27 @@ import theme from './theme.css'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Img from 'components/common/img/Img'
-import { ItemTypesNames } from 'constants/itemsTypes'
-import Item from 'models/Item'
+import { Item } from 'adex-models'
 import Translate from 'components/translate/Translate'
+import FontIcon from 'react-toolbox/lib/font_icon'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemTypesNames } = ItemsConstants
 
 const RRCardMedia = withReactRouterLink(CardMedia)
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))
+const TooltipFontIcon = Tooltip(FontIcon)
 
 class MyCard extends Component {
 
     render() {
-        let meta = this.props.item._meta
-        let name = this.props.item._name
-        let id = this.props.item._id
-        let itemTypeName = ItemTypesNames[this.props.item._type]
+        let item = this.props.item
+        let meta = item._meta
+        let name = item._name
+        let id = item._id
+        let itemTypeName = ItemTypesNames[item._type]
         let to = '/dashboard/' + this.props.side + '/' + itemTypeName + '/' + id
+        let synced = item._syncedWeb3 && item.syncedIpfs
         return (
             <Card raised={false} theme={theme}>
                 <RRCardMedia
@@ -28,7 +34,7 @@ class MyCard extends Component {
                     aspectRatio='wide'
                     theme={theme}
                 >
-                    <Img src={Item.getImgUrl(meta.img)} alt={name} />
+                    <Img src={Item.getImgUrl(meta.img, process.env.IPFS_GATEWAY)} alt={name} />
                 </RRCardMedia>
                 <CardTitle
                     title={meta.fullName}
@@ -36,6 +42,12 @@ class MyCard extends Component {
                 />
                 <CardActions theme={theme}>
                     <div>
+                        {/* TODO: fix the sync icon */}
+                        {!synced ?
+                            <TooltipFontIcon
+                                value='sync_problem'
+                                tooltip={this.props.t('ITEM_NOT_SYNCED')}
+                            /> : null}
                         {this.props.actionsRenderer}
                     </div>
                     <TooltipRRButton

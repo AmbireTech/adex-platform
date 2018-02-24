@@ -6,7 +6,7 @@ import history from './history'
 import { routerMiddleware } from 'react-router-redux'
 import { persistStore, persistCombineReducers, persistReducer } from 'redux-persist'
 import localStorage from 'redux-persist/es/storage'
-import session from 'redux-persist/lib/storage/session'
+// import session from 'redux-persist/lib/storage/session'
 
 const reduxRouterMiddleware = routerMiddleware(history)
 
@@ -15,10 +15,10 @@ const configStorage = {
   storage: localStorage,
 }
 
-const configSession = {
-  key: 'session',
-  storage: session,
-}
+// const configSession = {
+//   key: 'session',
+//   storage: session,
+// }
 
 // const rootReducer = combineReducers(reducers)
 
@@ -65,7 +65,7 @@ function configureStoreDev(initialState) {
     // Add other middleware on this line...
 
     // Redux middleware that spits an error on you when you try to mutate your state either inside a dispatch or between dispatches.
-    // reduxImmutableStateInvariant(),
+    reduxImmutableStateInvariant(),
 
     // thunk middleware can also accept an extra argument to be passed to each thunk action
     // https://github.com/gaearon/redux-thunk#injecting-a-custom-argument

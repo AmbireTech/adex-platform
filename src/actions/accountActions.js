@@ -38,3 +38,13 @@ export function resetAccount() {
         })
     }
 }
+
+export function updateAccount({ meta, ownProps }) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.UPDATE_ACCOUNT,
+            meta: meta,
+            ownProps: ownProps,
+        })
+    }
+}

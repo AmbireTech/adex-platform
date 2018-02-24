@@ -1,6 +1,6 @@
 import { UPDATE_NEW_BID, RESET_NEW_BID } from 'constants/actionTypes'
 import initialState from 'store/initialState'
-import Bid from 'models/Bid'
+import { Bid } from 'adex-models'
 
 export default function newBidsReducer(state = initialState.newBid, action) {
     let newState

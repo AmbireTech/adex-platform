@@ -7,24 +7,67 @@ import theme from './theme.css'
 import { AppBar } from 'react-toolbox/lib/app_bar'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import { Navigation } from 'react-toolbox/lib/navigation'
-import { Link } from 'react-toolbox/lib/link'
-import { IconMenu, MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
+import {  MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
 import ButtonMenu from 'components/common/button_menu/ButtonMenu'
 import Translate from 'components/translate/Translate'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
+// import GasPrice from 'components/dashboard/account/GasPrice'
 // import ChangeLang from 'components/translate/ChangeLang'
+import Switch from 'react-toolbox/lib/switch'
+
+const RRMenuItem = withReactRouterLink(MenuItem)
+const RRSwitch = withReactRouterLink((props) => <a {...props}><Switch {...props}  theme={theme} /></a>)
+
+const SideSwitch = ({ side }) => {
+  return (
+    <div>
+      {/* Keep both if there is no valid side and force react to rerender at the same time */}
+      {side !== 'advertiser' ?
+        <RRSwitch
+          checked={true}
+          value='account'
+          to={{ pathname: '/dashboard/advertiser' }}
+          label='Publisher'
+        /> : null}
+      {side !== 'publisher' ?
+        <RRSwitch
+          checked={false}
+          to={{ pathname: '/dashboard/publisher' }}
+          label='Advertiser'
+        /> : null}
+    </div>
+  )
+}
 
 class TopNav extends Component {
 
   render() {
     return (
-      <AppBar title={this.props.side} onLeftIconClick={() => alert('test')} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={true} >
-        <Navigation type='horizontal'>
+      <AppBar title={<SideSwitch side={this.props.side} />} onLeftIconClick={() => alert('test')} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={true} >
+
+        <Navigation type='horizontal' className={theme.rightNavigation}>
           {/* At the moment we use translations only for proper items properties display names */}
           {/* <ChangeLang /> */}
-
-          <ButtonMenu selectable={true} selected='help' icon='expand_more' label={this.props.account._name} position='auto' menuRipple active={true} iconRight={true} iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}>
-            <MenuItem value='settings' icon='settings' caption='Settings' />
-            <MenuItem value='help' icon='help' caption='Help' />
+          {/* <GasPrice /> */}
+          <ButtonMenu
+            selectable={true}
+            selected='help'
+            icon='expand_more'
+            label={this.props.account._addr || 'some username'}
+            position='auto'
+            menuRipple
+            active={true}
+            iconRight={true}
+            iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
+            style={{ float: 'right' }}
+          >
+            <RRMenuItem
+              value='account'
+              to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
+              icon='account_box'
+              caption='Account'
+            />
+            {/* <MenuItem value='help' icon='help' caption='Help' /> */}
             <MenuDivider />
             <MenuItem value='logout' icon='exit_to_app' caption='Logout' onClick={() => this.props.actions.resetAccount()} />
           </ButtonMenu>

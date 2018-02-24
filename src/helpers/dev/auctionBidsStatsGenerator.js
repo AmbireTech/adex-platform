@@ -1,5 +1,5 @@
 // Generate some random bids reports to use with charts until the AdEx node ready
-import Bid, { BidState } from 'models/Bid'
+import { Bid } from 'adex-models'
 import Helper from 'helpers/miscHelpers'
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'

@@ -5,10 +5,12 @@ import AdUnit from 'models/AdUnit'
 import Channel from 'models/Channel'
 import AdSlot from 'models/AdSlot'
 import Bid, { BidState } from 'models/Bid'
-import { ItemsTypes } from 'constants/itemsTypes'
 import Helper from 'helpers/miscHelpers'
 import moment from 'moment'
 import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemsTypes } = ItemsConstants
 
 // TODO: update generator to work with changed models
 class InitialStateGenerator {

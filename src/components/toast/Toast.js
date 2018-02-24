@@ -5,6 +5,8 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Snackbar from 'react-toolbox/lib/snackbar'
+import FontIcon from 'react-toolbox/lib/font_icon'
+import theme from './theme.css'
 
 export class Toast extends Component {
     constructor(props) {
@@ -41,8 +43,30 @@ export class Toast extends Component {
 
     }
 
+    label = ({ type, label }) => {
+
+        let icon = ''
+        switch (type) {
+            case 'accept':
+                icon = 'check_circle'
+                break
+            case 'cancel':
+                icon = 'error'
+                break
+            case 'warning':
+                icon = 'warning'
+                break
+            default:
+                break
+        }
+
+        return (
+            <span><FontIcon value={icon} style={{ verticalAlign: 'bottom', marginRight: 10 }} /> <strong> {label} </strong> </span>
+        )
+    }
+
     render() {
-        var toast = this.state.toast
+        let toast = this.state.toast
 
         if (!toast) return null
 
@@ -50,11 +74,12 @@ export class Toast extends Component {
             <Snackbar
                 action={toast.action}
                 active={this.state.active}
-                label={toast.label}
+                label={<this.label type={toast.type} label={(toast.label || '').toString()} />}
                 timeout={toast.timeout || 0}
                 onClick={this.close.bind(this, toast.id)}
                 onTimeout={this.close.bind(this, toast.id)}
                 type={toast.type}
+                theme={theme}
             />
         )
     }

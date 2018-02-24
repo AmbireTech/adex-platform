@@ -1,3 +1,5 @@
+@import './../../../styles/variables.css';
+
 .appBar {
     background-color: #eee;
     z-index: 200 !important;
@@ -17,4 +19,27 @@
   & > svg {
     width: 92px;
   }
+}
+
+.rightNavigation {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.off {
+    background :#A5D6A7 !important;
+
+    & .thumb {
+        background: var(--color-adex-accent-primary) !important;
+    }
+
+    & .ripple {
+        background: var(--color-adex-accent-primary) !important;
+    }
+}
+
+.field {
+  margin-bottom: 0 !important;
 }

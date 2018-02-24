@@ -9,6 +9,8 @@ import debounce from 'debounce'
 import Dropzone from 'react-dropzone'
 import { FontIcon } from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
+import { IconButton } from 'react-toolbox/lib/button'
+import RTButtonTheme from 'styles/RTButton.css'
 
 class ImgForm extends Component {
 
@@ -24,24 +26,44 @@ class ImgForm extends Component {
   onDrop = (acceptedFiles, rejectedFiles) => {
     let that = this
     let file = acceptedFiles[0]
-    console.log('file', file)
     if (!file) return
     let objectUrl = URL.createObjectURL(file)
-    console.log('objectUrl', objectUrl)
 
     that.setState({ imgSrc: objectUrl, imgName: file.name })
+    // TODO: Maybe get width and height here instead on ing validation hoc
     this.props.onChange({ tempUrl: objectUrl })
+  }
+
+  onRemove = (e) => {
+    if (e.stopPropagation) {
+      e.stopPropagation()
+    }
+    if (e.nativeEvent) {
+      e.nativeEvent.stopImmediatePropagation()
+    }
+
+    if (this.state.imgSrc) {
+      URL.revokeObjectURL(this.state.imgSrc)
+      this.setState({ imgSrc: '', imgName: '' })
+      this.props.onChange({ tempUrl: null })
+    }
   }
 
   UploadInfo = () => {
     return (
       <div className={theme.uploadInfo}>
-        <FontIcon value='file_upload' />
+        {this.state.imgSrc ?
+          <IconButton icon='cancel' className={RTButtonTheme.danger} onClick={this.onRemove} />
+          : <FontIcon value='file_upload' />
+        }
         <div>
           <span> {this.props.t('DRAG_AND_DROP_TO_UPLOAD')} </span>
         </div>
         <div>
           <small> (max 2MB; .jpeg, .jpg, .png)  </small>
+        </div>
+        <div className={theme.imgErr}>
+          {this.props.errMsg}
         </div>
       </div>
     )
@@ -63,11 +85,14 @@ class ImgForm extends Component {
         <div>
           <Dropzone accept='.jpeg,.jpg,.png' onDrop={this.onDrop} className={theme.dropzone} >
             <div className={theme.droppedImgContainer}>
-                <Img src={this.state.imgSrc} alt={'name'} className={theme.imgDropzonePreview} />
-                <this.UploadInfo />
+              <Img src={this.state.imgSrc} alt={'name'} className={theme.imgDropzonePreview} />
+              <this.UploadInfo />
             </div>
 
           </Dropzone>
+        </div>
+        <div>
+          <small> {this.props.additionalInfo} </small>
         </div>
       </div>
     )

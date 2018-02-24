@@ -4,29 +4,34 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { ItemsTypes } from 'constants/itemsTypes'
 import theme from './theme.css'
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import { IconButton, Button } from 'react-toolbox/lib/button'
 import ItemsList from './ItemsList'
 import Rows from 'components/dashboard/collection/Rows'
 import moment from 'moment'
-import { BidState, BidStateNames } from 'models/Bid'
 import { Tab, Tabs } from 'react-toolbox'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
 import { BidsStatusBars, BidsStatusPie, SlotsClicksAndRevenue } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
+import { getSlotBids, getAvailableBids } from 'services/adex-node/actions'
+import { Item } from 'adex-models'
+import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
+import { AcceptBid, GiveupBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
+
+const { ItemsTypes } = ItemsConstants
+const { BID_STATES, BidStateNames } = ExchangeConstants
 
 // import d3 from 'd3'
 
 // const cardinal = d3.curveCardinal.tension(0.2)
 
 const SORT_PROPERTIES = [
-    { value: 'id', label: '' },
-    { value: 'advertiser', label: '' },
-    { value: 'amount', label: '' },
-    { value: 'requiredExecTime', label: '' }
+    { value: '_amount', label: '' },
+    { value: '_target', label: '' },
+    { value: '_timeout', label: '' },
+    { value: '_advertiser', label: '' },
 ]
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
@@ -38,8 +43,30 @@ export class SlotBids extends Component {
         this.state = {
             bidding: false,
             activeSlot: {},
-            tabIndex: 2
+            tabIndex: 0,
+            bids: [],
+            openBids: [],
         }
+    }
+
+    componentWillMount() {
+        getSlotBids({
+            authSig: this.props.account._authSig,
+            adSlot: this.props.item._ipfs
+        })
+            .then((bids) => {
+                // console.log('unit bids', bids)
+                this.setState({ bids: bids })
+            })
+
+        getAvailableBids({
+            authSig: this.props.account._authSig,
+            sizeAndType: this.props.item.sizeAndType
+        })
+            .then((bids) => {
+                // console.log('unit openBids', bids)
+                this.setState({ openBids: bids })
+            })
     }
 
     handleTabChange = (index) => {
@@ -87,7 +114,7 @@ export class SlotBids extends Component {
                 <Grid fluid >
                     <Row middle='xs' className={theme.itemsListControls}>
                         <Col xs={12} sm={12} md={6}>
-                            {this.renderSlotsClicksCharts({ bids: this.props.bidsIds })}
+                            {/* {this.renderSlotsClicksCharts({ bids: this.props.bidsIds })} */}
                         </Col>
                         <Col xs={12} sm={12} md={6}>
                             <BidsStatusBars data={data.states} t={this.props.t} />
@@ -100,7 +127,6 @@ export class SlotBids extends Component {
 
             </div>
         )
-
     }
 
     renderTableHead() {
@@ -109,8 +135,10 @@ export class SlotBids extends Component {
             <TableHead>
                 <TableCell> {t('TOTAL_REWARD')} </TableCell>
                 <TableCell> {t('CONVERSION_GOALS')} </TableCell>
+                <TableCell> {t('STATE')} </TableCell>
                 <TableCell> {t('ADVERTISER')} </TableCell>
-                <TableCell> {t('EXPIRATION_DATE')} </TableCell>
+                <TableCell> {t('AD_UNIT')} </TableCell>
+                <TableCell> {t('TIMEOUT')} </TableCell>
                 <TableCell> {t('ACTIONS')} </TableCell>
             </TableHead>
         )
@@ -119,12 +147,62 @@ export class SlotBids extends Component {
     renderTableRow(bid, index, { to, selected }) {
         let t = this.props.t
         return (
-            <TableRow key={bid.id}>
-                <TableCell> {bid.amount} </TableCell>
-                <TableCell> {bid.requiredPoints} </TableCell>
-                <TableCell> {bid.advertiser} </TableCell>
-                <TableCell> {moment(bid.requiredExecTime).format('DD.MM.YYYY')} </TableCell>
-                <TableCell> <Button label={t('ACCEPT')} primary raised /> <Button label={t('REJECT')} /> </TableCell>
+            <TableRow key={bid._id}>
+                <TableCell> {bid._amount} </TableCell>
+                <TableCell> {bid._target} </TableCell>
+                <TableCell> {bid._state} </TableCell>
+                <TableCell> {bid._advertiser} </TableCell>
+                <TableCell>
+                    {/*TODO: link to the meta or popup on click and the get tha meta or accept bid dialog whic will have the adunit meta info*/}
+                    <a target='_blank' href={Item.getIpfsMetaUrl(bid._adUnit)} > {bid._adUnit} </a>
+                </TableCell>
+                <TableCell> {moment.duration(bid._timeout, 's').humanize()} </TableCell>
+                <TableCell>
+
+                    {(() => {
+                        switch (bid._state) {
+                            case BID_STATES.DoesNotExist.id:
+                                return <AcceptBid
+                                    icon='check'
+                                    adUnitId={bid._adUnitId}
+                                    slotId={this.props.item._id}
+                                    bidId={bid._id}
+                                    placedBid={bid}
+                                    slot={this.props.item}
+                                    acc={this.props.account}
+                                    raised
+                                    primary
+                                    onSave={this.onSave}
+                                />
+                            case BID_STATES.Accepted.id:
+                                // TODO: check for unique clicks first
+                                return <span>
+                                    <VerifyBid
+                                        icon='check_circle'
+                                        itemId={bid._adSlotId}
+                                        bidId={bid._id}
+                                        placedBid={bid}
+                                        acc={this.props.account}
+                                        raised
+                                        primary
+                                        onSave={this.onSave}
+                                    />
+                                    <GiveupBid
+                                        icon='cancel'
+                                        slotId={bid._adSlotId}
+                                        bidId={bid._id}
+                                        placedBid={bid}
+                                        acc={this.props.account}
+                                        raised
+                                        accent
+                                        onSave={this.onSave}
+                                    />
+                                </span>
+                            default:
+                                return null
+                        }
+                    })()}
+                </TableCell>
             </TableRow >
         )
     }
@@ -141,28 +219,15 @@ export class SlotBids extends Component {
         />
 
     searchMatch = (bid) => {
-        return (bid.name || '') +
-            (bid.advertiser || '') +
-            (bid.amount || '') +
+        return (bid._amount || '') +
+            (bid._advertiser || '') +
+            (bid._timeout || '') +
             (bid.requiredPoints || '')
     }
 
     render() {
-        let bidsIds = this.props.bidsIds
-        let openBids = []
-        let otherBids = []
-        let allBids = []
-
-        for (let i = 0; i < bidsIds.length; i++) {
-            let bid = this.props.bids[bidsIds[i]]
-            if (bid.state === BidState.Open) {
-                openBids.push(bid)
-            } else {
-                otherBids.push(bid)
-            }
-
-            allBids.push(bid)
-        }
+        let openBids = this.state.openBids || []
+        let slotBids = this.state.bids || []
 
         let t = this.props.t
 
@@ -180,12 +245,12 @@ export class SlotBids extends Component {
                     </Tab>
                     <Tab label={t('BIDS_HISTORY')}>
                         <div>
-                            <ItemsList items={otherBids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
+                            <ItemsList items={slotBids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
                         </div>
                     </Tab>
                     <Tab label={t('BIDS_STATISTICS')}>
                         <div>
-                            {this.renderNonOpenedBidsChart(allBids)}
+                            {/* {this.renderNonOpenedBidsChart(slotBids)} */}
                         </div>
                     </Tab>
                 </Tabs>
@@ -197,9 +262,7 @@ export class SlotBids extends Component {
 SlotBids.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    // items: PropTypes.array.isRequired,
     item: PropTypes.object.isRequired,
-    slots: PropTypes.array.isRequired,
     spinner: PropTypes.bool
 };
 
@@ -208,10 +271,8 @@ function mapStateToProps(state, props) {
     let memory = state.memory
     return {
         account: persist.account,
-        slots: persist.items[ItemsTypes.AdSlot.id],
         // item: state.currentItem,
         spinner: memory.spinners[ItemsTypes.AdUnit.name],
-        bidsIds: persist.bids.bidsByAdslot[props.item._id],
         bids: persist.bids.bidsById
     };
 }

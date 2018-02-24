@@ -4,8 +4,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { ItemsTypes } from 'constants/itemsTypes'
-
 import theme from './theme.css'
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import { IconButton, Button } from 'react-toolbox/lib/button'
@@ -15,6 +13,9 @@ import NewItemWithDialog from 'components/dashboard/forms/NewItemWithDialog'
 import BidForm from 'components/dashboard/forms/BidForm'
 import Dialog from 'react-toolbox/lib/dialog'
 import Translate from 'components/translate/Translate'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemsTypes } = ItemsConstants
 
 const SORT_PROPERTIES = [
     { value: '_id', label: 'Id' },
@@ -100,7 +101,7 @@ export class UnitSlots extends Component {
         let item = this.props.item
         let meta = item._meta
         let t = this.props.t
-        let slots = this.props.slots.filter((slot) => {
+        let slots = (this.props.slots || []).filter((slot) => {
             return slot._meta.adType === item._meta.adType && slot._meta.size === item._meta.size
         })
 

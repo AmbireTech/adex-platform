@@ -1,0 +1,26 @@
+- auth token expire time - done
+- deposit to exchange - done
+- withdraw from exchange - done
+- accept bids - done
+- cancel bids - done
+- verify bids - done
+- fix logout - done
+- float precision on placing bids - done
+- remove img blob after item save - done
+
+- upload fallback img - temp done but must make multi file upload on the node
+- hoc for img validation - done but may handle and the initial validation
+
+- fix add item to  collection
+- metamask how to on signin
+- fix cancel on steps (reset the items, clear blob)
+- handle error
+- add translations
+- when click to accept bid check again the status from the node
+- format bids
+- filter bids actions
+- make some charts
+- He accept, he not accept, but most importantly he validate
+- use only item._type in production
+- fix campaigns and channels update (make endpoint to the node node)
+- fix units and slots description update (make endpoint to the node)
