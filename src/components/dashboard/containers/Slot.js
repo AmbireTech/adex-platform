@@ -12,7 +12,8 @@ import { BasicProps } from './ItemCommon'
 import Helper from 'helpers/miscHelpers'
 
 const { ItemsTypes } = ItemsConstants
-const ADVIEW_URL = process.env.ADVIEW_HOST || 'https://adview.adex.network'
+console.log('process.env.ADVIEW_HOST', process.env.ADVIEW_HOST)
+const ADVIEW_URL = process.env.ADVIEW_HOST || 'https://view.adex.network'
 
 const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fallbackUrl }) => {
 
