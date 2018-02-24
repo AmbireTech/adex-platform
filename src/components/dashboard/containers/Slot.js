@@ -12,7 +12,6 @@ import { BasicProps } from './ItemCommon'
 import Helper from 'helpers/miscHelpers'
 
 const { ItemsTypes } = ItemsConstants
-console.log('process.env.ADVIEW_HOST', process.env.ADVIEW_HOST)
 const ADVIEW_URL = process.env.ADVIEW_HOST || 'https://view.adex.network'
 
 const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fallbackUrl }) => {
@@ -29,7 +28,7 @@ const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fal
         slotId: slotId,
         slotIpfs: slotIpfs,
         fallbackImgIpfs: fallbackImgIpfs,
-        fallbackUrl: fallbackUrl
+        fallbackUrl: fallbackUrl || ''
     }
 
     let query = Helper.getQuery(queryParmas)

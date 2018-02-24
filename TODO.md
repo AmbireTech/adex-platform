@@ -11,6 +11,7 @@
 - upload fallback img - temp done but must make multi file upload on the node
 - hoc for img validation - done but may handle and the initial validation
 
+- check exchange deposit before place bid 
 - fix add item to  collection
 - metamask how to on signin
 - fix cancel on steps (reset the items, clear blob)
