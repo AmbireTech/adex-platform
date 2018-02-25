@@ -15,7 +15,7 @@ class VerifyBid extends Component {
         if (!this.props.transaction.report) {
 
             this.props.validate('report', { isValid: false,  err: { msg: 'ERR_UNIT_INFO_NOT_READY' },  dirty: false })
-            this.props.actions.updateSpinner(this.props.placedBid._id, true)
+            this.props.actions.updateSpinner(this.props.trId, true)
 
             getBidVerificationReport({ bidId: this.props.placedBid._id, authSig: this.props.account._authSig })
                 .then((report) => {
@@ -23,7 +23,7 @@ class VerifyBid extends Component {
                     this.props.handleChange('placedBid', this.props.placedBid)
                     this.props.handleChange('account', this.props.acc)
                     this.props.handleChange('report', report)
-                    this.props.actions.updateSpinner(this.props.placedBid._id, false)
+                    this.props.actions.updateSpinner(this.props.trId, false)
                     this.props.validate('report', { isValid: true,  dirty: false })
                 })
                 .catch((err)=> {
@@ -66,7 +66,7 @@ function mapStateToProps(state, props) {
     let persist = state.persist
     let memory = state.memory
     return {
-        spinner: memory.spinners[props.placedBid._id],
+        spinner: memory.spinners[props.trId],
         // trId: 'approve'
     }
 }

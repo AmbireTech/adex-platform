@@ -10,7 +10,6 @@ import AuthenticateStepGetToken from './AuthenticateStepGetToken'
 import AcceptBidStep from './AcceptBid'
 import CancelBidStep from './CancelBid'
 import VerifyBidStep from './VerifyBid'
-import RefundBidStep from './RefundBid'
 import scActions from 'services/smart-contracts/actions'
 import { signToken, sendBidState } from 'services/adex-node/actions'
 
@@ -216,7 +215,7 @@ export const RefundBid = (props) =>
         saveBtnLabel='REFUND_BID_SAVE_BTN'
         title="REFUND_BID_TITLE"
         trId={'refund_bid_unit_' + props.unitId + '_bid_' + props.bidId}
-        trPages={[{ title: 'VERIFY_BID_STEP', page: RefundBidStep }]}
+        trPages={[{ title: 'VERIFY_BID_STEP', page: VerifyBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return new Promise((resolve, reject) => {
                 refundBid(

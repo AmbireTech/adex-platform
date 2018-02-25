@@ -16,7 +16,7 @@ class AcceptBid extends Component {
         if (!this.props.transaction.unit) {
             
             this.props.validate('unit', { isValid: false,  err: { msg: 'ERR_UNIT_INFO_NOT_READY' },  dirty: false })
-            this.props.actions.updateSpinner(this.props.placedBid._id + this.props.slot._id, true)
+            this.props.actions.updateSpinner(this.props.trId, true)
 
             getItem({ id: this.props.adUnitId, authSig: this.props.account._authSig })
                 .then((unit) => {
@@ -24,7 +24,7 @@ class AcceptBid extends Component {
                     this.props.handleChange('placedBid', this.props.placedBid)
                     this.props.handleChange('slot', this.props.slot)
                     this.props.handleChange('account', this.props.acc)
-                    this.props.actions.updateSpinner(this.props.placedBid._id + this.props.slot._id, false)
+                    this.props.actions.updateSpinner(this.props.trId, false)
                     this.props.validate('unit', { isValid: true,  dirty: false })
                 })
                 .catch((err)=> {
@@ -67,7 +67,7 @@ function mapStateToProps(state, props) {
     let persist = state.persist
     let memory = state.memory
     return {
-        spinner: memory.spinners[props.placedBid._id + props.slot._id]
+        spinner: memory.spinners[props.trId]
     }
 }
 
