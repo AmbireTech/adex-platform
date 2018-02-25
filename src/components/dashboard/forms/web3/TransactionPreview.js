@@ -53,7 +53,8 @@ class TransactionPreview extends Component {
                                 .map(key => {
                                     let keyName = key
                                     let value = transaction[key]
-                                    if(typeof value === 'object'){
+                                    let isObjValue = (typeof value === 'object')
+                                    if(isObjValue){
                                         value = JSON.stringify(value, null, 2)
                                     }
 
@@ -61,9 +62,13 @@ class TransactionPreview extends Component {
                                         <Row key={key}>
                                             <Col xs={12} lg={4} className={theme.textRight}>{this.props.t(keyName, { isProp: true })}:</Col>
                                             <Col xs={12} lg={8} className={theme.textLeft}>
-                                                <pre>
-                                                    {(value || '').toString()}
-                                                </pre>
+                                                {isObjValue ?
+                                                    <pre>
+                                                        {(value || '').toString()}
+                                                    </pre>
+                                                    :
+                                                    (value || '').toString()
+                                                }                                                
                                             </Col>
                                         </Row>
                                     )
