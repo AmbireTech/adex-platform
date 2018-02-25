@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-
 import { List, ListItem } from 'react-toolbox/lib/list'
 import theme from './theme.css'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
@@ -11,133 +10,82 @@ import CampaignIcon from 'components/common/icons/CampaignIcon'
 import ChannelIcon from 'components/common/icons/ChannelIcon'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from 'components/dashboard/forms/NewItems'
+import classnames from 'classnames'
 
 const RRListItem = withReactRouterLink(ListItem)
 
 class SideNav extends Component {
 
-    renderAdvertiser() {
-        return (
-            <List selectable={true} selected="2" ripple >
-                <RRListItem
-                    to={{ pathname: '/dashboard/' + this.props.side }}
-                    selectable={true}
-                    value="1"
-                    caption={this.props.t('DASHBOARD')}
-                    theme={theme}
-                    className="side-nav-link"
-                    leftIcon='dashboard'
-                    // disabled
-                />
-                <RRListItem
-                    to={{ pathname: '/dashboard/' + this.props.side + "/campaigns" }}
-                    selectable={true}
-                    value="2"
-                    caption={this.props.t('CAMPAIGNS')}
-                    theme={theme}
-                    className="side-nav-link"
-                    leftIcon={<CampaignIcon color='rgb(117, 117, 117)' />}
-                    // disabled
-                />
-                <ListItem
-                    selectable={false}
-                    ripple={false}
-                >
-                    <NewCampaign
-                        theme={theme}
-                        flat
-                        color='first'
-                        raised
-                        // disabled
-                    />
-                </ListItem>
-                <RRListItem
-                    to={{ pathname: '/dashboard/' + this.props.side + "/units" }}
-                    selectable={true}
-                    value="3"
-                    caption={this.props.t('UNITS')}
-                    theme={theme}
-                    className="side-nav-link"
-                    leftIcon='format_list_bulleted'
-                    // disabled
-                />
-                <ListItem
-                    selectable={false}
-                    ripple={false}
-                >
-                    <NewUnit
-                        theme={theme}
-                        flat
-                        color='second'
-                        raised
-                        // disabled
-                    />
-                </ListItem>
-            </List>
-        )
-    }
-
-    renderPublisher() {
-        return (
-            <List selectable={true} selected="2" ripple >
-                <RRListItem
-                    to={{ pathname: '/dashboard/' + this.props.side }}
-                    selectable={true}
-                    value="1"
-                    caption={this.props.t('DASHBOARD')}
-                    theme={theme}
-                    className="side-nav-link"
-                    leftIcon='dashboard'
-                />
-                <RRListItem
-                    to={{ pathname: '/dashboard/' + this.props.side + "/channels" }}
-                    selectable={true}
-                    value="2"
-                    caption={this.props.t('CHANNELS')}
-                    theme={theme}
-                    className="side-nav-link"
-                    leftIcon={<ChannelIcon color='rgb(117, 117, 117)' />}
-                />
-                <ListItem
-                    selectable={false}
-                    ripple={false}
-                >
-                    <NewChannel theme={theme} flat color='first' raised />
-
-                </ListItem>
-                <RRListItem
-                    to={{ pathname: '/dashboard/' + this.props.side + "/slots" }}
-                    selectable={true}
-                    value="3"
-                    caption={this.props.t('SLOTS')}
-                    theme={theme}
-                    className="side-nav-link"
-                    leftIcon='format_list_bulleted'
-                />
-                <ListItem
-                    selectable={false}
-                    ripple={false}
-                >
-                    <NewSlot theme={theme} flat color='second' raised />
-                </ListItem>
-            </List>
-        )
-    }
-
     render() {
+        const side = this.props.side
+        if (side !== 'advertiser' && side !== 'publisher') {
+            return null
+        }
+
+        const location = this.props.location.pathname.replace(/\/dashboard\/(advertiser|publisher)/, '').replace(/\//g, '')
+        const isAdvertiser = side === 'advertiser'
+        const collection = (isAdvertiser ? 'campaigns' : 'channels')
+        const items = (isAdvertiser ? 'units' : 'slots')
+        const NewCollectionBtn = (isAdvertiser ? NewCampaign : NewChannel)
+        const NewItemBtn = (isAdvertiser ? NewUnit : NewSlot)
+        const CollectionIcon = (isAdvertiser ? CampaignIcon : ChannelIcon)
+        const itemsIcon = (isAdvertiser ? 'format_list_bulleted' : 'format_list_bulleted')
+        const t = this.props.t
 
         return (
             <div className="Navigation">
-                {/* TEMP */}
-                {this.props.side === 'publisher' ?
-                    this.renderPublisher() : null}
-                {this.props.side === 'advertiser' ?
-                    this.renderAdvertiser() : null}
+                <List kor={location} >
+                    <RRListItem
+                        to={{ pathname: '/dashboard/' + side }}
+                        selectable={true}
+                        caption={t('DASHBOARD')}
+                        theme={theme}
+                        className={classnames({ [theme.active]: location === '' })}
+                        leftIcon='dashboard'
+                    />
+                    <RRListItem
+                        to={{ pathname: '/dashboard/' + side + '/' + collection }}
+                        selectable={true}
+                        caption={t(collection.toUpperCase())}
+                        theme={theme}
+                        className={classnames({ [theme.active]: location === collection })}
+                        leftIcon={<CollectionIcon color='rgb(117, 117, 117)' />}
+                    />
+                    <ListItem
+                        selectable={false}
+                        ripple={false}
+                    >
+                        <NewCollectionBtn
+                            theme={theme}
+                            flat
+                            color='first'
+                            raised
+                        />
+                    </ListItem>
+                    <RRListItem
+                        to={{ pathname: '/dashboard/' + side + '/' + items }}
+                        selectable={true}
+                        caption={t(items.toUpperCase())}
+                        theme={theme}
+                        className={classnames({ [theme.active]: location === items })}
+                        leftIcon={itemsIcon}
+                    />
+                    <ListItem
+                        selectable={false}
+                        ripple={false}
+                    >
+                        <NewItemBtn
+                            theme={theme}
+                            flat
+                            color='second'
+                            raised
+                        />
+                    </ListItem>
+                </List>
             </div >
         )
     }
 }
-
 
 SideNav.propTypes = {
     actions: PropTypes.object.isRequired

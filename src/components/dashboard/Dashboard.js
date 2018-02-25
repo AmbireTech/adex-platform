@@ -130,7 +130,7 @@ class Dashboard extends React.Component {
         return (
             <Layout theme={theme} >
                 <NavDrawer pinned={true} theme={theme}>
-                    <SideNav side={side} data={this.props.account} />
+                    <SideNav location={this.props.location} side={side} data={this.props.account} />
                 </NavDrawer >
 
                 <Panel theme={theme} >

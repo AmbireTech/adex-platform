@@ -1,13 +1,10 @@
 .listItem, .item, .itemText {
   color: #fff !important;
-  
-  & .active {
-    background-color: green;
-  }
+  user-select: none;
 }
 
 .active {
-  background-color: green;
+  background-color: #aaa;
 }
 
 .button {

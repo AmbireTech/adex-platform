@@ -62,6 +62,7 @@
 .listTools {
     border-bottom: 1px solid var(--color-divider);
     margin-bottom: 10px;
+    user-select: none;
 }
 
 .top {
