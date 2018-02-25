@@ -30,6 +30,7 @@ class Img extends Component {
     }
 
     componentWillUnmount() {
+        this.clearLoadTimeout()
         if (this.displayImage) {
             this.displayImage.onerror = null
             this.displayImage.onload = null
