@@ -14,6 +14,7 @@ import DashboardStats from './containers/DashboardStats'
 import Unit from './containers/Unit'
 import Slot from './containers/Slot'
 import Items from './containers/Items'
+import Transactions from './containers/Transactions'
 import {
     AdUnit as AdUnitModel,
     AdSlot as AdSlotModel,
@@ -148,6 +149,7 @@ class Dashboard extends React.Component {
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
 
                         <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/account'} component={Account} />
+                        <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/transactions'} component={Transactions} />
 
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/:side' component={DashboardStats} />
                         <PrivateRoute auth={this.props.auth} component={() => <h1>404 at {side} side</h1>} />

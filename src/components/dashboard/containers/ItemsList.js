@@ -398,7 +398,7 @@ ItemsList.propTypes = {
     itemRenderer: PropTypes.func,
     side: PropTypes.string.isRequired,
     listMode: PropTypes.string,
-    objModel: PropTypes.func.isRequired
+    objModel: PropTypes.func
 }
 
 function mapStateToProps(state, props) {

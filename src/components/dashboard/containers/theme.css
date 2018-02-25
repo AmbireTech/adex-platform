@@ -179,6 +179,9 @@
             color: #fff;
         }
     }
+    &.Transactions{
+         background-color: #888;
+    }
 }
 
 .floating {

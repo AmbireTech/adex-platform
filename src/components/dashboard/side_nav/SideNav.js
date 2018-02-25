@@ -81,6 +81,14 @@ class SideNav extends Component {
                             raised
                         />
                     </ListItem>
+                    <RRListItem
+                        to={{ pathname: '/dashboard/' + side + '/transactions' }}
+                        selectable={true}
+                        caption={t('TRANSACTIONS')}
+                        theme={theme}
+                        className={classnames({ [theme.active]: location === 'transactions' })}
+                        leftIcon={'swap_horiz'}
+                    />
                 </List>
             </div >
         )

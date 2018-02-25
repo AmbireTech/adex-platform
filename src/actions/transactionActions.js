@@ -21,5 +21,23 @@ export function resetNewTransaction({ trId }) {
     }
 }
 
-// TODO: add transactions to persistence (for now just there)
-// Make call to etherscan api some day in order to skip all blocks scans for transactions history
+// PERSIST STORAGE
+export function updateWeb3Transaction({ trId, key, value }) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.UPDATE_WEB3_TRANSACTION,
+            trId: trId,
+            key: key,
+            value: value
+        })
+    }
+}
+
+export function resetWeb3Transaction({ trId }) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.RESET_WEB3_TRANSACTION,
+            trId: trId
+        })
+    }
+}
