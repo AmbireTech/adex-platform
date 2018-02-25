@@ -136,23 +136,38 @@ export class SlotBids extends Component {
         let t = this.props.t
         return (
             <TableHead>
-                <TableCell> {t('BID_REWARD')} </TableCell>
-                <TableCell> {t('BID_TARGET')} </TableCell>
+                <TableCell> {t('BID_AMOUNT')} </TableCell>
+                <TableCell> {t('BID_TARGET')} / {t('BID_UNIQUE_CLICKS')} </TableCell>
                 <TableCell> {t('BID_STATE')} </TableCell>
-                <TableCell> {t('ADVERTISER')} </TableCell>
+                <TableCell> {t('Advertiser')} </TableCell>
                 <TableCell> {t('AD_UNIT')} </TableCell>
-                <TableCell> {t('TIMEOUT')} </TableCell>
+                <TableCell> {t('TIMEOUT')} / {t('ACCEPTED')} / {t('EXPIRES')}  </TableCell>
                 <TableCell> {t('ACTIONS')} </TableCell>
             </TableHead>
         )
     }
 
+    // TODO: make something common with unit bids 
     renderTableRow(bid, index, { to, selected }) {
         let t = this.props.t
+        const canAccept = bid._state === BID_STATES.DoesNotExist.id
+        const canVerify = BID_STATES.Accepted.id && (bid.clicksCount >= bid._target)
+        const canGiveup = bid._state === BID_STATES.Accepted.id
+        const accepted = (bid._acceptedTime || 0) * 1000
+        const timeout = (bid._timeout || 0) * 1000
+        const bidExpires = accepted ? (accepted + timeout) : null
+
         return (
             <TableRow key={bid._id}>
                 <TableCell> {adxToFloatView(bid._amount) + ' ADX'} </TableCell>
-                <TableCell> {bid._target} </TableCell>
+                <TableCell>
+                    <div>
+                        {bid._target}
+                    </div>
+                    <div>
+                        {bid.clicksCount || '-'}
+                    </div>
+                </TableCell>
                 <TableCell> {t(BidStatesLabels[bid._state])} </TableCell>
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
@@ -162,59 +177,62 @@ export class SlotBids extends Component {
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    {/*TODO: link to the meta or popup on click and the get tha meta or accept bid dialog whic will have the adunit meta info*/}
                     <a target='_blank' href={Item.getIpfsMetaUrl(bid._adUnit, process.env.IPFS_GATEWAY)} > {bid._adUnit} </a>
                 </TableCell>
-                <TableCell> {moment.duration(bid._timeout, 's').humanize()} </TableCell>
+                <TableCell>
+                    <div>
+                        {moment.duration(timeout, 'ms').humanize()}
+                    </div>
+                    <div>
+                        {accepted ? moment(accepted).format('MMMM Do, YYYY, HH:mm:ss') : null}
+                    </div>
+                    <div>
+                        {bidExpires ? moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss') : null}
+                    </div>
+                </TableCell>
                 <TableCell
                     className={classnames(theme.actionsCol)}
                 >
-                    {(() => {
-                        switch (bid._state) {
-                            case BID_STATES.DoesNotExist.id:
-                                return <AcceptBid
-                                    icon='check'
-                                    adUnitId={bid._adUnitId}
-                                    slotId={this.props.item._id}
-                                    bidId={bid._id}
-                                    placedBid={bid}
-                                    slot={this.props.item}
-                                    acc={this.props.account}
-                                    raised
-                                    primary
-                                    className={theme.actionBtn}
-                                    onSave={this.onSave}
-                                />
-                            case BID_STATES.Accepted.id:
-                                // TODO: check for unique clicks first
-                                return <span>
-                                    <VerifyBid
-                                        icon='check_circle'
-                                        itemId={bid._adSlotId}
-                                        bidId={bid._id}
-                                        placedBid={bid}
-                                        acc={this.props.account}
-                                        raised
-                                        primary
-                                        className={theme.actionBtn}
-                                        onSave={this.onSave}
-                                    />
-                                    <GiveupBid
-                                        icon='cancel'
-                                        slotId={bid._adSlotId}
-                                        bidId={bid._id}
-                                        placedBid={bid}
-                                        acc={this.props.account}
-                                        raised
-                                        accent
-                                        className={theme.actionBtn}
-                                        onSave={this.onSave}
-                                    />
-                                </span>
-                            default:
-                                return null
-                        }
-                    })()}
+                    {canAccept ?
+                        <AcceptBid
+                            icon='check'
+                            adUnitId={bid._adUnitId}
+                            slotId={this.props.item._id}
+                            bidId={bid._id}
+                            placedBid={bid}
+                            slot={this.props.item}
+                            acc={this.props.account}
+                            raised
+                            primary
+                            className={theme.actionBtn}
+                            onSave={this.onSave}
+                        /> : null}
+                    {canVerify ?
+                        <VerifyBid
+                            icon='check_circle'
+                            itemId={bid._adSlotId}
+                            bidId={bid._id}
+                            placedBid={bid}
+                            acc={this.props.account}
+                            raised
+                            primary
+                            className={theme.actionBtn}
+                            onSave={this.onSave}
+                        />
+                        : null}
+                    {canGiveup ?
+                        <GiveupBid
+                            icon='cancel'
+                            slotId={bid._adSlotId}
+                            bidId={bid._id}
+                            placedBid={bid}
+                            acc={this.props.account}
+                            raised
+                            accent
+                            className={theme.actionBtn}
+                            onSave={this.onSave}
+                        />
+                        : null}
                 </TableCell>
             </TableRow >
         )
