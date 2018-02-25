@@ -72,7 +72,7 @@ export class Unit extends Component {
                     primary
                     bidId={item._id}
                     // TODO: fix icon v align
-                    icon={<BidIcon />}
+                    icon={<BidIcon style={{ marginTop: 10 }} />}
                     adUnit={item}
                     closeDialog={!!this.state.closeDialog}
                 />

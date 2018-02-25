@@ -134,7 +134,7 @@ class ItemsList extends Component {
                             className={RTButtonTheme.danger}
                         />
                         :
-                        'Select all'
+                        null
                     }
                 </TableCell>
                 <TableCell> Name </TableCell>
@@ -292,8 +292,8 @@ class ItemsList extends Component {
             side={this.props.side}
             item={items}
             rows={items}
-            multiSelectable
-            selectable
+            multiSelectable={false}
+            selectable={false}
             rowRenderer={this.renderTableRow.bind(this)}
             tableHeadRenderer={this.renderTableHead.bind(this)}
         />
