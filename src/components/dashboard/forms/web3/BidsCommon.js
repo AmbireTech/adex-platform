@@ -9,13 +9,14 @@ import { Item } from 'adex-models'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import moment from 'moment'
+import classnames from 'classnames'
 
 const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue, AdTypesByValue } = ItemsConstants
 
-export const PropRow = ({ left, right }) =>
+export const PropRow = ({ left, right, className }) =>
     <Row >
-        <Col xs={12} lg={4} className={theme.textRight}>{left}:</Col>
-        <Col xs={12} lg={8} className={theme.textLeft}>{right}</Col>
+        <Col xs={12} lg={4} className={classnames(theme.textRight)}>{left}:</Col>
+        <Col xs={12} lg={8} className={classnames(theme.textLeft, theme.breakLong)}>{right}</Col>
     </Row>
 
 export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
@@ -58,6 +59,7 @@ export const BidInfo = ({ bid, slot, unit, t, report, ...rest }) => {
     return (
         <div className={theme.itemPropTop}>
             <Grid fluid style={{ padding: 0 }}>
+                <PropRow left={t('BID_ID')} right={bid._id} />
                 <PropRow left={t('BID_TARGET')} right={bid._target} />
                 <PropRow left={t('BID_AMOUNT')} right={adxToFloatView(bid._amount) + ' ADX'} />
                 <PropRow left={t('BID_TIMEOUT')} right={moment.duration(timeout, 'ms').humanize()} />

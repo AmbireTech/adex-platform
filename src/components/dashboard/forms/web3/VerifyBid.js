@@ -36,10 +36,7 @@ class VerifyBid extends Component {
     render() {
         let tr = this.props.transaction
         let t = this.props.t
-        let unit = tr.unit 
         let bid = this.props.placedBid || {}
-
-        console.log('unit', unit)
 
         return (
             <div>
@@ -47,7 +44,7 @@ class VerifyBid extends Component {
                     <ProgressBar className={theme.progressCircleCenter} type='circular' mode='indeterminate' multicolor />
                     :
                     <Grid fluid>
-                        <BidInfo bid={bid} unit={unit} t={t} report={tr.report} />
+                        <BidInfo bid={bid} t={t} report={tr.report} />
                     </Grid>
                 }
             </div>

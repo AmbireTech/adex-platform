@@ -10,7 +10,6 @@ import AuthenticateStepGetToken from './AuthenticateStepGetToken'
 import AcceptBidStep from './AcceptBid'
 import CancelBidStep from './CancelBid'
 import VerifyBidStep from './VerifyBid'
-import GiveupBidStep from './GiveupBid'
 import RefundBidStep from './RefundBid'
 import scActions from 'services/smart-contracts/actions'
 import { signToken, sendBidState } from 'services/adex-node/actions'
@@ -187,7 +186,7 @@ export const GiveupBid = (props) =>
         saveBtnLabel='GIVEUP_BID_SAVE_BTN'
         title="GIVEUP_BID_TITLE"
         trId={'giveup_bid_slot_' + props.slotId + '_bid_' + props.bidId}
-        trPages={[{ title: 'GIVEUP_BID_STEP', page: GiveupBidStep }]}
+        trPages={[{ title: 'GIVEUP_BID_STEP', page: VerifyBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return new Promise((resolve, reject) => {
                 giveupBid(

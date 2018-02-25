@@ -124,6 +124,10 @@
     top: calc(50% - 30px);
 }
 
+.breakLong {
+    word-break: break-all;
+}
+
 @media (width <= 1400px) {
     .dialog { 
         max-width: 95%;
