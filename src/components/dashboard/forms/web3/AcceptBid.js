@@ -68,7 +68,6 @@ function mapStateToProps(state, props) {
     let memory = state.memory
     return {
         spinner: memory.spinners[props.placedBid._id + props.slot._id]
-        // trId: 'approve'
     }
 }
 

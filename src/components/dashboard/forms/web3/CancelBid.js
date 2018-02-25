@@ -4,51 +4,51 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Grid, Row, Col } from 'react-flexbox-grid'
-// import theme from 'components/dashboard/forms/theme.css'
-// import Translate from 'components/translate/Translate'
+import theme from './../theme.css'
 import NewTransactionHoc from './TransactionHoc'
-// import { Grid, Row, Col } from 'react-flexbox-grid'
-// import numeral from 'numeral'
-import Input from 'react-toolbox/lib/input'
-// import { Button, IconButton } from 'react-toolbox/lib/button'
 import { getItem } from 'services/adex-node/actions'
+import { BidInfo } from './BidsCommon'
+import ProgressBar from 'react-toolbox/lib/progress_bar'
+
 
 class CancelBid extends Component {
+    // TODO: pas unit as prop are make hoc for this and accept bid
     componentWillMount() {
-        getItem({ id: this.props.adUnitId, authSig: this.props.account._authSig })
-            .then((unit) => {
-                this.props.handleChange('unit', unit)
-                this.props.handleChange('placedBid', this.props.placedBid)
-                this.props.handleChange('account', this.props.acc)
-            })
+        if (!this.props.transaction.unit) {
+            
+            this.props.validate('unit', { isValid: false,  err: { msg: 'ERR_UNIT_INFO_NOT_READY' },  dirty: false })
+            this.props.actions.updateSpinner(this.props.placedBid._id + this.props.adUnitId, true)
+
+            getItem({ id: this.props.adUnitId, authSig: this.props.account._authSig })
+                .then((unit) => {
+                    this.props.handleChange('unit', unit)
+                    this.props.handleChange('placedBid', this.props.placedBid)
+                    this.props.handleChange('account', this.props.acc)
+                    this.props.actions.updateSpinner(this.props.placedBid._id + this.props.adUnitId, false)
+                    this.props.validate('unit', { isValid: true,  dirty: false })
+                })
+                .catch((err)=> {
+                    this.props.actions
+                        .addToast({ type: 'warning', action: 'X', label: this.props.t('ERR_GETTING_BID_INFO', {args: [err]} ), timeout: 5000 })
+                })
+        }
     }
-
-    row = ({ left, right }) =>
-        <Row >
-            <Col xs={12} lg={4} className={'theme.textRight'}>{left}:</Col>
-            <Col xs={12} lg={8} className={'theme.textLeft'}>{right}</Col>
-        </Row>
-
 
     render() {
         let tr = this.props.transaction
         let t = this.props.t
-        let unit = tr.unit || {}
-        let unitMeta = unit._meta || {}
+        let unit = tr.unit
         let bid = this.props.placedBid || {}
-
-        // console.log('unitMeta', unitMeta)
 
         return (
             <div>
-                <Grid fluid>
-                    <this.row left={this.props.t('BID_CLICKS')} right={bid._target} />
-                    <this.row left={this.props.t('BID_AMOUNT')} right={bid._amount} />
-                    <this.row left={this.props.t('UNIT_TIMEOUT')} right={bid._timeout} />
-                    <this.row left={this.props.t('UNIT_NAME')} right={unitMeta.fullName} />
-                    <this.row left={this.props.t('UNIT_URL')} right={unitMeta.ad_url} />
-
-                </Grid>
+                {!!this.props.spinner ?
+                    <ProgressBar className={theme.progressCircleCenter} type='circular' mode='indeterminate' multicolor />
+                    :
+                    <Grid fluid>
+                        <BidInfo bid={bid} unit={unit} t={t} />
+                    </Grid>
+                }
             </div>
         )
     }
@@ -67,7 +67,7 @@ function mapStateToProps(state, props) {
     let persist = state.persist
     let memory = state.memory
     return {
-        // trId: 'approve'
+        spinner: memory.spinners[props.placedBid._id + props.adUnitId]
     }
 }
 
