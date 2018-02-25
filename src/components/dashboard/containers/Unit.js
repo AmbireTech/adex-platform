@@ -80,7 +80,7 @@ export class Unit extends Component {
                     item={item}
                     t={t}
                     url={item.adUrl}
-                    rightComponent={<UnitTargets {...this.props} targets={item.meta.targets} t={t} />}
+                    rightComponent={<UnitTargets {...this.props} targets={item.meta.targets} t={t} subHeader={true} />}
                 />
                 <div>
                     <Tabs

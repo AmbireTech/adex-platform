@@ -215,7 +215,7 @@ export const RefundBid = (props) =>
         saveBtnLabel='REFUND_BID_SAVE_BTN'
         title="REFUND_BID_TITLE"
         trId={'refund_bid_unit_' + props.unitId + '_bid_' + props.bidId}
-        trPages={[{ title: 'VERIFY_BID_STEP', page: VerifyBidStep }]}
+        trPages={[{ title: 'REFUND_BID_STEP', page: VerifyBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return new Promise((resolve, reject) => {
                 refundBid(
