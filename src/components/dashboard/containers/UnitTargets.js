@@ -54,6 +54,7 @@ export class UnitTargets extends Component {
                     rightIcon={<FontIcon value={icon.icon} style={{ color: icon.color }} />}
                     leftIcon='child_care'
                     theme={theme}
+                    className={theme.targetsListItem}
                 />
                 <ListDivider />
             </span>
@@ -62,7 +63,7 @@ export class UnitTargets extends Component {
 
     TargetsList = ({ targets, t }) => (
         <List selectable={false} ripple={false}>
-            <ListSubHeader caption='Targets' />
+            {/* <ListSubHeader caption='Targets' /> */}
             {
                 (targets || []).map((target) => {
 
