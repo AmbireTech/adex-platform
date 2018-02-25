@@ -37,21 +37,41 @@ export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
             right={<UnitTargets targets={unitMeta.targets} t={t} />}
         />
     </div>
+    
+export const Report = ({ report = {}, t }) =>
+    <div>
+        <PropRow left={t('BID_REPORT_IPFS')}
+            right={<a target='_blank' href={process.env.IPFS_GATEWAY + report.ipfs} > {report.ipfs} </a>}
+        />
+        <PropRow left={t('BID_REPORT_VERIFIED_UNIQUE_CLICKS')} right={report.report.verifiedUniqueClicks} />
+        <PropRow left={t('BID_REPORT_ALL_CLICKS')} right={report.report.allClicks} />
+    </div>
 
-export const BidInfo = ({ bid, slot, unit, t, rightComponent, ...rest }) => {
+export const BidInfo = ({ bid, slot, unit, t, report, ...rest }) => {
 
     const accepted = (bid._acceptedTime || 0) * 1000
     const timeout = (bid._timeout || 0) * 1000
     const bidExpires = accepted ? (accepted + timeout) : null
+
+    console.log('report', report)
 
     return (
         <div className={theme.itemPropTop}>
             <Grid fluid style={{ padding: 0 }}>
                 <PropRow left={t('BID_TARGET')} right={bid._target} />
                 <PropRow left={t('BID_AMOUNT')} right={adxToFloatView(bid._amount) + ' ADX'} />
-                <PropRow left={t('UNIT_TIMEOUT')} right={moment.duration(timeout, 'ms').humanize()} />
+                <PropRow left={t('BID_TIMEOUT')} right={moment.duration(timeout, 'ms').humanize()} />
+                {accepted ? 
+                    <PropRow left={t('BID_ACCEPTED_TIME')} right={ moment(accepted).format('MMMM Do, YYYY, HH:mm:ss') } />
+                    : null}
+                {bidExpires ? 
+                    <PropRow left={t('BID_EXPIRE_TIME')} right={moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss') } />
+                    : null}
+                {report ? 
+                    <Report report={report} t={t} />
+                    : null}
                 {unit ? <AdUnit unit={unit} unitMeta={unit._meta} t={t} /> : null}
-
+                
             </Grid>
         </div >
     )

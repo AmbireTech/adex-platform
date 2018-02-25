@@ -93,10 +93,10 @@ export class UnitBids extends Component {
                         {moment.duration(timeout, 'ms').humanize()}
                     </div>
                     <div>
-                        {accepted ? moment(accepted).format('MMMM Do, YYYY, HH:mm:ss') : null}
+                        {accepted ? moment(accepted).format('MMMM Do, YYYY, HH:mm:ss') : '-'}
                     </div>
                     <div>
-                        {bidExpires ? moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss') : null}
+                        {bidExpires ? moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss') : '-'}
                     </div>
                 </TableCell>
                 <TableCell>

@@ -162,7 +162,7 @@ export const VerifyBid = (props) =>
                 verifyBid(
                     {
                         placedBid: transaction.placedBid,
-                        _report: transaction.report,
+                        _report: transaction.report.ipfs,
                         _addr: acc._addr,
                         gas: transaction.gas,
                         gasPrice: transaction._gasPrice

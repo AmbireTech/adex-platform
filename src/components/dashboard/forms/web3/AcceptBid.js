@@ -14,24 +14,23 @@ import ProgressBar from 'react-toolbox/lib/progress_bar'
 class AcceptBid extends Component {
     componentWillMount() {
         if (!this.props.transaction.unit) {
+            
             this.props.validate('unit', { isValid: false,  err: { msg: 'ERR_UNIT_INFO_NOT_READY' },  dirty: false })
-        
+            this.props.actions.updateSpinner(this.props.placedBid._id + this.props.slot._id, true)
 
-        this.props.actions.updateSpinner(this.props.placedBid._id + this.props.slot._id, true)
-
-        getItem({ id: this.props.adUnitId, authSig: this.props.account._authSig })
-            .then((unit) => {
-                this.props.handleChange('unit', unit)
-                this.props.handleChange('placedBid', this.props.placedBid)
-                this.props.handleChange('slot', this.props.slot)
-                this.props.handleChange('account', this.props.acc)
-                this.props.actions.updateSpinner(this.props.placedBid._id + this.props.slot._id, false)
-                this.props.validate('unit', { isValid: true,  dirty: false })
-            })
-            .catch((err)=> {
-                this.props.actions
-                    .addToast({ type: 'warning', action: 'X', label: this.props.t('ERR_GETTING_BID_INFO', {args: [err]} ), timeout: 5000 })
-            })
+            getItem({ id: this.props.adUnitId, authSig: this.props.account._authSig })
+                .then((unit) => {
+                    this.props.handleChange('unit', unit)
+                    this.props.handleChange('placedBid', this.props.placedBid)
+                    this.props.handleChange('slot', this.props.slot)
+                    this.props.handleChange('account', this.props.acc)
+                    this.props.actions.updateSpinner(this.props.placedBid._id + this.props.slot._id, false)
+                    this.props.validate('unit', { isValid: true,  dirty: false })
+                })
+                .catch((err)=> {
+                    this.props.actions
+                        .addToast({ type: 'warning', action: 'X', label: this.props.t('ERR_GETTING_BID_INFO', {args: [err]} ), timeout: 5000 })
+                })
         }
     }
 
