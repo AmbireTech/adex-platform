@@ -45,7 +45,7 @@ export const fromHexParam = (param, type) => {
 
 // NOTE: maybe it shoud work with .32
 const CHECK_NUMBER_STR = new RegExp(/^([0-9]+\.?[0-9]*)$/)
-const LEADING_ZEROS =  /^0+/
+const LEADING_ZEROS = /^0+/
 // NOTE: converts user input string to multiplied integer
 // TODO: more tests for this
 export const adxAmountStrToPrecision = (amountStr) => {
@@ -78,4 +78,9 @@ export const validAmountStr = (amountStr) => {
     // TODO: maybe more strict test
     let isValid = CHECK_NUMBER_STR.test(amountStr)
     return isValid
+}
+
+export const adxToFloatView = (adxAmountStr) => {
+    let floatAmount = parseInt(adxAmountStr, 10) / MULT
+    return floatAmount.toFixed(4)
 }

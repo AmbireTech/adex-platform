@@ -303,6 +303,26 @@
   }
 }
 
+.compactCol {
+    max-width: 120px;
+}
+
+.actionsCol {
+    min-width: 200px;
+}
+
+.actionBtn {
+    margin-right: 5px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 @media (height <= 1000px) {
     .dialog {
         min-height: 95vh; 

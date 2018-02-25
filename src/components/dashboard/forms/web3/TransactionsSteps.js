@@ -40,9 +40,9 @@ class NewTransactionSteps extends Component {
         })
 
         return (
-            <div style={{ textAlign: 'left' }}>
+            <span style={{ textAlign: 'left' }}>
                 <MaterialStepper pages={pages} />
-            </div>
+            </span>
         )
     }
 }

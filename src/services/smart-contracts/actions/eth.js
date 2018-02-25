@@ -113,6 +113,7 @@ export const getAccountStatsMetaMask = () => {
                     reject('No metamask addr!')
                 }
 
+                // TODO: check for possible race condition 
                 let balanceEth = web3.eth.getBalance(_addr)
                 let balanceAdx = token.methods.balanceOf(_addr).call()
                 let allowance = token.methods.allowance(_addr, cfg.addr.exchange).call()

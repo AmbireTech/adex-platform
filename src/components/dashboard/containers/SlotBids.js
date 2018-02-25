@@ -16,12 +16,14 @@ import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
 import { BidsStatusBars, BidsStatusPie, SlotsClicksAndRevenue } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
 import { getSlotBids, getAvailableBids } from 'services/adex-node/actions'
+import { adxToFloatView } from 'services/smart-contracts/utils'
 import { Item } from 'adex-models'
 import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
 import { AcceptBid, GiveupBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
+import classnames from 'classnames'
 
 const { ItemsTypes } = ItemsConstants
-const { BID_STATES, BidStateNames } = ExchangeConstants
+const { BID_STATES, BidStateNames, BidStatesLabels } = ExchangeConstants
 
 // import d3 from 'd3'
 
@@ -49,6 +51,7 @@ export class SlotBids extends Component {
         }
     }
 
+    // TODO: map bid and set amount to number or make something to pars the amount in the items list sort function
     componentWillMount() {
         getSlotBids({
             authSig: this.props.account._authSig,
@@ -133,9 +136,9 @@ export class SlotBids extends Component {
         let t = this.props.t
         return (
             <TableHead>
-                <TableCell> {t('TOTAL_REWARD')} </TableCell>
-                <TableCell> {t('CONVERSION_GOALS')} </TableCell>
-                <TableCell> {t('STATE')} </TableCell>
+                <TableCell> {t('BID_REWARD')} </TableCell>
+                <TableCell> {t('BID_TARGET')} </TableCell>
+                <TableCell> {t('BID_STATE')} </TableCell>
                 <TableCell> {t('ADVERTISER')} </TableCell>
                 <TableCell> {t('AD_UNIT')} </TableCell>
                 <TableCell> {t('TIMEOUT')} </TableCell>
@@ -148,17 +151,24 @@ export class SlotBids extends Component {
         let t = this.props.t
         return (
             <TableRow key={bid._id}>
-                <TableCell> {bid._amount} </TableCell>
+                <TableCell> {adxToFloatView(bid._amount) + ' ADX'} </TableCell>
                 <TableCell> {bid._target} </TableCell>
-                <TableCell> {bid._state} </TableCell>
-                <TableCell> {bid._advertiser} </TableCell>
-                <TableCell>
+                <TableCell> {t(BidStatesLabels[bid._state])} </TableCell>
+                <TableCell
+                    className={classnames(theme.compactCol, theme.ellipsis)}
+                >
+                    <a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._advertiser} > {bid._advertiser} </a>
+                </TableCell>
+                <TableCell
+                    className={classnames(theme.compactCol, theme.ellipsis)}
+                >
                     {/*TODO: link to the meta or popup on click and the get tha meta or accept bid dialog whic will have the adunit meta info*/}
-                    <a target='_blank' href={Item.getIpfsMetaUrl(bid._adUnit)} > {bid._adUnit} </a>
+                    <a target='_blank' href={Item.getIpfsMetaUrl(bid._adUnit, process.env.IPFS_GATEWAY)} > {bid._adUnit} </a>
                 </TableCell>
                 <TableCell> {moment.duration(bid._timeout, 's').humanize()} </TableCell>
-                <TableCell>
-
+                <TableCell
+                    className={classnames(theme.actionsCol)}
+                >
                     {(() => {
                         switch (bid._state) {
                             case BID_STATES.DoesNotExist.id:
@@ -172,6 +182,7 @@ export class SlotBids extends Component {
                                     acc={this.props.account}
                                     raised
                                     primary
+                                    className={theme.actionBtn}
                                     onSave={this.onSave}
                                 />
                             case BID_STATES.Accepted.id:
@@ -185,6 +196,7 @@ export class SlotBids extends Component {
                                         acc={this.props.account}
                                         raised
                                         primary
+                                        className={theme.actionBtn}
                                         onSave={this.onSave}
                                     />
                                     <GiveupBid
@@ -195,6 +207,7 @@ export class SlotBids extends Component {
                                         acc={this.props.account}
                                         raised
                                         accent
+                                        className={theme.actionBtn}
                                         onSave={this.onSave}
                                     />
                                 </span>
@@ -250,6 +263,7 @@ export class SlotBids extends Component {
                     </Tab>
                     <Tab label={t('BIDS_STATISTICS')}>
                         <div>
+                            {t('COMING_SOON')}
                             {/* {this.renderNonOpenedBidsChart(slotBids)} */}
                         </div>
                     </Tab>
