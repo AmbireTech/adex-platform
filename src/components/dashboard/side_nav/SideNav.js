@@ -38,7 +38,7 @@ class SideNav extends Component {
         const pendingTrsCount = Object.keys(transactions).reduce((memo, key) => {
 
                 let itm = {...transactions[key]}
-                if(itm && itm.status === 'TRANSACTION_STATUS_SENT') {
+                if(itm && itm.status === 'TRANSACTION_STATUS_PENDING') {
                     memo += 1
                 }
 

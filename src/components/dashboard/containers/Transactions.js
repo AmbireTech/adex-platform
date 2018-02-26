@@ -25,32 +25,7 @@ const SORT_PROPERTIES = [
     { value: '_id', label: '' },
 ]
 
-
 class Transactions extends Component {
-
-    componentWillMount(nextProps) {
-        this.checkTransactions()
-    }
-
-    checkTransactions = () => {
-        let transactions = this.props.transactions
-        let hashes = Object.keys(transactions).reduce((memo, key) => {
-            if(key && ((key.toString()).length === 66)){
-                memo.push(key)
-            }
-            return memo
-        }, [])
-
-        getTransactionsReceipts(hashes)
-        .then((receipts)=>{
-            receipts.forEach((rec) =>{
-                if(rec && rec.transactionHash && rec.status){
-                    let status = rec.status === '0x1' ? 'TRANSACTION_STATUS_SUCCESS' : 'TRANSACTION_STATUS_ERROR'
-                    this.props.actions.updateWeb3Transaction({ trId: rec.transactionHash, key: 'status', value: status, addr: this.props.account._addr })
-                }
-            })
-        })
-    }
 
     renderTableHead() {
         let t = this.props.t
@@ -106,7 +81,6 @@ class Transactions extends Component {
 
     render() {
         let t = this.props.t
-        // let items = Array.from(Object.values(this.props.transactions || {})) || []
         let transactions = this.props.transactions
         let reduced = Object.keys(transactions).reduce((memo, key) => {
             if(key && ((key.toString()).length === 66)){
@@ -125,15 +99,6 @@ class Transactions extends Component {
                 <div className={classnames(theme.heading, theme.Transactions, theme.items)}>
                     <h2 > {t('TRANSACTIONS')} {'(' + itemsCount + ')'} </h2>
                 </div>
-
-                <Button
-                        floating
-                        icon='refresh'
-                        primary
-                        flat
-                        className={classnames(theme.floating)}
-                        onClick={this.checkTransactions}
-                    />
 
                 <ItemsList items={reduced} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
             </div>
