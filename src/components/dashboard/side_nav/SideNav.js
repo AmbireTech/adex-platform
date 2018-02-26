@@ -117,7 +117,7 @@ function mapStateToProps(state) {
     // let memory = state.memory
     return {
         account: persist.account,
-        transactions: persist.web3Transactions
+        transactions: persist.web3Transactions[persist.account._addr] || {}
     }
 }
 

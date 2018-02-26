@@ -42,7 +42,7 @@ export default function NewTransactionHoc(Decorated) {
                 let trData = {...trans}
                 trData.status = 'TRANSACTION_STATUS_SENT'
                 trData.sendingTime = Date.now()
-                this.props.actions.addWeb3Transaction({trans: trData})
+                this.props.actions.addWeb3Transaction({trans: trData, addr: this.props.account._addr})
             }            
         }
 

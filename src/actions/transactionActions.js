@@ -22,35 +22,38 @@ export function resetNewTransaction({ trId }) {
 }
 
 // PERSIST STORAGE
-export function addWeb3Transaction({ trans }) {
-    if(!trans || !trans.trHash) return
+export function addWeb3Transaction({ trans, addr }) {
+    if(!trans || !trans.trHash || !addr) return
 
     return function (dispatch) {
         return dispatch({
             type: types.ADD_WEB3_TRANSACTION,
             value: trans,
-            trId: trans.trHash
+            trId: trans.trHash,
+            addr: addr
         })
     }
 }
 
 // TODO: make update multiple
-export function updateWeb3Transaction({ trId, key, value }) {
+export function updateWeb3Transaction({ trId, key, value, addr }) {
     return function (dispatch) {
         return dispatch({
             type: types.UPDATE_WEB3_TRANSACTION,
             trId: trId,
             key: key,
-            value: value
+            value: value,
+            addr: addr
         })
     }
 }
 
-export function resetWeb3Transaction({ trId }) {
+export function resetWeb3Transaction({ trId, addr }) {
     return function (dispatch) {
         return dispatch({
             type: types.RESET_WEB3_TRANSACTION,
-            trId: trId
+            trId: trId,
+            addr: addr
         })
     }
 }

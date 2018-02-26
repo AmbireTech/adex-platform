@@ -46,7 +46,7 @@ class Transactions extends Component {
             receipts.forEach((rec) =>{
                 if(rec && rec.transactionHash && rec.status){
                     let status = rec.status === '0x1' ? 'TRANSACTION_STATUS_SUCCESS' : 'TRANSACTION_STATUS_ERROR'
-                    this.props.actions.updateWeb3Transaction({ trId: rec.transactionHash, key: 'status', value: status })
+                    this.props.actions.updateWeb3Transaction({ trId: rec.transactionHash, key: 'status', value: status, addr: this.props.account._addr })
                 }
             })
         })
@@ -152,7 +152,7 @@ function mapStateToProps(state, props) {
     // let memory = state.memory
     return {
         account: persist.account,
-        transactions: persist.web3Transactions
+        transactions: persist.web3Transactions[persist.account._addr] || {}
     }
 }
 
