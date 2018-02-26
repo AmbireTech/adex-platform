@@ -136,6 +136,7 @@ export const CancelBid = (props) =>
                         gasPrice: transaction._gasPrice
                     })
                     .then((res) => {
+                        resolve(res)
                         return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
                     })
                     .catch((err) => {

@@ -35,7 +35,7 @@ const checkBidIdAndSign = ({ exchange, _id, _advertiser, _adUnit, _opened, _targ
     })
 }
 
-export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } }, _adSlot, _addr, gas, gasPrice } = {}) => {
+export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } }, _adSlot, _addr, gas, gasPrice, onReceipt } = {}) => {
     return new Promise((resolve, reject) => {
 
         getWeb3
@@ -67,21 +67,16 @@ export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
                             .send({ from: _addr, gas: estimatedGas })
                             .on('transactionHash', (hash) => {
                                 console.log('acceptBid transactionHash', hash)
-                                resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Accepted.id, trHash: hash })
+                                resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Accepted.id, trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_ACCEPT_BID' })
 
                             })
                             .on('confirmation', (confirmationNumber, receipt) => {
                                 console.log('acceptBid confirmation confirmationNumber', confirmationNumber)
                                 console.log('acceptBid confirmation receipt', receipt)
-
-                                if (receipt.status === '0x1') {
-                                    resolve(receipt)
-                                } else {
-                                    reject(receipt)
-                                }
                             })
                             .on('receipt', (receipt) => {
                                 console.log('acceptBid receipt', receipt)
+                                // TODO: onReceipt() ...
                             })
                             .on('error', (err) => {
                                 console.log('acceptBid err', err)
@@ -126,17 +121,11 @@ export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
                             .send({ from: _addr, gas: estimatedGas })
                             .on('transactionHash', (hash) => {
                                 console.log('cancelBid transactionHash', hash)
-                                resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Canceled.id, trHash: hash })
+                                resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Canceled.id, trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_CANCEL_BID' })
                             })
                             .on('confirmation', (confirmationNumber, receipt) => {
                                 console.log('cancelBid confirmation confirmationNumber', confirmationNumber)
                                 console.log('cancelBid confirmation receipt', receipt)
-
-                                if (receipt.status === '0x1') {
-                                    resolve(receipt)
-                                } else {
-                                    reject(receipt)
-                                }
                             })
                             .on('receipt', (receipt) => {
                                 console.log('cancelBid receipt', receipt)
@@ -176,17 +165,11 @@ export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report
                                 console.log('verifyBid transactionHash', hash)
                                 resolve(hash)
                                 // TODO: Send just the report if only one verification
-                                // resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Completed.id, trHash: hash })
+                                resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Completed.id, trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_VERIFY_BID' })
                             })
                             .on('confirmation', (confirmationNumber, receipt) => {
                                 console.log('verifyBid confirmation confirmationNumber', confirmationNumber)
                                 console.log('verifyBid confirmation receipt', receipt)
-
-                                if (receipt.status === '0x1') {
-                                    resolve(receipt)
-                                } else {
-                                    reject(receipt)
-                                }
                             })
                             .on('receipt', (receipt) => {
                                 console.log('verifyBid receipt', receipt)
@@ -227,17 +210,11 @@ export const giveupBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, 
                             .send({ from: _addr, gas: estimatedGas })
                             .on('transactionHash', (hash) => {
                                 console.log('giveupBid transactionHash', hash)
-                                resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Canceled.id, trHash: hash })
+                                resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Canceled.id, trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_GIVEUP_BID' })
                             })
                             .on('confirmation', (confirmationNumber, receipt) => {
                                 console.log('giveupBid confirmation confirmationNumber', confirmationNumber)
                                 console.log('giveupBid confirmation receipt', receipt)
-
-                                if (receipt.status === '0x1') {
-                                    resolve(receipt)
-                                } else {
-                                    reject(receipt)
-                                }
                             })
                             .on('receipt', (receipt) => {
                                 console.log('giveupBid receipt', receipt)
@@ -275,17 +252,11 @@ export const refundBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, 
                             .send({ from: _addr, gas: estimatedGas })
                             .on('transactionHash', (hash) => {
                                 console.log('refundBid transactionHash', hash)
-                                // resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Completed.id, trHash: hash })
+                                resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Expired.id, trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_REFUND_BID' })
                             })
                             .on('confirmation', (confirmationNumber, receipt) => {
                                 console.log('refundBid confirmation confirmationNumber', confirmationNumber)
                                 console.log('refundBid confirmation receipt', receipt)
-
-                                if (receipt.status === '0x1') {
-                                    resolve(receipt)
-                                } else {
-                                    reject(receipt)
-                                }
                             })
                             .on('receipt', (receipt) => {
                                 console.log('refundBid receipt', receipt)
@@ -406,7 +377,7 @@ function sendDeposit({ exchange, _addr, amount, gas }) {
         exchange.methods.deposit(amount)
             .send({ from: _addr, gas: gas })
             .on('transactionHash', (hash) => {
-                resolve()
+                resolve({trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_DEPOSIT'})
             })
             .on('error', (err) => {
                 reject(err)
@@ -459,7 +430,7 @@ export const withdrawFromExchange = ({ amountToWithdraw, _addr, gas }) => {
                 exchange.methods.withdraw(amount)
                     .send({ from: _addr, gas: 90000 })
                     .on('transactionHash', (hash) => {
-                        resolve()
+                        resolve({trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_WITHDRAW'})
                     })
                     .on('error', (err) => {
                         reject(err)

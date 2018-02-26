@@ -6,18 +6,19 @@ import actions from 'actions'
 import ItemsList from './ItemsList'
 import theme from './theme.css'
 import classnames from 'classnames'
-import { getItems } from 'services/adex-node/actions'
-import { Models } from 'adex-models'
 import { items as ItemsConstants } from 'adex-constants'
 import Rows from 'components/dashboard/collection/Rows'
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import Translate from 'components/translate/Translate'
+import moment from 'moment'
 
 const { ItemTypesNames } = ItemsConstants
 
 const SORT_PROPERTIES = [
+    { value: 'sendingTime', label: '' },
+    { value: 'status', label: '' },
+    { value: 'trMethod', label: '' },
     { value: '_id', label: '' },
-    { value: '_status', label: '' },
 ]
 
 
@@ -27,7 +28,10 @@ class Transactions extends Component {
         let t = this.props.t
         return (
             <TableHead>
+                <TableCell> {t('TRANS_METHOD')} </TableCell>
                 <TableCell> {t('TRANS_ID')} </TableCell>
+                <TableCell> {t('TRANS_STATUS')} </TableCell>
+                <TableCell> {t('TRANS_SENDING_TIME')} </TableCell>
             </TableHead>
         )
     }
@@ -40,12 +44,14 @@ class Transactions extends Component {
 
         return (
             <TableRow key={transaction._id || index}>
+                <TableCell> {t(transaction.trMethod)} </TableCell>
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    {transaction._id}
-                    <a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + transaction._advertiser} > {transaction._advertiser} </a>
+                    <a target='_blank' href={process.env.ETH_SCAN_TX_HOST + transaction._id} > {transaction._id} </a>
                 </TableCell>
+                <TableCell> {t(transaction.status)} </TableCell>
+                <TableCell> {t(moment(transaction.sendingTime).format('MMMM Do, YYYY, HH:mm:ss'))} </TableCell>
 
             </TableRow >
         )
@@ -64,14 +70,27 @@ class Transactions extends Component {
 
     searchMatch = (transaction) => {
         return (transaction._id || '') +
-            (transaction._status || '') +
-            (transaction._time || '')
+            (transaction.status || '') +
+            (transaction.bidId || '') +
+            (transaction.state || '') +
+            (transaction.sendingTime || '')
     }
 
     render() {
         let t = this.props.t
-        let items = Array.from(Object.values(this.props.transactions || {})) || []
-        let itemsCount = (items.filter((i) => !!i && !!i._id).length)
+        // let items = Array.from(Object.values(this.props.transactions || {})) || []
+        let transactions = this.props.transactions
+        let reduced = Object.keys(transactions).reduce((memo, key) => {
+            if(key && ((key.toString()).length === 66)){
+                let itm = {...transactions[key]}
+                itm._id = key
+                memo.push(itm)
+            }
+
+            return memo
+        }, [])
+
+        let itemsCount = reduced.length
 
         return (
             <div>
@@ -79,7 +98,7 @@ class Transactions extends Component {
                     <h2 > {t('TRANSACTIONS')} {'(' + itemsCount + ')'} </h2>
                 </div>
 
-                <ItemsList items={items} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
+                <ItemsList items={reduced} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
             </div>
         )
     }

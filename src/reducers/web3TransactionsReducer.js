@@ -1,4 +1,4 @@
-import { UPDATE_WEB3_TRANSACTION, RESET_WEB3_TRANSACTION } from 'constants/actionTypes'
+import { ADD_WEB3_TRANSACTION, UPDATE_WEB3_TRANSACTION, RESET_WEB3_TRANSACTION } from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
 export default function web3TransactionsReducer(state = initialState.web3Transactions, action) {
@@ -16,11 +16,13 @@ export default function web3TransactionsReducer(state = initialState.web3Transac
     }
 
     switch (action.type) {
+        case ADD_WEB3_TRANSACTION:
+            newTr = { ...action.value }
+            newState[action.trId] = newTr
+            return newState
         case UPDATE_WEB3_TRANSACTION:
             newTr = { ...(newState[action.trId] || initialState.web3Transactions.default) }
             newTr = updateTr({ tr: newTr, key: action.key, val: action.value })
-
-            console.log('newTr', newTr)
             newState[action.trId] = newTr
             return newState
         case RESET_WEB3_TRANSACTION:

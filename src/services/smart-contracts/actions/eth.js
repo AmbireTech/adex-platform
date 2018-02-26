@@ -39,14 +39,12 @@ export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, gas } = {}) =
                 value: amount,
                 gas: gas || GAS_LIMIT
             })
-                .then(function (res) {
-                    console.log('withdrawEth res', res)
-                    return resolve(res)
-                })
-                .catch((err) => {
-                    console.log('withdrawEth err', err)
-                    reject(err)
-                })
+            .on('transactionHash', (hash) => {
+                resolve({trHash: hash, trMethod: 'TRANS_MTD_ETH_WITHDRAW'})
+            })
+            .on('error', (err) => {
+                reject(err)
+            })
         })
     })
 }
