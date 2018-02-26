@@ -90,7 +90,7 @@ export const getAccountStats = ({ _addr }) => {
                         exchangeBalance: getExchangeBalances(exchBal)
                     }
 
-                    console.log('accStats', accStats)
+                    // console.log('accStats', accStats)
                     return resolve(accStats)
                 })
                 .catch((err) => {
@@ -130,7 +130,7 @@ export const getAccountStatsMetaMask = () => {
                                 exchangeBalance: getExchangeBalances(exchBal)
                             }
 
-                        console.log('accStats', accStats)
+                        // console.log('accStats', accStats)
                         return resolve(accStats)
                     })
                     .catch((err) => {

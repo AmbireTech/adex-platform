@@ -25,13 +25,13 @@ const SORT_PROPERTIES = [
     { value: '_id', label: '' },
 ]
 
-
 class Transactions extends Component {
 
     componentWillMount(nextProps) {
         this.checkTransactions()
     }
 
+    // TEMP
     checkTransactions = () => {
         let transactions = this.props.transactions
         let hashes = Object.keys(transactions).reduce((memo, key) => {
@@ -106,7 +106,6 @@ class Transactions extends Component {
 
     render() {
         let t = this.props.t
-        // let items = Array.from(Object.values(this.props.transactions || {})) || []
         let transactions = this.props.transactions
         let reduced = Object.keys(transactions).reduce((memo, key) => {
             if(key && ((key.toString()).length === 66)){

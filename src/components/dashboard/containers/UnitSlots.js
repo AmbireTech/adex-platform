@@ -53,7 +53,6 @@ export class UnitSlots extends Component {
                 </TableCell>
             </TableRow >
         )
-
     }
 
     renderRows = (items) =>
