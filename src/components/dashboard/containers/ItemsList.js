@@ -20,6 +20,9 @@ import Img from 'components/common/img/Img'
 import { Item } from 'adex-models'
 import moment from 'moment'
 import Translate from 'components/translate/Translate'
+import classnames from 'classnames'
+import { items as ItemsConstants } from 'adex-constants'
+const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue, AdTypesByValue } = ItemsConstants
 
 const RRTableCell = withReactRouterLink(TableCell)
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))
@@ -27,11 +30,10 @@ const TooltipIconButton = Tooltip(IconButton)
 const TooltipButton = Tooltip(Button)
 
 const SORT_PROPERTIES = [
-    { value: '_id' },
-    { value: '_name' },
     { value: 'fullName' },
-    { value: 'modifiedOn' },
-    { value: 'createdOn' }
+    { value: 'createdOn' },
+    { value: 'size' },
+    { value: 'adType' },
 ]
 
 const List = ({ list, itemRenderer }) => {
@@ -120,6 +122,7 @@ class ItemsList extends Component {
     }
 
     renderTableHead({ selected }) {
+        const t = this.props.t
         return (
             <TableHead>
                 <TableCell>
@@ -137,11 +140,11 @@ class ItemsList extends Component {
                         null
                     }
                 </TableCell>
-                <TableCell> Name </TableCell>
-                <TableCell> Type </TableCell>
-                <TableCell> Size </TableCell>
-                <TableCell> Created </TableCell>
-                <TableCell> Actions </TableCell>
+                <TableCell> {t('PROP_NAME')} </TableCell>
+                <TableCell> {t('PROP_ADTYPE')} </TableCell>
+                <TableCell> {t('PROP_SIZE')}</TableCell>
+                <TableCell> {t('PROP_CREATEDON')} </TableCell>
+                <TableCell> {t('ACTIONS')} </TableCell>
             </TableHead>
         )
     }
@@ -150,11 +153,11 @@ class ItemsList extends Component {
         return (
             <TableRow key={item._id || index} theme={tableTheme} selected={selected}>
                 <RRTableCell className={tableTheme.link} to={to} theme={tableTheme}>
-                    <Img className={tableTheme.img} src={Item.getImgUrl(item._meta.img, process.env.IPFS_GATEWAY)} alt={item._name} />
+                    <Img className={classnames(tableTheme.img)} src={Item.getImgUrl(item._meta.img, process.env.IPFS_GATEWAY)} alt={item._name} />
                 </RRTableCell>
-                <RRTableCell className={tableTheme.link} to={to}> {item._name} </RRTableCell>
-                <TableCell> {item._type} </TableCell>
-                <TableCell> {item._size} </TableCell>
+                <RRTableCell className={tableTheme.link} to={to}> {item._meta.fullName} </RRTableCell>
+                <TableCell> {(AdTypesByValue[item._meta.adType] || {}).label} </TableCell>
+                <TableCell> {(AdSizesByValue[item._meta.size] || {}).label} </TableCell>
                 <TableCell> {moment(item._meta.createdOn).format('DD-MM-YYYY')} </TableCell>
                 <TableCell>
 
@@ -251,7 +254,7 @@ class ItemsList extends Component {
                 } else if (typeof searchMatch === 'string' && !!searchMatch) {
                     matchString = searchMatch
                 } else {
-                    matchString = (i._name || '') +
+                    matchString = 
                         (meta.fullName || '') +
                         (meta.description || '')
                 }
