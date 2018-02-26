@@ -17,8 +17,6 @@ const RRListItem = withReactRouterLink(ListItem)
 
 class SideNav extends Component {
 
-    
-
     render() {
         const side = this.props.side
         if (side !== 'advertiser' && side !== 'publisher') {
@@ -53,16 +51,16 @@ class SideNav extends Component {
                         selectable={true}
                         caption={t('DASHBOARD')}
                         theme={theme}
-                        className={classnames({ [theme.active]: location === '' })}
                         leftIcon='dashboard'
+                        activeClassName={theme.active}
                     />
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side + '/' + collection }}
                         selectable={true}
                         caption={t(collection.toUpperCase())}
                         theme={theme}
-                        className={classnames({ [theme.active]: location === collection })}
                         leftIcon={<CollectionIcon color='rgb(117, 117, 117)' />}
+                        activeClassName={theme.active}
                     />
                     <ListItem
                         selectable={false}
@@ -80,7 +78,7 @@ class SideNav extends Component {
                         selectable={true}
                         caption={t(items.toUpperCase())}
                         theme={theme}
-                        className={classnames({ [theme.active]: location === items })}
+                        activeClassName={theme.active}
                         leftIcon={itemsIcon}
                     />
                     <ListItem
@@ -99,7 +97,7 @@ class SideNav extends Component {
                         selectable={true}
                         caption={t('TRANSACTIONS')}
                         theme={theme}
-                        className={classnames({ [theme.active]: location === 'transactions' })}
+                        activeClassName={theme.active}
                         leftIcon={<FontIcon value='swap_horiz' style={{color: pendingTrsCount > 0 ? '#FF5722' : ''}}/>}
                     />
                 </List>

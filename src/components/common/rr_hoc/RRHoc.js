@@ -26,7 +26,7 @@ export const withReactRouterLink = Component => {
     isActive = (toLocation, nextProps) => {
       const currProps = nextProps || this.props
       const { location } = currProps
-      return toLocation === location.pathname
+      return this.resolveToLocation(toLocation) === location.pathname
     }
 
     handleClick = event => {
@@ -52,11 +52,11 @@ export const withReactRouterLink = Component => {
         this.setState({ active: this.isActive(to, nextProps) })
       }
     }
-    // TODO: delete active state stuff
-    // shouldComponentUpdate(nextProps, nextState) {
-    //   // const { to } = this.props;
-    //   return this.state.active !== nextState.active
-    // }
+
+    shouldComponentUpdate(nextProps, nextState) {
+      // const { to } = this.props;
+      return this.state.active !== nextState.active
+    }
     render() {
       const { activeClassName, className, to, beforeTo, ...rest } = this.props;
 
