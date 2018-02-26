@@ -23,7 +23,7 @@ export const withReactRouterLink = Component => {
     }
 
     render() {
-      const { to, match, location, history,  ...rest } = this.props
+      const { to, match, location, history, staticContext, ...rest } = this.props
       const toLocation = this.resolveToLocation(to)
       return (
         <Component          

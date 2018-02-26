@@ -60,11 +60,11 @@ export class UnitBids extends Component {
     renderTableRow(bid, index, { to, selected }) {
         const t = this.props.t
         const canCancel = bid._state === BID_STATES.DoesNotExist.id
-        const canVerify = BID_STATES.Accepted.id && (bid.clicksCount >= bid._target)
+        const canVerify = (bid._state === BID_STATES.Accepted.id) && (bid.clicksCount >= bid._target)
         const accepted = (bid._acceptedTime || 0) * 1000
         const timeout = (bid._timeout || 0) * 1000
         const bidExpires = accepted ? (accepted + timeout) : null
-        const canRefund = bid._state === BID_STATES.Accepted.id && (bidExpires < Date.now())
+        const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidExpires < Date.now())
 
         return (
             <TableRow key={bid._id}>
