@@ -70,14 +70,6 @@ export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
                                 resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Accepted.id, trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_ACCEPT_BID' })
 
                             })
-                            .on('confirmation', (confirmationNumber, receipt) => {
-                                console.log('acceptBid confirmation confirmationNumber', confirmationNumber)
-                                console.log('acceptBid confirmation receipt', receipt)
-                            })
-                            .on('receipt', (receipt) => {
-                                console.log('acceptBid receipt', receipt)
-                                // TODO: onReceipt() ...
-                            })
                             .on('error', (err) => {
                                 console.log('acceptBid err', err)
                                 reject(err)
@@ -123,13 +115,6 @@ export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
                                 console.log('cancelBid transactionHash', hash)
                                 resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Canceled.id, trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_CANCEL_BID' })
                             })
-                            .on('confirmation', (confirmationNumber, receipt) => {
-                                console.log('cancelBid confirmation confirmationNumber', confirmationNumber)
-                                console.log('cancelBid confirmation receipt', receipt)
-                            })
-                            .on('receipt', (receipt) => {
-                                console.log('cancelBid receipt', receipt)
-                            })
                             .on('error', (err) => {
                                 console.log('cancelBid err', err)
                                 reject(err)
@@ -163,16 +148,7 @@ export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report
                             .send({ from: _addr, gas: estimatedGas })
                             .on('transactionHash', (hash) => {
                                 console.log('verifyBid transactionHash', hash)
-                                resolve(hash)
-                                // TODO: Send just the report if only one verification
-                                resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Completed.id, trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_VERIFY_BID' })
-                            })
-                            .on('confirmation', (confirmationNumber, receipt) => {
-                                console.log('verifyBid confirmation confirmationNumber', confirmationNumber)
-                                console.log('verifyBid confirmation receipt', receipt)
-                            })
-                            .on('receipt', (receipt) => {
-                                console.log('verifyBid receipt', receipt)
+                                resolve({ bidId: _id, state: 'VERIFY_BID', trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_VERIFY_BID' })
                             })
                             .on('error', (err) => {
                                 console.log('verifyBid err', err)
@@ -253,13 +229,6 @@ export const refundBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, 
                             .on('transactionHash', (hash) => {
                                 console.log('refundBid transactionHash', hash)
                                 resolve({ bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Expired.id, trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_REFUND_BID' })
-                            })
-                            .on('confirmation', (confirmationNumber, receipt) => {
-                                console.log('refundBid confirmation confirmationNumber', confirmationNumber)
-                                console.log('refundBid confirmation receipt', receipt)
-                            })
-                            .on('receipt', (receipt) => {
-                                console.log('refundBid receipt', receipt)
                             })
                             .on('error', (err) => {
                                 console.log('refundBid err', err)

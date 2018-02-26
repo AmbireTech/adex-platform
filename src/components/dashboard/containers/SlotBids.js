@@ -152,7 +152,7 @@ export class SlotBids extends Component {
         let t = this.props.t
         const transactions = this.props.transactions
         const canAccept = bid._state === BID_STATES.DoesNotExist.id
-        const canVerify = BID_STATES.Accepted.id && (bid.clicksCount >= bid._target)
+        const canVerify = (bid._state === BID_STATES.Accepted.id) && (bid.clicksCount >= bid._target)
         const canGiveup = bid._state === BID_STATES.Accepted.id
         const accepted = (bid._acceptedTime || 0) * 1000
         const timeout = (bid._timeout || 0) * 1000

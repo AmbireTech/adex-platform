@@ -104,7 +104,7 @@ class Dashboard extends React.Component {
 
     componentWillMount(nextProps) {
         this.props.actions.updateNav('side', this.props.match.params.side)
-        this.checkTransactions()
+        // this.checkTransactions()
     }
 
     componentWillUpdate(nextProps) {
@@ -231,7 +231,7 @@ function mapStateToProps(state, props) {
         // TODO: temp until we decide how to handle the logged in state
         // TODO: We do not need aut here anymore, the auth is on the root
         auth: !!account._addr,
-        transactions: persist.web3Transactions[persist.account._addr] || {}
+        // transactions: persist.web3Transactions[persist.account._addr] || {}
     }
 }
 
