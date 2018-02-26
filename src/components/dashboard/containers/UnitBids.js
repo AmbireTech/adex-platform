@@ -81,12 +81,12 @@ export class UnitBids extends Component {
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    <a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._publisher} > {bid._publisher} </a>
+                    <a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._publisher} > {bid._publisher || '-'} </a>
                 </TableCell>
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    <a target='_blank' href={Item.getIpfsMetaUrl(bid._adSlot, process.env.IPFS_GATEWAY)} > {bid._adSlot} </a>
+                    <a target='_blank' href={Item.getIpfsMetaUrl(bid._adSlot, process.env.IPFS_GATEWAY)} > {bid._adSlot || '-'} </a>
                 </TableCell>
                 <TableCell>
                     <div>

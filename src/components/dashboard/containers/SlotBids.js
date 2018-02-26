@@ -150,12 +150,18 @@ export class SlotBids extends Component {
     // TODO: make something common with unit bids 
     renderTableRow(bid, index, { to, selected }) {
         let t = this.props.t
+        const transactions = this.props.transactions
         const canAccept = bid._state === BID_STATES.DoesNotExist.id
         const canVerify = BID_STATES.Accepted.id && (bid.clicksCount >= bid._target)
         const canGiveup = bid._state === BID_STATES.Accepted.id
         const accepted = (bid._acceptedTime || 0) * 1000
         const timeout = (bid._timeout || 0) * 1000
         const bidExpires = accepted ? (accepted + timeout) : null
+        const pendingTransaction = transactions[bid.unconfirmedStateTrHash] 
+        const pendingState = (!!pendingTransaction && (pendingTransaction.status === 'TRANSACTION_STATUS_PENDING')) ? bid.unconfirmedStateId : null
+        const pendingGiveup = pendingState === BID_STATES.Canceled.id
+        const pendingAccept = pendingState === BID_STATES.Accepted.id
+        const pendingVerify = canAccept && bid._advertiserConfirmation
 
         return (
             <TableRow key={bid._id}>
@@ -172,12 +178,14 @@ export class SlotBids extends Component {
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    <a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._advertiser} > {bid._advertiser} </a>
+                    <a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._advertiser} > {bid._advertiser || '-'} </a>
                 </TableCell>
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    <a target='_blank' href={Item.getIpfsMetaUrl(bid._adUnit, process.env.IPFS_GATEWAY)} > {bid._adUnit} </a>
+                    {bid._adUnit ?
+                        <a target='_blank' href={Item.getIpfsMetaUrl(bid._adUnit, process.env.IPFS_GATEWAY)} > {bid._adUnit} </a>
+                        : '-' }
                 </TableCell>
                 <TableCell>
                     <div>
@@ -195,7 +203,7 @@ export class SlotBids extends Component {
                 >
                     {canAccept ?
                         <AcceptBid
-                            icon='check'
+                            icon={pendingAccept ? 'hourglass_empty' : 'check' }
                             adUnitId={bid._adUnitId}
                             slotId={this.props.item._id}
                             bidId={bid._id}
@@ -206,10 +214,11 @@ export class SlotBids extends Component {
                             primary
                             className={theme.actionBtn}
                             onSave={this.onSave}
+                            disabled={pendingAccept}
                         /> : null}
                     {canVerify ?
                         <VerifyBid
-                            icon='check_circle'
+                            icon={pendingGiveup ? 'hourglass_empty' : 'check_circle' }
                             itemId={bid._adSlotId}
                             bidId={bid._id}
                             placedBid={bid}
@@ -218,11 +227,12 @@ export class SlotBids extends Component {
                             primary
                             className={theme.actionBtn}
                             onSave={this.onSave}
+                            disabled={pendingVerify}
                         />
                         : null}
                     {canGiveup ?
                         <GiveupBid
-                            icon='cancel'
+                            icon={pendingGiveup ? 'hourglass_empty' : 'cancel' }
                             slotId={bid._adSlotId}
                             bidId={bid._id}
                             placedBid={bid}
@@ -231,6 +241,7 @@ export class SlotBids extends Component {
                             accent
                             className={theme.actionBtn}
                             onSave={this.onSave}
+                            disabled={pendingGiveup}
                         />
                         : null}
                 </TableCell>
@@ -305,7 +316,8 @@ function mapStateToProps(state, props) {
         account: persist.account,
         // item: state.currentItem,
         spinner: memory.spinners[ItemsTypes.AdUnit.name],
-        bids: persist.bids.bidsById
+        bids: persist.bids.bidsById,
+        transactions: persist.web3Transactions[persist.account._addr] || {}
     };
 }
 
