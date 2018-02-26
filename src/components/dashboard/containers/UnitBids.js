@@ -11,17 +11,21 @@ import ItemsList from './ItemsList'
 import Rows from 'components/dashboard/collection/Rows'
 import Translate from 'components/translate/Translate'
 import { getUnitBids } from 'services/adex-node/actions'
+import { adxToFloatView } from 'services/smart-contracts/utils'
 import { Item } from 'adex-models'
 import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
 import { CancelBid, VerifyBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
+import classnames from 'classnames'
+import moment from 'moment'
 
 const { ItemsTypes } = ItemsConstants
-const { BID_STATES } = ExchangeConstants
+const { BID_STATES, BidStatesLabels } = ExchangeConstants
 
 const SORT_PROPERTIES = [
-    { value: '_target', label: 'Target' },
-    { value: '_amount', label: 'Amount' },
-    { value: '_timeout', label: 'Timeout' },
+    { value: '_state', label: '' },
+    { value: '_target', label: '' },
+    { value: '_amount', label: '' },
+    { value: '_timeout', label: '' },
     /** traffic, etc. */
 ]
 
@@ -39,66 +43,100 @@ export class UnitBids extends Component {
     }
 
     renderTableHead() {
+        let t = this.props.t
         return (
             <TableHead>
-                <TableCell> {this.props.t('TARGET')} </TableCell>
-                <TableCell> {this.props.t('AMOUNT')} </TableCell>
-                <TableCell> {this.props.t('STATE')} </TableCell>
-                <TableCell> {this.props.t('TIMEOUT')} </TableCell>
-                <TableCell> {this.props.t('ACTIONS')} </TableCell>
+                <TableCell> {t('BID_AMOUNT')} </TableCell>
+                <TableCell> {t('BID_TARGET')} / {t('BID_UNIQUE_CLICKS')} </TableCell>
+                <TableCell> {t('BID_STATE')} </TableCell>
+                <TableCell> {t('PUBLISHER')} </TableCell>
+                <TableCell> {t('AD_SLOT')} </TableCell>
+                <TableCell> {t('TIMEOUT')} / {t('ACCEPTED')} / {t('EXPIRES')}  </TableCell>
+                <TableCell> {t('ACTIONS')} </TableCell>
             </TableHead>
         )
     }
 
     renderTableRow(bid, index, { to, selected }) {
+        const t = this.props.t
+        const canCancel = bid._state === BID_STATES.DoesNotExist.id
+        const canVerify = BID_STATES.Accepted.id && (bid.clicksCount >= bid._target)
+        const accepted = (bid._acceptedTime || 0) * 1000
+        const timeout = (bid._timeout || 0) * 1000
+        const bidExpires = accepted ? (accepted + timeout) : null
+        const canRefund = bid._state === BID_STATES.Accepted.id && (bidExpires < Date.now())
+
         return (
             <TableRow key={bid._id}>
-                <TableCell> {bid._target} </TableCell>
-                <TableCell> {bid._amount} </TableCell>
-                <TableCell> {bid._state} </TableCell>
-                <TableCell> {bid._timeout} </TableCell>
+                <TableCell> {adxToFloatView(bid._amount) + ' ADX'} </TableCell>
                 <TableCell>
-                    {(() => {
-                        switch (bid._state) {
-                            case BID_STATES.DoesNotExist.id:
-                                return <CancelBid
-                                    icon='cancel'
-                                    adUnitId={bid._adUnitId}
-                                    bidId={bid._id}
-                                    placedBid={bid}
-                                    acc={this.props.account}
-                                    raised
-                                    accent
-                                    onSave={this.onSave}
-                                />
-                            case BID_STATES.Accepted.id:
-                                // TODO: check for unique clicks first
-                                return <span>
-                                    <VerifyBid
-                                        icon='check_circle'
-                                        itemId={bid._adUnitId}
-                                        bidId={bid._id}
-                                        placedBid={bid}
-                                        acc={this.props.account}
-                                        raised
-                                        primary
-                                        onSave={this.onSave}
-                                    />
-                                    <RefundBid
-                                        icon='cancel'
-                                        adUnitId={bid._adUnitId}
-                                        bidId={bid._id}
-                                        placedBid={bid}
-                                        acc={this.props.account}
-                                        raised
-                                        accent
-                                        onSave={this.onSave}
-                                    />
-                                </span>
-                            default:
-                                return null
-                        }
-                    })()}
+                    <div>
+                        {bid._target}
+                    </div>
+                    <div>
+                        {bid.clicksCount || '-'}
+                    </div>
+                </TableCell>
+                <TableCell> {t(BidStatesLabels[bid._state])} </TableCell>
+                <TableCell
+                    className={classnames(theme.compactCol, theme.ellipsis)}
+                >
+                    <a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._publisher} > {bid._publisher} </a>
+                </TableCell>
+                <TableCell
+                    className={classnames(theme.compactCol, theme.ellipsis)}
+                >
+                    <a target='_blank' href={Item.getIpfsMetaUrl(bid._adSlot, process.env.IPFS_GATEWAY)} > {bid._adSlot} </a>
+                </TableCell>
+                <TableCell>
+                    <div>
+                        {moment.duration(timeout, 'ms').humanize()}
+                    </div>
+                    <div>
+                        {accepted ? moment(accepted).format('MMMM Do, YYYY, HH:mm:ss') : '-'}
+                    </div>
+                    <div>
+                        {bidExpires ? moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss') : '-'}
+                    </div>
+                </TableCell>
+                <TableCell>
+
+                    {canCancel ?
+                        <CancelBid
+                            icon='cancel'
+                            adUnitId={bid._adUnitId}
+                            bidId={bid._id}
+                            placedBid={bid}
+                            acc={this.props.account}
+                            raised
+                            accent
+                            className={theme.actionBtn}
+                            onSave={this.onSave}
+                        /> : null}
+                    {canVerify ?
+                        <VerifyBid
+                            icon='check_circle'
+                            itemId={bid._adUnitId}
+                            bidId={bid._id}
+                            placedBid={bid}
+                            acc={this.props.account}
+                            raised
+                            primary
+                            className={theme.actionBtn}
+                            onSave={this.onSave}
+                        /> : null}
+                    {canRefund ?
+                        <RefundBid
+                            icon='cancel'
+                            adUnitId={bid._adUnitId}
+                            bidId={bid._id}
+                            placedBid={bid}
+                            acc={this.props.account}
+                            raised
+                            accent
+                            className={theme.actionBtn}
+                            onSave={this.onSave}
+                        /> : null}
                 </TableCell>
             </TableRow >
         )
@@ -116,6 +154,13 @@ export class UnitBids extends Component {
             tableHeadRenderer={this.renderTableHead.bind(this)}
         />
 
+    searchMatch = (bid) => {
+        return (bid._amount || '') +
+            (bid._advertiser || '') +
+            (bid._timeout || '') +
+            (bid._target || '')
+        }
+
     render() {
         let item = this.props.item
         let t = this.props.t
@@ -123,7 +168,7 @@ export class UnitBids extends Component {
 
         return (
             <div>
-                <ItemsList items={bids} listMode='rows' delete renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} />
+                <ItemsList items={bids} listMode='rows' delete renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch}/>
             </div>
         )
     }

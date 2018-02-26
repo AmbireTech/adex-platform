@@ -39,14 +39,12 @@ export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, gas } = {}) =
                 value: amount,
                 gas: gas || GAS_LIMIT
             })
-                .then(function (res) {
-                    console.log('withdrawEth res', res)
-                    return resolve(res)
-                })
-                .catch((err) => {
-                    console.log('withdrawEth err', err)
-                    reject(err)
-                })
+            .on('transactionHash', (hash) => {
+                resolve({trHash: hash, trMethod: 'TRANS_MTD_ETH_WITHDRAW'})
+            })
+            .on('error', (err) => {
+                reject(err)
+            })
         })
     })
 }
@@ -113,6 +111,7 @@ export const getAccountStatsMetaMask = () => {
                     reject('No metamask addr!')
                 }
 
+                // TODO: check for possible race condition 
                 let balanceEth = web3.eth.getBalance(_addr)
                 let balanceAdx = token.methods.balanceOf(_addr).call()
                 let allowance = token.methods.allowance(_addr, cfg.addr.exchange).call()
@@ -142,3 +141,22 @@ export const getAccountStatsMetaMask = () => {
         })
     })
 }
+
+export const getTransactionsReceipts = (trHashes = []) => {
+    return new Promise((resolve, reject) => {
+        getWeb3.then(({ cfg, exchange, token, web3 }) => {
+                let all = trHashes.map((trH) => web3.eth.getTransactionReceipt(trH))
+
+                Promise.all(all)
+                    .then(receipts => {
+                        // console.log('receipts', receipts)
+                        return resolve(receipts)
+                    })
+                    .catch((err) => {
+                        console.log('getTransactionsReceipts err', err)
+                        reject(err)
+                    })
+            })
+        })
+}
+

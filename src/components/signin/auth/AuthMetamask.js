@@ -15,6 +15,7 @@ import scActions from 'services/smart-contracts/actions'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { addSig, getSig } from 'services/auth/auth'
 import { checkAuth } from 'services/adex-node/actions'
+import METAMASK_DL_IMG from 'resources/download-metamask.png'
 
 const { signAuthTokenMetamask, signAuthToken, getAccountMetamask } = scActions
 
@@ -107,13 +108,21 @@ class AuthMetamask extends Component {
 
         return (
             <div >
+                <span>
+                    MetaMask is a bridge that allows you to visit the distributed web of tomorrow in your browser today. It allows you to run Ethereum dApps right in your browser without running a full Ethereum node.
+                </span>
+                <br/>
                 <h3>
-                    How to work with metamask here:
+                    <a href='https://metamask.io/' target='_blank'>
+                        <img src={METAMASK_DL_IMG} alt={'Downlad metamask'} style={{maxWidth: '100%', maxHeight: '80px'}}/>
+                    </a>
                 </h3>
+                <br/>
+                <br/>
                 {userAddr ?
                     <Button onClick={this.authOnServer} label={t('AUTH_WITH_METAMASK', { args: [userAddr] })} raised accent />
                     :
-                    <Button onClick={this.checkMetamask} label={t('AUTH_CONNECT_WITH_METAMASK')} raised accent />
+                    <Button onClick={this.checkMetamask} label={t('AUTH_CONNECT_WITH_METAMASK')} raised primary />
                 }
             </div>
         )

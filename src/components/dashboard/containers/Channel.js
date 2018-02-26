@@ -7,6 +7,7 @@ import { Channel as ChannelModel, AdSlot as AdSlotModel } from 'adex-models'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
 import NewSlotForm from 'components/dashboard/forms/items/NewSlotForm'
+import NewSlotFormImgs from 'components/dashboard/forms/items/NewSlotFormImgs'
 // import theme from './theme.css'
 import AddItemDialog from './AddItemDialog'
 import NewItemSteps from 'components/dashboard/forms/items/NewItemSteps'
@@ -68,7 +69,13 @@ export class Channel extends Component {
                                 tabExsLabel={this.props.t('EXISTING_SLOT')}
                                 objModel={AdSlotModel}
                                 newForm={(props) =>
-                                    <NewItemSteps {...props} addTo={item} itemPages={[NewSlotForm]} itemType={ItemsTypes.AdSlot.id} itemModel={AdSlotModel} />
+                                    <NewItemSteps 
+                                        {...props} 
+                                        addTo={item} 
+                                        itemPages={[NewSlotForm, NewSlotFormImgs]} 
+                                        itemType={ItemsTypes.AdSlot.id} 
+                                        itemModel={AdSlotModel} 
+                                    />
                                 }
                             />
                         </div>

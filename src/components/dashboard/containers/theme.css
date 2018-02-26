@@ -62,6 +62,7 @@
 .listTools {
     border-bottom: 1px solid var(--color-divider);
     margin-bottom: 10px;
+    user-select: none;
 }
 
 .top {
@@ -177,6 +178,9 @@
         & input{
             color: #fff;
         }
+    }
+    &.Transactions{
+         background-color: #888;
     }
 }
 
@@ -300,6 +304,26 @@
     padding-top: 5px;
     padding-botom: 5px;
   }
+}
+
+.compactCol {
+    max-width: 120px;
+}
+
+.actionsCol {
+    min-width: 200px;
+}
+
+.actionBtn {
+    margin-right: 5px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @media (height <= 1000px) {

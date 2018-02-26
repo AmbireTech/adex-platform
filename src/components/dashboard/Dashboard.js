@@ -14,6 +14,7 @@ import DashboardStats from './containers/DashboardStats'
 import Unit from './containers/Unit'
 import Slot from './containers/Slot'
 import Items from './containers/Items'
+import Transactions from './containers/Transactions'
 import {
     AdUnit as AdUnitModel,
     AdSlot as AdSlotModel,
@@ -23,12 +24,12 @@ import {
 import Account from './account/Account'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
-// import scActions from 'services/smart-contracts/actions'
 import { items as ItemsConstants } from 'adex-constants'
+// import scActions from 'services/smart-contracts/actions'
 
 const { ItemsTypes } = ItemsConstants
 
-// const { getAccount, getAccountStats, getAccountStatsMetaMask } = scActions
+// const { getAccount, getAccountStats, getAccountStatsMetaMask,getTransactionsReceipts } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
     return (
@@ -42,14 +43,31 @@ function PrivateRoute({ component: Component, auth, ...other }) {
 }
 
 class Dashboard extends React.Component {
-    state = {
-        drawerActive: false,
-        drawerPinned: false,
-        sidebarPinned: false
+    constructor(props) {
+        super(props)
+        this.state = {
+            drawerActive: false,
+            drawerPinned: false,
+            sidebarPinned: false
+        }
+
+        // this.transactionsCheckTimeout = null
+    }  
+
+    // clearTimeouts() {
+    //     if(this.transactionsCheckTimeout){
+    //         clearTimeout(this.transactionsCheckTimeout)
+    //         this.transactionsCheckTimeout = null
+    //     }
+    // }
+
+    componentWillUnmount(){
+        // this.clearTimeouts()
     }
 
     componentWillMount(nextProps) {
         this.props.actions.updateNav('side', this.props.match.params.side)
+        // this.checkTransactions()
     }
 
     componentWillUpdate(nextProps) {
@@ -130,7 +148,7 @@ class Dashboard extends React.Component {
         return (
             <Layout theme={theme} >
                 <NavDrawer pinned={true} theme={theme}>
-                    <SideNav side={side} data={this.props.account} />
+                    <SideNav location={this.props.location} side={side} data={this.props.account} />
                 </NavDrawer >
 
                 <Panel theme={theme} >
@@ -148,6 +166,7 @@ class Dashboard extends React.Component {
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
 
                         <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/account'} component={Account} />
+                        <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/transactions'} component={Transactions} />
 
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/:side' component={DashboardStats} />
                         <PrivateRoute auth={this.props.auth} component={() => <h1>404 at {side} side</h1>} />
@@ -172,7 +191,8 @@ function mapStateToProps(state, props) {
         account: account,
         // TODO: temp until we decide how to handle the logged in state
         // TODO: We do not need aut here anymore, the auth is on the root
-        auth: !!account._addr
+        auth: !!account._addr,
+        transactions: persist.web3Transactions
     }
 }
 

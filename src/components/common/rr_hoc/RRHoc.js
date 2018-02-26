@@ -28,6 +28,7 @@ export const withReactRouterLink = Component => {
       const { location } = currProps
       return toLocation === location.pathname
     }
+
     handleClick = event => {
       event.preventDefault();
       const { to, beforeTo } = this.props
@@ -44,16 +45,18 @@ export const withReactRouterLink = Component => {
       const { to } = this.props;
       this.setState({ active: this.isActive(to) })
     }
+
     componentWillReceiveProps(nextProps) {
       const { to } = this.props;
       if (this.state.active !== this.isActive(to, nextProps)) {
         this.setState({ active: this.isActive(to, nextProps) })
       }
     }
-    shouldComponentUpdate(nextProps, nextState) {
-      // const { to } = this.props;
-      return this.state.active !== nextState.active
-    }
+    // TODO: delete active state stuff
+    // shouldComponentUpdate(nextProps, nextState) {
+    //   // const { to } = this.props;
+    //   return this.state.active !== nextState.active
+    // }
     render() {
       const { activeClassName, className, to, beforeTo, ...rest } = this.props;
 

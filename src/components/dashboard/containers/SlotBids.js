@@ -16,12 +16,14 @@ import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
 import { BidsStatusBars, BidsStatusPie, SlotsClicksAndRevenue } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
 import { getSlotBids, getAvailableBids } from 'services/adex-node/actions'
+import { adxToFloatView } from 'services/smart-contracts/utils'
 import { Item } from 'adex-models'
 import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
 import { AcceptBid, GiveupBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
+import classnames from 'classnames'
 
 const { ItemsTypes } = ItemsConstants
-const { BID_STATES, BidStateNames } = ExchangeConstants
+const { BID_STATES, BidStateNames, BidStatesLabels } = ExchangeConstants
 
 // import d3 from 'd3'
 
@@ -49,6 +51,7 @@ export class SlotBids extends Component {
         }
     }
 
+    // TODO: map bid and set amount to number or make something to pars the amount in the items list sort function
     componentWillMount() {
         getSlotBids({
             authSig: this.props.account._authSig,
@@ -133,75 +136,103 @@ export class SlotBids extends Component {
         let t = this.props.t
         return (
             <TableHead>
-                <TableCell> {t('TOTAL_REWARD')} </TableCell>
-                <TableCell> {t('CONVERSION_GOALS')} </TableCell>
-                <TableCell> {t('STATE')} </TableCell>
-                <TableCell> {t('ADVERTISER')} </TableCell>
+                <TableCell> {t('BID_AMOUNT')} </TableCell>
+                <TableCell> {t('BID_TARGET')} / {t('BID_UNIQUE_CLICKS')} </TableCell>
+                <TableCell> {t('BID_STATE')} </TableCell>
+                <TableCell> {t('Advertiser')} </TableCell>
                 <TableCell> {t('AD_UNIT')} </TableCell>
-                <TableCell> {t('TIMEOUT')} </TableCell>
+                <TableCell> {t('TIMEOUT')} / {t('ACCEPTED')} / {t('EXPIRES')}  </TableCell>
                 <TableCell> {t('ACTIONS')} </TableCell>
             </TableHead>
         )
     }
 
+    // TODO: make something common with unit bids 
     renderTableRow(bid, index, { to, selected }) {
         let t = this.props.t
+        const canAccept = bid._state === BID_STATES.DoesNotExist.id
+        const canVerify = BID_STATES.Accepted.id && (bid.clicksCount >= bid._target)
+        const canGiveup = bid._state === BID_STATES.Accepted.id
+        const accepted = (bid._acceptedTime || 0) * 1000
+        const timeout = (bid._timeout || 0) * 1000
+        const bidExpires = accepted ? (accepted + timeout) : null
+
         return (
             <TableRow key={bid._id}>
-                <TableCell> {bid._amount} </TableCell>
-                <TableCell> {bid._target} </TableCell>
-                <TableCell> {bid._state} </TableCell>
-                <TableCell> {bid._advertiser} </TableCell>
+                <TableCell> {adxToFloatView(bid._amount) + ' ADX'} </TableCell>
                 <TableCell>
-                    {/*TODO: link to the meta or popup on click and the get tha meta or accept bid dialog whic will have the adunit meta info*/}
-                    <a target='_blank' href={Item.getIpfsMetaUrl(bid._adUnit)} > {bid._adUnit} </a>
+                    <div>
+                        {bid._target}
+                    </div>
+                    <div>
+                        {bid.clicksCount || '-'}
+                    </div>
                 </TableCell>
-                <TableCell> {moment.duration(bid._timeout, 's').humanize()} </TableCell>
+                <TableCell> {t(BidStatesLabels[bid._state])} </TableCell>
+                <TableCell
+                    className={classnames(theme.compactCol, theme.ellipsis)}
+                >
+                    <a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._advertiser} > {bid._advertiser} </a>
+                </TableCell>
+                <TableCell
+                    className={classnames(theme.compactCol, theme.ellipsis)}
+                >
+                    <a target='_blank' href={Item.getIpfsMetaUrl(bid._adUnit, process.env.IPFS_GATEWAY)} > {bid._adUnit} </a>
+                </TableCell>
                 <TableCell>
-
-                    {(() => {
-                        switch (bid._state) {
-                            case BID_STATES.DoesNotExist.id:
-                                return <AcceptBid
-                                    icon='check'
-                                    adUnitId={bid._adUnitId}
-                                    slotId={this.props.item._id}
-                                    bidId={bid._id}
-                                    placedBid={bid}
-                                    slot={this.props.item}
-                                    acc={this.props.account}
-                                    raised
-                                    primary
-                                    onSave={this.onSave}
-                                />
-                            case BID_STATES.Accepted.id:
-                                // TODO: check for unique clicks first
-                                return <span>
-                                    <VerifyBid
-                                        icon='check_circle'
-                                        itemId={bid._adSlotId}
-                                        bidId={bid._id}
-                                        placedBid={bid}
-                                        acc={this.props.account}
-                                        raised
-                                        primary
-                                        onSave={this.onSave}
-                                    />
-                                    <GiveupBid
-                                        icon='cancel'
-                                        slotId={bid._adSlotId}
-                                        bidId={bid._id}
-                                        placedBid={bid}
-                                        acc={this.props.account}
-                                        raised
-                                        accent
-                                        onSave={this.onSave}
-                                    />
-                                </span>
-                            default:
-                                return null
-                        }
-                    })()}
+                    <div>
+                        {moment.duration(timeout, 'ms').humanize()}
+                    </div>
+                    <div>
+                        {accepted ? moment(accepted).format('MMMM Do, YYYY, HH:mm:ss') : '-'}
+                    </div>
+                    <div>
+                        {bidExpires ? moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss') : '-'}
+                    </div>
+                </TableCell>
+                <TableCell
+                    className={classnames(theme.actionsCol)}
+                >
+                    {canAccept ?
+                        <AcceptBid
+                            icon='check'
+                            adUnitId={bid._adUnitId}
+                            slotId={this.props.item._id}
+                            bidId={bid._id}
+                            placedBid={bid}
+                            slot={this.props.item}
+                            acc={this.props.account}
+                            raised
+                            primary
+                            className={theme.actionBtn}
+                            onSave={this.onSave}
+                        /> : null}
+                    {canVerify ?
+                        <VerifyBid
+                            icon='check_circle'
+                            itemId={bid._adSlotId}
+                            bidId={bid._id}
+                            placedBid={bid}
+                            acc={this.props.account}
+                            raised
+                            primary
+                            className={theme.actionBtn}
+                            onSave={this.onSave}
+                        />
+                        : null}
+                    {canGiveup ?
+                        <GiveupBid
+                            icon='cancel'
+                            slotId={bid._adSlotId}
+                            bidId={bid._id}
+                            placedBid={bid}
+                            acc={this.props.account}
+                            raised
+                            accent
+                            className={theme.actionBtn}
+                            onSave={this.onSave}
+                        />
+                        : null}
                 </TableCell>
             </TableRow >
         )
@@ -222,7 +253,7 @@ export class SlotBids extends Component {
         return (bid._amount || '') +
             (bid._advertiser || '') +
             (bid._timeout || '') +
-            (bid.requiredPoints || '')
+            (bid._target || '')
     }
 
     render() {
@@ -250,6 +281,7 @@ export class SlotBids extends Component {
                     </Tab>
                     <Tab label={t('BIDS_STATISTICS')}>
                         <div>
+                            {t('COMING_SOON')}
                             {/* {this.renderNonOpenedBidsChart(slotBids)} */}
                         </div>
                     </Tab>

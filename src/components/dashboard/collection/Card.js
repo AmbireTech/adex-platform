@@ -41,13 +41,13 @@ class MyCard extends Component {
                     theme={theme}
                 />
                 <CardActions theme={theme}>
-                    <div>
-                        {/* TODO: fix the sync icon */}
-                        {!synced ?
+                    {/* TODO: fix the sync icon */}
+                    <div>                       
+                        {/* {!synced ?
                             <TooltipFontIcon
                                 value='sync_problem'
                                 tooltip={this.props.t('ITEM_NOT_SYNCED')}
-                            /> : null}
+                            /> : null} */}
                         {this.props.actionsRenderer}
                     </div>
                     <TooltipRRButton

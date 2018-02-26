@@ -11,6 +11,7 @@ import { WithdrawEth, WithdrawAdx, Deposit, WithdrawFromExchange } from 'compone
 import { List, ListItem, ListDivider } from 'react-toolbox/lib/list'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import { Button } from 'react-toolbox/lib/button'
+import { adxToFloatView } from 'services/smart-contracts/utils'
 import scActions from 'services/smart-contracts/actions'
 
 const { getAccountStats, getAccountStatsMetaMask } = scActions
@@ -38,13 +39,12 @@ class Account extends React.Component {
         let account = this.props.account
         let stats = { ...account._stats } || {}
         let t = this.props.t
-        // TODO: save precision; now the values are strings so fix that too
-        let addrBalanceAdx = ((stats.balanceAdx || 0) / MULT)
+        let addrBalanceAdx = adxToFloatView(stats.balanceAdx || 0)
         let addrBalanceEth = web3Utils.fromWei(stats.balanceEth || '0', 'ether')
         let exchBal = stats.exchangeBalance || {}
-        let adxOnExchangeTotal = exchBal.total / MULT
-        let adxOnBids = exchBal.onBids / MULT
-        let exchangeAvailable = exchBal.available / MULT
+        // let adxOnExchangeTotal = adxToFloatView(exchBal.total)
+        let adxOnBids = adxToFloatView(exchBal.onBids)
+        let exchangeAvailable = adxToFloatView(exchBal.available)
 
         return (
             <div>
@@ -55,15 +55,13 @@ class Account extends React.Component {
                         caption={account._addr}
                         // TODO: add copy to clipboard btn for the address
                         // rightIcon='content_copy'
-                        // leftIcon='compare_arrows'
                         theme={theme}
                     />
                     <ListDivider />
                     <ListItem
                         ripple={false}
                         legend={t('ACCOUNT_ETH_BALANCE')}
-                        caption={addrBalanceEth}
-                        // leftIcon='euro_symbol'
+                        caption={addrBalanceEth + ' ETH'}
                         theme={theme}
                         rightIcon={<WithdrawEth
                             icon=''
@@ -73,14 +71,14 @@ class Account extends React.Component {
                             availableAmount={addrBalanceEth}
                             tokenName='ETH'
                             accAddr={account._addr}
+                            className={theme.actionBtn}
                         />}
                     />
                     <ListDivider />
                     <ListItem
                         ripple={false}
                         legend={t('ACCOUNT_ADX_BALANCE')}
-                        caption={addrBalanceAdx + ''}
-                        // leftIcon='text_format'
+                        caption={addrBalanceAdx + ' ADX'}
                         theme={theme}
                         rightIcon={<WithdrawAdx
                             icon=''
@@ -90,14 +88,14 @@ class Account extends React.Component {
                             availableAmount={addrBalanceAdx}
                             tokenName='ADX'
                             accAddr={account._addr}
+                            className={theme.actionBtn}
                         />}
                     />
                     <ListDivider />
                     <ListItem
                         ripple={false}
                         legend={t('EXCHANGE_ADX_BALANCE_AVAILABLE')}
-                        caption={exchangeAvailable + ''}
-                        // leftIcon='text_format'
+                        caption={exchangeAvailable + ' ADX'}
                         theme={theme}
                         rightIcon={
                             <span>
@@ -107,6 +105,7 @@ class Account extends React.Component {
                                     accent
                                     onSave={this.onSave}
                                     addrBalanceAdx={addrBalanceAdx}
+                                    className={theme.actionBtn}
                                 />
                                 <WithdrawFromExchange
                                     icon=''
@@ -114,6 +113,7 @@ class Account extends React.Component {
                                     primary
                                     onSave={this.onSave}
                                     exchangeAvailable={exchangeAvailable}
+                                    className={theme.actionBtn}
                                 />
                             </span>}
                     />
@@ -121,14 +121,13 @@ class Account extends React.Component {
                     <ListItem
                         ripple={false}
                         legend={t('EXCHANGE_ADX_BALANCE_ON_BIDS')}
-                        caption={adxOnBids + ''}
-                        // leftIcon='text_format'
+                        caption={adxOnBids + ' ADX'}
                         theme={theme}
-                        rightIcon={<RRButton
-                            to={`/dashboard/${this.props.side}/accepted-bids`}
-                            // TODO: Make this page
-                            label={t('GO_TO_ACCEPTED_BIDS')}
-                        />}
+                        // rightIcon={<RRButton
+                        //     to={`/dashboard/${this.props.side}/accepted-bids`}
+                        //     // TODO: Make this page
+                        //     label={t('GO_TO_ACCEPTED_BIDS')}
+                        // />}
                     />
                     <ListDivider />
                 </List>

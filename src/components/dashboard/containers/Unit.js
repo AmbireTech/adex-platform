@@ -72,7 +72,7 @@ export class Unit extends Component {
                     primary
                     bidId={item._id}
                     // TODO: fix icon v align
-                    icon={<BidIcon />}
+                    icon={<BidIcon style={{ marginTop: 10 }} />}
                     adUnit={item}
                     closeDialog={!!this.state.closeDialog}
                 />
@@ -80,7 +80,7 @@ export class Unit extends Component {
                     item={item}
                     t={t}
                     url={item.adUrl}
-                    rightComponent={<UnitTargets {...this.props} targets={item.meta.targets} t={t} />}
+                    rightComponent={<UnitTargets {...this.props} targets={item.meta.targets} t={t} subHeader={true} />}
                 />
                 <div>
                     <Tabs
