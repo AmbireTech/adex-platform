@@ -17,6 +17,10 @@ const RRListItem = withReactRouterLink(ListItem)
 
 class SideNav extends Component {
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.props.side !== nextProps.side
+      }
+
     render() {
         const side = this.props.side
         if (side !== 'advertiser' && side !== 'publisher') {
@@ -98,7 +102,7 @@ class SideNav extends Component {
                         caption={t('TRANSACTIONS')}
                         theme={theme}
                         activeClassName={theme.active}
-                        leftIcon={<FontIcon value='swap_horiz' style={{color: pendingTrsCount > 0 ? '#FF5722' : ''}}/>}
+                        leftIcon={<FontIcon value='swap_horiz' style={{transactions: 1 > 0 ? '#FF5722' : ''}}/>}
                     />
                 </List>
             </div >
