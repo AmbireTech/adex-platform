@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-// import theme from 'components/dashboard/forms/theme.css'
+import theme from './../theme.css'
 import { Bid } from 'adex-models'
 import Translate from 'components/translate/Translate'
 import NewTransactionHoc from './TransactionHoc'
@@ -49,15 +49,27 @@ class TransactionPreview extends Component {
                         {
                             Object
                                 .keys(transaction)
-                                .filter((key) => !/gas/.test(key))
+                                .filter((key) => !/gas|account/.test(key))
                                 .map(key => {
                                     let keyName = key
                                     let value = transaction[key]
+                                    let isObjValue = (typeof value === 'object')
+                                    if(isObjValue){
+                                        value = JSON.stringify(value, null, 2)
+                                    }
 
                                     return (
                                         <Row key={key}>
-                                            <Col xs={12} lg={4} className={'theme.textRight'}>{this.props.t(keyName, { isProp: true })}:</Col>
-                                            <Col xs={12} lg={8} className={'theme.textLeft'}>{(value || '').toString()}</Col>
+                                            <Col xs={12} lg={4} className={theme.textRight}>{this.props.t(keyName, { isProp: true })}:</Col>
+                                            <Col xs={12} lg={8} className={theme.textLeft}>
+                                                {isObjValue ?
+                                                    <pre>
+                                                        {(value || '').toString()}
+                                                    </pre>
+                                                    :
+                                                    (value || '').toString()
+                                                }                                                
+                                            </Col>
                                         </Row>
                                     )
                                 })

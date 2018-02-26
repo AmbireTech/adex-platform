@@ -13,6 +13,7 @@
     flex: 1 0 0px;
     margin-bottom: 2px;
     background-color: #fff;
+    user-select: none;
 
     & .step {
         position: relative;

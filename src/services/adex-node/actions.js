@@ -346,8 +346,11 @@ export const checkAuth = ({ authSig }) => {
                 return catchErrors(resp)
             })
             .then((resp) => {
+                return resp.json()
+            })
+            .then((resp) => {
                 if (resp && resp.authenticated) {
-                    return resolve(resp.json())
+                    return resolve(true)
                 } else {
                     reject((resp || {}).error || 'Authentication error')
                 }

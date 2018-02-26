@@ -23,8 +23,7 @@ export default function NewTransactionHoc(Decorated) {
             this.props.actions.updateNewTransaction({ trId: this.props.trId, key: name, value: value })
         }
 
-        onSave = () => {
-            // TODO: fix this and make something common to use here and in NewItemsHocStep...
+        onSave = (err, trans) => {
             if (typeof this.props.onSave === 'function') {
                 this.props.onSave()
             }
@@ -36,16 +35,29 @@ export default function NewTransactionHoc(Decorated) {
                     }
                 }
             }
+
+            this.props.actions.resetNewTransaction({trId: this.props.trId})
+
+            if(trans){
+                let trData = {...trans}
+                trData.status = 'TRANSACTION_STATUS_SENT'
+                trData.sendingTime = Date.now()
+                this.props.actions.addWeb3Transaction({trans: trData, addr: this.props.account._addr})
+            }            
         }
 
         save = () => {
+            const t = this.props.t
+
+
             this.props.saveFn({ acc: this.props.account, transaction: this.props.transaction })
                 .then((res) => {
-                    console.log('save res', res)
-                    this.onSave()
+                    this.props.actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTION_SENT_MSG', {args: [res.trHash]}), timeout: 5000 })
+                    this.onSave(null, res)
                 })
                 .catch((err) => {
-                    console.log('save err', err)
+                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', {args: [err]}), timeout: 5000 })
+                    this.onSave(err, null)
                 })
 
         }

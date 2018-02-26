@@ -31,6 +31,27 @@ export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
 
                                 </CardTitle>
                             </Card>
+                            <br />
+                            {item.fallbackAdImg || item.fallbackAdUrl ?
+                                <div>
+                                    <div className={theme.integrationLabel}> {t('FALLBACK_DATA')}</div>
+                                    <Card className={theme.itemDetailCard} raised={false} theme={theme}>
+                                        <CardMedia
+                                            aspectRatio='wide'
+                                            theme={theme}
+                                        >
+                                            <Img src={Item.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY)} alt={item.fallbackAdUrl} />
+                                        </CardMedia>
+                                        <CardTitle theme={theme} >
+                                            <a href={item.fallbackAdUrl} target='_blank'>
+                                                {item.fallbackAdUrl}
+                                            </a>
+
+                                        </CardTitle>
+                                    </Card>
+                                </div>
+                                : null
+                            }
                         </div>
                         <div className={theme.bannerProps}>
                             <div>
@@ -57,6 +78,6 @@ export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
                     </Col>
                 </Row>
             </Grid>
-        </div>
+        </div >
     )
 }

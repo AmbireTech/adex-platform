@@ -121,12 +121,10 @@ export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, gas } = {}) =
                     gasPrice: GAS_PRICE,
                     gas: gas || GAS_LIMIT
                 })
-                .then(function (res) {
-                    console.log('withdrawAdx res', res)
-                    return resolve(res)
+                .on('transactionHash', (hash) => {
+                    resolve({trHash: hash, trMethod: 'TRANS_MTD_ADX_WITHDRAW'})
                 })
-                .catch((err) => {
-                    console.log('withdrawAdx err', err)
+                .on('error', (err) => {
                     reject(err)
                 })
         })

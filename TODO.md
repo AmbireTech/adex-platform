@@ -25,3 +25,4 @@
 - use only item._type in production
 - fix campaigns and channels update (make endpoint to the node node)
 - fix units and slots description update (make endpoint to the node)
+- validate target parse to int

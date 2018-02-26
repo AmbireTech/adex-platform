@@ -1,22 +1,17 @@
 import React from 'react'
-
 import TransactionsSteps from './TransactionsSteps'
 import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
 import ApproveStep from './ApproveStep'
 import WithdrawStep from './WithdrawStep'
 import DepositToExchange from './DepositToExchange'
 import WithdrawFromExchangePage from './WithdrawFromExchange'
-import AuthenticateStepGetToken from './AuthenticateStepGetToken'
 import AcceptBidStep from './AcceptBid'
 import CancelBidStep from './CancelBid'
 import VerifyBidStep from './VerifyBid'
-import GiveupBidStep from './GiveupBid'
-import RefundBidStep from './RefundBid'
 import scActions from 'services/smart-contracts/actions'
-import { signToken, sendBidState } from 'services/adex-node/actions'
+import { sendBidState } from 'services/adex-node/actions'
 
 const {
-    getAccountStats,
     approveTokens,
     withdrawEth,
     withdrawAdx,
@@ -27,7 +22,6 @@ const {
     verifyBid,
     giveupBid,
     refundBid,
-    signAuthToken,
     depositToExchange,
     withdrawFromExchange
 } = scActions
@@ -108,11 +102,11 @@ export const AcceptBid = (props) =>
                         gasPrice: transaction._gasPrice
                     })
                     .then((res) => {
+                        resolve(res)
                         return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
                     })
                     .catch((err) => {
-                        console.log('AcceptBid err', err)
-                        //TODO: handle errors
+                        return reject(err)
                     })
             })
         }}
@@ -138,11 +132,11 @@ export const CancelBid = (props) =>
                         gasPrice: transaction._gasPrice
                     })
                     .then((res) => {
+                        resolve(res)
                         return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
                     })
                     .catch((err) => {
-                        console.log('CancelBid err', err)
-                        //TODO: handle errors
+                        return reject(err)
                     })
             })
         }}
@@ -162,7 +156,7 @@ export const VerifyBid = (props) =>
                 verifyBid(
                     {
                         placedBid: transaction.placedBid,
-                        _report: transaction.report,
+                        _report: transaction.report.ipfs,
                         _addr: acc._addr,
                         gas: transaction.gas,
                         gasPrice: transaction._gasPrice
@@ -172,8 +166,7 @@ export const VerifyBid = (props) =>
                         // return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
                     })
                     .catch((err) => {
-                        console.log('VerifyBid err', err)
-                        //TODO: handle errors
+                        return reject(err)
                     })
             })
         }}
@@ -187,7 +180,7 @@ export const GiveupBid = (props) =>
         saveBtnLabel='GIVEUP_BID_SAVE_BTN'
         title="GIVEUP_BID_TITLE"
         trId={'giveup_bid_slot_' + props.slotId + '_bid_' + props.bidId}
-        trPages={[{ title: 'GIVEUP_BID_STEP', page: GiveupBidStep }]}
+        trPages={[{ title: 'GIVEUP_BID_STEP', page: VerifyBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return new Promise((resolve, reject) => {
                 giveupBid(
@@ -198,11 +191,11 @@ export const GiveupBid = (props) =>
                         gasPrice: transaction._gasPrice
                     })
                     .then((res) => {
+                        resolve(res)
                         return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
                     })
                     .catch((err) => {
-                        console.log('GiveupBid err', err)
-                        //TODO: handle errors
+                        return reject(err)
                     })
             })
         }}
@@ -217,7 +210,7 @@ export const RefundBid = (props) =>
         saveBtnLabel='REFUND_BID_SAVE_BTN'
         title="REFUND_BID_TITLE"
         trId={'refund_bid_unit_' + props.unitId + '_bid_' + props.bidId}
-        trPages={[{ title: 'VERIFY_BID_STEP', page: RefundBidStep }]}
+        trPages={[{ title: 'REFUND_BID_STEP', page: VerifyBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return new Promise((resolve, reject) => {
                 refundBid(
@@ -228,45 +221,15 @@ export const RefundBid = (props) =>
                         gasPrice: transaction._gasPrice
                     })
                     .then((res) => {
+                        resolve(res)
                         return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
                     })
                     .catch((err) => {
-                        console.log('RefundBid err', err)
-                        //TODO: handle errors
+                        return reject(err)
                     })
             })
         }}
         estimateGasFn={() => 300000}
-    />
-
-export const Authenticate = (props) =>
-    <TransactionsStepsWithDialog
-        {...props}
-        btnLabel="ACCOUNT_AUTHENTICATE"
-        saveBtnLabel='ACCOUNT_AUTHENTICATE'
-        title="ACCOUNT_AUTHENTICATE_TITLE"
-        trId='authenticateAcc'
-        trPages={[{ title: 'ACCOUNT_AUTHENTICATE_STEP', page: AuthenticateStepGetToken }]}
-        saveFn={({ acc, transaction } = {}) => {
-            return new Promise((resolve, reject) => {
-                let signature = null
-                signAuthToken({ userAddr: acc._addr, authToken: transaction.authToken })
-                    .then((sig) => {
-                        signature = sig
-                        return signToken({ userid: acc._addr, signature: signature, authToken: transaction.authToken })
-                    })
-                    .then((res) => {
-                        // TEMP
-                        // TODO: keep it here or make it on login?
-                        // TODO: catch
-                        if (res === 'OK') {
-                            localStorage.setItem('addr-sig-' + acc._addr, signature)
-                        }
-
-                        return resolve('OK')
-                    })
-            })
-        }}
     />
 
 export const Deposit = (props) =>

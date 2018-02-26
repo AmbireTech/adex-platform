@@ -37,7 +37,7 @@ class SideSelect extends Component {
         <RRSideBox
           title={t('ADVERTISER')}
           icon={<AdvertiserLogo />}
-          // salePoints={[t('SALE_POINT_ADV_1'), t('SALE_POINT_ADV_2'), t('SALE_POINT_ADV_3')]}
+          salePoints={[t('SALE_POINT_ADV_1'), t('SALE_POINT_ADV_2'), t('SALE_POINT_ADV_3')]}
           to='/dashboard/advertiser'
           linkTitle={t('GO_ADVERTISER')}
         // disabled
@@ -46,7 +46,7 @@ class SideSelect extends Component {
         <RRSideBox
           title={t('PUBLISHER')}
           icon={<PublisherLogo />}
-          // salePoints={[t('SALE_POINT_PUB_1'), t('SALE_POINT_PUB_2'), t('SALE_POINT_PUB_3')]}
+          salePoints={[t('SALE_POINT_PUB_1'), t('SALE_POINT_PUB_2'), t('SALE_POINT_PUB_3')]}
           to='/dashboard/publisher'
           linkTitle={t('GO_PUBLISHER')}
         // disabled

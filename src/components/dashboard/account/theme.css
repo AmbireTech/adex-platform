@@ -9,3 +9,7 @@
 .values {
     color: #000 !important;
 }
+
+.actionBtn {
+    margin-left: 5px;
+}

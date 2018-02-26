@@ -1,7 +1,7 @@
 import { UPDATE_NEW_TRANSACTION, RESET_NEW_TRANSACTION } from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
-export default function newBidsReducer(state = initialState.newTransactions, action) {
+export default function newTransactionsReducer(state = initialState.newTransactions, action) {
     let newState
     let newTr
 
@@ -24,7 +24,7 @@ export default function newBidsReducer(state = initialState.newTransactions, act
             newState[action.trId] = newTr
             return newState
         case RESET_NEW_TRANSACTION:
-            newTr = { ...initialState.newBid.empty }
+            newTr = { ...initialState.newTransactions.default }
             newState[action.trId] = newTr
             return newState
         default:

@@ -78,8 +78,10 @@ function getClientEnvironment(publicUrl) {
         WEB3_NODE: process.env.WEB3_NODE || 'https://parity.wings.ai',
         ADX_TOKEN_ADDR: process.env.ADX_TOKEN_ADDR || '0x4470BB87d77b963A013DB939BE332f927f2b992e',
         ADX_EXCHANGE_ADDR: process.env.ADX_EXCHANGE_ADDR || '0x912b8f85E28B9ec196b48228159E2f13546836e6',
-        ADVIEW_HOST: process.env.ADVIEW_HOST || 'https://view.adex.network',
-        ADEX_NODE_HOST: process.env.ADEX_NODE_HOST || 'https://node.adex.network'
+        ADVIEW_HOST: process.env.ADVIEW_HOST || 'https://view.adex.network', // 'http://localhost:15900' ||
+        ADEX_NODE_HOST: process.env.ADEX_NODE_HOST || 'https://node.adex.network', // 'http://localhost:9710' ||
+        ETH_SCAN_ADDR_HOST: process.env.ETH_SCAN_ADDR_HOST || 'https://etherscan.io/address/',
+        ETH_SCAN_TX_HOST: process.env.ETH_SCAN_ADDR_HOST || 'https://etherscan.io/tx/',
       }
     );
   // Stringify all values so we can feed into Webpack DefinePlugin

@@ -54,7 +54,7 @@ export default function ItemHoc(Decorated) {
 
             // console.log('theme', this.props.theme)
             return (
-                <div>
+                <span>
                     <Button
                         disabled={this.props.disabled}
                         floating={this.props.floating}
@@ -66,7 +66,9 @@ export default function ItemHoc(Decorated) {
                         accent={this.props.accent}
                         flat={this.props.flat}
                         theme={this.props.theme}
+                        style={this.props.style}
                         className={classnames(
+                            this.props.className,
                             { [theme.floating]: this.props.floating },
                             { [RTButtonTheme[this.props.color]]: !!this.props.color }
                         )}
@@ -87,7 +89,7 @@ export default function ItemHoc(Decorated) {
                         <Decorated {...this.props} onSave={this.onSave()} />
                     </Dialog>
 
-                </div>
+                </span>
             )
         }
     }

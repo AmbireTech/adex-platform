@@ -54,15 +54,16 @@ export class UnitTargets extends Component {
                     rightIcon={<FontIcon value={icon.icon} style={{ color: icon.color }} />}
                     leftIcon='child_care'
                     theme={theme}
+                    className={theme.targetsListItem}
                 />
                 <ListDivider />
             </span>
         )
     }
 
-    TargetsList = ({ targets, t }) => (
+    TargetsList = ({ targets, subHeader, t, ...rest }) => (
         <List selectable={false} ripple={false}>
-            <ListSubHeader caption='Targets' />
+            {subHeader ? <ListSubHeader caption={t('TARGETS')} /> : null}
             {
                 (targets || []).map((target) => {
 
@@ -82,7 +83,7 @@ export class UnitTargets extends Component {
 
     render() {
         return (
-            <this.TargetsList targets={this.props.targets} t={this.props.t} />
+            <this.TargetsList {...this.props} />
         )
     }
 }
