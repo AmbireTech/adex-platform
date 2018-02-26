@@ -5,12 +5,16 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import ItemsList from './ItemsList'
 import theme from './theme.css'
+import RTButtonTheme from 'styles/RTButton.css'
 import classnames from 'classnames'
 import { items as ItemsConstants } from 'adex-constants'
 import Rows from 'components/dashboard/collection/Rows'
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import Translate from 'components/translate/Translate'
 import moment from 'moment'
+import { Button, IconButton } from 'react-toolbox/lib/button'
+import scActions from 'services/smart-contracts/actions'
+const { getTransactionsReceipts } = scActions
 
 const { ItemTypesNames } = ItemsConstants
 
@@ -23,6 +27,30 @@ const SORT_PROPERTIES = [
 
 
 class Transactions extends Component {
+
+    componentWillMount(nextProps) {
+        this.checkTransactions()
+    }
+
+    checkTransactions = () => {
+        let transactions = this.props.transactions
+        let hashes = Object.keys(transactions).reduce((memo, key) => {
+            if(key && ((key.toString()).length === 66)){
+                memo.push(key)
+            }
+            return memo
+        }, [])
+
+        getTransactionsReceipts(hashes)
+        .then((receipts)=>{
+            receipts.forEach((rec) =>{
+                if(rec && rec.transactionHash && rec.status){
+                    let status = rec.status === '0x1' ? 'TRANSACTION_STATUS_SUCCESS' : 'TRANSACTION_STATUS_ERROR'
+                    this.props.actions.updateWeb3Transaction({ trId: rec.transactionHash, key: 'status', value: status })
+                }
+            })
+        })
+    }
 
     renderTableHead() {
         let t = this.props.t
@@ -97,6 +125,15 @@ class Transactions extends Component {
                 <div className={classnames(theme.heading, theme.Transactions, theme.items)}>
                     <h2 > {t('TRANSACTIONS')} {'(' + itemsCount + ')'} </h2>
                 </div>
+
+                <Button
+                        floating
+                        icon='refresh'
+                        primary
+                        flat
+                        className={classnames(theme.floating)}
+                        onClick={this.checkTransactions}
+                    />
 
                 <ItemsList items={reduced} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
             </div>

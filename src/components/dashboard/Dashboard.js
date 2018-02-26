@@ -24,12 +24,12 @@ import {
 import Account from './account/Account'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
-// import scActions from 'services/smart-contracts/actions'
 import { items as ItemsConstants } from 'adex-constants'
+// import scActions from 'services/smart-contracts/actions'
 
 const { ItemsTypes } = ItemsConstants
 
-// const { getAccount, getAccountStats, getAccountStatsMetaMask } = scActions
+// const { getAccount, getAccountStats, getAccountStatsMetaMask,getTransactionsReceipts } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
     return (
@@ -43,14 +43,31 @@ function PrivateRoute({ component: Component, auth, ...other }) {
 }
 
 class Dashboard extends React.Component {
-    state = {
-        drawerActive: false,
-        drawerPinned: false,
-        sidebarPinned: false
+    constructor(props) {
+        super(props)
+        this.state = {
+            drawerActive: false,
+            drawerPinned: false,
+            sidebarPinned: false
+        }
+
+        // this.transactionsCheckTimeout = null
+    }  
+
+    // clearTimeouts() {
+    //     if(this.transactionsCheckTimeout){
+    //         clearTimeout(this.transactionsCheckTimeout)
+    //         this.transactionsCheckTimeout = null
+    //     }
+    // }
+
+    componentWillUnmount(){
+        // this.clearTimeouts()
     }
 
     componentWillMount(nextProps) {
         this.props.actions.updateNav('side', this.props.match.params.side)
+        // this.checkTransactions()
     }
 
     componentWillUpdate(nextProps) {
@@ -174,7 +191,8 @@ function mapStateToProps(state, props) {
         account: account,
         // TODO: temp until we decide how to handle the logged in state
         // TODO: We do not need aut here anymore, the auth is on the root
-        auth: !!account._addr
+        auth: !!account._addr,
+        transactions: persist.web3Transactions
     }
 }
 

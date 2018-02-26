@@ -154,6 +154,13 @@ export class UnitBids extends Component {
             tableHeadRenderer={this.renderTableHead.bind(this)}
         />
 
+    searchMatch = (bid) => {
+        return (bid._amount || '') +
+            (bid._advertiser || '') +
+            (bid._timeout || '') +
+            (bid._target || '')
+        }
+
     render() {
         let item = this.props.item
         let t = this.props.t
@@ -161,7 +168,7 @@ export class UnitBids extends Component {
 
         return (
             <div>
-                <ItemsList items={bids} listMode='rows' delete renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} />
+                <ItemsList items={bids} listMode='rows' delete renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch}/>
             </div>
         )
     }

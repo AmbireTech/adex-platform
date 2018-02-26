@@ -24,7 +24,7 @@ export function resetNewTransaction({ trId }) {
 // PERSIST STORAGE
 export function addWeb3Transaction({ trans }) {
     if(!trans || !trans.trHash) return
-    
+
     return function (dispatch) {
         return dispatch({
             type: types.ADD_WEB3_TRANSACTION,
@@ -34,6 +34,7 @@ export function addWeb3Transaction({ trans }) {
     }
 }
 
+// TODO: make update multiple
 export function updateWeb3Transaction({ trId, key, value }) {
     return function (dispatch) {
         return dispatch({

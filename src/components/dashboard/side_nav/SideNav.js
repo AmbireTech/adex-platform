@@ -10,11 +10,14 @@ import CampaignIcon from 'components/common/icons/CampaignIcon'
 import ChannelIcon from 'components/common/icons/ChannelIcon'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from 'components/dashboard/forms/NewItems'
+import FontIcon from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 
 const RRListItem = withReactRouterLink(ListItem)
 
 class SideNav extends Component {
+
+    
 
     render() {
         const side = this.props.side
@@ -31,6 +34,16 @@ class SideNav extends Component {
         const CollectionIcon = (isAdvertiser ? CampaignIcon : ChannelIcon)
         const itemsIcon = (isAdvertiser ? 'format_list_bulleted' : 'format_list_bulleted')
         const t = this.props.t
+        let transactions = this.props.transactions
+        const pendingTrsCount = Object.keys(transactions).reduce((memo, key) => {
+
+                let itm = {...transactions[key]}
+                if(itm && itm.status === 'TRANSACTION_STATUS_SENT') {
+                    memo += 1
+                }
+
+            return memo
+        }, 0)
 
         return (
             <div className="Navigation">
@@ -87,7 +100,7 @@ class SideNav extends Component {
                         caption={t('TRANSACTIONS')}
                         theme={theme}
                         className={classnames({ [theme.active]: location === 'transactions' })}
-                        leftIcon={'swap_horiz'}
+                        leftIcon={<FontIcon value='swap_horiz' style={{color: pendingTrsCount > 0 ? '#FF5722' : ''}}/>}
                     />
                 </List>
             </div >
@@ -103,7 +116,8 @@ function mapStateToProps(state) {
     let persist = state.persist
     // let memory = state.memory
     return {
-        account: persist.account
+        account: persist.account,
+        transactions: persist.web3Transactions
     }
 }
 

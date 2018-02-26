@@ -141,3 +141,22 @@ export const getAccountStatsMetaMask = () => {
         })
     })
 }
+
+export const getTransactionsReceipts = (trHashes = []) => {
+    return new Promise((resolve, reject) => {
+        getWeb3.then(({ cfg, exchange, token, web3 }) => {
+                let all = trHashes.map((trH) => web3.eth.getTransactionReceipt(trH))
+
+                Promise.all(all)
+                    .then(receipts => {
+                        // console.log('receipts', receipts)
+                        return resolve(receipts)
+                    })
+                    .catch((err) => {
+                        console.log('getTransactionsReceipts err', err)
+                        reject(err)
+                    })
+            })
+        })
+}
+

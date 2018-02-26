@@ -253,7 +253,7 @@ export class SlotBids extends Component {
         return (bid._amount || '') +
             (bid._advertiser || '') +
             (bid._timeout || '') +
-            (bid.requiredPoints || '')
+            (bid._target || '')
     }
 
     render() {
