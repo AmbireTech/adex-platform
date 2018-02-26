@@ -5,78 +5,36 @@ import { withRouter } from 'react-router-dom'
 export const withReactRouterLink = Component => {
 
   class Decorated extends React.Component {
-    constructor(props, context) {
-      super(props, context)
-      this.state = { active: false }
-    }
-    static propTypes = {
-      activeClassName: PropTypes.string,
-      className: PropTypes.string,
-      target: PropTypes.string,
-      to: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.object,
-      ]).isRequired,
-    };
 
     resolveToLocation = to => {
       return typeof to === 'object' ? to['pathname'] : to
     }
 
-    isActive = (toLocation, nextProps) => {
-      const currProps = nextProps || this.props
-      const { location } = currProps
-      return this.resolveToLocation(toLocation) === location.pathname
-    }
-
     handleClick = event => {
-      event.preventDefault();
-      const { to, beforeTo } = this.props
-
-      if (typeof beforeTo === 'function') {
-        beforeTo()
-      }
+      event.preventDefault()
+      const { to } = this.props
 
       this.props.history.push(to)
-      this.setState({ active: this.isActive(to) })
-    }
-
-    componentWillMount() {
-      const { to } = this.props;
-      this.setState({ active: this.isActive(to) })
-    }
-
-    componentWillReceiveProps(nextProps) {
-      const { to } = this.props;
-      if (this.state.active !== this.isActive(to, nextProps)) {
-        this.setState({ active: this.isActive(to, nextProps) })
-      }
     }
 
     shouldComponentUpdate(nextProps, nextState) {
       // const { to } = this.props;
-      return this.state.active !== nextState.active
+      return this.resolveToLocation(this.props.to) !== this.resolveToLocation(nextProps.to)
     }
+
     render() {
-      const { activeClassName, className, to, beforeTo, ...rest } = this.props;
-
-      // TODO: do we need these props here
-      delete rest.history
-      delete rest.location
-      delete rest.match
-      delete rest.staticContext
-
-      const toLocation = this.resolveToLocation(to);
-      const _className = this.state.active ? `${className} ${activeClassName}` : className;
+      const { to, match, location, history,  ...rest } = this.props
+      const toLocation = this.resolveToLocation(to)
       return (
-        <Component
+        <Component          
           {...rest}
-          className={_className}
+
           href={toLocation}
           onClick={this.handleClick}
         />
-      );
+      )
     }
-  };
+  }
+
   return withRouter(Decorated)
 }

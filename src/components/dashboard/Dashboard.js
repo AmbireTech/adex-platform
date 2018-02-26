@@ -73,7 +73,7 @@ class Dashboard extends React.Component {
         return getTransactionsReceipts(hashes)
             .then((receipts)=>{
                 receipts.forEach((rec) => {
-                    console.log('rec', rec)
+                    // console.log('rec', rec)
                     if(rec && rec.transactionHash && rec.status){
                         let status = rec.status === '0x1' ? 'TRANSACTION_STATUS_SUCCESS' : 'TRANSACTION_STATUS_ERROR'
                         this.props.actions.updateWeb3Transaction({ trId: rec.transactionHash, key: 'status', value: status, addr: this.props.account._addr })
@@ -108,7 +108,9 @@ class Dashboard extends React.Component {
     }
 
     componentWillUpdate(nextProps) {
-        this.props.actions.updateNav('side', nextProps.match.params.side)
+        if(nextProps.match.params.side !== this.props.match.params.side){
+            this.props.actions.updateNav('side', nextProps.match.params.side)
+        }
     }
 
     toggleDrawerActive = () => {

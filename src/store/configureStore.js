@@ -48,7 +48,8 @@ function configureStoreProd(initialState) {
     // thunk middleware can also accept an extra argument to be passed to each thunk action
     // https://github.com/gaearon/redux-thunk#injecting-a-custom-argument
     thunk,
-    reduxRouterMiddleware
+    reduxRouterMiddleware,
+    // logger
   ]
 
   let store = createStore(rootReducer, initialState, compose(
