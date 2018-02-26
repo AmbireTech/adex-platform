@@ -17,7 +17,9 @@ const RRListItem = withReactRouterLink(ListItem)
 
 class SideNav extends Component {
 
-    
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.props.side !== nextProps.side
+      }
 
     render() {
         const side = this.props.side
@@ -38,7 +40,7 @@ class SideNav extends Component {
         const pendingTrsCount = Object.keys(transactions).reduce((memo, key) => {
 
                 let itm = {...transactions[key]}
-                if(itm && itm.status === 'TRANSACTION_STATUS_SENT') {
+                if(itm && itm.status === 'TRANSACTION_STATUS_PENDING') {
                     memo += 1
                 }
 
@@ -53,16 +55,16 @@ class SideNav extends Component {
                         selectable={true}
                         caption={t('DASHBOARD')}
                         theme={theme}
-                        className={classnames({ [theme.active]: location === '' })}
                         leftIcon='dashboard'
+                        activeClassName={theme.active}
                     />
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side + '/' + collection }}
                         selectable={true}
                         caption={t(collection.toUpperCase())}
                         theme={theme}
-                        className={classnames({ [theme.active]: location === collection })}
                         leftIcon={<CollectionIcon color='rgb(117, 117, 117)' />}
+                        activeClassName={theme.active}
                     />
                     <ListItem
                         selectable={false}
@@ -80,7 +82,7 @@ class SideNav extends Component {
                         selectable={true}
                         caption={t(items.toUpperCase())}
                         theme={theme}
-                        className={classnames({ [theme.active]: location === items })}
+                        activeClassName={theme.active}
                         leftIcon={itemsIcon}
                     />
                     <ListItem
@@ -99,8 +101,8 @@ class SideNav extends Component {
                         selectable={true}
                         caption={t('TRANSACTIONS')}
                         theme={theme}
-                        className={classnames({ [theme.active]: location === 'transactions' })}
-                        leftIcon={<FontIcon value='swap_horiz' style={{color: pendingTrsCount > 0 ? '#FF5722' : ''}}/>}
+                        activeClassName={theme.active}
+                        leftIcon={<FontIcon value='swap_horiz' style={{transactions: 1 > 0 ? '#FF5722' : ''}}/>}
                     />
                 </List>
             </div >

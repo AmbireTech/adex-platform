@@ -60,11 +60,11 @@ export class UnitBids extends Component {
     renderTableRow(bid, index, { to, selected }) {
         const t = this.props.t
         const canCancel = bid._state === BID_STATES.DoesNotExist.id
-        const canVerify = BID_STATES.Accepted.id && (bid.clicksCount >= bid._target)
+        const canVerify = (bid._state === BID_STATES.Accepted.id) && (bid.clicksCount >= bid._target)
         const accepted = (bid._acceptedTime || 0) * 1000
         const timeout = (bid._timeout || 0) * 1000
         const bidExpires = accepted ? (accepted + timeout) : null
-        const canRefund = bid._state === BID_STATES.Accepted.id && (bidExpires < Date.now())
+        const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidExpires < Date.now())
 
         return (
             <TableRow key={bid._id}>
@@ -81,12 +81,12 @@ export class UnitBids extends Component {
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    <a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._publisher} > {bid._publisher} </a>
+                    <a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._publisher} > {bid._publisher || '-'} </a>
                 </TableCell>
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    <a target='_blank' href={Item.getIpfsMetaUrl(bid._adSlot, process.env.IPFS_GATEWAY)} > {bid._adSlot} </a>
+                    <a target='_blank' href={Item.getIpfsMetaUrl(bid._adSlot, process.env.IPFS_GATEWAY)} > {bid._adSlot || '-'} </a>
                 </TableCell>
                 <TableCell>
                     <div>

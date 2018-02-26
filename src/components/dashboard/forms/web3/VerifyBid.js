@@ -13,9 +13,9 @@ import { getBidVerificationReport } from 'services/adex-node/actions'
 class VerifyBid extends Component {
     componentWillMount() {
         if (!this.props.transaction.report) {
-
-            this.props.validate('report', { isValid: false,  err: { msg: 'ERR_UNIT_INFO_NOT_READY' },  dirty: false })
+           
             this.props.actions.updateSpinner(this.props.trId, true)
+            this.props.validate('report', { isValid: false,  err: { msg: 'ERR_UNIT_INFO_NOT_READY' },  dirty: false })
 
             getBidVerificationReport({ bidId: this.props.placedBid._id, authSig: this.props.account._authSig })
                 .then((report) => {

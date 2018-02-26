@@ -71,10 +71,10 @@ export const signAuthToken = ({ authToken, userAddr }) => {
     return new Promise((resolve, reject) => {
         getWeb3.then(({ web3, exchange, token, mode }) => {
             //TEMP: until metamask way recovery on the node
-            console.log('sig authToken', authToken)
+            // console.log('sig authToken', authToken)
             let sig = web3.eth.accounts.sign(authToken, '0xa9212d1d1fd949a813119361f3e9bb2cf1bda7dbedbde4a75f4ed3bd93642096').signature
 
-            console.log('sig', sig)
+            // console.log('sig', sig)
 
             return resolve(sig)
         })

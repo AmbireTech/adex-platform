@@ -32,7 +32,7 @@ class App extends Component {
             <ConnectedRouter history={history} >
               <div className="adex-dapp">
                 <Switch >
-                  <Root location2={location} />
+                  <Root />
                 </Switch>
                 <Toast />
                 <Confirm />

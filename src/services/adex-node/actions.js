@@ -2,7 +2,7 @@ import requester from './requester'
 
 const catchErrors = (res) => {
     return new Promise((resolve, reject) => {
-        console.log('res', res)
+        // console.log('res', res)
         if (res.status >= 200 && res.status < 400) {
             return resolve(res)
         } else {
