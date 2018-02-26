@@ -42,7 +42,7 @@ export function placeBid({ bid, slot, unit, userAddr, authSig }) {
                 return plsBid({ bid: bidInst.plainObj(), userAddr: userAddr, authSig: authSig })
             })
             .then((bid) => {
-                console.log(bid)
+               // console.log(bid)
                 return dispatch({
                     type: types.UNIT_PLACE_BID,
                     bid: bid,

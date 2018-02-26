@@ -20,7 +20,7 @@ export default function newTransactionsReducer(state = initialState.newTransacti
             newTr = { ...(newState[action.trId] || initialState.newTransactions.default) }
             newTr = updateTr({ tr: newTr, key: action.key, val: action.value })
 
-            console.log('newTr', newTr)
+            // console.log('newTr', newTr)
             newState[action.trId] = newTr
             return newState
         case RESET_NEW_TRANSACTION:
