@@ -10,14 +10,18 @@ import { IconButton, Button } from 'react-toolbox/lib/button'
 import ItemsList from './ItemsList'
 import Rows from 'components/dashboard/collection/Rows'
 import Translate from 'components/translate/Translate'
+import Tooltip from 'react-toolbox/lib/tooltip'
+import RTButtonTheme from 'styles/RTButton.css'
 // import { getUnitBids } from 'services/adex-node/actions'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import { Item } from 'adex-models'
 import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
 import { CancelBid, VerifyBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
+import FontIcon from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 import moment from 'moment'
 
+const TooltipIconButton = Tooltip(IconButton)
 const { ItemsTypes } = ItemsConstants
 const { BID_STATES, BidStatesLabels, TxStatusLabels } = ExchangeConstants
 
@@ -77,6 +81,7 @@ export class UnitBids extends Component {
         const pendingCancel = pendingState === BID_STATES.Canceled.id
         const pendingRefund = pendingState === BID_STATES.Expired.id
         const pendingVerify = (pendingState === BID_STATES.ConfirmedAdv.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
+        const pendingAcceptByPub = bid.unconfirmedStateId === BID_STATES.Accepted.id
 
         return (
             <TableRow key={bid._id}>
@@ -126,9 +131,16 @@ export class UnitBids extends Component {
                             onSave={this.onSave}
                             disabled={pendingCancel}
                         /> : null}
-                    {pendingVerify ?
+                    {canCancel && pendingAcceptByPub ? 
+                        <TooltipIconButton
+                            icon='warning'   
+                            tooltip={t('WARNING_PENDING_ACCEPT_BY_PUB')}
+                            className={RTButtonTheme.warning}
+                        /> : null
+                    }
+                    {canVerify ?
                         <VerifyBid
-                            icon={pending ? 'hourglass_empty' : 'check_circle'}
+                            icon={pendingVerify ? 'hourglass_empty' : 'check_circle'}
                             itemId={bid._adUnitId}
                             bidId={bid._id}
                             placedBid={bid}
