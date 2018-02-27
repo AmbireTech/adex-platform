@@ -1,6 +1,20 @@
 .listItem, .item, .itemText {
   color: #fff !important;
   user-select: none;
+
+  
+}
+
+.item {
+  &.selectable:not(.disabled):hover {
+       color: #000  !important;
+       span {
+         color: #000  !important;
+       }
+      .itemText {
+        color: #000  !important;
+      }
+    }
 }
 
 .active {
@@ -10,3 +24,5 @@
 .button {
   width: 220px;
 }
+
+ 

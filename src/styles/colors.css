@@ -27,7 +27,11 @@
 
     /*AdEx danger*/
     --color-adex-danger-primary: #FF5722; /* Deep Orange 500 */
-    --color-adex-danger-contrast: #FFFFFF;        
+    --color-adex-danger-contrast: #FFFFFF;   
+
+    /*AdEx warning*/
+    --color-adex-warning-primary: #ffae00;
+    --color-adex-warning-contrast: #FFFFFF;   
 
     /*AdEx neutral*/
     --color-adex-neutral-primary: #FFFFFF;  /* Deep Orange 500 */

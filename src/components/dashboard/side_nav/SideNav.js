@@ -12,6 +12,8 @@ import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from 'components/dashboard/forms/NewItems'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
+import { exchange as ExchangeConstants } from 'adex-constants'
+const { TX_STATUS } = ExchangeConstants
 
 const RRListItem = withReactRouterLink(ListItem)
 
@@ -40,7 +42,7 @@ class SideNav extends Component {
         const pendingTrsCount = Object.keys(transactions).reduce((memo, key) => {
 
                 let itm = {...transactions[key]}
-                if(itm && itm.status === 'TRANSACTION_STATUS_PENDING') {
+                if(itm && itm.status === TX_STATUS.Pending.id) {
                     memo += 1
                 }
 
