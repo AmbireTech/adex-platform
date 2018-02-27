@@ -21,8 +21,8 @@ class MyCard extends Component {
 
     render() {
         let item = this.props.item
-        let meta = item._meta
-        let name = item._name
+        let meta = item._meta || {}
+        let name = meta.fullName
         let id = item._id
         let itemTypeName = ItemTypesNames[item._type]
         let to = '/dashboard/' + this.props.side + '/' + itemTypeName + '/' + id
