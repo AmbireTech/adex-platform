@@ -21,7 +21,7 @@ export default function web3TransactionsReducer(state = initialState.web3Transac
     }
 
     // NOTE: keep transaction by address in order to keep them in the persist storage when the user is switch
-    // If fe keep the transactions on the node we can clean them from local storage on address change
+    // If we keep the transactions on the node we can clean them from local storage on address change
     switch (action.type) {
         case ADD_WEB3_TRANSACTION:
             newAddrTrs = {...newState[action.addr] || {}}
