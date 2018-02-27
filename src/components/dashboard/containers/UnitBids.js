@@ -10,7 +10,7 @@ import { IconButton, Button } from 'react-toolbox/lib/button'
 import ItemsList from './ItemsList'
 import Rows from 'components/dashboard/collection/Rows'
 import Translate from 'components/translate/Translate'
-import { getUnitBids } from 'services/adex-node/actions'
+// import { getUnitBids } from 'services/adex-node/actions'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import { Item } from 'adex-models'
 import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
@@ -42,6 +42,10 @@ export class UnitBids extends Component {
         }
     }
 
+    onSave = () => {
+        this.props.getUnitBids()
+    }
+
     renderTableHead() {
         let t = this.props.t
         return (
@@ -60,14 +64,14 @@ export class UnitBids extends Component {
     renderTableRow(bid, index, { to, selected }) {
         const t = this.props.t
         const transactions = this.props.transactions
-        const canCancel = bid._state === BID_STATES.DoesNotExist.id
+        const pendingTransaction = transactions[bid.unconfirmedStateTrHash] 
+        const pendingState = (!!pendingTransaction && (pendingTransaction.status === 'TRANSACTION_STATUS_PENDING')) ? bid.unconfirmedStateId : null
+        const canCancel = (bid._state === BID_STATES.DoesNotExist.id)
         const canVerify = (bid._state === BID_STATES.Accepted.id) && (bid.clicksCount >= bid._target)
         const accepted = (bid._acceptedTime || 0) * 1000
         const timeout = (bid._timeout || 0) * 1000
         const bidExpires = accepted ? (accepted + timeout) : null
-        const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidExpires < Date.now())
-        const pendingTransaction = transactions[bid.unconfirmedStateTrHash] 
-        const pendingState = (!!pendingTransaction && (pendingTransaction.status === 'TRANSACTION_STATUS_PENDING')) ? bid.unconfirmedStateId : null
+        const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidExpires < Date.now()) 
         const pendingCancel = pendingState === BID_STATES.Canceled.id
         const pendingRefund = pendingState === BID_STATES.Expired.id
         const pendingVerify = canVerify && bid._publisherConfirmation

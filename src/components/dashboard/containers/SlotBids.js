@@ -52,7 +52,7 @@ export class SlotBids extends Component {
     }
 
     // TODO: map bid and set amount to number or make something to pars the amount in the items list sort function
-    componentWillMount() {
+    getBids = () => {
         getSlotBids({
             authSig: this.props.account._authSig,
             adSlot: this.props.item._ipfs
@@ -70,6 +70,11 @@ export class SlotBids extends Component {
                 // console.log('unit openBids', bids)
                 this.setState({ openBids: bids })
             })
+    }
+
+   
+    componentWillMount() {
+        this.getBids()
     }
 
     handleTabChange = (index) => {
@@ -213,7 +218,7 @@ export class SlotBids extends Component {
                             raised
                             primary
                             className={theme.actionBtn}
-                            onSave={this.onSave}
+                            onSave={this.getBids}
                             disabled={pendingAccept}
                         /> : null}
                     {canVerify ?
@@ -226,7 +231,7 @@ export class SlotBids extends Component {
                             raised
                             primary
                             className={theme.actionBtn}
-                            onSave={this.onSave}
+                            onSave={this.getBids}
                             disabled={pendingVerify}
                         />
                         : null}
@@ -240,7 +245,7 @@ export class SlotBids extends Component {
                             raised
                             accent
                             className={theme.actionBtn}
-                            onSave={this.onSave}
+                            onSave={this.getBids}
                             disabled={pendingGiveup}
                         />
                         : null}
