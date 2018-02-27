@@ -25,11 +25,9 @@ import Account from './account/Account'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
 import { items as ItemsConstants } from 'adex-constants'
-import scActions from 'services/smart-contracts/actions'
+import checkTransactions from 'services/store-data/transactions'
 
 const { ItemsTypes } = ItemsConstants
-
-const { getAccount, getAccountStats, getAccountStatsMetaMask, getTransactionsReceipts } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
     return (
@@ -50,61 +48,14 @@ class Dashboard extends React.Component {
             drawerPinned: false,
             sidebarPinned: false
         }
-
-        this.transactionsCheckTimeout = null
     }  
 
-    clearTransactionsTimeout() {
-        if(this.transactionsCheckTimeout){
-            clearTimeout(this.transactionsCheckTimeout)
-            this.transactionsCheckTimeout = null
-        }
-    }
-
-    syncTransactions = () => {
-        let transactions = this.props.transactions
-        let hashes = Object.keys(transactions).reduce((memo, key) => {
-            if(key && ((key.toString()).length === 66)){
-                memo.push(key)
-            }
-            return memo
-        }, [])
-
-        return getTransactionsReceipts(hashes)
-            .then((receipts)=>{
-                receipts.forEach((rec) => {
-                    // console.log('rec', rec)
-                    if(rec && rec.transactionHash && rec.status){
-                        let status = rec.status === '0x1' ? 'TRANSACTION_STATUS_SUCCESS' : 'TRANSACTION_STATUS_ERROR'
-                        this.props.actions.updateWeb3Transaction({ trId: rec.transactionHash, key: 'status', value: status, addr: this.props.account._addr })
-                    }
-                })
-            })
-    }
-
-    checkTransactionsLoop = () => {
-        this.clearTransactionsTimeout()
-
-        this.transactionsCheckTimeout = setTimeout(this.checkTransactions, 30 * 1000)
-    }
-
-    checkTransactions = () => {
-        this.syncTransactions()
-            .then(() => {
-                this.checkTransactionsLoop()
-            })
-            .catch(() => {
-                this.checkTransactionsLoop()
-            })
-    }
-
     componentWillUnmount(){
-        this.clearTransactionsTimeout()
     }
 
     componentWillMount(nextProps) {
         this.props.actions.updateNav('side', this.props.match.params.side)
-        // this.checkTransactions()
+        checkTransactions()
     }
 
     componentWillUpdate(nextProps) {
