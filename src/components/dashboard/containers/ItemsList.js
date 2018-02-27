@@ -22,7 +22,7 @@ import moment from 'moment'
 import Translate from 'components/translate/Translate'
 import classnames from 'classnames'
 import { items as ItemsConstants } from 'adex-constants'
-const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue, AdTypesByValue } = ItemsConstants
+const { AdSizesByValue, AdTypesByValue, ItemTypesNames } = ItemsConstants
 
 const RRTableCell = withReactRouterLink(TableCell)
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))
@@ -98,21 +98,22 @@ class ItemsList extends Component {
     }
 
     renderCard(item, index) {
+        const t = this.props.t
         return (
             <Card
                 key={item._id}
                 item={item}
-                name={item._name}
+                name={item._meta.fullName}
                 logo={item._meta.img}
                 side={this.props.side}
                 delete={this.props.actions.confirmAction.bind(this,
                     this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel, authSig: this.props.account._authSig }),
                     null,
                     {
-                        confirmLabel: 'Yes',
-                        cancelLabel: 'No',
-                        title: 'Delete Item - ' + item._name,
-                        text: 'Are you sure?'
+                        confirmLabel: t('CONFIRM_YES'),
+                        cancelLabel: t('CONFIRM_NO'),
+                        text: t('DELETE_ITEM', {args: [t(ItemTypesNames[item._type], {isProp: true}), item._meta.fullName]}),
+                        title: t('CONFIRM_SURE')
                     })}
                 remove={null}
                 actionsRenderer={this.renderActions(item)}
@@ -129,12 +130,12 @@ class ItemsList extends Component {
                     {selected.length ?
                         <TooltipButton
                             icon='delete'
-                            label='delete selected'
-                            onClick={null}
-                            tooltip='Delete all'
+                            label={t('DELETE_ALL')}                            
+                            tooltip={t('DELETE_ALL')}
                             tooltipDelay={1000}
                             tooltipPosition='top'
                             className={RTButtonTheme.danger}
+                            onClick={null}
                         />
                         :
                         null
@@ -150,10 +151,11 @@ class ItemsList extends Component {
     }
 
     renderTableRow(item, index, { to, selected }) {
+        const t = this.props.t
         return (
             <TableRow key={item._id || index} theme={tableTheme} selected={selected}>
                 <RRTableCell className={tableTheme.link} to={to} theme={tableTheme}>
-                    <Img className={classnames(tableTheme.img)} src={Item.getImgUrl(item._meta.img, process.env.IPFS_GATEWAY)} alt={item._name} />
+                    <Img className={classnames(tableTheme.img)} src={Item.getImgUrl(item._meta.img, process.env.IPFS_GATEWAY)} alt={item._meta.fullName} />
                 </RRTableCell>
                 <RRTableCell className={tableTheme.link} to={to}> {item._meta.fullName} </RRTableCell>
                 <TableCell> {(AdTypesByValue[item._meta.adType] || {}).label} </TableCell>
@@ -162,9 +164,11 @@ class ItemsList extends Component {
                 <TableCell>
 
                     <TooltipRRButton
-                        to={to} label='view'
-                        raised primary
-                        tooltip='View'
+                        to={to} 
+                        label={t('LABEL_VIEW')}                      
+                        tooltip={t('LABEL_VIEW')}
+                        raised 
+                        primary
                         tooltipDelay={1000}
                         tooltipPosition='top'
                     />
@@ -176,21 +180,27 @@ class ItemsList extends Component {
     }
 
     renderActions(item) {
+        const parentItem = this.props.parentItem
+        const parentName = parentItem ? parentItem._meta.fullName : ''
+        const itemName = item._meta.fullName
+        const t = this.props.t
+        const itemTypeName = t(ItemTypesNames[item._type], {isProp: true})
+
         return (
             <span>
                 {this.props.archive ?
                     <TooltipIconButton
                         icon='archive'
-                        label='archive'
-                        tooltip='Archive'
+                        label={t('ARCHIVE')}
+                        tooltip={t('ARCHIVE')}
                         tooltipDelay={1000}
                         tooltipPosition='top'
                     /> : null}
                 {this.props.delete ?
                     <TooltipIconButton
                         icon='delete'
-                        label='delete'
-                        tooltip='Delete'
+                        label={t('DELETE')}
+                        tooltip={t('DELETE')}
                         tooltipDelay={1000}
                         tooltipPosition='top'
                         className={RTButtonTheme.danger}
@@ -198,17 +208,17 @@ class ItemsList extends Component {
                             this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel, authSig: this.props.account._authSig }),
                             null,
                             {
-                                confirmLabel: 'Yes',
-                                cancelLabel: 'No',
-                                title: 'Delete Item - ' + item._name,
-                                text: 'Are you sure?'
+                                confirmLabel: t('CONFIRM_YES'),
+                                cancelLabel: t('CONFIRM_NO'),
+                                text: t('DELETE_ITEM', {args: [itemTypeName, itemName]}),
+                                title: t('CONFIRM_SURE')
                             })}
                     /> : null}
-                {this.props.removeFromItem ?
+                {this.props.removeFromItem && parentItem?
                     <TooltipIconButton
                         icon='remove_circle_outline'
-                        label={'Remove to ' + this.props.parentItem._name}
-                        tooltip={'Remove to ' + this.props.parentItem._name}
+                        label={t('REMOVE_FROM', { args: [parentName] })}
+                        tooltip={t('REMOVE_FROM', { args: [parentName] })}
                         tooltipDelay={1000}
                         tooltipPosition='top'
                         className={RTButtonTheme.danger}
@@ -216,19 +226,19 @@ class ItemsList extends Component {
                             this.props.actions.removeItemFromItem.bind(this, { item: item, toRemove: this.props.parentItem, authSig: this.props.account._authSig }),
                             null,
                             {
-                                confirmLabel: 'Yes',
-                                cancelLabel: 'No',
-                                title: 'Remove Item - ' + item._name + ' from ' + this.props.parentItem._name,
-                                text: 'Are you sure?'
+                                confirmLabel: t('CONFIRM_YES'),
+                                cancelLabel: t('CONFIRM_NO'),
+                                text: t('REMOVE_ITEM', {args: [itemTypeName, itemName, t(ItemTypesNames[parentItem._type], {isProp: true}), parentName ]}),
+                                title: t('CONFIRM_SURE')
                             })}
                     /> : null}
 
-                {this.props.addToItem ?
+                {this.props.addToItem && parentItem ?
                     <TooltipIconButton
                         icon='add_circle_outline'
-                        label={'Add to ' + this.props.parentItem._name}
+                        label={t('ADD_TO', { args: [parentName] })}
+                        tooltip={t('ADD_TO', { args: [parentName] })}
                         accent
-                        tooltip={'Add to ' + this.props.parentItem._name}
                         tooltipDelay={1000}
                         tooltipPosition='top'
                         onClick={this.props.actions.addItemToItem.bind(this, { item: item, toAdd: this.props.parentItem, authSig: this.props.account._authSig })}
