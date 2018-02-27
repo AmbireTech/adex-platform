@@ -51,11 +51,12 @@ class Dashboard extends React.Component {
     }  
 
     componentWillUnmount(){
+        checkTransactions.stop()
     }
 
     componentWillMount(nextProps) {
         this.props.actions.updateNav('side', this.props.match.params.side)
-        checkTransactions()
+        checkTransactions.start()
     }
 
     componentWillUpdate(nextProps) {

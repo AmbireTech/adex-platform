@@ -59,12 +59,18 @@ export class UnitBids extends Component {
 
     renderTableRow(bid, index, { to, selected }) {
         const t = this.props.t
+        const transactions = this.props.transactions
         const canCancel = bid._state === BID_STATES.DoesNotExist.id
         const canVerify = (bid._state === BID_STATES.Accepted.id) && (bid.clicksCount >= bid._target)
         const accepted = (bid._acceptedTime || 0) * 1000
         const timeout = (bid._timeout || 0) * 1000
         const bidExpires = accepted ? (accepted + timeout) : null
         const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidExpires < Date.now())
+        const pendingTransaction = transactions[bid.unconfirmedStateTrHash] 
+        const pendingState = (!!pendingTransaction && (pendingTransaction.status === 'TRANSACTION_STATUS_PENDING')) ? bid.unconfirmedStateId : null
+        const pendingCancel = pendingState === BID_STATES.Canceled.id
+        const pendingRefund = pendingState === BID_STATES.Expired.id
+        const pendingVerify = canVerify && bid._publisherConfirmation
 
         return (
             <TableRow key={bid._id}>
@@ -103,7 +109,7 @@ export class UnitBids extends Component {
 
                     {canCancel ?
                         <CancelBid
-                            icon='cancel'
+                            icon={pendingCancel ? 'hourglass_empty' : 'cancel'}
                             adUnitId={bid._adUnitId}
                             bidId={bid._id}
                             placedBid={bid}
@@ -112,10 +118,11 @@ export class UnitBids extends Component {
                             accent
                             className={theme.actionBtn}
                             onSave={this.onSave}
+                            disabled={pendingCancel}
                         /> : null}
                     {canVerify ?
                         <VerifyBid
-                            icon='check_circle'
+                            icon={pendingVerify ? 'hourglass_empty' : 'check_circle'}
                             itemId={bid._adUnitId}
                             bidId={bid._id}
                             placedBid={bid}
@@ -124,10 +131,11 @@ export class UnitBids extends Component {
                             primary
                             className={theme.actionBtn}
                             onSave={this.onSave}
+                            disabled={pendingVerify}                            
                         /> : null}
                     {canRefund ?
                         <RefundBid
-                            icon='cancel'
+                        icon={pendingRefund ? 'hourglass_empty' : 'cancel'}
                             adUnitId={bid._adUnitId}
                             bidId={bid._id}
                             placedBid={bid}
@@ -186,7 +194,8 @@ function mapStateToProps(state) {
     let memory = state.memory
     return {
         account: persist.account,
-        spinner: memory.spinners[ItemsTypes.AdUnit.name]
+        spinner: memory.spinners[ItemsTypes.AdUnit.name],
+        transactions: persist.web3Transactions[persist.account._addr] || {}
     }
 }
 

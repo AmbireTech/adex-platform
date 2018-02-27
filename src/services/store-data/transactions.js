@@ -62,9 +62,17 @@ const checkTransactionsLoop = () => {
     transactionsCheckTimeout = setTimeout(checkTransactions, 3 * 1000)
 }
 
-const init = () => {
+const start = () => {
     clearTransactionsTimeout()
     checkTransactions()
 }
 
-export default init
+const stop = () => {
+    clearTransactionsTimeout()
+}
+
+
+export default {
+    start,
+    stop
+}
