@@ -32,7 +32,7 @@ export default function web3TransactionsReducer(state = initialState.web3Transac
         case UPDATE_WEB3_TRANSACTION:
             newAddrTrs = {...newState[action.addr] || {}}
             newTr = { ...(newAddrTrs[action.trId] || {}) }
-            newTr = updateObj({ tr: newTr, key: action.key, val: action.value })
+            newTr = updateObj({ obj: newTr, key: action.key, val: action.value })
             newAddrTrs[action.trId] = newTr
             newState[action.addr] = newAddrTrs
             return newState

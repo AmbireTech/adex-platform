@@ -89,7 +89,7 @@ export class Unit extends Component {
                         onChange={this.handleTabChange.bind(this)}
                     >
                         <Tab label={t('BIDS')}>
-                            <UnitBids item={item} bids={this.state.bids} />
+                            <UnitBids item={item} bids={this.state.bids} getUnitBids={this.getUnitBids} />
                         </Tab>
                     </Tabs>
                 </div>
