@@ -23,6 +23,7 @@ class VerifyBid extends Component {
                     this.props.handleChange('placedBid', this.props.placedBid)
                     this.props.handleChange('account', this.props.acc)
                     this.props.handleChange('report', report)
+                    this.props.handleChange('side', this.props.side)
                     this.props.actions.updateSpinner(this.props.trId, false)
                     this.props.validate('report', { isValid: true,  dirty: false })
                 })
@@ -67,6 +68,7 @@ function mapStateToProps(state, props) {
     let memory = state.memory
     return {
         spinner: memory.spinners[props.trId],
+        side: memory.nav.side
         // trId: 'approve'
     }
 }

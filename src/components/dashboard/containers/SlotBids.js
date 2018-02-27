@@ -156,17 +156,19 @@ export class SlotBids extends Component {
     renderTableRow(bid, index, { to, selected }) {
         let t = this.props.t
         const transactions = this.props.transactions
-        const canAccept = bid._state === BID_STATES.DoesNotExist.id
+        const pendingTransaction = transactions[bid.unconfirmedStateTrHash] 
+        const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
+
+        const canAccept = (bid._state === BID_STATES.DoesNotExist.id) 
         const canVerify = (bid._state === BID_STATES.Accepted.id) && (bid.clicksCount >= bid._target)
         const canGiveup = bid._state === BID_STATES.Accepted.id
         const accepted = (bid._acceptedTime || 0) * 1000
         const timeout = (bid._timeout || 0) * 1000
-        const bidExpires = accepted ? (accepted + timeout) : null
-        const pendingTransaction = transactions[bid.unconfirmedStateTrHash] 
-        const pendingState = (!!pendingTransaction && (pendingTransaction.status === 'TRANSACTION_STATUS_PENDING')) ? bid.unconfirmedStateId : null
+        const bidExpires = accepted ? (accepted + timeout) : null   
+        const pending = pendingState !== null   
         const pendingGiveup = pendingState === BID_STATES.Canceled.id
         const pendingAccept = pendingState === BID_STATES.Accepted.id
-        const pendingVerify = canAccept && bid._advertiserConfirmation
+        const pendingVerify = (pendingState === BID_STATES.ConfirmedPub.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
 
         return (
             <TableRow key={bid._id}>
@@ -223,7 +225,7 @@ export class SlotBids extends Component {
                         /> : null}
                     {canVerify ?
                         <VerifyBid
-                            icon={pendingGiveup ? 'hourglass_empty' : 'check_circle' }
+                            icon={pendingVerify ? 'hourglass_empty' : 'check_circle' }
                             itemId={bid._adSlotId}
                             bidId={bid._id}
                             placedBid={bid}
