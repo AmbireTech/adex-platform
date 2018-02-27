@@ -12,7 +12,7 @@ import Confirm from 'components/confirm/Confirm'
 import { PersistGate } from 'redux-persist/es/integration/react'
 import Root from './Root'
 
-const { persistor, store } = configureStore()
+const { persistor, store } = configureStore
 // console.log('initial store', store.getState())
 
 const onBeforeLift = () => {
