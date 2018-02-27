@@ -19,7 +19,7 @@ import classnames from 'classnames'
 import moment from 'moment'
 
 const { ItemsTypes } = ItemsConstants
-const { BID_STATES, BidStatesLabels } = ExchangeConstants
+const { BID_STATES, BidStatesLabels, TxStatusLabels } = ExchangeConstants
 
 const SORT_PROPERTIES = [
     { value: '_state', label: '' },
@@ -65,16 +65,18 @@ export class UnitBids extends Component {
         const t = this.props.t
         const transactions = this.props.transactions
         const pendingTransaction = transactions[bid.unconfirmedStateTrHash] 
-        const pendingState = (!!pendingTransaction && (pendingTransaction.status === 'TRANSACTION_STATUS_PENDING')) ? bid.unconfirmedStateId : null
+        const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
+        
         const canCancel = (bid._state === BID_STATES.DoesNotExist.id)
         const canVerify = (bid._state === BID_STATES.Accepted.id) && (bid.clicksCount >= bid._target)
         const accepted = (bid._acceptedTime || 0) * 1000
         const timeout = (bid._timeout || 0) * 1000
         const bidExpires = accepted ? (accepted + timeout) : null
         const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidExpires < Date.now()) 
+        const pending = pendingState !== null 
         const pendingCancel = pendingState === BID_STATES.Canceled.id
         const pendingRefund = pendingState === BID_STATES.Expired.id
-        const pendingVerify = canVerify && bid._publisherConfirmation
+        const pendingVerify = (pendingState === BID_STATES.ConfirmedAdv.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
 
         return (
             <TableRow key={bid._id}>
@@ -124,9 +126,9 @@ export class UnitBids extends Component {
                             onSave={this.onSave}
                             disabled={pendingCancel}
                         /> : null}
-                    {canVerify ?
+                    {pendingVerify ?
                         <VerifyBid
-                            icon={pendingVerify ? 'hourglass_empty' : 'check_circle'}
+                            icon={pending ? 'hourglass_empty' : 'check_circle'}
                             itemId={bid._adUnitId}
                             bidId={bid._id}
                             placedBid={bid}
@@ -148,6 +150,7 @@ export class UnitBids extends Component {
                             accent
                             className={theme.actionBtn}
                             onSave={this.onSave}
+                            disabled={pendingRefund} 
                         /> : null}
                 </TableCell>
             </TableRow >

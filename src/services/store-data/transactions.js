@@ -1,6 +1,8 @@
 import configureStore from 'store/configureStore'
 import actions from 'actions'
 import scActions from 'services/smart-contracts/actions'
+import { exchange as ExchangeConstants } from 'adex-constants'
+const { TX_STATUS } = ExchangeConstants
 
 const { getTransactionsReceipts } = scActions
 const { store } = configureStore
@@ -35,7 +37,7 @@ const syncTransactions = () => {
                 // console.log('rec', rec)                
                 if(rec && rec.transactionHash && rec.status){
                     // TODO: Make constants for transactions status
-                    let status = rec.status === '0x1' ? 'TRANSACTION_STATUS_SUCCESS' : 'TRANSACTION_STATUS_ERROR'
+                    let status = rec.status === '0x1' ? TX_STATUS.Success.id : TX_STATUS.Error.id
 
                     if(transactions[rec.transactionHash].status !==  status){                    
                         let action = actions.updateWeb3Transaction({ trId: rec.transactionHash, key: 'status', value: status, addr: addr })
@@ -59,7 +61,7 @@ const checkTransactions = () => {
 const checkTransactionsLoop = () => {
     clearTransactionsTimeout()
 
-    transactionsCheckTimeout = setTimeout(checkTransactions, 3 * 1000)
+    transactionsCheckTimeout = setTimeout(checkTransactions, 20 * 1000)
 }
 
 const start = () => {

@@ -7,7 +7,7 @@ import ItemsList from './ItemsList'
 import theme from './theme.css'
 import RTButtonTheme from 'styles/RTButton.css'
 import classnames from 'classnames'
-import { items as ItemsConstants } from 'adex-constants'
+import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
 import Rows from 'components/dashboard/collection/Rows'
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import Translate from 'components/translate/Translate'
@@ -17,6 +17,7 @@ import scActions from 'services/smart-contracts/actions'
 const { getTransactionsReceipts } = scActions
 
 const { ItemTypesNames } = ItemsConstants
+const { BID_STATES, BidStatesLabels, TxStatusLabels } = ExchangeConstants
 
 const SORT_PROPERTIES = [
     { value: 'sendingTime', label: '' },
@@ -53,7 +54,7 @@ class Transactions extends Component {
                 >
                     <a target='_blank' href={process.env.ETH_SCAN_TX_HOST + transaction._id} > {transaction._id} </a>
                 </TableCell>
-                <TableCell> {t(transaction.status)} </TableCell>
+                <TableCell> {t(TxStatusLabels[transaction.status])} </TableCell>
                 <TableCell> {t(moment(transaction.sendingTime).format('MMMM Do, YYYY, HH:mm:ss'))} </TableCell>
 
             </TableRow >

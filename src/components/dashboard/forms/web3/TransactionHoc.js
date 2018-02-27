@@ -10,6 +10,8 @@ import { Bid } from 'adex-models'
 import Translate from 'components/translate/Translate'
 import { encrypt } from 'services/crypto/crypto'
 import scActions from 'services/smart-contracts/actions'
+import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
+const { TX_STATUS } = ExchangeConstants
 
 const { placeBidAuction } = scActions
 
@@ -40,7 +42,7 @@ export default function NewTransactionHoc(Decorated) {
 
             if(trans){
                 let trData = {...trans}
-                trData.status = 'TRANSACTION_STATUS_PENDING'
+                trData.status = TX_STATUS.Pending.id
                 trData.sendingTime = Date.now()
                 this.props.actions.addWeb3Transaction({trans: trData, addr: this.props.account._addr})
             }            

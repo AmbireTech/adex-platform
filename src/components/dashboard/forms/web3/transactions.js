@@ -159,11 +159,12 @@ export const VerifyBid = (props) =>
                         _report: transaction.report.ipfs,
                         _addr: acc._addr,
                         gas: transaction.gas,
-                        gasPrice: transaction._gasPrice
+                        gasPrice: transaction._gasPrice,
+                        side: transaction.side
                     })
                     .then((res) => {
-                        return resolve(res)
-                        // return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+                        resolve(res)
+                        return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
                     })
                     .catch((err) => {
                         return reject(err)
