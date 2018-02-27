@@ -17,9 +17,9 @@ const RRListItem = withReactRouterLink(ListItem)
 
 class SideNav extends Component {
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return this.props.side !== nextProps.side
-      }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     return this.props.side !== nextProps.side
+    //   }
 
     render() {
         const side = this.props.side
@@ -46,6 +46,13 @@ class SideNav extends Component {
 
             return memo
         }, 0)
+
+        let pendingTransactionsIcon = 'swap_horiz'
+        if((pendingTrsCount >  0) && (pendingTrsCount <= 9)) {
+            pendingTransactionsIcon = 'filter_' + pendingTrsCount
+        }else if(pendingTrsCount >  9){
+            pendingTransactionsIcon = 'filter_9_plus'
+        }
 
         return (
             <div className="Navigation">
@@ -102,7 +109,7 @@ class SideNav extends Component {
                         caption={t('TRANSACTIONS')}
                         theme={theme}
                         activeClassName={theme.active}
-                        leftIcon={<FontIcon value='swap_horiz' style={{transactions: 1 > 0 ? '#FF5722' : ''}}/>}
+                        leftIcon={<FontIcon value={pendingTransactionsIcon} style={{color: pendingTrsCount > 0 ? '#FF5722' : ''}}/>}
                     />
                 </List>
             </div >
