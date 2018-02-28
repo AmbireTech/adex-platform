@@ -1,5 +1,5 @@
 import * as types from 'constants/actionTypes'
-import { uploadImage, regItem, delItem, addItmToItm, removeItmFromItm } from 'services/adex-node/actions'
+import { uploadImage, regItem, delItem, addItmToItm, removeItmFromItm, updateItm } from 'services/adex-node/actions'
 import { Base, Models } from 'adex-models'
 import { addActionToast } from './uiActions'
 
@@ -124,7 +124,7 @@ export function deleteItem({ item, objModel, authSig } = {}) {
 
             })
             .catch((err) => {
-                return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label:' Err deleting item to item: ' + err, timeout: 5000 })
+                return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label: ' Err deleting item to item: ' + err, timeout: 5000 })
             })
     }
 }
@@ -140,7 +140,7 @@ export function removeItemFromItem({ item, toRemove, authSig } = {}) {
                 })
             })
             .catch((err) => {
-                return addActionToast({ dispatch: dispatch, type: 'cancel', action: 'X', label:'Err removing item to item: ' + err, timeout: 5000 })
+                return addActionToast({ dispatch: dispatch, type: 'cancel', action: 'X', label: 'Err removing item to item: ' + err, timeout: 5000 })
             })
     }
 }
@@ -162,17 +162,20 @@ export function addItemToItem({ item, toAdd, authSig } = {}) {
     }
 }
 
-export function updateItem({ item, newMeta, objModel } = {}) {
+// Accepts the entire new item and replace so be careful!
+export function updateItem({ item, authSig } = {}) {
     return function (dispatch) {
-        setTimeout(() => {
-            dispatch({
-                type: types.UPDATE_ITEM,
-                item: item,
-                meta: newMeta,
-                objModel: objModel
-            })
+        updateItm({ item, authSig })
+            .then((res) => {
+                dispatch({
+                    type: types.UPDATE_ITEM,
+                    item: item
+                })
 
-        }, 3000)
+            })
+            .catch((err) => {
+                return addActionToast({ dispatch: dispatch, type: 'cancel', action: 'X', label: 'Err updating item: ' + err, timeout: 5000 })
+            })
     }
 }
 

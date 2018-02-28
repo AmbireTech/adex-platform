@@ -26,7 +26,7 @@ export default function itemsReducer(state = initialState.items, action) {
 
     if (action.item && action.item._meta) {
         newState = { ...state }
-        item = action.item
+        item = { ...action.item }
         collectionId = item._type || item._meta.type
     }
 
@@ -34,7 +34,7 @@ export default function itemsReducer(state = initialState.items, action) {
         case ADD_ITEM:
             // TODO: the item should come here ready (with id from bc and ipsf)
             // id is going to be set when it comes here
-            newItem = { ...item }
+            newItem = item
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
             return newState
@@ -46,8 +46,6 @@ export default function itemsReducer(state = initialState.items, action) {
             return newState
 
         case DELETE_ITEM:
-            // newItem = Base.updateMeta(newState[collectionId][item._id], { deleted: true, modifiedOn: Date.now() })
-            // newItem = Base.updateObject({ item: newState[collectionId][item._id], meta: { _deleted: true }, objModel: action.objModel })
             newCollection = removeCollectionProp(newState[collectionId], item._id)
             newState[collectionId] = newCollection
             return newState
@@ -59,7 +57,7 @@ export default function itemsReducer(state = initialState.items, action) {
             return newState
 
         case UPDATE_ITEM:
-            newItem = Base.updateObject({ item: newState[collectionId][item._id], meta: { ...action.meta }, objModel: action.objModel })
+            newItem = item
             newCollection = collection(newState[collectionId], { ...action, item: newItem })
             newState[collectionId] = newCollection
             return newState
