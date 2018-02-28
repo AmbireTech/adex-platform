@@ -65,15 +65,10 @@ export default function ItemHoc(Decorated) {
             }
         }
 
-        // handleChange = (name, value) => {
-        //     let newItem = Base.updateMeta(this.state.item, { [name]: value }, this.state.dirtyProps || [])
-        //     this.setState({ item: newItem, dirtyProps: newItem.dirtyProps })
-        // }
-
         handleChange = (name, value) => {
             let newItem = Base.updateObject({
                 item: this.state.item,
-                meta: { [name]: value },
+                newValues: { [name]: value },
                 dirtyProps: this.state.dirtyProps || [],
                 objModel: this.props.objModel
             })
@@ -91,10 +86,9 @@ export default function ItemHoc(Decorated) {
             if (this.state.dirtyProps.length && !this.props.spinner) {
                 this.props.actions.updateItem({
                     item: this.state.item,
-                    newMeta: this.state.item._meta,
-                    objModel: this.props.objModel
+                    authSig: this.props.account._authSig
                 })
-                this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], true)
+                this.props.actions.updateSpinner(ItemTypesNames['update' + this.state.item._id], true)
             }
         }
 
@@ -119,7 +113,7 @@ export default function ItemHoc(Decorated) {
             let item = new model(this.state.item) || {}
             // let imgSrc =  ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)
             let t = this.props.t
-            let canEdit = false // ItemTypeByTypeId[item.type] === 'collection'
+            let canEdit = ItemTypeByTypeId[item.type] === 'collection'
 
             return (
                 <div>
@@ -158,9 +152,9 @@ export default function ItemHoc(Decorated) {
                                             :
                                             <span> {t('NO_DESCRIPTION_YET')}</span>
                                         }
-                                        {/* <span>
+                                        <span>
                                             <IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'description', true)} />
-                                        </span> */}
+                                        </span>
                                     </p>
 
                                 </div>
@@ -182,7 +176,7 @@ export default function ItemHoc(Decorated) {
                                             </div>
                                         ) : ''
                                 )}
-                            {/* <FloatingProgressButton inProgress={!!this.props.spinner} theme={theme} icon='save' onClick={this.save} floating primary /> */}
+                            <FloatingProgressButton inProgress={!!this.props.spinner} theme={theme} icon='save' onClick={this.save} floating primary />
                         </div>
 
                     </div>

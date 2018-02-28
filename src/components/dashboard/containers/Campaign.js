@@ -106,7 +106,7 @@ export class Campaign extends Component {
                         theme={theme}
                         inputFormat={this.inputFormat}
                         size={moment(from).format('MMMM').length} /** temp fix */
-                        readonly
+                        // readonly
                     />
                     <span>{t('to')} </span>
                     <DatePicker
@@ -117,7 +117,7 @@ export class Campaign extends Component {
                         theme={theme}
                         inputFormat={this.inputFormat}
                         size={moment(to).format('MMMM').length} /** temp fix */
-                        readonly
+                        // readonly
                     />
 
                 </div>
