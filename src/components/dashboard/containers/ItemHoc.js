@@ -10,6 +10,7 @@ import FontIcon from 'react-toolbox/lib/font_icon'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Avatar from 'react-toolbox/lib/avatar'
 import Input from 'react-toolbox/lib/input'
+import RTButtonTheme from 'styles/RTButton.css'
 import { Base, Item as ItemModel, Models } from 'adex-models'
 import FloatingProgressButton from 'components/common/floating_btn_progress/FloatingProgressButton'
 import classnames from 'classnames'
@@ -31,6 +32,7 @@ export default function ItemHoc(Decorated) {
             this.state = {
                 activeFields: {},
                 item: {},
+                initialItemState: {},
                 dirtyProps: [],
                 editImg: false
             }
@@ -50,10 +52,12 @@ export default function ItemHoc(Decorated) {
         }
 
         componentWillMount() {
-            this.setState({ item: this.props.items[this.props.match.params.itemId] })
+            let item = this.props.items[this.props.match.params.itemId]
+            this.setState({ item: { ...item }, initialItemState: { ...item } })
         }
 
         componentWillReceiveProps(nextProps) {
+            // TODO: check for item change
             if (!nextProps.spinner) {
                 this.setState({ item: nextProps.items[nextProps.match.params.itemId] })
             }
@@ -61,7 +65,7 @@ export default function ItemHoc(Decorated) {
 
         componentWillUnmount() {
             if (this.state.item) {
-                this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], false)
+                this.props.actions.updateSpinner(ItemTypesNames['update' + this.state.item._id], false)
             }
         }
 
@@ -84,11 +88,13 @@ export default function ItemHoc(Decorated) {
         //TODO: Do not save if not dirty!
         save() {
             if (this.state.dirtyProps.length && !this.props.spinner) {
+                let item = { ...this.state.item }
                 this.props.actions.updateItem({
-                    item: this.state.item,
+                    item: item,
                     authSig: this.props.account._authSig
                 })
-                this.props.actions.updateSpinner(ItemTypesNames['update' + this.state.item._id], true)
+                this.props.actions.updateSpinner(ItemTypesNames['update' + item._id], true)
+                this.setState({ dirtyProps: [] })
             }
         }
 
@@ -127,7 +133,12 @@ export default function ItemHoc(Decorated) {
                             <Avatar title={item.fullName} cover onClick={this.handleToggle.bind(this)} />
                             {/* <ImgDialog imgSrc={imgSrc} handleToggle={this.handleToggle} active={this.state.editImg} onChange={this.handleChange.bind(this, 'img')} /> */}
                             {canEdit && this.state.activeFields.fullName ?
-                                <Input className={theme.itemName} type='text' label={t('fullName', { isProp: true })} name='fullName' value={item.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
+                                <span>
+                                    <span>
+                                        <Input className={theme.itemName} type='text' label={t('fullName', { isProp: true })} name='fullName' value={item.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
+                                    </span>
+                                    <span><IconButton theme={theme} icon='cancel' className={RTButtonTheme.danger} onClick={this.setActiveFields.bind(this, 'fullName', false)} /></span>
+                                </span>
                                 :
                                 <h3 className={theme.itemName}>
                                     <span> {item.fullName} </span>
@@ -184,6 +195,7 @@ export default function ItemHoc(Decorated) {
                     <div>
                         <Decorated
                             {...this.props}
+                            inEdit={!!this.state.dirtyProps.length}
                             item={item}
                             save={this.save}
                             handleChange={this.handleChange}
