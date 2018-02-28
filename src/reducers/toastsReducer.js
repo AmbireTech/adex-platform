@@ -34,7 +34,7 @@ export default function toastsReducer(state = initialState.toasts, action) {
             return newState
 
         case UPDATE_ITEM:
-            return toasts(state, { label: ItemTypesNames[action.item._type] + ' ' + action.item._meta.fullName + ' has been updated!', type: 'warning', action: 'X', timeout: 5000 })
+            return toasts(state, { label: ItemTypesNames[action.item._type] + ' ' + action.item._meta.fullName + ' has been updated!', type: 'accept', action: 'X', timeout: 5000 })
         case ADD_ITEM:
             return toasts(state, { label: ItemTypesNames[action.item._type] + ' ' + action.item._meta.fullName + ' has been added!', type: 'accept', action: 'X', timeout: 5000 })
         case DELETE_ITEM:

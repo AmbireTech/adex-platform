@@ -34,32 +34,33 @@ export default function ItemHoc(Decorated) {
                 item: {},
                 initialItemState: {},
                 dirtyProps: [],
-                editImg: false
-            }
-        }
-
-        componentDidUpdate(prevProps, prevState) {
-            let itemId = this.props.match.params.itemId
-            let item = this.props.items[itemId] || {}
-            let meta = item._meta
-            let prevItem = prevProps.items[itemId] || {}
-            let prevMeta = prevItem._meta
-
-            if ((meta && prevMeta) && (meta.modifiedOn !== prevMeta.modifiedOn)) {
-                this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], false)
-                this.setState({ activeFields: {}, dirtyProps: [] })
+                editImg: false,
+                itemModel: Item
             }
         }
 
         componentWillMount() {
             let item = this.props.items[this.props.match.params.itemId]
-            this.setState({ item: { ...item }, initialItemState: { ...item } })
+            if (!item) {
+                return
+            }
+
+            let model = Models.itemClassByTypeId[item._type]
+            let initialItemState = new model(item)
+
+            this.setState({ item: { ...item }, initialItemState: initialItemState, itemModel: model })
         }
 
-        componentWillReceiveProps(nextProps) {
-            // TODO: check for item change
-            if (!nextProps.spinner) {
-                this.setState({ item: nextProps.items[nextProps.match.params.itemId] })
+        componentWillReceiveProps(nextProps, nextState) {
+            let currentItemInst = new this.state.itemModel(this.state.item)            
+            // Assume that the this.props.match.params.itemId can not be changed without remout of the component
+            // TODO: check the above
+            let nextItem = nextProps.items[nextProps.match.params.itemId]
+            let nexItemInst = new this.state.itemModel(nextItem)   
+            // TODO: check why nexItemInst parse _modifiedOn as null when there is value temp use nextItem._modifiedOn
+
+            if(nextItem._modifiedOn !== nexItemInst._modifiedOn){
+                this.setState({item: nexItemInst.plainObj(), initialItemState: nexItemInst, activeFields: {}, dirtyProps: [] })
             }
         }
 
@@ -70,13 +71,26 @@ export default function ItemHoc(Decorated) {
         }
 
         handleChange = (name, value) => {
-            let newItem = Base.updateObject({
-                item: this.state.item,
-                newValues: { [name]: value },
-                dirtyProps: this.state.dirtyProps || [],
-                objModel: this.props.objModel
-            })
-            this.setState({ item: newItem, dirtyProps: newItem.dirtyProps })
+            let newItem = new this.state.itemModel(this.state.item)
+            newItem[name] = value
+
+            let dp = this.state.dirtyProps.slice(0)
+
+            if (dp.indexOf(name) < 0) {
+                dp.push(name)
+            }
+
+            this.setState({ item: newItem.plainObj(), dirtyProps: dp })
+        }
+
+        returnPropToInitalState = (propName) => {
+            let initialItemStateValue = this.state.initialItemState[propName]
+            let newItem = new this.state.itemModel(this.state.item)
+            newItem[propName] = initialItemStateValue
+
+            let dp = this.state.dirtyProps.filter((dp) => { return dp !== propName })
+
+            this.setState({ item: newItem.plainObj(), dirtyProps: dp })
         }
 
         setActiveFields(field, value) {
@@ -115,11 +129,13 @@ export default function ItemHoc(Decorated) {
                 * NOTE: using instance of the item, the instance is passes to the Unit, Slot, Channel and Campaign components,
                 * in this case there is no need to make instance inside them
             */
-            let model = Models.itemClassByTypeId[this.state.item._type]
-            let item = new model(this.state.item) || {}
+            // let model = Models.itemClassByTypeId[this.state.item._type]
+            let item = new this.state.itemModel(this.state.item) || {}
             // let imgSrc =  ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)
             let t = this.props.t
             let canEdit = ItemTypeByTypeId[item.type] === 'collection'
+
+            console.log('item', item)
 
             return (
                 <div>
@@ -135,15 +151,30 @@ export default function ItemHoc(Decorated) {
                             {canEdit && this.state.activeFields.fullName ?
                                 <span>
                                     <span>
-                                        <Input className={theme.itemName} type='text' label={t('fullName', { isProp: true })} name='fullName' value={item.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
+                                        <Input
+                                            className={theme.itemName}
+                                            type='text'
+                                            label={t('fullName', { isProp: true })}
+                                            name='fullName'
+                                            value={item.fullName}
+                                            onChange={this.handleChange.bind(this, 'fullName')}
+                                            maxLength={128}
+                                            onBlur={this.setActiveFields.bind(this, 'fullName', false)}
+                                        />
                                     </span>
-                                    <span><IconButton theme={theme} icon='cancel' className={RTButtonTheme.danger} onClick={this.setActiveFields.bind(this, 'fullName', false)} /></span>
                                 </span>
                                 :
                                 <h3 className={theme.itemName}>
                                     <span> {item.fullName} </span>
                                     {canEdit ?
-                                        <span><IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'fullName', true)} /></span>
+                                        <span>
+                                            <IconButton
+                                                theme={theme}
+                                                icon='edit'
+                                                accent
+                                                onClick={this.setActiveFields.bind(this, 'fullName', true)}
+                                            />
+                                        </span>
                                         : null}
                                 </h3>
                             }
@@ -152,19 +183,33 @@ export default function ItemHoc(Decorated) {
                     <div>
                         <div className={classnames(theme.top, theme.left)}>
 
-
                             {this.state.activeFields.description ?
-                                <Input multiline rows={3} type='text' label={t('description', { isProp: true })} name='description' value={item.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
+                                <Input
+                                    multiline
+                                    rows={3}
+                                    type='text'
+                                    label={t('description', { isProp: true })}
+                                    name='description'
+                                    value={item.description}
+                                    onChange={this.handleChange.bind(this, 'description')}
+                                    maxLength={1024}
+                                    onBlur={this.setActiveFields.bind(this, 'description', false)}
+                                />
                                 :
                                 <div>
                                     <p>
                                         {item.description ?
                                             item.description
                                             :
-                                            <span> {t('NO_DESCRIPTION_YET')}</span>
+                                            <span style={{ opacity: 0.3 }}> {t('NO_DESCRIPTION_YET')}</span>
                                         }
                                         <span>
-                                            <IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'description', true)} />
+                                            <IconButton
+                                                theme={theme}
+                                                icon='edit'
+                                                accent
+                                                onClick={this.setActiveFields.bind(this, 'description', true)}
+                                            />
                                         </span>
                                     </p>
 
@@ -182,7 +227,14 @@ export default function ItemHoc(Decorated) {
                                             <div className={theme.itemStatus}>
                                                 <TooltipFontIcon value='info_outline' tooltip={t('UNSAVED_CHANGES')} />
                                                 {this.state.dirtyProps.map((p) => {
-                                                    return (<Chip key={p}>{t(p, { isProp: true })}</Chip>)
+                                                    return (
+                                                        <Chip
+                                                            deletable
+                                                            key={p}
+                                                            onDeleteClick={this.returnPropToInitalState.bind(this, p)}
+                                                        >
+                                                            {t(p, { isProp: true })}
+                                                        </Chip>)
                                                 })}
                                             </div>
                                         ) : ''

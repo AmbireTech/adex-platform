@@ -90,7 +90,7 @@ export class Channel extends Component {
 Channel.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    slots: PropTypes.array.isRequired,
+    slots: PropTypes.object.isRequired,
     spinner: PropTypes.bool,
     rowsView: PropTypes.bool.isRequired
 }
