@@ -169,7 +169,7 @@ export function updateItem({ item, authSig } = {}) {
             .then((res) => {
                 dispatch({
                     type: types.UPDATE_ITEM,
-                    item: item
+                    item: res
                 })
 
             })
