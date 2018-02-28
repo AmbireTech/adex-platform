@@ -65,17 +65,18 @@ export class Unit extends Component {
 
         return (
             <div>
-                <BidFormWithDialog
-                    btnLabel='PLACE_BID'
-                    title={this.props.t('PLACE_BID_FOR', { args: [item.fullName] })}
-                    floating
-                    primary
-                    bidId={item._id}
-                    // TODO: fix icon v align
-                    icon={<BidIcon style={{ marginTop: 10 }} />}
-                    adUnit={item}
-                    closeDialog={!!this.state.closeDialog}
-                />
+                {!this.props.inEdit ?
+                    <BidFormWithDialog
+                        btnLabel='PLACE_BID'
+                        title={this.props.t('PLACE_BID_FOR', { args: [item.fullName] })}
+                        floating
+                        primary
+                        bidId={item._id}
+                        // TODO: fix icon v align
+                        icon={<BidIcon style={{ marginTop: 10 }} />}
+                        adUnit={item}
+                        closeDialog={!!this.state.closeDialog}
+                    /> : null}
                 <BasicProps
                     item={item}
                     t={t}
