@@ -1,24 +1,18 @@
 .listItem, .item, .itemText {
   color: #fff !important;
   user-select: none;
-
-  
+ 
 }
 
 .item {
   &.selectable:not(.disabled):hover {
-       color: #000  !important;
-       span {
-         color: #000  !important;
-       }
-      .itemText {
-        color: #000  !important;
-      }
+    & .itemText {
+      color: #3C3C3C !important;
     }
+  }
 }
-
 .active {
-  background-color: #aaa;
+  background-color: #999;
 }
 
 .button {

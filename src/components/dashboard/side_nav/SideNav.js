@@ -65,7 +65,7 @@ class SideNav extends Component {
                         caption={t('DASHBOARD')}
                         theme={theme}
                         leftIcon='dashboard'
-                        activeClassName={theme.active}
+                        className={classnames({ [theme.active]: location === '' })}
                     />
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side + '/' + collection }}
@@ -73,7 +73,7 @@ class SideNav extends Component {
                         caption={t(collection.toUpperCase())}
                         theme={theme}
                         leftIcon={<CollectionIcon color='rgb(117, 117, 117)' />}
-                        activeClassName={theme.active}
+                        className={classnames({ [theme.active]: location === collection })}
                     />
                     <ListItem
                         selectable={false}
@@ -91,7 +91,7 @@ class SideNav extends Component {
                         selectable={true}
                         caption={t(items.toUpperCase())}
                         theme={theme}
-                        activeClassName={theme.active}
+                        className={classnames({ [theme.active]: location === items })}
                         leftIcon={itemsIcon}
                     />
                     <ListItem
@@ -110,7 +110,7 @@ class SideNav extends Component {
                         selectable={true}
                         caption={t('TRANSACTIONS')}
                         theme={theme}
-                        activeClassName={theme.active}
+                        className={classnames({ [theme.active]: location === 'transactions' })}
                         leftIcon={<FontIcon value={pendingTransactionsIcon} style={{color: pendingTrsCount > 0 ? '#FF5722' : ''}}/>}
                     />
                 </List>
