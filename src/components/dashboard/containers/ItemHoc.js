@@ -52,14 +52,14 @@ export default function ItemHoc(Decorated) {
         }
 
         componentWillReceiveProps(nextProps, nextState) {
+            
             let currentItemInst = new this.state.itemModel(this.state.item)            
             // Assume that the this.props.match.params.itemId can not be changed without remout of the component
             // TODO: check the above
             let nextItem = nextProps.items[nextProps.match.params.itemId]
             let nexItemInst = new this.state.itemModel(nextItem)   
-            // TODO: check why nexItemInst parse _modifiedOn as null when there is value temp use nextItem._modifiedOn
-
-            if(nextItem._modifiedOn !== nexItemInst._modifiedOn){
+    
+            if(currentItemInst.modifiedOn !== nexItemInst.modifiedOn){
                 this.setState({item: nexItemInst.plainObj(), initialItemState: nexItemInst, activeFields: {}, dirtyProps: [] })
             }
         }
@@ -135,7 +135,7 @@ export default function ItemHoc(Decorated) {
             let t = this.props.t
             let canEdit = ItemTypeByTypeId[item.type] === 'collection'
 
-            console.log('item', item)
+            // console.log('item', item)
 
             return (
                 <div>
