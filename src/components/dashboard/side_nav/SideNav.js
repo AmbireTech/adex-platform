@@ -135,7 +135,7 @@ class SideNav extends Component {
                         <small> &copy; {(new Date()).getFullYear()} AdEx Network OÜ</small>
                     </div>
                     <div>
-                        <small> v.{packageJson.version} </small>
+                        <small> v.{packageJson.version}-beta </small>
                     </div>
                 </div>
             </div >
