@@ -121,7 +121,7 @@ export default function ItemHoc(Decorated) {
             this.setState({ editImg: !active })
         }
 
-        render() {
+        render() {            
             if (!this.state.item) {
                 return (<h1> No item found! </h1>)
             }
@@ -135,7 +135,7 @@ export default function ItemHoc(Decorated) {
             let t = this.props.t
             let canEdit = ItemTypeByTypeId[item.type] === 'collection'
 
-            // console.log('item', item)
+            // console.log('item', item)            
 
             return (
                 <div>

@@ -19,11 +19,10 @@ class VerifyBid extends Component {
 
             getBidVerificationReport({ bidId: this.props.placedBid._id, authSig: this.props.account._authSig })
                 .then((report) => {
-                    //TODO: Spinner and validation before report ready
                     this.props.handleChange('placedBid', this.props.placedBid)
                     this.props.handleChange('account', this.props.acc)
                     this.props.handleChange('report', report)
-                    // this.props.handleChange('side', this.props.side)
+                    this.props.handleChange('side', this.props.side)
                     this.props.actions.updateSpinner(this.props.trId, false)
                     this.props.validate('report', { isValid: true,  dirty: false })
                 })
@@ -68,8 +67,7 @@ function mapStateToProps(state, props) {
     let memory = state.memory
     return {
         spinner: memory.spinners[props.trId],
-        // side: memory.nav.side
-        // trId: 'approve'
+        side: memory.nav.side
     }
 }
 
