@@ -23,13 +23,17 @@ const shoudUpdateTransaction = () => {
 const syncTransactions = () => {
     const persist = store.getState().persist    
     const addr = persist.account._addr
-    let transactions = persist.web3Transactions[addr]
+    let transactions = persist.web3Transactions[addr] || {}
     let hashes = Object.keys(transactions).reduce((memo, key) => {
         if(key && ((key.toString()).length === 66)){
             memo.push(key)
         }
         return memo
     }, [])
+
+    if(!hashes.length) {
+        return Promise.resolve()
+    }
 
     return getTransactionsReceipts(hashes)
         .then((receipts)=>{
