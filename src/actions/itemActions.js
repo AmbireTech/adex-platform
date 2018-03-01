@@ -172,6 +172,12 @@ export function updateItem({ item, authSig } = {}) {
                     item: res
                 })
 
+                return dispatch({
+                    type: types.UPDATE_SPINNER,
+                    spinner: 'update' + res._id,
+                    value: false
+                })
+
             })
             .catch((err) => {
                 return addActionToast({ dispatch: dispatch, type: 'cancel', action: 'X', label: 'Err updating item: ' + err, timeout: 5000 })

@@ -130,9 +130,7 @@ export class Campaign extends Component {
 Campaign.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    // items: PropTypes.array.isRequired,
     units: PropTypes.object.isRequired,
-    spinner: PropTypes.bool,
     rowsView: PropTypes.bool.isRequired
 }
 
@@ -142,7 +140,6 @@ function mapStateToProps(state) {
     return {
         account: persist.account,
         units: persist.items[ItemsTypes.AdUnit.id],
-        spinner: memory.spinners[ItemsTypes.Campaign.name],
         rowsView: !!persist.ui[VIEW_MODE],
         objModel: CampaignModel,
         itemType: ItemsTypes.Campaign.id

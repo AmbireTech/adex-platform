@@ -40,7 +40,7 @@ export default function ItemHoc(Decorated) {
         }
 
         componentWillMount() {
-            let item = this.props.items[this.props.match.params.itemId]
+            let item = this.props.item
             if (!item) {
                 return
             }
@@ -56,7 +56,7 @@ export default function ItemHoc(Decorated) {
             let currentItemInst = new this.state.itemModel(this.state.item)            
             // Assume that the this.props.match.params.itemId can not be changed without remout of the component
             // TODO: check the above
-            let nextItem = nextProps.items[nextProps.match.params.itemId]
+            let nextItem = nextProps.item
             let nexItemInst = new this.state.itemModel(nextItem)   
     
             if(currentItemInst.modifiedOn !== nexItemInst.modifiedOn){
@@ -66,7 +66,7 @@ export default function ItemHoc(Decorated) {
 
         componentWillUnmount() {
             if (this.state.item) {
-                this.props.actions.updateSpinner(ItemTypesNames['update' + this.state.item._id], false)
+                this.props.actions.updateSpinner('update' + this.state.item._id, false)
             }
         }
 
@@ -107,7 +107,7 @@ export default function ItemHoc(Decorated) {
                     item: item,
                     authSig: this.props.account._authSig
                 })
-                this.props.actions.updateSpinner(ItemTypesNames['update' + item._id], true)
+                this.props.actions.updateSpinner('update' + item._id, true)
                 this.setState({ dirtyProps: [] })
             }
         }
@@ -264,7 +264,7 @@ export default function ItemHoc(Decorated) {
     Item.propTypes = {
         actions: PropTypes.object.isRequired,
         account: PropTypes.object.isRequired,
-        items: PropTypes.object.isRequired,
+        item: PropTypes.object.isRequired,
         spinner: PropTypes.bool,
         // objModel: PropTypes.func.isRequired
     }
@@ -274,7 +274,8 @@ export default function ItemHoc(Decorated) {
         let memory = state.memory
         return {
             account: persist.account,
-            items: persist.items[props.itemType]
+            item: persist.items[props.itemType][props.match.params.itemId],
+            spinner: memory.spinners['update' + props.match.params.itemId]
         }
     }
 

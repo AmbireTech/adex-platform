@@ -91,17 +91,15 @@ Channel.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     slots: PropTypes.object.isRequired,
-    spinner: PropTypes.bool,
     rowsView: PropTypes.bool.isRequired
 }
 
 function mapStateToProps(state) {
     let persist = state.persist
-    let memory = state.memory
+    // let memory = state.memory
     return {
         account: persist.account,
         slots: persist.items[ItemsTypes.AdSlot.id],
-        spinner: memory.spinners[ItemsTypes.Channel.name],
         rowsView: !!persist.ui[VIEW_MODE],
         objModel: ChannelModel,
         itemType: ItemsTypes.Channel.id
