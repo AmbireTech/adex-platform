@@ -53,16 +53,8 @@ export class Unit extends Component {
         this.getUnitBids()
     }
 
-    // componentWillReceiveProps(nextProps) {
-    //     if ((nextProps.unitsBids[this.props.item._id] || []).length > (this.props.unitsBids[this.props.item._id] || []).length) {
-    //         this.setState({ closeDialog: true })
-    //         this.getUnitBids()
-    //     } else {
-    //         this.setState({ closeDialog: false })
-    //     }
-    // }
-
     render() {
+        
         let item = this.props.item
         let t = this.props.t
 
@@ -107,25 +99,15 @@ export class Unit extends Component {
 
 Unit.propTypes = {
     actions: PropTypes.object.isRequired,
-    // account: PropTypes.object.isRequired,
-    // items: PropTypes.object.isRequired,
     item: PropTypes.object.isRequired,
-    // slots: PropTypes.array.isRequired,
-    // spinner: PropTypes.bool
 };
 
 function mapStateToProps(state, props) {
     let persist = state.persist
     let memory = state.memory
     return {
-        // account: persist.account,
-        // items: persist.items[ItemsTypes.AdUnit.id],
-        // slots: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
-        // item: state.currentItem,
-        // spinner: memory.spinners[ItemsTypes.AdUnit.name],
         objModel: AdUnit,
-        itemType: ItemsTypes.AdUnit.id,
-        // unitsBids: persist.bids.bidsByAdunit
+        itemType: ItemsTypes.AdUnit.id
     }
 }
 

@@ -38,12 +38,9 @@ const SORT_PROPERTIES = [
 
 export class UnitBids extends Component {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            bidding: false,
-            activeSlot: {}
-        }
+    shouldComponentUpdate(nextProps, nextState){
+        // TODO: investigate why component recieves props without change in the parent components and stre state props
+        return JSON.stringify(this.props) !== JSON.stringify(nextProps)
     }
 
     onSave = () => {
@@ -63,7 +60,7 @@ export class UnitBids extends Component {
                 <TableCell> {t('ACTIONS')} </TableCell>
             </TableHead>
         )
-    }
+    }   
 
     renderTableRow(bid, index, { to, selected }) {
         const t = this.props.t
@@ -189,6 +186,7 @@ export class UnitBids extends Component {
         }
 
     render() {
+       
         let item = this.props.item
         let t = this.props.t
         let bids = this.props.bids || []
@@ -205,15 +203,13 @@ UnitBids.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     item: PropTypes.object.isRequired,
-    spinner: PropTypes.bool
 }
 
 function mapStateToProps(state) {
     let persist = state.persist
-    let memory = state.memory
+    // let memory = state.memory
     return {
         account: persist.account,
-        spinner: memory.spinners[ItemsTypes.AdUnit.name],
         transactions: persist.web3Transactions[persist.account._addr] || {}
     }
 }
