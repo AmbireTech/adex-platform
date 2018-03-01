@@ -4,21 +4,18 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Chip from 'react-toolbox/lib/chip'
-import { Button, IconButton } from 'react-toolbox/lib/button'
+import { IconButton } from 'react-toolbox/lib/button'
 import theme from './theme.css'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Avatar from 'react-toolbox/lib/avatar'
 import Input from 'react-toolbox/lib/input'
-import RTButtonTheme from 'styles/RTButton.css'
-import { Base, Item as ItemModel, Models } from 'adex-models'
+import { Models } from 'adex-models'
 import FloatingProgressButton from 'components/common/floating_btn_progress/FloatingProgressButton'
 import classnames from 'classnames'
-import ImgDialog from './ImgDialog'
 import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
 import { items as ItemsConstants } from 'adex-constants'
-// import Img from 'components/common/img/Img'
 
 const { ItemTypesNames, ItemTypeByTypeId } = ItemsConstants
 
@@ -52,15 +49,15 @@ export default function ItemHoc(Decorated) {
         }
 
         componentWillReceiveProps(nextProps, nextState) {
-            
-            let currentItemInst = new this.state.itemModel(this.state.item)            
+
+            let currentItemInst = new this.state.itemModel(this.state.item)
             // Assume that the this.props.match.params.itemId can not be changed without remout of the component
             // TODO: check the above
             let nextItem = nextProps.item
-            let nexItemInst = new this.state.itemModel(nextItem)   
-    
-            if(currentItemInst.modifiedOn !== nexItemInst.modifiedOn){
-                this.setState({item: nexItemInst.plainObj(), initialItemState: nexItemInst, activeFields: {}, dirtyProps: [] })
+            let nexItemInst = new this.state.itemModel(nextItem)
+
+            if (currentItemInst.modifiedOn !== nexItemInst.modifiedOn) {
+                this.setState({ item: nexItemInst.plainObj(), initialItemState: nexItemInst, activeFields: {}, dirtyProps: [] })
             }
         }
 
@@ -121,7 +118,7 @@ export default function ItemHoc(Decorated) {
             this.setState({ editImg: !active })
         }
 
-        render() {            
+        render() {
             if (!this.state.item) {
                 return (<h1> No item found! </h1>)
             }
@@ -131,11 +128,8 @@ export default function ItemHoc(Decorated) {
             */
             // let model = Models.itemClassByTypeId[this.state.item._type]
             let item = new this.state.itemModel(this.state.item) || {}
-            // let imgSrc =  ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)
             let t = this.props.t
             let canEdit = ItemTypeByTypeId[item.type] === 'collection'
-
-            // console.log('item', item)            
 
             return (
                 <div>
@@ -147,7 +141,6 @@ export default function ItemHoc(Decorated) {
                     <div className={classnames(theme.heading, theme[ItemTypesNames[item._type || item._meta.type]])}>
                         <div className={theme.headingLeft}>
                             <Avatar title={item.fullName} cover onClick={this.handleToggle.bind(this)} />
-                            {/* <ImgDialog imgSrc={imgSrc} handleToggle={this.handleToggle} active={this.state.editImg} onChange={this.handleChange.bind(this, 'img')} /> */}
                             {canEdit && this.state.activeFields.fullName ?
                                 <span>
                                     <span>
@@ -254,8 +247,6 @@ export default function ItemHoc(Decorated) {
                             toggleImgEdit={this.handleToggle.bind(this)}
                         />
                     </div>
-                    {/* <pre> {JSON.stringify(item, null, 2)} </pre> */}
-
                 </div>
             )
         }
@@ -265,8 +256,7 @@ export default function ItemHoc(Decorated) {
         actions: PropTypes.object.isRequired,
         account: PropTypes.object.isRequired,
         item: PropTypes.object.isRequired,
-        spinner: PropTypes.bool,
-        // objModel: PropTypes.func.isRequired
+        spinner: PropTypes.bool
     }
 
     function mapStateToProps(state, props) {
@@ -289,6 +279,4 @@ export default function ItemHoc(Decorated) {
         mapStateToProps,
         mapDispatchToProps
     )(Translate(Item))
-
-    return Translate(Item)
 }

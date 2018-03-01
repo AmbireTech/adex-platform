@@ -4,18 +4,13 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import theme from './../theme.css'
-import { Bid } from 'adex-models'
-import Translate from 'components/translate/Translate'
 import NewTransactionHoc from './TransactionHoc'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import Tooltip from 'react-toolbox/lib/tooltip'
-import numeral from 'numeral'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
 import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
 import { web3Utils } from 'services/smart-contracts/ADX'
 
-import scActions from 'services/smart-contracts/actions'
-const { getAccountStats, approveTokens, approveTokensEstimateGas } = scActions
 const TooltipCol = Tooltip(Col)
 
 class TransactionPreview extends Component {
@@ -30,7 +25,7 @@ class TransactionPreview extends Component {
 
     render() {
         let transaction = this.props.transaction || {}
-        let t = this.props.t
+        // let t = this.props.t
         let fee
         let gasPrice = this.props.account._settings.gasPrice ? this.props.account._settings.gasPrice : DEFAULT_GAS_PRICE
         let previewMsgs = this.props.previewMsgs

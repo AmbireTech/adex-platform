@@ -4,15 +4,12 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import NewItemHoc from './NewItemHocStep'
-import Dropdown from 'react-toolbox/lib/dropdown'
-import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
 import ImgForm from './../ImgForm'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './../theme.css'
-// import { validUrl } from 'helpers/validators'
 import { items as ItemsConstants } from 'adex-constants'
-import ValidImageHoc  from 'components/dashboard/forms/ValidImageHoc'
+import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
 
 const { ItemsTypes, AdSizesByValue } = ItemsConstants
 const AVATAR_MAX_WIDTH = 600

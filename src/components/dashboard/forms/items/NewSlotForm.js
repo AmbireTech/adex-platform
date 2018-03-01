@@ -7,14 +7,12 @@ import NewItemHoc from './NewItemHocStep'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
-import ImgForm from './../ImgForm'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './../theme.css'
-// import { validUrl } from 'helpers/validators'
 import { items as ItemsConstants } from 'adex-constants'
 import { validUrl } from 'helpers/validators'
 
-const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue } = ItemsConstants
+const { ItemsTypes, AdTypes, AdSizes } = ItemsConstants
 
 class NewSlotForm extends Component {
 
@@ -45,10 +43,7 @@ class NewSlotForm extends Component {
 
     render() {
         let item = this.props.item
-        let ad_url = item.ad_url
         let t = this.props.t
-        let errSize = this.props.invalidFields['size']
-        let errSlotUrl = this.props.invalidFields['slotUrl']
         let errFallbackAdUrl = this.props.invalidFields['fallbackAdUrl']
 
         return (

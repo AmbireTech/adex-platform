@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { Button, IconButton } from 'react-toolbox/lib/button'
-import theme from './theme.css'
+// import theme from './theme.css'
 import Input from 'react-toolbox/lib/input'
 
 class BidForm extends Component {
@@ -27,7 +26,7 @@ class BidForm extends Component {
           name='name'
           value={this.state.bid}
           onChange={(value) => this.setState({ bid: value })}
-      />
+        />
       </div>
     )
   }

@@ -6,7 +6,6 @@ import actions from 'actions'
 import ItemHoc from './ItemHoc'
 import { AdUnit } from 'adex-models'
 import theme from './theme.css'
-// import UnitSlots from './UnitSlots'
 import { Tab, Tabs } from 'react-toolbox'
 import UnitTargets from './UnitTargets'
 import Translate from 'components/translate/Translate'
@@ -103,8 +102,8 @@ Unit.propTypes = {
 };
 
 function mapStateToProps(state, props) {
-    let persist = state.persist
-    let memory = state.memory
+    // let persist = state.persist
+    // let memory = state.memory
     return {
         objModel: AdUnit,
         itemType: ItemsTypes.AdUnit.id

@@ -1,13 +1,13 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Grid, Row, Col } from 'react-flexbox-grid'
-import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
+import { Card, CardMedia, CardTitle } from 'react-toolbox/lib/card'
 import Input from 'react-toolbox/lib/input'
 import Img from 'components/common/img/Img'
 import theme from './theme.css'
 import { items as ItemsConstants } from 'adex-constants'
 import { Item } from 'adex-models'
 
-const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue, AdTypesByValue } = ItemsConstants
+const { AdSizesByValue, AdTypesByValue } = ItemsConstants
 
 export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
 

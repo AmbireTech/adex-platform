@@ -115,7 +115,7 @@ NewItemFormPreview.propTypes = {
 
 function mapStateToProps(state) {
     let persist = state.persist
-    let memory = state.memory
+    // let memory = state.memory
     return {
         account: persist.account,
         // newItem: memory.newItem[ItemsTypes.AdUnit.id]

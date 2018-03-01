@@ -8,14 +8,13 @@ import Tooltip from 'react-toolbox/lib/tooltip'
 import Img from 'components/common/img/Img'
 import { Item } from 'adex-models'
 import Translate from 'components/translate/Translate'
-import FontIcon from 'react-toolbox/lib/font_icon'
 import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemTypesNames } = ItemsConstants
 
 const RRCardMedia = withReactRouterLink(CardMedia)
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))
-const TooltipFontIcon = Tooltip(FontIcon)
+// const TooltipFontIcon = Tooltip(FontIcon)
 
 class MyCard extends Component {
 
@@ -26,7 +25,6 @@ class MyCard extends Component {
         let id = item._id
         let itemTypeName = ItemTypesNames[item._type]
         let to = '/dashboard/' + this.props.side + '/' + itemTypeName + '/' + id
-        let synced = item._syncedWeb3 && item.syncedIpfs
         return (
             <Card raised={false} theme={theme}>
                 <RRCardMedia
@@ -42,7 +40,7 @@ class MyCard extends Component {
                 />
                 <CardActions theme={theme}>
                     {/* TODO: fix the sync icon */}
-                    <div>                       
+                    <div>
                         {/* {!synced ?
                             <TooltipFontIcon
                                 value='sync_problem'

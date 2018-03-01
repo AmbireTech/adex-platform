@@ -252,7 +252,7 @@ class ItemsList extends Component {
         // TODO: maybe filter deleted before this?
         let filtered = (items || [])
             .filter((i) => {
-                let isItem = (!!i && ((!!i._meta && !i._deleted) || i.id) || i._id)
+                let isItem = (!!i && ((!!i._meta && !i._deleted) || i.id || i._id))
                 if (!isItem) return isItem
                 let hasSearch = !!search
                 if (!hasSearch) return isItem

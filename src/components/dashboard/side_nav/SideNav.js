@@ -11,14 +11,10 @@ import ChannelIcon from 'components/common/icons/ChannelIcon'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from 'components/dashboard/forms/NewItems'
 import FontIcon from 'react-toolbox/lib/font_icon'
-import { Button, IconButton } from 'react-toolbox/lib/button'
 import classnames from 'classnames'
-import { exchange as ExchangeConstants } from 'adex-constants'
 import packageJson from './../../../../package.json'
-const { TX_STATUS } = ExchangeConstants
 
 const RRListItem = withReactRouterLink(ListItem)
-const RRIconButton = withReactRouterLink(IconButton)
 
 class SideNav extends Component {
 
@@ -26,7 +22,7 @@ class SideNav extends Component {
         let sideChanged = this.props.side !== nextProps.side
         let locationChanged = this.props.location.pathname !== nextProps.location.pathname
         let transactionsChanged = (this.props.transactions.pendingTxs || []).length !== (nextProps.transactions.pendingTxs || []).length
-        return sideChanged || locationChanged || transactionsChanged 
+        return sideChanged || locationChanged || transactionsChanged
     }
 
     render() {
@@ -44,7 +40,6 @@ class SideNav extends Component {
         const CollectionIcon = (isAdvertiser ? CampaignIcon : ChannelIcon)
         const itemsIcon = (isAdvertiser ? 'format_list_bulleted' : 'format_list_bulleted')
         const t = this.props.t
-        let transactions = this.props.transactions
         const pendingTrsCount = (this.props.transactions.pendingTxs || []).length
 
         let pendingTransactionsIcon = 'swap_horiz'

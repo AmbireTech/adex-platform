@@ -1,17 +1,12 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Grid, Row, Col } from 'react-flexbox-grid'
-import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
-import Input from 'react-toolbox/lib/input'
 import Img from 'components/common/img/Img'
 import theme from './../theme.css'
-import { items as ItemsConstants } from 'adex-constants'
 import { Item } from 'adex-models'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import moment from 'moment'
 import classnames from 'classnames'
-
-const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue, AdTypesByValue } = ItemsConstants
 
 export const PropRow = ({ left, right, className }) =>
     <Row >
