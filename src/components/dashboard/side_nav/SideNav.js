@@ -22,9 +22,12 @@ const RRIconButton = withReactRouterLink(IconButton)
 
 class SideNav extends Component {
 
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     return this.props.side !== nextProps.side
-    //   }
+    shouldComponentUpdate(nextProps, nextState) {
+        let sideChanged = this.props.side !== nextProps.side
+        let locationChanged = this.props.location.pathname !== nextProps.location.pathname
+        let transactionsChanged = (this.props.transactions.pendingTxs || []).length !== (nextProps.transactions.pendingTxs || []).length
+        return sideChanged || locationChanged || transactionsChanged 
+    }
 
     render() {
         const side = this.props.side
@@ -42,15 +45,7 @@ class SideNav extends Component {
         const itemsIcon = (isAdvertiser ? 'format_list_bulleted' : 'format_list_bulleted')
         const t = this.props.t
         let transactions = this.props.transactions
-        const pendingTrsCount = Object.keys(transactions).reduce((memo, key) => {
-
-            let itm = { ...transactions[key] }
-            if (itm && itm.status === TX_STATUS.Pending.id) {
-                memo += 1
-            }
-
-            return memo
-        }, 0)
+        const pendingTrsCount = (this.props.transactions.pendingTxs || []).length
 
         let pendingTransactionsIcon = 'swap_horiz'
         if ((pendingTrsCount > 0) && (pendingTrsCount <= 9)) {
@@ -151,7 +146,7 @@ function mapStateToProps(state) {
     let persist = state.persist
     // let memory = state.memory
     return {
-        account: persist.account,
+        // account: persist.account,
         transactions: persist.web3Transactions[persist.account._addr] || {}
     }
 }

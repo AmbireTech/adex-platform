@@ -182,8 +182,7 @@ function mapStateToProps(state, props) {
         account: account,
         // TODO: temp until we decide how to handle the logged in state
         // TODO: We do not need aut here anymore, the auth is on the root
-        auth: !!account._addr,
-        // transactions: persist.web3Transactions[persist.account._addr] || {}
+        auth: !!account._addr
     }
 }
 

@@ -60,10 +60,8 @@ export default function ValidImageHoc(Decorated) {
     }
 
     function mapStateToProps(state, props) {
-        let persist = state.persist
         let memory = state.memory
         return {
-            account: persist.account,
             validations: memory.validations[props.validateId]
         }
     }

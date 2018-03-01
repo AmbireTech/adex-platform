@@ -48,14 +48,19 @@ export class Unit extends Component {
         this.getUnitBids()
     }
 
-    componentWillReceiveProps(nextProps) {
-        if ((nextProps.unitsBids[this.props.item._id] || []).length > (this.props.unitsBids[this.props.item._id] || []).length) {
-            this.setState({ closeDialog: true })
-            this.getUnitBids()
-        } else {
-            this.setState({ closeDialog: false })
-        }
+    onBidPlaced = () => {
+        this.setState({ closeDialog: true })
+        this.getUnitBids()
     }
+
+    // componentWillReceiveProps(nextProps) {
+    //     if ((nextProps.unitsBids[this.props.item._id] || []).length > (this.props.unitsBids[this.props.item._id] || []).length) {
+    //         this.setState({ closeDialog: true })
+    //         this.getUnitBids()
+    //     } else {
+    //         this.setState({ closeDialog: false })
+    //     }
+    // }
 
     render() {
         let item = this.props.item
@@ -76,6 +81,7 @@ export class Unit extends Component {
                         icon={<BidIcon style={{ marginTop: 10 }} />}
                         adUnit={item}
                         closeDialog={!!this.state.closeDialog}
+                        onSave={this.onBidPlaced}
                     /> : null}
                 <BasicProps
                     item={item}
@@ -105,7 +111,7 @@ Unit.propTypes = {
     // items: PropTypes.object.isRequired,
     item: PropTypes.object.isRequired,
     // slots: PropTypes.array.isRequired,
-    spinner: PropTypes.bool
+    // spinner: PropTypes.bool
 };
 
 function mapStateToProps(state, props) {
@@ -116,10 +122,10 @@ function mapStateToProps(state, props) {
         // items: persist.items[ItemsTypes.AdUnit.id],
         // slots: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
         // item: state.currentItem,
-        spinner: memory.spinners[ItemsTypes.AdUnit.name],
+        // spinner: memory.spinners[ItemsTypes.AdUnit.name],
         objModel: AdUnit,
         itemType: ItemsTypes.AdUnit.id,
-        unitsBids: persist.bids.bidsByAdunit
+        // unitsBids: persist.bids.bidsByAdunit
     }
 }
 

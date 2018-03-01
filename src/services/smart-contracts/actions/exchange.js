@@ -295,6 +295,7 @@ export const signBid = ({ userAddr, bid }) => {
             //NOTE: We need to set the exchangeAddr because it is needed for the hash
             bid.exchangeAddr = cfg.addr.exchange //Need bid instance
             bid.amount = adxAmountStrToPrecision(bid.amount) // * 10 000 but safe
+            bid.opened = Date.now()
 
             let typed = bid.typed
 
@@ -316,11 +317,11 @@ export const signBid = ({ userAddr, bid }) => {
                             from: userAddr
                         }, (err, res) => {
                             if (err) {
-                                throw new Error(err)
+                                return reject(err)
                             }
 
                             if (res.error) {
-                                throw new Error(res.error)
+                                return reject(res.error)
                             }
 
                             //TODO: do it with the Bid model
