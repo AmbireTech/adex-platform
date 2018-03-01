@@ -14,10 +14,8 @@ import Translate from 'components/translate/Translate'
 import moment from 'moment'
 import { Button, IconButton } from 'react-toolbox/lib/button'
 import scActions from 'services/smart-contracts/actions'
-const { getTransactionsReceipts } = scActions
 
-const { ItemTypesNames } = ItemsConstants
-const { BID_STATES, BidStatesLabels, TxStatusLabels } = ExchangeConstants
+const { TxStatusLabels } = ExchangeConstants
 
 const SORT_PROPERTIES = [
     { value: 'sendingTime', label: '' },

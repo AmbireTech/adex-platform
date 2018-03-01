@@ -18,7 +18,7 @@ class BidFormPreview extends Component {
     let t = this.props.t
 
     // TODO: Make getter in the model
-    let timeout = constants.exchange.timeoutsByValue[bid.timeout]
+    let timeout = constants.exchange.timeoutsByValue[bid.timeout] || {}
 
     return (
       <div>
