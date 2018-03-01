@@ -5,8 +5,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import theme from './theme.css'
-import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
-import { IconButton, Button } from 'react-toolbox/lib/button'
+import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import ItemsList from './ItemsList'
 import Rows from 'components/dashboard/collection/Rows'
 import moment from 'moment'
@@ -25,10 +24,6 @@ import classnames from 'classnames'
 const { ItemsTypes } = ItemsConstants
 const { BID_STATES, BidStateNames, BidStatesLabels } = ExchangeConstants
 
-// import d3 from 'd3'
-
-// const cardinal = d3.curveCardinal.tension(0.2)
-
 const SORT_PROPERTIES = [
     { value: '_amount', label: '' },
     { value: '_target', label: '' },
@@ -36,7 +31,7 @@ const SORT_PROPERTIES = [
     { value: '_advertiser', label: '' },
 ]
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
+// const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
 
 export class SlotBids extends Component {
 
@@ -72,7 +67,7 @@ export class SlotBids extends Component {
             })
     }
 
-   
+
     componentWillMount() {
         this.getBids()
     }
@@ -156,16 +151,15 @@ export class SlotBids extends Component {
     renderTableRow(bid, index, { to, selected }) {
         let t = this.props.t
         const transactions = this.props.transactions
-        const pendingTransaction = transactions[bid.unconfirmedStateTrHash] 
+        const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
         const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
 
-        const canAccept = (bid._state === BID_STATES.DoesNotExist.id) 
+        const canAccept = (bid._state === BID_STATES.DoesNotExist.id)
         const canVerify = (bid._state === BID_STATES.Accepted.id) && (bid.clicksCount >= bid._target)
         const canGiveup = bid._state === BID_STATES.Accepted.id
         const accepted = (bid._acceptedTime || 0) * 1000
         const timeout = (bid._timeout || 0) * 1000
-        const bidExpires = accepted ? (accepted + timeout) : null   
-        const pending = pendingState !== null   
+        const bidExpires = accepted ? (accepted + timeout) : null
         const pendingGiveup = pendingState === BID_STATES.Canceled.id
         const pendingAccept = pendingState === BID_STATES.Accepted.id
         const pendingVerify = (pendingState === BID_STATES.ConfirmedPub.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
@@ -192,7 +186,7 @@ export class SlotBids extends Component {
                 >
                     {bid._adUnit ?
                         <a target='_blank' href={Item.getIpfsMetaUrl(bid._adUnit, process.env.IPFS_GATEWAY)} > {bid._adUnit} </a>
-                        : '-' }
+                        : '-'}
                 </TableCell>
                 <TableCell>
                     <div>
@@ -210,7 +204,7 @@ export class SlotBids extends Component {
                 >
                     {canAccept ?
                         <AcceptBid
-                            icon={pendingAccept ? 'hourglass_empty' : 'check' }
+                            icon={pendingAccept ? 'hourglass_empty' : 'check'}
                             adUnitId={bid._adUnitId}
                             slotId={this.props.item._id}
                             bidId={bid._id}
@@ -225,7 +219,7 @@ export class SlotBids extends Component {
                         /> : null}
                     {canVerify ?
                         <VerifyBid
-                            icon={pendingVerify ? 'hourglass_empty' : 'check_circle' }
+                            icon={pendingVerify ? 'hourglass_empty' : 'check_circle'}
                             itemId={bid._adSlotId}
                             bidId={bid._id}
                             placedBid={bid}
@@ -239,7 +233,7 @@ export class SlotBids extends Component {
                         : null}
                     {canGiveup ?
                         <GiveupBid
-                            icon={pendingGiveup ? 'hourglass_empty' : 'cancel' }
+                            icon={pendingGiveup ? 'hourglass_empty' : 'cancel'}
                             slotId={bid._adSlotId}
                             bidId={bid._id}
                             placedBid={bid}

@@ -72,14 +72,14 @@ export class Slot extends Component {
                 <BasicProps
                     item={item}
                     t={t}
-                    rightComponent={<IntegrationCode 
-                    ipfs={item.ipfs} 
-                    size={item.sizeTxtValue}
-                    t={t}
-                    slotId={item.id}
-                    slotIpfs={item.ipfs} 
-                    fallbackImgIpfs={(item.fallbackAdImg || {}).ipfs}
-                    fallbackUrl={item.fallbackAdUrl}
+                    rightComponent={<IntegrationCode
+                        ipfs={item.ipfs}
+                        size={item.sizeTxtValue}
+                        t={t}
+                        slotId={item.id}
+                        slotIpfs={item.ipfs}
+                        fallbackImgIpfs={(item.fallbackAdImg || {}).ipfs}
+                        fallbackUrl={item.fallbackAdUrl}
                     />}
                 />
                 <div>

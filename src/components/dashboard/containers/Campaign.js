@@ -136,7 +136,7 @@ Campaign.propTypes = {
 
 function mapStateToProps(state) {
     let persist = state.persist
-    let memory = state.memory
+    // let memory = state.memory
     return {
         account: persist.account,
         units: persist.items[ItemsTypes.AdUnit.id],

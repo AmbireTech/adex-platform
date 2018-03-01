@@ -10,7 +10,7 @@ import theme from './../theme.css'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import ImgForm from './../ImgForm'
 import { items as ItemsConstants } from 'adex-constants'
-import ValidImageHoc  from 'components/dashboard/forms/ValidImageHoc'
+import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
 
 const { ItemTypesNames } = ItemsConstants
 const AVATAR_MAX_WIDTH = 600

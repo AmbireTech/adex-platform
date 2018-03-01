@@ -5,15 +5,12 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import ItemsList from './ItemsList'
 import theme from './theme.css'
-import RTButtonTheme from 'styles/RTButton.css'
 import classnames from 'classnames'
-import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
+import { exchange as ExchangeConstants } from 'adex-constants'
 import Rows from 'components/dashboard/collection/Rows'
-import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
+import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import Translate from 'components/translate/Translate'
 import moment from 'moment'
-import { Button, IconButton } from 'react-toolbox/lib/button'
-import scActions from 'services/smart-contracts/actions'
 
 const { TxStatusLabels } = ExchangeConstants
 

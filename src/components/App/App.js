@@ -22,7 +22,6 @@ const onBeforeLift = () => {
 class App extends Component {
 
   render() {
-    const { location } = this.props
     return (
       <ThemeProvider theme={theme}>
         <Provider store={store}>

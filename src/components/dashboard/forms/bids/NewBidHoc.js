@@ -3,22 +3,12 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { Button, IconButton } from 'react-toolbox/lib/button'
-import theme from './theme.css'
-import Input from 'react-toolbox/lib/input'
 import { Bid } from 'adex-models'
 import Translate from 'components/translate/Translate'
-import { encrypt } from 'services/crypto/crypto'
 import scActions from 'services/smart-contracts/actions'
 import { placeBid } from 'services/adex-node/actions'
 const { signBid } = scActions
 
-// const { placeBidAuction } = scActions
-
-const EJ_MAX_SPACES = 2000000
-const SPACES_COUNT_STEP = 10000
-const MIN_BID_PRICE = 0.05
-const AUCTION_SLOT_ID = 1
 export default function NewBidHoc(Decorated) {
   class BidForm extends Component {
 

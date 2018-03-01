@@ -4,7 +4,7 @@ import thunk from 'redux-thunk'
 import { persistReducers, memoryReducers } from 'reducers'
 import history from './history'
 import { routerMiddleware } from 'react-router-redux'
-import { persistStore, persistCombineReducers, persistReducer } from 'redux-persist'
+import { persistStore, persistCombineReducers } from 'redux-persist'
 import localStorage from 'redux-persist/es/storage'
 // import session from 'redux-persist/lib/storage/session'
 

@@ -10,40 +10,36 @@ const { store } = configureStore
 let transactionsCheckTimeout = null
 
 const clearTransactionsTimeout = () => {
-    if(transactionsCheckTimeout){
+    if (transactionsCheckTimeout) {
         clearTimeout(transactionsCheckTimeout)
         transactionsCheckTimeout = null
     }
 }
 
-const shoudUpdateTransaction = () => {
-
-}
-
 const syncTransactions = () => {
-    const persist = store.getState().persist    
+    const persist = store.getState().persist
     const addr = persist.account._addr
     let transactions = persist.web3Transactions[addr] || {}
     let hashes = Object.keys(transactions).reduce((memo, key) => {
-        if(key && ((key.toString()).length === 66)){
+        if (key && ((key.toString()).length === 66)) {
             memo.push(key)
         }
         return memo
     }, [])
 
-    if(!hashes.length) {
+    if (!hashes.length) {
         return Promise.resolve()
     }
 
     return getTransactionsReceipts(hashes)
-        .then((receipts)=>{
+        .then((receipts) => {
             receipts.forEach((rec) => {
                 // console.log('rec', rec)                
-                if(rec && rec.transactionHash && rec.status){
+                if (rec && rec.transactionHash && rec.status) {
                     // TODO: Make constants for transactions status
                     let status = rec.status === '0x1' ? TX_STATUS.Success.id : TX_STATUS.Error.id
 
-                    if(transactions[rec.transactionHash].status !==  status){                    
+                    if (transactions[rec.transactionHash].status !== status) {
                         let action = actions.updateWeb3Transaction({ trId: rec.transactionHash, key: 'status', value: status, addr: addr })
                         action(store.dispatch)
                     }

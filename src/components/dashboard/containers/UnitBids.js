@@ -5,25 +5,22 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import theme from './theme.css'
-import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
-import { IconButton, Button } from 'react-toolbox/lib/button'
+import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
+import { IconButton } from 'react-toolbox/lib/button'
 import ItemsList from './ItemsList'
 import Rows from 'components/dashboard/collection/Rows'
 import Translate from 'components/translate/Translate'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import RTButtonTheme from 'styles/RTButton.css'
-// import { getUnitBids } from 'services/adex-node/actions'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import { Item } from 'adex-models'
-import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
+import { exchange as ExchangeConstants } from 'adex-constants'
 import { CancelBid, VerifyBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
-import FontIcon from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 import moment from 'moment'
 
 const TooltipIconButton = Tooltip(IconButton)
-const { ItemsTypes } = ItemsConstants
-const { BID_STATES, BidStatesLabels, TxStatusLabels } = ExchangeConstants
+const { BID_STATES, BidStatesLabels } = ExchangeConstants
 
 const SORT_PROPERTIES = [
     { value: '_state', label: '' },
@@ -38,7 +35,7 @@ const SORT_PROPERTIES = [
 
 export class UnitBids extends Component {
 
-    shouldComponentUpdate(nextProps, nextState){
+    shouldComponentUpdate(nextProps, nextState) {
         // TODO: investigate why component recieves props without change in the parent components and stre state props
         return JSON.stringify(this.props) !== JSON.stringify(nextProps)
     }
@@ -60,21 +57,20 @@ export class UnitBids extends Component {
                 <TableCell> {t('ACTIONS')} </TableCell>
             </TableHead>
         )
-    }   
+    }
 
     renderTableRow(bid, index, { to, selected }) {
         const t = this.props.t
         const transactions = this.props.transactions
-        const pendingTransaction = transactions[bid.unconfirmedStateTrHash] 
+        const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
         const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
-        
+
         const canCancel = (bid._state === BID_STATES.DoesNotExist.id)
         const canVerify = (bid._state === BID_STATES.Accepted.id) && (bid.clicksCount >= bid._target)
         const accepted = (bid._acceptedTime || 0) * 1000
         const timeout = (bid._timeout || 0) * 1000
         const bidExpires = accepted ? (accepted + timeout) : null
-        const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidExpires < Date.now()) 
-        const pending = pendingState !== null 
+        const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidExpires < Date.now())
         const pendingCancel = pendingState === BID_STATES.Canceled.id
         const pendingRefund = pendingState === BID_STATES.Expired.id
         const pendingVerify = (pendingState === BID_STATES.ConfirmedAdv.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
@@ -128,9 +124,9 @@ export class UnitBids extends Component {
                             onSave={this.onSave}
                             disabled={pendingCancel}
                         /> : null}
-                    {canCancel && pendingAcceptByPub ? 
+                    {canCancel && pendingAcceptByPub ?
                         <TooltipIconButton
-                            icon='warning'   
+                            icon='warning'
                             tooltip={t('WARNING_PENDING_ACCEPT_BY_PUB')}
                             className={RTButtonTheme.warning}
                         /> : null
@@ -146,11 +142,11 @@ export class UnitBids extends Component {
                             primary
                             className={theme.actionBtn}
                             onSave={this.onSave}
-                            disabled={pendingVerify}                            
+                            disabled={pendingVerify}
                         /> : null}
                     {canRefund ?
                         <RefundBid
-                        icon={pendingRefund ? 'hourglass_empty' : 'cancel'}
+                            icon={pendingRefund ? 'hourglass_empty' : 'cancel'}
                             adUnitId={bid._adUnitId}
                             bidId={bid._id}
                             placedBid={bid}
@@ -159,7 +155,7 @@ export class UnitBids extends Component {
                             accent
                             className={theme.actionBtn}
                             onSave={this.onSave}
-                            disabled={pendingRefund} 
+                            disabled={pendingRefund}
                         /> : null}
                 </TableCell>
             </TableRow >
@@ -183,17 +179,15 @@ export class UnitBids extends Component {
             (bid._advertiser || '') +
             (bid._timeout || '') +
             (bid._target || '')
-        }
+    }
 
     render() {
-       
-        let item = this.props.item
-        let t = this.props.t
+
         let bids = this.props.bids || []
 
         return (
             <div>
-                <ItemsList items={bids} listMode='rows' delete renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch}/>
+                <ItemsList items={bids} listMode='rows' delete renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
             </div>
         )
     }

@@ -48,9 +48,9 @@ class Dashboard extends React.Component {
             drawerPinned: false,
             sidebarPinned: false
         }
-    }  
+    }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         checkTransactions.stop()
     }
 
@@ -60,7 +60,7 @@ class Dashboard extends React.Component {
     }
 
     componentWillUpdate(nextProps) {
-        if(nextProps.match.params.side !== this.props.match.params.side){
+        if (nextProps.match.params.side !== this.props.match.params.side) {
             this.props.actions.updateNav('side', nextProps.match.params.side)
         }
     }
