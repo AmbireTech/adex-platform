@@ -11,11 +11,14 @@ import ChannelIcon from 'components/common/icons/ChannelIcon'
 import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from 'components/dashboard/forms/NewItems'
 import FontIcon from 'react-toolbox/lib/font_icon'
+import { Button, IconButton } from 'react-toolbox/lib/button'
 import classnames from 'classnames'
 import { exchange as ExchangeConstants } from 'adex-constants'
+import packageJson from './../../../../package.json'
 const { TX_STATUS } = ExchangeConstants
 
 const RRListItem = withReactRouterLink(ListItem)
+const RRIconButton = withReactRouterLink(IconButton)
 
 class SideNav extends Component {
 
@@ -41,24 +44,24 @@ class SideNav extends Component {
         let transactions = this.props.transactions
         const pendingTrsCount = Object.keys(transactions).reduce((memo, key) => {
 
-                let itm = {...transactions[key]}
-                if(itm && itm.status === TX_STATUS.Pending.id) {
-                    memo += 1
-                }
+            let itm = { ...transactions[key] }
+            if (itm && itm.status === TX_STATUS.Pending.id) {
+                memo += 1
+            }
 
             return memo
         }, 0)
 
         let pendingTransactionsIcon = 'swap_horiz'
-        if((pendingTrsCount >  0) && (pendingTrsCount <= 9)) {
+        if ((pendingTrsCount > 0) && (pendingTrsCount <= 9)) {
             pendingTransactionsIcon = 'filter_' + pendingTrsCount
-        }else if(pendingTrsCount >  9){
+        } else if (pendingTrsCount > 9) {
             pendingTransactionsIcon = 'filter_9_plus'
         }
 
         return (
-            <div className="Navigation">
-                <List kor={location} >
+            <div className={theme.navigation}>
+                <List >
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side }}
                         selectable={true}
@@ -111,9 +114,30 @@ class SideNav extends Component {
                         caption={t('TRANSACTIONS')}
                         theme={theme}
                         className={classnames({ [theme.active]: location === 'transactions' })}
-                        leftIcon={<FontIcon value={pendingTransactionsIcon} style={{color: pendingTrsCount > 0 ? '#FF5722' : ''}}/>}
+                        leftIcon={<FontIcon value={pendingTransactionsIcon} style={{ color: pendingTrsCount > 0 ? '#FF5722' : '' }} />}
                     />
                 </List>
+                <div className={theme.listBottom} >
+                    <List>
+                        <RRListItem
+                            to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
+                            selectable={true}
+                            caption={t('ACCOUNT')}
+                            theme={theme}
+                            leftIcon='account_box'
+                            className={classnames({ [theme.active]: location === 'account' })}
+                        />
+                    </List>
+                </div>
+
+                <div className={theme.version}>
+                    <div>
+                        <small> &copy; {(new Date()).getFullYear()} AdEx Network OÜ</small>
+                    </div>
+                    <div>
+                        <small> v.{packageJson.version} </small>
+                    </div>
+                </div>
             </div >
         )
     }
