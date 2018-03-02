@@ -41,6 +41,10 @@ export default function NewTransactionHoc(Decorated) {
                 this.props.actions.addWeb3Transaction({ trans: trData, addr: this.props.account._addr })
             }
         }
+        
+        resetTransaction = () => {
+            this.props.actions.resetNewTransaction({ trId: this.props.trId })
+        }
 
         save = () => {
             const t = this.props.t
@@ -63,7 +67,13 @@ export default function NewTransactionHoc(Decorated) {
             let props = this.props
 
             return (
-                <Decorated {...props} transaction={transaction} save={this.save} handleChange={this.handleChange} />
+                <Decorated 
+                    {...props} 
+                    transaction={transaction} 
+                    save={this.save} 
+                    handleChange={this.handleChange} 
+                    resetTransaction={this.resetTransaction}
+                />
             )
         }
     }
