@@ -57,7 +57,8 @@ class NewSlotFormImgs extends Component {
                                 <ImgForm
                                     label={t('SLOT_AVATAR_IMG_LABEL')}
                                     imgSrc={item.img.tempUrl || ''}
-                                    onChange={this.props.validateImg.bind(this, 'img', AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT, 'ERR_IMG_SIZE_MAX', false, false)}
+                                    onChange={this.props.validateImg.bind(this, 
+                                        { propsName: 'img', widthTarget: AVATAR_MAX_WIDTH, heightTarget: AVATAR_MAX_HEIGHT, msg: 'ERR_IMG_SIZE_MAX', exact: false, required: false})}
                                     additionalInfo={t('SLOT_AVATAR_IMG_INFO')}
                                     errMsg={errImg ? errImg.errMsg : ''}
                                 />
@@ -66,7 +67,8 @@ class NewSlotFormImgs extends Component {
                                 <ImgForm
                                     label={t('SLOT_FALLBACK_IMG_LABEL')}
                                     imgSrc={item.fallbackAdImg.tempUrl || ''}
-                                    onChange={this.props.validateImg.bind(this, 'fallbackAdImg', AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'ERR_IMG_SIZE_EXACT', true, false)}
+                                    onChange={this.props.validateImg.bind(this, 
+                                        { propsName: 'fallbackAdImg', widthTarget: AdSizesByValue[item.size].width, heightTarget:  AdSizesByValue[item.size].height, msg: 'ERR_IMG_SIZE_EXACT', exact: true, required: false})}
                                     additionalInfo={t('SLOT_FALLBACK_IMG_INFO', { args: [AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'px'] })}
                                     errMsg={errFallbackAdImg ? errFallbackAdImg.errMsg : ''}
                                 />

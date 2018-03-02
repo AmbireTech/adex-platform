@@ -7,11 +7,13 @@ import Chip from 'react-toolbox/lib/chip'
 import { IconButton } from 'react-toolbox/lib/button'
 import theme from './theme.css'
 import FontIcon from 'react-toolbox/lib/font_icon'
+import ImgDialog from './ImgDialog'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import Avatar from 'react-toolbox/lib/avatar'
 import Input from 'react-toolbox/lib/input'
 import { Models } from 'adex-models'
 import FloatingProgressButton from 'components/common/floating_btn_progress/FloatingProgressButton'
+import { Item as ItemModel } from 'adex-models'
 import classnames from 'classnames'
 import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
@@ -130,6 +132,7 @@ export default function ItemHoc(Decorated) {
             let item = new this.state.itemModel(this.state.item) || {}
             let t = this.props.t
             let canEdit = ItemTypeByTypeId[item.type] === 'collection'
+            // let imgSrc =  ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)
 
             return (
                 <div>
@@ -141,6 +144,13 @@ export default function ItemHoc(Decorated) {
                     <div className={classnames(theme.heading, theme[ItemTypesNames[item._type || item._meta.type]])}>
                         <div className={theme.headingLeft}>
                             <Avatar title={item.fullName} cover onClick={this.handleToggle.bind(this)} />
+                             {/* <ImgDialog 
+                                imgSrc={imgSrc} 
+                                handleToggle={this.handleToggle} 
+                                active={this.state.editImg} 
+                                onChangeReady={this.handleChange}
+                                validateId={item._id}
+                              /> */}
                             {canEdit && this.state.activeFields.fullName ?
                                 <span>
                                     <span>

@@ -31,7 +31,8 @@ class ImgForm extends Component {
 
     that.setState({ imgSrc: objectUrl, imgName: file.name })
     // TODO: Maybe get width and height here instead on ing validation hoc
-    this.props.onChange({ tempUrl: objectUrl })
+    let res = { tempUrl: objectUrl }    
+    this.props.onChange(res)
   }
 
   onRemove = (e) => {
