@@ -10,8 +10,8 @@ import classnames from 'classnames'
 
 export const PropRow = ({ left, right, className }) =>
     <Row >
-        <Col xs={12} lg={4} className={classnames(theme.textRight)}>{left}:</Col>
-        <Col xs={12} lg={8} className={classnames(theme.textLeft, theme.breakLong)}>{right}</Col>
+        <Col xs={12} lg={4} className={classnames(theme.textRight, className)}>{left}:</Col>
+        <Col xs={12} lg={8} className={classnames(theme.textLeft, theme.breakLong, className)}>{right}</Col>
     </Row>
 
 export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
@@ -26,7 +26,7 @@ export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
         <PropRow left={t('UNIT_IPFS')}
             right={<a target='_blank' href={process.env.IPFS_GATEWAY + unit._ipfs} > {unit._ipfs} </a>}
         />
-        <PropRow left={t('PUBLISHER')}
+        <PropRow left={t('ADVERTISER')}
             right={<a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + unitMeta.owner} > {unitMeta.owner} </a>}
         />
         <PropRow left={t('UNIT_TARGETS')}
@@ -43,7 +43,7 @@ export const Report = ({ report = {}, t }) =>
         <PropRow left={t('BID_REPORT_ALL_CLICKS')} right={report.report.allClicks} />
     </div>
 
-export const BidInfo = ({ bid, slot, unit, t, report, ...rest }) => {
+export const BidInfo = ({ bid, slot, unit, t, report, errMsg, errArgs, ...rest }) => {
 
     const accepted = (bid._acceptedTime || 0) * 1000
     const timeout = (bid._timeout || 0) * 1000
@@ -52,7 +52,8 @@ export const BidInfo = ({ bid, slot, unit, t, report, ...rest }) => {
     return (
         <div className={theme.itemPropTop}>
             <Grid fluid style={{ padding: 0 }}>
-                <PropRow left={t('BID_ID')} right={bid._id} />
+                {errMsg ? <PropRow className={theme.err} left={t('ERROR')} right={t(errMsg, {args: errArgs})} /> : null }
+                <PropRow left={t('BID_ID')} right={bid._id} err />
                 <PropRow left={t('BID_TARGET')} right={bid._target} />
                 <PropRow left={t('BID_AMOUNT')} right={adxToFloatView(bid._amount) + ' ADX'} />
                 <PropRow left={t('BID_TIMEOUT')} right={moment.duration(timeout, 'ms').humanize()} />
@@ -66,7 +67,7 @@ export const BidInfo = ({ bid, slot, unit, t, report, ...rest }) => {
                     <Report report={report} t={t} />
                     : null}
                 {unit ? <AdUnit unit={unit} unitMeta={unit._meta} t={t} /> : null}
-                
+                            
             </Grid>
         </div >
     )

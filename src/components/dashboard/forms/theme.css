@@ -113,6 +113,9 @@
     color: var(--color-adex-danger-primary)
 }
 
+.err {
+    color: var(--color-adex-danger-primary)
+}
 .grid {
     padding: 0 !important; /* suka */
 }

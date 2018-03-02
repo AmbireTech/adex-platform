@@ -70,6 +70,17 @@ const getExchangeBalances = (exchBal = {}) => {
     }
 }
 
+
+export const getAccountExchangeAmount = (_addr) => {
+       return getWeb3
+            .then(({ cfg, exchange, token, web3 }) => {
+                return exchange.methods.getBalance(_addr).call()
+            })
+            .then((exchBal) => {
+                return getExchangeBalances(exchBal)
+            })
+}
+
 export const getAccountStats = ({ _addr }) => {
     return new Promise((resolve, reject) => {
         getWeb3.then(({ cfg, exchange, token, web3 }) => {

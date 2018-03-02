@@ -62,10 +62,10 @@ const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fal
 
 export class Slot extends Component {
     render() {
-        let item = this.props.item
+        let item = this.props.item || {}
         let t = this.props.t
 
-        if (!item) return (<h1>Slot '404'</h1>)
+        if (!item._id) return (<h1>Slot '404'</h1>)
 
         return (
             <div>

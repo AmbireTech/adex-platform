@@ -10,11 +10,21 @@ import NewTransactionHoc from './TransactionHoc'
 import { getItem } from 'services/adex-node/actions'
 import { BidInfo } from './BidsCommon'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
+import scActions from 'services/smart-contracts/actions'
+
+const { getAccountExchangeAmount } = scActions
 
 class AcceptBid extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            errMsg: null,
+            errArgs: []
+        }
+    } 
+
     componentWillMount() {
         if (!this.props.transaction.unit) {
-
             this.props.validate('unit', { isValid: false, err: { msg: 'ERR_UNIT_INFO_NOT_READY' }, dirty: false })
             this.props.actions.updateSpinner(this.props.trId, true)
 
@@ -23,15 +33,34 @@ class AcceptBid extends Component {
                     this.props.handleChange('unit', unit)
                     this.props.handleChange('placedBid', this.props.placedBid)
                     this.props.handleChange('slot', this.props.slot)
-                    this.props.handleChange('account', this.props.acc)
+                    this.props.handleChange('account', this.props.acc)         
+
+                    return getAccountExchangeAmount(this.props.placedBid._advertiser)
+                })
+                .then((advertiserAdxOnExchange) => {
                     this.props.actions.updateSpinner(this.props.trId, false)
-                    this.props.validate('unit', { isValid: true, dirty: false })
+                    let available = parseInt(advertiserAdxOnExchange.availabl, 10)
+                    let bid = parseInt(this.props.placedBid._amount, 10)
+
+                    // TODO: new err msg for 0 bid; validate place bid > 0
+                    if((available >=  bid) &&  (bid > 0)) {                        
+                        this.props.validate('unit', { isValid: true, dirty: false })
+                    } else {
+                        // TODO: check why set state after unmounth
+                        this.setState({errMsg: 'ERR_NO_ADV_AMOUNT_ON_EXCHANGE'})
+                    } 
                 })
                 .catch((err) => {
+                    this.props.validate('unit', { isValid: true, dirty: false })
+                    this.setState({errMsg: 'ERR_TRANSACTION', errArgs: [err]})
                     this.props.actions
                         .addToast({ type: 'warning', action: 'X', label: this.props.t('ERR_GETTING_BID_INFO', { args: [err] }), timeout: 5000 })
                 })
         }
+    }
+
+    componentWillUnmount() {
+        this.props.resetTransaction()
     }
 
     render() {
@@ -46,7 +75,13 @@ class AcceptBid extends Component {
                     <ProgressBar className={theme.progressCircleCenter} type='circular' mode='indeterminate' multicolor />
                     :
                     <Grid fluid>
-                        <BidInfo bid={bid} unit={unit} t={t} />
+                        <BidInfo 
+                            bid={bid} 
+                            unit={unit} 
+                            t={t} 
+                            errMsg={this.state.errMsg}
+                            errArgs={this.state.errArgs}
+                        />
                     </Grid>
                 }
             </div>
