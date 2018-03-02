@@ -21,47 +21,40 @@ class AcceptBid extends Component {
             errMsg: null,
             errArgs: []
         }
-    } 
-
-    componentWillMount() {
-        if (!this.props.transaction.unit) {
-            this.props.validate('unit', { isValid: false, err: { msg: 'ERR_UNIT_INFO_NOT_READY' }, dirty: false })
-            this.props.actions.updateSpinner(this.props.trId, true)
-
-            getItem({ id: this.props.adUnitId, authSig: this.props.account._authSig })
-                .then((unit) => {
-                    this.props.handleChange('unit', unit)
-                    this.props.handleChange('placedBid', this.props.placedBid)
-                    this.props.handleChange('slot', this.props.slot)
-                    this.props.handleChange('account', this.props.acc)         
-
-                    return getAccountBalances(this.props.placedBid._advertiser)
-                })
-                .then((balances) => {
-                    this.props.actions.updateSpinner(this.props.trId, false)
-                    let available = parseInt(balances.available, 10)
-                    let bid = parseInt(this.props.placedBid._amount, 10)
-
-                    // TODO: new err msg for 0 bid; validate place bid > 0
-                    if((available >=  bid) &&  (bid > 0)) {                        
-                        this.props.validate('unit', { isValid: true, dirty: false })
-                    } else {
-                        // TODO: check why set state after unmounth
-                        this.setState({errMsg: 'ERR_NO_ADV_AMOUNT_ON_EXCHANGE'})
-                    } 
-                })
-                .catch((err) => {
-                    this.props.actions.updateSpinner(this.props.trId, false)
-                    this.props.validate('unit', { isValid: true, dirty: false })
-                    this.setState({errMsg: 'ERR_TRANSACTION', errArgs: [err]})
-                    this.props.actions
-                        .addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_GETTING_BID_INFO', { args: [err] }), timeout: 5000 })
-                })
-        }
     }
 
-    componentWillUnmount() {
-        this.props.resetTransaction()
+    componentWillMount() {
+        this.props.validate('unit', { isValid: false, err: { msg: 'ERR_UNIT_INFO_NOT_READY' }, dirty: false })
+        this.props.actions.updateSpinner(this.props.trId, true)
+
+        getAccountBalances(this.props.placedBid._advertiser)
+            .then((balances) => {
+
+                let available = parseInt(balances.available, 10)
+                let bid = parseInt(this.props.placedBid._amount, 10)
+
+                // TODO: new err msg for 0 bid; validate place bid > 0
+                if ((available < bid) || (bid <= 0)) {
+                    this.setState({ errMsg: 'ERR_NO_ADV_AMOUNT_ON_EXCHANGE' })
+                }
+
+                return getItem({ id: this.props.adUnitId, authSig: this.props.account._authSig })
+            })
+            .then((unit) => {
+                this.props.handleChange('unit', unit)
+                this.props.handleChange('placedBid', this.props.placedBid)
+                this.props.handleChange('slot', this.props.slot)
+                this.props.handleChange('account', this.props.acc)
+                this.props.validate('unit', { isValid: true, dirty: false })
+                this.props.actions.updateSpinner(this.props.trId, false)
+            })
+            .catch((err) => {
+                this.props.actions.updateSpinner(this.props.trId, false)
+                this.props.validate('unit', { isValid: true, dirty: false })
+                this.setState({ errMsg: 'ERR_TRANSACTION', errArgs: [err] })
+                this.props.actions
+                    .addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_GETTING_BID_INFO', { args: [err] }), timeout: 5000 })
+            })
     }
 
     render() {
@@ -76,10 +69,10 @@ class AcceptBid extends Component {
                     <ProgressBar className={theme.progressCircleCenter} type='circular' mode='indeterminate' multicolor />
                     :
                     <Grid fluid>
-                        <BidInfo 
-                            bid={bid} 
-                            unit={unit} 
-                            t={t} 
+                        <BidInfo
+                            bid={bid}
+                            unit={unit}
+                            t={t}
                             errMsg={this.state.errMsg}
                             errArgs={this.state.errArgs}
                         />

@@ -58,7 +58,7 @@ export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
                                 {/* TODO: temp use input to use the styles */}
                                 <Input
                                     type='text'
-                                    value={AdTypesByValue[item.adType].label}
+                                    value={(AdTypesByValue[item.adType] || {}).label}
                                     label={t('adType', { isProp: true })}
                                     disabled
                                 />
@@ -66,7 +66,7 @@ export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
                             <div>
                                 <Input
                                     type='text'
-                                    value={AdSizesByValue[item.size].label}
+                                    value={(AdSizesByValue[item.size] || {}).label}
                                     label={t('size', { isProp: true })}
                                     disabled
                                 />
