@@ -79,8 +79,8 @@ class NewSlotForm extends Component {
                                     value={item.fallbackAdUrl}
                                     onChange={this.props.handleChange.bind(this, 'fallbackAdUrl')}
                                     maxLength={1024}
-                                    onBlur={this.props.validate.bind(this, 'fallbackAdUrl', { isValid: validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true })}
-                                    onFocus={this.props.validate.bind(this, 'fallbackAdUrl', { isValid: validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
+                                    onBlur={this.props.validate.bind(this, 'fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true })}
+                                    onFocus={this.props.validate.bind(this, 'fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
                                     error={errFallbackAdUrl && !!errFallbackAdUrl.dirty ? <span> {errFallbackAdUrl.errMsg} </span> : null}
                                 >
                                     {!errFallbackAdUrl || !errFallbackAdUrl.dirty ?
