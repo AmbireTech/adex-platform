@@ -5,7 +5,7 @@
   "dependencies": {
     "adex-constants": "^1.0.7",
     "adex-models": "^1.0.6",
-    "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#abf0775e089ef4ae5da66820d7651e92be34b6c9",
+    "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#15b083f8cb6c75adb73d9e2bc77d3bf7b8b7d81d",
     "autoprefixer": "7.1.2",
     "babel-core": "6.25.0",
     "babel-eslint": "7.2.3",
