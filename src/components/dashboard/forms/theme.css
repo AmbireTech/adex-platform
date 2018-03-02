@@ -187,3 +187,7 @@
 .agesGrid {
     padding: 0;
 }
+
+.warning {
+    color: var(--color-adex-alt-primary-header);
+}
