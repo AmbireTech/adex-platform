@@ -10,6 +10,7 @@ import NewTransactionHoc from './TransactionHoc'
 import { getItem } from 'services/adex-node/actions'
 import { BidInfo } from './BidsCommon'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
+import { adxToFloatView } from 'services/smart-contracts/utils'
 import scActions from 'services/smart-contracts/actions'
 
 const { getAccountExchangeAmount } = scActions
@@ -39,8 +40,8 @@ class AcceptBid extends Component {
                 })
                 .then((advertiserAdxOnExchange) => {
                     this.props.actions.updateSpinner(this.props.trId, false)
-                    let available = parseInt(advertiserAdxOnExchange.availabl, 10)
-                    let bid = parseInt(this.props.placedBid._amount, 10)
+                    let available = adxToFloatView(advertiserAdxOnExchange.available)
+                    let bid = adxToFloatView(this.props.placedBid._amount)
 
                     // TODO: new err msg for 0 bid; validate place bid > 0
                     if((available >=  bid) &&  (bid > 0)) {                        

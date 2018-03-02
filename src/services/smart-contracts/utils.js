@@ -69,7 +69,7 @@ export const adxAmountStrToPrecision = (amountStr) => {
 }
 
 export const adxAmountStrToHex = (amountStr) => {
-    let amount = adxAmountStrToPrecision(amountStr)
+    let amount = !!amountStr && adxAmountStrToPrecision(amountStr)
 
     return toHex(amount)
 }
