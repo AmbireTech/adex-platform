@@ -53,7 +53,7 @@ export class Unit extends Component {
     }
 
     render() {
-        
+
         let item = this.props.item
         let t = this.props.t
 
@@ -88,6 +88,12 @@ export class Unit extends Component {
                     >
                         <Tab label={t('BIDS')}>
                             <UnitBids item={item} bids={this.state.bids} getUnitBids={this.getUnitBids} />
+                        </Tab>
+                        <Tab label={t('BIDS_STATISTICS')}>
+                            <div>
+                                {t('COMING_SOON')}
+                                {/* {this.renderNonOpenedBidsChart(slotBids)} */}
+                            </div>
                         </Tab>
                     </Tabs>
                 </div>
