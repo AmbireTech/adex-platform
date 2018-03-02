@@ -10,10 +10,9 @@ import NewTransactionHoc from './TransactionHoc'
 import { getItem } from 'services/adex-node/actions'
 import { BidInfo } from './BidsCommon'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
-import { adxToFloatView } from 'services/smart-contracts/utils'
 import scActions from 'services/smart-contracts/actions'
 
-const { getAccountExchangeAmount } = scActions
+const { getAccountBalances } = scActions
 
 class AcceptBid extends Component {
     constructor(props) {
@@ -36,12 +35,12 @@ class AcceptBid extends Component {
                     this.props.handleChange('slot', this.props.slot)
                     this.props.handleChange('account', this.props.acc)         
 
-                    return getAccountExchangeAmount(this.props.placedBid._advertiser)
+                    return getAccountBalances(this.props.placedBid._advertiser)
                 })
-                .then((advertiserAdxOnExchange) => {
+                .then((balances) => {
                     this.props.actions.updateSpinner(this.props.trId, false)
-                    let available = adxToFloatView(advertiserAdxOnExchange.available)
-                    let bid = adxToFloatView(this.props.placedBid._amount)
+                    let available = parseInt(balances.available, 10)
+                    let bid = parseInt(this.props.placedBid._amount, 10)
 
                     // TODO: new err msg for 0 bid; validate place bid > 0
                     if((available >=  bid) &&  (bid > 0)) {                        
@@ -52,10 +51,11 @@ class AcceptBid extends Component {
                     } 
                 })
                 .catch((err) => {
+                    this.props.actions.updateSpinner(this.props.trId, false)
                     this.props.validate('unit', { isValid: true, dirty: false })
                     this.setState({errMsg: 'ERR_TRANSACTION', errArgs: [err]})
                     this.props.actions
-                        .addToast({ type: 'warning', action: 'X', label: this.props.t('ERR_GETTING_BID_INFO', { args: [err] }), timeout: 5000 })
+                        .addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_GETTING_BID_INFO', { args: [err] }), timeout: 5000 })
                 })
         }
     }
