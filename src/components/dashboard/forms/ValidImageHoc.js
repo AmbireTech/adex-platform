@@ -12,7 +12,7 @@ export default function ValidImageHoc(Decorated) {
         * Now NewItemHoc mus be add before this
         * Add here initial validation
         * */
-        validateImg = (propsName, widthTarget, heightTarget, msg, exact, required, img) => {
+        validateImg = ({propsName, widthTarget, heightTarget, msg, exact, required, onChange} = {}, img) => {
             if (!required && !img.tempUrl) {
                 this.props.validate(propsName, { isValid: true, err: { msg: msg, args: [] }, dirty: true })
                 this.props.handleChange(propsName, img)
@@ -42,7 +42,14 @@ export default function ValidImageHoc(Decorated) {
                 that.props.validate(propsName, { isValid: isValid, err: { msg: msg, args: masgArgs }, dirty: true })
                 img.width = width
                 img.height = height
-                that.props.handleChange(propsName, img)
+                // TODO: temp fix make this HOC independent
+                if(typeof that.props.handleChange === 'function') {
+                    that.props.handleChange(propsName, img)
+                }else if(typeof that.handleChange === 'function') {
+                    that.handleChange(propsName, img)
+                }else if (typeof onChange === 'function') {
+                    onChange(propsName, img)
+                }                
             }
         }
 

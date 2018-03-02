@@ -99,7 +99,8 @@ class NewItemForm extends Component {
                                 <ImgForm
                                     label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}
                                     imgSrc={item.img.tempUrl || ''}
-                                    onChange={this.props.validateImg.bind(this, 'img', AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT, 'ERR_IMG_SIZE_MAX', false, false)}
+                                    onChange={this.props.validateImg.bind(this, 
+                                       { propsName: 'img', widthTarget: AVATAR_MAX_WIDTH, heightTarget: AVATAR_MAX_HEIGHT, msg: 'ERR_IMG_SIZE_MAX', exact: false, required: false})}
                                     additionalInfo={t(this.props.imgAdditionalInfo)}
                                     errMsg={errImg ? errImg.errMsg : ''}
                                 />
