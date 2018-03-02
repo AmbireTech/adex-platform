@@ -38,8 +38,6 @@ export class SlotBids extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            bidding: false,
-            activeSlot: {},
             tabIndex: 0,
             bids: [],
             openBids: [],

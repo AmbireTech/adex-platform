@@ -42,9 +42,11 @@
 
 .listBottom {
   position: absolute;
-  bottom: 60px;
+  bottom: 75px;
   left: 0;
   right: 0;
 }
-
+.adxLink {
+  color: var(--color-adex-divider-darker);
+}
  

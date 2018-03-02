@@ -125,6 +125,15 @@ class SideNav extends Component {
                         <small> &copy; {(new Date()).getFullYear()} AdEx Network OÜ</small>
                     </div>
                     <div>
+                        <small>
+                            <a className={theme.adxLink} target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_TOKEN_ADDR} > AdEx (ADX) Token </a>
+                        </small>
+                        <small> / </small>
+                        <small>
+                            <a className={theme.adxLink} target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_EXCHANGE_ADDR} > AdEx Exchange </a>
+                        </small>
+                    </div>
+                    <div>
                         <small> v.{packageJson.version}-beta </small>
                     </div>
                 </div>
