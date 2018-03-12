@@ -134,7 +134,7 @@ export default function ItemHoc(Decorated) {
             let item = new this.state.itemModel(this.state.item) || {}
             let t = this.props.t
             let canEdit = ItemTypeByTypeId[item.type] === 'collection'
-            let imgSrc = ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)
+            let imgSrc = item.meta.img.tempUrl || ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)
 
             return (
                 <div>
@@ -159,6 +159,7 @@ export default function ItemHoc(Decorated) {
                                 additionalInfo={t(this.props.updateImgInfoLabel)}
                                 exact={this.props.updateImgExact}
                                 errMsg={this.props.updateImgErrMsg}
+                                imgPropName='img'
                             />
                             {canEdit && this.state.activeFields.fullName ?
                                 <span>

@@ -45,13 +45,13 @@ export class ImgDialog extends Component {
 
     getActions = () => [
         { label: "Cancel", onClick: this.props.handleToggle, disabled: false },
-        { label: "Ok", onClick: this.onOk, disabled: !!(this.props.invalidFields || {})['img'] }
+        { label: "Ok", onClick: this.onOk, disabled: !!(this.props.invalidFields || {})[this.props.imgPropName] }
     ]
 
     render() {
         let t = () => { }
         let validations = this.props.invalidFields || {}
-        let errImg = validations['img']
+        let errImg = validations[this.props.imgPropName]
         return (
             <span>
                 <Dialog
@@ -78,7 +78,7 @@ export class ImgDialog extends Component {
                                     label={t(this.props.imgLabel)}
                                     imgSrc={this.props.imgSrc || ''}
                                     onChange={this.props.validateImg.bind(this,
-                                        { propsName: 'img', widthTarget: this.props.width || AVATAR_MAX_WIDTH, heightTarget: this.props.height || AVATAR_MAX_HEIGHT, msg: this.props.errMsg, exact: this.props.exact, required: this.props.required, onChange: this.handleChange })}
+                                        { propsName: this.props.imgPropName, widthTarget: this.props.width || AVATAR_MAX_WIDTH, heightTarget: this.props.height || AVATAR_MAX_HEIGHT, msg: this.props.errMsg, exact: this.props.exact, required: this.props.required, onChange: this.handleChange })}
                                     additionalInfo={t(this.props.additionalInfo)}
                                     errMsg={errImg ? errImg.errMsg : ''}
                                 />

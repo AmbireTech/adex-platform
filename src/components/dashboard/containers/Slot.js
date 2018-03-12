@@ -10,8 +10,10 @@ import SlotBids from './SlotBids'
 import { items as ItemsConstants } from 'adex-constants'
 import { BasicProps } from './ItemCommon'
 import Helper from 'helpers/miscHelpers'
+import ImgDialog from './ImgDialog'
+import { Item as ItemModel } from 'adex-models'
 
-const { ItemsTypes } = ItemsConstants
+const { ItemsTypes, AdSizesByValue } = ItemsConstants
 const ADVIEW_URL = process.env.ADVIEW_HOST || 'https://view.adex.network'
 
 const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fallbackUrl }) => {
@@ -61,18 +63,33 @@ const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fal
 }
 
 export class Slot extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            editFallbackImg: false
+        }
+    }
+
+    handleFallbackImgUpdateToggle = () => {
+        let active = this.state.editFallbackImg
+        this.setState({ editFallbackImg: !active })
+    }
+
     render() {
         let item = this.props.item || {}
         let t = this.props.t
 
         if (!item._id) return (<h1>Slot '404'</h1>)
 
+        let imgSrc = item.fallbackAdImg.tempUrl || ItemModel.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY)
         return (
             <div>
                 <BasicProps
                     item={item}
                     t={t}
                     toggleImgEdit={this.props.toggleImgEdit}
+                    toggleFallbackImgEdit={this.handleFallbackImgUpdateToggle}
                     rightComponent={<IntegrationCode
                         ipfs={item.ipfs}
                         size={item.sizeTxtValue}
@@ -80,8 +97,23 @@ export class Slot extends Component {
                         slotId={item.id}
                         slotIpfs={item.ipfs}
                         fallbackImgIpfs={(item.fallbackAdImg || {}).ipfs}
-                        fallbackUrl={item.fallbackAdUrl}                        
+                        fallbackUrl={item.fallbackAdUrl}
                     />}
+                />
+                <ImgDialog
+                    imgSrc={imgSrc}
+                    handleToggle={this.handleFallbackImgUpdateToggle}
+                    active={this.state.editFallbackImg}
+                    onChangeReady={this.props.handleChange}
+                    validateId={item._id}
+                    width={AdSizesByValue[item.size].width}
+                    height={AdSizesByValue[item.size].height}
+                    title={t('SLOT_FALLBACK_IMG_LABEL')}
+                    additionalInfo={t('SLOT_FALLBACK_IMG_INFO', { args: [AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'px'] })}
+                    exact={true}
+                    required={true}
+                    errMsg={t('ERR_IMG_SIZE_EXACT')}
+                    imgPropName='fallbackAdImg'
                 />
                 <div>
                     <SlotBids {...this.props} item={item} t={t} />
