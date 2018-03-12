@@ -142,7 +142,12 @@ function mapStateToProps(state) {
         units: persist.items[ItemsTypes.AdUnit.id],
         rowsView: !!persist.ui[VIEW_MODE],
         objModel: CampaignModel,
-        itemType: ItemsTypes.Campaign.id
+        itemType: ItemsTypes.Campaign.id,
+        updateImgInfoLabel: 'CAMPAIGN_IMG_ADDITIONAL_INFO',
+        updateImgLabel: 'CAMPAIGN_LOGO',
+        updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
+        updateImgExact: false,
+        canEditImg: true
     }
 }
 

@@ -15,6 +15,7 @@ export default function ValidImageHoc(Decorated) {
         validateImg = ({propsName, widthTarget, heightTarget, msg, exact, required, onChange} = {}, img) => {
             if (!required && !img.tempUrl) {
                 this.props.validate(propsName, { isValid: true, err: { msg: msg, args: [] }, dirty: true })
+                // TODO: fix this
                 this.props.handleChange(propsName, img)
                 return
             }

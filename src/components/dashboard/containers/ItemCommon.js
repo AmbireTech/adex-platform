@@ -22,7 +22,7 @@ export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
                                     aspectRatio='wide'
                                     theme={theme}
                                 >
-                                    <Img src={Item.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)} alt={item.fullName} />
+                                    <Img src={Item.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)} alt={item.fullName} onClick={rest.toggleImgEdit} />
                                 </CardMedia>
                                 <CardTitle theme={theme} >
                                     <a href={url} target='_blank'>
