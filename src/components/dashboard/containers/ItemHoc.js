@@ -9,7 +9,6 @@ import theme from './theme.css'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import ImgDialog from './ImgDialog'
 import Tooltip from 'react-toolbox/lib/tooltip'
-import Avatar from 'react-toolbox/lib/avatar'
 import Input from 'react-toolbox/lib/input'
 import { Models } from 'adex-models'
 import FloatingProgressButton from 'components/common/floating_btn_progress/FloatingProgressButton'
@@ -18,8 +17,9 @@ import classnames from 'classnames'
 import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
 import { items as ItemsConstants } from 'adex-constants'
+import Img from 'components/common/img/Img'
 
-const { ItemTypesNames, ItemTypeByTypeId } = ItemsConstants
+const { ItemTypesNames, ItemTypeByTypeId, AdSizesByValue } = ItemsConstants
 
 const TooltipFontIcon = Tooltip(FontIcon)
 
@@ -116,6 +116,8 @@ export default function ItemHoc(Decorated) {
         }
 
         handleToggle = () => {
+            if (!this.props.canEditImg) return
+
             let active = this.state.editImg
             this.setState({ editImg: !active })
         }
@@ -132,7 +134,7 @@ export default function ItemHoc(Decorated) {
             let item = new this.state.itemModel(this.state.item) || {}
             let t = this.props.t
             let canEdit = ItemTypeByTypeId[item.type] === 'collection'
-            // let imgSrc =  ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)
+            let imgSrc = ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)
 
             return (
                 <div>
@@ -143,14 +145,21 @@ export default function ItemHoc(Decorated) {
 
                     <div className={classnames(theme.heading, theme[ItemTypesNames[item._type || item._meta.type]])}>
                         <div className={theme.headingLeft}>
-                            <Avatar title={item.fullName} cover onClick={this.handleToggle.bind(this)} />
-                             {/* <ImgDialog 
-                                imgSrc={imgSrc} 
-                                handleToggle={this.handleToggle} 
-                                active={this.state.editImg} 
+                            <Img src={imgSrc} alt={item.fullName} onClick={this.handleToggle} className={classnames(theme.avatar, { [theme.pointer]: this.props.canEditImg })} />
+
+                            <ImgDialog
+                                imgSrc={imgSrc}
+                                handleToggle={this.handleToggle}
+                                active={this.state.editImg}
                                 onChangeReady={this.handleChange}
                                 validateId={item._id}
-                              /> */}
+                                width={(AdSizesByValue[item.size] || {}).width}
+                                height={(AdSizesByValue[item.size] || {}).height}
+                                title={t(this.props.updateImgLabel)}
+                                additionalInfo={t(this.props.updateImgInfoLabel)}
+                                exact={this.props.updateImgExact}
+                                errMsg={this.props.updateImgErrMsg}
+                            />
                             {canEdit && this.state.activeFields.fullName ?
                                 <span>
                                     <span>

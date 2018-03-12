@@ -102,7 +102,12 @@ function mapStateToProps(state) {
         slots: persist.items[ItemsTypes.AdSlot.id],
         rowsView: !!persist.ui[VIEW_MODE],
         objModel: ChannelModel,
-        itemType: ItemsTypes.Channel.id
+        itemType: ItemsTypes.Channel.id,
+        updateImgInfoLabel: 'CHANNEL_IMG_ADDITIONAL_INFO',
+        updateImgLabel: 'CHANNEL_LOGO',
+        updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
+        updateImgExact: false,
+        canEditImg: true
     }
 }
 

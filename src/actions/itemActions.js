@@ -3,6 +3,43 @@ import { uploadImage, regItem, delItem, addItmToItm, removeItmFromItm, updateItm
 import { Base, Models } from 'adex-models'
 import { addActionToast } from './uiActions'
 
+const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
+    return fetch(tempUrl)
+        .then((resp) => {
+            return resp.blob()
+        })
+        .then((imgBlob) => {
+            URL.revokeObjectURL(tempUrl)
+            return uploadImage({ imageBlob: imgBlob, imageName: 'image.png', authSig: authSig })
+        })
+}
+
+const uploadImages = ({ item, authSig }) => {
+    let imgIpfsProm = Promise.resolve()
+    let fallbackImgIpfsProm = Promise.resolve()
+
+    if (item._meta.img.tempUrl) {
+        imgIpfsProm = getImgsIpfsFromBlob({ tempUrl: item._meta.img.tempUrl, authSig: authSig })
+    }
+
+    if (item._fallbackAdImg && item._fallbackAdImg.tempUrl) {
+        fallbackImgIpfsProm = getImgsIpfsFromBlob({ tempUrl: item._fallbackAdImg.tempUrl, authSig: authSig })
+    }
+
+    return Promise.all([imgIpfsProm, fallbackImgIpfsProm])
+        .then(([imgIpf, fallbackImgIpfs]) => {
+            if (imgIpf) {
+                item._meta.img = { ipfs: imgIpf.ipfs }
+            }
+
+            if (fallbackImgIpfs) {
+                item._fallbackAdImg = { ipfs: fallbackImgIpfs.ipfs }
+            }
+
+            return item
+        })
+}
+
 export function updateNewItem(item, newValues) {
     item = Base.updateObject({ item: item, newValues: newValues, objModel: Models.itemClassByTypeId[item._type || item._meta.type] })
     return function (dispatch) {
@@ -27,55 +64,14 @@ export function addItem(item, itemToAddTo, authSig) {
     item = { ...item }
 
     return function (dispatch) {
-        if (item._meta.img.tempUrl) {
-            // TODO: fix the logic, send both imgs for upload (update the node)
-            fetch(item._meta.img.tempUrl)
-                .then((resp) => {
-                    return resp.blob()
-                })
-                .then((imgBlob) => {
-                    URL.revokeObjectURL(item._meta.img.tempUrl)
-                    return uploadImage({ imageBlob: imgBlob, imageName: 'image.png', authSig: authSig })
-                })
-                .then((imgResp) => {
-                    item._meta.img.ipfs = imgResp.ipfs
-                    delete item._meta.img.tempUrl
-                    delete item._meta.img.width
-                    delete item._meta.img.height
-                })
-                .then(() => {
-                    if (item._fallbackAdImg && item._fallbackAdImg.tempUrl) {
-                        return fetch(item._fallbackAdImg.tempUrl)
-                    } else {
-                        registerItem(item, itemToAddTo)
-                    }
-                })
-                .then((resp) => {
-                    if (resp) {
-                        return resp.blob()
-                    }
-                })
-                .then((imgBlob) => {
-                    if (imgBlob) {
-                        URL.revokeObjectURL(item._fallbackAdImg.tempUrl)
-                        return uploadImage({ imageBlob: imgBlob, imageName: 'image.png', authSig: authSig })
-                    }
-                })
-                .then((imgResp) => {
-                    if (imgResp) {
-                        item._fallbackAdImg.ipfs = imgResp.ipfs
-                        delete item._fallbackAdImg.tempUrl
-                        delete item._fallbackAdImg.width
-                        delete item._fallbackAdImg.height
-                        registerItem(item, itemToAddTo)
-                    }
-                })
-                .catch((err) => {
-                    return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label: 'Err creating item to item: ' + err, timeout: 5000 })
-                })
-        } else {
-            registerItem(item, itemToAddTo)
-        }
+
+        uploadImages({ item: item, authSig: authSig })
+            .then(() => {
+                registerItem(item, itemToAddTo)
+            })
+            .catch((err) => {
+                return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label: 'Err creating item to item: ' + err, timeout: 5000 })
+            })
 
         function registerItem(item, itemToAddTo) {
 
@@ -165,7 +161,10 @@ export function addItemToItem({ item, toAdd, authSig } = {}) {
 // Accepts the entire new item and replace so be careful!
 export function updateItem({ item, authSig } = {}) {
     return function (dispatch) {
-        updateItm({ item, authSig })
+        uploadImages({ item: { ...item }, authSig: authSig })
+            .then(() => {
+                return updateItm({ item, authSig })
+            })
             .then((res) => {
                 dispatch({
                     type: types.UPDATE_ITEM,

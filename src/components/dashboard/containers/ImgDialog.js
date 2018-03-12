@@ -25,30 +25,31 @@ export class ImgDialog extends Component {
         this.state = {
             values: {}
         }
-    }    
+    }
 
     handleChange = (name, value) => {
 
-        let newValues = {...this.state.values} 
+        let newValues = { ...this.state.values }
         newValues[name] = value
-        this.setState({values: newValues})
+        this.setState({ values: newValues })
     }
 
-    onOk = () => {       
+    onOk = () => {
         const vals = this.state.values
         Object.keys(vals).forEach((key) => {
             this.props.onChangeReady(key, vals[key])
+            this.props.handleToggle()
         })
 
     }
 
-    actions = [
-        { label: "Cancel", onClick: this.props.handleToggle, disabled: true },
-        { label: "Ok", onClick: this.onOk }
+    getActions = () => [
+        { label: "Cancel", onClick: this.props.handleToggle, disabled: false },
+        { label: "Ok", onClick: this.onOk, disabled: !!(this.props.invalidFields || {})['img'] }
     ]
 
     render() {
-        let t = () => {}
+        let t = () => { }
         let validations = this.props.invalidFields || {}
         let errImg = validations['img']
         return (
@@ -61,7 +62,7 @@ export class ImgDialog extends Component {
                     title={this.props.title}
                     type={this.props.type || 'normal'}
                     className={theme[ItemTypesNames[this.props.itemType]]}
-                    actions={this.actions}
+                    actions={this.getActions()}
                 >
                     <IconButton
                         icon='close'
@@ -76,9 +77,9 @@ export class ImgDialog extends Component {
                                 <ImgForm
                                     label={t(this.props.imgLabel)}
                                     imgSrc={this.props.imgSrc || ''}
-                                    onChange={this.props.validateImg.bind(this, 
-                                        {propsName: 'img', widthTarget: this.props.width || AVATAR_MAX_WIDTH, heightTarget: this.props.height || AVATAR_MAX_HEIGHT, msg: 'ERR_IMG_SIZE_MAX', exact: this.props.exact, required: this.props.required, onChange: this.handleChange })}
-                                    additionalInfo={t(this.props.imgInfoLabel)}
+                                    onChange={this.props.validateImg.bind(this,
+                                        { propsName: 'img', widthTarget: this.props.width || AVATAR_MAX_WIDTH, heightTarget: this.props.height || AVATAR_MAX_HEIGHT, msg: this.props.errMsg, exact: this.props.exact, required: this.props.required, onChange: this.handleChange })}
+                                    additionalInfo={t(this.props.additionalInfo)}
                                     errMsg={errImg ? errImg.errMsg : ''}
                                 />
                             </Col>

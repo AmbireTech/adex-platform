@@ -72,6 +72,7 @@ export class Slot extends Component {
                 <BasicProps
                     item={item}
                     t={t}
+                    toggleImgEdit={this.props.toggleImgEdit}
                     rightComponent={<IntegrationCode
                         ipfs={item.ipfs}
                         size={item.sizeTxtValue}
@@ -79,7 +80,7 @@ export class Slot extends Component {
                         slotId={item.id}
                         slotIpfs={item.ipfs}
                         fallbackImgIpfs={(item.fallbackAdImg || {}).ipfs}
-                        fallbackUrl={item.fallbackAdUrl}
+                        fallbackUrl={item.fallbackAdUrl}                        
                     />}
                 />
                 <div>
@@ -94,7 +95,7 @@ Slot.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     item: PropTypes.object.isRequired,
-};
+}
 
 function mapStateToProps(state) {
     let persist = state.persist
@@ -102,14 +103,20 @@ function mapStateToProps(state) {
     return {
         account: persist.account,
         objModel: AdSlot,
-        itemType: ItemsTypes.AdSlot.id
-    };
+        itemType: ItemsTypes.AdSlot.id,
+        // NOTE: maybe not the best way but pass props to the HOC here
+        updateImgInfoLabel: 'SLOT_AVATAR_IMG_INFO',
+        updateImgLabel: 'SLOT_AVATAR_IMG_LABEL',
+        updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
+        updateImgExact: false,
+        canEditImg: false // TEMP: we can edit slot avatar
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
 const SlotItem = ItemHoc(Slot)
