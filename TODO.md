@@ -11,18 +11,27 @@
 - upload fallback img - temp done but must make multi file upload on the node
 - hoc for img validation - done but may handle and the initial validation
 
-- check exchange deposit before place bid 
-- fix add item to  collection
-- metamask how to on signin
-- fix cancel on steps (reset the items, clear blob)
-- handle error
-- add translations
-- when click to accept bid check again the status from the node
-- format bids
-- filter bids actions
-- make some charts
-- He accept, he not accept, but most importantly he validate
+- check exchange deposit before place bid - done
+- fix add item to  collection - done
+- metamask how to on signin - done
+- fix cancel on steps (reset the items, clear blob) - done
+- when click to accept bid check again the status from the node - done
+- format bids - done
+- filter bids actions - done
+- He accept, he not accept, but most importantly he validate - done
+- fix campaigns and channels update (make endpoint to the node node) - done
+- fix units and slots description update (make endpoint to the node) - done
+- fix the 
+- validate target parse to int - done
+- check ETH balance before web3 transactions - validation and msgs
+- update fallback ad data for slot
+- update channels/campaigns avatars
+- crop images on steps
+- handle errors
 - use only item._type in production
-- fix campaigns and channels update (make endpoint to the node node)
-- fix units and slots description update (make endpoint to the node)
-- validate target parse to int
+- add link to tutorials ot place it on the dapp
+- show balance for placed (not accepted) bids
+- add trezor auth
+- add ledger auth
+- make some charts
+
