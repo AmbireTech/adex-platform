@@ -40,7 +40,7 @@ export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
                                             aspectRatio='wide'
                                             theme={theme}
                                         >
-                                            <Img src={Item.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY)} alt={item.fallbackAdUrl} />
+                                            <Img src={Item.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY)} alt={item.fallbackAdUrl} onClick={rest.toggleFallbackImgEdit} style={{ cursor: 'pointer' }} />
                                         </CardMedia>
                                         <CardTitle theme={theme} >
                                             <a href={item.fallbackAdUrl} target='_blank'>
