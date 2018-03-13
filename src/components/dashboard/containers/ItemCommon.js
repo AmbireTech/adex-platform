@@ -7,11 +7,11 @@ import theme from './theme.css'
 import { items as ItemsConstants } from 'adex-constants'
 import { Item } from 'adex-models'
 import classnames from 'classnames'
+import { IconButton } from 'react-toolbox/lib/button'
 
 const { AdSizesByValue, AdTypesByValue } = ItemsConstants
 
 export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
-
     return (
         <div className={theme.itemPropTop}>
             <Grid fluid style={{ padding: 0 }}>
@@ -43,10 +43,40 @@ export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
                                         >
                                             <Img src={Item.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY)} alt={item.fallbackAdUrl} onClick={rest.toggleFallbackImgEdit} style={{ cursor: 'pointer' }} />
                                         </CardMedia>
-                                        <CardTitle theme={theme} >
-                                            <a href={item.fallbackAdUrl} target='_blank'>
-                                                {item.fallbackAdUrl}
-                                            </a>
+                                        <CardTitle theme={theme} >                                           
+
+                                            {rest.activeFields.fallbackAdUrl ?
+                                                <Input
+                                                    type='text'
+                                                    label={t('fallbackAdUrl', { isProp: true })}
+                                                    name='fallbackAdUrl'
+                                                    value={item.fallbackAdUrl || ''}
+                                                    onChange={(val) => rest.handleChange('fallbackAdUrl', val)}
+                                                    maxLength={1024}
+                                                    onBlur={() => rest.setActiveFields('fallbackAdUrl', false)}
+                                                />
+                                                :
+                                                <div>
+                                                    <p>
+                                                        {item.fallbackAdUrl ?
+                                                            <a href={item.fallbackAdUrl} target='_blank'>
+                                                                {item.fallbackAdUrl}
+                                                            </a>
+                                                            :
+                                                            <span style={{ opacity: 0.3 }}> {t('NO_FALLBACK_URL_YET')}</span>
+                                                        }
+                                                        <span>
+                                                            <IconButton
+                                                                theme={theme}
+                                                                icon='edit'
+                                                                accent
+                                                                onClick={ () => rest.setActiveFields('fallbackAdUrl', true)}
+                                                            />
+                                                        </span>
+                                                    </p>
+
+                                                </div>
+                                            }
 
                                         </CardTitle>
                                     </Card>
