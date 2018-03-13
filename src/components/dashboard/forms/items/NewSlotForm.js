@@ -76,7 +76,7 @@ class NewSlotForm extends Component {
                                     // required
                                     type='text'
                                     label={t('fallbackAdUrl', { isProp: true })}
-                                    value={item.fallbackAdUrl}
+                                    value={item.fallbackAdUrl || ''}
                                     onChange={this.props.handleChange.bind(this, 'fallbackAdUrl')}
                                     maxLength={1024}
                                     onBlur={this.props.validate.bind(this, 'fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true })}

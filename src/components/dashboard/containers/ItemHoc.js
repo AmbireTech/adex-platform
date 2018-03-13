@@ -18,6 +18,8 @@ import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
 import { items as ItemsConstants } from 'adex-constants'
 import Img from 'components/common/img/Img'
+import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
+import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
 
 const { ItemTypesNames, ItemTypeByTypeId, AdSizesByValue } = ItemsConstants
 
@@ -123,6 +125,7 @@ export default function ItemHoc(Decorated) {
         }
 
         render() {
+            console.log('props', this.props)
             if (!this.state.item) {
                 return (<h1> No item found! </h1>)
             }
@@ -148,6 +151,7 @@ export default function ItemHoc(Decorated) {
                             <Img src={imgSrc} alt={item.fullName} onClick={this.handleToggle} className={classnames(theme.avatar, { [theme.pointer]: this.props.canEditImg })} />
 
                             <ImgDialog
+                                {...this.props}
                                 imgSrc={imgSrc}
                                 handleToggle={this.handleToggle}
                                 active={this.state.editImg}
@@ -252,7 +256,15 @@ export default function ItemHoc(Decorated) {
                                             </div>
                                         ) : ''
                                 )}
-                            <FloatingProgressButton inProgress={!!this.props.spinner} theme={theme} icon='save' onClick={this.save} floating primary />
+                            <FloatingProgressButton 
+                                inProgress={!!this.props.spinner} 
+                                theme={theme} 
+                                icon='save' 
+                                onClick={this.save} 
+                                floating 
+                                primary 
+                                disabled={!!Object.keys(this.props.validations[item._id] || {}).length}
+                            />
                         </div>
 
                     </div>
@@ -284,10 +296,12 @@ export default function ItemHoc(Decorated) {
     function mapStateToProps(state, props) {
         let persist = state.persist
         let memory = state.memory
+        const item = persist.items[props.itemType][props.match.params.itemId]
         return {
             account: persist.account,
-            item: persist.items[props.itemType][props.match.params.itemId],
-            spinner: memory.spinners['update' + props.match.params.itemId]
+            item: item,
+            spinner: memory.spinners['update' + props.match.params.itemId],
+            validations: memory.validations
         }
     }
 
