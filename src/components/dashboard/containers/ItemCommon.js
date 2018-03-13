@@ -6,6 +6,7 @@ import Img from 'components/common/img/Img'
 import theme from './theme.css'
 import { items as ItemsConstants } from 'adex-constants'
 import { Item } from 'adex-models'
+import classnames from 'classnames'
 
 const { AdSizesByValue, AdTypesByValue } = ItemsConstants
 
@@ -22,7 +23,7 @@ export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
                                     aspectRatio='wide'
                                     theme={theme}
                                 >
-                                    <Img src={Item.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)} alt={item.fullName} onClick={rest.toggleImgEdit} />
+                                    <Img src={Item.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)} alt={item.fullName} onClick={rest.toggleImgEdit} className={classnames({ [theme.pointer]: rest.canEditImg })} />
                                 </CardMedia>
                                 <CardTitle theme={theme} >
                                     <a href={url} target='_blank'>

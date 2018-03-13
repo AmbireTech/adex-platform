@@ -13,11 +13,10 @@ import { items as ItemsConstants } from 'adex-constants'
 import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Translate from 'components/translate/Translate'
+import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT} from 'constants/misc'
 
 const { ItemTypesNames } = ItemsConstants
 
-const AVATAR_MAX_WIDTH = 600
-const AVATAR_MAX_HEIGHT = 400
 export class ImgDialog extends Component {
 
     constructor(props) {

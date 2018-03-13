@@ -153,8 +153,8 @@ export default function ItemHoc(Decorated) {
                                 active={this.state.editImg}
                                 onChangeReady={this.handleChange}
                                 validateId={item._id}
-                                width={(AdSizesByValue[item.size] || {}).width}
-                                height={(AdSizesByValue[item.size] || {}).height}
+                                width={this.props.updateImgWidth || (AdSizesByValue[item.size] || {}).width}
+                                height={this.props.updateImgHeight ||(AdSizesByValue[item.size] || {}).height}
                                 title={t(this.props.updateImgLabel)}
                                 additionalInfo={t(this.props.updateImgInfoLabel)}
                                 exact={this.props.updateImgExact}

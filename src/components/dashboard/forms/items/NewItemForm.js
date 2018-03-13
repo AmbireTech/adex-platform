@@ -11,10 +11,9 @@ import { Grid, Row, Col } from 'react-flexbox-grid'
 import ImgForm from './../ImgForm'
 import { items as ItemsConstants } from 'adex-constants'
 import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
+import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT} from 'constants/misc'
 
 const { ItemTypesNames } = ItemsConstants
-const AVATAR_MAX_WIDTH = 600
-const AVATAR_MAX_HEIGHT = 400
 
 class NewItemForm extends Component {
 
