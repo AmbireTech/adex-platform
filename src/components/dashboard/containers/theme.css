@@ -13,6 +13,7 @@
     box-sizing: border-box;
     width: 40px;
     height: 40px;
+    position: relative;
 }
 
 .pointer { 
@@ -343,6 +344,14 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.cardTitle {
+    word-break: break-all;
+    width: 100%;
+    & > div {
+        width: 100%;
+    }
 }
 
 @media (height <= 1000px) {

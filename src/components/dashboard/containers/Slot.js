@@ -104,6 +104,7 @@ export class Slot extends Component {
                     />}
                 />
                 <ImgDialog
+                    {...this.props}
                     imgSrc={imgSrc}
                     handleToggle={this.handleFallbackImgUpdateToggle}
                     active={this.state.editFallbackImg}

@@ -8,8 +8,73 @@ import { items as ItemsConstants } from 'adex-constants'
 import { Item } from 'adex-models'
 import classnames from 'classnames'
 import { IconButton } from 'react-toolbox/lib/button'
+import { validUrl } from 'helpers/validators'
+import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 
 const { AdSizesByValue, AdTypesByValue } = ItemsConstants
+
+const FallbackAdData =  ({ item, t, rightComponent, url, ...rest }) => {
+    let errFallbackAdUrl = rest.invalidFields['fallbackAdUrl']
+
+    return (
+        <div>
+            <div className={theme.integrationLabel}> {t('FALLBACK_DATA')}</div>
+            <Card className={theme.itemDetailCard} raised={false} theme={theme}>
+                <CardMedia
+                    aspectRatio='wide'
+                    theme={theme}
+                >
+                    <Img src={Item.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY)} alt={item.fallbackAdUrl} onClick={rest.toggleFallbackImgEdit} style={{ cursor: 'pointer' }} />
+                </CardMedia>
+                <CardTitle theme={theme} >                                           
+
+                    {rest.activeFields.fallbackAdUrl ?
+                        <Input
+                            // required
+                            type='text'
+                            label={t('fallbackAdUrl', { isProp: true })}
+                            value={item.fallbackAdUrl}
+                            onChange={(val) =>  rest.handleChange('fallbackAdUrl', val)}
+                            maxLength={1024}
+                            onBlur={() => rest.validate('fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true })}
+                            onFocus={() => rest.validate('fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
+                            error={errFallbackAdUrl && !!errFallbackAdUrl.dirty ? <span> {errFallbackAdUrl.errMsg} </span> : null}
+                        >
+                            {!errFallbackAdUrl || !errFallbackAdUrl.dirty ?
+                                <div>
+                                    {t('SLOT_FALLBACK_AD_URL_DESCRIPTION')}
+                                </div> : null}
+                        </Input>
+                        :
+                        <div >
+                            <p>
+                                {item.fallbackAdUrl ?
+                                    <a href={item.fallbackAdUrl} target='_blank'>
+                                        {item.fallbackAdUrl}
+                                    </a>
+                                    :
+                                    <span style={{ opacity: 0.3 }}> {t('NO_FALLBACK_URL_YET')}</span>
+                                }
+                                <span>
+                                    <IconButton
+                                        theme={theme}
+                                        icon='edit'
+                                        accent
+                                        onClick={ () => rest.setActiveFields('fallbackAdUrl', true)}
+                                    />
+                                </span>
+                            </p>
+
+                        </div>
+                    }
+
+                </CardTitle>
+            </Card>
+        </div>
+    )
+}
+
+const ValidatedFallbackAdData = ValidItemHoc(FallbackAdData)
 
 export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
     return (
@@ -34,53 +99,7 @@ export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
                             </Card>
                             <br />
                             {item.fallbackAdImg || item.fallbackAdUrl ?
-                                <div>
-                                    <div className={theme.integrationLabel}> {t('FALLBACK_DATA')}</div>
-                                    <Card className={theme.itemDetailCard} raised={false} theme={theme}>
-                                        <CardMedia
-                                            aspectRatio='wide'
-                                            theme={theme}
-                                        >
-                                            <Img src={Item.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY)} alt={item.fallbackAdUrl} onClick={rest.toggleFallbackImgEdit} style={{ cursor: 'pointer' }} />
-                                        </CardMedia>
-                                        <CardTitle theme={theme} >                                           
-
-                                            {rest.activeFields.fallbackAdUrl ?
-                                                <Input
-                                                    type='text'
-                                                    label={t('fallbackAdUrl', { isProp: true })}
-                                                    name='fallbackAdUrl'
-                                                    value={item.fallbackAdUrl || ''}
-                                                    onChange={(val) => rest.handleChange('fallbackAdUrl', val)}
-                                                    maxLength={1024}
-                                                    onBlur={() => rest.setActiveFields('fallbackAdUrl', false)}
-                                                />
-                                                :
-                                                <div>
-                                                    <p>
-                                                        {item.fallbackAdUrl ?
-                                                            <a href={item.fallbackAdUrl} target='_blank'>
-                                                                {item.fallbackAdUrl}
-                                                            </a>
-                                                            :
-                                                            <span style={{ opacity: 0.3 }}> {t('NO_FALLBACK_URL_YET')}</span>
-                                                        }
-                                                        <span>
-                                                            <IconButton
-                                                                theme={theme}
-                                                                icon='edit'
-                                                                accent
-                                                                onClick={ () => rest.setActiveFields('fallbackAdUrl', true)}
-                                                            />
-                                                        </span>
-                                                    </p>
-
-                                                </div>
-                                            }
-
-                                        </CardTitle>
-                                    </Card>
-                                </div>
+                                <ValidatedFallbackAdData validateId={item._id} item={item} t={t} url={url} {...rest} />
                                 : null
                             }
                         </div>
