@@ -12,6 +12,7 @@ import { BasicProps } from './ItemCommon'
 import Helper from 'helpers/miscHelpers'
 import ImgDialog from './ImgDialog'
 import { Item as ItemModel } from 'adex-models'
+import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT} from 'constants/misc'
 
 const { ItemsTypes, AdSizesByValue } = ItemsConstants
 const ADVIEW_URL = process.env.ADVIEW_HOST || 'https://view.adex.network'
@@ -90,6 +91,7 @@ export class Slot extends Component {
                     t={t}
                     toggleImgEdit={this.props.toggleImgEdit}
                     toggleFallbackImgEdit={this.handleFallbackImgUpdateToggle}
+                    canEditImg
                     rightComponent={<IntegrationCode
                         ipfs={item.ipfs}
                         size={item.sizeTxtValue}
@@ -141,7 +143,9 @@ function mapStateToProps(state) {
         updateImgLabel: 'SLOT_AVATAR_IMG_LABEL',
         updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
         updateImgExact: false,
-        canEditImg: false // TEMP: we can edit slot avatar
+        canEditImg: true, // TEMP: we can edit slot avatar,
+        updateImgWidth: AVATAR_MAX_WIDTH,
+        updateImgHeight: AVATAR_MAX_HEIGHT
     }
 }
 
