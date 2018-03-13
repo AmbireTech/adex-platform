@@ -82,7 +82,7 @@ export default function ItemHoc(Decorated) {
             this.setState({ item: newItem.plainObj(), dirtyProps: dp })
         }
 
-        returnPropToInitalState = (propName) => {
+        returnPropToInitialState = (propName) => {
             let initialItemStateValue = this.state.initialItemState[propName]
             let newItem = new this.state.itemModel(this.state.item)
             newItem[propName] = initialItemStateValue
@@ -92,7 +92,7 @@ export default function ItemHoc(Decorated) {
             this.setState({ item: newItem.plainObj(), dirtyProps: dp })
         }
 
-        setActiveFields(field, value) {
+        setActiveFields = (field, value) => {
             let newActiveFields = { ...this.state.activeFields }
             newActiveFields[field] = value
             this.setState({ activeFields: newActiveFields })
@@ -244,7 +244,7 @@ export default function ItemHoc(Decorated) {
                                                         <Chip
                                                             deletable
                                                             key={p}
-                                                            onDeleteClick={this.returnPropToInitalState.bind(this, p)}
+                                                            onDeleteClick={this.returnPropToInitialState.bind(this, p)}
                                                         >
                                                             {t(p, { isProp: true })}
                                                         </Chip>)
@@ -265,6 +265,8 @@ export default function ItemHoc(Decorated) {
                             save={this.save}
                             handleChange={this.handleChange}
                             toggleImgEdit={this.handleToggle.bind(this)}
+                            activeFields={this.state.activeFields}
+                            setActiveFields={this.setActiveFields.bind(this)}
                         />
                     </div>
                 </div>

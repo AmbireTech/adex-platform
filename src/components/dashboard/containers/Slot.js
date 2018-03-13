@@ -87,6 +87,7 @@ export class Slot extends Component {
         return (
             <div>
                 <BasicProps
+                    {...this.props}
                     item={item}
                     t={t}
                     toggleImgEdit={this.props.toggleImgEdit}
