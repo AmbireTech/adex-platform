@@ -66,8 +66,8 @@ export function addItem(item, itemToAddTo, authSig) {
     return function (dispatch) {
 
         uploadImages({ item: item, authSig: authSig })
-            .then(() => {
-                registerItem(item, itemToAddTo)
+            .then((updatedItem) => {
+                registerItem(updatedItem, itemToAddTo)
             })
             .catch((err) => {
                 return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label: 'Err creating item to item: ' + err, timeout: 5000 })
@@ -162,8 +162,8 @@ export function addItemToItem({ item, toAdd, authSig } = {}) {
 export function updateItem({ item, authSig } = {}) {
     return function (dispatch) {
         uploadImages({ item: { ...item }, authSig: authSig })
-            .then(() => {
-                return updateItm({ item, authSig })
+            .then((updatedItem) => {
+                return updateItm({ item: updatedItem, authSig })
             })
             .then((res) => {
                 dispatch({
