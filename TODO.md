@@ -21,15 +21,14 @@
 - He accept, he not accept, but most importantly he validate - done
 - fix campaigns and channels update (make endpoint to the node node) - done
 - fix units and slots description update (make endpoint to the node) - done
-- fix the 
 - validate target parse to int - done
 - check ETH balance before web3 transactions - validation and msgs
-- update fallback ad data for slot
-- update channels/campaigns avatars
+- update fallback ad data for slot - done
+- update channels/campaigns avatars -done
 - crop images on steps
 - handle errors
 - use only item._type in production
-- add link to tutorials ot place it on the dapp
+- add link to tutorials or place it on the dapp - done
 - show balance for placed (not accepted) bids
 - add trezor auth
 - add ledger auth
