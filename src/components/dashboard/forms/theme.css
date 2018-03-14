@@ -73,7 +73,7 @@
 }
 
 .imgPreview {
-    height: 150px;
+    height: 120px;
     // margin: 20px;
     width: auto;
     box-shadow: var(--shadow-2p);  /* 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);*/
@@ -93,12 +93,12 @@
     background-color: #ccc;
     position: relative;
     width: 100%;
-    min-height: 60px;
+    min-height: 40px;
     color: #fff;
     display: flex;
     align-items: center;
-    padding-left: 20px;
-    margin: 30px 0;
+    padding-left: 10px;
+    margin: 10px 0;
 }
 
 .uploadInfo {
@@ -109,8 +109,26 @@
     max-height: 100%;
 }
 
+.imgErr {
+    color: var(--color-adex-danger-primary)
+}
+
+.err {
+    color: var(--color-adex-danger-primary)
+}
 .grid {
     padding: 0 !important; /* suka */
+}
+
+.progressCircleCenter {
+    /* TODO: Temp - make it better */
+    position: absolute !important;
+    left: calc(50% - 30px);
+    top: calc(50% - 30px);
+}
+
+.breakLong {
+    word-break: break-all;
 }
 
 @media (width <= 1400px) {
@@ -135,4 +153,41 @@
     .dialog {
         min-height: 90vh;
     }
+}
+
+/*  Targets 
+ TODO: Make it commom if needed */
+.targetsHead {
+    border-bottom: 1px solid var(--color-adex-neutral-contrast);
+    color: var(--color-adex-neutral-contrast);
+    padding-bottom: 5px;
+    text-align: left;
+}
+
+.weightSlider {
+    padding-top: 16px;
+}
+
+.sliderWrapper {
+    position: absolute;
+    bottom: 8px;
+    width: 100%;
+    padding: 8px 0;
+}
+
+.targetRow {
+    margin-top: 10px;
+    border-bottom: 1px solid var(--color-adex-neutral-contrast);
+}
+
+.weightCol {
+    position: realtive;
+}
+
+.agesGrid {
+    padding: 0;
+}
+
+.warning {
+    color: var(--color-adex-alt-primary-header);
 }

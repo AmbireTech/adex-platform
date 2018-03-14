@@ -1,6 +1,6 @@
 import { SET_CURRENT_ITEM, UPDATE_CURRENT_ITEM } from './../constants/actionTypes'
 import initialState from './../store/initialState'
-import Base from './../models/Base'
+import { Base } from 'adex-models'
 
 
 export default function currentItemReducer(state = initialState.currentItem, action) {
@@ -10,7 +10,7 @@ export default function currentItemReducer(state = initialState.currentItem, act
 
     switch (action.type) {
         case SET_CURRENT_ITEM:
-            newState = {...action.item} || {}
+            newState = { ...action.item } || {}
             newState.dirty = false
             newState.dirtyProps = []
 

@@ -1,0 +1,15 @@
+.textLeft {
+    text-align: left;
+}
+
+.textRight {
+    text-align: right;
+}
+
+.values {
+    color: #000 !important;
+}
+
+.actionBtn {
+    margin-left: 5px;
+}

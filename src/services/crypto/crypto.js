@@ -1,20 +1,20 @@
 // Nodejs encryption with CTR
 var crypto = require('crypto'),
     algorithm = 'aes-256-ctr',
-    password = 'kaipahH5';
+    default_password = 'kaipahH5' // temp
 
-export const encrypt = (text) => {
-    if(!text) return ''
+export const encrypt = (text, password = default_password) => {
+    if (!text) return ''
     var cipher = crypto.createCipher(algorithm, password)
     var crypted = cipher.update(text, 'utf8', 'hex')
-    crypted += cipher.final('hex');
-    return crypted;
+    crypted += cipher.final('hex')
+    return crypted
 }
 
-export const decrypt = (text) => {
-    if(!text) return ''
+export const decrypt = (text, password = default_password) => {
+    if (!text) return ''
     var decipher = crypto.createDecipher(algorithm, password)
     var dec = decipher.update(text, 'hex', 'utf8')
-    dec += decipher.final('utf8');
-    return dec;
+    dec += decipher.final('utf8')
+    return dec
 }

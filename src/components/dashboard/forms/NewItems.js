@@ -1,28 +1,27 @@
 import React from 'react'
+import NewItemSteps from './items/NewItemSteps'
+import NewItemWithDialog from './items/NewItemWithDialog'
+import NewSlotForm from './items/NewSlotForm'
+import NewSlotFormImgs from './items/NewSlotFormImgs'
+import NewUnitFormBasic from './items/NewUnitFormBasic'
+import NewUnitFormImg from './items/NewUnitFormImg'
+import NewUnitFormTargets from './items/NewUnitFormTargets'
+import NewCampaignForm from './items/NewCampaignForm'
+import { AdUnit, AdSlot, Channel, Campaign } from 'adex-models'
+import { items as ItemsConstants } from 'adex-constants'
 
-import { ItemsTypes } from 'constants/itemsTypes'
-import NewItemSteps from './NewItemSteps'
-import NewItemWithDialog from './NewItemWithDialog'
-// import NewUnitForm from './NewUnitForm'
-import NewSlotForm from './NewSlotForm'
-import NewUnitFormBasic from './NewUnitFormBasic'
-import NewCampaignForm from './NewCampaignForm'
-import NewChannelForm from './NewChannelForm'
-import AdUnit from 'models/AdUnit'
-import AdSlot from 'models/AdSlot'
-import Channel from 'models/Channel'
-import Campaign from 'models/Campaign'
+const { ItemsTypes } = ItemsConstants
 
 const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
 
 export const NewUnit = (props) =>
     <NewItemStepsWithDialog
         {...props}
-        btnLabel="NEW_UNIT"
-        title="CREATE_NEW_UNIT"
+        btnLabel='NEW_UNIT'
+        title='CREATE_NEW_UNIT'
         itemType={ItemsTypes.AdUnit.id}
-        itemPages={[NewUnitFormBasic]}
-        imgLabel="UNIT_BANNER"
+        itemPages={[NewUnitFormBasic, NewUnitFormImg, NewUnitFormTargets]}
+        imgLabel='UNIT_BANNER_IMG_LABEL'
         noDefaultImg
         itemModel={AdUnit}
     />
@@ -30,34 +29,36 @@ export const NewUnit = (props) =>
 export const NewCampaign = (props) =>
     <NewItemStepsWithDialog
         {...props}
-        btnLabel="NEW_CAMPAIGN"
-        title="CREATE_NEW_CAMPAIGN"
+        btnLabel='NEW_CAMPAIGN'
+        title='CREATE_NEW_CAMPAIGN'
         itemType={ItemsTypes.Campaign.id}
         itemPages={[NewCampaignForm]}
-        imgLabel="CAMPAIGN_LOGO"
+        imgLabel='CAMPAIGN_LOGO'
         itemModel={Campaign}
+        imgAdditionalInfo='CAMPAIGN_IMG_ADDITIONAL_INFO'
     />
 
 export const NewSlot = (props) =>
     <NewItemStepsWithDialog
         {...props}
-        btnLabel="NEW_SLOT"
-        title="CREATE_NEW_SLOT"
+        btnLabel='NEW_SLOT'
+        title='CREATE_NEW_SLOT'
         itemType={ItemsTypes.AdSlot.id}
-        itemPages={[NewSlotForm]}
-        imgLabel="SLOT_PREVIEW"
+        itemPages={[NewSlotForm, NewSlotFormImgs]}
+        imgLabel='SLOT_AVATAR_IMG_LABEL'
         noDefaultImg
-        descriptionHelperTxt="SLOT_DESCRIPTION_HELPER"
+        descriptionHelperTxt='SLOT_DESCRIPTION_HELPER'
         itemModel={AdSlot}
     />
 
 export const NewChannel = (props) =>
     <NewItemStepsWithDialog
         {...props}
-        btnLabel="NEW_CHANNEL"
-        title="CREATE_NEW_CHANNEL"
+        btnLabel='NEW_CHANNEL'
+        title='CREATE_NEW_CHANNEL'
         itemType={ItemsTypes.Channel.id}
-        itemPages={[NewChannelForm]}
-        imgLabel="CHANNEL_LOGO"
+        itemPages={[]}
+        imgLabel='CHANNEL_LOGO'
         itemModel={Channel}
+        imgAdditionalInfo='CHANNEL_IMG_ADDITIONAL_INFO'
     />

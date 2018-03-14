@@ -1,4 +1,29 @@
 @import '../../../styles/variables.css';
+@import './../../../../node_modules/react-toolbox/lib/input/config.css';
+
+.error {
+    color: var(--input-text-error-color);
+}
+
+.avatar {
+    border-radius: 50%;
+    display: inline-block;
+    height: 40px;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    width: 40px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+    position: relative;
+}
+
+.pointer { 
+    cursor: pointer
+}
 
 .circular{
     width: 36px;
@@ -18,7 +43,7 @@
     justify-content: flex-end;
     align-items: center;
 
-    & > span, & > div{
+    & > span, & > div {
         display: inline-block;
         vertical-align: middle; 
         margin-right: 10px;
@@ -62,6 +87,7 @@
 .listTools {
     border-bottom: 1px solid var(--color-divider);
     margin-bottom: 10px;
+    user-select: none;
 }
 
 .top {
@@ -178,6 +204,9 @@
             color: #fff;
         }
     }
+    &.Transactions{
+         background-color: #888;
+    }
 }
 
 .floating {
@@ -199,7 +228,7 @@
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
 }
 
-.imgHolder, .bannerProps{
+.imgHolder, .bannerProps, .unitTargets{
     display: inline-block;
     vertical-align: top;
     margin-bottom: 10px;
@@ -211,6 +240,10 @@
 
 .bannerProps {
     max-width: calc(100% - 400px)
+}
+/* TODO: fix this s tyles */
+.unitTargets {
+    max-width: calc(100% - 550px)
 }
 .targetsHead {
     border-bottom: 1px solid var(--color-adex-neutral-contrast);
@@ -288,6 +321,42 @@
     font-size: 12px;
     margin-bottom: 6px;
     color: var(--label-color);
+}
+
+.itemContentRoot {
+  &.large {
+    height: auto;
+    padding-top: 5px;
+    padding-botom: 5px;
+  }
+}
+
+.compactCol {
+    max-width: 120px;
+}
+
+.actionsCol {
+    min-width: 200px;
+}
+
+.actionBtn {
+    margin-right: 5px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cardTitle {
+    word-break: break-all;
+    width: 100%;
+    & > div {
+        width: 100%;
+    }
 }
 
 @media (height <= 1000px) {

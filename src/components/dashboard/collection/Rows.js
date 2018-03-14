@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import theme from './theme.css'
 import { Table } from 'react-toolbox/lib/table'
-import { ItemTypesNames } from 'constants/itemsTypes'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemTypesNames } = ItemsConstants
 
 class Rows extends Component {
     constructor(props, context) {
@@ -29,10 +31,11 @@ class Rows extends Component {
     render() {
         let side = this.props.side
         let item = this.props.item
+        let meta = item.meta || {}
         let rows = this.props.rows
         return (
             <div>
-                <h1> {item._name} </h1>
+                <h1> {meta.fullName} </h1>
                 <div>
                     <Table
                         theme={theme}

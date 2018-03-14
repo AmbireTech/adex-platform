@@ -1,8 +1,7 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Autocomplete from 'react-toolbox/lib/autocomplete'
-import { IconButton, Button } from 'react-toolbox/lib/button'
+import { IconButton } from 'react-toolbox/lib/button'
 import Slider from 'react-toolbox/lib/slider'
-import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './theme.css'
 
 export const PAGE_SIZES = [

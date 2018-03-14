@@ -7,7 +7,7 @@ import { IconMenu, MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
 import FlagIconFactory from 'react-flag-icon-css'
 import adexTranslations from 'adex-translations'
 
-const allLangs = adexTranslations.all
+const allLangs = adexTranslations.onlyTranslated
 
 const FlagIcon = FlagIconFactory(React)
 
@@ -21,8 +21,8 @@ class ChangeLang extends Component {
 
   render() {
     return (
-      <IconMenu icon={<FlagIcon code={this.props.language.split('-')[1].toLowerCase()} />} position='topRight' menuRipple>
-        {allLangs.sort((a, b)=> a.split('-')[1].localeCompare(b.split('-')[1]) ).map((lng) =>
+      <IconMenu icon={<FlagIcon code={this.props.language.split('-')[1].toLowerCase()} />} menuRipple>
+        {allLangs.sort((a, b) => a.split('-')[1].localeCompare(b.split('-')[1])).map((lng) =>
           <MenuItem key={lng} value={lng} icon={<FlagIcon code={lng.split('-')[1].toLowerCase()} />} caption={lng} onClick={this.changeLanguage.bind(this, lng)} />
         )}
 

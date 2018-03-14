@@ -1,14 +1,11 @@
-import DevInitialStateGenerator from 'helpers/dev/initialStateGenerator'
-import { ItemsTypes } from 'constants/itemsTypes'
-import Campaign from 'models/Campaign'
-import AdUnit from 'models/AdUnit'
-import Channel from 'models/Channel'
-import AdSlot from 'models/AdSlot'
-import Bid from 'models/Bid'
+import { Bid, AdUnit, AdSlot, Campaign, Channel, Account } from 'adex-models'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemsTypes } = ItemsConstants
 
 let initialState = {
     account: {
-        account: this.account,
+        account: new Account(),
     },
     signin: {
         name: '',
@@ -53,14 +50,11 @@ let initialState = {
     },
     newBid: {
         empty: new Bid().plainObj()
-    }
-}
-
-if (process.env.NODE_ENV === 'development') {
-    /* TODO: fix the initial state
-    * Make it to load the test data after initial state and persistance rehidration!
-    */
-    // initialState = DevInitialStateGenerator.getDevInitialState()
+    },
+    newTransactions: {
+        default: {}
+    },
+    web3Transactions: {}
 }
 
 export default initialState
