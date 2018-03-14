@@ -153,7 +153,7 @@ export function addItemToItem({ item, toAdd, authSig } = {}) {
         addItmToItm({ item: item._id, collection: toAdd._id || toAdd, authSig: authSig })
             .then((res) => {
                 //TODO: use response and UPDATE_ITEM
-                addToast({ dispatch: dispatch, type: 'warning', errStr: 'SUCCESS_ADD_ITEM_TO_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, ItemTypesNames[toAdd._type], toAdd._meta.fullName,] })
+                addToast({ dispatch: dispatch, type: 'accept', errStr: 'SUCCESS_ADD_ITEM_TO_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, ItemTypesNames[toAdd._type], toAdd._meta.fullName,] })
 
                 return dispatch({
                     type: types.ADD_ITEM_TO_ITEM,

@@ -33,4 +33,5 @@
 - add trezor auth
 - add ledger auth
 - make some charts
+- check why have to use shouldComponentUpdate at ItemHoc and UnitBids
 

@@ -134,7 +134,7 @@ class Dashboard extends React.Component {
         )
     }
 
-    render() {
+    render() {        
         let side = this.props.side || this.props.match.params.side
         return (
             <Layout theme={theme} >
