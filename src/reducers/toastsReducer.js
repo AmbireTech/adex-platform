@@ -32,17 +32,6 @@ export default function toastsReducer(state = initialState.toasts, action) {
         case REMOVE_TOAST:
             newState = state.filter((t) => t.id !== action.toast)
             return newState
-
-        case UPDATE_ITEM:
-            return toasts(state, { label: ItemTypesNames[action.item._type] + ' ' + action.item._meta.fullName + ' has been updated!', type: 'accept', action: 'X', timeout: 5000 })
-        case ADD_ITEM:
-            return toasts(state, { label: ItemTypesNames[action.item._type] + ' ' + action.item._meta.fullName + ' has been added!', type: 'accept', action: 'X', timeout: 5000 })
-        case DELETE_ITEM:
-            return toasts(state, { label: ItemTypesNames[action.item._type] + ' ' + action.item._meta.fullName + ' has been DELETED!', type: 'warning', action: 'X', timeout: 5000 })
-        case ADD_ITEM_TO_ITEM:
-            return toasts(state, { label: ItemTypesNames[action.toAdd._type] + ' ' + action.toAdd._meta.fullName + ' has been ADDED to ' + ItemTypesNames[action.item._type] + ' ' + action.item._meta.fullName, type: 'accept', action: 'X', timeout: 5000 })
-        case REMOVE_ITEM_FROM_ITEM:
-            return toasts(state, { label: ItemTypesNames[action.toRemove._type] + ' ' + action.toRemove._meta.fullName + ' has been REMOVED from ' + ItemTypesNames[action.item._type] + ' ' + action.item._meta.fullName, type: 'warning', action: 'X', timeout: 5000 })
         default:
             return state
     }

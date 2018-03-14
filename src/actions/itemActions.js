@@ -2,6 +2,14 @@ import * as types from 'constants/actionTypes'
 import { uploadImage, regItem, delItem, addItmToItm, removeItmFromItm, updateItm } from 'services/adex-node/actions'
 import { Base, Models } from 'adex-models'
 import { addActionToast } from './uiActions'
+import { translate } from 'services/translations/translations'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemTypesNames } = ItemsConstants
+
+const addToast = ({type, errStr, args, dispatch}) => {
+    return addActionToast({ dispatch: dispatch, type: type, action: 'X', label: translate(errStr, {args: args}), timeout: 5000 })
+}
 
 const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
     return fetch(tempUrl)
@@ -67,38 +75,33 @@ export function addItem(item, itemToAddTo, authSig) {
 
         uploadImages({ item: item, authSig: authSig })
             .then((updatedItem) => {
-                registerItem(updatedItem, itemToAddTo)
+                // registerItem(updatedItem, itemToAddTo)
+                return regItem({ item: updatedItem, authSig: authSig })
             })
-            .catch((err) => {
-                return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label: 'Err creating item to item: ' + err, timeout: 5000 })
-            })
+            .then((resItem) => {
+                let registeredItem = new Models.itemClassByTypeId[item._type || item._meta.type](resItem)
+                dispatch({
+                    type: types.ADD_ITEM,
+                    item: registeredItem
+                })
 
-        function registerItem(item, itemToAddTo) {
+                addToast({ dispatch: dispatch, type: 'accept', errStr: 'SUCCESS_CREATING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName] })
 
-            regItem({ item, authSig: authSig })
-                .then((item) => {
-                    let registeredItem = new Models.itemClassByTypeId[item._type || item._meta.type](item)
-                    dispatch({
-                        type: types.ADD_ITEM,
-                        item: registeredItem
-                    })
-
-                    if (itemToAddTo) {
-                        // TODO: How to use addItemToItem action
-                        addItmToItm({ item: registeredItem._id, collection: itemToAddTo._id || itemToAddTo, authSig: authSig })
-                            .then((res) => {
-                                return dispatch({
-                                    type: types.ADD_ITEM_TO_ITEM,
-                                    item: registeredItem,
-                                    toAdd: itemToAddTo,
-                                })
+                if (itemToAddTo) {
+                    // TODO: How to use addItemToItem action
+                    addItmToItm({ item: registeredItem._id, collection: itemToAddTo._id || itemToAddTo, authSig: authSig })
+                        .then((res) => {
+                            return dispatch({
+                                type: types.ADD_ITEM_TO_ITEM,
+                                item: registeredItem,
+                                toAdd: itemToAddTo,
                             })
-                    }
-                })
-                .catch((err) => {
-                    return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label: 'Err creating item to item: ' + err, timeout: 5000 })
-                })
-        }
+                        })
+                }
+            })            
+            .catch((err) => {
+                return addToast({ dispatch: dispatch, type: 'cancel', errStr: 'ERR_CREATING_ITEM', args: [ItemTypesNames[item._type], err] })
+            })
     }
 }
 
@@ -111,6 +114,7 @@ export function deleteItem({ item, objModel, authSig } = {}) {
         })
             .then((res) => {
                 // console.log('deleteItem res', res)
+                addToast({ dispatch: dispatch, type: 'warning', errStr: 'SUCCESS_DELETING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName] })
 
                 return dispatch({
                     type: types.DELETE_ITEM,
@@ -120,7 +124,7 @@ export function deleteItem({ item, objModel, authSig } = {}) {
 
             })
             .catch((err) => {
-                return addActionToast({ dispatch: dispatch, type: 'warning', action: 'X', label: ' Err deleting item to item: ' + err, timeout: 5000 })
+                return addToast({ dispatch: dispatch, type: 'cancel', errStr: 'ERR_DELETING_ITEM', args: [ItemTypesNames[item._type], err] })
             })
     }
 }
@@ -129,6 +133,9 @@ export function removeItemFromItem({ item, toRemove, authSig } = {}) {
     return function (dispatch) {
         removeItmFromItm({ item: item._id, collection: toRemove._id || toRemove, authSig: authSig })
             .then((res) => {
+                
+                addToast({ dispatch: dispatch, type: 'warning', errStr: 'SUCCESS_REMOVE_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, ItemTypesNames[toRemove._type], toRemove._meta.fullName,] })
+                
                 return dispatch({
                     type: types.REMOVE_ITEM_FROM_ITEM,
                     item: item,
@@ -136,7 +143,7 @@ export function removeItemFromItem({ item, toRemove, authSig } = {}) {
                 })
             })
             .catch((err) => {
-                return addActionToast({ dispatch: dispatch, type: 'cancel', action: 'X', label: 'Err removing item to item: ' + err, timeout: 5000 })
+                return addToast({ dispatch: dispatch, type: 'cancel', errStr: 'ERR_REMOVE_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], ItemTypesNames[toRemove._type], err] })
             })
     }
 }
@@ -146,6 +153,8 @@ export function addItemToItem({ item, toAdd, authSig } = {}) {
         addItmToItm({ item: item._id, collection: toAdd._id || toAdd, authSig: authSig })
             .then((res) => {
                 //TODO: use response and UPDATE_ITEM
+                addToast({ dispatch: dispatch, type: 'warning', errStr: 'SUCCESS_ADD_ITEM_TO_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, ItemTypesNames[toAdd._type], toAdd._meta.fullName,] })
+
                 return dispatch({
                     type: types.ADD_ITEM_TO_ITEM,
                     item: item,
@@ -153,7 +162,7 @@ export function addItemToItem({ item, toAdd, authSig } = {}) {
                 })
             })
             .catch((err) => {
-                return addActionToast({ dispatch: dispatch, type: 'cancel', action: 'X', label: 'Err adding item to item: ' + err, timeout: 5000 })
+                return addToast({ dispatch: dispatch, type: 'cancel', errStr: 'ERR_ADD_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], ItemTypesNames[toAdd._type], err] })
             })
     }
 }
@@ -171,6 +180,8 @@ export function updateItem({ item, authSig } = {}) {
                     item: res
                 })
 
+                addToast({ dispatch: dispatch, type: 'accept', errStr: 'SUCCESS_UPDATING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName] })
+
                 return dispatch({
                     type: types.UPDATE_SPINNER,
                     spinner: 'update' + res._id,
@@ -179,7 +190,7 @@ export function updateItem({ item, authSig } = {}) {
 
             })
             .catch((err) => {
-                return addActionToast({ dispatch: dispatch, type: 'cancel', action: 'X', label: 'Err updating item: ' + err, timeout: 5000 })
+                return addToast({ dispatch: dispatch, type: 'cancel', errStr: 'ERR_UPDATING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, err] })
             })
     }
 }

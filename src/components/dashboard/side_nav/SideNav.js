@@ -19,10 +19,11 @@ const RRListItem = withReactRouterLink(ListItem)
 class SideNav extends Component {
 
     shouldComponentUpdate(nextProps, nextState) {
+        let langChanged = this.props.language !== nextProps.language
         let sideChanged = this.props.side !== nextProps.side
         let locationChanged = this.props.location.pathname !== nextProps.location.pathname
         let transactionsChanged = (this.props.transactions.pendingTxs || []).length !== (nextProps.transactions.pendingTxs || []).length
-        return sideChanged || locationChanged || transactionsChanged
+        return langChanged || sideChanged || locationChanged || transactionsChanged
     }
 
     render() {
