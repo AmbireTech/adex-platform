@@ -109,6 +109,14 @@ class SideNav extends Component {
                 </List>
                 <div className={theme.listBottom} >
                     <List>
+                        <a rel='noopener noreferrer' target='_blank' href='https://medium.com/adex-network-tips-and-tricks' >
+                            <ListItem
+                                leftIcon='help_outline'
+                                selectable={true}
+                                caption={t('HELP')}
+                                theme={theme}
+                            />
+                        </a>
                         <RRListItem
                             to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
                             selectable={true}
@@ -126,11 +134,11 @@ class SideNav extends Component {
                     </div>
                     <div>
                         <small>
-                            <a className={theme.adxLink} target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_TOKEN_ADDR} > AdEx (ADX) Token </a>
+                            <a className={theme.adxLink} rel='noopener noreferrer' target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_TOKEN_ADDR} > AdEx (ADX) Token </a>
                         </small>
                         <small> / </small>
                         <small>
-                            <a className={theme.adxLink} target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_EXCHANGE_ADDR} > AdEx Exchange </a>
+                            <a className={theme.adxLink} rel='noopener noreferrer' target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_EXCHANGE_ADDR} > AdEx Exchange </a>
                         </small>
                     </div>
                     <div>
