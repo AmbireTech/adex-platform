@@ -4,21 +4,13 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { ItemsTypes } from 'constants/itemsTypes'
 import theme from './theme.css'
-import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
-import { IconButton, Button } from 'react-toolbox/lib/button'
-import ItemsList from './ItemsList'
-import Rows from 'components/dashboard/collection/Rows'
-import moment from 'moment'
-import { BidState, BidStateNames } from 'models/Bid'
 import { Grid, Row, Col } from 'react-flexbox-grid'
-import { Line, Doughnut } from 'react-chartjs-2'
 import { BidsStatusPie, SlotsClicksAndRevenue } from 'components/dashboard/charts/slot'
 import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
 import Translate from 'components/translate/Translate'
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
+// const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
 
 export class DashboardStats extends Component {
 

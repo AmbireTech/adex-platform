@@ -1,21 +1,25 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import NO_IMAGE from 'resources/no-image-box.png'
+import NO_IMAGE from 'resources/no-image-box-eddie.jpg'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
 import theme from './theme.css'
+
+const MAX_IMG_LOAD_TIME = 3000
 
 class Img extends Component {
 
     constructor(props) {
-        super(props);
+        super(props)
         this.state = {
             imgSrc: null
-        };
+        }
+
         this.setDisplayImage = this.setDisplayImage.bind(this)
+        this.loadTimeout = null
     }
 
     componentDidMount() {
-        this.displayImage = new window.Image()
+        this.displayImage = new Image()
         this.setDisplayImage({ image: this.props.src, fallback: this.props.fallbackSrc || NO_IMAGE })
     }
 
@@ -26,20 +30,48 @@ class Img extends Component {
     }
 
     componentWillUnmount() {
+        this.clearLoadTimeout()
         if (this.displayImage) {
-            this.displayImage.onerror = null;
-            this.displayImage.onload = null;
-            this.displayImage = null;
+            this.displayImage.onerror = null
+            this.displayImage.onload = null
+            this.displayImage.onabort = null
+            this.displayImage = null
         }
     }
 
-    setDisplayImage({ image, fallback }) {
-        this.displayImage.onerror = () => {
-            this.setState({
-                imgSrc: fallback || null
-            })
+    clearLoadTimeout = () => {
+        if (this.loadTimeout) {
+            clearTimeout(this.loadTimeout)
+            this.loadTimeout = null
         }
+    }
+
+    onFail = (fallback) => {
+        if (this.displayImage) {
+            this.displayImage.onerror = null
+            this.displayImage.onload = null
+            this.displayImage.onabort = null
+
+            this.clearLoadTimeout()
+            this.displayImage.src = fallback
+        }
+
+        this.clearLoadTimeout()
+
+        this.setState({
+            imgSrc: fallback || null
+        })
+    }
+
+    setDisplayImage = ({ image, fallback }) => {
+        this.loadTimeout = setTimeout(() => {
+            this.onFail(fallback)
+        }, MAX_IMG_LOAD_TIME)
+
+        this.displayImage.onerror = this.displayImage.onabort = this.onFail.bind(this, fallback)
+
         this.displayImage.onload = () => {
+            this.clearLoadTimeout()
             this.setState({
                 imgSrc: image
             })

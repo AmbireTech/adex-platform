@@ -3,115 +3,126 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { ItemsTypes, AdTypes, Sizes, TargetsWeight, Locations, TargetWeightLabels, Genders } from 'constants/itemsTypes'
-import AdSlot from 'models/AdSlot'
-import Dropdown from 'react-toolbox/lib/dropdown'
+import { AdSlot } from 'adex-models'
 import ItemHoc from './ItemHoc'
-import { Grid, Row, Col } from 'react-flexbox-grid'
-import Img from 'components/common/img/Img'
-import Item from 'models/Item'
-import Input from 'react-toolbox/lib/input'
 import theme from './theme.css'
-import Autocomplete from 'react-toolbox/lib/autocomplete'
-import Slider from 'react-toolbox/lib/slider'
-import classnames from 'classnames'
-import { Tab, Tabs } from 'react-toolbox'
 import SlotBids from './SlotBids'
-import { Card, CardMedia, CardTitle, CardActions } from 'react-toolbox/lib/card'
-import { IconButton, Button } from 'react-toolbox/lib/button'
+import { items as ItemsConstants } from 'adex-constants'
+import { BasicProps } from './ItemCommon'
+import Helper from 'helpers/miscHelpers'
+import ImgDialog from './ImgDialog'
+import { Item as ItemModel } from 'adex-models'
+import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT} from 'constants/misc'
+
+const { ItemsTypes, AdSizesByValue } = ItemsConstants
+const ADVIEW_URL = process.env.ADVIEW_HOST || 'https://view.adex.network'
+
+const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fallbackUrl }) => {
+
+    let sizes = size.split('x')
+    sizes = {
+        width: sizes[0],
+        height: sizes[1]
+    }
+
+    let queryParmas = {
+        width: sizes.width,
+        height: sizes.height,
+        slotId: slotId,
+        slotIpfs: slotIpfs,
+        fallbackImgIpfs: fallbackImgIpfs,
+        fallbackUrl: fallbackUrl || ''
+    }
+
+    let query = Helper.getQuery(queryParmas)
+
+    let src = ADVIEW_URL + query
+
+    let iframeStr =
+        `<iframe src="${src}"\n` +
+        `   width="${sizes.width}"\n` +
+        `   height="${sizes.height}"\n` +
+        `   scrolling="no"\n` +
+        `   frameBorder="0"\n` +
+        `   style="border: 0;"\n` +
+        `></iframe>`
+
+    // TODO: Add copy to clipboard and tooltip or description how to use it
+    return (
+        <div>
+            <div className={theme.integrationLabel}> {t('INTEGRATION_CODE')}</div>
+            <pre className={theme.integrationCode}>
+                {iframeStr}
+            </pre>
+            <div>
+                <br />
+                <div className={theme.integrationLabel}> {t('AD_PREVIEW')}</div>
+                <div dangerouslySetInnerHTML={{ __html: iframeStr }} />
+            </div>
+        </div>
+    )
+}
 
 export class Slot extends Component {
 
-    integrationCode = () => {
-        let src = `adview.adex.network/${this.props.item._id}` //TODO: Set real src with config !!!
-        let sizes = this.props.item._meta.size.split('x')
-        sizes = {
-            width: sizes[0],
-            height: sizes[1]
+    constructor(props) {
+        super(props)
+        this.state = {
+            editFallbackImg: false
         }
-        let iframeStr =
-            `<iframe src="${src}"\n` +
-            `   width="${sizes.width}"\n` +
-            `   height="${sizes.height}"\n` +
-            `   scrolling="no"\n` +
-            `   frameborder="0"\n` +
-            `   style="border: 0;"\n` +
-            `></iframe>`
+    }
 
-        // TODO: Add copy to clipboard and tooltip or description how to use it
-        return (
-            <div>
-                <div className={theme.integrationLabel}> {this.props.t('INTEGRATION_CODE')}</div>
-                <pre className={theme.integrationCode}>
-                    {iframeStr}
-                </pre>
-            </div>
-        )
+    handleFallbackImgUpdateToggle = () => {
+        let active = this.state.editFallbackImg
+        this.setState({ editFallbackImg: !active })
     }
 
     render() {
-        let item = this.props.item
-        let meta = item._meta
+        let item = this.props.item || {}
         let t = this.props.t
 
-        if (!item) return (<h1>Slot '404'</h1>)
+        if (!item._id) return (<h1>Slot '404'</h1>)
 
+        let imgSrc = item.fallbackAdImg.tempUrl || ItemModel.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY)
         return (
             <div>
-                <div className={theme.itemPropTop}>
-                    <Grid fluid style={{ padding: 0 }}>
-                        <Row top='xs'>
-                            <Col xs={12} sm={12} md={12} lg={7}>
-                                <div className={theme.imgHolder}>
-                                    <Card className={theme.itemDetailCard} raised={false} theme={theme}>
-                                        <CardMedia
-                                            aspectRatio='wide'
-                                            theme={theme}
-                                        >
-                                            <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} />
-                                        </CardMedia>
-                                        <CardActions theme={theme} >
-
-                                            <IconButton
-                                                /* theme={theme} */
-                                                icon='edit'
-                                                accent
-                                                onClick={this.props.toggleImgEdit}
-                                            />
-                                        </CardActions>
-                                    </Card>
-                                    {/* <Img src={Item.getImgUrl(meta.img)} alt={meta.fullName} className={theme.img} /> */}
-                                </div>
-                                <div className={theme.bannerProps}>
-                                    <div>
-                                        <Dropdown
-                                            onChange={this.props.handleChange.bind(this, 'adType')}
-                                            source={AdTypes}
-                                            value={meta.adType}
-                                            label={t('adType', { isProp: true })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <Dropdown
-                                            onChange={this.props.handleChange.bind(this, 'size')}
-                                            source={Sizes}
-                                            value={meta.size}
-                                            label={t('size', { isProp: true })}
-                                        />
-                                    </div>
-                                </div>
-                            </Col>
-                            <Col xs={12} sm={12} md={12} lg={5}>
-                                <this.integrationCode />
-                            </Col>
-                        </Row>
-                    </Grid>
-                </div>
+                <BasicProps
+                    {...this.props}
+                    item={item}
+                    t={t}
+                    toggleImgEdit={this.props.toggleImgEdit}
+                    toggleFallbackImgEdit={this.handleFallbackImgUpdateToggle}
+                    canEditImg
+                    rightComponent={<IntegrationCode
+                        ipfs={item.ipfs}
+                        size={item.sizeTxtValue}
+                        t={t}
+                        slotId={item.id}
+                        slotIpfs={item.ipfs}
+                        fallbackImgIpfs={(item.fallbackAdImg || {}).ipfs}
+                        fallbackUrl={item.fallbackAdUrl}
+                    />}
+                />
+                <ImgDialog
+                    {...this.props}
+                    imgSrc={imgSrc}
+                    handleToggle={this.handleFallbackImgUpdateToggle}
+                    active={this.state.editFallbackImg}
+                    onChangeReady={this.props.handleChange}
+                    validateId={item._id}
+                    width={AdSizesByValue[item.size].width}
+                    height={AdSizesByValue[item.size].height}
+                    title={t('SLOT_FALLBACK_IMG_LABEL')}
+                    additionalInfo={t('SLOT_FALLBACK_IMG_INFO', { args: [AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'px'] })}
+                    exact={true}
+                    required={true}
+                    errMsg={t('ERR_IMG_SIZE_EXACT')}
+                    imgPropName='fallbackAdImg'
+                />
                 <div>
-                    <SlotBids {...this.props} meta={meta} t={t} />
+                    <SlotBids {...this.props} item={item} t={t} />
                 </div>
             </div>
-
         )
     }
 }
@@ -119,27 +130,31 @@ export class Slot extends Component {
 Slot.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    // items: PropTypes.array.isRequired,
     item: PropTypes.object.isRequired,
-    spinner: PropTypes.bool
-};
+}
 
 function mapStateToProps(state) {
     let persist = state.persist
-    let memory = state.memory
+    // let memory = state.memory
     return {
         account: persist.account,
-        // items: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
-        spinner: memory.spinners[ItemsTypes.AdSlot.name],
         objModel: AdSlot,
-        itemType: ItemsTypes.AdSlot.id
-    };
+        itemType: ItemsTypes.AdSlot.id,
+        // NOTE: maybe not the best way but pass props to the HOC here
+        updateImgInfoLabel: 'SLOT_AVATAR_IMG_INFO',
+        updateImgLabel: 'SLOT_AVATAR_IMG_LABEL',
+        updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
+        updateImgExact: false,
+        canEditImg: true, // TEMP: we can edit slot avatar,
+        updateImgWidth: AVATAR_MAX_WIDTH,
+        updateImgHeight: AVATAR_MAX_HEIGHT
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
 const SlotItem = ItemHoc(Slot)

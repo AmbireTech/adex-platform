@@ -38,6 +38,7 @@
 .img {
     width: auto;
     height: 100%;
+    max-width: 180px;
 }
 
 .content {

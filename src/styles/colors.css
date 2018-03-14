@@ -27,7 +27,11 @@
 
     /*AdEx danger*/
     --color-adex-danger-primary: #FF5722; /* Deep Orange 500 */
-    --color-adex-danger-contrast: #FFFFFF;        
+    --color-adex-danger-contrast: #FFFFFF;   
+
+    /*AdEx warning*/
+    --color-adex-warning-primary: #ffae00;
+    --color-adex-warning-contrast: #FFFFFF;   
 
     /*AdEx neutral*/
     --color-adex-neutral-primary: #FFFFFF;  /* Deep Orange 500 */
@@ -35,6 +39,7 @@
 
     /*AdEx other colors*/
     --color-adex-divider: var(--color-divider);
+    --color-adex-divider-darker: var(--color-adex-neutral-contrast);
 
     /* Sections gradients */
     --gradient-adex-first: linear-gradient(to left, #34b3f8, #1a75ed);

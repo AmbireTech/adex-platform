@@ -11,7 +11,9 @@ import FontIcon from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 import Ripple from 'react-toolbox/lib/ripple'
 import { Button } from 'react-toolbox/lib/button'
-import { ItemTypesNames } from 'constants/itemsTypes'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ItemTypesNames } = ItemsConstants
 
 const Step = ({ page, active, index, children, theme, canAdvance, canFinish, canReverse, setPageIndex, canAdvanceToPage, currentPage, goToPage, ...other }) => {
     let warning = page.status === 'warning'
@@ -67,11 +69,11 @@ const StepperNav = ({ pages, currentPage, ...other }) => {
 class MaterialStepper extends React.Component {
 
     onComplete() {
-        console.log('currPage', this.currPage)
+        // console.log('currPage', this.currPage)
         let props = this.props
         let page = props.pages[props.currentPage]
 
-        console.log('props.pages[props.currentPage]', page.component)
+        // console.log('props.pages[props.currentPage]', page.component)
     }
 
     goToPage(nexStep) {
@@ -123,7 +125,7 @@ class MaterialStepper extends React.Component {
                         </div>
 
                         <div className={stepperTheme.right} >
-                            <Button label='Cancel' />
+                            {/* <Button label='Cancel' /> */}
                             {this.canAdvanceNextToPage() && !page.completeBtn ?
                                 <Button label='Continue' primary onClick={this.goToPage.bind(this, currentPage + 1)} />
                                 :
