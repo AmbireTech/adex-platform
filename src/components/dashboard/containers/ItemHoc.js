@@ -18,8 +18,6 @@ import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
 import { items as ItemsConstants } from 'adex-constants'
 import Img from 'components/common/img/Img'
-import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
-import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
 
 const { ItemTypesNames, ItemTypeByTypeId, AdSizesByValue } = ItemsConstants
 
@@ -36,7 +34,8 @@ export default function ItemHoc(Decorated) {
                 initialItemState: {},
                 dirtyProps: [],
                 editImg: false,
-                itemModel: Item
+                itemModel: Item,
+                _activeInput: null
             }
         }
 
@@ -92,6 +91,8 @@ export default function ItemHoc(Decorated) {
             let dp = this.state.dirtyProps.filter((dp) => { return dp !== propName })
 
             this.setState({ item: newItem.plainObj(), dirtyProps: dp })
+            // TEMP fix, we assume that the initial values are validated
+            this.props.actions.resetValidationErrors(this.state.item._id, propName)
         }
 
         setActiveFields = (field, value) => {
@@ -169,6 +170,7 @@ export default function ItemHoc(Decorated) {
                                 <span>
                                     <span>
                                         <Input
+                                            autoFocus
                                             className={theme.itemName}
                                             type='text'
                                             label={t('fullName', { isProp: true })}
@@ -202,6 +204,7 @@ export default function ItemHoc(Decorated) {
 
                             {this.state.activeFields.description ?
                                 <Input
+                                    autoFocus
                                     multiline
                                     rows={3}
                                     type='text'

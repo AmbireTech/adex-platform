@@ -1,4 +1,9 @@
 @import '../../../styles/variables.css';
+@import './../../../../node_modules/react-toolbox/lib/input/config.css';
+
+.error {
+    color: var(--input-text-error-color);
+}
 
 .avatar {
     border-radius: 50%;
