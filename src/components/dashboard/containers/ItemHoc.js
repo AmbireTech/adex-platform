@@ -51,10 +51,14 @@ export default function ItemHoc(Decorated) {
             this.setState({ item: { ...item }, initialItemState: initialItemState, itemModel: model })
         }
 
-        componentWillReceiveProps(nextProps, nextState) {
+        shouldComponentUpdate(nextProps, nextState) {
+            // TODO: check why need this...
+            return JSON.stringify(this.props) !== JSON.stringify(nextProps)
+        }
 
+        componentWillReceiveProps(nextProps, nextState) {
             let currentItemInst = new this.state.itemModel(this.state.item)
-            // Assume that the this.props.match.params.itemId can not be changed without remout of the component
+            // Assume that the this.props.match.params.itemId can not be changed without remount of the component
             // TODO: check the above
             let nextItem = nextProps.item
             let nexItemInst = new this.state.itemModel(nextItem)
@@ -126,7 +130,7 @@ export default function ItemHoc(Decorated) {
         }
 
         render() {
-            console.log('props', this.props)
+            console.log('ItemHoc')
             if (!this.state.item) {
                 return (<h1> No item found! </h1>)
             }
@@ -159,7 +163,7 @@ export default function ItemHoc(Decorated) {
                                 onChangeReady={this.handleChange}
                                 validateId={item._id}
                                 width={this.props.updateImgWidth || (AdSizesByValue[item.size] || {}).width}
-                                height={this.props.updateImgHeight ||(AdSizesByValue[item.size] || {}).height}
+                                height={this.props.updateImgHeight || (AdSizesByValue[item.size] || {}).height}
                                 title={t(this.props.updateImgLabel)}
                                 additionalInfo={t(this.props.updateImgInfoLabel)}
                                 exact={this.props.updateImgExact}
@@ -259,13 +263,13 @@ export default function ItemHoc(Decorated) {
                                             </div>
                                         ) : ''
                                 )}
-                            <FloatingProgressButton 
-                                inProgress={!!this.props.spinner} 
-                                theme={theme} 
-                                icon='save' 
-                                onClick={this.save} 
-                                floating 
-                                primary 
+                            <FloatingProgressButton
+                                inProgress={!!this.props.spinner}
+                                theme={theme}
+                                icon='save'
+                                onClick={this.save}
+                                floating
+                                primary
                                 disabled={!!Object.keys(this.props.validations[item._id] || {}).length}
                             />
                         </div>
@@ -304,7 +308,7 @@ export default function ItemHoc(Decorated) {
             account: persist.account,
             item: item,
             spinner: memory.spinners['update' + props.match.params.itemId],
-            validations: memory.validations
+            validations: {} // memory.validations
         }
     }
 

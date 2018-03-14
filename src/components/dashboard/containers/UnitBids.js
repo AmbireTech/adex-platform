@@ -30,13 +30,10 @@ const SORT_PROPERTIES = [
     /** traffic, etc. */
 ]
 
-// TODO: Higher level component that uses Item to pass instance of the Item in order to use its props through getters instead of plain object props
-// TODO: use plain object only for the store
-
 export class UnitBids extends Component {
 
     shouldComponentUpdate(nextProps, nextState) {
-        // TODO: investigate why component recieves props without change in the parent components and stre state props
+        // TODO: investigate why component receives props without change in the parent components and stre state props
         return JSON.stringify(this.props) !== JSON.stringify(nextProps)
     }
 
