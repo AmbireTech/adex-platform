@@ -12,6 +12,7 @@ import ImgForm from './../ImgForm'
 import { items as ItemsConstants } from 'adex-constants'
 import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
 import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT} from 'constants/misc'
+import { validName } from 'helpers/validators'
 
 const { ItemTypesNames } = ItemsConstants
 
@@ -31,17 +32,7 @@ class NewItemForm extends Component {
     }
 
     validateName(name, dirty) {
-        let msg = ''
-        let errMsgArgs = []
-        if (!name) {
-            msg = 'ERR_REQUIRED_FIELD'
-        } else if (name.length < 4) {
-            msg = 'ERR_MIN_LENGTH'
-            errMsgArgs.push(4)
-        } else if (name.length > 128) {
-            msg = 'ERR_MAX_LENGTH'
-            errMsgArgs.push(128)
-        }
+        const {msg, errMsgArgs} = validName(name)
 
         this.props.validate('fullName', { isValid: !msg, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
     }

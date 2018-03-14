@@ -31,12 +31,13 @@ const FallbackAdData =  ({ item, t, rightComponent, url, ...rest }) => {
                     {rest.activeFields.fallbackAdUrl ?
                         <Input
                             // required
+                            autoFocus
                             type='text'
                             label={t('fallbackAdUrl', { isProp: true })}
                             value={item.fallbackAdUrl}
                             onChange={(val) =>  rest.handleChange('fallbackAdUrl', val)}
                             maxLength={1024}
-                            onBlur={() => rest.validate('fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true })}
+                            onBlur={() => { rest.setActiveFields('fallbackAdUrl', false); rest.validate('fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true }); } }
                             onFocus={() => rest.validate('fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
                             error={errFallbackAdUrl && !!errFallbackAdUrl.dirty ? <span> {errFallbackAdUrl.errMsg} </span> : null}
                         >
@@ -64,6 +65,10 @@ const FallbackAdData =  ({ item, t, rightComponent, url, ...rest }) => {
                                     />
                                 </span>
                             </p>
+                            {errFallbackAdUrl && !!errFallbackAdUrl.dirty ?
+                                <div>
+                                    <span className={theme.error}> {errFallbackAdUrl.errMsg} </span>
+                                </div> : null}
 
                         </div>
                     }
