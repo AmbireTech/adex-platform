@@ -3,30 +3,14 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import adexTranslations from 'adex-translations'
-
-const translations = adexTranslations()
+import { translate } from 'services/translations/translations'
 
 export default function Translate(Decorated) {
   class Translated extends Component {
 
-    interpolate(tpl, args) {
-      return tpl.replace(/\${(\w+)}/g, function (_, v) { return args[v] })
-    }
-
     t(val, { isProp = false, args = [] } = {}) {
-      let key = val + ''
-      if (isProp) {
-        key = 'PROP_' + (key.replace(/^_/, ''))
-      }
-      
-      key = key.toUpperCase()
 
-      let translation = translations[this.props.language][key] || val
-
-      if(args.length && Array.isArray(args)){
-        translation = this.interpolate(translation, args)
-      }
+      const translation = translate(val, {isProp, args}, this.props.language)
 
       return translation
     }
