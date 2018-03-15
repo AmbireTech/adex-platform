@@ -114,7 +114,7 @@ export function deleteItem({ item, objModel, authSig } = {}) {
         })
             .then((res) => {
                 // console.log('deleteItem res', res)
-                addToast({ dispatch: dispatch, type: 'warning', errStr: 'SUCCESS_DELETING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName] })
+                addToast({ dispatch: dispatch, type: 'accept', errStr: 'SUCCESS_DELETING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName] })
 
                 return dispatch({
                     type: types.DELETE_ITEM,
@@ -134,7 +134,7 @@ export function removeItemFromItem({ item, toRemove, authSig } = {}) {
         removeItmFromItm({ item: item._id, collection: toRemove._id || toRemove, authSig: authSig })
             .then((res) => {
                 
-                addToast({ dispatch: dispatch, type: 'warning', errStr: 'SUCCESS_REMOVE_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, ItemTypesNames[toRemove._type], toRemove._meta.fullName,] })
+                addToast({ dispatch: dispatch, type: 'accept', errStr: 'SUCCESS_REMOVE_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, ItemTypesNames[toRemove._type], toRemove._meta.fullName,] })
                 
                 return dispatch({
                     type: types.REMOVE_ITEM_FROM_ITEM,
