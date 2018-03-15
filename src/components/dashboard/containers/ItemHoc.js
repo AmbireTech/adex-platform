@@ -18,6 +18,7 @@ import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
 import { items as ItemsConstants } from 'adex-constants'
 import Img from 'components/common/img/Img'
+import SaveBtn from './SaveBtn'
 
 const { ItemTypesNames, ItemTypeByTypeId, AdSizesByValue } = ItemsConstants
 
@@ -51,10 +52,11 @@ export default function ItemHoc(Decorated) {
             this.setState({ item: { ...item }, initialItemState: initialItemState, itemModel: model })
         }
 
-        shouldComponentUpdate(nextProps, nextState) {
-            // TODO: check why need this...
-            return JSON.stringify(this.props) !== JSON.stringify(nextProps)
-        }
+        // shouldComponentUpdate(nextProps, nextState) {
+        //     let diffProps = JSON.stringify(this.props) !== JSON.stringify(nextProps)
+        //     let diffState = JSON.stringify(this.state) !== JSON.stringify(nextState)
+        //     return diffProps || diffState
+        // }
 
         componentWillReceiveProps(nextProps, nextState) {
             let currentItemInst = new this.state.itemModel(this.state.item)
@@ -106,7 +108,7 @@ export default function ItemHoc(Decorated) {
         }
 
         //TODO: Do not save if not dirty!
-        save() {
+        save = () => {
             if (this.state.dirtyProps.length && !this.props.spinner) {
                 let item = { ...this.state.item }
                 this.props.actions.updateItem({
@@ -130,7 +132,6 @@ export default function ItemHoc(Decorated) {
         }
 
         render() {
-            console.log('ItemHoc')
             if (!this.state.item) {
                 return (<h1> No item found! </h1>)
             }
@@ -138,11 +139,12 @@ export default function ItemHoc(Decorated) {
                 * NOTE: using instance of the item, the instance is passes to the Unit, Slot, Channel and Campaign components,
                 * in this case there is no need to make instance inside them
             */
-            // let model = Models.itemClassByTypeId[this.state.item._type]
+           
             let item = new this.state.itemModel(this.state.item) || {}
             let t = this.props.t
             let canEdit = ItemTypeByTypeId[item.type] === 'collection'
             let imgSrc = item.meta.img.tempUrl || ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)
+            let { validations, ...rest } = this.props
 
             return (
                 <div>
@@ -241,44 +243,18 @@ export default function ItemHoc(Decorated) {
                             }
 
                         </div>
-                        <div className={classnames(theme.top, theme.right)}>
-
-                            {!!this.props.spinner ?
-                                null
-                                : (
-                                    this.state.dirtyProps.length ?
-                                        (
-                                            <div className={theme.itemStatus}>
-                                                <TooltipFontIcon value='info_outline' tooltip={t('UNSAVED_CHANGES')} />
-                                                {this.state.dirtyProps.map((p) => {
-                                                    return (
-                                                        <Chip
-                                                            deletable
-                                                            key={p}
-                                                            onDeleteClick={this.returnPropToInitialState.bind(this, p)}
-                                                        >
-                                                            {t(p, { isProp: true })}
-                                                        </Chip>)
-                                                })}
-                                            </div>
-                                        ) : ''
-                                )}
-                            <FloatingProgressButton
-                                inProgress={!!this.props.spinner}
-                                theme={theme}
-                                icon='save'
-                                onClick={this.save}
-                                floating
-                                primary
-                                disabled={!!Object.keys(this.props.validations[item._id] || {}).length}
-                            />
-                        </div>
-
+                        <SaveBtn 
+                            spinnerId={'update' + item._id}
+                            itemId={item._id}
+                            returnPropToInitialState={this.returnPropToInitialState}
+                            dirtyProps={this.state.dirtyProps}
+                            save={this.save}
+                        />
                     </div>
 
                     <div>
                         <Decorated
-                            {...this.props}
+                            {...rest}
                             inEdit={!!this.state.dirtyProps.length}
                             item={item}
                             save={this.save}
@@ -302,13 +278,11 @@ export default function ItemHoc(Decorated) {
 
     function mapStateToProps(state, props) {
         let persist = state.persist
-        let memory = state.memory
+        // let memory = state.memory
         const item = persist.items[props.itemType][props.match.params.itemId]
         return {
             account: persist.account,
-            item: item,
-            spinner: memory.spinners['update' + props.match.params.itemId],
-            validations: {} // memory.validations
+            item: item
         }
     }
 

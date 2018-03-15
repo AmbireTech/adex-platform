@@ -47,6 +47,12 @@ export class Unit extends Component {
         this.getUnitBids()
     }
 
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     let diffProps = JSON.stringify(this.props) !== JSON.stringify(nextProps)
+    //     let diffState = JSON.stringify(this.state) !== JSON.stringify(nextState)
+    //     return diffProps || diffState
+    // }
+
     onBidPlaced = () => {
         this.setState({ closeDialog: true })
         this.getUnitBids()
