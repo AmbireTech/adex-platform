@@ -57,7 +57,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2.0.0] - 2018-02-26
 
-[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v2.0.5...HEAD
+[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.5...HEAD
 [2.0.5]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.2...v2.0.3
