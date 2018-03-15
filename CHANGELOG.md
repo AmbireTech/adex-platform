@@ -1,7 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [2.0.4] - 2018-03-18
+## [2.0.5] - 2018-03-15
+### Added
+- Changelog
+- Separate component Save btn at Item HOC
+
+### Changed
+- Notifications translations
+- Item HOC re render fix
+- README
+
+## [2.0.4] - 2018-03-14
 ### Added
 - Edit Campaign/Channel/AdSlot logo(avatar)  
 - Edit Ad slot fallback ad url and fallback ad image
@@ -36,6 +46,7 @@ All notable changes to this project will be documented in this file.
 - Misc bug fixes
 - Code cleanup
 
+[2.0.5]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.2...v0.0.3
 [2.0.2]: https://github.com/AdExBlockchain/adex-dapp/compare/7a8ba665907351a99290ef77e1f0ffbee080dd95...v2.0.2
