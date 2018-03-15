@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Switch } from 'react-router-dom'
+import 'react-image-crop/dist/ReactCrop.css'
 import './App.css'
 import theme from './theme'
 import { ThemeProvider } from 'react-css-themr'

@@ -11,6 +11,7 @@ import { FontIcon } from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
 import { IconButton } from 'react-toolbox/lib/button'
 import RTButtonTheme from 'styles/RTButton.css'
+import ReactCrop from 'react-image-crop'
 
 class ImgForm extends Component {
 
@@ -19,7 +20,8 @@ class ImgForm extends Component {
 
     this.state = {
       imgSrc: props.imgSrc || '',
-      imgName: ''
+      imgName: '',
+      crop: {}
     }
   }
 
@@ -48,6 +50,10 @@ class ImgForm extends Component {
       this.setState({ imgSrc: '', imgName: '' })
       this.props.onChange({ tempUrl: null })
     }
+  }
+
+  onChange = (crop) => {
+    this.setState({ crop });
   }
 
   UploadInfo = () => {
@@ -86,7 +92,15 @@ class ImgForm extends Component {
         <div>
           <Dropzone accept='.jpeg,.jpg,.png' onDrop={this.onDrop} className={theme.dropzone} >
             <div className={theme.droppedImgContainer}>
-              <Img src={this.state.imgSrc} alt={'name'} className={theme.imgDropzonePreview} />
+              <ReactCrop 
+                style={{maxWidth: '70%', maxHeight: 216}}
+                imageStyle={{maxWidth: '100%', maxHeight: '100%'}}
+                className={theme.imgDropzonePreview}
+                crop={this.state.crop}
+                src={this.state.imgSrc || ''}
+                onChange={this.onChange}
+                />
+              {/* <Img src={this.state.imgSrc} alt={'name'} className={theme.imgDropzonePreview} /> */}
               <this.UploadInfo />
             </div>
 
