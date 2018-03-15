@@ -1,12 +1,12 @@
 @import './../../../../node_modules/react-toolbox/lib/variables.css';
 @import '../../../styles/variables.css';
 
-.dropzone {
+.dropzone, .cropOverlay {
     display: flex;
     flex-direction: column;
     flex: 1 1;
     width: 100%;
-    height: 250px;
+    height: 220px;
     border: 2px dashed #ccc;
     background: #f7f7f7;
     align-items: center;
@@ -25,11 +25,16 @@
         align-items: center;
 
         & .imgDropzonePreview {
-            height: 216px;
+            max-height: 206px;
+            height: auto;
             width: auto;
             max-width: 70%;
         }
     }
+}
+
+.cropOverlay {
+    cursor: default;
 }
 
 .floating {
