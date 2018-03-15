@@ -1,6 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
 ## [2.0.5] - 2018-03-15
 ### Added
 - Changelog
@@ -46,7 +48,18 @@ All notable changes to this project will be documented in this file.
 - Misc bug fixes
 - Code cleanup
 
+## [2.0.1] - 2018-02-27
+### Added
+- New translations
+
+### Fixed 
+- Misc bug fixes
+
+## [2.0.0] - 2018-02-26
+
+[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v2.0.5...HEAD
 [2.0.5]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.3...v2.0.4
-[2.0.3]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.2...v0.0.3
+[2.0.3]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/AdExBlockchain/adex-dapp/compare/7a8ba665907351a99290ef77e1f0ffbee080dd95...v2.0.2
+[2.0.1]: https://github.com/AdExBlockchain/adex-dapp/compare/20bc85bcf3797d86c951aa63cd5c568d3c5b5e6d...7a8ba665907351a99290ef77e1f0ffbee080dd95
