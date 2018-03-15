@@ -37,8 +37,8 @@ export class ImgDialog extends Component {
         const vals = this.state.values
         Object.keys(vals).forEach((key) => {
             this.props.onChangeReady(key, vals[key])
-            this.props.handleToggle()
         })
+        this.props.handleToggle()
 
     }
 
