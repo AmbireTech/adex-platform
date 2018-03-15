@@ -12,6 +12,7 @@ import Translate from 'components/translate/Translate'
 import { IconButton } from 'react-toolbox/lib/button'
 import RTButtonTheme from 'styles/RTButton.css'
 import ReactCrop from 'react-image-crop'
+import { getCroppedImg } from 'services/images/crop'
 
 class ImgForm extends Component {
 
@@ -20,7 +21,9 @@ class ImgForm extends Component {
 
     this.state = {
       imgSrc: props.imgSrc || '',
+      imgFile: null,
       imgName: '',
+      cropMode: false,
       crop: {}
     }
   }
@@ -31,7 +34,7 @@ class ImgForm extends Component {
     if (!file) return
     let objectUrl = URL.createObjectURL(file)
 
-    that.setState({ imgSrc: objectUrl, imgName: file.name })
+    that.setState({ imgSrc: objectUrl, imgName: file.name, imgFile: file })
     // TODO: Maybe get width and height here instead on ing validation hoc
     let res = { tempUrl: objectUrl }    
     this.props.onChange(res)
@@ -52,15 +55,35 @@ class ImgForm extends Component {
     }
   }
 
-  onChange = (crop) => {
+  onCropChange = (crop) => {
     this.setState({ crop });
+  }
+
+  saveCropped = () => {
+    getCroppedImg(this.state.imgFile, this.state.crop, 'image')
+      .then((croppedBlob)=> {
+        // console.log('croppedBlock', croppedBlob)
+        this.setState({imgSrc: croppedBlob, cropMode: false})
+      })
+  }
+
+  preventBubbling = (e) => {
+    if (e.stopPropagation) {
+      e.stopPropagation()
+    }
+    if (e.nativeEvent) {
+      e.nativeEvent.stopImmediatePropagation()
+    }
   }
 
   UploadInfo = () => {
     return (
       <div className={theme.uploadInfo}>
         {this.state.imgSrc ?
-          <IconButton icon='cancel' className={RTButtonTheme.danger} onClick={this.onRemove} />
+          <span>
+            <IconButton icon='crop' primary onClick={() => this.setState({cropMode: true})} />
+            <IconButton icon='clear' className={RTButtonTheme.danger} onClick={this.onRemove} />
+          </span>
           : <FontIcon value='file_upload' />
         }
         <div>
@@ -90,21 +113,33 @@ class ImgForm extends Component {
 
         </div>
         <div>
-          <Dropzone accept='.jpeg,.jpg,.png' onDrop={this.onDrop} className={theme.dropzone} >
-            <div className={theme.droppedImgContainer}>
-              <ReactCrop 
-                style={{maxWidth: '70%', maxHeight: 216}}
-                imageStyle={{maxWidth: '100%', maxHeight: '100%'}}
-                className={theme.imgDropzonePreview}
-                crop={this.state.crop}
-                src={this.state.imgSrc || ''}
-                onChange={this.onChange}
+          
+          {this.state.cropMode ? 
+            <div className={theme.cropOverlay} onClick={this.preventBubbling}>
+              <div className={theme.droppedImgContainer}>                
+                <ReactCrop 
+                  style={{maxWidth: '70%', maxHeight: 206}}
+                  imageStyle={{maxWidth: '100%', maxHeight: '206px', width: 'auto', height: 'auto'}}
+                  className={theme.imgDropzonePreview}
+                  crop={this.state.crop}
+                  src={this.state.imgSrc || ''}
+                  onChange={this.onCropChange}
                 />
-              {/* <Img src={this.state.imgSrc} alt={'name'} className={theme.imgDropzonePreview} /> */}
-              <this.UploadInfo />
+                <span>
+                  <IconButton icon='save' primary onClick={this.saveCropped} />
+                  <IconButton icon='clear' className={RTButtonTheme.danger} onClick={() => this.setState({cropMode: false})} />
+                </span>
+              </div>
             </div>
-
-          </Dropzone>
+            :    
+            <Dropzone accept='.jpeg,.jpg,.png' onDrop={this.onDrop} className={theme.dropzone} >      
+              <div className={theme.droppedImgContainer}>              
+                <Img src={this.state.imgSrc} alt={'name'} className={theme.imgDropzonePreview} />
+                <this.UploadInfo />
+              </div>
+            </Dropzone>
+          }
+          
         </div>
         <div>
           <small> {this.props.additionalInfo} </small>
