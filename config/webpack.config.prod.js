@@ -168,6 +168,7 @@ module.exports = {
           // in the main CSS file.
           {
             test: /\.css$/,
+            exclude: path.resolve(paths.appNodeModules, 'react-image-crop'),
             loader: ExtractTextPlugin.extract(
               Object.assign(
                 {
@@ -212,6 +213,22 @@ module.exports = {
               )
             ),
             // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
+          },
+          {
+            test: /\.css$/,
+            include: path.resolve(paths.appNodeModules, 'react-image-crop'),  
+            use: [
+              require.resolve('style-loader'),
+              {
+                loader: require.resolve('css-loader'),
+                options: {              
+                  modules: false,
+                  sourceMap: true,
+                  importLoaders: 1,
+                  localIdentName: "[name]--[local]--[hash:base64:8]"
+                },
+              }
+            ],
           },
           // "file" loader makes sure assets end up in the `build` folder.
           // When you `import` an asset, you get its filename.
