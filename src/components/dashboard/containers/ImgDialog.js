@@ -51,6 +51,8 @@ export class ImgDialog extends Component {
         let t = () => { }
         let validations = this.props.invalidFields || {}
         let errImg = validations[this.props.imgPropName]
+        let width = this.props.width || AVATAR_MAX_WIDTH
+        let height = this.props.height || AVATAR_MAX_HEIGHT
         return (
             <span>
                 <Dialog
@@ -77,9 +79,10 @@ export class ImgDialog extends Component {
                                     label={t(this.props.imgLabel)}
                                     imgSrc={this.props.imgSrc || ''}
                                     onChange={this.props.validateImg.bind(this,
-                                        { propsName: this.props.imgPropName, widthTarget: this.props.width || AVATAR_MAX_WIDTH, heightTarget: this.props.height || AVATAR_MAX_HEIGHT, msg: this.props.errMsg, exact: this.props.exact, required: this.props.required, onChange: this.handleChange })}
+                                        { propsName: this.props.imgPropName, widthTarget: width, heightTarget: height, msg: this.props.errMsg, exact: this.props.exact, required: this.props.required, onChange: this.handleChange })}
                                     additionalInfo={t(this.props.additionalInfo)}
                                     errMsg={errImg ? errImg.errMsg : ''}
+                                    size={{ width: width, height: height }}
                                 />
                             </Col>
                         </Row>
