@@ -60,6 +60,7 @@ class NewSlotFormImgs extends Component {
                                         { propsName: 'img', widthTarget: AVATAR_MAX_WIDTH, heightTarget: AVATAR_MAX_HEIGHT, msg: 'ERR_IMG_SIZE_MAX', exact: false, required: false})}
                                     additionalInfo={t('SLOT_AVATAR_IMG_INFO')}
                                     errMsg={errImg ? errImg.errMsg : ''}
+                                    size={{width: AVATAR_MAX_WIDTH, height: AVATAR_MAX_HEIGHT}}
                                 />
                             </Col>
                             <Col sm={12}>
@@ -70,6 +71,7 @@ class NewSlotFormImgs extends Component {
                                         { propsName: 'fallbackAdImg', widthTarget: AdSizesByValue[item.size].width, heightTarget:  AdSizesByValue[item.size].height, msg: 'ERR_IMG_SIZE_EXACT', exact: true, required: false})}
                                     additionalInfo={t('SLOT_FALLBACK_IMG_INFO', { args: [AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'px'] })}
                                     errMsg={errFallbackAdImg ? errFallbackAdImg.errMsg : ''}
+                                    size={{width: AdSizesByValue[item.size].width, height:  AdSizesByValue[item.size].height}}
                                 />
                             </Col>
                         </Row>

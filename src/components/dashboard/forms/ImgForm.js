@@ -19,11 +19,13 @@ class ImgForm extends Component {
   constructor(props) {
     super(props)
 
+    const aspect = props.size ? (this.props.size.width / this.props.size.height) : undefined
+
     this.state = {
       imgSrc: props.imgSrc || '',
       imgName: '',
       cropMode: false,
-      crop: {}
+      crop: {aspect: aspect}
     }
   }
 
@@ -59,7 +61,7 @@ class ImgForm extends Component {
   }
 
   saveCropped = () => {
-    getCroppedImgUrl(this.state.imgSrc, this.state.crop, 'image')
+    getCroppedImgUrl({objUrl: this.state.imgSrc, pixelCrop: this.state.crop, fileName: 'image', size: this.props.size })
       .then((croppedBlob)=> {
         URL.revokeObjectURL(this.state.imgSrc)
         this.setState({imgSrc: croppedBlob, cropMode: false})
@@ -82,7 +84,8 @@ class ImgForm extends Component {
       <div className={theme.uploadInfo}>
         {this.state.imgSrc ?
           <span>
-            <IconButton icon='crop' primary onClick={() => this.setState({cropMode: true})} />
+            {/* TEMP: make size required */}
+            {this.props.size ? <IconButton icon='crop' primary onClick={() => this.setState({cropMode: true})} /> : null}
             <IconButton icon='clear' className={RTButtonTheme.danger} onClick={this.onRemove} />
           </span>
           : <FontIcon value='file_upload' />
@@ -154,7 +157,8 @@ ImgForm.propTypes = {
   actions: PropTypes.object.isRequired,
   language: PropTypes.string.isRequired,
   imgSrc: PropTypes.string,
-  label: PropTypes.string
+  label: PropTypes.string,
+  size: PropTypes.object
 }
 
 function mapStateToProps(state, props) {

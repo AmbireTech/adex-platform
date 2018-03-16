@@ -93,6 +93,7 @@ class NewItemForm extends Component {
                                        { propsName: 'img', widthTarget: AVATAR_MAX_WIDTH, heightTarget: AVATAR_MAX_HEIGHT, msg: 'ERR_IMG_SIZE_MAX', exact: false, required: false})}
                                     additionalInfo={t(this.props.imgAdditionalInfo)}
                                     errMsg={errImg ? errImg.errMsg : ''}
+                                    size={{width: AVATAR_MAX_WIDTH, height: AVATAR_MAX_HEIGHT}}
                                 />
                             </Col>
                         </Row>

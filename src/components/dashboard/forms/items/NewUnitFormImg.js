@@ -55,6 +55,7 @@ class NewUnitFormImg extends Component {
                                     { propsName: 'img', widthTarget: AdSizesByValue[item.size].width, heightTarget:  AdSizesByValue[item.size].height, msg: 'ERR_IMG_SIZE_EXACT', exact: true, required: true})}
                                 additionalInfo={t('UNIT_BANNER_IMG_INFO', { args: [AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'px'] })}
                                 errMsg={errImg ? errImg.errMsg : ''}
+                                size={{width: AdSizesByValue[item.size].width, height:  AdSizesByValue[item.size].height}}                                
                             />
                         </Col>
                     </Row>
