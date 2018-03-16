@@ -115,6 +115,10 @@
     max-height: 100%;
 }
 
+.uploadActions {
+    margin-bottom: 10px;
+}
+
 .imgErr {
     color: var(--color-adex-danger-primary)
 }

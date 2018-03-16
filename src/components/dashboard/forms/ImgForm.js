@@ -9,7 +9,7 @@ import theme from './theme.css'
 import Dropzone from 'react-dropzone'
 import { FontIcon } from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
-import { IconButton } from 'react-toolbox/lib/button'
+import { IconButton, Button } from 'react-toolbox/lib/button'
 import RTButtonTheme from 'styles/RTButton.css'
 import ReactCrop from 'react-image-crop'
 import { getCroppedImgUrl } from 'services/images/crop'
@@ -80,18 +80,20 @@ class ImgForm extends Component {
   }
 
   UploadInfo = () => {
+    const t = this.props.t
     return (
       <div className={theme.uploadInfo}>
         {this.state.imgSrc ?
-          <span>
+          <div className={theme.uploadActions}>
             {/* TEMP: make size required */}
-            {this.props.size ? <IconButton icon='crop' primary onClick={() => this.setState({cropMode: true})} /> : null}
-            <IconButton icon='clear' className={RTButtonTheme.danger} onClick={this.onRemove} />
-          </span>
+            {this.props.size ? <Button icon='crop' raised primary onClick={() => this.setState({cropMode: true})} label={t('IMG_FORM_CROP')} /> : null}  
+            &nbsp;
+            <Button icon='clear' raised className={RTButtonTheme.danger} onClick={this.onRemove} label={t('IMG_FORM_CLEAR')} />
+          </div>
           : <FontIcon value='file_upload' />
         }
         <div>
-          <span> {this.props.t('DRAG_AND_DROP_TO_UPLOAD')} </span>
+          <span> {t('DRAG_AND_DROP_TO_UPLOAD')} </span>
         </div>
         <div>
           <small> (max 2MB; .jpeg, .jpg, .png)  </small>
@@ -105,6 +107,7 @@ class ImgForm extends Component {
 
   // TODO: CLEAR IMG BLOB!!!!
   render() {
+    const t = this.props.t
     return (
       <div className={theme.imgForm}>
         <div className={theme.imgHeader}>
@@ -130,8 +133,8 @@ class ImgForm extends Component {
                   onChange={this.onCropChange}
                 />
                 <span>
-                  <IconButton icon='save' primary onClick={this.saveCropped} />
-                  <IconButton icon='clear' className={RTButtonTheme.danger} onClick={() => this.setState({cropMode: false})} />
+                  <Button icon='save' raised label={t('IMG_FORM_SAVE_CROP')} primary onClick={this.saveCropped} /> &nbsp;
+                  <Button icon='clear' raised label={t('IMG_FORM_CANCEL_CROP')} className={RTButtonTheme.danger} onClick={() => this.setState({cropMode: false})} />
                 </span>
               </div>
             </div>
