@@ -12,7 +12,7 @@ import Translate from 'components/translate/Translate'
 import { IconButton } from 'react-toolbox/lib/button'
 import RTButtonTheme from 'styles/RTButton.css'
 import ReactCrop from 'react-image-crop'
-import { getCroppedImg } from 'services/images/crop'
+import { getCroppedImgUrl } from 'services/images/crop'
 
 class ImgForm extends Component {
 
@@ -21,7 +21,6 @@ class ImgForm extends Component {
 
     this.state = {
       imgSrc: props.imgSrc || '',
-      imgFile: null,
       imgName: '',
       cropMode: false,
       crop: {}
@@ -34,7 +33,7 @@ class ImgForm extends Component {
     if (!file) return
     let objectUrl = URL.createObjectURL(file)
 
-    that.setState({ imgSrc: objectUrl, imgName: file.name, imgFile: file })
+    that.setState({ imgSrc: objectUrl, imgName: file.name })
     // TODO: Maybe get width and height here instead on ing validation hoc
     let res = { tempUrl: objectUrl }    
     this.props.onChange(res)
@@ -60,10 +59,12 @@ class ImgForm extends Component {
   }
 
   saveCropped = () => {
-    getCroppedImg(this.state.imgFile, this.state.crop, 'image')
+    getCroppedImgUrl(this.state.imgSrc, this.state.crop, 'image')
       .then((croppedBlob)=> {
-        // console.log('croppedBlock', croppedBlob)
+        URL.revokeObjectURL(this.state.imgSrc)
         this.setState({imgSrc: croppedBlob, cropMode: false})
+        let res = { tempUrl: croppedBlob }    
+        this.props.onChange(res)
       })
   }
 
