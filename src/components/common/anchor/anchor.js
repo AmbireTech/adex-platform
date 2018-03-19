@@ -14,6 +14,7 @@ const Anchor = ({href, target, children, ...rest}) => {
             draggable='false'
             rel='noopener noreferrer'
             {...rest}
+            target={target}
             href={url}
         >
             { children }
