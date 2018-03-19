@@ -2,7 +2,10 @@ import React from 'react'
 
 const getUrl = (url) => {
 
-	url = url.replace(/^(https?:)?\/\//i, '//')
+    url = (url || '').replace(/^(https?:)?\/\//i, '')
+    if(url) {
+        url = '//' + url
+    }
 
 	return url
 }
