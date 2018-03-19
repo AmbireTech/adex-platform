@@ -26,3 +26,9 @@ body {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+a, img {
+  -webkit-user-drag: none;
+  user-select: none;
+  user-drag: none;
+}

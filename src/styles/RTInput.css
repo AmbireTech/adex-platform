@@ -27,6 +27,7 @@
     margin-top: var(--underline-margin-bottom);
     line-height: inherit !important;
     max-width: calc(100% - 60px);
+    user-select: none;
 }
 
 .counter {

@@ -14,9 +14,10 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 // import GasPrice from 'components/dashboard/account/GasPrice'
 // import ChangeLang from 'components/translate/ChangeLang'
 import Switch from 'react-toolbox/lib/switch'
+import Anchor from 'components/common/anchor/anchor'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
-const RRSwitch = withReactRouterLink((props) => <a {...props}><Switch {...props}  theme={theme} /></a>)
+const RRSwitch = withReactRouterLink((props) => <Anchor {...props}><Switch {...props}  theme={theme} /></Anchor>)
 
 const SideSwitch = ({ side, t }) => {
   return (

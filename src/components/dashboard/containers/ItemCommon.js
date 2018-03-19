@@ -10,6 +10,7 @@ import classnames from 'classnames'
 import { IconButton } from 'react-toolbox/lib/button'
 import { validUrl } from 'helpers/validators'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
+import Anchor from 'components/common/anchor/anchor'
 
 const { AdSizesByValue, AdTypesByValue } = ItemsConstants
 
@@ -50,9 +51,9 @@ const FallbackAdData =  ({ item, t, rightComponent, url, ...rest }) => {
                         <div >
                             <p>
                                 {item.fallbackAdUrl ?
-                                    <a href={item.fallbackAdUrl} target='_blank'>
+                                    <Anchor href={item.fallbackAdUrl} target='_blank'>
                                         {item.fallbackAdUrl}
-                                    </a>
+                                    </Anchor>
                                     :
                                     <span style={{ opacity: 0.3 }}> {t('NO_FALLBACK_URL_YET')}</span>
                                 }
@@ -96,9 +97,9 @@ export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
                                     <Img src={Item.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)} alt={item.fullName} onClick={rest.toggleImgEdit} className={classnames({ [theme.pointer]: rest.canEditImg })} />
                                 </CardMedia>
                                 <CardTitle theme={theme} >
-                                    <a href={url} target='_blank'>
+                                    <Anchor href={url} target='_blank'>
                                         {url}
-                                    </a>
+                                    </Anchor>
 
                                 </CardTitle>
                             </Card>

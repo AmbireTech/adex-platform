@@ -14,6 +14,8 @@ import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { addSig, getSig } from 'services/auth/auth'
 import { checkAuth } from 'services/adex-node/actions'
 import METAMASK_DL_IMG from 'resources/download-metamask.png'
+import Anchor from 'components/common/anchor/anchor'
+import Img from 'components/common/img/Img'
 
 const { signAuthTokenMetamask, getAccountMetamask } = scActions
 
@@ -111,9 +113,9 @@ class AuthMetamask extends Component {
                 </span>
                 <br/>
                 <h3>
-                    <a href='https://metamask.io/' target='_blank'>
-                        <img src={METAMASK_DL_IMG} alt={'Downlad metamask'} style={{maxWidth: '100%', maxHeight: '80px'}}/>
-                    </a>
+                    <Anchor href='https://metamask.io/' target='_blank'>
+                        <Img src={METAMASK_DL_IMG} alt={'Downlad metamask'} style={{maxWidth: '100%', maxHeight: '80px'}}/>
+                    </Anchor>
                 </h3>
                 <br/>
                 <br/>
