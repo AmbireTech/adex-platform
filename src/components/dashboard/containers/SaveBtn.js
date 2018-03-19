@@ -49,7 +49,7 @@ class SaveBtn extends Component {
                     onClick={this.props.save}
                     floating
                     primary
-                    disabled={!!Object.keys(this.props.validations[this.props.itemId] || {}).length}
+                    disabled={!!Object.keys(this.props.validations[this.props.validationId] || {}).length}
                 />
             </div>
 
@@ -59,6 +59,7 @@ class SaveBtn extends Component {
 
 SaveBtn.propTypes = {
     spinnerId: PropTypes.string,
+    validationId: PropTypes.string,
     itemId: PropTypes.string,
     validations: PropTypes.object
 }

@@ -25,7 +25,7 @@
 - check ETH balance before web3 transactions - validation and msgs
 - update fallback ad data for slot - done
 - update channels/campaigns avatars -done
-- crop images on steps
+- crop images on steps - done
 - handle errors
 - use only item._type in production
 - add link to tutorials or place it on the dapp - done
@@ -33,5 +33,5 @@
 - add trezor auth
 - add ledger auth
 - make some charts
-- check why have to use shouldComponentUpdate at ItemHoc and UnitBids
+- check why have to use shouldComponentUpdate at ItemHoc and UnitBids - done (validations and spinners at ItemHoc)
 
