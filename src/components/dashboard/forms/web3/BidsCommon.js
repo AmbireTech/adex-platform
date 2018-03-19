@@ -22,7 +22,7 @@ export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
             right={<Anchor target='_blank' href={unitMeta.ad_url} > {unitMeta.ad_url} </Anchor>}
         />
         <PropRow left={t('UNIT_BANNER')}
-            right={<Img className={theme.imgPreview} src={Item.getImgUrl(unitMeta.img, process.env.IPFS_GATEWAY)} alt={unitMeta.fullName} />}
+            right={<Img className={theme.imgPreview} src={Item.getImgUrl(unitMeta.img, process.env.IPFS_GATEWAY) || ''} alt={unitMeta.fullName} />}
         />
         <PropRow left={t('UNIT_IPFS')}
             right={<Anchor target='_blank' href={process.env.IPFS_GATEWAY + unit._ipfs} > {unit._ipfs} </Anchor>}

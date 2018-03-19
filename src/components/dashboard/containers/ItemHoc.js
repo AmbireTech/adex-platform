@@ -143,7 +143,7 @@ export default function ItemHoc(Decorated) {
             let item = new this.state.itemModel(this.state.item) || {}
             let t = this.props.t
             let canEdit = ItemTypeByTypeId[item.type] === 'collection'
-            let imgSrc = item.meta.img.tempUrl || ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)
+            let imgSrc = item.meta.img.tempUrl || ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY) || ''
             let { validations, ...rest } = this.props
 
             return (

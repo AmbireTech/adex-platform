@@ -25,6 +25,7 @@ class MyCard extends Component {
         let id = item._id
         let itemTypeName = ItemTypesNames[item._type]
         let to = '/dashboard/' + this.props.side + '/' + itemTypeName + '/' + id
+        let imageSrc = Item.getImgUrl(meta.img, process.env.IPFS_GATEWAY) || ''
         return (
             <Card raised={false} theme={theme}>
                 <RRCardMedia
@@ -32,7 +33,7 @@ class MyCard extends Component {
                     aspectRatio='wide'
                     theme={theme}
                 >
-                    <Img src={Item.getImgUrl(meta.img, process.env.IPFS_GATEWAY)} alt={name} />
+                    <Img src={imageSrc} alt={name} />
                 </RRCardMedia>
                 <CardTitle
                     title={meta.fullName}

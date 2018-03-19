@@ -25,7 +25,7 @@ const FallbackAdData =  ({ item, t, rightComponent, url, ...rest }) => {
                     aspectRatio='wide'
                     theme={theme}
                 >
-                    <Img src={Item.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY)} alt={item.fallbackAdUrl} onClick={rest.toggleFallbackImgEdit} style={{ cursor: 'pointer' }} />
+                    <Img src={Item.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY) || ''} alt={item.fallbackAdUrl} onClick={rest.toggleFallbackImgEdit} style={{ cursor: 'pointer' }} />
                 </CardMedia>
                 <CardTitle theme={theme} >                                           
 
@@ -94,7 +94,7 @@ export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
                                     aspectRatio='wide'
                                     theme={theme}
                                 >
-                                    <Img src={Item.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)} alt={item.fullName} onClick={rest.toggleImgEdit} className={classnames({ [theme.pointer]: rest.canEditImg })} />
+                                    <Img src={Item.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY) || ''} alt={item.fullName} onClick={rest.toggleImgEdit} className={classnames({ [theme.pointer]: rest.canEditImg })} />
                                 </CardMedia>
                                 <CardTitle theme={theme} >
                                     <Anchor href={url} target='_blank'>
