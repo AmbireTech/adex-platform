@@ -83,7 +83,7 @@ export class Slot extends Component {
 
         if (!item._id) return (<h1>Slot '404'</h1>)
 
-        let imgSrc = item.fallbackAdImg.tempUrl || ItemModel.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY)
+        let imgSrc = item.fallbackAdImg.tempUrl || ItemModel.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY) || ''
         return (
             <div>
                 <BasicProps

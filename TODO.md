@@ -35,4 +35,5 @@
 - make some charts
 - check why have to use shouldComponentUpdate at ItemHoc and UnitBids - done (validations and spinners at ItemHoc)
 - make anchor component to set some attributes on one place - done
+- fix adex-models getImgUrl to return '' instead og undefined
 
