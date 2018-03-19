@@ -20,6 +20,7 @@ import { Item } from 'adex-models'
 import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
 import { AcceptBid, GiveupBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
 import classnames from 'classnames'
+import Anchor from 'components/common/anchor/anchor'
 
 const { ItemsTypes } = ItemsConstants
 const { BID_STATES, BidStateNames, BidStatesLabels } = ExchangeConstants
@@ -177,13 +178,13 @@ export class SlotBids extends Component {
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    <a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._advertiser} > {bid._advertiser || '-'} </a>
+                    <Anchor target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._advertiser} > {bid._advertiser || '-'} </Anchor>
                 </TableCell>
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
                     {bid._adUnit ?
-                        <a target='_blank' href={Item.getIpfsMetaUrl(bid._adUnit, process.env.IPFS_GATEWAY)} > {bid._adUnit} </a>
+                        <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._adUnit, process.env.IPFS_GATEWAY)} > {bid._adUnit} </Anchor>
                         : '-'}
                 </TableCell>
                 <TableCell>

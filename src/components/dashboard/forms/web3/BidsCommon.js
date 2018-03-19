@@ -7,6 +7,7 @@ import UnitTargets from 'components/dashboard/containers/UnitTargets'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import moment from 'moment'
 import classnames from 'classnames'
+import Anchor from 'components/common/anchor/anchor'
 
 export const PropRow = ({ left, right, className }) =>
     <Row >
@@ -18,16 +19,16 @@ export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
     <div>
         <PropRow left={t('UNIT_NAME')} right={unitMeta.fullName} />
         <PropRow left={t('UNIT_URL')}
-            right={<a target='_blank' href={unitMeta.ad_url} > {unitMeta.ad_url} </a>}
+            right={<Anchor target='_blank' href={unitMeta.ad_url} > {unitMeta.ad_url} </Anchor>}
         />
         <PropRow left={t('UNIT_BANNER')}
             right={<Img className={theme.imgPreview} src={Item.getImgUrl(unitMeta.img, process.env.IPFS_GATEWAY)} alt={unitMeta.fullName} />}
         />
         <PropRow left={t('UNIT_IPFS')}
-            right={<a target='_blank' href={process.env.IPFS_GATEWAY + unit._ipfs} > {unit._ipfs} </a>}
+            right={<Anchor target='_blank' href={process.env.IPFS_GATEWAY + unit._ipfs} > {unit._ipfs} </Anchor>}
         />
         <PropRow left={t('ADVERTISER')}
-            right={<a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + unitMeta.owner} > {unitMeta.owner} </a>}
+            right={<Anchor target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + unitMeta.owner} > {unitMeta.owner} </Anchor>}
         />
         <PropRow left={t('UNIT_TARGETS')}
             right={<UnitTargets targets={unitMeta.targets} t={t} />}
@@ -37,7 +38,7 @@ export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
 export const Report = ({ report = {}, t }) =>
     <div>
         <PropRow left={t('BID_REPORT_IPFS')}
-            right={<a target='_blank' href={process.env.IPFS_GATEWAY + report.ipfs} > {report.ipfs} </a>}
+            right={<Anchor target='_blank' href={process.env.IPFS_GATEWAY + report.ipfs} > {report.ipfs} </Anchor>}
         />
         <PropRow left={t('BID_REPORT_VERIFIED_UNIQUE_CLICKS')} right={report.report.verifiedUniqueClicks} />
         <PropRow left={t('BID_REPORT_ALL_CLICKS')} right={report.report.allClicks} />

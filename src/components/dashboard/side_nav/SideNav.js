@@ -13,6 +13,7 @@ import { NewUnit, NewCampaign, NewSlot, NewChannel } from 'components/dashboard/
 import FontIcon from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 import packageJson from './../../../../package.json'
+import Anchor from 'components/common/anchor/anchor'
 
 const RRListItem = withReactRouterLink(ListItem)
 
@@ -110,14 +111,14 @@ class SideNav extends Component {
                 </List>
                 <div className={theme.listBottom} >
                     <List>
-                        <a rel='noopener noreferrer' target='_blank' href='https://medium.com/adex-network-tips-and-tricks' >
+                        <Anchor target='_blank' href='https://medium.com/adex-network-tips-and-tricks' >
                             <ListItem
                                 leftIcon='help_outline'
                                 selectable={true}
                                 caption={t('HELP')}
                                 theme={theme}
                             />
-                        </a>
+                        </Anchor>
                         <RRListItem
                             to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
                             selectable={true}
@@ -135,11 +136,11 @@ class SideNav extends Component {
                     </div>
                     <div>
                         <small>
-                            <a className={theme.adxLink} rel='noopener noreferrer' target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_TOKEN_ADDR} > AdEx (ADX) Token </a>
+                            <Anchor className={theme.adxLink} target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_TOKEN_ADDR} > AdEx (ADX) Token </Anchor>
                         </small>
                         <small> / </small>
                         <small>
-                            <a className={theme.adxLink} rel='noopener noreferrer' target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_EXCHANGE_ADDR} > AdEx Exchange </a>
+                            <Anchor className={theme.adxLink} target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_EXCHANGE_ADDR} > AdEx Exchange </Anchor>
                         </small>
                     </div>
                     <div>

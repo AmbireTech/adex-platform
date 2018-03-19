@@ -11,6 +11,7 @@ import Rows from 'components/dashboard/collection/Rows'
 import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import Translate from 'components/translate/Translate'
 import moment from 'moment'
+import Anchor from 'components/common/anchor/anchor'
 
 const { TxStatusLabels } = ExchangeConstants
 
@@ -47,7 +48,7 @@ class Transactions extends Component {
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    <a target='_blank' href={process.env.ETH_SCAN_TX_HOST + transaction._id} > {transaction._id} </a>
+                    <Anchor target='_blank' href={process.env.ETH_SCAN_TX_HOST + transaction._id} > {transaction._id} </Anchor>
                 </TableCell>
                 <TableCell> {t(TxStatusLabels[transaction.status])} </TableCell>
                 <TableCell> {t(moment(transaction.sendingTime).format('MMMM Do, YYYY, HH:mm:ss'))} </TableCell>

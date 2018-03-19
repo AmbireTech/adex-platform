@@ -84,7 +84,7 @@ class Img extends Component {
         let { alt, ...other } = this.props
         return (
             this.state.imgSrc ?
-                <img {...other} alt={alt} src={this.state.imgSrc} />
+                <img {...other} alt={alt} src={this.state.imgSrc} draggable='false' onDragStart={(event) => event.preventDefault() /*Firefox*/} />
                 :
                 <div className={theme.imgLoading}>
                     <ProgressBar theme={theme} type='circular' mode='indeterminate' />

@@ -18,6 +18,7 @@ import { exchange as ExchangeConstants } from 'adex-constants'
 import { CancelBid, VerifyBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
 import classnames from 'classnames'
 import moment from 'moment'
+import Anchor from 'components/common/anchor/anchor'
 
 const TooltipIconButton = Tooltip(IconButton)
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
@@ -88,12 +89,12 @@ export class UnitBids extends Component {
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    <a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._publisher} > {bid._publisher || '-'} </a>
+                    <Anchor target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._publisher} > {bid._publisher || '-'} </Anchor>
                 </TableCell>
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    <a target='_blank' href={Item.getIpfsMetaUrl(bid._adSlot, process.env.IPFS_GATEWAY)} > {bid._adSlot || '-'} </a>
+                    <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._adSlot, process.env.IPFS_GATEWAY)} > {bid._adSlot || '-'} </Anchor>
                 </TableCell>
                 <TableCell>
                     <div>
