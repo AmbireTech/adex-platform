@@ -35,7 +35,7 @@ const FallbackAdData =  ({ item, t, rightComponent, url, ...rest }) => {
                             autoFocus
                             type='text'
                             label={t('fallbackAdUrl', { isProp: true })}
-                            value={item.fallbackAdUrl}
+                            value={item.fallbackAdUrl || ''}
                             onChange={(val) =>  rest.handleChange('fallbackAdUrl', val)}
                             maxLength={1024}
                             onBlur={() => { rest.setActiveFields('fallbackAdUrl', false); rest.validate('fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true }); } }
