@@ -21,17 +21,18 @@ const SaveBtnWithItem = NewItemHoc(saveBtn)
 class NewItemSteps extends Component {
     render() {
 
+        let validateId =  'new-' + this.props.itemType + '-'
         let pages = [{
             title: 'Step 1',
             component: ValidItemHoc(NewItemForm),
-            props: { ...this.props, validateId: this.props.itemType + '' + 0 }
+            props: { ...this.props, validateId: validateId + 0 }
         }]
 
         this.props.itemPages.map((itemPage, index) => {
             pages.push({
                 title: 'Step ' + (index + 2),
                 component: ValidItemHoc(itemPage),
-                props: { ...this.props, validateId: this.props.itemType + '' + (index + 1) }
+                props: { ...this.props, validateId: validateId + (index + 1) }
             })
         })
 

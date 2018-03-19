@@ -22,16 +22,17 @@ const SaveBtnWithItem = NewBidHoc(saveBtn)
 class NewBidSteps extends Component {
 
     render() {
+        let validateId = 'bid-' + this.props.bidId
         let t = this.props.t
         let pages = [{
             title: t('STEP_N', { args: [1] }),
             component: ValidItemHoc(BidForm),
-            props: { ...this.props, validateId: this.props.bidId }
+            props: { ...this.props, validateId: validateId }
         }, {
             title: t('PREVIEW_AND_BID'),
             completeBtn: () => <SaveBtnWithItem {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
             component: ValidItemHoc(BidFormPreview),
-            props: { ...this.props, validateId: this.props.bidId }
+            props: { ...this.props, validateId: validateId }
         }]
 
         return (

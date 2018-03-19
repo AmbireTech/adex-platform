@@ -139,7 +139,7 @@ export default function ItemHoc(Decorated) {
                 * NOTE: using instance of the item, the instance is passes to the Unit, Slot, Channel and Campaign components,
                 * in this case there is no need to make instance inside them
             */
-           
+
             let item = new this.state.itemModel(this.state.item) || {}
             let t = this.props.t
             let canEdit = ItemTypeByTypeId[item.type] === 'collection'
@@ -244,8 +244,8 @@ export default function ItemHoc(Decorated) {
 
                         </div>
                         <SaveBtn 
-                            spinnerId={'update' + item._id}
-                            itemId={item._id}
+                            spinnerId={'update-' + item._id}
+                            validationId={'update-' + item._id}
                             returnPropToInitialState={this.returnPropToInitialState}
                             dirtyProps={this.state.dirtyProps}
                             save={this.save}
