@@ -37,6 +37,14 @@ const SORT_PROPERTIES = [
     { value: 'adType' },
 ]
 
+const FILTER_ROPERTIES = [
+    { label: '_deleted', value: '_deleted' }
+]
+
+const FILTER_VALUES = {
+    _deleted: [{label: 'ALL', value: null}, {label: 'DELETED', value: true}, {label: 'NOT_DELETED', value: false}]
+}
+
 const List = ({ list, itemRenderer }) => {
     return (<div className="list">
         {list.map((item, index) => itemRenderer(item, index))}
@@ -56,7 +64,10 @@ class ItemsList extends Component {
             search: '',
             sortOrder: -1,
             sortProperty: (props.sortProperties || SORT_PROPERTIES)[0] ? (props.sortProperties || SORT_PROPERTIES)[0].value : null, // TODO: fix this
-            filteredItems: []
+            filteredItems: [],
+            filterBy: null,
+            filterByValues: [],
+            filterByValueFilter: null
         }
 
         this.renderCard = this.renderCard.bind(this)
@@ -88,6 +99,9 @@ class ItemsList extends Component {
     handleChange = (name, value) => {
         let newStateValue = { [name]: value }
         if (name === 'search') newStateValue.page = 0
+        if (name === 'filterBy') {
+            newStateValue.filterByValues = FILTER_VALUES[value]
+        }
         this.setState(newStateValue);
     }
 
@@ -248,13 +262,18 @@ class ItemsList extends Component {
         )
     }
 
-    filterItems({ items, search, sortProperty, sortOrder, page, pageSize, searchMatch }) {
+    filterItems({ items, search, sortProperty, sortOrder, page, pageSize, searchMatch, filterBy }) {
         // TODO: optimize filter
         // TODO: maybe filter deleted before this?
         let filtered = (items || [])
             .filter((i) => {
-                let isItem = (!!i && ((!!i._meta && !i._deleted) || i.id || i._id))
+                let isItem = (!!i && ((!!i._meta) || i.id || i._id))
                 if (!isItem) return isItem
+
+                if(filterBy){
+                    return i[filterBy.key] === filterBy.value
+                }
+
                 let hasSearch = !!search
                 if (!hasSearch) return isItem
                 let regex = new RegExp(search, 'i')
@@ -329,7 +348,8 @@ class ItemsList extends Component {
             sortOrder: this.state.sortOrder,
             page: this.state.page,
             pageSize: this.state.pageSize,
-            searchMatch: this.props.searchMatch
+            searchMatch: this.props.searchMatch,
+            // filterBy: {key: '_type', value: 0} 
         })
 
         let items = data.items
@@ -350,15 +370,15 @@ class ItemsList extends Component {
                 <div className={theme.listTools}>
                     <Grid fluid style={{ padding: 0 }} >
                         <Row middle='xs' className={theme.itemsListControls}>
-                            <Col sm={6} md={6} lg={3}>
-                                <Input theme={theme} type='text' label={<InputLabel icon='search' label='Search'/>} name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} />
+                            <Col sm={6} md={6} lg={2}>
+                                <Input theme={theme} type='text' label={<InputLabel icon='search' label='Search'/>} name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')}/>
                             </Col>
-                            <Col sm={6} md={6} lg={3}>
+                            <Col sm={6} md={6} lg={2}>
                                 <div style={{ display: 'inline-block', width: 'calc(100% - 76px)' }}>
                                     <Dropdown
                                         auto
                                         // label={<InputLabel icon='sort' label='Sort by' style={{marginLeft: '-2px'}}/>}
-                                        // // icon='sort'
+                                        // icon='sort'
                                         label='Sort by'
                                         onChange={this.handleChange.bind(this, 'sortProperty')}
                                         source={this.mapSortProperties(this.props.sortProperties || SORT_PROPERTIES)}
@@ -370,7 +390,29 @@ class ItemsList extends Component {
                                     <IconButton icon='arrow_downward' primary={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
                                 </div>
                             </Col>
-                            <Col sm={10} md={10} lg={5}>
+                            <Col sm={12} md={12} lg={3}>
+                                <Row>
+                                    <Col sm={6} md={6} lg={6}>
+                                        <Dropdown
+                                            auto
+                                            label='Filter by'
+                                            onChange={this.handleChange.bind(this, 'filterBy')}
+                                            source={this.mapSortProperties(this.props.filterByProperties || FILTER_ROPERTIES)}
+                                            value={this.state.filterBy}
+                                        />  
+                                    </Col>
+                                    <Col sm={6} md={6} lg={6}>
+                                        <Dropdown
+                                            auto
+                                            label='Filter by value'
+                                            onChange={this.handleChange.bind(this, 'filterByValueFilter')}
+                                            source={this.mapSortProperties(this.state.filterByValues)}
+                                            value={this.state.filterByValueFilter}
+                                        />  
+                                    </Col>   
+                                </Row>             
+                            </Col>
+                            <Col sm={10} md={10} lg={4}>
                                 <Pagination
                                     page={data.page}
                                     pages={data.pages}
@@ -382,7 +424,8 @@ class ItemsList extends Component {
                                     goToFirstPage={this.goToPage.bind(this, 0)}
                                     goToPrevPage={this.goToPage.bind(this, data.page - 1)}
                                     changePageSize={this.changePageSize.bind(this, 'pageSize',
-                                        { page: data.page, pages: data.pages, itemsLength: data.itemsLength })}
+                                        { page: data.page, pages: data.pages, itemsLength: data.itemsLength })
+                                    }
                                 />
                             </Col>
                             {!this.props.listMode ?
