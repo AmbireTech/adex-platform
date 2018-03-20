@@ -108,6 +108,7 @@ class ImgForm extends Component {
   // TODO: CLEAR IMG BLOB!!!!
   render() {
     const t = this.props.t
+    const crop = this.state.crop
     return (
       <div className={theme.imgForm}>
         <div className={theme.imgHeader}>
@@ -133,7 +134,7 @@ class ImgForm extends Component {
                   onChange={this.onCropChange}
                 />
                 <span>
-                  <Button icon='save' raised label={t('IMG_FORM_SAVE_CROP')} primary onClick={this.saveCropped} /> &nbsp;
+                  <Button icon='save' raised label={t('IMG_FORM_SAVE_CROP')} primary onClick={this.saveCropped} disabled={!crop.width || !crop.height} /> &nbsp;
                   <Button icon='clear' raised label={t('IMG_FORM_CANCEL_CROP')} className={RTButtonTheme.danger} onClick={() => this.setState({cropMode: false})} />
                 </span>
               </div>
