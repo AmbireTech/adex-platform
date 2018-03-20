@@ -1,0 +1,5 @@
+@import './../../../styles/variables.css';
+
+.overlay {
+    background-color: var(--overlay-color-light) ;
+}
