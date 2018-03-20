@@ -370,3 +370,20 @@
         min-height: 85vh;
     }
 }
+
+.label { 
+    top: 26px;
+}
+
+.inputLabel {
+
+}
+
+.inputLabelIcon {
+    /* font-size: 16px; */
+}
+
+.inputLabelValue {
+    display: inline-block;
+    vertical-align: super;
+}

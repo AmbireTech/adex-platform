@@ -21,7 +21,6 @@ All notable changes to this project will be documented in this file.
 - Images urls
 - Validations ids
 
-
 ## [2.0.5] - 2018-03-15
 ### Added
 - Changelog
@@ -45,7 +44,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2.0.3] - 2018-03-03
 ### Added
-- Links to AdEd ethereum contract on side navigation
+- Links to AdEx ethereum contract on side navigation
 - Edit Items (name, description, etc..)
 - Validation for placing/accepting bids (check for available deposit)
 - Deposit warning message (for multiple transactions needed)
@@ -55,7 +54,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2.0.2] - 2018-03-01
 ### Added
-- Sowing pending transactions on side navigation
+- Showing pending transactions on side navigation
 - New translations
 - Showing pending bids actions
 

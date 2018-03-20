@@ -21,6 +21,7 @@ import { Item } from 'adex-models'
 import moment from 'moment'
 import Translate from 'components/translate/Translate'
 import classnames from 'classnames'
+import { InputLabel } from 'components/dashboard/containers/ListControls'
 import { items as ItemsConstants } from 'adex-constants'
 const { AdSizesByValue, AdTypesByValue, ItemTypesNames } = ItemsConstants
 
@@ -350,13 +351,14 @@ class ItemsList extends Component {
                     <Grid fluid style={{ padding: 0 }} >
                         <Row middle='xs' className={theme.itemsListControls}>
                             <Col sm={6} md={6} lg={3}>
-                                <Input type='text' label='Search' icon='search' name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} />
+                                <Input theme={theme} type='text' label={<InputLabel icon='search' label='Search'/>} name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} />
                             </Col>
                             <Col sm={6} md={6} lg={3}>
                                 <div style={{ display: 'inline-block', width: 'calc(100% - 76px)' }}>
                                     <Dropdown
                                         auto
-                                        icon='sort'
+                                        // label={<InputLabel icon='sort' label='Sort by' style={{marginLeft: '-2px'}}/>}
+                                        // // icon='sort'
                                         label='Sort by'
                                         onChange={this.handleChange.bind(this, 'sortProperty')}
                                         source={this.mapSortProperties(this.props.sortProperties || SORT_PROPERTIES)}
