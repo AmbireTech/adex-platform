@@ -8,7 +8,8 @@ export const getCroppedImgUrl = ({objUrl, pixelCrop, fileName, size}) => {
     const scaleCanvas = document.createElement('canvas')
 
     let img = new Image()
-    img.src = objUrl
+    img.crossOrigin = 'Anonymous' // For ipfs URL
+    img.src = objUrl    
   
     // As a blob
     return new Promise((resolve, reject) => {
