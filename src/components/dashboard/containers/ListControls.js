@@ -2,6 +2,7 @@ import React from 'react'
 import Autocomplete from 'react-toolbox/lib/autocomplete'
 import { IconButton } from 'react-toolbox/lib/button'
 import Slider from 'react-toolbox/lib/slider'
+import FontIcon from 'react-toolbox/lib/font_icon'
 import theme from './theme.css'
 
 export const PAGE_SIZES = [
@@ -63,3 +64,6 @@ const getAllPagedValues = (current, max) => {
 
     return pages
 }
+
+export const InputLabel = ({icon, label}) =>
+    <div className={theme.inputLabel} ><FontIcon className={theme.inputLabelIcon} value={icon}/> <span className={theme.inputLabelValue}> {label} </span> </div>
