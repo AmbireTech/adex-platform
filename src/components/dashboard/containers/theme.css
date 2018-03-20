@@ -387,3 +387,8 @@
     display: inline-block;
     vertical-align: super;
 }
+
+.field { 
+    display: inline-block !important;
+    margin-right: 20px;
+}
