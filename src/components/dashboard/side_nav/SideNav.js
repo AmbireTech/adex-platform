@@ -144,7 +144,11 @@ class SideNav extends Component {
                         </small>
                     </div>
                     <div>
-                        <small> v.{packageJson.version}-beta </small>
+                        <small>
+                            <Anchor className={theme.adxLink} target='_blank' href='https://github.com/AdExBlockchain/adex-dapp/blob/master/CHANGELOG.md' >
+                                v.{packageJson.version}-beta
+                            </Anchor>
+                        </small>
                     </div>
                 </div>
             </div >
