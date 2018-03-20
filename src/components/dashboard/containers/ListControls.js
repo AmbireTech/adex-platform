@@ -16,7 +16,7 @@ export const Pagination = (props) => {
 
     return (
         <div>
-            <div style={{ display: 'inline-block', width: 220 }}>
+            <div style={{ display: 'inline-block', width: 196 }}>
                 <IconButton
                     primary
                     disabled={!(props.page > 0 && props.pages > props.page)}
@@ -47,7 +47,7 @@ export const Pagination = (props) => {
                 <span> of </span>
                 <span> {props.pages} </span>
             </div>
-            <div style={{ position: 'relative', display: 'inline-block', width: 'calc(100% - 220px)', minWidth: 140 }}>
+            <div style={{ position: 'relative', display: 'inline-block', width: 'calc(100% - 196px)'}}>
                 <label className={theme.sliderLabel}> Page size <strong>{props.pageSize}</strong> </label>
                 <Slider pinned snaps min={5} max={25} step={5} value={props.pageSize} onChange={props.changePageSize} />
             </div>
