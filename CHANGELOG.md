@@ -3,6 +3,25 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.0.7] - 2018-03-20
+### Fixed
+- Anchor getUrl
+- fallbackAdUrl input
+- crop images bugs
+
+## [2.0.6] - 2018-03-19
+### Added
+- upload/edit images - crop and auto resize
+- Anchor component
+
+### Changed
+- Images and links - not draggable (on Firefox links are still draggable)
+
+### Fixed
+- Images urls
+- Validations ids
+
+
 ## [2.0.5] - 2018-03-15
 ### Added
 - Changelog
@@ -57,7 +76,9 @@ All notable changes to this project will be documented in this file.
 
 ## [2.0.0] - 2018-02-26
 
-[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.5...HEAD
+[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.7...HEAD
+[2.0.7]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.6...v2.0.7
+[2.0.6]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.2...v2.0.3
