@@ -4,6 +4,7 @@
  * @param {String} fileName - Name of the returned file in Promise
  */
 export const getCroppedImgUrl = ({objUrl, pixelCrop, fileName, size}) => {
+    // TODO: Validate pixelCrop and size
     const cropCanvas = document.createElement('canvas')
     const scaleCanvas = document.createElement('canvas')
 
@@ -19,12 +20,12 @@ export const getCroppedImgUrl = ({objUrl, pixelCrop, fileName, size}) => {
 
             // pixelCrop come in %
             const crop = {
-                x: width * (pixelCrop.x / 100),
-                y: height * (pixelCrop.y / 100),
-                width: width * (pixelCrop.width / 100),
-                height: height * (pixelCrop.height / 100),
+                x: Math.round(width * (pixelCrop.x / 100)),
+                y: Math.round(height * (pixelCrop.y / 100)),
+                width: Math.round(width * (pixelCrop.width / 100)),
+                height: Math.round(height * (pixelCrop.height / 100)),
             }
-              
+            
             cropCanvas.width = crop.width
             cropCanvas.height = crop.height
             const cctx = cropCanvas.getContext('2d')
