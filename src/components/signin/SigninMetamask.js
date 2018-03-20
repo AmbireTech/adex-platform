@@ -12,6 +12,7 @@ import { getWeb3 } from 'services/smart-contracts/ADX'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import AuthMethod from 'components/signin/auth/AuthMethod'
 import { getSig } from 'services/auth/auth'
+import packageJson from './../../../package.json'
 
 class SigninMetamask extends Component {
   constructor(props) {
@@ -29,7 +30,7 @@ class SigninMetamask extends Component {
 
     return (
       <div>
-        <div>
+        <div className={theme.adexLogo} >
           <Logo width={370} height={144} />
         </div>
         <br />
@@ -49,6 +50,9 @@ class SigninMetamask extends Component {
         <div className={theme.container}>
           <div className="adex-dapp">
             <this.renderDefault />
+            <small className={theme.adxVersion} >
+              v.{packageJson.version}-beta
+            </small>
           </div>
         </div>
       </div>

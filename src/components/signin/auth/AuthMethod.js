@@ -35,6 +35,7 @@ class AuthMethod extends Component {
       <Dialog
         active={true}
         title={t('CHOOSE_AUTH_METHOD')}
+        theme={theme}
       >
         <Tabs
           theme={theme}
