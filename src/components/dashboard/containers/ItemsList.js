@@ -21,6 +21,7 @@ import { Item } from 'adex-models'
 import moment from 'moment'
 import Translate from 'components/translate/Translate'
 import classnames from 'classnames'
+import { RadioGroup, RadioButton } from 'react-toolbox/lib/radio'
 import { InputLabel } from 'components/dashboard/containers/ListControls'
 import { items as ItemsConstants } from 'adex-constants'
 const { AdSizesByValue, AdTypesByValue, ItemTypesNames } = ItemsConstants
@@ -67,7 +68,8 @@ class ItemsList extends Component {
             filteredItems: [],
             filterBy: null,
             filterByValues: [],
-            filterByValueFilter: null
+            filterByValueFilter: null,
+            filterDeleted: false
         }
 
         this.renderCard = this.renderCard.bind(this)
@@ -262,7 +264,7 @@ class ItemsList extends Component {
         )
     }
 
-    filterItems({ items, search, sortProperty, sortOrder, page, pageSize, searchMatch, filterBy }) {
+    filterItems({ items, search, sortProperty, sortOrder, page, pageSize, searchMatch, filterBy, filterDeleted }) {
         // TODO: optimize filter
         // TODO: maybe filter deleted before this?
         let filtered = (items || [])
@@ -270,7 +272,11 @@ class ItemsList extends Component {
                 let isItem = (!!i && ((!!i._meta) || i.id || i._id))
                 if (!isItem) return isItem
 
-                if(filterBy){
+                if ((filterDeleted !== null) && (filterDeleted !== i._deleted)) {
+                    return false
+                }
+
+                if (filterBy){
                     return i[filterBy.key] === filterBy.value
                 }
 
@@ -349,7 +355,8 @@ class ItemsList extends Component {
             page: this.state.page,
             pageSize: this.state.pageSize,
             searchMatch: this.props.searchMatch,
-            // filterBy: {key: '_type', value: 0} 
+            // filterBy: {key: '_type', value: 0},
+            filterDeleted: this.state.filterDeleted 
         })
 
         let items = data.items
@@ -438,6 +445,16 @@ class ItemsList extends Component {
                                 :
                                 null
                             }
+                        </Row>
+                        <Row>
+                            <Col sm={12} md={12} lg={12}>
+                                <RadioGroup name='deleted' value={this.state.filterDeleted} onChange={this.handleChange.bind(this, 'filterDeleted')}>
+                                    <RadioButton theme={theme} label='Active' value={false}/>
+                                    <RadioButton theme={theme} label='Deleted' value={true} />
+                                    <RadioButton theme={theme} label='All' value={null}/>                                    
+                                </RadioGroup>
+                            </Col>
+                        
                         </Row>
                     </Grid>
                 </div >
