@@ -392,3 +392,12 @@
     display: inline-block !important;
     margin-right: 20px;
 }
+
+.radio {
+    color: var(--color-adex-neutral-contrast) !important;
+    border-color: var(--color-adex-neutral-contrast) !important;
+}
+
+.text {
+    color: var(--color-adex-neutral-contrast) !important;
+}
