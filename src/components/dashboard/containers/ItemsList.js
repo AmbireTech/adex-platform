@@ -69,7 +69,7 @@ class ItemsList extends Component {
             filterBy: null,
             filterByValues: [],
             filterByValueFilter: null,
-            filterArchived: false
+            filterArchived: props.archive ? false : ''
         }
 
         this.renderCard = this.renderCard.bind(this)
@@ -78,10 +78,10 @@ class ItemsList extends Component {
     mapSortProperties = (sortProps = []) => {
         return sortProps.map((prop) => {
             if (prop.label) {
-                return prop
+                return { value: prop.value.toString(), label: prop.label}
             } else {
                 return {
-                    value: prop.value,
+                    value: prop.value.toString(),
                     label: this.props.t(prop.value, { isProp: true })
                 }
             }
@@ -114,7 +114,7 @@ class ItemsList extends Component {
         this.setState({ page: nextPage, pageSize: newPageSize })
     }
 
-    renderCard(item, index) {
+    renderCard = (item, index) => {
         const t = this.props.t
         return (
             <Card
@@ -123,23 +123,13 @@ class ItemsList extends Component {
                 name={item._meta.fullName}
                 logo={item._meta.img}
                 side={this.props.side}
-                delete={this.props.actions.confirmAction.bind(this,
-                    this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel, authSig: this.props.account._authSig }),
-                    null,
-                    {
-                        confirmLabel: t('CONFIRM_YES'),
-                        cancelLabel: t('CONFIRM_NO'),
-                        text: t('DELETE_ITEM', {args: [t(ItemTypesNames[item._type], {isProp: true}), item._meta.fullName]}),
-                        title: t('CONFIRM_SURE')
-                    })}
                 remove={null}
                 actionsRenderer={this.renderActions(item)}
-
             />
         )
     }
 
-    renderTableHead({ selected }) {
+    renderTableHead = ({ selected }) => {
         const t = this.props.t
         return (
             <TableHead>
@@ -167,7 +157,7 @@ class ItemsList extends Component {
         )
     }
 
-    renderTableRow(item, index, { to, selected }) {
+    renderTableRow = (item, index, { to, selected }) => {
         const t = this.props.t
         return (
             <TableRow key={item._id || index} theme={tableTheme} selected={selected}>
@@ -196,7 +186,7 @@ class ItemsList extends Component {
         )
     }
 
-    renderActions(item) {
+    renderActions = (item) => {
         const parentItem = this.props.parentItem
         const parentName = parentItem ? parentItem._meta.fullName : ''
         const itemName = item._meta.fullName
@@ -274,7 +264,7 @@ class ItemsList extends Component {
         )
     }
 
-    filterItems({ items, search, sortProperty, sortOrder, page, pageSize, searchMatch, filterBy, filterArchived }) {
+    filterItems = ({ items, search, sortProperty, sortOrder, page, pageSize, searchMatch, filterBy, filterArchived }) => {
         // TODO: optimize filter
         // TODO: maybe filter deleted before this?
         let filtered = (items || [])
@@ -282,7 +272,7 @@ class ItemsList extends Component {
                 let isItem = (!!i && ((!!i._meta) || i.id || i._id))
                 if (!isItem) return isItem
 
-                if ((filterArchived !== null) && (filterArchived !== i._archived)) {
+                if ((filterArchived !== '') && (filterArchived.toString() !== i._archived.toString())) {
                     return false
                 }
 
@@ -415,7 +405,7 @@ class ItemsList extends Component {
                                             label='Filter by'
                                             onChange={this.handleChange.bind(this, 'filterBy')}
                                             source={this.mapSortProperties(this.props.filterByProperties || FILTER_ROPERTIES)}
-                                            value={this.state.filterBy}
+                                            value={this.state.filterBy !== null ? this.state.filterBy.toString() : null}
                                         />  
                                     </Col>
                                     <Col sm={6} md={6} lg={6}>
@@ -424,7 +414,7 @@ class ItemsList extends Component {
                                             label='Filter by value'
                                             onChange={this.handleChange.bind(this, 'filterByValueFilter')}
                                             source={this.mapSortProperties(this.state.filterByValues)}
-                                            value={this.state.filterByValueFilter}
+                                            value={this.state.filterByValueFilter !== null ? this.state.filterByValueFilter.toString() : null}
                                         />  
                                     </Col>   
                                 </Row>             
@@ -456,16 +446,18 @@ class ItemsList extends Component {
                                 null
                             }
                         </Row>
-                        <Row>
-                            <Col sm={12} md={12} lg={12}>
-                                <RadioGroup theme={theme} name='archived' value={this.state.filterArchived} onChange={this.handleChange.bind(this, 'filterArchived')}>
-                                    <RadioButton theme={theme} label='LABEL_ACTIVE' value={false}/>
-                                    <RadioButton theme={theme} label='LABEL_ARCHIVED' value={true} />
-                                    <RadioButton theme={theme} label='LABEL_ALL' value={null}/>                                    
-                                </RadioGroup>
-                            </Col>
-                        
-                        </Row>
+                        { this.props.archive ?
+                            <Row>
+                                <Col sm={12} md={12} lg={12}>
+                                    <RadioGroup theme={theme} name='archived' value={this.state.filterArchived.toString()} onChange={this.handleChange.bind(this, 'filterArchived')}>
+                                        <RadioButton theme={theme} label='LABEL_ACTIVE' value={'false'}/>
+                                        <RadioButton theme={theme} label='LABEL_ARCHIVED' value={'true'} />
+                                        <RadioButton theme={theme} label='LABEL_ALL' value={''}/>                                    
+                                    </RadioGroup>
+                                </Col>
+                            
+                            </Row> 
+                            : null }
                     </Grid>
                 </div >
                 <section>

@@ -185,7 +185,7 @@ export class UnitBids extends Component {
 
         return (
             <div>
-                <ItemsList items={bids} listMode='rows' delete renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
+                <ItemsList items={bids} listMode='rows' renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
             </div>
         )
     }
