@@ -24,7 +24,7 @@ import classnames from 'classnames'
 import { RadioGroup, RadioButton } from 'react-toolbox/lib/radio'
 import { InputLabel } from 'components/dashboard/containers/ListControls'
 import { items as ItemsConstants } from 'adex-constants'
-const { AdSizesByValue, AdTypesByValue, ItemTypesNames } = ItemsConstants
+const { AdSizesByValue, AdTypesByValue, ItemTypesNames, AdTypes, AdSizes } = ItemsConstants
 
 const RRTableCell = withReactRouterLink(TableCell)
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))
@@ -38,18 +38,19 @@ const SORT_PROPERTIES = [
     { value: 'adType' },
 ]
 
-const FILTER_ROPERTIES = [
-    { label: '_deleted', value: '_deleted' }
-]
-
-const FILTER_VALUES = {
-    _deleted: [{label: 'ALL', value: null}, {label: 'DELETED', value: true}, {label: 'NOT_DELETED', value: false}]
+const FILTER_ROPERTIES = {
+    adType: { label: 'adType', values: AdTypes },
+    size: { label: 'size', values: AdSizes },
 }
 
 const List = ({ list, itemRenderer }) => {
     return (<div className="list">
         {list.map((item, index) => itemRenderer(item, index))}
     </div>)
+}
+
+const mapFilterProps = (props) => {
+    return Object.keys(props).map((key) => { return  { label: props[key].label, value: key }} )
 }
 
 class ItemsList extends Component {
@@ -77,11 +78,11 @@ class ItemsList extends Component {
 
     mapSortProperties = (sortProps = []) => {
         return sortProps.map((prop) => {
-            if (prop.label) {
+            if (prop.label && prop.value) {
                 return { value: prop.value.toString(), label: prop.label}
             } else {
                 return {
-                    value: prop.value.toString(),
+                    value: (prop.value || '').toString(),
                     label: this.props.t(prop.value, { isProp: true })
                 }
             }
@@ -102,7 +103,8 @@ class ItemsList extends Component {
         let newStateValue = { [name]: value }
         if (name === 'search') newStateValue.page = 0
         if (name === 'filterBy') {
-            newStateValue.filterByValues = FILTER_VALUES[value]
+            newStateValue.filterByValues =  ([{label: 'ALL', value: 'nofilter'}].concat(FILTER_ROPERTIES[value].values))
+            newStateValue.filterByValueFilter = 'nofilter'
         }
         this.setState(newStateValue);
     }
@@ -404,7 +406,7 @@ class ItemsList extends Component {
                                             auto
                                             label='Filter by'
                                             onChange={this.handleChange.bind(this, 'filterBy')}
-                                            source={this.mapSortProperties(this.props.filterByProperties || FILTER_ROPERTIES)}
+                                            source={mapFilterProps(this.props.filterByProperties || FILTER_ROPERTIES)}
                                             value={this.state.filterBy !== null ? this.state.filterBy.toString() : null}
                                         />  
                                     </Col>
