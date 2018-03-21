@@ -7,8 +7,8 @@ import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemTypesNames } = ItemsConstants
 
-const addToast = ({type, errStr, args, dispatch}) => {
-    return addActionToast({ dispatch: dispatch, type: type, action: 'X', label: translate(errStr, {args: args}), timeout: 5000 })
+const addToast = ({type, toastStr, args, dispatch}) => {
+    return addActionToast({ dispatch: dispatch, type: type, action: 'X', label: translate(toastStr, {args: args}), timeout: 5000 })
 }
 
 const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
@@ -85,7 +85,7 @@ export function addItem(item, itemToAddTo, authSig) {
                     item: registeredItem
                 })
 
-                addToast({ dispatch: dispatch, type: 'accept', errStr: 'SUCCESS_CREATING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName] })
+                addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_CREATING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName] })
 
                 if (itemToAddTo) {
                     // TODO: How to use addItemToItem action
@@ -100,31 +100,7 @@ export function addItem(item, itemToAddTo, authSig) {
                 }
             })            
             .catch((err) => {
-                return addToast({ dispatch: dispatch, type: 'cancel', errStr: 'ERR_CREATING_ITEM', args: [ItemTypesNames[item._type], err] })
-            })
-    }
-}
-
-export function deleteItem({ item, objModel, authSig } = {}) {
-    return function (dispatch) {
-        delItem({
-            id: item._id,
-            type: item._meta.type,
-            authSig: authSig //TODO: use user from session
-        })
-            .then((res) => {
-                // console.log('deleteItem res', res)
-                addToast({ dispatch: dispatch, type: 'accept', errStr: 'SUCCESS_DELETING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName] })
-
-                return dispatch({
-                    type: types.DELETE_ITEM,
-                    item: item,
-                    objModel: objModel
-                })
-
-            })
-            .catch((err) => {
-                return addToast({ dispatch: dispatch, type: 'cancel', errStr: 'ERR_DELETING_ITEM', args: [ItemTypesNames[item._type], err] })
+                return addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_CREATING_ITEM', args: [ItemTypesNames[item._type], err] })
             })
     }
 }
@@ -134,7 +110,7 @@ export function removeItemFromItem({ item, toRemove, authSig } = {}) {
         removeItmFromItm({ item: item._id, collection: toRemove._id || toRemove, authSig: authSig })
             .then((res) => {
                 
-                addToast({ dispatch: dispatch, type: 'accept', errStr: 'SUCCESS_REMOVE_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, ItemTypesNames[toRemove._type], toRemove._meta.fullName,] })
+                addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_REMOVE_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, ItemTypesNames[toRemove._type], toRemove._meta.fullName,] })
                 
                 return dispatch({
                     type: types.REMOVE_ITEM_FROM_ITEM,
@@ -143,7 +119,7 @@ export function removeItemFromItem({ item, toRemove, authSig } = {}) {
                 })
             })
             .catch((err) => {
-                return addToast({ dispatch: dispatch, type: 'cancel', errStr: 'ERR_REMOVE_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], ItemTypesNames[toRemove._type], err] })
+                return addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_REMOVE_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], ItemTypesNames[toRemove._type], err] })
             })
     }
 }
@@ -153,7 +129,7 @@ export function addItemToItem({ item, toAdd, authSig } = {}) {
         addItmToItm({ item: item._id, collection: toAdd._id || toAdd, authSig: authSig })
             .then((res) => {
                 //TODO: use response and UPDATE_ITEM
-                addToast({ dispatch: dispatch, type: 'accept', errStr: 'SUCCESS_ADD_ITEM_TO_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, ItemTypesNames[toAdd._type], toAdd._meta.fullName,] })
+                addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_ADD_ITEM_TO_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, ItemTypesNames[toAdd._type], toAdd._meta.fullName,] })
 
                 return dispatch({
                     type: types.ADD_ITEM_TO_ITEM,
@@ -162,13 +138,13 @@ export function addItemToItem({ item, toAdd, authSig } = {}) {
                 })
             })
             .catch((err) => {
-                return addToast({ dispatch: dispatch, type: 'cancel', errStr: 'ERR_ADD_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], ItemTypesNames[toAdd._type], err] })
+                return addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_ADD_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], ItemTypesNames[toAdd._type], err] })
             })
     }
 }
 
 // Accepts the entire new item and replace so be careful!
-export function updateItem({ item, authSig } = {}) {
+export function updateItem({ item, authSig, successMsg, errMsg } = {}) {
     return function (dispatch) {
         uploadImages({ item: { ...item }, authSig: authSig })
             .then((updatedItem) => {
@@ -180,7 +156,7 @@ export function updateItem({ item, authSig } = {}) {
                     item: res
                 })
 
-                addToast({ dispatch: dispatch, type: 'accept', errStr: 'SUCCESS_UPDATING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName] })
+                addToast({ dispatch: dispatch, type: 'accept', toastStr: successMsg || 'SUCCESS_UPDATING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName] })
 
                 return dispatch({
                     type: types.UPDATE_SPINNER,
@@ -190,9 +166,37 @@ export function updateItem({ item, authSig } = {}) {
 
             })
             .catch((err) => {
-                return addToast({ dispatch: dispatch, type: 'cancel', errStr: 'ERR_UPDATING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, err] })
+                return addToast({ dispatch: dispatch, type: 'cancel', toastStr: errMsg || 'ERR_UPDATING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, err] })
             })
     }
+}
+
+// export function deleteItem({ item, objModel, authSig } = {}) {
+//     item = {...item}
+//     item._deleted = true
+
+//     return updateItem({ item: item, authSig: authSig, successMsg: 'SUCCESS_DELETING_ITEM', errMsg: 'ERR_DELETING_ITEM' })
+// }
+
+// export function restoreItem({ item, authSig } = {}) {
+//     item = {...item}
+//     item._deleted = false
+
+//     return updateItem({ item: item, authSig: authSig, successMsg: 'SUCCESS_RESTORE_ITEM', errMsg: 'ERR_RESTORING_ITEM' })
+// }
+
+export function archiveItem({ item, authSig } = {}) {
+    item = {...item}
+    item._archived = true
+
+    return updateItem({ item: item, authSig: authSig, successMsg: 'SUCCESS_ARCHIVING_ITEM', errMsg: 'ERR_ARCHIVING_ITEM' })
+}
+
+export function unarchiveItem({ item, authSig } = {}) {
+    item = {...item}
+    item._archived = false
+
+    return updateItem({ item: item, authSig: authSig, successMsg: 'SUCCESS_UNARCHIVING_ITEM', errMsg: 'ERR_UNARCHIVING_ITEM' })
 }
 
 export function setCurrentItem(item) {
