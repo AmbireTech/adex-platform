@@ -209,7 +209,7 @@ class ItemsList extends Component {
                     <TooltipIconButton
                         icon='archive'
                         label={t('ARCHIVE')}
-                        tooltip={t('ARCHIVE')}
+                        tooltip={t('TOOLTIP_ARCHIVE')}
                         tooltipDelay={1000}
                         tooltipPosition='top'
                         className={RTButtonTheme.danger}
@@ -227,7 +227,7 @@ class ItemsList extends Component {
                     <TooltipIconButton
                         icon='unarchive'
                         label={t('UNARCHIVE')}
-                        tooltip={t('UNARCHIVE')}
+                        tooltip={t('TOOLTIP_UNARCHIVE')}
                         tooltipDelay={1000}
                         tooltipPosition='top'
                         accent
@@ -459,9 +459,9 @@ class ItemsList extends Component {
                         <Row>
                             <Col sm={12} md={12} lg={12}>
                                 <RadioGroup theme={theme} name='archived' value={this.state.filterArchived} onChange={this.handleChange.bind(this, 'filterArchived')}>
-                                    <RadioButton theme={theme} label='ACTIVE' value={false}/>
-                                    <RadioButton theme={theme} label='ARCHIVED' value={true} />
-                                    <RadioButton theme={theme} label='ALL' value={null}/>                                    
+                                    <RadioButton theme={theme} label='LABEL_ACTIVE' value={false}/>
+                                    <RadioButton theme={theme} label='LABEL_ARCHIVED' value={true} />
+                                    <RadioButton theme={theme} label='LABEL_ALL' value={null}/>                                    
                                 </RadioGroup>
                             </Col>
                         
