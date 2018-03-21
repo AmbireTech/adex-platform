@@ -448,7 +448,7 @@ class ItemsList extends Component {
                         </Row>
                         <Row>
                             <Col sm={12} md={12} lg={12}>
-                                <RadioGroup name='deleted' value={this.state.filterDeleted} onChange={this.handleChange.bind(this, 'filterDeleted')}>
+                                <RadioGroup theme={theme} name='deleted' value={this.state.filterDeleted} onChange={this.handleChange.bind(this, 'filterDeleted')}>
                                     <RadioButton theme={theme} label='Active' value={false}/>
                                     <RadioButton theme={theme} label='Deleted' value={true} />
                                     <RadioButton theme={theme} label='All' value={null}/>                                    
