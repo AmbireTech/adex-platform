@@ -97,26 +97,25 @@ export const getItems = ({ type, authSig }) => {
     })
 }
 
-
-export const delItem = ({ id, type, authSig }) => {
-    return new Promise((resolve, reject) => {
-        requester.fetch({
-            route: 'items',
-            method: 'DELETE',
-            queryParams: { 'type': type, id: id },
-            authSig: authSig
-        })
-            .then((resp) => {
-                return catchErrors(resp)
-            })
-            .then((resp) => {
-                return resolve(resp.json())
-            })
-            .catch((err) => {
-                return reject(err)
-            })
-    })
-}
+// export const delItem = ({ id, type, authSig }) => {
+//     return new Promise((resolve, reject) => {
+//         requester.fetch({
+//             route: 'items',
+//             method: 'DELETE',
+//             queryParams: { 'type': type, id: id },
+//             authSig: authSig
+//         })
+//             .then((resp) => {
+//                 return catchErrors(resp)
+//             })
+//             .then((resp) => {
+//                 return resolve(resp.json())
+//             })
+//             .catch((err) => {
+//                 return reject(err)
+//             })
+//     })
+// }
 
 export const addItmToItm = ({ item, type, collection, authSig }) => {
     return new Promise((resolve, reject) => {

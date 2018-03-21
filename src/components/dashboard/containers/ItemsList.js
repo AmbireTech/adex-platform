@@ -69,7 +69,7 @@ class ItemsList extends Component {
             filterBy: null,
             filterByValues: [],
             filterByValueFilter: null,
-            filterDeleted: false
+            filterArchived: false
         }
 
         this.renderCard = this.renderCard.bind(this)
@@ -205,29 +205,39 @@ class ItemsList extends Component {
 
         return (
             <span>
-                {this.props.archive ?
+                {this.props.archive && !item._archived ?
                     <TooltipIconButton
                         icon='archive'
                         label={t('ARCHIVE')}
                         tooltip={t('ARCHIVE')}
                         tooltipDelay={1000}
                         tooltipPosition='top'
-                    /> : null}
-                {this.props.delete ?
-                    <TooltipIconButton
-                        icon='delete'
-                        label={t('DELETE')}
-                        tooltip={t('DELETE')}
-                        tooltipDelay={1000}
-                        tooltipPosition='top'
                         className={RTButtonTheme.danger}
                         onClick={this.props.actions.confirmAction.bind(this,
-                            this.props.actions.deleteItem.bind(this, { item: item, objModel: this.props.objModel, authSig: this.props.account._authSig }),
+                            this.props.actions.archiveItem.bind(this, { item: item, authSig: this.props.account._authSig }),
                             null,
                             {
                                 confirmLabel: t('CONFIRM_YES'),
                                 cancelLabel: t('CONFIRM_NO'),
-                                text: t('DELETE_ITEM', {args: [itemTypeName, itemName]}),
+                                text: t('ARCHIVE_ITEM', {args: [itemTypeName, itemName]}),
+                                title: t('CONFIRM_SURE')
+                            })}
+                    /> : null}
+                {this.props.archive && item._archived ?
+                    <TooltipIconButton
+                        icon='unarchive'
+                        label={t('UNARCHIVE')}
+                        tooltip={t('UNARCHIVE')}
+                        tooltipDelay={1000}
+                        tooltipPosition='top'
+                        accent
+                        onClick={this.props.actions.confirmAction.bind(this,
+                            this.props.actions.unarchiveItem.bind(this, { item: item, authSig: this.props.account._authSig }),
+                            null,
+                            {
+                                confirmLabel: t('CONFIRM_YES'),
+                                cancelLabel: t('CONFIRM_NO'),
+                                text: t('UNARCHIVE_ITEM', {args: [itemTypeName, itemName]}),
                                 title: t('CONFIRM_SURE')
                             })}
                     /> : null}
@@ -264,7 +274,7 @@ class ItemsList extends Component {
         )
     }
 
-    filterItems({ items, search, sortProperty, sortOrder, page, pageSize, searchMatch, filterBy, filterDeleted }) {
+    filterItems({ items, search, sortProperty, sortOrder, page, pageSize, searchMatch, filterBy, filterArchived }) {
         // TODO: optimize filter
         // TODO: maybe filter deleted before this?
         let filtered = (items || [])
@@ -272,7 +282,7 @@ class ItemsList extends Component {
                 let isItem = (!!i && ((!!i._meta) || i.id || i._id))
                 if (!isItem) return isItem
 
-                if ((filterDeleted !== null) && (filterDeleted !== i._deleted)) {
+                if ((filterArchived !== null) && (filterArchived !== i._archived)) {
                     return false
                 }
 
@@ -356,7 +366,7 @@ class ItemsList extends Component {
             pageSize: this.state.pageSize,
             searchMatch: this.props.searchMatch,
             // filterBy: {key: '_type', value: 0},
-            filterDeleted: this.state.filterDeleted 
+            filterArchived: this.state.filterArchived 
         })
 
         let items = data.items
@@ -448,10 +458,10 @@ class ItemsList extends Component {
                         </Row>
                         <Row>
                             <Col sm={12} md={12} lg={12}>
-                                <RadioGroup theme={theme} name='deleted' value={this.state.filterDeleted} onChange={this.handleChange.bind(this, 'filterDeleted')}>
-                                    <RadioButton theme={theme} label='Active' value={false}/>
-                                    <RadioButton theme={theme} label='Deleted' value={true} />
-                                    <RadioButton theme={theme} label='All' value={null}/>                                    
+                                <RadioGroup theme={theme} name='archived' value={this.state.filterArchived} onChange={this.handleChange.bind(this, 'filterArchived')}>
+                                    <RadioButton theme={theme} label='ACTIVE' value={false}/>
+                                    <RadioButton theme={theme} label='ARCHIVED' value={true} />
+                                    <RadioButton theme={theme} label='ALL' value={null}/>                                    
                                 </RadioGroup>
                             </Col>
                         

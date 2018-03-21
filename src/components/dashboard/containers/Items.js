@@ -35,13 +35,13 @@ class Items extends Component {
         return (
             <div>
                 <div className={classnames(theme.heading, theme[ItemTypesNames[this.props.itemsType]], theme.items)}>
-                    <h2 > {this.props.header} {'(' + (items.filter((i) => !!i && !!i._meta && !i._deleted).length) + ')'} </h2>
+                    <h2 > {this.props.header} {'(' + (items.filter((i) => !!i && !!i._meta && !i._deleted && !i._archived).length) + ')'} </h2>
                 </div>
                 <div className={theme.panelContent}>
                     {this.props.newItemBtn ? this.props.newItemBtn() : null}
                 </div>
 
-                <ItemsList {...this.props} items={items} viewModeId={this.props.viewModeId} delete />
+                <ItemsList {...this.props} items={items} viewModeId={this.props.viewModeId} archive />
             </div>
         )
     }
