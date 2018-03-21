@@ -105,8 +105,8 @@ class SideNav extends Component {
                         selectable={true}
                         caption={t('TRANSACTIONS')}
                         theme={theme}
-                        className={classnames({ [theme.active]: location === 'transactions' })}
-                        leftIcon={<FontIcon value={pendingTransactionsIcon} style={{ color: pendingTrsCount > 0 ? '#FF5722' : '' }} />}
+                        className={classnames({ [theme.active]: location === 'transactions', [theme.pendingTransactions]: pendingTrsCount > 0 })}
+                        leftIcon={<FontIcon value={pendingTransactionsIcon} />}
                     />
                 </List>
                 <div className={theme.listBottom} >
