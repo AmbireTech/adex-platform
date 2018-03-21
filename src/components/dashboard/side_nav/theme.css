@@ -1,20 +1,32 @@
 @import './../../../styles/variables.css';
 
-.listItem, .item, .itemText {
-  color: #fff !important;
+.listItem, .item, .itemText, .itemAction {
+  color: #9c9c9b !important;
   user-select: none;
- 
+  & [data-react-toolbox='font-icon'] {
+    color: #9c9c9b;
+  }
+  & svg {
+    fill: currentColor !important;
+  }
 }
 
 .item {
   &.selectable:not(.disabled):hover {
-    & .itemText {
-      color: #3C3C3C !important;
-    }
+    background-color: #131313 !important;
   }
 }
 .active {
-  background-color: #999;
+  background-color: #555;
+  & .listItem, & .item, & .itemText, & .itemAction,  & svg, & [data-react-toolbox='font-icon']  {
+    color: #FFFFFF !important;
+  }
+}
+
+.pendingTransactions {
+  & [data-react-toolbox='font-icon'] {
+    color: #FF5722 !important;
+  }
 }
 
 .button {
