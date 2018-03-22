@@ -17,6 +17,7 @@ import FontIcon from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
 import { AdUnit as AdUnitModel, Campaign as CampaignModel } from 'adex-models'
 import { groupItemsForCollection } from 'helpers/itemsHelpers'
+import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemsTypes } = ItemsConstants
@@ -121,7 +122,15 @@ export class Campaign extends Component {
                     />
 
                 </div>
-                <ItemsList parentItem={item} removeFromItem items={units} viewModeId={VIEW_MODE} objModel={AdUnitModel} />
+                <ItemsList 
+                    parentItem={item} 
+                    removeFromItem 
+                    items={units} 
+                    viewModeId={VIEW_MODE} 
+                    bjModel={AdUnitModel} 
+                    sortProperties={SORT_PROPERTIES_ITEMS}
+                    filterProperties={FILTER_PROPERTIES_ITEMS}
+                />
             </div>
         )
     }

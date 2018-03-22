@@ -31,18 +31,6 @@ const TooltipRRButton = withReactRouterLink(Tooltip(Button))
 const TooltipIconButton = Tooltip(IconButton)
 const TooltipButton = Tooltip(Button)
 
-const SORT_PROPERTIES = [
-    { value: 'fullName' },
-    { value: 'createdOn' },
-    { value: 'size' },
-    { value: 'adType' },
-]
-
-const FILTER_PROPERTIES = {
-    '_meta.adType': { label: 'adType', labelIsProp: true, values: AdTypes },
-    '_meta.size': {  label: 'size', labelIsProp: true, values: AdSizes },
-}
-
 const List = ({ list, itemRenderer }) => {
     return (<div className="list">
         {list.map((item, index) => itemRenderer(item, index))}
@@ -53,9 +41,9 @@ const mapFilterProps = ({ filterProps = {}, t }) => {
     return Object.keys(filterProps)
         .map((key) => {
             let prop = filterProps[key]
-            let label = filterProps[key].label || key
+            let label = prop.label || key
             return {
-                label: t(label, { isProp: filterProps[key].labelIsProp || !filterProps[key].label }),
+                label: t(label, { isProp: prop.labelIsProp || !prop.label, args: prop.labelArgs || [] }),
                 value: key
             }
         })
@@ -66,8 +54,8 @@ const mapSortProperties = ({ sortProps = [], t }) => {
         let label = prop.label || prop.value
 
         return {
-            value: (prop.value || '').toString(),
-            label: t(label, { isProp: !prop.label })
+            value: ((prop.value !== null && prop.value !== undefined) ? prop.value : '').toString(),
+            label: t(label, { isProp: !prop.label, args: prop.labelArgs || [] })
         }
     })
 }
@@ -172,6 +160,7 @@ class ItemsList extends Component {
 
     renderTableRow = (item, index, { to, selected }) => {
         const t = this.props.t
+        const adSize = (AdSizesByValue[item._meta.size] || {})
         return (
             <TableRow key={item._id || index} theme={tableTheme} selected={selected}>
                 <RRTableCell className={tableTheme.link} to={to} theme={tableTheme}>
@@ -179,7 +168,7 @@ class ItemsList extends Component {
                 </RRTableCell>
                 <RRTableCell className={tableTheme.link} to={to}> {item._meta.fullName} </RRTableCell>
                 <TableCell> {(AdTypesByValue[item._meta.adType] || {}).label} </TableCell>
-                <TableCell> {(AdSizesByValue[item._meta.size] || {}).label} </TableCell>
+                <TableCell> {t(adSize.label, { args: adSize.labelArgs || [] })} </TableCell>
                 <TableCell> {moment(item._meta.createdOn).format('DD-MM-YYYY')} </TableCell>
                 <TableCell>
 
@@ -511,8 +500,8 @@ function mapStateToProps(state, props) {
         rowsView: !!persist.ui[props.viewModeId],
         side: memory.nav.side,
         account: persist.account,
-        sortProperties: props.sortProperties || SORT_PROPERTIES,
-        filterProperties: props.filterProperties || FILTER_PROPERTIES
+        sortProperties: props.sortProperties || [],
+        filterProperties: props.filterProperties || {}
     };
 }
 

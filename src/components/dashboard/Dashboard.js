@@ -26,6 +26,7 @@ import Translate from 'components/translate/Translate'
 import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
 import { items as ItemsConstants } from 'adex-constants'
 import checkTransactions from 'services/store-data/transactions'
+import { SORT_PROPERTIES_ITEMS, SORT_PROPERTIES_COLLECTION, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 
 const { ItemsTypes } = ItemsConstants
 
@@ -85,6 +86,8 @@ class Dashboard extends React.Component {
                 itemsType={ItemsTypes.AdUnit.id}
                 newItemBtn={() => <NewUnit floating accent />}
                 objModel={AdUnitModel}
+                sortProperties={SORT_PROPERTIES_ITEMS}
+                filterProperties={FILTER_PROPERTIES_ITEMS}
             />
         )
     }
@@ -97,6 +100,8 @@ class Dashboard extends React.Component {
                 itemsType={ItemsTypes.Campaign.id}
                 newItemBtn={() => <NewCampaign floating accent />}
                 objModel={CampaignModel}
+                sortProperties={SORT_PROPERTIES_COLLECTION}
+                // filterProperties={FILTER_PROPERTIES_ITEMS}
             />
         )
     }
@@ -109,6 +114,8 @@ class Dashboard extends React.Component {
                 itemsType={ItemsTypes.AdSlot.id}
                 newItemBtn={() => <NewSlot floating accent />}
                 objModel={AdSlotModel}
+                sortProperties={SORT_PROPERTIES_ITEMS}
+                filterProperties={FILTER_PROPERTIES_ITEMS}
             />
         )
     }
@@ -121,6 +128,8 @@ class Dashboard extends React.Component {
                 itemsType={ItemsTypes.Channel.id}
                 newItemBtn={() => <NewChannel floating accent />}
                 objModel={ChannelModel}
+                sortProperties={SORT_PROPERTIES_COLLECTION}
+                // filterProperties={FILTER_PROPERTIES_ITEMS}
             />
         )
     }
