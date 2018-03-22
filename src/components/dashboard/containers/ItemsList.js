@@ -384,6 +384,7 @@ class ItemsList extends Component {
         } else {
             renderItems = this.props.renderCards || this.renderCards
         }
+        const t = this.props.t
 
         return (
             <div>
@@ -391,7 +392,7 @@ class ItemsList extends Component {
                     <Grid fluid style={{ padding: 0 }} >
                         <Row middle='xs' className={theme.itemsListControls}>
                             <Col sm={6} md={6} lg={2}>
-                                <Input theme={theme} type='text' label={<InputLabel icon='search' label='Search' />} name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} />
+                                <Input theme={theme} className={theme.inputIconLabel} type='text' label={<InputLabel icon='search' label={t('LIST_CONTROL_LABEL_SEARCH')} />} name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} />
                             </Col>
                             <Col sm={6} md={6} lg={2}>
                                 <div style={{ display: 'inline-block', width: 'calc(100% - 76px)' }}>
@@ -399,7 +400,7 @@ class ItemsList extends Component {
                                         auto
                                         // label={<InputLabel icon='sort' label='Sort by' style={{marginLeft: '-2px'}}/>}
                                         // icon='sort'
-                                        label='Sort by'
+                                        label={t('LIST_CONTROL_LABEL_SORT')}
                                         onChange={this.handleChange.bind(this, 'sortProperty')}
                                         source={this.state.sortProperties}
                                         value={this.state.sortProperty}
@@ -410,30 +411,33 @@ class ItemsList extends Component {
                                     <IconButton icon='arrow_downward' primary={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
                                 </div>
                             </Col>
-                            <Col sm={12} md={12} lg={3}>
-                                <Row>
-                                    <Col sm={6} md={6} lg={6}>
-                                        <Dropdown
-                                            auto
-                                            label='Filter by'
-                                            onChange={this.handleChange.bind(this, 'filterBy')}
-                                            source={this.state.filterProperties}
-                                            value={this.state.filterBy !== null ? this.state.filterBy.toString() : null}
-                                        />
-                                    </Col>
-                                    <Col sm={6} md={6} lg={6}>
-                                        <Dropdown
-                                            auto
-                                            label='Filter by value'
-                                            onChange={this.handleChange.bind(this, 'filterByValueFilter')}
-                                            source={mapSortProperties({ sortProps: this.state.filterByValues, t: this.props.t })}
-                                            value={this.state.filterByValueFilter !== null ? this.state.filterByValueFilter.toString() : null}
-                                        />
-                                    </Col>
-                                </Row>
+                            {this.props.filterProperties ? 
+                                <Col sm={12} md={12} lg={3}>
+                                    <Row>
+                                        <Col sm={6} md={6} lg={6}>
+                                            <Dropdown
+                                                auto
+                                                label={t('LIST_CONTROL_LABEL_FILTER_BY')}
+                                                onChange={this.handleChange.bind(this, 'filterBy')}
+                                                source={this.state.filterProperties}
+                                                value={this.state.filterBy !== null ? this.state.filterBy.toString() : null}
+                                            />
+                                        </Col>
+                                        <Col sm={6} md={6} lg={6}>
+                                            <Dropdown
+                                                auto
+                                                label={t('LIST_CONTROL_LABEL_FILTER_BY_VALUE')}
+                                                onChange={this.handleChange.bind(this, 'filterByValueFilter')}
+                                                source={mapSortProperties({ sortProps: this.state.filterByValues, t: this.props.t })}
+                                                value={this.state.filterByValueFilter !== null ? this.state.filterByValueFilter.toString() : null}
+                                            />
+                                        </Col>
+                                    </Row>
                             </Col>
+                            : null }
                             <Col sm={10} md={10} lg={4}>
                                 <Pagination
+                                    t={t}
                                     page={data.page}
                                     pages={data.pages}
                                     pageSize={this.state.pageSize}
@@ -463,9 +467,9 @@ class ItemsList extends Component {
                             <Row>
                                 <Col sm={12} md={12} lg={12}>
                                     <RadioGroup theme={theme} name='archived' value={this.state.filterArchived.toString()} onChange={this.handleChange.bind(this, 'filterArchived')}>
-                                        <RadioButton theme={theme} label='LABEL_ACTIVE' value={'false'} />
-                                        <RadioButton theme={theme} label='LABEL_ARCHIVED' value={'true'} />
-                                        <RadioButton theme={theme} label='LABEL_ALL' value={''} />
+                                        <RadioButton theme={theme} label={t('LABEL_ACTIVE')} value={'false'} />
+                                        <RadioButton theme={theme} label={t('LABEL_ARCHIVED')} value={'true'} />
+                                        <RadioButton theme={theme} label={t('LABEL_ALL')} value={''} />
                                     </RadioGroup>
                                 </Col>
 
@@ -490,7 +494,7 @@ ItemsList.propTypes = {
     listMode: PropTypes.string,
     objModel: PropTypes.func,
     sortProperties: PropTypes.array.isRequired,
-    filterProperties: PropTypes.object.isRequired
+    filterProperties: PropTypes.object
 }
 
 function mapStateToProps(state, props) {
@@ -501,7 +505,7 @@ function mapStateToProps(state, props) {
         side: memory.nav.side,
         account: persist.account,
         sortProperties: props.sortProperties || [],
-        filterProperties: props.filterProperties || {}
+        filterProperties: props.filterProperties
     };
 }
 

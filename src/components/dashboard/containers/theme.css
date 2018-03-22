@@ -376,7 +376,14 @@
 } */
 
 .inputLabel {
+    max-width: 100%;
+}
 
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 .inputLabelIcon {
@@ -400,4 +407,15 @@
 
 .text {
     color: var(--color-adex-neutral-contrast) !important;
+}
+
+.pageOf {
+    max-width: 50px;
+    display: inline-block;
+}
+
+.inputIconLabel {
+    & .label {
+        top: 24px;
+    }
 }
