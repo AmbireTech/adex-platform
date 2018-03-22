@@ -38,9 +38,9 @@ const SORT_PROPERTIES = [
     { value: 'adType' },
 ]
 
-const FILTER_ROPERTIES = {
-    adType: { label: 'adType', values: AdTypes },
-    size: { label: 'size', values: AdSizes },
+const FILTER_PROPERTIES = {
+    '_meta.adType': { label: 'adType', labelIsProp: true, values: AdTypes },
+    '_meta.size': {  label: 'size', labelIsProp: true, values: AdSizes },
 }
 
 const List = ({ list, itemRenderer }) => {
@@ -49,13 +49,35 @@ const List = ({ list, itemRenderer }) => {
     </div>)
 }
 
-const mapFilterProps = (props) => {
-    return Object.keys(props).map((key) => { return  { label: props[key].label, value: key }} )
+const mapFilterProps = ({ filterProps = {}, t }) => {
+    return Object.keys(filterProps)
+        .map((key) => {
+            let prop = filterProps[key]
+            let label = filterProps[key].label || key
+            return {
+                label: t(label, { isProp: filterProps[key].labelIsProp || !filterProps[key].label }),
+                value: key
+            }
+        })
+}
+
+const mapSortProperties = ({ sortProps = [], t }) => {
+    return sortProps.map((prop) => {
+        let label = prop.label || prop.value
+
+        return {
+            value: (prop.value || '').toString(),
+            label: t(label, { isProp: !prop.label })
+        }
+    })
 }
 
 class ItemsList extends Component {
     constructor(props, context) {
         super(props, context);
+
+        const sortProperties = mapSortProperties({ sortProps: props.sortProperties || [{}], t: props.t })
+        // TODO: update on ComponentWillReceiveProps
 
         this.state = {
             items: [],
@@ -65,7 +87,9 @@ class ItemsList extends Component {
             isError: false,
             search: '',
             sortOrder: -1,
-            sortProperty: (props.sortProperties || SORT_PROPERTIES)[0] ? (props.sortProperties || SORT_PROPERTIES)[0].value : null, // TODO: fix this
+            sortProperties: sortProperties,
+            sortProperty: (sortProperties)[0].value,
+            filterProperties: mapFilterProps({ filterProps: props.filterProperties, t: props.t }),
             filteredItems: [],
             filterBy: null,
             filterByValues: [],
@@ -74,19 +98,6 @@ class ItemsList extends Component {
         }
 
         this.renderCard = this.renderCard.bind(this)
-    }
-
-    mapSortProperties = (sortProps = []) => {
-        return sortProps.map((prop) => {
-            if (prop.label && prop.value) {
-                return { value: prop.value.toString(), label: prop.label}
-            } else {
-                return {
-                    value: (prop.value || '').toString(),
-                    label: this.props.t(prop.value, { isProp: true })
-                }
-            }
-        })
     }
 
     toggleView(value) {
@@ -103,8 +114,8 @@ class ItemsList extends Component {
         let newStateValue = { [name]: value }
         if (name === 'search') newStateValue.page = 0
         if (name === 'filterBy') {
-            newStateValue.filterByValues =  ([{label: 'ALL', value: 'nofilter'}].concat(FILTER_ROPERTIES[value].values))
-            newStateValue.filterByValueFilter = 'nofilter'
+            newStateValue.filterByValues = ([{ label: 'ALL', value: '' }].concat(this.props.filterProperties[value].values))
+            newStateValue.filterByValueFilter = ''
         }
         this.setState(newStateValue);
     }
@@ -139,7 +150,7 @@ class ItemsList extends Component {
                     {selected.length ?
                         <TooltipButton
                             icon='delete'
-                            label={t('DELETE_ALL')}                            
+                            label={t('DELETE_ALL')}
                             tooltip={t('DELETE_ALL')}
                             tooltipDelay={1000}
                             tooltipPosition='top'
@@ -173,10 +184,10 @@ class ItemsList extends Component {
                 <TableCell>
 
                     <TooltipRRButton
-                        to={to} 
-                        label={t('LABEL_VIEW')}                      
+                        to={to}
+                        label={t('LABEL_VIEW')}
                         tooltip={t('LABEL_VIEW')}
-                        raised 
+                        raised
                         primary
                         tooltipDelay={1000}
                         tooltipPosition='top'
@@ -193,7 +204,7 @@ class ItemsList extends Component {
         const parentName = parentItem ? parentItem._meta.fullName : ''
         const itemName = item._meta.fullName
         const t = this.props.t
-        const itemTypeName = t(ItemTypesNames[item._type], {isProp: true})
+        const itemTypeName = t(ItemTypesNames[item._type], { isProp: true })
 
         return (
             <span>
@@ -211,7 +222,7 @@ class ItemsList extends Component {
                             {
                                 confirmLabel: t('CONFIRM_YES'),
                                 cancelLabel: t('CONFIRM_NO'),
-                                text: t('ARCHIVE_ITEM', {args: [itemTypeName, itemName]}),
+                                text: t('ARCHIVE_ITEM', { args: [itemTypeName, itemName] }),
                                 title: t('CONFIRM_SURE')
                             })}
                     /> : null}
@@ -229,11 +240,11 @@ class ItemsList extends Component {
                             {
                                 confirmLabel: t('CONFIRM_YES'),
                                 cancelLabel: t('CONFIRM_NO'),
-                                text: t('UNARCHIVE_ITEM', {args: [itemTypeName, itemName]}),
+                                text: t('UNARCHIVE_ITEM', { args: [itemTypeName, itemName] }),
                                 title: t('CONFIRM_SURE')
                             })}
                     /> : null}
-                {this.props.removeFromItem && parentItem?
+                {this.props.removeFromItem && parentItem ?
                     <TooltipIconButton
                         icon='remove_circle_outline'
                         label={t('REMOVE_FROM', { args: [parentName] })}
@@ -247,7 +258,7 @@ class ItemsList extends Component {
                             {
                                 confirmLabel: t('CONFIRM_YES'),
                                 cancelLabel: t('CONFIRM_NO'),
-                                text: t('REMOVE_ITEM', {args: [itemTypeName, itemName, t(ItemTypesNames[parentItem._type], {isProp: true}), parentName ]}),
+                                text: t('REMOVE_ITEM', { args: [itemTypeName, itemName, t(ItemTypesNames[parentItem._type], { isProp: true }), parentName] }),
                                 title: t('CONFIRM_SURE')
                             })}
                     /> : null}
@@ -266,6 +277,24 @@ class ItemsList extends Component {
         )
     }
 
+    search = ({ item, search, searchMatch }) => {
+        let regex = new RegExp(search, 'i')
+        let meta = item._meta || {}
+        let matchString = null
+        if (typeof searchMatch === 'function') {
+            matchString = searchMatch(item)
+        } else if (typeof searchMatch === 'string' && !!searchMatch) {
+            matchString = searchMatch
+        } else {
+            matchString =
+                (meta.fullName || '') +
+                (meta.description || '')
+        }
+
+        let match = regex.exec(matchString)
+        return !!match
+    }
+
     filterItems = ({ items, search, sortProperty, sortOrder, page, pageSize, searchMatch, filterBy, filterArchived }) => {
         // TODO: optimize filter
         // TODO: maybe filter deleted before this?
@@ -278,27 +307,20 @@ class ItemsList extends Component {
                     return false
                 }
 
-                if (filterBy){
-                    return i[filterBy.key] === filterBy.value
+                if (filterBy && filterBy.key && (filterBy.value !== '')) {
+                    let itemValue = filterBy.key.split('.')
+                        .reduce((o, p) => o ? o[p] : 'noprop', i)
+                    let passFilter = itemValue.toString() === filterBy.value.toString()
+
+                    if (!passFilter) {
+                        return false
+                    }
                 }
 
                 let hasSearch = !!search
                 if (!hasSearch) return isItem
-                let regex = new RegExp(search, 'i')
-                let meta = i._meta || {}
-                let matchString = null
-                if (typeof searchMatch === 'function') {
-                    matchString = searchMatch(i)
-                } else if (typeof searchMatch === 'string' && !!searchMatch) {
-                    matchString = searchMatch
-                } else {
-                    matchString = 
-                        (meta.fullName || '') +
-                        (meta.description || '')
-                }
 
-                let match = regex.exec(matchString)
-                return !!match
+                return this.search({ item: i, search, searchMatch })
             })
 
         if (sortProperty) {
@@ -357,8 +379,8 @@ class ItemsList extends Component {
             page: this.state.page,
             pageSize: this.state.pageSize,
             searchMatch: this.props.searchMatch,
-            // filterBy: {key: '_type', value: 0},
-            filterArchived: this.state.filterArchived 
+            filterBy: { key: this.state.filterBy, value: this.state.filterByValueFilter },
+            filterArchived: this.state.filterArchived
         })
 
         let items = data.items
@@ -380,7 +402,7 @@ class ItemsList extends Component {
                     <Grid fluid style={{ padding: 0 }} >
                         <Row middle='xs' className={theme.itemsListControls}>
                             <Col sm={6} md={6} lg={2}>
-                                <Input theme={theme} type='text' label={<InputLabel icon='search' label='Search'/>} name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')}/>
+                                <Input theme={theme} type='text' label={<InputLabel icon='search' label='Search' />} name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} />
                             </Col>
                             <Col sm={6} md={6} lg={2}>
                                 <div style={{ display: 'inline-block', width: 'calc(100% - 76px)' }}>
@@ -390,7 +412,7 @@ class ItemsList extends Component {
                                         // icon='sort'
                                         label='Sort by'
                                         onChange={this.handleChange.bind(this, 'sortProperty')}
-                                        source={this.mapSortProperties(this.props.sortProperties || SORT_PROPERTIES)}
+                                        source={this.state.sortProperties}
                                         value={this.state.sortProperty}
                                     />
                                 </div>
@@ -406,20 +428,20 @@ class ItemsList extends Component {
                                             auto
                                             label='Filter by'
                                             onChange={this.handleChange.bind(this, 'filterBy')}
-                                            source={mapFilterProps(this.props.filterByProperties || FILTER_ROPERTIES)}
+                                            source={this.state.filterProperties}
                                             value={this.state.filterBy !== null ? this.state.filterBy.toString() : null}
-                                        />  
+                                        />
                                     </Col>
                                     <Col sm={6} md={6} lg={6}>
                                         <Dropdown
                                             auto
                                             label='Filter by value'
                                             onChange={this.handleChange.bind(this, 'filterByValueFilter')}
-                                            source={this.mapSortProperties(this.state.filterByValues)}
+                                            source={mapSortProperties({ sortProps: this.state.filterByValues, t: this.props.t })}
                                             value={this.state.filterByValueFilter !== null ? this.state.filterByValueFilter.toString() : null}
-                                        />  
-                                    </Col>   
-                                </Row>             
+                                        />
+                                    </Col>
+                                </Row>
                             </Col>
                             <Col sm={10} md={10} lg={4}>
                                 <Pagination
@@ -448,18 +470,18 @@ class ItemsList extends Component {
                                 null
                             }
                         </Row>
-                        { this.props.archive ?
+                        {this.props.archive ?
                             <Row>
                                 <Col sm={12} md={12} lg={12}>
                                     <RadioGroup theme={theme} name='archived' value={this.state.filterArchived.toString()} onChange={this.handleChange.bind(this, 'filterArchived')}>
-                                        <RadioButton theme={theme} label='LABEL_ACTIVE' value={'false'}/>
+                                        <RadioButton theme={theme} label='LABEL_ACTIVE' value={'false'} />
                                         <RadioButton theme={theme} label='LABEL_ARCHIVED' value={'true'} />
-                                        <RadioButton theme={theme} label='LABEL_ALL' value={''}/>                                    
+                                        <RadioButton theme={theme} label='LABEL_ALL' value={''} />
                                     </RadioGroup>
                                 </Col>
-                            
-                            </Row> 
-                            : null }
+
+                            </Row>
+                            : null}
                     </Grid>
                 </div >
                 <section>
@@ -477,7 +499,9 @@ ItemsList.propTypes = {
     itemRenderer: PropTypes.func,
     side: PropTypes.string.isRequired,
     listMode: PropTypes.string,
-    objModel: PropTypes.func
+    objModel: PropTypes.func,
+    sortProperties: PropTypes.array.isRequired,
+    filterProperties: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state, props) {
@@ -486,7 +510,9 @@ function mapStateToProps(state, props) {
     return {
         rowsView: !!persist.ui[props.viewModeId],
         side: memory.nav.side,
-        account: persist.account
+        account: persist.account,
+        sortProperties: props.sortProperties || SORT_PROPERTIES,
+        filterProperties: props.filterProperties || FILTER_PROPERTIES
     };
 }
 
