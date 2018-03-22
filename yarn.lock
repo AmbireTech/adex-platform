@@ -78,6 +78,12 @@ adex-constants@^1.0.7:
   dependencies:
     country-data "^0.0.31"
 
+adex-constants@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/adex-constants/-/adex-constants-1.0.8.tgz#05ba8eaa1cc55121b3680d822c4b258bf81d92ee"
+  dependencies:
+    country-data "^0.0.31"
+
 adex-models@^1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/adex-models/-/adex-models-1.0.6.tgz#2d3930fca551ebc7d2e8c8f35858d3cdcdada0e4"
@@ -85,9 +91,9 @@ adex-models@^1.0.6:
     adex-constants "^1.0.7"
     bs58 "^4.0.1"
 
-"adex-translations@git+https://git@github.com/AdExBlockchain/adex-translations.git#e6220c60636037e3cda3aedfb51d1e246781df1b":
+"adex-translations@git+https://git@github.com/AdExBlockchain/adex-translations.git#77c1b7b571a966067d3951fe1c03e39d988a0377":
   version "0.0.1"
-  resolved "git+https://git@github.com/AdExBlockchain/adex-translations.git#e6220c60636037e3cda3aedfb51d1e246781df1b"
+  resolved "git+https://git@github.com/AdExBlockchain/adex-translations.git#77c1b7b571a966067d3951fe1c03e39d988a0377"
 
 ajv-keywords@^1.0.0:
   version "1.5.1"

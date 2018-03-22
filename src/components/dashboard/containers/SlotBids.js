@@ -21,16 +21,10 @@ import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-con
 import { AcceptBid, GiveupBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
 import classnames from 'classnames'
 import Anchor from 'components/common/anchor/anchor'
+import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS_NO_STATE } from 'constants/misc'
 
 const { ItemsTypes } = ItemsConstants
 const { BID_STATES, BidStateNames, BidStatesLabels } = ExchangeConstants
-
-const SORT_PROPERTIES = [
-    { value: '_amount', label: '' },
-    { value: '_target', label: '' },
-    { value: '_timeout', label: '' },
-    { value: '_advertiser', label: '' },
-]
 
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
 
@@ -45,7 +39,7 @@ export class SlotBids extends Component {
         }
     }
 
-    // TODO: map bid and set amount to number or make something to pars the amount in the items list sort function
+    // TODO: map bid and set amount to number or make something to parse the amount in the items list sort function
     getBids = () => {
         getSlotBids({
             authSig: this.props.account._authSig,
@@ -278,16 +272,30 @@ export class SlotBids extends Component {
                 <Tabs
                     theme={theme}
                     index={this.state.tabIndex}
-                    onChange={this.handleTabChange.bind(this)}
+                    onChange={this.handleTabChange}
                 >
                     <Tab label={t('OPEN_BIDS')}>
-                        <div>
-                            <ItemsList items={openBids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
+                         <div>
+                            <ItemsList 
+                            items={openBids} 
+                            listMode='rows'
+                            renderRows={this.renderRows} 
+                            sortProperties={SORT_PROPERTIES_BIDS} 
+                            searchMatch={this.searchMatch} 
+                            filterProperties={FILTER_PROPERTIES_BIDS_NO_STATE}
+                            />
                         </div>
                     </Tab>
                     <Tab label={t('BIDS_HISTORY')}>
                         <div>
-                            <ItemsList items={slotBids} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
+                            <ItemsList 
+                                items={slotBids} 
+                                listMode='rows'
+                                renderRows={this.renderRows} 
+                                sortProperties={SORT_PROPERTIES_BIDS} 
+                                searchMatch={this.searchMatch} 
+                                filterProperties={FILTER_PROPERTIES_BIDS}
+                            />
                         </div>
                     </Tab>
                     <Tab label={t('BIDS_STATISTICS')}>

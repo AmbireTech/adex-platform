@@ -54,7 +54,8 @@ Items.propTypes = {
     viewModeId: PropTypes.string.isRequired,
     header: PropTypes.string.isRequired,
     objModel: PropTypes.func.isRequired,
-    itemsType: PropTypes.number.isRequired
+    itemsType: PropTypes.number.isRequired,
+    sortProperties: PropTypes.array.isRequired
 }
 
 function mapStateToProps(state, props) {

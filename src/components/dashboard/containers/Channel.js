@@ -14,6 +14,7 @@ import NewItemSteps from 'components/dashboard/forms/items/NewItemSteps'
 import theme from './theme.css'
 import Translate from 'components/translate/Translate'
 import { groupItemsForCollection } from 'helpers/itemsHelpers'
+import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemsTypes } = ItemsConstants
@@ -81,7 +82,16 @@ export class Channel extends Component {
                         </div>
                     </span>
                 </h2>
-                <ItemsList {...this.props} parentItem={item} removeFromItem items={slots} viewModeId={VIEW_MODE} objModel={AdSlotModel} />
+                <ItemsList 
+                    {...this.props} 
+                    parentItem={item} 
+                    removeFromItem 
+                    items={slots} 
+                    viewModeId={VIEW_MODE} 
+                    objModel={AdSlotModel}
+                    sortProperties={SORT_PROPERTIES_ITEMS}
+                    filterProperties={FILTER_PROPERTIES_ITEMS}
+                />
             </div>
         )
     }

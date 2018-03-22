@@ -83,6 +83,8 @@ const FallbackAdData =  ({ item, t, rightComponent, url, ...rest }) => {
 const ValidatedFallbackAdData = ValidItemHoc(FallbackAdData)
 
 export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
+    const adSize = (AdSizesByValue[item._meta.size] || {})
+
     return (
         <div className={theme.itemPropTop}>
             <Grid fluid style={{ padding: 0 }}>
@@ -122,7 +124,7 @@ export const BasicProps = ({ item, t, rightComponent, url, ...rest }) => {
                             <div>
                                 <Input
                                     type='text'
-                                    value={(AdSizesByValue[item.size] || {}).label}
+                                    value={t(adSize.label, { args: adSize.labelArgs || [] })}
                                     label={t('size', { isProp: true })}
                                     disabled
                                 />

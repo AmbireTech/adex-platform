@@ -19,17 +19,10 @@ import { CancelBid, VerifyBid, RefundBid } from 'components/dashboard/forms/web3
 import classnames from 'classnames'
 import moment from 'moment'
 import Anchor from 'components/common/anchor/anchor'
+import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
 
 const TooltipIconButton = Tooltip(IconButton)
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
-
-const SORT_PROPERTIES = [
-    { value: '_state', label: '' },
-    { value: '_target', label: '' },
-    { value: '_amount', label: '' },
-    { value: '_timeout', label: '' },
-    /** traffic, etc. */
-]
 
 export class UnitBids extends Component {
 
@@ -185,7 +178,14 @@ export class UnitBids extends Component {
 
         return (
             <div>
-                <ItemsList items={bids} listMode='rows' renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
+                <ItemsList
+                    items={bids}
+                    listMode='rows'
+                    renderRows={this.renderRows.bind(this)}
+                    sortProperties={SORT_PROPERTIES_BIDS}
+                    searchMatch={this.searchMatch}
+                    filterProperties={FILTER_PROPERTIES_BIDS}
+                />
             </div>
         )
     }
