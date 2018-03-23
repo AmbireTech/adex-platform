@@ -59,7 +59,11 @@ export default function NewTransactionHoc(Decorated) {
                     this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [err] }), timeout: 5000 })
                     this.onSave(err, null)
                 })
+        }
 
+        cancel = () => {
+            // TODO: take a look at onSave if change something
+            this.onSave(null, null)
         }
 
         render() {
@@ -71,6 +75,7 @@ export default function NewTransactionHoc(Decorated) {
                     {...props} 
                     transaction={transaction} 
                     save={this.save} 
+                    cancel={this.cancel}
                     handleChange={this.handleChange} 
                     resetTransaction={this.resetTransaction}
                 />

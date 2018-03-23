@@ -332,7 +332,7 @@
 }
 
 .compactCol {
-    max-width: 120px;
+    max-width: 120px !important;
 }
 
 .actionsCol {
