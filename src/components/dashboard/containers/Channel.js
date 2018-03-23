@@ -35,7 +35,7 @@ export class Channel extends Component {
 
     render() {
         // let side = this.props.match.params.side
-        // let t = this.props.t
+        let t = this.props.t
         let item = this.props.item
         // let items = item._items || []
         let propsSlots = { ...this.props.slots }
@@ -52,21 +52,23 @@ export class Channel extends Component {
         return (
             <div>
                 <h2>
-                    <span>{this.props.t('SLOTS_IN_CHANNEL', { args: [slots.length] })}</span>
+                    <span>{t('SLOTS_IN_CHANNEL', { args: [slots.length] })}</span>
                     <span>
                         <div className={theme.newIemToItemBtn} >
                             <AddItemDialog
                                 color='second'
                                 addCampaign={this.props.actions.addCampaign}
-                                btnLabel={this.props.t('NEW_SLOT_TO_CHANNEL')}
+                                btnLabel={t('NEW_SLOT_TO_CHANNEL')}
                                 title=''
                                 items={otherSlots}
                                 viewMode={VIEW_MODE_UNITS}
                                 listMode='rows'
                                 addTo={item}
-                                tabNewLabel={this.props.t('NEW_SLOT')}
-                                tabExsLabel={this.props.t('EXISTING_SLOT')}
+                                tabNewLabel={t('NEW_SLOT')}
+                                tabExsLabel={t('EXISTING_SLOT')}
                                 objModel={AdSlotModel}
+                                sortProperties={SORT_PROPERTIES_ITEMS}
+                                filterProperties={FILTER_PROPERTIES_ITEMS}  
                                 newForm={(props) =>
                                     <NewSlotSteps 
                                         {...props} 
