@@ -37,15 +37,7 @@ export default function NewItemHoc(Decorated) {
             this.props.actions.updateNewItem(this.props.newItem, { [prop]: value })
         }
 
-        save() {
-            let itemType = this.props.newItem._type || this.props.newItem._meta.type || this.props.itemType
-            let item = new Models.itemClassByTypeId[itemType](this.props.newItem) || {}
-            let acc = this.props.account
-
-            // this.setState({ saved: true }, () => {
-            this.props.actions.addItem(item, this.props.addTo, acc._authSig)
-            this.props.actions.resetNewItem(this.state.item)
-
+        onSave = () => {
             // TODO:.....
             if (typeof this.props.onSave === 'function') {
                 this.props.onSave()
@@ -58,7 +50,24 @@ export default function NewItemHoc(Decorated) {
                     }
                 }
             }
-            // })
+        }
+
+        save = () => {
+            let itemType = this.props.newItem._type || this.props.newItem._meta.type || this.props.itemType
+            let item = new Models.itemClassByTypeId[itemType](this.props.newItem) || {}
+            let acc = this.props.account
+
+            // this.setState({ saved: true }, () => {
+            this.props.actions.addItem(item, this.props.addTo, acc._authSig)
+            this.props.actions.resetNewItem(this.state.item)
+
+            this.onSave()
+        }
+
+        cancel = () => {
+            this.props.actions.resetNewItem(this.state.item)
+
+            this.onSave()
         }
 
         // updateItemInStore() {
@@ -73,7 +82,7 @@ export default function NewItemHoc(Decorated) {
             const props = this.props
 
             return (
-                <Decorated {...props} item={item} save={this.save} handleChange={this.handleChange} />
+                <Decorated {...props} item={item} save={this.save} handleChange={this.handleChange} cancel={this.cancel}/>
             )
         }
     }
