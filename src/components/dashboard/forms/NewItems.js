@@ -91,7 +91,7 @@ export const NewSlotDialog = (props) =>
 
 // Channel
 export const NewChannelSteps = (props) =>
-    <NewItemStepsWithDialog
+    <NewItemSteps
         {...props}
         itemType={ItemsTypes.Channel.id}
         itemPages={[
