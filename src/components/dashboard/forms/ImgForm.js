@@ -126,8 +126,8 @@ class ImgForm extends Component {
             <div className={theme.cropOverlay} onClick={this.preventBubbling}>
               <div className={theme.droppedImgContainer}>                
                 <ReactCrop 
-                  style={{maxWidth: '70%', maxHeight: 206}}
-                  imageStyle={{maxWidth: '100%', maxHeight: '206px', width: 'auto', height: 'auto'}}
+                  style={{maxWidth: '70%', maxHeight: 176}}
+                  imageStyle={{maxWidth: '100%', maxHeight: '176px', width: 'auto', height: 'auto'}}
                   className={theme.imgDropzonePreview}
                   crop={this.state.crop}
                   src={this.state.imgSrc || ''}

@@ -77,7 +77,7 @@ class NewItemFormPreview extends Component {
                                 }
 
                                 if (keyName === 'size') {
-                                    value = AdSizesByValue[value].label
+                                    value = t(AdSizesByValue[value].label, { args: AdSizesByValue[value].labelArgs })
                                 }
 
                                 if (keyName === 'adType') {

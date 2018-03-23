@@ -16,6 +16,16 @@ const { ItemsTypes, AdTypes, AdSizes } = ItemsConstants
 
 class NewSlotForm extends Component {
 
+    constructor(props, context) {
+        super(props, context)
+        this.state = {
+            // TODO: Common func for this and ad unit
+            adSizesSrc: AdSizes.map((size) => {
+                return { value: size.value, label: props.t(size.label, { args: size.labelArgs }) }
+            })
+        }
+    }
+
     componentDidMount() {
         if (!this.props.item.adType) {
             this.props.validate('adType', {
@@ -44,7 +54,6 @@ class NewSlotForm extends Component {
     render() {
         let item = this.props.item
         let t = this.props.t
-        let errFallbackAdUrl = this.props.invalidFields['fallbackAdUrl']
 
         return (
             <div>
@@ -64,30 +73,10 @@ class NewSlotForm extends Component {
                                 <Dropdown
                                     required
                                     onChange={this.validateAndUpdateDD.bind(this, true, 'size')}
-                                    source={AdSizes}
+                                    source={this.state.adSizesSrc}
                                     value={item.size + ''}
                                     label={t('size', { isProp: true })}
                                 />
-                            </Col>
-                        </Row>
-                        <Row middle='md'>
-                            <Col sm={12}>
-                                <Input
-                                    // required
-                                    type='text'
-                                    label={t('fallbackAdUrl', { isProp: true })}
-                                    value={item.fallbackAdUrl || ''}
-                                    onChange={this.props.handleChange.bind(this, 'fallbackAdUrl')}
-                                    maxLength={1024}
-                                    onBlur={this.props.validate.bind(this, 'fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true })}
-                                    onFocus={this.props.validate.bind(this, 'fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
-                                    error={errFallbackAdUrl && !!errFallbackAdUrl.dirty ? <span> {errFallbackAdUrl.errMsg} </span> : null}
-                                >
-                                    {!errFallbackAdUrl || !errFallbackAdUrl.dirty ?
-                                        <div>
-                                            {t('SLOT_FALLBACK_AD_URL_DESCRIPTION')}
-                                        </div> : null}
-                                </Input>
                             </Col>
                         </Row>
                     </Grid>

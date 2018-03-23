@@ -6,7 +6,7 @@
     flex-direction: column;
     flex: 1 1;
     width: 100%;
-    height: 220px;
+    height: 190px;
     border: 2px dashed #ccc;
     background: #f7f7f7;
     align-items: center;
@@ -25,7 +25,7 @@
         align-items: center;
 
         & .imgDropzonePreview {
-            max-height: 206px;
+            max-height: 176px;
             height: auto;
             width: auto;
             max-width: 70%;

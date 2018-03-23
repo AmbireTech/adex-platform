@@ -74,7 +74,7 @@ export const NewSlotSteps = (props) =>
             {title: 'SLOT_IMAGES_STEP', page: NewSlotFormImgs}
         ]}
         imgLabel='SLOT_AVATAR_IMG_LABEL'
-        noDefaultImg
+        imgAdditionalInfo='SLOT_AVATAR_IMG_INFO'
         descriptionHelperTxt='SLOT_DESCRIPTION_HELPER'
         itemModel={AdSlot}
     />

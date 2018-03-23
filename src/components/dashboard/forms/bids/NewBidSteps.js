@@ -11,26 +11,40 @@ import NewBidHoc from './NewBidHoc'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Translate from 'components/translate/Translate'
 
+// TODO: Make common steps component for Bid, transactions and items
 const saveBtn = ({ ...props }) => {
     return (
-        <Button icon='save' label='Place the bid' primary onClick={props.save} />
+        <Button icon='save' label={props.t('PLACE_BID_SAVE_BTN')} primary onClick={props.save} />
     )
 }
 
-const SaveBtnWithItem = NewBidHoc(saveBtn)
+const SaveBtnWithBid = NewBidHoc(saveBtn)
+
+const cancelBtn = ({ ...props }) => {
+    return (
+        <Button label={props.t('CANCEL')} onClick={props.cancel} />
+    )
+}
+
+const CancelBtnWithBid = NewBidHoc(cancelBtn)
 
 class NewBidSteps extends Component {
 
     render() {
         let validateId = 'bid-' + this.props.bidId
         let t = this.props.t
+
+        const cancelButton = () => <CancelBtnWithBid  {...this.props} onSave={this.props.onSave} />
+
         let pages = [{
-            title: t('STEP_N', { args: [1] }),
+            title: t('BID_DATA_STEP'),
+            cancelBtn: cancelButton,
             component: ValidItemHoc(BidForm),
             props: { ...this.props, validateId: validateId }
         }, {
             title: t('PREVIEW_AND_BID'),
-            completeBtn: () => <SaveBtnWithItem {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
+            completeBtn: () => <SaveBtnWithBid {...this.props} onSave={this.props.onSave} />,
+            cancelBtn: cancelButton,
             component: ValidItemHoc(BidFormPreview),
             props: { ...this.props, validateId: validateId }
         }]
