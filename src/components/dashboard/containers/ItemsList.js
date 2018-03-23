@@ -391,10 +391,10 @@ class ItemsList extends Component {
                 <div className={theme.listTools}>
                     <Grid fluid style={{ padding: 0 }} >
                         <Row middle='xs' className={theme.itemsListControls}>
-                            <Col sm={6} md={6} lg={2}>
+                            <Col xs={12} sm={6} md={6} lg={4}>
                                 <Input theme={theme} className={theme.inputIconLabel} type='text' label={<InputLabel icon='search' label={t('LIST_CONTROL_LABEL_SEARCH')} />} name='search' value={this.state.search} onChange={this.handleChange.bind(this, 'search')} />
                             </Col>
-                            <Col sm={6} md={6} lg={2}>
+                            <Col xs={12} sm={6} md={6} lg={3}>
                                 <div style={{ display: 'inline-block', width: 'calc(100% - 76px)' }}>
                                     <Dropdown
                                         auto
@@ -412,9 +412,9 @@ class ItemsList extends Component {
                                 </div>
                             </Col>
                             {this.props.filterProperties ? 
-                                <Col sm={12} md={12} lg={3}>
+                                <Col sm={12} md={12} lg={5}>
                                     <Row>
-                                        <Col sm={6} md={6} lg={6}>
+                                        <Col xs={12} sm={6} md={6} lg={6}>
                                             <Dropdown
                                                 auto
                                                 label={t('LIST_CONTROL_LABEL_FILTER_BY')}
@@ -423,7 +423,7 @@ class ItemsList extends Component {
                                                 value={this.state.filterBy !== null ? this.state.filterBy.toString() : null}
                                             />
                                         </Col>
-                                        <Col sm={6} md={6} lg={6}>
+                                        <Col xs={12} sm={6} md={6} lg={6}>
                                             <Dropdown
                                                 auto
                                                 label={t('LIST_CONTROL_LABEL_FILTER_BY_VALUE')}
@@ -435,7 +435,16 @@ class ItemsList extends Component {
                                     </Row>
                             </Col>
                             : null }
-                            <Col sm={10} md={10} lg={4}>
+                            {this.props.archive ?
+                                <Col sm={12} md={5} lg={4}>
+                                    <RadioGroup theme={theme} name='archived' value={this.state.filterArchived.toString()} onChange={this.handleChange.bind(this, 'filterArchived')}>
+                                        <RadioButton theme={theme} label={t('LABEL_ACTIVE')} value={'false'} />
+                                        <RadioButton theme={theme} label={t('LABEL_ARCHIVED')} value={'true'} />
+                                        <RadioButton theme={theme} label={t('LABEL_ALL')} value={''} />
+                                    </RadioGroup>
+                                </Col>
+                            : null}
+                            <Col xs={12} sm={12} md={5} lg={6}>
                                 <Pagination
                                     t={t}
                                     page={data.page}
@@ -453,7 +462,7 @@ class ItemsList extends Component {
                                 />
                             </Col>
                             {!this.props.listMode ?
-                                <Col sm={2} md={2} lg={1}>
+                                <Col sm={12} md={2} lg={2}>
                                     <div>
                                         <IconButton icon='view_module' primary={!this.props.rowsView} onClick={this.toggleView.bind(this, false)} />
                                         <IconButton icon='view_list' primary={this.props.rowsView} onClick={this.toggleView.bind(this, true)} />
@@ -463,18 +472,7 @@ class ItemsList extends Component {
                                 null
                             }
                         </Row>
-                        {this.props.archive ?
-                            <Row>
-                                <Col sm={12} md={12} lg={12}>
-                                    <RadioGroup theme={theme} name='archived' value={this.state.filterArchived.toString()} onChange={this.handleChange.bind(this, 'filterArchived')}>
-                                        <RadioButton theme={theme} label={t('LABEL_ACTIVE')} value={'false'} />
-                                        <RadioButton theme={theme} label={t('LABEL_ARCHIVED')} value={'true'} />
-                                        <RadioButton theme={theme} label={t('LABEL_ALL')} value={''} />
-                                    </RadioGroup>
-                                </Col>
-
-                            </Row>
-                            : null}
+                       
                     </Grid>
                 </div >
                 <section>

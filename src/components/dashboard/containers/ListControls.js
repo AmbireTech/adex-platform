@@ -17,14 +17,14 @@ export const Pagination = (props) => {
 
     return (
         <div>
-            <div style={{ display: 'inline-block', width: 196 }}>
+            <div className={theme.paginationPage} >
                 <IconButton
                     primary
                     disabled={!(props.page > 0 && props.pages > props.page)}
                     icon='chevron_left'
                     onClick={props.goToPrevPage} />
 
-                <div style={{ display: 'inline-block', width: 70 }}>
+                <div className={theme.paginationInput}>
                     <Autocomplete
                         allowCreate={false}
                         direction="down"
@@ -48,7 +48,7 @@ export const Pagination = (props) => {
 
                 <span className={classnames(theme.pageOf,theme.ellipsis)}> {props.t('LIST_CONTROL_LABEL_PAGE_OF', {args: [props.pages]})} </span>
             </div>
-            <div style={{ position: 'relative', display: 'inline-block', width: 'calc(100% - 196px)'}}>
+            <div className={theme.paginationSlider} >
                 <label className={classnames(theme.sliderLabel, theme.ellipsis)}> {props.t('LIST_CONTROL_LABEL_PAGE_SIZE')} <strong>{props.pageSize}</strong> </label>
                 <Slider pinned snaps min={5} max={25} step={5} value={props.pageSize} onChange={props.changePageSize} />
             </div>
