@@ -12,7 +12,7 @@ import Translate from 'components/translate/Translate'
 
 const saveBtn = ({ ...props }) => {
     return (
-        <Button icon='save' label='Save' primary onClick={props.save} />
+        <Button icon='save' label={props.t('SAVE')} primary onClick={props.save} />
     )
 }
 
@@ -20,7 +20,7 @@ const SaveBtnWithItem = NewItemHoc(saveBtn)
 
 const cancelBtn = ({ ...props }) => {
     return (
-        <Button label='Cancel' onClick={props.cancel} />
+        <Button label={props.t('CANCEL')} onClick={props.cancel} />
     )
 }
 
@@ -47,7 +47,7 @@ class NewItemSteps extends Component {
             {
                 title: t('PREVIEW_AND_SAVE_ITEM'),
                 completeBtn: () => <SaveBtnWithItem  {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
-                cancelBtn: () => cancelButton,
+                cancelBtn: cancelButton,
                 component: NewItemFormPreview,
                 props: { ...this.props }
             }
