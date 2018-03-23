@@ -13,7 +13,6 @@ import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
 
 const { ItemsTypes, AdSizesByValue } = ItemsConstants
 
-
 class NewUnitFormImg extends Component {
 
     componentDidMount() {

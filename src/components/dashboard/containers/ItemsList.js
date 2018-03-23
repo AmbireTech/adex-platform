@@ -24,7 +24,7 @@ import classnames from 'classnames'
 import { RadioGroup, RadioButton } from 'react-toolbox/lib/radio'
 import { InputLabel } from 'components/dashboard/containers/ListControls'
 import { items as ItemsConstants } from 'adex-constants'
-const { AdSizesByValue, AdTypesByValue, ItemTypesNames, AdTypes, AdSizes } = ItemsConstants
+const { AdSizesByValue, AdTypesByValue, ItemTypesNames } = ItemsConstants
 
 const RRTableCell = withReactRouterLink(TableCell)
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))

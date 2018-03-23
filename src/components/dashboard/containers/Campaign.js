@@ -5,13 +5,9 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
-import NewUnitFormBasic from 'components/dashboard/forms/items/NewUnitFormBasic'
-import NewUnitFormImg from 'components/dashboard/forms/items/NewUnitFormImg'
-import NewUnitFormTargets from 'components/dashboard/forms/items/NewUnitFormTargets'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import theme from './campaign.css'
 import AddItemDialog from './AddItemDialog'
-import NewItemSteps from 'components/dashboard/forms/items/NewItemSteps'
 import moment from 'moment'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
@@ -19,6 +15,7 @@ import { AdUnit as AdUnitModel, Campaign as CampaignModel } from 'adex-models'
 import { groupItemsForCollection } from 'helpers/itemsHelpers'
 import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import { items as ItemsConstants } from 'adex-constants'
+import { NewUnitSteps } from 'components/dashboard/forms/NewItems'
 
 const { ItemsTypes } = ItemsConstants
 
@@ -82,13 +79,13 @@ export class Campaign extends Component {
                                 itemModel={AdUnitModel}
                                 newForm={(props) =>
                                     //TODO: fix it
-                                    <NewItemSteps {...props}
+                                    <NewUnitSteps {...props}
                                         addTo={item}
-                                        itemPages={[NewUnitFormBasic, NewUnitFormImg, NewUnitFormTargets]}
-                                        itemType={ItemsTypes.AdUnit.id}
-                                        itemModel={AdUnitModel}
-                                        objModel={AdUnitModel}
-                                        noDefaultImg
+                                        // itemPages={[NewUnitFormBasic, NewUnitFormImg, NewUnitFormTargets]}
+                                        // itemType={ItemsTypes.AdUnit.id}
+                                        // itemModel={AdUnitModel}
+                                        // objModel={AdUnitModel}
+                                        // noDefaultImg
                                     />
                                 }
                             />

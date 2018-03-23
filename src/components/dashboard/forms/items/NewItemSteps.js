@@ -5,10 +5,10 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Button } from 'react-toolbox/lib/button'
 import MaterialStepper from './../stepper/MaterialStepper'
-import NewItemForm from './NewItemForm'
 import NewItemFormPreview from './NewItemFormPreview'
 import NewItemHoc from './NewItemHocStep'
 import ValidItemHoc from './../ValidItemHoc'
+import Translate from 'components/translate/Translate'
 
 const saveBtn = ({ ...props }) => {
     return (
@@ -20,25 +20,23 @@ const SaveBtnWithItem = NewItemHoc(saveBtn)
 
 class NewItemSteps extends Component {
     render() {
+        let t = this.props.t
 
         let validateId =  'new-' + this.props.itemType + '-'
-        let pages = [{
-            title: 'Step 1',
-            component: ValidItemHoc(NewItemForm),
-            props: { ...this.props, validateId: validateId + 0 }
-        }]
+
+        let pages = []
 
         this.props.itemPages.map((itemPage, index) => {
             pages.push({
-                title: 'Step ' + (index + 2),
-                component: ValidItemHoc(itemPage),
+                title: t(itemPage.title || 'Step ' + (index + 1)),
+                component: ValidItemHoc(itemPage.page || itemPage),
                 props: { ...this.props, validateId: validateId + (index + 1) }
             })
         })
 
         pages.push(
             {
-                title: 'Preview and save',
+                title: t('PREVIEW_AND_SAVE_ITEM'),
                 completeBtn: () => <SaveBtnWithItem  {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
                 component: NewItemFormPreview,
                 props: { ...this.props }
@@ -58,7 +56,7 @@ NewItemSteps.propTypes = {
     account: PropTypes.object.isRequired,
     title: PropTypes.string,
     addTo: PropTypes.object,
-    itemPages: PropTypes.arrayOf(PropTypes.func)
+    itemPages: PropTypes.arrayOf(PropTypes.object)
 
 }
 
@@ -79,5 +77,5 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(NewItemSteps)
+)(Translate(NewItemSteps))
 
