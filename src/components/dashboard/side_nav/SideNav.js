@@ -9,7 +9,7 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
 import ChannelIcon from 'components/common/icons/ChannelIcon'
 import Translate from 'components/translate/Translate'
-import { NewUnit, NewCampaign, NewSlot, NewChannel } from 'components/dashboard/forms/NewItems'
+import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, NewChannelDialog } from 'components/dashboard/forms/NewItems'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 import packageJson from './../../../../package.json'
@@ -37,8 +37,8 @@ class SideNav extends Component {
         const isAdvertiser = side === 'advertiser'
         const collection = (isAdvertiser ? 'campaigns' : 'channels')
         const items = (isAdvertiser ? 'units' : 'slots')
-        const NewCollectionBtn = (isAdvertiser ? NewCampaign : NewChannel)
-        const NewItemBtn = (isAdvertiser ? NewUnit : NewSlot)
+        const NewCollectionBtn = (isAdvertiser ? NewCampaignDialog : NewChannelDialog)
+        const NewItemBtn = (isAdvertiser ? NewUnitDialog : NewSlotDialog)
         const CollectionIcon = (isAdvertiser ? CampaignIcon : ChannelIcon)
         const itemsIcon = (isAdvertiser ? 'format_list_bulleted' : 'format_list_bulleted')
         const t = this.props.t

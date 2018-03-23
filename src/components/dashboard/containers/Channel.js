@@ -6,15 +6,13 @@ import actions from 'actions'
 import { Channel as ChannelModel, AdSlot as AdSlotModel } from 'adex-models'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
-import NewSlotForm from 'components/dashboard/forms/items/NewSlotForm'
-import NewSlotFormImgs from 'components/dashboard/forms/items/NewSlotFormImgs'
 // import theme from './theme.css'
 import AddItemDialog from './AddItemDialog'
-import NewItemSteps from 'components/dashboard/forms/items/NewItemSteps'
 import theme from './theme.css'
 import Translate from 'components/translate/Translate'
 import { groupItemsForCollection } from 'helpers/itemsHelpers'
 import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
+import { NewSlotSteps } from 'components/dashboard/forms/NewItems'
 import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemsTypes } = ItemsConstants
@@ -70,12 +68,9 @@ export class Channel extends Component {
                                 tabExsLabel={this.props.t('EXISTING_SLOT')}
                                 objModel={AdSlotModel}
                                 newForm={(props) =>
-                                    <NewItemSteps 
+                                    <NewSlotSteps 
                                         {...props} 
-                                        addTo={item} 
-                                        itemPages={[NewSlotForm, NewSlotFormImgs]} 
-                                        itemType={ItemsTypes.AdSlot.id} 
-                                        itemModel={AdSlotModel} 
+                                        addTo={item}
                                     />
                                 }
                             />
