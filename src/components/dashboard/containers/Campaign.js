@@ -67,25 +67,22 @@ export class Campaign extends Component {
                             <AddItemDialog
                                 color='second'
                                 addCampaign={this.props.actions.addCampaign}
-                                btnLabel={this.props.t('NEW_UNIT_TO_CAMPAIGN')}
+                                btnLabel={t('NEW_UNIT_TO_CAMPAIGN')}
                                 title=''
                                 items={otherUnits}
                                 viewMode={VIEW_MODE_UNITS}
                                 listMode='rows'
                                 addTo={item}
-                                tabNewLabel={this.props.t('NEW_UNIT')}
-                                tabExsLabel={this.props.t('EXISTING_UNIT')}
+                                tabNewLabel={t('NEW_UNIT')}
+                                tabExsLabel={t('EXISTING_UNIT')}
                                 objModel={AdUnitModel}
                                 itemModel={AdUnitModel}
+                                sortProperties={SORT_PROPERTIES_ITEMS}
+                                filterProperties={FILTER_PROPERTIES_ITEMS}
                                 newForm={(props) =>
-                                    //TODO: fix it
-                                    <NewUnitSteps {...props}
+                                    <NewUnitSteps 
+                                        {...props}
                                         addTo={item}
-                                        // itemPages={[NewUnitFormBasic, NewUnitFormImg, NewUnitFormTargets]}
-                                        // itemType={ItemsTypes.AdUnit.id}
-                                        // itemModel={AdUnitModel}
-                                        // objModel={AdUnitModel}
-                                        // noDefaultImg
                                     />
                                 }
                             />
