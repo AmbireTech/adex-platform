@@ -60,12 +60,16 @@ export default function NewBidHoc(Decorated) {
         })
     }
 
+    cancel = () => {
+      this.onSave()
+    }
+
     render() {
       let bid = this.props.bid || {}
       let props = this.props
 
       return (
-        <Decorated {...props} bid={bid} save={this.save} handleChange={this.handleChange} />
+        <Decorated {...props} bid={bid} save={this.save} handleChange={this.handleChange} cancel={this.cancel}/>
       )
     }
   }
