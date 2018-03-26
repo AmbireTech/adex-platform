@@ -3,6 +3,22 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.0.8] - 2018-03-26
+### Added
+- List items/bids - filter by property
+- Items - archive/unarchive buttons and list controls
+- Cancel button for new items/bids/transactions
+- New items steps - meaningful steps names
+- New translations 
+- Link to AdEx site in side nav
+
+### Changed
+- Items - removed delete btn (now just archive, in future will be added delete btn but only for items with no related bids)
+- Side nav styles
+
+### Fixed
+- List controls grid styles
+
 ## [2.0.7] - 2018-03-20
 ### Fixed
 - Anchor getUrl
@@ -75,7 +91,8 @@ All notable changes to this project will be documented in this file.
 
 ## [2.0.0] - 2018-02-26
 
-[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.7...HEAD
+[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.8...HEAD
+[2.0.8]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.7...v2.0.8
 [2.0.7]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.6...v2.0.7
 [2.0.6]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.4...v2.0.5
