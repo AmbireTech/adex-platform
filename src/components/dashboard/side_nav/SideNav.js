@@ -132,7 +132,9 @@ class SideNav extends Component {
 
                 <div className={theme.version}>
                     <div>
-                        <small> &copy; {(new Date()).getFullYear()} AdEx Network OÜ</small>
+                        <small> &copy; {(new Date()).getFullYear()}
+                            <Anchor className={theme.adxLink} target='_blank' href={process.env.ADEX_SITE_HOST} > AdEx Network OÜ </Anchor>
+                        </small>
                     </div>
                     <div>
                         <small>
