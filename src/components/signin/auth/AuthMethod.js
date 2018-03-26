@@ -12,13 +12,14 @@ import { Tab, Tabs } from 'react-toolbox'
 import { Button } from 'react-toolbox/lib/button'
 import { getWeb3 } from 'services/smart-contracts/ADX'
 import AuthMetamask from 'components/signin/auth/AuthMetamask'
+import AuthTrezor from 'components/signin/auth/AuthTrezor'
 
 class AuthMethod extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      tabIndex: 0,
+      tabIndex: 1,
       closeDialog: false,
       bids: []
     }
@@ -29,7 +30,6 @@ class AuthMethod extends Component {
   }
 
   render() {
-    // console.log('SideSelect', this.props)
     let t = this.props.t
     return (
       <Dialog
@@ -46,7 +46,7 @@ class AuthMethod extends Component {
             <AuthMetamask />
           </Tab>
           <Tab label={t('TREZOR')}>
-            <h1>{t('COMING_SOON')}</h1>
+            <AuthTrezor />
           </Tab>
           <Tab label={t('LEDGER')}>
             <h1>{t('COMING_SOON')}</h1>
