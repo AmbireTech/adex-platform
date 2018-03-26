@@ -3,23 +3,23 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import theme from './theme.css'
-import Logo from 'components/common/icons/AdexIconTxt'
+// import theme from './theme.css'
 import { Button } from 'react-toolbox/lib/button'
-import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Translate from 'components/translate/Translate'
-import { getWeb3 } from 'services/smart-contracts/ADX'
-import SideSelect from 'components/signin/side-select/SideSelect'
+// import { getWeb3 } from 'services/smart-contracts/ADX'
+// import SideSelect from 'components/signin/side-select/SideSelect'
 import { signToken } from 'services/adex-node/actions'
 import scActions from 'services/smart-contracts/actions'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { addSig, getSig } from 'services/auth/auth'
 import { checkAuth } from 'services/adex-node/actions'
 import METAMASK_DL_IMG from 'resources/download-metamask.png'
+import Anchor from 'components/common/anchor/anchor'
+import Img from 'components/common/img/Img'
 
-const { signAuthTokenMetamask, signAuthToken, getAccountMetamask } = scActions
+const { signAuthTokenMetamask, getAccountMetamask } = scActions
 
-const RRButton = withReactRouterLink(Button)
+// const RRButton = withReactRouterLink(Button)
 
 class AuthMetamask extends Component {
     constructor(props) {
@@ -104,7 +104,7 @@ class AuthMetamask extends Component {
     render() {
         let t = this.props.t
         let userAddr = this.props.account._addr
-        let authMode = this.props.account._authMode
+        // let authMode = this.props.account._authMode
 
         return (
             <div >
@@ -113,9 +113,9 @@ class AuthMetamask extends Component {
                 </span>
                 <br/>
                 <h3>
-                    <a href='https://metamask.io/' target='_blank'>
-                        <img src={METAMASK_DL_IMG} alt={'Downlad metamask'} style={{maxWidth: '100%', maxHeight: '80px'}}/>
-                    </a>
+                    <Anchor href='https://metamask.io/' target='_blank'>
+                        <Img src={METAMASK_DL_IMG} alt={'Downlad metamask'} style={{maxWidth: '100%', maxHeight: '80px'}}/>
+                    </Anchor>
                 </h3>
                 <br/>
                 <br/>

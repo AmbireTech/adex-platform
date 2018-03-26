@@ -6,14 +6,13 @@ import actions from 'actions'
 import { Channel as ChannelModel, AdSlot as AdSlotModel } from 'adex-models'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
-import NewSlotForm from 'components/dashboard/forms/items/NewSlotForm'
-import NewSlotFormImgs from 'components/dashboard/forms/items/NewSlotFormImgs'
 // import theme from './theme.css'
 import AddItemDialog from './AddItemDialog'
-import NewItemSteps from 'components/dashboard/forms/items/NewItemSteps'
 import theme from './theme.css'
 import Translate from 'components/translate/Translate'
 import { groupItemsForCollection } from 'helpers/itemsHelpers'
+import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
+import { NewSlotSteps } from 'components/dashboard/forms/NewItems'
 import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemsTypes } = ItemsConstants
@@ -36,7 +35,7 @@ export class Channel extends Component {
 
     render() {
         // let side = this.props.match.params.side
-        // let t = this.props.t
+        let t = this.props.t
         let item = this.props.item
         // let items = item._items || []
         let propsSlots = { ...this.props.slots }
@@ -53,35 +52,43 @@ export class Channel extends Component {
         return (
             <div>
                 <h2>
-                    <span>{this.props.t('SLOTS_IN_CHANNEL', { args: [slots.length] })}</span>
+                    <span>{t('SLOTS_IN_CHANNEL', { args: [slots.length] })}</span>
                     <span>
                         <div className={theme.newIemToItemBtn} >
                             <AddItemDialog
                                 color='second'
                                 addCampaign={this.props.actions.addCampaign}
-                                btnLabel={this.props.t('NEW_SLOT_TO_CHANNEL')}
+                                btnLabel={t('NEW_SLOT_TO_CHANNEL')}
                                 title=''
                                 items={otherSlots}
                                 viewMode={VIEW_MODE_UNITS}
                                 listMode='rows'
                                 addTo={item}
-                                tabNewLabel={this.props.t('NEW_SLOT')}
-                                tabExsLabel={this.props.t('EXISTING_SLOT')}
+                                tabNewLabel={t('NEW_SLOT')}
+                                tabExsLabel={t('EXISTING_SLOT')}
                                 objModel={AdSlotModel}
+                                sortProperties={SORT_PROPERTIES_ITEMS}
+                                filterProperties={FILTER_PROPERTIES_ITEMS}  
                                 newForm={(props) =>
-                                    <NewItemSteps 
+                                    <NewSlotSteps 
                                         {...props} 
-                                        addTo={item} 
-                                        itemPages={[NewSlotForm, NewSlotFormImgs]} 
-                                        itemType={ItemsTypes.AdSlot.id} 
-                                        itemModel={AdSlotModel} 
+                                        addTo={item}
                                     />
                                 }
                             />
                         </div>
                     </span>
                 </h2>
-                <ItemsList {...this.props} parentItem={item} removeFromItem items={slots} viewModeId={VIEW_MODE} objModel={AdSlotModel} />
+                <ItemsList 
+                    {...this.props} 
+                    parentItem={item} 
+                    removeFromItem 
+                    items={slots} 
+                    viewModeId={VIEW_MODE} 
+                    objModel={AdSlotModel}
+                    sortProperties={SORT_PROPERTIES_ITEMS}
+                    filterProperties={FILTER_PROPERTIES_ITEMS}
+                />
             </div>
         )
     }
@@ -90,21 +97,24 @@ export class Channel extends Component {
 Channel.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    slots: PropTypes.array.isRequired,
-    spinner: PropTypes.bool,
+    slots: PropTypes.object.isRequired,
     rowsView: PropTypes.bool.isRequired
 }
 
 function mapStateToProps(state) {
     let persist = state.persist
-    let memory = state.memory
+    // let memory = state.memory
     return {
         account: persist.account,
         slots: persist.items[ItemsTypes.AdSlot.id],
-        spinner: memory.spinners[ItemsTypes.Channel.name],
         rowsView: !!persist.ui[VIEW_MODE],
         objModel: ChannelModel,
-        itemType: ItemsTypes.Channel.id
+        itemType: ItemsTypes.Channel.id,
+        updateImgInfoLabel: 'CHANNEL_IMG_ADDITIONAL_INFO',
+        updateImgLabel: 'CHANNEL_LOGO',
+        updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
+        updateImgExact: false,
+        canEditImg: true
     }
 }
 

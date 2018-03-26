@@ -1,12 +1,64 @@
-.listItem, .item, .itemText {
-  color: #fff !important;
+@import './../../../styles/variables.css';
+
+.listItem, .item, .itemText, .itemAction {
+  color: #9c9c9b !important;
   user-select: none;
+  & [data-react-toolbox='font-icon'] {
+    color: #9c9c9b;
+  }
+  & svg {
+    fill: currentColor !important;
+  }
 }
 
+.item {
+  &.selectable:not(.disabled):hover {
+    background-color: #131313 !important;
+  }
+}
 .active {
-  background-color: #aaa;
+  background-color: #555;
+  & .listItem, & .item, & .itemText, & .itemAction,  & svg, & [data-react-toolbox='font-icon']  {
+    color: #FFFFFF !important;
+  }
+}
+
+.pendingTransactions {
+  & [data-react-toolbox='font-icon'] {
+    color: #FF5722 !important;
+  }
 }
 
 .button {
   width: 220px;
 }
+
+.navigation {
+  position: absolute;
+  top: 64px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.version {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  padding-left: 16px;
+  border-top: 1px solid var(--color-adex-divider-darker);
+  color: var(--color-adex-divider-darker);
+}
+
+.listBottom {
+  position: absolute;
+  bottom: 75px;
+  left: 0;
+  right: 0;
+}
+.adxLink {
+  color: var(--color-adex-divider-darker);
+}
+ 

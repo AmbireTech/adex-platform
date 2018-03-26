@@ -8,25 +8,24 @@ import Tooltip from 'react-toolbox/lib/tooltip'
 import Img from 'components/common/img/Img'
 import { Item } from 'adex-models'
 import Translate from 'components/translate/Translate'
-import FontIcon from 'react-toolbox/lib/font_icon'
 import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemTypesNames } = ItemsConstants
 
 const RRCardMedia = withReactRouterLink(CardMedia)
 const TooltipRRButton = withReactRouterLink(Tooltip(Button))
-const TooltipFontIcon = Tooltip(FontIcon)
+// const TooltipFontIcon = Tooltip(FontIcon)
 
 class MyCard extends Component {
 
     render() {
         let item = this.props.item
-        let meta = item._meta
-        let name = item._name
+        let meta = item._meta || {}
+        let name = meta.fullName
         let id = item._id
         let itemTypeName = ItemTypesNames[item._type]
         let to = '/dashboard/' + this.props.side + '/' + itemTypeName + '/' + id
-        let synced = item._syncedWeb3 && item.syncedIpfs
+        let imageSrc = Item.getImgUrl(meta.img, process.env.IPFS_GATEWAY) || ''
         return (
             <Card raised={false} theme={theme}>
                 <RRCardMedia
@@ -34,7 +33,7 @@ class MyCard extends Component {
                     aspectRatio='wide'
                     theme={theme}
                 >
-                    <Img src={Item.getImgUrl(meta.img, process.env.IPFS_GATEWAY)} alt={name} />
+                    <Img src={imageSrc} alt={name} />
                 </RRCardMedia>
                 <CardTitle
                     title={meta.fullName}
@@ -42,7 +41,7 @@ class MyCard extends Component {
                 />
                 <CardActions theme={theme}>
                     {/* TODO: fix the sync icon */}
-                    <div>                       
+                    <div>
                         {/* {!synced ?
                             <TooltipFontIcon
                                 value='sync_problem'

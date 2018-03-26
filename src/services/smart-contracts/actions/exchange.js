@@ -131,7 +131,7 @@ export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
 }
 
 // TODO: get the report, make some endpoint on the node
-export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report, _addr, gas, gasPrice } = {}) => {
+export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report, _addr, gas, gasPrice, side } = {}) => {
     return new Promise((resolve, reject) => {
         getWeb3
             .then(({ web3, exchange, token }) => {
@@ -141,6 +141,14 @@ export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report
                 let verifyBid = exchange.methods
                     .verifyBid(_id, _report)
 
+                let state = 'CONFIRM_BID'
+                // TODO: constants for advertiser/publisher
+                if(side === 'advertiser') {
+                    state = EXCHANGE_CONSTANTS.BID_STATES.ConfirmedAdv.id
+                }else if (side === 'publisher') {
+                    state = EXCHANGE_CONSTANTS.BID_STATES.ConfirmedPub.id
+                }
+
                 verifyBid
                     .estimateGas({ from: _addr })
                     .then((estimatedGas) => {
@@ -148,7 +156,7 @@ export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report
                             .send({ from: _addr, gas: estimatedGas })
                             .on('transactionHash', (hash) => {
                                 console.log('verifyBid transactionHash', hash)
-                                resolve({ bidId: _id, state: 'VERIFY_BID', trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_VERIFY_BID' })
+                                resolve({ bidId: _id, state: state, trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_VERIFY_BID' })
                             })
                             .on('error', (err) => {
                                 console.log('verifyBid err', err)
@@ -287,6 +295,7 @@ export const signBid = ({ userAddr, bid }) => {
             //NOTE: We need to set the exchangeAddr because it is needed for the hash
             bid.exchangeAddr = cfg.addr.exchange //Need bid instance
             bid.amount = adxAmountStrToPrecision(bid.amount) // * 10 000 but safe
+            bid.opened = Date.now()
 
             let typed = bid.typed
 
@@ -308,11 +317,11 @@ export const signBid = ({ userAddr, bid }) => {
                             from: userAddr
                         }, (err, res) => {
                             if (err) {
-                                throw new Error(err)
+                                return reject(err)
                             }
 
                             if (res.error) {
-                                throw new Error(res.error)
+                                return reject(res.error)
                             }
 
                             //TODO: do it with the Bid model

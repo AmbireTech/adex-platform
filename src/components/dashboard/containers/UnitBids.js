@@ -5,41 +5,34 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import theme from './theme.css'
-import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
-import { IconButton, Button } from 'react-toolbox/lib/button'
+import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
+import { IconButton } from 'react-toolbox/lib/button'
 import ItemsList from './ItemsList'
 import Rows from 'components/dashboard/collection/Rows'
 import Translate from 'components/translate/Translate'
-import { getUnitBids } from 'services/adex-node/actions'
+import Tooltip from 'react-toolbox/lib/tooltip'
+import RTButtonTheme from 'styles/RTButton.css'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import { Item } from 'adex-models'
-import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
+import { exchange as ExchangeConstants } from 'adex-constants'
 import { CancelBid, VerifyBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
 import classnames from 'classnames'
 import moment from 'moment'
+import Anchor from 'components/common/anchor/anchor'
+import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
 
-const { ItemsTypes } = ItemsConstants
+const TooltipIconButton = Tooltip(IconButton)
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
-
-const SORT_PROPERTIES = [
-    { value: '_state', label: '' },
-    { value: '_target', label: '' },
-    { value: '_amount', label: '' },
-    { value: '_timeout', label: '' },
-    /** traffic, etc. */
-]
-
-// TODO: Higher level component that uses Item to pass instance of the Item in order to use its props through getters instead of plain object props
-// TODO: use plain object only for the store
 
 export class UnitBids extends Component {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            bidding: false,
-            activeSlot: {}
-        }
+    shouldComponentUpdate(nextProps, nextState) {
+        // TODO: investigate why component receives props without change in the parent components and stre state props
+        return JSON.stringify(this.props) !== JSON.stringify(nextProps)
+    }
+
+    onSave = () => {
+        this.props.getUnitBids()
     }
 
     renderTableHead() {
@@ -59,12 +52,20 @@ export class UnitBids extends Component {
 
     renderTableRow(bid, index, { to, selected }) {
         const t = this.props.t
-        const canCancel = bid._state === BID_STATES.DoesNotExist.id
+        const transactions = this.props.transactions
+        const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
+        const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
+
+        const canCancel = (bid._state === BID_STATES.DoesNotExist.id)
         const canVerify = (bid._state === BID_STATES.Accepted.id) && (bid.clicksCount >= bid._target)
         const accepted = (bid._acceptedTime || 0) * 1000
         const timeout = (bid._timeout || 0) * 1000
         const bidExpires = accepted ? (accepted + timeout) : null
         const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidExpires < Date.now())
+        const pendingCancel = pendingState === BID_STATES.Canceled.id
+        const pendingRefund = pendingState === BID_STATES.Expired.id
+        const pendingVerify = (pendingState === BID_STATES.ConfirmedAdv.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
+        const pendingAcceptByPub = bid.unconfirmedStateId === BID_STATES.Accepted.id
 
         return (
             <TableRow key={bid._id}>
@@ -81,12 +82,12 @@ export class UnitBids extends Component {
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    <a target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._publisher} > {bid._publisher || '-'} </a>
+                    <Anchor target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._publisher} > {bid._publisher || '-'} </Anchor>
                 </TableCell>
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    <a target='_blank' href={Item.getIpfsMetaUrl(bid._adSlot, process.env.IPFS_GATEWAY)} > {bid._adSlot || '-'} </a>
+                    <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._adSlot, process.env.IPFS_GATEWAY)} > {bid._adSlot || '-'} </Anchor>
                 </TableCell>
                 <TableCell>
                     <div>
@@ -103,7 +104,7 @@ export class UnitBids extends Component {
 
                     {canCancel ?
                         <CancelBid
-                            icon='cancel'
+                            icon={pendingCancel ? 'hourglass_empty' : 'cancel'}
                             adUnitId={bid._adUnitId}
                             bidId={bid._id}
                             placedBid={bid}
@@ -112,10 +113,18 @@ export class UnitBids extends Component {
                             accent
                             className={theme.actionBtn}
                             onSave={this.onSave}
+                            disabled={pendingCancel}
                         /> : null}
+                    {canCancel && pendingAcceptByPub ?
+                        <TooltipIconButton
+                            icon='warning'
+                            tooltip={t('WARNING_PENDING_ACCEPT_BY_PUB')}
+                            className={RTButtonTheme.warning}
+                        /> : null
+                    }
                     {canVerify ?
                         <VerifyBid
-                            icon='check_circle'
+                            icon={pendingVerify ? 'hourglass_empty' : 'check_circle'}
                             itemId={bid._adUnitId}
                             bidId={bid._id}
                             placedBid={bid}
@@ -124,10 +133,11 @@ export class UnitBids extends Component {
                             primary
                             className={theme.actionBtn}
                             onSave={this.onSave}
+                            disabled={pendingVerify}
                         /> : null}
                     {canRefund ?
                         <RefundBid
-                            icon='cancel'
+                            icon={pendingRefund ? 'hourglass_empty' : 'cancel'}
                             adUnitId={bid._adUnitId}
                             bidId={bid._id}
                             placedBid={bid}
@@ -136,6 +146,7 @@ export class UnitBids extends Component {
                             accent
                             className={theme.actionBtn}
                             onSave={this.onSave}
+                            disabled={pendingRefund}
                         /> : null}
                 </TableCell>
             </TableRow >
@@ -159,16 +170,22 @@ export class UnitBids extends Component {
             (bid._advertiser || '') +
             (bid._timeout || '') +
             (bid._target || '')
-        }
+    }
 
     render() {
-        let item = this.props.item
-        let t = this.props.t
+
         let bids = this.props.bids || []
 
         return (
             <div>
-                <ItemsList items={bids} listMode='rows' delete renderRows={this.renderRows.bind(this)} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch}/>
+                <ItemsList
+                    items={bids}
+                    listMode='rows'
+                    renderRows={this.renderRows.bind(this)}
+                    sortProperties={SORT_PROPERTIES_BIDS}
+                    searchMatch={this.searchMatch}
+                    filterProperties={FILTER_PROPERTIES_BIDS}
+                />
             </div>
         )
     }
@@ -178,15 +195,14 @@ UnitBids.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     item: PropTypes.object.isRequired,
-    spinner: PropTypes.bool
 }
 
 function mapStateToProps(state) {
     let persist = state.persist
-    let memory = state.memory
+    // let memory = state.memory
     return {
         account: persist.account,
-        spinner: memory.spinners[ItemsTypes.AdUnit.name]
+        transactions: persist.web3Transactions[persist.account._addr] || {}
     }
 }
 

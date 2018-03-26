@@ -10,6 +10,7 @@ import moment from 'moment'
 import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
+import Anchor from 'components/common/anchor/anchor'
 import { items as ItemsConstants } from 'adex-constants'
 const { ItemsTypes, AdSizesByValue, AdTypesByValue } = ItemsConstants
 
@@ -28,7 +29,7 @@ class NewItemFormPreview extends Component {
                 </Row>
                 <Row>
                     <Col xs={12} lg={4} className={theme.textRight}>{t('fallbackAdUrl', { isProp: true })}:</Col>
-                    <Col xs={12} lg={8} className={theme.textLeft}><a href={item.fallbackAdUrl} target='_blank'>{item.fallbackAdUrl}</a></Col>
+                    <Col xs={12} lg={8} className={theme.textLeft}><Anchor href={item.fallbackAdUrl} target='_blank'>{item.fallbackAdUrl}</Anchor></Col>
                 </Row>
             </div>
         )
@@ -76,7 +77,7 @@ class NewItemFormPreview extends Component {
                                 }
 
                                 if (keyName === 'size') {
-                                    value = AdSizesByValue[value].label
+                                    value = t(AdSizesByValue[value].label, { args: AdSizesByValue[value].labelArgs })
                                 }
 
                                 if (keyName === 'adType') {
@@ -115,7 +116,7 @@ NewItemFormPreview.propTypes = {
 
 function mapStateToProps(state) {
     let persist = state.persist
-    let memory = state.memory
+    // let memory = state.memory
     return {
         account: persist.account,
         // newItem: memory.newItem[ItemsTypes.AdUnit.id]

@@ -6,9 +6,7 @@ import actions from 'actions'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import NewItemHoc from './NewItemHocStep'
 import theme from './../theme.css'
-import { Button } from 'react-toolbox/lib/button'
 import Translate from 'components/translate/Translate'
-import { Campaign } from 'adex-models'
 import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemsTypes } = ItemsConstants

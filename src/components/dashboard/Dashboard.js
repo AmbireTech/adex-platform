@@ -23,13 +23,12 @@ import {
 } from 'adex-models'
 import Account from './account/Account'
 import Translate from 'components/translate/Translate'
-import { NewUnit, NewCampaign, NewSlot, NewChannel } from './forms/NewItems'
+import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, NewChannelDialog } from './forms/NewItems'
 import { items as ItemsConstants } from 'adex-constants'
-import scActions from 'services/smart-contracts/actions'
+import checkTransactions from 'services/store-data/transactions'
+import { SORT_PROPERTIES_ITEMS, SORT_PROPERTIES_COLLECTION, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 
 const { ItemsTypes } = ItemsConstants
-
-const { getAccount, getAccountStats, getAccountStatsMetaMask, getTransactionsReceipts } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
     return (
@@ -50,65 +49,19 @@ class Dashboard extends React.Component {
             drawerPinned: false,
             sidebarPinned: false
         }
-
-        this.transactionsCheckTimeout = null
-    }  
-
-    clearTransactionsTimeout() {
-        if(this.transactionsCheckTimeout){
-            clearTimeout(this.transactionsCheckTimeout)
-            this.transactionsCheckTimeout = null
-        }
     }
 
-    syncTransactions = () => {
-        let transactions = this.props.transactions
-        let hashes = Object.keys(transactions).reduce((memo, key) => {
-            if(key && ((key.toString()).length === 66)){
-                memo.push(key)
-            }
-            return memo
-        }, [])
-
-        return getTransactionsReceipts(hashes)
-            .then((receipts)=>{
-                receipts.forEach((rec) => {
-                    // console.log('rec', rec)
-                    if(rec && rec.transactionHash && rec.status){
-                        let status = rec.status === '0x1' ? 'TRANSACTION_STATUS_SUCCESS' : 'TRANSACTION_STATUS_ERROR'
-                        this.props.actions.updateWeb3Transaction({ trId: rec.transactionHash, key: 'status', value: status, addr: this.props.account._addr })
-                    }
-                })
-            })
-    }
-
-    checkTransactionsLoop = () => {
-        this.clearTransactionsTimeout()
-
-        this.transactionsCheckTimeout = setTimeout(this.checkTransactions, 30 * 1000)
-    }
-
-    checkTransactions = () => {
-        this.syncTransactions()
-            .then(() => {
-                this.checkTransactionsLoop()
-            })
-            .catch(() => {
-                this.checkTransactionsLoop()
-            })
-    }
-
-    componentWillUnmount(){
-        this.clearTransactionsTimeout()
+    componentWillUnmount() {
+        checkTransactions.stop()
     }
 
     componentWillMount(nextProps) {
         this.props.actions.updateNav('side', this.props.match.params.side)
-        // this.checkTransactions()
+        checkTransactions.start()
     }
 
     componentWillUpdate(nextProps) {
-        if(nextProps.match.params.side !== this.props.match.params.side){
+        if (nextProps.match.params.side !== this.props.match.params.side) {
             this.props.actions.updateNav('side', nextProps.match.params.side)
         }
     }
@@ -131,8 +84,10 @@ class Dashboard extends React.Component {
                 header={this.props.t('ALL_UNITS')}
                 viewModeId='rowsViewUnits'
                 itemsType={ItemsTypes.AdUnit.id}
-                newItemBtn={() => <NewUnit floating accent />}
+                newItemBtn={() => <NewUnitDialog floating accent />}
                 objModel={AdUnitModel}
+                sortProperties={SORT_PROPERTIES_ITEMS}
+                filterProperties={FILTER_PROPERTIES_ITEMS}
             />
         )
     }
@@ -143,8 +98,10 @@ class Dashboard extends React.Component {
                 header={this.props.t('ALL_CAMPAIGNS')}
                 viewModeId='rowsViewCampaigns'
                 itemsType={ItemsTypes.Campaign.id}
-                newItemBtn={() => <NewCampaign floating accent />}
+                newItemBtn={() => <NewCampaignDialog floating accent />}
                 objModel={CampaignModel}
+                sortProperties={SORT_PROPERTIES_COLLECTION}
+                // filterProperties={FILTER_PROPERTIES_ITEMS}
             />
         )
     }
@@ -155,8 +112,10 @@ class Dashboard extends React.Component {
                 header={this.props.t('ALL_SLOTS')}
                 viewModeId='rowsViewSlots'
                 itemsType={ItemsTypes.AdSlot.id}
-                newItemBtn={() => <NewSlot floating accent />}
+                newItemBtn={() => <NewSlotDialog floating accent />}
                 objModel={AdSlotModel}
+                sortProperties={SORT_PROPERTIES_ITEMS}
+                filterProperties={FILTER_PROPERTIES_ITEMS}
             />
         )
     }
@@ -167,8 +126,10 @@ class Dashboard extends React.Component {
                 header={this.props.t('ALL_CHANNELS')}
                 viewModeId='rowsViewChannels'
                 itemsType={ItemsTypes.Channel.id}
-                newItemBtn={() => <NewChannel floating accent />}
+                newItemBtn={() => <NewChannelDialog floating accent />}
                 objModel={ChannelModel}
+                sortProperties={SORT_PROPERTIES_COLLECTION}
+                // filterProperties={FILTER_PROPERTIES_ITEMS}
             />
         )
     }
@@ -182,7 +143,7 @@ class Dashboard extends React.Component {
         )
     }
 
-    render() {
+    render() {        
         let side = this.props.side || this.props.match.params.side
         return (
             <Layout theme={theme} >
@@ -230,8 +191,7 @@ function mapStateToProps(state, props) {
         account: account,
         // TODO: temp until we decide how to handle the logged in state
         // TODO: We do not need aut here anymore, the auth is on the root
-        auth: !!account._addr,
-        // transactions: persist.web3Transactions[persist.account._addr] || {}
+        auth: !!account._addr
     }
 }
 

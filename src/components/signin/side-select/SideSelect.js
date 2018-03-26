@@ -32,6 +32,7 @@ class SideSelect extends Component {
       <Dialog
         active={this.props.active}
         title={t('CHOOSE_SIDE')}
+        theme={theme}
       >
 
         <RRSideBox

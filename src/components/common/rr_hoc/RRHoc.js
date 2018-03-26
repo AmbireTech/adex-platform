@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 import { withRouter } from 'react-router-dom'
 
 export const withReactRouterLink = Component => {
@@ -17,10 +17,11 @@ export const withReactRouterLink = Component => {
       this.props.history.push(to)
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-      // const { to } = this.props;
-      return this.resolveToLocation(this.props.to) !== this.resolveToLocation(nextProps.to)
-    }
+    // TODO: check if it works without infinite loops
+    // shouldComponentUpdate(nextProps, nextState) {
+    //   // const { to } = this.props;
+    //   return this.resolveToLocation(this.props.to) !== this.resolveToLocation(nextProps.to)
+    // }
 
     render() {
       const { to, match, location, history, staticContext, ...rest } = this.props

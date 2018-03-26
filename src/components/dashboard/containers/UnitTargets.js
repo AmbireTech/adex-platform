@@ -5,11 +5,8 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import theme from './theme.css'
-import { items as ItemsConstants } from 'adex-constants'
 import { List, ListItem, ListSubHeader, ListDivider } from 'react-toolbox/lib/list'
 import FontIcon from 'react-toolbox/lib/font_icon'
-
-const { ItemsTypes } = ItemsConstants
 
 const targetWeightIcon = {
     0: { icon: 'exposure_zero', color: '#616161' },
@@ -81,7 +78,7 @@ export class UnitTargets extends Component {
         </List>
     )
 
-    render() {
+    render() {        
         return (
             <this.TargetsList {...this.props} />
         )
@@ -91,24 +88,21 @@ export class UnitTargets extends Component {
 UnitTargets.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    item: PropTypes.object.isRequired,
-    spinner: PropTypes.bool,
-    targets: PropTypes.array.isRequired
+    item: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
     let persist = state.persist
-    let memory = state.memory
+    // let memory = state.memory
     return {
-        account: persist.account,
-        spinner: memory.spinners[ItemsTypes.AdUnit.name]
-    };
+        account: persist.account
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
 export default connect(

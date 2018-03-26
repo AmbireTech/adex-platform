@@ -44,7 +44,7 @@ const cssFilename = 'static/css/[name].css';
 // To have this structure working with relative paths, we have to use custom options.
 const extractTextPluginOptions = shouldUseRelativeAssetPaths
   ? // Making sure that the publicPath goes back to to build folder.
-    { publicPath: Array(cssFilename.split('/').length).join('../') }
+  { publicPath: Array(cssFilename.split('/').length).join('../') }
   : {};
 
 // This is the production configuration.
@@ -91,7 +91,7 @@ module.exports = {
     // for React Native Web.
     extensions: ['.web.js', '.js', '.json', '.web.jsx', '.jsx'],
     alias: {
-      
+
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
@@ -122,7 +122,7 @@ module.exports = {
             options: {
               formatter: eslintFormatter,
               eslintPath: require.resolve('eslint'),
-              
+
             },
             loader: require.resolve('eslint-loader'),
           },
@@ -150,7 +150,7 @@ module.exports = {
             include: paths.appSrc,
             loader: require.resolve('babel-loader'),
             options: {
-              
+
               compact: true,
             },
           },
@@ -168,6 +168,7 @@ module.exports = {
           // in the main CSS file.
           {
             test: /\.css$/,
+            exclude: path.resolve(paths.appNodeModules, 'react-image-crop'),
             loader: ExtractTextPlugin.extract(
               Object.assign(
                 {
@@ -213,11 +214,27 @@ module.exports = {
             ),
             // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
           },
+          {
+            test: /\.css$/,
+            include: path.resolve(paths.appNodeModules, 'react-image-crop'),  
+            use: [
+              require.resolve('style-loader'),
+              {
+                loader: require.resolve('css-loader'),
+                options: {              
+                  modules: false,
+                  sourceMap: true,
+                  importLoaders: 1,
+                  localIdentName: "[name]--[local]--[hash:base64:8]"
+                },
+              }
+            ],
+          },
           // "file" loader makes sure assets end up in the `build` folder.
           // When you `import` an asset, you get its filename.
           // This loader don't uses a "test" so it will catch all modules
           // that fall through the other loaders.
-	  {
+          {
             loader: require.resolve('file-loader'),
             // Exclude `js` files to keep "css" loader working as it injects
             // it's runtime that would otherwise processed through "file" loader.
@@ -245,6 +262,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.appHtml,
+      hash: true,
       minify: {
         removeComments: true,
         collapseWhitespace: true,

@@ -72,22 +72,28 @@ address@1.0.2, address@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/address/-/address-1.0.2.tgz#480081e82b587ba319459fef512f516fe03d58af"
 
-adex-constants@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/adex-constants/-/adex-constants-1.0.4.tgz#bea496e0cdccb2711c0496b10fd4109247135a22"
+adex-constants@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/adex-constants/-/adex-constants-1.0.7.tgz#81f11f76a31124a596f3e5259ba3aadf1407196b"
   dependencies:
     country-data "^0.0.31"
 
-adex-models@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/adex-models/-/adex-models-1.0.4.tgz#e05af213b6c8cba525320386ba5362b14f20a5d8"
+adex-constants@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/adex-constants/-/adex-constants-1.0.8.tgz#05ba8eaa1cc55121b3680d822c4b258bf81d92ee"
   dependencies:
-    adex-constants "^1.0.4"
+    country-data "^0.0.31"
+
+adex-models@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/adex-models/-/adex-models-1.0.6.tgz#2d3930fca551ebc7d2e8c8f35858d3cdcdada0e4"
+  dependencies:
+    adex-constants "^1.0.7"
     bs58 "^4.0.1"
 
-"adex-translations@git+https://git@github.com/AdExBlockchain/adex-translations.git#f0280392ef344c4f46fabcfc7e40dabf18815bf9":
+"adex-translations@git+https://git@github.com/AdExBlockchain/adex-translations.git#fad5b5a7f1c3a85cdc3533dcbccd954d94a51a99":
   version "0.0.1"
-  resolved "git+https://git@github.com/AdExBlockchain/adex-translations.git#f0280392ef344c4f46fabcfc7e40dabf18815bf9"
+  resolved "git+https://git@github.com/AdExBlockchain/adex-translations.git#fad5b5a7f1c3a85cdc3533dcbccd954d94a51a99"
 
 ajv-keywords@^1.0.0:
   version "1.5.1"
@@ -6410,6 +6416,10 @@ react-flexbox-grid@^1.1.5:
   dependencies:
     flexboxgrid "^6.3.0"
     prop-types "^15.5.8"
+
+react-image-crop@^3.0.10:
+  version "3.0.10"
+  resolved "https://registry.yarnpkg.com/react-image-crop/-/react-image-crop-3.0.10.tgz#a1bced7ca608b17632da124cab63f5bad1877de0"
 
 react-list@^0.8.7:
   version "0.8.7"

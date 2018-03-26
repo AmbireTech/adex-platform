@@ -31,10 +31,11 @@ class Rows extends Component {
     render() {
         let side = this.props.side
         let item = this.props.item
+        let meta = item.meta || {}
         let rows = this.props.rows
         return (
             <div>
-                <h1> {item._name} </h1>
+                <h1> {meta.fullName} </h1>
                 <div>
                     <Table
                         theme={theme}

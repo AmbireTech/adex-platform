@@ -6,7 +6,6 @@ import actions from 'actions'
 import ItemHoc from './ItemHoc'
 import { AdUnit } from 'adex-models'
 import theme from './theme.css'
-// import UnitSlots from './UnitSlots'
 import { Tab, Tabs } from 'react-toolbox'
 import UnitTargets from './UnitTargets'
 import Translate from 'components/translate/Translate'
@@ -48,16 +47,19 @@ export class Unit extends Component {
         this.getUnitBids()
     }
 
-    componentWillReceiveProps(nextProps) {
-        if ((nextProps.unitsBids[this.props.item._id] || []).length > (this.props.unitsBids[this.props.item._id] || []).length) {
-            this.setState({ closeDialog: true })
-            this.getUnitBids()
-        } else {
-            this.setState({ closeDialog: false })
-        }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     let diffProps = JSON.stringify(this.props) !== JSON.stringify(nextProps)
+    //     let diffState = JSON.stringify(this.state) !== JSON.stringify(nextState)
+    //     return diffProps || diffState
+    // }
+
+    onBidPlaced = () => {
+        this.setState({ closeDialog: true })
+        this.getUnitBids()
     }
 
     render() {
+
         let item = this.props.item
         let t = this.props.t
 
@@ -65,17 +67,19 @@ export class Unit extends Component {
 
         return (
             <div>
-                <BidFormWithDialog
-                    btnLabel='PLACE_BID'
-                    title={this.props.t('PLACE_BID_FOR', { args: [item.fullName] })}
-                    floating
-                    primary
-                    bidId={item._id}
-                    // TODO: fix icon v align
-                    icon={<BidIcon style={{ marginTop: 10 }} />}
-                    adUnit={item}
-                    closeDialog={!!this.state.closeDialog}
-                />
+                {!this.props.inEdit ?
+                    <BidFormWithDialog
+                        btnLabel='PLACE_BID'
+                        title={this.props.t('PLACE_BID_FOR', { args: [item.fullName] })}
+                        floating
+                        primary
+                        bidId={item._id}
+                        // TODO: fix icon v align
+                        icon={<BidIcon style={{ marginTop: 10 }} />}
+                        adUnit={item}
+                        closeDialog={!!this.state.closeDialog}
+                        onSave={this.onBidPlaced}
+                    /> : null}
                 <BasicProps
                     item={item}
                     t={t}
@@ -89,7 +93,13 @@ export class Unit extends Component {
                         onChange={this.handleTabChange.bind(this)}
                     >
                         <Tab label={t('BIDS')}>
-                            <UnitBids item={item} bids={this.state.bids} />
+                            <UnitBids item={item} bids={this.state.bids} getUnitBids={this.getUnitBids} />
+                        </Tab>
+                        <Tab label={t('BIDS_STATISTICS')}>
+                            <div>
+                                {t('COMING_SOON')}
+                                {/* {this.renderNonOpenedBidsChart(slotBids)} */}
+                            </div>
                         </Tab>
                     </Tabs>
                 </div>
@@ -100,25 +110,15 @@ export class Unit extends Component {
 
 Unit.propTypes = {
     actions: PropTypes.object.isRequired,
-    // account: PropTypes.object.isRequired,
-    // items: PropTypes.object.isRequired,
     item: PropTypes.object.isRequired,
-    // slots: PropTypes.array.isRequired,
-    spinner: PropTypes.bool
 };
 
 function mapStateToProps(state, props) {
-    let persist = state.persist
-    let memory = state.memory
+    // let persist = state.persist
+    // let memory = state.memory
     return {
-        // account: persist.account,
-        // items: persist.items[ItemsTypes.AdUnit.id],
-        // slots: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
-        // item: state.currentItem,
-        spinner: memory.spinners[ItemsTypes.AdUnit.name],
         objModel: AdUnit,
-        itemType: ItemsTypes.AdUnit.id,
-        unitsBids: persist.bids.bidsByAdunit
+        itemType: ItemsTypes.AdUnit.id
     }
 }
 

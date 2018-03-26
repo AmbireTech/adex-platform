@@ -1,4 +1,29 @@
 @import '../../../styles/variables.css';
+@import './../../../../node_modules/react-toolbox/lib/input/config.css';
+
+.error {
+    color: var(--input-text-error-color);
+}
+
+.avatar {
+    border-radius: 50%;
+    display: inline-block;
+    height: 40px;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    width: 40px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+    position: relative;
+}
+
+.pointer { 
+    cursor: pointer
+}
 
 .circular{
     width: 36px;
@@ -307,7 +332,7 @@
 }
 
 .compactCol {
-    max-width: 120px;
+    max-width: 120px !important;
 }
 
 .actionsCol {
@@ -326,6 +351,14 @@
     text-overflow: ellipsis;
 }
 
+.cardTitle {
+    word-break: break-all;
+    width: 100%;
+    & > div {
+        width: 100%;
+    }
+}
+
 @media (height <= 1000px) {
     .dialog {
         min-height: 95vh; 
@@ -335,5 +368,78 @@
 @media (height <= 1200px) {
     .dialog {
         min-height: 85vh;
+    }
+}
+
+/* .label { 
+    top: 26px;
+} */
+
+.inputLabel {
+    max-width: 100%;
+}
+
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.inputLabelIcon {
+    /* font-size: 16px; */
+}
+
+.inputLabelValue {
+    display: inline-block;
+    vertical-align: super;
+}
+
+.field { 
+    display: inline-block !important;
+    margin-right: 20px;
+    margin-top: 15px;
+}
+
+.radio {
+    color: var(--color-adex-neutral-contrast) !important;
+    border-color: var(--color-adex-neutral-contrast) !important;
+}
+
+.text {
+    color: var(--color-adex-neutral-contrast) !important;
+}
+
+.pageOf {
+    max-width: 50px;
+    display: inline-block;
+}
+
+.inputIconLabel {
+    & .label {
+        top: 24px;
+    }
+}
+
+.paginationPage {
+    display: inline-block;
+    width: 196px;
+}
+
+.paginationInput {
+    display: inline-block;
+    width: 70px;
+}
+
+.paginationSlider {
+    position: relative;
+    display: inline-block;
+    width: calc(100% - 196px);
+}
+
+@media (width < 768px) {
+    .paginationSlider {
+        display: block;
+        width: 100%;
     }
 }

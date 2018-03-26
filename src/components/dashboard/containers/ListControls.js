@@ -1,9 +1,10 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Autocomplete from 'react-toolbox/lib/autocomplete'
-import { IconButton, Button } from 'react-toolbox/lib/button'
+import { IconButton } from 'react-toolbox/lib/button'
 import Slider from 'react-toolbox/lib/slider'
-import { Grid, Row, Col } from 'react-flexbox-grid'
+import FontIcon from 'react-toolbox/lib/font_icon'
 import theme from './theme.css'
+import classnames from 'classnames'
 
 export const PAGE_SIZES = [
     { value: 5, label: 5 },
@@ -16,18 +17,18 @@ export const Pagination = (props) => {
 
     return (
         <div>
-            <div style={{ display: 'inline-block', width: 220 }}>
+            <div className={theme.paginationPage} >
                 <IconButton
                     primary
                     disabled={!(props.page > 0 && props.pages > props.page)}
                     icon='chevron_left'
                     onClick={props.goToPrevPage} />
 
-                <div style={{ display: 'inline-block', width: 70 }}>
+                <div className={theme.paginationInput}>
                     <Autocomplete
                         allowCreate={false}
                         direction="down"
-                        label='page'
+                        label={props.t('LIST_CONTROL_LABEL_PAGE')}
                         multiple={false}
                         onChange={props.goToPage}
                         source={getAllPagedValues(props.page, props.pages)}
@@ -42,13 +43,13 @@ export const Pagination = (props) => {
                     primary
                     disabled={!(props.page < (props.pages - 1))}
                     icon='chevron_right'
-                    onClick={props.goToNextPage} />
+                    onClick={props.goToNextPage} 
+                />
 
-                <span> of </span>
-                <span> {props.pages} </span>
+                <span className={classnames(theme.pageOf,theme.ellipsis)}> {props.t('LIST_CONTROL_LABEL_PAGE_OF', {args: [props.pages]})} </span>
             </div>
-            <div style={{ position: 'relative', display: 'inline-block', width: 'calc(100% - 220px)', minWidth: 140 }}>
-                <label className={theme.sliderLabel}> Page size <strong>{props.pageSize}</strong> </label>
+            <div className={theme.paginationSlider} >
+                <label className={classnames(theme.sliderLabel, theme.ellipsis)}> {props.t('LIST_CONTROL_LABEL_PAGE_SIZE')} <strong>{props.pageSize}</strong> </label>
                 <Slider pinned snaps min={5} max={25} step={5} value={props.pageSize} onChange={props.changePageSize} />
             </div>
         </div>
@@ -64,3 +65,6 @@ const getAllPagedValues = (current, max) => {
 
     return pages
 }
+
+export const InputLabel = ({icon, label}) =>
+    <div className={theme.inputLabel} ><FontIcon className={classnames(theme.inputLabelIcon, theme.ellipsis)} value={icon}/> <span className={theme.inputLabelValue}> {label} </span> </div>

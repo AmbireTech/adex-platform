@@ -26,7 +26,7 @@ export default function NewItemHoc(Decorated) {
             this.setState({ invalidFields: this.props.validations || {} })
         }
 
-        validate(key, { isValid = true, err = { msg: '', args: [] }, dirty = false, removeAll = false }) {
+        validate = (key, { isValid = true, err = { msg: '', args: [] }, dirty = false, removeAll = false }) => {
             if (!isValid) {
                 let errors = {}
                 errors[key] = {
@@ -56,10 +56,9 @@ export default function NewItemHoc(Decorated) {
     }
 
     function mapStateToProps(state, props) {
-        let persist = state.persist
+        // let persist = state.persist
         let memory = state.memory
         return {
-            account: persist.account,
             validations: memory.validations[props.validateId]
         }
     }

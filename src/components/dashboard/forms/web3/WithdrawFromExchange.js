@@ -73,10 +73,9 @@ WithdrawFromExchange.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-    let persist = state.persist
-    let memory = state.memory
+    // let persist = state.persist
+    // let memory = state.memory
     return {
-        // trId: 'approve'
     }
 }
 

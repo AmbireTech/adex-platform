@@ -7,16 +7,24 @@ import NewItemHoc from './NewItemHocStep'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
-import ImgForm from './../ImgForm'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './../theme.css'
-// import { validUrl } from 'helpers/validators'
 import { items as ItemsConstants } from 'adex-constants'
 import { validUrl } from 'helpers/validators'
 
-const { ItemsTypes, AdTypes, AdSizes, AdSizesByValue } = ItemsConstants
+const { ItemsTypes, AdTypes, AdSizes } = ItemsConstants
 
 class NewSlotForm extends Component {
+
+    constructor(props, context) {
+        super(props, context)
+        this.state = {
+            // TODO: Common func for this and ad unit
+            adSizesSrc: AdSizes.map((size) => {
+                return { value: size.value, label: props.t(size.label, { args: size.labelArgs }) }
+            })
+        }
+    }
 
     componentDidMount() {
         if (!this.props.item.adType) {
@@ -45,11 +53,7 @@ class NewSlotForm extends Component {
 
     render() {
         let item = this.props.item
-        let ad_url = item.ad_url
         let t = this.props.t
-        let errSize = this.props.invalidFields['size']
-        let errSlotUrl = this.props.invalidFields['slotUrl']
-        let errFallbackAdUrl = this.props.invalidFields['fallbackAdUrl']
 
         return (
             <div>
@@ -69,30 +73,10 @@ class NewSlotForm extends Component {
                                 <Dropdown
                                     required
                                     onChange={this.validateAndUpdateDD.bind(this, true, 'size')}
-                                    source={AdSizes}
+                                    source={this.state.adSizesSrc}
                                     value={item.size + ''}
                                     label={t('size', { isProp: true })}
                                 />
-                            </Col>
-                        </Row>
-                        <Row middle='md'>
-                            <Col sm={12}>
-                                <Input
-                                    // required
-                                    type='text'
-                                    label={t('fallbackAdUrl', { isProp: true })}
-                                    value={item.fallbackAdUrl}
-                                    onChange={this.props.handleChange.bind(this, 'fallbackAdUrl')}
-                                    maxLength={1024}
-                                    onBlur={this.props.validate.bind(this, 'fallbackAdUrl', { isValid: validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true })}
-                                    onFocus={this.props.validate.bind(this, 'fallbackAdUrl', { isValid: validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
-                                    error={errFallbackAdUrl && !!errFallbackAdUrl.dirty ? <span> {errFallbackAdUrl.errMsg} </span> : null}
-                                >
-                                    {!errFallbackAdUrl || !errFallbackAdUrl.dirty ?
-                                        <div>
-                                            {t('SLOT_FALLBACK_AD_URL_DESCRIPTION')}
-                                        </div> : null}
-                                </Input>
                             </Col>
                         </Row>
                     </Grid>
