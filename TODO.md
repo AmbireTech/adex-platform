@@ -11,18 +11,30 @@
 - upload fallback img - temp done but must make multi file upload on the node
 - hoc for img validation - done but may handle and the initial validation
 
-- check exchange deposit before place bid 
-- fix add item to  collection
-- metamask how to on signin
-- fix cancel on steps (reset the items, clear blob)
-- handle error
-- add translations
-- when click to accept bid check again the status from the node
-- format bids
-- filter bids actions
-- make some charts
-- He accept, he not accept, but most importantly he validate
+- check exchange deposit before place bid - done
+- fix add item to  collection - done
+- metamask how to on signin - done
+- fix cancel on steps (reset the items, clear blob) - done
+- when click to accept bid check again the status from the node - done
+- format bids - done
+- filter bids actions - done
+- He accept, he not accept, but most importantly he validate - done
+- fix campaigns and channels update (make endpoint to the node node) - done
+- fix units and slots description update (make endpoint to the node) - done
+- validate target parse to int - done
+- check ETH balance before web3 transactions - validation and msgs
+- update fallback ad data for slot - done
+- update channels/campaigns avatars -done
+- crop images on steps - done
+- handle errors
 - use only item._type in production
-- fix campaigns and channels update (make endpoint to the node node)
-- fix units and slots description update (make endpoint to the node)
-- validate target parse to int
+- add link to tutorials or place it on the dapp - done
+- show balance for placed (not accepted) bids
+- add trezor auth
+- add ledger auth
+- make some charts
+- check why have to use shouldComponentUpdate at ItemHoc and UnitBids - done (validations and spinners at ItemHoc)
+- make anchor component to set some attributes on one place - done
+- fix adex-models getImgUrl to return '' instead og undefined
+- Img component use div wit background instead img (need to fix some styles where used)
+

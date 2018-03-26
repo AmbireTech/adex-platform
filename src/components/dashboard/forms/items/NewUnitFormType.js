@@ -7,7 +7,6 @@ import NewItemHoc from './NewItemHocStep'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
-import ImgForm from './../ImgForm'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './../theme.css'
 import { validUrl } from 'helpers/validators'
@@ -15,8 +14,16 @@ import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemsTypes, AdTypes, AdSizes } = ItemsConstants
 
-
 class NewUnitForm extends Component {
+
+    constructor(props, context) {
+        super(props, context)
+        this.state = {
+            adSizesSrc: AdSizes.map((size) => {
+                return { value: size.value, label: props.t(size.label, { args: size.labelArgs }) }
+            })
+        }
+    }
 
     componentDidMount() {
         this.props.validate('ad_url', {
@@ -87,7 +94,7 @@ class NewUnitForm extends Component {
                             <Dropdown
                                 required
                                 onChange={this.validateAndUpdateDD.bind(this, true, 'size')}
-                                source={AdSizes}
+                                source={this.state.adSizesSrc}
                                 value={item.size + ''}
                                 label={t('size', { isProp: true })}
                             />

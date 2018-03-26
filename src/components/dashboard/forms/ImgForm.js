@@ -5,21 +5,27 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Img from 'components/common/img/Img'
 import theme from './theme.css'
-import debounce from 'debounce'
+// import debounce from 'debounce'
 import Dropzone from 'react-dropzone'
 import { FontIcon } from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
-import { IconButton } from 'react-toolbox/lib/button'
+import { IconButton, Button } from 'react-toolbox/lib/button'
 import RTButtonTheme from 'styles/RTButton.css'
+import ReactCrop from 'react-image-crop'
+import { getCroppedImgUrl } from 'services/images/crop'
 
 class ImgForm extends Component {
 
   constructor(props) {
     super(props)
 
+    const aspect = props.size ? (this.props.size.width / this.props.size.height) : undefined
+
     this.state = {
       imgSrc: props.imgSrc || '',
-      imgName: ''
+      imgName: '',
+      cropMode: false,
+      crop: {aspect: aspect}
     }
   }
 
@@ -31,7 +37,8 @@ class ImgForm extends Component {
 
     that.setState({ imgSrc: objectUrl, imgName: file.name })
     // TODO: Maybe get width and height here instead on ing validation hoc
-    this.props.onChange({ tempUrl: objectUrl })
+    let res = { tempUrl: objectUrl }    
+    this.props.onChange(res)
   }
 
   onRemove = (e) => {
@@ -49,15 +56,44 @@ class ImgForm extends Component {
     }
   }
 
+  onCropChange = (crop) => {
+    this.setState({ crop });
+  }
+
+  saveCropped = () => {
+    getCroppedImgUrl({objUrl: this.state.imgSrc, pixelCrop: this.state.crop, fileName: 'image', size: this.props.size })
+      .then((croppedBlob)=> {
+        URL.revokeObjectURL(this.state.imgSrc)
+        this.setState({imgSrc: croppedBlob, cropMode: false})
+        let res = { tempUrl: croppedBlob }    
+        this.props.onChange(res)
+      })
+  }
+
+  preventBubbling = (e) => {
+    if (e.stopPropagation) {
+      e.stopPropagation()
+    }
+    if (e.nativeEvent) {
+      e.nativeEvent.stopImmediatePropagation()
+    }
+  }
+
   UploadInfo = () => {
+    const t = this.props.t
     return (
       <div className={theme.uploadInfo}>
         {this.state.imgSrc ?
-          <IconButton icon='cancel' className={RTButtonTheme.danger} onClick={this.onRemove} />
+          <div className={theme.uploadActions}>
+            {/* TEMP: make size required */}
+            {this.props.size ? <Button icon='crop' raised primary onClick={() => this.setState({cropMode: true})} label={t('IMG_FORM_CROP')} /> : null}  
+            &nbsp;
+            <Button icon='clear' raised className={RTButtonTheme.danger} onClick={this.onRemove} label={t('IMG_FORM_CLEAR')} />
+          </div>
           : <FontIcon value='file_upload' />
         }
         <div>
-          <span> {this.props.t('DRAG_AND_DROP_TO_UPLOAD')} </span>
+          <span> {t('DRAG_AND_DROP_TO_UPLOAD')} </span>
         </div>
         <div>
           <small> (max 2MB; .jpeg, .jpg, .png)  </small>
@@ -71,6 +107,8 @@ class ImgForm extends Component {
 
   // TODO: CLEAR IMG BLOB!!!!
   render() {
+    const t = this.props.t
+    const crop = this.state.crop
     return (
       <div className={theme.imgForm}>
         <div className={theme.imgHeader}>
@@ -83,13 +121,33 @@ class ImgForm extends Component {
 
         </div>
         <div>
-          <Dropzone accept='.jpeg,.jpg,.png' onDrop={this.onDrop} className={theme.dropzone} >
-            <div className={theme.droppedImgContainer}>
-              <Img src={this.state.imgSrc} alt={'name'} className={theme.imgDropzonePreview} />
-              <this.UploadInfo />
+          
+          {this.state.cropMode ? 
+            <div className={theme.cropOverlay} onClick={this.preventBubbling}>
+              <div className={theme.droppedImgContainer}>                
+                <ReactCrop 
+                  style={{maxWidth: '70%', maxHeight: 176}}
+                  imageStyle={{maxWidth: '100%', maxHeight: '176px', width: 'auto', height: 'auto'}}
+                  className={theme.imgDropzonePreview}
+                  crop={this.state.crop}
+                  src={this.state.imgSrc || ''}
+                  onChange={this.onCropChange}
+                />
+                <span>
+                  <Button icon='save' raised label={t('IMG_FORM_SAVE_CROP')} primary onClick={this.saveCropped} disabled={!crop.width || !crop.height} /> &nbsp;
+                  <Button icon='clear' raised label={t('IMG_FORM_CANCEL_CROP')} className={RTButtonTheme.danger} onClick={() => this.setState({cropMode: false})} />
+                </span>
+              </div>
             </div>
-
-          </Dropzone>
+            :    
+            <Dropzone accept='.jpeg,.jpg,.png' onDrop={this.onDrop} className={theme.dropzone} >      
+              <div className={theme.droppedImgContainer}>              
+                <Img src={this.state.imgSrc} alt={'name'} className={theme.imgDropzonePreview} />
+                <this.UploadInfo />
+              </div>
+            </Dropzone>
+          }
+          
         </div>
         <div>
           <small> {this.props.additionalInfo} </small>
@@ -103,7 +161,8 @@ ImgForm.propTypes = {
   actions: PropTypes.object.isRequired,
   language: PropTypes.string.isRequired,
   imgSrc: PropTypes.string,
-  label: PropTypes.string
+  label: PropTypes.string,
+  size: PropTypes.object
 }
 
 function mapStateToProps(state, props) {

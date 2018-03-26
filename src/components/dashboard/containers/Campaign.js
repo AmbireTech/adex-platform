@@ -5,19 +5,17 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
-import NewUnitFormBasic from 'components/dashboard/forms/items/NewUnitFormBasic'
-import NewUnitFormImg from 'components/dashboard/forms/items/NewUnitFormImg'
-import NewUnitFormTargets from 'components/dashboard/forms/items/NewUnitFormTargets'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import theme from './campaign.css'
 import AddItemDialog from './AddItemDialog'
-import NewItemSteps from 'components/dashboard/forms/items/NewItemSteps'
 import moment from 'moment'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
 import { AdUnit as AdUnitModel, Campaign as CampaignModel } from 'adex-models'
 import { groupItemsForCollection } from 'helpers/itemsHelpers'
+import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import { items as ItemsConstants } from 'adex-constants'
+import { NewUnitSteps } from 'components/dashboard/forms/NewItems'
 
 const { ItemsTypes } = ItemsConstants
 
@@ -69,25 +67,22 @@ export class Campaign extends Component {
                             <AddItemDialog
                                 color='second'
                                 addCampaign={this.props.actions.addCampaign}
-                                btnLabel={this.props.t('NEW_UNIT_TO_CAMPAIGN')}
+                                btnLabel={t('NEW_UNIT_TO_CAMPAIGN')}
                                 title=''
                                 items={otherUnits}
                                 viewMode={VIEW_MODE_UNITS}
                                 listMode='rows'
                                 addTo={item}
-                                tabNewLabel={this.props.t('NEW_UNIT')}
-                                tabExsLabel={this.props.t('EXISTING_UNIT')}
+                                tabNewLabel={t('NEW_UNIT')}
+                                tabExsLabel={t('EXISTING_UNIT')}
                                 objModel={AdUnitModel}
                                 itemModel={AdUnitModel}
+                                sortProperties={SORT_PROPERTIES_ITEMS}
+                                filterProperties={FILTER_PROPERTIES_ITEMS}
                                 newForm={(props) =>
-                                    //TODO: fix it
-                                    <NewItemSteps {...props}
+                                    <NewUnitSteps 
+                                        {...props}
                                         addTo={item}
-                                        itemPages={[NewUnitFormBasic, NewUnitFormImg, NewUnitFormTargets]}
-                                        itemType={ItemsTypes.AdUnit.id}
-                                        itemModel={AdUnitModel}
-                                        objModel={AdUnitModel}
-                                        noDefaultImg
                                     />
                                 }
                             />
@@ -106,7 +101,7 @@ export class Campaign extends Component {
                         theme={theme}
                         inputFormat={this.inputFormat}
                         size={moment(from).format('MMMM').length} /** temp fix */
-                        readonly
+                        // readonly
                     />
                     <span>{t('to')} </span>
                     <DatePicker
@@ -117,11 +112,19 @@ export class Campaign extends Component {
                         theme={theme}
                         inputFormat={this.inputFormat}
                         size={moment(to).format('MMMM').length} /** temp fix */
-                        readonly
+                        // readonly
                     />
 
                 </div>
-                <ItemsList parentItem={item} removeFromItem items={units} viewModeId={VIEW_MODE} objModel={AdUnitModel} />
+                <ItemsList 
+                    parentItem={item} 
+                    removeFromItem 
+                    items={units} 
+                    viewModeId={VIEW_MODE} 
+                    bjModel={AdUnitModel} 
+                    sortProperties={SORT_PROPERTIES_ITEMS}
+                    filterProperties={FILTER_PROPERTIES_ITEMS}
+                />
             </div>
         )
     }
@@ -130,22 +133,24 @@ export class Campaign extends Component {
 Campaign.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    // items: PropTypes.array.isRequired,
     units: PropTypes.object.isRequired,
-    spinner: PropTypes.bool,
     rowsView: PropTypes.bool.isRequired
 }
 
 function mapStateToProps(state) {
     let persist = state.persist
-    let memory = state.memory
+    // let memory = state.memory
     return {
         account: persist.account,
         units: persist.items[ItemsTypes.AdUnit.id],
-        spinner: memory.spinners[ItemsTypes.Campaign.name],
         rowsView: !!persist.ui[VIEW_MODE],
         objModel: CampaignModel,
-        itemType: ItemsTypes.Campaign.id
+        itemType: ItemsTypes.Campaign.id,
+        updateImgInfoLabel: 'CAMPAIGN_IMG_ADDITIONAL_INFO',
+        updateImgLabel: 'CAMPAIGN_LOGO',
+        updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
+        updateImgExact: false,
+        canEditImg: true
     }
 }
 

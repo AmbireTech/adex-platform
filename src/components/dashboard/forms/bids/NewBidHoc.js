@@ -3,20 +3,12 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { Button, IconButton } from 'react-toolbox/lib/button'
-import theme from './theme.css'
-import Input from 'react-toolbox/lib/input'
 import { Bid } from 'adex-models'
 import Translate from 'components/translate/Translate'
-import { encrypt } from 'services/crypto/crypto'
 import scActions from 'services/smart-contracts/actions'
+import { placeBid } from 'services/adex-node/actions'
+const { signBid } = scActions
 
-const { placeBidAuction } = scActions
-
-const EJ_MAX_SPACES = 2000000
-const SPACES_COUNT_STEP = 10000
-const MIN_BID_PRICE = 0.05
-const AUCTION_SLOT_ID = 1
 export default function NewBidHoc(Decorated) {
   class BidForm extends Component {
 
@@ -24,22 +16,52 @@ export default function NewBidHoc(Decorated) {
       this.props.actions.updateNewBid({ bidId: this.props.bidId, key: name, value: value })
     }
 
+    onSave = () => {
+      if (typeof this.props.onSave === 'function') {
+        this.props.onSave()
+      }
+
+      if (Array.isArray(this.props.onSave)) {
+          for (var index = 0; index < this.props.onSave.length; index++) {
+              if (typeof this.props.onSave[index] === 'function') {
+                  this.props.onSave[index]()
+              }
+          }
+      }
+
+      this.props.actions.resetNewBid({bidId: this.props.bidId})
+    }
+
     save = () => {
+      const t = this.props.t
       let bid = { ...this.props.bid }
-      this.props.actions.placeBid({ bid: bid, unit: this.props.adUnit, userAddr: this.props.account._addr, authSig: this.props.account._authSig })
+      let unit = this.props.adUnit
+      let bidInst = new Bid(bid)
+      let userAddr = this.props.account._addr
+      let authSig = this.props.account._authSig
+      bidInst.adUnit = unit._ipfs
+      bidInst.adUnitId = unit._id
+      bidInst.advertiser = this.props.account._addr
 
-      // TODO: fix this and make something common to use here and in NewItemsHocStep...
-      // if (typeof this.props.onSave === 'function') {
-      //   this.props.onSave()
-      // }
+      signBid({ userAddr: userAddr, authSig: authSig, bid: bidInst })
+        .then((sig) => {
+          bidInst.signature = sig
+          bidInst._id = sig.hash
 
-      // if (Array.isArray(this.props.onSave)) {
-      //   for (var index = 0; index < this.props.onSave.length; index++) {
-      //     if (typeof this.props.onSave[index] === 'function') {
-      //       this.props.onSave[index].onSave()
-      //     }
-      //   }
-      // }
+          return placeBid({ bid: bidInst.plainObj(), userAddr: userAddr, authSig: authSig })
+        })
+        .then((bid) => {
+          this.props.actions.addToast({ type: 'accept', action: 'X', label: t('BID_PLACED_MSG', {args: [bid._id]}), timeout: 5000 })
+          this.onSave()
+        })
+        .catch((err) => {
+          this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_PLACE_BID', {args: [err.message || err]}), timeout: 5000 })
+          this.onSave()
+        })
+    }
+
+    cancel = () => {
+      this.onSave()
     }
 
     render() {
@@ -47,7 +69,7 @@ export default function NewBidHoc(Decorated) {
       let props = this.props
 
       return (
-        <Decorated {...props} bid={bid} save={this.save} handleChange={this.handleChange} />
+        <Decorated {...props} bid={bid} save={this.save} handleChange={this.handleChange} cancel={this.cancel}/>
       )
     }
   }

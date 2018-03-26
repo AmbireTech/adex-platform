@@ -5,40 +5,49 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Button } from 'react-toolbox/lib/button'
 import MaterialStepper from './../stepper/MaterialStepper'
-import NewItemForm from './NewItemForm'
 import NewItemFormPreview from './NewItemFormPreview'
 import NewItemHoc from './NewItemHocStep'
 import ValidItemHoc from './../ValidItemHoc'
+import Translate from 'components/translate/Translate'
 
 const saveBtn = ({ ...props }) => {
     return (
-        <Button icon='save' label='Save' primary onClick={props.save} />
+        <Button icon='save' label={props.t('SAVE')} primary onClick={props.save} />
     )
 }
 
 const SaveBtnWithItem = NewItemHoc(saveBtn)
 
+const cancelBtn = ({ ...props }) => {
+    return (
+        <Button label={props.t('CANCEL')} onClick={props.cancel} />
+    )
+}
+
+const CancelBtnWithItem = NewItemHoc(cancelBtn)
+
 class NewItemSteps extends Component {
     render() {
+        let t = this.props.t
+        let validateId =  'new-' + this.props.itemType + '-'
+        let pages = []
 
-        let pages = [{
-            title: 'Step 1',
-            component: ValidItemHoc(NewItemForm),
-            props: { ...this.props, validateId: this.props.itemType + '' + 0 }
-        }]
+        const cancelButton = () => <CancelBtnWithItem  {...this.props} itemType={this.props.itemType} onSave={this.props.onSave} />
 
         this.props.itemPages.map((itemPage, index) => {
             pages.push({
-                title: 'Step ' + (index + 2),
-                component: ValidItemHoc(itemPage),
-                props: { ...this.props, validateId: this.props.itemType + '' + (index + 1) }
+                title: t(itemPage.title || 'Step ' + (index + 1)),
+                cancelBtn: cancelButton,
+                component: ValidItemHoc(itemPage.page || itemPage),
+                props: { ...this.props, validateId: validateId + (index + 1) }
             })
         })
 
         pages.push(
             {
-                title: 'Preview and save',
+                title: t('PREVIEW_AND_SAVE_ITEM'),
                 completeBtn: () => <SaveBtnWithItem  {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} />,
+                cancelBtn: cancelButton,
                 component: NewItemFormPreview,
                 props: { ...this.props }
             }
@@ -57,7 +66,7 @@ NewItemSteps.propTypes = {
     account: PropTypes.object.isRequired,
     title: PropTypes.string,
     addTo: PropTypes.object,
-    itemPages: PropTypes.arrayOf(PropTypes.func)
+    itemPages: PropTypes.arrayOf(PropTypes.object)
 
 }
 
@@ -78,5 +87,5 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(NewItemSteps)
+)(Translate(NewItemSteps))
 

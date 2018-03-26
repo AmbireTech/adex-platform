@@ -163,11 +163,12 @@ module.exports = {
           // in development "style" loader enables hot editing of CSS.
           {
             test: /\.css$/,
+            exclude: path.resolve(paths.appNodeModules, 'react-image-crop'),  
             use: [
               require.resolve('style-loader'),
               {
                 loader: require.resolve('css-loader'),
-                options: {
+                options: {               
                   modules: true,
                   sourceMap: true,
                   importLoaders: 1,
@@ -206,6 +207,22 @@ module.exports = {
                   ],
                 },
               },
+            ],
+          },
+          {
+            test: /\.css$/,
+            include: path.resolve(paths.appNodeModules, 'react-image-crop'),  
+            use: [
+              require.resolve('style-loader'),
+              {
+                loader: require.resolve('css-loader'),
+                options: {              
+                  modules: false,
+                  sourceMap: true,
+                  importLoaders: 1,
+                  localIdentName: "[name]--[local]--[hash:base64:8]"
+                },
+              }
             ],
           },
           // "file" loader makes sure those assets get served by WebpackDevServer.

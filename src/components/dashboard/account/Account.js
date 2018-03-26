@@ -6,16 +6,13 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Translate from 'components/translate/Translate'
 import { web3Utils } from 'services/smart-contracts/ADX'
-import { MULT } from 'services/smart-contracts/constants'
 import { WithdrawEth, WithdrawAdx, Deposit, WithdrawFromExchange } from 'components/dashboard/forms/web3/transactions'
 import { List, ListItem, ListDivider } from 'react-toolbox/lib/list'
-import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
-import { Button } from 'react-toolbox/lib/button'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import scActions from 'services/smart-contracts/actions'
 
-const { getAccountStats, getAccountStatsMetaMask } = scActions
-const RRButton = withReactRouterLink(Button)
+const { getAccountStatsMetaMask } = scActions
+// const RRButton = withReactRouterLink(Button)
 
 class Account extends React.Component {
 
@@ -123,11 +120,11 @@ class Account extends React.Component {
                         legend={t('EXCHANGE_ADX_BALANCE_ON_BIDS')}
                         caption={adxOnBids + ' ADX'}
                         theme={theme}
-                        // rightIcon={<RRButton
-                        //     to={`/dashboard/${this.props.side}/accepted-bids`}
-                        //     // TODO: Make this page
-                        //     label={t('GO_TO_ACCEPTED_BIDS')}
-                        // />}
+                    // rightIcon={<RRButton
+                    //     to={`/dashboard/${this.props.side}/accepted-bids`}
+                    //     // TODO: Make this page
+                    //     label={t('GO_TO_ACCEPTED_BIDS')}
+                    // />}
                     />
                     <ListDivider />
                 </List>

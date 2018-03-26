@@ -41,14 +41,14 @@ class WithdrawEthStep extends Component {
         this.props.validate('amountToWithdraw', { isValid: isValid, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
     }
 
-    validateAddress= (addr, dirty) => {
+    validateAddress = (addr, dirty) => {
         let isValid = web3Utils.isAddress(addr)
         let msg = 'ERR_INVALID_ETH_ADDRESS'
-        if(isValid && (addr.toLowerCase() === this.props.accAddr.toLowerCase())){
+        if (isValid && (addr.toLowerCase() === this.props.accAddr.toLowerCase())) {
             isValid = false
             msg = 'ERR_WITHDRAW_TO_YOUR_ADDR_IF_YOU_WANT_WITHDRAW'
         }
-       
+
         this.props.validate('withdrawTo', { isValid: isValid, err: { msg: msg }, dirty: dirty })
     }
 
@@ -110,7 +110,7 @@ class WithdrawEthStep extends Component {
                 >
                     {errAmount && !errAmount.dirty ?
                         <div>
-                            {t('MAX_AMOUNT_TO_WITHDRAW', { args: [this.props.availableAmount,  this.props.tokenName] })}
+                            {t('MAX_AMOUNT_TO_WITHDRAW', { args: [this.props.availableAmount, this.props.tokenName] })}
                         </div> : null}
                 </Input>
             </div>
@@ -128,10 +128,9 @@ WithdrawEthStep.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-    let persist = state.persist
-    let memory = state.memory
+    // let persist = state.persist
+    // let memory = state.memory
     return {
-        // trId: 'approve'
     }
 }
 

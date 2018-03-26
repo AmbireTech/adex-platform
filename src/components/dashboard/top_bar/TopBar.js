@@ -14,11 +14,12 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 // import GasPrice from 'components/dashboard/account/GasPrice'
 // import ChangeLang from 'components/translate/ChangeLang'
 import Switch from 'react-toolbox/lib/switch'
+import Anchor from 'components/common/anchor/anchor'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
-const RRSwitch = withReactRouterLink((props) => <a {...props}><Switch {...props}  theme={theme} /></a>)
+const RRSwitch = withReactRouterLink((props) => <Anchor {...props}><Switch {...props}  theme={theme} /></Anchor>)
 
-const SideSwitch = ({ side }) => {
+const SideSwitch = ({ side, t }) => {
   return (
     <div>
       {/* Keep both if there is no valid side and force react to rerender at the same time */}
@@ -27,13 +28,13 @@ const SideSwitch = ({ side }) => {
           checked={true}
           value='account'
           to={{ pathname: '/dashboard/advertiser' }}
-          label='Publisher'
+          label={t('PUBLISHER')}
         /> : null}
       {side !== 'publisher' ?
         <RRSwitch
           checked={false}
           to={{ pathname: '/dashboard/publisher' }}
-          label='Advertiser'
+          label={t('ADVERTISER')}
         /> : null}
     </div>
   )
@@ -42,8 +43,9 @@ const SideSwitch = ({ side }) => {
 class TopNav extends Component {
 
   render() {
+    const t = this.props.t
     return (
-      <AppBar title={<SideSwitch side={this.props.side} />} onLeftIconClick={() => alert('test')} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={true} >
+      <AppBar title={<SideSwitch side={this.props.side} t={t} />} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={true} >
 
         <Navigation type='horizontal' className={theme.rightNavigation}>
           {/* At the moment we use translations only for proper items properties display names */}
@@ -51,9 +53,8 @@ class TopNav extends Component {
           {/* <GasPrice /> */}
           <ButtonMenu
             selectable={true}
-            selected='help'
             icon='expand_more'
-            label={this.props.account._addr || 'some username'}
+            label={this.props.account._addr || t('NOT_LOGGED')}
             position='auto'
             menuRipple
             active={true}
@@ -65,11 +66,15 @@ class TopNav extends Component {
               value='account'
               to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
               icon='account_box'
-              caption='Account'
+              caption={t('ACCOUNT')}
             />
-            {/* <MenuItem value='help' icon='help' caption='Help' /> */}
             <MenuDivider />
-            <MenuItem value='logout' icon='exit_to_app' caption='Logout' onClick={() => this.props.actions.resetAccount()} />
+            <MenuItem            
+              value='logout' 
+              icon='exit_to_app' 
+              caption={t('LOGOUT')} 
+              onClick={() => this.props.actions.resetAccount()} 
+            />
           </ButtonMenu>
 
         </Navigation>

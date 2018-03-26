@@ -38,8 +38,8 @@ export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
 }
 
 export const regItem = ({ item, authSig }) => {
-    return new Promise((resolve, reject) => {
-        requester.fetch({
+    // return new Promise((resolve, reject) => {
+       return requester.fetch({
             route: 'items',
             method: 'POST',
             body: JSON.stringify(item),
@@ -50,12 +50,12 @@ export const regItem = ({ item, authSig }) => {
                 return catchErrors(resp)
             })
             .then((resp) => {
-                return resolve(resp.json())
+                return resp.json()
             })
-            .catch((err) => {
-                return reject(err)
-            })
-    })
+    //         .catch((err) => {
+    //             return reject(err)
+    //         })
+    // })
 }
 
 export const getItem = ({ id, authSig }) => {
@@ -97,26 +97,25 @@ export const getItems = ({ type, authSig }) => {
     })
 }
 
-
-export const delItem = ({ id, type, authSig }) => {
-    return new Promise((resolve, reject) => {
-        requester.fetch({
-            route: 'items',
-            method: 'DELETE',
-            queryParams: { 'type': type, id: id },
-            authSig: authSig
-        })
-            .then((resp) => {
-                return catchErrors(resp)
-            })
-            .then((resp) => {
-                return resolve(resp.json())
-            })
-            .catch((err) => {
-                return reject(err)
-            })
-    })
-}
+// export const delItem = ({ id, type, authSig }) => {
+//     return new Promise((resolve, reject) => {
+//         requester.fetch({
+//             route: 'items',
+//             method: 'DELETE',
+//             queryParams: { 'type': type, id: id },
+//             authSig: authSig
+//         })
+//             .then((resp) => {
+//                 return catchErrors(resp)
+//             })
+//             .then((resp) => {
+//                 return resolve(resp.json())
+//             })
+//             .catch((err) => {
+//                 return reject(err)
+//             })
+//     })
+// }
 
 export const addItmToItm = ({ item, type, collection, authSig }) => {
     return new Promise((resolve, reject) => {
@@ -359,4 +358,20 @@ export const checkAuth = ({ authSig }) => {
                 return reject(err)
             })
     })
+}
+
+export const updateItm = ({item, authSig}) => {
+    return requester.fetch({
+        route: 'items',
+        method: 'PUT',
+        body: JSON.stringify(item),
+        authSig: authSig,
+        headers: { 'Content-Type': 'application/json' }
+    })
+        .then((resp) => {
+            return catchErrors(resp)
+        })
+        .then((resp) => {
+            return resp.json()
+        })
 }

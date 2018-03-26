@@ -4,7 +4,7 @@ import thunk from 'redux-thunk'
 import { persistReducers, memoryReducers } from 'reducers'
 import history from './history'
 import { routerMiddleware } from 'react-router-redux'
-import { persistStore, persistCombineReducers, persistReducer } from 'redux-persist'
+import { persistStore, persistCombineReducers } from 'redux-persist'
 import localStorage from 'redux-persist/es/storage'
 // import session from 'redux-persist/lib/storage/session'
 
@@ -34,9 +34,9 @@ const logger = store => next => action => {
   // }
 
   console.groupCollapsed(action.type)
-  // console.info('dispatching', action)
+  console.info('dispatching', action)
   let result = next(action)
-  // console.log('next state', store.getState())
+  console.log('next state', store.getState())
   console.groupEnd(action.type)
   return result
 }
@@ -95,4 +95,4 @@ function configureStoreDev(initialState) {
 
 const configureStore = process.env.NODE_ENV === 'production' ? configureStoreProd : configureStoreDev
 
-export default configureStore
+export default configureStore()

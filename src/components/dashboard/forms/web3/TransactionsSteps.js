@@ -18,15 +18,26 @@ const saveBtn = ({ save, saveBtnLabel, saveBtnIcon, t, ...other }) => {
 
 const SaveBtnWithTransaction = TransactionHoc(saveBtn)
 
+const cancelBtn = ({ cancel, cancelBtnLabel, t, ...other }) => {
+    return (
+        <Button label={t(cancelBtnLabel || 'CANCEL')} onClick={cancel} />
+    )
+}
+
+const CancelBtnWithTransaction = TransactionHoc(cancelBtn)
+
 class NewTransactionSteps extends Component {
 
     render() {
         let t = this.props.t
         let pages = []
 
+        const cancelButton = () => <CancelBtnWithTransaction  {...this.props} onSave={this.props.onSave} t={t} />
+
         this.props.trPages.map((trPage, index) => {
             pages.push({
-                title: t(trPage.title || 'Step ' + (index + 2)),
+                title: t(trPage.title || 'Step ' + (index + 1)),
+                cancelBtn: cancelButton,
                 component: ValidItemHoc(trPage.page || trPage),
                 props: { ...this.props, validateId: this.props.trId + '' + (index + 1) }
             })
@@ -34,7 +45,8 @@ class NewTransactionSteps extends Component {
 
         pages.push({
             title: t('PREVIEW_AND_MAKE_TR'),
-            completeBtn: () => <SaveBtnWithTransaction {...this.props} itemType={this.props.itemType} addTo={this.props.addTo} onSave={this.props.onSave} t={t} />,
+            completeBtn: () => <SaveBtnWithTransaction {...this.props} onSave={this.props.onSave} t={t} />,
+            cancelBtn: cancelButton,
             component: ValidItemHoc(TransactionPreview),
             props: { ...this.props, validateId: this.props.trId }
         })

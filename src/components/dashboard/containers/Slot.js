@@ -10,8 +10,11 @@ import SlotBids from './SlotBids'
 import { items as ItemsConstants } from 'adex-constants'
 import { BasicProps } from './ItemCommon'
 import Helper from 'helpers/miscHelpers'
+import ImgDialog from './ImgDialog'
+import { Item as ItemModel } from 'adex-models'
+import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT} from 'constants/misc'
 
-const { ItemsTypes } = ItemsConstants
+const { ItemsTypes, AdSizesByValue } = ItemsConstants
 const ADVIEW_URL = process.env.ADVIEW_HOST || 'https://view.adex.network'
 
 const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fallbackUrl }) => {
@@ -61,26 +64,60 @@ const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fal
 }
 
 export class Slot extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            editFallbackImg: false
+        }
+    }
+
+    handleFallbackImgUpdateToggle = () => {
+        let active = this.state.editFallbackImg
+        this.setState({ editFallbackImg: !active })
+    }
+
     render() {
-        let item = this.props.item
+        let item = this.props.item || {}
         let t = this.props.t
 
-        if (!item) return (<h1>Slot '404'</h1>)
+        if (!item._id) return (<h1>Slot '404'</h1>)
 
+        let imgSrc = item.fallbackAdImg.tempUrl || ItemModel.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY) || ''
         return (
             <div>
                 <BasicProps
+                    {...this.props}
                     item={item}
                     t={t}
-                    rightComponent={<IntegrationCode 
-                    ipfs={item.ipfs} 
-                    size={item.sizeTxtValue}
-                    t={t}
-                    slotId={item.id}
-                    slotIpfs={item.ipfs} 
-                    fallbackImgIpfs={(item.fallbackAdImg || {}).ipfs}
-                    fallbackUrl={item.fallbackAdUrl}
+                    toggleImgEdit={this.props.toggleImgEdit}
+                    toggleFallbackImgEdit={this.handleFallbackImgUpdateToggle}
+                    canEditImg
+                    rightComponent={<IntegrationCode
+                        ipfs={item.ipfs}
+                        size={item.sizeTxtValue}
+                        t={t}
+                        slotId={item.id}
+                        slotIpfs={item.ipfs}
+                        fallbackImgIpfs={(item.fallbackAdImg || {}).ipfs}
+                        fallbackUrl={item.fallbackAdUrl}
                     />}
+                />
+                <ImgDialog
+                    {...this.props}
+                    imgSrc={imgSrc}
+                    handleToggle={this.handleFallbackImgUpdateToggle}
+                    active={this.state.editFallbackImg}
+                    onChangeReady={this.props.handleChange}
+                    validateId={item._id}
+                    width={AdSizesByValue[item.size].width}
+                    height={AdSizesByValue[item.size].height}
+                    title={t('SLOT_FALLBACK_IMG_LABEL')}
+                    additionalInfo={t('SLOT_FALLBACK_IMG_INFO', { args: [AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'px'] })}
+                    exact={true}
+                    required={true}
+                    errMsg={t('ERR_IMG_SIZE_EXACT')}
+                    imgPropName='fallbackAdImg'
                 />
                 <div>
                     <SlotBids {...this.props} item={item} t={t} />
@@ -93,27 +130,31 @@ export class Slot extends Component {
 Slot.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    // items: PropTypes.array.isRequired,
     item: PropTypes.object.isRequired,
-    spinner: PropTypes.bool
-};
+}
 
 function mapStateToProps(state) {
     let persist = state.persist
-    let memory = state.memory
+    // let memory = state.memory
     return {
         account: persist.account,
-        // items: Array.from(Object.values(persist.items[ItemsTypes.AdSlot.id])),
-        spinner: memory.spinners[ItemsTypes.AdSlot.name],
         objModel: AdSlot,
-        itemType: ItemsTypes.AdSlot.id
-    };
+        itemType: ItemsTypes.AdSlot.id,
+        // NOTE: maybe not the best way but pass props to the HOC here
+        updateImgInfoLabel: 'SLOT_AVATAR_IMG_INFO',
+        updateImgLabel: 'SLOT_AVATAR_IMG_LABEL',
+        updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
+        updateImgExact: false,
+        canEditImg: true, // TEMP: we can edit slot avatar,
+        updateImgWidth: AVATAR_MAX_WIDTH,
+        updateImgHeight: AVATAR_MAX_HEIGHT
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
 const SlotItem = ItemHoc(Slot)

@@ -10,8 +10,21 @@
 
 .container {
     position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.adexLogo {
+    position: absolute;
+    top: 20px;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
+    transform: translateX(-50%)
+}
+
+.adxVersion {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
 }

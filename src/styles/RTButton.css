@@ -2,6 +2,7 @@
 :root {
   --button-neutral-color-hover: color(var(--color-adex-neutral-contrast) a(20%));
   --button-danger-color-hover: color(var(--color-adex-danger-contrast) a(20%));
+  --button-danger-color-hover: color(var(--color-adex-warning-contrast) a(20%));
   --button-first-color-hover: color(var(--color-adex-primary-lighter) a(20%));
   --button-second-color-hover: color(var(--color-adex-alt-primary-button) a(20%));
   --button-disabled-text-color: color(var(--color-adex-neutral-contrast) a(80%));
@@ -89,6 +90,27 @@
 
   &.flat:hover {
     background: var(--button-danger-color-hover) !important;
+  }
+}
+
+.warning:not([disabled]) {
+  &.raised,
+  &.floating {
+    background: var(--color-adex-warning-primary) !important;
+    color: var(--color-adex-warning-contrast) !important;
+  }
+
+  &.flat,
+  &.toggle {
+    color: var(--color-adex-warning-primary) !important;
+
+    &:focus:not(:active) {
+      background: var(--button-warning-color-hover) !important;
+    }
+  }
+
+  &.flat:hover {
+    background: var(--button-warning-color-hover) !important;
   }
 }
 

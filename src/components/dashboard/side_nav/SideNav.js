@@ -9,17 +9,23 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
 import ChannelIcon from 'components/common/icons/ChannelIcon'
 import Translate from 'components/translate/Translate'
-import { NewUnit, NewCampaign, NewSlot, NewChannel } from 'components/dashboard/forms/NewItems'
+import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, NewChannelDialog } from 'components/dashboard/forms/NewItems'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
+import packageJson from './../../../../package.json'
+import Anchor from 'components/common/anchor/anchor'
 
 const RRListItem = withReactRouterLink(ListItem)
 
 class SideNav extends Component {
 
     shouldComponentUpdate(nextProps, nextState) {
-        return this.props.side !== nextProps.side
-      }
+        let langChanged = this.props.language !== nextProps.language
+        let sideChanged = this.props.side !== nextProps.side
+        let locationChanged = this.props.location.pathname !== nextProps.location.pathname
+        let transactionsChanged = (this.props.transactions.pendingTxs || []).length !== (nextProps.transactions.pendingTxs || []).length
+        return langChanged || sideChanged || locationChanged || transactionsChanged
+    }
 
     render() {
         const side = this.props.side
@@ -31,32 +37,30 @@ class SideNav extends Component {
         const isAdvertiser = side === 'advertiser'
         const collection = (isAdvertiser ? 'campaigns' : 'channels')
         const items = (isAdvertiser ? 'units' : 'slots')
-        const NewCollectionBtn = (isAdvertiser ? NewCampaign : NewChannel)
-        const NewItemBtn = (isAdvertiser ? NewUnit : NewSlot)
+        const NewCollectionBtn = (isAdvertiser ? NewCampaignDialog : NewChannelDialog)
+        const NewItemBtn = (isAdvertiser ? NewUnitDialog : NewSlotDialog)
         const CollectionIcon = (isAdvertiser ? CampaignIcon : ChannelIcon)
         const itemsIcon = (isAdvertiser ? 'format_list_bulleted' : 'format_list_bulleted')
         const t = this.props.t
-        let transactions = this.props.transactions
-        const pendingTrsCount = Object.keys(transactions).reduce((memo, key) => {
+        const pendingTrsCount = (this.props.transactions.pendingTxs || []).length
 
-                let itm = {...transactions[key]}
-                if(itm && itm.status === 'TRANSACTION_STATUS_PENDING') {
-                    memo += 1
-                }
-
-            return memo
-        }, 0)
+        let pendingTransactionsIcon = 'swap_horiz'
+        if ((pendingTrsCount > 0) && (pendingTrsCount <= 9)) {
+            pendingTransactionsIcon = 'filter_' + pendingTrsCount
+        } else if (pendingTrsCount > 9) {
+            pendingTransactionsIcon = 'filter_9_plus'
+        }
 
         return (
-            <div className="Navigation">
-                <List kor={location} >
+            <div className={theme.navigation}>
+                <List >
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side }}
                         selectable={true}
                         caption={t('DASHBOARD')}
                         theme={theme}
                         leftIcon='dashboard'
-                        activeClassName={theme.active}
+                        className={classnames({ [theme.active]: location === '' })}
                     />
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side + '/' + collection }}
@@ -64,7 +68,7 @@ class SideNav extends Component {
                         caption={t(collection.toUpperCase())}
                         theme={theme}
                         leftIcon={<CollectionIcon color='rgb(117, 117, 117)' />}
-                        activeClassName={theme.active}
+                        className={classnames({ [theme.active]: location === collection })}
                     />
                     <ListItem
                         selectable={false}
@@ -82,7 +86,7 @@ class SideNav extends Component {
                         selectable={true}
                         caption={t(items.toUpperCase())}
                         theme={theme}
-                        activeClassName={theme.active}
+                        className={classnames({ [theme.active]: location === items })}
                         leftIcon={itemsIcon}
                     />
                     <ListItem
@@ -101,10 +105,54 @@ class SideNav extends Component {
                         selectable={true}
                         caption={t('TRANSACTIONS')}
                         theme={theme}
-                        activeClassName={theme.active}
-                        leftIcon={<FontIcon value='swap_horiz' style={{transactions: 1 > 0 ? '#FF5722' : ''}}/>}
+                        className={classnames({ [theme.active]: location === 'transactions', [theme.pendingTransactions]: pendingTrsCount > 0 })}
+                        leftIcon={<FontIcon value={pendingTransactionsIcon} />}
                     />
                 </List>
+                <div className={theme.listBottom} >
+                    <List>
+                        <Anchor target='_blank' href='https://medium.com/adex-network-tips-and-tricks' >
+                            <ListItem
+                                leftIcon='help_outline'
+                                selectable={true}
+                                caption={t('HELP')}
+                                theme={theme}
+                            />
+                        </Anchor>
+                        <RRListItem
+                            to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
+                            selectable={true}
+                            caption={t('ACCOUNT')}
+                            theme={theme}
+                            leftIcon='account_box'
+                            className={classnames({ [theme.active]: location === 'account' })}
+                        />
+                    </List>
+                </div>
+
+                <div className={theme.version}>
+                    <div>
+                        <small> &copy; {(new Date()).getFullYear()}
+                            <Anchor className={theme.adxLink} target='_blank' href={process.env.ADEX_SITE_HOST} > AdEx Network OÜ </Anchor>
+                        </small>
+                    </div>
+                    <div>
+                        <small>
+                            <Anchor className={theme.adxLink} target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_TOKEN_ADDR} > AdEx (ADX) Token </Anchor>
+                        </small>
+                        <small> / </small>
+                        <small>
+                            <Anchor className={theme.adxLink} target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_EXCHANGE_ADDR} > AdEx Exchange </Anchor>
+                        </small>
+                    </div>
+                    <div>
+                        <small>
+                            <Anchor className={theme.adxLink} target='_blank' href='https://github.com/AdExBlockchain/adex-dapp/blob/master/CHANGELOG.md' >
+                                v.{packageJson.version}-beta
+                            </Anchor>
+                        </small>
+                    </div>
+                </div>
             </div >
         )
     }
@@ -118,7 +166,7 @@ function mapStateToProps(state) {
     let persist = state.persist
     // let memory = state.memory
     return {
-        account: persist.account,
+        // account: persist.account,
         transactions: persist.web3Transactions[persist.account._addr] || {}
     }
 }

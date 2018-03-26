@@ -5,18 +5,15 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import ItemsList from './ItemsList'
 import theme from './theme.css'
-import RTButtonTheme from 'styles/RTButton.css'
 import classnames from 'classnames'
-import { items as ItemsConstants } from 'adex-constants'
+import { exchange as ExchangeConstants } from 'adex-constants'
 import Rows from 'components/dashboard/collection/Rows'
-import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
+import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import Translate from 'components/translate/Translate'
 import moment from 'moment'
-import { Button, IconButton } from 'react-toolbox/lib/button'
-import scActions from 'services/smart-contracts/actions'
-const { getTransactionsReceipts } = scActions
+import Anchor from 'components/common/anchor/anchor'
 
-const { ItemTypesNames } = ItemsConstants
+const { TxStatusLabels } = ExchangeConstants
 
 const SORT_PROPERTIES = [
     { value: 'sendingTime', label: '' },
@@ -26,31 +23,6 @@ const SORT_PROPERTIES = [
 ]
 
 class Transactions extends Component {
-
-    componentWillMount(nextProps) {
-        this.checkTransactions()
-    }
-
-    // TEMP
-    checkTransactions = () => {
-        let transactions = this.props.transactions
-        let hashes = Object.keys(transactions).reduce((memo, key) => {
-            if(key && ((key.toString()).length === 66)){
-                memo.push(key)
-            }
-            return memo
-        }, [])
-
-        getTransactionsReceipts(hashes)
-        .then((receipts)=>{
-            receipts.forEach((rec) =>{
-                if(rec && rec.transactionHash && rec.status){
-                    let status = rec.status === '0x1' ? 'TRANSACTION_STATUS_SUCCESS' : 'TRANSACTION_STATUS_ERROR'
-                    this.props.actions.updateWeb3Transaction({ trId: rec.transactionHash, key: 'status', value: status, addr: this.props.account._addr })
-                }
-            })
-        })
-    }
 
     renderTableHead() {
         let t = this.props.t
@@ -76,9 +48,9 @@ class Transactions extends Component {
                 <TableCell
                     className={classnames(theme.compactCol, theme.ellipsis)}
                 >
-                    <a target='_blank' href={process.env.ETH_SCAN_TX_HOST + transaction._id} > {transaction._id} </a>
+                    <Anchor target='_blank' href={process.env.ETH_SCAN_TX_HOST + transaction._id} > {transaction._id} </Anchor>
                 </TableCell>
-                <TableCell> {t(transaction.status)} </TableCell>
+                <TableCell> {t(TxStatusLabels[transaction.status])} </TableCell>
                 <TableCell> {t(moment(transaction.sendingTime).format('MMMM Do, YYYY, HH:mm:ss'))} </TableCell>
 
             </TableRow >
@@ -124,15 +96,6 @@ class Transactions extends Component {
                 <div className={classnames(theme.heading, theme.Transactions, theme.items)}>
                     <h2 > {t('TRANSACTIONS')} {'(' + itemsCount + ')'} </h2>
                 </div>
-
-                <Button
-                        floating
-                        icon='refresh'
-                        primary
-                        flat
-                        className={classnames(theme.floating)}
-                        onClick={this.checkTransactions}
-                    />
 
                 <ItemsList items={reduced} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
             </div>

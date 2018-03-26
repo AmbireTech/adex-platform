@@ -10,11 +10,11 @@ import theme from './../theme.css'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import ImgForm from './../ImgForm'
 import { items as ItemsConstants } from 'adex-constants'
-import ValidImageHoc  from 'components/dashboard/forms/ValidImageHoc'
+import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
+import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT} from 'constants/misc'
+import { validName } from 'helpers/validators'
 
 const { ItemTypesNames } = ItemsConstants
-const AVATAR_MAX_WIDTH = 600
-const AVATAR_MAX_HEIGHT = 400
 
 class NewItemForm extends Component {
 
@@ -32,17 +32,7 @@ class NewItemForm extends Component {
     }
 
     validateName(name, dirty) {
-        let msg = ''
-        let errMsgArgs = []
-        if (!name) {
-            msg = 'ERR_REQUIRED_FIELD'
-        } else if (name.length < 4) {
-            msg = 'ERR_MIN_LENGTH'
-            errMsgArgs.push(4)
-        } else if (name.length > 128) {
-            msg = 'ERR_MAX_LENGTH'
-            errMsgArgs.push(128)
-        }
+        const {msg, errMsgArgs} = validName(name)
 
         this.props.validate('fullName', { isValid: !msg, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
     }
@@ -99,9 +89,11 @@ class NewItemForm extends Component {
                                 <ImgForm
                                     label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}
                                     imgSrc={item.img.tempUrl || ''}
-                                    onChange={this.props.validateImg.bind(this, 'img', AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT, 'ERR_IMG_SIZE_MAX', false, false)}
+                                    onChange={this.props.validateImg.bind(this, 
+                                       { propsName: 'img', widthTarget: AVATAR_MAX_WIDTH, heightTarget: AVATAR_MAX_HEIGHT, msg: 'ERR_IMG_SIZE_MAX', exact: false, required: false})}
                                     additionalInfo={t(this.props.imgAdditionalInfo)}
                                     errMsg={errImg ? errImg.errMsg : ''}
+                                    size={{width: AVATAR_MAX_WIDTH, height: AVATAR_MAX_HEIGHT}}
                                 />
                             </Col>
                         </Row>

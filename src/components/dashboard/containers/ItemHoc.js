@@ -4,22 +4,23 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Chip from 'react-toolbox/lib/chip'
-import { Button, IconButton } from 'react-toolbox/lib/button'
+import { IconButton } from 'react-toolbox/lib/button'
 import theme from './theme.css'
 import FontIcon from 'react-toolbox/lib/font_icon'
-import Tooltip from 'react-toolbox/lib/tooltip'
-import Avatar from 'react-toolbox/lib/avatar'
-import Input from 'react-toolbox/lib/input'
-import { Base, Item as ItemModel, Models } from 'adex-models'
-import FloatingProgressButton from 'components/common/floating_btn_progress/FloatingProgressButton'
-import classnames from 'classnames'
 import ImgDialog from './ImgDialog'
+import Tooltip from 'react-toolbox/lib/tooltip'
+import Input from 'react-toolbox/lib/input'
+import { Models } from 'adex-models'
+import FloatingProgressButton from 'components/common/floating_btn_progress/FloatingProgressButton'
+import { Item as ItemModel } from 'adex-models'
+import classnames from 'classnames'
 import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
 import { items as ItemsConstants } from 'adex-constants'
-// import Img from 'components/common/img/Img'
+import Img from 'components/common/img/Img'
+import SaveBtn from './SaveBtn'
 
-const { ItemTypesNames, ItemTypeByTypeId } = ItemsConstants
+const { ItemTypesNames, ItemTypeByTypeId, AdSizesByValue } = ItemsConstants
 
 const TooltipFontIcon = Tooltip(FontIcon)
 
@@ -31,70 +32,91 @@ export default function ItemHoc(Decorated) {
             this.state = {
                 activeFields: {},
                 item: {},
+                initialItemState: {},
                 dirtyProps: [],
-                editImg: false
-            }
-        }
-
-        componentDidUpdate(prevProps, prevState) {
-            let itemId = this.props.match.params.itemId
-            let item = this.props.items[itemId] || {}
-            let meta = item._meta
-            let prevItem = prevProps.items[itemId] || {}
-            let prevMeta = prevItem._meta
-
-            if ((meta && prevMeta) && (meta.modifiedOn !== prevMeta.modifiedOn)) {
-                this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], false)
-                this.setState({ activeFields: {}, dirtyProps: [] })
+                editImg: false,
+                itemModel: Item,
+                _activeInput: null
             }
         }
 
         componentWillMount() {
-            this.setState({ item: this.props.items[this.props.match.params.itemId] })
+            let item = this.props.item
+            if (!item) {
+                return
+            }
+
+            let model = Models.itemClassByTypeId[item._type]
+            let initialItemState = new model(item)
+
+            this.setState({ item: { ...item }, initialItemState: initialItemState, itemModel: model })
         }
 
-        componentWillReceiveProps(nextProps) {
-            if (!nextProps.spinner) {
-                this.setState({ item: nextProps.items[nextProps.match.params.itemId] })
+        // shouldComponentUpdate(nextProps, nextState) {
+        //     let diffProps = JSON.stringify(this.props) !== JSON.stringify(nextProps)
+        //     let diffState = JSON.stringify(this.state) !== JSON.stringify(nextState)
+        //     return diffProps || diffState
+        // }
+
+        componentWillReceiveProps(nextProps, nextState) {
+            let currentItemInst = new this.state.itemModel(this.state.item)
+            // Assume that the this.props.match.params.itemId can not be changed without remount of the component
+            // TODO: check the above
+            let nextItem = nextProps.item
+            let nexItemInst = new this.state.itemModel(nextItem)
+
+            if (currentItemInst.modifiedOn !== nexItemInst.modifiedOn) {
+                this.setState({ item: nexItemInst.plainObj(), initialItemState: nexItemInst, activeFields: {}, dirtyProps: [] })
             }
         }
 
         componentWillUnmount() {
             if (this.state.item) {
-                this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], false)
+                this.props.actions.updateSpinner('update' + this.state.item._id, false)
             }
         }
 
-        // handleChange = (name, value) => {
-        //     let newItem = Base.updateMeta(this.state.item, { [name]: value }, this.state.dirtyProps || [])
-        //     this.setState({ item: newItem, dirtyProps: newItem.dirtyProps })
-        // }
-
         handleChange = (name, value) => {
-            let newItem = Base.updateObject({
-                item: this.state.item,
-                meta: { [name]: value },
-                dirtyProps: this.state.dirtyProps || [],
-                objModel: this.props.objModel
-            })
-            this.setState({ item: newItem, dirtyProps: newItem.dirtyProps })
+            let newItem = new this.state.itemModel(this.state.item)
+            newItem[name] = value
+
+            let dp = this.state.dirtyProps.slice(0)
+
+            if (dp.indexOf(name) < 0) {
+                dp.push(name)
+            }
+
+            this.setState({ item: newItem.plainObj(), dirtyProps: dp })
         }
 
-        setActiveFields(field, value) {
+        returnPropToInitialState = (propName) => {
+            let initialItemStateValue = this.state.initialItemState[propName]
+            let newItem = new this.state.itemModel(this.state.item)
+            newItem[propName] = initialItemStateValue
+
+            let dp = this.state.dirtyProps.filter((dp) => { return dp !== propName })
+
+            this.setState({ item: newItem.plainObj(), dirtyProps: dp })
+            // TEMP fix, we assume that the initial values are validated
+            this.props.actions.resetValidationErrors(this.state.item._id, propName)
+        }
+
+        setActiveFields = (field, value) => {
             let newActiveFields = { ...this.state.activeFields }
             newActiveFields[field] = value
             this.setState({ activeFields: newActiveFields })
         }
 
         //TODO: Do not save if not dirty!
-        save() {
+        save = () => {
             if (this.state.dirtyProps.length && !this.props.spinner) {
+                let item = { ...this.state.item }
                 this.props.actions.updateItem({
-                    item: this.state.item,
-                    newMeta: this.state.item._meta,
-                    objModel: this.props.objModel
+                    item: item,
+                    authSig: this.props.account._authSig
                 })
-                this.props.actions.updateSpinner(ItemTypesNames[this.state.item._type], true)
+                this.props.actions.updateSpinner('update' + item._id, true)
+                this.setState({ dirtyProps: [] })
             }
         }
 
@@ -103,6 +125,8 @@ export default function ItemHoc(Decorated) {
         }
 
         handleToggle = () => {
+            if (!this.props.canEditImg) return
+
             let active = this.state.editImg
             this.setState({ editImg: !active })
         }
@@ -115,11 +139,12 @@ export default function ItemHoc(Decorated) {
                 * NOTE: using instance of the item, the instance is passes to the Unit, Slot, Channel and Campaign components,
                 * in this case there is no need to make instance inside them
             */
-            let model = Models.itemClassByTypeId[this.state.item._type]
-            let item = new model(this.state.item) || {}
-            // let imgSrc =  ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY)
+
+            let item = new this.state.itemModel(this.state.item) || {}
             let t = this.props.t
-            let canEdit = false // ItemTypeByTypeId[item.type] === 'collection'
+            let canEdit = ItemTypeByTypeId[item.type] === 'collection'
+            let imgSrc = item.meta.img.tempUrl || ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY) || ''
+            let { validations, ...rest } = this.props
 
             return (
                 <div>
@@ -130,15 +155,51 @@ export default function ItemHoc(Decorated) {
 
                     <div className={classnames(theme.heading, theme[ItemTypesNames[item._type || item._meta.type]])}>
                         <div className={theme.headingLeft}>
-                            <Avatar title={item.fullName} cover onClick={this.handleToggle.bind(this)} />
-                            {/* <ImgDialog imgSrc={imgSrc} handleToggle={this.handleToggle} active={this.state.editImg} onChange={this.handleChange.bind(this, 'img')} /> */}
+                            <Img src={imgSrc} alt={item.fullName} onClick={this.handleToggle} className={classnames(theme.avatar, { [theme.pointer]: this.props.canEditImg })} />
+
+                            <ImgDialog
+                                {...this.props}
+                                imgSrc={imgSrc}
+                                handleToggle={this.handleToggle}
+                                active={this.state.editImg}
+                                onChangeReady={this.handleChange}
+                                validateId={item._id}
+                                width={this.props.updateImgWidth || (AdSizesByValue[item.size] || {}).width}
+                                height={this.props.updateImgHeight || (AdSizesByValue[item.size] || {}).height}
+                                title={t(this.props.updateImgLabel)}
+                                additionalInfo={t(this.props.updateImgInfoLabel)}
+                                exact={this.props.updateImgExact}
+                                errMsg={this.props.updateImgErrMsg}
+                                imgPropName='img'
+                            />
                             {canEdit && this.state.activeFields.fullName ?
-                                <Input className={theme.itemName} type='text' label={t('fullName', { isProp: true })} name='fullName' value={item.fullName} onChange={this.handleChange.bind(this, 'fullName')} maxLength={128} />
+                                <span>
+                                    <span>
+                                        <Input
+                                            autoFocus
+                                            className={theme.itemName}
+                                            type='text'
+                                            label={t('fullName', { isProp: true })}
+                                            name='fullName'
+                                            value={item.fullName}
+                                            onChange={this.handleChange.bind(this, 'fullName')}
+                                            maxLength={128}
+                                            onBlur={this.setActiveFields.bind(this, 'fullName', false)}
+                                        />
+                                    </span>
+                                </span>
                                 :
                                 <h3 className={theme.itemName}>
                                     <span> {item.fullName} </span>
                                     {canEdit ?
-                                        <span><IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'fullName', true)} /></span>
+                                        <span>
+                                            <IconButton
+                                                theme={theme}
+                                                icon='edit'
+                                                accent
+                                                onClick={this.setActiveFields.bind(this, 'fullName', true)}
+                                            />
+                                        </span>
                                         : null}
                                 </h3>
                             }
@@ -147,57 +208,62 @@ export default function ItemHoc(Decorated) {
                     <div>
                         <div className={classnames(theme.top, theme.left)}>
 
-
                             {this.state.activeFields.description ?
-                                <Input multiline rows={3} type='text' label={t('description', { isProp: true })} name='description' value={item.description} onChange={this.handleChange.bind(this, 'description')} maxLength={1024} />
+                                <Input
+                                    autoFocus
+                                    multiline
+                                    rows={3}
+                                    type='text'
+                                    label={t('description', { isProp: true })}
+                                    name='description'
+                                    value={item.description}
+                                    onChange={this.handleChange.bind(this, 'description')}
+                                    maxLength={1024}
+                                    onBlur={this.setActiveFields.bind(this, 'description', false)}
+                                />
                                 :
                                 <div>
                                     <p>
                                         {item.description ?
                                             item.description
                                             :
-                                            <span> {t('NO_DESCRIPTION_YET')}</span>
+                                            <span style={{ opacity: 0.3 }}> {t('NO_DESCRIPTION_YET')}</span>
                                         }
-                                        {/* <span>
-                                            <IconButton theme={theme} icon='edit' accent onClick={this.setActiveFields.bind(this, 'description', true)} />
-                                        </span> */}
+                                        <span>
+                                            <IconButton
+                                                theme={theme}
+                                                icon='edit'
+                                                accent
+                                                onClick={this.setActiveFields.bind(this, 'description', true)}
+                                            />
+                                        </span>
                                     </p>
 
                                 </div>
                             }
 
                         </div>
-                        <div className={classnames(theme.top, theme.right)}>
-
-                            {!!this.props.spinner ?
-                                null
-                                : (
-                                    this.state.dirtyProps.length ?
-                                        (
-                                            <div className={theme.itemStatus}>
-                                                <TooltipFontIcon value='info_outline' tooltip={t('UNSAVED_CHANGES')} />
-                                                {this.state.dirtyProps.map((p) => {
-                                                    return (<Chip key={p}>{t(p, { isProp: true })}</Chip>)
-                                                })}
-                                            </div>
-                                        ) : ''
-                                )}
-                            {/* <FloatingProgressButton inProgress={!!this.props.spinner} theme={theme} icon='save' onClick={this.save} floating primary /> */}
-                        </div>
-
+                        <SaveBtn 
+                            spinnerId={'update-' + item._id}
+                            validationId={'update-' + item._id}
+                            returnPropToInitialState={this.returnPropToInitialState}
+                            dirtyProps={this.state.dirtyProps}
+                            save={this.save}
+                        />
                     </div>
 
                     <div>
                         <Decorated
-                            {...this.props}
+                            {...rest}
+                            inEdit={!!this.state.dirtyProps.length}
                             item={item}
                             save={this.save}
                             handleChange={this.handleChange}
                             toggleImgEdit={this.handleToggle.bind(this)}
+                            activeFields={this.state.activeFields}
+                            setActiveFields={this.setActiveFields.bind(this)}
                         />
                     </div>
-                    {/* <pre> {JSON.stringify(item, null, 2)} </pre> */}
-
                 </div>
             )
         }
@@ -206,17 +272,17 @@ export default function ItemHoc(Decorated) {
     Item.propTypes = {
         actions: PropTypes.object.isRequired,
         account: PropTypes.object.isRequired,
-        items: PropTypes.object.isRequired,
-        spinner: PropTypes.bool,
-        // objModel: PropTypes.func.isRequired
+        item: PropTypes.object.isRequired,
+        spinner: PropTypes.bool
     }
 
     function mapStateToProps(state, props) {
         let persist = state.persist
-        let memory = state.memory
+        // let memory = state.memory
+        const item = persist.items[props.itemType][props.match.params.itemId]
         return {
             account: persist.account,
-            items: persist.items[props.itemType]
+            item: item
         }
     }
 
@@ -230,6 +296,4 @@ export default function ItemHoc(Decorated) {
         mapStateToProps,
         mapDispatchToProps
     )(Translate(Item))
-
-    return Translate(Item)
 }

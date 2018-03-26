@@ -159,11 +159,12 @@ export const VerifyBid = (props) =>
                         _report: transaction.report.ipfs,
                         _addr: acc._addr,
                         gas: transaction.gas,
-                        gasPrice: transaction._gasPrice
+                        gasPrice: transaction._gasPrice,
+                        side: transaction.side
                     })
                     .then((res) => {
-                        return resolve(res)
-                        // return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+                        resolve(res)
+                        return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
                     })
                     .catch((err) => {
                         return reject(err)
@@ -240,6 +241,7 @@ export const Deposit = (props) =>
         title="ACCOUNT_DEPOSIT_TO_EXCHANGE_TITLE"
         trId='deposit'
         trPages={[{ title: 'ACCOUNT_DEPOSIT_TO_EXCHANGE_STEP', page: DepositToExchange }]}
+        previewWarnMsgs={[{msg: 'ACCOUNT_DEPOSIT_MULTIPLE_SIGNS_MSG'}]}
         saveFn={({ acc, transaction } = {}) => {
             return depositToExchange({ _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
         }}

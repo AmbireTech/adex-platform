@@ -28,3 +28,22 @@ export const validPositiveInt = (intStr) => {
     let isValid = onlyDigitsRegex.test(intStr)
     return isValid
 }
+
+export const validName = (name) => {
+    let msg = ''
+    let errMsgArgs = []
+    if (!name) {
+        msg = 'ERR_REQUIRED_FIELD'
+    } else if (name.length < 4) {
+        msg = 'ERR_MIN_LENGTH'
+        errMsgArgs.push(4)
+    } else if (name.length > 128) {
+        msg = 'ERR_MAX_LENGTH'
+        errMsgArgs.push(128)
+    }
+
+    return {
+        msg,
+        errMsgArgs
+    }
+}

@@ -39,12 +39,12 @@ export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, gas } = {}) =
                 value: amount,
                 gas: gas || GAS_LIMIT
             })
-            .on('transactionHash', (hash) => {
-                resolve({trHash: hash, trMethod: 'TRANS_MTD_ETH_WITHDRAW'})
-            })
-            .on('error', (err) => {
-                reject(err)
-            })
+                .on('transactionHash', (hash) => {
+                    resolve({ trHash: hash, trMethod: 'TRANS_MTD_ETH_WITHDRAW' })
+                })
+                .on('error', (err) => {
+                    reject(err)
+                })
         })
     })
 }
@@ -68,6 +68,17 @@ const getExchangeBalances = (exchBal = {}) => {
         onBids: adxOnBids,
         available: exchangeAvailable
     }
+}
+
+
+export const getAccountBalances = (_addr) => {
+    return getWeb3
+        .then(({ cfg, exchange, token, web3 }) => {
+            return exchange.methods.getBalance(_addr).call()
+        })
+        .then((exchBal) => {
+            return getExchangeBalances(exchBal)
+        })
 }
 
 export const getAccountStats = ({ _addr }) => {
@@ -145,18 +156,18 @@ export const getAccountStatsMetaMask = () => {
 export const getTransactionsReceipts = (trHashes = []) => {
     return new Promise((resolve, reject) => {
         getWeb3.then(({ cfg, exchange, token, web3 }) => {
-                let all = trHashes.map((trH) => web3.eth.getTransactionReceipt(trH))
+            let all = trHashes.map((trH) => web3.eth.getTransactionReceipt(trH))
 
-                Promise.all(all)
-                    .then(receipts => {
-                        // console.log('receipts', receipts)
-                        return resolve(receipts)
-                    })
-                    .catch((err) => {
-                        console.log('getTransactionsReceipts err', err)
-                        reject(err)
-                    })
-            })
+            Promise.all(all)
+                .then(receipts => {
+                    // console.log('receipts', receipts)
+                    return resolve(receipts)
+                })
+                .catch((err) => {
+                    console.log('getTransactionsReceipts err', err)
+                    reject(err)
+                })
         })
+    })
 }
 
