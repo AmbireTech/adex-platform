@@ -15,10 +15,13 @@ import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 // import { checkAuth } from 'services/adex-node/actions'
 import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
+import { List, ListItem, ListSubHeader, ListDivider, ListCheckbox } from 'react-toolbox/lib/list'
+import { getAddrs } from 'services/hd-wallet/utils'
+import scActions from 'services/smart-contracts/actions'
 import trezorConnect from 'third-party/trezor-connect'
 const TrezorConnect = trezorConnect.TrezorConnect
 
-// const { signAuthTokenMetamask, getAccountMetamask } = scActions
+const { getAccountStats } = scActions
 
 const path = "m/44'/60'/0'/0";
 
@@ -29,18 +32,46 @@ class AuthTrezor extends Component {
         super(props)
         this.state = {
             method: '',
-            sideSelect: false
+            sideSelect: false,
+            addresses: []
         }
     }
 
     connectTrezor = () => {
-        TrezorConnect.getXPubKey(path, function (result) {
+        TrezorConnect.getXPubKey(path, (result) => {
             if (result.success) {
-                console.log('Address: ', result);
+                let addresses = getAddrs(result.publicKey, result.chainCode)
+
+                let allStatsPr = []
+
+                addresses.forEach((addr) => {
+                    allStatsPr.push(getAccountStats({_addr: addr}))
+                })
+
+                Promise.all(allStatsPr)
+                    .then((results) => {
+                        this.setState({ addresses: results })
+                    })
+                
             } else {
-                console.error('Error:', result);
+                console.error('Error:', result)
             }
         })
+    }
+
+    AddressSelect = ({addresses, ...rest}) => {
+        return (
+            <List selectable ripple>
+            {addresses.map((res, index) => 
+                <ListItem key={res.addr} onClick={this.onAddrSelect.bind(this, res.addr)} caption={res.addr} legend={res.balanceEth + ' ETH, ' + res.balanceAdx + ' ADX, exchange: ' + res.exchangeBalance + ' ADX'   }/>
+            )}
+            </List>
+        )
+    }
+
+    onAddrSelect = (addr) => {
+        console.log('addr', addr)
+        // TODO:
     }
 
     render() {
@@ -49,18 +80,24 @@ class AuthTrezor extends Component {
 
         return (
             <div >
-                <span>
-                    TREZOR info here...
-                </span>
-                <br/>
-                <h3>
-                    <Anchor href='https://trezor.io' target='_blank'>
-                        https://trezor.io
-                    </Anchor>
-                </h3>
-                <br/>
-                <br/>
-                    <Button onClick={this.connectTrezor} label={t('AUTH_CONNECT_WITH_TREZOR')} raised primary />
+                {this.state.addresses.length ? 
+                    <this.AddressSelect addresses={this.state.addresses} />
+                    :
+                    <div>
+                        <span>
+                            TREZOR info here...
+                        </span>
+                        <br/>
+                        <h3>
+                            <Anchor href='https://trezor.io' target='_blank'>
+                                https://trezor.io
+                            </Anchor>
+                        </h3>
+                        <br/>
+                        <br/>
+                        <Button onClick={this.connectTrezor} label={t('AUTH_CONNECT_WITH_TREZOR')} raised primary />
+                    </div>
+                }
             </div>
         )
     }
