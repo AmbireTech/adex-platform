@@ -95,6 +95,7 @@ export const getAccountStats = ({ _addr }) => {
                 .then(([balEth, balAdx, allow, exchBal]) => {
 
                     let accStats = {
+                        addr: _addr,
                         balanceEth: balEth,
                         balanceAdx: balAdx,
                         allowance: allow,
