@@ -16,6 +16,7 @@ import { checkAuth } from 'services/adex-node/actions'
 import METAMASK_DL_IMG from 'resources/download-metamask.png'
 import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
+import AuthHoc from './AuthHoc'
 
 const { signAuthTokenMetamask, getAccountMetamask } = scActions
 
@@ -37,28 +38,10 @@ class AuthMetamask extends Component {
     }
 
     authOnServer = () => {
-        let signature = null
         let addr = this.props.account._addr
-        // let authToken = 'someAuthTOken'
         let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id // TEMP?
 
-        signAuthTokenMetamask({ userAddr: addr })
-            .then(({ sig, sig_mode, authToken, typedData }) => {
-                signature = sig
-                return signToken({ userid: addr, signature: signature, authToken: authToken, mode: mode, typedData: typedData })
-            })
-            .then((res) => {
-                // TEMP
-                // TODO: keep it here or make it on login?
-                // TODO: catch
-                if (res.status === 'OK') {
-                    addSig({ addr: addr, sig: signature, mode: mode, expiryTime: res.expiryTime })
-
-                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: signature } })
-                } else {
-                    this.props.actions.resetAccount()
-                }
-            })
+        this.props.authOnServer({ mode, addr })
     }
 
     // TODO: Make it some common function if needed or make timeout as metamask way 
@@ -151,4 +134,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(AuthMetamask))
+)(Translate(AuthHoc(AuthMetamask)))

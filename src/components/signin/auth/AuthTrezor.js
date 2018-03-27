@@ -21,12 +21,13 @@ import scActions from 'services/smart-contracts/actions'
 import trezorConnect from 'third-party/trezor-connect'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import { web3Utils } from 'services/smart-contracts/ADX'
+import AuthHoc from './AuthHoc'
 
 const TrezorConnect = trezorConnect.TrezorConnect
 
 const { getAccountStats, signAuthTokenTrezor } = scActions
 
-const path = "m/44'/60'/0'/0";
+const HD_PATH = "m/44'/60'/0'/0"
 
 const getAddrStatsLabel = (stats) => {
     let addrBalanceAdx = adxToFloatView(stats.balanceAdx || 0)
@@ -52,7 +53,7 @@ class AuthTrezor extends Component {
     }
 
     connectTrezor = () => {
-        TrezorConnect.getXPubKey(path, (result) => {
+        TrezorConnect.getXPubKey(HD_PATH, (result) => {
             if (result.success) {
                 let addresses = getAddrs(result.publicKey, result.chainCode)
 
@@ -83,34 +84,9 @@ class AuthTrezor extends Component {
         )
     }
 
-    authOnServer = (addr, index) => {
-        let signature = null
-        // let addr = this.props.account._addr
-        // let authToken = 'someAuthTOken'
-        let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Trezor.id // TEMP?
-
-        signAuthTokenTrezor({ userAddr: addr, hdPAth: path, mode: mode, addrIdx: index })
-            .then(({ sig, sig_mode, authToken, typedData, hashData }) => {
-                signature = sig
-                return signToken({ userid: addr, signature: signature, authToken: authToken, mode: mode, typedData: typedData, hashData: hashData })
-            })
-            .then((res) => {
-                // TEMP
-                // TODO: keep it here or make it on login?
-                // TODO: catch
-                if (res.status === 'OK') {
-                    addSig({ addr: addr, sig: signature, mode: mode, expiryTime: res.expiryTime })
-
-                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: signature } })
-                } else {
-                    this.props.actions.resetAccount()
-                }
-            })
-    }
-
     onAddrSelect = (addr, index) => {
         let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Trezor.id
-        this.authOnServer(addr, index)
+        this.props.authOnServer({ mode, addr, hdPath: HD_PATH, addrIdx: index })
     }
 
     render() {
@@ -164,4 +140,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(AuthTrezor))
+)(Translate(AuthHoc(AuthTrezor)))
