@@ -1,5 +1,8 @@
 import { getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 import { TO_HEX_PAD } from 'services/smart-contracts/constants'
+import { getRsvFromSig, getTypedDataHash } from 'services/smart-contracts/utils'
+import trezorConnect from 'third-party/trezor-connect'
+const TrezorConnect = trezorConnect.TrezorConnect
 
 const PRODUCTION_MODE = process.env.NODE_ENV === 'production'
 
@@ -110,5 +113,29 @@ export const signAuthTokenMetamask = ({ userAddr }) => {
             })
             // }
         })
+    })
+}
+
+export const signAuthTokenTrezor = ({ userAddr, hdPAth, mode, addrIdx }) => {
+    return new Promise((resolve, reject) => {
+        let authToken = (Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()
+        let typed = [
+            { type: 'uint', name: 'Auth token', value: authToken }
+        ]
+
+        let hash = getTypedDataHash({typedData: typed})
+
+        let buff = Buffer.from(hash.slice(2), 'hex')
+        TrezorConnect.ethereumSignMessage(
+            hdPAth + '/' + addrIdx, buff, (resp) => {
+                if (resp.success) {
+                    let signature = { sig_mode: mode, sig: '0x' + resp.signature, authToken: authToken, typedData: typed, hashData: hash }
+                    return resolve(signature)
+                } else {
+                    return reject(resp)
+                }
+                
+            }
+        )
     })
 }

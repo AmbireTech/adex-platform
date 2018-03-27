@@ -260,13 +260,14 @@ export const getAuthToken = ({ authSig } = {}) => {
     })
 }
 
-export const signToken = ({ userid, signature, authToken, mode, typedData } = {}) => {
+export const signToken = ({ userid, signature, authToken, mode, typedData, hashData } = {}) => {
     let data = {
         userid: userid,
         signature: signature,
         authToken: authToken,
         mode: mode,
-        typedData: typedData
+        typedData: typedData,
+        hashData: hashData
     }
 
     return new Promise((resolve, reject) => {
