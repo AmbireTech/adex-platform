@@ -1,6 +1,6 @@
 import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
-import { toHexParam, adxAmountStrToHex, adxAmountStrToPrecision } from 'services/smart-contracts/utils'
+import { toHexParam, adxAmountStrToHex, adxAmountStrToPrecision, getRsvFromSig, getTypedDataHash } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { helpers } from 'adex-models'
@@ -248,30 +248,6 @@ export const refundBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, 
                     })
             })
     })
-}
-
-const getRsvFromSig = (sig) => {
-    sig = sig.slice(2)
-
-    var r = '0x' + sig.substring(0, 64)
-    var s = '0x' + sig.substring(64, 128)
-    var v = parseInt(sig.substring(128, 130), 16)
-
-    return { r: r, s: s, v: v }
-}
-// NOTE: works with typed data in format {type: 'solidity data type', name: 'string (label)', value: 'preferable string'} 
-const getTypedDataHash = ({ typedData }) => {
-    let values = typedData.map((entry) => {
-        return entry.value // ? .toString().toLowerCase()
-    })
-    let valuesHash = web3Utils.soliditySha3.apply(null, values)
-
-    let schema = typedData.map((entry) => { return entry.type + ' ' + entry.name })
-    let schemaHash = web3Utils.soliditySha3.apply(null, schema)
-
-    let hash = web3Utils.soliditySha3(schemaHash, valuesHash)
-
-    return hash
 }
 
 // gets the hash (bid id) from adex exchange contract

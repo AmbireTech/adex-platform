@@ -8,10 +8,10 @@ import { Button } from 'react-toolbox/lib/button'
 import Translate from 'components/translate/Translate'
 // import { getWeb3 } from 'services/smart-contracts/ADX'
 // import SideSelect from 'components/signin/side-select/SideSelect'
-// import { signToken } from 'services/adex-node/actions'
+import { signToken } from 'services/adex-node/actions'
 // import scActions from 'services/smart-contracts/actions'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
-// import { addSig, getSig } from 'services/auth/auth'
+import { addSig, getSig } from 'services/auth/auth'
 // import { checkAuth } from 'services/adex-node/actions'
 import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
@@ -24,7 +24,7 @@ import { web3Utils } from 'services/smart-contracts/ADX'
 
 const TrezorConnect = trezorConnect.TrezorConnect
 
-const { getAccountStats } = scActions
+const { getAccountStats, signAuthTokenTrezor } = scActions
 
 const path = "m/44'/60'/0'/0";
 
@@ -77,15 +77,40 @@ class AuthTrezor extends Component {
         return (
             <List selectable ripple>
             {addresses.map((res, index) => 
-                <ListItem key={res.addr} onClick={this.onAddrSelect.bind(this, res.addr)} caption={res.addr} legend={getAddrStatsLabel(res)}/>
+                <ListItem key={res.addr} onClick={this.onAddrSelect.bind(this, res.addr, index)} caption={res.addr} legend={getAddrStatsLabel(res)}/>
             )}
             </List>
         )
     }
 
-    onAddrSelect = (addr) => {
-        console.log('addr', addr)
-        // TODO:
+    authOnServer = (addr, index) => {
+        let signature = null
+        // let addr = this.props.account._addr
+        // let authToken = 'someAuthTOken'
+        let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Trezor.id // TEMP?
+
+        signAuthTokenTrezor({ userAddr: addr, hdPAth: path, mode: mode, addrIdx: index })
+            .then(({ sig, sig_mode, authToken, typedData, hashData }) => {
+                signature = sig
+                return signToken({ userid: addr, signature: signature, authToken: authToken, mode: mode, typedData: typedData, hashData: hashData })
+            })
+            .then((res) => {
+                // TEMP
+                // TODO: keep it here or make it on login?
+                // TODO: catch
+                if (res.status === 'OK') {
+                    addSig({ addr: addr, sig: signature, mode: mode, expiryTime: res.expiryTime })
+
+                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: signature } })
+                } else {
+                    this.props.actions.resetAccount()
+                }
+            })
+    }
+
+    onAddrSelect = (addr, index) => {
+        let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Trezor.id
+        this.authOnServer(addr, index)
     }
 
     render() {
