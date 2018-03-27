@@ -41,7 +41,7 @@ class Root extends Component {
         let acc = this.props.account // come from persistence storage
         //Maybe dont need it but if for some reason the store account empty is not there
         //TODO: check once when metamask on '/' !!!
-        if (acc && this.props.location.pathname !== '/') {
+        if (acc && acc._authMode === EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id && this.props.location.pathname !== '/') {
             getAccountMetamask()
                 .then(({ addr, mode }) => {
                     addr = (addr || '').toLowerCase()
