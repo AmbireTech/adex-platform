@@ -30,9 +30,9 @@ class SigninMetamask extends Component {
 
     return (
       <div>
-        <div className={theme.adexLogo} >
-          <Logo width={370} height={144} />
-        </div>
+        {/* <div className={theme.adexLogo} >
+          <Logo width={247} height={96} />
+        </div> */}
         <br />
         {hasSession ?
           <SideSelect active={true} />

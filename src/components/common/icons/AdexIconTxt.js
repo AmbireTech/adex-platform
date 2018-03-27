@@ -4,15 +4,15 @@ import React from 'react';
 const AdexIcon = ({width, height}) => {
 
   const defautSize = {
-    width: 185,
-    height: 72
+    width: '185px',
+    height: '72px'
   }
 
   return (
     <svg {...this.props}
       viewBox="0 0 185 72"
-      width={(width || defautSize.width) + 'px'} 
-      height={(height || defautSize.height) + 'px'} >
+      width={(width || defautSize.width)} 
+      height={(height || defautSize.height)} >
       <g >
         <path  fill="rgb(60, 60, 59)"
           d="M44.995,49.818 L36.605,58.060 L22.494,44.199 L8.383,58.060 L-0.007,49.818 L14.104,35.957 L-0.007,22.095 L8.383,13.853 L22.494,27.715 L36.605,13.853 L44.995,22.095 L30.884,35.957 L44.995,49.818 ZM22.494,13.562 L16.296,19.724 L9.354,12.904 L17.594,4.809 L22.494,-0.004 L27.394,4.809 L35.634,12.904 L28.692,19.724 L22.494,13.562 ZM22.494,58.438 L28.692,52.276 L35.634,59.095 L27.394,67.190 L22.494,72.003 L17.594,67.190 L9.354,59.095 L16.296,52.276 L22.494,58.438 Z"/>
