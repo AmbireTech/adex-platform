@@ -19,11 +19,25 @@ import { List, ListItem, ListSubHeader, ListDivider, ListCheckbox } from 'react-
 import { getAddrs } from 'services/hd-wallet/utils'
 import scActions from 'services/smart-contracts/actions'
 import trezorConnect from 'third-party/trezor-connect'
+import { adxToFloatView } from 'services/smart-contracts/utils'
+import { web3Utils } from 'services/smart-contracts/ADX'
+
 const TrezorConnect = trezorConnect.TrezorConnect
 
 const { getAccountStats } = scActions
 
 const path = "m/44'/60'/0'/0";
+
+const getAddrStatsLabel = (stats) => {
+    let addrBalanceAdx = adxToFloatView(stats.balanceAdx || 0)
+    let addrBalanceEth = web3Utils.fromWei(stats.balanceEth || '0', 'ether')
+    let exchBal = stats.exchangeBalance || {}
+    let adxOnBids = adxToFloatView(exchBal.onBids)
+    let exchangeAvailable = adxToFloatView(exchBal.available)
+
+    // TODO: translation
+    return  addrBalanceEth + ' ETH, ' + addrBalanceAdx + ' ADX, on bids: ' +adxOnBids + ' ADX, exchange available: ' + exchangeAvailable + ' ADX'
+}
 
 // const RRButton = withReactRouterLink(Button)
 
@@ -33,7 +47,7 @@ class AuthTrezor extends Component {
         this.state = {
             method: '',
             sideSelect: false,
-            addresses: []
+            addresses: [] //testAddresses
         }
     }
 
@@ -63,7 +77,7 @@ class AuthTrezor extends Component {
         return (
             <List selectable ripple>
             {addresses.map((res, index) => 
-                <ListItem key={res.addr} onClick={this.onAddrSelect.bind(this, res.addr)} caption={res.addr} legend={res.balanceEth + ' ETH, ' + res.balanceAdx + ' ADX, exchange: ' + res.exchangeBalance + ' ADX'   }/>
+                <ListItem key={res.addr} onClick={this.onAddrSelect.bind(this, res.addr)} caption={res.addr} legend={getAddrStatsLabel(res)}/>
             )}
             </List>
         )

@@ -13,6 +13,7 @@ import { Button } from 'react-toolbox/lib/button'
 import { getWeb3 } from 'services/smart-contracts/ADX'
 import AuthMetamask from 'components/signin/auth/AuthMetamask'
 import AuthTrezor from 'components/signin/auth/AuthTrezor'
+import Logo from 'components/common/icons/AdexIconTxt'
 
 class AuthMethod extends Component {
 
@@ -37,21 +38,26 @@ class AuthMethod extends Component {
         title={t('CHOOSE_AUTH_METHOD')}
         theme={theme}
       >
-        <Tabs
-          theme={theme}
-          index={this.state.tabIndex}
-          onChange={this.handleTabChange.bind(this)}
-        >
-          <Tab label={t('METAMASK')}>
-            <AuthMetamask />
-          </Tab>
-          <Tab label={t('TREZOR')}>
-            <AuthTrezor />
-          </Tab>
-          <Tab label={t('LEDGER')}>
-            <h1>{t('COMING_SOON')}</h1>
-          </Tab>
-        </Tabs>
+        <div>
+          <div className={theme.adexLogoTop} >
+            <Logo width='12.8vh' height='5vh' />
+          </div>
+          <Tabs
+            theme={theme}
+            index={this.state.tabIndex}
+            onChange={this.handleTabChange.bind(this)}
+          >
+            <Tab label={t('METAMASK')}>
+              <AuthMetamask />
+            </Tab>
+            <Tab label={t('TREZOR')}>
+              <AuthTrezor />
+            </Tab>
+            <Tab label={t('LEDGER')}>
+              <h1>{t('COMING_SOON')}</h1>
+            </Tab>
+          </Tabs>
+        </div>
 
       </Dialog>
     )

@@ -1,5 +1,29 @@
 @import './../../../styles/variables.css';
 
+:root {
+    --dialog-height: 80vh;
+}
+
 .overlay {
     background-color: var(--overlay-color-light) ;
+}
+
+.dialog {
+    height: var(--dialog-height);
+    overflow: visible;
+
+    & .body {
+        height: var(--dialog-height);
+    }
+}
+
+.adexLogoTop {
+    position: absolute;
+    top: -6vh;
+    left: 0;
+}
+
+.tab {
+    height: calc(var(--dialog-height) - 150px);
+    overflow: auto;
 }
