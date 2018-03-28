@@ -380,6 +380,7 @@ function sendDeposit({ exchange, _addr, amount, gas }) {
 export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
     let amount = adxAmountStrToHex(amountToDeposit)
     let mode = user._authMode.signType
+    let txResults = []
 
     return new Promise((resolve, reject) => {
         getWeb3(user._authMode.authType).then(({ web3, exchange, token }) => {
@@ -395,7 +396,8 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                             user,
                             txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE_TO_ZERO' }
                         })
-                            .then(() => {
+                            .then((result) => {
+                                txResults.push(result)
                                 sendTx({
                                     tx: approveTokens({ token: token, _addr: _addr, exchangeAddr: cfg.addr.exchange, amount: amount, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 }),
                                     opts: { gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 },
@@ -413,7 +415,8 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                         })
                     }
 
-                    return p.then(() => {
+                    return p.then((result) => {
+                        txResults.push(result)
                         return sendTx({
                             tx: sendDeposit({ exchange: exchange, _addr: _addr, amount: amount, gas: 90000 }),
                             opts: { gas: 90000 },
@@ -423,8 +426,9 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                     })
                 })
                 .then((result) => {
-                    console.log('depositToExchange result ', result)
-                    return resolve(result)
+                    txResults.push(result)
+                    console.log('depositToExchange result ', txResults)
+                    return resolve(txResults)
                 })
                 .catch((err) => {
                     console.log('token approve err', err)
