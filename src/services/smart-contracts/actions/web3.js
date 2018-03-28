@@ -3,6 +3,7 @@ import { TO_HEX_PAD } from 'services/smart-contracts/constants'
 import { getRsvFromSig, getTypedDataHash } from 'services/smart-contracts/utils'
 import trezorConnect from 'third-party/trezor-connect'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
+import { AUTH_TYPES } from 'constants/misc'
 const TrezorConnect = trezorConnect.TrezorConnect
 
 const PRODUCTION_MODE = process.env.NODE_ENV === 'production'
@@ -13,7 +14,7 @@ export const setWallet = ({ prKey, addr = '' }) => {
 
     return new Promise((resolve, reject) => {
 
-        getWeb3.then(({ web3, exchange, token }) => {
+        getWeb3().then(({ web3, exchange, token }) => {
 
             /* HACK: because of the testrpc
             * generated addr from prKey (no leading 0x) is different than needed for testrpc 
@@ -58,7 +59,7 @@ export const setWallet = ({ prKey, addr = '' }) => {
 
 export const getAccountMetamask = () => {
     return new Promise((resolve, reject) => {
-        getWeb3.then(({ web3, mode }) => {
+        getWeb3(AUTH_TYPES.METAMASK.name).then(({ web3, mode }) => {
             web3.eth.getAccounts((err, accounts) => {
                 //TODO: maybe different check for different modes
                 if (err || !accounts || !accounts[0]) {
@@ -73,10 +74,10 @@ export const getAccountMetamask = () => {
     })
 }
 
-export const signAuthTokenMetamask = ({ userAddr, typedData }) => {
+export const signAuthTokenMetamask = ({ userAddr, typedData, authType }) => {
     return new Promise((resolve, reject) => {
 
-        getWeb3.then(({ web3, exchange, token, mode }) => {
+        getWeb3(authType).then(({ web3, exchange, token, mode }) => {
 
             web3.currentProvider.sendAsync({
                 method: 'eth_signTypedData',
@@ -131,7 +132,7 @@ export const signAuthToken = ({ mode, userAddr, hdPath, addrIdx }) => {
             pr =  signAuthTokenTrezor({ userAddr, hdPath, mode, addrIdx, typedData })
             break
         case SIGN_TYPES.Eip.id:
-            pr =  signAuthTokenMetamask({ userAddr, typedData })
+            pr =  signAuthTokenMetamask({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name })
             break
         default:
             pr = Promise.reject(new Error('Invalid signature mode!'))

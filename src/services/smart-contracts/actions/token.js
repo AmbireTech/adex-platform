@@ -17,7 +17,7 @@ export const approveTokensEstimateGas = ({ _addr, amountToApprove } = {}) => {
 
     return new Promise((resolve, reject) => {
 
-        getWeb3.then(({ web3, exchange, token }) => {
+        getWeb3().then(({ web3, exchange, token }) => {
             token.methods
                 .allowance(_addr, cfg.addr.exchange)
                 .call()
@@ -49,7 +49,7 @@ export const approveTokens = ({ _addr, amountToApprove } = {}) => {
         // NOTE: to set new approve first set approve to 0
         // https://github.com/OpenZeppelin/zeppelin-solidity/blob/7b9c1429d918a3cf685a1e85fd497d9cc3cf350e/contracts/token/StandardToken.sol#L45
 
-        getWeb3.then(({ web3, exchange, token }) => {
+        getWeb3().then(({ web3, exchange, token }) => {
             token.methods
                 .allowance(_addr, cfg.addr.exchange)
                 .call()
@@ -88,7 +88,7 @@ export const withdrawAdxEstimateGas = ({ _addr, withdrawTo, amountToWithdraw } =
     let amount = adxAmountStrToHex(amountToWithdraw)
 
     return new Promise((resolve, reject) => {
-        getWeb3.then(({ web3, exchange, token }) => {
+        getWeb3().then(({ web3, exchange, token }) => {
             token.methods
                 .transfer(withdrawTo, amount)
                 .estimateGas({
@@ -113,7 +113,7 @@ export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, gas } = {}) =
     let amount = adxAmountStrToHex(amountToWithdraw)
 
     return new Promise((resolve, reject) => {
-        getWeb3.then(({ web3, exchange, token }) => {
+        getWeb3().then(({ web3, exchange, token }) => {
             token.methods
                 .transfer(withdrawTo, amount)
                 .send({

@@ -25,7 +25,7 @@ class SigninMetamask extends Component {
 
   renderDefault = () => {
     let account = this.props.account
-    let lsSig = getSig({ addr: account._addr, mode: account._authMode })
+    let lsSig = getSig({ addr: account._addr, mode: (account._authMode || {}).sigMode })
     let hasSession = !!lsSig && !!account._authSig && (lsSig === account._authSig)
 
     return (

@@ -38,7 +38,7 @@ const checkBidIdAndSign = ({ exchange, _id, _advertiser, _adUnit, _opened, _targ
 export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } }, _adSlot, _addr, gas, gasPrice, onReceipt } = {}) => {
     return new Promise((resolve, reject) => {
 
-        getWeb3
+        getWeb3()
             .then(({ web3, exchange, token }) => {
                 /* TODO: Maybe we should keep _adUnit and _adSlot as it is on the contract (in 32 bytes hex)
                 *   and decode it in the ui when needed
@@ -85,7 +85,7 @@ export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
 // The bid is canceled by the advertiser
 export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } }, _addr, gas, gasPrice } = {}) => {
     return new Promise((resolve, reject) => {
-        getWeb3
+        getWeb3()
             .then(({ web3, exchange, token }) => {
                 _adUnit = ipfsHashTo32BytesHex(_adUnit)
                 _opened = _opened.toString() // TODO: validate - max 365 day in seconds (60 * 60 * 24 * 365)
@@ -133,7 +133,7 @@ export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
 // TODO: get the report, make some endpoint on the node
 export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report, _addr, gas, gasPrice, side } = {}) => {
     return new Promise((resolve, reject) => {
-        getWeb3
+        getWeb3()
             .then(({ web3, exchange, token }) => {
 
                 _report = ipfsHashTo32BytesHex(_report)
@@ -181,7 +181,7 @@ export const giveupBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, 
             return resolve('Not your bid')
         }
 
-        getWeb3
+        getWeb3()
             .then(({ web3, exchange, token }) => {
 
                 let giveupBid = exchange.methods
@@ -223,7 +223,7 @@ export const refundBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, 
             return resolve('Not your bid')
         }
 
-        getWeb3
+        getWeb3()
             .then(({ web3, exchange, token }) => {
 
                 let refundBid = exchange.methods
@@ -267,7 +267,7 @@ const getAdexExchangeBidHash = ({ exchange, typedData }) => {
 
 export const signBid = ({ userAddr, bid }) => {
     return new Promise((resolve, reject) => {
-        getWeb3.then(({ cfg, web3, exchange, token, mode }) => {
+        getWeb3().then(({ cfg, web3, exchange, token, mode }) => {
             //NOTE: We need to set the exchangeAddr because it is needed for the hash
             bid.exchangeAddr = cfg.addr.exchange //Need bid instance
             bid.amount = adxAmountStrToPrecision(bid.amount) // * 10 000 but safe
@@ -343,7 +343,7 @@ export const depositToExchange = ({ amountToDeposit, _addr, gas }) => {
     let amount = adxAmountStrToHex(amountToDeposit)
 
     return new Promise((resolve, reject) => {
-        getWeb3.then(({ web3, exchange, token, mode }) => {
+        getWeb3().then(({ web3, exchange, token, mode }) => {
             var p
             token.methods
                 .allowance(_addr, cfg.addr.exchange)
@@ -379,7 +379,7 @@ export const withdrawFromExchange = ({ amountToWithdraw, _addr, gas }) => {
     let amount = adxAmountStrToHex(amountToWithdraw)
 
     return new Promise((resolve, reject) => {
-        getWeb3
+        getWeb3()
             .then(({ web3, exchange, token, mode }) => {
                 exchange.methods.withdraw(amount)
                     .send({ from: _addr, gas: 90000 })
