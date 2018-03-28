@@ -61,7 +61,7 @@ export const setWallet = ({ prKey, addr = '' }) => {
 export const getAccountMetamask = () => {
     return new Promise((resolve, reject) => {
         getWeb3(AUTH_TYPES.METAMASK.name).then(({ web3 }) => {
-            let mode = AUTH_TYPES.METAMASK.signType 
+            let mode = AUTH_TYPES.METAMASK.signType
 
             web3.eth.getAccounts((err, accounts) => {
                 //TODO: maybe different check for different modes
@@ -105,7 +105,7 @@ export const signAuthTokenMetamask = ({ userAddr, typedData, authType }) => {
 export const signAuthTokenTrezor = ({ userAddr, hdPath, mode, addrIdx, typedData }) => {
     return new Promise((resolve, reject) => {
 
-        let hash = getTypedDataHash({typedData: typedData})
+        let hash = getTypedDataHash({ typedData: typedData })
 
         let buff = Buffer.from(hash.slice(2), 'hex')
         TrezorConnect.ethereumSignMessage(
@@ -116,7 +116,7 @@ export const signAuthTokenTrezor = ({ userAddr, hdPath, mode, addrIdx, typedData
                 } else {
                     return reject(resp)
                 }
-                
+
             }
         )
     })
@@ -130,12 +130,12 @@ export const signAuthToken = ({ mode, userAddr, hdPath, addrIdx }) => {
 
     let pr
 
-    switch(mode) {
+    switch (mode) {
         case SIGN_TYPES.Trezor.id:
-            pr =  signAuthTokenTrezor({ userAddr, hdPath, mode, addrIdx, typedData })
+            pr = signAuthTokenTrezor({ userAddr, hdPath, mode, addrIdx, typedData })
             break
         case SIGN_TYPES.Eip.id:
-            pr =  signAuthTokenMetamask({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name })
+            pr = signAuthTokenMetamask({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name })
             break
         default:
             pr = Promise.reject(new Error('Invalid signature mode!'))
@@ -159,10 +159,10 @@ const padLeftEven = (hex) => {
     return hex;
 }
 
-const sendTxTrezor = ({web3, rawTx, user}) => {
+const sendTxTrezor = ({ web3, rawTx, user, txSuccessData }) => {
     console.log('sendTxTrezor')
     return new Promise((resolve, reject) => {
-    console.log('rawTx', rawTx)
+        console.log('rawTx', rawTx)
         TrezorConnect.ethereumSignTx(
             user._hdWalletAddrPath + '/' + user._hdWalletAddrIdx,
             rawTx.nonce.slice(2),
@@ -184,59 +184,64 @@ const sendTxTrezor = ({web3, rawTx, user}) => {
                     console.log('signedTx', signedTx)
 
                     // TODO: use .on('transactionHash/error')
-                    // web3.eth.sendSignedTransaction(signedTx, function (err, resp) {
-                    //     resolve(resp)
-                    // })
+                    web3.eth.sendSignedTransaction(signedTx)
+                        .on('transactionHash', (trHash) => {
+                            let res = { ...txSuccessData, trHash }
+                            console.log('res', res)
+                            return resolve(res)
+                        })
+                        .on('error', (err) => {
+                            console.log('err', err)
+                            return reject(err)
+                        })
                 } else {
                     console.log('response no success', signedTx)
-                    reject(response)
+                    return reject(response)
                 }
 
             })
-        })
+    })
 }
 
-export const sendTx = ({ tx, opts = {}, user }) => {
-    let web3 = null
+export const sendTx = ({ tx, opts = {}, user, txSuccessData }) => {
+    let web33 = null
     let authType = user._authType
 
-    let rawTx = {
-        nonce: sanitizeHex(Date.now().toString(16)),
-        gasPrice: sanitizeHex((opts.gasPrice || 3009951502 ).toString(16)),
-        gasLimit: sanitizeHex(opts.gas.toString(16)),
-        to: tx._parent._address,
-        value: sanitizeHex((opts.value || 0).toString(16)),
-        data: tx.encodeABI(),
-        chainId: 1,
-    }
+    return new Promise((resolve, reject) => {
+        /* Note use Promise wrapper because despite getWeb3 is Promise itself it is not called by user action
+        *   and this results in Trezor popup block by the browser
+        */
+        getWeb3(authType)
+            .then(({ web3 }) => {
+                web33 = web3
+                return web33.eth.net.getId()
+            })
+            .then((netId) => {
+                let rawTx = {
+                    nonce: sanitizeHex(Date.now().toString(16)),
+                    gasPrice: sanitizeHex((opts.gasPrice || 4009951502).toString(16)),
+                    gasLimit: sanitizeHex(opts.gas.toString(16)),
+                    to: tx._parent._address,
+                    value: sanitizeHex((opts.value || 0).toString(16)),
+                    data: tx.encodeABI(),
+                    chainId: netId,
+                }
 
-    sendTxTrezor({ web3, rawTx, user })
+                return rawTx
+            })
+            .then((rawTx) => {
+                console.log('authType', authType)
+                if (authType === AUTH_TYPES.TREZOR.name) {
+                    return sendTxTrezor({ web3: web33, rawTx, user, opts, txSuccessData })
+                }
+            })
+            .then((res) => {
+                return resolve(res)
+            })
+            .catch((err) => {
+                return reject(err)
+            })
 
-    // TODO: When first call getWeb3, getId trezor popup is blocked ...
-
-    // return getWeb3(authType)
-    //     .then(({ web3 }) => {
-    //        return web3.eth.net.getId()
-    //     })
-    //     .then((netId) => {
-    //         let rawTx = {
-    //             nonce: sanitizeHex(Date.now().toString(16)),
-    //             gasPrice: sanitizeHex((opts.gasPrice || 3009951502 ).toString(16)),
-    //             gasLimit: sanitizeHex(opts.gas.toString(16)),
-    //             to: tx._parent._address,
-    //             value: sanitizeHex((opts.value || 0).toString(16)),
-    //             data: tx.encodeABI(),
-    //             chainId: netId,
-    //         }
-
-    //         return rawTx
-    //     })   
-    //     .then((rawTx)=> {
-    //         console.log('authType', authType)
-    //         if(authType === AUTH_TYPES.TREZOR.name ){
-    //             sendTxTrezor({ web3, rawTx, user })
-    //         }
-    //     })    
-    
+    })
 }
 
