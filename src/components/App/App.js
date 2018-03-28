@@ -13,6 +13,10 @@ import Confirm from 'components/confirm/Confirm'
 import { PersistGate } from 'redux-persist/es/integration/react'
 import Root from './Root'
 
+// window.TREZOR_POPUP_PATH = 'https://localhost/'
+// window.TREZOR_POPUP_ORIGIN = 'http://localhost'
+// window.TREZOR_POPUP_URL = 'http://localhost/popup/popup.html'
+
 const { persistor, store } = configureStore
 // console.log('initial store', store.getState())
 

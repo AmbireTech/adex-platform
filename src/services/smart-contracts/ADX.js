@@ -79,7 +79,7 @@ const getLocalWeb3 = new Promise(function (resolve, reject) {
 })
 
 const getWeb3 = (mode) => {
-	if(mode === AUTH_TYPES.METAMASK.name) {
+	if(mode === AUTH_TYPES.METAMASK.name || true) {
 		return getInjectedWeb3
 	} else {
 		return getLocalWeb3

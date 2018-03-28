@@ -243,7 +243,7 @@ export const Deposit = (props) =>
         trPages={[{ title: 'ACCOUNT_DEPOSIT_TO_EXCHANGE_STEP', page: DepositToExchange }]}
         previewWarnMsgs={[{msg: 'ACCOUNT_DEPOSIT_MULTIPLE_SIGNS_MSG'}]}
         saveFn={({ acc, transaction } = {}) => {
-            return depositToExchange({ _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
+            return depositToExchange({ user: acc, _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
         }}
     />
 
