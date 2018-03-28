@@ -38,7 +38,7 @@ class Auth extends Component {
         }
     }
 
-    authOnServer = ({ mode, addr, hdPath, addrIdx }) => {
+    authOnServer = ({ mode, addr, hdPath, addrIdx, authType }) => {
         let signature = null
 
         signAuthToken({ userAddr: addr, mode, hdPath, addrIdx })
@@ -53,7 +53,12 @@ class Auth extends Component {
                 if (res.status === 'OK') {
                     addSig({ addr: addr, sig: signature, mode: mode, expiryTime: res.expiryTime })
 
-                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: signature } })
+                    let authMode = {
+                        sigMode: mode,
+                        authType: authType
+                    }
+
+                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode, authSig: signature } })
                 } else {
                     this.props.actions.resetAccount()
                 }

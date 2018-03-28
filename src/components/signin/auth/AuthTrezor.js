@@ -22,6 +22,7 @@ import trezorConnect from 'third-party/trezor-connect'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import { web3Utils } from 'services/smart-contracts/ADX'
 import AuthHoc from './AuthHoc'
+import { AUTH_TYPES } from 'constants/misc'
 
 const TrezorConnect = trezorConnect.TrezorConnect
 
@@ -37,7 +38,7 @@ const getAddrStatsLabel = (stats) => {
     let exchangeAvailable = adxToFloatView(exchBal.available)
 
     // TODO: translation
-    return  addrBalanceEth + ' ETH, ' + addrBalanceAdx + ' ADX, on bids: ' +adxOnBids + ' ADX, exchange available: ' + exchangeAvailable + ' ADX'
+    return  addrBalanceEth + ' ETH, ' + addrBalanceAdx + ' ADX, on bids: ' + adxOnBids + ' ADX, exchange available: ' + exchangeAvailable + ' ADX'
 }
 
 // const RRButton = withReactRouterLink(Button)
@@ -85,8 +86,9 @@ class AuthTrezor extends Component {
     }
 
     onAddrSelect = (addr, index) => {
-        let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Trezor.id
-        this.props.authOnServer({ mode, addr, hdPath: HD_PATH, addrIdx: index })
+        let mode = AUTH_TYPES.TREZOR.signType // TEMP?
+        let authType = AUTH_TYPES.TREZOR.name
+        this.props.authOnServer({ mode, addr, authType, hdPath: HD_PATH, addrIdx: index })
     }
 
     render() {

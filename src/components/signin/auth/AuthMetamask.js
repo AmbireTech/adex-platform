@@ -17,6 +17,7 @@ import METAMASK_DL_IMG from 'resources/download-metamask.png'
 import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
 import AuthHoc from './AuthHoc'
+import { AUTH_TYPES } from 'constants/misc'
 
 const { signAuthTokenMetamask, getAccountMetamask } = scActions
 
@@ -39,9 +40,10 @@ class AuthMetamask extends Component {
 
     authOnServer = () => {
         let addr = this.props.account._addr
-        let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id // TEMP?
+        let mode = AUTH_TYPES.METAMASK.signType // TEMP?
+        let authType = AUTH_TYPES.METAMASK.name
 
-        this.props.authOnServer({ mode, addr })
+        this.props.authOnServer({ mode, addr, authType })
     }
 
     // TODO: Make it some common function if needed or make timeout as metamask way 
