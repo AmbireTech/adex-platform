@@ -38,7 +38,7 @@ class Auth extends Component {
         }
     }
 
-    authOnServer = ({ mode, addr, hdPath, addrIdx, authType }) => {
+    authOnServer = ({ mode, addr, hdPath, addrIdx, authType, chainId }) => {
         let signature = null
 
         signAuthToken({ userAddr: addr, mode, hdPath, addrIdx })
@@ -58,7 +58,7 @@ class Auth extends Component {
                         authType: authType
                     }
 
-                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode, authSig: signature } })
+                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode, signType: mode, authType, authSig: signature, chainId, hdWalletAddrPath: hdPath, hdWalletAddrIdx: addrIdx  } })
                 } else {
                     this.props.actions.resetAccount()
                 }

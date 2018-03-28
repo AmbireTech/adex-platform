@@ -53,9 +53,11 @@ class AuthMetamask extends Component {
         let sig = null
         let userAddr = null
         let sigMode = null
+        let chainId = null
         let t = this.props.t
         getAccountMetamask()
-            .then(({ addr, mode }) => {
+            .then(({ addr, mode, netId }) => {
+                chainId = netId
                 sigMode = mode
                 if (!addr) {
                     this.props.actions.resetAccount()
@@ -77,7 +79,7 @@ class AuthMetamask extends Component {
             })
             .then((res) => {
                 if (res) {
-                    this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, authSig: getSig({ addr: userAddr, mode: sigMode }) } })
+                    this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, chainId, authSig: getSig({ addr: userAddr, mode: sigMode }) } })
                 }
             })
             .catch((err) => {
