@@ -18,7 +18,7 @@ const mainnetCfg = {
 let cfg
 
 // if (process.env.NODE_ENV === 'production') {
-	cfg = mainnetCfg
+cfg = mainnetCfg
 // } else {
 // 	cfg = testrpcCfg
 // }
@@ -39,7 +39,7 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 			// mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id // Currently only metamask
 			token = new web3.eth.Contract(tokenAbi, cfg.addr.token)
 			exchange = new web3.eth.Contract(exchangeAbi, cfg.addr.exchange)
-			
+
 			// console.log('web3.currentProvider', web3.currentProvider)
 			console.log('Injected web3 detected.')
 			let results = {
@@ -52,7 +52,7 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 
 			resolve(results)
 		} else {
-			
+
 			console.log('No web3 instance injected, using Local web3.')
 			reject(new Error('No metamask injected web3 found'))
 		}
@@ -66,7 +66,7 @@ const getLocalWeb3 = new Promise(function (resolve, reject) {
 	// let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Trezor.id
 	let token = new web3.eth.Contract(tokenAbi, cfg.addr.token)
 	let exchange = new web3.eth.Contract(exchangeAbi, cfg.addr.exchange)
-	
+
 	let results = {
 		web3: web3,
 		// mode: mode,
@@ -79,7 +79,7 @@ const getLocalWeb3 = new Promise(function (resolve, reject) {
 })
 
 const getWeb3 = (mode) => {
-	if(mode === AUTH_TYPES.METAMASK.name || true) {
+	if (mode === AUTH_TYPES.METAMASK.name) {
 		return getInjectedWeb3
 	} else {
 		return getLocalWeb3

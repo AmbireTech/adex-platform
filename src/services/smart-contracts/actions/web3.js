@@ -178,26 +178,40 @@ const sendTxTrezor = ({ web3, rawTx, user, txSuccessData }) => {
                     rawTx.v = '0x' + response.v.toString(16)
                     rawTx.r = '0x' + response.r
                     rawTx.s = '0x' + response.s
+                    console.log('rawTx signed', rawTx)
                     var eTx = new ethTx(rawTx);
                     var signedTx = '0x' + eTx.serialize().toString('hex')
 
                     console.log('signedTx', signedTx)
-
-                    // TODO: use .on('transactionHash/error')
                     web3.eth.sendSignedTransaction(signedTx)
                         .on('transactionHash', (trHash) => {
                             let res = { ...txSuccessData, trHash }
-                            console.log('res', res)
+                            console.log('transactionHash', res)
                             return resolve(res)
                         })
                         .on('error', (err) => {
-                            console.log('err', err)
+                            console.log('transactionHash err', err)
                             return reject(err)
                         })
                 } else {
                     console.log('response no success', signedTx)
                     return reject(response)
                 }
+            })
+    })
+}
+
+const txSend = ({tx, opts, txSuccessData}) => {
+    return new Promise((resolve, reject) => {
+        tx.send(opts)
+            .on('transactionHash', (trHash) => {
+                let res = { ...txSuccessData, trHash }
+                console.log('res', res)
+                return resolve(res)
+            })
+            .on('error', (err) => {
+                console.log('err', err)
+                return reject(err)
             })
     })
 }
@@ -232,6 +246,8 @@ export const sendTx = ({ tx, opts = {}, user, txSuccessData }) => {
                 console.log('authType', authType)
                 if (authType === AUTH_TYPES.TREZOR.name) {
                     return sendTxTrezor({ web3: web33, rawTx, user, opts, txSuccessData })
+                } else {
+                    return txSend({tx, opts, txSuccessData})
                 }
             })
             .then((res) => {
