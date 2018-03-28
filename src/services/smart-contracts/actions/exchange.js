@@ -144,9 +144,9 @@ export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report
 
                 let state = 'CONFIRM_BID'
                 // TODO: constants for advertiser/publisher
-                if(side === 'advertiser') {
+                if (side === 'advertiser') {
                     state = EXCHANGE_CONSTANTS.BID_STATES.ConfirmedAdv.id
-                }else if (side === 'publisher') {
+                } else if (side === 'publisher') {
                     state = EXCHANGE_CONSTANTS.BID_STATES.ConfirmedPub.id
                 }
 
@@ -170,7 +170,7 @@ export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report
             })
             .catch((err) => {
                 reject(err)
-            })            
+            })
     })
 }
 
@@ -316,28 +316,28 @@ export const signBid = ({ userAddr, bid }) => {
 
 function approveTokens({ token, _addr, exchangeAddr, amount, gas }) {
     // return new Promise((resolve, reject) => {
-        return token.methods.approve(cfg.addr.exchange, amount)
-            // .send({ from: _addr, gas: gas })
-            // .on('transactionHash', (hash) => {
-            //     resolve()
-            // })
-            // .on('error', (err) => {
-            //     reject(err)
-            // })
+    return token.methods.approve(cfg.addr.exchange, amount)
+    // .send({ from: _addr, gas: gas })
+    // .on('transactionHash', (hash) => {
+    //     resolve()
+    // })
+    // .on('error', (err) => {
+    //     reject(err)
+    // })
     // })
 }
 
 function sendDeposit({ exchange, _addr, amount, gas }) {
     // return new Promise((resolve, reject) => {
-        return exchange.methods.deposit(amount)
-//             .send({ from: _addr, gas: gas })
-//             .on('transactionHash', (hash) => {
-//                 resolve({trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_DEPOSIT'})
-//             })
-//             .on('error', (err) => {
-//                 reject(err)
-//             })
-//     })
+    return exchange.methods.deposit(amount)
+    //             .send({ from: _addr, gas: gas })
+    //             .on('transactionHash', (hash) => {
+    //                 resolve({trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_DEPOSIT'})
+    //             })
+    //             .on('error', (err) => {
+    //                 reject(err)
+    //             })
+    //     })
 }
 
 // export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
@@ -389,33 +389,37 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                 .call()
                 .then((allowance) => {
                     if (parseInt(allowance, 10) !== 0) {
-                        p = sendTx({ 
+                        p = sendTx({
                             tx: approveTokens({ token: token, _addr: _addr, exchangeAddr: cfg.addr.exchange, amount: adxAmountStrToHex('0'), gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0 }),
                             opts: { gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0 },
-                            user
+                            user,
+                            txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE_TO_ZERO' }
                         })
                             .then(() => {
-                                sendTx({ 
-                                    tx:  approveTokens({ token: token, _addr: _addr, exchangeAddr: cfg.addr.exchange, amount: amount, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 }), 
+                                sendTx({
+                                    tx: approveTokens({ token: token, _addr: _addr, exchangeAddr: cfg.addr.exchange, amount: amount, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 }),
                                     opts: { gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 },
-                                    user
+                                    user,
+                                    txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE' }
                                 })
                             })
 
                     } else {
-                        p = sendTx({ 
-                            tx: approveTokens({ token: token, _addr: _addr, exchangeAddr: cfg.addr.exchange, amount: amount, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 }), 
+                        p = sendTx({
+                            tx: approveTokens({ token: token, _addr: _addr, exchangeAddr: cfg.addr.exchange, amount: amount, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 }),
                             opts: { gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 },
-                            user
+                            user,
+                            txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE' }
                         })
                     }
 
                     return p.then(() => {
-                        return sendTx({ 
+                        return sendTx({
                             tx: sendDeposit({ exchange: exchange, _addr: _addr, amount: amount, gas: 90000 }),
                             opts: { gas: 90000 },
-                            user
-                        }) 
+                            user,
+                            txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_DEPOSIT' }
+                        })
                     })
                 })
                 .then((result) => {
@@ -439,7 +443,7 @@ export const withdrawFromExchange = ({ amountToWithdraw, _addr, gas }) => {
                 exchange.methods.withdraw(amount)
                     .send({ from: _addr, gas: 90000 })
                     .on('transactionHash', (hash) => {
-                        resolve({trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_WITHDRAW'})
+                        resolve({ trHash: hash, trMethod: 'TRANS_MTD_EXCHANGE_WITHDRAW' })
                     })
                     .on('error', (err) => {
                         reject(err)
