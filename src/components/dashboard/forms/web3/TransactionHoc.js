@@ -19,7 +19,14 @@ export default function NewTransactionHoc(Decorated) {
             this.props.actions.updateNewTransaction({ trId: this.props.trId, key: name, value: value })
         }
 
-        onSave = (err, trans) => {
+        addTx = (tx) => {
+            let txData = { ...tx }
+            txData.status = TX_STATUS.Pending.id
+            txData.sendingTime = Date.now()
+            this.props.actions.addWeb3Transaction({ trans: txData, addr: this.props.account._addr })
+        }
+
+        onSave = (err, tx, manyTxs) => {
             if (typeof this.props.onSave === 'function') {
                 this.props.onSave()
             }
@@ -34,14 +41,15 @@ export default function NewTransactionHoc(Decorated) {
 
             this.props.actions.resetNewTransaction({ trId: this.props.trId })
 
-            if (trans) {
-                let trData = { ...trans }
-                trData.status = TX_STATUS.Pending.id
-                trData.sendingTime = Date.now()
-                this.props.actions.addWeb3Transaction({ trans: trData, addr: this.props.account._addr })
+            if (tx && manyTxs) {
+                tx.forEach(t => {
+                    this.addTx(t)
+                })
+            } else if (tx) {
+                this.addTx(tx)
             }
         }
-        
+
         resetTransaction = () => {
             this.props.actions.resetNewTransaction({ trId: this.props.trId })
         }
@@ -52,8 +60,15 @@ export default function NewTransactionHoc(Decorated) {
 
             this.props.saveFn({ acc: this.props.account, transaction: this.props.transaction })
                 .then((res) => {
-                    this.props.actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTION_SENT_MSG', { args: [res.trHash] }), timeout: 5000 })
-                    this.onSave(null, res)
+                    const areManyTxs = Array.isArray(res)
+
+                    if (areManyTxs) {
+                        this.props.actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTIONS_SENT_MSG', { args: [res.length] }), timeout: 5000 })
+                    } else {
+                        this.props.actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTION_SENT_MSG', { args: [res.trHash] }), timeout: 5000 })
+                    }
+
+                    this.onSave(null, res, areManyTxs)
                 })
                 .catch((err) => {
                     this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [err] }), timeout: 5000 })
@@ -71,12 +86,12 @@ export default function NewTransactionHoc(Decorated) {
             let props = this.props
 
             return (
-                <Decorated 
-                    {...props} 
-                    transaction={transaction} 
-                    save={this.save} 
+                <Decorated
+                    {...props}
+                    transaction={transaction}
+                    save={this.save}
                     cancel={this.cancel}
-                    handleChange={this.handleChange} 
+                    handleChange={this.handleChange}
                     resetTransaction={this.resetTransaction}
                 />
             )

@@ -198,7 +198,6 @@ const sendTxTrezor = ({ web3, rawTx, user, txSuccessData }) => {
                     console.log('response no success', signedTx)
                     return reject(response)
                 }
-
             })
     })
 }
