@@ -71,9 +71,9 @@ class WithdrawEthStep extends Component {
     componentWillUnmount() {
         //TODO: only on continue and validate inputs
         let tr = this.props.transaction
-        // if (tr.withdrawTo && tr.amountToWithdraw) {
-        //     this.estimateGas()
-        // }
+        if (tr.withdrawTo && tr.amountToWithdraw) {
+            this.estimateGas()
+        }
     }
 
     render() {

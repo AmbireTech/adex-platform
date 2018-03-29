@@ -306,10 +306,37 @@ export const signBid = ({ userAddr, bid }) => {
     })
 }
 
+export const depositToExchangeEG = ({ amountToDeposit, _addr, user, gas }) => {
+    let amount = adxAmountStrToHex(amountToDeposit)
+    let mode = user._authMode.signType
+    let txResults = []
+
+    return getWeb3(user._authMode.authType)
+        .then(({ web3, exchange, token }) => {
+            return token.methods
+                .allowance(_addr, cfg.addr.exchange)
+                .call()
+                .then((allowance) => {
+                    if (parseInt(allowance, 10) !== 0) {
+                        txResults.push({trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE_TO_ZERO', gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0  })
+                        txResults.push({trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE', gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0  })
+                    } else {
+                        txResults.push({trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE', gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0  })
+                    }
+
+                    txResults.push({trMethod: 'TRANS_MTD_EXCHANGE_DEPOSIT', gas: 90000  })
+
+                    return txResults
+                })
+        })
+
+}
+
 export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
     let amount = adxAmountStrToHex(amountToDeposit)
     let mode = user._authMode.signType
     let txResults = []
+    let gasPrice = user._settings.gasPrice
 
     return new Promise((resolve, reject) => {
         getWeb3(user._authMode.authType)
@@ -322,7 +349,7 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                         if (parseInt(allowance, 10) !== 0) {
                             p = sendTx({
                                 tx: token.methods.approve(cfg.addr.exchange, adxAmountStrToHex('0')),
-                                opts: { from: _addr, gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0 },
+                                opts: { from: _addr, gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0, gasPrice },
                                 user,
                                 txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE_TO_ZERO' }
                             })
@@ -330,7 +357,7 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                                     txResults.push(result)
                                     sendTx({
                                         tx: token.methods.approve(cfg.addr.exchange, amount),
-                                        opts: { from: _addr, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 },
+                                        opts: { from: _addr, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0, gasPrice },
                                         user,
                                         txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE' }
                                     })
@@ -339,7 +366,7 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                         } else {
                             p = sendTx({
                                 tx: token.methods.approve(cfg.addr.exchange, amount),
-                                opts: { from: _addr, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 },
+                                opts: { from: _addr, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0, gasPrice },
                                 user,
                                 txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE' }
                             })
@@ -349,7 +376,7 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                             txResults.push(result)
                             return sendTx({
                                 tx: exchange.methods.deposit(amount),
-                                opts: { from: _addr, gas: 90000 },
+                                opts: { from: _addr, gas: 90000, gasPrice },
                                 user,
                                 txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_DEPOSIT' }
                             })

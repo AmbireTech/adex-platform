@@ -28,7 +28,7 @@ export const getGasData = () => {
                 safeLow: { price: (data.safeLow / 10).toFixed(0), wait: data.safeLowWait },
                 average: { price: (data.average / 10).toFixed(0), wait: data.avgWait },
                 fast: { price: (data.fast / 10).toFixed(0), wait: data.fastWait },
-                fastest: { price: (data.safeLow / 10).toFixed(0), wait: data.safeLowWait },
+                fastest: { price: (data.fastest / 10).toFixed(0), wait: data.fastestWait },
             }
 
             return gasData

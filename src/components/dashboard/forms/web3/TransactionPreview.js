@@ -12,6 +12,7 @@ import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
 import { web3Utils } from 'services/smart-contracts/ADX'
 import { FontIcon } from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
+import GasPrice from 'components/dashboard/account/GasPrice'
 
 const TooltipCol = Tooltip(Col)
 
@@ -21,20 +22,61 @@ class TransactionPreview extends Component {
         super(props, context)
 
         this.state = {
-            gas: 0
+            gas: null
+        }
+    }
+
+    componentWillMount() {
+        if (this.props.estimateGasFn) {
+            
+            this.props.actions.updateSpinner(this.props.trId, true)
+            this.props.estimateGasFn({acc: this.props.account, transaction: this.props.transaction})
+                .then((estimatedGas) => {
+                    this.setState({gas: estimatedGas })
+                    this.props.actions.updateSpinner(this.props.trId, false)
+                })
+        }
+    }
+
+    gasRow = ({gas, gasPrice}) => {
+        let eGas = gas.gas ? gas.gas : gas
+        console.log('eGas', eGas)
+        console.log('gasPrice', gasPrice)
+        let fee = web3Utils.fromWei((eGas * parseInt(gasPrice, 10)).toString(), 'ether')
+        return (
+            <Row>
+                <TooltipCol xs={12} lg={4} className={'theme.textRight'}
+                    tooltip={this.props.t('OPERATION_FEE_TOOLTIP')}
+                >
+                    <strong>  {this.props.t(gas.trMethod || 'OPERATION_FEE')}:</strong>
+                </TooltipCol>
+                <Col xs={12} lg={8} className={'theme.textLeft'}><strong>{fee} ETH</strong></Col>
+            </Row>
+        )
+
+    } 
+
+    gasInfo = ({gasPrice}) => {
+        if(!this.state.gas) return null
+
+        if(Array.isArray(this.state.gas)) {
+            return(
+                <div>
+                    {this.state.gas.map((gas, index) => 
+                        <this.gasRow key={index} gas={gas} gasPrice={gasPrice} />
+                    )}
+                </div>         
+            )
+        } else {
+            return ( <this.gasRow  gas={this.state.gas} gasPrice={gasPrice} /> )
         }
     }
 
     render() {
         let transaction = this.props.transaction || {}
         let t = this.props.t
-        let fee
-        let gasPrice = this.props.account._settings.gasPrice ? this.props.account._settings.gasPrice : DEFAULT_GAS_PRICE
+        const gasPrice = this.props.account._settings.gasPrice ? this.props.account._settings.gasPrice : DEFAULT_GAS_PRICE
         let previewWarnMsgs = this.props.previewWarnMsgs
-
-        if (transaction.gas) {
-            fee = web3Utils.fromWei((transaction.gas * gasPrice).toString(), 'ether')
-        }
 
         return (
             <div>
@@ -42,7 +84,8 @@ class TransactionPreview extends Component {
                     <ProgressBar type='circular' mode='indeterminate' multicolor />
                     :
 
-                    <Grid fluid>
+                    <Grid fluid>                       
+                        <GasPrice />
                         {previewWarnMsgs ?
                             previewWarnMsgs.map((msg, index) =>
                                 <Row key={index}>
@@ -53,6 +96,9 @@ class TransactionPreview extends Component {
                                 </Row>
                             )
                             : null}
+                        
+                        <this.gasInfo gasPrice={gasPrice} />
+
                         {
                             Object
                                 .keys(transaction)
@@ -81,17 +127,6 @@ class TransactionPreview extends Component {
                                     )
                                 })
                         }
-
-                        {!!fee ?
-                            <Row>
-                                <TooltipCol xs={12} lg={4} className={'theme.textRight'}
-                                    tooltip={this.props.t('OPERATION_FEE_TOOLTIP')}
-                                >
-                                    <strong>  {this.props.t('OPERATION_FEE *', { isProp: true })}:</strong>
-                                </TooltipCol>
-                                <Col xs={12} lg={8} className={'theme.textLeft'}><strong>{fee} ETH</strong></Col>
-                            </Row>
-                            : null}
                     </Grid>
                 }
 
@@ -106,7 +141,8 @@ TransactionPreview.propTypes = {
     trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     transaction: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    previewMsgs: PropTypes.array
+    previewMsgs: PropTypes.array,
+    estimateGasFn: PropTypes.func
 }
 
 function mapStateToProps(state, props) {
