@@ -1,3 +1,5 @@
+@import './../../../styles/variables.css';
+
 .textLeft {
     text-align: left;
 }
@@ -12,4 +14,37 @@
 
 .actionBtn {
     margin-left: 5px;
+}
+
+.dropdown {
+    width: 100%;
+    
+    & .label {
+        color: #fff !important;
+    }
+
+    & .value {
+        & > input {
+            color: #fff !important;
+            border-bottom-color: #fff !important;
+        }
+
+        & > label {
+            color: #fff !important;
+        }
+
+        & .bar {
+
+        }
+    }
+
+    & .field {
+         color: #fff !important;
+    }
+
+    & .input {
+        & .label {
+            color: #fff !important;
+        }
+    }
 }

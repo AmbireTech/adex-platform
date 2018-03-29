@@ -1,7 +1,16 @@
 const URL = 'https://ethgasstation.info/json/ethgasAPI.json'
 
+export const DEFAULT_DATA = {
+    safeLow: { price: 3, wait: 90 },
+    average: { price: 4, wait: 30 },
+    fast: { price: 21, wait:  2 },
+    fastest: { price: 30, wait: 1 },
+}
+
 export const getGasData = () => {
-    return fetch(URL)
+    return fetch(URL, {
+        method: 'GET'
+    })
         .then((res) => {
             if (res.status >= 200 && res.status < 400) {
                 return res.json()
