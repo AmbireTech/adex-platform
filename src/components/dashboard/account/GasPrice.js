@@ -17,7 +17,7 @@ class GasPrice extends React.Component {
         super(props, context)
 
         this.state = {
-            gasPrices: this.mapGasPrices(DEFAULT_DATA)
+            gasPrices: null
         }
     }
 
@@ -37,13 +37,15 @@ class GasPrice extends React.Component {
     getGasPrices = () => {
         getGasData()
             .then((gasData) => {
-                let prices = this.mapGasPrices(gasData)
+                let prices = this.mapGasPrices(gasData)                
                 this.setState({ gasPrices: prices })
             })
     }
 
     componentWillMount() {
-        this.getGasPrices()
+        this.setState({ gasPrices: this.mapGasPrices(this.props.account._settings.gasData || DEFAULT_DATA) })
+        // this.getGasPrices()
+        // Use interval check for that - services/store-data/gas
     }
 
     changeGasPrice = (val) => {

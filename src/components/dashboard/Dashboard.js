@@ -26,6 +26,7 @@ import Translate from 'components/translate/Translate'
 import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, NewChannelDialog } from './forms/NewItems'
 import { items as ItemsConstants } from 'adex-constants'
 import checkTransactions from 'services/store-data/transactions'
+import checkGasData from 'services/store-data/gas'
 import { SORT_PROPERTIES_ITEMS, SORT_PROPERTIES_COLLECTION, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 
 const { ItemsTypes } = ItemsConstants
@@ -53,11 +54,13 @@ class Dashboard extends React.Component {
 
     componentWillUnmount() {
         checkTransactions.stop()
+        checkGasData.stop()
     }
 
     componentWillMount(nextProps) {
         this.props.actions.updateNav('side', this.props.match.params.side)
         checkTransactions.start()
+        checkGasData.start()
     }
 
     componentWillUpdate(nextProps) {
