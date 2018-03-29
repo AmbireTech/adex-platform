@@ -61,4 +61,12 @@
 .adxLink {
   color: var(--color-adex-divider-darker);
 }
+
+.label {
+  color: white !important;
+}
+
+.value { 
+  color: white !important;
+}
  

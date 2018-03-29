@@ -6,46 +6,38 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 // import moment from 'moment'
 // import { Button, IconButton } from 'react-toolbox/lib/button'
-import Slider from 'react-toolbox/lib/slider'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import Translate from 'components/translate/Translate'
 import { web3Utils } from 'services/smart-contracts/ADX'
-import { getCurrentGasPrice } from 'services/smart-contracts/actions/eth'
-import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
+import { getGasData, DEFAULT_DATA } from 'services/eth/gas'
 
-// TODO: translations
-const pricesMap = [
-    { ratio: 0.75, label: 'Very slow (Maybe not)' },
-    { ratio: 0.85, label: 'Slow' },
-    { ratio: 1, label: 'Normal' },
-    { ratio: 1.2, label: 'Fast' },
-    { ratio: 1.5, label: 'Very fast' }
-]
-
+// TODO: Move component to side nav ?
 class GasPrice extends React.Component {
     constructor(props, context) {
         super(props, context)
 
         this.state = {
-            gasPrices: this.mapGasPrices(DEFAULT_GAS_PRICE)
+            gasPrices: this.mapGasPrices(DEFAULT_DATA)
         }
     }
 
-    mapGasPrices = (price) => {
-        let prices = pricesMap.map((pr) => {
-            let val = pr.ratio * price
-            let inGwei = web3Utils.fromWei(val.toString(), 'Gwei')
+    mapGasPrices = (gasData) => {
+        let prices = Object.keys(gasData).map((key) => {
+            let pr = gasData[key]
+            let inGwei = pr.price
+            let inWei = web3Utils.toWei(inGwei.toString(), 'Gwei')
 
-            return { value: val, label: inGwei + ' Gwei - ' + pr.label }
+            // TODO: Translations
+            return { value: inWei, label: inGwei + ' Gwei - ' + pr.wait + 'min' }
         })
 
         return prices
     }
 
     getGasPrices = () => {
-        getCurrentGasPrice()
-            .then((price) => {
-                let prices = this.mapGasPrices(price)
+        getGasData()
+            .then((gasData) => {
+                let prices = this.mapGasPrices(gasData)
                 this.setState({ gasPrices: prices })
             })
     }
@@ -68,9 +60,10 @@ class GasPrice extends React.Component {
         if (settings && settings.gasPrice) {
             gasPrice = settings.gasPrice
         } else {
-            gasPrice = this.state.gasPrices[3].value
+            gasPrice = this.state.gasPrices[1].value
         }
 
+        console.log(gasPrice)
         return (
             <span>
                 <Dropdown
