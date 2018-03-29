@@ -37,4 +37,5 @@
 - make anchor component to set some attributes on one place - done
 - fix adex-models getImgUrl to return '' instead og undefined
 - Img component use div wit background instead img (need to fix some styles where used)
+- Fix transaction validations on back btn
 
