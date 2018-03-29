@@ -23,6 +23,7 @@ const {
     giveupBid,
     refundBid,
     depositToExchange,
+    depositToExchangeEG,
     withdrawFromExchange
 } = scActions
 
@@ -244,6 +245,9 @@ export const Deposit = (props) =>
         previewWarnMsgs={[{msg: 'ACCOUNT_DEPOSIT_MULTIPLE_SIGNS_MSG'}]}
         saveFn={({ acc, transaction } = {}) => {
             return depositToExchange({ user: acc, _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
+        }}
+        estimateGasFn={({ acc, transaction } = {}) => {
+            return depositToExchangeEG({ user: acc, _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
         }}
     />
 

@@ -67,7 +67,7 @@ class GasPrice extends React.Component {
         return (
             <span>
                 <Dropdown
-                    theme={theme}
+                    // theme={this.props.theme}
                     auto={false}
                     label='GAS_PRICE_LABEL'
                     onChange={this.changeGasPrice}

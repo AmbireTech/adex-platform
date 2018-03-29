@@ -14,7 +14,7 @@ import FontIcon from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 import packageJson from './../../../../package.json'
 import Anchor from 'components/common/anchor/anchor'
-import GasPrice from 'components/dashboard/account/GasPrice'
+// import GasPrice from 'components/dashboard/account/GasPrice'
 
 const RRListItem = withReactRouterLink(ListItem)
 
@@ -116,7 +116,7 @@ class SideNav extends Component {
                             selectable={false}
                             ripple={false}
                         >
-                            <GasPrice theme={theme}/>
+                            {/* <GasPrice theme={theme}/> */}
                         </ListItem>
                         <Anchor target='_blank' href='https://medium.com/adex-network-tips-and-tricks' >
                             <ListItem
