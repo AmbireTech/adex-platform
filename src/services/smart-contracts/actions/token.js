@@ -3,6 +3,7 @@ import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/const
 import { setWalletAndGetAddress, toHexParam, adxAmountStrToHex } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
 import { registerItem } from 'services/smart-contracts/actions'
+import { sendTx } from 'services/smart-contracts/actions/web3'
 
 // TODO: check if that values can be changed
 const GAS_LIMIT_APPROVE_0_WHEN_NO_0 = 45136 + 1
@@ -83,50 +84,25 @@ export const approveTokens = ({ _addr, amountToApprove } = {}) => {
     })
 }
 
-export const withdrawAdxEstimateGas = ({ _addr, withdrawTo, amountToWithdraw } = {}) => {
+export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, gas, gasPrice, user, estimateGasOnly } = {}) => {
 
     let amount = adxAmountStrToHex(amountToWithdraw)
 
-    return new Promise((resolve, reject) => {
-        getWeb3().then(({ web3, exchange, token }) => {
-            token.methods
-                .transfer(withdrawTo, amount)
-                .estimateGas({
-                    from: _addr,
-                    // to: withdrawTo,
-                    // value: amount
+    return getWeb3(user._authMode.authType)
+        .then(({ web3, exchange, token }) => {
+
+            let tx = token.methods.transfer(withdrawTo, amount)
+
+            if(estimateGasOnly) {
+                return tx.estimateGas({from: _addr})
+            } else {
+                return sendTx({
+                    web3,
+                    tx: tx,
+                    opts: { from: _addr, gas, gasPrice },
+                    user,
+                    txSuccessData: { trMethod: 'TRANS_MTD_ADX_WITHDRAW' }
                 })
-                .then(function (res) {
-                    console.log('withdrawAdxEstimateGas res', res)
-                    return resolve(res)
-                })
-                .catch((err) => {
-                    console.log('withdrawAdxEstimateGas err', err)
-                    reject(err)
-                })
+            }
         })
-    })
-}
-
-export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, gas } = {}) => {
-
-    let amount = adxAmountStrToHex(amountToWithdraw)
-
-    return new Promise((resolve, reject) => {
-        getWeb3().then(({ web3, exchange, token }) => {
-            token.methods
-                .transfer(withdrawTo, amount)
-                .send({
-                    from: _addr,
-                    gasPrice: GAS_PRICE,
-                    gas: gas || GAS_LIMIT
-                })
-                .on('transactionHash', (hash) => {
-                    resolve({trHash: hash, trMethod: 'TRANS_MTD_ADX_WITHDRAW'})
-                })
-                .on('error', (err) => {
-                    reject(err)
-                })
-        })
-    })
 }

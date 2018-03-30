@@ -52,30 +52,6 @@ class WithdrawEthStep extends Component {
         this.props.validate('withdrawTo', { isValid: isValid, err: { msg: msg }, dirty: dirty })
     }
 
-
-    // Until TREZOR and LEDGER integration we don't need this (Coming soon)
-    estimateGas() {
-        this.props.actions.updateSpinner(this.props.trId, true)
-        this.props.estimateGasFn({
-            _addr: this.props.account._addr,
-            withdrawTo: this.props.transaction.withdrawTo,
-            amountToWithdraw: this.props.transaction.amountToWithdraw
-        })
-            .then((res) => {
-                this.props.actions.updateNewTransaction({ trId: this.props.trId, key: 'gas', value: res })
-                this.props.actions.updateSpinner(this.props.trId, false)
-            })
-        // TODO: catch
-    }
-
-    componentWillUnmount() {
-        //TODO: only on continue and validate inputs
-        let tr = this.props.transaction
-        if (tr.withdrawTo && tr.amountToWithdraw) {
-            this.estimateGas()
-        }
-    }
-
     render() {
         let tr = this.props.transaction
         let t = this.props.t
@@ -123,8 +99,7 @@ WithdrawEthStep.propTypes = {
     label: PropTypes.string,
     trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     transaction: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired,
-    estimateGasFn: PropTypes.func.isRequired
+    account: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state, props) {

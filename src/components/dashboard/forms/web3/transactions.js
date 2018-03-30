@@ -15,8 +15,6 @@ const {
     approveTokens,
     withdrawEth,
     withdrawAdx,
-    withdrawAdxEstimateGas,
-    withdrawEthEstimateGas,
     acceptBid,
     cancelBid,
     verifyBid,
@@ -55,13 +53,24 @@ export const WithdrawEth = (props) =>
         saveFn={({ acc, transaction } = {}) => {
             return withdrawEth(
                 {
+                    user: acc,
                     _addr: acc._addr,
                     withdrawTo: transaction.withdrawTo,
                     amountToWithdraw: transaction.amountToWithdraw,
                     gas: transaction.gas
                 })
         }}
-        estimateGasFn={withdrawEthEstimateGas}
+        estimateGasFn={({ acc, transaction } = {}) => {
+            return withdrawEth(
+                {
+                    user: acc,
+                    _addr: acc._addr,
+                    withdrawTo: transaction.withdrawTo,
+                    amountToWithdraw: transaction.amountToWithdraw,
+                    gas: transaction.gas,
+                    estimateGasOnly: true
+                })
+        }}
     />
 
 export const WithdrawAdx = (props) =>
@@ -74,14 +83,25 @@ export const WithdrawAdx = (props) =>
         trPages={[{ title: 'ACCOUNT_WITHDRAW_ADX_STEP', page: WithdrawStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return withdrawAdx(
-                {
+                {   
+                    user: acc,
                     _addr: acc._addr,
                     withdrawTo: transaction.withdrawTo,
                     amountToWithdraw: transaction.amountToWithdraw,
                     gas: transaction.gas
                 })
         }}
-        estimateGasFn={withdrawAdxEstimateGas}
+        estimateGasFn={({ acc, transaction } = {}) => {
+            return withdrawAdx(
+                {   
+                    user: acc,
+                    _addr: acc._addr,
+                    withdrawTo: transaction.withdrawTo,
+                    amountToWithdraw: transaction.amountToWithdraw,
+                    gas: transaction.gas,
+                    estimateGasOnly: true
+                })
+        }}
     />
 
 export const AcceptBid = (props) =>

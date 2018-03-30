@@ -1,52 +1,30 @@
 import { cfg, web3Utils, getWeb3 } from 'services/smart-contracts/ADX'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
+import { sendTx } from 'services/smart-contracts/actions/web3'
 // import { encrypt } from 'services/crypto/crypto'
 // import { registerItem } from 'services/smart-contracts/actions'
 const GAS_LIMIT = 21000
 
-export const withdrawEthEstimateGas = ({ _addr, withdrawTo, amountToWithdraw } = {}) => {
+export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, gas, gasPrice, user, estimateGasOnly } = {}) => {
 
     let amount = web3Utils.toWei(amountToWithdraw, 'ether')
 
-    return new Promise((resolve, reject) => {
-        getWeb3().then(({ cfg, exchange, token, web3 }) => {
-            web3.eth.estimateGas({
-                from: _addr,
-                to: withdrawTo,
-                value: amount
-            })
-                .then(function (res) {
-                    console.log('withdrawEthEstimateGas res', res)
-                    return resolve(res)
+    return getWeb3(user._authMode.authType)
+        .then(({ web3, exchange, token }) => {
+
+            if(estimateGasOnly) {
+                return web3.eth.estimateGas({from: _addr,  value: amount, to: withdrawTo})
+            } else {
+                // TODO: Fix it to work with sendTransaction
+                return sendTx({
+                    web3,
+                    tx: web3.eth.sendTransaction,
+                    opts: { from: _addr, gas, gasPrice, value: amount, to: withdrawTo },
+                    user,
+                    txSuccessData: { trMethod: 'TRANS_MTD_ETH_WITHDRAW' }
                 })
-                .catch((err) => {
-                    console.log('withdrawEthEstimateGas err', err)
-                    reject(err)
-                })
+            }
         })
-    })
-}
-
-export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, gas } = {}) => {
-
-    let amount = web3Utils.toWei(amountToWithdraw, 'ether')
-
-    return new Promise((resolve, reject) => {
-        getWeb3().then(({ cfg, exchange, token, web3 }) => {
-            web3.eth.sendTransaction({
-                from: _addr,
-                to: withdrawTo,
-                value: amount,
-                gas: gas || GAS_LIMIT
-            })
-                .on('transactionHash', (hash) => {
-                    resolve({ trHash: hash, trMethod: 'TRANS_MTD_ETH_WITHDRAW' })
-                })
-                .on('error', (err) => {
-                    reject(err)
-                })
-        })
-    })
 }
 
 export const getCurrentGasPrice = () => {
