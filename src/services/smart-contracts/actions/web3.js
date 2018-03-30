@@ -197,7 +197,7 @@ const sendTxTrezor = ({ web3, rawTx, user, txSuccessData }) => {
 
 const txSend = ({tx, opts, txSuccessData}) => {
     return new Promise((resolve, reject) => {
-        tx.send(opts)
+        (tx.send ? tx.send(opts) : tx(opts))
             .on('transactionHash', (trHash) => {
                 let res = { ...txSuccessData, trHash }
                 console.log('res', res)
@@ -213,15 +213,17 @@ const txSend = ({tx, opts, txSuccessData}) => {
 export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData }) => {
     let authType = user._authType
 
+    console.log('tx', tx)
+
     return web3.eth.net.getId()
         .then((netId) => {
             let rawTx = {
                 nonce: sanitizeHex(Date.now().toString(16)),
                 gasPrice: sanitizeHex((parseInt(opts.gasPrice, 10) || 4009951502).toString(16)),
                 gasLimit: sanitizeHex((parseInt(opts.gas, 10)).toString(16)),
-                to: tx._parent._address,
+                to: tx._parent ? tx._parent._address : opts.to,
                 value: sanitizeHex((opts.value || 0).toString(16)),
-                data: tx.encodeABI(),
+                data: tx.encodeABI ? tx.encodeABI() : '',
                 chainId: netId,
             }
 
