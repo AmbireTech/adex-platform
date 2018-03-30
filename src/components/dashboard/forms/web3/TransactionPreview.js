@@ -22,7 +22,8 @@ class TransactionPreview extends Component {
         super(props, context)
 
         this.state = {
-            gas: null
+            gas: null,
+            errors: []
         }
     }
 
@@ -33,6 +34,7 @@ class TransactionPreview extends Component {
             this.props.estimateGasFn({acc: this.props.account, transaction: this.props.transaction})
                 .then((estimatedGas) => {
                     this.setState({gas: estimatedGas })
+                    this.props.handleChange('gas', estimatedGas)
                     this.props.actions.updateSpinner(this.props.trId, false)
                 })
         }

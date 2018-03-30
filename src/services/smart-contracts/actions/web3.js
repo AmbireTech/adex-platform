@@ -217,8 +217,8 @@ export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData }) => {
         .then((netId) => {
             let rawTx = {
                 nonce: sanitizeHex(Date.now().toString(16)),
-                gasPrice: sanitizeHex((opts.gasPrice || 4009951502).toString(16)),
-                gasLimit: sanitizeHex(opts.gas.toString(16)),
+                gasPrice: sanitizeHex((parseInt(opts.gasPrice, 10) || 4009951502).toString(16)),
+                gasLimit: sanitizeHex((parseInt(opts.gas, 10)).toString(16)),
                 to: tx._parent._address,
                 value: sanitizeHex((opts.value || 0).toString(16)),
                 data: tx.encodeABI(),

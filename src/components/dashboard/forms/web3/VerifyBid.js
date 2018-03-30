@@ -11,6 +11,14 @@ import { BidInfo } from './BidsCommon'
 import { getBidVerificationReport } from 'services/adex-node/actions'
 
 class VerifyBid extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            errMsg: null,
+            errArgs: []
+        }
+    }
+
     componentWillMount() {
         if (!this.props.transaction.report) {
 
@@ -27,14 +35,16 @@ class VerifyBid extends Component {
                     this.props.validate('report', { isValid: true, dirty: false })
                 })
                 .catch((err) => {
+                    this.props.actions.updateSpinner(this.props.trId, false)
+                    this.setState({ errMsg: 'ERR_TRANSACTION', errArgs: [err] })
                     this.props.actions
-                        .addToast({ type: 'warning', action: 'X', label: this.props.t('ERR_GETTING_BID_REPORT', { args: [err] }), timeout: 5000 })
+                        .addToast({ type: 'warning', action: 'X', label: this.props.t('ERR_GETTING_BID_REPORT', { args: [err] }), timeout: 5000 })                    
                 })
         }
     }
 
     render() {
-        let tr = this.props.transaction
+        let tx = this.props.transaction
         let t = this.props.t
         let bid = this.props.placedBid || {}
 
@@ -44,7 +54,7 @@ class VerifyBid extends Component {
                     <ProgressBar className={theme.progressCircleCenter} type='circular' mode='indeterminate' multicolor />
                     :
                     <Grid fluid>
-                        <BidInfo bid={bid} t={t} report={tr.report} />
+                        <BidInfo bid={bid} t={t} report={tx.report} errMsg={this.state.errMsg} errArgs={this.state.errArgs} />
                     </Grid>
                 }
             </div>
