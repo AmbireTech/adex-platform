@@ -71,6 +71,7 @@ export default function NewTransactionHoc(Decorated) {
                     this.onSave(null, res, areManyTxs)
                 })
                 .catch((err) => {
+                    console.log('save err', err)
                     this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [err] }), timeout: 5000 })
                     this.onSave(err, null)
                 })

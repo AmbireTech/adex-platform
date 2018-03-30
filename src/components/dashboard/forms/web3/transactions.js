@@ -93,25 +93,32 @@ export const AcceptBid = (props) =>
         trId={'accept_bid_slot_' + props.slotId + '_bid_' + props.bidId}
         trPages={[{ title: 'ACCEPT_BID_STEP', page: AcceptBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
-            return new Promise((resolve, reject) => {
-                acceptBid(
-                    {
-                        placedBid: transaction.placedBid,
-                        _adSlot: transaction.slot._ipfs,
-                        _addr: transaction.account._addr,
-                        gas: transaction.gas,
-                        gasPrice: transaction._gasPrice
-                    })
-                    .then((res) => {
-                        resolve(res)
-                        return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
-                    })
-                    .catch((err) => {
-                        return reject(err)
-                    })
-            })
+            return  acceptBid(
+                {
+                    user: acc,
+                    placedBid: transaction.placedBid,
+                    _adSlot: transaction.slot._ipfs,
+                    _addr: transaction.account._addr,
+                    gas: transaction.gas,
+                    gasPrice: transaction._gasPrice
+                })
+                .then((res) => {
+                    sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+                    return res
+                })
         }}
-        estimateGasFn={() => 100000}
+        estimateGasFn={({ acc, transaction } = {}) => {
+            return  acceptBid(
+                {
+                    user: acc,
+                    placedBid: transaction.placedBid,
+                    _adSlot: transaction.slot._ipfs,
+                    _addr: transaction.account._addr,
+                    gas: transaction.gas,
+                    gasPrice: transaction._gasPrice,
+                    estimateGasOnly: true
+                })
+        }}
     />
 
 export const CancelBid = (props) =>
@@ -123,25 +130,32 @@ export const CancelBid = (props) =>
         trId={'cancel_bid_adunit_' + props.unitId + '_bid_' + props.bidId}
         trPages={[{ title: 'CANCEL_BID_STEP', page: CancelBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
-            return new Promise((resolve, reject) => {
-                cancelBid(
-                    {
-                        placedBid: transaction.placedBid,
-                        _adUnit: transaction.unit._ipfs,
-                        _addr: transaction.account._addr,
-                        gas: transaction.gas,
-                        gasPrice: transaction._gasPrice
-                    })
-                    .then((res) => {
-                        resolve(res)
-                        return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
-                    })
-                    .catch((err) => {
-                        return reject(err)
-                    })
-            })
+            return cancelBid(
+                {
+                    user: acc,
+                    placedBid: transaction.placedBid,
+                    _adUnit: transaction.unit._ipfs,
+                    _addr: transaction.account._addr,
+                    gas: transaction.gas,
+                    gasPrice: transaction._gasPrice
+                })
+                .then((res) => {
+                    sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+                    return res
+                })
         }}
-        estimateGasFn={() => 300000}
+        estimateGasFn={({ acc, transaction } = {}) => {
+            return cancelBid(
+                {
+                    user: acc,
+                    placedBid: transaction.placedBid,
+                    _adUnit: transaction.unit._ipfs,
+                    _addr: transaction.account._addr,
+                    gas: transaction.gas,
+                    gasPrice: transaction._gasPrice,
+                    estimateGasOnly: true
+                })
+        }}
     />
 
 export const VerifyBid = (props) =>
@@ -153,26 +167,34 @@ export const VerifyBid = (props) =>
         trId={'verify_bid_item_' + props.itemId + '_bid_' + props.bidId}
         trPages={[{ title: 'VERIFY_BID_STEP', page: VerifyBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
-            return new Promise((resolve, reject) => {
-                verifyBid(
-                    {
-                        placedBid: transaction.placedBid,
-                        _report: transaction.report.ipfs,
-                        _addr: acc._addr,
-                        gas: transaction.gas,
-                        gasPrice: transaction._gasPrice,
-                        side: transaction.side
-                    })
-                    .then((res) => {
-                        resolve(res)
-                        return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
-                    })
-                    .catch((err) => {
-                        return reject(err)
-                    })
-            })
+            return verifyBid(
+                {
+                    user: acc,
+                    placedBid: transaction.placedBid,
+                    _report: transaction.report.ipfs,
+                    _addr: acc._addr,
+                    gas: transaction.gas,
+                    gasPrice: transaction._gasPrice,
+                    side: transaction.side
+                })
+                .then((res) => {
+                    sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+                    return res                         
+                })
         }}
-        estimateGasFn={() => 300000}
+        estimateGasFn={({ acc, transaction } = {}) => {
+            return verifyBid(
+                {
+                    user: acc,
+                    placedBid: transaction.placedBid,
+                    _report: transaction.report.ipfs,
+                    _addr: acc._addr,
+                    gas: transaction.gas,
+                    gasPrice: transaction._gasPrice,
+                    side: transaction.side,
+                    estimateGasOnly: true
+                })
+        }}
     />
 
 export const GiveupBid = (props) =>
@@ -184,24 +206,30 @@ export const GiveupBid = (props) =>
         trId={'giveup_bid_slot_' + props.slotId + '_bid_' + props.bidId}
         trPages={[{ title: 'GIVEUP_BID_STEP', page: VerifyBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
-            return new Promise((resolve, reject) => {
-                giveupBid(
-                    {
-                        placedBid: transaction.placedBid,
-                        _addr: acc._addr,
-                        gas: transaction.gas,
-                        gasPrice: transaction._gasPrice
-                    })
-                    .then((res) => {
-                        resolve(res)
-                        return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
-                    })
-                    .catch((err) => {
-                        return reject(err)
-                    })
-            })
+            return giveupBid(
+                {
+                    user: acc,
+                    placedBid: transaction.placedBid,
+                    _addr: acc._addr,
+                    gas: transaction.gas,
+                    gasPrice: transaction._gasPrice
+                })
+                .then((res) => {
+                    sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+                    return res
+                })
         }}
-        estimateGasFn={() => 300000}
+        estimateGasFn={({ acc, transaction } = {}) => {
+            return giveupBid(
+                {
+                    user: acc,
+                    placedBid: transaction.placedBid,
+                    _addr: acc._addr,
+                    gas: transaction.gas,
+                    gasPrice: transaction._gasPrice,
+                    estimateGasOnly: true
+                })
+        }}
     />
 
 
@@ -214,24 +242,30 @@ export const RefundBid = (props) =>
         trId={'refund_bid_unit_' + props.unitId + '_bid_' + props.bidId}
         trPages={[{ title: 'REFUND_BID_STEP', page: VerifyBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
-            return new Promise((resolve, reject) => {
-                refundBid(
-                    {
-                        placedBid: transaction.placedBid,
-                        _addr: acc._addr,
-                        gas: transaction.gas,
-                        gasPrice: transaction._gasPrice
-                    })
-                    .then((res) => {
-                        resolve(res)
-                        return sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
-                    })
-                    .catch((err) => {
-                        return reject(err)
-                    })
-            })
+            return  refundBid(
+                {
+                    user: acc,
+                    placedBid: transaction.placedBid,
+                    _addr: acc._addr,
+                    gas: transaction.gas,
+                    gasPrice: transaction._gasPrice
+                })
+                .then((res) => {
+                    sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+                    return res
+                })
         }}
-        estimateGasFn={() => 300000}
+        estimateGasFn={({ acc, transaction } = {}) => {
+            return  refundBid(
+                {
+                    user: acc,
+                    placedBid: transaction.placedBid,
+                    _addr: acc._addr,
+                    gas: transaction.gas,
+                    gasPrice: transaction._gasPrice,
+                    estimateGasOnly: true
+                })
+        }}
     />
 
 export const Deposit = (props) =>
@@ -260,6 +294,9 @@ export const WithdrawFromExchange = (props) =>
         trId='withdrawWromExchange'
         trPages={[{ title: 'ACCOUNT_WITHDRAW_FROM_EXCHANGE_STEP', page: WithdrawFromExchangePage }]}
         saveFn={({ acc, transaction } = {}) => {
-            return withdrawFromExchange({ _addr: acc._addr, amountToWithdraw: transaction.withdrawAmount, gas: transaction.gas })
+            return withdrawFromExchange({ _addr: acc._addr, amountToWithdraw: transaction.withdrawAmount, gas: transaction.gas, user: acc, })
+        }}
+        estimateGasFn={({ acc, transaction } = {}) => {
+            return withdrawFromExchange({ _addr: acc._addr, amountToWithdraw: transaction.withdrawAmount, gas: transaction.gas, user: acc, estimateGasOnly: true })
         }}
     />
