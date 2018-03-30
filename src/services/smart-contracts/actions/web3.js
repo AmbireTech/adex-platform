@@ -161,8 +161,7 @@ const padLeftEven = (hex) => {
 
 const sendTxTrezor = ({ web3, rawTx, user, txSuccessData }) => {
     console.log('sendTxTrezor')
-    return new Promise((resolve, reject) => {
-        console.log('rawTx', rawTx)
+    return new Promise(( resolve, reject) => {
         TrezorConnect.ethereumSignTx(
             user._hdWalletAddrPath + '/' + user._hdWalletAddrIdx,
             rawTx.nonce.slice(2),
@@ -174,15 +173,11 @@ const sendTxTrezor = ({ web3, rawTx, user, txSuccessData }) => {
             rawTx.chainId,
             (response) => {
                 if (response.success) {
-
                     rawTx.v = '0x' + response.v.toString(16)
                     rawTx.r = '0x' + response.r
                     rawTx.s = '0x' + response.s
-                    console.log('rawTx signed', rawTx)
                     var eTx = new ethTx(rawTx);
                     var signedTx = '0x' + eTx.serialize().toString('hex')
-
-                    console.log('signedTx', signedTx)
                     web3.eth.sendSignedTransaction(signedTx)
                         .on('transactionHash', (trHash) => {
                             let res = { ...txSuccessData, trHash }
@@ -194,7 +189,6 @@ const sendTxTrezor = ({ web3, rawTx, user, txSuccessData }) => {
                             return reject(err)
                         })
                 } else {
-                    console.log('response no success', signedTx)
                     return reject(response)
                 }
             })
@@ -216,47 +210,30 @@ const txSend = ({tx, opts, txSuccessData}) => {
     })
 }
 
-export const sendTx = ({ tx, opts = {}, user, txSuccessData }) => {
-    let web33 = null
+export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData }) => {
     let authType = user._authType
 
-    return new Promise((resolve, reject) => {
-        /* Note use Promise wrapper because despite getWeb3 is Promise itself it is not called by user action
-        *   and this results in Trezor popup block by the browser
-        */
-        getWeb3(authType)
-            .then(({ web3 }) => {
-                web33 = web3
-                return web33.eth.net.getId()
-            })
-            .then((netId) => {
-                let rawTx = {
-                    nonce: sanitizeHex(Date.now().toString(16)),
-                    gasPrice: sanitizeHex((opts.gasPrice || 4009951502).toString(16)),
-                    gasLimit: sanitizeHex(opts.gas.toString(16)),
-                    to: tx._parent._address,
-                    value: sanitizeHex((opts.value || 0).toString(16)),
-                    data: tx.encodeABI(),
-                    chainId: netId,
-                }
+    return web3.eth.net.getId()
+        .then((netId) => {
+            let rawTx = {
+                nonce: sanitizeHex(Date.now().toString(16)),
+                gasPrice: sanitizeHex((opts.gasPrice || 4009951502).toString(16)),
+                gasLimit: sanitizeHex(opts.gas.toString(16)),
+                to: tx._parent._address,
+                value: sanitizeHex((opts.value || 0).toString(16)),
+                data: tx.encodeABI(),
+                chainId: netId,
+            }
 
-                return rawTx
-            })
-            .then((rawTx) => {
-                console.log('authType', authType)
-                if (authType === AUTH_TYPES.TREZOR.name) {
-                    return sendTxTrezor({ web3: web33, rawTx, user, opts, txSuccessData })
-                } else {
-                    return txSend({tx, opts, txSuccessData})
-                }
-            })
-            .then((res) => {
-                return resolve(res)
-            })
-            .catch((err) => {
-                return reject(err)
-            })
-
-    })
+            return rawTx
+        })
+        .then((rawTx) => {
+            console.log('authType', authType)
+            if (authType === AUTH_TYPES.TREZOR.name) {
+                return sendTxTrezor({ web3, rawTx, user, opts, txSuccessData })
+            } else {
+                return txSend({tx, opts, txSuccessData})
+            }
+        })
 }
 

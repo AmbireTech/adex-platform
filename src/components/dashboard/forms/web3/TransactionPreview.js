@@ -84,8 +84,13 @@ class TransactionPreview extends Component {
                     <ProgressBar type='circular' mode='indeterminate' multicolor />
                     :
 
-                    <Grid fluid>                       
-                        <GasPrice />
+                    <Grid fluid>
+                        <Row >
+                            <Col xs={12} lg={4} className={classnames(theme.textRight, theme.warning)}></Col>
+                            <Col xs={12} lg={8} className={classnames(theme.textLeft)}>
+                                <GasPrice />
+                            </Col>
+                        </Row>
                         {previewWarnMsgs ?
                             previewWarnMsgs.map((msg, index) =>
                                 <Row key={index}>
