@@ -79,11 +79,16 @@ const getLocalWeb3 = new Promise(function (resolve, reject) {
 })
 
 const getWeb3 = (mode) => {
-	if (mode === AUTH_TYPES.METAMASK.name || true) {
-		return getInjectedWeb3
-	} else {
-		return getLocalWeb3
-	}
+	/* NOTE: use Promise wrapper because despite getWeb3 is Promise itself it is not called by user action
+	*   and this results in Trezor popup block by the browser
+	*/
+	return new Promise((resolve, reject) => {
+		if (mode === AUTH_TYPES.METAMASK.name || true) {
+			return resolve(getInjectedWeb3)
+		} else {
+			return resolve(getLocalWeb3)
+		}
+	})	
 }
 
 const web3Utils = Web3.utils

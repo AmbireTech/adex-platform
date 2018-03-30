@@ -338,64 +338,62 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
     let txResults = []
     let gasPrice = user._settings.gasPrice
 
-    return new Promise((resolve, reject) => {
-        getWeb3(user._authMode.authType)
-            .then(({ web3, exchange, token }) => {
-                var p
-                token.methods
-                    .allowance(_addr, cfg.addr.exchange)
-                    .call()
-                    .then((allowance) => {
-                        if (parseInt(allowance, 10) !== 0) {
-                            p = sendTx({
-                                tx: token.methods.approve(cfg.addr.exchange, adxAmountStrToHex('0')),
-                                opts: { from: _addr, gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0, gasPrice },
-                                user,
-                                txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE_TO_ZERO' }
-                            })
-                                .then((result) => {
-                                    txResults.push(result)
-                                    sendTx({
-                                        tx: token.methods.approve(cfg.addr.exchange, amount),
-                                        opts: { from: _addr, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0, gasPrice },
-                                        user,
-                                        txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE' }
-                                    })
+    return getWeb3(user._authMode.authType)
+        .then(({ web3, exchange, token }) => {
+            var p
+            return token.methods
+                .allowance(_addr, cfg.addr.exchange)
+                .call()
+                .then((allowance) => {
+                    if (parseInt(allowance, 10) !== 0) {
+                        p = sendTx({
+                            web3,
+                            tx: token.methods.approve(cfg.addr.exchange, adxAmountStrToHex('0')),
+                            opts: { from: _addr, gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0, gasPrice },
+                            user,
+                            txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE_TO_ZERO' },
+                        })
+                            .then((result) => {
+                                txResults.push(result)
+                                return sendTx({
+                                    web3,
+                                    tx: token.methods.approve(cfg.addr.exchange, amount),
+                                    opts: { from: _addr, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0, gasPrice },
+                                    user,
+                                    txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE' }
                                 })
-
-                        } else {
-                            p = sendTx({
-                                tx: token.methods.approve(cfg.addr.exchange, amount),
-                                opts: { from: _addr, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0, gasPrice },
-                                user,
-                                txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE' }
                             })
-                        }
 
-                        return p.then((result) => {
-                            txResults.push(result)
-                            return sendTx({
-                                tx: exchange.methods.deposit(amount),
-                                opts: { from: _addr, gas: 90000, gasPrice },
-                                user,
-                                txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_DEPOSIT' }
-                            })
+                    } else {
+                        p = sendTx({
+                            web3,
+                            tx: token.methods.approve(cfg.addr.exchange, amount),
+                            opts: { from: _addr, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0, gasPrice },
+                            user,
+                            txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE' }
+                        })
+                    }
+
+                    return p.then((result) => {
+                        txResults.push(result)
+                        return sendTx({
+                            web3,
+                            tx: exchange.methods.deposit(amount),
+                            opts: { from: _addr, gas: 90000, gasPrice },
+                            user,
+                            txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_DEPOSIT' }
                         })
                     })
-                    .then((result) => {
-                        txResults.push(result)
-                        console.log('depositToExchange result ', txResults)
-                        return resolve(txResults)
-                    })
-                    .catch((err) => {
-                        console.log('token approve err', err)
-                        reject(err)
-                    })
-            })
-    })
+                })
+                .then((result) => {
+                    txResults.push(result)
+                    console.log('depositToExchange result ', txResults)
+                    return txResults
+                })
+        })
 }
 
-export const withdrawFromExchange = ({ amountToWithdraw, _addr, gas }) => {
+export const withdrawFromExchange = ({ amountToWithdraw, _addr, gas, user }) => {
     let amount = adxAmountStrToHex(amountToWithdraw)
 
     return new Promise((resolve, reject) => {
