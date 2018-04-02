@@ -77,7 +77,7 @@ export const getAccountMetamask = () => {
     })
 }
 
-export const signAuthTokenMetamask = ({ userAddr, typedData, authType }) => {
+export const signTypedMetamask = ({ userAddr, typedData, authType, hash }) => {
     return new Promise((resolve, reject) => {
 
         getWeb3(authType).then(({ web3, exchange, token, mode }) => {
@@ -95,23 +95,21 @@ export const signAuthTokenMetamask = ({ userAddr, typedData, authType }) => {
                     return reject(res.error)
                 }
 
-                let signature = { sig: res.result }
+                let signature = { sig: res.result, hash: hash }
                 return resolve(signature)
             })
         })
     })
 }
 
-export const signAuthTokenTrezor = ({ userAddr, hdPath, mode, addrIdx, typedData }) => {
+export const signTypedTrezor = ({ userAddr, hdPath, mode, addrIdx, typedData, hash }) => {
     return new Promise((resolve, reject) => {
-
-        let hash = getTypedDataHash({ typedData: typedData })
 
         let buff = Buffer.from(hash.slice(2), 'hex')
         TrezorConnect.ethereumSignMessage(
             hdPath + '/' + addrIdx, buff, (resp) => {
                 if (resp.success) {
-                    let signature = { sig: '0x' + resp.signature, hashData: hash }
+                    let signature = { sig: '0x' + resp.signature, hash: hash }
                     return resolve(signature)
                 } else {
                     return reject(resp)
@@ -122,27 +120,35 @@ export const signAuthTokenTrezor = ({ userAddr, hdPath, mode, addrIdx, typedData
     })
 }
 
+export const signTypedMsg = ({ mode, userAddr, hdPath, addrIdx, typedData }) => {
+    let pr
+
+    let hash = getTypedDataHash({ typedData: typedData })
+
+    switch (mode) {
+        case SIGN_TYPES.Trezor.id:
+            pr = signTypedTrezor({ userAddr, hdPath, mode, addrIdx, typedData, hash })
+            break
+        case SIGN_TYPES.Eip.id:
+            pr = signTypedMetamask({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name, hash })
+            break
+        default:
+            pr = Promise.reject(new Error('Invalid signature mode!'))
+    }
+
+    return pr
+}
+
 export const signAuthToken = ({ mode, userAddr, hdPath, addrIdx }) => {
     let authToken = (Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()
     let typedData = [
         { type: 'uint', name: 'Auth token', value: authToken }
     ]
 
-    let pr
-
-    switch (mode) {
-        case SIGN_TYPES.Trezor.id:
-            pr = signAuthTokenTrezor({ userAddr, hdPath, mode, addrIdx, typedData })
-            break
-        case SIGN_TYPES.Eip.id:
-            pr = signAuthTokenMetamask({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name })
-            break
-        default:
-            pr = Promise.reject(new Error('Invalid signature mode!'))
-    }
+    let pr = signTypedMsg({ mode, userAddr, hdPath, addrIdx, typedData })
 
     return pr.then((res = {}) => {
-        let sig = { sig_mode: mode, sig: res.sig, authToken: authToken, typedData, hashData: res.hashData }
+        let sig = { sig_mode: mode, sig: res.sig, authToken: authToken, typedData, hash: res.hash }
 
         return sig
     })

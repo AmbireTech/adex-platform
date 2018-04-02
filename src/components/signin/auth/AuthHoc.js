@@ -42,9 +42,9 @@ class Auth extends Component {
         let signature = null
 
         signAuthToken({ userAddr: addr, mode, hdPath, addrIdx })
-            .then(({ sig, sig_mode, authToken, typedData, hashData }) => {
+            .then(({ sig, sig_mode, authToken, typedData, hash }) => {
                 signature = sig
-                return signToken({ userid: addr, signature: signature, authToken, mode, typedData, hashData })
+                return signToken({ userid: addr, signature: signature, authToken, mode, typedData, hash })
             })
             .then((res) => {
                 // TEMP

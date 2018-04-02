@@ -1,5 +1,5 @@
 import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
-import { sendTx } from 'services/smart-contracts/actions/web3'
+import { sendTx, signTypedMsg } from 'services/smart-contracts/actions/web3'
 import { GAS_PRICE, MULT, DEFAULT_TIMEOUT } from 'services/smart-contracts/constants'
 import { toHexParam, adxAmountStrToHex, adxAmountStrToPrecision, getRsvFromSig, getTypedDataHash } from 'services/smart-contracts/utils'
 import { encrypt } from 'services/crypto/crypto'
@@ -196,52 +196,38 @@ const getAdexExchangeBidHash = ({ exchange, typedData }) => {
         .call()
 }
 
-export const signBid = ({ userAddr, bid }) => {
-    return new Promise((resolve, reject) => {
-        getWeb3().then(({ cfg, web3, exchange, token, mode }) => {
+export const signBid = ({ userAddr, bid, user }) => {
+    return getWeb3(user._authMode.authType)
+        .then(({ cfg, web3, exchange }) => {
             //NOTE: We need to set the exchangeAddr because it is needed for the hash
             bid.exchangeAddr = cfg.addr.exchange //Need bid instance
             bid.amount = adxAmountStrToPrecision(bid.amount) // * 10 000 but safe
             bid.opened = Date.now()
 
+            // NOTE: Currently instance of bid is passed - must be changed
             let typed = bid.typed
 
-            let hash = getTypedDataHash({ typedData: typed })
+            let hashCheck = getTypedDataHash({ typedData: typed })
+            let mode = user._authMode.sigMode
 
-            getAdexExchangeBidHash({ exchange: exchange, typedData: typed })
+            console.log('user', user)
+
+            return getAdexExchangeBidHash({ exchange: exchange, typedData: typed })
                 .then((scHash) => {
-                    if (scHash === hash) {
-                        return hash
+                    if (scHash === hashCheck) {
+                        return hashCheck
                     } else {
-                        throw new Error('Error calculated hash does not match exchange id  ')
+                        throw new Error('Error calculated hash does not match exchange id')
                     }
                 })
                 .then((checkedHash) => {
-                    if (mode === EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id) {
-                        web3.currentProvider.sendAsync({
-                            method: 'eth_signTypedData',
-                            params: [typed, userAddr],
-                            from: userAddr
-                        }, (err, res) => {
-                            if (err) {
-                                return reject(err)
-                            }
-
-                            if (res.error) {
-                                return reject(res.error)
-                            }
-
-                            //TODO: do it with the Bid model
-                            let signature = { sig_mode: mode, signature: res.result, hash: checkedHash, ...getRsvFromSig(res.result) }
-                            return resolve(signature)
-                        })
-                    }
+                    return signTypedMsg({ mode, userAddr, typedData: typed, addrIdx: user._settings.addrIdx, hdPath: user._settings.hdPath })
                 })
-                .catch((err) => {
-                    return reject(err)
+                .then((res) => {
+                    let signature = { sig_mode: mode, signature: res.sig, hash: res.hash, ...getRsvFromSig(res.sig) }
+                    return signature
                 })
         })
-    })
 }
 
 export const depositToExchangeEG = ({ amountToDeposit, _addr, user, gas }) => {

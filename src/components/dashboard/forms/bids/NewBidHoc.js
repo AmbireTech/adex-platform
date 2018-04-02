@@ -22,14 +22,14 @@ export default function NewBidHoc(Decorated) {
       }
 
       if (Array.isArray(this.props.onSave)) {
-          for (var index = 0; index < this.props.onSave.length; index++) {
-              if (typeof this.props.onSave[index] === 'function') {
-                  this.props.onSave[index]()
-              }
+        for (var index = 0; index < this.props.onSave.length; index++) {
+          if (typeof this.props.onSave[index] === 'function') {
+            this.props.onSave[index]()
           }
+        }
       }
 
-      this.props.actions.resetNewBid({bidId: this.props.bidId})
+      this.props.actions.resetNewBid({ bidId: this.props.bidId })
     }
 
     save = () => {
@@ -37,13 +37,14 @@ export default function NewBidHoc(Decorated) {
       let bid = { ...this.props.bid }
       let unit = this.props.adUnit
       let bidInst = new Bid(bid)
-      let userAddr = this.props.account._addr
+      let user = this.props.account
+      let userAddr = user._addr
       let authSig = this.props.account._authSig
       bidInst.adUnit = unit._ipfs
       bidInst.adUnitId = unit._id
       bidInst.advertiser = this.props.account._addr
 
-      signBid({ userAddr: userAddr, authSig: authSig, bid: bidInst })
+      signBid({ userAddr: userAddr, authSig: authSig, bid: bidInst, user: user })
         .then((sig) => {
           bidInst.signature = sig
           bidInst._id = sig.hash
@@ -51,11 +52,11 @@ export default function NewBidHoc(Decorated) {
           return placeBid({ bid: bidInst.plainObj(), userAddr: userAddr, authSig: authSig })
         })
         .then((bid) => {
-          this.props.actions.addToast({ type: 'accept', action: 'X', label: t('BID_PLACED_MSG', {args: [bid._id]}), timeout: 5000 })
+          this.props.actions.addToast({ type: 'accept', action: 'X', label: t('BID_PLACED_MSG', { args: [bid._id] }), timeout: 5000 })
           this.onSave()
         })
         .catch((err) => {
-          this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_PLACE_BID', {args: [err.message || err]}), timeout: 5000 })
+          this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_PLACE_BID', { args: [err.message || err] }), timeout: 5000 })
           this.onSave()
         })
     }
@@ -69,7 +70,7 @@ export default function NewBidHoc(Decorated) {
       let props = this.props
 
       return (
-        <Decorated {...props} bid={bid} save={this.save} handleChange={this.handleChange} cancel={this.cancel}/>
+        <Decorated {...props} bid={bid} save={this.save} handleChange={this.handleChange} cancel={this.cancel} />
       )
     }
   }
