@@ -61,11 +61,14 @@ export default function NewTransactionHoc(Decorated) {
             this.props.saveFn({ acc: this.props.account, transaction: this.props.transaction })
                 .then((res) => {
                     const areManyTxs = Array.isArray(res)
+                    let userSettings = { ...this.props.account._settings }
 
                     if (areManyTxs) {
                         this.props.actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTIONS_SENT_MSG', { args: [res.length] }), timeout: 5000 })
+                        // this.props.actions.updateAccount({ ownProps: { settings: userSettings.nonce + res.length } })
                     } else {
                         this.props.actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTION_SENT_MSG', { args: [res.trHash] }), timeout: 5000 })
+                        // this.props.actions.updateAccount({ ownProps: { settings: userSettings.nonce + 1 } })
                     }
 
                     this.onSave(null, res, areManyTxs)
@@ -78,12 +81,12 @@ export default function NewTransactionHoc(Decorated) {
         }
 
         getErrMsg = (err) => {
-            let stack = (err.message.toString() || err.toString() || '').split(/\r\n|\n|\r/g)
+            let stack = ((err.message || err || '').toString()).split(/\r\n|\n|\r/g)
 
             if (stack.length > 1) {
-                return err.name + ': ' + stack[0]
+                return err.name + ': ' + (stack[0].error || stack[0])
             } else {
-                return err
+                return err.error || err
             }
         }
 
