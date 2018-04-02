@@ -27,6 +27,16 @@ export default function NewTransactionHoc(Decorated) {
         }
 
         onSave = (err, tx, manyTxs) => {
+            this.props.actions.resetNewTransaction({ trId: this.props.trId })
+
+            if (tx && manyTxs) {
+                tx.forEach(t => {
+                    this.addTx(t)
+                })
+            } else if (tx) {
+                this.addTx(tx)
+            }
+
             if (typeof this.props.onSave === 'function') {
                 this.props.onSave()
             }
@@ -37,16 +47,6 @@ export default function NewTransactionHoc(Decorated) {
                         this.props.onSave[index]()
                     }
                 }
-            }
-
-            this.props.actions.resetNewTransaction({ trId: this.props.trId })
-
-            if (tx && manyTxs) {
-                tx.forEach(t => {
-                    this.addTx(t)
-                })
-            } else if (tx) {
-                this.addTx(tx)
             }
         }
 
@@ -71,10 +71,20 @@ export default function NewTransactionHoc(Decorated) {
                     this.onSave(null, res, areManyTxs)
                 })
                 .catch((err) => {
-                    console.log('save err', err)
-                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [err] }), timeout: 5000 })
+                    console.log('err on save', err)
+                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [this.getErrMsg(err)] }), timeout: 5000 })
                     this.onSave(err, null)
                 })
+        }
+
+        getErrMsg = (err) => {
+            let stack = (err.message.toString() || err.toString() || '').split(/\r\n|\n|\r/g)
+
+            if (stack.length > 1) {
+                return err.name + ': ' + stack[0]
+            } else {
+                return err
+            }
         }
 
         cancel = () => {

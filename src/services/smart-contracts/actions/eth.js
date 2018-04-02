@@ -5,21 +5,21 @@ import { sendTx } from 'services/smart-contracts/actions/web3'
 // import { registerItem } from 'services/smart-contracts/actions'
 const GAS_LIMIT = 21000
 
-export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, gas, gasPrice, user, estimateGasOnly } = {}) => {
+export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, gas, user, estimateGasOnly } = {}) => {
 
     let amount = web3Utils.toWei(amountToWithdraw, 'ether')
 
     return getWeb3(user._authMode.authType)
         .then(({ web3, exchange, token }) => {
 
-            if(estimateGasOnly) {
-                return web3.eth.estimateGas({from: _addr,  value: amount, to: withdrawTo})
+            if (estimateGasOnly) {
+                return web3.eth.estimateGas({ from: _addr, value: amount, to: withdrawTo })
             } else {
                 // TODO: Fix it to work with sendTransaction
                 return sendTx({
                     web3,
                     tx: web3.eth.sendTransaction,
-                    opts: { from: _addr, gas, gasPrice, value: amount, to: withdrawTo },
+                    opts: { from: _addr, gas: gas, value: amount, to: withdrawTo },
                     user,
                     txSuccessData: { trMethod: 'TRANS_MTD_ETH_WITHDRAW' }
                 })

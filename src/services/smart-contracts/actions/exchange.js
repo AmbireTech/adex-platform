@@ -20,8 +20,8 @@ const checkBidIdAndSign = ({ exchange, _id, _advertiser, _adUnit, _opened, _targ
                 throw new Error('Invalid signature')
             } else {
 
-            return exchange.methods.getBidID(_advertiser, _adUnit, _opened, _target, _amount, _timeout)
-                .call()
+                return exchange.methods.getBidID(_advertiser, _adUnit, _opened, _target, _amount, _timeout)
+                    .call()
             }
         })
         .then((idCheck) => {
@@ -35,7 +35,7 @@ const checkBidIdAndSign = ({ exchange, _id, _advertiser, _adUnit, _opened, _targ
         })
 }
 
-export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } }, _adSlot, _addr, gas, gasPrice, onReceipt, user, estimateGasOnly } = {}) => {
+export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } }, _adSlot, _addr, gas, onReceipt, user, estimateGasOnly } = {}) => {
     return getWeb3(user._authMode.authType)
         .then(({ web3, exchange, token }) => {
             /* TODO: Maybe we should keep _adUnit and _adSlot as it is on the contract (in 32 bytes hex)
@@ -52,28 +52,26 @@ export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
 
             let tx = exchange.methods.acceptBid(_advertiser, _adUnit, _opened, _target, _amount, _timeout, _adSlot, v, r, s, sig_mode)
 
-            gasPrice = gasPrice || user._settings.gasPrice
-
             // TODO: Maybe we dont need to check didSign and getBidID
             return checkBidIdAndSign({ exchange, _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, v, r, s, sig_mode })
                 .then(() => {
-                    if(estimateGasOnly) {
-                        return tx.estimateGas({from: _addr})
+                    if (estimateGasOnly) {
+                        return tx.estimateGas({ from: _addr })
                     } else {
                         return sendTx({
                             web3,
                             tx: tx,
-                            opts: { from: _addr, gas, gasPrice },
+                            opts: { from: _addr, gas },
                             user,
                             txSuccessData: { bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Accepted.id, trMethod: 'TRANS_MTD_EXCHANGE_ACCEPT_BID' }
                         })
                     }
                 })
-        })  
+        })
 }
 
 // The bid is canceled by the advertiser
-export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } }, _addr, gas, gasPrice, user, estimateGasOnly } = {}) => {
+export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } }, _addr, gas, user, estimateGasOnly } = {}) => {
     return getWeb3(user._authMode.authType)
         .then(({ web3, exchange, token }) => {
             _adUnit = ipfsHashTo32BytesHex(_adUnit)
@@ -86,21 +84,19 @@ export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
 
             let _advertiser = _addr
 
-            gasPrice = gasPrice || user._settings.gasPrice
-
             // function cancelBid(bytes32 _adunit, uint _opened, uint _target, uint _amount, uint _timeout, uint8 v, bytes32 r, bytes32 s, uint8 sigMode)
             let tx = exchange.methods.cancelBid(_adUnit, _opened, _target, _amount, _timeout, v, r, s, sig_mode)
 
             // NOTE: if checkBidIdAndSign we can handle the error on tx preview and not let the user to try sign the tx  
             return checkBidIdAndSign({ exchange, _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, v, r, s, sig_mode })
                 .then(() => {
-                    if(estimateGasOnly) {
-                        return tx.estimateGas({from: _addr})
+                    if (estimateGasOnly) {
+                        return tx.estimateGas({ from: _addr })
                     } else {
                         return sendTx({
                             web3,
                             tx: tx,
-                            opts: { from: _addr, gas, gasPrice },
+                            opts: { from: _addr, gas: gas },
                             user,
                             txSuccessData: { bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Canceled.id, trMethod: 'TRANS_MTD_EXCHANGE_CANCEL_BID' }
                         })
@@ -110,10 +106,8 @@ export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
 }
 
 // TODO: get the report, make some endpoint on the node
-export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report, _addr, gas, gasPrice, side, user, estimateGasOnly } = {}) => {
-    
-    gasPrice = gasPrice || user._settings.gasPrice
-    
+export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report, _addr, gas, side, user, estimateGasOnly } = {}) => {
+
     return getWeb3(user._authMode.authType)
         .then(({ web3, exchange, token }) => {
 
@@ -129,13 +123,13 @@ export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report
                 state = EXCHANGE_CONSTANTS.BID_STATES.ConfirmedPub.id
             }
 
-            if(estimateGasOnly) {
-                return tx.estimateGas({from: _addr})
+            if (estimateGasOnly) {
+                return tx.estimateGas({ from: _addr })
             } else {
                 return sendTx({
                     web3,
                     tx: tx,
-                    opts: { from: _addr, gas, gasPrice },
+                    opts: { from: _addr, gas: gas },
                     user,
                     txSuccessData: { bidId: _id, state: state, trMethod: 'TRANS_MTD_EXCHANGE_VERIFY_BID' }
                 })
@@ -144,26 +138,24 @@ export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report
 }
 
 // The bid is canceled by the publisher
-export const giveupBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, gas, gasPrice, user, estimateGasOnly } = {}) => {
+export const giveupBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, gas, user, estimateGasOnly } = {}) => {
 
     if (_publisher !== _addr) {
         return Promise.reject('Not your bid')
     }
-
-    gasPrice = gasPrice || user._settings.gasPrice
 
     return getWeb3(user._authMode.authType)
         .then(({ web3, exchange, token }) => {
 
             let tx = exchange.methods.giveupBid(_id)
 
-            if(estimateGasOnly) {
-                return tx.estimateGas({from: _addr})
+            if (estimateGasOnly) {
+                return tx.estimateGas({ from: _addr })
             } else {
                 return sendTx({
                     web3,
                     tx: tx,
-                    opts: { from: _addr, gas, gasPrice },
+                    opts: { from: _addr, gas: gas },
                     user,
                     txSuccessData: { bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Canceled.id, trMethod: 'TRANS_MTD_EXCHANGE_GIVEUP_BID' }
                 })
@@ -172,31 +164,29 @@ export const giveupBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, 
 }
 
 // This can be done if a bid is accepted, but expired
-export const refundBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, gas, gasPrice, user, estimateGasOnly } = {}) => {
+export const refundBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, gas, user, estimateGasOnly } = {}) => {
 
-        if (_advertiser !== _addr) {
-            return Promise.reject('Not your bid')
-        }
+    if (_advertiser !== _addr) {
+        return Promise.reject('Not your bid')
+    }
 
-        gasPrice = gasPrice || user._settings.gasPrice
+    return getWeb3(user._authMode.authType)
+        .then(({ web3, exchange, token }) => {
 
-        return getWeb3(user._authMode.authType)
-            .then(({ web3, exchange, token }) => {
+            let tx = exchange.methods.refundBid(_id)
 
-                let tx = exchange.methods.refundBid(_id)
-
-                if(estimateGasOnly) {
-                    return tx.estimateGas({from: _addr})
-                } else {
-                    return sendTx({
-                        web3,
-                        tx: tx,
-                        opts: { from: _addr, gas, gasPrice },
-                        user,
-                        txSuccessData: { bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Expired.id, trMethod: 'TRANS_MTD_EXCHANGE_REFUND_BID' }
-                    })
-                }
-            })
+            if (estimateGasOnly) {
+                return tx.estimateGas({ from: _addr })
+            } else {
+                return sendTx({
+                    web3,
+                    tx: tx,
+                    opts: { from: _addr, gas: gas },
+                    user,
+                    txSuccessData: { bidId: _id, state: EXCHANGE_CONSTANTS.BID_STATES.Expired.id, trMethod: 'TRANS_MTD_EXCHANGE_REFUND_BID' }
+                })
+            }
+        })
 }
 
 // gets the hash (bid id) from adex exchange contract
@@ -264,13 +254,13 @@ export const depositToExchangeEG = ({ amountToDeposit, _addr, user, gas }) => {
                 .call()
                 .then((allowance) => {
                     if (parseInt(allowance, 10) !== 0) {
-                        txResults.push({trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE_TO_ZERO', gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0  })
-                        txResults.push({trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE', gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0  })
+                        txResults.push({ trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE_TO_ZERO', gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0 })
+                        txResults.push({ trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE', gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 })
                     } else {
-                        txResults.push({trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE', gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0  })
+                        txResults.push({ trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE', gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 })
                     }
 
-                    txResults.push({trMethod: 'TRANS_MTD_EXCHANGE_DEPOSIT', gas: 90000  })
+                    txResults.push({ trMethod: 'TRANS_MTD_EXCHANGE_DEPOSIT', gas: 90000 })
 
                     return txResults
                 })
@@ -281,7 +271,6 @@ export const depositToExchangeEG = ({ amountToDeposit, _addr, user, gas }) => {
 export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
     let amount = adxAmountStrToHex(amountToDeposit)
     let txResults = []
-    let gasPrice = user._settings.gasPrice
 
     return getWeb3(user._authMode.authType)
         .then(({ web3, exchange, token }) => {
@@ -294,7 +283,7 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                         p = sendTx({
                             web3,
                             tx: token.methods.approve(cfg.addr.exchange, adxAmountStrToHex('0')),
-                            opts: { from: _addr, gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0, gasPrice },
+                            opts: { from: _addr, gas: GAS_LIMIT_APPROVE_0_WHEN_NO_0 },
                             user,
                             txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE_TO_ZERO' },
                         })
@@ -303,7 +292,7 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                                 return sendTx({
                                     web3,
                                     tx: token.methods.approve(cfg.addr.exchange, amount),
-                                    opts: { from: _addr, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0, gasPrice },
+                                    opts: { from: _addr, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 },
                                     user,
                                     txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE' }
                                 })
@@ -313,7 +302,7 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                         p = sendTx({
                             web3,
                             tx: token.methods.approve(cfg.addr.exchange, amount),
-                            opts: { from: _addr, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0, gasPrice },
+                            opts: { from: _addr, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 },
                             user,
                             txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE' }
                         })
@@ -324,7 +313,7 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                         return sendTx({
                             web3,
                             tx: exchange.methods.deposit(amount),
-                            opts: { from: _addr, gas: 90000, gasPrice },
+                            opts: { from: _addr, gas: 90000 },
                             user,
                             txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_DEPOSIT' }
                         })
@@ -340,23 +329,22 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
 
 export const withdrawFromExchange = ({ amountToWithdraw, _addr, gas, user, estimateGasOnly }) => {
     let amount = adxAmountStrToHex(amountToWithdraw)
-    let gasPrice = user._settings.gasPrice
 
     return getWeb3(user._authMode.authType)
         .then(({ web3, exchange, token, mode }) => {
             let tx = exchange.methods.withdraw(amount)
 
-            if(estimateGasOnly) {
-                return tx.estimateGas({from: _addr})
+            if (estimateGasOnly) {
+                return tx.estimateGas({ from: _addr })
             } else {
                 // TODO: if no gas provided estimate the gas but we should always get the gas
                 return sendTx({
                     web3,
                     tx: tx,
-                    opts: { from: _addr, gas: gas || 90000, gasPrice },
+                    opts: { from: _addr, gas: gas || 90000 },
                     user,
                     txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_WITHDRAW' }
                 })
-            }              
+            }
         })
 }

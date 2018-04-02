@@ -84,7 +84,7 @@ export const approveTokens = ({ _addr, amountToApprove } = {}) => {
     })
 }
 
-export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, gas, gasPrice, user, estimateGasOnly } = {}) => {
+export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, gas, user, estimateGasOnly } = {}) => {
 
     let amount = adxAmountStrToHex(amountToWithdraw)
 
@@ -93,13 +93,13 @@ export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, gas, gasPrice
 
             let tx = token.methods.transfer(withdrawTo, amount)
 
-            if(estimateGasOnly) {
-                return tx.estimateGas({from: _addr})
+            if (estimateGasOnly) {
+                return tx.estimateGas({ from: _addr })
             } else {
                 return sendTx({
                     web3,
                     tx: tx,
-                    opts: { from: _addr, gas, gasPrice },
+                    opts: { from: _addr, gas: gas },
                     user,
                     txSuccessData: { trMethod: 'TRANS_MTD_ADX_WITHDRAW' }
                 })
