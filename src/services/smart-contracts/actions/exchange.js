@@ -221,10 +221,10 @@ export const signBid = ({ userAddr, bid, user }) => {
                     }
                 })
                 .then((checkedHash) => {
-                    return signTypedMsg({ mode, userAddr, typedData: typed, addrIdx: user._settings.addrIdx, hdPath: user._settings.hdPath })
+                    return signTypedMsg({ mode, userAddr, typedData: typed, addrIdx: user._hdWalletAddrIdx, hdPath: user._hdWalletAddrPath })
                 })
                 .then((res) => {
-                    let signature = { sig_mode: mode, signature: res.sig, hash: res.hash, ...getRsvFromSig(res.sig) }
+                    let signature = { sig_mode: mode, signature: res.sig, hash: res.hash, ...getRsvFromSig(res.sig) }                    
                     return signature
                 })
         })

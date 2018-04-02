@@ -78,9 +78,9 @@ adex-constants@^1.0.7:
   dependencies:
     country-data "^0.0.31"
 
-adex-constants@^1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/adex-constants/-/adex-constants-1.0.8.tgz#05ba8eaa1cc55121b3680d822c4b258bf81d92ee"
+adex-constants@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/adex-constants/-/adex-constants-1.0.9.tgz#436dd98c1f123517141a0ef315a7dcd3bd5bd7b5"
   dependencies:
     country-data "^0.0.31"
 
