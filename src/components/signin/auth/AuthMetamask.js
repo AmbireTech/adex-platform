@@ -8,7 +8,6 @@ import { Button } from 'react-toolbox/lib/button'
 import Translate from 'components/translate/Translate'
 // import { getWeb3 } from 'services/smart-contracts/ADX'
 // import SideSelect from 'components/signin/side-select/SideSelect'
-import { signToken } from 'services/adex-node/actions'
 import scActions from 'services/smart-contracts/actions'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { addSig, getSig } from 'services/auth/auth'
@@ -19,7 +18,7 @@ import Img from 'components/common/img/Img'
 import AuthHoc from './AuthHoc'
 import { AUTH_TYPES } from 'constants/misc'
 
-const { signAuthTokenMetamask, getAccountMetamask } = scActions
+const { getAccountMetamask } = scActions
 
 // const RRButton = withReactRouterLink(Button)
 
@@ -98,14 +97,14 @@ class AuthMetamask extends Component {
                 <span>
                     MetaMask is a bridge that allows you to visit the distributed web of tomorrow in your browser today. It allows you to run Ethereum dApps right in your browser without running a full Ethereum node.
                 </span>
-                <br/>
+                <br />
                 <h3>
                     <Anchor href='https://metamask.io/' target='_blank'>
-                        <Img src={METAMASK_DL_IMG} alt={'Downlad metamask'} style={{maxWidth: '100%', maxHeight: '80px'}}/>
+                        <Img src={METAMASK_DL_IMG} alt={'Downlad metamask'} style={{ maxWidth: '100%', maxHeight: '80px' }} />
                     </Anchor>
                 </h3>
-                <br/>
-                <br/>
+                <br />
+                <br />
                 {userAddr ?
                     <Button onClick={this.authOnServer} label={t('AUTH_WITH_METAMASK', { args: [userAddr] })} raised accent />
                     :

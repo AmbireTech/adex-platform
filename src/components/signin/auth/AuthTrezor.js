@@ -8,7 +8,6 @@ import { Button } from 'react-toolbox/lib/button'
 import Translate from 'components/translate/Translate'
 // import { getWeb3 } from 'services/smart-contracts/ADX'
 // import SideSelect from 'components/signin/side-select/SideSelect'
-import { signToken } from 'services/adex-node/actions'
 // import scActions from 'services/smart-contracts/actions'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { addSig, getSig } from 'services/auth/auth'
@@ -26,7 +25,7 @@ import { AUTH_TYPES } from 'constants/misc'
 
 const TrezorConnect = trezorConnect.TrezorConnect
 
-const { getAccountStats, signAuthTokenTrezor } = scActions
+const { getAccountStats } = scActions
 
 const HD_PATH = "m/44'/60'/0'/0"
 
