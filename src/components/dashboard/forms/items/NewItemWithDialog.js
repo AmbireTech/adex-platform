@@ -33,6 +33,8 @@ export default function ItemHoc(Decorated) {
         onSave = () => {
             let onSave = []
 
+            onSave.push(this.handleToggle)
+
             if (typeof this.props.onSave === 'function') {
                 onSave.push(this.props.onSave)
             }
@@ -43,9 +45,7 @@ export default function ItemHoc(Decorated) {
                         onSave.push(this.props.onSave[index])
                     }
                 }
-            }
-
-            onSave.push(this.handleToggle)
+            }            
 
             return onSave
         }

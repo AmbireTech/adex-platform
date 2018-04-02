@@ -161,7 +161,7 @@ const padLeftEven = (hex) => {
 
 const sendTxTrezor = ({ web3, rawTx, user, txSuccessData }) => {
     console.log('sendTxTrezor')
-    return new Promise(( resolve, reject) => {
+    return new Promise((resolve, reject) => {
         TrezorConnect.ethereumSignTx(
             user._hdWalletAddrPath + '/' + user._hdWalletAddrIdx,
             rawTx.nonce.slice(2),
@@ -195,7 +195,7 @@ const sendTxTrezor = ({ web3, rawTx, user, txSuccessData }) => {
     })
 }
 
-const txSend = ({tx, opts, txSuccessData}) => {
+const txSend = ({ tx, opts, txSuccessData }) => {
     return new Promise((resolve, reject) => {
         (tx.send ? tx.send(opts) : tx(opts))
             .on('transactionHash', (trHash) => {
@@ -212,8 +212,8 @@ const txSend = ({tx, opts, txSuccessData}) => {
 
 export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData }) => {
     let authType = user._authType
-
-    console.log('tx', tx)
+    opts = { ...opts }
+    opts.gasPrice = user._settings.gasPrice
 
     return web3.eth.net.getId()
         .then((netId) => {
@@ -223,7 +223,7 @@ export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData }) => {
                 gasLimit: sanitizeHex((parseInt(opts.gas, 10)).toString(16)),
                 to: tx._parent ? tx._parent._address : opts.to,
                 value: sanitizeHex((opts.value || 0).toString(16)),
-                data: tx.encodeABI ? tx.encodeABI() : '',
+                data: tx.encodeABI ? tx.encodeABI() : null,
                 chainId: netId,
             }
 
@@ -234,7 +234,7 @@ export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData }) => {
             if (authType === AUTH_TYPES.TREZOR.name) {
                 return sendTxTrezor({ web3, rawTx, user, opts, txSuccessData })
             } else {
-                return txSend({tx, opts, txSuccessData})
+                return txSend({ tx, opts, txSuccessData })
             }
         })
 }

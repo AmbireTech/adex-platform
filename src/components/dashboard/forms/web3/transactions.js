@@ -83,7 +83,7 @@ export const WithdrawAdx = (props) =>
         trPages={[{ title: 'ACCOUNT_WITHDRAW_ADX_STEP', page: WithdrawStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return withdrawAdx(
-                {   
+                {
                     user: acc,
                     _addr: acc._addr,
                     withdrawTo: transaction.withdrawTo,
@@ -93,7 +93,7 @@ export const WithdrawAdx = (props) =>
         }}
         estimateGasFn={({ acc, transaction } = {}) => {
             return withdrawAdx(
-                {   
+                {
                     user: acc,
                     _addr: acc._addr,
                     withdrawTo: transaction.withdrawTo,
@@ -113,14 +113,13 @@ export const AcceptBid = (props) =>
         trId={'accept_bid_slot_' + props.slotId + '_bid_' + props.bidId}
         trPages={[{ title: 'ACCEPT_BID_STEP', page: AcceptBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
-            return  acceptBid(
+            return acceptBid(
                 {
                     user: acc,
                     placedBid: transaction.placedBid,
                     _adSlot: transaction.slot._ipfs,
                     _addr: transaction.account._addr,
-                    gas: transaction.gas,
-                    gasPrice: transaction._gasPrice
+                    gas: transaction.gas
                 })
                 .then((res) => {
                     sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
@@ -128,14 +127,13 @@ export const AcceptBid = (props) =>
                 })
         }}
         estimateGasFn={({ acc, transaction } = {}) => {
-            return  acceptBid(
+            return acceptBid(
                 {
                     user: acc,
                     placedBid: transaction.placedBid,
                     _adSlot: transaction.slot._ipfs,
                     _addr: transaction.account._addr,
                     gas: transaction.gas,
-                    gasPrice: transaction._gasPrice,
                     estimateGasOnly: true
                 })
         }}
@@ -156,8 +154,7 @@ export const CancelBid = (props) =>
                     placedBid: transaction.placedBid,
                     _adUnit: transaction.unit._ipfs,
                     _addr: transaction.account._addr,
-                    gas: transaction.gas,
-                    gasPrice: transaction._gasPrice
+                    gas: transaction.gas
                 })
                 .then((res) => {
                     sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
@@ -172,7 +169,6 @@ export const CancelBid = (props) =>
                     _adUnit: transaction.unit._ipfs,
                     _addr: transaction.account._addr,
                     gas: transaction.gas,
-                    gasPrice: transaction._gasPrice,
                     estimateGasOnly: true
                 })
         }}
@@ -194,12 +190,11 @@ export const VerifyBid = (props) =>
                     _report: transaction.report.ipfs,
                     _addr: acc._addr,
                     gas: transaction.gas,
-                    gasPrice: transaction._gasPrice,
                     side: transaction.side
                 })
                 .then((res) => {
                     sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
-                    return res                         
+                    return res
                 })
         }}
         estimateGasFn={({ acc, transaction } = {}) => {
@@ -210,7 +205,6 @@ export const VerifyBid = (props) =>
                     _report: transaction.report.ipfs,
                     _addr: acc._addr,
                     gas: transaction.gas,
-                    gasPrice: transaction._gasPrice,
                     side: transaction.side,
                     estimateGasOnly: true
                 })
@@ -232,7 +226,6 @@ export const GiveupBid = (props) =>
                     placedBid: transaction.placedBid,
                     _addr: acc._addr,
                     gas: transaction.gas,
-                    gasPrice: transaction._gasPrice
                 })
                 .then((res) => {
                     sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
@@ -246,7 +239,6 @@ export const GiveupBid = (props) =>
                     placedBid: transaction.placedBid,
                     _addr: acc._addr,
                     gas: transaction.gas,
-                    gasPrice: transaction._gasPrice,
                     estimateGasOnly: true
                 })
         }}
@@ -262,13 +254,12 @@ export const RefundBid = (props) =>
         trId={'refund_bid_unit_' + props.unitId + '_bid_' + props.bidId}
         trPages={[{ title: 'REFUND_BID_STEP', page: VerifyBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
-            return  refundBid(
+            return refundBid(
                 {
                     user: acc,
                     placedBid: transaction.placedBid,
                     _addr: acc._addr,
                     gas: transaction.gas,
-                    gasPrice: transaction._gasPrice
                 })
                 .then((res) => {
                     sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
@@ -276,13 +267,12 @@ export const RefundBid = (props) =>
                 })
         }}
         estimateGasFn={({ acc, transaction } = {}) => {
-            return  refundBid(
+            return refundBid(
                 {
                     user: acc,
                     placedBid: transaction.placedBid,
                     _addr: acc._addr,
                     gas: transaction.gas,
-                    gasPrice: transaction._gasPrice,
                     estimateGasOnly: true
                 })
         }}
@@ -296,7 +286,7 @@ export const Deposit = (props) =>
         title="ACCOUNT_DEPOSIT_TO_EXCHANGE_TITLE"
         trId='deposit'
         trPages={[{ title: 'ACCOUNT_DEPOSIT_TO_EXCHANGE_STEP', page: DepositToExchange }]}
-        previewWarnMsgs={[{msg: 'ACCOUNT_DEPOSIT_MULTIPLE_SIGNS_MSG'}]}
+        previewWarnMsgs={[{ msg: 'ACCOUNT_DEPOSIT_MULTIPLE_SIGNS_MSG' }]}
         saveFn={({ acc, transaction } = {}) => {
             return depositToExchange({ user: acc, _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
         }}

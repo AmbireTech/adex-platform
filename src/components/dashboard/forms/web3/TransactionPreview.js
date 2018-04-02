@@ -28,22 +28,20 @@ class TransactionPreview extends Component {
     }
 
     componentWillMount() {
-        if (this.props.estimateGasFn) {
-            
+        if (this.props.estimateGasFn && Object.keys(this.props.transaction).length) {
+
             this.props.actions.updateSpinner(this.props.trId, true)
-            this.props.estimateGasFn({acc: this.props.account, transaction: this.props.transaction})
+            this.props.estimateGasFn({ acc: this.props.account, transaction: this.props.transaction })
                 .then((estimatedGas) => {
-                    this.setState({gas: estimatedGas })
+                    this.setState({ gas: estimatedGas })
                     this.props.handleChange('gas', estimatedGas)
                     this.props.actions.updateSpinner(this.props.trId, false)
                 })
         }
     }
 
-    gasRow = ({gas, gasPrice}) => {
+    gasRow = ({ gas, gasPrice }) => {
         let eGas = gas.gas ? gas.gas : gas
-        console.log('eGas', eGas)
-        console.log('gasPrice', gasPrice)
         let fee = web3Utils.fromWei((eGas * parseInt(gasPrice, 10)).toString(), 'ether')
         return (
             <Row>
@@ -56,21 +54,21 @@ class TransactionPreview extends Component {
             </Row>
         )
 
-    } 
+    }
 
-    gasInfo = ({gasPrice}) => {
-        if(!this.state.gas) return null
+    gasInfo = ({ gasPrice }) => {
+        if (!this.state.gas) return null
 
-        if(Array.isArray(this.state.gas)) {
-            return(
+        if (Array.isArray(this.state.gas)) {
+            return (
                 <div>
-                    {this.state.gas.map((gas, index) => 
+                    {this.state.gas.map((gas, index) =>
                         <this.gasRow key={index} gas={gas} gasPrice={gasPrice} />
                     )}
-                </div>         
+                </div>
             )
         } else {
-            return ( <this.gasRow  gas={this.state.gas} gasPrice={gasPrice} /> )
+            return (<this.gasRow gas={this.state.gas} gasPrice={gasPrice} />)
         }
     }
 
@@ -103,7 +101,7 @@ class TransactionPreview extends Component {
                                 </Row>
                             )
                             : null}
-                        
+
                         <this.gasInfo gasPrice={gasPrice} />
 
                         {
