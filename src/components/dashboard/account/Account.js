@@ -11,7 +11,7 @@ import { List, ListItem, ListDivider } from 'react-toolbox/lib/list'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import scActions from 'services/smart-contracts/actions'
 
-const { getAccountStatsMetaMask, getAccountStats } = scActions
+const { getAccountStats } = scActions
 // const RRButton = withReactRouterLink(Button)
 
 class Account extends React.Component {
@@ -22,7 +22,7 @@ class Account extends React.Component {
 
     getStats = () => {
         // TODO: spinner
-        /*getAccountStats*/ getAccountStats({ _addr: this.props.account._addr })
+        /*getAccountStats*/ getAccountStats({ _addr: this.props.account._addr, authType: this.props.account._authMode.authType })
             .then((stats) => {
                 this.props.actions.updateAccount({ ownProps: { stats: stats } })
             })

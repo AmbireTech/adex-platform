@@ -165,7 +165,7 @@ const padLeftEven = (hex) => {
     return hex;
 }
 
-const sendTxTrezor = ({ web3, rawTx, user, txSuccessData }) => {
+const sendTxTrezor = ({ web3, rawTx, user, txSuccessData, nonce }) => {
     console.log('sendTxTrezor')
     return new Promise((resolve, reject) => {
         TrezorConnect.ethereumSignTx(
@@ -186,7 +186,7 @@ const sendTxTrezor = ({ web3, rawTx, user, txSuccessData }) => {
                     var signedTx = '0x' + eTx.serialize().toString('hex')
                     web3.eth.sendSignedTransaction(signedTx)
                         .on('transactionHash', (trHash) => {
-                            let res = { ...txSuccessData, trHash }
+                            let res = { ...txSuccessData, trHash, nonce }
                             console.log('transactionHash', res)
                             return resolve(res)
                         })
@@ -216,15 +216,35 @@ const txSend = ({ tx, opts, txSuccessData }) => {
     })
 }
 
-export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData }) => {
+export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData, prevNonce = 0, nonceIncrement = 0 }) => {
     let authType = user._authType
     opts = { ...opts }
     opts.gasPrice = user._settings.gasPrice
+    let netId = null
 
+    if (authType === AUTH_TYPES.METAMASK.name) {
+        return txSend({ tx, opts, txSuccessData })
+    }
+
+    /*
+    * TODO: send pending tx from here for e.g. When deposit to exchange if user confirm the allowance
+    * but cancel the second transaction for the deposit currently it returns error ant the first tx is not added to transactions;
+    * When all transactions are completed we just have to close the popup and cleat the tx data from the store
+    */
     return web3.eth.net.getId()
-        .then((netId) => {
+        .then((chainId) => {
+            netId = chainId
+            return web3.eth.getTransactionCount(user._addr)
+        })
+        .then((nonce) => {
+            /**
+             * TODO: increment user nonce on tx hash and keep all the info in transactions store 
+             * in order to have possibility to send the same tx with higher gas price 
+             * (someday for trezor and ledger, metamask keeps its own nonce but it is not work correct in some cases)
+             */
+            nonce = Math.max(nonce, prevNonce) + nonceIncrement
             let rawTx = {
-                nonce: sanitizeHex(Date.now().toString(16)),
+                nonce: sanitizeHex(nonce.toString(16)),
                 gasPrice: sanitizeHex((parseInt(opts.gasPrice, 10) || 4009951502).toString(16)),
                 gasLimit: sanitizeHex((parseInt(opts.gas, 10)).toString(16)),
                 to: tx._parent ? tx._parent._address : opts.to,
@@ -233,15 +253,10 @@ export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData }) => {
                 chainId: netId,
             }
 
-            return rawTx
-        })
-        .then((rawTx) => {
-            console.log('authType', authType)
             if (authType === AUTH_TYPES.TREZOR.name) {
-                return sendTxTrezor({ web3, rawTx, user, opts, txSuccessData })
-            } else {
-                return txSend({ tx, opts, txSuccessData })
+                return sendTxTrezor({ web3, rawTx, user, opts, txSuccessData, nonce })
             }
         })
+
 }
 

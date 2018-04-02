@@ -280,7 +280,9 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                                     tx: token.methods.approve(cfg.addr.exchange, amount),
                                     opts: { from: _addr, gas: GAS_LIMIT_APPROVE_OVER_0_WHEN_0 },
                                     user,
-                                    txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE' }
+                                    txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_SET_ALLOWANCE' },
+                                    prevNonce: result.nonce,
+                                    nonceIncrement: 1
                                 })
                             })
 
@@ -301,7 +303,9 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                             tx: exchange.methods.deposit(amount),
                             opts: { from: _addr, gas: 90000 },
                             user,
-                            txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_DEPOSIT' }
+                            txSuccessData: { trMethod: 'TRANS_MTD_EXCHANGE_DEPOSIT' },
+                            prevNonce: result.nonce,
+                            nonceIncrement: 1
                         })
                     })
                 })

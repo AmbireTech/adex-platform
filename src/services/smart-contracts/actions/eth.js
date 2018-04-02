@@ -60,8 +60,7 @@ export const getAccountBalances = (_addr) => {
 }
 
 export const getAccountStats = ({ _addr, authType, mode }) => {
-    return new Promise((resolve, reject) => {
-        getWeb3(authType).then(({ cfg, exchange, token, web3 }) => {
+       return getWeb3(authType).then(({ cfg, exchange, token, web3 }) => {
             let balanceEth = web3.eth.getBalance(_addr)
             let balanceAdx = token.methods.balanceOf(_addr).call()
             let allowance = token.methods.allowance(_addr, cfg.addr.exchange).call()
@@ -69,7 +68,7 @@ export const getAccountStats = ({ _addr, authType, mode }) => {
 
             let all = [balanceEth, balanceAdx, allowance, exchangeBalance]
 
-            Promise.all(all)
+            return Promise.all(all)
                 .then(([balEth, balAdx, allow, exchBal]) => {
 
                     let accStats = {
@@ -80,15 +79,9 @@ export const getAccountStats = ({ _addr, authType, mode }) => {
                         exchangeBalance: getExchangeBalances(exchBal)
                     }
 
-                    // console.log('accStats', accStats)
-                    return resolve(accStats)
-                })
-                .catch((err) => {
-                    console.log('getAccountStats err', err)
-                    reject(err)
+                    return accStats
                 })
         })
-    })
 }
 
 export const getAccountStatsMetaMask = () => {

@@ -83,12 +83,12 @@ const getWeb3 = (mode) => {
 	*   and this results in Trezor popup block by the browser
 	*/
 	return new Promise((resolve, reject) => {
-		if (mode === AUTH_TYPES.METAMASK.name || true) {
+		if (mode === AUTH_TYPES.METAMASK.name) {
 			return resolve(getInjectedWeb3)
 		} else {
 			return resolve(getLocalWeb3)
 		}
-	})	
+	})
 }
 
 const web3Utils = Web3.utils
