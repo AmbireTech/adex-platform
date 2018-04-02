@@ -37,6 +37,12 @@ class TransactionPreview extends Component {
                     this.props.handleChange('gas', estimatedGas)
                     this.props.actions.updateSpinner(this.props.trId, false)
                 })
+                .catch((err) => {
+                    // console.log(err)
+                    // TODO: handle the error
+                    this.setState({ err: [err] })
+                    this.props.actions.updateSpinner(this.props.trId, false)
+                })
         }
     }
 
