@@ -12,7 +12,7 @@ import ButtonMenu from 'components/common/button_menu/ButtonMenu'
 import Translate from 'components/translate/Translate'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 // import GasPrice from 'components/dashboard/account/GasPrice'
-// import ChangeLang from 'components/translate/ChangeLang'
+import ChangeLang from 'components/translate/ChangeLang'
 import Switch from 'react-toolbox/lib/switch'
 import Anchor from 'components/common/anchor/anchor'
 import { AUTH_TYPES } from 'constants/misc'
@@ -69,7 +69,7 @@ class TopNav extends Component {
 
         <Navigation type='horizontal' className={theme.rightNavigation}>
           {/* At the moment we use translations only for proper items properties display names */}
-          {/* <ChangeLang /> */}
+          <ChangeLang />
           {/* <GasPrice /> */}
           <ButtonMenu
             selectable={true}
