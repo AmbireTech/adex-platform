@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-// import theme from './theme.css'
+import theme from './theme.css'
 import { Button } from 'react-toolbox/lib/button'
 import Translate from 'components/translate/Translate'
 // import { getWeb3 } from 'services/smart-contracts/ADX'
@@ -27,7 +27,8 @@ class AuthMetamask extends Component {
         super(props)
         this.state = {
             method: '',
-            sideSelect: false
+            sideSelect: false,
+            waitingMetamaskAction: false,
         }
     }
 
@@ -41,8 +42,13 @@ class AuthMetamask extends Component {
         let addr = this.props.account._addr
         let mode = AUTH_TYPES.METAMASK.signType // TEMP?
         let authType = AUTH_TYPES.METAMASK.name
-
-        this.props.authOnServer({ mode, addr, authType })
+        this.setState({ waitingMetamaskAction: true }, () =>
+            this.props.authOnServer({ mode, addr, authType })
+                .then()
+                .catch(() => {
+                    this.setState({ waitingMetamaskAction: true })
+                })
+        )
     }
 
     // TODO: Make it some common function if needed or make timeout as metamask way 
@@ -106,7 +112,22 @@ class AuthMetamask extends Component {
                 <br />
                 <br />
                 {userAddr ?
-                    <Button onClick={this.authOnServer} label={t('AUTH_WITH_METAMASK', { args: [userAddr] })} raised accent />
+                    <div >
+                        <div className={theme.metamaskLAbel}>
+                            {this.state.waitingMetamaskAction ?
+                                t('METAMASK_WAITING_ACTION', { args: [userAddr] }) :
+                                t('AUTH_WITH_METAMASK_LABEL', { args: [userAddr] })
+                            }
+                        </div>
+                        <Button
+                            onClick={this.authOnServer}
+                            label={t('AUTH_WITH_METAMASK_BTN', { args: [userAddr] })}
+                            raised
+                            accent
+                            disabled={this.state.waitingMetamaskAction}
+                            icon={this.state.waitingMetamaskAction ? 'hourglass_empty' : ''}
+                        />
+                    </div>
                     :
                     <Button onClick={this.checkMetamask} label={t('AUTH_CONNECT_WITH_METAMASK')} raised primary />
                 }
