@@ -198,6 +198,10 @@
     padding: 0;
 }
 
+.error {
+    color: var(--color-adex-danger-primary);
+}
+
 .warning {
-    color: var(--color-adex-alt-primary-header);
+    color: var(--color-adex-warning-primary);
 }

@@ -284,7 +284,7 @@ export const Deposit = (props) =>
         btnLabel="ACCOUNT_DEPOSIT_TO_EXCHANGE_BTN"
         saveBtnLabel='ACCOUNT_DEPOSIT_TO_EXCHANGE_SAVE_BTN'
         title="ACCOUNT_DEPOSIT_TO_EXCHANGE_TITLE"
-        trId='deposit'
+        trId='depositToExchange'
         trPages={[{ title: 'ACCOUNT_DEPOSIT_TO_EXCHANGE_STEP', page: DepositToExchange }]}
         previewWarnMsgs={[{ msg: 'ACCOUNT_DEPOSIT_MULTIPLE_SIGNS_MSG' }]}
         saveFn={({ acc, transaction } = {}) => {
@@ -301,7 +301,7 @@ export const WithdrawFromExchange = (props) =>
         btnLabel="ACCOUNT_WITHDRAW_FROM_EXCHANGE_BTN"
         saveBtnLabel='ACCOUNT_WITHDRAW_FROM_EXCHANGE_SAVE_BTN'
         title="ACCOUNT_WITHDRAW_FROM_EXCHANGE_TITLE"
-        trId='withdrawWromExchange'
+        trId='withdrawFromExchange'
         trPages={[{ title: 'ACCOUNT_WITHDRAW_FROM_EXCHANGE_STEP', page: WithdrawFromExchangePage }]}
         saveFn={({ acc, transaction } = {}) => {
             return withdrawFromExchange({ _addr: acc._addr, amountToWithdraw: transaction.withdrawAmount, gas: transaction.gas, user: acc, })
