@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import Dashboard from 'components/dashboard/Dashboard'
-import SigninMetamask from 'components/signin/SigninMetamask'
+import SigninExternalWallet from 'components/signin/SigninExternalWallet'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import Translate from 'components/translate/Translate'
 import scActions from 'services/smart-contracts/actions'
@@ -93,7 +93,7 @@ class Root extends Component {
         return (
             <Switch >
                 <PrivateRoute auth={this.props.auth} path="/dashboard/:side" component={Dashboard} />
-                <Route exact path="/" component={SigninMetamask} />
+                <Route exact path="/" component={SigninExternalWallet} />
                 <Route component={PageNotFound} />
             </Switch>
         )

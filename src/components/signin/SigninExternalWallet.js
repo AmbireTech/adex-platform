@@ -14,7 +14,7 @@ import AuthMethod from 'components/signin/auth/AuthMethod'
 import { getSig } from 'services/auth/auth'
 import packageJson from './../../../package.json'
 
-class SigninMetamask extends Component {
+class SigninExternalWallet extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -60,7 +60,7 @@ class SigninMetamask extends Component {
   }
 }
 
-SigninMetamask.propTypes = {
+SigninExternalWallet.propTypes = {
   actions: PropTypes.object.isRequired,
 }
 
@@ -82,4 +82,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Translate(SigninMetamask))
+)(Translate(SigninExternalWallet))
