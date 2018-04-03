@@ -15,6 +15,10 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 // import ChangeLang from 'components/translate/ChangeLang'
 import Switch from 'react-toolbox/lib/switch'
 import Anchor from 'components/common/anchor/anchor'
+import { AUTH_TYPES } from 'constants/misc'
+import metamaskLogo from 'resources/metamask-logo.png'
+import trezorLogo from 'resources/trezor-logo-h.png'
+import ledgerLogo from 'resources/ledger_logo_header.png'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
 const RRSwitch = withReactRouterLink((props) => <Anchor {...props}><Switch {...props}  theme={theme} /></Anchor>)
@@ -44,6 +48,22 @@ class TopNav extends Component {
 
   render() {
     const t = this.props.t
+    let imgSrc = ''
+
+    switch (this.props.account._authMode.authType) {
+      case AUTH_TYPES.METAMASK.name:
+        imgSrc = metamaskLogo
+        break
+      case AUTH_TYPES.TREZOR.name: 
+        imgSrc = trezorLogo
+        break
+      case AUTH_TYPES.LEDGER.name: 
+        imgSrc = ledgerLogo
+        break
+      default:
+        break
+    }
+
     return (
       <AppBar title={<SideSwitch side={this.props.side} t={t} />} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={true} >
 
@@ -53,6 +73,7 @@ class TopNav extends Component {
           {/* <GasPrice /> */}
           <ButtonMenu
             selectable={true}
+            leftIconSrc={imgSrc}
             icon='expand_more'
             label={this.props.account._addr || t('NOT_LOGGED')}
             position='auto'
