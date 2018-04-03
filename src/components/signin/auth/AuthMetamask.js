@@ -95,12 +95,12 @@ class AuthMetamask extends Component {
         return (
             <div >
                 <span>
-                    MetaMask is a bridge that allows you to visit the distributed web of tomorrow in your browser today. It allows you to run Ethereum dApps right in your browser without running a full Ethereum node.
+                    {t('METAMASK_INFO')}
                 </span>
                 <br />
                 <h3>
                     <Anchor href='https://metamask.io/' target='_blank'>
-                        <Img src={METAMASK_DL_IMG} alt={'Downlad metamask'} style={{ maxWidth: '100%', maxHeight: '80px' }} />
+                        <Img src={METAMASK_DL_IMG} alt={'Downlad metamask'} style={{ maxWidth: '100%', maxHeight: '72px' }} />
                     </Anchor>
                 </h3>
                 <br />

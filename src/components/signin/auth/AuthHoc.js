@@ -23,85 +23,87 @@ const { signAuthToken } = scActions
 
 export default function AuthHoc(Decorated) {
 
-class Auth extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            method: '',
-            sideSelect: false
+    class Auth extends Component {
+        constructor(props) {
+            super(props)
+            this.state = {
+                method: '',
+                sideSelect: false
+            }
         }
-    }
 
-    componentWillMount() {
-        if (!getSig({ addr: this.props.account._addr, mode: this.props.account._authMode })) {
-            this.props.actions.resetAccount()
+        componentWillMount() {
+            if (!getSig({ addr: this.props.account._addr, mode: this.props.account._authMode })) {
+                this.props.actions.resetAccount()
+            }
         }
-    }
 
-    authOnServer = ({ mode, addr, hdPath, addrIdx, authType, chainId }) => {
-        let signature = null
+        authOnServer = ({ mode, addr, hdPath, addrIdx, authType, chainId }) => {
+            let signature = null
 
-        signAuthToken({ userAddr: addr, mode, hdPath, addrIdx })
-            .then(({ sig, sig_mode, authToken, typedData, hash }) => {
-                signature = sig
-                return signToken({ userid: addr, signature: signature, authToken, mode, typedData, hash })
-            })
-            .then((res) => {
-                // TEMP
-                // TODO: keep it here or make it on login?
-                // TODO: catch
-                if (res.status === 'OK') {
-                    addSig({ addr: addr, sig: signature, mode: mode, expiryTime: res.expiryTime })
+            return signAuthToken({ userAddr: addr, mode, hdPath, addrIdx })
+                .then(({ sig, sig_mode, authToken, typedData, hash }) => {
+                    signature = sig
+                    return signToken({ userid: addr, signature: signature, authToken, mode, typedData, hash })
+                })
+                .then((res) => {
+                    // TEMP
+                    // TODO: keep it here or make it on login?
+                    // TODO: catch
+                    if (res.status === 'OK') {
+                        addSig({ addr: addr, sig: signature, mode: mode, expiryTime: res.expiryTime })
 
-                    let authMode = {
-                        sigMode: mode,
-                        authType: authType
+                        let authMode = {
+                            sigMode: mode,
+                            authType: authType
+                        }
+
+                        this.props.actions.updateAccount({ ownProps: { addr: addr, authMode, signType: mode, authType, authSig: signature, chainId, hdWalletAddrPath: hdPath, hdWalletAddrIdx: addrIdx } })
+                        return true
+                    } else {
+                        this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_ON_SERVER'), timeout: 5000 })
+                        throw new Error(this.props.t('ERR_AUTH_ON_SERVER'))
                     }
+                })
+        }
 
-                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode, signType: mode, authType, authSig: signature, chainId, hdWalletAddrPath: hdPath, hdWalletAddrIdx: addrIdx  } })
-                } else {
-                    this.props.actions.resetAccount()
-                }
-            })
+        render() {
+            let t = this.props.t
+            let userAddr = this.props.account._addr
+            // let authMode = this.props.account._authMode
+
+            return (
+                <div>
+                    <Decorated
+                        {...this.props}
+                        authOnServer={this.authOnServer}
+                    />
+                </div>
+            )
+        }
     }
 
-    render() {
-        let t = this.props.t
-        let userAddr = this.props.account._addr
-        // let authMode = this.props.account._authMode
-
-        return (
-            <div>
-                <Decorated
-                    {...this.props}
-                    authOnServer={this.authOnServer}
-                />
-            </div>
-        )
+    Auth.propTypes = {
+        actions: PropTypes.object.isRequired,
     }
-}
 
-Auth.propTypes = {
-    actions: PropTypes.object.isRequired,
-}
-
-// 
-function mapStateToProps(state) {
-    let persist = state.persist
-    // let memory = state.memory
-    return {
-        account: persist.account
+    // 
+    function mapStateToProps(state) {
+        let persist = state.persist
+        // let memory = state.memory
+        return {
+            account: persist.account
+        }
     }
-}
 
-function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
+    function mapDispatchToProps(dispatch) {
+        return {
+            actions: bindActionCreators(actions, dispatch)
+        }
     }
-}
 
-return connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Translate(Auth))
+    return connect(
+        mapStateToProps,
+        mapDispatchToProps
+    )(Translate(Auth))
 }
