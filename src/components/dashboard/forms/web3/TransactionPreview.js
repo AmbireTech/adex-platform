@@ -13,6 +13,8 @@ import { web3Utils } from 'services/smart-contracts/ADX'
 import { FontIcon } from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 import GasPrice from 'components/dashboard/account/GasPrice'
+import { PropRow } from './BidsCommon'
+import Helper from 'helpers/miscHelpers'
 
 const TooltipCol = Tooltip(Col)
 
@@ -38,10 +40,9 @@ class TransactionPreview extends Component {
                     this.props.actions.updateSpinner(this.props.trId, false)
                 })
                 .catch((err) => {
-                    // console.log(err)
-                    // TODO: handle the error
-                    this.setState({ err: [err] })
+                    console.log(err)
                     this.props.actions.updateSpinner(this.props.trId, false)
+                    this.props.handleChange('errors', [Helper.getErrMsg(err)])
                 })
         }
     }
@@ -50,16 +51,15 @@ class TransactionPreview extends Component {
         let eGas = gas.gas ? gas.gas : gas
         let fee = web3Utils.fromWei((eGas * parseInt(gasPrice, 10)).toString(), 'ether')
         return (
-            <Row>
-                <TooltipCol xs={12} lg={4} className={'theme.textRight'}
-                    tooltip={this.props.t('OPERATION_FEE_TOOLTIP')}
-                >
-                    <strong>  {this.props.t(gas.trMethod || 'OPERATION_FEE')}:</strong>
-                </TooltipCol>
-                <Col xs={12} lg={8} className={'theme.textLeft'}><strong>{fee} ETH</strong></Col>
-            </Row>
+            <PropRow
+                left={
+                    <TooltipCol className={'theme.textRight'} tooltip={this.props.t('OPERATION_FEE_TOOLTIP')} >
+                        <strong>{this.props.t(gas.trMethod || 'OPERATION_FEE')}</strong>
+                    </TooltipCol>
+                }
+                right={<strong>{fee} ETH</strong>}
+            />
         )
-
     }
 
     gasInfo = ({ gasPrice }) => {
@@ -79,34 +79,45 @@ class TransactionPreview extends Component {
     }
 
     render() {
-        let transaction = this.props.transaction || {}
-        let t = this.props.t
+        const transaction = this.props.transaction || {}
+        const t = this.props.t
         const gasPrice = this.props.account._settings.gasPrice ? this.props.account._settings.gasPrice : DEFAULT_GAS_PRICE
-        let previewWarnMsgs = this.props.previewWarnMsgs
+        const previewWarnMsgs = this.props.previewWarnMsgs
+        const errors = transaction.errors || []
 
         return (
             <div>
                 {this.props.spinner ?
-                    <ProgressBar type='circular' mode='indeterminate' multicolor />
+                    <ProgressBar className={theme.progressCircleCenter} type='circular' mode='indeterminate' multicolor />
                     :
 
                     <Grid fluid>
-                        <Row >
-                            <Col xs={12} lg={4} className={classnames(theme.textRight, theme.warning)}></Col>
-                            <Col xs={12} lg={8} className={classnames(theme.textLeft)}>
-                                <GasPrice />
-                            </Col>
-                        </Row>
+                        {errors.length ?
+                            errors.map((err, index) =>
+                                <PropRow
+                                    key={index}
+                                    className={theme.error}
+                                    left={<span> <FontIcon value='error' /> </span>}
+                                    right={err}
+                                />)
+                            : null}
+
+
                         {previewWarnMsgs ?
                             previewWarnMsgs.map((msg, index) =>
-                                <Row key={index}>
-                                    <Col xs={12} lg={4} className={classnames(theme.textRight, theme.warning)}><span> <FontIcon value='warning' /> </span> <span>:</span></Col>
-                                    <Col xs={12} lg={8} className={classnames(theme.textLeft, theme.warning)}>
-                                        {t(msg.msg, { args: msg.args })}
-                                    </Col>
-                                </Row>
+                                <PropRow
+                                    key={index}
+                                    className={theme.warning}
+                                    left={<span> <FontIcon value='warning' /> </span>}
+                                    right={t(msg.msg, { args: msg.args })}
+                                />
                             )
                             : null}
+
+                        {!errors.length ?
+                            <PropRow
+                                right={<GasPrice />}
+                            /> : null}
 
                         <this.gasInfo gasPrice={gasPrice} />
 
@@ -123,18 +134,17 @@ class TransactionPreview extends Component {
                                     }
 
                                     return (
-                                        <Row key={key}>
-                                            <Col xs={12} lg={4} className={theme.textRight}>{this.props.t(keyName, { isProp: true })}:</Col>
-                                            <Col xs={12} lg={8} className={theme.textLeft}>
-                                                {isObjValue ?
-                                                    <pre>
-                                                        {(value || '').toString()}
-                                                    </pre>
-                                                    :
-                                                    (value || '').toString()
-                                                }
-                                            </Col>
-                                        </Row>
+                                        <PropRow
+                                            key={key}
+                                            left={this.props.t(keyName, { isProp: true })}
+                                            right={isObjValue ?
+                                                <pre>
+                                                    {(value || '').toString()}
+                                                </pre>
+                                                :
+                                                (value || '').toString()
+                                            }
+                                        />
                                     )
                                 })
                         }

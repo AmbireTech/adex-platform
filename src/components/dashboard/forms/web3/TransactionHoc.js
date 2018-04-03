@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 // import theme from './theme.css'
 import Translate from 'components/translate/Translate'
+import Helper from 'helpers/miscHelpers'
 import { exchange as ExchangeConstants } from 'adex-constants'
 
 const { TX_STATUS } = ExchangeConstants
@@ -75,19 +76,9 @@ export default function NewTransactionHoc(Decorated) {
                 })
                 .catch((err) => {
                     console.log('err on save', err)
-                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [this.getErrMsg(err)] }), timeout: 5000 })
+                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
                     this.onSave(err, null)
                 })
-        }
-
-        getErrMsg = (err) => {
-            let stack = ((err.message || err || '').toString()).split(/\r\n|\n|\r/g)
-
-            if (stack.length > 1) {
-                return err.name + ': ' + (stack[0].error || stack[0])
-            } else {
-                return err.error || err
-            }
         }
 
         cancel = () => {

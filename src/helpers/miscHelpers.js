@@ -85,6 +85,16 @@ class Helper {
             return encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key])
         }, '').join('&') || ''
     }
+
+    getErrMsg = (err) => {
+        let stack = ((err.message || err || '').toString()).split(/\r\n|\n|\r/g)
+
+        if (stack.length > 1) {
+            return err.name + ': ' + (stack[0].error || stack[0]).toString()
+        } else {
+            return (err.error || err || '').toString()
+        }
+    }
 }
 
 export default new Helper()

@@ -21,14 +21,14 @@ class GasPrice extends React.Component {
         }
     }
 
-    mapGasPrices = (gasData) => {
+    mapGasPrices = (gasData, t) => {
         let prices = Object.keys(gasData).map((key) => {
             let pr = gasData[key]
             let inGwei = pr.price
             let inWei = web3Utils.toWei(inGwei.toString(), 'Gwei')
 
             // TODO: Translations
-            return { value: inWei, label: inGwei + ' Gwei - ' + pr.wait + 'min' }
+            return { value: inWei, label: t('GAS_PRICE_OPTION_LABEL', { args: [inGwei, 'Gwei', pr.wait] }) }
         })
 
         return prices
@@ -37,13 +37,13 @@ class GasPrice extends React.Component {
     getGasPrices = () => {
         getGasData()
             .then((gasData) => {
-                let prices = this.mapGasPrices(gasData)                
+                let prices = this.mapGasPrices(gasData, this.props.t)
                 this.setState({ gasPrices: prices })
             })
     }
 
     componentWillMount() {
-        this.setState({ gasPrices: this.mapGasPrices(this.props.account._settings.gasData || DEFAULT_DATA) })
+        this.setState({ gasPrices: this.mapGasPrices(this.props.account._settings.gasData || DEFAULT_DATA, this.props.t) })
         // this.getGasPrices()
         // Use interval check for that - services/store-data/gas
     }
@@ -71,7 +71,7 @@ class GasPrice extends React.Component {
                 <Dropdown
                     // theme={this.props.theme}
                     auto={false}
-                    label='GAS_PRICE_LABEL'
+                    label={this.props.t('GAS_PRICE_LABEL')}
                     onChange={this.changeGasPrice}
                     source={this.state.gasPrices}
                     value={gasPrice}
