@@ -11,7 +11,7 @@ import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
 import Anchor from 'components/common/anchor/anchor'
-import { PropRow } from 'components/dashboard/forms/FormsCommon'
+import { PropRow, StepBox } from 'components/dashboard/forms/FormsCommon'
 import { items as ItemsConstants } from 'adex-constants'
 const { ItemsTypes, AdSizesByValue, AdTypesByValue } = ItemsConstants
 
@@ -42,7 +42,7 @@ class NewItemFormPreview extends Component {
         let t = this.props.t
 
         return (
-            <div>
+            <StepBox>
                 <Grid fluid>
                     <PropRow
                         left={t('fullName', { isProp: true })}
@@ -103,7 +103,7 @@ class NewItemFormPreview extends Component {
 
                 </Grid>
                 <br />
-            </div>
+            </StepBox>
         )
     }
 }

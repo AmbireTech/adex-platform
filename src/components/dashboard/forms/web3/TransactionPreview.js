@@ -7,13 +7,12 @@ import theme from './../theme.css'
 import NewTransactionHoc from './TransactionHoc'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import Tooltip from 'react-toolbox/lib/tooltip'
-import ProgressBar from 'react-toolbox/lib/progress_bar'
 import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
 import { web3Utils } from 'services/smart-contracts/ADX'
 import { FontIcon } from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 import GasPrice from 'components/dashboard/account/GasPrice'
-import { PropRow } from 'components/dashboard/forms/FormsCommon'
+import { PropRow, StepBox, StepBody, StepStickyTop, FullStepSpinner, WalletAction } from 'components/dashboard/forms/FormsCommon'
 import Helper from 'helpers/miscHelpers'
 
 const TooltipCol = Tooltip(Col)
@@ -53,7 +52,7 @@ class TransactionPreview extends Component {
         return (
             <PropRow
                 left={
-                    <TooltipCol className={'theme.textRight'} tooltip={this.props.t('OPERATION_FEE_TOOLTIP')} >
+                    <TooltipCol tooltip={this.props.t('OPERATION_FEE_TOOLTIP')} >
                         <strong>{this.props.t(gas.trMethod || 'OPERATION_FEE')}</strong>
                     </TooltipCol>
                 }
@@ -88,67 +87,75 @@ class TransactionPreview extends Component {
         return (
             <div>
                 {this.props.spinner ?
-                    <ProgressBar className={theme.progressCircleCenter} type='circular' mode='indeterminate' multicolor />
+                    <FullStepSpinner />
                     :
-
-                    <Grid fluid>
-                        {errors.length ?
-                            errors.map((err, index) =>
-                                <PropRow
-                                    key={index}
-                                    className={theme.error}
-                                    left={<span> <FontIcon value='error' /> </span>}
-                                    right={err}
-                                />)
-                            : null}
-
-
-                        {previewWarnMsgs ?
-                            previewWarnMsgs.map((msg, index) =>
-                                <PropRow
-                                    key={index}
-                                    className={theme.warning}
-                                    left={<span> <FontIcon value='warning' /> </span>}
-                                    right={t(msg.msg, { args: msg.args })}
-                                />
-                            )
-                            : null}
-
-                        {!errors.length ?
-                            <PropRow
-                                right={<GasPrice />}
-                            /> : null}
-
-                        <this.gasInfo gasPrice={gasPrice} />
-
-                        {
-                            Object
-                                .keys(transaction)
-                                .filter((key) => !/gas|account/.test(key))
-                                .map(key => {
-                                    let keyName = key
-                                    let value = transaction[key]
-                                    let isObjValue = (typeof value === 'object')
-                                    if (isObjValue) {
-                                        value = JSON.stringify(value, null, 2)
-                                    }
-
-                                    return (
+                    <StepBox>
+                        {transaction.waitingForWalletAction ?
+                            <StepStickyTop>
+                                <WalletAction t={t} authType={this.props.account._authMode.authType} />
+                            </StepStickyTop> : null}
+                        <StepBody>
+                            <Grid fluid>
+                                {errors.length ?
+                                    errors.map((err, index) =>
                                         <PropRow
-                                            key={key}
-                                            left={this.props.t(keyName, { isProp: true })}
-                                            right={isObjValue ?
-                                                <pre>
-                                                    {(value || '').toString()}
-                                                </pre>
-                                                :
-                                                (value || '').toString()
-                                            }
+                                            key={index}
+                                            className={theme.error}
+                                            left={<span> <FontIcon value='error' /> </span>}
+                                            right={err}
+                                        />)
+                                    : null}
+
+
+                                {previewWarnMsgs ?
+                                    previewWarnMsgs.map((msg, index) =>
+                                        <PropRow
+                                            key={index}
+                                            className={theme.warning}
+                                            left={<span> <FontIcon value='warning' /> </span>}
+                                            right={t(msg.msg, { args: msg.args })}
                                         />
                                     )
-                                })
-                        }
-                    </Grid>
+                                    : null}
+
+                                {!errors.length ?
+                                    <PropRow
+                                        right={<GasPrice />}
+                                    /> : null}
+
+                                <this.gasInfo gasPrice={gasPrice} />
+
+                                {
+                                    Object
+                                        .keys(transaction)
+                                        .filter((key) => !/gas|account|waitingForWalletAction/.test(key))
+                                        .map(key => {
+                                            let keyName = key
+                                            let value = transaction[key]
+                                            let isObjValue = (typeof value === 'object')
+                                            if (isObjValue) {
+                                                value = JSON.stringify(value, null, 2)
+                                            }
+
+                                            return (
+                                                <PropRow
+                                                    key={key}
+                                                    left={this.props.t(keyName, { isProp: true })}
+                                                    right={isObjValue ?
+                                                        <pre>
+                                                            {(value || '').toString()}
+                                                        </pre>
+                                                        :
+                                                        (value || '').toString()
+                                                    }
+                                                />
+                                            )
+                                        })
+                                }
+                            </Grid>
+                        </StepBody>
+
+                    </StepBox>
                 }
 
             </div>

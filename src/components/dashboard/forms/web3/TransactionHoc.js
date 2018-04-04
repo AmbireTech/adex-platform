@@ -14,6 +14,7 @@ export default function NewTransactionHoc(Decorated) {
     // TODO: make it common for bids and items
     class TransactionHoc extends Component {
         componentWillMount() {
+            // console.log('TransactionHoc')
         }
 
         handleChange = (name, value) => {
@@ -58,6 +59,7 @@ export default function NewTransactionHoc(Decorated) {
         save = () => {
             const t = this.props.t
 
+            this.handleChange('waitingForWalletAction', true)
 
             this.props.saveFn({ acc: this.props.account, transaction: this.props.transaction })
                 .then((res) => {

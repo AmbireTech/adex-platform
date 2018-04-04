@@ -100,7 +100,7 @@ class AuthTrezor extends Component {
 
     AddressSelect = ({ addresses, waitingTrezorAction, t, ...rest }) => {
         return (
-            <div className={theme.addsBox}>
+            <div className={theme.addrsBox}>
                 <div className={theme.addrHead}>
                     {waitingTrezorAction ?
                         t('TREZOR_WAITING_ACTION')

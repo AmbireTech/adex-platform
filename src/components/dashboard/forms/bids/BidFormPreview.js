@@ -7,6 +7,7 @@ import theme from 'components/dashboard/forms/theme.css'
 import { Bid } from 'adex-models'
 import NewBidHoc from './NewBidHoc'
 import { Grid, Row, Col } from 'react-flexbox-grid'
+import { PropRow, StepBox, StepBody, StepStickyTop, WalletAction } from 'components/dashboard/forms/FormsCommon'
 import constants from 'adex-constants'
 
 class BidFormPreview extends Component {
@@ -18,23 +19,29 @@ class BidFormPreview extends Component {
     let timeout = constants.exchange.timeoutsByValue[bid.timeout] || {}
 
     return (
-      <div>
+      <StepBox>
         {/* TODO: Add translations and format the numbers */}
-        <Grid fluid>
-          <Row>
-            <Col xs={12} lg={4} className={theme.textRight}> {t('BID_TARGET_CLICKS')}:</Col>
-            <Col xs={12} lg={8} className={theme.textLeft}>{bid.target} </Col>
-          </Row>
-          <Row>
-            <Col xs={12} lg={4} className={theme.textRight}>{t('BID_AMOUNT')}:</Col>
-            <Col xs={12} lg={8} className={theme.textLeft}>{bid.amount}</Col>
-          </Row>
-          <Row>
-            <Col xs={12} lg={4} className={theme.textRight}>{t('BID_TIMEOUT')}:</Col>
-            <Col xs={12} lg={8} className={theme.textLeft}>{t(timeout.label, { args: timeout.labelArgs })}</Col>
-          </Row>
-        </Grid>
-      </div>
+        {/* {bid.waitingForWalletAction || true ?
+          <StepStickyTop>
+            <WalletAction t={t} authType={this.props.account._authMode.authType} />
+          </StepStickyTop> : null} */}
+        <StepBody>
+          <Grid fluid>
+            <PropRow
+              left={t('BID_TARGET_CLICKS')}
+              right={bid.target}
+            />
+            <PropRow
+              left={t('BID_AMOUNT')}
+              right={bid.amount}
+            />
+            <PropRow
+              left={t('BID_TIMEOUT')}
+              right={t(timeout.label, { args: timeout.labelArgs })}
+            />
+          </Grid>
+        </StepBody>
+      </StepBox>
     )
   }
 }
