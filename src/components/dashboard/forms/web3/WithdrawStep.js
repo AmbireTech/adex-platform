@@ -12,14 +12,14 @@ import { web3Utils } from 'services/smart-contracts/ADX'
 
 class WithdrawEthStep extends Component {
     componentDidMount() {
-        if (!this.props.transaction.withdrawAmount) {
+        if (!this.props.transaction.withdrawTo) {
             this.props.validate('withdrawTo', {
                 isValid: false,
                 err: { msg: 'ERR_REQUIRED_FIELD' },
                 dirty: false
             })
         }
-        if (!this.props.transaction.withdrawAmount) {
+        if (!this.props.transaction.amountToWithdraw) {
             this.props.validate('amountToWithdraw', {
                 isValid: false,
                 err: { msg: 'ERR_REQUIRED_FIELD' },
