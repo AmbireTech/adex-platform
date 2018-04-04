@@ -13,7 +13,7 @@ import { web3Utils } from 'services/smart-contracts/ADX'
 import { FontIcon } from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 import GasPrice from 'components/dashboard/account/GasPrice'
-import { PropRow } from './BidsCommon'
+import { PropRow } from 'components/dashboard/forms/FormsCommon'
 import Helper from 'helpers/miscHelpers'
 
 const TooltipCol = Tooltip(Col)

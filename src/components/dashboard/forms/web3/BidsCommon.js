@@ -6,42 +6,51 @@ import { Item } from 'adex-models'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import moment from 'moment'
-import classnames from 'classnames'
 import Anchor from 'components/common/anchor/anchor'
-
-export const PropRow = ({ left, right, className, classNameLeft, classNameRight }) =>
-    <Row >
-        <Col xs={12} lg={4} className={classnames(theme.textRight, className, classNameLeft)}>{left}</Col>
-        <Col xs={12} lg={8} className={classnames(theme.textLeft, theme.breakLong, className, classNameRight)}>{right}</Col>
-    </Row>
+import { PropRow } from 'components/dashboard/forms/FormsCommon'
 
 export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
     <div>
-        <PropRow left={t('UNIT_NAME')} right={unitMeta.fullName} />
-        <PropRow left={t('UNIT_URL')}
+        <PropRow
+            left={t('UNIT_NAME')}
+            right={unitMeta.fullName}
+        />
+        <PropRow
+            left={t('UNIT_URL')}
             right={<Anchor target='_blank' href={unitMeta.ad_url} > {unitMeta.ad_url} </Anchor>}
         />
-        <PropRow left={t('UNIT_BANNER')}
+        <PropRow
+            left={t('UNIT_BANNER')}
             right={<Img className={theme.imgPreview} src={Item.getImgUrl(unitMeta.img, process.env.IPFS_GATEWAY) || ''} alt={unitMeta.fullName} />}
         />
-        <PropRow left={t('UNIT_IPFS')}
+        <PropRow
+            left={t('UNIT_IPFS')}
             right={<Anchor target='_blank' href={process.env.IPFS_GATEWAY + unit._ipfs} > {unit._ipfs} </Anchor>}
         />
-        <PropRow left={t('ADVERTISER')}
+        <PropRow
+            left={t('ADVERTISER')}
             right={<Anchor target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + unitMeta.owner} > {unitMeta.owner} </Anchor>}
         />
-        <PropRow left={t('UNIT_TARGETS')}
+        <PropRow
+            eft={t('UNIT_TARGETS')}
             right={<UnitTargets targets={unitMeta.targets} t={t} />}
         />
     </div>
 
 export const Report = ({ report = {}, t }) =>
     <div>
-        <PropRow left={t('BID_REPORT_IPFS')}
+        <PropRow
+            left={t('BID_REPORT_IPFS')}
             right={<Anchor target='_blank' href={process.env.IPFS_GATEWAY + report.ipfs} > {report.ipfs} </Anchor>}
         />
-        <PropRow left={t('BID_REPORT_VERIFIED_UNIQUE_CLICKS')} right={report.report.verifiedUniqueClicks} />
-        <PropRow left={t('BID_REPORT_ALL_CLICKS')} right={report.report.allClicks} />
+        <PropRow
+            left={t('BID_REPORT_VERIFIED_UNIQUE_CLICKS')}
+            right={report.report.verifiedUniqueClicks}
+        />
+        <PropRow
+            left={t('BID_REPORT_ALL_CLICKS')}
+            right={report.report.allClicks}
+        />
     </div>
 
 export const BidInfo = ({ bid, slot, unit, t, report, errMsg, errArgs, ...rest }) => {
@@ -53,16 +62,40 @@ export const BidInfo = ({ bid, slot, unit, t, report, errMsg, errArgs, ...rest }
     return (
         <div className={theme.itemPropTop}>
             <Grid fluid style={{ padding: 0 }}>
-                {errMsg ? <PropRow className={theme.err} left={t('ERROR')} right={t(errMsg, { args: errArgs })} /> : null}
-                <PropRow left={t('BID_ID')} right={bid._id} err />
-                <PropRow left={t('BID_TARGET')} right={bid._target} />
-                <PropRow left={t('BID_AMOUNT')} right={adxToFloatView(bid._amount) + ' ADX'} />
-                <PropRow left={t('BID_TIMEOUT')} right={moment.duration(timeout, 'ms').humanize()} />
+                {errMsg ?
+                    <PropRow
+                        className={theme.err}
+                        left={t('ERROR')}
+                        right={t(errMsg, { args: errArgs })}
+                    />
+                    : null}
+                <PropRow
+                    left={t('BID_ID')}
+                    right={bid._id}
+                />
+                <PropRow
+                    left={t('BID_TARGET')}
+                    right={bid._target}
+                />
+                <PropRow
+                    left={t('BID_AMOUNT')}
+                    right={adxToFloatView(bid._amount) + ' ADX'}
+                />
+                <PropRow
+                    left={t('BID_TIMEOUT')}
+                    right={moment.duration(timeout, 'ms').humanize()}
+                />
                 {accepted ?
-                    <PropRow left={t('BID_ACCEPTED_TIME')} right={moment(accepted).format('MMMM Do, YYYY, HH:mm:ss')} />
+                    <PropRow
+                        left={t('BID_ACCEPTED_TIME')}
+                        right={moment(accepted).format('MMMM Do, YYYY, HH:mm:ss')}
+                    />
                     : null}
                 {bidExpires ?
-                    <PropRow left={t('BID_EXPIRE_TIME')} right={moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss')} />
+                    <PropRow
+                        left={t('BID_EXPIRE_TIME')}
+                        right={moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss')}
+                    />
                     : null}
                 {report ?
                     <Report report={report} t={t} />
