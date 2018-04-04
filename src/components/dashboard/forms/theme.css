@@ -211,3 +211,44 @@
 .capitalize {
     text-transform: capitalize;
 }
+
+.adexLogoTop {
+    position: absolute;
+    top: -6vh;
+    left: 0;
+}
+
+.stepBox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.stepStickyTop {
+    padding: 8px 4px;
+    flex-shrink: 0;
+    display: inline-flex;
+    word-break: break-word;
+}
+
+.stepBody {
+    flex-grow: 1;
+    overflow-y: auto; 
+}
+
+.steptopLoadingCircular {
+    flex-shrink: 0;
+}
+
+.steptopLoading {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    & > div {
+        padding: 8px; 
+    }
+}

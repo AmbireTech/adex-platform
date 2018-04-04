@@ -10,9 +10,14 @@ import TransactionHoc from './TransactionHoc'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Translate from 'components/translate/Translate'
 
-const saveBtn = ({ save, saveBtnLabel, saveBtnIcon, t, transaction, ...other }) => {
+const saveBtn = ({ save, saveBtnLabel, saveBtnIcon, t, transaction, waitingForWalletAction, ...other }) => {
     return (
-        <Button icon={saveBtnIcon || 'icon'} label={t(saveBtnLabel || 'DO_IT')} primary onClick={save} disabled={transaction.errors && transaction.errors.length} />
+        <Button
+            icon={transaction.waitingForWalletAction ? 'hourglass_empty' : (saveBtnIcon || 'icon')}
+            label={t(saveBtnLabel || 'DO_IT')}
+            primary onClick={save}
+            disabled={(transaction.errors && transaction.errors.length) || transaction.waitingForWalletAction}
+        />
     )
 }
 
