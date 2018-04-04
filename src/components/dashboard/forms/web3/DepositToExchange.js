@@ -12,7 +12,7 @@ import { validateNumber } from 'helpers/validators'
 class DepositToExchange extends Component {
 
     componentDidMount() {
-        if (!this.props.transaction.withdrawAmount) {
+        if (!this.props.transaction.depositAmount) {
             this.props.validate('depositAmount', {
                 isValid: false,
                 err: { msg: 'ERR_REQUIRED_FIELD' },
