@@ -138,7 +138,9 @@
 }
 
 .breakLong {
-    word-break: break-all;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
 }
 
 @media (width <= 1400px) {
@@ -204,4 +206,8 @@
 
 .warning {
     color: var(--color-adex-warning-primary);
+}
+
+.capitalize {
+    text-transform: capitalize;
 }

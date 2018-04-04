@@ -11,6 +11,7 @@ import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
 import Anchor from 'components/common/anchor/anchor'
+import { PropRow } from 'components/dashboard/forms/FormsCommon'
 import { items as ItemsConstants } from 'adex-constants'
 const { ItemsTypes, AdSizesByValue, AdTypesByValue } = ItemsConstants
 
@@ -23,14 +24,14 @@ class NewItemFormPreview extends Component {
     SlotFallback = ({ item, t }) => {
         return (
             <div>
-                <Row>
-                    <Col xs={12} lg={4} className={theme.textRight}>{t('SLOT_FALLBACK_IMG_LABEL')}:</Col>
-                    <Col xs={12} lg={8} className={theme.textLeft}>{<Img className={theme.imgPreview} src={item.fallbackAdImg.tempUrl || ''} alt={item.fallbackAdUrl} />} </Col>
-                </Row>
-                <Row>
-                    <Col xs={12} lg={4} className={theme.textRight}>{t('fallbackAdUrl', { isProp: true })}:</Col>
-                    <Col xs={12} lg={8} className={theme.textLeft}><Anchor href={item.fallbackAdUrl} target='_blank'>{item.fallbackAdUrl}</Anchor></Col>
-                </Row>
+                <PropRow
+                    left={t('SLOT_FALLBACK_IMG_LABEL')}
+                    right={<Img className={theme.imgPreview} src={item.fallbackAdImg.tempUrl || ''} alt={item.fallbackAdUrl} />}
+                />
+                <PropRow
+                    left={t('fallbackAdUrl', { isProp: true })}
+                    right={<Anchor href={item.fallbackAdUrl} target='_blank'>{item.fallbackAdUrl}</Anchor>}
+                />
             </div>
         )
     }
@@ -43,18 +44,18 @@ class NewItemFormPreview extends Component {
         return (
             <div>
                 <Grid fluid>
-                    <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{t('fullName', { isProp: true })}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{meta.fullName}</Col>
-                    </Row>
-                    <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{t('description', { isProp: true })}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{item._description}</Col>
-                    </Row>
-                    <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{<Img className={theme.imgPreview} src={meta.img.tempUrl || ''} alt={meta.fullName} />} </Col>
-                    </Row>
+                    <PropRow
+                        left={t('fullName', { isProp: true })}
+                        right={meta.fullName}
+                    />
+                    <PropRow
+                        left={t('description', { isProp: true })}
+                        right={meta._description}
+                    />
+                    <PropRow
+                        left={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}
+                        right={<Img className={theme.imgPreview} src={meta.img.tempUrl || ''} alt={meta.fullName} />}
+                    />
                     {
                         item._type === ItemsTypes.AdSlot.id ?
                             <this.SlotFallback item={item} t={t} />
@@ -85,18 +86,18 @@ class NewItemFormPreview extends Component {
                                 }
 
                                 return (
-                                    <Row key={key}>
-                                        <Col xs={12} lg={4} className={theme.textRight}>{t(keyName, { isProp: true })}:</Col>
-                                        <Col xs={12} lg={8} className={theme.textLeft}>{value}</Col>
-                                    </Row>
+                                    <PropRow key={key}
+                                        left={t(keyName, { isProp: true })}
+                                        right={value}
+                                    />
                                 )
                             })
                     }
                     {meta.targets ?
-                        <Row>
-                            <Col xs={12} lg={4} className={theme.textRight}>{t('targets', { isProp: true })}:</Col>
-                            <Col xs={12} lg={8} className={theme.textLeft}><UnitTargets {...this.props} targets={meta.targets} t={t} /></Col>
-                        </Row>
+                        <PropRow
+                            left={t('targets', { isProp: true })}
+                            right={<UnitTargets {...this.props} targets={meta.targets} t={t} />}
+                        />
                         : null
                     }
 
