@@ -53,7 +53,8 @@ const CancelBtnWithTransaction = TransactionHoc(CancelBtn)
 const txCommon = {
     SaveBtn: SaveBtnWithTransaction,
     CancelBtn: CancelBtnWithTransaction,
-    stepsPreviewPage: { title: 'PREVIEW_AND_MAKE_TR', page: TransactionPreview }
+    stepsPreviewPage: { title: 'PREVIEW_AND_MAKE_TR', page: TransactionPreview },
+    validateIdBase: 'tx-'
 }
 
 export const Approve = (props) =>

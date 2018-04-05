@@ -11,16 +11,16 @@ class FormSteps extends Component {
 
     render() {
         let pages = []
-        const { SaveBtn, CancelBtn, t, onSave, stepsId, stepsPages, stepsPreviewPage, ...rest } = this.props
-
+        const { SaveBtn, CancelBtn, t, onSave, stepsId, stepsPages, stepsPreviewPage, validateIdBase, ...rest } = this.props
         const cancelButton = () => <CancelBtn  {...rest} stepsId={stepsId} onSave={onSave} t={t} />
+        const validateId = (validateIdBase || '') + stepsId
 
         stepsPages.map((page, index) => {
             pages.push({
-                title: t(page.title || 'Step ' + (index + 1)),
+                title: t(page.title),
                 cancelBtn: cancelButton,
                 component: ValidItemHoc(page.page || page),
-                props: { ...this.props, validateId: stepsId + '-' + (index + 1) }
+                props: { ...this.props, validateId: validateId + '-' + index }
             })
         })
 
@@ -29,7 +29,7 @@ class FormSteps extends Component {
             completeBtn: () => <SaveBtn {...rest} stepsId={stepsId} onSave={onSave} t={t} />,
             cancelBtn: cancelButton,
             component: ValidItemHoc(stepsPreviewPage.page || stepsPreviewPage),
-            props: { ...this.props, validateId: stepsId + '-' + stepsPages.length }
+            props: { ...this.props, validateId: validateId + '-' + stepsPages.length }
         })
 
         return (
@@ -44,12 +44,13 @@ FormSteps.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     title: PropTypes.string,
-    itemPages: PropTypes.arrayOf(PropTypes.func)
+    itemPages: PropTypes.arrayOf(PropTypes.func),
+    stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 }
 
 function mapStateToProps(state, props) {
-    let persist = state.persist
-    // let memory = state.memory
+    const persist = state.persist
+    // const memory = state.memory
     return {
         account: persist.account,
     }
