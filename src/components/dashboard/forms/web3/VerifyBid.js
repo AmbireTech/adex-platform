@@ -66,6 +66,7 @@ VerifyBid.propTypes = {
     actions: PropTypes.object.isRequired,
     label: PropTypes.string,
     trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     transaction: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     placedBid: PropTypes.object.isRequired,
@@ -74,10 +75,13 @@ VerifyBid.propTypes = {
 
 function mapStateToProps(state, props) {
     // let persist = state.persist
-    let memory = state.memory
+    const memory = state.memory
+    const trId = props.stepsId
     return {
-        spinner: memory.spinners[props.trId],
-        side: memory.nav.side
+        spinner: memory.spinners[trId],
+        side: memory.nav.side,
+        trId: trId
+        
     }
 }
 
@@ -87,7 +91,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-let VerifyBidForm = NewTransactionHoc(VerifyBid)
+const VerifyBidForm = NewTransactionHoc(VerifyBid)
 export default connect(
     mapStateToProps,
     mapDispatchToProps

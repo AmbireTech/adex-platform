@@ -58,6 +58,7 @@ CancelBid.propTypes = {
     actions: PropTypes.object.isRequired,
     label: PropTypes.string,
     trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     transaction: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     placedBid: PropTypes.object.isRequired
@@ -65,9 +66,11 @@ CancelBid.propTypes = {
 
 function mapStateToProps(state, props) {
     // let persist = state.persist
-    let memory = state.memory
+    const memory = state.memory
+    const trId = props.stepsId
     return {
-        spinner: memory.spinners[props.trId]
+        trId: trId,
+        spinner: memory.spinners[trId]
     }
 }
 
@@ -77,7 +80,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-let CancelBidForm = NewTransactionHoc(CancelBid)
+const CancelBidForm = NewTransactionHoc(CancelBid)
 export default connect(
     mapStateToProps,
     mapDispatchToProps

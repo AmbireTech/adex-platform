@@ -83,7 +83,6 @@ class TransactionPreview extends Component {
         const gasPrice = this.props.account._settings.gasPrice ? this.props.account._settings.gasPrice : DEFAULT_GAS_PRICE
         const previewWarnMsgs = this.props.previewWarnMsgs
         const errors = transaction.errors || []
-
         return (
             <div>
                 {this.props.spinner ?
@@ -167,6 +166,7 @@ TransactionPreview.propTypes = {
     actions: PropTypes.object.isRequired,
     label: PropTypes.string,
     trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     transaction: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     previewMsgs: PropTypes.array,
@@ -174,12 +174,13 @@ TransactionPreview.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-    let persist = state.persist
-    let memory = state.memory
+    const persist = state.persist
+    const memory = state.memory
+    const trId = props.stepsId
     return {
-        transaction: memory.newTransactions[props.trId] || {},
-        trId: props.trId,
-        spinner: memory.spinners[props.trId],
+        transaction: memory.newTransactions[trId] || {},
+        trId: trId,
+        spinner: memory.spinners[trId],
         account: persist.account
     }
 }
@@ -190,7 +191,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-let TransactionPreviewForm = NewTransactionHoc(TransactionPreview)
+const TransactionPreviewForm = NewTransactionHoc(TransactionPreview)
 export default connect(
     mapStateToProps,
     mapDispatchToProps

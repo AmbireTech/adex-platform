@@ -108,18 +108,21 @@ export default function NewTransactionHoc(Decorated) {
     TransactionHoc.propTypes = {
         actions: PropTypes.object.isRequired,
         label: PropTypes.string,
-        trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+        stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
         transaction: PropTypes.object.isRequired,
         account: PropTypes.object.isRequired,
         saveFn: PropTypes.func
     }
 
     function mapStateToProps(state, props) {
-        let persist = state.persist
-        let memory = state.memory
+        const persist = state.persist
+        const memory = state.memory
+        const trId = props.stepsId
         return {
             account: persist.account,
-            transaction: memory.newTransactions[props.trId] || {},
+            transaction: memory.newTransactions[props.stepsId] || {},
+            trId: trId, // TODO: change with txId
+            spinner: memory.spinners[trId],
         }
     }
 
