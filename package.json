@@ -74,6 +74,7 @@
     "redux-immutable-state-invariant": "^2.0.0",
     "redux-persist": "^5.4.0",
     "redux-thunk": "^2.2.0",
+    "rpl": "^0.8.0",
     "slug": "^0.9.1",
     "style-loader": "0.18.2",
     "sw-precache-webpack-plugin": "0.11.4",
