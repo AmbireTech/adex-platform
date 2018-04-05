@@ -5,9 +5,13 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Bid } from 'adex-models'
 import Translate from 'components/translate/Translate'
+import Helper from 'helpers/miscHelpers'
 import scActions from 'services/smart-contracts/actions'
 import { placeBid } from 'services/adex-node/actions'
 const { signBid } = scActions
+
+export const getSpinnerId = (bidId) =>
+  'new-bid-wallet-action-' + bidId
 
 export default function NewBidHoc(Decorated) {
   class BidForm extends Component {
@@ -30,9 +34,11 @@ export default function NewBidHoc(Decorated) {
       }
 
       this.props.actions.resetNewBid({ bidId: this.props.bidId })
+      this.props.actions.updateSpinner(getSpinnerId(this.props.bidId), false)
     }
 
     save = () => {
+      this.props.actions.updateSpinner(getSpinnerId(this.props.bidId), true)
       const t = this.props.t
       let bid = { ...this.props.bid }
       let unit = this.props.adUnit
@@ -56,7 +62,7 @@ export default function NewBidHoc(Decorated) {
           this.onSave()
         })
         .catch((err) => {
-          this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_PLACE_BID', { args: [err.message || err] }), timeout: 5000 })
+          this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_PLACE_BID', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
           this.onSave()
         })
     }
@@ -68,7 +74,6 @@ export default function NewBidHoc(Decorated) {
     render() {
       let bid = this.props.bid || {}
       let props = this.props
-
       return (
         <Decorated {...props} bid={bid} save={this.save} handleChange={this.handleChange} cancel={this.cancel} />
       )
@@ -85,12 +90,15 @@ export default function NewBidHoc(Decorated) {
   }
 
   function mapStateToProps(state, props) {
-    let persist = state.persist
-    let memory = state.memory
+    const persist = state.persist
+    const memory = state.memory
+    const bidId = props.bidId
     return {
       account: persist.account,
-      bid: memory.newBid[props.bidId] || new Bid().plainObj(),
-      bidsIds: persist.bids.bidsIds
+      bid: memory.newBid[bidId] || new Bid().plainObj(),
+      bidsIds: persist.bids.bidsIds,
+      // Needed for save btn and user action msg
+      waitingForWalletAction: memory.spinners[getSpinnerId(bidId)]
     }
   }
 

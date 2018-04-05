@@ -33,7 +33,7 @@ const FormStepsWithDialog = NewItemWithDialog(FormSteps)
 const SaveBtn = ({ save, saveBtnLabel, saveBtnIcon, t, transaction, waitingForWalletAction, spinner, ...other }) => {
     return (
         <Button
-            icon={transaction.waitingForWalletAction ? 'hourglass_empty' : (saveBtnIcon || 'icon')}
+            icon={transaction.waitingForWalletAction ? 'hourglass_empty' : (saveBtnIcon || '')}
             label={t(saveBtnLabel || 'DO_IT')}
             primary onClick={save}
             disabled={(transaction.errors && transaction.errors.length) || transaction.waitingForWalletAction || spinner}
