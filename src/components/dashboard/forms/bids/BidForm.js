@@ -165,8 +165,8 @@ BidForm.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-  let persist = state.persist
-  let memory = state.memory
+  const persist = state.persist
+  const memory = state.memory
   return {
     bid: memory.newBid[props.bidId] || new Bid().plainObj(),
     bidsIds: persist.bids.bidsIds,

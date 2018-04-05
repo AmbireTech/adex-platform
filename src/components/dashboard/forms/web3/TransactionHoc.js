@@ -120,7 +120,7 @@ export default function NewTransactionHoc(Decorated) {
         const trId = props.stepsId
         return {
             account: persist.account,
-            transaction: memory.newTransactions[props.stepsId] || {},
+            transaction: memory.newTransactions[trId] || {},
             trId: trId, // TODO: change with txId
             spinner: memory.spinners[trId],
         }

@@ -8,10 +8,11 @@ import NewBidHoc from './NewBidHoc'
 const SaveBtn = ({ ...props }) => {
     return (
         <Button
-            icon='save'
+            icon={props.waitingForWalletAction ? 'hourglass_empty' : (props.saveBtnIcon || '')}
             label={props.t(props.saveBtnLabel || 'PLACE_BID_SAVE_BTN')}
             primary
             onClick={props.save}
+            disabled={props.waitingForWalletAction}
         />
     )
 }
