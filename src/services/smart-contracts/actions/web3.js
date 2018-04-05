@@ -3,6 +3,7 @@ import { getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 import { TO_HEX_PAD } from 'services/smart-contracts/constants'
 import { getRsvFromSig, getTypedDataHash } from 'services/smart-contracts/utils'
 import trezorConnect from 'third-party/trezor-connect'
+import ledger from 'third-party/ledger.min'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { AUTH_TYPES } from 'constants/misc'
 const TrezorConnect = trezorConnect.TrezorConnect
@@ -199,6 +200,10 @@ const sendTxTrezor = ({ web3, rawTx, user, txSuccessData, nonce }) => {
                 }
             })
     })
+}
+
+const sendTxLedger = ({ web3, rawTx, user, txSuccessData, nonce }) => {
+    console.log('sendTxLedger', ledger)
 }
 
 const txSend = ({ tx, opts, txSuccessData }) => {
