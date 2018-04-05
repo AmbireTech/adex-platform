@@ -12,6 +12,8 @@ const PRODUCTION_MODE = process.env.NODE_ENV === 'production'
 
 const { SIGN_TYPES } = EXCHANGE_CONSTANTS
 
+// const ledger = window.ledger
+
 export const setWallet = ({ prKey, addr = '' }) => {
 
     return new Promise((resolve, reject) => {
@@ -121,17 +123,46 @@ export const signTypedTrezor = ({ userAddr, hdPath, mode, addrIdx, typedData, ha
     })
 }
 
+export const signTypedLedger = ({ userAddr, hdPath, mode, addrIdx, typedData, hash }) => {
+    console.log('signTypedLedger')
+    return ledger.comm_u2f.create_async()
+        .then((comm) => {
+            var eth = new ledger.eth(comm)
+            var dPath = hdPath + '/' + addrIdx
+            var buf = Buffer.from(hash.slice(2), 'hex')
+            return eth.signPersonalMessage_async(dPath, buf.toString('hex'))
+        })
+        .then((result) => {
+            var v = result['v']
+            v = v.toString(16)
+            if (v.length < 2) {
+                v = '0' + v
+            } // pad v
+
+            let signature = { sig: '0x' + result['r'] + result['s'] + v, hash: hash }
+            return signature
+        }).catch((err) => {
+            return err
+        })
+  
+}
+
+
 export const signTypedMsg = ({ mode, userAddr, hdPath, addrIdx, typedData }) => {
     let pr
 
     let hash = getTypedDataHash({ typedData: typedData })
 
+    // TODO: Should check the authType not the sigType ...
     switch (mode) {
         case SIGN_TYPES.Trezor.id:
             pr = signTypedTrezor({ userAddr, hdPath, mode, addrIdx, typedData, hash })
             break
         case SIGN_TYPES.Eip.id:
             pr = signTypedMetamask({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name, hash })
+            break
+        case SIGN_TYPES.EthPersonal.id:
+            pr = signTypedLedger({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name, hash, mode })
             break
         default:
             pr = Promise.reject(new Error('Invalid signature mode!'))
