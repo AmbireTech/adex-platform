@@ -10,7 +10,7 @@ import { Tab, Tabs } from 'react-toolbox'
 import UnitTargets from './UnitTargets'
 import Translate from 'components/translate/Translate'
 import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
-import NewBidSteps from 'components/dashboard/forms/bids/NewBidSteps'
+import { NewBidSteps } from 'components/dashboard/forms/bids/bids'
 import UnitBids from './UnitBids'
 import { items as ItemsConstants } from 'adex-constants'
 import { BasicProps } from './ItemCommon'
@@ -74,6 +74,7 @@ export class Unit extends Component {
                         floating
                         primary
                         bidId={item._id}
+                        stepsId={item._id}
                         // TODO: fix icon v align
                         icon={<BidIcon style={{ marginTop: 10 }} />}
                         adUnit={item}
