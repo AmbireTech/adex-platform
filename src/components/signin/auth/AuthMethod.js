@@ -13,6 +13,7 @@ import { Button } from 'react-toolbox/lib/button'
 import { getWeb3 } from 'services/smart-contracts/ADX'
 import AuthMetamask from 'components/signin/auth/AuthMetamask'
 import AuthTrezor from 'components/signin/auth/AuthTrezor'
+import AuthLedger from 'components/signin/auth/AuthLedger'
 import Logo from 'components/common/icons/AdexIconTxt'
 
 class AuthMethod extends Component {
@@ -20,7 +21,7 @@ class AuthMethod extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      tabIndex: 1,
+      tabIndex: 2,
       closeDialog: false,
       bids: []
     }
@@ -54,7 +55,7 @@ class AuthMethod extends Component {
               <AuthTrezor />
             </Tab>
             <Tab label={t('LEDGER')}>
-              <h1>{t('COMING_SOON')}</h1>
+              <AuthLedger />
             </Tab>
           </Tabs>
         </div>
