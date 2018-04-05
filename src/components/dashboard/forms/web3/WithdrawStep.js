@@ -98,6 +98,7 @@ WithdrawEthStep.propTypes = {
     actions: PropTypes.object.isRequired,
     label: PropTypes.string,
     trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     transaction: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired
 }
@@ -105,7 +106,9 @@ WithdrawEthStep.propTypes = {
 function mapStateToProps(state, props) {
     // let persist = state.persist
     // let memory = state.memory
+    const trId = props.stepsId
     return {
+        trId: trId
     }
 }
 
@@ -115,7 +118,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-let WithdrawEthStepForm = NewTransactionHoc(WithdrawEthStep)
+const WithdrawEthStepForm = NewTransactionHoc(WithdrawEthStep)
 export default connect(
     mapStateToProps,
     mapDispatchToProps

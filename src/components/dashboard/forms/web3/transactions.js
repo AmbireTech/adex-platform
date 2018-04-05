@@ -1,5 +1,4 @@
 import React from 'react'
-import TransactionsSteps from './TransactionsSteps'
 import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
 import ApproveStep from './ApproveStep'
 import WithdrawStep from './WithdrawStep'
@@ -8,8 +7,12 @@ import WithdrawFromExchangePage from './WithdrawFromExchange'
 import AcceptBidStep from './AcceptBid'
 import CancelBidStep from './CancelBid'
 import VerifyBidStep from './VerifyBid'
+import TransactionPreview from './TransactionPreview'
 import scActions from 'services/smart-contracts/actions'
 import { sendBidState } from 'services/adex-node/actions'
+import { Button } from 'react-toolbox/lib/button'
+import TransactionHoc from './TransactionHoc'
+import FormSteps from 'components/dashboard/forms/FormSteps'
 
 const {
     approveTokens,
@@ -25,16 +28,43 @@ const {
     withdrawFromExchange
 } = scActions
 
-const TransactionsStepsWithDialog = NewItemWithDialog(TransactionsSteps)
+const FormStepsWithDialog = NewItemWithDialog(FormSteps)
+
+const SaveBtn = ({ save, saveBtnLabel, saveBtnIcon, t, transaction, waitingForWalletAction, spinner, ...other }) => {
+    return (
+        <Button
+            icon={transaction.waitingForWalletAction ? 'hourglass_empty' : (saveBtnIcon || 'icon')}
+            label={t(saveBtnLabel || 'DO_IT')}
+            primary onClick={save}
+            disabled={(transaction.errors && transaction.errors.length) || transaction.waitingForWalletAction || spinner}
+        />
+    )
+}
+
+const CancelBtn = ({ cancel, cancelBtnLabel, t, ...other }) => {
+    return (
+        <Button label={t(cancelBtnLabel || 'CANCEL')} onClick={cancel} />
+    )
+}
+
+const SaveBtnWithTransaction = TransactionHoc(SaveBtn)
+const CancelBtnWithTransaction = TransactionHoc(CancelBtn)
+
+const txCommon = {
+    SaveBtn: SaveBtnWithTransaction,
+    CancelBtn: CancelBtnWithTransaction,
+    stepsPreviewPage: { title: 'PREVIEW_AND_MAKE_TR', page: TransactionPreview }
+}
 
 export const Approve = (props) =>
-    <TransactionsStepsWithDialog
+    <FormStepsWithDialog
         {...props}
         btnLabel="ACCOUNT_APPROVE_BTN"
         saveBtnLabel='ACC_APPROVE_SAVE_BTN'
         title="ACCOUNT_APPROVE_TITLE"
-        trId='approve'
-        trPages={[{ title: 'ACCOUNT_APPROVE_STEP', page: ApproveStep }]}
+        stepsId='approve'
+        {...txCommon}
+        stepsPages={[{ title: 'ACCOUNT_APPROVE_STEP', page: ApproveStep }]}
         //TODO: refactor the stepper. This is not cool :)
         // Until the refactor we will use mapping function from account and transaction hoc to specific sc function
         saveFn={({ acc, transaction } = {}) => {
@@ -43,13 +73,14 @@ export const Approve = (props) =>
     />
 
 export const WithdrawEth = (props) =>
-    <TransactionsStepsWithDialog
+    <FormStepsWithDialog
         {...props}
         btnLabel="ACCOUNT_WITHDRAW_ETH_BTN"
         saveBtnLabel='ACC_WITHDRAW_ETH_SAVE_BTN'
         title="ACCOUNT_WITHDRAW_ETH_TITLE"
-        trId='withdrawEth'
-        trPages={[{ title: 'ACCOUNT_WITHDRAW_ETH_STEP', page: WithdrawStep }]}
+        stepsId='withdrawEth'
+        {...txCommon}
+        stepsPages={[{ title: 'ACCOUNT_WITHDRAW_ETH_STEP', page: WithdrawStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return withdrawEth(
                 {
@@ -74,13 +105,14 @@ export const WithdrawEth = (props) =>
     />
 
 export const WithdrawAdx = (props) =>
-    <TransactionsStepsWithDialog
+    <FormStepsWithDialog
         {...props}
         btnLabel="ACCOUNT_WITHDRAW_ADX_BTN"
         saveBtnLabel='ACC_WITHDRAW_ADX_SAVE_BTN'
         title="ACCOUNT_WITHDRAW_ADX_TITLE"
-        trId='withdrawAdx'
-        trPages={[{ title: 'ACCOUNT_WITHDRAW_ADX_STEP', page: WithdrawStep }]}
+        stepsId='withdrawAdx'
+        {...txCommon}
+        stepsPages={[{ title: 'ACCOUNT_WITHDRAW_ADX_STEP', page: WithdrawStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return withdrawAdx(
                 {
@@ -105,13 +137,14 @@ export const WithdrawAdx = (props) =>
     />
 
 export const AcceptBid = (props) =>
-    < TransactionsStepsWithDialog
+    < FormStepsWithDialog
         {...props}
         btnLabel="ACCEPT_BID"
         saveBtnLabel='ACCEPT_BID_SAVE_BTN'
         title="ACCEPT_BID_TITLE"
-        trId={'accept_bid_slot_' + props.slotId + '_bid_' + props.bidId}
-        trPages={[{ title: 'ACCEPT_BID_STEP', page: AcceptBidStep }]}
+        stepsId={'accept_bid_slot_' + props.slotId + '_bid_' + props.bidId}
+        {...txCommon}
+        stepsPages={[{ title: 'ACCEPT_BID_STEP', page: AcceptBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return acceptBid(
                 {
@@ -140,13 +173,14 @@ export const AcceptBid = (props) =>
     />
 
 export const CancelBid = (props) =>
-    < TransactionsStepsWithDialog
+    < FormStepsWithDialog
         {...props}
         btnLabel="CANCEL_BID"
         saveBtnLabel='CANCEL_BID_SAVE_BTN'
         title="CANCEL_BID_TITLE"
-        trId={'cancel_bid_adunit_' + props.unitId + '_bid_' + props.bidId}
-        trPages={[{ title: 'CANCEL_BID_STEP', page: CancelBidStep }]}
+        stepsId={'cancel_bid_adunit_' + props.unitId + '_bid_' + props.bidId}
+        {...txCommon}
+        stepsPages={[{ title: 'CANCEL_BID_STEP', page: CancelBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return cancelBid(
                 {
@@ -175,13 +209,14 @@ export const CancelBid = (props) =>
     />
 
 export const VerifyBid = (props) =>
-    < TransactionsStepsWithDialog
+    < FormStepsWithDialog
         {...props}
         btnLabel="VERIFY_BID"
         saveBtnLabel='VERIFY_BID_SAVE_BTN'
         title="VERIFY_BID_TITLE"
-        trId={'verify_bid_item_' + props.itemId + '_bid_' + props.bidId}
-        trPages={[{ title: 'VERIFY_BID_STEP', page: VerifyBidStep }]}
+        stepsId={'verify_bid_item_' + props.itemId + '_bid_' + props.bidId}
+        {...txCommon}
+        stepsPages={[{ title: 'VERIFY_BID_STEP', page: VerifyBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return verifyBid(
                 {
@@ -212,13 +247,14 @@ export const VerifyBid = (props) =>
     />
 
 export const GiveupBid = (props) =>
-    < TransactionsStepsWithDialog
+    < FormStepsWithDialog
         {...props}
         btnLabel="GIVEUP_BID"
         saveBtnLabel='GIVEUP_BID_SAVE_BTN'
         title="GIVEUP_BID_TITLE"
-        trId={'giveup_bid_slot_' + props.slotId + '_bid_' + props.bidId}
-        trPages={[{ title: 'GIVEUP_BID_STEP', page: VerifyBidStep }]}
+        stepsId={'giveup_bid_slot_' + props.slotId + '_bid_' + props.bidId}
+        {...txCommon}
+        stepsPages={[{ title: 'GIVEUP_BID_STEP', page: VerifyBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return giveupBid(
                 {
@@ -246,13 +282,14 @@ export const GiveupBid = (props) =>
 
 
 export const RefundBid = (props) =>
-    < TransactionsStepsWithDialog
+    < FormStepsWithDialog
         {...props}
         btnLabel="REFUND_BID"
         saveBtnLabel='REFUND_BID_SAVE_BTN'
         title="REFUND_BID_TITLE"
-        trId={'refund_bid_unit_' + props.unitId + '_bid_' + props.bidId}
-        trPages={[{ title: 'REFUND_BID_STEP', page: VerifyBidStep }]}
+        stepsId={'refund_bid_unit_' + props.unitId + '_bid_' + props.bidId}
+        {...txCommon}
+        stepsPages={[{ title: 'REFUND_BID_STEP', page: VerifyBidStep }]}
         saveFn={({ acc, transaction } = {}) => {
             return refundBid(
                 {
@@ -279,13 +316,14 @@ export const RefundBid = (props) =>
     />
 
 export const Deposit = (props) =>
-    <TransactionsStepsWithDialog
+    <FormStepsWithDialog
         {...props}
         btnLabel="ACCOUNT_DEPOSIT_TO_EXCHANGE_BTN"
         saveBtnLabel='ACCOUNT_DEPOSIT_TO_EXCHANGE_SAVE_BTN'
         title="ACCOUNT_DEPOSIT_TO_EXCHANGE_TITLE"
-        trId='depositToExchange'
-        trPages={[{ title: 'ACCOUNT_DEPOSIT_TO_EXCHANGE_STEP', page: DepositToExchange }]}
+        stepsId='depositToExchange'
+        {...txCommon}
+        stepsPages={[{ title: 'ACCOUNT_DEPOSIT_TO_EXCHANGE_STEP', page: DepositToExchange }]}
         previewWarnMsgs={[{ msg: 'ACCOUNT_DEPOSIT_MULTIPLE_SIGNS_MSG' }]}
         saveFn={({ acc, transaction } = {}) => {
             return depositToExchange({ user: acc, _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
@@ -296,13 +334,14 @@ export const Deposit = (props) =>
     />
 
 export const WithdrawFromExchange = (props) =>
-    <TransactionsStepsWithDialog
+    <FormStepsWithDialog
         {...props}
         btnLabel="ACCOUNT_WITHDRAW_FROM_EXCHANGE_BTN"
         saveBtnLabel='ACCOUNT_WITHDRAW_FROM_EXCHANGE_SAVE_BTN'
         title="ACCOUNT_WITHDRAW_FROM_EXCHANGE_TITLE"
-        trId='withdrawFromExchange'
-        trPages={[{ title: 'ACCOUNT_WITHDRAW_FROM_EXCHANGE_STEP', page: WithdrawFromExchangePage }]}
+        stepsId='withdrawFromExchange'
+        {...txCommon}
+        stepsPages={[{ title: 'ACCOUNT_WITHDRAW_FROM_EXCHANGE_STEP', page: WithdrawFromExchangePage }]}
         saveFn={({ acc, transaction } = {}) => {
             return withdrawFromExchange({ _addr: acc._addr, amountToWithdraw: transaction.withdrawAmount, gas: transaction.gas, user: acc, })
         }}

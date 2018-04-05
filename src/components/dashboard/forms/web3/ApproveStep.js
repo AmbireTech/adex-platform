@@ -63,15 +63,17 @@ ApproveStep.propTypes = {
     actions: PropTypes.object.isRequired,
     label: PropTypes.string,
     trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     transaction: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state, props) {
-    let persist = state.persist
-    let memory = state.memory
+    // const persist = state.persist
+    // const memory = state.memory
+    const trId = props.stepsId
     return {
-        // trId: 'approve'
+        trId: trId
     }
 }
 
@@ -81,7 +83,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-let ApproveStepForm = NewTransactionHoc(ApproveStep)
+const ApproveStepForm = NewTransactionHoc(ApproveStep)
 export default connect(
     mapStateToProps,
     mapDispatchToProps

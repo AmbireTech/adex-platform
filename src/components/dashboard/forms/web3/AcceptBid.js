@@ -87,6 +87,7 @@ AcceptBid.propTypes = {
     actions: PropTypes.object.isRequired,
     label: PropTypes.string,
     trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     transaction: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     placedBid: PropTypes.object.isRequired
@@ -94,9 +95,11 @@ AcceptBid.propTypes = {
 
 function mapStateToProps(state, props) {
     // let persist = state.persist
-    let memory = state.memory
+    const memory = state.memory
+    const trId = props.stepsId
     return {
-        spinner: memory.spinners[props.trId]
+        spinner: memory.spinners[trId],
+        trId: trId
     }
 }
 
@@ -106,7 +109,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-let AcceptBidForm = NewTransactionHoc(AcceptBid)
+const AcceptBidForm = NewTransactionHoc(AcceptBid)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
