@@ -13,7 +13,7 @@ class FormSteps extends Component {
         let pages = []
         const { SaveBtn, CancelBtn, t, onSave, stepsId, stepsPages, stepsPreviewPage, validateIdBase, ...rest } = this.props
         const cancelButton = () => <CancelBtn  {...rest} stepsId={stepsId} onSave={onSave} t={t} />
-        const validateId = (validateIdBase || '') + stepsId
+        const validateId = (validateIdBase || '') + '-' + stepsId
 
         stepsPages.map((page, index) => {
             pages.push({

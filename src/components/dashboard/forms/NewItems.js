@@ -1,5 +1,8 @@
 import React from 'react'
-import NewItemSteps from './items/NewItemSteps'
+import { Button } from 'react-toolbox/lib/button'
+import FormSteps from 'components/dashboard/forms/FormSteps'
+import NewItemHoc from './items/NewItemHocStep'
+import NewItemFormPreview from './items/NewItemFormPreview'
 import NewItemWithDialog from './items/NewItemWithDialog'
 import NewItemForm from './items/NewItemForm'
 import NewSlotForm from './items/NewSlotForm'
@@ -12,15 +15,37 @@ import { AdUnit, AdSlot, Channel, Campaign } from 'adex-models'
 import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemsTypes } = ItemsConstants
+const SaveBtn = ({ ...props }) => {
+    return (
+        <Button icon='save' label={props.t('SAVE')} primary onClick={props.save} />
+    )
+}
 
-const NewItemStepsWithDialog = NewItemWithDialog(NewItemSteps)
+const SaveBtnWithItem = NewItemHoc(SaveBtn)
+
+const CancelBtn = ({ ...props }) => {
+    return (
+        <Button label={props.t('CANCEL')} onClick={props.cancel} />
+    )
+}
+
+const CancelBtnWithItem = NewItemHoc(CancelBtn)
+
+const itemsCommon = {
+    SaveBtn: SaveBtnWithItem,
+    CancelBtn: CancelBtnWithItem,
+    stepsPreviewPage: { title: 'PREVIEW_AND_SAVE_ITEM', page: NewItemFormPreview },
+    validateIdBase: 'new-'
+}
 
 // Ad unit
 export const NewUnitSteps = (props) => 
-    <NewItemSteps
+    <FormSteps
         {...props}
+        {...itemsCommon}
         itemType={ItemsTypes.AdUnit.id}
-        itemPages={[
+        stepsId={ItemsTypes.AdUnit.id}
+        stepsPages={[
             {title: 'UNIT_BASIC_STEP', page: NewItemForm},
             {title: 'UNIT_TYPE_DATA_STEP', page: NewUnitFormType},
             {title: 'UNIT_BANNER_STEP', page: NewUnitFormImg},
@@ -42,10 +67,12 @@ export const NewUnitDialog = (props) =>
     
 // Campaign
 export const NewCampaignSteps = (props) =>
-    <NewItemSteps
+    <FormSteps
             {...props}
+            {...itemsCommon}
             itemType={ItemsTypes.Campaign.id}
-            itemPages={[
+            stepsId={ItemsTypes.Campaign.id}
+            stepsPages={[
                 {title: 'CAMPAIGN_BASIC_STEP', page: NewItemForm},
                 {title: 'CAMPAIGN_PERIOD_STEP', page: NewCampaignForm}                
             ]}
@@ -65,10 +92,12 @@ export const NewCampaignDialog = (props) =>
 
 // Ad slot
 export const NewSlotSteps = (props) =>
-    <NewItemSteps
+    <FormSteps
         {...props}
+        {...itemsCommon}
         itemType={ItemsTypes.AdSlot.id}
-        itemPages={[
+        stepsId={ItemsTypes.AdSlot.id}
+        stepsPages={[
             {title: 'SLOT_BASIC_STEP', page: NewItemForm},
             {title: 'SLOT_TYPE_DATA_STEP', page: NewSlotForm},
             {title: 'SLOT_IMAGES_STEP', page: NewSlotFormImgs}
@@ -91,10 +120,12 @@ export const NewSlotDialog = (props) =>
 
 // Channel
 export const NewChannelSteps = (props) =>
-    <NewItemSteps
+    <FormSteps
         {...props}
+        {...itemsCommon}
         itemType={ItemsTypes.Channel.id}
-        itemPages={[
+        stepsId={ItemsTypes.Channel.id}
+        stepsPages={[
             {title: 'CHANNEL_BASIC_STEP', page: NewItemForm},
         ]}
         imgLabel='CHANNEL_LOGO'
