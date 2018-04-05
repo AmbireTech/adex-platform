@@ -6,15 +6,11 @@ import actions from 'actions'
 import theme from './theme.css'
 import { Button } from 'react-toolbox/lib/button'
 import Translate from 'components/translate/Translate'
-// import { getWeb3 } from 'services/smart-contracts/ADX'
-// import SideSelect from 'components/signin/side-select/SideSelect'
-// import scActions from 'services/smart-contracts/actions'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { addSig, getSig } from 'services/auth/auth'
-// import { checkAuth } from 'services/adex-node/actions'
 import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
-import { List, ListItem, ListSubHeader, ListDivider, ListCheckbox } from 'react-toolbox/lib/list'
+import { List, ListItem } from 'react-toolbox/lib/list'
 import { getAddrs } from 'services/hd-wallet/utils'
 import scActions from 'services/smart-contracts/actions'
 import trezorConnect from 'third-party/trezor-connect'
@@ -22,7 +18,8 @@ import { adxToFloatView } from 'services/smart-contracts/utils'
 import { web3Utils } from 'services/smart-contracts/ADX'
 import AuthHoc from './AuthHoc'
 import { AUTH_TYPES } from 'constants/misc'
-import ProgressBar from 'react-toolbox/lib/progress_bar'
+import { TabBox, TabBody, TabStickyTop, TopLoading } from './AuthCommon'
+import Helper from 'helpers/miscHelpers'
 
 const TrezorConnect = trezorConnect.TrezorConnect
 
@@ -93,27 +90,29 @@ class AuthTrezor extends Component {
                 // NOTE: Now this can be triggered if you are open the trezor popup, change the tab of auth method return to and again press the button, if you stay in the trezor tab it should not be a problem
                 console.error('Error: catch', err)
                 // this.setState({waitingTrezorAction: false})
-                this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_TREZOR', { args: [err] }), timeout: 5000 })
+                this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_TREZOR', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
             }
         })
     }
 
     AddressSelect = ({ addresses, waitingTrezorAction, t, ...rest }) => {
         return (
-            <div className={theme.addrsBox}>
-                <div className={theme.addrHead}>
+            <TabBox >
+                <TabStickyTop>
                     {waitingTrezorAction ?
-                        t('TREZOR_WAITING_ACTION')
+                        <TopLoading msg={t('TREZOR_WAITING_ACTION')} />
                         :
                         t('SELECT_ADDR_TREZOR')
                     }
-                </div>
-                <List selectable ripple className={theme.addrList}>
-                    {addresses.map((res, index) =>
-                        <ListItem key={res.addr} onClick={this.onAddrSelect.bind(this, res.addr, index)} caption={res.addr} legend={getAddrStatsLabel({ stats: res, t: t })} />
-                    )}
-                </List>
-            </div>
+                </TabStickyTop>
+                <TabBody>
+                    <List selectable ripple className={theme.addrList}>
+                        {addresses.map((res, index) =>
+                            <ListItem key={res.addr} onClick={this.onAddrSelect.bind(this, res.addr, index)} caption={res.addr} legend={getAddrStatsLabel({ stats: res, t: t })} />
+                        )}
+                    </List>
+                </TabBody>
+            </TabBox>
         )
     }
 
@@ -137,31 +136,45 @@ class AuthTrezor extends Component {
         // let authMode = this.props.account._authMode
 
         return (
-            <div >
+            <div>
                 {this.state.addresses.length ?
-                    <this.AddressSelect waitingTrezorAction={this.state.waitingTrezorAction} addresses={this.state.addresses} t={t} />
+                    <this.AddressSelect 
+                        waitingTrezorAction={this.state.waitingTrezorAction} 
+                        addresses={this.state.addresses} 
+                        t={t} 
+                    />
                     :
-                    <div>
-                        <span>
-                            {t('TREZOR_INFO')}
-                        </span>
-                        <br />
-                        <h3>
-                            <Anchor href='https://trezor.io' target='_blank'>
-                                <Img src={require('resources/trezor-logo-h.png')} alt={'https://trezor.io'} style={{ maxWidth: '100%', maxHeight: '72px' }} />
-                            </Anchor>
-                        </h3>
-                        <br />
-                        <br />
-
+                    <TabBox>
                         {this.state.waitingAddrsData ?
-                            <span> <ProgressBar type='circular' mode='indeterminate' multicolor theme={theme} /> <span> {t('TREZOR_WAITING_ADDRS_INFO')} </span> </span>
-                            : this.state.waitingTrezorAction ?
-                                <span> {t('TREZOR_WAITING_ACTION')} </span>
-                                : <Button onClick={this.connectTrezor} label={t('CONNECT_WITH_TREZOR')} raised primary />
+                            <TabStickyTop>
+                                <TopLoading msg={t('TREZOR_WAITING_ADDRS_INFO')} />
+                            </TabStickyTop> 
+                            : 
+                            this.state.waitingTrezorAction ?
+                                <TabStickyTop>
+                                    <TopLoading msg={t('TREZOR_WAITING_ACTION')} />
+                                </TabStickyTop> : null 
                         }
 
-                    </div>
+                        <TabBody>
+                            <span>
+                                {t('TREZOR_INFO')}
+                            </span>
+                            <br />
+                            <h3>
+                                <Anchor href='https://trezor.io' target='_blank'>
+                                    <Img src={require('resources/trezor-logo-h.png')} alt={'https://trezor.io'} style={{ maxWidth: '100%', maxHeight: '72px' }} />
+                                </Anchor>
+                            </h3>
+                            <br />
+                            <br />
+
+                            {!this.state.waitingAddrsData && !this.state.waitingTrezorAction ?
+                                <Button onClick={this.connectTrezor} label={t('CONNECT_WITH_TREZOR')} raised primary />
+                                : null }
+
+                        </TabBody>
+                    </TabBox>
                 }
             </div>
         )
