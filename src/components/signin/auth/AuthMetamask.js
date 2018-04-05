@@ -17,6 +17,8 @@ import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
 import AuthHoc from './AuthHoc'
 import { AUTH_TYPES } from 'constants/misc'
+import { TabBox, TabBody, TabStickyTop, TopLoading } from './AuthCommon'
+import Helper from 'helpers/miscHelpers'
 
 const { getAccountMetamask } = scActions
 
@@ -45,8 +47,9 @@ class AuthMetamask extends Component {
         this.setState({ waitingMetamaskAction: true }, () =>
             this.props.authOnServer({ mode, addr, authType })
                 .then()
-                .catch(() => {
-                    this.setState({ waitingMetamaskAction: true })
+                .catch((err) => {
+                    this.setState({ waitingMetamaskAction: false })
+                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_METAMASK', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
                 })
         )
     }
@@ -99,39 +102,43 @@ class AuthMetamask extends Component {
         // let authMode = this.props.account._authMode
 
         return (
-            <div >
-                <span>
-                    {t('METAMASK_INFO')}
-                </span>
-                <br />
-                <h3>
-                    <Anchor href='https://metamask.io/' target='_blank'>
-                        <Img src={METAMASK_DL_IMG} alt={'Downlad metamask'} style={{ maxWidth: '100%', maxHeight: '72px' }} />
-                    </Anchor>
-                </h3>
-                <br />
-                <br />
-                {userAddr ?
-                    <div >
-                        <div className={theme.metamaskLAbel}>
-                            {this.state.waitingMetamaskAction ?
-                                t('METAMASK_WAITING_ACTION', { args: [userAddr] }) :
-                                t('AUTH_WITH_METAMASK_LABEL', { args: [userAddr] })
-                            }
+            <TabBox >
+                {this.state.waitingMetamaskAction ?
+                    <TabStickyTop>
+                        <TopLoading msg={t('METAMASK_WAITING_ACTION')} />
+                    </TabStickyTop> 
+                : null }
+                <TabBody>
+                    <span>
+                        {t('METAMASK_INFO')}
+                    </span>
+                    <br />
+                    <h3>
+                        <Anchor href='https://metamask.io/' target='_blank'>
+                            <Img src={METAMASK_DL_IMG} alt={'Downlad metamask'} style={{ maxWidth: '100%', maxHeight: '72px' }} />
+                        </Anchor>
+                    </h3>
+                    <br />
+                    <br />
+                    {userAddr ?
+                        <div >
+                            <div className={theme.metamaskLAbel}>
+                                {t('AUTH_WITH_METAMASK_LABEL', { args: [userAddr] })}
+                            </div>
+                            <Button
+                                onClick={this.authOnServer}
+                                label={t('AUTH_WITH_METAMASK_BTN', { args: [userAddr] })}
+                                raised
+                                accent
+                                disabled={this.state.waitingMetamaskAction}
+                                icon={this.state.waitingMetamaskAction ? 'hourglass_empty' : ''}
+                            />
                         </div>
-                        <Button
-                            onClick={this.authOnServer}
-                            label={t('AUTH_WITH_METAMASK_BTN', { args: [userAddr] })}
-                            raised
-                            accent
-                            disabled={this.state.waitingMetamaskAction}
-                            icon={this.state.waitingMetamaskAction ? 'hourglass_empty' : ''}
-                        />
-                    </div>
-                    :
-                    <Button onClick={this.checkMetamask} label={t('AUTH_CONNECT_WITH_METAMASK')} raised primary />
-                }
-            </div>
+                        :
+                        <Button onClick={this.checkMetamask} label={t('AUTH_CONNECT_WITH_METAMASK')} raised primary />
+                    }
+                </TabBody>
+            </TabBox>
         )
     }
 }
