@@ -3,7 +3,7 @@ import { getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 import { TO_HEX_PAD } from 'services/smart-contracts/constants'
 import { getRsvFromSig, getTypedDataHash } from 'services/smart-contracts/utils'
 import trezorConnect from 'third-party/trezor-connect'
-import ledger from 'third-party/ledger.min'
+import ledger from 'ledgerco' //'third-party/ledger.min'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { AUTH_TYPES } from 'constants/misc'
 const TrezorConnect = trezorConnect.TrezorConnect
@@ -11,8 +11,6 @@ const TrezorConnect = trezorConnect.TrezorConnect
 const PRODUCTION_MODE = process.env.NODE_ENV === 'production'
 
 const { SIGN_TYPES } = EXCHANGE_CONSTANTS
-
-// const ledger = window.ledger
 
 export const setWallet = ({ prKey, addr = '' }) => {
 
@@ -141,10 +139,8 @@ export const signTypedLedger = ({ userAddr, hdPath, mode, addrIdx, typedData, ha
 
             let signature = { sig: '0x' + result['r'] + result['s'] + v, hash: hash }
             return signature
-        }).catch((err) => {
-            return err
         })
-  
+
 }
 
 
@@ -162,7 +158,7 @@ export const signTypedMsg = ({ mode, userAddr, hdPath, addrIdx, typedData }) => 
             pr = signTypedMetamask({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name, hash })
             break
         case SIGN_TYPES.EthPersonal.id:
-            pr = signTypedLedger({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name, hash, mode })
+            pr = signTypedLedger({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name, hash, mode, hdPath, addrIdx })
             break
         default:
             pr = Promise.reject(new Error('Invalid signature mode!'))

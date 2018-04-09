@@ -12,7 +12,7 @@ import Img from 'components/common/img/Img'
 import { List, ListItem } from 'react-toolbox/lib/list'
 import { getAddrs } from 'services/hd-wallet/utils'
 import scActions from 'services/smart-contracts/actions'
-import ledger from 'third-party/ledger.min'
+import ledger from 'ledgerco' //'third-party/ledger.min'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import { web3Utils } from 'services/smart-contracts/ADX'
 import AuthHoc from './AuthHoc'
@@ -33,7 +33,7 @@ const getAddrStatsLabel = ({ stats, t }) => {
     let adxOnBids = adxToFloatView(exchBal.onBids)
     let exchangeAvailable = adxToFloatView(exchBal.available)
 
-    return t('LEDGER_ADDR_INFO', { args: [addrBalanceEth, addrBalanceAdx, adxOnBids, exchangeAvailable] })
+    return t('ADDR_INFO', { args: [addrBalanceEth, addrBalanceAdx, adxOnBids, exchangeAvailable] })
 }
 
 class AuthLedger extends Component {
