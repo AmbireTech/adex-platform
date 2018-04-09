@@ -39,6 +39,7 @@
     "history": "^4.7.2",
     "html-webpack-plugin": "2.29.0",
     "jest": "20.0.4",
+    "ledgerco": "^1.2.1",
     "lodash.merge": "^4.6.0",
     "moment": "^2.18.1",
     "moment-range": "^3.0.3",
