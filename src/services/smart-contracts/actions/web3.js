@@ -4,6 +4,7 @@ import { TO_HEX_PAD } from 'services/smart-contracts/constants'
 import { getRsvFromSig, getTypedDataHash } from 'services/smart-contracts/utils'
 import trezorConnect from 'third-party/trezor-connect'
 import ledger from 'ledgerco' //'third-party/ledger.min'
+import rlp from 'rlp'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { AUTH_TYPES } from 'constants/misc'
 const TrezorConnect = trezorConnect.TrezorConnect
@@ -193,6 +194,21 @@ const padLeftEven = (hex) => {
     return hex;
 }
 
+const txSend = ({ tx, opts, txSuccessData }) => {
+    return new Promise((resolve, reject) => {
+        (tx.send ? tx.send(opts) : tx(opts))
+            .on('transactionHash', (trHash) => {
+                let res = { ...txSuccessData, trHash }
+                console.log('res', res)
+                return resolve(res)
+            })
+            .on('error', (err) => {
+                console.log('err', err)
+                return reject(err)
+            })
+    })
+}
+
 const sendTxTrezor = ({ web3, rawTx, user, txSuccessData, nonce }) => {
     console.log('sendTxTrezor')
     return new Promise((resolve, reject) => {
@@ -212,14 +228,14 @@ const sendTxTrezor = ({ web3, rawTx, user, txSuccessData, nonce }) => {
                     rawTx.s = '0x' + response.s
                     var eTx = new ethTx(rawTx);
                     var signedTx = '0x' + eTx.serialize().toString('hex')
-                    web3.eth.sendSignedTransaction(signedTx)
-                        .on('transactionHash', (trHash) => {
-                            let res = { ...txSuccessData, trHash, nonce }
-                            console.log('transactionHash', res)
+
+                    const tx = web3.eth.sendSignedTransaction
+
+                    txSend({ tx, opts: signedTx, txSuccessData })
+                        .then((res) => {
                             return resolve(res)
                         })
-                        .on('error', (err) => {
-                            console.log('transactionHash err', err)
+                        .catch((err) => {
                             return reject(err)
                         })
                 } else {
@@ -231,21 +247,33 @@ const sendTxTrezor = ({ web3, rawTx, user, txSuccessData, nonce }) => {
 
 const sendTxLedger = ({ web3, rawTx, user, txSuccessData, nonce }) => {
     console.log('sendTxLedger', ledger)
-}
+    // return new Promise((resolve, reject) => {
+    const eTx = new ethTx(rawTx)
+    eTx.raw[6] = Buffer.from([rawTx.chainId])
+    eTx.raw[7] = eTx.raw[8] = 0
+    const toHash = eTx.raw // old ? eTx.raw.slice(0, 6) : eTx.raw
+    const txToSign = rlp.encode(toHash)
 
-const txSend = ({ tx, opts, txSuccessData }) => {
-    return new Promise((resolve, reject) => {
-        (tx.send ? tx.send(opts) : tx(opts))
-            .on('transactionHash', (trHash) => {
-                let res = { ...txSuccessData, trHash }
-                console.log('res', res)
-                return resolve(res)
-            })
-            .on('error', (err) => {
-                console.log('err', err)
-                return reject(err)
-            })
-    })
+    return ledger.comm_u2f.create_async()
+        .then((comm) => {
+            const eth = new ledger.eth(comm)
+
+            const dPath = user._hdWalletAddrPath + '/' + user._hdWalletAddrIdx
+
+            return eth.signTransaction_async(dPath, txToSign.toString('hex'))
+        })
+        .then((result) => {
+            const rewTxSigned = { ...rawTx }
+            rewTxSigned.v = '0x' + result['v']
+            rewTxSigned.r = '0x' + result['r']
+            rewTxSigned.s = '0x' + result['s']
+
+            const eTxSigned = new ethTx(rewTxSigned)
+            const signedTx = '0x' + eTxSigned.serialize().toString('hex')
+            const tx = web3.eth.sendSignedTransaction
+
+            return txSend({ tx, opts: signedTx, txSuccessData })
+        })
 }
 
 export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData, prevNonce = 0, nonceIncrement = 0 }) => {
@@ -287,6 +315,9 @@ export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData, prevNonce = 0
 
             if (authType === AUTH_TYPES.TREZOR.name) {
                 return sendTxTrezor({ web3, rawTx, user, opts, txSuccessData, nonce })
+            }
+            if (authType === AUTH_TYPES.LEDGER.name) {
+                return sendTxLedger({ web3, rawTx, user, opts, txSuccessData, nonce })
             }
         })
 
