@@ -224,7 +224,7 @@ export const signBid = ({ userAddr, bid, user }) => {
                     return signTypedMsg({ mode, userAddr, typedData: typed, addrIdx: user._hdWalletAddrIdx, hdPath: user._hdWalletAddrPath })
                 })
                 .then((res) => {
-                    let signature = { sig_mode: mode, signature: res.sig, hash: res.hash, ...getRsvFromSig(res.sig) }                    
+                    let signature = { sig_mode: mode, signature: res.sig, hash: res.hash, ...getRsvFromSig(res.sig) }
                     return signature
                 })
         })
@@ -318,6 +318,10 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                     /* NOTE: if for some reason (e.g user reject the deposit) some txes are confirmed b
                     but some are not we return the sent 
                     */
+                    /**
+                     * NOTE: Actually not needed any more since sendTx handles store and notifications update
+                     * TODO: Delete unused code
+                     */
 
                     return {
                         err: err,

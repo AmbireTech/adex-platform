@@ -21,35 +21,25 @@ export default function NewTransactionHoc(Decorated) {
             this.props.actions.updateNewTransaction({ trId: this.props.trId, key: name, value: value })
         }
 
-        addTx = (tx) => {
-            let txData = { ...tx }
-            txData.status = TX_STATUS.Pending.id
-            txData.sendingTime = Date.now()
-            this.props.actions.addWeb3Transaction({ trans: txData, addr: this.props.account._addr })
-        }
+        // addTx = (tx) => {
+        //     let txData = { ...tx }
+        //     txData.status = TX_STATUS.Pending.id
+        //     txData.sendingTime = Date.now()
+        //     this.props.actions.addWeb3Transaction({ trans: txData, addr: this.props.account._addr })
+        // }
 
         onSave = (err, tx, manyTxs) => {
             this.props.actions.resetNewTransaction({ trId: this.props.trId })
-            let nonces = []
 
-            if (tx && manyTxs) {
-                tx.forEach(t => {
-                    this.addTx(t)
-                    nonces.push(t.nonce)
-                })
-            } else if (tx) {
-                this.addTx(tx)
-                nonces.push(tx.nonce)
-            }
+            // NOTE: Now the web3Tx are updated on sendTx and here are handled just the error and on all txs success
 
-            nonces.filter(n => Helper.isInt(n))
-
-            let settings = { ...this.props.account._settings }
-
-            settings.nonce = Math.max((settings.nonce || 0), ...nonces) + 1
-
-            this.props.actions.updateAccount({ ownProps: { settings: settings } })
-
+            // if (tx && manyTxs) {
+            //     tx.forEach(t => {
+            //         this.addTx(t)
+            //     })
+            // } else if (tx) {
+            //     this.addTx(tx)
+            // }
 
             if (typeof this.props.onSave === 'function') {
                 this.props.onSave()
@@ -72,12 +62,6 @@ export default function NewTransactionHoc(Decorated) {
             const t = this.props.t
             const areManyTxs = Array.isArray(res)
 
-            if (areManyTxs) {
-                this.props.actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTIONS_SENT_MSG', { args: [res.length] }), timeout: 5000 })
-            } else if (res) {
-                this.props.actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTION_SENT_MSG', { args: [res.trHash] }), timeout: 5000 })
-            }
-
             if (err) {
                 this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
             }
@@ -99,7 +83,7 @@ export default function NewTransactionHoc(Decorated) {
                 .catch((error) => {
                     console.log('err on save', error)
                     const res = error.txResults || null
-                    const err = error.err
+                    const err = error.err || error
 
                     this.handleSaveRes({ err: err, res: res })
                 })
