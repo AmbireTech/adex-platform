@@ -314,6 +314,16 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
                     console.log('depositToExchange result ', txResults)
                     return txResults
                 })
+                .catch((err) => {
+                    /* NOTE: if for some reason (e.g user reject the deposit) some txes are confirmed b
+                    but some are not we return the sent 
+                    */
+
+                    return {
+                        err: err,
+                        txResults: txResults
+                    }
+                })
         })
 }
 

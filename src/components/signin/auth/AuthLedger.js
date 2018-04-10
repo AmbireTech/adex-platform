@@ -17,24 +17,12 @@ import { adxToFloatView } from 'services/smart-contracts/utils'
 import { web3Utils } from 'services/smart-contracts/ADX'
 import AuthHoc from './AuthHoc'
 import { AUTH_TYPES } from 'constants/misc'
-import { TabBox, TabBody, TabStickyTop, TopLoading } from './AuthCommon'
+import { TabBox, TabBody, TabStickyTop, TopLoading, getAddrStatsLabel } from './AuthCommon'
 import Helper from 'helpers/miscHelpers'
 
 const { getAccountStats } = scActions
 
 const HD_PATH = "m/44'/60'/0'"
-
-// const ledger = window.ledger
-
-const getAddrStatsLabel = ({ stats, t }) => {
-    let addrBalanceAdx = adxToFloatView(stats.balanceAdx || 0)
-    let addrBalanceEth = web3Utils.fromWei(stats.balanceEth || '0', 'ether')
-    let exchBal = stats.exchangeBalance || {}
-    let adxOnBids = adxToFloatView(exchBal.onBids)
-    let exchangeAvailable = adxToFloatView(exchBal.available)
-
-    return t('ADDR_INFO', { args: [addrBalanceEth, addrBalanceAdx, adxOnBids, exchangeAvailable] })
-}
 
 class AuthLedger extends Component {
     constructor(props) {

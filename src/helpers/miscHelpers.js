@@ -95,6 +95,10 @@ class Helper {
             return (err.error || err || '').toString()
         }
     }
+
+    isInt = (int) => {
+        return typeof int === 'number' && (int % 1 === 0)
+    }
 }
 
 export default new Helper()

@@ -30,14 +30,26 @@ export default function NewTransactionHoc(Decorated) {
 
         onSave = (err, tx, manyTxs) => {
             this.props.actions.resetNewTransaction({ trId: this.props.trId })
+            let nonces = []
 
             if (tx && manyTxs) {
                 tx.forEach(t => {
                     this.addTx(t)
+                    nonces.push(t.nonce)
                 })
             } else if (tx) {
                 this.addTx(tx)
+                nonces.push(tx.nonce)
             }
+
+            nonces.filter(n => Helper.isInt(n))
+
+            let settings = { ...this.props.account._settings }
+
+            settings.nonce = Math.max((settings.nonce || 0), ...nonces) + 1
+
+            this.props.actions.updateAccount({ ownProps: { settings: settings } })
+
 
             if (typeof this.props.onSave === 'function') {
                 this.props.onSave()
@@ -56,30 +68,40 @@ export default function NewTransactionHoc(Decorated) {
             this.props.actions.resetNewTransaction({ trId: this.props.trId })
         }
 
-        save = () => {
+        handleSaveRes = ({ err, res }) => {
             const t = this.props.t
+            const areManyTxs = Array.isArray(res)
 
+            if (areManyTxs) {
+                this.props.actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTIONS_SENT_MSG', { args: [res.length] }), timeout: 5000 })
+            } else if (res) {
+                this.props.actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTION_SENT_MSG', { args: [res.trHash] }), timeout: 5000 })
+            }
+
+            if (err) {
+                this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
+            }
+
+            this.onSave(err, res, Array.isArray(res))
+        }
+
+        save = () => {
             this.handleChange('waitingForWalletAction', true)
-
             this.props.saveFn({ acc: this.props.account, transaction: this.props.transaction })
                 .then((res) => {
-                    const areManyTxs = Array.isArray(res)
-                    let userSettings = { ...this.props.account._settings }
+                    console.log('res on save', res)
 
-                    if (areManyTxs) {
-                        this.props.actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTIONS_SENT_MSG', { args: [res.length] }), timeout: 5000 })
-                        // this.props.actions.updateAccount({ ownProps: { settings: userSettings.nonce + res.length } })
-                    } else {
-                        this.props.actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTION_SENT_MSG', { args: [res.trHash] }), timeout: 5000 })
-                        // this.props.actions.updateAccount({ ownProps: { settings: userSettings.nonce + 1 } })
-                    }
+                    const txs = res.txResults || res
+                    const err = res.err || null
 
-                    this.onSave(null, res, areManyTxs)
+                    this.handleSaveRes({ err: err, res: txs })
                 })
-                .catch((err) => {
-                    console.log('err on save', err)
-                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
-                    this.onSave(err, null)
+                .catch((error) => {
+                    console.log('err on save', error)
+                    const res = error.txResults || null
+                    const err = error.err
+
+                    this.handleSaveRes({ err: err, res: res })
                 })
         }
 
