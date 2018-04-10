@@ -7,11 +7,15 @@ import ledger from 'ledgerco' //'third-party/ledger.min'
 import rlp from 'rlp'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { AUTH_TYPES } from 'constants/misc'
+import actions from 'actions'
+import { translate } from 'services/translations/translations'
+
+
 const TrezorConnect = trezorConnect.TrezorConnect
 
 const PRODUCTION_MODE = process.env.NODE_ENV === 'production'
 
-const { SIGN_TYPES } = EXCHANGE_CONSTANTS
+const { SIGN_TYPES, TX_STATUS } = EXCHANGE_CONSTANTS
 
 export const setWallet = ({ prKey, addr = '' }) => {
 
@@ -194,22 +198,35 @@ const padLeftEven = (hex) => {
     return hex;
 }
 
-const txSend = ({ tx, opts, txSuccessData }) => {
+// NOTE: not the best place to do such updates but we need the tx and notifications on tx hash when there a re more than one tx for action
+const addTx = (tx, addr, user, nonce) => {
+    let txData = { ...tx }
+    txData.status = TX_STATUS.Pending.id
+    txData.sendingTime = Date.now()
+    actions.execute(actions.addWeb3Transaction({ trans: txData, addr: addr }))
+    actions.execute(actions.addToast({ type: 'accept', action: 'X', label: translate('TRANSACTION_SENT_MSG', { args: [tx.trHash] }), timeout: 5000 }))
+    
+    let settings = { ...user._settings }
+    settings.nonce = nonce + 1
+    actions.execute(actions.updateAccount({ ownProps: { settings: settings } }))
+
+}
+
+const txSend = ({ tx, opts, txSuccessData, from, user, nonce }) => {
     return new Promise((resolve, reject) => {
         (tx.send ? tx.send(opts) : tx(opts))
             .on('transactionHash', (trHash) => {
                 let res = { ...txSuccessData, trHash }
-                console.log('res', res)
+                addTx(res, from, user, nonce)
                 return resolve(res)
             })
             .on('error', (err) => {
-                console.log('err', err)
                 return reject(err)
             })
     })
 }
 
-const sendTxTrezor = ({ web3, rawTx, user, txSuccessData, nonce }) => {
+const sendTxTrezor = ({ web3, rawTx, user, txSuccessData, nonce, from }) => {
     console.log('sendTxTrezor')
     return new Promise((resolve, reject) => {
         TrezorConnect.ethereumSignTx(
@@ -231,7 +248,7 @@ const sendTxTrezor = ({ web3, rawTx, user, txSuccessData, nonce }) => {
 
                     const tx = web3.eth.sendSignedTransaction
 
-                    txSend({ tx, opts: signedTx, txSuccessData })
+                    txSend({ tx, opts: signedTx, txSuccessData, from, user, nonce })
                         .then((res) => {
                             return resolve(res)
                         })
@@ -245,7 +262,7 @@ const sendTxTrezor = ({ web3, rawTx, user, txSuccessData, nonce }) => {
     })
 }
 
-const sendTxLedger = ({ web3, rawTx, user, txSuccessData, nonce }) => {
+const sendTxLedger = ({ web3, rawTx, user, txSuccessData, nonce, from }) => {
     console.log('sendTxLedger', ledger)
     // return new Promise((resolve, reject) => {
     const eTx = new ethTx(rawTx)
@@ -272,7 +289,7 @@ const sendTxLedger = ({ web3, rawTx, user, txSuccessData, nonce }) => {
             const signedTx = '0x' + eTxSigned.serialize().toString('hex')
             const tx = web3.eth.sendSignedTransaction
 
-            return txSend({ tx, opts: signedTx, txSuccessData })
+            return txSend({ tx, opts: signedTx, txSuccessData, from, user, nonce })
         })
 }
 
@@ -282,9 +299,10 @@ export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData, prevNonce = 0
     opts.gasPrice = user._settings.gasPrice
     let userNonce = user._settings.nonce || 0
     let netId = null
+    const from = opts.from
 
     if (authType === AUTH_TYPES.METAMASK.name) {
-        return txSend({ tx, opts, txSuccessData })
+        return txSend({ tx, opts, txSuccessData, from, user })
     }
 
     /*
@@ -318,10 +336,10 @@ export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData, prevNonce = 0
             txSuccessData.nonce = nonce
 
             if (authType === AUTH_TYPES.TREZOR.name) {
-                return sendTxTrezor({ web3, rawTx, user, opts, txSuccessData, nonce })
+                return sendTxTrezor({ web3, rawTx, user, opts, txSuccessData, nonce, from })
             }
             if (authType === AUTH_TYPES.LEDGER.name) {
-                return sendTxLedger({ web3, rawTx, user, opts, txSuccessData, nonce })
+                return sendTxLedger({ web3, rawTx, user, opts, txSuccessData, nonce, from })
             }
         })
 

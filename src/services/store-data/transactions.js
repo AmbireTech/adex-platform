@@ -34,14 +34,10 @@ const syncTransactions = () => {
     return getTransactionsReceipts(hashes)
         .then((receipts) => {
             receipts.forEach((rec) => {
-                // console.log('rec', rec)                
                 if (rec && rec.transactionHash && rec.status) {
-                    // TODO: Make constants for transactions status
                     let status = rec.status === '0x1' ? TX_STATUS.Success.id : TX_STATUS.Error.id
-
                     if (transactions[rec.transactionHash].status !== status) {
-                        let action = actions.updateWeb3Transaction({ trId: rec.transactionHash, key: 'status', value: status, addr: addr })
-                        action(store.dispatch)
+                        actions.execute(actions.updateWeb3Transaction({ trId: rec.transactionHash, key: 'status', value: status, addr: addr }))
                     }
                 }
             })
@@ -72,6 +68,8 @@ const start = () => {
 const stop = () => {
     clearTransactionsTimeout()
 }
+
+// const addTransaction
 
 
 export default {
