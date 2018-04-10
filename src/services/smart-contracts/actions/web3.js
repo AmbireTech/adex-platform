@@ -280,6 +280,7 @@ export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData, prevNonce = 0
     let authType = user._authType
     opts = { ...opts }
     opts.gasPrice = user._settings.gasPrice
+    let userNonce = user._settings.nonce || 0
     let netId = null
 
     if (authType === AUTH_TYPES.METAMASK.name) {
@@ -302,7 +303,7 @@ export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData, prevNonce = 0
              * in order to have possibility to send the same tx with higher gas price 
              * (someday for trezor and ledger, metamask keeps its own nonce but it is not work correct in some cases)
              */
-            nonce = Math.max(nonce, prevNonce) + nonceIncrement
+            nonce = Math.max(nonce, prevNonce, userNonce) + nonceIncrement
             let rawTx = {
                 nonce: sanitizeHex(nonce.toString(16)),
                 gasPrice: sanitizeHex((parseInt(opts.gasPrice, 10) || 4009951502).toString(16)),
@@ -312,6 +313,9 @@ export const sendTx = ({ web3, tx, opts = {}, user, txSuccessData, prevNonce = 0
                 data: tx.encodeABI ? tx.encodeABI() : null,
                 chainId: netId,
             }
+
+            txSuccessData = { ...txSuccessData }
+            txSuccessData.nonce = nonce
 
             if (authType === AUTH_TYPES.TREZOR.name) {
                 return sendTxTrezor({ web3, rawTx, user, opts, txSuccessData, nonce })

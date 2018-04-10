@@ -18,7 +18,7 @@ import { adxToFloatView } from 'services/smart-contracts/utils'
 import { web3Utils } from 'services/smart-contracts/ADX'
 import AuthHoc from './AuthHoc'
 import { AUTH_TYPES } from 'constants/misc'
-import { TabBox, TabBody, TabStickyTop, TopLoading } from './AuthCommon'
+import { TabBox, TabBody, TabStickyTop, TopLoading, getAddrStatsLabel } from './AuthCommon'
 import Helper from 'helpers/miscHelpers'
 
 const TrezorConnect = trezorConnect.TrezorConnect
@@ -26,16 +26,6 @@ const TrezorConnect = trezorConnect.TrezorConnect
 const { getAccountStats } = scActions
 
 const HD_PATH = "m/44'/60'/0'/0"
-
-const getAddrStatsLabel = ({ stats, t }) => {
-    let addrBalanceAdx = adxToFloatView(stats.balanceAdx || 0)
-    let addrBalanceEth = web3Utils.fromWei(stats.balanceEth || '0', 'ether')
-    let exchBal = stats.exchangeBalance || {}
-    let adxOnBids = adxToFloatView(exchBal.onBids)
-    let exchangeAvailable = adxToFloatView(exchBal.available)
-
-    return t('TREZOR_ADDR_INFO', { args: [addrBalanceEth, addrBalanceAdx, adxOnBids, exchangeAvailable] })
-}
 
 class AuthTrezor extends Component {
     constructor(props) {
