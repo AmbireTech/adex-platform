@@ -25,10 +25,10 @@ export const getGasData = () => {
         .then((data) => {
             // Gas Price in Gwei, wait in minutes
             let gasData = {
-                safeLow: { price: (data.safeLow / 10).toFixed(0), wait: data.safeLowWait },
-                average: { price: (data.average / 10).toFixed(0), wait: data.avgWait },
-                fast: { price: (data.fast / 10).toFixed(0), wait: data.fastWait },
-                fastest: { price: (data.fastest / 10).toFixed(0), wait: data.fastestWait },
+                safeLow: { price: (data.safeLow / 10), wait: data.safeLowWait },
+                average: { price: (data.average / 10), wait: data.avgWait },
+                fast: { price: (data.fast / 10), wait: data.fastWait },
+                fastest: { price: (data.fastest / 10), wait: data.fastestWait },
             }
 
             return gasData
