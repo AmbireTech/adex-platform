@@ -1,4 +1,5 @@
 @import './../../../styles/variables.css';
+@import './../../../../node_modules/react-toolbox/lib/list/theme.css';
 
 :root {
     --dialog-height: 80vh;
@@ -100,4 +101,32 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+}
+
+.addrInfoWrapper {
+    width: 100%;
+    padding: 10px 0;
+}
+
+.addr {    
+    color: var(--color-text);
+    font-size: var(--font-size-normal);
+}
+
+.addrInfo {
+    display: flex;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-small);
+    padding-top: var(--list-item-legend-margin-top);
+    white-space: normal;
+
+    & strong {
+        margin-right: 15px;
+    }
+}
+
+.addrInfoLabel {
+    color: var(--color-adex-neutral-contrast);
 }

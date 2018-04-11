@@ -17,7 +17,7 @@ import { adxToFloatView } from 'services/smart-contracts/utils'
 import { web3Utils } from 'services/smart-contracts/ADX'
 import AuthHoc from './AuthHoc'
 import { AUTH_TYPES } from 'constants/misc'
-import { TabBox, TabBody, TabStickyTop, TopLoading, getAddrStatsLabel } from './AuthCommon'
+import { TabBox, TabBody, TabStickyTop, TopLoading, AddrItem } from './AuthCommon'
 import Helper from 'helpers/miscHelpers'
 
 const { getAccountStats } = scActions
@@ -48,7 +48,7 @@ class AuthLedger extends Component {
                     var eth = new ledger.eth(transport)
 
                     return eth.getAddress_async(HD_PATH, false, true)
-                })                    
+                })
                 .then((resp) => {
                     let addresses = getAddrs(resp.publicKey, resp.chainCode)
 
@@ -89,7 +89,11 @@ class AuthLedger extends Component {
                 <TabBody>
                     <List selectable ripple className={theme.addrList}>
                         {addresses.map((res, index) =>
-                            <ListItem key={res.addr} onClick={this.onAddrSelect.bind(this, res.addr, index)} caption={res.addr} legend={getAddrStatsLabel({ stats: res, t: t })} />
+                            <ListItem
+                                key={res.addr}
+                                onClick={this.onAddrSelect.bind(this, res.addr, index)}
+                                itemContent={<AddrItem stats={res} t={t} addr={res.addr} />}
+                            />
                         )}
                     </List>
                 </TabBody>
@@ -119,22 +123,22 @@ class AuthLedger extends Component {
         return (
             <div>
                 {this.state.addresses.length ?
-                    <this.AddressSelect 
-                        waitingLedgerAction={this.state.waitingLedgerAction} 
-                        addresses={this.state.addresses} 
-                        t={t} 
+                    <this.AddressSelect
+                        waitingLedgerAction={this.state.waitingLedgerAction}
+                        addresses={this.state.addresses}
+                        t={t}
                     />
                     :
                     <TabBox>
                         {this.state.waitingAddrsData ?
                             <TabStickyTop>
                                 <TopLoading msg={t('LEDGER_WAITING_ADDRS_INFO')} />
-                            </TabStickyTop> 
-                            : 
+                            </TabStickyTop>
+                            :
                             this.state.waitingLedgerAction ?
                                 <TabStickyTop>
                                     <TopLoading msg={t('LEDGER_WAITING_ACTION')} />
-                                </TabStickyTop> : null 
+                                </TabStickyTop> : null
                         }
 
                         <TabBody>
@@ -152,7 +156,7 @@ class AuthLedger extends Component {
 
                             {!this.state.waitingAddrsData && !this.state.waitingLedgerAction ?
                                 <Button onClick={this.connectLedger} label={t('CONNECT_WITH_LEDGER')} raised primary />
-                                : null }
+                                : null}
 
                         </TabBody>
                     </TabBox>
