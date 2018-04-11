@@ -7,7 +7,7 @@ import theme from './theme.css'
 import { AppBar } from 'react-toolbox/lib/app_bar'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import { Navigation } from 'react-toolbox/lib/navigation'
-import {  MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
+import { MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
 import ButtonMenu from 'components/common/button_menu/ButtonMenu'
 import Translate from 'components/translate/Translate'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
@@ -21,7 +21,7 @@ import trezorLogo from 'resources/trezor-logo-h.png'
 import ledgerLogo from 'resources/ledger_logo_header.png'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
-const RRSwitch = withReactRouterLink((props) => <Anchor {...props}><Switch {...props}  theme={theme} /></Anchor>)
+const RRSwitch = withReactRouterLink((props) => <Anchor {...props}><Switch {...props} theme={theme} /></Anchor>)
 
 const SideSwitch = ({ side, t }) => {
   return (
@@ -54,10 +54,10 @@ class TopNav extends Component {
       case AUTH_TYPES.METAMASK.name:
         imgSrc = metamaskLogo
         break
-      case AUTH_TYPES.TREZOR.name: 
+      case AUTH_TYPES.TREZOR.name:
         imgSrc = trezorLogo
         break
-      case AUTH_TYPES.LEDGER.name: 
+      case AUTH_TYPES.LEDGER.name:
         imgSrc = ledgerLogo
         break
       default:
@@ -90,11 +90,11 @@ class TopNav extends Component {
               caption={t('ACCOUNT')}
             />
             <MenuDivider />
-            <MenuItem            
-              value='logout' 
-              icon='exit_to_app' 
-              caption={t('LOGOUT')} 
-              onClick={() => this.props.actions.resetAccount()} 
+            <MenuItem
+              value='logout'
+              icon='exit_to_app'
+              caption={t('LOGOUT')}
+              onClick={() => { this.props.actions.resetAccount(); this.props.actions.resetAllItems(); }}
             />
           </ButtonMenu>
 
