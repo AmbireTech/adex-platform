@@ -33,9 +33,12 @@ class AcceptBid extends Component {
                 let available = parseInt(balances.available, 10)
                 let bid = parseInt(this.props.placedBid._amount, 10)
 
-                // TODO: new err msg for 0 bid; validate place bid > 0
-                if ((available < bid) || (bid <= 0)) {
+                if ((available < bid)) {
                     this.setState({ errMsg: 'ERR_NO_ADV_AMOUNT_ON_EXCHANGE' })
+                    this.props.validate('unit', { isValid: false, err: { msg: 'ERR_NO_ADV_AMOUNT_ON_EXCHANGE' }, dirty: false })
+                } else if ((bid <= 0)) {
+                    this.setState({ errMsg: 'ERR_INVALID_BID_AMOUNT' })
+                    this.props.validate('unit', { isValid: false, err: { msg: 'ERR_INVALID_BID_AMOUNT' }, dirty: false })
                 }
 
                 return getItem({ id: this.props.adUnitId, authSig: this.props.account._authSig })
@@ -45,12 +48,14 @@ class AcceptBid extends Component {
                 this.props.handleChange('placedBid', this.props.placedBid)
                 this.props.handleChange('slot', this.props.slot)
                 this.props.handleChange('account', this.props.acc)
-                this.props.validate('unit', { isValid: true, dirty: false })
                 this.props.actions.updateSpinner(this.props.trId, false)
+                if (!this.state.errMsg) {
+                    this.props.validate('unit', { isValid: true, dirty: false })
+                }
             })
             .catch((err) => {
                 this.props.actions.updateSpinner(this.props.trId, false)
-                this.props.validate('unit', { isValid: true, dirty: false })
+                this.props.validate('unit', { isValid: false, dirty: false })
                 this.setState({ errMsg: 'ERR_TRANSACTION', errArgs: [err] })
                 this.props.actions
                     .addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_GETTING_BID_INFO', { args: [err] }), timeout: 5000 })
