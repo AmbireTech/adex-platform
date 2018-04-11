@@ -8,6 +8,7 @@ import { adxToFloatView } from 'services/smart-contracts/utils'
 import moment from 'moment'
 import Anchor from 'components/common/anchor/anchor'
 import { PropRow } from 'components/dashboard/forms/FormsCommon'
+import { FontIcon } from 'react-toolbox/lib/font_icon'
 
 export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
     <div>
@@ -64,8 +65,8 @@ export const BidInfo = ({ bid, slot, unit, t, report, errMsg, errArgs, ...rest }
             <Grid fluid style={{ padding: 0 }}>
                 {errMsg ?
                     <PropRow
-                        className={theme.err}
-                        left={t('ERROR')}
+                        className={theme.error}
+                        left={<span> <FontIcon value='error' /> </span>}
                         right={t(errMsg, { args: errArgs })}
                     />
                     : null}

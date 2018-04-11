@@ -91,9 +91,9 @@ adex-models@^1.0.7:
     adex-constants "^1.0.7"
     bs58 "^4.0.1"
 
-"adex-translations@git+https://git@github.com/AdExBlockchain/adex-translations.git#9762242ceac8d3077ea205c86f1c6bdaed004072":
+"adex-translations@git+https://git@github.com/AdExBlockchain/adex-translations.git#195616b1649aa0ef05337787ba85782870b775cf":
   version "0.0.1"
-  resolved "git+https://git@github.com/AdExBlockchain/adex-translations.git#9762242ceac8d3077ea205c86f1c6bdaed004072"
+  resolved "git+https://git@github.com/AdExBlockchain/adex-translations.git#195616b1649aa0ef05337787ba85782870b775cf"
 
 aes-js@^0.2.3:
   version "0.2.4"
