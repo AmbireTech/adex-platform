@@ -30,6 +30,7 @@ class Transactions extends Component {
             <TableHead>
                 <TableCell> {t('TRANS_METHOD')} </TableCell>
                 <TableCell> {t('TRANS_ID')} </TableCell>
+                <TableCell> {t('TRANS_NONCE')} </TableCell>
                 <TableCell> {t('TRANS_STATUS')} </TableCell>
                 <TableCell> {t('TRANS_SENDING_TIME')} </TableCell>
             </TableHead>
@@ -38,7 +39,7 @@ class Transactions extends Component {
 
     // TODO: make something common with unit bids 
     renderTableRow(transaction, index, { to, selected }) {
-        if(!transaction) return null
+        if (!transaction) return null
 
         let t = this.props.t
 
@@ -50,6 +51,7 @@ class Transactions extends Component {
                 >
                     <Anchor target='_blank' href={process.env.ETH_SCAN_TX_HOST + transaction._id} > {transaction._id} </Anchor>
                 </TableCell>
+                <TableCell> {transaction.nonce} </TableCell>
                 <TableCell> {t(TxStatusLabels[transaction.status])} </TableCell>
                 <TableCell> {t(moment(transaction.sendingTime).format('MMMM Do, YYYY, HH:mm:ss'))} </TableCell>
 
@@ -80,8 +82,8 @@ class Transactions extends Component {
         let t = this.props.t
         let transactions = this.props.transactions
         let reduced = Object.keys(transactions).reduce((memo, key) => {
-            if(key && ((key.toString()).length === 66)){
-                let itm = {...transactions[key]}
+            if (key && ((key.toString()).length === 66)) {
+                let itm = { ...transactions[key] }
                 itm._id = key
                 memo.push(itm)
             }
