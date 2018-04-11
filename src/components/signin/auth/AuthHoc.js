@@ -3,23 +3,11 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-// import theme from './theme.css'
-import { Button } from 'react-toolbox/lib/button'
 import Translate from 'components/translate/Translate'
-// import { getWeb3 } from 'services/smart-contracts/ADX'
-// import SideSelect from 'components/signin/side-select/SideSelect'
 import { signToken } from 'services/adex-node/actions'
 import scActions from 'services/smart-contracts/actions'
-import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { addSig, getSig } from 'services/auth/auth'
-import { checkAuth } from 'services/adex-node/actions'
-import METAMASK_DL_IMG from 'resources/download-metamask.png'
-import Anchor from 'components/common/anchor/anchor'
-import Img from 'components/common/img/Img'
-
 const { signAuthToken } = scActions
-
-// const RRButton = withReactRouterLink(Button)
 
 export default function AuthHoc(Decorated) {
 
@@ -41,6 +29,7 @@ export default function AuthHoc(Decorated) {
         authOnServer = ({ mode, addr, hdPath, addrIdx, authType, chainId }) => {
             let signature = null
 
+            addr = addr.toLowerCase()
             return signAuthToken({ userAddr: addr, mode, hdPath, addrIdx })
                 .then(({ sig, sig_mode, authToken, typedData, hash }) => {
                     signature = sig

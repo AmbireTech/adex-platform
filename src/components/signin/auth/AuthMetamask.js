@@ -6,21 +6,16 @@ import actions from 'actions'
 import theme from './theme.css'
 import { Button } from 'react-toolbox/lib/button'
 import Translate from 'components/translate/Translate'
-// import { getWeb3 } from 'services/smart-contracts/ADX'
-// import SideSelect from 'components/signin/side-select/SideSelect'
 import scActions from 'services/smart-contracts/actions'
-import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
-import { addSig, getSig } from 'services/auth/auth'
-import { checkAuth } from 'services/adex-node/actions'
 import METAMASK_DL_IMG from 'resources/download-metamask.png'
 import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
 import AuthHoc from './AuthHoc'
 import { AUTH_TYPES } from 'constants/misc'
-import { TabBox, TabBody, TabStickyTop, TopLoading } from './AuthCommon'
+import { TabBox, TabBody, TabStickyTop, TopLoading, AddrItem } from './AuthCommon'
 import Helper from 'helpers/miscHelpers'
 
-const { getAccountMetamask } = scActions
+const { getAccountMetamask, getAccountStats } = scActions
 
 // const RRButton = withReactRouterLink(Button)
 
@@ -30,23 +25,43 @@ class AuthMetamask extends Component {
         this.state = {
             method: '',
             sideSelect: false,
+            address: {},
             waitingMetamaskAction: false,
+            waitingAddrsData: false
         }
+
+        this.accountInterval = null
     }
 
     componentWillMount() {
-        if (!getSig({ addr: this.props.account._addr, mode: this.props.account._authMode })) {
-            this.props.actions.resetAccount()
-        }
+        this.props.actions.resetAccount()
+        this.accountInterval = setInterval(this.checkForMetamaskAccountChange, 1000)
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.accountInterval)
+    }
+
+    checkForMetamaskAccountChange = () => {
+        getAccountMetamask()
+            .then(({ addr, mode }) => {
+                let stateAddr = this.state.address.addr
+
+                if (stateAddr && (stateAddr.toLowerCase() !== addr.toLowerCase())) {
+                    this.setState({ address: {} })
+                }
+            })
     }
 
     authOnServer = () => {
-        let addr = this.props.account._addr
+        let addr = this.state.address.addr
         let mode = AUTH_TYPES.METAMASK.signType // TEMP?
         let authType = AUTH_TYPES.METAMASK.name
         this.setState({ waitingMetamaskAction: true }, () =>
             this.props.authOnServer({ mode, addr, authType })
-                .then()
+                .then(() => {
+                    // this.setState({ waitingMetamaskAction: false })
+                })
                 .catch((err) => {
                     this.setState({ waitingMetamaskAction: false })
                     this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_METAMASK', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
@@ -54,60 +69,43 @@ class AuthMetamask extends Component {
         )
     }
 
-    // TODO: Make it some common function if needed or make timeout as metamask way 
-    // TODO: Keep signature expire time, and check again on the node for session 
     checkMetamask = () => {
-        // TODO: make it better
-        let sig = null
-        let userAddr = null
-        let sigMode = null
-        let chainId = null
         let t = this.props.t
-        getAccountMetamask()
-            .then(({ addr, mode, netId }) => {
-                chainId = netId
-                sigMode = mode
-                if (!addr) {
-                    this.props.actions.resetAccount()
-                    this.props.actions.addToast({ type: 'warning', action: 'X', label: t('AUTH_WARN_NO_METAMASK_ADDR'), timeout: 5000 })
-                } else {
-                    userAddr = addr
-                    let authSig = getSig({ addr: addr, mode: mode })
-                    return authSig
-                }
-            })
-            .then((authSig) => {
-                if (authSig) {
-                    sig = authSig
-                    return checkAuth({ authSig })
-                } else {
-                    this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, authSig: null } })
-                    return false
-                }
-            })
-            .then((res) => {
-                if (res) {
-                    this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, chainId, authSig: getSig({ addr: userAddr, mode: sigMode }) } })
-                }
-            })
-            .catch((err) => {
-                this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, authSig: null } })
-                this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('AUTH_ERR_METAMASK', { args: [err] }), timeout: 5000 })
-            })
+        this.setState({ waitingAddrsData: true }, () => {
+            getAccountMetamask()
+                .then(({ addr, netId }) => {
+                    if (!addr) {
+                        this.setState({ address: {} })
+                        this.props.actions.addToast({ type: 'warning', action: 'X', label: t('AUTH_WARN_NO_METAMASK_ADDR'), timeout: 5000 })
+                    } else {
+                        return getAccountStats({ _addr: addr })
+                    }
+                })
+                .then((stats) => {
+                    this.setState({ address: stats, waitingAddrsData: false, })
+                })
+                .catch((err) => {
+                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('AUTH_ERR_METAMASK', { args: [err] }), timeout: 5000 })
+                    this.setState({ waitingAddrsData: false, address: {} })
+                })
+        })
     }
 
     render() {
         let t = this.props.t
-        let userAddr = this.props.account._addr
-        // let authMode = this.props.account._authMode
+        let stats = this.state.address
+        let userAddr = stats.addr
 
         return (
             <TabBox >
                 {this.state.waitingMetamaskAction ?
                     <TabStickyTop>
                         <TopLoading msg={t('METAMASK_WAITING_ACTION')} />
-                    </TabStickyTop> 
-                : null }
+                    </TabStickyTop>
+                    : this.state.waitingAddrsData ?
+                        <TopLoading msg={t('METAMASK_WAITING_ADDR_INFO')} />
+                        : null
+                }
                 <TabBody>
                     <span>
                         {t('METAMASK_INFO')}
@@ -121,9 +119,13 @@ class AuthMetamask extends Component {
                     <br />
                     <br />
                     {userAddr ?
-                        <div >
+                        <div>
                             <div className={theme.metamaskLAbel}>
-                                {t('AUTH_WITH_METAMASK_LABEL', { args: [userAddr] })}
+                                {stats ?
+                                    <AddrItem stats={stats} t={t} addr={userAddr} />
+                                    : t('AUTH_WITH_METAMASK_LABEL', { args: [userAddr] })
+                                }
+
                             </div>
                             <Button
                                 onClick={this.authOnServer}
