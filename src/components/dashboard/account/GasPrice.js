@@ -75,6 +75,7 @@ class GasPrice extends React.Component {
                     onChange={this.changeGasPrice}
                     source={this.state.gasPrices}
                     value={gasPrice}
+                    disabled={this.props.disabled}
                 />
             </span>
         )

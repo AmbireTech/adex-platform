@@ -119,7 +119,7 @@ class TransactionPreview extends Component {
 
                                 {!errors.length ?
                                     <PropRow
-                                        right={<GasPrice />}
+                                        right={<GasPrice disabled={!!transaction.waitingForWalletAction} />}
                                     /> : null}
 
                                 <this.gasInfo gasPrice={gasPrice} />
