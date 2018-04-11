@@ -40,8 +40,8 @@ class Account extends React.Component {
         let addrBalanceEth = web3Utils.fromWei(stats.balanceEth || '0', 'ether')
         let exchBal = stats.exchangeBalance || {}
         // let adxOnExchangeTotal = adxToFloatView(exchBal.total)
-        let adxOnBids = adxToFloatView(exchBal.onBids)
-        let exchangeAvailable = adxToFloatView(exchBal.available)
+        let adxOnBids = adxToFloatView(exchBal.onBids || 0)
+        let exchangeAvailable = adxToFloatView(exchBal.available || 0)
 
         return (
             <div>

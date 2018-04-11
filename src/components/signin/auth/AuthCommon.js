@@ -33,8 +33,8 @@ export const AddrItem = ({ addr, stats, t }) => {
     let addrBalanceAdx = adxToFloatView(stats.balanceAdx || 0)
     let addrBalanceEth = web3Utils.fromWei(stats.balanceEth || '0', 'ether')
     let exchBal = stats.exchangeBalance || {}
-    let adxOnBids = adxToFloatView(exchBal.onBids)
-    let exchangeAvailable = adxToFloatView(exchBal.available)
+    let adxOnBids = adxToFloatView(exchBal.onBids || 0)
+    let exchangeAvailable = adxToFloatView(exchBal.available || 0)
 
     return (
         <div className={theme.addrInfoWrapper}>

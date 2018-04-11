@@ -128,5 +128,6 @@
 }
 
 .addrInfoLabel {
-    color: var(--color-adex-neutral-contrast);
+    color: #cdcdcd;
+    font-weight: bold;
 }
