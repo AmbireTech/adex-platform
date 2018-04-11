@@ -59,6 +59,7 @@ export default function AuthHoc(Decorated) {
                         }
 
                         this.props.actions.updateAccount({ ownProps: { addr: addr, authMode, signType: mode, authType, authSig: signature, chainId, hdWalletAddrPath: hdPath, hdWalletAddrIdx: addrIdx } })
+                        this.props.actions.resetAllItems()
                         return true
                     } else {
                         this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_ON_SERVER'), timeout: 5000 })
