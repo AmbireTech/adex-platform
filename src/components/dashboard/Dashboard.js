@@ -19,7 +19,8 @@ import {
     AdUnit as AdUnitModel,
     AdSlot as AdSlotModel,
     Campaign as CampaignModel,
-    Channel as ChannelModel
+    Channel as ChannelModel,
+    Models
 } from 'adex-models'
 import Account from './account/Account'
 import Translate from 'components/translate/Translate'
@@ -28,6 +29,7 @@ import { items as ItemsConstants } from 'adex-constants'
 import checkTransactions from 'services/store-data/transactions'
 import checkGasData from 'services/store-data/gas'
 import { SORT_PROPERTIES_ITEMS, SORT_PROPERTIES_COLLECTION, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
+import { getItems } from 'services/adex-node/actions'
 
 const { ItemsTypes } = ItemsConstants
 
@@ -52,6 +54,32 @@ class Dashboard extends React.Component {
         }
     }
 
+    // TODO: 
+    getUserItems() {
+        let all = []
+        Object.keys(ItemsTypes)
+            .forEach((key) => {
+                const type = ItemsTypes[key].id
+                const p = getItems({ type: type, authSig: this.props.account._authSig })
+                    .then((items) => {
+                        items = items.map((item) => {
+                            let mapped = { ...(new Models.itemClassByTypeId[item._type || item._meta.type](item)) }
+                            return mapped
+                        })
+                        this.props.actions.updateItems({ items: items, itemsType: type })
+
+                        return true
+                    })
+
+                all.push(p)
+            })
+
+        Promise.all(all)
+            .catch((err) => {
+                this.props.actions.addToast({ type: 'cancel', action: 'X', label: err, timeout: 5000 })
+            })
+    }
+
     componentWillUnmount() {
         checkTransactions.stop()
         checkGasData.stop()
@@ -61,6 +89,7 @@ class Dashboard extends React.Component {
         this.props.actions.updateNav('side', this.props.match.params.side)
         checkTransactions.start()
         checkGasData.start()
+        this.getUserItems()
     }
 
     componentWillUpdate(nextProps) {
@@ -104,7 +133,7 @@ class Dashboard extends React.Component {
                 newItemBtn={() => <NewCampaignDialog floating accent />}
                 objModel={CampaignModel}
                 sortProperties={SORT_PROPERTIES_COLLECTION}
-                // filterProperties={FILTER_PROPERTIES_ITEMS}
+            // filterProperties={FILTER_PROPERTIES_ITEMS}
             />
         )
     }
@@ -132,7 +161,7 @@ class Dashboard extends React.Component {
                 newItemBtn={() => <NewChannelDialog floating accent />}
                 objModel={ChannelModel}
                 sortProperties={SORT_PROPERTIES_COLLECTION}
-                // filterProperties={FILTER_PROPERTIES_ITEMS}
+            // filterProperties={FILTER_PROPERTIES_ITEMS}
             />
         )
     }
@@ -146,7 +175,7 @@ class Dashboard extends React.Component {
         )
     }
 
-    render() {        
+    render() {
         let side = this.props.side || this.props.match.params.side
         return (
             <Layout theme={theme} >
