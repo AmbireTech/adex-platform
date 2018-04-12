@@ -242,6 +242,7 @@
 
 .steptopLoadingCircular {
     flex-shrink: 0;
+    margin-right: 12px;
 }
 
 .steptopLoading {
