@@ -47,7 +47,7 @@ class AuthMetamask extends Component {
             .then(({ addr, mode }) => {
                 let stateAddr = this.state.address.addr
 
-                if (stateAddr && (stateAddr.toLowerCase() !== addr.toLowerCase())) {
+                if (stateAddr && (stateAddr.toLowerCase() !== (addr || '').toLowerCase())) {
                     this.setState({ address: {} })
                 }
             })
@@ -71,24 +71,24 @@ class AuthMetamask extends Component {
 
     checkMetamask = () => {
         let t = this.props.t
-        this.setState({ waitingAddrsData: true }, () => {
-            getAccountMetamask()
-                .then(({ addr, netId }) => {
-                    if (!addr) {
-                        this.setState({ address: {} })
-                        this.props.actions.addToast({ type: 'warning', action: 'X', label: t('AUTH_WARN_NO_METAMASK_ADDR'), timeout: 5000 })
-                    } else {
-                        return getAccountStats({ _addr: addr })
-                    }
-                })
-                .then((stats) => {
-                    this.setState({ address: stats, waitingAddrsData: false, })
-                })
-                .catch((err) => {
-                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('AUTH_ERR_METAMASK', { args: [err] }), timeout: 5000 })
-                    this.setState({ waitingAddrsData: false, address: {} })
-                })
-        })
+        getAccountMetamask()
+            .then(({ addr, netId }) => {
+                if (!addr) {
+                    this.setState({ address: {} })
+                    this.props.actions.addToast({ type: 'warning', action: 'X', label: t('AUTH_WARN_NO_METAMASK_ADDR'), timeout: 5000 })
+                    return null
+                } else {
+                    this.setState({ waitingAddrsData: true })
+                    return getAccountStats({ _addr: addr })
+                }
+            })
+            .then((stats) => {
+                this.setState({ address: stats || {}, waitingAddrsData: false, })
+            })
+            .catch((err) => {
+                this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('AUTH_ERR_METAMASK', { args: [err] }), timeout: 5000 })
+                this.setState({ waitingAddrsData: false, address: {} })
+            })
     }
 
     render() {
@@ -137,7 +137,7 @@ class AuthMetamask extends Component {
                             />
                         </div>
                         :
-                        <Button onClick={this.checkMetamask} label={t('AUTH_CONNECT_WITH_METAMASK')} raised primary />
+                        <Button onClick={this.checkMetamask} label={t('AUTH_CONNECT_WITH_METAMASK')} raised primary disabled={this.state.waitingAddrsData} />
                     }
                 </TabBody>
             </TabBox>
