@@ -41,3 +41,4 @@
 - Change trId to txId everywhere!!! - !important
 - Remove all tooltips and find way to show the additional info (easier for mobile devices)
 - Adex-node service - use user auth directly from the store for easier calls (without providing auth sig every time)
+- TODO: use eth addresses only with lower case everywhere!!!
