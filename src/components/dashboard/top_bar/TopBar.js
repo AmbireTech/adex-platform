@@ -69,7 +69,7 @@ class TopNav extends Component {
 
         <Navigation type='horizontal' className={theme.rightNavigation}>
           {/* At the moment we use translations only for proper items properties display names */}
-          <ChangeLang />
+          {/* <ChangeLang /> */}
           {/* <GasPrice /> */}
           <ButtonMenu
             selectable={true}
