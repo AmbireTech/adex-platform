@@ -19,21 +19,20 @@ import {
     AdUnit as AdUnitModel,
     AdSlot as AdSlotModel,
     Campaign as CampaignModel,
-    Channel as ChannelModel,
-    Models
+    Channel as ChannelModel
 } from 'adex-models'
 import Account from './account/Account'
 import Translate from 'components/translate/Translate'
 import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, NewChannelDialog } from './forms/NewItems'
 import { items as ItemsConstants } from 'adex-constants'
 import checkTransactions from 'services/store-data/transactions'
+import { getUserItems } from 'services/store-data/items'
 import checkGasData from 'services/store-data/gas'
 import { SORT_PROPERTIES_ITEMS, SORT_PROPERTIES_COLLECTION, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
-import { getItems } from 'services/adex-node/actions'
 
 const { ItemsTypes } = ItemsConstants
 
-function PrivateRoute({ component: Component, auth, ...other }) {
+const PrivateRoute = ({ component: Component, auth, ...other }) => {
     return (
         <Route
             {...other}
@@ -54,32 +53,6 @@ class Dashboard extends React.Component {
         }
     }
 
-    // TODO: 
-    getUserItems() {
-        let all = []
-        Object.keys(ItemsTypes)
-            .forEach((key) => {
-                const type = ItemsTypes[key].id
-                const p = getItems({ type: type, authSig: this.props.account._authSig })
-                    .then((items) => {
-                        items = items.map((item) => {
-                            let mapped = { ...(new Models.itemClassByTypeId[item._type || item._meta.type](item)) }
-                            return mapped
-                        })
-                        this.props.actions.updateItems({ items: items, itemsType: type })
-
-                        return true
-                    })
-
-                all.push(p)
-            })
-
-        Promise.all(all)
-            .catch((err) => {
-                this.props.actions.addToast({ type: 'cancel', action: 'X', label: err, timeout: 5000 })
-            })
-    }
-
     componentWillUnmount() {
         checkTransactions.stop()
         checkGasData.stop()
@@ -89,7 +62,10 @@ class Dashboard extends React.Component {
         this.props.actions.updateNav('side', this.props.match.params.side)
         checkTransactions.start()
         checkGasData.start()
-        this.getUserItems()
+        getUserItems({ authSig: this.props.account._authSig })
+            .catch((err) => {
+                this.props.actions.addToast({ type: 'cancel', action: 'X', label: err, timeout: 5000 })
+            })
     }
 
     componentWillUpdate(nextProps) {
