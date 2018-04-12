@@ -13,7 +13,7 @@ import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { getSig } from 'services/auth/auth'
 import { AUTH_TYPES } from 'constants/misc'
 
-const { getAccountMetamask, getAccountStatsMetaMask } = scActions
+const { getAccountMetamask, getAccountStats } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
     return (
@@ -59,7 +59,7 @@ class Root extends Component {
                             }
                             this.props.actions.updateAccount({ ownProps: { addr: addr, authMode, authSig: mmAddrSigCheck } })
                             this.props.actions.resetAllItems()
-                            getAccountStatsMetaMask({})
+                            getAccountStats({ _addr: addr, authType: authMode.authType, mode: authMode.sigMode })
                                 .then((stats) => {
                                     this.props.actions.updateAccount({ ownProps: { stats: stats } })
                                 })
