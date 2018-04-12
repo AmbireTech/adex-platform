@@ -12,6 +12,7 @@ import scActions from 'services/smart-contracts/actions'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { getSig } from 'services/auth/auth'
 import { AUTH_TYPES } from 'constants/misc'
+import { getUserItems } from 'services/store-data/items'
 
 const { getAccountMetamask, getAccountStats } = scActions
 
@@ -62,6 +63,10 @@ class Root extends Component {
                             getAccountStats({ _addr: addr, authType: authMode.authType, mode: authMode.sigMode })
                                 .then((stats) => {
                                     this.props.actions.updateAccount({ ownProps: { stats: stats } })
+                                })
+                            getUserItems({ authSig: mmAddrSigCheck })
+                                .catch((err) => {
+                                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: err, timeout: 5000 })
                                 })
                         } else {
                             this.logout()
