@@ -3,13 +3,33 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.0.10] - 2018-04-13
+### Added
+- Basic info for wallets authentication on signup
+- Translations can accept insertion of components
+
+### Fixed
+- Styles
+
 ## [2.0.9] - 2018-04-12
 ### Added
 - TREZOR and LEDGER hardware wallets authentication
 - Transactions - new notifications
+- Gas price dropdown on transactions preview
+- Get current gas prices info from [ethgasstation.info]
+- Show estimated gas costs on tx preview
+- Tx preview notification for waiting user actions
+- Common function to send transactions with different wallet
+- Common function to sign messages wth different wallets
+- Wallet logo before address on top bar
+- Multiple transactions from one action sent to transactions page
+- Error msgs formatter (e.g No more metamask ugly errors)
 
 ### Changed
+- Show each transaction when multiple for one action (e.g. Deposit to exchange) on tx preview
 - Code optimization
+- Getting web3
+- Tx preview minor styles changes
 
 ### Fixed
 - Misc bug fixes
@@ -100,9 +120,10 @@ All notable changes to this project will be documented in this file.
 ### Fixed 
 - Misc bug fixes
 
-## [2.0.0] - 2018-02-26
+## 2.0.0 - 2018-02-26
 
-[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.9...HEAD
+[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.10...HEAD
+[2.0.9]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.9...v2.0.10
 [2.0.9]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.8...v2.0.9
 [2.0.8]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.7...v2.0.8
 [2.0.7]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.6...v2.0.7
@@ -112,3 +133,5 @@ All notable changes to this project will be documented in this file.
 [2.0.3]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/AdExBlockchain/adex-dapp/compare/7a8ba665907351a99290ef77e1f0ffbee080dd95...v2.0.2
 [2.0.1]: https://github.com/AdExBlockchain/adex-dapp/compare/20bc85bcf3797d86c951aa63cd5c568d3c5b5e6d...7a8ba665907351a99290ef77e1f0ffbee080dd95
+
+[ethgasstation.info]: https://ethgasstation.info/
