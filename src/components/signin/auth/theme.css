@@ -24,6 +24,11 @@
     left: 0;
 }
 
+.logo {
+    width: 12.8vh;
+    height: 5vh;
+}
+
 .tab {
     height: calc(var(--dialog-height) - 150px);
     overflow: auto;
