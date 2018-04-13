@@ -7,7 +7,7 @@ import theme from './theme.css'
 
 const ImgIcon = ({src}) => {
   return (
-    <img src={src} height='100%' width='auto' alt='logo'/>
+    <img src={src} className={theme.imgIcon} height='100%' width='auto' alt='logo'/>
   )
 }
 
