@@ -21,7 +21,7 @@ class AuthMethod extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      tabIndex: 2,
+      tabIndex: 0,
       closeDialog: false,
       bids: []
     }
