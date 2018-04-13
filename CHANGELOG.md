@@ -123,7 +123,7 @@ All notable changes to this project will be documented in this file.
 ## 2.0.0 - 2018-02-26
 
 [Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.10...HEAD
-[2.0.9]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.9...v2.0.10
+[2.0.10]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.9...v2.0.10
 [2.0.9]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.8...v2.0.9
 [2.0.8]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.7...v2.0.8
 [2.0.7]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.6...v2.0.7
