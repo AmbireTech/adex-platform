@@ -1,11 +1,21 @@
 import adexTranslations from 'adex-translations'
+import { renderToString } from 'react-dom/server'
 
 const translations = adexTranslations()
 
 let lang = 'en-US'
 
+// TODO: sanitization
 const interpolate = (tpl, args) => {
-    return tpl.replace(/\${(\w+)}/g, function (_, v) { return args[v] })
+
+    return tpl.replace(/\${(\w+)}/g, (_, v) => {
+        let arg = args[v]
+        if (typeof arg === 'object' && arg.component) {
+            return renderToString(arg.component)
+        } else {
+            return arg
+        }
+    })
 }
 
 export const translate = (val, { isProp = false, args = [] } = {}, language = lang) => {
@@ -13,12 +23,12 @@ export const translate = (val, { isProp = false, args = [] } = {}, language = la
     if (isProp) {
         key = 'PROP_' + (key.replace(/^_/, ''))
     }
-    
+
     key = key.toUpperCase()
 
     let translation = translations[language][key] || val
 
-    if(args.length && Array.isArray(args)){
+    if (args.length && Array.isArray(args)) {
         translation = interpolate(translation, args)
     }
 

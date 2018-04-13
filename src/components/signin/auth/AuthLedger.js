@@ -44,7 +44,7 @@ class AuthLedger extends Component {
         this.setState({ waitingLedgerAction: true }, () => {
 
             ledger.comm_u2f.create_async()
-                .then((transport) => {
+                .then((transport) => {                    
                     var eth = new ledger.eth(transport)
 
                     return eth.getAddress_async(HD_PATH, false, true)
@@ -146,10 +146,19 @@ class AuthLedger extends Component {
                                 {t('LEDGER_INFO')}
                             </p>
                             <br />
-                            <p>
-
-                                {t('LEDGER_BASIC_USAGE_INFO')}
-                            </p>
+                            <p
+                                dangerouslySetInnerHTML={
+                                    {
+                                        __html: t('LEDGER_BASIC_USAGE_INFO',
+                                            {
+                                                args: [{
+                                                    component:
+                                                        <Anchor href='https://www.ledgerwallet.com/' target='_blank'> LEDGER </Anchor>
+                                                }]
+                                            })
+                                    }
+                                }
+                            />
                             <br />
                             <h3>
                                 <Anchor href='https://www.ledgerwallet.com/' target='_blank'>

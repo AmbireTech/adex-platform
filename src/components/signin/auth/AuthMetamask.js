@@ -14,6 +14,7 @@ import AuthHoc from './AuthHoc'
 import { AUTH_TYPES } from 'constants/misc'
 import { TabBox, TabBody, TabStickyTop, TopLoading, AddrItem } from './AuthCommon'
 import Helper from 'helpers/miscHelpers'
+import { renderToString } from 'react-dom/server'
 
 const { getAccountMetamask, getAccountStats } = scActions
 
@@ -111,9 +112,19 @@ class AuthMetamask extends Component {
                         {t('METAMASK_INFO')}
                     </p>
                     <br />
-                    <p>
-                        {t('METAMASK_BASIC_USAGE_INFO')}
-                    </p>
+                    <p
+                        dangerouslySetInnerHTML={
+                            {
+                                __html: t('METAMASK_BASIC_USAGE_INFO',
+                                    {
+                                        args: [{
+                                            component:
+                                                <Anchor href='https://metamask.io/' target='_blank'> https://metamask.io/</Anchor>
+                                        }]
+                                    })
+                            }
+                        }
+                    />
                     <br />
                     <h3>
                         <Anchor href='https://metamask.io/' target='_blank'>
