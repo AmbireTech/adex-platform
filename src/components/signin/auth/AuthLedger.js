@@ -142,9 +142,14 @@ class AuthLedger extends Component {
                         }
 
                         <TabBody>
-                            <span>
+                            <p>
                                 {t('LEDGER_INFO')}
-                            </span>
+                            </p>
+                            <br />
+                            <p>
+                                
+                                {t('LEDGER_BASIC_USAGE_INFO')}
+                            </p>
                             <br />
                             <h3>
                                 <Anchor href='https://www.ledgerwallet.com/' target='_blank'>

@@ -151,9 +151,13 @@ class AuthTrezor extends Component {
                         }
 
                         <TabBody>
-                            <span>
+                            <p>
                                 {t('TREZOR_INFO')}
-                            </span>
+                            </p>
+                            <p>
+                                {t('TREZOR_BASIC_USAGE_INFO')}
+                            </p>
+                            <br />
                             <br />
                             <h3>
                                 <Anchor href='https://trezor.io' target='_blank'>

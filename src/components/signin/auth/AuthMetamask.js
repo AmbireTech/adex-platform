@@ -107,9 +107,13 @@ class AuthMetamask extends Component {
                         : null
                 }
                 <TabBody>
-                    <span>
+                    <p>
                         {t('METAMASK_INFO')}
-                    </span>
+                    </p>
+                    <br />
+                    <p>
+                        {t('METAMASK_BASIC_USAGE_INFO')}
+                    </p>
                     <br />
                     <h3>
                         <Anchor href='https://metamask.io/' target='_blank'>
