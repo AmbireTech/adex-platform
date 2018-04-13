@@ -37,7 +37,8 @@ class AuthMethod extends Component {
       <Dialog
         active={true}
         title={t('CHOOSE_AUTH_METHOD')}
-        theme={theme}
+        theme={theme}        
+        type='large'
       >
         <div>
           <div className={theme.adexLogoTop} >
