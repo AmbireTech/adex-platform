@@ -1,7 +1,7 @@
 import React from 'react';
 
 // TODO; make it class with default props if needed
-const AdexAuction = ({ width, height }) => {
+const AdexAuction = ({ width, height, ...other }) => {
 
   const defautSize = {
     width: 110,
@@ -9,7 +9,7 @@ const AdexAuction = ({ width, height }) => {
   }
 
   return (
-    <svg {...this.props}
+    <svg {...other}
       viewBox="0 0 512 512"
       width={(width || defautSize.width) + 'px'}
       height={(height || defautSize.height) + 'px'} >

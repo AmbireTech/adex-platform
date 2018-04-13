@@ -41,7 +41,7 @@ class AuthMethod extends Component {
       >
         <div>
           <div className={theme.adexLogoTop} >
-            <Logo width='12.8vh' height='5vh' />
+            <Logo className={theme.logo} />
           </div>
           <Tabs
             theme={theme}
