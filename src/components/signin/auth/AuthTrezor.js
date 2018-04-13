@@ -155,9 +155,22 @@ class AuthTrezor extends Component {
                                 {t('TREZOR_INFO')}
                             </p>
                             <br />
-                            <p>
-                                {t('TREZOR_BASIC_USAGE_INFO')}
-                            </p>
+                            <p
+                                dangerouslySetInnerHTML={
+                                    {
+                                        __html: t('TREZOR_BASIC_USAGE_INFO',
+                                            {
+                                                args: [{
+                                                    component:
+                                                        <Anchor href='https://trezor.io/' target='_blank'> TREZOR Wallet </Anchor>
+                                                }, {
+                                                    component:
+                                                        <Anchor href='https://wallet.trezor.io/#/bridge' target='_blank'> TREZOR Bridge </Anchor>
+                                                }]
+                                            })
+                                    }
+                                }
+                            />
                             <br />
                             <h3>
                                 <Anchor href='https://trezor.io' target='_blank'>
