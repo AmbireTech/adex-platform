@@ -96,7 +96,7 @@ class AuthTrezor extends Component {
                     }
                 </TabStickyTop>
                 <TabBody>
-                    <List selectable ripple className={theme.addrList}>
+                    <List selectable ripple >
                         {addresses.map((res, index) =>
                             <ListItem
                                 key={res.addr}

@@ -56,15 +56,6 @@
     word-break: break-word;
 }
 
-.addrList {
-    /* position: absolute;
-    top: 50px;
-    width: 100%;
-    bottom: 0;
-    overflow: auto */
-    flex-grow: 1;
-    overflow-y: auto; 
-}
 
 .circular {
     vertical-align: middle;
@@ -84,10 +75,6 @@
     display: flex;
     flex-direction: column;
     padding: 17px 12px;
-
-    & > div {
-        padding-bottom: 100px;
-    }
 }
 
 .tabStickyTop {
@@ -99,7 +86,8 @@
 
 .tabBody {
     flex-grow: 1;
-    overflow-y: auto; 
+    overflow: auto; 
+    padding-bottom: 20px;
 }
 
 .tabLoadingCircular {
@@ -116,11 +104,14 @@
 .addrInfoWrapper {
     width: 100%;
     padding: 10px 0;
+    overflow: hidden;
 }
 
 .addr {    
     color: var(--color-text);
     font-size: var(--font-size-normal);
+    word-break: break-all;
+    white-space: normal;
 }
 
 .addrInfo {

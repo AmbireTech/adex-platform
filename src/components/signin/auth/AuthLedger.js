@@ -87,7 +87,7 @@ class AuthLedger extends Component {
                     }
                 </TabStickyTop>
                 <TabBody>
-                    <List selectable ripple className={theme.addrList}>
+                    <List selectable ripple >
                         {addresses.map((res, index) =>
                             <ListItem
                                 key={res.addr}
@@ -147,7 +147,7 @@ class AuthLedger extends Component {
                             </p>
                             <br />
                             <p>
-                                
+
                                 {t('LEDGER_BASIC_USAGE_INFO')}
                             </p>
                             <br />
