@@ -8,13 +8,14 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import Campaign from './containers/Campaign'
-import Channel from './containers/Channel'
-import DashboardStats from './containers/DashboardStats'
-import Unit from './containers/Unit'
-import Slot from './containers/Slot'
-import Items from './containers/Items'
-import Transactions from './containers/Transactions'
+import Campaign from 'components/dashboard/containers/Campaign'
+import Channel from 'components/dashboard/containers/Channel'
+import DashboardStats from 'components/dashboard/containers/DashboardStats'
+import Unit from 'components/dashboard/containers/Unit'
+import Slot from 'components/dashboard/containers/Slot'
+import Items from 'components/dashboard/containers/Items'
+import Transactions from 'components/dashboard/containers/Transactions'
+import UnitBids from 'components/dashboard/containers/UnitBids'
 import {
     AdUnit as AdUnitModel,
     AdSlot as AdSlotModel,
@@ -27,6 +28,7 @@ import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, NewChannelDialog } fro
 import { items as ItemsConstants } from 'adex-constants'
 import checkTransactions from 'services/store-data/transactions'
 import { getUserItems } from 'services/store-data/items'
+import { getAddrBids } from 'services/store-data/bids'
 import checkGasData from 'services/store-data/gas'
 import { SORT_PROPERTIES_ITEMS, SORT_PROPERTIES_COLLECTION, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 
@@ -66,6 +68,8 @@ class Dashboard extends React.Component {
             .catch((err) => {
                 this.props.actions.addToast({ type: 'cancel', action: 'X', label: err, timeout: 5000 })
             })
+
+        getAddrBids({ authSig: this.props.account._authSig })
     }
 
     componentWillUpdate(nextProps) {
@@ -142,6 +146,14 @@ class Dashboard extends React.Component {
         )
     }
 
+    renderAdvertiserBids = () => {
+        return (
+            <UnitBids
+                bids={[]}
+            />
+        )
+    }
+
     Dash = () => {
 
         return (
@@ -167,6 +179,7 @@ class Dashboard extends React.Component {
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/units' component={this.renderAdUnits} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/Campaign/:itemId' component={Campaign} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/AdUnit/:itemId' component={Unit} />
+                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/bids' component={this.renderAdvertiserBids} />
 
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/channels' component={this.renderChannels} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/slots' component={this.renderAdSlots} />

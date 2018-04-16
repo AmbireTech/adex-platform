@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import theme from './theme.css'
+import { Tab, Tabs } from 'react-toolbox'
 import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import { IconButton } from 'react-toolbox/lib/button'
 import ItemsList from './ItemsList'
@@ -25,10 +26,20 @@ const TooltipIconButton = Tooltip(IconButton)
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
 
 export class UnitBids extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            tabIndex: 0
+        }
+    }
+
+    handleTabChange = (index) => {
+        this.setState({ tabIndex: index })
+    }
 
     shouldComponentUpdate(nextProps, nextState) {
         // TODO: investigate why component receives props without change in the parent components and stre state props
-        return JSON.stringify(this.props) !== JSON.stringify(nextProps)
+        return (JSON.stringify(this.props) !== JSON.stringify(nextProps) )|| (JSON.stringify(this.state) !== JSON.stringify(nextState))
     }
 
     onSave = () => {
@@ -39,12 +50,14 @@ export class UnitBids extends Component {
         let t = this.props.t
         return (
             <TableHead>
+                <TableCell> {t('BID_ID')} </TableCell>
                 <TableCell> {t('BID_AMOUNT')} </TableCell>
                 <TableCell> {t('BID_TARGET')} / {t('BID_UNIQUE_CLICKS')} </TableCell>
                 <TableCell> {t('BID_STATE')} </TableCell>
                 <TableCell> {t('PUBLISHER')} </TableCell>
                 <TableCell> {t('AD_SLOT')} </TableCell>
                 <TableCell> {t('TIMEOUT')} / {t('ACCEPTED')} / {t('EXPIRES')}  </TableCell>
+                <TableCell> {t('REPORTS')}  </TableCell>
                 <TableCell> {t('ACTIONS')} </TableCell>
             </TableHead>
         )
@@ -69,14 +82,14 @@ export class UnitBids extends Component {
 
         return (
             <TableRow key={bid._id}>
+                <TableCell
+                    className={classnames(theme.compactCol, theme.ellipsis)}
+                > 
+                    {bid._id || '-'}
+                </TableCell>
                 <TableCell> {adxToFloatView(bid._amount) + ' ADX'} </TableCell>
                 <TableCell>
-                    <div>
-                        {bid._target}
-                    </div>
-                    <div>
-                        {bid.clicksCount || '-'}
-                    </div>
+                    {bid._target} / {bid.clicksCount || '-'}
                 </TableCell>
                 <TableCell> {t(BidStatesLabels[bid._state])} </TableCell>
                 <TableCell
@@ -98,6 +111,20 @@ export class UnitBids extends Component {
                     </div>
                     <div>
                         {bidExpires ? moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss') : '-'}
+                    </div>
+                </TableCell>
+                <TableCell
+                    className={classnames(theme.compactCol, theme.ellipsis)}
+                >
+                    <div>
+                        {bid._publisherConfirmation ?
+                            <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._publisherConfirmation, process.env.IPFS_GATEWAY)} > {t('PUBLISHER')} </Anchor>
+                            : '-' }
+                    </div>
+                    <div>
+                        {bid._advertiserConfirmation ? 
+                            <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._advertiserConfirmation, process.env.IPFS_GATEWAY)} > {t('ADVERTISER')} </Anchor>
+                            : '-' }
                     </div>
                 </TableCell>
                 <TableCell>
@@ -159,7 +186,7 @@ export class UnitBids extends Component {
             multiSelectable={false}
             selectable={false}
             side={this.props.side}
-            item={items}
+            item={{}}
             rows={items}
             rowRenderer={this.renderTableRow.bind(this)}
             tableHeadRenderer={this.renderTableHead.bind(this)}
@@ -172,20 +199,77 @@ export class UnitBids extends Component {
             (bid._target || '')
     }
 
+    sortBids = (bids) => {
+        const sorted = bids.reduce((memo, bid) => {
+            if(bid._state ===  BID_STATES.DoesNotExist.id) {
+                memo.open.push(bid)
+            } else if(bid._state ===  BID_STATES.Accepted.id
+                || bid._state ===  BID_STATES.ConfirmedAdv.id 
+                || bid._state ===  BID_STATES.ConfirmedPub.id ) {
+                memo.action.push(bid)
+            } else {
+                memo.closed.push(bid) 
+            }
+
+            return memo
+        }, {action: [], open: [], closed: [] })
+
+        return sorted
+    }
+
     render() {
 
-        let bids = this.props.bids || []
+        let bids =  this.props.advBids || []
+        let t = this.props.t
+        const sorted = this.sortBids(bids)
+
+        // console.log('sorted', sorted)
 
         return (
             <div>
-                <ItemsList
-                    items={bids}
-                    listMode='rows'
-                    renderRows={this.renderRows.bind(this)}
-                    sortProperties={SORT_PROPERTIES_BIDS}
-                    searchMatch={this.searchMatch}
-                    filterProperties={FILTER_PROPERTIES_BIDS}
-                />
+                <Tabs
+                        theme={theme}
+                        index={this.state.tabIndex}
+                        onChange={this.handleTabChange}
+                    >
+                        <Tab label={t('BIDS_AWAITING_ACTION')}>
+                            <ItemsList
+                                items={sorted.action}
+                                listMode='rows'
+                                renderRows={this.renderRows.bind(this)}
+                                sortProperties={SORT_PROPERTIES_BIDS}
+                                searchMatch={this.searchMatch}
+                                filterProperties={FILTER_PROPERTIES_BIDS}
+                            />
+                        </Tab>
+                        <Tab label={t('BIDS_OPEN')}>
+                            <ItemsList
+                                items={sorted.open}
+                                listMode='rows'
+                                renderRows={this.renderRows.bind(this)}
+                                sortProperties={SORT_PROPERTIES_BIDS}
+                                searchMatch={this.searchMatch}
+                                filterProperties={FILTER_PROPERTIES_BIDS}
+                            />
+                        </Tab>
+                        <Tab label={t('BIDS_CLOSED')}>
+                            <ItemsList
+                                items={sorted.closed}
+                                listMode='rows'
+                                renderRows={this.renderRows.bind(this)}
+                                sortProperties={SORT_PROPERTIES_BIDS}
+                                searchMatch={this.searchMatch}
+                                filterProperties={FILTER_PROPERTIES_BIDS}
+                            />
+                        </Tab>
+                        <Tab label={t('BIDS_STATISTICS')}>
+                            <div>
+                                {t('COMING_SOON')}
+                                {/* {this.renderNonOpenedBidsChart(slotBids)} */}
+                            </div>
+                        </Tab>
+                    </Tabs>
+                
             </div>
         )
     }
@@ -202,7 +286,8 @@ function mapStateToProps(state) {
     // let memory = state.memory
     return {
         account: persist.account,
-        transactions: persist.web3Transactions[persist.account._addr] || {}
+        transactions: persist.web3Transactions[persist.account._addr] || {},
+        advBids: persist.bids.advBids
     }
 }
 
