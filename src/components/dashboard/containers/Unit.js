@@ -24,7 +24,6 @@ export class Unit extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            tabIndex: 0,
             closeDialog: false,
             bids: []
         }
@@ -88,21 +87,7 @@ export class Unit extends Component {
                     rightComponent={<UnitTargets {...this.props} targets={item.meta.targets} t={t} subHeader={true} />}
                 />
                 <div>
-                    <Tabs
-                        theme={theme}
-                        index={this.state.tabIndex}
-                        onChange={this.handleTabChange.bind(this)}
-                    >
-                        <Tab label={t('BIDS')}>
-                            <UnitBids item={item} bids={this.state.bids} getUnitBids={this.getUnitBids} />
-                        </Tab>
-                        <Tab label={t('BIDS_STATISTICS')}>
-                            <div>
-                                {t('COMING_SOON')}
-                                {/* {this.renderNonOpenedBidsChart(slotBids)} */}
-                            </div>
-                        </Tab>
-                    </Tabs>
+                    <UnitBids item={item} bids={this.state.bids} getUnitBids={this.getUnitBids} />
                 </div>
             </div>
         )

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { List, ListItem } from 'react-toolbox/lib/list'
+import { List, ListItem, ListDivider } from 'react-toolbox/lib/list'
 import theme from './theme.css'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
@@ -14,6 +14,7 @@ import FontIcon from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 import packageJson from './../../../../package.json'
 import Anchor from 'components/common/anchor/anchor'
+import BidIcon from 'components/common/icons/BidIcon'
 // import GasPrice from 'components/dashboard/account/GasPrice'
 
 const RRListItem = withReactRouterLink(ListItem)
@@ -63,6 +64,7 @@ class SideNav extends Component {
                         leftIcon='dashboard'
                         className={classnames({ [theme.active]: location === '' })}
                     />
+                    <ListDivider />
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side + '/' + collection }}
                         selectable={true}
@@ -82,6 +84,7 @@ class SideNav extends Component {
                             raised
                         />
                     </ListItem>
+                    <ListDivider />
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side + '/' + items }}
                         selectable={true}
@@ -101,6 +104,15 @@ class SideNav extends Component {
                             raised
                         />
                     </ListItem>
+                    <ListDivider />
+                    <RRListItem
+                        to={{ pathname: '/dashboard/' + side + '/bids' }}
+                        selectable={true}
+                        caption={t('BIDS')}
+                        theme={theme}
+                        className={classnames({ [theme.active]: location === 'bids'})}
+                        leftIcon={<BidIcon style={{height: 24}}/>}
+                    />
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side + '/transactions' }}
                         selectable={true}

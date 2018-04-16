@@ -46,7 +46,9 @@ let initialState = {
         bidsIds: [null],
         bidsByAdslot: {},
         bidsByAdunit: {},
-        auctionBids: {} //temp
+        auctionBids: {}, //temp
+        advBids: [], // TODO: update on bid update
+        pubBids: []
     },
     newBid: {
         empty: new Bid().plainObj()

@@ -234,6 +234,14 @@ export const getSlotBids = ({ authSig, adSlot }) => {
     return getBids({ authSig: authSig, query: query })
 }
 
+export const getBidsBySide = ({ authSig, side }) => {
+    let query = {
+        side: side
+    }
+
+    return getBids({ authSig: authSig, query: query })
+}
+
 export const getAvailableBids = ({ authSig, sizeAndType }) => {
     let query = {
         sizeAndType: sizeAndType
