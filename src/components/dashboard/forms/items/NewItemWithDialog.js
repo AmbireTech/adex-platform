@@ -52,10 +52,16 @@ export default function ItemHoc(Decorated) {
 
         render() {
 
+            let ButtonComponent = Button
+
+            if(this.props.iconButton) {
+                ButtonComponent = IconButton
+            }
+
             // console.log('theme', this.props.theme)
             return (
                 <span>
-                    <Button
+                    <ButtonComponent
                         disabled={this.props.disabled}
                         floating={this.props.floating}
                         icon={this.props.icon === undefined ? 'add' : this.props.icon}
