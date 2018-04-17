@@ -208,7 +208,7 @@ export class SlotBids extends Component {
                             primary
                             className={theme.actionBtn}
                             onSave={this.getBids}
-                            disabled={pendingAccept}
+                            // disabled={pendingAccept}
                         /> : null}
                     {canVerify ?
                         <VerifyBid
