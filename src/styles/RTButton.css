@@ -2,7 +2,10 @@
 :root {
   --button-neutral-color-hover: color(var(--color-adex-neutral-contrast) a(20%));
   --button-danger-color-hover: color(var(--color-adex-danger-contrast) a(20%));
-  --button-danger-color-hover: color(var(--color-adex-warning-contrast) a(20%));
+  --button-warning-color-hover: color(var(--color-adex-warning-contrast) a(20%));
+  --button-dark-color-hover: color(var(--color-adex-dark-contrast) a(20%));
+  --button-light-color-hover: color(var(--color-adex-light-contrast) a(20%));
+  --button-success-color-hover: color(var(--color-adex-success-contrast) a(20%));
   --button-first-color-hover: color(var(--color-adex-primary-lighter) a(20%));
   --button-second-color-hover: color(var(--color-adex-alt-primary-button) a(20%));
   --button-disabled-text-color: color(var(--color-adex-neutral-contrast) a(80%));
@@ -114,6 +117,69 @@
 
   &.flat:hover {
     background: var(--button-warning-color-hover) !important;
+  }
+}
+
+.success:not([disabled]) {
+  &.raised,
+  &.floating {
+    background: var(--color-adex-success-primary) !important;
+    color: var(--color-adex-success-contrast) !important;
+  }
+
+  &.flat,
+  &.toggle {
+    color: var(--color-adex-success-primary) !important;
+
+    &:focus:not(:active) {
+      background: var(--button-success-color-hover) !important;
+    }
+  }
+
+  &.flat:hover {
+    background: var(--button-success-color-hover) !important;
+  }
+}
+
+.dark:not([disabled]) {
+  &.raised,
+  &.floating {
+    background: var(--color-adex-dark-primary) !important;
+    color: var(--color-adex-dark-contrast) !important;
+  }
+
+  &.flat,
+  &.toggle {
+    color: var(--color-adex-dark-primary) !important;
+
+    &:focus:not(:active) {
+      background: var(--button-dark-color-hover) !important;
+    }
+  }
+
+  &.flat:hover {
+    background: var(--button-dark-color-hover) !important;
+  }
+}
+
+.light:not([disabled]) {
+  &.raised,
+  &.floating {
+    background: var(--color-adex-light-primary) !important;
+    color: var(--color-adex-light-contrast) !important;
+  }
+
+  &.flat,
+  &.toggle {
+    color: var(--color-adex-light-primary) !important;
+
+    &:focus:not(:active) {
+      background: var(--button-light-color-hover) !important;
+    }
+  }
+
+  &.flat:hover {
+    background: var(--button-light-color-hover) !important;
   }
 }
 

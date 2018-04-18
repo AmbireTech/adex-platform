@@ -23,7 +23,12 @@
     --color-adex-accent-contrast: #FFFFFF;    
 
     /*Adex Dark*/
-    --color-adex-dark-primary: #3C3C3c;
+    --color-adex-dark-primary: #3C3C3c; 
+    --color-adex-dark-contrast: #FFFFFF;
+
+    /*Adex light*/
+    --color-adex-light-primary: #eee; 
+    --color-adex-light-contrast: #3C3C3c;
 
     /*AdEx danger*/
     --color-adex-danger-primary: #FF5722; /* Deep Orange 500 */
@@ -31,7 +36,12 @@
 
     /*AdEx warning*/
     --color-adex-warning-primary: #ffae00;
-    --color-adex-warning-contrast: #FFFFFF;   
+    --color-adex-warning-contrast: #FFFFFF;  
+
+    /*AdEx success*/
+    --color-adex-success-primary: #00ffbf;
+    --color-adex-success-contrast: #FFFFFF;    
+
 
     /*AdEx neutral*/
     --color-adex-neutral-primary: #FFFFFF;
