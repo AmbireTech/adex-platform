@@ -7,7 +7,8 @@ import actions from 'actions'
 import { Bid } from 'adex-models'
 import NewBidHoc from './NewBidHoc'
 import { Grid } from 'react-flexbox-grid'
-import { PropRow, StepBox, StepBody, StepStickyTop, WalletAction } from 'components/dashboard/forms/FormsCommon'
+import { WalletAction } from 'components/dashboard/forms/FormsCommon'
+import { PropRow, ContentBox, ContentBody, ContentStickyTop } from 'components/common/dialog/content'
 import constants from 'adex-constants'
 
 class BidFormPreview extends Component {
@@ -18,13 +19,13 @@ class BidFormPreview extends Component {
     let timeout = constants.exchange.timeoutsByValue[bid.timeout] || {}
 
     return (
-      <StepBox>
+      <ContentBox>
         {/* TODO: Add translations and format the numbers */}
         {this.props.waitingForWalletAction ?
-          <StepStickyTop>
+          <ContentStickyTop>
             <WalletAction t={t} authType={this.props.account._authMode.authType} />
-          </StepStickyTop> : null}
-        <StepBody>
+          </ContentStickyTop> : null}
+        <ContentBody>
           <Grid fluid>
             <PropRow
               left={t('BID_TARGET_CLICKS')}
@@ -39,8 +40,8 @@ class BidFormPreview extends Component {
               right={t(timeout.label, { args: timeout.labelArgs })}
             />
           </Grid>
-        </StepBody>
-      </StepBox>
+        </ContentBody>
+      </ContentBox>
     )
   }
 }

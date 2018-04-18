@@ -44,28 +44,6 @@
     z-index: 110;
 }
 
-.dialog{
-    min-height: 70vh;
-    min-width: 800px;
-    max-width: 1280px;
-    background-color: #eee;
-
-   /*
-    &.AdUnit{
-        background-color: #0f0;
-    }
-    &.Campaign{
-        background-color: #E0F7FA;
-    }
-    */
-
-    & .body{
-        // overflow-y: auto;
-        // overflow-y: overlay;
-        position: relative;
-    }
-}
-
 .datepicker{
     z-index: 410; 
 }
@@ -216,40 +194,4 @@
     position: absolute;
     top: -6vh;
     left: 0;
-}
-
-.stepBox {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.stepStickyTop {
-    padding: 8px 4px;
-    flex-shrink: 0;
-    display: inline-flex;
-    word-break: break-word;
-}
-
-.stepBody {
-    flex-grow: 1;
-    overflow-y: auto; 
-}
-
-.steptopLoadingCircular {
-    flex-shrink: 0;
-    margin-right: 12px;
-}
-
-.steptopLoading {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    & > div {
-        padding: 8px; 
-    }
 }

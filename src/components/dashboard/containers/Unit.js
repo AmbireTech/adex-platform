@@ -9,7 +9,7 @@ import theme from './theme.css'
 import { Tab, Tabs } from 'react-toolbox'
 import UnitTargets from './UnitTargets'
 import Translate from 'components/translate/Translate'
-import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
+import WithDialog from 'components/common/dialog/WithDialog'
 import { NewBidSteps } from 'components/dashboard/forms/bids/bids'
 import UnitBids from './UnitBids'
 import { items as ItemsConstants } from 'adex-constants'
@@ -18,7 +18,7 @@ import { getUnitBids } from 'services/adex-node/actions'
 import BidIcon from 'components/common/icons/BidIcon'
 
 const { ItemsTypes } = ItemsConstants
-const BidFormWithDialog = NewItemWithDialog(NewBidSteps)
+const BidFormWithDialog = WithDialog(NewBidSteps)
 
 export class Unit extends Component {
     constructor(props) {
@@ -79,6 +79,7 @@ export class Unit extends Component {
                         adUnit={item}
                         closeDialog={!!this.state.closeDialog}
                         onSave={this.onBidPlaced}
+                        darkerBackground={true}
                     /> : null}
                 <BasicProps
                     item={item}

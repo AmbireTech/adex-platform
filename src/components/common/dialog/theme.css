@@ -1,22 +1,15 @@
 @import './../../../../node_modules/react-toolbox/lib/variables.css';
 @import '../../../styles/variables.css';
 
-.cropOverlay {
-    cursor: default;
-}
-
-.floating {
-    position: fixed;
-    top: 116px;
-    right: 40px;
-    z-index: 110;
-}
-
 .dialog {
     min-height: 70vh;
     min-width: 800px;
     max-width: 1080px;
     background-color: #fff;
+
+    &.darkerBackground {
+        background-color: #eee;
+    }
 
     & .body{
         // overflow-y: auto;
@@ -28,7 +21,6 @@
     }
 }
 
-/* TODO: navigation buttons fix if it is broken */
 .dialogBody {
     flex-grow: 1;
     position: relative;
@@ -40,10 +32,6 @@
     padding: 0 8px;
     overflow: hidde;
     word-wrap: break-word;
-}
-
-.datepicker{
-    z-index: 410; 
 }
 
 .textLeft {
@@ -66,58 +54,6 @@
 
 .textRight {
     text-align: right;
-}
-
-.imgPreview {
-    height: 120px;
-    // margin: 20px;
-    width: auto;
-    box-shadow: var(--shadow-2p);  /* 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);*/
-}
-
-.imgForm {
-    text-align: left;
-}
-
-.imgUploadBtn {
-    position: absolute;
-    right: 20px;
-    bottom: -20px;
-}
-
-.imgHeader {
-    background-color: #ccc;
-    position: relative;
-    width: 100%;
-    min-height: 40px;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    padding-left: 10px;
-    margin: 10px 0;
-}
-
-.uploadInfo {
-    text-align: left;
-    cursor: pointer;
-    margin: 10px;
-    overflow: hidden;
-    max-height: 100%;
-}
-
-.uploadActions {
-    margin-bottom: 10px;
-}
-
-.imgErr {
-    color: var(--color-adex-danger-primary)
-}
-
-.err {
-    color: var(--color-adex-danger-primary)
-}
-.grid {
-    padding: 0 !important; /* suka */
 }
 
 .progressCircleCenter {

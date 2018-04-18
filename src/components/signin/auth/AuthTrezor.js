@@ -18,7 +18,8 @@ import { adxToFloatView } from 'services/smart-contracts/utils'
 import { web3Utils } from 'services/smart-contracts/ADX'
 import AuthHoc from './AuthHoc'
 import { AUTH_TYPES } from 'constants/misc'
-import { TabBox, TabBody, TabStickyTop, TopLoading, AddrItem } from './AuthCommon'
+import { AddrItem } from './AuthCommon'
+import { ContentBox, ContentBody, ContentStickyTop, TopLoading } from 'components/common/dialog/content'
 import Helper from 'helpers/miscHelpers'
 
 const TrezorConnect = trezorConnect.TrezorConnect
@@ -87,15 +88,15 @@ class AuthTrezor extends Component {
 
     AddressSelect = ({ addresses, waitingTrezorAction, t, ...rest }) => {
         return (
-            <TabBox >
-                <TabStickyTop>
+            <ContentBox className={theme.tabBox} >
+                <ContentStickyTop>
                     {waitingTrezorAction ?
                         <TopLoading msg={t('TREZOR_WAITING_ACTION')} />
                         :
                         t('SELECT_ADDR_TREZOR')
                     }
-                </TabStickyTop>
-                <TabBody>
+                </ContentStickyTop>
+                <ContentBody>
                     <List selectable ripple >
                         {addresses.map((res, index) =>
                             <ListItem
@@ -105,8 +106,8 @@ class AuthTrezor extends Component {
                             />
                         )}
                     </List>
-                </TabBody>
-            </TabBox>
+                </ContentBody>
+            </ContentBox>
         )
     }
 
@@ -138,19 +139,19 @@ class AuthTrezor extends Component {
                         t={t}
                     />
                     :
-                    <TabBox>
+                    <ContentBox className={theme.tabBox}>
                         {this.state.waitingAddrsData ?
-                            <TabStickyTop>
+                            <ContentStickyTop>
                                 <TopLoading msg={t('TREZOR_WAITING_ADDRS_INFO')} />
-                            </TabStickyTop>
+                            </ContentStickyTop>
                             :
                             this.state.waitingTrezorAction ?
-                                <TabStickyTop>
+                                <ContentStickyTop>
                                     <TopLoading msg={t('TREZOR_WAITING_ACTION')} />
-                                </TabStickyTop> : null
+                                </ContentStickyTop> : null
                         }
 
-                        <TabBody>
+                        <ContentBody>
                             <p>
                                 {t('TREZOR_INFO')}
                             </p>
@@ -184,8 +185,8 @@ class AuthTrezor extends Component {
                                 <Button onClick={this.connectTrezor} label={t('CONNECT_WITH_TREZOR')} raised primary />
                                 : null}
 
-                        </TabBody>
-                    </TabBox>
+                        </ContentBody>
+                    </ContentBox>
                 }
             </div>
         )

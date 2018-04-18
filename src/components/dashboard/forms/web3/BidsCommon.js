@@ -7,8 +7,8 @@ import UnitTargets from 'components/dashboard/containers/UnitTargets'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import moment from 'moment'
 import Anchor from 'components/common/anchor/anchor'
-import { PropRow } from 'components/dashboard/forms/FormsCommon'
 import { FontIcon } from 'react-toolbox/lib/font_icon'
+import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
 
 export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
     <div>

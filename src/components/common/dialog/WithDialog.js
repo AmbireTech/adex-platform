@@ -6,9 +6,6 @@ import theme from './theme.css'
 import classnames from 'classnames'
 import RTButtonTheme from 'styles/RTButton.css'
 import Translate from 'components/translate/Translate'
-import { items as ItemsConstants } from 'adex-constants'
-
-const { ItemTypesNames } = ItemsConstants
 
 export default function ItemHoc(Decorated) {
     class WithDialog extends Component {
@@ -58,7 +55,6 @@ export default function ItemHoc(Decorated) {
                 ButtonComponent = IconButton
             }
 
-            // console.log('theme', this.props.theme)
             return (
                 <span>
                     <ButtonComponent
@@ -81,12 +77,12 @@ export default function ItemHoc(Decorated) {
                     />
                     <Dialog
                         theme={theme}
+                        className={classnames({[theme.darkerBackground]: !!this.props.darkerBackground})}
                         active={this.state.active}
                         onEscKeyDown={this.handleToggle}
                         onOverlayClick={this.handleToggle}
                         title={this.props.t(this.props.title)}
                         type={this.props.type || 'large'}
-                        className={theme[ItemTypesNames[this.props.itemType]]}
                     >
                         <IconButton
                             icon='close'

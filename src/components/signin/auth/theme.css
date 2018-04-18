@@ -67,38 +67,7 @@
 }
 
 .tabBox {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    display: flex;
-    flex-direction: column;
     padding: 17px 12px;
-}
-
-.tabStickyTop {
-    padding: 17px 12px;
-    flex-shrink: 0;
-    display: inline-flex;
-    word-break: break-word;
-}
-
-.tabBody {
-    flex-grow: 1;
-    overflow: auto; 
-    padding-bottom: 20px;
-}
-
-.tabLoadingCircular {
-    flex-shrink: 0;
-    margin-right: 12px;
-}
-
-.tabLoading {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
 }
 
 .addrInfoWrapper {

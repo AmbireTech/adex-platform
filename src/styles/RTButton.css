@@ -11,7 +11,9 @@
 
 .button{
   user-select: none;
-  border-radius: 0 !important;
+  &:not(.floating) {
+    border-radius: 0 !important;
+  }
   &[disabled] {
     color: var(--button-disabled-text-color) !important;
   }
