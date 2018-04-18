@@ -34,8 +34,9 @@
     --color-adex-warning-contrast: #FFFFFF;   
 
     /*AdEx neutral*/
-    --color-adex-neutral-primary: #FFFFFF;  /* Deep Orange 500 */
-    --color-adex-neutral-contrast: #787878;     
+    --color-adex-neutral-primary: #FFFFFF;
+    --color-adex-neutral-contrast: #787878;  
+    --color-adex-neutral-contrast-lighter: #9c9c9b;  
 
     /*AdEx other colors*/
     --color-adex-divider: var(--color-divider);
