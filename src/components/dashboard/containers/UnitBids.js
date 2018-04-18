@@ -21,39 +21,41 @@ import classnames from 'classnames'
 import moment from 'moment'
 import Anchor from 'components/common/anchor/anchor'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
-import { PropRow } from 'components/dashboard/forms/FormsCommon'
-import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
+import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
+import WithDialog from 'components/common/dialog/WithDialog'
 
 const TooltipIconButton = Tooltip(IconButton)
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
 
 const bidDetails = ({ bidData, t }) => {
     return (
-        <div>
-            <PropRow left={t('BID_ID')} right={bidData._id} />
-            <PropRow left={t('BID_AMOUNT')} right={bidData._amount} />
-            <PropRow left={t('BID_TARGET')} right={bidData._target} />
-            <PropRow left={t('BID_UNIQUE_CLICKS')} right={bidData.clicksCount} />
-            <PropRow left={t('BID_STATE')} right={bidData._state} />
-            <PropRow left={t('PUBLISHER')} right={bidData._publisher} />
-            <PropRow left={t('AD_SLOT')} right={bidData._adSlot} />
-            <PropRow left={t('TIMEOUT')} right={bidData.timeout} />
-            <PropRow left={t('ACCEPTED')} right={bidData.accepted} />
-            <PropRow left={t('EXPIRES')} right={bidData.bidExpires} />
-            <PropRow left={t('REPORT_ADVERTISER')} right={bidData._advertiserConfirmation} />
-            <PropRow left={t('REPORT_PUBLISHER')} right={bidData._publisherConfirmation} />
-            <PropRow left={t('ACTIONS')}
-                right={<div>
-                    {bidData.cancelBtn}
-                    {bidData.pendingAcceptByPub}
-                    {bidData.verifyBtn}
-                    {bidData.refundBtn}
-                </div>} />
-        </div>
+        <ContentBox>
+            <ContentBody>
+                <PropRow left={t('BID_ID')} right={bidData._id} />
+                <PropRow left={t('BID_AMOUNT')} right={bidData._amount} />
+                <PropRow left={t('BID_TARGET')} right={bidData._target} />
+                <PropRow left={t('BID_UNIQUE_CLICKS')} right={bidData.clicksCount} />
+                <PropRow left={t('BID_STATE')} right={bidData._state} />
+                <PropRow left={t('PUBLISHER')} right={bidData._publisher} />
+                <PropRow left={t('AD_SLOT')} right={bidData._adSlot} />
+                <PropRow left={t('TIMEOUT')} right={bidData.timeout} />
+                <PropRow left={t('ACCEPTED')} right={bidData.accepted} />
+                <PropRow left={t('EXPIRES')} right={bidData.bidExpires} />
+                <PropRow left={t('REPORT_ADVERTISER')} right={bidData._advertiserConfirmation} />
+                <PropRow left={t('REPORT_PUBLISHER')} right={bidData._publisherConfirmation} />
+                <PropRow left={t('ACTIONS')}
+                    right={<div>
+                        {bidData.cancelBtn}
+                        {bidData.pendingAcceptByPub}
+                        {bidData.verifyBtn}
+                        {bidData.refundBtn}
+                    </div>} />
+            </ContentBody>
+        </ContentBox>
     )
 }
 
-const BidDetailWithDialog = NewItemWithDialog(bidDetails)
+const BidDetailWithDialog = WithDialog(bidDetails)
 
 export class UnitBids extends Component {
     constructor(props) {
