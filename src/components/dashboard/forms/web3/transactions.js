@@ -214,6 +214,7 @@ export const VerifyBid = (props) =>
     < FormStepsWithDialog
         {...props}
         btnLabel="VERIFY_BID"
+        btnLabelArgs={[props.noTargetsReached ? ' ?' : '']}
         saveBtnLabel='VERIFY_BID_SAVE_BTN'
         title="VERIFY_BID_TITLE"
         stepsId={'verify_bid_item_' + props.itemId + '_bid_' + props.bidId}

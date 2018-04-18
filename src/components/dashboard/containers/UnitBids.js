@@ -23,9 +23,21 @@ import Anchor from 'components/common/anchor/anchor'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
 import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
 import WithDialog from 'components/common/dialog/WithDialog'
+import { FontIcon } from 'react-toolbox/lib/font_icon'
 
 const TooltipIconButton = Tooltip(IconButton)
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
+
+// TODO: use colors with css
+const StateIcons = {
+    [BID_STATES.DoesNotExist.id]: { icon: 'more_horiz', color: '#0277BD' },
+    [BID_STATES.Accepted.id]: { icon: 'done', color: '#0277BD' },
+    [BID_STATES.Canceled.id]: { icon: 'close', color: '#787878' },
+    [BID_STATES.Expired.id]: { icon: 'access_time', color: '#FF5722' },
+    [BID_STATES.Completed.id]: { icon: 'done_all', color: '#00ffbf' },
+    [BID_STATES.ConfirmedAdv.id]: { icon: 'done', color: '#00E5FF' },
+    [BID_STATES.ConfirmedPub.id]: { icon: 'done', color: '#00E5FF' },
+}
 
 const bidDetails = ({ bidData, t }) => {
     return (
@@ -119,7 +131,11 @@ export class UnitBids extends Component {
             _amount: adxToFloatView(bid._amount) + ' ADX',
             _target: bid._target,
             clicksCount: bid.clicksCount || '-',
-            _state: t(BidStatesLabels[bid._state]),
+            _state:
+                <span className={theme.bidState}>
+                    <FontIcon value={StateIcons[bid._state].icon} style={{ marginRight: 5, color: StateIcons[bid._state].color }} />
+                    <span>{t(BidStatesLabels[bid._state])}</span>
+                </span>,
             _publisher: <Anchor target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._publisher} > {bid._publisher || '-'} </Anchor>,
             _adSlot: <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._adSlot, process.env.IPFS_GATEWAY)} > {bid._adSlot || '-'} </Anchor>,
             timeout: moment.duration(timeout, 'ms').humanize(),
@@ -133,22 +149,21 @@ export class UnitBids extends Component {
                 bidId={bid._id}
                 placedBid={bid}
                 acc={this.props.account}
-                raised
-                // accent
-                className={theme.actionBtn}
+                // raised
+                className={classnames(theme.actionBtn, RTButtonTheme.dark)}
                 onSave={this.onSave}
                 disabled={pendingCancel}
             /> : null,
             verifyBtn: canVerify ?
                 <VerifyBid
-                    icon={pendingVerify ? 'hourglass_empty' : (noTargetsReached ? 'warning' : '')}
+                    noTargetsReached
+                    icon={pendingVerify ? 'hourglass_empty' : (noTargetsReached ? '' : '')}
                     itemId={bid._adUnitId}
                     bidId={bid._id}
                     placedBid={bid}
                     acc={this.props.account}
-                    raised
-                    // primary
-                    className={theme.actionBtn}
+                    // raised
+                    className={classnames(theme.actionBtn, { [RTButtonTheme.warning]: noTargetsReached, [RTButtonTheme.success]: !noTargetsReached })}
                     onSave={this.onSave}
                     disabled={pendingVerify}
                 /> : null,
@@ -159,9 +174,9 @@ export class UnitBids extends Component {
                     bidId={bid._id}
                     placedBid={bid}
                     acc={this.props.account}
-                    raised
-                    // accent
-                    className={theme.actionBtn}
+                    // raised
+                    // flat
+                    className={classnames(theme.actionBtn, RTButtonTheme.danger)}
                     onSave={this.onSave}
                     disabled={pendingRefund}
                 /> : null,

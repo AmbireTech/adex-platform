@@ -61,7 +61,7 @@ export default function ItemHoc(Decorated) {
                         disabled={this.props.disabled}
                         floating={this.props.floating}
                         icon={this.props.icon === undefined ? 'add' : this.props.icon}
-                        label={this.props.floating ? '' : this.props.t(this.props.btnLabel)}
+                        label={this.props.floating ? '' : this.props.t(this.props.btnLabel, { args: this.props.btnLabelArgs || [''] })}
                         onClick={this.handleToggle}
                         primary={this.props.primary}
                         raised={this.props.raised}
@@ -77,7 +77,7 @@ export default function ItemHoc(Decorated) {
                     />
                     <Dialog
                         theme={theme}
-                        className={classnames({[theme.darkerBackground]: !!this.props.darkerBackground})}
+                        className={classnames({ [theme.darkerBackground]: !!this.props.darkerBackground })}
                         active={this.state.active}
                         onEscKeyDown={this.handleToggle}
                         onOverlayClick={this.handleToggle}
