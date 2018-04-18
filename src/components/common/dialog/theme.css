@@ -34,6 +34,13 @@
     word-wrap: break-word;
 }
 
+.floating {
+    position: fixed;
+    top: 116px;
+    right: 40px;
+    z-index: 110;
+}
+
 .textLeft {
     text-align: left;
 }
