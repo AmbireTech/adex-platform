@@ -11,7 +11,7 @@ import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
 import Anchor from 'components/common/anchor/anchor'
-import { PropRow, StepBox } from 'components/dashboard/forms/FormsCommon'
+import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
 import { items as ItemsConstants } from 'adex-constants'
 const { ItemsTypes, AdSizesByValue, AdTypesByValue } = ItemsConstants
 
@@ -42,68 +42,70 @@ class NewItemFormPreview extends Component {
         let t = this.props.t
 
         return (
-            <StepBox>
-                <Grid fluid>
-                    <PropRow
-                        left={t('fullName', { isProp: true })}
-                        right={meta.fullName}
-                    />
-                    <PropRow
-                        left={t('description', { isProp: true })}
-                        right={meta._description}
-                    />
-                    <PropRow
-                        left={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}
-                        right={<Img className={theme.imgPreview} src={meta.img.tempUrl || ''} alt={meta.fullName} />}
-                    />
-                    {
-                        item._type === ItemsTypes.AdSlot.id ?
-                            <this.SlotFallback item={item} t={t} />
-                            : null
-                    }
-                    {
-                        Object
-                            .keys(meta)
-                            .filter((key) => !/fullName|description|items|img|createdOn|modifiedOn|deleted|archived|banner|name|owner|type|targets/.test(key))
-                            .map(key => {
-                                let keyName = key
-                                let value = item._meta[key]
-
-                                if (!value) {
-                                    return null
-                                }
-
-                                if (!!/from|to/.test(key)) {
-                                    value = moment(value).format('D MMMM YYYY')
-                                }
-
-                                if (keyName === 'size') {
-                                    value = t(AdSizesByValue[value].label, { args: AdSizesByValue[value].labelArgs })
-                                }
-
-                                if (keyName === 'adType') {
-                                    value = AdTypesByValue[value].label
-                                }
-
-                                return (
-                                    <PropRow key={key}
-                                        left={t(keyName, { isProp: true })}
-                                        right={value}
-                                    />
-                                )
-                            })
-                    }
-                    {meta.targets ?
+            <ContentBox>
+                <ContentBody>
+                    <Grid fluid>
                         <PropRow
-                            left={t('targets', { isProp: true })}
-                            right={<UnitTargets {...this.props} targets={meta.targets} t={t} />}
+                            left={t('fullName', { isProp: true })}
+                            right={meta.fullName}
                         />
-                        : null
-                    }
+                        <PropRow
+                            left={t('description', { isProp: true })}
+                            right={meta._description}
+                        />
+                        <PropRow
+                            left={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}
+                            right={<Img className={theme.imgPreview} src={meta.img.tempUrl || ''} alt={meta.fullName} />}
+                        />
+                        {
+                            item._type === ItemsTypes.AdSlot.id ?
+                                <this.SlotFallback item={item} t={t} />
+                                : null
+                        }
+                        {
+                            Object
+                                .keys(meta)
+                                .filter((key) => !/fullName|description|items|img|createdOn|modifiedOn|deleted|archived|banner|name|owner|type|targets/.test(key))
+                                .map(key => {
+                                    let keyName = key
+                                    let value = item._meta[key]
 
-                </Grid>
-                <br />
-            </StepBox>
+                                    if (!value) {
+                                        return null
+                                    }
+
+                                    if (!!/from|to/.test(key)) {
+                                        value = moment(value).format('D MMMM YYYY')
+                                    }
+
+                                    if (keyName === 'size') {
+                                        value = t(AdSizesByValue[value].label, { args: AdSizesByValue[value].labelArgs })
+                                    }
+
+                                    if (keyName === 'adType') {
+                                        value = AdTypesByValue[value].label
+                                    }
+
+                                    return (
+                                        <PropRow key={key}
+                                            left={t(keyName, { isProp: true })}
+                                            right={value}
+                                        />
+                                    )
+                                })
+                        }
+                        {meta.targets ?
+                            <PropRow
+                                left={t('targets', { isProp: true })}
+                                right={<UnitTargets {...this.props} targets={meta.targets} t={t} />}
+                            />
+                            : null
+                        }
+
+                    </Grid>
+                    <br />
+                </ContentBody>
+            </ContentBox>
         )
     }
 }

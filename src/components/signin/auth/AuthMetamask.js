@@ -12,9 +12,9 @@ import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
 import AuthHoc from './AuthHoc'
 import { AUTH_TYPES } from 'constants/misc'
-import { TabBox, TabBody, TabStickyTop, TopLoading, AddrItem } from './AuthCommon'
+import { AddrItem } from './AuthCommon'
 import Helper from 'helpers/miscHelpers'
-import { renderToString } from 'react-dom/server'
+import { ContentBox, ContentBody, ContentStickyTop, TopLoading } from 'components/common/dialog/content'
 
 const { getAccountMetamask, getAccountStats } = scActions
 
@@ -98,16 +98,16 @@ class AuthMetamask extends Component {
         let userAddr = stats.addr
 
         return (
-            <TabBox >
+            <ContentBox className={theme.tabBox} >
                 {this.state.waitingMetamaskAction ?
-                    <TabStickyTop>
+                    <ContentStickyTop>
                         <TopLoading msg={t('METAMASK_WAITING_ACTION')} />
-                    </TabStickyTop>
+                    </ContentStickyTop>
                     : this.state.waitingAddrsData ?
                         <TopLoading msg={t('METAMASK_WAITING_ADDR_INFO')} />
                         : null
                 }
-                <TabBody>
+                <ContentBody>
                     <p>
                         {t('METAMASK_INFO')}
                     </p>
@@ -154,8 +154,8 @@ class AuthMetamask extends Component {
                         :
                         <Button onClick={this.checkMetamask} label={t('AUTH_CONNECT_WITH_METAMASK')} raised primary disabled={this.state.waitingAddrsData} />
                     }
-                </TabBody>
-            </TabBox>
+                </ContentBody>
+            </ContentBox>
         )
     }
 }

@@ -3,7 +3,7 @@ import { Button } from 'react-toolbox/lib/button'
 import FormSteps from 'components/dashboard/forms/FormSteps'
 import NewItemHoc from './items/NewItemHocStep'
 import NewItemFormPreview from './items/NewItemFormPreview'
-import NewItemWithDialog from './items/NewItemWithDialog'
+import WithDialog from 'components/common/dialog/WithDialog'
 import NewItemForm from './items/NewItemForm'
 import NewSlotForm from './items/NewSlotForm'
 import NewSlotFormImgs from './items/NewSlotFormImgs'
@@ -38,6 +38,10 @@ const itemsCommon = {
     validateIdBase: 'new-'
 }
 
+const dialogCommon = {
+    darkerBackground: true
+}
+
 // Ad unit
 export const NewUnitSteps = (props) => 
     <FormSteps
@@ -56,11 +60,12 @@ export const NewUnitSteps = (props) =>
         itemModel={AdUnit}
     />
 
-const NewUnitStepsWithDialog = NewItemWithDialog(NewUnitSteps)
+const NewUnitStepsWithDialog = WithDialog(NewUnitSteps)
 
 export const NewUnitDialog = (props) =>
         <NewUnitStepsWithDialog
             {...props}
+            {...dialogCommon}
             btnLabel='NEW_UNIT'
             title='CREATE_NEW_UNIT'
         />
@@ -81,11 +86,12 @@ export const NewCampaignSteps = (props) =>
             imgAdditionalInfo='CAMPAIGN_IMG_ADDITIONAL_INFO'
         />
 
-const NewCampaignStepsWithDialog = NewItemWithDialog(NewCampaignSteps)
+const NewCampaignStepsWithDialog = WithDialog(NewCampaignSteps)
 
 export const NewCampaignDialog = (props) =>
     <NewCampaignStepsWithDialog
         {...props}
+        {...dialogCommon}
         btnLabel='NEW_CAMPAIGN'
         title='CREATE_NEW_CAMPAIGN'
     />
@@ -109,11 +115,12 @@ export const NewSlotSteps = (props) =>
     />
 
 
-const NewSlotStepsWithDialog = NewItemWithDialog(NewSlotSteps)
+const NewSlotStepsWithDialog = WithDialog(NewSlotSteps)
 
 export const NewSlotDialog = (props) =>
     <NewSlotStepsWithDialog
         {...props}
+        {...dialogCommon}
         btnLabel='NEW_SLOT'
         title='CREATE_NEW_SLOT'
     />
@@ -133,11 +140,12 @@ export const NewChannelSteps = (props) =>
         imgAdditionalInfo='CHANNEL_IMG_ADDITIONAL_INFO'
     />
 
-const NewChannelStepsWithDialog = NewItemWithDialog(NewChannelSteps)
+const NewChannelStepsWithDialog = WithDialog(NewChannelSteps)
 
 export const NewChannelDialog = (props) =>
     <NewChannelStepsWithDialog
         {...props}
+        {...dialogCommon}
         btnLabel='NEW_CHANNEL'
         title='CREATE_NEW_CHANNEL'
     />

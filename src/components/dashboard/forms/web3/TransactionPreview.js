@@ -12,7 +12,8 @@ import { web3Utils } from 'services/smart-contracts/ADX'
 import { FontIcon } from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 import GasPrice from 'components/dashboard/account/GasPrice'
-import { PropRow, StepBox, StepBody, StepStickyTop, FullStepSpinner, WalletAction } from 'components/dashboard/forms/FormsCommon'
+import { WalletAction } from 'components/dashboard/forms/FormsCommon'
+import { PropRow, ContentBox, ContentBody, ContentStickyTop, FullContentSpinner } from 'components/common/dialog/content'
 import Helper from 'helpers/miscHelpers'
 
 const TooltipCol = Tooltip(Col)
@@ -86,14 +87,14 @@ class TransactionPreview extends Component {
         return (
             <div>
                 {this.props.spinner ?
-                    <FullStepSpinner />
+                    <FullContentSpinner />
                     :
-                    <StepBox>
+                    <ContentBox>
                         {transaction.waitingForWalletAction ?
-                            <StepStickyTop>
+                            <ContentStickyTop>
                                 <WalletAction t={t} authType={this.props.account._authMode.authType} />
-                            </StepStickyTop> : null}
-                        <StepBody>
+                            </ContentStickyTop> : null}
+                        <ContentBody>
                             <Grid fluid>
                                 {errors.length ?
                                     errors.map((err, index) =>
@@ -152,9 +153,9 @@ class TransactionPreview extends Component {
                                         })
                                 }
                             </Grid>
-                        </StepBody>
+                        </ContentBody>
 
-                    </StepBox>
+                    </ContentBox>
                 }
 
             </div>

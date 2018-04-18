@@ -1,5 +1,4 @@
 import React from 'react'
-import NewItemWithDialog from 'components/dashboard/forms/items/NewItemWithDialog'
 import ApproveStep from './ApproveStep'
 import WithdrawStep from './WithdrawStep'
 import DepositToExchange from './DepositToExchange'
@@ -13,6 +12,7 @@ import { sendBidState } from 'services/adex-node/actions'
 import { Button } from 'react-toolbox/lib/button'
 import TransactionHoc from './TransactionHoc'
 import FormSteps from 'components/dashboard/forms/FormSteps'
+import WithDialog from 'components/common/dialog/WithDialog'
 
 const {
     approveTokens,
@@ -28,7 +28,7 @@ const {
     withdrawFromExchange
 } = scActions
 
-const FormStepsWithDialog = NewItemWithDialog(FormSteps)
+const FormStepsWithDialog = WithDialog(FormSteps)
 
 const SaveBtn = ({ save, saveBtnLabel, saveBtnIcon, t, transaction, waitingForWalletAction, spinner, ...other }) => {
     return (
@@ -54,7 +54,8 @@ const txCommon = {
     SaveBtn: SaveBtnWithTransaction,
     CancelBtn: CancelBtnWithTransaction,
     stepsPreviewPage: { title: 'PREVIEW_AND_MAKE_TR', page: TransactionPreview },
-    validateIdBase: 'tx-'
+    validateIdBase: 'tx-',
+    darkerBackground: true
 }
 
 export const Approve = (props) =>
