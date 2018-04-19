@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -57,13 +56,13 @@ const bidDetails = ({ bidData, t }) => {
                 <PropRow left={t('REPORT_PUBLISHER')} right={bidData._publisherConfirmation} />
                 <PropRow left={t('')}
                     right={
-                    
-                    <div>
-                        {bidData.cancelBtn}
-                        {bidData.pendingAcceptByPub}
-                        {bidData.verifyBtn}
-                        {bidData.refundBtn}
-                    </div>} />
+
+                        <div>
+                            {bidData.cancelBtn}
+                            {bidData.pendingAcceptByPub}
+                            {bidData.verifyBtn}
+                            {bidData.refundBtn}
+                        </div>} />
             </ContentBody>
         </ContentBox>
     )
@@ -93,7 +92,7 @@ export class UnitBids extends Component {
         this.props.getUnitBids()
     }
 
-    renderTableHead() {
+    renderTableHead = () => {
         let t = this.props.t
         return (
             <TableHead>
@@ -110,7 +109,7 @@ export class UnitBids extends Component {
         )
     }
 
-    renderTableRow(bid, index, { to, selected }) {
+    getBidData = (bid) => {
         const t = this.props.t
         const transactions = this.props.transactions
         const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
@@ -190,6 +189,13 @@ export class UnitBids extends Component {
 
         }
 
+        return bidData
+
+    }
+
+    renderTableRow = (bid, index, { to, selected }) => {
+        const t = this.props.t
+        const bidData = this.getBidData(bid)
 
         return (
             <TableRow key={bid._id}>

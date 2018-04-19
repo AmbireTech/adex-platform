@@ -16,6 +16,7 @@ import Slot from 'components/dashboard/containers/Slot'
 import Items from 'components/dashboard/containers/Items'
 import Transactions from 'components/dashboard/containers/Transactions'
 import UnitBids from 'components/dashboard/containers/UnitBids'
+import SlotBids from 'components/dashboard/containers/SlotBids'
 import {
     AdUnit as AdUnitModel,
     AdSlot as AdSlotModel,
@@ -154,6 +155,14 @@ class Dashboard extends React.Component {
         )
     }
 
+    renderPublisherBids = () => {
+        return (
+            <SlotBids
+                bids={[]}
+            />
+        )
+    }
+
     Dash = () => {
 
         return (
@@ -185,6 +194,7 @@ class Dashboard extends React.Component {
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/slots' component={this.renderAdSlots} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/Channel/:itemId' component={Channel} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
+                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/bids' component={this.renderPublisherBids} />                        
 
                         <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/account'} component={Account} />
                         <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/transactions'} component={Transactions} />

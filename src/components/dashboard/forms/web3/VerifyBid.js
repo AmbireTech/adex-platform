@@ -28,8 +28,11 @@ class VerifyBid extends Component {
 
             this.props.actions.updateSpinner(this.props.trId, true)
             this.props.validate('report', { isValid: false, err: { msg: 'ERR_UNIT_INFO_NOT_READY' }, dirty: false })
-            this.props.validate('conversion', { isValid: this.state.targetReached, err: { msg: 'ERR_NO_TARGET_REACHED' }, dirty: false })
 
+            // TODO: Convesion check for refund and cancel bid - opposite + messages
+            if (this.props.checkConversion) {
+                this.props.validate('conversion', { isValid: this.state.targetReached, err: { msg: 'ERR_NO_TARGET_REACHED' }, dirty: false })
+            }
             getBidVerificationReport({ bidId: placedBid._id, authSig: this.props.account._authSig })
                 .then((report) => {
                     this.props.handleChange('placedBid', placedBid)
@@ -69,7 +72,7 @@ class VerifyBid extends Component {
                 left={<span> <FontIcon value='warning' /> </span>}
                 right={<Checkbox
                     checked={!errConversion}
-                    label={t('WARNING_NO_TARGET_REACHED_CHECKBOX')}
+                    label={t(this.props.conversionCheckMsg || 'WARNING_NO_TARGET_REACHED_CHECKBOX')}
                     onChange={this.validateConversion}
                 />}
             />
@@ -80,7 +83,7 @@ class VerifyBid extends Component {
         const tx = this.props.transaction
         const t = this.props.t
         const bid = this.props.placedBid || {}
-        
+
         return (
             <ContentBox>
                 {!!this.props.spinner ?
@@ -92,7 +95,7 @@ class VerifyBid extends Component {
                         report={tx.report}
                         errMsg={this.state.errMsg}
                         errArgs={this.state.errArgs}
-                        stickyTop={this.state.targetReached ? null : <this.ConversionConfirm />}
+                        stickyTop={this.props.checkConversion && this.state.targetReached ? <this.ConversionConfirm /> : null}
                     />
                 }
             </ContentBox>

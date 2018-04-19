@@ -2,22 +2,20 @@
 import actions from 'actions'
 import { items as ItemsConstants } from 'adex-constants'
 import { getBidsBySide } from 'services/adex-node/actions'
-import { Models } from 'adex-models'
-const { ItemsTypes } = ItemsConstants
 
+export const getAddrBids = ({ authSig, side }) => {
 
-
-export const getAddrBids = ({authSig, side}) => {
-    return getAdvBids({authSig})
+    return Promise
+        .all([
+            getBids({ side: 'advertiser', storeProp: 'advBids', authSig }),
+            getBids({ side: 'publisher', storeProp: 'pubBids', authSig })
+        ])
 }
 
-export const getAdvBids = ({ authSig }) => {
-
-    return getBidsBySide({ side: 'advertiser', authSig: authSig })
+export const getBids = ({ side, storeProp, authSig }) => {
+    return getBidsBySide({ side: side, authSig: authSig })
         .then((bids) => {
-
-            actions.execute(actions.updateBids({ advBids: bids}))
-
+            actions.execute(actions.updateBids({ [storeProp]: bids }))
             return true
-        })                
+        })
 }
