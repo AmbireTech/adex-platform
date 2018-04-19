@@ -179,11 +179,11 @@
 }
 
 .error {
-    color: var(--color-adex-danger-primary);
+    color: var(--color-adex-danger-primary) !important;
 }
 
 .warning {
-    color: var(--color-adex-warning-primary);
+    color: var(--color-adex-warning-primary) !important;
 }
 
 .capitalize {

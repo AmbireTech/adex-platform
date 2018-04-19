@@ -55,8 +55,10 @@ const bidDetails = ({ bidData, t }) => {
                 <PropRow left={t('EXPIRES')} right={bidData.bidExpires} />
                 <PropRow left={t('REPORT_ADVERTISER')} right={bidData._advertiserConfirmation} />
                 <PropRow left={t('REPORT_PUBLISHER')} right={bidData._publisherConfirmation} />
-                <PropRow left={t('ACTIONS')}
-                    right={<div>
+                <PropRow left={t('')}
+                    right={
+                    
+                    <div>
                         {bidData.cancelBtn}
                         {bidData.pendingAcceptByPub}
                         {bidData.verifyBtn}

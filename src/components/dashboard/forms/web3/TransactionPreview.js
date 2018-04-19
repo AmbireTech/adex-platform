@@ -100,7 +100,8 @@ class TransactionPreview extends Component {
                                     errors.map((err, index) =>
                                         <PropRow
                                             key={index}
-                                            className={theme.error}
+                                            classNameLeft={theme.error}
+                                            classNameRight={theme.error}
                                             left={<span> <FontIcon value='error' /> </span>}
                                             right={err}
                                         />)
@@ -111,7 +112,8 @@ class TransactionPreview extends Component {
                                     previewWarnMsgs.map((msg, index) =>
                                         <PropRow
                                             key={index}
-                                            className={theme.warning}
+                                            classNameLeft={theme.warning}
+                                            classNameRight={theme.warning}
                                             left={<span> <FontIcon value='warning' /> </span>}
                                             right={t(msg.msg, { args: msg.args })}
                                         />

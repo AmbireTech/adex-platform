@@ -8,7 +8,8 @@ import { adxToFloatView } from 'services/smart-contracts/utils'
 import moment from 'moment'
 import Anchor from 'components/common/anchor/anchor'
 import { FontIcon } from 'react-toolbox/lib/font_icon'
-import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
+// import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
+import { PropRow, ContentBox, ContentBody, ContentStickyTop, FullContentSpinner } from 'components/common/dialog/content'
 
 export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
     <div>
@@ -33,7 +34,7 @@ export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
             right={<Anchor target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + unitMeta.owner} > {unitMeta.owner} </Anchor>}
         />
         <PropRow
-            eft={t('UNIT_TARGETS')}
+            left={t('UNIT_TARGETS')}
             right={<UnitTargets targets={unitMeta.targets} t={t} />}
         />
     </div>
@@ -54,15 +55,21 @@ export const Report = ({ report = {}, t }) =>
         />
     </div>
 
-export const BidInfo = ({ bid, slot, unit, t, report, errMsg, errArgs, ...rest }) => {
+export const BidInfo = ({ bid, slot, unit, t, report, errMsg, errArgs, stickyTop, ...rest }) => {
 
     const accepted = (bid._acceptedTime || 0) * 1000
     const timeout = (bid._timeout || 0) * 1000
     const bidExpires = accepted ? (accepted + timeout) : null
 
     return (
-        <div className={theme.itemPropTop}>
+        <ContentBody>
             <Grid fluid style={{ padding: 0 }}>
+                {stickyTop ?
+                    <ContentStickyTop >
+                        {stickyTop}
+                    </ContentStickyTop>
+                    : null
+                }
                 {errMsg ?
                     <PropRow
                         className={theme.error}
@@ -70,6 +77,7 @@ export const BidInfo = ({ bid, slot, unit, t, report, errMsg, errArgs, ...rest }
                         right={t(errMsg, { args: errArgs })}
                     />
                     : null}
+
                 <PropRow
                     left={t('BID_ID')}
                     right={bid._id}
@@ -104,6 +112,6 @@ export const BidInfo = ({ bid, slot, unit, t, report, errMsg, errArgs, ...rest }
                 {unit ? <AdUnit unit={unit} unitMeta={unit._meta} t={t} /> : null}
 
             </Grid>
-        </div >
+        </ContentBody >
     )
 }

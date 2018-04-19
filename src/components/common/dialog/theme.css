@@ -180,6 +180,7 @@
     flex-shrink: 0;
     display: inline-flex;
     word-break: break-word;
+    width: 100%;
 }
 
 .contentBody {
