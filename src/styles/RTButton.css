@@ -97,6 +97,13 @@
   &.flat:hover {
     background: var(--button-danger-color-hover) !important;
   }
+
+  &.raised {
+    &.inverted {
+      color: var(--color-adex-danger-primary) !important;
+      background: var(--color-adex-danger-contrast) !important;
+    }
+  }
 }
 
 .warning:not([disabled]) {
@@ -117,6 +124,13 @@
 
   &.flat:hover {
     background: var(--button-warning-color-hover) !important;
+  }
+
+  &.raised {
+    &.inverted {
+      color: var(--color-adex-warning-primary) !important;
+      background: var(--color-adex-warning-contrast) !important;
+    }
   }
 }
 
@@ -139,6 +153,13 @@
   &.flat:hover {
     background: var(--button-success-color-hover) !important;
   }
+
+  &.raised {
+    &.inverted {
+      color: var(--color-adex-success-primary) !important;
+      background: var(--color-adex-success-contrast) !important;
+    }
+  }
 }
 
 .dark:not([disabled]) {
@@ -160,6 +181,13 @@
   &.flat:hover {
     background: var(--button-dark-color-hover) !important;
   }
+
+  &.raised {
+    &.inverted {
+      color: var(--color-adex-dark-primary) !important;
+      background: var(--color-adex-dark-contrast) !important;
+    }
+  }
 }
 
 .light:not([disabled]) {
@@ -180,6 +208,13 @@
 
   &.flat:hover {
     background: var(--button-light-color-hover) !important;
+  }
+
+  &.raised {
+    &.inverted {
+      color: var(--color-adex-light-primary) !important;
+      background: var(--color-adex-light-contrast) !important;
+    }
   }
 }
 
