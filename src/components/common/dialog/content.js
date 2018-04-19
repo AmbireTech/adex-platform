@@ -4,10 +4,10 @@ import ProgressBar from 'react-toolbox/lib/progress_bar'
 import theme from './theme.css'
 import classnames from 'classnames'
 
-export const PropRow = ({ left, right, className, classNameLeft, classNameRight }) =>
-    <Row className={theme.propRow}>
-        <Col xs={12} sm={4} lg={3} className={classnames(theme.leftCol, theme.uppercase, className, classNameLeft)}>{left}</Col>
-        <Col xs={12} sm={8} lg={9} className={classnames(theme.rightCol, theme.breakLong, className, classNameRight)}>{right}</Col>
+export const PropRow = ({ left, right, className, classNameLeft, classNameRight, style = {} }) =>
+    <Row className={classnames(theme.propRow, className)} style={style}>
+        <Col xs={12} sm={4} lg={3} className={classnames(theme.leftCol, theme.uppercase, classNameLeft)}>{left}</Col>
+        <Col xs={12} sm={8} lg={9} className={classnames(theme.rightCol, theme.breakLong, classNameRight)}>{right}</Col>
     </Row>
 
 export const ContentBox = ({ children, className }) =>
