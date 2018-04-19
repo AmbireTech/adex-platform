@@ -28,7 +28,7 @@ import { FontIcon } from 'react-toolbox/lib/font_icon'
 const TooltipIconButton = Tooltip(IconButton)
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
 
-// TODO: use colors with css
+// TODO: use colors with css 
 const StateIcons = {
     [BID_STATES.DoesNotExist.id]: { icon: 'more_horiz', color: '#0277BD' },
     [BID_STATES.Accepted.id]: { icon: 'done', color: '#0277BD' },
@@ -149,8 +149,8 @@ export class UnitBids extends Component {
                 bidId={bid._id}
                 placedBid={bid}
                 acc={this.props.account}
-                // raised
-                className={classnames(theme.actionBtn, RTButtonTheme.dark)}
+                raised
+                className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
                 onSave={this.onSave}
                 disabled={pendingCancel}
             /> : null,
@@ -162,8 +162,8 @@ export class UnitBids extends Component {
                     bidId={bid._id}
                     placedBid={bid}
                     acc={this.props.account}
-                    // raised
-                    className={classnames(theme.actionBtn, { [RTButtonTheme.warning]: noTargetsReached, [RTButtonTheme.success]: !noTargetsReached })}
+                    raised
+                    className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: noTargetsReached, [RTButtonTheme.success]: !noTargetsReached })}
                     onSave={this.onSave}
                     disabled={pendingVerify}
                 /> : null,
@@ -174,9 +174,8 @@ export class UnitBids extends Component {
                     bidId={bid._id}
                     placedBid={bid}
                     acc={this.props.account}
-                    // raised
-                    // flat
-                    className={classnames(theme.actionBtn, RTButtonTheme.danger)}
+                    raised
+                    className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.danger)}
                     onSave={this.onSave}
                     disabled={pendingRefund}
                 /> : null,
