@@ -12,6 +12,12 @@ import { Item } from 'adex-models'
 import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
 import WithDialog from 'components/common/dialog/WithDialog'
 import classnames from 'classnames'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
+import ItemIpfsDetails from './ItemIpfsDetails'
+import { Button } from 'react-toolbox/lib/button'
+
+const RRButton = withReactRouterLink(Button)
+const ItemIpfsDetailsDialog = WithDialog(ItemIpfsDetails)
 
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
 
@@ -25,7 +31,7 @@ export const StateIcons = {
     [BID_STATES.ConfirmedPub.id]: { icon: 'done', color: '#00E5FF' },
 }
 
-export const bidDetails = ({ bidData, t, actions }) => {
+export const bidDetails = ({ bidData, t, side }) => {
     return (
         <ContentBox>
             <ContentBody>
@@ -36,9 +42,10 @@ export const bidDetails = ({ bidData, t, actions }) => {
                 <PropRow left={t('BID_STATE')} right={bidData._state} />
                 <PropRow left={t('PUBLISHER')} right={bidData._publisher} />
                 <PropRow left={t('AD_SLOT')} right={bidData._adSlot} />
-                <PropRow left={t('TIMEOUT')} right={bidData.timeout} />
-                <PropRow left={t('ACCEPTED')} right={bidData.accepted} />
-                <PropRow left={t('EXPIRES')} right={bidData.bidExpires} />
+                <PropRow left={t('AD_UNIT')} right={bidData._adUnit} />
+                <PropRow left={t('TIMEOUT')} right={bidData.timeoutLabel} />
+                <PropRow left={t('ACCEPTED')} right={bidData.acceptedLabel} />
+                <PropRow left={t('EXPIRES')} right={bidData.bidExpiresLabel} />
                 <PropRow left={t('REPORT_ADVERTISER')} right={bidData._advertiserConfirmation} />
                 <PropRow left={t('REPORT_PUBLISHER')} right={bidData._publisherConfirmation} />
                 <PropRow left={t('')}
@@ -50,8 +57,8 @@ export const bidDetails = ({ bidData, t, actions }) => {
                             {bidData.refundBtn || null}
                             {bidData.acceptBid || null}
                             {bidData.giveupBid || null}
-                        </div>} 
-                    />
+                        </div>}
+                />
             </ContentBody>
         </ContentBox>
     )
@@ -59,10 +66,7 @@ export const bidDetails = ({ bidData, t, actions }) => {
 
 const BidDetailWithDialog = WithDialog(bidDetails)
 
-export const renderTableHead = ({t}) => {
-
-    console.log('t', t)
-    // let t = this.props.t
+export const renderTableHead = ({ t, side }) => {
     return (
         <TableHead>
             <TableCell> {t('DETAILS')} </TableCell>
@@ -70,7 +74,7 @@ export const renderTableHead = ({t}) => {
             <TableCell> {t('BID_TARGET')} / {t('BID_UNIQUE_CLICKS')} </TableCell>
             <TableCell> {t('BID_STATE')} </TableCell>
             <TableCell> {t('PUBLISHER')} </TableCell>
-            <TableCell> {t('AD_SLOT')} </TableCell>
+            <TableCell> {t('AD_SLOT') + ' / ' + t('AD_UNIT')} </TableCell>
             <TableCell> {t('TIMEOUT')} / {t('ACCEPTED')} / {t('EXPIRES')}  </TableCell>
             <TableCell> {t('REPORTS')}  </TableCell>
             <TableCell> {t('ACTIONS')} </TableCell>
@@ -78,7 +82,7 @@ export const renderTableHead = ({t}) => {
     )
 }
 
-export const renderCommonTableRow = ({bidData, t}) => {
+export const renderCommonTableRow = ({ bidData, t }) => {
     return (
         <TableRow key={bidData._id}>
             <TableCell>
@@ -104,12 +108,17 @@ export const renderCommonTableRow = ({bidData, t}) => {
             <TableCell
                 className={classnames(theme.compactCol, theme.ellipsis)}
             >
-                {bidData._adSlot}
+                <div>
+                    {bidData._adSlot}
+                </div>
+                <div>
+                    {bidData._adUnit}
+                </div>
             </TableCell>
             <TableCell>
-                <div> {bidData.timeout} </div>
-                <div> {bidData.accepted} </div>
-                <div> {bidData.bidExpires} </div>
+                <div> {bidData.timeoutLabel} </div>
+                <div> {bidData.acceptedLabel} </div>
+                <div> {bidData.bidExpiresLabel} </div>
             </TableCell>
             <TableCell
                 className={classnames(theme.compactCol, theme.ellipsis)}
@@ -129,7 +138,7 @@ export const renderCommonTableRow = ({bidData, t}) => {
     )
 }
 
-export const getCommonBidData = ({ bid, transactions, t }) => {
+export const getCommonBidData = ({ bid, t, side }) => {
 
     const accepted = (bid._acceptedTime || 0) * 1000
     const timeout = (bid._timeout || 0) * 1000
@@ -146,12 +155,22 @@ export const getCommonBidData = ({ bid, transactions, t }) => {
                 <span>{t(BidStatesLabels[bid._state])}</span>
             </span>,
         _publisher: <Anchor target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._publisher} > {bid._publisher || '-'} </Anchor>,
-        _adSlot: <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._adSlot, process.env.IPFS_GATEWAY)} > {bid._adSlot || '-'} </Anchor>,
-        timeout: moment.duration(timeout, 'ms').humanize(),
-        accepted: accepted ? moment(accepted).format('MMMM Do, YYYY, HH:mm:ss') : '-',
-        bidExpires: bidExpires ? moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss') : '-',
+        accepted: accepted,
+        timeout: timeout,
+        bidExpires: bidExpires,
+        timeoutLabel: moment.duration(timeout, 'ms').humanize(),
+        acceptedLabel: accepted ? moment(accepted).format('MMMM Do, YYYY, HH:mm:ss') : '-',
+        bidExpiresLabel: bidExpires ? moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss') : '-',
+
         _publisherConfirmation: bid._publisherConfirmation ? <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._publisherConfirmation, process.env.IPFS_GATEWAY)} > {t('PUBLISHER')} </Anchor> : '-',
-        _advertiserConfirmation: bid._advertiserConfirmation ? <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._advertiserConfirmation, process.env.IPFS_GATEWAY)} > {t('ADVERTISER')} </Anchor> : '-'
+        _advertiserConfirmation: bid._advertiserConfirmation ? <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._advertiserConfirmation, process.env.IPFS_GATEWAY)} > {t('ADVERTISER')} </Anchor> : '-',
+        // TODO: Set user id on bid accept on the node or use IPFS id
+        _adSlot: side === 'publisher' ? 
+            (bid._adSlotId ? <RRButton to={ '/dashboard/publisher/adSlot/' + bid._adSlotId}>{t('AD_SLOT')}</RRButton> : null)
+            : <ItemIpfsDetailsDialog btnLabel={t('AD_SLOT')} itemIpfs={bid._adSlot} t={t} icon='' title={t('AD_SLOT') + ': ' + bid._adSlot} />,
+        _adUnit: side === 'advertiser' ?
+        <RRButton to={ '/dashboard/advertiser/adUnit/' + bid._adUnitId}>{t('AD_UNIT')}</RRButton>
+        : <ItemIpfsDetailsDialog btnLabel={t('AD_UNIT')} itemIpfs={bid._adUnit} t={t} icon=''  title={t('AD_UNIT') + ': ' + bid._adUnit} />
     }
 
     return bidData

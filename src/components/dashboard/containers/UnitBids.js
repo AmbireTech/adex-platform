@@ -14,7 +14,6 @@ import RTButtonTheme from 'styles/RTButton.css'
 import { exchange as ExchangeConstants } from 'adex-constants'
 import { CancelBid, VerifyBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
 import classnames from 'classnames'
-import Anchor from 'components/common/anchor/anchor'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
 import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch } from './BidsCommon'
 
@@ -45,6 +44,8 @@ export class UnitBids extends Component {
 
     getBidData = (bid) => {
         const t = this.props.t
+        let bidData = getCommonBidData({ bid, t, side: this.props.side })
+
         const transactions = this.props.transactions
         const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
         const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
@@ -52,16 +53,11 @@ export class UnitBids extends Component {
         const canCancel = (bid._state === BID_STATES.DoesNotExist.id)
         const canVerify = (bid._state === BID_STATES.Accepted.id) && !bid._advertiserConfirmation
         const noTargetsReached = bid.clicksCount < bid._target
-        const accepted = (bid._acceptedTime || 0) * 1000
-        const timeout = (bid._timeout || 0) * 1000
-        const bidExpires = accepted ? (accepted + timeout) : null
-        const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidExpires < Date.now()) && !bid._advertiserConfirmation
+        const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidData.bidExpires < Date.now()) && !bid._advertiserConfirmation
         const pendingCancel = pendingState === BID_STATES.Canceled.id
         const pendingRefund = pendingState === BID_STATES.Expired.id
         const pendingVerify = (pendingState === BID_STATES.ConfirmedAdv.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
         const pendingAcceptByPub = bid.unconfirmedStateId === BID_STATES.Accepted.id
-
-        let bidData = getCommonBidData({ bid, t })
 
         bidData.cancelBtn = canCancel ? <CancelBid
             icon={pendingCancel ? 'hourglass_empty' : ''}
@@ -108,7 +104,6 @@ export class UnitBids extends Component {
                 tooltip={t('WARNING_PENDING_ACCEPT_BY_PUB')}
                 className={RTButtonTheme.warning}
             /> : null
-
 
         return bidData
 
@@ -215,12 +210,13 @@ UnitBids.propTypes = {
 }
 
 function mapStateToProps(state) {
-    let persist = state.persist
-    // let memory = state.memory
+    const persist = state.persist
+    const memory = state.memory
     return {
         account: persist.account,
         transactions: persist.web3Transactions[persist.account._addr] || {},
-        advBids: persist.bids.advBids
+        advBids: persist.bids.advBids,
+        side: memory.nav.side
     }
 }
 

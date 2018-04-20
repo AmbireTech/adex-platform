@@ -140,9 +140,7 @@ export class SlotBids extends Component {
         const pendingAccept = pendingState === BID_STATES.Accepted.id
         const pendingVerify = (pendingState === BID_STATES.ConfirmedPub.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
 
-
-        let bidData = getCommonBidData({bid, t})
-
+        let bidData = getCommonBidData({bid, t, side: this.props.side})
        
         bidData.acceptBid = canAccept ? <AcceptBid
                 icon={pendingAccept ? 'hourglass_empty' : ''}
@@ -305,24 +303,24 @@ SlotBids.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     item: PropTypes.object.isRequired
-};
+}
 
 function mapStateToProps(state, props) {
-    let persist = state.persist
-    let memory = state.memory
+    const persist = state.persist
+    const memory = state.memory
     return {
         account: persist.account,
-        // item: state.currentItem,
         bids: persist.bids.bidsById,
         transactions: persist.web3Transactions[persist.account._addr] || {},
-        pubBids: persist.bids.pubBids
-    };
+        pubBids: persist.bids.pubBids,
+        side: memory.nav.side
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
 export default connect(
