@@ -17,8 +17,9 @@ class VerifyBid extends Component {
         this.state = {
             errMsg: null,
             errArgs: [],
-            // TODO: gie this option to publisher only if the bid is verified by advertiser first!
-            targetReached: props.placedBid.clicksCount >= props.placedBid._target
+            // TODO: give this option to publisher only if the bid is verified by advertiser first!
+            targetReached: props.placedBid.clicksCount >= props.placedBid._target,
+            isValidConversion: true
         }
     }
 
@@ -29,9 +30,20 @@ class VerifyBid extends Component {
             this.props.actions.updateSpinner(this.props.trId, true)
             this.props.validate('report', { isValid: false, err: { msg: 'ERR_UNIT_INFO_NOT_READY' }, dirty: false })
 
-            // TODO: Convesion check for refund and cancel bid - opposite + messages
+            // TODO: Conversion check for refund and cancel bid - opposite + messages
+            const verifyType = this.props.verifyType
+
+            let isValidConversion = true
+            if (this.props.verifyType === 'verify') {
+                isValidConversion = this.state.targetReached
+            } else if ((this.props.verifyType === 'giveup') || (this.props.verifyType === 'refund')) {
+                isValidConversion = !this.state.targetReached
+            }
+
+            this.setState({ isValidConversion: isValidConversion })
+
             if (this.props.checkConversion) {
-                this.props.validate('conversion', { isValid: this.state.targetReached, err: { msg: 'ERR_NO_TARGET_REACHED' }, dirty: false })
+                this.props.validate('conversion', { isValid: isValidConversion, err: { msg: 'ERR_NO_TARGET_REACHED' }, dirty: false })
             }
             getBidVerificationReport({ bidId: placedBid._id, authSig: this.props.account._authSig })
                 .then((report) => {
@@ -59,10 +71,6 @@ class VerifyBid extends Component {
     ConversionConfirm = () => {
         const t = this.props.t
         const errConversion = this.props.invalidFields['conversion'] || null
-
-        if (this.state.targetReached) {
-            return null
-        }
 
         return (
             <PropRow
@@ -95,7 +103,7 @@ class VerifyBid extends Component {
                         report={tx.report}
                         errMsg={this.state.errMsg}
                         errArgs={this.state.errArgs}
-                        stickyTop={this.props.checkConversion && this.state.targetReached ? <this.ConversionConfirm /> : null}
+                        stickyTop={!this.state.isValidConversion ? <this.ConversionConfirm /> : null}
                     />
                 }
             </ContentBox>
