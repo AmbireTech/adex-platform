@@ -183,9 +183,9 @@ export const getCommonBidData = ({ bid, t, side }) => {
         _advertiserConfirmation: bid._advertiserConfirmation ?
             <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._advertiserConfirmation, process.env.IPFS_GATEWAY)} > {t('ADVERTISER')} </Anchor>
             : '-',
-        // TODO: Set user id on bid accept on the node or use IPFS id
+        // NOTE: Temp used filter from the existing slots in ItemHoc
         _adSlot: side === 'publisher' ?
-            (bid._adSlotId ? <RRButton to={'/dashboard/publisher/adSlot/' + bid._adSlotId}>{t('AD_SLOT')}</RRButton> : null)
+            <RRButton to={'/dashboard/publisher/adSlot/' + (bid._adSlotId || bid._adSlot)}>{t('AD_SLOT')}</RRButton>
             : <ItemIpfsDetailsDialog btnLabel={t('AD_SLOT')} itemIpfs={bid._adSlot} t={t} icon='' title={t('AD_SLOT') + ': ' + bid._adSlot} />,
         _adUnit: side === 'advertiser' ?
             <RRButton to={'/dashboard/advertiser/adUnit/' + bid._adUnitId}>{t('AD_UNIT')}</RRButton>
