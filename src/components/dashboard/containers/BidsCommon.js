@@ -17,6 +17,7 @@ import ItemIpfsDetails from './ItemIpfsDetails'
 import { Button } from 'react-toolbox/lib/button'
 
 const RRButton = withReactRouterLink(Button)
+// const RRAnchor = withReactRouterLink(Anchor)
 const ItemIpfsDetailsDialog = WithDialog(ItemIpfsDetails)
 
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
@@ -32,6 +33,7 @@ export const StateIcons = {
 }
 
 export const bidDetails = ({ bidData, t, side }) => {
+
     return (
         <ContentBox>
             <ContentBody>
@@ -40,7 +42,7 @@ export const bidDetails = ({ bidData, t, side }) => {
                 <PropRow left={t('BID_TARGET')} right={bidData._target} />
                 <PropRow left={t('BID_UNIQUE_CLICKS')} right={bidData.clicksCount} />
                 <PropRow left={t('BID_STATE')} right={bidData._state} />
-                <PropRow left={t('PUBLISHER')} right={bidData._publisher} />
+                <PropRow left={t(bidData.sideData.label)} right={bidData.sideData.owner} />
                 <PropRow left={t('AD_SLOT')} right={bidData._adSlot} />
                 <PropRow left={t('AD_UNIT')} right={bidData._adUnit} />
                 <PropRow left={t('TIMEOUT')} right={bidData.timeoutLabel} />
@@ -66,15 +68,18 @@ export const bidDetails = ({ bidData, t, side }) => {
 
 const BidDetailWithDialog = WithDialog(bidDetails)
 
-export const renderTableHead = ({ t, side }) => {
+export const renderTableHead = ({ t, side, }) => {
     return (
         <TableHead>
             <TableCell> {t('DETAILS')} </TableCell>
             <TableCell> {t('BID_AMOUNT')} </TableCell>
             <TableCell> {t('BID_TARGET')} / {t('BID_UNIQUE_CLICKS')} </TableCell>
             <TableCell> {t('BID_STATE')} </TableCell>
-            <TableCell> {t('PUBLISHER')} </TableCell>
-            <TableCell> {t('AD_SLOT') + ' / ' + t('AD_UNIT')} </TableCell>
+            {/* TODO: make this check only at 1 place */}
+            <TableCell> {t(side === 'publisher' ? 'ADVERTISER' : 'PUBLISHER')} </TableCell>
+            <TableCell>
+                {t('AD_SLOT') + ' / ' + t('AD_UNIT')}
+            </TableCell>
             <TableCell> {t('TIMEOUT')} / {t('ACCEPTED')} / {t('EXPIRES')}  </TableCell>
             <TableCell> {t('REPORTS')}  </TableCell>
             <TableCell> {t('ACTIONS')} </TableCell>
@@ -82,7 +87,7 @@ export const renderTableHead = ({ t, side }) => {
     )
 }
 
-export const renderCommonTableRow = ({ bidData, t }) => {
+export const renderCommonTableRow = ({ bidData, t, side }) => {
     return (
         <TableRow key={bidData._id}>
             <TableCell>
@@ -103,7 +108,7 @@ export const renderCommonTableRow = ({ bidData, t }) => {
             <TableCell
                 className={classnames(theme.compactCol, theme.ellipsis)}
             >
-                {bidData._publisher}
+                {bidData.sideData.owner}
             </TableCell>
             <TableCell
                 className={classnames(theme.compactCol, theme.ellipsis)}
@@ -144,6 +149,16 @@ export const getCommonBidData = ({ bid, t, side }) => {
     const timeout = (bid._timeout || 0) * 1000
     const bidExpires = accepted ? (accepted + timeout) : null
 
+    let sideData = {}
+
+    if (side === 'publisher') {
+        sideData.label = 'ASVERTISER'
+        sideData.owner = <Anchor target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._advertiser} > {bid._advertiser || '-'} </Anchor>
+    } else if (side === 'advertiser') {
+        sideData.label = 'PUBLISHER'
+        sideData.owner = <Anchor target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._publisher} > {bid._publisher || '-'} </Anchor>
+    }
+
     const bidData = {
         _id: bid._id || '-',
         _amount: adxToFloatView(bid._amount) + ' ADX',
@@ -154,7 +169,7 @@ export const getCommonBidData = ({ bid, t, side }) => {
                 <FontIcon value={StateIcons[bid._state].icon} style={{ marginRight: 5, color: StateIcons[bid._state].color }} />
                 <span>{t(BidStatesLabels[bid._state])}</span>
             </span>,
-        _publisher: <Anchor target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._publisher} > {bid._publisher || '-'} </Anchor>,
+        sideData: sideData,
         accepted: accepted,
         timeout: timeout,
         bidExpires: bidExpires,
@@ -162,15 +177,19 @@ export const getCommonBidData = ({ bid, t, side }) => {
         acceptedLabel: accepted ? moment(accepted).format('MMMM Do, YYYY, HH:mm:ss') : '-',
         bidExpiresLabel: bidExpires ? moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss') : '-',
 
-        _publisherConfirmation: bid._publisherConfirmation ? <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._publisherConfirmation, process.env.IPFS_GATEWAY)} > {t('PUBLISHER')} </Anchor> : '-',
-        _advertiserConfirmation: bid._advertiserConfirmation ? <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._advertiserConfirmation, process.env.IPFS_GATEWAY)} > {t('ADVERTISER')} </Anchor> : '-',
+        _publisherConfirmation: bid._publisherConfirmation ?
+            <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._publisherConfirmation, process.env.IPFS_GATEWAY)} > {t('PUBLISHER')} </Anchor>
+            : '-',
+        _advertiserConfirmation: bid._advertiserConfirmation ?
+            <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._advertiserConfirmation, process.env.IPFS_GATEWAY)} > {t('ADVERTISER')} </Anchor>
+            : '-',
         // TODO: Set user id on bid accept on the node or use IPFS id
-        _adSlot: side === 'publisher' ? 
-            (bid._adSlotId ? <RRButton to={ '/dashboard/publisher/adSlot/' + bid._adSlotId}>{t('AD_SLOT')}</RRButton> : null)
+        _adSlot: side === 'publisher' ?
+            (bid._adSlotId ? <RRButton to={'/dashboard/publisher/adSlot/' + bid._adSlotId}>{t('AD_SLOT')}</RRButton> : null)
             : <ItemIpfsDetailsDialog btnLabel={t('AD_SLOT')} itemIpfs={bid._adSlot} t={t} icon='' title={t('AD_SLOT') + ': ' + bid._adSlot} />,
         _adUnit: side === 'advertiser' ?
-        <RRButton to={ '/dashboard/advertiser/adUnit/' + bid._adUnitId}>{t('AD_UNIT')}</RRButton>
-        : <ItemIpfsDetailsDialog btnLabel={t('AD_UNIT')} itemIpfs={bid._adUnit} t={t} icon=''  title={t('AD_UNIT') + ': ' + bid._adUnit} />
+            <RRButton to={'/dashboard/advertiser/adUnit/' + bid._adUnitId}>{t('AD_UNIT')}</RRButton>
+            : <ItemIpfsDetailsDialog btnLabel={t('AD_UNIT')} itemIpfs={bid._adUnit} t={t} icon='' title={t('AD_UNIT') + ': ' + bid._adUnit} />
     }
 
     return bidData

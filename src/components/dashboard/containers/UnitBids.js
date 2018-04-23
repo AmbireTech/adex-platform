@@ -16,6 +16,7 @@ import { CancelBid, VerifyBid, RefundBid } from 'components/dashboard/forms/web3
 import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
 import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch } from './BidsCommon'
+import { sortBids } from 'services/store-data/bids'
 
 const TooltipIconButton = Tooltip(IconButton)
 const { BID_STATES } = ExchangeConstants
@@ -39,12 +40,15 @@ export class UnitBids extends Component {
     }
 
     onSave = () => {
-        this.props.getUnitBids()
+        if (this.props.getUnitBids) {
+            this.props.getUnitBids()
+        }
     }
 
     getBidData = (bid) => {
+        const side = this.props.side
         const t = this.props.t
-        let bidData = getCommonBidData({ bid, t, side: this.props.side })
+        let bidData = getCommonBidData({ bid, t, side: side })
 
         const transactions = this.props.transactions
         const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
@@ -124,34 +128,18 @@ export class UnitBids extends Component {
             item={{}}
             rows={items}
             rowRenderer={this.renderTableRow.bind(this)}
-            tableHeadRenderer={renderTableHead.bind(this, { t: this.props.t })}
+            tableHeadRenderer={renderTableHead.bind(this, { t: this.props.t, side: this.props.side })}
         />
 
-    sortBids = (bids) => {
-        const sorted = bids.reduce((memo, bid) => {
-            if (bid._state === BID_STATES.DoesNotExist.id) {
-                memo.open.push(bid)
-            } else if (bid._state === BID_STATES.Accepted.id
-                || bid._state === BID_STATES.ConfirmedAdv.id
-                || bid._state === BID_STATES.ConfirmedPub.id) {
-                memo.action.push(bid)
-            } else {
-                memo.closed.push(bid)
-            }
-
-            return memo
-        }, { action: [], open: [], closed: [] })
-
-        return sorted
-    }
-
     render() {
-
-        let bids = this.props.advBids || []
         let t = this.props.t
-        const sorted = this.sortBids(bids)
+        let sorted = null
 
-        // console.log('sorted', sorted)
+        if (this.props.getUnitBids) {
+            sorted = this.props.bids || {}
+        } else {
+            sorted = this.props.advBids || {}
+        }
 
         return (
             <div>
