@@ -243,7 +243,7 @@ export default function ItemHoc(Decorated) {
                             }
 
                         </div>
-                        <SaveBtn 
+                        <SaveBtn
                             spinnerId={'update-' + item._id}
                             validationId={'update-' + item._id}
                             returnPropToInitialState={this.returnPropToInitialState}
@@ -276,10 +276,34 @@ export default function ItemHoc(Decorated) {
         spinner: PropTypes.bool
     }
 
+    const tryGetItemByIpfs = ({ items, ipfs }) => {
+
+        let keys = Object.keys(items)
+
+        for (let index = 0; index < keys.length; index++) {
+            const key = keys[index]
+            const item = items[key]
+
+            if (item._ipfs === ipfs) {
+                return item
+            }
+
+        }
+
+        return null
+    }
+
     function mapStateToProps(state, props) {
         let persist = state.persist
         // let memory = state.memory
-        const item = persist.items[props.itemType][props.match.params.itemId]
+        const items = persist.items[props.itemType]
+        const id = props.match.params.itemId
+        let item = items[id]
+
+        if (!item && props.itemType) {
+            item = tryGetItemByIpfs({ items: items, ipfs: id })
+        }
+
         return {
             account: persist.account,
             item: item
