@@ -221,6 +221,7 @@ export const VerifyBid = (props) =>
         {...txCommon}
         stepsPages={[{ title: 'VERIFY_BID_STEP', page: VerifyBidStep }]}
         checkConversion={true}
+        verifyType='verify'
         saveFn={({ acc, transaction } = {}) => {
             return verifyBid(
                 {
@@ -259,6 +260,7 @@ export const GiveupBid = (props) =>
         stepsId={'giveup_bid_slot_' + props.slotId + '_bid_' + props.bidId}
         {...txCommon}
         stepsPages={[{ title: 'GIVEUP_BID_STEP', page: VerifyBidStep }]}
+        verifyType='giveup'
         saveFn={({ acc, transaction } = {}) => {
             return giveupBid(
                 {
@@ -294,6 +296,7 @@ export const RefundBid = (props) =>
         stepsId={'refund_bid_unit_' + props.unitId + '_bid_' + props.bidId}
         {...txCommon}
         stepsPages={[{ title: 'REFUND_BID_STEP', page: VerifyBidStep }]}
+        verifyType='refund'
         saveFn={({ acc, transaction } = {}) => {
             return refundBid(
                 {
