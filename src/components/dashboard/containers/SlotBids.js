@@ -19,7 +19,8 @@ import { AcceptBid, GiveupBid, VerifyBid } from 'components/dashboard/forms/web3
 import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS_NO_STATE } from 'constants/misc'
 import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch } from './BidsCommon'
- 
+import { getAddrBids, sortBids } from 'services/store-data/bids'
+
 const { BID_STATES, BidStateNames } = ExchangeConstants
 
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
@@ -63,7 +64,9 @@ export class SlotBids extends Component {
 
 
     componentWillMount() {
-        // this.getBids()
+        if (this.props.getSlotBids) {
+            this.getBids()
+        }
     }
 
     handleTabChange = (index) => {
@@ -140,22 +143,22 @@ export class SlotBids extends Component {
         const pendingAccept = pendingState === BID_STATES.Accepted.id
         const pendingVerify = (pendingState === BID_STATES.ConfirmedPub.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
 
-        let bidData = getCommonBidData({bid, t, side: this.props.side})
-       
+        let bidData = getCommonBidData({ bid, t, side: this.props.side })
+
         bidData.acceptBid = canAccept ? <AcceptBid
-                icon={pendingAccept ? 'hourglass_empty' : ''}
-                adUnitId={bid._adUnitId}
-                slotId={this.props.item._id}
-                bidId={bid._id}
-                placedBid={bid}
-                slot={this.props.item}
-                acc={this.props.account}
-                raised
-                primary
-                className={theme.actionBtn}
-                onSave={this.getBids}
-            // disabled={pendingAccept}
-            /> : null
+            icon={pendingAccept ? 'hourglass_empty' : ''}
+            adUnitId={bid._adUnitId}
+            slotId={this.props.item._id}
+            bidId={bid._id}
+            placedBid={bid}
+            slot={this.props.item}
+            acc={this.props.account}
+            raised
+            primary
+            className={theme.actionBtn}
+            onSave={this.getBids}
+        // disabled={pendingAccept}
+        /> : null
 
         bidData.verifyBtn = canVerify ?
             <VerifyBid
@@ -193,7 +196,7 @@ export class SlotBids extends Component {
         let t = this.props.t
         const bidData = this.getBidData(bid)
 
-        return renderCommonTableRow({bidData, t})
+        return renderCommonTableRow({ bidData, t })
     }
 
     renderRows = (items) =>
@@ -204,35 +207,23 @@ export class SlotBids extends Component {
             item={items}
             rows={items}
             rowRenderer={this.renderTableRow.bind(this)}
-            tableHeadRenderer={renderTableHead.bind(this, {t: this.props.t})}
+            tableHeadRenderer={renderTableHead.bind(this, { t: this.props.t, side: this.props.side })}
         />
-
-
-    sortBids = (bids) => {
-        const sorted = bids.reduce((memo, bid) => {
-            if (bid._state === BID_STATES.DoesNotExist.id) {
-                memo.open.push(bid)
-            } else if (bid._state === BID_STATES.Accepted.id
-                || bid._state === BID_STATES.ConfirmedAdv.id
-                || bid._state === BID_STATES.ConfirmedPub.id) {
-                memo.action.push(bid)
-            } else {
-                memo.closed.push(bid)
-            }
-
-            return memo
-        }, { action: [], open: [], closed: [] })
-
-        return sorted
-    }
 
     render() {
         let openBids = this.state.openBids || []
-        let slotBids = this.state.bids || []
-
         let t = this.props.t
-        let bids = this.props.pubBids || []
-        const sorted = this.sortBids(bids)
+        let sorted = []
+
+        if (this.props.getSlotBids) {
+            sorted = sortBids(this.state.bids || [])
+        } else {
+            sorted = this.props.pubBids
+        }
+
+
+
+        // const sorted = this.sortBids(bids)
 
         return (
             <div>
@@ -241,32 +232,20 @@ export class SlotBids extends Component {
                     index={this.state.tabIndex}
                     onChange={this.handleTabChange}
                 >
-                    {/* <Tab label={t('OPEN_BIDS')}>
-                        <div>
-                            <ItemsList
-                                // items={openBids}
-                                items={sorted.open}
-                                listMode='rows'
-                                renderRows={this.renderRows}
-                                sortProperties={SORT_PROPERTIES_BIDS}
-                                searchMatch={this.searchMatch}
-                                filterProperties={FILTER_PROPERTIES_BIDS_NO_STATE}
-                            />
-                        </div>
-                    </Tab> */}
-                    {/* <Tab label={t('BIDS_HISTORY')}>
-                        <div>
-                            <ItemsList
-                                items={slotBids}
-                                items={sorted.open}                                
-                                listMode='rows'
-                                renderRows={this.renderRows}
-                                sortProperties={SORT_PROPERTIES_BIDS}
-                                searchMatch={this.searchMatch}
-                                filterProperties={FILTER_PROPERTIES_BIDS}
-                            />
-                        </div>
-                    </Tab> */}
+                    {this.props.getSlotBids ?
+                        <Tab label={t('OPEN_BIDS')}>
+                            <div>
+                                <ItemsList
+                                    items={openBids}
+                                    listMode='rows'
+                                    renderRows={this.renderRows}
+                                    sortProperties={SORT_PROPERTIES_BIDS}
+                                    searchMatch={this.searchMatch}
+                                    filterProperties={FILTER_PROPERTIES_BIDS_NO_STATE}
+                                />
+                            </div>
+                        </Tab>
+                        : null}
                     <Tab label={t('BIDS_AWAITING_ACTION')}>
                         <ItemsList
                             items={sorted.action}

@@ -12,7 +12,7 @@ import { BasicProps } from './ItemCommon'
 import Helper from 'helpers/miscHelpers'
 import ImgDialog from './ImgDialog'
 import { Item as ItemModel } from 'adex-models'
-import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT} from 'constants/misc'
+import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT } from 'constants/misc'
 
 const { ItemsTypes, AdSizesByValue } = ItemsConstants
 const ADVIEW_URL = process.env.ADVIEW_HOST || 'https://view.adex.network'
@@ -120,7 +120,7 @@ export class Slot extends Component {
                     imgPropName='fallbackAdImg'
                 />
                 <div>
-                    <SlotBids {...this.props} item={item} t={t} />
+                    <SlotBids {...this.props} item={item} t={t} getSlotBids={true} />
                 </div>
             </div>
         )

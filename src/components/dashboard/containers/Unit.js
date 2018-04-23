@@ -16,6 +16,7 @@ import { items as ItemsConstants } from 'adex-constants'
 import { BasicProps } from './ItemCommon'
 import { getUnitBids } from 'services/adex-node/actions'
 import BidIcon from 'components/common/icons/BidIcon'
+import { sortBids } from 'services/store-data/bids'
 
 const { ItemsTypes } = ItemsConstants
 const BidFormWithDialog = WithDialog(NewBidSteps)
@@ -38,7 +39,7 @@ export class Unit extends Component {
             .then((bids) => {
                 // console.log('unit bids', bids)
                 // TODO: Maybe map to Bid instances?
-                this.setState({ bids: bids })
+                this.setState({ bids: sortBids(bids) })
             })
     }
 
