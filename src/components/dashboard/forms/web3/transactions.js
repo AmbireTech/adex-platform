@@ -220,7 +220,6 @@ export const VerifyBid = (props) =>
         stepsId={'verify_bid_item_' + props.itemId + '_bid_' + props.bidId}
         {...txCommon}
         stepsPages={[{ title: 'VERIFY_BID_STEP', page: VerifyBidStep }]}
-        checkConversion={true}
         verifyType='verify'
         saveFn={({ acc, transaction } = {}) => {
             return verifyBid(
