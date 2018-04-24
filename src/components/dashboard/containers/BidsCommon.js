@@ -176,20 +176,48 @@ export const getCommonBidData = ({ bid, t, side }) => {
         timeoutLabel: moment.duration(timeout, 'ms').humanize(),
         acceptedLabel: accepted ? moment(accepted).format('MMMM Do, YYYY, HH:mm:ss') : '-',
         bidExpiresLabel: bidExpires ? moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss') : '-',
-
         _publisherConfirmation: bid._publisherConfirmation ?
-            <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._publisherConfirmation, process.env.IPFS_GATEWAY)} > {t('PUBLISHER')} </Anchor>
+            <ItemIpfsDetailsDialog
+                btnLabel={t('PUBLISHER')}
+                itemIpfs={bid._publisherConfirmation}
+                t={t}
+                icon=''
+                title={t('REPORT_PUBLISHER')}
+                detailsType='report'
+            />
             : '-',
         _advertiserConfirmation: bid._advertiserConfirmation ?
-            <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._advertiserConfirmation, process.env.IPFS_GATEWAY)} > {t('ADVERTISER')} </Anchor>
+            // <Anchor target='_blank' href={Item.getIpfsMetaUrl(bid._advertiserConfirmation, process.env.IPFS_GATEWAY)} > {t('ADVERTISER')} </Anchor>
+            <ItemIpfsDetailsDialog
+                btnLabel={t('ADVERTISER')}
+                itemIpfs={bid._advertiserConfirmation}
+                t={t}
+                icon=''
+                title={t('REPORT_ADVERTISER')}
+                detailsType='report'
+            />
             : '-',
         // NOTE: Temp used filter from the existing slots in ItemHoc
         _adSlot: side === 'publisher' ?
             <RRButton to={'/dashboard/publisher/adSlot/' + (bid._adSlotId || bid._adSlot)}>{t('AD_SLOT')}</RRButton>
-            : <ItemIpfsDetailsDialog btnLabel={t('AD_SLOT')} itemIpfs={bid._adSlot} t={t} icon='' title={t('AD_SLOT') + ': ' + bid._adSlot} />,
+            : <ItemIpfsDetailsDialog
+                btnLabel={t('AD_SLOT')}
+                itemIpfs={bid._adSlot}
+                t={t}
+                icon=''
+                title={t('AD_SLOT') + ': ' + bid._adSlot}
+                detailsType='item'
+            />,
         _adUnit: side === 'advertiser' ?
             <RRButton to={'/dashboard/advertiser/adUnit/' + bid._adUnitId}>{t('AD_UNIT')}</RRButton>
-            : <ItemIpfsDetailsDialog btnLabel={t('AD_UNIT')} itemIpfs={bid._adUnit} t={t} icon='' title={t('AD_UNIT') + ': ' + bid._adUnit} />
+            : <ItemIpfsDetailsDialog
+                btnLabel={t('AD_UNIT')}
+                itemIpfs={bid._adUnit}
+                t={t}
+                icon=''
+                title={t('AD_UNIT') + ': ' + bid._adUnit}
+                detailsType='item'
+            />
     }
 
     return bidData
