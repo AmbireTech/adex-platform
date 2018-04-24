@@ -30,15 +30,19 @@ class VerifyBid extends Component {
             const verifyType = this.props.verifyType
 
             let isValidConversion = true
+            let conversionWarningMsg = ''
             let conversionCheckMsg = ''
             if (verifyType === 'verify') {
                 isValidConversion = this.state.targetReached
+                conversionWarningMsg = 'WARNING_NO_TARGET_REACHED_VERIFY'
                 conversionCheckMsg = 'WARNING_NO_TARGET_REACHED_VERIFY_CHECKBOX'
             } else if (verifyType === 'giveup') {
                 isValidConversion = !this.state.targetReached
+                conversionWarningMsg = 'WARNING_TARGET_REACHED_GIVEUP'
                 conversionCheckMsg = 'WARNING_TARGET_REACHED_GIVEUP_CHECKBOX'
             } else if (verifyType === 'refund') {
                 isValidConversion = !this.state.targetReached
+                conversionWarningMsg = 'WARNING_TARGET_REACHED_REFUND'
                 conversionCheckMsg = 'WARNING_TARGET_REACHED_REFUND_CHECKBOX'
             }
 
@@ -47,6 +51,7 @@ class VerifyBid extends Component {
             this.props.validate('report', { isValid: false, err: { msg: 'ERR_UNIT_INFO_NOT_READY' }, dirty: false })
 
             this.props.handleChange('isValidConversion', isValidConversion)
+            this.props.handleChange('conversionWarningMsg', conversionWarningMsg)
             this.props.handleChange('conversionCheckMsg', conversionCheckMsg)
 
             getBidVerificationReport({ bidId: placedBid._id, authSig: this.props.account._authSig })
@@ -82,11 +87,16 @@ class VerifyBid extends Component {
                 classNameRight={theme.warning}
                 style={{ width: '100%' }}
                 left={<span> <FontIcon value='warning' /> </span>}
-                right={<Checkbox
-                    checked={!errConversion}
-                    label={t(this.props.transaction.conversionCheckMsg)}
-                    onChange={this.validateConversion}
-                />}
+                right={
+                    <div>
+                        <Checkbox
+                            checked={!errConversion}
+                            label={t(this.props.transaction.conversionCheckMsg)}
+                            onChange={this.validateConversion}
+                        />
+                        <div> {t(this.props.transaction.conversionWarningMsg)} </div>
+                    </div>
+                }
             />
         )
     }

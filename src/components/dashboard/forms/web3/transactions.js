@@ -214,7 +214,7 @@ export const VerifyBid = (props) =>
     < FormStepsWithDialog
         {...props}
         btnLabel="VERIFY_BID"
-        btnLabelArgs={[props.noTargetsReached ? ' ?' : '']}
+        btnLabelArgs={[props.questionableVerify ? ' ?' : '']}
         saveBtnLabel='VERIFY_BID_SAVE_BTN'
         title="VERIFY_BID_TITLE"
         stepsId={'verify_bid_item_' + props.itemId + '_bid_' + props.bidId}
@@ -254,6 +254,7 @@ export const GiveupBid = (props) =>
     < FormStepsWithDialog
         {...props}
         btnLabel="GIVEUP_BID"
+        btnLabelArgs={[props.questionableVerify ? ' ?' : '']}
         saveBtnLabel='GIVEUP_BID_SAVE_BTN'
         title="GIVEUP_BID_TITLE"
         stepsId={'giveup_bid_slot_' + props.slotId + '_bid_' + props.bidId}
@@ -290,6 +291,7 @@ export const RefundBid = (props) =>
     < FormStepsWithDialog
         {...props}
         btnLabel="REFUND_BID"
+        btnLabelArgs={[props.questionableVerify ? ' ?' : '']}
         saveBtnLabel='REFUND_BID_SAVE_BTN'
         title="REFUND_BID_TITLE"
         stepsId={'refund_bid_unit_' + props.unitId + '_bid_' + props.bidId}

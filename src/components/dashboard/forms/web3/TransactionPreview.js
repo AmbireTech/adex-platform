@@ -130,7 +130,7 @@ class TransactionPreview extends Component {
                                 {
                                     Object
                                         .keys(transaction)
-                                        .filter((key) => !/gas|account|waitingForWalletAction/.test(key))
+                                        .filter((key) => !/gas|account|waitingForWalletAction|isValidConversion|conversionWarningMsg|conversionCheckMsg/.test(key))
                                         .map(key => {
                                             let keyName = key
                                             let value = transaction[key]

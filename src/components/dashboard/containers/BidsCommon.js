@@ -152,7 +152,7 @@ export const getCommonBidData = ({ bid, t, side }) => {
     let sideData = {}
 
     if (side === 'publisher') {
-        sideData.label = 'ASVERTISER'
+        sideData.label = 'ADVERTISER'
         sideData.owner = <Anchor target='_blank' href={process.env.ETH_SCAN_ADDR_HOST + bid._advertiser} > {bid._advertiser || '-'} </Anchor>
     } else if (side === 'advertiser') {
         sideData.label = 'PUBLISHER'
