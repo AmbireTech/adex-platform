@@ -8,7 +8,7 @@ import NewTransactionHoc from './TransactionHoc'
 import { FontIcon } from 'react-toolbox/lib/font_icon'
 import { BidInfo } from './BidsCommon'
 import { getBidVerificationReport } from 'services/adex-node/actions'
-import { PropRow, ContentBox, ContentBody, ContentStickyTop, FullContentSpinner } from 'components/common/dialog/content'
+import { PropRow, ContentBox, FullContentSpinner } from 'components/common/dialog/content'
 import Checkbox from 'react-toolbox/lib/checkbox'
 
 class VerifyBid extends Component {
@@ -19,32 +19,36 @@ class VerifyBid extends Component {
             errArgs: [],
             // TODO: give this option to publisher only if the bid is verified by advertiser first!
             targetReached: props.placedBid.clicksCount >= props.placedBid._target,
-            isValidConversion: true
         }
     }
 
     componentWillMount() {
         const placedBid = this.props.placedBid
+
         if (!this.props.transaction.report) {
 
-            this.props.actions.updateSpinner(this.props.trId, true)
-            this.props.validate('report', { isValid: false, err: { msg: 'ERR_UNIT_INFO_NOT_READY' }, dirty: false })
-
-            // TODO: Conversion check for refund and cancel bid - opposite + messages
             const verifyType = this.props.verifyType
 
             let isValidConversion = true
-            if (this.props.verifyType === 'verify') {
+            let conversionCheckMsg = ''
+            if (verifyType === 'verify') {
                 isValidConversion = this.state.targetReached
-            } else if ((this.props.verifyType === 'giveup') || (this.props.verifyType === 'refund')) {
+                conversionCheckMsg = 'WARNING_NO_TARGET_REACHED_VERIFY_CHECKBOX'
+            } else if (verifyType === 'giveup') {
                 isValidConversion = !this.state.targetReached
+                conversionCheckMsg = 'WARNING_TARGET_REACHED_GIVEUP_CHECKBOX'
+            } else if (verifyType === 'refund') {
+                isValidConversion = !this.state.targetReached
+                conversionCheckMsg = 'WARNING_TARGET_REACHED_REFUND_CHECKBOX'
             }
 
-            this.setState({ isValidConversion: isValidConversion })
+            this.props.actions.updateSpinner(this.props.trId, true)
+            this.props.validate('conversion', { isValid: isValidConversion, err: { msg: 'ERR_NO_TARGET_REACHED' }, dirty: false })
+            this.props.validate('report', { isValid: false, err: { msg: 'ERR_UNIT_INFO_NOT_READY' }, dirty: false })
 
-            if (this.props.checkConversion) {
-                this.props.validate('conversion', { isValid: isValidConversion, err: { msg: 'ERR_NO_TARGET_REACHED' }, dirty: false })
-            }
+            this.props.handleChange('isValidConversion', isValidConversion)
+            this.props.handleChange('conversionCheckMsg', conversionCheckMsg)
+
             getBidVerificationReport({ bidId: placedBid._id, authSig: this.props.account._authSig })
                 .then((report) => {
                     this.props.handleChange('placedBid', placedBid)
@@ -80,7 +84,7 @@ class VerifyBid extends Component {
                 left={<span> <FontIcon value='warning' /> </span>}
                 right={<Checkbox
                     checked={!errConversion}
-                    label={t(this.props.conversionCheckMsg || 'WARNING_NO_TARGET_REACHED_CHECKBOX')}
+                    label={t(this.props.transaction.conversionCheckMsg)}
                     onChange={this.validateConversion}
                 />}
             />
@@ -103,7 +107,7 @@ class VerifyBid extends Component {
                         report={tx.report}
                         errMsg={this.state.errMsg}
                         errArgs={this.state.errArgs}
-                        stickyTop={!this.state.isValidConversion ? <this.ConversionConfirm /> : null}
+                        stickyTop={!tx.isValidConversion ? <this.ConversionConfirm /> : null}
                     />
                 }
             </ContentBox>
