@@ -193,8 +193,7 @@ export class UnitBids extends Component {
 
 UnitBids.propTypes = {
     actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired,
-    item: PropTypes.object.isRequired,
+    account: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state) {

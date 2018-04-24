@@ -7,6 +7,10 @@ import classnames from 'classnames'
 import RTButtonTheme from 'styles/RTButton.css'
 import Translate from 'components/translate/Translate'
 
+const TextBtn = ({ label, className, style, onClick, ...rest }) => {
+    return <span className={classnames(theme.textBtn, className)} style={style} onClick={onClick}> {label} </span>
+}
+
 export default function ItemHoc(Decorated) {
     class WithDialog extends Component {
         constructor(props) {
@@ -50,23 +54,31 @@ export default function ItemHoc(Decorated) {
         render() {
 
             let ButtonComponent = Button
+            // NOTE: to avoid some warnings
+            let btnProps = {}
 
             if (this.props.iconButton) {
                 ButtonComponent = IconButton
+            } else if (this.props.textButton) {
+                ButtonComponent = TextBtn
+            } else {
+                btnProps = {
+                    raised: this.props.raised,
+                    floating: this.props.floating,
+                    flat: this.props.flat
+                }
             }
 
             return (
                 <span>
                     <ButtonComponent
                         disabled={this.props.disabled}
-                        floating={this.props.floating}
                         icon={this.props.icon === undefined ? 'add' : this.props.icon}
                         label={this.props.floating ? '' : this.props.t(this.props.btnLabel, { args: this.props.btnLabelArgs || [''] })}
                         onClick={this.handleToggle}
                         primary={this.props.primary}
-                        raised={this.props.raised}
+                        {...btnProps}
                         accent={this.props.accent}
-                        flat={this.props.flat}
                         theme={this.props.theme}
                         style={this.props.style}
                         className={classnames(
