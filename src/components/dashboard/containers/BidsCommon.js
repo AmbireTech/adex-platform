@@ -17,7 +17,7 @@ import ItemIpfsDetails from './ItemIpfsDetails'
 import { Button } from 'react-toolbox/lib/button'
 
 const RRButton = withReactRouterLink(Button)
-// const RRAnchor = withReactRouterLink(Anchor)
+const RRAnchor = withReactRouterLink(Anchor)
 const ItemIpfsDetailsDialog = WithDialog(ItemIpfsDetails)
 
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
@@ -184,6 +184,7 @@ export const getCommonBidData = ({ bid, t, side }) => {
                 icon=''
                 title={t('REPORT_PUBLISHER')}
                 detailsType='report'
+                textButton
             />
             : '-',
         _advertiserConfirmation: bid._advertiserConfirmation ?
@@ -195,11 +196,12 @@ export const getCommonBidData = ({ bid, t, side }) => {
                 icon=''
                 title={t('REPORT_ADVERTISER')}
                 detailsType='report'
+                textButton
             />
             : '-',
         // NOTE: Temp used filter from the existing slots in ItemHoc
         _adSlot: side === 'publisher' ?
-            <RRButton to={'/dashboard/publisher/adSlot/' + (bid._adSlotId || bid._adSlot)}>{t('AD_SLOT')}</RRButton>
+            <RRAnchor to={'/dashboard/publisher/adSlot/' + (bid._adSlotId || bid._adSlot)}>{t('AD_SLOT')}</RRAnchor>
             : <ItemIpfsDetailsDialog
                 btnLabel={t('AD_SLOT')}
                 itemIpfs={bid._adSlot}
@@ -207,9 +209,10 @@ export const getCommonBidData = ({ bid, t, side }) => {
                 icon=''
                 title={t('AD_SLOT') + ': ' + bid._adSlot}
                 detailsType='item'
+                textButton
             />,
         _adUnit: side === 'advertiser' ?
-            <RRButton to={'/dashboard/advertiser/adUnit/' + bid._adUnitId}>{t('AD_UNIT')}</RRButton>
+            <RRAnchor to={'/dashboard/advertiser/adUnit/' + bid._adUnitId}>{t('AD_UNIT')}</RRAnchor>
             : <ItemIpfsDetailsDialog
                 btnLabel={t('AD_UNIT')}
                 itemIpfs={bid._adUnit}
@@ -217,6 +220,7 @@ export const getCommonBidData = ({ bid, t, side }) => {
                 icon=''
                 title={t('AD_UNIT') + ': ' + bid._adUnit}
                 detailsType='item'
+                textButton
             />
     }
 

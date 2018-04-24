@@ -41,7 +41,7 @@ export class ItemIpfsDetails extends Component {
         }
     }
 
-    itemDetails = ({ details, t }) => {
+    itemDetails = ({ details = {}, t } = {}) => {
         return (
             <Grid fluid style={{ padding: 0 }}>
                 <PropRow
@@ -68,7 +68,7 @@ export class ItemIpfsDetails extends Component {
         )
     }
 
-    reportDetails = ({ report, t }) => {
+    reportDetails = ({ report = {}, t } = {}) => {
         return (
             <Grid fluid style={{ padding: 0 }}>
                 <PropRow
@@ -120,7 +120,7 @@ export class ItemIpfsDetails extends Component {
                     :
                     <ContentBody>
                         {this.props.detailsType === 'item' ?
-                            <this.itemDetails itemData={details} t={t} /> : null
+                            <this.itemDetails details={details} t={t} /> : null
                         }
                         {this.props.detailsType === 'report' ?
                             <this.reportDetails report={details} t={t} /> : null
@@ -135,7 +135,6 @@ export class ItemIpfsDetails extends Component {
 
 ItemIpfsDetails.propTypes = {
     actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired,
     itemIpfs: PropTypes.string.isRequired,
 }
 
