@@ -60,10 +60,6 @@ export class ItemIpfsDetails extends Component {
                     left={t('PROP_SIZE')}
                     right={t(AdSizesByValue[details.size].label, { args: AdSizesByValue[details.size].labelArgs })}
                 />
-                <PropRow
-                    left={t('SLOT_IPFS')}
-                    right={<Anchor target='_blank' href={this.state.itemIpfsUrl} > {this.props.itemIpfs} </Anchor>}
-                />
             </Grid>
         )
     }
@@ -71,10 +67,6 @@ export class ItemIpfsDetails extends Component {
     reportDetails = ({ report = {}, t } = {}) => {
         return (
             <Grid fluid style={{ padding: 0 }}>
-                <PropRow
-                    left={t('REPORT_IPFS')}
-                    right={<Anchor target='_blank' href={this.state.itemIpfsUrl} > {this.props.itemIpfs} </Anchor>}
-                />
                 <PropRow
                     left={t('PROP_BIDID')}
                     right={report.bidId}
@@ -115,6 +107,11 @@ export class ItemIpfsDetails extends Component {
 
         return (
             <ContentBox>
+                {/* NOTE: show the ipfs link in case of long loading */}
+                <PropRow
+                    left={t('IPFS')}
+                    right={<Anchor target='_blank' href={this.state.itemIpfsUrl} > {this.props.itemIpfs} </Anchor>}
+                />
                 {!!this.props.spinner || !details ?
                     <FullContentSpinner />
                     :

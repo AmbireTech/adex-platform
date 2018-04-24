@@ -56,7 +56,7 @@ export class UnitBids extends Component {
 
         const canCancel = (bid._state === BID_STATES.DoesNotExist.id)
         const canVerify = (bid._state === BID_STATES.Accepted.id) && !bid._advertiserConfirmation
-        const noTargetsReached = bid.clicksCount < bid._target
+        const targetReached = bid.clicksCount >= bid._target
         const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidData.bidExpires < Date.now()) && !bid._advertiserConfirmation
         const pendingCancel = pendingState === BID_STATES.Canceled.id
         const pendingRefund = pendingState === BID_STATES.Expired.id
@@ -77,20 +77,21 @@ export class UnitBids extends Component {
 
         bidData.verifyBtn = canVerify ?
             <VerifyBid
-                noTargetsReached
-                icon={pendingVerify ? 'hourglass_empty' : (noTargetsReached ? '' : '')}
+                questionableVerify={!targetReached}
+                icon={pendingVerify ? 'hourglass_empty' : ''}
                 itemId={bid._adUnitId}
                 bidId={bid._id}
                 placedBid={bid}
                 acc={this.props.account}
                 raised
-                className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: noTargetsReached, [RTButtonTheme.success]: !noTargetsReached })}
+                className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: !targetReached, [RTButtonTheme.success]: targetReached })}
                 onSave={this.onSave}
                 disabled={pendingVerify}
             /> : null
 
         bidData.refundBtn = canRefund ?
             <RefundBid
+                questionableVerify={targetReached}
                 icon={pendingRefund ? 'hourglass_empty' : ''}
                 adUnitId={bid._adUnitId}
                 bidId={bid._id}
