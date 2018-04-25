@@ -27,11 +27,27 @@
   & [data-react-toolbox='font-icon'] {
     color: #FF5722 !important;
   }
+
+  circle, rect {
+    fill:  #FF5722 !important;
+  }
+
+  text {
+    fill: #fff
+  }
 }
 
 .bidsActions {
   & [data-react-toolbox='font-icon'] {
-    color: var(--color-adex-accent-accent) !important;
+    color: var(--color-adex-accent-primary) !important;
+  }
+
+  circle, rect {
+    fill: var(--color-adex-accent-primary) !important;
+  }
+
+  text {
+    fill: #fff
   }
 }
 
