@@ -223,12 +223,13 @@ export class SlotBids extends Component {
             sorted = this.props.pubBids
         }
 
-
-
-        // const sorted = this.sortBids(bids)
-
         return (
             <div>
+                {this.props.getSlotBids ? null :
+                    <div className={classnames(theme.heading, theme.Transactions)}>
+                        <h2 > {t('ALL_BIDS')} </h2>
+                    </div>                
+                }
                 <Tabs
                     theme={theme}
                     index={this.state.tabIndex}

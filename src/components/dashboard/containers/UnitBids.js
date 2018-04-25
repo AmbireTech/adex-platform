@@ -146,6 +146,11 @@ export class UnitBids extends Component {
 
         return (
             <div>
+                {this.props.getUnitBids ? null :
+                    <div className={classnames(theme.heading, theme.Transactions)}>
+                        <h2 > {t('ALL_BIDS')} </h2>
+                    </div>                
+                }
                 <Tabs
                     theme={theme}
                     index={this.state.tabIndex}

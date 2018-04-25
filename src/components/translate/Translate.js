@@ -8,7 +8,7 @@ import { translate } from 'services/translations/translations'
 export default function Translate(Decorated) {
   class Translated extends Component {
 
-    t(val, { isProp = false, args = [] } = {}) {
+    t(val, { isProp = false, args = [''] } = {}) {
 
       const translation = translate(val, {isProp, args}, this.props.language)
 
