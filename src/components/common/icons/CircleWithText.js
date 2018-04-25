@@ -2,7 +2,7 @@ import React from 'react'
 import theme from './theme.css'
 import classnames from 'classnames'
 
-const CircleWithText = ({ width, height, color, text, className = '', ...other }) => {
+const CircleWithText = ({ width, height, color, text, className, classNameCircle, classNameText, ...other }) => {
 
   const defaultSize = {
     width: 24,
@@ -18,7 +18,7 @@ const CircleWithText = ({ width, height, color, text, className = '', ...other }
       className={classnames(className, theme.svg)}
     >
       <g>
-        <circle r="50%" cx="50%" cy="50%" className={classnames(className, theme.circle)} />
+        <circle r="50%" cx="50%" cy="50%" className={classnames(theme.circle, classNameCircle)} />
         <text 
           x="50%" 
           y="50%" 
@@ -26,7 +26,7 @@ const CircleWithText = ({ width, height, color, text, className = '', ...other }
           alignmentBaseline="central"
           dominantBaseline ="central"
           // dy="0.33em" 
-          className={classnames(className, theme.text)}
+          className={classnames(theme.text, classNameText)}
         >{text}</text>
       </g>
     </svg>

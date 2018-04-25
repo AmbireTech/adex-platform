@@ -50,7 +50,7 @@ class SideNav extends Component {
 
         let pendingTransactionsIcon = <FontIcon value={'swap_horiz'} /> // 'swap_horiz'
         if(pendingTrsCount > 0) {
-            pendingTransactionsIcon = <CircleWithText text={pendingTrsCount <= 9 ? pendingTrsCount : '9+' }  className={classnames(theme.bidsActions)}/>
+            pendingTransactionsIcon = <CircleWithText text={pendingTrsCount <= 9 ? pendingTrsCount : '9+' }  className={classnames(theme.pendingTransactions)}/>
         }
 
         const bidsAwaitingActionCount = this.props.bidsAwaitingActionCount
@@ -62,7 +62,7 @@ class SideNav extends Component {
 
         return (
             <div className={theme.navigation}>
-                <List >
+                <List theme={theme}>
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side }}
                         selectable={true}
@@ -71,7 +71,7 @@ class SideNav extends Component {
                         leftIcon='dashboard'
                         className={classnames({ [theme.active]: location === '' })}
                     />
-                    <ListDivider />
+                    <ListDivider theme={theme}/>
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side + '/' + collection }}
                         selectable={true}
@@ -91,7 +91,7 @@ class SideNav extends Component {
                             raised
                         />
                     </ListItem>
-                    <ListDivider />
+                    <ListDivider theme={theme}/>
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side + '/' + items }}
                         selectable={true}
@@ -111,7 +111,7 @@ class SideNav extends Component {
                             raised
                         />
                     </ListItem>
-                    <ListDivider />
+                    <ListDivider theme={theme}/>
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side + '/bids' }}
                         selectable={true}

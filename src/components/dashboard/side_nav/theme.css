@@ -28,12 +28,13 @@
     color: #FF5722 !important;
   }
 
-  circle, rect {
+  & circle, & rect {
     fill:  #FF5722 !important;
+    color:  #FF5722 !important;
   }
 
-  text {
-    fill: #fff
+  & text {
+    fill: #fff !important;
   }
 }
 
@@ -42,12 +43,14 @@
     color: var(--color-adex-accent-primary) !important;
   }
 
-  circle, rect {
+  & circle, & rect {
     fill: var(--color-adex-accent-primary) !important;
+    color: var(--color-adex-accent-primary) !important;
   }
 
-  text {
-    fill: #fff
+  & text {
+    fill: #fff;
+    color: #FFF !important;
   }
 }
 
@@ -70,7 +73,7 @@
   right: 0;
   padding: 10px;
   padding-left: 16px;
-  border-top: 1px solid var(--color-adex-divider-darker);
+  border-top: 1px solid var(--color-adex-divider-darkest);
   color: var(--color-adex-divider-darker);
 }
 
@@ -91,4 +94,8 @@
 .value { 
   color: white !important;
 }
+
+.divider {
+  background-color: var(--color-adex-divider-darkest) !important;
+} 
  

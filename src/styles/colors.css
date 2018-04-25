@@ -51,6 +51,7 @@
     /*AdEx other colors*/
     --color-adex-divider: var(--color-divider);
     --color-adex-divider-darker: var(--color-adex-neutral-contrast);
+    --color-adex-divider-darkest: #131313;
 
     /* Sections gradients */
     --gradient-adex-first: linear-gradient(to left, #34b3f8, #1a75ed);
