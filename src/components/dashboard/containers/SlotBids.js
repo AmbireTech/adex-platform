@@ -281,7 +281,7 @@ export class SlotBids extends Component {
 SlotBids.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    item: PropTypes.object.isRequired
+    item: PropTypes.object
 }
 
 function mapStateToProps(state, props) {

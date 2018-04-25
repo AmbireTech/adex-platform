@@ -26,7 +26,8 @@ class SideNav extends Component {
         let sideChanged = this.props.side !== nextProps.side
         let locationChanged = this.props.location.pathname !== nextProps.location.pathname
         let transactionsChanged = (this.props.transactions.pendingTxs || []).length !== (nextProps.transactions.pendingTxs || []).length
-        return langChanged || sideChanged || locationChanged || transactionsChanged
+        let bidsAwaitingActionChanged = this.bidsAwaitingActionCount !== nextProps.bidsAwaitingActionCount
+        return langChanged || sideChanged || locationChanged || transactionsChanged || bidsAwaitingActionChanged
     }
 
     render() {
@@ -52,6 +53,15 @@ class SideNav extends Component {
         } else if (pendingTrsCount > 9) {
             pendingTransactionsIcon = 'filter_9_plus'
         }
+
+        const bidsAwaitingActionCount = this.props.bidsAwaitingActionCount
+        let bidsIcon = <BidIcon style={{ height: 24 }} />
+        if ((bidsAwaitingActionCount > 0) && (bidsAwaitingActionCount <= 9)) {
+            bidsIcon = 'filter_' + bidsAwaitingActionCount
+        } else if (pendingTrsCount > 9) {
+            bidsIcon = 'filter_9_plus'
+        }
+
 
         return (
             <div className={theme.navigation}>
@@ -110,8 +120,8 @@ class SideNav extends Component {
                         selectable={true}
                         caption={t('BIDS')}
                         theme={theme}
-                        className={classnames({ [theme.active]: location === 'bids'})}
-                        leftIcon={<BidIcon style={{height: 24}}/>}
+                        className={classnames({ [theme.active]: location === 'bids', [theme.bidsActions]: bidsAwaitingActionCount > 0 })}
+                        leftIcon={bidsIcon}
                     />
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side + '/transactions' }}
@@ -182,11 +192,23 @@ SideNav.propTypes = {
 }
 
 function mapStateToProps(state) {
-    let persist = state.persist
-    // let memory = state.memory
+    const persist = state.persist
+    const memory = state.memory
+    const side = memory.nav.side
+
+    let bidsKey = ''
+
+    if (side === 'advertiser') {
+        bidsKey = 'advBids'
+    } else if (side === 'publisher') {
+        bidsKey = 'pubBids'
+    }
+
+
     return {
         // account: persist.account,
-        transactions: persist.web3Transactions[persist.account._addr] || {}
+        transactions: persist.web3Transactions[persist.account._addr] || {},
+        bidsAwaitingActionCount: ((persist.bids[bidsKey] || {}).action || []).length
     }
 }
 

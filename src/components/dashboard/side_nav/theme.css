@@ -29,6 +29,12 @@
   }
 }
 
+.bidsActions {
+  & [data-react-toolbox='font-icon'] {
+    color: var(--color-adex-accent-accent) !important;
+  }
+}
+
 .button {
   width: 220px;
 }
