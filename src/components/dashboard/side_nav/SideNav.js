@@ -8,6 +8,7 @@ import theme from './theme.css'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
 import ChannelIcon from 'components/common/icons/ChannelIcon'
+import CircleWithText from 'components/common/icons/CircleWithText'
 import Translate from 'components/translate/Translate'
 import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, NewChannelDialog } from 'components/dashboard/forms/NewItems'
 import FontIcon from 'react-toolbox/lib/font_icon'
@@ -47,21 +48,17 @@ class SideNav extends Component {
         const t = this.props.t
         const pendingTrsCount = (this.props.transactions.pendingTxs || []).length
 
-        let pendingTransactionsIcon = 'swap_horiz'
-        if ((pendingTrsCount > 0) && (pendingTrsCount <= 9)) {
-            pendingTransactionsIcon = 'filter_' + pendingTrsCount
-        } else if (pendingTrsCount > 9) {
-            pendingTransactionsIcon = 'filter_9_plus'
+        let pendingTransactionsIcon = <FontIcon value={'swap_horiz'} /> // 'swap_horiz'
+        if(pendingTrsCount > 0) {
+            pendingTransactionsIcon = <CircleWithText text={pendingTrsCount <= 9 ? pendingTrsCount : '9+' }  className={classnames(theme.bidsActions)}/>
         }
 
         const bidsAwaitingActionCount = this.props.bidsAwaitingActionCount
         let bidsIcon = <BidIcon style={{ height: 24 }} />
-        if ((bidsAwaitingActionCount > 0) && (bidsAwaitingActionCount <= 9)) {
-            bidsIcon = 'filter_' + bidsAwaitingActionCount
-        } else if (pendingTrsCount > 9) {
-            bidsIcon = 'filter_9_plus'
-        }
 
+        if(bidsAwaitingActionCount > 0) {
+            bidsIcon = <CircleWithText text={bidsAwaitingActionCount <= 9 ? bidsAwaitingActionCount : '9+' }  className={classnames(theme.bidsActions)}/>
+        }
 
         return (
             <div className={theme.navigation}>
@@ -129,7 +126,7 @@ class SideNav extends Component {
                         caption={t('TRANSACTIONS')}
                         theme={theme}
                         className={classnames({ [theme.active]: location === 'transactions', [theme.pendingTransactions]: pendingTrsCount > 0 })}
-                        leftIcon={<FontIcon value={pendingTransactionsIcon} />}
+                        leftIcon={pendingTransactionsIcon}
                     />
                 </List>
                 <div className={theme.listBottom} >
