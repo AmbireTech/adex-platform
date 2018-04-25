@@ -32,3 +32,10 @@ export const updateBids = ({ advBids, pubBids }) => {
         })
     }
 }
+export const resetAllBids = () => {
+    return (dispatch) => {
+        return dispatch({
+            type: types.RESET_ALL_BIDS,
+        })
+    }
+}
