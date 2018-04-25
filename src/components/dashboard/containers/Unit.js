@@ -76,7 +76,7 @@ export class Unit extends Component {
                         bidId={item._id}
                         stepsId={'new-bid-' + item._id}
                         // TODO: fix icon v align
-                        icon={<BidIcon style={{ marginTop: 10 }} />}
+                        icon={<BidIcon />}
                         adUnit={item}
                         closeDialog={!!this.state.closeDialog}
                         onSave={this.onBidPlaced}

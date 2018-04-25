@@ -1,4 +1,5 @@
-import React from 'react';
+import React from 'react'
+import theme from './theme.css'
 
 // TODO; make it class with default props if needed
 const BidIcon = ({ width, height, color, ...other }) => {
@@ -12,7 +13,9 @@ const BidIcon = ({ width, height, color, ...other }) => {
     <svg {...other}
       viewBox="0 0 24 34"
       width={(width || defaultSize.width) + 'px'}
-      height={(height || defaultSize.height) + 'px'} >
+      height={(height || defaultSize.height) + 'px'} 
+      className={theme.svg}
+      >
       <title>bid</title>
       <style>
       </style>
@@ -26,4 +29,4 @@ const BidIcon = ({ width, height, color, ...other }) => {
   )
 }
 
-export default BidIcon;
+export default BidIcon
