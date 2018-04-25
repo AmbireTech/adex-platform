@@ -43,30 +43,32 @@ export class SlotBids extends Component {
 
     // TODO: map bid and set amount to number or make something to parse the amount in the items list sort function
     getBids = () => {
-        getSlotBids({
-            authSig: this.props.account._authSig,
-            adSlot: this.props.item._ipfs
-        })
-            .then((bids) => {
-                // console.log('unit bids', bids)
-                this.setState({ bids: bids })
+        if(this.props.getSlotBids) {
+            getSlotBids({
+                authSig: this.props.account._authSig,
+                adSlot: this.props.item._ipfs
             })
+                .then((bids) => {
+                    // console.log('unit bids', bids)
+                    this.setState({ bids: bids })
+                })
 
-        getAvailableBids({
-            authSig: this.props.account._authSig,
-            sizeAndType: this.props.item.sizeAndType
-        })
-            .then((bids) => {
-                // console.log('unit openBids', bids)
-                this.setState({ openBids: bids })
+            getAvailableBids({
+                authSig: this.props.account._authSig,
+                sizeAndType: this.props.item.sizeAndType
             })
+                .then((bids) => {
+                    // console.log('unit openBids', bids)
+                    this.setState({ openBids: bids })
+                })
+        } else {
+            getAddrBids({ authSig: this.props.account._authSig })
+        }
     }
 
 
     componentWillMount() {
-        if (this.props.getSlotBids) {
-            this.getBids()
-        }
+        this.getBids()
     }
 
     handleTabChange = (index) => {
