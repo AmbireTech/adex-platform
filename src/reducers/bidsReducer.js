@@ -1,4 +1,4 @@
-import { UNIT_PLACE_BID, UPDATE_ALL_BIDS } from 'constants/actionTypes'
+import { UNIT_PLACE_BID, UPDATE_ALL_BIDS, RESET_ALL_BIDS } from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
 export default function bidsReducer(state = initialState.bids, action) {
@@ -36,7 +36,8 @@ export default function bidsReducer(state = initialState.bids, action) {
             }
 
             return newState
-
+        case RESET_ALL_BIDS: 
+            return initialState.bids
         default:
             return state
     }

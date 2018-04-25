@@ -31,7 +31,7 @@ export default function ItemHoc(Decorated) {
             this.save = this.save.bind(this)
             this.state = {
                 activeFields: {},
-                item: {},
+                item: null,
                 initialItemState: {},
                 dirtyProps: [],
                 editImg: false,
@@ -284,7 +284,7 @@ export default function ItemHoc(Decorated) {
             const key = keys[index]
             const item = items[key]
 
-            if (item._ipfs === ipfs) {
+            if (!!item && item._ipfs && !!ipfs && item._ipfs === ipfs) {
                 return item
             }
 
@@ -300,7 +300,7 @@ export default function ItemHoc(Decorated) {
         const id = props.match.params.itemId
         let item = items[id]
 
-        if (!item && props.itemType) {
+        if (!item && (props.itemType !== undefined)) {
             item = tryGetItemByIpfs({ items: items, ipfs: id })
         }
 

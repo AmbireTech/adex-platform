@@ -137,7 +137,7 @@ export class SlotBids extends Component {
 
         const noTargetsReached = bid.clicksCount < bid._target
         const canAccept = (bid._state === BID_STATES.DoesNotExist.id)
-        const canVerify = (bid._state === BID_STATES.Accepted.id) && (bid.clicksCount >= bid._target)
+        const canVerify = (bid._state === BID_STATES.Accepted.id) && ((bid.clicksCount >= bid._target) || bid._advertiserConfirmation)
         const canGiveup = bid._state === BID_STATES.Accepted.id
         const pendingGiveup = pendingState === BID_STATES.Canceled.id
         const pendingAccept = pendingState === BID_STATES.Accepted.id

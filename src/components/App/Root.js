@@ -13,6 +13,8 @@ import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { getSig } from 'services/auth/auth'
 import { AUTH_TYPES } from 'constants/misc'
 import { getUserItems } from 'services/store-data/items'
+import { getAddrBids } from 'services/store-data/bids'
+import { logOut } from 'services/store-data/auth'
 
 const { getAccountMetamask, getAccountStats } = scActions
 
@@ -32,11 +34,6 @@ class Root extends Component {
     constructor(props) {
         super(props)
         this.accountInterval = null
-    }
-
-    logout = () => {
-        this.props.actions.resetAccount() // logaut
-        this.props.actions.resetAllItems()
     }
 
     checkForMetamaskAccountChange = () => {
@@ -60,6 +57,8 @@ class Root extends Component {
                             }
                             this.props.actions.updateAccount({ ownProps: { addr: addr, authMode, authSig: mmAddrSigCheck } })
                             this.props.actions.resetAllItems()
+
+                            // TODO: Make func next to logaut to get this data at one place
                             getAccountStats({ _addr: addr, authType: authMode.authType, mode: authMode.sigMode })
                                 .then((stats) => {
                                     this.props.actions.updateAccount({ ownProps: { stats: stats } })
@@ -68,11 +67,12 @@ class Root extends Component {
                                 .catch((err) => {
                                     this.props.actions.addToast({ type: 'cancel', action: 'X', label: err, timeout: 5000 })
                                 })
+                            getAddrBids({ authSig: this.props.account._authSig })
                         } else {
-                            this.logout()
+                            logOut()
                         }
                     } else {
-                        this.logout()
+                        logOut()
                     }
                 })
         }

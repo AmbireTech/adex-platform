@@ -19,6 +19,7 @@ import { AUTH_TYPES } from 'constants/misc'
 import metamaskLogo from 'resources/metamask-logo.png'
 import trezorLogo from 'resources/trezor-logo-h.png'
 import ledgerLogo from 'resources/ledger_logo_header.png'
+import { logOut } from 'services/store-data/auth'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
 const RRSwitch = withReactRouterLink((props) => <Anchor {...props}><Switch {...props} theme={theme} /></Anchor>)
@@ -94,7 +95,7 @@ class TopNav extends Component {
               value='logout'
               icon='exit_to_app'
               caption={t('LOGOUT')}
-              onClick={() => { this.props.actions.resetAccount(); this.props.actions.resetAllItems(); }}
+              onClick={() => { logOut() }}
             />
           </ButtonMenu>
 
