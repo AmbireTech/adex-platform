@@ -16,7 +16,7 @@ import { CancelBid, VerifyBid, RefundBid } from 'components/dashboard/forms/web3
 import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
 import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch } from './BidsCommon'
-import { sortBids } from 'services/store-data/bids'
+import { getAddrBids } from 'services/store-data/bids'
 
 const TooltipIconButton = Tooltip(IconButton)
 const { BID_STATES } = ExchangeConstants
@@ -42,6 +42,8 @@ export class UnitBids extends Component {
     onSave = () => {
         if (this.props.getUnitBids) {
             this.props.getUnitBids()
+        } else {
+            getAddrBids({ authSig: this.props.account._authSig })
         }
     }
 
