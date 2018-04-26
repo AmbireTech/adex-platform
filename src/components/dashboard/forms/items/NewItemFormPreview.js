@@ -51,7 +51,7 @@ class NewItemFormPreview extends Component {
                         />
                         <PropRow
                             left={t('description', { isProp: true })}
-                            right={meta._description}
+                            right={item._description}
                         />
                         <PropRow
                             left={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}
@@ -68,7 +68,7 @@ class NewItemFormPreview extends Component {
                                 .filter((key) => !/fullName|description|items|img|createdOn|modifiedOn|deleted|archived|banner|name|owner|type|targets/.test(key))
                                 .map(key => {
                                     let keyName = key
-                                    let value = item._meta[key]
+                                    let value = meta[key]
 
                                     if (!value) {
                                         return null

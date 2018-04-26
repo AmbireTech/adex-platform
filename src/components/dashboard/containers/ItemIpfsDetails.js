@@ -6,10 +6,13 @@ import actions from 'actions'
 import { Grid } from 'react-flexbox-grid'
 import { items as ItemsConstants } from 'adex-constants'
 import { Item } from 'adex-models'
+import Img from 'components/common/img/Img'
 import { PropRow, ContentBox, ContentBody, FullContentSpinner } from 'components/common/dialog/content'
 import Anchor from 'components/common/anchor/anchor'
+import { Item as ItemModel } from 'adex-models'
+import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
-const { AdSizesByValue, AdTypesByValue } = ItemsConstants
+const { AdSizesByValue, AdTypesByValue, ItemsTypes } = ItemsConstants
 
 export class ItemIpfsDetails extends Component {
 
@@ -60,6 +63,25 @@ export class ItemIpfsDetails extends Component {
                     left={t('PROP_SIZE')}
                     right={t(AdSizesByValue[details.size].label, { args: AdSizesByValue[details.size].labelArgs })}
                 />
+                <PropRow
+                    left={t('PROP_AD_URL')}
+                    right={<Anchor target='_blank' href={details.ad_url} > {details.ad_url || '-'} </Anchor>}
+                />
+                {details.type === ItemsTypes.AdUnit.id ?
+                    <div>
+                        <PropRow
+                            left={t('UNIT_BANNER_IMG_LABEL')}
+                            right={<Img className={''} src={ ItemModel.getImgUrl(details.img, process.env.IPFS_GATEWAY) || ''} alt={details.fullName} />}
+                        />
+                        {details.targets ?
+                        <PropRow
+                            left={t('targets', { isProp: true })}
+                            right={<UnitTargets targets={details.targets} t={t} />}
+                        />
+                    : null}
+                    </div>
+                : null}
+
             </Grid>
         )
     }
