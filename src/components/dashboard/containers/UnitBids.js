@@ -156,9 +156,19 @@ export class UnitBids extends Component {
                     index={this.state.tabIndex}
                     onChange={this.handleTabChange}
                 >
-                    <Tab label={t('BIDS_AWAITING_ACTION')}>
+                    <Tab label={t('BIDS_READY_TO_VERIFY')}>
                         <ItemsList
                             items={sorted.action}
+                            listMode='rows'
+                            renderRows={this.renderRows.bind(this)}
+                            sortProperties={SORT_PROPERTIES_BIDS}
+                            searchMatch={searchMatch}
+                            filterProperties={FILTER_PROPERTIES_BIDS}
+                        />
+                    </Tab>
+                    <Tab label={t('BIDS_ACTIVE')}>
+                        <ItemsList
+                            items={sorted.active}
                             listMode='rows'
                             renderRows={this.renderRows.bind(this)}
                             sortProperties={SORT_PROPERTIES_BIDS}
@@ -186,7 +196,7 @@ export class UnitBids extends Component {
                             filterProperties={FILTER_PROPERTIES_BIDS}
                         />
                     </Tab>
-                    <Tab label={t('BIDS_STATISTICS')}>
+                    <Tab label={t('STATISTICS')}>
                         <div>
                             {t('COMING_SOON')}
                             {/* {this.renderNonOpenedBidsChart(slotBids)} */}
