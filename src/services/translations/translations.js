@@ -18,7 +18,7 @@ const interpolate = (tpl, args) => {
     })
 }
 
-export const translate = (val, { isProp = false, args = [''] } = {}, language = lang) => {
+export const translate = (val = '', { isProp = false, args = [''] } = {}, language = lang) => {
     let key = val + ''
     if (isProp) {
         key = 'PROP_' + (key.replace(/^_/, ''))

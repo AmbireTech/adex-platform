@@ -12,13 +12,18 @@ export const sortBids = (bids) => {
         } else if (bid._state === BID_STATES.Accepted.id
             || bid._state === BID_STATES.ConfirmedAdv.id
             || bid._state === BID_STATES.ConfirmedPub.id) {
-            memo.action.push(bid)
-        } else {
+            if(bid.clicksCount >= bid._target) {
+                memo.action.push(bid)
+            } else {
+                memo.active.push(bid)
+            }
+        } 
+        else {
             memo.closed.push(bid)
         }
 
         return memo
-    }, { action: [], open: [], closed: [] })
+    }, { action: [], active: [], open: [], closed: [] })
 
     return sorted
 }
