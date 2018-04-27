@@ -70,7 +70,7 @@ export default function ItemHoc(Decorated) {
             }
 
             return (
-                <span>
+                <div>
                     <ButtonComponent
                         disabled={this.props.disabled}
                         icon={this.props.icon === undefined ? 'add' : this.props.icon}
@@ -105,7 +105,7 @@ export default function ItemHoc(Decorated) {
                         </div>
                     </Dialog>
 
-                </span>
+                </div>
             )
         }
     }

@@ -153,7 +153,7 @@ class MyMaterialStepper extends React.Component {
 
     render() {
         return (
-            <Stepper pages={this.props.pages}>
+            <Stepper pages={this.props.pages} style={{display: 'block'}}>
                 <WithMaterialStepper itemType={this.props.itemType} validations={this.props.validations} />
             </Stepper>
         )
