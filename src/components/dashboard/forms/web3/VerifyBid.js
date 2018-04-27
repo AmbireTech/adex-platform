@@ -89,12 +89,13 @@ class VerifyBid extends Component {
                 left={<span> <FontIcon value='warning' /> </span>}
                 right={
                     <div>
+                        <div> {t(this.props.transaction.conversionWarningMsg)} </div>
+                        <br />
                         <Checkbox
                             checked={!errConversion}
                             label={t(this.props.transaction.conversionCheckMsg)}
                             onChange={this.validateConversion}
-                        />
-                        <div> {t(this.props.transaction.conversionWarningMsg)} </div>
+                        />                        
                     </div>
                 }
             />
