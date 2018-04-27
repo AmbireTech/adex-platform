@@ -7,7 +7,7 @@ import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import theme from './campaign.css'
-import AddItemDialog from './AddItemDialog'
+import AddItem from './AddItem'
 import moment from 'moment'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
@@ -16,11 +16,13 @@ import { groupItemsForCollection } from 'helpers/itemsHelpers'
 import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import { items as ItemsConstants } from 'adex-constants'
 import { NewUnitSteps } from 'components/dashboard/forms/NewItems'
+import WithDialog from 'components/common/dialog/WithDialog'
 
 const { ItemsTypes } = ItemsConstants
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
+const AddItemWitgDialog = WithDialog(AddItem)
 
 export class Campaign extends Component {
     constructor(props, context) {
@@ -64,7 +66,7 @@ export class Campaign extends Component {
                     <span>{this.props.t('UNITS_IN_CAMPAIGN', { args: [units.length] })}</span>
                     <span>
                         <div className={theme.newIemToItemBtn}>
-                            <AddItemDialog
+                            <AddItemWitgDialog
                                 color='second'
                                 addCampaign={this.props.actions.addCampaign}
                                 btnLabel={t('NEW_UNIT_TO_CAMPAIGN')}

@@ -7,18 +7,20 @@ import { Channel as ChannelModel, AdSlot as AdSlotModel } from 'adex-models'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
 // import theme from './theme.css'
-import AddItemDialog from './AddItemDialog'
+import AddItem from './AddItem'
 import theme from './theme.css'
 import Translate from 'components/translate/Translate'
 import { groupItemsForCollection } from 'helpers/itemsHelpers'
 import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import { NewSlotSteps } from 'components/dashboard/forms/NewItems'
 import { items as ItemsConstants } from 'adex-constants'
+import WithDialog from 'components/common/dialog/WithDialog'
 
 const { ItemsTypes } = ItemsConstants
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
+const AddItemWitgDialog = WithDialog(AddItem)
 
 export class Channel extends Component {
     constructor(props, context) {
@@ -55,7 +57,7 @@ export class Channel extends Component {
                     <span>{t('SLOTS_IN_CHANNEL', { args: [slots.length] })}</span>
                     <span>
                         <div className={theme.newIemToItemBtn} >
-                            <AddItemDialog
+                            <AddItemWitgDialog
                                 color='second'
                                 addCampaign={this.props.actions.addCampaign}
                                 btnLabel={t('NEW_SLOT_TO_CHANNEL')}

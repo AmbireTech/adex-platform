@@ -9,9 +9,9 @@
 }
 
 .dialog {
-  transform:scale(0.9, 0.9) !important;
+  transform: translateY(0) !important;
 
-  &.active {
-    transform: scale(0.9, 0.9) !important;
-  }
+  /* &.active {
+    transform: scale(1, 1) !important;
+  } */
 }

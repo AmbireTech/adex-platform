@@ -33,9 +33,9 @@ class FormSteps extends Component {
         })
 
         return (
-            <span style={{ textAlign: 'left' }}>
+            // <div style={{ textAlign: 'left' }}>
                 <MaterialStepper pages={pages} />
-            </span>
+            // </div>
         )
     }
 }
