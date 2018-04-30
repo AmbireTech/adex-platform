@@ -39,19 +39,19 @@ export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
 
 export const regItem = ({ item, authSig }) => {
     // return new Promise((resolve, reject) => {
-       return requester.fetch({
-            route: 'items',
-            method: 'POST',
-            body: JSON.stringify(item),
-            authSig: authSig,
-            headers: { 'Content-Type': 'application/json' }
+    return requester.fetch({
+        route: 'items',
+        method: 'POST',
+        body: JSON.stringify(item),
+        authSig: authSig,
+        headers: { 'Content-Type': 'application/json' }
+    })
+        .then((resp) => {
+            return catchErrors(resp)
         })
-            .then((resp) => {
-                return catchErrors(resp)
-            })
-            .then((resp) => {
-                return resp.json()
-            })
+        .then((resp) => {
+            return resp.json()
+        })
     //         .catch((err) => {
     //             return reject(err)
     //         })
@@ -369,11 +369,27 @@ export const checkAuth = ({ authSig }) => {
     })
 }
 
-export const updateItm = ({item, authSig}) => {
+export const updateItm = ({ item, authSig }) => {
     return requester.fetch({
         route: 'items',
         method: 'PUT',
         body: JSON.stringify(item),
+        authSig: authSig,
+        headers: { 'Content-Type': 'application/json' }
+    })
+        .then((resp) => {
+            return catchErrors(resp)
+        })
+        .then((resp) => {
+            return resp.json()
+        })
+}
+
+export const getBidEvents = ({ authSig, eventData = { bidId: null, start: null, end: null, interval: null } } = {}) => {
+    return requester.fetch({
+        route: 'events',
+        method: 'GET',
+        body: JSON.stringify(eventData),
         authSig: authSig,
         headers: { 'Content-Type': 'application/json' }
     })
