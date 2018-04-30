@@ -26,7 +26,7 @@ export class Unit extends Component {
         super(props)
         this.state = {
             closeDialog: false,
-            bids: []
+            bids: sortBids([])
         }
     }
 
