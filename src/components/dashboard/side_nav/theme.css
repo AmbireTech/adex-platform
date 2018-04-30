@@ -1,5 +1,17 @@
 @import './../../../styles/variables.css';
 
+.list {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  justify-content: space-between;
+}
+
 .listItem, .item, .itemText, .itemAction {
   color: #9c9c9b !important;
   user-select: none;
@@ -77,12 +89,6 @@
   color: var(--color-adex-divider-darker);
 }
 
-.listBottom {
-  position: absolute;
-  bottom: 75px;
-  left: 0;
-  right: 0;
-}
 .adxLink {
   color: var(--color-adex-divider-darker);
 }

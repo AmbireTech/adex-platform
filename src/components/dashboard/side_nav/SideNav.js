@@ -63,6 +63,7 @@ class SideNav extends Component {
         return (
             <div className={theme.navigation}>
                 <List theme={theme}>
+                <div>
                     <RRListItem
                         to={{ pathname: '/dashboard/' + side }}
                         selectable={true}
@@ -128,24 +129,17 @@ class SideNav extends Component {
                         className={classnames({ [theme.active]: location === 'transactions', [theme.pendingTransactions]: pendingTrsCount > 0 })}
                         leftIcon={pendingTransactionsIcon}
                     />
-                </List>
-                <div className={theme.listBottom} >
-                    <List>
+                     </div>
+                    <div>
+                    <Anchor target='_blank' href='https://medium.com/adex-network-tips-and-tricks' >
                         <ListItem
-                            selectable={false}
-                            ripple={false}
-                        >
-                            {/* <GasPrice theme={theme}/> */}
-                        </ListItem>
-                        <Anchor target='_blank' href='https://medium.com/adex-network-tips-and-tricks' >
-                            <ListItem
-                                leftIcon='help_outline'
-                                selectable={true}
-                                caption={t('HELP')}
-                                theme={theme}
-                            />
-                        </Anchor>
-                        <RRListItem
+                            leftIcon='help_outline'
+                            selectable={true}
+                            caption={t('HELP')}
+                            theme={theme}
+                        />
+                    </Anchor>
+                    <RRListItem
                             to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
                             selectable={true}
                             caption={t('ACCOUNT')}
@@ -153,9 +147,8 @@ class SideNav extends Component {
                             leftIcon='account_box'
                             className={classnames({ [theme.active]: location === 'account' })}
                         />
-                    </List>
-                </div>
-
+                    </div>
+                </List>
                 <div className={theme.version}>
                     <div>
                         <small> &copy; {(new Date()).getFullYear()}
