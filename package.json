@@ -1,6 +1,6 @@
 {
   "name": "adex-dapp",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "private": true,
   "dependencies": {
     "adex-constants": "^1.0.9",
