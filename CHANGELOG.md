@@ -3,6 +3,26 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.0.11] - 2018-04-30
+### Added
+- Page to show all user bids (by role)
+- New columns for bids tables (details/reports/ad slot/ad unit)
+- Bids details popup
+- Popup with ad unit/slot ipfs details at bid row
+- Popup for bid ipfs report
+- Svg circle with text for notifications
+- Validations with checkbox for transaction that are possible but don't meet the criteria (Verify bid without target reached, refund when target reached, etc.)
+- Bids spilled to Ready to verify/Open/Active/Closed
+- Show bids ready to verify count on side nav
+
+### Changed
+- Common components for unit/slot bids
+
+### Fixed
+- Misc bugs and styles
+- ADX exchange ABI
+- Auth - getting addr stats auth type
+
 ## [2.0.10] - 2018-04-13
 ### Added
 - Basic info for wallets authentication on signup
@@ -122,7 +142,8 @@ All notable changes to this project will be documented in this file.
 
 ## 2.0.0 - 2018-02-26
 
-[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.10...HEAD
+[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.11...HEAD
+[2.0.11]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.10...v2.0.11
 [2.0.10]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.9...v2.0.10
 [2.0.9]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.8...v2.0.9
 [2.0.8]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.7...v2.0.8
