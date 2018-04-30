@@ -80,7 +80,7 @@ class AuthMetamask extends Component {
                     return null
                 } else {
                     this.setState({ waitingAddrsData: true })
-                    return getAccountStats({ _addr: addr })
+                    return getAccountStats({ _addr: addr, authType: AUTH_TYPES.METAMASK.name })
                 }
             })
             .then((stats) => {
