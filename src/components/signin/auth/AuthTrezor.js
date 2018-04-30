@@ -56,7 +56,7 @@ class AuthTrezor extends Component {
                         let allStatsPr = []
 
                         addresses.forEach((addr) => {
-                            allStatsPr.push(getAccountStats({ _addr: addr }))
+                            allStatsPr.push(getAccountStats({ _addr: addr, authType: AUTH_TYPES.TREZOR.name }))
                         })
 
                         this.setState({ waitingAddrsData: true }, () => {
