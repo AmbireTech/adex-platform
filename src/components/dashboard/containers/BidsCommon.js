@@ -14,7 +14,8 @@ import WithDialog from 'components/common/dialog/WithDialog'
 import classnames from 'classnames'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import ItemIpfsDetails from './ItemIpfsDetails'
-import { Button } from 'react-toolbox/lib/button'
+import { Button, IconButton } from 'react-toolbox/lib/button'
+import { getBidEvents } from 'services/adex-node/actions'
 
 const RRButton = withReactRouterLink(Button)
 const RRAnchor = withReactRouterLink(Anchor)
@@ -138,6 +139,8 @@ export const renderCommonTableRow = ({ bidData, t, side }) => {
                 {bidData.refundBtn || null}
                 {bidData.acceptBid || null}
                 {bidData.giveupBid || null}
+                <IconButton icon='info' onClick={() =>
+                    getBidEvents({ eventData: { bid: bidData._id, /*end: Date.now() */ interval: Math.floor((Date.now() - (20 * 60 * 1000)) / 1000) } })} />
             </TableCell>
         </TableRow >
     )

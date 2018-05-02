@@ -43,7 +43,7 @@ export class SlotBids extends Component {
 
     // TODO: map bid and set amount to number or make something to parse the amount in the items list sort function
     getBids = () => {
-        if(this.props.getSlotBids) {
+        if (this.props.getSlotBids) {
             getSlotBids({
                 authSig: this.props.account._authSig,
                 adSlot: this.props.item._ipfs
@@ -228,7 +228,7 @@ export class SlotBids extends Component {
                 {this.props.getSlotBids ? null :
                     <div className={classnames(theme.heading, theme.Transactions)}>
                         <h2 > {t('ALL_BIDS')} </h2>
-                    </div>                
+                    </div>
                 }
                 <Tabs
                     theme={theme}
