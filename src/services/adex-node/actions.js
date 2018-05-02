@@ -385,12 +385,11 @@ export const updateItm = ({ item, authSig }) => {
         })
 }
 
-export const getBidEvents = ({ authSig, eventData = { bidId: null, start: null, end: null, interval: null } } = {}) => {
+export const getBidEvents = ({ eventData = { bid: null, start: null, end: null, interval: null } } = {}) => {
     return requester.fetch({
         route: 'events',
         method: 'GET',
-        body: JSON.stringify(eventData),
-        authSig: authSig,
+        queryParams: eventData,
         headers: { 'Content-Type': 'application/json' }
     })
         .then((resp) => {
@@ -398,5 +397,8 @@ export const getBidEvents = ({ authSig, eventData = { bidId: null, start: null, 
         })
         .then((resp) => {
             return resp.json()
+        })
+        .then(resp => {
+            console.log(resp)
         })
 }
