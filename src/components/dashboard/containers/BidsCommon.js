@@ -140,7 +140,15 @@ export const renderCommonTableRow = ({ bidData, t, side }) => {
                 {bidData.acceptBid || null}
                 {bidData.giveupBid || null}
                 <IconButton icon='info' onClick={() =>
-                    getBidEvents({ eventData: { bid: bidData._id, /*end: Date.now() */ interval: Math.floor((Date.now() - (20 * 60 * 1000)) / 1000) } })} />
+                    getBidEvents({
+                        eventData: {
+                            bid: bidData._id,
+                            end: Date.now(),
+                            start: Date.now() - (24 * 60 * 60 * 1000),
+                            // interval: Date.now()
+                        }
+                    })
+                } />
             </TableCell>
         </TableRow >
     )
