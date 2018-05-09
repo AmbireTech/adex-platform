@@ -22,6 +22,7 @@ import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch } 
 import { getAddrBids, sortBids } from 'services/store-data/bids'
 import { getBidEvents } from 'services/adex-node/actions'
 import { IconButton } from 'react-toolbox/lib/button'
+import BidsStatistics from './BidsStatistics'
 
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
 
@@ -69,104 +70,12 @@ export class SlotBids extends Component {
         }
     }
 
-
     componentWillMount() {
         this.getBids()
     }
 
     handleTabChange = (index) => {
         this.setState({ tabIndex: index })
-    }
-
-    getNonOpenedBidsChartData = (bids) => {
-    }
-
-    renderSlotsClicksCharts({ bids }) {
-        // let data = BidsStatsGenerator.getRandomStatsForSlots(bids, 'days')
-        return (
-            <SlotsClicksAndRevenue data={bids} t={this.props.t} />
-        )
-    }
-
-    mapBidToStatisticsData = ({ memo, interval, bid }) => {
-        bid[interval].forEach((data) => {
-            const intData = memo[data.timeInterval] || { clicks: 0, uniqueClicks: 0, loaded: 0 }
-            intData.clicks += parseInt((data.clicks || 0), 10)
-            intData.uniqueClicks += parseInt((data.uniqueClicks || 0), 10)
-            intData.loaded += parseInt((data.loaded || 0), 10)
-
-            memo[data.timeInterval] = intData
-        })
-
-        return memo
-    }
-
-    bidsStatsData = () => {
-        return this.state.statsBids.reduce((memo, bid) => {
-            if (bid) {
-
-                memo.live = this.mapBidToStatisticsData({ memo: memo.live, interval: 'live', bid })
-                memo.hourly = this.mapBidToStatisticsData({ memo: memo.hourly, interval: 'hourly', bid })
-                memo.daily = this.mapBidToStatisticsData({ memo: memo.daily, interval: 'daily', bid })
-            }
-
-            return memo
-
-        }, { live: {}, daily: {}, hourly: {} })
-    }
-
-    renderNonOpenedBidsChart(bids, range) {
-        let statusData = bids.reduce((memo, bid) => {
-            if (bid) {
-                let state = bid._state
-                let statistics = memo.statistics
-                let states = memo.states
-
-                let val = statistics[state] || { state: state, value: state, count: 0, name: BidStatesLabels[state] }
-                val.count = val.count + 1
-                statistics[state] = val
-
-                if (states[BidStatesLabels[state]] === undefined) {
-                    states[BidStatesLabels[state]] = 1
-                } else {
-                    states[BidStatesLabels[state]] = (states[BidStatesLabels[state]] + 1)
-                }
-
-                return {
-                    statistics: statistics,
-                    states: states
-                }
-            } else {
-                return memo
-            }
-        }, { statistics: [], states: {} })
-
-        let data = this.bidsStatsData()
-
-        return (
-            <div>
-                <Grid fluid >
-                    <Row middle='xs' className={theme.itemsListControls}>
-                        <Col xs={12} sm={12} md={6}>
-                            <BidsTimeStatistics data={data.live} t={this.props.t} />
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                            <BidsTimeStatistics data={data.hourly} t={this.props.t} />
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                            <BidsTimeStatistics data={data.daily} t={this.props.t} />
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                            <BidsStatusBars data={statusData.states} t={this.props.t} />
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                            <BidsStatusPie data={statusData.states} t={this.props.t} />
-                        </Col>
-                    </Row>
-                </Grid>
-
-            </div>
-        )
     }
 
     getBidData = (bid) => {
@@ -266,26 +175,6 @@ export class SlotBids extends Component {
                 {this.props.getSlotBids ? null :
                     <div className={classnames(theme.heading, theme.Transactions)}>
                         <h2 > {t('ALL_BIDS')} </h2>
-                        <div>
-                            <IconButton icon='info' onClick={() => {
-                                getBidEvents({
-                                    eventData: {
-                                        bids: (sorted.active.concat(sorted.closed, sorted.acton)).reduce((memo, bid) => {
-                                            if (bid && bid._id) {
-                                                memo.push(bid._id)
-                                            }
-
-                                            return memo
-                                        }, []),
-                                        end: Date.now() - (0 * 24 * 60 * 60 * 1000),
-                                        start: Date.now() - (7 * 24 * 60 * 60 * 1000)
-                                    }
-                                }).then((res) => {
-                                    this.setState({ statsBids: res.data })
-                                })
-                            }
-                            } />
-                        </div>
                     </div>
                 }
                 <Tabs
@@ -338,10 +227,7 @@ export class SlotBids extends Component {
                         />
                     </Tab>
                     <Tab label={t('STATISTICS')}>
-                        <div>
-                            {/* {t('COMING_SOON')} */}
-                            {this.renderNonOpenedBidsChart(sorted.action.concat(sorted.active, sorted.closed))}
-                        </div>
+                        <BidsStatistics bids={sorted.action.concat(sorted.active, sorted.closed)} />
                     </Tab>
                 </Tabs>
             </div>
