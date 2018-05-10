@@ -32,6 +32,7 @@ import { getUserItems } from 'services/store-data/items'
 import { getAddrBids } from 'services/store-data/bids'
 import checkGasData from 'services/store-data/gas'
 import { SORT_PROPERTIES_ITEMS, SORT_PROPERTIES_COLLECTION, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
+import Helper from 'helpers/miscHelpers'
 
 const { ItemsTypes } = ItemsConstants
 
@@ -67,7 +68,7 @@ class Dashboard extends React.Component {
         checkGasData.start()
         getUserItems({ authSig: this.props.account._authSig })
             .catch((err) => {
-                this.props.actions.addToast({ type: 'cancel', action: 'X', label: err, timeout: 5000 })
+                this.props.actions.addToast({ type: 'cancel', action: 'X', label:  this.props.t('ERR_AUTH_METAMASK', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
             })
 
         getAddrBids({ authSig: this.props.account._authSig })

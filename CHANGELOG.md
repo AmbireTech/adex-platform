@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.0.12] - 2018-05-10
+### Added
+- Logout ot authentication error
+
+### Fixed
+- Authentication bug
+
 ## [2.0.11] - 2018-04-30
 ### Added
 - Page to show all user bids (by role)
@@ -142,7 +149,8 @@ All notable changes to this project will be documented in this file.
 
 ## 2.0.0 - 2018-02-26
 
-[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.11...HEAD
+[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.12...HEAD
+[2.0.12]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.11...v2.0.12
 [2.0.11]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.10...v2.0.11
 [2.0.10]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.9...v2.0.10
 [2.0.9]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.8...v2.0.9

@@ -72,8 +72,11 @@ export default function AuthHoc(Decorated) {
                     }
                 })
                 .catch((err) => {
-                    // TODO: fix auth when signature expire on the server (fix getSig)
-                    return this.signAuth({ addr, mode, hdPath, addrIdx, authMode, authType, chainId })
+                    if (err && (err.status === 401 || err.status === 403)) {
+                        return this.signAuth({ addr, mode, hdPath, addrIdx, authMode, authType, chainId })
+                    } else {
+                        throw err
+                    }
                 })
         }
 
