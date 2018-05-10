@@ -71,6 +71,13 @@ export default function AuthHoc(Decorated) {
                         return this.signAuth({ addr, mode, hdPath, addrIdx, authMode, authType, chainId })
                     }
                 })
+                .catch((err) => {
+                    if (err && (err.status === 401 || err.status === 403)) {
+                        return this.signAuth({ addr, mode, hdPath, addrIdx, authMode, authType, chainId })
+                    } else {
+                        throw err
+                    }
+                })
         }
 
         render() {

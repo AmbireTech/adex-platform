@@ -1,14 +1,21 @@
 import requester from './requester'
+import { logOut } from 'services/store-data/auth'
+import actions from 'actions'
+import { translate } from 'services/translations/translations'
 
 const catchErrors = (res) => {
     return new Promise((resolve, reject) => {
-        // console.log('res', res)
         if (res.status >= 200 && res.status < 400) {
             return resolve(res)
         } else {
             res.text()
                 .then((err) => {
-                    return reject(res.statusText + ' - ' + err)
+                    if (res.status === 401 || res.status === 403) {
+                        logOut()
+                        // NOTE: In some places this err is handled but its good to have toast always
+                        actions.execute(actions.addToast({ type: 'cancel', action: 'X', label: translate('ERR_AUTH', { args: [res.statusText + ' - ' + err] }), timeout: 5000 }))
+                    }
+                    return reject({ status: res.status, error: res.statusText + ' - ' + err })
                 })
         }
     })
@@ -39,19 +46,19 @@ export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
 
 export const regItem = ({ item, authSig }) => {
     // return new Promise((resolve, reject) => {
-       return requester.fetch({
-            route: 'items',
-            method: 'POST',
-            body: JSON.stringify(item),
-            authSig: authSig,
-            headers: { 'Content-Type': 'application/json' }
+    return requester.fetch({
+        route: 'items',
+        method: 'POST',
+        body: JSON.stringify(item),
+        authSig: authSig,
+        headers: { 'Content-Type': 'application/json' }
+    })
+        .then((resp) => {
+            return catchErrors(resp)
         })
-            .then((resp) => {
-                return catchErrors(resp)
-            })
-            .then((resp) => {
-                return resp.json()
-            })
+        .then((resp) => {
+            return resp.json()
+        })
     //         .catch((err) => {
     //             return reject(err)
     //         })
@@ -360,7 +367,7 @@ export const checkAuth = ({ authSig }) => {
                 if (resp && resp.authenticated) {
                     return resolve(true)
                 } else {
-                    reject((resp || {}).error || 'Authentication error')
+                    return reject((resp || {}).error || 'Authentication error')
                 }
             })
             .catch((err) => {
@@ -369,7 +376,7 @@ export const checkAuth = ({ authSig }) => {
     })
 }
 
-export const updateItm = ({item, authSig}) => {
+export const updateItm = ({ item, authSig }) => {
     return requester.fetch({
         route: 'items',
         method: 'PUT',
