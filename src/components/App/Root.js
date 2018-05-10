@@ -15,6 +15,7 @@ import { AUTH_TYPES } from 'constants/misc'
 import { getUserItems } from 'services/store-data/items'
 import { getAddrBids } from 'services/store-data/bids'
 import { logOut } from 'services/store-data/auth'
+import Helper from 'helpers/miscHelpers'
 
 const { getAccountMetamask, getAccountStats } = scActions
 
@@ -65,7 +66,7 @@ class Root extends Component {
                                 })
                             getUserItems({ authSig: mmAddrSigCheck })
                                 .catch((err) => {
-                                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: err, timeout: 5000 })
+                                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: Helper.getErrMsg(err), timeout: 5000 })
                                 })
                             getAddrBids({ authSig: this.props.account._authSig })
                         } else {
