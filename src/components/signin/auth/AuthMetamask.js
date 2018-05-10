@@ -87,7 +87,7 @@ class AuthMetamask extends Component {
                 this.setState({ address: stats || {}, waitingAddrsData: false, })
             })
             .catch((err) => {
-                this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('AUTH_ERR_METAMASK', { args: [err] }), timeout: 5000 })
+                this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('AUTH_ERR_METAMASK', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
                 this.setState({ waitingAddrsData: false, address: {} })
             })
     }
