@@ -25,8 +25,8 @@ export const BidsTimeStatistics = ({ data, options, t }) => {
     // console.log('data', data)
 
     let commonDsProps = {
-        fill: true,
-        lineTension: 0.4,
+        fill: false,
+        lineTension: 0.3,
         borderWidth: 0,
         pointRadius: 1,
         pointHitRadius: 10,
@@ -34,7 +34,7 @@ export const BidsTimeStatistics = ({ data, options, t }) => {
 
     let chartData = {
         labels: data.labels,
-        stacked: false,
+        // stacked: true,
         datasets: [
             {
                 ...commonDsProps,
@@ -70,7 +70,7 @@ export const BidsTimeStatistics = ({ data, options, t }) => {
             }
         },
         tooltips: {
-            mode: 'x-axis'
+            mode: 'index',
         },
         scales: {
             xAxes: [
@@ -89,9 +89,13 @@ export const BidsTimeStatistics = ({ data, options, t }) => {
                 {
                     display: true,
                     ticks: {
-                        min: data.step.min,
-                        max: data.step.max
-                    }
+                        suggestedMin: data.step.min,
+                        suggestedMax: data.step.max
+                    },
+                    gridLines: {
+                        display: true,
+                        beginAtZero: true
+                    },
                 }
             ]
         }

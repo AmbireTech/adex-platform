@@ -13,6 +13,7 @@ import { getBidEvents } from 'services/adex-node/actions'
 import { Button } from 'react-toolbox/lib/button'
 import Navigation from 'react-toolbox/lib/navigation'
 import moment from 'moment'
+import Dropdown from 'react-toolbox/lib/dropdown'
 
 const { BidStatesLabels } = ExchangeConstants
 
@@ -23,15 +24,16 @@ export class BidsStatistics extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            statsBids: []
+            statsBids: [],
+            hourlyDaySelected: ''
         }
     }
 
     getBids = ({ start, end }) => {
         getBidEvents({
             eventData: {
-                bids: (this.props.bids).reduce((memo, bid) => {
-                    if (bid && bid._id) {
+                bids: (this.props.bids || []).reduce((memo, bid) => {
+                    if (bid && bid._id && (bid._acceptedTime * 1000) < end) {
                         memo.push(bid._id)
                     }
 
@@ -41,6 +43,7 @@ export class BidsStatistics extends Component {
                 end: end
             }
         }).then((res) => {
+            console.log('statsBids', res.data)
             this.setState({ statsBids: res.data })
         })
     }
@@ -58,25 +61,40 @@ export class BidsStatistics extends Component {
     }
 
     mapBidToStatisticsData = ({ memo, interval, bid }) => {
+        // TODO: TEMP - make this mapping with params
         bid[interval].forEach((data) => {
             let format = ''
+            let dayKey = ''
+            let time = moment(Math.floor(data.timeInterval * data.interval))
 
             if (data.interval <= 5 * 60 * 1000) {
                 format = 'HH:mm'
             } else if (data.interval <= 60 * 60 * 1000) {
                 format = 'HH:mm'
+                dayKey = time.format('YYYY-MM-DD')
             } else if (data.interval <= 24 * 60 * 60 * 1000) {
-                format = 'YYYY-MM-DD'
+                format = 'DD MMMM'
             }
 
-            const key = moment(Math.floor(data.timeInterval * data.interval)).format(format)
+            const key = time.format(format)
+            let intData = null
 
-            const intData = memo[key] || { clicks: 0, uniqueClicks: 0, loaded: 0 }
+            if (dayKey) {
+                memo[dayKey] = memo[dayKey] || {}
+                intData = memo[dayKey][key] || { clicks: 0, uniqueClicks: 0, loaded: 0 }
+            } else {
+                intData = memo[key] || { clicks: 0, uniqueClicks: 0, loaded: 0 }
+            }
+
             intData.clicks += parseInt((data.clicks || 0), 10)
             intData.uniqueClicks += parseInt((data.uniqueClicks || 0), 10)
             intData.loaded += parseInt((data.loaded || 0), 10)
 
-            memo[key] = intData
+            if (dayKey) {
+                memo[dayKey][key] = intData
+            } else {
+                memo[key] = intData
+            }
         })
 
         return memo
@@ -123,19 +141,42 @@ export class BidsStatistics extends Component {
 
         let data = this.bidsStatsData()
 
+        console.log('data', data)
+
         return (
             <div>
                 <Grid fluid >
                     <Row middle='xs' className={theme.itemsListControls}>
-                        <Col xs={12} sm={12} md={6}>
-                            <BidsTimeStatistics data={data.live} t={this.props.t} />
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                            <BidsTimeStatistics data={data.hourly} t={this.props.t} />
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                            <BidsTimeStatistics data={data.daily} t={this.props.t} />
-                        </Col>
+                        {Object.keys(data.live).length ?
+                            <Col xs={12} sm={12} md={6}>
+                                <BidsTimeStatistics data={data.live} t={this.props.t} />
+                            </Col>
+                            : null}
+                        {Object.keys(data.hourly).length ?
+                            <Col xs={12} sm={12} md={6}>
+                                <Dropdown
+                                    source={Object.keys(data.hourly).map((key) => { return { value: key, label: key } })}
+                                    onChange={(val) => this.setState({ hourlyDaySelected: val })}
+                                    label='LABEL_DD_SELECT_DAY'
+                                    value={this.state.hourlyDaySelected || Object.keys(data.hourly)[0]}
+                                />
+
+                                {Object.keys(data.hourly).map((key) => {
+                                    return (
+                                        <div key={key} style={{ display: !this.state.hourlyDaySelected ||  (this.state.hourlyDaySelected === key) ? 'block' : 'none' }}>
+                                            {/* <div> {key}</div> */}
+                                            <BidsTimeStatistics data={data.hourly[key]} t={this.props.t} />
+                                        </div>
+                                    )
+                                })}
+
+                            </Col>
+                            : null}
+                        {Object.keys(data.daily).length ?
+                            <Col xs={12} sm={12} md={6}>
+                                <BidsTimeStatistics data={data.daily} t={this.props.t} />
+                            </Col>
+                            : null}
                         {/* <Col xs={12} sm={12} md={6}>
                             <BidsStatusBars data={statusData.states} t={this.props.t} />
                         </Col>
@@ -154,10 +195,14 @@ export class BidsStatistics extends Component {
             <div>
                 <Navigation>
                     <Button label={t('LABEL_LAST_24H')} onClick={() => this.getBids({ start: Date.now() - (24 * 60 * 60 * 1000), end: Date.now() })} />
+
                     <Button label={t('LABEL_THIS_WEEK')} onClick={() => this.getBids({ start: moment().startOf('isoWeek').valueOf(), end: moment().endOf('isoWeek').valueOf() })} />
+
                     <Button label={t('LABEL_LAST_WEEK')} onClick={() => this.getBids({ start: moment().subtract(1, 'week').startOf('isoWeek').valueOf(), end: moment().subtract(1, 'week').endOf('isoWeek').valueOf() })} />
+
                     <Button label={t('LABEL_THIS_MONTH')} onClick={() => this.getBids({ start: moment().startOf('month').valueOf(), end: moment().endOf('month').valueOf() })} />
-                    <Button label={t('LABEL_LAST_MONTH')} onClick={() => this.getBids({ start: moment().subtract(1, 'month').startOf('isoMonth').valueOf(), end: moment().subtract(1, 'month').endOf('isoMonth').valueOf() })} />
+
+                    <Button label={t('LABEL_LAST_MONTH')} onClick={() => this.getBids({ start: moment().subtract(1, 'month').startOf('month').valueOf(), end: moment().subtract(1, 'month').endOf('month').valueOf() })} />
                 </Navigation>
                 <br />
                 <br />
