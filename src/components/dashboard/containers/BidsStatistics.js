@@ -43,8 +43,7 @@ export class BidsStatistics extends Component {
                 end: end
             }
         }).then((res) => {
-            console.log('statsBids', res.data)
-            this.setState({ statsBids: res.data })
+            this.setState({ statsBids: res.stats })
         })
     }
 
@@ -60,30 +59,33 @@ export class BidsStatistics extends Component {
         )
     }
 
-    mapBidToStatisticsData = ({ memo, interval, bid }) => {
+    mapBidToStatisticsData = ({ stats = {}, interval, timeInterval }) => {
         // TODO: TEMP - make this mapping with params
-        bid[interval].forEach((data) => {
+        let mapped = {}
+
+        Object.keys(stats).forEach((key) => {
+            const data = stats[key]
             let format = ''
             let dayKey = ''
-            let time = moment(Math.floor(data.timeInterval * data.interval))
+            let time = moment(Math.floor(parseInt(key, 10) * timeInterval))
 
-            if (data.interval <= 5 * 60 * 1000) {
+            if (interval === 'live') {
                 format = 'HH:mm'
-            } else if (data.interval <= 60 * 60 * 1000) {
+            } else if (interval === 'hourly') {
                 format = 'HH:mm'
                 dayKey = time.format('YYYY-MM-DD')
-            } else if (data.interval <= 24 * 60 * 60 * 1000) {
+            } else if (interval === 'daily') {
                 format = 'DD MMMM'
             }
 
-            const key = time.format(format)
+            const timeKey = time.format(format)
             let intData = null
 
             if (dayKey) {
-                memo[dayKey] = memo[dayKey] || {}
-                intData = memo[dayKey][key] || { clicks: 0, uniqueClicks: 0, loaded: 0 }
+                mapped[dayKey] = mapped[dayKey] || {}
+                intData = mapped[dayKey][timeKey] || { clicks: 0, uniqueClicks: 0, loaded: 0 }
             } else {
-                intData = memo[key] || { clicks: 0, uniqueClicks: 0, loaded: 0 }
+                intData = mapped[timeKey] || { clicks: 0, uniqueClicks: 0, loaded: 0 }
             }
 
             intData.clicks += parseInt((data.clicks || 0), 10)
@@ -91,26 +93,28 @@ export class BidsStatistics extends Component {
             intData.loaded += parseInt((data.loaded || 0), 10)
 
             if (dayKey) {
-                memo[dayKey][key] = intData
+                mapped[dayKey][timeKey] = intData
             } else {
-                memo[key] = intData
+                mapped[timeKey] = intData
             }
         })
 
-        return memo
+        return mapped
     }
 
     bidsStatsData = () => {
-        return this.state.statsBids.reduce((memo, bid) => {
-            if (bid) {
-                memo.live = this.mapBidToStatisticsData({ memo: memo.live, interval: 'live', bid })
-                memo.hourly = this.mapBidToStatisticsData({ memo: memo.hourly, interval: 'hourly', bid })
-                memo.daily = this.mapBidToStatisticsData({ memo: memo.daily, interval: 'daily', bid })
-            }
+        const stats = this.state.statsBids || {}
+        const liveData = stats.live || {}
+        const hourlyData = stats.hourly || {}
+        const dailyData = stats.daily || {}
 
-            return memo
+        const data = {
+            live: this.mapBidToStatisticsData({ stats: liveData.intervalStats, interval: 'live', timeInterval: liveData.interval }),
+            hourly: this.mapBidToStatisticsData({ stats: hourlyData.intervalStats, interval: 'hourly', timeInterval: hourlyData.interval }),
+            daily: this.mapBidToStatisticsData({ stats: dailyData.intervalStats, interval: 'daily', timeInterval: dailyData.interval })
+        }
 
-        }, { live: {}, daily: {}, hourly: {} })
+        return data
     }
 
     renderNonOpenedBidsChart(bids, range) {
@@ -163,7 +167,7 @@ export class BidsStatistics extends Component {
 
                                 {Object.keys(data.hourly).map((key) => {
                                     return (
-                                        <div key={key} style={{ display: !this.state.hourlyDaySelected ||  (this.state.hourlyDaySelected === key) ? 'block' : 'none' }}>
+                                        <div key={key} style={{ display: !this.state.hourlyDaySelected || (this.state.hourlyDaySelected === key) ? 'block' : 'none' }}>
                                             {/* <div> {key}</div> */}
                                             <BidsTimeStatistics data={data.hourly[key]} t={this.props.t} />
                                         </div>
