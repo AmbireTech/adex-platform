@@ -16,6 +16,8 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import ItemIpfsDetails from './ItemIpfsDetails'
 import { Button, IconButton } from 'react-toolbox/lib/button'
 import { getBidEvents } from 'services/adex-node/actions'
+import { AcceptBid, GiveupBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
+import RTButtonTheme from 'styles/RTButton.css'
 
 const RRButton = withReactRouterLink(Button)
 const RRAnchor = withReactRouterLink(Anchor)
@@ -236,6 +238,67 @@ export const getCommonBidData = ({ bid, t, side }) => {
     }
 
     return bidData
+}
+
+export const getPublisherBidData = ({ bid, t, transactions, side, item, account, getBids, onSave }) => {
+    const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
+    const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
+
+    const noTargetsReached = bid.clicksCount < bid._target
+    const canAccept = (bid._state === BID_STATES.DoesNotExist.id)
+    const canVerify = (bid._state === BID_STATES.Accepted.id) && ((bid.clicksCount >= bid._target) || bid._advertiserConfirmation)
+    const canGiveup = bid._state === BID_STATES.Accepted.id
+    const pendingGiveup = pendingState === BID_STATES.Canceled.id
+    const pendingAccept = pendingState === BID_STATES.Accepted.id
+    const pendingVerify = (pendingState === BID_STATES.ConfirmedPub.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
+
+    let bidData = getCommonBidData({ bid, t, side: side })
+
+    bidData.acceptBid = canAccept ? <AcceptBid
+        icon={pendingAccept ? 'hourglass_empty' : ''}
+        adUnitId={bid._adUnitId}
+        slotId={item._id}
+        bidId={bid._id}
+        placedBid={bid}
+        slot={item}
+        acc={account}
+        raised
+        primary
+        className={theme.actionBtn}
+        onSave={getBids}
+    // disabled={pendingAccept}
+    /> : null
+
+    bidData.verifyBtn = canVerify ?
+        <VerifyBid
+            noTargetsReached
+            icon={pendingVerify ? 'hourglass_empty' : (noTargetsReached ? '' : '')}
+            itemId={bid._adUnitId}
+            bidId={bid._id}
+            placedBid={bid}
+            acc={account}
+            raised
+            className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: noTargetsReached, [RTButtonTheme.success]: !noTargetsReached })}
+            onSave={onSave}
+            disabled={pendingVerify}
+        /> : null
+
+    bidData.giveupBid = canGiveup ?
+        <GiveupBid
+            icon={pendingGiveup ? 'hourglass_empty' : ''}
+            slotId={bid._adSlotId}
+            bidId={bid._id}
+            placedBid={bid}
+            acc={account}
+            raised
+            className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
+            onSave={getBids}
+            disabled={pendingGiveup}
+        /> : null
+
+
+    return bidData
+
 }
 
 export const searchMatch = (bid) => {

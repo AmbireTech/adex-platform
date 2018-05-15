@@ -18,7 +18,7 @@ import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-con
 import { AcceptBid, GiveupBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
 import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS_NO_STATE } from 'constants/misc'
-import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch } from './BidsCommon'
+import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch, getPublisherBidData } from './BidsCommon'
 import { getAddrBids, sortBids } from 'services/store-data/bids'
 import { getBidEvents } from 'services/adex-node/actions'
 import { IconButton } from 'react-toolbox/lib/button'
@@ -79,65 +79,16 @@ export class SlotBids extends Component {
     }
 
     getBidData = (bid) => {
-        let t = this.props.t
-        const transactions = this.props.transactions
-        const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
-        const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
-
-        const noTargetsReached = bid.clicksCount < bid._target
-        const canAccept = (bid._state === BID_STATES.DoesNotExist.id)
-        const canVerify = (bid._state === BID_STATES.Accepted.id) && ((bid.clicksCount >= bid._target) || bid._advertiserConfirmation)
-        const canGiveup = bid._state === BID_STATES.Accepted.id
-        const pendingGiveup = pendingState === BID_STATES.Canceled.id
-        const pendingAccept = pendingState === BID_STATES.Accepted.id
-        const pendingVerify = (pendingState === BID_STATES.ConfirmedPub.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
-
-        let bidData = getCommonBidData({ bid, t, side: this.props.side })
-
-        bidData.acceptBid = canAccept ? <AcceptBid
-            icon={pendingAccept ? 'hourglass_empty' : ''}
-            adUnitId={bid._adUnitId}
-            slotId={this.props.item._id}
-            bidId={bid._id}
-            placedBid={bid}
-            slot={this.props.item}
-            acc={this.props.account}
-            raised
-            primary
-            className={theme.actionBtn}
-            onSave={this.getBids}
-        // disabled={pendingAccept}
-        /> : null
-
-        bidData.verifyBtn = canVerify ?
-            <VerifyBid
-                noTargetsReached
-                icon={pendingVerify ? 'hourglass_empty' : (noTargetsReached ? '' : '')}
-                itemId={bid._adUnitId}
-                bidId={bid._id}
-                placedBid={bid}
-                acc={this.props.account}
-                raised
-                className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: noTargetsReached, [RTButtonTheme.success]: !noTargetsReached })}
-                onSave={this.onSave}
-                disabled={pendingVerify}
-            /> : null
-
-        bidData.giveupBid = canGiveup ?
-            <GiveupBid
-                icon={pendingGiveup ? 'hourglass_empty' : ''}
-                slotId={bid._adSlotId}
-                bidId={bid._id}
-                placedBid={bid}
-                acc={this.props.account}
-                raised
-                className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
-                onSave={this.getBids}
-                disabled={pendingGiveup}
-            /> : null
-
-
-        return bidData
+        return getPublisherBidData({
+            bid: bid,
+            t: this.props.t,
+            transactions: this.props.transactions,
+            side: this.props.side,
+            item: this.props.item,
+            account: this.props.account,
+            getBids: this.getBids,
+            onSave: this.getBids
+        })
     }
 
     // TODO: make something common with unit bids 
