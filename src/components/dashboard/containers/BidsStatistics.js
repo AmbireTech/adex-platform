@@ -14,6 +14,10 @@ import { Button } from 'react-toolbox/lib/button'
 import Navigation from 'react-toolbox/lib/navigation'
 import moment from 'moment'
 import Dropdown from 'react-toolbox/lib/dropdown'
+import ItemsList from './ItemsList'
+import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
+import { renderCommonTableRowStats, renderTableHeadStats, searchMatch, getBidData } from './BidsCommon'
+import Rows from 'components/dashboard/collection/Rows'
 
 const { BidStatesLabels } = ExchangeConstants
 
@@ -24,8 +28,9 @@ export class BidsStatistics extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            statsBids: [],
-            hourlyDaySelected: ''
+            statsBids: {},
+            hourlyDaySelected: '',
+            bidsStats: {}
         }
     }
 
@@ -43,7 +48,7 @@ export class BidsStatistics extends Component {
                 end: end
             }
         }).then((res) => {
-            this.setState({ statsBids: res.stats })
+            this.setState({ statsBids: res.stats, bidsStats: res.bidsStats })
         })
     }
 
@@ -145,8 +150,6 @@ export class BidsStatistics extends Component {
 
         let data = this.bidsStatsData()
 
-        console.log('data', data)
-
         return (
             <div>
                 <Grid fluid >
@@ -193,6 +196,60 @@ export class BidsStatistics extends Component {
         )
     }
 
+    // TODO: Make common funcs, fix the statistics
+    renderTableRow(bid, index, { to, selected }) {
+
+        let t = this.props.t
+        const bidAllData = this.props.bidsById[bid._id] || {}
+        bidAllData.statistics = {
+            live: bid.live,
+            hourly: bid.hourly,
+            daily: bid.daily,
+        }
+
+        const bidData = getBidData({
+            bid: bidAllData,
+            t: t,
+            transactions: this.props.transactions,
+            side: this.props.side,
+            item: this.props.item,
+            account: this.props.account,
+            onSave: this.getBids
+        })
+
+        // console.log('bidData', bidData)
+
+        return renderCommonTableRowStats({ bidData, t })
+    }
+
+    renderRows = (items) =>
+        <Rows
+            multiSelectable={false}
+            selectable={false}
+            side={this.props.side}
+            item={items}
+            rows={items}
+            rowRenderer={this.renderTableRow.bind(this)}
+            tableHeadRenderer={renderTableHeadStats.bind(this, { t: this.props.t, side: this.props.side })}
+        />
+
+
+    renderBidsTable({ bids }) {
+        return (<ItemsList
+            items={Object.keys(bids).map((key) => {
+                const bid = bids[key]
+                bid._id = key
+
+                return bid
+            })}
+            listMode='rows'
+            renderRows={this.renderRows.bind(this)}
+            sortProperties={SORT_PROPERTIES_BIDS}
+            searchMatch={searchMatch}
+            filterProperties={FILTER_PROPERTIES_BIDS}
+        />)
+    }
+
     render() {
         let t = this.props.t
         return (
@@ -213,6 +270,9 @@ export class BidsStatistics extends Component {
                 <div>
                     {this.renderNonOpenedBidsChart(this.props.bids)}
                 </div>
+                <div>
+                    {this.renderBidsTable({ bids: this.state.bidsStats })}
+                </div>
             </div>
         )
     }
@@ -228,7 +288,10 @@ function mapStateToProps(state, props) {
     const persist = state.persist
     const memory = state.memory
     return {
-        account: persist.account
+        account: persist.account,
+        bidsById: persist.bids.bidsById,
+        side: memory.nav.side,
+        transactions: persist.web3Transactions[persist.account._addr] || {},
     }
 }
 
