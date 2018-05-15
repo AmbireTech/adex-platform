@@ -16,12 +16,14 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import ItemIpfsDetails from './ItemIpfsDetails'
 import { Button, IconButton } from 'react-toolbox/lib/button'
 import { getBidEvents } from 'services/adex-node/actions'
-import { AcceptBid, GiveupBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
+import { AcceptBid, GiveupBid, VerifyBid, CancelBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
 import RTButtonTheme from 'styles/RTButton.css'
+import Tooltip from 'react-toolbox/lib/tooltip'
 
 const RRButton = withReactRouterLink(Button)
 const RRAnchor = withReactRouterLink(Anchor)
 const ItemIpfsDetailsDialog = WithDialog(ItemIpfsDetails)
+const TooltipIconButton = Tooltip(IconButton)
 
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
 
@@ -240,7 +242,7 @@ export const getCommonBidData = ({ bid, t, side }) => {
     return bidData
 }
 
-export const getPublisherBidData = ({ bid, t, transactions, side, item, account, getBids, onSave }) => {
+export const getPublisherBidData = ({ bid, t, transactions, side, item, account, onSave }) => {
     const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
     const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
 
@@ -265,7 +267,7 @@ export const getPublisherBidData = ({ bid, t, transactions, side, item, account,
         raised
         primary
         className={theme.actionBtn}
-        onSave={getBids}
+        onSave={onSave}
     // disabled={pendingAccept}
     /> : null
 
@@ -292,10 +294,74 @@ export const getPublisherBidData = ({ bid, t, transactions, side, item, account,
             acc={account}
             raised
             className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
-            onSave={getBids}
+            onSave={onSave}
             disabled={pendingGiveup}
         /> : null
 
+    return bidData
+}
+
+export const getAdvertiserBidData = ({ bid, t, transactions, side, item, account, onSave }) => {
+    let bidData = getCommonBidData({ bid, t, side: side })
+
+    const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
+    const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
+
+    const canCancel = (bid._state === BID_STATES.DoesNotExist.id)
+    const canVerify = (bid._state === BID_STATES.Accepted.id) && !bid._advertiserConfirmation
+    const targetReached = bid.clicksCount >= bid._target
+    const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidData.bidExpires < Date.now()) && !bid._advertiserConfirmation
+    const pendingCancel = pendingState === BID_STATES.Canceled.id
+    const pendingRefund = pendingState === BID_STATES.Expired.id
+    const pendingVerify = (pendingState === BID_STATES.ConfirmedAdv.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
+    const pendingAcceptByPub = bid.unconfirmedStateId === BID_STATES.Accepted.id
+
+    bidData.cancelBtn = canCancel ? <CancelBid
+        icon={pendingCancel ? 'hourglass_empty' : ''}
+        adUnitId={bid._adUnitId}
+        bidId={bid._id}
+        placedBid={bid}
+        acc={account}
+        raised
+        className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
+        onSave={onSave}
+        disabled={pendingCancel}
+    /> : null
+
+    bidData.verifyBtn = canVerify ?
+        <VerifyBid
+            questionableVerify={!targetReached}
+            icon={pendingVerify ? 'hourglass_empty' : ''}
+            itemId={bid._adUnitId}
+            bidId={bid._id}
+            placedBid={bid}
+            acc={account}
+            raised
+            className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: !targetReached, [RTButtonTheme.success]: targetReached })}
+            onSave={onSave}
+            disabled={pendingVerify}
+        /> : null
+
+    bidData.refundBtn = canRefund ?
+        <RefundBid
+            questionableVerify={targetReached}
+            icon={pendingRefund ? 'hourglass_empty' : ''}
+            adUnitId={bid._adUnitId}
+            bidId={bid._id}
+            placedBid={bid}
+            acc={account}
+            raised
+            className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.danger)}
+            onSave={onSave}
+            disabled={pendingRefund}
+        /> : null
+
+    bidData.pendingAcceptByPub = canCancel && pendingAcceptByPub ?
+        <TooltipIconButton
+            icon='warning'
+            tooltip={t('WARNING_PENDING_ACCEPT_BY_PUB')}
+            className={RTButtonTheme.warning}
+        /> : null
 
     return bidData
 
