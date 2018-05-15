@@ -15,7 +15,7 @@ import { exchange as ExchangeConstants } from 'adex-constants'
 import { CancelBid, VerifyBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
 import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
-import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch } from './BidsCommon'
+import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch, getAdvertiserBidData } from './BidsCommon'
 import { getAddrBids } from 'services/store-data/bids'
 
 const TooltipIconButton = Tooltip(IconButton)
@@ -48,72 +48,16 @@ export class UnitBids extends Component {
     }
 
     getBidData = (bid) => {
-        const side = this.props.side
-        const t = this.props.t
-        let bidData = getCommonBidData({ bid, t, side: side })
 
-        const transactions = this.props.transactions
-        const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
-        const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
-
-        const canCancel = (bid._state === BID_STATES.DoesNotExist.id)
-        const canVerify = (bid._state === BID_STATES.Accepted.id) && !bid._advertiserConfirmation
-        const targetReached = bid.clicksCount >= bid._target
-        const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidData.bidExpires < Date.now()) && !bid._advertiserConfirmation
-        const pendingCancel = pendingState === BID_STATES.Canceled.id
-        const pendingRefund = pendingState === BID_STATES.Expired.id
-        const pendingVerify = (pendingState === BID_STATES.ConfirmedAdv.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
-        const pendingAcceptByPub = bid.unconfirmedStateId === BID_STATES.Accepted.id
-
-        bidData.cancelBtn = canCancel ? <CancelBid
-            icon={pendingCancel ? 'hourglass_empty' : ''}
-            adUnitId={bid._adUnitId}
-            bidId={bid._id}
-            placedBid={bid}
-            acc={this.props.account}
-            raised
-            className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
-            onSave={this.onSave}
-            disabled={pendingCancel}
-        /> : null
-
-        bidData.verifyBtn = canVerify ?
-            <VerifyBid
-                questionableVerify={!targetReached}
-                icon={pendingVerify ? 'hourglass_empty' : ''}
-                itemId={bid._adUnitId}
-                bidId={bid._id}
-                placedBid={bid}
-                acc={this.props.account}
-                raised
-                className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: !targetReached, [RTButtonTheme.success]: targetReached })}
-                onSave={this.onSave}
-                disabled={pendingVerify}
-            /> : null
-
-        bidData.refundBtn = canRefund ?
-            <RefundBid
-                questionableVerify={targetReached}
-                icon={pendingRefund ? 'hourglass_empty' : ''}
-                adUnitId={bid._adUnitId}
-                bidId={bid._id}
-                placedBid={bid}
-                acc={this.props.account}
-                raised
-                className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.danger)}
-                onSave={this.onSave}
-                disabled={pendingRefund}
-            /> : null
-
-        bidData.pendingAcceptByPub = canCancel && pendingAcceptByPub ?
-            <TooltipIconButton
-                icon='warning'
-                tooltip={t('WARNING_PENDING_ACCEPT_BY_PUB')}
-                className={RTButtonTheme.warning}
-            /> : null
-
-        return bidData
-
+        return getAdvertiserBidData({
+            bid: bid,
+            t: this.props.t,
+            transactions: this.props.transactions,
+            side: this.props.side,
+            item: this.props.item,
+            account: this.props.account,
+            onSave: this.onSave
+        })
     }
 
     renderTableRow = (bid, index, { to, selected }) => {
