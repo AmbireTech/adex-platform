@@ -18,7 +18,7 @@ import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-con
 import { AcceptBid, GiveupBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
 import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS_NO_STATE } from 'constants/misc'
-import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch, getPublisherBidData } from './BidsCommon'
+import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch, getPublisherBidData, getBidData } from './BidsCommon'
 import { getAddrBids, sortBids } from 'services/store-data/bids'
 import { getBidEvents } from 'services/adex-node/actions'
 import { IconButton } from 'react-toolbox/lib/button'
@@ -78,23 +78,18 @@ export class SlotBids extends Component {
         this.setState({ tabIndex: index })
     }
 
-    getBidData = (bid) => {
-        return getPublisherBidData({
+    // TODO: make something common with unit bids 
+    renderTableRow(bid, index, { to, selected }) {
+        let t = this.props.t
+        const bidData = getBidData({
             bid: bid,
-            t: this.props.t,
+            t: t,
             transactions: this.props.transactions,
             side: this.props.side,
             item: this.props.item,
             account: this.props.account,
-            getBids: this.getBids,
             onSave: this.getBids
         })
-    }
-
-    // TODO: make something common with unit bids 
-    renderTableRow(bid, index, { to, selected }) {
-        let t = this.props.t
-        const bidData = this.getBidData(bid)
 
         return renderCommonTableRow({ bidData, t })
     }

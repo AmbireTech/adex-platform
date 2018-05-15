@@ -158,6 +158,51 @@ export const renderCommonTableRow = ({ bidData, t, side }) => {
     )
 }
 
+export const renderTableHeadStats = ({ t, side, }) => {
+    return (
+        <TableHead>
+            <TableCell> {t('DETAILS')} </TableCell>
+            <TableCell> {t('BID_ID')} </TableCell>
+            <TableCell> {t('BID_UNIQUE_CLICKS')}</TableCell>
+            <TableCell> {t('BID_CLICKS')} </TableCell>
+            <TableCell> {t('BID_IMPRESSIONS')} </TableCell>
+            <TableCell> {t('BID_ESTIMATED_REVENUE')} </TableCell>
+        </TableHead>
+    )
+}
+
+export const renderCommonTableRowStats = ({ bidData, t, side }) => {
+    return (
+        <TableRow key={bidData._id}>
+            <TableCell>
+                <BidDetailWithDialog
+                    btnLabel=''
+                    title={bidData._id}
+                    t={t}
+                    bidData={bidData}
+                    icon='open_in_new'
+                    iconButton
+                />
+            </TableCell>
+            <TableCell> {bidData._id} </TableCell>
+            <TableCell>
+                {bidData.statistics.daily.uniqueClicks || 0}
+            </TableCell>
+            <TableCell>
+                {bidData.statistics.daily.clicks || 0}
+            </TableCell>
+            <TableCell>
+                {bidData.statistics.daily.loads || 0}
+            </TableCell>
+            <TableCell>
+                {bidData.statistics.daily.uniqueClicks > 0 ?
+                    (parseInt(bidData._target, 10) / parseInt(bidData._amount, 10)) / bidData.statistics.daily.uniqueClicks / 10000
+                    : 0}
+            </TableCell>
+        </TableRow >
+    )
+}
+
 export const getCommonBidData = ({ bid, t, side }) => {
 
     const accepted = (bid._acceptedTime || 0) * 1000
@@ -191,6 +236,7 @@ export const getCommonBidData = ({ bid, t, side }) => {
         timeoutLabel: moment.duration(timeout, 'ms').humanize(),
         acceptedLabel: accepted ? moment(accepted).format('MMMM Do, YYYY, HH:mm:ss') : '-',
         bidExpiresLabel: bidExpires ? moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss') : '-',
+        statistics: bid.statistics,
         _publisherConfirmation: bid._publisherConfirmation ?
             <ItemIpfsDetailsDialog
                 btnLabel={t('PUBLISHER')}
@@ -364,7 +410,16 @@ export const getAdvertiserBidData = ({ bid, t, transactions, side, item, account
         /> : null
 
     return bidData
+}
 
+export const getBidData = ({ bid, t, transactions, side, item, account, onSave }) => {
+    if (side === 'advertiser') {
+        return getAdvertiserBidData({ bid, t, transactions, side, item, account, onSave })
+    } else if (side === 'publisher') {
+        return getPublisherBidData({ bid, t, transactions, side, item, account, onSave })
+    } else {
+        return 'kor' // OR throw ?
+    }
 }
 
 export const searchMatch = (bid) => {

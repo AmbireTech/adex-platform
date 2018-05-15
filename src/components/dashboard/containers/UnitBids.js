@@ -15,7 +15,7 @@ import { exchange as ExchangeConstants } from 'adex-constants'
 import { CancelBid, VerifyBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
 import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
-import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch, getAdvertiserBidData } from './BidsCommon'
+import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch, getAdvertiserBidData, getBidData } from './BidsCommon'
 import { getAddrBids } from 'services/store-data/bids'
 
 const TooltipIconButton = Tooltip(IconButton)
@@ -47,22 +47,17 @@ export class UnitBids extends Component {
         }
     }
 
-    getBidData = (bid) => {
-
-        return getAdvertiserBidData({
+    renderTableRow = (bid, index, { to, selected }) => {
+        const t = this.props.t
+        const bidData = getBidData({
             bid: bid,
-            t: this.props.t,
+            t: t,
             transactions: this.props.transactions,
             side: this.props.side,
             item: this.props.item,
             account: this.props.account,
             onSave: this.onSave
         })
-    }
-
-    renderTableRow = (bid, index, { to, selected }) => {
-        const t = this.props.t
-        const bidData = this.getBidData(bid)
 
         return renderCommonTableRow({ bidData, t })
     }
@@ -93,7 +88,7 @@ export class UnitBids extends Component {
                 {this.props.getUnitBids ? null :
                     <div className={classnames(theme.heading, theme.Transactions)}>
                         <h2 > {t('ALL_BIDS')} </h2>
-                    </div>                
+                    </div>
                 }
                 <Tabs
                     theme={theme}
