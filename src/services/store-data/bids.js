@@ -35,23 +35,29 @@ export const getAddrBids = ({ authSig, side }) => {
             getBids({ side: 'advertiser', storeProp: 'advBids', authSig }),
             getBids({ side: 'publisher', storeProp: 'pubBids', authSig })
         ])
+        .then(([advBids, pubBids]) => {
+            // TODO: keep only this in the store and sort the bids when asked
+
+            const bidsById = ((advBids || []).concat(pubBids || [])).reduce((memo, bid) => {
+                if (bid && bid._id) {
+                    memo[bid._id] = bid
+                }
+                return memo
+            }, {})
+
+            actions.execute(actions.updateBids({
+                bidsById: bidsById
+            }))
+
+            return true
+        })
 }
 
 export const getBids = ({ side, storeProp, authSig }) => {
     return getBidsBySide({ side: side, authSig: authSig })
         .then((bids) => {
-            actions.execute(actions.updateBids({
-                bidsById: bids.reduce((memo, bid) => {
-                    if (bid && bid._id) {
-                        memo[bid._id] = bid
-                    }
-
-                    return memo
-
-                }, {})
-            }))
             const sorted = sortBids(bids)
             actions.execute(actions.updateBids({ [storeProp]: sorted }))
-            return true
+            return bids
         })
 }

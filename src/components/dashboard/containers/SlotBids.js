@@ -23,6 +23,7 @@ import { getAddrBids, sortBids } from 'services/store-data/bids'
 import { getBidEvents } from 'services/adex-node/actions'
 import { IconButton } from 'react-toolbox/lib/button'
 import BidsStatistics from './BidsStatistics'
+import statisticsTheme from './bidsStatisticsTheme.css'
 
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
 
@@ -172,7 +173,7 @@ export class SlotBids extends Component {
                             filterProperties={FILTER_PROPERTIES_BIDS}
                         />
                     </Tab>
-                    <Tab label={t('STATISTICS')}>
+                    <Tab className={theme.noPaddingTab} label={t('STATISTICS')}>
                         <BidsStatistics bids={sorted.action.concat(sorted.active, sorted.closed)} />
                     </Tab>
                 </Tabs>

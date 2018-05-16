@@ -137,6 +137,25 @@
         // max-height: calc(70vh - 100px);
         outline: none;
         max-width: 1200px;
+        padding: 0;
+    }
+
+    & .inverse {
+        & .navigation {
+        background-color: #0277BD;
+        & .label {
+            color: #fff;
+            opacity: 0.6;
+            &.active {
+                opacity: 1
+            }
+        }
+    }
+
+    & .pointer {
+        background-color: #fff;
+    } 
+
     }
 }
 
