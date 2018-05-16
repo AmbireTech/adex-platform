@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import theme from './theme.css'
+import datepickerTheme from './datepicker.css'
 import statisticsTheme from './bidsStatisticsTheme.css'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import { BidsStatusBars, BidsStatusPie, SlotsClicksAndRevenue, BidsTimeStatistics } from 'components/dashboard/charts/slot'
@@ -21,6 +22,8 @@ import { renderCommonTableRowStats, renderTableHeadStats, searchMatch, getBidDat
 import Rows from 'components/dashboard/collection/Rows'
 import { Tab, Tabs } from 'react-toolbox'
 import classnames from 'classnames'
+import DatePicker from 'react-toolbox/lib/date_picker'
+import FontIcon from 'react-toolbox/lib/font_icon'
 
 const { BidStatesLabels } = ExchangeConstants
 
@@ -35,12 +38,25 @@ export class BidsStatistics extends Component {
             hourlyDaySelected: '',
             bidsStats: {},
             tabIndex: 0,
-            filterIndex: null
+            filterIndex: null,
+            from: moment().subtract('days', 6),
+            to: moment()
         }
+    }
+
+    dateFormat = (value) => {
+        return moment(value).format('DD MMMM')
     }
 
     handleTabChange = (index) => {
         this.setState({ tabIndex: index })
+    }
+
+    handleChangeDatepickerChange = (prop, value) => {
+
+        console.log('value', value)
+        console.log('prop', prop)
+        this.setState({ [prop]: value })
     }
 
     getBids = ({ start, end }) => {
@@ -291,6 +307,10 @@ export class BidsStatistics extends Component {
         const t = this.props.t
         const filterIndex = this.state.filterIndex
         const tabIndex = this.state.tabIndex
+        let from = this.state.from ? new Date(this.state.from) : null
+        let to = this.state.to ? new Date(this.state.to) : null
+        let now = new Date()
+
         return (
             <div>
                 <Navigation theme={statisticsTheme}>
@@ -329,7 +349,38 @@ export class BidsStatistics extends Component {
                                 onClick={() => this.applyPeriodFilter({ start: moment().subtract(1, 'month').startOf('month').valueOf(), end: moment().subtract(1, 'month').endOf('month').valueOf(), filterIndex: 4 })}
                             />
                         </div>
-                        <div>
+                        <div className={classnames(datepickerTheme.statsDatePicker, { [datepickerTheme.active]: filterIndex === 5 })}>
+                            <FontIcon value="date_range" />
+                            <span>{t('from')} </span>
+                            <DatePicker
+                                label={this.props.t('from', { isProp: true })}
+                                // minDate={now}
+                                maxDate={now}
+                                onChange={(val) => { this.handleChangeDatepickerChange('from', val) }}
+                                value={from}
+                                className={datepickerTheme.datepicker}
+                                theme={datepickerTheme}
+                                inputFormat={this.dateFormat}
+                                size={moment(from).format('DD MMMM').length} /** temp fix */
+                            />
+                            <span>{t('to')} </span>
+                            <DatePicker
+                                label={this.props.t('to', { isProp: true })}
+                                minDate={from || now}
+                                maxDate={now}
+                                onChange={(val) => { this.handleChangeDatepickerChange('to', val) }}
+                                value={to}
+                                className={datepickerTheme.datepicker}
+                                theme={datepickerTheme}
+                                inputFormat={this.dateFormat}
+                                size={moment(to).format('DD MMMM').length} /** temp fix */
+                            />
+                            <Button
+                                className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: filterIndex === 5 })}
+                                inverse
+                                label={t('SEND')}
+                                onClick={() => this.applyPeriodFilter({ start: moment(from).valueOf(), end: moment(to).valueOf(), filterIndex: 5 })}
+                            />
 
                         </div>
                     </div>

@@ -16,7 +16,7 @@
 
 .navLeft {
     display: flex;
-    flex-grow: 4;
+    flex-grow: 3;
     flex-direction: row;
     flex-flow: wrap;
     padding-right: 40px;
@@ -27,7 +27,7 @@
     flex-grow: 1;
     flex-direction: row;
     justify-content: flex-end;
-    /* flex-flow: wrap; */
+    flex-flow: wrap;
 }
 
 .tab {
