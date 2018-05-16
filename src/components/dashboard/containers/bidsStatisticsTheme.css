@@ -1,0 +1,40 @@
+.horizontal {
+    background-color: #0277bd;
+    display: flex;
+    justify-content: space-between;
+    flex-flow: nowrap;
+}
+
+.navButton {
+    opacity: 0.6;
+
+    &.active {
+        opacity: 1;
+        text-decoration: underline
+    }
+}
+
+.navLeft {
+    display: flex;
+    flex-grow: 4;
+    flex-direction: row;
+    flex-flow: wrap;
+    padding-right: 40px;
+}
+
+.navRight {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: row;
+    justify-content: flex-end;
+    /* flex-flow: wrap; */
+}
+
+.tab {
+    padding: 0;
+    padding-bottom: 12px;
+
+    &.active {
+        padding: 0;
+    }
+}
