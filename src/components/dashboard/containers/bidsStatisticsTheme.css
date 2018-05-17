@@ -19,7 +19,6 @@
     flex-grow: 3;
     flex-direction: row;
     flex-flow: wrap;
-    padding-right: 40px;
 }
 
 .navRight {

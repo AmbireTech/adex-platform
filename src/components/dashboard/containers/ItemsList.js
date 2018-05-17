@@ -296,9 +296,10 @@ class ItemsList extends Component {
                     return false
                 }
 
-                if (filterBy && filterBy.key && (filterBy.value !== '')) {
+                if (filterBy && filterBy.key && (filterBy.value)) {
                     let itemValue = filterBy.key.split('.')
-                        .reduce((o, p) => o ? o[p] : 'noprop', i)
+                        .reduce((o, p) => o ? o[p] : 'noprop', i) || ''
+
                     let passFilter = itemValue.toString() === filterBy.value.toString()
 
                     if (!passFilter) {
@@ -411,7 +412,7 @@ class ItemsList extends Component {
                                     <IconButton icon='arrow_downward' primary={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
                                 </div>
                             </Col>
-                            {this.props.filterProperties ? 
+                            {this.props.filterProperties ?
                                 <Col sm={12} md={12} lg={5}>
                                     <Row>
                                         <Col xs={12} sm={6} md={6} lg={6}>
@@ -433,8 +434,8 @@ class ItemsList extends Component {
                                             />
                                         </Col>
                                     </Row>
-                            </Col>
-                            : null }
+                                </Col>
+                                : null}
                             {this.props.archive ?
                                 <Col sm={12} md={5} lg={4}>
                                     <RadioGroup theme={theme} name='archived' value={this.state.filterArchived.toString()} onChange={this.handleChange.bind(this, 'filterArchived')}>
@@ -443,7 +444,7 @@ class ItemsList extends Component {
                                         <RadioButton theme={theme} label={t('LABEL_ALL')} value={''} />
                                     </RadioGroup>
                                 </Col>
-                            : null}
+                                : null}
                             <Col xs={12} sm={12} md={5} lg={6}>
                                 <Pagination
                                     t={t}
@@ -472,7 +473,7 @@ class ItemsList extends Component {
                                 null
                             }
                         </Row>
-                       
+
                     </Grid>
                 </div >
                 <section>

@@ -3,7 +3,7 @@ import { Bar, Doughnut, Line } from 'react-chartjs-2'
 import { CHARTS_COLORS, hexColorsToRgbaArray } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
 
-export const BidsTimeStatistics = ({ data, options, t }) => {
+export const BidsTimeStatistics = ({ data, options = {}, t }) => {
 
     if (!Object.keys(data).length) return null
     data = Object.keys(data).reduce((memo, key) => {
@@ -64,9 +64,14 @@ export const BidsTimeStatistics = ({ data, options, t }) => {
     }
 
     const linesOptions = {
+        responsive: true,
+        title: {
+            display: true,
+            text: options.title
+        },
         elements: {
             line: {
-                fill: false
+                fill: true
             }
         },
         tooltips: {

@@ -143,16 +143,6 @@ export const renderCommonTableRow = ({ bidData, t, side }) => {
                 {bidData.refundBtn || null}
                 {bidData.acceptBid || null}
                 {bidData.giveupBid || null}
-                <IconButton icon='info' onClick={() =>
-                    getBidEvents({
-                        eventData: {
-                            bid: bidData._id,
-                            end: Date.now(),
-                            start: Date.now() - (24 * 60 * 60 * 1000),
-                            // interval: Date.now()
-                        }
-                    })
-                } />
             </TableCell>
         </TableRow >
     )
@@ -163,9 +153,12 @@ export const renderTableHeadStats = ({ t, side, }) => {
         <TableHead>
             <TableCell> {t('DETAILS')} </TableCell>
             <TableCell> {t('BID_ID')} </TableCell>
-            <TableCell> {t('BID_UNIQUE_CLICKS')}</TableCell>
-            <TableCell> {t('BID_CLICKS')} </TableCell>
-            <TableCell> {t('BID_IMPRESSIONS')} </TableCell>
+            <TableCell> {t('BID_AMOUNT')} </TableCell>
+            <TableCell> {t('BID_TARGET')} / {t('BID_UNIQUE_CLICKS')} </TableCell>
+            <TableCell> {t('BID_STATE')} </TableCell>
+            <TableCell> {t('BID_PERIOD_UNIQUE_CLICKS')}</TableCell>
+            <TableCell> {t('BID_PERIOD_CLICKS')} </TableCell>
+            <TableCell> {t('BID_PERIOD_IMPRESSIONS')} </TableCell>
             <TableCell> {t('BID_ESTIMATED_REVENUE')} </TableCell>
         </TableHead>
     )
@@ -184,7 +177,16 @@ export const renderCommonTableRowStats = ({ bidData, t, side }) => {
                     iconButton
                 />
             </TableCell>
-            <TableCell> {bidData._id} </TableCell>
+            <TableCell
+                className={classnames(theme.compactCol, theme.ellipsis)}
+            >
+                {bidData._id}
+            </TableCell>
+            <TableCell> {bidData._amount} </TableCell>
+            <TableCell>
+                {bidData._target} / {bidData.clicksCount}
+            </TableCell>
+            <TableCell> {bidData._state} </TableCell>
             <TableCell>
                 {bidData.statistics.daily.uniqueClicks || 0}
             </TableCell>
