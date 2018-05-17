@@ -40,7 +40,9 @@ export class BidsStatistics extends Component {
             hourlyDaySelected: '',
             bidsStats: {},
             tabIndex: 0,
-            filterIndex: null,
+            filterIndex: 0,
+            start: null,
+            end: null,
             from: moment().subtract('days', 6),
             to: moment(),
             fullWidthChart: ''
@@ -50,6 +52,10 @@ export class BidsStatistics extends Component {
     toggleFullWidthChart = (chartID) => {
         const id = this.state.fullWidthChart === chartID ? '' : chartID
         this.setState({ fullWidthChart: id })
+    }
+
+    componentWillMount = () => {
+        this.applyPeriodFilter({ start: Date.now() - (24 * 60 * 60 * 1000), end: Date.now(), filterIndex: 0 })
     }
 
     componentWillUnmount = () => {
@@ -339,7 +345,7 @@ export class BidsStatistics extends Component {
 
     applyPeriodFilter = ({ start, end, filterIndex }) => {
         this.props.actions.updateSpinner(SPINNER_ID, true)
-        this.setState({ filterIndex, hourlyDaySelected: '' })
+        this.setState({ filterIndex, hourlyDaySelected: '', start, end })
         this.getBids({ start, end })
     }
 
@@ -434,21 +440,26 @@ export class BidsStatistics extends Component {
                     </div>
 
                 </Navigation>
-                <div>
-                    <Button
-                        className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: tabIndex === 0 })}
-                        primary={tabIndex === 0}
-                        icon='donut_large'
-                        label={t('CHARTS')}
-                        onClick={() => this.handleTabChange(0)}
-                    />
-                    <Button
-                        className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: tabIndex === 1 })}
-                        primary={tabIndex === 1}
-                        icon='list'
-                        label={t('TABLE')}
-                        onClick={() => this.handleTabChange(1)}
-                    />
+                <div className={statisticsTheme.subNav}>
+                    <div>
+                        <Button
+                            className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: tabIndex === 0 })}
+                            primary={tabIndex === 0}
+                            icon='donut_large'
+                            label={t('CHARTS')}
+                            onClick={() => this.handleTabChange(0)}
+                        />
+                        <Button
+                            className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: tabIndex === 1 })}
+                            primary={tabIndex === 1}
+                            icon='list'
+                            label={t('TABLE')}
+                            onClick={() => this.handleTabChange(1)}
+                        />
+                    </div>
+                    <div>
+                        {moment(this.state.start).format() + ' - ' + moment(this.state.end).format()}
+                    </div>
                 </div>
                 <br />
 
