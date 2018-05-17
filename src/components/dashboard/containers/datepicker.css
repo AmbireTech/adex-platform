@@ -31,11 +31,20 @@
 }
 
 .statsDatePicker {
-    opacity: 0.6;
-    & span {
-        color: #fff;
-    }
+    display: flex;
+    align-items: center;
+
     &.active {
+        & .input, & .inputElement, & span {
+            opacity: 1;
+        }
+    }
+    &.button {
         opacity: 1;
+    }
+
+    & .input, & .inputElement, & span {
+        color: #fff;
+        opacity: 0.6;
     }
 }

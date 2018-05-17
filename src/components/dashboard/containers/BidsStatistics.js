@@ -12,7 +12,7 @@ import { BidsStatusBars, BidsStatusPie, SlotsClicksAndRevenue, BidsTimeStatistic
 import Translate from 'components/translate/Translate'
 import { exchange as ExchangeConstants } from 'adex-constants'
 import { getBidEvents } from 'services/adex-node/actions'
-import { Button } from 'react-toolbox/lib/button'
+import { Button, IconButton } from 'react-toolbox/lib/button'
 import Navigation from 'react-toolbox/lib/navigation'
 import moment from 'moment'
 import Dropdown from 'react-toolbox/lib/dropdown'
@@ -24,8 +24,10 @@ import { Tab, Tabs } from 'react-toolbox'
 import classnames from 'classnames'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import FontIcon from 'react-toolbox/lib/font_icon'
+import ProgressBar from 'react-toolbox/lib/progress_bar'
 
 const { BidStatesLabels } = ExchangeConstants
+const SPINNER_ID = 'STATISTICS'
 
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
 
@@ -40,8 +42,18 @@ export class BidsStatistics extends Component {
             tabIndex: 0,
             filterIndex: null,
             from: moment().subtract('days', 6),
-            to: moment()
+            to: moment(),
+            fullWidthChart: ''
         }
+    }
+
+    toggleFullWidthChart = (chartID) => {
+        const id = this.state.fullWidthChart === chartID ? '' : chartID
+        this.setState({ fullWidthChart: id })
+    }
+
+    componentWillUnmount = () => {
+        this.props.actions.updateSpinner(SPINNER_ID, false)
     }
 
     dateFormat = (value) => {
@@ -74,6 +86,7 @@ export class BidsStatistics extends Component {
             }
         }).then((res) => {
             this.setState({ statistics: res.stats, bidsStats: res.bidsStats })
+            this.props.actions.updateSpinner(SPINNER_ID, false)
         })
     }
 
@@ -146,20 +159,44 @@ export class BidsStatistics extends Component {
         return data
     }
 
-    renderBidsPeriodStatistics = ({ stats }) => {
+    chartZoomBtn = ({ btnID }) => {
+        return (
+            <div style={{ textAlign: 'right' }}>
+                <IconButton icon={this.state.fullWidthChart === btnID ? 'fullscreen_exit' : 'fullscreen'} onClick={() =>
+                    this.toggleFullWidthChart(btnID)
+                } />
+            </div>
+        )
+    }
 
-        let data = this.bidsStatsData({ stats: stats })
+    resizableCol = ({ id, stateId, children }) => {
+        const cols = this.state.fullWidthChart === id ? 12 : 6
+        return (
+            <Col
+                key={id + cols} // NOTE: hack to escape react optimization and rerender the col
+                xs={12}
+                sm={12}
+                md={cols}>
+                {children}
+            </Col>
+        )
+    }
+
+    renderBidsPeriodStatistics = ({ stats }) => {
+        const data = this.bidsStatsData({ stats: stats })
+        const t = this.props.t
         return (
             <div>
                 <Grid fluid >
-                    <Row middle='xs' className={theme.itemsListControls}>
+                    <Row bottom='xs' className={theme.itemsListControls}>
                         {Object.keys(data.live).length ?
-                            <Col xs={12} sm={12} md={6}>
-                                <BidsTimeStatistics data={data.live} t={this.props.t} />
-                            </Col>
+                            <this.resizableCol id='LIVE_CHART' >
+                                <this.chartZoomBtn btnID='LIVE_CHART' />
+                                <BidsTimeStatistics data={data.live} t={this.props.t} options={{ title: t('CHART_LIVE_TITLE'), col: this.state.fullWidthChart === 'LIVE_CHART' ? 12 : 6 }} />
+                            </this.resizableCol >
                             : null}
                         {Object.keys(data.hourly).length ?
-                            <Col xs={12} sm={12} md={6}>
+                            <this.resizableCol id='HOURLY_CHART' >
                                 <Dropdown
                                     source={Object.keys(data.hourly).map((key) => { return { value: key, label: key } })}
                                     onChange={(val) => this.setState({ hourlyDaySelected: val })}
@@ -167,21 +204,23 @@ export class BidsStatistics extends Component {
                                     value={this.state.hourlyDaySelected || Object.keys(data.hourly)[0]}
                                 />
 
-                                {Object.keys(data.hourly).map((key) => {
+                                <this.chartZoomBtn btnID='HOURLY_CHART' />
+                                {Object.keys(data.hourly).map((key, index) => {
                                     return (
-                                        <div key={key} style={{ display: !this.state.hourlyDaySelected || (this.state.hourlyDaySelected === key) ? 'block' : 'none' }}>
-                                            {/* <div> {key}</div> */}
-                                            <BidsTimeStatistics data={data.hourly[key]} t={this.props.t} />
+                                        <div key={key} style={{ display: (this.state.hourlyDaySelected === key) || (!this.state.hourlyDaySelected && index === 0) ? 'block' : 'none' }}>
+                                            <BidsTimeStatistics data={data.hourly[key]} t={this.props.t} options={{ title: t('CHART_LIVE_HOURLY', { args: [key] }), col: this.state.fullWidthChart === 'HOURLY_CHART' ? 12 : 6 }} />
                                         </div>
                                     )
                                 })}
-
-                            </Col>
+                            </this.resizableCol >
                             : null}
                         {Object.keys(data.daily).length ?
-                            <Col xs={12} sm={12} md={6}>
-                                <BidsTimeStatistics data={data.daily} t={this.props.t} />
-                            </Col>
+
+                            <this.resizableCol id='DAILY_CHART' >
+                                <this.chartZoomBtn btnID='DAILY_CHART' />
+                                <BidsTimeStatistics data={data.daily} t={this.props.t} options={{ title: t('CHART_LIVE_DAILY'), col: this.state.fullWidthChart === 'DAILY_CHART' ? 12 : 6 }} />
+                            </this.resizableCol >
+
                             : null}
                     </Row>
                 </Grid>
@@ -299,7 +338,8 @@ export class BidsStatistics extends Component {
     }
 
     applyPeriodFilter = ({ start, end, filterIndex }) => {
-        this.setState({ filterIndex })
+        this.props.actions.updateSpinner(SPINNER_ID, true)
+        this.setState({ filterIndex, hourlyDaySelected: '' })
         this.getBids({ start, end })
     }
 
@@ -313,8 +353,13 @@ export class BidsStatistics extends Component {
 
         return (
             <div>
-                <Navigation theme={statisticsTheme}>
-                    <div className={statisticsTheme.navLeft}>
+                <Navigation
+                    theme={statisticsTheme}
+                    className={statisticsTheme.nav}
+                >
+                    <div
+                        className={statisticsTheme.navLeft}
+                    >
                         <div>
                             <Button
                                 className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: filterIndex === 0 })}
@@ -349,69 +394,79 @@ export class BidsStatistics extends Component {
                                 onClick={() => this.applyPeriodFilter({ start: moment().subtract(1, 'month').startOf('month').valueOf(), end: moment().subtract(1, 'month').endOf('month').valueOf(), filterIndex: 4 })}
                             />
                         </div>
-                        <div className={classnames(datepickerTheme.statsDatePicker, { [datepickerTheme.active]: filterIndex === 5 })}>
-                            <FontIcon value="date_range" />
-                            <span>{t('from')} </span>
-                            <DatePicker
-                                label={this.props.t('from', { isProp: true })}
-                                // minDate={now}
-                                maxDate={now}
-                                onChange={(val) => { this.handleChangeDatepickerChange('from', val) }}
-                                value={from}
-                                className={datepickerTheme.datepicker}
-                                theme={datepickerTheme}
-                                inputFormat={this.dateFormat}
-                                size={moment(from).format('DD MMMM').length} /** temp fix */
-                            />
-                            <span>{t('to')} </span>
-                            <DatePicker
-                                label={this.props.t('to', { isProp: true })}
-                                minDate={from || now}
-                                maxDate={now}
-                                onChange={(val) => { this.handleChangeDatepickerChange('to', val) }}
-                                value={to}
-                                className={datepickerTheme.datepicker}
-                                theme={datepickerTheme}
-                                inputFormat={this.dateFormat}
-                                size={moment(to).format('DD MMMM').length} /** temp fix */
-                            />
-                            <Button
-                                className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: filterIndex === 5 })}
-                                inverse
-                                label={t('SEND')}
-                                onClick={() => this.applyPeriodFilter({ start: moment(from).valueOf(), end: moment(to).valueOf(), filterIndex: 5 })}
-                            />
+                    </div>
+                    <div
+                        className={classnames(statisticsTheme.navRight, datepickerTheme.statsDatePicker, { [datepickerTheme.active]: filterIndex === 5 })}
 
-                        </div>
-                    </div>
-                    <div className={statisticsTheme.navRight}>
-                        <Button
-                            className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: tabIndex === 0 })}
-                            inverse
-                            icon='donut_large'
-                            label={t('CHARTS')}
-                            onClick={() => this.handleTabChange(0)}
+                    >
+                        <FontIcon value="date_range" />
+                        <span>{t('from')} </span>
+                        <DatePicker
+                            label={this.props.t('from', { isProp: true })}
+                            // minDate={now}
+                            maxDate={now}
+                            onChange={(val) => { this.handleChangeDatepickerChange('from', val) }}
+                            value={from}
+                            className={datepickerTheme.datepicker}
+                            theme={datepickerTheme}
+                            inputFormat={this.dateFormat}
+                            size={moment(from).format('DD MMMM').length} /** temp fix */
+                        />
+                        <span>{t('to')} </span>
+                        <DatePicker
+                            label={this.props.t('to', { isProp: true })}
+                            minDate={from || now}
+                            maxDate={now}
+                            onChange={(val) => { this.handleChangeDatepickerChange('to', val) }}
+                            value={to}
+                            className={datepickerTheme.datepicker}
+                            theme={datepickerTheme}
+                            inputFormat={this.dateFormat}
+                            size={moment(to).format('DD MMMM').length} /** temp fix */
                         />
                         <Button
-                            className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: tabIndex === 1 })}
                             inverse
-                            icon='list'
-                            label={t('TABLE')}
-                            onClick={() => this.handleTabChange(1)}
+                            raised
+                            label={t('APPLY')}
+                            onClick={() => this.applyPeriodFilter({ start: moment(from).valueOf(), end: moment(to).valueOf(), filterIndex: 5 })}
                         />
+
                     </div>
+
                 </Navigation>
+                <div>
+                    <Button
+                        className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: tabIndex === 0 })}
+                        primary={tabIndex === 0}
+                        icon='donut_large'
+                        label={t('CHARTS')}
+                        onClick={() => this.handleTabChange(0)}
+                    />
+                    <Button
+                        className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: tabIndex === 1 })}
+                        primary={tabIndex === 1}
+                        icon='list'
+                        label={t('TABLE')}
+                        onClick={() => this.handleTabChange(1)}
+                    />
+                </div>
                 <br />
 
-                <div>
-                    {this.state.tabIndex === 0 ?
-                        this.renderBidsPeriodStatistics({ stats: this.state.statistics }) : null
-                    }
+                {this.props.spinner ?
+                    <div style={{ textAlign: 'center' }}>
+                        <ProgressBar type='circular' mode='indeterminate' multicolor />
+                    </div>
+                    :
+                    <div>
+                        {this.state.tabIndex === 0 ?
+                            this.renderBidsPeriodStatistics({ stats: this.state.statistics }) : null
+                        }
 
-                    {this.state.tabIndex === 1 ?
-                        this.renderBidsTable({ bids: this.state.bidsStats }) : null
-                    }
-                </div>
+                        {this.state.tabIndex === 1 ?
+                            this.renderBidsTable({ bids: this.state.bidsStats }) : null
+                        }
+                    </div>
+                }
             </div>
         )
     }
@@ -431,6 +486,7 @@ function mapStateToProps(state, props) {
         bidsById: persist.bids.bidsById,
         side: memory.nav.side,
         transactions: persist.web3Transactions[persist.account._addr] || {},
+        spinner: memory.spinners[SPINNER_ID],
     }
 }
 
