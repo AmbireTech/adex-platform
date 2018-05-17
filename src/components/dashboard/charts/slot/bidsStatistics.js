@@ -63,6 +63,11 @@ export const BidsTimeStatistics = ({ data, options = {}, t }) => {
         ]
     }
 
+    const maxTickLimit = 10
+    const max = (Math.ceil(data.step.max / 5) * 5) || 1
+    const min = data.step.min || 0
+    const step = Math.ceil(max / maxTickLimit) || 1
+
     const linesOptions = {
         responsive: true,
         title: {
@@ -83,7 +88,7 @@ export const BidsTimeStatistics = ({ data, options = {}, t }) => {
                     display: true,
                     gridLines: {
                         display: true,
-                        beginAtZero: true
+                        // beginAtZero: true
                     },
                     // labels: {
                     //     show: true
@@ -94,8 +99,11 @@ export const BidsTimeStatistics = ({ data, options = {}, t }) => {
                 {
                     display: true,
                     ticks: {
-                        suggestedMin: data.step.min,
-                        suggestedMax: data.step.max
+                        beginAtZero: true,
+                        min: min,
+                        max: max,
+                        stepSize: step,
+                        maxTicksLimit: maxTickLimit
                     },
                     gridLines: {
                         display: true,
