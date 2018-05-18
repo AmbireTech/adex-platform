@@ -91,7 +91,7 @@ export class BidsStatistics extends Component {
                 end: end
             }
         }).then((res) => {
-            this.setState({ statistics: res.stats, bidsStats: res.bidsStats })
+            this.setState({ statistics: res.stats || {}, bidsStats: res.bidsStats || {} })
             this.props.actions.updateSpinner(SPINNER_ID, false)
         })
     }
@@ -138,7 +138,7 @@ export class BidsStatistics extends Component {
             }
 
             intData.clicks += parseInt((data.clicks || 0), 10)
-            intData.uniqueClicks += parseInt((data.uniqueClicks || 0), 10)
+            intData.uniqueClicks += parseInt((data.uniqueClick || 0), 10)
             intData.loaded += parseInt((data.loaded || 0), 10)
 
             if (dayKey) {
@@ -306,7 +306,7 @@ export class BidsStatistics extends Component {
             side: this.props.side,
             item: this.props.item,
             account: this.props.account,
-            onSave: this.getBids
+            onSave: this.props.onSave
         })
 
         // console.log('bidData', bidData)
@@ -468,13 +468,21 @@ export class BidsStatistics extends Component {
                         <ProgressBar type='circular' mode='indeterminate' multicolor />
                     </div>
                     :
+
                     <div>
                         {this.state.tabIndex === 0 ?
-                            this.renderBidsPeriodStatistics({ stats: this.state.statistics }) : null
+                            Object.keys(this.state.statistics).length ?
+                                this.renderBidsPeriodStatistics({ stats: this.state.statistics })
+                                : t('NOTHING_TO_SHOW')
+
+                            : null
                         }
 
                         {this.state.tabIndex === 1 ?
-                            this.renderBidsTable({ bids: this.state.bidsStats }) : null
+                            Object.keys(this.state.statistics).length && Object.keys(this.state.bidsStats).length ?
+                                this.renderBidsTable({ bids: this.state.bidsStats })
+                                : t('NOTHING_TO_SHOW')
+                            : null
                         }
                     </div>
                 }
@@ -486,7 +494,8 @@ export class BidsStatistics extends Component {
 BidsStatistics.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    bids: PropTypes.array.isRequired
+    bids: PropTypes.array.isRequired,
+    onSave: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state, props) {

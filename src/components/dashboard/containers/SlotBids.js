@@ -174,7 +174,7 @@ export class SlotBids extends Component {
                         />
                     </Tab>
                     <Tab className={theme.noPaddingTab} label={t('STATISTICS')}>
-                        <BidsStatistics bids={sorted.action.concat(sorted.active, sorted.closed)} />
+                        <BidsStatistics bids={sorted.action.concat(sorted.active, sorted.closed)} onSave={this.getBids}/>
                     </Tab>
                 </Tabs>
             </div>

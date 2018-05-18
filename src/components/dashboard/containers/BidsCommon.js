@@ -188,7 +188,7 @@ export const renderCommonTableRowStats = ({ bidData, t, side }) => {
             </TableCell>
             <TableCell> {bidData._state} </TableCell>
             <TableCell>
-                {bidData.statistics.daily.uniqueClicks || 0}
+                {bidData.statistics.daily.uniqueClick || 0}
             </TableCell>
             <TableCell>
                 {bidData.statistics.daily.clicks || 0}
@@ -197,8 +197,8 @@ export const renderCommonTableRowStats = ({ bidData, t, side }) => {
                 {bidData.statistics.daily.loads || 0}
             </TableCell>
             <TableCell>
-                {bidData.statistics.daily.uniqueClicks > 0 ?
-                    (parseInt(bidData._target, 10) / parseInt(bidData._amount, 10)) / bidData.statistics.daily.uniqueClicks / 10000
+                {bidData.clicksCount > 0 ?
+                    (adxToFloatView(Math.floor(parseInt(bidData.amount, 10) / parseInt(bidData._target, 10)) * bidData.clicksCount)) + ' ADX'
                     : 0}
             </TableCell>
         </TableRow >
@@ -224,6 +224,7 @@ export const getCommonBidData = ({ bid, t, side }) => {
     const bidData = {
         _id: bid._id || '-',
         _amount: adxToFloatView(bid._amount) + ' ADX',
+        amount: bid._amount,
         _target: bid._target,
         clicksCount: bid.clicksCount || '-',
         _state:
