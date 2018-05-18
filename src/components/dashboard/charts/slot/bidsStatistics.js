@@ -10,9 +10,9 @@ export const BidsTimeStatistics = ({ data, options = {}, t }) => {
         const item = data[key]
 
         memo.labels.push(key)
-        memo.clicks.push(item.clicks)
-        memo.uniqueClicks.push(item.uniqueClicks)
-        memo.loaded.push(item.loaded)
+        memo.clicks.push(item.clicks || 0)
+        memo.uniqueClicks.push(item.uniqueClicks || 0)
+        memo.loaded.push(item.loaded || 0)
 
         memo.step.min = Math.min(memo.step.min, item.clicks, item.uniqueClicks, item.loaded)
         memo.step.max = Math.max(memo.step.max, item.clicks, item.uniqueClicks, item.loaded)
@@ -64,9 +64,15 @@ export const BidsTimeStatistics = ({ data, options = {}, t }) => {
     }
 
     const maxTickLimit = 10
-    const max = (Math.ceil(data.step.max / 5) * 5) || 1
+    const max = data.step.max || 1
     const min = data.step.min || 0
     const step = Math.ceil(max / maxTickLimit) || 1
+
+    let maxTick = (step * maxTickLimit)
+
+    if (max < (maxTickLimit)) {
+        maxTick = max
+    }
 
     const linesOptions = {
         responsive: true,
@@ -101,9 +107,9 @@ export const BidsTimeStatistics = ({ data, options = {}, t }) => {
                     ticks: {
                         beginAtZero: true,
                         min: min,
-                        max: max,
+                        max: maxTick,
                         stepSize: step,
-                        maxTicksLimit: maxTickLimit
+                        // maxTicksLimit: maxTickLimit + 1
                     },
                     gridLines: {
                         display: true,

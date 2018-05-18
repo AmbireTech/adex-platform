@@ -17,6 +17,7 @@ import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
 import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch, getAdvertiserBidData, getBidData } from './BidsCommon'
 import { getAddrBids } from 'services/store-data/bids'
+import BidsStatistics from './BidsStatistics'
 
 const TooltipIconButton = Tooltip(IconButton)
 const { BID_STATES } = ExchangeConstants
@@ -136,10 +137,7 @@ export class UnitBids extends Component {
                         />
                     </Tab>
                     <Tab label={t('STATISTICS')}>
-                        <div>
-                            {t('COMING_SOON')}
-                            {/* {this.renderNonOpenedBidsChart(slotBids)} */}
-                        </div>
+                        <BidsStatistics bids={sorted.action.concat(sorted.active, sorted.closed)} onSave={this.onSave} />
                     </Tab>
                 </Tabs>
 
