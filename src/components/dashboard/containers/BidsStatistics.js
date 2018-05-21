@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -45,13 +44,25 @@ export class BidsStatistics extends Component {
             end: null,
             from: moment().subtract('days', 6),
             to: moment(),
-            fullWidthChart: ''
+            fullWidthChart: []
         }
     }
 
     toggleFullWidthChart = (chartID) => {
-        const id = this.state.fullWidthChart === chartID ? '' : chartID
-        this.setState({ fullWidthChart: id })
+        const newCharts = [...this.state.fullWidthChart]
+        const idIndex = newCharts.indexOf(chartID)
+
+        if (idIndex > -1) {
+            newCharts.splice(idIndex, 1)
+        } else {
+            newCharts.push(chartID)
+        }
+
+        this.setState({ fullWidthChart: newCharts })
+    }
+
+    isInFullWidthChart = (id) => {
+        return this.state.fullWidthChart.indexOf(id) > -1
     }
 
     componentWillMount = () => {
@@ -71,9 +82,6 @@ export class BidsStatistics extends Component {
     }
 
     handleChangeDatepickerChange = (prop, value) => {
-
-        console.log('value', value)
-        console.log('prop', prop)
         this.setState({ [prop]: value })
     }
 
@@ -168,7 +176,7 @@ export class BidsStatistics extends Component {
     chartZoomBtn = ({ btnID }) => {
         return (
             <div style={{ textAlign: 'right' }}>
-                <IconButton icon={this.state.fullWidthChart === btnID ? 'fullscreen_exit' : 'fullscreen'} onClick={() =>
+                <IconButton icon={this.isInFullWidthChart(btnID) ? 'fullscreen_exit' : 'fullscreen'} onClick={() =>
                     this.toggleFullWidthChart(btnID)
                 } />
             </div>
@@ -176,7 +184,7 @@ export class BidsStatistics extends Component {
     }
 
     resizableCol = ({ id, stateId, children }) => {
-        const cols = this.state.fullWidthChart === id ? 12 : 6
+        const cols = this.isInFullWidthChart(id) ? 12 : 6
         return (
             <Col
                 key={id + cols} // NOTE: hack to escape react optimization and rerender the col
@@ -198,7 +206,7 @@ export class BidsStatistics extends Component {
                         {Object.keys(data.live).length ?
                             <this.resizableCol id='LIVE_CHART' >
                                 <this.chartZoomBtn btnID='LIVE_CHART' />
-                                <BidsTimeStatistics data={data.live} t={this.props.t} options={{ title: t('CHART_LIVE_TITLE'), col: this.state.fullWidthChart === 'LIVE_CHART' ? 12 : 6 }} />
+                                <BidsTimeStatistics data={data.live} t={this.props.t} options={{ title: t('CHART_LIVE_TITLE'), col: this.isInFullWidthChart('LIVE_CHART') ? 12 : 6 }} />
                             </this.resizableCol >
                             : null}
                         {Object.keys(data.hourly).length ?
@@ -214,7 +222,7 @@ export class BidsStatistics extends Component {
                                 {Object.keys(data.hourly).map((key, index) => {
                                     return (
                                         <div key={key} style={{ display: (this.state.hourlyDaySelected === key) || (!this.state.hourlyDaySelected && index === 0) ? 'block' : 'none' }}>
-                                            <BidsTimeStatistics data={data.hourly[key]} t={this.props.t} options={{ title: t('CHART_LIVE_HOURLY', { args: [key] }), col: this.state.fullWidthChart === 'HOURLY_CHART' ? 12 : 6 }} />
+                                            <BidsTimeStatistics data={data.hourly[key]} t={this.props.t} options={{ title: t('CHART_LIVE_HOURLY', { args: [key] }), col: this.isInFullWidthChart('HOURLY_CHART') ? 12 : 6 }} />
                                         </div>
                                     )
                                 })}
@@ -224,7 +232,7 @@ export class BidsStatistics extends Component {
 
                             <this.resizableCol id='DAILY_CHART' >
                                 <this.chartZoomBtn btnID='DAILY_CHART' />
-                                <BidsTimeStatistics data={data.daily} t={this.props.t} options={{ title: t('CHART_LIVE_DAILY'), col: this.state.fullWidthChart === 'DAILY_CHART' ? 12 : 6 }} />
+                                <BidsTimeStatistics data={data.daily} t={this.props.t} options={{ title: t('CHART_LIVE_DAILY'), col: this.isInFullWidthChart('DAILY_CHART') ? 12 : 6 }} />
                             </this.resizableCol >
 
                             : null}
