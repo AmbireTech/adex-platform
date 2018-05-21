@@ -1,8 +1,17 @@
+/* TODO: colors constants */
 .horizontal {
     background-color: #0277bd;
     display: flex;
     justify-content: space-between;
     flex-flow: nowrap;
+}
+
+.dataLabel {
+    color: #0277bd;
+}
+
+.noDataLabel {
+    color: #FF5722;
 }
 
 .navButton {
