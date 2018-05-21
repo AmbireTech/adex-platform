@@ -42,6 +42,7 @@ export class BidsStatistics extends Component {
             filterIndex: 0,
             start: null,
             end: null,
+            currentPeriodLabel: null,
             from: moment().subtract('days', 6),
             to: moment(),
             fullWidthChart: []
@@ -66,7 +67,7 @@ export class BidsStatistics extends Component {
     }
 
     componentWillMount = () => {
-        this.applyPeriodFilter({ start: Date.now() - (24 * 60 * 60 * 1000), end: Date.now(), filterIndex: 0 })
+        this.applyPeriodFilter({ start: Date.now() - (24 * 60 * 60 * 1000), end: Date.now(), filterIndex: 0, label: 'LABEL_LAST_24H' })
     }
 
     componentWillUnmount = () => {
@@ -130,7 +131,7 @@ export class BidsStatistics extends Component {
                 format = 'HH:mm'
             } else if (interval === 'hourly') {
                 format = 'HH:mm'
-                dayKey = time.format('YYYY-MM-DD')
+                dayKey = time.format('DD MMMM YYYY')
             } else if (interval === 'daily') {
                 format = 'DD MMMM'
             }
@@ -199,6 +200,7 @@ export class BidsStatistics extends Component {
     renderBidsPeriodStatistics = ({ stats }) => {
         const data = this.bidsStatsData({ stats: stats })
         const t = this.props.t
+        const hourlyDataValue = this.state.hourlyDaySelected || Object.keys(data.hourly)[0]
         return (
             <div>
                 <Grid fluid >
@@ -206,7 +208,7 @@ export class BidsStatistics extends Component {
                         {Object.keys(data.live).length ?
                             <this.resizableCol id='LIVE_CHART' >
                                 <this.chartZoomBtn btnID='LIVE_CHART' />
-                                <BidsTimeStatistics data={data.live} t={this.props.t} options={{ title: t('CHART_LIVE_TITLE'), col: this.isInFullWidthChart('LIVE_CHART') ? 12 : 6 }} />
+                                <BidsTimeStatistics data={data.live} t={t} options={{ title: t('CHART_LIVE_TITLE'), col: this.isInFullWidthChart('LIVE_CHART') ? 12 : 6 }} />
                             </this.resizableCol >
                             : null}
                         {Object.keys(data.hourly).length ?
@@ -214,15 +216,15 @@ export class BidsStatistics extends Component {
                                 <Dropdown
                                     source={Object.keys(data.hourly).map((key) => { return { value: key, label: key } })}
                                     onChange={(val) => this.setState({ hourlyDaySelected: val })}
-                                    label='LABEL_DD_SELECT_DAY'
-                                    value={this.state.hourlyDaySelected || Object.keys(data.hourly)[0]}
+                                    label={t('LABEL_DD_SELECT_DAY')}
+                                    value={hourlyDataValue}
                                 />
 
                                 <this.chartZoomBtn btnID='HOURLY_CHART' />
                                 {Object.keys(data.hourly).map((key, index) => {
                                     return (
                                         <div key={key} style={{ display: (this.state.hourlyDaySelected === key) || (!this.state.hourlyDaySelected && index === 0) ? 'block' : 'none' }}>
-                                            <BidsTimeStatistics data={data.hourly[key]} t={this.props.t} options={{ title: t('CHART_LIVE_HOURLY', { args: [key] }), col: this.isInFullWidthChart('HOURLY_CHART') ? 12 : 6 }} />
+                                            <BidsTimeStatistics data={data.hourly[key]} t={t} options={{ title: t('CHART_HOURLY_TITLE', { args: ['(' + key + ')'] }), col: this.isInFullWidthChart('HOURLY_CHART') ? 12 : 6 }} />
                                         </div>
                                     )
                                 })}
@@ -232,7 +234,7 @@ export class BidsStatistics extends Component {
 
                             <this.resizableCol id='DAILY_CHART' >
                                 <this.chartZoomBtn btnID='DAILY_CHART' />
-                                <BidsTimeStatistics data={data.daily} t={this.props.t} options={{ title: t('CHART_LIVE_DAILY'), col: this.isInFullWidthChart('DAILY_CHART') ? 12 : 6 }} />
+                                <BidsTimeStatistics data={data.daily} t={t} options={{ title: t('CHART_DAILY_TITLE'), col: this.isInFullWidthChart('DAILY_CHART') ? 12 : 6 }} />
                             </this.resizableCol >
 
                             : null}
@@ -351,9 +353,9 @@ export class BidsStatistics extends Component {
         />)
     }
 
-    applyPeriodFilter = ({ start, end, filterIndex }) => {
+    applyPeriodFilter = ({ start, end, filterIndex, label }) => {
         this.props.actions.updateSpinner(SPINNER_ID, true)
-        this.setState({ filterIndex, hourlyDaySelected: '', start, end })
+        this.setState({ filterIndex, hourlyDaySelected: '', start, end, currentPeriodLabel: label })
         this.getBids({ start, end })
     }
 
@@ -364,6 +366,10 @@ export class BidsStatistics extends Component {
         let from = this.state.from ? new Date(this.state.from) : null
         let to = this.state.to ? new Date(this.state.to) : null
         let now = new Date()
+        const startLabel = moment(this.state.start).format('DD MMMM YYYY')
+        const endLabel = moment(this.state.end).format('DD MMMM YYYY')
+        const hastStatisticsForPeriod = Object.keys(this.state.statistics).length
+        const periodLabel = t('FORMAT_PERIOD', { args: [startLabel, endLabel] })
 
         return (
             <div>
@@ -379,33 +385,33 @@ export class BidsStatistics extends Component {
                                 className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: filterIndex === 0 })}
                                 inverse
                                 label={t('LABEL_LAST_24H')}
-                                onClick={() => this.applyPeriodFilter({ start: Date.now() - (24 * 60 * 60 * 1000), end: Date.now(), filterIndex: 0 })}
+                                onClick={() => this.applyPeriodFilter({ start: Date.now() - (24 * 60 * 60 * 1000), end: Date.now(), filterIndex: 0, label: 'LABEL_LAST_24H' })}
                             />
 
                             <Button
                                 className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: filterIndex === 1 })}
                                 inverse label={t('LABEL_THIS_WEEK')}
-                                onClick={() => this.applyPeriodFilter({ start: moment().startOf('isoWeek').valueOf(), end: moment().endOf('isoWeek').valueOf(), filterIndex: 1 })}
+                                onClick={() => this.applyPeriodFilter({ start: moment().startOf('isoWeek').valueOf(), end: moment().endOf('isoWeek').valueOf(), filterIndex: 1, label: 'LABEL_THIS_WEEK' })}
                             />
 
                             <Button
                                 className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: filterIndex === 2 })}
                                 inverse
                                 label={t('LABEL_LAST_WEEK')}
-                                onClick={() => this.applyPeriodFilter({ start: moment().subtract(1, 'week').startOf('isoWeek').valueOf(), end: moment().subtract(1, 'week').endOf('isoWeek').valueOf(), filterIndex: 2 })}
+                                onClick={() => this.applyPeriodFilter({ start: moment().subtract(1, 'week').startOf('isoWeek').valueOf(), end: moment().subtract(1, 'week').endOf('isoWeek').valueOf(), filterIndex: 2, label: 'LABEL_LAST_WEEK' })}
                             />
 
                             <Button className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: filterIndex === 3 })}
                                 inverse
                                 label={t('LABEL_THIS_MONTH')}
-                                onClick={() => this.applyPeriodFilter({ start: moment().startOf('month').valueOf(), end: moment().endOf('month').valueOf(), filterIndex: 3 })}
+                                onClick={() => this.applyPeriodFilter({ start: moment().startOf('month').valueOf(), end: moment().endOf('month').valueOf(), filterIndex: 3, label: 'LABEL_THIS_MONTH' })}
                             />
 
                             <Button
                                 className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: filterIndex === 4 })}
                                 inverse
                                 label={t('LABEL_LAST_MONTH')}
-                                onClick={() => this.applyPeriodFilter({ start: moment().subtract(1, 'month').startOf('month').valueOf(), end: moment().subtract(1, 'month').endOf('month').valueOf(), filterIndex: 4 })}
+                                onClick={() => this.applyPeriodFilter({ start: moment().subtract(1, 'month').startOf('month').valueOf(), end: moment().subtract(1, 'month').endOf('month').valueOf(), filterIndex: 4, label: 'LABEL_LAST_MONTH' })}
                             />
                         </div>
                     </div>
@@ -466,7 +472,19 @@ export class BidsStatistics extends Component {
                         />
                     </div>
                     <div>
-                        {moment(this.state.start).format() + ' - ' + moment(this.state.end).format()}
+                        {!this.props.spinner ?
+                            <div>
+                                {hastStatisticsForPeriod ?
+                                    <strong className={statisticsTheme.dataLabel}> {t('SHOW_FOR_PERIOD', { args: [t(this.state.currentPeriodLabel) || periodLabel] })} </strong>
+                                    :
+                                    <strong className={statisticsTheme.noDataLabel}> {t('NOTHING_TO_SHOW_FOR_PERIOD', { args: [t(this.state.currentPeriodLabel) || periodLabel] })} </strong>}
+                                {!!this.state.currentPeriodLabel ?
+                                    <small> ({periodLabel}) </small>
+                                    : null
+                                }
+                            </div>
+                            : null
+                        }
                     </div>
                 </div>
                 <br />
@@ -478,20 +496,13 @@ export class BidsStatistics extends Component {
                     :
 
                     <div>
-                        {this.state.tabIndex === 0 ?
-                            Object.keys(this.state.statistics).length ?
-                                this.renderBidsPeriodStatistics({ stats: this.state.statistics })
-                                : t('NOTHING_TO_SHOW')
+                        {hastStatisticsForPeriod && this.state.tabIndex === 0 ?
+                            this.renderBidsPeriodStatistics({ stats: this.state.statistics })
+                            : null}
 
-                            : null
-                        }
-
-                        {this.state.tabIndex === 1 ?
-                            Object.keys(this.state.statistics).length && Object.keys(this.state.bidsStats).length ?
-                                this.renderBidsTable({ bids: this.state.bidsStats })
-                                : t('NOTHING_TO_SHOW')
-                            : null
-                        }
+                        {hastStatisticsForPeriod && this.state.tabIndex === 1 ?
+                            this.renderBidsTable({ bids: this.state.bidsStats })
+                            : null}
                     </div>
                 }
             </div>

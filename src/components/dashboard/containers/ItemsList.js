@@ -476,7 +476,7 @@ class ItemsList extends Component {
 
                     </Grid>
                 </div >
-                <section>
+                <section style={{ overflowY: 'auto' }}>
                     {renderItems(items)}
                 </section>
             </div >
