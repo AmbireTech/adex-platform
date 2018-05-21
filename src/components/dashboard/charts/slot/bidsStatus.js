@@ -22,50 +22,6 @@ const mapStatsData = (data) => {
     return chartData
 }
 
-export const BidsStatusBars = ({ data, options, t }) => {
-    let mappedData = mapStatsData(data)
-    let chartData = {
-        labels: mappedData.labels,
-        datasets: [
-            {
-                label: t('CHART_LABEL_BIDS'),
-                backgroundColor: CHARTS_COLORS[0],
-                // borderColor: CHARTS_COLORS[3],
-                hoverBackgroundColor: CHARTS_COLORS[0],
-                // hoverBorderColor: CHARTS_COLORS[3],
-                borderWidth: 0,
-                data: mappedData.data
-            }
-        ]
-    }
-
-    let barsOptions = {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true,
-                },
-                gridLines: {
-                    borderDash: [4, 4],
-                    zeroLineBorderDashOffset: 10
-                }
-            }],
-            xAxes: [{
-                gridLines: {
-                    borderDash: [4, 4]
-                }
-            }]
-        }
-    }
-
-    return (
-        <Bar
-            data={chartData}
-            options={barsOptions}
-        />
-    )
-}
-
 export const BidsStatusPie = ({ data, options, t }) => {
     let mappedData = mapStatsData(data)
     // let colors = hexColorsToRgbaArray(CHARTS_COLORS, 1)
@@ -81,7 +37,12 @@ export const BidsStatusPie = ({ data, options, t }) => {
                 borderWidth: 0,
                 data: mappedData.data
             }
-        ]
+        ],
+        options: { responsive: true },
+        legend: {
+            display: true,
+            position: 'bottom'
+        }
     }
 
     return (
