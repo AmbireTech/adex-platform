@@ -6,9 +6,11 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import theme from './theme.css'
 import { Grid, Row, Col } from 'react-flexbox-grid'
-import { BidsStatusPie, SlotsClicksAndRevenue } from 'components/dashboard/charts/slot'
-import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
+import { BidsStatusPie, BidsStatusBars } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
+import { exchange as ExchangeConstants } from 'adex-constants'
+
+const { BidStatesLabels } = ExchangeConstants
 
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
 
@@ -23,14 +25,50 @@ export class DashboardStats extends Component {
     }
 
     componentWillMount() {
-        this.setState({
-            bidsData: BidsStatsGenerator.getRandomStatsForSlots(this.props.bidsIds, 'days'),
-            bidsStats: BidsStatsGenerator.getBidsStateStats()
-        })
     }
 
     handleTabChange = (index) => {
         this.setState({ tabIndex: index })
+    }
+
+    // TODO: make 1 loop to get this data and the data for the other stats
+    BidsStateChart = ({ bids = {} }) => {
+        const allBids = (bids.action || []).concat(bids.active || [], bids.closed || [], bids.open || [])
+
+        let statusData = allBids.reduce((memo, bid) => {
+            if (bid) {
+                let state = bid._state
+                let states = memo.states
+                let key = this.props.t(BidStatesLabels[state])
+
+                // TODO: TEMP - fix it
+                if ((bids.action || []).filter((b) => b._id === bid._id).length) {
+                    key += (' (' + this.props.t('BIDS_READY_TO_VERIFY') + ')')
+                } else if ((bids.active || []).filter((b) => b._id === bid._id).length) {
+                    key += (' (' + this.props.t('BIDS_ACTIVE') + ')')
+                }
+
+                if (states[key] === undefined) {
+                    states[key] = 1
+                } else {
+                    states[key] = (states[key] + 1)
+                }
+
+                return {
+                    states: states
+                }
+            } else {
+                return memo
+            }
+        }, { states: {} })
+
+        // console.log('statusData', statusData)
+
+        return (
+            <div>
+                <BidsStatusPie data={statusData.states} t={this.props.t} />
+            </div>
+        )
     }
 
     render() {
@@ -39,10 +77,10 @@ export class DashboardStats extends Component {
                 <Grid fluid >
                     <Row middle='xs' className={theme.itemsListControls}>
                         <Col xs={12} sm={12} md={6}>
-                            <SlotsClicksAndRevenue data={this.state.bidsData} t={this.props.t} />
+                            <this.BidsStateChart bids={this.props.sideBids} />
                         </Col>
                         <Col xs={12} sm={12} md={6}>
-                            <BidsStatusPie data={this.state.bidsStats} t={this.props.t} />
+                            {/* <BidsStatusPie data={this.state.bidsStats} t={this.props.t} /> */}
                         </Col>
                         <Col xs={12} sm={12} md={6}>
                         </Col>
@@ -59,21 +97,31 @@ DashboardStats.propTypes = {
     account: PropTypes.object.isRequired,
     bidsIds: PropTypes.array.isRequired,
 
-};
+}
 
 function mapStateToProps(state, props) {
-    let persist = state.persist
-    // let memory = state.memory
+    const persist = state.persist
+    const memory = state.memory
+    const side = memory.nav.side
+    let sideBidsProp = ''
+    if (side === 'publisher') {
+        sideBidsProp = 'pubBids'
+    } else if (side === 'advertiser') {
+        sideBidsProp = 'advBids'
+    }
+
     return {
         account: persist.account,
-        bidsIds: persist.bids.bidsIds
-    };
+        bidsIds: persist.bids.bidsIds,
+        side: memory.nav.side,
+        sideBids: persist.bids[sideBidsProp] || {}
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
 export default connect(

@@ -7,7 +7,7 @@ import theme from './theme.css'
 import datepickerTheme from './datepicker.css'
 import statisticsTheme from './bidsStatisticsTheme.css'
 import { Grid, Row, Col } from 'react-flexbox-grid'
-import { BidsStatusBars, BidsStatusPie, SlotsClicksAndRevenue, BidsTimeStatistics } from 'components/dashboard/charts/slot'
+import { BidsStatusBars, BidsStatusPie, BidsTimeStatistics } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
 import { exchange as ExchangeConstants } from 'adex-constants'
 import { getBidEvents } from 'services/adex-node/actions'
@@ -108,13 +108,6 @@ export class BidsStatistics extends Component {
     shouldComponentUpdate(nextProps, nextState) {
         // TODO:
         return (JSON.stringify(this.props) !== JSON.stringify(nextProps)) || (JSON.stringify(this.state) !== JSON.stringify(nextState))
-    }
-
-    renderSlotsClicksCharts({ bids }) {
-        // let data = BidsStatsGenerator.getRandomStatsForSlots(bids, 'days')
-        return (
-            <SlotsClicksAndRevenue data={bids} t={this.props.t} />
-        )
     }
 
     mapBidToStatisticsData = ({ stats = {}, interval, timeInterval }) => {

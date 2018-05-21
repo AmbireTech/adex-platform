@@ -11,7 +11,7 @@ import Rows from 'components/dashboard/collection/Rows'
 import { Tab, Tabs } from 'react-toolbox'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
-import { BidsStatusBars, BidsStatusPie, SlotsClicksAndRevenue, BidsTimeStatistics } from 'components/dashboard/charts/slot'
+import { BidsStatusBars, BidsStatusPie, BidsTimeStatistics } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
 import { getSlotBids, getAvailableBids } from 'services/adex-node/actions'
 import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
@@ -174,7 +174,7 @@ export class SlotBids extends Component {
                         />
                     </Tab>
                     <Tab className={theme.noPaddingTab} label={t('STATISTICS')}>
-                        <BidsStatistics bids={sorted.action.concat(sorted.active, sorted.closed)} onSave={this.getBids}/>
+                        <BidsStatistics bids={sorted.action.concat(sorted.active, sorted.closed)} onSave={this.getBids} />
                     </Tab>
                 </Tabs>
             </div>
