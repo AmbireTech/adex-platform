@@ -33,8 +33,15 @@ export class SlotBids extends Component {
 
     constructor(props) {
         super(props)
+        
+        let tabParam = props.match && props.match.params ? props.match.params.tab : null
+        let tabIndex = parseInt(tabParam, 10)
+        if (isNaN(tabIndex)) {
+            tabIndex = 0
+        }
+
         this.state = {
-            tabIndex: 3,
+            tabIndex: tabIndex,
             bids: [],
             openBids: [],
             statsBids: []

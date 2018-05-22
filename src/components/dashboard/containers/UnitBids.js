@@ -25,8 +25,15 @@ const { BID_STATES } = ExchangeConstants
 export class UnitBids extends Component {
     constructor(props) {
         super(props)
+
+        let tabParam = props.match && props.match.params ? props.match.params.tab : null
+        let tabIndex = parseInt(tabParam, 10)
+        if (isNaN(tabIndex)) {
+            tabIndex = 0
+        }
+
         this.state = {
-            tabIndex: 0,
+            tabIndex: tabIndex,
             detailsOpen: false
         }
     }
@@ -152,7 +159,9 @@ UnitBids.propTypes = {
     getUnitBids: PropTypes.func
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
+
+    console.log('props 1', props)
     const persist = state.persist
     const memory = state.memory
     return {
