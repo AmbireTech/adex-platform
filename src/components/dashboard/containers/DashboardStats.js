@@ -31,6 +31,9 @@ export class DashboardStats extends Component {
         this.setState({ tabIndex: index })
     }
 
+    getData = ({ bids = { action: [], active: [], closed: [], open: [] } }) => {
+    }
+
     // TODO: make 1 loop to get this data and the data for the other stats
     BidsStateChart = ({ bids = {} }) => {
         const allBids = (bids.action || []).concat(bids.active || [], bids.closed || [], bids.open || [])
@@ -66,18 +69,36 @@ export class DashboardStats extends Component {
 
         return (
             <div>
-                <BidsStatusPie data={statusData.states} t={this.props.t} />
+                <BidsStatusPie
+                    data={statusData.states}
+                    t={this.props.t}
+                    options={{
+                        title: {
+                            display: true,
+                            position: 'top',
+                            text: this.props.t('TITLE_STATS_BY_BID_STATUS')
+                        }
+                    }}
+                    onPieClick={(ev) => {
+                        // console.log('ev', ev)
+                        // this.props.history.push('/dashboard/' + this.props.side + '/bids/' + 1)
+                    }}
+
+                />
             </div>
         )
     }
 
     render() {
+        console.log('props', this.props)
         return (
             <div>
                 <Grid fluid >
                     <Row middle='xs' className={theme.itemsListControls}>
                         <Col xs={12} sm={12} md={6}>
-                            <this.BidsStateChart bids={this.props.sideBids} />
+                            <this.BidsStateChart
+                                bids={this.props.sideBids}
+                            />
                         </Col>
                         <Col xs={12} sm={12} md={6}>
                             {/* <BidsStatusPie data={this.state.bidsStats} t={this.props.t} /> */}

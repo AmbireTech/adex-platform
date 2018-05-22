@@ -27,7 +27,7 @@ export const withReactRouterLink = Component => {
       const { to, match, location, history, staticContext, ...rest } = this.props
       const toLocation = this.resolveToLocation(to)
       return (
-        <Component          
+        <Component
           {...rest}
 
           href={toLocation}
