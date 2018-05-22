@@ -9,6 +9,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid'
 import { BidsStatusPie, BidsStatusBars } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
 import { exchange as ExchangeConstants } from 'adex-constants'
+import { List, ListItem, ListSubHeader, ListDivider } from 'react-toolbox/lib/list'
 
 const { BidStatesLabels, BID_STATES } = ExchangeConstants
 
@@ -67,7 +68,7 @@ export class DashboardStats extends Component {
         return this.props.t(BidStatesLabels[state]) + (extraLabel ? extraLabel : '') + ' [' + count + ']'
     }
 
-    getData = ({ action = [], active = [], closed = [], open = [] }) => {
+    mapData = ({ action = [], active = [], closed = [], open = [] }) => {
         // NOTE: Ugly but with 1 loop  map all the needed data
         const PieLabels = []
         const PieDataCount = []
@@ -136,9 +137,7 @@ export class DashboardStats extends Component {
         return stats
     }
 
-    BidsStateChart = ({ bids = {} }) => {
-        const stats = this.getData(bids)
-
+    BidsStateChart = ({ stats }) => {
         return (
             <div>
                 <BidsStatusPie
@@ -162,20 +161,46 @@ export class DashboardStats extends Component {
         )
     }
 
+    // TODO: show more data here
+    InfoStats = ({ stats }) => {
+        // console.log(stats)
+        const t = this.props.t
+        return (
+            <List selectable={false} ripple={false}>
+                <ListItem
+                    ripple={false}
+                    legend={t('LABEL_SPENT_EARNED')}
+                    caption={stats.closed.completed.amount + ''}
+                />
+                <ListItem
+                    ripple={false}
+                    legend={t('LABEL_AWAITING_VERIFY')}
+                    caption={stats.action.amount + ''}
+                />
+                <ListItem
+                    ripple={false}
+                    legend={t('LABEL_ON_OPEN')}
+                    caption={stats.open.amount + ''}
+                />
+            </List>
+        )
+    }
+
     render() {
+        const stats = this.mapData(this.props.sideBids)
         return (
             <div>
                 <Grid fluid >
-                    <Row middle='xs' className={theme.itemsListControls}>
+                    <Row top='xs' className={theme.itemsListControls}>
                         <Col xs={12} sm={12} md={6}>
                             <this.BidsStateChart
-                                bids={this.props.sideBids}
+                                stats={stats}
                             />
                         </Col>
                         <Col xs={12} sm={12} md={6}>
-                            {/* <BidsStatusPie data={this.state.bidsStats} t={this.props.t} /> */}
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
+                            <this.InfoStats
+                                stats={stats}
+                            />
                         </Col>
                     </Row>
                 </Grid>
