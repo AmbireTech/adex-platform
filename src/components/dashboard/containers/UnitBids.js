@@ -27,14 +27,29 @@ export class UnitBids extends Component {
         super(props)
 
         let tabParam = props.match && props.match.params ? props.match.params.tab : null
-        let tabIndex = parseInt(tabParam, 10)
-        if (isNaN(tabIndex)) {
-            tabIndex = 0
-        }
+        let tabIndex = this.getTabIndex(tabParam)
 
         this.state = {
             tabIndex: tabIndex,
             detailsOpen: false
+        }
+    }
+
+    getTabIndex = (tab) => {
+
+        switch (tab) {
+            case 'action':
+                return 0
+            case 'active':
+                return 1
+            case 'open':
+                return 2
+            case 'closed':
+                return 3
+            case 'statistics':
+                return 4
+            default:
+                return 0
         }
     }
 

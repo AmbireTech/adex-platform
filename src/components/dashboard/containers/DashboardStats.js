@@ -10,7 +10,7 @@ import { BidsStatusPie, BidsStatusBars } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
 import { exchange as ExchangeConstants } from 'adex-constants'
 
-const { BidStatesLabels } = ExchangeConstants
+const { BidStatesLabels, BID_STATES } = ExchangeConstants
 
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
 
@@ -31,46 +31,118 @@ export class DashboardStats extends Component {
         this.setState({ tabIndex: index })
     }
 
-    getData = ({ bids = { action: [], active: [], closed: [], open: [] } }) => {
+    mapBidsToStats = (bids, initialValue) => {
+        return bids.reduce((memo, bid) => {
+            memo.count += 1
+            memo.amount += parseInt(bid._amount, 10)
+
+            return memo
+        }, { amount: 0, count: 0 })
     }
 
-    // TODO: make 1 loop to get this data and the data for the other stats
-    BidsStateChart = ({ bids = {} }) => {
-        const allBids = (bids.action || []).concat(bids.active || [], bids.closed || [], bids.open || [])
-
-        let statusData = allBids.reduce((memo, bid) => {
-            if (bid) {
-                let state = bid._state
-                let states = memo.states
-                let key = this.props.t(BidStatesLabels[state])
-
-                // TODO: TEMP - fix it
-                if ((bids.action || []).filter((b) => b._id === bid._id).length) {
-                    key += (' (' + this.props.t('BIDS_READY_TO_VERIFY') + ')')
-                } else if ((bids.active || []).filter((b) => b._id === bid._id).length) {
-                    key += (' (' + this.props.t('BIDS_ACTIVE') + ')')
-                }
-
-                if (states[key] === undefined) {
-                    states[key] = 1
-                } else {
-                    states[key] = (states[key] + 1)
-                }
-
-                return {
-                    states: states
-                }
-            } else {
-                return memo
+    mapClosedBidsToStats = (bids) => {
+        return bids.reduce((memo, bid) => {
+            switch (bid._state) {
+                case BID_STATES.Canceled.id:
+                    memo.canceled.count += 1
+                    memo.canceled.amount += parseInt(bid._amount, 10)
+                    break
+                case BID_STATES.Expired.id:
+                    memo.expired.count += 1
+                    memo.expired.amount += parseInt(bid._amount, 10)
+                    break
+                case BID_STATES.Completed.id:
+                    memo.completed.count += 1
+                    memo.completed.amount += parseInt(bid._amount, 10)
+                    break
+                default:
+                    break
             }
-        }, { states: {} })
 
-        // console.log('statusData', statusData)
+            return memo
+        }, { completed: { amount: 0, count: 0 }, canceled: { amount: 0, count: 0 }, expired: { amount: 0, count: 0 } })
+    }
+
+    getLabel = (state, count, extraLabel) => {
+        return this.props.t(BidStatesLabels[state]) + (extraLabel ? extraLabel : '') + ' [' + count + ']'
+    }
+
+    getData = ({ action = [], active = [], closed = [], open = [] }) => {
+        // NOTE: Ugly but with 1 loop  map all the needed data
+        const PieLabels = []
+        const PieDataCount = []
+        const PieDataAmount = []
+        const tabs = []
+        let totalCount = 0
+
+        const stats = {}
+        const t = this.props.t
+
+        stats.action = this.mapBidsToStats(action)
+        const actionCount = stats.action.count
+        PieLabels.push(this.getLabel(BID_STATES.Accepted.id, actionCount, ' (' + this.props.t('BIDS_READY_TO_VERIFY') + ')'))
+        PieDataCount.push(actionCount)
+        PieDataAmount.push(stats.action.amount)
+        totalCount += actionCount
+        tabs.push('action')
+
+        stats.active = this.mapBidsToStats(active)
+        const activeCount = stats.active.count
+        PieLabels.push(this.getLabel(BID_STATES.Accepted.id, activeCount, ' (' + this.props.t('BIDS_ACTIVE') + ')'))
+        PieDataCount.push(activeCount)
+        PieDataAmount.push(stats.active.amount)
+        totalCount += activeCount
+        tabs.push('active')
+
+        stats.open = this.mapBidsToStats(open)
+        const openCount = stats.open.count
+        PieLabels.push(this.getLabel(BID_STATES.DoesNotExist.id, openCount))
+        PieDataCount.push(openCount)
+        PieDataAmount.push(stats.open.amount)
+        totalCount += openCount
+        tabs.push('open')
+
+        stats.closed = this.mapClosedBidsToStats(closed)
+
+        const completedCount = stats.closed.completed.count
+        PieLabels.push(this.getLabel(BID_STATES.Completed.id, completedCount))
+        PieDataCount.push(completedCount)
+        PieDataAmount.push(stats.closed.completed.amount)
+        totalCount += completedCount
+        tabs.push('closed')
+
+        const canceledCount = stats.closed.canceled.count
+        PieLabels.push(this.getLabel(BID_STATES.Canceled.id, canceledCount))
+        PieDataCount.push(canceledCount)
+        PieDataAmount.push(stats.closed.canceled.amount)
+        totalCount += canceledCount
+        tabs.push('closed')
+
+        const expiredCount = stats.closed.expired.count
+        PieLabels.push(this.getLabel(BID_STATES.Expired.id, expiredCount))
+        PieDataCount.push(expiredCount)
+        PieDataAmount.push(stats.closed.expired.amount)
+        totalCount += expiredCount
+        tabs.push('closed')
+
+        stats.pieData = {
+            labels: PieLabels,
+            data: PieDataCount,
+            totalCount: totalCount
+        }
+
+        stats.tabs = tabs
+
+        return stats
+    }
+
+    BidsStateChart = ({ bids = {} }) => {
+        const stats = this.getData(bids)
 
         return (
             <div>
                 <BidsStatusPie
-                    data={statusData.states}
+                    pieData={stats.pieData}
                     t={this.props.t}
                     options={{
                         title: {
@@ -80,8 +152,9 @@ export class DashboardStats extends Component {
                         }
                     }}
                     onPieClick={(ev) => {
-                        // console.log('ev', ev)
-                        // this.props.history.push('/dashboard/' + this.props.side + '/bids/' + 1)
+                        if (ev && !isNaN(ev._index)) {
+                            this.props.history.push('/dashboard/' + this.props.side + '/bids/' + stats.tabs[ev._index])
+                        }
                     }}
 
                 />
@@ -90,7 +163,6 @@ export class DashboardStats extends Component {
     }
 
     render() {
-        console.log('props', this.props)
         return (
             <div>
                 <Grid fluid >
@@ -116,8 +188,7 @@ export class DashboardStats extends Component {
 DashboardStats.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    bidsIds: PropTypes.array.isRequired,
-
+    bidsIds: PropTypes.array.isRequired
 }
 
 function mapStateToProps(state, props) {
