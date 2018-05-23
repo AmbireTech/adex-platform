@@ -24,6 +24,7 @@ import classnames from 'classnames'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
+import CsvDownloadBtn from 'components/common/csv_dl_btn/CsvDownloadBtn'
 
 const { BidStatesLabels } = ExchangeConstants
 const SPINNER_ID = 'STATISTICS'
@@ -167,9 +168,14 @@ export class BidsStatistics extends Component {
         return data
     }
 
-    chartZoomBtn = ({ btnID }) => {
+    chartActions = ({ btnID, stats, fileName }) => {
         return (
             <div style={{ textAlign: 'right' }}>
+                {stats ?
+                    <CsvDownloadBtn getData={() => {
+                        return this.getChartCsvData({ stats: stats })
+                    }} fileName={fileName} />
+                    : null}
                 <IconButton icon={this.isInFullWidthChart(btnID) ? 'fullscreen_exit' : 'fullscreen'} onClick={() =>
                     this.toggleFullWidthChart(btnID)
                 } />
@@ -190,6 +196,22 @@ export class BidsStatistics extends Component {
         )
     }
 
+    getChartCsvData = ({ stats }) => {
+        const t = this.props.t
+        const csvData = [[t('CSV_COL_TIME_INTERVAL'), t('CSV_COL_UNIQUE_CLICKS'), t('CSV_COL_CLICKS'), t('CSV_COL_IMPRESSIONS')]]
+        Object.keys(stats.intervalStats).forEach(key => {
+            const rowStats = stats.intervalStats[key]
+            const row = [moment(parseInt(key, 10) * stats.interval).format('YYYY-MM-DD HH:mm:ss'), rowStats.uniqueClick, rowStats.clicks, rowStats.loaded]
+            csvData.push(row)
+        })
+
+        return csvData
+    }
+
+    getExportFileName = ({ intervalType = '' }) => {
+        return 'adex_export_' + intervalType + '_' + moment(this.state.start).format('YYYY_MM_DD') + '_' + moment(this.state.end).format('YYYY_MM_DD')
+    }
+
     renderBidsPeriodStatistics = ({ stats }) => {
         const data = this.bidsStatsData({ stats: stats })
         const t = this.props.t
@@ -200,7 +222,11 @@ export class BidsStatistics extends Component {
                     <Row bottom='xs' className={theme.itemsListControls}>
                         {Object.keys(data.live).length ?
                             <this.resizableCol id='LIVE_CHART' >
-                                <this.chartZoomBtn btnID='LIVE_CHART' />
+                                <this.chartActions
+                                    btnID='LIVE_CHART'
+                                    stats={stats.live}
+                                    fileName={this.getExportFileName({ intervalType: 'live' })}
+                                />
                                 <BidsTimeStatistics data={data.live} t={t} options={{ title: t('CHART_LIVE_TITLE'), col: this.isInFullWidthChart('LIVE_CHART') ? 12 : 6 }} />
                             </this.resizableCol >
                             : null}
@@ -212,8 +238,11 @@ export class BidsStatistics extends Component {
                                     label={t('LABEL_DD_SELECT_DAY')}
                                     value={hourlyDataValue}
                                 />
-
-                                <this.chartZoomBtn btnID='HOURLY_CHART' />
+                                <this.chartActions
+                                    btnID='HOURLY_CHART'
+                                    stats={stats.hourly}
+                                    fileName={this.getExportFileName({ intervalType: 'hourly' })}
+                                />
                                 {Object.keys(data.hourly).map((key, index) => {
                                     return (
                                         <div key={key} style={{ display: (this.state.hourlyDaySelected === key) || (!this.state.hourlyDaySelected && index === 0) ? 'block' : 'none' }}>
@@ -226,7 +255,11 @@ export class BidsStatistics extends Component {
                         {Object.keys(data.daily).length ?
 
                             <this.resizableCol id='DAILY_CHART' >
-                                <this.chartZoomBtn btnID='DAILY_CHART' />
+                                <this.chartActions
+                                    btnID='DAILY_CHART'
+                                    stats={stats.daily}
+                                    fileName={this.getExportFileName({ intervalType: 'daily' })}
+                                />
                                 <BidsTimeStatistics data={data.daily} t={t} options={{ title: t('CHART_DAILY_TITLE'), col: this.isInFullWidthChart('DAILY_CHART') ? 12 : 6 }} />
                             </this.resizableCol >
 
