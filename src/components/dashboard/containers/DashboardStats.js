@@ -10,6 +10,8 @@ import { BidsStatusPie, BidsStatusBars } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
 import { exchange as ExchangeConstants } from 'adex-constants'
 import { List, ListItem, ListSubHeader, ListDivider } from 'react-toolbox/lib/list'
+import { Card, CardMedia, CardTitle, CardText, CardActions } from 'react-toolbox/lib/card'
+import classnames from 'classnames'
 
 const { BidStatesLabels, BID_STATES } = ExchangeConstants
 
@@ -161,28 +163,34 @@ export class DashboardStats extends Component {
         )
     }
 
-    // TODO: show more data here
+    // TODO: show more data here and format it
     InfoStats = ({ stats }) => {
         // console.log(stats)
         const t = this.props.t
         return (
-            <List selectable={false} ripple={false}>
-                <ListItem
-                    ripple={false}
-                    legend={t('LABEL_SPENT_EARNED')}
-                    caption={stats.closed.completed.amount + ''}
-                />
-                <ListItem
-                    ripple={false}
-                    legend={t('LABEL_AWAITING_VERIFY')}
-                    caption={stats.action.amount + ''}
-                />
-                <ListItem
-                    ripple={false}
-                    legend={t('LABEL_ON_OPEN')}
-                    caption={stats.open.amount + ''}
-                />
-            </List>
+            <div>
+
+                <Card className={classnames(theme.dashboardCardHalf)}>
+                    <CardTitle
+                        subtitle={t('LABEL_SPENT_EARNED')}
+                        title={stats.closed.completed.amount + ''}
+                    />
+                </Card>
+
+                <Card className={classnames(theme.dashboardCardHalf)}>
+                    <CardTitle
+                        subtitle={t('LABEL_AWAITING_VERIFY')}
+                        title={stats.action.amount + ''}
+                    />
+                </Card>
+                <Card className={classnames(theme.dashboardCardHalf)}>
+                    <CardTitle
+                        subtitle={t('LABEL_ON_OPEN')}
+                        title={stats.open.amount + ''}
+                    />
+                </Card>
+
+            </div>
         )
     }
 
@@ -192,12 +200,14 @@ export class DashboardStats extends Component {
             <div>
                 <Grid fluid >
                     <Row top='xs' className={theme.itemsListControls}>
-                        <Col xs={12} sm={12} md={6}>
-                            <this.BidsStateChart
-                                stats={stats}
-                            />
+                        <Col xs={12} sm={12} lg={6}>
+                            <Card className={classnames(theme.dashboardCardBody)}>
+                                <this.BidsStateChart
+                                    stats={stats}
+                                />
+                            </Card>
                         </Col>
-                        <Col xs={12} sm={12} md={6}>
+                        <Col xs={12} sm={12} lg={6}>
                             <this.InfoStats
                                 stats={stats}
                             />
