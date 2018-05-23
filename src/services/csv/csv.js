@@ -7,7 +7,7 @@ export const dataToCSV = (data) => {
         var value = data[i]
 
         for (var j = 0; j < value.length; j++) {
-            var innerValue = value[j] === null ? '' : value[j].toString()
+            var innerValue = value[j] === null || value[j] === undefined ? '' : value[j].toString()
             var result = innerValue.replace(/"/g, '""')
             if (result.search(/("|,|\n|\r\n|\r)/g) >= 0) {
                 result = '"' + result + '"'
