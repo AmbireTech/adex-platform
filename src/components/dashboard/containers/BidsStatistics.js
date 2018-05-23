@@ -25,6 +25,7 @@ import DatePicker from 'react-toolbox/lib/date_picker'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
 import CsvDownloadBtn from 'components/common/csv_dl_btn/CsvDownloadBtn'
+import { adxToFloatView } from 'services/smart-contracts/utils'
 
 const { BidStatesLabels } = ExchangeConstants
 const SPINNER_ID = 'STATISTICS'
@@ -268,7 +269,6 @@ export class BidsStatistics extends Component {
                 </Grid>
             </div>
         )
-
     }
 
     renderNonOpenedBidsChart = (bids, range) => {
@@ -319,24 +319,11 @@ export class BidsStatistics extends Component {
     renderTableRow(bid, index, { to, selected }) {
 
         let t = this.props.t
-        const bidInfo = this.props.bidsById[bid._id]
-
-        if (!bidInfo) {
-            return null
-        }
-
-        const bidAllData = { ...bidInfo }
-
-        bidAllData.statistics = {
-            live: bid.live,
-            hourly: bid.hourly,
-            daily: bid.daily,
-        }
 
         // console.log('bidAllData', bidAllData)
 
         const bidData = getBidData({
-            bid: bidAllData,
+            bid: bid,
             t: t,
             transactions: this.props.transactions,
             side: this.props.side,
@@ -361,22 +348,93 @@ export class BidsStatistics extends Component {
             tableHeadRenderer={renderTableHeadStats.bind(this, { t: this.props.t, side: this.props.side })}
         />
 
+    getTableCsvData = ({ bids = [] }) => {
+        const t = this.props.t
+        const csvData = [
+            [moment(this.state.start).format('YYYY/MM/DD') + '-' + moment(this.state.end).format('YYYY/MM/DD')],
 
-    renderBidsTable({ bids }) {
+            [t('BID_ID'),
+            t('BID_AMOUNT') + ' (ADX)',
+            t('BID_TARGET'),
+            t('BID_UNIQUE_CLICKS'),
+            t('BID_STATE'),
+            t('BID_PERIOD_UNIQUE_CLICKS'),
+            t('BID_PERIOD_CLICKS'),
+            t('BID_PERIOD_IMPRESSIONS'),
+            t('BID_ESTIMATED_REVENUE'),
+            t('TIMEOUT'),
+            t('ACCEPTED'),
+            t('EXPIRES')]
+        ]
+
+        bids.forEach(bid => {
+
+            const statsUniqueClicks = bid.statistics.daily.uniqueClick || 0
+            const accepted = (bid._acceptedTime || 0) * 1000
+            const timeout = (bid._timeout || 0) * 1000
+            const bidExpires = accepted ? (accepted + timeout) : null
+
+            const row = [
+                bid._id,
+                adxToFloatView(bid._amount),
+                bid._target,
+                bid.clicksCount || 0,
+                t(BidStatesLabels[bid._state]),                
+                bid.statistics.statsUniqueClicks,
+                bid.statistics.daily.clicks || 0,
+                bid.statistics.daily.loaded || 0,
+                statsUniqueClicks > 0 ?
+                    (adxToFloatView(Math.floor(parseInt(bid._amount, 10) / parseInt(bid._target, 10)) * statsUniqueClicks))
+                    : 0,
+                moment.duration(timeout, 'ms').humanize(),
+                accepted ? moment(accepted).format('YYYY-MM-DD HH:mm:ss') : '-',
+                bidExpires ? moment(bidExpires).format('YYYY-MM-DD HH:mm:ss') : '-'
+            ]
+            csvData.push(row)
+        })
+
+        return csvData
+    }
+
+
+    renderBidsTable = ({ bids }) => {
         // console.log('bids', bids)
-        return (<ItemsList
-            items={Object.keys(bids).map((key) => {
-                const bid = bids[key]
-                bid._id = key
+        let allBidsData = Object.keys(bids).reduce((memo, key) => {
+            const statistics = bids[key]
+            const bid = this.props.bidsById[key]
 
-                return bid
-            })}
-            listMode='rows'
-            renderRows={this.renderRows.bind(this)}
-            sortProperties={SORT_PROPERTIES_BIDS}
-            searchMatch={searchMatch}
-            filterProperties={FILTER_PROPERTIES_BIDS}
-        />)
+            if (!bid) {
+                return memo
+            }
+
+            bid.statistics = {
+                live: statistics.live,
+                hourly: statistics.hourly,
+                daily: statistics.daily,
+            }
+
+            memo.push(bid)
+
+            return memo
+        }, [])
+
+        console.log(this.getTableCsvData({ bids: allBidsData }))
+
+        return (
+            <div>
+                <CsvDownloadBtn getData={() => {
+                    return this.getTableCsvData({ bids: allBidsData })
+                }} fileName={this.getExportFileName({ intervalType: 'by_bid' })} />
+                <ItemsList
+                    items={allBidsData}
+                    listMode='rows'
+                    renderRows={this.renderRows.bind(this)}
+                    sortProperties={SORT_PROPERTIES_BIDS}
+                    searchMatch={searchMatch}
+                    filterProperties={FILTER_PROPERTIES_BIDS}
+                />
+            </div>
+        )
     }
 
     applyPeriodFilter = ({ start, end, filterIndex, label }) => {
