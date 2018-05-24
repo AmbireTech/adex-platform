@@ -32,6 +32,8 @@ import { intervalsMs, DATETIME_EXPORT_FORMAT } from 'helpers/timeHelpers'
 const { BidStatesLabels } = ExchangeConstants
 const SPINNER_ID = 'STATISTICS'
 
+const MAX_STATS_INTERVAL = 3 * 31 * 24 * 60 * 60 * 1000 // 93 days
+
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
 
 export class BidsStatistics extends Component {
@@ -280,50 +282,6 @@ export class BidsStatistics extends Component {
         )
     }
 
-    renderNonOpenedBidsChart = (bids, range) => {
-        let statusData = bids.reduce((memo, bid) => {
-            if (bid) {
-                let state = bid._state
-                let statistics = memo.statistics
-                let states = memo.states
-
-                let val = statistics[state] || { state: state, value: state, count: 0, name: BidStatesLabels[state] }
-                val.count = val.count + 1
-                statistics[state] = val
-
-                if (states[BidStatesLabels[state]] === undefined) {
-                    states[BidStatesLabels[state]] = 1
-                } else {
-                    states[BidStatesLabels[state]] = (states[BidStatesLabels[state]] + 1)
-                }
-
-                return {
-                    statistics: statistics,
-                    states: states
-                }
-            } else {
-                return memo
-            }
-        }, { statistics: [], states: {} })
-
-        let data = this.bidsStatsData()
-
-        return (
-            <div>
-                <Grid fluid >
-                    <Row middle='xs' className={theme.itemsListControls}>
-                        <Col xs={12} sm={12} md={6}>
-                            <BidsStatusBars data={statusData.states} t={this.props.t} />
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                            <BidsStatusPie data={statusData.states} t={this.props.t} />
-                        </Col>
-                    </Row>
-                </Grid>
-            </div>
-        )
-    }
-
     // TODO: Make common funcs, fix the statistics
     renderTableRow(bid, index, { to, selected }) {
 
@@ -408,8 +366,8 @@ export class BidsStatistics extends Component {
 
     renderBidsTable = ({ bids }) => {
         let allBidsData = Object.keys(bids).reduce((memo, key) => {
-            const statistics = bids[key]
-            const bid = this.props.bidsById[key]
+            const statistics = { ...bids[key] }
+            const bid = { ...this.props.bidsById[key] }
 
             if (!bid) {
                 return memo
@@ -461,6 +419,11 @@ export class BidsStatistics extends Component {
         const hastStatisticsForPeriod = Object.keys(this.state.statistics).length
         const periodLabel = t('FORMAT_PERIOD', { args: [startLabel, endLabel] })
 
+        const fromMs = from ? from.valueOf() : 0
+        const toMs = to ? to.valueOf() : 0
+
+        //TODO: Add some info about this on the UI
+        const intervalErr = toMs - fromMs > MAX_STATS_INTERVAL
         return (
             <div>
                 <Navigation
@@ -537,6 +500,7 @@ export class BidsStatistics extends Component {
                         <Button
                             inverse
                             raised
+                            disabled={intervalErr}
                             label={t('APPLY')}
                             onClick={() => this.applyPeriodFilter({ start: moment(from).valueOf(), end: moment(to).valueOf(), filterIndex: 5 })}
                         />
