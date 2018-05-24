@@ -485,3 +485,9 @@
         width: 100% !important;
     }
 }
+
+.linkCard {
+    &:hover, &:focus {
+        cursor: pointer;
+    }
+}
