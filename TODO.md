@@ -44,3 +44,5 @@
 - TODO: use eth addresses only with lower case everywhere!!!
 - Global logout func - reset all data - done
 - Use selectors for data filtering
+- Separate components for each statistics (e.g hourly interval chart in order to use it's own state and do nor rerender all charts on day change)
+- Selectors for data mapping instead doing this inside the components

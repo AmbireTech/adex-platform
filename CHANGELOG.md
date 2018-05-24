@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.0.13] - 2018-05-24
+### Added
+- Statistics for bids (charts and tables)
+- Dashboard statistics
+- CSV export for statistics
+
+### Fixed
+- Misc styles and bug fixes
+
 ## [2.0.12] - 2018-05-10
 ### Added
 - Logout ot authentication error
@@ -149,7 +158,8 @@ All notable changes to this project will be documented in this file.
 
 ## 2.0.0 - 2018-02-26
 
-[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.12...HEAD
+[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.13...HEAD
+[2.0.13]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.12...v2.0.13
 [2.0.12]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.11...v2.0.12
 [2.0.11]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.10...v2.0.11
 [2.0.10]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.9...v2.0.10

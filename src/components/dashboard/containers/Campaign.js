@@ -6,7 +6,7 @@ import actions from 'actions'
 import ItemHoc from './ItemHoc'
 import ItemsList from './ItemsList'
 import DatePicker from 'react-toolbox/lib/date_picker'
-import theme from './campaign.css'
+import theme from './datepicker.css'
 import AddItem from './AddItem'
 import moment from 'moment'
 import FontIcon from 'react-toolbox/lib/font_icon'
@@ -102,7 +102,7 @@ export class Campaign extends Component {
                         className={theme.datepicker}
                         theme={theme}
                         inputFormat={this.inputFormat}
-                        size={moment(from).format('MMMM').length} /** temp fix */
+                        size={moment(from).format('DD MMMM').length} /** temp fix */
                         // readonly
                     />
                     <span>{t('to')} </span>
@@ -113,7 +113,7 @@ export class Campaign extends Component {
                         className={theme.datepicker}
                         theme={theme}
                         inputFormat={this.inputFormat}
-                        size={moment(to).format('MMMM').length} /** temp fix */
+                        size={moment(to).format('DD MMMM').length} /** temp fix */
                         // readonly
                     />
 

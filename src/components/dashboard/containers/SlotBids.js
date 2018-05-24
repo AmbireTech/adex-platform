@@ -11,17 +11,21 @@ import Rows from 'components/dashboard/collection/Rows'
 import { Tab, Tabs } from 'react-toolbox'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
-import { BidsStatusBars, BidsStatusPie, SlotsClicksAndRevenue } from 'components/dashboard/charts/slot'
+import { BidsStatusBars, BidsStatusPie, BidsTimeStatistics } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
 import { getSlotBids, getAvailableBids } from 'services/adex-node/actions'
 import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
 import { AcceptBid, GiveupBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
 import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS_NO_STATE } from 'constants/misc'
-import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch } from './BidsCommon'
+import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch, getPublisherBidData, getBidData } from './BidsCommon'
 import { getAddrBids, sortBids } from 'services/store-data/bids'
+import { getBidEvents } from 'services/adex-node/actions'
+import { IconButton } from 'react-toolbox/lib/button'
+import BidsStatistics from './BidsStatistics'
+import statisticsTheme from './bidsStatisticsTheme.css'
 
-const { BID_STATES, BidStateNames } = ExchangeConstants
+const { BID_STATES, BidStatesLabels } = ExchangeConstants
 
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
 
@@ -29,10 +33,35 @@ export class SlotBids extends Component {
 
     constructor(props) {
         super(props)
+
+        let tabParam = props.match && props.match.params ? props.match.params.tab : null
+        let tabIndex = this.getTabIndex(tabParam)
+
         this.state = {
-            tabIndex: 0,
+            tabIndex: tabIndex,
             bids: [],
             openBids: [],
+            statsBids: []
+        }
+    }
+
+    getTabIndex = (tab) => {
+
+        const openBids = this.props.getSlotBids ? 0 : 1
+
+        switch (tab) {
+            case 'open':
+                return 0
+            case 'action':
+                return 1 - openBids
+            case 'active':
+                return 2 - openBids
+            case 'closed':
+                return 3 - openBids
+            case 'statistics':
+                return 4 - openBids
+            default:
+                return 0
         }
     }
 
@@ -43,7 +72,7 @@ export class SlotBids extends Component {
 
     // TODO: map bid and set amount to number or make something to parse the amount in the items list sort function
     getBids = () => {
-        if(this.props.getSlotBids) {
+        if (this.props.getSlotBids) {
             getSlotBids({
                 authSig: this.props.account._authSig,
                 adSlot: this.props.item._ipfs
@@ -66,7 +95,6 @@ export class SlotBids extends Component {
         }
     }
 
-
     componentWillMount() {
         this.getBids()
     }
@@ -75,128 +103,18 @@ export class SlotBids extends Component {
         this.setState({ tabIndex: index })
     }
 
-    getNonOpenedBidsChartData = (bids) => {
-    }
-
-    renderSlotsClicksCharts({ bids }) {
-        let data = BidsStatsGenerator.getRandomStatsForSlots(bids, 'days')
-        return (
-            <SlotsClicksAndRevenue data={data} t={this.props.t} />
-        )
-    }
-
-    renderNonOpenedBidsChart(bids, range) {
-        let data = bids.reduce((memo, bid) => {
-            if (bid) {
-                let state = bid.state
-                let statistics = memo.statistics
-                let states = memo.states
-
-                let val = statistics[state] || { state: state, value: state, count: 0, name: BidStateNames[state] }
-                val.count = val.count + 1
-                statistics[state] = val
-
-                if (states[BidStateNames[state]] === undefined) {
-                    states[BidStateNames[state]] = 1
-                } else {
-                    states[BidStateNames[state]] = (states[BidStateNames[state]] + 1)
-                }
-
-                return {
-                    statistics: statistics,
-                    states: states
-                }
-            } else {
-                return memo
-            }
-        }, { statistics: [], states: {} })
-
-        return (
-            <div>
-                <Grid fluid >
-                    <Row middle='xs' className={theme.itemsListControls}>
-                        <Col xs={12} sm={12} md={6}>
-                            {/* {this.renderSlotsClicksCharts({ bids: this.props.bidsIds })} */}
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                            <BidsStatusBars data={data.states} t={this.props.t} />
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                            <BidsStatusPie data={data.states} t={this.props.t} />
-                        </Col>
-                    </Row>
-                </Grid>
-
-            </div>
-        )
-    }
-
-    getBidData = (bid) => {
-        let t = this.props.t
-        const transactions = this.props.transactions
-        const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
-        const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
-
-        const noTargetsReached = bid.clicksCount < bid._target
-        const canAccept = (bid._state === BID_STATES.DoesNotExist.id)
-        const canVerify = (bid._state === BID_STATES.Accepted.id) && ((bid.clicksCount >= bid._target) || bid._advertiserConfirmation)
-        const canGiveup = bid._state === BID_STATES.Accepted.id
-        const pendingGiveup = pendingState === BID_STATES.Canceled.id
-        const pendingAccept = pendingState === BID_STATES.Accepted.id
-        const pendingVerify = (pendingState === BID_STATES.ConfirmedPub.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
-
-        let bidData = getCommonBidData({ bid, t, side: this.props.side })
-
-        bidData.acceptBid = canAccept ? <AcceptBid
-            icon={pendingAccept ? 'hourglass_empty' : ''}
-            adUnitId={bid._adUnitId}
-            slotId={this.props.item._id}
-            bidId={bid._id}
-            placedBid={bid}
-            slot={this.props.item}
-            acc={this.props.account}
-            raised
-            primary
-            className={theme.actionBtn}
-            onSave={this.getBids}
-        // disabled={pendingAccept}
-        /> : null
-
-        bidData.verifyBtn = canVerify ?
-            <VerifyBid
-                noTargetsReached
-                icon={pendingVerify ? 'hourglass_empty' : (noTargetsReached ? '' : '')}
-                itemId={bid._adUnitId}
-                bidId={bid._id}
-                placedBid={bid}
-                acc={this.props.account}
-                raised
-                className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: noTargetsReached, [RTButtonTheme.success]: !noTargetsReached })}
-                onSave={this.onSave}
-                disabled={pendingVerify}
-            /> : null
-
-        bidData.giveupBid = canGiveup ?
-            <GiveupBid
-                icon={pendingGiveup ? 'hourglass_empty' : ''}
-                slotId={bid._adSlotId}
-                bidId={bid._id}
-                placedBid={bid}
-                acc={this.props.account}
-                raised
-                className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
-                onSave={this.getBids}
-                disabled={pendingGiveup}
-            /> : null
-
-
-        return bidData
-    }
-
     // TODO: make something common with unit bids 
     renderTableRow(bid, index, { to, selected }) {
         let t = this.props.t
-        const bidData = this.getBidData(bid)
+        const bidData = getBidData({
+            bid: bid,
+            t: t,
+            transactions: this.props.transactions,
+            side: this.props.side,
+            item: this.props.item,
+            account: this.props.account,
+            onSave: this.getBids
+        })
 
         return renderCommonTableRow({ bidData, t })
     }
@@ -228,7 +146,7 @@ export class SlotBids extends Component {
                 {this.props.getSlotBids ? null :
                     <div className={classnames(theme.heading, theme.Transactions)}>
                         <h2 > {t('ALL_BIDS')} </h2>
-                    </div>                
+                    </div>
                 }
                 <Tabs
                     theme={theme}
@@ -279,11 +197,8 @@ export class SlotBids extends Component {
                             filterProperties={FILTER_PROPERTIES_BIDS}
                         />
                     </Tab>
-                    <Tab label={t('STATISTICS')}>
-                        <div>
-                            {t('COMING_SOON')}
-                            {/* {this.renderNonOpenedBidsChart(slotBids)} */}
-                        </div>
+                    <Tab className={theme.noPaddingTab} label={t('STATISTICS')}>
+                        <BidsStatistics bids={sorted.action.concat(sorted.active, sorted.closed)} onSave={this.getBids} />
                     </Tab>
                 </Tabs>
             </div>

@@ -37,7 +37,8 @@ class SideNav extends Component {
             return null
         }
 
-        const location = this.props.location.pathname.replace(/\/dashboard\/(advertiser|publisher)/, '').replace(/\//g, '')
+        // TODO: test location
+        const location = this.props.location.pathname.split('/')[3]
         const isAdvertiser = side === 'advertiser'
         const collection = (isAdvertiser ? 'campaigns' : 'channels')
         const items = (isAdvertiser ? 'units' : 'slots')
@@ -49,97 +50,97 @@ class SideNav extends Component {
         const pendingTrsCount = (this.props.transactions.pendingTxs || []).length
 
         let pendingTransactionsIcon = <FontIcon value={'swap_horiz'} /> // 'swap_horiz'
-        if(pendingTrsCount > 0) {
-            pendingTransactionsIcon = <CircleWithText text={pendingTrsCount <= 9 ? pendingTrsCount : '9+' }  className={classnames(theme.pendingTransactions)}/>
+        if (pendingTrsCount > 0) {
+            pendingTransactionsIcon = <CircleWithText text={pendingTrsCount <= 9 ? pendingTrsCount : '9+'} className={classnames(theme.pendingTransactions)} />
         }
 
         const bidsAwaitingActionCount = this.props.bidsAwaitingActionCount
         let bidsIcon = <BidIcon style={{ height: 24 }} />
 
-        if(bidsAwaitingActionCount > 0) {
-            bidsIcon = <CircleWithText text={bidsAwaitingActionCount <= 9 ? bidsAwaitingActionCount : '9+' }  className={classnames(theme.bidsActions)}/>
+        if (bidsAwaitingActionCount > 0) {
+            bidsIcon = <CircleWithText text={bidsAwaitingActionCount <= 9 ? bidsAwaitingActionCount : '9+'} className={classnames(theme.bidsActions)} />
         }
 
         return (
             <div className={theme.navigation}>
                 <List theme={theme}>
-                <div>
-                    <RRListItem
-                        to={{ pathname: '/dashboard/' + side }}
-                        selectable={true}
-                        caption={t('DASHBOARD')}
-                        theme={theme}
-                        leftIcon='dashboard'
-                        className={classnames({ [theme.active]: location === '' })}
-                    />
-                    <ListDivider theme={theme}/>
-                    <RRListItem
-                        to={{ pathname: '/dashboard/' + side + '/' + collection }}
-                        selectable={true}
-                        caption={t(collection.toUpperCase())}
-                        theme={theme}
-                        leftIcon={<CollectionIcon color='rgb(117, 117, 117)' />}
-                        className={classnames({ [theme.active]: location === collection })}
-                    />
-                    <ListItem
-                        selectable={false}
-                        ripple={false}
-                    >
-                        <NewCollectionBtn
-                            theme={theme}
-                            flat
-                            color='first'
-                            raised
-                        />
-                    </ListItem>
-                    <ListDivider theme={theme}/>
-                    <RRListItem
-                        to={{ pathname: '/dashboard/' + side + '/' + items }}
-                        selectable={true}
-                        caption={t(items.toUpperCase())}
-                        theme={theme}
-                        className={classnames({ [theme.active]: location === items })}
-                        leftIcon={itemsIcon}
-                    />
-                    <ListItem
-                        selectable={false}
-                        ripple={false}
-                    >
-                        <NewItemBtn
-                            theme={theme}
-                            flat
-                            color='second'
-                            raised
-                        />
-                    </ListItem>
-                    <ListDivider theme={theme}/>
-                    <RRListItem
-                        to={{ pathname: '/dashboard/' + side + '/bids' }}
-                        selectable={true}
-                        caption={t('BIDS')}
-                        theme={theme}
-                        className={classnames({ [theme.active]: location === 'bids', [theme.bidsActions]: bidsAwaitingActionCount > 0 })}
-                        leftIcon={bidsIcon}
-                    />
-                    <RRListItem
-                        to={{ pathname: '/dashboard/' + side + '/transactions' }}
-                        selectable={true}
-                        caption={t('TRANSACTIONS')}
-                        theme={theme}
-                        className={classnames({ [theme.active]: location === 'transactions', [theme.pendingTransactions]: pendingTrsCount > 0 })}
-                        leftIcon={pendingTransactionsIcon}
-                    />
-                     </div>
                     <div>
-                    <Anchor target='_blank' href='https://medium.com/adex-network-tips-and-tricks' >
-                        <ListItem
-                            leftIcon='help_outline'
+                        <RRListItem
+                            to={{ pathname: '/dashboard/' + side }}
                             selectable={true}
-                            caption={t('HELP')}
+                            caption={t('DASHBOARD')}
                             theme={theme}
+                            leftIcon='dashboard'
+                            className={classnames({ [theme.active]: location === '' })}
                         />
-                    </Anchor>
-                    <RRListItem
+                        <ListDivider theme={theme} />
+                        <RRListItem
+                            to={{ pathname: '/dashboard/' + side + '/' + collection }}
+                            selectable={true}
+                            caption={t(collection.toUpperCase())}
+                            theme={theme}
+                            leftIcon={<CollectionIcon color='rgb(117, 117, 117)' />}
+                            className={classnames({ [theme.active]: location === collection })}
+                        />
+                        <ListItem
+                            selectable={false}
+                            ripple={false}
+                        >
+                            <NewCollectionBtn
+                                theme={theme}
+                                flat
+                                color='first'
+                                raised
+                            />
+                        </ListItem>
+                        <ListDivider theme={theme} />
+                        <RRListItem
+                            to={{ pathname: '/dashboard/' + side + '/' + items }}
+                            selectable={true}
+                            caption={t(items.toUpperCase())}
+                            theme={theme}
+                            className={classnames({ [theme.active]: location === items })}
+                            leftIcon={itemsIcon}
+                        />
+                        <ListItem
+                            selectable={false}
+                            ripple={false}
+                        >
+                            <NewItemBtn
+                                theme={theme}
+                                flat
+                                color='second'
+                                raised
+                            />
+                        </ListItem>
+                        <ListDivider theme={theme} />
+                        <RRListItem
+                            to={{ pathname: '/dashboard/' + side + '/bids' }}
+                            selectable={true}
+                            caption={t('BIDS')}
+                            theme={theme}
+                            className={classnames({ [theme.active]: location === 'bids', [theme.bidsActions]: bidsAwaitingActionCount > 0 })}
+                            leftIcon={bidsIcon}
+                        />
+                        <RRListItem
+                            to={{ pathname: '/dashboard/' + side + '/transactions' }}
+                            selectable={true}
+                            caption={t('TRANSACTIONS')}
+                            theme={theme}
+                            className={classnames({ [theme.active]: location === 'transactions', [theme.pendingTransactions]: pendingTrsCount > 0 })}
+                            leftIcon={pendingTransactionsIcon}
+                        />
+                    </div>
+                    <div>
+                        <Anchor target='_blank' href='https://medium.com/adex-network-tips-and-tricks' >
+                            <ListItem
+                                leftIcon='help_outline'
+                                selectable={true}
+                                caption={t('HELP')}
+                                theme={theme}
+                            />
+                        </Anchor>
+                        <RRListItem
                             to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
                             selectable={true}
                             caption={t('ACCOUNT')}

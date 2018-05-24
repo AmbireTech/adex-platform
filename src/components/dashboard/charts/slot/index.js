@@ -1,8 +1,8 @@
 import { BidsStatusBars, BidsStatusPie } from './bidsStatus'
-import { SlotsClicksAndRevenue } from './bidsStatistics'
+import {  BidsTimeStatistics } from './bidsStatistics'
 
 export {
     BidsStatusBars,
     BidsStatusPie,
-    SlotsClicksAndRevenue
+    BidsTimeStatistics
 }

@@ -15,8 +15,9 @@ import { exchange as ExchangeConstants } from 'adex-constants'
 import { CancelBid, VerifyBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
 import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
-import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch } from './BidsCommon'
+import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch, getAdvertiserBidData, getBidData } from './BidsCommon'
 import { getAddrBids } from 'services/store-data/bids'
+import BidsStatistics from './BidsStatistics'
 
 const TooltipIconButton = Tooltip(IconButton)
 const { BID_STATES } = ExchangeConstants
@@ -24,9 +25,31 @@ const { BID_STATES } = ExchangeConstants
 export class UnitBids extends Component {
     constructor(props) {
         super(props)
+
+        let tabParam = props.match && props.match.params ? props.match.params.tab : null
+        let tabIndex = this.getTabIndex(tabParam)
+
         this.state = {
-            tabIndex: 0,
+            tabIndex: tabIndex,
             detailsOpen: false
+        }
+    }
+
+    getTabIndex = (tab) => {
+
+        switch (tab) {
+            case 'action':
+                return 0
+            case 'active':
+                return 1
+            case 'open':
+                return 2
+            case 'closed':
+                return 3
+            case 'statistics':
+                return 4
+            default:
+                return 0
         }
     }
 
@@ -47,78 +70,17 @@ export class UnitBids extends Component {
         }
     }
 
-    getBidData = (bid) => {
-        const side = this.props.side
-        const t = this.props.t
-        let bidData = getCommonBidData({ bid, t, side: side })
-
-        const transactions = this.props.transactions
-        const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
-        const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
-
-        const canCancel = (bid._state === BID_STATES.DoesNotExist.id)
-        const canVerify = (bid._state === BID_STATES.Accepted.id) && !bid._advertiserConfirmation
-        const targetReached = bid.clicksCount >= bid._target
-        const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidData.bidExpires < Date.now()) && !bid._advertiserConfirmation
-        const pendingCancel = pendingState === BID_STATES.Canceled.id
-        const pendingRefund = pendingState === BID_STATES.Expired.id
-        const pendingVerify = (pendingState === BID_STATES.ConfirmedAdv.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
-        const pendingAcceptByPub = bid.unconfirmedStateId === BID_STATES.Accepted.id
-
-        bidData.cancelBtn = canCancel ? <CancelBid
-            icon={pendingCancel ? 'hourglass_empty' : ''}
-            adUnitId={bid._adUnitId}
-            bidId={bid._id}
-            placedBid={bid}
-            acc={this.props.account}
-            raised
-            className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
-            onSave={this.onSave}
-            disabled={pendingCancel}
-        /> : null
-
-        bidData.verifyBtn = canVerify ?
-            <VerifyBid
-                questionableVerify={!targetReached}
-                icon={pendingVerify ? 'hourglass_empty' : ''}
-                itemId={bid._adUnitId}
-                bidId={bid._id}
-                placedBid={bid}
-                acc={this.props.account}
-                raised
-                className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: !targetReached, [RTButtonTheme.success]: targetReached })}
-                onSave={this.onSave}
-                disabled={pendingVerify}
-            /> : null
-
-        bidData.refundBtn = canRefund ?
-            <RefundBid
-                questionableVerify={targetReached}
-                icon={pendingRefund ? 'hourglass_empty' : ''}
-                adUnitId={bid._adUnitId}
-                bidId={bid._id}
-                placedBid={bid}
-                acc={this.props.account}
-                raised
-                className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.danger)}
-                onSave={this.onSave}
-                disabled={pendingRefund}
-            /> : null
-
-        bidData.pendingAcceptByPub = canCancel && pendingAcceptByPub ?
-            <TooltipIconButton
-                icon='warning'
-                tooltip={t('WARNING_PENDING_ACCEPT_BY_PUB')}
-                className={RTButtonTheme.warning}
-            /> : null
-
-        return bidData
-
-    }
-
     renderTableRow = (bid, index, { to, selected }) => {
         const t = this.props.t
-        const bidData = this.getBidData(bid)
+        const bidData = getBidData({
+            bid: bid,
+            t: t,
+            transactions: this.props.transactions,
+            side: this.props.side,
+            item: this.props.item,
+            account: this.props.account,
+            onSave: this.onSave
+        })
 
         return renderCommonTableRow({ bidData, t })
     }
@@ -149,7 +111,7 @@ export class UnitBids extends Component {
                 {this.props.getUnitBids ? null :
                     <div className={classnames(theme.heading, theme.Transactions)}>
                         <h2 > {t('ALL_BIDS')} </h2>
-                    </div>                
+                    </div>
                 }
                 <Tabs
                     theme={theme}
@@ -197,10 +159,7 @@ export class UnitBids extends Component {
                         />
                     </Tab>
                     <Tab label={t('STATISTICS')}>
-                        <div>
-                            {t('COMING_SOON')}
-                            {/* {this.renderNonOpenedBidsChart(slotBids)} */}
-                        </div>
+                        <BidsStatistics bids={sorted.action.concat(sorted.active, sorted.closed)} onSave={this.onSave} />
                     </Tab>
                 </Tabs>
 
@@ -215,7 +174,9 @@ UnitBids.propTypes = {
     getUnitBids: PropTypes.func
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
+
+    console.log('props 1', props)
     const persist = state.persist
     const memory = state.memory
     return {
