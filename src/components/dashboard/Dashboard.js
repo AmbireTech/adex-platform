@@ -33,7 +33,9 @@ import { getAddrBids } from 'services/store-data/bids'
 import checkGasData from 'services/store-data/gas'
 import { SORT_PROPERTIES_ITEMS, SORT_PROPERTIES_COLLECTION, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import Helper from 'helpers/miscHelpers'
+import scActions from 'services/smart-contracts/actions'
 
+const { getAccountStats } = scActions
 const { ItemsTypes } = ItemsConstants
 
 const PrivateRoute = ({ component: Component, auth, ...other }) => {
@@ -72,6 +74,11 @@ class Dashboard extends React.Component {
             })
 
         getAddrBids({ authSig: this.props.account._authSig })
+
+        getAccountStats({ _addr: this.props.account._addr, authType: this.props.account._authMode.authType })
+            .then((stats) => {
+                this.props.actions.updateAccount({ ownProps: { stats: stats } })
+            })
     }
 
     componentWillUpdate(nextProps) {
