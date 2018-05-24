@@ -25,20 +25,21 @@ class CsvDownloadBtn extends Component {
     }
 
     render() {
+        const csvFileName = (this.props.fileName || 'adex-export') + '.csv'
         return (
             <span>
                 <a
                     ref={(i) => this.dlAnchor = i}
-                    download={(this.props.fileName || 'adex-export') + '.csv'}
+                    download={csvFileName}
                     style={{ visibility: 'hidden', width: 0, height: 0, display: 'inline-block' }}
                 >
-                    {(this.props.fileName || 'adex-export') + '.csv'}
+                    {csvFileName}
                 </a>
                 <Button
                     {...this.props}
                     icon={this.state.generatingCSV ? 'hourglass_empty' : (this.props.icon || 'save_alt')}
                     onClick={this.dlCSV}
-                    label={this.props.label || this.props.t('DOWNLOAD_CSV_BTN')}
+                    label={this.props.t(this.props.label || 'DOWNLOAD_CSV_BTN')}
                     disabled={this.state.generatingCSV}
                 />
             </span>
