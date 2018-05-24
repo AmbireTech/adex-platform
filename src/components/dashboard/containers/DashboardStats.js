@@ -6,12 +6,15 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import theme from './theme.css'
 import { Grid, Row, Col } from 'react-flexbox-grid'
-import { BidsStatusPie, BidsStatusBars } from 'components/dashboard/charts/slot'
+import { BidsStatusPie } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
 import { exchange as ExchangeConstants } from 'adex-constants'
-import { List, ListItem, ListSubHeader, ListDivider } from 'react-toolbox/lib/list'
-import { Card, CardMedia, CardTitle, CardText, CardActions } from 'react-toolbox/lib/card'
+import { Card, CardTitle, CardActions } from 'react-toolbox/lib/card'
 import classnames from 'classnames'
+import { adxToFloatView } from 'services/smart-contracts/utils'
+import { web3Utils } from 'services/smart-contracts/ADX'
+import SideSelect from 'components/signin/side-select/SideSelect'
+import { Button } from 'react-toolbox/lib/button'
 
 const { BidStatesLabels, BID_STATES } = ExchangeConstants
 
@@ -25,6 +28,14 @@ export class DashboardStats extends Component {
             bidsData: [],
             bidsStats: {}
         }
+    }
+
+    goToBids = (tab) => {
+        this.props.history.push('/dashboard/' + this.props.side + '/bids/' + tab)
+    }
+
+    goToAccount = () => {
+        this.props.history.push('/dashboard/' + this.props.side + '/account')
     }
 
     componentWillMount() {
@@ -154,7 +165,7 @@ export class DashboardStats extends Component {
                     }}
                     onPieClick={(ev) => {
                         if (ev && !isNaN(ev._index)) {
-                            this.props.history.push('/dashboard/' + this.props.side + '/bids/' + stats.tabs[ev._index])
+                            this.goToBids(stats.tabs[ev._index])
                         }
                     }}
 
@@ -163,30 +174,95 @@ export class DashboardStats extends Component {
         )
     }
 
-    // TODO: show more data here and format it
+    // TODO: Common func to get account stats for here and account component
     InfoStats = ({ stats }) => {
-        // console.log(stats)
         const t = this.props.t
+        const side = this.props.side
+        const spentEarned = side === 'publisher' ? 'LABEL_TOTAL_REVENUE' : 'LABEL_TOTAL_EXPENSES'
+
+
+        const account = this.props.account
+        const accStats = { ...account._stats } || {}
+        const addrBalanceAdx = adxToFloatView(accStats.balanceAdx || 0)
+        const addrBalanceEth = web3Utils.fromWei(accStats.balanceEth || '0', 'ether')
+        const exchBal = accStats.exchangeBalance || {}
+        const adxOnBids = adxToFloatView(exchBal.onBids || 0)
+        const exchangeAvailable = adxToFloatView(exchBal.available || 0)
         return (
             <div>
 
-                <Card className={classnames(theme.dashboardCardHalf)}>
+                <Card
+                    className={classnames(theme.dashboardCardHalf, theme.linkCard)}
+                    onClick={() => this.goToBids('closed')}
+                >
                     <CardTitle
-                        subtitle={t('LABEL_SPENT_EARNED')}
-                        title={stats.closed.completed.amount + ''}
+                        subtitle={t(spentEarned)}
+                        title={adxToFloatView(stats.closed.completed.amount || 0) + ' ADX'}
                     />
                 </Card>
 
-                <Card className={classnames(theme.dashboardCardHalf)}>
+                <Card
+                    className={classnames(theme.dashboardCardHalf, theme.linkCard)}
+                    onClick={() => this.goToBids('action')}
+                >
                     <CardTitle
-                        subtitle={t('LABEL_AWAITING_VERIFY')}
-                        title={stats.action.amount + ''}
+                        subtitle={t('LABEL_AMOUNT_READY_TO_VERIFY')}
+                        title={adxToFloatView(stats.action.amount || 0) + ' ADX'}
+                    />
+                    {/* <CardActions theme={theme}>
+                        <Button label="Action 1" />
+                    </CardActions> */}
+                </Card>
+                {side === 'advertiser' ?
+                    <Card
+                        className={classnames(theme.dashboardCardHalf, theme.linkCard)}
+                        onClick={() => this.goToBids('open')}
+                    >
+                        <CardTitle
+                            subtitle={t('LABEL_OPEN_BIDS_AMOUNT')}
+                            title={adxToFloatView(stats.open.amount || 0) + ' ADX'}
+                        />
+                    </Card>
+                    : null}
+
+                <Card
+                    className={classnames(theme.dashboardCardHalf, theme.linkCard)}
+                    onClick={this.goToAccount}
+                >
+                    <CardTitle
+                        subtitle={t('ACCOUNT_ETH_BALANCE')}
+                        title={addrBalanceEth + ' ETH'}
                     />
                 </Card>
-                <Card className={classnames(theme.dashboardCardHalf)}>
+
+
+                <Card
+                    className={classnames(theme.dashboardCardHalf, theme.linkCard)}
+                    onClick={this.goToAccount}
+                >
                     <CardTitle
-                        subtitle={t('LABEL_ON_OPEN')}
-                        title={stats.open.amount + ''}
+                        subtitle={t('ACCOUNT_ADX_BALANCE')}
+                        title={addrBalanceAdx + ' ADX'}
+                    />
+                </Card>
+
+                <Card
+                    className={classnames(theme.dashboardCardHalf, theme.linkCard)}
+                    onClick={this.goToAccount}
+                >
+                    <CardTitle
+                        subtitle={t('EXCHANGE_ADX_BALANCE_AVAILABLE')}
+                        title={exchangeAvailable + ' ADX'}
+                    />
+                </Card>
+
+                <Card
+                    className={classnames(theme.dashboardCardHalf, theme.linkCard)}
+                    onClick={this.goToAccount}
+                >
+                    <CardTitle
+                        subtitle={t('EXCHANGE_ADX_BALANCE_ON_BIDS')}
+                        title={adxOnBids + ' ADX'}
                     />
                 </Card>
 
@@ -195,6 +271,12 @@ export class DashboardStats extends Component {
     }
 
     render() {
+        if (this.props.side !== 'advertiser' && this.props.side !== 'publisher') {
+            return (
+                <SideSelect active={true} />
+            )
+        }
+
         const stats = this.mapData(this.props.sideBids)
         return (
             <div>
