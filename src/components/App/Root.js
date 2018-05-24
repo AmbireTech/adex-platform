@@ -50,26 +50,8 @@ class Root extends Component {
                         let mmAddrSigCheck = getSig({ addr: addr, mode: EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id })
                         if (!!mmAddrSigCheck && !!accSigCheck && (mmAddrSigCheck === accSigCheck)) {
                             return // user authenticated and not changed
-                        } else if ((addr !== acc._addr) && !!mmAddrSigCheck) {
-                            //the metamask address is changed but already authenticated, so we load the stats for it
-                            let authMode = {
-                                sigMode: mode,
-                                authType: AUTH_TYPES.METAMASK.name
-                            }
-                            this.props.actions.updateAccount({ ownProps: { addr: addr, authMode, authSig: mmAddrSigCheck } })
-                            this.props.actions.resetAllItems()
-
-                            // TODO: Make func next to logaut to get this data at one place
-                            getAccountStats({ _addr: addr, authType: authMode.authType, mode: authMode.sigMode })
-                                .then((stats) => {
-                                    this.props.actions.updateAccount({ ownProps: { stats: stats } })
-                                })
-                            getUserItems({ authSig: mmAddrSigCheck })
-                                .catch((err) => {
-                                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: Helper.getErrMsg(err), timeout: 5000 })
-                                })
-                            getAddrBids({ authSig: this.props.account._authSig })
                         } else {
+                            // logout on metamask addr change
                             logOut()
                         }
                     } else {

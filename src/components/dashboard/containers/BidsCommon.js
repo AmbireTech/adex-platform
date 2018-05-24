@@ -14,11 +14,16 @@ import WithDialog from 'components/common/dialog/WithDialog'
 import classnames from 'classnames'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import ItemIpfsDetails from './ItemIpfsDetails'
-import { Button } from 'react-toolbox/lib/button'
+import { Button, IconButton } from 'react-toolbox/lib/button'
+import { getBidEvents } from 'services/adex-node/actions'
+import { AcceptBid, GiveupBid, VerifyBid, CancelBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
+import RTButtonTheme from 'styles/RTButton.css'
+import Tooltip from 'react-toolbox/lib/tooltip'
 
 const RRButton = withReactRouterLink(Button)
 const RRAnchor = withReactRouterLink(Anchor)
 const ItemIpfsDetailsDialog = WithDialog(ItemIpfsDetails)
+const TooltipIconButton = Tooltip(IconButton)
 
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
 
@@ -143,6 +148,65 @@ export const renderCommonTableRow = ({ bidData, t, side }) => {
     )
 }
 
+export const renderTableHeadStats = ({ t, side, }) => {
+    return (
+        <TableHead>
+            <TableCell> {t('DETAILS')} </TableCell>
+            <TableCell> {t('BID_ID')} </TableCell>
+            <TableCell> {t('BID_AMOUNT')} </TableCell>
+            <TableCell> {t('BID_TARGET')} / {t('BID_UNIQUE_CLICKS')} </TableCell>
+            <TableCell> {t('BID_STATE')} </TableCell>
+            <TableCell> {t('BID_PERIOD_UNIQUE_CLICKS')}</TableCell>
+            <TableCell> {t('BID_PERIOD_CLICKS')} </TableCell>
+            <TableCell> {t('BID_PERIOD_IMPRESSIONS')} </TableCell>
+            <TableCell> {t('BID_ESTIMATED_REVENUE')} </TableCell>
+        </TableHead>
+    )
+}
+
+export const renderCommonTableRowStats = ({ bidData, t, side }) => {
+    const statsUniqueClicks = bidData.statistics.daily.uniqueClick || 0
+    return (
+        <TableRow key={bidData._id}>
+            <TableCell>
+                <BidDetailWithDialog
+                    btnLabel=''
+                    title={bidData._id}
+                    t={t}
+                    bidData={bidData}
+                    icon='open_in_new'
+                    iconButton
+                />
+            </TableCell>
+            <TableCell
+                className={classnames(theme.compactCol, theme.ellipsis)}
+            >
+                {bidData._id}
+            </TableCell>
+            <TableCell> {bidData._amount} </TableCell>
+            <TableCell>
+                {bidData._target} / {bidData.clicksCount}
+            </TableCell>
+            <TableCell> {bidData._state} </TableCell>
+            <TableCell>
+                {statsUniqueClicks}
+            </TableCell>
+            <TableCell>
+                {bidData.statistics.daily.clicks || 0}
+            </TableCell>
+            <TableCell>
+                {bidData.statistics.daily.loaded || 0}
+            </TableCell>
+            <TableCell>
+                {statsUniqueClicks > 0 ?
+                    (adxToFloatView(Math.floor(parseInt(bidData.amount, 10) / parseInt(bidData._target, 10)) * statsUniqueClicks))
+                    : 0}
+                {' ADX'}
+            </TableCell>
+        </TableRow >
+    )
+}
+
 export const getCommonBidData = ({ bid, t, side }) => {
 
     const accepted = (bid._acceptedTime || 0) * 1000
@@ -162,6 +226,7 @@ export const getCommonBidData = ({ bid, t, side }) => {
     const bidData = {
         _id: bid._id || '-',
         _amount: adxToFloatView(bid._amount) + ' ADX',
+        amount: bid._amount,
         _target: bid._target,
         clicksCount: bid.clicksCount || '-',
         _state:
@@ -176,6 +241,7 @@ export const getCommonBidData = ({ bid, t, side }) => {
         timeoutLabel: moment.duration(timeout, 'ms').humanize(),
         acceptedLabel: accepted ? moment(accepted).format('MMMM Do, YYYY, HH:mm:ss') : '-',
         bidExpiresLabel: bidExpires ? moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss') : '-',
+        statistics: bid.statistics,
         _publisherConfirmation: bid._publisherConfirmation ?
             <ItemIpfsDetailsDialog
                 btnLabel={t('PUBLISHER')}
@@ -225,6 +291,140 @@ export const getCommonBidData = ({ bid, t, side }) => {
     }
 
     return bidData
+}
+
+export const getPublisherBidData = ({ bid, t, transactions, side, item, account, onSave }) => {
+    const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
+    const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
+
+    const noTargetsReached = bid.clicksCount < bid._target
+    const canAccept = (bid._state === BID_STATES.DoesNotExist.id)
+    const canVerify = (bid._state === BID_STATES.Accepted.id) && ((bid.clicksCount >= bid._target) || bid._advertiserConfirmation)
+    const canGiveup = bid._state === BID_STATES.Accepted.id
+    const pendingGiveup = pendingState === BID_STATES.Canceled.id
+    const pendingAccept = pendingState === BID_STATES.Accepted.id
+    const pendingVerify = (pendingState === BID_STATES.ConfirmedPub.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
+
+    let bidData = getCommonBidData({ bid, t, side: side })
+
+    bidData.acceptBid = canAccept ? <AcceptBid
+        icon={pendingAccept ? 'hourglass_empty' : ''}
+        adUnitId={bid._adUnitId}
+        slotId={item._id}
+        bidId={bid._id}
+        placedBid={bid}
+        slot={item}
+        acc={account}
+        raised
+        primary
+        className={theme.actionBtn}
+        onSave={onSave}
+    // disabled={pendingAccept}
+    /> : null
+
+    bidData.verifyBtn = canVerify ?
+        <VerifyBid
+            noTargetsReached
+            icon={pendingVerify ? 'hourglass_empty' : (noTargetsReached ? '' : '')}
+            itemId={bid._adUnitId}
+            bidId={bid._id}
+            placedBid={bid}
+            acc={account}
+            raised
+            className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: noTargetsReached, [RTButtonTheme.success]: !noTargetsReached })}
+            onSave={onSave}
+            disabled={pendingVerify}
+        /> : null
+
+    bidData.giveupBid = canGiveup ?
+        <GiveupBid
+            icon={pendingGiveup ? 'hourglass_empty' : ''}
+            slotId={bid._adSlotId}
+            bidId={bid._id}
+            placedBid={bid}
+            acc={account}
+            raised
+            className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
+            onSave={onSave}
+            disabled={pendingGiveup}
+        /> : null
+
+    return bidData
+}
+
+export const getAdvertiserBidData = ({ bid, t, transactions, side, item, account, onSave }) => {
+    let bidData = getCommonBidData({ bid, t, side: side })
+
+    const pendingTransaction = transactions[bid.unconfirmedStateTrHash]
+    const pendingState = !!pendingTransaction ? pendingTransaction.state : (bid.unconfirmedStateId || null)
+
+    const canCancel = (bid._state === BID_STATES.DoesNotExist.id)
+    const canVerify = (bid._state === BID_STATES.Accepted.id) && !bid._advertiserConfirmation
+    const targetReached = bid.clicksCount >= bid._target
+    const canRefund = (bid._state === BID_STATES.Accepted.id) && (bidData.bidExpires < Date.now()) && !bid._advertiserConfirmation
+    const pendingCancel = pendingState === BID_STATES.Canceled.id
+    const pendingRefund = pendingState === BID_STATES.Expired.id
+    const pendingVerify = (pendingState === BID_STATES.ConfirmedAdv.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
+    const pendingAcceptByPub = bid.unconfirmedStateId === BID_STATES.Accepted.id
+
+    bidData.cancelBtn = canCancel ? <CancelBid
+        icon={pendingCancel ? 'hourglass_empty' : ''}
+        adUnitId={bid._adUnitId}
+        bidId={bid._id}
+        placedBid={bid}
+        acc={account}
+        raised
+        className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
+        onSave={onSave}
+        disabled={pendingCancel}
+    /> : null
+
+    bidData.verifyBtn = canVerify ?
+        <VerifyBid
+            questionableVerify={!targetReached}
+            icon={pendingVerify ? 'hourglass_empty' : ''}
+            itemId={bid._adUnitId}
+            bidId={bid._id}
+            placedBid={bid}
+            acc={account}
+            raised
+            className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: !targetReached, [RTButtonTheme.success]: targetReached })}
+            onSave={onSave}
+            disabled={pendingVerify}
+        /> : null
+
+    bidData.refundBtn = canRefund ?
+        <RefundBid
+            questionableVerify={targetReached}
+            icon={pendingRefund ? 'hourglass_empty' : ''}
+            adUnitId={bid._adUnitId}
+            bidId={bid._id}
+            placedBid={bid}
+            acc={account}
+            raised
+            className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.danger)}
+            onSave={onSave}
+            disabled={pendingRefund}
+        /> : null
+
+    bidData.pendingAcceptByPub = canCancel && pendingAcceptByPub ?
+        <TooltipIconButton
+            icon='warning'
+            tooltip={t('WARNING_PENDING_ACCEPT_BY_PUB')}
+            className={RTButtonTheme.warning}
+        /> : null
+
+    return bidData
+}
+
+export const getBidData = ({ bid, t, transactions, side, item, account, onSave }) => {
+    if (side === 'advertiser') {
+        return getAdvertiserBidData({ bid, t, transactions, side, item, account, onSave })
+    } else if (side === 'publisher') {
+        return getPublisherBidData({ bid, t, transactions, side, item, account, onSave })
+    } else {
+        return 'kor' // OR throw ?
+    }
 }
 
 export const searchMatch = (bid) => {

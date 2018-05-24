@@ -391,3 +391,22 @@ export const updateItm = ({ item, authSig }) => {
             return resp.json()
         })
 }
+
+export const getBidEvents = ({ eventData = { bids: null, bid: null, start: null, end: null, interval: null } } = {}) => {
+    return requester.fetch({
+        route: 'events',
+        method: 'GET',
+        queryParams: eventData,
+        headers: { 'Content-Type': 'application/json' }
+    })
+        .then((resp) => {
+            return catchErrors(resp)
+        })
+        .then((resp) => {
+            return resp.json()
+        })
+        .then(resp => {
+            // console.log(resp)
+            return resp
+        })
+}

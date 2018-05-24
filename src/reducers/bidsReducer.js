@@ -27,16 +27,20 @@ export default function bidsReducer(state = initialState.bids, action) {
             return newState
 
         case UPDATE_ALL_BIDS:
-            if(action.advBids) {
-                newState.advBids = {...action.advBids}
+            if (action.advBids) {
+                newState.advBids = { ...action.advBids }
             }
 
-            if(action.pubBids) {
-                newState.pubBids = {...action.pubBids}
+            if (action.pubBids) {
+                newState.pubBids = { ...action.pubBids }
+            }
+
+            if (action.bidsById) {
+                newState.bidsById = { ...action.bidsById }
             }
 
             return newState
-        case RESET_ALL_BIDS: 
+        case RESET_ALL_BIDS:
             return initialState.bids
         default:
             return state

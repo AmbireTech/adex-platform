@@ -33,7 +33,9 @@ import { getAddrBids } from 'services/store-data/bids'
 import checkGasData from 'services/store-data/gas'
 import { SORT_PROPERTIES_ITEMS, SORT_PROPERTIES_COLLECTION, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import Helper from 'helpers/miscHelpers'
+import scActions from 'services/smart-contracts/actions'
 
+const { getAccountStats } = scActions
 const { ItemsTypes } = ItemsConstants
 
 const PrivateRoute = ({ component: Component, auth, ...other }) => {
@@ -68,10 +70,15 @@ class Dashboard extends React.Component {
         checkGasData.start()
         getUserItems({ authSig: this.props.account._authSig })
             .catch((err) => {
-                this.props.actions.addToast({ type: 'cancel', action: 'X', label:  this.props.t('ERR_AUTH_METAMASK', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
+                this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_METAMASK', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
             })
 
         getAddrBids({ authSig: this.props.account._authSig })
+
+        getAccountStats({ _addr: this.props.account._addr, authType: this.props.account._authMode.authType })
+            .then((stats) => {
+                this.props.actions.updateAccount({ ownProps: { stats: stats } })
+            })
     }
 
     componentWillUpdate(nextProps) {
@@ -148,31 +155,6 @@ class Dashboard extends React.Component {
         )
     }
 
-    renderAdvertiserBids = () => {
-        return (
-            <UnitBids
-                bids={[]}
-            />
-        )
-    }
-
-    renderPublisherBids = () => {
-        return (
-            <SlotBids
-                bids={[]}
-            />
-        )
-    }
-
-    Dash = () => {
-
-        return (
-            <div>
-                {this.props.t('DASHBOARD')}
-            </div>
-        )
-    }
-
     render() {
         let side = this.props.side || this.props.match.params.side
         return (
@@ -189,13 +171,13 @@ class Dashboard extends React.Component {
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/units' component={this.renderAdUnits} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/Campaign/:itemId' component={Campaign} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/AdUnit/:itemId' component={Unit} />
-                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/bids' component={this.renderAdvertiserBids} />
+                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/bids/:tab?' component={UnitBids} />
 
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/channels' component={this.renderChannels} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/slots' component={this.renderAdSlots} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/Channel/:itemId' component={Channel} />
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
-                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/bids' component={this.renderPublisherBids} />                        
+                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/bids/:tab?' component={SlotBids} />
 
                         <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/account'} component={Account} />
                         <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/transactions'} component={Transactions} />

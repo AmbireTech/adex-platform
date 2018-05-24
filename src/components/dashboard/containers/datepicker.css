@@ -5,6 +5,9 @@
     transform: translateY(-50%);
     right: 124px;
     z-index: 110;
+}
+
+.campaignPeriodContainer, .statsDatePicker {
     & .input, & .inputElement {
         padding: 0;
         margin: 0;
@@ -24,5 +27,24 @@
         margin-right: 5px;
         opacity: 0.6;
         vertical-align: text-bottom;
+    }
+}
+
+.statsDatePicker {
+    display: flex;
+    align-items: center;
+
+    &.active {
+        & .input, & .inputElement, & span {
+            opacity: 1;
+        }
+    }
+    &.button {
+        opacity: 1;
+    }
+
+    & .input, & .inputElement, & span {
+        color: #fff;
+        opacity: 0.6;
     }
 }

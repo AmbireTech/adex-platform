@@ -12,12 +12,12 @@ export const sortBids = (bids) => {
         } else if (bid._state === BID_STATES.Accepted.id
             || bid._state === BID_STATES.ConfirmedAdv.id
             || bid._state === BID_STATES.ConfirmedPub.id) {
-            if(bid.clicksCount >= bid._target) {
+            if (bid.clicksCount >= bid._target) {
                 memo.action.push(bid)
             } else {
                 memo.active.push(bid)
             }
-        } 
+        }
         else {
             memo.closed.push(bid)
         }
@@ -35,6 +35,22 @@ export const getAddrBids = ({ authSig, side }) => {
             getBids({ side: 'advertiser', storeProp: 'advBids', authSig }),
             getBids({ side: 'publisher', storeProp: 'pubBids', authSig })
         ])
+        .then(([advBids, pubBids]) => {
+            // TODO: keep only this in the store and sort the bids when asked
+
+            const bidsById = ((advBids || []).concat(pubBids || [])).reduce((memo, bid) => {
+                if (bid && bid._id) {
+                    memo[bid._id] = bid
+                }
+                return memo
+            }, {})
+
+            actions.execute(actions.updateBids({
+                bidsById: bidsById
+            }))
+
+            return true
+        })
 }
 
 export const getBids = ({ side, storeProp, authSig }) => {
@@ -42,6 +58,6 @@ export const getBids = ({ side, storeProp, authSig }) => {
         .then((bids) => {
             const sorted = sortBids(bids)
             actions.execute(actions.updateBids({ [storeProp]: sorted }))
-            return true
+            return bids
         })
 }
