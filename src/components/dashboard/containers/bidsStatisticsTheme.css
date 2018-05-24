@@ -53,3 +53,15 @@
     align-items: center;
     justify-content: space-between
 }
+
+.chartActions {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: space-between;
+}
+
+.chartCard {
+    padding: 20px;
+    margin: 10px;
+}

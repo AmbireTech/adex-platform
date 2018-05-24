@@ -201,7 +201,7 @@ export class DashboardStats extends Component {
                 <Grid fluid >
                     <Row top='xs' className={theme.itemsListControls}>
                         <Col xs={12} sm={12} lg={6}>
-                            <Card className={classnames(theme.dashboardCardBody)}>
+                            <Card raised className={classnames(theme.dashboardCardBody)}>
                                 <this.BidsStateChart
                                     stats={stats}
                                 />
