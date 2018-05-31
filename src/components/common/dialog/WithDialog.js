@@ -1,14 +1,24 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Button, IconButton } from 'react-toolbox/lib/button'
-import Dialog from 'react-toolbox/lib/dialog'
+import Dialog from '@material-ui/core/Dialog' // 'react-toolbox/lib/dialog'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import DialogContent from '@material-ui/core/DialogContent'
+import Fade from '@material-ui/core/Fade'
 import theme from './theme.css'
 import classnames from 'classnames'
 import RTButtonTheme from 'styles/RTButton.css'
 import Translate from 'components/translate/Translate'
+import Slide from '@material-ui/core/Slide'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './theme'
 
 const TextBtn = ({ label, className, style, onClick, ...rest }) => {
     return <span className={classnames(theme.textBtn, className)} style={style} onClick={onClick}> {label} </span>
+}
+
+const Transition = (props) => {
+    return <Slide direction="up" {...props} />;
 }
 
 export default function ItemHoc(Decorated) {
@@ -69,6 +79,9 @@ export default function ItemHoc(Decorated) {
                 }
             }
 
+            const { stiles, classes, ...other } = this.props
+
+
             return (
                 <div>
                     <ButtonComponent
@@ -88,21 +101,30 @@ export default function ItemHoc(Decorated) {
                         )}
                     />
                     <Dialog
-                        theme={theme}
-                        className={classnames({ [theme.darkerBackground]: !!this.props.darkerBackground })}
-                        active={this.state.active}
-                        onEscKeyDown={this.handleToggle}
-                        onOverlayClick={this.handleToggle}
-                        title={this.props.t(this.props.title)}
-                        type={this.props.type || 'large'}
+                        // disableBackdropClick
+                        // disableEscapeKeyDown
+                        // maxWidth="xs"
+                        // fullScreen
+                        // theme={theme}
+                        // className={classnames({ [theme.darkerBackground]: !!this.props.darkerBackground })}
+                        open={this.state.active}
+                        onClose={this.handleToggle}
+                        TransitionComponent={Transition}
+                        classes={{ paper: classes.dialog }}
+                        // classes={classes}
+                        // onEscKeyDown={this.handleToggle}
+                        // onOverlayClick={this.handleToggle}
+                        // title={this.props.t(this.props.title)}
+                        // type={this.props.type || 'large'}
                     >
+                        <DialogTitle id="simple-dialog-title">Set backup account</DialogTitle>
                         <IconButton
                             icon='close'
                             onClick={this.handleToggle}
                         />
-                        <div className={theme.dialogBody}>
+                        <DialogContent className={theme.dialogBody}>
                             <Decorated {...this.props} onSave={this.onSave()} />
-                        </div>
+                        </DialogContent>
                     </Dialog>
 
                 </div>
@@ -116,6 +138,6 @@ export default function ItemHoc(Decorated) {
         floating: PropTypes.bool
     }
 
-    return Translate(WithDialog)
+    return Translate(withStyles(styles)(WithDialog))
 }
 
