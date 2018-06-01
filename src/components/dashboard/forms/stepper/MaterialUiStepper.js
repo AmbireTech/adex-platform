@@ -40,14 +40,14 @@ const StepperNav = ({ pages, currentPage, classes, ...other }) => {
                 return (
                     <Step key={page.title} >
                         <StepLabel
-                            StepIconProps={
-                                {
-                                    classes: {
-                                        root: classes.root,
-                                        active: classes.active,
-                                    }
-                                }
-                            }
+                            // StepIconProps={
+                            //     {
+                            //         classes: {
+                            //             root: classes.root,
+                            //             active: classes.active,
+                            //         }
+                            //     }
+                            // }
                         >
                             {page.title}
                         </StepLabel>
