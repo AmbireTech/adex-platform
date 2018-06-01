@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import MaterialStepper from 'components/dashboard/forms/stepper/MaterialStepper'
+import MaterialStepper from 'components/dashboard/forms/stepper/MaterialUiStepper'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Translate from 'components/translate/Translate'
 
