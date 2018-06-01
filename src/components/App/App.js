@@ -12,6 +12,8 @@ import Toast from 'components/toast/Toast'
 import Confirm from 'components/confirm/Confirm'
 import { PersistGate } from 'redux-persist/es/integration/react'
 import Root from './Root'
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import { themeMUI } from './themeMUi'
 
 // window.TREZOR_POPUP_PATH = 'https://localhost/'
 // window.TREZOR_POPUP_ORIGIN = 'http://localhost'
@@ -35,11 +37,13 @@ class App extends Component {
             persistor={persistor}>
             <ConnectedRouter history={history} >
               <div className="adex-dapp">
-                <Switch >
-                  <Root />
-                </Switch>
-                <Toast />
-                <Confirm />
+                <MuiThemeProvider theme={themeMUI}>
+                  <Switch >
+                    <Root />
+                  </Switch>
+                  <Toast />
+                  <Confirm />
+                </MuiThemeProvider>
               </div>
             </ConnectedRouter>
 
