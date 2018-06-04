@@ -1,21 +1,29 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Button, IconButton } from 'react-toolbox/lib/button'
+import IconButtonMui from '@material-ui/core/IconButton'
 import Dialog from '@material-ui/core/Dialog' // 'react-toolbox/lib/dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
+import DialogActions from '@material-ui/core/DialogActions'
 import Fade from '@material-ui/core/Fade'
-import theme from './theme.css'
+// import theme from './theme.css'
 import classnames from 'classnames'
 import RTButtonTheme from 'styles/RTButton.css'
 import Translate from 'components/translate/Translate'
 import Slide from '@material-ui/core/Slide'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './theme'
+import Icon from '@material-ui/core/Icon'
+import Typography from '@material-ui/core/Typography'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
 
-const TextBtn = ({ label, className, style, onClick, ...rest }) => {
-    return <span className={classnames(theme.textBtn, className)} style={style} onClick={onClick}> {label} </span>
+const textBtn = ({ label, className, classes, style, onClick, ...rest }) => {
+    return <span className={classnames(classes.textBtn, className)} style={style} onClick={onClick}> {label} </span>
 }
+
+const TextBtn = withStyles(styles)(textBtn)
 
 const Transition = (props) => {
     return <Slide direction="up" {...props} />;
@@ -83,7 +91,7 @@ export default function ItemHoc(Decorated) {
 
 
             return (
-                <div>
+                <div >
                     <ButtonComponent
                         disabled={this.props.disabled}
                         icon={this.props.icon === undefined ? 'add' : this.props.icon}
@@ -96,7 +104,7 @@ export default function ItemHoc(Decorated) {
                         style={this.props.style}
                         className={classnames(
                             this.props.className,
-                            { [theme.floating]: this.props.floating },
+                            { [classes.floating]: this.props.floating },
                             { [RTButtonTheme[this.props.color]]: !!this.props.color }
                         )}
                     />
@@ -111,18 +119,24 @@ export default function ItemHoc(Decorated) {
                         onClose={this.handleToggle}
                         TransitionComponent={Transition}
                         classes={{ paper: classes.dialog }}
-                        // classes={classes}
-                        // onEscKeyDown={this.handleToggle}
-                        // onOverlayClick={this.handleToggle}
-                        // title={this.props.t(this.props.title)}
-                        // type={this.props.type || 'large'}
+                    // onEscKeyDown={this.handleToggle}
+                    // onOverlayClick={this.handleToggle}
                     >
-                        <DialogTitle id="simple-dialog-title">Set backup account</DialogTitle>
-                        <IconButton
-                            icon='close'
-                            onClick={this.handleToggle}
-                        />
-                        <DialogContent className={theme.dialogBody}>
+                        {/* <AppBar className={classes.appBar}>
+                            <Toolbar> */}
+                        <DialogTitle>
+                            <IconButtonMui
+                                onClick={this.handleToggle}
+                            >
+                                <Icon>cancel</Icon>
+                            </IconButtonMui>
+                            {this.props.t(this.props.title)}
+                        </DialogTitle>
+                        {/* </Toolbar>
+                        </AppBar> */}
+                        <DialogContent
+                            classes={{ root: classes.content }}
+                        >
                             <Decorated {...this.props} onSave={this.onSave()} />
                         </DialogContent>
                     </Dialog>
