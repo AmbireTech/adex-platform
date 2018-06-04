@@ -5,7 +5,8 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import theme from './../theme.css'
 import NewTransactionHoc from './TransactionHoc'
-import { Grid, Row, Col } from 'react-flexbox-grid'
+import { Col } from 'react-flexbox-grid'
+import Grid from '@material-ui/core/Grid'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
 import { web3Utils } from 'services/smart-contracts/ADX'
@@ -95,7 +96,7 @@ class TransactionPreview extends Component {
                                 <WalletAction t={t} authType={this.props.account._authMode.authType} />
                             </ContentStickyTop> : null}
                         <ContentBody>
-                            <Grid fluid>
+                            <Grid container >
                                 {errors.length ?
                                     errors.map((err, index) =>
                                         <PropRow

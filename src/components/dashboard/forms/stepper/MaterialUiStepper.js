@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Stepper } from 'react-step/lib/stepper'
 import { withStepper } from 'react-step/lib/with-stepper'
-import stepperTheme from './stepperTheme.css'
+// import stepperTheme from './stepperTheme.css'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import classnames from 'classnames'
 import Ripple from 'react-toolbox/lib/ripple'
@@ -21,14 +21,11 @@ import Button from '@material-ui/core/Button'
 import { withStyles } from '@material-ui/core/styles'
 import Translate from 'components/translate/Translate'
 import { styles } from './stepperThemeMUI'
+import Paper from '@material-ui/core/Paper'
 
 // const MyStep = ({ page, active, index, children, theme, canAdvance, canFinish, canReverse, setPageIndex, canAdvanceToPage, currentPage, goToPage, ...other }) => {}
 
 const StepperNav = ({ pages, currentPage, classes, ...other }) => {
-
-    console.log('classes', classes)
-
-
     return (
         <StepperMUI
             alternativeLabel
@@ -40,14 +37,14 @@ const StepperNav = ({ pages, currentPage, classes, ...other }) => {
                 return (
                     <Step key={page.title} >
                         <StepLabel
-                            // StepIconProps={
-                            //     {
-                            //         classes: {
-                            //             root: classes.root,
-                            //             active: classes.active,
-                            //         }
-                            //     }
-                            // }
+                        // StepIconProps={
+                        //     {
+                        //         classes: {
+                        //             root: classes.root,
+                        //             active: classes.active,
+                        //         }
+                        //     }
+                        // }
                         >
                             {page.title}
                         </StepLabel>
@@ -95,21 +92,36 @@ class MaterialStepper extends React.Component {
     }
 
     render() {
-        let { pages, component, validations, currentPage, t, ...props } = { ...this.props }
+        let { pages, component, validations, currentPage, t, classes, ...props } = { ...this.props }
         let page = pages[currentPage]
         let Comp = page.component
 
-        return (
-            <div className={stepperTheme.stepper}>
-                <StepperNav  {...props} pages={pages} currentPage={currentPage} goToPage={this.goToPage.bind(this)} />
+        console.log(classes)
 
-                <div className={stepperTheme.page}>
-                    <div className={stepperTheme.pageContent}>
+        return (
+            <div >
+                <Paper>
+                    <StepperNav  {...props} pages={pages} currentPage={currentPage} goToPage={this.goToPage.bind(this)} />
+                </Paper>
+                <br />
+
+                <Paper
+                    classes={{
+                        root: classes.pagePaper
+                    }}
+                >
+                    <div
+                        className={classes.pageContent}
+                    >
                         {<Comp {...page.props} />}
                     </div>
 
-                    <div className={stepperTheme.controls}>
-                        <div className={stepperTheme.left}>
+                    <div
+                        className={classes.controls}
+                    >
+                        <div
+                            className={classes.left}
+                        >
                             {props.canReverse ?
                                 <Button onClick={() => props.setPageIndex(currentPage - 1)} >
                                     {t('BACK')}
@@ -117,7 +129,7 @@ class MaterialStepper extends React.Component {
                                 : ''}
                         </div>
 
-                        <div className={stepperTheme.right} >
+                        <div className={classes.right}>
                             {/* <Button label='Cancel' onClick={this.cancel}/> */}
                             {page.cancelBtn ?
                                 <page.cancelBtn />
@@ -137,7 +149,7 @@ class MaterialStepper extends React.Component {
                                 : ''}
                         </div>
                     </div>
-                </div>
+                </Paper>
 
             </div>
         )
