@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import theme from './theme.css'
+// import theme from './theme.css'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import { Navigation } from 'react-toolbox/lib/navigation'
 import ButtonMenu from 'components/common/button_menu/ButtonMenuMui'
@@ -31,36 +31,10 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
+import { styles } from './theme'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
-const RRSwitch = withReactRouterLink((props) => <Anchor {...props}><Switch {...props} theme={theme} /></Anchor>)
-
-const drawerWidth = 240
-
-const styles = theme => ({
-  menuButton: {
-    marginLeft: 12,
-    marginRight: 36,
-  },
-  hide: {
-    display: 'none',
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-})
+const RRSwitch = withReactRouterLink((props) => <Anchor {...props}><Switch {...props} /></Anchor>)
 
 const SideSwitch = ({ side, t }) => {
   return (
@@ -112,16 +86,14 @@ class TopNav extends Component {
 
     return (
       <AppBar
-        position="absolute"
-        className={classnames(classes.appBar, this.props.open && classes.appBarShift)}
-      // title={<SideSwitch side={this.props.side} t={t} />} leftIcon={<AdexIconTxt />} fixed={true} theme={theme} flat={true}
+        className={classnames(classes.appBar)}
       >
-        <Toolbar disableGutters={!this.props.open}>
+        <Toolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
-            onClick={this.props.handleDrawerOpen}
-            className={classnames(classes.menuButton, this.props.open && classes.hide)}
+            onClick={this.props.handleDrawerToggle}
+            className={classnames(classes.navIconHide)}
           >
             <Icon>menu</Icon>
           </IconButton>
