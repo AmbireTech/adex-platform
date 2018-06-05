@@ -20,7 +20,7 @@ export const styles = theme => {
             '&:first-child': {
                 paddingTop: spacing,
             },
-            overflowX: 'hidden'
+            overflow: 'visible'
         },
         contentBox: {
             position: 'absolute',
@@ -75,6 +75,11 @@ export const styles = theme => {
             top: 116,
             right: 40,
             zIndex: 110
+        },
+        breakLong: {
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+            hyphens: 'auto'
         }
     }
 }
