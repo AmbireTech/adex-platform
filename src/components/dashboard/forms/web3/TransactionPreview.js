@@ -145,7 +145,7 @@ class TransactionPreview extends Component {
                                                     key={key}
                                                     left={this.props.t(keyName, { isProp: true })}
                                                     right={isObjValue ?
-                                                        <pre>
+                                                        <pre style={{overflowX: 'auto'}}>
                                                             {(value || '').toString()}
                                                         </pre>
                                                         :

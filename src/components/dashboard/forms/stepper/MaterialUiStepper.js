@@ -29,22 +29,12 @@ const StepperNav = ({ pages, currentPage, classes, ...other }) => {
     return (
         <StepperMUI
             alternativeLabel
-            // className={stepperTheme.stepperNav}
             activeStep={currentPage}
         >
             {pages.map((page, i) => {
-                // return (<MyStep key={page.title} page={page} active={i === currentPage} index={i} {...other} currentPage={currentPage} />)
                 return (
                     <Step key={page.title} >
                         <StepLabel
-                        // StepIconProps={
-                        //     {
-                        //         classes: {
-                        //             root: classes.root,
-                        //             active: classes.active,
-                        //         }
-                        //     }
-                        // }
                         >
                             {page.title}
                         </StepLabel>
