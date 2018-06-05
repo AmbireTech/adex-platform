@@ -1,7 +1,7 @@
 import React from 'react'
 import { Layout, Panel, NavDrawer } from 'react-toolbox/lib/layout'
 import SideNav from './side_nav/SideNav'
-import TopBar from './top_bar/TopBar'
+import TopBar from './top_bar/TopBarMui' //'./top_bar/TopBar'
 import theme from './theme.css'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
@@ -35,8 +35,88 @@ import { SORT_PROPERTIES_ITEMS, SORT_PROPERTIES_COLLECTION, FILTER_PROPERTIES_IT
 import Helper from 'helpers/miscHelpers'
 import scActions from 'services/smart-contracts/actions'
 
+
+import { withStyles } from '@material-ui/core/styles'
+import Drawer from '@material-ui/core/Drawer'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import classnames from 'classnames'
+import Typography from '@material-ui/core/Typography'
+import IconButton from '@material-ui/core/IconButton'
+import Icon from '@material-ui/core/Icon'
+import Divider from '@material-ui/core/Divider'
+import List from '@material-ui/core/List'
+
 const { getAccountStats } = scActions
 const { ItemsTypes } = ItemsConstants
+
+const drawerWidth = 280
+
+const styles = theme => ({
+    layout: {
+        flexGrow: 1,
+        zIndex: 1,
+        overflow: 'hidden',
+        position: 'relative',
+        display: 'flex',
+        // width: '100%',
+    },
+    appBar: {
+        zIndex: theme.zIndex.drawer + 1,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+    },
+    appBarShift: {
+        marginLeft: drawerWidth,
+        width: `calc(100% - ${drawerWidth}px)`,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    },
+    menuButton: {
+        marginLeft: 12,
+        marginRight: 36,
+    },
+    hide: {
+        display: 'none',
+    },
+    drawerPaper: {
+        position: 'relative',
+        whiteSpace: 'nowrap',
+        width: drawerWidth,
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    },
+    drawerPaperClose: {
+        overflowX: 'hidden',
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+        width: theme.spacing.unit * 7,
+        [theme.breakpoints.up('sm')]: {
+            width: theme.spacing.unit * 9,
+        },
+    },
+    toolbar: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        padding: '0 8px',
+        ...theme.mixins.toolbar,
+    },
+    content: {
+        flexGrow: 1,
+        backgroundColor: theme.palette.background.default,
+        padding: theme.spacing.unit * 3,
+        // position: 
+    }
+})
 
 const PrivateRoute = ({ component: Component, auth, ...other }) => {
     return (
@@ -155,38 +235,61 @@ class Dashboard extends React.Component {
         )
     }
 
+    handleDrawerOpen = () => {
+        this.setState({ open: true });
+    }
+
+    handleDrawerClose = () => {
+        this.setState({ open: false });
+    }
+
     render() {
-        let side = this.props.side || this.props.match.params.side
+        const side = this.props.side || this.props.match.params.side
+        const classes = this.props.classes
+
         return (
-            <Layout theme={theme} >
-                <NavDrawer pinned={true} theme={theme}>
-                    <SideNav location={this.props.location} side={side} data={this.props.account} />
-                </NavDrawer >
-
-                <Panel theme={theme} >
-                    <TopBar side={side} />
-                    <Switch locatiom={this.props.location}>
-                        {/* TODO: Make things dynamic if easier */}
+            <div className={classes.layout} >
+                <TopBar side={side} open={this.state.open} handleDrawerOpen={this.handleDrawerOpen} />
+                <Drawer
+                    variant="permanent"
+                    classes={{
+                        paper: classnames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
+                    }}
+                    open={this.state.open}
+                >
+                    <div className={classes.toolbar}>
+                        <IconButton onClick={this.handleDrawerClose}>
+                            {theme.direction === 'rtl' ? <Icon>chevron_right</Icon> : <Icon>chevron_left</Icon>}
+                        </IconButton>
+                    </div>
+                </Drawer>
+                <main className={classes.content}>
+                    <div className={classes.toolbar} />
+                    <Panel theme={theme} >
+                        <Switch locatiom={this.props.location}>
+                            TODO: Make things dynamic if easier
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/campaigns' component={this.renderCampaigns} />
-                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/units' component={this.renderAdUnits} />
-                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/Campaign/:itemId' component={Campaign} />
-                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/AdUnit/:itemId' component={Unit} />
-                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/bids/:tab?' component={UnitBids} />
+                            <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/units' component={this.renderAdUnits} />
+                            <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/Campaign/:itemId' component={Campaign} />
+                            <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/AdUnit/:itemId' component={Unit} />
+                            <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/bids/:tab?' component={UnitBids} />
 
-                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/channels' component={this.renderChannels} />
-                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/slots' component={this.renderAdSlots} />
-                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/Channel/:itemId' component={Channel} />
-                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
-                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/bids/:tab?' component={SlotBids} />
+                            <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/channels' component={this.renderChannels} />
+                            <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/slots' component={this.renderAdSlots} />
+                            <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/Channel/:itemId' component={Channel} />
+                            <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
+                            <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/bids/:tab?' component={SlotBids} />
 
-                        <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/account'} component={Account} />
-                        <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/transactions'} component={Transactions} />
+                            <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/account'} component={Account} />
+                            <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/transactions'} component={Transactions} />
 
-                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/:side' component={DashboardStats} />
-                        <PrivateRoute auth={this.props.auth} component={() => <h1>404 at {side} side</h1>} />
-                    </Switch>
-                </Panel>
-            </Layout>
+                            <PrivateRoute auth={this.props.auth} exact path='/dashboard/:side' component={DashboardStats} />
+                            <PrivateRoute auth={this.props.auth} component={() => <h1>404 at {side} side</h1>} />
+                        </Switch>
+                    </Panel>
+                </main>
+
+            </div>
         );
     }
 }
@@ -218,4 +321,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(Dashboard))
+)(Translate(withStyles(styles)(Dashboard)))
