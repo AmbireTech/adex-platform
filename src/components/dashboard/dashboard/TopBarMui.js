@@ -34,28 +34,6 @@ import ListItemText from '@material-ui/core/ListItemText'
 import { styles } from './theme'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
-const RRSwitch = withReactRouterLink((props) => <Anchor {...props}><Switch {...props} /></Anchor>)
-
-const SideSwitch = ({ side, t }) => {
-  return (
-    <div>
-      {/* Keep both if there is no valid side and force react to rerender at the same time */}
-      {side !== 'advertiser' ?
-        <RRSwitch
-          checked={true}
-          value='account'
-          to={{ pathname: '/dashboard/advertiser' }}
-          label={t('PUBLISHER')}
-        /> : null}
-      {side !== 'publisher' ?
-        <RRSwitch
-          checked={false}
-          to={{ pathname: '/dashboard/publisher' }}
-          label={t('ADVERTISER')}
-        /> : null}
-    </div>
-  )
-}
 
 class TopNav extends Component {
 
@@ -84,9 +62,12 @@ class TopNav extends Component {
 
     const classes = this.props.classes
 
+    console.log('classes', classes)
+
     return (
       <AppBar
-        className={classnames(classes.appBar)}
+        className={classes.appBar}
+        position="sticky"
       >
         <Toolbar>
           <IconButton
@@ -97,9 +78,13 @@ class TopNav extends Component {
           >
             <Icon>menu</Icon>
           </IconButton>
-          <AdexIconTxt />
-          <SideSwitch side={this.props.side} t={t} />
-
+          <div
+            className={classes.flex}
+          >
+            <Typography variant="title" color="inherit" className={classes.flex}>
+              {this.props.navTitle}
+            </Typography>
+          </div>
 
           {/* <Navigation type='horizontal' className={theme.rightNavigation}> */}
           {/* At the moment we use translations only for proper items properties display names */}
@@ -110,12 +95,12 @@ class TopNav extends Component {
             leftIconSrc={imgSrc}
             icon='expand_more'
             label={this.props.account._addr || t('NOT_LOGGED')}
-            position='auto'
-            menuRipple
+            // position='auto'
+            // menuRipple
             active={true}
-            iconRight={true}
+            // iconRight={true}
             iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
-            style={{ float: 'right' }}
+          // style={{ float: 'right' }}
           >
             <RRMenuItem
               value='account'
@@ -140,7 +125,6 @@ class TopNav extends Component {
               <ListItemText classes={{ primary: classes.primary }} inset primary={t('LOGOUT')} />
             </MenuItem>
           </ButtonMenu>
-
         </Toolbar>
       </AppBar>
     )
@@ -153,10 +137,11 @@ TopNav.propTypes = {
 }
 
 function mapStateToProps(state) {
-  let persist = state.persist
-  // let memory = state.memory
+  const persist = state.persist
+  const memory = state.memory
   return {
     account: persist.account,
+    navTitle: memory.nav.navTitle || 'Dashboard'
   }
 }
 

@@ -13,15 +13,21 @@ import { items as ItemsConstants } from 'adex-constants'
 const { ItemTypesNames } = ItemsConstants
 
 class Items extends Component {
+
+    componentWillMount() {
+        const items = Array.from(Object.values(this.props.items || {})) || []
+        this.props.actions.updateNav('navTitle', this.props.header + '(' + (items.filter((i) => !!i && !!i._meta && !i._deleted && !i._archived).length) + ')')
+    }
+
     render() {
-        let items = Array.from(Object.values(this.props.items || {})) || []
+        const items = Array.from(Object.values(this.props.items || {})) || []
         // let items = this.props.items || []
 
         return (
             <div>
-                <div className={classnames(theme.heading, theme[ItemTypesNames[this.props.itemsType]], theme.items)}>
+                {/* <div className={classnames(theme.heading, theme[ItemTypesNames[this.props.itemsType]], theme.items)}>
                     <h2 > {this.props.header} {'(' + (items.filter((i) => !!i && !!i._meta && !i._deleted && !i._archived).length) + ')'} </h2>
-                </div>
+                </div> */}
                 <div className={theme.panelContent}>
                     {this.props.newItemBtn ? this.props.newItemBtn() : null}
                 </div>
