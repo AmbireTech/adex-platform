@@ -24,6 +24,14 @@ const SORT_PROPERTIES = [
 
 class Transactions extends Component {
 
+    componentWillMount() {
+        this.props.actions.updateNav('navTitle', this.props.t('TRANSACTIONS'))
+    }
+
+    setNavTitle = (title) => {
+        this.props.actions.updateNav('navTitle', title)
+    }
+
     renderTableHead() {
         let t = this.props.t
         return (
@@ -95,9 +103,9 @@ class Transactions extends Component {
 
         return (
             <div>
-                <div className={classnames(theme.heading, theme.Transactions, theme.items)}>
+                {/* <div className={classnames(theme.heading, theme.Transactions, theme.items)}>
                     <h2 > {t('TRANSACTIONS')} {'(' + itemsCount + ')'} </h2>
-                </div>
+                </div> */}
 
                 <ItemsList items={reduced} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
             </div>

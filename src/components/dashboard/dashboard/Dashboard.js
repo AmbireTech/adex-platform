@@ -35,6 +35,7 @@ import { SORT_PROPERTIES_ITEMS, SORT_PROPERTIES_COLLECTION, FILTER_PROPERTIES_IT
 import Helper from 'helpers/miscHelpers'
 import scActions from 'services/smart-contracts/actions'
 
+import { SideSwitch } from './SideSwitch'
 
 import { withStyles } from '@material-ui/core/styles'
 import Drawer from '@material-ui/core/Drawer'
@@ -185,11 +186,13 @@ class Dashboard extends React.Component {
 
     render() {
         const side = this.props.side || this.props.match.params.side
-        const classes = this.props.classes
+        const { classes, theme } = this.props
 
+        console.log('classes.toolbar', classes.toolbar)
         const drawer = (
             <div>
                 <div className={classes.toolbar}>
+                    <SideSwitch side={side} t={this.props.t} />
                 </div>
                 <Divider />
                 <SideNav location={this.props.location} side={side} data={this.props.account} />
@@ -197,12 +200,12 @@ class Dashboard extends React.Component {
         )
 
         return (
-            <div className={classes.layout} >
+            <div className={classes.root} >
                 <TopBar side={side} open={this.state.open} handleDrawerToggle={this.handleDrawerToggle} />
                 <Hidden mdUp>
                     <Drawer
                         variant="temporary"
-                        // anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+                        anchor={theme.direction === 'rtl' ? 'right' : 'left'}
                         open={this.state.mobileOpen}
                         onClose={this.handleDrawerToggle}
                         classes={{
@@ -215,7 +218,8 @@ class Dashboard extends React.Component {
                         {drawer}
                     </Drawer>
                 </Hidden>
-                <Hidden smDown implementation="css">
+                <Hidden smDown
+                    implementation="css">
                     <Drawer
                         variant="permanent"
                         open
@@ -226,10 +230,10 @@ class Dashboard extends React.Component {
                         {drawer}
                     </Drawer>
                 </Hidden>
-
+                
                 <main className={classes.content}>
-                    <div className={classes.toolbar} />
-                    {/* <Panel theme={theme} > */}
+                <div className={classes.toolbar} />
+
                     <Switch locatiom={this.props.location}>
                         TODO: Make things dynamic if easier
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/campaigns' component={this.renderCampaigns} />
@@ -250,7 +254,7 @@ class Dashboard extends React.Component {
                         <PrivateRoute auth={this.props.auth} exact path='/dashboard/:side' component={DashboardStats} />
                         <PrivateRoute auth={this.props.auth} component={() => <h1>404 at {side} side</h1>} />
                     </Switch>
-                    {/* </Panel> */}
+
                 </main>
 
             </div>
@@ -285,4 +289,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(withStyles(styles)(Dashboard)))
+)(Translate(withStyles(styles, { withTheme: true })(Dashboard)))
