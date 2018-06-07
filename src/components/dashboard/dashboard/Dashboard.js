@@ -1,6 +1,6 @@
 import React from 'react'
 import { Layout, Panel, NavDrawer } from 'react-toolbox/lib/layout'
-import SideNav from 'components/dashboard/side_nav/SideNav'
+import SideNav from './SideNavigation'// 'components/dashboard/side_nav/SideNav'
 import TopBar from './TopBarMui' //'./top_bar/TopBar'
 // import theme from './theme.css'
 import { Route, Switch, Redirect } from 'react-router-dom'
@@ -39,14 +39,7 @@ import { SideSwitch } from './SideSwitch'
 
 import { withStyles } from '@material-ui/core/styles'
 import Drawer from '@material-ui/core/Drawer'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import classnames from 'classnames'
-import Typography from '@material-ui/core/Typography'
-import IconButton from '@material-ui/core/IconButton'
-import Icon from '@material-ui/core/Icon'
 import Divider from '@material-ui/core/Divider'
-import List from '@material-ui/core/List'
 // import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
 import { styles } from './theme'
@@ -191,10 +184,10 @@ class Dashboard extends React.Component {
         console.log('classes.toolbar', classes.toolbar)
         const drawer = (
             <div>
-                <div className={classes.toolbar}>
+                {/* <div className={classes.toolbar}>
                     <SideSwitch side={side} t={this.props.t} />
                 </div>
-                <Divider />
+                <Divider /> */}
                 <SideNav location={this.props.location} side={side} data={this.props.account} />
             </div>
         )
@@ -230,9 +223,9 @@ class Dashboard extends React.Component {
                         {drawer}
                     </Drawer>
                 </Hidden>
-                
+
                 <main className={classes.content}>
-                <div className={classes.toolbar} />
+                    <div className={classes.toolbar} />
 
                     <Switch locatiom={this.props.location}>
                         TODO: Make things dynamic if easier

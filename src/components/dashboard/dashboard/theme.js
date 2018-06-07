@@ -81,10 +81,41 @@ export const styles = theme => ({
     icon: {
         height: 36,
         width: 'auto',
-        marginRight: 10,
-        paddingLeft: theme.spacing.unit * 1.5,
-        [theme.breakpoints.down('xs')]: {
-            display: 'none',
-        },
+        // marginRight: 10,
+        // paddingLeft: theme.spacing.unit * 1.5,
+        // [theme.breakpoints.down('xs')]: {
+        //     display: 'none',
+        // },
+    },
+    navigation: {
+        backgroundColor: theme.palette.background.paper
+    },
+    version: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: 10,
+        paddingLeft: 16,
+    },
+    navList: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 80,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+    },
+    navListRoot: {
+        color: '#fff'
+    },
+    sideNavToolbar: {
+        borderBottom: {
+            border: theme.palette.divider.default
+        }
+    },
+    sntPadding: {
+        paddingTop: 0
     }
 })
