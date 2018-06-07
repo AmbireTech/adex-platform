@@ -12,7 +12,7 @@ import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 
 const RRSwitch = withReactRouterLink((props) =>
 
-    <List>
+    // <List>
         <ListItem>
             <ListItemText primary={props.label} />
             <ListItemSecondaryAction>
@@ -21,7 +21,7 @@ const RRSwitch = withReactRouterLink((props) =>
                 </Anchor>
             </ListItemSecondaryAction>
         </ListItem>
-    </List>
+    // </List>
 )
 
 export const SideSwitch = ({ side, t }) => {
