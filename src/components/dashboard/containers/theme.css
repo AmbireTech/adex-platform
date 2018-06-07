@@ -230,9 +230,9 @@
 
 .floating {
     position: fixed;
-    top: 116px;
+    top: 86px;
     right: 40px;
-    z-index: 110;
+    z-index: 1110;
 }
 
 .itemPropTop {

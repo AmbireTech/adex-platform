@@ -21,6 +21,8 @@ export const styles = theme => ({
             // width: `calc(100% - ${drawerWidth}px)`,
             left: drawerWidth,
         },
+        backgroundColor: '#eee',
+        color: '#000'
     },
     flex: {
         flex: 1,
@@ -28,12 +30,38 @@ export const styles = theme => ({
         display: 'flex',
         alignItems: 'center'
     },
+
+    flexRow: {
+        display: 'flex',
+        alignItems: 'center',
+        flexBasis: '100%',
+        paddingTop: theme.spacing.unit * 0.5,
+        paddingBottom: theme.spacing.unit * 0.5,
+        '&:last-child': {
+            paddingRight: 100,
+            paddingTop: theme.spacing.unit * 1.5,
+            paddingBottom: theme.spacing.unit * 1.5,
+            paddingLeft: theme.spacing.unit * 1.5,
+        },
+
+    },
+    toolbarControls: {
+        justifyContent: 'flex-end'
+    },
+    toolbarTitle: {
+        justifyContent: 'flex-start'
+    },
     navIconHide: {
+        marginRight: 10,
         [theme.breakpoints.up('md')]: {
             display: 'none',
         },
     },
-    toolbar: theme.mixins.toolbar,
+    toolbar: {
+        flexFlow: 'wrap',
+        height: 114,
+        ...theme.mixins.toolbar
+    },
     drawerPaper: {
         width: drawerWidth,
         [theme.breakpoints.up('md')]: {
@@ -53,6 +81,10 @@ export const styles = theme => ({
     icon: {
         height: 36,
         width: 'auto',
-        marginRight: 10
+        marginRight: 10,
+        paddingLeft: theme.spacing.unit * 1.5,
+        [theme.breakpoints.down('xs')]: {
+            display: 'none',
+        },
     }
 })

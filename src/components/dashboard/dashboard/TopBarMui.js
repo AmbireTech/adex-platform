@@ -69,62 +69,87 @@ class TopNav extends Component {
         className={classes.appBar}
         position="sticky"
       >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={this.props.handleDrawerToggle}
-            className={classnames(classes.navIconHide)}
-          >
-            <Icon>menu</Icon>
-          </IconButton>
+        <Toolbar
+          className={classes.toolbar}
+        >
           <div
-            className={classes.flex}
+            className={classes.flexRow}
           >
-            <Typography variant="title" color="inherit" className={classes.flex}>
-              {this.props.navTitle}
-            </Typography>
+
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={this.props.handleDrawerToggle}
+              className={classnames(classes.navIconHide)}
+            >
+              <Icon>menu</Icon>
+            </IconButton>
+
+            <AdexIconTxt
+              className={classes.icon}
+            />
+            <div
+              className={classnames(classes.flex, classes.toolbarControls)}
+            >
+
+              {/* <Navigation type='horizontal' className={theme.rightNavigation}> */}
+              {/* At the moment we use translations only for proper items properties display names */}
+              {/* <ChangeLang /> */}
+              {/* <GasPrice /> */}
+              <ButtonMenu
+                selectable={true}
+                leftIconSrc={imgSrc}
+                icon='expand_more'
+                label={this.props.account._addr || t('NOT_LOGGED')}
+                // position='auto'
+                // menuRipple
+                active={true}
+                // iconRight={true}
+                iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
+              // style={{ float: 'right' }}
+              >
+                <RRMenuItem
+                  value='account'
+                  to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
+                  // icon='account_box'
+                  caption={t('ACCOUNT')}
+                >
+
+                  <ListItemIcon className={classes.icon}>
+                    <Icon>account_box</Icon>
+                  </ListItemIcon>
+                  <ListItemText classes={{ primary: classes.primary }} inset primary={t('ACCOUNT')} />
+                </RRMenuItem>
+                {/* <MenuDivider /> */}
+                <MenuItem
+                  value='logout'
+                  onClick={() => { logOut() }}
+                >
+                  <ListItemIcon className={classes.icon}>
+                    <Icon>exit_to_app</Icon>
+                  </ListItemIcon>
+                  <ListItemText classes={{ primary: classes.primary }} inset primary={t('LOGOUT')} />
+                </MenuItem>
+              </ButtonMenu>
+            </div>
           </div>
+          <div
+            className={classes.flexRow}
 
-          {/* <Navigation type='horizontal' className={theme.rightNavigation}> */}
-          {/* At the moment we use translations only for proper items properties display names */}
-          {/* <ChangeLang /> */}
-          {/* <GasPrice /> */}
-          <ButtonMenu
-            selectable={true}
-            leftIconSrc={imgSrc}
-            icon='expand_more'
-            label={this.props.account._addr || t('NOT_LOGGED')}
-            // position='auto'
-            // menuRipple
-            active={true}
-            // iconRight={true}
-            iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
-          // style={{ float: 'right' }}
           >
-            <RRMenuItem
-              value='account'
-              to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
-              // icon='account_box'
-              caption={t('ACCOUNT')}
+            <div
+              className={classnames(classes.flex, classes.toolbarTitle)}
             >
-
-              <ListItemIcon className={classes.icon}>
-                <Icon>account_box</Icon>
-              </ListItemIcon>
-              <ListItemText classes={{ primary: classes.primary }} inset primary={t('ACCOUNT')} />
-            </RRMenuItem>
-            {/* <MenuDivider /> */}
-            <MenuItem
-              value='logout'
-              onClick={() => { logOut() }}
-            >
-              <ListItemIcon className={classes.icon}>
-                <Icon>exit_to_app</Icon>
-              </ListItemIcon>
-              <ListItemText classes={{ primary: classes.primary }} inset primary={t('LOGOUT')} />
-            </MenuItem>
-          </ButtonMenu>
+              <Typography
+                variant="title"
+                color="inherit"
+                className={classes.flex}
+                noWrap
+              >
+                {this.props.navTitle}
+              </Typography>
+            </div>
+          </div>
         </Toolbar>
       </AppBar>
     )
