@@ -40,7 +40,9 @@ export const styles = theme => {
             overflowY: 'auto'
         },
         appBar: {
-            position: 'relative'
+            position: 'relative',
+            backgroundColor: '#eee',
+            color: '#000'
         },
         contentTopLoadingCircular: {
             flexShrink: 0,
@@ -72,9 +74,9 @@ export const styles = theme => {
         },
         floating: {
             position: 'fixed',
-            top: 116,
+            top: 86,
             right: 40,
-            zIndex: 110
+            zIndex: 1110
         },
         breakLong: {
             wordBreak: 'break-word',

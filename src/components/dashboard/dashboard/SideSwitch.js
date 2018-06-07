@@ -14,12 +14,6 @@ const RRSwitch = withReactRouterLink((props) =>
 
     <List>
         <ListItem>
-            <ListItemIcon>
-                {/* <AdexIconTxt
-                        className={props.classes}
-                    /> */}
-                <Icon>close</Icon>
-            </ListItemIcon>
             <ListItemText primary={props.label} />
             <ListItemSecondaryAction>
                 <Anchor {...props}>
