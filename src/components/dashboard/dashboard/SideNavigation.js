@@ -30,6 +30,8 @@ import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
 import Badge from '@material-ui/core/Badge'
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
+import AccountBoxIcon from '@material-ui/icons/AccountBox'
 
 const RRListItem = withReactRouterLink(ListItem)
 
@@ -69,7 +71,6 @@ class SideNav extends Component {
                 className={classes.navigation}
             >
                 <List
-                    // theme={theme}
                     classes={{
                         padding: classes.sntPadding,
                         root: classes.navListRoot
@@ -89,16 +90,13 @@ class SideNav extends Component {
                             <SideSwitch
                                 side={side}
                                 t={this.props.t}
-                            // className={classes.toolbar}
                             />
                         </div>
-                        <ListDivider
-                        // theme={theme}
-                        />
+                        <ListDivider />
                         <RRListItem
                             button
                             to={{ pathname: '/dashboard/' + side }}
-                        // className={classnames({ [theme.active]: location === '' })}
+                            className={classnames({ [classes.active]: location === '' })}
                         >
                             <ListItemIcon>
                                 <DashboardIcon />
@@ -106,38 +104,32 @@ class SideNav extends Component {
                             <ListItemText inset primary={t('DASHBOARD')} />
                         </RRListItem>
                         <ListDivider
-                        // theme={theme}
                         />
                         <RRListItem
                             button
                             to={{ pathname: '/dashboard/' + side + '/' + collection }}
-                        // className={classnames({ [theme.active]: location === collection })}
+                            className={classnames({ [classes.active]: location === collection })}
                         >
                             <ListItemIcon>
-                                {/* <Icon>dashboard</Icon> */}
-                                {/* <CollectionIcon color='rgb(117, 117, 117)' /> */}
                                 {CollectionIcon}
                             </ListItemIcon>
                             <ListItemText inset primary={t(collection.toUpperCase())} />
                         </RRListItem>
                         <ListItem
-                            selectable={false}
-                            ripple={false}
+                            className={classes.newItemBtn}
                         >
                             <NewCollectionBtn
-                                // theme={theme}
-                                flat
-                                color='first'
-                                raised
+                                className={classes.newItemBtn}
+                                color='primary'
+                                variant='raised'
+                            // btnClasses={classes.newItemBtn}
                             />
                         </ListItem>
-                        <ListDivider
-                        // theme={theme}
-                        />
+                        <ListDivider />
                         <RRListItem
                             button
                             to={{ pathname: '/dashboard/' + side + '/' + items }}
-                        // className={classnames({ [theme.active]: location === items })}
+                            className={classnames({ [classes.active]: location === items })}
                         >
                             <ListItemIcon>
                                 <Icon>{itemsIcon}</Icon>
@@ -145,13 +137,12 @@ class SideNav extends Component {
                             <ListItemText inset primary={t(items.toUpperCase())} />
                         </RRListItem>
                         <ListItem
-                            selectable={false}
-                            ripple={false}
+                            className={classes.newItemBtn}
                         >
                             <NewItemBtn
-                                flat
-                                color='second'
-                                raised
+                                className={classes.newItemBtn}
+                                color='primary'
+                                variant='raised'
                             />
                         </ListItem>
                         <ListDivider
@@ -159,13 +150,16 @@ class SideNav extends Component {
                         <RRListItem
                             button
                             to={{ pathname: '/dashboard/' + side + '/bids' }}
-                        // className={classnames({ [theme.active]: location === 'bids', [theme.bidsActions]: bidsAwaitingActionCount > 0 })}
+                            className={classnames({ [classes.active]: location === 'bids' })}
                         >
                             <ListItemIcon>
                                 <span>
                                     <BidIcon />
                                     {bidsAwaitingActionCount > 0 &&
-                                        <Badge badgeContent={bidsAwaitingActionCount <= 9 ? bidsAwaitingActionCount : '9+'} color="primary" />}
+                                        <Badge
+                                            badgeContent={bidsAwaitingActionCount <= 9 ? bidsAwaitingActionCount : '9+'}
+                                            color="primary"
+                                        />}
                                 </span>
                             </ListItemIcon>
                             <ListItemText inset primary={t('BIDS')} />
@@ -173,13 +167,16 @@ class SideNav extends Component {
                         <RRListItem
                             button
                             to={{ pathname: '/dashboard/' + side + '/transactions' }}
-                        // className={classnames({ [theme.active]: location === 'transactions', [theme.pendingTransactions]: pendingTrsCount > 0 })}
+                            className={classnames({ [classes.active]: location === 'transactions' })}
                         >
                             <ListItemIcon>
                                 <span>
                                     <SwapHorizontalIcon />
-                                    {pendingTrsCount >= 0 &&
-                                        <Badge badgeContent={pendingTrsCount <= 9 ? pendingTrsCount : '9+'} color="primary" />}
+                                    {pendingTrsCount > 0 &&
+                                        <Badge
+                                            badgeContent={pendingTrsCount <= 9 ? pendingTrsCount : '9+'}
+                                            color="primary"
+                                        />}
                                 </span>
                             </ListItemIcon>
                             <ListItemText inset primary={t('TRANSACTIONS')} />
@@ -188,28 +185,34 @@ class SideNav extends Component {
                     <div>
                         <Anchor target='_blank' href='https://medium.com/adex-network-tips-and-tricks' >
                             <ListItem
-                                leftIcon='help_outline'
-                                selectable={true}
-                                caption={t('HELP')}
-                            // theme={theme}
-                            />
+                                button
+                            >
+                                <ListItemIcon>
+                                    <HelpOutlineIcon />
+                                </ListItemIcon>
+                                <ListItemText inset primary={t('HELP')} />
+                            </ListItem>
                         </Anchor>
+
                         <RRListItem
+                            button
                             to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
-                            selectable={true}
-                            caption={t('ACCOUNT')}
-                            leftIcon='account_box'
-                        // className={classnames({ [theme.active]: location === 'account' })}
-                        />
+                            className={classnames({ [classes.active]: location === 'account' })}
+                        >
+                            <ListItemIcon>
+                                <AccountBoxIcon />
+                            </ListItemIcon>
+                            <ListItemText inset primary={t('ACCOUNT')} />
+                        </RRListItem>
                     </div>
                 </List>
                 <div
                     className={classes.version}
                 >
-                    <div>
-                        <small> &copy; {(new Date()).getFullYear()}
+                    <div className={classes.adxLink}>
+                        <small> &copy; {(new Date()).getFullYear()}  &nbsp;
                             <Anchor
-                                // className={theme.adxLink}
+                                className={classes.adxLink}
                                 target='_blank'
                                 href={process.env.ADEX_SITE_HOST}
                             >
@@ -220,7 +223,7 @@ class SideNav extends Component {
                     <div>
                         <small>
                             <Anchor
-                                // className={theme.adxLink}
+                                className={classes.adxLink}
                                 target='_blank'
                                 href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_TOKEN_ADDR}
                             >
@@ -230,7 +233,7 @@ class SideNav extends Component {
                         <small> / </small>
                         <small>
                             <Anchor
-                                // className={theme.adxLink}
+                                className={classes.adxLink}
                                 target='_blank'
                                 href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_EXCHANGE_ADDR}
                             >
@@ -241,7 +244,7 @@ class SideNav extends Component {
                     <div>
                         <small>
                             <Anchor
-                                // className={theme.adxLink}
+                                className={classes.adxLink}
                                 target='_blank'
                                 href='https://github.com/AdExBlockchain/adex-dapp/blob/master/CHANGELOG.md'
                             >

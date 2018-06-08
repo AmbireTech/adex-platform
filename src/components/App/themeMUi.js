@@ -1,13 +1,15 @@
 import React from 'react'
 import { createMuiTheme } from '@material-ui/core/styles'
-import blue from '@material-ui/core/colors/blue'
-import green from '@material-ui/core/colors/green'
+import indigo from '@material-ui/core/colors/indigo'
+import pink from '@material-ui/core/colors/pink'
+import lime from '@material-ui/core/colors/lime'
 import deepOrange from '@material-ui/core/colors/deepOrange'
 
 const palette = {
-    primary: blue,
-    secondary: green,
+    primary: indigo,
+    secondary: pink,
     error: deepOrange,
+    first: lime,
     contrastThreshold: 3,
     tonalOffset: 0.2,
 }

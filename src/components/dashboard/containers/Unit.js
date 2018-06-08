@@ -72,6 +72,7 @@ export class Unit extends Component {
                         btnLabel='PLACE_BID'
                         title={this.props.t('PLACE_BID_FOR', { args: [item.fullName] })}
                         floating
+                        variant='fab'
                         primary
                         bidId={item._id}
                         stepsId={'new-bid-' + item._id}

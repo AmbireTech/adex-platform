@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Button, IconButton } from 'react-toolbox/lib/button'
-import IconButtonMui from '@material-ui/core/IconButton'
+// import { Button, IconButton } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
+import IconButton from '@material-ui/core/IconButton'
+// import IconButtonMui from '@material-ui/core/IconButton'
 import Dialog from '@material-ui/core/Dialog' // 'react-toolbox/lib/dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
@@ -18,6 +20,7 @@ import Icon from '@material-ui/core/Icon'
 import Typography from '@material-ui/core/Typography'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
+import CancelIcon from '@material-ui/icons/Cancel'
 
 const textBtn = ({ label, className, classes, style, onClick, ...rest }) => {
     return <span className={classnames(classes.textBtn, className)} style={style} onClick={onClick}> {label} </span>
@@ -71,6 +74,8 @@ export default function ItemHoc(Decorated) {
 
         render() {
 
+            console.log('this.props', this.props.props)
+
             let ButtonComponent = Button
             // NOTE: to avoid some warnings
             let btnProps = {}
@@ -81,33 +86,40 @@ export default function ItemHoc(Decorated) {
                 ButtonComponent = TextBtn
             } else {
                 btnProps = {
-                    raised: this.props.raised,
-                    floating: this.props.floating,
-                    flat: this.props.flat
+                    variant: this.props.variant || 'raised',
+                    color: this.props.color
+                    // floating: this.props.floating,
+                    // flat: this.props.flat
                 }
             }
 
             const { stiles, classes, ...other } = this.props
 
+            const btnLabel = this.props.t(this.props.btnLabel, { args: this.props.btnLabelArgs || [''] })
 
             return (
                 <div >
                     <ButtonComponent
                         disabled={this.props.disabled}
-                        icon={this.props.icon === undefined ? 'add' : this.props.icon}
-                        label={this.props.floating ? '' : this.props.t(this.props.btnLabel, { args: this.props.btnLabelArgs || [''] })}
+                        aria-label={btnLabel}
                         onClick={this.handleToggle}
-                        primary={this.props.primary}
+                        // primary={this.props.primary}
                         {...btnProps}
                         accent={this.props.accent}
-                        theme={this.props.theme}
-                        style={this.props.style}
+                        // theme={this.props.theme}
+                        // style={this.props.style}
+                        // raised
                         className={classnames(
                             this.props.className,
-                            { [classes.floating]: this.props.floating },
-                            { [RTButtonTheme[this.props.color]]: !!this.props.color }
+                            { [classes.floating]: this.props.variant === 'fab' },
+                            { [classes.first]: this.props.color === 'first' },
+                            { [classes.second]: this.props.color === 'second' }
+                            // { [RTButtonTheme[this.props.color]]: !!this.props.color }
                         )}
-                    />
+                    >
+                        <Icon className={classes.rightIcon}>{this.props.icon === undefined ? 'add' : this.props.icon}</Icon>
+                        {this.props.variant !== 'fab' && btnLabel}
+                    </ButtonComponent>
                     <Dialog
                         // disableBackdropClick
                         // disableEscapeKeyDown
@@ -125,11 +137,11 @@ export default function ItemHoc(Decorated) {
                         {/* <AppBar className={classes.appBar}>
                             <Toolbar> */}
                         <DialogTitle>
-                            <IconButtonMui
+                            <IconButton
                                 onClick={this.handleToggle}
                             >
-                                <Icon>cancel</Icon>
-                            </IconButtonMui>
+                                <CancelIcon />
+                            </IconButton>
                             {this.props.t(this.props.title)}
                         </DialogTitle>
                         {/* </Toolbar>
