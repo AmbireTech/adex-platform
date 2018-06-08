@@ -67,7 +67,7 @@ export const styles = theme => ({
         [theme.breakpoints.up('md')]: {
             position: 'fixed',
         },
-        backgroundColor: '#3c3c3c'
+        backgroundColor: '#fff'
     },
     content: {
         flexGrow: 1,
