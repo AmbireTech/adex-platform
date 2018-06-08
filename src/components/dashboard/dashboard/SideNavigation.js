@@ -27,6 +27,9 @@ import { styles } from './theme'
 // import GasPrice from 'components/dashboard/account/GasPrice'
 import { SideSwitch } from './SideSwitch'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
+import DashboardIcon from '@material-ui/icons/Dashboard'
+import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
+import Badge from '@material-ui/core/Badge'
 
 const RRListItem = withReactRouterLink(ListItem)
 
@@ -54,29 +57,11 @@ class SideNav extends Component {
         const items = (isAdvertiser ? 'units' : 'slots')
         const NewCollectionBtn = (isAdvertiser ? NewCampaignDialog : NewChannelDialog)
         const NewItemBtn = (isAdvertiser ? NewUnitDialog : NewSlotDialog)
-        const CollectionIcon = (isAdvertiser ? CampaignIcon : ChannelIcon)
+        const CollectionIcon = (isAdvertiser ? <CampaignIcon /> : <ChannelIcon />)
         const itemsIcon = (isAdvertiser ? 'format_list_bulleted' : 'format_list_bulleted')
         const t = this.props.t
         const pendingTrsCount = (this.props.transactions.pendingTxs || []).length
-
-        let pendingTransactionsIcon = <FontIcon value={'swap_horiz'} /> // 'swap_horiz'
-        if (pendingTrsCount > 0) {
-            pendingTransactionsIcon = <CircleWithText
-                text={pendingTrsCount <= 9 ? pendingTrsCount : '9+'}
-            // className={classnames(theme.pendingTransactions)}
-            />
-        }
-
         const bidsAwaitingActionCount = this.props.bidsAwaitingActionCount
-        let bidsIcon = <BidIcon style={{ height: 24 }} />
-
-        if (bidsAwaitingActionCount > 0) {
-            bidsIcon = <CircleWithText
-                text={bidsAwaitingActionCount <= 9 ? bidsAwaitingActionCount : '9+'}
-            // className={classnames(theme.bidsActions)}
-            />
-        }
-
         const classes = this.props.classes
 
         return (
@@ -113,14 +98,10 @@ class SideNav extends Component {
                         <RRListItem
                             button
                             to={{ pathname: '/dashboard/' + side }}
-                        // selectable={true}
-                        // caption={t('DASHBOARD')}
-                        // theme={theme}
-                        // leftIcon='dashboard'
                         // className={classnames({ [theme.active]: location === '' })}
                         >
                             <ListItemIcon>
-                                <Icon>dashboard</Icon>
+                                <DashboardIcon />
                             </ListItemIcon>
                             <ListItemText inset primary={t('DASHBOARD')} />
                         </RRListItem>
@@ -130,15 +111,12 @@ class SideNav extends Component {
                         <RRListItem
                             button
                             to={{ pathname: '/dashboard/' + side + '/' + collection }}
-                        // selectable={true}
-                        // caption={t(collection.toUpperCase())}
-                        // theme={theme}
-                        // leftIcon={<CollectionIcon color='rgb(117, 117, 117)' />}
                         // className={classnames({ [theme.active]: location === collection })}
                         >
                             <ListItemIcon>
                                 {/* <Icon>dashboard</Icon> */}
-                                <CollectionIcon color='rgb(117, 117, 117)' />
+                                {/* <CollectionIcon color='rgb(117, 117, 117)' /> */}
+                                {CollectionIcon}
                             </ListItemIcon>
                             <ListItemText inset primary={t(collection.toUpperCase())} />
                         </RRListItem>
@@ -159,11 +137,7 @@ class SideNav extends Component {
                         <RRListItem
                             button
                             to={{ pathname: '/dashboard/' + side + '/' + items }}
-                        // selectable={true}
-                        // caption={t(items.toUpperCase())}
-                        // theme={theme}
                         // className={classnames({ [theme.active]: location === items })}
-                        // leftIcon={itemsIcon}
                         >
                             <ListItemIcon>
                                 <Icon>{itemsIcon}</Icon>
@@ -175,40 +149,38 @@ class SideNav extends Component {
                             ripple={false}
                         >
                             <NewItemBtn
-                                // theme={theme}
                                 flat
                                 color='second'
                                 raised
                             />
                         </ListItem>
                         <ListDivider
-                        // theme={theme} 
                         />
                         <RRListItem
                             button
                             to={{ pathname: '/dashboard/' + side + '/bids' }}
-                        // selectable={true}
-                        // caption={t('BIDS')}
-                        // theme={theme}
                         // className={classnames({ [theme.active]: location === 'bids', [theme.bidsActions]: bidsAwaitingActionCount > 0 })}
-                        // leftIcon={bidsIcon}
                         >
                             <ListItemIcon>
-                                <Icon>{bidsIcon}</Icon>
+                                <span>
+                                    <BidIcon />
+                                    {bidsAwaitingActionCount > 0 &&
+                                        <Badge badgeContent={bidsAwaitingActionCount <= 9 ? bidsAwaitingActionCount : '9+'} color="primary" />}
+                                </span>
                             </ListItemIcon>
                             <ListItemText inset primary={t('BIDS')} />
                         </RRListItem>
                         <RRListItem
                             button
                             to={{ pathname: '/dashboard/' + side + '/transactions' }}
-                        // selectable={true}
-                        // caption={t('TRANSACTIONS')}
-                        // theme={theme}
                         // className={classnames({ [theme.active]: location === 'transactions', [theme.pendingTransactions]: pendingTrsCount > 0 })}
-                        // leftIcon={pendingTransactionsIcon}
                         >
                             <ListItemIcon>
-                                <Icon>{pendingTransactionsIcon}</Icon>
+                                <span>
+                                    <SwapHorizontalIcon />
+                                    {pendingTrsCount >= 0 &&
+                                        <Badge badgeContent={pendingTrsCount <= 9 ? pendingTrsCount : '9+'} color="primary" />}
+                                </span>
                             </ListItemIcon>
                             <ListItemText inset primary={t('TRANSACTIONS')} />
                         </RRListItem>
@@ -226,7 +198,6 @@ class SideNav extends Component {
                             to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
                             selectable={true}
                             caption={t('ACCOUNT')}
-                            // theme={theme}
                             leftIcon='account_box'
                         // className={classnames({ [theme.active]: location === 'account' })}
                         />
