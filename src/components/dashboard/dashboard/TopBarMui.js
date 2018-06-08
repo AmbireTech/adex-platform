@@ -100,7 +100,7 @@ class TopNav extends Component {
                   to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
                   caption={t('ACCOUNT')}
                 >
-                  <ListItemIcon className={classes.icon}>
+                  <ListItemIcon >
                     <Icon>account_box</Icon>
                   </ListItemIcon>
                   <ListItemText classes={{ primary: classes.primary }} inset primary={t('ACCOUNT')} />
@@ -110,7 +110,7 @@ class TopNav extends Component {
                   value='logout'
                   onClick={() => { logOut() }}
                 >
-                  <ListItemIcon className={classes.icon}>
+                  <ListItemIcon >
                     <Icon>exit_to_app</Icon>
                   </ListItemIcon>
                   <ListItemText classes={{ primary: classes.primary }} inset primary={t('LOGOUT')} />

@@ -97,6 +97,9 @@ export const styles = theme => ({
         right: 0,
         padding: 10,
         paddingLeft: 16,
+        borderTopWidth: 1,
+        borderTopColor: theme.palette.divider,
+        borderTopStyle: 'solid'
     },
     navList: {
         position: 'absolute',
@@ -108,14 +111,26 @@ export const styles = theme => ({
         overflowX: 'hidden',
     },
     navListRoot: {
-        color: '#fff'
+        color: '#fff',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between'
     },
     sideNavToolbar: {
-        borderBottom: {
-            border: theme.palette.divider.default
-        }
     },
     sntPadding: {
         paddingTop: 0
+    },
+    active: {
+        backgroundColor: '#fafafa'
+    },
+    newItemBtn: {
+        width: '200px' // TODO
+    },
+    adxLink: {
+        color: theme.palette.text.hint,
+        '&:hover': {
+            color: theme.palette.text.secondary
+        }
     }
 })

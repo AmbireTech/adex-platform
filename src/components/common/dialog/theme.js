@@ -76,7 +76,7 @@ export const styles = theme => {
             position: 'fixed',
             top: 86,
             right: 40,
-            zIndex: 1110
+            zIndex: theme.zIndex.appBar
         },
         breakLong: {
             wordBreak: 'break-word',

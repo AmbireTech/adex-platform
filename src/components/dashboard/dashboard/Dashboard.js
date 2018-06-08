@@ -119,7 +119,7 @@ class Dashboard extends React.Component {
                 header={this.props.t('ALL_UNITS')}
                 viewModeId='rowsViewUnits'
                 itemsType={ItemsTypes.AdUnit.id}
-                newItemBtn={() => <NewUnitDialog floating accent />}
+                newItemBtn={() => <NewUnitDialog variant='fab' color='secondary' />}
                 objModel={AdUnitModel}
                 sortProperties={SORT_PROPERTIES_ITEMS}
                 filterProperties={FILTER_PROPERTIES_ITEMS}
@@ -133,7 +133,7 @@ class Dashboard extends React.Component {
                 header={this.props.t('ALL_CAMPAIGNS')}
                 viewModeId='rowsViewCampaigns'
                 itemsType={ItemsTypes.Campaign.id}
-                newItemBtn={() => <NewCampaignDialog floating accent />}
+                newItemBtn={() => <NewCampaignDialog variant='fab' accent color='secondary' />}
                 objModel={CampaignModel}
                 sortProperties={SORT_PROPERTIES_COLLECTION}
             // filterProperties={FILTER_PROPERTIES_ITEMS}
@@ -147,7 +147,7 @@ class Dashboard extends React.Component {
                 header={this.props.t('ALL_SLOTS')}
                 viewModeId='rowsViewSlots'
                 itemsType={ItemsTypes.AdSlot.id}
-                newItemBtn={() => <NewSlotDialog floating accent />}
+                newItemBtn={() => <NewSlotDialog variant='fab' accent color='secondary' />}
                 objModel={AdSlotModel}
                 sortProperties={SORT_PROPERTIES_ITEMS}
                 filterProperties={FILTER_PROPERTIES_ITEMS}
@@ -161,7 +161,7 @@ class Dashboard extends React.Component {
                 header={this.props.t('ALL_CHANNELS')}
                 viewModeId='rowsViewChannels'
                 itemsType={ItemsTypes.Channel.id}
-                newItemBtn={() => <NewChannelDialog floating accent />}
+                newItemBtn={() => <NewChannelDialog variant='fab' accent color='secondary' />}
                 objModel={ChannelModel}
                 sortProperties={SORT_PROPERTIES_COLLECTION}
             // filterProperties={FILTER_PROPERTIES_ITEMS}
