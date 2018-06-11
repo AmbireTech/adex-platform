@@ -78,6 +78,10 @@ export const styles = theme => ({
             marginLeft: drawerWidth,
         },
     },
+    contentInner: {
+        maxWidth: 1600,
+        margin: 'auto'
+    },
     icon: {
         height: 36,
         width: 'auto',

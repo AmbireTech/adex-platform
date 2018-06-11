@@ -269,9 +269,7 @@ export class DashboardStats extends Component {
 
         return (
             <div>
-                <Grid container
-                    classes={{ container: classes.statsContainer }}
-                >
+                <Grid container >
                     <Grid item md={12} lg={6}>
                         <Card
                             raised
