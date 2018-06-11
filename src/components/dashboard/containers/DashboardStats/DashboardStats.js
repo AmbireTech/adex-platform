@@ -1,20 +1,21 @@
-
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import theme from './theme.css'
-import { Grid, Row, Col } from 'react-flexbox-grid'
 import { BidsStatusPie } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
 import { exchange as ExchangeConstants } from 'adex-constants'
-import { Card, CardTitle, CardActions } from 'react-toolbox/lib/card'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
 import classnames from 'classnames'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import { web3Utils } from 'services/smart-contracts/ADX'
 import SideSelect from 'components/signin/side-select/SideSelect'
-import { Button } from 'react-toolbox/lib/button'
+import { withStyles } from '@material-ui/core/styles'
+import StatsCard from './StatsCard'
+import { styles } from './styles'
+import Grid from '@material-ui/core/Grid'
 
 const { BidStatesLabels, BID_STATES } = ExchangeConstants
 
@@ -188,113 +189,106 @@ export class DashboardStats extends Component {
         const exchBal = accStats.exchangeBalance || {}
         const adxOnBids = adxToFloatView(exchBal.onBids || 0)
         const exchangeAvailable = adxToFloatView(exchBal.available || 0)
-        return (
-            <div>
 
-                <Card
-                    className={classnames(theme.dashboardCardHalf, theme.linkCard)}
+        const classes = this.props.classes
+        return (
+            <div className={classes.infoStatsContainer}>
+
+                <StatsCard
+                    linkCard
+                    subtitle={t(spentEarned)}
+                    title={adxToFloatView(stats.closed.completed.amount || 0) + ' ADX'}
                     onClick={() => this.goToBids('closed')}
                 >
-                    <CardTitle
-                        subtitle={t(spentEarned)}
-                        title={adxToFloatView(stats.closed.completed.amount || 0) + ' ADX'}
-                    />
-                </Card>
+                </StatsCard>
 
-                <Card
-                    className={classnames(theme.dashboardCardHalf, theme.linkCard)}
+                <StatsCard
+                    linkCard
                     onClick={() => this.goToBids('action')}
+                    subtitle={t('LABEL_AMOUNT_READY_TO_VERIFY')}
+                    title={adxToFloatView(stats.action.amount || 0) + ' ADX'}
                 >
-                    <CardTitle
-                        subtitle={t('LABEL_AMOUNT_READY_TO_VERIFY')}
-                        title={adxToFloatView(stats.action.amount || 0) + ' ADX'}
-                    />
-                    {/* <CardActions theme={theme}>
-                        <Button label="Action 1" />
-                    </CardActions> */}
-                </Card>
-                {side === 'advertiser' ?
-                    <Card
-                        className={classnames(theme.dashboardCardHalf, theme.linkCard)}
+                </StatsCard>
+
+                {side === 'advertiser' &&
+                    <StatsCard
+                        linkCard
                         onClick={() => this.goToBids('open')}
+                        subtitle={t('LABEL_OPEN_BIDS_AMOUNT')}
+                        title={adxToFloatView(stats.open.amount || 0) + ' ADX'}
                     >
-                        <CardTitle
-                            subtitle={t('LABEL_OPEN_BIDS_AMOUNT')}
-                            title={adxToFloatView(stats.open.amount || 0) + ' ADX'}
-                        />
-                    </Card>
-                    : null}
 
-                <Card
-                    className={classnames(theme.dashboardCardHalf, theme.linkCard)}
+                    </StatsCard>
+                }
+
+                <StatsCard
+                    linkCard
                     onClick={this.goToAccount}
+                    subtitle={t('ACCOUNT_ETH_BALANCE')}
+                    title={addrBalanceEth + ' ETH'}
                 >
-                    <CardTitle
-                        subtitle={t('ACCOUNT_ETH_BALANCE')}
-                        title={addrBalanceEth + ' ETH'}
-                    />
-                </Card>
+                </StatsCard>
 
-
-                <Card
-                    className={classnames(theme.dashboardCardHalf, theme.linkCard)}
+                <StatsCard
+                    linkCard
                     onClick={this.goToAccount}
+                    subtitle={t('ACCOUNT_ADX_BALANCE')}
+                    title={addrBalanceAdx + ' ADX'}
                 >
-                    <CardTitle
-                        subtitle={t('ACCOUNT_ADX_BALANCE')}
-                        title={addrBalanceAdx + ' ADX'}
-                    />
-                </Card>
+                </StatsCard>
 
-                <Card
-                    className={classnames(theme.dashboardCardHalf, theme.linkCard)}
+                <StatsCard
+                    linkCard
                     onClick={this.goToAccount}
+                    subtitle={t('EXCHANGE_ADX_BALANCE_AVAILABLE')}
+                    title={exchangeAvailable + ' ADX'}
                 >
-                    <CardTitle
-                        subtitle={t('EXCHANGE_ADX_BALANCE_AVAILABLE')}
-                        title={exchangeAvailable + ' ADX'}
-                    />
-                </Card>
+                </StatsCard>
 
-                <Card
-                    className={classnames(theme.dashboardCardHalf, theme.linkCard)}
+                <StatsCard
+                    linkCard
                     onClick={this.goToAccount}
+                    subtitle={t('EXCHANGE_ADX_BALANCE_ON_BIDS')}
+                    title={adxOnBids + ' ADX'}
                 >
-                    <CardTitle
-                        subtitle={t('EXCHANGE_ADX_BALANCE_ON_BIDS')}
-                        title={adxOnBids + ' ADX'}
-                    />
-                </Card>
+                </StatsCard>
 
             </div>
         )
     }
 
     render() {
-        if (this.props.side !== 'advertiser' && this.props.side !== 'publisher') {
+        const { side, sideBids, classes } = this.props
+        if (side !== 'advertiser' && side !== 'publisher') {
             return (
                 <SideSelect active={true} />
             )
         }
 
-        const stats = this.mapData(this.props.sideBids)
+        const stats = this.mapData(sideBids)
+
         return (
             <div>
-                <Grid fluid >
-                    <Row top='xs' className={theme.itemsListControls}>
-                        <Col xs={12} sm={12} lg={6}>
-                            <Card raised className={classnames(theme.dashboardCardBody)}>
+                <Grid container
+                    classes={{ container: classes.statsContainer }}
+                >
+                    <Grid item md={12} lg={6}>
+                        <Card
+                            raised
+                            className={classnames(classes.dashboardCardBody)}
+                        >
+                            <CardContent>
                                 <this.BidsStateChart
                                     stats={stats}
                                 />
-                            </Card>
-                        </Col>
-                        <Col xs={12} sm={12} lg={6}>
-                            <this.InfoStats
-                                stats={stats}
-                            />
-                        </Col>
-                    </Row>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid item md={12} lg={6}>
+                        <this.InfoStats
+                            stats={stats}
+                        />
+                    </Grid>
                 </Grid>
 
             </div>
@@ -336,4 +330,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(DashboardStats))
+)(withStyles(styles)(Translate(DashboardStats)))
