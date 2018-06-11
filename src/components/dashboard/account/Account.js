@@ -7,7 +7,13 @@ import actions from 'actions'
 import Translate from 'components/translate/Translate'
 import { web3Utils } from 'services/smart-contracts/ADX'
 import { WithdrawEth, WithdrawAdx, Deposit, WithdrawFromExchange } from 'components/dashboard/forms/web3/transactions'
-import { List, ListItem, ListDivider } from 'react-toolbox/lib/list'
+import { withStyles } from '@material-ui/core/styles'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
+import ListDivider from '@material-ui/core/Divider'
+import { styles } from './theme.js'
+
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import scActions from 'services/smart-contracts/actions'
 
@@ -42,90 +48,104 @@ class Account extends React.Component {
         // let adxOnExchangeTotal = adxToFloatView(exchBal.total)
         let adxOnBids = adxToFloatView(exchBal.onBids || 0)
         let exchangeAvailable = adxToFloatView(exchBal.available || 0)
+        const classes = this.props.classes
 
         return (
             <div>
-                <List selectable={false} ripple={false}>
+                <List
+                // dense={true}
+                >
                     <ListItem
-                        ripple={false}
-                        legend={t('ACCOUNT_ETH_ADDR')}
-                        caption={account._addr}
-                        // TODO: add copy to clipboard btn for the address
-                        // rightIcon='content_copy'
-                        theme={theme}
-                    />
+                    // // TODO: add copy to clipboard btn for the address
+                    // // rightIcon='content_copy'
+                    >
+                        <ListItemText
+                            primary={account._addr}
+                            secondary={t('ACCOUNT_ETH_ADDR')}
+                        />
+                    </ListItem>
                     <ListDivider />
                     <ListItem
-                        ripple={false}
-                        legend={t('ACCOUNT_ETH_BALANCE')}
-                        caption={addrBalanceEth + ' ETH'}
-                        theme={theme}
-                        rightIcon={<WithdrawEth
-                            icon=''
-                            raised
-                            primary
-                            onSave={this.onSave}
-                            availableAmount={addrBalanceEth}
-                            tokenName='ETH'
-                            accAddr={account._addr}
-                            className={theme.actionBtn}
-                        />}
-                    />
+                    >
+                        <ListItemText
+                            primary={addrBalanceEth + ' ETH'}
+                            secondary={t('ACCOUNT_ETH_BALANCE')}
+                        />
+                        <div className={classes.itemActions}>
+                            <WithdrawEth
+                                varint='raised'
+                                color='primary'
+                                onSave={this.onSave}
+                                availableAmount={addrBalanceEth}
+                                tokenName='ETH'
+                                accAddr={account._addr}
+                                className={theme.actionBtn}
+                                size='small'
+                            />
+                        </div>
+                    </ListItem>
                     <ListDivider />
                     <ListItem
-                        ripple={false}
-                        legend={t('ACCOUNT_ADX_BALANCE')}
-                        caption={addrBalanceAdx + ' ADX'}
-                        theme={theme}
-                        rightIcon={<WithdrawAdx
-                            icon=''
-                            raised
-                            primary
-                            onSave={this.onSave}
-                            availableAmount={addrBalanceAdx}
-                            tokenName='ADX'
-                            accAddr={account._addr}
-                            className={theme.actionBtn}
-                        />}
-                    />
+                    >
+                        <ListItemText
+                            primary={addrBalanceAdx + ' ADX'}
+                            secondary={t('ACCOUNT_ADX_BALANCE')}
+                        />
+                        <div className={classes.itemActions}>
+                            <WithdrawAdx
+                                varint='raised'
+                                color='primary'
+                                onSave={this.onSave}
+                                availableAmount={addrBalanceAdx}
+                                tokenName='ADX'
+                                accAddr={account._addr}
+                                className={theme.actionBtn}
+                                size='small'
+                            />
+                        </div>
+                    </ListItem>
                     <ListDivider />
                     <ListItem
-                        ripple={false}
-                        legend={t('EXCHANGE_ADX_BALANCE_AVAILABLE')}
-                        caption={exchangeAvailable + ' ADX'}
-                        theme={theme}
-                        rightIcon={
-                            <span>
-                                <Deposit
-                                    icon=''
-                                    raised
-                                    accent
-                                    onSave={this.onSave}
-                                    addrBalanceAdx={addrBalanceAdx}
-                                    className={theme.actionBtn}
-                                />
-                                <WithdrawFromExchange
-                                    icon=''
-                                    raised
-                                    primary
-                                    onSave={this.onSave}
-                                    exchangeAvailable={exchangeAvailable}
-                                    className={theme.actionBtn}
-                                />
-                            </span>}
-                    />
+                    >
+                        <ListItemText
+                            primary={exchangeAvailable + ' ADX'}
+                            secondary={t('EXCHANGE_ADX_BALANCE_AVAILABLE')}
+                        />
+                        <div className={classes.itemActions}>
+                            <Deposit
+                                variant='raised'
+                                color='secondary'
+                                onSave={this.onSave}
+                                addrBalanceAdx={addrBalanceAdx}
+                                className={theme.actionBtn}
+                                size='small'
+                            />
+                            <WithdrawFromExchange
+                                variant='raised'
+                                color='primary'
+                                onSave={this.onSave}
+                                exchangeAvailable={exchangeAvailable}
+                                className={theme.actionBtn}
+                                size='small'
+                            />
+                        </div>
+                    </ListItem>
                     <ListDivider />
                     <ListItem
-                        ripple={false}
-                        legend={t('EXCHANGE_ADX_BALANCE_ON_BIDS')}
-                        caption={adxOnBids + ' ADX'}
-                        theme={theme}
-                    // rightIcon={<RRButton
-                    //     to={`/dashboard/${this.props.side}/accepted-bids`}
-                    //     // TODO: Make this page
-                    //     label={t('GO_TO_ACCEPTED_BIDS')}
-                    // />}
-                    />
+
+                    >
+                        <ListItemText
+                            primary={adxOnBids + ' ADX'}
+                            secondary={t('EXCHANGE_ADX_BALANCE_ON_BIDS')}
+                        />
+                        {/* <div className={classes.itemActions}>
+                            <RRButton
+                                to={`/dashboard/${this.props.side}/accepted-bids`}
+                                // TODO: Make this page
+                                label={t('GO_TO_ACCEPTED_BIDS')}
+                            />
+                        </div> */}
+                    </ListItem>
                     <ListDivider />
                 </List>
             </div>
@@ -157,4 +177,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(Account))
+)(withStyles(styles)(Translate(Account)))

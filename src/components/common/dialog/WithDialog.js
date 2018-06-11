@@ -87,13 +87,14 @@ export default function ItemHoc(Decorated) {
             } else {
                 btnProps = {
                     variant: this.props.variant || 'raised',
-                    color: this.props.color
+                    color: this.props.color,
+                    size: this.props.size
                     // floating: this.props.floating,
                     // flat: this.props.flat
                 }
             }
 
-            const { stiles, classes, ...other } = this.props
+            const { classes, ...other } = this.props
 
             const btnLabel = this.props.t(this.props.btnLabel, { args: this.props.btnLabelArgs || [''] })
 
@@ -109,6 +110,7 @@ export default function ItemHoc(Decorated) {
                         // theme={this.props.theme}
                         // style={this.props.style}
                         // raised
+                        size="small"
                         className={classnames(
                             this.props.className,
                             { [classes.floating]: this.props.variant === 'fab' },
@@ -117,7 +119,7 @@ export default function ItemHoc(Decorated) {
                             // { [RTButtonTheme[this.props.color]]: !!this.props.color }
                         )}
                     >
-                        <Icon className={classes.rightIcon}>{this.props.icon === undefined ? 'add' : this.props.icon}</Icon>
+                        {this.props.icon && <Icon className={classes.rightIcon}>{this.props.icon === undefined ? 'add' : this.props.icon}</Icon>}
                         {this.props.variant !== 'fab' && btnLabel}
                     </ButtonComponent>
                     <Dialog
