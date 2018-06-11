@@ -2,7 +2,7 @@
 import grey from '@material-ui/core/colors/grey'
 
 export const styles = theme => {
-    const spacing = theme.spacing.unit * 3;
+    const spacing = theme.spacing.unit * 3
     return {
         dialog: {
             minHeight: '70vh',
