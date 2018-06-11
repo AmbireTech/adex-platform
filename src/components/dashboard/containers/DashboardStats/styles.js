@@ -17,10 +17,6 @@ export const styles = theme => {
                 cursor: 'pointer'
             }
         },
-        statsContainer: {
-            maxWidth: 1600,
-            margin: 'auto'
-        },
         dashboardCardBody: {
             margin: spacing,
         }
