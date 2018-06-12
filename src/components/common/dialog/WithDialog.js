@@ -102,6 +102,7 @@ export default function ItemHoc(Decorated) {
                     <ButtonComponent
                         disabled={this.props.disabled}
                         aria-label={btnLabel}
+                        label={btnLabel}
                         onClick={this.handleToggle}
                         {...btnProps}
                         // style={this.props.style}

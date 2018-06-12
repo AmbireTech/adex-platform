@@ -14,7 +14,7 @@ import Anchor from 'components/common/anchor/anchor'
 
 const { AdSizesByValue, AdTypesByValue } = ItemsConstants
 
-const FallbackAdData =  ({ item, t, rightComponent, url, ...rest }) => {
+const FallbackAdData = ({ item, t, rightComponent, url, ...rest }) => {
     let errFallbackAdUrl = rest.invalidFields['fallbackAdUrl']
 
     return (
@@ -27,7 +27,7 @@ const FallbackAdData =  ({ item, t, rightComponent, url, ...rest }) => {
                 >
                     <Img src={Item.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY) || ''} alt={item.fallbackAdUrl} onClick={rest.toggleFallbackImgEdit} style={{ cursor: 'pointer' }} />
                 </CardMedia>
-                <CardTitle theme={theme} >                                           
+                <CardTitle theme={theme} >
 
                     {rest.activeFields.fallbackAdUrl ?
                         <Input
@@ -36,9 +36,9 @@ const FallbackAdData =  ({ item, t, rightComponent, url, ...rest }) => {
                             type='text'
                             label={t('fallbackAdUrl', { isProp: true })}
                             value={item.fallbackAdUrl || ''}
-                            onChange={(val) =>  rest.handleChange('fallbackAdUrl', val)}
+                            onChange={(val) => rest.handleChange('fallbackAdUrl', val)}
                             maxLength={1024}
-                            onBlur={() => { rest.setActiveFields('fallbackAdUrl', false); rest.validate('fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true }); } }
+                            onBlur={() => { rest.setActiveFields('fallbackAdUrl', false); rest.validate('fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true }); }}
                             onFocus={() => rest.validate('fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
                             error={errFallbackAdUrl && !!errFallbackAdUrl.dirty ? <span> {errFallbackAdUrl.errMsg} </span> : null}
                         >
@@ -62,7 +62,7 @@ const FallbackAdData =  ({ item, t, rightComponent, url, ...rest }) => {
                                         theme={theme}
                                         icon='edit'
                                         accent
-                                        onClick={ () => rest.setActiveFields('fallbackAdUrl', true)}
+                                        onClick={() => rest.setActiveFields('fallbackAdUrl', true)}
                                     />
                                 </span>
                             </p>

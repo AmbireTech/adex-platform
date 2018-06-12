@@ -21,7 +21,15 @@ export const themeMUI = createMuiTheme({
             root: {
                 borderRadius: 0
             },
+            outlined: {
+                borderRadius: 0
+            }
         },
+        MuiTableCell: {
+            head: {
+               whiteSpace: 'nowrap' 
+            } 
+        }
         // MuiStepIcon: {
         //     root: {
         //         color: 'yellow',
