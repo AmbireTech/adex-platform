@@ -95,7 +95,7 @@ class VerifyBid extends Component {
                             checked={!errConversion}
                             label={t(this.props.transaction.conversionCheckMsg)}
                             onChange={this.validateConversion}
-                        />                        
+                        />
                     </div>
                 }
             />

@@ -27,14 +27,22 @@ export class AddItem extends Component {
                 <Tab label={this.props.tabNewLabel}>
                     <ContentBox>
                         <ContentBody>
-                                {this.props.newForm({...this.props})}
+                            {this.props.newForm({ ...this.props })}
                         </ContentBody>
                     </ContentBox>
                 </Tab>
                 <Tab theme={theme} label={this.props.tabExsLabel}>
                     <ContentBox>
                         <ContentBody>
-                            <ItemsList {...this.props} objModel={this.props.objModel} parentItem={this.props.addTo} addToItem items={this.props.items} viewModeId={this.props.viewMode} listMode={this.props.listMode} />
+                            <ItemsList
+                                {...this.props}
+                                objModel={this.props.objModel}
+                                parentItem={this.props.addTo}
+                                addToItem
+                                items={this.props.items}
+                                viewModeId={this.props.viewMode}
+                                listMode={this.props.listMode}
+                            />
                         </ContentBody>
                     </ContentBox>
                 </Tab>

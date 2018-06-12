@@ -10,7 +10,10 @@ import { Pagination } from './ListControls'
 import Rows from 'components/dashboard/collection/Rows'
 import Card from 'components/dashboard/collection/Card'
 import { Grid, Row, Col } from 'react-flexbox-grid'
-import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
+// import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
+import TableCell from '@material-ui/core/TableCell'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
 import theme from './theme.css'
 import tableTheme from 'components/dashboard/collection/theme.css'
 import RTButtonTheme from 'styles/RTButton.css'
@@ -23,6 +26,7 @@ import Translate from 'components/translate/Translate'
 import classnames from 'classnames'
 import { RadioGroup, RadioButton } from 'react-toolbox/lib/radio'
 import { InputLabel } from 'components/dashboard/containers/ListControls'
+
 import { items as ItemsConstants } from 'adex-constants'
 const { AdSizesByValue, AdTypesByValue, ItemTypesNames } = ItemsConstants
 
@@ -71,8 +75,6 @@ class ItemsList extends Component {
             items: [],
             page: 0,
             pageSize: 10,
-            isLoading: false,
-            isError: false,
             search: '',
             sortOrder: -1,
             sortProperties: sortProperties,
@@ -134,26 +136,28 @@ class ItemsList extends Component {
         const t = this.props.t
         return (
             <TableHead>
-                <TableCell>
-                    {selected.length ?
-                        <TooltipButton
-                            icon='delete'
-                            label={t('DELETE_ALL')}
-                            tooltip={t('DELETE_ALL')}
-                            tooltipDelay={1000}
-                            tooltipPosition='top'
-                            className={RTButtonTheme.danger}
-                            onClick={null}
-                        />
-                        :
-                        null
-                    }
-                </TableCell>
-                <TableCell> {t('PROP_NAME')} </TableCell>
-                <TableCell> {t('PROP_ADTYPE')} </TableCell>
-                <TableCell> {t('PROP_SIZE')}</TableCell>
-                <TableCell> {t('PROP_CREATEDON')} </TableCell>
-                <TableCell> {t('ACTIONS')} </TableCell>
+                <TableRow>
+                    <TableCell>
+                        {selected.length ?
+                            <TooltipButton
+                                icon='delete'
+                                label={t('DELETE_ALL')}
+                                tooltip={t('DELETE_ALL')}
+                                tooltipDelay={1000}
+                                tooltipPosition='top'
+                                className={RTButtonTheme.danger}
+                                onClick={null}
+                            />
+                            :
+                            null
+                        }
+                    </TableCell>
+                    <TableCell> {t('PROP_NAME')} </TableCell>
+                    <TableCell> {t('PROP_ADTYPE')} </TableCell>
+                    <TableCell> {t('PROP_SIZE')}</TableCell>
+                    <TableCell> {t('PROP_CREATEDON')} </TableCell>
+                    <TableCell> {t('ACTIONS')} </TableCell>
+                </TableRow>
             </TableHead>
         )
     }
@@ -355,8 +359,8 @@ class ItemsList extends Component {
         <List
             itemRenderer={this.props.itemRenderer || this.renderCard}
             list={items}
-            isError={this.state.isError}
-            isLoading={this.state.isLoading}
+            // isError={this.state.isError}
+            // isLoading={this.state.isLoading}
             side={this.props.side}
         />
 
@@ -376,16 +380,13 @@ class ItemsList extends Component {
         let items = data.items
         let renderItems
 
-        if (this.props.listMode === 'rows') {
-            renderItems = this.props.renderRows || this.renderRows
-        } else if (this.props.listMode === 'cards') {
-            renderItems = this.props.renderCards || this.renderCards
-        } else if (!!this.props.rowsView) {
-            renderItems = this.props.renderRows || this.renderRows
+        if ((this.props.listMode === 'rows') || !!this.props.rowsView) {
+            renderItems = this.props.renderRows
         } else {
-            renderItems = this.props.renderCards || this.renderCards
+            renderItems = this.props.renderCards
         }
-        const t = this.props.t
+
+        const { t, side } = this.props
 
         return (
             <div>
@@ -497,8 +498,8 @@ ItemsList.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-    let persist = state.persist
-    let memory = state.memory
+    const persist = state.persist
+    const memory = state.memory
     return {
         rowsView: !!persist.ui[props.viewModeId],
         side: memory.nav.side,

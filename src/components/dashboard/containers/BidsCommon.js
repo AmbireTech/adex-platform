@@ -2,14 +2,16 @@
 import React, { Component } from 'react'
 import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
 import { exchange as ExchangeConstants } from 'adex-constants'
-import theme from './theme.css'
+// import theme from './theme.css'
 // import RTButtonTheme from 'styles/RTButton.css'
 import Anchor from 'components/common/anchor/anchor'
 import moment from 'moment'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import { FontIcon } from 'react-toolbox/lib/font_icon'
 import { Item } from 'adex-models'
-import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
+import TableCell from '@material-ui/core/TableCell'
 import WithDialog from 'components/common/dialog/WithDialog'
 import classnames from 'classnames'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
@@ -19,6 +21,8 @@ import { getBidEvents } from 'services/adex-node/actions'
 import { AcceptBid, GiveupBid, VerifyBid, CancelBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
 import RTButtonTheme from 'styles/RTButton.css'
 import Tooltip from 'react-toolbox/lib/tooltip'
+import { withStyles } from '@material-ui/core/styles'
+// import { styles } from './styles'
 
 const RRButton = withReactRouterLink(Button)
 const RRAnchor = withReactRouterLink(Anchor)
@@ -76,18 +80,20 @@ const BidDetailWithDialog = WithDialog(bidDetails)
 export const renderTableHead = ({ t, side, }) => {
     return (
         <TableHead>
-            <TableCell> {t('DETAILS')} </TableCell>
-            <TableCell> {t('BID_AMOUNT')} </TableCell>
-            <TableCell> {t('BID_TARGET')} / {t('BID_UNIQUE_CLICKS')} </TableCell>
-            <TableCell> {t('BID_STATE')} </TableCell>
-            {/* TODO: make this check only at 1 place */}
-            <TableCell> {t(side === 'publisher' ? 'ADVERTISER' : 'PUBLISHER')} </TableCell>
-            <TableCell>
-                {t('AD_SLOT') + ' / ' + t('AD_UNIT')}
-            </TableCell>
-            <TableCell> {t('TIMEOUT')} / {t('ACCEPTED')} / {t('EXPIRES')}  </TableCell>
-            <TableCell> {t('REPORTS')}  </TableCell>
-            <TableCell> {t('ACTIONS')} </TableCell>
+            <TableRow>
+                <TableCell numeric> {t('DETAILS')} </TableCell>
+                <TableCell > {t('BID_AMOUNT')} </TableCell>
+                <TableCell> {t('BID_TARGET')} / {t('BID_UNIQUE_CLICKS')} </TableCell>
+                <TableCell> {t('BID_STATE')} </TableCell>
+                {/* TODO: make this check only at 1 place */}
+                <TableCell> {t(side === 'publisher' ? 'ADVERTISER' : 'PUBLISHER')} </TableCell>
+                <TableCell>
+                    {t('AD_SLOT') + ' / ' + t('AD_UNIT')}
+                </TableCell>
+                <TableCell> {t('TIMEOUT')} / {t('ACCEPTED')} / {t('EXPIRES')}  </TableCell>
+                <TableCell> {t('REPORTS')}  </TableCell>
+                <TableCell> {t('ACTIONS')} </TableCell>
+            </TableRow>
         </TableHead>
     )
 }
@@ -111,12 +117,12 @@ export const renderCommonTableRow = ({ bidData, t, side }) => {
             </TableCell>
             <TableCell> {bidData._state} </TableCell>
             <TableCell
-                className={classnames(theme.compactCol, theme.ellipsis)}
+            // className={classnames(theme.compactCol, theme.ellipsis)}
             >
                 {bidData.sideData.owner}
             </TableCell>
             <TableCell
-                className={classnames(theme.compactCol, theme.ellipsis)}
+            // className={classnames(theme.compactCol, theme.ellipsis)}
             >
                 <div>
                     {bidData._adSlot}
@@ -131,7 +137,7 @@ export const renderCommonTableRow = ({ bidData, t, side }) => {
                 <div> {bidData.bidExpiresLabel} </div>
             </TableCell>
             <TableCell
-                className={classnames(theme.compactCol, theme.ellipsis)}
+            // className={classnames(theme.compactCol, theme.ellipsis)}
             >
                 <div> {bidData._publisherConfirmation} </div>
                 <div> {bidData._advertiserConfirmation} </div>
@@ -151,15 +157,17 @@ export const renderCommonTableRow = ({ bidData, t, side }) => {
 export const renderTableHeadStats = ({ t, side, }) => {
     return (
         <TableHead>
-            <TableCell> {t('DETAILS')} </TableCell>
-            <TableCell> {t('BID_ID')} </TableCell>
-            <TableCell> {t('BID_AMOUNT')} </TableCell>
-            <TableCell> {t('BID_TARGET')} / {t('BID_UNIQUE_CLICKS')} </TableCell>
-            <TableCell> {t('BID_STATE')} </TableCell>
-            <TableCell> {t('BID_PERIOD_UNIQUE_CLICKS')}</TableCell>
-            <TableCell> {t('BID_PERIOD_CLICKS')} </TableCell>
-            <TableCell> {t('BID_PERIOD_IMPRESSIONS')} </TableCell>
-            <TableCell> {t('BID_ESTIMATED_REVENUE')} </TableCell>
+            <TableRow>
+                <TableCell> {t('DETAILS')} </TableCell>
+                <TableCell numeric> {t('BID_ID')} </TableCell>
+                <TableCell> {t('BID_AMOUNT')} </TableCell>
+                <TableCell> {t('BID_TARGET')} / {t('BID_UNIQUE_CLICKS')} </TableCell>
+                <TableCell> {t('BID_STATE')} </TableCell>
+                <TableCell> {t('BID_PERIOD_UNIQUE_CLICKS')}</TableCell>
+                <TableCell> {t('BID_PERIOD_CLICKS')} </TableCell>
+                <TableCell> {t('BID_PERIOD_IMPRESSIONS')} </TableCell>
+                <TableCell> {t('BID_ESTIMATED_REVENUE')} </TableCell>
+            </TableRow>
         </TableHead>
     )
 }
@@ -179,7 +187,7 @@ export const renderCommonTableRowStats = ({ bidData, t, side }) => {
                 />
             </TableCell>
             <TableCell
-                className={classnames(theme.compactCol, theme.ellipsis)}
+            // className={classnames(theme.compactCol, theme.ellipsis)}
             >
                 {bidData._id}
             </TableCell>
@@ -230,7 +238,9 @@ export const getCommonBidData = ({ bid, t, side }) => {
         _target: bid._target,
         clicksCount: bid.clicksCount || '-',
         _state:
-            <span className={theme.bidState}>
+            <span
+            // className={theme.bidState}
+            >
                 <FontIcon value={StateIcons[bid._state].icon} style={{ marginRight: 5, color: StateIcons[bid._state].color }} />
                 <span>{t(BidStatesLabels[bid._state])}</span>
             </span>,
@@ -315,9 +325,10 @@ export const getPublisherBidData = ({ bid, t, transactions, side, item, account,
         placedBid={bid}
         slot={item}
         acc={account}
-        raised
-        primary
-        className={theme.actionBtn}
+        variant='outlined'
+        size='small'
+        // primary
+        // className={theme.actionBtn}
         onSave={onSave}
     // disabled={pendingAccept}
     /> : null
@@ -330,8 +341,9 @@ export const getPublisherBidData = ({ bid, t, transactions, side, item, account,
             bidId={bid._id}
             placedBid={bid}
             acc={account}
-            raised
-            className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: noTargetsReached, [RTButtonTheme.success]: !noTargetsReached })}
+            variant='outlined'
+            size='small'
+            // className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: noTargetsReached, [RTButtonTheme.success]: !noTargetsReached })}
             onSave={onSave}
             disabled={pendingVerify}
         /> : null
@@ -343,8 +355,9 @@ export const getPublisherBidData = ({ bid, t, transactions, side, item, account,
             bidId={bid._id}
             placedBid={bid}
             acc={account}
-            raised
-            className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
+            variant='outlined'
+            size='small'
+            // className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
             onSave={onSave}
             disabled={pendingGiveup}
         /> : null
@@ -373,8 +386,9 @@ export const getAdvertiserBidData = ({ bid, t, transactions, side, item, account
         bidId={bid._id}
         placedBid={bid}
         acc={account}
-        raised
-        className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
+        variant='outlined'
+        size='small'
+        // className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
         onSave={onSave}
         disabled={pendingCancel}
     /> : null
@@ -387,8 +401,10 @@ export const getAdvertiserBidData = ({ bid, t, transactions, side, item, account
             bidId={bid._id}
             placedBid={bid}
             acc={account}
-            raised
-            className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: !targetReached, [RTButtonTheme.success]: targetReached })}
+            variant='outlined'
+            size='small'
+            color={targetReached && 'primary'}
+            // className={classnames(theme.actionBtn, RTButtonTheme.inverted, { [RTButtonTheme.warning]: !targetReached, [RTButtonTheme.success]: targetReached })}
             onSave={onSave}
             disabled={pendingVerify}
         /> : null
@@ -401,8 +417,9 @@ export const getAdvertiserBidData = ({ bid, t, transactions, side, item, account
             bidId={bid._id}
             placedBid={bid}
             acc={account}
-            raised
-            className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.danger)}
+            variant='outlined'
+            size='small'
+            // className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.danger)}
             onSave={onSave}
             disabled={pendingRefund}
         /> : null
