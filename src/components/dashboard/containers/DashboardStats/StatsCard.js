@@ -8,14 +8,16 @@ import { styles } from './styles'
 import classnames from 'classnames'
 
 const StatsCard = props => {
-    const { classes, title, subtitle, linkCard, children } = props
+    const { classes, title, subtitle, linkCard, children, onClick } = props
 
     return (
         <Card
             // raised
             className={classnames(classes.infoCard,
                 { [classes.linkCard]: !!linkCard })
-            }>
+            }
+            onClick={onClick}
+        >
             <CardContent>
                 {title &&
                     <Typography

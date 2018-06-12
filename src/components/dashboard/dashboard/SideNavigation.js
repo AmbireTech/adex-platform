@@ -154,12 +154,13 @@ class SideNav extends Component {
                         >
                             <ListItemIcon>
                                 <span>
-                                    <BidIcon />
-                                    {bidsAwaitingActionCount > 0 &&
+                                    {bidsAwaitingActionCount > 0 ?
                                         <Badge
                                             badgeContent={bidsAwaitingActionCount <= 9 ? bidsAwaitingActionCount : '9+'}
                                             color="primary"
-                                        />}
+                                        >
+                                            <BidIcon />
+                                        </Badge> : <BidIcon />}
                                 </span>
                             </ListItemIcon>
                             <ListItemText inset primary={t('BIDS')} />
@@ -171,12 +172,11 @@ class SideNav extends Component {
                         >
                             <ListItemIcon>
                                 <span>
-                                    <SwapHorizontalIcon />
-                                    {pendingTrsCount > 0 &&
+                                    {pendingTrsCount > 0 ?
                                         <Badge
                                             badgeContent={pendingTrsCount <= 9 ? pendingTrsCount : '9+'}
                                             color="primary"
-                                        />}
+                                        ></Badge> : <SwapHorizontalIcon />}
                                 </span>
                             </ListItemIcon>
                             <ListItemText inset primary={t('TRANSACTIONS')} />

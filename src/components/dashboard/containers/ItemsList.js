@@ -222,7 +222,7 @@ class ItemsList extends Component {
                         tooltip={t('TOOLTIP_UNARCHIVE')}
                         tooltipDelay={1000}
                         tooltipPosition='top'
-                        accent
+                        color='secondary'
                         onClick={this.props.actions.confirmAction.bind(this,
                             this.props.actions.unarchiveItem.bind(this, { item: item, authSig: this.props.account._authSig }),
                             null,
@@ -257,7 +257,7 @@ class ItemsList extends Component {
                         icon='add_circle_outline'
                         label={t('ADD_TO', { args: [parentName] })}
                         tooltip={t('ADD_TO', { args: [parentName] })}
-                        accent
+                        color='secondary'
                         tooltipDelay={1000}
                         tooltipPosition='top'
                         onClick={this.props.actions.addItemToItem.bind(this, { item: item, toAdd: this.props.parentItem, authSig: this.props.account._authSig })}

@@ -41,28 +41,34 @@ class ButtonMenu extends Component {
     let leftIcon = this.props.leftIconSrc ? <ImgIcon src={this.props.leftIconSrc} /> : null
 
     return (
-      <div style={{ display: 'inline-block' }}>
+      <div
+      // style={{ display: 'inline-block' }}
+      >
         <Button
           style={this.props.btnStyle}
           onClick={this.handleMenu}
           aria-owns='menu-appbar'// {open ? 'menu-appbar' : null}
-          aria-haspopup="true"
+          aria-haspopup='true'
         >
           {leftIcon}
-          <span style={{ maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis' }}> {this.props.label} </span>
+          <span
+            style={{ maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis' }}
+          >
+            {this.props.label}
+          </span>
           <Icon style={this.props.iconStyle} >{this.props.icon}</Icon>
         </Button>
         <Menu
           id="menu-appbar"
           open={open}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
+          // anchorOrigin={{
+          //   vertical: 'top',
+          //   horizontal: 'right',
+          // }}
+          // transformOrigin={{
+          //   vertical: 'top',
+          //   horizontal: 'right',
+          // }}
           onClose={this.handleClose}
         >
           {this.props.children}

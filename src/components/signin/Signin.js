@@ -137,10 +137,22 @@ class Signin extends Component {
           <Logo width={370} height={144} />
         </div>
         <br />
-        <Button icon='create' onClick={() => this.handleToggle('create')} accent raised label="Create new account" />
+        <Button
+          icon='create'
+          onClick={() => this.handleToggle('create')}
+          color='secondary'
+          variant='raised'
+          label="Create new account"
+        />
         <br />
         <br />
-        <Button icon='import_export' onClick={() => this.handleToggle('restore')} primary raised label="Restore account" />
+        <Button
+          icon='import_export'
+          onClick={() => this.handleToggle('restore')}
+          color='primary'
+          variant='raised'
+          label="Restore account"
+        />
         <this.renderDialog />
       </div>
     )
