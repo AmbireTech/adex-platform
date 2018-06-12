@@ -86,11 +86,10 @@ export default function ItemHoc(Decorated) {
                 ButtonComponent = TextBtn
             } else {
                 btnProps = {
-                    variant: this.props.variant || 'raised',
+                    variant: this.props.variant,
                     color: this.props.color,
-                    size: this.props.size
-                    // floating: this.props.floating,
-                    // flat: this.props.flat
+                    size: this.props.size,
+                    mini: !!this.props.mini
                 }
             }
 
@@ -104,13 +103,8 @@ export default function ItemHoc(Decorated) {
                         disabled={this.props.disabled}
                         aria-label={btnLabel}
                         onClick={this.handleToggle}
-                        // primary={this.props.primary}
                         {...btnProps}
-                        accent={this.props.accent}
-                        // theme={this.props.theme}
                         // style={this.props.style}
-                        // raised
-                        size="small"
                         className={classnames(
                             this.props.className,
                             { [classes.floating]: this.props.variant === 'fab' },
@@ -119,7 +113,7 @@ export default function ItemHoc(Decorated) {
                             // { [RTButtonTheme[this.props.color]]: !!this.props.color }
                         )}
                     >
-                        {this.props.icon && <Icon className={classes.rightIcon}>{this.props.icon === undefined ? 'add' : this.props.icon}</Icon>}
+                        {this.props.icon && <Icon> {this.props.icon}</Icon>}
                         {this.props.variant !== 'fab' && btnLabel}
                     </ButtonComponent>
                     <Dialog

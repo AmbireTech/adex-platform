@@ -32,8 +32,7 @@ const RRMenuItem = withReactRouterLink(MenuItem)
 class TopNav extends Component {
 
   state = {
-    auth: true,
-    anchorEl: null,
+    auth: true
   }
 
   render() {
