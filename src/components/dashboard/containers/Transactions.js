@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import ItemsList from './ItemsList'
+import ListWithControls from './Lists/ListWithControls'
 import theme from './theme.css'
 import classnames from 'classnames'
 import { exchange as ExchangeConstants } from 'adex-constants'
@@ -107,7 +107,7 @@ class Transactions extends Component {
                     <h2 > {t('TRANSACTIONS')} {'(' + itemsCount + ')'} </h2>
                 </div> */}
 
-                <ItemsList items={reduced} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
+                <ListWithControls items={reduced} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
             </div>
         )
     }

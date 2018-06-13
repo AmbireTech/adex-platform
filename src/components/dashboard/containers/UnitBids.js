@@ -5,22 +5,14 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import theme from './theme.css'
 import { Tab, Tabs } from 'react-toolbox'
-import { IconButton } from 'react-toolbox/lib/button'
-import ItemsList from './ItemsList'
+import ListWithControls from './Lists/ListWithControls'
 import Rows from 'components/dashboard/collection/Rows'
 import Translate from 'components/translate/Translate'
-import Tooltip from 'react-toolbox/lib/tooltip'
-import RTButtonTheme from 'styles/RTButton.css'
-import { exchange as ExchangeConstants } from 'adex-constants'
-import { CancelBid, VerifyBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
 import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
-import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch, getAdvertiserBidData, getBidData } from './BidsCommon'
+import { renderCommonTableRow, renderTableHead, searchMatch, getBidData } from './BidsCommon'
 import { getAddrBids } from 'services/store-data/bids'
 import BidsStatistics from './BidsStatistics'
-
-const TooltipIconButton = Tooltip(IconButton)
-const { BID_STATES } = ExchangeConstants
 
 export class UnitBids extends Component {
     constructor(props) {
@@ -119,7 +111,7 @@ export class UnitBids extends Component {
                     onChange={this.handleTabChange}
                 >
                     <Tab label={t('BIDS_READY_TO_VERIFY')}>
-                        <ItemsList
+                        <ListWithControls
                             items={sorted.action}
                             listMode='rows'
                             renderRows={this.renderRows.bind(this)}
@@ -129,7 +121,7 @@ export class UnitBids extends Component {
                         />
                     </Tab>
                     <Tab label={t('BIDS_ACTIVE')}>
-                        <ItemsList
+                        <ListWithControls
                             items={sorted.active}
                             listMode='rows'
                             renderRows={this.renderRows.bind(this)}
@@ -139,7 +131,7 @@ export class UnitBids extends Component {
                         />
                     </Tab>
                     <Tab label={t('BIDS_OPEN')}>
-                        <ItemsList
+                        <ListWithControls
                             items={sorted.open}
                             listMode='rows'
                             renderRows={this.renderRows.bind(this)}
@@ -149,7 +141,7 @@ export class UnitBids extends Component {
                         />
                     </Tab>
                     <Tab label={t('BIDS_CLOSED')}>
-                        <ItemsList
+                        <ListWithControls
                             items={sorted.closed}
                             listMode='rows'
                             renderRows={this.renderRows.bind(this)}
