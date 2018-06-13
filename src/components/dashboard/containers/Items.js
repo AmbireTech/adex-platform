@@ -6,8 +6,6 @@ import actions from 'actions'
 import ItemsList from './ItemsList'
 import theme from './theme.css'
 import classnames from 'classnames'
-import { getItems } from 'services/adex-node/actions'
-import { Models } from 'adex-models'
 import { items as ItemsConstants } from 'adex-constants'
 import moment from 'moment'
 import TableCell from '@material-ui/core/TableCell'
@@ -16,12 +14,12 @@ import TableRow from '@material-ui/core/TableRow'
 import Tooltip from 'react-toolbox/lib/tooltip'
 import { IconButton, Button } from 'react-toolbox/lib/button'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
-import { Card, CardMedia, CardTitle } from 'react-toolbox/lib/card'
 import RTButtonTheme from 'styles/RTButton.css'
 import tableTheme from 'components/dashboard/collection/theme.css'
 import { Item } from 'adex-models'
 import Img from 'components/common/img/Img'
 import Rows from 'components/dashboard/collection/Rows'
+import Card from 'components/dashboard/collection/Card'
 import Translate from 'components/translate/Translate'
 
 const { ItemTypesNames, AdSizesByValue, AdTypesByValue, } = ItemsConstants
@@ -40,7 +38,7 @@ const List = ({ list, itemRenderer }) => {
 class Items extends Component {
 
     renderCard = (item, index) => {
-        const t = this.props.t
+        // const t = this.props.t
         return (
             <Card
                 key={item._id}
@@ -49,7 +47,7 @@ class Items extends Component {
                 logo={item._meta.img}
                 side={this.props.side}
                 remove={null}
-                actionsRenderer={this.renderActions(item)}
+                renderActions={() => this.renderActions(item)}
             />
         )
     }
@@ -199,16 +197,20 @@ class Items extends Component {
             rows={items}
             multiSelectable={false}
             selectable={false}
-            rowRenderer={this.renderTableRow.bind(this)}
-            tableHeadRenderer={this.renderTableHead.bind(this)}
+            rowRenderer={this.renderTableRow}
+            tableHeadRenderer={this.renderTableHead}
         />
 
-    renderCards = (items) =>
-        <List
-            itemRenderer={this.renderCard.bind(this)}
+    renderCards = (items) => {
+        console.log(items)
+
+        return (<List
+            itemRenderer={this.renderCard}
             list={items}
             side={this.props.side}
-        />
+        />)
+    }
+
 
     componentWillMount() {
         const items = Array.from(Object.values(this.props.items || {})) || []
@@ -233,8 +235,8 @@ class Items extends Component {
                     items={items}
                     viewModeId={this.props.viewModeId}
                     archive
-                    renderRows={this.renderRows.bind(this)}
-                    renderCards={this.renderCards.bind(this)}
+                    renderRows={this.renderRows}
+                    renderCards={this.renderCards}
                 />
             </div>
         )

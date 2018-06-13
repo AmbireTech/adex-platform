@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import theme from './theme.css'
 import RTButtonTheme from 'styles/RTButton.css'
-import ItemsList from './ItemsList'
+import ListWithControls from './Lists/ListWithControls'
 import Rows from 'components/dashboard/collection/Rows'
 import { Tab, Tabs } from 'react-toolbox'
 import { Grid, Row, Col } from 'react-flexbox-grid'
@@ -156,7 +156,7 @@ export class SlotBids extends Component {
                     {this.props.getSlotBids ?
                         <Tab label={t('OPEN_BIDS')}>
                             <div>
-                                <ItemsList
+                                <ListWithControls
                                     items={openBids}
                                     listMode='rows'
                                     renderRows={this.renderRows}
@@ -168,7 +168,7 @@ export class SlotBids extends Component {
                         </Tab>
                         : null}
                     <Tab label={t('BIDS_READY_TO_VERIFY')}>
-                        <ItemsList
+                        <ListWithControls
                             items={sorted.action}
                             listMode='rows'
                             renderRows={this.renderRows.bind(this)}
@@ -178,7 +178,7 @@ export class SlotBids extends Component {
                         />
                     </Tab>
                     <Tab label={t('BIDS_ACTIVE')}>
-                        <ItemsList
+                        <ListWithControls
                             items={sorted.active}
                             listMode='rows'
                             renderRows={this.renderRows.bind(this)}
@@ -188,7 +188,7 @@ export class SlotBids extends Component {
                         />
                     </Tab>
                     <Tab label={t('BIDS_CLOSED')}>
-                        <ItemsList
+                        <ListWithControls
                             items={sorted.closed}
                             listMode='rows'
                             renderRows={this.renderRows.bind(this)}
