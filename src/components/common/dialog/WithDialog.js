@@ -1,25 +1,16 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-// import { Button, IconButton } from 'react-toolbox/lib/button'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
-// import IconButtonMui from '@material-ui/core/IconButton'
-import Dialog from '@material-ui/core/Dialog' // 'react-toolbox/lib/dialog'
+import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
-import DialogActions from '@material-ui/core/DialogActions'
-import Fade from '@material-ui/core/Fade'
-// import theme from './theme.css'
 import classnames from 'classnames'
-import RTButtonTheme from 'styles/RTButton.css'
 import Translate from 'components/translate/Translate'
 import Slide from '@material-ui/core/Slide'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './theme'
 import Icon from '@material-ui/core/Icon'
-import Typography from '@material-ui/core/Typography'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
 import CancelIcon from '@material-ui/icons/Cancel'
 
 const textBtn = ({ label, className, classes, style, onClick, ...rest }) => {
@@ -73,8 +64,6 @@ export default function ItemHoc(Decorated) {
         }
 
         render() {
-
-            console.log('this.props', this.props.props)
 
             let ButtonComponent = Button
             // NOTE: to avoid some warnings
