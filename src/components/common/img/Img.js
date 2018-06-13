@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import NO_IMAGE from 'resources/no-image-box-eddie.jpg'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
+import classnames from 'classnames'
 import theme from './theme.css'
 
 const MAX_IMG_LOAD_TIME = 3000
@@ -81,12 +82,19 @@ class Img extends Component {
     }
 
     render() {
-        let { alt, ...other } = this.props
+        let { alt, className, ...other } = this.props
         return (
             this.state.imgSrc ?
-                <img {...other} alt={alt} src={this.state.imgSrc} draggable='false' onDragStart={(event) => event.preventDefault() /*Firefox*/} />
+                <img
+                    {...other}
+                    alt={alt}
+                    src={this.state.imgSrc}
+                    draggable='false'
+                    className={classnames(theme.imgLoading, className)}
+                    onDragStart={(event) => event.preventDefault() /*Firefox*/}
+                />
                 :
-                <div className={theme.imgLoading}>
+                <div className={classnames(theme.imgLoading, className)}>
                     <ProgressBar theme={theme} type='circular' mode='indeterminate' />
                 </div>
         )
