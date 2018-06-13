@@ -18,7 +18,7 @@ import tableTheme from 'components/dashboard/collection/theme.css'
 import { Item } from 'adex-models'
 import Img from 'components/common/img/Img'
 import Rows from 'components/dashboard/collection/Rows'
-import Card from './Lists/Card'
+import Card from './ItemCard/ItemCard'
 import Translate from 'components/translate/Translate'
 
 const { ItemTypesNames, AdSizesByValue, AdTypesByValue, } = ItemsConstants
@@ -29,14 +29,18 @@ const TooltipRRButton = withReactRouterLink(Tooltip(Button))
 const TooltipIconButton = Tooltip(IconButton)
 
 const List = ({ list, itemRenderer }) => {
-    return (<div className="list">
-        {list.map((item, index) => itemRenderer(item, index))}
+    return (<div style={{ display: 'flex', flexGrow: 1, flexWrap: 'wrap' }}>
+        {list.map((item, index) =>
+            <div style={{ maxWidth: '100%' }}>
+                {itemRenderer(item, index)}
+            </div>
+        )}
     </div>)
 }
 
 class ItemsList extends Component {
 
-    renderCard = (item, index) => { 
+    renderCard = (item, index) => {
         // const t = this.props.t
         return (
             <Card

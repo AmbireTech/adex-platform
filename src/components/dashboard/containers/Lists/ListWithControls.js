@@ -113,7 +113,7 @@ class ListWithControls extends Component {
                 let isItem = (!!i && ((!!i._meta) || i.id || i._id))
                 if (!isItem) return isItem
 
-                if ((!!filterArchived && filterArchived !== '') && (filterArchived.toString() !== i._archived.toString())) {
+                if ((filterArchived !== '') && (filterArchived.toString() !== i._archived.toString())) {
                     return false
                 }
 
