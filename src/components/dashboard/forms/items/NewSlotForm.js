@@ -4,13 +4,11 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import NewItemHoc from './NewItemHocStep'
-import Dropdown from 'react-toolbox/lib/dropdown'
-import Input from 'react-toolbox/lib/input'
+import Dropdown from 'components/common/dropdown'
 import Translate from 'components/translate/Translate'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './../theme.css'
 import { items as ItemsConstants } from 'adex-constants'
-import { validUrl } from 'helpers/validators'
 
 const { ItemsTypes, AdTypes, AdSizes } = ItemsConstants
 
