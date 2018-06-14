@@ -33,6 +33,9 @@ export const styles = theme => {
             minHeight: '50%',
             height: 'auto',
             width: '100%'
+        },
+        actionsRoot: {
+            justifyContent: 'space-between'
         }
     }
 }

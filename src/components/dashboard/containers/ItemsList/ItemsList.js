@@ -10,8 +10,9 @@ import moment from 'moment'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
-import Tooltip from 'react-toolbox/lib/tooltip'
-import { IconButton, Button } from 'react-toolbox/lib/button'
+import Tooltip from '@material-ui/core/Tooltip'
+import Button from '@material-ui/core/Button'
+import IconButton from '@material-ui/core/IconButton'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import RTButtonTheme from 'styles/RTButton.css'
 import tableTheme from 'components/dashboard/collection/theme.css'
@@ -20,13 +21,16 @@ import Img from 'components/common/img/Img'
 import Rows from 'components/dashboard/collection/Rows'
 import Card from 'components/dashboard/containers/ItemCard'
 import Translate from 'components/translate/Translate'
+// import DeleteIcon from '@material-ui/icons/Delete'
+import ArchiveIcon from '@material-ui/icons/Archive'
+import UnarchiveIcon from '@material-ui/icons/Unarchive'
+import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline'
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 
 const { ItemTypesNames, AdSizesByValue, AdTypesByValue, } = ItemsConstants
 
-const TooltipButton = Tooltip(Button)
 const RRTableCell = withReactRouterLink(TableCell)
-const TooltipRRButton = withReactRouterLink(Tooltip(Button))
-const TooltipIconButton = Tooltip(IconButton)
+const RRButton = withReactRouterLink(Button)
 
 const List = ({ list, itemRenderer }) => {
     return (<div style={{ display: 'flex', flexGrow: 1, flexWrap: 'wrap' }}>
@@ -61,18 +65,21 @@ class ItemsList extends Component {
             <TableHead>
                 <TableRow>
                     <TableCell>
-                        {selected.length ?
-                            <TooltipButton
-                                icon='delete'
-                                label={t('DELETE_ALL')}
-                                tooltip={t('DELETE_ALL')}
-                                tooltipDelay={1000}
-                                tooltipPosition='top'
-                                className={RTButtonTheme.danger}
-                                onClick={null}
-                            />
-                            :
-                            null
+                        {selected.length &&
+                            <Tooltip
+                                title={t('DELETE_ALL')}
+                                placement='top'
+                                enterDelay={1000}
+                            >
+                                <Button
+                                    // icon='delete'
+                                    className={RTButtonTheme.danger}
+                                    onClick={null}
+                                >
+                                    {t('DELETE_ALL')}
+                                </Button >
+                            </Tooltip>
+
                         }
                     </TableCell>
                     <TableCell> {t('PROP_NAME')} </TableCell>
@@ -99,15 +106,19 @@ class ItemsList extends Component {
                 <TableCell> {moment(item._meta.createdOn).format('DD-MM-YYYY')} </TableCell>
                 <TableCell>
 
-                    <TooltipRRButton
-                        to={to}
-                        label={t('LABEL_VIEW')}
-                        tooltip={t('LABEL_VIEW')}
-                        raised
-                        primary
-                        tooltipDelay={1000}
-                        tooltipPosition='top'
-                    />
+                    <Tooltip
+                        title={t('LABEL_VIEW')}
+                        placement='top'
+                        enterDelay={1000}
+                    >
+                        <RRButton
+                            to={to}
+                            variant='raised'
+                            color='primary'
+                        >
+                            {t('LABEL_VIEW')}
+                        </RRButton>
+                    </Tooltip>
                     {this.renderActions(item)}
 
                 </TableCell>
@@ -125,70 +136,91 @@ class ItemsList extends Component {
         return (
             <span>
                 {!item._archived &&
-                    <TooltipIconButton
-                        icon='archive'
-                        label={t('ARCHIVE')}
-                        tooltip={t('TOOLTIP_ARCHIVE')}
-                        tooltipDelay={1000}
-                        tooltipPosition='top'
-                        className={RTButtonTheme.danger}
-                        onClick={this.props.actions.confirmAction.bind(this,
-                            this.props.actions.archiveItem.bind(this, { item: item, authSig: this.props.account._authSig }),
-                            null,
-                            {
-                                confirmLabel: t('CONFIRM_YES'),
-                                cancelLabel: t('CONFIRM_NO'),
-                                text: t('ARCHIVE_ITEM', { args: [itemTypeName, itemName] }),
-                                title: t('CONFIRM_SURE')
-                            })}
-                    />}
+                    <Tooltip
+                        title={t('TOOLTIP_ARCHIVE')}
+                        placement='top'
+                        enterDelay={1000}
+                    >
+                        <IconButton
+                            // label={t('ARCHIVE')}
+                            // className={RTButtonTheme.danger}
+                            onClick={this.props.actions.confirmAction.bind(this,
+                                this.props.actions.archiveItem.bind(this, { item: item, authSig: this.props.account._authSig }),
+                                null,
+                                {
+                                    confirmLabel: t('CONFIRM_YES'),
+                                    cancelLabel: t('CONFIRM_NO'),
+                                    text: t('ARCHIVE_ITEM', { args: [itemTypeName, itemName] }),
+                                    title: t('CONFIRM_SURE')
+                                })}
+                        >
+                            <ArchiveIcon />
+                        </IconButton>
+                    </Tooltip>
+                }
                 {item._archived &&
-                    <TooltipIconButton
-                        icon='unarchive'
-                        label={t('UNARCHIVE')}
-                        tooltip={t('TOOLTIP_UNARCHIVE')}
-                        tooltipDelay={1000}
-                        tooltipPosition='top'
-                        color='secondary'
-                        onClick={this.props.actions.confirmAction.bind(this,
-                            this.props.actions.unarchiveItem.bind(this, { item: item, authSig: this.props.account._authSig }),
-                            null,
-                            {
-                                confirmLabel: t('CONFIRM_YES'),
-                                cancelLabel: t('CONFIRM_NO'),
-                                text: t('UNARCHIVE_ITEM', { args: [itemTypeName, itemName] }),
-                                title: t('CONFIRM_SURE')
-                            })}
-                    />}
-                {this.props.removeFromItem && parentItem ?
-                    <TooltipIconButton
-                        icon='remove_circle_outline'
-                        label={t('REMOVE_FROM', { args: [parentName] })}
-                        tooltip={t('REMOVE_FROM', { args: [parentName] })}
-                        tooltipDelay={1000}
-                        tooltipPosition='top'
-                        className={RTButtonTheme.danger}
-                        onClick={this.props.actions.confirmAction.bind(this,
-                            this.props.actions.removeItemFromItem.bind(this, { item: item, toRemove: this.props.parentItem, authSig: this.props.account._authSig }),
-                            null,
-                            {
-                                confirmLabel: t('CONFIRM_YES'),
-                                cancelLabel: t('CONFIRM_NO'),
-                                text: t('REMOVE_ITEM', { args: [itemTypeName, itemName, t(ItemTypesNames[parentItem._type], { isProp: true }), parentName] }),
-                                title: t('CONFIRM_SURE')
-                            })}
-                    /> : null}
+                    <Tooltip
+                        title={t('TOOLTIP_UNARCHIVE')}
+                        enterDelay={1000}
+                        placement='top'
+                    >
+                        <IconButton
+                            // label={t('UNARCHIVE')}
+                            color='secondary'
+                            onClick={this.props.actions.confirmAction.bind(this,
+                                this.props.actions.unarchiveItem.bind(this, { item: item, authSig: this.props.account._authSig }),
+                                null,
+                                {
+                                    confirmLabel: t('CONFIRM_YES'),
+                                    cancelLabel: t('CONFIRM_NO'),
+                                    text: t('UNARCHIVE_ITEM', { args: [itemTypeName, itemName] }),
+                                    title: t('CONFIRM_SURE')
+                                })}
+                        >
+                            <UnarchiveIcon />
+                        </IconButton>
+                    </Tooltip>
+                }
+                {(this.props.removeFromItem && parentItem) &&
+                    <Tooltip
+                        title={t('REMOVE_FROM', { args: [parentName] })}
+                        placement='top'
+                        enterDelay={1000}
+                    >
+                        <IconButton
+                            icon='remove_circle_outline'
+                            label={t('REMOVE_FROM', { args: [parentName] })}
+                            className={RTButtonTheme.danger}
+                            onClick={this.props.actions.confirmAction.bind(this,
+                                this.props.actions.removeItemFromItem.bind(this, { item: item, toRemove: this.props.parentItem, authSig: this.props.account._authSig }),
+                                null,
+                                {
+                                    confirmLabel: t('CONFIRM_YES'),
+                                    cancelLabel: t('CONFIRM_NO'),
+                                    text: t('REMOVE_ITEM', { args: [itemTypeName, itemName, t(ItemTypesNames[parentItem._type], { isProp: true }), parentName] }),
+                                    title: t('CONFIRM_SURE')
+                                })}
+                        >
+                            <RemoveCircleOutlineIcon />
+                        </IconButton>
+                    </Tooltip>
+                }
 
-                {this.props.addToItem && parentItem ?
-                    <TooltipIconButton
-                        icon='add_circle_outline'
-                        label={t('ADD_TO', { args: [parentName] })}
-                        tooltip={t('ADD_TO', { args: [parentName] })}
-                        color='secondary'
-                        tooltipDelay={1000}
-                        tooltipPosition='top'
-                        onClick={this.props.actions.addItemToItem.bind(this, { item: item, toAdd: this.props.parentItem, authSig: this.props.account._authSig })}
-                    /> : null}
+                {(this.props.addToItem && parentItem) &&
+                    <Tooltip
+                        tile={t('ADD_TO', { args: [parentName] })}
+                        placement='top'
+                        enterDelay={1000}
+                    >
+                        <IconButton
+                            label={t('ADD_TO', { args: [parentName] })}
+                            color='secondary'
+                            onClick={this.props.actions.addItemToItem.bind(this, { item: item, toAdd: this.props.parentItem, authSig: this.props.account._authSig })}
+                        >
+                            <AddCircleOutlineIcon />
+                        </IconButton>
+                    </Tooltip>
+                }
             </span>
         )
     }
@@ -231,7 +263,7 @@ class ItemsList extends Component {
 ItemsList.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
-    items: PropTypes.object.isRequired,
+    items: PropTypes.array.isRequired,
     viewModeId: PropTypes.string.isRequired,
     header: PropTypes.string.isRequired,
     objModel: PropTypes.func.isRequired,
