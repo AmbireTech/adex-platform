@@ -1,12 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import React from 'react'
+import PropTypes from 'prop-types'
+import { withStyles } from '@material-ui/core/styles'
+import Input from '@material-ui/core/Input'
+import InputLabel from '@material-ui/core/InputLabel'
+import MenuItem from '@material-ui/core/MenuItem'
+import FormHelperText from '@material-ui/core/FormHelperText'
+import FormControl from '@material-ui/core/FormControl'
+import Select from '@material-ui/core/Select'
 
 const styles = theme => ({
     root: {
@@ -20,7 +20,7 @@ const styles = theme => ({
     selectEmpty: {
         marginTop: theme.spacing.unit * 2,
     },
-});
+})
 
 class Dropdown extends React.Component {
 
@@ -53,7 +53,7 @@ class Dropdown extends React.Component {
                     error={error}
                 >
                     {/* {label && */}
-                        <InputLabel htmlFor={htmlId}>{label}</InputLabel>
+                    <InputLabel htmlFor={htmlId}>{label}</InputLabel>
                     {/* } */}
                     <Select
                         native
@@ -73,7 +73,7 @@ class Dropdown extends React.Component {
                     }
                 </FormControl>
             </form>
-        );
+        )
     }
 }
 
@@ -89,7 +89,6 @@ Dropdown.propTypes = {
     name: PropTypes.string,
     displayEmpty: PropTypes.bool,
     helperText: PropTypes.string
-
-};
+}
 
 export default withStyles(styles)(Dropdown)
