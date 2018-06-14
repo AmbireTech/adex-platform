@@ -7,14 +7,15 @@ import MenuItem from '@material-ui/core/MenuItem'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
+import classnames from 'classnames'
 
 const styles = theme => ({
     root: {
-        display: 'flex',
-        flexWrap: 'wrap',
+        // display: 'flex',
+        // flexWrap: 'wrap',
     },
     formControl: {
-        margin: theme.spacing.unit,
+        // margin: theme.spacing.unit,
         minWidth: 120,
     },
     selectEmpty: {
@@ -41,12 +42,17 @@ class Dropdown extends React.Component {
             name = '',
             disabled = false,
             error = false,
-            helperText
+            helperText,
+            className
 
         } = this.props
 
+        // TODO: add native renderer for mobile devices when supported
         return (
-            <form className={classes.root} autoComplete="off">
+            <form
+                className={classnames(className)}
+                autoComplete="off"
+            >
                 <FormControl
                     className={classes.formControl}
                     disabled={disabled}
@@ -56,7 +62,6 @@ class Dropdown extends React.Component {
                     <InputLabel htmlFor={htmlId}>{label}</InputLabel>
                     {/* } */}
                     <Select
-                        native
                         value={value}
                         onChange={this.handleChange}
                         input={<Input name={name} id={htmlId} />}
@@ -64,7 +69,12 @@ class Dropdown extends React.Component {
 
                         {source.map((src) => {
                             return (
-                                <MenuItem value={src.value}>{src.label}</MenuItem>
+                                <MenuItem
+                                    key={src.value}
+                                    value={src.value}
+                                >
+                                    {src.label}
+                                </MenuItem>
                             )
                         })}
                     </Select>

@@ -1,10 +1,13 @@
 import React from 'react'
-import Autocomplete from 'react-toolbox/lib/autocomplete'
-import { IconButton } from 'react-toolbox/lib/button'
-import Slider from 'react-toolbox/lib/slider'
-import FontIcon from 'react-toolbox/lib/font_icon'
+import Slider from '@material-ui/lab/Slider'
 import theme from './theme.css'
 import classnames from 'classnames'
+import IconButton from '@material-ui/core/IconButton'
+import ChevronLeft from '@material-ui/icons/ChevronLeft'
+import ChevronRight from '@material-ui/icons/ChevronRight'
+import Dropdown from 'components/common/dropdown'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 export const PAGE_SIZES = [
     { value: 5, label: 5 },
@@ -13,40 +16,44 @@ export const PAGE_SIZES = [
     { value: 46, label: 46 },
 ]
 
-export const Pagination = (props) => {
+const pagination = (props) => {
 
+    const { classes, className } = props
     return (
-        <div>
-            <div className={theme.paginationPage} >
+        <div
+            className={classes.flexRow}
+        >
+            <div
+                className={classnames(classes.flexRow, className)}
+            >
                 <IconButton
-                    primary
+                    color='primary'
                     disabled={!(props.page > 0 && props.pages > props.page)}
-                    icon='chevron_left'
-                    onClick={props.goToPrevPage} />
+                    onClick={props.goToPrevPage} >
+                    <ChevronLeft />
+                </IconButton>
 
                 <div className={theme.paginationInput}>
-                    <Autocomplete
-                        allowCreate={false}
-                        direction="down"
+                    <Dropdown
                         label={props.t('LIST_CONTROL_LABEL_PAGE')}
-                        multiple={false}
                         onChange={props.goToPage}
                         source={getAllPagedValues(props.page, props.pages)}
-                        hint={props.page + 1 + ''}
+                        // hint={props.page + 1 + ''}
                         value={props.page + ''}
-                        suggestionMatch='anywhere'
-                        showSuggestionsWhenValueIsSet={true}
+                    // suggestionMatch='anywhere'
+                    // showSuggestionsWhenValueIsSet={true}
                     />
                 </div>
 
                 <IconButton
-                    primary
+                    color='primary'
                     disabled={!(props.page < (props.pages - 1))}
-                    icon='chevron_right'
-                    onClick={props.goToNextPage} 
-                />
+                    onClick={props.goToNextPage}
+                >
+                    <ChevronRight />
+                </IconButton>
 
-                <span className={classnames(theme.pageOf,theme.ellipsis)}> {props.t('LIST_CONTROL_LABEL_PAGE_OF', {args: [props.pages]})} </span>
+                <span className={classnames(theme.pageOf, theme.ellipsis)}> {props.t('LIST_CONTROL_LABEL_PAGE_OF', { args: [props.pages] })} </span>
             </div>
             <div className={theme.paginationSlider} >
                 <label className={classnames(theme.sliderLabel, theme.ellipsis)}> {props.t('LIST_CONTROL_LABEL_PAGE_SIZE')} <strong>{props.pageSize}</strong> </label>
@@ -56,15 +63,20 @@ export const Pagination = (props) => {
     )
 }
 
+export const Pagination = withStyles(styles)(pagination)
+
 const getAllPagedValues = (current, max) => {
-    let pages = {}
+    // let pages = {}
+
+    // for (var index = 0; index < max; index++) {
+    //     pages[index + ''] = index + 1 + ''
+    // }
+
+    let pages = []
 
     for (var index = 0; index < max; index++) {
-        pages[index + ''] = index + 1 + ''
+        pages.push({ value: index + '', label: index + 1 + '' })
     }
 
     return pages
 }
-
-export const InputLabel = ({icon, label}) =>
-    <div className={theme.inputLabel} ><FontIcon className={classnames(theme.inputLabelIcon, theme.ellipsis)} value={icon}/> <span className={theme.inputLabelValue}> {label} </span> </div>
