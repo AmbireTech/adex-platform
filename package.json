@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^1.1.0",
     "@material-ui/icons": "^1.1.0",
+    "@material-ui/lab": "^1.0.0-alpha.5",
     "adex-constants": "^1.0.9",
     "adex-models": "^1.0.7",
     "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#a13326a899520f7c3d66f8325376d2ff6713ccef",
@@ -41,6 +42,7 @@
     "hdkey": "^0.8.0",
     "history": "^4.7.2",
     "html-webpack-plugin": "2.29.0",
+    "import": "^0.0.6",
     "jest": "20.0.4",
     "ledgerco": "^1.2.1",
     "lodash.merge": "^4.6.0",
@@ -72,6 +74,7 @@
     "react-router": "^4.1.2",
     "react-router-dom": "^4.1.2",
     "react-router-redux": "next",
+    "react-select": "^1.2.1",
     "react-step": "^0.4.1",
     "recompose": "^0.25.0",
     "redux": "^3.7.2",
