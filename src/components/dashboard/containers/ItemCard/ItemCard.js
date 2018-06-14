@@ -58,8 +58,11 @@ class MyCard extends Component {
                     </Typography>
                 </CardContent>
 
-                <CardActions>
-                    {this.props.renderActions()}
+                <CardActions
+                    classes={
+                        { root: classes.actionsRoot }
+                    }
+                >
                     <Tooltip
                         enterDelay={300}
                         id={'tooltip-view-item' + item._id}
@@ -74,6 +77,8 @@ class MyCard extends Component {
                             {'view'}
                         </RRButton>
                     </Tooltip>
+
+                    {this.props.renderActions()}
                 </CardActions>
             </Card>
         )
