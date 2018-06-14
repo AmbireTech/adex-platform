@@ -76,6 +76,8 @@ class GasPrice extends React.Component {
                     source={this.state.gasPrices}
                     value={gasPrice}
                     disabled={this.props.disabled}
+                    htmlId='get-gas-price-dd'
+                    name='gasPrice'
                 />
             </span>
         )

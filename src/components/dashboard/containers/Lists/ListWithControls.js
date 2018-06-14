@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import IconButton from '@material-ui/core/IconButton'
-import Dropdown from 'react-toolbox/lib/dropdown'
+import Dropdown from 'components/common/dropdown' 
 import Input from 'react-toolbox/lib/input'
 import { Pagination, InputLabel } from './Controls'
 import { Grid, Row, Col } from 'react-flexbox-grid'
@@ -61,9 +61,9 @@ class ListWithControls extends Component {
             sortProperty: (sortProperties)[0].value,
             filterProperties: mapFilterProps({ filterProps: props.filterProperties, t: props.t }),
             filteredItems: [],
-            filterBy: null,
+            filterBy: '',
             filterByValues: [],
-            filterByValueFilter: null,
+            filterByValueFilter: '',
             filterArchived: props.archive ? 'false' : ''
         }
     }
@@ -212,6 +212,8 @@ class ListWithControls extends Component {
                                         onChange={this.handleChange.bind(this, 'sortProperty')}
                                         source={this.state.sortProperties}
                                         value={this.state.sortProperty}
+                                        htmlId='sort-by-prop'
+                                        name='sortProperty'
                                     />
                                 </div>
                                 <div style={{ display: 'inline-block' }}>
@@ -238,7 +240,10 @@ class ListWithControls extends Component {
                                                 label={t('LIST_CONTROL_LABEL_FILTER_BY')}
                                                 onChange={this.handleChange.bind(this, 'filterBy')}
                                                 source={this.state.filterProperties}
-                                                value={this.state.filterBy !== null ? this.state.filterBy.toString() : null}
+                                                value={this.state.filterBy !== null ? this.state.filterBy.toString() : ''}
+                                                htmlId='filter-by-prop-dd'
+                                                name='filterBy'
+                                                displayEmpty
                                             />
                                         </Col>
                                         <Col xs={12} sm={6} md={6} lg={6}>
@@ -247,7 +252,12 @@ class ListWithControls extends Component {
                                                 label={t('LIST_CONTROL_LABEL_FILTER_BY_VALUE')}
                                                 onChange={this.handleChange.bind(this, 'filterByValueFilter')}
                                                 source={mapSortProperties({ sortProps: this.state.filterByValues, t: this.props.t })}
-                                                value={this.state.filterByValueFilter !== null ? this.state.filterByValueFilter.toString() : null}
+                                                value={this.state.filterByValueFilter !== null ? this.state.filterByValueFilter.toString() : ''}
+                                                htmlId='filter-by-value-dd'
+                                                name='filterByValueFilter'
+                                                displayEmpty
+                                                disabled={!this.state.filterBy}
+                                                helperText={t('HELPER_TXT_FILTER_BY_VALUE')}
                                             />
                                         </Col>
                                     </Row>

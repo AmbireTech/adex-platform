@@ -148,6 +148,8 @@ class BidForm extends Component {
               source={timeouts}
               value={timeout + ''}
               label={t('BID_TIMEOUT')}
+              htmlId='bid-timeout-dd'
+              name='timeout'
             />
           </Grid>
         }
