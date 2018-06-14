@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { IconButton } from 'react-toolbox/lib/button'
+import IconButton from '@material-ui/core/IconButton'
 import Dropdown from 'react-toolbox/lib/dropdown'
 import Input from 'react-toolbox/lib/input'
 import { Pagination, InputLabel } from './Controls'
@@ -11,7 +11,15 @@ import { Grid, Row, Col } from 'react-flexbox-grid'
 import theme from './../theme.css'
 import Translate from 'components/translate/Translate'
 // import classnames from 'classnames'
-import { RadioGroup, RadioButton } from 'react-toolbox/lib/radio'
+import Radio from '@material-ui/core/Radio'
+import RadioGroup from '@material-ui/core/RadioGroup'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormControl from '@material-ui/core/FormControl'
+
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
+import ViewModuleIcon from '@material-ui/icons/ViewModule'
+import ViewListIcon from '@material-ui/icons/ViewList'
 
 const mapFilterProps = ({ filterProps = {}, t }) => {
     return Object.keys(filterProps)
@@ -56,7 +64,7 @@ class ListWithControls extends Component {
             filterBy: null,
             filterByValues: [],
             filterByValueFilter: null,
-            filterArchived: props.archive ? false : ''
+            filterArchived: props.archive ? 'false' : ''
         }
     }
 
@@ -71,6 +79,7 @@ class ListWithControls extends Component {
     }
 
     handleChange = (name, value) => {
+        console.log(name, value)
         let newStateValue = { [name]: value }
         if (name === 'search') newStateValue.page = 0
         if (name === 'filterBy') {
@@ -206,8 +215,18 @@ class ListWithControls extends Component {
                                     />
                                 </div>
                                 <div style={{ display: 'inline-block' }}>
-                                    <IconButton icon='arrow_upward' primary={this.state.sortOrder === 1} onClick={this.handleChange.bind(this, 'sortOrder', 1)} />
-                                    <IconButton icon='arrow_downward' primary={this.state.sortOrder === -1} onClick={this.handleChange.bind(this, 'sortOrder', -1)} />
+                                    <IconButton
+                                        color={(this.state.sortOrder === 1) ? 'primary' : 'default'}
+                                        onClick={this.handleChange.bind(this, 'sortOrder', 1)}
+                                    >
+                                        <ArrowUpwardIcon />
+                                    </IconButton>
+                                    <IconButton
+                                        color={(this.state.sortOrder === -1) ? 'primary' : 'default'}
+                                        onClick={this.handleChange.bind(this, 'sortOrder', -1)}
+                                    >
+                                        <ArrowDownwardIcon />
+                                    </IconButton>
                                 </div>
                             </Col>
                             {this.props.filterProperties ?
@@ -234,15 +253,22 @@ class ListWithControls extends Component {
                                     </Row>
                                 </Col>
                                 : null}
-                            {this.props.archive ?
+                            {this.props.archive &&
                                 <Col sm={12} md={5} lg={4}>
-                                    <RadioGroup theme={theme} name='archived' value={this.state.filterArchived.toString()} onChange={this.handleChange.bind(this, 'filterArchived')}>
-                                        <RadioButton theme={theme} label={t('LABEL_ACTIVE')} value={'false'} />
-                                        <RadioButton theme={theme} label={t('LABEL_ARCHIVED')} value={'true'} />
-                                        <RadioButton theme={theme} label={t('LABEL_ALL')} value={''} />
-                                    </RadioGroup>
+                                    <FormControl>
+                                        <RadioGroup
+                                            // theme={theme}
+                                            name='archived'
+                                            value={this.state.filterArchived.toString()}
+                                            onChange={(ev) => this.handleChange('filterArchived', ev.target.value)}
+                                        >
+                                            <FormControlLabel value='false' control={<Radio color='primary' />} label={t('LABEL_ACTIVE')} />
+                                            <FormControlLabel value='true' control={<Radio color='primary' />} label={t('LABEL_ARCHIVED')} />
+                                            <FormControlLabel value='' control={<Radio color='primary' />} label={t('LABEL_ALL')} />
+                                        </RadioGroup>
+                                    </FormControl>
                                 </Col>
-                                : null}
+                            }
                             <Col xs={12} sm={12} md={5} lg={6}>
                                 <Pagination
                                     t={t}
@@ -263,8 +289,18 @@ class ListWithControls extends Component {
                             {!this.props.listMode ?
                                 <Col sm={12} md={2} lg={2}>
                                     <div>
-                                        <IconButton icon='view_module' primary={!this.props.rowsView} onClick={this.toggleView.bind(this, false)} />
-                                        <IconButton icon='view_list' primary={this.props.rowsView} onClick={this.toggleView.bind(this, true)} />
+                                        <IconButton
+                                            color={!this.props.rowsView ? 'primary' : 'default'}
+                                            onClick={this.toggleView.bind(this, false)}
+                                        >
+                                            <ViewModuleIcon />
+                                        </IconButton >
+                                        <IconButton
+                                            color={this.props.rowsView ? 'primary' : 'default'}
+                                            onClick={this.toggleView.bind(this, true)}
+                                        >
+                                            <ViewListIcon />
+                                        </IconButton >
                                     </div>
                                 </Col>
                                 :
