@@ -20,7 +20,7 @@ const { ItemTypesNames } = ItemsConstants
 const RRCardMedia = withReactRouterLink(CardMedia)
 const RRButton = withReactRouterLink(Button)
 
-class MyCard extends Component {
+class ItemCard extends Component {
 
     render() {
         let item = this.props.item
@@ -85,10 +85,10 @@ class MyCard extends Component {
     }
 }
 
-MyCard.propTypes = {
+ItemCard.propTypes = {
     item: PropTypes.object.isRequired,
     renderActions: PropTypes.func,
     props: PropTypes.string,
 }
 
-export default withStyles(styles)(Translate(MyCard))
+export default withStyles(styles)(Translate(ItemCard))
