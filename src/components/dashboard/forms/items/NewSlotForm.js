@@ -67,6 +67,8 @@ class NewSlotForm extends Component {
                                     source={AdTypes}
                                     value={item.adType + ''}
                                     label={t('adType', { isProp: true })}
+                                    htmlId='ad-type-dd'
+                                    name='adType'
                                 />
                             </Col>
                             <Col sm={12} lg={6}>
@@ -76,6 +78,8 @@ class NewSlotForm extends Component {
                                     source={this.state.adSizesSrc}
                                     value={item.size + ''}
                                     label={t('size', { isProp: true })}
+                                    htmlId='ad-size-dd'
+                                    name='size'
                                 />
                             </Col>
                         </Row>

@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import NewItemHoc from './NewItemHocStep'
 import Dropdown from 'react-toolbox/lib/dropdown'
+// import Dropdown from 'components/common/dropdown' 
 import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
 import { Grid, Row, Col } from 'react-flexbox-grid'
@@ -88,6 +89,8 @@ class NewUnitForm extends Component {
                                 source={AdTypes}
                                 value={item.adType + ''}
                                 label={t('adType', { isProp: true })}
+                                htmlId='ad-type-dd'
+                                name='adType'
                             />
                         </Col>
                         <Col sm={12} lg={6}>
@@ -97,6 +100,8 @@ class NewUnitForm extends Component {
                                 source={this.state.adSizesSrc}
                                 value={item.size + ''}
                                 label={t('size', { isProp: true })}
+                                htmlId='ad-size-dd'
+                                name='size'
                             />
                         </Col>
                     </Row>

@@ -246,6 +246,8 @@ export class BidsStatistics extends Component {
                                         onChange={(val) => this.setState({ hourlyDaySelected: val })}
                                         label={t('LABEL_DD_SELECT_DAY')}
                                         value={hourlyDataValue}
+                                        htmlId='hourly-date-dd'
+                                        name='hourlyDataValue'
                                     />
                                     <this.chartActions
                                         btnID='HOURLY_CHART'
