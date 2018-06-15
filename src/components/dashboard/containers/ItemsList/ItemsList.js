@@ -14,8 +14,6 @@ import Tooltip from '@material-ui/core/Tooltip'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
-import RTButtonTheme from 'styles/RTButton.css'
-import tableTheme from 'components/dashboard/collection/theme.css'
 import { Item } from 'adex-models'
 import Img from 'components/common/img/Img'
 import Rows from 'components/dashboard/collection/Rows'
@@ -26,8 +24,11 @@ import ArchiveIcon from '@material-ui/icons/Archive'
 import UnarchiveIcon from '@material-ui/icons/Unarchive'
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline'
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
+import { itemAdTypeLabel, itemAdSizeLabel } from 'helpers/itemsHelpers'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
-const { ItemTypesNames, AdSizesByValue, AdTypesByValue, } = ItemsConstants
+const { ItemTypesNames } = ItemsConstants
 
 const RRTableCell = withReactRouterLink(TableCell)
 const RRButton = withReactRouterLink(Button)
@@ -35,7 +36,10 @@ const RRButton = withReactRouterLink(Button)
 const List = ({ list, itemRenderer }) => {
     return (<div style={{ display: 'flex', flexGrow: 1, flexWrap: 'wrap' }}>
         {list.map((item, index) =>
-            <div style={{ maxWidth: '100%' }}>
+            <div
+                key={item._id || item.id}
+                style={{ maxWidth: '100%' }}
+            >
                 {itemRenderer(item, index)}
             </div>
         )}
@@ -68,12 +72,11 @@ class ItemsList extends Component {
                         {selected.length &&
                             <Tooltip
                                 title={t('DELETE_ALL')}
-                                placement='top'
+                                // placement='top'
                                 enterDelay={1000}
                             >
                                 <Button
                                     // icon='delete'
-                                    className={RTButtonTheme.danger}
                                     onClick={null}
                                 >
                                     {t('DELETE_ALL')}
@@ -93,22 +96,39 @@ class ItemsList extends Component {
     }
 
     renderTableRow = (item, index, { to, selected }) => {
-        const t = this.props.t
-        const adSize = (AdSizesByValue[item._meta.size] || {})
+        const { t, classes } = this.props
+
+        console.log(classes)
         return (
-            <TableRow key={item._id || index} theme={tableTheme} selected={selected}>
-                <RRTableCell className={tableTheme.link} to={to} theme={tableTheme}>
-                    <Img className={classnames(tableTheme.img)} src={Item.getImgUrl(item._meta.img, process.env.IPFS_GATEWAY) || ''} alt={item._meta.fullName} />
+            <TableRow
+                key={item._id || index}
+                selected={selected}
+            >
+                <RRTableCell
+                    // className={tableTheme.link}
+                    to={to}
+                // theme={tableTheme}
+                >
+                    <Img
+                        className={classnames(classes.cellImg)}
+                        src={Item.getImgUrl(item._meta.img, process.env.IPFS_GATEWAY) || ''}
+                        alt={item._meta.fullName}
+                    />
                 </RRTableCell>
-                <RRTableCell className={tableTheme.link} to={to}> {item._meta.fullName} </RRTableCell>
-                <TableCell> {(AdTypesByValue[item._meta.adType] || {}).label} </TableCell>
-                <TableCell> {t(adSize.label, { args: adSize.labelArgs || [] })} </TableCell>
+                <RRTableCell
+                    // className={tableTheme.link}
+                    to={to}
+                >
+                    {item._meta.fullName}
+                </RRTableCell>
+                <TableCell> {itemAdTypeLabel({ adType: item._meta.adType })} </TableCell>
+                <TableCell> {itemAdSizeLabel({ size: item._meta.size, t: t })} </TableCell>
                 <TableCell> {moment(item._meta.createdOn).format('DD-MM-YYYY')} </TableCell>
                 <TableCell>
 
                     <Tooltip
                         title={t('LABEL_VIEW')}
-                        placement='top'
+                        // placement='top'
                         enterDelay={1000}
                     >
                         <RRButton
@@ -138,7 +158,7 @@ class ItemsList extends Component {
                 {!item._archived &&
                     <Tooltip
                         title={t('TOOLTIP_ARCHIVE')}
-                        placement='top'
+                        // placement='top'
                         enterDelay={1000}
                     >
                         <IconButton
@@ -162,7 +182,7 @@ class ItemsList extends Component {
                     <Tooltip
                         title={t('TOOLTIP_UNARCHIVE')}
                         enterDelay={1000}
-                        placement='top'
+                        // placement='top'
                     >
                         <IconButton
                             // label={t('UNARCHIVE')}
@@ -184,13 +204,13 @@ class ItemsList extends Component {
                 {(this.props.removeFromItem && parentItem) &&
                     <Tooltip
                         title={t('REMOVE_FROM', { args: [parentName] })}
-                        placement='top'
+                        // placement='top'
                         enterDelay={1000}
                     >
                         <IconButton
                             icon='remove_circle_outline'
                             label={t('REMOVE_FROM', { args: [parentName] })}
-                            className={RTButtonTheme.danger}
+                            // className={RTButtonTheme.danger}
                             onClick={this.props.actions.confirmAction.bind(this,
                                 this.props.actions.removeItemFromItem.bind(this, { item: item, toRemove: this.props.parentItem, authSig: this.props.account._authSig }),
                                 null,
@@ -209,7 +229,7 @@ class ItemsList extends Component {
                 {(this.props.addToItem && parentItem) &&
                     <Tooltip
                         tile={t('ADD_TO', { args: [parentName] })}
-                        placement='top'
+                        // placement='top'
                         enterDelay={1000}
                     >
                         <IconButton
@@ -230,15 +250,13 @@ class ItemsList extends Component {
             side={this.props.side}
             item={items}
             rows={items}
-            multiSelectable={false}
-            selectable={false}
+            // multiSelectable={false}
+            // selectable={false}
             rowRenderer={this.renderTableRow}
             tableHeadRenderer={this.renderTableHead}
         />
 
     renderCards = (items) => {
-        console.log(items)
-
         return (<List
             itemRenderer={this.renderCard}
             list={items}
@@ -289,4 +307,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(ItemsList))
+)(withStyles(styles)((Translate(ItemsList))))

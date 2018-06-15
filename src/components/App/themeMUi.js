@@ -28,7 +28,10 @@ export const themeMUI = createMuiTheme({
         MuiTableCell: {
             head: {
                whiteSpace: 'nowrap' 
-            } 
+            },
+            root: {
+                whiteSpace: 'nowrap'
+            }
         }
         // MuiStepIcon: {
         //     root: {

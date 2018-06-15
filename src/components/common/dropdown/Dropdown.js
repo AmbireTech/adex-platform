@@ -8,26 +8,11 @@ import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
 import classnames from 'classnames'
-
-const styles = theme => ({
-    root: {
-        // display: 'flex',
-        // flexWrap: 'wrap',
-    },
-    formControl: {
-        // margin: theme.spacing.unit,
-        minWidth: 120,
-    },
-    selectEmpty: {
-        marginTop: theme.spacing.unit * 2,
-    },
-})
+import { styles } from './styles'
 
 class Dropdown extends React.Component {
 
     handleChange = event => {
-        // this.setState({ [event.target.name]: event.target.value })
-
         this.props.onChange(event.target.value)
     }
 
@@ -35,7 +20,6 @@ class Dropdown extends React.Component {
         const {
             classes,
             label = '',
-            onChange,
             value,
             source,
             htmlId = 'some-id',
@@ -43,46 +27,40 @@ class Dropdown extends React.Component {
             disabled = false,
             error = false,
             helperText,
+            // margin = '',
             className
 
         } = this.props
 
         // TODO: add native renderer for mobile devices when supported
         return (
-            <form
-                className={classnames(className)}
-                autoComplete="off"
+            <FormControl
+                className={classnames(className, classes.formControl)}
+                disabled={disabled}
+                error={error}
             >
-                <FormControl
-                    className={classes.formControl}
-                    disabled={disabled}
-                    error={error}
+                <InputLabel htmlFor={htmlId}>{label}</InputLabel>
+                <Select
+                    value={value}
+                    onChange={this.handleChange}
+                    input={<Input name={name} id={htmlId} />}
                 >
-                    {/* {label && */}
-                    <InputLabel htmlFor={htmlId}>{label}</InputLabel>
-                    {/* } */}
-                    <Select
-                        value={value}
-                        onChange={this.handleChange}
-                        input={<Input name={name} id={htmlId} />}
-                    >
 
-                        {source.map((src) => {
-                            return (
-                                <MenuItem
-                                    key={src.value}
-                                    value={src.value}
-                                >
-                                    {src.label}
-                                </MenuItem>
-                            )
-                        })}
-                    </Select>
-                    {helperText &&
-                        <FormHelperText>{helperText}</FormHelperText>
-                    }
-                </FormControl>
-            </form>
+                    {source.map((src) => {
+                        return (
+                            <MenuItem
+                                key={src.value}
+                                value={src.value}
+                            >
+                                {src.label}
+                            </MenuItem>
+                        )
+                    })}
+                </Select>
+                {helperText &&
+                    <FormHelperText>{helperText}</FormHelperText>
+                }
+            </FormControl>
         )
     }
 }

@@ -7,7 +7,6 @@ import IconButton from '@material-ui/core/IconButton'
 import Dropdown from 'components/common/dropdown'
 import Input from '@material-ui/core/Input'
 import { Pagination } from './Controls'
-import theme from './../theme.css'
 import Translate from 'components/translate/Translate'
 // import classnames from 'classnames'
 import Radio from '@material-ui/core/Radio'
@@ -16,7 +15,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormControl from '@material-ui/core/FormControl'
 import InputLabel from '@material-ui/core/InputLabel'
 import InputAdornment from '@material-ui/core/InputAdornment'
-
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 import ViewModuleIcon from '@material-ui/icons/ViewModule'
@@ -80,12 +78,10 @@ class ListWithControls extends Component {
     }
 
     goToPage(page) {
-        console.log('page', page)
         this.setState({ page: parseInt(page, 10) })
     }
 
     handleChange = (name, value) => {
-        console.log(name, value)
         let newStateValue = { [name]: value }
         if (name === 'search') newStateValue.page = 0
         if (name === 'filterBy') {
@@ -202,133 +198,140 @@ class ListWithControls extends Component {
 
         return (
             <div>
-                <div className={classes.controls}>
+                <div className={classes.row}>
 
-                    <FormControl
-                        // fullWidth
-                        className={classnames(classes.flexItem)}
-                    >
-                        <InputLabel htmlFor="search">{t('LIST_CONTROL_LABEL_SEARCH')}</InputLabel>
-                        <Input
-                            name='search'
-                            id="search"
-                            value={this.state.search}
-                            onChange={(ev) => this.handleChange('search', ev.target.value)}
-                            startAdornment={<InputAdornment position="start"><SearchIcon /></InputAdornment>}
-                        />
-                    </FormControl>
                     <div
-                        // style={{ display: 'inline-block', width: 'calc(100% - 76px)' }}
-                        className={classnames(classes.flexRow, classes.flexItem)}
+                        className={classes.controls}
                     >
-                        <Dropdown
-                            auto
-                            // label={<InputLabel icon='sort' label='Sort by' style={{marginLeft: '-2px'}}/>}
-                            // icon='sort'
-                            label={t('LIST_CONTROL_LABEL_SORT')}
-                            onChange={this.handleChange.bind(this, 'sortProperty')}
-                            source={this.state.sortProperties}
-                            value={this.state.sortProperty}
-                            htmlId='sort-by-prop'
-                            name='sortProperty'
-                        />
-                        <IconButton
-                            color={(this.state.sortOrder === 1) ? 'primary' : 'default'}
-                            onClick={this.handleChange.bind(this, 'sortOrder', 1)}
+                        <FormControl
+                            className={classnames(classes.flexItem)}
                         >
-                            <ArrowUpwardIcon />
-                        </IconButton>
-                        <IconButton
-                            color={(this.state.sortOrder === -1) ? 'primary' : 'default'}
-                            onClick={this.handleChange.bind(this, 'sortOrder', -1)}
-                        >
-                            <ArrowDownwardIcon />
-                        </IconButton>
-                    </div>
-
-                    {this.props.filterProperties &&
+                            <InputLabel htmlFor="search">{t('LIST_CONTROL_LABEL_SEARCH')}</InputLabel>
+                            <Input
+                                name='search'
+                                id="search"
+                                value={this.state.search}
+                                onChange={(ev) => this.handleChange('search', ev.target.value)}
+                                startAdornment={<InputAdornment position="start"><SearchIcon /></InputAdornment>}
+                            />
+                        </FormControl>
                         <div
-                            className={classnames(classes.flexRow, )}
-                        >
-                            <Dropdown
-                                className={classnames(classes.flexItem)}
-                                auto
-                                label={t('LIST_CONTROL_LABEL_FILTER_BY')}
-                                onChange={this.handleChange.bind(this, 'filterBy')}
-                                source={this.state.filterProperties}
-                                value={this.state.filterBy !== null ? this.state.filterBy.toString() : ''}
-                                htmlId='filter-by-prop-dd'
-                                name='filterBy'
-                                displayEmpty
-                            />
-                            <Dropdown
-                                className={classnames(classes.flexItem)}
-                                auto
-                                label={t('LIST_CONTROL_LABEL_FILTER_BY_VALUE')}
-                                onChange={this.handleChange.bind(this, 'filterByValueFilter')}
-                                source={mapSortProperties({ sortProps: this.state.filterByValues, t: this.props.t })}
-                                value={this.state.filterByValueFilter !== null ? this.state.filterByValueFilter.toString() : ''}
-                                htmlId='filter-by-value-dd'
-                                name='filterByValueFilter'
-                                displayEmpty
-                                disabled={!this.state.filterBy}
-                                helperText={t('HELPER_TXT_FILTER_BY_VALUE')}
-                            />
-                        </div>
-                    }
-                    {this.props.archive &&
-                        // <FormControl
-                        //     className={classnames(classes.flexRow, classes.flexItem)}
-                        // >
-                        <RadioGroup
-                            // theme={theme}
-                            name='archived'
-                            value={this.state.filterArchived.toString()}
-                            onChange={(ev) => this.handleChange('filterArchived', ev.target.value)}
                             className={classnames(classes.flexRow, classes.flexItem)}
                         >
-                            <FormControlLabel value='false' control={<Radio color='primary' />} label={t('LABEL_ACTIVE')} />
-                            <FormControlLabel value='true' control={<Radio color='primary' />} label={t('LABEL_ARCHIVED')} />
-                            <FormControlLabel value='' control={<Radio color='primary' />} label={t('LABEL_ALL')} />
-                        </RadioGroup>
-                        // </FormControl>
-                    }
+                            <Dropdown
+                                label={t('LIST_CONTROL_LABEL_SORT')}
+                                onChange={this.handleChange.bind(this, 'sortProperty')}
+                                source={this.state.sortProperties}
+                                value={this.state.sortProperty}
+                                htmlId='sort-by-prop'
+                                name='sortProperty'
+                            />
+                            <div>
+                                <IconButton
+                                    color={(this.state.sortOrder === 1) ? 'primary' : 'default'}
+                                    onClick={this.handleChange.bind(this, 'sortOrder', 1)}
+                                    className={classes.rowButton}
+                                    size='small'
+                                >
+                                    <ArrowUpwardIcon />
+                                </IconButton>
+                                <IconButton
+                                    color={(this.state.sortOrder === -1) ? 'primary' : 'default'}
+                                    onClick={this.handleChange.bind(this, 'sortOrder', -1)}
+                                    className={classes.rowButton}
+                                    size='small'
+                                >
+                                    <ArrowDownwardIcon />
+                                </IconButton>
+                            </div>
+                        </div>
 
-                    <Pagination
-                        className={classnames(classes.flexRow, classes.flexItem)}
-                        t={t}
-                        page={data.page}
-                        pages={data.pages}
-                        pageSize={this.state.pageSize}
-                        itemsLength={data.itemsLength}
-                        goToPage={this.goToPage.bind(this)}
-                        goToLastPage={this.goToPage.bind(this, data.pages - 1)}
-                        goToNextPage={this.goToPage.bind(this, data.page + 1)}
-                        goToFirstPage={this.goToPage.bind(this, 0)}
-                        goToPrevPage={this.goToPage.bind(this, data.page - 1)}
-                        changePageSize={this.changePageSize.bind(this, 'pageSize',
-                            { page: data.page, pages: data.pages, itemsLength: data.itemsLength })
+                        {this.props.filterProperties &&
+                            <div
+                                className={classnames(classes.flexRow, )}
+                            >
+                                <Dropdown
+                                    className={classnames(classes.flexItem)}
+                                    auto
+                                    label={t('LIST_CONTROL_LABEL_FILTER_BY')}
+                                    onChange={this.handleChange.bind(this, 'filterBy')}
+                                    source={this.state.filterProperties}
+                                    value={this.state.filterBy !== null ? this.state.filterBy.toString() : ''}
+                                    htmlId='filter-by-prop-dd'
+                                    name='filterBy'
+                                    displayEmpty
+                                />
+                                <Dropdown
+                                    className={classnames(classes.flexItem)}
+                                    auto
+                                    label={t('LIST_CONTROL_LABEL_FILTER_BY_VALUE')}
+                                    onChange={this.handleChange.bind(this, 'filterByValueFilter')}
+                                    source={mapSortProperties({ sortProps: this.state.filterByValues, t: this.props.t })}
+                                    value={this.state.filterByValueFilter !== null ? this.state.filterByValueFilter.toString() : ''}
+                                    htmlId='filter-by-value-dd'
+                                    name='filterByValueFilter'
+                                    displayEmpty
+                                    disabled={!this.state.filterBy}
+                                    helperText={t('HELPER_TXT_FILTER_BY_VALUE')}
+                                />
+                            </div>
                         }
-                    />
-                    {!this.props.listMode &&
-                        <div
-                            className={classnames(classes.flexRow, classes.flexItem)}
-                        >
-                            <IconButton
-                                color={!this.props.rowsView ? 'primary' : 'default'}
-                                onClick={this.toggleView.bind(this, false)}
-                            >
-                                <ViewModuleIcon />
-                            </IconButton >
-                            <IconButton
-                                color={this.props.rowsView ? 'primary' : 'default'}
-                                onClick={this.toggleView.bind(this, true)}
-                            >
-                                <ViewListIcon />
-                            </IconButton >
-                        </div>
-                    }
 
+                        {this.props.archive &&
+                            <RadioGroup
+                                name='archived'
+                                value={this.state.filterArchived.toString()}
+                                onChange={(ev) => this.handleChange('filterArchived', ev.target.value)}
+                                className={classnames(classes.flexRow, classes.flexItem)}
+                            >
+                                <FormControlLabel value='false' control={<Radio color='primary' />} label={t('LABEL_ACTIVE')} />
+                                <FormControlLabel value='true' control={<Radio color='primary' />} label={t('LABEL_ARCHIVED')} />
+                                <FormControlLabel value='' control={<Radio color='primary' />} label={t('LABEL_ALL')} />
+                            </RadioGroup>
+                        }
+                    </div>
+                    <div className={classes.row}>
+                        <div
+                            className={classnames(classes.controls, classes.bottomControls)}
+                        >
+
+                            <Pagination
+                                t={t}
+                                page={data.page}
+                                pages={data.pages}
+                                pageSize={this.state.pageSize}
+                                itemsLength={data.itemsLength}
+                                goToPage={this.goToPage.bind(this)}
+                                goToLastPage={this.goToPage.bind(this, data.pages - 1)}
+                                goToNextPage={this.goToPage.bind(this, data.page + 1)}
+                                goToFirstPage={this.goToPage.bind(this, 0)}
+                                goToPrevPage={this.goToPage.bind(this, data.page - 1)}
+                                changePageSize={this.changePageSize.bind(this, 'pageSize',
+                                    { page: data.page, pages: data.pages, itemsLength: data.itemsLength })
+                                }
+                            />
+                            {!this.props.listMode &&
+                                <div
+                                    className={classnames(classes.flexRow, classes.flexItem)}
+                                >
+                                    <IconButton
+                                        color={!this.props.rowsView ? 'primary' : 'default'}
+                                        onClick={this.toggleView.bind(this, false)}
+                                        className={classes.rowButton}
+                                    >
+                                        <ViewModuleIcon />
+                                    </IconButton >
+                                    <IconButton
+                                        color={this.props.rowsView ? 'primary' : 'default'}
+                                        onClick={this.toggleView.bind(this, true)}
+                                        className={classes.rowButton}
+                                    >
+                                        <ViewListIcon />
+                                    </IconButton >
+                                </div>
+                            }
+                        </div >
+                    </div >
                 </div >
                 <section style={{ overflowY: 'auto' }}>
                     {renderItems(items)}
