@@ -15,8 +15,8 @@ import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
 import Items from 'components/dashboard/containers/Items'
 import Transactions from 'components/dashboard/containers/Transactions'
-import UnitBids from 'components/dashboard/containers/UnitBids'
-import SlotBids from 'components/dashboard/containers/SlotBids'
+import UnitBids from 'components/dashboard/containers/Bids/UnitBids'
+import SlotBids from 'components/dashboard/containers/Bids/SlotBids'
 import {
     AdUnit as AdUnitModel,
     AdSlot as AdSlotModel,

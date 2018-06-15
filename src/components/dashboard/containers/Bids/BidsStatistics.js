@@ -15,7 +15,8 @@ import { Button, IconButton } from 'react-toolbox/lib/button'
 import Navigation from 'react-toolbox/lib/navigation'
 import moment from 'moment'
 import Dropdown from 'components/common/dropdown'
-import ItemsList from './ItemsList'
+// import ItemsList from './ItemsList'
+import ListWithControls from 'components/dashboard/containers/Lists/ListWithControls'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
 import { renderCommonTableRowStats, renderTableHeadStats, searchMatch, getBidData } from './BidsCommon'
 import Rows from 'components/dashboard/collection/Rows'
@@ -391,7 +392,7 @@ export class BidsStatistics extends Component {
                 <CsvDownloadBtn getData={() => {
                     return this.getTableCsvData({ bids: allBidsData })
                 }} fileName={this.getExportFileName({ intervalType: 'by_bid' })} />
-                <ItemsList
+                <ListWithControls
                     items={allBidsData}
                     listMode='rows'
                     renderRows={this.renderRows.bind(this)}
