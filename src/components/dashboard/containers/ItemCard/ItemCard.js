@@ -14,6 +14,8 @@ import Translate from 'components/translate/Translate'
 import { items as ItemsConstants } from 'adex-constants'
 import { styles } from './styles'
 import Tooltip from '@material-ui/core/Tooltip'
+import { itemAdTypeLabel, itemAdSizeLabel } from 'helpers/itemsHelpers'
+import NO_IMAGE from 'resources/no-image-box-eddie.jpg'
 
 const { ItemTypesNames } = ItemsConstants
 
@@ -31,7 +33,7 @@ class ItemCard extends Component {
         let to = '/dashboard/' + this.props.side + '/' + itemTypeName + '/' + id
         let imageSrc = Item.getImgUrl(meta.img, process.env.IPFS_GATEWAY) || ''
 
-        const classes = this.props.classes
+        const { classes, t } = this.props
         return (
             <Card
                 raised={false}
@@ -39,8 +41,8 @@ class ItemCard extends Component {
             >
                 <RRCardMedia
                     to={to}
-                    aspectRatio='wide'
                     classes={{ root: classes.mediaRoot }}
+                    image={NO_IMAGE}
                 >
                     <Img
                         className={classes.img}
@@ -55,6 +57,9 @@ class ItemCard extends Component {
                         noWrap
                     >
                         {meta.fullName}
+                    </Typography>
+                    <Typography component="p">
+                        {itemAdTypeLabel({ adType: item._meta.adType })}  {itemAdSizeLabel({ size: item._meta.size, t: t })}
                     </Typography>
                 </CardContent>
 

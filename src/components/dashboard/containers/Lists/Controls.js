@@ -6,6 +6,7 @@ import IconButton from '@material-ui/core/IconButton'
 import ChevronLeft from '@material-ui/icons/ChevronLeft'
 import ChevronRight from '@material-ui/icons/ChevronRight'
 import Dropdown from 'components/common/dropdown'
+import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -18,46 +19,60 @@ export const PAGE_SIZES = [
 
 const pagination = (props) => {
 
-    const { classes, className } = props
+    const {
+        page,
+        pages,
+        pageSize,
+        classes,
+        goToPrevPage,
+        goToNextPage,
+        goToPage,
+        changePageSize,
+        // className,
+        t
+    } = props
     return (
         <div
             className={classes.flexRow}
         >
             <div
-                className={classnames(classes.flexRow, className)}
+                className={classnames(classes.flexItem, classes.flexRow)}
             >
-                <IconButton
-                    color='primary'
-                    disabled={!(props.page > 0 && props.pages > props.page)}
-                    onClick={props.goToPrevPage} >
-                    <ChevronLeft />
-                </IconButton>
 
-                <div className={theme.paginationInput}>
+                <div
+                >
                     <Dropdown
-                        label={props.t('LIST_CONTROL_LABEL_PAGE')}
-                        onChange={props.goToPage}
-                        source={getAllPagedValues(props.page, props.pages)}
-                        // hint={props.page + 1 + ''}
-                        value={props.page + ''}
-                    // suggestionMatch='anywhere'
-                    // showSuggestionsWhenValueIsSet={true}
+                        label={t('LIST_CONTROL_LABEL_PAGE_OF', { args: [(page + 1), pages] })}
+                        onChange={goToPage}
+                        source={getAllPagedValues(page, pages)}
+                        value={page + ''}
+                        htmlId='page-size-select'
                     />
                 </div>
-
                 <IconButton
                     color='primary'
-                    disabled={!(props.page < (props.pages - 1))}
-                    onClick={props.goToNextPage}
+                    disabled={!(page > 0 && pages > page)}
+                    onClick={goToPrevPage}
+                    className={classes.rowButton}
+                    size='small'
+                >
+                    <ChevronLeft />
+                </IconButton>
+                <IconButton
+                    color='primary'
+                    disabled={!(page < (pages - 1))}
+                    onClick={goToNextPage}
+                    className={classes.rowButton}
+                    size='small'
                 >
                     <ChevronRight />
                 </IconButton>
-
-                <span className={classnames(theme.pageOf, theme.ellipsis)}> {props.t('LIST_CONTROL_LABEL_PAGE_OF', { args: [props.pages] })} </span>
             </div>
-            <div className={theme.paginationSlider} >
-                <label className={classnames(theme.sliderLabel, theme.ellipsis)}> {props.t('LIST_CONTROL_LABEL_PAGE_SIZE')} <strong>{props.pageSize}</strong> </label>
-                <Slider pinned snaps min={5} max={25} step={5} value={props.pageSize} onChange={props.changePageSize} />
+            <div
+                className={classnames(classes.flexItem)}
+            >
+                <Typography noWrap id="page-size">{t('LIST_CONTROL_LABEL_PAGE_SIZE')} <strong>{pageSize}</strong> </Typography>
+                <Slider aria-labelledby="page-size" min={5} max={25} step={5} value={pageSize} onChange={changePageSize} />
             </div>
         </div>
     )
