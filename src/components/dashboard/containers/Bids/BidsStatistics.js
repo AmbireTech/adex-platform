@@ -11,7 +11,8 @@ import { BidsStatusBars, BidsStatusPie, BidsTimeStatistics } from 'components/da
 import Translate from 'components/translate/Translate'
 import { exchange as ExchangeConstants } from 'adex-constants'
 import { getBidEvents } from 'services/adex-node/actions'
-import { Button, IconButton } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
+import IconButton from '@material-ui/core/IconButton'
 import Navigation from 'react-toolbox/lib/navigation'
 import moment from 'moment'
 import Dropdown from 'components/common/dropdown'
@@ -20,7 +21,6 @@ import ListWithControls from 'components/dashboard/containers/Lists/ListWithCont
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
 import { CommonTableRowStats, renderTableHeadStats, searchMatch, getBidData } from './BidsCommon'
 import Rows from 'components/dashboard/collection/Rows'
-import { Tab, Tabs } from 'react-toolbox'
 import classnames from 'classnames'
 import DatePicker from 'react-toolbox/lib/date_picker'
 import FontIcon from 'react-toolbox/lib/font_icon'
@@ -29,6 +29,10 @@ import CsvDownloadBtn from 'components/common/csv_dl_btn/CsvDownloadBtn'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import { Card } from 'react-toolbox/lib/card'
 import { intervalsMs, DATETIME_EXPORT_FORMAT } from 'helpers/timeHelpers'
+import FullscreenIcon from '@material-ui/icons/Fullscreen'
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 const { BidStatesLabels } = ExchangeConstants
 const SPINNER_ID = 'STATISTICS'
@@ -182,9 +186,12 @@ export class BidsStatistics extends Component {
                         return this.getChartCsvData({ stats: stats })
                     }} fileName={fileName} />
                     : null}
-                <IconButton icon={this.isInFullWidthChart(btnID) ? 'fullscreen_exit' : 'fullscreen'} onClick={() =>
-                    this.toggleFullWidthChart(btnID)
-                } />
+
+                <IconButton
+                    onClick={() => this.toggleFullWidthChart(btnID)}
+                >
+                    {this.isInFullWidthChart(btnID) ? <FullscreenIcon /> : <FullscreenExitIcon />}
+                </IconButton>
             </div>
         )
     }
@@ -304,7 +311,7 @@ export class BidsStatistics extends Component {
 
         // console.log('bidData', bidData)
 
-        return <CommonTableRowStats bidData={bidData} t={t} />
+        return <CommonTableRowStats bidData={bidData} t={t} key={bid._id} />
     }
 
     renderRows = (items) =>
@@ -411,7 +418,7 @@ export class BidsStatistics extends Component {
     }
 
     render() {
-        const t = this.props.t
+        const { t, classes } = this.props
         const filterIndex = this.state.filterIndex
         const tabIndex = this.state.tabIndex
         let from = this.state.from ? new Date(this.state.from) : null
@@ -429,50 +436,56 @@ export class BidsStatistics extends Component {
         const intervalErr = toMs - fromMs > MAX_STATS_INTERVAL
         return (
             <div>
-                <Navigation
-                    theme={statisticsTheme}
-                    className={statisticsTheme.nav}
+                <div
+                    className={classes.horizontal}
                 >
                     <div
-                        className={statisticsTheme.navLeft}
+                        className={classes.navLeft}
                     >
                         <div>
                             <Button
-                                className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: filterIndex === 0 })}
-                                inverse
-                                label={t('LABEL_LAST_24H')}
+                                color='primary'
+                                className={classnames(classes.navButton, { [classes.active]: filterIndex === 0 })}
                                 onClick={() => this.applyPeriodFilter({ start: intervalsMs.last24Hours.start, end: intervalsMs.last24Hours.end, filterIndex: 0, label: 'LABEL_LAST_24H' })}
-                            />
+                            >
+                                {t('LABEL_LAST_24H')}
+                            </Button>
 
                             <Button
-                                className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: filterIndex === 1 })}
-                                inverse label={t('LABEL_THIS_WEEK')}
+                                color='primary'
+                                className={classnames(classes.navButton, { [classes.active]: filterIndex === 1 })}
                                 onClick={() => this.applyPeriodFilter({ start: intervalsMs.thisWeek.start, end: intervalsMs.thisWeek.end, filterIndex: 1, label: 'LABEL_THIS_WEEK' })}
-                            />
+                            >
+                                {t('LABEL_THIS_WEEK')}
+                            </Button>
 
                             <Button
-                                className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: filterIndex === 2 })}
-                                inverse
-                                label={t('LABEL_LAST_WEEK')}
+                                color='primary'
+                                className={classnames(classes.navButton, { [classes.active]: filterIndex === 2 })}
                                 onClick={() => this.applyPeriodFilter({ start: intervalsMs.lastWeek.start, end: intervalsMs.lastWeek.end, filterIndex: 2, label: 'LABEL_LAST_WEEK' })}
-                            />
-
-                            <Button className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: filterIndex === 3 })}
-                                inverse
-                                label={t('LABEL_THIS_MONTH')}
-                                onClick={() => this.applyPeriodFilter({ start: intervalsMs.thisMonth.start, end: intervalsMs.thisMonth.end, filterIndex: 3, label: 'LABEL_THIS_MONTH' })}
-                            />
+                            >
+                                {t('LABEL_LAST_WEEK')}
+                            </Button>
 
                             <Button
-                                className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: filterIndex === 4 })}
-                                inverse
-                                label={t('LABEL_LAST_MONTH')}
+                                color='primary'
+                                className={classnames(classes.navButton, { [classes.active]: filterIndex === 3 })}
+                                onClick={() => this.applyPeriodFilter({ start: intervalsMs.thisMonth.start, end: intervalsMs.thisMonth.end, filterIndex: 3, label: 'LABEL_THIS_MONTH' })}
+                            >
+                                {t('LABEL_THIS_MONTH')}
+                            </Button>
+
+                            <Button
+                                color='primary'
+                                className={classnames(classes.navButton, { [classes.active]: filterIndex === 4 })}
                                 onClick={() => this.applyPeriodFilter({ start: intervalsMs.lastMonth.start, end: intervalsMs.lastMonth.end, filterIndex: 4, label: 'LABEL_LAST_MONTH' })}
-                            />
+                            >
+                                {t('LABEL_LAST_MONTH')}
+                            </Button>
                         </div>
                     </div>
                     <div
-                        className={classnames(statisticsTheme.navRight, datepickerTheme.statsDatePicker, { [datepickerTheme.active]: filterIndex === 5 })}
+                        className={classnames(classes.navRight, datepickerTheme.statsDatePicker, { [datepickerTheme.active]: filterIndex === 5 })}
 
                     >
                         <FontIcon value="date_range" />
@@ -501,32 +514,35 @@ export class BidsStatistics extends Component {
                             size={moment(to).format('DD MMMM').length} /** temp fix */
                         />
                         <Button
-                            inverse
-                            raised
+                            // inverse
+                            // variant='raised'
                             disabled={intervalErr}
-                            label={t('APPLY')}
                             onClick={() => this.applyPeriodFilter({ start: moment(from).valueOf(), end: moment(to).valueOf(), filterIndex: 5 })}
-                        />
+                        >
+                            {t('APPLY')}
+                        </Button>
 
                     </div>
 
-                </Navigation>
+                </div>
                 <div className={statisticsTheme.subNav}>
                     <div>
                         <Button
-                            className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: tabIndex === 0 })}
-                            primary={tabIndex === 0}
+                            // className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: tabIndex === 0 })}
+                            color={tabIndex === 0 ? 'primary' : null}
                             icon='donut_large'
-                            label={t('CHARTS')}
                             onClick={() => this.handleTabChange(0)}
-                        />
+                        >
+                            {t('CHARTS')}
+                        </Button>
                         <Button
-                            className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: tabIndex === 1 })}
-                            primary={tabIndex === 1}
+                            // className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: tabIndex === 1 })}
+                            color={tabIndex === 1 ? 'primary' : null}
                             icon='list'
-                            label={t('TABLE')}
                             onClick={() => this.handleTabChange(1)}
-                        />
+                        >
+                            {t('TABLE')}
+                        </Button>
                     </div>
                     <div>
                         {!this.props.spinner ?
@@ -595,4 +611,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(BidsStatistics))
+)(withStyles(styles)(Translate(BidsStatistics)))
