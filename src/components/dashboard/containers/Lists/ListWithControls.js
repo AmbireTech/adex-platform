@@ -23,6 +23,8 @@ import SearchIcon from '@material-ui/icons/Search'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import classnames from 'classnames'
+import Paper from '@material-ui/core/Paper'
+import Divider from '@material-ui/core/Divider'
 
 const mapFilterProps = ({ filterProps = {}, t }) => {
     return Object.keys(filterProps)
@@ -197,8 +199,10 @@ class ListWithControls extends Component {
         const { t, side, classes } = this.props
 
         return (
-            <div>
-                <div className={classes.row}>
+            <Paper>
+                <div
+                    className={classes.controlsRoot}
+                >
 
                     <div
                         className={classes.controls}
@@ -289,12 +293,9 @@ class ListWithControls extends Component {
                                 <FormControlLabel value='' control={<Radio color='primary' />} label={t('LABEL_ALL')} />
                             </RadioGroup>
                         }
-                    </div>
-                    <div className={classes.row}>
                         <div
                             className={classnames(classes.controls, classes.bottomControls)}
                         >
-
                             <Pagination
                                 t={t}
                                 page={data.page}
@@ -310,33 +311,36 @@ class ListWithControls extends Component {
                                     { page: data.page, pages: data.pages, itemsLength: data.itemsLength })
                                 }
                             />
-                            {!this.props.listMode &&
-                                <div
-                                    className={classnames(classes.flexRow, classes.flexItem)}
-                                >
-                                    <IconButton
-                                        color={!this.props.rowsView ? 'primary' : 'default'}
-                                        onClick={this.toggleView.bind(this, false)}
-                                        className={classes.rowButton}
-                                    >
-                                        <ViewModuleIcon />
-                                    </IconButton >
-                                    <IconButton
-                                        color={this.props.rowsView ? 'primary' : 'default'}
-                                        onClick={this.toggleView.bind(this, true)}
-                                        className={classes.rowButton}
-                                    >
-                                        <ViewListIcon />
-                                    </IconButton >
-                                </div>
-                            }
                         </div >
+                        {!this.props.listMode &&
+                            <div
+                                className={classnames(classes.flexRow, classes.flexItem)}
+                            >
+                                <IconButton
+                                    color={!this.props.rowsView ? 'primary' : 'default'}
+                                    onClick={this.toggleView.bind(this, false)}
+                                    className={classes.rowButton}
+                                >
+                                    <ViewModuleIcon />
+                                </IconButton >
+                                <IconButton
+                                    color={this.props.rowsView ? 'primary' : 'default'}
+                                    onClick={this.toggleView.bind(this, true)}
+                                    className={classes.rowButton}
+                                >
+                                    <ViewListIcon />
+                                </IconButton >
+                            </div>
+                        }
                     </div >
                 </div >
-                <section style={{ overflowY: 'auto' }}>
+                <Divider />
+                <div
+                    className={classnames(classes.listRoot)}
+                >
                     {renderItems(items)}
-                </section>
-            </div >
+                </div>
+            </Paper >
         )
     }
 }

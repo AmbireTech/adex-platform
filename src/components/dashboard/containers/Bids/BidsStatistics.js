@@ -18,7 +18,7 @@ import Dropdown from 'components/common/dropdown'
 // import ItemsList from './ItemsList'
 import ListWithControls from 'components/dashboard/containers/Lists/ListWithControls'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
-import { renderCommonTableRowStats, renderTableHeadStats, searchMatch, getBidData } from './BidsCommon'
+import { CommonTableRowStats, renderTableHeadStats, searchMatch, getBidData } from './BidsCommon'
 import Rows from 'components/dashboard/collection/Rows'
 import { Tab, Tabs } from 'react-toolbox'
 import classnames from 'classnames'
@@ -304,7 +304,7 @@ export class BidsStatistics extends Component {
 
         // console.log('bidData', bidData)
 
-        return renderCommonTableRowStats({ bidData, t })
+        return <CommonTableRowStats bidData={bidData} t={t} />
     }
 
     renderRows = (items) =>

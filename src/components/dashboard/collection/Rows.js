@@ -33,33 +33,28 @@ class Rows extends Component {
 
     render() {
         let side = this.props.side
-        let item = this.props.item
-        let meta = item.meta || {}
         let rows = this.props.rows
         return (
             <div>
-                <h1> {meta.fullName} </h1>
-                <div>
-                    <Table
-                    // theme={theme}
-                    // multiSelectable={this.props.multiSelectable === true}
-                    // selectable={this.props.selectable === true}
-                    // onRowSelect={this.handleRowSelect}
-                    >
-                        {this.props.tableHeadRenderer({ selected: this.state.selected })}
-                        <TableBody>
-                            {
-                                rows.map((u, i) => {
-                                    let to = '/dashboard/' + side + '/' + ItemTypesNames[u._type] + '/' + u._id
-                                    let selected = this.state.selected.indexOf(u._id) !== -1
-                                    return (
-                                        this.props.rowRenderer(u, i, { to: to, selected: selected })
-                                    )
-                                })
-                            }
-                        </TableBody>
-                    </Table>
-                </div>
+                <Table
+                // theme={theme}
+                // multiSelectable={this.props.multiSelectable === true}
+                // selectable={this.props.selectable === true}
+                // onRowSelect={this.handleRowSelect}
+                >
+                    {this.props.tableHeadRenderer({ selected: this.state.selected })}
+                    <TableBody>
+                        {
+                            rows.map((u, i) => {
+                                let to = '/dashboard/' + side + '/' + ItemTypesNames[u._type] + '/' + u._id
+                                let selected = this.state.selected.indexOf(u._id) !== -1
+                                return (
+                                    this.props.rowRenderer(u, i, { to: to, selected: selected })
+                                )
+                            })
+                        }
+                    </TableBody>
+                </Table>
             </div>
         )
     }

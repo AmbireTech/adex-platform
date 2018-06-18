@@ -10,7 +10,7 @@ import Rows from 'components/dashboard/collection/Rows'
 import Translate from 'components/translate/Translate'
 import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
-import { renderCommonTableRow, renderTableHead, searchMatch, getBidData } from './BidsCommon'
+import { BidCommonTableRow, renderTableHead, searchMatch, getBidData } from './BidsCommon'
 import { getAddrBids } from 'services/store-data/bids'
 import BidsStatistics from './BidsStatistics'
 
@@ -74,7 +74,7 @@ export class UnitBids extends Component {
             onSave: this.onSave
         })
 
-        return renderCommonTableRow({ bidData, t })
+        return <BidCommonTableRow bidData={bidData} t={t} key={bidData._id} />
     }
 
     renderRows = (items) =>
