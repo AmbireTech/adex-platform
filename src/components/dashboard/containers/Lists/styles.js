@@ -6,8 +6,6 @@ export const styles = theme => {
             display: 'flex',
             flexWrap: 'wrap',
             flexDirection: 'row',
-            marginTop: spacing,
-            marginBottom: spacing,
         },
         flexRow: {
             display: 'flex',
@@ -15,7 +13,8 @@ export const styles = theme => {
             flexWrap: 'wrap',
         },
         flexItem: {
-            margin: spacing
+            marginRight: spacing,
+            marginBottom: spacing,
         },
         rowButton: {
             marginTop: spacing * 1.5,
@@ -30,6 +29,15 @@ export const styles = theme => {
         },
         bottomControls: {
             justifyContent: 'flex-start'
+        },
+        listRoot: {
+            paddingBottom: spacing * 1.5,
+            overflowX: 'auto',
+        },
+        controlsRoot: {
+            padding: spacing * 1.5,
+            paddingBottom: spacing * 0.5,
+            // marginBottom: spacing * 2
         }
     }
 }

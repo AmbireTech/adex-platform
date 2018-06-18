@@ -73,6 +73,7 @@ export const styles = theme => ({
         flexGrow: 1,
         backgroundColor: theme.palette.background.default,
         padding: theme.spacing.unit * 3,
+        paddingTop: theme.spacing.unit * 5,
         overflow: 'auto',
         [theme.breakpoints.up('md')]: {
             marginLeft: drawerWidth,

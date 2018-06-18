@@ -1,33 +1,28 @@
 
-import React, { Component } from 'react'
+import React from 'react'
 import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
 import { exchange as ExchangeConstants } from 'adex-constants'
-// import theme from './theme.css'
-// import RTButtonTheme from 'styles/RTButton.css'
 import Anchor from 'components/common/anchor/anchor'
 import moment from 'moment'
 import { adxToFloatView } from 'services/smart-contracts/utils'
-import { FontIcon } from 'react-toolbox/lib/font_icon'
-import { Item } from 'adex-models'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import TableCell from '@material-ui/core/TableCell'
+import IconButton from '@material-ui/core/IconButton'
 import WithDialog from 'components/common/dialog/WithDialog'
 import classnames from 'classnames'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import ItemIpfsDetails from './../ItemIpfsDetails'
-import { Button, IconButton } from 'react-toolbox/lib/button'
-import { getBidEvents } from 'services/adex-node/actions'
 import { AcceptBid, GiveupBid, VerifyBid, CancelBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
-import RTButtonTheme from 'styles/RTButton.css'
-import Tooltip from 'react-toolbox/lib/tooltip'
+import Tooltip from '@material-ui/core/Tooltip'
+import Icon from '@material-ui/core/Icon'
+import Typography from '@material-ui/core/Typography'
+import WarningIcon from '@material-ui/icons/Warning'
 import { withStyles } from '@material-ui/core/styles'
-// import { styles } from './styles'
+import { styles } from './styles'
 
-const RRButton = withReactRouterLink(Button)
 const RRAnchor = withReactRouterLink(Anchor)
 const ItemIpfsDetailsDialog = WithDialog(ItemIpfsDetails)
-const TooltipIconButton = Tooltip(IconButton)
 
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
 
@@ -98,10 +93,13 @@ export const renderTableHead = ({ t, side, }) => {
     )
 }
 
-export const renderCommonTableRow = ({ bidData, t, side }) => {
+export const renderCommonTableRow = ({ bidData, t, side, classes = {} }) => {
     return (
-        <TableRow key={bidData._id}>
-            <TableCell>
+        <TableRow
+            key={bidData._id}
+            hover={true}
+        >
+            <TableCell padding='dense'>
                 <BidDetailWithDialog
                     btnLabel=''
                     title={bidData._id}
@@ -111,18 +109,21 @@ export const renderCommonTableRow = ({ bidData, t, side }) => {
                     iconButton
                 />
             </TableCell>
-            <TableCell> {bidData._amount} </TableCell>
-            <TableCell>
+            <TableCell padding='dense'> {bidData._amount} </TableCell>
+            <TableCell padding='dense'>
                 {bidData._target} / {bidData.clicksCount}
             </TableCell>
-            <TableCell> {bidData._state} </TableCell>
+            <TableCell padding='dense'> {bidData._state} </TableCell>
             <TableCell
-            // className={classnames(theme.compactCol, theme.ellipsis)}
+                padding='dense'
+                className={classnames(classes.compactCol)}
             >
-                {bidData.sideData.owner}
+                <Typography noWrap>
+                    {bidData.sideData.owner}
+                </Typography>
             </TableCell>
             <TableCell
-            // className={classnames(theme.compactCol, theme.ellipsis)}
+                padding='dense'
             >
                 <div>
                     {bidData._adSlot}
@@ -131,18 +132,20 @@ export const renderCommonTableRow = ({ bidData, t, side }) => {
                     {bidData._adUnit}
                 </div>
             </TableCell>
-            <TableCell>
+            <TableCell padding='dense'>
                 <div> {bidData.timeoutLabel} </div>
                 <div> {bidData.acceptedLabel} </div>
                 <div> {bidData.bidExpiresLabel} </div>
             </TableCell>
             <TableCell
-            // className={classnames(theme.compactCol, theme.ellipsis)}
+                padding='dense'
+                className={classnames(classes.compactCol, classes.ellipsis)}
             >
                 <div> {bidData._publisherConfirmation} </div>
                 <div> {bidData._advertiserConfirmation} </div>
             </TableCell>
-            <TableCell>
+            <TableCell
+                padding='dense'>
                 {bidData.cancelBtn || null}
                 {bidData.pendingAcceptByPub || null}
                 {bidData.verifyBtn || null}
@@ -154,12 +157,14 @@ export const renderCommonTableRow = ({ bidData, t, side }) => {
     )
 }
 
+export const BidCommonTableRow = withStyles(styles)(renderCommonTableRow)
+
 export const renderTableHeadStats = ({ t, side, }) => {
     return (
         <TableHead>
             <TableRow>
                 <TableCell> {t('DETAILS')} </TableCell>
-                <TableCell numeric> {t('BID_ID')} </TableCell>
+                <TableCell > {t('BID_ID')} </TableCell>
                 <TableCell> {t('BID_AMOUNT')} </TableCell>
                 <TableCell> {t('BID_TARGET')} / {t('BID_UNIQUE_CLICKS')} </TableCell>
                 <TableCell> {t('BID_STATE')} </TableCell>
@@ -172,7 +177,7 @@ export const renderTableHeadStats = ({ t, side, }) => {
     )
 }
 
-export const renderCommonTableRowStats = ({ bidData, t, side }) => {
+export const renderCommonTableRowStats = ({ bidData, t, side, classes }) => {
     const statsUniqueClicks = bidData.statistics.daily.uniqueClick || 0
     return (
         <TableRow key={bidData._id}>
@@ -187,9 +192,11 @@ export const renderCommonTableRowStats = ({ bidData, t, side }) => {
                 />
             </TableCell>
             <TableCell
-            // className={classnames(theme.compactCol, theme.ellipsis)}
+                className={classnames(classes.compactCol)}
             >
-                {bidData._id}
+                <Typography noWrap>
+                    {bidData._id}
+                </Typography >
             </TableCell>
             <TableCell> {bidData._amount} </TableCell>
             <TableCell>
@@ -214,6 +221,8 @@ export const renderCommonTableRowStats = ({ bidData, t, side }) => {
         </TableRow >
     )
 }
+
+export const CommonTableRowStats = withStyles(styles)(renderCommonTableRowStats)
 
 export const getCommonBidData = ({ bid, t, side }) => {
 
@@ -241,7 +250,12 @@ export const getCommonBidData = ({ bid, t, side }) => {
             <span
             // className={theme.bidState}
             >
-                <FontIcon value={StateIcons[bid._state].icon} style={{ marginRight: 5, color: StateIcons[bid._state].color }} />
+                <Icon
+                    style={{ marginRight: 5, color: StateIcons[bid._state].color }}
+                >
+                    {StateIcons[bid._state].icon}
+                </Icon>
+                {/* <FontIcon value={StateIcons[bid._state].icon} style={{ marginRight: 5, color: StateIcons[bid._state].color }} /> */}
                 <span>{t(BidStatesLabels[bid._state])}</span>
             </span>,
         sideData: sideData,
@@ -380,18 +394,19 @@ export const getAdvertiserBidData = ({ bid, t, transactions, side, item, account
     const pendingVerify = (pendingState === BID_STATES.ConfirmedAdv.id) || (bid.unconfirmedStateId === BID_STATES.Completed.id)
     const pendingAcceptByPub = bid.unconfirmedStateId === BID_STATES.Accepted.id
 
-    bidData.cancelBtn = canCancel ? <CancelBid
-        icon={pendingCancel ? 'hourglass_empty' : ''}
-        adUnitId={bid._adUnitId}
-        bidId={bid._id}
-        placedBid={bid}
-        acc={account}
-        variant='outlined'
-        size='small'
-        // className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
-        onSave={onSave}
-        disabled={pendingCancel}
-    /> : null
+    bidData.cancelBtn = canCancel ?
+        <CancelBid
+            icon={pendingCancel ? 'hourglass_empty' : ''}
+            adUnitId={bid._adUnitId}
+            bidId={bid._id}
+            placedBid={bid}
+            acc={account}
+            variant='outlined'
+            size='small'
+            // className={classnames(theme.actionBtn, RTButtonTheme.inverted, RTButtonTheme.dark)}
+            onSave={onSave}
+            disabled={pendingCancel}
+        /> : null
 
     bidData.verifyBtn = canVerify ?
         <VerifyBid
@@ -424,12 +439,15 @@ export const getAdvertiserBidData = ({ bid, t, transactions, side, item, account
             disabled={pendingRefund}
         /> : null
 
-    bidData.pendingAcceptByPub = canCancel && pendingAcceptByPub ?
-        <TooltipIconButton
-            icon='warning'
-            tooltip={t('WARNING_PENDING_ACCEPT_BY_PUB')}
-            className={RTButtonTheme.warning}
-        /> : null
+    bidData.pendingAcceptByPub = (canCancel && pendingAcceptByPub) &&
+        <Tooltip
+            title={t('WARNING_PENDING_ACCEPT_BY_PUB')}
+        >
+            <IconButton
+            >
+                <WarningIcon />
+            </IconButton>
+        </Tooltip >
 
     return bidData
 }

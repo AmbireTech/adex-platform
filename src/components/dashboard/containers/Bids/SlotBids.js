@@ -18,7 +18,7 @@ import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-con
 import { AcceptBid, GiveupBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
 import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS_NO_STATE } from 'constants/misc'
-import { getCommonBidData, renderCommonTableRow, renderTableHead, searchMatch, getPublisherBidData, getBidData } from './BidsCommon'
+import { getCommonBidData, BidCommonTableRow, renderTableHead, searchMatch, getPublisherBidData, getBidData } from './BidsCommon'
 import { getAddrBids, sortBids } from 'services/store-data/bids'
 import { getBidEvents } from 'services/adex-node/actions'
 import { IconButton } from 'react-toolbox/lib/button'
@@ -116,7 +116,7 @@ export class SlotBids extends Component {
             onSave: this.getBids
         })
 
-        return renderCommonTableRow({ bidData, t })
+        return <BidCommonTableRow bidData={bidData} t={t} key={bidData._id} />
     }
 
     renderRows = (items) =>
