@@ -3,31 +3,30 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import theme from './theme.css'
+// import theme from './theme.css'
 import datepickerTheme from './datepicker.css'
 import statisticsTheme from './bidsStatisticsTheme.css'
 import { Grid, Row, Col } from 'react-flexbox-grid'
-import { BidsStatusBars, BidsStatusPie, BidsTimeStatistics } from 'components/dashboard/charts/slot'
+import { BidsTimeStatistics } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
 import { exchange as ExchangeConstants } from 'adex-constants'
 import { getBidEvents } from 'services/adex-node/actions'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
-import Navigation from 'react-toolbox/lib/navigation'
 import moment from 'moment'
 import Dropdown from 'components/common/dropdown'
-// import ItemsList from './ItemsList'
 import ListWithControls from 'components/dashboard/containers/Lists/ListWithControls'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
 import { CommonTableRowStats, renderTableHeadStats, searchMatch, getBidData } from './BidsCommon'
 import Rows from 'components/dashboard/collection/Rows'
 import classnames from 'classnames'
-import DatePicker from 'react-toolbox/lib/date_picker'
+// import DatePicker from 'react-toolbox/lib/date_picker'
+import DatePicker from 'components/common/DatePicker'
 import FontIcon from 'react-toolbox/lib/font_icon'
-import ProgressBar from 'react-toolbox/lib/progress_bar'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import Paper from '@material-ui/core/Paper'
 import CsvDownloadBtn from 'components/common/csv_dl_btn/CsvDownloadBtn'
 import { adxToFloatView } from 'services/smart-contracts/utils'
-import { Card } from 'react-toolbox/lib/card'
 import { intervalsMs, DATETIME_EXPORT_FORMAT } from 'helpers/timeHelpers'
 import FullscreenIcon from '@material-ui/icons/Fullscreen'
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit'
@@ -233,22 +232,25 @@ export class BidsStatistics extends Component {
         return (
             <div>
                 <Grid fluid >
-                    <Row top='xs' className={theme.itemsListControls}>
+                    <Row
+                        top='xs'
+                        // className={theme.itemsListControls}
+                    >
                         {Object.keys(data.live).length ?
                             <this.resizableCol id='LIVE_CHART' >
-                                <Card raised className={statisticsTheme.chartCard}>
+                                <Paper raised className={statisticsTheme.chartCard}>
                                     <this.chartActions
                                         btnID='LIVE_CHART'
                                         stats={stats.live}
                                         fileName={this.getExportFileName({ intervalType: 'live' })}
                                     />
                                     <BidsTimeStatistics data={data.live} t={t} options={{ title: t('CHART_LIVE_TITLE'), col: this.isInFullWidthChart('LIVE_CHART') ? 12 : 6 }} />
-                                </Card>
+                                </Paper>
                             </this.resizableCol >
                             : null}
                         {Object.keys(data.hourly).length ?
                             <this.resizableCol id='HOURLY_CHART' >
-                                <Card raised className={statisticsTheme.chartCard}>
+                                <Paper raised className={statisticsTheme.chartCard}>
                                     <Dropdown
                                         source={Object.keys(data.hourly).map((key) => { return { value: key, label: key } })}
                                         onChange={(val) => this.setState({ hourlyDaySelected: val })}
@@ -269,20 +271,20 @@ export class BidsStatistics extends Component {
                                             </div>
                                         )
                                     })}
-                                </Card>
+                                </Paper>
                             </this.resizableCol >
                             : null}
                         {Object.keys(data.daily).length ?
 
                             <this.resizableCol id='DAILY_CHART' >
-                                <Card raised className={statisticsTheme.chartCard}>
+                                <Paper raised className={statisticsTheme.chartCard}>
                                     <this.chartActions
                                         btnID='DAILY_CHART'
                                         stats={stats.daily}
                                         fileName={this.getExportFileName({ intervalType: 'daily' })}
                                     />
                                     <BidsTimeStatistics data={data.daily} t={t} options={{ title: t('CHART_DAILY_TITLE'), col: this.isInFullWidthChart('DAILY_CHART') ? 12 : 6 }} />
-                                </Card>
+                                </Paper>
                             </this.resizableCol >
 
                             : null}
@@ -444,7 +446,6 @@ export class BidsStatistics extends Component {
                     >
                         <div>
                             <Button
-                                color='primary'
                                 className={classnames(classes.navButton, { [classes.active]: filterIndex === 0 })}
                                 onClick={() => this.applyPeriodFilter({ start: intervalsMs.last24Hours.start, end: intervalsMs.last24Hours.end, filterIndex: 0, label: 'LABEL_LAST_24H' })}
                             >
@@ -452,7 +453,6 @@ export class BidsStatistics extends Component {
                             </Button>
 
                             <Button
-                                color='primary'
                                 className={classnames(classes.navButton, { [classes.active]: filterIndex === 1 })}
                                 onClick={() => this.applyPeriodFilter({ start: intervalsMs.thisWeek.start, end: intervalsMs.thisWeek.end, filterIndex: 1, label: 'LABEL_THIS_WEEK' })}
                             >
@@ -460,7 +460,6 @@ export class BidsStatistics extends Component {
                             </Button>
 
                             <Button
-                                color='primary'
                                 className={classnames(classes.navButton, { [classes.active]: filterIndex === 2 })}
                                 onClick={() => this.applyPeriodFilter({ start: intervalsMs.lastWeek.start, end: intervalsMs.lastWeek.end, filterIndex: 2, label: 'LABEL_LAST_WEEK' })}
                             >
@@ -468,7 +467,6 @@ export class BidsStatistics extends Component {
                             </Button>
 
                             <Button
-                                color='primary'
                                 className={classnames(classes.navButton, { [classes.active]: filterIndex === 3 })}
                                 onClick={() => this.applyPeriodFilter({ start: intervalsMs.thisMonth.start, end: intervalsMs.thisMonth.end, filterIndex: 3, label: 'LABEL_THIS_MONTH' })}
                             >
@@ -476,7 +474,6 @@ export class BidsStatistics extends Component {
                             </Button>
 
                             <Button
-                                color='primary'
                                 className={classnames(classes.navButton, { [classes.active]: filterIndex === 4 })}
                                 onClick={() => this.applyPeriodFilter({ start: intervalsMs.lastMonth.start, end: intervalsMs.lastMonth.end, filterIndex: 4, label: 'LABEL_LAST_MONTH' })}
                             >
@@ -488,39 +485,53 @@ export class BidsStatistics extends Component {
                         className={classnames(classes.navRight, datepickerTheme.statsDatePicker, { [datepickerTheme.active]: filterIndex === 5 })}
 
                     >
-                        <FontIcon value="date_range" />
-                        <span>{t('from')} </span>
-                        <DatePicker
-                            label={this.props.t('from', { isProp: true })}
-                            // minDate={now}
-                            maxDate={now}
-                            onChange={(val) => { this.handleChangeDatepickerChange('from', val) }}
-                            value={from}
-                            className={datepickerTheme.datepicker}
-                            theme={datepickerTheme}
-                            inputFormat={this.dateFormat}
-                            size={moment(from).format('DD MMMM').length} /** temp fix */
-                        />
-                        <span>{t('to')} </span>
-                        <DatePicker
-                            label={this.props.t('to', { isProp: true })}
-                            minDate={from || now}
-                            maxDate={now}
-                            onChange={(val) => { this.handleChangeDatepickerChange('to', val) }}
-                            value={to}
-                            className={datepickerTheme.datepicker}
-                            theme={datepickerTheme}
-                            inputFormat={this.dateFormat}
-                            size={moment(to).format('DD MMMM').length} /** temp fix */
-                        />
-                        <Button
-                            // inverse
-                            // variant='raised'
-                            disabled={intervalErr}
-                            onClick={() => this.applyPeriodFilter({ start: moment(from).valueOf(), end: moment(to).valueOf(), filterIndex: 5 })}
+                        {/* <FontIcon value="date_range" /> */}
+                        {/* <span>{t('from')} </span> */}
+                        <div
+                            className={classnames(classes.datepickerGroup)}
                         >
-                            {t('APPLY')}
-                        </Button>
+
+                            <div
+                                className={classnames(classes.datepicker)}
+                            >
+                                <DatePicker
+                                    label={this.props.t('from', { isProp: true })}
+                                    // minDate={now}
+                                    color='secondary'
+                                    maxDate={now}
+                                    onChange={(val) => { this.handleChangeDatepickerChange('from', val) }}
+                                    value={from}
+                                    // classes={{ input: classes.datepicker }}
+                                    theme={datepickerTheme}
+                                    inputFormat={this.dateFormat}
+                                    size={moment(from).format('DD MMMM').length} /** temp fix */
+                                />
+                            </div>
+                            {/* <span>{t('to')} </span> */}
+                            <div
+                                className={classnames(classes.datepicker)}
+                            >
+                                <DatePicker
+                                    label={this.props.t('to', { isProp: true })}
+                                    minDate={from || now}
+                                    maxDate={now}
+                                    onChange={(val) => { this.handleChangeDatepickerChange('to', val) }}
+                                    value={to}
+                                    theme={datepickerTheme}
+                                    inputFormat={this.dateFormat}
+                                    size={moment(to).format('DD MMMM').length} /** temp fix */
+                                />
+                            </div>
+
+
+                            <Button
+                                className={classnames(classes.applyBtn)}
+                                disabled={intervalErr}
+                                onClick={() => this.applyPeriodFilter({ start: moment(from).valueOf(), end: moment(to).valueOf(), filterIndex: 5 })}
+                            >
+                                {t('APPLY')}
+                            </Button>
+                        </div>
 
                     </div>
 
@@ -564,7 +575,7 @@ export class BidsStatistics extends Component {
 
                 {this.props.spinner ?
                     <div style={{ textAlign: 'center' }}>
-                        <ProgressBar type='circular' mode='indeterminate' multicolor />
+                        <CircularProgress />
                     </div>
                     :
 
