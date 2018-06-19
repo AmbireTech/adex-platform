@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-// import theme from './theme.css'
 import datepickerTheme from './datepicker.css'
 import statisticsTheme from './bidsStatisticsTheme.css'
 import { Grid, Row, Col } from 'react-flexbox-grid'
@@ -20,9 +19,7 @@ import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
 import { CommonTableRowStats, renderTableHeadStats, searchMatch, getBidData } from './BidsCommon'
 import Rows from 'components/dashboard/collection/Rows'
 import classnames from 'classnames'
-// import DatePicker from 'react-toolbox/lib/date_picker'
-import DatePicker from 'components/common/DatePicker'
-import FontIcon from 'react-toolbox/lib/font_icon'
+import { DatePickerContrast } from 'components/common/DatePicker'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Paper from '@material-ui/core/Paper'
 import CsvDownloadBtn from 'components/common/csv_dl_btn/CsvDownloadBtn'
@@ -234,7 +231,7 @@ export class BidsStatistics extends Component {
                 <Grid fluid >
                     <Row
                         top='xs'
-                        // className={theme.itemsListControls}
+                    // className={theme.itemsListControls}
                     >
                         {Object.keys(data.live).length ?
                             <this.resizableCol id='LIVE_CHART' >
@@ -434,6 +431,8 @@ export class BidsStatistics extends Component {
         const fromMs = from ? from.valueOf() : 0
         const toMs = to ? to.valueOf() : 0
 
+        console.log('classes', classes)
+
         //TODO: Add some info about this on the UI
         const intervalErr = toMs - fromMs > MAX_STATS_INTERVAL
         return (
@@ -482,47 +481,43 @@ export class BidsStatistics extends Component {
                         </div>
                     </div>
                     <div
-                        className={classnames(classes.navRight, datepickerTheme.statsDatePicker, { [datepickerTheme.active]: filterIndex === 5 })}
+                        className={classnames(classes.navRight)}
 
                     >
-                        {/* <FontIcon value="date_range" /> */}
-                        {/* <span>{t('from')} </span> */}
                         <div
                             className={classnames(classes.datepickerGroup)}
                         >
-
                             <div
-                                className={classnames(classes.datepicker)}
+                                className={classnames(classes.datepicker, { [classes.active]: filterIndex === 5 })}
                             >
-                                <DatePicker
+                                <DatePickerContrast
                                     label={this.props.t('from', { isProp: true })}
                                     // minDate={now}
                                     color='secondary'
                                     maxDate={now}
                                     onChange={(val) => { this.handleChangeDatepickerChange('from', val) }}
                                     value={from}
-                                    // classes={{ input: classes.datepicker }}
                                     theme={datepickerTheme}
-                                    inputFormat={this.dateFormat}
+                                    // inputFormat={this.dateFormat}
                                     size={moment(from).format('DD MMMM').length} /** temp fix */
+                                    margin='none'
                                 />
                             </div>
-                            {/* <span>{t('to')} </span> */}
                             <div
-                                className={classnames(classes.datepicker)}
+                                className={classnames(classes.datepicker, { [classes.active]: filterIndex === 5 })}
                             >
-                                <DatePicker
+                                <DatePickerContrast
                                     label={this.props.t('to', { isProp: true })}
                                     minDate={from || now}
                                     maxDate={now}
                                     onChange={(val) => { this.handleChangeDatepickerChange('to', val) }}
                                     value={to}
                                     theme={datepickerTheme}
-                                    inputFormat={this.dateFormat}
+                                    // inputFormat={this.dateFormat}
                                     size={moment(to).format('DD MMMM').length} /** temp fix */
+                                    margin='none'
                                 />
                             </div>
-
 
                             <Button
                                 className={classnames(classes.applyBtn)}
@@ -539,7 +534,7 @@ export class BidsStatistics extends Component {
                 <div className={statisticsTheme.subNav}>
                     <div>
                         <Button
-                            // className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: tabIndex === 0 })}
+                            className={classnames(classes.tabButton, { [classes.active]: tabIndex === 0 })}
                             color={tabIndex === 0 ? 'primary' : null}
                             icon='donut_large'
                             onClick={() => this.handleTabChange(0)}
@@ -547,7 +542,7 @@ export class BidsStatistics extends Component {
                             {t('CHARTS')}
                         </Button>
                         <Button
-                            // className={classnames(statisticsTheme.navButton, { [statisticsTheme.active]: tabIndex === 1 })}
+                            className={classnames(classes.tabButton, { [classes.active]: tabIndex === 1 })}
                             color={tabIndex === 1 ? 'primary' : null}
                             icon='list'
                             onClick={() => this.handleTabChange(1)}
@@ -559,9 +554,9 @@ export class BidsStatistics extends Component {
                         {!this.props.spinner ?
                             <div>
                                 {hastStatisticsForPeriod ?
-                                    <strong className={statisticsTheme.dataLabel}> {t('SHOW_FOR_PERIOD', { args: [t(this.state.currentPeriodLabel) || periodLabel] })} </strong>
+                                    <strong className={classes.dataLabel}> {t('SHOW_FOR_PERIOD', { args: [t(this.state.currentPeriodLabel) || periodLabel] })} </strong>
                                     :
-                                    <strong className={statisticsTheme.noDataLabel}> {t('NOTHING_TO_SHOW_FOR_PERIOD', { args: [t(this.state.currentPeriodLabel) || periodLabel] })} </strong>}
+                                    <strong className={classes.noDataLabel}> {t('NOTHING_TO_SHOW_FOR_PERIOD', { args: [t(this.state.currentPeriodLabel) || periodLabel] })} </strong>}
                                 {!!this.state.currentPeriodLabel ?
                                     <small> ({periodLabel}) </small>
                                     : null

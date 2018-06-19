@@ -1,5 +1,3 @@
-import { common } from "@material-ui/core/colors";
-
 export const styles = theme => {
     const spacing = theme.spacing.unit
     console.log('theme', theme)
@@ -36,30 +34,43 @@ export const styles = theme => {
             alignItems: 'center',
             flexWrap: 'wrap'
         },
+        tabButton: {
+            opacity: 0.6,
+        },
         navButton: {
             opacity: 0.6,
             marginRight: spacing,
             // marginBottom: spacing,
             color: theme.palette.primary.contrastText
         },
+        datepicker: {
+            marginTop: spacing,
+            marginRight: spacing,
+            opacity: 0.6,
+            '& input, & label': {
+                cursor: 'pointer'
+            }
+
+        },
         active: {
             opacity: 1,
-            texDecoration: 'underlined'
         },
         applyBtn: {
             color: theme.palette.common.white,
             backgroundColor: theme.palette.grey[900],
             marginRight: spacing
         },
-        datepicker: {
-            backgroundColor: theme.palette.common.white,
-            padding: spacing,
-            marginRight: spacing
-        },
         datepickerGroup: {
             display: 'flex',
             flexDirection: 'row',
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
+            alignItems: 'center'
+        },
+        dataLabel: {
+            color: theme.palette.primary.main
+        },
+        noDataLabel: {
+            color: theme.palette.error.main
         }
     }
 }
