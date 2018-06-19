@@ -14,6 +14,8 @@ import { PersistGate } from 'redux-persist/es/integration/react'
 import Root from './Root'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import { themeMUI } from './themeMUi'
+import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils';
+import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
 
 // window.TREZOR_POPUP_PATH = 'https://localhost/'
 // window.TREZOR_POPUP_ORIGIN = 'http://localhost'
@@ -38,11 +40,13 @@ class App extends Component {
             <ConnectedRouter history={history} >
               <div className="adex-dapp">
                 <MuiThemeProvider theme={themeMUI}>
-                  <Switch >
-                    <Root />
-                  </Switch>
-                  <Toast />
-                  <Confirm />
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <Switch >
+                      <Root />
+                    </Switch>
+                    <Toast />
+                    <Confirm />
+                  </MuiPickersUtilsProvider>
                 </MuiThemeProvider>
               </div>
             </ConnectedRouter>
