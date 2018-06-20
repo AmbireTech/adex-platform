@@ -7,7 +7,7 @@ import moment from 'moment'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
-import TableCell from '@material-ui/core/TableCell'
+import TableCellMui from '@material-ui/core/TableCell'
 import IconButton from '@material-ui/core/IconButton'
 import WithDialog from 'components/common/dialog/WithDialog'
 import classnames from 'classnames'
@@ -25,6 +25,14 @@ const RRAnchor = withReactRouterLink(Anchor)
 const ItemIpfsDetailsDialog = WithDialog(ItemIpfsDetails)
 
 const { BID_STATES, BidStatesLabels } = ExchangeConstants
+
+const TableCell = ({ children, ...rest }) =>
+    <TableCellMui
+        padding='dense'
+        {...rest}
+    >
+        {children}
+    </TableCellMui >
 
 export const StateIcons = {
     [BID_STATES.DoesNotExist.id]: { icon: 'more_horiz', color: '#0277BD' },
@@ -76,7 +84,7 @@ export const renderTableHead = ({ t, side, }) => {
     return (
         <TableHead>
             <TableRow>
-                <TableCell numeric> {t('DETAILS')} </TableCell>
+                <TableCell> {t('DETAILS')} </TableCell>
                 <TableCell > {t('BID_AMOUNT')} </TableCell>
                 <TableCell> {t('BID_TARGET')} / {t('BID_UNIQUE_CLICKS')} </TableCell>
                 <TableCell> {t('BID_STATE')} </TableCell>
@@ -99,7 +107,7 @@ export const renderCommonTableRow = ({ bidData, t, side, classes = {} }) => {
             key={bidData._id}
             hover={true}
         >
-            <TableCell padding='dense'>
+            <TableCell>
                 <BidDetailWithDialog
                     btnLabel=''
                     title={bidData._id}
@@ -109,22 +117,19 @@ export const renderCommonTableRow = ({ bidData, t, side, classes = {} }) => {
                     iconButton
                 />
             </TableCell>
-            <TableCell padding='dense'> {bidData._amount} </TableCell>
-            <TableCell padding='dense'>
+            <TableCell> {bidData._amount} </TableCell>
+            <TableCell>
                 {bidData._target} / {bidData.clicksCount}
             </TableCell>
-            <TableCell padding='dense'> {bidData._state} </TableCell>
+            <TableCell> {bidData._state} </TableCell>
             <TableCell
-                padding='dense'
                 className={classnames(classes.compactCol)}
             >
                 <Typography noWrap>
                     {bidData.sideData.owner}
                 </Typography>
             </TableCell>
-            <TableCell
-                padding='dense'
-            >
+            <TableCell>
                 <div>
                     {bidData._adSlot}
                 </div>
@@ -132,20 +137,18 @@ export const renderCommonTableRow = ({ bidData, t, side, classes = {} }) => {
                     {bidData._adUnit}
                 </div>
             </TableCell>
-            <TableCell padding='dense'>
+            <TableCell>
                 <div> {bidData.timeoutLabel} </div>
                 <div> {bidData.acceptedLabel} </div>
                 <div> {bidData.bidExpiresLabel} </div>
             </TableCell>
             <TableCell
-                padding='dense'
                 className={classnames(classes.compactCol, classes.ellipsis)}
             >
                 <div> {bidData._publisherConfirmation} </div>
                 <div> {bidData._advertiserConfirmation} </div>
             </TableCell>
-            <TableCell
-                padding='dense'>
+            <TableCell>
                 {bidData.cancelBtn || null}
                 {bidData.pendingAcceptByPub || null}
                 {bidData.verifyBtn || null}

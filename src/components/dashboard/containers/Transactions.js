@@ -8,7 +8,9 @@ import theme from './theme.css'
 import classnames from 'classnames'
 import { exchange as ExchangeConstants } from 'adex-constants'
 import Rows from 'components/dashboard/collection/Rows'
-import { TableHead, TableRow, TableCell } from 'react-toolbox/lib/table'
+import TableCellMui from '@material-ui/core/TableCell'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
 import Translate from 'components/translate/Translate'
 import moment from 'moment'
 import Anchor from 'components/common/anchor/anchor'
@@ -21,6 +23,14 @@ const SORT_PROPERTIES = [
     { value: 'trMethod', label: '' },
     { value: '_id', label: '' },
 ]
+
+const TableCell = ({ children, ...rest }) =>
+    <TableCellMui
+        padding='dense'
+        {...rest}
+    >
+        {!!children && children}
+    </TableCellMui >
 
 class Transactions extends Component {
 
@@ -36,11 +46,13 @@ class Transactions extends Component {
         let t = this.props.t
         return (
             <TableHead>
-                <TableCell> {t('TRANS_METHOD')} </TableCell>
-                <TableCell> {t('TRANS_ID')} </TableCell>
-                <TableCell> {t('TRANS_NONCE')} </TableCell>
-                <TableCell> {t('TRANS_STATUS')} </TableCell>
-                <TableCell> {t('TRANS_SENDING_TIME')} </TableCell>
+                <TableRow>
+                    <TableCell> {t('TRANS_METHOD')} </TableCell>
+                    <TableCell> {t('TRANS_ID')} </TableCell>
+                    <TableCell> {t('TRANS_NONCE')} </TableCell>
+                    <TableCell> {t('TRANS_STATUS')} </TableCell>
+                    <TableCell> {t('TRANS_SENDING_TIME')} </TableCell>
+                </TableRow>
             </TableHead>
         )
     }
