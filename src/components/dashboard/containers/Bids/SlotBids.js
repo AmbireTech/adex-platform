@@ -4,28 +4,18 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import theme from './theme.css'
-import RTButtonTheme from 'styles/RTButton.css'
 import ListWithControls from 'components/dashboard/containers/Lists/ListWithControls'
 import Rows from 'components/dashboard/collection/Rows'
-import { Tab, Tabs } from 'react-toolbox'
-import { Grid, Row, Col } from 'react-flexbox-grid'
-import BidsStatsGenerator from 'helpers/dev/bidsStatsGenerator'
-import { BidsStatusBars, BidsStatusPie, BidsTimeStatistics } from 'components/dashboard/charts/slot'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
 import Translate from 'components/translate/Translate'
 import { getSlotBids, getAvailableBids } from 'services/adex-node/actions'
-import { items as ItemsConstants, exchange as ExchangeConstants } from 'adex-constants'
-import { AcceptBid, GiveupBid, VerifyBid } from 'components/dashboard/forms/web3/transactions'
-import classnames from 'classnames'
+// import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS_NO_STATE } from 'constants/misc'
-import { getCommonBidData, BidCommonTableRow, renderTableHead, searchMatch, getPublisherBidData, getBidData } from './BidsCommon'
+import { BidCommonTableRow, renderTableHead, searchMatch, getBidData } from './BidsCommon'
 import { getAddrBids, sortBids } from 'services/store-data/bids'
-import { getBidEvents } from 'services/adex-node/actions'
-import { IconButton } from 'react-toolbox/lib/button'
 import BidsStatistics from './BidsStatistics'
-import statisticsTheme from './bidsStatisticsTheme.css'
-
-const { BID_STATES, BidStatesLabels } = ExchangeConstants
+import AppBar from '@material-ui/core/AppBar'
 
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
 
@@ -42,6 +32,13 @@ export class SlotBids extends Component {
             bids: [],
             openBids: [],
             statsBids: []
+        }
+    }
+
+    componentWillMount() {
+        this.getBids()
+        if (!this.props.getSlotBids) {
+            this.props.actions.updateNav('navTitle', this.props.t('ALL_BIDS'))
         }
     }
 
@@ -95,11 +92,7 @@ export class SlotBids extends Component {
         }
     }
 
-    componentWillMount() {
-        this.getBids()
-    }
-
-    handleTabChange = (index) => {
+    handleTabChange = (event, index) => {
         this.setState({ tabIndex: index })
     }
 
@@ -131,8 +124,8 @@ export class SlotBids extends Component {
         />
 
     render() {
-        let openBids = this.state.openBids || []
-        let t = this.props.t
+        const openBids = this.state.openBids || []
+        const { classes, t } = this.props
         let sorted = []
 
         if (this.props.getSlotBids) {
@@ -141,33 +134,48 @@ export class SlotBids extends Component {
             sorted = this.props.pubBids
         }
 
+        const { tabIndex } = this.state
+        const indexShift = !!this.props.getSlotBids ? 1 : 0
+
         return (
             <div>
-                {this.props.getSlotBids ? null :
-                    <div className={classnames(theme.heading, theme.Transactions)}>
-                        <h2 > {t('ALL_BIDS')} </h2>
-                    </div>
-                }
-                <Tabs
-                    theme={theme}
-                    index={this.state.tabIndex}
-                    onChange={this.handleTabChange}
+                <AppBar
+                    position='static'
+                    color='default'
                 >
-                    {this.props.getSlotBids ?
-                        <Tab label={t('OPEN_BIDS')}>
-                            <div>
-                                <ListWithControls
-                                    items={openBids}
-                                    listMode='rows'
-                                    renderRows={this.renderRows}
-                                    sortProperties={SORT_PROPERTIES_BIDS}
-                                    searchMatch={this.searchMatch}
-                                    filterProperties={FILTER_PROPERTIES_BIDS_NO_STATE}
-                                />
-                            </div>
-                        </Tab>
-                        : null}
-                    <Tab label={t('BIDS_READY_TO_VERIFY')}>
+                    <Tabs
+                        value={this.state.tabIndex}
+                        onChange={this.handleTabChange}
+                        scrollable
+                        scrollButtons='off'
+                        indicatorColor='primary'
+                        textColor='primary'
+                    >
+                        {!!this.props.getSlotBids &&
+                            <Tab label={t('OPEN_BIDS')} />
+                        }
+                        <Tab label={t('BIDS_READY_TO_VERIFY')} />
+                        <Tab label={t('BIDS_ACTIVE')} />
+                        <Tab label={t('BIDS_CLOSED')} />
+                        <Tab label={t('STATISTICS')} />
+                    </Tabs>
+                </AppBar>
+                <div
+                    style={{ marginTop: 10 }}
+                >
+                    {
+                        (!!this.props.getSlotBid && tabIndex === 0) &&
+                        <ListWithControls
+                            items={openBids}
+                            listMode='rows'
+                            renderRows={this.renderRows}
+                            sortProperties={SORT_PROPERTIES_BIDS}
+                            searchMatch={this.searchMatch}
+                            filterProperties={FILTER_PROPERTIES_BIDS_NO_STATE}
+                        />
+                    }
+                    {
+                        tabIndex === (0 + indexShift) &&
                         <ListWithControls
                             items={sorted.action}
                             listMode='rows'
@@ -176,8 +184,9 @@ export class SlotBids extends Component {
                             searchMatch={searchMatch}
                             filterProperties={FILTER_PROPERTIES_BIDS}
                         />
-                    </Tab>
-                    <Tab label={t('BIDS_ACTIVE')}>
+                    }
+                    {
+                        tabIndex === (1 + indexShift) &&
                         <ListWithControls
                             items={sorted.active}
                             listMode='rows'
@@ -186,8 +195,9 @@ export class SlotBids extends Component {
                             searchMatch={searchMatch}
                             filterProperties={FILTER_PROPERTIES_BIDS}
                         />
-                    </Tab>
-                    <Tab label={t('BIDS_CLOSED')}>
+                    }
+                    {
+                        tabIndex === (2 + indexShift) &&
                         <ListWithControls
                             items={sorted.closed}
                             listMode='rows'
@@ -196,11 +206,12 @@ export class SlotBids extends Component {
                             searchMatch={this.searchMatch}
                             filterProperties={FILTER_PROPERTIES_BIDS}
                         />
-                    </Tab>
-                    <Tab className={theme.noPaddingTab} label={t('STATISTICS')}>
+                    }
+                    {
+                        tabIndex === (3 + indexShift) &&
                         <BidsStatistics bids={sorted.action.concat(sorted.active, sorted.closed)} onSave={this.getBids} />
-                    </Tab>
-                </Tabs>
+                    }
+                </div>
             </div>
         )
     }

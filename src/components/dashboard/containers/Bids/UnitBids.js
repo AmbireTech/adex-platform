@@ -3,16 +3,17 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import theme from './theme.css'
-import { Tab, Tabs } from 'react-toolbox'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
 import ListWithControls from 'components/dashboard/containers/Lists/ListWithControls'
 import Rows from 'components/dashboard/collection/Rows'
 import Translate from 'components/translate/Translate'
-import classnames from 'classnames'
+// import classnames from 'classnames'
 import { SORT_PROPERTIES_BIDS, FILTER_PROPERTIES_BIDS } from 'constants/misc'
 import { BidCommonTableRow, renderTableHead, searchMatch, getBidData } from './BidsCommon'
 import { getAddrBids } from 'services/store-data/bids'
 import BidsStatistics from './BidsStatistics'
+import AppBar from '@material-ui/core/AppBar'
 
 export class UnitBids extends Component {
     constructor(props) {
@@ -24,6 +25,12 @@ export class UnitBids extends Component {
         this.state = {
             tabIndex: 4 || tabIndex,
             detailsOpen: false
+        }
+    }
+
+    componentWillMount() {
+        if (!this.props.getUnitBids) {
+            this.props.actions.updateNav('navTitle', this.props.t('ALL_BIDS'))
         }
     }
 
@@ -45,7 +52,7 @@ export class UnitBids extends Component {
         }
     }
 
-    handleTabChange = (index) => {
+    handleTabChange = (event, index) => {
         this.setState({ tabIndex: index })
     }
 
@@ -89,7 +96,7 @@ export class UnitBids extends Component {
         />
 
     render() {
-        let t = this.props.t
+        const { classes, t } = this.props
         let sorted = null
 
         if (this.props.getUnitBids) {
@@ -98,19 +105,34 @@ export class UnitBids extends Component {
             sorted = this.props.advBids || {}
         }
 
+        const { tabIndex } = this.state
+
         return (
             <div>
-                {this.props.getUnitBids ? null :
-                    <div className={classnames(theme.heading, theme.Transactions)}>
-                        <h2 > {t('ALL_BIDS')} </h2>
-                    </div>
-                }
-                <Tabs
-                    theme={theme}
-                    index={this.state.tabIndex}
-                    onChange={this.handleTabChange}
+                <AppBar
+                    position='static'
+                    color='default'
                 >
-                    <Tab label={t('BIDS_READY_TO_VERIFY')}>
+                    <Tabs
+                        value={tabIndex}
+                        onChange={this.handleTabChange}
+                        scrollable
+                        scrollButtons='off'
+                        indicatorColor='primary'
+                        textColor='primary'
+                    >
+                        <Tab label={t('BIDS_READY_TO_VERIFY')} />
+                        <Tab label={t('BIDS_ACTIVE')} />
+                        <Tab label={t('BIDS_OPEN')} />
+                        <Tab label={t('BIDS_CLOSED')} />
+                        <Tab label={t('STATISTICS')} />
+                    </Tabs>
+                </AppBar>
+                <div
+                    style={{ marginTop: 10 }}
+                >
+                    {
+                        (!!tabIndex === 0) &&
                         <ListWithControls
                             items={sorted.action}
                             listMode='rows'
@@ -119,8 +141,9 @@ export class UnitBids extends Component {
                             searchMatch={searchMatch}
                             filterProperties={FILTER_PROPERTIES_BIDS}
                         />
-                    </Tab>
-                    <Tab label={t('BIDS_ACTIVE')}>
+                    }
+                    {
+                        !!(tabIndex === 1) &&
                         <ListWithControls
                             items={sorted.active}
                             listMode='rows'
@@ -129,8 +152,9 @@ export class UnitBids extends Component {
                             searchMatch={searchMatch}
                             filterProperties={FILTER_PROPERTIES_BIDS}
                         />
-                    </Tab>
-                    <Tab label={t('BIDS_OPEN')}>
+                    }
+                    {
+                        !!(tabIndex === 2) &&
                         <ListWithControls
                             items={sorted.open}
                             listMode='rows'
@@ -139,8 +163,9 @@ export class UnitBids extends Component {
                             searchMatch={searchMatch}
                             filterProperties={FILTER_PROPERTIES_BIDS}
                         />
-                    </Tab>
-                    <Tab label={t('BIDS_CLOSED')}>
+                    }
+                    {
+                        !!(tabIndex === 3) &&
                         <ListWithControls
                             items={sorted.closed}
                             listMode='rows'
@@ -149,11 +174,12 @@ export class UnitBids extends Component {
                             searchMatch={searchMatch}
                             filterProperties={FILTER_PROPERTIES_BIDS}
                         />
-                    </Tab>
-                    <Tab label={t('STATISTICS')}>
+                    }
+                    {
+                        !!(tabIndex === 4) &&
                         <BidsStatistics bids={sorted.action.concat(sorted.active, sorted.closed)} onSave={this.onSave} />
-                    </Tab>
-                </Tabs>
+                    }
+                </div>
 
             </div>
         )

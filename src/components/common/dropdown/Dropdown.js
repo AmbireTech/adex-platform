@@ -28,6 +28,7 @@ class Dropdown extends React.Component {
             error = false,
             helperText,
             // margin = '',
+            fullWidth = false,
             className
 
         } = this.props
@@ -38,6 +39,7 @@ class Dropdown extends React.Component {
                 className={classnames(className, classes.formControl)}
                 disabled={disabled}
                 error={error}
+                fullWidth={fullWidth}
             >
                 <InputLabel htmlFor={htmlId}>{label}</InputLabel>
                 <Select
