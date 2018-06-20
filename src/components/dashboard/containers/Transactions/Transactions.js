@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import ListWithControls from './Lists/ListWithControls'
-import theme from './theme.css'
+import ListWithControls from 'components/dashboard/containers/Lists/ListWithControls'
 import classnames from 'classnames'
 import { exchange as ExchangeConstants } from 'adex-constants'
 import Rows from 'components/dashboard/collection/Rows'
@@ -14,6 +13,9 @@ import TableRow from '@material-ui/core/TableRow'
 import Translate from 'components/translate/Translate'
 import moment from 'moment'
 import Anchor from 'components/common/anchor/anchor'
+import Typography from '@material-ui/core/Typography'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 const { TxStatusLabels } = ExchangeConstants
 
@@ -61,15 +63,17 @@ class Transactions extends Component {
     renderTableRow(transaction, index, { to, selected }) {
         if (!transaction) return null
 
-        let t = this.props.t
+        let { t, classes } = this.props
 
         return (
             <TableRow key={transaction._id || index}>
                 <TableCell> {t(transaction.trMethod)} </TableCell>
                 <TableCell
-                    className={classnames(theme.compactCol, theme.ellipsis)}
+                    className={classnames(classes.compactCol)}
                 >
-                    <Anchor target='_blank' href={process.env.ETH_SCAN_TX_HOST + transaction._id} > {transaction._id} </Anchor>
+                    <Typography noWrap>
+                        <Anchor target='_blank' href={process.env.ETH_SCAN_TX_HOST + transaction._id} > {transaction._id} </Anchor>
+                    </Typography>
                 </TableCell>
                 <TableCell> {transaction.nonce} </TableCell>
                 <TableCell> {t(TxStatusLabels[transaction.status])} </TableCell>
@@ -149,4 +153,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(Transactions))
+)(withStyles(styles)(Translate(Transactions)))
