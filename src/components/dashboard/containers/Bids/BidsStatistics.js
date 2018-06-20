@@ -3,9 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import datepickerTheme from './datepicker.css'
-import statisticsTheme from './bidsStatisticsTheme.css'
-import { Grid, Row, Col } from 'react-flexbox-grid'
+import Grid from '@material-ui/core/Grid'
 import { BidsTimeStatistics } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
 import { exchange as ExchangeConstants } from 'adex-constants'
@@ -27,8 +25,11 @@ import { adxToFloatView } from 'services/smart-contracts/utils'
 import { intervalsMs, DATETIME_EXPORT_FORMAT } from 'helpers/timeHelpers'
 import FullscreenIcon from '@material-ui/icons/Fullscreen'
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit'
+import DonutLargeIcon from '@material-ui/icons/DonutLarge'
+import ListIcon from '@material-ui/icons/List'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import AppBar from '@material-ui/core/AppBar'
 
 const { BidStatesLabels } = ExchangeConstants
 const SPINNER_ID = 'STATISTICS'
@@ -175,13 +176,14 @@ export class BidsStatistics extends Component {
     }
 
     chartActions = ({ btnID, stats, fileName }) => {
+        const { classes } = this.props
         return (
-            <div className={statisticsTheme.chartActions}>
-                {stats ?
+            <div className={classes.chartActions}>
+                {stats &&
                     <CsvDownloadBtn getData={() => {
                         return this.getChartCsvData({ stats: stats })
                     }} fileName={fileName} />
-                    : null}
+                }
 
                 <IconButton
                     onClick={() => this.toggleFullWidthChart(btnID)}
@@ -195,13 +197,14 @@ export class BidsStatistics extends Component {
     resizableCol = ({ id, stateId, children }) => {
         const cols = this.isInFullWidthChart(id) ? 12 : 6
         return (
-            <Col
+            <Grid
+                item
                 key={id + cols} // NOTE: hack to escape react optimization and rerender the col
                 xs={12}
                 sm={12}
                 md={cols}>
                 {children}
-            </Col>
+            </Grid>
         )
     }
 
@@ -224,68 +227,64 @@ export class BidsStatistics extends Component {
     // TODO: Separate components for different charts
     renderBidsPeriodStatistics = ({ stats }) => {
         const data = this.bidsStatsData({ stats: stats })
-        const t = this.props.t
+        const { t, classes } = this.props
         const hourlyDataValue = this.state.hourlyDaySelected || Object.keys(data.hourly)[0]
         return (
             <div>
-                <Grid fluid >
-                    <Row
-                        top='xs'
-                    // className={theme.itemsListControls}
-                    >
-                        {Object.keys(data.live).length ?
-                            <this.resizableCol id='LIVE_CHART' >
-                                <Paper raised className={statisticsTheme.chartCard}>
-                                    <this.chartActions
-                                        btnID='LIVE_CHART'
-                                        stats={stats.live}
-                                        fileName={this.getExportFileName({ intervalType: 'live' })}
-                                    />
-                                    <BidsTimeStatistics data={data.live} t={t} options={{ title: t('CHART_LIVE_TITLE'), col: this.isInFullWidthChart('LIVE_CHART') ? 12 : 6 }} />
-                                </Paper>
-                            </this.resizableCol >
-                            : null}
-                        {Object.keys(data.hourly).length ?
-                            <this.resizableCol id='HOURLY_CHART' >
-                                <Paper raised className={statisticsTheme.chartCard}>
-                                    <Dropdown
-                                        source={Object.keys(data.hourly).map((key) => { return { value: key, label: key } })}
-                                        onChange={(val) => this.setState({ hourlyDaySelected: val })}
-                                        label={t('LABEL_DD_SELECT_DAY')}
-                                        value={hourlyDataValue}
-                                        htmlId='hourly-date-dd'
-                                        name='hourlyDataValue'
-                                    />
-                                    <this.chartActions
-                                        btnID='HOURLY_CHART'
-                                        stats={stats.hourly}
-                                        fileName={this.getExportFileName({ intervalType: 'hourly' })}
-                                    />
-                                    {Object.keys(data.hourly).map((key, index) => {
-                                        return (
-                                            <div key={key} style={{ display: (this.state.hourlyDaySelected === key) || (!this.state.hourlyDaySelected && index === 0) ? 'block' : 'none' }}>
-                                                <BidsTimeStatistics data={data.hourly[key]} t={t} options={{ title: t('CHART_HOURLY_TITLE', { args: ['(' + key + ')'] }), col: this.isInFullWidthChart('HOURLY_CHART') ? 12 : 6 }} />
-                                            </div>
-                                        )
-                                    })}
-                                </Paper>
-                            </this.resizableCol >
-                            : null}
-                        {Object.keys(data.daily).length ?
+                <Grid container spacing={8} >
+                    {!!Object.keys(data.live).length &&
+                        <this.resizableCol id='LIVE_CHART' >
+                            <Paper raised className={classes.chartPaper}>
+                                <this.chartActions
+                                    btnID='LIVE_CHART'
+                                    stats={stats.live}
+                                    fileName={this.getExportFileName({ intervalType: 'live' })}
+                                />
+                                <BidsTimeStatistics data={data.live} t={t} options={{ title: t('CHART_LIVE_TITLE'), col: this.isInFullWidthChart('LIVE_CHART') ? 12 : 6 }} />
+                            </Paper>
+                        </this.resizableCol >
+                    }
+                    {!!Object.keys(data.hourly).length &&
+                        <this.resizableCol id='HOURLY_CHART' >
+                            <Paper raised className={classes.chartPaper}>
+                                <this.chartActions
+                                    btnID='HOURLY_CHART'
+                                    stats={stats.hourly}
+                                    fileName={this.getExportFileName({ intervalType: 'hourly' })}
+                                />
+                                <Dropdown
+                                    fullWidth
+                                    source={Object.keys(data.hourly).map((key) => { return { value: key, label: key } })}
+                                    onChange={(val) => this.setState({ hourlyDaySelected: val })}
+                                    label={t('LABEL_DD_SELECT_DAY')}
+                                    value={hourlyDataValue}
+                                    htmlId='hourly-date-dd'
+                                    name='hourlyDataValue'
+                                />
+                                {Object.keys(data.hourly).map((key, index) => {
+                                    return (
+                                        <div key={key} style={{ display: (this.state.hourlyDaySelected === key) || (!this.state.hourlyDaySelected && index === 0) ? 'block' : 'none' }}>
+                                            <BidsTimeStatistics data={data.hourly[key]} t={t} options={{ title: t('CHART_HOURLY_TITLE', { args: ['(' + key + ')'] }), col: this.isInFullWidthChart('HOURLY_CHART') ? 12 : 6 }} />
+                                        </div>
+                                    )
+                                })}
+                            </Paper>
+                        </this.resizableCol >
+                    }
+                    {!!Object.keys(data.daily).length &&
 
-                            <this.resizableCol id='DAILY_CHART' >
-                                <Paper raised className={statisticsTheme.chartCard}>
-                                    <this.chartActions
-                                        btnID='DAILY_CHART'
-                                        stats={stats.daily}
-                                        fileName={this.getExportFileName({ intervalType: 'daily' })}
-                                    />
-                                    <BidsTimeStatistics data={data.daily} t={t} options={{ title: t('CHART_DAILY_TITLE'), col: this.isInFullWidthChart('DAILY_CHART') ? 12 : 6 }} />
-                                </Paper>
-                            </this.resizableCol >
+                        <this.resizableCol id='DAILY_CHART' >
+                            <Paper raised className={classes.chartPaper}>
+                                <this.chartActions
+                                    btnID='DAILY_CHART'
+                                    stats={stats.daily}
+                                    fileName={this.getExportFileName({ intervalType: 'daily' })}
+                                />
+                                <BidsTimeStatistics data={data.daily} t={t} options={{ title: t('CHART_DAILY_TITLE'), col: this.isInFullWidthChart('DAILY_CHART') ? 12 : 6 }} />
+                            </Paper>
+                        </this.resizableCol >
 
-                            : null}
-                    </Row>
+                    }
                 </Grid>
             </div>
         )
@@ -395,9 +394,13 @@ export class BidsStatistics extends Component {
 
         return (
             <div>
-                <CsvDownloadBtn getData={() => {
-                    return this.getTableCsvData({ bids: allBidsData })
-                }} fileName={this.getExportFileName({ intervalType: 'by_bid' })} />
+                <CsvDownloadBtn
+                    getData={() => {
+                        return this.getTableCsvData({ bids: allBidsData })
+                    }}
+                    fileName={this.getExportFileName({ intervalType: 'by_bid' })}
+                    size='small'
+                />
                 <ListWithControls
                     items={allBidsData}
                     listMode='rows'
@@ -431,13 +434,14 @@ export class BidsStatistics extends Component {
         const fromMs = from ? from.valueOf() : 0
         const toMs = to ? to.valueOf() : 0
 
-        console.log('classes', classes)
+        // console.log('classes', classes)
 
         //TODO: Add some info about this on the UI
         const intervalErr = toMs - fromMs > MAX_STATS_INTERVAL
         return (
             <div>
-                <div
+                <AppBar
+                    position='static'
                     className={classes.horizontal}
                 >
                     <div
@@ -445,6 +449,7 @@ export class BidsStatistics extends Component {
                     >
                         <div>
                             <Button
+                                size='small'
                                 className={classnames(classes.navButton, { [classes.active]: filterIndex === 0 })}
                                 onClick={() => this.applyPeriodFilter({ start: intervalsMs.last24Hours.start, end: intervalsMs.last24Hours.end, filterIndex: 0, label: 'LABEL_LAST_24H' })}
                             >
@@ -452,6 +457,7 @@ export class BidsStatistics extends Component {
                             </Button>
 
                             <Button
+                                size='small'
                                 className={classnames(classes.navButton, { [classes.active]: filterIndex === 1 })}
                                 onClick={() => this.applyPeriodFilter({ start: intervalsMs.thisWeek.start, end: intervalsMs.thisWeek.end, filterIndex: 1, label: 'LABEL_THIS_WEEK' })}
                             >
@@ -459,6 +465,7 @@ export class BidsStatistics extends Component {
                             </Button>
 
                             <Button
+                                size='small'
                                 className={classnames(classes.navButton, { [classes.active]: filterIndex === 2 })}
                                 onClick={() => this.applyPeriodFilter({ start: intervalsMs.lastWeek.start, end: intervalsMs.lastWeek.end, filterIndex: 2, label: 'LABEL_LAST_WEEK' })}
                             >
@@ -466,6 +473,7 @@ export class BidsStatistics extends Component {
                             </Button>
 
                             <Button
+                                size='small'
                                 className={classnames(classes.navButton, { [classes.active]: filterIndex === 3 })}
                                 onClick={() => this.applyPeriodFilter({ start: intervalsMs.thisMonth.start, end: intervalsMs.thisMonth.end, filterIndex: 3, label: 'LABEL_THIS_MONTH' })}
                             >
@@ -473,6 +481,7 @@ export class BidsStatistics extends Component {
                             </Button>
 
                             <Button
+                                size='small'
                                 className={classnames(classes.navButton, { [classes.active]: filterIndex === 4 })}
                                 onClick={() => this.applyPeriodFilter({ start: intervalsMs.lastMonth.start, end: intervalsMs.lastMonth.end, filterIndex: 4, label: 'LABEL_LAST_MONTH' })}
                             >
@@ -497,7 +506,6 @@ export class BidsStatistics extends Component {
                                     maxDate={now}
                                     onChange={(val) => { this.handleChangeDatepickerChange('from', val) }}
                                     value={from}
-                                    theme={datepickerTheme}
                                     // inputFormat={this.dateFormat}
                                     size={moment(from).format('DD MMMM').length} /** temp fix */
                                     margin='none'
@@ -512,7 +520,6 @@ export class BidsStatistics extends Component {
                                     maxDate={now}
                                     onChange={(val) => { this.handleChangeDatepickerChange('to', val) }}
                                     value={to}
-                                    theme={datepickerTheme}
                                     // inputFormat={this.dateFormat}
                                     size={moment(to).format('DD MMMM').length} /** temp fix */
                                     margin='none'
@@ -530,41 +537,39 @@ export class BidsStatistics extends Component {
 
                     </div>
 
-                </div>
-                <div className={statisticsTheme.subNav}>
+                </AppBar>
+                <div className={classes.subNav}>
                     <div>
                         <Button
+                            size='small'
                             className={classnames(classes.tabButton, { [classes.active]: tabIndex === 0 })}
                             color={tabIndex === 0 ? 'primary' : null}
-                            icon='donut_large'
                             onClick={() => this.handleTabChange(0)}
                         >
+                            <DonutLargeIcon className={classes.leftIcon} />
                             {t('CHARTS')}
                         </Button>
                         <Button
+                            size='small'
                             className={classnames(classes.tabButton, { [classes.active]: tabIndex === 1 })}
                             color={tabIndex === 1 ? 'primary' : null}
-                            icon='list'
                             onClick={() => this.handleTabChange(1)}
                         >
+                            <ListIcon className={classes.leftIcon} />
                             {t('TABLE')}
                         </Button>
                     </div>
-                    <div>
-                        {!this.props.spinner ?
-                            <div>
-                                {hastStatisticsForPeriod ?
-                                    <strong className={classes.dataLabel}> {t('SHOW_FOR_PERIOD', { args: [t(this.state.currentPeriodLabel) || periodLabel] })} </strong>
-                                    :
-                                    <strong className={classes.noDataLabel}> {t('NOTHING_TO_SHOW_FOR_PERIOD', { args: [t(this.state.currentPeriodLabel) || periodLabel] })} </strong>}
-                                {!!this.state.currentPeriodLabel ?
-                                    <small> ({periodLabel}) </small>
-                                    : null
-                                }
-                            </div>
-                            : null
-                        }
-                    </div>
+                    {!this.props.spinner &&
+                        <div>
+                            {hastStatisticsForPeriod ?
+                                <strong className={classes.dataLabel}> {t('SHOW_FOR_PERIOD', { args: [t(this.state.currentPeriodLabel) || periodLabel] })} </strong>
+                                :
+                                <strong className={classes.noDataLabel}> {t('NOTHING_TO_SHOW_FOR_PERIOD', { args: [t(this.state.currentPeriodLabel) || periodLabel] })} </strong>}
+                            {!!this.state.currentPeriodLabel &&
+                                <small> ({periodLabel}) </small>
+                            }
+                        </div>
+                    }
                 </div>
                 <br />
 
@@ -573,15 +578,14 @@ export class BidsStatistics extends Component {
                         <CircularProgress />
                     </div>
                     :
-
                     <div>
-                        {hastStatisticsForPeriod && this.state.tabIndex === 0 ?
-                            this.renderBidsPeriodStatistics({ stats: this.state.statistics })
-                            : null}
+                        {!!(hastStatisticsForPeriod && (this.state.tabIndex === 0)) &&
+                            <this.renderBidsPeriodStatistics stats={this.state.statistics} />
+                        }
 
-                        {hastStatisticsForPeriod && this.state.tabIndex === 1 ?
-                            this.renderBidsTable({ bids: this.state.bidsStats })
-                            : null}
+                        {!!(hastStatisticsForPeriod && (this.state.tabIndex === 1)) &&
+                            <this.renderBidsTable bids={this.state.bidsStats} />
+                        }
                     </div>
                 }
             </div>

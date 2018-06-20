@@ -25,6 +25,7 @@ export const styles = theme => {
             justifyContent: 'flex-end'
         },
         horizontal: {
+            padding: spacing,
             // paddingTop: spacing,
             // paddingBottom: spacing,
             backgroundColor: theme.palette.primary.main,
@@ -32,7 +33,8 @@ export const styles = theme => {
             justifyContent: 'space-between',
             flexWrap: 'nowrap',
             alignItems: 'center',
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
+            flexDirection: 'row'
         },
         tabButton: {
             opacity: 0.6,
@@ -71,6 +73,26 @@ export const styles = theme => {
         },
         noDataLabel: {
             color: theme.palette.error.main
+        },
+        chartPaper: {
+            padding: spacing,
+            // marginTop: spacing,
+            // marginRight: spacing,
+        },
+        leftIcon: {
+            marginRight: spacing
+        },
+        chartActions: {
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+        },
+        subNav: {
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between'
         }
     }
 }
