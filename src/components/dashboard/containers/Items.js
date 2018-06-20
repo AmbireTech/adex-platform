@@ -8,7 +8,7 @@ import theme from './theme.css'
 import classnames from 'classnames'
 import { items as ItemsConstants } from 'adex-constants'
 import moment from 'moment'
-import TableCell from '@material-ui/core/TableCell'
+import TableCellMui from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Tooltip from 'react-toolbox/lib/tooltip'
@@ -23,6 +23,14 @@ import Card from 'components/dashboard/collection/Card'
 import Translate from 'components/translate/Translate'
 
 const { ItemTypesNames, AdSizesByValue, AdTypesByValue, } = ItemsConstants
+
+const TableCell = ({ children, ...rest }) =>
+    <TableCellMui
+        padding='dense'
+        {...rest}
+    >
+        {!!children && children}
+    </TableCellMui >
 
 const TooltipButton = Tooltip(Button)
 const RRTableCell = withReactRouterLink(TableCell)

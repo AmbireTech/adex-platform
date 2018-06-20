@@ -7,7 +7,7 @@ import ListWithControls from 'components/dashboard/containers/Lists/ListWithCont
 import classnames from 'classnames'
 import { items as ItemsConstants } from 'adex-constants'
 import moment from 'moment'
-import TableCell from '@material-ui/core/TableCell'
+import TableCellMui from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Tooltip from '@material-ui/core/Tooltip'
@@ -29,6 +29,14 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
 const { ItemTypesNames } = ItemsConstants
+
+const TableCell = ({ children, ...rest }) =>
+    <TableCellMui
+        padding='dense'
+        {...rest}
+    >
+        {!!children && children}
+    </TableCellMui >
 
 const RRTableCell = withReactRouterLink(TableCell)
 const RRButton = withReactRouterLink(Button)
@@ -182,7 +190,7 @@ class ItemsList extends Component {
                     <Tooltip
                         title={t('TOOLTIP_UNARCHIVE')}
                         enterDelay={1000}
-                        // placement='top'
+                    // placement='top'
                     >
                         <IconButton
                             // label={t('UNARCHIVE')}
