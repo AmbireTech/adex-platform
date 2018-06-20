@@ -1,6 +1,5 @@
 import React from 'react'
 import Slider from '@material-ui/lab/Slider'
-import theme from './theme.css'
 import classnames from 'classnames'
 import IconButton from '@material-ui/core/IconButton'
 import ChevronLeft from '@material-ui/icons/ChevronLeft'

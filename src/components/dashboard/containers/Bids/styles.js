@@ -1,6 +1,6 @@
 export const styles = theme => {
     const spacing = theme.spacing.unit
-    console.log('theme', theme)
+    // console.log('theme', theme)
     // const iconButtonSize = 48 - (spacing * 2)
     return {
         compactCol: {
