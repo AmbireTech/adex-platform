@@ -6,15 +6,19 @@ import actions from 'actions'
 import { Channel as ChannelModel, AdSlot as AdSlotModel } from 'adex-models'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
 import ItemsList from 'components/dashboard/containers/ItemsList'
-// import theme from './theme.css'
 import AddItem from 'components/dashboard/containers/AddItem'
-import theme from 'components/dashboard/containers/theme.css'
 import Translate from 'components/translate/Translate'
 import { groupItemsForCollection } from 'helpers/itemsHelpers'
 import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import { NewSlotSteps } from 'components/dashboard/forms/NewItems'
 import { items as ItemsConstants } from 'adex-constants'
 import WithDialog from 'components/common/dialog/WithDialog'
+import AddIcon from '@material-ui/icons/Add'
+import AppBar from '@material-ui/core/AppBar'
+import Typography from '@material-ui/core/Typography'
+import Toolbar from '@material-ui/core/Toolbar'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 const { ItemsTypes } = ItemsConstants
 
@@ -37,50 +41,59 @@ export class Channel extends Component {
 
     render() {
         // let side = this.props.match.params.side
-        let t = this.props.t
-        let item = this.props.item
+        const { t, classes, item, } = this.props
         // let items = item._items || []
-        let propsSlots = { ...this.props.slots }
+        const propsSlots = { ...this.props.slots }
 
 
         if (!item) return (<h1>'404'</h1>)
 
         //TODO: Make it wit HOC for collection (campaing/channel)
-        let groupedSlots = groupItemsForCollection({ collectionId: item._id, allItems: propsSlots })
+        const groupedSlots = groupItemsForCollection({ collectionId: item._id, allItems: propsSlots })
 
-        let slots = groupedSlots.items
-        let otherSlots = groupedSlots.otherItems
+        const slots = groupedSlots.items
+        const otherSlots = groupedSlots.otherItems
 
         return (
             <div>
-                <h2>
-                    <span>{t('SLOTS_IN_CHANNEL', { args: [slots.length] })}</span>
-                    <span>
-                        <div className={theme.newIemToItemBtn} >
-                            <AddItemWitgDialog
-                                color='second'
-                                addCampaign={this.props.actions.addCampaign}
-                                btnLabel={t('NEW_SLOT_TO_CHANNEL')}
-                                title=''
-                                items={otherSlots}
-                                viewMode={VIEW_MODE_UNITS}
-                                listMode='rows'
-                                addTo={item}
-                                tabNewLabel={t('NEW_SLOT')}
-                                tabExsLabel={t('EXISTING_SLOT')}
-                                objModel={AdSlotModel}
-                                sortProperties={SORT_PROPERTIES_ITEMS}
-                                filterProperties={FILTER_PROPERTIES_ITEMS}
-                                newForm={(props) =>
-                                    <NewSlotSteps
-                                        {...props}
-                                        addTo={item}
-                                    />
-                                }
-                            />
-                        </div>
-                    </span>
-                </h2>
+                <AppBar
+                    position='static'
+                    color='primary'
+                    className={classes.appBar}
+                >
+                    <Toolbar>
+                        <Typography
+                            variant="title"
+                            color="inherit"
+                            className={classes.flex}
+                        >
+                            {t('SLOTS_IN_CHANNEL', { args: [slots.length] })}
+                        </Typography>
+
+                        <AddItemWitgDialog
+                            color='inherit'
+                            icon={<AddIcon />}
+                            addCampaign={this.props.actions.addCampaign}
+                            btnLabel={t('NEW_SLOT_TO_CHANNEL')}
+                            title=''
+                            items={otherSlots}
+                            viewMode={VIEW_MODE_UNITS}
+                            listMode='rows'
+                            addTo={item}
+                            tabNewLabel={t('NEW_SLOT')}
+                            tabExsLabel={t('EXISTING_SLOT')}
+                            objModel={AdSlotModel}
+                            sortProperties={SORT_PROPERTIES_ITEMS}
+                            filterProperties={FILTER_PROPERTIES_ITEMS}
+                            newForm={(props) =>
+                                <NewSlotSteps
+                                    {...props}
+                                    addTo={item}
+                                />
+                            }
+                        />
+                    </Toolbar>
+                </AppBar>                
                 <ItemsList
                     {...this.props}
                     parentItem={item}
@@ -127,7 +140,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-const ChannelItem = ItemHoc(Channel)
+const ChannelItem = ItemHoc(withStyles(styles)(Channel))
 export default connect(
     mapStateToProps,
     mapDispatchToProps

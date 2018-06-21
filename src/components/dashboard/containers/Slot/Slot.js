@@ -12,8 +12,8 @@ import Helper from 'helpers/miscHelpers'
 import ImgDialog from 'components/dashboard/containers/ImgDialog'
 import { Item as ItemModel } from 'adex-models'
 import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT } from 'constants/misc'
-import { withStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
+import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
 const { ItemsTypes, AdSizesByValue } = ItemsConstants
