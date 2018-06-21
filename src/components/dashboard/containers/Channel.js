@@ -41,7 +41,7 @@ export class Channel extends Component {
         let item = this.props.item
         // let items = item._items || []
         let propsSlots = { ...this.props.slots }
-        
+
 
         if (!item) return (<h1>'404'</h1>)
 
@@ -70,10 +70,10 @@ export class Channel extends Component {
                                 tabExsLabel={t('EXISTING_SLOT')}
                                 objModel={AdSlotModel}
                                 sortProperties={SORT_PROPERTIES_ITEMS}
-                                filterProperties={FILTER_PROPERTIES_ITEMS}  
+                                filterProperties={FILTER_PROPERTIES_ITEMS}
                                 newForm={(props) =>
-                                    <NewSlotSteps 
-                                        {...props} 
+                                    <NewSlotSteps
+                                        {...props}
                                         addTo={item}
                                     />
                                 }
@@ -81,12 +81,12 @@ export class Channel extends Component {
                         </div>
                     </span>
                 </h2>
-                <ItemsList 
-                    {...this.props} 
-                    parentItem={item} 
-                    removeFromItem 
-                    items={slots} 
-                    viewModeId={VIEW_MODE} 
+                <ItemsList
+                    {...this.props}
+                    parentItem={item}
+                    removeFromItem
+                    items={slots}
+                    viewModeId={VIEW_MODE}
                     objModel={AdSlotModel}
                     sortProperties={SORT_PROPERTIES_ITEMS}
                     filterProperties={FILTER_PROPERTIES_ITEMS}
@@ -116,7 +116,8 @@ function mapStateToProps(state) {
         updateImgLabel: 'CHANNEL_LOGO',
         updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
         updateImgExact: false,
-        canEditImg: true
+        canEditImg: true,
+        showLogo: true
     }
 }
 

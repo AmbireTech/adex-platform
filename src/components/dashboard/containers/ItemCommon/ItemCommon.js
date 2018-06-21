@@ -102,7 +102,7 @@ const basicProps = ({ item, t, rightComponent, url, classes, ...rest }) => {
 
     return (
         <div >
-            <Grid container spacing={8} style={{ padding: 0 }}>
+            <Grid container spacing={16}>
                 <Grid item xs={12} sm={12} md={12} lg={7}>
                     <div >
                         <div
