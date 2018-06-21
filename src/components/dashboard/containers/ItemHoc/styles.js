@@ -2,18 +2,6 @@ export const styles = theme => {
     const spacing = theme.spacing.unit * 1
 
     return {
-        card: {
-            marginRight: spacing,
-            marginBottom: spacing,
-            width: 320,
-            display: 'block',
-            position: 'relative',
-            maxWidth: '100%',
-            '@media(max-width:380px)': {
-                margin: 0,
-                marginBottom: spacing,
-            }
-        },
         mediaRoot: {
             height: 0,
             paddingTop: '56.25%', // 16:9
@@ -32,14 +20,11 @@ export const styles = theme => {
             height: 'auto',
             width: '100%'
         },
-        basicInfo: {
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'start',
-            flexWrap: 'wrap'
-        },
         buttonRight: {
             marginLeft: spacing
+        },
+        buttonLeft: {
+            marginRight: spacing
         },
         error: {
             color: theme.palette.error.main
@@ -48,24 +33,23 @@ export const styles = theme => {
             marginBottom: spacing,
             marginRight: spacing
         },
-        avatar: {
-            marginBottom: spacing,
-            marginLeft: spacing,
-            borderRadius: '50%',
-            display: 'inline-block',
-            height: 40,
-            overflow: 'hidden',
-            position: 'relative',
-            textAlign: 'center',
-            verticalAlign: 'middle',
-            width: 40,
-            boxSizing: 'border-box',
-        },
         top: {
             display: 'flex',
             flexDirection: 'column',
             flexWrap: 'wrap',
             maxWidth: '70%'
+        },
+        changesLine: {
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            color: theme.palette.secondary.main,
+            marginBottom: spacing
+        },
+        changeChip: {
+            margin: spacing,
+            marginLeft: 0
         }
     }
 }

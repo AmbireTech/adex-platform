@@ -153,7 +153,8 @@ function mapStateToProps(state) {
         updateImgLabel: 'CAMPAIGN_LOGO',
         updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
         updateImgExact: false,
-        canEditImg: true
+        canEditImg: true,
+        showLogo: true
     }
 }
 
