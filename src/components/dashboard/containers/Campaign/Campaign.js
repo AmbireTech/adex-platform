@@ -6,10 +6,8 @@ import actions from 'actions'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
 import ItemsList from 'components/dashboard/containers/ItemsList'
 import DatePicker from 'components/common/DatePicker'
-import theme from 'components/dashboard/containers/datepicker.css'
 import AddItem from 'components/dashboard/containers/AddItem'
 import moment from 'moment'
-import FontIcon from 'react-toolbox/lib/font_icon'
 import Translate from 'components/translate/Translate'
 import { AdUnit as AdUnitModel, Campaign as CampaignModel } from 'adex-models'
 import { groupItemsForCollection } from 'helpers/itemsHelpers'
@@ -17,6 +15,12 @@ import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import { items as ItemsConstants } from 'adex-constants'
 import { NewUnitSteps } from 'components/dashboard/forms/NewItems'
 import WithDialog from 'components/common/dialog/WithDialog'
+import AddIcon from '@material-ui/icons/Add'
+import AppBar from '@material-ui/core/AppBar'
+import Typography from '@material-ui/core/Typography'
+import Toolbar from '@material-ui/core/Toolbar'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 const { ItemsTypes } = ItemsConstants
 
@@ -43,82 +47,89 @@ export class Campaign extends Component {
 
     render() {
         // let side = this.props.match.params.side
-        let item = this.props.item
-        let propsUnits = { ...this.props.units }
-
-        let t = this.props.t
+        const { t, classes, item } = this.props
+        const propsUnits = { ...this.props.units }
 
         if (!item) return (<h1>'404'</h1>)
 
-        let from = item.from ? new Date(item.from) : null
-        let to = item.to ? new Date(item.to) : null
-        let now = new Date()
+        const from = item.from ? new Date(item.from) : null
+        const to = item.to ? new Date(item.to) : null
+        const now = new Date()
 
         //TODO: Make it wit HOC for collection (campaing/channel)
-        let groupedUnits = groupItemsForCollection({ collectionId: item._id, allItems: propsUnits })
+        const groupedUnits = groupItemsForCollection({ collectionId: item._id, allItems: propsUnits })
 
-        let units = groupedUnits.items
-        let otherUnits = groupedUnits.otherItems
+        const units = groupedUnits.items
+        const otherUnits = groupedUnits.otherItems
 
         return (
             <div>
-                <div
-                // className={theme.campaignPeriodContainer}
-                >
+                <div >
                     <DatePicker
+                        calendarIcon
                         label={this.props.t('from', { isProp: true })}
                         // minDate={now}
                         maxDate={to}
                         onChange={(val) => this.props.handleChange('from', val)}
                         value={from}
-                        className={theme.datepicker}
-                        theme={theme}
-                        inputFormat={this.inputFormat}
-                        size={moment(from).format('DD MMMM').length} /** temp fix */
+                        className={classes.datepicker}
+                    // inputFormat={this.inputFormat}
+                    // size={moment(from).format('DD MMMM').length} /** temp fix */
                     // readonly
                     />
                     <DatePicker
+                        calendarIcon
                         label={this.props.t('to', { isProp: true })}
                         minDate={from || now}
                         onChange={(val) => this.props.handleChange('to', val)}
                         value={to}
-                        className={theme.datepicker}
-                        theme={theme}
-                        inputFormat={this.inputFormat}
-                        size={moment(to).format('DD MMMM').length} /** temp fix */
+                        className={classes.datepicker}
+                    // inputFormat={this.inputFormat}
+                    // size={moment(to).format('DD MMMM').length} /** temp fix */
                     // readonly
                     />
 
                 </div>
-                <h2>
-                    <span>{this.props.t('UNITS_IN_CAMPAIGN', { args: [units.length] })}</span>
-                    <span>
-                        <div className={theme.newIemToItemBtn}>
-                            <AddItemWitgDialog
-                                color='second'
-                                addCampaign={this.props.actions.addCampaign}
-                                btnLabel={t('NEW_UNIT_TO_CAMPAIGN')}
-                                title=''
-                                items={otherUnits}
-                                viewMode={VIEW_MODE_UNITS}
-                                listMode='rows'
-                                addTo={item}
-                                tabNewLabel={t('NEW_UNIT')}
-                                tabExsLabel={t('EXISTING_UNIT')}
-                                objModel={AdUnitModel}
-                                itemModel={AdUnitModel}
-                                sortProperties={SORT_PROPERTIES_ITEMS}
-                                filterProperties={FILTER_PROPERTIES_ITEMS}
-                                newForm={(props) =>
-                                    <NewUnitSteps
-                                        {...props}
-                                        addTo={item}
-                                    />
-                                }
-                            />
-                        </div>
-                    </span>
-                </h2>
+                <AppBar
+                    position='static'
+                    color='primary'
+                    className={classes.appBar}
+                >
+                    <Toolbar>
+                        <Typography
+                            variant="title"
+                            color="inherit"
+                            className={classes.flex}
+                        >
+                            {this.props.t('UNITS_IN_CAMPAIGN', { args: [units.length] })}
+                        </Typography>
+
+                        <AddItemWitgDialog
+                            color='inherit'
+                            icon={<AddIcon />}
+                            addCampaign={this.props.actions.addCampaign}
+                            btnLabel={t('NEW_UNIT_TO_CAMPAIGN')}
+                            title=''
+                            items={otherUnits}
+                            viewMode={VIEW_MODE_UNITS}
+                            listMode='rows'
+                            addTo={item}
+                            tabNewLabel={t('NEW_UNIT')}
+                            tabExsLabel={t('EXISTING_UNIT')}
+                            objModel={AdUnitModel}
+                            itemModel={AdUnitModel}
+                            sortProperties={SORT_PROPERTIES_ITEMS}
+                            filterProperties={FILTER_PROPERTIES_ITEMS}
+                            newForm={(props) =>
+                                <NewUnitSteps
+                                    {...props}
+                                    addTo={item}
+                                />
+                            }
+                        />
+
+                    </Toolbar>
+                </AppBar>
                 <ItemsList
                     parentItem={item}
                     removeFromItem
@@ -164,7 +175,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-const CampaignItem = ItemHoc(Campaign)
+const CampaignItem = ItemHoc(withStyles(styles)(Campaign))
 export default connect(
     mapStateToProps,
     mapDispatchToProps

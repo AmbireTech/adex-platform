@@ -44,6 +44,9 @@ export const styles = theme => {
         error: {
             color: theme.palette.error.main
         },
-        
+        label: {
+            marginBottom: spacing,
+            color: theme.palette.text.hint
+        }
     }
 }

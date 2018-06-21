@@ -46,18 +46,21 @@ export const styles = theme => {
         },
         contentTopLoadingCircular: {
             flexShrink: 0,
-            marginRight: 12
+            marginRight: theme.spacing.unit
         },
         contentTopLoading: {
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
             '& > div': {
-                padding: 8
+                padding: theme.spacing.unit
             }
         },
         textBtn: {
             cursor: 'pointer'
+        },
+        btnIconLeft: {
+            marginRight: theme.spacing.unit
         },
         leftCol: {
             textTransform: 'uppercase',

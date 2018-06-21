@@ -23,7 +23,7 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, ...rest }) => {
     return (
         <div>
             <div
-            // className={theme.integrationLabel}
+                className={classes.label}
             >
                 {t('FALLBACK_DATA')}
             </div>

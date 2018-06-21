@@ -9,7 +9,7 @@ import classnames from 'classnames'
 import Translate from 'components/translate/Translate'
 import Slide from '@material-ui/core/Slide'
 import { withStyles } from '@material-ui/core/styles'
-import { styles } from './theme'
+import { styles } from './styles'
 import Icon from '@material-ui/core/Icon'
 import CancelIcon from '@material-ui/icons/Cancel'
 
@@ -103,7 +103,7 @@ export default function ItemHoc(Decorated) {
                             // { [RTButtonTheme[this.props.color]]: !!this.props.color }
                         )}
                     >
-                        {this.props.icon && <Icon> {this.props.icon}</Icon>}
+                        {this.props.icon && <Icon className={classnames({ [classes.btnIconLeft]: this.props.variant !== 'fab' })}>{this.props.icon}</Icon>}
                         {this.props.variant !== 'fab' && btnLabel}
                     </ButtonComponent>
                     <Dialog
