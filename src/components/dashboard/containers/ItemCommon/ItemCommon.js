@@ -72,6 +72,7 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, ...rest }) => {
                                 }
                                 <span>
                                     <IconButton
+                                        size='small'
                                         className={classes.buttonRight}
                                         color='secondary'
                                         onClick={() => rest.setActiveFields('fallbackAdUrl', true)}

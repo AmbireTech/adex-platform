@@ -3,15 +3,10 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import Chip from 'react-toolbox/lib/chip'
-import { IconButton } from 'react-toolbox/lib/button'
-import theme from 'components/dashboard/containers/theme.css'
-import FontIcon from 'react-toolbox/lib/font_icon'
+import IconButton from '@material-ui/core/IconButton'
+import EditIcon from '@material-ui/icons/Edit'
 import ImgDialog from 'components/dashboard/containers/ImgDialog'
-import Tooltip from 'react-toolbox/lib/tooltip'
-import Input from 'react-toolbox/lib/input'
 import { Models } from 'adex-models'
-import FloatingProgressButton from 'components/common/floating_btn_progress/FloatingProgressButton'
 import { Item as ItemModel } from 'adex-models'
 import classnames from 'classnames'
 import { Prompt } from 'react-router'
@@ -19,10 +14,14 @@ import Translate from 'components/translate/Translate'
 import { items as ItemsConstants } from 'adex-constants'
 import Img from 'components/common/img/Img'
 import SaveBtn from 'components/dashboard/containers/SaveBtn'
+import { withStyles } from '@material-ui/core/styles'
+import Input from '@material-ui/core/Input'
+import InputLabel from '@material-ui/core/InputLabel'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import FormControl from '@material-ui/core/FormControl'
+import { styles } from './styles'
 
 const { ItemTypesNames, ItemTypeByTypeId, AdSizesByValue } = ItemsConstants
-
-const TooltipFontIcon = Tooltip(FontIcon)
 
 export default function ItemHoc(Decorated) {
     class Item extends Component {
@@ -40,6 +39,10 @@ export default function ItemHoc(Decorated) {
             }
         }
 
+        updateNav = (item = {}) => {
+            this.props.actions.updateNav('navTitle', this.props.t(ItemTypesNames[item._type]) + ' > ' + item.fullName)
+        }
+
         componentWillMount() {
             let item = this.props.item
             if (!item) {
@@ -50,6 +53,7 @@ export default function ItemHoc(Decorated) {
             let initialItemState = new model(item)
 
             this.setState({ item: { ...item }, initialItemState: initialItemState, itemModel: model })
+            this.updateNav(initialItemState)
         }
 
         // shouldComponentUpdate(nextProps, nextState) {
@@ -68,6 +72,8 @@ export default function ItemHoc(Decorated) {
             if (currentItemInst.modifiedOn !== nexItemInst.modifiedOn) {
                 this.setState({ item: nexItemInst.plainObj(), initialItemState: nexItemInst, activeFields: {}, dirtyProps: [] })
             }
+
+            this.updateNav(nexItemInst)
         }
 
         componentWillUnmount() {
@@ -141,10 +147,9 @@ export default function ItemHoc(Decorated) {
             */
 
             let item = new this.state.itemModel(this.state.item) || {}
-            let t = this.props.t
             let canEdit = ItemTypeByTypeId[item.type] === 'collection'
             let imgSrc = item.meta.img.tempUrl || ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY) || ''
-            let { validations, ...rest } = this.props
+            let { validations, classes, t, ...rest } = this.props
 
             return (
                 <div>
@@ -153,9 +158,17 @@ export default function ItemHoc(Decorated) {
                         message={t('UNSAVED_CHANGES_ALERT')}
                     />
 
-                    <div className={classnames(theme.heading, theme[ItemTypesNames[item._type || item._meta.type]])}>
-                        <div className={theme.headingLeft}>
-                            <Img src={imgSrc} alt={item.fullName} onClick={this.handleToggle} className={classnames(theme.avatar, { [theme.pointer]: this.props.canEditImg })} />
+                    <div
+                        position='static'
+                        color='default'
+                    >
+                        <div  >
+                            <Img
+                                src={imgSrc}
+                                alt={item.fullName}
+                                onClick={this.handleToggle}
+                                className={classnames(classes.avatar, { [classes.pointer]: this.props.canEditImg })}
+                            />
 
                             <ImgDialog
                                 {...this.props}
@@ -172,76 +185,77 @@ export default function ItemHoc(Decorated) {
                                 errMsg={this.props.updateImgErrMsg}
                                 imgPropName='img'
                             />
-                            {canEdit && this.state.activeFields.fullName ?
-                                <span>
-                                    <span>
-                                        <Input
-                                            autoFocus
-                                            className={theme.itemName}
-                                            type='text'
-                                            label={t('fullName', { isProp: true })}
-                                            name='fullName'
-                                            value={item.fullName}
-                                            onChange={this.handleChange.bind(this, 'fullName')}
-                                            maxLength={128}
-                                            onBlur={this.setActiveFields.bind(this, 'fullName', false)}
-                                        />
-                                    </span>
-                                </span>
-                                :
-                                <h3 className={theme.itemName}>
-                                    <span> {item.fullName} </span>
-                                    {canEdit ?
-                                        <span>
-                                            <IconButton
-                                                theme={theme}
-                                                icon='edit'
-                                                accent
-                                                onClick={this.setActiveFields.bind(this, 'fullName', true)}
-                                            />
-                                        </span>
-                                        : null}
-                                </h3>
-                            }
+
                         </div>
                     </div>
                     <div>
-                        <div className={classnames(theme.top, theme.left)}>
-
-                            {this.state.activeFields.description ?
-                                <Input
-                                    autoFocus
-                                    multiline
-                                    rows={3}
-                                    type='text'
-                                    label={t('description', { isProp: true })}
-                                    name='description'
-                                    value={item.description}
-                                    onChange={this.handleChange.bind(this, 'description')}
-                                    maxLength={1024}
-                                    onBlur={this.setActiveFields.bind(this, 'description', false)}
-                                />
-                                :
-                                <div>
-                                    <p>
-                                        {item.description ?
-                                            item.description
-                                            :
-                                            <span style={{ opacity: 0.3 }}> {t('NO_DESCRIPTION_YET')}</span>
+                        <div className={classnames(classes.top, classes.left)}>
+                            <div>
+                                <FormControl
+                                    fullWidth
+                                    className={classes.textField}
+                                    margin='dense'
+                                >
+                                    <InputLabel >{t('fullName', { isProp: true })}</InputLabel>
+                                    <Input
+                                        fullWidth
+                                        autoFocus
+                                        type='text'
+                                        name={t('fullName', { isProp: true })}
+                                        value={item.fullName}
+                                        onChange={(ev) => this.handleChange('fullName', ev.target.value)}
+                                        maxLength={1024}
+                                        onBlur={(ev) => this.setActiveFields('fullName', false)}
+                                        disabled={!this.state.activeFields.fullName}
+                                        endAdornment={canEdit &&
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    // size='small'
+                                                    color='secondary'
+                                                    className={classes.buttonRight}
+                                                    onClick={(ev) => this.setActiveFields('fullName', true)}
+                                                >
+                                                    <EditIcon />
+                                                </IconButton>
+                                            </InputAdornment>
                                         }
-                                        <span>
-                                            <IconButton
-                                                theme={theme}
-                                                icon='edit'
-                                                accent
-                                                onClick={this.setActiveFields.bind(this, 'description', true)}
-                                            />
-                                        </span>
-                                    </p>
-
-                                </div>
-                            }
-
+                                    />
+                                </FormControl>
+                            </div>
+                            <div>
+                                <FormControl
+                                    margin='dense'
+                                    fullWidth
+                                    className={classes.textField}
+                                >
+                                    <InputLabel htmlFor="adornment-password">{t('description', { isProp: true })}</InputLabel>
+                                    <Input
+                                        fullWidth
+                                        autoFocus
+                                        multiline
+                                        rows={3}
+                                        type='text'
+                                        name='description'
+                                        value={item.description || t('NO_DESCRIPTION_YET')}
+                                        onChange={(ev) => this.handleChange('description', ev.target.value)}
+                                        maxLength={1024}
+                                        onBlur={(ev) => this.setActiveFields('description', false)}
+                                        disabled={!this.state.activeFields.description}
+                                        endAdornment={
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    // size='small'
+                                                    color='secondary'
+                                                    className={classes.buttonRight}
+                                                    onClick={(ev) => this.setActiveFields('description', true)}
+                                                >
+                                                    <EditIcon />
+                                                </IconButton>
+                                            </InputAdornment>
+                                        }
+                                    />
+                                </FormControl>
+                            </div>
                         </div>
                         <SaveBtn
                             spinnerId={'update-' + item._id}
@@ -255,6 +269,7 @@ export default function ItemHoc(Decorated) {
                     <div>
                         <Decorated
                             {...rest}
+                            t={t}
                             inEdit={!!this.state.dirtyProps.length}
                             item={item}
                             save={this.save}
@@ -287,15 +302,14 @@ export default function ItemHoc(Decorated) {
             if (!!item && item._ipfs && !!ipfs && item._ipfs === ipfs) {
                 return item
             }
-
         }
 
         return null
     }
 
     function mapStateToProps(state, props) {
-        let persist = state.persist
-        // let memory = state.memory
+        const persist = state.persist
+        // const memory = state.memory
         const items = persist.items[props.itemType]
         const id = props.match.params.itemId
         let item = items[id]
@@ -319,5 +333,5 @@ export default function ItemHoc(Decorated) {
     return connect(
         mapStateToProps,
         mapDispatchToProps
-    )(Translate(Item))
+    )(withStyles(styles)(Translate(Item)))
 }

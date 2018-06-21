@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
 import ItemsList from 'components/dashboard/containers/ItemsList'
-import DatePicker from 'react-toolbox/lib/date_picker'
+import DatePicker from 'components/common/DatePicker'
 import theme from 'components/dashboard/containers/datepicker.css'
 import AddItem from 'components/dashboard/containers/AddItem'
 import moment from 'moment'
@@ -62,6 +62,34 @@ export class Campaign extends Component {
 
         return (
             <div>
+                <div
+                // className={theme.campaignPeriodContainer}
+                >
+                    <DatePicker
+                        label={this.props.t('from', { isProp: true })}
+                        // minDate={now}
+                        maxDate={to}
+                        onChange={(val) => this.props.handleChange('from', val)}
+                        value={from}
+                        className={theme.datepicker}
+                        theme={theme}
+                        inputFormat={this.inputFormat}
+                        size={moment(from).format('DD MMMM').length} /** temp fix */
+                    // readonly
+                    />
+                    <DatePicker
+                        label={this.props.t('to', { isProp: true })}
+                        minDate={from || now}
+                        onChange={(val) => this.props.handleChange('to', val)}
+                        value={to}
+                        className={theme.datepicker}
+                        theme={theme}
+                        inputFormat={this.inputFormat}
+                        size={moment(to).format('DD MMMM').length} /** temp fix */
+                    // readonly
+                    />
+
+                </div>
                 <h2>
                     <span>{this.props.t('UNITS_IN_CAMPAIGN', { args: [units.length] })}</span>
                     <span>
@@ -82,7 +110,7 @@ export class Campaign extends Component {
                                 sortProperties={SORT_PROPERTIES_ITEMS}
                                 filterProperties={FILTER_PROPERTIES_ITEMS}
                                 newForm={(props) =>
-                                    <NewUnitSteps 
+                                    <NewUnitSteps
                                         {...props}
                                         addTo={item}
                                     />
@@ -91,39 +119,12 @@ export class Campaign extends Component {
                         </div>
                     </span>
                 </h2>
-                <div className={theme.campaignPeriodContainer}>
-                    <FontIcon value="date_range" />
-                    <span>{t('from')} </span>
-                    <DatePicker
-                        minDate={now}
-                        maxDate={to}
-                        onChange={this.props.handleChange.bind(this, 'from')}
-                        value={from}
-                        className={theme.datepicker}
-                        theme={theme}
-                        inputFormat={this.inputFormat}
-                        size={moment(from).format('DD MMMM').length} /** temp fix */
-                        // readonly
-                    />
-                    <span>{t('to')} </span>
-                    <DatePicker
-                        minDate={from || now}
-                        onChange={this.props.handleChange.bind(this, 'to')}
-                        value={to}
-                        className={theme.datepicker}
-                        theme={theme}
-                        inputFormat={this.inputFormat}
-                        size={moment(to).format('DD MMMM').length} /** temp fix */
-                        // readonly
-                    />
-
-                </div>
-                <ItemsList 
-                    parentItem={item} 
-                    removeFromItem 
-                    items={units} 
-                    viewModeId={VIEW_MODE} 
-                    bjModel={AdUnitModel} 
+                <ItemsList
+                    parentItem={item}
+                    removeFromItem
+                    items={units}
+                    viewModeId={VIEW_MODE}
+                    bjModel={AdUnitModel}
                     sortProperties={SORT_PROPERTIES_ITEMS}
                     filterProperties={FILTER_PROPERTIES_ITEMS}
                 />
