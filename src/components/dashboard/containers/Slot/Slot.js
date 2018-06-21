@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { AdSlot } from 'adex-models'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
-import theme from './theme.css'
 import SlotBids from 'components/dashboard/containers/Bids/SlotBids'
 import { items as ItemsConstants } from 'adex-constants'
 import { BasicProps } from 'components/dashboard/containers/ItemCommon'
@@ -13,11 +12,14 @@ import Helper from 'helpers/miscHelpers'
 import ImgDialog from 'components/dashboard/containers/ImgDialog'
 import { Item as ItemModel } from 'adex-models'
 import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT } from 'constants/misc'
+import { withStyles } from '@material-ui/core/styles'
+import Paper from '@material-ui/core/Paper'
+import { styles } from './styles'
 
 const { ItemsTypes, AdSizesByValue } = ItemsConstants
 const ADVIEW_URL = process.env.ADVIEW_HOST || 'https://view.adex.network'
 
-const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fallbackUrl }) => {
+const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fallbackUrl, classes }) => {
 
     let sizes = size.split('x')
     sizes = {
@@ -50,15 +52,19 @@ const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fal
     // TODO: Add copy to clipboard and tooltip or description how to use it
     return (
         <div>
-            <div className={theme.integrationLabel}> {t('INTEGRATION_CODE')}</div>
-            <pre className={theme.integrationCode}>
-                {iframeStr}
-            </pre>
-            <div>
-                <br />
-                <div className={theme.integrationLabel}> {t('AD_PREVIEW')}</div>
-                <div dangerouslySetInnerHTML={{ __html: iframeStr }} />
-            </div>
+            <div className={classes.integrationLabel}> {t('INTEGRATION_CODE')}</div>
+            <Paper>
+                <pre className={classes.integrationCode}>
+                    {iframeStr}
+                </pre>
+            </Paper>
+            {(process.env.NODE_ENV !== 'production') &&
+                <div>
+                    <br />
+                    <div className={classes.integrationLabel}> {t('AD_PREVIEW')}</div>
+                    <div dangerouslySetInnerHTML={{ __html: iframeStr }} />
+                </div>
+            }
         </div>
     )
 }
@@ -79,11 +85,12 @@ export class Slot extends Component {
 
     render() {
         let item = this.props.item || {}
-        let t = this.props.t
+        let { t, classes } = this.props
 
         if (!item._id) return (<h1>Slot '404'</h1>)
 
         let imgSrc = item.fallbackAdImg.tempUrl || ItemModel.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY) || ''
+
         return (
             <div>
                 <BasicProps
@@ -94,6 +101,7 @@ export class Slot extends Component {
                     toggleFallbackImgEdit={this.handleFallbackImgUpdateToggle}
                     canEditImg
                     rightComponent={<IntegrationCode
+                        classes={classes}
                         ipfs={item.ipfs}
                         size={item.sizeTxtValue}
                         t={t}
@@ -157,7 +165,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-const SlotItem = ItemHoc(Slot)
+const SlotItem = ItemHoc(withStyles(styles)(Slot))
 export default connect(
     mapStateToProps,
     mapDispatchToProps
