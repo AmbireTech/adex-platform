@@ -52,13 +52,13 @@ class ItemCard extends Component {
 
                 <CardContent>
                     <Typography
-                        variant="headline"
-                        component="h2"
+                        variant='headline'
+                        component='h2'
                         noWrap
                     >
                         {meta.fullName}
                     </Typography>
-                    <Typography component="p">
+                    <Typography component='p'>
                         {itemAdTypeLabel({ adType: item._meta.adType })}  {itemAdSizeLabel({ size: item._meta.size, t: t })}
                     </Typography>
                 </CardContent>
