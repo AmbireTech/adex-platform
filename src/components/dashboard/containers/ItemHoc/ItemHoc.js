@@ -250,7 +250,6 @@ export default function ItemHoc(Decorated) {
                                             rows={3}
                                             type='text'
                                             name='description'
-                                            pla
                                             value={item.description || ''}
                                             onChange={(ev) => this.handleChange('description', ev.target.value)}
                                             maxLength={1024}
