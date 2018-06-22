@@ -1,26 +1,17 @@
 import React from 'react'
-
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Stepper } from 'react-step/lib/stepper'
 import { withStepper } from 'react-step/lib/with-stepper'
-// import stepperTheme from './stepperTheme.css'
-import FontIcon from 'react-toolbox/lib/font_icon'
-import classnames from 'classnames'
-import Ripple from 'react-toolbox/lib/ripple'
-// import { Button } from 'react-toolbox/lib/button'
-import { items as ItemsConstants } from 'adex-constants'
 import StepperMUI from '@material-ui/core/Stepper'
 import Step from '@material-ui/core/Step'
 import StepLabel from '@material-ui/core/StepLabel'
-import StepIcon from '@material-ui/core/StepIcon'
-import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import { withStyles } from '@material-ui/core/styles'
 import Translate from 'components/translate/Translate'
-import { styles } from './stepperThemeMUI'
+import { styles } from './styles'
 import Paper from '@material-ui/core/Paper'
 
 // const MyStep = ({ page, active, index, children, theme, canAdvance, canFinish, canReverse, setPageIndex, canAdvanceToPage, currentPage, goToPage, ...other }) => {}
@@ -85,8 +76,6 @@ class MaterialStepper extends React.Component {
         let { pages, component, validations, currentPage, t, classes, ...props } = { ...this.props }
         let page = pages[currentPage]
         let Comp = page.component
-
-        console.log(classes)
 
         return (
             <div >
