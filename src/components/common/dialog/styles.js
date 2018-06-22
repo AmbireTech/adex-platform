@@ -61,7 +61,10 @@ export const styles = theme => {
         leftCol: {
             textTransform: 'uppercase',
             // color: var(--color-adex-neutral-contrast-lighter);
-            textAlign: 'right'
+            textAlign: 'right',
+            [theme.breakpoints.up('xs')]: {
+                textAlign: 'left',
+            },
         },
         rightCol: {
             textAlign: 'left'
