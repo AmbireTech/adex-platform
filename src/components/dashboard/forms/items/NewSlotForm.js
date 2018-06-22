@@ -6,8 +6,7 @@ import actions from 'actions'
 import NewItemHoc from './NewItemHocStep'
 import Dropdown from 'components/common/dropdown'
 import Translate from 'components/translate/Translate'
-import { Grid, Row, Col } from 'react-flexbox-grid'
-import theme from './../theme.css'
+import Grid from '@material-ui/core/Grid'
 import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemsTypes, AdTypes, AdSizes } = ItemsConstants
@@ -42,45 +41,47 @@ class NewSlotForm extends Component {
     }
 
     validateAndUpdateDD = (dirty, propsName, value) => {
-        let isValid = !!value
-        let msg = 'ERR_REQUIRED_FIELD'
+        const isValid = !!value
+        const msg = 'ERR_REQUIRED_FIELD'
 
         this.props.handleChange(propsName, value)
         this.props.validate(propsName, { isValid: isValid, err: { msg: msg }, dirty: dirty })
     }
 
     render() {
-        let item = this.props.item
-        let t = this.props.t
+        const { t, item } = this.props
 
         return (
             <div>
                 <div>
-                    <Grid fluid className={theme.grid}>
-                        <Row middle='md'>
-                            <Col sm={12} lg={6}>
-                                <Dropdown
-                                    required
-                                    onChange={this.validateAndUpdateDD.bind(this, true, 'adType')}
-                                    source={AdTypes}
-                                    value={item.adType + ''}
-                                    label={t('adType', { isProp: true })}
-                                    htmlId='ad-type-dd'
-                                    name='adType'
-                                />
-                            </Col>
-                            <Col sm={12} lg={6}>
-                                <Dropdown
-                                    required
-                                    onChange={this.validateAndUpdateDD.bind(this, true, 'size')}
-                                    source={this.state.adSizesSrc}
-                                    value={item.size + ''}
-                                    label={t('size', { isProp: true })}
-                                    htmlId='ad-size-dd'
-                                    name='size'
-                                />
-                            </Col>
-                        </Row>
+                    <Grid
+                        container
+                        spacing={16}
+                    >
+                        <Grid item sm={12} lg={6}>
+                            <Dropdown
+                                fullWidth
+                                required
+                                onChange={this.validateAndUpdateDD.bind(this, true, 'adType')}
+                                source={AdTypes}
+                                value={item.adType + ''}
+                                label={t('adType', { isProp: true })}
+                                htmlId='ad-type-dd'
+                                name='adType'
+                            />
+                        </Grid>
+                        <Grid item sm={12} lg={6}>
+                            <Dropdown
+                                fullWidth
+                                required
+                                onChange={this.validateAndUpdateDD.bind(this, true, 'size')}
+                                source={this.state.adSizesSrc}
+                                value={item.size + ''}
+                                label={t('size', { isProp: true })}
+                                htmlId='ad-size-dd'
+                                name='size'
+                            />
+                        </Grid>
                     </Grid>
                 </div>
 
@@ -96,8 +97,8 @@ NewSlotForm.propTypes = {
 }
 
 function mapStateToProps(state) {
-    let persist = state.persist
-    // let memory = state.memory
+    const persist = state.persist
+    // const memory = state.memory
     return {
         account: persist.account,
         itemType: ItemsTypes.AdSlot.id

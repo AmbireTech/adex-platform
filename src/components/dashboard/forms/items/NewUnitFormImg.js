@@ -6,8 +6,7 @@ import actions from 'actions'
 import NewItemHoc from './NewItemHocStep'
 import Translate from 'components/translate/Translate'
 import ImgForm from './../ImgForm'
-import { Grid, Row, Col } from 'react-flexbox-grid'
-import theme from './../theme.css'
+import Grid from '@material-ui/core/Grid'
 import { items as ItemsConstants } from 'adex-constants'
 import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
 
@@ -38,28 +37,26 @@ class NewUnitFormImg extends Component {
     }
 
     render() {
-        let item = this.props.item
-        let t = this.props.t
-        let errImg = this.props.invalidFields['img']
+        const { item, t } = this.props
+        const errImg = this.props.invalidFields['img']
         return (
             <div>
-                <Grid fluid className={theme.grid}>
-                    <Row>
-
-                        <Col sm={12}>
-                            <ImgForm
-                                label={t('UNIT_BANNER_IMG_LABEL')}
-                                imgSrc={item.img.tempUrl || ''}
-                                onChange={this.props.validateImg.bind(this,
-                                    { propsName: 'img', widthTarget: AdSizesByValue[item.size].width, heightTarget:  AdSizesByValue[item.size].height, msg: 'ERR_IMG_SIZE_EXACT', exact: true, required: true})}
-                                additionalInfo={t('UNIT_BANNER_IMG_INFO', { args: [AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'px'] })}
-                                errMsg={errImg ? errImg.errMsg : ''}
-                                size={{width: AdSizesByValue[item.size].width, height:  AdSizesByValue[item.size].height}}                                
-                            />
-                        </Col>
-                    </Row>
+                <Grid
+                    container
+                >
+                    <Grid item sm={12}>
+                        <ImgForm
+                            label={t('UNIT_BANNER_IMG_LABEL')}
+                            imgSrc={item.img.tempUrl || ''}
+                            onChange={this.props.validateImg.bind(this,
+                                { propsName: 'img', widthTarget: AdSizesByValue[item.size].width, heightTarget: AdSizesByValue[item.size].height, msg: 'ERR_IMG_SIZE_EXACT', exact: true, required: true })}
+                            additionalInfo={t('UNIT_BANNER_IMG_INFO', { args: [AdSizesByValue[item.size].width, AdSizesByValue[item.size].height, 'px'] })}
+                            errMsg={errImg ? errImg.errMsg : ''}
+                            size={{ width: AdSizesByValue[item.size].width, height: AdSizesByValue[item.size].height }}
+                        />
+                    </Grid>
                 </Grid>
-            </div>
+            </div >
         )
     }
 }
@@ -71,8 +68,8 @@ NewUnitFormImg.propTypes = {
 }
 
 function mapStateToProps(state) {
-    let persist = state.persist
-    // let memory = state.memory
+    const persist = state.persist
+    // const memory = state.memory
     return {
         account: persist.account,
         itemType: ItemsTypes.AdUnit.id

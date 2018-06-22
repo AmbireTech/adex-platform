@@ -7,7 +7,8 @@ import NewItemHoc from './NewItemHocStep'
 import Translate from 'components/translate/Translate'
 import theme from './../theme.css'
 import { AdUnit } from 'adex-models'
-import { Grid, Row, Col } from 'react-flexbox-grid'
+// import { Grid, Row, Col } from 'react-flexbox-grid'
+import Grid from '@material-ui/core/Grid'
 import Autocomplete from 'react-toolbox/lib/autocomplete'
 import classnames from 'classnames'
 import Slider from 'react-toolbox/lib/slider'
@@ -105,37 +106,38 @@ class NewUnitFormTargets extends Component {
         let value = target.value || {}
         return (
             <div>
-                <Grid fluid className={theme.agesGrid}>
-                    <Row>
-                        <Col lg={6}>
+                <Grid
+                    container
+                // className={theme.agesGrid}
+                >
+                    <Grid item lg={6}>
 
-                            <Autocomplete
-                                direction="auto"
-                                multiple={false}
-                                onChange={this.handleTargetChange.bind(this, target, 'from')}
-                                label={this.props.t('TARGET_AGE_FROM')}
-                                source={ages.slice(0, (value.to | 0) + 1)}
-                                value={value.from + ''}
-                                suggestionMatch='anywhere'
-                                showSuggestionsWhenValueIsSet={true}
-                                allowCreate={false}
-                            />
-                        </Col>
-                        <Col lg={6}>
+                        <Autocomplete
+                            direction="auto"
+                            multiple={false}
+                            onChange={this.handleTargetChange.bind(this, target, 'from')}
+                            label={this.props.t('TARGET_AGE_FROM')}
+                            source={ages.slice(0, (value.to | 0) + 1)}
+                            value={value.from + ''}
+                            suggestionMatch='anywhere'
+                            showSuggestionsWhenValueIsSet={true}
+                            allowCreate={false}
+                        />
+                    </Grid>
+                    <Grid item lg={6}>
 
-                            <Autocomplete
-                                direction="auto"
-                                multiple={false}
-                                onChange={this.handleTargetChange.bind(this, target, 'to')}
-                                label={this.props.t('TARGET_AGE_TO')}
-                                source={ages.slice(value.from | 0)}
-                                value={value.to + ''}
-                                suggestionMatch='anywhere'
-                                showSuggestionsWhenValueIsSet={true}
-                                allowCreate={false}
-                            />
-                        </Col>
-                    </Row>
+                        <Autocomplete
+                            direction="auto"
+                            multiple={false}
+                            onChange={this.handleTargetChange.bind(this, target, 'to')}
+                            label={this.props.t('TARGET_AGE_TO')}
+                            source={ages.slice(value.from | 0)}
+                            value={value.to + ''}
+                            suggestionMatch='anywhere'
+                            showSuggestionsWhenValueIsSet={true}
+                            allowCreate={false}
+                        />
+                    </Grid>
                 </Grid >
             </div>
         )
@@ -144,20 +146,27 @@ class NewUnitFormTargets extends Component {
     Targets = ({ meta, t }) => {
         return (
             <div>
-                <Grid fluid >
-                    <Row className={theme.targetsHead}>
-                        <Col lg={7}>
-                            {t('TARGET')}
-                        </Col>
-                        <Col lg={5}>
-                            {t('WEIGHT')}
-                        </Col>
-                    </Row>
+                <Grid container >
+                    <Grid
+                        item
+                        className={theme.targetsHead}
+
+                        lg={7}>
+                        {t('TARGET')}
+                    </Grid>
+                    <Grid item lg={5}>
+                        {t('WEIGHT')}
+                    </Grid>
                     {
                         (meta.targets || []).map((target) => {
                             return (
-                                <Row key={target.name} className={theme.targetRow}>
-                                    <Col lg={7}>
+                                <div>
+                                    <Grid
+                                        item
+                                        key={target.name}
+                                        className={theme.targetRow}
+                                        lg={7}
+                                    >
                                         {(() => {
                                             switch (target.name) {
                                                 case 'location':
@@ -169,8 +178,8 @@ class NewUnitFormTargets extends Component {
                                                 default: null
                                             }
                                         })()}
-                                    </Col>
-                                    <Col lg={5} style={{ position: 'relative' }}>
+                                    </Grid>
+                                    <Grid item lg={5} style={{ position: 'relative' }}>
                                         <div className={classnames(theme.sliderWrapper)}>
                                             <label className={classnames(theme.sliderLabel, theme.weightLabel)}>
                                                 {target.name}  weight:
@@ -187,9 +196,8 @@ class NewUnitFormTargets extends Component {
                                                 onChange={this.handleTargetChange.bind(this, target, 'updateWeight')}
                                             />
                                         </div>
-                                    </Col>
-
-                                </Row>
+                                    </Grid>
+                                </div>
                             )
                         })
                     }
