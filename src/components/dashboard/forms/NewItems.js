@@ -116,7 +116,6 @@ export const NewSlotSteps = (props) =>
         itemModel={AdSlot}
     />
 
-
 const NewSlotStepsWithDialog = WithDialog(NewSlotSteps)
 
 export const NewSlotDialog = (props) =>

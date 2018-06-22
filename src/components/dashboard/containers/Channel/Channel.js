@@ -75,7 +75,7 @@ export class Channel extends Component {
                             icon={<AddIcon />}
                             addCampaign={this.props.actions.addCampaign}
                             btnLabel={t('NEW_SLOT_TO_CHANNEL')}
-                            title=''
+                            title={t('NEW_SLOT_TO_CHANNEL')}
                             items={otherSlots}
                             viewMode={VIEW_MODE_UNITS}
                             listMode='rows'

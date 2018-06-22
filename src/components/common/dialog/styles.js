@@ -37,12 +37,8 @@ export const styles = theme => {
         },
         contentBody: {
             flexGrow: 1,
-            overflowY: 'auto'
-        },
-        appBar: {
-            position: 'relative',
-            backgroundColor: '#eee',
-            color: '#000'
+            margin: 8 // Grid spacing 8 fix
+            // overflowY: 'auto'
         },
         contentTopLoadingCircular: {
             flexShrink: 0,

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { Grid } from 'react-flexbox-grid'
+import Grid from '@material-ui/core/Grid'
 import { items as ItemsConstants } from 'adex-constants'
 import { Item } from 'adex-models'
 import Img from 'components/common/img/Img'
@@ -46,7 +46,7 @@ export class ItemIpfsDetails extends Component {
 
     itemDetails = ({ details = {}, t } = {}) => {
         return (
-            <Grid fluid style={{ padding: 0 }}>
+            <Grid container spacing={8} >
                 <PropRow
                     left={t('PROP_FULLNAME')}
                     right={details.fullName}
@@ -67,20 +67,19 @@ export class ItemIpfsDetails extends Component {
                     left={t('PROP_AD_URL')}
                     right={<Anchor target='_blank' href={details.ad_url} > {details.ad_url || '-'} </Anchor>}
                 />
-                {details.type === ItemsTypes.AdUnit.id ?
-                    <div>
-                        <PropRow
-                            left={t('UNIT_BANNER_IMG_LABEL')}
-                            right={<Img className={''} src={ ItemModel.getImgUrl(details.img, process.env.IPFS_GATEWAY) || ''} alt={details.fullName} />}
-                        />
-                        {details.targets ?
-                        <PropRow
-                            left={t('targets', { isProp: true })}
-                            right={<UnitTargets targets={details.targets} t={t} />}
-                        />
-                    : null}
-                    </div>
-                : null}
+                {details.type === ItemsTypes.AdUnit.id &&
+                    <PropRow
+                        left={t('UNIT_BANNER_IMG_LABEL')}
+                        right={<Img className={''} src={ItemModel.getImgUrl(details.img, process.env.IPFS_GATEWAY) || ''} alt={details.fullName} />}
+                    />
+                }
+
+                {(!!details.type === ItemsTypes.AdUnit.id && details.targets) &&
+                    <PropRow
+                        left={t('targets', { isProp: true })}
+                        right={<UnitTargets targets={details.targets} t={t} />}
+                    />
+                }
 
             </Grid>
         )
@@ -88,7 +87,7 @@ export class ItemIpfsDetails extends Component {
 
     reportDetails = ({ report = {}, t } = {}) => {
         return (
-            <Grid fluid style={{ padding: 0 }}>
+            <Grid container spacing={8} >
                 <PropRow
                     left={t('PROP_BIDID')}
                     right={report.bidId}
@@ -130,10 +129,12 @@ export class ItemIpfsDetails extends Component {
         return (
             <ContentBox>
                 {/* NOTE: show the ipfs link in case of long loading */}
-                <PropRow
-                    left={t('IPFS')}
-                    right={<Anchor target='_blank' href={this.state.itemIpfsUrl} > {this.props.itemIpfs} </Anchor>}
-                />
+                <Grid container spacing={8} style={{ marginBottom: 8 }}>
+                    <PropRow
+                        left={t('IPFS')}
+                        right={<Anchor target='_blank' href={this.state.itemIpfsUrl} > {this.props.itemIpfs} </Anchor>}
+                    />
+                </Grid>
                 {!!this.props.spinner || !details ?
                     <FullContentSpinner />
                     :

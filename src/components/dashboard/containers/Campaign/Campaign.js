@@ -26,7 +26,7 @@ const { ItemsTypes } = ItemsConstants
 
 const VIEW_MODE = 'campaignRowsView'
 const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
-const AddItemWitgDialog = WithDialog(AddItem)
+const AddItemWithDialog = WithDialog(AddItem)
 
 export class Campaign extends Component {
     constructor(props, context) {
@@ -104,12 +104,12 @@ export class Campaign extends Component {
                             {this.props.t('UNITS_IN_CAMPAIGN', { args: [units.length] })}
                         </Typography>
 
-                        <AddItemWitgDialog
+                        <AddItemWithDialog
                             color='inherit'
                             icon={<AddIcon />}
                             addCampaign={this.props.actions.addCampaign}
                             btnLabel={t('NEW_UNIT_TO_CAMPAIGN')}
-                            title=''
+                            title={t('NEW_UNIT_TO_CAMPAIGN')}
                             items={otherUnits}
                             viewMode={VIEW_MODE_UNITS}
                             listMode='rows'

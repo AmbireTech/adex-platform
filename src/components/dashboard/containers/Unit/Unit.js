@@ -71,7 +71,7 @@ export class Unit extends Component {
                         title={this.props.t('PLACE_BID_FOR', { args: [item.fullName] })}
                         floating
                         variant='fab'
-                        primary
+                        color='primary'
                         bidId={item._id}
                         stepsId={'new-bid-' + item._id}
                         // TODO: fix icon v align
