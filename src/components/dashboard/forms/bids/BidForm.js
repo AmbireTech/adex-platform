@@ -109,7 +109,7 @@ class BidForm extends Component {
 
     return (
       <div>
-        {!!this.props.spinner || true ?
+        {!!this.props.spinner ?
           <div className={classes.centralSpinner}>
             <CircularProgress />
           </div>
