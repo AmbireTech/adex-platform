@@ -96,7 +96,7 @@ class TransactionPreview extends Component {
                                 <WalletAction t={t} authType={this.props.account._authMode.authType} />
                             </ContentStickyTop> : null}
                         <ContentBody>
-                            <Grid container >
+                            <Grid container spacing={8} >
                                 {errors.length ?
                                     errors.map((err, index) =>
                                         <PropRow

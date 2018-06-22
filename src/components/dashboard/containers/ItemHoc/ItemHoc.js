@@ -297,7 +297,7 @@ export default function ItemHoc(Decorated) {
                     </div>
                     <div>
                         <SaveBtn
-                            spinnerId={'update-' + item._id}
+                            spinnerId={'update' + item._id}
                             validationId={'update-' + item._id}
                             returnPropToInitialState={this.returnPropToInitialState}
                             dirtyProps={this.state.dirtyProps}
