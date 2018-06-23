@@ -2657,6 +2657,12 @@ dotenv@4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-4.0.0.tgz#864ef1379aced55ce6f95debecdce179f7a0cd1d"
 
+downshift@^2.0.10:
+  version "2.0.10"
+  resolved "https://registry.yarnpkg.com/downshift/-/downshift-2.0.10.tgz#598b93c5598c4c45caf8c46479fdfde587da7860"
+  dependencies:
+    prop-types "^15.6.0"
+
 drbg.js@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/drbg.js/-/drbg.js-1.0.1.tgz#3e36b6c42b37043823cdbc332d58f31e2445480b"
@@ -5103,7 +5109,7 @@ keccakjs@^0.2.0, keccakjs@^0.2.1:
     browserify-sha3 "^0.0.1"
     sha3 "^1.1.0"
 
-keycode@^2.1.9:
+keycode@^2.1.9, keycode@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/keycode/-/keycode-2.2.0.tgz#3d0af56dc7b8b8e5cba8d0a97f107204eec22b04"
 

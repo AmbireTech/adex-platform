@@ -7,9 +7,8 @@ import NewItemHoc from './NewItemHocStep'
 import Translate from 'components/translate/Translate'
 import theme from './../theme.css'
 import { AdUnit } from 'adex-models'
-// import { Grid, Row, Col } from 'react-flexbox-grid'
 import Grid from '@material-ui/core/Grid'
-import Autocomplete from 'react-toolbox/lib/autocomplete'
+import Autocomplete from 'components/common/autocomplete'
 import classnames from 'classnames'
 import Slider from 'react-toolbox/lib/slider'
 import { items as ItemsConstants } from 'adex-constants'
@@ -41,7 +40,7 @@ const AcGenders = autocompleteGenders()
 const ages = (() => {
     let ages = []
     for (var index = TARGET_MIN_AGE; index <= TARGET_MAX_AGE; index++) {
-        ages.push(index + '')
+        ages.push({ label: index + '' })
     }
 
     return ages
@@ -73,6 +72,7 @@ class NewUnitFormTargets extends Component {
     renderLocationTarget = (target) => {
         return (
             <Autocomplete
+                id='location-targets-select'
                 direction="auto"
                 multiple={true}
                 onChange={this.handleTargetChange.bind(this, target, null)}
@@ -89,6 +89,7 @@ class NewUnitFormTargets extends Component {
     renderGendersTarget = (target) => {
         return (
             <Autocomplete
+                id='genders-targets-select'
                 direction="auto"
                 multiple={true}
                 onChange={this.handleTargetChange.bind(this, target, null)}
@@ -108,11 +109,13 @@ class NewUnitFormTargets extends Component {
             <div>
                 <Grid
                     container
+                    spacing={16}
                 // className={theme.agesGrid}
                 >
                     <Grid item lg={6}>
 
                         <Autocomplete
+                            id='age-target-from-select'
                             direction="auto"
                             multiple={false}
                             onChange={this.handleTargetChange.bind(this, target, 'from')}
@@ -127,6 +130,7 @@ class NewUnitFormTargets extends Component {
                     <Grid item lg={6}>
 
                         <Autocomplete
+                            id='age-target-to-select'
                             direction="auto"
                             multiple={false}
                             onChange={this.handleTargetChange.bind(this, target, 'to')}
@@ -159,8 +163,9 @@ class NewUnitFormTargets extends Component {
                     </Grid>
                     {
                         (meta.targets || []).map((target) => {
+                            // if (target.name !== 'location') return null
                             return (
-                                <div>
+                                <Grid container spacing={16} key={target.name}>
                                     <Grid
                                         item
                                         key={target.name}
@@ -197,7 +202,7 @@ class NewUnitFormTargets extends Component {
                                             />
                                         </div>
                                     </Grid>
-                                </div>
+                                </Grid>
                             )
                         })
                     }
