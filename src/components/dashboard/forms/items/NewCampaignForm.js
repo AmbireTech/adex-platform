@@ -7,7 +7,6 @@ import actions from 'actions'
 import DatePicker from 'components/common/DatePicker'
 import NewItemHoc from './NewItemHocStep'
 import Grid from '@material-ui/core/Grid'
-import theme from './../theme.css'
 import Translate from 'components/translate/Translate'
 import { items as ItemsConstants } from 'adex-constants'
 
