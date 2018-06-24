@@ -188,7 +188,7 @@ export class BidsStatistics extends Component {
                 <IconButton
                     onClick={() => this.toggleFullWidthChart(btnID)}
                 >
-                    {this.isInFullWidthChart(btnID) ? <FullscreenIcon /> : <FullscreenExitIcon />}
+                    {this.isInFullWidthChart(btnID) ? <FullscreenExitIcon /> : <FullscreenIcon />}
                 </IconButton>
             </div>
         )
@@ -292,10 +292,7 @@ export class BidsStatistics extends Component {
 
     // TODO: Make common funcs, fix the statistics
     renderTableRow(bid, index, { to, selected }) {
-
         let t = this.props.t
-
-        // console.log('bidAllData', bidAllData)
 
         const bidData = getBidData({
             bid: bid,
@@ -306,8 +303,6 @@ export class BidsStatistics extends Component {
             account: this.props.account,
             onSave: this.props.onSave
         })
-
-        // console.log('bidData', bidData)
 
         return <CommonTableRowStats bidData={bidData} t={t} key={bid._id} />
     }

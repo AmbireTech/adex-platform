@@ -1,24 +1,33 @@
 import React from 'react'
-import { Button } from 'react-toolbox/lib/button'
+// import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
 import FormSteps from 'components/dashboard/forms/FormSteps'
-import NewItemHoc from './items/NewItemHocStep'
-import NewItemFormPreview from './items/NewItemFormPreview'
+import NewItemHoc from './NewItemHocStep'
+import NewItemFormPreview from './NewItemFormPreview'
 import WithDialog from 'components/common/dialog/WithDialog'
-import NewItemForm from './items/NewItemForm'
-import NewSlotForm from './items/NewSlotForm'
-import NewSlotFormImgs from './items/NewSlotFormImgs'
-import NewUnitFormType from './items/NewUnitFormType'
-import NewUnitFormImg from './items/NewUnitFormImg'
-import NewUnitFormTargets from './items/NewUnitFormTargets'
-import NewCampaignForm from './items/NewCampaignForm'
+import NewItemForm from './NewItemForm'
+import NewSlotForm from './NewSlotForm'
+import NewSlotFormImgs from './NewSlotFormImgs'
+import NewUnitFormType from './NewUnitFormType'
+import NewUnitFormImg from './NewUnitFormImg'
+import NewUnitFormTargets from './NewUnitFormTargets'
+import NewCampaignForm from './NewCampaignForm'
 import { AdUnit, AdSlot, Channel, Campaign } from 'adex-models'
 import { items as ItemsConstants } from 'adex-constants'
 import AddIcon from '@material-ui/icons/Add'
+import SaveIcon from '@material-ui/icons/Save'
 
 const { ItemsTypes } = ItemsConstants
 const SaveBtn = ({ ...props }) => {
     return (
-        <Button icon='save' label={props.t('SAVE')} primary onClick={props.save} />
+        <Button icon='save'
+            color='primary'
+            onClick={props.save}
+        >
+            {/*TODO: withStyles */}
+            <SaveIcon style={{ marginRight: 8 }} />
+            {props.t('SAVE')}
+        </Button>
     )
 }
 
@@ -26,7 +35,9 @@ const SaveBtnWithItem = NewItemHoc(SaveBtn)
 
 const CancelBtn = ({ ...props }) => {
     return (
-        <Button label={props.t('CANCEL')} onClick={props.cancel} />
+        <Button onClick={props.cancel} >
+            {props.t('CANCEL')}
+        </Button>
     )
 }
 
@@ -52,9 +63,9 @@ export const NewUnitSteps = (props) =>
         itemType={ItemsTypes.AdUnit.id}
         stepsId={ItemsTypes.AdUnit.id}
         stepsPages={[
-            // { title: 'UNIT_BASIC_STEP', page: NewItemForm },
-            // { title: 'UNIT_TYPE_DATA_STEP', page: NewUnitFormType },
-            // { title: 'UNIT_BANNER_STEP', page: NewUnitFormImg },
+            { title: 'UNIT_BASIC_STEP', page: NewItemForm },
+            { title: 'UNIT_TYPE_DATA_STEP', page: NewUnitFormType },
+            { title: 'UNIT_BANNER_STEP', page: NewUnitFormImg },
             { title: 'UNIT_TARGETS_STEP', page: NewUnitFormTargets }
         ]}
         imgLabel='UNIT_BANNER_IMG_LABEL'

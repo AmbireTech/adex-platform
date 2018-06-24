@@ -1,15 +1,14 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import NewItemHoc from './NewItemHocStep'
 import Translate from 'components/translate/Translate'
-import theme from './../theme.css'
 import { AdUnit } from 'adex-models'
 import Grid from '@material-ui/core/Grid'
 import Autocomplete from 'components/common/autocomplete'
-import classnames from 'classnames'
+// import classnames from 'classnames'
 import { items as ItemsConstants } from 'adex-constants'
 import Slider from '@material-ui/lab/Slider'
 import Typography from '@material-ui/core/Typography'
@@ -206,11 +205,9 @@ class NewUnitFormTargets extends Component {
                                             style={{ flex: '1' }}
                                         >
                                             <Typography noWrap id="page-size">
-                                                <label className={classnames(theme.sliderLabel, theme.weightLabel)}>
-                                                    {target.name}  Weight:
-                                            <strong> {target.weight} </strong>
-                                                    ({TargetWeightLabels[target.weight].label})
-                                        </label></Typography>
+                                                {/*TODO: Translate target name*/}
+                                                {t('TARGET_WEIGHT_LABEL', { args: [target.name, target.weight, t(TargetWeightLabels[target.weight].label)] })}
+                                            </Typography>
                                             <Slider
                                                 aria-labelledby={target.name + '-weight'}
                                                 min={0} max={4}

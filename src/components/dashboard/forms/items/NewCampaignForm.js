@@ -3,8 +3,10 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import DatePicker from 'react-toolbox/lib/date_picker'
+// import DatePicker from 'react-toolbox/lib/date_picker'
+import DatePicker from 'components/common/DatePicker'
 import NewItemHoc from './NewItemHocStep'
+import Grid from '@material-ui/core/Grid'
 import theme from './../theme.css'
 import Translate from 'components/translate/Translate'
 import { items as ItemsConstants } from 'adex-constants'
@@ -20,23 +22,32 @@ class NewCampaignForm extends Component {
         let now = new Date()
 
         return (
-            <div>
-                <DatePicker
-                    label={this.props.t('from', { isProp: true })}
-                    minDate={now}
-                    maxDate={to}
-                    onChange={this.props.handleChange.bind(this, 'from')}
-                    value={from}
-                    className={theme.datepicker}
-                />
-                <DatePicker
-                    label={this.props.t('to', { isProp: true })}
-                    minDate={from || now}
-                    onChange={this.props.handleChange.bind(this, 'to')}
-                    value={to}
-                    className={theme.datepicker}
-                />
-            </div>
+            <Grid
+                container
+                spacing={16}
+            >
+                <Grid item sm={12} md={6}>
+                    <DatePicker
+                        fullWidth
+                        calendarIcon
+                        label={this.props.t('from', { isProp: true })}
+                        minDate={now}
+                        maxDate={to}
+                        onChange={(val) => this.props.handleChange('from', val)}
+                        value={from}
+                    />
+                </Grid>
+                <Grid item sm={12} md={6}>
+                    <DatePicker
+                        fullWidth
+                        calendarIcon
+                        label={this.props.t('to', { isProp: true })}
+                        minDate={from || now}
+                        onChange={(val) => this.props.handleChange('to', val)}
+                        value={to}
+                    />
+                </Grid>
+            </Grid>
         )
     }
 }

@@ -5,10 +5,9 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import NewItemHoc from './NewItemHocStep'
 import Dropdown from 'components/common/dropdown'
-import Input from 'react-toolbox/lib/input'
 import Translate from 'components/translate/Translate'
-import { Grid, Row, Col } from 'react-flexbox-grid'
-import theme from './../theme.css'
+import Grid from '@material-ui/core/Grid'
+import TextField from '@material-ui/core/TextField'
 import { validUrl } from 'helpers/validators'
 import { items as ItemsConstants } from 'adex-constants'
 
@@ -64,48 +63,51 @@ class NewUnitForm extends Component {
         let errUrl = this.props.invalidFields['ad_url']
         return (
             <div>
-                <Grid fluid className={theme.grid}>
-                    <Row middle='md'>
-                        <Col sm={12}>
-                            <Input
-                                type='text'
-                                required
-                                label={t('ad_url', { isProp: true })}
-                                value={ad_url}
-                                onChange={this.props.handleChange.bind(this, 'ad_url')}
-                                maxLength={1024}
-                                onBlur={this.props.validate.bind(this, 'ad_url', { isValid: validUrl(ad_url), err: { msg: 'ERR_INVALID_URL' }, dirty: true })}
-                                onFocus={this.props.validate.bind(this, 'ad_url', { isValid: validUrl(ad_url), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
-                                error={errUrl && !!errUrl.dirty ? <span> {errUrl.errMsg} </span> : null}
-                            />
-                        </Col>
-                    </Row>
-                    <Row middle='md'>
-                        <Col sm={12} lg={6}>
-                            <Dropdown
-                                required
-                                onChange={this.validateAndUpdateDD.bind(this, true, 'adType')}
-                                source={AdTypes}
-                                value={item.adType + ''}
-                                label={t('adType', { isProp: true })}
-                                htmlId='ad-type-dd'
-                                name='adType'
-                            />
-                        </Col>
-                        <Col sm={12} lg={6}>
-                            <Dropdown
-                                required
-                                onChange={this.validateAndUpdateDD.bind(this, true, 'size')}
-                                source={this.state.adSizesSrc}
-                                value={item.size + ''}
-                                label={t('size', { isProp: true })}
-                                htmlId='ad-size-dd'
-                                name='size'
-                            />
-                        </Col>
-                    </Row>
+                <Grid
+                    container
+                    spacing={16}
+                >
+                    <Grid item xs={12}>
+                        <TextField
+                            fullWidth
+                            type='text'
+                            required
+                            label={t('ad_url', { isProp: true })}
+                            value={ad_url}
+                            onChange={(ev) => this.props.handleChange('ad_url', ev.target.value)}
+                            maxLength={1024}
+                            onBlur={() => this.props.validate('ad_url', { isValid: validUrl(ad_url), err: { msg: 'ERR_INVALID_URL' }, dirty: true })}
+                            onFocus={() => this.props.validate('ad_url', { isValid: validUrl(ad_url), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
+                            error={errUrl && !!errUrl.dirty}
+                            helperText={errUrl && !!errUrl.dirty ? errUrl.errMsg : ''}
+                        />
+                    </Grid>
+                    <Grid item sm={12} md={6}>
+                        <Dropdown
+                            fullWidth
+                            required
+                            onChange={this.validateAndUpdateDD.bind(this, true, 'adType')}
+                            source={AdTypes}
+                            value={item.adType + ''}
+                            label={t('adType', { isProp: true })}
+                            htmlId='ad-type-dd'
+                            name='adType'
+                        />
+                    </Grid>
+                    <Grid item sm={12} md={6}>
+                        <Dropdown
+                            fullWidth
+                            required
+                            onChange={this.validateAndUpdateDD.bind(this, true, 'size')}
+                            source={this.state.adSizesSrc}
+                            value={item.size + ''}
+                            label={t('size', { isProp: true })}
+                            htmlId='ad-size-dd'
+                            name='size'
+                        />
+                    </Grid>
                 </Grid>
-            </div>
+            </div >
         )
     }
 }

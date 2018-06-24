@@ -53,9 +53,12 @@ renderSuggestion.propTypes = {
 }
 
 export const getSuggestions = (inputValue, source) => {
-    console.log('filter', inputValue)
-    return source.filter(suggestion => {
-        return (!inputValue || suggestion.label.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1)
+    if (!inputValue) {
+        return source
+    } else {
+        return source.filter(suggestion => {
+            return (!inputValue || suggestion.label.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1)
 
-    }) || source // Return all on click
+        })
+    }
 }
