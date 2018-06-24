@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import NewItemHoc from './NewItemHocStep'
-import Grid from '@material-ui/core/Grid'
 import moment from 'moment'
 import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
@@ -53,66 +52,66 @@ class NewItemFormPreview extends Component {
             <ContentBox>
                 <ContentBody>
                     {/* <Grid container spacing={16}> */}
-                        <PropRow
-                            left={t('fullName', { isProp: true })}
-                            right={meta.fullName}
-                        />
-                        <PropRow
-                            left={t('description', { isProp: true })}
-                            right={item._description}
-                        />
-                        <PropRow
-                            left={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}
-                            right={
-                                <Img
-                                    className={classes.imgPreview}
-                                    src={meta.img.tempUrl || ''}
-                                    alt={meta.fullName}
-                                />
-                            }
-                        />
-                        {item._type === ItemsTypes.AdSlot.id &&
-                            <this.SlotFallback item={item} t={t} classes={classes} />
-                        }
-                        {
-                            Object
-                                .keys(meta)
-                                .filter((key) => !/fullName|description|items|img|createdOn|modifiedOn|deleted|archived|banner|name|owner|type|targets/.test(key))
-                                .map(key => {
-                                    let keyName = key
-                                    let value = meta[key]
-
-                                    if (!value) {
-                                        return null
-                                    }
-
-                                    if (!!/from|to/.test(key)) {
-                                        value = moment(value).format('D MMMM YYYY')
-                                    }
-
-                                    if (keyName === 'size') {
-                                        value = t(AdSizesByValue[value].label, { args: AdSizesByValue[value].labelArgs })
-                                    }
-
-                                    if (keyName === 'adType') {
-                                        value = AdTypesByValue[value].label
-                                    }
-
-                                    return (
-                                        <PropRow key={key}
-                                            left={t(keyName, { isProp: true })}
-                                            right={value}
-                                        />
-                                    )
-                                })
-                        }
-                        {meta.targets ?
-                            <PropRow
-                                left={t('targets', { isProp: true })}
-                                right={<UnitTargets {...this.props} targets={meta.targets} t={t} />}
+                    <PropRow
+                        left={t('fullName', { isProp: true })}
+                        right={meta.fullName}
+                    />
+                    <PropRow
+                        left={t('description', { isProp: true })}
+                        right={item._description}
+                    />
+                    <PropRow
+                        left={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}
+                        right={
+                            <Img
+                                className={classes.imgPreview}
+                                src={meta.img.tempUrl || ''}
+                                alt={meta.fullName}
                             />
-                            : null
                         }
+                    />
+                    {item._type === ItemsTypes.AdSlot.id &&
+                        <this.SlotFallback item={item} t={t} classes={classes} />
+                    }
+                    {
+                        Object
+                            .keys(meta)
+                            .filter((key) => !/fullName|description|items|img|createdOn|modifiedOn|deleted|archived|banner|name|owner|type|targets/.test(key))
+                            .map(key => {
+                                let keyName = key
+                                let value = meta[key]
+
+                                if (!value) {
+                                    return null
+                                }
+
+                                if (!!/from|to/.test(key)) {
+                                    value = moment(value).format('D MMMM YYYY')
+                                }
+
+                                if (keyName === 'size') {
+                                    value = t(AdSizesByValue[value].label, { args: AdSizesByValue[value].labelArgs })
+                                }
+
+                                if (keyName === 'adType') {
+                                    value = AdTypesByValue[value].label
+                                }
+
+                                return (
+                                    <PropRow key={key}
+                                        left={t(keyName, { isProp: true })}
+                                        right={value}
+                                    />
+                                )
+                            })
+                    }
+                    {meta.targets ?
+                        <PropRow
+                            left={t('targets', { isProp: true })}
+                            right={<UnitTargets {...this.props} targets={meta.targets} t={t} />}
+                        />
+                        : null
+                    }
 
                     {/* </Grid> */}
                     <br />

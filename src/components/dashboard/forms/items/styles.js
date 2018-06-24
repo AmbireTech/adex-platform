@@ -1,5 +1,5 @@
 export const styles = theme => {
-    const spacing = theme.spacing.unit * 1
+    // const spacing = theme.spacing.unit * 1
     return {
         imgPreview: {
             height: 120,

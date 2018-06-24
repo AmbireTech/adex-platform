@@ -62,7 +62,7 @@ export const styles = theme => {
             textTransform: 'uppercase',
             // color: var(--color-adex-neutral-contrast-lighter);
             textAlign: 'right',
-            [theme.breakpoints.up('xs')]: {
+            [theme.breakpoints.down('sm')]: {
                 textAlign: 'left',
             },
         },

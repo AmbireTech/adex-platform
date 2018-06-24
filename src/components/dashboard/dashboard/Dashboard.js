@@ -25,7 +25,7 @@ import {
 } from 'adex-models'
 import Account from 'components/dashboard/account/Account'
 import Translate from 'components/translate/Translate'
-import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, NewChannelDialog } from 'components/dashboard/forms/NewItems'
+import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, NewChannelDialog } from 'components/dashboard/forms/items/NewItems'
 import { items as ItemsConstants } from 'adex-constants'
 import checkTransactions from 'services/store-data/transactions'
 import { getUserItems } from 'services/store-data/items'
