@@ -1,8 +1,5 @@
-import { width } from "window-size";
-
 export const styles = theme => {
     const spacing = theme.spacing.unit
-    console.log(theme)
     return {
         addrInfo: {
             display: 'flex',
@@ -20,7 +17,7 @@ export const styles = theme => {
         },
         dialogPaper: {
             height: '80vh',
-            margin: spacing * 2
+            margin: spacing * 2,
         },
         content: {
             display: 'flex',
@@ -64,6 +61,15 @@ export const styles = theme => {
         },
         leftBtnIcon: {
             marginRight: spacing
+        },
+        adexLogoTop: {
+            position: 'absolute',
+            top: '-6vh',
+            left: 0
+        },
+        logo: {
+            width: '12.8vh',
+            height: '5vh'
         }
     }
 }

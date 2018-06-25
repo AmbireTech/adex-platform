@@ -3,16 +3,14 @@ import PropTypes, { node } from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import theme from './Signin.css'
 import Logo from 'components/common/icons/AdexIconTxt'
-import { Button } from 'react-toolbox/lib/button'
-import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Translate from 'components/translate/Translate'
-import { getWeb3 } from 'services/smart-contracts/ADX'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import AuthMethod from 'components/signin/auth/AuthMethod'
 import { getSig } from 'services/auth/auth'
 import packageJson from './../../../package.json'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 class SigninExternalWallet extends Component {
   constructor(props) {
@@ -24,9 +22,9 @@ class SigninExternalWallet extends Component {
   }
 
   renderDefault = () => {
-    let account = this.props.account
-    let lsSig = getSig({ addr: account._addr, mode: (account._authMode || {}).sigMode })
-    let hasSession = !!lsSig && !!account._authSig && (lsSig === account._authSig)
+    const { account } = this.props
+    const lsSig = getSig({ addr: account._addr, mode: (account._authMode || {}).sigMode })
+    const hasSession = !!lsSig && !!account._authSig && (lsSig === account._authSig)
 
     return (
       <div>
@@ -45,12 +43,16 @@ class SigninExternalWallet extends Component {
   }
 
   render() {
+    const { classes } = this.props
     return (
-      <div className={theme.signinContainer} style={{ backgroundImage: `url(${require('resources/background.png')})` }}>
-        <div className={theme.container}>
+      <div className={classes.signinContainer} style={{ backgroundImage: `url(${require('resources/background.png')})` }}>
+        <div className={classes.container}>
           <div className="adex-dapp">
+            <div className={classes.adexLogoTop} >
+              <Logo className={classes.logo} />
+            </div>
             <this.renderDefault />
-            <small className={theme.adxVersion} >
+            <small className={classes.adxVersion} >
               v.{packageJson.version}-beta
             </small>
           </div>
@@ -66,8 +68,8 @@ SigninExternalWallet.propTypes = {
 
 // 
 function mapStateToProps(state) {
-  let persist = state.persist
-  // let memory = state.memory
+  const persist = state.persist
+  // const memory = state.memory
   return {
     account: persist.account
   }
@@ -82,4 +84,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Translate(SigninExternalWallet))
+)(Translate(withStyles(styles)(SigninExternalWallet)))
