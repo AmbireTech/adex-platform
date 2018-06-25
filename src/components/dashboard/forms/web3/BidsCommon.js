@@ -1,17 +1,16 @@
 import React from 'react'
-import { Grid, Row, Col } from 'react-flexbox-grid'
 import Img from 'components/common/img/Img'
-import theme from './../theme.css'
 import { Item } from 'adex-models'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import moment from 'moment'
 import Anchor from 'components/common/anchor/anchor'
-import { FontIcon } from 'react-toolbox/lib/font_icon'
-// import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
-import { PropRow, ContentBox, ContentBody, ContentStickyTop, FullContentSpinner } from 'components/common/dialog/content'
+import ErrorIcon from '@material-ui/icons/Error'
+import { PropRow, ContentBody, ContentStickyTop } from 'components/common/dialog/content'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
-export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
+const adUnit = ({ unit = {}, unitMeta = {}, t, classes }) =>
     <div>
         <PropRow
             left={t('UNIT_NAME')}
@@ -23,7 +22,7 @@ export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
         />
         <PropRow
             left={t('UNIT_BANNER')}
-            right={<Img className={theme.imgPreview} src={Item.getImgUrl(unitMeta.img, process.env.IPFS_GATEWAY) || ''} alt={unitMeta.fullName} />}
+            right={<Img className={classes.imgPreview} src={Item.getImgUrl(unitMeta.img, process.env.IPFS_GATEWAY) || ''} alt={unitMeta.fullName} />}
         />
         <PropRow
             left={t('UNIT_IPFS')}
@@ -38,6 +37,8 @@ export const AdUnit = ({ unit = {}, unitMeta = {}, t }) =>
             right={<UnitTargets targets={unitMeta.targets} t={t} />}
         />
     </div>
+
+export const AdUnit = withStyles(styles)(adUnit)
 
 export const Report = ({ report = {}, t }) =>
     <div>
@@ -55,7 +56,7 @@ export const Report = ({ report = {}, t }) =>
         />
     </div>
 
-export const BidInfo = ({ bid, slot, unit, t, report, errMsg, errArgs, stickyTop, ...rest }) => {
+export const bidInfo = ({ bid, slot, unit, t, report, errMsg, errArgs, stickyTop, classes, ...rest }) => {
 
     const accepted = (bid._acceptedTime || 0) * 1000
     const timeout = (bid._timeout || 0) * 1000
@@ -63,55 +64,57 @@ export const BidInfo = ({ bid, slot, unit, t, report, errMsg, errArgs, stickyTop
 
     return (
         <ContentBody>
-            <Grid fluid style={{ padding: 0 }}>
-                {stickyTop ?
-                    <ContentStickyTop >
-                        {stickyTop}
-                    </ContentStickyTop>
-                    : null
-                }
-                {errMsg ?
-                    <PropRow
-                        className={theme.error}
-                        left={<span> <FontIcon value='error' /> </span>}
-                        right={t(errMsg, { args: errArgs })}
-                    />
-                    : null}
+            {/* <Grid fluid style={{ padding: 0 }}> */}
+            {stickyTop ?
+                <ContentStickyTop >
+                    {stickyTop}
+                </ContentStickyTop>
+                : null
+            }
+            {errMsg ?
+                <PropRow
+                    className={classes.error}
+                    left={<span> <ErrorIcon /> </span>}
+                    right={t(errMsg, { args: errArgs })}
+                />
+                : null}
 
+            <PropRow
+                left={t('BID_ID')}
+                right={bid._id}
+            />
+            <PropRow
+                left={t('BID_TARGET')}
+                right={bid._target}
+            />
+            <PropRow
+                left={t('BID_AMOUNT')}
+                right={adxToFloatView(bid._amount) + ' ADX'}
+            />
+            <PropRow
+                left={t('BID_TIMEOUT')}
+                right={moment.duration(timeout, 'ms').humanize()}
+            />
+            {accepted ?
                 <PropRow
-                    left={t('BID_ID')}
-                    right={bid._id}
+                    left={t('BID_ACCEPTED_TIME')}
+                    right={moment(accepted).format('MMMM Do, YYYY, HH:mm:ss')}
                 />
+                : null}
+            {bidExpires ?
                 <PropRow
-                    left={t('BID_TARGET')}
-                    right={bid._target}
+                    left={t('BID_EXPIRE_TIME')}
+                    right={moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss')}
                 />
-                <PropRow
-                    left={t('BID_AMOUNT')}
-                    right={adxToFloatView(bid._amount) + ' ADX'}
-                />
-                <PropRow
-                    left={t('BID_TIMEOUT')}
-                    right={moment.duration(timeout, 'ms').humanize()}
-                />
-                {accepted ?
-                    <PropRow
-                        left={t('BID_ACCEPTED_TIME')}
-                        right={moment(accepted).format('MMMM Do, YYYY, HH:mm:ss')}
-                    />
-                    : null}
-                {bidExpires ?
-                    <PropRow
-                        left={t('BID_EXPIRE_TIME')}
-                        right={moment(bidExpires).format('MMMM Do, YYYY, HH:mm:ss')}
-                    />
-                    : null}
-                {report ?
-                    <Report report={report} t={t} />
-                    : null}
-                {unit ? <AdUnit unit={unit} unitMeta={unit._meta} t={t} /> : null}
+                : null}
+            {report ?
+                <Report report={report} t={t} />
+                : null}
+            {unit ? <AdUnit unit={unit} unitMeta={unit._meta} t={t} /> : null}
 
-            </Grid>
+            {/* </Grid> */}
         </ContentBody >
     )
 }
+
+export const BidInfo = withStyles(styles)(bidInfo)

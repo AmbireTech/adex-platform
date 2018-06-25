@@ -4,11 +4,13 @@ import indigo from '@material-ui/core/colors/indigo'
 import pink from '@material-ui/core/colors/pink'
 import lime from '@material-ui/core/colors/lime'
 import deepOrange from '@material-ui/core/colors/deepOrange'
+import amber from '@material-ui/core/colors/amber'
 
 const palette = {
     primary: indigo,
     secondary: pink,
     error: deepOrange,
+    warning: amber,
     first: lime,
     contrastThreshold: 3,
     tonalOffset: 0.2,
@@ -27,7 +29,7 @@ export const themeMUI = createMuiTheme({
         },
         MuiTableCell: {
             head: {
-               whiteSpace: 'nowrap' 
+                whiteSpace: 'nowrap'
             },
             root: {
                 whiteSpace: 'nowrap'

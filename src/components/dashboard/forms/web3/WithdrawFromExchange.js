@@ -3,10 +3,9 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-// import theme from 'components/dashboard/forms/theme.css'
 // import Translate from 'components/translate/Translate'
 import NewTransactionHoc from './TransactionHoc'
-import Input from 'react-toolbox/lib/input'
+import TextField from '@material-ui/core/TextField'
 import { validateNumber } from 'helpers/validators'
 
 class WithdrawFromExchange extends Component {
@@ -35,30 +34,27 @@ class WithdrawFromExchange extends Component {
     }
 
     render() {
-        let tr = this.props.transaction
-        let t = this.props.t
-        let errAmount = this.props.invalidFields['withdrawAmount']
+        const { transaction, t, invalidFields, exchangeAvailable, handleChange } = this.props.transaction
+        const errAmount = invalidFields['withdrawAmount']
 
         return (
             <div>
-                <span> {t('EXCHANGE_CURRENT_ADX_BALANCE_AVAILABLE')} {this.props.exchangeAvailable} </span>
-                <Input
+                <div> {t('EXCHANGE_CURRENT_ADX_BALANCE_AVAILABLE')} {exchangeAvailable} </div>
+                <TextField
                     type='text'
+                    fullWidth
                     required
-                    label={this.props.t('TOKENS_TO_WITHDRAW')}
+                    label={t('TOKENS_TO_WITHDRAW')}
                     name='withdrawAmount'
-                    value={tr.withdrawAmount || ''}
-                    onChange={(value) => this.props.handleChange('withdrawAmount', value)}
-                    onBlur={this.validateAmount.bind(this, tr.withdrawAmount, true)}
-                    onFocus={this.validateAmount.bind(this, tr.withdrawAmount, false)}
-                    error={errAmount && !!errAmount.dirty ?
-                        <span> {errAmount.errMsg} </span> : null}
-                >
-                    {errAmount && !errAmount.dirty ?
-                        <div>
-                            {t('MAX_AMOUNT_TO_WITHDRAW', { args: [this.props.exchangeAvailable, 'ADX'] })}
-                        </div> : null}
-                </Input>
+                    value={transaction.withdrawAmount || ''}
+                    onChange={(ev) => handleChange('withdrawAmount', ev.target.value)}
+                    onBlur={() => this.validateAmount(transaction.withdrawAmount, true)}
+                    onFocus={() => this.validateAmount(transaction.withdrawAmount, false)}
+                    error={errAmount && !!errAmount.dirty}
+                    helperText={errAmount && !!errAmount.dirty ?
+                        errAmount.errMsg : t('MAX_AMOUNT_TO_WITHDRAW', { args: [exchangeAvailable, 'ADX'] })
+                    }
+                />
             </div>
         )
     }
@@ -74,8 +70,8 @@ WithdrawFromExchange.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-    // let persist = state.persist
-    // let memory = state.memory
+    // const persist = state.persist
+    // const memory = state.memory
     const trId = props.stepsId
     return {
         trId: trId
