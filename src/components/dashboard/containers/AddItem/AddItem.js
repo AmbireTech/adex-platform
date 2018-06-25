@@ -23,7 +23,6 @@ export class AddItem extends Component {
         this.setState({ tabIndex: index })
     }
 
-
     render() {
         const { classes } = this.props
         const { tabIndex } = this.state

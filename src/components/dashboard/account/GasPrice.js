@@ -7,6 +7,8 @@ import Dropdown from 'components/common/dropdown'
 import Translate from 'components/translate/Translate'
 import { web3Utils } from 'services/smart-contracts/ADX'
 import { getGasData, DEFAULT_DATA } from 'services/eth/gas'
+import { styles } from './theme.js'
+import { withStyles } from '@material-ui/core/styles'
 
 // TODO: Move component to side nav ?
 class GasPrice extends React.Component {
@@ -104,4 +106,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(GasPrice))
+)(Translate(withStyles(styles)(GasPrice)))

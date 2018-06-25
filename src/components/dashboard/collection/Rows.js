@@ -1,10 +1,7 @@
 import React, { Component } from 'react'
-// import theme from './theme.css'
 import { items as ItemsConstants } from 'adex-constants'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
 
 const { ItemTypesNames } = ItemsConstants
 
