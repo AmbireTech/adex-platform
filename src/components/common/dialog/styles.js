@@ -37,8 +37,6 @@ export const styles = theme => {
         },
         contentBody: {
             flexGrow: 1,
-            margin: 8 // Grid spacing 8 fix
-            // overflowY: 'auto'
         },
         contentTopLoadingCircular: {
             flexShrink: 0,

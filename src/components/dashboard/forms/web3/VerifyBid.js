@@ -84,7 +84,7 @@ class VerifyBid extends Component {
             <PropRow
                 classNameLeft={classes.warning}
                 classNameRight={classes.warning}
-                style={{ width: '100%' }}
+                // style={{ width: '100%' }}
                 left={<span> <WarningIcon /> </span>}
                 right={
                     <div>

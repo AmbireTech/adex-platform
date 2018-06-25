@@ -1,5 +1,4 @@
 import React from 'react'
-import theme from './theme.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -12,7 +11,7 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
-import { styles } from './theme.js'
+import { styles } from './styles.js'
 
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import scActions from 'services/smart-contracts/actions'
@@ -39,16 +38,14 @@ class Account extends React.Component {
     }
 
     render() {
-        let account = this.props.account
+        const { t, account, classes } = this.props
         let stats = { ...account._stats } || {}
-        let t = this.props.t
         let addrBalanceAdx = adxToFloatView(stats.balanceAdx || 0)
         let addrBalanceEth = web3Utils.fromWei(stats.balanceEth || '0', 'ether')
         let exchBal = stats.exchangeBalance || {}
         // let adxOnExchangeTotal = adxToFloatView(exchBal.total)
         let adxOnBids = adxToFloatView(exchBal.onBids || 0)
         let exchangeAvailable = adxToFloatView(exchBal.available || 0)
-        const classes = this.props.classes
 
         return (
             <div>
@@ -79,7 +76,7 @@ class Account extends React.Component {
                                 availableAmount={addrBalanceEth}
                                 tokenName='ETH'
                                 accAddr={account._addr}
-                                className={theme.actionBtn}
+                                className={classes.actionBtn}
                                 size='small'
                             />
                         </div>
@@ -99,7 +96,7 @@ class Account extends React.Component {
                                 availableAmount={addrBalanceAdx}
                                 tokenName='ADX'
                                 accAddr={account._addr}
-                                className={theme.actionBtn}
+                                className={classes.actionBtn}
                                 size='small'
                             />
                         </div>
@@ -117,7 +114,7 @@ class Account extends React.Component {
                                 color='secondary'
                                 onSave={this.onSave}
                                 addrBalanceAdx={addrBalanceAdx}
-                                className={theme.actionBtn}
+                                className={classes.actionBtn}
                                 size='small'
                             />
                             <WithdrawFromExchange
@@ -125,7 +122,7 @@ class Account extends React.Component {
                                 color='primary'
                                 onSave={this.onSave}
                                 exchangeAvailable={exchangeAvailable}
-                                className={theme.actionBtn}
+                                className={classes.actionBtn}
                                 size='small'
                             />
                         </div>
