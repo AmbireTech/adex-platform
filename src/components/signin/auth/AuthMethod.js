@@ -1,20 +1,21 @@
 import React, { Component } from 'react'
-import theme from './theme.css'
-import PublisherLogo from 'components/common/icons/AdexPublisher'
-import AdvertiserLogo from 'components/common/icons/AdexAdvertiser'
-import AuctionLogo from 'components/common/icons/AdexAuction'
-// import { Link } from 'react-router-dom'
-import Dialog from 'react-toolbox/lib/dialog'
-import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Translate from 'components/translate/Translate'
-import classnames from 'classnames'
-import { Tab, Tabs } from 'react-toolbox'
-import { Button } from 'react-toolbox/lib/button'
-import { getWeb3 } from 'services/smart-contracts/ADX'
+import Dialog from '@material-ui/core/Dialog'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import AppBar from '@material-ui/core/AppBar'
 import AuthMetamask from 'components/signin/auth/AuthMetamask'
 import AuthTrezor from 'components/signin/auth/AuthTrezor'
 import AuthLedger from 'components/signin/auth/AuthLedger'
+import METAMASK_DL_IMG from 'resources/download-metamask.png'
+import LEDGER_DL_IMG from 'resources/ledger_logo_header.png'
+import TREZOR_DL_IMG from 'resources/trezor-logo-h.png'
+import Img from 'components/common/img/Img'
 import Logo from 'components/common/icons/AdexIconTxt'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 class AuthMethod extends Component {
 
@@ -27,43 +28,80 @@ class AuthMethod extends Component {
     }
   }
 
-  handleTabChange = (index) => {
+  handleTabChange = (event, index) => {
     this.setState({ tabIndex: index })
   }
 
   render() {
-    let t = this.props.t
+    const { t, classes } = this.props
+    const { tabIndex } = this.state
     return (
       <Dialog
-        active={true}
-        title={t('CHOOSE_AUTH_METHOD')}
-        theme={theme}        
-        type='large'
+        open={true}
+        classes={{ paper: classes.dialogPaper }}
+        BackdropProps={{
+          classes: {
+            root: classes.backdrop
+          }
+        }}
+        fullWidth
+        maxWidth='md'
       >
-        <div>
-          <div className={theme.adexLogoTop} >
-            <Logo className={theme.logo} />
-          </div>
-          <Tabs
-            theme={theme}
-            index={this.state.tabIndex}
-            onChange={this.handleTabChange.bind(this)}
+        <DialogTitle >
+          {t('CHOOSE_AUTH_METHOD')}
+        </DialogTitle>
+        <DialogContent
+          classes={{ root: classes.content }}
+        >
+          {/* <div className={classes.adexLogoTop} >
+            <Logo className={classes.logo} />
+          </div> */}
+          <AppBar
+            position='static'
+            color='default'
           >
-            <Tab label={t('METAMASK')}>
+            <Tabs
+              value={this.state.tabIndex}
+              onChange={this.handleTabChange}
+              scrollable
+              scrollButtons='off'
+              indicatorColor='primary'
+              textColor='inhprimaryerit'
+            >
+              <Tab
+                // label={t('METAMASK')}
+                classes={{ label: classes.tabLabel }}
+                label={<Img src={METAMASK_DL_IMG} alt={'Authenticate with METAMASK'} className={classes.tabLogo} />}
+              />
+              <Tab
+                // label={t('TREZOR')}
+                classes={{ label: classes.tabLabel }}
+                label={<Img src={TREZOR_DL_IMG} alt={'Authenticate with TREZOR'} className={classes.tabLogo} />}
+              />
+              <Tab
+                // label={t('LEDGER')}
+                classes={{ label: classes.tabLabel }}
+                label={<Img src={LEDGER_DL_IMG} alt={'Authenticate with LEDGER'} className={classes.tabLogo} />}
+              />
+            </Tabs>
+          </AppBar>
+          <div className={classes.tabsContainer}>
+            {(tabIndex === 0) &&
               <AuthMetamask />
-            </Tab>
-            <Tab label={t('TREZOR')}>
+            }
+            {(tabIndex === 1) &&
               <AuthTrezor />
-            </Tab>
-            <Tab label={t('LEDGER')}>
+            }
+            {(tabIndex === 2) &&
               <AuthLedger />
-            </Tab>
-          </Tabs>
-        </div>
+            }
+
+          </div>
+        </DialogContent>
 
       </Dialog>
     )
   }
 }
 
-export default Translate(AuthMethod)
+export default Translate(withStyles(styles)(AuthMethod))
