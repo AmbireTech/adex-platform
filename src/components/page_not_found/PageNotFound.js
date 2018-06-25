@@ -7,7 +7,7 @@ class PageNotFound extends React.Component {
     render() {
         return (
             <div>
-                <h1>4YMIYW4</h1>
+                <h1>404</h1>
                 <Link to="/">Go home..</Link>
                 <AdexIcon />
             </div>

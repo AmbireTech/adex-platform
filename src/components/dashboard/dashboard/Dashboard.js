@@ -1,8 +1,6 @@
 import React from 'react'
-import { Layout, Panel, NavDrawer } from 'react-toolbox/lib/layout'
-import SideNav from './SideNavigation'// 'components/dashboard/side_nav/SideNav'
-import TopBar from './TopBarMui' //'./top_bar/TopBar'
-// import theme from './theme.css'
+import SideNav from './SideNav'
+import TopBar from './TopBar'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -34,15 +32,10 @@ import checkGasData from 'services/store-data/gas'
 import { SORT_PROPERTIES_ITEMS, SORT_PROPERTIES_COLLECTION, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import Helper from 'helpers/miscHelpers'
 import scActions from 'services/smart-contracts/actions'
-
-import { SideSwitch } from './SideSwitch'
-
-import { withStyles } from '@material-ui/core/styles'
 import Drawer from '@material-ui/core/Drawer'
-import Divider from '@material-ui/core/Divider'
-// import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
-import { styles } from './theme'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 const { getAccountStats } = scActions
 const { ItemsTypes } = ItemsConstants
