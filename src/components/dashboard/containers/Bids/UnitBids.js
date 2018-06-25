@@ -132,7 +132,7 @@ export class UnitBids extends Component {
                     style={{ marginTop: 10 }}
                 >
                     {
-                        (!!tabIndex === 0) &&
+                        !!(tabIndex === 0) &&
                         <ListWithControls
                             items={sorted.action}
                             listMode='rows'

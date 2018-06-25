@@ -95,13 +95,13 @@ class Img extends Component {
                     onDragStart={(event) => event.preventDefault() /*Firefox*/}
                 />
                 :
-                <div className={classnames(classes.imgLoading, className)}>
-                    <div
+                <span className={classnames(classes.imgLoading, className)}>
+                    <span
                         className={classes.circular}
                     >
                         <CircularProgress />
-                    </div>
-                </div>
+                    </span>
+                </span>
         )
     }
 }
