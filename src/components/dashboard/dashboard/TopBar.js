@@ -25,7 +25,7 @@ import { withStyles } from '@material-ui/core/styles'
 import MenuItem from '@material-ui/core/MenuItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
-import { styles } from './theme'
+import { styles } from './styles'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
 
