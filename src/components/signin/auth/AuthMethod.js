@@ -13,7 +13,6 @@ import METAMASK_DL_IMG from 'resources/download-metamask.png'
 import LEDGER_DL_IMG from 'resources/ledger_logo_header.png'
 import TREZOR_DL_IMG from 'resources/trezor-logo-h.png'
 import Img from 'components/common/img/Img'
-import Logo from 'components/common/icons/AdexIconTxt'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -53,9 +52,6 @@ class AuthMethod extends Component {
         <DialogContent
           classes={{ root: classes.content }}
         >
-          {/* <div className={classes.adexLogoTop} >
-            <Logo className={classes.logo} />
-          </div> */}
           <AppBar
             position='static'
             color='default'
