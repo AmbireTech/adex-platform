@@ -4,9 +4,12 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import Snackbar from 'react-toolbox/lib/snackbar'
-import FontIcon from 'react-toolbox/lib/font_icon'
-import theme from './theme.css'
+import Snackbar from '@material-ui/core/Snackbar'
+import CheckCircleIcon from '@material-ui/icons/CheckCircle'
+import ErrorIcon from '@material-ui/icons/Error'
+import WarningIcon from '@material-ui/icons/Warning'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 export class Toast extends Component {
     constructor(props) {
@@ -48,20 +51,20 @@ export class Toast extends Component {
         let icon = ''
         switch (type) {
             case 'accept':
-                icon = 'check_circle'
+                icon = <CheckCircleIcon style={{ verticalAlign: 'bottom', marginRight: 10 }} />
                 break
             case 'cancel':
-                icon = 'error'
+                icon = <ErrorIcon style={{ verticalAlign: 'bottom', marginRight: 10 }} />
                 break
             case 'warning':
-                icon = 'warning'
+                icon = <WarningIcon style={{ verticalAlign: 'bottom', marginRight: 10 }} />
                 break
             default:
                 break
         }
 
         return (
-            <span><FontIcon value={icon} style={{ verticalAlign: 'bottom', marginRight: 10 }} /> <strong> {label} </strong> </span>
+            <span> {icon} <strong> {label} </strong> </span>
         )
     }
 
@@ -72,14 +75,13 @@ export class Toast extends Component {
 
         return (
             <Snackbar
-                action={toast.action}
-                active={this.state.active}
-                label={<this.label type={toast.type} label={(toast.label || '').toString()} />}
-                timeout={toast.timeout || 0}
+                // action={toast.action}
+                open={this.state.active}
+                action={<this.label type={toast.type} label={(toast.label || '').toString()} />}
+                // timeout={toast.timeout || 0}
                 onClick={this.close.bind(this, toast.id)}
-                onTimeout={this.close.bind(this, toast.id)}
+                // onTimeout={this.close.bind(this, toast.id)}
                 type={toast.type}
-                theme={theme}
             />
         )
     }
@@ -107,4 +109,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Toast);
+)(withStyles(styles)(Toast))
