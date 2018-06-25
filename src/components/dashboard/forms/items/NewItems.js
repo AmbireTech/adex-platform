@@ -20,7 +20,7 @@ import SaveIcon from '@material-ui/icons/Save'
 const { ItemsTypes } = ItemsConstants
 const SaveBtn = ({ ...props }) => {
     return (
-        <Button icon='save'
+        <Button
             color='primary'
             onClick={props.save}
         >

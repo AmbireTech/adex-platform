@@ -3,13 +3,15 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import theme from './../theme.css'
 import NewTransactionHoc from './TransactionHoc'
-import { FontIcon } from 'react-toolbox/lib/font_icon'
 import { BidInfo } from './BidsCommon'
 import { getBidVerificationReport } from 'services/adex-node/actions'
 import { PropRow, ContentBox, FullContentSpinner } from 'components/common/dialog/content'
-import Checkbox from 'react-toolbox/lib/checkbox'
+import Checkbox from '@material-ui/core/Checkbox'
+import WarningIcon from '@material-ui/icons/Warning'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import { styles } from './styles.js'
+import { withStyles } from '@material-ui/core/styles'
 
 class VerifyBid extends Component {
     constructor(props) {
@@ -23,12 +25,9 @@ class VerifyBid extends Component {
     }
 
     componentWillMount() {
-        const placedBid = this.props.placedBid
+        const { t, transaction, placedBid, validate, handleChange, actions, trId, account, acc, side, verifyType } = this.props
 
-        if (!this.props.transaction.report) {
-
-            const verifyType = this.props.verifyType
-
+        if (!transaction.report) {
             let isValidConversion = true
             let conversionWarningMsg = ''
             let conversionCheckMsg = ''
@@ -46,29 +45,29 @@ class VerifyBid extends Component {
                 conversionCheckMsg = 'WARNING_TARGET_REACHED_REFUND_CHECKBOX'
             }
 
-            this.props.actions.updateSpinner(this.props.trId, true)
-            this.props.validate('conversion', { isValid: isValidConversion, err: { msg: 'ERR_NO_TARGET_REACHED' }, dirty: false })
-            this.props.validate('report', { isValid: false, err: { msg: 'ERR_UNIT_INFO_NOT_READY' }, dirty: false })
+            actions.updateSpinner(trId, true)
+            validate('conversion', { isValid: isValidConversion, err: { msg: 'ERR_NO_TARGET_REACHED' }, dirty: false })
+            validate('report', { isValid: false, err: { msg: 'ERR_UNIT_INFO_NOT_READY' }, dirty: false })
 
-            this.props.handleChange('isValidConversion', isValidConversion)
-            this.props.handleChange('conversionWarningMsg', conversionWarningMsg)
-            this.props.handleChange('conversionCheckMsg', conversionCheckMsg)
+            handleChange('isValidConversion', isValidConversion)
+            handleChange('conversionWarningMsg', conversionWarningMsg)
+            handleChange('conversionCheckMsg', conversionCheckMsg)
 
-            getBidVerificationReport({ bidId: placedBid._id, authSig: this.props.account._authSig })
+            getBidVerificationReport({ bidId: placedBid._id, authSig: account._authSig })
                 .then((report) => {
-                    this.props.handleChange('placedBid', placedBid)
-                    this.props.handleChange('account', this.props.acc)
-                    this.props.handleChange('report', report)
-                    this.props.handleChange('side', this.props.side)
-                    this.props.actions.updateSpinner(this.props.trId, false)
+                    handleChange('placedBid', placedBid)
+                    handleChange('account', acc)
+                    handleChange('report', report)
+                    handleChange('side', side)
+                    actions.updateSpinner(trId, false)
 
-                    this.props.validate('report', { isValid: true, dirty: false })
+                    validate('report', { isValid: true, dirty: false })
                 })
                 .catch((err) => {
-                    this.props.actions.updateSpinner(this.props.trId, false)
+                    actions.updateSpinner(trId, false)
                     this.setState({ errMsg: 'ERR_TRANSACTION', errArgs: [err] })
-                    this.props.actions
-                        .addToast({ type: 'warning', action: 'X', label: this.props.t('ERR_GETTING_BID_REPORT', { args: [err] }), timeout: 5000 })
+                    actions
+                        .addToast({ type: 'warning', action: 'X', label: t('ERR_GETTING_BID_REPORT', { args: [err] }), timeout: 5000 })
                 })
         }
     }
@@ -78,23 +77,28 @@ class VerifyBid extends Component {
     }
 
     ConversionConfirm = () => {
-        const t = this.props.t
-        const errConversion = this.props.invalidFields['conversion'] || null
+        const { t, classes, invalidFields } = this.props
+        const errConversion = invalidFields['conversion'] || null
 
         return (
             <PropRow
-                classNameLeft={theme.warning}
-                classNameRight={theme.warning}
+                classNameLeft={classes.warning}
+                classNameRight={classes.warning}
                 style={{ width: '100%' }}
-                left={<span> <FontIcon value='warning' /> </span>}
+                left={<span> <WarningIcon /> </span>}
                 right={
                     <div>
                         <div> {t(this.props.transaction.conversionWarningMsg)} </div>
                         <br />
-                        <Checkbox
-                            checked={!errConversion}
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    color="default"
+                                    checked={!errConversion}
+                                    onChange={(ev) => this.validateConversion(ev.target.checked)}
+                                />
+                            }
                             label={t(this.props.transaction.conversionCheckMsg)}
-                            onChange={this.validateConversion}
                         />
                     </div>
                 }
@@ -103,9 +107,7 @@ class VerifyBid extends Component {
     }
 
     render() {
-        const tx = this.props.transaction
-        const t = this.props.t
-        const bid = this.props.placedBid || {}
+        const { t, transaction, placedBid = {} } = this.props
 
         return (
             <ContentBox>
@@ -113,12 +115,12 @@ class VerifyBid extends Component {
                     <FullContentSpinner />
                     :
                     <BidInfo
-                        bid={bid}
+                        bid={placedBid}
                         t={t}
-                        report={tx.report}
+                        report={transaction.report}
                         errMsg={this.state.errMsg}
                         errArgs={this.state.errArgs}
-                        stickyTop={!tx.isValidConversion ? <this.ConversionConfirm /> : null}
+                        stickyTop={!transaction.isValidConversion ? <this.ConversionConfirm /> : null}
                     />
                 }
             </ContentBox>
@@ -138,7 +140,7 @@ VerifyBid.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-    // let persist = state.persist
+    // const persist = state.persist
     const memory = state.memory
     const trId = props.stepsId
     return {
@@ -159,4 +161,4 @@ const VerifyBidForm = NewTransactionHoc(VerifyBid)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(VerifyBidForm)
+)(withStyles(styles)(VerifyBidForm))

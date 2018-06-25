@@ -1,5 +1,4 @@
 import React from 'react'
-import ApproveStep from './ApproveStep'
 import WithdrawStep from './WithdrawStep'
 import DepositToExchange from './DepositToExchange'
 import WithdrawFromExchangePage from './WithdrawFromExchange'
@@ -9,13 +8,14 @@ import VerifyBidStep from './VerifyBid'
 import TransactionPreview from './TransactionPreview'
 import scActions from 'services/smart-contracts/actions'
 import { sendBidState } from 'services/adex-node/actions'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
 import TransactionHoc from './TransactionHoc'
 import FormSteps from 'components/dashboard/forms/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
+// import SaveIcon from '@material-ui/icons/Save'
+import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 
 const {
-    approveTokens,
     withdrawEth,
     withdrawAdx,
     acceptBid,
@@ -33,17 +33,23 @@ const FormStepsWithDialog = WithDialog(FormSteps)
 const SaveBtn = ({ save, saveBtnLabel, saveBtnIcon, t, transaction, waitingForWalletAction, spinner, ...other }) => {
     return (
         <Button
-            icon={transaction.waitingForWalletAction ? 'hourglass_empty' : (saveBtnIcon || '')}
-            label={t(saveBtnLabel || 'DO_IT')}
-            primary onClick={save}
+            color='primary'
+            onClick={save}
             disabled={(transaction.errors && transaction.errors.length) || transaction.waitingForWalletAction || spinner}
-        />
+        >
+            {transaction.waitingForWalletAction ? <HourglassEmptyIcon /> : (saveBtnIcon || '')}
+            {t(saveBtnLabel || 'DO_IT')}
+        </Button>
     )
 }
 
 const CancelBtn = ({ cancel, cancelBtnLabel, t, ...other }) => {
     return (
-        <Button label={t(cancelBtnLabel || 'CANCEL')} onClick={cancel} />
+        <Button
+            onClick={cancel}
+        >
+            {t(cancelBtnLabel || 'CANCEL')}
+        </Button>
     )
 }
 
@@ -57,22 +63,6 @@ const txCommon = {
     validateIdBase: 'tx-',
     darkerBackground: true
 }
-
-export const Approve = (props) =>
-    <FormStepsWithDialog
-        {...props}
-        btnLabel="ACCOUNT_APPROVE_BTN"
-        saveBtnLabel='ACC_APPROVE_SAVE_BTN'
-        title="ACCOUNT_APPROVE_TITLE"
-        stepsId='approve'
-        {...txCommon}
-        stepsPages={[{ title: 'ACCOUNT_APPROVE_STEP', page: ApproveStep }]}
-        //TODO: refactor the stepper. This is not cool :)
-        // Until the refactor we will use mapping function from account and transaction hoc to specific sc function
-        saveFn={({ acc, transaction } = {}) => {
-            return approveTokens({ _addr: acc._addr, amountToApprove: transaction.allowance, gas: transaction.gas })
-        }}
-    />
 
 export const WithdrawEth = (props) =>
     <FormStepsWithDialog
