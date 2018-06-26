@@ -11,9 +11,11 @@ import Confirm from 'components/confirm/Confirm'
 import { PersistGate } from 'redux-persist/es/integration/react'
 import Root from './Root'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import { themeMUI } from './themeMUi'
+import { themeMUI, globalStyles } from './themeMUi'
 import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils'
 import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import { withStyles } from '@material-ui/core/styles'
 
 // window.TREZOR_POPUP_PATH = 'https://localhost/'
 // window.TREZOR_POPUP_ORIGIN = 'http://localhost'
@@ -26,30 +28,47 @@ const onBeforeLift = () => {
   // take some action before the gate lifts
 }
 
+const cssBaselineStyled = ({ classes }) =>
+  <CssBaseline classes={
+    { children: classes.globalStyles }
+  } />
+
+
+const CssBaselineStyled = withStyles(globalStyles)(cssBaselineStyled)
+
 class App extends Component {
 
   render() {
     return (
-      <Provider store={store}>
-        <PersistGate
-          onBeforeLift={onBeforeLift}
-          persistor={persistor}>
-          <ConnectedRouter history={history} >
-            <div className="adex-dapp">
-              <MuiThemeProvider theme={themeMUI}>
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                  <Switch >
-                    <Root />
-                  </Switch>
-                  <Toast />
-                  <Confirm />
-                </MuiPickersUtilsProvider>
-              </MuiThemeProvider>
-            </div>
-          </ConnectedRouter>
+      <React.Fragment>
+        <CssBaselineStyled
+        // classes={
+        //   { children: classes.globalStyles }
+        // }
+        />
+        <MuiThemeProvider theme={themeMUI}>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <Provider store={store}>
+              <PersistGate
+                onBeforeLift={onBeforeLift}
+                persistor={persistor}>
+                <ConnectedRouter history={history} >
+                  <div className="adex-dapp">
 
-        </PersistGate>
-      </Provider>
+                    <Switch >
+                      <Root />
+                    </Switch>
+                    <Toast />
+                    <Confirm />
+
+                  </div>
+                </ConnectedRouter>
+
+              </PersistGate>
+            </Provider>
+          </MuiPickersUtilsProvider>
+        </MuiThemeProvider>
+      </React.Fragment>
     )
   }
 }

@@ -25,6 +25,7 @@ import { withStyles } from '@material-ui/core/styles'
 import MenuItem from '@material-ui/core/MenuItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
@@ -89,7 +90,7 @@ class TopNav extends Component {
               {/* <GasPrice /> */}
               <ButtonMenu
                 leftIconSrc={imgSrc}
-                icon='expand_more'
+                icon={<ExpandMoreIcon />}
                 label={this.props.account._addr || t('NOT_LOGGED')}
                 active={true}
                 iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}

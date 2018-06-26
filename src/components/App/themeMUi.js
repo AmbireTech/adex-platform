@@ -48,3 +48,13 @@ export const themeMUI = createMuiTheme({
         // }
     },
 })
+
+export const globalStyles = theme => {
+    return {
+        '@global': {
+            html: {
+                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif'
+            }
+        }
+    }
+}
