@@ -1,13 +1,13 @@
 import React from 'react'
 import { createMuiTheme } from '@material-ui/core/styles'
-import indigo from '@material-ui/core/colors/indigo'
+import blue from '@material-ui/core/colors/blue'
 import pink from '@material-ui/core/colors/pink'
 import lime from '@material-ui/core/colors/lime'
 import deepOrange from '@material-ui/core/colors/deepOrange'
 import amber from '@material-ui/core/colors/amber'
 
 const palette = {
-    primary: indigo,
+    primary: blue,
     secondary: pink,
     error: deepOrange,
     warning: amber,
@@ -54,6 +54,9 @@ export const globalStyles = theme => {
         '@global': {
             html: {
                 fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif'
+            },
+            a: {
+                textDecoration: 'none'
             }
         }
     }

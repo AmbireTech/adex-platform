@@ -40,10 +40,6 @@ class Transactions extends Component {
         this.props.actions.updateNav('navTitle', this.props.t('TRANSACTIONS'))
     }
 
-    setNavTitle = (title) => {
-        this.props.actions.updateNav('navTitle', title)
-    }
-
     renderTableHead() {
         let t = this.props.t
         return (

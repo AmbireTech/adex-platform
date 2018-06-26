@@ -23,7 +23,7 @@ export class UnitBids extends Component {
         let tabIndex = this.getTabIndex(tabParam)
 
         this.state = {
-            tabIndex: 4 || tabIndex,
+            tabIndex: tabIndex || 0,
             detailsOpen: false
         }
     }
