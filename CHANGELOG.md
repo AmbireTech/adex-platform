@@ -3,6 +3,19 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.1.0] - 2018-06-26
+### Added
+- materia-ui components
+- More responsive UI (not fully yet)
+
+### Changed
+- Remove react-toolbox components
+- More simple UI
+- Code refactoring
+
+### Fixed
+- Misc bugs and styles
+
 ## [2.0.13] - 2018-05-24
 ### Added
 - Statistics for bids (charts and tables)
@@ -158,7 +171,8 @@ All notable changes to this project will be documented in this file.
 
 ## 2.0.0 - 2018-02-26
 
-[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.13...HEAD
+[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.13...v2.1.0
 [2.0.13]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.12...v2.0.13
 [2.0.12]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.11...v2.0.12
 [2.0.11]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.10...v2.0.11
