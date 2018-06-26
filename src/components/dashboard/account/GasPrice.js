@@ -1,15 +1,15 @@
 import React from 'react'
-import theme from './theme.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-// import moment from 'moment'
-// import { Button, IconButton } from 'react-toolbox/lib/button'
-import Dropdown from 'react-toolbox/lib/dropdown'
+import Dropdown from 'components/common/dropdown'
 import Translate from 'components/translate/Translate'
 import { web3Utils } from 'services/smart-contracts/ADX'
 import { getGasData, DEFAULT_DATA } from 'services/eth/gas'
+import { styles } from './styles'
+
+import { withStyles } from '@material-ui/core/styles'
 
 // TODO: Move component to side nav ?
 class GasPrice extends React.Component {
@@ -69,13 +69,14 @@ class GasPrice extends React.Component {
         return (
             <span>
                 <Dropdown
-                    // theme={this.props.theme}
                     auto={false}
                     label={this.props.t('GAS_PRICE_LABEL')}
                     onChange={this.changeGasPrice}
                     source={this.state.gasPrices}
                     value={gasPrice}
                     disabled={this.props.disabled}
+                    htmlId='get-gas-price-dd'
+                    name='gasPrice'
                 />
             </span>
         )
@@ -105,4 +106,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(GasPrice))
+)(Translate(withStyles(styles)(GasPrice)))

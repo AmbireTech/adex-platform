@@ -3,8 +3,9 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import theme from './theme.css'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
+import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
+import Typography from '@material-ui/core/Typography'
 import Translate from 'components/translate/Translate'
 import scActions from 'services/smart-contracts/actions'
 import METAMASK_DL_IMG from 'resources/download-metamask.png'
@@ -15,10 +16,10 @@ import { AUTH_TYPES } from 'constants/misc'
 import { AddrItem } from './AuthCommon'
 import Helper from 'helpers/miscHelpers'
 import { ContentBox, ContentBody, ContentStickyTop, TopLoading } from 'components/common/dialog/content'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 const { getAccountMetamask, getAccountStats } = scActions
-
-// const RRButton = withReactRouterLink(Button)
 
 class AuthMetamask extends Component {
     constructor(props) {
@@ -71,7 +72,7 @@ class AuthMetamask extends Component {
     }
 
     checkMetamask = () => {
-        let t = this.props.t
+        const { t } = this.props
         getAccountMetamask()
             .then(({ addr, netId }) => {
                 if (!addr) {
@@ -93,12 +94,12 @@ class AuthMetamask extends Component {
     }
 
     render() {
-        let t = this.props.t
-        let stats = this.state.address
-        let userAddr = stats.addr
+        const { t, classes } = this.props
+        const stats = this.state.address
+        const userAddr = stats.addr
 
         return (
-            <ContentBox className={theme.tabBox} >
+            <ContentBox className={classes.tabBox} >
                 {this.state.waitingMetamaskAction ?
                     <ContentStickyTop>
                         <TopLoading msg={t('METAMASK_WAITING_ACTION')} />
@@ -108,34 +109,32 @@ class AuthMetamask extends Component {
                         : null
                 }
                 <ContentBody>
-                    <p>
+                    <Typography paragraph variant='subheading'>
                         {t('METAMASK_INFO')}
-                    </p>
-                    <br />
-                    <p
-                        dangerouslySetInnerHTML={
-                            {
-                                __html: t('METAMASK_BASIC_USAGE_INFO',
-                                    {
-                                        args: [{
-                                            component:
-                                                <Anchor href='https://metamask.io/' target='_blank'> https://metamask.io/</Anchor>
-                                        }]
-                                    })
+                    </Typography>
+                    <Typography paragraph>
+                        <span
+                            dangerouslySetInnerHTML={
+                                {
+                                    __html: t('METAMASK_BASIC_USAGE_INFO',
+                                        {
+                                            args: [{
+                                                component:
+                                                    <Anchor href='https://metamask.io/' target='_blank'> https://metamask.io/</Anchor>
+                                            }]
+                                        })
+                                }
                             }
-                        }
-                    />
-                    <br />
-                    <h3>
+                        />
+                    </Typography>
+                    <Typography paragraph>
                         <Anchor href='https://metamask.io/' target='_blank'>
-                            <Img src={METAMASK_DL_IMG} alt={'Downlad metamask'} style={{ maxWidth: '100%', maxHeight: '72px' }} />
+                            <Img src={METAMASK_DL_IMG} alt={'Downlad metamask'} className={classes.dlBtnImg}  />
                         </Anchor>
-                    </h3>
-                    <br />
-                    <br />
+                    </Typography>
                     {userAddr ?
                         <div>
-                            <div className={theme.metamaskLAbel}>
+                            <div className={classes.metamaskLAbel}>
                                 {stats ?
                                     <AddrItem stats={stats} t={t} addr={userAddr} />
                                     : t('AUTH_WITH_METAMASK_LABEL', { args: [userAddr] })
@@ -144,15 +143,23 @@ class AuthMetamask extends Component {
                             </div>
                             <Button
                                 onClick={this.authOnServer}
-                                label={t('AUTH_WITH_METAMASK_BTN', { args: [userAddr] })}
-                                raised
-                                accent
+                                variant='raised'
+                                color='secondary'
                                 disabled={this.state.waitingMetamaskAction}
-                                icon={this.state.waitingMetamaskAction ? 'hourglass_empty' : ''}
-                            />
+                            >
+                                {this.state.waitingMetamaskAction && <HourglassEmptyIcon className={classes.leftBtnIcon} />}
+                                {t('AUTH_WITH_METAMASK_BTN', { args: [userAddr] })}
+                            </Button>
                         </div>
                         :
-                        <Button onClick={this.checkMetamask} label={t('AUTH_CONNECT_WITH_METAMASK')} raised primary disabled={this.state.waitingAddrsData} />
+                        <Button
+                            onClick={this.checkMetamask}
+                            variant='raised'
+                            color='primary'
+                            disabled={this.state.waitingAddrsData}
+                        >
+                            {t('AUTH_CONNECT_WITH_METAMASK')}
+                        </Button>
                     }
                 </ContentBody>
             </ContentBox>
@@ -164,10 +171,9 @@ AuthMetamask.propTypes = {
     actions: PropTypes.object.isRequired,
 }
 
-// 
 function mapStateToProps(state) {
-    let persist = state.persist
-    // let memory = state.memory
+    const persist = state.persist
+    // const memory = state.memory
     return {
         account: persist.account
     }
@@ -182,4 +188,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(AuthHoc(AuthMetamask)))
+)(Translate(AuthHoc(withStyles(styles)(AuthMetamask))))

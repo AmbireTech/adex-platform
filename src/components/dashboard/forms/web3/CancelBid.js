@@ -3,12 +3,10 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { Grid } from 'react-flexbox-grid'
-import theme from './../theme.css'
 import NewTransactionHoc from './TransactionHoc'
 import { getItem } from 'services/adex-node/actions'
 import { BidInfo } from './BidsCommon'
-import ProgressBar from 'react-toolbox/lib/progress_bar'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 
 class CancelBid extends Component {
@@ -35,19 +33,19 @@ class CancelBid extends Component {
     }
 
     render() {
-        let tr = this.props.transaction
-        let t = this.props.t
-        let unit = tr.unit
-        let bid = this.props.placedBid || {}
+        const { transaction, t, classes, placedBid = {} } = this.props.transaction
+        const unit = transaction.unit
 
         return (
             <div>
                 {!!this.props.spinner ?
-                    <ProgressBar className={theme.progressCircleCenter} type='circular' mode='indeterminate' multicolor />
+                    <div className={classes.centralSpinner}>
+                        <CircularProgress />
+                    </div>
                     :
-                    <Grid fluid>
-                        <BidInfo bid={bid} unit={unit} t={t} />
-                    </Grid>
+                    // <Grid fluid>
+                    <BidInfo bid={placedBid} unit={unit} t={t} />
+                    // </Grid>
                 }
             </div>
         )

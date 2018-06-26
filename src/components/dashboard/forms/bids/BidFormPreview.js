@@ -3,10 +3,9 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-// import theme from 'components/dashboard/forms/theme.css'
 import { Bid } from 'adex-models'
 import NewBidHoc from './NewBidHoc'
-import { Grid } from 'react-flexbox-grid'
+import Grid from '@material-ui/core/Grid'
 import { WalletAction } from 'components/dashboard/forms/FormsCommon'
 import { PropRow, ContentBox, ContentBody, ContentStickyTop } from 'components/common/dialog/content'
 import constants from 'adex-constants'
@@ -26,7 +25,7 @@ class BidFormPreview extends Component {
             <WalletAction t={t} authType={this.props.account._authMode.authType} />
           </ContentStickyTop> : null}
         <ContentBody>
-          <Grid fluid>
+          <Grid container spacing={16}>
             <PropRow
               left={t('BID_TARGET_CLICKS')}
               right={bid.target}
