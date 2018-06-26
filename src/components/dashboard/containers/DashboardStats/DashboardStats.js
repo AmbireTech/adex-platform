@@ -40,6 +40,7 @@ export class DashboardStats extends Component {
     }
 
     componentWillMount() {
+        this.props.actions.updateNav('navTitle', this.props.t('DASHBOARD'))
     }
 
     handleTabChange = (index) => {

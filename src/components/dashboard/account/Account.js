@@ -21,7 +21,8 @@ const { getAccountStats } = scActions
 
 class Account extends React.Component {
 
-    componentWillMount(nextProps) {
+    componentWillMount() {
+        this.props.actions.updateNav('navTitle', this.props.t('ACCOUNT'))
         this.getStats()
     }
 
