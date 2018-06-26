@@ -5,9 +5,10 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import NewTransactionHoc from './TransactionHoc'
 import Tooltip from '@material-ui/core/Tooltip'
+import ErrorIcon from '@material-ui/icons/Error'
+import WarningIcon from '@material-ui/icons/Warning'
 import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
 import { web3Utils } from 'services/smart-contracts/ADX'
-import { FontIcon } from 'react-toolbox/lib/font_icon'
 import GasPrice from 'components/dashboard/account/GasPrice'
 import { WalletAction } from 'components/dashboard/forms/FormsCommon'
 import { PropRow, ContentBox, ContentBody, ContentStickyTop, FullContentSpinner } from 'components/common/dialog/content'
@@ -98,7 +99,7 @@ class TransactionPreview extends Component {
                                         key={index}
                                         classNameLeft={classes.error}
                                         classNameRight={classes.error}
-                                        left={<span> <FontIcon value='error' /> </span>}
+                                        left={<ErrorIcon />}
                                         right={err}
                                     />)
                                 : null}
@@ -109,7 +110,7 @@ class TransactionPreview extends Component {
                                         key={index}
                                         classNameLeft={classes.warning}
                                         classNameRight={classes.warning}
-                                        left={<span> <FontIcon value='warning' /> </span>}
+                                        left={<WarningIcon />}
                                         right={t(msg.msg, { args: msg.args })}
                                     />
                                 )

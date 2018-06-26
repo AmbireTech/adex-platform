@@ -1,10 +1,6 @@
 import React, { Component } from 'react'
-import { FontIcon } from 'react-toolbox/lib/font_icon'
 import Icon from '@material-ui/core/Icon'
-// import { Menu } from 'react-toolbox/lib/menu'
-// import { Button } from 'react-toolbox/lib/button'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
-import theme from './theme.css'
 import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
 import IconButton from '@material-ui/core/IconButton'
@@ -13,7 +9,7 @@ import { withStyles } from '@material-ui/core/styles'
 
 const ImgIcon = ({ src }) => {
   return (
-    <img src={src} className={theme.imgIcon} height={36} width='auto' alt='logo' style={{ marginRight: 5 }} />
+    <img src={src} height={36} width='auto' alt='logo' style={{ marginRight: 5 }} />
   )
 }
 
