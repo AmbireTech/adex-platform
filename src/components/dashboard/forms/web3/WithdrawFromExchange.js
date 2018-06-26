@@ -34,7 +34,7 @@ class WithdrawFromExchange extends Component {
     }
 
     render() {
-        const { transaction, t, invalidFields, exchangeAvailable, handleChange } = this.props.transaction
+        const { transaction, t, invalidFields, exchangeAvailable, handleChange } = this.props
         const errAmount = invalidFields['withdrawAmount']
 
         return (
