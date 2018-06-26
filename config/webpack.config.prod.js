@@ -250,9 +250,11 @@ module.exports = {
       sourceMap: shouldUseSourceMap,
     }),
     // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
-    new ExtractTextPlugin({
+    // NOTE: Temp disabled because we do not have any imported css
+    /*new ExtractTextPlugin({
       filename: cssFilename,
-    }),
+    }),*/
+
     // Generate a manifest file which contains a mapping of all asset filenames
     // to their corresponding output file so that tools can pick it up without
     // having to parse `index.html`.
