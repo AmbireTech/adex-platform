@@ -174,7 +174,6 @@ class Dashboard extends React.Component {
         const side = this.props.side || this.props.match.params.side
         const { classes, theme } = this.props
 
-        console.log('classes.toolbar', classes.toolbar)
         const drawer = (
             <div>
                 {/* <div className={classes.toolbar}>

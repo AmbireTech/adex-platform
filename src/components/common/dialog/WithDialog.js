@@ -85,6 +85,8 @@ export default function ItemHoc(Decorated) {
             const { classes, ...other } = this.props
 
             const btnLabel = this.props.t(this.props.btnLabel, { args: this.props.btnLabelArgs || [''] })
+            // TODO: fix it for fab wit text
+            const isIconBtn = (this.props.variant == 'fab') || this.props.iconButton
 
             return (
                 <div >
@@ -102,8 +104,8 @@ export default function ItemHoc(Decorated) {
                             { [classes.second]: this.props.color === 'second' }
                         )}
                     >
-                        {this.props.icon && <Icon className={classnames({ [classes.btnIconLeft]: this.props.variant !== 'fab' })}>{this.props.icon}</Icon>}
-                        {this.props.variant !== 'fab' && btnLabel}
+                        {this.props.icon && <Icon className={classnames({ [classes.btnIconLeft]: !isIconBtn })} > {this.props.icon}</Icon>}
+                        {!isIconBtn && btnLabel}
                     </ButtonComponent>
                     <Dialog
                         // disableBackdropClick
@@ -136,7 +138,7 @@ export default function ItemHoc(Decorated) {
                         </DialogContent>
                     </Dialog>
 
-                </div>
+                </div >
             )
         }
     }
