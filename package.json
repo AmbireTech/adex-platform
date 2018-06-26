@@ -1,6 +1,6 @@
 {
   "name": "adex-dapp",
-  "version": "2.0.13",
+  "version": "2.1.0",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^1.2.2",
