@@ -3,18 +3,19 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import theme from './../theme.css'
-import Input from 'react-toolbox/lib/input'
+import TextField from '@material-ui/core/TextField'
+import Grid from '@material-ui/core/Grid'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import { Bid } from 'adex-models'
 // import ValidItemHoc from './ValidItemHoc'
 import NewBidHoc from './NewBidHoc'
 import numeral from 'numeral'
-import Dropdown from 'react-toolbox/lib/dropdown'
+import Dropdown from 'components/common/dropdown'
 import constants from 'adex-constants'
 import { validAmountStr, adxToFloatView, adxAmountStrToPrecision } from 'services/smart-contracts/utils'
-import ProgressBar from 'react-toolbox/lib/progress_bar'
-import { Grid } from 'react-flexbox-grid'
 import scActions from 'services/smart-contracts/actions'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 const { getAccountBalances } = scActions
 
@@ -96,7 +97,7 @@ class BidForm extends Component {
 
   render() {
     let bid = this.props.bid || {}
-    let t = this.props.t
+    let { t, classes } = this.props
     let timeout = bid.timeout || constants.exchange.TIMEOUTS[0]
     let timeouts = constants.exchange.TIMEOUTS.map((tmo) => {
       return { value: tmo.value + '', label: t(tmo.label, { args: tmo.labelArgs }) }
@@ -109,46 +110,58 @@ class BidForm extends Component {
     return (
       <div>
         {!!this.props.spinner ?
-          <ProgressBar className={theme.progressCircleCenter} type='circular' mode='indeterminate' multicolor />
+          <div className={classes.centralSpinner}>
+            <CircularProgress />
+          </div>
           :
-          <Grid fluid>
-            <Input
-              type='text'
-              required
-              label={t('BID_TARGET_CLICKS', { args: [numeral(bid.target).format('0')] })}
-              name='target'
-              step='1'
-              value={bid.target || ''}
-              onChange={(value) => this.props.handleChange('target', value)}
-              onBlur={this.props.validate.bind(this, 'target', { isValid: this.isValidTarget(bid.target), err: { msg: 'ERR_INVALID_TARGET' }, dirty: true })}
-              onFocus={this.props.validate.bind(this, 'target', { isValid: this.isValidTarget(bid.target), err: { msg: 'ERR_INVALID_TARGET' }, dirty: false })}
-              error={errTarget && !!errTarget.dirty ? <span> {errTarget.errMsg} </span> : null}
-            >
-
-            </Input>
-            <Input
-              type='text'
-              required
-              label={t('BID_AMOUNT', { args: [numeral(bid.amount).format('ADX 0,0')] })}
-              name='amount'
-              value={bid.amount || ''}
-              onChange={(value) => this.props.handleChange('amount', value)}
-              onBlur={this.validateAmount.bind(this, bid.amount, true, exchangeAvailable)}
-              onFocus={this.validateAmount.bind(this, bid.amount, false, exchangeAvailable)}
-              error={errAmount && !!errAmount.dirty ? <span> {errAmount.errMsg} </span> : null}
-            >
-              {!errAmount || !errAmount.dirty ?
-                <div> {t('EXCHANGE_ADX_BALANCE_AVAILABLE_BID_INFO', { args: [adxToFloatView(exchangeAvailable)] })} </div>
-                : null}
-
-            </Input>
-            <Dropdown
-              required
-              onChange={this.validateAndUpdateDD.bind(this, true, 'timeout')}
-              source={timeouts}
-              value={timeout + ''}
-              label={t('BID_TIMEOUT')}
-            />
+          <Grid
+            container
+            spacing={16}
+          >
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                type='text'
+                required
+                label={t('BID_TARGET_CLICKS', { args: [numeral(bid.target).format('0')] })}
+                name='target'
+                step='1'
+                value={bid.target || ''}
+                onChange={(ev) => this.props.handleChange('target', ev.target.value)}
+                onBlur={this.props.validate.bind(this, 'target', { isValid: this.isValidTarget(bid.target), err: { msg: 'ERR_INVALID_TARGET' }, dirty: true })}
+                onFocus={this.props.validate.bind(this, 'target', { isValid: this.isValidTarget(bid.target), err: { msg: 'ERR_INVALID_TARGET' }, dirty: false })}
+                error={(errTarget && !!errTarget.dirty)}
+                helperText={errTarget && !!errTarget.dirty ? errTarget.errMsg : ''}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                type='text'
+                required
+                label={t('BID_AMOUNT', { args: [numeral(bid.amount).format('ADX 0,0')] })}
+                name='amount'
+                value={bid.amount || ''}
+                onChange={(ev) => this.props.handleChange('amount', ev.target.value)}
+                onBlur={this.validateAmount.bind(this, bid.amount, true, exchangeAvailable)}
+                onFocus={this.validateAmount.bind(this, bid.amount, false, exchangeAvailable)}
+                error={(errAmount && !!errAmount.dirty)}
+                helperText={!errAmount ?
+                  t('EXCHANGE_ADX_BALANCE_AVAILABLE_BID_INFO', { args: [adxToFloatView(exchangeAvailable)] }) : errAmount.errMsg}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Dropdown
+                fullWidth
+                required
+                onChange={this.validateAndUpdateDD.bind(this, true, 'timeout')}
+                source={timeouts}
+                value={timeout + ''}
+                label={t('BID_TIMEOUT')}
+                htmlId='bid-timeout-dd'
+                name='timeout'
+              />
+            </Grid>
           </Grid>
         }
       </div>
@@ -182,7 +195,7 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-let NewBidForm = NewBidHoc(BidForm)
+let NewBidForm = NewBidHoc(withStyles(styles)(BidForm))
 export default connect(
   mapStateToProps,
   mapDispatchToProps

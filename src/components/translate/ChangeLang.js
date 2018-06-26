@@ -1,17 +1,37 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
+import * as React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { IconMenu, MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
 import FlagIconFactory from 'react-flag-icon-css'
 import adexTranslations from 'adex-translations'
+import IconButton from '@material-ui/core/IconButton'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
 
 const allLangs = adexTranslations.onlyTranslated
 
-const FlagIcon = FlagIconFactory(React)
+// const FlagIcon = FlagIconFactory(React)
+const FlagIcon = FlagIconFactory(React, { useCssModules: false })
+const ITEM_HEIGHT = 48
 
 class ChangeLang extends Component {
+
+  state = {
+    anchorEl: null,
+  }
+
+  handleClick = event => {
+    this.setState({ anchorEl: event.currentTarget })
+  }
+
+  handleClose = () => {
+    this.setState({ anchorEl: null })
+  }
+
 
   changeLanguage(newLng) {
     if (this.props.language !== newLng) {
@@ -20,13 +40,39 @@ class ChangeLang extends Component {
   }
 
   render() {
+    const { anchorEl } = this.state
     return (
-      <IconMenu icon={<FlagIcon code={this.props.language.split('-')[1].toLowerCase()} />} menuRipple>
-        {allLangs.sort((a, b) => a.split('-')[1].localeCompare(b.split('-')[1])).map((lng) =>
-          <MenuItem key={lng} value={lng} icon={<FlagIcon code={lng.split('-')[1].toLowerCase()} />} caption={lng} onClick={this.changeLanguage.bind(this, lng)} />
-        )}
-
-      </IconMenu>
+      <span>
+        <IconButton
+          aria-label="More"
+          aria-owns={anchorEl ? 'long-menu' : null}
+          aria-haspopup="true"
+          onClick={this.handleClick}
+        >
+          <FlagIcon code={this.props.language.split('-')[1].toLowerCase()} />
+        </IconButton>
+        <Menu
+          id="long-menu"
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={this.handleClose}
+          PaperProps={{
+            style: {
+              maxHeight: ITEM_HEIGHT * 4.5,
+              width: 200,
+            },
+          }}
+        >
+          {allLangs.sort((a, b) => a.split('-')[1].localeCompare(b.split('-')[1])).map((lng) =>
+            <MenuItem key={lng} value={lng} onClick={() => this.changeLanguage(lng)} >
+              <ListItemIcon >
+                <FlagIcon code={lng.split('-')[1].toLowerCase()} />
+              </ListItemIcon>
+              <ListItemText inset primary={lng} />
+            </MenuItem>
+          )}
+        </Menu>
+      </span >
     )
   }
 }

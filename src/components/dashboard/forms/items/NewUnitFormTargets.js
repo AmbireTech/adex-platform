@@ -1,17 +1,18 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import NewItemHoc from './NewItemHocStep'
 import Translate from 'components/translate/Translate'
-import theme from './../theme.css'
 import { AdUnit } from 'adex-models'
-import { Grid, Row, Col } from 'react-flexbox-grid'
-import Autocomplete from 'react-toolbox/lib/autocomplete'
-import classnames from 'classnames'
-import Slider from 'react-toolbox/lib/slider'
+import Grid from '@material-ui/core/Grid'
+import Autocomplete from 'components/common/autocomplete'
+// import classnames from 'classnames'
 import { items as ItemsConstants } from 'adex-constants'
+import Slider from '@material-ui/lab/Slider'
+import Typography from '@material-ui/core/Typography'
+
 
 const { ItemsTypes, Locations, TargetWeightLabels, Genders, TARGET_MIN_AGE, TARGET_MAX_AGE } = ItemsConstants
 
@@ -40,7 +41,7 @@ const AcGenders = autocompleteGenders()
 const ages = (() => {
     let ages = []
     for (var index = TARGET_MIN_AGE; index <= TARGET_MAX_AGE; index++) {
-        ages.push(index + '')
+        ages.push({ label: index + '', value: index + '' })
     }
 
     return ages
@@ -72,10 +73,13 @@ class NewUnitFormTargets extends Component {
     renderLocationTarget = (target) => {
         return (
             <Autocomplete
+                id='location-targets-select'
                 direction="auto"
-                multiple={true}
+                multiple
+                openOnClick
                 onChange={this.handleTargetChange.bind(this, target, null)}
                 label={this.props.t('TARGET_LOCATION')}
+                placeholder={this.props.t('TARGET_LOCATION_PLACEHOLDER')}
                 source={AcLocations}
                 value={target.value}
                 suggestionMatch='anywhere'
@@ -88,10 +92,13 @@ class NewUnitFormTargets extends Component {
     renderGendersTarget = (target) => {
         return (
             <Autocomplete
+                id='genders-targets-select'
                 direction="auto"
-                multiple={true}
+                multiple
+                openOnClick
                 onChange={this.handleTargetChange.bind(this, target, null)}
                 label={this.props.t('TARGET_GENDERS')}
+                placeholder={this.props.t('TARGET_GENDERS_PLACEHOLDER')}
                 source={AcGenders}
                 value={target.value}
                 suggestionMatch='anywhere'
@@ -105,37 +112,43 @@ class NewUnitFormTargets extends Component {
         let value = target.value || {}
         return (
             <div>
-                <Grid fluid className={theme.agesGrid}>
-                    <Row>
-                        <Col lg={6}>
+                <Grid
+                    container
+                    spacing={16}
+                // className={theme.agesGrid}
+                >
+                    <Grid item lg={6}>
 
-                            <Autocomplete
-                                direction="auto"
-                                multiple={false}
-                                onChange={this.handleTargetChange.bind(this, target, 'from')}
-                                label={this.props.t('TARGET_AGE_FROM')}
-                                source={ages.slice(0, (value.to | 0) + 1)}
-                                value={value.from + ''}
-                                suggestionMatch='anywhere'
-                                showSuggestionsWhenValueIsSet={true}
-                                allowCreate={false}
-                            />
-                        </Col>
-                        <Col lg={6}>
+                        <Autocomplete
+                            id='age-target-from-select'
+                            direction="auto"
+                            openOnClick
+                            onChange={this.handleTargetChange.bind(this, target, 'from')}
+                            label={this.props.t('TARGET_AGE_FROM')}
+                            placeholder={this.props.t('TARGET_AGE_FROM_PLACEHOLDER')}
+                            source={ages.slice(0, (value.to | 0) + 1)}
+                            value={value.from + ''}
+                            suggestionMatch='anywhere'
+                            showSuggestionsWhenValueIsSet={true}
+                            allowCreate={false}
+                        />
+                    </Grid>
+                    <Grid item lg={6}>
 
-                            <Autocomplete
-                                direction="auto"
-                                multiple={false}
-                                onChange={this.handleTargetChange.bind(this, target, 'to')}
-                                label={this.props.t('TARGET_AGE_TO')}
-                                source={ages.slice(value.from | 0)}
-                                value={value.to + ''}
-                                suggestionMatch='anywhere'
-                                showSuggestionsWhenValueIsSet={true}
-                                allowCreate={false}
-                            />
-                        </Col>
-                    </Row>
+                        <Autocomplete
+                            id='age-target-to-select'
+                            direction="auto"
+                            openOnClick
+                            onChange={this.handleTargetChange.bind(this, target, 'to')}
+                            label={this.props.t('TARGET_AGE_TO')}
+                            placeholder={this.props.t('TARGET_AGE_TO_PLACEHOLDER')}
+                            source={ages.slice(value.from | 0)}
+                            value={value.to + ''}
+                            suggestionMatch='anywhere'
+                            showSuggestionsWhenValueIsSet={true}
+                            allowCreate={false}
+                        />
+                    </Grid>
                 </Grid >
             </div>
         )
@@ -144,20 +157,37 @@ class NewUnitFormTargets extends Component {
     Targets = ({ meta, t }) => {
         return (
             <div>
-                <Grid fluid >
-                    <Row className={theme.targetsHead}>
-                        <Col lg={7}>
+                <Grid container spacing={16}>
+                    <Grid
+                        item
+                        container xs={12}
+                        spacing={16}
+                        alignItems='flex-end'
+                    >
+                        <Grid item xs={12} md={7}>
                             {t('TARGET')}
-                        </Col>
-                        <Col lg={5}>
+                        </Grid>
+                        <Grid item xs={12} md={5}>
                             {t('WEIGHT')}
-                        </Col>
-                    </Row>
+                        </Grid>
+                    </Grid>
                     {
                         (meta.targets || []).map((target) => {
                             return (
-                                <Row key={target.name} className={theme.targetRow}>
-                                    <Col lg={7}>
+                                <Grid
+                                    item
+                                    container
+                                    xs={12}
+                                    key={target.name}
+                                    spacing={16}
+                                    alignItems='flex-end'
+                                >
+                                    <Grid
+                                        item
+                                        key={target.name}
+                                        xs={12}
+                                        md={7}
+                                    >
                                         {(() => {
                                             switch (target.name) {
                                                 case 'location':
@@ -169,27 +199,25 @@ class NewUnitFormTargets extends Component {
                                                 default: null
                                             }
                                         })()}
-                                    </Col>
-                                    <Col lg={5} style={{ position: 'relative' }}>
-                                        <div className={classnames(theme.sliderWrapper)}>
-                                            <label className={classnames(theme.sliderLabel, theme.weightLabel)}>
-                                                {target.name}  weight:
-                                            <strong> {target.weight} </strong>
-                                                ({TargetWeightLabels[target.weight].label})
-                                        </label>
-                                            <Slider className={theme.weightSlider}
-                                                pinned
-                                                snaps
-                                                min={0}
-                                                max={4}
+                                    </Grid>
+                                    <Grid item xs={12} md={5} >
+                                        <div
+                                            style={{ flex: '1' }}
+                                        >
+                                            <Typography noWrap id="page-size">
+                                                {/*TODO: Translate target name*/}
+                                                {t('TARGET_WEIGHT_LABEL', { args: [target.name, target.weight, t(TargetWeightLabels[target.weight].label)] })}
+                                            </Typography>
+                                            <Slider
+                                                aria-labelledby={target.name + '-weight'}
+                                                min={0} max={4}
                                                 step={1}
                                                 value={target.weight}
-                                                onChange={this.handleTargetChange.bind(this, target, 'updateWeight')}
+                                                onChange={(ev, val) => this.handleTargetChange(target, 'updateWeight', val)}
                                             />
                                         </div>
-                                    </Col>
-
-                                </Row>
+                                    </Grid>
+                                </Grid>
                             )
                         })
                     }

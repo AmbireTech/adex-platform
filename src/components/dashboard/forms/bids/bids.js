@@ -1,5 +1,6 @@
 import React from 'react'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
+import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 import FormSteps from 'components/dashboard/forms/FormSteps'
 import BidForm from './BidForm'
 import BidFormPreview from './BidFormPreview'
@@ -9,20 +10,23 @@ const SaveBtn = ({ ...props }) => {
     return (
         <Button
             icon={props.waitingForWalletAction ? 'hourglass_empty' : (props.saveBtnIcon || '')}
-            label={props.t(props.saveBtnLabel || 'PLACE_BID_SAVE_BTN')}
-            primary
+            color='primary'
             onClick={props.save}
             disabled={props.waitingForWalletAction}
-        />
+        >
+            {props.t(props.saveBtnLabel || 'PLACE_BID_SAVE_BTN')}
+        </Button>
     )
 }
 
 const CancelBtn = ({ ...props }) => {
     return (
         <Button
-            label={props.t(props.cancelBtnLabel || 'CANCEL')}
             onClick={props.cancel}
-        />
+        >
+            <HourglassEmptyIcon style={{ marginRigt: 8 }} />
+            {props.t(props.cancelBtnLabel || 'CANCEL')}
+        </Button>
     )
 }
 
