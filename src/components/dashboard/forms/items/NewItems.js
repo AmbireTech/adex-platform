@@ -1,5 +1,4 @@
 import React from 'react'
-// import { Button } from 'react-toolbox/lib/button'
 import Button from '@material-ui/core/Button'
 import FormSteps from 'components/dashboard/forms/FormSteps'
 import NewItemHoc from './NewItemHocStep'

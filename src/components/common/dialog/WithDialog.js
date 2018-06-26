@@ -100,7 +100,6 @@ export default function ItemHoc(Decorated) {
                             { [classes.floating]: this.props.variant === 'fab' },
                             { [classes.first]: this.props.color === 'first' },
                             { [classes.second]: this.props.color === 'second' }
-                            // { [RTButtonTheme[this.props.color]]: !!this.props.color }
                         )}
                     >
                         {this.props.icon && <Icon className={classnames({ [classes.btnIconLeft]: this.props.variant !== 'fab' })}>{this.props.icon}</Icon>}
@@ -111,8 +110,6 @@ export default function ItemHoc(Decorated) {
                         // disableEscapeKeyDown
                         // maxWidth="xs"
                         // fullScreen
-                        // theme={theme}
-                        // className={classnames({ [theme.darkerBackground]: !!this.props.darkerBackground })}
                         open={this.state.active}
                         onClose={this.handleToggle}
                         TransitionComponent={Transition}

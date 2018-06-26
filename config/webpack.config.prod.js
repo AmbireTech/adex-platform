@@ -1,6 +1,5 @@
 'use strict';
 
-const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -12,7 +11,6 @@ const eslintFormatter = require('react-dev-utils/eslintFormatter');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
-const stylesConfig = require('./styles.config')
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -168,60 +166,12 @@ module.exports = {
           // in the main CSS file.
           {
             test: /\.css$/,
-            exclude: path.resolve(paths.appNodeModules, 'react-image-crop'),
-            loader: ExtractTextPlugin.extract(
-              Object.assign(
-                {
-                  fallback: require.resolve('style-loader'),
-                  use: [
-                    {
-                      loader: require.resolve('css-loader'),
-                      options: {
-                        modules: true,
-                        importLoaders: 1,
-                        minimize: true,
-                        sourceMap: shouldUseSourceMap,
-                        localIdentName: "[name]--[local]--[hash:base64:8]"
-                      },
-                    },
-                    {
-                      loader: require.resolve('postcss-loader'),
-                      options: {
-                        // Necessary for external CSS imports to work
-                        // https://github.com/facebookincubator/create-react-app/issues/2677
-                        ident: 'postcss',
-                        plugins: () => [
-                          require('postcss-flexbugs-fixes'),
-                          require('postcss-import'),
-                          require('postcss-mixins'),
-                          require('postcss-each'),
-                          require('postcss-apply'),
-                          require('postcss-nesting'),
-                          require('postcss-cssnext')({
-                            features: {
-                              customProperties: {
-                                variables: stylesConfig.reactToolboxVariables
-                              }
-                            }
-                          })
-                        ],
-                      },
-                    },
-                  ],
-                },
-                extractTextPluginOptions
-              )
-            ),
-            // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
-          },
-          {
-            test: /\.css$/,
-            include: path.resolve(paths.appNodeModules, 'react-image-crop'),  
+            include: path.resolve(paths.appNodeModules, 'react-image-crop'),
             use: [
               require.resolve('style-loader'),
               {
                 loader: require.resolve('css-loader'),
-                options: {              
+                options: {
                   modules: false,
                   sourceMap: true,
                   importLoaders: 1,
