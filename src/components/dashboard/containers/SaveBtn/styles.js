@@ -30,7 +30,7 @@ export const styles = theme => ({
         marginLeft: -12,
     },
     position: {
-        position: 'absolute',
+        position: 'fixed',
         top: 86,
         right: 40,
         zIndex: theme.zIndex.appBar

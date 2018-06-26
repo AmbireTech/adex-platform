@@ -137,5 +137,8 @@ export const styles = theme => ({
         '&:hover': {
             color: theme.palette.text.secondary
         }
+    },
+    bar: {
+        opacity: 0.5
     }
 })

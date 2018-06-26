@@ -5,6 +5,8 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 const RRSwitch = withReactRouterLink((props) =>
     <ListItem>
@@ -17,23 +19,33 @@ const RRSwitch = withReactRouterLink((props) =>
     </ListItem>
 )
 
-export const SideSwitch = ({ side, t }) => {
+const sideSwitch = ({ side, t, classes }) => {
     return (
         <div>
             {/* Keep both if there is no valid side and force react to rerender at the same time */}
-            {side !== 'advertiser' ?
+            {side !== 'advertiser' &&
                 <RRSwitch
+                    color='default'
                     checked={true}
                     value='account'
                     to={{ pathname: '/dashboard/advertiser' }}
                     label={t('PUBLISHER')}
-                /> : null}
-            {side !== 'publisher' ?
+                    classes={{
+                        bar: classes.bar
+                    }}
+                />}
+            {side !== 'publisher' &&
                 <RRSwitch
+                    color='default'
                     checked={false}
                     to={{ pathname: '/dashboard/publisher' }}
                     label={t('ADVERTISER')}
-                /> : null}
+                    classes={{
+                        bar: classes.bar
+                    }}
+                />}
         </div>
     )
 }
+
+export const SideSwitch = withStyles(styles)(sideSwitch)
