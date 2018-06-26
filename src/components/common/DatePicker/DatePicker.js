@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-// import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils'
 import MuiDatePicker from 'material-ui-pickers/DatePicker'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
