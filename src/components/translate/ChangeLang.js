@@ -1,4 +1,4 @@
-import  { Component } from 'react'
+import { Component } from 'react'
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -15,22 +15,22 @@ import ListItemText from '@material-ui/core/ListItemText'
 const allLangs = adexTranslations.onlyTranslated
 
 // const FlagIcon = FlagIconFactory(React)
-const FlagIcon = FlagIconFactory(React, { useCssModules: false }) 
+const FlagIcon = FlagIconFactory(React, { useCssModules: false })
 const ITEM_HEIGHT = 48
 
 class ChangeLang extends Component {
 
   state = {
     anchorEl: null,
-  };
+  }
 
   handleClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
-  };
+    this.setState({ anchorEl: event.currentTarget })
+  }
 
   handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
+    this.setState({ anchorEl: null })
+  }
 
 
   changeLanguage(newLng) {
@@ -40,7 +40,7 @@ class ChangeLang extends Component {
   }
 
   render() {
-    const { anchorEl } = this.state;
+    const { anchorEl } = this.state
     return (
       <span>
         <IconButton

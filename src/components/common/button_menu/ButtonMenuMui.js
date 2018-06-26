@@ -57,6 +57,7 @@ class ButtonMenu extends Component {
         <Menu
           id="menu-appbar"
           open={open}
+          anchorEl={anchorEl}
           // anchorOrigin={{
           //   vertical: 'top',
           //   horizontal: 'right',
