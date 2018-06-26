@@ -12,7 +12,7 @@ import { PersistGate } from 'redux-persist/es/integration/react'
 import Root from './Root'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import { themeMUI, globalStyles } from './themeMUi'
-import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils'
+import MomentUtils from 'material-ui-pickers/utils/moment-utils'
 import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { withStyles } from '@material-ui/core/styles'
@@ -47,7 +47,7 @@ class App extends Component {
         // }
         />
         <MuiThemeProvider theme={themeMUI}>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <MuiPickersUtilsProvider utils={MomentUtils}>
             <Provider store={store}>
               <PersistGate
                 onBeforeLift={onBeforeLift}
