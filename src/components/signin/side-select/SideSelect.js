@@ -1,19 +1,22 @@
 import React, { Component } from 'react'
-import theme from './theme.css'
 import PublisherLogo from 'components/common/icons/AdexPublisher'
 import AdvertiserLogo from 'components/common/icons/AdexAdvertiser'
-import Dialog from 'react-toolbox/lib/dialog'
+import Dialog from '@material-ui/core/Dialog'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogTitle from '@material-ui/core/DialogTitle'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Translate from 'components/translate/Translate'
 import classnames from 'classnames'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
-const SideBox = ({ salePoints = [], linkTitle, icon, title, disabled, ...other }) => (
-  <div {...other} className={classnames(theme.sideBox, { [theme.disabled]: disabled })} >
-    <div className={theme.icon}>
+const SideBox = ({ salePoints = [], linkTitle, icon, title, disabled, classes, ...other }) => (
+  <div {...other} className={classnames(classes.sideBox, { [classes.disabled]: disabled })} >
+    <div className={classes.icon}>
       {icon}
     </div>
     <h2>{title}</h2>
-    <ul className={theme.salePoints}>
+    <ul className={classes.salePoints}>
       {salePoints.map(function (point, key) {
         return (<li key={key}> {point} </li>)
       })}
@@ -26,36 +29,48 @@ const RRSideBox = withReactRouterLink(SideBox)
 class SideSelect extends Component {
 
   render() {
-    // console.log('SideSelect', this.props)
-    let t = this.props.t
+    let { t, classes } = this.props
     return (
       <Dialog
-        active={this.props.active}
-        title={t('CHOOSE_SIDE')}
-        theme={theme}
+        open={true}
+        classes={{ paper: classes.dialogPaper }}
+        BackdropProps={{
+          classes: {
+            root: classes.backdrop
+          }
+        }}
+        fullWidth
+        maxWidth='sm'
       >
+        <DialogTitle >
+          {t('CHOOSE_SIDE')}
+        </DialogTitle>
+        <DialogContent>
 
-        <RRSideBox
-          title={t('ADVERTISER')}
-          icon={<AdvertiserLogo />}
-          salePoints={[t('SALE_POINT_ADV_1'), t('SALE_POINT_ADV_2'), t('SALE_POINT_ADV_3')]}
-          to='/dashboard/advertiser'
-          linkTitle={t('GO_ADVERTISER')}
-        // disabled
-        />
+          <RRSideBox
+            classes={classes}
+            title={t('ADVERTISER')}
+            icon={<AdvertiserLogo style={{ width: 110, height: 110 }} color='primary' />}
+            salePoints={[t('SALE_POINT_ADV_1'), t('SALE_POINT_ADV_2'), t('SALE_POINT_ADV_3')]}
+            to='/dashboard/advertiser'
+            linkTitle={t('GO_ADVERTISER')}
+          // disabled
+          />
 
-        <RRSideBox
-          title={t('PUBLISHER')}
-          icon={<PublisherLogo />}
-          salePoints={[t('SALE_POINT_PUB_1'), t('SALE_POINT_PUB_2'), t('SALE_POINT_PUB_3')]}
-          to='/dashboard/publisher'
-          linkTitle={t('GO_PUBLISHER')}
-        // disabled
-        />
+          <RRSideBox
+            classes={classes}
+            title={t('PUBLISHER')}
+            icon={<PublisherLogo style={{ width: 110, height: 110 }} color='primary' />}
+            salePoints={[t('SALE_POINT_PUB_1'), t('SALE_POINT_PUB_2'), t('SALE_POINT_PUB_3')]}
+            to='/dashboard/publisher'
+            linkTitle={t('GO_PUBLISHER')}
+          // disabled
+          />
 
+        </DialogContent>
       </Dialog>
     )
   }
 }
 
-export default Translate(SideSelect)
+export default Translate(withStyles(styles)(SideSelect))

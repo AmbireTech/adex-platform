@@ -4,7 +4,12 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import Dialog from 'react-toolbox/lib/dialog'
+import Dialog from '@material-ui/core/Dialog'
+import Button from '@material-ui/core/Button'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
 import Translate from 'components/translate/Translate'
 
 export class Confirm extends Component {
@@ -41,19 +46,23 @@ export class Confirm extends Component {
 
         return (
             <Dialog
-                actions={[
-                    { label: this.props.cancelLabel || this.props.t('CANCEL'), onClick: this.cancel },
-                    { label: this.props.confirmLabel || this.props.t('OK'), onClick: this.confirm }
-                ]}
-                active={this.state.active}
-                onEscKeyDown={this.cancel}
-                onOverlayClick={() => { }}
-                title={this.props.title}
+                open={this.state.active}
             >
-                <div>
-                    {this.props.text}
+                <DialogTitle id="alert-dialog-title">{this.props.title}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {this.props.text}
+                    </DialogContentText>
                     {this.props.children}
-                </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={this.cancel} color="primary">
+                        {this.props.cancelLabel | this.props.t('CANCEL')}
+                    </Button>
+                    <Button onClick={this.confirm} color="primary" autoFocus>
+                        {this.props.confirmLabel || this.props.t('OK')}
+                    </Button>
+                </DialogActions>
 
             </Dialog>
         )

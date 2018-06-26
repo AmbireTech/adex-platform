@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import NO_IMAGE from 'resources/no-image-box-eddie.jpg'
-import ProgressBar from 'react-toolbox/lib/progress_bar'
-import theme from './theme.css'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import classnames from 'classnames'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 const MAX_IMG_LOAD_TIME = 3000
 
@@ -81,14 +83,25 @@ class Img extends Component {
     }
 
     render() {
-        let { alt, ...other } = this.props
+        const { alt, className, classes, ...other } = this.props
         return (
             this.state.imgSrc ?
-                <img {...other} alt={alt} src={this.state.imgSrc} draggable='false' onDragStart={(event) => event.preventDefault() /*Firefox*/} />
+                <img
+                    {...other}
+                    alt={alt}
+                    src={this.state.imgSrc}
+                    draggable='false'
+                    className={classnames(classes.imgLoading, className)}
+                    onDragStart={(event) => event.preventDefault() /*Firefox*/}
+                />
                 :
-                <div className={theme.imgLoading}>
-                    <ProgressBar theme={theme} type='circular' mode='indeterminate' />
-                </div>
+                <span className={classnames(classes.imgLoading, className)}>
+                    <span
+                        className={classes.circular}
+                    >
+                        <CircularProgress />
+                    </span>
+                </span>
         )
     }
 }
@@ -99,4 +112,4 @@ Img.propTypes = {
     alt: PropTypes.string
 }
 
-export default Img
+export default withStyles(styles)(Img)

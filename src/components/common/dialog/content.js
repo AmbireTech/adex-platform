@@ -1,35 +1,44 @@
 import React from 'react'
-import { Row, Col } from 'react-flexbox-grid'
-import ProgressBar from 'react-toolbox/lib/progress_bar'
-import theme from './theme.css'
+import Grid from '@material-ui/core/Grid'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import { styles } from './styles.js'
 import classnames from 'classnames'
+import { withStyles } from '@material-ui/core/styles'
 
-export const PropRow = ({ left, right, className, classNameLeft, classNameRight, style = {} }) =>
-    <Row className={classnames(theme.propRow, className)} style={style}>
-        <Col xs={12} sm={4} lg={3} className={classnames(theme.leftCol, theme.uppercase, classNameLeft)}>{left}</Col>
-        <Col xs={12} sm={8} lg={9} className={classnames(theme.rightCol, theme.breakLong, classNameRight)}>{right}</Col>
-    </Row>
+// TODO: fix responsive styles
+const propRow = ({ classes, left, right, className, classNameLeft, classNameRight, style = {} }) =>
+    <Grid item container spacing={16} xs={12} className={classnames(className)} style={style}>
+        <Grid item xs={12} sm={4} lg={3} className={classnames(classes.leftCol, classes.uppercase, classNameLeft)}>{left}</Grid >
+        <Grid item xs={12} sm={8} lg={9} className={classnames(classes.rightCol, classes.breakLong, classNameRight)}>{right}</Grid >
+    </Grid>
 
-export const ContentBox = ({ children, className }) =>
-    <div className={classnames(theme.contentBox, className)}>
+const contentBox = ({ classes, children, className }) =>
+    <div className={classnames(classes.contentBox, className)}>
         {children}
     </div>
 
-export const ContentBody = ({ children, className }) =>
-    <div className={classnames(theme.contentBody, className)}>
+const contentBody = ({ classes, children, className }) =>
+    <div className={classnames(classes.contentBody, className)}>
         {children}
     </div>
 
-export const ContentStickyTop = ({ children, className }) =>
-    <div className={classnames(theme.contentStickyTop)}>
+const contentStickyTop = ({ classes, children, className }) =>
+    <div className={classnames(classes.contentStickyTop)}>
         {children}
     </div>
 
-export const TopLoading = ({ msg, className }) =>
-    <div className={classnames(theme.contentTopLoading)}>
-        <ProgressBar className={theme.contentTopLoadingCircular} type='circular' mode='indeterminate' multicolor />
+const topLoading = ({ classes, msg, className }) =>
+    <div className={classnames(classes.contentTopLoading)}>
+        <CircularProgress className={classes.contentTopLoadingCircular} size={50} />
         <div> {msg} </div>
     </div>
 
-export const FullContentSpinner = () =>
-    <ProgressBar className={classnames(theme.progressCircleCenter)} type='circular' mode='indeterminate' multicolor />
+const fullContentSpinner = ({ classes }) =>
+    <CircularProgress className={classnames(classes.progressCircleCenter)} size={50} />
+
+export const PropRow = withStyles(styles)(propRow)
+export const ContentBox = withStyles(styles)(contentBox)
+export const ContentBody = withStyles(styles)(contentBody)
+export const ContentStickyTop = withStyles(styles)(contentStickyTop)
+export const TopLoading = withStyles(styles)(topLoading)
+export const FullContentSpinner = withStyles(styles)(fullContentSpinner)

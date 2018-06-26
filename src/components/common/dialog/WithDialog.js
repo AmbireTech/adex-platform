@@ -1,14 +1,26 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Button, IconButton } from 'react-toolbox/lib/button'
-import Dialog from 'react-toolbox/lib/dialog'
-import theme from './theme.css'
+import Button from '@material-ui/core/Button'
+import IconButton from '@material-ui/core/IconButton'
+import Dialog from '@material-ui/core/Dialog'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import DialogContent from '@material-ui/core/DialogContent'
 import classnames from 'classnames'
-import RTButtonTheme from 'styles/RTButton.css'
 import Translate from 'components/translate/Translate'
+import Slide from '@material-ui/core/Slide'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
+import Icon from '@material-ui/core/Icon'
+import CancelIcon from '@material-ui/icons/Cancel'
 
-const TextBtn = ({ label, className, style, onClick, ...rest }) => {
-    return <span className={classnames(theme.textBtn, className)} style={style} onClick={onClick}> {label} </span>
+const textBtn = ({ label, className, classes, style, onClick, ...rest }) => {
+    return <span className={classnames(classes.textBtn, className)} style={style} onClick={onClick}> {label} </span>
+}
+
+const TextBtn = withStyles(styles)(textBtn)
+
+const Transition = (props) => {
+    return <Slide direction="up" {...props} />;
 }
 
 export default function ItemHoc(Decorated) {
@@ -63,49 +75,70 @@ export default function ItemHoc(Decorated) {
                 ButtonComponent = TextBtn
             } else {
                 btnProps = {
-                    raised: this.props.raised,
-                    floating: this.props.floating,
-                    flat: this.props.flat
+                    variant: this.props.variant,
+                    color: this.props.color,
+                    size: this.props.size,
+                    mini: !!this.props.mini
                 }
             }
 
+            const { classes, ...other } = this.props
+
+            const btnLabel = this.props.t(this.props.btnLabel, { args: this.props.btnLabelArgs || [''] })
+            // TODO: fix it for fab wit text
+            const isIconBtn = (this.props.variant == 'fab') || this.props.iconButton
+
             return (
-                <div>
+                <div >
                     <ButtonComponent
                         disabled={this.props.disabled}
-                        icon={this.props.icon === undefined ? 'add' : this.props.icon}
-                        label={this.props.floating ? '' : this.props.t(this.props.btnLabel, { args: this.props.btnLabelArgs || [''] })}
+                        aria-label={btnLabel}
+                        label={btnLabel}
                         onClick={this.handleToggle}
-                        primary={this.props.primary}
                         {...btnProps}
-                        accent={this.props.accent}
-                        theme={this.props.theme}
-                        style={this.props.style}
+                        // style={this.props.style}
                         className={classnames(
                             this.props.className,
-                            { [theme.floating]: this.props.floating },
-                            { [RTButtonTheme[this.props.color]]: !!this.props.color }
+                            { [classes.floating]: this.props.variant === 'fab' },
+                            { [classes.first]: this.props.color === 'first' },
+                            { [classes.second]: this.props.color === 'second' }
                         )}
-                    />
-                    <Dialog
-                        theme={theme}
-                        className={classnames({ [theme.darkerBackground]: !!this.props.darkerBackground })}
-                        active={this.state.active}
-                        onEscKeyDown={this.handleToggle}
-                        onOverlayClick={this.handleToggle}
-                        title={this.props.t(this.props.title)}
-                        type={this.props.type || 'large'}
                     >
-                        <IconButton
-                            icon='close'
-                            onClick={this.handleToggle}
-                        />
-                        <div className={theme.dialogBody}>
+                        {this.props.icon && <Icon className={classnames({ [classes.btnIconLeft]: !isIconBtn })} > {this.props.icon}</Icon>}
+                        {!isIconBtn && btnLabel}
+                    </ButtonComponent>
+                    <Dialog
+                        // disableBackdropClick
+                        // disableEscapeKeyDown
+                        // maxWidth="xs"
+                        // fullScreen
+                        open={this.state.active}
+                        onClose={this.handleToggle}
+                        TransitionComponent={Transition}
+                        classes={{ paper: classes.dialog }}
+                    // onEscKeyDown={this.handleToggle}
+                    // onOverlayClick={this.handleToggle}
+                    >
+                        {/* <AppBar className={classes.appBar}>
+                            <Toolbar> */}
+                        <DialogTitle>
+                            <IconButton
+                                onClick={this.handleToggle}
+                            >
+                                <CancelIcon />
+                            </IconButton>
+                            {this.props.t(this.props.title)}
+                        </DialogTitle>
+                        {/* </Toolbar>
+                        </AppBar> */}
+                        <DialogContent
+                            classes={{ root: classes.content }}
+                        >
                             <Decorated {...this.props} onSave={this.onSave()} />
-                        </div>
+                        </DialogContent>
                     </Dialog>
 
-                </div>
+                </div >
             )
         }
     }
@@ -116,6 +149,6 @@ export default function ItemHoc(Decorated) {
         floating: PropTypes.bool
     }
 
-    return Translate(WithDialog)
+    return Translate(withStyles(styles)(WithDialog))
 }
 

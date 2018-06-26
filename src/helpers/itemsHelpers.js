@@ -1,6 +1,6 @@
 import { items as ItemsConstants } from 'adex-constants'
 
-const { ItemsTypes } = ItemsConstants
+const { ItemsTypes, AdTypesByValue, AdSizesByValue } = ItemsConstants
 
 export const sortCollections = (items) => {
     let collections = {
@@ -50,3 +50,13 @@ export const groupItemsForCollection = ({ collectionId, allItems = {} }) => {
 
     return grouped
 }
+
+export const itemAdTypeLabel = ({ adType }) => {
+    return (AdTypesByValue[adType] || {}).label
+}
+
+export const itemAdSizeLabel = ({ size, t }) => {
+    const adSize = (AdSizesByValue[size] || {})
+    return t(adSize.label, { args: adSize.labelArgs || [] })
+}
+

@@ -1,8 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
 import { dataToCSV } from 'services/csv/csv'
 import Translate from 'components/translate/Translate'
+import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
+import DownloadIcon from '@material-ui/icons/FileDownload'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 class CsvDownloadBtn extends Component {
 
@@ -26,6 +30,7 @@ class CsvDownloadBtn extends Component {
 
     render() {
         const csvFileName = (this.props.fileName || 'adex-export') + '.csv'
+        const { classes } = this.props
         return (
             <span>
                 <a
@@ -37,11 +42,17 @@ class CsvDownloadBtn extends Component {
                 </a>
                 <Button
                     {...this.props}
-                    icon={this.state.generatingCSV ? 'hourglass_empty' : (this.props.icon || 'save_alt')}
+                    // icon={this.state.generatingCSV ? 'hourglass_empty' : (this.props.icon || 'save_alt')}
                     onClick={this.dlCSV}
-                    label={this.props.t(this.props.label || 'DOWNLOAD_CSV_BTN')}
+                    // label={this.props.t(this.props.label || 'DOWNLOAD_CSV_BTN')}
                     disabled={this.state.generatingCSV}
-                />
+                >
+                    {this.state.generatingCSV ?
+                        <HourglassEmptyIcon className={classes.leftIcon} />
+                        : (this.props.icon || <DownloadIcon className={classes.leftIcon} />)
+                    }
+                    {this.props.t(this.props.label || 'DOWNLOAD_CSV_BTN')}
+                </Button >
             </span>
         )
     }
@@ -52,4 +63,4 @@ CsvDownloadBtn.propTypes = {
     fileName: PropTypes.string
 }
 
-export default Translate(CsvDownloadBtn)
+export default withStyles(styles)(Translate(CsvDownloadBtn))

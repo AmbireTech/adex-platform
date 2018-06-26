@@ -1,5 +1,3 @@
-import slug from 'slug'
-import unidecode from 'unidecode'
 import moment from 'moment'
 class Helper {
 
@@ -37,13 +35,6 @@ class Helper {
     getRandomKeyFromObj(obj) {
         var keys = Object.keys(obj)
         return keys[keys.length * Math.random() << 0]
-    }
-
-    slugify(str, legth = 32) {
-        if (!str || (typeof str !== 'string')) return ''
-        let slugified = slug(unidecode(str), { lower: true }).substring(0, legth)
-        // console.log('slugified', slugified)
-        return slugified
     }
 
     geRandomMoment(maxDaysPast, maxDaysAhead, initialMoment) {
