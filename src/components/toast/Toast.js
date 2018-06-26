@@ -8,8 +8,22 @@ import Snackbar from '@material-ui/core/Snackbar'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
+import InfoIcon from '@material-ui/icons/Info'
+import CloseIcon from '@material-ui/icons/Close'
+import IconButton from '@material-ui/core/IconButton';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+
+const variantIcon = {
+    accept: CheckCircleIcon,
+    success: CheckCircleIcon,
+    warning: WarningIcon,
+    cancel: ErrorIcon,
+    error: ErrorIcon,
+    info: InfoIcon,
+}
 
 export class Toast extends Component {
     constructor(props) {
@@ -46,43 +60,49 @@ export class Toast extends Component {
 
     }
 
-    label = ({ type, label }) => {
-
-        let icon = ''
-        switch (type) {
-            case 'accept':
-                icon = <CheckCircleIcon style={{ verticalAlign: 'bottom', marginRight: 10 }} />
-                break
-            case 'cancel':
-                icon = <ErrorIcon style={{ verticalAlign: 'bottom', marginRight: 10 }} />
-                break
-            case 'warning':
-                icon = <WarningIcon style={{ verticalAlign: 'bottom', marginRight: 10 }} />
-                break
-            default:
-                break
-        }
-
-        return (
-            <span> {icon} <strong> {label} </strong> </span>
-        )
-    }
-
     render() {
-        let toast = this.state.toast
+        const { toast } = this.state
+        const { classes } = this.props
+        const Icon = variantIcon[toast.type]
 
         if (!toast) return null
 
         return (
             <Snackbar
-                // action={toast.action}
                 open={this.state.active}
-                action={<this.label type={toast.type} label={(toast.label || '').toString()} />}
-                // timeout={toast.timeout || 0}
-                onClick={this.close.bind(this, toast.id)}
-                // onTimeout={this.close.bind(this, toast.id)}
-                type={toast.type}
-            />
+                autoHideDuration={toast.timeout || 0}
+                onClose={() => this.close(toast.id)}
+            >
+                <SnackbarContent
+                    aria-describedby="client-snackbar"
+                    message={
+                        <span id="client-snackbar" className={classes.message}>
+                            <Icon className={classnames(classes.icon, classes.iconVariant)} />
+                            {(toast.label || '').toString()}
+                        </span>
+
+                    }
+                    action={[
+                        <IconButton
+                            key="close"
+                            aria-label="Close"
+                            color="inherit"
+                            className={classes.close}
+                            onClick={() => this.close(toast.id)}
+                        >
+                            <CloseIcon className={classes.icon} />
+                        </IconButton>,
+                    ]}
+
+                    className={classnames(
+                        classes.snackbar,
+                        {
+                            [classes.accept]: toast.type === 'accept',
+                            [classes.cancel]: toast.type === 'cancel',
+                            [classes.warning]: toast.type === 'warning',
+                        })}
+                />
+            </Snackbar>
         )
     }
 }

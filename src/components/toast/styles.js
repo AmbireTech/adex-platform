@@ -1,5 +1,5 @@
 export const styles = theme => {
-    // const spacing = theme.spacing.unit
+    const spacing = theme.spacing.unit
     return {
         snackbar: {
             border: '3px solid',
@@ -7,7 +7,8 @@ export const styles = theme => {
             backgroundColor: '#222',
             '&.active': {
                 transform: 'translateY(-20%)'
-            }
+            },
+            margin: spacing
         },
         warning: {
             borderColor: '#FFAB00',
@@ -21,6 +22,17 @@ export const styles = theme => {
         accept: {
             borderColor: '#00E676',
             color: '#00E676'
-        }
+        },
+        icon: {
+            fontSize: 20,
+        },
+        iconVariant: {
+            opacity: 0.9,
+            marginRight: theme.spacing.unit,
+        },
+        message: {
+            display: 'flex',
+            alignItems: 'center',
+          }
     }
 }
