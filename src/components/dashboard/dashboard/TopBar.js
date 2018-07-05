@@ -83,7 +83,6 @@ class TopNav extends Component {
             <div
               className={classnames(classes.flex, classes.toolbarControls)}
             >
-
               {/* <Navigation type='horizontal' className={theme.rightNavigation}> */}
               {/* At the moment we use translations only for proper items properties display names */}
               {/* <ChangeLang /> */}
