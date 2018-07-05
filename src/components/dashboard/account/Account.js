@@ -15,6 +15,7 @@ import { styles } from './styles.js'
 
 import { adxToFloatView } from 'services/smart-contracts/utils'
 import scActions from 'services/smart-contracts/actions'
+import AirSwap from 'components/dashboard/forms/AirSwap'
 
 const { getAccountStats } = scActions
 // const RRButton = withReactRouterLink(Button)
@@ -100,6 +101,8 @@ class Account extends React.Component {
                                 className={classes.actionBtn}
                                 size='small'
                             />
+                            <AirSwap mode='buy' label={t('BUY_ADEX')} />
+                            <AirSwap mode='sell' label={t('SELL_ADEX')} />
                         </div>
                     </ListItem>
                     <ListDivider />
@@ -157,9 +160,9 @@ Account.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-    let persist = state.persist
-    let memory = state.memory
-    let account = persist.account
+    const { persist, memory } = state
+    const account = persist.account
+
     return {
         account: account,
         side: memory.nav.side,
