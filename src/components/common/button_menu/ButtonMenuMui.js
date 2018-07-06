@@ -1,9 +1,6 @@
 import React, { Component } from 'react'
 import Icon from '@material-ui/core/Icon'
-import CampaignIcon from 'components/common/icons/CampaignIcon'
-import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
-import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
 import { withStyles } from '@material-ui/core/styles'
 
