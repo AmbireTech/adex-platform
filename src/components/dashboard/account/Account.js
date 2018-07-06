@@ -101,8 +101,7 @@ class Account extends React.Component {
                                 className={classes.actionBtn}
                                 size='small'
                             />
-                            <AirSwap mode='buy' label={t('BUY_ADEX')} />
-                            <AirSwap mode='sell' label={t('SELL_ADEX')} />
+                            <AirSwap />
                         </div>
                     </ListItem>
                     <ListDivider />
