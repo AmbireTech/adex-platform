@@ -11,7 +11,6 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
 import Translate from 'components/translate/Translate'
 import WithDialog from 'components/common/dialog/WithDialog'
-import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import AirSwapIcon from 'components/common/icons/AirSwap'
@@ -19,9 +18,16 @@ import AirSwapWithTxtIcon from 'components/common/icons/AirSwapWithTxt'
 import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
 import { getAuthLogo } from 'helpers/logosHelpers'
+import { getStatsValues } from 'helpers/accStatsHelpers'
+import StatsCard from 'components/dashboard/containers/DashboardStats/StatsCard'
 const AirSwap = window.AirSwap
 
 const AirSwapDialogBody = ({ t, onBuy, onSell, classes, account }) => {
+    const {
+        addrBalanceAdx,
+        addrBalanceEth,
+    } = getStatsValues(account._stats)
+
     return (
         <div className={classes.paper}>
             <div>
@@ -31,8 +37,8 @@ const AirSwapDialogBody = ({ t, onBuy, onSell, classes, account }) => {
                     <ListDivider />
                     <ListItem  >
                         <ListItemText
-                            primary={t('AIRSWAP_INFO_MSG')}
-                            secondary={
+                            secondary={t('AIRSWAP_INFO_MSG')}
+                            primary={
                                 <Anchor
                                     className={classes.iconLink}
                                     href='https://www.airswap.io/'
@@ -48,9 +54,9 @@ const AirSwapDialogBody = ({ t, onBuy, onSell, classes, account }) => {
                     <ListItem  >
                         <ListItemText
                             primary={t('AIRSWAP_WARNING_MSG')}
-                            secondary={t('AIRSWAP_WARNING')}
+                            // secondary={t('AIRSWAP_WARNING')}
                             primaryTypographyProps={{ color: 'primary' }}
-                            secondaryTypographyProps={{ color: 'primary' }}
+                        // secondaryTypographyProps={{ color: 'default' }}
                         />
                     </ListItem>
                     <ListDivider />
@@ -67,33 +73,27 @@ const AirSwapDialogBody = ({ t, onBuy, onSell, classes, account }) => {
                             secondary={t('CURRENT_AUTH_METOHD')}
                         />
                     </ListItem>
+                    <ListDivider />
                 </List>
-            </div>
-            <div
-                className={classes.btns}
-            >
-                <Button
-                    color='primary'
-                    variant='contained'
-                    size='large'
-                    onClick={onBuy}
-                >
-                    <AirSwapIcon
-                        className={classes.btnIconLeft}
-                    />
-                    {t('BUY_ADX_AIRSWAP')}
-                </Button>
-                <Button
-                    color='primary'
-                    variant='contained'
-                    size='large'
-                    onClick={onSell}
-                >
-                    <AirSwapIcon
-                        className={classes.btnIconLeft}
-                    />
-                    {t('SELL_ADX_AIRSWAP')}
-                </Button>
+                <div className={classes.infoStatsContainer}>
+                    <StatsCard
+                        linkCard
+                        onClick={this.goToAccount}
+                        subtitle={t('ACCOUNT_ETH_BALANCE')}
+                        title={addrBalanceEth + ' ETH'}
+                        padding='dense'
+                    >
+                    </StatsCard>
+
+                    <StatsCard
+                        linkCard
+                        onClick={this.goToAccount}
+                        subtitle={t('ACCOUNT_ADX_BALANCE')}
+                        title={addrBalanceAdx + ' ADX'}
+                        padding='dense'
+                    >
+                    </StatsCard>
+                </div>
             </div>
         </div >
     )
@@ -127,9 +127,10 @@ class AirSwapWidget extends Component {
     }
 
     render() {
+        const { classes, t } = this.props
         return (
             <AirSwapDialog
-                classes={this.props.classes}
+                classes={classes}
                 btnLabel='BUY_SELL_ADX_AIRSWAP_BTN'
                 title='BUY_SELL_ADX_AIRSWAP_DIALOG_TITLE'
                 variant='contained'
@@ -139,6 +140,36 @@ class AirSwapWidget extends Component {
                 onBuy={() => this.onSwap({ mode: 'buy' })}
                 onSell={() => this.onSwap({ mode: 'sell' })}
                 account={this.props.account}
+                dialogActions={
+                    <div
+                        className={classes.btns}
+                    >
+                        <Button
+                            className={classes.actionBtn}
+                            color='primary'
+                            variant='contained'
+                            size='large'
+                            onClick={() => this.onSwap({ mode: 'buy' })}
+                        >
+                            <AirSwapIcon
+                                className={classes.btnIconLeft}
+                            />
+                            {t('BUY_ADX_AIRSWAP')}
+                        </Button>
+                        <Button
+                            className={classes.actionBtn}
+                            color='primary'
+                            variant='contained'
+                            size='large'
+                            onClick={() => this.onSwap({ mode: 'sell' })}
+                        >
+                            <AirSwapIcon
+                                className={classes.btnIconLeft}
+                            />
+                            {t('SELL_ADX_AIRSWAP')}
+                        </Button>
+                    </div>
+                }
             />
         )
     }

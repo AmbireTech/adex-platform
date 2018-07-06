@@ -10,12 +10,12 @@ import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import classnames from 'classnames'
 import { adxToFloatView } from 'services/smart-contracts/utils'
-import { web3Utils } from 'services/smart-contracts/ADX'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import { withStyles } from '@material-ui/core/styles'
 import StatsCard from './StatsCard'
 import { styles } from './styles'
 import Grid from '@material-ui/core/Grid'
+import { getStatsValues } from 'helpers/accStatsHelpers'
 
 const { BidStatesLabels, BID_STATES } = ExchangeConstants
 
@@ -92,7 +92,7 @@ export class DashboardStats extends Component {
         let totalCount = 0
 
         const stats = {}
-        const t = this.props.t
+        // const { t } = this.props
 
         stats.action = this.mapBidsToStats(action)
         const actionCount = stats.action.count
@@ -178,18 +178,18 @@ export class DashboardStats extends Component {
 
     // TODO: Common func to get account stats for here and account component
     InfoStats = ({ stats }) => {
-        const t = this.props.t
-        const side = this.props.side
+        const { t, side, account } = this.props
         const spentEarned = side === 'publisher' ? 'LABEL_TOTAL_REVENUE' : 'LABEL_TOTAL_EXPENSES'
 
 
-        const account = this.props.account
-        const accStats = { ...account._stats } || {}
-        const addrBalanceAdx = adxToFloatView(accStats.balanceAdx || 0)
-        const addrBalanceEth = web3Utils.fromWei(accStats.balanceEth || '0', 'ether')
-        const exchBal = accStats.exchangeBalance || {}
-        const adxOnBids = adxToFloatView(exchBal.onBids || 0)
-        const exchangeAvailable = adxToFloatView(exchBal.available || 0)
+        const accStats = { ...account._stats }
+
+        const {
+            addrBalanceAdx,
+            addrBalanceEth,
+            adxOnBids,
+            exchangeAvailable
+        } = getStatsValues(accStats)
 
         const classes = this.props.classes
         return (
