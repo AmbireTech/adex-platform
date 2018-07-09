@@ -8,7 +8,12 @@ export const styles = theme => {
             minHeight: '70vh',
             minWidth: 800,
             maxWidth: 1080,
-            backgroundColor: grey[200] // TODO: color
+            backgroundColor: grey[200], // TODO: color,
+            maxHeight: '100vh',
+            '@media(max-width:1080px)': {
+                maxWidth: '100%',
+                minWidth: `calc(100vw - ${theme.spacing.unit * 2}px)`,
+            }
         },
         content: {
             display: 'flex',
@@ -20,7 +25,8 @@ export const styles = theme => {
             '&:first-child': {
                 paddingTop: spacing,
             },
-            overflow: 'visible'
+            overflow: 'visible',
+            overflowY: 'auto'
         },
         contentBox: {
             position: 'absolute',
