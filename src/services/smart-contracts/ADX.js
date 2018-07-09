@@ -23,6 +23,23 @@ cfg = mainnetCfg
 // 	cfg = testrpcCfg
 // }
 
+const localWeb3 = () => {
+	const provider = new Web3.providers.HttpProvider(cfg.node)
+	const web3 = new Web3(provider)
+	const token = new web3.eth.Contract(tokenAbi, cfg.addr.token)
+	const exchange = new web3.eth.Contract(exchangeAbi, cfg.addr.exchange)
+
+	const results = {
+		web3: web3,
+		// mode: mode,
+		cfg: cfg,
+		token: token,
+		exchange: exchange
+	}
+
+	return results
+}
+
 const getInjectedWeb3 = new Promise(function (resolve, reject) {
 	// Wait for loading completion to avoid race conditions with web3 injection timing.
 	window.addEventListener('load', function () {
@@ -42,7 +59,7 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 
 			// console.log('web3.currentProvider', web3.currentProvider)
 			console.log('Injected web3 detected.')
-			let results = {
+			const results = {
 				web3: web3,
 				// mode: mode,
 				cfg: cfg,
@@ -52,30 +69,16 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 
 			resolve(results)
 		} else {
-
+			// Fallback to local web3
 			console.log('No web3 instance injected, using Local web3.')
-			reject(new Error('No metamask injected web3 found'))
+			resolve(localWeb3())
 		}
 	})
 })
 
 const getLocalWeb3 = new Promise(function (resolve, reject) {
 	console.log('getLocalWeb3')
-	let provider = new Web3.providers.HttpProvider(cfg.node)
-	let web3 = new Web3(provider)
-	// let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Trezor.id
-	let token = new web3.eth.Contract(tokenAbi, cfg.addr.token)
-	let exchange = new web3.eth.Contract(exchangeAbi, cfg.addr.exchange)
-
-	let results = {
-		web3: web3,
-		// mode: mode,
-		cfg: cfg,
-		token: token,
-		exchange: exchange
-	}
-
-	resolve(results)
+	resolve(localWeb3())
 })
 
 const getWeb3 = (mode) => {
