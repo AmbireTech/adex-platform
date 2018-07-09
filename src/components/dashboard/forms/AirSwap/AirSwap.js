@@ -116,13 +116,15 @@ class AirSwapWidget extends Component {
             },
             onComplete: (transactionId) => {
 
-                const txData = {
-                    trHash: transactionId,
-                    trMethod: `TX_MTD_AIRSWAP_${mode.toUpperCase()}`
-                }
-                actions.addWeb3Transaction({ trans: txData, addr: 'GET_THE_ADDR' })
+                // TODO: Get data when available
+                // const txData = {
+                //     trHash: transactionId,
+                //     trMethod: `TX_MTD_AIRSWAP_${mode.toUpperCase()}`
+                // }
+                // actions.addWeb3Transaction({ trans: txData, addr: 'GET_THE_ADDR' })
                 actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTION_SENT_MSG', { args: [transactionId] }), timeout: 5000 })
-            }
+            },
+            //TODO: add onTransactionHash when possible
         }, 'body')
     }
 
