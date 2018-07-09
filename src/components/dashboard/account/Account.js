@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Translate from 'components/translate/Translate'
-import { web3Utils } from 'services/smart-contracts/ADX'
 import { WithdrawEth, WithdrawAdx, Deposit, WithdrawFromExchange } from 'components/dashboard/forms/web3/transactions'
 import { withStyles } from '@material-ui/core/styles'
 import List from '@material-ui/core/List'
@@ -12,9 +11,9 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
 import { styles } from './styles.js'
-
-import { adxToFloatView } from 'services/smart-contracts/utils'
+import { getStatsValues } from 'helpers/accStatsHelpers'
 import scActions from 'services/smart-contracts/actions'
+import AirSwap from 'components/dashboard/forms/AirSwap'
 
 const { getAccountStats } = scActions
 // const RRButton = withReactRouterLink(Button)
@@ -40,13 +39,14 @@ class Account extends React.Component {
 
     render() {
         const { t, account, classes } = this.props
-        let stats = { ...account._stats } || {}
-        let addrBalanceAdx = adxToFloatView(stats.balanceAdx || 0)
-        let addrBalanceEth = web3Utils.fromWei(stats.balanceEth || '0', 'ether')
-        let exchBal = stats.exchangeBalance || {}
-        // let adxOnExchangeTotal = adxToFloatView(exchBal.total)
-        let adxOnBids = adxToFloatView(exchBal.onBids || 0)
-        let exchangeAvailable = adxToFloatView(exchBal.available || 0)
+        const stats = { ...account._stats }
+
+        const {
+            addrBalanceAdx,
+            addrBalanceEth,
+            adxOnBids,
+            exchangeAvailable
+        } = getStatsValues(stats)
 
         return (
             <div>
@@ -100,6 +100,7 @@ class Account extends React.Component {
                                 className={classes.actionBtn}
                                 size='small'
                             />
+                            <AirSwap />
                         </div>
                     </ListItem>
                     <ListDivider />
@@ -157,9 +158,9 @@ Account.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-    let persist = state.persist
-    let memory = state.memory
-    let account = persist.account
+    const { persist, memory } = state
+    const account = persist.account
+
     return {
         account: account,
         side: memory.nav.side,

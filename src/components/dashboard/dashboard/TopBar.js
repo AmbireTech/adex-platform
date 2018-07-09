@@ -8,10 +8,7 @@ import ButtonMenu from 'components/common/button_menu/ButtonMenuMui'
 import Translate from 'components/translate/Translate'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 // import ChangeLang from 'components/translate/ChangeLang'
-import { AUTH_TYPES } from 'constants/misc'
-import metamaskLogo from 'resources/metamask-logo.png'
-import trezorLogo from 'resources/trezor-logo-h.png'
-import ledgerLogo from 'resources/ledger_logo_header.png'
+import { getAuthLogo } from 'helpers/logosHelpers'
 import { logOut } from 'services/store-data/auth'
 
 import AppBar from '@material-ui/core/AppBar'
@@ -38,21 +35,7 @@ class TopNav extends Component {
 
   render() {
     const t = this.props.t
-    let imgSrc = ''
-
-    switch (this.props.account._authMode.authType) {
-      case AUTH_TYPES.METAMASK.name:
-        imgSrc = metamaskLogo
-        break
-      case AUTH_TYPES.TREZOR.name:
-        imgSrc = trezorLogo
-        break
-      case AUTH_TYPES.LEDGER.name:
-        imgSrc = ledgerLogo
-        break
-      default:
-        break
-    }
+    let imgSrc = getAuthLogo(this.props.account._authMode.authType)
 
     const classes = this.props.classes
 
@@ -83,7 +66,6 @@ class TopNav extends Component {
             <div
               className={classnames(classes.flex, classes.toolbarControls)}
             >
-
               {/* <Navigation type='horizontal' className={theme.rightNavigation}> */}
               {/* At the moment we use translations only for proper items properties display names */}
               {/* <ChangeLang /> */}

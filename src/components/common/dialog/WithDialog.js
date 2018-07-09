@@ -12,6 +12,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import Icon from '@material-ui/core/Icon'
 import CancelIcon from '@material-ui/icons/Cancel'
+import DialogActions from '@material-ui/core/DialogActions'
 
 const textBtn = ({ label, className, classes, style, onClick, ...rest }) => {
     return <span className={classnames(classes.textBtn, className)} style={style} onClick={onClick}> {label} </span>
@@ -136,6 +137,11 @@ export default function ItemHoc(Decorated) {
                         >
                             <Decorated {...this.props} onSave={this.onSave()} />
                         </DialogContent>
+                        {this.props.dialogActions &&
+                           <DialogActions>
+                               {this.props.dialogActions}
+                            </DialogActions>
+                        }
                     </Dialog>
 
                 </div >
