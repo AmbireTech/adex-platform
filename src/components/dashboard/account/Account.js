@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
+import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import { WithdrawEth, WithdrawAdx, Deposit, WithdrawFromExchange } from 'components/dashboard/forms/web3/transactions'
 import { withStyles } from '@material-ui/core/styles'
@@ -16,7 +17,6 @@ import { styles } from './styles.js'
 import { getStatsValues } from 'helpers/accStatsHelpers'
 import scActions from 'services/smart-contracts/actions'
 import AirSwap from 'components/dashboard/forms/AirSwap'
-import copy from 'copy-to-clipboard'
 
 const { getAccountStats } = scActions
 // const RRButton = withReactRouterLink(Button)
