@@ -15,9 +15,6 @@ export const styles = theme => {
             padding: spacing,
             margin: 0,
             alignSelf: 'flex-start'
-        },
-        copyButton: {
-            // justifyContent: 'flex-end'
         }
     }
 }
