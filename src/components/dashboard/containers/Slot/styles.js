@@ -3,7 +3,11 @@ export const styles = theme => {
     return {
         integrationLabel: {
             marginBottom: spacing,
-            color: theme.palette.text.hint
+            color: theme.palette.text.hint,
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between'
         },
         integrationCode: {
             whiteSpace: 'pre-wrap',
@@ -11,6 +15,9 @@ export const styles = theme => {
             padding: spacing,
             margin: 0,
             alignSelf: 'flex-start'
+        },
+        copyButton: {
+            // justifyContent: 'flex-end'
         }
     }
 }

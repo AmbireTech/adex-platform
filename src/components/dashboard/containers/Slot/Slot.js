@@ -14,7 +14,10 @@ import { Item as ItemModel } from 'adex-models'
 import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT } from 'constants/misc'
 import Paper from '@material-ui/core/Paper'
 import { withStyles } from '@material-ui/core/styles'
+import IconButton from '@material-ui/core/IconButton'
+import ContentCopy from '@material-ui/icons/ContentCopy'
 import { styles } from './styles'
+import copy from 'copy-to-clipboard'
 
 const { ItemsTypes, AdSizesByValue } = ItemsConstants
 const ADVIEW_URL = process.env.ADVIEW_HOST || 'https://view.adex.network'
@@ -52,7 +55,15 @@ const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fal
     // TODO: Add copy to clipboard and tooltip or description how to use it
     return (
         <div>
-            <div className={classes.integrationLabel}> {t('INTEGRATION_CODE')}</div>
+            <div className={classes.integrationLabel}>
+                {t('INTEGRATION_CODE')}
+                <IconButton 
+                    color='default'
+                    onClick={() => {copy(iframeStr)}}
+                >
+                    <ContentCopy/>
+                </IconButton>
+            </div>
             <Paper>
                 <pre className={classes.integrationCode}>
                     {iframeStr}
