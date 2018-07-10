@@ -10,10 +10,14 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
+import Button from '@material-ui/core/Button'
+import IconButton from '@material-ui/core/IconButton'
+import ContentCopy from '@material-ui/icons/ContentCopy'
 import { styles } from './styles.js'
 import { getStatsValues } from 'helpers/accStatsHelpers'
 import scActions from 'services/smart-contracts/actions'
 import AirSwap from 'components/dashboard/forms/AirSwap'
+import copy from 'copy-to-clipboard'
 
 const { getAccountStats } = scActions
 // const RRButton = withReactRouterLink(Button)
@@ -55,12 +59,15 @@ class Account extends React.Component {
                 >
                     <ListItem
                     // // TODO: add copy to clipboard btn for the address
-                    // // rightIcon='content_copy'
+                    // // 
                     >
                         <ListItemText
                             primary={account._addr}
                             secondary={t('ACCOUNT_ETH_ADDR')}
                         />
+                        <IconButton color="default" onClick={() => {copy(account._addr)}}>
+                            <ContentCopy/>
+                        </IconButton>
                     </ListItem>
                     <ListDivider />
                     <ListItem
