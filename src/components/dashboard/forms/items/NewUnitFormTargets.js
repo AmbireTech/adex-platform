@@ -99,7 +99,7 @@ class NewUnitFormTargets extends Component {
                 onChange={this.handleTargetChange.bind(this, target, null)}
                 label={this.props.t('TARGET_GENDERS')}
                 placeholder={this.props.t('TARGET_GENDERS_PLACEHOLDER')}
-                source={AcGenders}
+                source={this.translateGenders(AcGenders)}
                 value={target.value}
                 suggestionMatch='anywhere'
                 showSuggestionsWhenValueIsSet={true}
@@ -224,6 +224,13 @@ class NewUnitFormTargets extends Component {
                 </Grid>
             </div >
         )
+    }
+
+    translateGenders(genders) {
+        for (let key in genders) {
+            genders[key] = this.props.t(genders[key])
+        }
+        return genders;
     }
 
     render() {
