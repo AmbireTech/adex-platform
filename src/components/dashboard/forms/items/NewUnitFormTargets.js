@@ -12,7 +12,7 @@ import Autocomplete from 'components/common/autocomplete'
 import { items as ItemsConstants } from 'adex-constants'
 import Slider from '@material-ui/lab/Slider'
 import Typography from '@material-ui/core/Typography'
-
+import { translate } from 'services/translations/translations'
 
 const { ItemsTypes, Locations, TargetWeightLabels, Genders, TARGET_MIN_AGE, TARGET_MAX_AGE } = ItemsConstants
 
@@ -30,7 +30,7 @@ const AcLocations = autocompleteLocations()
 const autocompleteGenders = () => {
     let genders = {}
     Genders.map((gen) => {
-        genders[gen.value] = gen.label
+        genders[gen.value] = translate(gen.label)
     })
 
     return genders
@@ -99,7 +99,7 @@ class NewUnitFormTargets extends Component {
                 onChange={this.handleTargetChange.bind(this, target, null)}
                 label={this.props.t('TARGET_GENDERS')}
                 placeholder={this.props.t('TARGET_GENDERS_PLACEHOLDER')}
-                source={this.translateGenders(AcGenders)}
+                source={AcGenders}
                 value={target.value}
                 suggestionMatch='anywhere'
                 showSuggestionsWhenValueIsSet={true}
@@ -224,13 +224,6 @@ class NewUnitFormTargets extends Component {
                 </Grid>
             </div >
         )
-    }
-
-    translateGenders(genders) {
-        for (let key in genders) {
-            genders[key] = this.props.t(genders[key])
-        }
-        return genders;
     }
 
     render() {
