@@ -232,7 +232,6 @@ export const renderCommonTableRowStats = ({ bidData, t, side, classes }) => {
 export const CommonTableRowStats = withStyles(styles)(renderCommonTableRowStats)
 
 export const getCommonBidData = ({ bid, t, side }) => {
-
     const accepted = (bid._acceptedTime || 0) * 1000
     const timeout = (bid._timeout || 0) * 1000
     const bidExpires = accepted ? (accepted + timeout) : null
@@ -256,7 +255,6 @@ export const getCommonBidData = ({ bid, t, side }) => {
         _state:
             <span
                 style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}
-            // className={theme.bidState}
             >
                 <Icon
                     style={{ marginRight: 5, color: StateIcons[bid._state].color }}
