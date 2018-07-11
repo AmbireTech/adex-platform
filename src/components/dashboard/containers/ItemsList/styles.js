@@ -6,7 +6,8 @@ export const styles = theme => {
             width: 'auto',
             height: 'auto',
             maxHeight: 70,
-            maxWidth: 180
+            maxWidth: 180,
+            cursor: 'pointer'
         }
     }
 }
