@@ -121,7 +121,9 @@ export const renderCommonTableRow = ({ bidData, t, side, classes = {} }) => {
             <TableCell>
                 {bidData._target} / {bidData.clicksCount}
             </TableCell>
-            <TableCell> {bidData._state} </TableCell>
+            <TableCell> 
+                {bidData._state} 
+            </TableCell>
             <TableCell
                 className={classnames(classes.compactCol)}
             >
@@ -205,7 +207,9 @@ export const renderCommonTableRowStats = ({ bidData, t, side, classes }) => {
             <TableCell>
                 {bidData._target} / {bidData.clicksCount}
             </TableCell>
-            <TableCell> {bidData._state} </TableCell>
+            <TableCell> 
+                {bidData._state} 
+            </TableCell>
             <TableCell>
                 {statsUniqueClicks}
             </TableCell>
@@ -251,6 +255,7 @@ export const getCommonBidData = ({ bid, t, side }) => {
         clicksCount: bid.clicksCount || '-',
         _state:
             <span
+                style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}
             // className={theme.bidState}
             >
                 <Icon
