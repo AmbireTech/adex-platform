@@ -4,7 +4,8 @@ export const styles = theme => ({
         left: 0,
         width: 'auto',
         height: '100%',
-        position: 'relative'
+        position: 'relative',
+        cursor: 'pointer'
     },
     circular: {
         position: 'absolute',
