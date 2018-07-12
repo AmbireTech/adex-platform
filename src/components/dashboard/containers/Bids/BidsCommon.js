@@ -17,8 +17,12 @@ import { AcceptBid, GiveupBid, VerifyBid, CancelBid, RefundBid } from 'component
 import Tooltip from '@material-ui/core/Tooltip'
 import Typography from '@material-ui/core/Typography'
 import WarningIcon from '@material-ui/icons/Warning'
-import { withStyles } from '@material-ui/core/styles'
 import MoreHoriz from '@material-ui/icons/MoreHoriz'
+import Done from '@material-ui/icons/Done'
+import Close from '@material-ui/icons/Close'
+import AccessTime from '@material-ui/icons/AccessTime'
+import DoneAll from '@material-ui/icons/DoneAll'
+import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
 const RRAnchor = withReactRouterLink(Anchor)
@@ -36,12 +40,12 @@ const TableCell = ({ children, ...rest }) =>
 
 export const StateIcons = {
     [BID_STATES.DoesNotExist.id]: { icon: <MoreHoriz style={{color: '#0277BD'}}/> },
-    [BID_STATES.Accepted.id]: { icon: 'done', color: '#0277BD' },
-    [BID_STATES.Canceled.id]: { icon: 'close', color: '#787878' },
-    [BID_STATES.Expired.id]: { icon: 'access_time', color: '#FF5722' },
-    [BID_STATES.Completed.id]: { icon: 'done_all', color: '#00ffbf' },
-    [BID_STATES.ConfirmedAdv.id]: { icon: 'done', color: '#00E5FF' },
-    [BID_STATES.ConfirmedPub.id]: { icon: 'done', color: '#00E5FF' },
+    [BID_STATES.Accepted.id]: { icon: <Done style={{color: '#0277BD'}} /> },
+    [BID_STATES.Canceled.id]: { icon: <Close style={{color: '#787878'}} /> },
+    [BID_STATES.Expired.id]: { icon: <AccessTime style={{color: '#FF5722'}} /> },
+    [BID_STATES.Completed.id]: { icon: <DoneAll style={{color: '#00FFBF'}} /> },
+    [BID_STATES.ConfirmedAdv.id]: { icon: <Done style={{color: '#00E5FF'}} /> },
+    [BID_STATES.ConfirmedPub.id]: { icon: <Done style={{color: '#00E5FF'}} /> },
 }
 
 export const bidDetails = ({ bidData, t, side }) => {
