@@ -257,12 +257,6 @@ export const getCommonBidData = ({ bid, t, side }) => {
             <span
                 style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}
             >
-                {/* <Icon
-                    style={{ marginRight: 5, color: StateIcons[bid._state].color }}
-                >
-                    {StateIcons[bid._state].icon}
-                </Icon> */}
-                {/* <FontIcon value={StateIcons[bid._state].icon} style={{ marginRight: 5, color: StateIcons[bid._state].color }} /> */}
                 <MoreHoriz style={{marginRight: 5, color: StateIcons[bid._state].color }}>
                     {StateIcons[bid._state].icon}
                 </MoreHoriz>
