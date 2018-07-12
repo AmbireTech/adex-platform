@@ -154,6 +154,7 @@ class SideNav extends Component {
                                         <Badge
                                             badgeContent={bidsAwaitingActionCount <= 9 ? bidsAwaitingActionCount : '9+'}
                                             color="primary"
+                                            className={classnames(classes.actionCount)}
                                         >
                                             <BidIcon />
                                         </Badge> : <BidIcon />}
@@ -172,7 +173,10 @@ class SideNav extends Component {
                                         <Badge
                                             badgeContent={pendingTrsCount <= 9 ? pendingTrsCount : '9+'}
                                             color="primary"
-                                        ></Badge> : <SwapHorizontalIcon />}
+                                            className={classnames(classes.actionCount)}
+                                        >
+                                            <SwapHorizontalIcon />
+                                        </Badge> : <SwapHorizontalIcon />}
                                 </span>
                             </ListItemIcon>
                             <ListItemText inset primary={t('TRANSACTIONS')} />
