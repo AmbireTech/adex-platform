@@ -33,7 +33,8 @@ class CancelBid extends Component {
     }
 
     render() {
-        const { transaction, t, classes, placedBid = {} } = this.props.transaction
+        const { transaction, t, classes, placedBid = {} } = this.props
+
         const unit = transaction.unit
 
         return (
