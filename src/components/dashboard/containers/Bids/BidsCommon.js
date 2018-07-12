@@ -19,6 +19,7 @@ import Icon from '@material-ui/core/Icon'
 import Typography from '@material-ui/core/Typography'
 import WarningIcon from '@material-ui/icons/Warning'
 import { withStyles } from '@material-ui/core/styles'
+import MoreHoriz from '@material-ui/icons/MoreHoriz'
 import { styles } from './styles'
 
 const RRAnchor = withReactRouterLink(Anchor)
@@ -256,12 +257,15 @@ export const getCommonBidData = ({ bid, t, side }) => {
             <span
                 style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}
             >
-                <Icon
+                {/* <Icon
                     style={{ marginRight: 5, color: StateIcons[bid._state].color }}
                 >
                     {StateIcons[bid._state].icon}
-                </Icon>
+                </Icon> */}
                 {/* <FontIcon value={StateIcons[bid._state].icon} style={{ marginRight: 5, color: StateIcons[bid._state].color }} /> */}
+                <MoreHoriz style={{marginRight: 5, color: StateIcons[bid._state].color }}>
+                    {StateIcons[bid._state].icon}
+                </MoreHoriz>
                 <span>{t(BidStatesLabels[bid._state])}</span>
             </span>,
         sideData: sideData,
