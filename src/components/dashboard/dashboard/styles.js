@@ -140,5 +140,8 @@ export const styles = theme => ({
     },
     bar: {
         opacity: 0.5
+    },
+    actionCount: {
+        marginTop: theme.spacing.unit,
     }
 })
