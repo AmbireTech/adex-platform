@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
+import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import { WithdrawEth, WithdrawAdx, Deposit, WithdrawFromExchange } from 'components/dashboard/forms/web3/transactions'
 import { withStyles } from '@material-ui/core/styles'
@@ -10,6 +11,8 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
+import IconButton from '@material-ui/core/IconButton'
+import ContentCopy from '@material-ui/icons/ContentCopy'
 import { styles } from './styles.js'
 import { getStatsValues } from 'helpers/accStatsHelpers'
 import scActions from 'services/smart-contracts/actions'
@@ -53,14 +56,17 @@ class Account extends React.Component {
                 <List
                 // dense={true}
                 >
-                    <ListItem
-                    // // TODO: add copy to clipboard btn for the address
-                    // // rightIcon='content_copy'
-                    >
+                    <ListItem>
                         <ListItemText
                             primary={account._addr}
                             secondary={t('ACCOUNT_ETH_ADDR')}
                         />
+                        <IconButton 
+                            color='default' 
+                            onClick={() => {copy(account._addr)}}
+                        >
+                            <ContentCopy/>
+                        </IconButton>
                     </ListItem>
                     <ListDivider />
                     <ListItem

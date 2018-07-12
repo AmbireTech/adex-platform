@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { AdSlot } from 'adex-models'
+import copy from 'copy-to-clipboard'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
 import SlotBids from 'components/dashboard/containers/Bids/SlotBids'
 import { items as ItemsConstants } from 'adex-constants'
@@ -13,6 +14,8 @@ import ImgDialog from 'components/dashboard/containers/ImgDialog'
 import { Item as ItemModel } from 'adex-models'
 import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT } from 'constants/misc'
 import Paper from '@material-ui/core/Paper'
+import IconButton from '@material-ui/core/IconButton'
+import ContentCopy from '@material-ui/icons/ContentCopy'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -52,7 +55,15 @@ const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fal
     // TODO: Add copy to clipboard and tooltip or description how to use it
     return (
         <div>
-            <div className={classes.integrationLabel}> {t('INTEGRATION_CODE')}</div>
+            <div className={classes.integrationLabel}>
+                {t('INTEGRATION_CODE')}
+                <IconButton 
+                    color='default'
+                    onClick={() => {copy(iframeStr)}}
+                >
+                    <ContentCopy/>
+                </IconButton>
+            </div>
             <Paper>
                 <pre className={classes.integrationCode}>
                     {iframeStr}

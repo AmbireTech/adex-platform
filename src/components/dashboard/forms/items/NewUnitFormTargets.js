@@ -12,7 +12,7 @@ import Autocomplete from 'components/common/autocomplete'
 import { items as ItemsConstants } from 'adex-constants'
 import Slider from '@material-ui/lab/Slider'
 import Typography from '@material-ui/core/Typography'
-
+import { translate } from 'services/translations/translations'
 
 const { ItemsTypes, Locations, TargetWeightLabels, Genders, TARGET_MIN_AGE, TARGET_MAX_AGE } = ItemsConstants
 
@@ -30,7 +30,7 @@ const AcLocations = autocompleteLocations()
 const autocompleteGenders = () => {
     let genders = {}
     Genders.map((gen) => {
-        genders[gen.value] = gen.label
+        genders[gen.value] = translate(gen.label)
     })
 
     return genders
