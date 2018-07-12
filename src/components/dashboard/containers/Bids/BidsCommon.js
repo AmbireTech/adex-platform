@@ -15,7 +15,6 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import ItemIpfsDetails from './../ItemIpfsDetails'
 import { AcceptBid, GiveupBid, VerifyBid, CancelBid, RefundBid } from 'components/dashboard/forms/web3/transactions'
 import Tooltip from '@material-ui/core/Tooltip'
-import Icon from '@material-ui/core/Icon'
 import Typography from '@material-ui/core/Typography'
 import WarningIcon from '@material-ui/icons/Warning'
 import { withStyles } from '@material-ui/core/styles'
@@ -36,7 +35,7 @@ const TableCell = ({ children, ...rest }) =>
     </TableCellMui >
 
 export const StateIcons = {
-    [BID_STATES.DoesNotExist.id]: { icon: 'more_horiz', color: '#0277BD' },
+    [BID_STATES.DoesNotExist.id]: { icon: '<MoreHoriz />', color: '#0277BD' },
     [BID_STATES.Accepted.id]: { icon: 'done', color: '#0277BD' },
     [BID_STATES.Canceled.id]: { icon: 'close', color: '#787878' },
     [BID_STATES.Expired.id]: { icon: 'access_time', color: '#FF5722' },
@@ -257,9 +256,7 @@ export const getCommonBidData = ({ bid, t, side }) => {
             <span
                 style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}
             >
-                <MoreHoriz style={{marginRight: 5, color: StateIcons[bid._state].color }}>
-                    {StateIcons[bid._state].icon}
-                </MoreHoriz>
+                <MoreHoriz style={{marginRight: 5, color: StateIcons[bid._state].color}} />
                 <span>{t(BidStatesLabels[bid._state])}</span>
             </span>,
         sideData: sideData,
