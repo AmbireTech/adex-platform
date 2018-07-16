@@ -45,7 +45,7 @@ class DownshiftMultiple extends React.Component {
 
     handleDelete = item => () => {
         const selectedItem = [...this.state.selectedItem]
-        selectedItem.splice(selectedItem.indexOf(item.value), 1)
+        selectedItem.splice(selectedItem.indexOf(item), 1)
 
         this.setState({ selectedItem })
         this.props.onChange(selectedItem)

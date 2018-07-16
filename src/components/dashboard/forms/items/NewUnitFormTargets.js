@@ -14,7 +14,7 @@ import Slider from '@material-ui/lab/Slider'
 import Typography from '@material-ui/core/Typography'
 import { translate } from 'services/translations/translations'
 
-const { ItemsTypes, Locations, TargetWeightLabels, Genders, TARGET_MIN_AGE, TARGET_MAX_AGE } = ItemsConstants
+const { ItemsTypes, Locations, TargetWeightLabels, Genders, PredefinedTags, TARGET_MIN_AGE, TARGET_MAX_AGE } = ItemsConstants
 
 const autocompleteLocations = () => {
     let locs = {}
@@ -26,6 +26,18 @@ const autocompleteLocations = () => {
 }
 
 const AcLocations = autocompleteLocations()
+
+const autocompleteTags = () => {
+    let tags = {}
+
+    PredefinedTags.map((tag) => {
+        tags[tag.name] = tag.name
+    })
+
+    return tags
+}
+
+const AcTags = autocompleteTags()
 
 const autocompleteGenders = () => {
     let genders = {}
@@ -216,6 +228,21 @@ class NewUnitFormTargets extends Component {
                                                 onChange={(ev, val) => this.handleTargetChange(target, 'updateWeight', val)}
                                             />
                                         </div>
+                                    </Grid>
+                                    <Grid item lg={12}>
+                                        <Autocomplete
+                                            id='tags-select'
+                                            direction="auto"
+                                            multiple
+                                            openOnClick
+                                            onChange={() => {}}
+                                            label={this.props.t('TARGET_GENDERS')}
+                                            placeholder={this.props.t('TARGET_GENDERS_PLACEHOLDER')}
+                                            source={AcTags}
+                                            suggestionMatch='anywhere'
+                                            showSuggestionsWhenValueIsSet={true}
+                                            allowCreate={true}
+                                        />
                                     </Grid>
                                 </Grid>
                             )
