@@ -62,9 +62,10 @@ export const NewUnitSteps = (props) =>
         itemType={ItemsTypes.AdUnit.id}
         stepsId={ItemsTypes.AdUnit.id}
         stepsPages={[
-            { title: 'UNIT_BASIC_STEP', page: NewItemForm },
-            { title: 'UNIT_TYPE_DATA_STEP', page: NewUnitFormType },
-            { title: 'UNIT_BANNER_STEP', page: NewUnitFormImg },
+            // TODO SIMO: Uncomment
+            // { title: 'UNIT_BASIC_STEP', page: NewItemForm },
+            // { title: 'UNIT_TYPE_DATA_STEP', page: NewUnitFormType },
+            // { title: 'UNIT_BANNER_STEP', page: NewUnitFormImg },
             { title: 'UNIT_TARGETS_STEP', page: NewUnitFormTargets }
         ]}
         imgLabel='UNIT_BANNER_IMG_LABEL'
