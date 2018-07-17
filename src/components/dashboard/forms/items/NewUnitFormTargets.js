@@ -8,13 +8,13 @@ import Translate from 'components/translate/Translate'
 import { AdUnit } from 'adex-models'
 import Grid from '@material-ui/core/Grid'
 import Autocomplete from 'components/common/autocomplete'
-// import classnames from 'classnames'
 import { items as ItemsConstants } from 'adex-constants'
 import Slider from '@material-ui/lab/Slider'
 import Typography from '@material-ui/core/Typography'
 import { translate } from 'services/translations/translations'
+import NewItemFormTags from './NewItemFormTags'
 
-const { ItemsTypes, Locations, TargetWeightLabels, Genders, PredefinedTags, TARGET_MIN_AGE, TARGET_MAX_AGE } = ItemsConstants
+const { ItemsTypes, Locations, TargetWeightLabels, Genders, TARGET_MIN_AGE, TARGET_MAX_AGE } = ItemsConstants
 
 const autocompleteLocations = () => {
     let locs = {}
@@ -26,18 +26,6 @@ const autocompleteLocations = () => {
 }
 
 const AcLocations = autocompleteLocations()
-
-const autocompleteTags = () => {
-    let tags = {}
-
-    PredefinedTags.map((tag) => {
-        tags[tag.name] = tag.name
-    })
-
-    return tags
-}
-
-const AcTags = autocompleteTags()
 
 const autocompleteGenders = () => {
     let genders = {}
@@ -60,7 +48,6 @@ const ages = (() => {
 })()
 
 class NewUnitFormTargets extends Component {
-
     handleTargetChange = (target, valueKey, newValue) => {
         let newWeight
         if (valueKey === 'updateWeight') {
@@ -127,7 +114,7 @@ class NewUnitFormTargets extends Component {
                 <Grid
                     container
                     spacing={16}
-                // className={theme.agesGrid}
+                //  className={theme.agesGrid}
                 >
                     <Grid item lg={6}>
 
@@ -146,7 +133,6 @@ class NewUnitFormTargets extends Component {
                         />
                     </Grid>
                     <Grid item lg={6}>
-
                         <Autocomplete
                             id='age-target-to-select'
                             direction="auto"
@@ -229,21 +215,6 @@ class NewUnitFormTargets extends Component {
                                             />
                                         </div>
                                     </Grid>
-                                    <Grid item lg={12}>
-                                        <Autocomplete
-                                            id='tags-select'
-                                            direction="auto"
-                                            multiple
-                                            openOnClick
-                                            onChange={() => {}}
-                                            label={this.props.t('TARGET_GENDERS')}
-                                            placeholder={this.props.t('TARGET_GENDERS_PLACEHOLDER')}
-                                            source={AcTags}
-                                            suggestionMatch='anywhere'
-                                            showSuggestionsWhenValueIsSet={true}
-                                            allowCreate={true}
-                                        />
-                                    </Grid>
                                 </Grid>
                             )
                         })
@@ -255,7 +226,10 @@ class NewUnitFormTargets extends Component {
 
     render() {
         return (
-            <this.Targets meta={this.props.item._meta} t={this.props.t} />
+            <div>
+                <this.Targets meta={this.props.item._meta} t={this.props.t} />
+                <NewItemFormTags meta={this.props.item._meta} t={this.props.t} handleChange={this.props.handleChange}/>
+            </div>
         )
     }
 }
