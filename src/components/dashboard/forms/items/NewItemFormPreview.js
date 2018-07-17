@@ -97,6 +97,10 @@ class NewItemFormPreview extends Component {
                                     value = AdTypesByValue[value].label
                                 }
 
+                                if (keyName === 'tags') {
+                                    value = value.join(', ')
+                                }
+
                                 return (
                                     <PropRow key={key}
                                         left={t(keyName, { isProp: true })}
