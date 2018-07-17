@@ -164,7 +164,7 @@ export class SlotBids extends Component {
                     style={{ marginTop: 10 }}
                 >
                     {
-                        (!!this.props.getSlotBid && tabIndex === 0) &&
+                        (!!this.props.getSlotBids && tabIndex === 0) &&
                         <ListWithControls
                             items={openBids}
                             listMode='rows'
