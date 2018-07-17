@@ -19,8 +19,8 @@ const clearTransactionsTimeout = () => {
 const syncTransactions = () => {
     const persist = store.getState().persist
     const addr = persist.account._addr
-    let transactions = persist.web3Transactions[addr] || {}
-    let hashes = Object.keys(transactions).reduce((memo, key) => {
+    const transactions = persist.web3Transactions[addr] || {}
+    const hashes = Object.keys(transactions).reduce((memo, key) => {
         if (key && ((key.toString()).length === 66)) {
             memo.push(key)
         }
@@ -35,7 +35,8 @@ const syncTransactions = () => {
         .then((receipts) => {
             receipts.forEach((rec) => {
                 if (rec && rec.transactionHash && rec.status) {
-                    let status = rec.status === '0x1' ? TX_STATUS.Success.id : TX_STATUS.Error.id
+                    // NOTE: web3.eth.getTransactionReceipt changed status vale from 0x1 to true for success but we keep bot now
+                    const status = ((rec.status === '0x1') || (rec.status === true)) ? TX_STATUS.Success.id : TX_STATUS.Error.id
                     if (transactions[rec.transactionHash].status !== status) {
                         actions.execute(actions.updateWeb3Transaction({ trId: rec.transactionHash, key: 'status', value: status, addr: addr }))
                     }
