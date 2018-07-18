@@ -81,7 +81,8 @@ export class SlotBids extends Component {
 
             getAvailableBids({
                 authSig: this.props.account._authSig,
-                sizeAndType: this.props.item.sizeAndType
+                sizeAndType: this.props.item.sizeAndType,
+                tags: this.props.item.tags
             })
                 .then((bids) => {
                     // console.log('unit openBids', bids)

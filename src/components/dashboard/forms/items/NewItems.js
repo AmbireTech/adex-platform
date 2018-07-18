@@ -8,6 +8,8 @@ import NewItemForm from './NewItemForm'
 import NewSlotForm from './NewSlotForm'
 import NewSlotFormImgs from './NewSlotFormImgs'
 import NewUnitFormTargets from './NewUnitFormTargets'
+import NewUnitFormType from './NewUnitFormType'
+import NewUnitFormImg from './NewUnitFormImg'
 import NewCampaignForm from './NewCampaignForm'
 import { AdUnit, AdSlot, Channel, Campaign } from 'adex-models'
 import { items as ItemsConstants } from 'adex-constants'
@@ -61,9 +63,9 @@ export const NewUnitSteps = (props) =>
         stepsId={ItemsTypes.AdUnit.id}
         stepsPages={[
             // TODO SIMO: Uncomment
-            // { title: 'UNIT_BASIC_STEP', page: NewItemForm },
-            // { title: 'UNIT_TYPE_DATA_STEP', page: NewUnitFormType },
-            // { title: 'UNIT_BANNER_STEP', page: NewUnitFormImg },
+            { title: 'UNIT_BASIC_STEP', page: NewItemForm },
+            { title: 'UNIT_TYPE_DATA_STEP', page: NewUnitFormType },
+            { title: 'UNIT_BANNER_STEP', page: NewUnitFormImg },
             { title: 'UNIT_TARGETS_STEP', page: NewUnitFormTargets }
         ]}
         imgLabel='UNIT_BANNER_IMG_LABEL'
