@@ -249,9 +249,10 @@ export const getBidsBySide = ({ authSig, side }) => {
     return getBids({ authSig: authSig, query: query })
 }
 
-export const getAvailableBids = ({ authSig, sizeAndType }) => {
+export const getAvailableBids = ({ authSig, sizeAndType, tags }) => {
     let query = {
-        sizeAndType: sizeAndType
+        sizeAndType: sizeAndType,
+        tags: tags
     }
 
     return getBids({ authSig: authSig, query: query })

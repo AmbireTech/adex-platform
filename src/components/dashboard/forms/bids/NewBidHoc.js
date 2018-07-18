@@ -49,6 +49,7 @@ export default function NewBidHoc(Decorated) {
       bidInst.adUnit = unit._ipfs
       bidInst.adUnitId = unit._id
       bidInst.advertiser = this.props.account._addr
+      bidInst.tags = unit.tags
 
       signBid({ userAddr: userAddr, authSig: authSig, bid: bidInst, user: user })
         .then((sig) => {
