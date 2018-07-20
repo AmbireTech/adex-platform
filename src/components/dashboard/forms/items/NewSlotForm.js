@@ -83,7 +83,12 @@ class NewSlotForm extends Component {
                                 name='size'
                             />
                         </Grid>
-                        <NewItemFormTags meta={this.props.item._meta} t={this.props.t} handleChange={this.props.handleChange}/>
+                        <NewItemFormTags 
+                            meta={this.props.item._meta} 
+                            t={this.props.t} 
+                            handleChange={this.props.handleChange}
+                            account={this.props.account}
+                        />
                     </Grid>
                 </div>
 

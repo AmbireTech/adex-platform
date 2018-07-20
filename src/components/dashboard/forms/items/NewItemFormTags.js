@@ -1,27 +1,23 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Grid from '@material-ui/core/Grid'
 import Autocomplete from 'components/common/autocomplete'
-import { items as ItemsConstants } from 'adex-constants'
-
-const { PredefinedTags } = ItemsConstants;
-
-const autocompleteTags = () => {
-    let tags = {}
-
-    PredefinedTags.map((tag) => {
-        tags[tag.name] = tag.name
-    })
-
-    return tags
-}
-
-const AcTags = autocompleteTags()
+import { getTags } from '../../../../services/adex-node/actions'
 
 class NewItemFormTags extends Component {
+    componentWillMount() {
+        getTags({authSig: this.props.account._authSig})
+            .then((res) => {
+                this.props.meta.tags = {}
+                res.map((tag) => {
+                    this.props.meta.tags[tag._id] = tag._id;
+                })
+            })
+    }
+
     render() {
         return (
             <Grid item lg={12}>
@@ -37,7 +33,7 @@ class NewItemFormTags extends Component {
                     value={this.props.meta.tags}
                     label={this.props.t('TAGS_LABEL')}
                     placeholder={this.props.t('TAGS_PLACEHOLDER')}
-                    source={AcTags}
+                    source={this.props.meta.tags}
                     suggestionMatch='anywhere'
                     showSuggestionsWhenValueIsSet={true}
                     allowCreate={true}
