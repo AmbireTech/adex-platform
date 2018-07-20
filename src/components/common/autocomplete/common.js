@@ -44,6 +44,15 @@ export const renderSuggestion = ({ suggestion, index, itemProps, highlightedInde
         </MenuItem>
     )
 }
+
+const newSuggestion = (inputValue) => {
+    return [{
+        label: `Tag "${inputValue.toLowerCase().trim()}" does not exist. Click here to create it!`,
+        value: inputValue.toLowerCase().trim(),
+        newTag: true
+    }]
+}
+
 renderSuggestion.propTypes = {
     highlightedIndex: PropTypes.number,
     index: PropTypes.number,
@@ -56,9 +65,12 @@ export const getSuggestions = (inputValue, source) => {
     if (!inputValue) {
         return source
     } else {
-        return source.filter(suggestion => {
+        source = source.filter(suggestion => {
             return (!inputValue || suggestion.label.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1)
-
         })
+        if (source.length > 0) {
+            return source
+        }
+        return newSuggestion(inputValue);
     }
 }

@@ -29,8 +29,10 @@ class DownshiftMultiple extends React.Component {
     }
 
     handleChange = item => {
-        let { selectedItem } = this.state
+        // So tag is visible in the tags input field
+        this.props.source[item.value] = item.value;
 
+        let { selectedItem } = this.state
         if (selectedItem.indexOf(item.value) === -1) {
             selectedItem = [...selectedItem, item.value]
         }

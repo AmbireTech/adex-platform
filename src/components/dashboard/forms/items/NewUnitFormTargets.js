@@ -228,7 +228,12 @@ class NewUnitFormTargets extends Component {
         return (
             <div>
                 <this.Targets meta={this.props.item._meta} t={this.props.t} />
-                <NewItemFormTags meta={this.props.item._meta} t={this.props.t} handleChange={this.props.handleChange}/>
+                <NewItemFormTags 
+                    meta={this.props.item._meta} 
+                    t={this.props.t} 
+                    handleChange={this.props.handleChange}
+                    account={this.props.account}
+                />
             </div>
         )
     }
