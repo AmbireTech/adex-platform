@@ -92,7 +92,7 @@ class NewUnitFormTargets extends Component {
         return (
             <Autocomplete
                 id='genders-targets-select'
-                direction="auto"
+                direction='auto'
                 multiple
                 openOnClick
                 onChange={this.handleTargetChange.bind(this, target, null)}
