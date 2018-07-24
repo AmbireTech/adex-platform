@@ -6,10 +6,10 @@ export default function tagsReducer(state = initialState.tags, action) {
 
     switch (action.type) {
         case UPDATE_TAGS:
-            newState = { ...(action.tags || initialState.tags) }
+            newState = {...(action.tags || state)}
             return newState
         case ADD_NEW_TAG:
-            newState = { ...state}
+            newState = {...state}
             newState[action.tag] = action.tag
             return newState
         default:

@@ -46,11 +46,10 @@ export const renderSuggestion = ({ suggestion, index, itemProps, highlightedInde
 }
 
 const newSuggestion = (inputValue) => {
-    return [{
-        label: `Tag "${inputValue.toLowerCase().trim()}" does not exist. Click here to create it!`,
-        value: inputValue.toLowerCase().trim(),
-        newTag: true
-    }]
+    return {
+        label: `Click here to create tag "${inputValue.toLowerCase().trim()}"`,
+        value: inputValue.toLowerCase().trim()
+    }
 }
 
 renderSuggestion.propTypes = {
@@ -61,16 +60,22 @@ renderSuggestion.propTypes = {
     suggestion: PropTypes.shape({ label: PropTypes.string }).isRequired,
 }
 
-export const getSuggestions = (inputValue, source) => {
+export const getSuggestions = (inputValue, source, allowCreate) => {
     if (!inputValue) {
         return source
     } else {
         source = source.filter(suggestion => {
             return (!inputValue || suggestion.label.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1)
         })
-        if (source.length > 0) {
-            return source
+
+        // Making sure that an option to create a new item will exist when needed
+        const values = source.map((item) => {
+            return item.value
+        })
+        if (!values.includes(inputValue) && allowCreate) {
+            source.push(newSuggestion(inputValue))
         }
-        return newSuggestion(inputValue);
+        
+        return source
     }
 }

@@ -407,7 +407,6 @@ export const getBidEvents = ({ eventData = { bids: null, bid: null, start: null,
             return resp.json()
         })
         .then(resp => {
-            // console.log(resp)
             return resp
         })
 }
