@@ -8,7 +8,6 @@ import Dropdown from 'components/common/dropdown'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import { items as ItemsConstants } from 'adex-constants'
-import NewItemFormTags from './NewItemFormTags'
 
 const { ItemsTypes, AdTypes, AdSizes } = ItemsConstants
 
@@ -83,12 +82,6 @@ class NewSlotForm extends Component {
                                 name='size'
                             />
                         </Grid>
-                        <NewItemFormTags 
-                            meta={this.props.item._meta} 
-                            t={this.props.t} 
-                            handleChange={this.props.handleChange}
-                            account={this.props.account}
-                        />
                     </Grid>
                 </div>
 

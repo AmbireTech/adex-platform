@@ -47,7 +47,6 @@ class NewItemFormPreview extends Component {
         const item = this.props.item || {}
         const meta = item._meta || {}
         const { t, classes } = this.props
-
         return (
             <ContentBox>
                 <ContentBody>

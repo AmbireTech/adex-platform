@@ -12,7 +12,7 @@ import { items as ItemsConstants } from 'adex-constants'
 import Slider from '@material-ui/lab/Slider'
 import Typography from '@material-ui/core/Typography'
 import { translate } from 'services/translations/translations'
-import NewItemFormTags from './NewItemFormTags'
+import { getTags } from 'services/adex-node/actions'
 
 const { ItemsTypes, Locations, TargetWeightLabels, Genders, TARGET_MIN_AGE, TARGET_MAX_AGE } = ItemsConstants
 
@@ -48,6 +48,19 @@ const ages = (() => {
 })()
 
 class NewUnitFormTargets extends Component {
+
+    componentWillMount() {
+        getTags({authSig: this.props.account._authSig})
+            .then((res) => {
+                const tags = {}
+                res.map((tag) => {
+                    tags[tag._id] = tag._id
+                })
+
+                this.props.actions.updateTags({tags: {...tags}})
+            })
+    }
+
     handleTargetChange = (target, valueKey, newValue) => {
         let newWeight
         if (valueKey === 'updateWeight') {
@@ -219,6 +232,14 @@ class NewUnitFormTargets extends Component {
                             )
                         })
                     }
+
+                    <Grid
+                        item
+                        container xs={12}
+                        spacing={16}
+                        alignItems='flex-end'
+                    >
+                    </Grid>
                 </Grid>
             </div >
         )
@@ -228,12 +249,6 @@ class NewUnitFormTargets extends Component {
         return (
             <div>
                 <this.Targets meta={this.props.item._meta} t={this.props.t} />
-                <NewItemFormTags 
-                    meta={this.props.item._meta} 
-                    t={this.props.t} 
-                    handleChange={this.props.handleChange}
-                    account={this.props.account}
-                />
             </div>
         )
     }
@@ -243,6 +258,7 @@ NewUnitFormTargets.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     title: PropTypes.string,
+    tags: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state) {
@@ -250,7 +266,8 @@ function mapStateToProps(state) {
     // let memory = state.memory
     return {
         account: persist.account,
-        itemType: ItemsTypes.AdUnit.id
+        itemType: ItemsTypes.AdUnit.id,
+        tags: persist.tags
     }
 }
 

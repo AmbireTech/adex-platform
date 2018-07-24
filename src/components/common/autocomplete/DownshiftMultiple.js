@@ -29,10 +29,10 @@ class DownshiftMultiple extends React.Component {
     }
 
     handleChange = item => {
-        // So tag is visible in the tags input field
+        let { selectedItem } = this.state
+
         this.props.source[item.value] = item.value;
 
-        let { selectedItem } = this.state
         if (selectedItem.indexOf(item.value) === -1) {
             selectedItem = [...selectedItem, item.value]
         }
@@ -57,7 +57,7 @@ class DownshiftMultiple extends React.Component {
      * source {'propValue': 'propsLabel'} - skip one mapping to get the label for Chip
      */
     render() {
-        const { classes, source, label, id, placeholder, helperText, openOnClick } = this.props
+        const { classes, source, label, id, placeholder, helperText, openOnClick, allowCreate } = this.props
         const { inputValue, selectedItem } = this.state
         const allValues = Object.keys(source).map(key => { return { value: key, label: source[key] } })
 
@@ -103,7 +103,7 @@ class DownshiftMultiple extends React.Component {
                             })}
                             {isOpen ? (
                                 <Paper className={classes.paper} square>
-                                    {getSuggestions(inputValue2, allValues).map((suggestion, index) =>
+                                    {getSuggestions(inputValue2, allValues, allowCreate).map((suggestion, index) =>
                                         renderSuggestion({
                                             suggestion,
                                             index,

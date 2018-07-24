@@ -75,7 +75,6 @@ export class SlotBids extends Component {
                 adSlot: this.props.item._ipfs
             })
                 .then((bids) => {
-                    // console.log('unit bids', bids)
                     this.setState({ bids: bids })
                 })
 
@@ -85,7 +84,6 @@ export class SlotBids extends Component {
                 tags: this.props.item.tags
             })
                 .then((bids) => {
-                    // console.log('unit openBids', bids)
                     this.setState({ openBids: bids })
                 })
         } else {
@@ -126,7 +124,7 @@ export class SlotBids extends Component {
 
     render() {
         const openBids = this.state.openBids || []
-        const { classes, t } = this.props
+        const { t } = this.props
         let sorted = []
 
         if (this.props.getSlotBids) {
