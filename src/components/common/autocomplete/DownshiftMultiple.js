@@ -5,6 +5,9 @@ import Downshift from 'downshift'
 import Paper from '@material-ui/core/Paper'
 import Chip from '@material-ui/core/Chip'
 import { renderInput, getSuggestions, renderSuggestion } from './common'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { TagsRegex, TAGS_MAX_LENGTH } = ItemsConstants
 
 class DownshiftMultiple extends React.Component {
     constructor(props) {
@@ -25,7 +28,16 @@ class DownshiftMultiple extends React.Component {
     }
 
     handleInputChange = event => {
-        this.setState({ inputValue: event.target.value })
+        const value = event.target.value.toLowerCase()
+        const id = event.target.id
+
+        if (id === 'tags-select' && value) {
+            if (value.length > TAGS_MAX_LENGTH || !value.match(TagsRegex)) {
+                return null;
+            }  
+        }
+
+        this.setState({ inputValue: value })
     }
 
     handleChange = item => {
