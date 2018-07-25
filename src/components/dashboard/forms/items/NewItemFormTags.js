@@ -13,12 +13,9 @@ class NewItemFormTags extends Component {
     componentWillMount() {
         getTags({authSig: this.props.account._authSig})
             .then((res) => {
-                const tags = {}
-                res.map((tag) => {
-                    tags[tag._id] = tag._id
-                })
+                const tags = res.reduce((o, key) => ({ ...o, [key._id]: key._id}), {})
 
-                this.props.actions.updateTags({tags: {...tags}})
+                this.props.actions.updateTags({tags: tags})
             })
     }
 
@@ -52,6 +49,7 @@ class NewItemFormTags extends Component {
                         direction="auto"
                         multiple
                         openOnClick
+                        required={true}                        
                         onChange={(value) => {
                             this.addTagsForDisplay(value)
                             this.props.handleChange('tags', [...value])

@@ -34,7 +34,7 @@ class DownshiftMultiple extends React.Component {
         if (id === 'tags-select' && value) {
             if (value.length > TAGS_MAX_LENGTH || !value.match(TagsRegex)) {
                 return null;
-            }  
+            }
         }
 
         this.setState({ inputValue: value })
@@ -42,8 +42,6 @@ class DownshiftMultiple extends React.Component {
 
     handleChange = item => {
         let { selectedItem } = this.state
-
-        this.props.source[item.value] = item.value;
 
         if (selectedItem.indexOf(item.value) === -1) {
             selectedItem = [...selectedItem, item.value]
@@ -69,7 +67,7 @@ class DownshiftMultiple extends React.Component {
      * source {'propValue': 'propsLabel'} - skip one mapping to get the label for Chip
      */
     render() {
-        const { classes, source, label, id, placeholder, helperText, openOnClick, allowCreate } = this.props
+        const { classes, source, label, id, placeholder, helperText, openOnClick, allowCreate, required } = this.props
         const { inputValue, selectedItem } = this.state
         const allValues = Object.keys(source).map(key => { return { value: key, label: source[key] } })
 

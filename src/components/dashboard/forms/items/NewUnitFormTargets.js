@@ -48,19 +48,6 @@ const ages = (() => {
 })()
 
 class NewUnitFormTargets extends Component {
-
-    componentWillMount() {
-        getTags({authSig: this.props.account._authSig})
-            .then((res) => {
-                const tags = {}
-                res.map((tag) => {
-                    tags[tag._id] = tag._id
-                })
-
-                this.props.actions.updateTags({tags: {...tags}})
-            })
-    }
-
     handleTargetChange = (target, valueKey, newValue) => {
         let newWeight
         if (valueKey === 'updateWeight') {
