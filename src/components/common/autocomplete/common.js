@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
+import { translate } from '../../../services/translations/translations'
 
 export const renderInput = (inputProps) => {
     const { InputProps, classes, ref, ...other } = inputProps
@@ -47,7 +48,7 @@ export const renderSuggestion = ({ suggestion, index, itemProps, highlightedInde
 
 const newSuggestion = (inputValue) => {
     return {
-        label: `Click here to create tag "${inputValue.toLowerCase().trim()}"`,
+        label: `${translate('CREATE_TAG_LABEL')} "${inputValue.toLowerCase().trim()}"`,
         value: inputValue.toLowerCase().trim()
     }
 }
