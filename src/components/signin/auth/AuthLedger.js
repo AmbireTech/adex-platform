@@ -92,6 +92,7 @@ class AuthLedger extends Component {
                     <List >
                         {addresses.map((res, index) =>
                             <ListItem
+                                classes={{ root: classes.addrListItem }}
                                 key={res.addr}
                                 onClick={this.onAddrSelect.bind(this, res.addr, index)}
                             >

@@ -1,6 +1,11 @@
 export const styles = theme => {
     const spacing = theme.spacing.unit
     return {
+        addrListItem: {
+            '&:hover': {
+                cursor: 'pointer'
+            }
+        },
         addrInfo: {
             display: 'flex',
             flexWrap: 'wrap',
