@@ -39,13 +39,13 @@ const TableCell = ({ children, ...rest }) =>
     </TableCellMui >
 
 export const StateIcons = {
-    [BID_STATES.DoesNotExist.id]: { icon: <MoreHoriz style={{color: '#0277BD'}}/> },
-    [BID_STATES.Accepted.id]: { icon: <Done style={{color: '#0277BD'}} /> },
-    [BID_STATES.Canceled.id]: { icon: <Close style={{color: '#787878'}} /> },
-    [BID_STATES.Expired.id]: { icon: <AccessTime style={{color: '#FF5722'}} /> },
-    [BID_STATES.Completed.id]: { icon: <DoneAll style={{color: '#00FFBF'}} /> },
-    [BID_STATES.ConfirmedAdv.id]: { icon: <Done style={{color: '#00E5FF'}} /> },
-    [BID_STATES.ConfirmedPub.id]: { icon: <Done style={{color: '#00E5FF'}} /> },
+    [BID_STATES.DoesNotExist.id]: { icon: <MoreHoriz style={{ color: '#0277BD' }} /> },
+    [BID_STATES.Accepted.id]: { icon: <Done style={{ color: '#0277BD' }} /> },
+    [BID_STATES.Canceled.id]: { icon: <Close style={{ color: '#787878' }} /> },
+    [BID_STATES.Expired.id]: { icon: <AccessTime style={{ color: '#FF5722' }} /> },
+    [BID_STATES.Completed.id]: { icon: <DoneAll style={{ color: '#00FFBF' }} /> },
+    [BID_STATES.ConfirmedAdv.id]: { icon: <Done style={{ color: '#00E5FF' }} /> },
+    [BID_STATES.ConfirmedPub.id]: { icon: <Done style={{ color: '#00E5FF' }} /> },
 }
 
 export const bidDetails = ({ bidData, t, side }) => {
@@ -125,8 +125,8 @@ export const renderCommonTableRow = ({ bidData, t, side, classes = {} }) => {
             <TableCell>
                 {bidData._target} / {bidData.clicksCount}
             </TableCell>
-            <TableCell> 
-                {bidData._state} 
+            <TableCell>
+                {bidData._state}
             </TableCell>
             <TableCell
                 className={classnames(classes.compactCol)}
@@ -211,8 +211,8 @@ export const renderCommonTableRowStats = ({ bidData, t, side, classes }) => {
             <TableCell>
                 {bidData._target} / {bidData.clicksCount}
             </TableCell>
-            <TableCell> 
-                {bidData._state} 
+            <TableCell>
+                {bidData._state}
             </TableCell>
             <TableCell>
                 {statsUniqueClicks}
@@ -258,9 +258,9 @@ export const getCommonBidData = ({ bid, t, side }) => {
         clicksCount: bid.clicksCount || '-',
         _state:
             <span
-                style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}
+                style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
             >
-                {StateIcons[bid._state].icon}
+                <span style={{ marginRight: 8 }}> {StateIcons[bid._state].icon}</span>
                 <span>{t(BidStatesLabels[bid._state])}</span>
             </span>,
         sideData: sideData,
