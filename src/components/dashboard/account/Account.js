@@ -12,7 +12,7 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
-import ContentCopy from '@material-ui/icons/ContentCopy'
+import CopyIcon from '@material-ui/icons/FileCopy'
 import { styles } from './styles.js'
 import { getStatsValues } from 'helpers/accStatsHelpers'
 import scActions from 'services/smart-contracts/actions'
@@ -30,7 +30,7 @@ class Account extends React.Component {
 
     getStats = () => {
         // TODO: spinner
-        /*getAccountStats*/ getAccountStats({ _addr: this.props.account._addr, authType: this.props.account._authMode.authType })
+        /*getAccountStats*/ getAccountStats({ _addr: this.props.account._addr, authType: this.props.account._authType })
             .then((stats) => {
                 this.props.actions.updateAccount({ ownProps: { stats: stats } })
             })
@@ -65,7 +65,7 @@ class Account extends React.Component {
                             color='default' 
                             onClick={() => {copy(account._addr)}}
                         >
-                            <ContentCopy/>
+                            <CopyIcon/>
                         </IconButton>
                     </ListItem>
                     <ListDivider />

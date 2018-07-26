@@ -34,6 +34,11 @@ export const themeMUI = createMuiTheme({
             root: {
                 whiteSpace: 'nowrap'
             }
+        },
+        MuiPaper: {
+            rounded: {
+                borderRadius: 0
+            }
         }
         // MuiStepIcon: {
         //     root: {

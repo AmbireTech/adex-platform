@@ -69,7 +69,7 @@ const AirSwapDialogBody = ({ t, onBuy, onSell, classes, account }) => {
                     <ListDivider />
                     <ListItem  >
                         <ListItemText
-                            primary={<Img src={getAuthLogo(account._authMode.authType)} style={{ maxHeight: 32, width: 'auto' }} />}
+                            primary={<Img src={getAuthLogo(account._authType)} style={{ maxHeight: 32, width: 'auto' }} />}
                             secondary={t('CURRENT_AUTH_METOHD')}
                         />
                     </ListItem>

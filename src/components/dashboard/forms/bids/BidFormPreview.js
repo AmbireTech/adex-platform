@@ -22,7 +22,7 @@ class BidFormPreview extends Component {
         {/* TODO: Add translations and format the numbers */}
         {this.props.waitingForWalletAction ?
           <ContentStickyTop>
-            <WalletAction t={t} authType={this.props.account._authMode.authType} />
+            <WalletAction t={t} authType={this.props.account._authType} />
           </ContentStickyTop> : null}
         <ContentBody>
           <Grid container spacing={16}>

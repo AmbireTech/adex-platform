@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.1.2] - 2018-07-26
+### Added
+- Support fro Trezor new sign algorithm 
+- Copy to clipboard buttons where needed
+
+### Fixed
+- Misc bugs and styles
+
 ## [2.1.1] - 2018-07-09
 ### Added
 - [AirSwap widget](https://github.com/airswap/developers/tree/master/widget) to buy/sell ADX inside the dApp (from account page)
@@ -175,7 +183,8 @@ All notable changes to this project will be documented in this file.
 
 ## 2.0.0 - 2018-02-26
 
-[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.2...HEAD
+[2.1.2]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.13...v2.1.0
 [2.0.13]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.12...v2.0.13

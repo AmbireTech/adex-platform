@@ -12,12 +12,9 @@ import scActions from 'services/smart-contracts/actions'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { getSig } from 'services/auth/auth'
 import { AUTH_TYPES } from 'constants/misc'
-import { getUserItems } from 'services/store-data/items'
-import { getAddrBids } from 'services/store-data/bids'
 import { logOut } from 'services/store-data/auth'
-import Helper from 'helpers/miscHelpers'
 
-const { getAccountMetamask, getAccountStats } = scActions
+const { getAccountMetamask } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
     return (
@@ -41,13 +38,13 @@ class Root extends Component {
         let acc = this.props.account // come from persistence storage
         //Maybe dont need it but if for some reason the store account empty is not there
         //TODO: check once when metamask on '/' !!!
-        if (acc && acc._authMode && acc._authMode.authType === AUTH_TYPES.METAMASK.name && this.props.location.pathname !== '/') {
+        if (acc && acc._authType === AUTH_TYPES.METAMASK.name && this.props.location.pathname !== '/') {
             getAccountMetamask()
                 .then(({ addr, mode }) => {
                     addr = (addr || '').toLowerCase()
-                    if (addr && acc._addr && acc._authMode !== undefined && acc._authMode.authType !== undefined) {
-                        let accSigCheck = getSig({ addr: acc._addr, mode: acc._authMode.sigMode })
-                        let mmAddrSigCheck = getSig({ addr: addr, mode: EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id })
+                    if (addr && acc._addr && acc._authType !== undefined) {
+                        let accSigCheck = getSig({ addr: acc._addr, mode: acc._authType })
+                        let mmAddrSigCheck = getSig({ addr: addr, mode: AUTH_TYPES.METAMASK.name })
                         if (!!mmAddrSigCheck && !!accSigCheck && (mmAddrSigCheck === accSigCheck)) {
                             return // user authenticated and not changed
                         } else {
@@ -99,7 +96,7 @@ function mapStateToProps(state) {
     // let memory = state.memory
     return {
         account: account,
-        auth: !!account._addr && !!account._authSig && account._authMode !== undefined
+        auth: !!account._addr && !!account._authSig && account._authType !== undefined
     }
 }
 

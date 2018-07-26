@@ -23,7 +23,7 @@ class SigninExternalWallet extends Component {
 
   renderDefault = () => {
     const { account } = this.props
-    const lsSig = getSig({ addr: account._addr, mode: (account._authMode || {}).sigMode })
+    const lsSig = getSig({ addr: account._addr, mode: account._authType })
     const hasSession = !!lsSig && !!account._authSig && (lsSig === account._authSig)
 
     return (

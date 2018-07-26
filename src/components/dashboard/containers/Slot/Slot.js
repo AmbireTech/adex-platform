@@ -15,7 +15,7 @@ import { Item as ItemModel } from 'adex-models'
 import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT } from 'constants/misc'
 import Paper from '@material-ui/core/Paper'
 import IconButton from '@material-ui/core/IconButton'
-import ContentCopy from '@material-ui/icons/ContentCopy'
+import CopyIcon from '@material-ui/icons/FileCopy'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -57,11 +57,11 @@ const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fal
         <div>
             <div className={classes.integrationLabel}>
                 {t('INTEGRATION_CODE')}
-                <IconButton 
+                <IconButton
                     color='default'
-                    onClick={() => {copy(iframeStr)}}
+                    onClick={() => { copy(iframeStr) }}
                 >
-                    <ContentCopy/>
+                    <CopyIcon />
                 </IconButton>
             </div>
             <Paper>
