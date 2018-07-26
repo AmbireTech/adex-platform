@@ -82,7 +82,7 @@ class Dashboard extends React.Component {
 
         getAddrBids({ authSig: this.props.account._authSig })
 
-        getAccountStats({ _addr: this.props.account._addr, authType: this.props.account._authMode.authType })
+        getAccountStats({ _addr: this.props.account._addr, authType: this.props.account._authType })
             .then((stats) => {
                 this.props.actions.updateAccount({ ownProps: { stats: stats } })
             })

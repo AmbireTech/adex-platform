@@ -9,6 +9,8 @@ import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { AUTH_TYPES } from 'constants/misc'
 import actions from 'actions'
 import { translate } from 'services/translations/translations'
+const ethereumjs = require('ethereumjs-util')
+const { toBuffer, ecrecover, pubToAddress } = ethereumjs
 
 
 const TrezorConnect = trezorConnect.TrezorConnect
@@ -101,32 +103,42 @@ export const signTypedMetamask = ({ userAddr, typedData, authType, hash }) => {
                     return reject(res.error)
                 }
 
-                let signature = { sig: res.result, hash: hash }
+                let signature = { sig: res.result, hash: hash, mode: SIGN_TYPES.Eip.id }
                 return resolve(signature)
             })
         })
     })
 }
 
-export const signTypedTrezor = ({ userAddr, hdPath, mode, addrIdx, typedData, hash }) => {
+export const signTypedTrezor = ({ userAddr, hdPath, addrIdx, typedData, hash }) => {
     return new Promise((resolve, reject) => {
 
         let buff = Buffer.from(hash.slice(2), 'hex')
         TrezorConnect.ethereumSignMessage(
             hdPath + '/' + addrIdx, buff, (resp) => {
                 if (resp.success) {
-                    let signature = { sig: '0x' + resp.signature, hash: hash }
+                    const sig = '0x' + resp.signature
+                    const isLegacy = isLegacyTrezorSignature({ sig, hash, userAddr })
+
+                    const signature = { sig: sig, hash: hash, mode: isLegacy ? SIGN_TYPES.Trezor.id : SIGN_TYPES.EthPersonal.id }
+
                     return resolve(signature)
                 } else {
                     return reject(resp)
                 }
-
             }
         )
     })
 }
 
-export const signTypedLedger = ({ userAddr, hdPath, mode, addrIdx, typedData, hash }) => {
+const isLegacyTrezorSignature = ({ sig, hash, userAddr }) => {
+    const legacyMsg = web3Utils.soliditySha3('\x19Ethereum Signed Message:\n\x20', hash)
+    const signature = getRsvFromSig(sig)
+    const pubKey = ecrecover(toBuffer(legacyMsg), signature.v, toBuffer(signature.r), toBuffer(signature.s))
+    const addr = '0x' + (pubToAddress(pubKey)).toString('hex')
+    return addr === userAddr
+}
+export const signTypedLedger = ({ userAddr, hdPath, addrIdx, typedData, hash }) => {
     console.log('signTypedLedger')
     return ledger.comm_u2f.create_async()
         .then((comm) => {
@@ -142,46 +154,45 @@ export const signTypedLedger = ({ userAddr, hdPath, mode, addrIdx, typedData, ha
                 v = '0' + v
             } // pad v
 
-            let signature = { sig: '0x' + result['r'] + result['s'] + v, hash: hash }
+            let signature = { sig: '0x' + result['r'] + result['s'] + v, hash: hash, mode: SIGN_TYPES.EthPersonal.id }
             return signature
         })
 
 }
 
 
-export const signTypedMsg = ({ mode, userAddr, hdPath, addrIdx, typedData }) => {
+export const signTypedMsg = ({ authType, userAddr, hdPath, addrIdx, typedData }) => {
     let pr
 
     let hash = getTypedDataHash({ typedData: typedData })
 
-    // TODO: Should check the authType not the sigType ...
-    switch (mode) {
-        case SIGN_TYPES.Trezor.id:
-            pr = signTypedTrezor({ userAddr, hdPath, mode, addrIdx, typedData, hash })
+    switch (authType) {
+        case AUTH_TYPES.TREZOR.name:
+            pr = signTypedTrezor({ userAddr, hdPath, addrIdx, typedData, hash })
             break
-        case SIGN_TYPES.Eip.id:
+        case AUTH_TYPES.METAMASK.name:
             pr = signTypedMetamask({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name, hash })
             break
-        case SIGN_TYPES.EthPersonal.id:
-            pr = signTypedLedger({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name, hash, mode, hdPath, addrIdx })
+        case AUTH_TYPES.LEDGER.name:
+            pr = signTypedLedger({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name, hash, hdPath, addrIdx })
             break
         default:
-            pr = Promise.reject(new Error('Invalid signature mode!'))
+            pr = Promise.reject(new Error('Invalid authentication type!'))
     }
 
     return pr
 }
 
-export const signAuthToken = ({ mode, userAddr, hdPath, addrIdx }) => {
+export const signAuthToken = ({ authType, userAddr, hdPath, addrIdx }) => {
     let authToken = (Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()
     let typedData = [
-        { type: 'uint', name: 'Auth token', value: authToken }
+        { type: 'uint', name: 'Auth token', value: 'authToken' }
     ]
 
-    let pr = signTypedMsg({ mode, userAddr, hdPath, addrIdx, typedData })
+    let pr = signTypedMsg({ authType, userAddr, hdPath, addrIdx, typedData })
 
     return pr.then((res = {}) => {
-        let sig = { sig_mode: mode, sig: res.sig, authToken: authToken, typedData, hash: res.hash }
+        let sig = { sig_mode: res.mode, sig: res.sig, authToken: 'authToken', typedData, hash: res.hash }
 
         return sig
     })
@@ -205,7 +216,7 @@ const addTx = (tx, addr, user, nonce) => {
     txData.sendingTime = Date.now()
     actions.execute(actions.addWeb3Transaction({ trans: txData, addr: addr }))
     actions.execute(actions.addToast({ type: 'accept', action: 'X', label: translate('TRANSACTION_SENT_MSG', { args: [tx.trHash] }), timeout: 5000 }))
-    
+
     let settings = { ...user._settings }
     settings.nonce = nonce + 1
     actions.execute(actions.updateAccount({ ownProps: { settings: settings } }))

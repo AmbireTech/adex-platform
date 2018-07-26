@@ -5,14 +5,17 @@ export const styles = theme => {
     const spacing = theme.spacing.unit * 3
     return {
         dialog: {
-            minHeight: '70vh',
-            minWidth: 800,
+            minHeight: '90vh',
+            minWidth: 1024,
             maxWidth: 1080,
             backgroundColor: grey[200], // TODO: color,
             maxHeight: '100vh',
             '@media(max-width:1080px)': {
                 maxWidth: '100%',
                 minWidth: `calc(100vw - ${theme.spacing.unit * 2}px)`,
+            },
+            '@media(max-height:823px)': {
+                minHeight: `calc(100vh - ${theme.spacing.unit * 2}px)`,
             }
         },
         content: {

@@ -35,7 +35,7 @@ class TopNav extends Component {
 
   render() {
     const t = this.props.t
-    let imgSrc = getAuthLogo(this.props.account._authMode.authType)
+    let imgSrc = getAuthLogo(this.props.account._authType)
 
     const classes = this.props.classes
 

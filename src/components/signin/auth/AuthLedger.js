@@ -92,6 +92,7 @@ class AuthLedger extends Component {
                     <List >
                         {addresses.map((res, index) =>
                             <ListItem
+                                classes={{ root: classes.addrListItem }}
                                 key={res.addr}
                                 onClick={this.onAddrSelect.bind(this, res.addr, index)}
                             >
@@ -121,7 +122,6 @@ class AuthLedger extends Component {
 
     render() {
         let { t, classes } = this.props
-        // let authMode = this.props.account._authMode
 
         return (
             <div>
