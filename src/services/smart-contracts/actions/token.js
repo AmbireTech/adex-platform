@@ -88,7 +88,7 @@ export const withdrawAdx = ({ _addr, withdrawTo, amountToWithdraw, gas, user, es
 
     let amount = adxAmountStrToHex(amountToWithdraw)
 
-    return getWeb3(user._authMode.authType)
+    return getWeb3(user._authType)
         .then(({ web3, exchange, token }) => {
 
             let tx = token.methods.transfer(withdrawTo, amount)

@@ -9,7 +9,7 @@ export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, gas, user, es
 
     let amount = web3Utils.toWei(amountToWithdraw, 'ether')
 
-    return getWeb3(user._authMode.authType)
+    return getWeb3(user._authType)
         .then(({ web3, exchange, token }) => {
 
             if (estimateGasOnly) {
@@ -106,12 +106,12 @@ export const getAccountStatsMetaMask = () => {
                     .then(([balEth, balAdx, allow, exchBal]) => {
 
                         let accStats =
-                            {
-                                balanceEth: balEth,
-                                balanceAdx: balAdx,
-                                allowance: allow,
-                                exchangeBalance: getExchangeBalances(exchBal)
-                            }
+                        {
+                            balanceEth: balEth,
+                            balanceAdx: balAdx,
+                            allowance: allow,
+                            exchangeBalance: getExchangeBalances(exchBal)
+                        }
 
                         // console.log('accStats', accStats)
                         return resolve(accStats)

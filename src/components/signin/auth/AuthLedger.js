@@ -121,7 +121,6 @@ class AuthLedger extends Component {
 
     render() {
         let { t, classes } = this.props
-        // let authMode = this.props.account._authMode
 
         return (
             <div>
