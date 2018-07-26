@@ -19,7 +19,7 @@ class NewItemFormTags extends Component {
 
                 this.props.actions.updateTags({tags: tags})
             })
-        this.props.validate('tags', {isValid: false, err: {msg: noTagsErrMsg}})                             
+        this.props.validate('tags', {isValid: this.props.item.meta.tags && this.props.item.meta.tags.length > 0, err: {msg: noTagsErrMsg}})                             
     }
 
     addTagsForDisplay(tags) {
