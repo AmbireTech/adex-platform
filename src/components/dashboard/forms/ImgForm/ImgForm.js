@@ -16,7 +16,7 @@ import { getCroppedImgUrl } from 'services/images/crop'
 import CropIcon from '@material-ui/icons/Crop'
 import ClearIcon from '@material-ui/icons/Clear'
 import SaveIcon from '@material-ui/icons/Save'
-import FileUploadIcon from '@material-ui/icons/FileUpload'
+import FileUploadIcon from '@material-ui/icons/CloudUpload'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 

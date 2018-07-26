@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button'
 import { dataToCSV } from 'services/csv/csv'
 import Translate from 'components/translate/Translate'
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
-import DownloadIcon from '@material-ui/icons/FileDownload'
+import DownloadIcon from '@material-ui/icons/SaveAlt'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
