@@ -9,6 +9,8 @@ import Grid from '@material-ui/core/Grid'
 import Autocomplete from 'components/common/autocomplete'
 import { getTags } from 'services/adex-node/actions'
 
+const noTagsErrMsg = 'ERR_REQUIRED_FIELD'
+
 class NewItemFormTags extends Component {
     componentWillMount() {
         getTags({authSig: this.props.account._authSig})
@@ -17,6 +19,7 @@ class NewItemFormTags extends Component {
 
                 this.props.actions.updateTags({tags: tags})
             })
+        this.props.validate('tags', {isValid: false, err: {msg: noTagsErrMsg}})                             
     }
 
     addTagsForDisplay(tags) {
@@ -25,7 +28,7 @@ class NewItemFormTags extends Component {
         }
         tags.forEach(tag => {
             if (this.doesTagExist(tag)) {
-                return null        
+                return null
             }
     
             this.props.actions.addNewTag({tag: tag})
@@ -37,6 +40,7 @@ class NewItemFormTags extends Component {
     }
 
     render() {
+        // Makes sure if you go one step forward and then back the unsaved tags still appear
         this.addTagsForDisplay(this.props.item.meta.tags)
 
         if (!this.props.tags) {
@@ -46,13 +50,14 @@ class NewItemFormTags extends Component {
                 <Grid item lg={12}>
                     <Autocomplete
                         id='tags-select'
-                        direction="auto"
+                        direction='auto'
                         multiple
                         openOnClick
-                        required={true}                        
+                        required
                         onChange={(value) => {
                             this.addTagsForDisplay(value)
                             this.props.handleChange('tags', [...value])
+                            this.props.validate('tags', {isValid: this.props.item.meta.tags && !!value.length, err: { msg: noTagsErrMsg}})
                         }}
                         value={[...(this.props.item.meta.tags || [])]}
                         label={this.props.t('TAGS_LABEL')}
