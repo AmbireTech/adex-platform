@@ -30,7 +30,7 @@ class Account extends React.Component {
 
     getStats = () => {
         // TODO: spinner
-        /*getAccountStats*/ getAccountStats({ _addr: this.props.account._addr, authType: this.props.account._authMode.authType })
+        /*getAccountStats*/ getAccountStats({ _addr: this.props.account._addr, authType: this.props.account._authType })
             .then((stats) => {
                 this.props.actions.updateAccount({ ownProps: { stats: stats } })
             })

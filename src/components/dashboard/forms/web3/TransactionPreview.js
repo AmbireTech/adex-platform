@@ -90,7 +90,7 @@ class TransactionPreview extends Component {
                     <ContentBox>
                         {transaction.waitingForWalletAction ?
                             <ContentStickyTop>
-                                <WalletAction t={t} authType={account._authMode.authType} />
+                                <WalletAction t={t} authType={account._authType} />
                             </ContentStickyTop> : null}
                         <ContentBody>
                             {errors.length ?

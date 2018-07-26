@@ -36,7 +36,7 @@ const checkBidIdAndSign = ({ exchange, _id, _advertiser, _adUnit, _opened, _targ
 }
 
 export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } }, _adSlot, _addr, gas, onReceipt, user, estimateGasOnly } = {}) => {
-    return getWeb3(user._authMode.authType)
+    return getWeb3(user._authType)
         .then(({ web3, exchange, token }) => {
             /* TODO: Maybe we should keep _adUnit and _adSlot as it is on the contract (in 32 bytes hex)
             *   and decode it in the ui when needed
@@ -72,7 +72,7 @@ export const acceptBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
 
 // The bid is canceled by the advertiser
 export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _target, _amount, _timeout, _signature: { v, r, s, sig_mode } }, _addr, gas, user, estimateGasOnly } = {}) => {
-    return getWeb3(user._authMode.authType)
+    return getWeb3(user._authType)
         .then(({ web3, exchange, token }) => {
             _adUnit = ipfsHashTo32BytesHex(_adUnit)
             _opened = _opened.toString() // TODO: validate - max 365 day in seconds (60 * 60 * 24 * 365)
@@ -108,7 +108,7 @@ export const cancelBid = ({ placedBid: { _id, _advertiser, _adUnit, _opened, _ta
 // TODO: get the report, make some endpoint on the node
 export const verifyBid = ({ placedBid: { _id, _advertiser, _publisher }, _report, _addr, gas, side, user, estimateGasOnly } = {}) => {
 
-    return getWeb3(user._authMode.authType)
+    return getWeb3(user._authType)
         .then(({ web3, exchange, token }) => {
 
             _report = ipfsHashTo32BytesHex(_report)
@@ -144,7 +144,7 @@ export const giveupBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, 
         return Promise.reject('Not your bid')
     }
 
-    return getWeb3(user._authMode.authType)
+    return getWeb3(user._authType)
         .then(({ web3, exchange, token }) => {
 
             let tx = exchange.methods.giveupBid(_id)
@@ -170,7 +170,7 @@ export const refundBid = ({ placedBid: { _id, _advertiser, _publisher }, _addr, 
         return Promise.reject('Not your bid')
     }
 
-    return getWeb3(user._authMode.authType)
+    return getWeb3(user._authType)
         .then(({ web3, exchange, token }) => {
 
             let tx = exchange.methods.refundBid(_id)
@@ -197,7 +197,7 @@ const getAdexExchangeBidHash = ({ exchange, typedData }) => {
 }
 
 export const signBid = ({ userAddr, bid, user }) => {
-    return getWeb3(user._authMode.authType)
+    return getWeb3(user._authType)
         .then(({ cfg, web3, exchange }) => {
             //NOTE: We need to set the exchangeAddr because it is needed for the hash
             bid.exchangeAddr = cfg.addr.exchange //Need bid instance
@@ -208,7 +208,7 @@ export const signBid = ({ userAddr, bid, user }) => {
             let typed = bid.typed
 
             let hashCheck = getTypedDataHash({ typedData: typed })
-            let mode = user._authMode.sigMode
+            // let mode = user._signType
 
             console.log('user', user)
 
@@ -221,10 +221,10 @@ export const signBid = ({ userAddr, bid, user }) => {
                     }
                 })
                 .then((checkedHash) => {
-                    return signTypedMsg({ mode, userAddr, typedData: typed, addrIdx: user._hdWalletAddrIdx, hdPath: user._hdWalletAddrPath })
+                    return signTypedMsg({ userAddr, typedData: typed, addrIdx: user._hdWalletAddrIdx, hdPath: user._hdWalletAddrPath })
                 })
                 .then((res) => {
-                    let signature = { sig_mode: mode, signature: res.sig, hash: res.hash, ...getRsvFromSig(res.sig) }
+                    let signature = { sig_mode: res.mode, signature: res.sig, hash: res.hash, ...getRsvFromSig(res.sig) }
                     return signature
                 })
         })
@@ -233,7 +233,7 @@ export const signBid = ({ userAddr, bid, user }) => {
 export const depositToExchangeEG = ({ amountToDeposit, _addr, user, gas }) => {
     let txResults = []
 
-    return getWeb3(user._authMode.authType)
+    return getWeb3(user._authType)
         .then(({ web3, exchange, token }) => {
             return token.methods
                 .allowance(_addr, cfg.addr.exchange)
@@ -258,7 +258,7 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
     let amount = adxAmountStrToHex(amountToDeposit)
     let txResults = []
 
-    return getWeb3(user._authMode.authType)
+    return getWeb3(user._authType)
         .then(({ web3, exchange, token }) => {
             var p
             return token.methods
@@ -334,7 +334,7 @@ export const depositToExchange = ({ amountToDeposit, _addr, user, gas }) => {
 export const withdrawFromExchange = ({ amountToWithdraw, _addr, gas, user, estimateGasOnly }) => {
     let amount = adxAmountStrToHex(amountToWithdraw)
 
-    return getWeb3(user._authMode.authType)
+    return getWeb3(user._authType)
         .then(({ web3, exchange, token, mode }) => {
             let tx = exchange.methods.withdraw(amount)
 

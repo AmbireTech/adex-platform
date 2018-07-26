@@ -25,17 +25,19 @@ export default function AuthHoc(Decorated) {
             this.props.actions.resetAllItems()
         }
 
-        signAuth = ({ addr, mode, hdPath, addrIdx, authMode, authType, chainId }) => {
+        signAuth = ({ addr, hdPath, addrIdx, authType, chainId }) => {
             let signature = null
-            return signAuthToken({ userAddr: addr, mode, hdPath, addrIdx })
+            let mode = null
+            return signAuthToken({ userAddr: addr, authType, hdPath, addrIdx })
                 .then(({ sig, sig_mode, authToken, typedData, hash } = {}) => {
                     signature = sig
-                    return signToken({ userid: addr, signature: signature, authToken, mode, typedData, hash })
+                    mode = sig_mode
+                    return signToken({ userid: addr, signature: signature, authToken, mode: mode, typedData, hash })
                 })
                 .then((res) => {
                     if (res && res.status === 'OK') {
-                        addSig({ addr: addr, sig: signature, mode: mode, expiryTime: res.expiryTime })
-                        this.props.actions.updateAccount({ ownProps: { addr: addr, authMode, signType: mode, authType, authSig: signature, chainId, hdWalletAddrPath: hdPath, hdWalletAddrIdx: addrIdx } })
+                        addSig({ addr: addr, sig: signature, mode: authType, expiryTime: res.expiryTime })
+                        this.props.actions.updateAccount({ ownProps: { addr: addr, signType: mode, authType, authSig: signature, chainId, hdWalletAddrPath: hdPath, hdWalletAddrIdx: addrIdx } })
                         return true
                     } else {
                         this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_ON_SERVER'), timeout: 5000 })
@@ -44,15 +46,10 @@ export default function AuthHoc(Decorated) {
                 })
         }
 
-        authOnServer = ({ mode, addr, hdPath, addrIdx, authType, chainId }) => {
-            let signature = getSig({ addr: addr, mode: mode }) || null
+        authOnServer = ({ addr, hdPath, addrIdx, authType, chainId }) => {
+            let signature = getSig({ addr: addr, mode: authType }) || null
 
             addr = addr.toLowerCase()
-
-            let authMode = {
-                sigMode: mode,
-                authType: authType
-            }
 
             let p = null
 
@@ -65,15 +62,15 @@ export default function AuthHoc(Decorated) {
             return p
                 .then((res) => {
                     if (res) {
-                        this.props.actions.updateAccount({ ownProps: { addr: addr, authMode, signType: mode, authType, authSig: signature, chainId, hdWalletAddrPath: hdPath, hdWalletAddrIdx: addrIdx } })
+                        this.props.actions.updateAccount({ ownProps: { addr: addr, signType: res.sigMode, authType, authSig: signature, chainId, hdWalletAddrPath: hdPath, hdWalletAddrIdx: addrIdx } })
                         return true
                     } else {
-                        return this.signAuth({ addr, mode, hdPath, addrIdx, authMode, authType, chainId })
+                        return this.signAuth({ addr, hdPath, addrIdx, authType, chainId })
                     }
                 })
                 .catch((err) => {
                     if (err && (err.status === 401 || err.status === 403)) {
-                        return this.signAuth({ addr, mode, hdPath, addrIdx, authMode, authType, chainId })
+                        return this.signAuth({ addr, hdPath, addrIdx, authType, chainId })
                     } else {
                         throw err
                     }
@@ -81,10 +78,6 @@ export default function AuthHoc(Decorated) {
         }
 
         render() {
-            let t = this.props.t
-            let userAddr = this.props.account._addr
-            // let authMode = this.props.account._authMode
-
             return (
                 <div>
                     <Decorated
