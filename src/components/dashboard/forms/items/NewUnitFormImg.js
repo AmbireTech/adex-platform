@@ -39,6 +39,11 @@ class NewUnitFormImg extends Component {
     render() {
         const { item, t } = this.props
         const errImg = this.props.invalidFields['img']
+
+        if (!item.size) {
+            return null
+        }
+
         return (
             <div>
                 <Grid

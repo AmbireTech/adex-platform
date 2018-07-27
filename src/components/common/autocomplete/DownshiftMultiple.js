@@ -7,7 +7,7 @@ import Chip from '@material-ui/core/Chip'
 import { renderInput, getSuggestions, renderSuggestion } from './common'
 import { items as ItemsConstants } from 'adex-constants'
 
-const { TagsRegex, TAGS_MAX_LENGTH } = ItemsConstants
+const { ACInputRegex } = ItemsConstants
 
 class DownshiftMultiple extends React.Component {
     constructor(props) {
@@ -29,12 +29,9 @@ class DownshiftMultiple extends React.Component {
 
     handleInputChange = event => {
         const value = event.target.value.toLowerCase()
-        const id = event.target.id
 
-        if (id === 'tags-select' && value) {
-            if (value.length > TAGS_MAX_LENGTH || !value.match(TagsRegex)) {
-                return null;
-            }
+        if (!value.match(ACInputRegex)) {
+            return null;
         }
 
         this.setState({ inputValue: value })
@@ -67,7 +64,7 @@ class DownshiftMultiple extends React.Component {
      * source {'propValue': 'propsLabel'} - skip one mapping to get the label for Chip
      */
     render() {
-        const { classes, source, label, id, placeholder, helperText, openOnClick, allowCreate, required } = this.props
+        const { classes, source, label, id, placeholder, helperText, openOnClick, allowCreate } = this.props
         const { inputValue, selectedItem } = this.state
         const allValues = Object.keys(source).map(key => { return { value: key, label: source[key] } })
 

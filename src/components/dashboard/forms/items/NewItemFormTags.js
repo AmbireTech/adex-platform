@@ -13,15 +13,15 @@ const noTagsErrMsg = 'ERR_REQUIRED_FIELD'
 
 class NewItemFormTags extends Component {
     componentWillMount() {
-        getTags({authSig: this.props.account._authSig})
+        this.props.validate('tags', {isValid: this.props.item.meta.tags && this.props.item.meta.tags.length > 0, err: {msg: noTagsErrMsg}})                             
+            getTags({authSig: this.props.account._authSig})
             .then((res) => {
                 const tags = res.reduce((o, key) => ({ ...o, [key._id]: key._id}), {})
 
                 this.props.actions.updateTags({tags: tags})
             })
-        this.props.validate('tags', {isValid: this.props.item.meta.tags && this.props.item.meta.tags.length > 0, err: {msg: noTagsErrMsg}})                             
     }
-
+    
     addTagsForDisplay(tags) {
         if (!tags) {
             return null
@@ -40,9 +40,6 @@ class NewItemFormTags extends Component {
     }
 
     render() {
-        // Makes sure if you go one step forward and then back the unsaved tags still appear
-        this.addTagsForDisplay(this.props.item.meta.tags)
-
         if (!this.props.tags) {
             return null
         } else {
@@ -55,9 +52,9 @@ class NewItemFormTags extends Component {
                         openOnClick
                         required
                         onChange={(value) => {
-                            this.addTagsForDisplay(value)
                             this.props.handleChange('tags', [...value])
                             this.props.validate('tags', {isValid: this.props.item.meta.tags && !!value.length, err: { msg: noTagsErrMsg}})
+                            this.props.actions.addNewTag({tag: value[value.length - 1]})
                         }}
                         value={[...(this.props.item.meta.tags || [])]}
                         label={this.props.t('TAGS_LABEL')}
