@@ -47,6 +47,11 @@ class NewSlotFormImgs extends Component {
         const { item, t } = this.props
         const errFallbackAdImg = this.props.invalidFields['fallbackAdImg']
         const errFallbackAdUrl = this.props.invalidFields['fallbackAdUrl']
+
+        if (!item.size) {
+            return null
+        }
+
         return (
             <div>
                 <div>
