@@ -17,7 +17,6 @@ class NewItemFormTags extends Component {
             getTags()
             .then((res) => {
                 const tags = res.reduce((o, key) => ({ ...o, [key._id]: key._id}), {})
-                console.log('tags loaded')
                 this.props.actions.updateTags({tags: tags})
             })
     }
@@ -37,7 +36,9 @@ class NewItemFormTags extends Component {
                         onChange={(value) => {
                             this.props.handleChange('tags', [...value])
                             this.props.validate('tags', {isValid: this.props.item.meta.tags && !!value.length, err: { msg: noTagsErrMsg}})
-                            // this.props.actions.addNewTag({tag: value[value.length - 1]})
+                            if (process.env.ALLOW_NEW_TAGS === 'true') {
+                                this.props.actions.addNewTag({tag: value[value.length - 1]})                                
+                            }
                         }}
                         value={[...(this.props.item.meta.tags || [])]}
                         label={this.props.t('TAGS_LABEL')}
