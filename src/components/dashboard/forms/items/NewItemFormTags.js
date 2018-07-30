@@ -10,7 +10,7 @@ import Autocomplete from 'components/common/autocomplete'
 import { getTags } from 'services/adex-node/actions'
 
 const noTagsErrMsg = 'ERR_REQUIRED_FIELD'
-
+const allowNewTags = process.env.ALLOW_NEW_TAGS === 'true'
 class NewItemFormTags extends Component {
     componentWillMount() {
         this.props.validate('tags', {isValid: this.props.item.meta.tags && this.props.item.meta.tags.length > 0, err: {msg: noTagsErrMsg}})                             
@@ -36,7 +36,7 @@ class NewItemFormTags extends Component {
                         onChange={(value) => {
                             this.props.handleChange('tags', [...value])
                             this.props.validate('tags', {isValid: this.props.item.meta.tags && !!value.length, err: { msg: noTagsErrMsg}})
-                            if (process.env.ALLOW_NEW_TAGS === 'true') {
+                            if (allowNewTags) {
                                 this.props.actions.addNewTag({tag: value[value.length - 1]})                                
                             }
                         }}
@@ -45,7 +45,7 @@ class NewItemFormTags extends Component {
                         placeholder={this.props.t('TAGS_PLACEHOLDER')}
                         source={{...this.props.tags}}
                         showSuggestionsWhenValueIsSet={true}
-                        allowCreate={true}
+                        allowCreate={allowNewTags}
                     />
                 </Grid>
             )

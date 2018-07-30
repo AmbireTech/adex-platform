@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
-import { translate } from '../../../services/translations/translations'
+import { translate } from 'services/translations/translations'
 
 export const renderInput = (inputProps) => {
     const { InputProps, classes, ref, ...other } = inputProps
@@ -70,13 +70,11 @@ export const getSuggestions = (inputValue, source, allowCreate) => {
         })
 
         // Making sure that an option to create a new item will exist when needed
-        if (process.env.ALLOW_NEW_TAGS === 'true') {
-            const values = source.map((item) => {
-                return item.value
-            })
-            if (!values.includes(inputValue) && allowCreate) {
-                source.push(newSuggestion(inputValue))
-            }
+        const values = source.map((item) => {
+            return item.value
+        })
+        if (!values.includes(inputValue) && allowCreate) {
+            source.push(newSuggestion(inputValue))
         }
         
         return source
