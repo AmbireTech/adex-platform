@@ -14,29 +14,12 @@ const noTagsErrMsg = 'ERR_REQUIRED_FIELD'
 class NewItemFormTags extends Component {
     componentWillMount() {
         this.props.validate('tags', {isValid: this.props.item.meta.tags && this.props.item.meta.tags.length > 0, err: {msg: noTagsErrMsg}})                             
-            getTags({authSig: this.props.account._authSig})
+            getTags()
             .then((res) => {
                 const tags = res.reduce((o, key) => ({ ...o, [key._id]: key._id}), {})
-
+                console.log('tags loaded')
                 this.props.actions.updateTags({tags: tags})
             })
-    }
-    
-    addTagsForDisplay(tags) {
-        if (!tags) {
-            return null
-        }
-        tags.forEach(tag => {
-            if (this.doesTagExist(tag)) {
-                return null
-            }
-    
-            this.props.actions.addNewTag({tag: tag})
-        })
-    }
-
-    doesTagExist(tag) {
-        return tag in this.props.tags
     }
 
     render() {
@@ -54,7 +37,7 @@ class NewItemFormTags extends Component {
                         onChange={(value) => {
                             this.props.handleChange('tags', [...value])
                             this.props.validate('tags', {isValid: this.props.item.meta.tags && !!value.length, err: { msg: noTagsErrMsg}})
-                            this.props.actions.addNewTag({tag: value[value.length - 1]})
+                            // this.props.actions.addNewTag({tag: value[value.length - 1]})
                         }}
                         value={[...(this.props.item.meta.tags || [])]}
                         label={this.props.t('TAGS_LABEL')}

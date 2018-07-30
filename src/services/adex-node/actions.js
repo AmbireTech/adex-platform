@@ -411,11 +411,10 @@ export const getBidEvents = ({ eventData = { bids: null, bid: null, start: null,
         })
 }
 
-export const getTags = ({authSig}) => {
+export const getTags = () => {
     return requester.fetch({
         route: 'tags',
         method: 'GET',
-        authsig: authSig,
         headers: { 'Content-Type': 'application/json' }
     })
     .then((resp) => {
