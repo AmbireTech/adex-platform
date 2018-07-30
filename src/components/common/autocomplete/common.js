@@ -46,12 +46,12 @@ export const renderSuggestion = ({ suggestion, index, itemProps, highlightedInde
     )
 }
 
-// const newSuggestion = (inputValue) => {
-//     return {
-//         label: `${translate('CREATE_TAG_LABEL')} "${inputValue.toLowerCase().trim()}"`,
-//         value: inputValue.toLowerCase().trim()
-//     }
-// }
+const newSuggestion = (inputValue) => {
+    return {
+        label: `${translate('CREATE_TAG_LABEL')} "${inputValue.toLowerCase().trim()}"`,
+        value: inputValue.toLowerCase().trim()
+    }
+}
 
 renderSuggestion.propTypes = {
     highlightedIndex: PropTypes.number,
@@ -70,12 +70,14 @@ export const getSuggestions = (inputValue, source, allowCreate) => {
         })
 
         // Making sure that an option to create a new item will exist when needed
-        // const values = source.map((item) => {
-        //     return item.value
-        // })
-        // if (!values.includes(inputValue) && allowCreate) {
-        //     source.push(newSuggestion(inputValue))
-        // }
+        if (process.env.ALLOW_NEW_TAGS === 'true') {
+            const values = source.map((item) => {
+                return item.value
+            })
+            if (!values.includes(inputValue) && allowCreate) {
+                source.push(newSuggestion(inputValue))
+            }
+        }
         
         return source
     }

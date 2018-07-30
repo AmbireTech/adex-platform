@@ -20,7 +20,7 @@ const catchErrors = (res) => {
         }
     })
 }
-
+    
 export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
     let formData = new FormData()
     formData.append('image', imageBlob, imageName)
