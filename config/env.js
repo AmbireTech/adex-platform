@@ -83,7 +83,7 @@ function getClientEnvironment(publicUrl) {
         ETH_SCAN_ADDR_HOST: process.env.ETH_SCAN_ADDR_HOST || 'https://etherscan.io/address/',
         ETH_SCAN_TX_HOST: process.env.ETH_SCAN_ADDR_HOST || 'https://etherscan.io/tx/',
         ADEX_SITE_HOST: process.env.ADEX_SITE_HOST || 'https://www.adex.network/',
-        ALLOW_NEW_TAGS: process.env.ALLOW_NEW_TAGS || 'false'
+        ALLOW_NEW_TAGS: process.env.ALLOW_NEW_TAGS || 'true'
       }
     );
   // Stringify all values so we can feed into Webpack DefinePlugin
