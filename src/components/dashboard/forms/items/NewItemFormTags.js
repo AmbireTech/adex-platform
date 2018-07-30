@@ -11,6 +11,14 @@ import { getTags } from 'services/adex-node/actions'
 
 const noTagsErrMsg = 'ERR_REQUIRED_FIELD'
 const allowNewTags = process.env.ALLOW_NEW_TAGS === 'true'
+
+function doesInputMatch(input, regex) {
+    if (input.length < 2) {
+        return true;
+    }
+    return input.match(regex)
+}
+
 class NewItemFormTags extends Component {
     componentWillMount() {
         this.props.validate('tags', {isValid: this.props.item.meta.tags && this.props.item.meta.tags.length > 0, err: {msg: noTagsErrMsg}})                             
@@ -20,6 +28,8 @@ class NewItemFormTags extends Component {
                 this.props.actions.updateTags({tags: tags})
             })
     }
+
+    
 
     render() {
         if (!this.props.tags) {
@@ -40,6 +50,7 @@ class NewItemFormTags extends Component {
                                 this.props.actions.addNewTag({tag: value[value.length - 1]})                                
                             }
                         }}
+                        doesInputMatch={allowNewTags ? doesInputMatch : null}
                         value={[...(this.props.item.meta.tags || [])]}
                         label={this.props.t('TAGS_LABEL')}
                         placeholder={this.props.t('TAGS_PLACEHOLDER')}
