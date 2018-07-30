@@ -5,9 +5,6 @@ import Downshift from 'downshift'
 import Paper from '@material-ui/core/Paper'
 import Chip from '@material-ui/core/Chip'
 import { renderInput, getSuggestions, renderSuggestion } from './common'
-import { items as ItemsConstants } from 'adex-constants'
-
-const { ACInputRegex } = ItemsConstants
 
 class DownshiftMultiple extends React.Component {
     constructor(props) {
@@ -29,10 +26,6 @@ class DownshiftMultiple extends React.Component {
 
     handleInputChange = event => {
         const value = event.target.value.toLowerCase()
-
-        if (!value.match(ACInputRegex)) {
-            return null;
-        }
 
         this.setState({ inputValue: value })
     }

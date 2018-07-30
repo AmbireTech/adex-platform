@@ -12,7 +12,6 @@ import { items as ItemsConstants } from 'adex-constants'
 import Slider from '@material-ui/lab/Slider'
 import Typography from '@material-ui/core/Typography'
 import { translate } from 'services/translations/translations'
-import { getTags } from 'services/adex-node/actions'
 
 const { ItemsTypes, Locations, TargetWeightLabels, Genders, TARGET_MIN_AGE, TARGET_MAX_AGE } = ItemsConstants
 

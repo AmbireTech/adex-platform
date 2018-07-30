@@ -245,11 +245,11 @@ export const updateTags = ({ tags }) => {
     }
 }
 
-export const addNewTag = ({ tag }) => {
-    return (dispatch) => {
-        return dispatch({
-            type: types.ADD_NEW_TAG,
-            tag: tag
-        })
-    }
-}
+// export const addNewTag = ({ tag }) => {
+//     return (dispatch) => {
+//         return dispatch({
+//             type: types.ADD_NEW_TAG,
+//             tag: tag
+//         })
+//     }
+// }
