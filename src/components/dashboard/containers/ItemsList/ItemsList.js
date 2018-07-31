@@ -105,7 +105,6 @@ class ItemsList extends Component {
 
     renderTableRow = (item, index, { to, selected }) => {
         const { t, classes } = this.props
-
         return (
             <TableRow
                 key={item._id || index}
