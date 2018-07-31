@@ -23,10 +23,10 @@ class NewItemFormTags extends Component {
     componentWillMount() {
         this.props.validate('tags', {isValid: this.props.item.meta.tags && this.props.item.meta.tags.length > 0, err: {msg: noTagsErrMsg}})                             
             getTags()
-            .then((res) => {
-                const tags = res.reduce((o, key) => ({ ...o, [key._id]: key._id}), {})
-                this.props.actions.updateTags({tags: tags})
-            })
+                .then((res) => {
+                    const tags = res.reduce((o, key) => ({ ...o, [key._id]: key._id}), {})
+                    this.props.actions.updateTags({tags: tags})
+                })
     }
 
     
