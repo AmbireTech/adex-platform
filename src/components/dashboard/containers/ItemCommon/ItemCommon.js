@@ -152,7 +152,7 @@ const basicProps = ({ item, t, rightComponent, url, classes, ...rest }) => {
                                 <div>
                                     <TextField
                                         value={item.tags.join(', ')}
-                                        label={t('tags', { isProp: true })}
+                                        label={t('tags', { isProp: true }) + ` (${item.tags.length})`}
                                         disabled
                                         margin='dense'
                                     />
