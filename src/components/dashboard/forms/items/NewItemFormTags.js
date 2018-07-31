@@ -29,7 +29,7 @@ class NewItemFormTags extends Component {
                 })
     }
 
-    
+
 
     render() {
         if (!this.props.tags) {
@@ -47,7 +47,7 @@ class NewItemFormTags extends Component {
                             this.props.handleChange('tags', [...value])
                             this.props.validate('tags', {isValid: this.props.item.meta.tags && !!value.length, err: { msg: noTagsErrMsg}})
                             if (allowNewTags) {
-                                this.props.actions.addNewTag({tag: value[value.length - 1]})                                
+                                this.props.actions.addNewTag({tag: value[value.length - 1]})
                             }
                         }}
                         doesInputMatch={allowNewTags ? doesInputMatch : null}

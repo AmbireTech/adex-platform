@@ -29,11 +29,11 @@ class DownshiftMultiple extends React.Component {
 
     handleInputChange = event => {
         const value = event.target.value.toLowerCase()
-        
+
         if (this.props.doesInputMatch && !this.props.doesInputMatch(value, ACTagsRegex)) {
             return null
         }
-        
+
         this.setState({ inputValue: value })
     }
 

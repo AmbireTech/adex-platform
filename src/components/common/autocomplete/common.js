@@ -76,7 +76,7 @@ export const getSuggestions = (inputValue, source, allowCreate) => {
         if (!values.includes(inputValue) && allowCreate) {
             source.push(newSuggestion(inputValue))
         }
-        
+
         return source
     }
 }
