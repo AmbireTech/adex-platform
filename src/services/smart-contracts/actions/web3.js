@@ -186,13 +186,13 @@ export const signTypedMsg = ({ authType, userAddr, hdPath, addrIdx, typedData })
 export const signAuthToken = ({ authType, userAddr, hdPath, addrIdx }) => {
     let authToken = (Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()
     let typedData = [
-        { type: 'uint', name: 'Auth token', value: 'authToken' }
+        { type: 'uint', name: 'Auth token', value: authToken }
     ]
 
     let pr = signTypedMsg({ authType, userAddr, hdPath, addrIdx, typedData })
 
     return pr.then((res = {}) => {
-        let sig = { sig_mode: res.mode, sig: res.sig, authToken: 'authToken', typedData, hash: res.hash }
+        let sig = { sig_mode: res.mode, sig: res.sig, authToken: authToken, typedData, hash: res.hash }
 
         return sig
     })
