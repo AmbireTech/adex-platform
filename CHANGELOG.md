@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.1.4] - 2018-08-07
+### Fixed
+- minor bug fixes
+
+## [2.1.3] - 2018-08-07
+### Added 
+- Tags for matching/filtering between bids/ad slots/ad units 
+
 ## [2.1.2] - 2018-07-26
 ### Added
 - Support fro Trezor new sign algorithm 
@@ -183,7 +191,9 @@ All notable changes to this project will be documented in this file.
 
 ## 2.0.0 - 2018-02-26
 
-[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.2...HEAD
+[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.4...HEAD
+[2.1.4]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.3...v2.1.4
+[2.1.3]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.13...v2.1.0
