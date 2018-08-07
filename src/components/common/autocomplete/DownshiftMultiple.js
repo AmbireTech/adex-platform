@@ -25,7 +25,8 @@ class DownshiftMultiple extends React.Component {
     }
 
     handleInputChange = event => {
-        this.setState({ inputValue: event.target.value })
+        const value = event.target.value.toLowerCase()
+        this.setState({ inputValue: value })
     }
 
     handleChange = item => {
@@ -45,7 +46,7 @@ class DownshiftMultiple extends React.Component {
 
     handleDelete = item => () => {
         const selectedItem = [...this.state.selectedItem]
-        selectedItem.splice(selectedItem.indexOf(item.value), 1)
+        selectedItem.splice(selectedItem.indexOf(item), 1)
 
         this.setState({ selectedItem })
         this.props.onChange(selectedItem)
@@ -55,7 +56,7 @@ class DownshiftMultiple extends React.Component {
      * source {'propValue': 'propsLabel'} - skip one mapping to get the label for Chip
      */
     render() {
-        const { classes, source, label, id, placeholder, helperText, openOnClick } = this.props
+        const { classes, source, label, id, placeholder, helperText, openOnClick, allowCreate, validateCreation } = this.props
         const { inputValue, selectedItem } = this.state
         const allValues = Object.keys(source).map(key => { return { value: key, label: source[key] } })
 
@@ -101,7 +102,7 @@ class DownshiftMultiple extends React.Component {
                             })}
                             {isOpen ? (
                                 <Paper className={classes.paper} square>
-                                    {getSuggestions(inputValue2, allValues).map((suggestion, index) =>
+                                    {getSuggestions(inputValue2, allValues, allowCreate, validateCreation).map((suggestion, index) =>
                                         renderSuggestion({
                                             suggestion,
                                             index,

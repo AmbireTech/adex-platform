@@ -96,7 +96,7 @@ export class UnitBids extends Component {
         />
 
     render() {
-        const { classes, t } = this.props
+        const { t } = this.props
         let sorted = null
 
         if (this.props.getUnitBids) {
@@ -193,8 +193,6 @@ UnitBids.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-
-    console.log('props 1', props)
     const persist = state.persist
     const memory = state.memory
     return {

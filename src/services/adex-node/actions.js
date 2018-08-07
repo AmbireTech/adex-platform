@@ -20,7 +20,7 @@ const catchErrors = (res) => {
         }
     })
 }
-
+    
 export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
     let formData = new FormData()
     formData.append('image', imageBlob, imageName)
@@ -249,9 +249,10 @@ export const getBidsBySide = ({ authSig, side }) => {
     return getBids({ authSig: authSig, query: query })
 }
 
-export const getAvailableBids = ({ authSig, sizeAndType }) => {
+export const getAvailableBids = ({ authSig, sizeAndType, tags }) => {
     let query = {
-        sizeAndType: sizeAndType
+        sizeAndType: sizeAndType,
+        tags: tags
     }
 
     return getBids({ authSig: authSig, query: query })
@@ -406,7 +407,20 @@ export const getBidEvents = ({ eventData = { bids: null, bid: null, start: null,
             return resp.json()
         })
         .then(resp => {
-            // console.log(resp)
             return resp
         })
+}
+
+export const getTags = () => {
+    return requester.fetch({
+        route: 'tags',
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then((resp) => {
+        return catchErrors(resp)
+    })
+    .then((resp) => {
+        return resp.json()
+    })
 }

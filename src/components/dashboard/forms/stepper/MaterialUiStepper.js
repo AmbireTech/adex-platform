@@ -47,12 +47,12 @@ class MaterialStepper extends React.Component {
         // console.log('props.pages[props.currentPage]', page.component)
     }
 
-    goToPage(nexStep) {
-        let canAdvance = (nexStep > this.props.currentPage) && this.canAdvanceNextToPage()
-        let canGoBack = nexStep < this.props.currentPage
+    goToPage(nextStep) {
+        let canAdvance = (nextStep > this.props.currentPage) && this.canAdvanceNextToPage()
+        let canGoBack = nextStep < this.props.currentPage
 
         if (canAdvance || canGoBack) {
-            this.props.setPageIndex(nexStep)
+            this.props.setPageIndex(nextStep)
         }
     }
 
