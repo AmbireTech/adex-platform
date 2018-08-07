@@ -8,25 +8,21 @@ import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import Autocomplete from 'components/common/autocomplete'
 import { getTags } from 'services/adex-node/actions'
+import { items as ItemsConstants } from 'adex-constants'
+
+const { ACTagsRegex } = ItemsConstants
 
 const noTagsErrMsg = 'ERR_REQUIRED_FIELD'
 const allowNewTags = process.env.ALLOW_NEW_TAGS === 'true'
 
-function doesInputMatch(input, regex) {
-    if (input.length < 2) {
-        return true;
-    }
-    return input.match(regex)
-}
-
 class NewItemFormTags extends Component {
     componentWillMount() {
-        this.props.validate('tags', {isValid: this.props.item.meta.tags && this.props.item.meta.tags.length > 0, err: {msg: noTagsErrMsg}})
-            getTags()
-                .then((res) => {
-                    const tags = res.reduce((o, key) => ({ ...o, [key._id]: key._id}), {})
-                    this.props.actions.updateTags({tags: tags})
-                })
+        this.props.validate('tags', { isValid: this.props.item.meta.tags && this.props.item.meta.tags.length > 0, err: { msg: noTagsErrMsg } })
+        getTags()
+            .then((res) => {
+                const tags = res.reduce((o, key) => ({ ...o, [key._id]: key._id }), {})
+                this.props.actions.updateTags({ tags: tags })
+            })
     }
 
     render() {
@@ -43,16 +39,17 @@ class NewItemFormTags extends Component {
                         required
                         onChange={(value) => {
                             this.props.handleChange('tags', [...value])
-                            this.props.validate('tags', {isValid: this.props.item.meta.tags && !!value.length, err: { msg: noTagsErrMsg}})
+                            this.props.validate('tags', { isValid: this.props.item.meta.tags && !!value.length, err: { msg: noTagsErrMsg } })
                             if (allowNewTags) {
-                                this.props.actions.addNewTag({tag: value[value.length - 1]})
+                                this.props.actions.addNewTag({ tag: value[value.length - 1] })
                             }
                         }}
-                        doesInputMatch={allowNewTags ? doesInputMatch : null}
+                        // TODO: fix the regex in constants - remove /g
+                        validateCreation={(value = '') => !!value.match(ACTagsRegex)}
                         value={[...(this.props.item.meta.tags || [])]}
                         label={this.props.t('TAGS_LABEL')}
                         placeholder={this.props.t('TAGS_PLACEHOLDER')}
-                        source={{...this.props.tags}}
+                        source={{ ...this.props.tags }}
                         showSuggestionsWhenValueIsSet={true}
                         allowCreate={allowNewTags}
                     />

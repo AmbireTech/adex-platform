@@ -61,19 +61,24 @@ renderSuggestion.propTypes = {
     suggestion: PropTypes.shape({ label: PropTypes.string }).isRequired,
 }
 
-export const getSuggestions = (inputValue, source, allowCreate) => {
+export const getSuggestions = (inputValue = '', source, allowCreate, validateCreation) => {
     if (!inputValue) {
         return source
     } else {
+        inputValue = inputValue.toLowerCase().trim()
+
         source = source.filter(suggestion => {
-            return (!inputValue || suggestion.label.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1)
+            return (!inputValue || suggestion.label.toLowerCase().trim().indexOf(inputValue) !== -1)
         })
 
         // Making sure that an option to create a new item will exist when needed
         const values = source.map((item) => {
             return item.value
         })
-        if (!values.includes(inputValue) && allowCreate) {
+
+        if (!values.includes(inputValue)
+            && allowCreate
+            && (!validateCreation || validateCreation(inputValue))) {
             source.push(newSuggestion(inputValue))
         }
 
