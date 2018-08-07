@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ## [2.1.4] - 2018-08-07
+### Added
+- Toast when copy to clipboard btn is used
+
 ### Fixed
 - minor bug fixes
 
