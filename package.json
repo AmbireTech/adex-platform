@@ -8,7 +8,7 @@
     "@material-ui/lab": "^1.0.0-alpha.7",
     "adex-constants": "1.0.10",
     "adex-models": "1.0.9",
-    "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#32e7194c6f8da812179ad94186bc7678845cecc1",
+    "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#da02a026b918ef0a4e9fcf07f541234554970bd8",
     "autoprefixer": "7.1.6",
     "babel-core": "6.26.0",
     "babel-eslint": "7.2.3",

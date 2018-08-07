@@ -61,11 +61,15 @@ class Account extends React.Component {
                             primary={account._addr}
                             secondary={t('ACCOUNT_ETH_ADDR')}
                         />
-                        <IconButton 
-                            color='default' 
-                            onClick={() => {copy(account._addr)}}
+                        <IconButton
+                            color='default'
+                            onClick={() => {
+                                copy(account._addr);
+                                this.props.actions
+                                    .addToast({ type: 'accept', action: 'X', label: t('COPIED_TO_CLIPBOARD'), timeout: 5000 })
+                            }}
                         >
-                            <CopyIcon/>
+                            <CopyIcon />
                         </IconButton>
                     </ListItem>
                     <ListDivider />
