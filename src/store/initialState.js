@@ -56,7 +56,8 @@ let initialState = {
     newTransactions: {
         default: {}
     },
-    web3Transactions: {}
+    web3Transactions: {},
+    tags: {}
 }
 
 export default initialState

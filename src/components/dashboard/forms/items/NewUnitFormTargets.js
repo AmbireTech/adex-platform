@@ -8,7 +8,6 @@ import Translate from 'components/translate/Translate'
 import { AdUnit } from 'adex-models'
 import Grid from '@material-ui/core/Grid'
 import Autocomplete from 'components/common/autocomplete'
-// import classnames from 'classnames'
 import { items as ItemsConstants } from 'adex-constants'
 import Slider from '@material-ui/lab/Slider'
 import Typography from '@material-ui/core/Typography'
@@ -48,7 +47,6 @@ const ages = (() => {
 })()
 
 class NewUnitFormTargets extends Component {
-
     handleTargetChange = (target, valueKey, newValue) => {
         let newWeight
         if (valueKey === 'updateWeight') {
@@ -93,7 +91,7 @@ class NewUnitFormTargets extends Component {
         return (
             <Autocomplete
                 id='genders-targets-select'
-                direction="auto"
+                direction='auto'
                 multiple
                 openOnClick
                 onChange={this.handleTargetChange.bind(this, target, null)}
@@ -115,7 +113,7 @@ class NewUnitFormTargets extends Component {
                 <Grid
                     container
                     spacing={16}
-                // className={theme.agesGrid}
+                //  className={theme.agesGrid}
                 >
                     <Grid item lg={6}>
 
@@ -134,7 +132,6 @@ class NewUnitFormTargets extends Component {
                         />
                     </Grid>
                     <Grid item lg={6}>
-
                         <Autocomplete
                             id='age-target-to-select'
                             direction="auto"
@@ -221,6 +218,14 @@ class NewUnitFormTargets extends Component {
                             )
                         })
                     }
+
+                    <Grid
+                        item
+                        container xs={12}
+                        spacing={16}
+                        alignItems='flex-end'
+                    >
+                    </Grid>
                 </Grid>
             </div >
         )
@@ -228,7 +233,9 @@ class NewUnitFormTargets extends Component {
 
     render() {
         return (
-            <this.Targets meta={this.props.item._meta} t={this.props.t} />
+            <div>
+                <this.Targets meta={this.props.item._meta} t={this.props.t} />
+            </div>
         )
     }
 }
@@ -237,6 +244,7 @@ NewUnitFormTargets.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     title: PropTypes.string,
+    tags: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state) {
@@ -244,7 +252,8 @@ function mapStateToProps(state) {
     // let memory = state.memory
     return {
         account: persist.account,
-        itemType: ItemsTypes.AdUnit.id
+        itemType: ItemsTypes.AdUnit.id,
+        tags: persist.tags
     }
 }
 

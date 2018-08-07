@@ -75,16 +75,15 @@ export class SlotBids extends Component {
                 adSlot: this.props.item._ipfs
             })
                 .then((bids) => {
-                    // console.log('unit bids', bids)
                     this.setState({ bids: bids })
                 })
 
             getAvailableBids({
                 authSig: this.props.account._authSig,
-                sizeAndType: this.props.item.sizeAndType
+                sizeAndType: this.props.item.sizeAndType,
+                tags: this.props.item.tags
             })
                 .then((bids) => {
-                    // console.log('unit openBids', bids)
                     this.setState({ openBids: bids })
                 })
         } else {
@@ -125,7 +124,7 @@ export class SlotBids extends Component {
 
     render() {
         const openBids = this.state.openBids || []
-        const { classes, t } = this.props
+        const { t } = this.props
         let sorted = []
 
         if (this.props.getSlotBids) {

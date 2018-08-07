@@ -82,7 +82,8 @@ function getClientEnvironment(publicUrl) {
         ADEX_NODE_HOST: process.env.ADEX_NODE_HOST || (process.env.NODE_ENV === 'production' ? 'https://node.adex.network' : 'http://localhost:9710'),
         ETH_SCAN_ADDR_HOST: process.env.ETH_SCAN_ADDR_HOST || 'https://etherscan.io/address/',
         ETH_SCAN_TX_HOST: process.env.ETH_SCAN_ADDR_HOST || 'https://etherscan.io/tx/',
-        ADEX_SITE_HOST: process.env.ADEX_SITE_HOST || 'https://www.adex.network/'
+        ADEX_SITE_HOST: process.env.ADEX_SITE_HOST || 'https://www.adex.network/',
+        ALLOW_NEW_TAGS: process.env.ALLOW_NEW_TAGS || 'false'
       }
     );
   // Stringify all values so we can feed into Webpack DefinePlugin

@@ -64,7 +64,7 @@ export class Campaign extends Component {
 
         return (
             <div>
-                <div >
+                <div>
                     <DatePicker
                         calendarIcon
                         label={this.props.t('from', { isProp: true })}
@@ -73,9 +73,9 @@ export class Campaign extends Component {
                         onChange={(val) => this.props.handleChange('from', val)}
                         value={from}
                         className={classes.datepicker}
-                    // inputFormat={this.inputFormat}
-                    // size={moment(from).format('DD MMMM').length} /** temp fix */
-                    // readonly
+                        // inputFormat={this.inputFormat}
+                        // size={moment(from).format('DD MMMM').length} /** temp fix */
+                        // readonly
                     />
                     <DatePicker
                         calendarIcon

@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
+import { translate } from 'services/translations/translations'
 
 export const renderInput = (inputProps) => {
     const { InputProps, classes, ref, ...other } = inputProps
@@ -44,6 +45,14 @@ export const renderSuggestion = ({ suggestion, index, itemProps, highlightedInde
         </MenuItem>
     )
 }
+
+const newSuggestion = (inputValue) => {
+    return {
+        label: `${translate('CREATE_TAG_LABEL')} "${inputValue.toLowerCase().trim()}"`,
+        value: inputValue.toLowerCase().trim()
+    }
+}
+
 renderSuggestion.propTypes = {
     highlightedIndex: PropTypes.number,
     index: PropTypes.number,
@@ -52,13 +61,27 @@ renderSuggestion.propTypes = {
     suggestion: PropTypes.shape({ label: PropTypes.string }).isRequired,
 }
 
-export const getSuggestions = (inputValue, source) => {
+export const getSuggestions = (inputValue = '', source, allowCreate, validateCreation) => {
     if (!inputValue) {
         return source
     } else {
-        return source.filter(suggestion => {
-            return (!inputValue || suggestion.label.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1)
+        inputValue = inputValue.toLowerCase().trim()
 
+        source = source.filter(suggestion => {
+            return (!inputValue || suggestion.label.toLowerCase().trim().indexOf(inputValue) !== -1)
         })
+
+        // Making sure that an option to create a new item will exist when needed
+        const values = source.map((item) => {
+            return item.value
+        })
+
+        if (!values.includes(inputValue)
+            && allowCreate
+            && (!validateCreation || validateCreation(inputValue))) {
+            source.push(newSuggestion(inputValue))
+        }
+
+        return source
     }
 }

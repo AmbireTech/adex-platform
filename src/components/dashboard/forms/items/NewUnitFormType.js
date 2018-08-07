@@ -73,7 +73,7 @@ class NewUnitForm extends Component {
                             type='text'
                             required
                             label={t('ad_url', { isProp: true })}
-                            value={ad_url}
+                            value={ad_url || ''}
                             onChange={(ev) => this.props.handleChange('ad_url', ev.target.value)}
                             maxLength={1024}
                             onBlur={() => this.props.validate('ad_url', { isValid: validUrl(ad_url), err: { msg: 'ERR_INVALID_URL' }, dirty: true })}
