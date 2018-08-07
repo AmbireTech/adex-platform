@@ -16,7 +16,7 @@ import { styles } from './styles'
 class SaveBtn extends Component {
 
     render() {
-        let { t, spinner, classes, success, dirtyProps, save, validations, validationId, className, ...other } = this.props
+        let { t, spinner, classes, success, dirtyProps, save, validations, validationId, className, spinnerId, ...other } = this.props
         return (
 
             <div className={classes.position}>
