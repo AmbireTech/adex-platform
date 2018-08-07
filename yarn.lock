@@ -145,17 +145,17 @@ address@1.0.3, address@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/address/-/address-1.0.3.tgz#b5f50631f8d6cec8bd20c963963afb55e06cbce9"
 
-adex-constants@^1.0.7, adex-constants@^1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/adex-constants/-/adex-constants-1.0.9.tgz#436dd98c1f123517141a0ef315a7dcd3bd5bd7b5"
+adex-constants@1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/adex-constants/-/adex-constants-1.0.10.tgz#39047ba778f477c812eccbb3c87258dde93ef8cc"
   dependencies:
     country-data "^0.0.31"
 
-adex-models@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/adex-models/-/adex-models-1.0.7.tgz#e1649263935e2305ec88e2a0c020d932ac90ce1b"
+adex-models@1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/adex-models/-/adex-models-1.0.9.tgz#aa36525c6a3a66ce75df38c673dd0892f6f0c916"
   dependencies:
-    adex-constants "^1.0.7"
+    adex-constants "1.0.10"
     bs58 "^4.0.1"
 
 "adex-translations@git+https://git@github.com/AdExBlockchain/adex-translations.git#0b6b4a7b30550a3d1c7dede5133eb64e43dc477b":
