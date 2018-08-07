@@ -149,14 +149,16 @@ const basicProps = ({ item, t, rightComponent, url, classes, ...rest }) => {
                                         margin='dense'
                                     />
                                 </div>
-                                <div>
-                                    <TextField
-                                        value={item.tags.join(', ')}
-                                        label={t('tags', { isProp: true }) + ` (${item.tags.length})`}
-                                        disabled
-                                        margin='dense'
-                                    />
-                                </div>
+                                {Array.isArray(item.tags) &&
+                                    <div>
+                                        <TextField
+                                            value={item.tags.join(', ')}
+                                            label={t('tags', { isProp: true }) + ` (${item.tags.length})`}
+                                            disabled
+                                            margin='dense'
+                                        />
+                                    </div>
+                                }
                             </div>
                         </div>
 
