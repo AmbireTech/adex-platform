@@ -41,7 +41,7 @@ class ItemCard extends Component {
                 <RRCardMedia
                     to={to}
                     classes={{ root: classes.mediaRoot }}
-                    image={NO_IMAGE}
+                    image={imageSrc ? null : NO_IMAGE}
                 >
                     <Img
                         allowFullscreen={this.props.allowFullscreen === false ? false : true}
