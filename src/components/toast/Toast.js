@@ -65,7 +65,7 @@ export class Toast extends Component {
         const { classes } = this.props
         const Icon = variantIcon[toast.type]
 
-        if (!toast) return null
+        if (!toast || !Icon) return null
 
         return (
             <Snackbar

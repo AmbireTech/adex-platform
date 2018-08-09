@@ -63,9 +63,13 @@ class Account extends React.Component {
                         />
                         <IconButton
                             color='default'
-                            onClick={() => {copy(account._addr)}}
+                            onClick={() => {
+                                copy(account._addr);
+                                this.props.actions
+                                    .addToast({ type: 'accept', action: 'X', label: t('COPIED_TO_CLIPBOARD'), timeout: 5000 })
+                            }}
                         >
-                            <CopyIcon/>
+                            <CopyIcon />
                         </IconButton>
                     </ListItem>
                     <ListDivider />

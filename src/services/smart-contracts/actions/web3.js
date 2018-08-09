@@ -90,22 +90,39 @@ export const signTypedMetamask = ({ userAddr, typedData, authType, hash }) => {
 
         getWeb3(authType).then(({ web3, exchange, token, mode }) => {
 
-            web3.currentProvider.sendAsync({
-                method: 'eth_signTypedData',
-                params: [typedData, userAddr],
-                from: userAddr
-            }, (err, res) => {
-                if (err) {
-                    return reject(err)
-                }
 
-                if (res.error) {
-                    return reject(res.error)
-                }
+            web3.eth.personal.sign(hash, userAddr,
+                (err, res) => {
 
-                let signature = { sig: res.result, hash: hash, mode: SIGN_TYPES.Eip.id }
-                return resolve(signature)
-            })
+                    if (err) {
+                        return reject(err)
+                    }
+
+                    if (res.error) {
+                        return reject(res.error)
+                    }
+
+                    let signature = { sig: res, hash: hash, mode: SIGN_TYPES.EthPersonal.id }
+                    return resolve(signature)
+                })
+
+            // Temp disable until metamsak fix eth_signTypedData
+            // web3.currentProvider.sendAsync({
+            //     method: 'eth_signTypedData',
+            //     params: [typedData, userAddr],
+            //     from: userAddr
+            // }, (err, res) => {
+            //     if (err) {
+            //         return reject(err)
+            //     }
+
+            //     if (res.error) {
+            //         return reject(res.error)
+            //     }
+
+            //     let signature = { sig: res.result, hash: hash, mode: SIGN_TYPES.Eip.id }
+            //     return resolve(signature)
+            // })
         })
     })
 }
@@ -165,6 +182,9 @@ export const signTypedMsg = ({ authType, userAddr, hdPath, addrIdx, typedData })
     let pr
 
     let hash = getTypedDataHash({ typedData: typedData })
+
+    console.log('hash', hash)
+    console.log('authType', authType)
 
     switch (authType) {
         case AUTH_TYPES.TREZOR.name:

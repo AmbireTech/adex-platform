@@ -12,7 +12,7 @@ class DownshiftSingle extends React.Component {
     }
 
     render() {
-        const { classes, source, label, id, placeholder, helperText, showSelected, value, openOnClick } = this.props
+        const { classes, source, label, id, placeholder, helperText, showSelected, value, openOnClick, allowCreate, validateCreation } = this.props
         const allValues = source //Object.keys(source).map(key => { return { value: key, label: source[key] } })
 
         return (
@@ -45,7 +45,7 @@ class DownshiftSingle extends React.Component {
                             })}
                             {isOpen ? (
                                 <Paper className={classes.paper} square>
-                                    {getSuggestions(inputValue, allValues).map((suggestion, index) =>
+                                    {getSuggestions(inputValue, allValues, allowCreate, validateCreation).map((suggestion, index) =>
                                         renderSuggestion({
                                             suggestion,
                                             index,
