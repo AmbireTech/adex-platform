@@ -284,6 +284,7 @@ export default function ItemHoc(Decorated) {
                                             className={classnames(classes.mediaRoot, classes.imgContainer)}
                                         >
                                             <Img
+                                                allowFullscreen={true}
                                                 src={imgSrc}
                                                 alt={item.fullName}
                                                 onClick={this.handleToggle}

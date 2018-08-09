@@ -45,6 +45,7 @@ class ItemCard extends Component {
                     image={NO_IMAGE}
                 >
                     <Img
+                        allowFullscreen={true}
                         className={classes.img}
                         src={imageSrc} alt={name}
                     />

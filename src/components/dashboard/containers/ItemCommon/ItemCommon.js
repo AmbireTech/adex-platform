@@ -35,6 +35,7 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, ...rest }) => {
                     classes={{ root: classes.mediaRoot }}
                 >
                     <Img
+                        allowFullscreen={true}
                         className={classes.img}
                         src={Item.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY) || ''}
                         alt={item.fallbackAdUrl} onClick={rest.toggleFallbackImgEdit}
@@ -116,6 +117,7 @@ const basicProps = ({ item, t, rightComponent, url, classes, ...rest }) => {
                                     classes={{ root: classes.mediaRoot }}
                                 >
                                     <Img
+                                        allowFullscreen={true}
                                         src={Item.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY) || ''}
                                         alt={item.fullName}
                                         onClick={rest.toggleImgEdit}

@@ -99,7 +99,7 @@ class Transactions extends Component {
     }
 
     render() {
-        let t = this.props.t
+        // let t = this.props.t
         let transactions = this.props.transactions
         let reduced = Object.keys(transactions).reduce((memo, key) => {
             if (key && ((key.toString()).length === 66)) {
@@ -111,7 +111,7 @@ class Transactions extends Component {
             return memo
         }, [])
 
-        let itemsCount = reduced.length
+        // let itemsCount = reduced.length
 
         return (
             <div>

@@ -61,8 +61,8 @@ class Account extends React.Component {
                             primary={account._addr}
                             secondary={t('ACCOUNT_ETH_ADDR')}
                         />
-                        <IconButton 
-                            color='default' 
+                        <IconButton
+                            color='default'
                             onClick={() => {copy(account._addr)}}
                         >
                             <CopyIcon/>
