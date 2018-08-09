@@ -90,6 +90,28 @@ class Img extends Component {
         this.displayImage.src = image
     }
 
+    renderFullscreenIconAndDialog() {
+        const { classes, allowFullscreen } = this.props
+        if (!allowFullscreen) {
+            return
+        }
+        return (
+            <div>
+                <FullscreenIcon
+                    className={classnames(classes.fullscreenIcon)}
+                    onClick={() => { this.handleDialogToggle() }}
+                />
+                <FullscreenImgDialog
+                    {...this.props}
+                    imgSrc={this.state.imgSrc}
+                    handleToggle={this.handleDialogToggle}
+                    active={this.state.showDialog}
+                    onChangeReady={this.props.handleChange}
+                />
+            </div>
+        )
+    }
+
     render() {
         const { alt, className, classes, ...other } = this.props
         return (
@@ -103,18 +125,7 @@ class Img extends Component {
                         className={classnames(classes.imgLoading, className)}
                         onDragStart={(event) => event.preventDefault() /*Firefox*/}
                     />
-                    <FullscreenIcon
-                        visibility={this.props.allowFullscreen ? 'visible' : 'hidden'}
-                        className={classnames(classes.fullscreenIcon)}
-                        onClick={() => { this.handleDialogToggle() }}
-                    />
-                    <FullscreenImgDialog
-                        {...this.props}
-                        imgSrc={this.state.imgSrc}
-                        handleToggle={this.handleDialogToggle}
-                        active={this.state.showDialog}
-                        onChangeReady={this.props.handleChange}
-                    />
+                    {this.renderFullscreenIconAndDialog()}
                 </span>
                 :
                 <span className={classnames(classes.imgLoading, className)}>

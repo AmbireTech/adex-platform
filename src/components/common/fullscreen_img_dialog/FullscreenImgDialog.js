@@ -1,6 +1,5 @@
 
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
@@ -21,6 +20,7 @@ export class FullscreenImgDialog extends Component {
                 <Dialog
                     open={this.props.active}
                     type={this.props.type || 'normal'}
+                    maxWidth={false}
                 >
                     <DialogTitle>
                     </DialogTitle>
