@@ -43,7 +43,6 @@ export class Confirm extends Component {
     }
 
     render() {
-
         return (
             <Dialog
                 open={this.state.active}
@@ -63,7 +62,6 @@ export class Confirm extends Component {
                         {this.props.confirmLabel || this.props.t('OK')}
                     </Button>
                 </DialogActions>
-
             </Dialog>
         )
     }

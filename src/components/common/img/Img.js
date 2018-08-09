@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import NO_IMAGE from 'resources/no-image-box-eddie.jpg'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import FullscreenIcon from '@material-ui/icons/Fullscreen'
 import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
@@ -86,14 +87,17 @@ class Img extends Component {
         const { alt, className, classes, ...other } = this.props
         return (
             this.state.imgSrc ?
-                <img
-                    {...other}
-                    alt={alt}
-                    src={this.state.imgSrc}
-                    draggable='false'
-                    className={classnames(classes.imgLoading, className)}
-                    onDragStart={(event) => event.preventDefault() /*Firefox*/}
-                />
+                <span className={classnames(classes.imgParent, className)}>
+                    <img
+                        {...other}
+                        alt={alt}
+                        src={this.state.imgSrc}
+                        draggable='false'
+                        className={classnames(classes.imgLoading, className)}
+                        onDragStart={(event) => event.preventDefault() /*Firefox*/}
+                    />
+                    <FullscreenIcon visibility={this.props.allowFullscreen ? 'visible' : 'hidden'} className={classnames(classes.fullscreenIcon)}/>
+                </span>
                 :
                 <span className={classnames(classes.imgLoading, className)}>
                     <span

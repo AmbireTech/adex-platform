@@ -14,7 +14,6 @@ export const styles = theme => {
             borderColor: '#FFAB00',
             color: '#FFAB00'
         },
-
         cancel: {
             borderColor: '#FF5722',
             color: '#FF5722'
