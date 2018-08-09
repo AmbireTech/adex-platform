@@ -1,9 +1,9 @@
 export const styles = theme => ({
     imgLoading: {
-        top: 0,
-        left: 0,
+        top: '50%',
+        left: '50%',
         width: 'auto',
-        height: '100%',
+        height: 'auto',
         position: 'relative',
     },
     imgParent: {
@@ -15,7 +15,6 @@ export const styles = theme => ({
     },
     circular: {
         position: 'absolute',
-        top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)'
     },

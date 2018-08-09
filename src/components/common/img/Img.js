@@ -93,7 +93,7 @@ class Img extends Component {
     render() {
         const { alt, className, classes, ...other } = this.props
         return (
-            this.state.imgSrc ?
+            !this.state.imgSrc ?
                 <span className={classnames(classes.imgParent, className)}>
                     <img
                         {...other}

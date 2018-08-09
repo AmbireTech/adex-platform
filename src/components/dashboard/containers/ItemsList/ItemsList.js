@@ -188,7 +188,7 @@ class ItemsList extends Component {
                     <Tooltip
                         title={t('TOOLTIP_UNARCHIVE')}
                         enterDelay={1000}
-                    // placement='top'
+                        // placement='top'
                     >
                         <IconButton
                             // label={t('UNARCHIVE')}
