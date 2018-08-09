@@ -6,6 +6,7 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen'
 import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import { FullscreenImgDialog } from '../fullscreen_img_dialog/FullscreenImgDialog';
 
 const MAX_IMG_LOAD_TIME = 3000
 
@@ -14,11 +15,17 @@ class Img extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            imgSrc: null
+            imgSrc: null,
+            showDialog: false
         }
 
         this.setDisplayImage = this.setDisplayImage.bind(this)
         this.loadTimeout = null
+    }
+
+    handleDialogToggle = () => {
+        let active = this.state.showDialog
+        this.setState({ showDialog: !active })
     }
 
     componentDidMount() {
@@ -96,7 +103,18 @@ class Img extends Component {
                         className={classnames(classes.imgLoading, className)}
                         onDragStart={(event) => event.preventDefault() /*Firefox*/}
                     />
-                    <FullscreenIcon visibility={this.props.allowFullscreen ? 'visible' : 'hidden'} className={classnames(classes.fullscreenIcon)}/>
+                    <FullscreenIcon
+                        visibility={this.props.allowFullscreen ? 'visible' : 'hidden'}
+                        className={classnames(classes.fullscreenIcon)}
+                        onClick={() => { this.handleDialogToggle() }}
+                    />
+                    <FullscreenImgDialog
+                        {...this.props}
+                        imgSrc={this.state.imgSrc}
+                        handleToggle={this.handleDialogToggle}
+                        active={this.state.showDialog}
+                        onChangeReady={this.props.handleChange}
+                    />
                 </span>
                 :
                 <span className={classnames(classes.imgLoading, className)}>
