@@ -34,8 +34,6 @@ export class FullscreenImgDialog extends Component {
                         >
                             {'Close'}
                         </Button>
-                        <Button>
-                        </Button>
                     </DialogActions>
                 </Dialog>
             </span>
