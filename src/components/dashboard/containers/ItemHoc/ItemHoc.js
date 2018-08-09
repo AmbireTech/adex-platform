@@ -300,7 +300,6 @@ export default function ItemHoc(Decorated) {
                         <SaveBtn
                             spinnerId={'update' + item._id}
                             validationId={'update-' + item._id}
-                            returnPropToInitialState={this.returnPropToInitialState}
                             dirtyProps={this.state.dirtyProps}
                             save={this.save}
                         />

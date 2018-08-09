@@ -5,9 +5,6 @@ import Downshift from 'downshift'
 import Paper from '@material-ui/core/Paper'
 import Chip from '@material-ui/core/Chip'
 import { renderInput, getSuggestions, renderSuggestion } from './common'
-import {items as ItemsConstants} from 'adex-constants'
-
-const { ACTagsRegex } = ItemsConstants
 
 class DownshiftMultiple extends React.Component {
     constructor(props) {
@@ -29,11 +26,6 @@ class DownshiftMultiple extends React.Component {
 
     handleInputChange = event => {
         const value = event.target.value.toLowerCase()
-
-        if (this.props.doesInputMatch && !this.props.doesInputMatch(value, ACTagsRegex)) {
-            return null
-        }
-
         this.setState({ inputValue: value })
     }
 
@@ -64,7 +56,7 @@ class DownshiftMultiple extends React.Component {
      * source {'propValue': 'propsLabel'} - skip one mapping to get the label for Chip
      */
     render() {
-        const { classes, source, label, id, placeholder, helperText, openOnClick, allowCreate } = this.props
+        const { classes, source, label, id, placeholder, helperText, openOnClick, allowCreate, validateCreation } = this.props
         const { inputValue, selectedItem } = this.state
         const allValues = Object.keys(source).map(key => { return { value: key, label: source[key] } })
 
@@ -110,7 +102,7 @@ class DownshiftMultiple extends React.Component {
                             })}
                             {isOpen ? (
                                 <Paper className={classes.paper} square>
-                                    {getSuggestions(inputValue2, allValues, allowCreate).map((suggestion, index) =>
+                                    {getSuggestions(inputValue2, allValues, allowCreate, validateCreation).map((suggestion, index) =>
                                         renderSuggestion({
                                             suggestion,
                                             index,

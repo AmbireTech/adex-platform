@@ -22,7 +22,7 @@ import { styles } from './styles'
 const { ItemsTypes, AdSizesByValue } = ItemsConstants
 const ADVIEW_URL = process.env.ADVIEW_HOST || 'https://view.adex.network'
 
-const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fallbackUrl, classes }) => {
+const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fallbackUrl, classes, onCopy }) => {
 
     let sizes = size.split('x')
     sizes = {
@@ -59,7 +59,10 @@ const IntegrationCode = ({ ipfs, t, size, slotId, slotIpfs, fallbackImgIpfs, fal
                 {t('INTEGRATION_CODE')}
                 <IconButton
                     color='default'
-                    onClick={() => { copy(iframeStr) }}
+                    onClick={() => {
+                        copy(iframeStr)
+                        onCopy && onCopy()
+                    }}
                 >
                     <CopyIcon />
                 </IconButton>
@@ -120,6 +123,9 @@ export class Slot extends Component {
                         slotIpfs={item.ipfs}
                         fallbackImgIpfs={(item.fallbackAdImg || {}).ipfs}
                         fallbackUrl={item.fallbackAdUrl}
+                        onCopy={() =>
+                            this.props.actions
+                                .addToast({ type: 'accept', action: 'X', label: t('COPIED_TO_CLIPBOARD'), timeout: 5000 })}
                     />}
                 />
                 <ImgDialog
