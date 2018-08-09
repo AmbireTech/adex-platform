@@ -32,7 +32,6 @@ class ItemCard extends Component {
         let itemTypeName = ItemTypesNames[item._type]
         let to = '/dashboard/' + this.props.side + '/' + itemTypeName + '/' + id
         let imageSrc = Item.getImgUrl(meta.img, process.env.IPFS_GATEWAY) || ''
-
         const { classes, t } = this.props
         return (
             <Card
@@ -45,7 +44,7 @@ class ItemCard extends Component {
                     image={NO_IMAGE}
                 >
                     <Img
-                        allowFullscreen={true}
+                        allowFullscreen={this.props.allowFullscreen === false ? false : true}
                         className={classes.img}
                         src={imageSrc} alt={name}
                     />

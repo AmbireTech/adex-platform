@@ -66,6 +66,7 @@ class ItemsList extends Component {
                 logo={item._meta.img}
                 side={this.props.side}
                 remove={null}
+                allowFullscreen={false}
                 renderActions={() => this.renderActions(item)}
             />
         )
@@ -131,7 +132,6 @@ class ItemsList extends Component {
                 <TableCell> {itemAdSizeLabel({ size: item._meta.size, t: t })} </TableCell>
                 <TableCell> {moment(item._meta.createdOn).format('DD-MM-YYYY')} </TableCell>
                 <TableCell>
-
                     <Tooltip
                         title={t('LABEL_VIEW')}
                         // placement='top'
