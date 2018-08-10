@@ -21,8 +21,8 @@ export const styles = theme => ({
     },
     fullscreenIcon: {
         position: 'absolute',
-        top: 0,
-        right: 0,
+        top: '5px',
+        right: '5px',
         cursor: 'pointer'
     }
 })
