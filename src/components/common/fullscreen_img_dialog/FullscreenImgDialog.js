@@ -4,7 +4,7 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
 
-export class FullscreenImgDialog extends Component {
+class FullscreenImgDialog extends Component {
     render() {
         return (
             <span>
@@ -29,3 +29,5 @@ export class FullscreenImgDialog extends Component {
         )
     }
 }
+
+export default FullscreenImgDialog

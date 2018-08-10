@@ -7,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { FullscreenImgDialog } from '../fullscreen_img_dialog/FullscreenImgDialog'
+import FullscreenImgDialog from '../fullscreen_img_dialog/FullscreenImgDialog'
 
 const MAX_IMG_LOAD_TIME = 3000
 
