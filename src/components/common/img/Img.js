@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import NO_IMAGE from 'resources/no-image-box-eddie.jpg'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import FullscreenIcon from '@material-ui/icons/Fullscreen'
+import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
@@ -97,10 +98,12 @@ class Img extends Component {
         }
         return (
             <div>
-                <FullscreenIcon
+                <IconButton
                     className={classnames(classes.fullscreenIcon)}
                     onClick={() => { this.handleDialogToggle() }}
-                />
+                >
+                    <FullscreenIcon/>
+                </IconButton>
                 <FullscreenImgDialog
                     {...this.props}
                     imgSrc={this.state.imgSrc}
