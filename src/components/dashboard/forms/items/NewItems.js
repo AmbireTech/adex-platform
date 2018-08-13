@@ -67,7 +67,7 @@ export const NewUnitSteps = (props) =>
             { title: 'UNIT_TYPE_DATA_STEP', page: NewUnitFormType },
             { title: 'UNIT_BANNER_STEP', page: NewUnitFormImg },
             { title: 'UNIT_TARGETS_STEP', page: NewUnitFormTargets },
-            { title: 'UNIT_TAGS_STEP', page: NewItemFormTags}
+            { title: 'UNIT_TAGS_STEP', page: NewItemFormTags }
         ]}
         imgLabel='UNIT_BANNER_IMG_LABEL'
         noDefaultImg
@@ -121,7 +121,7 @@ export const NewSlotSteps = (props) =>
             { title: 'SLOT_BASIC_STEP', page: NewItemForm },
             { title: 'SLOT_TYPE_DATA_STEP', page: NewSlotForm },
             { title: 'SLOT_IMAGES_STEP', page: NewSlotFormImgs },
-            { title: 'SLOT_TAGS_STEP', page: NewItemFormTags}
+            { title: 'SLOT_TAGS_STEP', page: NewItemFormTags }
         ]}
         imgLabel='SLOT_AVATAR_IMG_LABEL'
         imgAdditionalInfo='SLOT_AVATAR_IMG_INFO'
