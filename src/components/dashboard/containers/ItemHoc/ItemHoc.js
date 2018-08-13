@@ -277,7 +277,6 @@ export default function ItemHoc(Decorated) {
                                 </div>
                             </Grid >
                             <Grid item xs={12} sm={12} md={12} lg={5}>
-
                                 {this.props.showLogo &&
                                     <div style={{ width: 270 }}>
                                         <Paper
