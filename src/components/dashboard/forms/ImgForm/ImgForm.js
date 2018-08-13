@@ -118,7 +118,7 @@ class ImgForm extends Component {
           <span> {t('DRAG_AND_DROP_TO_UPLOAD')} </span>
         </div>
         <div>
-          <small> (max 2MB; .jpeg, .jpg, .png)  </small>
+          <small> (max 2MB; .jpeg, .jpg)  </small>
         </div>
         <div>
           <Typography color='error'>
@@ -200,7 +200,7 @@ class ImgForm extends Component {
             </div>
             :
             <Dropzone
-              accept='.jpeg,.jpg,.png'
+              accept='.jpeg,.jpg'
               onDrop={this.onDrop}
               className={classes.dropzone} >
               <div
