@@ -13,7 +13,7 @@ export const styles = theme => {
         dialogImage: {
             '@media(max-width:1080px)': {
                 maxWidth: '80vw',
-                maxHeight: '80vw',
+                maxHeight: '75vh',
                 display: 'block',
                 margin: 'auto'
             }
