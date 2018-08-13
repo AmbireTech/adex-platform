@@ -43,7 +43,7 @@ class NewItemFormTags extends Component {
                         required
                         onChange={(value) => {
                             this.props.handleChange('tags', [...value])
-                            this.props.validate('tags', { isValid: !!this.props.item.meta.tags && !!value.length, err: { msg: noTagsErrMsg } })
+                            this.props.validate('tags', { isValid: !!value && !!value.length, err: { msg: noTagsErrMsg } })
                             if (allowNewTags) {
                                 this.props.actions.addNewTag({ tag: value[value.length - 1] })
                             }
