@@ -210,7 +210,7 @@ export const signBid = ({ userAddr, bid, user }) => {
             let hashCheck = getTypedDataHash({ typedData: typed })
             // let mode = user._signType
 
-            console.log('user', user)
+            // console.log('user', user)
 
             return getAdexExchangeBidHash({ exchange: exchange, typedData: typed })
                 .then((scHash) => {
@@ -221,7 +221,7 @@ export const signBid = ({ userAddr, bid, user }) => {
                     }
                 })
                 .then((checkedHash) => {
-                    return signTypedMsg({ userAddr, typedData: typed, addrIdx: user._hdWalletAddrIdx, hdPath: user._hdWalletAddrPath })
+                    return signTypedMsg({ userAddr, authType: user._authType, typedData: typed, addrIdx: user._hdWalletAddrIdx, hdPath: user._hdWalletAddrPath })
                 })
                 .then((res) => {
                     let signature = { sig_mode: res.mode, signature: res.sig, hash: res.hash, ...getRsvFromSig(res.sig) }
