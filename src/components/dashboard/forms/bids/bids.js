@@ -14,6 +14,11 @@ const SaveBtn = ({ ...props }) => {
             onClick={props.save}
             disabled={props.waitingForWalletAction}
         >
+            {props.waitingForWalletAction ?
+                <HourglassEmptyIcon style={{ marginRight: 8 }} />
+                : props.saveBtnIcon || null
+            }
+
             {props.t(props.saveBtnLabel || 'PLACE_BID_SAVE_BTN')}
         </Button>
     )
@@ -24,7 +29,6 @@ const CancelBtn = ({ ...props }) => {
         <Button
             onClick={props.cancel}
         >
-            <HourglassEmptyIcon style={{ marginRigt: 8 }} />
             {props.t(props.cancelBtnLabel || 'CANCEL')}
         </Button>
     )
