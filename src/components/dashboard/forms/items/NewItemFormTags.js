@@ -17,7 +17,11 @@ const allowNewTags = process.env.ALLOW_NEW_TAGS === 'true'
 
 class NewItemFormTags extends Component {
     componentWillMount() {
-        this.props.validate('tags', { isValid: this.props.item.meta.tags && this.props.item.meta.tags.length > 0, err: { msg: noTagsErrMsg } })
+        this.props.validate('tags', {
+            isValid: !!this.props.item.meta.tags && !!this.props.item.meta.tags.length,
+            err: { msg: noTagsErrMsg },
+            dirty: false
+        })
         getTags()
             .then((res) => {
                 const tags = res.reduce((o, key) => ({ ...o, [key._id]: key._id }), {})
@@ -39,7 +43,7 @@ class NewItemFormTags extends Component {
                         required
                         onChange={(value) => {
                             this.props.handleChange('tags', [...value])
-                            this.props.validate('tags', { isValid: this.props.item.meta.tags && !!value.length, err: { msg: noTagsErrMsg } })
+                            this.props.validate('tags', { isValid: !!value && !!value.length, err: { msg: noTagsErrMsg } })
                             if (allowNewTags) {
                                 this.props.actions.addNewTag({ tag: value[value.length - 1] })
                             }

@@ -56,7 +56,7 @@ export class Confirm extends Component {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={this.cancel} color="primary">
-                        {this.props.cancelLabel | this.props.t('CANCEL')}
+                        {this.props.cancelLabel || this.props.t('CANCEL')}
                     </Button>
                     <Button onClick={this.confirm} color="primary" autoFocus>
                         {this.props.confirmLabel || this.props.t('OK')}
