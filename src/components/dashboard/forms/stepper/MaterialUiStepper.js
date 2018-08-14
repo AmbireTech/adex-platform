@@ -80,7 +80,7 @@ class MaterialStepper extends React.Component {
         return (
             <div >
                 <Paper>
-                    <StepperNav  {...props} pages={pages} currentPage={currentPage} goToPage={this.goToPage.bind(this)} />
+                    <StepperNav {...props} pages={pages} currentPage={currentPage} goToPage={this.goToPage.bind(this)} />
                 </Paper>
                 <br />
 

@@ -34,11 +34,22 @@ export const styles = {
     right: {
         textAlign: 'right',
         display: 'inline-block',
-        width: '50%'
+        width: '50%',
+        '@media(max-width:475px)': {
+            width: '86%'
+        }
     },
     left: {
         display: 'inline-block',
         textAlign: 'left',
-        width: '50%'
+        width: '50%',
+        '@media(max-width:475px)': {
+            width: '14%'
+        }
+    },
+    stepperNav: {
+        '@media(max-width:400px)': {
+            backgroundColor: 'black'
+        }
     }
 }

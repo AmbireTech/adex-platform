@@ -8,6 +8,9 @@ export const styles = theme => {
         },
         actionBtn: {
             marginLeft: spacing
+        },
+        address: {
+            wordWrap: 'break-word'
         }
     }
 }

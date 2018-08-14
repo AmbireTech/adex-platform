@@ -18,7 +18,7 @@ export const styles = theme => {
             }
         },
         dashboardCardBody: {
-            margin: spacing,
+            margin: spacing
         }
     }
 }
