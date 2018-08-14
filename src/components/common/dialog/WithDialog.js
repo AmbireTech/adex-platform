@@ -83,7 +83,7 @@ export default function ItemHoc(Decorated) {
                 }
             }
 
-            const { classes, ...other } = this.props
+            const { classes } = this.props
 
             const btnLabel = this.props.t(this.props.btnLabel, { args: this.props.btnLabelArgs || [''] })
             // TODO: fix it for fab wit text

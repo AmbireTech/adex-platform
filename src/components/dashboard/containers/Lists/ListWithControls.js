@@ -196,7 +196,7 @@ class ListWithControls extends Component {
             renderItems = this.props.renderCards
         }
 
-        const { t, side, classes } = this.props
+        const { t, classes } = this.props
 
         return (
             <Paper>

@@ -37,7 +37,6 @@ const pagination = (props) => {
             <div
                 className={classnames(classes.flexItem, classes.flexRow)}
             >
-
                 <div
                 >
                     <Dropdown
