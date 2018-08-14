@@ -203,7 +203,6 @@ class ListWithControls extends Component {
                 <div
                     className={classes.controlsRoot}
                 >
-
                     <div
                         className={classes.controls}
                     >

@@ -48,8 +48,10 @@ export const styles = {
         }
     },
     stepperNav: {
-        '@media(max-width:400px)': {
-            backgroundColor: 'black'
+        backgroundColor: 'black',
+        '@media(max-width:500px)': {
+            backgroundColor: 'black',
+            width: '100px'
         }
     }
 }
