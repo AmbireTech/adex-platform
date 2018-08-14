@@ -194,7 +194,6 @@ export class DashboardStats extends Component {
         const classes = this.props.classes
         return (
             <div className={classes.infoStatsContainer}>
-
                 <StatsCard
                     linkCard
                     subtitle={t(spentEarned)}
@@ -270,7 +269,7 @@ export class DashboardStats extends Component {
 
         return (
             <div>
-                <Grid container >
+                <Grid container>
                     <Grid item md={12} lg={6}>
                         <Card
                             raised
