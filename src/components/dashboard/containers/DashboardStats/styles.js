@@ -18,7 +18,12 @@ export const styles = theme => {
             }
         },
         dashboardCardBody: {
-            margin: spacing
+            margin: spacing,
+            '@media(max-width:380px)': {
+                // TODO: Fit it in a better way
+                marginLeft: '-20px',
+                transform: 'scale(0.85, 0.85)'
+            }
         }
     }
 }
