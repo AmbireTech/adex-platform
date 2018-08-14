@@ -38,10 +38,24 @@ export const styles = theme => {
         },
         dropzoneBtn: {
             marginBottom: spacing,
-            marginRight: spacing
+            marginRight: spacing,
+            '@media(max-width:425px)': {
+                width: '100px'
+            }
         },
         leftIcon: {
             marginRight: spacing
+        },
+        uploadInfo: {
+            '@media(max-width:425px)': {
+                fontSize: '10px',
+                width: '50%'
+            }
+        },
+        errMsg: {
+            '@media(max-width:425px)': {
+                fontSize: '8px'
+            }
         }
     }
 }
