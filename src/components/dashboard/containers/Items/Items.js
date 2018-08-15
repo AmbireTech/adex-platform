@@ -9,7 +9,6 @@ import Translate from 'components/translate/Translate'
 class Items extends Component {
 
     componentWillMount() {
-        const items = Array.from(Object.values(this.props.items || {})) || []
         this.props.actions.updateNav('navTitle', this.props.header)
     }
 
