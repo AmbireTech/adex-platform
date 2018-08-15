@@ -94,7 +94,7 @@ class Img extends Component {
     renderFullscreenIconAndDialog() {
         const { classes, allowFullscreen } = this.props
         if (!allowFullscreen) {
-            return
+            return null
         }
         return (
             <div>
