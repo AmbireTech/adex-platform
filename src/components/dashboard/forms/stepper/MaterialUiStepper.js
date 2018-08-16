@@ -6,6 +6,7 @@ import actions from 'actions'
 import { Stepper } from 'react-step/lib/stepper'
 import { withStepper } from 'react-step/lib/with-stepper'
 import StepperMUI from '@material-ui/core/Stepper'
+import MobileStepper from '@material-ui/core/MobileStepper'
 import Step from '@material-ui/core/Step'
 import StepLabel from '@material-ui/core/StepLabel'
 import Button from '@material-ui/core/Button'
@@ -15,8 +16,24 @@ import { styles } from './styles'
 import Paper from '@material-ui/core/Paper'
 
 // const MyStep = ({ page, active, index, children, theme, canAdvance, canFinish, canReverse, setPageIndex, canAdvanceToPage, currentPage, goToPage, ...other }) => {}
-
 const StepperNav = ({ pages, currentPage, classes, ...other }) => {
+    if (window.innerWidth <= 768) {
+        return (
+            <div>
+                <StepLabel className={classes.mobileStepLabel}>
+                    ({currentPage + 1}/{pages.length}) {pages[currentPage].title}
+                </StepLabel>
+                <MobileStepper
+                    activeStep={currentPage}
+                    steps={pages.length}
+                    position={'static'}
+                    variant="progress"
+                    className={classes.mobileStepper}
+                >
+                </MobileStepper>
+            </div>
+        )
+    }
     return (
         <StepperMUI
             alternativeLabel
@@ -39,13 +56,13 @@ const StepperNav = ({ pages, currentPage, classes, ...other }) => {
 
 class MaterialStepper extends React.Component {
 
-    onComplete() {
-        // console.log('currPage', this.currPage)
-        let props = this.props
-        let page = props.pages[props.currentPage]
+    // onComplete() {
+    //     // console.log('currPage', this.currPage)
+    //     let props = this.props
+    //     let page = props.pages[props.currentPage]
 
-        // console.log('props.pages[props.currentPage]', page.component)
-    }
+    //     // console.log('props.pages[props.currentPage]', page.component)
+    // }
 
     goToPage(nextStep) {
         let canAdvance = (nextStep > this.props.currentPage) && this.canAdvanceNextToPage()
@@ -80,7 +97,7 @@ class MaterialStepper extends React.Component {
         return (
             <div >
                 <Paper>
-                    <StepperNav className={classes.stepperNav} {...props} pages={pages} currentPage={currentPage} goToPage={this.goToPage.bind(this)} />
+                    <StepperNav className={classes.stepperNav} {...props} pages={pages} classes={classes} currentPage={currentPage} goToPage={this.goToPage.bind(this)} />
                 </Paper>
                 <br />
 
