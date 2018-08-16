@@ -24,6 +24,10 @@ export const styles = {
         padding: 20,
         overflowY: 'auto',
         WebkitOverflowScrolling: 'touch',
+        '@media(max-width:500px)': {
+            paddingLeft: 0,
+            paddingRight: 0
+        }
     },
     controls: {
         position: 'absolute',
@@ -47,11 +51,19 @@ export const styles = {
             width: '14%'
         }
     },
-    stepperNav: {
-        backgroundColor: 'black',
-        '@media(max-width:500px)': {
-            backgroundColor: 'black',
-            width: '100px'
+    mobileStepper: {
+        width: '100%',
+        '& div': {
+            width: '100%',
+            height: '10px'
         }
+    },
+    mobileStepLabel: {
+        '& span': {
+            fontSize: '24px',
+            margin: '14px auto'
+        },
+        textAlign: 'center',
+        width: 'auto'
     }
 }
