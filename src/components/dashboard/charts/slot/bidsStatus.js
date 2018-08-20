@@ -21,16 +21,16 @@ export const BidsStatusPie = ({ pieData = {}, options = {}, t, onPieClick }) => 
                     var data = chart.data
 
                     if (data.labels.length && data.datasets.length) {
-                      return data.labels.map((label, i) => {
-                        var ds = data.datasets[0]
-                        var fill = ds.backgroundColor[i]
+                        return data.labels.map((label, i) => {
+                            var ds = data.datasets[0]
+                            var fill = ds.backgroundColor[i]
 
-                        return {
-                          text: label,
-                          fillStyle: fill,
-                          index: i
-                        };
-                      });
+                            return {
+                                text: label,
+                                fillStyle: fill,
+                                index: i
+                            };
+                        });
                     }
                     return [];
                 }
