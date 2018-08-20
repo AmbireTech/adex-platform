@@ -19,7 +19,7 @@ export const BidsStatusPie = ({ pieData = {}, options = {}, t, onPieClick }) => 
                         }
                     }
                     var data = chart.data
-                    
+
                     if (data.labels.length && data.datasets.length) {
                       return data.labels.map((label, i) => {
                         var ds = data.datasets[0]
