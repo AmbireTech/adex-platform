@@ -1,15 +1,40 @@
 import React from 'react'
-import { Doughnut, Chart, Pie } from 'react-chartjs-2'
-import { CHARTS_COLORS, hexColorsToRgbaArray } from 'components/dashboard/charts/options'
+import { Doughnut} from 'react-chartjs-2'
+import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 
 export const BidsStatusPie = ({ pieData = {}, options = {}, t, onPieClick }) => {
-    // let colors = hexColorsToRgbaArray(CHARTS_COLORS, 1)
+    const isMobile = window.innerWidth <= 768
 
     let opts = {
         responsive: true,
         cutoutPercentage: 70,
         legend: {
-            position: 'left'
+            position: isMobile ? 'top' : 'left',
+            fullWidth: true,
+            labels: {
+                generateLabels:  function (chart) {
+                    chart.legend.afterFit = function () {
+                        if (this.lineWidths) {
+                            this.lineWidths = this.lineWidths.map( () => this.width )
+                        }
+                    }
+                    var data = chart.data
+                    
+                    if (data.labels.length && data.datasets.length) {
+                      return data.labels.map((label, i) => {
+                        var ds = data.datasets[0]
+                        var fill = ds.backgroundColor[i]
+
+                        return {
+                          text: label,
+                          fillStyle: fill,
+                          index: i
+                        };
+                      });
+                    }
+                    return [];
+                }
+            }
         },
         tooltips: {
             callbacks: {
@@ -19,11 +44,11 @@ export const BidsStatusPie = ({ pieData = {}, options = {}, t, onPieClick }) => 
                     let count = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]
                     label += count
                     label += ' (' + ((count / pieData.totalCount) * 100).toFixed(2) + '%)'
-
                     return label
                 }
             }
         },
+        maintainAspectRatio: false,
         ...options,
     }
 
@@ -45,6 +70,7 @@ export const BidsStatusPie = ({ pieData = {}, options = {}, t, onPieClick }) => 
 
         <Doughnut
             data={chartData}
+            height={isMobile ? 400 : 200}
             options={opts}
             getElementAtEvent={(e) => {
                 onPieClick(e[0])
