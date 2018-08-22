@@ -17,6 +17,9 @@ export const styles = theme => {
             color: '#666',
             fontFamily: "'Helvetica', 'Arial', sans-serif",
             cursor: 'pointer'
+        },
+        chartParent: {
+            maxHeight: '600px'
         }
     }
 }
