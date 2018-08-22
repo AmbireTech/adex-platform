@@ -19,6 +19,7 @@ export const styles = theme => {
             cursor: 'pointer'
         },
         chartParent: {
+            height: 'auto',
             maxHeight: '600px'
         }
     }
