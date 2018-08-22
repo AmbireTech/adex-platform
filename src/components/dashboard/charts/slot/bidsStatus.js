@@ -12,6 +12,9 @@ class BidsStatusPie extends React.Component {
         const { onPieClick } = this.props
         const classes = this.props.classes
 
+        const isMobile = window.innerWidth <= 768
+        const pieDataExists = pieData.totalCount > 0
+
         let opts = {
             responsive: true,
             responsiveAnimationDuration: 1000,
@@ -53,15 +56,21 @@ class BidsStatusPie extends React.Component {
         }
         return (
             <div className={classes.chartParent}>
-                {this.refs && this.refs.doughnut ? this.refs.doughnut.chartInstance.generateLegend() : this.forceUpdate()}
-                <Doughnut
-                    ref='doughnut'
-                    data={chartData}
-                    options={opts}
-                    getElementAtEvent={(e) => {
-                        onPieClick(e[0])
-                    }}
-                />
+                <h3 className={classes.chartTitle}>{this.props.t('TITLE_STATS_BY_BID_STATUS')}</h3>
+                <div className={classes.chartLabel}>
+                    {this.refs && this.refs.doughnut ? this.refs.doughnut.chartInstance.generateLegend() : this.forceUpdate()}
+                </div>
+                <div className={classes.chartContainer}>
+                    <Doughnut
+                        ref='doughnut'
+                        data={chartData}
+                        height={pieDataExists ? isMobile ? 400 : 200 : 25}
+                        options={opts}
+                        getElementAtEvent={(e) => {
+                            onPieClick(e[0])
+                        }}
+                    />
+                </div>
             </div>
         )
     }

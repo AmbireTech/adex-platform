@@ -158,13 +158,6 @@ export class DashboardStats extends Component {
                 <BidsStatusPie
                     pieData={stats.pieData}
                     t={this.props.t}
-                    options={{
-                        title: {
-                            display: true,
-                            position: 'top',
-                            text: this.props.t('TITLE_STATS_BY_BID_STATUS')
-                        }
-                    }}
                     onPieClick={(ev) => {
                         if (ev && !isNaN(ev._index)) {
                             this.goToBids(stats.tabs[ev._index])

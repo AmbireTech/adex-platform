@@ -19,10 +19,12 @@ export const styles = theme => {
         },
         dashboardCardBody: {
             margin: spacing,
+            padding: spacing,
             '@media(max-width:400px)': {
                 width: 'auto',
-                maxWidth: '80vw'
-            }
+                maxWidth: '80vw',
+                padding: 0
+            },
         }
     }
 }
