@@ -2,12 +2,15 @@ import React from 'react'
 import { Doughnut} from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import { BidsLegend } from '.'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
-export class BidsStatusPie extends React.Component {
+class BidsStatusPie extends React.Component {
     render() {
         const pieData = this.props.pieData || {}
         const options = this.props.options || {}
-        const {onPieClick } = this.props
+        const { onPieClick } = this.props
+        const classes = this.props.classes
 
         const isMobile = window.innerWidth <= 768
 
@@ -51,8 +54,8 @@ export class BidsStatusPie extends React.Component {
             ]
         }
         return (
-            <div>
-                {this.refs && this.refs.doughnut ? this.refs.doughnut.chartInstance.generateLegend() : this.forceUpdate()}
+            <div className={classes.chartParent}>
+                {this.refs && this.refs.doughnut ? this.refs.doughnut.chartInstance.generateLegend() : null}
                 <Doughnut
                     ref='doughnut'
                     data={chartData}
@@ -66,3 +69,5 @@ export class BidsStatusPie extends React.Component {
         )
     }
 }
+
+export default withStyles(styles)(BidsStatusPie)
