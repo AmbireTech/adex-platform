@@ -93,25 +93,17 @@ class Img extends Component {
         this.displayImage.src = image
     }
 
-    renderIconButtons() {
-        const { classes } = this.props
-
-        return (
-            <IconButton
-                className={classnames(classes.fullscreenIcon)}
-                onClick={() => { this.handleToggle() }}
-            >
-                <FullscreenIcon/>
-            </IconButton>
-        )
-    }
-
     renderFullscreenDialog() {
         const { allowFullscreen, className, alt, classes, ...other } = this.props
 
         return (
             <span>
-                {this.renderIconButtons()}
+                <IconButton
+                    className={classnames(classes.fullscreenIcon)}
+                    onClick={() => { this.handleToggle() }}
+                >
+                    <FullscreenIcon/>
+                </IconButton>
                 <Dialog
                     open={this.state.active}
                     type={this.props.type || 'normal'}
