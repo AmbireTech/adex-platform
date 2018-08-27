@@ -66,7 +66,6 @@ class ItemsList extends Component {
                 logo={item._meta.img}
                 side={this.props.side}
                 remove={null}
-                allowFullscreen={false}
                 renderActions={() => this.renderActions(item)}
             />
         )

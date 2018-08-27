@@ -2,31 +2,33 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import NO_IMAGE from 'resources/no-image-box-eddie.jpg'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import FullscreenIcon from '@material-ui/icons/Fullscreen'
-import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import FullscreenImgDialog from '../fullscreen_img_dialog/FullscreenImgDialog'
+import FullscreenIcon from '@material-ui/icons/Fullscreen'
+import IconButton from '@material-ui/core/IconButton'
+import Dialog from '@material-ui/core/Dialog'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogActions from '@material-ui/core/DialogActions'
+import Button from '@material-ui/core/Button'
 
 const MAX_IMG_LOAD_TIME = 3000
-
 class Img extends Component {
 
     constructor(props) {
         super(props)
         this.state = {
             imgSrc: null,
-            showDialog: false
+            active: false
         }
 
         this.setDisplayImage = this.setDisplayImage.bind(this)
         this.loadTimeout = null
     }
 
-    handleDialogToggle = () => {
-        let active = this.state.showDialog
-        this.setState({ showDialog: !active })
+    handleToggle = () => {
+        let active = this.state.active
+        this.setState({ active: !active })
     }
 
     componentDidMount() {
@@ -91,32 +93,56 @@ class Img extends Component {
         this.displayImage.src = image
     }
 
-    renderFullscreenIconAndDialog() {
-        const { classes, allowFullscreen } = this.props
-        if (!allowFullscreen) {
-            return null
-        }
+    renderIconButtons() {
+        const { classes } = this.props
+
         return (
-            <div>
-                <IconButton
-                    className={classnames(classes.fullscreenIcon)}
-                    onClick={() => { this.handleDialogToggle() }}
+            <IconButton
+                className={classnames(classes.fullscreenIcon)}
+                onClick={() => { this.handleToggle() }}
+            >
+                <FullscreenIcon/>
+            </IconButton>
+        )
+    }
+
+    renderFullscreenDialog() {
+        const { allowFullscreen, className, alt, classes, ...other } = this.props
+
+        return (
+            <span>
+                {this.renderIconButtons()}
+                <Dialog
+                    open={this.state.active}
+                    type={this.props.type || 'normal'}
+                    maxWidth={false}
+                    classes={{ paper: classes.dialog }}
                 >
-                    <FullscreenIcon/>
-                </IconButton>
-                <FullscreenImgDialog
-                    {...this.props}
-                    imgSrc={this.state.imgSrc}
-                    handleToggle={this.handleDialogToggle}
-                    active={this.state.showDialog}
-                    onChangeReady={this.props.handleChange}
-                />
-            </div>
+                    <DialogContent className={classes.dialogImageParent}>
+                        <img
+                            {...other}
+                            alt={alt}
+                            src={this.state.imgSrc}
+                            draggable='false'
+                            className={classnames(classes.dialogImage, classes.imgLoading)}
+                            onDragStart={(event) => event.preventDefault() /*Firefox*/}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={() => this.handleToggle()}
+                            color="primary"
+                        >
+                            Close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </span>
         )
     }
 
     render() {
-        const { alt, className, classes, ...other } = this.props
+        const { alt, allowFullscreen, className, classes, ...other } = this.props
         return (
             this.state.imgSrc ?
                 <span className={classnames(classes.imgParent, className)}>
@@ -128,7 +154,7 @@ class Img extends Component {
                         className={classnames(classes.imgLoading, className)}
                         onDragStart={(event) => event.preventDefault() /*Firefox*/}
                     />
-                    {this.renderFullscreenIconAndDialog()}
+                    {allowFullscreen ? this.renderFullscreenDialog() : null}
                 </span>
                 :
                 <span className={classnames(classes.imgLoading, className)}>

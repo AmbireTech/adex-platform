@@ -40,7 +40,8 @@ const pagination = (props) => {
                 <div
                 >
                     <Dropdown
-                        label={t('LIST_CONTROL_LABEL_PAGE_OF', { args: [pages] })}
+                        label={t('LIST_CONTROL_LABEL_PAGE')}
+                        helperText={t('LIST_CONTROL_LABEL_PAGE_OF', { args: [pages] })}
                         onChange={goToPage}
                         source={getAllPagedValues(page, pages)}
                         value={page + ''}

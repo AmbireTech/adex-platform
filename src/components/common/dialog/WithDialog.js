@@ -33,8 +33,8 @@ export default function ItemHoc(Decorated) {
             }
         }
 
-        componentWillReceiveProps(nextPorps, nextState) {
-            if (nextPorps.closeDialog && this.state.active) {
+        componentWillReceiveProps(nextProps, nextState) {
+            if (nextProps.closeDialog && this.state.active) {
                 this.handleToggle()
             }
         }

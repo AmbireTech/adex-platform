@@ -15,7 +15,7 @@ export const styles = theme => {
             fontSize: '12px',
             marginLeft: '8px',
             color: '#666',
-            fontFamily: "'Helvetica', 'Arial', sans-serif",
+            fontFamily: "'Roboto', 'Arial', sans-serif",
             cursor: 'pointer'
         },
         chartParent: {
@@ -35,7 +35,7 @@ export const styles = theme => {
         chartTitle: {
             textAlign: 'center',
             color: '#666',
-            fontFamily: "'Helvetica', 'Arial', sans-serif"
+            fontFamily: "'Roboto', 'Arial', sans-serif"
         }
     }
 }
