@@ -56,7 +56,7 @@ class BidsStatusPie extends React.Component {
         }
         return (
             <div className={classes.chartParent}>
-                <h3 className={classes.chartTitle}>{this.props.t('TITLE_STATS_BY_BID_STATUS')}</h3>
+                <h3 className={classes.chartTitle}>{this.props.chartTitle}</h3>
                 <div className={classes.chartLabel}>
                     {this.refs && this.refs.doughnut ? this.refs.doughnut.chartInstance.generateLegend() : this.forceUpdate()}
                 </div>
@@ -64,7 +64,6 @@ class BidsStatusPie extends React.Component {
                     <Doughnut
                         ref='doughnut'
                         data={chartData}
-                        height={pieDataExists ? isMobile ? 400 : 200 : 25}
                         options={opts}
                         getElementAtEvent={(e) => {
                             onPieClick(e[0])
