@@ -55,6 +55,7 @@ export class Campaign extends Component {
         const from = item.from ? new Date(item.from) : null
         const to = item.to ? new Date(item.to) : null
         const now = new Date()
+        now.setHours(0, 0, 0, 0)
 
         //TODO: Make it wit HOC for collection (campaing/channel)
         const groupedUnits = groupItemsForCollection({ collectionId: item._id, allItems: propsUnits })
