@@ -395,7 +395,7 @@ export const updateItm = ({ item, authSig }) => {
     return requester.fetch({
         route: 'items',
         method: 'PUT',
-        body: JSON.stringify(item),
+        body: convertItemToJSON(item),
         authSig: authSig,
         headers: { 'Content-Type': 'application/json' }
     })
