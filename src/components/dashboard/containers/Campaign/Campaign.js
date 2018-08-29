@@ -69,7 +69,7 @@ export class Campaign extends Component {
                     <DatePicker
                         calendarIcon
                         label={this.props.t('from', { isProp: true })}
-                        // minDate={now}
+                        minDate={now}
                         maxDate={to}
                         onChange={(val) => this.props.handleChange('from', val)}
                         value={from}
