@@ -89,7 +89,6 @@ export class Campaign extends Component {
                     // size={moment(to).format('DD MMMM').length} /** temp fix */
                     // readonly
                     />
-
                 </div>
                 <AppBar
                     position='static'

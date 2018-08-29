@@ -25,6 +25,8 @@ import InfoOutlineIcon from '@material-ui/icons/Info'
 import Chip from '@material-ui/core/Chip'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import { styles } from './styles'
+import { validName } from 'helpers/validators'
+
 
 const { ItemTypesNames, ItemTypeByTypeId, AdSizesByValue } = ItemsConstants
 
@@ -142,6 +144,11 @@ export default function ItemHoc(Decorated) {
             this.setState({ editImg: !active })
         }
 
+        isNameValid(name) {
+            const { msg } = validName(name)
+            return !msg
+        }
+
         render() {
             if (!this.state.item) {
                 return (<h1> No item found! </h1>)
@@ -219,7 +226,9 @@ export default function ItemHoc(Decorated) {
                                             value={item.fullName}
                                             onChange={(ev) => this.handleChange('fullName', ev.target.value)}
                                             maxLength={1024}
-                                            onBlur={(ev) => this.setActiveFields('fullName', false)}
+                                            onBlur={(ev) => {
+                                                this.setActiveFields('fullName', false)
+                                            }}
                                             disabled={!this.state.activeFields.fullName}
                                             endAdornment={canEdit &&
                                                 <InputAdornment position="end">
@@ -301,6 +310,8 @@ export default function ItemHoc(Decorated) {
                             validationId={'update-' + item._id}
                             dirtyProps={this.state.dirtyProps}
                             save={this.save}
+                            disabled={!this.state.dirtyProps.length || !this.isNameValid(this.state.item._meta.fullName)}
+
                         />
                     </div>
 
