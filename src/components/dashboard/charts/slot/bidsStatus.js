@@ -16,6 +16,13 @@ class BidsStatusPie extends React.Component {
         this.forceUpdate()
     }
 
+    componentWillUpdate = (nextProps, nextState) => {
+        // Hack to update doughnut ref
+        if (JSON.stringify(nextProps.pieData) !== JSON.stringify(this.props.pieData)) {
+            this.forceUpdate()
+        }
+    }
+
     render() {
         const pieData = this.props.pieData || {}
         const options = this.props.options || {}
