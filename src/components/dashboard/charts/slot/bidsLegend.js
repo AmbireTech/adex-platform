@@ -20,12 +20,16 @@ class BidsLegend extends Component {
                 <ul className={classes.legendList}>
                     {chart.data.datasets[0].data.map((item, i) => {
                         return (
-                            <li className={classes.legendListItem} onClick={(event) => {
-                                this.toggleChartItem(event, i)
-                                this.toggleLabelCross(event.currentTarget)}}
+                            <li
+                                key={i}
+                                className={classes.legendListItem}
+                                onClick={(event) => {
+                                    this.toggleChartItem(event, i)
+                                    this.toggleLabelCross(event.currentTarget)
+                                }}
                             >
                                 <span
-                                    style={{backgroundColor: chart.data.datasets[0].backgroundColor[i]}}
+                                    style={{ backgroundColor: chart.data.datasets[0].backgroundColor[i] }}
                                     className={classes.legendSpan}
                                 >
                                 </span>

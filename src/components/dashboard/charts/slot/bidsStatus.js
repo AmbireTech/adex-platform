@@ -1,11 +1,21 @@
 import React from 'react'
-import { Doughnut} from 'react-chartjs-2'
+import { Doughnut } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import { BidsLegend } from '.'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
 class BidsStatusPie extends React.Component {
+    constructor(props) {
+        super(props)
+        this.doughnut = React.createRef()
+    }
+
+    componentDidMount() {
+        // Force update to get the doughnut ref
+        this.forceUpdate()
+    }
+
     render() {
         const pieData = this.props.pieData || {}
         const options = this.props.options || {}
@@ -22,8 +32,8 @@ class BidsStatusPie extends React.Component {
             legend: {
                 display: false
             },
-            legendCallback: function(chart) {
-                return <BidsLegend chart={chart}/>
+            legendCallback: function (chart) {
+                return <BidsLegend chart={chart} />
             },
             tooltips: {
                 callbacks: {
@@ -54,15 +64,16 @@ class BidsStatusPie extends React.Component {
                 }
             ]
         }
+
         return (
             <div className={classes.chartParent}>
                 <h3 className={classes.chartTitle}>{this.props.chartTitle}</h3>
                 <div className={classes.chartLabel}>
-                    {this.refs && this.refs.doughnut ? this.refs.doughnut.chartInstance.generateLegend() : this.forceUpdate()}
+                    {this.doughnut.current ? this.doughnut.current.chartInstance.generateLegend() : null}
                 </div>
                 <div className={classes.chartContainer}>
                     <Doughnut
-                        ref='doughnut'
+                        ref={this.doughnut}
                         data={chartData}
                         options={opts}
                         getElementAtEvent={(e) => {
