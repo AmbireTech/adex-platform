@@ -3,6 +3,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.1.7] - 2018-09-05
+### Added
+- View images in full size
+- Validation on updating items
+
+### Changed
+- Changed styles - more responsive design
+
+### Fixed
+-  Misc styles and bug fixes
+
 ## [2.1.6] - 2018-08-13
 ### Fixed
 - Misc bug fixes
@@ -202,7 +213,8 @@ All notable changes to this project will be documented in this file.
 
 ## 2.0.0 - 2018-02-26
 
-[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.6...HEAD
+[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.7...HEAD
+[2.1.7]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.6...v2.1.7
 [2.1.6]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.5...v2.1.6
 [2.1.5]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.4...v2.1.5
 [2.1.4]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.3...v2.1.4
