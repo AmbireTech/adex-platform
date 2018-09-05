@@ -5,19 +5,31 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import FullscreenIcon from '@material-ui/icons/Fullscreen'
+import IconButton from '@material-ui/core/IconButton'
+import Dialog from '@material-ui/core/Dialog'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogActions from '@material-ui/core/DialogActions'
+import Button from '@material-ui/core/Button'
+import Translate from 'components/translate/Translate'
 
 const MAX_IMG_LOAD_TIME = 3000
-
 class Img extends Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            imgSrc: null
+            imgSrc: null,
+            active: false
         }
 
         this.setDisplayImage = this.setDisplayImage.bind(this)
         this.loadTimeout = null
+    }
+
+    handleToggle = () => {
+        let active = this.state.active
+        this.setState({ active: !active })
     }
 
     componentDidMount() {
@@ -82,18 +94,62 @@ class Img extends Component {
         this.displayImage.src = image
     }
 
+    renderFullscreenDialog() {
+        const { allowFullscreen, className, alt, classes, t, ...other } = this.props
+
+        return (
+            <span>
+                <IconButton
+                    className={classnames(classes.fullscreenIcon)}
+                    onClick={() => { this.handleToggle() }}
+                >
+                    <FullscreenIcon />
+                </IconButton>
+                <Dialog
+                    open={this.state.active}
+                    type={this.props.type || 'normal'}
+                    maxWidth={false}
+                    onClose={this.handleToggle}
+                    classes={{ paper: classes.dialog }}
+                >
+                    <DialogContent className={classes.dialogImageParent}>
+                        <img
+                            {...other}
+                            alt={alt}
+                            src={this.state.imgSrc}
+                            draggable='false'
+                            className={classnames(classes.dialogImage, classes.imgLoading)}
+                            onDragStart={(event) => event.preventDefault() /*Firefox*/}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={this.handleToggle}
+                            color='primary'
+                        >
+                            {t('CLOSE')}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </span>
+        )
+    }
+
     render() {
-        const { alt, className, classes, ...other } = this.props
+        const { alt, allowFullscreen, className, classes, t, ...other } = this.props
         return (
             this.state.imgSrc ?
-                <img
-                    {...other}
-                    alt={alt}
-                    src={this.state.imgSrc}
-                    draggable='false'
-                    className={classnames(classes.imgLoading, className)}
-                    onDragStart={(event) => event.preventDefault() /*Firefox*/}
-                />
+                <span className={classnames(classes.imgParent, className)}>
+                    <img
+                        {...other}
+                        alt={alt}
+                        src={this.state.imgSrc}
+                        draggable='false'
+                        className={classnames(classes.imgLoading, className)}
+                        onDragStart={(event) => event.preventDefault() /*Firefox*/}
+                    />
+                    {allowFullscreen ? this.renderFullscreenDialog() : null}
+                </span>
                 :
                 <span className={classnames(classes.imgLoading, className)}>
                     <span
@@ -112,4 +168,4 @@ Img.propTypes = {
     alt: PropTypes.string
 }
 
-export default withStyles(styles)(Img)
+export default Translate(withStyles(styles)(Img))

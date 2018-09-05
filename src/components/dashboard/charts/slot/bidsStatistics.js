@@ -1,6 +1,6 @@
 import React from 'react'
-import { Bar, Doughnut, Line } from 'react-chartjs-2'
-import { CHARTS_COLORS, hexColorsToRgbaArray } from 'components/dashboard/charts/options'
+import { Line } from 'react-chartjs-2'
+import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
 
 export const BidsTimeStatistics = ({ data, options = {}, t }) => {

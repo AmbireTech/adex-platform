@@ -29,8 +29,9 @@ const onBeforeLift = () => {
 }
 
 const cssBaselineStyled = ({ classes }) =>
+  // Might break something
   <CssBaseline classes={
-    { children: classes.globalStyles }
+    classes.globalStyles
   } />
 
 
@@ -54,16 +55,13 @@ class App extends Component {
                 persistor={persistor}>
                 <ConnectedRouter history={history} >
                   <div className="adex-dapp">
-
                     <Switch >
                       <Root />
                     </Switch>
                     <Toast />
                     <Confirm />
-
                   </div>
                 </ConnectedRouter>
-
               </PersistGate>
             </Provider>
           </MuiPickersUtilsProvider>

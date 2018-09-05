@@ -1,10 +1,6 @@
 export const styles = theme => {
     const spacing = theme.spacing.unit
     return {
-        dialogPaper: {
-            // height: '80vh',
-            // margin: spacing * 2,
-        },
         backdrop: {
             backgroundColor: 'rgba(255, 255, 255, 0.5)'
         },
@@ -21,6 +17,9 @@ export const styles = theme => {
             },
             '&.disabled': {
                 opacity: 0.3
+            },
+            '@media(max-width:425px)': {
+                width: '100%'
             }
         },
         icon: {

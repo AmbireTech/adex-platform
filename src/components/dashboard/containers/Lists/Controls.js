@@ -37,11 +37,11 @@ const pagination = (props) => {
             <div
                 className={classnames(classes.flexItem, classes.flexRow)}
             >
-
                 <div
                 >
                     <Dropdown
-                        label={t('LIST_CONTROL_LABEL_PAGE_OF', { args: [(page + 1), pages] })}
+                        label={t('LIST_CONTROL_LABEL_PAGE')}
+                        helperText={t('LIST_CONTROL_LABEL_PAGE_OF', { args: [pages] })}
                         onChange={goToPage}
                         source={getAllPagedValues(page, pages)}
                         value={page + ''}

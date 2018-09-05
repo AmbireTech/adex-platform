@@ -9,8 +9,7 @@ import Translate from 'components/translate/Translate'
 class Items extends Component {
 
     componentWillMount() {
-        const items = Array.from(Object.values(this.props.items || {})) || []
-        this.props.actions.updateNav('navTitle', this.props.header + '(' + (items.filter((i) => !!i && !!i._meta && !i._deleted && !i._archived).length) + ')')
+        this.props.actions.updateNav('navTitle', this.props.header)
     }
 
     render() {

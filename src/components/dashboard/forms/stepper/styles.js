@@ -24,6 +24,10 @@ export const styles = {
         padding: 20,
         overflowY: 'auto',
         WebkitOverflowScrolling: 'touch',
+        '@media(max-width:500px)': {
+            paddingLeft: 0,
+            paddingRight: 0
+        }
     },
     controls: {
         position: 'absolute',
@@ -34,11 +38,32 @@ export const styles = {
     right: {
         textAlign: 'right',
         display: 'inline-block',
-        width: '50%'
+        width: '50%',
+        '@media(max-width:475px)': {
+            width: '86%'
+        }
     },
     left: {
         display: 'inline-block',
         textAlign: 'left',
-        width: '50%'
+        width: '50%',
+        '@media(max-width:475px)': {
+            width: '14%'
+        }
+    },
+    mobileStepper: {
+        width: '100%',
+        '& div': {
+            width: '100%',
+            height: '10px'
+        }
+    },
+    mobileStepLabel: {
+        '& span': {
+            fontSize: '24px',
+            margin: '14px auto'
+        },
+        textAlign: 'center',
+        width: 'auto'
     }
 }

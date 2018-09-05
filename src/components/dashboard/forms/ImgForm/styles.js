@@ -8,7 +8,8 @@ export const styles = theme => {
             display: 'flex',
             flexDirection: 'column',
             flex: '1 1',
-            height: 190,
+            height: 'auto',
+            width: 'auto',
             border: `2px dashed ${theme.palette.grey[500]}`,
             background: theme.palette.background.default,
             alignItems: 'center',
@@ -16,7 +17,6 @@ export const styles = theme => {
             padding: 10,
             cursor: 'pointer',
             overflow: 'hidden',
-
         },
         droppedImgContainer: {
             textAlign: 'center',
@@ -25,16 +25,18 @@ export const styles = theme => {
             flexDirection: 'row',
             display: 'flex',
             justifyContent: ' space-around',
-            alignItems: 'center'
+            alignItems: 'center',
+            '@media(max-width:768px)': {
+                display: 'grid',
+            }
         },
         imgDropzonePreview: {
             maxHeight: 176,
             height: 'auto',
             width: 'auto',
-            maxWidth: '70%'
-        },
-        imgForm: {
-            textAlign: 'left'
+            '@media(max-width:500px)': {
+                width: '100%'
+            }
         },
         dropzoneBtn: {
             marginBottom: spacing,
@@ -42,6 +44,9 @@ export const styles = theme => {
         },
         leftIcon: {
             marginRight: spacing
-        }
+        },
+        uploadActions: {
+            marginTop: spacing
+        },
     }
 }

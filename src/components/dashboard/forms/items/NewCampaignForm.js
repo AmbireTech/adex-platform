@@ -18,7 +18,7 @@ class NewCampaignForm extends Component {
         let from = item.from ? new Date(item.from) : null
         let to = item.to ? new Date(item.to) : null
         let now = new Date()
-
+        now.setHours(0, 0, 0, 0)
         return (
             <Grid
                 container

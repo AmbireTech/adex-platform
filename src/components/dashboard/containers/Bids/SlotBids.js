@@ -95,7 +95,7 @@ export class SlotBids extends Component {
         this.setState({ tabIndex: index })
     }
 
-    // TODO: make something common with unit bids 
+    // TODO: make something common with unit bids
     renderTableRow(bid, index, { to, selected }) {
         let t = this.props.t
         const bidData = getBidData({

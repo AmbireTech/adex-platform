@@ -121,7 +121,7 @@ class ImgForm extends Component {
           <small> (max 2MB; .jpeg, .jpg)  </small>
         </div>
         <div>
-          <Typography color='error'>
+          <Typography className={classes.errMsg} color='error'>
             {this.props.errMsg}
           </Typography>
         </div>

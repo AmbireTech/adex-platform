@@ -70,7 +70,7 @@ export class ItemIpfsDetails extends Component {
                 {details.type === ItemsTypes.AdUnit.id &&
                     <PropRow
                         left={t('UNIT_BANNER_IMG_LABEL')}
-                        right={<Img className={''} src={ItemModel.getImgUrl(details.img, process.env.IPFS_GATEWAY) || ''} alt={details.fullName} />}
+                        right={<Img allowFullscreen={true} className={''} src={ItemModel.getImgUrl(details.img, process.env.IPFS_GATEWAY) || ''} alt={details.fullName} />}
                     />
                 }
 

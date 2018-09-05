@@ -15,7 +15,10 @@ export const styles = theme => {
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'space-between',
-            flex: '1 1'
+            flex: '1 1',
+            '@media(max-width:425px)': {
+                width: '100%'
+            }
         },
         btnIconLeft: {
             marginRight: theme.spacing.unit
@@ -34,6 +37,9 @@ export const styles = theme => {
         },
         actionBtn: {
             margin: spacing
+        },
+        addr: {
+            wordWrap: 'break-word'
         }
     }
 }
