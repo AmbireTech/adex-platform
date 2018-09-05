@@ -13,6 +13,7 @@ import { styles } from './styles'
 import Icon from '@material-ui/core/Icon'
 import CancelIcon from '@material-ui/icons/Cancel'
 import DialogActions from '@material-ui/core/DialogActions'
+import Typography from '@material-ui/core/Typography'
 
 const textBtn = ({ label, className, classes, style, onClick, ...rest }) => {
     return <span className={classnames(classes.textBtn, className)} style={style} onClick={onClick}> {label} </span>
@@ -122,13 +123,23 @@ export default function ItemHoc(Decorated) {
                     >
                         {/* <AppBar className={classes.appBar}>
                             <Toolbar> */}
-                        <DialogTitle>
-                            <IconButton
-                                onClick={this.handleToggle}
+                        <DialogTitle
+                            disableTypography
+
+                        >
+                            <Typography
+                                variant='title'
+                                classes={
+                                    { title: classes.dialogTitle }
+                                }
                             >
-                                <CancelIcon />
-                            </IconButton>
-                            {this.props.t(this.props.title)}
+                                {this.props.t(this.props.title)}
+                                <IconButton
+                                    onClick={this.handleToggle}
+                                >
+                                    <CancelIcon />
+                                </IconButton>
+                            </Typography>
                         </DialogTitle>
                         {/* </Toolbar>
                         </AppBar> */}
@@ -138,8 +149,8 @@ export default function ItemHoc(Decorated) {
                             <Decorated {...this.props} onSave={this.onSave()} />
                         </DialogContent>
                         {this.props.dialogActions &&
-                           <DialogActions>
-                               {this.props.dialogActions}
+                            <DialogActions>
+                                {this.props.dialogActions}
                             </DialogActions>
                         }
                     </Dialog>
