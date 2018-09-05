@@ -27,7 +27,6 @@ import FormHelperText from '@material-ui/core/FormHelperText'
 import { styles } from './styles'
 import { validName } from 'helpers/validators'
 
-
 const { ItemTypesNames, ItemTypeByTypeId, AdSizesByValue } = ItemsConstants
 
 export default function ItemHoc(Decorated) {
@@ -163,6 +162,8 @@ export default function ItemHoc(Decorated) {
             let imgSrc = item.meta.img.tempUrl || ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY) || ''
             let { validations, classes, t, ...rest } = this.props
 
+            const fullNameErr = validName(item.fullName)
+
             return (
                 <div>
                     <Prompt
@@ -216,6 +217,7 @@ export default function ItemHoc(Decorated) {
                                         fullWidth
                                         className={classes.textField}
                                         margin='dense'
+                                        error={!!fullNameErr.msg}
                                     >
                                         <InputLabel >{t('fullName', { isProp: true })}</InputLabel>
                                         <Input
@@ -230,6 +232,10 @@ export default function ItemHoc(Decorated) {
                                                 this.setActiveFields('fullName', false)
                                             }}
                                             disabled={!this.state.activeFields.fullName}
+                                            helperText={
+                                                fullNameErr && !!fullNameErr.msg ?
+                                                    fullNameErr.msg : ''
+                                            }
                                             endAdornment={canEdit &&
                                                 <InputAdornment position="end">
                                                     <IconButton
@@ -243,6 +249,12 @@ export default function ItemHoc(Decorated) {
                                                 </InputAdornment>
                                             }
                                         />
+                                        {(fullNameErr && !!fullNameErr.msg) &&
+                                            <FormHelperText >
+                                                {t(fullNameErr.msg, { args: fullNameErr.errMsgArgs })}
+                                            </FormHelperText >
+                                        }
+
                                     </FormControl>
                                 </div>
                                 <div>
@@ -310,8 +322,8 @@ export default function ItemHoc(Decorated) {
                             validationId={'update-' + item._id}
                             dirtyProps={this.state.dirtyProps}
                             save={this.save}
+                            // TODO: validate wit item validation HOC!!!
                             disabled={!this.state.dirtyProps.length || !this.isNameValid(this.state.item._meta.fullName)}
-
                         />
                     </div>
 
@@ -326,6 +338,7 @@ export default function ItemHoc(Decorated) {
                             toggleImgEdit={this.handleToggle.bind(this)}
                             activeFields={this.state.activeFields}
                             setActiveFields={this.setActiveFields.bind(this)}
+                            canEdit={canEdit}
                         />
                     </div>
                 </div >

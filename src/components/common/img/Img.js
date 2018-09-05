@@ -136,7 +136,7 @@ class Img extends Component {
     }
 
     render() {
-        const { alt, allowFullscreen, className, classes, ...other } = this.props
+        const { alt, allowFullscreen, className, classes, t, ...other } = this.props
         return (
             this.state.imgSrc ?
                 <span className={classnames(classes.imgParent, className)}>
