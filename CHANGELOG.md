@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.1.8] - 2018-09-05
+### Added
+- Switch button to turn ON/OFF filter by tags for slot open bids
+
 ## [2.1.7] - 2018-09-05
 ### Added
 - View images in full size
@@ -213,7 +217,8 @@ All notable changes to this project will be documented in this file.
 
 ## 2.0.0 - 2018-02-26
 
-[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.7...HEAD
+[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.8...HEAD
+[2.1.8]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.7...v2.1.8
 [2.1.7]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.6...v2.1.7
 [2.1.6]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.5...v2.1.6
 [2.1.5]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.4...v2.1.5
