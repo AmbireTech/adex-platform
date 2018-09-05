@@ -5,6 +5,7 @@ export const styles = theme => ({
         width: 'auto',
         height: '100%',
         position: 'relative',
+        display: 'inline-block'
     },
     imgParent: {
         top: 0,
@@ -12,12 +13,13 @@ export const styles = theme => ({
         width: 'auto',
         height: 'auto',
         position: 'relative',
+        display: 'inline-block'
     },
     circular: {
         position: 'relative',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)'
+        top: 'calc(50% - 20px)', //UGLY but works best - DEFAULT circular size is 40px
+        left: 'calc(50% - 20px)',
+        display: 'inline-block'
     },
     fullscreenIcon: {
         position: 'absolute',

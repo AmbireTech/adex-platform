@@ -11,6 +11,7 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
+import Translate from 'components/translate/Translate'
 
 const MAX_IMG_LOAD_TIME = 3000
 class Img extends Component {
@@ -94,7 +95,7 @@ class Img extends Component {
     }
 
     renderFullscreenDialog() {
-        const { allowFullscreen, className, alt, classes, ...other } = this.props
+        const { allowFullscreen, className, alt, classes, t, ...other } = this.props
 
         return (
             <span>
@@ -102,12 +103,13 @@ class Img extends Component {
                     className={classnames(classes.fullscreenIcon)}
                     onClick={() => { this.handleToggle() }}
                 >
-                    <FullscreenIcon/>
+                    <FullscreenIcon />
                 </IconButton>
                 <Dialog
                     open={this.state.active}
                     type={this.props.type || 'normal'}
                     maxWidth={false}
+                    onClose={this.handleToggle}
                     classes={{ paper: classes.dialog }}
                 >
                     <DialogContent className={classes.dialogImageParent}>
@@ -122,10 +124,10 @@ class Img extends Component {
                     </DialogContent>
                     <DialogActions>
                         <Button
-                            onClick={() => this.handleToggle()}
-                            color="primary"
+                            onClick={this.handleToggle}
+                            color='primary'
                         >
-                            Close
+                            {t('CLOSE')}
                         </Button>
                     </DialogActions>
                 </Dialog>
@@ -166,4 +168,4 @@ Img.propTypes = {
     alt: PropTypes.string
 }
 
-export default withStyles(styles)(Img)
+export default Translate(withStyles(styles)(Img))
