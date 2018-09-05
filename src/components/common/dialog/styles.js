@@ -18,6 +18,12 @@ export const styles = theme => {
                 minHeight: `calc(100vh - ${theme.spacing.unit * 2}px)`,
             }
         },
+        dialogTitle: {
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+        },
         content: {
             display: 'flex',
             flexDirection: 'column',
