@@ -16,6 +16,9 @@ import { BidCommonTableRow, renderTableHead, searchMatch, getBidData } from './B
 import { getAddrBids, sortBids } from 'services/store-data/bids'
 import BidsStatistics from './BidsStatistics'
 import AppBar from '@material-ui/core/AppBar'
+import Switch from '@material-ui/core/Switch'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormGroup from '@material-ui/core/FormGroup'
 
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
 
@@ -31,7 +34,8 @@ export class SlotBids extends Component {
             tabIndex: tabIndex,
             bids: [],
             openBids: [],
-            statsBids: []
+            statsBids: [],
+            filterByTags: false
         }
     }
 
@@ -71,8 +75,8 @@ export class SlotBids extends Component {
     getBids = () => {
         if (this.props.getSlotBids) {
             getSlotBids({
-                authSig: this.props.account._authSig,
-                adSlot: this.props.item._ipfs
+                // authSig: this.props.account._authSig,
+                adSlot: this.props.item._ipfs,
             })
                 .then((bids) => {
                     this.setState({ bids: bids })
@@ -81,7 +85,8 @@ export class SlotBids extends Component {
             getAvailableBids({
                 authSig: this.props.account._authSig,
                 sizeAndType: this.props.item.sizeAndType,
-                tags: this.props.item.tags
+                tags: this.props.item.tags || '',
+                filterByTags: this.state.filterByTags
             })
                 .then((bids) => {
                     this.setState({ openBids: bids })
@@ -93,6 +98,10 @@ export class SlotBids extends Component {
 
     handleTabChange = (event, index) => {
         this.setState({ tabIndex: index })
+    }
+
+    handleTagsFilterChange = ev => {
+        this.setState({ filterByTags: ev.target.checked }, this.getBids)
     }
 
     // TODO: make something common with unit bids
@@ -124,17 +133,17 @@ export class SlotBids extends Component {
 
     render() {
         const openBids = this.state.openBids || []
-        const { t } = this.props
+        const { t, getSlotBids, pubBids } = this.props
         let sorted = []
 
-        if (this.props.getSlotBids) {
+        if (getSlotBids) {
             sorted = sortBids(this.state.bids || [])
         } else {
-            sorted = this.props.pubBids
+            sorted = pubBids
         }
 
-        const { tabIndex } = this.state
-        const indexShift = !!this.props.getSlotBids ? 1 : 0
+        const { tabIndex, filterByTags } = this.state
+        const indexShift = !!getSlotBids ? 1 : 0
 
         return (
             <div>
@@ -164,14 +173,25 @@ export class SlotBids extends Component {
                 >
                     {
                         (!!this.props.getSlotBids && tabIndex === 0) &&
-                        <ListWithControls
-                            items={openBids}
-                            listMode='rows'
-                            renderRows={this.renderRows}
-                            sortProperties={SORT_PROPERTIES_BIDS}
-                            searchMatch={this.searchMatch}
-                            filterProperties={FILTER_PROPERTIES_BIDS_NO_STATE}
-                        />
+                        <div>
+                            <FormGroup>
+                                <FormControlLabel
+                                    control={
+                                        <Switch checked={filterByTags} onChange={this.handleTagsFilterChange} aria-label="FilterByTags" />
+                                    }
+                                    // TODO: translation
+                                    label={filterByTags ? 'Filter by tags ON' : 'Filter by tags OFF'}
+                                />
+                            </FormGroup>
+                            <ListWithControls
+                                items={openBids}
+                                listMode='rows'
+                                renderRows={this.renderRows}
+                                sortProperties={SORT_PROPERTIES_BIDS}
+                                searchMatch={this.searchMatch}
+                                filterProperties={FILTER_PROPERTIES_BIDS_NO_STATE}
+                            />
+                        </div>
                     }
                     {
                         tabIndex === (0 + indexShift) &&
