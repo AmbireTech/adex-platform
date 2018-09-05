@@ -153,18 +153,14 @@ export class DashboardStats extends Component {
     }
 
     BidsStateChart = ({ stats }) => {
+        const t = this.props.t
+
         return (
             <div>
                 <BidsStatusPie
                     pieData={stats.pieData}
-                    t={this.props.t}
-                    options={{
-                        title: {
-                            display: true,
-                            position: 'top',
-                            text: this.props.t('TITLE_STATS_BY_BID_STATUS')
-                        }
-                    }}
+                    t={t}
+                    chartTitle={t('TITLE_STATS_BY_BID_STATUS')}
                     onPieClick={(ev) => {
                         if (ev && !isNaN(ev._index)) {
                             this.goToBids(stats.tabs[ev._index])
@@ -194,7 +190,6 @@ export class DashboardStats extends Component {
         const classes = this.props.classes
         return (
             <div className={classes.infoStatsContainer}>
-
                 <StatsCard
                     linkCard
                     subtitle={t(spentEarned)}
@@ -270,7 +265,7 @@ export class DashboardStats extends Component {
 
         return (
             <div>
-                <Grid container >
+                <Grid container>
                     <Grid item md={12} lg={6}>
                         <Card
                             raised

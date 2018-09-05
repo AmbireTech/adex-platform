@@ -93,7 +93,7 @@ export class Channel extends Component {
                             }
                         />
                     </Toolbar>
-                </AppBar>                
+                </AppBar>
                 <ItemsList
                     {...this.props}
                     parentItem={item}

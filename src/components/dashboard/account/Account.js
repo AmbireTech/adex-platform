@@ -58,6 +58,7 @@ class Account extends React.Component {
                 >
                     <ListItem>
                         <ListItemText
+                            className={classes.address}
                             primary={account._addr}
                             secondary={t('ACCOUNT_ETH_ADDR')}
                         />

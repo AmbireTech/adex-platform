@@ -2,6 +2,7 @@ import requester from './requester'
 import { logOut } from 'services/store-data/auth'
 import actions from 'actions'
 import { translate } from 'services/translations/translations'
+import moment from 'moment'
 
 const catchErrors = (res) => {
     return new Promise((resolve, reject) => {
@@ -20,7 +21,7 @@ const catchErrors = (res) => {
         }
     })
 }
-    
+
 export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
     let formData = new FormData()
     formData.append('image', imageBlob, imageName)
@@ -44,12 +45,25 @@ export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
     })
 }
 
+const convertItemToJSON = (item) => {
+    if (item._from && moment.isMoment(item._from)) {
+        item._from = moment.unix(item._from) / 1000
+    }
+
+    if (item._to && moment.isMoment(item._to)) {
+        item._to = moment.unix(item._to) / 1000
+    }
+
+    return JSON.stringify(item)
+}
+
 export const regItem = ({ item, authSig }) => {
+
     // return new Promise((resolve, reject) => {
     return requester.fetch({
         route: 'items',
         method: 'POST',
-        body: JSON.stringify(item),
+        body: convertItemToJSON(item),
         authSig: authSig,
         headers: { 'Content-Type': 'application/json' }
     })
@@ -381,7 +395,7 @@ export const updateItm = ({ item, authSig }) => {
     return requester.fetch({
         route: 'items',
         method: 'PUT',
-        body: JSON.stringify(item),
+        body: convertItemToJSON(item),
         authSig: authSig,
         headers: { 'Content-Type': 'application/json' }
     })

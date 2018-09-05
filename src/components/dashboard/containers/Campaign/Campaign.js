@@ -19,6 +19,7 @@ import AddIcon from '@material-ui/icons/Add'
 import AppBar from '@material-ui/core/AppBar'
 import Typography from '@material-ui/core/Typography'
 import Toolbar from '@material-ui/core/Toolbar'
+import EditIcon from '@material-ui/icons/Edit'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -47,7 +48,7 @@ export class Campaign extends Component {
 
     render() {
         // let side = this.props.match.params.side
-        const { t, classes, item } = this.props
+        const { t, classes, item, setActiveFields, handleChange, activeFields } = this.props
         const propsUnits = { ...this.props.units }
 
         if (!item) return (<h1>'404'</h1>)
@@ -55,40 +56,64 @@ export class Campaign extends Component {
         const from = item.from ? new Date(item.from) : null
         const to = item.to ? new Date(item.to) : null
         const now = new Date()
+        now.setHours(0, 0, 0, 0)
 
         //TODO: Make it wit HOC for collection (campaing/channel)
         const groupedUnits = groupItemsForCollection({ collectionId: item._id, allItems: propsUnits })
 
         const units = groupedUnits.items
         const otherUnits = groupedUnits.otherItems
+        const editFrom = !!activeFields.from
+        const editTo = !!activeFields.to
 
         return (
             <div>
                 <div>
                     <DatePicker
                         calendarIcon
-                        label={this.props.t('from', { isProp: true })}
-                        // minDate={now}
-                        maxDate={to}
-                        onChange={(val) => this.props.handleChange('from', val)}
+                        icon={!editFrom ? <EditIcon /> : undefined}
+                        iconColor={!editFrom ? 'secondary' : undefined}
+                        label={t('from', { isProp: true })}
+                        onIconClick={(ev) => {
+                            if (!editFrom) {
+                                setActiveFields('from', true)
+                            }
+                        }}
+                        onBlur={(ev) => {
+                            setActiveFields('from', false)
+                        }}
+                        minDate={editFrom ? now : null}
+                        maxDate={editFrom ? to : null}
+                        onChange={(val) => handleChange('from', val)}
                         value={from}
                         className={classes.datepicker}
-                        // inputFormat={this.inputFormat}
-                        // size={moment(from).format('DD MMMM').length} /** temp fix */
-                        // readonly
+                        disabled={!editFrom}
+                    // inputFormat={this.inputFormat}
+                    // size={moment(from).format('DD MMMM').length} /** temp fix */
+                    // readonly
                     />
                     <DatePicker
                         calendarIcon
-                        label={this.props.t('to', { isProp: true })}
-                        minDate={from || now}
-                        onChange={(val) => this.props.handleChange('to', val)}
+                        icon={!editTo ? <EditIcon /> : undefined}
+                        iconColor={!editTo ? 'secondary' : undefined}
+                        onIconClick={(ev) => {
+                            if (!editTo) {
+                                setActiveFields('to', true)
+                            }
+                        }}
+                        onBlur={(ev) => {
+                            setActiveFields('to', false)
+                        }}
+                        label={t('to', { isProp: true })}
+                        minDate={editTo ? (from || now) : null}
+                        onChange={(val) => handleChange('to', val)}
                         value={to}
                         className={classes.datepicker}
+                        disabled={!editTo}
                     // inputFormat={this.inputFormat}
                     // size={moment(to).format('DD MMMM').length} /** temp fix */
                     // readonly
                     />
-
                 </div>
                 <AppBar
                     position='static'

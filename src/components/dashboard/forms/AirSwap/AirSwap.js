@@ -62,6 +62,7 @@ const AirSwapDialogBody = ({ t, onBuy, onSell, classes, account }) => {
                     <ListDivider />
                     <ListItem  >
                         <ListItemText
+                            className={classes.addr}
                             primary={account._addr}
                             secondary={t('CURRENT_AUTH_ADDR')}
                         />

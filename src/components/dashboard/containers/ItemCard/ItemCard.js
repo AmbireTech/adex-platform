@@ -32,8 +32,8 @@ class ItemCard extends Component {
         let itemTypeName = ItemTypesNames[item._type]
         let to = '/dashboard/' + this.props.side + '/' + itemTypeName + '/' + id
         let imageSrc = Item.getImgUrl(meta.img, process.env.IPFS_GATEWAY) || ''
-
         const { classes, t } = this.props
+
         return (
             <Card
                 raised={false}
@@ -42,9 +42,10 @@ class ItemCard extends Component {
                 <RRCardMedia
                     to={to}
                     classes={{ root: classes.mediaRoot }}
-                    image={NO_IMAGE}
+                    image={imageSrc ? null : NO_IMAGE}
                 >
                     <Img
+                        allowFullscreen={!!this.props.allowFullscreen}
                         className={classes.img}
                         src={imageSrc} alt={name}
                     />

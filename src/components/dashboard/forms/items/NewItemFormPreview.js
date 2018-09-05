@@ -29,6 +29,7 @@ class NewItemFormPreview extends Component {
                     left={t('SLOT_FALLBACK_IMG_LABEL')}
                     right={
                         <Img
+                            allowFullscreen={true}
                             className={classes.imgPreview}
                             src={item.fallbackAdImg.tempUrl || ''}
                             alt={item.fallbackAdUrl}
@@ -63,6 +64,7 @@ class NewItemFormPreview extends Component {
                         left={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}
                         right={
                             <Img
+                                allowFullscreen={true}
                                 className={classes.imgPreview}
                                 src={meta.img.tempUrl || ''}
                                 alt={meta.fullName}

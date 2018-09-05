@@ -131,7 +131,6 @@ class ItemsList extends Component {
                 <TableCell> {itemAdSizeLabel({ size: item._meta.size, t: t })} </TableCell>
                 <TableCell> {moment(item._meta.createdOn).format('DD-MM-YYYY')} </TableCell>
                 <TableCell>
-
                     <Tooltip
                         title={t('LABEL_VIEW')}
                         // placement='top'
@@ -188,7 +187,7 @@ class ItemsList extends Component {
                     <Tooltip
                         title={t('TOOLTIP_UNARCHIVE')}
                         enterDelay={1000}
-                    // placement='top'
+                        // placement='top'
                     >
                         <IconButton
                             // label={t('UNARCHIVE')}
