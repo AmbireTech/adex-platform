@@ -29,9 +29,6 @@ class BidsStatusPie extends React.Component {
         const { onPieClick } = this.props
         const classes = this.props.classes
 
-        const isMobile = window.innerWidth <= 768
-        const pieDataExists = pieData.totalCount > 0
-
         let opts = {
             responsive: true,
             responsiveAnimationDuration: 1000,
