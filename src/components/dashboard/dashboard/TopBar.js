@@ -34,11 +34,8 @@ class TopNav extends Component {
   }
 
   render() {
-    const t = this.props.t
-    let imgSrc = getAuthLogo(this.props.account._authType)
-
-    const classes = this.props.classes
-
+    const { t, handleDrawerToggle, account, side, navTitle, classes } = this.props
+    let imgSrc = getAuthLogo(account._authType)
     return (
       <AppBar
         className={classes.appBar}
@@ -54,7 +51,7 @@ class TopNav extends Component {
             <IconButton
               color="inherit"
               aria-label="open drawer"
-              onClick={this.props.handleDrawerToggle}
+              onClick={handleDrawerToggle}
               className={classnames(classes.navIconHide)}
             >
               <Icon>menu</Icon>
@@ -73,19 +70,23 @@ class TopNav extends Component {
               <ButtonMenu
                 leftIconSrc={imgSrc}
                 icon={<ExpandMoreIcon />}
-                label={this.props.account._addr || t('NOT_LOGGED')}
+                label={account._addr || t('NOT_LOGGED')}
                 active={true}
                 iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
               >
                 <RRMenuItem
                   value='account'
-                  to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
+                  to={{ pathname: '/dashboard/' + side + '/account' }}
                   caption={t('ACCOUNT')}
                 >
                   <ListItemIcon >
                     <Icon>account_box</Icon>
                   </ListItemIcon>
-                  <ListItemText classes={{ primary: classes.primary }} inset primary={t('ACCOUNT')} />
+                  <ListItemText
+                    classes={{ primary: classes.primary }}
+                    inset
+                    primary={t('ACCOUNT')}
+                  />
                 </RRMenuItem>
                 {/* <MenuDivider /> */}
                 <MenuItem
@@ -102,7 +103,6 @@ class TopNav extends Component {
           </div>
           <div
             className={classes.flexRow}
-
           >
             <div
               className={classnames(classes.flex, classes.toolbarTitle)}
@@ -113,7 +113,7 @@ class TopNav extends Component {
                 className={classes.flex}
                 noWrap
               >
-                {t(this.props.navTitle)}
+                {t(navTitle)}
               </Typography>
             </div>
           </div>

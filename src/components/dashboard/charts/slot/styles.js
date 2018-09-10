@@ -23,13 +23,13 @@ export const styles = theme => {
             maxHeight: '600px',
         },
         chartLabel: {
-            '@media(min-width:769px) and (max-width:1279px)': {
+            '@media(min-width:650px) and (max-width:1279px)': {
                 float: 'left'
             }
         },
         chartContainer: {
-            '@media(min-width:769px) and (max-width:1279px)': {
-                float: 'right'
+            '@media(min-width:650px) and (max-width:1279px)': {
+                float: 'right',
             }
         },
         chartTitle: {
