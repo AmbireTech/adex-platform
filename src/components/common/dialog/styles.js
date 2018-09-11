@@ -3,7 +3,7 @@ import grey from '@material-ui/core/colors/grey'
 
 export const styles = theme => {
     const spacing = theme.spacing.unit * 3
-    const fullHeight = Math.max(window.innerHeight, 400)
+    const fullHeight = Math.max(window.innerHeight - spacing, 400)
     return {
         dialog: {
             minHeight: `${fullHeight}px`,
