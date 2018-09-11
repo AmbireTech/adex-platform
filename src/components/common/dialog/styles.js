@@ -3,26 +3,28 @@ import grey from '@material-ui/core/colors/grey'
 
 export const styles = theme => {
     const spacing = theme.spacing.unit * 3
+    const fullHeight = Math.max(window.innerHeight, 400)
     return {
         dialog: {
-            minHeight: '90vh',
+            minHeight: `${fullHeight}px`,
             minWidth: 1024,
             maxWidth: 1080,
             backgroundColor: grey[200], // TODO: color,
-            maxHeight: '100vh',
+            // maxHeight: `${fullHeight}`,
             '@media(max-width:1080px)': {
                 maxWidth: '100%',
                 minWidth: `calc(100vw - ${theme.spacing.unit * 2}px)`,
             },
             '@media(max-height:823px)': {
-                minHeight: `calc(100vh - ${theme.spacing.unit * 2}px)`,
+                minHeight: `calc(${fullHeight} - ${theme.spacing.unit * 2}px)`,
             }
         },
         dialogTitle: {
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            wordWrap: 'break-word'
         },
         content: {
             display: 'flex',

@@ -130,7 +130,7 @@ export default function ItemHoc(Decorated) {
                             <Typography
                                 variant='title'
                                 classes={
-                                    { title: classes.dialogTitle }
+                                    { title: classnames(classes.dialogTitle, classes.breakLong) }
                                 }
                             >
                                 {this.props.t(this.props.title)}
