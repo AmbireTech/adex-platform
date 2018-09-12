@@ -3,15 +3,15 @@ export const styles = theme => {
     return {
         itemActions: {
             display: 'flex',
+            flex: '0 0 187px',
             flexDirection: 'column',
             alignItems: 'flex-end',
-            justifyContent: 'center'
+            justifyContent: 'space-around'
         },
         actionBtn: {
-            marginLeft: spacing,
             marginBottom: spacing,
             '@media(min-width:450px)': {
-                minWidth: '225px'
+                // minWidth: '225px'
             }
         },
         address: {
