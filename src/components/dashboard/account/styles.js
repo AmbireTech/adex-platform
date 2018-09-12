@@ -9,10 +9,7 @@ export const styles = theme => {
             justifyContent: 'space-around'
         },
         actionBtn: {
-            marginBottom: spacing,
-            '@media(min-width:450px)': {
-                // minWidth: '225px'
-            }
+            marginBottom: spacing
         },
         address: {
             wordWrap: 'break-word'
