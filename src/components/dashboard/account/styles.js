@@ -4,10 +4,15 @@ export const styles = theme => {
         itemActions: {
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'flex-end'
+            alignItems: 'flex-end',
+            justifyContent: 'center'
         },
         actionBtn: {
-            marginLeft: spacing
+            marginLeft: spacing,
+            marginBottom: spacing,
+            '@media(min-width:450px)': {
+                minWidth: '225px'
+            }
         },
         address: {
             wordWrap: 'break-word'

@@ -6,7 +6,8 @@ export const styles = theme => {
             display: 'flex',
             flexDirection: 'row',
             flexWrap: 'wrap',
-            justifyContent: 'stretch'
+            justifyContent: 'stretch',
+            height: '100%'
         },
         infoCard: {
             margin: spacing,
@@ -24,9 +25,9 @@ export const styles = theme => {
                 width: `calc(100vw - ${spacing * 8}px)`
             },
             '@media(max-width:400px)': {
-                width: 'auto',
-                maxWidth: '80vw',
-                padding: 0
+                // width: 'auto',
+                // maxWidth: '80vw',
+                // padding: 0
             },
         }
     }
