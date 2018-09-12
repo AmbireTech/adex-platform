@@ -31,7 +31,7 @@ class BidsStatusPie extends React.Component {
 
         let opts = {
             responsive: true,
-            responsiveAnimationDuration: 1000,
+            responsiveAnimationDuration: 500,
             cutoutPercentage: 70,
             legend: {
                 display: false
@@ -68,7 +68,6 @@ class BidsStatusPie extends React.Component {
                 }
             ]
         }
-
         return (
             <div className={classes.chartParent}>
                 <h3 className={classes.chartTitle}>{this.props.chartTitle}</h3>
