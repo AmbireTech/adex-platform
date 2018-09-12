@@ -30,8 +30,8 @@ class BidsStatusPie extends React.Component {
         const classes = this.props.classes
 
         let opts = {
-            responsive: true,
-            responsiveAnimationDuration: 500,
+            // responsive: true,
+            // responsiveAnimationDuration: 500,
             cutoutPercentage: 70,
             legend: {
                 display: false
@@ -51,7 +51,7 @@ class BidsStatusPie extends React.Component {
                     }
                 }
             },
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             ...options,
         }
 
@@ -76,6 +76,8 @@ class BidsStatusPie extends React.Component {
                 </div>
                 <div className={classes.chartContainer}>
                     <Doughnut
+                        width={250}
+                        height={150}
                         ref={this.doughnut}
                         data={chartData}
                         options={opts}
