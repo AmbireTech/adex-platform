@@ -155,6 +155,7 @@ const isLegacyTrezorSignature = ({ sig, hash, userAddr }) => {
     const addr = '0x' + (pubToAddress(pubKey)).toString('hex')
     return addr === userAddr
 }
+
 export const signTypedLedger = ({ userAddr, hdPath, addrIdx, typedData, hash }) => {
     console.log('signTypedLedger')
     return ledger.comm_u2f.create_async()
@@ -165,7 +166,6 @@ export const signTypedLedger = ({ userAddr, hdPath, addrIdx, typedData, hash }) 
             return eth.signPersonalMessage_async(dPath, buf.toString('hex'))
         })
         .then((result) => {
-            console.log(result)
             var v = result['v']
             v = v.toString(16)
             if (v.length < 2) {
@@ -175,12 +175,7 @@ export const signTypedLedger = ({ userAddr, hdPath, addrIdx, typedData, hash }) 
             let signature = { sig: '0x' + result['r'] + result['s'] + v, hash: hash, mode: SIGN_TYPES.EthPersonal.id }
             return signature
         })
-        .catch((err) => {
-            console.log(err);
-        })
-
 }
-
 
 export const signTypedMsg = ({ authType, userAddr, hdPath, addrIdx, typedData }) => {
     let pr
@@ -200,16 +195,6 @@ export const signTypedMsg = ({ authType, userAddr, hdPath, addrIdx, typedData })
         case AUTH_TYPES.LEDGER.name:
             pr = signTypedLedger({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name, hash, hdPath, addrIdx })
             break
-        case AUTH_TYPES.GUEST.name:
-            pr = new Promise((resolve, reject) => {
-                    resolve({
-                        // TODO: remove hardcoded, generate like in https://github.com/AdExNetwork/adex-adview/blob/master/public/main.js
-                        sig: '"0x5f8be294ae5586ff66927df7b557a661a3d73252695737aef8bf8c705b23ef5f255914bf94048db0d876861c51b52ca576acc97bf3365dfd2b7928957661ca4c1c"',
-                        hash: hash, mode:
-                        SIGN_TYPES.Guest.id
-                    })
-                })
-            break
         default:
             pr = Promise.reject(new Error('Invalid authentication type!'))
     }
@@ -226,10 +211,8 @@ export const signAuthToken = ({ authType, userAddr, hdPath, addrIdx }) => {
     let pr = signTypedMsg({ authType, userAddr, hdPath, addrIdx, typedData })
     return pr.then((res = {}) => {
         let sig = { sig_mode: res.mode, sig: res.sig, authToken: authToken, typedData, hash: res.hash }
-        console.log('sig', sig);
         return sig
     })
-    .catch(err => console.error(err))
 }
 
 const sanitizeHex = (hex) => {

@@ -43,5 +43,5 @@ export const AUTH_TYPES = {
     METAMASK: { name: 'metamask', signType: SIGN_TYPES.Eip.id },
     TREZOR: { name: 'trezor', signType: SIGN_TYPES.Trezor.id },
     LEDGER: { name: 'ledger', signType: SIGN_TYPES.EthPersonal.id },
-    GUEST: { name: 'guest', signType: SIGN_TYPES.Guest.id}
+    DEMO: { name: 'demo', signType: SIGN_TYPES.EthPersonal.id }
 }

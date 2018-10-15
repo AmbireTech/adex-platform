@@ -47,7 +47,6 @@ class AuthMetamask extends Component {
     checkForMetamaskAccountChange = () => {
         getAccountMetamask()
             .then(({ addr, mode }) => {
-                console.log('ADDRESS', addr);
                 let stateAddr = this.state.address.addr
                 if (stateAddr && (stateAddr.toLowerCase() !== (addr || '').toLowerCase())) {
                     this.setState({ address: {} })
