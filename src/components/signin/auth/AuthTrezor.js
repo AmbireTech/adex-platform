@@ -116,7 +116,6 @@ class AuthTrezor extends Component {
     }
 
     onAddrSelect = (addr, index) => {
-        console.log('ADDRESS', addr);
         this.setState({ waitingTrezorAction: true }, () => {
             let authType = AUTH_TYPES.TREZOR.name
             this.props.authOnServer({ addr, authType, hdPath: HD_PATH, addrIdx: index })
