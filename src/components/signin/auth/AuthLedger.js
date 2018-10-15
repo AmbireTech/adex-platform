@@ -106,6 +106,7 @@ class AuthLedger extends Component {
     }
 
     onAddrSelect = (addr, index) => {
+        console.log('ADDRESS', addr);
         this.setState({ waitingLedgerAction: true }, () => {
             let mode = AUTH_TYPES.LEDGER.signType // TEMP?
             let authType = AUTH_TYPES.LEDGER.name
