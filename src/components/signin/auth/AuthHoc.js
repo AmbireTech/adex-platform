@@ -44,13 +44,12 @@ export default function AuthHoc(Decorated) {
                         throw new Error(this.props.t('ERR_AUTH_ON_SERVER'))
                     }
                 })
+                .catch(err => console.error(err))
         }
 
         authOnServer = ({ addr, hdPath, addrIdx, authType, chainId }) => {
             let signature = getSig({ addr: addr, mode: authType }) || null
-
             addr = addr.toLowerCase()
-
             let p = null
 
             if (signature) {
@@ -93,7 +92,6 @@ export default function AuthHoc(Decorated) {
         actions: PropTypes.object.isRequired,
     }
 
-    // 
     function mapStateToProps(state) {
         let persist = state.persist
         // let memory = state.memory
