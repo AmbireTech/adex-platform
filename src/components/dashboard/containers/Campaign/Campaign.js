@@ -48,7 +48,7 @@ export class Campaign extends Component {
 
     render() {
         // let side = this.props.match.params.side
-        const { t, classes, item, setActiveFields, handleChange, activeFields } = this.props
+        const { t, classes, item, setActiveFields, handleChange, activeFields, isDemo } = this.props
         const propsUnits = { ...this.props.units }
 
         if (!item) return (<h1>'404'</h1>)
@@ -71,11 +71,11 @@ export class Campaign extends Component {
                 <div>
                     <DatePicker
                         calendarIcon
-                        icon={!editFrom ? <EditIcon /> : undefined}
-                        iconColor={!editFrom ? 'secondary' : undefined}
+                        icon={!editFrom || isDemo ? <EditIcon /> : undefined}
+                        iconColor={!editFrom && !isDemo ? 'secondary' : undefined}
                         label={t('from', { isProp: true })}
                         onIconClick={(ev) => {
-                            if (!editFrom) {
+                            if (!editFrom && !isDemo) {
                                 setActiveFields('from', true)
                             }
                         }}
@@ -87,17 +87,17 @@ export class Campaign extends Component {
                         onChange={(val) => handleChange('from', val)}
                         value={from}
                         className={classes.datepicker}
-                        disabled={!editFrom}
+                        disabled={!editFrom || isDemo}
                     // inputFormat={this.inputFormat}
                     // size={moment(from).format('DD MMMM').length} /** temp fix */
                     // readonly
                     />
                     <DatePicker
                         calendarIcon
-                        icon={!editTo ? <EditIcon /> : undefined}
-                        iconColor={!editTo ? 'secondary' : undefined}
+                        icon={!editTo || isDemo ? <EditIcon /> : undefined}
+                        iconColor={!editTo && !isDemo ? 'secondary' : undefined}
                         onIconClick={(ev) => {
-                            if (!editTo) {
+                            if (!editTo && !isDemo) {
                                 setActiveFields('to', true)
                             }
                         }}
@@ -109,7 +109,7 @@ export class Campaign extends Component {
                         onChange={(val) => handleChange('to', val)}
                         value={to}
                         className={classes.datepicker}
-                        disabled={!editTo}
+                        disabled={!editTo || isDemo}
                     // inputFormat={this.inputFormat}
                     // size={moment(to).format('DD MMMM').length} /** temp fix */
                     // readonly
