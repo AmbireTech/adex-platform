@@ -47,6 +47,12 @@ export const styles = theme => {
         label: {
             marginBottom: spacing,
             color: theme.palette.text.hint
+        },
+        editIcon: {
+            float: 'right'
+        },
+        padContent: {
+            marginTop: '50px'
         }
     }
 }

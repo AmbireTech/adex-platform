@@ -14,6 +14,7 @@ import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Anchor from 'components/common/anchor/anchor'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import classnames from 'classnames'
 
 const { AdSizesByValue, AdTypesByValue } = ItemsConstants
 
@@ -38,12 +39,18 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, ...rest }) => {
                         allowFullscreen={true}
                         className={classes.img}
                         src={Item.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY) || ''}
-                        alt={item.fallbackAdUrl} onClick={rest.toggleFallbackImgEdit}
+                        alt={item.fallbackAdUrl}
                         style={{ cursor: 'pointer' }}
                     />
                 </CardMedia>
+                <IconButton
+                    onClick={rest.toggleFallbackImgEdit}
+                    className={classnames(classes.editIcon)}
+                >
+                    <EditIcon/>
+                </IconButton>
+                <hr className={classes.padContent}/>
                 <CardContent>
-
                     {rest.activeFields.fallbackAdUrl ?
                         <TextField
                             // required
@@ -120,18 +127,22 @@ const basicProps = ({ item, t, rightComponent, url, classes, ...rest }) => {
                                         allowFullscreen={true}
                                         src={Item.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY) || ''}
                                         alt={item.fullName}
-                                        onClick={rest.toggleImgEdit}
                                         style={{ cursor: rest.canEditImg ? 'pointer' : '' }}
                                         className={classes.img}
                                     />
                                 </CardMedia>
+                                <IconButton
+                                    onClick={rest.toggleImgEdit}
+                                    className={classes.editIcon}
+                                >
+                                    <EditIcon/>
+                                </IconButton>
                                 <CardContent>
                                     <Anchor href={url} target='_blank'>
                                         {url}
                                     </Anchor>
                                 </CardContent>
                             </Card>
-
                             <div>
                                 <div>
                                     <TextField
