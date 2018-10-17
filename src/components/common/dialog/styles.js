@@ -1,5 +1,6 @@
 
 import grey from '@material-ui/core/colors/grey'
+import { relative } from 'path';
 
 export const styles = theme => {
     const spacing = theme.spacing.unit * 3
@@ -97,6 +98,12 @@ export const styles = theme => {
             wordBreak: 'break-word',
             overflowWrap: 'break-word',
             hyphens: 'auto'
+        },
+        demoImg: {
+            width: '100px',
+            height: 'auto',
+        },
+        demoBody: {
         }
     }
 }

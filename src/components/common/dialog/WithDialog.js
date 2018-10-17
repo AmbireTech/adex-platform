@@ -16,6 +16,8 @@ import DialogActions from '@material-ui/core/DialogActions'
 import Typography from '@material-ui/core/Typography'
 import { ContentBox, ContentBody, ContentStickyTop } from 'components/common/dialog/content'
 import { logOut, isDemoMode } from 'services/store-data/auth'
+import DEMO_IMAGE from 'resources/rekt-eddie.png'
+import Img from 'components/common/img/Img'
 
 const textBtn = ({ label, className, classes, style, onClick, ...rest }) => {
     return <span className={classnames(classes.textBtn, className)} style={style} onClick={onClick}> {label} </span>
@@ -68,7 +70,7 @@ export default function ItemHoc(Decorated) {
         }
 
         renderDemoModeAction = () => {
-            const t = this.props.t
+            const { t, classes } = this.props
             return (
                 <ContentBox>
                     <ContentStickyTop>
@@ -76,14 +78,26 @@ export default function ItemHoc(Decorated) {
                             {t('DEMO_MODE_ACTION_DESCRIPTION')}
                         </Typography>
                     </ContentStickyTop>
-                    <ContentBody>
-                        <Button
-                            onClick={logOut}
-                            variant='raised'
-                            color='primary'
-                        >
-                            {t('DEMO_GO_AUTH_BTN')}
-                        </Button>
+                    <ContentBody
+                        className={classes.demoBody}
+                    >
+                        <div>
+                            <Button
+                                onClick={logOut}
+                                variant='raised'
+                                color='primary'
+                            >
+                                {t('DEMO_GO_AUTH_BTN')}
+                            </Button>
+                        </div>
+                        <div>
+                            <Img
+                                allowFullscreen={false}
+                                src={DEMO_IMAGE}
+                                alt={'Demo image'}
+                                className={classes.demoImg}
+                            />
+                        </div>
                     </ContentBody>
                 </ContentBox>
             )

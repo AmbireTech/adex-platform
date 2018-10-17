@@ -33,6 +33,7 @@ export class Unit extends Component {
     }
 
     getUnitBids = () => {
+        console.log('prs', this.props)
         getUnitBids({ authSig: this.props.account._authSig, adUnit: this.props.item._id })
             .then((bids) => {
                 // console.log('unit bids', bids)

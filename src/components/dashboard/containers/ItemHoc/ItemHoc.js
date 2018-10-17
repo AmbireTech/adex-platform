@@ -157,10 +157,12 @@ export default function ItemHoc(Decorated) {
                 * in this case there is no need to make instance inside them
             */
 
+            const { validations, classes, t, account, ...rest } = this.props
+            const isDemo = account._authType === 'demo'
             let item = new this.state.itemModel(this.state.item) || {}
-            let canEdit = ItemTypeByTypeId[item.type] === 'collection'
+            let canEdit = ItemTypeByTypeId[item.type] === 'collection' && !isDemo
             let imgSrc = item.meta.img.tempUrl || ItemModel.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY) || ''
-            let { validations, classes, t, ...rest } = this.props
+
 
             const fullNameErr = validName(item.fullName)
 
@@ -282,6 +284,7 @@ export default function ItemHoc(Decorated) {
                                                         // size='small'
                                                         color='secondary'
                                                         className={classes.buttonRight}
+                                                        disabled={isDemo}
                                                         onClick={(ev) => this.setActiveFields('description', true)}
                                                     >
                                                         <EditIcon />
@@ -307,8 +310,8 @@ export default function ItemHoc(Decorated) {
                                                 allowFullscreen={true}
                                                 src={imgSrc}
                                                 alt={item.fullName}
-                                                onClick={this.handleToggle}
-                                                className={classnames(classes.img, { [classes.pointer]: this.props.canEditImg })}
+                                                onClick={!isDemo ? this.handleToggle : null}
+                                                className={classnames(classes.img, { [classes.pointer]: this.props.canEditImg && !isDemo })}
                                             />
                                         </Paper>
                                     </div>
@@ -330,6 +333,7 @@ export default function ItemHoc(Decorated) {
                     <div>
                         <Decorated
                             {...rest}
+                            account={account}
                             t={t}
                             inEdit={!!this.state.dirtyProps.length}
                             item={item}
@@ -339,6 +343,7 @@ export default function ItemHoc(Decorated) {
                             activeFields={this.state.activeFields}
                             setActiveFields={this.setActiveFields.bind(this)}
                             canEdit={canEdit}
+                            isDemo={isDemo}
                         />
                     </div>
                 </div >
