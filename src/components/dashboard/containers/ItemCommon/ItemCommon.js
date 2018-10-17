@@ -107,7 +107,7 @@ const ValidatedFallbackAdData = ValidItemHoc(FallbackAdData)
 
 const basicProps = ({ item, t, rightComponent, url, classes, ...rest }) => {
     const adSize = (AdSizesByValue[item._meta.size] || {})
-
+    console.log(this.props, rest);
     return (
         <div >
             <Grid container spacing={16}>
@@ -131,12 +131,18 @@ const basicProps = ({ item, t, rightComponent, url, classes, ...rest }) => {
                                         className={classes.img}
                                     />
                                 </CardMedia>
+
+                                {/* Very nasty code but couldn't find another way to detect side here 
+                                TODO: Find a way */}
+                                {!!Object.keys(rest).length ? 
                                 <IconButton
                                     onClick={rest.toggleImgEdit}
                                     className={classes.editIcon}
                                 >
                                     <EditIcon/>
                                 </IconButton>
+                                :
+                                null}
                                 <CardContent>
                                     <Anchor href={url} target='_blank'>
                                         {url}
