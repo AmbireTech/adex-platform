@@ -48,7 +48,6 @@ class AuthMetamask extends Component {
         getAccountMetamask()
             .then(({ addr, mode }) => {
                 let stateAddr = this.state.address.addr
-
                 if (stateAddr && (stateAddr.toLowerCase() !== (addr || '').toLowerCase())) {
                     this.setState({ address: {} })
                 }

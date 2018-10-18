@@ -155,8 +155,8 @@ const isLegacyTrezorSignature = ({ sig, hash, userAddr }) => {
     const addr = '0x' + (pubToAddress(pubKey)).toString('hex')
     return addr === userAddr
 }
+
 export const signTypedLedger = ({ userAddr, hdPath, addrIdx, typedData, hash }) => {
-    console.log('signTypedLedger')
     return ledger.comm_u2f.create_async()
         .then((comm) => {
             var eth = new ledger.eth(comm)
@@ -174,9 +174,7 @@ export const signTypedLedger = ({ userAddr, hdPath, addrIdx, typedData, hash }) 
             let signature = { sig: '0x' + result['r'] + result['s'] + v, hash: hash, mode: SIGN_TYPES.EthPersonal.id }
             return signature
         })
-
 }
-
 
 export const signTypedMsg = ({ authType, userAddr, hdPath, addrIdx, typedData }) => {
     let pr
@@ -210,10 +208,8 @@ export const signAuthToken = ({ authType, userAddr, hdPath, addrIdx }) => {
     ]
 
     let pr = signTypedMsg({ authType, userAddr, hdPath, addrIdx, typedData })
-
     return pr.then((res = {}) => {
         let sig = { sig_mode: res.mode, sig: res.sig, authToken: authToken, typedData, hash: res.hash }
-
         return sig
     })
 }

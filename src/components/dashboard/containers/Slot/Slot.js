@@ -99,7 +99,7 @@ export class Slot extends Component {
 
     render() {
         let item = this.props.item || {}
-        let { t, classes } = this.props
+        let { t, classes, isDemo } = this.props
 
         if (!item._id) return (<h1>Slot '404'</h1>)
 
@@ -113,7 +113,7 @@ export class Slot extends Component {
                     t={t}
                     toggleImgEdit={this.props.toggleImgEdit}
                     toggleFallbackImgEdit={this.handleFallbackImgUpdateToggle}
-                    canEditImg
+                    canEditImg={!isDemo}
                     rightComponent={<IntegrationCode
                         classes={classes}
                         ipfs={item.ipfs}
@@ -170,7 +170,6 @@ function mapStateToProps(state) {
         updateImgLabel: 'SLOT_AVATAR_IMG_LABEL',
         updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
         updateImgExact: false,
-        canEditImg: true, // TEMP: we can edit slot avatar,
         updateImgWidth: AVATAR_MAX_WIDTH,
         updateImgHeight: AVATAR_MAX_HEIGHT
     }
