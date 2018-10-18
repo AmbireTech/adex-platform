@@ -49,7 +49,8 @@ export const styles = theme => {
             color: theme.palette.text.hint
         },
         editIcon: {
-            float: 'right'
+            float: 'right',
+            marginTop: '-50px'
         },
         padContent: {
             marginTop: '50px'
