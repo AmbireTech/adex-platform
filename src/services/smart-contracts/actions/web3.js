@@ -157,7 +157,6 @@ const isLegacyTrezorSignature = ({ sig, hash, userAddr }) => {
 }
 
 export const signTypedLedger = ({ userAddr, hdPath, addrIdx, typedData, hash }) => {
-    console.log('signTypedLedger')
     return ledger.comm_u2f.create_async()
         .then((comm) => {
             var eth = new ledger.eth(comm)
