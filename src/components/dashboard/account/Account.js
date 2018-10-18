@@ -60,7 +60,7 @@ class Account extends React.Component {
                         <ListItemText
                             className={classes.address}
                             primary={account._addr}
-                            secondary={t('ACCOUNT_ETH_ADDR')}
+                            secondary={(account._authType === 'demo') ? t('DEMO_ACCOUNT_ETH_ADDRESS') : t('ACCOUNT_ETH_ADDR')}
                         />
                         <IconButton
                             color='default'

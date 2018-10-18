@@ -54,7 +54,7 @@ export const styles = theme => {
         },
         tabLabel: {
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center'
         },
