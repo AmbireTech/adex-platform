@@ -34,10 +34,10 @@ class TopNav extends Component {
   }
 
   render() {
-    const t = this.props.t
-    let imgSrc = getAuthLogo(this.props.account._authType)
+    const { t, account, classes } = this.props
+    let imgSrc = getAuthLogo(account._authType)
 
-    const classes = this.props.classes
+    const btnMenueLabel = account._authType === 'demo' ? t('DEMO_MODE') : (account._addr || t('NOT_LOGGED'))
 
     return (
       <AppBar
@@ -73,7 +73,7 @@ class TopNav extends Component {
               <ButtonMenu
                 leftIconSrc={imgSrc}
                 icon={<ExpandMoreIcon />}
-                label={this.props.account._addr || t('NOT_LOGGED')}
+                label={btnMenueLabel}
                 active={true}
                 iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
               >

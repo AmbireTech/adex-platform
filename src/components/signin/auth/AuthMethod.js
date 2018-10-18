@@ -9,9 +9,11 @@ import AppBar from '@material-ui/core/AppBar'
 import AuthMetamask from 'components/signin/auth/AuthMetamask'
 import AuthTrezor from 'components/signin/auth/AuthTrezor'
 import AuthLedger from 'components/signin/auth/AuthLedger'
+import AuthDemo from 'components/signin/auth/AuthDemo'
 import METAMASK_DL_IMG from 'resources/download-metamask.png'
 import LEDGER_DL_IMG from 'resources/ledger_logo_header.png'
 import TREZOR_DL_IMG from 'resources/trezor-logo-h.png'
+import DEMO_IMG from 'resources/demo-logo.png'
 import Img from 'components/common/img/Img'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
@@ -79,6 +81,10 @@ class AuthMethod extends Component {
                 classes={{ label: classes.tabLabel }}
                 label={<Img src={LEDGER_DL_IMG} alt={'Authenticate with LEDGER'} className={classes.tabLogo} />}
               />
+              <Tab
+                label={<div className={classes.tabLabel}> <Img src={DEMO_IMG} alt={'Demo mode'} className={classes.tabLogo} /> <span>{t('DEMO_MODE')}</span></div>}
+                classes={{ label: classes.tabLabel }}
+              />
             </Tabs>
           </AppBar>
           <div className={classes.tabsContainer}>
@@ -90,6 +96,9 @@ class AuthMethod extends Component {
             }
             {(tabIndex === 2) &&
               <AuthLedger />
+            }
+            {(tabIndex === 3) &&
+              <AuthDemo />
             }
 
           </div>

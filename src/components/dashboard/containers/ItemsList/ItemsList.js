@@ -152,11 +152,11 @@ class ItemsList extends Component {
     }
 
     renderActions = (item) => {
-        const parentItem = this.props.parentItem
+        const { parentItem, t, account } = this.props
         const parentName = parentItem ? parentItem._meta.fullName : ''
         const itemName = item._meta.fullName
-        const t = this.props.t
         const itemTypeName = t(ItemTypesNames[item._type], { isProp: true })
+        const isDemo = account._authType === 'demo'
 
         return (
             <span>
@@ -167,6 +167,7 @@ class ItemsList extends Component {
                         enterDelay={1000}
                     >
                         <IconButton
+                            disabled={isDemo}
                             // label={t('ARCHIVE')}
                             // className={RTButtonTheme.danger}
                             onClick={this.props.actions.confirmAction.bind(this,
@@ -187,9 +188,10 @@ class ItemsList extends Component {
                     <Tooltip
                         title={t('TOOLTIP_UNARCHIVE')}
                         enterDelay={1000}
-                        // placement='top'
+                    // placement='top'
                     >
                         <IconButton
+                            disabled={isDemo}
                             // label={t('UNARCHIVE')}
                             color='secondary'
                             onClick={this.props.actions.confirmAction.bind(this,
@@ -213,6 +215,7 @@ class ItemsList extends Component {
                         enterDelay={1000}
                     >
                         <IconButton
+                            disabled={isDemo}
                             icon='remove_circle_outline'
                             label={t('REMOVE_FROM', { args: [parentName] })}
                             // className={RTButtonTheme.danger}
@@ -238,6 +241,7 @@ class ItemsList extends Component {
                         enterDelay={1000}
                     >
                         <IconButton
+                            disabled={isDemo}
                             label={t('ADD_TO', { args: [parentName] })}
                             color='secondary'
                             onClick={this.props.actions.addItemToItem.bind(this, { item: item, toAdd: this.props.parentItem, authSig: this.props.account._authSig })}
