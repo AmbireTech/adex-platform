@@ -38,7 +38,6 @@ class AuthDemo extends Component {
 
     render() {
         const { t, classes } = this.props
-        console.log(this.props)
         return (
             <ContentBox className={classes.tabBox} >
                 <ContentBody>
