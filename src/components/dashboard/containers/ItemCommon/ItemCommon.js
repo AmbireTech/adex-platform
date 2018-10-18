@@ -40,7 +40,6 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, ...
                         className={classes.img}
                         src={Item.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY) || ''}
                         alt={item.fallbackAdUrl}
-                        onClick={canEditImg ? rest.toggleFallbackImgEdit : null}
                         style={{ cursor: 'pointer' }}
                     />
                 </CardMedia>
@@ -50,7 +49,6 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, ...
                 >
                     <EditIcon/>
                 </IconButton>
-                <hr className={classes.padContent}/>
                 <CardContent>
                     {rest.activeFields.fallbackAdUrl ?
                         <TextField
@@ -109,7 +107,7 @@ const ValidatedFallbackAdData = ValidItemHoc(FallbackAdData)
 
 const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, ...rest }) => {
     const adSize = (AdSizesByValue[item._meta.size] || {})
-    console.log(this.props, rest);
+
     return (
         <div >
             <Grid container spacing={16}>
@@ -134,23 +132,25 @@ const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, ...rest
                                         className={classes.img}
                                     />
                                 </CardMedia>
-
-                                {/* Very nasty code but couldn't find another way to detect side here 
-                                TODO: Find a way */}
-                                {!!Object.keys(rest).length ? 
-                                <IconButton
-                                    onClick={rest.toggleImgEdit}
-                                    className={classes.editIcon}
-                                >
-                                    <EditIcon/>
-                                </IconButton>
+                                {canEditImg ?
+                                    <IconButton
+                                        onClick={rest.toggleImgEdit}
+                                        className={classes.editIcon}
+                                    >
+                                        <EditIcon/>
+                                    </IconButton>
                                 :
-                                null}
-                                <CardContent>
-                                    <Anchor href={url} target='_blank'>
-                                        {url}
-                                    </Anchor>
-                                </CardContent>
+                                    null
+                                }
+                                {url ?
+                                    <CardContent>
+                                        <Anchor href={url} target='_blank'>
+                                            {url}
+                                        </Anchor>
+                                    </CardContent>
+                                :
+                                    null
+                                }
                             </Card>
                             <div>
                                 <div>
