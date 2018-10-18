@@ -43,7 +43,7 @@ class AuthDemo extends Component {
             <ContentBox className={classes.tabBox} >
                 <ContentBody>
                     <Typography paragraph variant='subheading'>
-                        {t('DEMO_MODE')}
+                        {t('DEMO_MODE_DESCRIPTION')}
                     </Typography>
                     <Button
                         onClick={this.authOnServer}

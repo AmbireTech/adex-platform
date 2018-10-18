@@ -100,10 +100,16 @@ export const styles = theme => {
             hyphens: 'auto'
         },
         demoImg: {
+            top: 'auto',
+            left: 'auto',
+            right: 0,
+            bottom: 0,
             width: '100px',
             height: 'auto',
+            position: 'absolute'
         },
         demoBody: {
+            position: 'relative'
         }
     }
 }
