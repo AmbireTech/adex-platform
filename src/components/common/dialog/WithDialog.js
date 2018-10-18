@@ -78,9 +78,7 @@ export default function ItemHoc(Decorated) {
                             {t('DEMO_MODE_ACTION_DESCRIPTION')}
                         </Typography>
                     </ContentStickyTop>
-                    <ContentBody
-                        className={classes.demoBody}
-                    >
+                    <ContentBody>
                         <div>
                             <Button
                                 onClick={logOut}
@@ -92,10 +90,10 @@ export default function ItemHoc(Decorated) {
                         </div>
                         <div>
                             <Img
+                                className={classes.demoImg}
                                 allowFullscreen={false}
                                 src={DEMO_IMAGE}
                                 alt={'Demo image'}
-                                className={classes.demoImg}
                             />
                         </div>
                     </ContentBody>
