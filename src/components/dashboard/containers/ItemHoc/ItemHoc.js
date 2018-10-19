@@ -137,7 +137,7 @@ export default function ItemHoc(Decorated) {
         }
 
         handleToggle = () => {
-            if (!this.props.canEditImg) return
+            // if (!this.props.canEditImg) return
 
             let active = this.state.editImg
             this.setState({ editImg: !active })
@@ -310,10 +310,15 @@ export default function ItemHoc(Decorated) {
                                                 allowFullscreen={true}
                                                 src={imgSrc}
                                                 alt={item.fullName}
-                                                onClick={!isDemo ? this.handleToggle : null}
                                                 className={classnames(classes.img, { [classes.pointer]: this.props.canEditImg && !isDemo })}
                                             />
                                         </Paper>
+                                        <IconButton
+                                            className={classes.editIcon}
+                                            onClick={!isDemo ? this.handleToggle : null}
+                                        >
+                                            <EditIcon/>
+                                        </IconButton>
                                     </div>
                                 }
                             </Grid >
