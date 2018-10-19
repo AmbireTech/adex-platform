@@ -51,9 +51,6 @@ export const styles = theme => {
         editIcon: {
             float: 'right',
             marginTop: '-50px'
-        },
-        padContent: {
-            marginTop: '50px'
         }
     }
 }

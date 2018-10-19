@@ -50,6 +50,10 @@ export const styles = theme => {
         changeChip: {
             margin: spacing,
             marginLeft: 0
+        },
+        editIcon: {
+            float: 'right',
+            marginTop: '-50px'
         }
     }
 }

@@ -107,7 +107,6 @@ const ValidatedFallbackAdData = ValidItemHoc(FallbackAdData)
 
 const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, ...rest }) => {
     const adSize = (AdSizesByValue[item._meta.size] || {})
-
     return (
         <div >
             <Grid container spacing={16}>
@@ -127,8 +126,6 @@ const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, ...rest
                                         allowFullscreen={true}
                                         src={Item.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY) || ''}
                                         alt={item.fullName}
-                                        onClick={canEditImg ? rest.toggleImgEdit : null}
-                                        style={{ cursor: rest.canEditImg ? 'pointer' : '' }}
                                         className={classes.img}
                                     />
                                 </CardMedia>

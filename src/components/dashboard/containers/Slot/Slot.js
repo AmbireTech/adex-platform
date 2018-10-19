@@ -113,7 +113,7 @@ export class Slot extends Component {
                     t={t}
                     toggleImgEdit={this.props.toggleImgEdit}
                     toggleFallbackImgEdit={this.handleFallbackImgUpdateToggle}
-                    canEditImg={!isDemo}
+                    canEditImg={true}
                     rightComponent={<IntegrationCode
                         classes={classes}
                         ipfs={item.ipfs}
