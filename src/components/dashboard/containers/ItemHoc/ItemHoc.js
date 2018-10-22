@@ -137,7 +137,9 @@ export default function ItemHoc(Decorated) {
         }
 
         handleToggle = () => {
-            // if (!this.props.canEditImg) return
+            const isDemo = this.props.account._authType === 'demo'
+
+            if (isDemo) return
 
             let active = this.state.editImg
             this.setState({ editImg: !active })
