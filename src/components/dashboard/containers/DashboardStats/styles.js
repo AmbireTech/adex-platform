@@ -21,10 +21,7 @@ export const styles = theme => {
         dashboardCardBody: {
             margin: spacing,
             padding: spacing,
-            '@media(max-width:960px)': {
-                minWidth: `calc(100vw - ${spacing * 8}px)`,
-                maxWidth: `calc(100vw - ${spacing * 8}px)`
-            }
+            width: `calc(100% - ${spacing * 2}px)`
         }
     }
 }
