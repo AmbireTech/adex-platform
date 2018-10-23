@@ -266,7 +266,7 @@ export class DashboardStats extends Component {
         return (
             <div>
                 <Grid container>
-                    <Grid item md={12} lg={6}>
+                    <Grid item md={12} lg={6} sm={12}>
                         <Card
                             raised
                             className={classnames(classes.dashboardCardBody)}
