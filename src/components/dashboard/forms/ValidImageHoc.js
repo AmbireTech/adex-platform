@@ -50,7 +50,7 @@ export default function ValidImageHoc(Decorated) {
                     that.handleChange(propsName, img)
                 }else if (typeof onChange === 'function') {
                     onChange(propsName, img)
-                }                
+                }
             }
         }
 

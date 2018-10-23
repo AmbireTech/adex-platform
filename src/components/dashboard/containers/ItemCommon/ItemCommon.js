@@ -93,10 +93,8 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, ...
                                 <div>
                                     <span className={classes.error}> {errFallbackAdUrl.errMsg} </span>
                                 </div> : null}
-
                         </div>
                     }
-
                 </CardContent>
             </Card>
         </div >
