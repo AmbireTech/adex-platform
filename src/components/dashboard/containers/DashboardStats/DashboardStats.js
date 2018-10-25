@@ -166,7 +166,6 @@ export class DashboardStats extends Component {
                             this.goToBids(stats.tabs[ev._index])
                         }
                     }}
-
                 />
             </div>
         )
