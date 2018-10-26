@@ -230,7 +230,7 @@ class ListWithControls extends Component {
                                 label={t('LIST_CONTROL_LABEL_SORT')}
                                 onChange={this.handleChangeRxState.bind(this, 'sortProperty')}
                                 source={this.state.sortProperties}
-                                value={this.props.sortProperty}
+                                value={this.props.sortProperty || (this.state.sortProperties)[0].value}
                                 htmlId='sort-by-prop'
                                 name='sortProperty'
                             />
@@ -288,7 +288,7 @@ class ListWithControls extends Component {
                         {this.props.archive &&
                             <RadioGroup
                                 name='archived'
-                                value={!!this.props.filterArchived ? this.props.filterArchived.toString() : 'false'}
+                                value={typeof this.props.filterArchived === 'string' ? this.props.filterArchived.toString() : 'false'}
                                 onChange={(ev) => this.handleChangeRxState('filterArchived', ev.target.value)}
                                 className={classnames(classes.flexRow, classes.flexItem)}
                             >
@@ -304,7 +304,7 @@ class ListWithControls extends Component {
                                 t={t}
                                 page={data.page}
                                 pages={data.pages}
-                                pageSize={this.props.pageSize}
+                                pageSize={this.props.pageSize || 10}
                                 itemsLength={data.itemsLength}
                                 goToPage={this.goToPage.bind(this)}
                                 goToLastPage={this.goToPage.bind(this, data.pages - 1)}
