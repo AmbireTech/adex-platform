@@ -370,10 +370,10 @@ function mapStateToProps(state, props) {
     const category = window.location.pathname.split('/').slice(-1)[0]
     return {
         rowsView: !!persist.ui[props.viewModeId],
-        pageSize: persist.ui[category]['pageSize'],
-        sortProperty: persist.ui[category]['sortProperty'],
-        sortOrder: persist.ui[category]['sortOrder'],
-        filterArchived: persist.ui[category]['filterArchived'],
+        pageSize: persist.ui[category] ? persist.ui[category]['pageSize'] : 10,
+        sortProperty: persist.ui[category] ? persist.ui[category]['sortProperty'] : null,
+        sortOrder: persist.ui[category] ? persist.ui[category]['sortOrder'] : -1,
+        filterArchived: persist.ui[category] ? persist.ui[category]['filterArchived'] : false,
         side: memory.nav.side,
         account: persist.account,
         sortProperties: props.sortProperties || [],
