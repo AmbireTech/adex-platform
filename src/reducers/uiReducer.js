@@ -7,7 +7,7 @@ export default function uiReducer(state = initialState.ui, action) {
         case UPDATE_UI:
             newState = { ...state }
             if (action.category) {
-                newState[action.category] = {}
+                newState[action.category] = { ...newState[action.category]}
                 newState[action.category][action.item] = action.value
             } else {
                 newState[action.item] = action.value
