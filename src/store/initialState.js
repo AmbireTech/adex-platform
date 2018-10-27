@@ -31,14 +31,7 @@ let initialState = {
         [ItemsTypes.AdSlot.id]: {}
     },
     spinners: {},
-    ui: {
-        channels: {},
-        slots: {},
-        bids: {},
-        transactions: {},
-        campaigns: {},
-        units: {}
-    },
+    ui: {},
     toasts: [],
     confirm: {
         data: {}
