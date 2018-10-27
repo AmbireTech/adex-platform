@@ -19,6 +19,7 @@ const Anchor = ({ href, target, children, label, ...rest }) => {
             {...rest}
             target={target}
             href={url}
+            style={{ wordBreak: 'break-all' }} // TODO: add it where needed only
         >
             {children || label}
         </a>
