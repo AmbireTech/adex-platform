@@ -53,9 +53,8 @@ class ListWithControls extends Component {
     constructor(props, context) {
         super(props, context);
 
-        // TODO: A little hacky, maybe find a better way
-        // Gets the last path in URL. ex: https://localhost:3000/dashboard/publisher/slots -> slots
-        const category = window.location.pathname.split('/').slice(-1)[0]
+        const uiStateId = props.uiStateId
+
 
         const sortProperties = mapSortProperties({ sortProps: props.sortProperties || [{}], t: props.t })
         // TODO: update on ComponentWillReceiveProps
@@ -69,7 +68,7 @@ class ListWithControls extends Component {
             filterBy: '', //
             filterByValues: [],
             filterByValueFilter: '', //
-            category: category
+            uiStateId: uiStateId
         }
     }
 
@@ -94,15 +93,15 @@ class ListWithControls extends Component {
     }
 
     // For changing redux state
-    handleChangeRxState =  (name, value) => {
-        this.props.actions.updateUi(name, value, this.state.category)
+    handleChangeRxState = (name, value) => {
+        this.props.actions.updateUi(name, value, this.state.uiStateId)
     }
 
     changePageSize = (name, { itemsLength, page, pages } = {}, ev, newPageSize) => {
         let currentPageSize = this.props.pageSize
         let currentFirstIndex = page * currentPageSize // To have at least the first item on current page on the next page
         let nextPage = Math.floor(currentFirstIndex / newPageSize)
-        this.props.actions.updateUi('pageSize', newPageSize, this.state.category)
+        this.props.actions.updateUi('pageSize', newPageSize, this.state.uiStateId)
     }
 
     search = ({ item, search, searchMatch }) => {
@@ -131,7 +130,7 @@ class ListWithControls extends Component {
                 let isItem = (!!i && ((!!i._meta) || i.id || i._id))
                 if (!isItem) return isItem
 
-                if ((filterArchived !== '') && (filterArchived.toString() !== i._archived.toString())) {
+                if ((filterArchived !== '') && (i._archived !== undefined) && (filterArchived.toString() !== i._archived.toString())) {
                     return false
                 }
 
@@ -180,6 +179,7 @@ class ListWithControls extends Component {
     }
 
     render() {
+        console.log('props', this.props)
         let data = this.filterItems({
             items: this.props.items,
             search: this.state.search,
@@ -256,7 +256,7 @@ class ListWithControls extends Component {
 
                         {this.props.filterProperties &&
                             <div
-                                className={classnames(classes.flexRow, )}
+                                className={classnames(classes.flexRow)}
                             >
                                 <Dropdown
                                     className={classnames(classes.flexItem)}
@@ -358,7 +358,8 @@ ListWithControls.propTypes = {
     listMode: PropTypes.string,
     objModel: PropTypes.func,
     sortProperties: PropTypes.array.isRequired,
-    filterProperties: PropTypes.object
+    filterProperties: PropTypes.object,
+    uiStateId: PropTypes.string.isRequired
 }
 
 function mapStateToProps(state, props) {
@@ -367,24 +368,25 @@ function mapStateToProps(state, props) {
 
     // TODO: A little hacky, maybe find a better way
     // Gets the last path in URL. ex: https://localhost:3000/dashboard/publisher/slots -> slots
-    const category = window.location.pathname.split('/').slice(-1)[0]
+    const uiStateId = props.uiStateId || 'default'
     return {
         rowsView: !!persist.ui[props.viewModeId],
-        pageSize: persist.ui[category] ? persist.ui[category]['pageSize'] : 10,
-        sortProperty: persist.ui[category] ? persist.ui[category]['sortProperty'] : null,
-        sortOrder: persist.ui[category] ? persist.ui[category]['sortOrder'] : -1,
-        filterArchived: persist.ui[category] ? persist.ui[category]['filterArchived'] : false,
+        pageSize: persist.ui[uiStateId] ? persist.ui[uiStateId]['pageSize'] || 10 : 10,
+        sortProperty: persist.ui[uiStateId] ? persist.ui[uiStateId]['sortProperty'] : null,
+        sortOrder: persist.ui[uiStateId] ? persist.ui[uiStateId]['sortOrder'] || - 1 : -1,
+        filterArchived: persist.ui[uiStateId] ? persist.ui[uiStateId]['filterArchived'] || false : false,
         side: memory.nav.side,
         account: persist.account,
         sortProperties: props.sortProperties || [],
         filterProperties: props.filterProperties,
-    };
+        uiStateId: uiStateId
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
 export default connect(

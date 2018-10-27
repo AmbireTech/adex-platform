@@ -116,6 +116,7 @@ class Dashboard extends React.Component {
                 objModel={AdUnitModel}
                 sortProperties={SORT_PROPERTIES_ITEMS}
                 filterProperties={FILTER_PROPERTIES_ITEMS}
+                uiStateId='units'
             />
         )
     }
@@ -129,6 +130,7 @@ class Dashboard extends React.Component {
                 newItemBtn={() => <NewCampaignDialog variant='fab' accent color='secondary' />}
                 objModel={CampaignModel}
                 sortProperties={SORT_PROPERTIES_COLLECTION}
+                uiStateId='campaigns'
             // filterProperties={FILTER_PROPERTIES_ITEMS}
             />
         )
@@ -144,6 +146,7 @@ class Dashboard extends React.Component {
                 objModel={AdSlotModel}
                 sortProperties={SORT_PROPERTIES_ITEMS}
                 filterProperties={FILTER_PROPERTIES_ITEMS}
+                uiStateId='slots'
             />
         )
     }
@@ -157,7 +160,8 @@ class Dashboard extends React.Component {
                 newItemBtn={() => <NewChannelDialog variant='fab' accent color='secondary' />}
                 objModel={ChannelModel}
                 sortProperties={SORT_PROPERTIES_COLLECTION}
-            // filterProperties={FILTER_PROPERTIES_ITEMS}
+                // filterProperties={FILTER_PROPERTIES_ITEMS}
+                uiStateId='channels'
             />
         )
     }
