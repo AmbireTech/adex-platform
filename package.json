@@ -58,7 +58,7 @@
     "raf": "3.4.0",
     "react": "^16.4.0",
     "react-chartjs-2": "^2.7.2",
-    "react-dev-utils": "^5.1.0",
+    "react-dev-utils": "^5.0.1",
     "react-dom": "^16.4.0",
     "react-dropzone": "^4.2.1",
     "react-error-overlay": "^1.0.10",

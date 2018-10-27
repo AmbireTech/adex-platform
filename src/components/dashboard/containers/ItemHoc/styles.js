@@ -1,10 +1,11 @@
 export const styles = theme => {
     const spacing = theme.spacing.unit * 1
+    const aspect = '56.25%'
 
     return {
         mediaRoot: {
             height: 0,
-            paddingTop: '56.25%', // 16:9
+            paddingTop: aspect, // 16:9
             position: 'relative',
             overflow: 'hidden'
         },
@@ -52,8 +53,9 @@ export const styles = theme => {
             marginLeft: 0
         },
         editIcon: {
-            float: 'right',
-            marginTop: '-50px'
+            position: 'absolute',
+            bottom: spacing,
+            right: spacing
         }
     }
 }

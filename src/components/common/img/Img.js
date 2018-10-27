@@ -99,12 +99,15 @@ class Img extends Component {
 
         return (
             <span>
-                <IconButton
+                <Button
+                    variant='fab'
+                    mini
+                    color='default'
                     className={classnames(classes.fullscreenIcon)}
                     onClick={() => { this.handleToggle() }}
                 >
                     <FullscreenIcon />
-                </IconButton>
+                </Button>
                 <Dialog
                     open={this.state.active}
                     type={this.props.type || 'normal'}

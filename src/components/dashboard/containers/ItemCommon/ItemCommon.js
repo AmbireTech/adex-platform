@@ -5,6 +5,7 @@ import CardMedia from '@material-ui/core/CardMedia'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import IconButton from '@material-ui/core/IconButton'
+import Button from '@material-ui/core/Button'
 import EditIcon from '@material-ui/icons/Edit'
 import Img from 'components/common/img/Img'
 import { items as ItemsConstants } from 'adex-constants'
@@ -18,7 +19,7 @@ import classnames from 'classnames'
 
 const { AdSizesByValue, AdTypesByValue } = ItemsConstants
 
-const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, ...rest }) => {
+const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, isDemo, ...rest }) => {
     let errFallbackAdUrl = rest.invalidFields['fallbackAdUrl']
 
     return (
@@ -43,12 +44,16 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, ...
                         style={{ cursor: 'pointer' }}
                     />
                 </CardMedia>
-                <IconButton
+                <Button
+                    variant='fab'
+                    mini
+                    color='secondary'
                     onClick={rest.toggleFallbackImgEdit}
-                    className={classnames(classes.editIcon)}
+                    className={classes.editIcon}
+                    disabled={isDemo}
                 >
-                    <EditIcon/>
-                </IconButton>
+                    <EditIcon />
+                </Button>
                 <CardContent>
                     {rest.activeFields.fallbackAdUrl ?
                         <TextField
@@ -127,24 +132,24 @@ const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, ...rest
                                         className={classes.img}
                                     />
                                 </CardMedia>
-                                {canEditImg ?
-                                    <IconButton
+                                {canEditImg &&
+                                    <Button
+                                        variant='fab'
+                                        mini
+                                        color='secondary'
                                         onClick={rest.toggleImgEdit}
                                         className={classes.editIcon}
                                     >
-                                        <EditIcon/>
-                                    </IconButton>
-                                :
-                                    null
+                                        <EditIcon />
+                                    </Button>
                                 }
-                                {url ?
+
+                                {url &&
                                     <CardContent>
                                         <Anchor href={url} target='_blank'>
                                             {url}
                                         </Anchor>
                                     </CardContent>
-                                :
-                                    null
                                 }
                             </Card>
                             <div>

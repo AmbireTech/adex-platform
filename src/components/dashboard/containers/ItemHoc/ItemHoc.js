@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Grid from '@material-ui/core/Grid'
 import IconButton from '@material-ui/core/IconButton'
+import Button from '@material-ui/core/Button'
 import EditIcon from '@material-ui/icons/Edit'
 import ImgDialog from 'components/dashboard/containers/ImgDialog'
 import { Models } from 'adex-models'
@@ -314,13 +315,18 @@ export default function ItemHoc(Decorated) {
                                                 alt={item.fullName}
                                                 className={classnames(classes.img, { [classes.pointer]: this.props.canEditImg && !isDemo })}
                                             />
+                                            <Button
+                                                variant='fab'
+                                                mini
+                                                color='secondary'
+                                                className={classes.editIcon}
+                                                onClick={!isDemo ? this.handleToggle : null}
+                                                disabled={isDemo}
+                                            >
+                                                <EditIcon />
+                                            </Button>
                                         </Paper>
-                                        <IconButton
-                                            className={classes.editIcon}
-                                            onClick={!isDemo ? this.handleToggle : null}
-                                        >
-                                            <EditIcon/>
-                                        </IconButton>
+
                                     </div>
                                 }
                             </Grid >
