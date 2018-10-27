@@ -34,7 +34,7 @@ class TopNav extends Component {
   }
 
   render() {
-    const { t, account, classes } = this.props
+    const { t, handleDrawerToggle, account, side, navTitle, classes } = this.props
     let imgSrc = getAuthLogo(account._authType)
 
     const btnMenueLabel = account._authType === 'demo' ? t('DEMO_MODE') : (account._addr || t('NOT_LOGGED'))
@@ -54,7 +54,7 @@ class TopNav extends Component {
             <IconButton
               color="inherit"
               aria-label="open drawer"
-              onClick={this.props.handleDrawerToggle}
+              onClick={handleDrawerToggle}
               className={classnames(classes.navIconHide)}
             >
               <Icon>menu</Icon>
@@ -79,13 +79,17 @@ class TopNav extends Component {
               >
                 <RRMenuItem
                   value='account'
-                  to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
+                  to={{ pathname: '/dashboard/' + side + '/account' }}
                   caption={t('ACCOUNT')}
                 >
                   <ListItemIcon >
                     <Icon>account_box</Icon>
                   </ListItemIcon>
-                  <ListItemText classes={{ primary: classes.primary }} inset primary={t('ACCOUNT')} />
+                  <ListItemText
+                    classes={{ primary: classes.primary }}
+                    inset
+                    primary={t('ACCOUNT')}
+                  />
                 </RRMenuItem>
                 {/* <MenuDivider /> */}
                 <MenuItem
@@ -102,7 +106,6 @@ class TopNav extends Component {
           </div>
           <div
             className={classes.flexRow}
-
           >
             <div
               className={classnames(classes.flex, classes.toolbarTitle)}
@@ -113,7 +116,7 @@ class TopNav extends Component {
                 className={classes.flex}
                 noWrap
               >
-                {t(this.props.navTitle)}
+                {t(navTitle)}
               </Typography>
             </div>
           </div>

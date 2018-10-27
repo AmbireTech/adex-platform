@@ -103,6 +103,7 @@ export class Channel extends Component {
                     objModel={AdSlotModel}
                     sortProperties={SORT_PROPERTIES_ITEMS}
                     filterProperties={FILTER_PROPERTIES_ITEMS}
+                    uiStateId='channel-slots'
                 />
             </div>
         )

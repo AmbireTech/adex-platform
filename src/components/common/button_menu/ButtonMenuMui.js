@@ -28,7 +28,7 @@ class ButtonMenu extends Component {
   }
 
   render() {
-    const { classes } = this.props
+    const { btnStyle, label, iconStyle, icon } = this.props
     const { anchorEl } = this.state
     const open = Boolean(anchorEl)
     let leftIcon = this.props.leftIconSrc ? <ImgIcon src={this.props.leftIconSrc} /> : null
@@ -38,7 +38,7 @@ class ButtonMenu extends Component {
       // style={{ display: 'inline-block' }}
       >
         <Button
-          style={this.props.btnStyle}
+          style={btnStyle}
           onClick={this.handleMenu}
           aria-owns='menu-appbar'// {open ? 'menu-appbar' : null}
           aria-haspopup='true'
@@ -47,9 +47,9 @@ class ButtonMenu extends Component {
           <span
             style={{ maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis' }}
           >
-            {this.props.label}
+            {label}
           </span>
-          <Icon style={this.props.iconStyle} >{this.props.icon}</Icon>
+          <Icon style={iconStyle} >{icon}</Icon>
         </Button>
         <Menu
           id="menu-appbar"
@@ -63,9 +63,10 @@ class ButtonMenu extends Component {
           //   vertical: 'top',
           //   horizontal: 'right',
           // }}
+          onClick={this.handleButtonClick }
           onClose={this.handleClose}
         >
-          {this.props.children}
+            {this.props.children}
         </Menu>
       </div>
     )

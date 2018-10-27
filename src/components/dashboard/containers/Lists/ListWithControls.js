@@ -8,7 +8,7 @@ import Dropdown from 'components/common/dropdown'
 import Input from '@material-ui/core/Input'
 import { Pagination } from './Controls'
 import Translate from 'components/translate/Translate'
-// import classnames from 'classnames'
+// import classnames from 'classnasmes'
 import Radio from '@material-ui/core/Radio'
 import RadioGroup from '@material-ui/core/RadioGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
@@ -53,23 +53,22 @@ class ListWithControls extends Component {
     constructor(props, context) {
         super(props, context);
 
+        const uiStateId = props.uiStateId
+
+
         const sortProperties = mapSortProperties({ sortProps: props.sortProperties || [{}], t: props.t })
         // TODO: update on ComponentWillReceiveProps
-
         this.state = {
             items: [],
-            page: 0,
-            pageSize: 10,
-            search: '',
-            sortOrder: -1,
+            page: 0, //
+            search: '', //
             sortProperties: sortProperties,
-            sortProperty: (sortProperties)[0].value,
             filterProperties: mapFilterProps({ filterProps: props.filterProperties, t: props.t }),
             filteredItems: [],
-            filterBy: '',
+            filterBy: '', //
             filterByValues: [],
-            filterByValueFilter: '',
-            filterArchived: props.archive ? 'false' : ''
+            filterByValueFilter: '', //
+            uiStateId: uiStateId
         }
     }
 
@@ -93,11 +92,16 @@ class ListWithControls extends Component {
         this.setState(newStateValue);
     }
 
+    // For changing redux state
+    handleChangeRxState = (name, value) => {
+        this.props.actions.updateUi(name, value, this.state.uiStateId)
+    }
+
     changePageSize = (name, { itemsLength, page, pages } = {}, ev, newPageSize) => {
-        let currentPageSize = this.state.pageSize
+        let currentPageSize = this.props.pageSize
         let currentFirstIndex = page * currentPageSize // To have at least the first item on current page on the next page
         let nextPage = Math.floor(currentFirstIndex / newPageSize)
-        this.setState({ page: nextPage, pageSize: newPageSize })
+        this.props.actions.updateUi('pageSize', newPageSize, this.state.uiStateId)
     }
 
     search = ({ item, search, searchMatch }) => {
@@ -126,7 +130,7 @@ class ListWithControls extends Component {
                 let isItem = (!!i && ((!!i._meta) || i.id || i._id))
                 if (!isItem) return isItem
 
-                if ((filterArchived !== '') && (filterArchived.toString() !== i._archived.toString())) {
+                if ((filterArchived !== '') && (i._archived !== undefined) && (filterArchived.toString() !== i._archived.toString())) {
                     return false
                 }
 
@@ -175,16 +179,17 @@ class ListWithControls extends Component {
     }
 
     render() {
+        console.log('props', this.props)
         let data = this.filterItems({
             items: this.props.items,
             search: this.state.search,
-            sortProperty: this.state.sortProperty,
-            sortOrder: this.state.sortOrder,
+            sortProperty: this.props.sortProperty || (this.state.sortProperties)[0].value,
+            sortOrder: this.props.sortOrder || -1,
             page: this.state.page,
-            pageSize: this.state.pageSize,
+            pageSize: this.props.pageSize || 10,
             searchMatch: this.props.searchMatch,
             filterBy: { key: this.state.filterBy, value: this.state.filterByValueFilter },
-            filterArchived: this.state.filterArchived
+            filterArchived: this.props.filterArchived || 'false'
         })
 
         let items = data.items
@@ -223,24 +228,24 @@ class ListWithControls extends Component {
                         >
                             <Dropdown
                                 label={t('LIST_CONTROL_LABEL_SORT')}
-                                onChange={this.handleChange.bind(this, 'sortProperty')}
+                                onChange={this.handleChangeRxState.bind(this, 'sortProperty')}
                                 source={this.state.sortProperties}
-                                value={this.state.sortProperty}
+                                value={this.props.sortProperty || (this.state.sortProperties)[0].value}
                                 htmlId='sort-by-prop'
                                 name='sortProperty'
                             />
                             <div>
                                 <IconButton
-                                    color={(this.state.sortOrder === 1) ? 'primary' : 'default'}
-                                    onClick={this.handleChange.bind(this, 'sortOrder', 1)}
+                                    color={(this.props.sortOrder === 1) ? 'primary' : 'default'}
+                                    onClick={this.handleChangeRxState.bind(this, 'sortOrder', 1)}
                                     className={classes.rowButton}
                                     size='small'
                                 >
                                     <ArrowUpwardIcon />
                                 </IconButton>
                                 <IconButton
-                                    color={(this.state.sortOrder === -1) ? 'primary' : 'default'}
-                                    onClick={this.handleChange.bind(this, 'sortOrder', -1)}
+                                    color={(this.props.sortOrder === -1) ? 'primary' : 'default'}
+                                    onClick={this.handleChangeRxState.bind(this, 'sortOrder', -1)}
                                     className={classes.rowButton}
                                     size='small'
                                 >
@@ -251,7 +256,7 @@ class ListWithControls extends Component {
 
                         {this.props.filterProperties &&
                             <div
-                                className={classnames(classes.flexRow, )}
+                                className={classnames(classes.flexRow)}
                             >
                                 <Dropdown
                                     className={classnames(classes.flexItem)}
@@ -283,8 +288,8 @@ class ListWithControls extends Component {
                         {this.props.archive &&
                             <RadioGroup
                                 name='archived'
-                                value={this.state.filterArchived.toString()}
-                                onChange={(ev) => this.handleChange('filterArchived', ev.target.value)}
+                                value={typeof this.props.filterArchived === 'string' ? this.props.filterArchived.toString() : 'false'}
+                                onChange={(ev) => this.handleChangeRxState('filterArchived', ev.target.value)}
                                 className={classnames(classes.flexRow, classes.flexItem)}
                             >
                                 <FormControlLabel value='false' control={<Radio color='primary' />} label={t('LABEL_ACTIVE')} />
@@ -299,7 +304,7 @@ class ListWithControls extends Component {
                                 t={t}
                                 page={data.page}
                                 pages={data.pages}
-                                pageSize={this.state.pageSize}
+                                pageSize={this.props.pageSize || 10}
                                 itemsLength={data.itemsLength}
                                 goToPage={this.goToPage.bind(this)}
                                 goToLastPage={this.goToPage.bind(this, data.pages - 1)}
@@ -353,25 +358,35 @@ ListWithControls.propTypes = {
     listMode: PropTypes.string,
     objModel: PropTypes.func,
     sortProperties: PropTypes.array.isRequired,
-    filterProperties: PropTypes.object
+    filterProperties: PropTypes.object,
+    uiStateId: PropTypes.string.isRequired
 }
 
 function mapStateToProps(state, props) {
     const persist = state.persist
     const memory = state.memory
+
+    // TODO: A little hacky, maybe find a better way
+    // Gets the last path in URL. ex: https://localhost:3000/dashboard/publisher/slots -> slots
+    const uiStateId = props.uiStateId || 'default'
     return {
         rowsView: !!persist.ui[props.viewModeId],
+        pageSize: persist.ui[uiStateId] ? persist.ui[uiStateId]['pageSize'] || 10 : 10,
+        sortProperty: persist.ui[uiStateId] ? persist.ui[uiStateId]['sortProperty'] : null,
+        sortOrder: persist.ui[uiStateId] ? persist.ui[uiStateId]['sortOrder'] || - 1 : -1,
+        filterArchived: persist.ui[uiStateId] ? persist.ui[uiStateId]['filterArchived'] || false : false,
         side: memory.nav.side,
         account: persist.account,
         sortProperties: props.sortProperties || [],
-        filterProperties: props.filterProperties
-    };
+        filterProperties: props.filterProperties,
+        uiStateId: uiStateId
+    }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(actions, dispatch)
-    };
+    }
 }
 
 export default connect(

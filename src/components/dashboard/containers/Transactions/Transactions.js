@@ -119,7 +119,15 @@ class Transactions extends Component {
                     <h2 > {t('TRANSACTIONS')} {'(' + itemsCount + ')'} </h2>
                 </div> */}
 
-                <ListWithControls items={reduced} listMode='rows' delete renderRows={this.renderRows} sortProperties={SORT_PROPERTIES} searchMatch={this.searchMatch} />
+                <ListWithControls
+                    items={reduced}
+                    listMode='rows'
+                    delete
+                    renderRows={this.renderRows}
+                    sortProperties={SORT_PROPERTIES}
+                    searchMatch={this.searchMatch}
+                    uiStateId='transactions'
+                />
             </div>
         )
     }

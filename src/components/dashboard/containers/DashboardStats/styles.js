@@ -6,7 +6,8 @@ export const styles = theme => {
             display: 'flex',
             flexDirection: 'row',
             flexWrap: 'wrap',
-            justifyContent: 'stretch'
+            justifyContent: 'stretch',
+            height: '100%'
         },
         infoCard: {
             margin: spacing,
@@ -20,11 +21,7 @@ export const styles = theme => {
         dashboardCardBody: {
             margin: spacing,
             padding: spacing,
-            '@media(max-width:400px)': {
-                width: 'auto',
-                maxWidth: '80vw',
-                padding: 0
-            },
+            width: `calc(100% - ${spacing * 2}px)`
         }
     }
 }

@@ -166,7 +166,6 @@ export class DashboardStats extends Component {
                             this.goToBids(stats.tabs[ev._index])
                         }
                     }}
-
                 />
             </div>
         )
@@ -266,7 +265,7 @@ export class DashboardStats extends Component {
         return (
             <div>
                 <Grid container>
-                    <Grid item md={12} lg={6}>
+                    <Grid item md={12} lg={6} sm={12}>
                         <Card
                             raised
                             className={classnames(classes.dashboardCardBody)}

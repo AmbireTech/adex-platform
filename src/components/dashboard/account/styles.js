@@ -3,11 +3,13 @@ export const styles = theme => {
     return {
         itemActions: {
             display: 'flex',
+            flex: '0 0 187px',
             flexDirection: 'column',
-            alignItems: 'flex-end'
+            alignItems: 'flex-end',
+            justifyContent: 'space-around'
         },
         actionBtn: {
-            marginLeft: spacing
+            marginBottom: spacing
         },
         address: {
             wordWrap: 'break-word'

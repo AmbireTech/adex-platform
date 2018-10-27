@@ -13,7 +13,7 @@ export default function ValidImageHoc(Decorated) {
         * Add here initial validation
         * */
         validateImg = ({propsName, widthTarget, heightTarget, msg, exact, required, onChange} = {}, img) => {
-            if (!required && !img.tempUrl) {
+            if (!required && !img.tempUrl && this.props.handleChange) {
                 this.props.validate(propsName, { isValid: true, err: { msg: msg, args: [] }, dirty: true })
                 // TODO: fix this
                 this.props.handleChange(propsName, img)
@@ -50,7 +50,7 @@ export default function ValidImageHoc(Decorated) {
                     that.handleChange(propsName, img)
                 }else if (typeof onChange === 'function') {
                     onChange(propsName, img)
-                }                
+                }
             }
         }
 

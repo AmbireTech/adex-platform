@@ -16,7 +16,7 @@ export const styles = theme => {
             justifyContent: 'center',
             padding: 10,
             cursor: 'pointer',
-            overflow: 'hidden',
+            overflow: 'hidden'
         },
         droppedImgContainer: {
             textAlign: 'center',
@@ -35,6 +35,7 @@ export const styles = theme => {
             height: 'auto',
             width: 'auto',
             '@media(max-width:500px)': {
+                // TODO: Find out why it breaks this limit after a new pic is uploaded
                 width: '100%'
             }
         },
