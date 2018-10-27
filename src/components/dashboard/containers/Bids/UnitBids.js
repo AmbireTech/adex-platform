@@ -140,6 +140,7 @@ export class UnitBids extends Component {
                             sortProperties={SORT_PROPERTIES_BIDS}
                             searchMatch={searchMatch}
                             filterProperties={FILTER_PROPERTIES_BIDS}
+                            uiStateId='unit-bids-action'
                         />
                     }
                     {
@@ -151,6 +152,7 @@ export class UnitBids extends Component {
                             sortProperties={SORT_PROPERTIES_BIDS}
                             searchMatch={searchMatch}
                             filterProperties={FILTER_PROPERTIES_BIDS}
+                            uiStateId='unit-bids-active'
                         />
                     }
                     {
@@ -162,6 +164,7 @@ export class UnitBids extends Component {
                             sortProperties={SORT_PROPERTIES_BIDS}
                             searchMatch={searchMatch}
                             filterProperties={FILTER_PROPERTIES_BIDS}
+                            uiStateId='unit-bids-open'
                         />
                     }
                     {
@@ -173,6 +176,7 @@ export class UnitBids extends Component {
                             sortProperties={SORT_PROPERTIES_BIDS}
                             searchMatch={searchMatch}
                             filterProperties={FILTER_PROPERTIES_BIDS}
+                            uiStateId='unit-bids-closed'
                         />
                     }
                     {

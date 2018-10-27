@@ -190,6 +190,7 @@ export class SlotBids extends Component {
                                 sortProperties={SORT_PROPERTIES_BIDS}
                                 searchMatch={this.searchMatch}
                                 filterProperties={FILTER_PROPERTIES_BIDS_NO_STATE}
+                                uiStateId='slot-bids-open'
                             />
                         </div>
                     }
@@ -202,6 +203,7 @@ export class SlotBids extends Component {
                             sortProperties={SORT_PROPERTIES_BIDS}
                             searchMatch={searchMatch}
                             filterProperties={FILTER_PROPERTIES_BIDS}
+                            uiStateId='slot-bids-action'
                         />
                     }
                     {
@@ -213,6 +215,7 @@ export class SlotBids extends Component {
                             sortProperties={SORT_PROPERTIES_BIDS}
                             searchMatch={searchMatch}
                             filterProperties={FILTER_PROPERTIES_BIDS}
+                            uiStateId='slot-bids-active'
                         />
                     }
                     {
@@ -224,6 +227,7 @@ export class SlotBids extends Component {
                             sortProperties={SORT_PROPERTIES_BIDS}
                             searchMatch={this.searchMatch}
                             filterProperties={FILTER_PROPERTIES_BIDS}
+                            uiStateId='slot-bids-closed'
                         />
                     }
                     {

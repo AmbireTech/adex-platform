@@ -28,7 +28,6 @@ export class ImgDialog extends Component {
     }
 
     handleChange = (name, value) => {
-
         let newValues = { ...this.state.values }
         newValues[name] = value
         this.setState({ values: newValues })

@@ -116,6 +116,7 @@ class Dashboard extends React.Component {
                 objModel={AdUnitModel}
                 sortProperties={SORT_PROPERTIES_ITEMS}
                 filterProperties={FILTER_PROPERTIES_ITEMS}
+                uiStateId='units'
             />
         )
     }
@@ -129,6 +130,7 @@ class Dashboard extends React.Component {
                 newItemBtn={() => <NewCampaignDialog variant='fab' accent color='secondary' />}
                 objModel={CampaignModel}
                 sortProperties={SORT_PROPERTIES_COLLECTION}
+                uiStateId='campaigns'
             // filterProperties={FILTER_PROPERTIES_ITEMS}
             />
         )
@@ -144,6 +146,7 @@ class Dashboard extends React.Component {
                 objModel={AdSlotModel}
                 sortProperties={SORT_PROPERTIES_ITEMS}
                 filterProperties={FILTER_PROPERTIES_ITEMS}
+                uiStateId='slots'
             />
         )
     }
@@ -157,7 +160,8 @@ class Dashboard extends React.Component {
                 newItemBtn={() => <NewChannelDialog variant='fab' accent color='secondary' />}
                 objModel={ChannelModel}
                 sortProperties={SORT_PROPERTIES_COLLECTION}
-            // filterProperties={FILTER_PROPERTIES_ITEMS}
+                // filterProperties={FILTER_PROPERTIES_ITEMS}
+                uiStateId='channels'
             />
         )
     }
@@ -222,21 +226,18 @@ class Dashboard extends React.Component {
 
                         <Switch locatiom={this.props.location}>
                             TODO: Make things dynamic if easier
-                        <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/campaigns' component={this.renderCampaigns} />
+                            <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/campaigns' component={this.renderCampaigns} />
                             <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/units' component={this.renderAdUnits} />
                             <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/Campaign/:itemId' component={Campaign} />
                             <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/AdUnit/:itemId' component={Unit} />
                             <PrivateRoute auth={this.props.auth} exact path='/dashboard/advertiser/bids/:tab?' component={UnitBids} />
-
                             <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/channels' component={this.renderChannels} />
                             <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/slots' component={this.renderAdSlots} />
                             <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/Channel/:itemId' component={Channel} />
                             <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
                             <PrivateRoute auth={this.props.auth} exact path='/dashboard/publisher/bids/:tab?' component={SlotBids} />
-
                             <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/account'} component={Account} />
                             <PrivateRoute auth={this.props.auth} exact path={'/dashboard/:side/transactions'} component={Transactions} />
-
                             <PrivateRoute auth={this.props.auth} exact path='/dashboard/:side' component={DashboardStats} />
                             <PrivateRoute auth={this.props.auth} component={() => <h1>404 at {side} side</h1>} />
                         </Switch>

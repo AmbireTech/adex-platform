@@ -38,6 +38,9 @@ export const styles = theme => {
             padding: spacing * 1.5,
             paddingBottom: spacing * 0.5,
             // marginBottom: spacing * 2
+        },
+        pageSize: {
+            width: '100px'
         }
     }
 }

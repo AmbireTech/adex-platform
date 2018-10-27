@@ -14,6 +14,7 @@ import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Anchor from 'components/common/anchor/anchor'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import classnames from 'classnames'
 
 const { AdSizesByValue, AdTypesByValue } = ItemsConstants
 
@@ -39,12 +40,16 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, ...
                         className={classes.img}
                         src={Item.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY) || ''}
                         alt={item.fallbackAdUrl}
-                        onClick={canEditImg ? rest.toggleFallbackImgEdit : null}
                         style={{ cursor: 'pointer' }}
                     />
                 </CardMedia>
+                <IconButton
+                    onClick={rest.toggleFallbackImgEdit}
+                    className={classnames(classes.editIcon)}
+                >
+                    <EditIcon/>
+                </IconButton>
                 <CardContent>
-
                     {rest.activeFields.fallbackAdUrl ?
                         <TextField
                             // required
@@ -88,10 +93,8 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, ...
                                 <div>
                                     <span className={classes.error}> {errFallbackAdUrl.errMsg} </span>
                                 </div> : null}
-
                         </div>
                     }
-
                 </CardContent>
             </Card>
         </div >
@@ -102,7 +105,6 @@ const ValidatedFallbackAdData = ValidItemHoc(FallbackAdData)
 
 const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, ...rest }) => {
     const adSize = (AdSizesByValue[item._meta.size] || {})
-
     return (
         <div >
             <Grid container spacing={16}>
@@ -122,18 +124,29 @@ const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, ...rest
                                         allowFullscreen={true}
                                         src={Item.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY) || ''}
                                         alt={item.fullName}
-                                        onClick={canEditImg ? rest.toggleImgEdit : null}
-                                        style={{ cursor: rest.canEditImg ? 'pointer' : '' }}
                                         className={classes.img}
                                     />
                                 </CardMedia>
-                                <CardContent>
-                                    <Anchor href={url} target='_blank'>
-                                        {url}
-                                    </Anchor>
-                                </CardContent>
+                                {canEditImg ?
+                                    <IconButton
+                                        onClick={rest.toggleImgEdit}
+                                        className={classes.editIcon}
+                                    >
+                                        <EditIcon/>
+                                    </IconButton>
+                                :
+                                    null
+                                }
+                                {url ?
+                                    <CardContent>
+                                        <Anchor href={url} target='_blank'>
+                                            {url}
+                                        </Anchor>
+                                    </CardContent>
+                                :
+                                    null
+                                }
                             </Card>
-
                             <div>
                                 <div>
                                     <TextField

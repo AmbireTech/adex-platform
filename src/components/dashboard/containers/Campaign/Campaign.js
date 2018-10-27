@@ -163,6 +163,7 @@ export class Campaign extends Component {
                     bjModel={AdUnitModel}
                     sortProperties={SORT_PROPERTIES_ITEMS}
                     filterProperties={FILTER_PROPERTIES_ITEMS}
+                    uiStateId='campaign-units'
                 />
             </div>
         )
