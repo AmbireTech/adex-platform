@@ -60,14 +60,14 @@ class ListWithControls extends Component {
         // TODO: update on ComponentWillReceiveProps
         this.state = {
             items: [],
-            page: 0, //
-            search: '', //
+            page: 0,
+            search: '',
             sortProperties: sortProperties,
             filterProperties: mapFilterProps({ filterProps: props.filterProperties, t: props.t }),
             filteredItems: [],
-            filterBy: '', //
+            filterBy: '',
             filterByValues: [],
-            filterByValueFilter: '', //
+            filterByValueFilter: '',
             uiStateId: uiStateId
         }
     }
@@ -79,7 +79,7 @@ class ListWithControls extends Component {
     }
 
     goToPage(page) {
-        this.setState({ page: parseInt(page, 10) })
+        this.props.actions.updateUi('page', parseInt(page, 10), this.state.uiStateId)
     }
 
     handleChange = (name, value) => {
@@ -94,6 +94,14 @@ class ListWithControls extends Component {
 
     // For changing redux state
     handleChangeRxState = (name, value) => {
+        if (name === 'search')
+        {
+            this.handleChangeRxState('page', 0, this.state.uiStateId)
+        }
+        if (name === 'filterBy') {
+            this.handleChangeRxState('filterByValues', ([{ label: 'ALL', value: '' }].concat(this.props.filterProperties[value].values)), this.state.uiStateId)
+            this.handleChangeRxState('filterByValueFilter', '', this.state.uiStateId)
+        }
         this.props.actions.updateUi(name, value, this.state.uiStateId)
     }
 
@@ -179,16 +187,15 @@ class ListWithControls extends Component {
     }
 
     render() {
-        console.log('props', this.props)
         let data = this.filterItems({
             items: this.props.items,
-            search: this.state.search,
+            search: this.props.search,
             sortProperty: this.props.sortProperty || (this.state.sortProperties)[0].value,
             sortOrder: this.props.sortOrder || -1,
-            page: this.state.page,
+            page: this.props.page,
             pageSize: this.props.pageSize || 10,
             searchMatch: this.props.searchMatch,
-            filterBy: { key: this.state.filterBy, value: this.state.filterByValueFilter },
+            filterBy: { key: this.props.filterBy, value: this.props.filterByValueFilter },
             filterArchived: this.props.filterArchived || 'false'
         })
 
@@ -218,8 +225,8 @@ class ListWithControls extends Component {
                             <Input
                                 name='search'
                                 id="search"
-                                value={this.state.search}
-                                onChange={(ev) => this.handleChange('search', ev.target.value)}
+                                value={this.props.search}
+                                onChange={(ev) => this.handleChangeRxState('search', ev.target.value)}
                                 startAdornment={<InputAdornment position="start"><SearchIcon /></InputAdornment>}
                             />
                         </FormControl>
@@ -262,9 +269,9 @@ class ListWithControls extends Component {
                                     className={classnames(classes.flexItem)}
                                     auto
                                     label={t('LIST_CONTROL_LABEL_FILTER_BY')}
-                                    onChange={this.handleChange.bind(this, 'filterBy')}
+                                    onChange={this.handleChangeRxState.bind(this, 'filterBy')}
                                     source={this.state.filterProperties}
-                                    value={this.state.filterBy !== null ? this.state.filterBy.toString() : ''}
+                                    value={this.props.filterBy !== null ? this.props.filterBy.toString() : ''}
                                     htmlId='filter-by-prop-dd'
                                     name='filterBy'
                                     displayEmpty
@@ -275,11 +282,11 @@ class ListWithControls extends Component {
                                     label={t('LIST_CONTROL_LABEL_FILTER_BY_VALUE')}
                                     onChange={this.handleChange.bind(this, 'filterByValueFilter')}
                                     source={mapSortProperties({ sortProps: this.state.filterByValues, t: this.props.t })}
-                                    value={this.state.filterByValueFilter !== null ? this.state.filterByValueFilter.toString() : ''}
+                                    value={this.props.filterByValueFilter !== null ? this.props.filterByValueFilter.toString() : ''}
                                     htmlId='filter-by-value-dd'
                                     name='filterByValueFilter'
                                     displayEmpty
-                                    disabled={!this.state.filterBy}
+                                    disabled={!this.props.filterBy}
                                     helperText={t('HELPER_TXT_FILTER_BY_VALUE')}
                                 />
                             </div>
@@ -371,10 +378,14 @@ function mapStateToProps(state, props) {
     const uiStateId = props.uiStateId || 'default'
     return {
         rowsView: !!persist.ui[props.viewModeId],
-        pageSize: persist.ui[uiStateId] ? persist.ui[uiStateId]['pageSize'] || 10 : 10,
+        pageSize: persist.ui[uiStateId] ? persist.ui[uiStateId]['pageSize'] : 10,
         sortProperty: persist.ui[uiStateId] ? persist.ui[uiStateId]['sortProperty'] : null,
-        sortOrder: persist.ui[uiStateId] ? persist.ui[uiStateId]['sortOrder'] || - 1 : -1,
-        filterArchived: persist.ui[uiStateId] ? persist.ui[uiStateId]['filterArchived'] || false : false,
+        sortOrder: persist.ui[uiStateId] ? persist.ui[uiStateId]['sortOrder'] : -1,
+        filterArchived: persist.ui[uiStateId] ? persist.ui[uiStateId]['filterArchived'] : false,
+        page: persist.ui[uiStateId] ? persist.ui[uiStateId]['page'] : 0,
+        search: persist.ui[uiStateId] ? persist.ui[uiStateId]['search'] : '',
+        filterBy: persist.ui[uiStateId] ? persist.ui[uiStateId]['filterBy'] : '',
+        filterByValueFilter: persist.ui[uiStateId] ? persist.ui[uiStateId]['filterByValueFilter'] : '',
         side: memory.nav.side,
         account: persist.account,
         sortProperties: props.sortProperties || [],
