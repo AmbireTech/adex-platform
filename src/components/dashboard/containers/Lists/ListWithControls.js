@@ -271,7 +271,7 @@ class ListWithControls extends Component {
                                     label={t('LIST_CONTROL_LABEL_FILTER_BY')}
                                     onChange={this.handleChangeRxState.bind(this, 'filterBy')}
                                     source={this.state.filterProperties}
-                                    value={this.props.filterBy !== null ? this.props.filterBy.toString() : ''}
+                                    value={typeof this.props.filterBy === 'string' ? this.props.filterBy.toString() : ''}
                                     htmlId='filter-by-prop-dd'
                                     name='filterBy'
                                     displayEmpty
@@ -282,7 +282,7 @@ class ListWithControls extends Component {
                                     label={t('LIST_CONTROL_LABEL_FILTER_BY_VALUE')}
                                     onChange={this.handleChange.bind(this, 'filterByValueFilter')}
                                     source={mapSortProperties({ sortProps: this.state.filterByValues, t: this.props.t })}
-                                    value={this.props.filterByValueFilter !== null ? this.props.filterByValueFilter.toString() : ''}
+                                    value={typeof this.props.filterByValueFilter === 'string' ? this.props.filterByValueFilter.toString() : ''}
                                     htmlId='filter-by-value-dd'
                                     name='filterByValueFilter'
                                     displayEmpty
