@@ -10,6 +10,7 @@ import AuthMetamask from 'components/signin/auth/AuthMetamask'
 import AuthTrezor from 'components/signin/auth/AuthTrezor'
 import AuthLedger from 'components/signin/auth/AuthLedger'
 import AuthDemo from 'components/signin/auth/AuthDemo'
+import AuthUniversal from 'components/signin/auth/AuthUniversal'
 import METAMASK_DL_IMG from 'resources/download-metamask.png'
 import LEDGER_DL_IMG from 'resources/ledger_logo_header.png'
 import TREZOR_DL_IMG from 'resources/trezor-logo-h.png'
@@ -67,6 +68,10 @@ class AuthMethod extends Component {
               textColor='inhprimaryerit'
             >
               <Tab
+                label={<div className={classes.tabLabel}> <Img src={DEMO_IMG} alt={'Universal Login'} className={classes.tabLogo} /> <span>{t('UNIVERSAL_LOGIN')}</span></div>}
+                classes={{ label: classes.tabLabel }}
+              />
+              <Tab
                 // label={t('METAMASK')}
                 classes={{ label: classes.tabLabel }}
                 label={<Img src={METAMASK_DL_IMG} alt={'Authenticate with METAMASK'} className={classes.tabLogo} />}
@@ -89,15 +94,18 @@ class AuthMethod extends Component {
           </AppBar>
           <div className={classes.tabsContainer}>
             {(tabIndex === 0) &&
-              <AuthMetamask />
+              <AuthUniversal />
             }
             {(tabIndex === 1) &&
-              <AuthTrezor />
+              <AuthMetamask />
             }
             {(tabIndex === 2) &&
-              <AuthLedger />
+              <AuthTrezor />
             }
             {(tabIndex === 3) &&
+              <AuthLedger />
+            }
+            {(tabIndex === 4) &&
               <AuthDemo />
             }
 
