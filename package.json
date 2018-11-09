@@ -94,7 +94,7 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
-    "universal-login:build": "cd node_modules/universal-login-monorepo && yarn",
+    "universal-login:build": "cd node_modules/universal-login-monorepo/universal-login-sdk && yarn && yarn build",
     "universal-login:start": "cd node_modules/universal-login-monorepo/universal-login-example && yarn dev:start"
   },
   "devDependencies": {

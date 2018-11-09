@@ -34,7 +34,7 @@ class AuthUniversal extends Component {
     }
 
     componentWillUnmount() {
-        this.subscription.remove()
+        this.subscription ? this.subscription.remove() : null
         this.sdk.stop()
     }
 
@@ -43,7 +43,6 @@ class AuthUniversal extends Component {
         const identityAddress = await this.sdk.identityExist(name)
         this.identityAddress = identityAddress
         if (identityAddress) {
-            console.log('ADDRESS EXISTS!!!!', identityAddress)
             const privateKey = await this.sdk.connect(identityAddress, this._getLabelStub())
             this.privateKey = privateKey
             const { address } = new Wallet(privateKey)
@@ -62,7 +61,6 @@ class AuthUniversal extends Component {
         const response  = await this.sdk.create(
             `${username}.ethereum.eth`
         )
-        console.log('ADDRESS CREATED!!!!', response.identityAddress)
     }
 
     authOnServer = () => {
