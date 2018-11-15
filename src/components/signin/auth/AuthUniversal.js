@@ -13,9 +13,11 @@ import Button from '@material-ui/core/Button'
 import { AUTH_TYPES } from 'constants/misc'
 import { getAccount, sigDemoMsg } from 'services/demo-account/demo-account'
 import { signToken } from 'services/adex-node/actions'
-import EthereumIdentitySDK from 'universal-login-monorepo/universal-login-sdk';
-import {ethers, Wallet} from 'ethers';
-import { Input } from '@material-ui/core';
+import EthereumIdentitySDK from 'universal-login-monorepo/universal-login-sdk'
+import { ethers, Wallet } from 'ethers'
+import { Input } from '@material-ui/core'
+import { getWeb3 } from 'services/smart-contracts/ADX'
+import { testrpcCfg } from 'services/smart-contracts/ADXTestrpcCfg'
 
 class AuthUniversal extends Component {
     constructor(props) {
@@ -25,8 +27,15 @@ class AuthUniversal extends Component {
             username: ''
         }
 
-        this.provider = new ethers.providers.JsonRpcProvider('http://localhost:18545');
-	    this.sdk = new EthereumIdentitySDK('https://relayer.ethworks.io', this.provider);
+        this.provider = new ethers.providers.JsonRpcProvider(testrpcCfg.node) // not sure if needed
+        this.sdk = new EthereumIdentitySDK('http://localhost:3311', this.provider)
+    }
+
+    getAcc() {
+        return getWeb3('universal')
+            .then(({ web3 }) => {
+                return web3.eth.accounts.create()
+            })
     }
 
     async componentDidMount() {
@@ -42,15 +51,15 @@ class AuthUniversal extends Component {
         const name = `${username}.mylogin.eth`
         const identityAddress = await this.sdk.identityExist(name)
         this.identityAddress = identityAddress
-        if (identityAddress) {
-            const privateKey = await this.sdk.connect(identityAddress, this._getLabelStub())
+        if (identityAddress ) {
+            const privateKey = await this.sdk.connect(identityAddress)
             this.privateKey = privateKey
             const { address } = new Wallet(privateKey)
             this.subscription = this.sdk.subscribe('KeyAdded', identityAddress, (event) => {
                 if (event.address === address) {
-                    this.setState({view: 'connected'})
+                    console.log('CONNECTED!!!')
                 }
-            });
+            })
         } else {
             await this.create(username)
         }
@@ -88,6 +97,10 @@ class AuthUniversal extends Component {
         await this.connect(this.state.username)
     }
 
+    onInputChange(username) {
+        this.setState({username})
+    }
+
     render() {
         const { t, classes } = this.props
         return (
@@ -97,7 +110,7 @@ class AuthUniversal extends Component {
                         {t('UNIVERSAL_DESCRIPTION')}
                     </Typography>
                     <Input
-                        onChange={(ev) => this.setState({username: ev.value})}
+                        onChange={(event) => this.onInputChange(event.target.value)}
                         placeholder="e.g. pencho"
                         value={this.state.username}
                     />
