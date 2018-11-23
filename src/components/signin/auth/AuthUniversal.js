@@ -27,7 +27,7 @@ class AuthUniversal extends Component {
             username: ''
         }
 
-        this.provider = new ethers.providers.JsonRpcProvider(testrpcCfg.node) // not sure if needed
+        this.provider = new ethers.providers.JsonRpcProvider('http://localhost:18545')
         this.sdk = new EthereumIdentitySDK('http://localhost:3311', this.provider)
     }
 
@@ -38,8 +38,8 @@ class AuthUniversal extends Component {
             })
     }
 
-    async componentDidMount() {
-        await this.sdk.start()
+    componentDidMount() {
+        this.sdk.start()
     }
 
     componentWillUnmount() {
@@ -47,27 +47,43 @@ class AuthUniversal extends Component {
         this.sdk.stop()
     }
 
-    async connect(username) {
+    connectToSdk(username) {
         const name = `${username}.mylogin.eth`
-        const identityAddress = await this.sdk.identityExist(name)
-        this.identityAddress = identityAddress
-        if (identityAddress ) {
-            const privateKey = await this.sdk.connect(identityAddress)
-            this.privateKey = privateKey
-            const { address } = new Wallet(privateKey)
-            this.subscription = this.sdk.subscribe('KeyAdded', identityAddress, (event) => {
-                if (event.address === address) {
-                    console.log('CONNECTED!!!')
+        this.sdk.identityExist(name)
+            .then((identityAddress) => {
+                console.log(identityAddress);
+                this.identityAddress = identityAddress
+                if (identityAddress) {
+                    console.log(identityAddress)
+                    const privateKey = this.sdk.connect(identityAddress)
+                    setTimeout(() => {console.log(privateKey)}, 10000)
+                        // .then(privateKey => {
+                            // console.log(privateKey)
+                            // this.privateKey = privateKey
+                            // const { address } = new Wallet(privateKey)
+                            // this.subscription = this.sdk.subscribe('KeyAdded', identityAddress, (event) => {
+                            //     if (event.address === address) {
+                            //         console.log('CONNECTED!!!')
+                            //     }
+                            // })
+                        // })
+                } else {
+                    console.log('creating new user');
+                    this.create(username)
+                        .then(res => {
+                            console.log('CREATION RESPONSE =', res)
+                        })
+                        .catch((err) => {
+                            console.error('CREATION ERROR', err)
+                        })
                 }
             })
-        } else {
-            await this.create(username)
-        }
+            .catch(err => console.error(err))
     }
 
-    async create(username) {
+    create(username) {
         // has keys firstPrivateKey, identityAddress
-        const response  = await this.sdk.create(
+        return this.sdk.create(
             `${username}.ethereum.eth`
         )
     }
@@ -93,8 +109,8 @@ class AuthUniversal extends Component {
             })
     }
 
-    async onSubmit() {
-        await this.connect(this.state.username)
+    onSubmit() {
+        this.connectToSdk(this.state.username)
     }
 
     onInputChange(username) {
