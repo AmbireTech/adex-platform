@@ -11,13 +11,12 @@ import { ContentBox, ContentBody } from 'components/common/dialog/content'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import { AUTH_TYPES } from 'constants/misc'
-import { getAccount, sigDemoMsg } from 'services/demo-account/demo-account'
+import { getAccount, sigMsg } from 'services/universal-login/universal-login'
 import { signToken } from 'services/adex-node/actions'
 import EthereumIdentitySDK from 'universal-login-monorepo/universal-login-sdk'
-import { ethers, Wallet } from 'ethers'
+import { ethers } from 'ethers'
 import { Input } from '@material-ui/core'
 import { getWeb3 } from 'services/smart-contracts/ADX'
-import { testrpcCfg } from 'services/smart-contracts/ADXTestrpcCfg'
 
 class AuthUniversal extends Component {
     constructor(props) {
@@ -29,6 +28,7 @@ class AuthUniversal extends Component {
 
         this.provider = new ethers.providers.JsonRpcProvider('http://localhost:18545')
         this.sdk = new EthereumIdentitySDK('http://localhost:3311', this.provider)
+        this.ensDomain = 'mylogin'
     }
 
     getAcc() {
@@ -48,13 +48,12 @@ class AuthUniversal extends Component {
     }
 
     connectToSdk(username) {
-        const name = `${username}.mylogin.eth`
-        this.sdk.identityExist(name)
+        const name = `${username}.${this.ensDomain}.eth`
+        this.sdk.identityExist(username)
             .then((identityAddress) => {
-                console.log(identityAddress);
                 this.identityAddress = identityAddress
                 if (identityAddress) {
-                    console.log(identityAddress)
+                    console.log('Identity Adress Exists!', identityAddress)
                     const privateKey = this.sdk.connect(identityAddress)
                     setTimeout(() => {console.log(privateKey)}, 10000)
                         // .then(privateKey => {
@@ -68,44 +67,43 @@ class AuthUniversal extends Component {
                             // })
                         // })
                 } else {
-                    console.log('creating new user');
-                    this.create(username)
+                    this.create(name)
                         .then(res => {
-                            console.log('CREATION RESPONSE =', res)
+                            console.log(res)
+                            const privateKey = res[0]
+                            const address = res[1]
+                            this.authOnServer({privateKey, address, name});
                         })
                         .catch((err) => {
-                            console.error('CREATION ERROR', err)
+                            console.error(err)
                         })
                 }
             })
             .catch(err => console.error(err))
     }
 
-    create(username) {
+    create(name) {
         // has keys firstPrivateKey, identityAddress
-        return this.sdk.create(
-            `${username}.ethereum.eth`
-        )
+        return this.sdk.create(name)
     }
 
-    authOnServer = () => {
-        const authToken = 'demo signature'
-        let mode = AUTH_TYPES.DEMO.signType
-        let authType = AUTH_TYPES.DEMO.name
+    authOnServer = ({privateKey, address, name}) => {
+        const authToken = 'UNIVERSAL'
+        let mode = AUTH_TYPES.UNIVERSAL.signType
+        let authType = AUTH_TYPES.UNIVERSAL.name
         let addr = null
         let signature = null
-
-        getAccount()
-            .then((account) => {
+        getAccount({privateKey, address})
+            .then(account => {
                 addr = account.address
-                return sigDemoMsg({ msg: authToken, account })
+                return sigMsg({ msg: authToken, account })
             })
             .then(sig => {
                 signature = sig.sig
                 return signToken({ userid: addr, signature: signature.signature, authToken, mode: mode, hash: sig.hash, })
             })
             .then(res => {
-                return this.props.updateAcc({ res, addr, signature: signature.signature, mode, authType })
+                return this.props.updateAcc({ res, addr, signature: signature.signature, mode, authType, name })
             })
     }
 
