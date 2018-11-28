@@ -51,13 +51,11 @@ class AuthUniversal extends Component {
         const name = `${username}.${this.ensDomain}.eth`
         this.sdk.identityExist(username)
             .then((identityAddress) => {
+                console.log(identityAddress)
                 this.identityAddress = identityAddress
                 if (identityAddress) {
-                    console.log('Identity Adress Exists!', identityAddress)
                     const privateKey = this.sdk.connect(identityAddress)
-                    setTimeout(() => {console.log(privateKey)}, 10000)
                         // .then(privateKey => {
-                            // console.log(privateKey)
                             // this.privateKey = privateKey
                             // const { address } = new Wallet(privateKey)
                             // this.subscription = this.sdk.subscribe('KeyAdded', identityAddress, (event) => {
@@ -69,7 +67,7 @@ class AuthUniversal extends Component {
                 } else {
                     this.create(name)
                         .then(res => {
-                            console.log(res)
+                            console.table({privateKey: res[0], address: res[1]})
                             const privateKey = res[0]
                             const address = res[1]
                             this.authOnServer({privateKey, address, name});
@@ -95,7 +93,7 @@ class AuthUniversal extends Component {
         let signature = null
         getAccount({privateKey, address})
             .then(account => {
-                addr = account.address
+                addr = account.address // Breaks if I use address, can't create web3 acc with preexisting address AND privatekey
                 return sigMsg({ msg: authToken, account })
             })
             .then(sig => {
@@ -105,6 +103,7 @@ class AuthUniversal extends Component {
             .then(res => {
                 return this.props.updateAcc({ res, addr, signature: signature.signature, mode, authType, name })
             })
+            .catch(err=> console.error(err))
     }
 
     onSubmit() {

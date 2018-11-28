@@ -25,10 +25,10 @@ export default function AuthHoc(Decorated) {
             this.props.actions.resetAllItems()
         }
 
-        updateAcc = ({ res, addr, signature, mode, authType, hdPath, chainId, addrIdx }) => {
+        updateAcc = ({ res, addr, signature, mode, authType, hdPath, chainId, addrIdx, name }) => {
             if (res && res.status === 'OK') {
                 addSig({ addr: addr, sig: signature, mode: authType, expiryTime: res.expiryTime })
-                this.props.actions.updateAccount({ ownProps: { addr: addr, signType: mode, authType, authSig: signature, chainId, hdWalletAddrPath: hdPath, hdWalletAddrIdx: addrIdx } })
+                this.props.actions.updateAccount({ ownProps: { addr: addr, signType: mode, authType, authSig: signature, chainId, hdWalletAddrPath: hdPath, hdWalletAddrIdx: addrIdx, name } })
                 return true
             } else {
                 this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_ON_SERVER'), timeout: 5000 })

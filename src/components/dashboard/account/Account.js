@@ -56,6 +56,30 @@ class Account extends React.Component {
                 <List
                 // dense={true}
                 >
+                    {account._name
+                    ?
+                    <span>
+                    <ListItem>
+                        <ListItemText
+                            className={classes.address}
+                            primary={account._name}
+                            secondary={t('ACC_NAME_LABEL')}
+                        />
+                    </ListItem>
+                    <IconButton
+                        color='default'
+                        onClick={() => {
+                            copy(account._name);
+                            this.props.actions
+                                .addToast({ type: 'accept', action: 'X', label: t('COPIED_TO_CLIPBOARD'), timeout: 5000 })
+                        }}
+                    >
+                        <CopyIcon />
+                    </IconButton>
+                    <ListDivider />
+                    </span>
+                    :
+                    null}
                     <ListItem>
                         <ListItemText
                             className={classes.address}
