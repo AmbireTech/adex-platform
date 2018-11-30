@@ -14,9 +14,10 @@ import { AUTH_TYPES } from 'constants/misc'
 import { getAccount, sigMsg } from 'services/universal-login/universal-login'
 import { signToken } from 'services/adex-node/actions'
 import EthereumIdentitySDK from 'universal-login-monorepo/universal-login-sdk'
-import { ethers } from 'ethers'
+import { ethers, Wallet } from 'ethers'
 import { Input } from '@material-ui/core'
 import { getWeb3 } from 'services/smart-contracts/ADX'
+import { getSig } from 'services/auth/auth'
 
 class AuthUniversal extends Component {
     constructor(props) {
@@ -49,35 +50,34 @@ class AuthUniversal extends Component {
 
     connectToSdk(username) {
         const name = `${username}.${this.ensDomain}.eth`
-        this.sdk.identityExist(username)
+        this.sdk.identityExist(name)
             .then((identityAddress) => {
-                console.log(identityAddress)
                 this.identityAddress = identityAddress
                 if (identityAddress) {
                     const privateKey = this.sdk.connect(identityAddress)
-                        // .then(privateKey => {
-                            // this.privateKey = privateKey
-                            // const { address } = new Wallet(privateKey)
-                            // this.subscription = this.sdk.subscribe('KeyAdded', identityAddress, (event) => {
-                            //     if (event.address === address) {
-                            //         console.log('CONNECTED!!!')
-                            //     }
-                            // })
-                        // })
+                        .then(privateKey => {
+                            this.privateKey = privateKey
+                            const { address } = new Wallet(privateKey)
+                            this.subscription = this.sdk.subscribe('KeyAdded', identityAddress, (event) => {
+                                if (event.address === address) {
+                                    console.log('CONNECTED!!!')
+                                }
+                            })
+                        })
                 } else {
                     this.create(name)
                         .then(res => {
                             console.table({privateKey: res[0], address: res[1]})
                             const privateKey = res[0]
-                            const address = res[1]
-                            this.authOnServer({privateKey, address, name});
+                            const addr = res[1]
+                            this.authOnServer({privateKey, addr, name});
                         })
                         .catch((err) => {
-                            console.error(err)
+                            console.error('Or here', err)
                         })
                 }
             })
-            .catch(err => console.error(err))
+            .catch(err => console.error('Breaks here', err))
     }
 
     create(name) {
@@ -85,25 +85,30 @@ class AuthUniversal extends Component {
         return this.sdk.create(name)
     }
 
-    authOnServer = ({privateKey, address, name}) => {
-        const authToken = 'UNIVERSAL'
+    authOnServer = ({privateKey, addr, name}) => {
         let mode = AUTH_TYPES.UNIVERSAL.signType
         let authType = AUTH_TYPES.UNIVERSAL.name
-        let addr = null
-        let signature = null
-        getAccount({privateKey, address})
-            .then(account => {
-                addr = account.address // Breaks if I use address, can't create web3 acc with preexisting address AND privatekey
-                return sigMsg({ msg: authToken, account })
+
+        this.props.authOnServer({addr, mode, authType, name})
+            .then((res) => {
+                console.log('PASSED', res)
             })
-            .then(sig => {
-                signature = sig.sig
-                return signToken({ userid: addr, signature: signature.signature, authToken, mode: mode, hash: sig.hash, })
+            .catch((err) => {
+                console.error(err)
             })
-            .then(res => {
-                return this.props.updateAcc({ res, addr, signature: signature.signature, mode, authType, name })
-            })
-            .catch(err=> console.error(err))
+        // getAccount({privateKey, address})
+        //     .then(account => {
+        //         addr = account.address // Breaks if I use address, can't create web3 acc with preexisting address AND privatekey
+        //         return sigMsg({ msg: authToken, account })
+        //     })
+        //     .then(sig => {
+        //         signature = sig.sig
+        //         return signToken({ userid: addr, signature: signature.signature, authToken, mode: mode, hash: sig.hash, })
+        //     })
+        //     .then(res => {
+        //         return this.props.updateAcc({ res, addr, signature: signature.signature, mode, authType, name })
+        //     })
+        //     .catch(err => console.error(err))
     }
 
     onSubmit() {

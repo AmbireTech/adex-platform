@@ -176,14 +176,32 @@ export const signTypedLedger = ({ userAddr, hdPath, addrIdx, typedData, hash }) 
         })
 }
 
+export const signTypedUniversal = ({ userAddr, typedData, authType, hash }) => {
+    return new Promise((resolve, reject) => {
+        getWeb3(authType).then(({ web3, exchange, token, mode }) => {
+            web3.eth.sign(hash, userAddr,
+                (err, res) => {
+                    console.log('HERE')
+                    if (err) {
+                        return reject(err)
+                    }
+                    console.log('WOW HERE TOO')
+                    if (res.error) {
+                        return reject(res.error)
+                    }
+                    console.log('EVEN HERE')
+                    let signature = { sig: res, hash: hash, mode: SIGN_TYPES.EthPersonal.id }
+                    console.log(signature)
+                    return resolve(signature)
+                })
+        })
+    })
+}
+
 export const signTypedMsg = ({ authType, userAddr, hdPath, addrIdx, typedData }) => {
     let pr
 
     let hash = getTypedDataHash({ typedData: typedData })
-
-    console.log('hash', hash)
-    console.log('authType', authType)
-
     switch (authType) {
         case AUTH_TYPES.TREZOR.name:
             pr = signTypedTrezor({ userAddr, hdPath, addrIdx, typedData, hash })
@@ -192,12 +210,14 @@ export const signTypedMsg = ({ authType, userAddr, hdPath, addrIdx, typedData })
             pr = signTypedMetamask({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name, hash })
             break
         case AUTH_TYPES.LEDGER.name:
-            pr = signTypedLedger({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name, hash, hdPath, addrIdx })
+            pr = signTypedLedger({ userAddr, typedData, authType: AUTH_TYPES.LEDGER.name, hash, hdPath, addrIdx })
+            break
+        case AUTH_TYPES.UNIVERSAL.name:
+            pr = signTypedUniversal({userAddr, typedData, authType: AUTH_TYPES.UNIVERSAL.name, hash})
             break
         default:
             pr = Promise.reject(new Error('Invalid authentication type!'))
     }
-
     return pr
 }
 
@@ -301,7 +321,6 @@ const sendTxLedger = ({ web3, rawTx, user, txSuccessData, nonce, from }) => {
     return ledger.comm_u2f.create_async()
         .then((comm) => {
             const eth = new ledger.eth(comm)
-
             const dPath = user._hdWalletAddrPath + '/' + user._hdWalletAddrIdx
 
             return eth.signTransaction_async(dPath, txToSign.toString('hex'))

@@ -49,7 +49,6 @@ class TopNav extends Component {
           <div
             className={classes.flexRow}
           >
-
             <IconButton
               color="inherit"
               aria-label="open drawer"
