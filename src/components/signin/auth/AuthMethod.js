@@ -65,7 +65,7 @@ class AuthMethod extends Component {
               scrollable
               scrollButtons='off'
               indicatorColor='primary'
-              textColor='inhprimaryerit'
+              textColor='primary'
             >
               <Tab
                 label={<div className={classes.tabLabel}> <Img src={DEMO_IMG} alt={'Universal Login'} className={classes.tabLogo} /> <span>{t('UNIVERSAL_LOGIN')}</span></div>}
