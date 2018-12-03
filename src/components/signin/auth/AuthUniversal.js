@@ -54,7 +54,7 @@ class AuthUniversal extends Component {
             .then((identityAddress) => {
                 this.identityAddress = identityAddress
                 if (identityAddress) {
-                    const privateKey = this.sdk.connect(identityAddress)
+                    this.sdk.connect(identityAddress)
                         .then(privateKey => {
                             this.privateKey = privateKey
                             const { address } = new Wallet(privateKey)
@@ -96,19 +96,6 @@ class AuthUniversal extends Component {
             .catch((err) => {
                 console.error(err)
             })
-        // getAccount({privateKey, address})
-        //     .then(account => {
-        //         addr = account.address // Breaks if I use address, can't create web3 acc with preexisting address AND privatekey
-        //         return sigMsg({ msg: authToken, account })
-        //     })
-        //     .then(sig => {
-        //         signature = sig.sig
-        //         return signToken({ userid: addr, signature: signature.signature, authToken, mode: mode, hash: sig.hash, })
-        //     })
-        //     .then(res => {
-        //         return this.props.updateAcc({ res, addr, signature: signature.signature, mode, authType, name })
-        //     })
-        //     .catch(err => console.error(err))
     }
 
     onSubmit() {
