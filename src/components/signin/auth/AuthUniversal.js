@@ -50,8 +50,10 @@ class AuthUniversal extends Component {
     }
 
     connectToSdk(username) {
+        const { t } = this.props;
         if (!this.checkEnsValidity(username)) {
-            console.error('bad username'); // TODO: replace with toast
+            this.props.actions
+                .addToast({ type: 'accept', action: 'X', label: t('BAD_ENS_USERNAME'), timeout: 5000 })
             return;
         }
 
