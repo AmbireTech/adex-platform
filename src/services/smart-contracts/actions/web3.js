@@ -12,7 +12,6 @@ import { translate } from 'services/translations/translations'
 const ethereumjs = require('ethereumjs-util')
 const { toBuffer, ecrecover, pubToAddress } = ethereumjs
 
-
 const TrezorConnect = trezorConnect.TrezorConnect
 
 const PRODUCTION_MODE = process.env.NODE_ENV === 'production'
@@ -181,15 +180,13 @@ export const signTypedUniversal = ({ userAddr, typedData, authType, hash }) => {
         getWeb3(authType).then(({ web3, exchange, token, mode }) => {
             web3.eth.sign(hash, userAddr,
                 (err, res) => {
-                    console.log('HERE')
                     if (err) {
                         return reject(err)
                     }
-                    console.log('WOW HERE TOO')
+
                     if (res.error) {
                         return reject(res.error)
                     }
-                    console.log('EVEN HERE')
                     let signature = { sig: res, hash: hash, mode: SIGN_TYPES.EthPersonal.id }
                     console.log(signature)
                     return resolve(signature)

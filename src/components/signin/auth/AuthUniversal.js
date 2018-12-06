@@ -11,13 +11,10 @@ import { ContentBox, ContentBody } from 'components/common/dialog/content'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import { AUTH_TYPES } from 'constants/misc'
-import { getAccount, sigMsg } from 'services/universal-login/universal-login'
-import { signToken } from 'services/adex-node/actions'
 import EthereumIdentitySDK from 'universal-login-monorepo/universal-login-sdk'
 import { ethers, Wallet } from 'ethers'
 import { Input } from '@material-ui/core'
 import { getWeb3 } from 'services/smart-contracts/ADX'
-import { getSig } from 'services/auth/auth'
 
 class AuthUniversal extends Component {
     constructor(props) {
@@ -48,8 +45,19 @@ class AuthUniversal extends Component {
         this.sdk.stop()
     }
 
+    checkEnsValidity(username) {
+        return /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]$/.test(username)
+    }
+
     connectToSdk(username) {
-        const name = `${username}.${this.ensDomain}.eth`
+        if (!this.checkEnsValidity(username)) {
+            console.error('bad username'); // TODO: replace with toast
+            return;
+        }
+
+        let name = `${username}.${this.ensDomain}.eth`
+        name = name.toLowerCase(); // sdk throws error for uppercase
+
         this.sdk.identityExist(name)
             .then((identityAddress) => {
                 this.identityAddress = identityAddress
