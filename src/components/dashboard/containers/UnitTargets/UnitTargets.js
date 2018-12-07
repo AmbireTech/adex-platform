@@ -94,7 +94,7 @@ export class UnitTargets extends Component {
                             return this.targetArrayValues(target, t)
                         case 'age':
                             return this.ageTargets(target, t)
-                        default: null
+                        default: null // eslint-disable-line no-unused-expressions
                     }
                 })
             }
