@@ -3,7 +3,8 @@ import { getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 import { TO_HEX_PAD } from 'services/smart-contracts/constants'
 import { getRsvFromSig, getTypedDataHash } from 'services/smart-contracts/utils'
 import trezorConnect from 'third-party/trezor-connect'
-import ledger from 'ledgerco' //'third-party/ledger.min'
+import ledgerTransport from '@ledgerhq/hw-transport-u2f'
+import ledgerEth from "@ledgerhq/hw-app-eth"
 import rlp from 'rlp'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { AUTH_TYPES } from 'constants/misc'
@@ -157,12 +158,12 @@ const isLegacyTrezorSignature = ({ sig, hash, userAddr }) => {
 }
 
 export const signTypedLedger = ({ userAddr, hdPath, addrIdx, typedData, hash }) => {
-    return ledger.comm_u2f.create_async()
+    return ledgerTransport.create()
         .then((comm) => {
-            var eth = new ledger.eth(comm)
+            var eth = new ledgerEth(comm)
             var dPath = hdPath + '/' + addrIdx
             var buf = Buffer.from(hash.slice(2), 'hex')
-            return eth.signPersonalMessage_async(dPath, buf.toString('hex'))
+            return eth.signPersonalMessage(dPath, buf.toString('hex'))
         })
         .then((result) => {
             var v = result['v']
@@ -290,7 +291,7 @@ const sendTxTrezor = ({ web3, rawTx, user, txSuccessData, nonce, from }) => {
 }
 
 const sendTxLedger = ({ web3, rawTx, user, txSuccessData, nonce, from }) => {
-    console.log('sendTxLedger', ledger)
+    // console.log('sendTxLedger', ledger)
     // return new Promise((resolve, reject) => {
     const eTx = new ethTx(rawTx)
     eTx.raw[6] = Buffer.from([rawTx.chainId])
@@ -298,13 +299,13 @@ const sendTxLedger = ({ web3, rawTx, user, txSuccessData, nonce, from }) => {
     const toHash = eTx.raw // old ? eTx.raw.slice(0, 6) : eTx.raw
     const txToSign = rlp.encode(toHash)
 
-    return ledger.comm_u2f.create_async()
+    return ledgerTransport.create()
         .then((comm) => {
-            const eth = new ledger.eth(comm)
+            const eth = new ledgerEth(comm)
 
             const dPath = user._hdWalletAddrPath + '/' + user._hdWalletAddrIdx
 
-            return eth.signTransaction_async(dPath, txToSign.toString('hex'))
+            return eth.signTransaction(dPath, txToSign.toString('hex'))
         })
         .then((result) => {
             const rewTxSigned = { ...rawTx }
