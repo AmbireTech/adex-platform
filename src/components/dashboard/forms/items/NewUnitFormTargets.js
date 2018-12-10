@@ -193,7 +193,7 @@ class NewUnitFormTargets extends Component {
                                                     return this.renderGendersTarget(target)
                                                 case 'age':
                                                     return this.renderAgeTarget(target)
-                                                default: null
+                                                default: null // eslint-disable-line no-unused-expressions
                                             }
                                         })()}
                                     </Grid>

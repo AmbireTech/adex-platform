@@ -12,7 +12,8 @@ import ListItem from '@material-ui/core/ListItem'
 import Typography from '@material-ui/core/Typography'
 import { getAddrs } from 'services/hd-wallet/utils'
 import scActions from 'services/smart-contracts/actions'
-import ledger from 'ledgerco' //'third-party/ledger.min'
+import ledgerTransportU2f from '@ledgerhq/hw-transport-u2f'
+import ledgerEth from "@ledgerhq/hw-app-eth"
 import AuthHoc from './AuthHoc'
 import { AUTH_TYPES } from 'constants/misc'
 import { AddrItem } from './AuthCommon'
@@ -45,11 +46,11 @@ class AuthLedger extends Component {
 
         this.setState({ waitingLedgerAction: true }, () => {
 
-            ledger.comm_u2f.create_async()
+            ledgerTransportU2f.create()
                 .then((transport) => {
-                    var eth = new ledger.eth(transport)
+                    var eth = new ledgerEth(transport)
 
-                    return eth.getAddress_async(HD_PATH, false, true)
+                    return eth.getAddress(HD_PATH, false, true)
                 })
                 .then((resp) => {
                     let addresses = getAddrs(resp.publicKey, resp.chainCode)

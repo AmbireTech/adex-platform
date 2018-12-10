@@ -13,7 +13,7 @@ import Root from './Root'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import { themeMUI, globalStyles } from './themeMUi'
 import MomentUtils from 'material-ui-pickers/utils/moment-utils'
-import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider'
+import { MuiPickersUtilsProvider } from 'material-ui-pickers'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { withStyles } from '@material-ui/core/styles'
 
