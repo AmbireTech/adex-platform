@@ -57,7 +57,8 @@ let initialState = {
         default: {}
     },
     web3Transactions: {},
-    tags: {}
+    tags: {},
+    identity: {}
 }
 
 export default initialState

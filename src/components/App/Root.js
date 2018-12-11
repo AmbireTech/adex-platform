@@ -6,6 +6,7 @@ import actions from 'actions'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import SigninExternalWallet from 'components/signin/SigninExternalWallet'
+import Identity from 'components/signin/identity/Identity'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import Translate from 'components/translate/Translate'
 import scActions from 'services/smart-contracts/actions'
@@ -78,7 +79,8 @@ class Root extends Component {
         return (
             <Switch >
                 <PrivateRoute auth={this.props.auth} path="/dashboard/:side" component={Dashboard} />
-                <Route exact path="/" component={SigninExternalWallet} />
+                {/* <Route exact path="/" component={SigninExternalWallet} /> */}
+                <Route exact path="/" component={Identity} />
                 <Route component={PageNotFound} />
             </Switch>
         )
