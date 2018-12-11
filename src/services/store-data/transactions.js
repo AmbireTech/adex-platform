@@ -31,7 +31,7 @@ const syncTransactions = () => {
         return Promise.resolve()
     }
 
-    return getTransactionsReceipts(hashes)
+    return getTransactionsReceipts(hashes, persist.account._authType)
         .then((receipts) => {
             receipts.forEach((rec) => {
                 if (rec && rec.transactionHash && rec.status) {
