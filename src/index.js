@@ -1,8 +1,8 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './components/App/App';
-import * as serviceWorker from './serviceWorker';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './index.css'
+import App from './components/App/App'
+import registerServiceWorker from './serviceWorker'
 
 // Temp here?
 Object.values = function* values(obj) {
@@ -11,7 +11,7 @@ Object.values = function* values(obj) {
     }
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById('root'))
 
-serviceWorker.register();
+registerServiceWorker()
 
