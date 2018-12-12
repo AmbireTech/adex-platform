@@ -4,7 +4,7 @@ import actions from 'actions'
 import { translate } from 'services/translations/translations'
 import moment from 'moment'
 
-const catchErrors = (res) => {
+const catchErrors = (res, skipErrToast) => {
     return new Promise((resolve, reject) => {
         if (res.status >= 200 && res.status < 400) {
             return resolve(res)
@@ -14,7 +14,9 @@ const catchErrors = (res) => {
                     if (res.status === 401 || res.status === 403) {
                         logOut()
                         // NOTE: In some places this err is handled but its good to have toast always
-                        actions.execute(actions.addToast({ type: 'cancel', action: 'X', label: translate('ERR_AUTH', { args: [res.statusText + ' - ' + err] }), timeout: 5000 }))
+                        if (!skipErrToast) {
+                            actions.execute(actions.addToast({ type: 'cancel', action: 'X', label: translate('ERR_AUTH', { args: [res.statusText + ' - ' + err] }), timeout: 5000 }))
+                        }
                     }
                     return reject({ status: res.status, error: res.statusText + ' - ' + err })
                 })
@@ -366,7 +368,7 @@ export const getBidVerificationReport = ({ bidId, authSig }) => {
     })
 }
 
-export const checkAuth = ({ authSig }) => {
+export const checkAuth = ({ authSig, skipErrToast }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'auth-check',
@@ -374,7 +376,7 @@ export const checkAuth = ({ authSig }) => {
             authSig: authSig
         })
             .then((resp) => {
-                return catchErrors(resp)
+                return catchErrors(resp, skipErrToast)
             })
             .then((resp) => {
                 return resp.json()
@@ -432,10 +434,10 @@ export const getTags = () => {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
-    .then((resp) => {
-        return catchErrors(resp)
-    })
-    .then((resp) => {
-        return resp.json()
-    })
+        .then((resp) => {
+            return catchErrors(resp)
+        })
+        .then((resp) => {
+            return resp.json()
+        })
 }
