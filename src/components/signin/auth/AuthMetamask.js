@@ -37,22 +37,7 @@ class AuthMetamask extends Component {
 
     componentWillMount() {
         this.props.actions.resetAccount()
-        this.accountInterval = setInterval(this.checkForMetamaskAccountChange, 1000)
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.accountInterval)
-    }
-
-    checkForMetamaskAccountChange = () => {
-        getAccountMetamask()
-            .then(({ addr, mode }) => {
-                let stateAddr = this.state.address.addr
-                if (stateAddr && (stateAddr.toLowerCase() !== (addr || '').toLowerCase())) {
-                    this.setState({ address: {} })
-                }
-            })
-    }
+    } 
 
     authOnServer = () => {
         let addr = this.state.address.addr
