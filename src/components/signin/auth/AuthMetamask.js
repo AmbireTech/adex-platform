@@ -37,7 +37,14 @@ class AuthMetamask extends Component {
 
     componentWillMount() {
         this.props.actions.resetAccount()
-    } 
+    }
+
+    componentWillUpdate = (nextProps, nextState) => {
+        // accountsChanged => (logout)
+        if (this.state.address.addr && !nextProps.account._addr) {
+            this.setState({ waitingAddrsData: false, address: {} })
+        }
+    }
 
     authOnServer = () => {
         let addr = this.state.address.addr
@@ -57,6 +64,7 @@ class AuthMetamask extends Component {
 
     checkMetamask = () => {
         const { t } = this.props
+        const authType = AUTH_TYPES.METAMASK.name
         getAccountMetamask()
             .then(({ addr, netId }) => {
                 if (!addr) {
@@ -65,11 +73,12 @@ class AuthMetamask extends Component {
                     return null
                 } else {
                     this.setState({ waitingAddrsData: true })
-                    return getAccountStats({ _addr: addr, authType: AUTH_TYPES.METAMASK.name })
+                    return getAccountStats({ _addr: addr, authType })
                 }
             })
             .then((stats) => {
                 this.setState({ address: stats || {}, waitingAddrsData: false, })
+                this.props.actions.updateAccount({ ownProps: { addr: stats.addr, authType } })
             })
             .catch((err) => {
                 this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('AUTH_ERR_METAMASK', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
@@ -113,7 +122,7 @@ class AuthMetamask extends Component {
                     </Typography>
                     <Typography paragraph>
                         <Anchor href='https://metamask.io/' target='_blank'>
-                            <Img src={METAMASK_DL_IMG} alt={'Downlad metamask'} className={classes.dlBtnImg}  />
+                            <Img src={METAMASK_DL_IMG} alt={'Downlad metamask'} className={classes.dlBtnImg} />
                         </Anchor>
                     </Typography>
                     {userAddr ?
