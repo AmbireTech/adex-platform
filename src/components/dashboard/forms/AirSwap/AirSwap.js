@@ -79,7 +79,6 @@ const AirSwapDialogBody = ({ t, onBuy, onSell, classes, account }) => {
                 <div className={classes.infoStatsContainer}>
                     <StatsCard
                         linkCard
-                        onClick={this.goToAccount}
                         subtitle={t('ACCOUNT_ETH_BALANCE')}
                         title={addrBalanceEth + ' ETH'}
                         padding='dense'
@@ -88,7 +87,6 @@ const AirSwapDialogBody = ({ t, onBuy, onSell, classes, account }) => {
 
                     <StatsCard
                         linkCard
-                        onClick={this.goToAccount}
                         subtitle={t('ACCOUNT_ADX_BALANCE')}
                         title={addrBalanceAdx + ' ADX'}
                         padding='dense'
