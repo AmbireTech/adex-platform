@@ -3,12 +3,10 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { Grid } from 'react-flexbox-grid'
-import theme from './../theme.css'
 import NewTransactionHoc from './TransactionHoc'
 import { getItem } from 'services/adex-node/actions'
 import { BidInfo } from './BidsCommon'
-import ProgressBar from 'react-toolbox/lib/progress_bar'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 
 class CancelBid extends Component {
@@ -35,19 +33,20 @@ class CancelBid extends Component {
     }
 
     render() {
-        let tr = this.props.transaction
-        let t = this.props.t
-        let unit = tr.unit
-        let bid = this.props.placedBid || {}
+        const { transaction, t, classes, placedBid = {} } = this.props
+
+        const unit = transaction.unit
 
         return (
             <div>
                 {!!this.props.spinner ?
-                    <ProgressBar className={theme.progressCircleCenter} type='circular' mode='indeterminate' multicolor />
+                    <div className={classes.centralSpinner}>
+                        <CircularProgress />
+                    </div>
                     :
-                    <Grid fluid>
-                        <BidInfo bid={bid} unit={unit} t={t} />
-                    </Grid>
+                    // <Grid fluid>
+                    <BidInfo bid={placedBid} unit={unit} t={t} />
+                    // </Grid>
                 }
             </div>
         )
@@ -58,6 +57,7 @@ CancelBid.propTypes = {
     actions: PropTypes.object.isRequired,
     label: PropTypes.string,
     trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     transaction: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     placedBid: PropTypes.object.isRequired
@@ -65,9 +65,11 @@ CancelBid.propTypes = {
 
 function mapStateToProps(state, props) {
     // let persist = state.persist
-    let memory = state.memory
+    const memory = state.memory
+    const trId = props.stepsId
     return {
-        spinner: memory.spinners[props.trId]
+        trId: trId,
+        spinner: memory.spinners[trId]
     }
 }
 
@@ -77,7 +79,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-let CancelBidForm = NewTransactionHoc(CancelBid)
+const CancelBidForm = NewTransactionHoc(CancelBid)
 export default connect(
     mapStateToProps,
     mapDispatchToProps

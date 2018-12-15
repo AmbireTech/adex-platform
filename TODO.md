@@ -37,4 +37,12 @@
 - make anchor component to set some attributes on one place - done
 - fix adex-models getImgUrl to return '' instead og undefined
 - Img component use div wit background instead img (need to fix some styles where used)
-
+- Fix transaction validations on back btn - done
+- Change trId to txId everywhere!!! - !important
+- Remove all tooltips and find way to show the additional info (easier for mobile devices)
+- Adex-node service - use user auth directly from the store for easier calls (without providing auth sig every time)
+- TODO: use eth addresses only with lower case everywhere!!!
+- Global logout func - reset all data - done
+- Use selectors for data filtering
+- Separate components for each statistics (e.g hourly interval chart in order to use it's own state and do nor rerender all charts on day change)
+- Selectors for data mapping instead doing this inside the components

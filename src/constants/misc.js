@@ -1,5 +1,5 @@
 import { exchange as ExchangeConstants, items as ItemsConstants } from 'adex-constants'
-const { BID_STATES, TIMEOUTS } = ExchangeConstants
+const { BID_STATES, TIMEOUTS, SIGN_TYPES } = ExchangeConstants
 const { AdTypes, AdSizes } = ItemsConstants
 
 export const NO_IMAGE_URL = 'https://crestaproject.com/demo/nucleare-pro/wp-content/themes/nucleare-pro/images/no-image-box.png'
@@ -37,4 +37,11 @@ export const SORT_PROPERTIES_COLLECTION = [
 export const FILTER_PROPERTIES_ITEMS = {
     '_meta.adType': { label: 'adType', labelIsProp: true, values: AdTypes },
     '_meta.size': { label: 'size', labelIsProp: true, values: AdSizes }
+}
+
+export const AUTH_TYPES = {
+    METAMASK: { name: 'metamask', signType: SIGN_TYPES.Eip.id },
+    TREZOR: { name: 'trezor', signType: SIGN_TYPES.Trezor.id },
+    LEDGER: { name: 'ledger', signType: SIGN_TYPES.EthPersonal.id },
+    DEMO: { name: 'demo', signType: SIGN_TYPES.EthPersonal.id }
 }

@@ -1,5 +1,3 @@
-import slug from 'slug'
-import unidecode from 'unidecode'
 import moment from 'moment'
 class Helper {
 
@@ -37,13 +35,6 @@ class Helper {
     getRandomKeyFromObj(obj) {
         var keys = Object.keys(obj)
         return keys[keys.length * Math.random() << 0]
-    }
-
-    slugify(str, legth = 32) {
-        if (!str || (typeof str !== 'string')) return ''
-        let slugified = slug(unidecode(str), { lower: true }).substring(0, legth)
-        // console.log('slugified', slugified)
-        return slugified
     }
 
     geRandomMoment(maxDaysPast, maxDaysAhead, initialMoment) {
@@ -84,6 +75,20 @@ class Helper {
         return '?' + Object.keys(queryParams).map((key) => {
             return encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key])
         }, '').join('&') || ''
+    }
+
+    getErrMsg = (err) => {
+        let stack = ((err.message || err || '').toString()).split(/\r\n|\n|\r/g)
+
+        if (stack.length > 1) {
+            return (err.name ? err.name + ': ' : '') + (stack[0]).toString()
+        } else {
+            return (err.error || err || '').toString()
+        }
+    }
+
+    isInt = (int) => {
+        return typeof int === 'number' && (int % 1 === 0)
     }
 }
 

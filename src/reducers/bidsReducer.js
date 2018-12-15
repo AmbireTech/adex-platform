@@ -1,19 +1,14 @@
-import { UNIT_PLACE_BID } from 'constants/actionTypes'
+import { UNIT_PLACE_BID, UPDATE_ALL_BIDS, RESET_ALL_BIDS } from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
 export default function bidsReducer(state = initialState.bids, action) {
-    let newState
-    let newBidsById
-    let newBidsIds
-    let newBidsByAdslot
-    let newBidsByAdunit
     let newBid
 
-    newState = { ...state }
-    newBidsById = { ...newState.bidsById }
-    newBidsIds = [...newState.bidsIds]
-    newBidsByAdslot = { ...newState.bidsByAdslot }
-    newBidsByAdunit = { ...newState.bidsByAdunit }
+    let newState = { ...state }
+    let newBidsById = { ...newState.bidsById }
+    let newBidsIds = [...newState.bidsIds]
+    let newBidsByAdslot = { ...newState.bidsByAdslot }
+    let newBidsByAdunit = { ...newState.bidsByAdunit }
 
     switch (action.type) {
         case UNIT_PLACE_BID:
@@ -31,6 +26,22 @@ export default function bidsReducer(state = initialState.bids, action) {
 
             return newState
 
+        case UPDATE_ALL_BIDS:
+            if (action.advBids) {
+                newState.advBids = { ...action.advBids }
+            }
+
+            if (action.pubBids) {
+                newState.pubBids = { ...action.pubBids }
+            }
+
+            if (action.bidsById) {
+                newState.bidsById = { ...action.bidsById }
+            }
+
+            return newState
+        case RESET_ALL_BIDS:
+            return initialState.bids
         default:
             return state
     }

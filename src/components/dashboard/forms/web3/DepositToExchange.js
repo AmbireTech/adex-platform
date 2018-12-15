@@ -3,16 +3,15 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-// import theme from 'components/dashboard/forms/theme.css'
 // import Translate from 'components/translate/Translate'
 import NewTransactionHoc from './TransactionHoc'
-import Input from 'react-toolbox/lib/input'
+import TextField from '@material-ui/core/TextField'
 import { validateNumber } from 'helpers/validators'
 
 class DepositToExchange extends Component {
 
     componentDidMount() {
-        if (!this.props.transaction.withdrawAmount) {
+        if (!this.props.transaction.depositAmount) {
             this.props.validate('depositAmount', {
                 isValid: false,
                 err: { msg: 'ERR_REQUIRED_FIELD' },
@@ -35,30 +34,27 @@ class DepositToExchange extends Component {
     }
 
     render() {
-        let tr = this.props.transaction
-        let t = this.props.t
-        let errAmount = this.props.invalidFields['depositAmount']
+        const { transaction, t, invalidFields, addrBalanceAdx, handleChange } = this.props
+        const errAmount = invalidFields['depositAmount']
 
         return (
             <div>
-                <span> {t('ACCOUNT_CURRENT_ADX_BALANCE_AVAILABLE')} {this.props.addrBalanceAdx} </span>
-                <Input
+                <div> {t('ACCOUNT_CURRENT_ADX_BALANCE_AVAILABLE')} {addrBalanceAdx} </div>
+                <TextField
+                    fullWidth
                     type='text'
                     required
-                    label={this.props.t('TOKENS_TO_DEPOSIT')}
+                    label={t('TOKENS_TO_DEPOSIT')}
                     name='depositAmount'
-                    value={tr.depositAmount || ''}
-                    onChange={(value) => this.props.handleChange('depositAmount', value)}
-                    onBlur={this.validateAmount.bind(this, tr.depositAmount, true)}
-                    onFocus={this.validateAmount.bind(this, tr.depositAmount, false)}
-                    error={errAmount && !!errAmount.dirty ?
-                        <span> {errAmount.errMsg} </span> : null}
-                >
-                    {errAmount && !errAmount.dirty ?
-                        <div>
-                            {t('MAX_AMOUNT_TO_DEPOSIT', { args: [this.props.addrBalanceAdx, 'ADX'] })}
-                        </div> : null}
-                </Input>
+                    value={transaction.depositAmount || ''}
+                    onChange={(ev) => handleChange('depositAmount', ev.target.value)}
+                    onBlur={() => this.validateAmount(transaction.depositAmount, true)}
+                    onFocus={() => this.validateAmount(transaction.depositAmount, false)}
+                    error={errAmount && !!errAmount.dirty}
+                    helperText={errAmount && !!errAmount.dirty ?
+                        errAmount.errMsg : t('MAX_AMOUNT_TO_DEPOSIT', { args: [addrBalanceAdx, 'ADX'] })
+                    }
+                />
             </div>
         )
     }
@@ -68,14 +64,17 @@ DepositToExchange.propTypes = {
     actions: PropTypes.object.isRequired,
     label: PropTypes.string,
     trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     transaction: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state, props) {
-    // let persist = state.persist
-    // let memory = state.memory
+    // const persist = state.persist
+    // const memory = state.memory
+    const trId = props.stepsId
     return {
+        trId: trId
     }
 }
 
@@ -85,7 +84,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-let DepositToExchangeForm = NewTransactionHoc(DepositToExchange)
+const DepositToExchangeForm = NewTransactionHoc(DepositToExchange)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
