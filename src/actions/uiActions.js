@@ -10,12 +10,13 @@ export function updateSpinner(item, value) {
     }
 }
 
-export function updateUi(item, value) {
+export function updateUi(item, value, category) {
     return function (dispatch) {
         return dispatch({
             type: types.UPDATE_UI,
             item: item,
-            value: value
+            value: value,
+            category: category
         })
     }
 }

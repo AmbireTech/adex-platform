@@ -20,3 +20,23 @@ export function resetNewBid({ bidId }) {
         })
     }
 }
+
+// PERSIST STORAGE
+
+export const updateBids = ({ advBids, pubBids, bidsById }) => {
+    return (dispatch) => {
+        return dispatch({
+            type: types.UPDATE_ALL_BIDS,
+            advBids: advBids,
+            pubBids: pubBids,
+            bidsById: bidsById
+        })
+    }
+}
+export const resetAllBids = () => {
+    return (dispatch) => {
+        return dispatch({
+            type: types.RESET_ALL_BIDS,
+        })
+    }
+}

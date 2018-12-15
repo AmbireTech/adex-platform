@@ -3,128 +3,159 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-// import theme from './theme.css'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
+import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
+import Typography from '@material-ui/core/Typography'
 import Translate from 'components/translate/Translate'
-// import { getWeb3 } from 'services/smart-contracts/ADX'
-// import SideSelect from 'components/signin/side-select/SideSelect'
-import { signToken } from 'services/adex-node/actions'
 import scActions from 'services/smart-contracts/actions'
-import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
-import { addSig, getSig } from 'services/auth/auth'
-import { checkAuth } from 'services/adex-node/actions'
 import METAMASK_DL_IMG from 'resources/download-metamask.png'
 import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
+import AuthHoc from './AuthHoc'
+import { AUTH_TYPES } from 'constants/misc'
+import { AddrItem } from './AuthCommon'
+import Helper from 'helpers/miscHelpers'
+import { ContentBox, ContentBody, ContentStickyTop, TopLoading } from 'components/common/dialog/content'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
-const { signAuthTokenMetamask, getAccountMetamask } = scActions
-
-// const RRButton = withReactRouterLink(Button)
+const { getAccountMetamask, getAccountStats } = scActions
 
 class AuthMetamask extends Component {
     constructor(props) {
         super(props)
         this.state = {
             method: '',
-            sideSelect: false
+            sideSelect: false,
+            address: {},
+            waitingMetamaskAction: false,
+            waitingAddrsData: false
         }
+
+        this.accountInterval = null
     }
 
     componentWillMount() {
-        if (!getSig({ addr: this.props.account._addr, mode: this.props.account._authMode })) {
-            this.props.actions.resetAccount()
+        this.props.actions.resetAccount()
+    }
+
+    componentWillUpdate = (nextProps, nextState) => {
+        // accountsChanged => (logout)
+        if (this.state.address.addr && !nextProps.account._addr) {
+            this.setState({ waitingAddrsData: false, address: {} })
         }
     }
 
     authOnServer = () => {
-        let signature = null
-        let addr = this.props.account._addr
-        // let authToken = 'someAuthTOken'
-        let mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id // TEMP?
-
-        signAuthTokenMetamask({ userAddr: addr })
-            .then(({ sig, sig_mode, authToken, typedData }) => {
-                signature = sig
-                return signToken({ userid: addr, signature: signature, authToken: authToken, mode: mode, typedData: typedData })
-            })
-            .then((res) => {
-                // TEMP
-                // TODO: keep it here or make it on login?
-                // TODO: catch
-                if (res.status === 'OK') {
-                    addSig({ addr: addr, sig: signature, mode: mode, expiryTime: res.expiryTime })
-
-                    this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: signature } })
-                } else {
-                    this.props.actions.resetAccount()
-                }
-            })
+        let addr = this.state.address.addr
+        let mode = AUTH_TYPES.METAMASK.signType // TEMP?
+        let authType = AUTH_TYPES.METAMASK.name
+        this.setState({ waitingMetamaskAction: true }, () =>
+            this.props.authOnServer({ mode, addr, authType })
+                .then(() => {
+                    // this.setState({ waitingMetamaskAction: false })
+                })
+                .catch((err) => {
+                    this.setState({ waitingMetamaskAction: false })
+                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_METAMASK', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
+                })
+        )
     }
 
-    // TODO: Make it some common function if needed or make timeout as metamask way 
-    // TODO: Keep signature expire time, and check again on the node for session 
     checkMetamask = () => {
-        // TODO: make it better
-        let sig = null
-        let userAddr = null
-        let sigMode = null
-        let t = this.props.t
+        const { t } = this.props
+        const authType = AUTH_TYPES.METAMASK.name
         getAccountMetamask()
-            .then(({ addr, mode }) => {
-                sigMode = mode
+            .then(({ addr, netId }) => {
                 if (!addr) {
-                    this.props.actions.resetAccount()
+                    this.setState({ address: {} })
                     this.props.actions.addToast({ type: 'warning', action: 'X', label: t('AUTH_WARN_NO_METAMASK_ADDR'), timeout: 5000 })
+                    return null
                 } else {
-                    userAddr = addr
-                    let authSig = getSig({ addr: addr, mode: mode })
-                    return authSig
+                    this.setState({ waitingAddrsData: true })
+                    return getAccountStats({ _addr: addr, authType })
                 }
             })
-            .then((authSig) => {
-                if (authSig) {
-                    sig = authSig
-                    return checkAuth({ authSig })
-                } else {
-                    this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, authSig: null } })
-                    return false
-                }
-            })
-            .then((res) => {
-                if (res) {
-                    this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, authSig: getSig({ addr: userAddr, mode: sigMode }) } })
-                }
+            .then((stats) => {
+                this.setState({ address: stats || {}, waitingAddrsData: false, })
+                this.props.actions.updateAccount({ ownProps: { addr: stats.addr, authType } })
             })
             .catch((err) => {
-                this.props.actions.updateAccount({ ownProps: { addr: userAddr, authMode: sigMode, authSig: null } })
-                this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('AUTH_ERR_METAMASK', { args: [err] }), timeout: 5000 })
+                this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('AUTH_ERR_METAMASK', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
+                this.setState({ waitingAddrsData: false, address: {} })
             })
     }
 
     render() {
-        let t = this.props.t
-        let userAddr = this.props.account._addr
-        // let authMode = this.props.account._authMode
+        const { t, classes } = this.props
+        const stats = this.state.address
+        const userAddr = stats.addr
 
         return (
-            <div >
-                <span>
-                    MetaMask is a bridge that allows you to visit the distributed web of tomorrow in your browser today. It allows you to run Ethereum dApps right in your browser without running a full Ethereum node.
-                </span>
-                <br/>
-                <h3>
-                    <Anchor href='https://metamask.io/' target='_blank'>
-                        <Img src={METAMASK_DL_IMG} alt={'Downlad metamask'} style={{maxWidth: '100%', maxHeight: '80px'}}/>
-                    </Anchor>
-                </h3>
-                <br/>
-                <br/>
-                {userAddr ?
-                    <Button onClick={this.authOnServer} label={t('AUTH_WITH_METAMASK', { args: [userAddr] })} raised accent />
-                    :
-                    <Button onClick={this.checkMetamask} label={t('AUTH_CONNECT_WITH_METAMASK')} raised primary />
+            <ContentBox className={classes.tabBox} >
+                {this.state.waitingMetamaskAction ?
+                    <ContentStickyTop>
+                        <TopLoading msg={t('METAMASK_WAITING_ACTION')} />
+                    </ContentStickyTop>
+                    : this.state.waitingAddrsData ?
+                        <TopLoading msg={t('METAMASK_WAITING_ADDR_INFO')} />
+                        : null
                 }
-            </div>
+                <ContentBody>
+                    <Typography paragraph variant='subheading'>
+                        {t('METAMASK_INFO')}
+                    </Typography>
+                    <Typography paragraph>
+                        <span
+                            dangerouslySetInnerHTML={
+                                {
+                                    __html: t('METAMASK_BASIC_USAGE_INFO',
+                                        {
+                                            args: [{
+                                                component:
+                                                    <Anchor href='https://metamask.io/' target='_blank'> https://metamask.io/</Anchor>
+                                            }]
+                                        })
+                                }
+                            }
+                        />
+                    </Typography>
+                    <Typography paragraph>
+                        <Anchor href='https://metamask.io/' target='_blank'>
+                            <Img src={METAMASK_DL_IMG} alt={'Downlad metamask'} className={classes.dlBtnImg} />
+                        </Anchor>
+                    </Typography>
+                    {userAddr ?
+                        <div>
+                            <div className={classes.metamaskLAbel}>
+                                {stats ?
+                                    <AddrItem stats={stats} t={t} addr={userAddr} />
+                                    : t('AUTH_WITH_METAMASK_LABEL', { args: [userAddr] })
+                                }
+
+                            </div>
+                            <Button
+                                onClick={this.authOnServer}
+                                variant='raised'
+                                color='secondary'
+                                disabled={this.state.waitingMetamaskAction}
+                            >
+                                {this.state.waitingMetamaskAction && <HourglassEmptyIcon className={classes.leftBtnIcon} />}
+                                {t('AUTH_WITH_METAMASK_BTN', { args: [userAddr] })}
+                            </Button>
+                        </div>
+                        :
+                        <Button
+                            onClick={this.checkMetamask}
+                            variant='raised'
+                            color='primary'
+                            disabled={this.state.waitingAddrsData}
+                        >
+                            {t('AUTH_CONNECT_WITH_METAMASK')}
+                        </Button>
+                    }
+                </ContentBody>
+            </ContentBox>
         )
     }
 }
@@ -133,10 +164,9 @@ AuthMetamask.propTypes = {
     actions: PropTypes.object.isRequired,
 }
 
-// 
 function mapStateToProps(state) {
-    let persist = state.persist
-    // let memory = state.memory
+    const persist = state.persist
+    // const memory = state.memory
     return {
         account: persist.account
     }
@@ -151,4 +181,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(AuthMetamask))
+)(Translate(AuthHoc(withStyles(styles)(AuthMetamask))))

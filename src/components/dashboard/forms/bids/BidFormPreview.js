@@ -3,38 +3,44 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import theme from 'components/dashboard/forms/theme.css'
 import { Bid } from 'adex-models'
 import NewBidHoc from './NewBidHoc'
-import { Grid, Row, Col } from 'react-flexbox-grid'
+import Grid from '@material-ui/core/Grid'
+import { WalletAction } from 'components/dashboard/forms/FormsCommon'
+import { PropRow, ContentBox, ContentBody, ContentStickyTop } from 'components/common/dialog/content'
 import constants from 'adex-constants'
 
 class BidFormPreview extends Component {
   render() {
     let bid = this.props.bid || {}
     let t = this.props.t
-
     // TODO: Make getter in the model
     let timeout = constants.exchange.timeoutsByValue[bid.timeout] || {}
 
     return (
-      <div>
+      <ContentBox>
         {/* TODO: Add translations and format the numbers */}
-        <Grid fluid>
-          <Row>
-            <Col xs={12} lg={4} className={theme.textRight}> {t('BID_TARGET_CLICKS')}:</Col>
-            <Col xs={12} lg={8} className={theme.textLeft}>{bid.target} </Col>
-          </Row>
-          <Row>
-            <Col xs={12} lg={4} className={theme.textRight}>{t('BID_AMOUNT')}:</Col>
-            <Col xs={12} lg={8} className={theme.textLeft}>{bid.amount}</Col>
-          </Row>
-          <Row>
-            <Col xs={12} lg={4} className={theme.textRight}>{t('BID_TIMEOUT')}:</Col>
-            <Col xs={12} lg={8} className={theme.textLeft}>{t(timeout.label, { args: timeout.labelArgs })}</Col>
-          </Row>
-        </Grid>
-      </div>
+        {this.props.waitingForWalletAction ?
+          <ContentStickyTop>
+            <WalletAction t={t} authType={this.props.account._authType} />
+          </ContentStickyTop> : null}
+        <ContentBody>
+          <Grid container spacing={16}>
+            <PropRow
+              left={t('BID_TARGET_CLICKS')}
+              right={bid.target}
+            />
+            <PropRow
+              left={t('BID_AMOUNT')}
+              right={bid.amount}
+            />
+            <PropRow
+              left={t('BID_TIMEOUT')}
+              right={t(timeout.label, { args: timeout.labelArgs })}
+            />
+          </Grid>
+        </ContentBody>
+      </ContentBox>
     )
   }
 }
@@ -48,12 +54,13 @@ BidFormPreview.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-  let persist = state.persist
-  let memory = state.memory
+  const persist = state.persist
+  const memory = state.memory
+  const bidId = props.bidId
   return {
-    bid: memory.newBid[props.bidId] || new Bid().plainObj(),
+    bid: memory.newBid[bidId] || new Bid().plainObj(),
     bidsIds: persist.bids.bidsIds,
-    bidId: props.bidId
+    bidId: bidId,
   }
 }
 

@@ -23,9 +23,10 @@ export function resetNewTransaction({ trId }) {
 
 // PERSIST STORAGE
 export function addWeb3Transaction({ trans, addr }) {
-    if(!trans || !trans.trHash || !addr) return
-
     return function (dispatch) {
+
+        if (!trans || !trans.trHash || !addr) return
+
         return dispatch({
             type: types.ADD_WEB3_TRANSACTION,
             value: trans,

@@ -1,17 +1,22 @@
 import React, { Component } from 'react'
-import theme from './theme.css'
-import PublisherLogo from 'components/common/icons/AdexPublisher'
-import AdvertiserLogo from 'components/common/icons/AdexAdvertiser'
-import AuctionLogo from 'components/common/icons/AdexAuction'
-// import { Link } from 'react-router-dom'
-import Dialog from 'react-toolbox/lib/dialog'
-import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Translate from 'components/translate/Translate'
-import classnames from 'classnames'
-import { Tab, Tabs } from 'react-toolbox'
-import { Button } from 'react-toolbox/lib/button'
-import { getWeb3 } from 'services/smart-contracts/ADX'
+import Dialog from '@material-ui/core/Dialog'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import AppBar from '@material-ui/core/AppBar'
 import AuthMetamask from 'components/signin/auth/AuthMetamask'
+import AuthTrezor from 'components/signin/auth/AuthTrezor'
+import AuthLedger from 'components/signin/auth/AuthLedger'
+import AuthDemo from 'components/signin/auth/AuthDemo'
+import METAMASK_DL_IMG from 'resources/download-metamask.png'
+import LEDGER_DL_IMG from 'resources/ledger_logo_header.png'
+import TREZOR_DL_IMG from 'resources/trezor-logo-h.png'
+import DEMO_IMG from 'resources/demo-logo.png'
+import Img from 'components/common/img/Img'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 class AuthMethod extends Component {
 
@@ -24,38 +29,84 @@ class AuthMethod extends Component {
     }
   }
 
-  handleTabChange = (index) => {
+  handleTabChange = (event, index) => {
     this.setState({ tabIndex: index })
   }
 
   render() {
-    // console.log('SideSelect', this.props)
-    let t = this.props.t
+    const { t, classes } = this.props
+    const { tabIndex } = this.state
     return (
       <Dialog
-        active={true}
-        title={t('CHOOSE_AUTH_METHOD')}
-        theme={theme}
+        open={true}
+        classes={{ paper: classes.dialogPaper }}
+        BackdropProps={{
+          classes: {
+            root: classes.backdrop
+          }
+        }}
+        fullWidth
+        maxWidth='md'
       >
-        <Tabs
-          theme={theme}
-          index={this.state.tabIndex}
-          onChange={this.handleTabChange.bind(this)}
+        <DialogTitle >
+          {t('CHOOSE_AUTH_METHOD')}
+        </DialogTitle>
+        <DialogContent
+          classes={{ root: classes.content }}
         >
-          <Tab label={t('METAMASK')}>
-            <AuthMetamask />
-          </Tab>
-          <Tab label={t('TREZOR')}>
-            <h1>{t('COMING_SOON')}</h1>
-          </Tab>
-          <Tab label={t('LEDGER')}>
-            <h1>{t('COMING_SOON')}</h1>
-          </Tab>
-        </Tabs>
+          <AppBar
+            position='static'
+            color='default'
+          >
+            <Tabs
+              value={this.state.tabIndex}
+              onChange={this.handleTabChange}
+              scrollable
+              scrollButtons='off'
+              indicatorColor='primary'
+              textColor='inhprimaryerit'
+            >
+              <Tab
+                // label={t('METAMASK')}
+                classes={{ label: classes.tabLabel }}
+                label={<Img src={METAMASK_DL_IMG} alt={'Authenticate with METAMASK'} className={classes.tabLogo} />}
+              />
+              <Tab
+                // label={t('TREZOR')}
+                classes={{ label: classes.tabLabel }}
+                label={<Img src={TREZOR_DL_IMG} alt={'Authenticate with TREZOR'} className={classes.tabLogo} />}
+              />
+              <Tab
+                // label={t('LEDGER')}
+                classes={{ label: classes.tabLabel }}
+                label={<Img src={LEDGER_DL_IMG} alt={'Authenticate with LEDGER'} className={classes.tabLogo} />}
+              />
+              <Tab
+                label={<div className={classes.tabLabel}> <Img src={DEMO_IMG} alt={'Demo mode'} className={classes.tabLogo} /> <span>{t('DEMO_MODE')}</span></div>}
+                classes={{ label: classes.tabLabel }}
+              />
+            </Tabs>
+          </AppBar>
+          <div className={classes.tabsContainer}>
+            {(tabIndex === 0) &&
+              <AuthMetamask />
+            }
+            {(tabIndex === 1) &&
+              <AuthTrezor />
+            }
+            {(tabIndex === 2) &&
+              <AuthLedger />
+            }
+            {(tabIndex === 3) &&
+              <AuthDemo />
+            }
+
+          </div>
+        </DialogContent>
 
       </Dialog>
     )
   }
 }
 
-export default Translate(AuthMethod)
+export default Translate(withStyles(styles)(AuthMethod))

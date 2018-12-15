@@ -5,9 +5,13 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Bid } from 'adex-models'
 import Translate from 'components/translate/Translate'
+import Helper from 'helpers/miscHelpers'
 import scActions from 'services/smart-contracts/actions'
 import { placeBid } from 'services/adex-node/actions'
 const { signBid } = scActions
+
+export const getSpinnerId = (bidId) =>
+  'new-bid-wallet-action-' + bidId
 
 export default function NewBidHoc(Decorated) {
   class BidForm extends Component {
@@ -22,28 +26,32 @@ export default function NewBidHoc(Decorated) {
       }
 
       if (Array.isArray(this.props.onSave)) {
-          for (var index = 0; index < this.props.onSave.length; index++) {
-              if (typeof this.props.onSave[index] === 'function') {
-                  this.props.onSave[index]()
-              }
+        for (var index = 0; index < this.props.onSave.length; index++) {
+          if (typeof this.props.onSave[index] === 'function') {
+            this.props.onSave[index]()
           }
+        }
       }
 
-      this.props.actions.resetNewBid({bidId: this.props.bidId})
+      this.props.actions.resetNewBid({ bidId: this.props.bidId })
+      this.props.actions.updateSpinner(getSpinnerId(this.props.bidId), false)
     }
 
     save = () => {
+      this.props.actions.updateSpinner(getSpinnerId(this.props.bidId), true)
       const t = this.props.t
       let bid = { ...this.props.bid }
       let unit = this.props.adUnit
       let bidInst = new Bid(bid)
-      let userAddr = this.props.account._addr
+      let user = this.props.account
+      let userAddr = user._addr
       let authSig = this.props.account._authSig
       bidInst.adUnit = unit._ipfs
       bidInst.adUnitId = unit._id
       bidInst.advertiser = this.props.account._addr
+      bidInst.tags = unit.tags
 
-      signBid({ userAddr: userAddr, authSig: authSig, bid: bidInst })
+      signBid({ userAddr: userAddr, authSig: authSig, bid: bidInst, user: user })
         .then((sig) => {
           bidInst.signature = sig
           bidInst._id = sig.hash
@@ -51,11 +59,11 @@ export default function NewBidHoc(Decorated) {
           return placeBid({ bid: bidInst.plainObj(), userAddr: userAddr, authSig: authSig })
         })
         .then((bid) => {
-          this.props.actions.addToast({ type: 'accept', action: 'X', label: t('BID_PLACED_MSG', {args: [bid._id]}), timeout: 5000 })
+          this.props.actions.addToast({ type: 'accept', action: 'X', label: t('BID_PLACED_MSG', { args: [bid._id] }), timeout: 5000 })
           this.onSave()
         })
         .catch((err) => {
-          this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_PLACE_BID', {args: [err.message || err]}), timeout: 5000 })
+          this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_PLACE_BID', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
           this.onSave()
         })
     }
@@ -67,9 +75,8 @@ export default function NewBidHoc(Decorated) {
     render() {
       let bid = this.props.bid || {}
       let props = this.props
-
       return (
-        <Decorated {...props} bid={bid} save={this.save} handleChange={this.handleChange} cancel={this.cancel}/>
+        <Decorated {...props} bid={bid} save={this.save} handleChange={this.handleChange} cancel={this.cancel} />
       )
     }
   }
@@ -84,12 +91,15 @@ export default function NewBidHoc(Decorated) {
   }
 
   function mapStateToProps(state, props) {
-    let persist = state.persist
-    let memory = state.memory
+    const persist = state.persist
+    const memory = state.memory
+    const bidId = props.bidId
     return {
       account: persist.account,
-      bid: memory.newBid[props.bidId] || new Bid().plainObj(),
-      bidsIds: persist.bids.bidsIds
+      bid: memory.newBid[bidId] || new Bid().plainObj(),
+      bidsIds: persist.bids.bidsIds,
+      // Needed for save btn and user action msg
+      waitingForWalletAction: memory.spinners[getSpinnerId(bidId)]
     }
   }
 

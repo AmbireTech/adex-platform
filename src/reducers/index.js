@@ -14,6 +14,7 @@ import bids from './bidsReducer'
 import newBid from './newBidsReducer'
 import newTransactions from './newTransactionsReducer'
 import web3Transactions from './web3TransactionsReducer'
+import tags from './tagsReducer'
 import { routerReducer, LOCATION_CHANGE, CALL_HISTORY_METHOD } from 'react-router-redux'
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
@@ -32,7 +33,8 @@ export const persistReducers = {
     language: language,
     // validations: validations,
     bids: bids,
-    web3Transactions: web3Transactions
+    web3Transactions: web3Transactions,
+    tags: tags
 }
 
 export const memoryReducers = {

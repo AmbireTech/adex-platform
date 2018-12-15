@@ -4,14 +4,16 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import NewItemHoc from './NewItemHocStep'
-import { Grid, Row, Col } from 'react-flexbox-grid'
-import theme from './../theme.css'
 import moment from 'moment'
 import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
 import Anchor from 'components/common/anchor/anchor'
+import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
 import { items as ItemsConstants } from 'adex-constants'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
+
 const { ItemsTypes, AdSizesByValue, AdTypesByValue } = ItemsConstants
 
 class NewItemFormPreview extends Component {
@@ -20,45 +22,57 @@ class NewItemFormPreview extends Component {
         this.save = props.save
     }
 
-    SlotFallback = ({ item, t }) => {
+    SlotFallback = ({ item, t, classes }) => {
         return (
             <div>
-                <Row>
-                    <Col xs={12} lg={4} className={theme.textRight}>{t('SLOT_FALLBACK_IMG_LABEL')}:</Col>
-                    <Col xs={12} lg={8} className={theme.textLeft}>{<Img className={theme.imgPreview} src={item.fallbackAdImg.tempUrl || ''} alt={item.fallbackAdUrl} />} </Col>
-                </Row>
-                <Row>
-                    <Col xs={12} lg={4} className={theme.textRight}>{t('fallbackAdUrl', { isProp: true })}:</Col>
-                    <Col xs={12} lg={8} className={theme.textLeft}><Anchor href={item.fallbackAdUrl} target='_blank'>{item.fallbackAdUrl}</Anchor></Col>
-                </Row>
+                <PropRow
+                    left={t('SLOT_FALLBACK_IMG_LABEL')}
+                    right={
+                        <Img
+                            allowFullscreen={true}
+                            className={classes.imgPreview}
+                            src={item.fallbackAdImg.tempUrl || ''}
+                            alt={item.fallbackAdUrl}
+                        />
+                    }
+                />
+                <PropRow
+                    left={t('fallbackAdUrl', { isProp: true })}
+                    right={<Anchor href={item.fallbackAdUrl} target='_blank'>{item.fallbackAdUrl}</Anchor>}
+                />
             </div>
         )
     }
 
     render() {
-        let item = this.props.item || {}
-        let meta = item._meta || {}
-        let t = this.props.t
-
+        const item = this.props.item || {}
+        const meta = item._meta || {}
+        const { t, classes } = this.props
         return (
-            <div>
-                <Grid fluid>
-                    <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{t('fullName', { isProp: true })}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{meta.fullName}</Col>
-                    </Row>
-                    <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{t('description', { isProp: true })}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{item._description}</Col>
-                    </Row>
-                    <Row>
-                        <Col xs={12} lg={4} className={theme.textRight}>{t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}:</Col>
-                        <Col xs={12} lg={8} className={theme.textLeft}>{<Img className={theme.imgPreview} src={meta.img.tempUrl || ''} alt={meta.fullName} />} </Col>
-                    </Row>
-                    {
-                        item._type === ItemsTypes.AdSlot.id ?
-                            <this.SlotFallback item={item} t={t} />
-                            : null
+            <ContentBox>
+                <ContentBody>
+                    {/* <Grid container spacing={16}> */}
+                    <PropRow
+                        left={t('fullName', { isProp: true })}
+                        right={meta.fullName}
+                    />
+                    <PropRow
+                        left={t('description', { isProp: true })}
+                        right={item._description}
+                    />
+                    <PropRow
+                        left={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}
+                        right={
+                            <Img
+                                allowFullscreen={true}
+                                className={classes.imgPreview}
+                                src={meta.img.tempUrl || ''}
+                                alt={meta.fullName}
+                            />
+                        }
+                    />
+                    {item._type === ItemsTypes.AdSlot.id &&
+                        <this.SlotFallback item={item} t={t} classes={classes} />
                     }
                     {
                         Object
@@ -66,7 +80,7 @@ class NewItemFormPreview extends Component {
                             .filter((key) => !/fullName|description|items|img|createdOn|modifiedOn|deleted|archived|banner|name|owner|type|targets/.test(key))
                             .map(key => {
                                 let keyName = key
-                                let value = item._meta[key]
+                                let value = meta[key]
 
                                 if (!value) {
                                     return null
@@ -84,25 +98,30 @@ class NewItemFormPreview extends Component {
                                     value = AdTypesByValue[value].label
                                 }
 
+                                if (keyName === 'tags') {
+                                    value = value.join(', ')
+                                }
+
                                 return (
-                                    <Row key={key}>
-                                        <Col xs={12} lg={4} className={theme.textRight}>{t(keyName, { isProp: true })}:</Col>
-                                        <Col xs={12} lg={8} className={theme.textLeft}>{value}</Col>
-                                    </Row>
+                                    <PropRow key={key}
+                                        left={t(keyName, { isProp: true })}
+                                        right={value}
+                                    />
                                 )
                             })
                     }
                     {meta.targets ?
-                        <Row>
-                            <Col xs={12} lg={4} className={theme.textRight}>{t('targets', { isProp: true })}:</Col>
-                            <Col xs={12} lg={8} className={theme.textLeft}><UnitTargets {...this.props} targets={meta.targets} t={t} /></Col>
-                        </Row>
+                        <PropRow
+                            left={t('targets', { isProp: true })}
+                            right={<UnitTargets {...this.props} targets={meta.targets} t={t} />}
+                        />
                         : null
                     }
 
-                </Grid>
-                <br />
-            </div>
+                    {/* </Grid> */}
+                    <br />
+                </ContentBody>
+            </ContentBox>
         )
     }
 }
@@ -115,8 +134,8 @@ NewItemFormPreview.propTypes = {
 }
 
 function mapStateToProps(state) {
-    let persist = state.persist
-    // let memory = state.memory
+    const persist = state.persist
+    // const memory = state.memory
     return {
         account: persist.account,
         // newItem: memory.newItem[ItemsTypes.AdUnit.id]
@@ -129,7 +148,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-const NewItemPreview = NewItemHoc(NewItemFormPreview)
+const NewItemPreview = NewItemHoc(withStyles(styles)(NewItemFormPreview))
 export default connect(
     mapStateToProps,
     mapDispatchToProps

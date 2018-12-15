@@ -1,57 +1,51 @@
 import React from 'react'
-import theme from './theme.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-// import moment from 'moment'
-// import { Button, IconButton } from 'react-toolbox/lib/button'
-import Slider from 'react-toolbox/lib/slider'
-import Dropdown from 'react-toolbox/lib/dropdown'
+import Dropdown from 'components/common/dropdown'
 import Translate from 'components/translate/Translate'
 import { web3Utils } from 'services/smart-contracts/ADX'
-import { getCurrentGasPrice } from 'services/smart-contracts/actions/eth'
-import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
+import { getGasData, DEFAULT_DATA } from 'services/eth/gas'
+import { styles } from './styles'
 
-// TODO: translations
-const pricesMap = [
-    { ratio: 0.75, label: 'Very slow (Maybe not)' },
-    { ratio: 0.85, label: 'Slow' },
-    { ratio: 1, label: 'Normal' },
-    { ratio: 1.2, label: 'Fast' },
-    { ratio: 1.5, label: 'Very fast' }
-]
+import { withStyles } from '@material-ui/core/styles'
 
+// TODO: Move component to side nav ?
 class GasPrice extends React.Component {
     constructor(props, context) {
         super(props, context)
 
         this.state = {
-            gasPrices: this.mapGasPrices(DEFAULT_GAS_PRICE)
+            gasPrices: null
         }
     }
 
-    mapGasPrices = (price) => {
-        let prices = pricesMap.map((pr) => {
-            let val = pr.ratio * price
-            let inGwei = web3Utils.fromWei(val.toString(), 'Gwei')
+    mapGasPrices = (gasData, t) => {
+        let prices = Object.keys(gasData).map((key) => {
+            let pr = gasData[key]
+            let inGwei = pr.price
+            let inWei = web3Utils.toWei(inGwei.toString(), 'Gwei')
 
-            return { value: val, label: inGwei + ' Gwei - ' + pr.label }
+            // TODO: Translations
+            return { value: inWei, label: t('GAS_PRICE_OPTION_LABEL', { args: [inGwei, 'Gwei', pr.wait] }) }
         })
 
         return prices
     }
 
     getGasPrices = () => {
-        getCurrentGasPrice()
-            .then((price) => {
-                let prices = this.mapGasPrices(price)
+        getGasData()
+            .then((gasData) => {
+                let prices = this.mapGasPrices(gasData, this.props.t)
                 this.setState({ gasPrices: prices })
             })
     }
 
     componentWillMount() {
-        this.getGasPrices()
+        this.setState({ gasPrices: this.mapGasPrices(this.props.account._settings.gasData || DEFAULT_DATA, this.props.t) })
+        // this.getGasPrices()
+        // Use interval check for that - services/store-data/gas
     }
 
     changeGasPrice = (val) => {
@@ -68,18 +62,21 @@ class GasPrice extends React.Component {
         if (settings && settings.gasPrice) {
             gasPrice = settings.gasPrice
         } else {
-            gasPrice = this.state.gasPrices[3].value
+            gasPrice = this.state.gasPrices[1].value
         }
 
+        console.log(gasPrice)
         return (
             <span>
                 <Dropdown
-                    theme={theme}
                     auto={false}
-                    label='GAS_PRICE_LABEL'
+                    label={this.props.t('GAS_PRICE_LABEL')}
                     onChange={this.changeGasPrice}
                     source={this.state.gasPrices}
                     value={gasPrice}
+                    disabled={this.props.disabled}
+                    htmlId='get-gas-price-dd'
+                    name='gasPrice'
                 />
             </span>
         )
@@ -109,4 +106,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(GasPrice))
+)(Translate(withStyles(styles)(GasPrice)))

@@ -4,15 +4,16 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Route, Switch, Redirect } from 'react-router-dom'
-import Dashboard from 'components/dashboard/Dashboard'
-import SigninMetamask from 'components/signin/SigninMetamask'
+import Dashboard from 'components/dashboard/dashboard/Dashboard'
+import SigninExternalWallet from 'components/signin/SigninExternalWallet'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import Translate from 'components/translate/Translate'
 import scActions from 'services/smart-contracts/actions'
-import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { getSig } from 'services/auth/auth'
+import { AUTH_TYPES } from 'constants/misc'
+import { logOut } from 'services/store-data/auth'
 
-const { getAccountMetamask, getAccountStatsMetaMask } = scActions
+const { getAccountMetamask } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
     return (
@@ -32,65 +33,47 @@ class Root extends Component {
         this.accountInterval = null
     }
 
-    logout = () => {
-        this.props.actions.resetAccount() // logaut
-        this.props.actions.resetAllItems()
-    }
-
     checkForMetamaskAccountChange = () => {
-        let acc = this.props.account // come from persistence storage
-        //Maybe dont need it but if for some reason the store account empty is not there
-        //TODO: check once when metamask on '/' !!!
-        if (acc && this.props.location.pathname !== '/') {
+        let acc = this.props.account
+        if (acc._authType === AUTH_TYPES.METAMASK.name) {
+
             getAccountMetamask()
                 .then(({ addr, mode }) => {
                     addr = (addr || '').toLowerCase()
-                    if (addr && acc._addr && acc._authMode !== undefined) {
-                        let accSigCheck = getSig({ addr: acc._addr, mode: acc._authMode })
-                        let mmAddrSigCheck = getSig({ addr: addr, mode: EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id })
+                    if (addr && acc._addr && acc._authType !== undefined) {
+                        let accSigCheck = getSig({ addr: acc._addr, mode: acc._authType })
+                        let mmAddrSigCheck = getSig({ addr: addr, mode: AUTH_TYPES.METAMASK.name })
                         if (!!mmAddrSigCheck && !!accSigCheck && (mmAddrSigCheck === accSigCheck)) {
                             return // user authenticated and not changed
-                        } else if ((addr !== acc._addr) && !!mmAddrSigCheck) {
-                            //the metamask address is changed but already authenticated, so we load the stats for it
-                            this.props.actions.updateAccount({ ownProps: { addr: addr, authMode: mode, authSig: mmAddrSigCheck } })
-                            this.props.actions.resetAllItems()
-                            getAccountStatsMetaMask({})
-                                .then((stats) => {
-                                    this.props.actions.updateAccount({ ownProps: { stats: stats } })
-                                })
                         } else {
-                            this.logout()
+                            // logout on metamask addr change
+                            logOut()
                         }
                     } else {
-                        this.logout()
+                        logOut()
                     }
                 })
         }
     }
 
     componentWillMount() {
-        // this.checkForMetamaskAccountChange()
+        this.checkForMetamaskAccountChange()
 
-        // TODO: Stop it when trezor or ledger detected
-        this.accountInterval = setInterval(this.checkForMetamaskAccountChange, 1000)
-    }
-
-    // NOTE: On location we check the metamsk user instead as metamask defaut setInterval way
-    // NOTE: On the signin page there will be button to signin manually if you are logged to metamsk
-    // TODO: We may need to use setInterval in order to detect metamask account change
-    componentWillUpdate(nextProps) {
-        // if (nextProps.location && nextProps.location.key && (nextProps.location.key !== this.props.location.key)) {
-        //     this.checkForMetamaskAccountChange()
-        // }
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                console.log('acc changed', accounts[0])
+                this.checkForMetamaskAccountChange()
+            })
+        }
     }
 
     render() {
         return (
             <Switch >
                 <PrivateRoute auth={this.props.auth} path="/dashboard/:side" component={Dashboard} />
-                <Route exact path="/" component={SigninMetamask} />
+                <Route exact path="/" component={SigninExternalWallet} />
                 <Route component={PageNotFound} />
-            </Switch>
+            </Switch >
         )
     }
 }
@@ -106,7 +89,7 @@ function mapStateToProps(state) {
     // let memory = state.memory
     return {
         account: account,
-        auth: !!account._addr && !!account._authSig && account._authMode !== undefined
+        auth: !!account._addr && !!account._authSig && account._authType !== undefined
     }
 }
 

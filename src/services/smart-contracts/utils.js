@@ -84,3 +84,28 @@ export const adxToFloatView = (adxAmountStr) => {
     let floatAmount = parseInt(adxAmountStr, 10) / MULT
     return floatAmount.toFixed(4)
 }
+
+export const getRsvFromSig = (sig) => {
+    sig = sig.slice(2)
+
+    var r = '0x' + sig.substring(0, 64)
+    var s = '0x' + sig.substring(64, 128)
+    var v = parseInt(sig.substring(128, 130), 16)
+
+    return { r: r, s: s, v: v }
+}
+
+// NOTE: works with typed data in format {type: 'solidity data type', name: 'string (label)', value: 'preferable string'} 
+export const getTypedDataHash = ({ typedData }) => {
+    let values = typedData.map((entry) => {
+        return entry.value // ? .toString().toLowerCase()
+    })
+    let valuesHash = web3Utils.soliditySha3.apply(null, values)
+
+    let schema = typedData.map((entry) => { return entry.type + ' ' + entry.name })
+    let schemaHash = web3Utils.soliditySha3.apply(null, schema)
+
+    let hash = web3Utils.soliditySha3(schemaHash, valuesHash)
+
+    return hash
+}

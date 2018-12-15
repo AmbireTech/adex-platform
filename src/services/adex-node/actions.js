@@ -1,14 +1,24 @@
 import requester from './requester'
+import { logOut } from 'services/store-data/auth'
+import actions from 'actions'
+import { translate } from 'services/translations/translations'
+import moment from 'moment'
 
-const catchErrors = (res) => {
+const catchErrors = (res, skipErrToast) => {
     return new Promise((resolve, reject) => {
-        // console.log('res', res)
         if (res.status >= 200 && res.status < 400) {
             return resolve(res)
         } else {
             res.text()
                 .then((err) => {
-                    return reject(res.statusText + ' - ' + err)
+                    if (res.status === 401 || res.status === 403) {
+                        logOut()
+                        // NOTE: In some places this err is handled but its good to have toast always
+                        if (!skipErrToast) {
+                            actions.execute(actions.addToast({ type: 'cancel', action: 'X', label: translate('ERR_AUTH', { args: [res.statusText + ' - ' + err] }), timeout: 5000 }))
+                        }
+                    }
+                    return reject({ status: res.status, error: res.statusText + ' - ' + err })
                 })
         }
     })
@@ -37,21 +47,34 @@ export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
     })
 }
 
+const convertItemToJSON = (item) => {
+    if (item._from && moment.isMoment(item._from)) {
+        item._from = moment.unix(item._from) / 1000
+    }
+
+    if (item._to && moment.isMoment(item._to)) {
+        item._to = moment.unix(item._to) / 1000
+    }
+
+    return JSON.stringify(item)
+}
+
 export const regItem = ({ item, authSig }) => {
+
     // return new Promise((resolve, reject) => {
-       return requester.fetch({
-            route: 'items',
-            method: 'POST',
-            body: JSON.stringify(item),
-            authSig: authSig,
-            headers: { 'Content-Type': 'application/json' }
+    return requester.fetch({
+        route: 'items',
+        method: 'POST',
+        body: convertItemToJSON(item),
+        authSig: authSig,
+        headers: { 'Content-Type': 'application/json' }
+    })
+        .then((resp) => {
+            return catchErrors(resp)
         })
-            .then((resp) => {
-                return catchErrors(resp)
-            })
-            .then((resp) => {
-                return resp.json()
-            })
+        .then((resp) => {
+            return resp.json()
+        })
     //         .catch((err) => {
     //             return reject(err)
     //         })
@@ -234,9 +257,19 @@ export const getSlotBids = ({ authSig, adSlot }) => {
     return getBids({ authSig: authSig, query: query })
 }
 
-export const getAvailableBids = ({ authSig, sizeAndType }) => {
+export const getBidsBySide = ({ authSig, side }) => {
     let query = {
-        sizeAndType: sizeAndType
+        side: side
+    }
+
+    return getBids({ authSig: authSig, query: query })
+}
+
+export const getAvailableBids = ({ authSig, sizeAndType, tags, filterByTags }) => {
+    let query = {
+        sizeAndType: sizeAndType,
+        tags: tags,
+        filterByTags: filterByTags
     }
 
     return getBids({ authSig: authSig, query: query })
@@ -260,13 +293,14 @@ export const getAuthToken = ({ authSig } = {}) => {
     })
 }
 
-export const signToken = ({ userid, signature, authToken, mode, typedData } = {}) => {
+export const signToken = ({ userid, signature, authToken, mode, typedData, hash } = {}) => {
     let data = {
         userid: userid,
         signature: signature,
         authToken: authToken,
         mode: mode,
-        typedData: typedData
+        typedData: typedData,
+        hash: hash
     }
 
     return new Promise((resolve, reject) => {
@@ -334,7 +368,7 @@ export const getBidVerificationReport = ({ bidId, authSig }) => {
     })
 }
 
-export const checkAuth = ({ authSig }) => {
+export const checkAuth = ({ authSig, skipErrToast }) => {
     return new Promise((resolve, reject) => {
         requester.fetch({
             route: 'auth-check',
@@ -342,7 +376,7 @@ export const checkAuth = ({ authSig }) => {
             authSig: authSig
         })
             .then((resp) => {
-                return catchErrors(resp)
+                return catchErrors(resp, skipErrToast)
             })
             .then((resp) => {
                 return resp.json()
@@ -351,7 +385,7 @@ export const checkAuth = ({ authSig }) => {
                 if (resp && resp.authenticated) {
                     return resolve(true)
                 } else {
-                    reject((resp || {}).error || 'Authentication error')
+                    return reject((resp || {}).error || 'Authentication error')
                 }
             })
             .catch((err) => {
@@ -360,12 +394,44 @@ export const checkAuth = ({ authSig }) => {
     })
 }
 
-export const updateItm = ({item, authSig}) => {
+export const updateItm = ({ item, authSig }) => {
     return requester.fetch({
         route: 'items',
         method: 'PUT',
-        body: JSON.stringify(item),
+        body: convertItemToJSON(item),
         authSig: authSig,
+        headers: { 'Content-Type': 'application/json' }
+    })
+        .then((resp) => {
+            return catchErrors(resp)
+        })
+        .then((resp) => {
+            return resp.json()
+        })
+}
+
+export const getBidEvents = ({ eventData = { bids: null, bid: null, start: null, end: null, interval: null } } = {}) => {
+    return requester.fetch({
+        route: 'events',
+        method: 'GET',
+        queryParams: eventData,
+        headers: { 'Content-Type': 'application/json' }
+    })
+        .then((resp) => {
+            return catchErrors(resp)
+        })
+        .then((resp) => {
+            return resp.json()
+        })
+        .then(resp => {
+            return resp
+        })
+}
+
+export const getTags = () => {
+    return requester.fetch({
+        route: 'tags',
+        method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
         .then((resp) => {

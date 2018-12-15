@@ -70,7 +70,6 @@ export function resetNewItem(item) {
 // register item
 export function addItem(item, itemToAddTo, authSig) {
     item = { ...item }
-
     return function (dispatch) {
 
         uploadImages({ item: item, authSig: authSig })
@@ -84,7 +83,6 @@ export function addItem(item, itemToAddTo, authSig) {
                     type: types.ADD_ITEM,
                     item: registeredItem
                 })
-
                 addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_CREATING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName] })
 
                 if (itemToAddTo) {
@@ -98,7 +96,7 @@ export function addItem(item, itemToAddTo, authSig) {
                             })
                         })
                 }
-            })            
+            })
             .catch((err) => {
                 return addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_CREATING_ITEM', args: [ItemTypesNames[item._type], err] })
             })
@@ -109,9 +107,7 @@ export function removeItemFromItem({ item, toRemove, authSig } = {}) {
     return function (dispatch) {
         removeItmFromItm({ item: item._id, collection: toRemove._id || toRemove, authSig: authSig })
             .then((res) => {
-                
                 addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_REMOVE_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, ItemTypesNames[toRemove._type], toRemove._meta.fullName,] })
-                
                 return dispatch({
                     type: types.REMOVE_ITEM_FROM_ITEM,
                     item: item,
@@ -232,6 +228,24 @@ export const resetAllItems = () => {
     return (dispatch) => {
         return dispatch({
             type: types.RESET_ALL_ITEMS
+        })
+    }
+}
+
+export const updateTags = ({ tags }) => {
+    return (dispatch) => {
+        return dispatch({
+            type: types.UPDATE_TAGS,
+            tags: tags
+        })
+    }
+}
+
+export const addNewTag = ({ tag }) => {
+    return (dispatch) => {
+        return dispatch({
+            type: types.ADD_NEW_TAG,
+            tag: tag
         })
     }
 }
