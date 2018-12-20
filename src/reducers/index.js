@@ -1,5 +1,6 @@
 import account from './accountReducer'
 import signin from './signinReducer'
+import identity from './identityReducer'
 import items from './itemsReducer'
 import newItem from './newItemsReducer'
 // import currentItem from './currentItemsReducer'
@@ -39,6 +40,7 @@ export const persistReducers = {
 
 export const memoryReducers = {
     signin: signin,
+    identity: identity,
     // account: account,
     // items: filterActions(items, (action => action.type.match(/_ITEM/))),
     newItem: filterActions(newItem, (action => action.type.match(/_NEWITEM/))),

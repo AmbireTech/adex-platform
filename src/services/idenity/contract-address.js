@@ -1,18 +1,27 @@
-import ethers from 'ethers'
-import utils from 'ethers/utils'
-import rpl from 'rpl'
+import { ethers } from 'ethers'
+// import { utils } from 'ethers/utils'
+import rlp from 'rlp'
+
+export const getRandomSeed = ({ extraEntropy = '' }) => {
+    const randomBytes = ethers.utils.randomBytes()
+    const entropy = ethers.utils.keccak256([extraEntropy, randomBytes])
+    const randomSeed = ethers.utils.HDNode(entropy)
+
+    return randomSeed
+}
 
 export const getNewRandomAddress = ({ extraEntropy }) => {
-    const wallet = ethers.Wallet.createRandom({ extraEntropy })
+    const wallet = ethers.Wallet.fromMnemonic(getRandomSeed({ extraEntropy }))
     const addres = wallet.address
 
     return addres
 }
 
 export const getIdentityContractAddress = ({ extraEntropy }) => {
-    const addr = getNewRandomAddress({ extraEntropy })
-    const rplEncoded = rpl.encode([addr, 0])
-    const idenityContractAddr = utils.keccak256(rplEncoded)
+    const randomSeed = getRandomSeed({ extraEntropy })
+    const wallet = ethers.Wallet.fromMnemonic(randomSeed)
+    // const rlpEncoded = rlp.encode([addr, 0])
+    // const idenityContractAddr = utils.keccak256(rlpEncoded)
 
-    return idenityContractAddr
+    return { addr: wallet.address, seed: randomSeed }
 }

@@ -10,7 +10,7 @@ export default function identityReducer(state = initialState.identity, action) {
 
     switch (action.type) {
         case UPDATE_IDENTITY:
-            newidentity = { ...newState }
+            newidentity = newState
             if (Array.isArray(newidentity[action.prop])) {
                 newidentity[action.prop] = [...action.value]
             } else {

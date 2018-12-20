@@ -27,7 +27,7 @@ export default function IdentityHoc(Decorated) {
         }
 
         handleChange = (prop, value) => {
-            this.props.actions.updateIdentity(this.props.identity, { [prop]: value })
+            this.props.actions.updateIdentity(prop, value)
         }
 
         save = () => {
