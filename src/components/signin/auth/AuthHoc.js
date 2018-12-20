@@ -56,7 +56,7 @@ export default function AuthHoc(Decorated) {
             let p = null
 
             if (signature) {
-                p = checkAuth({ authSig: signature })
+                p = checkAuth({ authSig: signature, skipErrToast: true })
             } else {
                 p = Promise.resolve(false)
             }

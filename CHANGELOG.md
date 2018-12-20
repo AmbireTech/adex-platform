@@ -3,6 +3,23 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.2.1] - 2018-19-12
+### Fixed
+- Service worker
+- Adding build to ipfs
+
+## [2.2.0] - 2018-12-12
+### Changed
+- Updated react dependencies
+- Using babel 7 and webpack 4
+- Stop using yarn for npm + lock file
+
+### Fixed
+- MetaMask use injected ethereum instead web3
+- MetaMask account change detected with the new event listener (no more interval check)
+- Ledger connection
+- Misc bug fixes
+
 ## [2.1.9] - 2018-10-28
 ### Added
 - DEMO mode - temp address with limited access
@@ -229,7 +246,9 @@ All notable changes to this project will be documented in this file.
 
 ## 2.0.0 - 2018-02-26
 
-[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.9...HEAD
+[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.2.1...HEAD
+[2.1.9]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.2.0...v2.2.1
+[2.1.9]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.9...v2.2.0
 [2.1.9]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.8...v2.1.9
 [2.1.8]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.7...v2.1.8
 [2.1.7]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.6...v2.1.7
