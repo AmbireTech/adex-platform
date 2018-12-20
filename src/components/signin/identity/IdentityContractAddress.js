@@ -20,17 +20,17 @@ class IdentityContractAddress extends Component {
 
     componentDidMount() {
         this.props.validate('identityContractAddress', {
-            isValid: !!this.props.item.identity_contract_address,
+            isValid: !!this.props.identity.identityContractAddress,
             err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
             dirty: false
         })
     }
 
-    getIdentityContracAddress(extraEntropy = '') {
-        const addr = getIdentityContractAddress({ extraEntropy })
-        this.props.handleChange('identityContractAddress', addr)
+    getIdentityContracAddress = (extraEntropy = '') => {
+        const addrData = getIdentityContractAddress({ extraEntropy: this.props.identity.extraEntropyIdentityContract })
+        this.props.handleChange('identityContractAddress', addrData.addr)
         this.props.validate('identityContractAddress', {
-            isValid: !!addr,
+            isValid: !!addrData.addr,
             err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
             dirty: true
         })
@@ -38,26 +38,30 @@ class IdentityContractAddress extends Component {
 
     render() {
         const { identity, t } = this.props
-        const { extraEntropyIdentityContract, identityContractAddress } = identity
+        const { extraEntropyIdentityContract, identityContractAddress } = identity || {}
+
         return (
             <div>
                 <Grid
                     container
                     spacing={16}
                 >
-                    <Grid item xs={12}>
+                    <Grid item sm={6}>
                         <TextField
                             fullWidth
                             type='text'
                             required
                             label={t('extraEntropyIdentityContract', { isProp: true })}
                             value={extraEntropyIdentityContract || ''}
+                            onChange={(ev) => this.props.handleChange('extraEntropyIdentityContract', ev.target.value)}
                         />
                     </Grid>
-                    <Grid item sm={12} md={6}>
+                    <Grid item sm={6}>
                         <Button
                             onClick={this.getIdentityContracAddress}
-                        />
+                        >
+                            {'Get addr'}
+                        </Button>
                         <div>
                             {identityContractAddress || ''}
                         </div>
