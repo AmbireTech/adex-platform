@@ -10,7 +10,6 @@ import Identity from 'components/signin/identity/Identity'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import Translate from 'components/translate/Translate'
 import scActions from 'services/smart-contracts/actions'
-import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { getSig } from 'services/auth/auth'
 import { AUTH_TYPES } from 'constants/misc'
 import { logOut } from 'services/store-data/auth'
@@ -36,10 +35,9 @@ class Root extends Component {
     }
 
     checkForMetamaskAccountChange = () => {
-        let acc = this.props.account // come from persistence storage
-        //Maybe dont need it but if for some reason the store account empty is not there
-        //TODO: check once when metamask on '/' !!!
-        if (acc && acc._authType === AUTH_TYPES.METAMASK.name && this.props.location.pathname !== '/') {
+        let acc = this.props.account
+        if (acc._authType === AUTH_TYPES.METAMASK.name) {
+
             getAccountMetamask()
                 .then(({ addr, mode }) => {
                     addr = (addr || '').toLowerCase()
@@ -60,19 +58,14 @@ class Root extends Component {
     }
 
     componentWillMount() {
-        // this.checkForMetamaskAccountChange()
+        this.checkForMetamaskAccountChange()
 
-        // TODO: Stop it when trezor or ledger detected
-        this.accountInterval = setInterval(this.checkForMetamaskAccountChange, 1000)
-    }
-
-    // NOTE: On location we check the metamsk user instead as metamask defaut setInterval way
-    // NOTE: On the signin page there will be button to signin manually if you are logged to metamsk
-    // TODO: We may need to use setInterval in order to detect metamask account change
-    componentWillUpdate(nextProps) {
-        // if (nextProps.location && nextProps.location.key && (nextProps.location.key !== this.props.location.key)) {
-        //     this.checkForMetamaskAccountChange()
-        // }
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                console.log('acc changed', accounts[0])
+                this.checkForMetamaskAccountChange()
+            })
+        }
     }
 
     render() {
@@ -82,7 +75,7 @@ class Root extends Component {
                 {/* <Route exact path="/" component={SigninExternalWallet} /> */}
                 <Route exact path="/" component={Identity} />
                 <Route component={PageNotFound} />
-            </Switch>
+            </Switch >
         )
     }
 }

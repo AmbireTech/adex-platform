@@ -60,76 +60,35 @@ export const getAccountBalances = (_addr) => {
 }
 
 export const getAccountStats = ({ _addr, authType, mode }) => {
-    return getWeb3(authType).then(({ cfg, exchange, token, web3 }) => {
-        let balanceEth = web3.eth.getBalance(_addr)
-        let balanceAdx = token.methods.balanceOf(_addr).call()
-        let allowance = token.methods.allowance(_addr, cfg.addr.exchange).call()
-        let exchangeBalance = exchange.methods.getBalance(_addr).call()
-
-        let all = [balanceEth, balanceAdx, allowance, exchangeBalance]
-
-        return Promise.all(all)
-            .then(([balEth, balAdx, allow, exchBal]) => {
-
-                let accStats = {
-                    addr: _addr,
-                    balanceEth: balEth,
-                    balanceAdx: balAdx,
-                    allowance: allow,
-                    exchangeBalance: getExchangeBalances(exchBal)
-                }
-
-                return accStats
-            })
-    })
-}
-
-export const getAccountStatsMetaMask = () => {
-    return new Promise((resolve, reject) => {
-        getWeb3().then(({ cfg, exchange, token, web3 }) => {
-            web3.eth.getAccounts((err, accounts) => {
-                let _addr = accounts[0]
-
-                if (!_addr) {
-                    reject('No metamask addr!')
-                }
-
-                // TODO: check for possible race condition 
-                let balanceEth = web3.eth.getBalance(_addr)
-                let balanceAdx = token.methods.balanceOf(_addr).call()
-                let allowance = token.methods.allowance(_addr, cfg.addr.exchange).call()
-                let exchangeBalance = exchange.methods.getBalance(_addr).call()
-
-                let all = [balanceEth, balanceAdx, allowance, exchangeBalance]
-
-                Promise.all(all)
-                    .then(([balEth, balAdx, allow, exchBal]) => {
-
-                        let accStats =
-                        {
-                            balanceEth: balEth,
-                            balanceAdx: balAdx,
-                            allowance: allow,
-                            exchangeBalance: getExchangeBalances(exchBal)
-                        }
-
-                        // console.log('accStats', accStats)
-                        return resolve(accStats)
-                    })
-                    .catch((err) => {
-                        console.log('getAccountStats err', err)
-                        reject(err)
-                    })
-            })
-        })
-    })
-}
-
-export const getTransactionsReceipts = (trHashes = []) => {
-    // TODO: Auth type
-    return getWeb3()
+    return getWeb3(authType)
         .then(({ cfg, exchange, token, web3 }) => {
-            let all = trHashes.map((trH) => web3.eth.getTransactionReceipt(trH))
+            let balanceEth = web3.eth.getBalance(_addr)
+            let balanceAdx = token.methods.balanceOf(_addr).call()
+            let allowance = token.methods.allowance(_addr, cfg.addr.exchange).call()
+            let exchangeBalance = exchange.methods.getBalance(_addr).call()
+
+            let all = [balanceEth, balanceAdx, allowance, exchangeBalance]
+
+            return Promise.all(all)
+                .then(([balEth, balAdx, allow, exchBal]) => {
+
+                    let accStats = {
+                        addr: _addr,
+                        balanceEth: balEth,
+                        balanceAdx: balAdx,
+                        allowance: allow,
+                        exchangeBalance: getExchangeBalances(exchBal)
+                    }
+
+                    return accStats
+                })
+        })
+}
+
+export const getTransactionsReceipts = (txHashes = [], authType) => {
+    return getWeb3(authType)
+        .then(({ cfg, exchange, token, web3 }) => {
+            let all = txHashes.map((trH) => web3.eth.getTransactionReceipt(trH))
             return Promise.all(all)
         })
 }

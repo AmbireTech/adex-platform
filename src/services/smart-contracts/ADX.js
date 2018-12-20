@@ -7,7 +7,7 @@ import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { AUTH_TYPES } from 'constants/misc'
 
 const mainnetCfg = {
-	node: process.env.WEB3_NODE || 'https://parity.wings.ai',
+	node: process.env.WEB3_NODE || 'https://mainnet.infura.io/v3/',
 	addr: {
 		token: process.env.ADX_TOKEN_ADDR || '0x4470BB87d77b963A013DB939BE332f927f2b992e',
 		exchange: process.env.ADX_EXCHANGE_ADDR || '0x912b8f85E28B9ec196b48228159E2f13546836e6',
@@ -44,21 +44,41 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 	// Wait for loading completion to avoid race conditions with web3 injection timing.
 	window.addEventListener('load', function () {
 		console.log('getInjectedWeb3')
-		let web3 = window.web3
+		const ethereum = window.ethereum
+		let web3 = null
 		let mode = null // metamask, and as some point trezor, ledger, ...
 		let token = null
 		let exchange = null
 
-		// Checking if Web3 has been injected by the browser (Mist/MetaMask)
-		if (typeof web3 !== 'undefined') {
-			// Use Mist/MetaMask's provider.
-			web3 = new Web3(web3.currentProvider)
-			// mode = EXCHANGE_CONSTANTS.SIGN_TYPES.Eip.id // Currently only metamask
+		if (ethereum) {
+			web3 = new Web3(ethereum)
 			token = new web3.eth.Contract(tokenAbi, cfg.addr.token)
 			exchange = new web3.eth.Contract(exchangeAbi, cfg.addr.exchange)
 
-			// console.log('web3.currentProvider', web3.currentProvider)
-			console.log('Injected web3 detected.')
+			ethereum.enable()
+				.then(() => {
+					console.log('Injected web3 detected.')
+					const results = {
+						web3: web3,
+						// mode: mode,
+						cfg: cfg,
+						token: token,
+						exchange: exchange
+					}
+
+					resolve(results)
+				})
+				.catch(err => {
+					reject('User denied account access...')
+				})
+		}
+		// Legacy dapp browsers...
+		else if (window.web3) {
+			web3 = new Web3(web3.currentProvider)
+			token = new web3.eth.Contract(tokenAbi, cfg.addr.token)
+			exchange = new web3.eth.Contract(exchangeAbi, cfg.addr.exchange)
+
+			console.log('Injected legacy web3 detected.')
 			const results = {
 				web3: web3,
 				// mode: mode,
@@ -69,9 +89,8 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 
 			resolve(results)
 		} else {
-			// Fallback to local web3
-			console.log('No web3 instance injected, using Local web3.')
-			resolve(localWeb3())
+			console.log('Non-Ethereum browser detected.');
+			reject('Non-Ethereum browser detected.');
 		}
 	})
 })
