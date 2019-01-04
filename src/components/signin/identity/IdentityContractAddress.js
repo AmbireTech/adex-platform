@@ -8,7 +8,7 @@ import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
-import { getIdentityContractAddress } from 'services/idenity/contract-address'
+import { getDeployTx, getRandomAddressForDeployTx } from 'services/idenity/contract-address'
 
 class IdentityContractAddress extends Component {
 
@@ -27,10 +27,18 @@ class IdentityContractAddress extends Component {
     }
 
     getIdentityContracAddress = (extraEntropy = '') => {
-        const addrData = getIdentityContractAddress({ extraEntropy: this.props.identity.extraEntropyIdentityContract })
+        const deployTx = getDeployTx({
+            addr: '0x0A8fe6e91eaAb3758dF18f546f7364343667E957', //this.props.account.addr,
+            privLevel: 3,
+            feeTokenAddr: '0x4470BB87d77b963A013DB939BE332f927f2b992e',
+            feeBeneficiery: '0x0A8fe6e91eaAb3758dF18f546f7364343667E957',
+            feeTokenAmount: '100'
+        })
+
+        const addrData = getRandomAddressForDeployTx({ deployTx })
         this.props.handleChange('identityContractAddress', addrData.addr)
         this.props.validate('identityContractAddress', {
-            isValid: !!addrData.addr,
+            isValid: !!addrData.idContractAddr,
             err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
             dirty: true
         })

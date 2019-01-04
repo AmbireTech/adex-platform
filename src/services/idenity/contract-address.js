@@ -1,27 +1,28 @@
-import { ethers, utils } from 'ethers'
-// import { utils } from 'ethers/utils'
-import rlp from 'rlp'
+import { ContractFactory, utils } from 'ethers'
+import identityJson from './../smart-contracts/build/Identity.json'
+import { getIdentityDeployData, getContractAddrWithZeroNonce } from 'adex-protocol-eth/js'
 
-export const getRandomSeed = ({ extraEntropy = '' }) => {
-    const randomBytes = utils.randomBytes(16)
-    const extra = utils.arrayify(utils.toUtf8Bytes(extraEntropy))
-    const extraExtra = utils.concat([extra, randomBytes])
-    const entropy = utils.keccak256(extraExtra)
-    const randomSeed = ethers.utils.HDNode.entropyToMnemonic(entropy)
-
+export const getRandomSeed = () => {
+    const randomSeed = utils.randomBytes(64)
     return randomSeed
 }
 
-export const getNewRandomAddress = ({ extraEntropy }) => {
-    const wallet = ethers.Wallet.fromMnemonic(getRandomSeed({ extraEntropy }))
-    const addres = wallet.address
+export const getDeployTx = ({ addr, privLevel, feeTokenAddr, feeBeneficiery, feeTokenAmount }) => {
+    const factory = new ContractFactory(identityJson.abi, identityJson.bytecode)
+    const deployTx = factory.getDeployTransaction(
+        addr,
+        privLevel,
+        feeTokenAddr,
+        feeBeneficiery,
+        feeTokenAmount,
+    )
 
-    return addres
+    return deployTx
 }
 
-export const getIdentityContractAddress = ({ extraEntropy }) => {
-    const randomSeed = getRandomSeed({ extraEntropy })
-    const wallet = ethers.Wallet.fromMnemonic(randomSeed)
-    
-    return { addr: wallet.address, seed: randomSeed }
+export const getRandomAddressForDeployTx = ({ deployTx }) => {
+
+    const randomSeed = getRandomSeed()
+    const data = getIdentityDeployData(randomSeed, deployTx)
+    return data
 }
