@@ -23,12 +23,12 @@ class AcceptBid extends Component {
     }
 
     componentWillMount() {
-        const { handleChange, validate, actions, placedBid } = this.props
+        const { handleChange, validate, actions, placedBid, account } = this.props
 
         validate('unit', { isValid: false, err: { msg: 'ERR_UNIT_INFO_NOT_READY' }, dirty: false })
         actions.updateSpinner(this.props.trId, true)
 
-        getAccountBalances(placedBid._advertiser)
+        getAccountBalances({ addr: placedBid._advertiser, authType: account._authType })
             .then((balances) => {
 
                 let available = parseInt(balances.available, 10)

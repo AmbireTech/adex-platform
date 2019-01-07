@@ -48,11 +48,10 @@ const getExchangeBalances = (exchBal = {}) => {
     }
 }
 
-
-export const getAccountBalances = (_addr) => {
-    return getWeb3()
+export const getAccountBalances = ({ addr, authType }) => {
+    return getWeb3(authType)
         .then(({ cfg, exchange, token, web3 }) => {
-            return exchange.methods.getBalance(_addr).call()
+            return exchange.methods.getBalance(addr).call()
         })
         .then((exchBal) => {
             return getExchangeBalances(exchBal)
