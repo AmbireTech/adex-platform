@@ -26,7 +26,7 @@ class IdentityContractAddress extends Component {
         })
     }
 
-    getIdentityContracAddress = () => {
+    getIdentityContracAddress = (extraEntropy = '') => {
         const deployTx = getDeployTx({
             addr: '0x0A8fe6e91eaAb3758dF18f546f7364343667E957',
             privLevel: 3,
@@ -36,7 +36,7 @@ class IdentityContractAddress extends Component {
         })
 
         const addrData = getRandomAddressForDeployTx({ deployTx })
-        this.props.handleChange('identityContractAddress', addrData.idContractAddr)
+        this.props.handleChange('identityContractAddress', addrData.addr)
         this.props.validate('identityContractAddress', {
             isValid: !!addrData.idContractAddr,
             err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
