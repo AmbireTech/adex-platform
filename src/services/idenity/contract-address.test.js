@@ -31,8 +31,9 @@ describe('contract-address getRandomAddressForDeployTx', () => {
             feeTokenAmount: '10000'
         })
 
-        expect(
-            getRandomAddressForDeployTx({ deployTx }).idContractAddr
-        ).toBeTruthy()
+        const dplaAddrData = getRandomAddressForDeployTx({ deployTx })
+        const idContractAddr = dplaAddrData.idContractAddr
+
+        expect(idContractAddr).toHaveLength(42)
     })
 })
