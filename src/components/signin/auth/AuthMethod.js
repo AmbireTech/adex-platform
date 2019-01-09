@@ -37,74 +37,76 @@ class AuthMethod extends Component {
     const { t, classes } = this.props
     const { tabIndex } = this.state
     return (
-      <Dialog
-        open={true}
-        classes={{ paper: classes.dialogPaper }}
-        BackdropProps={{
-          classes: {
-            root: classes.backdrop
-          }
-        }}
-        fullWidth
-        maxWidth='md'
-      >
-        <DialogTitle >
-          {t('CHOOSE_AUTH_METHOD')}
-        </DialogTitle>
-        <DialogContent
-          classes={{ root: classes.content }}
+      // <Dialog
+      //   open={true}
+      //   classes={{ paper: classes.dialogPaper }}
+      //   BackdropProps={{
+      //     classes: {
+      //       root: classes.backdrop
+      //     }
+      //   }}
+      //   fullWidth
+      //   maxWidth='md'
+      // >
+      //   <DialogTitle >
+      //     {t('CHOOSE_AUTH_METHOD')}
+      //   </DialogTitle>
+      //   <DialogContent
+      //     classes={{ root: classes.content }}
+      //   >
+      <div>
+        <AppBar
+          position='static'
+          color='default'
         >
-          <AppBar
-            position='static'
-            color='default'
+          <Tabs
+            value={this.state.tabIndex}
+            onChange={this.handleTabChange}
+            scrollable
+            scrollButtons='off'
+            indicatorColor='primary'
+            textColor='inhprimaryerit'
           >
-            <Tabs
-              value={this.state.tabIndex}
-              onChange={this.handleTabChange}
-              scrollable
-              scrollButtons='off'
-              indicatorColor='primary'
-              textColor='inhprimaryerit'
-            >
-              <Tab
-                // label={t('METAMASK')}
-                classes={{ label: classes.tabLabel }}
-                label={<Img src={METAMASK_DL_IMG} alt={'Authenticate with METAMASK'} className={classes.tabLogo} />}
-              />
-              <Tab
-                // label={t('TREZOR')}
-                classes={{ label: classes.tabLabel }}
-                label={<Img src={TREZOR_DL_IMG} alt={'Authenticate with TREZOR'} className={classes.tabLogo} />}
-              />
-              <Tab
-                // label={t('LEDGER')}
-                classes={{ label: classes.tabLabel }}
-                label={<Img src={LEDGER_DL_IMG} alt={'Authenticate with LEDGER'} className={classes.tabLogo} />}
-              />
-              <Tab
-                label={<div className={classes.tabLabel}> <Img src={DEMO_IMG} alt={'Demo mode'} className={classes.tabLogo} /> <span>{t('DEMO_MODE')}</span></div>}
-                classes={{ label: classes.tabLabel }}
-              />
-            </Tabs>
-          </AppBar>
-          <div className={classes.tabsContainer}>
-            {(tabIndex === 0) &&
-              <AuthMetamask />
-            }
-            {(tabIndex === 1) &&
-              <AuthTrezor />
-            }
-            {(tabIndex === 2) &&
-              <AuthLedger />
-            }
-            {(tabIndex === 3) &&
-              <AuthDemo />
-            }
+            <Tab
+              // label={t('METAMASK')}
+              classes={{ label: classes.tabLabel }}
+              label={<Img src={METAMASK_DL_IMG} alt={'Authenticate with METAMASK'} className={classes.tabLogo} />}
+            />
+            <Tab
+              // label={t('TREZOR')}
+              classes={{ label: classes.tabLabel }}
+              label={<Img src={TREZOR_DL_IMG} alt={'Authenticate with TREZOR'} className={classes.tabLogo} />}
+            />
+            <Tab
+              // label={t('LEDGER')}
+              classes={{ label: classes.tabLabel }}
+              label={<Img src={LEDGER_DL_IMG} alt={'Authenticate with LEDGER'} className={classes.tabLogo} />}
+            />
+            <Tab
+              label={<div className={classes.tabLabel}> <Img src={DEMO_IMG} alt={'Demo mode'} className={classes.tabLogo} /> <span>{t('DEMO_MODE')}</span></div>}
+              classes={{ label: classes.tabLabel }}
+            />
+          </Tabs>
+        </AppBar>
+        <div className={classes.tabsContainer}>
+          {(tabIndex === 0) &&
+            <AuthMetamask />
+          }
+          {(tabIndex === 1) &&
+            <AuthTrezor />
+          }
+          {(tabIndex === 2) &&
+            <AuthLedger />
+          }
+          {(tabIndex === 3) &&
+            <AuthDemo />
+          }
 
-          </div>
-        </DialogContent>
+        </div>
+      </div>
+      //   </DialogContent>
 
-      </Dialog>
+      // </Dialog>
     )
   }
 }
