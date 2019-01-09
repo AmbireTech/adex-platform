@@ -11,3 +11,12 @@ export const testrpcCfg = {
         exchange: '0x6387622bd50fddda242384e34cf4cd45f535a2ef',
     }
 }
+
+export const kovanCfg = {
+    node: 'https://kovan.infura.io/v3/3d22938fd7dd41b7af4197752f83e8a1',
+    addr: {
+        token: '0xC4375B7De8af5a38a93548eb8453a498222C4fF2',
+        exchange: '',
+        core: '0xe6AA464334A067F52E44F7B6dAbB91804371376C'
+    }
+}

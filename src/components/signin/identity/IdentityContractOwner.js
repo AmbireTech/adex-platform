@@ -4,7 +4,9 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import IdentityHoc from './IdentityHoc'
+import AuthMethod from 'components/signin/auth/AuthMethod'
 import Translate from 'components/translate/Translate'
+import { getSig } from 'services/auth/auth'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
@@ -18,12 +20,29 @@ class IdentityContractAddress extends Component {
         }
     }
 
+    hasSession = () => {
+        const { account } = this.props
+        const lsSig = getSig({ addr: account._addr, mode: account._authType })
+        const hasSession = !!lsSig && !!account._authSig && (lsSig === account._authSig)
+        return hasSession
+    }
+
     componentDidMount() {
         this.props.validate('identityContractAddress', {
-            isValid: !!this.props.identity.identityContractAddress,
+            isValid: this.hasSession(),
             err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
             dirty: false
         })
+    }
+
+    componentWillUpdate() {
+        if(this.hasSession()) {
+            this.props.validate('identityContractAddress', {
+                isValid: true,
+                err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
+                dirty: false
+            }) 
+        }
     }
 
     getIdentityContracAddress = (extraEntropy = '') => {
@@ -49,34 +68,7 @@ class IdentityContractAddress extends Component {
         const { extraEntropyIdentityContract, identityContractAddress } = identity || {}
 
         return (
-            <div>
-                <Grid
-                    container
-                    spacing={16}
-                >
-                    <Grid item sm={6}>
-                        <TextField
-                            fullWidth
-                            type='text'
-                            required
-                            label={t('extraEntropyIdentityContract', { isProp: true })}
-                            value={extraEntropyIdentityContract || ''}
-                            onChange={(ev) => this.props.handleChange('extraEntropyIdentityContract', ev.target.value)}
-                        />
-                    </Grid>
-                    <Grid item sm={6}>
-                        <Button
-                            onClick={this.getIdentityContracAddress}
-                        >
-                            {'Get addr'}
-                        </Button>
-                        <div>
-                            {identityContractAddress || ''}
-                        </div>
-
-                    </Grid>
-                </Grid>
-            </div >
+            <AuthMethod />
         )
     }
 }
