@@ -28,21 +28,21 @@ class IdentityContractAddress extends Component {
     }
 
     componentDidMount() {
-        this.props.validate('identityContractAddress', {
-            isValid: this.hasSession(),
-            err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
-            dirty: false
-        })
+        // this.props.validate('identityContractAddress', {
+        //     isValid: this.hasSession(),
+        //     err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
+        //     dirty: false
+        // })
     }
 
     componentWillUpdate() {
-        if(this.hasSession()) {
-            this.props.validate('identityContractAddress', {
-                isValid: true,
-                err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
-                dirty: false
-            }) 
-        }
+        // if(this.hasSession()) {
+        //     this.props.validate('identityContractAddress', {
+        //         isValid: true,
+        //         err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
+        //         dirty: false
+        //     }) 
+        // }
     }
 
     getIdentityContracAddress = (extraEntropy = '') => {
