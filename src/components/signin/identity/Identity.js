@@ -54,7 +54,7 @@ class Identty extends Component {
                     component: ValidItemHoc(p.page),
                     props: { validateId: 'inentity-step-' + p.title },
                     CancelBtn: CancelBtn,
-                    completeBtn: () => <SaveBtnWithIdentity t={t} />
+                    // completeBtn: () => <SaveBtnWithIdentity t={t} />
                 }
             })
         }
