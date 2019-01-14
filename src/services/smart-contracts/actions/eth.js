@@ -59,6 +59,26 @@ export const getAccountBalances = (_addr) => {
         })
 }
 
+export const getAccountBalance = ({ _addr, authType }) => {
+    return getWeb3(authType)
+        .then(({ cfg, exchange, token, web3 }) => {
+            let balanceEth = web3.eth.getBalance(_addr)
+
+            let all = [balanceEth]
+
+            return Promise.all(all)
+                .then(([balEth]) => {
+
+                    let accStats = {
+                        addr: _addr,
+                        balanceEth: balEth,
+                    }
+
+                    return accStats
+                })
+        })
+}
+
 export const getAccountStats = ({ _addr, authType, mode }) => {
     return getWeb3(authType)
         .then(({ cfg, exchange, token, web3 }) => {

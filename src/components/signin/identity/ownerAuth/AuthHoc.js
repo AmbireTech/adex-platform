@@ -27,9 +27,9 @@ export default function AuthHoc(Decorated) {
 
         updateAcc = ({ res, addr, signature, mode, authType, hdPath, chainId, addrIdx }) => {
 
-            const owner = { addr, type }
+            const owner = { addr, type: authType }
 
-            this.props.actions.updateIdentity(prop, value)
+            this.props.actions.updateIdentity('owner', owner)
         }
 
         signAuth = ({ addr, hdPath, addrIdx, authType, chainId }) => {
@@ -63,7 +63,7 @@ export default function AuthHoc(Decorated) {
                     <Decorated
                         {...this.props}
                         updateAcc={this.updateAcc}
-                        authOnServer={this.authOnServer}
+                        verifySignature={this.verifySignature}
                     />
                 </div>
             )
