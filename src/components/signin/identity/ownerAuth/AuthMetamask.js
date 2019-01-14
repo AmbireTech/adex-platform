@@ -19,7 +19,7 @@ import { ContentBox, ContentBody, ContentStickyTop, TopLoading } from 'component
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
-const { getAccountMetamask, getAccountStats } = scActions
+const { getAccountMetamask, getAccountBalance } = scActions
 
 class AuthMetamask extends Component {
     constructor(props) {
@@ -46,12 +46,12 @@ class AuthMetamask extends Component {
         }
     }
 
-    authOnServer = () => {
+    verifySignature = () => {
         let addr = this.state.address.addr
         let mode = AUTH_TYPES.METAMASK.signType // TEMP?
         let authType = AUTH_TYPES.METAMASK.name
         this.setState({ waitingMetamaskAction: true }, () =>
-            this.props.authOnServer({ mode, addr, authType })
+            this.props.verifySignature({ mode, addr, authType })
                 .then(() => {
                     // this.setState({ waitingMetamaskAction: false })
                 })
@@ -73,7 +73,7 @@ class AuthMetamask extends Component {
                     return null
                 } else {
                     this.setState({ waitingAddrsData: true })
-                    return getAccountStats({ _addr: addr, authType })
+                    return getAccountBalance({ _addr: addr, authType })
                 }
             })
             .then((stats) => {
@@ -135,7 +135,7 @@ class AuthMetamask extends Component {
 
                             </div>
                             <Button
-                                onClick={this.authOnServer}
+                                onClick={this.verifySignature}
                                 variant='raised'
                                 color='secondary'
                                 disabled={this.state.waitingMetamaskAction}
