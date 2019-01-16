@@ -10,6 +10,7 @@
     "@material-ui/core": "^1.4.1",
     "@material-ui/icons": "^2.0.0",
     "@material-ui/lab": "^1.0.0-alpha.7",
+    "@sentry/browser": "^4.5.1",
     "@svgr/webpack": "2.4.1",
     "adex-constants": "1.0.10",
     "adex-models": "1.0.9",
