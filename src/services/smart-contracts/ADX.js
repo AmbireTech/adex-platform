@@ -74,7 +74,7 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 		}
 		// Legacy dapp browsers...
 		else if (window.web3) {
-			web3 = new Web3(web3.currentProvider)
+			web3 = new Web3(window.web3.currentProvider)
 			token = new web3.eth.Contract(tokenAbi, cfg.addr.token)
 			exchange = new web3.eth.Contract(exchangeAbi, cfg.addr.exchange)
 
