@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [2.2.2] - 2018-19-17
+## [2.2.3] - 2018-19-17
 ### Fixed
 - Legacy dapp browsers bug
 
