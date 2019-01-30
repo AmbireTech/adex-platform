@@ -7,6 +7,9 @@ import Translate from 'components/translate/Translate'
 import { signToken, checkAuth } from 'services/adex-node/actions'
 import scActions from 'services/smart-contracts/actions'
 import { addSig, getSig } from 'services/auth/auth'
+import IdentityHoc from '../IdentityHoc'
+import ValidItemHoc from 'components/common/stepper/ValidItemHoc'
+
 const { signAuthToken } = scActions
 
 export default function AuthHoc(Decorated) {
@@ -18,6 +21,7 @@ export default function AuthHoc(Decorated) {
                 method: '',
                 sideSelect: false
             }
+            console.log('proips', props)
         }
 
         componentWillMount() {
@@ -37,12 +41,16 @@ export default function AuthHoc(Decorated) {
             let mode = null
             return signAuthToken({ userAddr: addr, authType, hdPath, addrIdx })
                 .then(({ sig, sig_mode, authToken, typedData, hash } = {}) => {
-                    signature = sig
-                    mode = sig_mode
-                    return signToken({ userid: addr, signature: signature, authToken, mode: mode, typedData, hash })
+                    this.props.handleChange('identityContractOwner', addr)
+                    // this.props.validate('identityContractOwner', {
+                    //     isValid: !!addr,
+                    //     err: { msg: 'ERR_NO_IDENTITY_CONTRACT_OWNER' },
+                    //     dirty: false
+                    // })
                 })
-                .then((res) => {
-                    return this.updateAcc({ res, addr, signature, mode, authType, hdPath, chainId, addrIdx })
+                .catch((err) => {
+                    console.log('err', err)
+                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_NO_IDENTITY_CONTRACT_OWNER'), timeout: 5000 })
                 })
         }
 
@@ -91,5 +99,5 @@ export default function AuthHoc(Decorated) {
     return connect(
         mapStateToProps,
         mapDispatchToProps
-    )(Translate(Auth))
+    )(Translate(ValidItemHoc(IdentityHoc(Auth))))
 }

@@ -11,6 +11,7 @@ import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import { getDeployTx, getRandomAddressForDeployTx } from 'services/idenity/contract-address'
+import color from '@material-ui/core/colors/lightBlue';
 
 class IdentityContractAddress extends Component {
 
@@ -20,29 +21,23 @@ class IdentityContractAddress extends Component {
         }
     }
 
-    hasSession = () => {
-        const { account } = this.props
-        const lsSig = getSig({ addr: account._addr, mode: account._authType })
-        const hasSession = !!lsSig && !!account._authSig && (lsSig === account._authSig)
-        return hasSession
+    getSnapshotBeforeUpdate(prevProps, prevState) {
+        if (prevProps.identity.identityContractOwner != this.props.identity.identityContractOwner) {
+            this.props.validate('identityContractOwner', {
+                isValid: !!this.props.identity.identityContractOwner,
+                err: { msg: 'ERR_NO_IDENTITY_CONTRACT_OWNER' },
+                dirty: true
+            })
+        }
     }
 
     componentDidMount() {
-        // this.props.validate('identityContractAddress', {
-        //     isValid: this.hasSession(),
-        //     err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
-        //     dirty: false
-        // })
-    }
-
-    componentWillUpdate() {
-        // if(this.hasSession()) {
-        //     this.props.validate('identityContractAddress', {
-        //         isValid: true,
-        //         err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
-        //         dirty: false
-        //     }) 
-        // }
+        console.log('this props ico', this.props)
+        this.props.validate('identityContractOwner', {
+            isValid: !!this.props.identity.identityContractOwner,
+            err: { msg: 'ERR_NO_IDENTITY_CONTRACT_OWNER' },
+            dirty: false
+        })
     }
 
     getIdentityContracAddress = (extraEntropy = '') => {
@@ -52,14 +47,6 @@ class IdentityContractAddress extends Component {
             feeTokenAddr: '0x4470BB87d77b963A013DB939BE332f927f2b992e',
             feeBeneficiery: '0x0A8fe6e91eaAb3758dF18f546f7364343667E957',
             feeTokenAmount: '10000'
-        })
-
-        const addrData = getRandomAddressForDeployTx({ deployTx })
-        this.props.handleChange('identityContractAddress', addrData.addr)
-        this.props.validate('identityContractAddress', {
-            isValid: !!addrData.idContractAddr,
-            err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
-            dirty: true
         })
     }
 

@@ -29,7 +29,8 @@ class AuthMetamask extends Component {
             sideSelect: false,
             address: {},
             waitingMetamaskAction: false,
-            waitingAddrsData: false
+            waitingAddrsData: false,
+            addressVerified: false
         }
 
         this.accountInterval = null
@@ -53,7 +54,7 @@ class AuthMetamask extends Component {
         this.setState({ waitingMetamaskAction: true }, () =>
             this.props.verifySignature({ mode, addr, authType })
                 .then(() => {
-                    // this.setState({ waitingMetamaskAction: false })
+                    this.setState({ waitingMetamaskAction: false, addressVerified: true })
                 })
                 .catch((err) => {
                     this.setState({ waitingMetamaskAction: false })
@@ -78,7 +79,6 @@ class AuthMetamask extends Component {
             })
             .then((stats) => {
                 this.setState({ address: stats || {}, waitingAddrsData: false, })
-                this.props.actions.updateAccount({ ownProps: { addr: stats.addr, authType } })
             })
             .catch((err) => {
                 this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('AUTH_ERR_METAMASK', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
@@ -88,6 +88,7 @@ class AuthMetamask extends Component {
 
     render() {
         const { t, classes } = this.props
+        const { addressVerified, address } = this.state
         const stats = this.state.address
         const userAddr = stats.addr
 
@@ -126,25 +127,32 @@ class AuthMetamask extends Component {
                         </Anchor>
                     </Typography>
                     {userAddr ?
-                        <div>
-                            <div className={classes.metamaskLAbel}>
-                                {stats ?
-                                    <AddrItem stats={stats} t={t} addr={userAddr} />
-                                    : t('AUTH_WITH_METAMASK_LABEL', { args: [userAddr] })
-                                }
+                        addressVerified ?
+                            <Typography paragraph variant='subheading'>
+                                {t('METAMASK_CONTINUET_TO_NEXT_STEP')}
+                            </Typography>
+                            :
+                            <div>
+                                <div className={classes.metamaskLAbel}>
+                                    {stats ?
+                                        <AddrItem stats={stats} t={t} addr={userAddr} />
+                                        : t('AUTH_WITH_METAMASK_LABEL', { args: [userAddr] })
+                                    }
 
+                                </div>
+                                <Button
+                                    onClick={this.verifySignature}
+                                    variant='raised'
+                                    color='secondary'
+                                    disabled={this.state.waitingMetamaskAction}
+                                >
+                                    {this.state.waitingMetamaskAction && <HourglassEmptyIcon className={classes.leftBtnIcon} />}
+                                    {t('AUTH_WITH_METAMASK_BTN', { args: [userAddr] })}
+                                </Button>
                             </div>
-                            <Button
-                                onClick={this.verifySignature}
-                                variant='raised'
-                                color='secondary'
-                                disabled={this.state.waitingMetamaskAction}
-                            >
-                                {this.state.waitingMetamaskAction && <HourglassEmptyIcon className={classes.leftBtnIcon} />}
-                                {t('AUTH_WITH_METAMASK_BTN', { args: [userAddr] })}
-                            </Button>
-                        </div>
+
                         :
+
                         <Button
                             onClick={this.checkMetamask}
                             variant='raised'
@@ -153,6 +161,7 @@ class AuthMetamask extends Component {
                         >
                             {t('AUTH_CONNECT_WITH_METAMASK')}
                         </Button>
+
                     }
                 </ContentBody>
             </ContentBox>
