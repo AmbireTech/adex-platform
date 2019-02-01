@@ -36,25 +36,15 @@ class AuthMetamask extends Component {
         this.accountInterval = null
     }
 
-    componentWillMount() {
-        this.props.actions.resetAccount()
-    }
-
-    componentWillUpdate = (nextProps, nextState) => {
-        // accountsChanged => (logout)
-        if (this.state.address.addr && !nextProps.account._addr) {
-            this.setState({ waitingAddrsData: false, address: {} })
-        }
-    }
-
     verifySignature = () => {
-        let addr = this.state.address.addr
+        let { addr } = this.state.address
         let mode = AUTH_TYPES.METAMASK.signType // TEMP?
         let authType = AUTH_TYPES.METAMASK.name
+
         this.setState({ waitingMetamaskAction: true }, () =>
             this.props.verifySignature({ mode, addr, authType })
                 .then(() => {
-                    this.setState({ waitingMetamaskAction: false, addressVerified: true })
+                    this.setState({ waitingMetamaskAction: false, addressVerified: true })  
                 })
                 .catch((err) => {
                     this.setState({ waitingMetamaskAction: false })
