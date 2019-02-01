@@ -24,29 +24,12 @@ export default function AuthHoc(Decorated) {
             console.log('proips', props)
         }
 
-        componentWillMount() {
-            // this.props.actions.resetAccount()
-            // this.props.actions.resetAllItems()
-        }
-
-        updateAcc = ({ res, addr, signature, mode, authType, hdPath, chainId, addrIdx }) => {
-
-            const owner = { addr, type: authType }
-
-            this.props.actions.updateIdentity('owner', owner)
-        }
-
         signAuth = ({ addr, hdPath, addrIdx, authType, chainId }) => {
             let signature = null
             let mode = null
             return signAuthToken({ userAddr: addr, authType, hdPath, addrIdx })
                 .then(({ sig, sig_mode, authToken, typedData, hash } = {}) => {
                     this.props.handleChange('identityContractOwner', addr)
-                    // this.props.validate('identityContractOwner', {
-                    //     isValid: !!addr,
-                    //     err: { msg: 'ERR_NO_IDENTITY_CONTRACT_OWNER' },
-                    //     dirty: false
-                    // })
                 })
                 .catch((err) => {
                     console.log('err', err)
@@ -58,10 +41,6 @@ export default function AuthHoc(Decorated) {
             return Promise.resolve()
                 .then(() => {
                     return this.signAuth({ addr, hdPath, addrIdx, authType, chainId })
-                })
-                .then((res) => {
-                    console.log('sign res', res)
-                    // this.updateAcc()
                 })
         }
 
