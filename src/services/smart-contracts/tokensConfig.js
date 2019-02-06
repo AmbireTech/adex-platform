@@ -1,4 +1,4 @@
-const tokens = [
+export const tokens = [
     {
         symbol: 'ADX',
         decimals: 4,
