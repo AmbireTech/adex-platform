@@ -29,6 +29,9 @@ export const styles = theme => {
             marginTop: '1.5vh',
             width: '17.92vh',
             height: '6vh'
+        },
+        formControl: {
+            display: 'flex'
         }
     }
 }
