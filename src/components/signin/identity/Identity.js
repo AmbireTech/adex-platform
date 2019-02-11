@@ -46,7 +46,7 @@ class Identty extends Component {
 
         this.state = {
             pages: [
-                { title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
+                // { title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
                 { title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddress }
             ].map(p => {
                 return {

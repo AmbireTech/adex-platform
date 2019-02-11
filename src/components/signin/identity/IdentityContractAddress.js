@@ -14,6 +14,8 @@ import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import { getDeployTx, getRandomAddressForDeployTx } from 'services/idenity/contract-address'
 import { tokens } from 'services/smart-contracts/tokensConfig'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
 const RELAYER_ADDR = '0x0A8fe6e91eaAb3758dF18f546f7364343667E957'
 
@@ -54,7 +56,7 @@ class IdentityContractAddress extends Component {
     }
 
     tokenSelect = () =>
-        <FormControl >
+        <FormControl className={this.props.classes.formControl} >
             <InputLabel htmlFor='fee-token'>Fee Token</InputLabel>
             <Select
                 value={this.props.identity.feeTokenAddr || ''}
@@ -68,7 +70,7 @@ class IdentityContractAddress extends Component {
                     <em>None</em>
                 </MenuItem>
                 {tokens.map((token) =>
-                    <MenuItem key={token.symbol}  value={token.contractAddress.kovan}>
+                    <MenuItem key={token.symbol} value={token.contractAddress.kovan}>
                         {token.symbol}
                     </MenuItem>
                 )}
@@ -76,7 +78,7 @@ class IdentityContractAddress extends Component {
         </FormControl>
 
     render() {
-        const { identity, t } = this.props
+        const { identity, t, classes } = this.props
         const { extraEntropyIdentityContract, identityContractAddress } = identity || {}
 
         return (
@@ -86,7 +88,7 @@ class IdentityContractAddress extends Component {
                     spacing={16}
                 >
                     <Grid item sm={6}>
-                        <this.tokenSelect />
+                        <this.tokenSelect classes={classes} />
                     </Grid>
                     <Grid item sm={6}>
                         <TextField
@@ -138,4 +140,4 @@ const IdentityContractAddressStep = IdentityHoc(IdentityContractAddress)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Translate(IdentityContractAddressStep))
+)(Translate(withStyles(styles)(IdentityContractAddressStep)))

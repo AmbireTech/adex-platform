@@ -5,7 +5,7 @@ export const tokens = [
         contractAddress: {
             mainnet: '0x4470BB87d77b963A013DB939BE332f927f2b992e',
             ropsten: null,
-            kovan: null,
+            kovan: '0xa624dEe05d96A0b3E441d0ee3b25Cc5CC0b5b836', // Test token
             rinkeby: null
         }
     },
