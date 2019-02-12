@@ -48,7 +48,7 @@ const CHECK_NUMBER_STR = new RegExp(/^([0-9]+\.?[0-9]*)$/)
 const LEADING_ZEROS = /^0+/
 // NOTE: converts user input string to multiplied integer
 // TODO: more tests for this
-export const adxAmountStrToPrecision = (amountStr) => {
+export const tokenAmountStrToPrecision = (amountStr, precision) => {
     amountStr = amountStr.toString() // OR throw if no string
 
     const isValid = validAmountStr(amountStr)
@@ -58,8 +58,8 @@ export const adxAmountStrToPrecision = (amountStr) => {
     const amParts = amountStr.split('.') //In no "." all goes to ints 
     const ints = amParts[0]
     const floats = amParts[1] || '0'
-    const floatsToPrecision = floats.substr(0, PRECISION) // Cuts the digits after the precision
-    const floatsEnsuredPrecision = padRight(floatsToPrecision, PRECISION) // Ensures precision
+    const floatsToPrecision = floats.substr(0, precision) // Cuts the digits after the precision
+    const floatsEnsuredPrecision = padRight(floatsToPrecision, precision) // Ensures precision
 
     const amount = ints + floatsEnsuredPrecision
 
@@ -68,10 +68,24 @@ export const adxAmountStrToPrecision = (amountStr) => {
     return amountNoLeadingZeros || '0'
 }
 
-export const adxAmountStrToHex = (amountStr) => {
-    let amount = !!amountStr && adxAmountStrToPrecision(amountStr)
+/**
+ * @deprecated Use tokenAmountStrToPrecision(amountStr, precision)
+ */
+export const adxAmountStrToPrecision = (amountStr) => {
+    return tokenAmountStrToPrecision(amountStr, PRECISION)
+}
+
+export const tokenAmountStrToHex = (amountStr, precision) => {
+    let amount = !!amountStr && tokenAmountStrToPrecision(amountStr, precision)
 
     return toHex(amount)
+}
+
+/**
+ * @deprecated Use tokenAmountStrToHex(amountStr, precision)
+ */
+export const adxAmountStrToHex = (amountStr) => {
+    return tokenAmountStrToHex(amountStr, PRECISION)
 }
 
 export const validAmountStr = (amountStr) => {
@@ -80,9 +94,16 @@ export const validAmountStr = (amountStr) => {
     return isValid
 }
 
-export const adxToFloatView = (adxAmountStr) => {
-    let floatAmount = parseInt(adxAmountStr, 10) / MULT
+export const tokenToFloatView = (tokenAmountStr, precision) => {
+    let floatAmount = parseInt(tokenAmountStr, 10) / Math.pow(10, precision)
     return floatAmount.toFixed(4)
+}
+
+/**
+ * @deprecated Use tokenToFloatView(tokenAmountStr, precision)
+ */
+export const adxToFloatView = (adxAmountStr) => {
+    return tokenToFloatView(adxAmountStr, PRECISION)
 }
 
 export const getRsvFromSig = (sig) => {
