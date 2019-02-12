@@ -14,6 +14,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import { getDeployTx, getRandomAddressForDeployTx } from 'services/idenity/contract-address'
 import { tokens } from 'services/smart-contracts/tokensConfig'
+import { validateNumber } from 'helpers/validators'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -33,6 +34,14 @@ class IdentityContractAddress extends Component {
             err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
             dirty: false
         })
+    }
+
+    validateAmount = (numStr, dirty) => {
+        let isValid = validateNumber(numStr)
+        let msg = 'ERR_INVALID_AMOUNT_VALUE'
+        let errMsgArgs = []
+
+        this.props.validate('withdrawAmount', { isValid: isValid, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
     }
 
     getIdentityContracAddress = () => {
@@ -77,9 +86,22 @@ class IdentityContractAddress extends Component {
             </Select>
         </FormControl>
 
+    tokenAmount = ({ t, feeTokenAmount, handleChange }) =>
+        <TextField
+            type='text'
+            fullWidth
+            required
+            label={t('FEE_TOKEN_AMOUNT')}
+            name='feeTokenAmount'
+            value={feeTokenAmount || ''}
+            onChange={(ev) => handleChange('feeTokenAmount', ev.target.value)}
+            onBlur={() => this.validateAmount(feeTokenAmount, true)}
+            onFocus={() => this.validateAmount(feeTokenAmount, false)}
+        />
+
     render() {
-        const { identity, t, classes } = this.props
-        const { extraEntropyIdentityContract, identityContractAddress } = identity || {}
+        const { identity, t, classes, handleChange } = this.props
+        const { identityContractAddress } = identity || {}
 
         return (
             <div>
@@ -91,14 +113,7 @@ class IdentityContractAddress extends Component {
                         <this.tokenSelect classes={classes} />
                     </Grid>
                     <Grid item sm={6}>
-                        <TextField
-                            fullWidth
-                            type='text'
-                            required
-                            label={t('extraEntropyIdentityContract', { isProp: true })}
-                            value={extraEntropyIdentityContract || ''}
-                            onChange={(ev) => this.props.handleChange('extraEntropyIdentityContract', ev.target.value)}
-                        />
+                        <this.tokenAmount t={t} feeTokenAmount={identity.feeTokenAmount} handleChange={handleChange} />
                     </Grid>
                     <Grid item sm={6}>
                         <Button
