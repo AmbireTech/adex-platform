@@ -30,39 +30,41 @@ class BidForm extends Component {
   }
 
   componentWillMount() {
-    this.props.actions.updateSpinner(SPINNER_ID, true)
+    const { bid, account, actions, validate, t } = this.props
 
-    if (!this.props.bid.target) {
-      this.props.validate('target', {
+    actions.updateSpinner(SPINNER_ID, true)
+
+    if (!bid.target) {
+      validate('target', {
         isValid: false,
         err: { msg: 'ERR_REQUIRED_FIELD' },
         dirty: false
       })
     }
-    if (!this.props.bid.amount) {
-      this.props.validate('amount', {
+    if (!bid.amount) {
+      validate('amount', {
         isValid: false,
         err: { msg: 'ERR_REQUIRED_FIELD' },
         dirty: false
       })
     }
-    if (!this.props.bid.timeout) {
-      this.props.validate('timeout', {
+    if (!bid.timeout) {
+      validate('timeout', {
         isValid: false,
         err: { msg: 'ERR_REQUIRED_FIELD' },
         dirty: false
       })
     }
 
-    getAccountBalances(this.props.account._addr)
+    getAccountBalances({ addr: account._addr, authType: account._authType })
       .then((balances) => {
-        this.props.actions.updateSpinner(SPINNER_ID, false)
+        actions.updateSpinner(SPINNER_ID, false)
         this.setState({ exchangeAvailable: balances.available })
       })
       .catch((err) => {
-        this.props.actions.updateSpinner(SPINNER_ID, false)
-        this.props.actions
-          .addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_GETTING_BALANCES_INFO', { args: [err] }), timeout: 5000 })
+        actions.updateSpinner(SPINNER_ID, false)
+        actions
+          .addToast({ type: 'cancel', action: 'X', label: t('ERR_GETTING_BALANCES_INFO', { args: [err] }), timeout: 5000 })
       })
   }
 
@@ -170,6 +172,7 @@ class BidForm extends Component {
 }
 
 BidForm.propTypes = {
+  account: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
   label: PropTypes.string,
   bid: PropTypes.object,
