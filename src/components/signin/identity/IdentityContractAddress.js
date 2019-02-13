@@ -12,6 +12,7 @@ import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
+import GasPrice from 'components/dashboard/account/GasPrice'
 import { getDeployTx, getRandomAddressForDeployTx } from 'services/idenity/contract-address'
 import { tokens } from 'services/smart-contracts/tokensConfig'
 import { validateNumber } from 'helpers/validators'
@@ -48,12 +49,14 @@ class IdentityContractAddress extends Component {
         const { identityContractOwner } = this.props.identity
 
         const deployTx = getDeployTx({
-            addr: identityContractOwner,
+            addr:  '0x2aecF52ABe359820c48986046959B4136AfDfbe2', //identityContractOwner,
             privLevel: 3,
-            feeTokenAddr: this.props.identity.feeTokenAddr, // '0x4470BB87d77b963A013DB939BE332f927f2b992e',
+            feeTokenAddr: '0x4470BB87d77b963A013DB939BE332f927f2b992e', //this.props.identity.feeTokenAddr, // '0x4470BB87d77b963A013DB939BE332f927f2b992e',
             feeBeneficiery: RELAYER_ADDR,
             feeTokenAmount: '10000'
         })
+
+        // NOTE: we need 
 
         const addrData = getRandomAddressForDeployTx({ deployTx })
         this.props.handleChange('identityContractAddress', addrData.idContractAddr)
@@ -114,6 +117,10 @@ class IdentityContractAddress extends Component {
                     </Grid>
                     <Grid item sm={6}>
                         <this.tokenAmount t={t} feeTokenAmount={identity.feeTokenAmount} handleChange={handleChange} />
+                    </Grid>
+
+                    <Grid item sm={6}>
+                        <GasPrice />
                     </Grid>
                     <Grid item sm={6}>
                         <Button

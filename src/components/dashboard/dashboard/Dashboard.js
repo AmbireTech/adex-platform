@@ -28,7 +28,7 @@ import { items as ItemsConstants } from 'adex-constants'
 import checkTransactions from 'services/store-data/transactions'
 import { getUserItems } from 'services/store-data/items'
 import { getAddrBids } from 'services/store-data/bids'
-import checkGasData from 'services/store-data/gas'
+// import checkGasData from 'services/store-data/gas'
 import { SORT_PROPERTIES_ITEMS, SORT_PROPERTIES_COLLECTION, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import Helper from 'helpers/miscHelpers'
 import scActions from 'services/smart-contracts/actions'
@@ -68,13 +68,13 @@ class Dashboard extends React.Component {
 
     componentWillUnmount() {
         checkTransactions.stop()
-        checkGasData.stop()
+        // checkGasData.stop()
     }
 
     componentWillMount(nextProps) {
         this.props.actions.updateNav('side', this.props.match.params.side)
         checkTransactions.start()
-        checkGasData.start()
+        // checkGasData.start()
         getUserItems({ authSig: this.props.account._authSig })
             .catch((err) => {
                 this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_METAMASK', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })

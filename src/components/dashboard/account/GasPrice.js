@@ -11,7 +11,7 @@ import { styles } from './styles'
 
 import { withStyles } from '@material-ui/core/styles'
 
-// TODO: Move component to side nav ?
+// TODO: Make common component
 class GasPrice extends React.Component {
     constructor(props, context) {
         super(props, context)
