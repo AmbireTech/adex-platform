@@ -48,3 +48,12 @@ export function updateAccount({ meta, ownProps }) {
         })
     }
 }
+
+export function updateGasData({gasData}) {
+    return function(dispatch) {
+        return dispatch({
+            type: types.UPDATE_GAS_DATA,
+            gasData: gasData
+        })
+    }
+}

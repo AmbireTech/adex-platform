@@ -5,6 +5,7 @@ export const DEFAULT_DATA = {
     average: { price: 4, wait: 30 },
     fast: { price: 21, wait:  2 },
     fastest: { price: 30, wait: 1 },
+    default: true
 }
 
 export const getGasData = () => {

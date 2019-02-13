@@ -17,6 +17,8 @@ export const getDeployTx = ({ addr, privLevel, feeTokenAddr, feeBeneficiery, fee
         feeTokenAmount,
     )
 
+    // TODO: deployTx.gasPrice
+
     return deployTx
 }
 

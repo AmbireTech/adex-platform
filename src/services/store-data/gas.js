@@ -3,6 +3,7 @@ import actions from 'actions'
 import { getGasData, DEFAULT_DATA } from 'services/eth/gas'
 
 const { store } = configureStore
+const GAS_CHECK_INTERVAL = 30 * 60 * 1000
 
 let gasDataCheckTimeout = null
 
@@ -15,22 +16,21 @@ const clearGasDataTimeout = () => {
 
 const syncGasData = () => {
     const persist = store.getState().persist
-    const account = persist.account
-    let settings = { ...account._settings }
-
+    const currentGasData = persist.ethNetwork.gasData
     return getGasData()
-        .then((gasData)=> {
-            
-            settings.gasData = gasData
+        .then((gasData) => {
 
-            let action = actions.updateAccount({ ownProps: { settings: settings } })
+            // TODO: fix where it is used (web3 transactions)
+            let action = actions.updateGasData({ gasData })
             action(store.dispatch)
         })
-        .catch(()=> {
-            settings.gasData = DEFAULT_DATA
+        .catch(() => {
+            const setDefault = !currentGasData.safeLow // never set beforw
 
-            let action = actions.updateAccount({ ownProps: { settings: settings } })
-            action(store.dispatch)
+            if (setDefault) {
+                let action = actions.updateGasData({ gasData: DEFAULT_DATA })
+                action(store.dispatch)
+            }
         })
 }
 
@@ -47,7 +47,7 @@ const checkGasData = () => {
 const checkGasDataLoop = () => {
     clearGasDataTimeout()
 
-    gasDataCheckTimeout = setTimeout(checkGasData, 30 * 60 * 1000)
+    gasDataCheckTimeout = setTimeout(checkGasData, GAS_CHECK_INTERVAL)
 }
 
 const start = () => {

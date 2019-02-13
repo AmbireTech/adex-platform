@@ -59,6 +59,10 @@ let initialState = {
     web3Transactions: {},
     tags: {},
     identity: {
+    },
+    ethNetwork: {
+        networkId: null,
+        gasData: {}
     }
 }
 

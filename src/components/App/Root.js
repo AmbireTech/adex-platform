@@ -13,6 +13,7 @@ import scActions from 'services/smart-contracts/actions'
 import { getSig } from 'services/auth/auth'
 import { AUTH_TYPES } from 'constants/misc'
 import { logOut } from 'services/store-data/auth'
+import checkGasData from 'services/store-data/gas'
 
 const { getAccountMetamask } = scActions
 
@@ -57,7 +58,12 @@ class Root extends Component {
         }
     }
 
+    componentWillUnmount() {
+        checkGasData.stop()
+    }
+
     componentWillMount() {
+        checkGasData.start()
         this.checkForMetamaskAccountChange()
 
         if (window.ethereum) {
