@@ -9,10 +9,12 @@ import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import GasPrice from 'components/dashboard/account/GasPrice'
 import { getDeployTx, getRandomAddressForDeployTx } from 'services/idenity/contract-address'
+import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
+import { sendTx, signTypedMsg } from 'services/smart-contracts/actions/web3'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
-class IdentityContractAddressEthDeploy extends Component {
+class IdentityContractAddressEthTransaction extends Component {
 
     constructor(props, context) {
         super(props, context)
@@ -20,34 +22,21 @@ class IdentityContractAddressEthDeploy extends Component {
         }
     }
 
-    componentDidMount() {
-        this.props.validate('identityContractAddress', {
-            isValid: !!this.props.identity.identityContractAddress,
-            err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
-            dirty: false
-        })
-    }
+    deployIdentity = () => {
+        const { identity } = this.props
+        const txData = { ...identity.identityContractTxData }
+        const tx = { ...txData.tx }
+        tx.chainId = 42 // temp for test
+        tx.from = identity.identityContractOwner
 
-    getIdentityContracAddress = () => {
-        // const { identityContractOwner } = this.props.identity
-        const identityContractOwner  = '0x2aecF52ABe359820c48986046959B4136AfDfbe2'
-
-        const deployTx = getDeployTx({
-            addr: identityContractOwner,
-            privLevel: 3,
-            feeTokenAddr: identityContractOwner,
-            feeBeneficiery: identityContractOwner,
-            feeTokenAmount: '0'
-        })
-
-        const addrData = getRandomAddressForDeployTx({ deployTx })
-        this.props.handleChange('identityContractAddress', addrData.idContractAddr)
-        this.props.handleChange('identityContractTxData', addrData)
-        this.props.validate('identityContractAddress', {
-            isValid: !!addrData.idContractAddr,
-            err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
-            dirty: true
-        })
+        getWeb3('metamask')
+            .then(({ web3 }) => {
+                return web3.eth.sendTransaction(tx)
+            }).then((receipt) => {
+                console.log('receipt', receipt)
+            }).catch((err) => {
+                console.log(err)
+            })
     }
 
     render() {
@@ -61,13 +50,10 @@ class IdentityContractAddressEthDeploy extends Component {
                     spacing={16}
                 >
                     <Grid item sm={6}>
-                        <GasPrice />
-                    </Grid>
-                    <Grid item sm={6}>
                         <Button
-                            onClick={this.getIdentityContracAddress}
+                            onClick={this.deployIdentity}
                         >
-                            {'Get addr'}
+                            {'SEND_IDENTITY_TX'}
                         </Button>
                         <div>
                             {identityContractAddress || ''}
@@ -80,7 +66,7 @@ class IdentityContractAddressEthDeploy extends Component {
     }
 }
 
-IdentityContractAddressEthDeploy.propTypes = {
+IdentityContractAddressEthTransaction.propTypes = {
     actions: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired
 }
@@ -99,7 +85,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-const IdentityContractAddressStep = IdentityHoc(IdentityContractAddressEthDeploy)
+const IdentityContractAddressStep = IdentityHoc(IdentityContractAddressEthTransaction)
 export default connect(
     mapStateToProps,
     mapDispatchToProps

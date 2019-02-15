@@ -6,6 +6,7 @@ import actions from 'actions'
 import Button from '@material-ui/core/Button'
 import IdentityHoc from './IdentityHoc'
 import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
+import IdentityContractAddressEthTransaction from './IdentityContractAddressEthTransaction'
 import IdentityContractOwner from './IdentityContractOwner'
 import ValidItemHoc from 'components/common/stepper/ValidItemHoc'
 import MaterialStepper from 'components/common/stepper/MaterialUiStepper'
@@ -46,8 +47,9 @@ class Identty extends Component {
 
         this.state = {
             pages: [
-                // { title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
-                { title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy }
+                { title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
+                { title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
+                { title: 'DEPLOY_IDENTITY_CONTRACT_ADDRSS', page: IdentityContractAddressEthTransaction }
             ].map(p => {
                 return {
                     title: p.title,
