@@ -237,7 +237,6 @@ const addTx = (tx, addr, user, nonce) => {
     let settings = { ...user._settings }
     settings.nonce = nonce + 1
     actions.execute(actions.updateAccount({ ownProps: { settings: settings } }))
-
 }
 
 const txSend = ({ tx, opts, txSuccessData, from, user, nonce }) => {
