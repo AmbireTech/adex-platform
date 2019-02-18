@@ -7,10 +7,7 @@ import IdentityHoc from './IdentityHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
-import GasPrice from 'components/dashboard/account/GasPrice'
-import { getDeployTx, getRandomAddressForDeployTx } from 'services/idenity/contract-address'
-import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
-import { sendTx, signTypedMsg } from 'services/smart-contracts/actions/web3'
+import { deplaoyIdentityContract } from 'services/idenity/contract-address'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -22,21 +19,15 @@ class IdentityContractAddressEthTransaction extends Component {
         }
     }
 
-    deployIdentity = () => {
+    deployIdentity = async () => {
         const { identity } = this.props
-        const txData = { ...identity.identityContractTxData }
-        const tx = { ...txData.tx }
-        tx.chainId = 42 // temp for test
-        tx.from = identity.identityContractOwner
-
-        getWeb3('metamask')
-            .then(({ web3 }) => {
-                return web3.eth.sendTransaction(tx)
-            }).then((receipt) => {
-                console.log('receipt', receipt)
-            }).catch((err) => {
-                console.log(err)
-            })
+        const deployData = { ...identity.identityContractTxData }
+        const result = await deplaoyIdentityContract({
+            deployData,
+            authType: 'metamask',
+            owner: identity.identityContractOwner
+        })
+        console.log('result', result)
     }
 
     render() {
