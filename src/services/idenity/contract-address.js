@@ -1,6 +1,7 @@
 import { ContractFactory, utils } from 'ethers'
 import identityJson from './../smart-contracts/build/Identity.json'
 import { getIdentityDeployData, getContractAddrWithZeroNonce } from 'adex-protocol-eth/js'
+import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 
 export const getRandomSeed = () => {
     const randomSeed = utils.randomBytes(64)
@@ -28,3 +29,20 @@ export const getRandomAddressForDeployTx = ({ deployTx }) => {
     const data = getIdentityDeployData(randomSeed, deployTx)
     return data
 }
+
+export const deplaoyIdentityContract = async ({ deployData, authType, owner }) => {
+    const { web3 } = await getWeb3(authType || 'metamask')
+
+    const fundReciept = await web3.eth.sendTransaction({
+        from: owner,
+        to: deployData.tx.from,
+        value: deployData.tx.gasLimit * deployData.tx.gasPrice,
+        gasPrice: deployData.tx.gasPrice
+    })
+
+    const deployReceipt = await web3.eth.sendSignedTransaction(deployData.txRaw)
+    return ({
+        fundReciept,
+        deployReceipt
+    })
+} 

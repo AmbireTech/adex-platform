@@ -29,8 +29,8 @@ class IdentityContractAddressEthDeploy extends Component {
     }
 
     getIdentityContracAddress = () => {
-        // const { identityContractOwner } = this.props.identity
-        const identityContractOwner  = '0x2aecF52ABe359820c48986046959B4136AfDfbe2'
+        const { identityContractOwner } = this.props.identity
+        // TODO: deployTx.gasPrice
 
         const deployTx = getDeployTx({
             addr: identityContractOwner,
