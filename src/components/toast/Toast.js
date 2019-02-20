@@ -67,11 +67,19 @@ export class Toast extends Component {
 
         if (!toast || !Icon) return null
 
+        const anchorOrigin = toast.anchorOrigin || {}
+
+        if (toast.top) {
+            anchorOrigin.horizontal = 'center'
+            anchorOrigin.vertical = 'top'
+        }
+
         return (
             <Snackbar
                 open={this.state.active}
                 autoHideDuration={toast.timeout || 0}
-                onClose={() => this.close(toast.id)}
+                onClose={() => !toast.unclosable && this.close(toast.id)}
+                anchorOrigin={anchorOrigin}
             >
                 <SnackbarContent
                     aria-describedby="client-snackbar"
@@ -83,20 +91,21 @@ export class Toast extends Component {
 
                     }
                     action={[
+                        !toast.unclosable &&
                         <IconButton
                             key="close"
                             aria-label="Close"
                             color="inherit"
                             className={classes.close}
-                            onClick={() => this.close(toast.id)}
+                            onClick={() => !toast.unclosable && this.close(toast.id)}
                         >
                             <CloseIcon className={classes.icon} />
-                        </IconButton>,
-                    ]}
+                        </IconButton>,]}
 
                     className={classnames(
                         classes.snackbar,
                         {
+                            [classes.top]: !!toast.top,
                             [classes.accept]: toast.type === 'accept',
                             [classes.cancel]: toast.type === 'cancel',
                             [classes.warning]: toast.type === 'warning',

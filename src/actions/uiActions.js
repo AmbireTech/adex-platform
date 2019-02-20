@@ -21,11 +21,11 @@ export function updateUi(item, value, category) {
     }
 }
 
-export function addToast({ type, action, label = '', timeout = false }) {
+export function addToast({ type, action, label = '', timeout = false, unclosable, anchorOrigin, top }) {
     return function (dispatch) {
         return dispatch({
             type: types.ADD_TOAST,
-            toast: { type: type, action: action, label, timeout: timeout }
+            toast: { type, action, label, timeout, unclosable, anchorOrigin, top }
         })
     }
 }

@@ -32,6 +32,10 @@ export const styles = theme => {
         message: {
             display: 'flex',
             alignItems: 'center',
-          }
+        },
+        top: {
+            width: '98vw',
+            maxWidth: '98vw'
+        }
     }
 }
