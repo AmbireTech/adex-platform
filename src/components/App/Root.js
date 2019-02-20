@@ -14,6 +14,7 @@ import { getSig } from 'services/auth/auth'
 import { AUTH_TYPES } from 'constants/misc'
 import { logOut } from 'services/store-data/auth'
 import checkGasData from 'services/store-data/gas'
+import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 
 const { getAccountMetamask } = scActions
 
@@ -32,7 +33,6 @@ class Root extends Component {
 
     constructor(props) {
         super(props)
-        this.accountInterval = null
     }
 
     checkForMetamaskAccountChange = () => {
@@ -58,6 +58,37 @@ class Root extends Component {
         }
     }
 
+    onMetamaskNetworkChanged = () => {
+        if (process.env.NODE_ENV !== 'production') {
+            return
+        }
+
+        let acc = this.props.account
+        if (acc._authType === AUTH_TYPES.METAMASK.name || !acc._authType) {
+            getWeb3('metamask')
+                .then(({ web3 }) => {
+                    console.log(web3)
+                    web3.eth.net.getNetworkType()
+                        .then((currentNetwork) => {
+                            if (currentNetwork != 'main') {
+                                this.props.actions.addToast({
+                                    type: 'warning',
+                                    // action,
+                                    label: 'WATNING_NO_MAINNET',
+                                    top: true,
+                                    unclosable: true,
+                                    timeout: 30 * 24 * 60 * 1000
+                                })
+                            }
+                            // console.log('getNetwork currentNetwork', currentNetwork)
+                        })
+                        .catch((err) => {
+                            // console.log('getNetwork err', err)
+                        })
+                })
+        }
+    }
+
     componentWillUnmount() {
         checkGasData.stop()
     }
@@ -65,11 +96,16 @@ class Root extends Component {
     componentWillMount() {
         checkGasData.start()
         this.checkForMetamaskAccountChange()
+        this.onMetamaskNetworkChanged()
 
         if (window.ethereum) {
             window.ethereum.on('accountsChanged', (accounts) => {
                 console.log('acc changed', accounts[0])
                 this.checkForMetamaskAccountChange()
+            })
+            window.ethereum.on('networkChanged', (network) => {
+                console.log('networkChanged', network)
+                this.onMetamaskNetworkChanged()
             })
         }
     }
