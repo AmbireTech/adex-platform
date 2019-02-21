@@ -21,7 +21,6 @@ export default function AuthHoc(Decorated) {
                 method: '',
                 sideSelect: false
             }
-            console.log('proips', props)
         }
 
         signAuth = ({ addr, hdPath, addrIdx, authType, chainId }) => {
@@ -29,7 +28,19 @@ export default function AuthHoc(Decorated) {
             let mode = null
             return signAuthToken({ userAddr: addr, authType, hdPath, addrIdx })
                 .then(({ sig, sig_mode, authToken, typedData, hash } = {}) => {
+                    const account = {
+                        addr,
+                        authType,
+                        hdPath,
+                        addrIdx,
+                        sig,
+                        sig_mode,
+                        authToken,
+                        typedData,
+                        hash
+                    }
                     this.props.handleChange('identityContractOwner', addr)
+                    this.props.handleChange('account', account)
                 })
                 .catch((err) => {
                     console.log('err', err)

@@ -7,7 +7,7 @@ import IdentityHoc from './IdentityHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
-import { deplaoyIdentityContract } from 'services/idenity/contract-address'
+import { deployIdentityContract } from 'services/idenity/contract-address'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -16,17 +16,24 @@ class IdentityContractAddressEthTransaction extends Component {
     constructor(props, context) {
         super(props, context)
         this.state = {
+            waitingIdentityDeploy: false,
+            identityDeployed: false
         }
+    }
+
+    skipDeployIdentity = () => {
+        // TODO
     }
 
     deployIdentity = async () => {
         const { identity } = this.props
         const deployData = { ...identity.identityContractTxData }
-        const result = await deplaoyIdentityContract({
+        const result = await deployIdentityContract({
             deployData,
             authType: 'metamask',
-            owner: identity.identityContractOwner
+            owner: identity.account.addr
         })
+
         console.log('result', result)
     }
 
@@ -44,7 +51,12 @@ class IdentityContractAddressEthTransaction extends Component {
                         <Button
                             onClick={this.deployIdentity}
                         >
-                            {'SEND_IDENTITY_TX'}
+                            {'SEND_IDENTITY_TX_NOW'}
+                        </Button>
+                        <Button
+                            onClick={this.skipDeployIdentity}
+                        >
+                            {'SEND_IDENTITY_TX_LATER'}
                         </Button>
                         <div>
                             {identityContractAddress || ''}
