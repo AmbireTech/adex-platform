@@ -30,7 +30,7 @@ export const getRandomAddressForDeployTx = ({ deployTx }) => {
     return data
 }
 
-export const deplaoyIdentityContract = async ({ deployData, authType, owner }) => {
+export const deployIdentityContract = async ({ deployData, authType, owner }) => {
     const { web3 } = await getWeb3(authType || 'metamask')
 
     const fundReciept = await web3.eth.sendTransaction({

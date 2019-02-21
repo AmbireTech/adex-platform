@@ -29,7 +29,7 @@ class IdentityContractAddressEthDeploy extends Component {
     }
 
     getIdentityContracAddress = () => {
-        const { identityContractOwner } = this.props.identity
+        const  identityContractOwner  = this.props.identity.account.addr
         // TODO: deployTx.gasPrice
 
         const deployTx = getDeployTx({
