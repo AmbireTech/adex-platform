@@ -45,4 +45,4 @@ export const deployIdentityContract = async ({ deployData, authType, owner }) =>
         fundReciept,
         deployReceipt
     })
-} 
+}
