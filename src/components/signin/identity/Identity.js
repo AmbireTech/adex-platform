@@ -8,9 +8,11 @@ import IdentityHoc from './IdentityHoc'
 import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
 import IdentityContractAddressEthTransaction from './IdentityContractAddressEthTransaction'
 import IdentityContractOwner from './IdentityContractOwner'
+import WalletInit from './localWallet/WalletInit'
 import ValidItemHoc from 'components/common/stepper/ValidItemHoc'
 import MaterialStepper from 'components/common/stepper/MaterialUiStepper'
 import SaveIcon from '@material-ui/icons/Save'
+import IdentitySteps from './IdentitySteps'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
@@ -38,53 +40,43 @@ const CancelBtn = ({ ...props }) => {
     )
 }
 
-class Identty extends Component {
+const CancelBtnWithIdentity = IdentityHoc(CancelBtn)
 
-    constructor(props) {
-        super(props)
-
-        const { t } = props
-
-        this.state = {
-            pages: [
-                { title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
-                { title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
-                { title: 'DEPLOY_IDENTITY_CONTRACT_ADDRSS', page: IdentityContractAddressEthTransaction }
-            ].map(p => {
-                return {
-                    title: p.title,
-                    component: ValidItemHoc(p.page),
-                    props: { validateId: 'inentity-step-' + p.title },
-                    CancelBtn: CancelBtn,
-                    // completeBtn: () => <SaveBtnWithIdentity t={t} />
-                }
-            })
-        }
-    }
-
-    render = () =>
-        <MaterialStepper pages={this.state.pages} />
+const common = {
+    SaveBtn: SaveBtnWithIdentity,
+    CancelBtn: CancelBtnWithIdentity,
+    validateIdBase: 'identity-'
 }
 
-Identty.propTypes = {
-    actions: PropTypes.object.isRequired,
-}
+export const QuickIdentity = (props) =>
+    <IdentitySteps
+        {...props}
+        {...common}
+        stepsPages={[
+            { title: 'INIT_WALLET', page: WalletInit },
+            { title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
+            { title: 'DEPLOY_IDENTITY_CONTRACT_ADDRSS', page: IdentityContractAddressEthTransaction }
+        ]}
+    />
 
-function mapStateToProps(state) {
-    const persist = state.persist
-    // const memory = state.memory
-    return {
-        account: persist.account
-    }
-}
+export const FullIdentity = (props) =>
+    <IdentitySteps
+        {...props}
+        {...common}
+        stepsPages={[
+            { title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
+            { title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
+            { title: 'DEPLOY_IDENTITY_CONTRACT_ADDRSS', page: IdentityContractAddressEthTransaction }
+        ]}
+    />
 
-function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    }
-}
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Translate(withStyles(styles)(Identty)))
+export const DemoIdentity = (props) =>
+    <IdentitySteps
+        {...props}
+        {...common}
+        stepsPages={[
+            { title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
+            { title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
+            { title: 'DEPLOY_IDENTITY_CONTRACT_ADDRSS', page: IdentityContractAddressEthTransaction }
+        ]}
+    />

@@ -6,7 +6,7 @@ import actions from 'actions'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import SigninExternalWallet from 'components/signin/SigninExternalWallet'
-import Identity from 'components/signin/identity/Identity'
+import {QuickIdentity, FullIdentity, DemoIdentity} from 'components/signin/identity/Identity'
 import authSelect from 'components/signin/auth-select/AuthSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import Translate from 'components/translate/Translate'
@@ -117,9 +117,9 @@ class Root extends Component {
                 <PrivateRoute auth={this.props.auth} path="/dashboard/:side" component={Dashboard} />
                 {/* <Route exact path="/" component={SigninExternalWallet} /> */}
                 <Route exact path="/" component={authSelect} />
-                <Route exact path="/identity/quick" component={Identity} />
-                <Route exact path="/identity/full" component={Identity} />
-                <Route exact path="/identity/demo" component={Identity} />
+                <Route exact path="/identity/quick" component={QuickIdentity} />
+                <Route exact path="/identity/full" component={FullIdentity} />
+                <Route exact path="/identity/demo" component={DemoIdentity} />
                 <Route component={PageNotFound} />
             </Switch >
         )
