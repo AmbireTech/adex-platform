@@ -63,6 +63,8 @@ let initialState = {
     ethNetwork: {
         networkId: null,
         gasData: {}
+    },
+    wallet: {  
     }
 }
 

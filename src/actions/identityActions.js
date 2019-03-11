@@ -18,3 +18,22 @@ export function resetIdentity() {
         })
     }
 }
+
+// MEMORY STORAGE
+export function updateWallet(prop, value) {
+    return function (dispatch) {
+        return dispatch({
+            type: types.UPDATE_WALLET,
+            prop: prop,
+            value: value
+        })
+    }
+}
+
+export function resetWallet() {
+    return function (dispatch) {
+        return dispatch({
+            type: types.RESET_WALLET
+        })
+    }
+}

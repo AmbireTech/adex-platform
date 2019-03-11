@@ -1,7 +1,7 @@
 import { UPDATE_WALLET, RESET_WALLET } from '../constants/actionTypes'
 import initialState from 'store/initialState'
 
-export default function identityReducer(state = initialState.wallet, action) {
+export default function walletReducer(state = initialState.wallet, action) {
 
     let newState
     let newWallet
@@ -21,9 +21,9 @@ export default function identityReducer(state = initialState.wallet, action) {
 
             return newState
 
-        case RESET_IDENTITY:
+        case RESET_WALLET:
             newWallet = { ...initialState.wallet }
-            newState = newidentity
+            newState = newWallet
             return newState
 
         default:
