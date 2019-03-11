@@ -25,7 +25,7 @@ class WalletInit extends Component {
                     onClick={() => this.setState({mnemonic: getRandomMnemonic()})}
                     variant='raised'
                     color='primary'
-                    disabled={this.state.waitingAddrsData}
+                    disabled={this.state.waitingAddrData}
                 >
                     {t('WALLET_GET_RANDOM_MNEMONIC')}
                 </Button>
