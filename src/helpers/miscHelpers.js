@@ -1,6 +1,7 @@
 import moment from 'moment'
-class Helper {
 
+// TODO: separate exports - not class
+class Helper {
     getGuid() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
             var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8) // eslint-disable-line no-mixed-operators
@@ -89,6 +90,10 @@ class Helper {
 
     isInt = (int) => {
         return typeof int === 'number' && (int % 1 === 0)
+    }
+
+    shuffleArray = (array) => {
+        return [...array].sort(() => Math.random() - 0.5)
     }
 }
 
