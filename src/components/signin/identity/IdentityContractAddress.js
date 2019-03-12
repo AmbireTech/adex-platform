@@ -45,7 +45,7 @@ class IdentityContractAddress extends Component {
         this.props.validate('withdrawAmount', { isValid: isValid, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
     }
 
-    getIdentityContracAddress = () => {
+    getIdentityContractAddress = () => {
         const { identityContractOwner } = this.props.identity
 
         const deployTx = getDeployTx({
@@ -124,7 +124,7 @@ class IdentityContractAddress extends Component {
                     </Grid>
                     <Grid item sm={6}>
                         <Button
-                            onClick={this.getIdentityContracAddress}
+                            onClick={this.getIdentityContractAddress}
                         >
                             {'Get addr'}
                         </Button>

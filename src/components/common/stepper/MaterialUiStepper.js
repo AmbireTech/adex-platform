@@ -131,7 +131,7 @@ class MaterialStepper extends React.Component {
                                 <page.cancelBtn />
                                 : null}
                             {this.canAdvanceNextToPage() && !page.completeBtn ?
-                                <Button onClick={this.goToPage.bind(this, currentPage + 1)} >
+                                <Button variant='contained' color='primary' onClick={this.goToPage.bind(this, currentPage + 1)} >
                                     {t('CONTINUE')}
                                 </Button>
                                 :

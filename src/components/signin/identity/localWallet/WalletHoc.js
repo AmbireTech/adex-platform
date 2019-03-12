@@ -44,7 +44,7 @@ export default function WalletHoc(Decorated) {
         }
     }
 
-    wallet.propTypes = {
+    Wallet.propTypes = {
         actions: PropTypes.object.isRequired,
         account: PropTypes.object.isRequired,
         wallet: PropTypes.object.isRequired
@@ -68,6 +68,6 @@ export default function WalletHoc(Decorated) {
     return connect(
         mapStateToProps,
         mapDispatchToProps
-    )(IdentityForm)
+    )(Wallet)
 }
 
