@@ -9,6 +9,7 @@ import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy
 import IdentityContractAddressEthTransaction from './IdentityContractAddressEthTransaction'
 import IdentityContractOwner from './IdentityContractOwner'
 import WalletInit from './WalletInit'
+import WalletCheck from './WalletCheck'
 import ValidItemHoc from 'components/common/stepper/ValidItemHoc'
 import MaterialStepper from 'components/common/stepper/MaterialUiStepper'
 import SaveIcon from '@material-ui/icons/Save'
@@ -54,6 +55,7 @@ export const QuickIdentity = (props) =>
         {...common}
         stepsPages={[
             { title: 'INIT_WALLET', page: WalletInit },
+            { title: 'CHECK_WALLET', page: WalletCheck },
             { title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
             { title: 'DEPLOY_IDENTITY_CONTRACT_ADDRSS', page: IdentityContractAddressEthTransaction }
         ]}
