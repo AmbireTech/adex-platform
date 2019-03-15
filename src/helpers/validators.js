@@ -2,36 +2,38 @@
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
 const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
 const onlyDigitsRegex = /^([1-9]+\d*)$/
+// Min 8 chars - at least 1 uppercase, 1 lowercase, 1 digit
+const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/
 
 
 export const validUrl = (url) => {
     url = url || ''
-    let isValid = urlRegex.test(url)
+    const isValid = urlRegex.test(url)
     return isValid
 }
 
 export const validEmail = (email) => {
     email = email || ''
-    let isValid = emailRegex.test(email)
+    const isValid = emailRegex.test(email)
     return isValid
 }
 
 export const validateNumber = (numberStr) => {
     numberStr = numberStr || ''
-    let isValid = !isNaN(parseFloat(numberStr)) && isFinite(numberStr) && (numberStr > 0)
+    const isValid = !isNaN(parseFloat(numberStr)) && isFinite(numberStr) && (numberStr > 0)
     return isValid
 }
 
 // > 0
 export const validPositiveInt = (intStr) => {
     intStr = intStr || ''
-    let isValid = onlyDigitsRegex.test(intStr)
+    const isValid = onlyDigitsRegex.test(intStr)
     return isValid
 }
 
 export const validName = (name) => {
     let msg = ''
-    let errMsgArgs = []
+    const errMsgArgs = []
     if (!name) {
         msg = 'ERR_REQUIRED_FIELD'
     } else if (name.length < 4) {
@@ -46,4 +48,10 @@ export const validName = (name) => {
         msg,
         errMsgArgs
     }
+}
+
+export const validPassword = (password) => {
+    password = password || ''
+    const isValid = passwordRegex.test(password)
+    return isValid
 }
