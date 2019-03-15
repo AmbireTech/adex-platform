@@ -45,7 +45,7 @@ class IdentityContractAddress extends Component {
             addr: '0x0A8fe6e91eaAb3758dF18f546f7364343667E957',
             privLevel: 3,
             feeTokenAddr: '0x4470BB87d77b963A013DB939BE332f927f2b992e',
-            feeBeneficiery: '0x0A8fe6e91eaAb3758dF18f546f7364343667E957',
+            feeBeneficiary: '0x0A8fe6e91eaAb3758dF18f546f7364343667E957',
             feeTokenAmount: '10000'
         })
     }
