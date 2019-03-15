@@ -52,7 +52,7 @@ class IdentityContractAddress extends Component {
             addr:  '0x2aecF52ABe359820c48986046959B4136AfDfbe2', //identityContractOwner,
             privLevel: 3,
             feeTokenAddr: '0x4470BB87d77b963A013DB939BE332f927f2b992e', //this.props.identity.feeTokenAddr, // '0x4470BB87d77b963A013DB939BE332f927f2b992e',
-            feeBeneficiery: RELAYER_ADDR,
+            feeBeneficiary: RELAYER_ADDR,
             feeTokenAmount: '10000'
         })
 

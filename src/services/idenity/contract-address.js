@@ -8,13 +8,13 @@ export const getRandomSeed = () => {
     return randomSeed
 }
 
-export const getDeployTx = ({ addr, privLevel, feeTokenAddr, feeBeneficiery, feeTokenAmount }) => {
+export const getDeployTx = ({ addr, privLevel, feeTokenAddr, feeBeneficiary, feeTokenAmount }) => {
     const factory = new ContractFactory(identityJson.abi, identityJson.bytecode)
     const deployTx = factory.getDeployTransaction(
         addr,
         privLevel,
         feeTokenAddr,
-        feeBeneficiery,
+        feeBeneficiary,
         feeTokenAmount,
     )
 

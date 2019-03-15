@@ -36,7 +36,7 @@ class IdentityContractAddressEthDeploy extends Component {
             addr: identityContractOwner,
             privLevel: 3,
             feeTokenAddr: identityContractOwner,
-            feeBeneficiery: identityContractOwner,
+            feeBeneficiary: identityContractOwner,
             feeTokenAmount: '0'
         })
 
