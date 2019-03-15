@@ -1,8 +1,4 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
+import React from 'react'
 import Button from '@material-ui/core/Button'
 import IdentityHoc from './IdentityHoc'
 import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
@@ -10,13 +6,12 @@ import IdentityContractAddressEthTransaction from './IdentityContractAddressEthT
 import IdentityContractOwner from './IdentityContractOwner'
 import WalletInit from './WalletInit'
 import WalletCheck from './WalletCheck'
-import ValidItemHoc from 'components/common/stepper/ValidItemHoc'
-import MaterialStepper from 'components/common/stepper/MaterialUiStepper'
+import UserInfo from './UserInfo'
 import SaveIcon from '@material-ui/icons/Save'
 import IdentitySteps from './IdentitySteps'
-import Translate from 'components/translate/Translate'
-import { withStyles } from '@material-ui/core/styles'
-import { styles } from './styles'
+// import Translate from 'components/translate/Translate'
+// import { withStyles } from '@material-ui/core/styles'
+// import { styles } from './styles'
 
 const SaveBtn = ({ ...props }) => {
     return (
@@ -54,8 +49,9 @@ export const QuickIdentity = (props) =>
         {...props}
         {...common}
         stepsPages={[
-            { title: 'INIT_WALLET', page: WalletInit },
-            { title: 'CHECK_WALLET', page: WalletCheck },
+            // { title: 'INIT_WALLET', page: WalletInit },
+            // { title: 'CHECK_WALLET', page: WalletCheck },
+            { title: 'USER_INFO', page: UserInfo },
             { title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
             { title: 'DEPLOY_IDENTITY_CONTRACT_ADDRSS', page: IdentityContractAddressEthTransaction }
         ]}
