@@ -7,6 +7,7 @@ import IdentityContractOwner from './IdentityContractOwner'
 import WalletInit from './WalletInit'
 import WalletCheck from './WalletCheck'
 import UserInfo from './UserInfo'
+import CouponCheck from './CouponCheck'
 import SaveIcon from '@material-ui/icons/Save'
 import IdentitySteps from './IdentitySteps'
 // import Translate from 'components/translate/Translate'
@@ -49,6 +50,7 @@ export const QuickIdentity = (props) =>
         {...props}
         {...common}
         stepsPages={[
+            { title: 'COUPON_CHECK', page: CouponCheck },
             // { title: 'INIT_WALLET', page: WalletInit },
             // { title: 'CHECK_WALLET', page: WalletCheck },
             { title: 'USER_INFO', page: UserInfo },
