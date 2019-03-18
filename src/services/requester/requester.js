@@ -1,9 +1,12 @@
 import Helper from 'helpers/miscHelpers'
-import {  isDemoMode, getAccount } from 'services/store-data/auth'
-
-const BASE_URL = process.env.ADEX_NODE_HOST || 'https://node.adex.network' //TODO: config
+import { isDemoMode, getAccount } from 'services/store-data/auth'
 
 class AdexNodeRequester {
+
+    constructor({ baseUrl }) {
+        this.baseUrl = baseUrl
+    }
+
     getAuthHeaders = () => {
         const acc = getAccount()
         return {
@@ -32,7 +35,7 @@ class AdexNodeRequester {
         }
 
         let query = Helper.getQuery(qp)
-        let url = this.getUrl(BASE_URL, route, query)
+        let url = this.getUrl(this.baseUrl, route, query)
 
         let hdrs = {
             ...this.getAuthHeaders(),
@@ -47,5 +50,5 @@ class AdexNodeRequester {
     }
 }
 
-export default new AdexNodeRequester()
+export default AdexNodeRequester
 

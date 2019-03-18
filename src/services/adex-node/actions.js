@@ -1,8 +1,12 @@
-import requester from './requester'
+import Requester from 'services/requester'
 import { logOut } from 'services/store-data/auth'
 import actions from 'actions'
 import { translate } from 'services/translations/translations'
 import moment from 'moment'
+
+const BASE_URL = process.env.ADEX_NODE_HOST || 'https://node.adex.network' //TODO: config
+
+const requester =new Requester({baseUrl: BASE_URL})
 
 const catchErrors = (res, skipErrToast) => {
     return new Promise((resolve, reject) => {
