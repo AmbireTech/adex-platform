@@ -28,7 +28,7 @@ class UserInfo extends Component {
             dirty: false
         })
         this.props.validate('emailCheck', {
-            isValid: !!this.props.identity.email,
+            isValid: !!this.props.identity.emailCheck,
             err: { msg: 'ERR_NO_EMAIL_CHECK' },
             dirty: false
         })
@@ -38,7 +38,7 @@ class UserInfo extends Component {
             dirty: false
         })
         this.props.validate('passwordCheck', {
-            isValid: !!this.props.identity.password,
+            isValid: !!this.props.identity.passwordCheck,
             err: { msg: 'ERR_NO_PASSWORD_CHECK' },
             dirty: false
         })
