@@ -4,6 +4,7 @@ const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\
 const onlyDigitsRegex = /^([1-9]+\d*)$/
 // Min 8 chars - at least 1 uppercase, 1 lowercase, 1 digit
 const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/
+const couponRegex = /^[a-zA-Z0-9]{46}$/
 
 
 export const validUrl = (url) => {
@@ -53,5 +54,11 @@ export const validName = (name) => {
 export const validPassword = (password) => {
     password = password || ''
     const isValid = passwordRegex.test(password)
+    return isValid
+}
+
+export const validQuickAccountCoupon = (coupon) => {
+    coupon = coupon || ''
+    const isValid = couponRegex.test(coupon)
     return isValid
 }

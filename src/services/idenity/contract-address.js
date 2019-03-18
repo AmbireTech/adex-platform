@@ -33,7 +33,7 @@ export const getRandomAddressForDeployTx = ({ deployTx }) => {
 export const deployIdentityContract = async ({ deployData, authType, owner }) => {
     const { web3 } = await getWeb3(authType || 'metamask')
 
-    const fundReciept = await web3.eth.sendTransaction({
+    const fundReceipt = await web3.eth.sendTransaction({
         from: owner,
         to: deployData.tx.from,
         value: deployData.tx.gasLimit * deployData.tx.gasPrice,
@@ -42,7 +42,7 @@ export const deployIdentityContract = async ({ deployData, authType, owner }) =>
 
     const deployReceipt = await web3.eth.sendSignedTransaction(deployData.txRaw)
     return ({
-        fundReciept,
+        fundReceipt,
         deployReceipt
     })
 }
