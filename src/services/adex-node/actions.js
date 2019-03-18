@@ -4,9 +4,9 @@ import actions from 'actions'
 import { translate } from 'services/translations/translations'
 import moment from 'moment'
 
-const BASE_URL = process.env.ADEX_NODE_HOST || 'https://node.adex.network' //TODO: config
+const ADEX_NODE_HOST = process.env.ADEX_NODE_HOST
 
-const requester =new Requester({baseUrl: BASE_URL})
+const requester =new Requester({baseUrl: ADEX_NODE_HOST})
 
 const catchErrors = (res, skipErrToast) => {
     return new Promise((resolve, reject) => {
