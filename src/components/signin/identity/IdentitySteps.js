@@ -11,46 +11,46 @@ import { styles } from './styles'
 
 class IdentitySteps extends Component {
 
-    render() {
-        let pages = []
-        const { SaveBtn, CancelBtn, t, onSave, stepsId, stepsPages, stepsPreviewPage, validateIdBase, ...rest } = this.props
-        const cancelButton = () => <CancelBtn  {...rest} stepsId={stepsId} onSave={onSave} t={t} />
-        const validateId = (validateIdBase || '') + '-' + stepsId
+	render() {
+		let pages = []
+		const { SaveBtn, CancelBtn, t, onSave, stepsId, stepsPages, stepsPreviewPage, validateIdBase, ...rest } = this.props
+		const cancelButton = () => <CancelBtn  {...rest} stepsId={stepsId} onSave={onSave} t={t} />
+		const validateId = (validateIdBase || '') + '-' + stepsId
 
-        stepsPages.map((page, index) => {
-            pages.push({
-                title: t(page.title),
-                cancelBtn: cancelButton,
-                component: ValidItemHoc(page.page),
-                props: { ...this.props, validateId: validateId + '-' + index }
-            })
-        })
+		stepsPages.map((page, index) => {
+			pages.push({
+				title: t(page.title),
+				cancelBtn: cancelButton,
+				component: ValidItemHoc(page.page),
+				props: { ...this.props, validateId: validateId + '-' + index }
+			})
+		})
 
-        return (
-            <MaterialStepper pages={pages} />
-        )
-    }
+		return (
+			<MaterialStepper pages={pages} />
+		)
+	}
 }
 
 IdentitySteps.propTypes = {
-    actions: PropTypes.object.isRequired,
+	actions: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state) {
-    const persist = state.persist
-    // const memory = state.memory
-    return {
-        account: persist.account
-    }
+	const persist = state.persist
+	// const memory = state.memory
+	return {
+		account: persist.account
+	}
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    }
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	}
 }
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Translate(withStyles(styles)(IdentitySteps)))

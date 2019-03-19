@@ -25,50 +25,50 @@ const { persistor, store } = configureStore
 // console.log('initial store', store.getState())
 
 const onBeforeLift = () => {
-  // take some action before the gate lifts
+	// take some action before the gate lifts
 }
 
 const cssBaselineStyled = ({ classes }) =>
-  // Might break something
-  <CssBaseline classes={
-    classes.globalStyles
-  } />
+// Might break something
+	<CssBaseline classes={
+		classes.globalStyles
+	} />
 
 
 const CssBaselineStyled = withStyles(globalStyles)(cssBaselineStyled)
 
 class App extends Component {
 
-  render() {
-    return (
-      <React.Fragment>
-        <CssBaselineStyled
-        // classes={
-        //   { children: classes.globalStyles }
-        // }
-        />
-        <MuiThemeProvider theme={themeMUI}>
-          <MuiPickersUtilsProvider utils={MomentUtils}>
-            <Provider store={store}>
-              <PersistGate
-                onBeforeLift={onBeforeLift}
-                persistor={persistor}>
-                <ConnectedRouter history={history} >
-                  <div className="adex-dapp">
-                    <Switch >
-                      <Root />
-                    </Switch>
-                    <Toast />
-                    <Confirm />
-                  </div>
-                </ConnectedRouter>
-              </PersistGate>
-            </Provider>
-          </MuiPickersUtilsProvider>
-        </MuiThemeProvider>
-      </React.Fragment>
-    )
-  }
+	render() {
+		return (
+			<React.Fragment>
+				<CssBaselineStyled
+					// classes={
+					//   { children: classes.globalStyles }
+					// }
+				/>
+				<MuiThemeProvider theme={themeMUI}>
+					<MuiPickersUtilsProvider utils={MomentUtils}>
+						<Provider store={store}>
+							<PersistGate
+								onBeforeLift={onBeforeLift}
+								persistor={persistor}>
+								<ConnectedRouter history={history} >
+									<div className="adex-dapp">
+										<Switch >
+											<Root />
+										</Switch>
+										<Toast />
+										<Confirm />
+									</div>
+								</ConnectedRouter>
+							</PersistGate>
+						</Provider>
+					</MuiPickersUtilsProvider>
+				</MuiThemeProvider>
+			</React.Fragment>
+		)
+	}
 }
 
 export default App

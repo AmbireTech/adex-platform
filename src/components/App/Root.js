@@ -20,135 +20,135 @@ import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 const { getAccountMetamask } = scActions
 
 function PrivateRoute({ component: Component, auth, ...other }) {
-    return (
-        <Route
-            {...other}
-            render={(props) => auth === true //|| true
-                ? <Component {...props} />
-                : <Redirect to={{ pathname: '/', state: { from: props.location } }} />}
-        />
-    )
+	return (
+		<Route
+			{...other}
+			render={(props) => auth === true //|| true
+				? <Component {...props} />
+				: <Redirect to={{ pathname: '/', state: { from: props.location } }} />}
+		/>
+	)
 }
 
 class Root extends Component {
 
-    constructor(props) {
-        super(props)
-    }
+	constructor(props) {
+		super(props)
+	}
 
     checkForMetamaskAccountChange = () => {
-        let acc = this.props.account
-        if (acc._authType === AUTH_TYPES.METAMASK.name) {
+    	let acc = this.props.account
+    	if (acc._authType === AUTH_TYPES.METAMASK.name) {
 
-            getAccountMetamask()
-                .then(({ addr, mode }) => {
-                    addr = (addr || '').toLowerCase()
-                    if (addr && acc._addr && acc._authType !== undefined) {
-                        let accSigCheck = getSig({ addr: acc._addr, mode: acc._authType })
-                        let mmAddrSigCheck = getSig({ addr: addr, mode: AUTH_TYPES.METAMASK.name })
-                        if (!!mmAddrSigCheck && !!accSigCheck && (mmAddrSigCheck === accSigCheck)) {
-                            return // user authenticated and not changed
-                        } else {
-                            // logout on metamask addr change
-                            logOut()
-                        }
-                    } else {
-                        logOut()
-                    }
-                })
-        }
+    		getAccountMetamask()
+    			.then(({ addr, mode }) => {
+    				addr = (addr || '').toLowerCase()
+    				if (addr && acc._addr && acc._authType !== undefined) {
+    					let accSigCheck = getSig({ addr: acc._addr, mode: acc._authType })
+    					let mmAddrSigCheck = getSig({ addr: addr, mode: AUTH_TYPES.METAMASK.name })
+    					if (!!mmAddrSigCheck && !!accSigCheck && (mmAddrSigCheck === accSigCheck)) {
+    						return // user authenticated and not changed
+    					} else {
+    						// logout on metamask addr change
+    						logOut()
+    					}
+    				} else {
+    					logOut()
+    				}
+    			})
+    	}
     }
 
     onMetamaskNetworkChanged = () => {
-        if (process.env.NODE_ENV !== 'production') {
-            return
-        }
+    	if (process.env.NODE_ENV !== 'production') {
+    		return
+    	}
 
-        let acc = this.props.account
-        if (acc._authType === AUTH_TYPES.METAMASK.name || !acc._authType) {
-            getWeb3('metamask')
-                .then(({ web3 }) => {
-                    console.log(web3)
-                    web3.eth.net.getNetworkType()
-                        .then((currentNetwork) => {
-                            if (currentNetwork != 'main') {
-                                this.props.actions.addToast({
-                                    type: 'warning',
-                                    // action,
-                                    label: 'WATNING_NO_MAINNET',
-                                    top: true,
-                                    unclosable: true,
-                                    timeout: 30 * 24 * 60 * 1000
-                                })
-                            }
-                            // console.log('getNetwork currentNetwork', currentNetwork)
-                        })
-                        .catch((err) => {
-                            // console.log('getNetwork err', err)
-                        })
-                })
-        }
+    	let acc = this.props.account
+    	if (acc._authType === AUTH_TYPES.METAMASK.name || !acc._authType) {
+    		getWeb3('metamask')
+    			.then(({ web3 }) => {
+    				console.log(web3)
+    				web3.eth.net.getNetworkType()
+    					.then((currentNetwork) => {
+    						if (currentNetwork != 'main') {
+    							this.props.actions.addToast({
+    								type: 'warning',
+    								// action,
+    								label: 'WATNING_NO_MAINNET',
+    								top: true,
+    								unclosable: true,
+    								timeout: 30 * 24 * 60 * 1000
+    							})
+    						}
+    						// console.log('getNetwork currentNetwork', currentNetwork)
+    					})
+    					.catch((err) => {
+    						// console.log('getNetwork err', err)
+    					})
+    			})
+    	}
     }
 
     componentWillUnmount() {
-        checkGasData.stop()
+    	checkGasData.stop()
     }
 
     componentWillMount() {
-        checkGasData.start()
-        this.checkForMetamaskAccountChange()
-        this.onMetamaskNetworkChanged()
+    	checkGasData.start()
+    	this.checkForMetamaskAccountChange()
+    	this.onMetamaskNetworkChanged()
 
-        if (window.ethereum) {
-            window.ethereum.on('accountsChanged', (accounts) => {
-                console.log('acc changed', accounts[0])
-                this.checkForMetamaskAccountChange()
-            })
-            window.ethereum.on('networkChanged', (network) => {
-                console.log('networkChanged', network)
-                this.onMetamaskNetworkChanged()
-            })
-        }
+    	if (window.ethereum) {
+    		window.ethereum.on('accountsChanged', (accounts) => {
+    			console.log('acc changed', accounts[0])
+    			this.checkForMetamaskAccountChange()
+    		})
+    		window.ethereum.on('networkChanged', (network) => {
+    			console.log('networkChanged', network)
+    			this.onMetamaskNetworkChanged()
+    		})
+    	}
     }
 
     render() {
-        return (
-            <Switch >
-                <PrivateRoute auth={this.props.auth} path="/dashboard/:side" component={Dashboard} />
-                {/* <Route exact path="/" component={SigninExternalWallet} /> */}
-                <Route exact path="/" component={authSelect} />
-                <Route exact path="/identity/quick" component={QuickIdentity} />
-                <Route exact path="/identity/full" component={FullIdentity} />
-                <Route exact path="/identity/demo" component={DemoIdentity} />
-                <Route component={PageNotFound} />
-            </Switch >
-        )
+    	return (
+    		<Switch >
+    			<PrivateRoute auth={this.props.auth} path="/dashboard/:side" component={Dashboard} />
+    			{/* <Route exact path="/" component={SigninExternalWallet} /> */}
+    			<Route exact path="/" component={authSelect} />
+    			<Route exact path="/identity/quick" component={QuickIdentity} />
+    			<Route exact path="/identity/full" component={FullIdentity} />
+    			<Route exact path="/identity/demo" component={DemoIdentity} />
+    			<Route component={PageNotFound} />
+    		</Switch >
+    	)
     }
 }
 
 Root.propTypes = {
-    actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired
+	actions: PropTypes.object.isRequired,
+	account: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state) {
-    let persist = state.persist
-    let account = persist.account
-    // let memory = state.memory
-    return {
-        account: account,
-        auth: !!account._addr && !!account._authSig && account._authType !== undefined
-    }
+	let persist = state.persist
+	let account = persist.account
+	// let memory = state.memory
+	return {
+		account: account,
+		auth: !!account._addr && !!account._authSig && account._authType !== undefined
+	}
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    }
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	}
 }
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Translate(Root))
 

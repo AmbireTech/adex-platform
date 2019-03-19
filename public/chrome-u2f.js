@@ -95,7 +95,7 @@ u2f.U2fRequest;
  */
 u2f.U2fResponse;
 
-
+/* eslint-disable */
 /**
  * An error object for responses
  * @typedef {{

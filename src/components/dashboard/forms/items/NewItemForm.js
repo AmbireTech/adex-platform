@@ -17,116 +17,116 @@ const { ItemTypesNames } = ItemsConstants
 
 class NewItemForm extends Component {
 
-    componentDidMount() {
-        /* TODO: make it understandable
+	componentDidMount() {
+		/* TODO: make it understandable
         * Now it forces to add invalid property for the required filed to prevent to go to the next step
         */
-        if (!this.props.item.fullName) {
-            this.props.validate('fullName', {
-                isValid: false,
-                err: { msg: 'ERR_REQUIRED_FIELD' },
-                dirty: false
-            })
-        }
-    }
+		if (!this.props.item.fullName) {
+			this.props.validate('fullName', {
+				isValid: false,
+				err: { msg: 'ERR_REQUIRED_FIELD' },
+				dirty: false
+			})
+		}
+	}
 
-    validateName(name, dirty) {
-        const { msg, errMsgArgs } = validName(name)
+	validateName(name, dirty) {
+		const { msg, errMsgArgs } = validName(name)
 
-        this.props.validate('fullName', { isValid: !msg, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
-    }
+		this.props.validate('fullName', { isValid: !msg, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
+	}
 
-    render() {
-        const { t, item } = this.props
-        const errFullName = this.props.invalidFields['fullName']
-        const errImg = this.props.invalidFields['img']
+	render() {
+		const { t, item } = this.props
+		const errFullName = this.props.invalidFields['fullName']
+		const errImg = this.props.invalidFields['img']
 
-        return (
-            <div>
-                <Grid
-                    container
-                    spacing={16}
-                >
-                    <Grid item sm={12}>
-                        <TextField
-                            fullWidth
-                            type='text'
-                            required
-                            label={ItemTypesNames[item._type] + ' ' + this.props.t('name', { isProp: true })}
-                            name='name'
-                            value={item.fullName}
-                            onChange={(ev) => this.props.handleChange('fullName', ev.target.value)}
-                            onBlur={() => this.validateName(item.fullName, true)}
-                            onFocus={() => this.validateName(item.fullName, false)}
-                            error={errFullName && !!errFullName.dirty}
-                            maxLength={128}
-                            helperText={
-                                errFullName && !!errFullName.dirty ?
-                                    errFullName.errMsg :
-                                    (this.props.nameHelperTxt ? this.props.nameHelperTxt : '')
-                            }
-                        />
-                    </Grid>
-                    <Grid item sm={12}>
-                        <TextField
-                            fullWidth
-                            type='text'
-                            multiline
-                            rows={3}
-                            label={t('description', { isProp: true })}
-                            value={item._description}
-                            onChange={(ev) => this.props.handleChange('description', ev.target.value)}
-                            maxLength={1024}
-                            helperText={this.props.descriptionHelperTxt || ''}
-                        />
-                    </Grid>
-                    {!this.props.noDefaultImg &&
+		return (
+			<div>
+				<Grid
+					container
+					spacing={16}
+				>
+					<Grid item sm={12}>
+						<TextField
+							fullWidth
+							type='text'
+							required
+							label={ItemTypesNames[item._type] + ' ' + this.props.t('name', { isProp: true })}
+							name='name'
+							value={item.fullName}
+							onChange={(ev) => this.props.handleChange('fullName', ev.target.value)}
+							onBlur={() => this.validateName(item.fullName, true)}
+							onFocus={() => this.validateName(item.fullName, false)}
+							error={errFullName && !!errFullName.dirty}
+							maxLength={128}
+							helperText={
+								errFullName && !!errFullName.dirty ?
+									errFullName.errMsg :
+									(this.props.nameHelperTxt ? this.props.nameHelperTxt : '')
+							}
+						/>
+					</Grid>
+					<Grid item sm={12}>
+						<TextField
+							fullWidth
+							type='text'
+							multiline
+							rows={3}
+							label={t('description', { isProp: true })}
+							value={item._description}
+							onChange={(ev) => this.props.handleChange('description', ev.target.value)}
+							maxLength={1024}
+							helperText={this.props.descriptionHelperTxt || ''}
+						/>
+					</Grid>
+					{!this.props.noDefaultImg &&
                         <Grid item sm={12}>
-                            <ImgForm
-                                label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}
-                                imgSrc={item.img.tempUrl || ''}
-                                onChange={this.props.validateImg.bind(this,
-                                    { propsName: 'img', widthTarget: AVATAR_MAX_WIDTH, heightTarget: AVATAR_MAX_HEIGHT, msg: 'ERR_IMG_SIZE_MAX', exact: false, required: false })}
-                                additionalInfo={t(this.props.imgAdditionalInfo)}
-                                errMsg={errImg ? errImg.errMsg : ''}
-                                size={{ width: AVATAR_MAX_WIDTH, height: AVATAR_MAX_HEIGHT }}
-                            />
+                        	<ImgForm
+                        		label={t(this.props.imgLabel || 'img', { isProp: !this.props.imgLabel })}
+                        		imgSrc={item.img.tempUrl || ''}
+                        		onChange={this.props.validateImg.bind(this,
+                        			{ propsName: 'img', widthTarget: AVATAR_MAX_WIDTH, heightTarget: AVATAR_MAX_HEIGHT, msg: 'ERR_IMG_SIZE_MAX', exact: false, required: false })}
+                        		additionalInfo={t(this.props.imgAdditionalInfo)}
+                        		errMsg={errImg ? errImg.errMsg : ''}
+                        		size={{ width: AVATAR_MAX_WIDTH, height: AVATAR_MAX_HEIGHT }}
+                        	/>
                         </Grid>
-                    }
-                </Grid>
-            </div>
-        )
-    }
+					}
+				</Grid>
+			</div>
+		)
+	}
 }
 
 NewItemForm.propTypes = {
-    actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired,
-    newItem: PropTypes.object.isRequired,
-    title: PropTypes.string,
-    itemType: PropTypes.number.isRequired,
-    imgLabel: PropTypes.string,
-    descriptionHelperTxt: PropTypes.string,
-    nameHelperTxt: PropTypes.string,
+	actions: PropTypes.object.isRequired,
+	account: PropTypes.object.isRequired,
+	newItem: PropTypes.object.isRequired,
+	title: PropTypes.string,
+	itemType: PropTypes.number.isRequired,
+	imgLabel: PropTypes.string,
+	descriptionHelperTxt: PropTypes.string,
+	nameHelperTxt: PropTypes.string,
 }
 
 function mapStateToProps(state, props) {
-    const persist = state.persist
-    const memory = state.memory
-    return {
-        account: persist.account,
-        newItem: memory.newItem[props.itemType]
-    };
+	const persist = state.persist
+	const memory = state.memory
+	return {
+		account: persist.account,
+		newItem: memory.newItem[props.itemType]
+	};
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    }
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	}
 }
 
 const ItemNewItemForm = NewItemHoc(ValidImageHoc(NewItemForm))
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Translate(ItemNewItemForm))

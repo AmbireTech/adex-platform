@@ -11,107 +11,107 @@ const { signAuthToken } = scActions
 
 export default function AuthHoc(Decorated) {
 
-    class Auth extends Component {
-        constructor(props) {
-            super(props)
-            this.state = {
-                method: '',
-                sideSelect: false
-            }
-        }
+	class Auth extends Component {
+		constructor(props) {
+			super(props)
+			this.state = {
+				method: '',
+				sideSelect: false
+			}
+		}
 
-        componentWillMount() {
-            this.props.actions.resetAccount()
-            this.props.actions.resetAllItems()
-        }
+		componentWillMount() {
+			this.props.actions.resetAccount()
+			this.props.actions.resetAllItems()
+		}
 
         updateAcc = ({ res, addr, signature, mode, authType, hdPath, chainId, addrIdx }) => {
-            if (res && res.status === 'OK') {
-                addSig({ addr: addr, sig: signature, mode: authType, expiryTime: res.expiryTime })
-                this.props.actions.updateAccount({ ownProps: { addr: addr, signType: mode, authType, authSig: signature, chainId, hdWalletAddrPath: hdPath, hdWalletAddrIdx: addrIdx } })
-                return true
-            } else {
-                this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_ON_SERVER'), timeout: 5000 })
-                throw new Error(this.props.t('ERR_AUTH_ON_SERVER'))
-            }
+        	if (res && res.status === 'OK') {
+        		addSig({ addr: addr, sig: signature, mode: authType, expiryTime: res.expiryTime })
+        		this.props.actions.updateAccount({ ownProps: { addr: addr, signType: mode, authType, authSig: signature, chainId, hdWalletAddrPath: hdPath, hdWalletAddrIdx: addrIdx } })
+        		return true
+        	} else {
+        		this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_ON_SERVER'), timeout: 5000 })
+        		throw new Error(this.props.t('ERR_AUTH_ON_SERVER'))
+        	}
         }
 
         signAuth = ({ addr, hdPath, addrIdx, authType, chainId }) => {
-            let signature = null
-            let mode = null
-            return signAuthToken({ userAddr: addr, authType, hdPath, addrIdx })
-                .then(({ sig, sig_mode, authToken, typedData, hash } = {}) => {
-                    signature = sig
-                    mode = sig_mode
-                    return signToken({ userid: addr, signature: signature, authToken, mode: mode, typedData, hash })
-                })
-                .then((res) => {
-                    return this.updateAcc({ res, addr, signature, mode, authType, hdPath, chainId, addrIdx })
-                })
+        	let signature = null
+        	let mode = null
+        	return signAuthToken({ userAddr: addr, authType, hdPath, addrIdx })
+        		.then(({ sig, sig_mode, authToken, typedData, hash } = {}) => {
+        			signature = sig
+        			mode = sig_mode
+        			return signToken({ userid: addr, signature: signature, authToken, mode: mode, typedData, hash })
+        		})
+        		.then((res) => {
+        			return this.updateAcc({ res, addr, signature, mode, authType, hdPath, chainId, addrIdx })
+        		})
         }
 
         authOnServer = ({ addr, hdPath, addrIdx, authType, chainId }) => {
-            let signature = getSig({ addr: addr, mode: authType }) || null
-            addr = addr.toLowerCase()
-            let p = null
+        	let signature = getSig({ addr: addr, mode: authType }) || null
+        	addr = addr.toLowerCase()
+        	let p = null
 
-            if (signature) {
-                p = checkAuth({ authSig: signature, skipErrToast: true })
-            } else {
-                p = Promise.resolve(false)
-            }
+        	if (signature) {
+        		p = checkAuth({ authSig: signature, skipErrToast: true })
+        	} else {
+        		p = Promise.resolve(false)
+        	}
 
-            return p
-                .then((res) => {
-                    if (res) {
-                        this.props.actions.updateAccount({ ownProps: { addr: addr, signType: res.sigMode, authType, authSig: signature, chainId, hdWalletAddrPath: hdPath, hdWalletAddrIdx: addrIdx } })
-                        return true
-                    } else {
-                        return this.signAuth({ addr, hdPath, addrIdx, authType, chainId })
-                    }
-                })
-                .catch((err) => {
-                    if (err && (err.status === 401 || err.status === 403)) {
-                        return this.signAuth({ addr, hdPath, addrIdx, authType, chainId })
-                    } else {
-                        throw err
-                    }
-                })
+        	return p
+        		.then((res) => {
+        			if (res) {
+        				this.props.actions.updateAccount({ ownProps: { addr: addr, signType: res.sigMode, authType, authSig: signature, chainId, hdWalletAddrPath: hdPath, hdWalletAddrIdx: addrIdx } })
+        				return true
+        			} else {
+        				return this.signAuth({ addr, hdPath, addrIdx, authType, chainId })
+        			}
+        		})
+        		.catch((err) => {
+        			if (err && (err.status === 401 || err.status === 403)) {
+        				return this.signAuth({ addr, hdPath, addrIdx, authType, chainId })
+        			} else {
+        				throw err
+        			}
+        		})
         }
 
         render() {
-            return (
-                <div>
-                    <Decorated
-                        {...this.props}
-                        updateAcc={this.updateAcc}
-                        authOnServer={this.authOnServer}
-                    />
-                </div>
-            )
+        	return (
+        		<div>
+        			<Decorated
+        				{...this.props}
+        				updateAcc={this.updateAcc}
+        				authOnServer={this.authOnServer}
+        			/>
+        		</div>
+        	)
         }
-    }
+	}
 
-    Auth.propTypes = {
-        actions: PropTypes.object.isRequired,
-    }
+	Auth.propTypes = {
+		actions: PropTypes.object.isRequired,
+	}
 
-    function mapStateToProps(state) {
-        let persist = state.persist
-        // let memory = state.memory
-        return {
-            account: persist.account
-        }
-    }
+	function mapStateToProps(state) {
+		let persist = state.persist
+		// let memory = state.memory
+		return {
+			account: persist.account
+		}
+	}
 
-    function mapDispatchToProps(dispatch) {
-        return {
-            actions: bindActionCreators(actions, dispatch)
-        }
-    }
+	function mapDispatchToProps(dispatch) {
+		return {
+			actions: bindActionCreators(actions, dispatch)
+		}
+	}
 
-    return connect(
-        mapStateToProps,
-        mapDispatchToProps
-    )(Translate(Auth))
+	return connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)(Translate(Auth))
 }

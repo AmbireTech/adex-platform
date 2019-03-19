@@ -13,93 +13,93 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import Translate from 'components/translate/Translate'
 
 export class Confirm extends Component {
-    constructor(props) {
-        super(props)
+	constructor(props) {
+		super(props)
 
-        this.cancel = this.cancel.bind(this)
-        this.confirm = this.confirm.bind(this)
-        this.state = {
-            active: false
-        }
-    }
+		this.cancel = this.cancel.bind(this)
+		this.confirm = this.confirm.bind(this)
+		this.state = {
+			active: false
+		}
+	}
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({ active: nextProps.visible })
-    }
+	componentWillReceiveProps(nextProps) {
+		this.setState({ active: nextProps.visible })
+	}
 
-    confirm() {
-        if (typeof this.props.confirm === 'function') {
-            this.props.confirm()
-        }
-        this.setState({ active: false })
-    }
+	confirm() {
+		if (typeof this.props.confirm === 'function') {
+			this.props.confirm()
+		}
+		this.setState({ active: false })
+	}
 
-    cancel() {
-        if (typeof this.props.cancel === 'function') {
-            this.props.cancel()
-        }
+	cancel() {
+		if (typeof this.props.cancel === 'function') {
+			this.props.cancel()
+		}
 
-        this.setState({ active: false })
-    }
+		this.setState({ active: false })
+	}
 
-    render() {
-        return (
-            <Dialog
-                open={this.state.active}
-            >
-                <DialogTitle id="alert-dialog-title">{this.props.title}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        {this.props.text}
-                    </DialogContentText>
-                    {this.props.children}
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={this.cancel} color="primary">
-                        {this.props.cancelLabel || this.props.t('CANCEL')}
-                    </Button>
-                    <Button onClick={this.confirm} color="primary" autoFocus>
-                        {this.props.confirmLabel || this.props.t('OK')}
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        )
-    }
+	render() {
+		return (
+			<Dialog
+				open={this.state.active}
+			>
+				<DialogTitle id="alert-dialog-title">{this.props.title}</DialogTitle>
+				<DialogContent>
+					<DialogContentText id="alert-dialog-description">
+						{this.props.text}
+					</DialogContentText>
+					{this.props.children}
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={this.cancel} color="primary">
+						{this.props.cancelLabel || this.props.t('CANCEL')}
+					</Button>
+					<Button onClick={this.confirm} color="primary" autoFocus>
+						{this.props.confirmLabel || this.props.t('OK')}
+					</Button>
+				</DialogActions>
+			</Dialog>
+		)
+	}
 }
 
 Confirm.propTypes = {
-    actions: PropTypes.object.isRequired,
-    cancelLabel: PropTypes.string,
-    confirmLabel: PropTypes.string,
-    title: PropTypes.string.isRequired,
-    text: PropTypes.string,
-    confirm: PropTypes.func,
-    cancel: PropTypes.func,
-    visible: PropTypes.bool,
-    calledOn: PropTypes.number
+	actions: PropTypes.object.isRequired,
+	cancelLabel: PropTypes.string,
+	confirmLabel: PropTypes.string,
+	title: PropTypes.string.isRequired,
+	text: PropTypes.string,
+	confirm: PropTypes.func,
+	cancel: PropTypes.func,
+	visible: PropTypes.bool,
+	calledOn: PropTypes.number
 };
 
 function mapStateToProps(state) {
-    state = state.memory
-    return {
-        cancelLabel: state.confirm.data.cancelLabel,
-        confirmLabel: state.confirm.data.confirmLabel,
-        title: state.confirm.data.title || '',
-        text: state.confirm.data.text || '',
-        confirm: state.confirm.onConfirm,
-        cancel: state.confirm.onCancel,
-        visible: state.confirm.active || false,
-        calledOn: state.confirm.calledOn
-    };
+	state = state.memory
+	return {
+		cancelLabel: state.confirm.data.cancelLabel,
+		confirmLabel: state.confirm.data.confirmLabel,
+		title: state.confirm.data.title || '',
+		text: state.confirm.data.text || '',
+		confirm: state.confirm.onConfirm,
+		cancel: state.confirm.onCancel,
+		visible: state.confirm.active || false,
+		calledOn: state.confirm.calledOn
+	};
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    };
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	};
 }
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Translate(Confirm))

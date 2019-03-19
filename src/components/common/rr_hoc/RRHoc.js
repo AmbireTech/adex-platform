@@ -4,17 +4,17 @@ import { withRouter } from 'react-router-dom'
 
 export const withReactRouterLink = Component => {
 
-  class Decorated extends React.Component {
+	class Decorated extends React.Component {
 
     resolveToLocation = to => {
-      return typeof to === 'object' ? to['pathname'] : to
+    	return typeof to === 'object' ? to['pathname'] : to
     }
 
     handleClick = event => {
-      event.preventDefault()
-      const { to } = this.props
+    	event.preventDefault()
+    	const { to } = this.props
 
-      this.props.history.push(to)
+    	this.props.history.push(to)
     }
 
     // TODO: check if it works without infinite loops
@@ -24,18 +24,18 @@ export const withReactRouterLink = Component => {
     // }
 
     render() {
-      const { to, match, location, history, staticContext, ...rest } = this.props
-      const toLocation = this.resolveToLocation(to)
-      return (
-        <Component
-          {...rest}
+    	const { to, match, location, history, staticContext, ...rest } = this.props
+    	const toLocation = this.resolveToLocation(to)
+    	return (
+    		<Component
+    			{...rest}
 
-          href={toLocation}
-          onClick={this.handleClick}
-        />
-      )
+    			href={toLocation}
+    			onClick={this.handleClick}
+    		/>
+    	)
     }
-  }
+	}
 
-  return withRouter(Decorated)
+	return withRouter(Decorated)
 }

@@ -4,15 +4,15 @@ import AdexIcon from 'components/common/icons/AdexIcon';
 
 class PageNotFound extends React.Component {
 
-    render() {
-        return (
-            <div>
-                <h1>404</h1>
-                <Link to="/">Go home..</Link>
-                <AdexIcon />
-            </div>
-        );
-    }
+	render() {
+		return (
+			<div>
+				<h1>404</h1>
+				<Link to="/">Go home..</Link>
+				<AdexIcon />
+			</div>
+		);
+	}
 }
 
 export default PageNotFound;

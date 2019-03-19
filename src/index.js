@@ -6,9 +6,9 @@ import { register } from './serviceWorker'
 
 // Temp here?
 Object.values = function* values(obj) {
-    for (let prop of Object.keys(obj)) {
-        yield obj[prop]
-    }
+	for (let prop of Object.keys(obj)) {
+		yield obj[prop]
+	}
 }
 
 ReactDOM.render(<App />, document.getElementById('root'))

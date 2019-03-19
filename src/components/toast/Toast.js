@@ -17,125 +17,125 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
 const variantIcon = {
-    accept: CheckCircleIcon,
-    success: CheckCircleIcon,
-    warning: WarningIcon,
-    cancel: ErrorIcon,
-    error: ErrorIcon,
-    info: InfoIcon,
+	accept: CheckCircleIcon,
+	success: CheckCircleIcon,
+	warning: WarningIcon,
+	cancel: ErrorIcon,
+	error: ErrorIcon,
+	info: InfoIcon,
 }
 
 export class Toast extends Component {
-    constructor(props) {
-        super(props)
+	constructor(props) {
+		super(props)
 
-        this.state = {
-            active: false,
-            toast: {}
-        }
-    }
+		this.state = {
+			active: false,
+			toast: {}
+		}
+	}
 
-    componentWillReceiveProps(nextProps) {
-        let toast = this.state.toast
-        let nextToast = nextProps.toasts[0]
+	componentWillReceiveProps(nextProps) {
+		let toast = this.state.toast
+		let nextToast = nextProps.toasts[0]
 
-        let isNewToast = !!nextToast && (toast.id !== nextToast.id)
+		let isNewToast = !!nextToast && (toast.id !== nextToast.id)
 
-        if (isNewToast) {
-            // this.setState({ active: true, toast: nextToast })
-            this.setState({ active: false }, () => {
-                setTimeout(() => {
-                    this.setState({ active: true, toast: nextToast })
-                    setTimeout(() => {
-                        this.props.actions.removeToast(nextToast.id)
-                    }, 800)
-                }, 800)
-            })
-        }
-    }
+		if (isNewToast) {
+			// this.setState({ active: true, toast: nextToast })
+			this.setState({ active: false }, () => {
+				setTimeout(() => {
+					this.setState({ active: true, toast: nextToast })
+					setTimeout(() => {
+						this.props.actions.removeToast(nextToast.id)
+					}, 800)
+				}, 800)
+			})
+		}
+	}
 
     close = (id) => {
-        this.setState({ active: false })
-        this.props.actions.removeToast(id)
+    	this.setState({ active: false })
+    	this.props.actions.removeToast(id)
 
     }
 
     render() {
-        const { toast } = this.state
-        const { classes } = this.props
-        const Icon = variantIcon[toast.type]
+    	const { toast } = this.state
+    	const { classes } = this.props
+    	const Icon = variantIcon[toast.type]
 
-        if (!toast || !Icon) return null
+    	if (!toast || !Icon) return null
 
-        const anchorOrigin = toast.anchorOrigin || {}
+    	const anchorOrigin = toast.anchorOrigin || {}
 
-        if (toast.top) {
-            anchorOrigin.horizontal = 'center'
-            anchorOrigin.vertical = 'top'
-        }
+    	if (toast.top) {
+    		anchorOrigin.horizontal = 'center'
+    		anchorOrigin.vertical = 'top'
+    	}
 
-        return (
-            <Snackbar
-                open={this.state.active}
-                autoHideDuration={toast.timeout || 0}
-                onClose={() => !toast.unclosable && this.close(toast.id)}
-                anchorOrigin={anchorOrigin}
-            >
-                <SnackbarContent
-                    aria-describedby="client-snackbar"
-                    message={
-                        <span id="client-snackbar" className={classes.message}>
-                            <Icon className={classnames(classes.icon, classes.iconVariant)} />
-                            {(toast.label || '').toString()}
-                        </span>
+    	return (
+    		<Snackbar
+    			open={this.state.active}
+    			autoHideDuration={toast.timeout || 0}
+    			onClose={() => !toast.unclosable && this.close(toast.id)}
+    			anchorOrigin={anchorOrigin}
+    		>
+    			<SnackbarContent
+    				aria-describedby="client-snackbar"
+    				message={
+    					<span id="client-snackbar" className={classes.message}>
+    						<Icon className={classnames(classes.icon, classes.iconVariant)} />
+    						{(toast.label || '').toString()}
+    					</span>
 
-                    }
-                    action={[
-                        !toast.unclosable &&
+    				}
+    				action={[
+    					!toast.unclosable &&
                         <IconButton
-                            key="close"
-                            aria-label="Close"
-                            color="inherit"
-                            className={classes.close}
-                            onClick={() => !toast.unclosable && this.close(toast.id)}
+                        	key="close"
+                        	aria-label="Close"
+                        	color="inherit"
+                        	className={classes.close}
+                        	onClick={() => !toast.unclosable && this.close(toast.id)}
                         >
-                            <CloseIcon className={classes.icon} />
+                        	<CloseIcon className={classes.icon} />
                         </IconButton>,]}
 
-                    className={classnames(
-                        classes.snackbar,
-                        {
-                            [classes.top]: !!toast.top,
-                            [classes.accept]: toast.type === 'accept',
-                            [classes.cancel]: toast.type === 'cancel',
-                            [classes.warning]: toast.type === 'warning',
-                        })}
-                />
-            </Snackbar>
-        )
+    				className={classnames(
+    					classes.snackbar,
+    					{
+    						[classes.top]: !!toast.top,
+    						[classes.accept]: toast.type === 'accept',
+    						[classes.cancel]: toast.type === 'cancel',
+    						[classes.warning]: toast.type === 'warning',
+    					})}
+    			/>
+    		</Snackbar>
+    	)
     }
 }
 
 Toast.propTypes = {
-    actions: PropTypes.object.isRequired,
-    toasts: PropTypes.array.isRequired
+	actions: PropTypes.object.isRequired,
+	toasts: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {
-    // let persist = state.persist
-    let memory = state.memory
-    return {
-        toasts: memory.toasts || []
-    };
+	// let persist = state.persist
+	let memory = state.memory
+	return {
+		toasts: memory.toasts || []
+	};
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    };
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	};
 }
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(withStyles(styles)(Toast))

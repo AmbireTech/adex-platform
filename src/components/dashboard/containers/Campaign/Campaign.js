@@ -30,179 +30,179 @@ const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
 const AddItemWithDialog = WithDialog(AddItem)
 
 export class Campaign extends Component {
-    constructor(props, context) {
-        super(props, context);
+	constructor(props, context) {
+		super(props, context);
 
-        this.state = {
-            tabIndex: 0
-        }
-    }
+		this.state = {
+			tabIndex: 0
+		}
+	}
 
     handleTabChange = (index) => {
-        this.setState({ tabIndex: index })
+    	this.setState({ tabIndex: index })
     }
 
     inputFormat = (value) => {
-        return moment(value).format('DD MMMM')
+    	return moment(value).format('DD MMMM')
     }
 
     render() {
-        // let side = this.props.match.params.side
-        const { t, classes, item, setActiveFields, handleChange, activeFields, isDemo } = this.props
-        const propsUnits = { ...this.props.units }
+    	// let side = this.props.match.params.side
+    	const { t, classes, item, setActiveFields, handleChange, activeFields, isDemo } = this.props
+    	const propsUnits = { ...this.props.units }
 
-        if (!item) return (<h1>'404'</h1>)
+    	if (!item) return (<h1>'404'</h1>)
 
-        const from = item.from ? new Date(item.from) : null
-        const to = item.to ? new Date(item.to) : null
-        const now = new Date()
-        now.setHours(0, 0, 0, 0)
+    	const from = item.from ? new Date(item.from) : null
+    	const to = item.to ? new Date(item.to) : null
+    	const now = new Date()
+    	now.setHours(0, 0, 0, 0)
 
-        //TODO: Make it wit HOC for collection (campaing/channel)
-        const groupedUnits = groupItemsForCollection({ collectionId: item._id, allItems: propsUnits })
+    	//TODO: Make it wit HOC for collection (campaing/channel)
+    	const groupedUnits = groupItemsForCollection({ collectionId: item._id, allItems: propsUnits })
 
-        const units = groupedUnits.items
-        const otherUnits = groupedUnits.otherItems
-        const editFrom = !!activeFields.from
-        const editTo = !!activeFields.to
+    	const units = groupedUnits.items
+    	const otherUnits = groupedUnits.otherItems
+    	const editFrom = !!activeFields.from
+    	const editTo = !!activeFields.to
 
-        return (
-            <div>
-                <div>
-                    <DatePicker
-                        calendarIcon
-                        icon={!editFrom || isDemo ? <EditIcon /> : undefined}
-                        iconColor={!editFrom && !isDemo ? 'secondary' : undefined}
-                        label={t('from', { isProp: true })}
-                        onIconClick={(ev) => {
-                            if (!editFrom && !isDemo) {
-                                setActiveFields('from', true)
-                            }
-                        }}
-                        onBlur={(ev) => {
-                            setActiveFields('from', false)
-                        }}
-                        minDate={editFrom ? now : null}
-                        maxDate={editFrom ? to : null}
-                        onChange={(val) => handleChange('from', val)}
-                        value={from}
-                        className={classes.datepicker}
-                        disabled={!editFrom || isDemo}
-                    // inputFormat={this.inputFormat}
-                    // size={moment(from).format('DD MMMM').length} /** temp fix */
-                    // readonly
-                    />
-                    <DatePicker
-                        calendarIcon
-                        icon={!editTo || isDemo ? <EditIcon /> : undefined}
-                        iconColor={!editTo && !isDemo ? 'secondary' : undefined}
-                        onIconClick={(ev) => {
-                            if (!editTo && !isDemo) {
-                                setActiveFields('to', true)
-                            }
-                        }}
-                        onBlur={(ev) => {
-                            setActiveFields('to', false)
-                        }}
-                        label={t('to', { isProp: true })}
-                        minDate={editTo ? (from || now) : null}
-                        onChange={(val) => handleChange('to', val)}
-                        value={to}
-                        className={classes.datepicker}
-                        disabled={!editTo || isDemo}
-                    // inputFormat={this.inputFormat}
-                    // size={moment(to).format('DD MMMM').length} /** temp fix */
-                    // readonly
-                    />
-                </div>
-                <AppBar
-                    position='static'
-                    color='primary'
-                    className={classes.appBar}
-                >
-                    <Toolbar>
-                        <Typography
-                            variant="title"
-                            color="inherit"
-                            className={classes.flex}
-                        >
-                            {this.props.t('UNITS_IN_CAMPAIGN', { args: [units.length] })}
-                        </Typography>
+    	return (
+    		<div>
+    			<div>
+    				<DatePicker
+    					calendarIcon
+    					icon={!editFrom || isDemo ? <EditIcon /> : undefined}
+    					iconColor={!editFrom && !isDemo ? 'secondary' : undefined}
+    					label={t('from', { isProp: true })}
+    					onIconClick={(ev) => {
+    						if (!editFrom && !isDemo) {
+    							setActiveFields('from', true)
+    						}
+    					}}
+    					onBlur={(ev) => {
+    						setActiveFields('from', false)
+    					}}
+    					minDate={editFrom ? now : null}
+    					maxDate={editFrom ? to : null}
+    					onChange={(val) => handleChange('from', val)}
+    					value={from}
+    					className={classes.datepicker}
+    					disabled={!editFrom || isDemo}
+    					// inputFormat={this.inputFormat}
+    					// size={moment(from).format('DD MMMM').length} /** temp fix */
+    					// readonly
+    				/>
+    				<DatePicker
+    					calendarIcon
+    					icon={!editTo || isDemo ? <EditIcon /> : undefined}
+    					iconColor={!editTo && !isDemo ? 'secondary' : undefined}
+    					onIconClick={(ev) => {
+    						if (!editTo && !isDemo) {
+    							setActiveFields('to', true)
+    						}
+    					}}
+    					onBlur={(ev) => {
+    						setActiveFields('to', false)
+    					}}
+    					label={t('to', { isProp: true })}
+    					minDate={editTo ? (from || now) : null}
+    					onChange={(val) => handleChange('to', val)}
+    					value={to}
+    					className={classes.datepicker}
+    					disabled={!editTo || isDemo}
+    					// inputFormat={this.inputFormat}
+    					// size={moment(to).format('DD MMMM').length} /** temp fix */
+    					// readonly
+    				/>
+    			</div>
+    			<AppBar
+    				position='static'
+    				color='primary'
+    				className={classes.appBar}
+    			>
+    				<Toolbar>
+    					<Typography
+    						variant="title"
+    						color="inherit"
+    						className={classes.flex}
+    					>
+    						{this.props.t('UNITS_IN_CAMPAIGN', { args: [units.length] })}
+    					</Typography>
 
-                        <AddItemWithDialog
-                            color='inherit'
-                            icon={<AddIcon />}
-                            addCampaign={this.props.actions.addCampaign}
-                            btnLabel={t('NEW_UNIT_TO_CAMPAIGN')}
-                            title={t('NEW_UNIT_TO_CAMPAIGN')}
-                            items={otherUnits}
-                            viewMode={VIEW_MODE_UNITS}
-                            listMode='rows'
-                            addTo={item}
-                            tabNewLabel={t('NEW_UNIT')}
-                            tabExsLabel={t('EXISTING_UNIT')}
-                            objModel={AdUnitModel}
-                            itemModel={AdUnitModel}
-                            sortProperties={SORT_PROPERTIES_ITEMS}
-                            filterProperties={FILTER_PROPERTIES_ITEMS}
-                            newForm={(props) =>
-                                <NewUnitSteps
-                                    {...props}
-                                    addTo={item}
-                                />
-                            }
-                        />
+    					<AddItemWithDialog
+    						color='inherit'
+    						icon={<AddIcon />}
+    						addCampaign={this.props.actions.addCampaign}
+    						btnLabel={t('NEW_UNIT_TO_CAMPAIGN')}
+    						title={t('NEW_UNIT_TO_CAMPAIGN')}
+    						items={otherUnits}
+    						viewMode={VIEW_MODE_UNITS}
+    						listMode='rows'
+    						addTo={item}
+    						tabNewLabel={t('NEW_UNIT')}
+    						tabExsLabel={t('EXISTING_UNIT')}
+    						objModel={AdUnitModel}
+    						itemModel={AdUnitModel}
+    						sortProperties={SORT_PROPERTIES_ITEMS}
+    						filterProperties={FILTER_PROPERTIES_ITEMS}
+    						newForm={(props) =>
+    							<NewUnitSteps
+    								{...props}
+    								addTo={item}
+    							/>
+    						}
+    					/>
 
-                    </Toolbar>
-                </AppBar>
-                <ItemsList
-                    parentItem={item}
-                    removeFromItem
-                    items={units}
-                    viewModeId={VIEW_MODE}
-                    bjModel={AdUnitModel}
-                    sortProperties={SORT_PROPERTIES_ITEMS}
-                    filterProperties={FILTER_PROPERTIES_ITEMS}
-                    uiStateId='campaign-units'
-                />
-            </div>
-        )
+    				</Toolbar>
+    			</AppBar>
+    			<ItemsList
+    				parentItem={item}
+    				removeFromItem
+    				items={units}
+    				viewModeId={VIEW_MODE}
+    				bjModel={AdUnitModel}
+    				sortProperties={SORT_PROPERTIES_ITEMS}
+    				filterProperties={FILTER_PROPERTIES_ITEMS}
+    				uiStateId='campaign-units'
+    			/>
+    		</div>
+    	)
     }
 }
 
 Campaign.propTypes = {
-    actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired,
-    units: PropTypes.object.isRequired,
-    rowsView: PropTypes.bool.isRequired
+	actions: PropTypes.object.isRequired,
+	account: PropTypes.object.isRequired,
+	units: PropTypes.object.isRequired,
+	rowsView: PropTypes.bool.isRequired
 }
 
 function mapStateToProps(state) {
-    let persist = state.persist
-    // let memory = state.memory
-    return {
-        account: persist.account,
-        units: persist.items[ItemsTypes.AdUnit.id],
-        rowsView: !!persist.ui[VIEW_MODE],
-        objModel: CampaignModel,
-        itemType: ItemsTypes.Campaign.id,
-        updateImgInfoLabel: 'CAMPAIGN_IMG_ADDITIONAL_INFO',
-        updateImgLabel: 'CAMPAIGN_LOGO',
-        updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
-        updateImgExact: false,
-        canEditImg: true,
-        showLogo: true
-    }
+	let persist = state.persist
+	// let memory = state.memory
+	return {
+		account: persist.account,
+		units: persist.items[ItemsTypes.AdUnit.id],
+		rowsView: !!persist.ui[VIEW_MODE],
+		objModel: CampaignModel,
+		itemType: ItemsTypes.Campaign.id,
+		updateImgInfoLabel: 'CAMPAIGN_IMG_ADDITIONAL_INFO',
+		updateImgLabel: 'CAMPAIGN_LOGO',
+		updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
+		updateImgExact: false,
+		canEditImg: true,
+		showLogo: true
+	}
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    }
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	}
 }
 
 const CampaignItem = ItemHoc(withStyles(styles)(Campaign))
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Translate(CampaignItem))

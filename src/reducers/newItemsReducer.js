@@ -3,25 +3,25 @@ import initialState from 'store/initialState'
 
 export default function newItemsReducer(state = initialState.newItem, action) {
 
-    let newState
-    let newItem
+	let newState
+	let newItem
 
-    switch (action.type) {
-        case UPDATE_NEW_ITEM:
-            newState = { ...state }
-            newItem = { ...action.item }
-            newState[newItem._type] = newItem
+	switch (action.type) {
+	case UPDATE_NEW_ITEM:
+		newState = { ...state }
+		newItem = { ...action.item }
+		newState[newItem._type] = newItem
 
-            return newState
+		return newState
 
-        case RESET_NEW_ITEM:
-            newState = { ...state }
-            newItem = { ...initialState.newItem[action.item._type] }
-            newState[action.item._type] = newItem
+	case RESET_NEW_ITEM:
+		newState = { ...state }
+		newItem = { ...initialState.newItem[action.item._type] }
+		newState[action.item._type] = newItem
 
-            return newState
+		return newState
 
-        default:
-            return state
-    }
+	default:
+		return state
+	}
 }

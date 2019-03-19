@@ -19,7 +19,7 @@ const mainnetCfg = {
 let cfg
 
 if (process.env.NODE_ENV === 'production') {
-cfg = mainnetCfg
+	cfg = mainnetCfg
 } else {
 	cfg = kovanCfg
 }

@@ -4,8 +4,8 @@ import * as web3 from './web3'
 import * as eth from './eth'
 
 export default {
-    ...exchange,
-    ...token,
-    ...web3,
-    ...eth
+	...exchange,
+	...token,
+	...web3,
+	...eth
 }

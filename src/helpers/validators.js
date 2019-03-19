@@ -8,57 +8,57 @@ const couponRegex = /^[a-zA-Z0-9]{46}$/
 
 
 export const validUrl = (url) => {
-    url = url || ''
-    const isValid = urlRegex.test(url)
-    return isValid
+	url = url || ''
+	const isValid = urlRegex.test(url)
+	return isValid
 }
 
 export const validEmail = (email) => {
-    email = email || ''
-    const isValid = emailRegex.test(email)
-    return isValid
+	email = email || ''
+	const isValid = emailRegex.test(email)
+	return isValid
 }
 
 export const validateNumber = (numberStr) => {
-    numberStr = numberStr || ''
-    const isValid = !isNaN(parseFloat(numberStr)) && isFinite(numberStr) && (numberStr > 0)
-    return isValid
+	numberStr = numberStr || ''
+	const isValid = !isNaN(parseFloat(numberStr)) && isFinite(numberStr) && (numberStr > 0)
+	return isValid
 }
 
 // > 0
 export const validPositiveInt = (intStr) => {
-    intStr = intStr || ''
-    const isValid = onlyDigitsRegex.test(intStr)
-    return isValid
+	intStr = intStr || ''
+	const isValid = onlyDigitsRegex.test(intStr)
+	return isValid
 }
 
 export const validName = (name) => {
-    let msg = ''
-    const errMsgArgs = []
-    if (!name) {
-        msg = 'ERR_REQUIRED_FIELD'
-    } else if (name.length < 4) {
-        msg = 'ERR_MIN_LENGTH'
-        errMsgArgs.push(4)
-    } else if (name.length > 128) {
-        msg = 'ERR_MAX_LENGTH'
-        errMsgArgs.push(128)
-    }
+	let msg = ''
+	const errMsgArgs = []
+	if (!name) {
+		msg = 'ERR_REQUIRED_FIELD'
+	} else if (name.length < 4) {
+		msg = 'ERR_MIN_LENGTH'
+		errMsgArgs.push(4)
+	} else if (name.length > 128) {
+		msg = 'ERR_MAX_LENGTH'
+		errMsgArgs.push(128)
+	}
 
-    return {
-        msg,
-        errMsgArgs
-    }
+	return {
+		msg,
+		errMsgArgs
+	}
 }
 
 export const validPassword = (password) => {
-    password = password || ''
-    const isValid = passwordRegex.test(password)
-    return isValid
+	password = password || ''
+	const isValid = passwordRegex.test(password)
+	return isValid
 }
 
 export const validQuickAccountCoupon = (coupon) => {
-    coupon = coupon || ''
-    const isValid = couponRegex.test(coupon)
-    return isValid
+	coupon = coupon || ''
+	const isValid = couponRegex.test(coupon)
+	return isValid
 }

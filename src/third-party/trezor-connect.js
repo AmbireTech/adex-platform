@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /**
  * (C) 2017 SatoshiLabs
  *

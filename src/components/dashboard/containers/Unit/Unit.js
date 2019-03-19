@@ -20,29 +20,29 @@ const { ItemsTypes } = ItemsConstants
 const BidFormWithDialog = WithDialog(NewBidSteps)
 
 export class Unit extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            closeDialog: false,
-            bids: sortBids([])
-        }
-    }
+	constructor(props) {
+		super(props)
+		this.state = {
+			closeDialog: false,
+			bids: sortBids([])
+		}
+	}
 
     handleTabChange = (index) => {
-        this.setState({ tabIndex: index })
+    	this.setState({ tabIndex: index })
     }
 
     getUnitBids = () => {
-        getUnitBids({ authSig: this.props.account._authSig, adUnit: this.props.item._id })
-            .then((bids) => {
-                // console.log('unit bids', bids)
-                // TODO: Maybe map to Bid instances?
-                this.setState({ bids: sortBids(bids) })
-            })
+    	getUnitBids({ authSig: this.props.account._authSig, adUnit: this.props.item._id })
+    		.then((bids) => {
+    			// console.log('unit bids', bids)
+    			// TODO: Maybe map to Bid instances?
+    			this.setState({ bids: sortBids(bids) })
+    		})
     }
 
     componentWillMount() {
-        this.getUnitBids()
+    	this.getUnitBids()
     }
 
     // shouldComponentUpdate(nextProps, nextState) {
@@ -52,71 +52,71 @@ export class Unit extends Component {
     // }
 
     onBidPlaced = () => {
-        this.setState({ closeDialog: true })
-        this.getUnitBids()
+    	this.setState({ closeDialog: true })
+    	this.getUnitBids()
     }
 
     render() {
 
-        let item = this.props.item
-        let t = this.props.t
+    	let item = this.props.item
+    	let t = this.props.t
 
-        if (!item) return (<h1>Unit '404'</h1>)
+    	if (!item) return (<h1>Unit '404'</h1>)
 
-        return (
-            <div>
-                {!this.props.inEdit ?
-                    <BidFormWithDialog
-                        btnLabel='PLACE_BID'
-                        title={this.props.t('PLACE_BID_FOR', { args: [item.fullName] })}
-                        floating
-                        variant='fab'
-                        color='primary'
-                        bidId={item._id}
-                        stepsId={'new-bid-' + item._id}
-                        // TODO: fix icon v align
-                        icon={<BidIcon />}
-                        adUnit={item}
-                        closeDialog={!!this.state.closeDialog}
-                        onSave={this.onBidPlaced}
-                        darkerBackground={true}
-                    /> : null}
-                <BasicProps
-                    item={item}
-                    t={t}
-                    url={item.adUrl}
-                    rightComponent={<UnitTargets {...this.props} targets={item.meta.targets} t={t} subHeader={true} />}
-                />
-                <div>
-                    <UnitBids item={item} bids={this.state.bids} getUnitBids={this.getUnitBids} />
-                </div>
-            </div>
-        )
+    	return (
+    		<div>
+    			{!this.props.inEdit ?
+    				<BidFormWithDialog
+    					btnLabel='PLACE_BID'
+    					title={this.props.t('PLACE_BID_FOR', { args: [item.fullName] })}
+    					floating
+    					variant='fab'
+    					color='primary'
+    					bidId={item._id}
+    					stepsId={'new-bid-' + item._id}
+    					// TODO: fix icon v align
+    					icon={<BidIcon />}
+    					adUnit={item}
+    					closeDialog={!!this.state.closeDialog}
+    					onSave={this.onBidPlaced}
+    					darkerBackground={true}
+    				/> : null}
+    			<BasicProps
+    				item={item}
+    				t={t}
+    				url={item.adUrl}
+    				rightComponent={<UnitTargets {...this.props} targets={item.meta.targets} t={t} subHeader={true} />}
+    			/>
+    			<div>
+    				<UnitBids item={item} bids={this.state.bids} getUnitBids={this.getUnitBids} />
+    			</div>
+    		</div>
+    	)
     }
 }
 
 Unit.propTypes = {
-    actions: PropTypes.object.isRequired,
-    item: PropTypes.object.isRequired,
+	actions: PropTypes.object.isRequired,
+	item: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state, props) {
-    // let persist = state.persist
-    // let memory = state.memory
-    return {
-        objModel: AdUnit,
-        itemType: ItemsTypes.AdUnit.id
-    }
+	// let persist = state.persist
+	// let memory = state.memory
+	return {
+		objModel: AdUnit,
+		itemType: ItemsTypes.AdUnit.id
+	}
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    }
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	}
 }
 
 const UnitItem = ItemHoc(Unit)
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Translate(UnitItem))

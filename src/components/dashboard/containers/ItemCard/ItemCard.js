@@ -24,77 +24,77 @@ const RRButton = withReactRouterLink(Button)
 
 class ItemCard extends Component {
 
-    render() {
-        let item = this.props.item
-        let meta = item._meta || {}
-        let name = meta.fullName
-        let id = item._id
-        let itemTypeName = ItemTypesNames[item._type]
-        let to = '/dashboard/' + this.props.side + '/' + itemTypeName + '/' + id
-        let imageSrc = Item.getImgUrl(meta.img, process.env.IPFS_GATEWAY) || ''
-        const { classes, t } = this.props
+	render() {
+		let item = this.props.item
+		let meta = item._meta || {}
+		let name = meta.fullName
+		let id = item._id
+		let itemTypeName = ItemTypesNames[item._type]
+		let to = '/dashboard/' + this.props.side + '/' + itemTypeName + '/' + id
+		let imageSrc = Item.getImgUrl(meta.img, process.env.IPFS_GATEWAY) || ''
+		const { classes, t } = this.props
 
-        return (
-            <Card
-                raised={false}
-                className={classes.card}
-            >
-                <RRCardMedia
-                    to={to}
-                    classes={{ root: classes.mediaRoot }}
-                    image={imageSrc ? null : NO_IMAGE}
-                >
-                    <Img
-                        allowFullscreen={!!this.props.allowFullscreen}
-                        className={classes.img}
-                        src={imageSrc} alt={name}
-                    />
-                </RRCardMedia>
+		return (
+			<Card
+				raised={false}
+				className={classes.card}
+			>
+				<RRCardMedia
+					to={to}
+					classes={{ root: classes.mediaRoot }}
+					image={imageSrc ? null : NO_IMAGE}
+				>
+					<Img
+						allowFullscreen={!!this.props.allowFullscreen}
+						className={classes.img}
+						src={imageSrc} alt={name}
+					/>
+				</RRCardMedia>
 
-                <CardContent>
-                    <Typography
-                        variant='headline'
-                        component='h2'
-                        noWrap
-                    >
-                        {meta.fullName}
-                    </Typography>
-                    <Typography component='p'>
-                        {itemAdTypeLabel({ adType: item._meta.adType })}  {itemAdSizeLabel({ size: item._meta.size, t: t })}
-                    </Typography>
-                </CardContent>
+				<CardContent>
+					<Typography
+						variant='headline'
+						component='h2'
+						noWrap
+					>
+						{meta.fullName}
+					</Typography>
+					<Typography component='p'>
+						{itemAdTypeLabel({ adType: item._meta.adType })}  {itemAdSizeLabel({ size: item._meta.size, t: t })}
+					</Typography>
+				</CardContent>
 
-                <CardActions
-                    classes={
-                        { root: classes.actionsRoot }
-                    }
-                >
-                    <Tooltip
-                        enterDelay={300}
-                        id={'tooltip-view-item' + item._id}
-                        leaveDelay={300}
-                        title={this.props.t('GO_' + itemTypeName.toUpperCase(), { args: [name] })}
-                    >
-                        <RRButton
-                            to={to}
-                            size="small"
-                            color="primary"
-                        >
-                            {'view'}
-                        </RRButton>
-                    </Tooltip>
+				<CardActions
+					classes={
+						{ root: classes.actionsRoot }
+					}
+				>
+					<Tooltip
+						enterDelay={300}
+						id={'tooltip-view-item' + item._id}
+						leaveDelay={300}
+						title={this.props.t('GO_' + itemTypeName.toUpperCase(), { args: [name] })}
+					>
+						<RRButton
+							to={to}
+							size="small"
+							color="primary"
+						>
+							{'view'}
+						</RRButton>
+					</Tooltip>
 
-                    {this.props.renderActions()}
-                </CardActions>
-            </Card>
-        )
-    }
+					{this.props.renderActions()}
+				</CardActions>
+			</Card>
+		)
+	}
 }
 
 ItemCard.propTypes = {
-    item: PropTypes.object.isRequired,
-    renderActions: PropTypes.func,
-    props: PropTypes.string,
+	item: PropTypes.object.isRequired,
+	renderActions: PropTypes.func,
+	props: PropTypes.string,
 }
 
 export default withStyles(styles)(Translate(ItemCard))

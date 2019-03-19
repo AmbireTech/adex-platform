@@ -23,178 +23,178 @@ import StatsCard from 'components/dashboard/containers/DashboardStats/StatsCard'
 const AirSwap = window.AirSwap
 
 const AirSwapDialogBody = ({ t, onBuy, onSell, classes, account }) => {
-    const {
-        addrBalanceAdx,
-        addrBalanceEth,
-    } = getStatsValues(account._stats)
+	const {
+		addrBalanceAdx,
+		addrBalanceEth,
+	} = getStatsValues(account._stats)
 
-    return (
-        <div className={classes.paper}>
-            <div>
-                <List
-                // dense={true}
-                >
-                    <ListDivider />
-                    <ListItem  >
-                        <ListItemText
-                            secondary={t('AIRSWAP_INFO_MSG')}
-                            primary={
-                                <Anchor
-                                    className={classes.iconLink}
-                                    href='https://www.airswap.io/'
-                                    target='_blank'
-                                    style={{ color: 'inherit' }}
-                                >
-                                    <AirSwapWithTxtIcon className={classes.linkIcon} />
-                                </Anchor>
-                            }
-                        />
-                    </ListItem>
-                    <ListDivider />
-                    <ListItem  >
-                        <ListItemText
-                            primary={t('AIRSWAP_WARNING_MSG')}
-                            // secondary={t('AIRSWAP_WARNING')}
-                            primaryTypographyProps={{ color: 'primary' }}
-                        // secondaryTypographyProps={{ color: 'default' }}
-                        />
-                    </ListItem>
-                    <ListDivider />
-                    <ListItem  >
-                        <ListItemText
-                            className={classes.addr}
-                            primary={account._addr}
-                            secondary={t('CURRENT_AUTH_ADDR')}
-                        />
-                    </ListItem>
-                    <ListDivider />
-                    <ListItem  >
-                        <ListItemText
-                            primary={<Img src={getAuthLogo(account._authType)} style={{ maxHeight: 32, width: 'auto' }} />}
-                            secondary={t('CURRENT_AUTH_METOHD')}
-                        />
-                    </ListItem>
-                    <ListDivider />
-                </List>
-                <div className={classes.infoStatsContainer}>
-                    <StatsCard
-                        linkCard
-                        subtitle={t('ACCOUNT_ETH_BALANCE')}
-                        title={addrBalanceEth + ' ETH'}
-                        padding='dense'
-                    >
-                    </StatsCard>
+	return (
+		<div className={classes.paper}>
+			<div>
+				<List
+					// dense={true}
+				>
+					<ListDivider />
+					<ListItem  >
+						<ListItemText
+							secondary={t('AIRSWAP_INFO_MSG')}
+							primary={
+								<Anchor
+									className={classes.iconLink}
+									href='https://www.airswap.io/'
+									target='_blank'
+									style={{ color: 'inherit' }}
+								>
+									<AirSwapWithTxtIcon className={classes.linkIcon} />
+								</Anchor>
+							}
+						/>
+					</ListItem>
+					<ListDivider />
+					<ListItem  >
+						<ListItemText
+							primary={t('AIRSWAP_WARNING_MSG')}
+							// secondary={t('AIRSWAP_WARNING')}
+							primaryTypographyProps={{ color: 'primary' }}
+							// secondaryTypographyProps={{ color: 'default' }}
+						/>
+					</ListItem>
+					<ListDivider />
+					<ListItem  >
+						<ListItemText
+							className={classes.addr}
+							primary={account._addr}
+							secondary={t('CURRENT_AUTH_ADDR')}
+						/>
+					</ListItem>
+					<ListDivider />
+					<ListItem  >
+						<ListItemText
+							primary={<Img src={getAuthLogo(account._authType)} style={{ maxHeight: 32, width: 'auto' }} />}
+							secondary={t('CURRENT_AUTH_METOHD')}
+						/>
+					</ListItem>
+					<ListDivider />
+				</List>
+				<div className={classes.infoStatsContainer}>
+					<StatsCard
+						linkCard
+						subtitle={t('ACCOUNT_ETH_BALANCE')}
+						title={addrBalanceEth + ' ETH'}
+						padding='dense'
+					>
+					</StatsCard>
 
-                    <StatsCard
-                        linkCard
-                        subtitle={t('ACCOUNT_ADX_BALANCE')}
-                        title={addrBalanceAdx + ' ADX'}
-                        padding='dense'
-                    >
-                    </StatsCard>
-                </div>
-            </div>
-        </div >
-    )
+					<StatsCard
+						linkCard
+						subtitle={t('ACCOUNT_ADX_BALANCE')}
+						title={addrBalanceAdx + ' ADX'}
+						padding='dense'
+					>
+					</StatsCard>
+				</div>
+			</div>
+		</div >
+	)
 }
 
 const AirSwapDialog = WithDialog(AirSwapDialogBody)
 
 class AirSwapWidget extends Component {
-    componentWillMount() {
-    }
+	componentWillMount() {
+	}
 
     onSwap = ({ mode }) => {
-        const { t, actions } = this.props
-        AirSwap.Trader.render({
-            env: 'production',
-            mode: mode,
-            token: cfg.addr.token,
-            onCancel: () => {
-                actions.addToast({ type: 'warning', action: 'X', label: t('TRANSACTION_CANCELED'), timeout: 5000 })
-            },
-            onComplete: (transactionId) => {
+    	const { t, actions } = this.props
+    	AirSwap.Trader.render({
+    		env: 'production',
+    		mode: mode,
+    		token: cfg.addr.token,
+    		onCancel: () => {
+    			actions.addToast({ type: 'warning', action: 'X', label: t('TRANSACTION_CANCELED'), timeout: 5000 })
+    		},
+    		onComplete: (transactionId) => {
 
-                // TODO: Get data when available
-                // const txData = {
-                //     trHash: transactionId,
-                //     trMethod: `TX_MTD_AIRSWAP_${mode.toUpperCase()}`
-                // }
-                // actions.addWeb3Transaction({ trans: txData, addr: 'GET_THE_ADDR' })
-                actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTION_SENT_MSG', { args: [transactionId] }), timeout: 5000 })
-            },
-            //TODO: add onTransactionHash when possible
-        }, 'body')
+    			// TODO: Get data when available
+    			// const txData = {
+    			//     trHash: transactionId,
+    			//     trMethod: `TX_MTD_AIRSWAP_${mode.toUpperCase()}`
+    			// }
+    			// actions.addWeb3Transaction({ trans: txData, addr: 'GET_THE_ADDR' })
+    			actions.addToast({ type: 'accept', action: 'X', label: t('TRANSACTION_SENT_MSG', { args: [transactionId] }), timeout: 5000 })
+    		},
+    		//TODO: add onTransactionHash when possible
+    	}, 'body')
     }
 
     render() {
-        const { classes, t } = this.props
-        return (
-            <AirSwapDialog
-                classes={classes}
-                btnLabel='BUY_SELL_ADX_AIRSWAP_BTN'
-                title='BUY_SELL_ADX_AIRSWAP_DIALOG_TITLE'
-                variant='contained'
-                size='small'
-                color='default'
-                icon={<AirSwapIcon />}
-                onBuy={() => this.onSwap({ mode: 'buy' })}
-                onSell={() => this.onSwap({ mode: 'sell' })}
-                account={this.props.account}
-                dialogActions={
-                    <div
-                        className={classes.btns}
-                    >
-                        <Button
-                            className={classes.actionBtn}
-                            color='primary'
-                            variant='contained'
-                            size='large'
-                            onClick={() => this.onSwap({ mode: 'buy' })}
-                        >
-                            <AirSwapIcon
-                                className={classes.btnIconLeft}
-                            />
-                            {t('BUY_ADX_AIRSWAP')}
-                        </Button>
-                        <Button
-                            className={classes.actionBtn}
-                            color='primary'
-                            variant='contained'
-                            size='large'
-                            onClick={() => this.onSwap({ mode: 'sell' })}
-                        >
-                            <AirSwapIcon
-                                className={classes.btnIconLeft}
-                            />
-                            {t('SELL_ADX_AIRSWAP')}
-                        </Button>
-                    </div>
-                }
-            />
-        )
+    	const { classes, t } = this.props
+    	return (
+    		<AirSwapDialog
+    			classes={classes}
+    			btnLabel='BUY_SELL_ADX_AIRSWAP_BTN'
+    			title='BUY_SELL_ADX_AIRSWAP_DIALOG_TITLE'
+    			variant='contained'
+    			size='small'
+    			color='default'
+    			icon={<AirSwapIcon />}
+    			onBuy={() => this.onSwap({ mode: 'buy' })}
+    			onSell={() => this.onSwap({ mode: 'sell' })}
+    			account={this.props.account}
+    			dialogActions={
+    				<div
+    					className={classes.btns}
+    				>
+    					<Button
+    						className={classes.actionBtn}
+    						color='primary'
+    						variant='contained'
+    						size='large'
+    						onClick={() => this.onSwap({ mode: 'buy' })}
+    					>
+    						<AirSwapIcon
+    							className={classes.btnIconLeft}
+    						/>
+    						{t('BUY_ADX_AIRSWAP')}
+    					</Button>
+    					<Button
+    						className={classes.actionBtn}
+    						color='primary'
+    						variant='contained'
+    						size='large'
+    						onClick={() => this.onSwap({ mode: 'sell' })}
+    					>
+    						<AirSwapIcon
+    							className={classes.btnIconLeft}
+    						/>
+    						{t('SELL_ADX_AIRSWAP')}
+    					</Button>
+    				</div>
+    			}
+    		/>
+    	)
     }
 }
 
 AirSwapWidget.propTypes = {
-    actions: PropTypes.object.isRequired
+	actions: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state, props) {
-    const { persist } = state
+	const { persist } = state
 
-    return {
-        account: persist.account
-    }
+	return {
+		account: persist.account
+	}
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    }
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	}
 }
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Translate(withStyles(styles)(AirSwapWidget)))
