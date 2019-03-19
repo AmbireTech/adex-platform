@@ -55,7 +55,7 @@ export const QuickIdentity = (props) =>
 			// { title: 'CHECK_WALLET', page: WalletCheck },
 			{ title: 'USER_INFO', page: UserInfo },
 			{ title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
-			{ title: 'DEPLOY_IDENTITY_CONTRACT_ADDRSS', page: IdentityContractAddressEthTransaction }
+			{ title: 'DEPLOY_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthTransaction }
 		]}
 	/>
 
@@ -66,7 +66,7 @@ export const FullIdentity = (props) =>
 		stepsPages={[
 			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
 			{ title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
-			{ title: 'DEPLOY_IDENTITY_CONTRACT_ADDRSS', page: IdentityContractAddressEthTransaction }
+			{ title: 'DEPLOY_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthTransaction }
 		]}
 	/>
 
@@ -77,6 +77,6 @@ export const DemoIdentity = (props) =>
 		stepsPages={[
 			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
 			{ title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
-			{ title: 'DEPLOY_IDENTITY_CONTRACT_ADDRSS', page: IdentityContractAddressEthTransaction }
+			{ title: 'DEPLOY_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthTransaction }
 		]}
 	/>
