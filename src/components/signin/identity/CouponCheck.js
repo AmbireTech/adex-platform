@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import IdentityHoc from './IdentityHoc'
+import Button from '@material-ui/core/Button'
 // import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
@@ -11,6 +12,7 @@ import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { validQuickAccountCoupon} from 'helpers/validators'
+import { checkCoupon } from 'services/adex-relayer/actions'
 
 // TEST COUPON: ch3r787h4v9h3rouh3rf987jver9ujhIJUjuih83nh083d
 
@@ -19,7 +21,7 @@ class CouponCheck extends Component {
 	constructor(props, context) {
 		super(props, context)
 		this.state = {
-			mnemonic: props.wallet.mnemonic
+			waitingCheck: false
 		}
 	}
 
@@ -29,20 +31,29 @@ class CouponCheck extends Component {
 			err: { msg: 'ERR_NO_COUPON' },
 			dirty: false
 		})
-		// this.props.validate('couponCheck', {
-		//     isValid: !!this.props.identity.couponCheck,
-		//     err: { msg: 'ERR_NO_COUPON_CHECK' },
-		//     dirty: false
-		// })
 	}
 
 	validateCoupon(coupon, dirty) {
-		const isValid = validQuickAccountCoupon(coupon)
-		this.props.validate('coupon', {
-			isValid: isValid,
-			err: { msg: 'ERR_COUPON' },
-			dirty: dirty
-		})
+		const isValidFormat = validQuickAccountCoupon(coupon)
+        
+		if(!isValidFormat) {
+			this.props.validate('coupon', {
+				isValid: isValidFormat,
+				err: { msg: 'ERR_COUPON' },
+				dirty: dirty
+			})
+		}else {
+			this.setState({waitingCheck: true}, () => {
+				checkCoupon({coupon})
+					.then(isValid => {
+						this.props.validate('coupon', {
+							isValid: isValid,
+							err: { msg: 'ERR_COUPON' },
+							dirty: dirty
+						})
+					})
+			})
+		}
 	}
 
 	validateCouponCheck(couponCheck, dirty) {
@@ -76,8 +87,8 @@ class CouponCheck extends Component {
 							name='coupon'
 							value={identity.coupon}
 							onChange={(ev) => handleChange('coupon', ev.target.value)}
-							onBlur={() => this.validateCoupon(identity.coupon, true)}
-							onFocus={() => this.validateCoupon(identity.coupon, false)}
+							// onBlur={() => this.validateCoupon(identity.coupon, true)}
+							// onFocus={() => this.validateCoupon(identity.coupon, false)}
 							error={coupon && !!coupon.dirty}
 							maxLength={128}
 							helperText={
@@ -86,7 +97,16 @@ class CouponCheck extends Component {
 									t('ENTER_VALID_COUPON')
 							}
 						/>
-					</Grid>         
+					</Grid>
+					<Grid item sm={12}>
+						<Button 
+							variant='contained'
+							color='primary'
+							onClick={() => this.validateCoupon(identity.coupon, true)}
+						>
+							{t('VALIDATE_COUPON')}
+						</Button>
+					</Grid>  
 				</Grid>
 			</div>
 		)
