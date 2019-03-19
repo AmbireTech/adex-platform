@@ -11,7 +11,7 @@ import TextField from '@material-ui/core/TextField'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { validQuickAccountCoupon} from 'helpers/validators'
+import { validQuickAccountCoupon } from 'helpers/validators'
 import { checkCoupon } from 'services/adex-relayer/actions'
 
 // TEST COUPON: ch3r787h4v9h3rouh3rf987jver9ujhIJUjuih83nh083d
@@ -35,20 +35,28 @@ class CouponCheck extends Component {
 
 	validateCoupon(coupon, dirty) {
 		const isValidFormat = validQuickAccountCoupon(coupon)
-        
-		if(!isValidFormat) {
+
+		if (!isValidFormat) {
 			this.props.validate('coupon', {
 				isValid: isValidFormat,
-				err: { msg: 'ERR_COUPON' },
+				err: { msg: 'ERR_COUPON_FORMAT' },
 				dirty: dirty
 			})
-		}else {
-			this.setState({waitingCheck: true}, () => {
-				checkCoupon({coupon})
-					.then(isValid => {
+		} else {
+			this.setState({ waitingCheck: true }, () => {
+				checkCoupon({ coupon })
+					.then((cpn = {}) => {
+						const isValid = (cpn.exist === true) && (cpn.used === false)
+						let msg = ''
+						if (cpn.exist === false) {
+							msg = 'ERR_COUPON_NOT_EXIST'
+						} else if(cpn.used === true) {
+							msg = 'ERR_COUPON_USED'							
+						}
+
 						this.props.validate('coupon', {
 							isValid: isValid,
-							err: { msg: 'ERR_COUPON' },
+							err: { msg: msg },
 							dirty: dirty
 						})
 					})
@@ -56,22 +64,10 @@ class CouponCheck extends Component {
 		}
 	}
 
-	validateCouponCheck(couponCheck, dirty) {
-		// TODO: check relayer before asking user to do reg
-
-		const isValid = false // TODO
-
-		this.props.validate('couponCheck', {
-			isValid: isValid,
-			err: { msg: 'ERR_COUPON_CHECK' },
-			dirty: dirty
-		})
-	}
-
 	render() {
 		const { t, identity, handleChange, invalidFields } = this.props
 		// Errors
-		const { coupon, couponCheck } = invalidFields
+		const { coupon } = invalidFields
 		return (
 			<div>
 				<Grid
@@ -99,14 +95,14 @@ class CouponCheck extends Component {
 						/>
 					</Grid>
 					<Grid item sm={12}>
-						<Button 
+						<Button
 							variant='contained'
 							color='primary'
 							onClick={() => this.validateCoupon(identity.coupon, true)}
 						>
 							{t('VALIDATE_COUPON')}
 						</Button>
-					</Grid>  
+					</Grid>
 				</Grid>
 			</div>
 		)
