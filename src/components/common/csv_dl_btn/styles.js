@@ -1,7 +1,7 @@
 export const styles = theme => {
-    return {
-        leftIcon: {
-            marginRight: theme.spacing.unit
-        }
-    }
+	return {
+		leftIcon: {
+			marginRight: theme.spacing.unit
+		}
+	}
 }

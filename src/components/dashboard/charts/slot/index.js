@@ -3,7 +3,7 @@ import { BidsTimeStatistics } from './bidsStatistics'
 import BidsLegend from './bidsLegend'
 
 export {
-    BidsStatusPie,
-    BidsTimeStatistics,
-    BidsLegend
+	BidsStatusPie,
+	BidsTimeStatistics,
+	BidsLegend
 }

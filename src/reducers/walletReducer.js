@@ -3,30 +3,30 @@ import initialState from 'store/initialState'
 
 export default function walletReducer(state = initialState.wallet, action) {
 
-    let newState
-    let newWallet
+	let newState
+	let newWallet
 
-    newState = { ...state }
+	newState = { ...state }
 
-    switch (action.type) {
-        case UPDATE_WALLET:
-            newWallet = newState
-            if (Array.isArray(newWallet[action.prop])) {
-                newWallet[action.prop] = [...action.value]
-            } else {
-                newWallet[action.prop] = action.value
-            }
+	switch (action.type) {
+	case UPDATE_WALLET:
+		newWallet = newState
+		if (Array.isArray(newWallet[action.prop])) {
+			newWallet[action.prop] = [...action.value]
+		} else {
+			newWallet[action.prop] = action.value
+		}
 
-            newState = newWallet
+		newState = newWallet
 
-            return newState
+		return newState
 
-        case RESET_WALLET:
-            newWallet = { ...initialState.wallet }
-            newState = newWallet
-            return newState
+	case RESET_WALLET:
+		newWallet = { ...initialState.wallet }
+		newState = newWallet
+		return newState
 
-        default:
-            return state
-    }
+	default:
+		return state
+	}
 }

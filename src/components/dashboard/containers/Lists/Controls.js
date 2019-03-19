@@ -10,87 +10,87 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
 export const PAGE_SIZES = [
-    { value: 5, label: 5 },
-    { value: 10, label: 10 },
-    { value: 20, label: 20 },
-    { value: 46, label: 46 },
+	{ value: 5, label: 5 },
+	{ value: 10, label: 10 },
+	{ value: 20, label: 20 },
+	{ value: 46, label: 46 },
 ]
 
 const pagination = (props) => {
 
-    const {
-        page,
-        pages,
-        pageSize,
-        classes,
-        goToPrevPage,
-        goToNextPage,
-        goToPage,
-        changePageSize,
-        // className,
-        t
-    } = props
-    return (
-        <div
-            className={classes.flexRow}
-        >
-            <div
-                className={classnames(classes.flexItem, classes.flexRow)}
-            >
-                <div
-                >
-                    <Dropdown
-                        label={t('LIST_CONTROL_LABEL_PAGE')}
-                        helperText={t('LIST_CONTROL_LABEL_PAGE_OF', { args: [pages] })}
-                        onChange={goToPage}
-                        source={getAllPagedValues(page, pages)}
-                        value={page + ''}
-                        htmlId='page-size-select'
-                    />
-                </div>
-                <IconButton
-                    color='primary'
-                    disabled={!(page > 0 && pages > page)}
-                    onClick={goToPrevPage}
-                    className={classes.rowButton}
-                    size='small'
-                >
-                    <ChevronLeft />
-                </IconButton>
-                <IconButton
-                    color='primary'
-                    disabled={!(page < (pages - 1))}
-                    onClick={goToNextPage}
-                    className={classes.rowButton}
-                    size='small'
-                >
-                    <ChevronRight />
-                </IconButton>
-            </div>
-            <div
-                className={classnames(classes.flexItem, classes.pageSize)}
-            >
-                <Typography noWrap id="page-size">{t('LIST_CONTROL_LABEL_PAGE_SIZE')} <strong>{pageSize}</strong> </Typography>
-                <Slider aria-labelledby="page-size" min={5} max={25} step={5} value={pageSize} onChange={changePageSize} />
-            </div>
-        </div>
-    )
+	const {
+		page,
+		pages,
+		pageSize,
+		classes,
+		goToPrevPage,
+		goToNextPage,
+		goToPage,
+		changePageSize,
+		// className,
+		t
+	} = props
+	return (
+		<div
+			className={classes.flexRow}
+		>
+			<div
+				className={classnames(classes.flexItem, classes.flexRow)}
+			>
+				<div
+				>
+					<Dropdown
+						label={t('LIST_CONTROL_LABEL_PAGE')}
+						helperText={t('LIST_CONTROL_LABEL_PAGE_OF', { args: [pages] })}
+						onChange={goToPage}
+						source={getAllPagedValues(page, pages)}
+						value={page + ''}
+						htmlId='page-size-select'
+					/>
+				</div>
+				<IconButton
+					color='primary'
+					disabled={!(page > 0 && pages > page)}
+					onClick={goToPrevPage}
+					className={classes.rowButton}
+					size='small'
+				>
+					<ChevronLeft />
+				</IconButton>
+				<IconButton
+					color='primary'
+					disabled={!(page < (pages - 1))}
+					onClick={goToNextPage}
+					className={classes.rowButton}
+					size='small'
+				>
+					<ChevronRight />
+				</IconButton>
+			</div>
+			<div
+				className={classnames(classes.flexItem, classes.pageSize)}
+			>
+				<Typography noWrap id="page-size">{t('LIST_CONTROL_LABEL_PAGE_SIZE')} <strong>{pageSize}</strong> </Typography>
+				<Slider aria-labelledby="page-size" min={5} max={25} step={5} value={pageSize} onChange={changePageSize} />
+			</div>
+		</div>
+	)
 }
 
 export const Pagination = withStyles(styles)(pagination)
 
 const getAllPagedValues = (current, max) => {
-    // let pages = {}
+	// let pages = {}
 
-    // for (var index = 0; index < max; index++) {
-    //     pages[index + ''] = index + 1 + ''
-    // }
+	// for (var index = 0; index < max; index++) {
+	//     pages[index + ''] = index + 1 + ''
+	// }
 
-    let pages = []
+	let pages = []
 
-    for (var index = 0; index < max; index++) {
-        pages.push({ value: index + '', label: index + 1 + '' })
-    }
+	for (var index = 0; index < max; index++) {
+		pages.push({ value: index + '', label: index + 1 + '' })
+	}
 
-    return pages
+	return pages
 }

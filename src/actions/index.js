@@ -7,11 +7,11 @@ import * as bidActions from './bidActions'
 import * as transactionActions from './transactionActions'
 
 export default {
-    ...common,
-    ...itemActions,
-    ...uiActions,
-    ...accountActions,
-    ...identityActions,
-    ...bidActions,
-    ...transactionActions
+	...common,
+	...itemActions,
+	...uiActions,
+	...accountActions,
+	...identityActions,
+	...bidActions,
+	...transactionActions
 }

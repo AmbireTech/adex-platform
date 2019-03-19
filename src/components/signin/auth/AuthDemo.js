@@ -16,66 +16,66 @@ import { signToken } from 'services/adex-node/actions'
 
 class AuthDemo extends Component {
     authOnServer = () => {
-        const authToken = 'demo signature'
-        let mode = AUTH_TYPES.DEMO.signType
-        let authType = AUTH_TYPES.DEMO.name
-        let addr = null
-        let signature = null
+    	const authToken = 'demo signature'
+    	let mode = AUTH_TYPES.DEMO.signType
+    	let authType = AUTH_TYPES.DEMO.name
+    	let addr = null
+    	let signature = null
 
-        getAccount()
-            .then((account) => {
-                addr = account.address
-                return sigDemoMsg({ msg: authToken, account })
-            })
-            .then(sig => {
-                signature = sig.sig
-                return signToken({ userid: addr, signature: signature.signature, authToken, mode: mode, hash: sig.hash, })
-            })
-            .then(res => {
-                return this.props.updateAcc({ res, addr, signature: signature.signature, mode, authType })
-            })
+    	getAccount()
+    		.then((account) => {
+    			addr = account.address
+    			return sigDemoMsg({ msg: authToken, account })
+    		})
+    		.then(sig => {
+    			signature = sig.sig
+    			return signToken({ userid: addr, signature: signature.signature, authToken, mode: mode, hash: sig.hash, })
+    		})
+    		.then(res => {
+    			return this.props.updateAcc({ res, addr, signature: signature.signature, mode, authType })
+    		})
     }
 
     render() {
-        const { t, classes } = this.props
-        return (
-            <ContentBox className={classes.tabBox} >
-                <ContentBody>
-                    <Typography paragraph variant='subheading'>
-                        {t('DEMO_MODE_DESCRIPTION')}
-                    </Typography>
-                    <Button
-                        onClick={this.authOnServer}
-                        variant='raised'
-                        color='primary'
-                    >
-                        {t('DEMO_AUTH')}
-                    </Button>
-                </ContentBody>
-            </ContentBox>
-        )
+    	const { t, classes } = this.props
+    	return (
+    		<ContentBox className={classes.tabBox} >
+    			<ContentBody>
+    				<Typography paragraph variant='subheading'>
+    					{t('DEMO_MODE_DESCRIPTION')}
+    				</Typography>
+    				<Button
+    					onClick={this.authOnServer}
+    					variant='raised'
+    					color='primary'
+    				>
+    					{t('DEMO_AUTH')}
+    				</Button>
+    			</ContentBody>
+    		</ContentBox>
+    	)
     }
 }
 
 AuthDemo.propTypes = {
-    actions: PropTypes.object.isRequired,
+	actions: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state) {
-    const persist = state.persist
-    // const memory = state.memory
-    return {
-        account: persist.account
-    }
+	const persist = state.persist
+	// const memory = state.memory
+	return {
+		account: persist.account
+	}
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    }
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	}
 }
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Translate(AuthHoc(withStyles(styles)(AuthDemo))))

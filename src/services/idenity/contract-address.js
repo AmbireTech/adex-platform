@@ -4,45 +4,45 @@ import { getIdentityDeployData, getContractAddrWithZeroNonce } from 'adex-protoc
 import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 
 export const getRandomSeed = () => {
-    const randomSeed = utils.randomBytes(64)
-    return randomSeed
+	const randomSeed = utils.randomBytes(64)
+	return randomSeed
 }
 
 export const getDeployTx = ({ addr, privLevel, feeTokenAddr, feeBeneficiary, feeTokenAmount }) => {
-    const factory = new ContractFactory(identityJson.abi, identityJson.bytecode)
-    const deployTx = factory.getDeployTransaction(
-        addr,
-        privLevel,
-        feeTokenAddr,
-        feeBeneficiary,
-        feeTokenAmount,
-    )
+	const factory = new ContractFactory(identityJson.abi, identityJson.bytecode)
+	const deployTx = factory.getDeployTransaction(
+		addr,
+		privLevel,
+		feeTokenAddr,
+		feeBeneficiary,
+		feeTokenAmount,
+	)
 
-    // TODO: deployTx.gasPrice
+	// TODO: deployTx.gasPrice
 
-    return deployTx
+	return deployTx
 }
 
 export const getRandomAddressForDeployTx = ({ deployTx }) => {
 
-    const randomSeed = getRandomSeed()
-    const data = getIdentityDeployData(randomSeed, deployTx)
-    return data
+	const randomSeed = getRandomSeed()
+	const data = getIdentityDeployData(randomSeed, deployTx)
+	return data
 }
 
 export const deployIdentityContract = async ({ deployData, authType, owner }) => {
-    const { web3 } = await getWeb3(authType || 'metamask')
+	const { web3 } = await getWeb3(authType || 'metamask')
 
-    const fundReceipt = await web3.eth.sendTransaction({
-        from: owner,
-        to: deployData.tx.from,
-        value: deployData.tx.gasLimit * deployData.tx.gasPrice,
-        gasPrice: deployData.tx.gasPrice
-    })
+	const fundReceipt = await web3.eth.sendTransaction({
+		from: owner,
+		to: deployData.tx.from,
+		value: deployData.tx.gasLimit * deployData.tx.gasPrice,
+		gasPrice: deployData.tx.gasPrice
+	})
 
-    const deployReceipt = await web3.eth.sendSignedTransaction(deployData.txRaw)
-    return ({
-        fundReceipt,
-        deployReceipt
-    })
+	const deployReceipt = await web3.eth.sendSignedTransaction(deployData.txRaw)
+	return ({
+		fundReceipt,
+		deployReceipt
+	})
 }

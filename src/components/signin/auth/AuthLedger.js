@@ -28,186 +28,186 @@ const { getAccountStats } = scActions
 const HD_PATH = "m/44'/60'/0'"
 
 class AuthLedger extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            method: '',
-            sideSelect: false,
-            addresses: [],
-            waitingLedgerAction: false,
-            waitingAddrsData: false
-        }
-    }
+	constructor(props) {
+		super(props)
+		this.state = {
+			method: '',
+			sideSelect: false,
+			addresses: [],
+			waitingLedgerAction: false,
+			waitingAddrsData: false
+		}
+	}
 
-    componentWillUnmount() {
-    }
+	componentWillUnmount() {
+	}
 
     connectLedger = () => {
 
-        this.setState({ waitingLedgerAction: true }, () => {
+    	this.setState({ waitingLedgerAction: true }, () => {
 
-            ledgerTransportU2f.create()
-                .then((transport) => {
-                    var eth = new ledgerEth(transport)
+    		ledgerTransportU2f.create()
+    			.then((transport) => {
+    				var eth = new ledgerEth(transport)
 
-                    return eth.getAddress(HD_PATH, false, true)
-                })
-                .then((resp) => {
-                    let addresses = getAddrs(resp.publicKey, resp.chainCode)
+    				return eth.getAddress(HD_PATH, false, true)
+    			})
+    			.then((resp) => {
+    				let addresses = getAddrs(resp.publicKey, resp.chainCode)
 
-                    let allStatsPr = []
+    				let allStatsPr = []
 
-                    addresses.forEach((addr) => {
-                        allStatsPr.push(getAccountStats({ _addr: addr, authType: AUTH_TYPES.LEDGER.name }))
-                    })
+    				addresses.forEach((addr) => {
+    					allStatsPr.push(getAccountStats({ _addr: addr, authType: AUTH_TYPES.LEDGER.name }))
+    				})
 
-                    this.setState({ waitingAddrsData: true }, () => {
-                        Promise.all(allStatsPr)
-                            .then((results) => {
-                                this.setState({ addresses: results, waitingAddrsData: false, waitingLedgerAction: false })
-                            })
-                            .catch((err) => {
-                                this.setState({ waitingLedgerAction: false, waitingAddrsData: false })
-                                this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_LEDGER', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
-                            })
-                    })
-                })
-                .catch((err) => {
-                    this.setState({ waitingLedgerAction: false, waitingAddrsData: false })
-                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_LEDGER', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
-                })
-        })
+    				this.setState({ waitingAddrsData: true }, () => {
+    					Promise.all(allStatsPr)
+    						.then((results) => {
+    							this.setState({ addresses: results, waitingAddrsData: false, waitingLedgerAction: false })
+    						})
+    						.catch((err) => {
+    							this.setState({ waitingLedgerAction: false, waitingAddrsData: false })
+    							this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_LEDGER', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
+    						})
+    				})
+    			})
+    			.catch((err) => {
+    				this.setState({ waitingLedgerAction: false, waitingAddrsData: false })
+    				this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_LEDGER', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
+    			})
+    	})
     }
 
     AddressSelect = ({ addresses, waitingLedgerAction, t, classes, ...rest }) => {
-        return (
-            <ContentBox className={classes.tabBox}>
-                <ContentStickyTop>
-                    {waitingLedgerAction ?
-                        <TopLoading msg={t('LEDGER_WAITING_ACTION')} />
-                        :
-                        t('SELECT_ADDR_LEDGER')
-                    }
-                </ContentStickyTop>
-                <ContentBody>
-                    <List >
-                        {addresses.map((res, index) =>
-                            <ListItem
-                                classes={{ root: classes.addrListItem }}
-                                key={res.addr}
-                                onClick={this.onAddrSelect.bind(this, res.addr, index)}
-                            >
-                                <AddrItem stats={res} t={t} addr={res.addr} />
-                            </ListItem>
-                        )}
-                    </List>
-                </ContentBody>
-            </ContentBox>
-        )
+    	return (
+    		<ContentBox className={classes.tabBox}>
+    			<ContentStickyTop>
+    				{waitingLedgerAction ?
+    					<TopLoading msg={t('LEDGER_WAITING_ACTION')} />
+    					:
+    					t('SELECT_ADDR_LEDGER')
+    				}
+    			</ContentStickyTop>
+    			<ContentBody>
+    				<List >
+    					{addresses.map((res, index) =>
+    						<ListItem
+    							classes={{ root: classes.addrListItem }}
+    							key={res.addr}
+    							onClick={this.onAddrSelect.bind(this, res.addr, index)}
+    						>
+    							<AddrItem stats={res} t={t} addr={res.addr} />
+    						</ListItem>
+    					)}
+    				</List>
+    			</ContentBody>
+    		</ContentBox>
+    	)
     }
 
     onAddrSelect = (addr, index) => {
-        this.setState({ waitingLedgerAction: true }, () => {
-            let mode = AUTH_TYPES.LEDGER.signType // TEMP?
-            let authType = AUTH_TYPES.LEDGER.name
-            this.props.authOnServer({ mode, addr, authType, hdPath: HD_PATH, addrIdx: index })
-                .then((res) => {
-                })
-                .catch((err) => {
-                    console.log(err)
-                    this.setState({ waitingLedgerAction: false, waitingAddrsData: false })
-                    this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_LEDGER', { args: [(err || {}).error || err] }), timeout: 5000 })
-                })
-        })
+    	this.setState({ waitingLedgerAction: true }, () => {
+    		let mode = AUTH_TYPES.LEDGER.signType // TEMP?
+    		let authType = AUTH_TYPES.LEDGER.name
+    		this.props.authOnServer({ mode, addr, authType, hdPath: HD_PATH, addrIdx: index })
+    			.then((res) => {
+    			})
+    			.catch((err) => {
+    				console.log(err)
+    				this.setState({ waitingLedgerAction: false, waitingAddrsData: false })
+    				this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_LEDGER', { args: [(err || {}).error || err] }), timeout: 5000 })
+    			})
+    	})
     }
 
     render() {
-        let { t, classes } = this.props
+    	let { t, classes } = this.props
 
-        return (
-            <div>
-                {this.state.addresses.length ?
-                    <this.AddressSelect
-                        waitingLedgerAction={this.state.waitingLedgerAction}
-                        addresses={this.state.addresses}
-                        t={t}
-                        classes={classes}
-                    />
-                    :
-                    <ContentBox className={classes.tabBox}>
-                        {this.state.waitingAddrsData ?
-                            <ContentStickyTop>
-                                <TopLoading msg={t('LEDGER_WAITING_ADDRS_INFO')} />
-                            </ContentStickyTop>
-                            :
-                            this.state.waitingLedgerAction ?
-                                <ContentStickyTop>
-                                    <TopLoading msg={t('LEDGER_WAITING_ACTION')} />
-                                </ContentStickyTop> : null
-                        }
+    	return (
+    		<div>
+    			{this.state.addresses.length ?
+    				<this.AddressSelect
+    					waitingLedgerAction={this.state.waitingLedgerAction}
+    					addresses={this.state.addresses}
+    					t={t}
+    					classes={classes}
+    				/>
+    				:
+    				<ContentBox className={classes.tabBox}>
+    					{this.state.waitingAddrsData ?
+    						<ContentStickyTop>
+    							<TopLoading msg={t('LEDGER_WAITING_ADDRS_INFO')} />
+    						</ContentStickyTop>
+    						:
+    						this.state.waitingLedgerAction ?
+    							<ContentStickyTop>
+    								<TopLoading msg={t('LEDGER_WAITING_ACTION')} />
+    							</ContentStickyTop> : null
+    					}
 
-                        <ContentBody>
-                            <Typography paragraph variant='subheading'>
-                                {t('LEDGER_INFO')}
-                            </Typography>
-                            <Typography paragraph>
-                                <span
-                                    dangerouslySetInnerHTML={
-                                        {
-                                            __html: t('LEDGER_BASIC_USAGE_INFO',
-                                                {
-                                                    args: [{
-                                                        component:
+    					<ContentBody>
+    						<Typography paragraph variant='subheading'>
+    							{t('LEDGER_INFO')}
+    						</Typography>
+    						<Typography paragraph>
+    							<span
+    								dangerouslySetInnerHTML={
+    									{
+    										__html: t('LEDGER_BASIC_USAGE_INFO',
+    											{
+    												args: [{
+    													component:
                                                             <Anchor href='https://www.ledgerwallet.com/' target='_blank'> LEDGER </Anchor>
-                                                    }]
-                                                })
-                                        }
-                                    }
-                                />
-                            </Typography>
-                            <Typography paragraph>
-                                <Anchor href='https://www.ledgerwallet.com/' target='_blank'>
-                                    <Img src={LEDGER_DL_IMG} alt={'https://www.ledgerwallet.com/'} className={classes.dlBtnImg} />
-                                </Anchor>
-                            </Typography>
+    												}]
+    											})
+    									}
+    								}
+    							/>
+    						</Typography>
+    						<Typography paragraph>
+    							<Anchor href='https://www.ledgerwallet.com/' target='_blank'>
+    								<Img src={LEDGER_DL_IMG} alt={'https://www.ledgerwallet.com/'} className={classes.dlBtnImg} />
+    							</Anchor>
+    						</Typography>
 
-                            {(!this.state.waitingAddrsData && !this.state.waitingLedgerAction) &&
+    						{(!this.state.waitingAddrsData && !this.state.waitingLedgerAction) &&
                                 <Button
-                                    onClick={this.connectLedger}
-                                    variant='raised'
-                                    color='primary'
+                                	onClick={this.connectLedger}
+                                	variant='raised'
+                                	color='primary'
                                 >
-                                    {t('CONNECT_WITH_LEDGER')}
+                                	{t('CONNECT_WITH_LEDGER')}
                                 </Button>
-                            }
+    						}
 
-                        </ContentBody>
-                    </ContentBox>
-                }
-            </div>
-        )
+    					</ContentBody>
+    				</ContentBox>
+    			}
+    		</div>
+    	)
     }
 }
 
 AuthLedger.propTypes = {
-    actions: PropTypes.object.isRequired,
+	actions: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state) {
-    const persist = state.persist
-    // const memory = state.memory
-    return {
-        account: persist.account
-    }
+	const persist = state.persist
+	// const memory = state.memory
+	return {
+		account: persist.account
+	}
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    }
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	}
 }
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Translate(AuthHoc(withStyles(styles)(AuthLedger))))

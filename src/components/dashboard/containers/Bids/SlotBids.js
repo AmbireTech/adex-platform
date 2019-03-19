@@ -24,247 +24,247 @@ import FormGroup from '@material-ui/core/FormGroup'
 
 export class SlotBids extends Component {
 
-    constructor(props) {
-        super(props)
+	constructor(props) {
+		super(props)
 
-        let tabParam = props.match && props.match.params ? props.match.params.tab : null
-        let tabIndex = this.getTabIndex(tabParam)
+		let tabParam = props.match && props.match.params ? props.match.params.tab : null
+		let tabIndex = this.getTabIndex(tabParam)
 
-        this.state = {
-            tabIndex: tabIndex,
-            bids: [],
-            openBids: [],
-            statsBids: [],
-            filterByTags: false
-        }
-    }
+		this.state = {
+			tabIndex: tabIndex,
+			bids: [],
+			openBids: [],
+			statsBids: [],
+			filterByTags: false
+		}
+	}
 
-    componentWillMount() {
-        this.getBids()
-        if (!this.props.getSlotBids) {
-            this.props.actions.updateNav('navTitle', this.props.t('ALL_BIDS'))
-        }
-    }
+	componentWillMount() {
+		this.getBids()
+		if (!this.props.getSlotBids) {
+			this.props.actions.updateNav('navTitle', this.props.t('ALL_BIDS'))
+		}
+	}
 
     getTabIndex = (tab) => {
 
-        const openBids = this.props.getSlotBids ? 0 : 1
+    	const openBids = this.props.getSlotBids ? 0 : 1
 
-        switch (tab) {
-            case 'open':
-                return 0
-            case 'action':
-                return 1 - openBids
-            case 'active':
-                return 2 - openBids
-            case 'closed':
-                return 3 - openBids
-            case 'statistics':
-                return 4 - openBids
-            default:
-                return 0
-        }
+    	switch (tab) {
+    	case 'open':
+    		return 0
+    	case 'action':
+    		return 1 - openBids
+    	case 'active':
+    		return 2 - openBids
+    	case 'closed':
+    		return 3 - openBids
+    	case 'statistics':
+    		return 4 - openBids
+    	default:
+    		return 0
+    	}
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        // TODO:
-        return (JSON.stringify(this.props) !== JSON.stringify(nextProps)) || (JSON.stringify(this.state) !== JSON.stringify(nextState))
+    	// TODO:
+    	return (JSON.stringify(this.props) !== JSON.stringify(nextProps)) || (JSON.stringify(this.state) !== JSON.stringify(nextState))
     }
 
     // TODO: map bid and set amount to number or make something to parse the amount in the items list sort function
     getBids = () => {
-        if (this.props.getSlotBids) {
-            getSlotBids({
-                // authSig: this.props.account._authSig,
-                adSlot: this.props.item._ipfs,
-            })
-                .then((bids) => {
-                    this.setState({ bids: bids })
-                })
+    	if (this.props.getSlotBids) {
+    		getSlotBids({
+    			// authSig: this.props.account._authSig,
+    			adSlot: this.props.item._ipfs,
+    		})
+    			.then((bids) => {
+    				this.setState({ bids: bids })
+    			})
 
-            getAvailableBids({
-                authSig: this.props.account._authSig,
-                sizeAndType: this.props.item.sizeAndType,
-                tags: this.props.item.tags || '',
-                filterByTags: this.state.filterByTags
-            })
-                .then((bids) => {
-                    this.setState({ openBids: bids })
-                })
-        } else {
-            getAddrBids({ authSig: this.props.account._authSig })
-        }
+    		getAvailableBids({
+    			authSig: this.props.account._authSig,
+    			sizeAndType: this.props.item.sizeAndType,
+    			tags: this.props.item.tags || '',
+    			filterByTags: this.state.filterByTags
+    		})
+    			.then((bids) => {
+    				this.setState({ openBids: bids })
+    			})
+    	} else {
+    		getAddrBids({ authSig: this.props.account._authSig })
+    	}
     }
 
     handleTabChange = (event, index) => {
-        this.setState({ tabIndex: index })
+    	this.setState({ tabIndex: index })
     }
 
     handleTagsFilterChange = ev => {
-        this.setState({ filterByTags: ev.target.checked }, this.getBids)
+    	this.setState({ filterByTags: ev.target.checked }, this.getBids)
     }
 
     // TODO: make something common with unit bids
     renderTableRow(bid, index, { to, selected }) {
-        let t = this.props.t
-        const bidData = getBidData({
-            bid: bid,
-            t: t,
-            transactions: this.props.transactions,
-            side: this.props.side,
-            item: this.props.item,
-            account: this.props.account,
-            onSave: this.getBids
-        })
+    	let t = this.props.t
+    	const bidData = getBidData({
+    		bid: bid,
+    		t: t,
+    		transactions: this.props.transactions,
+    		side: this.props.side,
+    		item: this.props.item,
+    		account: this.props.account,
+    		onSave: this.getBids
+    	})
 
-        return <BidCommonTableRow bidData={bidData} t={t} key={bidData._id} />
+    	return <BidCommonTableRow bidData={bidData} t={t} key={bidData._id} />
     }
 
     renderRows = (items) =>
-        <Rows
-            multiSelectable={false}
-            selectable={false}
-            side={this.props.side}
-            item={items}
-            rows={items}
-            rowRenderer={this.renderTableRow.bind(this)}
-            tableHeadRenderer={renderTableHead.bind(this, { t: this.props.t, side: this.props.side })}
-        />
+    	<Rows
+    		multiSelectable={false}
+    		selectable={false}
+    		side={this.props.side}
+    		item={items}
+    		rows={items}
+    		rowRenderer={this.renderTableRow.bind(this)}
+    		tableHeadRenderer={renderTableHead.bind(this, { t: this.props.t, side: this.props.side })}
+    	/>
 
     render() {
-        const openBids = this.state.openBids || []
-        const { t, getSlotBids, pubBids } = this.props
-        let sorted = []
+    	const openBids = this.state.openBids || []
+    	const { t, getSlotBids, pubBids } = this.props
+    	let sorted = []
 
-        if (getSlotBids) {
-            sorted = sortBids(this.state.bids || [])
-        } else {
-            sorted = pubBids
-        }
+    	if (getSlotBids) {
+    		sorted = sortBids(this.state.bids || [])
+    	} else {
+    		sorted = pubBids
+    	}
 
-        const { tabIndex, filterByTags } = this.state
-        const indexShift = !!getSlotBids ? 1 : 0
+    	const { tabIndex, filterByTags } = this.state
+    	const indexShift = !!getSlotBids ? 1 : 0
 
-        return (
-            <div>
-                <AppBar
-                    position='static'
-                    color='default'
-                >
-                    <Tabs
-                        value={this.state.tabIndex}
-                        onChange={this.handleTabChange}
-                        scrollable
-                        scrollButtons='off'
-                        indicatorColor='primary'
-                        textColor='primary'
-                    >
-                        {!!this.props.getSlotBids &&
+    	return (
+    		<div>
+    			<AppBar
+    				position='static'
+    				color='default'
+    			>
+    				<Tabs
+    					value={this.state.tabIndex}
+    					onChange={this.handleTabChange}
+    					scrollable
+    					scrollButtons='off'
+    					indicatorColor='primary'
+    					textColor='primary'
+    				>
+    					{!!this.props.getSlotBids &&
                             <Tab label={t('OPEN_BIDS')} />
-                        }
-                        <Tab label={t('BIDS_READY_TO_VERIFY')} />
-                        <Tab label={t('BIDS_ACTIVE')} />
-                        <Tab label={t('BIDS_CLOSED')} />
-                        <Tab label={t('STATISTICS')} />
-                    </Tabs>
-                </AppBar>
-                <div
-                    style={{ marginTop: 10 }}
-                >
-                    {
-                        (!!this.props.getSlotBids && tabIndex === 0) &&
+    					}
+    					<Tab label={t('BIDS_READY_TO_VERIFY')} />
+    					<Tab label={t('BIDS_ACTIVE')} />
+    					<Tab label={t('BIDS_CLOSED')} />
+    					<Tab label={t('STATISTICS')} />
+    				</Tabs>
+    			</AppBar>
+    			<div
+    				style={{ marginTop: 10 }}
+    			>
+    				{
+    					(!!this.props.getSlotBids && tabIndex === 0) &&
                         <div>
-                            <FormGroup>
-                                <FormControlLabel
-                                    control={
-                                        <Switch checked={filterByTags} onChange={this.handleTagsFilterChange} aria-label="FilterByTags" />
-                                    }
-                                    // TODO: translation
-                                    label={filterByTags ? 'Filter by tags ON' : 'Filter by tags OFF'}
-                                />
-                            </FormGroup>
-                            <ListWithControls
-                                items={openBids}
-                                listMode='rows'
-                                renderRows={this.renderRows}
-                                sortProperties={SORT_PROPERTIES_BIDS}
-                                searchMatch={this.searchMatch}
-                                filterProperties={FILTER_PROPERTIES_BIDS_NO_STATE}
-                                uiStateId='slot-bids-open'
-                            />
+                        	<FormGroup>
+                        		<FormControlLabel
+                        			control={
+                        				<Switch checked={filterByTags} onChange={this.handleTagsFilterChange} aria-label="FilterByTags" />
+                        			}
+                        			// TODO: translation
+                        			label={filterByTags ? 'Filter by tags ON' : 'Filter by tags OFF'}
+                        		/>
+                        	</FormGroup>
+                        	<ListWithControls
+                        		items={openBids}
+                        		listMode='rows'
+                        		renderRows={this.renderRows}
+                        		sortProperties={SORT_PROPERTIES_BIDS}
+                        		searchMatch={this.searchMatch}
+                        		filterProperties={FILTER_PROPERTIES_BIDS_NO_STATE}
+                        		uiStateId='slot-bids-open'
+                        	/>
                         </div>
-                    }
-                    {
-                        tabIndex === (0 + indexShift) &&
+    				}
+    				{
+    					tabIndex === (0 + indexShift) &&
                         <ListWithControls
-                            items={sorted.action}
-                            listMode='rows'
-                            renderRows={this.renderRows.bind(this)}
-                            sortProperties={SORT_PROPERTIES_BIDS}
-                            searchMatch={searchMatch}
-                            filterProperties={FILTER_PROPERTIES_BIDS}
-                            uiStateId='slot-bids-action'
+                        	items={sorted.action}
+                        	listMode='rows'
+                        	renderRows={this.renderRows.bind(this)}
+                        	sortProperties={SORT_PROPERTIES_BIDS}
+                        	searchMatch={searchMatch}
+                        	filterProperties={FILTER_PROPERTIES_BIDS}
+                        	uiStateId='slot-bids-action'
                         />
-                    }
-                    {
-                        tabIndex === (1 + indexShift) &&
+    				}
+    				{
+    					tabIndex === (1 + indexShift) &&
                         <ListWithControls
-                            items={sorted.active}
-                            listMode='rows'
-                            renderRows={this.renderRows.bind(this)}
-                            sortProperties={SORT_PROPERTIES_BIDS}
-                            searchMatch={searchMatch}
-                            filterProperties={FILTER_PROPERTIES_BIDS}
-                            uiStateId='slot-bids-active'
+                        	items={sorted.active}
+                        	listMode='rows'
+                        	renderRows={this.renderRows.bind(this)}
+                        	sortProperties={SORT_PROPERTIES_BIDS}
+                        	searchMatch={searchMatch}
+                        	filterProperties={FILTER_PROPERTIES_BIDS}
+                        	uiStateId='slot-bids-active'
                         />
-                    }
-                    {
-                        tabIndex === (2 + indexShift) &&
+    				}
+    				{
+    					tabIndex === (2 + indexShift) &&
                         <ListWithControls
-                            items={sorted.closed}
-                            listMode='rows'
-                            renderRows={this.renderRows.bind(this)}
-                            sortProperties={SORT_PROPERTIES_BIDS}
-                            searchMatch={this.searchMatch}
-                            filterProperties={FILTER_PROPERTIES_BIDS}
-                            uiStateId='slot-bids-closed'
+                        	items={sorted.closed}
+                        	listMode='rows'
+                        	renderRows={this.renderRows.bind(this)}
+                        	sortProperties={SORT_PROPERTIES_BIDS}
+                        	searchMatch={this.searchMatch}
+                        	filterProperties={FILTER_PROPERTIES_BIDS}
+                        	uiStateId='slot-bids-closed'
                         />
-                    }
-                    {
-                        tabIndex === (3 + indexShift) &&
+    				}
+    				{
+    					tabIndex === (3 + indexShift) &&
                         <BidsStatistics bids={sorted.action.concat(sorted.active, sorted.closed)} onSave={this.getBids} />
-                    }
-                </div>
-            </div>
-        )
+    				}
+    			</div>
+    		</div>
+    	)
     }
 }
 
 SlotBids.propTypes = {
-    actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired,
-    item: PropTypes.object
+	actions: PropTypes.object.isRequired,
+	account: PropTypes.object.isRequired,
+	item: PropTypes.object
 }
 
 function mapStateToProps(state, props) {
-    const persist = state.persist
-    const memory = state.memory
-    return {
-        account: persist.account,
-        bids: persist.bids.bidsById,
-        transactions: persist.web3Transactions[persist.account._addr] || {},
-        pubBids: persist.bids.pubBids,
-        side: memory.nav.side
-    }
+	const persist = state.persist
+	const memory = state.memory
+	return {
+		account: persist.account,
+		bids: persist.bids.bidsById,
+		transactions: persist.web3Transactions[persist.account._addr] || {},
+		pubBids: persist.bids.pubBids,
+		side: memory.nav.side
+	}
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    }
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	}
 }
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Translate(SlotBids))

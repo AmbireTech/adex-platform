@@ -4,26 +4,26 @@ import { Base, Account } from 'adex-models'
 
 export default function accountReducer(state = initialState.account, action) {
 
-    let newState
-    let newAccount
+	let newState
+	let newAccount
 
-    newState = { ...state }
+	newState = { ...state }
 
-    switch (action.type) {
-        case CREATE_ACCOUNT:
-            newAccount = { ...action.account }
-            newState = newAccount
-            return newState
-        case RESET_ACCOUNT:
-            newAccount = initialState.account
-            newState = newAccount
-            return newState
-        case UPDATE_ACCOUNT:
-            newAccount = Base.updateObject({ item: newState, ownProps: { ...action.ownProps }, objModel: Account })
-            newState = newAccount
-            return newState
+	switch (action.type) {
+	case CREATE_ACCOUNT:
+		newAccount = { ...action.account }
+		newState = newAccount
+		return newState
+	case RESET_ACCOUNT:
+		newAccount = initialState.account
+		newState = newAccount
+		return newState
+	case UPDATE_ACCOUNT:
+		newAccount = Base.updateObject({ item: newState, ownProps: { ...action.ownProps }, objModel: Account })
+		newState = newAccount
+		return newState
 
-        default:
-            return state
-    }
+	default:
+		return state
+	}
 }

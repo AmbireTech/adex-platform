@@ -1,8 +1,8 @@
 export const styles = theme => {
-    // const spacing = theme.spacing.unit
-    return {
-        compactCol: {
-            maxWidth: 80
-        }
-    }
+	// const spacing = theme.spacing.unit
+	return {
+		compactCol: {
+			maxWidth: 80
+		}
+	}
 }

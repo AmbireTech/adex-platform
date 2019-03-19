@@ -7,109 +7,109 @@ const GAS_LIMIT = 21000
 
 export const withdrawEth = ({ _addr, withdrawTo, amountToWithdraw, gas, user, estimateGasOnly } = {}) => {
 
-    let amount = web3Utils.toWei(amountToWithdraw, 'ether')
+	let amount = web3Utils.toWei(amountToWithdraw, 'ether')
 
-    return getWeb3(user._authType)
-        .then(({ web3, exchange, token }) => {
+	return getWeb3(user._authType)
+		.then(({ web3, exchange, token }) => {
 
-            if (estimateGasOnly) {
-                return web3.eth.estimateGas({ from: _addr, value: amount, to: withdrawTo })
-            } else {
-                // TODO: Fix it to work with sendTransaction
-                return sendTx({
-                    web3,
-                    tx: web3.eth.sendTransaction,
-                    opts: { from: _addr, gas: gas, value: amount, to: withdrawTo },
-                    user,
-                    txSuccessData: { trMethod: 'TRANS_MTD_ETH_WITHDRAW' }
-                })
-            }
-        })
+			if (estimateGasOnly) {
+				return web3.eth.estimateGas({ from: _addr, value: amount, to: withdrawTo })
+			} else {
+				// TODO: Fix it to work with sendTransaction
+				return sendTx({
+					web3,
+					tx: web3.eth.sendTransaction,
+					opts: { from: _addr, gas: gas, value: amount, to: withdrawTo },
+					user,
+					txSuccessData: { trMethod: 'TRANS_MTD_ETH_WITHDRAW' }
+				})
+			}
+		})
 }
 
 export const getCurrentGasPrice = () => {
-    return new Promise((resolve, reject) => {
-        getWeb3().then(({ cfg, exchange, token, web3 }) => {
+	return new Promise((resolve, reject) => {
+		getWeb3().then(({ cfg, exchange, token, web3 }) => {
 
-            return resolve(web3.eth.getGasPrice())
-        })
-    })
+			return resolve(web3.eth.getGasPrice())
+		})
+	})
 }
 
 const getExchangeBalances = (exchBal = {}) => {
-    let adxOnExchangeTotal = ((exchBal[0] || 0))
-    let adxOnBids = ((exchBal[1] || 0))
-    let exchangeAvailable = adxOnExchangeTotal - adxOnBids + ''
+	let adxOnExchangeTotal = ((exchBal[0] || 0))
+	let adxOnBids = ((exchBal[1] || 0))
+	let exchangeAvailable = adxOnExchangeTotal - adxOnBids + ''
 
-    return {
-        total: adxOnExchangeTotal,
-        onBids: adxOnBids,
-        available: exchangeAvailable
-    }
+	return {
+		total: adxOnExchangeTotal,
+		onBids: adxOnBids,
+		available: exchangeAvailable
+	}
 }
 
 
 export const getAccountBalances = (_addr) => {
-    return getWeb3()
-        .then(({ cfg, exchange, token, web3 }) => {
-            return exchange.methods.getBalance(_addr).call()
-        })
-        .then((exchBal) => {
-            return getExchangeBalances(exchBal)
-        })
+	return getWeb3()
+		.then(({ cfg, exchange, token, web3 }) => {
+			return exchange.methods.getBalance(_addr).call()
+		})
+		.then((exchBal) => {
+			return getExchangeBalances(exchBal)
+		})
 }
 
 export const getAccountBalance = ({ _addr, authType }) => {
-    return getWeb3(authType)
-        .then(({ cfg, exchange, token, web3 }) => {
-            let balanceEth = web3.eth.getBalance(_addr)
+	return getWeb3(authType)
+		.then(({ cfg, exchange, token, web3 }) => {
+			let balanceEth = web3.eth.getBalance(_addr)
 
-            let all = [balanceEth]
+			let all = [balanceEth]
 
-            return Promise.all(all)
-                .then(([balEth]) => {
+			return Promise.all(all)
+				.then(([balEth]) => {
 
-                    let accStats = {
-                        addr: _addr,
-                        balanceEth: balEth,
-                    }
+					let accStats = {
+						addr: _addr,
+						balanceEth: balEth,
+					}
 
-                    return accStats
-                })
-        })
+					return accStats
+				})
+		})
 }
 
 export const getAccountStats = ({ _addr, authType, mode }) => {
-    return getWeb3(authType)
-        .then(({ cfg, exchange, token, web3 }) => {
-            let balanceEth = web3.eth.getBalance(_addr)
-            let balanceAdx = token.methods.balanceOf(_addr).call()
-            let allowance = token.methods.allowance(_addr, cfg.addr.exchange).call()
-            let exchangeBalance = exchange.methods.getBalance(_addr).call()
+	return getWeb3(authType)
+		.then(({ cfg, exchange, token, web3 }) => {
+			let balanceEth = web3.eth.getBalance(_addr)
+			let balanceAdx = token.methods.balanceOf(_addr).call()
+			let allowance = token.methods.allowance(_addr, cfg.addr.exchange).call()
+			let exchangeBalance = exchange.methods.getBalance(_addr).call()
 
-            let all = [balanceEth, balanceAdx, allowance, exchangeBalance]
+			let all = [balanceEth, balanceAdx, allowance, exchangeBalance]
 
-            return Promise.all(all)
-                .then(([balEth, balAdx, allow, exchBal]) => {
+			return Promise.all(all)
+				.then(([balEth, balAdx, allow, exchBal]) => {
 
-                    let accStats = {
-                        addr: _addr,
-                        balanceEth: balEth,
-                        balanceAdx: balAdx,
-                        allowance: allow,
-                        exchangeBalance: getExchangeBalances(exchBal)
-                    }
+					let accStats = {
+						addr: _addr,
+						balanceEth: balEth,
+						balanceAdx: balAdx,
+						allowance: allow,
+						exchangeBalance: getExchangeBalances(exchBal)
+					}
 
-                    return accStats
-                })
-        })
+					return accStats
+				})
+		})
 }
 
 export const getTransactionsReceipts = (txHashes = [], authType) => {
-    return getWeb3(authType)
-        .then(({ cfg, exchange, token, web3 }) => {
-            let all = txHashes.map((trH) => web3.eth.getTransactionReceipt(trH))
-            return Promise.all(all)
-        })
+	return getWeb3(authType)
+		.then(({ cfg, exchange, token, web3 }) => {
+			let all = txHashes.map((trH) => web3.eth.getTransactionReceipt(trH))
+			return Promise.all(all)
+		})
 }
 

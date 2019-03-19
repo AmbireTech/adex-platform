@@ -13,75 +13,75 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
 class SigninExternalWallet extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      method: '',
-      sideSelect: false
-    }
-  }
+	constructor(props) {
+		super(props)
+		this.state = {
+			method: '',
+			sideSelect: false
+		}
+	}
 
   renderDefault = () => {
-    const { account } = this.props
-    const lsSig = getSig({ addr: account._addr, mode: account._authType })
-    const hasSession = !!lsSig && !!account._authSig && (lsSig === account._authSig)
+  	const { account } = this.props
+  	const lsSig = getSig({ addr: account._addr, mode: account._authType })
+  	const hasSession = !!lsSig && !!account._authSig && (lsSig === account._authSig)
 
-    return (
-      <div>
-        {/* <div className={theme.adexLogo} >
+  	return (
+  		<div>
+  			{/* <div className={theme.adexLogo} >
           <Logo width={247} height={96} />
         </div> */}
-        <br />
-        {hasSession ?
-          <SideSelect active={true} />
-          :
-          <AuthMethod />
-        }
+  			<br />
+  			{hasSession ?
+  				<SideSelect active={true} />
+  				:
+  				<AuthMethod />
+  			}
 
-      </div>
-    )
+  		</div>
+  	)
   }
 
   render() {
-    const { classes } = this.props
-    return (
-      <div className={classes.signinContainer} style={{ backgroundImage: `url(${require('resources/background.png')})` }}>
-        <div className={classes.container}>
-          <div className="adex-dapp">
-            <div className={classes.adexLogoTop} >
-              <Logo className={classes.logo} />
-            </div>
-            <this.renderDefault />
-            <small className={classes.adxVersion} >
+  	const { classes } = this.props
+  	return (
+  		<div className={classes.signinContainer} style={{ backgroundImage: `url(${require('resources/background.png')})` }}>
+  			<div className={classes.container}>
+  				<div className="adex-dapp">
+  					<div className={classes.adexLogoTop} >
+  						<Logo className={classes.logo} />
+  					</div>
+  					<this.renderDefault />
+  					<small className={classes.adxVersion} >
               v.{packageJson.version}-beta
-            </small>
-          </div>
-        </div>
-      </div>
-    )
+  					</small>
+  				</div>
+  			</div>
+  		</div>
+  	)
   }
 }
 
 SigninExternalWallet.propTypes = {
-  actions: PropTypes.object.isRequired,
+	actions: PropTypes.object.isRequired,
 }
 
 // 
 function mapStateToProps(state) {
-  const persist = state.persist
-  // const memory = state.memory
-  return {
-    account: persist.account
-  }
+	const persist = state.persist
+	// const memory = state.memory
+	return {
+		account: persist.account
+	}
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators(actions, dispatch)
-  }
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	}
 }
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Translate(withStyles(styles)(SigninExternalWallet)))

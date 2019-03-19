@@ -8,43 +8,43 @@ import { styles } from './styles'
 import classnames from 'classnames'
 
 const StatsCard = props => {
-    const { classes, title, subtitle, linkCard, children, onClick } = props
+	const { classes, title, subtitle, linkCard, children, onClick } = props
 
-    return (
-        <Card
-            // raised
-            className={classnames(classes.infoCard,
-                { [classes.linkCard]: !!linkCard })
-            }
-            onClick={onClick}
-        >
-            <CardContent>
-                {title &&
+	return (
+		<Card
+			// raised
+			className={classnames(classes.infoCard,
+				{ [classes.linkCard]: !!linkCard })
+			}
+			onClick={onClick}
+		>
+			<CardContent>
+				{title &&
                     <Typography
-                        variant="headline"
-                        component="h2"
-                        noWrap
+                    	variant="headline"
+                    	component="h2"
+                    	noWrap
                     >
-                        {title}
+                    	{title}
                     </Typography>
-                }
+				}
 
-                {subtitle &&
+				{subtitle &&
                     <Typography component="p" noWrap>
-                        {subtitle}
+                    	{subtitle}
                     </Typography>
-                }
-                {children}
-            </CardContent>
-        </Card>
-    )
+				}
+				{children}
+			</CardContent>
+		</Card>
+	)
 }
 
 StatsCard.propTypes = {
-    classes: PropTypes.object.isRequired,
-    title: PropTypes.string,
-    subtitle: PropTypes.string,
-    linkCard: PropTypes.bool
+	classes: PropTypes.object.isRequired,
+	title: PropTypes.string,
+	subtitle: PropTypes.string,
+	linkCard: PropTypes.bool
 }
 
 export default withStyles(styles)(StatsCard)

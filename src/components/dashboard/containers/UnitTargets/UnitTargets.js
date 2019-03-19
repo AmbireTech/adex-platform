@@ -20,115 +20,115 @@ import Looks3Icon from '@material-ui/icons/Looks3';
 import Looks4Icon from '@material-ui/icons/Looks4';
 
 const targetWeightIcon = {
-    0: { icon: ExposureZeroIcon, color: '#616161' },
-    1: { icon: LooksOneIcon, color: '#03A9F4' },
-    2: { icon: LooksTwoIcon, color: '#00E676' },
-    3: { icon: Looks3Icon, color: '#FFAB00' },
-    4: { icon: Looks4Icon, color: '#FF5722' },
+	0: { icon: ExposureZeroIcon, color: '#616161' },
+	1: { icon: LooksOneIcon, color: '#03A9F4' },
+	2: { icon: LooksTwoIcon, color: '#00E676' },
+	3: { icon: Looks3Icon, color: '#FFAB00' },
+	4: { icon: Looks4Icon, color: '#FF5722' },
 }
 
 const targetIcon = {
-    'location': LocationOnIcon,
-    'gender': WcIcon,
-    'age': ChildCareIcon,
+	'location': LocationOnIcon,
+	'gender': WcIcon,
+	'age': ChildCareIcon,
 }
 
 export class UnitTargets extends Component {
     targetArrayValues = (target, t) => {
-        const weightIcon = targetWeightIcon[target.weight]
-        const TargetIcon = targetIcon[target.name]
-        return (
-            <span key={target.name}>
-                <ListItem
-                >
-                    <ListItemIcon>
-                        <TargetIcon />
-                    </ListItemIcon>
-                    <ListItemText
-                        primary={t(target.name, { isTarget: true })}
-                        secondary={target.value.join(', ')}
-                    />
-                    <ListItemSecondaryAction>
-                        <weightIcon.icon style={{ color: weightIcon.color }} />
-                    </ListItemSecondaryAction>
-                </ListItem>
-                <Divider />
-            </span>
-        )
+    	const weightIcon = targetWeightIcon[target.weight]
+    	const TargetIcon = targetIcon[target.name]
+    	return (
+    		<span key={target.name}>
+    			<ListItem
+    			>
+    				<ListItemIcon>
+    					<TargetIcon />
+    				</ListItemIcon>
+    				<ListItemText
+    					primary={t(target.name, { isTarget: true })}
+    					secondary={target.value.join(', ')}
+    				/>
+    				<ListItemSecondaryAction>
+    					<weightIcon.icon style={{ color: weightIcon.color }} />
+    				</ListItemSecondaryAction>
+    			</ListItem>
+    			<Divider />
+    		</span>
+    	)
     }
 
     ageTargets = (target, t) => {
-        const weightIcon = targetWeightIcon[target.weight]
-        return (
-            <span key={target.name}>
-                <ListItem
-                >
-                    <ListItemIcon>
-                        <ChildCareIcon />
-                    </ListItemIcon>
-                    <ListItemText
-                        primary={t(target.name, { isTarget: true })}
-                        secondary={'from ' + target.value.from + ' to ' + target.value.to}
-                    />
-                    <ListItemSecondaryAction>
-                        <weightIcon.icon style={{ color: weightIcon.color }} />
-                    </ListItemSecondaryAction>
-                </ListItem>
-                <Divider />
-            </span>
-        )
+    	const weightIcon = targetWeightIcon[target.weight]
+    	return (
+    		<span key={target.name}>
+    			<ListItem
+    			>
+    				<ListItemIcon>
+    					<ChildCareIcon />
+    				</ListItemIcon>
+    				<ListItemText
+    					primary={t(target.name, { isTarget: true })}
+    					secondary={'from ' + target.value.from + ' to ' + target.value.to}
+    				/>
+    				<ListItemSecondaryAction>
+    					<weightIcon.icon style={{ color: weightIcon.color }} />
+    				</ListItemSecondaryAction>
+    			</ListItem>
+    			<Divider />
+    		</span>
+    	)
     }
 
     TargetsList = ({ targets, subHeader, t, ...rest }) => (
-        <List
-            dense
-            subheader={subHeader ? <ListSubheader caption={t('TARGETS')} /> : null}
-        >
-            {
-                (targets || []).map((target) => {
+    	<List
+    		dense
+    		subheader={subHeader ? <ListSubheader caption={t('TARGETS')} /> : null}
+    	>
+    		{
+    			(targets || []).map((target) => {
 
-                    switch (target.name) {
-                        case 'location':
-                            return this.targetArrayValues(target, t)
-                        case 'gender':
-                            return this.targetArrayValues(target, t)
-                        case 'age':
-                            return this.ageTargets(target, t)
-                        default: null // eslint-disable-line no-unused-expressions
-                    }
-                })
-            }
-        </List>
+    				switch (target.name) {
+    				case 'location':
+    					return this.targetArrayValues(target, t)
+    				case 'gender':
+    					return this.targetArrayValues(target, t)
+    				case 'age':
+    					return this.ageTargets(target, t)
+    				default: null // eslint-disable-line no-unused-expressions
+    				}
+    			})
+    		}
+    	</List>
     )
 
     render() {
-        return (
-            <this.TargetsList {...this.props} />
-        )
+    	return (
+    		<this.TargetsList {...this.props} />
+    	)
     }
 }
 
 UnitTargets.propTypes = {
-    actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired,
-    item: PropTypes.object.isRequired
+	actions: PropTypes.object.isRequired,
+	account: PropTypes.object.isRequired,
+	item: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
-    const persist = state.persist
-    // const memory = state.memory
-    return {
-        account: persist.account
-    }
+	const persist = state.persist
+	// const memory = state.memory
+	return {
+		account: persist.account
+	}
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    }
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	}
 }
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(UnitTargets);
