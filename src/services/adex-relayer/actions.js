@@ -18,7 +18,7 @@ const processResponse = (res) => {
 
 export const identityToEmail = ({identity, privileges, mail }) => {
     return requester.fetch({
-        route: 'identity-info-mail',
+        route: 'identity/info-mail',
         method: 'POST',
         body: JSON.stringify({
             identity,
@@ -32,13 +32,21 @@ export const identityToEmail = ({identity, privileges, mail }) => {
 
 export const quickAccount = ({ownerAddr, mail, couponCode}) => {
     return requester.fetch({
-        route: 'quick-account',
+        route: 'identity/quick-account',
         method: 'POST',
         body: JSON.stringify({
             mail,
-            identityAddr
+            ownerAddr
         }),
         headers: { 'Content-Type': 'application/json' }
+    })
+    .then(processResponse)
+}
+
+export const checkCoupon = ({coupon}) => {
+    return requester.fetch({
+        route: `identity/valid-coupon/${coupon}`,
+        method: 'GET'
     })
     .then(processResponse)
 }
