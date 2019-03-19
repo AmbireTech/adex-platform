@@ -1,4 +1,4 @@
-/* eslint-disable indent */
+/* eslint-disable */
 /**
  * (C) 2017 SatoshiLabs
  *
