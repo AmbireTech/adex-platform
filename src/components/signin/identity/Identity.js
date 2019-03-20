@@ -7,6 +7,7 @@ import IdentityContractOwner from './IdentityContractOwner'
 import WalletInit from './WalletInit'
 import WalletCheck from './WalletCheck'
 import UserInfo from './UserInfo'
+import GrantInfo from './GrantInfo'
 import CouponCheck from './CouponCheck'
 import SaveIcon from '@material-ui/icons/Save'
 import IdentitySteps from './IdentitySteps'
@@ -50,12 +51,13 @@ export const QuickIdentity = (props) =>
 		{...props}
 		{...common}
 		stepsPages={[
-			{ title: 'COUPON_CHECK', page: CouponCheck },
+			{ title: 'GRANT_INFO', page: GrantInfo },
+			// { title: 'COUPON_CHECK', page: CouponCheck },
+			// { title: 'USER_INFO', page: UserInfo },            
 			// { title: 'INIT_WALLET', page: WalletInit },
 			// { title: 'CHECK_WALLET', page: WalletCheck },
-			{ title: 'USER_INFO', page: UserInfo },
-			{ title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
-			{ title: 'DEPLOY_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthTransaction }
+			// { title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
+			// { title: 'DEPLOY_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthTransaction }
 		]}
 	/>
 

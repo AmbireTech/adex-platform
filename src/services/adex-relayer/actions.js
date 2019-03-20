@@ -30,9 +30,9 @@ export const identityToEmail = ({identity, privileges, mail }) => {
 		.then(processResponse)
 }
 
-export const quickAccount = ({ownerAddr, mail, couponCode}) => {
+export const grantAccount = ({ownerAddr, mail, couponCode}) => {
 	return requester.fetch({
-		route: 'identity/quick-account',
+		route: 'identity/grant-account',
 		method: 'POST',
 		body: JSON.stringify({
 			mail,
