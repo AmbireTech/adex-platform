@@ -11,8 +11,12 @@ import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { validEmail, validPassword } from 'helpers/validators'
+import { validQuickAccountCoupon } from 'helpers/validators'
+import { checkCoupon } from 'services/adex-relayer/actions'
 
-class UserInfo extends Component {
+// TEST COUPON: ch3r787h4v9h3rouh3rf987jver9ujhIJUjuih83nh083d
+
+class GrantInfo extends Component {
 
 	constructor(props, context) {
 		super(props, context)
@@ -40,6 +44,11 @@ class UserInfo extends Component {
 		this.props.validate('passwordCheck', {
 			isValid: !!this.props.identity.passwordCheck,
 			err: { msg: 'ERR_NO_PASSWORD_CHECK' },
+			dirty: false
+		})
+		this.props.validate('coupon', {
+			isValid: !!this.props.identity.coupon,
+			err: { msg: 'ERR_NO_COUPON' },
 			dirty: false
 		})
 	}
@@ -80,16 +89,67 @@ class UserInfo extends Component {
 		})
 	}
 
+	validateCoupon(coupon, dirty) {
+		const isValidFormat = validQuickAccountCoupon(coupon)
+
+		if (!isValidFormat) {
+			this.props.validate('coupon', {
+				isValid: isValidFormat,
+				err: { msg: 'ERR_COUPON_FORMAT' },
+				dirty: dirty
+			})
+		} else {
+			this.setState({ waitingCheck: true }, () => {
+				checkCoupon({ coupon })
+					.then((cpn = {}) => {
+						const isValid = (cpn.exist === true) && (cpn.used === false)
+						let msg = ''
+						if (cpn.exist === false) {
+							msg = 'ERR_COUPON_NOT_EXIST'
+						} else if(cpn.used === true) {
+							msg = 'ERR_COUPON_USED'							
+						}
+
+						this.props.validate('coupon', {
+							isValid: isValid,
+							err: { msg: msg },
+							dirty: dirty
+						})
+					})
+			})
+		}
+	}
+
 	render() {
 		const { t, identity, handleChange, invalidFields } = this.props
 		// Errors
-		const { email, emailCheck, password, passwordCheck } = invalidFields
+		const { coupon, email, emailCheck, password, passwordCheck } = invalidFields
 		return (
 			<div>
 				<Grid
 					container
 					spacing={16}
 				>
+					<Grid item sm={12}>
+						<TextField
+							fullWidth
+							type='text'
+							required
+							label={t('coupon', { isProp: true })}
+							name='coupon'
+							value={identity.coupon}
+							onChange={(ev) => handleChange('coupon', ev.target.value)}
+							onBlur={() => this.validateCoupon(identity.coupon, true)}
+							onFocus={() => this.validateCoupon(identity.coupon, false)}
+							error={coupon && !!coupon.dirty}
+							maxLength={128}
+							helperText={
+								coupon && !!coupon.dirty ?
+									coupon.errMsg :
+									t('ENTER_VALID_COUPON')
+							}
+						/>
+					</Grid>
 					<Grid item sm={12}>
 						<TextField
 							fullWidth
@@ -176,7 +236,7 @@ class UserInfo extends Component {
 	}
 }
 
-UserInfo.propTypes = {
+GrantInfo.propTypes = {
 	actions: PropTypes.object.isRequired,
 	account: PropTypes.object.isRequired
 }
@@ -196,8 +256,8 @@ function mapDispatchToProps(dispatch) {
 	}
 }
 
-const IdentityUserInfoStep = IdentityHoc(UserInfo)
+const IdentityGrantInfoStep = IdentityHoc(GrantInfo)
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(Translate(withStyles(styles)(IdentityUserInfoStep)))
+)(Translate(withStyles(styles)(IdentityGrantInfoStep)))
