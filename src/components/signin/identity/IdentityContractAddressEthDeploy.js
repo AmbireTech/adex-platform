@@ -28,7 +28,7 @@ class IdentityContractAddressEthDeploy extends Component {
 		})
 	}
 
-    getIdentityContracAddress = () => {
+    getIdentityContractAddress = () => {
     	const  identityContractOwner  = this.props.identity.account.addr
     	// TODO: deployTx.gasPrice
 
@@ -65,7 +65,7 @@ class IdentityContractAddressEthDeploy extends Component {
     				</Grid>
     				<Grid item sm={6}>
     					<Button
-    						onClick={this.getIdentityContracAddress}
+    						onClick={this.getIdentityContractAddress}
     					>
     						{'Get addr'}
     					</Button>

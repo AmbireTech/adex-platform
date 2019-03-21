@@ -36,7 +36,8 @@ export const grantAccount = ({ownerAddr, mail, couponCode}) => {
 		method: 'POST',
 		body: JSON.stringify({
 			mail,
-			ownerAddr
+			ownerAddr,
+			couponCode
 		}),
 		headers: { 'Content-Type': 'application/json' }
 	})
