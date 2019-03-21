@@ -1,4 +1,4 @@
-import {utils} from 'ethers'
+import {ethers, utils} from 'ethers'
 
 // Returns 12 random words
 export function getRandomMnemonic() {
@@ -8,5 +8,14 @@ export function getRandomMnemonic() {
 	return mnemonic
 }
 
-function generateRandomWallet() {
+export function generateRandomWallet() {
+	const mnemonic = getRandomMnemonic()
+	const wallet = ethers.Wallet.fromMnemonic(mnemonic)
+
+	return {
+		mnemonic,
+		privateKey: wallet.privateKey,
+		address: wallet.address,
+		path: wallet.path
+	}
 }

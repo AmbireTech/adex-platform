@@ -8,6 +8,7 @@ import WalletInit from './WalletInit'
 import WalletCheck from './WalletCheck'
 import UserInfo from './UserInfo'
 import GrantInfo from './GrantInfo'
+import GrantDeploy from './GrantDeploy'
 import CouponCheck from './CouponCheck'
 import SaveIcon from '@material-ui/icons/Save'
 import IdentitySteps from './IdentitySteps'
@@ -51,7 +52,8 @@ export const QuickIdentity = (props) =>
 		{...props}
 		{...common}
 		stepsPages={[
-			{ title: 'GRANT_INFO', page: GrantInfo },
+			// { title: 'GRANT_INFO', page: GrantInfo },
+			{ title: 'GRANT_DEPLOY', page: GrantDeploy },
 			// { title: 'COUPON_CHECK', page: CouponCheck },
 			// { title: 'USER_INFO', page: UserInfo },            
 			// { title: 'INIT_WALLET', page: WalletInit },
