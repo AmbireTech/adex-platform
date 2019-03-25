@@ -17,15 +17,17 @@ import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 
 const {
 	withdrawEth,
-	withdrawAdx,
+	withdrawToken,
 	acceptBid,
 	cancelBid,
 	verifyBid,
 	giveupBid,
 	refundBid,
-	depositToExchange,
-	depositToExchangeEG,
-	withdrawFromExchange
+	depositEthToIdentity,
+	depositToIdentity,
+	depositToIdentityEG,
+	withdrawEthFromIdentity,
+	withdrawTokensFromIdentity
 } = scActions
 
 const FormStepsWithDialog = WithDialog(FormSteps)
@@ -96,17 +98,17 @@ export const WithdrawEth = (props) =>
 		}}
 	/>
 
-export const WithdrawAdx = (props) =>
+export const WithdrawTokens = (props) =>
 	<FormStepsWithDialog
 		{...props}
-		btnLabel="ACCOUNT_WITHDRAW_ADX_BTN"
-		saveBtnLabel='ACC_WITHDRAW_ADX_SAVE_BTN'
-		title="ACCOUNT_WITHDRAW_ADX_TITLE"
-		stepsId='withdrawAdx'
+		btnLabel="ACCOUNT_WITHDRAW_TOKEN_BTN"
+		saveBtnLabel='ACC_WITHDRAW_TOKEN_SAVE_BTN'
+		title="ACCOUNT_WITHDRAW_TOKEN_TITLE"
+		stepsId='withdrawToken'
 		{...txCommon}
-		stepsPages={[{ title: 'ACCOUNT_WITHDRAW_ADX_STEP', page: WithdrawStep }]}
+		stepsPages={[{ title: 'ACCOUNT_WITHDRAW_TOKEN_STEP', page: WithdrawStep }]}
 		saveFn={({ acc, transaction } = {}) => {
-			return withdrawAdx(
+			return withdrawToken(
 				{
 					user: acc,
 					_addr: acc._addr,
@@ -116,7 +118,7 @@ export const WithdrawAdx = (props) =>
 				})
 		}}
 		estimateGasFn={({ acc, transaction } = {}) => {
-			return withdrawAdx(
+			return withdrawToken(
 				{
 					user: acc,
 					_addr: acc._addr,
@@ -313,25 +315,42 @@ export const RefundBid = (props) =>
 		}}
 	/>
 
-export const Deposit = (props) =>
+export const DepositEth = (props) =>
 	<FormStepsWithDialog
 		{...props}
-		btnLabel="ACCOUNT_DEPOSIT_TO_EXCHANGE_BTN"
-		saveBtnLabel='ACCOUNT_DEPOSIT_TO_EXCHANGE_SAVE_BTN'
-		title="ACCOUNT_DEPOSIT_TO_EXCHANGE_TITLE"
+		btnLabel="WALLET_DEPOSIT_ETH_TO_IDENTITY_BTN"
+		saveBtnLabel='WALLET_DEPOSIT_ETH_TO_IDENTITY_SAVE_BTN'
+		title="WALLET_DEPOSIT_ETH_TO_IDENTITY_TITLE"
 		stepsId='depositToExchange'
 		{...txCommon}
-		stepsPages={[{ title: 'ACCOUNT_DEPOSIT_TO_EXCHANGE_STEP', page: DepositToExchange }]}
-		previewWarnMsgs={[{ msg: 'ACCOUNT_DEPOSIT_MULTIPLE_SIGNS_MSG' }]}
+		stepsPages={[{ title: 'WALLET_DEPOSIT_ETH_TO_IDENTITY_STEP', page: DepositToExchange }]}
 		saveFn={({ acc, transaction } = {}) => {
-			return depositToExchange({ user: acc, _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
+			return depositEthToIdentity({ user: acc, _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
 		}}
 		estimateGasFn={({ acc, transaction } = {}) => {
-			return depositToExchangeEG({ user: acc, _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
+			return depositEthToIdentity({ user: acc, _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
 		}}
 	/>
 
-export const WithdrawFromExchange = (props) =>
+export const DepositToken = (props) =>
+	<FormStepsWithDialog
+		{...props}
+		btnLabel="WALLET_DEPOSIT_TO_IDENTITY_BTN"
+		saveBtnLabel='WALLET_DEPOSIT_TO_IDENTITY_SAVE_BTN'
+		title="WALLET_DEPOSIT_TO_IDENTITY_TITLE"
+		stepsId='depositToIdentity'
+		{...txCommon}
+		stepsPages={[{ title: 'WALLET_DEPOSIT_TO_IDENTITY_STEP', page: DepositToExchange }]}
+		previewWarnMsgs={[{ msg: 'WALLET_DEPOSIT_TO_IDENTITY_MULTIPLE_SIGNS_MSG' }]}
+		saveFn={({ acc, transaction } = {}) => {
+			return depositToIdentity({ user: acc, _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
+		}}
+		estimateGasFn={({ acc, transaction } = {}) => {
+			return depositToIdentityEG({ user: acc, _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
+		}}
+	/>
+
+export const WithdrawEthFromIdentity = (props) =>
 	<FormStepsWithDialog
 		{...props}
 		btnLabel="ACCOUNT_WITHDRAW_FROM_EXCHANGE_BTN"
@@ -341,9 +360,26 @@ export const WithdrawFromExchange = (props) =>
 		{...txCommon}
 		stepsPages={[{ title: 'ACCOUNT_WITHDRAW_FROM_EXCHANGE_STEP', page: WithdrawFromExchangePage }]}
 		saveFn={({ acc, transaction } = {}) => {
-			return withdrawFromExchange({ _addr: acc._addr, amountToWithdraw: transaction.withdrawAmount, gas: transaction.gas, user: acc, })
+			return withdrawEthFromIdentity({ _addr: acc._addr, amountToWithdraw: transaction.withdrawAmount, gas: transaction.gas, user: acc, })
 		}}
 		estimateGasFn={({ acc, transaction } = {}) => {
-			return withdrawFromExchange({ _addr: acc._addr, amountToWithdraw: transaction.withdrawAmount, gas: transaction.gas, user: acc, estimateGasOnly: true })
+			return withdrawEthFromIdentity({ _addr: acc._addr, amountToWithdraw: transaction.withdrawAmount, gas: transaction.gas, user: acc, estimateGasOnly: true })
+		}}
+	/>
+
+export const WithdrawTokenFromIdentity = (props) =>
+	<FormStepsWithDialog
+		{...props}
+		btnLabel="ACCOUNT_WITHDRAW_FROM_EXCHANGE_BTN"
+		saveBtnLabel='ACCOUNT_WITHDRAW_FROM_EXCHANGE_SAVE_BTN'
+		title="ACCOUNT_WITHDRAW_FROM_EXCHANGE_TITLE"
+		stepsId='withdrawFromExchange'
+		{...txCommon}
+		stepsPages={[{ title: 'ACCOUNT_WITHDRAW_FROM_EXCHANGE_STEP', page: WithdrawFromExchangePage }]}
+		saveFn={({ acc, transaction } = {}) => {
+			return withdrawTokensFromIdentity({ _addr: acc._addr, amountToWithdraw: transaction.withdrawAmount, gas: transaction.gas, user: acc, })
+		}}
+		estimateGasFn={({ acc, transaction } = {}) => {
+			return withdrawTokensFromIdentity({ _addr: acc._addr, amountToWithdraw: transaction.withdrawAmount, gas: transaction.gas, user: acc, estimateGasOnly: true })
 		}}
 	/>

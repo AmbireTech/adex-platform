@@ -1,9 +1,9 @@
 import Web3 from 'web3'
 import { ethers } from 'ethers'
-import {contracts}  from './contractsCfg'
+import { contracts }  from './contractsCfg'
 import { AUTH_TYPES } from 'constants/misc'
 
-const {AdExCore} = contracts
+const { AdExCore, Identity } = contracts
 
 const localWeb3 = () => {
 	const provider = new ethers.providers.JsonRpcProvider(process.env.WEB3_NODE_ADDR)
@@ -11,7 +11,8 @@ const localWeb3 = () => {
 
 	const results = {
 		provider: provider,
-		AdExCore: adexCore
+		AdExCore: adexCore,
+		Identity: Identity
 	}
 
 	return results
@@ -35,7 +36,8 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 					console.log('Injected web3 detected.')
 					const results = {
 						provider: provider,
-						AdExCore: adexCore
+						AdExCore: adexCore,
+						Identity: Identity
 					}
 
 					resolve(results)
@@ -52,7 +54,8 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 			console.log('Injected legacy web3 detected.')
 			const results = {
 				provider: provider,
-				AdExCore: adexCore
+				AdExCore: adexCore,
+				Identity: Identity
 			}
 
 			resolve(results)
@@ -68,7 +71,7 @@ const getLocalWeb3 = new Promise(function (resolve, reject) {
 	resolve(localWeb3())
 })
 
-const getWeb3 = (mode) => {
+const getEthers = (mode) => {
 	/* NOTE: use Promise wrapper because despite getWeb3 is Promise itself it is not called by user action
 	*   and this results in Trezor popup block by the browser
 	*/
@@ -81,9 +84,6 @@ const getWeb3 = (mode) => {
 	})
 }
 
-const web3Utils = Web3.utils
-
 export {
-	getWeb3,
-	web3Utils
+	getEthers
 }
