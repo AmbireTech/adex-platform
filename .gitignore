@@ -9,6 +9,9 @@
 # production
 /build
 
+# env config
+/config/envCfg.js
+
 # misc
 .DS_Store
 .env.local
