@@ -40,8 +40,10 @@ export const FILTER_PROPERTIES_ITEMS = {
 }
 
 export const AUTH_TYPES = {
-	METAMASK: { name: 'metamask', signType: SIGN_TYPES.Eip.id },
-	TREZOR: { name: 'trezor', signType: SIGN_TYPES.Trezor.id },
-	LEDGER: { name: 'ledger', signType: SIGN_TYPES.EthPersonal.id },
-	DEMO: { name: 'demo', signType: SIGN_TYPES.EthPersonal.id }
+	METAMASK: { name: 'metamask', signType: SIGN_TYPES.Eip.id, limit: 0 },
+	TREZOR: { name: 'trezor', signType: SIGN_TYPES.Trezor.id, limit: 0 },
+	LEDGER: { name: 'ledger', signType: SIGN_TYPES.EthPersonal.id, limit: 0 },
+	DEMO: { name: 'demo', signType: SIGN_TYPES.EthPersonal.id, limit: 0 },
+	GRANT: { name: 'grant', signType: SIGN_TYPES.EthPersonal.id, limit: 50 },
+	SEED: { name: 'seed', signType: SIGN_TYPES.EthPersonal.id, limit: 500 }
 }

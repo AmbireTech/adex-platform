@@ -5,9 +5,10 @@ import exchangeAbi from './abi/ADXExchange'
 import { testrpcCfg, kovanCfg } from './ADXTestrpcCfg'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { AUTH_TYPES } from 'constants/misc'
+import { networks } from './networksCfg'
 
 const mainnetCfg = {
-	node: process.env.WEB3_NODE || 'https://mainnet.infura.io/v3/',
+	node: networks.Mainnet.nodes[0],
 	addr: {
 		token: process.env.ADX_TOKEN_ADDR || '0x4470BB87d77b963A013DB939BE332f927f2b992e',
 		exchange: process.env.ADX_EXCHANGE_ADDR || '0x912b8f85E28B9ec196b48228159E2f13546836e6',
