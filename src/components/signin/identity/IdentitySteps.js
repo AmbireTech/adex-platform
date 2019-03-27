@@ -13,7 +13,7 @@ class IdentitySteps extends Component {
 
 	render() {
 		let pages = []
-		const { SaveBtn, CancelBtn, t, onSave, stepsId, stepsPages, stepsPreviewPage, validateIdBase, ...rest } = this.props
+		const { GoBtn, CancelBtn, t, onSave, stepsId, stepsPages, stepsPreviewPage, validateIdBase, ...rest } = this.props
 		const cancelButton = () => <CancelBtn  {...rest} stepsId={stepsId} onSave={onSave} t={t} />
 		const validateId = (validateIdBase || '') + '-' + stepsId
 
@@ -22,7 +22,8 @@ class IdentitySteps extends Component {
 				title: t(page.title),
 				cancelBtn: cancelButton,
 				component: ValidItemHoc(page.page),
-				props: { ...this.props, validateId: validateId + '-' + index }
+				props: { ...this.props, validateId: validateId + '-' + index },
+				completeBtn: page.final ? () => <GoBtn {...rest} stepsId={stepsId} onSave={onSave} t={t} /> : undefined
 			})
 		})
 

@@ -16,7 +16,7 @@ import IdentitySteps from './IdentitySteps'
 // import { withStyles } from '@material-ui/core/styles'
 // import { styles } from './styles'
 
-const SaveBtn = ({ ...props }) => {
+const GoBtn = ({ ...props }) => {
 	return (
 		<Button
 			color='primary'
@@ -24,12 +24,12 @@ const SaveBtn = ({ ...props }) => {
 		>
 			{/*TODO: withStyles */}
 			<SaveIcon style={{ marginRight: 8 }} />
-			{props.t('SAVE')}
+			{props.t('')}
 		</Button>
 	)
 }
 
-const SaveBtnWithIdentity = IdentityHoc(SaveBtn)
+const GoBtnWithIdentity = IdentityHoc(GoBtn)
 
 const CancelBtn = ({ ...props }) => {
 	return (
@@ -42,7 +42,7 @@ const CancelBtn = ({ ...props }) => {
 const CancelBtnWithIdentity = IdentityHoc(CancelBtn)
 
 const common = {
-	SaveBtn: SaveBtnWithIdentity,
+	GoBtn: GoBtnWithIdentity,
 	CancelBtn: CancelBtnWithIdentity,
 	validateIdBase: 'identity-'
 }
@@ -53,7 +53,7 @@ export const QuickIdentity = (props) =>
 		{...common}
 		stepsPages={[
 			// { title: 'GRANT_INFO', page: GrantInfo },
-			{ title: 'GRANT_DEPLOY', page: GrantDeploy },
+			{ title: 'GRANT_DEPLOY', page: GrantDeploy, final: true },
 			// { title: 'COUPON_CHECK', page: CouponCheck },
 			// { title: 'USER_INFO', page: UserInfo },            
 			// { title: 'INIT_WALLET', page: WalletInit },
