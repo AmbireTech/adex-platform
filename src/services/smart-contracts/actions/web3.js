@@ -1,5 +1,7 @@
 import ethTx from 'ethereumjs-tx'
 import { getWeb3, web3Utils } from 'services/smart-contracts/ADX'
+import { getEthers } from 'services/smart-contracts/ethers'
+import { ethers } from 'ethers'
 import { TO_HEX_PAD } from 'services/smart-contracts/constants'
 import { getRsvFromSig, getTypedDataHash } from 'services/smart-contracts/utils'
 import trezorConnect from 'third-party/trezor-connect'
@@ -177,13 +179,19 @@ export const signTypedLedger = ({ userAddr, hdPath, addrIdx, typedData, hash }) 
 		})
 }
 
-export const signTypedMsg = ({ authType, userAddr, hdPath, addrIdx, typedData }) => {
+export const signTypedLocal = async ({ privateKey, authType, address, addrIdx, typedData, hash }) => {
+	const wallet = new ethers.Wallet(privateKey)
+	const hashBytes = ethers.utils.arrayify(hash)
+	const sig = await wallet.signMessage(hashBytes)
+	const signature = { sig: sig, hash, mode: SIGN_TYPES.EthPersonal.id }
+
+	return signature
+}
+
+export const signTypedMsg = ({ authType, userAddr, hdPath, addrIdx, typedData, privateKey }) => {
 	let pr
 
 	let hash = getTypedDataHash({ typedData: typedData })
-
-	console.log('hash', hash)
-	console.log('authType', authType)
 
 	switch (authType) {
 	case AUTH_TYPES.TREZOR.name:
@@ -195,6 +203,9 @@ export const signTypedMsg = ({ authType, userAddr, hdPath, addrIdx, typedData })
 	case AUTH_TYPES.LEDGER.name:
 		pr = signTypedLedger({ userAddr, typedData, authType: AUTH_TYPES.METAMASK.name, hash, hdPath, addrIdx })
 		break
+	case AUTH_TYPES.GRANT.name:
+		pr = signTypedLocal({ userAddr, typedData, authType: AUTH_TYPES.GRANT.name, hash, hdPath, addrIdx, privateKey })
+		break
 	default:
 		pr = Promise.reject(new Error('Invalid authentication type!'))
 	}
@@ -202,13 +213,13 @@ export const signTypedMsg = ({ authType, userAddr, hdPath, addrIdx, typedData })
 	return pr
 }
 
-export const signAuthToken = ({ authType, userAddr, hdPath, addrIdx }) => {
-	let authToken = (Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()
+export const signAuthToken = ({ authType, userAddr, hdPath, addrIdx, privateKey }) => {
+	let authToken = 46 || (Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()
 	let typedData = [
 		{ type: 'uint', name: 'Auth token', value: authToken }
 	]
 
-	let pr = signTypedMsg({ authType, userAddr, hdPath, addrIdx, typedData })
+	let pr = signTypedMsg({ authType, userAddr, hdPath, addrIdx, typedData, privateKey })
 	return pr.then((res = {}) => {
 		let sig = { sig_mode: res.mode, sig: res.sig, authToken: authToken, typedData, hash: res.hash }
 		return sig

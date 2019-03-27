@@ -43,7 +43,9 @@ class GrantDeploy extends Component {
 		const { email, password } =
 			// identity || 
 			{ email: 'ivo.paunov@gmail.com', password: 'passWord123' }
-		const walletData = generateRandomWallet()
+		const walletData =	generateRandomWallet()
+
+
 		const data = JSON.stringify(walletData)
 
 		const encrKey = encrypt(email, password)

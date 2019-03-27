@@ -7,47 +7,47 @@ class AdexNodeRequester {
 		this.baseUrl = baseUrl
 	}
 
-    getAuthHeaders = () => {
-    	const acc = getAccount()
-    	return {
-    		'X-User-Address': acc._addr,
-    		'X-User-Signature': acc._authSig,
-    		'X-Auth-Token': acc._authToken,
-    	}
-    }
+	getAuthHeaders = ({ authSig } = {}) => {
+		const acc = getAccount()
+		return {
+			'X-User-Address': acc._addr,
+			'X-User-Signature': authSig || acc._authSig,
+			'X-Auth-Token': acc._authToken,
+		}
+	}
 
-    getUrl = (base, route, query) => {
-    	let url = base + '/'
-    	if (route) {
-    		route = route.replace(/^\//, '')
-    		url += route
-    	}
+	getUrl = (base, route, query) => {
+		let url = base + '/'
+		if (route) {
+			route = route.replace(/^\//, '')
+			url += route
+		}
 
-    	url += query
+		url += query
 
-    	return url
-    }
+		return url
+	}
 
-    fetch = ({ route = '', queryParams = {}, method = 'GET', body, headers = {}, userAddr, authSig = '', authToken }) => {
-    	const qp = { ...queryParams }
-    	if (isDemoMode()) {
-    		qp.demo = true
-    	}
+	fetch = ({ route = '', queryParams = {}, method = 'GET', body, headers = {}, userAddr, authSig = '', authToken }) => {
+		const qp = { ...queryParams }
+		if (isDemoMode()) {
+			qp.demo = true
+		}
 
-    	let query = Helper.getQuery(qp)
-    	let url = this.getUrl(this.baseUrl, route, query)
+		let query = Helper.getQuery(qp)
+		let url = this.getUrl(this.baseUrl, route, query)
 
-    	let hdrs = {
-    		...this.getAuthHeaders(),
-    		...headers
-    	}
+		let hdrs = {
+			...this.getAuthHeaders({ authSig }),
+			...headers
+		}
 
-    	return fetch(url, {
-    		method: method,
-    		headers: hdrs,
-    		body: body
-    	})
-    }
+		return fetch(url, {
+			method: method,
+			headers: hdrs,
+			body: body
+		})
+	}
 }
 
 export default AdexNodeRequester

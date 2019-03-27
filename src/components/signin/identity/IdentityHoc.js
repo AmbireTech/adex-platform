@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
+import { AUTH_TYPES } from 'constants/misc'
 
 export default function IdentityHoc(Decorated) {
 
@@ -26,22 +27,33 @@ export default function IdentityHoc(Decorated) {
 			this.setState({ identity: this.props.identity })
 		}
 
-        handleChange = (prop, value) => {
-        	this.props.actions.updateIdentity(prop, value)
-        }
+		handleChange = (prop, value) => {
+			this.props.actions.updateIdentity(prop, value)
+		}
 
-        save = () => {
-        	console.log('identity', this.state.identity)
-        }
+		save = () => {
+			// console.log(this.state.identity)
+			const { identityAddr, wallet, email } = this.state.identity
+			const newWallet = {...wallet}
+			newWallet.authType = AUTH_TYPES.GRANT.name
+			const identity = {
+				address: identityAddr
+			}
+			this.props.actions.createSession({
+				identity,
+				wallet: newWallet,
+				email
+			})
+		}
 
-        render() {
-        	const props = this.props
-        	const { identity } = this.state
+		render() {
+			const props = this.props
+			const { identity } = this.state
 
-        	return (
-        		<Decorated {...props} identity={identity} save={this.save} handleChange={this.handleChange} />
-        	)
-        }
+			return (
+				<Decorated {...props} identity={identity} save={this.save} handleChange={this.handleChange} />
+			)
+		}
 	}
 
 	IdentityForm.propTypes = {
