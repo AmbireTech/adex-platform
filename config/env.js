@@ -83,7 +83,7 @@ function getClientEnvironment(publicUrl) {
 				IPFS_GATEWAY: process.env.IPFS_GATEWAY || 'https://ipfs.adex.network/ipfs/',
 				INFURA_ID: process.env.INFURA_ID || '',
 				WEB3_NODE_NAME: process.env.WEB3_NODE_NAME || (process.env.NODE_ENV === 'production' ? 'mainnet' : 'kovan'),
-				WEB3_NODE_ADDR: process.env.WEB3_NODE_ADDR || ('https://kovan.infura.io/v3/' + process.env.INFURA_ID),
+				WEB3_NODE_ADDR: process.env.WEB3_NODE_ADDR || ('https://goerli.infura.io/v3/' + process.env.INFURA_ID),
 				ADEX_CORE_ADDR: process.env.ADEX_CORE_ADDR || '0x333420fc6a897356e69b62417cd17ff012177d2b',
 				ADX_TOKEN_ADDR: process.env.ADX_TOKEN_ADDR || '0x4470BB87d77b963A013DB939BE332f927f2b992e',
 				ADX_EXCHANGE_ADDR: process.env.ADX_EXCHANGE_ADDR || '0x912b8f85E28B9ec196b48228159E2f13546836e6',

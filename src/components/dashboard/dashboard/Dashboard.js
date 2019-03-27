@@ -21,7 +21,7 @@ import {
 	Campaign as CampaignModel,
 	Channel as ChannelModel
 } from 'adex-models'
-import Account from 'components/dashboard/account/Account'
+import Account from 'components/dashboard/account/AccountInfo'
 import Translate from 'components/translate/Translate'
 import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, NewChannelDialog } from 'components/dashboard/forms/items/NewItems'
 import { items as ItemsConstants } from 'adex-constants'
