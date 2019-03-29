@@ -12,8 +12,6 @@ import confirm from './confirmReducer'
 import nav from './navReducer'
 import language from './languageReducer'
 import validations from './validateItemsReducer'
-import bids from './bidsReducer'
-import newBid from './newBidsReducer'
 import newTransactions from './newTransactionsReducer'
 import web3Transactions from './web3TransactionsReducer'
 import tags from './tagsReducer'
@@ -35,7 +33,6 @@ export const persistReducers = {
 	// routing: filterActions(routerReducer, [LOCATION_CHANGE, CALL_HISTORY_METHOD]),
 	language: language,
 	// validations: validations,
-	bids: bids,
 	web3Transactions: web3Transactions,
 	tags: tags,
 	ethNetwork: ethNetwork
@@ -56,7 +53,5 @@ export const memoryReducers = {
 	routing: filterActions(routerReducer, [LOCATION_CHANGE, CALL_HISTORY_METHOD]),
 	// language: language,
 	validations: validations,
-	// bids: bids,
-	newBid: newBid,
 	newTransactions: newTransactions
 }
