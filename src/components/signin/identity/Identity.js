@@ -52,7 +52,7 @@ export const QuickIdentity = (props) =>
 		{...props}
 		{...common}
 		stepsPages={[
-			// { title: 'GRANT_INFO', page: GrantInfo },
+			{ title: 'GRANT_INFO', page: GrantInfo },
 			{ title: 'GRANT_DEPLOY', page: GrantDeploy, final: true },
 			// { title: 'COUPON_CHECK', page: CouponCheck },
 			// { title: 'USER_INFO', page: UserInfo },            

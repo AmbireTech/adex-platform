@@ -104,5 +104,4 @@ export function createSession({ wallet, identity, email }) {
 			}
 		})
 	}
-
 }

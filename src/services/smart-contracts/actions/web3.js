@@ -174,7 +174,10 @@ export const signTypedLedger = ({ userAddr, hdPath, addrIdx, typedData, hash }) 
 				v = '0' + v
 			} // pad v
 
-			let signature = { sig: '0x' + result['r'] + result['s'] + v, hash: hash, mode: SIGN_TYPES.EthPersonal.id }
+			let signature = { 
+				sig: '0x' + result['r'] + result['s'] + v, 
+				hash: hash, mode: SIGN_TYPES.EthPersonal.id
+			 }
 			return signature
 		})
 }
@@ -191,7 +194,7 @@ export const signTypedLocal = async ({ privateKey, authType, address, addrIdx, t
 export const signTypedMsg = ({ authType, userAddr, hdPath, addrIdx, typedData, privateKey }) => {
 	let pr
 
-	let hash = getTypedDataHash({ typedData: typedData })
+	const hash = getTypedDataHash({ typedData: typedData })
 
 	switch (authType) {
 	case AUTH_TYPES.TREZOR.name:
@@ -237,13 +240,18 @@ const padLeftEven = (hex) => {
 	return hex;
 }
 
-// NOTE: not the best place to do such updates but we need the tx and notifications on tx hash when there a re more than one tx for action
+// NOTE: not the best place to do such updates but we need 
+// the tx and notifications on tx hash when there a re more than one tx for action
 const addTx = (tx, addr, user, nonce) => {
 	let txData = { ...tx }
 	txData.status = TX_STATUS.Pending.id
 	txData.sendingTime = Date.now()
 	actions.execute(actions.addWeb3Transaction({ trans: txData, addr: addr }))
-	actions.execute(actions.addToast({ type: 'accept', action: 'X', label: translate('TRANSACTION_SENT_MSG', { args: [tx.trHash] }), timeout: 5000 }))
+	actions.execute(actions.addToast({ 
+		type: 'accept', 
+		action: 'X', 
+		label: translate('TRANSACTION_SENT_MSG', { args: [tx.trHash] }), 
+		timeout: 5000 }))
 
 	let settings = { ...user._settings }
 	settings.nonce = nonce + 1

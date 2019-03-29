@@ -14,18 +14,15 @@ import { validEmail, validPassword } from 'helpers/validators'
 import { validQuickAccountCoupon } from 'helpers/validators'
 import { checkCoupon } from 'services/adex-relayer/actions'
 
-// TEST COUPON: ch3r787h4v9h3rouh3rf987jver9ujhIJUjuih83nh083d
-
 class GrantInfo extends Component {
 
-	constructor(props, context) {
-		super(props, context)
-		this.state = {
-			mnemonic: props.wallet.mnemonic
-		}
-	}
-
 	componentDidMount() {
+		
+		// // TEST ONLY (skipping prev step)
+		// this.props.handleChange('email', 'ivo.paunov@gmail.com')
+		// this.props.handleChange('password', 'passWord123')
+		// this.props.handleChange('coupon', 'ch3r787h4v9h3rouh3rf987jver9ujhIJUjuih83nh083d')
+
 		this.props.validate('email', {
 			isValid: !!this.props.identity.email,
 			err: { msg: 'ERR_NO_EMAIL' },

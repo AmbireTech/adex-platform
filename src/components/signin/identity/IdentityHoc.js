@@ -33,8 +33,13 @@ export default function IdentityHoc(Decorated) {
 
 		save = () => {
 			// console.log(this.state.identity)
-			const { identityAddr, wallet, email } = this.state.identity
-			const newWallet = {...wallet}
+			const {
+				identityAddr,
+				wallet,
+				email
+			} = this.state.identity
+
+			const newWallet = { ...wallet }
 			newWallet.authType = AUTH_TYPES.GRANT.name
 			const identity = {
 				address: identityAddr
@@ -51,7 +56,12 @@ export default function IdentityHoc(Decorated) {
 			const { identity } = this.state
 
 			return (
-				<Decorated {...props} identity={identity} save={this.save} handleChange={this.handleChange} />
+				<Decorated
+					{...props}
+					identity={identity}
+					save={this.save}
+					handleChange={this.handleChange}
+				/>
 			)
 		}
 	}

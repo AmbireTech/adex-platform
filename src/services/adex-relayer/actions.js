@@ -52,3 +52,10 @@ export const checkCoupon = ({coupon}) => {
 		.then(processResponse)
 }
 
+export const getOwnerIdentities = ({owner}) => {
+	return requester.fetch({
+		route: `identity/owners/${owner}`,
+		method: 'GET'
+	})
+		.then(processResponse)
+}
