@@ -47,3 +47,9 @@ export const AUTH_TYPES = {
 	GRANT: { name: 'grant', signType: SIGN_TYPES.EthPersonal.id, limit: 50 },
 	SEED: { name: 'seed', signType: SIGN_TYPES.EthPersonal.id, limit: 500 }
 }
+
+export const NETWORK_STATUS = {
+	0: 'pending',
+	1: 'success',
+	2: 'failed'
+}

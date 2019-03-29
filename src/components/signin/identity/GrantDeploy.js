@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { generateRandomWallet } from 'services/wallet/wallet'
+import { generateRandomWallet, createLocalWallet } from 'services/wallet/wallet'
 import { encrypt, decrypt } from 'services/crypto/crypto'
 import { loadFromLocalStorage, saveToLocalStorage } from 'helpers/localStorageHelpers'
 import { grantAccount } from 'services/adex-relayer/actions'
@@ -19,64 +19,52 @@ import { styles } from './styles'
 
 class GrantDeploy extends Component {
 
-	constructor(props, context) {
-		super(props, context)
-		this.state = {
-			// mnemonic: props.wallet.mnemonic
-			// identityAddr: ''
+	componentDidMount() {			
+		this.validateIdentity()
+		this.initLocalWallet()
+	}
+
+	componentDidUpdate(prevProps) {
+		const currIdentity = this.props.identity.identityAddr
+		if (!!currIdentity &&
+			(currIdentity !== prevProps.identity.identityAddr)) {
+			this.validateIdentity()
 		}
 	}
 
-	componentWillMount() {
-		this.props.validate('identityAddr', {
-			isValid: !!this.props.identity.identityAddr,
+	validateIdentity = () => {
+		const { validate, identity } = this.props
+		const { identityAddr } = identity
+
+		validate('identityAddr', {
+			isValid: !!identityAddr,
 			err: { msg: 'ERR_IDENTITY_NOT_GENERATED' },
 			dirty: false
 		})
-
-		this.createLocalWallet()
 	}
 
-	// TODO: as service
-	createLocalWallet = () => {
+	initLocalWallet = () => {
 		const { handleChange, identity } = this.props
-		const { email, password } =
-			// identity || 
-			{ email: 'ivo.paunov@gmail.com', password: 'passWord123' }
-		const walletData =	generateRandomWallet()
+		const { email, password } = identity
 
-
-		const data = JSON.stringify(walletData)
-
-		const encrKey = encrypt(email, password)
-		const encrData = encrypt(data, email + password)
-
-		saveToLocalStorage(encrData, encrKey)
+		const walletData = createLocalWallet({
+			email,
+			password
+		})
 
 		handleChange('wallet', walletData)
 		handleChange('walletAddr', walletData.address)
 	}
 
-	// TODO: make it action
 	senIdentity = () => {
-		const { handleChange, identity } = this.props
-		const { email, coupon, wallet } = identity
-		grantAccount({
-			ownerAddr: wallet.address || '0x2aecF52ABe359820c48986046959B4136AfDfbe2',
-			mail: email || 'ivo.paunov@gmail.com',
-			couponCode: coupon || 'ch3r787h4v9h3rouh3rf987jver9ujhIJUjuih83nh083d'
-		}).then(res => {
-			console.log('deploy res', res)
-			handleChange('identityAddr', res.deployData.idContractAddr)
-			this.props.validate('identityAddr', {
-				isValid: true,
-				err: { msg: 'ERR_IDENTITY_NOT_GENERATED' },
-				dirty: true
-			})
+		const { identity, actions } = this.props
+		const { email, coupon, walletAddr } = identity
+
+		actions.getGrantAccount({
+			walletAddr,
+			email,
+			coupon: coupon
 		})
-			.catch(err => {
-				// TODO: err msg
-			})
 	}
 
 	render() {
