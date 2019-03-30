@@ -95,8 +95,8 @@ export function createSession({ wallet, identity, email }) {
 			}
 		}
 
-		return updateAccount({
-			dispatch: dispatch,
+		return dispatch({
+			type: types.UPDATE_ACCOUNT,
 			ownProps: {
 				email: email,
 				wallet: newWallet,

@@ -21,7 +21,7 @@ const StepperNav = ({ pages, currentPage, classes, ...other }) => {
 		return (
 			<div>
 				<StepLabel className={classes.mobileStepLabel}>
-                    ({currentPage + 1}/{pages.length}) {pages[currentPage].title}
+					({currentPage + 1}/{pages.length}) {pages[currentPage].title}
 				</StepLabel>
 				<MobileStepper
 					activeStep={currentPage}
@@ -95,9 +95,12 @@ class MaterialStepper extends React.Component {
 		let Comp = page.component
 
 		return (
-			<div >
-				<Paper>
-					<StepperNav className={classes.stepperNav} {...props} pages={pages} classes={classes} currentPage={currentPage} goToPage={this.goToPage.bind(this)} />
+			<div className={classes.stepperWrapper}>
+				<Paper
+					classes={{
+						root: classes.stepperNav
+					}} >
+					<StepperNav {...props} pages={pages} classes={classes} currentPage={currentPage} goToPage={this.goToPage.bind(this)} />
 				</Paper>
 				<br />
 

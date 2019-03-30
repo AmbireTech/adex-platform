@@ -13,7 +13,8 @@ export const styles = theme => {
 			}
 		},
 		gridContainer: {
-			flexGrow: 1
+			flexGrow: 1,
+			justifyContent: 'space-around'
 		}
 	}
 }

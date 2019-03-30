@@ -8,6 +8,14 @@ export const styles = {
 	active: {
 		color: 'yellow'
 	},
+	stepperWrapper: {
+		// display: 'flex',
+		position: 'absolute',
+		bottom: 0,
+		left: 0,
+		right: 0,
+		top: 0,
+	},
 	pagePaper: {
 		position: 'absolute',
 		bottom: 0,

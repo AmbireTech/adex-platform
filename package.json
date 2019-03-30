@@ -13,7 +13,7 @@
     "@svgr/webpack": "2.4.1",
     "adex-constants": "1.0.10",
     "adex-models": "1.0.9",
-    "adex-protocol-eth": "github:AdExNetwork/adex-protocol-eth#325b05398c8a29ea8c8f0465fa33f4fd67183408",
+    "adex-protocol-eth": "github:AdExNetwork/adex-protocol-eth#aa9099f044640edb5946e452751d93e1bd870570",
     "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#d77b001077a46c7cadf280f539a0a8d9c4e56e71",
     "autoprefixer": "7.1.6",
     "babel-core": "7.0.0-bridge.0",

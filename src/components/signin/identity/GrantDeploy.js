@@ -56,7 +56,7 @@ class GrantDeploy extends Component {
 		handleChange('walletAddr', walletData.address)
 	}
 
-	senIdentity = () => {
+	getIdentity = () => {
 		const { identity, actions } = this.props
 		const { email, coupon, walletAddr } = identity
 
@@ -97,9 +97,9 @@ class GrantDeploy extends Component {
 									variant='contained'
 									color='primary'
 									size='large'
-									onClick={this.senIdentity}
+									onClick={this.getIdentity}
 								>
-									{'SEND_GRANT_IDENTITY'}
+									{'GET_GRANT_IDENTITY'}
 								</Button>
 							}
 						</Grid>
