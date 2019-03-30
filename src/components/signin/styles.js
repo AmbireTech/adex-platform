@@ -29,6 +29,32 @@ export const styles = theme => {
 			marginTop: '1.5vh',
 			width: '17.92vh',
 			height: '6vh'
-		}
+		},
+		dialogPaper: {
+			height: '80vh',
+			margin: spacing * 2
+		},
+		noBg: {
+			background: 0,
+			boxShadow: 'none',
+			overflow: 'visible'
+		},
+		backdrop: {
+			backgroundColor: 'rgba(255, 255, 255, 0.5)'
+		},
+		content: {
+			display: 'flex',
+			flexDirection: 'column',
+			flex: '1 1 auto',
+			position: 'relative',
+			justifyContent: 'center',
+			padding: 0,
+			margin: `${spacing}px ${spacing}px ${spacing}px ${spacing}px`,
+			// '&:first-child': {
+			// 	paddingTop: spacing,
+			// },
+			overflow: 'visible'
+		},
+
 	}
 }

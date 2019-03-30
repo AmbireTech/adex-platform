@@ -5,9 +5,10 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
-// import SigninExternalWallet from 'components/signin/SigninExternalWallet'
+import SigninExternalWallet from 'components/signin/SigninExternalWallet'
+import ConnectHoc from 'components/signin/ConnectHoc'
 import { QuickIdentity, FullIdentity, DemoIdentity } from 'components/signin/identity/Identity'
-import authSelect from 'components/signin/auth-select/AuthSelect'
+import AuthSelect from 'components/signin/auth-select/AuthSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import Translate from 'components/translate/Translate'
 import scActions from 'services/smart-contracts/actions'
@@ -18,6 +19,10 @@ import checkGasData from 'services/store-data/gas'
 import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 
 const { getAccountMetamask } = scActions
+
+const ConnectedGrantIdentity = ConnectHoc(QuickIdentity)
+const ConnectedAuthSelect = ConnectHoc(AuthSelect)
+const ConnectedFullIdentity = ConnectHoc(FullIdentity)
 
 function PrivateRoute({ component: Component, auth, ...other }) {
 	return (
@@ -108,8 +113,11 @@ class Root extends Component {
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
-		// BOSS LEVEL 99
-		return this.props.auth !== nextProps.auth
+		// TODO: check if computedMatch or language change need to update
+		const authChanged = this.props.auth !== nextProps.auth
+		const locationChanged = JSON.stringify(this.props.location.pathname) !== JSON.stringify(nextProps.location.pathname)
+
+		return authChanged || locationChanged
 	}
 
 	render() {
@@ -117,9 +125,9 @@ class Root extends Component {
 			<Switch >
 				<PrivateRoute auth={this.props.auth} path="/dashboard/:side" component={Dashboard} />
 				{/* <Route exact path="/" component={SigninExternalWallet} /> */}
-				<Route exact path="/" component={authSelect} />
-				<Route exact path="/identity/quick" component={QuickIdentity} />
-				<Route exact path="/identity/full" component={FullIdentity} />
+				<Route exact path="/" component={(props) => <ConnectedAuthSelect {...props} noBackground />} />
+				<Route exact path="/identity/quick" component={ConnectedGrantIdentity} />
+				<Route exact path="/identity/full" component={ConnectedFullIdentity} />
 				<Route exact path="/identity/demo" component={DemoIdentity} />
 				<Route component={PageNotFound} />
 			</Switch >

@@ -10,8 +10,17 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
 class IdentitySteps extends Component {
+	constructor(props) {
+		super(props)
 
-	render() {
+		this.state = {
+			pages: this.mapPages()
+		}
+
+		// TODO: Check if it is possible to need state update
+	}
+
+	mapPages = () => {
 		let pages = []
 		const { GoBtn, CancelBtn, t, onSave, stepsId, stepsPages, stepsPreviewPage, validateIdBase, ...rest } = this.props
 		const cancelButton = () => <CancelBtn  {...rest} stepsId={stepsId} onSave={onSave} t={t} />
@@ -27,8 +36,12 @@ class IdentitySteps extends Component {
 			})
 		})
 
+		return pages
+	}
+
+	render() {
 		return (
-			<MaterialStepper pages={pages} />
+			<MaterialStepper pages={this.state.pages}/>
 		)
 	}
 }
@@ -41,7 +54,7 @@ function mapStateToProps(state) {
 	const persist = state.persist
 	// const memory = state.memory
 	return {
-		account: persist.account
+		// account: persist.account
 	}
 }
 

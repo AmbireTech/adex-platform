@@ -23,7 +23,7 @@ export default function IdentityHoc(Decorated) {
 			this.setState({ identity: nextProps.identity })
 		}
 
-		componentWillMount() {
+		componentDidMount() {
 			this.setState({ identity: this.props.identity })
 		}
 
@@ -51,6 +51,12 @@ export default function IdentityHoc(Decorated) {
 			})
 		}
 
+		cancel = () => {
+			const { resetIdentity } = this.props.actions
+			resetIdentity()
+			this.props.history.push('/')
+		}
+
 		render() {
 			const props = this.props
 			const { identity } = this.state
@@ -61,6 +67,7 @@ export default function IdentityHoc(Decorated) {
 					identity={identity}
 					save={this.save}
 					handleChange={this.handleChange}
+					cancel={this.cancel}
 				/>
 			)
 		}
