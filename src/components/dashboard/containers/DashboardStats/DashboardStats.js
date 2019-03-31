@@ -31,9 +31,9 @@ export class DashboardStats extends Component {
 		}
 	}
 
-	goToBids = (tab) => {
-		this.props.history.push('/dashboard/' + this.props.side + '/bids/' + tab)
-	}
+	// goToBids = (tab) => {
+	// 	this.props.history.push('/dashboard/' + this.props.side + '/bids/' + tab)
+	// }
 
 	goToAccount = () => {
 		this.props.history.push('/dashboard/' + this.props.side + '/account')
@@ -260,7 +260,7 @@ export class DashboardStats extends Component {
 			)
 		}
 
-		const stats = this.mapData(sideBids)
+		// const stats = this.mapData(sideBids)
 
 		return (
 			<div>
@@ -271,16 +271,16 @@ export class DashboardStats extends Component {
 							className={classnames(classes.dashboardCardBody)}
 						>
 							<CardContent>
-								<this.BidsStateChart
+								{/* <this.BidsStateChart
 									stats={stats}
-								/>
+								/> */}
 							</CardContent>
 						</Card>
 					</Grid>
 					<Grid item md={12} lg={6}>
-						<this.InfoStats
+						{/* <this.InfoStats
 							stats={stats}
-						/>
+						/> */}
 					</Grid>
 				</Grid>
 
@@ -296,21 +296,11 @@ DashboardStats.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-	const persist = state.persist
-	const memory = state.memory
-	const side = memory.nav.side
-	let sideBidsProp = ''
-	if (side === 'publisher') {
-		sideBidsProp = 'pubBids'
-	} else if (side === 'advertiser') {
-		sideBidsProp = 'advBids'
-	}
+	const { persist, memory } = state
 
 	return {
 		account: persist.account,
-		bidsIds: persist.bids.bidsIds,
-		side: memory.nav.side,
-		sideBids: persist.bids[sideBidsProp] || {}
+		side: memory.nav.side
 	}
 }
 
