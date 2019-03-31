@@ -16,7 +16,6 @@ import CopyIcon from '@material-ui/icons/FileCopy'
 import { styles } from './styles.js'
 import { getStatsValues } from 'helpers/accStatsHelpers'
 import scActions from 'services/smart-contracts/actions'
-import AirSwap from 'components/dashboard/forms/AirSwap'
 
 const { getAccountStats } = scActions
 // const RRButton = withReactRouterLink(Button)
@@ -25,7 +24,7 @@ class AccountInfo extends React.Component {
 
 	componentWillMount() {
 		this.props.actions.updateNav('navTitle', this.props.t('ACCOUNT'))
-		this.getStats()
+		// this.getStats()
 	}
 
 	getStats = () => {
@@ -37,7 +36,7 @@ class AccountInfo extends React.Component {
 	}
 
 	onSave = () => {
-		this.getStats()
+		// this.getStats()
 	}
 
 	render() {
@@ -105,7 +104,7 @@ class AccountInfo extends React.Component {
 					>
 						<ListItemText
 							primary={walletBalanceDai + ' DAI'}
-							secondary={t('WALLET_ADX_BALANCE')}
+							secondary={t('WALLET_DAI_BALANCE')}
 						/>
 						<div className={classes.itemActions}>
 							<WithdrawTokens
@@ -118,7 +117,6 @@ class AccountInfo extends React.Component {
 								className={classes.actionBtn}
 								size='small'
 							/>
-							<AirSwap />
 						</div>
 					</ListItem>
 					<ListDivider />
