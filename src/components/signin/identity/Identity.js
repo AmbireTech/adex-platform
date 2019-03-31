@@ -51,6 +51,7 @@ export const QuickIdentity = (props) =>
 	<IdentitySteps
 		{...props}
 		{...common}
+		stepsId='grant-identity'
 		stepsPages={[
 			{ title: 'GRANT_INFO', page: GrantInfo },
 			{ title: 'GRANT_DEPLOY', page: GrantDeploy, final: true },
@@ -67,6 +68,7 @@ export const FullIdentity = (props) =>
 	<IdentitySteps
 		{...props}
 		{...common}
+		stepsId='full-identity'
 		stepsPages={[
 			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
 			{ title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },

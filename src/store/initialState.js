@@ -4,9 +4,7 @@ import { items as ItemsConstants } from 'adex-constants'
 const { ItemsTypes } = ItemsConstants
 
 let initialState = {
-	account: {
-		account: new Account(),
-	},
+	account: new Account(),
 	signin: {
 		name: '',
 		email: '',
