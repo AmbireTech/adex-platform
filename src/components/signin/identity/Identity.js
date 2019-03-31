@@ -16,15 +16,16 @@ import IdentitySteps from './IdentitySteps'
 // import { withStyles } from '@material-ui/core/styles'
 // import { styles } from './styles'
 
-const GoBtn = ({ ...props }) => {
+const GoBtn = ({ waiting, save, t, ...rest }) => {
 	return (
 		<Button
 			color='primary'
-			onClick={props.save}
+			onClick={save}
+			disabled={waiting}
 		>
 			{/*TODO: withStyles */}
 			<SaveIcon style={{ marginRight: 8 }} />
-			{props.t('')}
+			{t('')}
 		</Button>
 	)
 }
