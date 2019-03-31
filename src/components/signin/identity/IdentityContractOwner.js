@@ -21,7 +21,7 @@ class IdentityContractAddress extends Component {
 		}
 	}
 
-	getSnapshotBeforeUpdate(prevProps, prevState) {
+	componentDidUpdate(prevProps, prevState, snapshot) {
 		if (prevProps.identity.identityContractOwner != this.props.identity.identityContractOwner) {
 			this.props.validate('identityContractOwner', {
 				isValid: !!this.props.identity.identityContractOwner,
