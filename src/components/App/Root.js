@@ -128,8 +128,8 @@ class Root extends Component {
 				<PrivateRoute auth={this.props.auth} path="/side-select" component={SideSelect} />
 				{/* <Route exact path="/" component={SigninExternalWallet} /> */}
 				<Route exact path="/" component={(props) => <ConnectedAuthSelect {...props} noBackground />} />
-				<Route exact path="/identity/quick" component={ConnectedGrantIdentity} />
-				<Route exact path="/identity/full" component={ConnectedFullIdentity} />
+				<Route exact path="/identity/quick" component={(props) => <ConnectedGrantIdentity {...props} noBackground />} />
+				<Route exact path="/identity/full" component={(props) => <ConnectedFullIdentity{...props} noBackground />} />
 				<Route exact path="/identity/demo" component={DemoIdentity} />
 				<Route component={PageNotFound} />
 			</Switch >

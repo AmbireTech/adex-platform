@@ -32,6 +32,17 @@ export const styles = theme => {
 		},
 		formControl: {
 			display: 'flex'
+		},
+		buttonProgressWrapper: {
+			margin: theme.spacing.unit,
+			position: 'relative',
+		},
+		buttonProgress: {
+			position: 'absolute',
+			top: '50%',
+			left: '50%',
+			marginTop: -12,
+			marginLeft: -12,
 		}
 	}
 }

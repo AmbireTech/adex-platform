@@ -33,8 +33,8 @@ class IdentityContractAddressEthDeploy extends Component {
     	// TODO: deployTx.gasPrice
 
     	const deployTx = getDeployTx({
-    		addr: identityContractOwner,
-    		privLevel: 3,
+    		addrs: [identityContractOwner],
+    		privLevels: [3],
     		feeTokenAddr: identityContractOwner,
     		feeBeneficiary: identityContractOwner,
     		feeTokenAmount: '0'

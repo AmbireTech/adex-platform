@@ -21,19 +21,33 @@ class IdentitySteps extends Component {
 	}
 
 	mapPages = () => {
-		let pages = []
-		const { GoBtn, CancelBtn, t, onSave, stepsId, stepsPages, stepsPreviewPage, validateIdBase, ...rest } = this.props
-		const cancelButton = () => <CancelBtn  {...rest} stepsId={stepsId} onSave={onSave} t={t} />
+		const {
+			GoBtn,
+			CancelBtn,
+			t,
+			onSave,
+			stepsId,
+			stepsPages = [],
+			stepsPreviewPage,
+			validateIdBase,
+			...rest
+		} = this.props
+
+		const cancelButton = () =>
+			<CancelBtn  {...rest} stepsId={stepsId} onSave={onSave} t={t} />
+
 		const validateId = (validateIdBase || '') + '-' + stepsId
 
-		stepsPages.map((page, index) => {
-			pages.push({
+		const pages = stepsPages.map((page, index) => {
+			return {
 				title: t(page.title),
 				cancelBtn: cancelButton,
 				component: ValidItemHoc(page.page),
 				props: { ...this.props, validateId: validateId + '-' + index },
-				completeBtn: page.final ? () => <GoBtn {...rest} stepsId={stepsId} onSave={onSave} t={t} /> : undefined
-			})
+				completeBtn: page.final
+					? () => <GoBtn {...rest} stepsId={stepsId} onSave={onSave} t={t} />
+					: undefined
+			}
 		})
 
 		return pages
@@ -41,7 +55,7 @@ class IdentitySteps extends Component {
 
 	render() {
 		return (
-			<MaterialStepper pages={this.state.pages}/>
+			<MaterialStepper pages={this.state.pages} />
 		)
 	}
 }
