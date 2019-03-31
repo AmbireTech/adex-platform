@@ -11,16 +11,13 @@ import ListDivider from '@material-ui/core/Divider'
 import Icon from '@material-ui/core/Icon'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
-import ChannelIcon from 'components/common/icons/ChannelIcon'
 import Translate from 'components/translate/Translate'
-import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, NewChannelDialog } from 'components/dashboard/forms/items/NewItems'
+import { NewUnitDialog, NewCampaignDialog, NewSlotDialog } from 'components/dashboard/forms/items/NewItems'
 import classnames from 'classnames'
 import packageJson from './../../../../package.json'
 import Anchor from 'components/common/anchor/anchor'
-import BidIcon from 'components/common/icons/BidIcon'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-// import GasPrice from 'components/dashboard/account/GasPrice'
 import { SideSwitch } from './SideSwitch'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import DashboardIcon from '@material-ui/icons/Dashboard'
@@ -51,15 +48,11 @@ class SideNav extends Component {
 		// TODO: test location
 		const location = this.props.location.pathname.split('/')[3]
 		const isAdvertiser = side === 'advertiser'
-		const collection = (isAdvertiser ? 'campaigns' : 'channels')
 		const items = (isAdvertiser ? 'units' : 'slots')
-		const NewCollectionBtn = (isAdvertiser ? NewCampaignDialog : NewChannelDialog)
 		const NewItemBtn = (isAdvertiser ? NewUnitDialog : NewSlotDialog)
-		const CollectionIcon = (isAdvertiser ? <CampaignIcon /> : <ChannelIcon />)
 		const itemsIcon = (isAdvertiser ? 'format_list_bulleted' : 'format_list_bulleted')
 		const t = this.props.t
 		const pendingTrsCount = (this.props.transactions.pendingTxs || []).length
-		const bidsAwaitingActionCount = this.props.bidsAwaitingActionCount
 		const classes = this.props.classes
 
 		return (
@@ -101,27 +94,32 @@ class SideNav extends Component {
 						</RRListItem>
 						<ListDivider
 						/>
-						<RRListItem
-							button
-							to={{ pathname: '/dashboard/' + side + '/' + collection }}
-							className={classnames({ [classes.active]: location === collection })}
-						>
-							<ListItemIcon>
-								{CollectionIcon}
-							</ListItemIcon>
-							<ListItemText inset primary={t(collection.toUpperCase())} />
-						</RRListItem>
-						<ListItem
-							className={classes.newItemBtn}
-						>
-							<NewCollectionBtn
-								className={classes.newItemBtn}
-								color='primary'
-								variant='raised'
-								// btnClasses={classes.newItemBtn}
-							/>
-						</ListItem>
-						<ListDivider />
+						{side === 'advertiser' &&
+							<div>
+								<RRListItem
+									button
+									to={{ pathname: '/dashboard/advertiser/campaigns' }}
+									className={classnames({ [classes.active]: location === 'campaigns' })}
+								>
+									<ListItemIcon>
+										<CampaignIcon />
+									</ListItemIcon>
+									<ListItemText inset primary={t('CAMPAIGNS')} />
+								</RRListItem>
+
+								<ListItem
+									className={classes.newItemBtn}
+								>
+									<NewCampaignDialog
+										className={classes.newItemBtn}
+										color='primary'
+										variant='raised'
+									// btnClasses={classes.newItemBtn}
+									/>
+								</ListItem>
+								<ListDivider />
+							</div>
+						}
 						<RRListItem
 							button
 							to={{ pathname: '/dashboard/' + side + '/' + items }}
@@ -143,25 +141,7 @@ class SideNav extends Component {
 						</ListItem>
 						<ListDivider
 						/>
-						<RRListItem
-							button
-							to={{ pathname: '/dashboard/' + side + '/bids' }}
-							className={classnames({ [classes.active]: location === 'bids' })}
-						>
-							<ListItemIcon>
-								<span>
-									{bidsAwaitingActionCount > 0 ?
-										<Badge
-											badgeContent={bidsAwaitingActionCount <= 9 ? bidsAwaitingActionCount : '9+'}
-											color="primary"
-											className={classnames(classes.actionCount)}
-										>
-											<BidIcon />
-										</Badge> : <BidIcon />}
-								</span>
-							</ListItemIcon>
-							<ListItemText inset primary={t('BIDS')} />
-						</RRListItem>
+
 						<RRListItem
 							button
 							to={{ pathname: '/dashboard/' + side + '/transactions' }}
@@ -216,7 +196,7 @@ class SideNav extends Component {
 								target='_blank'
 								href={process.env.ADEX_SITE_HOST}
 							>
-                                AdEx Network OÜ
+								AdEx Network OÜ
 							</Anchor>
 						</small>
 					</div>
@@ -227,7 +207,7 @@ class SideNav extends Component {
 								target='_blank'
 								href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_TOKEN_ADDR}
 							>
-                                AdEx (ADX) Token
+								AdEx (ADX) Token
 							</Anchor>
 						</small>
 						<small> / </small>
@@ -237,7 +217,7 @@ class SideNav extends Component {
 								target='_blank'
 								href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_EXCHANGE_ADDR}
 							>
-                                AdEx Exchange
+								AdEx Exchange
 							</Anchor>
 						</small>
 					</div>
@@ -248,7 +228,7 @@ class SideNav extends Component {
 								target='_blank'
 								href='https://github.com/AdExBlockchain/adex-dapp/blob/master/CHANGELOG.md'
 							>
-                                v.{packageJson.version}-beta
+								v.{packageJson.version}-beta
 							</Anchor>
 						</small>
 					</div>
@@ -263,23 +243,11 @@ SideNav.propTypes = {
 }
 
 function mapStateToProps(state) {
-	const persist = state.persist
-	const memory = state.memory
-	const side = memory.nav.side
-
-	let bidsKey = ''
-
-	if (side === 'advertiser') {
-		bidsKey = 'advBids'
-	} else if (side === 'publisher') {
-		bidsKey = 'pubBids'
-	}
-
+	const { persist, /*memory*/ } = state
 
 	return {
 		// account: persist.account,
 		transactions: persist.web3Transactions[persist.account._addr] || {},
-		bidsAwaitingActionCount: ((persist.bids[bidsKey] || {}).action || []).length
 	}
 }
 
