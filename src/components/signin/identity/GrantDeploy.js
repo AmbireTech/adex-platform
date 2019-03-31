@@ -21,7 +21,9 @@ class GrantDeploy extends Component {
 
 	componentDidMount() {			
 		this.validateIdentity()
-		this.initLocalWallet()
+		if(!this.props.identity.identityAddr) {
+			this.initLocalWallet()
+		}
 	}
 
 	componentDidUpdate(prevProps) {

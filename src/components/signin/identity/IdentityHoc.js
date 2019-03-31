@@ -14,17 +14,8 @@ export default function IdentityHoc(Decorated) {
 			this.save = this.save.bind(this);
 
 			this.state = {
-				identity: {},
 				ready: false
 			}
-		}
-
-		componentWillReceiveProps(nextProps) {
-			this.setState({ identity: nextProps.identity })
-		}
-
-		componentDidMount() {
-			this.setState({ identity: this.props.identity })
 		}
 
 		handleChange = (prop, value) => {
@@ -32,20 +23,20 @@ export default function IdentityHoc(Decorated) {
 		}
 
 		save = () => {
-			// console.log(this.state.identity)
+			const { identity, actions } = this.props
 			const {
 				identityAddr,
 				wallet,
 				email
-			} = this.state.identity
+			} = identity
 
 			const newWallet = { ...wallet }
 			newWallet.authType = AUTH_TYPES.GRANT.name
-			const identity = {
+			const accountIdentity = {
 				address: identityAddr
 			}
-			this.props.actions.createSession({
-				identity,
+			actions.createSession({
+				identity: accountIdentity,
 				wallet: newWallet,
 				email
 			})
@@ -58,12 +49,11 @@ export default function IdentityHoc(Decorated) {
 		}
 
 		render() {
-			const props = this.props
-			const { identity } = this.state
+			const { identity, ...rest } = this.props
 
 			return (
 				<Decorated
-					{...props}
+					{...rest}
 					identity={identity}
 					save={this.save}
 					handleChange={this.handleChange}
