@@ -1,6 +1,7 @@
 import * as types from 'constants/actionTypes'
 import { addSig, getSig } from 'services/auth/auth'
 import { getSession, checkSession } from 'services/adex-market/actions'
+import { updateSpinner } from './uiActions'
 import scActions from 'services/smart-contracts/actions'
 const { signAuthToken } = scActions
 
@@ -64,6 +65,8 @@ export function updateGasData({ gasData }) {
 
 export function createSession({ wallet, identity, email }) {
 	return async function (dispatch) {
+		updateSpinner('creating-session', true)(dispatch)
+
 		const newWallet = { ...wallet }
 		const sessionSignature = getSig({ addr: newWallet.address, mode: newWallet.authType }) || null
 		const hasSession = !!sessionSignature && (await checkSession({ authSig: sessionSignature, skipErrToast: true }))
@@ -95,13 +98,14 @@ export function createSession({ wallet, identity, email }) {
 			}
 		}
 
-		return dispatch({
-			type: types.UPDATE_ACCOUNT,
+		updateAccount({
 			ownProps: {
 				email: email,
 				wallet: newWallet,
 				identity: identity
 			}
-		})
+		})(dispatch)
+
+		updateSpinner('creating-session', false)(dispatch)
 	}
 }

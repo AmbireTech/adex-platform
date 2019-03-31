@@ -9,6 +9,7 @@ import SigninExternalWallet from 'components/signin/SigninExternalWallet'
 import ConnectHoc from 'components/signin/ConnectHoc'
 import { QuickIdentity, FullIdentity, DemoIdentity } from 'components/signin/identity/Identity'
 import AuthSelect from 'components/signin/auth-select/AuthSelect'
+import SideSelect from 'components/signin/side-select/SideSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import Translate from 'components/translate/Translate'
 import scActions from 'services/smart-contracts/actions'
@@ -124,6 +125,7 @@ class Root extends Component {
 		return (
 			<Switch >
 				<PrivateRoute auth={this.props.auth} path="/dashboard/:side" component={Dashboard} />
+				<PrivateRoute auth={this.props.auth} path="/side-select" component={SideSelect} />
 				{/* <Route exact path="/" component={SigninExternalWallet} /> */}
 				<Route exact path="/" component={(props) => <ConnectedAuthSelect {...props} noBackground />} />
 				<Route exact path="/identity/quick" component={ConnectedGrantIdentity} />

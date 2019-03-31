@@ -118,11 +118,12 @@ GrantDeploy.propTypes = {
 }
 
 function mapStateToProps(state) {
-	let persist = state.persist
-	let memory = state.memory
+	const { persist, memory} = state
+
 	return {
 		account: persist.account,
-		wallet: memory.wallet
+		wallet: memory.wallet,
+		spinner: memory.spinners['creating-session']
 	}
 }
 

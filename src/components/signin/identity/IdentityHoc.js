@@ -22,6 +22,12 @@ export default function IdentityHoc(Decorated) {
 			this.props.actions.updateIdentity(prop, value)
 		}
 
+		componentDidUpdate = () => {
+			if(this.props.account._wallet.authSig) {
+				this.props.history.push('/side-select')
+			}
+		}		
+
 		save = () => {
 			const { identity, actions } = this.props
 			const {
