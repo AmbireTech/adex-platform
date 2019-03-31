@@ -23,10 +23,10 @@ export default function IdentityHoc(Decorated) {
 		}
 
 		componentDidUpdate = () => {
-			if(this.props.account._wallet.authSig) {
+			if (this.props.account._wallet.authSig) {
 				this.props.history.push('/side-select')
 			}
-		}		
+		}
 
 		save = () => {
 			const { identity, actions } = this.props
@@ -55,7 +55,7 @@ export default function IdentityHoc(Decorated) {
 		}
 
 		render() {
-			const { identity, ...rest } = this.props
+			const { identity, spinner, ...rest } = this.props
 
 			return (
 				<Decorated
@@ -64,6 +64,7 @@ export default function IdentityHoc(Decorated) {
 					save={this.save}
 					handleChange={this.handleChange}
 					cancel={this.cancel}
+					waiting={spinner}
 				/>
 			)
 		}
@@ -76,11 +77,11 @@ export default function IdentityHoc(Decorated) {
 	}
 
 	function mapStateToProps(state, props) {
-		let persist = state.persist
-		let memory = state.memory
+		const { persist, memory } = state
 		return {
 			account: persist.account,
-			identity: memory.identity
+			identity: memory.identity,
+			spinner: memory.spinners['creating-session']
 		}
 	}
 

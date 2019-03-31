@@ -122,8 +122,7 @@ function mapStateToProps(state) {
 
 	return {
 		account: persist.account,
-		wallet: memory.wallet,
-		spinner: memory.spinners['creating-session']
+		wallet: memory.wallet
 	}
 }
 

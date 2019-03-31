@@ -3,19 +3,29 @@ import identityJson from './../smart-contracts/build/Identity.json'
 import { getIdentityDeployData, getContractAddrWithZeroNonce } from 'adex-protocol-eth/js'
 import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 
+const zeroAddr = '0x0000000000000000000000000000000000000000'
+
 export const getRandomSeed = () => {
 	const randomSeed = utils.randomBytes(64)
 	return randomSeed
 }
 
-export const getDeployTx = ({ addr, privLevel, feeTokenAddr, feeBeneficiary, feeTokenAmount }) => {
+export const getDeployTx = ({
+	feeTokenAddr = zeroAddr,
+	feeBeneficiary = zeroAddr,
+	feeTokenAmount = '0',
+	addrs,
+	privLevels,
+	regAddr = zeroAddr
+}) => {
 	const factory = new ContractFactory(identityJson.abi, identityJson.bytecode)
 	const deployTx = factory.getDeployTransaction(
-		addr,
-		privLevel,
 		feeTokenAddr,
 		feeBeneficiary,
 		feeTokenAmount,
+		addrs,
+		privLevels,
+		regAddr
 	)
 
 	// TODO: deployTx.gasPrice
