@@ -92,24 +92,24 @@ class Root extends Component {
 	}
 
 	componentWillUnmount() {
-		checkGasData.stop()
+		// checkGasData.stop()
 	}
 
 	componentWillMount() {
-		checkGasData.start()
-		this.checkForMetamaskAccountChange()
-		this.onMetamaskNetworkChanged()
+		// checkGasData.start()
+		// this.checkForMetamaskAccountChange()
+		// this.onMetamaskNetworkChanged()
 
-		if (window.ethereum) {
-			window.ethereum.on('accountsChanged', (accounts) => {
-				console.log('acc changed', accounts[0])
-				this.checkForMetamaskAccountChange()
-			})
-			window.ethereum.on('networkChanged', (network) => {
-				console.log('networkChanged', network)
-				this.onMetamaskNetworkChanged()
-			})
-		}
+		// if (window.ethereum) {
+		// 	window.ethereum.on('accountsChanged', (accounts) => {
+		// 		console.log('acc changed', accounts[0])
+		// 		this.checkForMetamaskAccountChange()
+		// 	})
+		// 	window.ethereum.on('networkChanged', (network) => {
+		// 		console.log('networkChanged', network)
+		// 		this.onMetamaskNetworkChanged()
+		// 	})
+		// }
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
@@ -141,13 +141,19 @@ Root.propTypes = {
 }
 
 function mapStateToProps(state) {
-	let persist = state.persist
-	let account = persist.account
-	// let memory = state.memory
+	const { persist } = state
+	const { account } = persist
+	const { _wallet, _identity } = account
+
+	const hasAuth = !!_wallet
+		&& !!_wallet.address
+		&& !!_wallet.authSig
+		&& !!_wallet.authType
+		&& !!_identity.address
+
 	return {
 		account: account,
-		// TODO: Fix auth with new account model
-		auth: !!account._addr && !!account._authSig && account._authType !== undefined
+		auth: hasAuth
 	}
 }
 
