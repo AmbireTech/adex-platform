@@ -17,37 +17,19 @@ import { checkCoupon } from 'services/adex-relayer/actions'
 class GrantInfo extends Component {
 
 	componentDidMount() {
-		
-		// // TEST ONLY (skipping prev step)
-		// this.props.handleChange('email', 'ivo.paunov@gmail.com')
-		// this.props.handleChange('password', 'passWord123')
-		// this.props.handleChange('coupon', 'ch3r787h4v9h3rouh3rf987jver9ujhIJUjuih83nh083d')
+		const {
+			email,
+			emailCheck,
+			password,
+			passwordCheck,
+			coupon
+		} = this.props
 
-		this.props.validate('email', {
-			isValid: !!this.props.identity.email,
-			err: { msg: 'ERR_NO_EMAIL' },
-			dirty: false
-		})
-		this.props.validate('emailCheck', {
-			isValid: !!this.props.identity.emailCheck,
-			err: { msg: 'ERR_NO_EMAIL_CHECK' },
-			dirty: false
-		})
-		this.props.validate('password', {
-			isValid: !!this.props.identity.password,
-			err: { msg: 'ERR_NO_PASSWORD' },
-			dirty: false
-		})
-		this.props.validate('passwordCheck', {
-			isValid: !!this.props.identity.passwordCheck,
-			err: { msg: 'ERR_NO_PASSWORD_CHECK' },
-			dirty: false
-		})
-		this.props.validate('coupon', {
-			isValid: !!this.props.identity.coupon,
-			err: { msg: 'ERR_NO_COUPON' },
-			dirty: false
-		})
+		this.validateEmail(email, false)
+		this.validateEmailCheck(emailCheck, false)
+		this.validatePassword(password, false)
+		this.validatePasswordCheck(passwordCheck, false)
+		this.validateCoupon(coupon, false)
 	}
 
 	validateEmail(email, dirty) {
@@ -127,14 +109,14 @@ class GrantInfo extends Component {
 					container
 					spacing={16}
 				>
-					<Grid item sm={12}>
+					<Grid item xs={12}>
 						<TextField
 							fullWidth
 							type='text'
 							required
 							label={t('coupon', { isProp: true })}
 							name='coupon'
-							value={identity.coupon}
+							value={identity.coupon || ''}
 							onChange={(ev) => handleChange('coupon', ev.target.value)}
 							onBlur={() => this.validateCoupon(identity.coupon, true)}
 							onFocus={() => this.validateCoupon(identity.coupon, false)}
@@ -147,14 +129,14 @@ class GrantInfo extends Component {
 							}
 						/>
 					</Grid>
-					<Grid item sm={12}>
+					<Grid item xs={12}>
 						<TextField
 							fullWidth
 							type='text'
 							required
 							label={t('email', { isProp: true })}
 							name='email'
-							value={identity.email}
+							value={identity.email || ''}
 							onChange={(ev) => handleChange('email', ev.target.value)}
 							onBlur={() => this.validateEmail(identity.email, true)}
 							onFocus={() => this.validateEmail(identity.email, false)}
@@ -167,14 +149,14 @@ class GrantInfo extends Component {
 							}
 						/>
 					</Grid>
-					<Grid item sm={12}>
+					<Grid item xs={12}>
 						<TextField
 							fullWidth
 							type='text'
 							required
 							label={t('emailCheck', { isProp: true })}
 							name='emailCheck'
-							value={identity.emailCheck}
+							value={identity.emailCheck || ''}
 							onChange={(ev) => handleChange('emailCheck', ev.target.value)}
 							onBlur={() => this.validateEmailCheck(identity.emailCheck, identity.email, true)}
 							onFocus={() => this.validateEmailCheck(identity.emailCheck, identity.email, false)}
@@ -187,14 +169,14 @@ class GrantInfo extends Component {
 							}
 						/>
 					</Grid>
-					<Grid item sm={12}>
+					<Grid item xs={12}>
 						<TextField
 							fullWidth
 							type='password'
 							required
 							label={t('password', { isProp: true })}
 							name='password'
-							value={identity.password}
+							value={identity.password || ''}
 							onChange={(ev) => handleChange('password', ev.target.value)}
 							onBlur={() => this.validatePassword(identity.password, true)}
 							onFocus={() => this.validatePassword(identity.password, false)}
@@ -207,14 +189,14 @@ class GrantInfo extends Component {
 							}
 						/>
 					</Grid>
-					<Grid item sm={12}>
+					<Grid item xs={12}>
 						<TextField
 							fullWidth
 							type='password'
 							required
 							label={t('passwordCheck', { isProp: true })}
 							name='passwordCheck'
-							value={identity.passwordCheck}
+							value={identity.passwordCheck || ''}
 							onChange={(ev) => handleChange('passwordCheck', ev.target.value)}
 							onBlur={() => this.validatePasswordCheck(identity.passwordCheck, identity.password, true)}
 							onFocus={() => this.validatePasswordCheck(identity.passwordCheck, identity.password, false)}

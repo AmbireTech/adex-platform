@@ -6,78 +6,158 @@ import actions from 'actions'
 import IdentityHoc from './IdentityHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
+import TextField from '@material-ui/core/TextField'
+import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import GasPrice from 'components/dashboard/account/GasPrice'
 import { getDeployTx, getRandomAddressForDeployTx } from 'services/idenity/contract-address'
+import { validEmail } from 'helpers/validators'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
 class IdentityContractAddressEthDeploy extends Component {
 
-	constructor(props, context) {
-		super(props, context)
-		this.state = {
+	componentDidMount() {
+		this.validateIdentity()
+	}
+
+	componentDidUpdate(prevProps) {
+		const currIdentity = this.props.identity.identityAddr
+		if (!!currIdentity &&
+			(currIdentity !== prevProps.identity.identityAddr)) {
+			this.validateIdentity()
 		}
 	}
 
-	componentDidMount() {
-		this.props.validate('identityContractAddress', {
-			isValid: !!this.props.identity.identityContractAddress,
-			err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
+	validateIdentity = () => {
+		const { validate, identity } = this.props
+		const { identityAddr } = identity
+
+		validate('identityAddr', {
+			isValid: !!identityAddr,
+			err: { msg: 'ERR_IDENTITY_NOT_GENERATED' },
 			dirty: false
 		})
 	}
 
-    getIdentityContractAddress = () => {
-    	const  identityContractOwner  = this.props.identity.account.addr
-    	// TODO: deployTx.gasPrice
+	validateEmail(email, dirty) {
+		const isValid = validEmail(email)
+		this.props.validate('email', {
+			isValid: isValid,
+			err: { msg: 'ERR_EMAIL' },
+			dirty: dirty
+		})
+	}
 
-    	const deployTx = getDeployTx({
-    		addrs: [identityContractOwner],
-    		privLevels: [3],
-    		feeTokenAddr: identityContractOwner,
-    		feeBeneficiary: identityContractOwner,
-    		feeTokenAmount: '0'
-    	})
+	validateEmailCheck(emailCheck, email, dirty) {
+		const isValid = !!emailCheck && !!email && (emailCheck === email)
+		this.props.validate('emailCheck', {
+			isValid: isValid,
+			err: { msg: 'ERR_EMAIL_CHECK' },
+			dirty: dirty
+		})
+	}
 
-    	const addrData = getRandomAddressForDeployTx({ deployTx })
-    	this.props.handleChange('identityContractAddress', addrData.idContractAddr)
-    	this.props.handleChange('identityContractTxData', addrData)
-    	this.props.validate('identityContractAddress', {
-    		isValid: !!addrData.idContractAddr,
-    		err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
-    		dirty: true
-    	})
-    }
+	getIdentityContractAddress = () => {
+		const { identityContractOwner } = this.props.identity
 
-    render() {
-    	const { identity, t, classes, handleChange } = this.props
-    	const { identityContractAddress } = identity || {}
+		// TODO: deployTx.gasPrice
 
-    	return (
-    		<div>
-    			<Grid
-    				container
-    				spacing={16}
-    			>
-    				<Grid item sm={6}>
-    					<GasPrice />
-    				</Grid>
-    				<Grid item sm={6}>
-    					<Button
-    						onClick={this.getIdentityContractAddress}
-    					>
-    						{'Get addr'}
-    					</Button>
-    					<div>
-    						{identityContractAddress || ''}
-    					</div>
+		const deployTx = getDeployTx({
+			addrs: [identityContractOwner],
+			privLevels: [3],
+			feeTokenAddr: identityContractOwner,
+			feeBeneficiary: identityContractOwner,
+			feeTokenAmount: '0'
+		})
 
-    				</Grid>
-    			</Grid>
-    		</div >
-    	)
-    }
+		const addrData = getRandomAddressForDeployTx({ deployTx })
+		this.props.handleChange('identityAddr', addrData.idContractAddr)
+		this.props.handleChange('identityTxData', addrData)
+	}
+
+	render() {
+		const { t, identity, handleChange, invalidFields } = this.props
+		const { identityAddr } = identity
+		// Errors
+		const { email, emailCheck } = invalidFields
+
+		return (
+			<div>
+				<Grid
+					container
+					spacing={16}
+				>
+					<Grid item xs={12}>
+						<TextField
+							fullWidth
+							type='text'
+							required
+							label={t('email', { isProp: true })}
+							name='email'
+							value={identity.email || ''}
+							onChange={(ev) => handleChange('email', ev.target.value)}
+							onBlur={() => this.validateEmail(identity.email, true)}
+							onFocus={() => this.validateEmail(identity.email, false)}
+							error={email && !!email.dirty}
+							maxLength={128}
+							helperText={
+								email && !!email.dirty ?
+									email.errMsg :
+									t('ENTER_VALID_EMAIL')
+							}
+						/>
+					</Grid>
+					<Grid item xs={12}>
+						<TextField
+							fullWidth
+							type='text'
+							required
+							label={t('emailCheck', { isProp: true })}
+							name='emailCheck'
+							value={identity.emailCheck || ''}
+							onChange={(ev) => handleChange('emailCheck', ev.target.value)}
+							onBlur={() => this.validateEmailCheck(identity.emailCheck, identity.email, true)}
+							onFocus={() => this.validateEmailCheck(identity.emailCheck, identity.email, false)}
+							error={emailCheck && !!emailCheck.dirty}
+							maxLength={128}
+							helperText={
+								emailCheck && !!emailCheck.dirty ?
+									emailCheck.errMsg :
+									t('ENTER_SAME_EMAIL')
+							}
+						/>
+					</Grid>
+					<Grid item xs={12}>
+						<GasPrice />
+					</Grid>
+					<Grid item xs={12}>
+						{!identityAddr
+							? <Button
+								variant='contained'
+								color='primary'
+								onClick={this.getIdentityContractAddress}
+							>
+								{t('GENERATE_IDENTITY_ADDRESS')}
+							</Button>
+							:
+							<div>
+								<Typography paragraph variant='subheading'>
+									{t('IDENTITY_CONTRACT_ADDRESS_INFO')}
+								</Typography>
+								<Typography paragraph variant='subheading'>
+									{t('IDENTITY_CONTRACT')}
+								</Typography>
+								<Typography paragraph variant='subheading'>
+									{identityAddr}
+								</Typography>
+							</div>
+						}
+					</Grid>
+				</Grid>
+			</div >
+		)
+	}
 }
 
 IdentityContractAddressEthDeploy.propTypes = {
