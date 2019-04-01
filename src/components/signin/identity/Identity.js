@@ -4,6 +4,7 @@ import IdentityHoc from './IdentityHoc'
 import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
 import IdentityContractAddressEthTransaction from './IdentityContractAddressEthTransaction'
 import IdentityContractOwner from './IdentityContractOwner'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import WalletInit from './WalletInit'
 import WalletCheck from './WalletCheck'
 import UserInfo from './UserInfo'
@@ -13,24 +14,25 @@ import CouponCheck from './CouponCheck'
 import SaveIcon from '@material-ui/icons/Save'
 import IdentitySteps from './IdentitySteps'
 // import Translate from 'components/translate/Translate'
-// import { withStyles } from '@material-ui/core/styles'
-// import { styles } from './styles'
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from './styles'
 
-const GoBtn = ({ waiting, save, t, ...rest }) => {
+const GoBtn = ({ waiting, save, t, classes, ...rest }) => {
 	return (
-		<Button
-			color='primary'
-			onClick={save}
-			disabled={waiting}
-		>
-			{/*TODO: withStyles */}
-			<SaveIcon style={{ marginRight: 8 }} />
-			{t('')}
-		</Button>
+		<span className={classes.buttonProgressWrapper}>
+			<Button
+				color='primary'
+				onClick={save}
+				disabled={waiting}
+			>
+				{t('LEST_GO')}
+			</Button>
+			{waiting && <CircularProgress size={24} className={classes.buttonProgress} />}
+		</span >
 	)
 }
 
-const GoBtnWithIdentity = IdentityHoc(GoBtn)
+const GoBtnWithIdentity = withStyles(styles)(IdentityHoc(GoBtn))
 
 const CancelBtn = ({ ...props }) => {
 	return (
