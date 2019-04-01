@@ -7,7 +7,7 @@ import IdentityHoc from './IdentityHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
-import { deployIdentityContract } from 'services/idenity/contract-address'
+import { deployIdentityContract } from 'services/smart-contracts/actions/identity'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -21,52 +21,58 @@ class IdentityContractAddressEthTransaction extends Component {
 		}
 	}
 
-    skipDeployIdentity = () => {
-    	// TODO
-    }
+	skipDeployIdentity = () => {
+		// TODO
+	}
 
-    deployIdentity = async () => {
-    	const { identity } = this.props
-    	const deployData = { ...identity.identityContractTxData }
-    	const result = await deployIdentityContract({
-    		deployData,
-    		authType: 'metamask',
-    		owner: identity.account.addr
-    	})
+	deployIdentity = async () => {
+		const { identity } = this.props
+		const deployData = { ...identity.identityTxData }
 
-    	console.log('result', result)
-    }
+		const { wallet } = identity
+		const account = {
+			_wallet: wallet,
+			_settings: {}
+		}
 
-    render() {
-    	const { identity, t, classes, handleChange } = this.props
-    	const { identityContractAddress } = identity || {}
+		const result = await deployIdentityContract({
+			deployData,
+			account
+		})
 
-    	return (
-    		<div>
-    			<Grid
-    				container
-    				spacing={16}
-    			>
-    				<Grid item sm={6}>
-    					<Button
-    						onClick={this.deployIdentity}
-    					>
-    						{'SEND_IDENTITY_TX_NOW'}
-    					</Button>
-    					<Button
-    						onClick={this.skipDeployIdentity}
-    					>
-    						{'SEND_IDENTITY_TX_LATER'}
-    					</Button>
-    					<div>
-    						{identityContractAddress || ''}
-    					</div>
+		console.log('result', result)
+	}
 
-    				</Grid>
-    			</Grid>
-    		</div >
-    	)
-    }
+	render() {
+		const { identity, t, classes, handleChange } = this.props
+		const { identityContractAddress } = identity || {}
+
+		return (
+			<div>
+				<Grid
+					container
+					spacing={16}
+				>
+					<Grid item sm={6}>
+						<Button
+							onClick={this.deployIdentity}
+						>
+							{'SEND_IDENTITY_TX_NOW'}
+						</Button>
+						<Button
+							onClick={this.skipDeployIdentity}
+						>
+							{'SEND_IDENTITY_TX_LATER'}
+						</Button>
+						<div>
+							{identityContractAddress || ''}
+						</div>
+
+					</Grid>
+				</Grid>
+			</div >
+		)
+	}
 }
 
 IdentityContractAddressEthTransaction.propTypes = {

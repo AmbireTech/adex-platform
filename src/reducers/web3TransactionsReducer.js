@@ -18,10 +18,10 @@ export default function web3TransactionsReducer(state = initialState.web3Transac
 	}
 
 	const updatePendingTxs = ({pTxs, newTx}) => {
-		if(newTx.status === 0 && pTxs.indexOf(newTx.trHash)){
-			pTxs.push(newTx.trHash)
+		if(newTx.status === 0 && pTxs.indexOf(newTx.txHash)){
+			pTxs.push(newTx.txHash)
 		}else {
-			pTxs = pTxs.filter((tx)=> tx !== newTx.trHash)
+			pTxs = pTxs.filter((tx)=> tx !== newTx.txHash)
 		}
 
 		return pTxs
@@ -54,7 +54,7 @@ export default function web3TransactionsReducer(state = initialState.web3Transac
 	case RESET_WEB3_TRANSACTION:
 		newTx = { ...initialState.web3Transactions.default }
 		newAddrTxs[action.trId] = newTx
-		newAddrTxs.pendingTxs = updatePendingTxs({pTxs: pendingTxs, newTx: {trHash: action.trId}})
+		newAddrTxs.pendingTxs = updatePendingTxs({pTxs: pendingTxs, newTx: {txHash: action.trId}})
 		newState[action.trId] = newTx
 		return newState
 	default:

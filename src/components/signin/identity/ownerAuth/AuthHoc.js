@@ -23,35 +23,28 @@ export default function AuthHoc(Decorated) {
 			}
 		}
 
-        signAuth = ({ addr, hdPath, addrIdx, authType, chainId }) => {
+        verifySignature = ({ addr, hdPath, addrIdx, authType, chainId }) => {
         	let signature = null
         	let mode = null
         	return signAuthToken({ userAddr: addr, authType, hdPath, addrIdx })
         		.then(({ sig, sig_mode, authToken, typedData, hash } = {}) => {
-        			const account = {
-        				addr,
+        			const wallet = {
+        				address: addr,
         				authType,
-        				hdPath,
-        				addrIdx,
-        				sig,
-        				sig_mode,
+        				hdWalletAddrPath: hdPath,
+        				hdWalletAddrIdx: addrIdx,
+        				// sig,
+        				signType: sig_mode,
         				authToken,
-        				typedData,
-        				hash
+        				// typedData,
+        				// hash
         			}
         			this.props.handleChange('identityContractOwner', addr)
-        			this.props.handleChange('account', account)
+        			this.props.handleChange('wallet', wallet)
         		})
         		.catch((err) => {
         			console.log('err', err)
         			this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_NO_IDENTITY_CONTRACT_OWNER'), timeout: 5000 })
-        		})
-        }
-
-        verifySignature = ({ addr, hdPath, addrIdx, authType, chainId }) => {
-        	return Promise.resolve()
-        		.then(() => {
-        			return this.signAuth({ addr, hdPath, addrIdx, authType, chainId })
         		})
         }
 
@@ -60,7 +53,7 @@ export default function AuthHoc(Decorated) {
         		<div>
         			<Decorated
         				{...this.props}
-        				updateAcc={this.updateAcc}
+        				// updateAcc={this.updateAcc}
         				verifySignature={this.verifySignature}
         			/>
         		</div>

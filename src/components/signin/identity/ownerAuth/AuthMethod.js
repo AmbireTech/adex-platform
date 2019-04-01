@@ -45,10 +45,10 @@ class AuthMethod extends Component {
 					<Tabs
 						value={this.state.tabIndex}
 						onChange={this.handleTabChange}
-						// scrollable
+						scrollable
 						scrollButtons='off'
 						indicatorColor='primary'
-						textColor='inhprimaryerit'
+						textColor='inherit'
 						variant='fullWidth'
 					>
 						<Tab

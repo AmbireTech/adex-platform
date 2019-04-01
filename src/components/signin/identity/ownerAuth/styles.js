@@ -53,8 +53,9 @@ export const styles = theme => {
 			backgroundColor: 'rgba(255, 255, 255, 0.5)'
 		},
 		tabLogo: {
-			// maxWidth: '100%',
+			maxWidth: '100%',
 			height: spacing * 4,
+			maxHeight: '100%',
 			width: 'auto'
 		},
 		tabLabel: {

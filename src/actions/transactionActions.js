@@ -25,12 +25,12 @@ export function resetNewTransaction({ trId }) {
 export function addWeb3Transaction({ trans, addr }) {
 	return function (dispatch) {
 
-		if (!trans || !trans.trHash || !addr) return
+		if (!trans || !trans.txHash || !addr) return
 
 		return dispatch({
 			type: types.ADD_WEB3_TRANSACTION,
 			value: trans,
-			trId: trans.trHash,
+			trId: trans.txHash,
 			addr: addr
 		})
 	}

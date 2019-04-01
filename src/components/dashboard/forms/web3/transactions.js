@@ -69,12 +69,12 @@ const txCommon = {
 export const WithdrawEth = (props) =>
 	<FormStepsWithDialog
 		{...props}
-		btnLabel="ACCOUNT_WITHDRAW_ETH_BTN"
-		saveBtnLabel='ACC_WITHDRAW_ETH_SAVE_BTN'
-		title="ACCOUNT_WITHDRAW_ETH_TITLE"
-		stepsId='withdrawEth'
+		btnLabel="ACCOUNT_TRANSFER_ETH_BTN"
+		saveBtnLabel='ACC_TRANSFER_ETH_SAVE_BTN'
+		title="ACCOUNT_TRANSFER_ETH_TITLE"
+		stepsId='transferEthFromWallet'
 		{...txCommon}
-		stepsPages={[{ title: 'ACCOUNT_WITHDRAW_ETH_STEP', page: WithdrawStep }]}
+		stepsPages={[{ title: 'ACCOUNT_TRANSFER_ETH_STEP', page: WithdrawStep }]}
 		saveFn={({ acc, transaction } = {}) => {
 			return withdrawEth(
 				{
@@ -149,7 +149,7 @@ export const AcceptBid = (props) =>
 					gas: transaction.gas
 				})
 				.then((res) => {
-					sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+					sendBidState({ bidId: res.bidId, state: res.state, txHash: res.txHash, authSig: acc._authSig })
 					return res
 				})
 		}}
@@ -185,7 +185,7 @@ export const CancelBid = (props) =>
 					gas: transaction.gas
 				})
 				.then((res) => {
-					sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+					sendBidState({ bidId: res.bidId, state: res.state, txHash: res.txHash, authSig: acc._authSig })
 					return res
 				})
 		}}
@@ -224,7 +224,7 @@ export const VerifyBid = (props) =>
 					side: transaction.side
 				})
 				.then((res) => {
-					sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+					sendBidState({ bidId: res.bidId, state: res.state, txHash: res.txHash, authSig: acc._authSig })
 					return res
 				})
 		}}
@@ -262,7 +262,7 @@ export const GiveupBid = (props) =>
 					gas: transaction.gas,
 				})
 				.then((res) => {
-					sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+					sendBidState({ bidId: res.bidId, state: res.state, txHash: res.txHash, authSig: acc._authSig })
 					return res
 				})
 		}}
@@ -299,7 +299,7 @@ export const RefundBid = (props) =>
 					gas: transaction.gas,
 				})
 				.then((res) => {
-					sendBidState({ bidId: res.bidId, state: res.state, trHash: res.trHash, authSig: acc._authSig })
+					sendBidState({ bidId: res.bidId, state: res.state, txHash: res.txHash, authSig: acc._authSig })
 					return res
 				})
 		}}
