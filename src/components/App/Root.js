@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
-import SigninExternalWallet from 'components/signin/SigninExternalWallet'
 import ConnectHoc from 'components/signin/ConnectHoc'
 import { QuickIdentity, FullIdentity, DemoIdentity } from 'components/signin/identity/Identity'
 import AuthSelect from 'components/signin/auth-select/AuthSelect'
@@ -126,7 +125,6 @@ class Root extends Component {
 			<Switch >
 				<PrivateRoute auth={this.props.auth} path="/dashboard/:side" component={Dashboard} />
 				<PrivateRoute auth={this.props.auth} path="/side-select" component={SideSelect} />
-				{/* <Route exact path="/" component={SigninExternalWallet} /> */}
 				<Route exact path="/" component={(props) => <ConnectedAuthSelect {...props} noBackground />} />
 				<Route exact path="/identity/quick" component={(props) => <ConnectedGrantIdentity {...props} noBackground />} />
 				<Route exact path="/identity/full" component={(props) => <ConnectedFullIdentity{...props} noBackground />} />
