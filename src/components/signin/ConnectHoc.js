@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import PropTypes, { node } from 'prop-types'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
@@ -7,10 +7,6 @@ import Logo from 'components/common/icons/AdexIconTxt'
 import Translate from 'components/translate/Translate'
 import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import SideSelect from 'components/signin/side-select/SideSelect'
-import AuthMethod from 'components/signin/auth/AuthMethod'
-import { getSig } from 'services/auth/auth'
 import classnames from 'classnames'
 import packageJson from './../../../package.json'
 import { withStyles } from '@material-ui/core/styles'
@@ -21,7 +17,6 @@ export default function ConnectHoc(Decorated) {
 
 		render() {
 			const { classes, t, noBackground, ...rest } = this.props
-			console.log('rest', rest)
 			return (
 				<div
 					className={classes.signinContainer}
@@ -75,7 +70,6 @@ export default function ConnectHoc(Decorated) {
 		actions: PropTypes.object.isRequired,
 	}
 
-	// 
 	function mapStateToProps(state) {
 		// const persist = state.persist
 		// const memory = state.memory
