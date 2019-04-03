@@ -4,13 +4,8 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Translate from 'components/translate/Translate'
-import { signToken, checkAuth } from 'services/adex-node/actions'
-import scActions from 'services/smart-contracts/actions'
-import { addSig, getSig } from 'services/auth/auth'
 import IdentityHoc from '../IdentityHoc'
 import ValidItemHoc from 'components/common/stepper/ValidItemHoc'
-
-const { signAuthToken } = scActions
 
 export default function AuthHoc(Decorated) {
 
@@ -23,42 +18,38 @@ export default function AuthHoc(Decorated) {
 			}
 		}
 
-        verifySignature = ({ addr, hdPath, addrIdx, authType, chainId }) => {
-        	let signature = null
-        	let mode = null
-        	return signAuthToken({ userAddr: addr, authType, hdPath, addrIdx })
-        		.then(({ sig, sig_mode, authToken, typedData, hash } = {}) => {
-        			const wallet = {
-        				address: addr,
-        				authType,
-        				hdWalletAddrPath: hdPath,
-        				hdWalletAddrIdx: addrIdx,
-        				// sig,
-        				signType: sig_mode,
-        				authToken,
-        				// typedData,
-        				// hash
-        			}
-        			this.props.handleChange('identityContractOwner', addr)
-        			this.props.handleChange('wallet', wallet)
-        		})
-        		.catch((err) => {
-        			console.log('err', err)
-        			this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_NO_IDENTITY_CONTRACT_OWNER'), timeout: 5000 })
-        		})
-        }
+		updateWallet = ({
+			address,
+			authType,
+			hdWalletAddrPath,
+			hdWalletAddrIdx,
+			chainId,
+			signType
+		}) => {
+			const wallet = {
+				address,
+				authType,
+				hdWalletAddrPath,
+				hdWalletAddrIdx,
+				chainId,
+				signType
+			}
 
-        render() {
-        	return (
-        		<div>
-        			<Decorated
-        				{...this.props}
-        				// updateAcc={this.updateAcc}
-        				verifySignature={this.verifySignature}
-        			/>
-        		</div>
-        	)
-        }
+			this.props.handleChange('identityContractOwner', address)
+			this.props.handleChange('wallet', wallet)
+		}
+
+		render() {
+			return (
+				<div>
+					<Decorated
+						{...this.props}
+						// updateAcc={this.updateAcc}
+						updateWallet={this.updateWallet}
+					/>
+				</div>
+			)
+		}
 	}
 
 	Auth.propTypes = {
