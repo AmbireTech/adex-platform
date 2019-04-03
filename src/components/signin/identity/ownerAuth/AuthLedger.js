@@ -12,6 +12,7 @@ import ListItem from '@material-ui/core/ListItem'
 import Typography from '@material-ui/core/Typography'
 import { getAddressBalances } from 'services/smart-contracts/actions/stats'
 import AuthHoc from './AuthHoc'
+import Helper from 'helpers/miscHelpers'
 import { AUTH_TYPES } from 'constants/misc'
 import { AddrItem } from './AuthCommon'
 import {
@@ -43,45 +44,46 @@ class AuthLedger extends Component {
 	connectLedger = async () => {
 
 		this.setState({ waitingLedgerAction: true }, async () => {
+			try {
+				const { provider } = await getEthers(AUTH_TYPES.LEDGER.name)
 
-			const {
-				provider
-			} = await getEthers(AUTH_TYPES.LEDGER.name)
-
-			const account = {
-				_wallet: {
-					authType: AUTH_TYPES.LEDGER.name
+				const account = {
+					_wallet: {
+						authType: AUTH_TYPES.LEDGER.name
+					}
 				}
-			}
-			const signer = await getSigner({ account, provider })
-			const addresses = await signer.getAddresses()
+				const ledgerSigner = await getSigner({ account, provider })
+				const addresses = await ledgerSigner.getAddresses({ from: 0, to: 19 })
 
-			const allAddressesData = addresses.map(address =>
-				getAddressBalances({ address, authType: AUTH_TYPES.LEDGER.name })
-			)
+				const allAddressesData = addresses.map(address =>
+					getAddressBalances({ address, authType: AUTH_TYPES.LEDGER.name })
+				)
 
-			this.setState({ waitingAddrsData: true }, async () => {
-				const results = await Promise.all(allAddressesData)
+				this.setState({ waitingAddrsData: true }, async () => {
+					const results = await Promise.all(allAddressesData)
 
-				this.setState({
-					hdPath: signer.path,
-					addresses: results,
-					waitingAddrsData: false,
-					waitingLedgerAction: false
+					this.setState({
+						hdPath: ledgerSigner.path,
+						addresses: results,
+						waitingAddrsData: false,
+						waitingLedgerAction: false
+					})
 				})
-
-				// TODO: catch
-				// .catch((err) => {
-				// 	this.setState({ waitingLedgerAction: false, waitingAddrsData: false })
-				// 	this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_LEDGER', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
-				// })
-			})
+			} catch (err) {
+				console.error('Error: catch', err)
+				this.setState({ waitingLedgerAction: false, waitingAddrsData: false })
+				this.props.actions.addToast({
+					type: 'cancel',
+					action: 'X',
+					label: this.props.t(
+						'ERR_AUTH_LEDGER',
+						{
+							args: [Helper.getErrMsg(err)]
+						}),
+					timeout: 5000
+				})
+			}
 		})
-		// .catch((err) => {
-		// 	this.setState({ waitingLedgerAction: false, waitingAddrsData: false })
-		// 	this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_LEDGER', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
-		// })
-
 	}
 
 	AddressSelect = ({ addresses, waitingLedgerAction, t, classes, ...rest }) => {
@@ -207,8 +209,9 @@ AuthLedger.propTypes = {
 
 function mapStateToProps(state) {
 	const { persist } = state
+	const { account } = persist
 	return {
-		account: persist.account
+		account
 	}
 }
 
