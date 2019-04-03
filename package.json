@@ -49,7 +49,7 @@
     "file-loader": "2.0.0",
     "fork-ts-checker-webpack-plugin-alt": "0.4.14",
     "fs-extra": "7.0.0",
-    "hdkey": "^0.8.0",
+    "hdkey": "^1.1.1",
     "history": "^4.7.2",
     "html-webpack-plugin": "4.0.0-alpha.2",
     "identity-obj-proxy": "3.0.0",
