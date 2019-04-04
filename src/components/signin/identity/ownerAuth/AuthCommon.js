@@ -5,7 +5,7 @@ import { styles } from './styles'
 import { utils } from 'ethers'
 
 export const addrItem = ({ stats, t, classes }) => {
-	const { walletBalanceEth, walletBalanceDai, address } = stats
+	const { balanceEth, balanceDai, address } = stats
 
 	return (
 		<ListItemText
@@ -14,11 +14,11 @@ export const addrItem = ({ stats, t, classes }) => {
 				<span className={classes.addrInfo}>
 					<span>
 						<span> ETH </span>
-						<strong> {utils.formatEther(walletBalanceEth)} </strong>
+						<strong> {utils.formatEther(balanceEth)} </strong>
 					</span>
 					<span>
 						<span> DAI </span>
-						<strong> {utils.formatEther(walletBalanceDai)} </strong>
+						<strong> {utils.formatEther(balanceDai)} </strong>
 					</span>
 				</span>
 			}

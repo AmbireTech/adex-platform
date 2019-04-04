@@ -57,13 +57,14 @@ class AuthTrezor extends Component {
 
 				const addresses = await trezorSigner.getAddresses({ from: 0, to: 19 })
 
-				const allAddressesData = addresses.payload.map(({ address }) =>
+				const allAddressesData = addresses.payload.map((address) =>
 					getAddressBalances({ address, authType: AUTH_TYPES.TREZOR.name })
 				)
 
 				this.setState({ waitingAddrsData: true }, async () => {
 					const results = await Promise.all(allAddressesData)
 
+					console.log('result', results)
 					this.setState({
 						hdPath: trezorSigner.path,
 						addresses: results,
@@ -107,7 +108,7 @@ class AuthTrezor extends Component {
 							<ListItem
 								classes={{ root: classes.addrListItem }}
 								key={res.address}
-								onClick={() => this.onAddrSelect(res.address, index)}
+								onClick={() => this.onAddrSelect(res, index)}
 								selected={this.state.selectedAddress === res.address}
 							>
 								<AddrItem stats={res} t={t} address={res.address} />
@@ -119,11 +120,20 @@ class AuthTrezor extends Component {
 		)
 	}
 
-	onAddrSelect = (address, hdWalletAddrIdx) => {
+	onAddrSelect = (addrData, hdWalletAddrIdx) => {
+		const {
+			address,
+			path,
+			balanceEth,
+			balanceDai,
+		} = addrData
 		this.props.updateWallet({
 			address,
 			authType: AUTH_TYPES.TREZOR.name,
-			hdWalletAddrPath: this.state.hdPath, // TODO: get it from address result
+			path,
+			balanceEth,
+			balanceDai,
+			hdWalletAddrPath: this.state.hdPath,
 			hdWalletAddrIdx,
 			signType: AUTH_TYPES.TREZOR.signType
 		})

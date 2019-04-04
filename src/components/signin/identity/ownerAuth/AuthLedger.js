@@ -102,10 +102,10 @@ class AuthLedger extends Component {
 							<ListItem
 								classes={{ root: classes.addrListItem }}
 								key={res.address}
-								onClick={() => this.onAddrSelect(res.address, index)}
+								onClick={() => this.onAddrSelect(res, index)}
 								selected={this.state.selectedAddress === res.address}
 							>
-								<AddrItem stats={res} t={t} address={res.address} />
+								<AddrItem stats={res} t={t}/>
 							</ListItem>
 						)}
 					</List>
@@ -114,11 +114,21 @@ class AuthLedger extends Component {
 		)
 	}
 
-	onAddrSelect = (address, hdWalletAddrIdx) => {
+	onAddrSelect = (addrData, hdWalletAddrIdx) => {
+		const {
+			address,
+			path,
+			balanceEth,
+			balanceDai,
+		} = addrData
+
 		this.props.updateWallet({
 			address,
 			authType: AUTH_TYPES.LEDGER.name,
-			hdWalletAddrPath: this.state.hdPath, // TODO: get it from address result
+			path,
+			balanceEth,
+			balanceDai,
+			hdWalletAddrPath: this.state.hdPath,
 			hdWalletAddrIdx,
 			signType: AUTH_TYPES.LEDGER.signType
 		})
