@@ -45,8 +45,6 @@ export default class TrezorSigner extends Signer {
 			txProps.value = utils.hexlify(0)
 		}
 
-		const txProps = await utils.resolveProperties(params)
-
 		const { success, payload } = await TrezorConnect
 			.ethereumSignTransaction({
 				path: this.path,
