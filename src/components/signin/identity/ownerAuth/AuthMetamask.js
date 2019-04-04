@@ -41,13 +41,11 @@ class AuthMetamask extends Component {
 		this.setState({ waitingAddrsData: true }, async () => {
 			const authType = AUTH_TYPES.METAMASK.name
 			const { provider } = await getEthers(authType)
-			const account = {
-				_wallet: {
-					authType: authType
-				}
+			const wallet = {
+				authType: authType
 			}
 
-			const metamaskSigner = await getSigner({ account, provider })
+			const metamaskSigner = await getSigner({ wallet, provider })
 			const address = await metamaskSigner.getAddress()
 			const stats = await getAddressBalances({ address: { address }, authType })
 

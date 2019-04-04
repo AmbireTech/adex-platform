@@ -3,6 +3,7 @@ import { addSig, getSig } from 'services/auth/auth'
 import { getSession, checkSession } from 'services/adex-market/actions'
 import { updateSpinner } from './uiActions'
 import scActions from 'services/smart-contracts/actions'
+import { getAuthSig } from 'services/smart-contracts/actions/ethers'
 const { signAuthToken } = scActions
 
 // MEMORY STORAGE
@@ -67,25 +68,35 @@ export function createSession({ wallet, identity, email }) {
 	return async function (dispatch) {
 		updateSpinner('creating-session', true)(dispatch)
 
+		// await new Promise(resolve => setTimeout(resolve, 5000))
+
 		const newWallet = { ...wallet }
-		const sessionSignature = getSig({ addr: newWallet.address, mode: newWallet.authType }) || null
-		const hasSession = !!sessionSignature && (await checkSession({ authSig: sessionSignature, skipErrToast: true }))
+		const sessionSignature = getSig({
+			addr: newWallet.address,
+			mode: newWallet.authType
+		}) || null
+
+		const hasSession = !!sessionSignature
+			&& (await checkSession({
+				authSig: sessionSignature,
+				skipErrToast: true
+			}))
 
 		if (hasSession) {
 			newWallet.authSig = sessionSignature
 		} else {
-			const { sig, sig_mode, authToken, hash, typedData } = await signAuthToken({
-				userAddr: newWallet.address,
-				authType: newWallet.authType,
-				hdPath: newWallet.hdWalletAddrPath,
-				addrIdx: newWallet.hdWalletAddrPath,
-				privateKey: newWallet.privateKey
-			})
+			const {
+				signature,
+				mode,
+				authToken,
+				hash,
+				typedData
+			} = await getAuthSig({ wallet: newWallet })
 
 			const { status, expiryTime } = await getSession({
 				identity: identity.address,
-				mode: sig_mode,
-				signature: sig,
+				mode: mode,
+				signature: signature,
 				authToken: authToken,
 				hash,
 				typedData,
@@ -93,8 +104,13 @@ export function createSession({ wallet, identity, email }) {
 			})
 
 			if (status === 'OK') {
-				addSig({ addr: wallet.address, sig, mode: wallet.authType, expiryTime: expiryTime })
-				newWallet.authSig = sig
+				addSig({
+					addr: wallet.address,
+					sig: signature,
+					mode: wallet.authType,
+					expiryTime: expiryTime
+				})
+				newWallet.authSig = signature
 			}
 		}
 

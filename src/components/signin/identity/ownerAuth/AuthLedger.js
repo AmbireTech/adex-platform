@@ -47,12 +47,11 @@ class AuthLedger extends Component {
 			try {
 				const { provider } = await getEthers(AUTH_TYPES.LEDGER.name)
 
-				const account = {
-					_wallet: {
-						authType: AUTH_TYPES.LEDGER.name
-					}
+				const wallet = {
+					authType: AUTH_TYPES.LEDGER.name
 				}
-				const ledgerSigner = await getSigner({ account, provider })
+
+				const ledgerSigner = await getSigner({ wallet, provider })
 				const addresses = await ledgerSigner.getAddresses({ from: 0, to: 19 })
 
 				const allAddressesData = addresses.map(address =>
@@ -105,7 +104,7 @@ class AuthLedger extends Component {
 								onClick={() => this.onAddrSelect(res, index)}
 								selected={this.state.selectedAddress === res.address}
 							>
-								<AddrItem stats={res} t={t}/>
+								<AddrItem stats={res} t={t} />
 							</ListItem>
 						)}
 					</List>
