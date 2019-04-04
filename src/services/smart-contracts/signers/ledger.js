@@ -60,8 +60,8 @@ export default class LedgerSigner extends Signer {
 		return addresses
 	}
 
-	signTx = async (tx) => {
-		const txProps = await utils.resolveProperties(tx)
+	signTx = async (params) => {
+		const txProps = await utils.resolveProperties(params)
 		const txUnsigned = utils.serializeTransaction(txProps)
 			.substring(2)
 
@@ -95,8 +95,8 @@ export default class LedgerSigner extends Signer {
 	* Actually it show the tx but does not return value after 
 	* confirmation on the device
 	*/
-	sendTransaction = async (tx) => {
-		const txSigned = await this.signTx(tx)
+	sendTransaction = async (params) => {
+		const txSigned = await this.signTx(params)
 		const txData = this.provider.sendTransaction(txSigned)
 		return txData
 	}

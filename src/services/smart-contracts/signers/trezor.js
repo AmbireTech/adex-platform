@@ -14,7 +14,6 @@ export default class TrezorSigner extends Signer {
 		super()
 		this._provider = provider
 		this._path = opts.path || DEFAULT_HD_PATH
-
 	}
 
 	get path() { return this._path }
@@ -39,18 +38,43 @@ export default class TrezorSigner extends Signer {
 		return { success, payload }
 	}
 
-	sign = async (transaction) => {
-		const tx = await utils.resolveProperties(transaction)
-		const unsignedTx = utils.serializeTransaction(tx)
-			.substring(2)
+	signTx = async (params) => {
+		const txProps = await utils.resolveProperties(params)
 
-		const signature = await TrezorConnect
+		if (!txProps.value) {
+			txProps.value = utils.hexlify(0)
+		}
+
+		const txProps = await utils.resolveProperties(params)
+
+		const { success, payload } = await TrezorConnect
 			.ethereumSignTransaction({
 				path: this.path,
-				transaction: unsignedTx
+				transaction: txProps
 			})
 
-		return signature
+		if (success) {
+			const signature = {
+				r: payload.r,
+				s: payload.s,
+				v: parseInt(payload.v)
+			}
+
+			const txSigned = utils.serializeTransaction(
+				txProps,
+				signature
+			)
+
+			return txSigned
+		} else {
+			throw new Error(payload.error)
+		}
+	}
+
+	sendTransaction = async (params) => {
+		const txSigned = await this.signTx(params)
+		const txData = this.provider.sendTransaction(txSigned)
+		return txData
 	}
 
 	signMessage = async (message, opts = {}) => {
@@ -80,5 +104,9 @@ export default class TrezorSigner extends Signer {
 				error: payload.error
 			}
 		}
+	}
+
+	connect = (provider) => {
+		return new TrezorSigner(provider, { path: this.path })
 	}
 }
