@@ -36,7 +36,10 @@ export default class LedgerSigner extends Signer {
 				.fromExtendedKey(derivedKey)
 				.address
 
-			addrs.push({ address: addr, path: `${this.path}/${index}` })
+			addrs.push({
+				address: addr,
+				path: `${this.path}/${index}`
+			})
 		}
 
 		return addrs
@@ -57,6 +60,47 @@ export default class LedgerSigner extends Signer {
 		return addresses
 	}
 
+	signTx = async (tx) => {
+		const txProps = await utils.resolveProperties(tx)
+		const txUnsigned = utils.serializeTransaction(txProps)
+			.substring(2)
+
+		const transport = await this._transport.create()
+		const eth = new LedgerEth(transport)
+		const { r, s, v } = await eth.signTransaction(
+			this.path,
+			txUnsigned
+		)
+
+		const signature = {
+			r: '0x' + r,
+			s: '0x' + s,
+			v
+		}
+
+		const txSigned = utils.serializeTransaction(
+			txProps,
+			signature
+		)
+
+		return txSigned
+	}
+
+	/*
+	* TODO: may not work.
+	* The ledger device or u2f seems to broken
+	* Can list the addresses
+	* Can sign messages
+	* Signs transactions
+	* Actually it show the tx but does not return value after 
+	* confirmation on the device
+	*/
+	sendTransaction = async (tx) => {
+		const txSigned = await this.signTx(tx)
+		const txData = this.provider.sendTransaction(txSigned)
+		return txData
+	}
+
 	signMessage = async (message, opts = {}) => {
 
 		if (!opts.hex) {
@@ -72,7 +116,8 @@ export default class LedgerSigner extends Signer {
 		const transport = await this._transport.create()
 		const eth = new LedgerEth(transport)
 
-		const signature = await eth.signPersonalMessage(this.path, message)
+		const signature = await eth
+			.signPersonalMessage(this.path, message)
 		signature.r = '0x' + signature.r
 		signature.s = '0x' + signature.s
 
@@ -86,5 +131,9 @@ export default class LedgerSigner extends Signer {
 		}
 
 		return res
+	}
+
+	connect = (provider) => {
+		return new LedgerSigner(provider, { path: this.path })
 	}
 }
