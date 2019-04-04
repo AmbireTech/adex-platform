@@ -12,7 +12,7 @@
     "@material-ui/lab": "^3.0.0-alpha.30",
     "@svgr/webpack": "2.4.1",
     "adex-constants": "1.0.10",
-    "adex-models": "1.0.9",
+    "adex-models": "git+https://git@github.com/AdExBlockchain/adex-models.git#91ca7cc323cda449c61232b46c4a9b6d2a568216",
     "adex-protocol-eth": "github:AdExNetwork/adex-protocol-eth#aa9099f044640edb5946e452751d93e1bd870570",
     "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#d77b001077a46c7cadf280f539a0a8d9c4e56e71",
     "autoprefixer": "7.1.6",
