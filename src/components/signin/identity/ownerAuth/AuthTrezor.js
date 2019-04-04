@@ -47,13 +47,12 @@ class AuthTrezor extends Component {
 		this.setState({ waitingTrezorAction: true }, async () => {
 			try {
 				const { provider } = await getEthers(AUTH_TYPES.TREZOR.name)
-				const account = {
-					_wallet: {
-						authType: AUTH_TYPES.TREZOR.name
-					}
+
+				const wallet = {
+					authType: AUTH_TYPES.TREZOR.name
 				}
 
-				const trezorSigner = await getSigner({ provider, account })
+				const trezorSigner = await getSigner({ provider, wallet })
 
 				const addresses = await trezorSigner.getAddresses({ from: 0, to: 19 })
 

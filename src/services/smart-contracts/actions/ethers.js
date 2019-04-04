@@ -4,19 +4,21 @@ import { getEthers } from 'services/smart-contracts/ethers'
 import { ethers } from 'ethers'
 import { TO_HEX_PAD } from 'services/smart-contracts/constants'
 import { getRsvFromSig, getTypedDataHash } from 'services/smart-contracts/utils'
-import trezorConnect from 'third-party/trezor-connect'
-import ledgerTransport from '@ledgerhq/hw-transport-u2f'
-import ledgerEth from "@ledgerhq/hw-app-eth"
 import rlp from 'rlp'
 import { exchange as EXCHANGE_CONSTANTS } from 'adex-constants'
 import { AUTH_TYPES } from 'constants/misc'
 import actions from 'actions'
 import { translate } from 'services/translations/translations'
+import TrezorSigner from 'services/smart-contracts/signers/trezor'
+import LedgerSigner from 'services/smart-contracts/signers/ledger'
+
+const ledgerTransport = {}
+const ledgerEth = {}
 const ethereumjs = require('ethereumjs-util')
 const { toBuffer, ecrecover, pubToAddress } = ethereumjs
 
 
-const TrezorConnect = trezorConnect.TrezorConnect
+const TrezorConnect = {} // trezorConnect.TrezorConnect
 
 const PRODUCTION_MODE = process.env.NODE_ENV === 'production'
 
@@ -259,18 +261,35 @@ const addTx = (tx, addr, account, nonce) => {
 	actions.execute(actions.updateAccount({ ownProps: { settings: settings } }))
 }
 
-const txSend = ({ tx, opts, txSuccessData, from, account, nonce }) => {
-	return new Promise((resolve, reject) => {
-		(tx.send ? tx.send(opts) : tx(opts))
-			.on('transactionHash', (txHash) => {
-				let res = { ...txSuccessData, txHash }
-				addTx(res, from, account, nonce)
-				return resolve(res)
+const txSend = async ({ provider, signer, tx, opts, txSuccessData, from, account, nonce }) => {
+	// const signer = provider.getSigner()
+	// const signerAddress = await provider.getAddress()
+	// console.log('signerAddress', signerAddress)
+
+	/*
+		return ((!tx && signer) || provider).sendTransaction(opts || tx)
+			.then(res => {
+				console.log('res', res)
 			})
-			.on('error', (err) => {
-				return reject(err)
+			.catch(err => {
+				console.log('err', err)
+	
 			})
-	})
+	*/
+
+	return tx()
+
+	// return new Promise((resolve, reject) => {
+	// 	(tx.send ? tx.send(opts) : tx(opts))
+	// 		.on('transactionHash', (txHash) => {
+	// 			let res = { ...txSuccessData, txHash }
+	// 			addTx(res, from, account, nonce)
+	// 			return resolve(res)
+	// 		})
+	// 		.on('error', (err) => {
+	// 			return reject(err)
+	// 		})
+	// })
 }
 
 const sendTxTrezor = ({ provider, rawTx, account, txSuccessData, nonce, from }) => {
@@ -340,7 +359,16 @@ const sendTxLedger = ({ provider, rawTx, account, txSuccessData, nonce, from }) 
 		})
 }
 
-export const sendTx = async ({ provider, tx, opts = {}, account, txSuccessData, prevNonce = 0, nonceIncrement = 0 }) => {
+export const sendTx = async ({
+	provider,
+	tx,
+	opts = {},
+	account,
+	txSuccessData,
+	prevNonce = 0,
+	nonceIncrement = 0
+}) => {
+
 	const authType = account._wallet.authType
 	const options = { ...opts }
 	options.gasPrice = opts.gasPrice || account._settings.gasPrice
@@ -348,7 +376,8 @@ export const sendTx = async ({ provider, tx, opts = {}, account, txSuccessData, 
 	const from = options.from
 
 	if (authType === AUTH_TYPES.METAMASK.name) {
-		return txSend({ tx, opts: options, txSuccessData, from, account })
+		const signer = await provider.getSigner()
+		return txSend({ provider, signer, tx, opts: options, txSuccessData, from, account })
 	}
 
 	/*
@@ -381,3 +410,42 @@ export const sendTx = async ({ provider, tx, opts = {}, account, txSuccessData, 
 	}
 }
 
+
+export async function getSigner({ wallet, provider }) {
+	const { authType, path } = wallet
+
+	if (authType === AUTH_TYPES.METAMASK.name) {
+		const signer = provider.getSigner()
+		return signer
+	}
+	if (authType === AUTH_TYPES.LEDGER.name) {
+
+		const signer = new LedgerSigner(provider, { path })
+
+		return signer
+	}
+	if (authType === AUTH_TYPES.TREZOR.name) {
+		const signer = new TrezorSigner(provider, { path })
+		return signer
+	}
+}
+
+export async function getAuthSig({ wallet }) {
+	const { provider } = await getEthers(wallet.authType)
+	const signer = await getSigner({ wallet, provider })
+
+	const authToken = 46 || (Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()
+	const typedData = [
+		{ type: 'uint', name: 'Auth token', value: authToken }
+	]
+
+	const hash = getTypedDataHash({ typedData: typedData })
+
+	const signature = await signer.signMessage(hash, { hex: true })
+
+	return {
+		...signature,
+		authToken,
+		hash
+	}
+}

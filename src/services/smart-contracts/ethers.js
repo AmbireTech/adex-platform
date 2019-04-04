@@ -1,23 +1,25 @@
-import Web3 from 'web3'
 import { ethers } from 'ethers'
-import { contracts }  from './contractsCfg'
+import { contracts } from './contractsCfg'
 import { AUTH_TYPES } from 'constants/misc'
 
-const { AdExCore, Identity } = contracts
+const { AdExCore, Identity, DAI } = contracts
 
 const localWeb3 = () => {
 	const provider = new ethers.providers.JsonRpcProvider(process.env.WEB3_NODE_ADDR)
 	const adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
+	const dai = new ethers.Contract(DAI.address, DAI.abi, provider)
 
 	const results = {
 		provider: provider,
 		AdExCore: adexCore,
-		Identity: Identity
+		Identity: Identity,
+		Dai: dai
 	}
 
 	return results
 }
 
+// TODO: GET get injected web3 on user action
 const getInjectedWeb3 = new Promise(function (resolve, reject) {
 	// Wait for loading completion to avoid race conditions with web3 injection timing.
 	window.addEventListener('load', function () {
@@ -26,10 +28,12 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 		let provider = null
 		// let mode = null // metamask, and as some point trezor, ledger, ...
 		let adexCore = null
+		let dai = null
 
 		if (ethereum) {
 			provider = new ethers.providers.Web3Provider(ethereum)
 			adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
+			dai = new ethers.Contract(DAI.address, DAI.abi, provider)
 
 			ethereum.enable()
 				.then(() => {
@@ -37,7 +41,8 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 					const results = {
 						provider: provider,
 						AdExCore: adexCore,
-						Identity: Identity
+						Identity: Identity,
+						Dai: dai
 					}
 
 					resolve(results)
@@ -50,12 +55,14 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 		else if (window.web3) {
 			provider = new ethers.providers.Web3Provider(window.web3.currentProvider)
 			adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
-		
+			dai = new ethers.Contract(DAI.address, DAI.abi, provider)
+
 			console.log('Injected legacy web3 detected.')
 			const results = {
 				provider: provider,
 				AdExCore: adexCore,
-				Identity: Identity
+				Identity: Identity,
+				Dai: dai
 			}
 
 			resolve(results)
