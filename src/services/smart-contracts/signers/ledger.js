@@ -3,6 +3,7 @@ import { ethers, utils } from 'ethers'
 import LedgerEth from "@ledgerhq/hw-app-eth"
 import TransportU2F from '@ledgerhq/hw-transport-u2f'
 import HDKey from 'hdkey'
+import { constants } from 'adex-models'
 
 const DEFAULT_HD_PATH = "m/44'/60'/0'"
 
@@ -13,6 +14,9 @@ export default class LedgerSigner extends Signer {
 		this._path = opts.path || DEFAULT_HD_PATH
 		this._transport = TransportU2F
 	}
+
+	get path() { return this._path }
+	get provider() { return this._provider }
 
 	addrsFromPubKey = async (
 		publicKey = '',
@@ -32,7 +36,7 @@ export default class LedgerSigner extends Signer {
 				.fromExtendedKey(derivedKey)
 				.address
 
-			addrs.push({address: addr, path: `${this.path}/${index}`})
+			addrs.push({ address: addr, path: `${this.path}/${index}` })
 		}
 
 		return addrs
@@ -53,7 +57,34 @@ export default class LedgerSigner extends Signer {
 		return addresses
 	}
 
-	get path() { return this._path }
-	get provider() { return this._provider }
-	get hdPath() { return this._path}
+	signMessage = async (message, opts = {}) => {
+
+		if (!opts.hex) {
+			if (typeof (message) === 'string') {
+				message = utils.toUtf8Bytes(message)
+			}
+
+			message = ethers.utils.hexlify(message)
+		}
+
+		message = message.substring(2)
+
+		const transport = await this._transport.create()
+		const eth = new LedgerEth(transport)
+
+		const signature = await eth.signPersonalMessage(this.path, message)
+		signature.r = '0x' + signature.r
+		signature.s = '0x' + signature.s
+
+		const { address } = await eth.getAddress(this.path)
+
+		const res = {
+			signature: ethers.utils.joinSignature(signature),
+			hash: message,
+			mode: constants.SignatureModes.GETH,
+			address
+		}
+
+		return res
+	}
 }
