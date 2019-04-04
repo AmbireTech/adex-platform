@@ -3,7 +3,6 @@ import TrezorConnect from 'trezor-connect'
 
 const DEFAULT_HD_PATH = "m/44'/60'/0'/0"
 
-//
 TrezorConnect.manifest({
 	email: 'contactus@adex.network',
 	appUrl: 'http://adex.network'

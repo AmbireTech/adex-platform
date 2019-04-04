@@ -23,16 +23,22 @@ export default function AuthHoc(Decorated) {
 			authType,
 			hdWalletAddrPath,
 			hdWalletAddrIdx,
+			path,
 			chainId,
-			signType
+			signType,
+			balanceEth,
+			balanceDai
 		}) => {
 			const wallet = {
 				address,
 				authType,
 				hdWalletAddrPath,
 				hdWalletAddrIdx,
+				path,
 				chainId,
-				signType
+				signType,
+				balanceEth,
+				balanceDai
 			}
 
 			this.props.handleChange('identityContractOwner', address)

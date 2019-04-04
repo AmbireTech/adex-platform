@@ -4,7 +4,7 @@ import LedgerEth from "@ledgerhq/hw-app-eth"
 import TransportU2F from '@ledgerhq/hw-transport-u2f'
 import HDKey from 'hdkey'
 
-const DEFAULT_HD_PATH = "m/44'/60'/0/0"
+const DEFAULT_HD_PATH = "m/44'/60'/0'"
 
 export default class LedgerSigner extends Signer {
 	constructor(provider, opts = {}) {
@@ -28,8 +28,11 @@ export default class LedgerSigner extends Signer {
 			const derivedKey = hdKey.derive(`m/${index}`)
 				.publicExtendedKey
 
-			const addr = utils.HDNode.fromExtendedKey(derivedKey).address
-			addrs.push(addr)
+			const addr = utils.HDNode
+				.fromExtendedKey(derivedKey)
+				.address
+
+			addrs.push({address: addr, path: `${this.path}/${index}`})
 		}
 
 		return addrs
@@ -52,4 +55,5 @@ export default class LedgerSigner extends Signer {
 
 	get path() { return this._path }
 	get provider() { return this._provider }
+	get hdPath() { return this._path}
 }
