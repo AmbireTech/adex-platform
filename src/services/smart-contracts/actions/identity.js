@@ -63,6 +63,8 @@ export const deployIdentityContract = async ({
 		from: wallet.address,
 		account: {}
 	})
+
+	return tx
 }
 
 export const getPrivileges = ({
