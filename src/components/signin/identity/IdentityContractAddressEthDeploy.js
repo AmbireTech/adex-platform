@@ -10,8 +10,10 @@ import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import GasPrice from 'components/dashboard/account/GasPrice'
-import { getDeployTx, getRandomAddressForDeployTx } from 'services/idenity/contract-address'
 import { validEmail } from 'helpers/validators'
+import {
+	getIdentityDeployData
+} from 'services/smart-contracts/actions/identity'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -19,6 +21,8 @@ class IdentityContractAddressEthDeploy extends Component {
 
 	componentDidMount() {
 		this.validateIdentity()
+		this.validateEmail(this.props.identity.email, false)
+		this.validateEmailCheck(this.props.identity.emailCheck, false)
 	}
 
 	componentDidUpdate(prevProps) {
@@ -58,22 +62,16 @@ class IdentityContractAddressEthDeploy extends Component {
 		})
 	}
 
-	getIdentityContractAddress = () => {
-		const { identityContractOwner } = this.props.identity
+	getIdentityContractData= async () => {
+		const {  wallet } = this.props.identity
 
-		// TODO: deployTx.gasPrice
-
-		const deployTx = getDeployTx({
-			addrs: [identityContractOwner],
-			privLevels: [3],
-			feeTokenAddr: identityContractOwner,
-			feeBeneficiary: identityContractOwner,
-			feeTokenAmount: '0'
+		const txData = await getIdentityDeployData({
+			owner: wallet.address,
+			privLevel: 3
 		})
 
-		const addrData = getRandomAddressForDeployTx({ deployTx })
-		this.props.handleChange('identityAddr', addrData.idContractAddr)
-		this.props.handleChange('identityTxData', addrData)
+		this.props.handleChange('identityAddr', txData.expectedAddr)
+		this.props.handleChange('identityTxData', txData)
 	}
 
 	render() {
@@ -136,7 +134,7 @@ class IdentityContractAddressEthDeploy extends Component {
 							? <Button
 								variant='contained'
 								color='primary'
-								onClick={this.getIdentityContractAddress}
+								onClick={this.getIdentityContractData}
 							>
 								{t('GENERATE_IDENTITY_ADDRESS')}
 							</Button>
