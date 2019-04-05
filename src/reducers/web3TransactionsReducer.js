@@ -18,10 +18,10 @@ export default function web3TransactionsReducer(state = initialState.web3Transac
 	}
 
 	const updatePendingTxs = ({pTxs, newTx}) => {
-		if(newTx.status === 0 && pTxs.indexOf(newTx.txHash)){
-			pTxs.push(newTx.txHash)
+		if(newTx.status === 0 && pTxs.indexOf(newTx.hash)){
+			pTxs.push(newTx.hash)
 		}else {
-			pTxs = pTxs.filter((tx)=> tx !== newTx.txHash)
+			pTxs = pTxs.filter((tx)=> tx !== newTx.hash)
 		}
 
 		return pTxs
@@ -40,22 +40,22 @@ export default function web3TransactionsReducer(state = initialState.web3Transac
 	switch (action.type) {
 	case ADD_WEB3_TRANSACTION:
 		newTx = { ...action.value }  
-		newAddrTxs[action.trId] = newTx
+		newAddrTxs[action.tx] = newTx
 		newAddrTxs.pendingTxs = updatePendingTxs({pTxs: pendingTxs, newTx: newTx})
 		newState[action.addr] = newAddrTxs
 		return newState
 	case UPDATE_WEB3_TRANSACTION:
-		newTx = { ...(newAddrTxs[action.trId] || {}) }
+		newTx = { ...(newAddrTxs[action.tx] || {}) }
 		newTx = updateObj({ obj: newTx, key: action.key, val: action.value })
-		newAddrTxs[action.trId] = newTx
+		newAddrTxs[action.tx] = newTx
 		newAddrTxs.pendingTxs = updatePendingTxs({pTxs: pendingTxs, newTx: newTx})
 		newState[action.addr] = newAddrTxs
 		return newState
 	case RESET_WEB3_TRANSACTION:
 		newTx = { ...initialState.web3Transactions.default }
-		newAddrTxs[action.trId] = newTx
-		newAddrTxs.pendingTxs = updatePendingTxs({pTxs: pendingTxs, newTx: {txHash: action.trId}})
-		newState[action.trId] = newTx
+		newAddrTxs[action.tx] = newTx
+		newAddrTxs.pendingTxs = updatePendingTxs({pTxs: pendingTxs, newTx: {txHash: action.tx}})
+		newState[action.tx] = newTx
 		return newState
 	default:
 		return state
