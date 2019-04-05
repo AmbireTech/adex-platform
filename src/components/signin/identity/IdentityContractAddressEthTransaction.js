@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button'
 import { deployIdentityContract } from 'services/smart-contracts/actions/identity'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import { registerFullIdentity } from 'services/adex-relayer/actions'
 
 class IdentityContractAddressEthTransaction extends Component {
 
@@ -21,26 +22,51 @@ class IdentityContractAddressEthTransaction extends Component {
 		}
 	}
 
-	skipDeployIdentity = () => {
-		// TODO
+	componentDidMount() {
+		this.validateRegistered(
+			this.props.identity.isRegistered
+		)
+	}
+
+	validateRegistered = (isRegistered, dirty) => {
+		const { validate } = this.props
+		validate('isRegistered', {
+			isValid: !!isRegistered,
+			err: { msg: 'ERR_IDENTITY_NOT_REGISTERED' },
+			dirty: dirty
+		})
 	}
 
 	deployIdentity = async () => {
 		const { identity } = this.props
-		const deployData = { ...identity.identityTxData }
+		const {
+			identityTxData,
+			wallet,
+			identityAddr,
+			email
 
-		const { wallet } = identity
+		} = identity
+
 		const account = {
 			_wallet: wallet,
 			_settings: {}
 		}
 
-		const result = await deployIdentityContract({
-			deployData,
-			account
+		const tx = await deployIdentityContract({
+			...identityTxData,
+			wallet
 		})
 
-		console.log('result', result)
+		const regInfo = await registerFullIdentity({
+			txHash: tx.hash,
+			identity: identityAddr,
+			privileges: [wallet.address, 3],
+			mail: email
+		})
+
+		if (regInfo) {
+			this.validateRegistered(true, false)
+		}
 	}
 
 	render() {
@@ -58,11 +84,6 @@ class IdentityContractAddressEthTransaction extends Component {
 							onClick={this.deployIdentity}
 						>
 							{'SEND_IDENTITY_TX_NOW'}
-						</Button>
-						<Button
-							onClick={this.skipDeployIdentity}
-						>
-							{'SEND_IDENTITY_TX_LATER'}
 						</Button>
 						<div>
 							{identityContractAddress || ''}
