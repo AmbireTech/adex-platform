@@ -54,66 +54,69 @@ export class Toast extends Component {
 		}
 	}
 
-    close = (id) => {
-    	this.setState({ active: false })
-    	this.props.actions.removeToast(id)
+	close = (id) => {
+		this.setState({ active: false })
+		this.props.actions.removeToast(id)
 
-    }
+	}
 
-    render() {
-    	const { toast } = this.state
-    	const { classes } = this.props
-    	const Icon = variantIcon[toast.type]
+	render() {
+		const { toast } = this.state
+		const { classes } = this.props
+		const Icon = variantIcon[toast.type]
 
-    	if (!toast || !Icon) return null
+		if (!toast || !Icon) return null
 
-    	const anchorOrigin = toast.anchorOrigin || {}
+		const anchorOrigin = toast.anchorOrigin || {
+			vertical: 'bottom',
+			horizontal: 'center',
+		}
 
-    	if (toast.top) {
-    		anchorOrigin.horizontal = 'center'
-    		anchorOrigin.vertical = 'top'
-    	}
+		if (toast.top) {
+			anchorOrigin.horizontal = 'center'
+			anchorOrigin.vertical = 'top'
+		}
 
-    	return (
-    		<Snackbar
-    			open={this.state.active}
-    			autoHideDuration={toast.timeout || 0}
-    			onClose={() => !toast.unclosable && this.close(toast.id)}
-    			anchorOrigin={anchorOrigin}
-    		>
-    			<SnackbarContent
-    				aria-describedby="client-snackbar"
-    				message={
-    					<span id="client-snackbar" className={classes.message}>
-    						<Icon className={classnames(classes.icon, classes.iconVariant)} />
-    						{(toast.label || '').toString()}
-    					</span>
+		return (
+			<Snackbar
+				open={this.state.active}
+				autoHideDuration={toast.timeout || 0}
+				onClose={() => !toast.unclosable && this.close(toast.id)}
+				anchorOrigin={anchorOrigin}
+			>
+				<SnackbarContent
+					aria-describedby="client-snackbar"
+					message={
+						<span id="client-snackbar" className={classes.message}>
+							<Icon className={classnames(classes.icon, classes.iconVariant)} />
+							{(toast.label || '').toString()}
+						</span>
 
-    				}
-    				action={[
-    					!toast.unclosable &&
-                        <IconButton
-                        	key="close"
-                        	aria-label="Close"
-                        	color="inherit"
-                        	className={classes.close}
-                        	onClick={() => !toast.unclosable && this.close(toast.id)}
-                        >
-                        	<CloseIcon className={classes.icon} />
-                        </IconButton>,]}
+					}
+					action={[
+						!toast.unclosable &&
+						<IconButton
+							key="close"
+							aria-label="Close"
+							color="inherit"
+							className={classes.close}
+							onClick={() => !toast.unclosable && this.close(toast.id)}
+						>
+							<CloseIcon className={classes.icon} />
+						</IconButton>,]}
 
-    				className={classnames(
-    					classes.snackbar,
-    					{
-    						[classes.top]: !!toast.top,
-    						[classes.accept]: toast.type === 'accept',
-    						[classes.cancel]: toast.type === 'cancel',
-    						[classes.warning]: toast.type === 'warning',
-    					})}
-    			/>
-    		</Snackbar>
-    	)
-    }
+					className={classnames(
+						classes.snackbar,
+						{
+							[classes.top]: !!toast.top,
+							[classes.accept]: toast.type === 'accept',
+							[classes.cancel]: toast.type === 'cancel',
+							[classes.warning]: toast.type === 'warning',
+						})}
+				/>
+			</Snackbar>
+		)
+	}
 }
 
 Toast.propTypes = {
