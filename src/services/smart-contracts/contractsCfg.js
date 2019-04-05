@@ -2,18 +2,17 @@ import Identity from './build/Identity.json'
 import AdExCore from './build/AdExCore.json'
 import Dai from './build/Dai.json'
 import Tst from './build/Tst.json'
+import IdentityFactory from './build/IdentityFactory.json'
 
 const production = process.env.NODE_ENV === 'production'
 
 export const contracts = {
 	Identity: {
-		abi: Identity.abi,
-		bytecode: Identity.bytecode
+		abi: Identity.abi
 	},
 	AdExCore: {
 		address: process.env.ADEX_CORE_ADDR || '0x333420fc6a897356e69b62417cd17ff012177d2b',
-		abi: AdExCore.abi,
-		bytecode: AdExCore.bytecode
+		abi: AdExCore.abi
 	},
 	DAI: {
 		address: production
@@ -23,5 +22,9 @@ export const contracts = {
 			? Dai.abi
 			:Tst.abi,
 		decimals: 18
+	},
+	IdentityFactory: {
+		address: process.env.IDENTITY_FACTORY_ADDR,
+		abi: IdentityFactory.abi
 	}
 }

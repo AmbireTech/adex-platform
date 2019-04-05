@@ -2,18 +2,20 @@ import { ethers } from 'ethers'
 import { contracts } from './contractsCfg'
 import { AUTH_TYPES } from 'constants/misc'
 
-const { AdExCore, Identity, DAI } = contracts
+const { AdExCore, Identity, DAI, IdentityFactory } = contracts
 
 const localWeb3 = () => {
 	const provider = new ethers.providers.JsonRpcProvider(process.env.WEB3_NODE_ADDR)
 	const adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
 	const dai = new ethers.Contract(DAI.address, DAI.abi, provider)
+	const identityFactory = new ethers.Contract(IdentityFactory.abi, provider)
 
 	const results = {
 		provider: provider,
 		AdExCore: adexCore,
 		Identity: Identity,
-		Dai: dai
+		Dai: dai,
+		IdentityFactory: identityFactory
 	}
 
 	return results
@@ -29,11 +31,13 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 		// let mode = null // metamask, and as some point trezor, ledger, ...
 		let adexCore = null
 		let dai = null
+		let identityFactory = null
 
 		if (ethereum) {
 			provider = new ethers.providers.Web3Provider(ethereum)
 			adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
 			dai = new ethers.Contract(DAI.address, DAI.abi, provider)
+			identityFactory = new ethers.Contract(IdentityFactory.abi, provider)
 
 			ethereum.enable()
 				.then(() => {
@@ -42,7 +46,8 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 						provider: provider,
 						AdExCore: adexCore,
 						Identity: Identity,
-						Dai: dai
+						Dai: dai,
+						IdentityFactory: identityFactory
 					}
 
 					resolve(results)
@@ -56,13 +61,15 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 			provider = new ethers.providers.Web3Provider(window.web3.currentProvider)
 			adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
 			dai = new ethers.Contract(DAI.address, DAI.abi, provider)
+			identityFactory = new ethers.Contract(IdentityFactory.abi, provider)
 
 			console.log('Injected legacy web3 detected.')
 			const results = {
 				provider: provider,
 				AdExCore: adexCore,
 				Identity: Identity,
-				Dai: dai
+				Dai: dai,
+				IdentityFactory: identityFactory
 			}
 
 			resolve(results)
