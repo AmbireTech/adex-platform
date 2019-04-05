@@ -1,12 +1,32 @@
 import { getEthers } from 'services/smart-contracts/ethers'
-import { ethers } from 'ethers'
-import { getRsvFromSig, getTypedDataHash } from 'services/smart-contracts/utils'
+import { ethers, utils } from 'ethers'
+import {
+	getRsvFromSig,
+	getTypedDataHash
+} from 'services/smart-contracts/utils'
 import { AUTH_TYPES } from 'constants/misc'
 import TrezorSigner from 'services/smart-contracts/signers/trezor'
 import LedgerSigner from 'services/smart-contracts/signers/ledger'
 import LocalSigner from 'services/smart-contracts/signers/local'
 
-export const prepareTx = ({}) => {
+/** 
+ * NOTE: DO NOT CALL WITH CONNECTED SIGNER
+ * Will fill missing props gasLimit, nonce, chainId, etc..  * 
+ * */
+export async function prepareTx({ tx, provider, sender }) {
+	const pTx = await utils.populateTransaction(
+		tx,
+		provider,
+		sender
+	)
+
+	// TO work with all signers
+	pTx.gasLimit = pTx.gasLimit.toHexString()
+	pTx.gasPrice = pTx.gasPrice.toHexString()
+	pTx.value = pTx.value || utils.hexlify(0)
+	pTx.nonce = utils.hexlify(pTx.nonce)
+
+	return pTx
 }
 
 export async function getSigner({ wallet, provider }) {
