@@ -8,7 +8,10 @@ const localWeb3 = () => {
 	const provider = new ethers.providers.JsonRpcProvider(process.env.WEB3_NODE_ADDR)
 	const adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
 	const dai = new ethers.Contract(DAI.address, DAI.abi, provider)
-	const identityFactory = new ethers.Contract(IdentityFactory.abi, provider)
+	const identityFactory = new ethers.Contract(
+		IdentityFactory.address,
+		IdentityFactory.abi,
+		provider)
 
 	const results = {
 		provider: provider,
@@ -37,7 +40,10 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 			provider = new ethers.providers.Web3Provider(ethereum)
 			adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
 			dai = new ethers.Contract(DAI.address, DAI.abi, provider)
-			identityFactory = new ethers.Contract(IdentityFactory.abi, provider)
+			identityFactory = new ethers.Contract(
+				IdentityFactory.address,
+				IdentityFactory.abi,
+				provider)
 
 			ethereum.enable()
 				.then(() => {
@@ -61,7 +67,10 @@ const getInjectedWeb3 = new Promise(function (resolve, reject) {
 			provider = new ethers.providers.Web3Provider(window.web3.currentProvider)
 			adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
 			dai = new ethers.Contract(DAI.address, DAI.abi, provider)
-			identityFactory = new ethers.Contract(IdentityFactory.abi, provider)
+			identityFactory = new ethers.Contract(
+				IdentityFactory.address,
+				IdentityFactory.abi,
+				provider)
 
 			console.log('Injected legacy web3 detected.')
 			const results = {
