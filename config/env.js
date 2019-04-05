@@ -96,6 +96,8 @@ function getClientEnvironment(publicUrl) {
 				ADEX_RELAYER_HOST: process.env.ADEX_RELAYER_HOST || (process.env.NODE_ENV === 'production' ? 'https://relayer.adex.network' : 'http://localhost:1934'),
 				ADEX_RELAYER_ADDR: process.env.ADEX_RELAYER_ADDR || (process.env.NODE_ENV === 'production' ? '0x2aecF52ABe359820c48986046959B4136AfDfbe2' : '0x2aecF52ABe359820c48986046959B4136AfDfbe2'),
 				ADEX_MARKET_HOST: process.env.ADEX_MARKET_HOST || (process.env.NODE_ENV === 'production' ? 'https://market.adex.network' : 'http://localhost:3012'),
+				IDENTITY_BASE_ADDR: process.env.IDENTITY_BASE_ADDR,
+				IDENTITY_FACTORY_ADDR: process.env.IDENTITY_FACTORY_ADDR,
 			}
 		);
 	// Stringify all values so we can feed into Webpack DefinePlugin
