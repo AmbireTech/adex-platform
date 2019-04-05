@@ -1,13 +1,15 @@
 import { getEthers } from 'services/smart-contracts/ethers'
-import { ethers, utils } from 'ethers'
-import {
-	getRsvFromSig,
-	getTypedDataHash
-} from 'services/smart-contracts/utils'
+import { utils } from 'ethers'
+import { getTypedDataHash } from 'services/smart-contracts/utils'
 import { AUTH_TYPES } from 'constants/misc'
 import TrezorSigner from 'services/smart-contracts/signers/trezor'
 import LedgerSigner from 'services/smart-contracts/signers/ledger'
 import LocalSigner from 'services/smart-contracts/signers/local'
+import { translate } from 'services/translations/translations'
+import { execute } from 'actions/common'
+import { addWeb3Transaction } from 'actions/transactionActions'
+import { addToast } from 'actions/uiActions'
+import { updateAccount } from 'actions/accountActions'
 
 /** 
  * NOTE: DO NOT CALL WITH CONNECTED SIGNER
@@ -29,7 +31,48 @@ export async function prepareTx({ tx, provider, sender }) {
 	return pTx
 }
 
+export async function processTx({
+	tx,
+	txSuccessData,
+	from,
+	account
+}) {
+	const { hash, nonce } = await tx
+	const txData = {
+		hash,
+		nonce,
+		...txSuccessData,
+		status: 'pending',
+		sendingTime: Date.now()
+	}
+
+	execute(
+		addWeb3Transaction({ tx: txData, addr: from })
+	)
+	execute(
+		addToast({
+			type: 'accept',
+			action: 'X',
+			label: translate(
+				'TRANSACTION_SENT_MSG',
+				{
+					args: [hash]
+				}),
+			timeout: 50000
+		})
+	)
+
+	const settings = { ...account._settings }
+	settings.nonce = nonce + 1
+	execute(
+		updateAccount({
+			ownProps: { settings }
+		})
+	)
+}
+
 export async function getSigner({ wallet, provider }) {
+	// TODO: Maybe get provider here?
 	const { authType, path, email, password } = wallet
 
 	if (authType === AUTH_TYPES.METAMASK.name) {
@@ -57,7 +100,8 @@ export async function getAuthSig({ wallet }) {
 	const { provider } = await getEthers(wallet.authType)
 	const signer = await getSigner({ wallet, provider })
 
-	const authToken = 46 || (Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()
+	const authToken = (Math.floor(Math.random() * Number.MAX_SAFE_INTEGER))
+		.toString()
 	const typedData = [
 		{ type: 'uint', name: 'Auth token', value: authToken }
 	]
