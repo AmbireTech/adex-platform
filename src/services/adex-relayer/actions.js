@@ -11,7 +11,10 @@ const processResponse = (res) => {
 	} else {
 		return res.text()
 			.then((text) => {
-				throw { status: res.status, error: res.statusText + ' - ' + text }
+				throw new Error(
+					`status: ${res.status}`,
+					`error: ${res.statusText}-${text}`
+				)
 			})
 	}
 }
@@ -60,7 +63,7 @@ export const getOwnerIdentities = ({ owner }) => {
 		.then(processResponse)
 }
 
-export const identityBytecode = ({ owner, privLevel,identityBaseAddr }) => {
+export const identityBytecode = ({ owner, privLevel, identityBaseAddr }) => {
 	return requester.fetch({
 		route: 'identity/identity-bytecode',
 		method: 'POST',
@@ -68,6 +71,22 @@ export const identityBytecode = ({ owner, privLevel,identityBaseAddr }) => {
 			owner,
 			privLevel,
 			identityBaseAddr
+		}),
+		headers: { 'Content-Type': 'application/json' }
+	})
+		.then(processResponse)
+}
+
+export const registerFullIdentity = ({
+	txHash, identity, privileges, mail }) => {
+	return requester.fetch({
+		route: 'identity/register-identity',
+		method: 'POST',
+		body: JSON.stringify({
+			txHash,
+			identity,
+			privileges,
+			mail
 		}),
 		headers: { 'Content-Type': 'application/json' }
 	})
