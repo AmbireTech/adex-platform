@@ -3,29 +3,29 @@ import initialState from 'store/initialState'
 
 export default function newTransactionsReducer(state = initialState.newTransactions, action) {
 	let newState
-	let newTr
+	let newTx
 
 	newState = { ...state }
 
 	// No model update
-	const updateTr = ({ tr, key, val }) => {
-		tr = tr || {}
-		tr[key] = val
+	const updateTx = ({ tx, key, val }) => {
+		tx = tx || {}
+		tx[key] = val
 
-		return tr
+		return tx
 	}
 
 	switch (action.type) {
 	case UPDATE_NEW_TRANSACTION:
-		newTr = { ...(newState[action.trId] || initialState.newTransactions.default) }
-		newTr = updateTr({ tr: newTr, key: action.key, val: action.value })
+		newTx = { ...(newState[action.tx] || initialState.newTransactions.default) }
+		newTx = updateTx({ tx: newTx, key: action.key, val: action.value })
 
-		// console.log('newTr', newTr)
-		newState[action.trId] = newTr
+		// console.log('newTx', newTx)
+		newState[action.tx] = newTx
 		return newState
 	case RESET_NEW_TRANSACTION:
-		newTr = { ...initialState.newTransactions.default }
-		newState[action.trId] = newTr
+		newTx = { ...initialState.newTransactions.default }
+		newState[action.tx] = newTx
 		return newState
 	default:
 		return state
