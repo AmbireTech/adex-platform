@@ -33,6 +33,10 @@ export function createLocalWallet({ email = '', password = '', mnemonic = '' }) 
 }
 
 export function getLocalWallet({ email, password }) {
+	if (!email || !password) {
+		throw new Error('email and password are required')
+	}
+
 	const key = encrypt(email, password)
 	const data = loadFromLocalStorage(key)
 	if (data) {
