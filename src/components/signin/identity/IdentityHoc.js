@@ -37,7 +37,6 @@ export default function IdentityHoc(Decorated) {
 			} = identity
 
 			const newWallet = { ...wallet }
-			newWallet.authType = AUTH_TYPES.GRANT.name
 			const accountIdentity = {
 				address: identityAddr
 			}
