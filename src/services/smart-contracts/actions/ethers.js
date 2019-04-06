@@ -5,6 +5,7 @@ import { AUTH_TYPES } from 'constants/misc'
 import TrezorSigner from 'services/smart-contracts/signers/trezor'
 import LedgerSigner from 'services/smart-contracts/signers/ledger'
 import LocalSigner from 'services/smart-contracts/signers/local'
+import MetaMaskSigner from 'services/smart-contracts/signers/metamask'
 import { translate } from 'services/translations/translations'
 import { execute } from 'actions/common'
 import { addWeb3Transaction } from 'actions/transactionActions'
@@ -76,7 +77,7 @@ export async function getSigner({ wallet, provider }) {
 	const { authType, path, email, password } = wallet
 
 	if (authType === AUTH_TYPES.METAMASK.name) {
-		const signer = provider.getSigner()
+		const signer = new MetaMaskSigner(provider)
 		return signer
 	}
 	if (authType === AUTH_TYPES.LEDGER.name) {
