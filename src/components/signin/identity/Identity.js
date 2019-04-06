@@ -4,6 +4,7 @@ import IdentityHoc from './IdentityHoc'
 import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
 import IdentityContractAddressEthTransaction from './IdentityContractAddressEthTransaction'
 import IdentityContractOwner from './IdentityContractOwner'
+import AllInOneTest from './OneStepToTestThemAll'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import WalletInit from './WalletInit'
 import WalletCheck from './WalletCheck'
@@ -57,13 +58,7 @@ export const QuickIdentity = (props) =>
 		stepsId='grant-identity'
 		stepsPages={[
 			{ title: 'GRANT_INFO', page: GrantInfo },
-			{ title: 'GRANT_DEPLOY', page: GrantDeploy, final: true },
-			// { title: 'COUPON_CHECK', page: CouponCheck },
-			// { title: 'USER_INFO', page: UserInfo },            
-			// { title: 'INIT_WALLET', page: WalletInit },
-			// { title: 'CHECK_WALLET', page: WalletCheck },
-			// { title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
-			// { title: 'DEPLOY_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthTransaction }
+			{ title: 'GRANT_DEPLOY', page: GrantDeploy, final: true }		
 		]}
 	/>
 
@@ -75,7 +70,7 @@ export const FullIdentity = (props) =>
 		stepsPages={[
 			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
 			{ title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
-			{ title: 'DEPLOY_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthTransaction }
+			{ title: 'DEPLOY_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthTransaction, final: true }
 		]}
 	/>
 
@@ -84,8 +79,6 @@ export const DemoIdentity = (props) =>
 		{...props}
 		{...common}
 		stepsPages={[
-			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
-			{ title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
-			{ title: 'DEPLOY_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthTransaction }
+			{ title: 'TEST_THIS_DEMO_IF_YOU_WANT_TEST', page: AllInOneTest }
 		]}
 	/>
