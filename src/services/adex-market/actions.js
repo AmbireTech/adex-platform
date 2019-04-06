@@ -87,8 +87,6 @@ const convertItemToJSON = (item) => {
 }
 
 export const getAdUnits = ({ authSig }) => {
-	// TODO: validate with adex-models schema
-
 	return requester.fetch({
 		route: 'adunits',
 		method: 'GET',
@@ -98,8 +96,6 @@ export const getAdUnits = ({ authSig }) => {
 }
 
 export const postAdUnit = ({ unit, authSig }) => {
-	// TODO: validate with adex-models schema
-
 	return requester.fetch({
 		route: 'adunits',
 		method: 'POST',
@@ -111,8 +107,6 @@ export const postAdUnit = ({ unit, authSig }) => {
 }
 
 export const updateAdUnit = ({ unit, authSig }) => {
-	// TODO: validate with adex-models schema
-
 	return requester.fetch({
 		route: 'adunits',
 		method: 'PUT',
@@ -124,8 +118,6 @@ export const updateAdUnit = ({ unit, authSig }) => {
 }
 
 export const getAdSlots = ({ authSig }) => {
-	// TODO: validate with adex-models schema
-
 	return requester.fetch({
 		route: 'adslots',
 		method: 'GET',
@@ -135,8 +127,6 @@ export const getAdSlots = ({ authSig }) => {
 }
 
 export const postAdSlot= ({ slot, authSig }) => {
-	// TODO: validate with adex-models schema
-
 	return requester.fetch({
 		route: 'adslots',
 		method: 'POST',
@@ -148,8 +138,6 @@ export const postAdSlot= ({ slot, authSig }) => {
 }
 
 export const updateAdSlot= ({ slot, authSig }) => {
-	// TODO: validate with adex-models schema
-
 	return requester.fetch({
 		route: 'adslots',
 		method: 'PUT',
@@ -160,11 +148,11 @@ export const updateAdSlot= ({ slot, authSig }) => {
 		.then(processResponse)
 }
 
-export const 
-
-
-
-
-
-
-
+export const getCampaigns = ({ authSig }) => {
+	return requester.fetch({
+		route: 'campaigns',
+		method: 'GET',
+		authSig
+	})
+		.then(processResponse)
+}
