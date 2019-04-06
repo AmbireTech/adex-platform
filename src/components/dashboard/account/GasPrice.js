@@ -57,7 +57,7 @@ class GasPrice extends React.Component {
     changeGasPrice = (val) => {
     	let settings = { ...this.props.account._settings }
     	settings.gasPrice = val
-    	this.props.actions.updateAccount({ ownProps: { settings: settings } })
+    	this.props.actions.updateAccount({ newValues: { settings: settings } })
     }
 
     render() {

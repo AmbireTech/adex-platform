@@ -67,7 +67,7 @@ export async function processTx({
 	settings.nonce = nonce + 1
 	execute(
 		updateAccount({
-			ownProps: { settings }
+			newValues: { settings }
 		})
 	)
 }

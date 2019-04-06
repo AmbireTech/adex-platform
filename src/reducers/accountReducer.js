@@ -19,7 +19,7 @@ export default function accountReducer(state = initialState.account, action) {
 		newState = newAccount
 		return newState
 	case UPDATE_ACCOUNT:
-		newAccount = Base.updateObject({ item: newState, ownProps: { ...action.ownProps }, objModel: Account })
+		newAccount = Base.updateObject({ item: newState, newValues: { ...action.newValues }, objModel: Account })
 		newState = newAccount
 		return newState
 
