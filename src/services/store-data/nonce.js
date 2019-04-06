@@ -23,13 +23,13 @@ const syncNonce = () => {
             
 			settings.gasData = gasData
 
-			let action = actions.updateAccount({ ownProps: { settings: settings } })
+			let action = actions.updateAccount({ newValues: { settings: settings } })
 			action(store.dispatch)
 		})
 		.catch(()=> {
 			settings.gasData = DEFAULT_DATA
 
-			let action = actions.updateAccount({ ownProps: { settings: settings } })
+			let action = actions.updateAccount({ newValues: { settings: settings } })
 			action(store.dispatch)
 		})
 }

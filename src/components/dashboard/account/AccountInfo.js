@@ -31,7 +31,7 @@ class AccountInfo extends React.Component {
     	// TODO: spinner
     	/*getAccountStats*/ getAccountStats({ _addr: this.props.account._addr, authType: this.props.account._authType })
 			.then((stats) => {
-				this.props.actions.updateAccount({ ownProps: { stats: stats } })
+				this.props.actions.updateAccount({ newValues: { stats: stats } })
 			})
 	}
 

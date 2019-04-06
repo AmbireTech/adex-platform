@@ -45,12 +45,12 @@ export function resetAccount() {
 	}
 }
 
-export function updateAccount({ meta, ownProps }) {
+export function updateAccount({ meta, newValues }) {
 	return function (dispatch) {
 		return dispatch({
 			type: types.UPDATE_ACCOUNT,
 			meta: meta,
-			ownProps: ownProps,
+			newValues: newValues,
 		})
 	}
 }
@@ -115,7 +115,7 @@ export function createSession({ wallet, identity, email }) {
 		}
 
 		updateAccount({
-			ownProps: {
+			newValues: {
 				email: email,
 				wallet: newWallet,
 				identity: identity
