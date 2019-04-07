@@ -97,8 +97,6 @@ class AdUnitMedia extends Component {
 }
 
 AdUnitMedia.propTypes = {
-	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
 	title: PropTypes.string,
 	newItem: PropTypes.object.isRequired
 }

@@ -154,11 +154,8 @@ class AdUnitBasic extends Component {
 }
 
 AdUnitBasic.propTypes = {
-	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
 	newItem: PropTypes.object.isRequired,
 	title: PropTypes.string,
-	itemType: PropTypes.number.isRequired,
 	descriptionHelperTxt: PropTypes.string,
 	nameHelperTxt: PropTypes.string,
 }
