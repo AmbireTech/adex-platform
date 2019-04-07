@@ -29,12 +29,23 @@ const autocompleteGendersSingleSelect = () => {
 	})
 }
 
+const autocompleteTagsSingleSelect = () => {
+	return constants.PredefinedTags.map(tag => {
+		return {
+			label: tag._id,
+			value: tag._id
+		}
+	})
+}
+
 const AcLocations = autocompleteLocationsSingleSelect()
 const AcGenders = autocompleteGendersSingleSelect()
+const AcTags = autocompleteTagsSingleSelect()
 
 const SOURCES = {
-	locations: AcLocations,
-	genders: AcGenders
+	locations: { src: AcLocations, collection: 'targeting' },
+	genders: { src: AcGenders, collection: 'targeting' },
+	tags: { src: AcTags, collection: 'tags' }
 }
 
 const styles = {
@@ -49,6 +60,7 @@ const SourcesSelect = Object.keys(SOURCES)
 			value: {
 				key: key, // FOR DROPDOWN
 				source: key,
+				collection: SOURCES[key].collection,
 				target: { tag: '', score: 0 },
 				label: `TARGET_LABEL_${key.toUpperCase()}`,
 				placeholder: `TARGET_LABEL_${key.toUpperCase()}`
@@ -62,12 +74,22 @@ class AdUnitTargeting extends Component {
 		super(props)
 
 		this.state = {
-			targets: []
+			targets: [],
+			targeting: [],
+			tags: []
 		}
 	}
 
-	componentDidMount() {
+	updateNewItemCollections(targets) {
+		const collections = [...targets]
+			.reduce((all, tg) => {
+				const newCollection = ((all[tg.collection] || []))
+				newCollection.push(tg.target)
+				all[tg.collection] = newCollection
+				return all
+			}, {})
 
+		this.props.handleChange(null, null, collections)
 	}
 
 	handleTargetChange = (index, prop, newValue) => {
@@ -75,7 +97,9 @@ class AdUnitTargeting extends Component {
 		const target = newTargets[index]
 		const newTarget = { ...target }
 		newTarget.target[prop] = newValue
-		newTargets[index] = {...target}
+		newTargets[index] = { ...target }
+
+		this.updateNewItemCollections(newTargets)
 		this.setState({ targets: newTargets })
 	}
 
@@ -90,6 +114,7 @@ class AdUnitTargeting extends Component {
 
 	targetTag = ({
 		source,
+		collection,
 		placeholder,
 		label,
 		value,
@@ -113,7 +138,8 @@ class AdUnitTargeting extends Component {
 							this.handleTargetChange(
 								index,
 								'tag',
-								newValue
+								newValue,
+								collection
 							)
 						}
 						label={label}
@@ -146,7 +172,8 @@ class AdUnitTargeting extends Component {
 								this.handleTargetChange(
 									index,
 									'score',
-									newValue
+									newValue,
+									collection
 								)
 							}
 						/>
@@ -163,7 +190,7 @@ class AdUnitTargeting extends Component {
 			newItem,
 			classes
 		} = this.props
-		const { targeting } = newItem
+		// const { targeting, tags } = newItem
 
 		const { targets } = this.state
 
@@ -174,13 +201,20 @@ class AdUnitTargeting extends Component {
 					spacing={16}
 				>
 					<Grid item sm={12}>
-						{[...targets].map(({ source, label, placeholder, target = {} } = {}, index) =>
+						{[...targets].map(({
+							source,
+							collection,
+							label,
+							placeholder,
+							target = {}
+						} = {}, index) =>
 							<this.targetTag
 								key={index} // TODO
 								label={t(label)}
 								placeholder={t(placeholder)}
 								index={index}
-								source={SOURCES[source]}
+								source={SOURCES[source].src}
+								collection={collection}
 								target={target}
 								t={t}
 								classes={classes}

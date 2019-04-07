@@ -19,10 +19,10 @@ export default function NewAdUnitHoc(Decorated) {
 			}
 		}
 
-		handleChange = (prop, value) => {
+		handleChange = (prop, value, newValues) => {
 			this.props.actions.updateNewItem(
 				this.props.newItem,
-				{ [prop]: value },
+				newValues || { [prop]: value },
 				'AdUnit',
 				AdUnit
 			)
