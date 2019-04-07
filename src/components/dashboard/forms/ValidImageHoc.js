@@ -40,15 +40,20 @@ export default function ValidImageHoc(Decorated) {
 				const masgArgs = [widthTarget, heightTarget, 'px']
 
 				that.props.validate(propsName, { isValid: isValid, err: { msg: msg, args: masgArgs }, dirty: true })
-				img.width = width
-				img.height = height
+
+				const resImg = {
+					width,
+					height,
+					mime: img.mime
+				}
+
 				// TODO: temp fix make this HOC independent
 				if (typeof that.props.handleChange === 'function') {
-					that.props.handleChange(propsName, img)
+					that.props.handleChange(propsName, resImg)
 				} else if (typeof that.handleChange === 'function') {
-					that.handleChange(propsName, img)
+					that.handleChange(propsName, resImg)
 				} else if (typeof onChange === 'function') {
-					onChange(propsName, img)
+					onChange(propsName, resImg)
 				}
 			}
 		}
