@@ -84,7 +84,10 @@ class AdUnitTargeting extends Component {
 		const collections = [...targets]
 			.reduce((all, tg) => {
 				const newCollection = ((all[tg.collection] || []))
-				newCollection.push(tg.target)
+				// NOTE: just skip empty tags
+				if (!!tg.target.tag) {
+					newCollection.push(tg.target)
+				}
 				all[tg.collection] = newCollection
 				return all
 			}, {})
@@ -167,6 +170,7 @@ class AdUnitTargeting extends Component {
 							aria-labelledby={`target-score-${index}`}
 							min={0} max={100}
 							step={1}
+							disabled={!target.tag}
 							value={target.score}
 							onChange={(ev, newValue) =>
 								this.handleTargetChange(
@@ -198,8 +202,22 @@ class AdUnitTargeting extends Component {
 			<div>
 				<Grid
 					container
-					spacing={16}
+					spacing={24}
 				>
+					<Grid item sm={12}>
+						<Dropdown
+							variant='filled'
+							fullWidth
+							onChange={(target) => {
+								this.newTarget({ ...target })
+							}}
+							source={[...SourcesSelect]}
+							value={''}
+							label={t('NEW_TARGET')}
+							htmlId='ad-type-dd'
+							name='adType'
+						/>
+					</Grid>
 					<Grid item sm={12}>
 						{[...targets].map(({
 							source,
@@ -221,21 +239,8 @@ class AdUnitTargeting extends Component {
 							/>
 						)}
 					</Grid>
-					<Grid item sm={12}>
-						<Dropdown
-							fullWidth
-							onChange={(target) => {
-								this.newTarget({ ...target })
-							}}
-							source={[...SourcesSelect]}
-							value={''}
-							label={t('NEW_TARGET')}
-							htmlId='ad-type-dd'
-							name='adType'
-						/>
-					</Grid>
 				</Grid>
-			</div>
+			</div >
 		)
 	}
 }
