@@ -10,14 +10,14 @@ export default function newItemsReducer(state = initialState.newItem, action) {
 	case UPDATE_NEW_ITEM:
 		newState = { ...state }
 		newItem = { ...action.item }
-		newState[newItem._type] = newItem
+		newState[action.itemType] = newItem
 
 		return newState
 
 	case RESET_NEW_ITEM:
 		newState = { ...state }
-		newItem = { ...initialState.newItem[action.item._type] }
-		newState[action.item._type] = newItem
+		newItem = { ...initialState.newItem[action.item] }
+		newState[action.item] = newItem
 
 		return newState
 

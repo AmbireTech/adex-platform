@@ -16,15 +16,15 @@ let initialState = {
 		authenticated: false
 	},
 	newItem: {
-		[ItemsTypes.Campaign.id]: new Campaign().plainObj(),
-		[ItemsTypes.AdUnit.id]: new AdUnit().plainObj(),
-		[ItemsTypes.AdSlot.id]: new AdSlot().plainObj()
+		Campaign: new Campaign().plainObj(),
+		AdUnit: new AdUnit().plainObj(),
+		AdSlot: new AdSlot().plainObj()
 	},
 	currentItem: {},
 	items: {
-		[ItemsTypes.Campaign.id]: {},
-		[ItemsTypes.AdUnit.id]: {},
-		[ItemsTypes.AdSlot.id]: {}
+		Campaign: {},
+		AdUnit: {},
+		AdSlot: {}
 	},
 	spinners: {},
 	ui: {},
