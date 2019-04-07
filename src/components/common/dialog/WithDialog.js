@@ -120,7 +120,7 @@ export default function ItemHoc(Decorated) {
         		}
         	}
 
-        	const { classes } = this.props
+        	const { classes, ...rest } = this.props
 
         	const btnLabel = this.props.t(this.props.btnLabel, { args: this.props.btnLabelArgs || [''] })
         	// TODO: fix it for fab wit text
@@ -187,7 +187,7 @@ export default function ItemHoc(Decorated) {
         					// NOTE: ugly but it's temp and saves a lot of work!
         						this.renderDemoModeAction()
         						:
-        						<Decorated {...this.props} onSave={this.onSave()} />
+        						<Decorated {...rest} onSave={this.onSave()} />
         					}
 
         				</DialogContent>
