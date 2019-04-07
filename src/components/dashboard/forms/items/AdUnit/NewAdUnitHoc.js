@@ -15,23 +15,9 @@ export default function NewAdUnitHoc(Decorated) {
 
 			this.state = {
 				active: false,
-				item: {},
 				saved: false
 			}
 		}
-
-		componentWillReceiveProps(nextProps) {
-			this.setState({ item: nextProps.newItem })
-		}
-
-		componentWillMount() {
-			this.setState({ item: this.props.newItem })
-		}
-
-		// Works when inside dialog because when no active its content is unmounted
-		// componentWillUnmount() {
-		//     this.updateItemInStore()
-		// }
 
 		handleChange = (prop, value) => {
 			this.props.actions.updateNewItem(this.props.newItem, { [prop]: value }, 'AdUnit', AdUnit)
@@ -53,30 +39,23 @@ export default function NewAdUnitHoc(Decorated) {
 		}
 
 		save = () => {
-			const { actions, newItem, account } = this.props
-			const item = new AdUnit(newItem)
+			const { actions, newItem, account, addTo } = this.props
 
-			// this.setState({ saved: true }, () => {
-			actions.addItem(item, this.props.addTo, account._wallet.authSig)
-			actions.resetNewItem(this.state.item, 'AdUnit')
+			actions.addItem(newItem, addTo, account.wallet.authSig)
+			actions.resetNewItem('AdUnit')
 
 			this.onSave()
 		}
 
 		cancel = () => {
-			this.props.actions.resetNewItem(this.state.item)
-
+			this.props.actions.resetNewItem('AdUnit')
 			this.onSave()
 		}
 
 		render() {
-			const { newItem } = this.props
-			
-			let item = new AdUnit(newItem) || {}
 			return (
 				<Decorated
 					{...this.props}
-					item={item}
 					save={this.save}
 					handleChange={this.handleChange}
 					cancel={this.cancel}
@@ -93,13 +72,11 @@ export default function NewAdUnitHoc(Decorated) {
 		addTo: PropTypes.object
 	}
 
-	// return ItemForm
-
 	function mapStateToProps(state, props) {
 		const { persist, memory } = state
 		return {
 			account: persist.account,
-			newItem: memory.newItem['AdUnit']
+			newItem: new AdUnit(memory.newItem['AdUnit'])
 		}
 	}
 
