@@ -73,10 +73,9 @@ class AdUnitTargeting extends Component {
 	constructor(props) {
 		super(props)
 
+		const { targets } = props.newItem.temp || {}
 		this.state = {
-			targets: [],
-			targeting: [],
-			tags: []
+			targets: targets || []
 		}
 	}
 
@@ -91,6 +90,13 @@ class AdUnitTargeting extends Component {
 				all[tg.collection] = newCollection
 				return all
 			}, {})
+
+		const { temp } = this.props.newItem
+		const newTemp = { ...temp }
+
+		// Need this to keep the state if user get back
+		newTemp.targets = [...targets]
+		collections.temp = newTemp
 
 		this.props.handleChange(null, null, collections)
 	}
@@ -120,8 +126,6 @@ class AdUnitTargeting extends Component {
 		collection,
 		placeholder,
 		label,
-		value,
-		id,
 		index,
 		target,
 		t,
