@@ -7,10 +7,17 @@ import Grid from '@material-ui/core/Grid'
 import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
 
 const getWidAndHightFromType = (type) => {
+	if(!type) {
+		return {
+			width: 0,
+			height: 0
+		}
+	}
+
 	const sizes = (type.split('_')[1]).split('x')
 	return {
-		width: sizes[0],
-		height: sizes[1]
+		width: parseInt(sizes[0], 10),
+		height: parseInt(sizes[1], 10)
 	}
 }
 
@@ -49,7 +56,7 @@ class AdUnitMedia extends Component {
 	render() {
 		const { newItem, t, validateImg } = this.props
 		const { type, temp } = newItem
-		const errImg = this.props.invalidFields['mediaUrl']
+		const errImg = this.props.invalidFields['temp']
 		const { width, height } = getWidAndHightFromType(type)
 
 		return (
