@@ -48,12 +48,13 @@ const uploadImages = ({ item, authSig }) => {
 		})
 }
 
-export function updateNewItem(item, newValues) {
-	item = Base.updateObject({ item: item, newValues: newValues, objModel: Models.itemClassByTypeId[item._type || item._meta.type] })
+export function updateNewItem(item, newValues, itemType, objModel) {
+	item = Base.updateObject({ item, newValues, objModel  })
 	return function (dispatch) {
 		return dispatch({
 			type: types.UPDATE_NEW_ITEM,
-			item: item
+			item,
+			itemType
 		})
 	}
 }

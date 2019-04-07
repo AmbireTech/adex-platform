@@ -26,29 +26,35 @@ export default function NewItemHoc(Decorated) {
 			this.setState({ invalidFields: this.props.validations || {} })
 		}
 
-        validate = (key, { isValid, err = { msg: '', args: [] }, dirty = false, removeAll = false }) => {
+		validate = (
+			key, {
+				isValid,
+				err = { msg: '', args: [] },
+				dirty = false,
+				removeAll = false
+			}) => {
 
-        	if (!isValid) {
-        		let errors = {}
-        		errors[key] = {
-        			errMsg: this.props.t(err.msg, { args: err.args }),
-        			dirty: dirty
-        		}
+			if (!isValid) {
+				let errors = {}
+				errors[key] = {
+					errMsg: this.props.t(err.msg, { args: err.args }),
+					dirty: dirty
+				}
 
-        		this.props.actions.updateValidationErrors(this.props.validateId, errors)
-        	} else if (removeAll) {
-        		this.props.actions.resetValidationErrors(this.props.validateId)
-        	} else {
-        		this.props.actions.resetValidationErrors(this.props.validateId, key)
-        	}
-        }
+				this.props.actions.updateValidationErrors(this.props.validateId, errors)
+			} else if (removeAll) {
+				this.props.actions.resetValidationErrors(this.props.validateId)
+			} else {
+				this.props.actions.resetValidationErrors(this.props.validateId, key)
+			}
+		}
 
-        render() {
-        	const props = this.props
-        	return (
-        		<Decorated {...props} validate={this.validate} invalidFields={this.state.invalidFields} />
-        	)
-        }
+		render() {
+			const props = this.props
+			return (
+				<Decorated {...props} validate={this.validate} invalidFields={this.state.invalidFields} />
+			)
+		}
 	}
 
 	ValidItemHoc.propTypes = {
