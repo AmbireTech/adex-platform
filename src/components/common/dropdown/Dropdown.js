@@ -49,10 +49,10 @@ class Dropdown extends React.Component {
     				input={<Input name={name} id={htmlId} />}
     			>
 
-    				{source.map((src) => {
+    				{[...source].map((src) => {
     					return (
     						<MenuItem
-    							key={src.value}
+    							key={src.value.key || src.value}
     							value={src.value}
     						>
     							{src.label}
