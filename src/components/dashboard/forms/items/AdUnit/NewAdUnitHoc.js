@@ -58,9 +58,10 @@ export default function NewAdUnitHoc(Decorated) {
 		}
 
 		render() {
+			const { classes, ...rest } = this.props
 			return (
 				<Decorated
-					{...this.props}
+					{...rest}
 					save={this.save}
 					handleChange={this.handleChange}
 					cancel={this.cancel}
