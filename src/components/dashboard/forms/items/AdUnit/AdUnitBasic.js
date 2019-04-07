@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
 import NewAdUnitHoc from './NewAdUnitHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
@@ -23,9 +20,9 @@ const AdTypes = constants.AdUnitsTypes
 class AdUnitBasic extends Component {
 
 	componentDidMount() {
-		this.validateName(this.props.item.title, false)
-		this.validateTargetUrl(this.props.item.targetUrl, false)
-
+		const { newItem } = this.props
+		this.validateName(newItem.title, false)
+		this.validateTargetUrl(newItem.targetUrl, false)
 	}
 
 	validateName(name, dirty, errMsg) {
@@ -65,13 +62,13 @@ class AdUnitBasic extends Component {
 	render() {
 		const {
 			t,
-			item,
+			newItem,
 			invalidFields,
 			handleChange,
 			nameHelperTxt,
 			descriptionHelperTxt
 		} = this.props
-		const { targetUrl, type, title } = item
+		const { targetUrl, type, title, description } = newItem
 		const errTitle = invalidFields['title']
 		const errTargetUrl = invalidFields['targetUrl']
 
@@ -109,7 +106,7 @@ class AdUnitBasic extends Component {
 							multiline
 							rows={3}
 							label={t('description', { isProp: true })}
-							value={item._description}
+							value={description}
 							onChange={(ev) =>
 								handleChange('description', ev.target.value)}
 							maxLength={1024}
@@ -162,28 +159,10 @@ AdUnitBasic.propTypes = {
 	newItem: PropTypes.object.isRequired,
 	title: PropTypes.string,
 	itemType: PropTypes.number.isRequired,
-	imgLabel: PropTypes.string,
 	descriptionHelperTxt: PropTypes.string,
 	nameHelperTxt: PropTypes.string,
 }
 
-function mapStateToProps(state, props) {
-	const persist = state.persist
-	const memory = state.memory
-	return {
-		account: persist.account,
-		newItem: memory.newItem[props.itemType]
-	};
-}
+const NewAdUnitBasic = NewAdUnitHoc(AdUnitBasic)
 
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch)
-	}
-}
-
-const ItemNewAdUnitBasic = NewAdUnitHoc(AdUnitBasic)
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(Translate(ItemNewAdUnitBasic))
+export default Translate(NewAdUnitBasic)
