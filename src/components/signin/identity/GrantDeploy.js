@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import { AUTH_TYPES } from 'constants/misc'
 
 class GrantDeploy extends Component {
 
@@ -49,6 +50,10 @@ class GrantDeploy extends Component {
 			email,
 			password
 		})
+
+		walletData.authType =  AUTH_TYPES.GRANT.name
+		walletData.email = email
+		walletData.password = password
 
 		handleChange('wallet', walletData)
 		handleChange('walletAddr', walletData.address)
