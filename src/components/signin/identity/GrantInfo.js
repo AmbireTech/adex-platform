@@ -5,8 +5,11 @@ import TextField from '@material-ui/core/TextField'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { validEmail, validPassword } from 'helpers/validators'
-import { validQuickAccountCoupon } from 'helpers/validators'
+import {
+	validEmail,
+	validPassword,
+	validQuickAccountCoupon
+} from 'helpers/validators'
 import { checkCoupon } from 'services/adex-relayer/actions'
 
 class GrantInfo extends Component {
@@ -87,6 +90,13 @@ class GrantInfo extends Component {
 							isValid: isValid,
 							err: { msg: msg },
 							dirty: dirty
+						})
+					})
+					.catch(err => {
+						this.props.validate('coupon', {
+							isValid: false,
+							err: { msg: 'ERR_COUPON_NETWORK' },
+							dirty: true
 						})
 					})
 			})
