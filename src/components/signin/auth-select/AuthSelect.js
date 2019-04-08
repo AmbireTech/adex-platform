@@ -64,12 +64,17 @@ class AuthSelect extends Component {
 					<Grid item xs={12} md={4}>
 						<AuthCard
 							classes={classes}
-							title={t('QUICK_ACCOUNT')}
-							authPoints={[t('QUICK_ACCUNT_INFO_1'), t('QUICK_ACCUNT_INFO_2'), t('QUICK_ACCUNT_INFO_2')]}
-							toCreate='/identity/quick'
-							toLogin='/login/quick'
-							btnCreateTitle={t('CREATE_QUICK_ACCOUNT')}
-							btnLoginTitle={t('LOGIN_QUICK_ACCOUNT')}
+							title={t('GRANT_ACCOUNT')}
+							authPoints={[
+								t('GRANT_ACCOUNT_INFO_1'),
+								t('GRANT_ACCOUNT_INFO_2'),
+								t('GRANT_ACCOUNT_INFO_3'),
+								t('GRANT_ACCOUNT_INFO_4')
+							]}
+							toCreate='/identity/grant'
+							toLogin='/login/grant'
+							btnCreateTitle={t('CREATE_GRANT_ACCOUNT')}
+							btnLoginTitle={t('LOGIN_GRANT_ACCOUNT')}
 						/>
 					</Grid>
 
@@ -77,11 +82,16 @@ class AuthSelect extends Component {
 						<AuthCard
 							classes={classes}
 							title={t('FULL_ACCOUNT')}
-							authPoints={[t('FULL_ACCOUNT_INFO_1'), t('FULL_ACCOUNT_INFO_2'), t('FULL_ACCOUNT_INFO_3'), t('FULL_ACCOUNT_INFO_4')]}
+							authPoints={[
+								t('FULL_ACCOUNT_INFO_1'),
+								t('FULL_ACCOUNT_INFO_2'),
+								t('FULL_ACCOUNT_INFO_3'),
+								t('FULL_ACCOUNT_INFO_4')
+							]}
 							toCreate='/identity/full'
 							toLogin='/login/full'
 							btnCreateTitle={t('CREATE_FULL_ACCOUNT')}
-							btnLoginTitle={t('CREATE_FULL_ACCOUNT')}
+							btnLoginTitle={t('LOGIN_FULL_ACCOUNT')}
 						/>
 					</Grid>
 
@@ -89,7 +99,12 @@ class AuthSelect extends Component {
 						<AuthCard
 							classes={classes}
 							title={t('DEMO_ACCOUNT')}
-							authPoints={[t('DEMO_ACCOUNT_INFO_1'), t('DEMO_ACCOUNT_INFO_2'), t('DEMO_ACCOUNT_INFO_3')]}
+							authPoints={[
+								t('DEMO_ACCOUNT_INFO_1'),
+								t('DEMO_ACCOUNT_INFO_2'),
+								t('DEMO_ACCOUNT_INFO_3'),
+								t('DEMO_ACCOUNT_INFO_4')
+							]}
 							toCreate='/identity/demo'
 							btnCreateTitle={t('GO_DEMO_ACCOUNT')}
 						/>
