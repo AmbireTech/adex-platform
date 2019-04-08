@@ -42,11 +42,10 @@ class GrantLogin extends Component {
 
 		validate('wallet', {
 			isValid: !!wallet.address,
-			err: { msg: 'ERR_WALLET' },
+			err: { msg: 'ERR_LOCAL_WALLET_LOGIN' },
 			dirty: dirty
 		})
 	}
-
 
 	render() {
 		const { t, identity, handleChange, invalidFields } = this.props
@@ -58,6 +57,11 @@ class GrantLogin extends Component {
 					container
 					spacing={16}
 				>
+					<Grid item xs={12}>
+						<Typography variant='body2' color='primary' gutterBottom>
+							{t('GRANT_LOGIN_INFO')}
+						</Typography>
+					</Grid>
 					<Grid item xs={12}>
 						<TextField
 							fullWidth
@@ -93,7 +97,7 @@ class GrantLogin extends Component {
 								<Typography variant='body1' >
 									{t('GRANT_WALLET_ADDRESS', { args: [identity.walletAddr] })}
 								</Typography>
-								<Typography variant='body1'  gutterBottom>
+								<Typography variant='body1' gutterBottom>
 									{t('GRANT_IDENTITY_ADDRESS', { args: [identity.identityAddr] })}
 								</Typography>
 							</div>
