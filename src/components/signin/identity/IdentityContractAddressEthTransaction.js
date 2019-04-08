@@ -8,6 +8,8 @@ import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import GasPrice from 'components/dashboard/account/GasPrice'
+import Paper from '@material-ui/core/Paper'
+import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -69,18 +71,24 @@ class IdentityContractAddressEthTransaction extends Component {
 					container
 					spacing={16}
 				>
+					<Grid item sm={12} >
+						<Paper className={classes.infoPaper} elevation={1}>
+							<Typography variant="h5" component="h3">
+								{identityAddr}
+							</Typography>
+							<Typography component="p">
+								{t('IDENTITY_PREDEPLOY_INFO')}
+							</Typography>
+						</Paper>
+					</Grid>
 					<Grid item sm={6}>
-						<Grid item xs={12}>
-							<GasPrice />
-						</Grid>
+
 						<Button
 							onClick={this.deployIdentity}
+							variant='contained'
 						>
-							{t('SEND_IDENTITY_TX_NOW')}
+							{t('SIGN_IDENTITY_TX_NOW')}
 						</Button>
-						<div>
-							{identityAddr || ''}
-						</div>
 
 					</Grid>
 				</Grid>
