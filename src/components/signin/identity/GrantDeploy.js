@@ -108,7 +108,7 @@ class GrantDeploy extends Component {
 											onClick={this.getIdentity}
 											disabled={spinner}
 										>
-											{'GET_GRANT_IDENTITY'}
+											{t('GET_GRANT_IDENTITY')}
 										</Button>
 										{spinner &&
 											<CircularProgress
