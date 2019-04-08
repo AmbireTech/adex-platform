@@ -16,7 +16,7 @@ const clearNonceTimeout = () => {
 const syncNonce = () => {
 	const persist = store.getState().persist
 	const account = persist.account
-	let settings = { ...account._settings }
+	let settings = { ...account.settings }
 
 	return getNonce()
 		.then((gasData)=> {

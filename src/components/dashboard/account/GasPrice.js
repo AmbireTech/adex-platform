@@ -47,7 +47,7 @@ class GasPrice extends React.Component {
 
     componentWillMount() {
 
-    	let gasData = this.props.account._settings ? this.props.account._settings.gasData : null
+    	let gasData = this.props.account.settings ? this.props.account.settings.gasData : null
     	this.setState({ gasPrices: this.mapGasPrices(gasData || DEFAULT_DATA, this.props.t) })
     	// this.getGasPrices()
     	// Use interval check for that - services/store-data/gas
@@ -55,14 +55,14 @@ class GasPrice extends React.Component {
     }
 
     changeGasPrice = (val) => {
-    	let settings = { ...this.props.account._settings }
+    	let settings = { ...this.props.account.settings }
     	settings.gasPrice = val
     	this.props.actions.updateAccount({ newValues: { settings: settings } })
     }
 
     render() {
     	let account = this.props.account
-    	let settings = account._settings
+    	let settings = account.settings
     	let gasPrice
 
     	if (settings && settings.gasPrice) {

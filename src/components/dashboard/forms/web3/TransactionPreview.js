@@ -80,7 +80,7 @@ class TransactionPreview extends Component {
 
     render() {
     	const { transaction = {}, t, classes, account, previewWarnMsgs, spinner } = this.props
-    	const gasPrice = account._settings.gasPrice ? account._settings.gasPrice : DEFAULT_GAS_PRICE
+    	const gasPrice = account.settings.gasPrice ? account.settings.gasPrice : DEFAULT_GAS_PRICE
     	const errors = transaction.errors || []
     	return (
     		<div>

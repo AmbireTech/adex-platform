@@ -91,6 +91,10 @@ class Root extends Component {
 		}
 	}
 
+	componentDidCatch(error, info) {
+		// TODO: catch errors
+	}
+
 	componentWillUnmount() {
 		// checkGasData.stop()
 	}
@@ -143,13 +147,13 @@ Root.propTypes = {
 function mapStateToProps(state) {
 	const { persist } = state
 	const { account } = persist
-	const { _wallet, _identity } = account
+	const { wallet, identity } = account
 
-	const hasAuth = !!_wallet
-		&& !!_wallet.address
-		&& !!_wallet.authSig
-		&& !!_wallet.authType
-		&& !!_identity.address
+	const hasAuth = !!wallet
+		&& !!wallet.address
+		&& !!wallet.authSig
+		&& !!wallet.authType
+		&& !!identity.address
 
 	return {
 		account: account,

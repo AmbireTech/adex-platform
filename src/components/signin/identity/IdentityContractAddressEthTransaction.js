@@ -48,8 +48,8 @@ class IdentityContractAddressEthTransaction extends Component {
 		} = identity
 
 		const account = {
-			_wallet: wallet,
-			_settings: {}
+			wallet,
+			settings: {}
 		}
 
 		const tx = await deployIdentityContract({

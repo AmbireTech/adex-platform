@@ -63,7 +63,7 @@ export async function processTx({
 		})
 	)
 
-	const settings = { ...account._settings }
+	const settings = { ...account.settings }
 	settings.nonce = nonce + 1
 	execute(
 		updateAccount({
