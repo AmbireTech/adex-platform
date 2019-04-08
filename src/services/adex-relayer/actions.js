@@ -1,48 +1,32 @@
 import Requester from 'services/requester'
-import { execute } from 'actions/common'
-import { addToast } from 'actions/uiActions'
 import { translate } from 'services/translations/translations'
 
 const ADEX_RELAYER_HOST = process.env.ADEX_RELAYER_HOST
-
 const requester = new Requester({ baseUrl: ADEX_RELAYER_HOST })
 
-const processResponse = (response) => {
+const processResponse = (res) => {
+	if (res.status >= 200 && res.status < 400) {
+		return res.json()
+	}
 
-	return response
-		.then(res => {
-			console.log('res', res)
-			if ( res.status >= 200 && res.status < 400) {
-				return res.json()
-			} else {
-				return res
-					.text()
-					.then(text => {
-						throw new Error(
-							`status: ${res.status}`,
-							`error: ${res.statusText}-${text}`
-						)
-					})
-			}
-
-		})
-		.catch(err => {
-			execute(
-				addToast({
-					type: 'cancel',
-					action: 'X',
-					label: err || translate(
-						'ERR_RELAYER_REQUEST',
-						{
-							args: [err]
-						}),
-					timeout: 50000
-				}))
+	return res
+		.text()
+		.then(text => {
+			throw new Error(
+				translate('SERVICE_ERROR_MSG',
+					{
+						args: [
+							res.url,
+							res.status,
+							res.statusText,
+							text
+						]
+					}))
 		})
 }
 
 export const identityToEmail = ({ identity, privileges, mail }) => {
-	return processResponse(requester.fetch({
+	return requester.fetch({
 		route: 'identity/info-mail',
 		method: 'POST',
 		body: JSON.stringify({
@@ -51,11 +35,11 @@ export const identityToEmail = ({ identity, privileges, mail }) => {
 			mail
 		}),
 		headers: { 'Content-Type': 'application/json' }
-	}))
+	}).then(processResponse)
 }
 
 export const grantAccount = ({ ownerAddr, mail, couponCode }) => {
-	return processResponse(requester.fetch({
+	return requester.fetch({
 		route: 'identity/grant-account',
 		method: 'POST',
 		body: JSON.stringify({
@@ -64,32 +48,32 @@ export const grantAccount = ({ ownerAddr, mail, couponCode }) => {
 			couponCode
 		}),
 		headers: { 'Content-Type': 'application/json' }
-	}))
+	}).then(processResponse)
 }
 
 export const checkCoupon = ({ coupon }) => {
-	return processResponse(requester.fetch({
+	return requester.fetch({
 		route: `identity/valid-coupon/${coupon}`,
 		method: 'GET'
-	}))
+	}).then(processResponse)
 }
 
 export const checkAccessCode = ({ code }) => {
-	return processResponse(requester.fetch({
+	return requester.fetch({
 		route: `identity/valid-accesscode/${code}`,
 		method: 'GET'
-	}))
+	}).then(processResponse)
 }
 
 export const getOwnerIdentities = ({ owner }) => {
-	return processResponse(requester.fetch({
+	return requester.fetch({
 		route: `identity/owners/${owner}`,
 		method: 'GET'
-	}))
+	}).then(processResponse)
 }
 
 export const identityBytecode = ({ owner, privLevel, identityBaseAddr }) => {
-	return processResponse(requester.fetch({
+	return requester.fetch({
 		route: 'identity/identity-bytecode',
 		method: 'POST',
 		body: JSON.stringify({
@@ -98,12 +82,12 @@ export const identityBytecode = ({ owner, privLevel, identityBaseAddr }) => {
 			identityBaseAddr
 		}),
 		headers: { 'Content-Type': 'application/json' }
-	}))
+	}).then(processResponse)
 }
 
 export const registerFullIdentity = ({
 	txHash, identity, privileges, mail }) => {
-	return processResponse(requester.fetch({
+	return requester.fetch({
 		route: 'identity/register-identity',
 		method: 'POST',
 		body: JSON.stringify({
@@ -113,5 +97,5 @@ export const registerFullIdentity = ({
 			mail
 		}),
 		headers: { 'Content-Type': 'application/json' }
-	}))
+	}).then(processResponse)
 }
