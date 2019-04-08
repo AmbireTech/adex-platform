@@ -3,6 +3,7 @@ import { grantAccount } from 'services/adex-relayer/actions'
 import { updateSpinner } from './uiActions'
 import { deployIdentityContract } from 'services/smart-contracts/actions/identity'
 import { registerFullIdentity } from 'services/adex-relayer/actions'
+import { translate } from 'services/translations/translations'
 import { addToast } from './uiActions'
 import {
 	getIdentityDeployData
@@ -75,8 +76,8 @@ export function getGrantAccount({ walletAddr, email, password, coupon }) {
 		} catch (err) {
 			addToast({
 				type: 'cancel',
-				label: 'ERR_REGISTER_GRANT_IDENTITY',
-				args: [err],
+				label: translate('ERR_REGISTER_GRANT_IDENTITY',
+					{ args: [err] }),
 				timeout: 20000
 			})(dispatch)
 		}
@@ -106,8 +107,8 @@ export function deployFullIdentity({ wallet, email, identityTxData, identityAddr
 			} else {
 				addToast({
 					type: 'cancel',
-					label: 'ERR_REGISTER_IDENTITY',
-					args: [tx.hash],
+					label: translate('ERR_REGISTER_IDENTITY',
+						{ args: [tx.hash] }),
 					timeout: 20000
 				})(dispatch)
 			}
@@ -115,8 +116,8 @@ export function deployFullIdentity({ wallet, email, identityTxData, identityAddr
 		catch (err) {
 			addToast({
 				type: 'cancel',
-				label: 'ERR_REGISTER_IDENTITY',
-				args: [err],
+				label: translate('ERR_REGISTER_IDENTITY',
+					{ args: [err] }),
 				timeout: 20000
 			})(dispatch)
 		}
@@ -134,8 +135,8 @@ export function getFullIdentityTxData({ owner, privLevel }) {
 		} catch (err) {
 			addToast({
 				type: 'cancel',
-				label: 'ERR_GET_IDENTITY_TX_DATA',
-				args: [err],
+				label: translate('ERR_GET_IDENTITY_TX_DATA',
+					{ args: [err] }),
 				timeout: 20000
 			})(dispatch)
 		}
