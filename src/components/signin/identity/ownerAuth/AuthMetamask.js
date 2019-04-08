@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import Translate from 'components/translate/Translate'
@@ -121,7 +118,7 @@ class AuthMetamask extends Component {
 										variant='subheading'
 										color='primary'
 									>
-										{t('METAMASK_CONTINUET_TO_NEXT_STEP')}
+										{t('METAMASK_CONTINUE_TO_NEXT_STEP')}
 									</Typography>
 									<AddrItem stats={stats} t={t} addr={address} />
 								</div>
@@ -147,23 +144,7 @@ class AuthMetamask extends Component {
 }
 
 AuthMetamask.propTypes = {
-	actions: PropTypes.object.isRequired,
+	updateWallet: PropTypes.func.isRequired
 }
 
-function mapStateToProps(state) {
-	// const { persist } = state.persist
-	return {
-		// account: persist.account
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch)
-	}
-}
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(Translate(AuthHoc(withStyles(styles)(AuthMetamask))))
+export default Translate(AuthHoc(withStyles(styles)(AuthMetamask)))
