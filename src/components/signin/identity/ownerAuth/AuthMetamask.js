@@ -162,7 +162,8 @@ class AuthMetamask extends Component {
 AuthMetamask.propTypes = {
 	actions: PropTypes.object.isRequired,
 	updateWallet: PropTypes.func.isRequired,
-	t: PropTypes.func.isRequired
+	t: PropTypes.func.isRequired,	
+	classes: PropTypes.object.isRequired
 }
 
 export default Translate(AuthHoc(withStyles(styles)(AuthMetamask)))

@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
 import Button from '@material-ui/core/Button'
 import Translate from 'components/translate/Translate'
 import Anchor from 'components/common/anchor/anchor'
@@ -214,23 +211,9 @@ class AuthLedger extends Component {
 
 AuthLedger.propTypes = {
 	actions: PropTypes.object.isRequired,
+	updateWallet: PropTypes.func.isRequired,
+	t: PropTypes.func.isRequired,
+	classes: PropTypes.object.isRequired
 }
 
-function mapStateToProps(state) {
-	const { persist } = state
-	const { account } = persist
-	return {
-		account
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch)
-	}
-}
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(Translate(AuthHoc(withStyles(styles)(AuthLedger))))
+export default Translate(AuthHoc(withStyles(styles)(AuthLedger)))

@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
 import Translate from 'components/translate/Translate'
 import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
@@ -10,7 +7,6 @@ import Button from '@material-ui/core/Button'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import Typography from '@material-ui/core/Typography'
-import scActions from 'services/smart-contracts/actions'
 import AuthHoc from './AuthHoc'
 import { AUTH_TYPES } from 'constants/misc'
 import { AddrItem } from './AuthCommon'
@@ -229,23 +225,9 @@ class AuthTrezor extends Component {
 
 AuthTrezor.propTypes = {
 	actions: PropTypes.object.isRequired,
+	updateWallet: PropTypes.func.isRequired,
+	t: PropTypes.func.isRequired,	
+	classes: PropTypes.object.isRequired
 }
 
-function mapStateToProps(state) {
-	const { persist } = state
-	const { account } = persist
-	return {
-		account
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch)
-	}
-}
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(Translate(AuthHoc(withStyles(styles)(AuthTrezor))))
+export default Translate(AuthHoc(withStyles(styles)(AuthTrezor)))
