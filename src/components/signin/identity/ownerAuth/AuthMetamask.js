@@ -15,6 +15,7 @@ import {
 	ContentStickyTop,
 	TopLoading
 } from 'components/common/dialog/content'
+import Helper from 'helpers/miscHelpers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { getEthers } from 'services/smart-contracts/ethers'
@@ -36,29 +37,44 @@ class AuthMetamask extends Component {
 
 	checkMetamask = async () => {
 		this.setState({ waitingAddrsData: true }, async () => {
-			const authType = AUTH_TYPES.METAMASK.name
-			const { provider } = await getEthers(authType)
-			const wallet = {
-				authType: authType
+			try {
+				const authType = AUTH_TYPES.METAMASK.name
+				const { provider } = await getEthers(authType)
+				const wallet = {
+					authType: authType
+				}
+
+				const metamaskSigner = await getSigner({ wallet, provider })
+				const address = await metamaskSigner.getAddress()
+				const stats = await getAddressBalances({ address: { address }, authType })
+
+				this.setState({
+					address,
+					stats,
+					waitingAddrsData: false
+				})
+
+				this.props.updateWallet({
+					address,
+					authType: AUTH_TYPES.METAMASK.name,
+					balanceEth: stats.balanceEth,
+					balanceDai: stats.balanceDai,
+					signType: AUTH_TYPES.METAMASK.signType
+				})
+			} catch (err) {
+				console.error('Error: catch', err)
+				this.setState({ waitingTrezorAction: false, waitingAddrsData: false })
+				this.props.actions.addToast({
+					type: 'cancel',
+					action: 'X',
+					label: this.props.t(
+						'ERR_AUTH_METAMASK',
+						{
+							args: [Helper.getErrMsg(err)]
+						}),
+					timeout: 5000
+				})
 			}
-
-			const metamaskSigner = await getSigner({ wallet, provider })
-			const address = await metamaskSigner.getAddress()
-			const stats = await getAddressBalances({ address: { address }, authType })
-
-			this.setState({
-				address,
-				stats,
-				waitingAddrsData: false
-			})
-
-			this.props.updateWallet({
-				address,
-				authType: AUTH_TYPES.METAMASK.name,
-				balanceEth: stats.balanceEth,
-				balanceDai: stats.balanceDai,
-				signType: AUTH_TYPES.METAMASK.signType
-			})
 		})
 	}
 
@@ -144,7 +160,9 @@ class AuthMetamask extends Component {
 }
 
 AuthMetamask.propTypes = {
-	updateWallet: PropTypes.func.isRequired
+	actions: PropTypes.object.isRequired,
+	updateWallet: PropTypes.func.isRequired,
+	t: PropTypes.func.isRequired
 }
 
 export default Translate(AuthHoc(withStyles(styles)(AuthMetamask)))
