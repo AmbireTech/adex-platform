@@ -2,7 +2,7 @@ import React from 'react'
 import Button from '@material-ui/core/Button'
 import FormSteps from 'components/dashboard/forms/FormSteps'
 import NewItemHoc from './NewItemHocStep'
-import NewItemFormPreview from './NewItemFormPreview'
+// import NewItemFormPreview from './NewItemFormPreview'
 import WithDialog from 'components/common/dialog/WithDialog'
 import NewItemForm from './NewItemForm'
 import NewSlotForm from './NewSlotForm'
@@ -16,6 +16,14 @@ import { AdUnit, AdSlot, Channel, Campaign } from 'adex-models'
 import { items as ItemsConstants } from 'adex-constants'
 import AddIcon from '@material-ui/icons/Add'
 import SaveIcon from '@material-ui/icons/Save'
+
+import NewAdUnitHoc from './AdUnit/NewAdUnitHoc'
+import AdUnitBasic from './AdUnit/AdUnitBasic'
+import AdUnitMedia from './AdUnit/AdUnitMedia'
+import AdUnitTargeting from './AdUnit/AdUnitTargeting'
+import AdUnitFormPreview from './AdUnit/AdUnitFormPreview'
+
+
 
 const { ItemsTypes } = ItemsConstants
 const SaveBtn = ({ ...props }) => {
@@ -31,7 +39,7 @@ const SaveBtn = ({ ...props }) => {
 	)
 }
 
-const SaveBtnWithItem = NewItemHoc(SaveBtn)
+const SaveBtnWithItem = NewAdUnitHoc(SaveBtn)
 
 const CancelBtn = ({ ...props }) => {
 	return (
@@ -41,12 +49,12 @@ const CancelBtn = ({ ...props }) => {
 	)
 }
 
-const CancelBtnWithItem = NewItemHoc(CancelBtn)
+const CancelBtnWithItem = NewAdUnitHoc(CancelBtn)
 
 const itemsCommon = {
 	SaveBtn: SaveBtnWithItem,
 	CancelBtn: CancelBtnWithItem,
-	stepsPreviewPage: { title: 'PREVIEW_AND_SAVE_ITEM', page: NewItemFormPreview },
+	stepsPreviewPage: { title: 'PREVIEW_AND_SAVE_ITEM', page: AdUnitFormPreview },
 	validateIdBase: 'new-'
 }
 
@@ -63,12 +71,11 @@ export const NewUnitSteps = (props) =>
 		itemType={ItemsTypes.AdUnit.id}
 		stepsId={ItemsTypes.AdUnit.id}
 		stepsPages={[
-			{ title: 'UNIT_BASIC_STEP', page: NewItemForm },
-			{ title: 'UNIT_TYPE_DATA_STEP', page: NewUnitFormType },
-			{ title: 'UNIT_BANNER_STEP', page: NewUnitFormImg },
-			{ title: 'UNIT_TARGETS_STEP', page: NewUnitFormTargets },
-			{ title: 'UNIT_TAGS_STEP', page: NewItemFormTags }
+			{ title: 'UNIT_BASIC_STEP', page: AdUnitBasic },
+			{ title: 'UNIT_MEDIA_STEP', page: AdUnitMedia },
+			{ title: 'UNIT_TARGETS_STEP', page: AdUnitTargeting }
 		]}
+		stepsPreviewPage={{ title: 'PREVIEW_AND_SAVE_ITEM', page: AdUnitFormPreview }}
 		imgLabel='UNIT_BANNER_IMG_LABEL'
 		noDefaultImg
 		itemModel={AdUnit}
