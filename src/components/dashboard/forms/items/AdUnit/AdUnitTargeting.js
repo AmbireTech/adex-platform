@@ -209,20 +209,6 @@ class AdUnitTargeting extends Component {
 					spacing={24}
 				>
 					<Grid item sm={12}>
-						<Dropdown
-							variant='filled'
-							fullWidth
-							onChange={(target) => {
-								this.newTarget({ ...target })
-							}}
-							source={[...SourcesSelect]}
-							value={''}
-							label={t('NEW_TARGET')}
-							htmlId='ad-type-dd'
-							name='adType'
-						/>
-					</Grid>
-					<Grid item sm={12}>
 						{[...targets].map(({
 							source,
 							collection,
@@ -242,6 +228,20 @@ class AdUnitTargeting extends Component {
 								classes={classes}
 							/>
 						)}
+					</Grid>
+					<Grid item sm={12}>
+						<Dropdown
+							variant='filled'
+							fullWidth
+							onChange={(target) => {
+								this.newTarget({ ...target })
+							}}
+							source={[...SourcesSelect]}
+							value={''}
+							label={t('NEW_TARGET')}
+							htmlId='ad-type-dd'
+							name='adType'
+						/>
 					</Grid>
 				</Grid>
 			</div >
