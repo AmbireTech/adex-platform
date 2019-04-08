@@ -64,7 +64,7 @@ class AllInOneTest extends Component {
 
 	getIdentityContractAddress = async (wallet) => {
 		const account = {
-			_wallet: wallet
+			wallet
 		}
 
 		const res = await getAuthSig({ account })

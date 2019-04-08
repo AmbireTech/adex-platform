@@ -82,7 +82,7 @@ export default function ItemHoc(Decorated) {
         				<div>
         					<Button
         						onClick={logOut}
-        						variant='raised'
+        						variant='contained'
         						color='primary'
         					>
         						{t('DEMO_GO_AUTH_BTN')}
