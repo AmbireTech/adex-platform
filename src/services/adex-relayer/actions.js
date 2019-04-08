@@ -74,6 +74,13 @@ export const checkCoupon = ({ coupon }) => {
 	}))
 }
 
+export const checkAccessCode = ({ code }) => {
+	return processResponse(requester.fetch({
+		route: `identity/valid-accesscode/${code}`,
+		method: 'GET'
+	}))
+}
+
 export const getOwnerIdentities = ({ owner }) => {
 	return processResponse(requester.fetch({
 		route: `identity/owners/${owner}`,
