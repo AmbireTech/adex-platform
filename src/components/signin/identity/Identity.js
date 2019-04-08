@@ -11,6 +11,7 @@ import WalletCheck from './WalletCheck'
 import UserInfo from './UserInfo'
 import GrantInfo from './GrantInfo'
 import GrantDeploy from './GrantDeploy'
+import GrantLogin from './GrantLogin'
 import SaveIcon from '@material-ui/icons/Save'
 import IdentitySteps from './IdentitySteps'
 // import Translate from 'components/translate/Translate'
@@ -58,6 +59,16 @@ export const CreateGrantIdentity = (props) =>
 		stepsPages={[
 			{ title: 'GRANT_INFO', page: GrantInfo },
 			{ title: 'GRANT_DEPLOY', page: GrantDeploy, final: true }
+		]}
+	/>
+
+export const LoginGrantIdentity = (props) =>
+	<IdentitySteps
+		{...props}
+		{...common}
+		stepsId='grant-identity'
+		stepsPages={[
+			{ title: 'GRANT_LOGIN', page: GrantLogin,  final: true  }
 		]}
 	/>
 
