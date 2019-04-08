@@ -6,7 +6,12 @@ import actions from 'actions'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import ConnectHoc from 'components/signin/ConnectHoc'
-import { CreateGrantIdentity, CreteFullIdentity, DemoIdentity } from 'components/signin/identity/Identity'
+import {
+	CreateGrantIdentity,
+	CreteFullIdentity,
+	DemoIdentity,
+	LoginGrantIdentity
+} from 'components/signin/identity/Identity'
 import AuthSelect from 'components/signin/auth-select/AuthSelect'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
@@ -21,6 +26,7 @@ import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 const { getAccountMetamask } = scActions
 
 const ConnectedCreateGrantIdentity = ConnectHoc(CreateGrantIdentity)
+const ConnectedGrantLogin = ConnectHoc(LoginGrantIdentity)
 const ConnectedAuthSelect = ConnectHoc(AuthSelect)
 const ConnectedCreateFullIdentity = ConnectHoc(CreteFullIdentity)
 
@@ -119,7 +125,9 @@ class Root extends Component {
 	shouldComponentUpdate(nextProps, nextState) {
 		// TODO: check if computedMatch or language change need to update
 		const authChanged = this.props.auth !== nextProps.auth
-		const locationChanged = JSON.stringify(this.props.location.pathname) !== JSON.stringify(nextProps.location.pathname)
+		const locationChanged =
+			JSON.stringify(this.props.location.pathname) !== 
+			JSON.stringify(nextProps.location.pathname)
 
 		return authChanged || locationChanged
 	}
@@ -131,7 +139,8 @@ class Root extends Component {
 				<PrivateRoute auth={this.props.auth} path="/side-select" component={SideSelect} />
 				<Route exact path="/" component={(props) => <ConnectedAuthSelect {...props} noBackground />} />
 				<Route exact path="/identity/grant" component={(props) => <ConnectedCreateGrantIdentity {...props} noBackground />} />
-				<Route exact path="/identity/full" component={(props) => <ConnectedCreateFullIdentity{...props} noBackground />} />
+				<Route exact path="/login/grant" component={(props) => <ConnectedGrantLogin {...props} noBackground />} />
+				<Route exact path="/identity/full" component={(props) => <ConnectedCreateFullIdentity {...props} noBackground />} />
 				<Route exact path="/identity/demo" component={DemoIdentity} />
 				<Route component={PageNotFound} />
 			</Switch >
