@@ -7,10 +7,9 @@ import IdentityHoc from './IdentityHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
-import { deployIdentityContract } from 'services/smart-contracts/actions/identity'
+import GasPrice from 'components/dashboard/account/GasPrice'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { registerFullIdentity } from 'services/adex-relayer/actions'
 
 class IdentityContractAddressEthTransaction extends Component {
 
@@ -23,22 +22,27 @@ class IdentityContractAddressEthTransaction extends Component {
 	}
 
 	componentDidMount() {
-		this.validateRegistered(
-			this.props.identity.isRegistered
-		)
+		this.validateRegistered()
 	}
 
-	validateRegistered = (isRegistered, dirty) => {
-		const { validate } = this.props
+	componentDidUpdate(prevProps) {
+		if (prevProps.identity.isRegistered
+			!== this.props.identity.isRegistered) {
+			this.validateRegistered()
+		}
+	}
+
+	validateRegistered = () => {
+		const { validate, identity } = this.props
 		validate('isRegistered', {
-			isValid: !!isRegistered,
+			isValid: !!identity.isRegistered,
 			err: { msg: 'ERR_IDENTITY_NOT_REGISTERED' },
-			dirty: dirty
+			dirty: false
 		})
 	}
 
 	deployIdentity = async () => {
-		const { identity } = this.props
+		const { identity, actions } = this.props
 		const {
 			identityTxData,
 			wallet,
@@ -47,31 +51,17 @@ class IdentityContractAddressEthTransaction extends Component {
 
 		} = identity
 
-		const account = {
+		actions.deployFullIdentity({
 			wallet,
-			settings: {}
-		}
-
-		const tx = await deployIdentityContract({
-			...identityTxData,
-			wallet
+			email,
+			identityAddr,
+			identityTxData
 		})
-
-		const regInfo = await registerFullIdentity({
-			txHash: tx.hash,
-			identity: identityAddr,
-			privileges: [wallet.address, 3],
-			mail: email
-		})
-
-		if (regInfo) {
-			this.validateRegistered(true, false)
-		}
 	}
 
 	render() {
 		const { identity, t, classes, handleChange } = this.props
-		const { identityContractAddress } = identity || {}
+		const { identityAddr } = identity || {}
 
 		return (
 			<div>
@@ -80,13 +70,16 @@ class IdentityContractAddressEthTransaction extends Component {
 					spacing={16}
 				>
 					<Grid item sm={6}>
+						<Grid item xs={12}>
+							<GasPrice />
+						</Grid>
 						<Button
 							onClick={this.deployIdentity}
 						>
-							{'SEND_IDENTITY_TX_NOW'}
+							{t('SEND_IDENTITY_TX_NOW')}
 						</Button>
 						<div>
-							{identityContractAddress || ''}
+							{identityAddr || ''}
 						</div>
 
 					</Grid>
@@ -98,7 +91,8 @@ class IdentityContractAddressEthTransaction extends Component {
 
 IdentityContractAddressEthTransaction.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired
+	account: PropTypes.object.isRequired,
+	identity: PropTypes.object.isRegistered,
 }
 
 function mapStateToProps(state) {
