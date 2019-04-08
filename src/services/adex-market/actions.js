@@ -17,7 +17,7 @@ const processResponse = (res) => {
 		return res.text()
 			.then((text) => {
 				if (res.status === 401 || res.status === 403) {
-					logOut()
+					// logOut()
 					execute(
 						addToast({
 							type: 'cancel',
@@ -69,7 +69,7 @@ export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
 	const formData = new FormData()
 	formData.append('media', imageBlob, imageName)
 	return requester.fetch({
-		route: 'image',
+		route: 'media',
 		method: 'POST',
 		body: formData,
 		authSig
