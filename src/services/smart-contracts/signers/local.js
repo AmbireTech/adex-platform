@@ -13,7 +13,7 @@ export default class LocalSigner extends Signer {
 		})
 
 		this._wallet = new Wallet(
-			walletData.privateKey,
+			walletData.data.privateKey,
 			provider
 		)
 	}
