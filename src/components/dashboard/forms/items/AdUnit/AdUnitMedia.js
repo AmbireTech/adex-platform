@@ -7,7 +7,8 @@ import Grid from '@material-ui/core/Grid'
 import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
 
 const getWidAndHightFromType = (type) => {
-	if(!type) {
+	type = type || 'legacy_300x250'
+	if (!type) {
 		return {
 			width: 0,
 			height: 0

@@ -14,7 +14,7 @@ export default function itemsReducer(state = initialState.items, action) {
 		if (!action.item) return state
 		return {
 			...state,
-			[action.item._id]: action.item,
+			[action.item.ipfs]: action.item,
 		}
 	}
 
@@ -24,10 +24,10 @@ export default function itemsReducer(state = initialState.items, action) {
 		return newCol
 	}
 
-	if (action.item && action.item._meta) {
+	if (action.item && action.itemType) {
 		newState = { ...state }
 		item = { ...action.item }
-		collectionId = item._type || item._meta.type
+		collectionId = action.itemType
 	}
 
 	switch (action.type) {
