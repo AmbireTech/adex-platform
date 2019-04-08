@@ -3,15 +3,11 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { generateRandomWallet, createLocalWallet } from 'services/wallet/wallet'
-import { encrypt, decrypt } from 'services/crypto/crypto'
-import { loadFromLocalStorage, saveToLocalStorage } from 'helpers/localStorageHelpers'
-import { grantAccount } from 'services/adex-relayer/actions'
+import { createLocalWallet } from 'services/wallet/wallet'
 import IdentityHoc from './IdentityHoc'
-// import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
-import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
@@ -19,9 +15,9 @@ import { styles } from './styles'
 
 class GrantDeploy extends Component {
 
-	componentDidMount() {			
+	componentDidMount() {
 		this.validateIdentity()
-		if(!this.props.identity.identityAddr) {
+		if (!this.props.identity.identityAddr) {
 			this.initLocalWallet()
 		}
 	}
@@ -70,8 +66,8 @@ class GrantDeploy extends Component {
 	}
 
 	render() {
-		const { t, identity, handleChange } = this.props
-		const { walletAddr, identityAddr } = identity
+		const { t, identity, classes, spinner } = this.props
+		const { walletAddr, identityAddr, grantAmount } = identity
 
 		return (
 			<div>
@@ -81,8 +77,11 @@ class GrantDeploy extends Component {
 				>
 					<Grid item sm={12}>
 						<Typography paragraph variant='subheading'>
-							{t('WALLET_ADDRESS')}
+							{t('GRANT_WALLET_ADDRESS')}
 							{' ' + walletAddr}
+						</Typography>
+						<Typography paragraph variant='body2'>
+							{t('GRANT_WALLET_ADDRESS_INFO')}
 						</Typography>
 
 
@@ -92,17 +91,32 @@ class GrantDeploy extends Component {
 						<Grid item sm={12}>
 							{!!identityAddr
 								? <Typography paragraph variant='subheading'>
-									{t('IDENTITY_ADDRESS_INFO')}
-									{' ' + identityAddr}
+									{t('IDENTITY_ADDRESS_INFO', {
+										args: [identityAddr, grantAmount]
+									})}
 								</Typography>
-								: <Button
-									variant='contained'
-									color='primary'
-									size='large'
-									onClick={this.getIdentity}
-								>
-									{'GET_GRANT_IDENTITY'}
-								</Button>
+								:
+								<div>
+									<Typography paragraph variant='subheading'>
+										{t('IDENTITY_ADDRESS_INFO_1')}
+									</Typography>
+									<span className={classes.buttonProgressWrapper}>
+										<Button
+											variant='contained'
+											color='primary'
+											size='large'
+											onClick={this.getIdentity}
+											disabled={spinner}
+										>
+											{'GET_GRANT_IDENTITY'}
+										</Button>
+										{spinner &&
+											<CircularProgress
+												size={24}
+												className={classes.buttonProgress}
+											/>}
+									</span >
+								</div>
 							}
 						</Grid>
 					}
@@ -118,11 +132,10 @@ GrantDeploy.propTypes = {
 }
 
 function mapStateToProps(state) {
-	const { persist, memory} = state
+	const { memory } = state
 
 	return {
-		account: persist.account,
-		wallet: memory.wallet
+		spinner: memory.spinners['getting-grant-identity']
 	}
 }
 
