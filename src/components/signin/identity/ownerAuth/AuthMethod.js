@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
 import Translate from 'components/translate/Translate'
-import Dialog from '@material-ui/core/Dialog'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import AppBar from '@material-ui/core/AppBar'
@@ -13,7 +10,6 @@ import AuthDemo from './AuthDemo'
 import METAMASK_DL_IMG from 'resources/download-metamask.png'
 import LEDGER_DL_IMG from 'resources/ledger_logo_header.png'
 import TREZOR_DL_IMG from 'resources/trezor-logo-h.png'
-import DEMO_IMG from 'resources/demo-logo.png'
 import Img from 'components/common/img/Img'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
@@ -54,17 +50,29 @@ class AuthMethod extends Component {
 						<Tab
 							// label={t('METAMASK')}
 							classes={{ label: classes.tabLabel }}
-							label={<Img src={METAMASK_DL_IMG} alt={'Authenticate with METAMASK'} className={classes.tabLogo} />}
+							label={<Img
+								src={METAMASK_DL_IMG}
+								alt={t('AUTH_WITH_METAMASK')}
+								className={classes.tabLogo}
+							/>}
 						/>
 						<Tab
 							// label={t('TREZOR')}
 							classes={{ label: classes.tabLabel }}
-							label={<Img src={TREZOR_DL_IMG} alt={'Authenticate with TREZOR'} className={classes.tabLogo} />}
+							label={<Img
+								src={TREZOR_DL_IMG}
+								alt={t('AUTH_WITH_TREZOR')}
+								className={classes.tabLogo}
+							/>}
 						/>
 						<Tab
 							// label={t('LEDGER')}
 							classes={{ label: classes.tabLabel }}
-							label={<Img src={LEDGER_DL_IMG} alt={'Authenticate with LEDGER'} className={classes.tabLogo} />}
+							label={<Img
+								src={LEDGER_DL_IMG}
+								alt={t('AUTH_WITH_LEDGER')}
+								className={classes.tabLogo}
+							/>}
 						/>
 					</Tabs>
 				</AppBar>
