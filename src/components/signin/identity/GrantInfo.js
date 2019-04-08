@@ -1,10 +1,5 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
 import IdentityHoc from './IdentityHoc'
-// import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Translate from 'components/translate/Translate'
@@ -15,7 +10,6 @@ import { validQuickAccountCoupon } from 'helpers/validators'
 import { checkCoupon } from 'services/adex-relayer/actions'
 
 class GrantInfo extends Component {
-
 	componentDidMount() {
 		const {
 			email,
@@ -23,7 +17,7 @@ class GrantInfo extends Component {
 			password,
 			passwordCheck,
 			coupon
-		} = this.props
+		} = this.props.identity
 
 		this.validateEmail(email, false)
 		this.validateEmailCheck(emailCheck, false)
@@ -63,7 +57,7 @@ class GrantInfo extends Component {
 		const isValid = !!passwordCheck && !!password && (passwordCheck === password)
 		this.props.validate('passwordCheck', {
 			isValid: isValid,
-			err: { msg: 'ERR_EMAIL_CHECK' },
+			err: { msg: 'ERR_PASSWORD_CHECK' },
 			dirty: dirty
 		})
 	}
@@ -85,8 +79,8 @@ class GrantInfo extends Component {
 						let msg = ''
 						if (cpn.exist === false) {
 							msg = 'ERR_COUPON_NOT_EXIST'
-						} else if(cpn.used === true) {
-							msg = 'ERR_COUPON_USED'							
+						} else if (cpn.used === true) {
+							msg = 'ERR_COUPON_USED'
 						}
 
 						this.props.validate('coupon', {
@@ -215,28 +209,5 @@ class GrantInfo extends Component {
 	}
 }
 
-GrantInfo.propTypes = {
-	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired
-}
-
-function mapStateToProps(state) {
-	let persist = state.persist
-	let memory = state.memory
-	return {
-		account: persist.account,
-		wallet: memory.wallet
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch)
-	}
-}
-
 const IdentityGrantInfoStep = IdentityHoc(GrantInfo)
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(Translate(withStyles(styles)(IdentityGrantInfoStep)))
+export default Translate(withStyles(styles)(IdentityGrantInfoStep))
