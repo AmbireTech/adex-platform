@@ -1,14 +1,14 @@
 import * as types from 'constants/actionTypes'
 import { uploadImage, postAdUnit } from 'services/adex-market/actions'
 import { Base, Models, AdUnit } from 'adex-models'
-import { addActionToast } from './uiActions'
+import { addToast as AddToastUi } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemTypesNames } = ItemsConstants
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
-	return addActionToast({ dispatch: dispatch, type: type, action: 'X', label: translate(toastStr, { args: args }), timeout: 5000 })
+	return AddToastUi({ dispatch: dispatch, type: type, action: 'X', label: translate(toastStr, { args: args }), timeout: 5000 })(dispatch)
 }
 
 const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
