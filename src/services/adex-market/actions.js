@@ -9,36 +9,46 @@ const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
 
 const requester = new Requester({ baseUrl: ADEX_MARKET_HOST })
 
-const processResponse = (res) => {
+const processResponse = (response) => {
 
-	if (res.status >= 200 && res.status < 400) {
-		return res.json()
-	} else {
-		return res.text()
-			.then((text) => {
-				if (res.status === 401 || res.status === 403) {
-					// logOut()
-					execute(
-						addToast({
-							type: 'cancel',
-							action: 'X',
-							label: translate(
-								'ERR_AUTH',
-								{
-									args: [res.statusText + ' - ' + text]
-								}), timeout: 5000
-						}))
-				}
-				throw new Error(JSON.stringify({
-					status: res.status,
-					error: res.statusText + ' - ' + text
+	return response
+		.then(res => {
+			console.log('res', res)
+			if (res.status >= 200 && res.status < 400) {
+				return res.json()
+			}
+			else {
+				return res
+					.text()
+					.then(text => {
+						if (res.status === 401 || res.status === 403) {
+							// logOut()
+						}
+						throw new Error(
+							`status: ${res.status}`,
+							`error: ${res.statusText}-${text}`
+						)
+					})
+			}
+
+		})
+		.catch(err => {
+			execute(
+				addToast({
+					type: 'cancel',
+					action: 'X',
+					label: err || translate(
+						'ERR_MARKET_REQUEST',
+						{
+							args: [err]
+						}),
+					timeout: 50000
 				}))
-			})
-	}
+		})
 }
 
 export const getSession = ({ identity, mode, signature, authToken, hash, typedData, signerAddress }) => {
-	return requester.fetch({
+	return processResponse(requester.fetch({
 		route: 'auth/',
 		method: 'POST',
 		body: JSON.stringify({
@@ -51,30 +61,27 @@ export const getSession = ({ identity, mode, signature, authToken, hash, typedDa
 			signerAddress
 		}),
 		headers: { 'Content-Type': 'application/json' }
-	})
-		.then(processResponse)
+	}))
 }
 
 export const checkSession = ({ authSig, skipErrToast }) => {
-	return requester.fetch({
+	return processResponse(requester.fetch({
 		route: 'session',
 		method: 'GET',
 		authSig,
 		skipErrToast
-	})
-		.then(processResponse)
+	}))
 }
 
 export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
 	const formData = new FormData()
 	formData.append('media', imageBlob, imageName)
-	return requester.fetch({
+	return processResponse(requester.fetch({
 		route: 'media',
 		method: 'POST',
 		body: formData,
 		authSig
-	})
-		.then(processResponse)
+	}))
 }
 
 const convertItemToJSON = (item) => {
@@ -87,72 +94,65 @@ const convertItemToJSON = (item) => {
 }
 
 export const getAdUnits = ({ authSig }) => {
-	return requester.fetch({
+	return processResponse(requester.fetch({
 		route: 'adunits',
 		method: 'GET',
 		authSig
-	})
-		.then(processResponse)
+	}))
 }
 
 export const postAdUnit = ({ unit, authSig }) => {
-	return requester.fetch({
+	return processResponse(requester.fetch({
 		route: 'adunits',
 		method: 'POST',
 		body: convertItemToJSON(unit),
 		authSig,
 		headers: { 'Content-Type': 'application/json' }
-	})
-		.then(processResponse)
+	}))
 }
 
 export const updateAdUnit = ({ unit, authSig }) => {
-	return requester.fetch({
+	return processResponse(requester.fetch({
 		route: 'adunits',
 		method: 'PUT',
 		body: convertItemToJSON(unit),
 		authSig,
 		headers: { 'Content-Type': 'application/json' }
-	})
-		.then(processResponse)
+	}))
 }
 
 export const getAdSlots = ({ authSig }) => {
-	return requester.fetch({
+	return processResponse(requester.fetch({
 		route: 'adslots',
 		method: 'GET',
 		authSig
-	})
-		.then(processResponse)
+	}))
 }
 
-export const postAdSlot= ({ slot, authSig }) => {
-	return requester.fetch({
+export const postAdSlot = ({ slot, authSig }) => {
+	return processResponse(requester.fetch({
 		route: 'adslots',
 		method: 'POST',
 		body: convertItemToJSON(slot),
 		authSig,
 		headers: { 'Content-Type': 'application/json' }
-	})
-		.then(processResponse)
+	}))
 }
 
-export const updateAdSlot= ({ slot, authSig }) => {
-	return requester.fetch({
+export const updateAdSlot = ({ slot, authSig }) => {
+	return processResponse(requester.fetch({
 		route: 'adslots',
 		method: 'PUT',
 		body: convertItemToJSON(slot),
 		authSig,
 		headers: { 'Content-Type': 'application/json' }
-	})
-		.then(processResponse)
+	}))
 }
 
 export const getCampaigns = ({ authSig }) => {
-	return requester.fetch({
+	return processResponse(requester.fetch({
 		route: 'campaigns',
 		method: 'GET',
 		authSig
-	})
-		.then(processResponse)
+	}))
 }
