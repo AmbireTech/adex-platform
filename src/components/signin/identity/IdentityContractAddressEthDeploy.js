@@ -7,9 +7,6 @@ import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import { validEmail } from 'helpers/validators'
-import {
-	getIdentityDeployData
-} from 'services/smart-contracts/actions/identity'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -59,16 +56,13 @@ class IdentityContractAddressEthDeploy extends Component {
 	}
 
 	getIdentityContractData = async () => {
+		const {actions, identity} = this.props
 		const { wallet } = this.props.identity
 
-		// TODO: action
-		const txData = await getIdentityDeployData({
+		actions.getFullIdentityTxData({
 			owner: wallet.address,
 			privLevel: 3
 		})
-
-		this.props.handleChange('identityAddr', txData.expectedAddr)
-		this.props.handleChange('identityTxData', txData)
 	}
 
 	render() {
