@@ -1,4 +1,7 @@
 import Requester from 'services/requester'
+import { execute } from 'actions/common'
+import { addToast } from 'actions/uiActions'
+import { translate } from 'services/translations/translations'
 
 const ADEX_RELAYER_HOST = process.env.ADEX_RELAYER_HOST
 
@@ -11,10 +14,20 @@ const processResponse = (res) => {
 	} else {
 		return res.text()
 			.then((text) => {
-				throw new Error(
-					`status: ${res.status}`,
-					`error: ${res.statusText}-${text}`
-				)
+				execute(
+					addToast({
+						type: 'cancel',
+						action: 'X',
+						label: translate(
+							'ERR_AUTH',
+							{
+								args: [res.statusText + ' - ' + text]
+							}), timeout: 50000
+					}))
+				// throw new Error(
+				// 	`status: ${res.status}`,
+				// 	`error: ${res.statusText}-${text}`
+				// )
 			})
 	}
 }
