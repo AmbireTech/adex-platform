@@ -22,14 +22,48 @@ export function generateWallet(mnemonic) {
 	}
 }
 
+function encrKey({ email, password }) {
+	const key = encrypt(email, password)
+	return key
+}
+
+function encrData({ email, password, data }) {
+	const encr = encrypt(JSON.stringify(data), email + password)
+	return encr
+}
+
+function decrData({ email, password, data }) {
+	const decr = JSON.parse(decrypt(data, email + password))
+	return decr
+}
+
 export function createLocalWallet({ email = '', password = '', mnemonic = '' }) {
 	const walletData = generateWallet(mnemonic)
-	const data = JSON.stringify(walletData)
-	const encrKey = encrypt(email, password)
-	const encrData = encrypt(data, email + password)
-	saveToLocalStorage({ data: encrData }, encrKey)
+	const key = encrKey({ email, password })
+	const data = encrData({ data: walletData, email, password })
+	saveToLocalStorage({ data }, key)
 
 	return walletData
+}
+
+export function addDataToWallet({
+	email = '',
+	password = '',
+	dataKey = '',
+	dataValue = '' }) {
+	if (dataKey === 'data') {
+		throw new Error('Invalid data key')
+	}
+
+	const wallet = getLocalWallet({ email, password })
+	if (!wallet) {
+		throw new Error('Wallet not found')
+	}
+
+	const data = encrData({ data: dataValue, email, password })
+	wallet[dataKey] = data
+	const key = encrKey({ email, password })
+	saveToLocalStorage(wallet, key)
 }
 
 export function getLocalWallet({ email, password }) {
@@ -37,12 +71,22 @@ export function getLocalWallet({ email, password }) {
 		throw new Error('email and password are required')
 	}
 
-	const key = encrypt(email, password)
-	const data = loadFromLocalStorage(key)
-	if (data) {
-		const decrData = decrypt(data.data, email + password)
-		const walletData = JSON.parse(decrData)
-		return walletData
+	const key = encrKey({ email, password })
+	const wallet = loadFromLocalStorage(key)
+
+	if (wallet) {
+		const data = Object.keys(wallet)
+			.reduce((props, key) => {
+				props[key] = decrData({
+					data: wallet[key],
+					email,
+					password
+				})
+
+				return props
+			}, {})
+
+		return data
 	} else {
 		return null
 	}
