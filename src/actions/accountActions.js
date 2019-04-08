@@ -2,9 +2,9 @@ import * as types from 'constants/actionTypes'
 import { addSig, getSig } from 'services/auth/auth'
 import { getSession, checkSession } from 'services/adex-market/actions'
 import { updateSpinner } from './uiActions'
-import scActions from 'services/smart-contracts/actions'
+import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
-const { signAuthToken } = scActions
+import { addToast } from './uiActions'
 
 // MEMORY STORAGE
 export function updateSignin(prop, value) {
@@ -67,60 +67,66 @@ export function updateGasData({ gasData }) {
 export function createSession({ wallet, identity, email }) {
 	return async function (dispatch) {
 		updateSpinner('creating-session', true)(dispatch)
+		try {
+			const newWallet = { ...wallet }
+			const sessionSignature = getSig({
+				addr: newWallet.address,
+				mode: newWallet.authType
+			}) || null
 
-		// await new Promise(resolve => setTimeout(resolve, 5000))
+			const hasSession = !!sessionSignature
+				&& (await checkSession({
+					authSig: sessionSignature,
+					skipErrToast: true
+				}))
 
-		const newWallet = { ...wallet }
-		const sessionSignature = getSig({
-			addr: newWallet.address,
-			mode: newWallet.authType
-		}) || null
+			if (hasSession) {
+				newWallet.authSig = sessionSignature
+			} else {
+				const {
+					signature,
+					mode,
+					authToken,
+					hash,
+					typedData
+				} = await getAuthSig({ wallet: newWallet })
 
-		const hasSession = !!sessionSignature
-			&& (await checkSession({
-				authSig: sessionSignature,
-				skipErrToast: true
-			}))
-
-		if (hasSession) {
-			newWallet.authSig = sessionSignature
-		} else {
-			const {
-				signature,
-				mode,
-				authToken,
-				hash,
-				typedData
-			} = await getAuthSig({ wallet: newWallet })
-
-			const { status, expiryTime } = await getSession({
-				identity: identity.address,
-				mode: mode,
-				signature: signature,
-				authToken: authToken,
-				hash,
-				typedData,
-				signerAddress: newWallet.address
-			})
-
-			if (status === 'OK') {
-				addSig({
-					addr: wallet.address,
-					sig: signature,
-					mode: wallet.authType,
-					expiryTime: expiryTime
+				const { status, expiryTime } = await getSession({
+					identity: identity.address,
+					mode: mode,
+					signature: signature,
+					authToken: authToken,
+					hash,
+					typedData,
+					signerAddress: newWallet.address
 				})
-				newWallet.authSig = signature
-			}
-		}
 
-		updateAccount({
-			newValues: {
-				email: email,
-				wallet: newWallet,
-				identity: identity
+				if (status === 'OK') {
+					addSig({
+						addr: wallet.address,
+						sig: signature,
+						mode: wallet.authType,
+						expiryTime: expiryTime
+					})
+					newWallet.authSig = signature
+				}
 			}
-		})(dispatch)
+
+			updateAccount({
+				newValues: {
+					email: email,
+					wallet: newWallet,
+					identity: identity
+				}
+			})(dispatch)
+		} catch (err) {
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_GETTING_SESSION',
+					{ args: [err] }),
+				timeout: 20000
+			})(dispatch)
+		}
 
 		updateSpinner('creating-session', false)(dispatch)
 	}
