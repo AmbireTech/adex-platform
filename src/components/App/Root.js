@@ -6,7 +6,7 @@ import actions from 'actions'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import ConnectHoc from 'components/signin/ConnectHoc'
-import { QuickIdentity, FullIdentity, DemoIdentity } from 'components/signin/identity/Identity'
+import { CreateGrantIdentity, CreteFullIdentity, DemoIdentity } from 'components/signin/identity/Identity'
 import AuthSelect from 'components/signin/auth-select/AuthSelect'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
@@ -20,9 +20,9 @@ import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 
 const { getAccountMetamask } = scActions
 
-const ConnectedGrantIdentity = ConnectHoc(QuickIdentity)
+const ConnectedCreateGrantIdentity = ConnectHoc(CreateGrantIdentity)
 const ConnectedAuthSelect = ConnectHoc(AuthSelect)
-const ConnectedFullIdentity = ConnectHoc(FullIdentity)
+const ConnectedCreateFullIdentity = ConnectHoc(CreteFullIdentity)
 
 function PrivateRoute({ component: Component, auth, ...other }) {
 	return (
@@ -130,8 +130,8 @@ class Root extends Component {
 				<PrivateRoute auth={this.props.auth} path="/dashboard/:side" component={Dashboard} />
 				<PrivateRoute auth={this.props.auth} path="/side-select" component={SideSelect} />
 				<Route exact path="/" component={(props) => <ConnectedAuthSelect {...props} noBackground />} />
-				<Route exact path="/identity/grant" component={(props) => <ConnectedGrantIdentity {...props} noBackground />} />
-				<Route exact path="/identity/full" component={(props) => <ConnectedFullIdentity{...props} noBackground />} />
+				<Route exact path="/identity/grant" component={(props) => <ConnectedCreateGrantIdentity {...props} noBackground />} />
+				<Route exact path="/identity/full" component={(props) => <ConnectedCreateFullIdentity{...props} noBackground />} />
 				<Route exact path="/identity/demo" component={DemoIdentity} />
 				<Route component={PageNotFound} />
 			</Switch >

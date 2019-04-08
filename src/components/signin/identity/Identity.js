@@ -11,7 +11,6 @@ import WalletCheck from './WalletCheck'
 import UserInfo from './UserInfo'
 import GrantInfo from './GrantInfo'
 import GrantDeploy from './GrantDeploy'
-import CouponCheck from './CouponCheck'
 import SaveIcon from '@material-ui/icons/Save'
 import IdentitySteps from './IdentitySteps'
 // import Translate from 'components/translate/Translate'
@@ -51,18 +50,18 @@ const common = {
 	validateIdBase: 'identity-'
 }
 
-export const QuickIdentity = (props) =>
+export const CreateGrantIdentity = (props) =>
 	<IdentitySteps
 		{...props}
 		{...common}
 		stepsId='grant-identity'
 		stepsPages={[
 			{ title: 'GRANT_INFO', page: GrantInfo },
-			{ title: 'GRANT_DEPLOY', page: GrantDeploy, final: true }		
+			{ title: 'GRANT_DEPLOY', page: GrantDeploy, final: true }
 		]}
 	/>
 
-export const FullIdentity = (props) =>
+export const CreteFullIdentity = (props) =>
 	<IdentitySteps
 		{...props}
 		{...common}
@@ -73,6 +72,7 @@ export const FullIdentity = (props) =>
 			{ title: 'DEPLOY_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthTransaction, final: true }
 		]}
 	/>
+
 
 export const DemoIdentity = (props) =>
 	<IdentitySteps
