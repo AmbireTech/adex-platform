@@ -58,7 +58,7 @@ export function getGrantAccount({ walletAddr, email, password, coupon }) {
 				couponCode: coupon
 			})
 
-			const identity = identityInfo.deployData.idContractAddr
+			const identity = identityInfo.address
 
 			if (identityInfo) {
 				addDataToWallet({
