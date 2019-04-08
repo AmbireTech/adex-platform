@@ -55,14 +55,16 @@ export function addDataToWallet({
 		throw new Error('Invalid data key')
 	}
 
-	const wallet = getLocalWallet({ email, password })
+	const key = encrKey({ email, password })
+	const wallet = loadFromLocalStorage(key)
+
 	if (!wallet) {
 		throw new Error('Wallet not found')
 	}
 
 	const data = encrData({ data: dataValue, email, password })
 	wallet[dataKey] = data
-	const key = encrKey({ email, password })
+	
 	saveToLocalStorage(wallet, key)
 }
 
