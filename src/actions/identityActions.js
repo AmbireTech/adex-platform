@@ -7,6 +7,7 @@ import { addToast } from './uiActions'
 import {
 	getIdentityDeployData
 } from 'services/smart-contracts/actions/identity'
+import { addDataToWallet } from 'services/wallet/wallet'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -46,7 +47,7 @@ export function resetWallet() {
 	}
 }
 
-export function getGrantAccount({ walletAddr, email, coupon }) {
+export function getGrantAccount({ walletAddr, email, password, coupon }) {
 	return async function (dispatch) {
 		updateSpinner('getting-grant-identity', true)(dispatch)
 		try {
@@ -56,11 +57,19 @@ export function getGrantAccount({ walletAddr, email, coupon }) {
 				couponCode: coupon
 			})
 
+			const identity = identityInfo.deployData.idContractAddr
+
 			if (identityInfo) {
+				addDataToWallet({
+					email,
+					password,
+					dataKey: 'identity',
+					dataValue: identity
+				})
 				return dispatch({
 					type: types.UPDATE_IDENTITY,
 					prop: 'identityAddr',
-					value: identityInfo.deployData.idContractAddr
+					value: identity
 				})
 			}
 		} catch (err) {
