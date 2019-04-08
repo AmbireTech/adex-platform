@@ -95,6 +95,8 @@ export async function getSigner({ wallet, provider }) {
 
 		return signer
 	}
+
+	throw new Error(`Invalid wallet authType ${wallet.authType}`)
 }
 
 export async function getAuthSig({ wallet }) {
