@@ -1,15 +1,11 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
 import IdentityHoc from './IdentityHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
-import GasPrice from 'components/dashboard/account/GasPrice'
 import { validEmail } from 'helpers/validators'
 import {
 	getIdentityDeployData
@@ -62,9 +58,10 @@ class IdentityContractAddressEthDeploy extends Component {
 		})
 	}
 
-	getIdentityContractData= async () => {
-		const {  wallet } = this.props.identity
+	getIdentityContractData = async () => {
+		const { wallet } = this.props.identity
 
+		// TODO: action
 		const txData = await getIdentityDeployData({
 			owner: wallet.address,
 			privLevel: 3
@@ -86,6 +83,11 @@ class IdentityContractAddressEthDeploy extends Component {
 					container
 					spacing={16}
 				>
+					<Grid item xs={12}>
+						<Typography paragraph variant='body1'>
+							{t('GENERATE_FULL_IDENTITY_INFO_EMAIL')}
+						</Typography>
+					</Grid>
 					<Grid item xs={12}>
 						<TextField
 							fullWidth
@@ -126,12 +128,14 @@ class IdentityContractAddressEthDeploy extends Component {
 							}
 						/>
 					</Grid>
+
 					<Grid item xs={12}>
-						<GasPrice />
-					</Grid>
-					<Grid item xs={12}>
+						<Typography paragraph variant='body1'>
+							{t('GENERATE_FULL_IDENTITY_INFO_ADDRESS')}
+						</Typography>
 						{!identityAddr
-							? <Button
+							?
+							<Button
 								variant='contained'
 								color='primary'
 								onClick={this.getIdentityContractData}
@@ -140,14 +144,8 @@ class IdentityContractAddressEthDeploy extends Component {
 							</Button>
 							:
 							<div>
-								<Typography paragraph variant='subheading'>
-									{t('IDENTITY_CONTRACT_ADDRESS_INFO')}
-								</Typography>
-								<Typography paragraph variant='subheading'>
-									{t('IDENTITY_CONTRACT')}
-								</Typography>
-								<Typography paragraph variant='subheading'>
-									{identityAddr}
+								<Typography paragraph variant='subtitle2' color='primary'>
+									{t('IDENTITY_CONTRACT_IS', { args: [identityAddr] })}
 								</Typography>
 							</div>
 						}
@@ -160,25 +158,13 @@ class IdentityContractAddressEthDeploy extends Component {
 
 IdentityContractAddressEthDeploy.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired
-}
-
-function mapStateToProps(state) {
-	let persist = state.persist
-	// let memory = state.memory
-	return {
-		account: persist.account,
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch)
-	}
+	account: PropTypes.object.isRequired,
+	identity: PropTypes.object.isRequired,
+	handleChange: PropTypes.func.isRequired,
+	t: PropTypes.func.isRequired,
+	invalidFields: PropTypes.object.isRequired,
+	validate: PropTypes.func.isRequired
 }
 
 const IdentityContractAddressStep = IdentityHoc(IdentityContractAddressEthDeploy)
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(Translate(withStyles(styles)(IdentityContractAddressStep)))
+export default Translate(withStyles(styles)(IdentityContractAddressStep))
