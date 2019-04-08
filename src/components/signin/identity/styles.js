@@ -34,7 +34,7 @@ export const styles = theme => {
 			display: 'flex'
 		},
 		buttonProgressWrapper: {
-			margin: theme.spacing.unit,
+			margin: spacing,
 			position: 'relative',
 		},
 		buttonProgress: {
@@ -43,6 +43,11 @@ export const styles = theme => {
 			left: '50%',
 			marginTop: -12,
 			marginLeft: -12,
+		},
+		infoPaper: {
+			...theme.mixins.gutters(),
+			paddingTop: spacing * 2,
+			paddingBottom: spacing * 2,
 		}
 	}
 }
