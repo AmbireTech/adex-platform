@@ -1,0 +1,100 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import NewCampaignHoc from './NewCampaignHoc'
+import Translate from 'components/translate/Translate'
+import UnitTargets from 'components/dashboard/containers/UnitTargets'
+import Grid from '@material-ui/core/Grid'
+import ItemsList from 'components/dashboard/containers/ItemsList'
+import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
+import { AdUnit } from 'adex-models'
+
+import { withStyles } from '@material-ui/core/styles'
+import { styles } from '../styles'
+
+class CampaignFormPreview extends Component {
+	constructor(props) {
+		super(props)
+		this.save = props.save
+	}
+
+	AdUnitsTable = ({ items }) => {
+		return (
+
+			<Grid item sm={12}>
+				<ContentBody>
+					<ItemsList
+						objModel={AdUnit}
+						items={items}
+						listMode
+						itemType={'AdUnit'}
+						noControls
+						padding='dense'
+						noControls
+					/>
+				</ContentBody>
+			</Grid>
+		)
+	}
+
+	render() {
+		const { classes, account, ...rest } = this.props
+		const { newItem, t } = rest
+		const {
+			targeting,
+			adUnits
+		} = newItem
+
+		return (
+			<ContentBox>
+				<ContentBody>
+					<PropRow
+						left={t('owner', { isProp: true })}
+						right={account.wallet.address}
+					/>
+					<PropRow
+						left={t('targeting', { isProp: true })}
+						right={
+							<UnitTargets
+								{...rest}
+								targets={targeting}
+								t={t}
+							// subHeader={'TARGETING'}
+							/>
+						}
+					/>
+					<PropRow
+						left={t('targeting', { isProp: true })}
+						right={
+							<this.AdUnitsTable
+								items={adUnits}
+							/>
+						}
+					/>
+
+					{/* </Grid> */}
+					<br />
+				</ContentBody>
+			</ContentBox>
+		)
+	}
+}
+
+CampaignFormPreview.propTypes = {
+	actions: PropTypes.object.isRequired,
+	account: PropTypes.object.isRequired,
+	newItem: PropTypes.object.isRequired,
+	title: PropTypes.string
+}
+
+function mapStateToProps(state) {
+	const { persist } = state
+	return {
+		account: persist.account
+	}
+}
+
+const NewCampaignFormPreview = NewCampaignHoc(withStyles(styles)(CampaignFormPreview))
+export default connect(
+	mapStateToProps
+)(Translate(NewCampaignFormPreview))
