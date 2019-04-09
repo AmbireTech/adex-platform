@@ -29,12 +29,11 @@ class Rows extends Component {
 	}
 
 	render() {
-		let side = this.props.side
-		let rows = this.props.rows
+		const { side, rows, padding } = this.props
 		return (
 			<div>
 				<Table
-				// theme={theme}
+					padding={padding || 'default'}
 				>
 					{this.props.tableHeadRenderer({ selected: this.state.selected })}
 					<TableBody>
