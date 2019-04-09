@@ -7,6 +7,8 @@ import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
 import { constants, schemas, Joi } from 'adex-models'
 
+const { adUnitPost } = schemas
+
 const AdTypes = constants.AdUnitsTypes
 	.map(type => {
 		return {
@@ -19,12 +21,13 @@ class AdUnitBasic extends Component {
 
 	componentDidMount() {
 		const { newItem } = this.props
-		this.validateName(newItem.title, false)
+		this.validateTitle(newItem.title, false)
+		this.validateDescription(newItem.description, false)
 		this.validateTargetUrl(newItem.targetUrl, false)
 	}
 
-	validateName(name, dirty, errMsg) {
-		const result = Joi.validate(name, schemas.adUnitPost.title)
+	validateTitle(name, dirty, errMsg) {
+		const result = Joi.validate(name, adUnitPost.title)
 
 		this.props.validate(
 			'title',
@@ -35,8 +38,20 @@ class AdUnitBasic extends Component {
 			})
 	}
 
+	validateDescription(name, dirty, errMsg) {
+		const result = Joi.validate(name, adUnitPost.description)
+
+		this.props.validate(
+			'description',
+			{
+				isValid: !result.error,
+				err: { msg: result.error ? result.error.message : '' },
+				dirty: dirty
+			})
+	}
+
 	validateTargetUrl(targetUrl, dirty) {
-		const result = Joi.validate(targetUrl, schemas.adUnitPost.targetUrl)
+		const result = Joi.validate(targetUrl, adUnitPost.targetUrl)
 		this.props.validate('targetUrl',
 			{
 				isValid: !result.error,
@@ -46,7 +61,7 @@ class AdUnitBasic extends Component {
 	}
 
 	validateAndUpdateType = (dirty, value) => {
-		const result = Joi.validate(value, schemas.adUnitPost.type)
+		const result = Joi.validate(value, adUnitPost.type)
 
 		this.props.handleChange('type', value)
 		this.props.validate('type',
@@ -68,6 +83,7 @@ class AdUnitBasic extends Component {
 		} = this.props
 		const { targetUrl, type, title, description } = newItem
 		const errTitle = invalidFields['title']
+		const errDescription = invalidFields['description']
 		const errTargetUrl = invalidFields['targetUrl']
 
 		return (
@@ -86,10 +102,10 @@ class AdUnitBasic extends Component {
 							value={title}
 							onChange={(ev) =>
 								handleChange('title', ev.target.value)}
-							onBlur={() => this.validateName(title, true)}
-							onFocus={() => this.validateName(title, false)}
+							onBlur={() => this.validateTitle(title, true)}
+							onFocus={() => this.validateTitle(title, false)}
 							error={errTitle && !!errTitle.dirty}
-							maxLength={128}
+							maxLength={120}
 							helperText={
 								(errTitle && !!errTitle.dirty)
 									? errTitle.errMsg
@@ -107,8 +123,15 @@ class AdUnitBasic extends Component {
 							value={description}
 							onChange={(ev) =>
 								handleChange('description', ev.target.value)}
-							maxLength={1024}
-							helperText={descriptionHelperTxt || ''}
+							onBlur={() => this.validateDescription(title, true)}
+							onFocus={() => this.validateDescription(title, false)}
+							error={errDescription && !!errDescription.dirty}
+							maxLength={300}
+							helperText={
+								(errDescription && !!errDescription.dirty)
+									? errDescription.errMsg
+									: (descriptionHelperTxt || '')
+							}
 						/>
 					</Grid>
 					<Grid item xs={12}>
@@ -121,7 +144,6 @@ class AdUnitBasic extends Component {
 							onChange={(ev) =>
 								handleChange('targetUrl', ev.target.value)
 							}
-							maxLength={1024}
 							onBlur={() => this.validateTargetUrl(targetUrl, true)}
 							onFocus={() => this.validateTargetUrl(targetUrl, false)}
 							error={errTargetUrl && !!errTargetUrl.dirty}
