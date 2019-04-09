@@ -12,6 +12,7 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Tooltip from '@material-ui/core/Tooltip'
 import Button from '@material-ui/core/Button'
+import Checkbox from '@material-ui/core/Checkbox'
 import IconButton from '@material-ui/core/IconButton'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import { Item } from 'adex-models'
@@ -73,26 +74,12 @@ class ItemsList extends Component {
 	}
 
 	renderTableHead = ({ selected }) => {
-		const t = this.props.t
+		const { t , selectedItems} = this.props
 		return (
 			<TableHead>
 				<TableRow>
 					<TableCell>
-						{selected.length &&
-							<Tooltip
-								title={t('DELETE_ALL')}
-								// placement='top'
-								enterDelay={1000}
-							>
-								<Button
-									// icon='delete'
-									onClick={null}
-								>
-									{t('DELETE_ALL')}
-								</Button >
-							</Tooltip>
-
-						}
+						{Object.keys(selectedItems).length || ''}
 					</TableCell>
 					<TableCell> {t('PROP_NAME')} </TableCell>
 					<TableCell> {t('PROP_ADTYPE')} </TableCell>
@@ -104,12 +91,23 @@ class ItemsList extends Component {
 	}
 
 	renderTableRow = (item, index, { to, selected }) => {
-		const { t, classes } = this.props
+		const { t, classes, selectMode, selectedItems, onSelect } = this.props
 		return (
 			<TableRow
 				key={item.ipfs || index}
-				selected={selected}
+				selected={selectedItems[item.ipfs]}
 			>
+				{selectMode &&
+					<TableCell padding="checkbox">
+						<Checkbox
+							// indeterminate={numSelected > 0 && numSelected < rowCount}
+							checked={selectedItems[item.ipfs]}
+							onChange={(event) => {
+								onSelect(item.ipfs, event.target.checked)
+							}}
+						/>
+					</TableCell>
+				}
 				<RRTableCell
 					// className={tableTheme.link}
 					to={to}
@@ -117,7 +115,7 @@ class ItemsList extends Component {
 				>
 					<Img
 						className={classnames(classes.cellImg)}
-						src={item.mediaUrl || item.fallbackMediaiUrl  || ''}
+						src={item.mediaUrl || item.fallbackMediaiUrl || ''}
 						alt={item.title}
 					/>
 				</RRTableCell>
@@ -130,20 +128,22 @@ class ItemsList extends Component {
 				<TableCell> {item.type} </TableCell>
 				<TableCell> {moment(item.created).format('DD-MM-YYYY')} </TableCell>
 				<TableCell>
-					<Tooltip
-						title={t('LABEL_VIEW')}
-						// placement='top'
-						enterDelay={1000}
-					>
-						<RRButton
-							to={to}
-							variant='raised'
-							color='primary'
+					{!selectMode &&
+						<Tooltip
+							title={t('LABEL_VIEW')}
+							// placement='top'
+							enterDelay={1000}
 						>
-							{t('LABEL_VIEW')}
-						</RRButton>
-					</Tooltip>
-					{this.renderActions(item)}
+							<RRButton
+								to={to}
+								variant='raised'
+								color='primary'
+							>
+								{t('LABEL_VIEW')}
+							</RRButton>
+						</Tooltip>
+					}
+					{this.renderActions(item, to)}
 
 				</TableCell>
 			</TableRow>
@@ -156,6 +156,7 @@ class ItemsList extends Component {
 			t,
 			account,
 			actions,
+			selectMode
 		} = this.props
 		const parentName = parentItem ? parentItem.title : ''
 		const itemName = item.title
@@ -164,7 +165,7 @@ class ItemsList extends Component {
 
 		return (
 			<span>
-				{!item._archived &&
+				{!selectMode && !item._archived &&
 					<Tooltip
 						title={t('TOOLTIP_ARCHIVE')}
 						// placement='top'
@@ -188,7 +189,7 @@ class ItemsList extends Component {
 						</IconButton>
 					</Tooltip>
 				}
-				{item._archived &&
+				{!selectMode && item.archived &&
 					<Tooltip
 						title={t('TOOLTIP_UNARCHIVE')}
 						enterDelay={1000}
@@ -212,7 +213,8 @@ class ItemsList extends Component {
 						</IconButton>
 					</Tooltip>
 				}
-				{(this.props.removeFromItem && parentItem) &&
+
+				{/* {(!!selectMode && !!onDeselect) &&
 					<Tooltip
 						title={t('REMOVE_FROM', { args: [parentName] })}
 						// placement='top'
@@ -223,22 +225,23 @@ class ItemsList extends Component {
 							icon='remove_circle_outline'
 							label={t('REMOVE_FROM', { args: [parentName] })}
 							// className={RTButtonTheme.danger}
-							onClick={actions.confirmAction.bind(this,
-								actions.removeItemFromItem.bind(this, { item: item, toRemove: parentItem, authSig: account.wallet.authSig }),
-								null,
-								{
-									confirmLabel: t('CONFIRM_YES'),
-									cancelLabel: t('CONFIRM_NO'),
-									text: t('REMOVE_ITEM', { args: [itemTypeName, itemName, t(ItemTypesNames[parentItem._type], { isProp: true }), parentName] }),
-									title: t('CONFIRM_SURE')
-								})}
+							// onClick={actions.confirmAction.bind(this,
+							// 	actions.removeItemFromItem.bind(this, { item: item, toRemove: parentItem, authSig: account.wallet.authSig }),
+							// 	null,
+							// 	{
+							// 		confirmLabel: t('CONFIRM_YES'),
+							// 		cancelLabel: t('CONFIRM_NO'),
+							// 		text: t('REMOVE_ITEM', { args: [itemTypeName, itemName, t(ItemTypesNames[parentItem._type], { isProp: true }), parentName] }),
+							// 		title: t('CONFIRM_SURE')
+							// 	})}
+							onClick={() => onDeselect(item)}
 						>
 							<RemoveCircleOutlineIcon />
 						</IconButton>
 					</Tooltip>
 				}
 
-				{(this.props.addToItem && parentItem) &&
+				{(!!selectMode && !!onSelect) &&
 					<Tooltip
 						tile={t('ADD_TO', { args: [parentName] })}
 						// placement='top'
@@ -248,12 +251,13 @@ class ItemsList extends Component {
 							disabled={isDemo}
 							label={t('ADD_TO', { args: [parentName] })}
 							color='secondary'
-							onClick={actions.addItemToItem.bind(this, { item: item, toAdd: this.props.parentItem, authSig: account.wallet.authSig })}
+							// onClick={actions.addItemToItem.bind(this, { item: item, toAdd: this.props.parentItem, authSig: account.wallet.authSig })}
+							onClick={() => onSelect(item)}
 						>
 							<AddCircleOutlineIcon />
 						</IconButton>
 					</Tooltip>
-				}
+				} */}
 			</span>
 		)
 	}
@@ -264,8 +268,8 @@ class ItemsList extends Component {
 			item={items}
 			rows={items}
 			itemType={this.props.itemType}
-			// multiSelectable={false}
-			// selectable={false}
+			// multiSelectable={true}
+			// selectable={true}
 			rowRenderer={this.renderTableRow}
 			tableHeadRenderer={this.renderTableHead}
 		/>
@@ -310,6 +314,7 @@ function mapStateToProps(state, props) {
 	return {
 		account: persist.account,
 		side: memory.nav.side,
+		selectedItems: props.selectedItems || {}
 	}
 }
 
