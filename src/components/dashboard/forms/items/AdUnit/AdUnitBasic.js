@@ -5,9 +5,7 @@ import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
-import { validName } from 'helpers/validators'
-import { validUrl } from 'helpers/validators'
-import { constants } from 'adex-models'
+import { constants, schemas, Joi } from 'adex-models'
 
 const AdTypes = constants.AdUnitsTypes
 	.map(type => {
@@ -26,35 +24,35 @@ class AdUnitBasic extends Component {
 	}
 
 	validateName(name, dirty, errMsg) {
-		const { msg, errMsgArgs } = validName(name)
+		const result = Joi.validate(name, schemas.adUnitPost.title)
 
 		this.props.validate(
 			'title',
 			{
-				isValid: !msg,
-				err: { msg: errMsg || msg, args: errMsgArgs },
+				isValid: !result.error,
+				err: { msg: result.error ? result.error.message : '' },
 				dirty: dirty
 			})
 	}
 
 	validateTargetUrl(targetUrl, dirty) {
+		const result = Joi.validate(targetUrl, schemas.adUnitPost.targetUrl)
 		this.props.validate('targetUrl',
 			{
-				isValid: validUrl(targetUrl),
-				err: { msg: 'ERR_INVALID_URL' },
+				isValid: !result.error,
+				err: { msg: result.error ? result.error.message : '' },
 				dirty: dirty
 			})
 	}
 
-	validateAndUpdateDD = (dirty, propsName, value) => {
-		let isValid = !!value
-		let msg = 'ERR_REQUIRED_FIELD'
+	validateAndUpdateType = (dirty, value) => {
+		const result = Joi.validate(value, schemas.adUnitPost.type)
 
-		this.props.handleChange(propsName, value)
-		this.props.validate(propsName,
+		this.props.handleChange('type', value)
+		this.props.validate('type',
 			{
-				isValid: isValid,
-				err: { msg: msg },
+				isValid: !result.error,
+				err: { msg: result.error ? result.error.message : '' },
 				dirty: dirty
 			})
 	}
@@ -138,8 +136,8 @@ class AdUnitBasic extends Component {
 						<Dropdown
 							fullWidth
 							required
-							onChange={this.validateAndUpdateDD
-								.bind(this, true, 'type')}
+							onChange={this.validateAndUpdateType
+								.bind(this, true)}
 							source={AdTypes}
 							value={type + ''}
 							label={t('adType', { isProp: true })}
