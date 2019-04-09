@@ -1,8 +1,15 @@
-import { exchange as ExchangeConstants, items as ItemsConstants } from 'adex-constants'
-const { BID_STATES, TIMEOUTS, SIGN_TYPES } = ExchangeConstants
-const { AdTypes, AdSizes } = ItemsConstants
+import { exchange as ExchangeConstants } from 'adex-constants'
+import { constants } from 'adex-models'
+const { BID_STATES, TIMEOUTS } = ExchangeConstants
+const { SignatureModes } = constants
+const AdTypes = constants.AdUnitsTypes
+	.map(type => {
+		return {
+			value: type,
+			label: type.split('_')[1]
+		}
+	})
 
-export const NO_IMAGE_URL = 'https://crestaproject.com/demo/nucleare-pro/wp-content/themes/nucleare-pro/images/no-image-box.png'
 export const AVATAR_MAX_WIDTH = 600
 export const AVATAR_MAX_HEIGHT = 400
 
@@ -23,29 +30,27 @@ export const FILTER_PROPERTIES_BIDS_NO_STATE = {
 }
 
 export const SORT_PROPERTIES_ITEMS = [
-	{ value: 'fullName' },
-	{ value: 'createdOn' },
-	{ value: 'size' },
-	{ value: 'adType' },
+	{ value: 'title' },
+	{ value: 'created' },
+	{ value: 'type' },
 ]
 
 export const SORT_PROPERTIES_COLLECTION = [
-	{ value: 'fullName' },
-	{ value: 'createdOn' }
+	{ value: 'title' },
+	{ value: 'created' }
 ]
 
 export const FILTER_PROPERTIES_ITEMS = {
-	'_meta.adType': { label: 'adType', labelIsProp: true, values: AdTypes },
-	'_meta.size': { label: 'size', labelIsProp: true, values: AdSizes }
+	'type': { label: 'type', labelIsProp: true, values: AdTypes },
 }
 
 export const AUTH_TYPES = {
-	METAMASK: { name: 'metamask', signType: SIGN_TYPES.Eip.id, limit: 0 },
-	TREZOR: { name: 'trezor', signType: SIGN_TYPES.Trezor.id, limit: 0 },
-	LEDGER: { name: 'ledger', signType: SIGN_TYPES.EthPersonal.id, limit: 0 },
-	DEMO: { name: 'demo', signType: SIGN_TYPES.EthPersonal.id, limit: 0 },
-	GRANT: { name: 'grant', signType: SIGN_TYPES.EthPersonal.id, limit: 50 },
-	SEED: { name: 'seed', signType: SIGN_TYPES.EthPersonal.id, limit: 500 }
+	METAMASK: { name: 'metamask', signType: SignatureModes.GETH, limit: 0 },
+	TREZOR: { name: 'trezor', signType: SignatureModes.GETH, limit: 0 },
+	LEDGER: { name: 'ledger', signType: SignatureModes.GETH, limit: 0 },
+	DEMO: { name: 'demo', signType: SignatureModes.GETH, limit: 0 },
+	GRANT: { name: 'grant', signType:SignatureModes.GETH, limit: 50 },
+	SEED: { name: 'seed', signType: SignatureModes.GETH, limit: 500 }
 }
 
 export const NETWORK_STATUS = {
