@@ -14,7 +14,6 @@ class Items extends Component {
 
 	render() {
 		const items = Array.from(Object.values(this.props.items || {})) || []
-		// let items = this.props.items || []
 
 		return (
 			<div>
@@ -37,16 +36,15 @@ Items.propTypes = {
 	viewModeId: PropTypes.string.isRequired,
 	header: PropTypes.string.isRequired,
 	objModel: PropTypes.func.isRequired,
-	itemsType: PropTypes.number.isRequired,
+	itemType: PropTypes.number.isRequired,
 	sortProperties: PropTypes.array.isRequired
 }
 
 function mapStateToProps(state, props) {
-	const persist = state.persist
-	const memory = state.memory
+	const { persist, memory } = state
 	return {
 		account: persist.account,
-		items: persist.items[props.itemsType],
+		items: persist.items[props.itemType],
 		side: memory.nav.side,
 	}
 }
