@@ -178,7 +178,6 @@ class ListWithControls extends Component {
     }
 
     render() {
-    	console.log('props', this.props)
     	let data = this.filterItems({
     		items: this.props.items,
     		search: this.state.search,
