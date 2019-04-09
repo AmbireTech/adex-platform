@@ -23,38 +23,35 @@ class Rows extends Component {
 		}
 	}
 
-    handleRowSelect = (selected) => {
-    	let newSelected = selected.map((index) => this.props.rows[index]._id)
-    	this.setState({ selected: newSelected });
-    }
+	handleRowSelect = (selected) => {
+		let newSelected = selected.map((index) => this.props.rows[index]._id)
+		this.setState({ selected: newSelected });
+	}
 
-    render() {
-    	let side = this.props.side
-    	let rows = this.props.rows
-    	return (
-    		<div>
-    			<Table
-    				// theme={theme}
-    				// multiSelectable={this.props.multiSelectable === true}
-    				// selectable={this.props.selectable === true}
-    				// onRowSelect={this.handleRowSelect}
-    			>
-    				{this.props.tableHeadRenderer({ selected: this.state.selected })}
-    				<TableBody>
-    					{
-    						rows.map((u, i) => {
-    							let to = '/dashboard/' + side + '/' + ItemTypesNames[u._type] + '/' + u._id
-    							let selected = this.state.selected.indexOf(u._id) !== -1
-    							return (
-    								this.props.rowRenderer(u, i, { to: to, selected: selected })
-    							)
-    						})
-    					}
-    				</TableBody>
-    			</Table>
-    		</div>
-    	)
-    }
+	render() {
+		let side = this.props.side
+		let rows = this.props.rows
+		return (
+			<div>
+				<Table
+				// theme={theme}
+				>
+					{this.props.tableHeadRenderer({ selected: this.state.selected })}
+					<TableBody>
+						{
+							rows.map((u, i) => {
+								let to = '/dashboard/' + side + '/' + ItemTypesNames[u._type] + '/' + u._id
+								let selected = this.state.selected.indexOf(u._id) !== -1
+								return (
+									this.props.rowRenderer(u, i, { to: to, selected: selected })
+								)
+							})
+						}
+					</TableBody>
+				</Table>
+			</div>
+		)
+	}
 }
 
 export default Rows

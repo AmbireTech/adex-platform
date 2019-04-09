@@ -37,8 +37,7 @@ class WalletInit extends Component {
     } 
 
     render() {
-    	const {t, identity} = this.props 
-    	console.log('props', this.props)
+    	const {t, identity} = this.props
     	return (
     		<div>
     			<Button
