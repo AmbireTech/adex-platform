@@ -25,14 +25,30 @@ const RRButton = withReactRouterLink(Button)
 class ItemCard extends Component {
 
 	render() {
-		let item = this.props.item
-		let meta = item._meta || {}
-		let name = meta.fullName
-		let id = item._id
-		let itemTypeName = ItemTypesNames[item._type]
-		let to = '/dashboard/' + this.props.side + '/' + itemTypeName + '/' + id
-		let imageSrc = Item.getImgUrl(meta.img, process.env.IPFS_GATEWAY) || ''
-		const { classes, t } = this.props
+
+		const {
+			item,
+			side,
+			itemType,
+			classes,
+			t,
+			allowFullscreen
+		} = this.props
+
+		const {
+			ipfs,
+			type,
+			title,
+			description,
+			mediaUrl,
+			targeting,
+			tags
+		} = item
+
+		const id = ipfs
+
+		const to = '/dashboard/' + side + '/' + itemType + '/' + id
+		const imageSrc = mediaUrl //, process.env.IPFS_GATEWAY) || ''
 
 		return (
 			<Card
@@ -42,12 +58,12 @@ class ItemCard extends Component {
 				<RRCardMedia
 					to={to}
 					classes={{ root: classes.mediaRoot }}
-					image={imageSrc ? null : NO_IMAGE}
+					image={imageSrc ? '' : NO_IMAGE}
 				>
 					<Img
-						allowFullscreen={!!this.props.allowFullscreen}
+						allowFullscreen={!!allowFullscreen}
 						className={classes.img}
-						src={imageSrc} alt={name}
+						src={imageSrc} alt={title}
 					/>
 				</RRCardMedia>
 
@@ -57,10 +73,10 @@ class ItemCard extends Component {
 						component='h2'
 						noWrap
 					>
-						{meta.fullName}
+						{title}
 					</Typography>
 					<Typography component='p'>
-						{itemAdTypeLabel({ adType: item._meta.adType })}  {itemAdSizeLabel({ size: item._meta.size, t: t })}
+						{itemAdTypeLabel({ adType: type })}  {itemAdSizeLabel({ size: type, t: t })}
 					</Typography>
 				</CardContent>
 
@@ -71,9 +87,9 @@ class ItemCard extends Component {
 				>
 					<Tooltip
 						enterDelay={300}
-						id={'tooltip-view-item' + item._id}
+						id={'tooltip-view-item' + id}
 						leaveDelay={300}
-						title={this.props.t('GO_' + itemTypeName.toUpperCase(), { args: [name] })}
+						title={this.props.t('GO_' + itemType.toUpperCase(), { args: [title] })}
 					>
 						<RRButton
 							to={to}
