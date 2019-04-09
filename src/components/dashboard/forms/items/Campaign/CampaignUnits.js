@@ -84,7 +84,7 @@ class CampaignUnits extends Component {
 								itemType={'AdUnit'}
 								sortProperties={SORT_PROPERTIES_ITEMS}
 								filterProperties={FILTER_PROPERTIES_ITEMS}
-								noControls
+								noActions
 							/>
 						</ContentBody>
 					</Grid>

@@ -31,6 +31,7 @@ class CampaignFormPreview extends Component {
 						noControls
 						padding='dense'
 						noControls
+						noActions
 					/>
 				</ContentBody>
 			</Grid>
