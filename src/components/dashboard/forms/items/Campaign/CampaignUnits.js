@@ -16,7 +16,10 @@ class CampaignUnits extends Component {
 		super(props)
 
 		this.state = {
-			selected: {}
+			selected: (props.newItem.adUnits.reduce((selected, unit) => {
+				selected[unit.ipfs] = true
+				return selected
+			}, {})) || {}
 		}
 	}
 
@@ -51,12 +54,12 @@ class CampaignUnits extends Component {
 			return adUnits[key]
 		})
 
-		handleChange('AdUnits', units)
+		handleChange('adUnits', units)
 		this.validateUnits(units, true)
 	}
 
 	render() {
-		const { adUnits } = this.props
+		const { adUnitsArray } = this.props
 
 		return (
 			<div>
@@ -75,7 +78,7 @@ class CampaignUnits extends Component {
 								onSelect={(unit, checked) => {
 									this.handleSelect(unit, checked)
 								}}
-								items={adUnits}
+								items={adUnitsArray}
 								listMode
 								viewModeId='rowsViewUnitsNewCampaign'
 								itemType={'AdUnit'}
