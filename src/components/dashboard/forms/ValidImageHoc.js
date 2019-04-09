@@ -44,7 +44,8 @@ export default function ValidImageHoc(Decorated) {
 				const resImg = {
 					width,
 					height,
-					mime: img.mime
+					mime: img.mime,
+					tempUrl: img.tempUrl
 				}
 
 				// TODO: temp fix make this HOC independent
