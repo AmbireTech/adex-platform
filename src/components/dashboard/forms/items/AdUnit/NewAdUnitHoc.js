@@ -5,36 +5,6 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { AdUnit } from 'adex-models'
 
-const testUnit = {
-	archived: false,
-	created: Date.now(),
-	description: "some description", // TODO: not required in models
-	ipfs: "",
-	mediaMime: "",
-	mediaUrl: "",
-	modified: null,
-	owner: "",
-	tags: [
-		{
-			score: 18,
-			tag: "adult entertainment"
-		}],
-
-	targetUrl: "https://www.adex.network",
-	targeting: [
-		{
-			score: 74,
-			tag: "location_NG"
-		}],
-	temp: {
-		height: 250,
-		mime: "image/jpeg",
-	},
-
-	title: "test unit",
-	type: "legacy_300x250"
-}
-
 export default function NewAdUnitHoc(Decorated) {
 
 	class ItemForm extends Component {
@@ -76,11 +46,8 @@ export default function NewAdUnitHoc(Decorated) {
 		save = () => {
 			const { actions, newItem, account, addTo } = this.props
 			newItem.owner = account.wallet.address
-
-			const test = testUnit
-			test.temp = newItem.temp
 	
-			actions.addItem(test, addTo, account.wallet.authSig)
+			actions.addItem(newItem, addTo, account.wallet.authSig)
 			actions.resetNewItem('AdUnit')
 
 			this.onSave()
