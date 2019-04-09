@@ -4,6 +4,7 @@ import { Base, AdUnit } from 'adex-models'
 import { addToast as AddToastUi } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAdUnits, getAdSlots, getCampaigns } from 'services/adex-market/actions'
+import { constants, schemas, Joi } from 'adex-models'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({ dispatch: dispatch, type: type, action: 'X', label: translate(toastStr, { args: args }), timeout: 5000 })(dispatch)
@@ -16,7 +17,7 @@ const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
 		})
 		.then((imgBlob) => {
 			URL.revokeObjectURL(tempUrl)
-			return uploadImage({ imageBlob: imgBlob, imageName: 'image.png', authSig: authSig })
+			return uploadImage({ imageBlob: imgBlob, imageName: 'image.jpeg', authSig: authSig })
 		})
 }
 
@@ -79,10 +80,13 @@ export function addItem(item, itemToAddTo, authSig) {
 
 			newItem.mediaUrl = `ipfs://${imageIpfs}`
 			newItem.mediaMime = newItem.temp.mime
+			newItem.created = Date.now()
 
 			delete newItem.temp
 			delete newItem.owner
 			delete newItem.ipfs
+
+			// TODO: validate with the schema
 
 			const resItem = await postAdUnit({
 				unit: newItem,
@@ -194,14 +198,14 @@ export function updateItem({ item, authSig, successMsg, errMsg } = {}) {
 }
 
 export function deleteItem({ item, objModel, authSig } = {}) {
-	item = {...item}
+	item = { ...item }
 	item._deleted = true
 
 	// return updateItem({ item: item, authSig: authSig, successMsg: 'SUCCESS_DELETING_ITEM', errMsg: 'ERR_DELETING_ITEM' })
 }
 
 export function restoreItem({ item, authSig } = {}) {
-	item = {...item}
+	item = { ...item }
 	item._deleted = false
 
 	return updateItem({ item: item, authSig: authSig, successMsg: 'SUCCESS_RESTORE_ITEM', errMsg: 'ERR_RESTORING_ITEM' })
