@@ -97,7 +97,7 @@ class ListWithControls extends Component {
     	this.props.actions.updateUi(name, value, this.state.uiStateId)
     }
 
-    changePageSize = (name, { itemsLength, page, pages } = {}, ev, newPageSize) => {
+    changePageSize = (name, { itemsLength, page, pages } = {}, ev, newPageSize) => {	
     	let currentPageSize = this.props.pageSize
     	let currentFirstIndex = page * currentPageSize // To have at least the first item on current page on the next page
     	let nextPage = Math.floor(currentFirstIndex / newPageSize)
@@ -105,8 +105,7 @@ class ListWithControls extends Component {
     }
 
     search = ({ item, search, searchMatch }) => {
-    	let regex = new RegExp(search, 'i')
-    	let meta = item._meta || {}
+    	const regex = new RegExp(search, 'i')
     	let matchString = null
     	if (typeof searchMatch === 'function') {
     		matchString = searchMatch(item)
@@ -114,11 +113,11 @@ class ListWithControls extends Component {
     		matchString = searchMatch
     	} else {
     		matchString =
-                (meta.fullName || '') +
-                (meta.description || '')
+                (item.title || '') +
+                (item.description || '')
     	}
 
-    	let match = regex.exec(matchString)
+    	const match = regex.exec(matchString)
     	return !!match
     }
 
@@ -127,10 +126,10 @@ class ListWithControls extends Component {
     	// TODO: maybe filter deleted before this?
     	let filtered = (items || [])
     		.filter((i) => {
-    			let isItem = (!!i && ((!!i._meta) || i.id || i._id))
+    			const isItem = (!!i && (i.id || i.ipfs))
     			if (!isItem) return isItem
 
-    			if ((filterArchived !== '') && (i._archived !== undefined) && (filterArchived.toString() !== i._archived.toString())) {
+    			if ((filterArchived !== '') && (i.archived !== undefined) && (filterArchived.toString() !== i.archived.toString())) {
     				return false
     			}
 
@@ -153,8 +152,8 @@ class ListWithControls extends Component {
 
     	if (sortProperty) {
     		filtered = filtered.sort((a, b) => {
-    			let propA = a[sortProperty] || (a._meta ? a._meta[sortProperty] : 0)
-    			let propB = b[sortProperty] || (b._meta ? b._meta[sortProperty] : 0)
+    			let propA = a[sortProperty]
+    			let propB = b[sortProperty]
 
     			return (propA < propB ? -1 : (propA > propB ? 1 : 0)) * sortOrder
     		})
