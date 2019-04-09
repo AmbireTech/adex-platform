@@ -6,12 +6,13 @@ import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import FullscreenIcon from '@material-ui/icons/Fullscreen'
-import IconButton from '@material-ui/core/IconButton'
+// import IconButton from '@material-ui/core/IconButton'
 import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
 import Translate from 'components/translate/Translate'
+import { constants, helpers } from 'adex-models'
 
 const MAX_IMG_LOAD_TIME = 3000
 class Img extends Component {
@@ -27,142 +28,160 @@ class Img extends Component {
 		this.loadTimeout = null
 	}
 
-    handleToggle = () => {
-    	let active = this.state.active
-    	this.setState({ active: !active })
-    }
+	ipfsSrc = (src) => {
+		if (!!src && constants.Regexes.ipfsRegex.test(src)) {
+			return helpers.getMediaUrlWithProvider(src, process.env.IPFS_GATEWAY)
+		}
 
-    componentDidMount() {
-    	this.displayImage = new Image()
-    	this.setDisplayImage({ image: this.props.src, fallback: this.props.fallbackSrc || NO_IMAGE })
-    }
+		return src
+	}
 
-    componentWillReceiveProps(nextProps) {
-    	if (nextProps.src !== this.props.src) {
-    		this.setDisplayImage({ image: nextProps.src, fallback: nextProps.fallbackSrc || NO_IMAGE })
-    	}
-    }
+	handleToggle = () => {
+		let active = this.state.active
+		this.setState({ active: !active })
+	}
 
-    componentWillUnmount() {
-    	this.clearLoadTimeout()
-    	if (this.displayImage) {
-    		this.displayImage.onerror = null
-    		this.displayImage.onload = null
-    		this.displayImage.onabort = null
-    		this.displayImage = null
-    	}
-    }
+	componentDidMount() {
+		this.displayImage = new Image()
+		this.setDisplayImage({
+			image: this.ipfsSrc(this.props.src),
+			fallback: this.ipfsSrc(this.props.fallbackSrc) || NO_IMAGE
+		})
+	}
 
-    clearLoadTimeout = () => {
-    	if (this.loadTimeout) {
-    		clearTimeout(this.loadTimeout)
-    		this.loadTimeout = null
-    	}
-    }
+	componentWillReceiveProps = (nextProps) => {
+		const nextSrc = this.ipfsSrc(nextProps.src)
+		const thisSrc = this.ipfsSrc(this.props.src)
+		const nextFallback = this.ipfsSrc(nextProps.fallbackSrc)
 
-    onFail = (fallback) => {
-    	if (this.displayImage) {
-    		this.displayImage.onerror = null
-    		this.displayImage.onload = null
-    		this.displayImage.onabort = null
+		if (nextSrc !== thisSrc) {
+			this.setDisplayImage({
+				image: this.ipfsSrc(nextSrc),
+				fallback: nextFallback || NO_IMAGE
+			})
+		}
+	}
 
-    		this.clearLoadTimeout()
-    		this.displayImage.src = fallback
-    	}
+	componentWillUnmount() {
+		this.clearLoadTimeout()
+		if (this.displayImage) {
+			this.displayImage.onerror = null
+			this.displayImage.onload = null
+			this.displayImage.onabort = null
+			this.displayImage = null
+		}
+	}
 
-    	this.clearLoadTimeout()
+	clearLoadTimeout = () => {
+		if (this.loadTimeout) {
+			clearTimeout(this.loadTimeout)
+			this.loadTimeout = null
+		}
+	}
 
-    	this.setState({
-    		imgSrc: fallback || null
-    	})
-    }
+	onFail = (fallback) => {
+		if (this.displayImage) {
+			this.displayImage.onerror = null
+			this.displayImage.onload = null
+			this.displayImage.onabort = null
 
-    setDisplayImage = ({ image, fallback }) => {
-    	this.loadTimeout = setTimeout(() => {
-    		this.onFail(fallback)
-    	}, MAX_IMG_LOAD_TIME)
+			this.clearLoadTimeout()
+			this.displayImage.src = fallback
+		}
 
-    	this.displayImage.onerror = this.displayImage.onabort = this.onFail.bind(this, fallback)
+		this.clearLoadTimeout()
 
-    	this.displayImage.onload = () => {
-    		this.clearLoadTimeout()
-    		this.setState({
-    			imgSrc: image
-    		})
-    	}
+		this.setState({
+			imgSrc: fallback || null
+		})
+	}
 
-    	this.displayImage.src = image
-    }
+	setDisplayImage = ({ image, fallback }) => {
+		this.loadTimeout = setTimeout(() => {
+			this.onFail(fallback)
+		}, MAX_IMG_LOAD_TIME)
 
-    renderFullscreenDialog() {
-    	const { allowFullscreen, className, alt, classes, t, ...other } = this.props
+		this.displayImage.onerror = this.displayImage.onabort = this.onFail.bind(this, fallback)
 
-    	return (
-    		<span>
-    			<Button
-    				variant='fab'
-    				mini
-    				color='default'
-    				className={classnames(classes.fullscreenIcon)}
-    				onClick={() => { this.handleToggle() }}
-    			>
-    				<FullscreenIcon />
-    			</Button>
-    			<Dialog
-    				open={this.state.active}
-    				type={this.props.type || 'normal'}
-    				maxWidth={false}
-    				onClose={this.handleToggle}
-    				classes={{ paper: classes.dialog }}
-    			>
-    				<DialogContent className={classes.dialogImageParent}>
-    					<img
-    						{...other}
-    						alt={alt}
-    						src={this.state.imgSrc}
-    						draggable='false'
-    						className={classnames(classes.dialogImage, classes.imgLoading)}
-    						onDragStart={(event) => event.preventDefault() /*Firefox*/}
-    					/>
-    				</DialogContent>
-    				<DialogActions>
-    					<Button
-    						onClick={this.handleToggle}
-    						color='primary'
-    					>
-    						{t('CLOSE')}
-    					</Button>
-    				</DialogActions>
-    			</Dialog>
-    		</span>
-    	)
-    }
+		this.displayImage.onload = () => {
+			this.clearLoadTimeout()
+			this.setState({
+				imgSrc: image
+			})
+		}
 
-    render() {
-    	const { alt, allowFullscreen, className, classes, t, ...other } = this.props
-    	return (
-    		this.state.imgSrc ?
-    			<span className={classnames(classes.imgParent, className)}>
-    				<img
-    					{...other}
-    					alt={alt}
-    					src={this.state.imgSrc}
-    					draggable='false'
-    					className={classnames(classes.imgLoading, className)}
-    					onDragStart={(event) => event.preventDefault() /*Firefox*/}
-    				/>
-    				{allowFullscreen ? this.renderFullscreenDialog() : null}
-    			</span>
-    			:
-    			<span className={classnames(classes.imgLoading, className)}>
-    				<span
-    					className={classes.circular}
-    				>
-    					<CircularProgress />
-    				</span>
-    			</span>
-    	)
-    }
+		this.displayImage.src = image
+	}
+
+	renderFullscreenDialog() {
+		const { allowFullscreen, className, alt, classes, t, ...other } = this.props
+
+		return (
+			<span>
+				<Button
+					variant='fab'
+					mini
+					color='default'
+					className={classnames(classes.fullscreenIcon)}
+					onClick={() => { this.handleToggle() }}
+				>
+					<FullscreenIcon />
+				</Button>
+				<Dialog
+					open={this.state.active}
+					type={this.props.type || 'normal'}
+					maxWidth={false}
+					onClose={this.handleToggle}
+					classes={{ paper: classes.dialog }}
+				>
+					<DialogContent className={classes.dialogImageParent}>
+						<img
+							{...other}
+							alt={alt}
+							src={this.state.imgSrc}
+							draggable='false'
+							className={classnames(classes.dialogImage, classes.imgLoading)}
+							onDragStart={(event) => event.preventDefault() /*Firefox*/}
+						/>
+					</DialogContent>
+					<DialogActions>
+						<Button
+							onClick={this.handleToggle}
+							color='primary'
+						>
+							{t('CLOSE')}
+						</Button>
+					</DialogActions>
+				</Dialog>
+			</span>
+		)
+	}
+
+	render() {
+		const { alt, allowFullscreen, className, classes, t, ...other } = this.props
+		return (
+			this.state.imgSrc ?
+				<span className={classnames(classes.imgParent, className)}>
+					<img
+						{...other}
+						alt={alt}
+						src={this.state.imgSrc}
+						draggable='false'
+						className={classnames(classes.imgLoading, className)}
+						onDragStart={(event) => event.preventDefault() /*Firefox*/}
+					/>
+					{allowFullscreen ? this.renderFullscreenDialog() : null}
+				</span>
+				:
+				<span className={classnames(classes.imgLoading, className)}>
+					<span
+						className={classes.circular}
+					>
+						<CircularProgress />
+					</span>
+				</span>
+		)
+	}
 }
 
 Img.propTypes = {
