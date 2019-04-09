@@ -7,7 +7,6 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Campaign from 'components/dashboard/containers/Campaign'
-import Channel from 'components/dashboard/containers/Channel'
 import DashboardStats from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
@@ -18,8 +17,7 @@ import SlotBids from 'components/dashboard/containers/Bids/SlotBids'
 import {
 	AdUnit as AdUnitModel,
 	AdSlot as AdSlotModel,
-	Campaign as CampaignModel,
-	Channel as ChannelModel
+	Campaign as CampaignModel
 } from 'adex-models'
 import Account from 'components/dashboard/account/AccountInfo'
 import Translate from 'components/translate/Translate'
@@ -29,17 +27,15 @@ import checkTransactions from 'services/store-data/transactions'
 import { getUserItems } from 'services/store-data/items'
 import { getAddrBids } from 'services/store-data/bids'
 // import checkGasData from 'services/store-data/gas'
-import { SORT_PROPERTIES_ITEMS, SORT_PROPERTIES_COLLECTION, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
-import Helper from 'helpers/miscHelpers'
-import scActions from 'services/smart-contracts/actions'
+import {
+	SORT_PROPERTIES_ITEMS,
+	SORT_PROPERTIES_COLLECTION,
+	FILTER_PROPERTIES_ITEMS
+} from 'constants/misc'
 import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-
-const { getAccountStats } = scActions
-const { ItemsTypes } = ItemsConstants
-
 class Dashboard extends React.Component {
 	constructor(props) {
 		super(props)
@@ -60,8 +56,15 @@ class Dashboard extends React.Component {
 		// checkGasData.stop()
 	}
 
-	componentWillMount(nextProps) {
-		this.props.actions.updateNav('side', this.props.match.params.side)
+	componentDidMount() {
+		const {
+			actions,
+			t,
+			account
+		} = this.props
+
+		actions.updateNav('side', this.props.match.params.side)
+		actions.getAllItems(account.wallet.authSig)
 		// checkTransactions.start()
 		// checkGasData.start()
 		// getUserItems({ authSig: this.props.account._authSig })
@@ -98,7 +101,7 @@ class Dashboard extends React.Component {
 			<Items
 				header={this.props.t('ALL_UNITS')}
 				viewModeId='rowsViewUnits'
-				itemsType={ItemsTypes.AdUnit.id}
+				itemType={'AdUnit'}
 				newItemBtn={() => <NewUnitDialog variant='fab' color='secondary' />}
 				objModel={AdUnitModel}
 				sortProperties={SORT_PROPERTIES_ITEMS}
@@ -113,7 +116,7 @@ class Dashboard extends React.Component {
 			<Items
 				header={this.props.t('ALL_CAMPAIGNS')}
 				viewModeId='rowsViewCampaigns'
-				itemsType={ItemsTypes.Campaign.id}
+				itemsType={'Campaign'}
 				newItemBtn={() => <NewCampaignDialog variant='fab' accent color='secondary' />}
 				objModel={CampaignModel}
 				sortProperties={SORT_PROPERTIES_COLLECTION}
@@ -128,27 +131,12 @@ class Dashboard extends React.Component {
 			<Items
 				header={this.props.t('ALL_SLOTS')}
 				viewModeId='rowsViewSlots'
-				itemsType={ItemsTypes.AdSlot.id}
+				itemsType={'AdSlot'}
 				newItemBtn={() => <NewSlotDialog variant='fab' accent color='secondary' />}
 				objModel={AdSlotModel}
 				sortProperties={SORT_PROPERTIES_ITEMS}
 				filterProperties={FILTER_PROPERTIES_ITEMS}
 				uiStateId='slots'
-			/>
-		)
-	}
-
-	renderChannels = () => {
-		return (
-			<Items
-				header={this.props.t('ALL_CHANNELS')}
-				viewModeId='rowsViewChannels'
-				itemsType={ItemsTypes.Channel.id}
-				newItemBtn={() => <NewChannelDialog variant='fab' accent color='secondary' />}
-				objModel={ChannelModel}
-				sortProperties={SORT_PROPERTIES_COLLECTION}
-				// filterProperties={FILTER_PROPERTIES_ITEMS}
-				uiStateId='channels'
 			/>
 		)
 	}
@@ -220,7 +208,6 @@ class Dashboard extends React.Component {
 							<Route auth={this.props.auth} exact path='/dashboard/advertiser/bids/:tab?' component={UnitBids} />
 							<Route auth={this.props.auth} exact path='/dashboard/publisher/channels' component={this.renderChannels} />
 							<Route auth={this.props.auth} exact path='/dashboard/publisher/slots' component={this.renderAdSlots} />
-							<Route auth={this.props.auth} exact path='/dashboard/publisher/Channel/:itemId' component={Channel} />
 							<Route auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
 							<Route auth={this.props.auth} exact path='/dashboard/publisher/bids/:tab?' component={SlotBids} />
 							<Route auth={this.props.auth} exact path={'/dashboard/:side/account'} component={Account} />
