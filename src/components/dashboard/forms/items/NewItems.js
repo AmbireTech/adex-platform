@@ -71,9 +71,9 @@ export const NewUnitSteps = (props) =>
 		itemType={ItemsTypes.AdUnit.id}
 		stepsId={ItemsTypes.AdUnit.id}
 		stepsPages={[
-			// { title: 'UNIT_BASIC_STEP', page: AdUnitBasic },
+			{ title: 'UNIT_BASIC_STEP', page: AdUnitBasic },
 			{ title: 'UNIT_MEDIA_STEP', page: AdUnitMedia },
-			// { title: 'UNIT_TARGETS_STEP', page: AdUnitTargeting }
+			{ title: 'UNIT_TARGETS_STEP', page: AdUnitTargeting }
 		]}
 		stepsPreviewPage={{ title: 'PREVIEW_AND_SAVE_ITEM', page: AdUnitFormPreview }}
 		imgLabel='UNIT_BANNER_IMG_LABEL'
