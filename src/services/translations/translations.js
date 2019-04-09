@@ -7,7 +7,10 @@ let lang = 'en-US'
 
 // TODO: sanitization
 const interpolate = (tpl, args) => {
-
+	if (typeof tpl !== 'string') {
+		return ''
+	}
+	
 	return tpl.replace(/\${(\w+)}/g, (_, v) => {
 		let arg = args[v]
 		if (typeof arg === 'object' && arg.component) {
