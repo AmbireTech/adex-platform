@@ -12,7 +12,7 @@ import NewUnitFormType from './NewUnitFormType'
 import NewUnitFormImg from './NewUnitFormImg'
 import NewItemFormTags from './NewItemFormTags';
 import NewCampaignForm from './NewCampaignForm'
-import { AdUnit, AdSlot, Channel, Campaign } from 'adex-models'
+import { AdUnit, AdSlot, Campaign } from 'adex-models'
 import { items as ItemsConstants } from 'adex-constants'
 import AddIcon from '@material-ui/icons/Add'
 import SaveIcon from '@material-ui/icons/Save'
@@ -23,7 +23,10 @@ import AdUnitMedia from './AdUnit/AdUnitMedia'
 import AdUnitTargeting from './AdUnit/AdUnitTargeting'
 import AdUnitFormPreview from './AdUnit/AdUnitFormPreview'
 
-
+import NewCampaignHoc from './Campaign/NewCampaignHoc'
+import CampaignUnits from './Campaign/CampaignUnits'
+import CampaignTargeting from './Campaign/CampaignTargeting'
+import CampaignFormPreview from './Campaign/CampaignFormPreview'
 
 const { ItemsTypes } = ItemsConstants
 const SaveBtn = ({ ...props }) => {
@@ -39,7 +42,8 @@ const SaveBtn = ({ ...props }) => {
 	)
 }
 
-const SaveBtnWithItem = NewAdUnitHoc(SaveBtn)
+const SaveBtnWithAdUnit = NewAdUnitHoc(SaveBtn)
+const SaveBtnWithCampaign = NewCampaignHoc(SaveBtn)
 
 const CancelBtn = ({ ...props }) => {
 	return (
@@ -50,9 +54,10 @@ const CancelBtn = ({ ...props }) => {
 }
 
 const CancelBtnWithItem = NewAdUnitHoc(CancelBtn)
+const CancelBtnWithCampaign = NewCampaignHoc(CancelBtn)
 
 const itemsCommon = {
-	SaveBtn: SaveBtnWithItem,
+	SaveBtn: SaveBtnWithAdUnit,
 	CancelBtn: CancelBtnWithItem,
 	stepsPreviewPage: { title: 'PREVIEW_AND_SAVE_ITEM', page: AdUnitFormPreview },
 	validateIdBase: 'new-'
@@ -67,9 +72,11 @@ const dialogCommon = {
 export const NewUnitSteps = (props) =>
 	<FormSteps
 		{...props}
-		{...itemsCommon}
-		itemType={ItemsTypes.AdUnit.id}
-		stepsId={ItemsTypes.AdUnit.id}
+		SaveBtn={SaveBtnWithAdUnit}
+		CancelBtn={CancelBtnWithItem}
+		validateIdBase={'new-AdUnit-'}
+		itemType={'AdUnit'}
+		stepsId={'new-adunit-'}
 		stepsPages={[
 			{ title: 'UNIT_BASIC_STEP', page: AdUnitBasic },
 			{ title: 'UNIT_MEDIA_STEP', page: AdUnitMedia },
@@ -95,14 +102,16 @@ export const NewUnitDialog = (props) =>
 export const NewCampaignSteps = (props) =>
 	<FormSteps
 		{...props}
-		{...itemsCommon}
-		itemType={ItemsTypes.Campaign.id}
-		stepsId={ItemsTypes.Campaign.id}
+		SaveBtn={SaveBtnWithCampaign}
+		CancelBtn={CancelBtnWithCampaign}
+		validateIdBase={'new-Campaign-'}
+		itemType={'Campaign'}
+		stepsId={'new-campaign-'}
 		stepsPages={[
-			{ title: 'CAMPAIGN_BASIC_STEP', page: NewItemForm },
-			{ title: 'CAMPAIGN_PERIOD_STEP', page: NewCampaignForm }
+			{ title: 'CAMPAIGN_UNITS_STEP', page: CampaignUnits },
+			{ title: 'CAMPAIGN_TARGETING_STEP', page: CampaignTargeting }
 		]}
-		imgLabel='CAMPAIGN_LOGO'
+		stepsPreviewPage={{ title: 'PREVIEW_AND_SAVE_ITEM', page: CampaignFormPreview }}
 		itemModel={Campaign}
 		imgAdditionalInfo='CAMPAIGN_IMG_ADDITIONAL_INFO'
 	/>
@@ -144,29 +153,4 @@ export const NewSlotDialog = (props) =>
 		{...dialogCommon}
 		btnLabel='NEW_SLOT'
 		title='CREATE_NEW_SLOT'
-	/>
-
-// Channel
-export const NewChannelSteps = (props) =>
-	<FormSteps
-		{...props}
-		{...itemsCommon}
-		itemType={ItemsTypes.Channel.id}
-		stepsId={ItemsTypes.Channel.id}
-		stepsPages={[
-			{ title: 'CHANNEL_BASIC_STEP', page: NewItemForm },
-		]}
-		imgLabel='CHANNEL_LOGO'
-		itemModel={Channel}
-		imgAdditionalInfo='CHANNEL_IMG_ADDITIONAL_INFO'
-	/>
-
-const NewChannelStepsWithDialog = WithDialog(NewChannelSteps)
-
-export const NewChannelDialog = (props) =>
-	<NewChannelStepsWithDialog
-		{...props}
-		{...dialogCommon}
-		btnLabel='NEW_CHANNEL'
-		title='CREATE_NEW_CHANNEL'
 	/>
