@@ -74,24 +74,29 @@ class ItemsList extends Component {
 	}
 
 	renderTableHead = ({ selected }) => {
-		const { t , selectedItems} = this.props
+		const { t, selectedItems, selectMode, noControls } = this.props
 		return (
 			<TableHead>
 				<TableRow>
-					<TableCell>
-						{Object.keys(selectedItems).length || ''}
-					</TableCell>
+					{selectMode &&
+						<TableCell>
+							{Object.keys(selectedItems).length || ''}
+						</TableCell>
+					}
+					<TableCell></TableCell>
 					<TableCell> {t('PROP_NAME')} </TableCell>
 					<TableCell> {t('PROP_ADTYPE')} </TableCell>
 					<TableCell> {t('PROP_CREATEDON')} </TableCell>
-					<TableCell> {t('ACTIONS')} </TableCell>
+					{!noControls &&
+						<TableCell> {t('ACTIONS')} </TableCell>
+					}
 				</TableRow>
 			</TableHead>
 		)
 	}
 
 	renderTableRow = (item, index, { to, selected }) => {
-		const { t, classes, selectMode, selectedItems, onSelect } = this.props
+		const { t, classes, selectMode, selectedItems, onSelect, noControls } = this.props
 		return (
 			<TableRow
 				key={item.ipfs || index}
@@ -127,8 +132,9 @@ class ItemsList extends Component {
 				</RRTableCell>
 				<TableCell> {item.type} </TableCell>
 				<TableCell> {moment(item.created).format('DD-MM-YYYY')} </TableCell>
-				<TableCell>
-					{!selectMode &&
+				{!noControls &&
+					<TableCell>
+
 						<Tooltip
 							title={t('LABEL_VIEW')}
 							// placement='top'
@@ -142,10 +148,9 @@ class ItemsList extends Component {
 								{t('LABEL_VIEW')}
 							</RRButton>
 						</Tooltip>
-					}
-					{this.renderActions(item, to)}
-
-				</TableCell>
+						{this.renderActions(item, to)}
+					</TableCell>
+				}
 			</TableRow>
 		)
 	}
@@ -264,14 +269,13 @@ class ItemsList extends Component {
 
 	renderRows = (items) =>
 		<Rows
+			padding={this.props.padding}
 			side={this.props.side}
-			item={items}
 			rows={items}
 			itemType={this.props.itemType}
-			// multiSelectable={true}
-			// selectable={true}
 			rowRenderer={this.renderTableRow}
 			tableHeadRenderer={this.renderTableHead}
+			padding='default'
 		/>
 
 	renderCards = (items) => {
@@ -284,11 +288,22 @@ class ItemsList extends Component {
 	}
 
 	render() {
+		const {
+			items,
+			viewModeId,
+			side,
+			noControls,
+			...rest
+		} = this.props
+
+		if (noControls) {
+			return this.renderRows(items)
+		}
 		return (
 			<ListWithControls
-				{...this.props}
-				items={this.props.items}
-				viewModeId={this.props.viewModeId}
+				{...rest}
+				items={items}
+				viewModeId={viewModeId}
 				archive
 				renderRows={this.renderRows}
 				renderCards={this.renderCards}
@@ -305,7 +320,12 @@ ItemsList.propTypes = {
 	header: PropTypes.string.isRequired,
 	objModel: PropTypes.func.isRequired,
 	itemType: PropTypes.string.isRequired,
-	sortProperties: PropTypes.array.isRequired
+	sortProperties: PropTypes.array.isRequired,
+	selectedItems: PropTypes.object,
+	selectMode: PropTypes.bool,
+	onSelect: PropTypes.func,
+	noControls: PropTypes.bool,
+	compressed: PropTypes.bool
 }
 
 function mapStateToProps(state, props) {
