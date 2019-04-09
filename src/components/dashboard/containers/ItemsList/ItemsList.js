@@ -74,7 +74,7 @@ class ItemsList extends Component {
 	}
 
 	renderTableHead = ({ selected }) => {
-		const { t, selectedItems, selectMode, noControls } = this.props
+		const { t, selectedItems, selectMode, noActions } = this.props
 		return (
 			<TableHead>
 				<TableRow>
@@ -87,7 +87,7 @@ class ItemsList extends Component {
 					<TableCell> {t('PROP_NAME')} </TableCell>
 					<TableCell> {t('PROP_ADTYPE')} </TableCell>
 					<TableCell> {t('PROP_CREATEDON')} </TableCell>
-					{!noControls &&
+					{!noActions &&
 						<TableCell> {t('ACTIONS')} </TableCell>
 					}
 				</TableRow>
@@ -96,7 +96,9 @@ class ItemsList extends Component {
 	}
 
 	renderTableRow = (item, index, { to, selected }) => {
-		const { t, classes, selectMode, selectedItems, onSelect, noControls } = this.props
+		const { t, classes, selectMode, selectedItems, onSelect, noActions } = this.props
+
+		const imagCell = noActions ? TableCell : RRTableCell
 		return (
 			<TableRow
 				key={item.ipfs || index}
@@ -113,17 +115,15 @@ class ItemsList extends Component {
 						/>
 					</TableCell>
 				}
-				<RRTableCell
-					// className={tableTheme.link}
+				<imagCell
 					to={to}
-				// theme={tableTheme}
 				>
 					<Img
 						className={classnames(classes.cellImg)}
 						src={item.mediaUrl || item.fallbackMediaiUrl || ''}
 						alt={item.title}
 					/>
-				</RRTableCell>
+				</imagCell>
 				<RRTableCell
 					// className={tableTheme.link}
 					to={to}
@@ -132,7 +132,7 @@ class ItemsList extends Component {
 				</RRTableCell>
 				<TableCell> {item.type} </TableCell>
 				<TableCell> {moment(item.created).format('DD-MM-YYYY')} </TableCell>
-				{!noControls &&
+				{!noActions &&
 					<TableCell>
 
 						<Tooltip
@@ -325,7 +325,7 @@ ItemsList.propTypes = {
 	selectMode: PropTypes.bool,
 	onSelect: PropTypes.func,
 	noControls: PropTypes.bool,
-	compressed: PropTypes.bool
+	noActions: PropTypes.bool
 }
 
 function mapStateToProps(state, props) {
