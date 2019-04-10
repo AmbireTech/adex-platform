@@ -56,14 +56,34 @@ const PubValidatorsSrc = Object.keys(PubPlatformValidators).map(key => {
 	}
 })
 
-const validateCampaignDates = ({ created, withdrawPeriodStart, validUntil }) => {
+
+
+const validateCampaignDates = ({ created = Date.now(), withdrawPeriodStart, validUntil }) => {
 	let error = null
-	if (withdrawPeriodStart && (withdrawPeriodStart < created)) {
-		error = { message: 'WITHDRAW_PERIOD_CANT_IN_PAST', prop: 'withdrawPeriodStart' }
+
+	if (withdrawPeriodStart && validUntil && (withdrawPeriodStart >= validUntil)) {
+		error = { message: 'ERR_VALID_UNTIL_BEFORE_START', prop: 'validUntil' }
+	} else if (withdrawPeriodStart && (withdrawPeriodStart < created)) {
+		error = { message: 'ERR_WITHDRAW_PERIOD_IN_PAST', prop: 'withdrawPeriodStart' }
 	} else if (validUntil && (validUntil < created)) {
-		error = { message: 'VALID_UNTIL_PERIOD_CANT_IN_PAST', prop: 'validUntil' }
-	} else if (withdrawPeriodStart && validUntil && (withdrawPeriodStart >= validUntil)) {
-		error = { message: 'VALID_UNTIL_CANT_BEFORE_START', prop: 'validUntil' }
+		error = { message: 'ERR_VALID_UNTIL_IN_PAST', prop: 'validUntil' }
+	}
+
+	return { error }
+}
+
+const validateAmounts = ({ depositAmount, maxPerImpression, minPerImpression }) => {
+	const dep = parseFloat(depositAmount)
+	const max = parseFloat(maxPerImpression)
+	const min = parseFloat(minPerImpression)
+
+	let error = null
+	if (min && max && (min > max)) {
+		error = { message: 'ERR_MIN_OVER_MAX', prop: 'maxPerImpression' }
+	} else if (dep && (dep < max)) {
+		error = { message: 'ERR_MAX_IMPR_OVER_DEPOSIT', prop: 'maxPerImpression' }
+	} if (dep && (dep < min)) {
+		error = { message: 'ERR_MIN_IMPR_OVER_DEPOSIT', prop: 'maxPerImpression' }
 	}
 
 	return { error }
@@ -124,17 +144,36 @@ class CampaignFinance extends Component {
 		})
 	}
 
-	validateAmount(amount = '', prop, dirty, errMsg) {
-		const isValidNumber = validations.isNumberString(amount)
-		const isValid = isValidNumber && utils.parseUnits(amount, 18)
+	validateAmount(value = '', prop, dirty, errMsg) {
+		const isValidNumber = validations.isNumberString(value)
+		const isValid = isValidNumber && utils.parseUnits(value, 18)
 
-		this.props.validate(
-			prop,
-			{
-				isValid: isValid,
-				err: { msg: errMsg || 'ERR_INVALID_AMOUNT' },
-				dirty: dirty
-			})
+		if (!isValid) {
+			this.props.validate(
+				prop,
+				{
+					isValid: isValid,
+					err: { msg: errMsg || 'ERR_INVALID_AMOUNT' },
+					dirty: dirty
+				})
+		} else {
+
+			const { newItem } = this.props
+
+			const depositAmount = (prop === 'depositAmount') ? value : newItem.depositAmount
+			const maxPerImpression = (prop === 'maxPerImpression') ? value : newItem.maxPerImpression
+			const minPerImpression = (prop === 'minPerImpression') ? value : newItem.minPerImpression
+
+			const result = validateAmounts({ depositAmount, maxPerImpression, minPerImpression })
+
+			this.props.validate(
+				prop,
+				{
+					isValid: !result.error,
+					err: { msg: result.error ? result.error.message : '' },
+					dirty: dirty
+				})
+		}
 	}
 
 	handleDates = (prop, value, dirty) => {
@@ -245,7 +284,7 @@ class CampaignFinance extends Component {
 							}
 						/>
 					</Grid>
-					<Grid item sm={12}>
+					<Grid item sm={12} md={6}>
 						<TextField
 							fullWidth
 							type='text'
@@ -268,7 +307,7 @@ class CampaignFinance extends Component {
 							}
 						/>
 					</Grid>
-					<Grid item sm={12}>
+					<Grid item sm={12} md={6}>
 						<TextField
 							fullWidth
 							type='text'
