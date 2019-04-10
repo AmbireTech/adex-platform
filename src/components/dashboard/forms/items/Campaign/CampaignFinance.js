@@ -8,6 +8,9 @@ import TextField from '@material-ui/core/TextField'
 import DatePicker from 'components/common/DatePicker'
 import { utils } from 'ethers'
 import { validations } from 'adex-models'
+import DateFnsUtils from "@date-io/moment";
+
+const moment = new DateFnsUtils()
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -53,14 +56,38 @@ const PubValidatorsSrc = Object.keys(PubPlatformValidators).map(key => {
 	}
 })
 
+const validateCampaignDates = ({ created, withdrawPeriodStart, validUntil }) => {
+	let error = null
+	if (withdrawPeriodStart && (withdrawPeriodStart < created)) {
+		error = { message: 'WITHDRAW_PERIOD_CANT_IN_PAST', prop: 'withdrawPeriodStart' }
+	} else if (validUntil && (validUntil < created)) {
+		error = { message: 'VALID_UNTIL_PERIOD_CANT_IN_PAST', prop: 'validUntil' }
+	} else if (withdrawPeriodStart && validUntil && (withdrawPeriodStart >= validUntil)) {
+		error = { message: 'VALID_UNTIL_CANT_BEFORE_START', prop: 'validUntil' }
+	}
+
+	return { error }
+}
+
 class CampaignFinance extends Component {
 	componentDidMount() {
-		const { newItem } = this.props
+		const { newItem, handleChange } = this.props
 		this.validateAndUpdateValidator(false, 0, newItem.validators[0])
 		this.validateAndUpdateValidator(false, 0, newItem.validators[1])
 		this.validateAmount(newItem.depositAmount, 'depositAmount', false, 'REQUIRED_FIELD')
 		this.validateAmount(newItem.maxPerImpression, 'maxPerImpression', false, 'REQUIRED_FIELD')
 		this.validateAmount(newItem.minPerImpression, 'minPerImpression', false, 'REQUIRED_FIELD')
+
+		const { withdrawPeriodStart, validUntil, created } = newItem
+		if (!withdrawPeriodStart) {
+			handleChange('handleChange', Date.now())
+		}
+		if (!validUntil) {
+			handleChange('validUntil', Date.now())
+		}
+		if (!created) {
+			handleChange('created', Date.now())
+		}
 	}
 
 	validateUnits(adUnits, dirty) {
@@ -110,6 +137,32 @@ class CampaignFinance extends Component {
 			})
 	}
 
+	handleDates = (prop, value, dirty) => {
+
+		const { newItem, handleChange } = this.props
+		const withdrawPeriodStart = (prop === 'withdrawPeriodStart') ? value : newItem.withdrawPeriodStart
+		const validUntil = (prop === 'validUntil') ? value : newItem.validUntil
+		const result = validateCampaignDates({ withdrawPeriodStart, validUntil, created: newItem.created })
+
+		this.props.validate(
+			'withdrawPeriodStart',
+			{
+				isValid: !result.error,
+				err: { msg: result.error ? result.error.message : '' },
+				dirty: dirty
+			})
+
+		this.props.validate(
+			'validUntil',
+			{
+				isValid: !result.error,
+				err: { msg: result.error ? result.error.message : '' },
+				dirty: dirty
+			})
+
+		handleChange(prop, value)
+	}
+
 	render() {
 		const {
 			handleChange,
@@ -127,15 +180,15 @@ class CampaignFinance extends Component {
 			withdrawPeriodStart
 		} = newItem
 
-		const from = withdrawPeriodStart ? new Date(withdrawPeriodStart) : null
-		const to = validUntil ? new Date(validUntil) : null
-		const now = new Date()
+		const from = withdrawPeriodStart || undefined
+		const to = validUntil || undefined
+		const now = moment.date().valueOf()
 
 		const errDepAmnt = invalidFields['depositAmount']
 		const errMin = invalidFields['minPerImpression']
 		const errMax = invalidFields['maxPerImpression']
-
-		console.log('newItem', newItem)
+		const errFrom = invalidFields['withdrawPeriodStart']
+		const errTo = invalidFields['validUntil']
 
 		return (
 			<div>
@@ -245,8 +298,17 @@ class CampaignFinance extends Component {
 							label={t('withdrawPeriodStart', { isProp: true })}
 							minDate={now}
 							maxDate={to}
-							onChange={(val) => handleChange('withdrawPeriodStart', val)}
+							onChange={(val) => {
+								console.log('vall', val.valueOf())
+								this.handleDates('withdrawPeriodStart', val.valueOf(), true)
+							}}
 							value={from}
+							error={errFrom && !!errFrom.dirty}
+							helperText={
+								(errFrom && !!errFrom.dirty)
+									? errFrom.errMsg
+									: t('WITHDRAW_START_PERIOD_HELPER_TXT')
+							}
 						/>
 					</Grid>
 					<Grid item sm={12} md={6}>
@@ -255,8 +317,15 @@ class CampaignFinance extends Component {
 							calendarIcon
 							label={t('validUntil', { isProp: true })}
 							minDate={from || now}
-							onChange={(val) => handleChange('validUntil', val)}
+							onChange={(val) =>
+								this.handleDates('validUntil', val.valueOf(), true)}
 							value={to}
+							error={errTo && !!errTo.dirty}
+							helperText={
+								(errTo && !!errTo.dirty)
+									? errTo.errMsg
+									: t('VALID_UNTIL_HELPER_TXT')
+							}
 						/>
 					</Grid>
 				</Grid>
