@@ -26,6 +26,7 @@ import AdUnitFormPreview from './AdUnit/AdUnitFormPreview'
 import NewCampaignHoc from './Campaign/NewCampaignHoc'
 import CampaignUnits from './Campaign/CampaignUnits'
 import CampaignTargeting from './Campaign/CampaignTargeting'
+import CampaignFinance from './Campaign/CampaignFinance'
 import CampaignFormPreview from './Campaign/CampaignFormPreview'
 
 const { ItemsTypes } = ItemsConstants
@@ -42,8 +43,20 @@ const SaveBtn = ({ ...props }) => {
 	)
 }
 
+const SendBtn = ({ ...props }) => {
+	return (
+		<Button
+			color='primary'
+			onClick={props.save}
+		>
+			<SaveIcon style={{ marginRight: 8 }} />
+			{props.t('OPEN_CAMPAIGN')}
+		</Button>
+	)
+}
+
 const SaveBtnWithAdUnit = NewAdUnitHoc(SaveBtn)
-const SaveBtnWithCampaign = NewCampaignHoc(SaveBtn)
+const SaveBtnWithCampaign = NewCampaignHoc(SendBtn)
 
 const CancelBtn = ({ ...props }) => {
 	return (
@@ -109,7 +122,8 @@ export const NewCampaignSteps = (props) =>
 		stepsId={'new-campaign-'}
 		stepsPages={[
 			{ title: 'CAMPAIGN_UNITS_STEP', page: CampaignUnits },
-			{ title: 'CAMPAIGN_TARGETING_STEP', page: CampaignTargeting }
+			{ title: 'CAMPAIGN_TARGETING_STEP', page: CampaignTargeting },
+			{ title: 'CAMPAIGN_FINANCE_STEP', page: CampaignFinance },
 		]}
 		stepsPreviewPage={{ title: 'PREVIEW_AND_SAVE_ITEM', page: CampaignFormPreview }}
 		itemModel={Campaign}
