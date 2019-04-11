@@ -99,3 +99,17 @@ export const registerFullIdentity = ({
 		headers: { 'Content-Type': 'application/json' }
 	}).then(processResponse)
 }
+
+export const sendOpenChannel = ({ txnsRaw, signatures, channel, identityAddr }) => {
+	return requester.fetch({
+		route: 'channel/open',
+		method: 'POST',
+		body: JSON.stringify({
+			txnsRaw,
+			signatures,
+			channel,
+			identityAddr
+		}),
+		headers: { 'Content-Type': 'application/json' }
+	}).then(processResponse)
+}
