@@ -1,35 +1,26 @@
 import React from 'react'
 import Button from '@material-ui/core/Button'
 import FormSteps from 'components/dashboard/forms/FormSteps'
-import NewItemHoc from './NewItemHocStep'
-// import NewItemFormPreview from './NewItemFormPreview'
 import WithDialog from 'components/common/dialog/WithDialog'
-import NewItemForm from './NewItemForm'
-import NewSlotForm from './NewSlotForm'
-import NewSlotFormImgs from './NewSlotFormImgs'
-import NewUnitFormTargets from './NewUnitFormTargets'
-import NewUnitFormType from './NewUnitFormType'
-import NewUnitFormImg from './NewUnitFormImg'
-import NewItemFormTags from './NewItemFormTags';
-import NewCampaignForm from './NewCampaignForm'
 import { AdUnit, AdSlot, Campaign } from 'adex-models'
-import { items as ItemsConstants } from 'adex-constants'
 import AddIcon from '@material-ui/icons/Add'
 import SaveIcon from '@material-ui/icons/Save'
-
 import NewAdUnitHoc from './AdUnit/NewAdUnitHoc'
 import AdUnitBasic from './AdUnit/AdUnitBasic'
 import AdUnitMedia from './AdUnit/AdUnitMedia'
 import AdUnitTargeting from './AdUnit/AdUnitTargeting'
 import AdUnitFormPreview from './AdUnit/AdUnitFormPreview'
-
 import NewCampaignHoc from './Campaign/NewCampaignHoc'
 import CampaignUnits from './Campaign/CampaignUnits'
 import CampaignTargeting from './Campaign/CampaignTargeting'
 import CampaignFinance from './Campaign/CampaignFinance'
 import CampaignFormPreview from './Campaign/CampaignFormPreview'
+import NewAdSlotHoc from './AdSlot/NewAdSlotHoc'
+import AdSlotBasic from './AdSlot/AdSlotBasic'
+import AdSlotMedia from './AdSlot/AdSlotMedia'
+import AdSlotTargeting from './AdSlot/AdSlotTargeting'
+import AdSlotPreview from './AdSlot/AdSlotPreview'
 
-const { ItemsTypes } = ItemsConstants
 const SaveBtn = ({ ...props }) => {
 	return (
 		<Button
@@ -57,6 +48,7 @@ const SendBtn = ({ ...props }) => {
 
 const SaveBtnWithAdUnit = NewAdUnitHoc(SaveBtn)
 const SaveBtnWithCampaign = NewCampaignHoc(SendBtn)
+const SaveBtnWithAdSlot = NewAdSlotHoc(SendBtn)
 
 const CancelBtn = ({ ...props }) => {
 	return (
@@ -68,13 +60,7 @@ const CancelBtn = ({ ...props }) => {
 
 const CancelBtnWithItem = NewAdUnitHoc(CancelBtn)
 const CancelBtnWithCampaign = NewCampaignHoc(CancelBtn)
-
-const itemsCommon = {
-	SaveBtn: SaveBtnWithAdUnit,
-	CancelBtn: CancelBtnWithItem,
-	stepsPreviewPage: { title: 'PREVIEW_AND_SAVE_ITEM', page: AdUnitFormPreview },
-	validateIdBase: 'new-'
-}
+const CancelBtnWithAdSlot = NewAdSlotHoc(CancelBtn)
 
 const dialogCommon = {
 	darkerBackground: true,
@@ -144,15 +130,17 @@ export const NewCampaignDialog = (props) =>
 export const NewSlotSteps = (props) =>
 	<FormSteps
 		{...props}
-		{...itemsCommon}
-		itemType={ItemsTypes.AdSlot.id}
-		stepsId={ItemsTypes.AdSlot.id}
+		SaveBtn={SaveBtnWithAdSlot}
+		CancelBtn={CancelBtnWithAdSlot}
+		validateIdBase={'new-AdUnit-'}
+		itemType={'AdSlot'}
+		stepsId={'new-slot-'}
 		stepsPages={[
-			{ title: 'SLOT_BASIC_STEP', page: NewItemForm },
-			{ title: 'SLOT_TYPE_DATA_STEP', page: NewSlotForm },
-			{ title: 'SLOT_IMAGES_STEP', page: NewSlotFormImgs },
-			{ title: 'SLOT_TAGS_STEP', page: NewItemFormTags }
+			{ title: 'SLOT_BASIC_STEP', page: AdSlotBasic },
+			{ title: 'SLOT_MEDIA_STEP', page: AdSlotMedia },
+			{ title: 'SLOT_TAGS_STEP', page: AdSlotTargeting }
 		]}
+		stepsPreviewPage={{ title: 'PREVIEW_AND_SAVE_ITEM', page: AdSlotPreview }}
 		imgLabel='SLOT_AVATAR_IMG_LABEL'
 		imgAdditionalInfo='SLOT_AVATAR_IMG_INFO'
 		descriptionHelperTxt='SLOT_DESCRIPTION_HELPER'
