@@ -121,7 +121,6 @@ export function getAllItems(authSig) {
 			updateItems({ items: resUnits, itemType: 'AdUnit' })(dispatch)
 			updateItems({ items: resSlots, itemType: 'AdSlot' })(dispatch)
 			updateItems({ items: resCampaigns, itemType: 'Campaign' })(dispatch)
-
 		} catch (err) {
 			addToast({
 				dispatch,
@@ -136,10 +135,15 @@ export function getAllItems(authSig) {
 export function openCampaign({ campaign, account }) {
 	return async function (dispatch) {
 		try {
-			const res = await openChannel({campaign, account})
+			const resCampaign = await openChannel({campaign, account})
+
+			dispatch({
+				type: types.ADD_ITEM,
+				item: resCampaign,
+				itemType: 'Campaign'
+			})
 
 		} catch (err) {
-			console.log('errrorororo', err)
 			addToast({
 				dispatch,
 				type: 'cancel',
