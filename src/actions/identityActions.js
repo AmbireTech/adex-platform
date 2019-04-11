@@ -58,7 +58,7 @@ export function getGrantAccount({ walletAddr, email, password, coupon }) {
 				couponCode: coupon
 			})
 
-			const identity = identityInfo.address
+			const identity = identityInfo.identityAddr
 
 			if (identityInfo) {
 				addDataToWallet({
@@ -66,6 +66,12 @@ export function getGrantAccount({ walletAddr, email, password, coupon }) {
 					password,
 					dataKey: 'identity',
 					dataValue: identity
+				})
+				addDataToWallet({
+					email,
+					password,
+					dataKey: 'identityPrivileges',
+					dataValue: identityInfo.identityPrivileges
 				})
 				return dispatch({
 					type: types.UPDATE_IDENTITY,
