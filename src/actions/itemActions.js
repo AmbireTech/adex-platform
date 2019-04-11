@@ -1,6 +1,6 @@
 import * as types from 'constants/actionTypes'
-import { uploadImage, postAdUnit } from 'services/adex-market/actions'
-import { Base, Campaign, AdUnit } from 'adex-models'
+import { uploadImage, postAdUnit, postAdSlot } from 'services/adex-market/actions'
+import { Base, AdSlot, AdUnit } from 'adex-models'
 import { addToast as AddToastUi } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAdUnits, getAdSlots, getCampaigns } from 'services/adex-market/actions'
@@ -68,7 +68,7 @@ export function resetNewItem(item) {
 }
 
 // register item
-export function addItem(item, itemToAddTo, authSig) {
+export function addItem(item, itemType, authSig) {
 	const newItem = { ...item }
 	return async function (dispatch) {
 
@@ -99,6 +99,44 @@ export function addItem(item, itemToAddTo, authSig) {
 				type: types.ADD_ITEM,
 				item: addedItem,
 				itemType: 'AdUnit'
+			})
+
+			addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_CREATING_ITEM', args: ['AdUnit', addedItem.title] })
+		} catch (err) {
+			addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_CREATING_ITEM', args: ['AdUnit', err] })
+		}
+	}
+}
+
+export function addSlot(item, itemType, authSig) {
+	const newItem = { ...item }
+	return async function (dispatch) {
+
+		try {
+			const imageIpfs = (await getImgsIpfsFromBlob({
+				tempUrl: newItem.temp.tempUrl,
+				authSig
+			})).ipfs
+
+			newItem.fallbackMediaUrl  = `ipfs://${imageIpfs}`
+			newItem.fallbackMediaMime  = newItem.temp.mime
+			newItem.created = Date.now()
+
+			delete newItem.temp
+			delete newItem.owner
+			delete newItem.ipfs
+
+			const resItem = await postAdSlot({
+				unit: newItem,
+				authSig
+			})
+
+			const addedItem = new AdSlot(resItem)
+
+			dispatch({
+				type: types.ADD_ITEM,
+				item: addedItem,
+				itemType: 'AdSlot'
 			})
 
 			addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_CREATING_ITEM', args: ['AdUnit', addedItem.title] })
