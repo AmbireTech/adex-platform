@@ -98,6 +98,11 @@ function getClientEnvironment(publicUrl) {
 				ADEX_MARKET_HOST: process.env.ADEX_MARKET_HOST || (process.env.NODE_ENV === 'production' ? 'https://market.adex.network' : 'http://localhost:3012'),
 				IDENTITY_BASE_ADDR: process.env.IDENTITY_BASE_ADDR,
 				IDENTITY_FACTORY_ADDR: process.env.IDENTITY_FACTORY_ADDR,
+				VALIDATOR_REGISTRY: process.env.VALIDATOR_REGISTRY,
+				VALIDATOR_LEADER_URL: process.env.VALIDATOR_LEADER_URL,
+				VALIDATOR_LEADER_ID: process.env.VALIDATOR_LEADER_ID,
+				VALIDATOR_FOLLOWER_URL: process.env.VALIDATOR_FOLLOWER_URL,
+				VALIDATOR_FOLLOWER_ID: process.env.VALIDATOR_FOLLOWER_ID,
 			}
 		);
 	// Stringify all values so we can feed into Webpack DefinePlugin
