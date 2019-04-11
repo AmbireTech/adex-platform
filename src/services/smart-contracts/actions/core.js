@@ -1,33 +1,16 @@
 
 import crypto from 'crypto'
-import { Channel } from 'adex-protocol-eth/js'
+import { Interface } from 'ethers/utils'
+import { Channel, splitSig, Transaction } from 'adex-protocol-eth/js'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { getSigner } from 'services/smart-contracts/actions/ethers'
+import { contracts } from '../contractsCfg'
+import { sendOpenChannel } from 'services/adex-relayer/actions'
+import { Base, Campaign, AdUnit } from 'adex-models'
+import { bigNumberify, randomBytes, parseUnits } from 'ethers/utils'
 
-const TEST_CHANNEL = {
-	id: '',
-	creator: '',
-	depositAsset: '',
-	depositAmount: (420 * 10 ** 15).toString(),
-	validUntil: 1554771428,
-	spec: {
-		// ((10**18) * 0.5) / 1000
-		minPerImpression: '305000000000009',
-		validators: [
-			{
-				id: '0x2892f6C41E0718eeeDd49D98D648C789668cA67d',
-				url: 'https://tom.adex.network',
-				fee: '0'
-			},
-			{
-				id: '0xce07CbB7e054514D590a0262C93070D838bFBA2e',
-				url: 'https://jerry.adex.network',
-				fee: '0'
-			}
-		],
-		created: Date.now()
-	}
-}
+const { AdExCore, DAI } = contracts
+const Core = new Interface(AdExCore.abi)
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
@@ -45,35 +28,54 @@ function toEthereumChannel(channel) {
 	})
 }
 
-export async function submitChannel({ channel, account }) {
+function getReadyCampaign(campaign, identity, Dai) {
+	const newCampaign = new Campaign(campaign)
+	newCampaign.creator = identity.address
+	newCampaign.validUntil = Math.floor(newCampaign.validUntil / 1000)
+	newCampaign.nonce = bigNumberify(randomBytes(32)).toString()
+	newCampaign.adUnits = newCampaign.adUnits.map(unit => (new AdUnit(unit)).spec)
+	newCampaign.depositAmount = parseUnits(newCampaign.depositAmount, DAI.decimals).toString()
+	newCampaign.maxPerImpression = parseUnits(newCampaign.maxPerImpression, DAI.decimals).toString()
+	newCampaign.minPerImpression = parseUnits(newCampaign.minPerImpression, DAI.decimals).toString()
+	newCampaign.depositAsset = newCampaign.depositAsset || Dai.address
+
+	return newCampaign.openReady
+}
+
+export async function openChannel({ campaign, account }) {
+	const { wallet, identity } = account
 	const {
 		provider,
 		AdExCore,
 		Dai
-	} = await getEthers(account._wallet.authType)
+	} = await getEthers(wallet.authType)
 
-	const chn = { ...(channel || TEST_CHANNEL) }
-	chn.depositAsset = chn.depositAsset || Dai.address
-	chn.creator = account._wallet.address
+	const openReady = getReadyCampaign(campaign, identity, Dai)
 
-	const ethChannel = toEthereumChannel(chn)
-	const signer = await getSigner({ account, provider }) 
+	const ethChannel = toEthereumChannel(openReady)
+	const identityNonce = await provider.getTransactionCount(identity.address)
 
-	const daiWithSigner = Dai.connect(signer)
+	const signer = await getSigner({ wallet, provider })
+	const channel = { ...openReady, id: ethChannel.hashHex(AdExCore.address) }
 
-	const allowanceTx = daiWithSigner
-		.approve(AdExCore.address, chn.depositAmount)
+	const tx = {
+		identityContract: openReady.creator,
+		nonce: identityNonce,
+		feeTokenAddr: Dai.address,
+		feeAmount: '160000000000000000',
+		to: AdExCore.address,
+		data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()])
+	}
 
-	const coreWithSigner = AdExCore.connect(signer)
-	const inputData = ethChannel.toSolidityTuple()
-	const tx = coreWithSigner
-		.channelOpen(inputData, { gasLimit: 300000 })
-		.catch(err => {
-			console.log('err', err)
-		})
+	const signTx = await signer.signMessage(new Transaction(tx).hash(), { hex: true })
 
-	const a = await allowanceTx
-	const b = await tx
+	const data = {
+		txnsRaw: [tx],
+		signatures: [splitSig(signTx.signature)],
+		channel,
+		identityAddr: identity.address
+	}
 
-	// TODO: handle tx
+	const result = await sendOpenChannel(data)
+	return result
 }
