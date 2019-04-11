@@ -196,10 +196,10 @@ class ImgForm extends Component {
 								className={classes.droppedImgContainer}
 							>
 								<ReactCrop
-									style={{ maxWidth: '70%', maxHeight: 176 }}
+									style={{ maxWidth: '70%', maxHeight: 320 }}
 									imageStyle={{
 										maxWidth: '100%',
-										maxHeight: '176px',
+										maxHeight: '320px',
 										width: 'auto',
 										height: 'auto'
 									}}

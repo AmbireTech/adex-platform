@@ -31,7 +31,7 @@ export const styles = theme => {
 			}
 		},
 		imgDropzonePreview: {
-			maxHeight: 176,
+			maxHeight: 320,
 			height: 'auto',
 			width: 'auto',
 			'@media(max-width:500px)': {
