@@ -91,23 +91,12 @@ const validateAmounts = ({ depositAmount, maxPerImpression, minPerImpression }) 
 
 class CampaignFinance extends Component {
 	componentDidMount() {
-		const { newItem, handleChange } = this.props
+		const { newItem } = this.props
 		this.validateAndUpdateValidator(false, 0, newItem.validators[0])
-		this.validateAndUpdateValidator(false, 0, newItem.validators[1])
+		this.validateAndUpdateValidator(false, 1, newItem.validators[1])
 		this.validateAmount(newItem.depositAmount, 'depositAmount', false, 'REQUIRED_FIELD')
 		this.validateAmount(newItem.maxPerImpression, 'maxPerImpression', false, 'REQUIRED_FIELD')
 		this.validateAmount(newItem.minPerImpression, 'minPerImpression', false, 'REQUIRED_FIELD')
-
-		const { withdrawPeriodStart, validUntil, created } = newItem
-		if (!withdrawPeriodStart) {
-			handleChange('handleChange', Date.now())
-		}
-		if (!validUntil) {
-			handleChange('validUntil', Date.now())
-		}
-		if (!created) {
-			handleChange('created', Date.now())
-		}
 	}
 
 	validateUnits(adUnits, dirty) {
@@ -338,7 +327,6 @@ class CampaignFinance extends Component {
 							minDate={now}
 							maxDate={to}
 							onChange={(val) => {
-								console.log('vall', val.valueOf())
 								this.handleDates('withdrawPeriodStart', val.valueOf(), true)
 							}}
 							value={from}
