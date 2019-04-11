@@ -45,10 +45,7 @@ export default function NewCampaignHoc(Decorated) {
 
 		save = () => {
 			const { actions, newItem, account, addTo } = this.props
-			newItem.owner = account.wallet.address
-	
-			// TODO: sign and send to relaye
-			actions.addItem(newItem, addTo, account.wallet.authSig)
+			actions.openCampaign({campaign: newItem, account})
 			actions.resetNewItem('Campaign')
 
 			this.onSave()
@@ -83,13 +80,13 @@ export default function NewCampaignHoc(Decorated) {
 	function mapStateToProps(state, props) {
 		const { persist, memory } = state
 
-		const adUnits = persist.items['AdUnit']  || {}
+		const adUnits = persist.items['AdUnit'] || {}
 		const adUnitsArray = Array.from(Object.values(adUnits)) || []
 		return {
 			account: persist.account,
 			newItem: new Campaign(memory.newItem['Campaign']),
 			adUnits,
-			adUnitsArray 
+			adUnitsArray
 		}
 	}
 
