@@ -12,7 +12,7 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
 import Translate from 'components/translate/Translate'
-import { constants, helpers } from 'adex-models'
+import { validations, helpers } from 'adex-models'
 
 const MAX_IMG_LOAD_TIME = 3000
 class Img extends Component {
@@ -29,7 +29,7 @@ class Img extends Component {
 	}
 
 	ipfsSrc = (src) => {
-		if (!!src && constants.Regexes.ipfsRegex.test(src)) {
+		if (!!src && validations.Regexes.ipfsRegex.test(src)) {
 			return helpers.getMediaUrlWithProvider(src, process.env.IPFS_GATEWAY)
 		}
 
