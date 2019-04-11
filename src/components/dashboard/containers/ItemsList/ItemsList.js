@@ -98,7 +98,7 @@ class ItemsList extends Component {
 	renderTableRow = (item, index, { to, selected }) => {
 		const { t, classes, selectMode, selectedItems, onSelect, noActions } = this.props
 
-		const imagCell = noActions ? TableCell : RRTableCell
+		const ImagCell = noActions ? TableCell : RRTableCell
 		return (
 			<TableRow
 				key={item.ipfs || index}
@@ -115,7 +115,7 @@ class ItemsList extends Component {
 						/>
 					</TableCell>
 				}
-				<imagCell
+				<ImagCell
 					to={to}
 				>
 					<Img
@@ -123,7 +123,7 @@ class ItemsList extends Component {
 						src={item.mediaUrl || item.fallbackMediaiUrl || ''}
 						alt={item.title}
 					/>
-				</imagCell>
+				</ImagCell>
 				<RRTableCell
 					// className={tableTheme.link}
 					to={to}
@@ -170,7 +170,7 @@ class ItemsList extends Component {
 
 		return (
 			<span>
-				{!selectMode && !item._archived &&
+				{!item.archived &&
 					<Tooltip
 						title={t('TOOLTIP_ARCHIVE')}
 						// placement='top'
@@ -194,7 +194,7 @@ class ItemsList extends Component {
 						</IconButton>
 					</Tooltip>
 				}
-				{!selectMode && item.archived &&
+				{item.archived &&
 					<Tooltip
 						title={t('TOOLTIP_UNARCHIVE')}
 						enterDelay={1000}

@@ -72,15 +72,13 @@ class CampaignUnits extends Component {
 						<ContentBody>
 							<ItemsList
 								objModel={AdUnit}
-								addToItem
 								selectMode
 								selectedItems={this.state.selected}
 								onSelect={(unit, checked) => {
 									this.handleSelect(unit, checked)
 								}}
 								items={adUnitsArray}
-								listMode
-								viewModeId='rowsViewUnitsNewCampaign'
+								listMode='rows'
 								itemType={'AdUnit'}
 								sortProperties={SORT_PROPERTIES_ITEMS}
 								filterProperties={FILTER_PROPERTIES_ITEMS}

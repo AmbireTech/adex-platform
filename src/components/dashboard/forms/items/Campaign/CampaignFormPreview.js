@@ -29,7 +29,7 @@ class CampaignFormPreview extends Component {
 						itemType={'AdUnit'}
 						noControls
 						padding='dense'
-						noControls
+						noActions
 					/>
 				</ContentBody>
 			</Grid>
