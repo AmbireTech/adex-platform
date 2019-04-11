@@ -44,7 +44,7 @@ class Dropdown extends React.Component {
     		>
     			<InputLabel htmlFor={htmlId} required={required}>{label}</InputLabel>
     			<Select
-    				value={value}
+    				value={value.id || value}
     				onChange={this.handleChange}
     				input={<Input name={name} id={htmlId} />}
     			>
@@ -52,8 +52,8 @@ class Dropdown extends React.Component {
     				{[...source].map((src) => {
     					return (
     						<MenuItem
-    							key={src.value.key || src.value}
-    							value={src.value}
+    							key={src.value.key || src.value.id || src.value}
+    							value={src.value.id || src.value}
     						>
     							{src.label}
     						</MenuItem>
