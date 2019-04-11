@@ -1,10 +1,10 @@
 import * as types from 'constants/actionTypes'
 import { uploadImage, postAdUnit } from 'services/adex-market/actions'
-import { Base, AdUnit } from 'adex-models'
+import { Base, Campaign, AdUnit } from 'adex-models'
 import { addToast as AddToastUi } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAdUnits, getAdSlots, getCampaigns } from 'services/adex-market/actions'
-import { constants, schemas, Joi } from 'adex-models'
+import { openChannel } from 'services/smart-contracts/actions/core'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({ dispatch: dispatch, type: type, action: 'X', label: translate(toastStr, { args: args }), timeout: 5000 })(dispatch)
@@ -127,6 +127,23 @@ export function getAllItems(authSig) {
 				dispatch,
 				type: 'cancel',
 				toastStr: 'ERR_GETTING_ITEMS',
+				args: [err]
+			})
+		}
+	}
+}
+
+export function openCampaign({ campaign, account }) {
+	return async function (dispatch) {
+		try {
+			const res = await openChannel({campaign, account})
+
+		} catch (err) {
+			console.log('errrorororo', err)
+			addToast({
+				dispatch,
+				type: 'cancel',
+				toastStr: 'ERR_OPENING_CAMPAIGN',
 				args: [err]
 			})
 		}
