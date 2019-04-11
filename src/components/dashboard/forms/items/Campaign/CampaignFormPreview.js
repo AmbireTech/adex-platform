@@ -8,7 +8,6 @@ import Grid from '@material-ui/core/Grid'
 import ItemsList from 'components/dashboard/containers/ItemsList'
 import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
 import { AdUnit } from 'adex-models'
-
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from '../styles'
 
@@ -31,7 +30,6 @@ class CampaignFormPreview extends Component {
 						noControls
 						padding='dense'
 						noControls
-						noActions
 					/>
 				</ContentBody>
 			</Grid>
@@ -43,7 +41,16 @@ class CampaignFormPreview extends Component {
 		const { newItem, t } = rest
 		const {
 			targeting,
-			adUnits
+			adUnits,
+			validators,
+			depositAmount,
+			minPerImpression,
+			maxPerImpression,
+			depositAsset,
+			withdrawPeriodStart,
+			validUntil,
+			created,
+			nonce
 		} = newItem
 
 		return (
@@ -65,12 +72,46 @@ class CampaignFormPreview extends Component {
 						}
 					/>
 					<PropRow
-						left={t('targeting', { isProp: true })}
+						left={t('adUnits', { isProp: true })}
 						right={
 							<this.AdUnitsTable
 								items={adUnits}
 							/>
 						}
+					/>
+					<PropRow
+						left={t('validators', { isProp: true })}
+						right={
+							<div>
+								{validators.map(val => <div>
+									{`${val.url} - ${val.id}`}
+								</div>)}
+							</div>
+						}
+					/>
+					<PropRow
+						left={t('depositAmount', { isProp: true })}
+						right={depositAmount}
+					/>
+					<PropRow
+						left={t('minPerImpression', { isProp: true })}
+						right={minPerImpression}
+					/>
+					<PropRow
+						left={t('maxPerImpression', { isProp: true })}
+						right={maxPerImpression}
+					/>
+					<PropRow
+						left={t('withdrawPeriodStart', { isProp: true })}
+						right={withdrawPeriodStart}
+					/>
+					<PropRow
+						left={t('validUntil', { isProp: true })}
+						right={validUntil}
+					/>
+					<PropRow
+						left={t('created', { isProp: true })}
+						right={created}
 					/>
 
 					{/* </Grid> */}
