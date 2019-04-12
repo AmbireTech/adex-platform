@@ -4,6 +4,7 @@ import { getSession, checkSession } from 'services/adex-market/actions'
 import { updateSpinner } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
+import { getAccountStats } from 'services/smart-contracts/actions/stats'
 import { addToast } from './uiActions'
 
 // MEMORY STORAGE
@@ -61,6 +62,24 @@ export function updateGasData({ gasData }) {
 			type: types.UPDATE_GAS_DATA,
 			gasData: gasData
 		})
+	}
+}
+
+export function updateAccountStats(account) {
+	return async function (dispatch) {
+		try {
+			const stats = await getAccountStats({ account })
+
+			updateAccount({ newValues: { stats } })(dispatch)
+		} catch (err) {
+			console.error('ERR_STATS', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_STATS',
+					{ args: [err] }),
+				timeout: 20000
+			})(dispatch)
+		}
 	}
 }
 
