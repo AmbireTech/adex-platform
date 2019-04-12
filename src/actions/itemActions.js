@@ -80,28 +80,20 @@ export function addItem(item, itemType, authSig) {
 
 			newItem.mediaUrl = `ipfs://${imageIpfs}`
 			newItem.mediaMime = newItem.temp.mime
-			newItem.created = Date.now()
-
-			delete newItem.temp
-			delete newItem.owner
-			delete newItem.ipfs
-
-			// TODO: validate with the schema
+			newItem.created = Date.now()			
 
 			const resItem = await postAdUnit({
-				unit: newItem,
+				unit: new AdUnit(newItem).marketAdd,
 				authSig
 			})
 
-			const addedItem = new AdUnit(resItem)
-
 			dispatch({
 				type: types.ADD_ITEM,
-				item: addedItem,
+				item: newItem,
 				itemType: 'AdUnit'
 			})
 
-			addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_CREATING_ITEM', args: ['AdUnit', addedItem.title] })
+			addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_CREATING_ITEM', args: ['AdUnit', newItem.title] })
 		} catch (err) {
 			addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_CREATING_ITEM', args: ['AdUnit', err] })
 		}
@@ -122,24 +114,18 @@ export function addSlot(item, itemType, authSig) {
 			newItem.fallbackMediaMime  = newItem.temp.mime
 			newItem.created = Date.now()
 
-			delete newItem.temp
-			delete newItem.owner
-			delete newItem.ipfs
-
 			const resItem = await postAdSlot({
-				unit: newItem,
+				slot: new AdSlot(newItem).marketAdd,
 				authSig
 			})
 
-			const addedItem = new AdSlot(resItem)
-
 			dispatch({
 				type: types.ADD_ITEM,
-				item: addedItem,
+				item: newItem,
 				itemType: 'AdSlot'
 			})
 
-			addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_CREATING_ITEM', args: ['AdUnit', addedItem.title] })
+			addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_CREATING_ITEM', args: ['AdUnit', newItem.title] })
 		} catch (err) {
 			addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_CREATING_ITEM', args: ['AdUnit', err] })
 		}
