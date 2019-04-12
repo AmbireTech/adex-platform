@@ -39,6 +39,7 @@ function toEthereumChannel(channel) {
 function getReadyCampaign(campaign, identity, Dai) {
 	const newCampaign = new Campaign(campaign)
 	newCampaign.creator = identity.address
+	newCampaign.created = Date.now()
 	newCampaign.validUntil = Math.floor(newCampaign.validUntil / 1000)
 	newCampaign.nonce = bigNumberify(randomBytes(32)).toString()
 	newCampaign.adUnits = newCampaign.adUnits.map(unit => (new AdUnit(unit)).spec)
