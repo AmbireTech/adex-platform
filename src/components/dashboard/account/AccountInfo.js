@@ -5,7 +5,14 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
-import { WithdrawEth, WithdrawTokens, DepositEth, DepositToken, WithdrawEthFromIdentity, WithdrawTokenFromIdentity } from 'components/dashboard/forms/web3/transactions'
+import {
+	WithdrawEth,
+	WithdrawTokens,
+	DepositEth,
+	DepositToken,
+	WithdrawEthFromIdentity,
+	WithdrawTokenFromIdentity
+} from 'components/dashboard/forms/web3/transactions'
 import { withStyles } from '@material-ui/core/styles'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -14,25 +21,16 @@ import ListDivider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
 import CopyIcon from '@material-ui/icons/FileCopy'
 import { styles } from './styles.js'
-import { getStatsValues } from 'helpers/accStatsHelpers'
-import scActions from 'services/smart-contracts/actions'
 
-const { getAccountStats } = scActions
 // const RRButton = withReactRouterLink(Button)
 
 class AccountInfo extends React.Component {
 
-	componentWillMount() {
-		this.props.actions.updateNav('navTitle', this.props.t('ACCOUNT'))
-		// this.getStats()
-	}
-
-	getStats = () => {
-    	// TODO: spinner
-    	/*getAccountStats*/ getAccountStats({ _addr: this.props.account._addr, authType: this.props.account._authType })
-			.then((stats) => {
-				this.props.actions.updateAccount({ newValues: { stats: stats } })
-			})
+	UNSAFE_componentWillMount() {
+		const { t, actions, account } = this.props
+		const { updateNav, updateAccountStats } = actions
+		updateNav('navTitle', t('ACCOUNT'))
+		updateAccountStats(account)
 	}
 
 	onSave = () => {
@@ -41,18 +39,16 @@ class AccountInfo extends React.Component {
 
 	render() {
 		const { t, account, classes } = this.props
-		const stats = { ...account._stats }
+		const formated = account.stats.formated || {}
 		const {
-		    walletAddress,
+			walletAddress,
 			walletAuthType,
-			walletPrivilege,
+			walletPrivileges,
 			walletBalanceEth,
 			walletBalanceDai,
 			identityAddress,
-			identityBalanceEth,
-			identityBalanceDai,
-			// identityPrivileges
-		} = getStatsValues(stats)
+			identityBalanceDai
+		} = formated
 
 		return (
 			<div>
@@ -63,9 +59,9 @@ class AccountInfo extends React.Component {
 						<ListItemText
 							className={classes.address}
 							primary={walletAddress}
-							secondary={(account._authType === 'demo')
-							 ? t('DEMO_ACCOUNT_WALLET_ADDRESS', {args: [walletAuthType, walletPrivilege]})
-							  : t('WALLET_ETH_ADDR', {args: [walletAuthType, walletPrivilege]})
+							secondary={(account.authType === 'demo')
+								? t('DEMO_ACCOUNT_WALLET_ADDRESS', { args: [walletAuthType, walletPrivileges] })
+								: t('WALLET_ETH_ADDR', { args: [walletAuthType, walletPrivileges] })
 							}
 						/>
 						<IconButton
@@ -125,8 +121,8 @@ class AccountInfo extends React.Component {
 							className={classes.address}
 							primary={identityAddress}
 							secondary={(account._authType === 'demo')
-							 ? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
-							  : t('IDENTITY_ETH_ADDR')
+								? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
+								: t('IDENTITY_ETH_ADDR')
 							}
 						/>
 						<IconButton
@@ -139,32 +135,6 @@ class AccountInfo extends React.Component {
 						>
 							<CopyIcon />
 						</IconButton>
-					</ListItem>
-					<ListDivider />
-					<ListItem
-					>
-						<ListItemText
-							primary={identityBalanceEth + ' ETH'}
-							secondary={t('IDENTITY_ETH_BALANCE_AVAILABLE')}
-						/>
-						<div className={classes.itemActions}>
-							<DepositEth
-								variant='raised'
-								color='secondary'
-								onSave={this.onSave}
-								walletBalanceEth={walletBalanceEth}
-								className={classes.actionBtn}
-								size='small'
-							/>
-							<WithdrawEthFromIdentity
-								variant='raised'
-								color='primary'
-								onSave={this.onSave}
-								identityAvailable={identityBalanceEth}
-								className={classes.actionBtn}
-								size='small'
-							/>
-						</div>
 					</ListItem>
 					<ListDivider />
 					<ListItem
@@ -208,7 +178,7 @@ AccountInfo.propTypes = {
 
 function mapStateToProps(state, props) {
 	const { persist, memory } = state
-	const account = persist.account
+	const { account } = persist
 
 	return {
 		account: account,
