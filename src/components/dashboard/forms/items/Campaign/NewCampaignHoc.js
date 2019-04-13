@@ -29,23 +29,15 @@ export default function NewCampaignHoc(Decorated) {
 		}
 
 		onSave = () => {
-			// TODO:.....
-			if (typeof this.props.onSave === 'function') {
-				this.props.onSave()
-			}
-
-			if (Array.isArray(this.props.onSave)) {
-				for (var index = 0; index < this.props.onSave.length; index++) {
-					if (typeof this.props.onSave[index] === 'function') {
-						this.props.onSave[index]()
-					}
-				}
+			const { closeDialog } = this.props
+			if (closeDialog) {
+				closeDialog()
 			}
 		}
 
 		save = () => {
-			const { actions, newItem, account, addTo } = this.props
-			actions.openCampaign({campaign: newItem, account})
+			const { actions, newItem, account } = this.props
+			actions.openCampaign({ campaign: newItem, account })
 			actions.resetNewItem('Campaign')
 
 			this.onSave()
