@@ -136,7 +136,6 @@ class Img extends Component {
 				>
 					<DialogContent className={classes.dialogImageParent}>
 						<img
-							{...other}
 							alt={alt}
 							src={this.state.imgSrc}
 							draggable='false'
@@ -163,7 +162,6 @@ class Img extends Component {
 			this.state.imgSrc ?
 				<span className={classnames(classes.imgParent, className)}>
 					<img
-						{...other}
 						alt={alt}
 						src={this.state.imgSrc}
 						draggable='false'
