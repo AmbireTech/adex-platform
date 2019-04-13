@@ -15,8 +15,6 @@ class FormSteps extends Component {
 	render() {
 		let pages = []
 		const { t, SaveBtn, CancelBtn, onSave, stepsId, stepsPages, stepsPreviewPage, validateIdBase, ...rest } = this.props
-
-		console.log('props', rest)
 		const cancelButton = () => <CancelBtn  {...rest} stepsId={stepsId} onSave={onSave} t={t} />
 		const validateId = (validateIdBase || '') + '-' + stepsId
 
