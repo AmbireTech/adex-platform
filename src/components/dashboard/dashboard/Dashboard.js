@@ -1,7 +1,7 @@
 import React from 'react'
 import SideNav from './SideNav'
 import TopBar from './TopBar'
-import { Route, Switch, Redirect } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -21,11 +21,8 @@ import {
 } from 'adex-models'
 import Account from 'components/dashboard/account/AccountInfo'
 import Translate from 'components/translate/Translate'
-import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, NewChannelDialog } from 'components/dashboard/forms/items/NewItems'
-import { items as ItemsConstants } from 'adex-constants'
-import checkTransactions from 'services/store-data/transactions'
-import { getUserItems } from 'services/store-data/items'
-import { getAddrBids } from 'services/store-data/bids'
+import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, } from 'components/dashboard/forms/items/NewItems'
+// import checkTransactions from 'services/store-data/transactions'
 // import checkGasData from 'services/store-data/gas'
 import {
 	SORT_PROPERTIES_ITEMS,
@@ -57,26 +54,18 @@ class Dashboard extends React.Component {
 	}
 
 	componentDidMount() {
-		const {
-			actions,
-			t,
-			account
-		} = this.props
+		const { actions } = this.props
 
 		actions.updateNav('side', this.props.match.params.side)
-		actions.getAllItems(account.wallet.authSig)
+		actions.getAllItems()
+		actions.updateAccountStats()
 		// checkTransactions.start()
 		// checkGasData.start()
-		// getUserItems({ authSig: this.props.account._authSig })
-		// 	.catch((err) => {
-		// 		this.props.actions.addToast({ type: 'cancel', action: 'X', label: this.props.t('ERR_AUTH_METAMASK', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
-		// 	})
-
-		// getAccountStats({ _addr: this.props.account._addr, authType: this.props.account._authType })
-		// 	.then((stats) => {
-		// 		this.props.actions.updateAccount({ newValues: { stats: stats } })
-		// 	})
 	}
+
+	// shouldComponentUpdate(nextProps, nextState) {
+
+	// }
 
 	componentWillUpdate(nextProps) {
 		if (nextProps.match.params.side !== this.props.match.params.side) {
@@ -159,7 +148,7 @@ class Dashboard extends React.Component {
                     <SideSwitch side={side} t={this.props.t} />
                 </div>
                 <Divider /> */}
-				<SideNav location={this.props.location} side={side} data={this.props.account} />
+				<SideNav location={this.props.location} side={side} />
 			</div>
 		)
 
@@ -224,16 +213,7 @@ class Dashboard extends React.Component {
 }
 
 Dashboard.propTypes = {
-	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired
-}
-
-function mapStateToProps(state, props) {
-	const { persist } = state
-	const { account } = persist
-	return {
-		account: account
-	}
+	actions: PropTypes.object.isRequired
 }
 
 function mapDispatchToProps(dispatch) {
@@ -243,6 +223,6 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(
-	mapStateToProps,
+	null,
 	mapDispatchToProps
 )(Translate(withStyles(styles, { withTheme: true })(Dashboard)))
