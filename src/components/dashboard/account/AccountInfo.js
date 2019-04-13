@@ -84,7 +84,7 @@ class AccountInfo extends React.Component {
 						/>
 						<div className={classes.itemActions}>
 							<WithdrawEth
-								variant='raised'
+								variant='contained'
 								color='primary'
 								onSave={this.onSave}
 								availableAmount={walletBalanceEth}
@@ -104,7 +104,7 @@ class AccountInfo extends React.Component {
 						/>
 						<div className={classes.itemActions}>
 							<WithdrawTokens
-								variant='raised'
+								variant='contained'
 								color='primary'
 								onSave={this.onSave}
 								availableAmount={walletBalanceDai}
@@ -145,7 +145,7 @@ class AccountInfo extends React.Component {
 						/>
 						<div className={classes.itemActions}>
 							<DepositToken
-								variant='raised'
+								variant='contained'
 								color='secondary'
 								onSave={this.onSave}
 								walletBalance={walletBalanceDai}
@@ -154,7 +154,7 @@ class AccountInfo extends React.Component {
 								size='small'
 							/>
 							<WithdrawTokenFromIdentity
-								variant='raised'
+								variant='contained'
 								color='primary'
 								onSave={this.onSave}
 								identityAvailable={identityBalanceDai}

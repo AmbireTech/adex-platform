@@ -113,7 +113,7 @@ class SideNav extends Component {
 									<NewCampaignDialog
 										className={classes.newItemBtn}
 										color='primary'
-										variant='raised'
+										variant='contained'
 									// btnClasses={classes.newItemBtn}
 									/>
 								</ListItem>
@@ -136,7 +136,7 @@ class SideNav extends Component {
 							<NewItemBtn
 								className={classes.newItemBtn}
 								color='primary'
-								variant='raised'
+								variant='contained'
 							/>
 						</ListItem>
 						<ListDivider

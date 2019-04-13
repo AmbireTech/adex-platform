@@ -145,7 +145,7 @@ class AuthMetamask extends Component {
 						:
 						<Button
 							onClick={this.checkMetamask}
-							variant='raised'
+							variant='contained'
 							color='primary'
 							disabled={this.state.waitingAddrsData}
 						>

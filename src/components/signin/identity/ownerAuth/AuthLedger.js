@@ -194,7 +194,7 @@ class AuthLedger extends Component {
 							{(!this.state.waitingAddrsData && !this.state.waitingLedgerAction) &&
 								<Button
 									onClick={this.connectLedger}
-									variant='raised'
+									variant='contained'
 									color='primary'
 								>
 									{t('CONNECT_WITH_LEDGER')}
