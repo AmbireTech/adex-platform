@@ -80,7 +80,7 @@ export function addItem(item, itemType, authSig) {
 
 			newItem.mediaUrl = `ipfs://${imageIpfs}`
 			newItem.mediaMime = newItem.temp.mime
-			newItem.created = Date.now()			
+			newItem.created = Date.now()
 
 			const resItem = await postAdUnit({
 				unit: new AdUnit(newItem).marketAdd,
@@ -89,7 +89,7 @@ export function addItem(item, itemType, authSig) {
 
 			dispatch({
 				type: types.ADD_ITEM,
-				item: newItem,
+				item: resItem,
 				itemType: 'AdUnit'
 			})
 
@@ -110,8 +110,8 @@ export function addSlot(item, itemType, authSig) {
 				authSig
 			})).ipfs
 
-			newItem.fallbackMediaUrl  = `ipfs://${imageIpfs}`
-			newItem.fallbackMediaMime  = newItem.temp.mime
+			newItem.fallbackMediaUrl = `ipfs://${imageIpfs}`
+			newItem.fallbackMediaMime = newItem.temp.mime
 			newItem.created = Date.now()
 
 			const resItem = await postAdSlot({
@@ -121,7 +121,7 @@ export function addSlot(item, itemType, authSig) {
 
 			dispatch({
 				type: types.ADD_ITEM,
-				item: newItem,
+				item: resItem,
 				itemType: 'AdSlot'
 			})
 
@@ -132,9 +132,10 @@ export function addSlot(item, itemType, authSig) {
 	}
 }
 
-export function getAllItems(authSig) {
-	return async function (dispatch) {
+export function getAllItems() {
+	return async function (dispatch, getState) {
 		try {
+			const { authSig } = getState().persist.account.wallet
 			const units = getAdUnits({ authSig })
 			const slots = getAdSlots({ authSig })
 			const campaigns = getCampaigns({ authSig })
@@ -159,7 +160,7 @@ export function getAllItems(authSig) {
 export function openCampaign({ campaign, account }) {
 	return async function (dispatch) {
 		try {
-			const resCampaign = await openChannel({campaign, account})
+			const resCampaign = await openChannel({ campaign, account })
 
 			dispatch({
 				type: types.ADD_ITEM,
