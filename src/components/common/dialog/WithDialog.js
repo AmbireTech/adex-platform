@@ -34,173 +34,162 @@ export default function ItemHoc(Decorated) {
 		constructor(props) {
 			super(props)
 			this.state = {
-				active: false
+				open: false
 			}
 		}
 
-		componentWillReceiveProps(nextProps, nextState) {
-			if (nextProps.closeDialog && this.state.active) {
-				this.handleToggle()
-			}
+		shouldComponentUpdate(nextProps, nextState) {
+			const shouldUpdate = (this.state.open !== nextState.open)
+				|| (JSON.stringify(this.props) !== JSON.stringify(nextProps))
+
+			return shouldUpdate
 		}
 
-        handleToggle = () => {
-        	let active = this.state.active
-        	this.setState({ active: !active })
-        }
+		handleToggle = () => {
+			this.setState({ open: !this.state.open })
+		}
 
-        onSave = () => {
-        	let onSave = []
+		closeDialog = () => {
+			this.setState({ open: false })
+		}
 
-        	onSave.push(this.handleToggle)
+		renderDemoModeAction = () => {
+			const { classes, t } = this.props
+			return (
+				<ContentBox>
+					<ContentStickyTop>
+						<Typography paragraph variant='subheading'>
+							{t('DEMO_MODE_ACTION_DESCRIPTION')}
+						</Typography>
+					</ContentStickyTop>
+					<ContentBody>
+						<div>
+							<Button
+								onClick={logOut}
+								variant='contained'
+								color='primary'
+							>
+								{t('DEMO_GO_AUTH_BTN')}
+							</Button>
+						</div>
+						<div>
+							<Img
+								className={classes.demoImg}
+								allowFullscreen={false}
+								src={DEMO_IMAGE}
+								alt={'Demo image'}
+							/>
+						</div>
+					</ContentBody>
+				</ContentBox>
+			)
+		}
 
-        	if (typeof this.props.onSave === 'function') {
-        		onSave.push(this.props.onSave)
-        	}
+		render() {
+			let ButtonComponent = Button
+			// NOTE: to avoid some warnings
+			let btnProps = {}
 
-        	if (Array.isArray(this.props.onSave)) {
-        		for (var index = 0; index < this.props.onSave.length; index++) {
-        			if (typeof this.props.onSave[index] === 'function') {
-        				onSave.push(this.props.onSave[index])
-        			}
-        		}
-        	}
+			if (this.props.iconButton) {
+				ButtonComponent = IconButton
+			} else if (this.props.textButton) {
+				ButtonComponent = TextBtn
+			} else {
+				btnProps = {
+					variant: this.props.variant,
+					color: this.props.color,
+					size: this.props.size,
+					mini: !!this.props.mini
+				}
+			}
 
-        	return onSave
-        }
+			const { classes, t, ...rest } = this.props
 
-        renderDemoModeAction = () => {
-        	const { t, classes } = this.props
-        	return (
-        		<ContentBox>
-        			<ContentStickyTop>
-        				<Typography paragraph variant='subheading'>
-        					{t('DEMO_MODE_ACTION_DESCRIPTION')}
-        				</Typography>
-        			</ContentStickyTop>
-        			<ContentBody>
-        				<div>
-        					<Button
-        						onClick={logOut}
-        						variant='contained'
-        						color='primary'
-        					>
-        						{t('DEMO_GO_AUTH_BTN')}
-        					</Button>
-        				</div>
-        				<div>
-        					<Img
-        						className={classes.demoImg}
-        						allowFullscreen={false}
-        						src={DEMO_IMAGE}
-        						alt={'Demo image'}
-        					/>
-        				</div>
-        			</ContentBody>
-        		</ContentBox>
-        	)
-        }
+			const btnLabel = t(this.props.btnLabel, { args: this.props.btnLabelArgs || [''] })
+			// TODO: fix it for fab wit text
+			const isIconBtn = (this.props.variant == 'fab') || this.props.iconButton
+			const isDemo = isDemoMode()
 
-        render() {
+			const { open } = this.state
 
-        	let ButtonComponent = Button
-        	// NOTE: to avoid some warnings
-        	let btnProps = {}
-
-        	if (this.props.iconButton) {
-        		ButtonComponent = IconButton
-        	} else if (this.props.textButton) {
-        		ButtonComponent = TextBtn
-        	} else {
-        		btnProps = {
-        			variant: this.props.variant,
-        			color: this.props.color,
-        			size: this.props.size,
-        			mini: !!this.props.mini
-        		}
-        	}
-
-        	const { classes, ...rest } = this.props
-
-        	const btnLabel = this.props.t(this.props.btnLabel, { args: this.props.btnLabelArgs || [''] })
-        	// TODO: fix it for fab wit text
-        	const isIconBtn = (this.props.variant == 'fab') || this.props.iconButton
-        	const isDemo = isDemoMode()
-
-        	return (
-        		<div >
-        			<ButtonComponent
-        				disabled={this.props.disabled}
-        				aria-label={btnLabel}
-        				label={btnLabel}
-        				onClick={this.handleToggle}
-        				{...btnProps}
-        				// style={this.props.style}
-        				className={classnames(
-        					this.props.className,
-        					{ [classes.floating]: this.props.variant === 'fab' },
-        					{ [classes.first]: this.props.color === 'first' },
-        					{ [classes.second]: this.props.color === 'second' }
-        				)}
-        			>
-        				{this.props.icon && <Icon className={classnames({ [classes.btnIconLeft]: !isIconBtn })} > {this.props.icon}</Icon>}
-        				{!isIconBtn && btnLabel}
-        			</ButtonComponent>
-        			<Dialog
-        				// disableBackdropClick
-        				// disableEscapeKeyDown
-        				// maxWidth="xs"
-        				// fullScreen
-        				open={this.state.active}
-        				onClose={this.handleToggle}
-        				TransitionComponent={Transition}
-        				classes={{ paper: classes.dialog }}
-        				// onEscKeyDown={this.handleToggle}
-        				// onOverlayClick={this.handleToggle}
-        			>
-        				{/* <AppBar className={classes.appBar}>
+			return (
+				<div >
+					<ButtonComponent
+						disabled={this.props.disabled}
+						aria-label={btnLabel}
+						label={btnLabel}
+						onClick={this.handleToggle}
+						{...btnProps}
+						// style={this.props.style}
+						className={classnames(
+							this.props.className,
+							{ [classes.floating]: this.props.variant === 'fab' },
+							{ [classes.first]: this.props.color === 'first' },
+							{ [classes.second]: this.props.color === 'second' }
+						)}
+					>
+						{this.props.icon && <Icon className={classnames({ [classes.btnIconLeft]: !isIconBtn })} > {this.props.icon}</Icon>}
+						{!isIconBtn && btnLabel}
+					</ButtonComponent>
+					<Dialog
+						// disableBackdropClick
+						// disableEscapeKeyDown
+						// maxWidth="xs"
+						// fullScreen
+						open={open}
+						onClose={this.handleToggle}
+						TransitionComponent={Transition}
+						classes={{ paper: classes.dialog }}
+					// onEscKeyDown={this.handleToggle}
+					// onOverlayClick={this.handleToggle}
+					>
+						{/* <AppBar className={classes.appBar}>
                             <Toolbar> */}
-        				<DialogTitle
-        					disableTypography
+						<DialogTitle
+							disableTypography
 
-        				>
-        					<Typography
-        						variant='title'
-        						classes={
-        							{ title: classnames(classes.dialogTitle, classes.breakLong) }
-        						}
-        					>
-        						{this.props.t(this.props.title)}
-        						<IconButton
-        							onClick={this.handleToggle}
-        						>
-        							<CancelIcon />
-        						</IconButton>
-        					</Typography>
-        				</DialogTitle>
-        				{/* </Toolbar>
+						>
+							<Typography
+								variant='title'
+								classes={
+									{ title: classnames(classes.dialogTitle, classes.breakLong) }
+								}
+							>
+								{t(this.props.title)}
+								<IconButton
+									onClick={this.handleToggle}
+								>
+									<CancelIcon />
+								</IconButton>
+							</Typography>
+						</DialogTitle>
+						{/* </Toolbar>
                         </AppBar> */}
-        				<DialogContent
-        					classes={{ root: classes.content }}
-        				>
-        					{isDemo ?
-        					// NOTE: ugly but it's temp and saves a lot of work!
-        						this.renderDemoModeAction()
-        						:
-        						<Decorated {...rest} onSave={this.onSave()} />
-        					}
+						<DialogContent
+							classes={{ root: classes.content }}
+						>
+							{
+								isDemo ?
+									// NOTE: ugly but it's temp and saves a lot of work!
+									this.renderDemoModeAction()
+									:
+									<Decorated
+										{...rest}
+										closeDialog={this.closeDialog}
+									/>
+							}
 
-        				</DialogContent>
-        				{this.props.dialogActions &&
-                            <DialogActions>
-                            	{this.props.dialogActions}
-                            </DialogActions>
-        				}
-        			</Dialog>
+						</DialogContent>
+						{this.props.dialogActions &&
+							<DialogActions>
+								{this.props.dialogActions}
+							</DialogActions>
+						}
+					</Dialog>
 
-        		</div >
-        	)
-        }
+				</div >
+			)
+		}
 	}
 
 	WithDialog.propTypes = {
