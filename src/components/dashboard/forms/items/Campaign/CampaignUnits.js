@@ -80,6 +80,7 @@ class CampaignUnits extends Component {
 								items={adUnitsArray}
 								listMode='rows'
 								itemType={'AdUnit'}
+								viewModeId={'newCampaignAdUnits'}
 								sortProperties={SORT_PROPERTIES_ITEMS}
 								filterProperties={FILTER_PROPERTIES_ITEMS}
 								noActions
@@ -97,7 +98,8 @@ CampaignUnits.propTypes = {
 	title: PropTypes.string,
 	descriptionHelperTxt: PropTypes.string,
 	nameHelperTxt: PropTypes.string,
-	adUnits: PropTypes.array.isRequired
+	adUnits: PropTypes.object.isRequired,
+	adUnitsArray: PropTypes.array.isRequired
 }
 
 const NewCampaignUnits = NewCampaignHoc(CampaignUnits)

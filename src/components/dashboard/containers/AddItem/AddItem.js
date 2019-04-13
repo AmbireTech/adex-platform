@@ -24,7 +24,7 @@ export class AddItem extends Component {
     }
 
     render() {
-    	const { classes } = this.props
+    	const { classes, ...rest } = this.props
     	const { tabIndex } = this.state
     	const NewForm = this.props.newForm
     	return (
@@ -58,7 +58,7 @@ export class AddItem extends Component {
 
                             <ContentBody>
                             	<ItemsList
-                            		{...this.props}
+                            		{...rest}
                             		objModel={this.props.objModel}
                             		parentItem={this.props.addTo}
                             		addToItem

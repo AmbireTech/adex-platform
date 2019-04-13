@@ -23,7 +23,13 @@ export class DatePicker extends Component {
 			<MuiDatePicker
 				InputProps={{
 					disabled: rest.disabled,
-					endAdornment: calendarIcon ? <CalendarIconAdor icon={icon} iconColor={iconColor} onIconClick={onIconClick} /> : null
+					endAdornment: calendarIcon
+						? <CalendarIconAdor
+							icon={icon}
+							iconColor={iconColor}
+							onIconClick={onIconClick}
+						/>
+						: null
 				}}
 				{...rest}
 			/>

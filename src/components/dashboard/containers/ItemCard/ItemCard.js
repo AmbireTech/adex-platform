@@ -45,7 +45,7 @@ class ItemCard extends Component {
 			tags
 		} = item
 
-		const id = ipfs
+		const id = ipfs || id
 
 		const to = '/dashboard/' + side + '/' + itemType + '/' + id
 		const imageSrc = mediaUrl //, process.env.IPFS_GATEWAY) || ''
