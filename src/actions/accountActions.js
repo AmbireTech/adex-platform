@@ -65,8 +65,9 @@ export function updateGasData({ gasData }) {
 	}
 }
 
-export function updateAccountStats(account) {
-	return async function (dispatch) {
+export function updateAccountStats() {
+	return async function (dispatch, getState) {
+		const { account } = getState().persist
 		try {
 			const stats = await getAccountStats({ account })
 
