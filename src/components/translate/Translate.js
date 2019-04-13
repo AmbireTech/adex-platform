@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
 import { translate } from 'services/translations/translations'
 
 export default function Translate(Decorated) {
@@ -10,7 +8,7 @@ export default function Translate(Decorated) {
 
 		t(val, { isProp = false, args = [''] } = {}) {
 
-			const translation = translate(val, {isProp, args}, this.props.language)
+			const translation = translate(val, { isProp, args }, this.props.language)
 
 			return translation
 		}
@@ -25,26 +23,18 @@ export default function Translate(Decorated) {
 	}
 
 	Translated.propTypes = {
-		actions: PropTypes.object.isRequired,
 		language: PropTypes.string.isRequired
 	}
 
-	function mapStateToProps(state, props) {
-		let persist = state.persist
-		// let memory = state.memory
+	function mapStateToProps(state) {
+		const { persist } = state
 		return {
 			language: persist.language
 		}
 	}
 
-	function mapDispatchToProps(dispatch) {
-		return {
-			actions: bindActionCreators(actions, dispatch)
-		}
-	}
-
 	return connect(
 		mapStateToProps,
-		mapDispatchToProps
+		null
 	)(Translated)
 }
