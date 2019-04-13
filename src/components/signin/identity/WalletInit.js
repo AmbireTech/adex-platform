@@ -42,7 +42,7 @@ class WalletInit extends Component {
     		<div>
     			<Button
     				onClick={this.getMnemonic}
-    				variant='raised'
+    				variant='contained'
     				color='primary'
     				disabled={this.state.waitingAddrData}
     			>

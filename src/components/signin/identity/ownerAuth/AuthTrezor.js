@@ -208,7 +208,7 @@ class AuthTrezor extends Component {
 							{(!this.state.waitingAddrsData && !this.state.waitingTrezorAction) &&
 								<Button
 									onClick={this.connectTrezor}
-									variant='raised'
+									variant='contained'
 									color='primary'
 								>
 									{t('CONNECT_WITH_TREZOR')}

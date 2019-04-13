@@ -82,7 +82,7 @@ class Account extends React.Component {
     					/>
     					<div className={classes.itemActions}>
     						<WithdrawEth
-    							varint='raised'
+    							variant='contained'
     							color='primary'
     							onSave={this.onSave}
     							availableAmount={addrBalanceEth}
@@ -102,7 +102,7 @@ class Account extends React.Component {
     					/>
     					<div className={classes.itemActions}>
     						<WithdrawAdx
-    							varint='raised'
+    							variant='contained'
     							color='primary'
     							onSave={this.onSave}
     							availableAmount={addrBalanceAdx}
@@ -123,7 +123,7 @@ class Account extends React.Component {
     					/>
     					<div className={classes.itemActions}>
     						<Deposit
-    							variant='raised'
+    							variant='contained'
     							color='secondary'
     							onSave={this.onSave}
     							addrBalanceAdx={addrBalanceAdx}
@@ -131,7 +131,7 @@ class Account extends React.Component {
     							size='small'
     						/>
     						<WithdrawFromExchange
-    							variant='raised'
+    							variant='contained'
     							color='primary'
     							onSave={this.onSave}
     							exchangeAvailable={exchangeAvailable}

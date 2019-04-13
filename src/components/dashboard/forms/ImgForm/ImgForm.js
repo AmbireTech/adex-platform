@@ -107,7 +107,7 @@ class ImgForm extends Component {
 						{/* TEMP: make size required */}
 						{!!size &&
 							<Button
-								variant='raised'
+								variant='contained'
 								color='primary'
 								onClick={(e) => {
 									this.preventBubbling(e);
@@ -121,7 +121,7 @@ class ImgForm extends Component {
 						}
 						&nbsp;
   					<Button
-							variant='raised'
+							variant='contained'
 							onClick={this.onRemove}
 							className={classes.dropzoneBtn}
 						>
@@ -213,7 +213,7 @@ class ImgForm extends Component {
 										{t('CROP_MODE_MSG')}
 									</Typography>
 									<Button
-										variant='raised'
+										variant='contained'
 										color='primary'
 										onClick={this.saveCropped}
 										disabled={!crop.width || !crop.height}
@@ -223,7 +223,7 @@ class ImgForm extends Component {
 										{t('IMG_FORM_SAVE_CROP')}
 									</Button>
 									<Button
-										variant='raised'
+										variant='contained'
 										onClick={() => this.setState({ cropMode: false })}
 										className={classes.dropzoneBtn}
 									>
