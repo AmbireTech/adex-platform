@@ -8,10 +8,15 @@ import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Translate from 'components/translate/Translate'
 
 class FormSteps extends Component {
+	shouldComponentUpdate(nextProps) {
+		return (JSON.stringify(this.props) !== JSON.stringify(nextProps))
+	}
 
 	render() {
 		let pages = []
-		const { SaveBtn, CancelBtn, t, onSave, stepsId, stepsPages, stepsPreviewPage, validateIdBase, ...rest } = this.props
+		const { t, SaveBtn, CancelBtn, onSave, stepsId, stepsPages, stepsPreviewPage, validateIdBase, ...rest } = this.props
+
+		console.log('props', rest)
 		const cancelButton = () => <CancelBtn  {...rest} stepsId={stepsId} onSave={onSave} t={t} />
 		const validateId = (validateIdBase || '') + '-' + stepsId
 
@@ -33,36 +38,17 @@ class FormSteps extends Component {
 		})
 
 		return (
-		// <div style={{ textAlign: 'left' }}>
+			// <div style={{ textAlign: 'left' }}>
 			<MaterialStepper pages={pages} />
-		// </div>
+			// </div>
 		)
 	}
 }
 
 FormSteps.propTypes = {
-	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
 	title: PropTypes.string,
 	itemPages: PropTypes.arrayOf(PropTypes.func),
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 }
 
-function mapStateToProps(state, props) {
-	const persist = state.persist
-	// const memory = state.memory
-	return {
-		account: persist.account,
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch)
-	}
-}
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(Translate(FormSteps))
+export default Translate(FormSteps)
