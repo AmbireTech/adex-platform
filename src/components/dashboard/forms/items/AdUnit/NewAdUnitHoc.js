@@ -29,17 +29,9 @@ export default function NewAdUnitHoc(Decorated) {
 		}
 
 		onSave = () => {
-			// TODO:.....
-			if (typeof this.props.onSave === 'function') {
-				this.props.onSave()
-			}
-
-			if (Array.isArray(this.props.onSave)) {
-				for (var index = 0; index < this.props.onSave.length; index++) {
-					if (typeof this.props.onSave[index] === 'function') {
-						this.props.onSave[index]()
-					}
-				}
+			const { closeDialog } = this.props
+			if (closeDialog) {
+				closeDialog()
 			}
 		}
 

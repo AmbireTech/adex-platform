@@ -66,6 +66,9 @@ class CampaignTargeting extends Component {
 		this.state = {
 			targets: targets || []
 		}
+
+		// Call it 1 step before finance
+		this.props.actions.updateAccountStats()
 	}
 
 	updateNewItemCollections(targets) {
