@@ -292,7 +292,6 @@ export class DashboardStats extends Component {
 DashboardStats.propTypes = {
 	actions: PropTypes.object.isRequired,
 	account: PropTypes.object.isRequired,
-	bidsIds: PropTypes.array.isRequired
 }
 
 function mapStateToProps(state, props) {

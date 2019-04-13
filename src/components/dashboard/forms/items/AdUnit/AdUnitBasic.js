@@ -19,8 +19,10 @@ const AdTypes = constants.AdUnitsTypes
 
 class AdUnitBasic extends Component {
 
-	componentDidMount() {
-		const { newItem } = this.props
+	constructor(props) {
+		super(props)
+
+		const { newItem } = props
 		this.validateTitle(newItem.title, false)
 		this.validateDescription(newItem.description, false)
 		this.validateTargetUrl(newItem.targetUrl, false)

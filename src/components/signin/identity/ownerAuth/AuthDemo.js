@@ -46,7 +46,7 @@ class AuthDemo extends Component {
     				</Typography>
     				<Button
     					onClick={this.authOnServer}
-    					variant='raised'
+    					variant='contained'
     					color='primary'
     				>
     					{t('DEMO_AUTH')}

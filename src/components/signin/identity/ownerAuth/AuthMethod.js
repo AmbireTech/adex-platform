@@ -20,7 +20,6 @@ class AuthMethod extends Component {
 		super(props)
 		this.state = {
 			tabIndex: 0,
-			closeDialog: false,
 			bids: []
 		}
 	}

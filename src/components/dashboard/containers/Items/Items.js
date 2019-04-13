@@ -13,13 +13,14 @@ class Items extends Component {
 	}
 
 	render() {
+		const { classes, ...rest } = this.props
 		const items = Array.from(Object.values(this.props.items || {})) || []
 
 		return (
 			<div>
 				{!!this.props.newItemBtn && <this.props.newItemBtn />}
 				<ItemsList
-					{...this.props}
+					{...rest}
 					items={items}
 					viewModeId={this.props.viewModeId}
 					archive
@@ -36,7 +37,7 @@ Items.propTypes = {
 	viewModeId: PropTypes.string.isRequired,
 	header: PropTypes.string.isRequired,
 	objModel: PropTypes.func.isRequired,
-	itemType: PropTypes.number.isRequired,
+	itemType: PropTypes.string.isRequired,
 	sortProperties: PropTypes.array.isRequired
 }
 
@@ -44,7 +45,7 @@ function mapStateToProps(state, props) {
 	const { persist, memory } = state
 	return {
 		account: persist.account,
-		items: persist.items[props.itemType],
+		items: persist.items[props.itemType] || [],
 		side: memory.nav.side,
 	}
 }
