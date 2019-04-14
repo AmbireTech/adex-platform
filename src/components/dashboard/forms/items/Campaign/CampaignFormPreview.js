@@ -30,6 +30,8 @@ class CampaignFormPreview extends Component {
 						noControls
 						padding='dense'
 						noActions
+						sortProperties={[]}
+						viewModeId={'newCampaignAdUnitsPreview'}
 					/>
 				</ContentBody>
 			</Grid>
@@ -83,9 +85,10 @@ class CampaignFormPreview extends Component {
 						left={t('validators', { isProp: true })}
 						right={
 							<div>
-								{validators.map(val => <div>
-									{`${val.url} - ${val.id}`}
-								</div>)}
+								{validators.map(val =>
+									<div key={val.id}>
+										{`${val.url} - ${val.id}`}
+									</div>)}
 							</div>
 						}
 					/>
