@@ -35,9 +35,9 @@ class TopNav extends Component {
 
   render() {
   	const { t, handleDrawerToggle, account, side, navTitle, classes } = this.props
-  	let imgSrc = getAuthLogo(account._authType)
+  	let imgSrc = getAuthLogo(account.wallet.authType)
 
-  	const btnMenueLabel = account._authType === 'demo' ? t('DEMO_MODE') : (account._addr || t('NOT_LOGGED'))
+  	const btnMenueLabel = account.wallet.authType === 'demo' ? t('DEMO_MODE') : (account.email || account.wallet.address || t('NOT_LOGGED'))
 
   	return (
   		<AppBar
