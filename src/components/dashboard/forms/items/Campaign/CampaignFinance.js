@@ -57,7 +57,6 @@ const PubValidatorsSrc = Object.keys(PubPlatformValidators).map(key => {
 })
 
 
-
 const validateCampaignDates = ({ created = Date.now(), withdrawPeriodStart, validUntil }) => {
 	let error = null
 
@@ -72,13 +71,17 @@ const validateCampaignDates = ({ created = Date.now(), withdrawPeriodStart, vali
 	return { error }
 }
 
-const validateAmounts = ({ depositAmount, maxPerImpression, minPerImpression }) => {
+const validateAmounts = ({ maxDeposit = 0, depositAmount, maxPerImpression, minPerImpression }) => {
+	const maxDep = parseFloat(maxDeposit)
 	const dep = parseFloat(depositAmount)
 	const max = parseFloat(maxPerImpression)
 	const min = parseFloat(minPerImpression)
 
 	let error = null
-	if (min && max && (min > max)) {
+	if (dep && (dep > maxDep)) {
+		error = { message: 'ERR_INSUFFICIENT_IDENTITY_BALANCE', prop: 'depositAmount' }
+	}
+	else if (min && max && (min > max)) {
 		error = { message: 'ERR_MIN_OVER_MAX', prop: 'maxPerImpression' }
 	} else if (dep && (dep < max)) {
 		error = { message: 'ERR_MAX_IMPR_OVER_DEPOSIT', prop: 'maxPerImpression' }
@@ -110,7 +113,7 @@ class CampaignFinance extends Component {
 			})
 	}
 
-	validateAndUpdateValidator = (dirty, index, key) => {
+	validateAndUpdateValidator = (dirty, index, key, update) => {
 		const { validators } = this.props.newItem
 		const newValidators = [...validators]
 		const newValue = VALIDATOR_SOURCES[index][key]
@@ -125,7 +128,10 @@ class CampaignFinance extends Component {
 			!!newValidators[1].id &&
 			!!newValidators[1].url
 
-		this.props.handleChange('validators', newValidators)
+		if (update) {
+			this.props.handleChange('validators', newValidators)
+		}
+
 		this.props.validate('validators', {
 			isValid: isValid,
 			err: { msg: 'ERR_VALIDATORS' },
@@ -147,13 +153,14 @@ class CampaignFinance extends Component {
 				})
 		} else {
 
-			const { newItem } = this.props
+			const { newItem, account } = this.props
 
+			const { identityBalanceDai } = account.stats.formated
 			const depositAmount = (prop === 'depositAmount') ? value : newItem.depositAmount
 			const maxPerImpression = (prop === 'maxPerImpression') ? value : newItem.maxPerImpression
 			const minPerImpression = (prop === 'minPerImpression') ? value : newItem.minPerImpression
 
-			const result = validateAmounts({ depositAmount, maxPerImpression, minPerImpression })
+			const result = validateAmounts({ maxDeposit: identityBalanceDai, depositAmount, maxPerImpression, minPerImpression })
 
 			this.props.validate(
 				prop,
@@ -196,7 +203,8 @@ class CampaignFinance extends Component {
 			handleChange,
 			newItem,
 			t,
-			invalidFields
+			invalidFields,
+			account
 		} = this.props
 		const {
 			validators,
@@ -207,6 +215,8 @@ class CampaignFinance extends Component {
 			validUntil,
 			withdrawPeriodStart
 		} = newItem
+
+		const { identityBalanceDai } = account.stats.formated
 
 		const from = withdrawPeriodStart || undefined
 		const to = validUntil || undefined
@@ -229,7 +239,7 @@ class CampaignFinance extends Component {
 							fullWidth
 							required
 							onChange={(value) =>
-								this.validateAndUpdateValidator(true, 0, value)}
+								this.validateAndUpdateValidator(true, 0, value, true)}
 							source={AdvValidatorsSrc}
 							value={(validators[0] || {}).id + ''}
 							label={t('ADV_PLATFORM_VALIDATOR')}
@@ -242,7 +252,7 @@ class CampaignFinance extends Component {
 							fullWidth
 							required
 							onChange={(value) =>
-								this.validateAndUpdateValidator(true, 1, value)}
+								this.validateAndUpdateValidator(true, 1, value, true)}
 							source={PubValidatorsSrc}
 							value={(validators[1] || {}).id + ''}
 							label={t('PUB_PLATFORM_VALIDATOR')}
@@ -255,7 +265,10 @@ class CampaignFinance extends Component {
 							fullWidth
 							type='text'
 							required
-							label={'Campaign ' + t('depositAmount', { isProp: true, args: ['DAI'] })}
+							label={'Campaign '
+								+ t('depositAmount', { isProp: true, args: ['DAI'] })
+								+ ` Available on identity ${identityBalanceDai} DAI`
+							}
 							name='depositAmount'
 							value={depositAmount}
 							onChange={(ev) =>
