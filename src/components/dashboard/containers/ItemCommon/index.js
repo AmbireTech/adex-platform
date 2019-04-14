@@ -1,1 +1,4 @@
-export { BasicProps } from './ItemCommon'
+export {
+	BasicProps,
+	CampaignProps
+} from './ItemCommon'
