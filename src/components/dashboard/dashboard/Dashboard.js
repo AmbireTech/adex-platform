@@ -12,8 +12,6 @@ import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
 import Items from 'components/dashboard/containers/Items'
 import Transactions from 'components/dashboard/containers/Transactions'
-import UnitBids from 'components/dashboard/containers/Bids/UnitBids'
-import SlotBids from 'components/dashboard/containers/Bids/SlotBids'
 import {
 	AdUnit as AdUnitModel,
 	AdSlot as AdSlotModel,
@@ -105,7 +103,7 @@ class Dashboard extends React.Component {
 			<Items
 				header={this.props.t('ALL_CAMPAIGNS')}
 				viewModeId='rowsViewCampaigns'
-				itemsType={'Campaign'}
+				itemType={'Campaign'}
 				newItemBtn={() => <NewCampaignDialog variant='fab' accent color='secondary' />}
 				objModel={CampaignModel}
 				sortProperties={SORT_PROPERTIES_COLLECTION}
@@ -120,7 +118,7 @@ class Dashboard extends React.Component {
 			<Items
 				header={this.props.t('ALL_SLOTS')}
 				viewModeId='rowsViewSlots'
-				itemsType={'AdSlot'}
+				itemType={'AdSlot'}
 				newItemBtn={() => <NewSlotDialog variant='fab' accent color='secondary' />}
 				objModel={AdSlotModel}
 				sortProperties={SORT_PROPERTIES_ITEMS}
@@ -194,11 +192,9 @@ class Dashboard extends React.Component {
 							<Route auth={this.props.auth} exact path='/dashboard/advertiser/units' component={this.renderAdUnits} />
 							<Route auth={this.props.auth} exact path='/dashboard/advertiser/Campaign/:itemId' component={Campaign} />
 							<Route auth={this.props.auth} exact path='/dashboard/advertiser/AdUnit/:itemId' component={Unit} />
-							<Route auth={this.props.auth} exact path='/dashboard/advertiser/bids/:tab?' component={UnitBids} />
 							<Route auth={this.props.auth} exact path='/dashboard/publisher/channels' component={this.renderChannels} />
 							<Route auth={this.props.auth} exact path='/dashboard/publisher/slots' component={this.renderAdSlots} />
 							<Route auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
-							<Route auth={this.props.auth} exact path='/dashboard/publisher/bids/:tab?' component={SlotBids} />
 							<Route auth={this.props.auth} exact path={'/dashboard/:side/account'} component={Account} />
 							<Route auth={this.props.auth} exact path={'/dashboard/:side/transactions'} component={Transactions} />
 							<Route auth={this.props.auth} exact path='/dashboard/:side' component={DashboardStats} />
