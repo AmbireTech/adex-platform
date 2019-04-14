@@ -98,6 +98,41 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, isD
 
 const ValidatedFallbackAdData = ValidItemHoc(FallbackAdData)
 
+const MediaCard = ({ classes, mediaUrl, title, canEditImg, toggleImgEdit, url }) => <Card
+	className={classes.card}
+	raised={false}
+>
+	<CardMedia
+		classes={{ root: classes.mediaRoot }}
+	>
+		<Img
+			allowFullscreen={true}
+			src={mediaUrl}
+			alt={title}
+			className={classes.img}
+		/>
+	</CardMedia>
+	{canEditImg &&
+		<Button
+			variant='fab'
+			mini
+			color='secondary'
+			onClick={toggleImgEdit}
+			className={classes.editIcon}
+		>
+			<EditIcon />
+		</Button>
+	}
+
+	{url &&
+		<CardContent>
+			<Anchor href={url} target='_blank'>
+				{url}
+			</Anchor>
+		</CardContent>
+	}
+</Card>
+
 const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, itemType, ...rest }) => {
 	const mediaUrl = item.mediaUrl || item.fallbackMediaUrl
 
@@ -113,40 +148,14 @@ const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, itemTyp
 								itemType === 'AdSlot'
 									? <ValidatedFallbackAdData validateId={item._id} item={item} t={t} url={url} classes={classes} canEditImg={canEditImg} {...rest} />
 									:
-									<Card
-										className={classes.card}
-										raised={false}
-									>
-										<CardMedia
-											classes={{ root: classes.mediaRoot }}
-										>
-											<Img
-												allowFullscreen={true}
-												src={mediaUrl}
-												alt={item.title}
-												className={classes.img}
-											/>
-										</CardMedia>
-										{canEditImg &&
-											<Button
-												variant='fab'
-												mini
-												color='secondary'
-												onClick={rest.toggleImgEdit}
-												className={classes.editIcon}
-											>
-												<EditIcon />
-											</Button>
-										}
-
-										{url &&
-											<CardContent>
-												<Anchor href={url} target='_blank'>
-													{url}
-												</Anchor>
-											</CardContent>
-										}
-									</Card>
+									<MediaCard
+										classes={classes}
+										mediaUrl={mediaUrl}
+										title={item.title}
+										canEditImg={canEditImg}
+										toggleImgEdit={rest.toggleImgEdit}
+										url={url}
+									/>
 							}
 							<div>
 								<div>
@@ -161,7 +170,7 @@ const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, itemTyp
 								{Array.isArray(item.tags) &&
 									<div>
 										<TextField
-											value={item.tags.map(tag=> `"${tag.tag}(${tag.score})"` ).join(',\n')}
+											value={item.tags.map(tag => `"${tag.tag}(${tag.score})"`).join(',\n')}
 											label={t('tags', { isProp: true }) + ` (${item.tags.length})`}
 											disabled
 											margin='dense'
@@ -185,3 +194,104 @@ const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, itemTyp
 }
 
 export const BasicProps = withStyles(styles)(basicProps)
+
+const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, itemType, ...rest }) => {
+	const mediaUrl = item.mediaUrl || item.fallbackMediaUrl
+
+	return (
+		<div >
+			<Grid container spacing={16}>
+				<Grid item xs={12} sm={12} md={12} lg={7}>
+					<div >
+						<div
+							className={classes.basicInfo}
+						>
+							{
+								<MediaCard
+									classes={classes}
+									mediaUrl={mediaUrl}
+									title={item.title}
+									canEditImg={canEditImg}
+									toggleImgEdit={rest.toggleImgEdit}
+									url={url}
+								/>
+							}
+							<div>
+								<div>
+									<TextField
+										// type='text'
+										value={item.id}
+										label={t('id', { isProp: true })}
+										disabled
+										margin='dense'
+									/>
+								</div>
+								<div>
+									<TextField
+										// type='text'
+										value={item.creator}
+										label={t('creator', { isProp: true })}
+										disabled
+										margin='dense'
+									/>
+								</div>
+								<div>
+									<TextField
+										// type='text'
+										value={item.depositAsset}
+										label={t('depositAsset', { isProp: true })}
+										disabled
+										margin='dense'
+									/>
+								</div>
+								<div>
+									<TextField
+										// type='text'
+										value={item.maxPerImpression}
+										label={t('maxPerImpression', { isProp: true })}
+										disabled
+										margin='dense'
+									/>
+								</div>
+								<div>
+									<TextField
+										// type='text'
+										value={item.minPerImpression}
+										label={t('minPerImpression', { isProp: true })}
+										disabled
+										margin='dense'
+									/>
+								</div>
+								<div>
+									<TextField
+										// type='text'
+										value={item.depositAsset}
+										label={t('depositAsset', { isProp: true })}
+										disabled
+										margin='dense'
+									/>
+								</div>
+								<div>
+									<TextField
+										// type='text'
+										value={item.withdrawPeriodStart}
+										label={t('withdrawPeriodStart', { isProp: true })}
+										disabled
+										margin='dense'
+									/>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<br />
+				</Grid>
+				<Grid item xs={12} sm={12} md={12} lg={5}>
+					{rightComponent}
+				</Grid>
+			</Grid>
+		</div >
+	)
+}
+
+export const CampaignProps = withStyles(styles)(campaignProps)
