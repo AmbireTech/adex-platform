@@ -6,7 +6,6 @@ import actions from 'actions'
 import { AdSlot } from 'adex-models'
 import copy from 'copy-to-clipboard'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
-import SlotBids from 'components/dashboard/containers/Bids/SlotBids'
 import { items as ItemsConstants } from 'adex-constants'
 import { BasicProps } from 'components/dashboard/containers/ItemCommon'
 import Helper from 'helpers/miscHelpers'
@@ -99,7 +98,7 @@ export class Slot extends Component {
 
     render() {
     	let item = this.props.item || {}
-    	let { t, classes, isDemo } = this.props
+    	let { t, classes, isDemo, ...rest } = this.props
 
     	if (!item._id) return (<h1>Slot '404'</h1>)
 
@@ -108,7 +107,7 @@ export class Slot extends Component {
     	return (
     		<div>
     			<BasicProps
-    				{...this.props}
+    				{...rest}
     				item={item}
     				t={t}
     				toggleImgEdit={this.props.toggleImgEdit}
@@ -129,7 +128,7 @@ export class Slot extends Component {
     				/>}
     			/>
     			<ImgDialog
-    				{...this.props}
+    				{...rest}
     				imgSrc={imgSrc}
     				handleToggle={this.handleFallbackImgUpdateToggle}
     				active={this.state.editFallbackImg}
@@ -144,9 +143,6 @@ export class Slot extends Component {
     				errMsg={t('ERR_IMG_SIZE_EXACT')}
     				imgPropName='fallbackAdImg'
     			/>
-    			<div>
-    				<SlotBids {...this.props} item={item} t={t} getSlotBids={true} />
-    			</div>
     		</div>
     	)
     }
