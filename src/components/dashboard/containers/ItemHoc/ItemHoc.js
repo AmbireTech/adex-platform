@@ -163,7 +163,7 @@ export default function ItemHoc(Decorated) {
 			const { validations, classes, t, account, itemType, ...rest } = this.props
 			const isDemo = account._authType === 'demo'
 			let item = new this.state.itemModel(this.state.item) || {}
-			let canEdit = itemType === 'AdSlot' 
+			let canEdit = itemType === 'AdSlot'
 			let imgSrc = item.temp.tempUrl || item.mediaUrl || item.fallbackMediaUrl
 
 			const titleErr = validName(item.title)
@@ -174,173 +174,176 @@ export default function ItemHoc(Decorated) {
 						when={!!this.state.dirtyProps.length}
 						message={t('UNSAVED_CHANGES_ALERT')}
 					/>
-
-					<div >
-						<ImgDialog
-							{...this.props}
-							imgSrc={imgSrc}
-							handleToggle={this.handleToggle}
-							active={this.state.editImg}
-							onChangeReady={this.handleChange}
-							validateId={item._id}
-							width={this.props.updateImgWidth || (AdSizesByValue[item.size] || {}).width}
-							height={this.props.updateImgHeight || (AdSizesByValue[item.size] || {}).height}
-							title={t(this.props.updateImgLabel)}
-							additionalInfo={t(this.props.updateImgInfoLabel)}
-							exact={this.props.updateImgExact}
-							errMsg={this.props.updateImgErrMsg}
-							imgPropName='img'
-						/>
-					</div>
-					<div>
-						{!!this.state.dirtyProps.length &&
-							<div
-								className={classes.changesLine}
-							>
-								<InfoOutlineIcon className={classes.buttonLeft} />
-								<span className={classes.buttonLeft}>
-									{t('UNSAVED_CHANGES')}:
-                            	</span>
-								{this.state.dirtyProps.map((p) => {
-									return (
-										<Chip
-											className={classes.changeChip}
-											key={p}
-											label={t(p, { isProp: true })}
-											onDelete={() => this.returnPropToInitialState(p)}
-										/>)
-								})}
+					{(itemType !== 'Campaign') &&
+						<div>
+							<div >
+								<ImgDialog
+									{...rest}
+									imgSrc={imgSrc}
+									handleToggle={this.handleToggle}
+									active={this.state.editImg}
+									onChangeReady={this.handleChange}
+									validateId={item._id}
+									width={this.props.updateImgWidth || (AdSizesByValue[item.size] || {}).width}
+									height={this.props.updateImgHeight || (AdSizesByValue[item.size] || {}).height}
+									title={t(this.props.updateImgLabel)}
+									additionalInfo={t(this.props.updateImgInfoLabel)}
+									exact={this.props.updateImgExact}
+									errMsg={this.props.updateImgErrMsg}
+									imgPropName='img'
+								/>
 							</div>
-						}
-					</div>
-					<div>
-						<Grid container spacing={16} >
-							<Grid item xs={12} sm={12} md={12} lg={7}>
-								<div>
-									<FormControl
-										fullWidth
-										className={classes.textField}
-										margin='dense'
-										error={!!titleErr.msg}
+							<div>
+								{!!this.state.dirtyProps.length &&
+									<div
+										className={classes.changesLine}
 									>
-										<InputLabel >{t('title', { isProp: true })}</InputLabel>
-										<Input
-											fullWidth
-											autoFocus
-											type='text'
-											name={t('title', { isProp: true })}
-											value={item.title}
-											onChange={(ev) => this.handleChange('title', ev.target.value)}
-											maxLength={1024}
-											onBlur={(ev) => {
-												this.setActiveFields('title', false)
-											}}
-											disabled={!this.state.activeFields.title}
-											helperText={
-												titleErr && !!titleErr.msg ?
-													titleErr.msg : ''
-											}
-											endAdornment={
-												<InputAdornment position="end">
-													<IconButton
-														// size='small'
-														color='secondary'
-														className={classes.buttonRight}
-														onClick={(ev) => this.setActiveFields('title', true)}
-													>
-														<EditIcon />
-													</IconButton>
-												</InputAdornment>
-											}
-										/>
-										{(titleErr && !!titleErr.msg) &&
-											<FormHelperText >
-												{t(titleErr.msg, { args: titleErr.errMsgArgs })}
-											</FormHelperText >
-										}
-
-									</FormControl>
-								</div>
-								<div>
-									<FormControl
-										margin='dense'
-										fullWidth
-										className={classes.textField}
-									>
-										<InputLabel htmlFor="adornment-password">{t('description', { isProp: true })}</InputLabel>
-										<Input
-											fullWidth
-											autoFocus
-											multiline
-											rows={3}
-											type='text'
-											name='description'
-											value={item.description || ''}
-											onChange={(ev) => this.handleChange('description', ev.target.value)}
-											maxLength={1024}
-											onBlur={(ev) => this.setActiveFields('description', false)}
-											disabled={!this.state.activeFields.description}
-											endAdornment={
-												<InputAdornment position="end">
-													<IconButton
-														// size='small'
-														color='secondary'
-														className={classes.buttonRight}
-														disabled={isDemo}
-														onClick={(ev) => this.setActiveFields('description', true)}
-													>
-														<EditIcon />
-													</IconButton>
-												</InputAdornment>
-											}
-										/>
-										{!item.description &&
-											<FormHelperText >
-												{t('NO_DESCRIPTION_YET')}
-											</FormHelperText >
-										}
-									</FormControl>
-								</div>
-							</Grid >
-							<Grid item xs={12} sm={12} md={12} lg={5}>
-								{this.props.showLogo &&
-									<div style={{ width: 270 }}>
-										<Paper
-											className={classnames(classes.mediaRoot, classes.imgContainer)}
-										>
-											<Img
-												allowFullscreen={true}
-												src={imgSrc}
-												alt={item.fullName}
-												className={classnames(classes.img, { [classes.pointer]: this.props.canEditImg && !isDemo })}
-											/>
-											<Button
-												variant='fab'
-												mini
-												color='secondary'
-												className={classes.editIcon}
-												onClick={!isDemo ? this.handleToggle : null}
-												disabled={isDemo}
-											>
-												<EditIcon />
-											</Button>
-										</Paper>
-
+										<InfoOutlineIcon className={classes.buttonLeft} />
+										<span className={classes.buttonLeft}>
+											{t('UNSAVED_CHANGES')}:
+                            	</span>
+										{this.state.dirtyProps.map((p) => {
+											return (
+												<Chip
+													className={classes.changeChip}
+													key={p}
+													label={t(p, { isProp: true })}
+													onDelete={() => this.returnPropToInitialState(p)}
+												/>)
+										})}
 									</div>
 								}
-							</Grid >
-						</Grid>
-					</div>
-					<div>
-						<SaveBtn
-							spinnerId={'update' + item.ipfs}
-							validationId={'update-' + item.ipfs}
-							dirtyProps={this.state.dirtyProps}
-							save={this.save}
-							// TODO: validate wit item validation HOC!!!
-							disabled={!this.state.dirtyProps.length || !this.isNameValid(this.state.item.title)}
-						/>
-					</div>
+							</div>
+							<div>
+								<Grid container spacing={16} >
+									<Grid item xs={12} sm={12} md={12} lg={7}>
+										<div>
+											<FormControl
+												fullWidth
+												className={classes.textField}
+												margin='dense'
+												error={!!titleErr.msg}
+											>
+												<InputLabel >{t('title', { isProp: true })}</InputLabel>
+												<Input
+													fullWidth
+													autoFocus
+													type='text'
+													name={t('title', { isProp: true })}
+													value={item.title}
+													onChange={(ev) => this.handleChange('title', ev.target.value)}
+													maxLength={1024}
+													onBlur={(ev) => {
+														this.setActiveFields('title', false)
+													}}
+													disabled={!this.state.activeFields.title}
+													helperText={
+														titleErr && !!titleErr.msg ?
+															titleErr.msg : ''
+													}
+													endAdornment={
+														<InputAdornment position="end">
+															<IconButton
+																// size='small'
+																color='secondary'
+																className={classes.buttonRight}
+																onClick={(ev) => this.setActiveFields('title', true)}
+															>
+																<EditIcon />
+															</IconButton>
+														</InputAdornment>
+													}
+												/>
+												{(titleErr && !!titleErr.msg) &&
+													<FormHelperText >
+														{t(titleErr.msg, { args: titleErr.errMsgArgs })}
+													</FormHelperText >
+												}
+
+											</FormControl>
+										</div>
+										<div>
+											<FormControl
+												margin='dense'
+												fullWidth
+												className={classes.textField}
+											>
+												<InputLabel htmlFor="adornment-password">{t('description', { isProp: true })}</InputLabel>
+												<Input
+													fullWidth
+													autoFocus
+													multiline
+													rows={3}
+													type='text'
+													name='description'
+													value={item.description || ''}
+													onChange={(ev) => this.handleChange('description', ev.target.value)}
+													maxLength={1024}
+													onBlur={(ev) => this.setActiveFields('description', false)}
+													disabled={!this.state.activeFields.description}
+													endAdornment={
+														<InputAdornment position="end">
+															<IconButton
+																// size='small'
+																color='secondary'
+																className={classes.buttonRight}
+																disabled={isDemo}
+																onClick={(ev) => this.setActiveFields('description', true)}
+															>
+																<EditIcon />
+															</IconButton>
+														</InputAdornment>
+													}
+												/>
+												{!item.description &&
+													<FormHelperText >
+														{t('NO_DESCRIPTION_YET')}
+													</FormHelperText >
+												}
+											</FormControl>
+										</div>
+									</Grid >
+									<Grid item xs={12} sm={12} md={12} lg={5}>
+										{this.props.showLogo &&
+											<div style={{ width: 270 }}>
+												<Paper
+													className={classnames(classes.mediaRoot, classes.imgContainer)}
+												>
+													<Img
+														allowFullscreen={true}
+														src={imgSrc}
+														alt={item.fullName}
+														className={classnames(classes.img, { [classes.pointer]: this.props.canEditImg && !isDemo })}
+													/>
+													<Button
+														variant='fab'
+														mini
+														color='secondary'
+														className={classes.editIcon}
+														onClick={!isDemo ? this.handleToggle : null}
+														disabled={isDemo}
+													>
+														<EditIcon />
+													</Button>
+												</Paper>
+
+											</div>
+										}
+									</Grid >
+								</Grid>
+							</div>
+							<div>
+								<SaveBtn
+									spinnerId={'update' + item.ipfs}
+									validationId={'update-' + item.ipfs}
+									dirtyProps={this.state.dirtyProps}
+									save={this.save}
+									// TODO: validate wit item validation HOC!!!
+									disabled={!this.state.dirtyProps.length || !this.isNameValid(this.state.item.title)}
+								/>
+							</div>
+						</div>
+					}
 
 					<div>
 						<Decorated
