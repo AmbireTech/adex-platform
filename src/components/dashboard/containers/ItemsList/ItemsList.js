@@ -59,12 +59,13 @@ class ItemsList extends Component {
 
 	renderCard = (item, index) => {
 		// const t = this.props.t
+		const itm = new this.props.objModel(item)
 		return (
 			<Card
-				key={item.ipfs}
-				item={item}
-				name={item.type}
-				logo={item.mediaUrl || item.fallbackMediaUrl}
+				key={itm.ipfs}
+				item={itm}
+				name={itm.type}
+				logo={itm.mediaUrl}
 				side={this.props.side}
 				remove={null}
 				itemType={this.props.itemType}
@@ -95,10 +96,11 @@ class ItemsList extends Component {
 		)
 	}
 
-	renderTableRow = (item, index, { to, selected }) => {
-		const { t, classes, selectMode, selectedItems, onSelect, noActions } = this.props
-
+	renderTableRow = (item, index, { selected }) => {
+		const { t, classes, selectMode, side, itemType, selectedItems, onSelect, noActions } = this.props
+		const to = '/dashboard/' + side + '/' + itemType + '/' + item.id
 		const ImagCell = noActions ? TableCell : RRTableCell
+
 		return (
 			<TableRow
 				key={item.ipfs || index}
@@ -142,7 +144,7 @@ class ItemsList extends Component {
 						>
 							<RRButton
 								to={to}
-								variant='raised'
+								variant='contained'
 								color='primary'
 							>
 								{t('LABEL_VIEW')}
@@ -161,11 +163,10 @@ class ItemsList extends Component {
 			t,
 			account,
 			actions,
-			selectMode
+			itemType
 		} = this.props
-		const parentName = parentItem ? parentItem.title : ''
 		const itemName = item.title
-		const itemTypeName = t(ItemTypesNames[item._type], { isProp: true })
+		const itemTypeName = t(itemType, { isProp: true })
 		const isDemo = account.wallet.address === 'demo'
 
 		return (
@@ -210,7 +211,7 @@ class ItemsList extends Component {
 								{
 									confirmLabel: t('CONFIRM_YES'),
 									cancelLabel: t('CONFIRM_NO'),
-									text: t('UNARCHIVE_ITEM', { args: [itemTypeName, itemName] }),
+									text: t('UNARCHIVE_ITEM', { args: [itemType, itemName] }),
 									title: t('CONFIRM_SURE')
 								})}
 						>
@@ -218,50 +219,6 @@ class ItemsList extends Component {
 						</IconButton>
 					</Tooltip>
 				}
-
-				{/* {(!!selectMode && !!onDeselect) &&
-					<Tooltip
-						title={t('REMOVE_FROM', { args: [parentName] })}
-						// placement='top'
-						enterDelay={1000}
-					>
-						<IconButton
-							disabled={isDemo}
-							icon='remove_circle_outline'
-							label={t('REMOVE_FROM', { args: [parentName] })}
-							// className={RTButtonTheme.danger}
-							// onClick={actions.confirmAction.bind(this,
-							// 	actions.removeItemFromItem.bind(this, { item: item, toRemove: parentItem, authSig: account.wallet.authSig }),
-							// 	null,
-							// 	{
-							// 		confirmLabel: t('CONFIRM_YES'),
-							// 		cancelLabel: t('CONFIRM_NO'),
-							// 		text: t('REMOVE_ITEM', { args: [itemTypeName, itemName, t(ItemTypesNames[parentItem._type], { isProp: true }), parentName] }),
-							// 		title: t('CONFIRM_SURE')
-							// 	})}
-							onClick={() => onDeselect(item)}
-						>
-							<RemoveCircleOutlineIcon />
-						</IconButton>
-					</Tooltip>
-				}
-
-				{(!!selectMode && !!onSelect) &&
-					<Tooltip
-						tile={t('ADD_TO', { args: [parentName] })}
-						// placement='top'
-						enterDelay={1000}
-					>
-						<IconButton
-							disabled={isDemo}
-							label={t('ADD_TO', { args: [parentName] })}
-							color='secondary'
-							// onClick={actions.addItemToItem.bind(this, { item: item, toAdd: this.props.parentItem, authSig: account.wallet.authSig })}
-							onClick={() => onSelect(item)}
-						>
-							<AddCircleOutlineIcon />
-						</IconButton>
-					</Tooltip>
 				} */}
 			</span>
 		)
@@ -293,6 +250,7 @@ class ItemsList extends Component {
 			viewModeId,
 			side,
 			noControls,
+			classes,
 			...rest
 		} = this.props
 
@@ -317,7 +275,7 @@ ItemsList.propTypes = {
 	account: PropTypes.object.isRequired,
 	items: PropTypes.array.isRequired,
 	viewModeId: PropTypes.string.isRequired,
-	header: PropTypes.string.isRequired,
+	header: PropTypes.string,
 	objModel: PropTypes.func.isRequired,
 	itemType: PropTypes.string.isRequired,
 	sortProperties: PropTypes.array.isRequired,
@@ -347,4 +305,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(withStyles(styles)((Translate(ItemsList))))
+)(Translate(withStyles(styles)(ItemsList)))
