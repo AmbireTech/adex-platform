@@ -371,7 +371,8 @@ export default function ItemHoc(Decorated) {
 		actions: PropTypes.object.isRequired,
 		account: PropTypes.object.isRequired,
 		item: PropTypes.object.isRequired,
-		spinner: PropTypes.bool
+		spinner: PropTypes.bool,
+		itemType: PropTypes.string.isRequired
 	}
 
 	const tryGetItemByIpfs = ({ items, ipfs }) => {
