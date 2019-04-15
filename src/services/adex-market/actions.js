@@ -141,7 +141,7 @@ export const updateAdSlot = ({ slot, authSig }) => {
 
 export const getCampaigns = ({ authSig }) => {
 	return requester.fetch({
-		route: 'campaigns',
+		route: 'campaigns/by-owner',
 		method: 'GET',
 		authSig
 	}).then(processResponse)
