@@ -67,7 +67,7 @@ export default function itemsReducer(state = initialState.items, action) {
 		newState = { ...state }
 		const newItems = action.items.reduce((memo, item, index) => {
 			const newItem = { ...item }
-			memo[newItem.ipfs] = newItem
+			memo[newItem.id || newItem.ipfs] = newItem
 			return memo
 		}, {})
 
