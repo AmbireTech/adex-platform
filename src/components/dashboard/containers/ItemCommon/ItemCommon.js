@@ -13,7 +13,9 @@ import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Anchor from 'components/common/anchor/anchor'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-
+import { utils } from 'ethers'
+import MomentUtils from '@date-io/moment'
+const moment = new MomentUtils()
 
 const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, isDemo, ...rest }) => {
 	const errFallbackAdUrl = rest.invalidFields['fallbackAdUrl']
@@ -46,17 +48,17 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, isD
 				<EditIcon />
 			</Button>
 			<CardContent>
-				{rest.activeFields.fallbackAdUrl ?
+				{rest.activeFields.fallbackTargetUrl ?
 					<TextField
 						// required
 						autoFocus
 						type='text'
-						label={t('fallbackAdUrl', { isProp: true })}
-						value={item.fallbackAdUrl || ''}
-						onChange={(ev) => rest.handleChange('fallbackAdUrl', ev.target.value)}
+						label={t('fallbackTargetUrl', { isProp: true })}
+						value={item.fallbackTargetUrl || ''}
+						onChange={(ev) => rest.handleChange('fallbackTargetUrl', ev.target.value)}
 						// maxLength={1024}
-						onBlur={() => { rest.setActiveFields('fallbackAdUrl', false); rest.validate('fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true }); }}
-						onFocus={() => rest.validate('fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
+						onBlur={() => { rest.setActiveFields('fallbackTargetUrl', false); rest.validate('fallbackTargetUrl', { isValid: !item.fallbackTargetUrl || validUrl(item.fallbackTargetUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true }); }}
+						onFocus={() => rest.validate('fallbackTargetUrl', { isValid: !item.fallbackTargetUrl || validUrl(item.fallbackTargetUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
 						error={errFallbackAdUrl && !!errFallbackAdUrl.dirty ? <span> {errFallbackAdUrl.errMsg} </span> : null}
 						helperText={!errFallbackAdUrl || !errFallbackAdUrl.dirty ?
 							<div>
@@ -66,9 +68,9 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, isD
 					:
 					<div >
 						<div>
-							{item.fallbackAdUrl ?
-								<Anchor href={item.fallbackAdUrl} target='_blank'>
-									{item.fallbackAdUrl}
+							{item.fallbackTargetUrl ?
+								<Anchor href={item.fallbackTargetUrl} target='_blank'>
+									{item.fallbackTargetUrl}
 								</Anchor>
 								:
 								<span style={{ opacity: 0.3 }}> {t('NO_FALLBACK_URL_YET')}</span>
@@ -79,7 +81,7 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, isD
 									size='small'
 									className={classes.buttonRight}
 									color='secondary'
-									onClick={() => rest.setActiveFields('fallbackAdUrl', true)}
+									onClick={() => rest.setActiveFields('fallbackTargetUrl', true)}
 								>
 									<EditIcon />
 								</IconButton>
@@ -137,76 +139,14 @@ const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, itemTyp
 	const mediaUrl = item.mediaUrl || item.fallbackMediaUrl
 
 	return (
-		<div >
-			<Grid container spacing={16}>
-				<Grid item xs={12} sm={12} md={12} lg={7}>
-					<div >
-						<div
-							className={classes.basicInfo}
-						>
-							{
-								itemType === 'AdSlot'
-									? <ValidatedFallbackAdData validateId={item._id} item={item} t={t} url={url} classes={classes} canEditImg={canEditImg} {...rest} />
-									:
-									<MediaCard
-										classes={classes}
-										mediaUrl={mediaUrl}
-										title={item.title}
-										canEditImg={canEditImg}
-										toggleImgEdit={rest.toggleImgEdit}
-										url={url}
-									/>
-							}
-							<div>
-								<div>
-									<TextField
-										// type='text'
-										value={item.type}
-										label={t('type', { isProp: true })}
-										disabled
-										margin='dense'
-									/>
-								</div>
-								{Array.isArray(item.tags) &&
-									<div>
-										<TextField
-											value={item.tags.map(tag => `"${tag.tag}(${tag.score})"`).join(',\n')}
-											label={t('tags', { isProp: true }) + ` (${item.tags.length})`}
-											disabled
-											margin='dense'
-											multiline
-											rows={7}
-										/>
-									</div>
-								}
-							</div>
-						</div>
-
-					</div>
-					<br />
-				</Grid>
-				<Grid item xs={12} sm={12} md={12} lg={5}>
-					{rightComponent}
-				</Grid>
-			</Grid>
-		</div >
-	)
-}
-
-export const BasicProps = withStyles(styles)(basicProps)
-
-const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, itemType, ...rest }) => {
-	const mediaUrl = item.mediaUrl || item.fallbackMediaUrl
-
-	return (
-		<div >
-			<Grid container spacing={16}>
-				<Grid item xs={12} sm={12} md={12} lg={7}>
-					<div >
-						<div
-							className={classes.basicInfo}
-						>
-							{
+		<Grid container spacing={16}>
+			<Grid item xs={12} sm={12} md={12} lg={7}>
+				<Grid container spacing={16}>
+					<Grid item xs={12} sm={5} md={5} lg={5} >
+						{
+							itemType === 'AdSlot'
+								? <ValidatedFallbackAdData validateId={item._id} item={item} t={t} url={url} classes={classes} canEditImg={canEditImg} {...rest} />
+								:
 								<MediaCard
 									classes={classes}
 									mediaUrl={mediaUrl}
@@ -215,78 +155,178 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 									toggleImgEdit={rest.toggleImgEdit}
 									url={url}
 								/>
-							}
-							<div>
-								<div>
-									<TextField
-										// type='text'
-										value={item.id}
-										label={t('id', { isProp: true })}
-										disabled
-										margin='dense'
-									/>
-								</div>
-								<div>
-									<TextField
-										// type='text'
-										value={item.creator}
-										label={t('creator', { isProp: true })}
-										disabled
-										margin='dense'
-									/>
-								</div>
-								<div>
-									<TextField
-										// type='text'
-										value={item.depositAsset}
-										label={t('depositAsset', { isProp: true })}
-										disabled
-										margin='dense'
-									/>
-								</div>
-								<div>
-									<TextField
-										// type='text'
-										value={item.maxPerImpression}
-										label={t('maxPerImpression', { isProp: true })}
-										disabled
-										margin='dense'
-									/>
-								</div>
-								<div>
-									<TextField
-										// type='text'
-										value={item.minPerImpression}
-										label={t('minPerImpression', { isProp: true })}
-										disabled
-										margin='dense'
-									/>
-								</div>
-								<div>
-									<TextField
-										// type='text'
-										value={item.depositAsset}
-										label={t('depositAsset', { isProp: true })}
-										disabled
-										margin='dense'
-									/>
-								</div>
-								<div>
-									<TextField
-										// type='text'
-										value={item.withdrawPeriodStart}
-										label={t('withdrawPeriodStart', { isProp: true })}
-										disabled
-										margin='dense'
-									/>
-								</div>
-							</div>
-						</div>
+						}
+					</Grid>
+					<Grid item xs={12} sm={7} md={7} lg={7} >
+						<Grid container spacing={8}>
+							<Grid item xs={12} >
 
+								<TextField
+									// type='text'
+									value={item.type}
+									label={t('type', { isProp: true })}
+									disabled
+									margin='dense'
+									fullWidth
+								/>
+							</Grid>
+							{Array.isArray(item.tags) &&
+								<Grid item xs={12} >
+									<TextField
+										value={item.tags.map(tag => `"${tag.tag}(${tag.score})"`).join(',\n')}
+										label={t('tags', { isProp: true }) + ` (${item.tags.length})`}
+										disabled
+										margin='dense'
+										multiline
+										fullWidth
+										rows={7}
+									/>
+								</Grid>
+							}
+						</Grid>
+					</Grid>
+				</Grid>
+			</Grid>
+			<Grid item xs={12} sm={12} md={12} lg={5}>
+				{rightComponent}
+			</Grid>
+		</Grid>
+
+	)
+}
+
+export const BasicProps = withStyles(styles)(basicProps)
+
+const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, itemType, ...rest }) => {
+	const mediaUrl = item.mediaUrl || item.fallbackMediaUrl
+	console.log('item', item)
+	return (
+		<div >
+			<Grid container spacing={16}>
+				<Grid item xs={12} sm={12} md={12} lg={8}>
+					<div >
+						<div
+							className={classes.basicInfo}
+						>
+							<Grid container spacing={16}>
+								<Grid item xs={12} sm={5} md={5} lg={5} >
+									<MediaCard
+										classes={classes}
+										mediaUrl={mediaUrl}
+										title={item.title}
+										canEditImg={canEditImg}
+										toggleImgEdit={rest.toggleImgEdit}
+										url={url}
+									/>
+								</Grid>
+								<Grid item xs={12} sm={7} md={7} lg={7} >
+									<Grid container spacing={8}>
+										<Grid item xs={12} sm={12} md={6} >
+											<Grid container spacing={8}>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={item.id}
+														label={t('id', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={moment.format(
+															moment.date(item.created),
+															moment.dateTime24hFormat)
+														}
+														label={t('created', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={moment.format(
+															moment.date(item.validUntil),
+															moment.dateTime24hFormat)
+														}
+														label={t('validUntil', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={moment.format(
+															moment.date(item.withdrawPeriodStart),
+															moment.dateTime24hFormat)
+														}
+														label={t('withdrawPeriodStart', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+
+											</Grid>
+										</Grid>
+										<Grid item xs={12} sm={12} md={6} >
+											<Grid container spacing={8}>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={item.creator}
+														label={t('creator', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={utils.formatUnits(item.depositAmount, 18) + ' DAI'}
+														label={t('depositAmount', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={utils.formatUnits(item.minPerImpression, 18) + ' DAI'}
+														label={t('minPerImpression', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={utils.formatUnits(item.maxPerImpression, 18) + ' DAI'}
+														label={t('maxPerImpression', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+											</Grid>
+										</Grid>
+									</Grid>
+								</Grid>
+							</Grid>
+						</div>
 					</div>
 					<br />
 				</Grid>
-				<Grid item xs={12} sm={12} md={12} lg={5}>
+				<Grid item xs={12} sm={12} md={12} lg={4}>
 					{rightComponent}
 				</Grid>
 			</Grid>
