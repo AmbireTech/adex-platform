@@ -41,29 +41,31 @@ export class Campaign extends Component {
 	}
 
 	render() {
-		// let side = this.props.match.params.side
 		const { t, classes, item, setActiveFields, handleChange, activeFields, isDemo, ...rest } = this.props
 		if (!item) return (<h1>'404'</h1>)
 
+		const units = item.spec.adUnits.map(u => {
+			const tempUnit = { ...u }
+			tempUnit.id = tempUnit.created
+			return tempUnit
+		})
 
-		const units = item.spec.adUnits
-
+		const campaign = new CampaignModel(item)
 
 		return (
 			<div>
 				<CampaignProps
-					item={item}
+					item={campaign}
 					t={t}
 					rightComponent={
 						<UnitTargets
 							{...rest}
-							targets={item.targeting}
+							targets={campaign.targeting}
 							t={t}
-							subHeader={true}
+							subHeader={t('CAMPAIGN_TARGETING')}
 						/>}
 				/>
 				<ItemsList
-					parentItem={item}
 					removeFromItem
 					items={units}
 					viewModeId={VIEW_MODE}
