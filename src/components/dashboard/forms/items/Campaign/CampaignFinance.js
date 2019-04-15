@@ -8,9 +8,8 @@ import TextField from '@material-ui/core/TextField'
 import DateTimePicker from 'components/common/DateTimePicker'
 import { utils } from 'ethers'
 import { validations } from 'adex-models'
-import DateFnsUtils from "@date-io/moment";
-
-const moment = new DateFnsUtils()
+import MomentUtils from '@date-io/moment'
+const moment = new MomentUtils()
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
