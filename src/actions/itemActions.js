@@ -143,9 +143,13 @@ export function getAllItems() {
 			const [resUnits, resSlots, resCampaigns]
 				= await Promise.all([units, slots, campaigns])
 
+			const campaignsMapped = resCampaigns.map(c => {
+				return { ...c, ...c.spec }
+			})
+
 			updateItems({ items: resUnits, itemType: 'AdUnit' })(dispatch)
 			updateItems({ items: resSlots, itemType: 'AdSlot' })(dispatch)
-			updateItems({ items: resCampaigns, itemType: 'Campaign' })(dispatch)
+			updateItems({ items: campaignsMapped, itemType: 'Campaign' })(dispatch)
 		} catch (err) {
 			addToast({
 				dispatch,
