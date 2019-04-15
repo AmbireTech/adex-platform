@@ -5,7 +5,7 @@ import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import Dropdown from 'components/common/dropdown'
 import TextField from '@material-ui/core/TextField'
-import DatePicker from 'components/common/DatePicker'
+import DateTimePicker from 'components/common/DateTimePicker'
 import { utils } from 'ethers'
 import { validations } from 'adex-models'
 import DateFnsUtils from "@date-io/moment";
@@ -333,7 +333,7 @@ class CampaignFinance extends Component {
 						/>
 					</Grid>
 					<Grid item sm={12} md={6}>
-						<DatePicker
+						<DateTimePicker
 							fullWidth
 							calendarIcon
 							label={t('withdrawPeriodStart', { isProp: true })}
@@ -352,7 +352,7 @@ class CampaignFinance extends Component {
 						/>
 					</Grid>
 					<Grid item sm={12} md={6}>
-						<DatePicker
+						<DateTimePicker
 							fullWidth
 							calendarIcon
 							label={t('validUntil', { isProp: true })}
