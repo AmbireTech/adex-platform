@@ -11,6 +11,7 @@
 
 # env config
 /config/envCfg.js
+/config/envCfgProd.js
 
 # misc
 .DS_Store
