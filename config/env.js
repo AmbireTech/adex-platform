@@ -15,6 +15,8 @@ if (!NODE_ENV) {
 if (process.env !== 'production') {
 	// Used in development for easy cfg to escape env check in other places
 	require('./envCfg')
+} else {
+	require('./envCfgProd')
 }
 
 // https://github.com/bkeepers/dotenv#what-other-env-files-can-i-use
