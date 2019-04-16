@@ -54,6 +54,11 @@ const AuthCard = ({
 )
 
 class AuthSelect extends Component {
+	componentDidMount() {
+		// NOTE: reset identity if someone press backspace 
+		// to go to this page
+		this.props.actions.resetIdentity()
+	}
 
 	render() {
 		let { t, classes } = this.props
