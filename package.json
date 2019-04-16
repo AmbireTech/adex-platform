@@ -108,7 +108,7 @@
     "workbox-webpack-plugin": "3.6.3"
   },
   "scripts": {
-    "start": "node --max-old-space-size=16000 scripts/start.js",
+    "start": "node --max-old-space-size=4000 scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
   },
