@@ -51,7 +51,7 @@ export const CreateGrantIdentity = (props) =>
 	<IdentitySteps
 		{...props}
 		{...common}
-		stepsId='grant-identity'
+		stepsId='grant-identity-create'
 		stepsPages={[
 			{ title: 'GRANT_INFO', page: GrantInfo },
 			{ title: 'GRANT_DEPLOY', page: GrantDeploy, final: true }
@@ -62,7 +62,7 @@ export const LoginGrantIdentity = (props) =>
 	<IdentitySteps
 		{...props}
 		{...common}
-		stepsId='grant-identity'
+		stepsId='grant-identity-login'
 		stepsPages={[
 			{ title: 'GRANT_LOGIN', page: GrantLogin,  final: true  }
 		]}
@@ -72,7 +72,7 @@ export const CreteFullIdentity = (props) =>
 	<IdentitySteps
 		{...props}
 		{...common}
-		stepsId='full-identity'
+		stepsId='full-identity-create'
 		stepsPages={[
 			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
 			{ title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy },
