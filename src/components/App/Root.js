@@ -16,14 +16,11 @@ import AuthSelect from 'components/signin/auth-select/AuthSelect'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import Translate from 'components/translate/Translate'
-import scActions from 'services/smart-contracts/actions'
 import { getSig } from 'services/auth/auth'
 import { AUTH_TYPES } from 'constants/misc'
 import { logOut } from 'services/store-data/auth'
 import checkGasData from 'services/store-data/gas'
-import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
-
-const { getAccountMetamask } = scActions
+// import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(CreateGrantIdentity)
 const ConnectedGrantLogin = ConnectHoc(LoginGrantIdentity)
@@ -47,22 +44,22 @@ class Root extends Component {
 		let acc = this.props.account
 		if (acc._authType === AUTH_TYPES.METAMASK.name) {
 
-			getAccountMetamask()
-				.then(({ addr, mode }) => {
-					addr = (addr || '').toLowerCase()
-					if (addr && acc._addr && acc._authType !== undefined) {
-						let accSigCheck = getSig({ addr: acc._addr, mode: acc._authType })
-						let mmAddrSigCheck = getSig({ addr: addr, mode: AUTH_TYPES.METAMASK.name })
-						if (!!mmAddrSigCheck && !!accSigCheck && (mmAddrSigCheck === accSigCheck)) {
-							return // user authenticated and not changed
-						} else {
-							// logout on metamask addr change
-							logOut()
-						}
-					} else {
-						logOut()
-					}
-				})
+			// getAccountMetamask()
+			// 	.then(({ addr, mode }) => {
+			// 		addr = (addr || '').toLowerCase()
+			// 		if (addr && acc._addr && acc._authType !== undefined) {
+			// 			let accSigCheck = getSig({ addr: acc._addr, mode: acc._authType })
+			// 			let mmAddrSigCheck = getSig({ addr: addr, mode: AUTH_TYPES.METAMASK.name })
+			// 			if (!!mmAddrSigCheck && !!accSigCheck && (mmAddrSigCheck === accSigCheck)) {
+			// 				return // user authenticated and not changed
+			// 			} else {
+			// 				// logout on metamask addr change
+			// 				logOut()
+			// 			}
+			// 		} else {
+			// 			logOut()
+			// 		}
+			// 	})
 		}
 	}
 
@@ -73,27 +70,27 @@ class Root extends Component {
 
 		let acc = this.props.account
 		if (acc._authType === AUTH_TYPES.METAMASK.name || !acc._authType) {
-			getWeb3('metamask')
-				.then(({ web3 }) => {
-					console.log(web3)
-					web3.eth.net.getNetworkType()
-						.then((currentNetwork) => {
-							if (currentNetwork != 'main') {
-								this.props.actions.addToast({
-									type: 'warning',
-									// action,
-									label: 'WATNING_NO_MAINNET',
-									top: true,
-									unclosable: true,
-									timeout: 30 * 24 * 60 * 1000
-								})
-							}
-							// console.log('getNetwork currentNetwork', currentNetwork)
-						})
-						.catch((err) => {
-							// console.log('getNetwork err', err)
-						})
-				})
+			// getWeb3('metamask')
+			// 	.then(({ web3 }) => {
+			// 		console.log(web3)
+			// 		web3.eth.net.getNetworkType()
+			// 			.then((currentNetwork) => {
+			// 				if (currentNetwork != 'main') {
+			// 					this.props.actions.addToast({
+			// 						type: 'warning',
+			// 						// action,
+			// 						label: 'WATNING_NO_MAINNET',
+			// 						top: true,
+			// 						unclosable: true,
+			// 						timeout: 30 * 24 * 60 * 1000
+			// 					})
+			// 				}
+			// 				// console.log('getNetwork currentNetwork', currentNetwork)
+			// 			})
+			// 			.catch((err) => {
+			// 				// console.log('getNetwork err', err)
+			// 			})
+			// 	})
 		}
 	}
 
