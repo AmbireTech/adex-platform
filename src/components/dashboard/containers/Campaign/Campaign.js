@@ -70,7 +70,7 @@ export class Campaign extends Component {
 					items={units}
 					viewModeId={VIEW_MODE}
 					itemType='AdUnit'
-					bjModel={AdUnitModel}
+					objModel={AdUnitModel}
 					sortProperties={SORT_PROPERTIES_ITEMS}
 					filterProperties={FILTER_PROPERTIES_ITEMS}
 					uiStateId='campaign-units'
