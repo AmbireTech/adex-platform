@@ -19,6 +19,7 @@ const Core = new Interface(AdExCore.abi)
 const ERC20 = new Interface(DAI.abi)
 const feeAmountApprove = '150000000000000000'
 const feeAmountOpen = '160000000000000000'
+const  timeframe = 15000 // 1 event per 15 seconds
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
@@ -47,6 +48,10 @@ function getReadyCampaign(campaign, identity, Dai) {
 	newCampaign.maxPerImpression = parseUnits(newCampaign.maxPerImpression, DAI.decimals).toString()
 	newCampaign.minPerImpression = parseUnits(newCampaign.minPerImpression, DAI.decimals).toString()
 	newCampaign.depositAsset = newCampaign.depositAsset || Dai.address
+	newCampaign.eventSubmission = {allow: [
+		{ uids: [newCampaign.creator, newCampaign.validators[0].id, newCampaign.validators[1].id] },
+		{ uids: null, rateLimit: { type: "ip", timeframe } }
+	]}
 
 	return newCampaign.openReady
 }
