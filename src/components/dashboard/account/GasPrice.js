@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Dropdown from 'components/common/dropdown'
 import Translate from 'components/translate/Translate'
-import { web3Utils } from 'services/smart-contracts/ADX'
+import { utils } from 'ethers'
 import { getGasData, DEFAULT_DATA } from 'services/eth/gas'
 import { styles } from './styles'
 
@@ -26,7 +26,8 @@ class GasPrice extends React.Component {
     		let pr = gasData[key]
     		let inGwei = pr.price
     		if (inGwei) {
-    			let inWei = web3Utils.toWei(inGwei.toString(), 'Gwei')
+    			// TODO: ethers
+    			let inWei = '' //utils.toWei(inGwei.toString(), 'Gwei')
     			// TODO: Translations
     			memo.push({ value: inWei, label: t('GAS_PRICE_OPTION_LABEL', { args: [inGwei, 'Gwei', pr.wait] }) })
     		} 

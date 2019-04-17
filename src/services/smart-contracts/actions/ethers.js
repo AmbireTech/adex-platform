@@ -1,6 +1,5 @@
 import { getEthers } from 'services/smart-contracts/ethers'
 import { utils } from 'ethers'
-import { getTypedDataHash } from 'services/smart-contracts/utils'
 import { AUTH_TYPES } from 'constants/misc'
 import TrezorSigner from 'services/smart-contracts/signers/trezor'
 import LedgerSigner from 'services/smart-contracts/signers/ledger'
@@ -97,6 +96,21 @@ export async function getSigner({ wallet, provider }) {
 	}
 
 	throw new Error(`Invalid wallet authType ${wallet.authType}`)
+}
+
+// NOTE: works with typed data in format {type: 'solidity data type', name: 'string (label)', value: 'preferable string'} 
+export const getTypedDataHash = ({ typedData }) => {
+	let values = typedData.map((entry) => {
+		return entry.value // ? .toString().toLowerCase()
+	})
+	let valuesHash = utils.keccak256.apply(null, values)
+
+	let schema = typedData.map((entry) => { return entry.type + ' ' + entry.name })
+	let schemaHash = utils.keccak256.apply(null, schema)
+
+	let hash = utils.keccak256(schemaHash, valuesHash)
+
+	return hash
 }
 
 export async function getAuthSig({ wallet }) {

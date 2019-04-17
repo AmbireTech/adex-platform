@@ -7,8 +7,6 @@ import actions from 'actions'
 import NewTransactionHoc from './TransactionHoc'
 import TextField from '@material-ui/core/TextField'
 import { validateNumber } from 'helpers/validators'
-import { web3Utils } from 'services/smart-contracts/ADX'
-
 class WithdrawEthStep extends Component {
 	componentDidMount() {
 		if (!this.props.transaction.withdrawTo) {
@@ -41,7 +39,8 @@ class WithdrawEthStep extends Component {
     }
 
     validateAddress = (addr, dirty) => {
-    	let isValid = web3Utils.isAddress(addr)
+    	// TODO: ethers
+    	let isValid = true // web3Utils.isAddress(addr)
     	let msg = 'ERR_INVALID_ETH_ADDRESS'
     	if (isValid && (addr.toLowerCase() === this.props.accAddr.toLowerCase())) {
     		isValid = false

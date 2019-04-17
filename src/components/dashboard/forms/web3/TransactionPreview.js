@@ -7,8 +7,7 @@ import NewTransactionHoc from './TransactionHoc'
 import Tooltip from '@material-ui/core/Tooltip'
 import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
-import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
-import { web3Utils } from 'services/smart-contracts/ADX'
+// import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
 import GasPrice from 'components/dashboard/account/GasPrice'
 import { WalletAction } from 'components/dashboard/forms/FormsCommon'
 import { PropRow, ContentBox, ContentBody, ContentStickyTop, FullContentSpinner } from 'components/common/dialog/content'
@@ -47,7 +46,8 @@ class TransactionPreview extends Component {
 
     gasRow = ({ gas, gasPrice }) => {
     	let eGas = gas.gas ? gas.gas : gas
-    	let fee = web3Utils.fromWei((eGas * parseInt(gasPrice, 10)).toString(), 'ether')
+    	// TODO: ethers
+    	let fee = '00' //web3Utils.fromWei((eGas * parseInt(gasPrice, 10)).toString(), 'ether')
     	return (
     		<PropRow
     			left={
@@ -80,7 +80,8 @@ class TransactionPreview extends Component {
 
     render() {
     	const { transaction = {}, t, classes, account, previewWarnMsgs, spinner } = this.props
-    	const gasPrice = account.settings.gasPrice ? account.settings.gasPrice : DEFAULT_GAS_PRICE
+    	// TODO: ethers
+    	const gasPrice = account.settings.gasPrice ? account.settings.gasPrice :  '300000000'//DEFAULT_GAS_PRICE
     	const errors = transaction.errors || []
     	return (
     		<div>
