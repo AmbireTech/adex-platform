@@ -20,7 +20,6 @@ import { getSig } from 'services/auth/auth'
 import { AUTH_TYPES } from 'constants/misc'
 import { logOut } from 'services/store-data/auth'
 import checkGasData from 'services/store-data/gas'
-// import { cfg, getWeb3, web3Utils } from 'services/smart-contracts/ADX'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(CreateGrantIdentity)
 const ConnectedGrantLogin = ConnectHoc(LoginGrantIdentity)

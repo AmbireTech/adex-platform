@@ -19,7 +19,7 @@ class GrantLogin extends Component {
 		const { identity, handleChange, validate } = this.props
 		const { email, password, } = identity
 
-		let wallet = {}
+		const wallet = {}
 
 		if (email && password) {
 			const walletData = getLocalWallet({

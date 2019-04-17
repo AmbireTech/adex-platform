@@ -9,13 +9,11 @@ import { exchange as ExchangeConstants } from 'adex-constants'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import classnames from 'classnames'
-import { adxToFloatView } from 'services/smart-contracts/utils'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import { withStyles } from '@material-ui/core/styles'
 import StatsCard from './StatsCard'
 import { styles } from './styles'
 import Grid from '@material-ui/core/Grid'
-import { getStatsValues } from 'helpers/accStatsHelpers'
 
 const { BidStatesLabels, BID_STATES } = ExchangeConstants
 
@@ -184,15 +182,14 @@ export class DashboardStats extends Component {
 			addrBalanceEth,
 			adxOnBids,
 			exchangeAvailable
-		} = getStatsValues(accStats)
-
+		} = {}
 		const classes = this.props.classes
 		return (
 			<div className={classes.infoStatsContainer}>
 				<StatsCard
 					linkCard
 					subtitle={t(spentEarned)}
-					title={adxToFloatView(stats.closed.completed.amount || 0) + ' ADX'}
+					// title={adxToFloatView(stats.closed.completed.amount || 0) + ' ADX'}
 					onClick={() => this.goToBids('closed')}
 				>
 				</StatsCard>
@@ -201,7 +198,7 @@ export class DashboardStats extends Component {
 					linkCard
 					onClick={() => this.goToBids('action')}
 					subtitle={t('LABEL_AMOUNT_READY_TO_VERIFY')}
-					title={adxToFloatView(stats.action.amount || 0) + ' ADX'}
+					// title={adxToFloatView(stats.action.amount || 0) + ' ADX'}
 				>
 				</StatsCard>
 
@@ -210,7 +207,7 @@ export class DashboardStats extends Component {
 						linkCard
 						onClick={() => this.goToBids('open')}
 						subtitle={t('LABEL_OPEN_BIDS_AMOUNT')}
-						title={adxToFloatView(stats.open.amount || 0) + ' ADX'}
+						// title={adxToFloatView(stats.open.amount || 0) + ' ADX'}
 					>
 
 					</StatsCard>
