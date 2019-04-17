@@ -1,6 +1,5 @@
 import { web3Utils } from 'services/smart-contracts/ADX'
 import { TO_HEX_PAD, MULT, PRECISION } from 'services/smart-contracts/constants'
-import bs58 from 'bs58'
 import { Exception } from 'handlebars';
 
 const { toBN, toHex, hexToNumber, hexToUtf8, padLeft, padRight } = web3Utils
