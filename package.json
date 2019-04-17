@@ -94,7 +94,6 @@
     "terser-webpack-plugin": "1.1.0",
     "trezor-connect": "^7.0.2",
     "url-loader": "1.1.1",
-    "web3": "^1.0.0-beta.52",
     "webpack": "4.19.1",
     "webpack-dev-server": "^3.3.1",
     "webpack-manifest-plugin": "2.0.4",
