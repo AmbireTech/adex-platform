@@ -215,9 +215,9 @@ class SideNav extends Component {
 							<Anchor
 								className={classes.adxLink}
 								target='_blank'
-								href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_EXCHANGE_ADDR}
+								href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADEX_CORE_ADDR}
 							>
-								AdEx Exchange
+								AdExCore
 							</Anchor>
 						</small>
 					</div>
