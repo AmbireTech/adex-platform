@@ -6,7 +6,6 @@ import AppBar from '@material-ui/core/AppBar'
 import AuthMetamask from './AuthMetamask'
 import AuthTrezor from './AuthTrezor'
 import AuthLedger from './AuthLedger'
-import AuthDemo from './AuthDemo'
 import METAMASK_DL_IMG from 'resources/download-metamask.png'
 import LEDGER_DL_IMG from 'resources/ledger_logo_header.png'
 import TREZOR_DL_IMG from 'resources/trezor-logo-h.png'
@@ -85,10 +84,6 @@ class AuthMethod extends Component {
 					{(tabIndex === 2) &&
 						<AuthLedger />
 					}
-					{(tabIndex === 3) &&
-						<AuthDemo />
-					}
-
 				</div>
 			</div>
 		)
