@@ -80,6 +80,7 @@ export function getGrantAccount({ walletAddr, email, password, coupon }) {
 				})
 			}
 		} catch (err) {
+			console.error('ERR_REGISTER_GRANT_IDENTITY', err)
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_REGISTER_GRANT_IDENTITY',
@@ -120,6 +121,7 @@ export function deployFullIdentity({ wallet, email, identityTxData, identityAddr
 			}
 		}
 		catch (err) {
+			console.error('ERR_REGISTER_IDENTITY', err)
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_REGISTER_IDENTITY',
@@ -139,6 +141,7 @@ export function getFullIdentityTxData({ owner, privLevel }) {
 			updateIdentity('identityAddr', txData.expectedAddr)(dispatch)
 			updateIdentity('identityTxData', txData)(dispatch)
 		} catch (err) {
+			console.error('ERR_GET_IDENTITY_TX_DATA', err)
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_GET_IDENTITY_TX_DATA',

@@ -140,6 +140,7 @@ export function createSession({ wallet, identity, email }) {
 				}
 			})(dispatch)
 		} catch (err) {
+			console.error('ERR_GETTING_SESSION', err)
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_GETTING_SESSION',
