@@ -100,15 +100,17 @@ export async function getSigner({ wallet, provider }) {
 
 // NOTE: works with typed data in format {type: 'solidity data type', name: 'string (label)', value: 'preferable string'} 
 export const getTypedDataHash = ({ typedData }) => {
-	let values = typedData.map((entry) => {
-		return entry.value // ? .toString().toLowerCase()
+	const values = typedData.map((entry) => {
+		return typeof entry.value === 'string'
+			? utils.toUtf8Bytes(entry.value)
+			: utils.hexlify(entry.value)
 	})
-	let valuesHash = utils.keccak256.apply(null, values)
+	const valuesHash = utils.keccak256.apply(null, values)
 
-	let schema = typedData.map((entry) => { return entry.type + ' ' + entry.name })
-	let schemaHash = utils.keccak256.apply(null, schema)
+	const schema = typedData.map((entry) => { return utils.toUtf8Bytes(entry.type + ' ' + entry.name) })
+	const schemaHash = utils.keccak256.apply(null, schema)
 
-	let hash = utils.keccak256(schemaHash, valuesHash)
+	const hash = utils.keccak256(schemaHash, valuesHash)
 
 	return hash
 }
@@ -123,7 +125,7 @@ export async function getAuthSig({ wallet }) {
 		{ type: 'uint', name: 'Auth token', value: authToken }
 	]
 
-	const hash = getTypedDataHash({ typedData: typedData })
+	const hash = getTypedDataHash({ typedData })
 
 	const signature = await signer.signMessage(hash, { hex: true })
 
