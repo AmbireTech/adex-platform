@@ -39,6 +39,7 @@ const AuthCard = ({
 				variant='contained'
 				to={toCreate} size='medium'
 				color='primary'
+				disabled={disabled}
 			>
 				{btnCreateTitle}
 			</RRButton>}
@@ -46,6 +47,7 @@ const AuthCard = ({
 				variant='contained'
 				to={toLogin} size='medium'
 				color='primary'
+				disabled={disabled}
 			>
 				{btnLoginTitle}
 			</RRButton>}
@@ -102,6 +104,7 @@ class AuthSelect extends Component {
 
 					<Grid item xs={12} md={4}>
 						<AuthCard
+							disabled
 							classes={classes}
 							title={t('DEMO_ACCOUNT')}
 							authPoints={[
