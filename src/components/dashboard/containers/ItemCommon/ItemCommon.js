@@ -14,8 +14,9 @@ import Anchor from 'components/common/anchor/anchor'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { utils } from 'ethers'
-import MomentUtils from '@date-io/moment'
-const moment = new MomentUtils()
+import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
+import { bigNumberify } from 'ethers/utils'
+
 
 const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, isDemo, ...rest }) => {
 	const errFallbackAdUrl = rest.invalidFields['fallbackAdUrl']
@@ -236,10 +237,7 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 												<Grid item xs={12} >
 													<TextField
 														// type='text'
-														value={moment.format(
-															moment.date(item.created),
-															moment.dateTime24hFormat)
-														}
+														value={formatDateTime(item.created)}
 														label={t('created', { isProp: true })}
 														disabled
 														margin='dense'
@@ -249,11 +247,9 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 												<Grid item xs={12} >
 													<TextField
 														// type='text'
-														value={moment.format(
-															moment.date(item.validUntil),
-															moment.dateTime24hFormat)
+														value={formatDateTime(item.activeFrom)
 														}
-														label={t('validUntil', { isProp: true })}
+														label={t('activeFrom', { isProp: true })}
 														disabled
 														margin='dense'
 														fullWidth
@@ -262,10 +258,7 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 												<Grid item xs={12} >
 													<TextField
 														// type='text'
-														value={moment.format(
-															moment.date(item.withdrawPeriodStart),
-															moment.dateTime24hFormat)
-														}
+														value={formatDateTime(item.withdrawPeriodStart)}
 														label={t('withdrawPeriodStart', { isProp: true })}
 														disabled
 														margin='dense'
@@ -300,18 +293,10 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 												<Grid item xs={12} >
 													<TextField
 														// type='text'
-														value={utils.formatUnits(item.minPerImpression, 18) + ' DAI'}
-														label={t('minPerImpression', { isProp: true })}
-														disabled
-														margin='dense'
-														fullWidth
-													/>
-												</Grid>
-												<Grid item xs={12} >
-													<TextField
-														// type='text'
-														value={utils.formatUnits(item.maxPerImpression, 18) + ' DAI'}
-														label={t('maxPerImpression', { isProp: true })}
+														value={formatTokenAmount(
+															bigNumberify(item.minPerImpression).mul(1000),
+															18, true) + ' DAI'}
+														label={t('CPM', { isProp: true })}
 														disabled
 														margin='dense'
 														fullWidth
