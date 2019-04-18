@@ -17,8 +17,8 @@ import InputLabel from '@material-ui/core/InputLabel'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
-import ViewModuleIcon from '@material-ui/icons/ViewModule'
-import ViewListIcon from '@material-ui/icons/ViewList'
+
+
 import SearchIcon from '@material-ui/icons/Search'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
