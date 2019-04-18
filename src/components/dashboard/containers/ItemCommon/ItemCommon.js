@@ -283,7 +283,7 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 												<Grid item xs={12} >
 													<TextField
 														// type='text'
-														value={utils.formatUnits(item.depositAmount, 18) + ' DAI'}
+														value={formatTokenAmount(item.depositAmount, 18) + ' DAI'}
 														label={t('depositAmount', { isProp: true })}
 														disabled
 														margin='dense'

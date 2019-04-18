@@ -3,13 +3,14 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import NewCampaignHoc from './NewCampaignHoc'
 import Translate from 'components/translate/Translate'
-import UnitTargets from 'components/dashboard/containers/UnitTargets'
 import Grid from '@material-ui/core/Grid'
 import ItemsList from 'components/dashboard/containers/ItemsList'
 import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
 import { AdUnit } from 'adex-models'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from '../styles'
+import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
+import { bigNumberify, parseUnits } from 'ethers/utils'
 
 class CampaignFormPreview extends Component {
 	constructor(props) {
@@ -42,17 +43,17 @@ class CampaignFormPreview extends Component {
 		const { classes, account, ...rest } = this.props
 		const { newItem, t } = rest
 		const {
-			targeting,
+			// targeting,
 			adUnits,
 			validators,
 			depositAmount,
 			minPerImpression,
-			maxPerImpression,
-			depositAsset,
+			// maxPerImpression,
+			// depositAsset,
 			withdrawPeriodStart,
-			validUntil,
+			activeFrom,
 			created,
-			nonce
+			// nonce
 		} = newItem
 
 		return (
@@ -62,7 +63,7 @@ class CampaignFormPreview extends Component {
 						left={t('owner', { isProp: true })}
 						right={account.wallet.address}
 					/>
-					<PropRow
+					{/* <PropRow
 						left={t('targeting', { isProp: true })}
 						right={
 							<UnitTargets
@@ -72,7 +73,7 @@ class CampaignFormPreview extends Component {
 							// subHeader={'TARGETING'}
 							/>
 						}
-					/>
+					/> */}
 					<PropRow
 						left={t('adUnits', { isProp: true })}
 						right={
@@ -94,28 +95,30 @@ class CampaignFormPreview extends Component {
 					/>
 					<PropRow
 						left={t('depositAmount', { isProp: true })}
-						right={depositAmount}
+						right={formatTokenAmount(parseUnits(depositAmount, 18), 18) + ' DAI'}
 					/>
 					<PropRow
-						left={t('minPerImpression', { isProp: true })}
-						right={minPerImpression}
+						left={t('CPM', { isProp: true })}
+						right={formatTokenAmount(
+							bigNumberify(parseUnits(minPerImpression, 18)).mul(1000),
+							18, true) + ' DAI'}
 					/>
-					<PropRow
+					{/* <PropRow
 						left={t('maxPerImpression', { isProp: true })}
 						right={maxPerImpression}
+					/> */}
+					<PropRow
+						left={t('activeFrom', { isProp: true })}
+						right={formatDateTime(activeFrom)}
 					/>
 					<PropRow
 						left={t('withdrawPeriodStart', { isProp: true })}
-						right={withdrawPeriodStart}
+						right={formatDateTime(withdrawPeriodStart)}
 					/>
-					<PropRow
-						left={t('validUntil', { isProp: true })}
-						right={validUntil}
-					/>
-					<PropRow
+					{/* <PropRow
 						left={t('created', { isProp: true })}
-						right={created}
-					/>
+						right={formatDateTime(created)}
+					/> */}
 
 					{/* </Grid> */}
 					<br />
