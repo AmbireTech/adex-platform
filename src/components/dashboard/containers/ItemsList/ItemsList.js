@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import ListWithControls from 'components/dashboard/containers/Lists/ListWithControls'
 import classnames from 'classnames'
-import moment from 'moment'
 import TableCellMui from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
@@ -22,9 +21,10 @@ import ArchiveIcon from '@material-ui/icons/Archive'
 import UnarchiveIcon from '@material-ui/icons/Unarchive'
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline'
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
-import { itemAdTypeLabel, itemAdSizeLabel } from 'helpers/itemsHelpers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
+import { bigNumberify } from 'ethers/utils'
 
 
 const TableCell = ({ children, ...rest }) =>
@@ -38,21 +38,31 @@ const TableCell = ({ children, ...rest }) =>
 const RRTableCell = withReactRouterLink(TableCell)
 const RRButton = withReactRouterLink(Button)
 
-const List = ({ list, itemRenderer }) => {
-	return (<div style={{ display: 'flex', flexGrow: 1, flexWrap: 'wrap' }}>
-		{list.map((item, index) =>
-			<div
-				key={item.ipfs || index}
-				style={{ maxWidth: '100%' }}
-			>
-				{itemRenderer(item, index)}
-			</div>
-		)}
-	</div>)
-}
-
 class ItemsList extends Component {
 	renderTableHead = ({ selected }) => {
+		const { t, selectedItems, selectMode, noActions, itemType } = this.props
+		return (
+			<TableHead>
+				<TableRow>
+					{selectMode &&
+						<TableCell>
+							{Object.keys(selectedItems).length || ''}
+						</TableCell>
+					}
+					<TableCell> {t('PROP_MEDIA')}</TableCell>
+					<TableCell> {t('PROP_TITLE')} </TableCell>
+					<TableCell> {t('PROP_TYPE')} </TableCell>
+					<TableCell> {t('PROP_CREATED')} </TableCell>
+
+					{!noActions &&
+						<TableCell> {t('ACTIONS')} </TableCell>
+					}
+				</TableRow>
+			</TableHead>
+		)
+	}
+
+	renderCampaignTableHead = ({ selected }) => {
 		const { t, selectedItems, selectMode, noActions } = this.props
 		return (
 			<TableHead>
@@ -62,10 +72,11 @@ class ItemsList extends Component {
 							{Object.keys(selectedItems).length || ''}
 						</TableCell>
 					}
-					<TableCell></TableCell>
-					<TableCell> {t('PROP_NAME')} </TableCell>
-					<TableCell> {t('PROP_ADTYPE')} </TableCell>
-					<TableCell> {t('PROP_CREATEDON')} </TableCell>
+					<TableCell> {t('PROP_DEPOSIT')} </TableCell>
+					<TableCell> {t('PROP_CPM')} </TableCell>
+					<TableCell> {t('PROP_CREATED')} </TableCell>
+					<TableCell> {t('PROP_STARTS')} </TableCell>
+					<TableCell> {t('PROP_ENDS')} </TableCell>
 					{!noActions &&
 						<TableCell> {t('ACTIONS')} </TableCell>
 					}
@@ -74,10 +85,16 @@ class ItemsList extends Component {
 		)
 	}
 
-	renderTableRow = (item, index, { selected }) => {
-		const { t, classes, selectMode, side, itemType, selectedItems, onSelect, noActions } = this.props
-		const to = '/dashboard/' + side + '/' + itemType + '/' + item.id
-		const ImagCell = noActions ? TableCell : RRTableCell
+	renderTableRow = (item, index, { to, selected }) => {
+		const {
+			t,
+			classes,
+			selectMode,
+			selectedItems,
+			onSelect,
+			noActions
+		} = this.props
+		// const ImagCell = noActions ? TableCell : RRTableCell
 
 		return (
 			<TableRow
@@ -95,15 +112,14 @@ class ItemsList extends Component {
 						/>
 					</TableCell>
 				}
-				<ImagCell
-					to={to}
-				>
+				<TableCell>
 					<Img
+						fullScreenOnClick={true}
 						className={classnames(classes.cellImg)}
 						src={item.mediaUrl || item.fallbackMediaiUrl || ''}
 						alt={item.title}
 					/>
-				</ImagCell>
+				</TableCell>
 				<RRTableCell
 					// className={tableTheme.link}
 					to={to}
@@ -111,33 +127,56 @@ class ItemsList extends Component {
 					{item.title}
 				</RRTableCell>
 				<TableCell> {item.type} </TableCell>
-				<TableCell> {moment(item.created).format('DD-MM-YYYY')} </TableCell>
+				<TableCell> {formatDateTime(item.created)} </TableCell>
 				{!noActions &&
-					<TableCell>
-
-						<Tooltip
-							title={t('LABEL_VIEW')}
-							// placement='top'
-							enterDelay={1000}
-						>
-							<RRButton
-								to={to}
-								variant='contained'
-								color='primary'
-							>
-								{t('LABEL_VIEW')}
-							</RRButton>
-						</Tooltip>
-						{this.renderActions(item, to)}
-					</TableCell>
+					this.renderActions({ item, to })
 				}
 			</TableRow>
 		)
 	}
 
-	renderActions = (item) => {
+
+	renderCampaignTableRow = (item, index, { to, selected }) => {
 		const {
-			parentItem,
+			selectMode,
+			selectedItems,
+			onSelect,
+			noActions
+		} = this.props
+		return (
+			<TableRow
+				key={item.ipfs || index}
+				selected={selectedItems[item.ipfs]}
+			>
+				{selectMode &&
+					<TableCell padding="checkbox">
+						<Checkbox
+							// indeterminate={numSelected > 0 && numSelected < rowCount}
+							checked={selectedItems[item.ipfs]}
+							onChange={(event) => {
+								onSelect(item.ipfs, event.target.checked)
+							}}
+						/>
+					</TableCell>
+				}
+				<TableCell>	{formatTokenAmount(item.depositAmount, 18, true)} DAI </TableCell>
+				<TableCell>
+					{formatTokenAmount(
+						bigNumberify(item.minPerImpression).mul(1000),
+						18, true)} DAI
+				</TableCell>
+				<TableCell> {formatDateTime(item.created)} </TableCell>
+				<TableCell> {formatDateTime(item.activeFrom)} </TableCell>
+				<TableCell> {formatDateTime(item.withdrawPeriodStart)} </TableCell>
+				{!noActions &&
+					this.renderActions({ item, to })
+				}
+			</TableRow>
+		)
+	}
+
+	renderActions = ({ item, to }) => {
+		const {
 			t,
 			account,
 			actions,
@@ -148,7 +187,20 @@ class ItemsList extends Component {
 		const isDemo = account.wallet.address === 'demo'
 
 		return (
-			<span>
+			<TableCell>
+				<Tooltip
+					title={t('LABEL_VIEW')}
+					// placement='top'
+					enterDelay={1000}
+				>
+					<RRButton
+						to={to}
+						variant='contained'
+						color='primary'
+					>
+						{t('LABEL_VIEW')}
+					</RRButton>
+				</Tooltip>
 				{!item.archived &&
 					<Tooltip
 						title={t('TOOLTIP_ARCHIVE')}
@@ -197,27 +249,23 @@ class ItemsList extends Component {
 						</IconButton>
 					</Tooltip>
 				}
-			</span>
+			</TableCell>
 		)
 	}
 
-	renderRows = (items) =>
-		<Rows
-			padding={this.props.padding}
-			side={this.props.side}
+	renderRows = (items) => {
+		const { itemType, side, padding } = this.props
+		return (<Rows
+			padding={padding}
+			side={side}
 			rows={items}
-			itemType={this.props.itemType}
-			rowRenderer={this.renderTableRow}
-			tableHeadRenderer={this.renderTableHead}
-			padding='default'
-		/>
-
-	renderCards = (items) => {
-		return (<List
-			itemRenderer={this.renderCard}
-			list={items}
-			side={this.props.side}
-			itemType={this.props.itemType}
+			itemType={itemType}
+			rowRenderer={itemType === 'Campaign'
+				? this.renderCampaignTableRow
+				: this.renderTableRow}
+			tableHeadRenderer={itemType === 'Campaign'
+				? this.renderCampaignTableHead
+				: this.renderTableHead}
 		/>)
 	}
 
