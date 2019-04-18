@@ -167,11 +167,11 @@ export function getAllItems() {
 export function openCampaign({ campaign, account }) {
 	return async function (dispatch) {
 		try {
-			const resCampaign = await openChannel({ campaign, account })
+			const { readyCampaign } = await openChannel({ campaign, account })
 
 			dispatch({
 				type: types.ADD_ITEM,
-				item: resCampaign,
+				item: readyCampaign,
 				itemType: 'Campaign'
 			})
 

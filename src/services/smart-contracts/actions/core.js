@@ -61,12 +61,16 @@ function getReadyCampaign(campaign, identity, Dai) {
 	newCampaign.maxPerImpression = newCampaign.minPerImpression
 
 	newCampaign.depositAsset = newCampaign.depositAsset || Dai.address
-	newCampaign.eventSubmission = {allow: [
-		{ uids: [newCampaign.creator, newCampaign.validators[0].id, newCampaign.validators[1].id] },
-		{ uids: null, rateLimit: { type: "ip", timeframe } }
-	]}
+	newCampaign.eventSubmission = {
+		allow: [
+			{ uids: [newCampaign.creator, newCampaign.validators[0].id, newCampaign.validators[1].id] },
+			{ uids: null, rateLimit: { type: "ip", timeframe } }
+		]
+	}
 
-	return newCampaign.openReady
+	newCampaign.status = { type: 'pending' }
+
+	return newCampaign
 }
 
 export async function openChannel({ campaign, account }) {
@@ -78,7 +82,8 @@ export async function openChannel({ campaign, account }) {
 		Identity
 	} = await getEthers(wallet.authType)
 
-	const openReady = getReadyCampaign(campaign, identity, Dai)
+	const readyCampaign = getReadyCampaign(campaign, identity, Dai)
+	const openReady = readyCampaign.openReady
 	const ethChannel = toEthereumChannel(openReady)
 	const signer = await getSigner({ wallet, provider })
 	const channel = {
@@ -131,5 +136,9 @@ export async function openChannel({ campaign, account }) {
 	}
 
 	const result = await sendOpenChannel(data)
-	return result
+	readyCampaign.id = channel.id
+	return {
+		result,
+		readyCampaign
+	}
 }
