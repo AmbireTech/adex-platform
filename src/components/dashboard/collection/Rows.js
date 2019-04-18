@@ -1,9 +1,6 @@
 import React, { Component } from 'react'
-import { items as ItemsConstants } from 'adex-constants'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
-
-const { ItemTypesNames } = ItemsConstants
 
 class Rows extends Component {
 	constructor(props, context) {
@@ -24,12 +21,12 @@ class Rows extends Component {
 	}
 
 	handleRowSelect = (selected) => {
-		let newSelected = selected.map((index) => this.props.rows[index]._id)
+		let newSelected = selected.map((index) => this.props.rows[index].id)
 		this.setState({ selected: newSelected });
 	}
 
 	render() {
-		const { side, rows, padding } = this.props
+		const { side, rows, padding, itemType } = this.props
 		return (
 			<div>
 				<Table
@@ -39,10 +36,10 @@ class Rows extends Component {
 					<TableBody>
 						{
 							rows.map((u, i) => {
-								let to = '/dashboard/' + side + '/' + ItemTypesNames[u._type] + '/' + u._id
-								let selected = this.state.selected.indexOf(u._id) !== -1
+								let to = `/dashboard/${side}/${itemType}/${u.id || u.ipfs}`
+								let selected = this.state.selected.indexOf(u.id) !== -1
 								return (
-									this.props.rowRenderer(u, i, { to: to, selected: selected })
+									this.props.rowRenderer(u, i, { to, selected, itemType })
 								)
 							})
 						}
