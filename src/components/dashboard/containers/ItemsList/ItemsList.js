@@ -219,7 +219,6 @@ class ItemsList extends Component {
 						</IconButton>
 					</Tooltip>
 				}
-				} */}
 			</span>
 		)
 	}
