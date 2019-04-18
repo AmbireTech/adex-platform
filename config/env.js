@@ -93,6 +93,7 @@ function getClientEnvironment(publicUrl) {
 				VALIDATOR_LEADER_ID: process.env.VALIDATOR_LEADER_ID,
 				VALIDATOR_FOLLOWER_URL: process.env.VALIDATOR_FOLLOWER_URL,
 				VALIDATOR_FOLLOWER_ID: process.env.VALIDATOR_FOLLOWER_ID,
+				DAI_TOKEN_ADDR: process.env.DAI_TOKEN_ADDR
 			}
 		);
 	// Stringify all values so we can feed into Webpack DefinePlugin
