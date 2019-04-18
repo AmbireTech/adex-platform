@@ -108,7 +108,8 @@ export const NewCampaignSteps = (props) =>
 		stepsId={'new-campaign-'}
 		stepsPages={[
 			{ title: 'CAMPAIGN_UNITS_STEP', page: CampaignUnits },
-			{ title: 'CAMPAIGN_TARGETING_STEP', page: CampaignTargeting },
+			// NOTE: Only at ad units at the moment
+			// { title: 'CAMPAIGN_TARGETING_STEP', page: CampaignTargeting },
 			{ title: 'CAMPAIGN_FINANCE_STEP', page: CampaignFinance },
 		]}
 		stepsPreviewPage={{ title: 'PREVIEW_AND_SAVE_ITEM', page: CampaignFormPreview }}
