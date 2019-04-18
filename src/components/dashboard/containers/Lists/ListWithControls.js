@@ -72,12 +72,6 @@ class ListWithControls extends Component {
 		}
 	}
 
-	toggleView(value) {
-		if (value !== this.props.rowsView) {
-			this.props.actions.updateUi(this.props.viewModeId, !!value)
-		}
-	}
-
 	goToPage(page) {
 		this.setState({ page: parseInt(page, 10) })
 	}
@@ -195,11 +189,7 @@ class ListWithControls extends Component {
 		let items = data.items
 		let renderItems
 
-		if ((this.props.listMode === 'rows') || !!this.props.rowsView) {
-			renderItems = this.props.renderRows
-		} else {
-			renderItems = this.props.renderCards
-		}
+		renderItems = this.props.renderRows
 
 		const { t, classes } = this.props
 
@@ -316,26 +306,6 @@ class ListWithControls extends Component {
 								}
 							/>
 						</div >
-						{!this.props.listMode &&
-							<div
-								className={classnames(classes.flexRow, classes.flexItem)}
-							>
-								<IconButton
-									color={!this.props.rowsView ? 'primary' : 'default'}
-									onClick={this.toggleView.bind(this, false)}
-									className={classes.rowButton}
-								>
-									<ViewModuleIcon />
-								</IconButton >
-								<IconButton
-									color={this.props.rowsView ? 'primary' : 'default'}
-									onClick={this.toggleView.bind(this, true)}
-									className={classes.rowButton}
-								>
-									<ViewListIcon />
-								</IconButton >
-							</div>
-						}
 					</div >
 				</div >
 				<Divider />
@@ -355,7 +325,6 @@ ListWithControls.propTypes = {
 	rowsView: PropTypes.bool.isRequired,
 	itemRenderer: PropTypes.func,
 	side: PropTypes.string.isRequired,
-	listMode: PropTypes.string,
 	objModel: PropTypes.func,
 	sortProperties: PropTypes.array.isRequired,
 	filterProperties: PropTypes.object,

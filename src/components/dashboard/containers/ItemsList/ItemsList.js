@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import ListWithControls from 'components/dashboard/containers/Lists/ListWithControls'
 import classnames from 'classnames'
-import { items as ItemsConstants } from 'adex-constants'
 import moment from 'moment'
 import TableCellMui from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
@@ -15,10 +14,8 @@ import Button from '@material-ui/core/Button'
 import Checkbox from '@material-ui/core/Checkbox'
 import IconButton from '@material-ui/core/IconButton'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
-import { Item } from 'adex-models'
 import Img from 'components/common/img/Img'
 import Rows from 'components/dashboard/collection/Rows'
-import Card from 'components/dashboard/containers/ItemCard'
 import Translate from 'components/translate/Translate'
 // import DeleteIcon from '@material-ui/icons/Delete'
 import ArchiveIcon from '@material-ui/icons/Archive'
@@ -29,7 +26,6 @@ import { itemAdTypeLabel, itemAdSizeLabel } from 'helpers/itemsHelpers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
-const { ItemTypesNames } = ItemsConstants
 
 const TableCell = ({ children, ...rest }) =>
 	<TableCellMui
@@ -56,24 +52,6 @@ const List = ({ list, itemRenderer }) => {
 }
 
 class ItemsList extends Component {
-
-	renderCard = (item, index) => {
-		// const t = this.props.t
-		const itm = new this.props.objModel(item)
-		return (
-			<Card
-				key={itm.ipfs}
-				item={itm}
-				name={itm.type}
-				logo={itm.mediaUrl}
-				side={this.props.side}
-				remove={null}
-				itemType={this.props.itemType}
-				renderActions={() => this.renderActions(item)}
-			/>
-		)
-	}
-
 	renderTableHead = ({ selected }) => {
 		const { t, selectedItems, selectMode, noActions } = this.props
 		return (
@@ -263,7 +241,6 @@ class ItemsList extends Component {
 				viewModeId={viewModeId}
 				archive
 				renderRows={this.renderRows}
-				renderCards={this.renderCards}
 			/>
 		)
 	}
