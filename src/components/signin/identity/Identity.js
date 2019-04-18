@@ -22,7 +22,7 @@ const GoBtn = ({ waiting, save, t, classes, ...rest }) => {
 				onClick={save}
 				disabled={waiting}
 			>
-				{t('LEST_GO')}
+				{t('LETS_GO')}
 			</Button>
 			{waiting && <CircularProgress size={24} className={classes.buttonProgress} />}
 		</span >
