@@ -13,14 +13,16 @@ class Items extends Component {
 	}
 
 	render() {
-		const { classes, ...rest } = this.props
+		const { classes, itemType, ...rest } = this.props
 		const items = Array.from(Object.values(this.props.items || {})) || []
 
 		return (
 			<div>
 				{!!this.props.newItemBtn && <this.props.newItemBtn />}
+
 				<ItemsList
 					{...rest}
+					itemType={itemType}
 					items={items}
 					viewModeId={this.props.viewModeId}
 					archive
