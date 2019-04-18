@@ -55,13 +55,14 @@ const PubValidatorsSrc = Object.keys(PubPlatformValidators).map(key => {
 	}
 })
 
-const getTotalImpressions = ({depositAmount, minPerImpression}) => {
-	if(!depositAmount) {
-		return 'DEPOSIT_NOT_SET'
+const getTotalImpressions = ({ depositAmount, minPerImpression, t }) => {
+	if (!depositAmount) {
+		return t('DEPOSIT_NOT_SET')
 	} else if (!minPerImpression) {
-		return 'CPM_NOT_SET'
+		return t('CPM_NOT_SET')
 	} else {
-		return utils.commify(Math.floor((depositAmount / minPerImpression) * 1000))
+		const impressions = utils.commify(Math.floor((depositAmount / minPerImpression) * 1000))
+		return t('TOTAL_IMPRESSIONS', { args: [impressions] })
 	}
 }
 
@@ -103,17 +104,6 @@ class CampaignFinance extends Component {
 		this.validateAndUpdateValidator(false, 1, newItem.validators[1])
 		this.validateAmount(newItem.depositAmount, 'depositAmount', false, 'REQUIRED_FIELD')
 		this.validateAmount(newItem.minPerImpression, 'minPerImpression', false, 'REQUIRED_FIELD')
-	}
-
-	validateUnits(adUnits, dirty) {
-		const isValid = !!adUnits.length
-		this.props.validate(
-			'adUnits',
-			{
-				isValid: isValid,
-				err: { msg: 'ERR_ADUNITS_REQIURED' },
-				dirty: dirty
-			})
 	}
 
 	validateAndUpdateValidator = (dirty, index, key, update) => {
@@ -227,7 +217,7 @@ class CampaignFinance extends Component {
 		const errMin = invalidFields['minPerImpression']
 		const errFrom = invalidFields['activeFrom']
 		const errTo = invalidFields['withdrawPeriodStart']
-		const impressions = getTotalImpressions({depositAmount, minPerImpression})
+		const impressions = getTotalImpressions({ depositAmount, minPerImpression, t })
 
 		return (
 			<div>
@@ -266,10 +256,7 @@ class CampaignFinance extends Component {
 							fullWidth
 							type='text'
 							required
-							label={'Campaign '
-								+ t('depositAmount', { isProp: true, args: ['DAI'] })
-								+ ` Available on identity ${identityBalanceDai} DAI`
-							}
+							label={t('DEPOSIT_AMOUNT_LABEL', { args: [t(identityBalanceDai), 'DAI'] })}
 							name='depositAmount'
 							value={depositAmount}
 							onChange={(ev) =>
@@ -292,7 +279,7 @@ class CampaignFinance extends Component {
 							fullWidth
 							type='text'
 							required
-							label={'CPM' + t('CPM_LABEL ', { args: ['DAI'] }) + impressions }
+							label={t('CPM_LABEL', { args: [impressions] })}
 							name='minPerImpression'
 							value={minPerImpression}
 							onChange={(ev) =>
@@ -306,17 +293,17 @@ class CampaignFinance extends Component {
 							helperText={
 								(errMin && !!errMin.dirty)
 									? errMin.errMsg
-									: t('MIN_PER_IMPRESSION_HELPER_TXT')
+									: t('CPM_HELPER_TXT')
 							}
 						/>
-					</Grid>			
+					</Grid>
 					<Grid item sm={12} md={6}>
 						<DateTimePicker
 							emptyLabel={t('SET_CAMPAIGN_START')}
 							disablePast
 							fullWidth
 							calendarIcon
-							label={t('CAMPAIGN_STARTS', { isProp: true })}
+							label={t('CAMPAIGN_STARTS')}
 							minDate={now}
 							maxDate={to}
 							onChange={(val) => {
@@ -330,14 +317,14 @@ class CampaignFinance extends Component {
 									: t('CAMPAIGN_STARTS_FROM_HELPER_TXT')
 							}
 						/>
-					</Grid>	
+					</Grid>
 					<Grid item sm={12} md={6}>
 						<DateTimePicker
 							emptyLabel={t('SET_CAMPAIGN_END')}
 							disablePast
 							fullWidth
 							calendarIcon
-							label={t('CAMPAIGN_ENDS', { isProp: true })}
+							label={t('CAMPAIGN_ENDS')}
 							minDate={from || now}
 							onChange={(val) =>
 								this.handleDates('withdrawPeriodStart', val.valueOf(), true)}
