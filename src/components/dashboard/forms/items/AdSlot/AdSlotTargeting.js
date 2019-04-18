@@ -40,10 +40,10 @@ const SourcesSelect = Object.keys(SOURCES)
 				source: key,
 				collection: SOURCES[key].collection,
 				target: { tag: '', score: 0 },
-				label: `TAG_LABEL_${key.toUpperCase()}`,
-				placeholder: `TAG_LABEL_${key.toUpperCase()}`
+				label: translate(`TARGET_LABEL_${key.toUpperCase()}`),
+				placeholder: translate(`TARGET_LABEL_${key.toUpperCase()}`)
 			},
-			label: `ADD_NEW_${key.toUpperCase()}_TARGET`
+			label: translate(`ADD_NEW_${key.toUpperCase()}_TARGET`)
 		}
 	})
 

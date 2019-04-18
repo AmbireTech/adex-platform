@@ -109,7 +109,7 @@ class AdSlotBasic extends Component {
 							helperText={
 								(errTitle && !!errTitle.dirty)
 									? errTitle.errMsg
-									: (nameHelperTxt || '')
+									: (t('TITLE_HELPER'))
 							}
 						/>
 					</Grid>
@@ -118,6 +118,7 @@ class AdSlotBasic extends Component {
 							fullWidth
 							type='text'
 							multiline
+							required
 							rows={3}
 							label={t('description', { isProp: true })}
 							value={description}
@@ -130,7 +131,7 @@ class AdSlotBasic extends Component {
 							helperText={
 								(errDescription && !!errDescription.dirty)
 									? errDescription.errMsg
-									: (descriptionHelperTxt || '')
+									: (t('DESCRIPTION_HELPER'))
 							}
 						/>
 					</Grid>
@@ -150,7 +151,7 @@ class AdSlotBasic extends Component {
 							helperText={
 								(errFallbackUrl && !!errFallbackUrl.dirty)
 									? errFallbackUrl.errMsg
-									: ''
+									: t('FALLBACKTARGETURL_HELPER')
 							}
 						/>
 					</Grid>

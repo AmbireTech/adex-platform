@@ -79,9 +79,7 @@ class AdUnitBasic extends Component {
 			t,
 			newItem,
 			invalidFields,
-			handleChange,
-			nameHelperTxt,
-			descriptionHelperTxt
+			handleChange
 		} = this.props
 		const { targetUrl, type, title, description } = newItem
 		const errTitle = invalidFields['title']
@@ -99,7 +97,7 @@ class AdUnitBasic extends Component {
 							fullWidth
 							type='text'
 							required
-							label={'Ad Unit ' + t('title', { isProp: true })}
+							label={t('title', { isProp: true })}
 							name='name'
 							value={title}
 							onChange={(ev) =>
@@ -111,7 +109,7 @@ class AdUnitBasic extends Component {
 							helperText={
 								(errTitle && !!errTitle.dirty)
 									? errTitle.errMsg
-									: (nameHelperTxt || '')
+									: (t('TITLE_HELPER'))
 							}
 						/>
 					</Grid>
@@ -119,6 +117,7 @@ class AdUnitBasic extends Component {
 						<TextField
 							fullWidth
 							type='text'
+							required
 							multiline
 							rows={3}
 							label={t('description', { isProp: true })}
@@ -132,7 +131,7 @@ class AdUnitBasic extends Component {
 							helperText={
 								(errDescription && !!errDescription.dirty)
 									? errDescription.errMsg
-									: (descriptionHelperTxt || '')
+									: (t('DESCRIPTION_HELPER'))
 							}
 						/>
 					</Grid>
