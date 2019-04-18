@@ -53,8 +53,13 @@ function getReadyCampaign(campaign, identity, Dai) {
 	newCampaign.nonce = bigNumberify(randomBytes(32)).toString()
 	newCampaign.adUnits = newCampaign.adUnits.map(unit => (new AdUnit(unit)).spec)
 	newCampaign.depositAmount = parseUnits(newCampaign.depositAmount, DAI.decimals).toString()
-	newCampaign.maxPerImpression = parseUnits(newCampaign.maxPerImpression, DAI.decimals).toString()
-	newCampaign.minPerImpression = parseUnits(newCampaign.minPerImpression, DAI.decimals).toString()
+
+	// NOTE: TEMP in UI its set per 1000 impressions (CPM)
+	newCampaign.minPerImpression = parseUnits(newCampaign.minPerImpression, DAI.decimals)
+		.div(bigNumberify(1000))
+		.toString()
+	newCampaign.maxPerImpression = newCampaign.minPerImpression
+
 	newCampaign.depositAsset = newCampaign.depositAsset || Dai.address
 	newCampaign.eventSubmission = {allow: [
 		{ uids: [newCampaign.creator, newCampaign.validators[0].id, newCampaign.validators[1].id] },

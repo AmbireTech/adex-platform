@@ -55,6 +55,16 @@ const PubValidatorsSrc = Object.keys(PubPlatformValidators).map(key => {
 	}
 })
 
+const getTotalImpressions = ({depositAmount, minPerImpression}) => {
+	if(!depositAmount) {
+		return 'DEPOSIT_NOT_SET'
+	} else if (!minPerImpression) {
+		return 'CPM_NOT_SET'
+	} else {
+		return utils.commify(Math.floor((depositAmount / minPerImpression) * 1000))
+	}
+}
+
 const validateCampaignDates = ({ created = Date.now(), withdrawPeriodStart, activeFrom }) => {
 	let error = null
 
@@ -71,21 +81,16 @@ const validateCampaignDates = ({ created = Date.now(), withdrawPeriodStart, acti
 	return { error }
 }
 
-const validateAmounts = ({ maxDeposit = 0, depositAmount, maxPerImpression, minPerImpression }) => {
+const validateAmounts = ({ maxDeposit = 0, depositAmount, minPerImpression }) => {
 	const maxDep = parseFloat(maxDeposit)
 	const dep = parseFloat(depositAmount)
-	const max = parseFloat(maxPerImpression)
 	const min = parseFloat(minPerImpression)
 
 	let error = null
 	if (dep && (dep > maxDep)) {
 		error = { message: 'ERR_INSUFFICIENT_IDENTITY_BALANCE', prop: 'depositAmount' }
-	} else if (min && max && (min > max)) {
-		error = { message: 'ERR_MIN_OVER_MAX', prop: 'maxPerImpression' }
-	} else if (dep && (dep < max)) {
-		error = { message: 'ERR_MAX_IMPR_OVER_DEPOSIT', prop: 'maxPerImpression' }
 	} if (dep && (dep < min)) {
-		error = { message: 'ERR_MIN_IMPR_OVER_DEPOSIT', prop: 'maxPerImpression' }
+		error = { message: 'ERR_CPM_OVER_DEPOSIT', prop: 'minPerImpression' }
 	}
 
 	return { error }
@@ -97,7 +102,6 @@ class CampaignFinance extends Component {
 		this.validateAndUpdateValidator(false, 0, newItem.validators[0])
 		this.validateAndUpdateValidator(false, 1, newItem.validators[1])
 		this.validateAmount(newItem.depositAmount, 'depositAmount', false, 'REQUIRED_FIELD')
-		this.validateAmount(newItem.maxPerImpression, 'maxPerImpression', false, 'REQUIRED_FIELD')
 		this.validateAmount(newItem.minPerImpression, 'minPerImpression', false, 'REQUIRED_FIELD')
 	}
 
@@ -156,10 +160,9 @@ class CampaignFinance extends Component {
 
 			const { identityBalanceDai } = account.stats.formated
 			const depositAmount = (prop === 'depositAmount') ? value : newItem.depositAmount
-			const maxPerImpression = (prop === 'maxPerImpression') ? value : newItem.maxPerImpression
 			const minPerImpression = (prop === 'minPerImpression') ? value : newItem.minPerImpression
 
-			const result = validateAmounts({ maxDeposit: identityBalanceDai, depositAmount, maxPerImpression, minPerImpression })
+			const result = validateAmounts({ maxDeposit: identityBalanceDai, depositAmount, minPerImpression })
 
 			this.props.validate(
 				prop,
@@ -209,7 +212,6 @@ class CampaignFinance extends Component {
 			validators,
 			depositAmount,
 			minPerImpression,
-			maxPerImpression,
 			depositAsset,
 			activeFrom,
 			withdrawPeriodStart
@@ -223,9 +225,9 @@ class CampaignFinance extends Component {
 
 		const errDepAmnt = invalidFields['depositAmount']
 		const errMin = invalidFields['minPerImpression']
-		const errMax = invalidFields['maxPerImpression']
 		const errFrom = invalidFields['activeFrom']
 		const errTo = invalidFields['withdrawPeriodStart']
+		const impressions = getTotalImpressions({depositAmount, minPerImpression})
 
 		return (
 			<div>
@@ -259,7 +261,7 @@ class CampaignFinance extends Component {
 							name='follower-validator'
 						/>
 					</Grid>
-					<Grid item sm={12}>
+					<Grid item sm={12} md={6}>
 						<TextField
 							fullWidth
 							type='text'
@@ -290,7 +292,7 @@ class CampaignFinance extends Component {
 							fullWidth
 							type='text'
 							required
-							label={'Campaign ' + t('minPerImpression', { isProp: true, args: ['DAI'] })}
+							label={'CPM' + t('CPM_LABEL ', { args: ['DAI'] }) + impressions }
 							name='minPerImpression'
 							value={minPerImpression}
 							onChange={(ev) =>
@@ -307,31 +309,7 @@ class CampaignFinance extends Component {
 									: t('MIN_PER_IMPRESSION_HELPER_TXT')
 							}
 						/>
-					</Grid>
-					<Grid item sm={12} md={6}>
-						<TextField
-							fullWidth
-							type='text'
-							required
-							label={'Campaign ' + t('maxPerImpression', { isProp: true, args: ['DAI'] })}
-							name='maxPerImpression'
-							value={maxPerImpression}
-							onChange={(ev) =>
-								handleChange('maxPerImpression', ev.target.value)}
-							onBlur={() =>
-								this.validateAmount(maxPerImpression, 'maxPerImpression', true)}
-							onFocus={() =>
-								this.validateAmount(maxPerImpression, 'maxPerImpression', false)}
-							error={errMax && !!errMax.dirty}
-							maxLength={120}
-							helperText={
-								(errMax && !!errMax.dirty)
-									? errMax.errMsg
-									: t('MAX_PER_IMPRESSION_HELPER_TXT')
-							}
-						/>
-					</Grid>
-			
+					</Grid>			
 					<Grid item sm={12} md={6}>
 						<DateTimePicker
 							emptyLabel={t('SET_CAMPAIGN_START')}
