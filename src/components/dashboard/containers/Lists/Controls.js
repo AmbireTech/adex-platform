@@ -71,7 +71,7 @@ const pagination = (props) => {
 				className={classnames(classes.flexItem, classes.pageSize)}
 			>
 				<Typography noWrap id="page-size">{t('LIST_CONTROL_LABEL_PAGE_SIZE')} <strong>{pageSize}</strong> </Typography>
-				<Slider aria-labelledby="page-size" min={5} max={25} step={5} value={pageSize} onChange={changePageSize} />
+				<Slider style={{ padding: '22px 0' }} aria-labelledby="page-size" min={5} max={25} step={5} value={pageSize} onChange={changePageSize} />
 			</div>
 		</div>
 	)
