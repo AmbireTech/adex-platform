@@ -19,7 +19,8 @@ const Core = new Interface(AdExCore.abi)
 const ERC20 = new Interface(DAI.abi)
 const feeAmountApprove = '150000000000000000'
 const feeAmountOpen = '160000000000000000'
-const  timeframe = 15000 // 1 event per 15 seconds
+const timeframe = 15000 // 1 event per 15 seconds
+const VALID_UNTIL_COEFFICIENT = 1.5
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
@@ -37,11 +38,18 @@ function toEthereumChannel(channel) {
 	})
 }
 
+function getValidUntil(created, withdrawPeriodStart) {
+	const period = withdrawPeriodStart - created
+	const validUntil = withdrawPeriodStart + (period * VALID_UNTIL_COEFFICIENT)
+
+	return Math.floor(validUntil / 1000)
+}
+
 function getReadyCampaign(campaign, identity, Dai) {
 	const newCampaign = new Campaign(campaign)
 	newCampaign.creator = identity.address
 	newCampaign.created = Date.now()
-	newCampaign.validUntil = Math.floor(newCampaign.validUntil / 1000)
+	newCampaign.validUntil = getValidUntil(newCampaign.created, newCampaign.withdrawPeriodStart)
 	newCampaign.nonce = bigNumberify(randomBytes(32)).toString()
 	newCampaign.adUnits = newCampaign.adUnits.map(unit => (new AdUnit(unit)).spec)
 	newCampaign.depositAmount = parseUnits(newCampaign.depositAmount, DAI.decimals).toString()

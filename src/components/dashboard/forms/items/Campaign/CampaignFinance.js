@@ -55,16 +55,17 @@ const PubValidatorsSrc = Object.keys(PubPlatformValidators).map(key => {
 	}
 })
 
-
-const validateCampaignDates = ({ created = Date.now(), withdrawPeriodStart, validUntil }) => {
+const validateCampaignDates = ({ created = Date.now(), withdrawPeriodStart, activeFrom }) => {
 	let error = null
 
-	if (withdrawPeriodStart && validUntil && (withdrawPeriodStart >= validUntil)) {
-		error = { message: 'ERR_VALID_UNTIL_BEFORE_START', prop: 'validUntil' }
+	if (withdrawPeriodStart && activeFrom && (withdrawPeriodStart <= activeFrom)) {
+		error = { message: 'ERR_END_BEFORE_START', prop: 'activeFrom' }
 	} else if (withdrawPeriodStart && (withdrawPeriodStart < created)) {
-		error = { message: 'ERR_WITHDRAW_PERIOD_IN_PAST', prop: 'withdrawPeriodStart' }
-	} else if (validUntil && (validUntil < created)) {
-		error = { message: 'ERR_VALID_UNTIL_IN_PAST', prop: 'validUntil' }
+		error = { message: 'ERR_END_BEFORE_NOW', prop: 'withdrawPeriodStart' }
+	} else if (activeFrom && (activeFrom < created)) {
+		error = { message: 'ERR_START_BEFORE_NOW', prop: 'activeFrom' }
+	} else if (activeFrom && !withdrawPeriodStart) {
+		error = { message: 'ERR_NO_END', prop: 'withdrawPeriodStart' }
 	}
 
 	return { error }
@@ -79,8 +80,7 @@ const validateAmounts = ({ maxDeposit = 0, depositAmount, maxPerImpression, minP
 	let error = null
 	if (dep && (dep > maxDep)) {
 		error = { message: 'ERR_INSUFFICIENT_IDENTITY_BALANCE', prop: 'depositAmount' }
-	}
-	else if (min && max && (min > max)) {
+	} else if (min && max && (min > max)) {
 		error = { message: 'ERR_MIN_OVER_MAX', prop: 'maxPerImpression' }
 	} else if (dep && (dep < max)) {
 		error = { message: 'ERR_MAX_IMPR_OVER_DEPOSIT', prop: 'maxPerImpression' }
@@ -175,11 +175,11 @@ class CampaignFinance extends Component {
 
 		const { newItem, handleChange } = this.props
 		const withdrawPeriodStart = (prop === 'withdrawPeriodStart') ? value : newItem.withdrawPeriodStart
-		const validUntil = (prop === 'validUntil') ? value : newItem.validUntil
-		const result = validateCampaignDates({ withdrawPeriodStart, validUntil, created: newItem.created })
+		const activeFrom = (prop === 'activeFrom') ? value : newItem.activeFrom
+		const result = validateCampaignDates({ withdrawPeriodStart, activeFrom, created: newItem.created })
 
 		this.props.validate(
-			'withdrawPeriodStart',
+			'activeFrom',
 			{
 				isValid: !result.error,
 				err: { msg: result.error ? result.error.message : '' },
@@ -187,7 +187,7 @@ class CampaignFinance extends Component {
 			})
 
 		this.props.validate(
-			'validUntil',
+			'withdrawPeriodStart',
 			{
 				isValid: !result.error,
 				err: { msg: result.error ? result.error.message : '' },
@@ -211,21 +211,21 @@ class CampaignFinance extends Component {
 			minPerImpression,
 			maxPerImpression,
 			depositAsset,
-			validUntil,
+			activeFrom,
 			withdrawPeriodStart
 		} = newItem
 
 		const { identityBalanceDai } = account.stats.formated
 
-		const from = withdrawPeriodStart || undefined
-		const to = validUntil || undefined
+		const from = activeFrom || undefined
+		const to = withdrawPeriodStart || undefined
 		const now = moment.date().valueOf()
 
 		const errDepAmnt = invalidFields['depositAmount']
 		const errMin = invalidFields['minPerImpression']
 		const errMax = invalidFields['maxPerImpression']
-		const errFrom = invalidFields['withdrawPeriodStart']
-		const errTo = invalidFields['validUntil']
+		const errFrom = invalidFields['activeFrom']
+		const errTo = invalidFields['withdrawPeriodStart']
 
 		return (
 			<div>
@@ -331,39 +331,44 @@ class CampaignFinance extends Component {
 							}
 						/>
 					</Grid>
+			
 					<Grid item sm={12} md={6}>
 						<DateTimePicker
+							emptyLabel={t('SET_CAMPAIGN_START')}
+							disablePast
 							fullWidth
 							calendarIcon
-							label={t('withdrawPeriodStart', { isProp: true })}
+							label={t('CAMPAIGN_STARTS', { isProp: true })}
 							minDate={now}
 							maxDate={to}
 							onChange={(val) => {
-								this.handleDates('withdrawPeriodStart', val.valueOf(), true)
+								this.handleDates('activeFrom', val.valueOf(), true)
 							}}
-							value={from}
+							value={from || null}
 							error={errFrom && !!errFrom.dirty}
 							helperText={
 								(errFrom && !!errFrom.dirty)
 									? errFrom.errMsg
-									: t('WITHDRAW_START_PERIOD_HELPER_TXT')
+									: t('CAMPAIGN_STARTS_FROM_HELPER_TXT')
 							}
 						/>
-					</Grid>
+					</Grid>	
 					<Grid item sm={12} md={6}>
 						<DateTimePicker
+							emptyLabel={t('SET_CAMPAIGN_END')}
+							disablePast
 							fullWidth
 							calendarIcon
-							label={t('validUntil', { isProp: true })}
+							label={t('CAMPAIGN_ENDS', { isProp: true })}
 							minDate={from || now}
 							onChange={(val) =>
-								this.handleDates('validUntil', val.valueOf(), true)}
-							value={to}
+								this.handleDates('withdrawPeriodStart', val.valueOf(), true)}
+							value={to || null}
 							error={errTo && !!errTo.dirty}
 							helperText={
 								(errTo && !!errTo.dirty)
 									? errTo.errMsg
-									: t('VALID_UNTIL_HELPER_TXT')
+									: t('CAMPAIGN_ENDS_HELPER_TXT')
 							}
 						/>
 					</Grid>
