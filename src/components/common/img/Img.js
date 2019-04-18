@@ -113,9 +113,8 @@ class Img extends Component {
 		this.displayImage.src = image
 	}
 
-	renderFullscreenDialog() {
-		const { allowFullscreen, className, alt, classes, t, ...other } = this.props
-
+	fullScreenBtn() {
+		const { classes } = this.props
 		return (
 			<span>
 				<Button
@@ -127,37 +126,46 @@ class Img extends Component {
 				>
 					<FullscreenIcon />
 				</Button>
-				<Dialog
-					open={this.state.active}
-					type={this.props.type || 'normal'}
-					maxWidth={false}
-					onClose={this.handleToggle}
-					classes={{ paper: classes.dialog }}
-				>
-					<DialogContent className={classes.dialogImageParent}>
-						<img
-							alt={alt}
-							src={this.state.imgSrc}
-							draggable='false'
-							className={classnames(classes.dialogImage, classes.imgLoading)}
-							onDragStart={(event) => event.preventDefault() /*Firefox*/}
-						/>
-					</DialogContent>
-					<DialogActions>
-						<Button
-							onClick={this.handleToggle}
-							color='primary'
-						>
-							{t('CLOSE')}
-						</Button>
-					</DialogActions>
-				</Dialog>
+				{this.renderFullscreenDialog()}
 			</span>
 		)
 	}
 
+	renderFullscreenDialog() {
+		const { t, alt, classes, type } = this.props
+		const { active, imgSrc } = this.state
+
+		return (
+			<Dialog
+				open={active}
+				type={type || 'normal'}
+				maxWidth={false}
+				onClose={this.handleToggle}
+				classes={{ paper: classes.dialog }}
+			>
+				<DialogContent className={classes.dialogImageParent}>
+					<img
+						alt={alt}
+						src={imgSrc}
+						draggable='false'
+						className={classnames(classes.dialogImage, classes.imgLoading)}
+						onDragStart={(event) => event.preventDefault() /*Firefox*/}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={this.handleToggle}
+						color='primary'
+					>
+						{t('CLOSE')}
+					</Button>
+				</DialogActions>
+			</Dialog>
+		)
+	}
+
 	render() {
-		const { alt, allowFullscreen, className, classes, t, ...other } = this.props
+		const { alt, allowFullscreen, className, classes, fullScreenOnClick } = this.props
 		return (
 			this.state.imgSrc ?
 				<span className={classnames(classes.imgParent, className)}>
@@ -167,8 +175,10 @@ class Img extends Component {
 						draggable='false'
 						className={classnames(classes.imgLoading, className)}
 						onDragStart={(event) => event.preventDefault() /*Firefox*/}
+						onClick={fullScreenOnClick && (() => { console.log('click'); this.handleToggle() })}
 					/>
-					{allowFullscreen ? this.renderFullscreenDialog() : null}
+					{allowFullscreen && this.fullScreenBtn()}
+					{fullScreenOnClick && this.renderFullscreenDialog()}
 				</span>
 				:
 				<span className={classnames(classes.imgLoading, className)}>
@@ -185,7 +195,9 @@ class Img extends Component {
 Img.propTypes = {
 	src: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 	fallbackSrc: PropTypes.string,
-	alt: PropTypes.string
+	alt: PropTypes.string,
+	allowFullscreen: PropTypes.bool,
+	fullScreenOnClick: PropTypes.bool
 }
 
 export default Translate(withStyles(styles)(Img))
