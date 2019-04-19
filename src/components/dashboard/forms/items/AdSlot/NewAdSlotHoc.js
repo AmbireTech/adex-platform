@@ -39,15 +39,15 @@ export default function NewAdUnitHoc(Decorated) {
 			const { actions, newItem, account } = this.props
 			newItem.owner = account.wallet.address
 
-			actions.addSlot(newItem, 'AdSlot', account.wallet.authSig)
-			actions.resetNewItem('AdSlot')
+			actions.addSlot(newItem, 'AdSlot', account.wallet.authSig)			
 
 			this.onSave()
+			actions.resetNewItem('AdSlot')
 		}
 
-		cancel = () => {
-			this.props.actions.resetNewItem('AdSlot')
+		cancel = () => {			
 			this.onSave()
+			this.props.actions.resetNewItem('AdSlot')
 		}
 
 		render() {
