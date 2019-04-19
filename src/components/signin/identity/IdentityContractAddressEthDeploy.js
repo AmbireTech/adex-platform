@@ -6,6 +6,7 @@ import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import {
 	validEmail,
 	validQuickAccountCoupon
@@ -14,7 +15,7 @@ import { checkAccessCode } from 'services/adex-relayer/actions'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
-const ACCESS_CODE_CHECK = !process.env.ACCESS_CODE_CHECK
+const ACCESS_CODE_CHECK = process.env.ACCESS_CODE_CHECK === 'true'
 
 class IdentityContractAddressEthDeploy extends Component {
 
@@ -32,19 +33,19 @@ class IdentityContractAddressEthDeploy extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		const currIdentity = this.props.identity.identityAddr
+		const currIdentity = this.props.identity.identityData
 		if (!!currIdentity &&
-			(currIdentity !== prevProps.identity.identityAddr)) {
+			(currIdentity.address !== (prevProps.identity.identityData || {}).address)) {
 			this.validateIdentity()
 		}
 	}
 
 	validateIdentity = () => {
 		const { validate, identity } = this.props
-		const { identityAddr } = identity
+		const { identityData } = identity
 
-		validate('identityAddr', {
-			isValid: !!identityAddr,
+		validate('identityData', {
+			isValid: !!identityData,
 			err: { msg: 'ERR_IDENTITY_NOT_GENERATED' },
 			dirty: false
 		})
@@ -108,17 +109,17 @@ class IdentityContractAddressEthDeploy extends Component {
 
 	getIdentityContractData = async () => {
 		const { actions, identity } = this.props
-		const { wallet } = identity
+		const { wallet, email } = identity
 
-		actions.getFullIdentityTxData({
+		actions.getRegisterExpectedIdentity({
 			owner: wallet.address,
-			privLevel: 3
+			mail: email
 		})
 	}
 
 	render() {
-		const { t, identity, handleChange, invalidFields } = this.props
-		const { identityAddr } = identity
+		const { t, identity, handleChange, invalidFields, waitingExpected, classes } = this.props
+		const { identityData } = identity
 		// Errors
 		const { email, emailCheck, code } = invalidFields
 
@@ -208,19 +209,24 @@ class IdentityContractAddressEthDeploy extends Component {
 						<Typography paragraph variant='body1'>
 							{t('GENERATE_FULL_IDENTITY_INFO_ADDRESS')}
 						</Typography>
-						{!identityAddr
+						{!identityData
 							?
-							<Button
-								variant='contained'
-								color='primary'
-								onClick={this.getIdentityContractData}
-							>
-								{t('GENERATE_IDENTITY_ADDRESS')}
-							</Button>
+							<span className={classes.buttonProgressWrapper}>
+								<Button
+									variant='contained'
+									color='primary'
+									onClick={this.getIdentityContractData}
+									disabled={waitingExpected}
+								>
+									{t('GENERATE_IDENTITY_ADDRESS')}
+								</Button>
+								{waitingExpected && <CircularProgress size={24} className={classes.buttonProgress} />}
+							</span >
+
 							:
 							<div>
 								<Typography paragraph variant='subtitle2' color='primary'>
-									{t('IDENTITY_CONTRACT_IS', { args: [identityAddr] })}
+									{t('IDENTITY_CONTRACT_IS', { args: [identityData.address] })}
 								</Typography>
 							</div>
 						}
