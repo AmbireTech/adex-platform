@@ -72,6 +72,7 @@ class ItemsList extends Component {
 							{Object.keys(selectedItems).length || ''}
 						</TableCell>
 					}
+					<TableCell> {t('PROP_STATUS')} </TableCell>
 					<TableCell> {t('PROP_DEPOSIT')} </TableCell>
 					<TableCell> {t('PROP_CPM')} </TableCell>
 					<TableCell> {t('PROP_CREATED')} </TableCell>
@@ -159,6 +160,7 @@ class ItemsList extends Component {
 						/>
 					</TableCell>
 				}
+				<TableCell> {(item.status || {}).name} </TableCell>
 				<TableCell>	{formatTokenAmount(item.depositAmount, 18, true)} DAI </TableCell>
 				<TableCell>
 					{formatTokenAmount(
