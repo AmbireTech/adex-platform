@@ -113,3 +113,15 @@ export const sendOpenChannel = ({ txnsRaw, signatures, channel, identityAddr }) 
 		headers: { 'Content-Type': 'application/json' }
 	}).then(processResponse)
 }
+
+export const registerExpectedIdentity = ({ owner, mail }) => {
+	return requester.fetch({
+		route: 'identity/register-expected',
+		method: 'POST',
+		body: JSON.stringify({
+			owner,
+			mail
+		}),
+		headers: { 'Content-Type': 'application/json' }
+	}).then(processResponse)
+}
