@@ -61,7 +61,8 @@ const getTotalImpressions = ({ depositAmount, minPerImpression, t }) => {
 	} else if (!minPerImpression) {
 		return t('CPM_NOT_SET')
 	} else {
-		const impressions = utils.commify(Math.floor((depositAmount / minPerImpression) * 1000))
+		const impressions = utils.commify(
+			Math.floor((parseFloat(depositAmount) / parseFloat(minPerImpression)) * 1000))
 		return t('TOTAL_IMPRESSIONS', { args: [impressions] })
 	}
 }
@@ -217,7 +218,9 @@ class CampaignFinance extends Component {
 		const errMin = invalidFields['minPerImpression']
 		const errFrom = invalidFields['activeFrom']
 		const errTo = invalidFields['withdrawPeriodStart']
-		const impressions = getTotalImpressions({ depositAmount, minPerImpression, t })
+		const impressions = !errDepAmnt && !errMin
+			? getTotalImpressions({ depositAmount, minPerImpression, t })
+			: ''
 
 		return (
 			<div>

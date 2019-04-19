@@ -95,13 +95,11 @@ class CampaignFormPreview extends Component {
 					/>
 					<PropRow
 						left={t('depositAmount', { isProp: true })}
-						right={formatTokenAmount(parseUnits(depositAmount, 18), 18) + ' DAI'}
+						right={depositAmount + ' DAI'}
 					/>
 					<PropRow
 						left={t('CPM', { isProp: true })}
-						right={formatTokenAmount(
-							bigNumberify(parseUnits(minPerImpression, 18)).mul(1000),
-							18, true) + ' DAI'}
+						right={minPerImpression + ' DAI'}
 					/>
 					{/* <PropRow
 						left={t('maxPerImpression', { isProp: true })}
