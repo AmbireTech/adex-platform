@@ -34,13 +34,21 @@ export async function getAccountStats({ account }) {
 		Identity
 	} = await getEthers(wallet.authType)
 
+	const { status = {} } = identity
 	const identityContract = new Contract(identity.address, Identity.abi, provider)
+	let privilegesAction
+	try {
+		await identityContract.deployed()
+		privilegesAction = identityContract.privileges(wallet.address)
+	} catch {
+		privilegesAction = status.type || 'Not Deployed'
+	}
 
 	const calls = [
 		provider.getBalance(wallet.address),
 		Dai.balanceOf(wallet.address),
 		Dai.balanceOf(identity.address),
-		identityContract.privileges(wallet.address)
+		privilegesAction
 	]
 
 	const [
@@ -66,7 +74,7 @@ export async function getAccountStats({ account }) {
 		walletBalanceEth: formatEther(walletBalanceEth),
 		walletBalanceDai: formatUnits(walletBalanceDai, 18),
 		identityAddress: identity.address,
-		identityBalanceDai: formatUnits(identityBalanceDai, 18)
+		identityBalanceDai:  formatUnits(identityBalanceDai, 18)
 	}
 
 	return {
