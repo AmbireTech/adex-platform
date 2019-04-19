@@ -32,21 +32,24 @@ class GrantLogin extends Component {
 				wallet.email = email
 				wallet.password = password
 				wallet.authType = AUTH_TYPES.GRANT.name
-				wallet.identity = walletData.identity
+				wallet.identity = {
+					address: walletData.identity,
+					privileges: walletData.identityPrivileges
+				}
 			}
+
+			handleChange('wallet', wallet)
+			handleChange('walletAddr', wallet.address)
+			handleChange('identityData', wallet.identity)
+
+			validate('wallet', {
+				isValid: !!wallet.address,
+				err: { msg: 'ERR_LOCAL_WALLET_LOGIN' },
+				dirty: dirty
+			})
 		}
-
-		handleChange('wallet', wallet)
-		handleChange('walletAddr', wallet.address)
-		handleChange('identityAddr', wallet.identity)
-
-		validate('wallet', {
-			isValid: !!wallet.address,
-			err: { msg: 'ERR_LOCAL_WALLET_LOGIN' },
-			dirty: dirty
-		})
 	}
-
+	
 	render() {
 		const { t, identity, handleChange, invalidFields } = this.props
 		// Errors
