@@ -2,7 +2,10 @@ import * as types from 'constants/actionTypes'
 import { grantAccount } from 'services/adex-relayer/actions'
 import { updateSpinner } from './uiActions'
 import { deployIdentityContract } from 'services/smart-contracts/actions/identity'
-import { registerFullIdentity } from 'services/adex-relayer/actions'
+import {
+	registerFullIdentity,
+	registerExpectedIdentity
+} from 'services/adex-relayer/actions'
 import { translate } from 'services/translations/translations'
 import { addToast } from './uiActions'
 import {
@@ -52,32 +55,28 @@ export function getGrantAccount({ walletAddr, email, password, coupon }) {
 	return async function (dispatch) {
 		updateSpinner('getting-grant-identity', true)(dispatch)
 		try {
-			const identityInfo = await grantAccount({
+			const identityData = await grantAccount({
 				ownerAddr: walletAddr,
 				mail: email,
 				couponCode: coupon
 			})
 
-			const identity = identityInfo.identityAddr
+			// TODO: validate identityData
 
-			if (identityInfo) {
+			if (identityData) {
 				addDataToWallet({
 					email,
 					password,
 					dataKey: 'identity',
-					dataValue: identity
+					dataValue: identityData.address
 				})
 				addDataToWallet({
 					email,
 					password,
-					dataKey: 'identityPrivileges',
-					dataValue: identityInfo.identityPrivileges
+					dataKey: 'privileges',
+					dataValue: identityData.privileges
 				})
-				return dispatch({
-					type: types.UPDATE_IDENTITY,
-					prop: 'identityAddr',
-					value: identity
-				})
+				return updateIdentity('identityData', identityData)(dispatch)
 			}
 		} catch (err) {
 			console.error('ERR_REGISTER_GRANT_IDENTITY', err)
@@ -95,7 +94,7 @@ export function getGrantAccount({ walletAddr, email, password, coupon }) {
 
 export function deployFullIdentity({ wallet, email, identityTxData, identityAddr }) {
 	return async function (dispatch) {
-		updateSpinner('getting-grant-identity', true)(dispatch)
+		updateSpinner('getting-full-identity', true)(dispatch)
 		try {
 			const tx = await deployIdentityContract({
 				...identityTxData,
@@ -129,7 +128,7 @@ export function deployFullIdentity({ wallet, email, identityTxData, identityAddr
 				timeout: 20000
 			})(dispatch)
 		}
-		updateSpinner('getting-grant-identity', true)(dispatch)
+		updateSpinner('getting-full-identity', false)(dispatch)
 
 	}
 }
@@ -149,5 +148,24 @@ export function getFullIdentityTxData({ owner, privLevel }) {
 				timeout: 20000
 			})(dispatch)
 		}
+	}
+}
+
+export function getRegisterExpectedIdentity({ owner, mail }) {
+	return async function (dispatch) {
+		updateSpinner('getting-expected-identity', true)(dispatch)
+		try {
+			const identityData = await registerExpectedIdentity({ owner, mail })
+			updateIdentity('identityData', identityData)(dispatch)
+		} catch (err) {
+			console.error('ERR_REGISTERING_EXPECTED_IDENTITY', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_REGISTERING_EXPECTED_IDENTITY',
+					{ args: [err] }),
+				timeout: 20000
+			})(dispatch)
+		}
+		updateSpinner('getting-expected-identity', false)(dispatch)
 	}
 }
