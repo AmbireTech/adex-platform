@@ -85,7 +85,7 @@ const convertItemToJSON = (item) => {
 
 export const getAdUnits = ({ authSig }) => {
 	return requester.fetch({
-		route: 'adunits',
+		route: 'units',
 		method: 'GET',
 		authSig
 	}).then(processResponse)
@@ -93,7 +93,7 @@ export const getAdUnits = ({ authSig }) => {
 
 export const postAdUnit = ({ unit, authSig }) => {
 	return requester.fetch({
-		route: 'adunits',
+		route: 'units',
 		method: 'POST',
 		body: convertItemToJSON(unit),
 		authSig,
@@ -103,7 +103,7 @@ export const postAdUnit = ({ unit, authSig }) => {
 
 export const updateAdUnit = ({ unit, authSig }) => {
 	return requester.fetch({
-		route: 'adunits',
+		route: 'units',
 		method: 'PUT',
 		body: convertItemToJSON(unit),
 		authSig,
@@ -113,7 +113,7 @@ export const updateAdUnit = ({ unit, authSig }) => {
 
 export const getAdSlots = ({ authSig }) => {
 	return requester.fetch({
-		route: 'adslots',
+		route: 'slots',
 		method: 'GET',
 		authSig
 	}).then(processResponse)
@@ -121,7 +121,7 @@ export const getAdSlots = ({ authSig }) => {
 
 export const postAdSlot = ({ slot, authSig }) => {
 	return requester.fetch({
-		route: 'adslots',
+		route: 'slots',
 		method: 'POST',
 		body: convertItemToJSON(slot),
 		authSig,
@@ -131,7 +131,7 @@ export const postAdSlot = ({ slot, authSig }) => {
 
 export const updateAdSlot = ({ slot, authSig }) => {
 	return requester.fetch({
-		route: 'adslots',
+		route: 'slots',
 		method: 'PUT',
 		body: convertItemToJSON(slot),
 		authSig,
