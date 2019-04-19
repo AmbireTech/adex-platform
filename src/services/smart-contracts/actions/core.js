@@ -68,7 +68,7 @@ function getReadyCampaign(campaign, identity, Dai) {
 		]
 	}
 
-	newCampaign.status = { type: 'pending' }
+	newCampaign.status = { name: 'Pending', lastChecked: Date.now() }
 
 	return newCampaign
 }

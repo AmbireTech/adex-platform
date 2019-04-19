@@ -273,6 +273,16 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 												<Grid item xs={12} >
 													<TextField
 														// type='text'
+														value={item.status.name}
+														label={t('status', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
 														value={item.creator}
 														label={t('creator', { isProp: true })}
 														disabled
