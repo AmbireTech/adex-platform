@@ -6,7 +6,7 @@ import { translate } from 'services/translations/translations'
 const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
 const requester = new Requester({ baseUrl: ADEX_MARKET_HOST })
 
-const processResponse = (res) => {
+const processResponse = (res, dontThrow) => {
 	if (res.status >= 200 && res.status < 400) {
 		return res.json()
 	}
@@ -17,16 +17,18 @@ const processResponse = (res) => {
 			if (res.status === 401 || res.status === 403) {
 				logOut()
 			}
-			throw new Error(
-				translate('SERVICE_ERROR_MSG',
-					{
-						args: [
-							res.url,
-							res.status,
-							res.statusText,
-							text
-						]
-					}))
+			if (!dontThrow) {
+				throw new Error(
+					translate('SERVICE_ERROR_MSG',
+						{
+							args: [
+								res.url,
+								res.status,
+								res.statusText,
+								text
+							]
+						}))
+			}
 		})
 }
 
@@ -60,7 +62,7 @@ export const checkSession = ({ authSig, skipErrToast }) => {
 		method: 'GET',
 		authSig,
 		skipErrToast
-	}).then(processResponse)
+	}).then((res) => processResponse(res, true))
 }
 
 export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
