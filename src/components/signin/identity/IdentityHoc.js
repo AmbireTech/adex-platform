@@ -31,19 +31,17 @@ export default function IdentityHoc(Decorated) {
 		save = () => {
 			const { identity, actions } = this.props
 			const {
-				identityAddr,
 				wallet,
-				email
+				email,
+				identityData
 			} = identity
 
 			const newWallet = { ...wallet }
-			const accountIdentity = {
-				address: identityAddr
-			}
 			actions.createSession({
-				identity: accountIdentity,
+				identity: identityData,
 				wallet: newWallet,
-				email
+				email,
+				registerExpected: !identityData
 			})
 		}
 
@@ -54,7 +52,7 @@ export default function IdentityHoc(Decorated) {
 		}
 
 		render() {
-			const { identity, spinner, ...rest } = this.props
+			const { identity, spinner, waitingExpected, ...rest } = this.props
 
 			return (
 				<Decorated
@@ -64,6 +62,7 @@ export default function IdentityHoc(Decorated) {
 					handleChange={this.handleChange}
 					cancel={this.cancel}
 					waiting={spinner}
+					waitingExpected={waitingExpected}
 				/>
 			)
 		}
@@ -80,7 +79,8 @@ export default function IdentityHoc(Decorated) {
 		return {
 			account: persist.account,
 			identity: memory.identity,
-			spinner: memory.spinners['creating-session']
+			spinner: memory.spinners['creating-session'],
+			waitingExpected: memory.spinners['getting-expected-identity']
 		}
 	}
 
