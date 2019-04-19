@@ -37,15 +37,15 @@ export default function NewCampaignHoc(Decorated) {
 
 		save = () => {
 			const { actions, newItem, account } = this.props
-			actions.openCampaign({ campaign: newItem, account })
-			actions.resetNewItem('Campaign')
+			actions.openCampaign({ campaign: newItem, account })	
 
 			this.onSave()
+			actions.resetNewItem('Campaign')
 		}
 
-		cancel = () => {
-			this.props.actions.resetNewItem('Campaign')
+		cancel = () => {	
 			this.onSave()
+			this.props.actions.resetNewItem('Campaign')
 		}
 
 		render() {
