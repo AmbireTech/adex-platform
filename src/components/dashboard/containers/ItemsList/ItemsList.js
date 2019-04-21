@@ -72,6 +72,7 @@ class ItemsList extends Component {
 							{Object.keys(selectedItems).length || ''}
 						</TableCell>
 					}
+					<TableCell> {t('PROP_MEDIA')}</TableCell>
 					<TableCell> {t('PROP_STATUS')} </TableCell>
 					<TableCell> {t('PROP_DEPOSIT')} </TableCell>
 					<TableCell> {t('PROP_CPM')} </TableCell>
@@ -142,7 +143,8 @@ class ItemsList extends Component {
 			selectMode,
 			selectedItems,
 			onSelect,
-			noActions
+			noActions,
+			classes
 		} = this.props
 		return (
 			<TableRow
@@ -160,6 +162,14 @@ class ItemsList extends Component {
 						/>
 					</TableCell>
 				}
+				<TableCell>
+					<Img
+						fullScreenOnClick={true}
+						className={classnames(classes.cellImg)}
+						src={item.mediaUrl || (item.adUnits ? item.adUnits[0].mediaUrl || '' : '')}
+						alt={item.title}
+					/>
+				</TableCell>
 				<TableCell> {(item.status || {}).name} </TableCell>
 				<TableCell>	{formatTokenAmount(item.depositAmount, 18, true)} DAI </TableCell>
 				<TableCell>
