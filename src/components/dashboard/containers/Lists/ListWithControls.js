@@ -17,20 +17,21 @@ import InputLabel from '@material-ui/core/InputLabel'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
-
-
 import SearchIcon from '@material-ui/icons/Search'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import classnames from 'classnames'
 import Paper from '@material-ui/core/Paper'
 import Divider from '@material-ui/core/Divider'
+import { bigNumberify } from 'ethers/utils'
+
+const INT_STRING = /^[0-9]+$/
 
 const mapFilterProps = ({ filterProps = {}, t }) => {
 	return Object.keys(filterProps)
 		.map((key) => {
-			let prop = filterProps[key]
-			let label = prop.label || key
+			const prop = filterProps[key]
+			const label = prop.label || key
 			return {
 				label: t(label, { isProp: prop.labelIsProp || !prop.label, args: prop.labelArgs || [] }),
 				value: key
@@ -40,10 +41,12 @@ const mapFilterProps = ({ filterProps = {}, t }) => {
 
 const mapSortProperties = ({ sortProps = [], t }) => {
 	return sortProps.map((prop) => {
-		let label = prop.label || prop.value
+		const label = prop.label || prop.value
+		const value = ((prop.value !== null && prop.value !== undefined)
+			? prop.value : '').toString()
 
 		return {
-			value: ((prop.value !== null && prop.value !== undefined) ? prop.value : '').toString(),
+			value,
 			label: t(label, { isProp: !prop.label, args: prop.labelArgs || [] })
 		}
 	})
@@ -150,6 +153,12 @@ class ListWithControls extends Component {
 			filtered = filtered.sort((a, b) => {
 				let propA = a[sortProperty]
 				let propB = b[sortProperty]
+
+				if (INT_STRING.test(propA) && INT_STRING.test(propB)) {
+					propA = bigNumberify(propA)
+					propB = bigNumberify(propB)
+					return (propA.lt(propB) ? -1 : (propA.gt(propB) ? 1 : 0)) * sortOrder
+				}
 
 				return (propA < propB ? -1 : (propA > propB ? 1 : 0)) * sortOrder
 			})
