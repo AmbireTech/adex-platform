@@ -25,7 +25,9 @@ import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, } from 'components/das
 import {
 	SORT_PROPERTIES_ITEMS,
 	SORT_PROPERTIES_COLLECTION,
-	FILTER_PROPERTIES_ITEMS
+	FILTER_PROPERTIES_ITEMS,
+	FILTER_PROPERTIES_CAMPAIGN,
+	SORT_PROPERTIES_CAMPAIGN
 } from 'constants/misc'
 import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
@@ -106,9 +108,9 @@ class Dashboard extends React.Component {
 				itemType={'Campaign'}
 				newItemBtn={() => <NewCampaignDialog variant='fab' accent color='secondary' />}
 				objModel={CampaignModel}
-				sortProperties={SORT_PROPERTIES_COLLECTION}
+				sortProperties={SORT_PROPERTIES_CAMPAIGN}
 				uiStateId='campaigns'
-			// filterProperties={FILTER_PROPERTIES_ITEMS}
+				filterProperties={FILTER_PROPERTIES_CAMPAIGN}
 			/>
 		)
 	}

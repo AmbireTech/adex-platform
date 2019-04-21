@@ -49,7 +49,7 @@ export const AUTH_TYPES = {
 	TREZOR: { name: 'trezor', signType: SignatureModes.GETH, limit: 0 },
 	LEDGER: { name: 'ledger', signType: SignatureModes.GETH, limit: 0 },
 	DEMO: { name: 'demo', signType: SignatureModes.GETH, limit: 0 },
-	GRANT: { name: 'grant', signType:SignatureModes.GETH, limit: 50 },
+	GRANT: { name: 'grant', signType: SignatureModes.GETH, limit: 50 },
 	SEED: { name: 'seed', signType: SignatureModes.GETH, limit: 500 }
 }
 
@@ -57,4 +57,32 @@ export const NETWORK_STATUS = {
 	0: 'pending',
 	1: 'success',
 	2: 'failed'
+}
+
+export const SORT_PROPERTIES_CAMPAIGN = [
+	{ value: 'status.name', label: 'Status' },
+	{ value: 'created', label: 'Created' },
+	{ value: 'withdrawPeriodStart', label: 'Ends' },
+	{ value: 'activeFrom', label: 'Starts' },
+	{ value: 'depositAmount', label: 'depositAmount' },
+	{ value: 'maxPerImpression', label: 'cpm' },
+]
+
+export const FILTER_PROPERTIES_CAMPAIGN = {
+	'status.name': {
+		label: 'ststus',
+		labelIsProp: true,
+		values: [
+			{ value: 'Pending', label: 'Pending' }, // UI only state
+			{ value: 'Initializing', label: 'Initializing' },
+			{ value: 'Offline', label: 'Offline' },
+			{ value: 'Disconnected', label: 'Disconnected' },
+			{ value: 'Invalid', label: 'Invalid' },
+			{ value: 'Unhealthy', label: 'Unhealthy' },
+			{ value: 'Ready', label: 'Ready' },
+			{ value: 'Active', label: 'Active' },
+			{ value: 'Exhausted', label: 'Exhausted' },
+			{ value: 'Expired', label: 'Expired' },
+		]
+	},
 }
