@@ -6,7 +6,7 @@ import { identityBytecode } from 'services/adex-relayer/actions'
 
 const IDENTITY_BASE_ADDR = process.env.IDENTITY_BASE_ADDR
 const IDENTITY_FACTORY_ADDR = process.env.IDENTITY_FACTORY_ADDR
-const gasLimit = 150000
+const GAS_LIMIT_DEPLOY_CONTRACT = 150000
 
 export async function getIdentityBytecode({ owner, privLevel }) {
 	const res = await identityBytecode({
@@ -33,8 +33,8 @@ export async function getIdentityDeployData({ owner, privLevel }) {
 	}
 }
 
-export const deployIdentityContract = async ({
-	wallet, bytecode, salt, expectedAddr }) => {
+export async function deployIdentityContract({
+	wallet, bytecode, salt, expectedAddr }) {
 
 	const { provider, IdentityFactory } = await getEthers(wallet.authType)
 	const signer = await getSigner({ wallet, provider })
@@ -45,10 +45,11 @@ export const deployIdentityContract = async ({
 			salt
 		),
 		provider,
-		sender: wallet.address
+		sender: wallet.address,
+		gasLimit: utils.hexlify(GAS_LIMIT_DEPLOY_CONTRACT)
 	})
 
-	pTx.gasLimit = utils.hexlify(gasLimit)
+	pTx.gasLimit = utils.hexlify(GAS_LIMIT_DEPLOY_CONTRACT)
 	const identityFactoryWithSigner = IdentityFactory.connect(signer)
 
 	const tx = identityFactoryWithSigner.deploy(
@@ -67,11 +68,11 @@ export const deployIdentityContract = async ({
 	return tx
 }
 
-export const getPrivileges = ({
+export function getPrivileges({
 	walletAddr,
 	identityAddr,
 	walletAuthType
-}) => {
+}) {
 	return getEthers(walletAuthType)
 		.then(({ provider, Identity }) => {
 			const contract = new ethers
@@ -79,3 +80,45 @@ export const getPrivileges = ({
 			return contract.privileges(walletAddr)
 		})
 }
+
+export async function sendDaiToIdentity({
+	account,
+	amountToSend,
+	gas,
+	estimateGasOnly
+}) {
+	const { wallet, identity } = account
+	const { provider, Dai } = await getEthers(wallet.authType)
+	const signer = await getSigner({ wallet, provider })
+	const daiWithSigner = Dai.connect(signer)
+	const tokenAmount = ethers.utils.parseUnits(amountToSend, 18).toString()
+	const walletAv = await Dai.balanceOf(wallet.address)
+
+	const signerAddr = await signer.getAddress()
+	console.log('signerAddr', signerAddr)
+	console.log('wallet', wallet.address)
+	console.log('identity', identity.address)
+	console.log('walletAv   ', walletAv.toString())
+	console.log('tokenAmount', tokenAmount.toString())
+
+	const pTx = await prepareTx({
+		tx: Dai.transferFrom(wallet.address, identity.address, tokenAmount),
+		provider,
+		// gasLimit,
+		sender: wallet.address
+	})
+
+	if (estimateGasOnly) {
+		return pTx.gasLimit
+	}
+
+	processTx({
+		tx: daiWithSigner.transferFrom(wallet.address, identity.address, amountToSend, pTx),
+		txSuccessData: { txMethod: 'TX_SEND_DAI_TO_IDENTITY' },
+		from: wallet.address,
+		account
+	})
+
+	return {}
+}
+
