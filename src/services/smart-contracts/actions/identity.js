@@ -84,7 +84,7 @@ export function getPrivileges({
 export async function sendDaiToIdentity({
 	account,
 	amountToSend,
-	gas,
+	// gas,
 	estimateGasOnly
 }) {
 	const { wallet, identity } = account
@@ -92,17 +92,9 @@ export async function sendDaiToIdentity({
 	const signer = await getSigner({ wallet, provider })
 	const daiWithSigner = Dai.connect(signer)
 	const tokenAmount = ethers.utils.parseUnits(amountToSend, 18).toString()
-	const walletAv = await Dai.balanceOf(wallet.address)
-
-	const signerAddr = await signer.getAddress()
-	console.log('signerAddr', signerAddr)
-	console.log('wallet', wallet.address)
-	console.log('identity', identity.address)
-	console.log('walletAv   ', walletAv.toString())
-	console.log('tokenAmount', tokenAmount.toString())
 
 	const pTx = await prepareTx({
-		tx: Dai.transferFrom(wallet.address, identity.address, tokenAmount),
+		tx: Dai.transfer(identity.address, tokenAmount),
 		provider,
 		// gasLimit,
 		sender: wallet.address
@@ -113,9 +105,10 @@ export async function sendDaiToIdentity({
 	}
 
 	processTx({
-		tx: daiWithSigner.transferFrom(wallet.address, identity.address, amountToSend, pTx),
+		tx: daiWithSigner.transfer(identity.address, tokenAmount, pTx),
 		txSuccessData: { txMethod: 'TX_SEND_DAI_TO_IDENTITY' },
 		from: wallet.address,
+		fromType: 'wallet',
 		account
 	})
 
