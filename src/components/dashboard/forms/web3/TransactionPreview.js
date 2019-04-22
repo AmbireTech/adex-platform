@@ -26,19 +26,19 @@ class TransactionPreview extends Component {
 		}
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		if (this.props.estimateGasFn && Object.keys(this.props.transaction).length) {
 
-			this.props.actions.updateSpinner(this.props.trId, true)
+			this.props.actions.updateSpinner(this.props.txId, true)
 			this.props.estimateGasFn({ acc: this.props.account, transaction: this.props.transaction })
 				.then((estimatedGas) => {
 					this.setState({ gas: estimatedGas })
 					this.props.handleChange('gas', estimatedGas)
-					this.props.actions.updateSpinner(this.props.trId, false)
+					this.props.actions.updateSpinner(this.props.txId, false)
 				})
 				.catch((err) => {
 					console.log(err)
-					this.props.actions.updateSpinner(this.props.trId, false)
+					this.props.actions.updateSpinner(this.props.txId, false)
 					this.props.handleChange('errors', [Helper.getErrMsg(err)])
 				})
 		}
@@ -162,7 +162,7 @@ class TransactionPreview extends Component {
 TransactionPreview.propTypes = {
 	actions: PropTypes.object.isRequired,
 	label: PropTypes.string,
-	trId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+	txId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	transaction: PropTypes.object.isRequired,
 	account: PropTypes.object.isRequired,
@@ -173,11 +173,11 @@ TransactionPreview.propTypes = {
 function mapStateToProps(state, props) {
 	const persist = state.persist
 	const memory = state.memory
-	const trId = props.stepsId
+	const txId = props.stepsId
 	return {
-		transaction: memory.newTransactions[trId] || {},
-		trId: trId,
-		spinner: memory.spinners[trId],
+		transaction: memory.newTransactions[txId] || {},
+		txId: txId,
+		spinner: memory.spinners[txId],
 		account: persist.account
 	}
 }
