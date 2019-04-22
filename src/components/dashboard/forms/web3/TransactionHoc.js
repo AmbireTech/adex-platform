@@ -17,7 +17,8 @@ export default function NewTransactionHoc(Decorated) {
 		}
 
 		handleChange = (name, value) => {
-			this.props.actions.updateNewTransaction({ tx: this.props.txId, key: name, value: value })
+			const { actions, txId } = this.props
+			actions.updateNewTransaction({ tx: txId, key: name, value: value })
 		}
 
 		// addTx = (tx) => {
@@ -28,41 +29,26 @@ export default function NewTransactionHoc(Decorated) {
 		// }
 
 		onSave = (err, tx, manyTxs) => {
-			this.props.actions.resetNewTransaction({ txId: this.props.txId })
+			const { closeDialog } = this.props
 
-			// NOTE: Now the web3Tx are updated on sendTx and here are handled just the error and on all txs success
-
-			// if (tx && manyTxs) {
-			//     tx.forEach(t => {
-			//         this.addTx(t)
-			//     })
-			// } else if (tx) {
-			//     this.addTx(tx)
-			// }
-
-			if (typeof this.props.onSave === 'function') {
-				this.props.onSave()
+			if (closeDialog) {
+				closeDialog()
 			}
 
-			if (Array.isArray(this.props.onSave)) {
-				for (var index = 0; index < this.props.onSave.length; index++) {
-					if (typeof this.props.onSave[index] === 'function') {
-						this.props.onSave[index]()
-					}
-				}
-			}
+			this.resetTransaction()
 		}
 
 		resetTransaction = () => {
-			this.props.actions.resetNewTransaction({ txId: this.props.txId })
+			const { actions, txId } = this.props
+			actions.resetNewTransaction({ tx: txId })
 		}
 
 		handleSaveRes = ({ err, res }) => {
-			const t = this.props.t
+			const { t, actions } = this.props
 			const areManyTxs = Array.isArray(res)
 
 			if (err) {
-				this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
+				actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [Helper.getErrMsg(err)] }), timeout: 50000 })
 			}
 
 			this.onSave(err, res, Array.isArray(res))
