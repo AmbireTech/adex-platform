@@ -7,7 +7,7 @@ import LocalSigner from 'services/smart-contracts/signers/local'
 import MetaMaskSigner from 'services/smart-contracts/signers/metamask'
 import { translate } from 'services/translations/translations'
 import { execute } from 'actions/common'
-import { addWeb3Transaction } from 'actions/transactionActions'
+import { addWeb3Transaction, updateWeb3Transaction } from 'actions/transactionActions'
 import { addToast } from 'actions/uiActions'
 import { updateAccount } from 'actions/accountActions'
 
@@ -35,16 +35,19 @@ export async function processTx({
 	tx,
 	txSuccessData,
 	from,
+	fromType,
 	account
 }) {
 	try {
-		const { hash, nonce } = await tx
+		const txRes = await tx
 		const txData = {
-			hash,
-			nonce,
+			// id: txRes.hash,
+			hash: txRes.hash,
+			nonce: txRes.nonce,
 			...txSuccessData,
 			status: 'pending',
-			sendingTime: Date.now()
+			sendingTime: Date.now(),
+			txData: txRes
 		}
 
 		execute(
@@ -57,19 +60,34 @@ export async function processTx({
 				label: translate(
 					'TRANSACTION_SENT_MSG',
 					{
-						args: [hash]
+						args: [txRes.hash]
 					}),
 				timeout: 50000
 			})
 		)
 
 		const settings = { ...account.settings }
-		settings.nonce = nonce + 1
+		settings[fromType] = { ...settings[fromType] } || {}
+		settings[fromType].nextNonce = txRes.nonce + 1
 		execute(
 			updateAccount({
 				newValues: { settings }
 			})
 		)
+
+		// TODO: catch and toast
+		const receipt = await txRes.wait()
+		execute(
+			updateWeb3Transaction({
+				tx: txRes.hash,
+				key: 'status',
+				value: ((receipt.status === 1) || (receipt.status === '0x1') || (receipt.status === true))
+					? 'success'
+					: 'failed',
+				addr: from
+			})
+		)
+
 	} catch (err) {
 		console.error(err)
 		execute(
@@ -150,4 +168,13 @@ export async function getAuthSig({ wallet }) {
 		authToken,
 		hash
 	}
+}
+
+export async function getTransactionsReceipts({ txHashes = [], authType }) {
+	const { provider } = await getEthers(authType)
+	const receipts = txHashes.map(tx =>
+		provider.getTransactionReceipt(tx)
+	)
+
+	return Promise.all(receipts)
 }
