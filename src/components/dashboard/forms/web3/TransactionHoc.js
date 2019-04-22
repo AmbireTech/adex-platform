@@ -16,98 +16,98 @@ export default function NewTransactionHoc(Decorated) {
 			// console.log('TransactionHoc')
 		}
 
-        handleChange = (name, value) => {
-        	this.props.actions.updateNewTransaction({ trId: this.props.trId, key: name, value: value })
-        }
+		handleChange = (name, value) => {
+			this.props.actions.updateNewTransaction({ tx: this.props.txId, key: name, value: value })
+		}
 
-        // addTx = (tx) => {
-        //     let txData = { ...tx }
-        //     txData.status = TX_STATUS.Pending.id
-        //     txData.sendingTime = Date.now()
-        //     this.props.actions.addWeb3Transaction({ trans: txData, addr: this.props.account._addr })
-        // }
+		// addTx = (tx) => {
+		//     let txData = { ...tx }
+		//     txData.status = TX_STATUS.Pending.id
+		//     txData.sendingTime = Date.now()
+		//     this.props.actions.addWeb3Transaction({ trans: txData, addr: this.props.account._addr })
+		// }
 
-        onSave = (err, tx, manyTxs) => {
-        	this.props.actions.resetNewTransaction({ trId: this.props.trId })
+		onSave = (err, tx, manyTxs) => {
+			this.props.actions.resetNewTransaction({ txId: this.props.txId })
 
-        	// NOTE: Now the web3Tx are updated on sendTx and here are handled just the error and on all txs success
+			// NOTE: Now the web3Tx are updated on sendTx and here are handled just the error and on all txs success
 
-        	// if (tx && manyTxs) {
-        	//     tx.forEach(t => {
-        	//         this.addTx(t)
-        	//     })
-        	// } else if (tx) {
-        	//     this.addTx(tx)
-        	// }
+			// if (tx && manyTxs) {
+			//     tx.forEach(t => {
+			//         this.addTx(t)
+			//     })
+			// } else if (tx) {
+			//     this.addTx(tx)
+			// }
 
-        	if (typeof this.props.onSave === 'function') {
-        		this.props.onSave()
-        	}
+			if (typeof this.props.onSave === 'function') {
+				this.props.onSave()
+			}
 
-        	if (Array.isArray(this.props.onSave)) {
-        		for (var index = 0; index < this.props.onSave.length; index++) {
-        			if (typeof this.props.onSave[index] === 'function') {
-        				this.props.onSave[index]()
-        			}
-        		}
-        	}
-        }
+			if (Array.isArray(this.props.onSave)) {
+				for (var index = 0; index < this.props.onSave.length; index++) {
+					if (typeof this.props.onSave[index] === 'function') {
+						this.props.onSave[index]()
+					}
+				}
+			}
+		}
 
-        resetTransaction = () => {
-        	this.props.actions.resetNewTransaction({ trId: this.props.trId })
-        }
+		resetTransaction = () => {
+			this.props.actions.resetNewTransaction({ txId: this.props.txId })
+		}
 
-        handleSaveRes = ({ err, res }) => {
-        	const t = this.props.t
-        	const areManyTxs = Array.isArray(res)
+		handleSaveRes = ({ err, res }) => {
+			const t = this.props.t
+			const areManyTxs = Array.isArray(res)
 
-        	if (err) {
-        		this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
-        	}
+			if (err) {
+				this.props.actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [Helper.getErrMsg(err)] }), timeout: 5000 })
+			}
 
-        	this.onSave(err, res, Array.isArray(res))
-        }
+			this.onSave(err, res, Array.isArray(res))
+		}
 
-        save = () => {
-        	this.handleChange('waitingForWalletAction', true)
-        	this.props.saveFn({ acc: this.props.account, transaction: this.props.transaction })
-        		.then((res) => {
-        			console.log('res on save', res)
+		save = () => {
+			this.handleChange('waitingForWalletAction', true)
+			this.props.saveFn({ acc: this.props.account, transaction: this.props.transaction })
+				.then((res) => {
+					console.log('res on save', res)
 
-        			const txs = res.txResults || res
-        			const err = res.err || null
+					const txs = res.txResults || res
+					const err = res.err || null
 
-        			this.handleSaveRes({ err: err, res: txs })
-        		})
-        		.catch((error) => {
-        			console.log('err on save', error)
-        			const res = error.txResults || null
-        			const err = error.err || error
+					this.handleSaveRes({ err: err, res: txs })
+				})
+				.catch((error) => {
+					console.log('err on save', error)
+					const res = error.txResults || null
+					const err = error.err || error
 
-        			this.handleSaveRes({ err: err, res: res })
-        		})
-        }
+					this.handleSaveRes({ err: err, res: res })
+				})
+		}
 
-        cancel = () => {
-        	// TODO: take a look at onSave if change something
-        	this.onSave(null, null)
-        }
+		cancel = () => {
+			// TODO: take a look at onSave if change something
+			this.onSave(null, null)
+		}
 
-        render() {
-        	let transaction = this.props.transaction || {}
-        	let props = this.props
+		render() {
+			let transaction = this.props.transaction || {}
+			let props = this.props
 
-        	return (
-        		<Decorated
-        			{...props}
-        			transaction={transaction}
-        			save={this.save}
-        			cancel={this.cancel}
-        			handleChange={this.handleChange}
-        			resetTransaction={this.resetTransaction}
-        		/>
-        	)
-        }
+			return (
+				<Decorated
+					{...props}
+					transaction={transaction}
+					save={this.save}
+					cancel={this.cancel}
+					handleChange={this.handleChange}
+					resetTransaction={this.resetTransaction}
+				/>
+			)
+		}
 	}
 
 	TransactionHoc.propTypes = {
@@ -120,14 +120,14 @@ export default function NewTransactionHoc(Decorated) {
 	}
 
 	function mapStateToProps(state, props) {
-		const persist = state.persist
-		const memory = state.memory
-		const trId = props.stepsId
+		const { persist, memory } = state
+		const txId = props.stepsId
+
 		return {
 			account: persist.account,
-			transaction: memory.newTransactions[trId] || {},
-			trId: trId, // TODO: change with txId
-			spinner: memory.spinners[trId],
+			transaction: memory.newTransactions[txId] || {},
+			txId: txId,
+			spinner: memory.spinners[txId],
 		}
 	}
 
