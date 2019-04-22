@@ -8,9 +8,7 @@ import Translate from 'components/translate/Translate'
 import {
 	WithdrawEth,
 	WithdrawTokens,
-	DepositEth,
 	DepositToken,
-	WithdrawEthFromIdentity,
 	WithdrawTokenFromIdentity
 } from 'components/dashboard/forms/web3/transactions'
 import { withStyles } from '@material-ui/core/styles'
@@ -39,7 +37,7 @@ class AccountInfo extends React.Component {
 
 	render() {
 		const { t, account, classes } = this.props
-		const formated = account.stats.formated || {}
+		const formatted = account.stats.formatted || {}
 		const {
 			walletAddress,
 			walletAuthType,
@@ -48,7 +46,7 @@ class AccountInfo extends React.Component {
 			walletBalanceDai,
 			identityAddress,
 			identityBalanceDai
-		} = formated
+		} = formatted
 
 		return (
 			<div>
