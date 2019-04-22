@@ -72,7 +72,7 @@ class GrantDeploy extends Component {
 	}
 
 	render() {
-		const { t, identity, classes, spinner } = this.props
+		const { t, identity, classes, waitingGrant } = this.props
 		const { walletAddr, identityAddr, grantAmount } = identity
 
 		return (
@@ -112,11 +112,11 @@ class GrantDeploy extends Component {
 											color='primary'
 											size='large'
 											onClick={this.getIdentity}
-											disabled={spinner}
+											disabled={waitingGrant}
 										>
 											{t('GET_GRANT_IDENTITY')}
 										</Button>
-										{spinner &&
+										{waitingGrant &&
 											<CircularProgress
 												size={24}
 												className={classes.buttonProgress}
@@ -141,7 +141,7 @@ function mapStateToProps(state) {
 	const { memory } = state
 
 	return {
-		spinner: memory.spinners['getting-grant-identity']
+		waitingGrant: memory.spinners['getting-grant-identity']
 	}
 }
 
