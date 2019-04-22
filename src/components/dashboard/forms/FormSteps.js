@@ -23,7 +23,7 @@ class FormSteps extends Component {
 				title: t(page.title),
 				cancelBtn: cancelButton,
 				component: ValidItemHoc(page.page || page),
-				props: { ...this.props, validateId: validateId + '-' + index }
+				props: { ...this.props, stepsId, validateId: validateId + '-' + index }
 			})
 		})
 
