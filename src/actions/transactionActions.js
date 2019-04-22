@@ -30,7 +30,7 @@ export function addWeb3Transaction({ tx, addr }) {
 		return dispatch({
 			type: types.ADD_WEB3_TRANSACTION,
 			value: tx,
-			txId: tx.hash,
+			tx: tx.hash,
 			addr: addr
 		})
 	}
