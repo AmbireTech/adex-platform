@@ -15,7 +15,7 @@ import { updateAccount } from 'actions/accountActions'
  * NOTE: DO NOT CALL WITH CONNECTED SIGNER
  * Will fill missing props gasLimit, nonce, chainId, etc..  * 
  * */
-export async function prepareTx({ tx, provider, sender }) {
+export async function prepareTx({ tx, provider, sender, gasLimit, gasPrice }) {
 	const pTx = await utils.populateTransaction(
 		tx,
 		provider,
@@ -23,8 +23,8 @@ export async function prepareTx({ tx, provider, sender }) {
 	)
 
 	// TO work with all signers
-	pTx.gasLimit = pTx.gasLimit.toHexString()
-	pTx.gasPrice = pTx.gasPrice.toHexString()
+	pTx.gasLimit = gasLimit || pTx.gasLimit.toHexString()
+	pTx.gasPrice = gasPrice || pTx.gasPrice.toHexString()
 	pTx.value = pTx.value || utils.hexlify(0)
 	pTx.nonce = utils.hexlify(pTx.nonce)
 
@@ -37,38 +37,54 @@ export async function processTx({
 	from,
 	account
 }) {
-	const { hash, nonce } = await tx
-	const txData = {
-		hash,
-		nonce,
-		...txSuccessData,
-		status: 'pending',
-		sendingTime: Date.now()
+	try {
+		const { hash, nonce } = await tx
+		const txData = {
+			hash,
+			nonce,
+			...txSuccessData,
+			status: 'pending',
+			sendingTime: Date.now()
+		}
+
+		execute(
+			addWeb3Transaction({ tx: txData, addr: from })
+		)
+		execute(
+			addToast({
+				type: 'accept',
+				action: 'X',
+				label: translate(
+					'TRANSACTION_SENT_MSG',
+					{
+						args: [hash]
+					}),
+				timeout: 50000
+			})
+		)
+
+		const settings = { ...account.settings }
+		settings.nonce = nonce + 1
+		execute(
+			updateAccount({
+				newValues: { settings }
+			})
+		)
+	} catch (err) {
+		console.error(err)
+		execute(
+			addToast({
+				type: 'cancel',
+				action: 'X',
+				label: translate(
+					'TRANSACTION_ERR_MSG',
+					{
+						args: [err]
+					}),
+				timeout: 50000
+			})
+		)
 	}
-
-	execute(
-		addWeb3Transaction({ tx: txData, addr: from })
-	)
-	execute(
-		addToast({
-			type: 'accept',
-			action: 'X',
-			label: translate(
-				'TRANSACTION_SENT_MSG',
-				{
-					args: [hash]
-				}),
-			timeout: 50000
-		})
-	)
-
-	const settings = { ...account.settings }
-	settings.nonce = nonce + 1
-	execute(
-		updateAccount({
-			newValues: { settings }
-		})
-	)
 }
 
 export async function getSigner({ wallet, provider }) {
