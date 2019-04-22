@@ -1,6 +1,6 @@
 import React from 'react'
 import WithdrawStep from './WithdrawStep'
-import DepositToExchange from './DepositToExchange'
+import SendToIdentity from './SendToIdentity'
 import WithdrawFromExchangePage from './WithdrawFromExchange'
 import TransactionPreview from './TransactionPreview'
 import Button from '@material-ui/core/Button'
@@ -9,6 +9,7 @@ import FormSteps from 'components/dashboard/forms/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
 // import SaveIcon from '@material-ui/icons/Save'
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
+import { sendDaiToIdentity } from 'services/smart-contracts/actions/identity'
 
 const {
 	withdrawEth,
@@ -126,13 +127,21 @@ export const DepositToken = (props) =>
 		title="WALLET_DEPOSIT_TO_IDENTITY_TITLE"
 		stepsId='depositToIdentity'
 		{...txCommon}
-		stepsPages={[{ title: 'WALLET_DEPOSIT_TO_IDENTITY_STEP', page: DepositToExchange }]}
-		previewWarnMsgs={[{ msg: 'WALLET_DEPOSIT_TO_IDENTITY_MULTIPLE_SIGNS_MSG' }]}
+		stepsPages={[{ title: 'WALLET_DEPOSIT_TO_IDENTITY_STEP', page: SendToIdentity }]}
 		saveFn={({ acc, transaction } = {}) => {
-			return depositToIdentity({ user: acc, _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
+			return sendDaiToIdentity({
+				account: acc,
+				amountToSend: transaction.amountToSend,
+				gas: transaction.gas
+			})
 		}}
 		estimateGasFn={({ acc, transaction } = {}) => {
-			return depositToIdentityEG({ user: acc, _addr: acc._addr, amountToDeposit: transaction.depositAmount, gas: transaction.gas })
+			return sendDaiToIdentity({
+				account: acc,
+				amountToSend: transaction.amountToSend,
+				gas: transaction.gas,
+				estimateGasOnly: true
+			})
 		}}
 	/>
 
