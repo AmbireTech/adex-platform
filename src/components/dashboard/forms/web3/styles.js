@@ -1,6 +1,5 @@
 export const styles = theme => {
 	// const spacing = theme.spacing.unit * 1
-	console.log(theme)
 	return {
 		error: {
 			color: theme.palette.error.main
