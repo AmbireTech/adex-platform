@@ -90,7 +90,7 @@ function mapDispatchToProps(dispatch) {
 	}
 }
 
-const SendToIdentityForm = NewTransactionHoc(SendToIdentityForm)
+const SendToIdentityForm = NewTransactionHoc(SendToIdentity)
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
