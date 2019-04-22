@@ -149,7 +149,7 @@ class CampaignFinance extends Component {
 
 			const { newItem, account } = this.props
 
-			const { identityBalanceDai } = account.stats.formated
+			const { identityBalanceDai } = account.stats.formatted
 			const depositAmount = (prop === 'depositAmount') ? value : newItem.depositAmount
 			const minPerImpression = (prop === 'minPerImpression') ? value : newItem.minPerImpression
 
@@ -208,7 +208,7 @@ class CampaignFinance extends Component {
 			withdrawPeriodStart
 		} = newItem
 
-		const { identityBalanceDai } = account.stats.formated
+		const { identityBalanceDai } = account.stats.formatted
 
 		const from = activeFrom || undefined
 		const to = withdrawPeriodStart || undefined
