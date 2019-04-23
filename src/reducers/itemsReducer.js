@@ -14,7 +14,7 @@ export default function itemsReducer(state = initialState.items, action) {
 		if (!action.item) return state
 		return {
 			...state,
-			[action.item.ipfs]: action.item,
+			[action.item.id]: action.item,
 		}
 	}
 
