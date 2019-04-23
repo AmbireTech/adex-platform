@@ -37,7 +37,7 @@ export class DashboardStats extends Component {
 		this.props.history.push('/dashboard/' + this.props.side + '/account')
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.props.actions.updateNav('navTitle', this.props.t('DASHBOARD'))
 	}
 
@@ -174,19 +174,20 @@ export class DashboardStats extends Component {
 		const { t, side, account } = this.props
 		const spentEarned = side === 'publisher' ? 'LABEL_TOTAL_REVENUE' : 'LABEL_TOTAL_EXPENSES'
 
-
-		const accStats = { ...account._stats }
-
+		const formatted = account.stats.formatted || {}
 		const {
-			addrBalanceAdx,
-			addrBalanceEth,
-			adxOnBids,
-			exchangeAvailable
-		} = {}
+			// walletAddress,
+			// walletAuthType,
+			// walletPrivileges,
+			walletBalanceEth,
+			walletBalanceDai,
+			// identityAddress,
+			identityBalanceDai
+		} = formatted
 		const classes = this.props.classes
 		return (
 			<div className={classes.infoStatsContainer}>
-				<StatsCard
+				{/* <StatsCard
 					linkCard
 					subtitle={t(spentEarned)}
 					// title={adxToFloatView(stats.closed.completed.amount || 0) + ' ADX'}
@@ -211,46 +212,37 @@ export class DashboardStats extends Component {
 					>
 
 					</StatsCard>
-				}
+				} */}
 
 				<StatsCard
 					linkCard
 					onClick={this.goToAccount}
-					subtitle={t('ACCOUNT_ETH_BALANCE')}
-					title={addrBalanceEth + ' ETH'}
+					subtitle={t('WALLET_ETH_BALANCE')}
+					title={walletBalanceEth + ' ETH'}
 				>
 				</StatsCard>
 
 				<StatsCard
 					linkCard
 					onClick={this.goToAccount}
-					subtitle={t('ACCOUNT_ADX_BALANCE')}
-					title={addrBalanceAdx + ' ADX'}
+					subtitle={t('WALLET_DAI_BALANCE')}
+					title={walletBalanceDai + ' DAI'}
 				>
 				</StatsCard>
 
 				<StatsCard
 					linkCard
 					onClick={this.goToAccount}
-					subtitle={t('EXCHANGE_ADX_BALANCE_AVAILABLE')}
-					title={exchangeAvailable + ' ADX'}
+					subtitle={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
+					title={identityBalanceDai + ' DAI'}
 				>
 				</StatsCard>
-
-				<StatsCard
-					linkCard
-					onClick={this.goToAccount}
-					subtitle={t('EXCHANGE_ADX_BALANCE_ON_BIDS')}
-					title={adxOnBids + ' ADX'}
-				>
-				</StatsCard>
-
 			</div>
 		)
 	}
 
 	render() {
-		const { side, sideBids, classes } = this.props
+		const { side, sideBids, classes, t } = this.props
 		if (side !== 'advertiser' && side !== 'publisher') {
 			return (
 				<SideSelect active={true} />
@@ -262,22 +254,24 @@ export class DashboardStats extends Component {
 		return (
 			<div>
 				<Grid container>
-					<Grid item md={12} lg={6} sm={12}>
+					<Grid item md={12} lg={6} xs={12}>
 						<Card
-							raised
 							className={classnames(classes.dashboardCardBody)}
 						>
 							<CardContent>
 								{/* <this.BidsStateChart
 									stats={stats}
 								/> */}
+								{t('NO_STATS_YET')}
 							</CardContent>
 						</Card>
+						<div className={classes.infoStatsContainer}>
+						</div>
 					</Grid>
 					<Grid item md={12} lg={6}>
-						{/* <this.InfoStats
-							stats={stats}
-						/> */}
+						<this.InfoStats
+							// stats={stats}
+						/>
 					</Grid>
 				</Grid>
 
