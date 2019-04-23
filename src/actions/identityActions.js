@@ -76,7 +76,8 @@ export function getGrantAccount({ walletAddr, email, password, coupon }) {
 					dataKey: 'privileges',
 					dataValue: identityData.privileges
 				})
-				return updateIdentity('identityData', identityData)(dispatch)
+				updateIdentity('identityAddr', identityData.address)(dispatch)
+				updateIdentity('identityData', identityData)(dispatch)
 			}
 		} catch (err) {
 			console.error('ERR_REGISTER_GRANT_IDENTITY', err)
