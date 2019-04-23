@@ -89,7 +89,7 @@ export function addItem(item, itemType, authSig) {
 
 			dispatch({
 				type: types.ADD_ITEM,
-				item: resItem,
+				item: new AdUnit(resItem).plainObj(),
 				itemType: 'AdUnit'
 			})
 
@@ -122,7 +122,7 @@ export function addSlot(item, itemType, authSig) {
 
 			dispatch({
 				type: types.ADD_ITEM,
-				item: resItem,
+				item: new AdSlot(resItem).plainObj(),
 				itemType: 'AdSlot'
 			})
 

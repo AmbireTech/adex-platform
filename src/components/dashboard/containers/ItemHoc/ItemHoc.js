@@ -392,7 +392,7 @@ export default function ItemHoc(Decorated) {
 	}
 
 	function mapStateToProps(state, props) {
-		const persist = state.persist
+		const { persist } = state
 		// const memory = state.memory
 		const items = persist.items[props.itemType]
 		const id = props.match.params.itemId
