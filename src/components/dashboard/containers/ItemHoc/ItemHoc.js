@@ -47,7 +47,8 @@ export default function ItemHoc(Decorated) {
 		}
 
 		updateNav = (item = {}) => {
-			this.props.actions.updateNav('navTitle', this.props.t(ItemTypesNames[item._type]) + ' > ' + item.fullName)
+			const { actions, t, itemType } = this.props
+			actions.updateNav('navTitle', t(itemType, { isProp: true }) + ' > ' + item.title)
 		}
 
 		componentDidMount() {
