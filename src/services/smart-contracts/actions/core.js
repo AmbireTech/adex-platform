@@ -21,6 +21,7 @@ const feeAmountApprove = '150000000000000000'
 const feeAmountOpen = '160000000000000000'
 const timeframe = 15000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 1.5
+const VALID_UNTIL_MIN_PERIOD = 72 * 60 * 60 * 1000// 72 hours in ms
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
@@ -40,7 +41,7 @@ function toEthereumChannel(channel) {
 
 function getValidUntil(created, withdrawPeriodStart) {
 	const period = withdrawPeriodStart - created
-	const validUntil = withdrawPeriodStart + (period * VALID_UNTIL_COEFFICIENT)
+	const validUntil = withdrawPeriodStart + Math.max((period * VALID_UNTIL_COEFFICIENT), VALID_UNTIL_MIN_PERIOD)
 
 	return Math.floor(validUntil / 1000)
 }
