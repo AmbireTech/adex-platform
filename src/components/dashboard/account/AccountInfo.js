@@ -48,6 +48,8 @@ class AccountInfo extends React.Component {
 			identityBalanceDai
 		} = formatted
 
+		const { authType } = account.wallet
+
 		return (
 			<div>
 				<List
@@ -59,7 +61,7 @@ class AccountInfo extends React.Component {
 							primary={walletAddress}
 							secondary={(account.authType === 'demo')
 								? t('DEMO_ACCOUNT_WALLET_ADDRESS', { args: [walletAuthType, walletPrivileges] })
-								: t('WALLET_ETH_ADDR', { args: [walletAuthType, walletPrivileges] })
+								: t('WALLET_INFO_LABEL', { args: [walletAuthType, walletPrivileges, authType] })
 							}
 						/>
 						<IconButton
@@ -74,7 +76,7 @@ class AccountInfo extends React.Component {
 						</IconButton>
 					</ListItem>
 					<ListDivider />
-					<ListItem
+					{/* <ListItem
 					>
 						<ListItemText
 							primary={walletBalanceEth + ' ETH'}
@@ -113,7 +115,7 @@ class AccountInfo extends React.Component {
 							/>
 						</div>
 					</ListItem>
-					<ListDivider />
+					<ListDivider /> */}
 					<ListItem>
 						<ListItemText
 							className={classes.address}

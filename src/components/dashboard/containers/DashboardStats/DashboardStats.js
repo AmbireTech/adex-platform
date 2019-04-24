@@ -214,7 +214,7 @@ export class DashboardStats extends Component {
 					</StatsCard>
 				} */}
 
-				<StatsCard
+				{/* <StatsCard
 					linkCard
 					onClick={this.goToAccount}
 					subtitle={t('WALLET_ETH_BALANCE')}
@@ -228,7 +228,7 @@ export class DashboardStats extends Component {
 					subtitle={t('WALLET_DAI_BALANCE')}
 					title={walletBalanceDai + ' DAI'}
 				>
-				</StatsCard>
+				</StatsCard> */}
 
 				<StatsCard
 					linkCard
