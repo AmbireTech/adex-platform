@@ -6,7 +6,6 @@ import actions from 'actions'
 import { AdSlot } from 'adex-models'
 import copy from 'copy-to-clipboard'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
-import { items as ItemsConstants } from 'adex-constants'
 import { BasicProps } from 'components/dashboard/containers/ItemCommon'
 import Helper from 'helpers/miscHelpers'
 import Paper from '@material-ui/core/Paper'
@@ -14,10 +13,15 @@ import IconButton from '@material-ui/core/IconButton'
 import CopyIcon from '@material-ui/icons/FileCopy'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import { contracts } from 'services/smart-contracts/contractsCfg'
 
-const ADVIEW_URL = process.env.ADVIEW_URL || 'https://view.adex.network/'
+const { DAI } = contracts
 
-const IntegrationCode = ({ type, t, size, slotId, slotIpfs, fallbackMediaUrl, fallbackTargetUrl, classes, onCopy }) => {
+const ADVIEW_URL = process.env.ADVIEW_URL || 'https://adexnetwork.github.io/adex-adview-manager/#'
+
+const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
+	const {type, tags, fallbackMediaUrl, fallbackTargetUrl } = slot
+	const identityAddr = account.identity.address
 
 	let sizes = type.split('_')[1].split('x')
 	sizes = {
@@ -25,16 +29,19 @@ const IntegrationCode = ({ type, t, size, slotId, slotIpfs, fallbackMediaUrl, fa
 		height: sizes[1]
 	}
 
-	let queryParmas = {
-		width: sizes.width,
-		height: sizes.height,
-		slotId: slotId,
-		slotIpfs: slotIpfs,
-		fallbackMediaUrl: fallbackMediaUrl,
+	const options = {
+		publisherAddr: identityAddr,
+		whitelistedToken: DAI.address,
+		whitelistedType: type,
+		randomize: true,
+		targeting: tags || [],
+		fallbackMediaUrl: fallbackMediaUrl || '',
 		fallbackTargetUrl: fallbackTargetUrl || ''
 	}
 
-	let query = Helper.getQuery(queryParmas)
+
+
+	let query = encodeURIComponent(JSON.stringify({options}))
 
 	let src = ADVIEW_URL + query
 
@@ -88,13 +95,12 @@ export class Slot extends Component {
 	}
 
 	handleFallbackImgUpdateToggle = () => {
-		let active = this.state.editFallbackImg
+		const active = this.state.editFallbackImg
 		this.setState({ editFallbackImg: !active })
 	}
 
 	render() {
-		let item = this.props.item || {}
-		let { t, classes, isDemo, ...rest } = this.props
+		const { t, classes, isDemo, item, account, ...rest } = this.props
 
 		if (!item.id) return (<h1>Slot '404'</h1>)
 
@@ -107,15 +113,10 @@ export class Slot extends Component {
 					canEditImg={!isDemo}
 					rightComponent={
 						<IntegrationCode
-							type={item.type}
 							classes={classes}
-							ipfs={item.ipfs}
-							size={item.sizeTxtValue}
 							t={t}
-							slotId={item.id}
-							slotIpfs={item.ipfs}
-							fallbackImgIpfs={(item.fallbackAdImg || {}).ipfs}
-							fallbackUrl={item.fallbackAdUrl}
+							account={account}
+							slot={item}	
 							onCopy={() =>
 								this.props.actions
 									.addToast({ type: 'accept', action: 'X', label: t('COPIED_TO_CLIPBOARD'), timeout: 5000 })}
@@ -133,7 +134,7 @@ Slot.propTypes = {
 }
 
 function mapStateToProps(state) {
-	let persist = state.persist
+	const { persist } = state
 	// let memory = state.memory
 	return {
 		account: persist.account,
