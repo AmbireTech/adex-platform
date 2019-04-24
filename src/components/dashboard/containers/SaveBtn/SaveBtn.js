@@ -27,7 +27,7 @@ class SaveBtn extends Component {
 						// className={buttonClassname}
 						onClick={() => save()}
 						disabled={spinner || !dirtyProps.length || !!Object.keys(validations[validationId] || {}).length}
-						{...other}
+						// {...other}
 					>
 						{/*TODO: Success */}
 						{success ? <CheckIcon /> : <SaveIcon />}

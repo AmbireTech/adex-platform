@@ -27,8 +27,9 @@ import Chip from '@material-ui/core/Chip'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import { styles } from './styles'
 import { validName } from 'helpers/validators'
+import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 
-const { ItemTypesNames, ItemTypeByTypeId, AdSizesByValue } = ItemsConstants
+const { AdSizesByValue } = ItemsConstants
 
 export default function ItemHoc(Decorated) {
 	class Item extends Component {
@@ -86,7 +87,7 @@ export default function ItemHoc(Decorated) {
 
 		componentWillUnmount() {
 			if (this.state.item) {
-				this.props.actions.updateSpinner('update' + this.state.item._id, false)
+				this.props.actions.updateSpinner('update' + this.state.item.id, false)
 			}
 		}
 
@@ -112,7 +113,7 @@ export default function ItemHoc(Decorated) {
 
 			this.setState({ item: newItem.plainObj(), dirtyProps: dp })
 			// TEMP fix, we assume that the initial values are validated
-			this.props.actions.resetValidationErrors(this.state.item.ipfs, propName)
+			this.props.actions.resetValidationErrors(this.state.item.id, propName)
 		}
 
 		setActiveFields = (field, value) => {
@@ -123,13 +124,14 @@ export default function ItemHoc(Decorated) {
 
 		//TODO: Do not save if not dirty!
 		save = () => {
+
 			if (this.state.dirtyProps.length && !this.props.spinner) {
 				let item = { ...this.state.item }
 				this.props.actions.updateItem({
 					item: item,
 					authSig: this.props.account.wallet.authSig
 				})
-				this.props.actions.updateSpinner('update' + item.ipfs, true)
+				this.props.actions.updateSpinner('update' + item.id, true)
 				this.setState({ dirtyProps: [] })
 			}
 		}
@@ -245,6 +247,7 @@ export default function ItemHoc(Decorated) {
 													endAdornment={
 														<InputAdornment position="end">
 															<IconButton
+																disabled
 																// size='small'
 																color='secondary'
 																className={classes.buttonRight}
@@ -288,7 +291,7 @@ export default function ItemHoc(Decorated) {
 																// size='small'
 																color='secondary'
 																className={classes.buttonRight}
-																disabled={isDemo}
+																disabled={isDemo || true}
 																onClick={(ev) => this.setActiveFields('description', true)}
 															>
 																<EditIcon />
@@ -335,8 +338,8 @@ export default function ItemHoc(Decorated) {
 							</div>
 							<div>
 								<SaveBtn
-									spinnerId={'update' + item.ipfs}
-									validationId={'update-' + item.ipfs}
+									spinnerId={'update' + item.id}
+									validationId={'update-' + item.id}
 									dirtyProps={this.state.dirtyProps}
 									save={this.save}
 									// TODO: validate wit item validation HOC!!!
@@ -405,7 +408,8 @@ export default function ItemHoc(Decorated) {
 
 		return {
 			account: persist.account,
-			item: item
+			item: item,
+			validateId: 'update-' + item
 		}
 	}
 
@@ -418,5 +422,5 @@ export default function ItemHoc(Decorated) {
 	return connect(
 		mapStateToProps,
 		mapDispatchToProps
-	)(withStyles(styles)(Translate(Item)))
+	)(withStyles(styles)(ValidItemHoc(Translate(Item))))
 }
