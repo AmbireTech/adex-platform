@@ -48,6 +48,9 @@ export const styles = theme => {
 			...theme.mixins.gutters(),
 			paddingTop: spacing * 2,
 			paddingBottom: spacing * 2,
-		}
+		},
+		input: {
+			display: 'none',
+		  },
 	}
 }
