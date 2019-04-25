@@ -18,17 +18,42 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
 import CopyIcon from '@material-ui/icons/FileCopy'
+import DownloadIcon from '@material-ui/icons/SaveAlt'
 import { styles } from './styles.js'
+import { getRecoveryWalletData } from 'services/wallet/wallet'
 
 // const RRButton = withReactRouterLink(Button)
 
 class AccountInfo extends React.Component {
+	// eslint-disable-next-line no-useless-constructor
+	constructor(props) {
+		super(props)
+		this.state = {
+			walletJsonData: this.localWalletDownloadHref()
+		}
+	}
 
 	UNSAFE_componentWillMount() {
 		const { t, actions, account } = this.props
 		const { updateNav, updateAccountStats } = actions
 		updateNav('navTitle', t('ACCOUNT'))
 		updateAccountStats(account)
+	}
+
+	componentDidMount() {
+
+	}
+
+	localWalletDownloadHref = () => {
+		const { account } = this.props
+		const { email, password } = account.wallet
+		const obj = getRecoveryWalletData({email, password})
+		if(!obj) {
+			return null
+		}
+		const data = "data:text/json;charset=utf-8," 
+			+ encodeURIComponent(JSON.stringify(obj))
+		return data
 	}
 
 	onSave = () => {
@@ -49,6 +74,7 @@ class AccountInfo extends React.Component {
 		} = formatted
 
 		const { authType } = account.wallet
+		const { walletJsonData } =this.state
 
 		return (
 			<div>
@@ -63,7 +89,20 @@ class AccountInfo extends React.Component {
 								? t('DEMO_ACCOUNT_WALLET_ADDRESS', { args: [walletAuthType, walletPrivileges] })
 								: t('WALLET_INFO_LABEL', { args: [walletAuthType, walletPrivileges, authType] })
 							}
-						/>
+						/>				
+						{walletJsonData && 
+						<label htmlFor='download-wallet-json'>
+							<a
+								id='download-wallet-json'
+								href={this.localWalletDownloadHref()}
+								download='wallet.json'
+							>
+								<IconButton variant="outlined" component="span" className={classes.button}>
+									<DownloadIcon />
+								</IconButton>
+							</a>						
+						</label>
+						}
 						<IconButton
 							color='default'
 							onClick={() => {
@@ -73,7 +112,7 @@ class AccountInfo extends React.Component {
 							}}
 						>
 							<CopyIcon />
-						</IconButton>
+						</IconButton>						
 					</ListItem>
 					<ListDivider />
 					{/* <ListItem
