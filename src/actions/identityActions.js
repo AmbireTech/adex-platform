@@ -202,27 +202,24 @@ export function  onUploadLocalWallet(event) {
 			updateSpinner('uploading-account-data', true)(dispatch)
 		}
 
-		reader.onerror = (ev) => {
-			reader.abort()
-			console.error('Error uploading account data. Aborting ...')
+		const onError = (err) => {
+			console.error('Error uploading account data.', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_UPLOADING_ACCOUNT_DATA'),
+				label: translate('ERR_UPLOADING_ACCOUNT_DATA', {args: [err]}),
 				timeout: 5000
 			})(dispatch)
 			updateSpinner('uploading-account-data', true)(dispatch)
+		}
+
+		reader.onerror = (ev) => {
+			reader.abort()
+			onError(translate())
 		}
 
 		reader.onabort = (ev) => {
-			console.error('Error uploading aborted')
-			addToast({
-				type: 'cancel',
-				label: translate('ABORTED_UPLOADING_ACCOUNT_DATA'),
-				timeout: 5000
-			})(dispatch)
-			updateSpinner('uploading-account-data', true)(dispatch)
+			onError(translate('ABORTING_DATA_UPLOAD'))
 		}
-
 
 		reader.readAsText(file)
 	}
