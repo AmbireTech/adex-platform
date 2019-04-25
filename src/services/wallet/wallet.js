@@ -68,6 +68,20 @@ export function addDataToWallet({
 	saveToLocalStorage(wallet, key)
 }
 
+export function getRecoveryWalletData({email, password}) {
+	if (!email || !password) {
+		return null
+	}
+
+	const key = encrKey({ email, password })
+	const wallet = loadFromLocalStorage(key)
+
+	return {
+		key,
+		wallet
+	}
+}
+
 export function getLocalWallet({ email, password }) {
 	if (!email || !password) {
 		throw new Error('email and password are required')
