@@ -51,7 +51,7 @@ class GrantLogin extends Component {
 	}
 	
 	render() {
-		const { t, identity, handleChange, invalidFields } = this.props
+		const { t, identity, handleChange, invalidFields, classes, actions } = this.props
 		// Errors
 		const { wallet } = invalidFields
 		return (
@@ -113,6 +113,24 @@ class GrantLogin extends Component {
 						>
 							{t('RECOVER_GRANT_IDENTITY')}
 						</Button>
+					</Grid>
+					<Grid item xs={12}>
+						<input
+							accept="text/json"
+							className={classes.input}
+							id="contained-button-file"
+							type="file"
+							onChange={actions.onUploadLocalWallet}
+						/>
+						<label htmlFor="contained-button-file">
+							<Button 							
+								variant="contained" 
+								component="span" 
+								className={classes.button}
+							>
+								{t('UPLOAD_ACCOUNT_DATA_JSON')}
+							</Button>
+						</label>
 					</Grid>
 				</Grid>
 			</div>
