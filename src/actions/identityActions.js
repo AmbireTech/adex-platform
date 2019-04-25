@@ -12,7 +12,7 @@ import {
 	getIdentityDeployData
 } from 'services/smart-contracts/actions/identity'
 import { addDataToWallet } from 'services/wallet/wallet'
-
+import { saveToLocalStorage } from 'helpers/localStorageHelpers'
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
 	return function (dispatch) {
@@ -168,5 +168,62 @@ export function getRegisterExpectedIdentity({ owner, mail }) {
 			})(dispatch)
 		}
 		updateSpinner('getting-expected-identity', false)(dispatch)
+	}
+}
+
+export function  onUploadLocalWallet(event) {
+	return async function (dispatch) {
+		updateSpinner('uploading-account-data', true)(dispatch)
+		const file = event.target.files[0]
+		const reader = new FileReader()
+
+		reader.onload = (ev) => {
+			try{
+				const obj = JSON.parse(ev.target.result)
+				if(!obj || !obj.key || !obj.wallet || !obj.wallet.data || !obj.wallet.identity || !obj.wallet.privileges) {				
+					throw new Error(translate('INVALID_JSON_DATA'))
+				} else {
+					saveToLocalStorage(obj.wallet, obj.key)
+					addToast({
+						type: 'accept',
+						label: translate('SUCCESS_UPLOADING_ACCOUNT_DATA'),
+						timeout: 5000
+					})(dispatch)
+				}
+			} catch (err) {
+				console.error('Error uploading account json data: ', err)
+				addToast({
+					type: 'cancel',
+					label: translate('ERR_UPLOADING_ACCOUNT_DATA',
+						{args: [err.message]}),
+					timeout: 5000
+				})(dispatch)
+			}
+			updateSpinner('uploading-account-data', true)(dispatch)
+		}
+
+		reader.onerror = (ev) => {
+			reader.abort()
+			console.error('Error uploading account data. Aborting ...')
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_UPLOADING_ACCOUNT_DATA'),
+				timeout: 5000
+			})(dispatch)
+			updateSpinner('uploading-account-data', true)(dispatch)
+		}
+
+		reader.onabort = (ev) => {
+			console.error('Error uploading aborted')
+			addToast({
+				type: 'cancel',
+				label: translate('ABORTED_UPLOADING_ACCOUNT_DATA'),
+				timeout: 5000
+			})(dispatch)
+			updateSpinner('uploading-account-data', true)(dispatch)
+		}
+
+
+		reader.readAsText(file)
 	}
 }

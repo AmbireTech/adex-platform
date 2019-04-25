@@ -80,7 +80,8 @@ export default function IdentityHoc(Decorated) {
 			account: persist.account,
 			identity: memory.identity,
 			spinner: memory.spinners['creating-session'],
-			waitingExpected: memory.spinners['getting-expected-identity']
+			waitingExpected: memory.spinners['getting-expected-identity'],
+			waitingUpload: memory.spinners['uploading-account-data']
 		}
 	}
 

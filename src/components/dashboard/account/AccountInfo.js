@@ -40,10 +40,6 @@ class AccountInfo extends React.Component {
 		updateAccountStats(account)
 	}
 
-	componentDidMount() {
-
-	}
-
 	localWalletDownloadHref = () => {
 		const { account } = this.props
 		const { email, password } = account.wallet
@@ -73,7 +69,7 @@ class AccountInfo extends React.Component {
 			identityBalanceDai
 		} = formatted
 
-		const { authType } = account.wallet
+		const { authType, email } = account.wallet
 		const { walletJsonData } =this.state
 
 		return (
@@ -95,12 +91,12 @@ class AccountInfo extends React.Component {
 							<a
 								id='download-wallet-json'
 								href={this.localWalletDownloadHref()}
-								download='wallet.json'
+								download={`adex-account-data-${email}.json`}
 							>
-								<IconButton variant="outlined" component="span" className={classes.button}>
+								<IconButton  >
 									<DownloadIcon />
 								</IconButton>
-							</a>						
+							</a>
 						</label>
 						}
 						<IconButton
@@ -112,7 +108,7 @@ class AccountInfo extends React.Component {
 							}}
 						>
 							<CopyIcon />
-						</IconButton>						
+						</IconButton>
 					</ListItem>
 					<ListDivider />
 					{/* <ListItem
@@ -221,7 +217,7 @@ function mapStateToProps(state, props) {
 
 	return {
 		account: account,
-		side: memory.nav.side,
+		side: memory.nav.side
 	}
 }
 
