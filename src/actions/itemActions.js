@@ -5,6 +5,7 @@ import { addToast as AddToastUi } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAdUnits, getAdSlots, getCampaigns } from 'services/adex-market/actions'
 import { openChannel } from 'services/smart-contracts/actions/core'
+import { lastApprovedState } from 'services/adex-validator/actions'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({ dispatch: dispatch, type: type, action: 'X', label: translate(toastStr, { args: args }), timeout: 5000 })(dispatch)
@@ -331,5 +332,27 @@ export const addNewTag = ({ tag }) => {
 			type: types.ADD_NEW_TAG,
 			tag: tag
 		})
+	}
+}
+
+export const updateCampaignState = ({campaign}) => {
+	return async (dispatch) => {
+		try {
+			const state = await lastApprovedState({campaign})
+			const newCampaign = {...campaign}
+			newCampaign.state = state
+
+			return dispatch({
+				type: types.UPDATE_ITEM,
+				item: newCampaign,
+				itemType: 'Campaign'
+			})
+
+		} catch (err) {
+			console.error('ERR_GETTING_CAMPAIGN_LAST_STATUS', err)
+			addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_GETTING_CAMPAIGN_LAST_STATUS', args: [err] })
+		}
+
+
 	}
 }
