@@ -24,6 +24,10 @@ export class Campaign extends Component {
 		}
 	}
 
+	componentDidMount = () => {
+		this.props.actions.updateCampaignState({campaign: this.props.item})
+	}
+
 	handleTabChange = (index) => {
 		this.setState({ tabIndex: index })
 	}
@@ -68,7 +72,8 @@ Campaign.propTypes = {
 	actions: PropTypes.object.isRequired,
 	account: PropTypes.object.isRequired,
 	units: PropTypes.object.isRequired,
-	rowsView: PropTypes.bool.isRequired
+	rowsView: PropTypes.bool.isRequired,
+	item: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state) {
@@ -79,7 +84,7 @@ function mapStateToProps(state) {
 		units: persist.items['AdUnit'],
 		rowsView: !!persist.ui[VIEW_MODE],
 		objModel: CampaignModel,
-		itemType: 'Campaign'
+		itemType: 'Campaign',
 	}
 }
 
