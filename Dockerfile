@@ -4,7 +4,7 @@ FROM node:8
 
 # Meta
 MAINTAINER Ivo Paunov <paunov@strem.io>
-LABEL Description="AdEx dapp" Vendor="Smart Code ltd" Version="0.0.0"
+LABEL Description="AdEx Platform" Vendor="Smart Code ltd" Version="0.0.0"
 
 #------------------------------------ Setup -----------------------------------
 
