@@ -148,3 +148,10 @@ export const getCampaigns = ({ authSig }) => {
 		authSig
 	}).then(processResponse)
 }
+
+export const getAllCampaigns = () => {
+	return requester.fetch({
+		route: 'campaigns',
+		method: 'GET'
+	}).then(processResponse)
+}

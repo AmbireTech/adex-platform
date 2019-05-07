@@ -3,7 +3,7 @@ import { translate } from 'services/translations/translations'
 
 
 const getRequester = ({campaign}) => {
-	const leader = campaign.validators[0]
+	const leader = (campaign.validators || campaign.spec.validators)[0]
 	const requester = new Requester({baseUrl: leader.url})
 
 	return requester
