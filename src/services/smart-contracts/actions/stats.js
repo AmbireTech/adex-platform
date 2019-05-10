@@ -84,7 +84,7 @@ export async function getAccountStats({ account }) {
 		walletBalanceDai: formatUnits(walletBalanceDai, 18),
 		identityAddress: identity.address,
 		identityBalanceDai: formatUnits(identityBalanceDai, 18),
-		outstandingBalanceDai: formatUnits(identityBalanceDai, 18),
+		outstandingBalanceDai: formatUnits(outstandingBalanceDai, 18),
 		totalIdentityBalanceDai: formatUnits(raw.totalIdentityBalanceDai, 18)
 	}
 
