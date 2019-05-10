@@ -4,7 +4,7 @@ import { utils, Contract } from 'ethers'
 import { getAllCampaigns } from 'services/adex-market/actions'
 import { lastApprovedState } from 'services/adex-validator/actions'
 import { bigNumberify } from 'ethers/utils'
-import { Channel, MerkleTree }  from 'adex-protocol-eth/js'
+import { Channel, MerkleTree } from 'adex-protocol-eth/js'
 
 const { formatEther, formatUnits } = utils
 const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
@@ -54,7 +54,7 @@ export async function getAccountStats({ account }) {
 		Dai.balanceOf(wallet.address),
 		Dai.balanceOf(identity.address),
 		privilegesAction,
-		getOutstandingBalance({wallet})
+		getOutstandingBalance({ wallet, identity })
 	]
 
 	const [
@@ -83,7 +83,7 @@ export async function getAccountStats({ account }) {
 		walletBalanceEth: formatEther(walletBalanceEth),
 		walletBalanceDai: formatUnits(walletBalanceDai, 18),
 		identityAddress: identity.address,
-		identityBalanceDai:  formatUnits(identityBalanceDai, 18),
+		identityBalanceDai: formatUnits(identityBalanceDai, 18),
 		outstandingBalanceDai: formatUnits(identityBalanceDai, 18),
 		totalIdentityBalanceDai: formatUnits(raw.totalIdentityBalanceDai, 18)
 	}
@@ -94,10 +94,11 @@ export async function getAccountStats({ account }) {
 	}
 }
 
-async function getAllChannels () {
+async function getAllChannels() {
 	const channels = await getAllCampaigns()
 	return Promise.all(channels.map(async channel => {
-		const { lastApproved } = await lastApprovedState({campaign: channel})
+		const { lastApproved } = await lastApprovedState({ campaign: channel })
+
 		if (lastApproved) {
 			const balancesTree = lastApproved.newState.msg.balances
 			const allLeafs = Object.keys(balancesTree).map(k => Channel.getBalanceLeaf(k, balancesTree[k]))
@@ -109,17 +110,18 @@ async function getAllChannels () {
 	}))
 }
 
-async function getAllChannelsWhereHasBalance (allActive, addr) {
+async function getAllChannelsWhereHasBalance(allActive, addr) {
 	return allActive
 		.filter(({ lastApproved }) => lastApproved && !!lastApproved.newState.msg.balances[addr])
 		.map(({ channel, lastApproved }) => ({ channel, balance: lastApproved.newState.msg.balances[addr] }))
 }
-async function getOutstandingBalance({wallet}) {
-	const {address, authType} = wallet
-	const {AdExCore} = await getEthers(authType)
+async function getOutstandingBalance({ wallet, identity }) {
+	const { authType } = wallet
+	const { address } = identity
+	const { AdExCore } = await getEthers(authType)
 	const allActive = await getAllChannels()
 	const withBalance = await getAllChannelsWhereHasBalance(allActive, address)
-    
+
 	const withOutstanding = await Promise.all(withBalance.map(async ({ channel, balance }) => {
 		const outstanding = bigNumberify(balance).sub(await AdExCore.withdrawnPerUser(channel.id, address))
 		return { channel, outstanding }
