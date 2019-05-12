@@ -79,7 +79,6 @@ function getClientEnvironment(publicUrl) {
 				WEB3_NODE_ADDR: process.env.WEB3_NODE_ADDR, // set in .env.(production/development).local
 				ADEX_CORE_ADDR: process.env.ADEX_CORE_ADDR,
 				ADX_TOKEN_ADDR: process.env.ADX_TOKEN_ADDR,
-				ADVIEW_HOST: process.env.ADVIEW_HOST,
 				ETH_SCAN_ADDR_HOST: process.env.ETH_SCAN_ADDR_HOST,
 				ETH_SCAN_TX_HOST: process.env.ETH_SCAN_ADDR_HOST,
 				ADEX_SITE_HOST: process.env.ADEX_SITE_HOST,
