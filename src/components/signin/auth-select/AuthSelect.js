@@ -68,7 +68,7 @@ class AuthSelect extends Component {
 			<div className={classes.gridContainer}>
 				<Grid container spacing={16} alignItems='center'>
 
-					<Grid item xs={12} md={4}>
+					<Grid item xs={12} md={6}>
 						<AuthCard
 							classes={classes}
 							title={t('GRANT_ACCOUNT')}
@@ -85,7 +85,7 @@ class AuthSelect extends Component {
 						/>
 					</Grid>
 
-					<Grid item xs={12} md={4}>
+					<Grid item xs={12} md={6}>
 						<AuthCard
 							classes={classes}
 							title={t('FULL_ACCOUNT')}
@@ -102,7 +102,7 @@ class AuthSelect extends Component {
 						/>
 					</Grid>
 
-					<Grid item xs={12} md={4}>
+					{/* <Grid item xs={12} md={4}>
 						<AuthCard
 							disabled
 							classes={classes}
@@ -116,7 +116,7 @@ class AuthSelect extends Component {
 							toCreate='/identity/demo'
 							btnCreateTitle={t('GO_DEMO_ACCOUNT')}
 						/>
-					</Grid>
+					</Grid> */}
 
 				</Grid>
 			</div>
