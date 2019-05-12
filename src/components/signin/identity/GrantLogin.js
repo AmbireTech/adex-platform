@@ -41,13 +41,13 @@ class GrantLogin extends Component {
 			handleChange('wallet', wallet)
 			handleChange('walletAddr', wallet.address)
 			handleChange('identityData', wallet.identity)
-
-			validate('wallet', {
-				isValid: !!wallet.address,
-				err: { msg: 'ERR_LOCAL_WALLET_LOGIN' },
-				dirty: dirty
-			})
 		}
+
+		validate('wallet', {
+			isValid: !!wallet.address,
+			err: { msg: 'ERR_LOCAL_WALLET_LOGIN' },
+			dirty: dirty
+		})
 	}
 	
 	render() {
@@ -111,7 +111,7 @@ class GrantLogin extends Component {
 							size='large'
 							onClick={() => this.validateWallet(true)}
 						>
-							{t('RECOVER_GRANT_IDENTITY')}
+							{t('CHECK_GRANT_IDENTITY')}
 						</Button>
 					</Grid>
 					<Grid item xs={12}>
