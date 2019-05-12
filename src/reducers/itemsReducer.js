@@ -63,13 +63,13 @@ export default function itemsReducer(state = initialState.items, action) {
 		return newState
 
 	case UPDATE_ALL_ITEMS:
-		//TEMP:
 		newState = { ...state }
-		const newItems = action.items.reduce((memo, item, index) => {
+		const newItems = action.items.reduce((items, item, index) => {
+			const currentItems = {...items}
 			const newItem = { ...item }
-			memo[newItem.id || newItem.ipfs] = newItem
-			return memo
-		}, {})
+			currentItems[newItem.id || newItem.ipfs] = newItem
+			return currentItems
+		}, newState[action.itemType])
 
 		newState[action.itemType] = newItems
 		return newState
