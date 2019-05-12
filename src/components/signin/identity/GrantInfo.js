@@ -3,6 +3,10 @@ import IdentityHoc from './IdentityHoc'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Translate from 'components/translate/Translate'
+import Checkbox from '@material-ui/core/Checkbox'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormHelperText from '@material-ui/core/FormHelperText'
+import FormControl from '@material-ui/core/FormControl'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import {
@@ -19,7 +23,8 @@ class GrantInfo extends Component {
 			emailCheck,
 			password,
 			passwordCheck,
-			coupon
+			coupon,
+			tosCheck
 		} = this.props.identity
 
 		this.validateEmail(email, false)
@@ -27,6 +32,7 @@ class GrantInfo extends Component {
 		this.validatePassword(password, false)
 		this.validatePasswordCheck(passwordCheck, false)
 		this.validateCoupon(coupon, false)
+		this.validateTOS(tosCheck, false)
 	}
 
 	validateEmail(email, dirty) {
@@ -103,10 +109,23 @@ class GrantInfo extends Component {
 		}
 	}
 
+	validateTOS(accepted, dirty) {
+		this.props.validate('tosCheck', {
+			isValid: !!accepted,
+			err: { msg: 'ERR_TOS_CHECK' },
+			dirty: dirty
+		})
+	}
+
+	tosCheck(checked) {
+		this.props.handleChange('tosCheck', checked)
+		this.validateTOS(checked, true)
+	}
+
 	render() {
 		const { t, identity, handleChange, invalidFields } = this.props
 		// Errors
-		const { coupon, email, emailCheck, password, passwordCheck } = invalidFields
+		const { coupon, email, emailCheck, password, passwordCheck, tosCheck } = invalidFields
 		return (
 			<div>
 				<Grid
@@ -213,8 +232,31 @@ class GrantInfo extends Component {
 							}
 						/>
 					</Grid>
+					<Grid item xs={12}>
+						<FormControl
+							required
+							error={tosCheck && tosCheck.dirty}
+							component="fieldset"
+						// className={classes.formControl}
+						>
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={!!identity.tosCheck}
+										onChange={(ev) => this.tosCheck(ev.target.checked)}
+										value='tosCheck'
+										color='primary'
+									/>
+								}
+								label={t('TOS_CHECK')}
+							/>
+							{(tosCheck && !!tosCheck.dirty) &&
+								<FormHelperText>{tosCheck.errMsg}</FormHelperText>
+							}
+						</FormControl>
+					</Grid>
 				</Grid>
-			</div>
+			</div >
 		)
 	}
 }
