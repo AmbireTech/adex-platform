@@ -7,7 +7,6 @@ import { AdSlot } from 'adex-models'
 import copy from 'copy-to-clipboard'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
 import { BasicProps } from 'components/dashboard/containers/ItemCommon'
-import Helper from 'helpers/miscHelpers'
 import Paper from '@material-ui/core/Paper'
 import IconButton from '@material-ui/core/IconButton'
 import CopyIcon from '@material-ui/icons/FileCopy'
@@ -17,7 +16,8 @@ import { contracts } from 'services/smart-contracts/contractsCfg'
 
 const { DAI } = contracts
 
-const ADVIEW_URL = process.env.ADVIEW_URL || 'https://adexnetwork.github.io/adex-adview-manager/#'
+const ADVIEW_URL = process.env.ADVIEW_URL
+const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
 
 const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 	const {type, tags, fallbackMediaUrl, fallbackTargetUrl } = slot
@@ -36,10 +36,9 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 		randomize: true,
 		targeting: tags || [],
 		fallbackMediaUrl: fallbackMediaUrl || '',
-		fallbackTargetUrl: fallbackTargetUrl || ''
+		fallbackTargetUrl: fallbackTargetUrl || '',
+		marketURL: ADEX_MARKET_HOST
 	}
-
-
 
 	let query = encodeURIComponent(JSON.stringify({options}))
 
