@@ -182,7 +182,10 @@ export class DashboardStats extends Component {
 			walletBalanceEth,
 			walletBalanceDai,
 			// identityAddress,
-			identityBalanceDai
+			identityBalanceDai,
+			outstandingBalanceDai,
+			totalIdentityBalanceDai
+
 		} = formatted
 		const classes = this.props.classes
 		return (
@@ -233,8 +236,10 @@ export class DashboardStats extends Component {
 				<StatsCard
 					linkCard
 					onClick={this.goToAccount}
-					subtitle={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
-					title={identityBalanceDai + ' DAI'}
+					subtitle={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
+						args: [identityBalanceDai, outstandingBalanceDai]
+					})}
+					title={totalIdentityBalanceDai + ' DAI'}
 				>
 				</StatsCard>
 			</div>
@@ -270,7 +275,7 @@ export class DashboardStats extends Component {
 					</Grid>
 					<Grid item md={12} lg={6}>
 						<this.InfoStats
-							// stats={stats}
+						// stats={stats}
 						/>
 					</Grid>
 				</Grid>
