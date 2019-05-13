@@ -11,10 +11,6 @@ export const styles = theme => {
 			'&.disabled': {
 				opacity: 0.3
 			}
-		},
-		gridContainer: {
-			flexGrow: 1,
-			justifyContent: 'space-around'
 		}
 	}
 }

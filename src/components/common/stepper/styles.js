@@ -32,6 +32,7 @@ export const styles = {
 		padding: 20,
 		overflowY: 'auto',
 		overflowX: 'hidden',
+		display: 'flex',
 		WebkitOverflowScrolling: 'touch',
 		'@media(max-width:500px)': {
 			paddingLeft: 0,

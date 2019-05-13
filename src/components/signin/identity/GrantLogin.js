@@ -55,47 +55,55 @@ class GrantLogin extends Component {
 		// Errors
 		const { wallet } = invalidFields
 		return (
-			<div>
-				<Grid
-					container
-					spacing={16}
-				>
-					<Grid item xs={12}>
-						<Typography variant='body2' color='primary' gutterBottom>
-							{t('GRANT_LOGIN_INFO')}
-						</Typography>
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							fullWidth
-							type='text'
-							required
-							label={t('email', { isProp: true })}
-							name='email'
-							value={identity.email || ''}
-							onChange={(ev) => handleChange('email', ev.target.value)}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							fullWidth
-							type='password'
-							required
-							label={t('password', { isProp: true })}
-							name='password'
-							value={identity.password || ''}
-							onChange={(ev) => handleChange('password', ev.target.value)}
-						/>
-					</Grid>
-					{(wallet && !!wallet.dirty) &&
+			// <div>
+			<Grid
+				container
+				spacing={16}
+				// direction='row'
+				alignContent='space-between'
+				alignItems='center'
+			>
+				<Grid item>
+					<Grid
+						container
+						spacing={16}
+					>
+						<Grid item xs={12}>
+							<Typography variant='body2' color='primary' gutterBottom>
+								{t('GRANT_LOGIN_INFO')}
+							</Typography>
+						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								fullWidth
+								type='text'
+								required
+								label={t('email', { isProp: true })}
+								name='email'
+								value={identity.email || ''}
+								onChange={(ev) => handleChange('email', ev.target.value)}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								fullWidth
+								type='password'
+								required
+								label={t('password', { isProp: true })}
+								name='password'
+								value={identity.password || ''}
+								onChange={(ev) => handleChange('password', ev.target.value)}
+							/>
+						</Grid>
+						{(wallet && !!wallet.dirty) &&
 						<Grid item xs={12}>
 							<Typography variant='body2' color='error' gutterBottom>
 								{wallet.errMsg}
 							</Typography>
 						</Grid>
-					}
-					<Grid item xs={12}>
-						{(!!identity.walletAddr) &&
+						}
+						<Grid item xs={12}>
+							{(!!identity.walletAddr) &&
 							<div>
 								<Typography variant='body1' >
 									{t('GRANT_WALLET_ADDRESS', { args: [identity.walletAddr] })}
@@ -104,36 +112,39 @@ class GrantLogin extends Component {
 									{t('GRANT_IDENTITY_ADDRESS', { args: [identity.identityAddr] })}
 								</Typography>
 							</div>
-						}
-						<Button
-							variant='contained'
-							color='primary'
-							size='large'
-							onClick={() => this.validateWallet(true)}
-						>
-							{t('CHECK_GRANT_IDENTITY')}
-						</Button>
-					</Grid>
-					<Grid item xs={12}>
-						<input
-							accept="text/json"
-							className={classes.input}
-							id="contained-button-file"
-							type="file"
-							onChange={actions.onUploadLocalWallet}
-						/>
-						<label htmlFor="contained-button-file">
-							<Button 							
-								variant="contained" 
-								component="span" 
-								className={classes.button}
+							}
+							<Button
+								variant='contained'
+								color='primary'
+								size='large'
+								onClick={() => this.validateWallet(true)}
 							>
-								{t('UPLOAD_ACCOUNT_DATA_JSON')}
+								{t('CHECK_GRANT_IDENTITY')}
 							</Button>
-						</label>
+						</Grid>
 					</Grid>
+
 				</Grid>
-			</div>
+				<Grid item xs={12}>
+					<input
+						accept="text/json"
+						className={classes.input}
+						id="contained-button-file"
+						type="file"
+						onChange={actions.onUploadLocalWallet}
+					/>
+					<label htmlFor="contained-button-file">
+						<Button 							
+							// variant="contained" 
+							component="span" 
+							className={classes.button}
+						>
+							{t('UPLOAD_ACCOUNT_DATA_JSON')}
+						</Button>
+					</label>
+				</Grid>
+			</Grid>
+			// </div>
 		)
 	}
 }
