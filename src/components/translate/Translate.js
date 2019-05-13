@@ -15,9 +15,7 @@ export default function Translate(Decorated) {
 
 		render() {
 			return (
-				<span>
-					<Decorated {...this.props} t={this.t.bind(this)} />
-				</span>
+				<Decorated {...this.props} t={this.t.bind(this)} />
 			)
 		}
 	}
