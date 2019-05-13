@@ -47,13 +47,11 @@ export default function AuthHoc(Decorated) {
 
 		render() {
 			return (
-				<div>
-					<Decorated
-						{...this.props}
-						// updateAcc={this.updateAcc}
-						updateWallet={this.updateWallet}
-					/>
-				</div>
+				<Decorated
+					{...this.props}
+					// updateAcc={this.updateAcc}
+					updateWallet={this.updateWallet}
+				/>
 			)
 		}
 	}

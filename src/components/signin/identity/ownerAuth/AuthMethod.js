@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import Translate from 'components/translate/Translate'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
+import Grid from '@material-ui/core/Grid'
+
 import AppBar from '@material-ui/core/AppBar'
 import AuthMetamask from './AuthMetamask'
 import AuthTrezor from './AuthTrezor'
@@ -31,50 +33,60 @@ class AuthMethod extends Component {
 		const { t, classes } = this.props
 		const { tabIndex } = this.state
 		return (
-			<div>
-				<AppBar
-					position='static'
-					color='default'
-				>
-					<Tabs
-						value={this.state.tabIndex}
-						onChange={this.handleTabChange}
-						scrollable
-						scrollButtons='off'
-						indicatorColor='primary'
-						textColor='inherit'
-						variant='fullWidth'
+			<Grid
+				container
+				spacing={16}
+				direction='row'
+				alignContent='flex-start'
+			>
+				<Grid item xs={12}>
+					<AppBar
+						position='static'
+						color='default'
 					>
-						<Tab
+						<Tabs
+							value={this.state.tabIndex}
+							onChange={this.handleTabChange}
+							scrollable
+							scrollButtons='off'
+							indicatorColor='primary'
+							textColor='inherit'
+							variant='fullWidth'
+						>
+							<Tab
 							// label={t('METAMASK')}
-							classes={{ label: classes.tabLabel }}
-							label={<Img
-								src={METAMASK_DL_IMG}
-								alt={t('AUTH_WITH_METAMASK')}
-								className={classes.tabLogo}
-							/>}
-						/>
-						<Tab
+								classes={{ label: classes.tabLabel }}
+								label={<Img
+									src={METAMASK_DL_IMG}
+									alt={t('AUTH_WITH_METAMASK')}
+									className={classes.tabLogo}
+								/>}
+							/>
+							<Tab
 							// label={t('TREZOR')}
-							classes={{ label: classes.tabLabel }}
-							label={<Img
-								src={TREZOR_DL_IMG}
-								alt={t('AUTH_WITH_TREZOR')}
-								className={classes.tabLogo}
-							/>}
-						/>
-						<Tab
+								classes={{ label: classes.tabLabel }}
+								label={<Img
+									src={TREZOR_DL_IMG}
+									alt={t('AUTH_WITH_TREZOR')}
+									className={classes.tabLogo}
+								/>}
+							/>
+							<Tab
 							// label={t('LEDGER')}
-							classes={{ label: classes.tabLabel }}
-							label={<Img
-								src={LEDGER_DL_IMG}
-								alt={t('AUTH_WITH_LEDGER')}
-								className={classes.tabLogo}
-							/>}
-						/>
-					</Tabs>
-				</AppBar>
-				<div className={classes.tabsContainer}>
+								classes={{ label: classes.tabLabel }}
+								label={<Img
+									src={LEDGER_DL_IMG}
+									alt={t('AUTH_WITH_LEDGER')}
+									className={classes.tabLogo}
+								/>}
+							/>
+						</Tabs>
+					</AppBar>
+				</Grid>
+				<Grid 
+					item xs={12} 
+					className={classes.tabsContainer}
+				>
 					{(tabIndex === 0) &&
 						<AuthMetamask />
 					}
@@ -84,8 +96,8 @@ class AuthMethod extends Component {
 					{(tabIndex === 2) &&
 						<AuthLedger />
 					}
-				</div>
-			</div>
+				</Grid>
+			</Grid>
 		)
 	}
 }
