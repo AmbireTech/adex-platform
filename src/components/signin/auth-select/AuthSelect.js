@@ -65,44 +65,43 @@ class AuthSelect extends Component {
 	render() {
 		let { t, classes } = this.props
 		return (
-			<div className={classes.gridContainer}>
-				<Grid container spacing={16} alignItems='center'>
+			<Grid container spacing={16} alignItems='center'>
 
-					<Grid item xs={12} md={6}>
-						<AuthCard
-							classes={classes}
-							title={t('GRANT_ACCOUNT')}
-							authPoints={[
-								t('GRANT_ACCOUNT_INFO_1'),
-								t('GRANT_ACCOUNT_INFO_2'),
-								t('GRANT_ACCOUNT_INFO_3'),
-								t('GRANT_ACCOUNT_INFO_4')
-							]}
-							toCreate='/identity/grant'
-							toLogin='/login/grant'
-							btnCreateTitle={t('CREATE_GRANT_ACCOUNT')}
-							btnLoginTitle={t('LOGIN_GRANT_ACCOUNT')}
-						/>
-					</Grid>
+				<Grid item xs={12} md={6}>
+					<AuthCard
+						classes={classes}
+						title={t('GRANT_ACCOUNT')}
+						authPoints={[
+							t('GRANT_ACCOUNT_INFO_1'),
+							t('GRANT_ACCOUNT_INFO_2'),
+							t('GRANT_ACCOUNT_INFO_3'),
+							t('GRANT_ACCOUNT_INFO_4')
+						]}
+						toCreate='/identity/grant'
+						toLogin='/login/grant'
+						btnCreateTitle={t('CREATE_GRANT_ACCOUNT')}
+						btnLoginTitle={t('LOGIN_GRANT_ACCOUNT')}
+					/>
+				</Grid>
 
-					<Grid item xs={12} md={6}>
-						<AuthCard
-							classes={classes}
-							title={t('FULL_ACCOUNT')}
-							authPoints={[
-								t('FULL_ACCOUNT_INFO_1'),
-								t('FULL_ACCOUNT_INFO_2'),
-								t('FULL_ACCOUNT_INFO_3'),
-								t('FULL_ACCOUNT_INFO_4')
-							]}
-							toCreate='/identity/full'
-							toLogin='/login/full'
-							btnCreateTitle={t('CREATE_FULL_ACCOUNT')}
-							btnLoginTitle={t('LOGIN_FULL_ACCOUNT')}
-						/>
-					</Grid>
+				<Grid item xs={12} md={6}>
+					<AuthCard
+						classes={classes}
+						title={t('FULL_ACCOUNT')}
+						authPoints={[
+							t('FULL_ACCOUNT_INFO_1'),
+							t('FULL_ACCOUNT_INFO_2'),
+							t('FULL_ACCOUNT_INFO_3'),
+							t('FULL_ACCOUNT_INFO_4')
+						]}
+						toCreate='/identity/full'
+						toLogin='/login/full'
+						btnCreateTitle={t('CREATE_FULL_ACCOUNT')}
+						btnLoginTitle={t('LOGIN_FULL_ACCOUNT')}
+					/>
+				</Grid>
 
-					{/* <Grid item xs={12} md={4}>
+				{/* <Grid item xs={12} md={4}>
 						<AuthCard
 							disabled
 							classes={classes}
@@ -118,8 +117,7 @@ class AuthSelect extends Component {
 						/>
 					</Grid> */}
 
-				</Grid>
-			</div>
+			</Grid>
 		)
 	}
 }
