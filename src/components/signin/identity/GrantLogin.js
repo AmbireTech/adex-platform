@@ -63,7 +63,7 @@ class GrantLogin extends Component {
 				alignContent='space-between'
 				alignItems='center'
 			>
-				<Grid item>
+				<Grid item xs={12}>
 					<Grid
 						container
 						spacing={16}

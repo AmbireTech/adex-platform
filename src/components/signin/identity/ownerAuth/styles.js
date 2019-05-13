@@ -42,12 +42,12 @@ export const styles = theme => {
 			overflowY: 'auto',
 			position: 'relative',
 			margin: spacing,
-			marginTop: spacing * 2,
-			position: 'absolute',
-			top: 70,
-			left: 0,
-			right: 0,
-			bottom: 0
+			// marginTop: spacing * 2,
+			// position: 'absolute',
+			// top: 70,
+			// left: 0,
+			// right: 0,
+			// bottom: 0
 		},
 		backdrop: {
 			backgroundColor: 'rgba(255, 255, 255, 0.5)'
