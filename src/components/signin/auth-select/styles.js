@@ -10,7 +10,11 @@ export const styles = theme => {
 			opacity: 0.7,
 			'&.disabled': {
 				opacity: 0.3
-			}
+			},
+			textAlign: 'center'
+		},
+		actions: {
+			justifyContent: 'center'
 		}
 	}
 }
