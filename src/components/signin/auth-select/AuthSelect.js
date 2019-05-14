@@ -25,19 +25,27 @@ const AuthCard = ({
 	...other }) => (
 	<Card className={classes.card} raised>
 		<CardContent>
-			<Typography component='h2' variant='headline' color='primary' gutterBottom>
+			<Typography
+				variant='h4' 
+				color='primary' 
+				gutterBottom
+			>			
 				{title}
 			</Typography>
 			{authPoints.map((point, index) =>
-				<Typography key={index} component='h5'>
+				<Typography 
+					key={index} 
+					variant='subtitle1'
+				>
 					{point}
 				</Typography>
 			)}
 		</CardContent>
-		<CardActions>
+		<CardActions className={classes.actions}>
 			{btnCreateTitle && <RRButton
 				variant='contained'
-				to={toCreate} size='medium'
+				to={toCreate} 
+				size='large'
 				color='primary'
 				disabled={disabled}
 			>
@@ -45,7 +53,8 @@ const AuthCard = ({
 			</RRButton>}
 			{btnLoginTitle && <RRButton
 				variant='contained'
-				to={toLogin} size='medium'
+				to={toLogin} 
+				size='large'
 				color='primary'
 				disabled={disabled}
 			>
