@@ -47,6 +47,7 @@
     "file-loader": "2.0.0",
     "fork-ts-checker-webpack-plugin-alt": "0.4.14",
     "fs-extra": "7.0.0",
+    "gh-pages": "^2.0.1",
     "hdkey": "^1.1.1",
     "history": "^4.7.2",
     "html-webpack-plugin": "4.0.0-alpha.2",
@@ -102,6 +103,8 @@
   "scripts": {
     "start": "node --max-old-space-size=4096 scripts/start.js",
     "build": "node --max-old-space-size=2048 scripts/build.js",
+    "predeploy": "npm run build && cp CNAME ./build",
+    "deploy": "gh-pages -d build",
     "test": "node scripts/test.js --env=jsdom"
   },
   "eslintConfig": {
