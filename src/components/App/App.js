@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Switch } from 'react-router-dom'
+import { Switch, HashRouter as Router } from 'react-router-dom'
 import 'react-image-crop/dist/ReactCrop.css'
 // import './App.css'
 import { Provider } from 'react-redux'
@@ -50,13 +50,15 @@ class App extends Component {
 								onBeforeLift={onBeforeLift}
 								persistor={persistor}>
 								<ConnectedRouter history={history} >
-									<div className="adex-dapp">
-										<Switch >
-											<Root />
-										</Switch>
-										<Toast />
-										<Confirm />
-									</div>
+									<Router>
+										<div className="adex-dapp">									
+											<Switch >
+												<Root />
+											</Switch>
+											<Toast />
+											<Confirm />									
+										</div>
+									</Router>
 								</ConnectedRouter>
 							</PersistGate>
 						</Provider>
