@@ -36,20 +36,6 @@ const autocompleteTagsSingleSelect = () => {
 			value: tag._id
 		}
 	})
-		.concat([
-			{
-				label: 'stremio',
-				value: 'stremio'
-			},
-			{
-				label: 'stremio_user',
-				value: 'stremio_user'
-			},
-			{
-				label: 'lang_en-US',
-				value: 'lang_en-US'
-			}
-		]) // TEMP
 }
 
 const AcLocations = autocompleteLocationsSingleSelect()
@@ -59,7 +45,8 @@ const AcTags = autocompleteTagsSingleSelect()
 const SOURCES = {
 	locations: { src: AcLocations, collection: 'targeting' },
 	genders: { src: AcGenders, collection: 'targeting' },
-	tags: { src: AcTags, collection: 'tags' }
+	tags: { src: AcTags, collection: 'tags' },
+	custom: { src: [], collection: 'targeting'}
 }
 
 const styles = {
@@ -169,7 +156,7 @@ class AdUnitTargeting extends Component {
 						value={target.tag}
 						suggestionMatch='anywhere'
 						showSuggestionsWhenValueIsSet={true}
-						allowCreate={false}
+						allowCreate={!source.length}
 					/>
 				</Grid>
 				<Grid item xs={12} md={6} >
