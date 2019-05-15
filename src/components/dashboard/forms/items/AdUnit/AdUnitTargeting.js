@@ -36,6 +36,20 @@ const autocompleteTagsSingleSelect = () => {
 			value: tag._id
 		}
 	})
+		.concat([
+			{
+				label: 'stremio',
+				value: 'stremio'
+			},
+			{
+				label: 'stremio_user',
+				value: 'stremio_user'
+			},
+			{
+				label: 'lang_en-US',
+				value: 'lang_en-US'
+			}
+		]) // TEMP
 }
 
 const AcLocations = autocompleteLocationsSingleSelect()
