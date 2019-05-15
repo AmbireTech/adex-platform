@@ -93,7 +93,11 @@ const validateAmounts = ({ maxDeposit = 0, depositAmount, minPerImpression }) =>
 		error = { message: 'ERR_INSUFFICIENT_IDENTITY_BALANCE', prop: 'depositAmount' }
 	} if (dep && (dep < min)) {
 		error = { message: 'ERR_CPM_OVER_DEPOSIT', prop: 'minPerImpression' }
-	}
+	} if (dep <= 0) {
+		error = { message: 'ERR_ZERO_DEPOSIT', prop: 'depositAmount' }
+	}  if (min <= 0) {
+		error = { message: 'ERR_ZERO_CPM', prop: 'minPerImpression' }
+	} 
 
 	return { error }
 }
