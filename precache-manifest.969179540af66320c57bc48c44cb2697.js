@@ -1,10 +1,10 @@
 self.__precacheManifest = [
   {
-    "revision": "d76394b5be017a898d14",
+    "revision": "fe31dea80d6741553586",
     "url": "/static/css/main.css"
   },
   {
-    "revision": "d76394b5be017a898d14",
+    "revision": "fe31dea80d6741553586",
     "url": "/static/js/main.js"
   },
   {
@@ -32,7 +32,7 @@ self.__precacheManifest = [
     "url": "/static/media/background.png"
   },
   {
-    "revision": "b9dae2d8d37428ae8114e412bae173cb",
+    "revision": "a5c1574fd10e940210f4b4d0922c98bb",
     "url": "/index.html"
   }
 ];
