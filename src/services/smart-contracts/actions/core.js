@@ -21,7 +21,7 @@ const feeAmountApprove = '150000000000000000'
 const feeAmountOpen = '160000000000000000'
 const timeframe = 15000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 1.5
-const VALID_UNTIL_MIN_PERIOD = 72 * 60 * 60 * 1000// 72 hours in ms
+const VALID_UNTIL_MIN_PERIOD = 7 * 24 * 60 * 60 * 1000// 7 days in ms
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
