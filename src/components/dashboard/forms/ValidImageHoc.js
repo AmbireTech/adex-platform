@@ -10,10 +10,9 @@ function checkExactish(widthTarget, width, heightTarget, height) {
 	const targetAspect = parseFloat(widthTarget / heightTarget).toFixed(5)
 	const aspect = parseFloat(width / height).toFixed(5)
 
-	const isValid =
-		(widthTarget < width) || 
-		(heightTarget < height) ||
-		targetAspect !== aspect
+	const isValid =	(widthTarget <= width) &&
+		(heightTarget <= height) &&
+		(targetAspect === aspect)
 
 	return isValid
 }
