@@ -3,13 +3,14 @@
   "main.js": "/static/js/main.js",
   "main.js.map": "/static/js/main.js.map",
   "static/media/trezor-logo-h.png": "/static/media/trezor-logo-h.png",
-  "static/media/download-metamask.png": "/static/media/download-metamask.png",
   "static/media/no-image-box-eddie.jpg": "/static/media/no-image-box-eddie.jpg",
   "static/media/rekt-eddie.png": "/static/media/rekt-eddie.png",
   "static/media/metamask-logo.png": "/static/media/metamask-logo.png",
+  "static/media/404.png": "/static/media/404.png",
   "static/media/background.png": "/static/media/background.png",
+  "static/media/download-metamask.png": "/static/media/download-metamask.png",
   "static/css/main.css.map": "/static/css/main.css.map",
   "index.html": "/index.html",
-  "precache-manifest.c5e8b2cc4bac5ab56341aaa722b27591.js": "/precache-manifest.c5e8b2cc4bac5ab56341aaa722b27591.js",
+  "precache-manifest.a14deea24b1ca634e142b9a65253c9d6.js": "/precache-manifest.a14deea24b1ca634e142b9a65253c9d6.js",
   "service-worker.js": "/service-worker.js"
 }
