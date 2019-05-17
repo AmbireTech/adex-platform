@@ -5,6 +5,19 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Translate from 'components/translate/Translate'
 
+// Allow higher res images with same aspect ratio
+function checkExactish(widthTarget, width, heightTarget, height) {
+	const targetAspect = parseFloat(widthTarget / heightTarget).toFixed(5)
+	const aspect = parseFloat(width / height).toFixed(5)
+
+	const isValid =
+		(widthTarget < width) || 
+		(heightTarget < height) ||
+		targetAspect !== aspect
+
+	return isValid
+}
+
 export default function ValidImageHoc(Decorated) {
 
 	class ValidImage extends Component {
@@ -29,10 +42,10 @@ export default function ValidImageHoc(Decorated) {
 
 				let isValid = true
 
-				if (exact && (widthTarget !== width || heightTarget !== height)) {
-					isValid = false
-
+				if (exact) {
+					isValid = checkExactish(widthTarget, width, heightTarget, height)
 				}
+
 				if (!exact && (widthTarget < width || heightTarget < height)) {
 					isValid = false
 				}
