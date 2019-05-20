@@ -5,6 +5,7 @@ import { getEthers } from 'services/smart-contracts/ethers'
 import { getSigner } from 'services/smart-contracts/actions/ethers'
 import { contracts } from '../contractsCfg'
 import { sendOpenChannel } from 'services/adex-relayer/actions'
+import { closeCampaign } from 'services/adex-validator/actions'
 import { Campaign, AdUnit } from 'adex-models'
 import {
 	bigNumberify,
@@ -142,4 +143,9 @@ export async function openChannel({ campaign, account }) {
 		result,
 		readyCampaign
 	}
+}
+
+export async function closeChannel({account, campaign}) {
+	const result = await closeCampaign({account, campaign})
+	return result
 }
