@@ -2,9 +2,10 @@ import * as types from 'constants/actionTypes'
 import { uploadImage, postAdUnit, postAdSlot } from 'services/adex-market/actions'
 import { Base, AdSlot, AdUnit } from 'adex-models'
 import { addToast as AddToastUi } from './uiActions'
+import { updateAccount } from './accountActions'
 import { translate } from 'services/translations/translations'
 import { getAdUnits, getAdSlots, getCampaigns } from 'services/adex-market/actions'
-import { openChannel } from 'services/smart-contracts/actions/core'
+import { openChannel, closeChannel } from 'services/smart-contracts/actions/core'
 import { lastApprovedState } from 'services/adex-validator/actions'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
@@ -335,11 +336,11 @@ export const addNewTag = ({ tag }) => {
 	}
 }
 
-export const updateCampaignState = ({campaign}) => {
+export const updateCampaignState = ({ campaign }) => {
 	return async (dispatch) => {
 		try {
-			const state = await lastApprovedState({campaign})
-			const newCampaign = {...campaign}
+			const state = await lastApprovedState({ campaign })
+			const newCampaign = { ...campaign }
 			newCampaign.state = state
 
 			return dispatch({
@@ -352,7 +353,29 @@ export const updateCampaignState = ({campaign}) => {
 			console.error('ERR_GETTING_CAMPAIGN_LAST_STATUS', err)
 			addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_GETTING_CAMPAIGN_LAST_STATUS', args: [err] })
 		}
+	}
+}
 
+export function closeCampaign({ campaign }) {
+	return async function (dispatch, getState) {
+		try {
+			const { account } = getState().persist
+			const { authTokens } = closeChannel({ account, campaign })
 
+			const newIdentity = { ...account.identity }
+			const newTokens = { ...newIdentity.validatorAuthTokens, authTokens }
+			newIdentity.validatorAuthTokens = newTokens
+			newIdentity.identity = newIdentity
+
+			updateAccount({ newValues: { identity: newIdentity } })(dispatch)
+		} catch (err) {
+			console.error('ERR_CLOSING_CAMPAIGN', err)
+			addToast({
+				dispatch,
+				type: 'cancel',
+				toastStr: 'ERR_CLOSING_CAMPAIGN',
+				args: [err]
+			})
+		}
 	}
 }
