@@ -6,6 +6,7 @@ import actions from 'actions'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
 import ItemsList from 'components/dashboard/containers/ItemsList'
 import Translate from 'components/translate/Translate'
+import Button from '@material-ui/core/Button'
 import { AdUnit as AdUnitModel, Campaign as CampaignModel } from 'adex-models'
 import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import { withStyles } from '@material-ui/core/styles'
@@ -25,15 +26,26 @@ export class Campaign extends Component {
 	}
 
 	componentDidMount = () => {
-		this.props.actions.updateCampaignState({campaign: this.props.item})
+		this.props.actions.updateCampaignState({ campaign: this.props.item })
 	}
 
 	handleTabChange = (index) => {
 		this.setState({ tabIndex: index })
 	}
 
+	CampaignActions = ({ campaign, actions, t }) => {
+		return (
+			<Button
+				color='secondary'
+				onClick={() => actions.closeCampaign({ campaign })}
+			>
+				{t('BTN_CLOSE_CAMPAIGN')}
+			</Button>
+		)
+	}
+
 	render() {
-		const { t, classes, item, setActiveFields, handleChange, activeFields, isDemo, ...rest } = this.props
+		const { t, classes, item, setActiveFields, handleChange, activeFields, isDemo, actions, ...rest } = this.props
 		if (!item) return (<h1>'404'</h1>)
 
 		const units = item.spec.adUnits
@@ -51,8 +63,12 @@ export class Campaign extends Component {
 							targets={campaign.targeting}
 							t={t}
 							subHeader={t('CAMPAIGN_TARGETING')}
-						/>}
+						/>
+					}
 				/>
+				<div>
+					<this.CampaignActions campaign={campaign} t={t} actions={actions} />
+				</div>
 				<ItemsList
 					removeFromItem
 					items={units}
@@ -77,7 +93,7 @@ Campaign.propTypes = {
 }
 
 function mapStateToProps(state) {
-	const {persist} = state
+	const { persist } = state
 	// let memory = state.memory
 	return {
 		account: persist.account,
