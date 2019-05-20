@@ -37,7 +37,11 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 		targeting: tags || [],
 		fallbackMediaUrl: fallbackMediaUrl || '',
 		fallbackTargetUrl: fallbackTargetUrl || '',
-		marketURL: ADEX_MARKET_HOST
+		marketURL: ADEX_MARKET_HOST,
+		width: sizes.width,
+		height: sizes.height,
+		minPerImpression: '0',
+		minTargetingScore: '0'
 	}
 
 	let query = encodeURIComponent(JSON.stringify({options}))
