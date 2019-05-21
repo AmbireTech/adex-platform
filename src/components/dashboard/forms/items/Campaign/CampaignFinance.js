@@ -56,13 +56,15 @@ const PubValidatorsSrc = Object.keys(PubPlatformValidators).map(key => {
 })
 
 const getTotalImpressions = ({ depositAmount, minPerImpression, t }) => {
-	if (!depositAmount) {
+	const dep = parseFloat(depositAmount)
+	const min = parseFloat(minPerImpression)
+	if (!dep) {
 		return t('DEPOSIT_NOT_SET')
-	} else if (!minPerImpression) {
+	} else if (!min) {
 		return t('CPM_NOT_SET')
 	} else {
 		const impressions = utils.commify(
-			Math.floor((parseFloat(depositAmount) / parseFloat(minPerImpression)) * 1000))
+			Math.floor((dep / min) * 1000))
 		return t('TOTAL_IMPRESSIONS', { args: [impressions] })
 	}
 }
@@ -95,9 +97,9 @@ const validateAmounts = ({ maxDeposit = 0, depositAmount, minPerImpression }) =>
 		error = { message: 'ERR_CPM_OVER_DEPOSIT', prop: 'minPerImpression' }
 	} if (dep <= 0) {
 		error = { message: 'ERR_ZERO_DEPOSIT', prop: 'depositAmount' }
-	}  if (min <= 0) {
+	} if (min <= 0) {
 		error = { message: 'ERR_ZERO_CPM', prop: 'minPerImpression' }
-	} 
+	}
 
 	return { error }
 }
@@ -222,7 +224,8 @@ class CampaignFinance extends Component {
 		const errMin = invalidFields['minPerImpression']
 		const errFrom = invalidFields['activeFrom']
 		const errTo = invalidFields['withdrawPeriodStart']
-		const impressions = !errDepAmnt && !errMin
+
+		const impressions = !(errDepAmnt || errMin)
 			? getTotalImpressions({ depositAmount, minPerImpression, t })
 			: ''
 
@@ -266,12 +269,10 @@ class CampaignFinance extends Component {
 							label={t('DEPOSIT_AMOUNT_LABEL', { args: [t(identityBalanceDai), 'DAI'] })}
 							name='depositAmount'
 							value={depositAmount}
-							onChange={(ev) =>
-								handleChange('depositAmount', ev.target.value)}
-							onBlur={() =>
-								this.validateAmount(depositAmount, 'depositAmount', true)}
-							onFocus={() =>
-								this.validateAmount(depositAmount, 'depositAmount', false)}
+							onChange={(ev) => {								
+								this.validateAmount(ev.target.value, 'depositAmount', true)	
+								handleChange('depositAmount', ev.target.value)				
+							}}
 							error={errDepAmnt && !!errDepAmnt.dirty}
 							maxLength={120}
 							helperText={
@@ -289,12 +290,10 @@ class CampaignFinance extends Component {
 							label={t('CPM_LABEL', { args: [impressions] })}
 							name='minPerImpression'
 							value={minPerImpression}
-							onChange={(ev) =>
-								handleChange('minPerImpression', ev.target.value)}
-							onBlur={() =>
-								this.validateAmount(minPerImpression, 'minPerImpression', true)}
-							onFocus={() =>
-								this.validateAmount(minPerImpression, 'minPerImpression', false)}
+							onChange={(ev) => {								
+								this.validateAmount(ev.target.value, 'minPerImpression', true)
+								handleChange('minPerImpression', ev.target.value)																
+							}}
 							error={errMin && !!errMin.dirty}
 							maxLength={120}
 							helperText={
