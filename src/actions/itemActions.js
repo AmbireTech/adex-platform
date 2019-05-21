@@ -365,7 +365,6 @@ export function closeCampaign({ campaign }) {
 			const newIdentity = { ...account.identity }
 			const newTokens = { ...newIdentity.validatorAuthTokens, authTokens }
 			newIdentity.validatorAuthTokens = newTokens
-			newIdentity.identity = newIdentity
 
 			updateAccount({ newValues: { identity: newIdentity } })(dispatch)
 		} catch (err) {
