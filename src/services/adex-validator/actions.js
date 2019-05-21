@@ -64,7 +64,7 @@ const sendMessage = async ({ account, campaign, options }) => {
 	const { follower, leader } = getRequesters({ campaign })
 
 	const followerAuthToken = await getAuthToken({ account, validator: follower.validator })
-	const leaderAuthToken = await getAuthToken({ account, validator: follower.validator })
+	const leaderAuthToken = await getAuthToken({ account, validator: leader.validator })
 	const followerResult = await follower.requester.fetch({
 		...options,
 		headers: { ...options.headers, authorization: BEARER_PREFIX + followerAuthToken }
@@ -99,9 +99,9 @@ export const lastApprovedState = ({ campaign }) => {
 
 export const closeCampaign = ({ account, campaign }) => {
 	const options = {
-		route: `channel/${campaign.id}/events/close`,
+		route: `channel/${campaign.id}/events`,
 		method: 'POST',
-		body: JSON.stringify([{ type: 'CLOSE' }]),
+		body: JSON.stringify({ events: [{ type: 'CLOSE' }] }),
 		headers: { 'Content-Type': 'application/json' }
 	}
 
