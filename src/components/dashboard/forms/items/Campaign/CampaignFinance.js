@@ -78,6 +78,8 @@ const validateCampaignDates = ({ created = Date.now(), withdrawPeriodStart, acti
 		error = { message: 'ERR_START_BEFORE_NOW', prop: 'activeFrom' }
 	} else if (activeFrom && !withdrawPeriodStart) {
 		error = { message: 'ERR_NO_END', prop: 'withdrawPeriodStart' }
+	} else if(!(withdrawPeriodStart || activeFrom)) {
+		error = { message: 'ERR_NO_DATE_SET', prop: 'withdrawPeriodStart' }
 	}
 
 	return { error }
@@ -95,9 +97,9 @@ const validateAmounts = ({ maxDeposit = 0, depositAmount, minPerImpression }) =>
 		error = { message: 'ERR_CPM_OVER_DEPOSIT', prop: 'minPerImpression' }
 	} if (dep <= 0) {
 		error = { message: 'ERR_ZERO_DEPOSIT', prop: 'depositAmount' }
-	}  if (min <= 0) {
+	} if (min <= 0) {
 		error = { message: 'ERR_ZERO_CPM', prop: 'minPerImpression' }
-	} 
+	}
 
 	return { error }
 }
@@ -109,10 +111,13 @@ class CampaignFinance extends Component {
 		this.validateAndUpdateValidator(false, 1, newItem.validators[1])
 		this.validateAmount(newItem.depositAmount, 'depositAmount', false, 'REQUIRED_FIELD')
 		this.validateAmount(newItem.minPerImpression, 'minPerImpression', false, 'REQUIRED_FIELD')
+		this.handleDates('activeFrom', newItem.activeFrom, false)
+		this.handleDates('withdrawPeriodStart', newItem.withdrawPeriodStart, false)
 	}
 
 	validateAndUpdateValidator = (dirty, index, key, update) => {
-		const { validators } = this.props.newItem
+		const { handleChange, newItem, validate } = this.props
+		const { validators } = newItem
 		const newValidators = [...validators]
 		const newValue = VALIDATOR_SOURCES[index][key]
 
@@ -127,10 +132,10 @@ class CampaignFinance extends Component {
 			!!newValidators[1].url
 
 		if (update) {
-			this.props.handleChange('validators', newValidators)
+			handleChange('validators', newValidators)
 		}
 
-		this.props.validate('validators', {
+		validate('validators', {
 			isValid: isValid,
 			err: { msg: 'ERR_VALIDATORS' },
 			dirty: dirty
@@ -171,12 +176,12 @@ class CampaignFinance extends Component {
 
 	handleDates = (prop, value, dirty) => {
 
-		const { newItem, handleChange } = this.props
+		const { newItem, handleChange, validate } = this.props
 		const withdrawPeriodStart = (prop === 'withdrawPeriodStart') ? value : newItem.withdrawPeriodStart
 		const activeFrom = (prop === 'activeFrom') ? value : newItem.activeFrom
 		const result = validateCampaignDates({ withdrawPeriodStart, activeFrom, created: newItem.created })
 
-		this.props.validate(
+		validate(
 			'activeFrom',
 			{
 				isValid: !result.error,
@@ -184,7 +189,7 @@ class CampaignFinance extends Component {
 				dirty: dirty
 			})
 
-		this.props.validate(
+		validate(
 			'withdrawPeriodStart',
 			{
 				isValid: !result.error,
@@ -192,7 +197,9 @@ class CampaignFinance extends Component {
 				dirty: dirty
 			})
 
-		handleChange(prop, value)
+		if (value) {
+			handleChange(prop, value)
+		}
 	}
 
 	render() {
