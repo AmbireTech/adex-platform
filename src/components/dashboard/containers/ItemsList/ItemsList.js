@@ -75,6 +75,7 @@ class ItemsList extends Component {
 					<TableCell> {t('PROP_MEDIA')}</TableCell>
 					<TableCell> {t('PROP_STATUS')} </TableCell>
 					<TableCell> {t('PROP_DEPOSIT')} </TableCell>
+					<TableCell> {t('PROP_DISTRIBUTED', { args: ['%'] })} </TableCell>
 					<TableCell> {t('PROP_CPM')} </TableCell>
 					<TableCell> {t('PROP_CREATED')} </TableCell>
 					<TableCell> {t('PROP_STARTS')} </TableCell>
@@ -146,6 +147,8 @@ class ItemsList extends Component {
 			noActions,
 			classes
 		} = this.props
+
+		const status = item.status || {}
 		return (
 			<TableRow
 				key={item.ipfs || index}
@@ -170,8 +173,9 @@ class ItemsList extends Component {
 						alt={item.title}
 					/>
 				</TableCell>
-				<TableCell> {(item.status || {}).name} </TableCell>
+				<TableCell> {status.name} </TableCell>
 				<TableCell>	{formatTokenAmount(item.depositAmount, 18, true)} DAI </TableCell>
+				<TableCell> {((status.fundsDistributedRatio || 0) / 10).toFixed(2)}</TableCell>
 				<TableCell>
 					{formatTokenAmount(
 						bigNumberify(item.minPerImpression).mul(1000),
