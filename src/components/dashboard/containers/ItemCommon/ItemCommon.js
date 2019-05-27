@@ -201,7 +201,7 @@ export const BasicProps = withStyles(styles)(basicProps)
 const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, itemType, ...rest }) => {
 	const mediaUrl = item.mediaUrl || item.fallbackMediaUrl
 	const status = item.status || {}
-	console.log('item', item)
+	// console.log('item', item)
 	return (
 		<div >
 			<Grid container spacing={16}>
