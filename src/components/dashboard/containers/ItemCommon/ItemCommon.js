@@ -200,6 +200,7 @@ export const BasicProps = withStyles(styles)(basicProps)
 
 const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, itemType, ...rest }) => {
 	const mediaUrl = item.mediaUrl || item.fallbackMediaUrl
+	const status = item.status || {}
 	console.log('item', item)
 	return (
 		<div >
@@ -273,7 +274,7 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 												<Grid item xs={12} >
 													<TextField
 														// type='text'
-														value={item.status.name}
+														value={status.name}
 														label={t('status', { isProp: true })}
 														disabled
 														margin='dense'
@@ -283,8 +284,8 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 												<Grid item xs={12} >
 													<TextField
 														// type='text'
-														value={item.creator}
-														label={t('creator', { isProp: true })}
+														value={((status.fundsDistributedRatio || 0) / 10).toFixed(2)}
+														label={t('PROP_DISTRIBUTED', { args: ['%'] })}
 														disabled
 														margin='dense'
 														fullWidth
@@ -329,4 +330,5 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 	)
 }
 
+// ((status.fundsDistributedRatio || 0) / 10).toFixed(2)
 export const CampaignProps = withStyles(styles)(campaignProps)
