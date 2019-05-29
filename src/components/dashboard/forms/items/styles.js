@@ -2,10 +2,14 @@ export const styles = theme => {
 	// const spacing = theme.spacing.unit * 1
 	return {
 		imgPreview: {
-			height: 120,
+			maxHeight: 120,
 			width: 'auto',
 			maxWidth: '100%',
+			height: 'auto',
 			boxShadow: theme.shadows[2]
+		},
+		imgPreviewWrapper: {
+			height: 'max-content'
 		}
 	}
 }
