@@ -24,7 +24,7 @@ class AdUnitFormPreview extends Component {
 					right={
 						<Img
 							allowFullscreen={true}
-							className={classes.imgPreview}
+							classes={{ img: classes.imgPreview, wrapper: classes.imgPreviewWrapper }}
 							src={item.fallbackAdImg.tempUrl || ''}
 							alt={item.fallbackAdUrl}
 						/>

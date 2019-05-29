@@ -75,6 +75,7 @@ class AdSlotPreview extends Component {
 							<Img
 								allowFullscreen={true}
 								className={classes.imgPreview}
+								classes={{ img: classes.imgPreview, wrapper: classes.imgPreviewWrapper }}
 								src={temp.tempUrl || ''}
 								alt={title}
 							/>

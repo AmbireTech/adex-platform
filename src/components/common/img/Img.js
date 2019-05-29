@@ -168,18 +168,18 @@ class Img extends Component {
 		const { alt, allowFullscreen, className, classes, fullScreenOnClick } = this.props
 		return (
 			this.state.imgSrc ?
-				<span className={classnames(classes.imgParent, className)}>
+				<div className={classnames(classes.imgParent, className, classes.wrapper)}>
 					<img
 						alt={alt}
 						src={this.state.imgSrc}
 						draggable='false'
-						className={classnames(classes.imgLoading, className)}
+						className={classnames(classes.imgLoading, className, classes.img)}
 						onDragStart={(event) => event.preventDefault() /*Firefox*/}
 						onClick={fullScreenOnClick && (() => { console.log('click'); this.handleToggle() })}
 					/>
 					{allowFullscreen && this.fullScreenBtn()}
 					{fullScreenOnClick && this.renderFullscreenDialog()}
-				</span>
+				</div>
 				:
 				<span className={classnames(classes.imgLoading, className)}>
 					<span

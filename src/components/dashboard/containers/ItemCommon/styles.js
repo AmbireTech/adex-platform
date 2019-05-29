@@ -28,10 +28,12 @@ export const styles = theme => {
 			left: 0,
 			right: 0,
 			margin: 'auto',
-			minWidth: '50%',
-			minHeight: '50%',
+			// minWidth: '50%',
+			// minHeight: '50%',
 			height: 'auto',
-			width: '100%'
+			maxWidth: '100%',
+			width: 'auto',
+			maxHeight: '100%'
 		},
 		basicInfo: {
 			display: 'flex',

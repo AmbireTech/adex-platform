@@ -11,7 +11,7 @@ export const styles = theme => ({
 		top: 0,
 		left: 0,
 		width: 'auto',
-		height: 'auto',
+		height: 'max-content',
 		position: 'relative',
 		display: 'inline-block'
 	},
@@ -50,5 +50,13 @@ export const styles = theme => ({
 	dialogImage: {
 		height: 'auto',
 		maxWidth: '80vw'
+	},
+	img: {
+		width: 'auto',
+		height: 'auto'
+	},
+	wrapper: {
+		height: 'max-content',
+		width: 'max-content'	
 	}
 })
