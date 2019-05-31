@@ -49,6 +49,11 @@ let initialState = {
 		gasData: {}
 	},
 	wallet: {
+	},
+	config: {
+		relayer: {},
+		market: {},
+		validators: {}
 	}
 }
 
