@@ -152,3 +152,11 @@ export function createSession({ wallet, identity, email }) {
 		updateSpinner('creating-session', false)(dispatch)
 	}
 }
+
+export function getRelayerConfig() {
+	return function (dispatch) {
+		return dispatch({
+			type: types.UPDATE_RELAYER_CFG
+		})
+	}
+}
