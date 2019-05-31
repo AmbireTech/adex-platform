@@ -1,6 +1,7 @@
 import * as types from 'constants/actionTypes'
 import { addSig, getSig } from 'services/auth/auth'
 import { getSession, checkSession } from 'services/adex-market/actions'
+import { relayerConfig } from 'services/adex-relayer/actions'
 import { updateSpinner } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
@@ -154,9 +155,11 @@ export function createSession({ wallet, identity, email }) {
 }
 
 export function getRelayerConfig() {
-	return function (dispatch) {
+	return async function (dispatch) {
+		const cfg = await relayerConfig()
 		return dispatch({
-			type: types.UPDATE_RELAYER_CFG
+			type: types.UPDATE_RELAYER_CFG,
+			cfg
 		})
 	}
 }

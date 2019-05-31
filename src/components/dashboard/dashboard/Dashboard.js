@@ -56,6 +56,7 @@ class Dashboard extends React.Component {
 		const { actions } = this.props
 
 		actions.updateNav('side', this.props.match.params.side)
+		actions.getRelayerConfig()
 		actions.getAllItems()
 		actions.updateAccountStats()
 		checkTransactions.start()
