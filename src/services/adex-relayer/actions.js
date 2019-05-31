@@ -125,3 +125,10 @@ export const registerExpectedIdentity = ({ owner, mail }) => {
 		headers: { 'Content-Type': 'application/json' }
 	}).then(processResponse)
 }
+
+export const relayerConfig = () => {
+	return requester.fetch({
+		route: 'relayer/cfg',
+		method: 'GET'
+	}).then(processResponse)
+}
