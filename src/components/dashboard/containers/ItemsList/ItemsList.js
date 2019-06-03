@@ -77,9 +77,11 @@ class ItemsList extends Component {
 					<TableCell> {t('PROP_DEPOSIT')} </TableCell>
 					<TableCell> {t('PROP_DISTRIBUTED', { args: ['%'] })} </TableCell>
 					<TableCell> {t('PROP_CPM')} </TableCell>
-					<TableCell> {t('PROP_CREATED')} </TableCell>
-					<TableCell> {t('PROP_STARTS')} </TableCell>
-					<TableCell> {t('PROP_ENDS')} </TableCell>
+					<TableCell>
+						{t('PROP_CREATED')}/ <br />
+						{t('PROP_STARTS')}/ <br />
+						{t('PROP_ENDS')}
+					</TableCell>
 					{!noActions &&
 						<TableCell> {t('ACTIONS')} </TableCell>
 					}
@@ -181,9 +183,11 @@ class ItemsList extends Component {
 						bigNumberify(item.minPerImpression).mul(1000),
 						18, true)} DAI
 				</TableCell>
-				<TableCell> {formatDateTime(item.created)} </TableCell>
-				<TableCell> {formatDateTime(item.activeFrom)} </TableCell>
-				<TableCell> {formatDateTime(item.withdrawPeriodStart)} </TableCell>
+				<TableCell>
+					{formatDateTime(item.created)} <br />
+					{formatDateTime(item.activeFrom)} <br />
+					{formatDateTime(item.withdrawPeriodStart)}
+				</TableCell>
 				{!noActions &&
 					this.renderActions({ item, to })
 				}
