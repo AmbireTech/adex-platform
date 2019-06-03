@@ -15,18 +15,19 @@ const RRButton = withReactRouterLink(Button)
 class PageNotFound extends React.Component {
 
 	render() {
-		const { 
-			t, 
+		const {
+			t,
 			classes,
 			title,
 			subtitle,
 			goToTxt,
-			goToPath
+			goToPath,
+			skipGoToButton
 		} = this.props
 		return (
-			<div 
+			<div
 				className={classes.wrapper}
-			>		
+			>
 				<Grid
 					container
 					spacing={16}
@@ -42,13 +43,13 @@ class PageNotFound extends React.Component {
 						</Typography>
 
 						{subtitle &&
-								<Typography
-									className={classes.text}
-									variant='subtitle1'
-								>
-									{t(subtitle)}
-								</Typography>
-						 }
+							<Typography
+								className={classes.text}
+								variant='subtitle1'
+							>
+								{t(subtitle)}
+							</Typography>
+						}
 					</Grid>
 
 					<Grid item sm={12}>
@@ -56,7 +57,7 @@ class PageNotFound extends React.Component {
 							inline
 							className={classes.text}
 							variant='h1'
-							style={{textTransform: 'uppercase'}}
+							style={{ textTransform: 'uppercase' }}
 						>
 							{t('404')}
 						</Typography>
@@ -71,14 +72,15 @@ class PageNotFound extends React.Component {
 					</Grid>
 
 					<Grid item sm={12}>
-						<RRButton
+						{!skipGoToButton && <RRButton
 							variant='contained'
-							to={goToPath || '/'} 
+							to={goToPath || '/'}
 							size='large'
 							color='primary'
 						>
 							{t(goToTxt || 'GO_HOME')}
 						</RRButton>
+						}
 					</Grid>
 
 				</Grid>
@@ -91,7 +93,8 @@ PageNotFound.propTypes = {
 	title: PropTypes.string,
 	subtitle: PropTypes.string,
 	goToTxt: PropTypes.string,
-	goToPath: PropTypes.string
+	goToPath: PropTypes.string,
+	skipGoToButton: PropTypes.bool
 }
 
 export default Translate(withStyles(styles)(PageNotFound))
