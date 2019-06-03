@@ -13,6 +13,9 @@ import CopyIcon from '@material-ui/icons/FileCopy'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { contracts } from 'services/smart-contracts/contractsCfg'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import AppBar from '@material-ui/core/AppBar'
 
 const { DAI } = contracts
 
@@ -20,7 +23,7 @@ const ADVIEW_URL = process.env.ADVIEW_URL
 const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
 
 const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
-	const {type, tags, fallbackMediaUrl, fallbackTargetUrl } = slot
+	const { type, tags, fallbackMediaUrl, fallbackTargetUrl } = slot
 	const identityAddr = account.identity.address
 
 	let sizes = type.split('_')[1].split('x')
@@ -44,7 +47,7 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 		minTargetingScore: '0'
 	}
 
-	let query = encodeURIComponent(JSON.stringify({options}))
+	let query = encodeURIComponent(JSON.stringify({ options }))
 
 	let src = ADVIEW_URL + query
 
@@ -93,7 +96,8 @@ export class Slot extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			editFallbackImg: false
+			editFallbackImg: false,
+			tabIndex: 0,
 		}
 	}
 
@@ -102,8 +106,13 @@ export class Slot extends Component {
 		this.setState({ editFallbackImg: !active })
 	}
 
+	handleTabChange = (event, index) => {
+		this.setState({ tabIndex: index })
+	}
+
 	render() {
 		const { t, classes, isDemo, item, account, ...rest } = this.props
+		const { tabIndex } = this.state
 
 		if (!item.id) return (<h1>Slot '404'</h1>)
 
@@ -114,17 +123,48 @@ export class Slot extends Component {
 					t={t}
 					url={item.adUrl}
 					canEditImg={!isDemo}
-					rightComponent={
-						<IntegrationCode
-							classes={classes}
-							t={t}
-							account={account}
-							slot={item}	
-							onCopy={() =>
-								this.props.actions
-									.addToast({ type: 'accept', action: 'X', label: t('COPIED_TO_CLIPBOARD'), timeout: 5000 })}
-						/>}
+					rightComponent={null}
 				/>
+				<div>
+					<AppBar
+						position='static'
+						color='default'
+					>
+						<Tabs
+							value={tabIndex}
+							onChange={this.handleTabChange}
+							scrollable
+							scrollButtons='off'
+							indicatorColor='primary'
+							textColor='primary'
+						>
+							<Tab label={t('STATISTICS')} />
+							<Tab label={t('INTEGRATION')} />
+						</Tabs>
+					</AppBar>
+					<div
+						style={{ marginTop: 10 }}
+					>
+						{
+							(tabIndex === 0) &&
+							null
+						}
+						{
+							(tabIndex === 1) &&
+							<IntegrationCode
+								classes={classes}
+								t={t}
+								account={account}
+								slot={item}
+								onCopy={() =>
+									this.props.actions
+										.addToast({ type: 'accept', action: 'X', label: t('COPIED_TO_CLIPBOARD'), timeout: 5000 })}
+							/>
+						}
+
+					</div>
+				</div>
+
 			</div>
 		)
 	}
