@@ -27,6 +27,7 @@ import FormHelperText from '@material-ui/core/FormHelperText'
 import { styles } from './styles'
 import { validName } from 'helpers/validators'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
+import PageNotFound from 'components/page_not_found/PageNotFound'
 
 const { AdSizesByValue } = ItemsConstants
 
@@ -41,26 +42,26 @@ export default function ItemHoc(Decorated) {
 				initialItemState: {},
 				dirtyProps: [],
 				editImg: false,
-				itemModel: Item,
 				_activeInput: null
 			}
 		}
 
 		updateNav = (item = {}) => {
 			const { actions, t, itemType } = this.props
-			actions.updateNav('navTitle', t(itemType, { isProp: true }) + ' > ' + item.title)
+			actions.updateNav('navTitle', t(itemType, { isProp: true }) + ' > ' + item.title || '')
 		}
 
-		componentDidMount() {
-			const { item, itemType } = this.props
+		componentWillMount() {
+			const { item, matchId, objModel } = this.props
+
 			if (!item) {
+				this.updateNav({ title: matchId })
 				return
 			}
 
-			let model = Models.itemClassByName[itemType]
-			let initialItemState = new model(item)
+			const initialItemState = new objModel(item)
 
-			this.setState({ item: { ...item }, initialItemState: initialItemState, itemModel: model })
+			this.setState({ item: { ...item }, initialItemState: initialItemState })
 			this.updateNav(initialItemState)
 		}
 
@@ -71,11 +72,13 @@ export default function ItemHoc(Decorated) {
 		// }
 
 		componentWillReceiveProps(nextProps, nextState) {
-			let currentItemInst = new this.state.itemModel(this.state.item)
+			const { objModel } = this.props
+			const { item } = this.state
+			let currentItemInst = new objModel(item || {})
 			// Assume that the this.props.match.params.itemId can not be changed without remount of the component
 			// TODO: check the above
 			let nextItem = nextProps.item
-			let nexItemInst = new this.state.itemModel(nextItem)
+			let nexItemInst = new objModel(nextItem || {})
 
 			// if (currentItemInst.modifiedOn !== nexItemInst.modifiedOn) {
 			if (JSON.stringify(currentItemInst.plainObj()) != JSON.stringify(nexItemInst.plainObj())) {
@@ -92,10 +95,13 @@ export default function ItemHoc(Decorated) {
 		}
 
 		handleChange = (name, value) => {
-			let newItem = new this.state.itemModel(this.state.item)
+			const { objModel } = this.props
+			const { item, dirtyProps } = this.state
+
+			const newItem = new objModel(item)
 			newItem[name] = value
 
-			let dp = this.state.dirtyProps.slice(0)
+			const dp = dirtyProps.slice(0)
 
 			if (dp.indexOf(name) < 0) {
 				dp.push(name)
@@ -105,15 +111,17 @@ export default function ItemHoc(Decorated) {
 		}
 
 		returnPropToInitialState = (propName) => {
-			let initialItemStateValue = this.state.initialItemState[propName]
-			let newItem = new this.state.itemModel(this.state.item)
+			const { objModel, actions } = this.props
+			const { dirtyProps, initialItemState, item } = this.state
+			const initialItemStateValue = initialItemState[propName]
+			const newItem = new objModel(item)
 			newItem[propName] = initialItemStateValue
 
-			let dp = this.state.dirtyProps.filter((dp) => { return dp !== propName })
+			const dp = dirtyProps.filter((dp) => { return dp !== propName })
 
 			this.setState({ item: newItem.plainObj(), dirtyProps: dp })
 			// TEMP fix, we assume that the initial values are validated
-			this.props.actions.resetValidationErrors(this.state.item.id, propName)
+			actions.resetValidationErrors(item.id, propName)
 		}
 
 		setActiveFields = (field, value) => {
@@ -155,17 +163,25 @@ export default function ItemHoc(Decorated) {
 		}
 
 		render() {
-			if (!this.state.item) {
-				return (<h1> No item found! </h1>)
+			const { validations, classes, t, account, itemType, objModel, matchId, side, ...rest } = this.props
+			const propsItem = this.props.item
+
+			if (!propsItem) {
+				return (
+					<PageNotFound
+						title={t('ITEM_NOT_FOUND_TITLE')}
+						subtitle={t('ITEM_NOT_FOUND_SUBTITLE', { args: [itemType, matchId] })}
+						skipGoToButton
+					/>
+				)
 			}
         	/*
                 * NOTE: using instance of the item, the instance is passes to the Unit, Slot, Channel and Campaign components,
                 * in this case there is no need to make instance inside them
             */
 
-			const { validations, classes, t, account, itemType, ...rest } = this.props
 			const isDemo = account._authType === 'demo'
-			let item = new this.state.itemModel(this.state.item) || {}
+			const item = new objModel(this.state.item || {})
 			let canEdit = itemType === 'AdSlot'
 			let imgSrc = item.temp.tempUrl || item.mediaUrl || item.fallbackMediaUrl
 
@@ -376,7 +392,8 @@ export default function ItemHoc(Decorated) {
 		account: PropTypes.object.isRequired,
 		item: PropTypes.object.isRequired,
 		spinner: PropTypes.bool,
-		itemType: PropTypes.string.isRequired
+		itemType: PropTypes.string.isRequired,
+		objModel: PropTypes.func.isRequired
 	}
 
 	const tryGetItemByIpfs = ({ items, ipfs }) => {
@@ -409,7 +426,8 @@ export default function ItemHoc(Decorated) {
 		return {
 			account: persist.account,
 			item: item,
-			validateId: 'update-' + item
+			validateId: 'update-' + item,
+			matchId: id
 		}
 	}
 
