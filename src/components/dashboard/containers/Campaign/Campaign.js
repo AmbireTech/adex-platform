@@ -61,10 +61,7 @@ export class Campaign extends Component {
 
 	render() {
 		const { t, classes, item, setActiveFields, handleChange, activeFields, isDemo, actions, ...rest } = this.props
-		if (!item) return (<h1>'404'</h1>)
-
 		const { tabIndex } = this.state
-
 
 		const units = item.spec.adUnits
 		const campaign = new CampaignModel(item)

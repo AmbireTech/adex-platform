@@ -16,6 +16,7 @@ import { contracts } from 'services/smart-contracts/contractsCfg'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import AppBar from '@material-ui/core/AppBar'
+import PageNotFound from 'components/page_not_found/PageNotFound'
 
 const { DAI } = contracts
 
@@ -113,8 +114,6 @@ export class Slot extends Component {
 	render() {
 		const { t, classes, isDemo, item, account, ...rest } = this.props
 		const { tabIndex } = this.state
-
-		if (!item.id) return (<h1>Slot '404'</h1>)
 
 		return (
 			<div>
