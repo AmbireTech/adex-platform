@@ -108,4 +108,11 @@ export const closeCampaign = ({ account, campaign }) => {
 	return sendMessage({ account, campaign, options })
 }
 
+export const eventsAggregates = ({ agrArgs, campaign }) => {
+	const { follower } = getRequesters({ campaign })
 
+	return follower.requester.fetch({
+		route: `channel/${campaign.id}/events-aggregates/${agrArgs}`,
+		method: 'GET'
+	}).then(processResponse)
+}
