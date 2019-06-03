@@ -2,7 +2,7 @@ import { getEthers } from 'services/smart-contracts/ethers'
 import { constants } from 'adex-models'
 import { utils, Contract } from 'ethers'
 import { getAllCampaigns } from 'services/adex-market/actions'
-import { lastApprovedState } from 'services/adex-validator/actions'
+import { lastApprovedState, eventsAggregates } from 'services/adex-validator/actions'
 import { bigNumberify } from 'ethers/utils'
 import { Channel, MerkleTree } from 'adex-protocol-eth/js'
 
@@ -54,7 +54,7 @@ export async function getAccountStats({ account }) {
 		Dai.balanceOf(wallet.address),
 		Dai.balanceOf(identity.address),
 		privilegesAction,
-		getOutstandingBalance({ wallet, identity })
+		getValidatorData({ wallet, identity })
 	]
 
 	const [
@@ -62,9 +62,11 @@ export async function getAccountStats({ account }) {
 		walletBalanceDai,
 		identityBalanceDai,
 		walletPrivileges,
-		outstandingBalanceDai
+		validatorsData
 	]
 		= await Promise.all(calls)
+
+	const { outstandingBalanceDai, aggregates } = validatorsData
 
 	// BigNumber values for balances
 	const raw = {
@@ -73,8 +75,11 @@ export async function getAccountStats({ account }) {
 		identityBalanceDai,
 		walletPrivileges,
 		outstandingBalanceDai,
-		totalIdentityBalanceDai: identityBalanceDai.add(outstandingBalanceDai)
+		totalIdentityBalanceDai: identityBalanceDai.add(outstandingBalanceDai),
+		aggregates
 	}
+
+	// console.log('raw', raw)
 
 	const formatted = {
 		walletAddress: wallet.address,
@@ -85,7 +90,8 @@ export async function getAccountStats({ account }) {
 		identityAddress: identity.address,
 		identityBalanceDai: formatUnits(identityBalanceDai, 18),
 		outstandingBalanceDai: formatUnits(outstandingBalanceDai, 18),
-		totalIdentityBalanceDai: formatUnits(raw.totalIdentityBalanceDai, 18)
+		totalIdentityBalanceDai: formatUnits(raw.totalIdentityBalanceDai, 18),
+		aggregates
 	}
 
 	return {
@@ -115,12 +121,10 @@ async function getAllChannelsWhereHasBalance(allActive, addr) {
 		.filter(({ lastApproved }) => lastApproved && !!lastApproved.newState.msg.balances[addr])
 		.map(({ channel, lastApproved }) => ({ channel, balance: lastApproved.newState.msg.balances[addr] }))
 }
-async function getOutstandingBalance({ wallet, identity }) {
+
+async function getOutstandingBalance({ wallet, address, withBalance }) {
 	const { authType } = wallet
-	const { address } = identity
 	const { AdExCore } = await getEthers(authType)
-	const allActive = await getAllChannels()
-	const withBalance = await getAllChannelsWhereHasBalance(allActive, address)
 
 	const withOutstanding = await Promise.all(withBalance.map(async ({ channel, balance }) => {
 		const outstanding = bigNumberify(balance).sub(await AdExCore.withdrawnPerUser(channel.id, address))
@@ -133,4 +137,34 @@ async function getOutstandingBalance({ wallet, identity }) {
 	}, bigNumberify('0'))
 
 	return totalOutstanding || bigNumberify('0')
+}
+
+async function getIdentityStatistics({ withBalance, address }) {
+	const allCalls = withBalance.map(async ({ channel }) => {
+		const agrArgs = `${address}?timeframe=hour`
+		const stats = await eventsAggregates({ agrArgs, campaign: channel })
+		return stats
+	})
+
+	const aggregates = await Promise.all(allCalls)
+	return aggregates
+}
+
+async function getAllChannelsForIdentity({ address }) {
+	const allActive = await getAllChannels()
+	const withBalance = await getAllChannelsWhereHasBalance(allActive, address)
+
+	return withBalance
+}
+
+async function getValidatorData({ wallet, identity }) {
+	const { address } = identity
+	const withBalance = await getAllChannelsForIdentity({ address })
+	const outstandingBalanceDai = await getOutstandingBalance({ wallet, address, withBalance })
+	const aggregates = await getIdentityStatistics({ withBalance, address })
+
+	return {
+		outstandingBalanceDai,
+		aggregates
+	}
 }
