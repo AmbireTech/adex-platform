@@ -9,7 +9,6 @@ import Button from '@material-ui/core/Button'
 import EditIcon from '@material-ui/icons/Edit'
 import ImgDialog from 'components/dashboard/containers/ImgDialog'
 import { Models } from 'adex-models'
-import { Item as ItemModel } from 'adex-models'
 import classnames from 'classnames'
 import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
@@ -78,7 +77,8 @@ export default function ItemHoc(Decorated) {
 			let nextItem = nextProps.item
 			let nexItemInst = new this.state.itemModel(nextItem)
 
-			if (currentItemInst.modifiedOn !== nexItemInst.modifiedOn) {
+			// if (currentItemInst.modifiedOn !== nexItemInst.modifiedOn) {
+			if (JSON.stringify(currentItemInst.plainObj()) != JSON.stringify(nexItemInst.plainObj())) {
 				this.setState({ item: nexItemInst.plainObj(), initialItemState: nexItemInst, activeFields: {}, dirtyProps: [] })
 			}
 

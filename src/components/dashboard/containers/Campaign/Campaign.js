@@ -13,6 +13,14 @@ import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { CampaignProps } from 'components/dashboard/containers/ItemCommon'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import AppBar from '@material-ui/core/AppBar'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
+import ListSubheader from '@material-ui/core/ListSubheader'
+import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
 const VIEW_MODE = 'campaignRowsView'
@@ -22,15 +30,17 @@ export class Campaign extends Component {
 		super(props, context);
 
 		this.state = {
-			tabIndex: 0
+			tabIndex: 0,
+			statistics: {}
 		}
 	}
 
 	componentDidMount = () => {
 		this.props.actions.updateCampaignState({ campaign: this.props.item })
+		// this.props.actions.updateCampaignStatistics({ campaign: this.props.item })
 	}
 
-	handleTabChange = (index) => {
+	handleTabChange = (event, index) => {
 		this.setState({ tabIndex: index })
 	}
 
@@ -53,9 +63,16 @@ export class Campaign extends Component {
 		const { t, classes, item, setActiveFields, handleChange, activeFields, isDemo, actions, ...rest } = this.props
 		if (!item) return (<h1>'404'</h1>)
 
-		const units = item.spec.adUnits
+		const { tabIndex } = this.state
 
+
+		const units = item.spec.adUnits
 		const campaign = new CampaignModel(item)
+
+		const balances = campaign.state &&
+			campaign.state.lastApproved
+			? campaign.state.lastApproved.newState.msg.balances
+			: {}
 
 		return (
 			<div>
@@ -73,16 +90,63 @@ export class Campaign extends Component {
 					}
 
 				/>
-				<ItemsList
-					removeFromItem
-					items={units}
-					viewModeId={VIEW_MODE}
-					itemType='AdUnit'
-					objModel={AdUnitModel}
-					sortProperties={SORT_PROPERTIES_ITEMS}
-					filterProperties={FILTER_PROPERTIES_ITEMS}
-					uiStateId='campaign-units'
-				/>
+				<div>
+					<AppBar
+						position='static'
+						color='default'
+					>
+						<Tabs
+							value={tabIndex}
+							onChange={this.handleTabChange}
+							scrollable
+							scrollButtons='off'
+							indicatorColor='primary'
+							textColor='primary'
+						>
+							<Tab label={t('STATE')} />
+							<Tab label={t('CAMPAIGN_UNITS')} />
+						</Tabs>
+					</AppBar>
+					<div
+						style={{ marginTop: 10 }}
+					>
+						{
+							(tabIndex === 0) &&
+							<List
+								subheader={
+									<ListSubheader component='div'>
+										{t('BALANCES')}
+									</ListSubheader>
+								}
+							>
+								{Object.keys(balances).map(key =>
+									<ListItem key={key}>
+										<ListItemText
+											primary={formatTokenAmount(balances[key]) + ' DAI'}
+											secondary={key}
+										/>
+									</ListItem>
+								)}
+
+							</List>
+						}
+						{
+							(tabIndex === 1) &&
+							<ItemsList
+								removeFromItem
+								items={units}
+								viewModeId={VIEW_MODE}
+								itemType='AdUnit'
+								objModel={AdUnitModel}
+								sortProperties={SORT_PROPERTIES_ITEMS}
+								filterProperties={FILTER_PROPERTIES_ITEMS}
+								uiStateId='campaign-units'
+							/>
+						}
+
+					</div>
+
+				</div>
 			</div>
 		)
 	}
