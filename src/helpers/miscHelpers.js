@@ -49,52 +49,57 @@ class Helper {
 			.add(this.getRandomInt(-60, 60), 'm')
 	}
 
-    hexToRgbaColorString = (hex, alpha) => {
-    	if (!hex || (typeof hex !== 'string')) {
-    		throw new Error('Invalid color')
-    	} else if (hex.length === 4) {
-    		hex = hex + hex.substr(1, 4)
-    	}
+	hexToRgbaColorString = (hex, alpha) => {
+		if (!hex || (typeof hex !== 'string')) {
+			throw new Error('Invalid color')
+		} else if (hex.length === 4) {
+			hex = hex + hex.substr(1, 4)
+		}
 
-    	if (typeof alpha === 'object' || typeof alpha === 'undefined') {
-    		alpha = 1
-    	}
+		if (typeof alpha === 'object' || typeof alpha === 'undefined') {
+			alpha = 1
+		}
 
-    	const hexToDec = (h) => {
-    		return parseInt("0x" + h, 16)
-    	}
+		const hexToDec = (h) => {
+			return parseInt("0x" + h, 16)
+		}
 
-    	let r = hexToDec(hex.substr(1, 2))
-    	let g = hexToDec(hex.substr(3, 2))
-    	let b = hexToDec(hex.substr(5, 2))
+		let r = hexToDec(hex.substr(1, 2))
+		let g = hexToDec(hex.substr(3, 2))
+		let b = hexToDec(hex.substr(5, 2))
 
-    	return `rgba(${r},${g},${b},${alpha})`
-    }
+		return `rgba(${r},${g},${b},${alpha})`
+	}
 
-    getQuery(queryParams) {
-    	if (!queryParams) return ''
-    	return '?' + Object.keys(queryParams).map((key) => {
-    		return encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key])
-    	}, '').join('&') || ''
-    }
+	getQuery(queryParams) {
+		if (!queryParams ||
+			((typeof queryParams === 'object') &&
+				!Object.keys(queryParams).length)
+		) {
+			return ''
+		}
+		return '?' + Object.keys(queryParams).map((key) => {
+			return encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key])
+		}, '').join('&') || ''
+	}
 
-    getErrMsg = (err) => {
-    	let stack = ((err.message || err || '').toString()).split(/\r\n|\n|\r/g)
+	getErrMsg = (err) => {
+		let stack = ((err.message || err || '').toString()).split(/\r\n|\n|\r/g)
 
-    	if (stack.length > 1) {
-    		return (err.name ? err.name + ': ' : '') + (stack[0]).toString()
-    	} else {
-    		return (err.error || err || '').toString()
-    	}
-    }
+		if (stack.length > 1) {
+			return (err.name ? err.name + ': ' : '') + (stack[0]).toString()
+		} else {
+			return (err.error || err || '').toString()
+		}
+	}
 
-    isInt = (int) => {
-    	return typeof int === 'number' && (int % 1 === 0)
-    }
+	isInt = (int) => {
+		return typeof int === 'number' && (int % 1 === 0)
+	}
 
-    shuffleArray = (array) => {
-    	return [...array].sort(() => Math.random() - 0.5)
-    }
+	shuffleArray = (array) => {
+		return [...array].sort(() => Math.random() - 0.5)
+	}
 }
 
 export default new Helper()
