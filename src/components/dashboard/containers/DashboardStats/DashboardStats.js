@@ -14,6 +14,7 @@ import { withStyles } from '@material-ui/core/styles'
 import StatsCard from './StatsCard'
 import { styles } from './styles'
 import Grid from '@material-ui/core/Grid'
+import { PublisherStats } from './PublisherStats'
 
 const { BidStatesLabels, BID_STATES } = ExchangeConstants
 
@@ -247,7 +248,7 @@ export class DashboardStats extends Component {
 	}
 
 	render() {
-		const { side, sideBids, classes, t } = this.props
+		const { side, sideBids, classes, t, account } = this.props
 		if (side !== 'advertiser' && side !== 'publisher') {
 			return (
 				<SideSelect active={true} />
@@ -267,7 +268,8 @@ export class DashboardStats extends Component {
 								{/* <this.BidsStateChart
 									stats={stats}
 								/> */}
-								{t('NO_STATS_YET')}
+								{/* {t('NO_STATS_YET')} */}
+								<PublisherStats aggregates={account.stats.raw.aggregates} t={t} />
 							</CardContent>
 						</Card>
 						<div className={classes.infoStatsContainer}>
