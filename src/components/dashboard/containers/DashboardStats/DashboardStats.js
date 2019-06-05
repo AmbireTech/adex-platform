@@ -265,15 +265,10 @@ export class DashboardStats extends Component {
 							className={classnames(classes.dashboardCardBody)}
 						>
 							<CardContent>
-								{/* <this.BidsStateChart
-									stats={stats}
-								/> */}
 								{/* {t('NO_STATS_YET')} */}
 								<PublisherStats aggregates={account.stats.raw.aggregates} t={t} />
 							</CardContent>
 						</Card>
-						<div className={classes.infoStatsContainer}>
-						</div>
 					</Grid>
 					<Grid item md={12} lg={6}>
 						<this.InfoStats
