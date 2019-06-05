@@ -28,15 +28,15 @@ self.__precacheManifest = [
     "url": "/static/media/404.png"
   },
   {
-    "revision": "5ca5e2531e404e358d82",
+    "revision": "fb5d5fd5da28f04c1d4b",
     "url": "/static/js/main.js"
   },
   {
-    "revision": "5ca5e2531e404e358d82",
+    "revision": "fb5d5fd5da28f04c1d4b",
     "url": "/static/css/main.css"
   },
   {
-    "revision": "b42268d289037a692774433627e36ac6",
+    "revision": "2f18f464dedda08d1b445e5bfb6c81ed",
     "url": "/index.html"
   }
 ];
