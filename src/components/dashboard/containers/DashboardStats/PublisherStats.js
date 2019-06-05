@@ -10,7 +10,7 @@ const getDayId = (_id) => {
 }
 
 const mapAggregates = ({ aggregates = [] }) => {
-	return aggregates.reduce(({ hourly, daily }, a) => {
+	return aggregates.reduce(({ hourly, daily, channels }, a) => {
 		const { aggr, channel } = a
 
 		const channelData = aggr
@@ -33,12 +33,14 @@ const mapAggregates = ({ aggregates = [] }) => {
 
 		hourly[channel.id] = channelData.channelHourly
 		daily[channel.id] = channelData.channelDaily
+		channels[channel.id] = channel
 
 		return {
 			hourly,
-			daily
+			daily,
+			channels
 		}
-	}, { hourly: {}, daily: {} })
+	}, { hourly: {}, daily: {}, channels: {} })
 }
 
 export const PublisherStats = ({ aggregates, t }) => {
@@ -48,8 +50,8 @@ export const PublisherStats = ({ aggregates, t }) => {
 	// console.log('data', data)
 	return (
 		<div>
-			<PublisherStatistics data={data.daily} options={{title: t('DAILY')}} t={t} />
-			<PublisherStatistics data={data.hourly} options={{title: t('HOURLY')}} t={t} />
+			<PublisherStatistics data={data.daily} channels={data.channels} options={{ title: t('DAILY') }} t={t} />
+			<PublisherStatistics data={data.hourly} channels={data.channels} options={{ title: t('HOURLY') }} t={t} />
 		</div>
 	)
 }
