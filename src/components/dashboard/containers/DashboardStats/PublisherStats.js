@@ -47,6 +47,9 @@ export const PublisherStats = ({ aggregates, t }) => {
 
 	// console.log('data', data)
 	return (
-		<PublisherStatistics data={data.daily} />
+		<div>
+			<PublisherStatistics data={data.daily} options={{title: t('DAILY')}} t={t} />
+			<PublisherStatistics data={data.hourly} options={{title: t('HOURLY')}} t={t} />
+		</div>
 	)
 }
