@@ -2,9 +2,20 @@ import React from 'react'
 import { Line } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
+import { formatTokenAmount } from 'helpers/formatters'
+import { bigNumberify } from 'ethers/utils'
 
-export const PublisherStatistics = ({ data, options = {}, t }) => {
-	// TODO: refine mapping, format format and labels
+const getChannelName = (channel) => {
+	const amount = formatTokenAmount(channel.depositAmount, 18, true)
+	const cpm = formatTokenAmount(
+		bigNumberify(channel.spec.minPerImpression).mul(1000).toString()
+		, 18, true)
+
+	return `Deposit ${amount} DAI for CPM ${cpm} DAI`
+}
+
+export const PublisherStatistics = ({ data, channels, options = {}, t }) => {
+	// TODO: refine mapping, format values and labels
 	if (!Object.keys(data).length) return null
 	const dataKeys = Object.keys(data)
 
@@ -64,7 +75,7 @@ export const PublisherStatistics = ({ data, options = {}, t }) => {
 		datasets: datasets.sets.map((set, index) => {
 			return {
 				...commonDsProps,
-				label: set.label,
+				label: getChannelName(channels[set.label]),
 				data: set.data,
 				backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[index % CHARTS_COLORS.length], 0.6),
 				borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[index % CHARTS_COLORS.length], 0.6),
@@ -132,7 +143,7 @@ export const PublisherStatistics = ({ data, options = {}, t }) => {
 					},
 					scaleLabel: {
 						display: true,
-						labelString: t('EARNINGS')
+						labelString: t('VIEWS')
 					}
 				}
 			]
