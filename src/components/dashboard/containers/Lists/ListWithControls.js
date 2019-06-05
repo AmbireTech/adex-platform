@@ -26,6 +26,7 @@ import Divider from '@material-ui/core/Divider'
 import { bigNumberify } from 'ethers/utils'
 
 const INT_STRING = /^[0-9]+$/
+const PAGE_SIZE = 50
 
 const mapFilterProps = ({ filterProps = {}, t }) => {
 	return Object.keys(filterProps)
@@ -189,7 +190,7 @@ class ListWithControls extends Component {
 			sortProperty: this.props.sortProperty || (this.state.sortProperties)[0].value,
 			sortOrder: this.props.sortOrder || -1,
 			page: this.state.page,
-			pageSize: this.props.pageSize || 10,
+			pageSize: PAGE_SIZE, // this.props.pageSize || 10,
 			searchMatch: this.props.searchMatch,
 			filterBy: { key: this.state.filterBy, value: this.state.filterByValueFilter },
 			filterArchived: this.props.filterArchived || 'false'
@@ -253,7 +254,7 @@ class ListWithControls extends Component {
 							</div>
 						</div>
 
-						{this.props.filterProperties &&
+						{/* {this.props.filterProperties &&
 							<div
 								className={classnames(classes.flexRow)}
 							>
@@ -282,7 +283,7 @@ class ListWithControls extends Component {
 									helperText={t('HELPER_TXT_FILTER_BY_VALUE')}
 								/>
 							</div>
-						}
+						} */}
 
 						{this.props.archive &&
 							<RadioGroup
@@ -303,7 +304,7 @@ class ListWithControls extends Component {
 								t={t}
 								page={data.page}
 								pages={data.pages}
-								pageSize={this.props.pageSize || 10}
+								pageSize={PAGE_SIZE || this.props.pageSize || 10}
 								itemsLength={data.itemsLength}
 								goToPage={this.goToPage.bind(this)}
 								goToLastPage={this.goToPage.bind(this, data.pages - 1)}
