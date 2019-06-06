@@ -20,7 +20,7 @@ export const PublisherStatistics = ({ data, channels, options = {}, t }) => {
 	const dataKeys = Object.keys(data)
 
 	const defaultValues = dataKeys.reduce((defaults, key) => {
-		defaults[key] = 0
+		defaults[key] = null
 		return defaults
 	}, {})
 
@@ -75,10 +75,10 @@ export const PublisherStatistics = ({ data, channels, options = {}, t }) => {
 		datasets: datasets.sets.map((set, index) => {
 			return {
 				...commonDsProps,
-				label: getChannelName(channels[set.label]),
+				label: getChannelName(channels[set.label]) + ` - ${index}`,
 				data: set.data,
-				backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[index % CHARTS_COLORS.length], 0.6),
-				borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[index % CHARTS_COLORS.length], 0.6),
+				backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[index % CHARTS_COLORS.length], 1),
+				// borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[index % CHARTS_COLORS.length], 1),
 				// yAxisID: 'y-axis-1'
 			}
 		})
