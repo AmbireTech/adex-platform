@@ -149,9 +149,14 @@ export const getCampaigns = ({ authSig }) => {
 	}).then(processResponse)
 }
 
-export const getAllCampaigns = () => {
+export const getAllCampaigns = (all) => {
+	const queryParams = all ? {
+		all: true
+	} : {}
+
 	return requester.fetch({
 		route: 'campaigns',
-		method: 'GET'
+		method: 'GET',
+		queryParams
 	}).then(processResponse)
 }
