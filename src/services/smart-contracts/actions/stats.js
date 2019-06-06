@@ -101,7 +101,7 @@ export async function getAccountStats({ account }) {
 }
 
 async function getAllChannels() {
-	const channels = await getAllCampaigns()
+	const channels = await getAllCampaigns(true)
 	return Promise.all(channels.map(async channel => {
 		const { lastApproved } = await lastApprovedState({ campaign: channel })
 
