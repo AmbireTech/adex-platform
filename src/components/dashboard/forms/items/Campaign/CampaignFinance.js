@@ -80,7 +80,7 @@ const validateCampaignDates = ({ created = Date.now(), withdrawPeriodStart, acti
 		error = { message: 'ERR_START_BEFORE_NOW', prop: 'activeFrom' }
 	} else if (activeFrom && !withdrawPeriodStart) {
 		error = { message: 'ERR_NO_END', prop: 'withdrawPeriodStart' }
-	} else if(!(withdrawPeriodStart || activeFrom)) {
+	} else if (!(withdrawPeriodStart || activeFrom)) {
 		error = { message: 'ERR_NO_DATE_SET', prop: 'withdrawPeriodStart' }
 	}
 
@@ -117,11 +117,11 @@ class CampaignFinance extends Component {
 		this.handleDates('withdrawPeriodStart', newItem.withdrawPeriodStart, false)
 	}
 
-	validateAndUpdateValidator = (dirty, index, key, update) => {
+	validateAndUpdateValidator = (dirty, index, key = {}, update) => {
 		const { handleChange, newItem, validate } = this.props
 		const { validators } = newItem
 		const newValidators = [...validators]
-		const newValue = VALIDATOR_SOURCES[index][key]
+		const newValue = VALIDATOR_SOURCES[index][key.id || key]
 
 		newValidators[index] = newValue
 
@@ -276,9 +276,9 @@ class CampaignFinance extends Component {
 							label={t('DEPOSIT_AMOUNT_LABEL', { args: [t(identityBalanceDai), 'DAI'] })}
 							name='depositAmount'
 							value={depositAmount}
-							onChange={(ev) => {								
-								this.validateAmount(ev.target.value, 'depositAmount', true)	
-								handleChange('depositAmount', ev.target.value)				
+							onChange={(ev) => {
+								this.validateAmount(ev.target.value, 'depositAmount', true)
+								handleChange('depositAmount', ev.target.value)
 							}}
 							error={errDepAmnt && !!errDepAmnt.dirty}
 							maxLength={120}
@@ -297,9 +297,9 @@ class CampaignFinance extends Component {
 							label={t('CPM_LABEL', { args: [impressions] })}
 							name='minPerImpression'
 							value={minPerImpression}
-							onChange={(ev) => {								
+							onChange={(ev) => {
 								this.validateAmount(ev.target.value, 'minPerImpression', true)
-								handleChange('minPerImpression', ev.target.value)																
+								handleChange('minPerImpression', ev.target.value)
 							}}
 							error={errMin && !!errMin.dirty}
 							maxLength={120}
