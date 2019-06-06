@@ -127,7 +127,10 @@ export const styles = theme => ({
 		paddingTop: 0
 	},
 	active: {
-		backgroundColor: '#fafafa'
+		backgroundColor: theme.palette.primary[100],
+		'&:focus': {
+			backgroundColor: theme.palette.primary[100],	
+		}
 	},
 	newItemBtn: {
 		width: '200px' // TODO

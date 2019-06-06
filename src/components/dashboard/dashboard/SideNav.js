@@ -85,7 +85,7 @@ class SideNav extends Component {
 						<RRListItem
 							button
 							to={{ pathname: '/dashboard/' + side }}
-							className={classnames({ [classes.active]: location === '' })}
+							className={classnames({ [classes.active]: !location })}
 						>
 							<ListItemIcon>
 								<DashboardIcon />
