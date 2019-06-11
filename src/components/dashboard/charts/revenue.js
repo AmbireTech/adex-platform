@@ -6,6 +6,9 @@ import { formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 
 const getChannelName = (channel) => {
+	if (!channel || !channel.spec) {
+		return 'unknown'
+	}
 	const amount = formatTokenAmount(channel.depositAmount, 18, true)
 	const cpm = formatTokenAmount(
 		bigNumberify(channel.spec.minPerImpression).mul(1000).toString()
