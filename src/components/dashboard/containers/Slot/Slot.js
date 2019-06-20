@@ -34,7 +34,7 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 	}
 
 	const options = {
-		publisher: identityAddr,
+		publisherAddr: identityAddr,
 		whitelistedToken: DAI.address,
 		whitelistedType: type,
 		randomize: true,
