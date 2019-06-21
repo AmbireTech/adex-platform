@@ -80,6 +80,28 @@ class AccountInfo extends React.Component {
 					<ListItem>
 						<ListItemText
 							className={classes.address}
+							primary={identityAddress}
+							secondary={(account._authType === 'demo')
+								? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
+								: t('IDENTITY_ETH_ADDR')
+							}
+						/>
+						<IconButton
+							color='default'
+							onClick={() => {
+								copy(identityAddress)
+								this.props.actions
+									.addToast({ type: 'accept', action: 'X', label: t('COPIED_TO_CLIPBOARD'), timeout: 5000 })
+							}}
+						>
+							<CopyIcon />
+						</IconButton>
+					</ListItem>
+					<ListDivider />
+
+					<ListItem>
+						<ListItemText
+							className={classes.address}
 							primary={walletAddress}
 							secondary={(account.authType === 'demo')
 								? t('DEMO_ACCOUNT_WALLET_ADDRESS', { args: [walletAuthType, walletPrivileges] })
@@ -111,6 +133,7 @@ class AccountInfo extends React.Component {
 						</IconButton>
 					</ListItem>
 					<ListDivider />
+
 					{/* <ListItem
 					>
 						<ListItemText
@@ -151,27 +174,7 @@ class AccountInfo extends React.Component {
 						</div>
 					</ListItem>
 					<ListDivider /> */}
-					<ListItem>
-						<ListItemText
-							className={classes.address}
-							primary={identityAddress}
-							secondary={(account._authType === 'demo')
-								? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
-								: t('IDENTITY_ETH_ADDR')
-							}
-						/>
-						<IconButton
-							color='default'
-							onClick={() => {
-								copy(identityAddress)
-								this.props.actions
-									.addToast({ type: 'accept', action: 'X', label: t('COPIED_TO_CLIPBOARD'), timeout: 5000 })
-							}}
-						>
-							<CopyIcon />
-						</IconButton>
-					</ListItem>
-					<ListDivider />
+
 					<ListItem
 					>
 						<ListItemText
