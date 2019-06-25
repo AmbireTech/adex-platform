@@ -23,7 +23,6 @@ class AdSlotBasic extends Component {
 		const { newItem } = this.props
 		this.validateTitle(newItem.title, false)
 		this.validateDescription(newItem.description, false)
-		this.validateFallbackUrl(newItem.fallbackTargetUrl, false)
 	}
 
 	validateTitle(name, dirty, errMsg) {
@@ -43,16 +42,6 @@ class AdSlotBasic extends Component {
 
 		this.props.validate(
 			'description',
-			{
-				isValid: !result.error,
-				err: { msg: result.error ? result.error.message : '' },
-				dirty: dirty
-			})
-	}
-
-	validateFallbackUrl(fallbackTargetUrl, dirty) {
-		const result = Joi.validate(fallbackTargetUrl, adSlotPost.fallbackTargetUrl)
-		this.props.validate('fallbackTargetUrl',
 			{
 				isValid: !result.error,
 				err: { msg: result.error ? result.error.message : '' },
@@ -81,10 +70,9 @@ class AdSlotBasic extends Component {
 			nameHelperTxt,
 			descriptionHelperTxt
 		} = this.props
-		const { fallbackTargetUrl, type, title, description } = newItem
+		const { type, title, description } = newItem
 		const errTitle = invalidFields['title']
 		const errDescription = invalidFields['description']
-		const errFallbackUrl = invalidFields['fallbackTargetUrl']
 
 		return (
 			<div>
@@ -132,26 +120,6 @@ class AdSlotBasic extends Component {
 								(errDescription && !!errDescription.dirty)
 									? errDescription.errMsg
 									: (t('DESCRIPTION_HELPER'))
-							}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							fullWidth
-							type='text'
-							required
-							label={t('fallbackTargetUrl', { isProp: true })}
-							value={fallbackTargetUrl}
-							onChange={(ev) =>
-								handleChange('fallbackTargetUrl', ev.target.value)
-							}
-							onBlur={() => this.validateFallbackUrl(fallbackTargetUrl, true)}
-							onFocus={() => this.validateFallbackUrl(fallbackTargetUrl, false)}
-							error={errFallbackUrl && !!errFallbackUrl.dirty}
-							helperText={
-								(errFallbackUrl && !!errFallbackUrl.dirty)
-									? errFallbackUrl.errMsg
-									: t('FALLBACKTARGETURL_HELPER')
 							}
 						/>
 					</Grid>
