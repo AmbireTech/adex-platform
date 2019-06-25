@@ -4,10 +4,14 @@ import NewAdSlotHoc from './NewAdSlotHoc'
 import Translate from 'components/translate/Translate'
 import ImgForm from 'components/dashboard/forms/ImgForm'
 import Grid from '@material-ui/core/Grid'
+import TextField from '@material-ui/core/TextField'
 import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
+import { schemas, Joi } from 'adex-models'
+
+const { adSlotPost } = schemas
+
 
 const getWidAndHightFromType = (type) => {
-	type = type || 'legacy_300x250'
 	if (!type) {
 		return {
 			width: 0,
@@ -52,19 +56,59 @@ class AdSlotMedia extends Component {
 				dirty: false
 			})
 		}
+
+		this.validateFallbackUrl(newItem.fallbackTargetUrl, false)
+	}
+
+	validateFallbackUrl(fallbackTargetUrl, dirty) {
+		const result = Joi.validate(fallbackTargetUrl, adSlotPost.fallbackTargetUrl)
+		this.props.validate('fallbackTargetUrl',
+			{
+				isValid: !result.error,
+				err: { msg: result.error ? result.error.message : '' },
+				dirty: dirty
+			})
 	}
 
 	render() {
-		const { newItem, t, validateImg } = this.props
-		const { type, temp } = newItem
+		const {
+			newItem,
+			t,
+			validateImg,
+			invalidFields,
+			handleChange
+		} = this.props
+		const { fallbackTargetUrl, type, temp } = newItem
 		const errImg = this.props.invalidFields['temp']
+		const errFallbackUrl = invalidFields['fallbackTargetUrl']
 		const { width, height } = getWidAndHightFromType(type)
 
 		return (
 			<div>
 				<Grid
-					container
+					container					
+					spacing={16}
 				>
+					<Grid item xs={12}>
+						<TextField
+							fullWidth
+							type='text'
+							required
+							label={t('fallbackTargetUrl', { isProp: true })}
+							value={fallbackTargetUrl}
+							onChange={(ev) =>
+								handleChange('fallbackTargetUrl', ev.target.value)
+							}
+							onBlur={() => this.validateFallbackUrl(fallbackTargetUrl, true)}
+							onFocus={() => this.validateFallbackUrl(fallbackTargetUrl, false)}
+							error={errFallbackUrl && !!errFallbackUrl.dirty}
+							helperText={
+								(errFallbackUrl && !!errFallbackUrl.dirty)
+									? errFallbackUrl.errMsg
+									: t('FALLBACKTARGETURL_HELPER')
+							}
+						/>
+					</Grid>
 					<Grid item sm={12}>
 						<ImgForm
 							label={t('SLOT_FALLBACK_MEDIA_LABEL')}
