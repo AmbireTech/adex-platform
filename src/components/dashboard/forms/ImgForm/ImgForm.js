@@ -235,7 +235,7 @@ class ImgForm extends Component {
 						</div>
 						:
 						<Dropzone
-							accept='.jpeg,.jpg'
+							accept='.jpeg,.jpg,.png'
 							onDrop={this.onDrop}
 							className={classes.dropzone} >
 							<div
