@@ -5,10 +5,11 @@ import Translate from 'components/translate/Translate'
 import ImgForm from 'components/dashboard/forms/ImgForm'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
+import Checkbox from '@material-ui/core/Checkbox'
 import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
 import { schemas, Joi } from 'adex-models'
 
-const { adSlotPost } = schemas
+const { adUnitPost } = schemas
 
 
 const getWidAndHightFromType = (type) => {
@@ -57,17 +58,26 @@ class AdSlotMedia extends Component {
 			})
 		}
 
-		this.validateFallbackUrl(newItem.fallbackTargetUrl, false)
+		this.validateFallbackUrl(newItem.targetUrl, false)
 	}
 
-	validateFallbackUrl(fallbackTargetUrl, dirty) {
-		const result = Joi.validate(fallbackTargetUrl, adSlotPost.fallbackTargetUrl)
-		this.props.validate('fallbackTargetUrl',
+	validateFallbackUrl = (targetUrl, dirty) => {
+		const { useFallback } = this.props.newItem.temp
+		const result = Joi.validate(targetUrl, adUnitPost.targetUrl)
+		this.props.validate('targetUrl',
 			{
-				isValid: !result.error,
+				isValid: !useFallback || !result.error,
 				err: { msg: result.error ? result.error.message : '' },
 				dirty: dirty
 			})
+	}
+
+	handleFallbackChange = (useFallback) => {
+		const { temp } = this.props.newItem
+		const newTemp = { ...temp }
+		newTemp.useFallback = useFallback
+
+		this.props.handleChange('temp', newTemp)
 	}
 
 	render() {
@@ -78,29 +88,39 @@ class AdSlotMedia extends Component {
 			invalidFields,
 			handleChange
 		} = this.props
-		const { fallbackTargetUrl, type, temp } = newItem
+		const { targetUrl, type, temp } = newItem
 		const errImg = this.props.invalidFields['temp']
-		const errFallbackUrl = invalidFields['fallbackTargetUrl']
+		const errFallbackUrl = invalidFields['targetUrl']
 		const { width, height } = getWidAndHightFromType(type)
 
 		return (
 			<div>
 				<Grid
-					container					
+					container
 					spacing={16}
 				>
+					<Grid item xs={12}>
+						<Checkbox
+							checked={temp.useFallback || false}
+							onChange={ev => this.handleFallbackChange(ev.target.checked)}
+							value='useFallback'
+							inputProps={{
+								'aria-label': 'useFallback checkbox',
+							}}
+						/>
+					</Grid>
 					<Grid item xs={12}>
 						<TextField
 							fullWidth
 							type='text'
 							required
-							label={t('fallbackTargetUrl', { isProp: true })}
-							value={fallbackTargetUrl}
+							label={t('targetUrl', { isProp: true })}
+							value={targetUrl}
 							onChange={(ev) =>
-								handleChange('fallbackTargetUrl', ev.target.value)
+								handleChange('targetUrl', ev.target.value)
 							}
-							onBlur={() => this.validateFallbackUrl(fallbackTargetUrl, true)}
-							onFocus={() => this.validateFallbackUrl(fallbackTargetUrl, false)}
+							onBlur={() => this.validateFallbackUrl(targetUrl, true)}
+							onFocus={() => this.validateFallbackUrl(targetUrl, false)}
 							error={errFallbackUrl && !!errFallbackUrl.dirty}
 							helperText={
 								(errFallbackUrl && !!errFallbackUrl.dirty)

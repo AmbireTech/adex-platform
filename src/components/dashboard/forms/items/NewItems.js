@@ -137,7 +137,7 @@ export const NewSlotSteps = (props) =>
 		itemType={'AdSlot'}
 		stepsId={'new-slot-'}
 		stepsPages={[
-			{ title: 'SLOT_BASIC_STEP', page: AdSlotBasic },
+			// { title: 'SLOT_BASIC_STEP', page: AdSlotBasic },
 			{ title: 'SLOT_MEDIA_STEP', page: AdSlotMedia },
 			{ title: 'SLOT_TAGS_STEP', page: AdSlotTargeting }
 		]}
