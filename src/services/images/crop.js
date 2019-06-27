@@ -3,7 +3,7 @@
  * @param {Object} pixelCrop - pixelCrop Object provided by react-image-crop
  * @param {String} fileName - Name of the returned file in Promise
  */
-export const getCroppedImgUrl = ({objUrl, pixelCrop, fileName, size}) => {
+export const getCroppedImgUrl = ({ objUrl, pixelCrop, fileName, size }) => {
 	// TODO: Validate pixelCrop and size
 	const cropCanvas = document.createElement('canvas')
 	const scaleCanvas = document.createElement('canvas')
@@ -11,7 +11,7 @@ export const getCroppedImgUrl = ({objUrl, pixelCrop, fileName, size}) => {
 	const img = new Image()
 	img.crossOrigin = 'Anonymous' // For ipfs URL
 	img.src = objUrl
-  
+
 	// As a blob
 	return new Promise((resolve, reject) => {
 		img.onload = () => {
@@ -25,7 +25,7 @@ export const getCroppedImgUrl = ({objUrl, pixelCrop, fileName, size}) => {
 				width: Math.round(width * (pixelCrop.width / 100)),
 				height: Math.round(height * (pixelCrop.height / 100)),
 			}
-            
+
 			cropCanvas.width = crop.width
 			cropCanvas.height = crop.height
 			const cctx = cropCanvas.getContext('2d')
@@ -60,9 +60,12 @@ export const getCroppedImgUrl = ({objUrl, pixelCrop, fileName, size}) => {
 			)
 
 			scaleCanvas.toBlob(file => {
+				if (!file) {
+					reject('Error cropping file')
+				}
 				file.name = fileName
 				resolve(URL.createObjectURL(file))
 			}, 'image/jpeg')
-		}      
+		}
 	})
 }
