@@ -5,14 +5,18 @@ import Translate from 'components/translate/Translate'
 import ImgForm from 'components/dashboard/forms/ImgForm'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
-import Checkbox from '@material-ui/core/Checkbox'
 import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
+import Collapse from '@material-ui/core/Collapse'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormHelperText from '@material-ui/core/FormHelperText'
+import Switch from '@material-ui/core/Switch'
 import { schemas, Joi } from 'adex-models'
 
 const { adUnitPost } = schemas
 
 
 const getWidAndHightFromType = (type) => {
+	type = type || 'legacy_300x250'
 	if (!type) {
 		return {
 			width: 0,
@@ -32,12 +36,12 @@ class AdSlotMedia extends Component {
 	componentDidMount() {
 		const { newItem, validate } = this.props
 		const { type, temp } = newItem
-		const { tempUrl } = temp
+		const { tempUrl, useFallback } = temp
 
 		const { width, height } =
 			getWidAndHightFromType(type)
 
-		if (tempUrl) {
+		if (tempUrl && useFallback) {
 			const isValidMediaSize =
 				(temp.width === width) &&
 				(temp.height === height)
@@ -50,7 +54,7 @@ class AdSlotMedia extends Component {
 				},
 				dirty: true
 			})
-		} else {
+		} else if (useFallback) {
 			validate('temp', {
 				isValid: false,
 				err: { msg: 'ERR_REQUIRED_FIELD' },
@@ -61,8 +65,7 @@ class AdSlotMedia extends Component {
 		this.validateFallbackUrl(newItem.targetUrl, false)
 	}
 
-	validateFallbackUrl = (targetUrl, dirty) => {
-		const { useFallback } = this.props.newItem.temp
+	validateFallbackUrl = (targetUrl, dirty, useFallback) => {
 		const result = Joi.validate(targetUrl, adUnitPost.targetUrl)
 		this.props.validate('targetUrl',
 			{
@@ -78,6 +81,13 @@ class AdSlotMedia extends Component {
 		newTemp.useFallback = useFallback
 
 		this.props.handleChange('temp', newTemp)
+		this.validateFallbackUrl('', null, useFallback)
+	}
+
+	handleImgChange = (prop, img) => {
+		const { newItem, handleChange } = this.props
+		const newTemp = { ...newItem.temp, ...img }
+		handleChange(prop, newTemp)
 	}
 
 	render() {
@@ -89,6 +99,7 @@ class AdSlotMedia extends Component {
 			handleChange
 		} = this.props
 		const { targetUrl, type, temp } = newItem
+		const useFallback = temp.useFallback || false
 		const errImg = this.props.invalidFields['temp']
 		const errFallbackUrl = invalidFields['targetUrl']
 		const { width, height } = getWidAndHightFromType(type)
@@ -100,61 +111,74 @@ class AdSlotMedia extends Component {
 					spacing={16}
 				>
 					<Grid item xs={12}>
-						<Checkbox
-							checked={temp.useFallback || false}
-							onChange={ev => this.handleFallbackChange(ev.target.checked)}
-							value='useFallback'
-							inputProps={{
-								'aria-label': 'useFallback checkbox',
-							}}
+						<FormControlLabel
+							control={
+								<Switch
+									checked={useFallback}
+									onChange={ev =>
+										this.handleFallbackChange(ev.target.checked)
+									}
+								/>}
+							label={t('USE_FALLBACK_DATA')}
 						/>
+						<FormHelperText>
+							{t('USE_FALLBACK_DATA_INFO')}
+						</FormHelperText>
 					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							fullWidth
-							type='text'
-							required
-							label={t('targetUrl', { isProp: true })}
-							value={targetUrl}
-							onChange={(ev) =>
-								handleChange('targetUrl', ev.target.value)
-							}
-							onBlur={() => this.validateFallbackUrl(targetUrl, true)}
-							onFocus={() => this.validateFallbackUrl(targetUrl, false)}
-							error={errFallbackUrl && !!errFallbackUrl.dirty}
-							helperText={
-								(errFallbackUrl && !!errFallbackUrl.dirty)
-									? errFallbackUrl.errMsg
-									: t('FALLBACKTARGETURL_HELPER')
-							}
-						/>
-					</Grid>
-					<Grid item sm={12}>
-						<ImgForm
-							label={t('SLOT_FALLBACK_MEDIA_LABEL')}
-							imgSrc={temp.tempUrl || ''}
-							onChange={
-								validateImg.bind(this,
-									{
-										propsName: 'temp',
-										widthTarget: width,
-										heightTarget: height,
-										msg: 'ERR_IMG_SIZE_EXACT',
-										exact: true,
-										required: true
-									})
-							}
-							additionalInfo={t('SLOT_FALLBACK_MEDIA_INFO',
-								{
-									args: [width, height, 'px']
-								})}
-							errMsg={errImg ? errImg.errMsg : ''}
-							size={{
-								width: width,
-								height: height
-							}}
-						/>
-					</Grid>
+					<Collapse in={useFallback}>
+						<Grid
+							container
+							spacing={16}
+						>
+							<Grid item xs={12}>
+								<TextField
+									fullWidth
+									type='text'
+									required
+									label={t('targetUrl', { isProp: true })}
+									value={targetUrl}
+									onChange={(ev) =>
+										handleChange('targetUrl', ev.target.value)
+									}
+									onBlur={() => this.validateFallbackUrl(targetUrl, true, useFallback)}
+									onFocus={() => this.validateFallbackUrl(targetUrl, false, useFallback)}
+									error={errFallbackUrl && !!errFallbackUrl.dirty}
+									helperText={
+										(errFallbackUrl && !!errFallbackUrl.dirty)
+											? errFallbackUrl.errMsg
+											: t('FALLBACKTARGETURL_HELPER')
+									}
+								/>
+							</Grid>
+							<Grid item sm={12}>
+								<ImgForm
+									label={t('SLOT_FALLBACK_MEDIA_LABEL')}
+									imgSrc={temp.tempUrl || ''}
+									onChange={
+										validateImg.bind(this,
+											{
+												propsName: 'temp',
+												widthTarget: width,
+												heightTarget: height,
+												msg: 'ERR_IMG_SIZE_EXACT',
+												exact: true,
+												required: true,
+												onChange: this.handleImgChange
+											})
+									}
+									additionalInfo={t('SLOT_FALLBACK_MEDIA_INFO',
+										{
+											args: [width, height, 'px']
+										})}
+									errMsg={errImg ? errImg.errMsg : ''}
+									size={{
+										width: width,
+										height: height
+									}}
+								/>
+							</Grid>
+						</Grid>
+					</Collapse >
 				</Grid>
 			</div >
 		)
