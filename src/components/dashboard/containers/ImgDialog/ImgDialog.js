@@ -11,7 +11,7 @@ import DialogActions from '@material-ui/core/DialogActions'
 import CancelIcon from '@material-ui/icons/Cancel'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
-import ImgForm from  'components/dashboard/forms/ImgForm'
+import ImgForm from 'components/dashboard/forms/ImgForm'
 import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import { AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT } from 'constants/misc'
@@ -27,76 +27,85 @@ export class ImgDialog extends Component {
 		}
 	}
 
-    handleChange = (name, value) => {
-    	let newValues = { ...this.state.values }
-    	newValues[name] = value
-    	this.setState({ values: newValues })
-    }
+	handleChange = (name, value) => {
+		let newValues = { ...this.state.values }
+		newValues[name] = value
+		this.setState({ values: newValues })
+	}
 
-    onOk = () => {
-    	const vals = this.state.values
-    	Object.keys(vals).forEach((key) => {
-    		this.props.onChangeReady(key, vals[key])
-    	})
-    	this.props.handleToggle()
+	onOk = () => {
+		const vals = this.state.values
+		Object.keys(vals).forEach((key) => {
+			this.props.onChangeReady(key, vals[key])
+		})
+		this.props.handleToggle()
 
-    }
+	}
 
-    render() {
-    	let t = () => { }
-    	let validations = this.props.invalidFields || {}
-    	let errImg = validations[this.props.imgPropName]
-    	let width = this.props.width || AVATAR_MAX_WIDTH
-    	let height = this.props.height || AVATAR_MAX_HEIGHT
-    	return (
-    		<span>
-    			<Dialog
-    				open={this.props.active}
-    				// onEscKeyDown={this.props.handleToggle}
-    				// onOverlayClick={this.props.handleToggle}
-    				title={this.props.title}
-    				type={this.props.type || 'normal'}
-    				// className={theme[ItemTypesNames[this.props.itemType]]}
-    			>
-    				<DialogTitle>
-    					<IconButton
-    						onClick={this.props.handleToggle}
-    					>
-    						<CancelIcon />
-    					</IconButton>
-    					{this.props.t(this.props.title)}
-    				</DialogTitle>
-    				<DialogContent >
-    					<ImgForm
-    						label={t(this.props.imgLabel)}
-    						imgSrc={this.props.imgSrc || ''}
-    						onChange={this.props.validateImg.bind(this,
-    							{ propsName: this.props.imgPropName, widthTarget: width, heightTarget: height, msg: this.props.errMsg, exact: this.props.exact, required: this.props.required, onChange: this.handleChange })}
-    						additionalInfo={t(this.props.additionalInfo)}
-    						errMsg={errImg ? errImg.errMsg : ''}
-    						size={{ width: width, height: height }}
-    					/>
-    				</DialogContent>
-    				<DialogActions>
-    					<Button
-    						onClick={this.props.handleToggle}
-    						color="primary"
-    					>
-    						{'Cancel'}
-    					</Button>
-    					<Button
-    						onClick={this.onOk}
-    						color="primary"
-    						autoFocus
-    						disabled={!!(this.props.invalidFields || {})[this.props.imgPropName]}
-    					>
-    						{'Ok'}
-    					</Button>
-    				</DialogActions>
-    			</Dialog>
-    		</span>
-    	)
-    }
+	render() {
+		let t = () => { }
+		let validations = this.props.invalidFields || {}
+		let errImg = validations[this.props.imgPropName]
+		let width = this.props.width || AVATAR_MAX_WIDTH
+		let height = this.props.height || AVATAR_MAX_HEIGHT
+		return (
+			<span>
+				<Dialog
+					open={this.props.active}
+					// onEscKeyDown={this.props.handleToggle}
+					// onOverlayClick={this.props.handleToggle}
+					title={this.props.title}
+					type={this.props.type || 'normal'}
+				// className={theme[ItemTypesNames[this.props.itemType]]}
+				>
+					<DialogTitle>
+						<IconButton
+							onClick={this.props.handleToggle}
+						>
+							<CancelIcon />
+						</IconButton>
+						{this.props.t(this.props.title)}
+					</DialogTitle>
+					<DialogContent >
+						<ImgForm
+							label={t(this.props.imgLabel)}
+							imgSrc={this.props.imgSrc || ''}
+							onChange={this.props.validateImg.bind(
+								this,
+								{
+									propsName: this.props.imgPropName,
+									widthTarget: width,
+									heightTarget: height,
+									msg: this.props.errMsg,
+									exact: this.props.exact,
+									required: this.props.required,
+									onChange: this.handleChange
+								})}
+							additionalInfo={t(this.props.additionalInfo)}
+							errMsg={errImg ? errImg.errMsg : ''}
+							size={{ width: width, height: height }}
+						/>
+					</DialogContent>
+					<DialogActions>
+						<Button
+							onClick={this.props.handleToggle}
+							color="primary"
+						>
+							{'Cancel'}
+						</Button>
+						<Button
+							onClick={this.onOk}
+							color="primary"
+							autoFocus
+							disabled={!!(this.props.invalidFields || {})[this.props.imgPropName]}
+						>
+							{'Ok'}
+						</Button>
+					</DialogActions>
+				</Dialog>
+			</span>
+		)
+	}
 }
 
 ImgDialog.propTypes = {
