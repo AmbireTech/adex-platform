@@ -5,7 +5,6 @@ import NewAdUnitHoc from './NewAdUnitHoc'
 import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
-import Anchor from 'components/common/anchor/anchor'
 import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from '../styles'
@@ -14,28 +13,6 @@ class AdUnitFormPreview extends Component {
 	constructor(props) {
 		super(props)
 		this.save = props.save
-	}
-
-	SlotFallback = ({ item, t, classes }) => {
-		return (
-			<div>
-				<PropRow
-					left={t('SLOT_FALLBACK_IMG_LABEL')}
-					right={
-						<Img
-							allowFullscreen={true}
-							classes={{ img: classes.imgPreview, wrapper: classes.imgPreviewWrapper }}
-							src={item.fallbackAdImg.tempUrl || ''}
-							alt={item.fallbackAdUrl}
-						/>
-					}
-				/>
-				<PropRow
-					left={t('fallbackAdUrl', { isProp: true })}
-					right={<Anchor href={item.fallbackAdUrl} target='_blank'>{item.fallbackAdUrl}</Anchor>}
-				/>
-			</div>
-		)
 	}
 
 	render() {
