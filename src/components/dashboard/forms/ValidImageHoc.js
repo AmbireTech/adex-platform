@@ -10,7 +10,7 @@ function checkExactish(widthTarget, width, heightTarget, height) {
 	const targetAspect = parseFloat(widthTarget / heightTarget).toFixed(5)
 	const aspect = parseFloat(width / height).toFixed(5)
 
-	const isValid =	(widthTarget <= width) &&
+	const isValid = (widthTarget <= width) &&
 		(heightTarget <= height) &&
 		(targetAspect === aspect)
 
@@ -20,15 +20,19 @@ function checkExactish(widthTarget, width, heightTarget, height) {
 export default function ValidImageHoc(Decorated) {
 
 	class ValidImage extends Component {
-		/* TODO: Make it not depend on NewItemHoc (props.handleChange)
-        * Now NewItemHoc mus be add before this
-        * Add here initial validation
-        * */
-		validateImg = ({ propsName, widthTarget, heightTarget, msg, exact, required, onChange } = {}, img) => {
-			if (!required && !img.tempUrl && this.props.handleChange) {
+		validateImg = ({
+			propsName,
+			widthTarget,
+			heightTarget,
+			msg,
+			exact,
+			required,
+			onChange
+		} = {}, img) => {
+			if (!required && !img.tempUrl && onChange) {
 				this.props.validate(propsName, { isValid: true, err: { msg: msg, args: [] }, dirty: true })
 				// TODO: fix this
-				this.props.handleChange(propsName, img)
+				onChange(propsName, img)
 				return
 			}
 			const image = new Image()
@@ -60,12 +64,7 @@ export default function ValidImageHoc(Decorated) {
 					tempUrl: img.tempUrl
 				}
 
-				// TODO: temp fix make this HOC independent
-				if (typeof that.props.handleChange === 'function') {
-					that.props.handleChange(propsName, resImg)
-				} else if (typeof that.handleChange === 'function') {
-					that.handleChange(propsName, resImg)
-				} else if (typeof onChange === 'function') {
+				if (typeof onChange === 'function') {
 					onChange(propsName, resImg)
 				}
 			}
