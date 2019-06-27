@@ -10,32 +10,32 @@ import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/conte
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from '../styles'
 
+const SlotFallback = ({ img, targetUrl, t, classes }) => {
+	return (
+		<div>
+			<PropRow
+				left={t('SLOT_FALLBACK_IMG_LABEL')}
+				right={
+					<Img
+						allowFullscreen={true}
+						classes={{ img: classes.imgPreview, wrapper: classes.imgPreviewWrapper }}
+						src={img.tempUrl || ''}
+						alt={targetUrl}
+					/>
+				}
+			/>
+			<PropRow
+				left={t('fallbackAdUrl', { isProp: true })}
+				right={<Anchor href={targetUrl} target='_blank'>{targetUrl}</Anchor>}
+			/>
+		</div>
+	)
+}
+
 class AdSlotPreview extends Component {
 	constructor(props) {
 		super(props)
 		this.save = props.save
-	}
-
-	SlotFallback = ({ item, t, classes }) => {
-		return (
-			<div>
-				<PropRow
-					left={t('SLOT_FALLBACK_IMG_LABEL')}
-					right={
-						<Img
-							allowFullscreen={true}
-							className={classes.imgPreview}
-							src={item.fallbackAdImg.tempUrl || ''}
-							alt={item.fallbackAdUrl}
-						/>
-					}
-				/>
-				<PropRow
-					left={t('fallbackAdUrl', { isProp: true })}
-					right={<Anchor href={item.fallbackAdUrl} target='_blank'>{item.fallbackAdUrl}</Anchor>}
-				/>
-			</div>
-		)
 	}
 
 	render() {
@@ -47,6 +47,7 @@ class AdSlotPreview extends Component {
 			description,
 			temp,
 			targeting,
+			targetUrl,
 			tags
 		} = newItem
 
@@ -69,18 +70,8 @@ class AdSlotPreview extends Component {
 						left={t('description', { isProp: true })}
 						right={description}
 					/>
-					<PropRow
-						left={t('MEDIA')}
-						right={
-							<Img
-								allowFullscreen={true}
-								className={classes.imgPreview}
-								classes={{ img: classes.imgPreview, wrapper: classes.imgPreviewWrapper }}
-								src={temp.tempUrl || ''}
-								alt={title}
-							/>
-						}
-					/>
+					{temp.useFallback &&
+						<SlotFallback img={temp} targetUrl={targetUrl} t={t} classes={classes} />}
 					{tags && <PropRow
 						left={t('tags', { isProp: true })}
 						right={
