@@ -54,6 +54,12 @@ class AdUnitMedia extends Component {
 		}
 	}
 
+	handleImgChange = (prop, img) => {
+		const { newItem, handleChange } = this.props
+		const newTemp = { ...newItem.temp, ...img }
+		handleChange(prop, newTemp)
+	}
+
 	render() {
 		const { newItem, t, validateImg } = this.props
 		const { type, temp } = newItem
@@ -77,7 +83,8 @@ class AdUnitMedia extends Component {
 										heightTarget: height,
 										msg: 'ERR_IMG_SIZE_EXACT',
 										exact: true,
-										required: true
+										required: true,
+										onChange: this.handleImgChange
 									})
 							}
 							additionalInfo={t('UNIT_BANNER_IMG_INFO',
