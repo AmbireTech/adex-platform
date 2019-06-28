@@ -34,35 +34,40 @@ const getWidAndHightFromType = (type) => {
 class AdSlotMedia extends Component {
 
 	componentDidMount() {
+		const { newItem } = this.props
+		const { temp, targetUrl } = newItem
+		const { useFallback } = temp
+
+		if (useFallback) {
+			this.validateImage(useFallback)
+			this.validateFallbackUrl(targetUrl, true, useFallback)
+		}
+	}
+
+	validateImage = (useFallback) => {
 		const { newItem, validate } = this.props
 		const { type, temp } = newItem
-		const { tempUrl, useFallback } = temp
+		const { tempUrl } = temp
 
 		const { width, height } =
 			getWidAndHightFromType(type)
 
-		if (tempUrl && useFallback) {
-			const isValidMediaSize =
+		const isValidMediaSize =
+			!useFallback || (
+				tempUrl &&
+				// TODO: validate ration not exact
 				(temp.width === width) &&
 				(temp.height === height)
+			)
 
-			validate('temp', {
-				isValid: isValidMediaSize,
-				err: {
-					msg: 'ERR_IMG_SIZE_EXACT',
-					args: [width, height, 'px']
-				},
-				dirty: true
-			})
-		} else if (useFallback) {
-			validate('temp', {
-				isValid: false,
-				err: { msg: 'ERR_REQUIRED_FIELD' },
-				dirty: false
-			})
-		}
-
-		this.validateFallbackUrl(newItem.targetUrl, false)
+		validate('temp', {
+			isValid: isValidMediaSize,
+			err: {
+				msg: 'ERR_IMG_SIZE_EXACT',
+				args: [width, height, 'px']
+			},
+			dirty: true
+		})
 	}
 
 	validateFallbackUrl = (targetUrl, dirty, useFallback) => {
@@ -76,12 +81,13 @@ class AdSlotMedia extends Component {
 	}
 
 	handleFallbackChange = (useFallback) => {
-		const { temp } = this.props.newItem
+		const { temp, targetUrl } = this.props.newItem
 		const newTemp = { ...temp }
 		newTemp.useFallback = useFallback
 
 		this.props.handleChange('temp', newTemp)
-		this.validateFallbackUrl('', null, useFallback)
+		this.validateFallbackUrl(targetUrl, null, useFallback)
+		this.validateImage(useFallback)
 	}
 
 	handleImgChange = (prop, img) => {
