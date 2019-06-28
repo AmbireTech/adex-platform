@@ -285,7 +285,7 @@ class ListWithControls extends Component {
 							</div>
 						} */}
 
-						{this.props.archive &&
+						{/* {this.props.archive &&
 							<RadioGroup
 								name='archived'
 								value={typeof this.props.filterArchived === 'string' ? this.props.filterArchived.toString() : 'false'}
@@ -296,7 +296,7 @@ class ListWithControls extends Component {
 								<FormControlLabel value='true' control={<Radio color='primary' />} label={t('LABEL_ARCHIVED')} />
 								<FormControlLabel value='' control={<Radio color='primary' />} label={t('LABEL_ALL')} />
 							</RadioGroup>
-						}
+						} */}
 						<div
 							className={classnames(classes.controls, classes.bottomControls)}
 						>

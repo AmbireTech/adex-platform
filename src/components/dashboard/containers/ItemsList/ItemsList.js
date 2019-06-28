@@ -78,7 +78,7 @@ class ItemsList extends Component {
 					<TableCell> {t('PROP_DISTRIBUTED', { args: ['%'] })} </TableCell>
 					<TableCell> {t('PROP_CPM')} </TableCell>
 					<TableCell>
-						{t('PROP_CREATED')}/ <br />
+						{/* {t('PROP_CREATED')}/ <br /> */}
 						{t('PROP_STARTS')}/ <br />
 						{t('PROP_ENDS')}
 					</TableCell>
@@ -184,7 +184,7 @@ class ItemsList extends Component {
 						18, true)} DAI
 				</TableCell>
 				<TableCell>
-					{formatDateTime(item.created)} <br />
+					{/* {formatDateTime(item.created)} <br /> */}
 					{formatDateTime(item.activeFrom)} <br />
 					{formatDateTime(item.withdrawPeriodStart)}
 				</TableCell>
@@ -221,7 +221,7 @@ class ItemsList extends Component {
 						{t('LABEL_VIEW')}
 					</RRButton>
 				</Tooltip>
-				{!item.archived &&
+				{/* {!item.archived &&
 					<Tooltip
 						title={t('TOOLTIP_ARCHIVE')}
 						// placement='top'
@@ -268,7 +268,7 @@ class ItemsList extends Component {
 							<UnarchiveIcon />
 						</IconButton>
 					</Tooltip>
-				}
+				} */}
 			</TableCell>
 		)
 	}
