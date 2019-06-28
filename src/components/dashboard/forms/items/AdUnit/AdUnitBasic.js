@@ -117,7 +117,6 @@ class AdUnitBasic extends Component {
 						<TextField
 							fullWidth
 							type='text'
-							required
 							multiline
 							rows={3}
 							label={t('description', { isProp: true })}
