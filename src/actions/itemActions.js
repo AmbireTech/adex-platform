@@ -108,13 +108,35 @@ export function addSlot(item, itemType, authSig) {
 	return async function (dispatch) {
 
 		try {
-			const imageIpfs = (await getImgsIpfsFromBlob({
-				tempUrl: newItem.temp.tempUrl,
-				authSig
-			})).ipfs
+			let fallbackUnit = null
+			if (newItem.temp.useFallback) {
+				const imageIpfs = (await getImgsIpfsFromBlob({
+					tempUrl: newItem.temp.tempUrl,
+					authSig
+				})).ipfs
 
-			newItem.fallbackMediaUrl = `ipfs://${imageIpfs}`
-			newItem.fallbackMediaMime = newItem.temp.mime
+				const unit = new AdUnit({
+					type: newItem.type,
+					mediaUrl: `ipfs://${imageIpfs}`,
+					targetUrl: newItem.targetUrl,
+					mediaMime: newItem.temp.mime,
+					created: Date.now(),
+					title: newItem.title,
+					description: newItem.description,
+					targeting: [],
+					tags: [],
+					passback: true
+				})
+
+				const resUnit = await postAdUnit({
+					unit: unit.marketAdd,
+					authSig
+				})
+
+				fallbackUnit = resUnit.ipfs
+			}
+
+			newItem.fallbackUnit = fallbackUnit
 			newItem.created = Date.now()
 
 			const resItem = await postAdSlot({
