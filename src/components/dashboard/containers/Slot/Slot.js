@@ -16,7 +16,6 @@ import { contracts } from 'services/smart-contracts/contractsCfg'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import AppBar from '@material-ui/core/AppBar'
-import PageNotFound from 'components/page_not_found/PageNotFound'
 
 const AUTO_HIDE_STRING = "window.addEventListener('message', function(ev) { if (ev.data.hasOwnProperty('adexHeight') && ev.origin === '{origin}') for (f of document.getElementsByTagName('iframe')) if (f.contentWindow === ev.source) f.height = ev.data.adexHeight }, false)"
 
