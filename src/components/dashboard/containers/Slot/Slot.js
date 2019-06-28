@@ -18,13 +18,15 @@ import Tab from '@material-ui/core/Tab'
 import AppBar from '@material-ui/core/AppBar'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 
+const AUTO_HIDE_STRING = "window.addEventListener('message', function(ev) { if (ev.data.hasOwnProperty('adexHeight') && ev.origin === '{origin}') for (f of document.getElementsByTagName('iframe')) if (f.contentWindow === ev.source) f.height = ev.data.adexHeight }, false)"
+
 const { DAI } = contracts
 
 const ADVIEW_URL = process.env.ADVIEW_URL
 const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
 
 const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
-	const { type, tags, fallbackMediaUrl, fallbackTargetUrl } = slot
+	const { type, tags, fallbackUnit } = slot
 	const identityAddr = account.identity.address
 
 	let sizes = type.split('_')[1].split('x')
@@ -39,8 +41,6 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 		whitelistedType: type,
 		randomize: true,
 		targeting: tags || [],
-		fallbackMediaUrl: fallbackMediaUrl || '',
-		fallbackTargetUrl: fallbackTargetUrl || '',
 		marketURL: ADEX_MARKET_HOST,
 		width: sizes.width,
 		height: sizes.height,
@@ -59,6 +59,10 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 		`   scrolling="no"\n` +
 		`   frameBorder="0"\n` +
 		`   style="border: 0;"\n` +
+		`   ${fallbackUnit ?
+			`fallbackUnit="${fallbackUnit}"`
+			: `onload={${AUTO_HIDE_STRING}}`
+		}`
 		`></iframe>`
 
 	// TODO: Add copy to clipboard and tooltip or description how to use it
