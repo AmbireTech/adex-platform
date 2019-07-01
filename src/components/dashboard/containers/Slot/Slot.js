@@ -44,7 +44,8 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 		width: sizes.width,
 		height: sizes.height,
 		minPerImpression: '0',
-		minTargetingScore: '0'
+		minTargetingScore: '0',
+		fallbackUnit
 	}
 
 	let query = encodeURIComponent(JSON.stringify({ options }))
@@ -58,10 +59,7 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 		`   scrolling="no"\n` +
 		`   frameBorder="0"\n` +
 		`   style="border: 0;"\n` +
-		`   ${fallbackUnit ?
-			`fallbackUnit="${fallbackUnit}"`
-			: `onload={${AUTO_HIDE_STRING}}`
-		}`
+		`	onload={${AUTO_HIDE_STRING}}` +
 		`></iframe>`
 
 	// TODO: Add copy to clipboard and tooltip or description how to use it
