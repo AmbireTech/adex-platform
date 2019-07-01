@@ -40,19 +40,19 @@ export async function processTx({
 }) {
 	try {
 		const txRes = await tx
-		const txData = {
-			// id: txRes.hash,
-			hash: txRes.hash,
-			nonce: txRes.nonce,
-			...txSuccessData,
-			status: 'pending',
-			sendingTime: Date.now(),
-			txData: txRes
-		}
+		// const txData = {
+		// 	// id: txRes.hash,
+		// 	hash: txRes.hash,
+		// 	nonce: txRes.nonce,
+		// 	...txSuccessData,
+		// 	status: 'pending',
+		// 	sendingTime: Date.now(),
+		// 	txData: txRes
+		// }
 
-		execute(
-			addWeb3Transaction({ tx: txData, addr: from })
-		)
+		// execute(
+		// 	addWeb3Transaction({ tx: txData, addr: from })
+		// )
 		execute(
 			addToast({
 				type: 'accept',
