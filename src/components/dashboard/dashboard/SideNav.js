@@ -27,6 +27,7 @@ import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 
 const RRListItem = withReactRouterLink(ListItem)
+const { ETH_SCAN_ADDR_HOST } = process.env
 
 class SideNav extends Component {
 
@@ -40,7 +41,7 @@ class SideNav extends Component {
 	}
 
 	render() {
-		const side = this.props.side
+		const { side, identity, t, transactions, classes } = this.props
 		if (side !== 'advertiser' && side !== 'publisher') {
 			return null
 		}
@@ -51,9 +52,7 @@ class SideNav extends Component {
 		const items = (isAdvertiser ? 'units' : 'slots')
 		const NewItemBtn = (isAdvertiser ? NewUnitDialog : NewSlotDialog)
 		const itemsIcon = (isAdvertiser ? 'format_list_bulleted' : 'format_list_bulleted')
-		const t = this.props.t
-		const pendingTrsCount = (this.props.transactions.pendingTxs || []).length
-		const classes = this.props.classes
+		const pendingTrsCount = (transactions.pendingTxs || []).length
 
 		return (
 			<div
@@ -78,7 +77,7 @@ class SideNav extends Component {
 							</ListItem>
 							<SideSwitch
 								side={side}
-								t={this.props.t}
+								t={t}
 							/>
 						</div>
 						<ListDivider />
@@ -142,7 +141,7 @@ class SideNav extends Component {
 						<ListDivider
 						/>
 
-						<RRListItem
+						{/* <RRListItem
 							button
 							to={{ pathname: '/dashboard/' + side + '/transactions' }}
 							className={classnames({ [classes.active]: location === 'transactions' })}
@@ -160,7 +159,7 @@ class SideNav extends Component {
 								</span>
 							</ListItemIcon>
 							<ListItemText inset primary={t('TRANSACTIONS')} />
-						</RRListItem>
+                        </RRListItem> */}
 					</div>
 					<div>
 						<Anchor target='_blank' href='https://medium.com/adex-network-tips-and-tricks' >
@@ -174,9 +173,20 @@ class SideNav extends Component {
 							</ListItem>
 						</Anchor>
 
+						<Anchor target='_blank' href={`${ETH_SCAN_ADDR_HOST + identity}`}>
+							<ListItem
+								button
+							>
+								<ListItemIcon>
+									<SwapHorizontalIcon />
+								</ListItemIcon>
+								<ListItemText inset primary={t('TRANSACTIONS')} />
+							</ListItem>
+						</Anchor>
+
 						<RRListItem
 							button
-							to={{ pathname: '/dashboard/' + this.props.side + '/account' }}
+							to={{ pathname: '/dashboard/' + side + '/account' }}
 							className={classnames({ [classes.active]: location === 'account' })}
 						>
 							<ListItemIcon>
@@ -248,6 +258,7 @@ function mapStateToProps(state) {
 	return {
 		// account: persist.account,
 		transactions: persist.web3Transactions[persist.account._addr] || {},
+		identity: persist.account.identity.address
 	}
 }
 
