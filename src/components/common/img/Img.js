@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import NO_IMAGE from 'resources/no-image-box-eddie.jpg'
+import VIDEO_IMAGE from 'resources/video-placeholder.jpg'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
@@ -13,6 +14,7 @@ import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
 import Translate from 'components/translate/Translate'
 import { validations, helpers } from 'adex-models'
+import { isVideoMedia } from 'helpers/mediaHelpers.js'
 
 const MAX_IMG_LOAD_TIME = 3000
 class Img extends Component {
@@ -42,10 +44,18 @@ class Img extends Component {
 	}
 
 	componentDidMount() {
+		const { src, fallbackSrc, mediaMime } = this.props
+
+		if(mediaMime && isVideoMedia(mediaMime)) {
+			return this.setState({
+				imgSrc: VIDEO_IMAGE
+			})
+		}
+
 		this.displayImage = new Image()
 		this.setDisplayImage({
-			image: this.ipfsSrc(this.props.src),
-			fallback: this.ipfsSrc(this.props.fallbackSrc) || NO_IMAGE
+			image: this.ipfsSrc(src),
+			fallback: this.ipfsSrc(fallbackSrc) || NO_IMAGE
 		})
 	}
 
@@ -197,7 +207,8 @@ Img.propTypes = {
 	fallbackSrc: PropTypes.string,
 	alt: PropTypes.string,
 	allowFullscreen: PropTypes.bool,
-	fullScreenOnClick: PropTypes.bool
+	fullScreenOnClick: PropTypes.bool,
+	mediaMime: PropTypes.string
 }
 
 export default Translate(withStyles(styles)(Img))
