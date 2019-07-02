@@ -7,8 +7,8 @@ import Translate from 'components/translate/Translate'
 
 // Allow higher res images with same aspect ratio
 function checkExactish(widthTarget, width, heightTarget, height) {
-	const targetAspect = parseFloat(widthTarget / heightTarget).toFixed(5)
-	const aspect = parseFloat(width / height).toFixed(5)
+	const targetAspect = parseFloat(widthTarget / heightTarget).toFixed(3)
+	const aspect = parseFloat(width / height).toFixed(3)
 
 	const isValid = (widthTarget <= width) &&
 		(heightTarget <= height) &&
@@ -17,10 +17,81 @@ function checkExactish(widthTarget, width, heightTarget, height) {
 	return isValid
 }
 
+const isVideo = (mime) => {
+	return mime.split('/')[0] === 'video'
+}
+
 export default function ValidImageHoc(Decorated) {
 
 	class ValidImage extends Component {
-		validateImg = ({
+
+		validate = ({
+			propsName,
+			widthTarget,
+			heightTarget,
+			mediaWidth,
+			mediaHeight,
+			msg,
+			exact,
+			required,
+			onChange,
+			mime,
+			tempUrl
+		}) => {
+			let isValid = true
+
+			if (exact) {
+				isValid = checkExactish(widthTarget, mediaWidth, heightTarget, mediaHeight)
+			}
+
+			if (!exact && (widthTarget < mediaWidth || heightTarget < mediaHeight)) {
+				isValid = false
+			}
+
+			const masgArgs = [widthTarget, heightTarget, 'px']
+
+			this.props.validate(propsName, { isValid: isValid, err: { msg: msg, args: masgArgs }, dirty: true })
+
+			const resMedia = {
+				width: mediaWidth,
+				height: mediaHeight,
+				mime,
+				tempUrl
+			}
+
+			if (typeof onChange === 'function') {
+				onChange(propsName, resMedia)
+			}
+
+		}
+
+		getVideoSize = (src) =>
+			new Promise(resolve => {
+				const video = document.createElement('video')
+				video.src = src.tempUrl
+
+				video.onloadedmetadata = ({ target }) => {
+					return resolve({
+						width: target.videoWidth,
+						height: target.videoHeight
+					})
+				}
+			})
+
+		getImageSize = (src) =>
+			new Promise(resolve => {
+				const image = new Image()
+				image.src = src.tempUrl
+
+				image.onload = function () {
+					return resolve({
+						width: this.width,
+						height: this.height
+					})
+				}
+			})
+
+		validateMedia = async ({
 			propsName,
 			widthTarget,
 			heightTarget,
@@ -28,52 +99,40 @@ export default function ValidImageHoc(Decorated) {
 			exact,
 			required,
 			onChange
-		} = {}, img) => {
-			if (!required && !img.tempUrl && onChange) {
+		} = {}, media) => {
+
+			if (!required && !media.tempUrl && onChange) {
 				this.props.validate(propsName, { isValid: true, err: { msg: msg, args: [] }, dirty: true })
 				// TODO: fix this
-				onChange(propsName, img)
+				onChange(propsName, media)
 				return
 			}
-			const image = new Image()
-			image.src = img.tempUrl
-			const that = this
 
-			image.onload = function () {
-				const width = this.width
-				const height = this.height
+			const getSize = isVideo(media.mime)
+				? () => this.getVideoSize(media)
+				: () => this.getImageSize(media)
 
-				let isValid = true
+			const size = await getSize()
 
-				if (exact) {
-					isValid = checkExactish(widthTarget, width, heightTarget, height)
-				}
-
-				if (!exact && (widthTarget < width || heightTarget < height)) {
-					isValid = false
-				}
-
-				const masgArgs = [widthTarget, heightTarget, 'px']
-
-				that.props.validate(propsName, { isValid: isValid, err: { msg: msg, args: masgArgs }, dirty: true })
-
-				const resImg = {
-					width,
-					height,
-					mime: img.mime,
-					tempUrl: img.tempUrl
-				}
-
-				if (typeof onChange === 'function') {
-					onChange(propsName, resImg)
-				}
-			}
+			this.validate({
+				propsName,
+				widthTarget,
+				heightTarget,
+				mediaWidth: size.width,
+				mediaHeight: size.height,
+				msg,
+				exact,
+				required,
+				onChange,
+				mime: media.mime,
+				tempUrl: media.tempUrl
+			})
 		}
 
 		render() {
 			const props = this.props
 			return (
-				<Decorated {...props} validateImg={this.validateImg} />
+				<Decorated {...props} validateMedia={this.validateMedia} />
 			)
 		}
 	}
