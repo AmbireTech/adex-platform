@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Translate from 'components/translate/Translate'
+import { isVideoMedia } from 'helpers/mediaHelpers.js'
 
 // Allow higher res images with same aspect ratio
 function checkExactish(widthTarget, width, heightTarget, height) {
@@ -15,10 +16,6 @@ function checkExactish(widthTarget, width, heightTarget, height) {
 		(targetAspect === aspect)
 
 	return isValid
-}
-
-const isVideo = (mime) => {
-	return mime.split('/')[0] === 'video'
 }
 
 export default function ValidImageHoc(Decorated) {
@@ -108,7 +105,7 @@ export default function ValidImageHoc(Decorated) {
 				return
 			}
 
-			const getSize = isVideo(media.mime)
+			const getSize = isVideoMedia(media.mime)
 				? () => this.getVideoSize(media)
 				: () => this.getImageSize(media)
 
