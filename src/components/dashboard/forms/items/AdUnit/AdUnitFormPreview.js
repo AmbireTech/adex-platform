@@ -54,6 +54,7 @@ class AdUnitFormPreview extends Component {
 								className={classes.imgPreview}
 								src={temp.tempUrl || ''}
 								alt={title}
+								mediaMime={temp.mime}
 							/>
 						}
 					/>
