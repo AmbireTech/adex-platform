@@ -23,10 +23,12 @@ class Img extends Component {
 		super(props)
 		this.state = {
 			imgSrc: null,
-			active: false
+			active: false,
+			videoSrc: null
 		}
 
 		this.setDisplayImage = this.setDisplayImage.bind(this)
+		this.setDisplayVideo = this.setDisplayVideo.bind(this)
 		this.loadTimeout = null
 	}
 
@@ -44,19 +46,29 @@ class Img extends Component {
 	}
 
 	componentDidMount() {
-		const { src, fallbackSrc, mediaMime } = this.props
+		const { src, fallbackSrc, mediaMime, allowVideo } = this.props
+		const isVideo = !!mediaMime && isVideoMedia(mediaMime)
 
-		if(mediaMime && isVideoMedia(mediaMime)) {
+		if (isVideo && !allowVideo) {
 			return this.setState({
 				imgSrc: VIDEO_IMAGE
 			})
 		}
 
-		this.displayImage = new Image()
-		this.setDisplayImage({
-			image: this.ipfsSrc(src),
-			fallback: this.ipfsSrc(fallbackSrc) || NO_IMAGE
-		})
+		if (isVideo) {
+			this.displayVideo = document.createElement('video')
+			this.setDisplayVideo({
+				image: this.ipfsSrc(src),
+				fallback: this.ipfsSrc(fallbackSrc) || NO_IMAGE
+			})
+
+		} else {
+			this.displayImage = new Image()
+			this.setDisplayImage({
+				image: this.ipfsSrc(src),
+				fallback: this.ipfsSrc(fallbackSrc) || NO_IMAGE
+			})
+		}
 	}
 
 	componentWillReceiveProps = (nextProps) => {
@@ -123,6 +135,21 @@ class Img extends Component {
 		this.displayImage.src = image
 	}
 
+	setDisplayVideo = ({ image, fallback }) => {
+		this.displayVideo.src = image
+
+		this.loadTimeout = setTimeout(() => {
+			this.onFail(fallback)
+		}, MAX_IMG_LOAD_TIME)
+
+		this.displayVideo.onloadedmetadata = ({ target }) => {
+			this.clearLoadTimeout()
+			this.setState({
+				videoSrc: image
+			})
+		}
+	}
+
 	fullScreenBtn() {
 		const { classes } = this.props
 		return (
@@ -143,7 +170,7 @@ class Img extends Component {
 
 	renderFullscreenDialog() {
 		const { t, alt, classes, type } = this.props
-		const { active, imgSrc } = this.state
+		const { active, imgSrc, videoSrc } = this.state
 
 		return (
 			<Dialog
@@ -154,13 +181,17 @@ class Img extends Component {
 				classes={{ paper: classes.dialog }}
 			>
 				<DialogContent className={classes.dialogImageParent}>
-					<img
-						alt={alt}
-						src={imgSrc}
-						draggable='false'
-						className={classnames(classes.dialogImage, classes.imgLoading)}
-						onDragStart={(event) => event.preventDefault() /*Firefox*/}
-					/>
+					{imgSrc ?
+						<img
+							alt={alt}
+							src={imgSrc}
+							draggable='false'
+							className={classnames(classes.dialogImage, classes.imgLoading)}
+							onDragStart={(event) => event.preventDefault() /*Firefox*/}
+						/>
+						: <video src={videoSrc} controls>
+						</video>
+					}
 				</DialogContent>
 				<DialogActions>
 					<Button
@@ -176,17 +207,23 @@ class Img extends Component {
 
 	render() {
 		const { alt, allowFullscreen, className, classes, fullScreenOnClick } = this.props
+		const { imgSrc, videoSrc } = this.state
 		return (
-			this.state.imgSrc ?
+			imgSrc || videoSrc ?
 				<div className={classnames(classes.imgParent, className, classes.wrapper)}>
-					<img
-						alt={alt}
-						src={this.state.imgSrc}
-						draggable='false'
-						className={classnames(classes.imgLoading, className, classes.img)}
-						onDragStart={(event) => event.preventDefault() /*Firefox*/}
-						onClick={fullScreenOnClick && (() => { console.log('click'); this.handleToggle() })}
-					/>
+					{!!imgSrc ?
+
+						<img
+							alt={alt}
+							src={this.state.imgSrc}
+							draggable='false'
+							className={classnames(classes.imgLoading, className, classes.img)}
+							onDragStart={(event) => event.preventDefault() /*Firefox*/}
+							onClick={fullScreenOnClick && (() => { console.log('click'); this.handleToggle() })}
+						/>
+						: <video src={videoSrc} controls>
+						</video>
+					}
 					{allowFullscreen && this.fullScreenBtn()}
 					{fullScreenOnClick && this.renderFullscreenDialog()}
 				</div>
