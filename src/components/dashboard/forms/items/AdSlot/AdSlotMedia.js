@@ -100,7 +100,7 @@ class AdSlotMedia extends Component {
 		const {
 			newItem,
 			t,
-			validateImg,
+			validateMedia,
 			invalidFields,
 			handleChange
 		} = this.props
@@ -161,7 +161,7 @@ class AdSlotMedia extends Component {
 									label={t('SLOT_FALLBACK_MEDIA_LABEL')}
 									imgSrc={temp.tempUrl || ''}
 									onChange={
-										validateImg.bind(this,
+										validateMedia.bind(this,
 											{
 												propsName: 'temp',
 												widthTarget: width,
