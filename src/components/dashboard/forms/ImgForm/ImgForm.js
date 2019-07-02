@@ -14,6 +14,7 @@ import CropIcon from '@material-ui/icons/Crop'
 import ClearIcon from '@material-ui/icons/Clear'
 import SaveIcon from '@material-ui/icons/Save'
 import FileUploadIcon from '@material-ui/icons/CloudUpload'
+import { isVideoMedia } from 'helpers/mediaHelpers.js'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -99,10 +100,10 @@ class ImgForm extends Component {
 
 	UploadInfo = () => {
 		const { t, classes, size, errMsg } = this.props
-		const { imgSrc } = this.state
+		const { imgSrc, mime } = this.state
 		return (
 			<div className={classes.uploadInfo}>
-				{imgSrc ?
+				{imgSrc && !isVideoMedia(mime) ?
 					<div className={classes.uploadActions}>
 						{/* TEMP: make size required */}
 						{!!size &&
@@ -159,9 +160,11 @@ class ImgForm extends Component {
 			crop,
 			cropMode,
 			imgName,
-			imgSrc
+			imgSrc,
+			mime
 		} = this.state
 
+		const videoSrc = isVideoMedia(mime)
 		return (
 			<div
 				className={classes.imgForm}
@@ -235,17 +238,22 @@ class ImgForm extends Component {
 						</div>
 						:
 						<Dropzone
-							accept='.jpeg,.jpg,.png'
+							accept='.jpeg,.jpg,.png,.mp4'
 							onDrop={this.onDrop}
 							className={classes.dropzone} >
 							<div
 								className={classes.droppedImgContainer}
 							>
-								<Img
-									src={imgSrc}
-									alt={'name'}
-									className={classes.imgDropzonePreview}
-								/>
+								{videoSrc ?
+									<video controls src={imgSrc}  type='video/mp4'>
+									</video>
+									:
+									<Img
+										src={imgSrc}
+										alt={'name'}
+										className={classes.imgDropzonePreview}
+									/>
+								}
 								<this.UploadInfo />
 							</div>
 						</Dropzone>
