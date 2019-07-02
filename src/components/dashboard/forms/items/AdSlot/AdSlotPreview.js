@@ -21,6 +21,8 @@ const SlotFallback = ({ img, targetUrl, t, classes }) => {
 						classes={{ img: classes.imgPreview, wrapper: classes.imgPreviewWrapper }}
 						src={img.tempUrl || ''}
 						alt={targetUrl}
+						mediaMime={img.mime}
+						allowVideo
 					/>
 				}
 			/>

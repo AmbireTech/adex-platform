@@ -101,7 +101,7 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, isD
 
 const ValidatedFallbackAdData = ValidItemHoc(FallbackAdData)
 
-const MediaCard = ({ classes, mediaUrl, title, canEditImg, toggleImgEdit, url }) => <Card
+const MediaCard = ({ classes, mediaUrl, mediaMime, title, canEditImg, toggleImgEdit, url }) => <Card
 	className={classes.card}
 	raised={false}
 >
@@ -113,6 +113,8 @@ const MediaCard = ({ classes, mediaUrl, title, canEditImg, toggleImgEdit, url })
 			src={mediaUrl}
 			alt={title}
 			className={classes.img}
+			mediaMime={mediaMime}
+			allowVideo
 		/>
 	</CardMedia>
 	{canEditImg &&
@@ -137,7 +139,8 @@ const MediaCard = ({ classes, mediaUrl, title, canEditImg, toggleImgEdit, url })
 </Card>
 
 const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, itemType, ...rest }) => {
-	const mediaUrl = item.mediaUrl || item.fallbackMediaUrl
+	const mediaUrl = item.mediaUrl
+	const mediaMime = item.mediaMime
 
 	return (
 		<Grid container spacing={16}>
@@ -151,6 +154,7 @@ const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, itemTyp
 								<MediaCard
 									classes={classes}
 									mediaUrl={mediaUrl}
+									mediaMime={mediaMime}
 									title={item.title}
 									canEditImg={canEditImg}
 									toggleImgEdit={rest.toggleImgEdit}
@@ -199,7 +203,7 @@ const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, itemTyp
 export const BasicProps = withStyles(styles)(basicProps)
 
 const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, itemType, ...rest }) => {
-	const mediaUrl = item.mediaUrl || item.fallbackMediaUrl
+	const mediaUrl = item.mediaUrl
 	const status = item.status || {}
 	// console.log('item', item)
 	return (
