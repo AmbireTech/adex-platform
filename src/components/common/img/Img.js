@@ -75,12 +75,25 @@ class Img extends Component {
 		const nextSrc = this.ipfsSrc(nextProps.src)
 		const thisSrc = this.ipfsSrc(this.props.src)
 		const nextFallback = this.ipfsSrc(nextProps.fallbackSrc)
+		const { mediaMime } = nextProps
 
 		if (nextSrc !== thisSrc) {
-			this.setDisplayImage({
-				image: this.ipfsSrc(nextSrc),
-				fallback: nextFallback || NO_IMAGE
-			})
+			const isVideo = !!mediaMime && isVideoMedia(mediaMime)
+
+			if (isVideo) {
+				this.displayVideo =  this.displayVideo || document.createElement('video')
+				this.setDisplayVideo({
+					image: this.ipfsSrc(nextSrc),
+					fallback: this.ipfsSrc(nextFallback) || NO_IMAGE
+				})
+	
+			} else {
+				this.displayImage = this.displayImage || new Image()
+				this.setDisplayImage({
+					image: this.ipfsSrc(nextSrc),
+					fallback: this.ipfsSrc(nextFallback) || NO_IMAGE
+				})
+			}
 		}
 	}
 
