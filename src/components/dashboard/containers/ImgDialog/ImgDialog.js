@@ -70,7 +70,7 @@ export class ImgDialog extends Component {
 						<ImgForm
 							label={t(this.props.imgLabel)}
 							imgSrc={this.props.imgSrc || ''}
-							onChange={this.props.validateImg.bind(
+							onChange={this.props.validateMedia.bind(
 								this,
 								{
 									propsName: this.props.imgPropName,
