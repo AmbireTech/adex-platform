@@ -57,7 +57,7 @@ export default function NewTransactionHoc(Decorated) {
 		save = () => {
 			this.handleChange('waitingForWalletAction', true)
 			this.props.saveFn({ acc: this.props.account, transaction: this.props.transaction })
-				.then((res) => {
+				.then((res = {}) => {
 					console.log('res on save', res)
 
 					const txs = res.txResults || res
@@ -65,7 +65,7 @@ export default function NewTransactionHoc(Decorated) {
 
 					this.handleSaveRes({ err: err, res: txs })
 				})
-				.catch((error) => {
+				.catch((error = {}) => {
 					console.log('err on save', error)
 					const res = error.txResults || null
 					const err = error.err || error
