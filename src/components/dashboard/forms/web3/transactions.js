@@ -9,14 +9,14 @@ import FormSteps from 'components/dashboard/forms/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
 // import SaveIcon from '@material-ui/icons/Save'
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
-import { sendDaiToIdentity } from 'services/smart-contracts/actions/identity'
+import {
+	sendDaiToIdentity,
+	withdrawFromIdentity
+} from 'services/smart-contracts/actions/identity'
 
 const {
 	withdrawEth,
-	withdrawToken,
-	depositToIdentity,
-	depositToIdentityEG,
-	withdrawTokensFromIdentity
+	withdrawToken
 } = {} // TODO
 
 const FormStepsWithDialog = WithDialog(FormSteps)
@@ -148,16 +148,21 @@ export const DepositToken = (props) =>
 export const WithdrawTokenFromIdentity = (props) =>
 	<FormStepsWithDialog
 		{...props}
-		btnLabel="ACCOUNT_WITHDRAW_FROM_EXCHANGE_BTN"
-		saveBtnLabel='ACCOUNT_WITHDRAW_FROM_EXCHANGE_SAVE_BTN'
-		title="ACCOUNT_WITHDRAW_FROM_EXCHANGE_TITLE"
-		stepsId='withdrawFromExchange'
+		btnLabel="ACCOUNT_WITHDRAW_FROM_IDENTITY_BTN"
+		saveBtnLabel='ACCOUNT_WITHDRAW_FROM_IDENTITY_SAVE_BTN'
+		title="ACCOUNT_WITHDRAW_FROM_IDENTITY_TITLE"
+		stepsId='withdrawFromIdentity'
 		{...txCommon}
-		stepsPages={[{ title: 'ACCOUNT_WITHDRAW_FROM_EXCHANGE_STEP', page: WithdrawFromExchangePage }]}
-		saveFn={({ acc, transaction } = {}) => {
-			return withdrawTokensFromIdentity({ _addr: acc._addr, amountToWithdraw: transaction.withdrawAmount, gas: transaction.gas, user: acc, })
+		stepsPages={[{ title: 'ACCOUNT_WITHDRAW_FROM_IDENTITY_STEP', page: WithdrawFromExchangePage }]}
+		saveFn={({ transaction } = {}) => {
+			return props.actions.identityWithdraw({
+				amountToWithdraw: transaction.withdrawAmount,
+				withdrawTo: transaction.withdrawTo,
+			})
 		}}
-		estimateGasFn={({ acc, transaction } = {}) => {
-			return withdrawTokensFromIdentity({ _addr: acc._addr, amountToWithdraw: transaction.withdrawAmount, gas: transaction.gas, user: acc, estimateGasOnly: true })
+		getFeesFn={({ transaction } = {}) => {
+			return withdrawFromIdentity({
+				getFeesOnly: true
+			})
 		}}
 	/>
