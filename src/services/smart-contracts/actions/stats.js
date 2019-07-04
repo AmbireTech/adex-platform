@@ -150,7 +150,11 @@ async function getIdentityStatistics({ withBalance, address }) {
 		return stats
 	})
 
-	const aggregates = await Promise.all(allCalls)
+	const aggregates = await Promise.all(allCalls.map(ag =>
+		ag
+			.then(res => res)
+			.catch(e => { return {} })
+	))
 	return aggregates
 }
 
