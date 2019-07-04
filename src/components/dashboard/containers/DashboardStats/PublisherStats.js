@@ -11,7 +11,7 @@ const getDayId = (_id) => {
 
 const mapAggregates = ({ aggregates = [] }) => {
 	return aggregates.reduce(({ hourly, daily, channels }, a) => {
-		const { aggr, channel } = a
+		const { aggr = [], channel = {} } = a
 
 		const channelData = aggr
 			.reduce(({ channelHourly, channelDaily }, e) => {
