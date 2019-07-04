@@ -57,7 +57,7 @@ class AccountInfo extends React.Component {
 	}
 
 	render() {
-		const { t, account, classes } = this.props
+		const { t, account, classes, actions } = this.props
 		const formatted = account.stats.formatted || {}
 		const {
 			walletAddress,
@@ -182,7 +182,7 @@ class AccountInfo extends React.Component {
 							secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
 						/>
 						<div className={classes.itemActions}>
-							<DepositToken
+							{/* <DepositToken
 								variant='contained'
 								color='secondary'
 								onSave={this.onSave}
@@ -190,7 +190,7 @@ class AccountInfo extends React.Component {
 								token='DAI'
 								className={classes.actionBtn}
 								size='small'
-							/>
+							/> */}
 							<WithdrawTokenFromIdentity
 								variant='contained'
 								color='primary'
@@ -199,6 +199,8 @@ class AccountInfo extends React.Component {
 								token='DAI'
 								className={classes.actionBtn}
 								size='small'
+								actions={actions}
+
 							/>
 						</div>
 					</ListItem>
