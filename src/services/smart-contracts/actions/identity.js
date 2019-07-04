@@ -1,12 +1,25 @@
 import { getEthers } from 'services/smart-contracts/ethers'
 import { getSigner, prepareTx, processTx } from 'services/smart-contracts/actions/ethers'
-import { ethers, utils } from 'ethers'
+import {
+	ethers,
+	utils,
+	Contract
+} from 'ethers'
+import {
+	Interface,
+	bigNumberify
+} from 'ethers/utils'
 import { generateAddress2 } from 'ethereumjs-util'
-import { identityBytecode } from 'services/adex-relayer/actions'
+import { splitSig, Transaction } from 'adex-protocol-eth/js'
+import { identityBytecode, executeTx } from 'services/adex-relayer/actions'
+import { contracts } from '../contractsCfg'
+const { DAI } = contracts
 
 const IDENTITY_BASE_ADDR = process.env.IDENTITY_BASE_ADDR
 const IDENTITY_FACTORY_ADDR = process.env.IDENTITY_FACTORY_ADDR
 const GAS_LIMIT_DEPLOY_CONTRACT = 150000
+const feeAmountTransfer = '150000000000000000'
+const ERC20 = new Interface(DAI.abi)
 
 export async function getIdentityBytecode({ owner, privLevel }) {
 	const res = await identityBytecode({
@@ -113,5 +126,74 @@ export async function sendDaiToIdentity({
 	})
 
 	return {}
+}
+
+export async function withdrawFromIdentity({
+	account,
+	amountToWithdraw,
+	withdrawTo,
+	getFeesOnly
+}) {
+	if (getFeesOnly) {
+		return bigNumberify(feeAmountTransfer).mul(bigNumberify('2'))
+	}
+
+	const { wallet, identity } = account
+	const {
+		provider,
+		Dai,
+		Identity } = await getEthers(wallet.authType)
+	const signer = await getSigner({ wallet, provider })
+	const tokenAmount = ethers.utils.parseUnits(amountToWithdraw, 18).toString()
+	const identityAddr = identity.address
+
+	const identityContract = new Contract(
+		identityAddr,
+		Identity.abi,
+		provider
+	)
+
+	const initialNonce = (await identityContract.nonce())
+		.toNumber()
+
+	const tx1 = {
+		identityContract: identityAddr,
+		nonce: initialNonce,
+		feeTokenAddr: Dai.address,
+		feeAmount: feeAmountTransfer,
+		to: Dai.address,
+		data: ERC20.functions.approve
+			.encode([identityAddr, tokenAmount])
+	}
+
+	const tx2 = {
+		identityContract: identityAddr,
+		nonce: initialNonce + 1,
+		feeTokenAddr: Dai.address,
+		feeAmount: feeAmountTransfer,
+		to: Dai.address,
+		data: ERC20.functions.transfer
+			.encode([withdrawTo, tokenAmount])
+	}
+
+	const signTx = (tx) =>
+		signer
+			.signMessage(new Transaction(tx).hashHex(), { hex: true })
+			.then(sig => splitSig(sig.signature))
+
+	const txns = [tx1, tx2]
+	const signatures = await Promise.all(txns.map(signTx))
+
+	const data = {
+		txnsRaw: txns,
+		signatures,
+		identityAddr: identity.address
+	}
+
+	const result = await executeTx(data)
+
+	return {
+		result
+	}
 }
 
