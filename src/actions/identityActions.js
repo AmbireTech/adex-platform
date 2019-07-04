@@ -9,7 +9,8 @@ import {
 import { translate } from 'services/translations/translations'
 import { addToast } from './uiActions'
 import {
-	getIdentityDeployData
+	getIdentityDeployData,
+	withdrawFromIdentity
 } from 'services/smart-contracts/actions/identity'
 import { addDataToWallet } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
@@ -171,16 +172,16 @@ export function getRegisterExpectedIdentity({ owner, mail }) {
 	}
 }
 
-export function  onUploadLocalWallet(event) {
+export function onUploadLocalWallet(event) {
 	return async function (dispatch) {
 		updateSpinner('uploading-account-data', true)(dispatch)
 		const file = event.target.files[0]
 		const reader = new FileReader()
 
 		reader.onload = (ev) => {
-			try{
+			try {
 				const obj = JSON.parse(ev.target.result)
-				if(!obj || !obj.key || !obj.wallet || !obj.wallet.data || !obj.wallet.identity || !obj.wallet.privileges) {				
+				if (!obj || !obj.key || !obj.wallet || !obj.wallet.data || !obj.wallet.identity || !obj.wallet.privileges) {
 					throw new Error(translate('INVALID_JSON_DATA'))
 				} else {
 					saveToLocalStorage(obj.wallet, obj.key)
@@ -195,7 +196,7 @@ export function  onUploadLocalWallet(event) {
 				addToast({
 					type: 'cancel',
 					label: translate('ERR_UPLOADING_ACCOUNT_DATA',
-						{args: [err.message]}),
+						{ args: [err.message] }),
 					timeout: 5000
 				})(dispatch)
 			}
@@ -206,7 +207,7 @@ export function  onUploadLocalWallet(event) {
 			console.error('Error uploading account data.', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_UPLOADING_ACCOUNT_DATA', {args: [err]}),
+				label: translate('ERR_UPLOADING_ACCOUNT_DATA', { args: [err] }),
 				timeout: 5000
 			})(dispatch)
 			updateSpinner('uploading-account-data', true)(dispatch)
@@ -222,5 +223,34 @@ export function  onUploadLocalWallet(event) {
 		}
 
 		reader.readAsText(file)
+	}
+}
+
+export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
+	return async function (dispatch, getState) {
+		try {
+			const { account } = getState().persist
+
+			const result = await withdrawFromIdentity({
+				account,
+				amountToWithdraw,
+				withdrawTo
+			})
+
+			addToast({
+				type: 'accept',
+				label: translate('IDENTITY_WITHDRAW_NOTIFICATION',
+					{ args: [result] }),
+				timeout: 20000
+			})(dispatch)
+		} catch (err) {
+			console.error('ERR_IDENTITY_WITHDRAW_NOTIFICATION', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_IDENTITY_WITHDRAW_NOTIFICATION',
+					{ args: [err] }),
+				timeout: 20000
+			})(dispatch)
+		}
 	}
 }
