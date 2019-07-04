@@ -132,3 +132,16 @@ export const relayerConfig = () => {
 		method: 'GET'
 	}).then(processResponse)
 }
+
+export const executeTx = ({ txnsRaw, signatures, identityAddr }) => {
+	return requester.fetch({
+		route: 'identity/execute',
+		method: 'POST',
+		body: JSON.stringify({
+			txnsRaw,
+			signatures,
+			identityAddr
+		}),
+		headers: { 'Content-Type': 'application/json' }
+	}).then(processResponse)
+}
