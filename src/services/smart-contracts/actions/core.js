@@ -145,7 +145,7 @@ export async function openChannel({ campaign, account }) {
 	}
 }
 
-export async function closeChannel({account, campaign}) {
-	const result = await closeCampaign({account, campaign})
+export async function closeChannel({ account, campaign }) {
+	const result = await closeCampaign({ account, campaign })
 	return result
 }
