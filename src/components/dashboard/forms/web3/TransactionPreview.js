@@ -22,6 +22,7 @@ class TransactionPreview extends Component {
 
 		this.state = {
 			gas: null,
+			fees: null,
 			errors: []
 		}
 	}
@@ -30,7 +31,7 @@ class TransactionPreview extends Component {
 		if (this.props.estimateGasFn && Object.keys(this.props.transaction).length) {
 
 			this.props.actions.updateSpinner(this.props.txId, true)
-			this.props.estimateGasFn({ acc: this.props.account, transaction: this.props.transaction })
+			this.props.getFeesFn({ acc: this.props.account, transaction: this.props.transaction })
 				.then((estimatedGas) => {
 					this.setState({ gas: estimatedGas })
 					this.props.handleChange('gas', estimatedGas)
@@ -44,119 +45,123 @@ class TransactionPreview extends Component {
 		}
 	}
 
-    gasRow = ({ gas, gasPrice }) => {
-    	let eGas = gas.gas ? gas.gas : gas
-    	// TODO: ethers
-    	let fee = '00' //web3Utils.fromWei((eGas * parseInt(gasPrice, 10)).toString(), 'ether')
-    	return (
-    		<PropRow
-    			left={
-    				<Tooltip
-    					title={this.props.t('OPERATION_FEE_TOOLTIP')}
-    				>
-    					<strong>{this.props.t(gas.trMethod || 'OPERATION_FEE')}</strong>
-    				</Tooltip>
-    			}
-    			right={<strong>{fee} ETH</strong>}
-    		/>
-    	)
-    }
+	// gasRow = ({ gas, gasPrice }) => {
+	// 	let eGas = gas.gas ? gas.gas : gas
+	// 	// TODO: ethers
+	// 	let fee = '00' //web3Utils.fromWei((eGas * parseInt(gasPrice, 10)).toString(), 'ether')
+	// 	return (
+	// 		<PropRow
+	// 			left={
+	// 				<Tooltip
+	// 					title={this.props.t('OPERATION_FEE_TOOLTIP')}
+	// 				>
+	// 					<strong>{this.props.t(gas.trMethod || 'OPERATION_FEE')}</strong>
+	// 				</Tooltip>
+	// 			}
+	// 			right={<strong>{fee} ETH</strong>}
+	// 		/>
+	// 	)
+	// }
 
-    gasInfo = ({ gasPrice }) => {
-    	if (!this.state.gas) return null
+	// gasInfo = ({ gasPrice }) => {
+	// 	if (!this.state.gas) return null
 
-    	if (Array.isArray(this.state.gas)) {
-    		return (
-    			<div>
-    				{this.state.gas.map((gas, index) =>
-    					<this.gasRow key={index} gas={gas} gasPrice={gasPrice} />
-    				)}
-    			</div>
-    		)
-    	} else {
-    		return (<this.gasRow gas={this.state.gas} gasPrice={gasPrice} />)
-    	}
-    }
+	// 	if (Array.isArray(this.state.gas)) {
+	// 		return (
+	// 			<div>
+	// 				{this.state.gas.map((gas, index) =>
+	// 					<this.gasRow key={index} gas={gas} gasPrice={gasPrice} />
+	// 				)}
+	// 			</div>
+	// 		)
+	// 	} else {
+	// 		return (<this.gasRow gas={this.state.gas} gasPrice={gasPrice} />)
+	// 	}
+	// }
 
-    render() {
-    	const { transaction = {}, t, classes, account, previewWarnMsgs, spinner } = this.props
-    	// TODO: ethers
-    	const gasPrice = account.settings.gasPrice ? account.settings.gasPrice :  '300000000'//DEFAULT_GAS_PRICE
-    	const errors = transaction.errors || []
-    	return (
-    		<div>
-    			{spinner ?
-    				<FullContentSpinner />
-    				:
-    				<ContentBox>
-    					{transaction.waitingForWalletAction ?
-    						<ContentStickyTop>
-    							<WalletAction t={t} authType={account._authType} />
-    						</ContentStickyTop> : null}
-    					<ContentBody>
-    						{errors.length ?
-    							errors.map((err, index) =>
-    								<PropRow
-    									key={index}
-    									classNameLeft={classes.error}
-    									classNameRight={classes.error}
-    									left={<ErrorIcon />}
-    									right={err}
-    								/>)
-    							: null}
+	feesRow = ({ fee }) => {
 
-    						{previewWarnMsgs ?
-    							previewWarnMsgs.map((msg, index) =>
-    								<PropRow
-    									key={index}
-    									classNameLeft={classes.warning}
-    									classNameRight={classes.warning}
-    									left={<WarningIcon />}
-    									right={t(msg.msg, { args: msg.args })}
-    								/>
-    							)
-    							: null}
+	}
 
-    						{!errors.length ?
-    							<PropRow
-    								right={<GasPrice disabled={!!transaction.waitingForWalletAction} />}
-    							/> : null}
+	render() {
+		const { transaction = {}, t, classes, account, previewWarnMsgs, spinner } = this.props
+		// TODO: ethers
+		// const gasPrice = account.settings.gasPrice ? account.settings.gasPrice :  '300000000'//DEFAULT_GAS_PRICE
+		const errors = transaction.errors || []
+		return (
+			<div>
+				{spinner ?
+					<FullContentSpinner />
+					:
+					<ContentBox>
+						{transaction.waitingForWalletAction ?
+							<ContentStickyTop>
+								<WalletAction t={t} authType={account._authType} />
+							</ContentStickyTop> : null}
+						<ContentBody>
+							{errors.length ?
+								errors.map((err, index) =>
+									<PropRow
+										key={index}
+										classNameLeft={classes.error}
+										classNameRight={classes.error}
+										left={<ErrorIcon />}
+										right={err}
+									/>)
+								: null}
 
-    						<this.gasInfo gasPrice={gasPrice} />
+							{previewWarnMsgs ?
+								previewWarnMsgs.map((msg, index) =>
+									<PropRow
+										key={index}
+										classNameLeft={classes.warning}
+										classNameRight={classes.warning}
+										left={<WarningIcon />}
+										right={t(msg.msg, { args: msg.args })}
+									/>
+								)
+								: null}
 
-    						{
-    							Object
-    								.keys(transaction)
-    								.filter((key) => !/gas|account|waitingForWalletAction|isValidConversion|conversionWarningMsg|conversionCheckMsg/.test(key))
-    								.map(key => {
-    									let keyName = key
-    									let value = transaction[key]
-    									let isObjValue = (typeof value === 'object')
-    									if (isObjValue) {
-    										value = JSON.stringify(value, null, 2)
-    									}
+							{/* {!errors.length ?
+								<PropRow
+									right={<GasPrice disabled={!!transaction.waitingForWalletAction} />}
+								/> : null} */}
 
-    									return (
-    										<PropRow
-    											key={key}
-    											left={t(keyName, { isProp: true })}
-    											right={isObjValue ?
-    												<pre style={{ overflowX: 'auto' }}>
-    													{(value || '').toString()}
-    												</pre>
-    												:
-    												(value || '').toString()
-    											}
-    										/>
-    									)
-    								})
-    						}
-    					</ContentBody>
-    				</ContentBox>
-    			}
-    		</div>
-    	)
-    }
+							{/* <this.gasInfo gasPrice={gasPrice} /> */}
+
+							{
+								Object
+									.keys(transaction)
+									.filter((key) => !/gas|account|waitingForWalletAction|isValidConversion|conversionWarningMsg|conversionCheckMsg/.test(key))
+									.map(key => {
+										let keyName = key
+										let value = transaction[key]
+										let isObjValue = (typeof value === 'object')
+										if (isObjValue) {
+											value = JSON.stringify(value, null, 2)
+										}
+
+										return (
+											<PropRow
+												key={key}
+												left={t(keyName, { isProp: true })}
+												right={isObjValue ?
+													<pre style={{ overflowX: 'auto' }}>
+														{(value || '').toString()}
+													</pre>
+													:
+													(value || '').toString()
+												}
+											/>
+										)
+									})
+							}
+						</ContentBody>
+					</ContentBox>
+				}
+			</div>
+		)
+	}
 }
 
 TransactionPreview.propTypes = {
