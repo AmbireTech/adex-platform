@@ -1,3 +1,5 @@
+import { utils } from 'ethers'
+
 // TODO: check the regex
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
 const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
@@ -61,4 +63,13 @@ export const validQuickAccountCoupon = (coupon) => {
 	coupon = coupon || ''
 	const isValid = couponRegex.test(coupon)
 	return isValid
+}
+
+export const isEthAddress = (addr = '') => {
+	try {
+		utils.getAddress(addr)
+	} catch (e) {
+		return false
+	}
+	return true
 }
