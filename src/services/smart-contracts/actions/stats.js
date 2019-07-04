@@ -64,9 +64,13 @@ export async function getAccountStats({ account }) {
 		walletPrivileges,
 		validatorsData
 	]
-		= await Promise.all(calls)
+		= await Promise.all(calls.map(c =>
+			c
+				.then(res => res)
+				.catch(e => { return {} })
+		))
 
-	const { outstandingBalanceDai, aggregates } = validatorsData
+	const { outstandingBalanceDai = 0, aggregates = [] } = validatorsData
 
 	// BigNumber values for balances
 	const raw = {
