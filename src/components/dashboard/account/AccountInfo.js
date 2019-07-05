@@ -113,7 +113,6 @@ class AccountInfo extends React.Component {
 						</IconButton>
 					</ListItem>
 					<ListDivider />
-
 					<ListItem>
 						<ListItemText
 							className={classes.address}
@@ -137,6 +136,7 @@ class AccountInfo extends React.Component {
 								color='primary'
 								onSave={this.onSave}
 								identityAvailable={identityBalanceDai}
+								identityAvailableRaw={identityBalanceDai}
 								token='DAI'
 								className={classes.actionBtn}
 								size='small'

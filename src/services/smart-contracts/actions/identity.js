@@ -2,16 +2,20 @@ import { getEthers } from 'services/smart-contracts/ethers'
 import { getSigner, prepareTx, processTx } from 'services/smart-contracts/actions/ethers'
 import {
 	ethers,
-	utils,
 	Contract
 } from 'ethers'
 import {
 	Interface,
-	bigNumberify
+	bigNumberify,
+	parseUnits,
+	randomBytes,
+	getAddress,
+	hexlify
 } from 'ethers/utils'
 import { generateAddress2 } from 'ethereumjs-util'
 import { splitSig, Transaction } from 'adex-protocol-eth/js'
 import { identityBytecode, executeTx } from 'services/adex-relayer/actions'
+import { formatTokenAmount } from 'helpers/formatters'
 import { contracts } from '../contractsCfg'
 const { DAI } = contracts
 
@@ -33,8 +37,8 @@ export async function getIdentityBytecode({ owner, privLevel }) {
 export async function getIdentityDeployData({ owner, privLevel }) {
 	const bytecode = await getIdentityBytecode({ owner, privLevel })
 	const salt =
-		`0x${Buffer.from(utils.randomBytes(32)).toString('hex')}`
-	const expectedAddr = utils.getAddress(
+		`0x${Buffer.from(randomBytes(32)).toString('hex')}`
+	const expectedAddr = getAddress(
 		`0x${generateAddress2(IDENTITY_FACTORY_ADDR, salt, bytecode)
 			.toString('hex')}`
 	)
@@ -59,10 +63,10 @@ export async function deployIdentityContract({
 		),
 		provider,
 		sender: wallet.address,
-		gasLimit: utils.hexlify(GAS_LIMIT_DEPLOY_CONTRACT)
+		gasLimit: hexlify(GAS_LIMIT_DEPLOY_CONTRACT)
 	})
 
-	pTx.gasLimit = utils.hexlify(GAS_LIMIT_DEPLOY_CONTRACT)
+	pTx.gasLimit = hexlify(GAS_LIMIT_DEPLOY_CONTRACT)
 	const identityFactoryWithSigner = IdentityFactory.connect(signer)
 
 	const tx = identityFactoryWithSigner.deploy(
@@ -104,7 +108,7 @@ export async function sendDaiToIdentity({
 	const { provider, Dai } = await getEthers(wallet.authType)
 	const signer = await getSigner({ wallet, provider })
 	const daiWithSigner = Dai.connect(signer)
-	const tokenAmount = ethers.utils.parseUnits(amountToSend, 18).toString()
+	const tokenAmount = parseUnits(amountToSend, 18).toString()
 
 	const pTx = await prepareTx({
 		tx: Dai.transfer(identity.address, tokenAmount),
@@ -134,8 +138,15 @@ export async function withdrawFromIdentity({
 	withdrawTo,
 	getFeesOnly
 }) {
+	const toWithdraw = parseUnits(amountToWithdraw, 18)
+	const fees = bigNumberify(feeAmountTransfer).mul(bigNumberify('2'))
+	const tokenAmount = toWithdraw.sub(fees).toString()
+
 	if (getFeesOnly) {
-		return bigNumberify(feeAmountTransfer).mul(bigNumberify('2'))
+		return {
+			fees: formatTokenAmount(fees.toString(), 18),
+			toGet: formatTokenAmount(tokenAmount, 18)
+		}
 	}
 
 	const { wallet, identity } = account
@@ -144,7 +155,6 @@ export async function withdrawFromIdentity({
 		Dai,
 		Identity } = await getEthers(wallet.authType)
 	const signer = await getSigner({ wallet, provider })
-	const tokenAmount = ethers.utils.parseUnits(amountToWithdraw, 18).toString()
 	const identityAddr = identity.address
 
 	const identityContract = new Contract(
