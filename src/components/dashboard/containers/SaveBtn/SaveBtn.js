@@ -15,53 +15,53 @@ import { styles } from './styles'
 // NOTE: Separate component to track the validations and spinner to avoid rerender of item top level components
 class SaveBtn extends Component {
 
-    render() {
-        let { t, spinner, classes, success, dirtyProps, save, validations, validationId, className, spinnerId, ...other } = this.props
-        return (
+	render() {
+		let { t, spinner, classes, success, dirtyProps, save, validations, validationId, className, spinnerId, ...other } = this.props
+		return (
 
-            <div className={classes.position}>
-                <div className={classes.wrapper}>
-                    <Button
-                        variant="fab"
-                        color="primary"
-                        // className={buttonClassname}
-                        onClick={() => save()}
-                        disabled={spinner || !dirtyProps.length || !!Object.keys(validations[validationId] || {}).length}
-                        {...other}
-                    >
-                        {/*TODO: Success */}
-                        {success ? <CheckIcon /> : <SaveIcon />}
-                    </Button>
-                    {!!spinner && <CircularProgress size={68} className={classes.fabProgress} />}
-                </div>
-            </div>
-        )
-    }
+			<div className={classes.position}>
+				<div className={classes.wrapper}>
+					<Button
+						variant="fab"
+						color="primary"
+						// className={buttonClassname}
+						onClick={() => save()}
+						disabled={spinner || !dirtyProps.length || !!Object.keys(validations[validationId] || {}).length}
+						// {...other}
+					>
+						{/*TODO: Success */}
+						{success ? <CheckIcon /> : <SaveIcon />}
+					</Button>
+					{!!spinner && <CircularProgress size={68} className={classes.fabProgress} />}
+				</div>
+			</div>
+		)
+	}
 }
 
 SaveBtn.propTypes = {
-    spinnerId: PropTypes.string,
-    validationId: PropTypes.string,
-    itemId: PropTypes.string,
-    validations: PropTypes.object
+	spinnerId: PropTypes.string,
+	validationId: PropTypes.string,
+	itemId: PropTypes.string,
+	validations: PropTypes.object
 }
 
 function mapStateToProps(state, props) {
-    // const persist = state.persist
-    const memory = state.memory
-    return {
-        spinner: memory.spinners[props.spinnerId],
-        validations: memory.validations
-    }
+	// const persist = state.persist
+	const memory = state.memory
+	return {
+		spinner: memory.spinners[props.spinnerId],
+		validations: memory.validations
+	}
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    }
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	}
 }
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Translate(withStyles(styles)(SaveBtn)))

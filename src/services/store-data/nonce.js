@@ -7,60 +7,60 @@ const { store } = configureStore
 let nonceTimeout = null
 
 const clearNonceTimeout = () => {
-    if (nonceTimeout) {
-        clearTimeout(nonceTimeout)
-       nonceTimeout = null
-    }
+	if (nonceTimeout) {
+		clearTimeout(nonceTimeout)
+		nonceTimeout = null
+	}
 }
 
 const syncNonce = () => {
-    const persist = store.getState().persist
-    const account = persist.account
-    let settings = { ...account._settings }
+	const persist = store.getState().persist
+	const account = persist.account
+	let settings = { ...account.settings }
 
-    return getNonce()
-        .then((gasData)=> {
+	return getNonce()
+		.then((gasData)=> {
             
-            settings.gasData = gasData
+			settings.gasData = gasData
 
-            let action = actions.updateAccount({ ownProps: { settings: settings } })
-            action(store.dispatch)
-        })
-        .catch(()=> {
-            settings.gasData = DEFAULT_DATA
+			let action = actions.updateAccount({ newValues: { settings: settings } })
+			action(store.dispatch)
+		})
+		.catch(()=> {
+			settings.gasData = DEFAULT_DATA
 
-            let action = actions.updateAccount({ ownProps: { settings: settings } })
-            action(store.dispatch)
-        })
+			let action = actions.updateAccount({ newValues: { settings: settings } })
+			action(store.dispatch)
+		})
 }
 
 const checkNonce = () => {
-    syncNonce()
-        .then(() => {
-            checkNonceLoop()
-        })
-        .catch(() => {
-            checkNonceLoop()
-        })
+	syncNonce()
+		.then(() => {
+			checkNonceLoop()
+		})
+		.catch(() => {
+			checkNonceLoop()
+		})
 }
 
 const checkNonceLoop = () => {
-    clearNonceTimeout()
+	clearNonceTimeout()
 
-   nonceTimeout = setTimeout(checkNonce, 30 * 60 * 1000)
+	nonceTimeout = setTimeout(checkNonce, 30 * 60 * 1000)
 }
 
 const start = () => {
-    clearNonceTimeout()
-    checkNonce()
+	clearNonceTimeout()
+	checkNonce()
 }
 
 const stop = () => {
-    clearNonceTimeout()
+	clearNonceTimeout()
 }
 
 
 export default {
-    start,
-    stop
+	start,
+	stop
 }

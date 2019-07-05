@@ -38,7 +38,7 @@
 - fix adex-models getImgUrl to return '' instead og undefined
 - Img component use div wit background instead img (need to fix some styles where used)
 - Fix transaction validations on back btn - done
-- Change trId to txId everywhere!!! - !important
+- Change txId to txId everywhere!!! - !important - DONE!!
 - Remove all tooltips and find way to show the additional info (easier for mobile devices)
 - Adex-node service - use user auth directly from the store for easier calls (without providing auth sig every time)
 - TODO: use eth addresses only with lower case everywhere!!!

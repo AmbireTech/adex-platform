@@ -1,0 +1,91 @@
+{
+  "contractName": "IdentityFactory",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "relayer",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "relayerAddr",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "addr",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "salt",
+          "type": "uint256"
+        }
+      ],
+      "name": "LogDeployed",
+      "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "code",
+          "type": "bytes"
+        },
+        {
+          "name": "salt",
+          "type": "uint256"
+        }
+      ],
+      "name": "deploy",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "code",
+          "type": "bytes"
+        },
+        {
+          "name": "salt",
+          "type": "uint256"
+        },
+        {
+          "name": "tokenAddr",
+          "type": "address"
+        },
+        {
+          "name": "tokenAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "deployAndFund",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
+}

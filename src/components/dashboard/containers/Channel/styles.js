@@ -1,12 +1,12 @@
 export const styles = theme => {
-    const spacing = theme.spacing.unit
-    return {
-        flex: {
-            flex: 1
-        },
-        appBar: {
-            marginTop: spacing * 2,
-            marginBottom: spacing,
-        }
-    }
+	const spacing = theme.spacing.unit
+	return {
+		flex: {
+			flex: 1
+		},
+		appBar: {
+			marginTop: spacing * 2,
+			marginBottom: spacing,
+		}
+	}
 }

@@ -1,174 +1,264 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import NO_IMAGE from 'resources/no-image-box-eddie.jpg'
+import VIDEO_IMAGE from 'resources/video-placeholder.jpg'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import FullscreenIcon from '@material-ui/icons/Fullscreen'
-import IconButton from '@material-ui/core/IconButton'
+// import IconButton from '@material-ui/core/IconButton'
 import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
 import Translate from 'components/translate/Translate'
+import { validations, helpers } from 'adex-models'
+import { isVideoMedia } from 'helpers/mediaHelpers.js'
 
 const MAX_IMG_LOAD_TIME = 3000
 class Img extends Component {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            imgSrc: null,
-            active: false
-        }
+	constructor(props) {
+		super(props)
+		this.state = {
+			imgSrc: null,
+			active: false,
+			videoSrc: null
+		}
 
-        this.setDisplayImage = this.setDisplayImage.bind(this)
-        this.loadTimeout = null
-    }
+		this.setDisplayImage = this.setDisplayImage.bind(this)
+		this.setDisplayVideo = this.setDisplayVideo.bind(this)
+		this.loadTimeout = null
+	}
 
-    handleToggle = () => {
-        let active = this.state.active
-        this.setState({ active: !active })
-    }
+	ipfsSrc = (src) => {
+		if (!!src && validations.Regexes.ipfsRegex.test(src)) {
+			return helpers.getMediaUrlWithProvider(src, process.env.IPFS_GATEWAY)
+		}
 
-    componentDidMount() {
-        this.displayImage = new Image()
-        this.setDisplayImage({ image: this.props.src, fallback: this.props.fallbackSrc || NO_IMAGE })
-    }
+		return src
+	}
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.src !== this.props.src) {
-            this.setDisplayImage({ image: nextProps.src, fallback: nextProps.fallbackSrc || NO_IMAGE })
-        }
-    }
+	handleToggle = () => {
+		let active = this.state.active
+		this.setState({ active: !active })
+	}
 
-    componentWillUnmount() {
-        this.clearLoadTimeout()
-        if (this.displayImage) {
-            this.displayImage.onerror = null
-            this.displayImage.onload = null
-            this.displayImage.onabort = null
-            this.displayImage = null
-        }
-    }
+	componentDidMount() {
+		const { src, fallbackSrc, mediaMime, allowVideo } = this.props
+		const isVideo = !!mediaMime && isVideoMedia(mediaMime)
 
-    clearLoadTimeout = () => {
-        if (this.loadTimeout) {
-            clearTimeout(this.loadTimeout)
-            this.loadTimeout = null
-        }
-    }
+		if (isVideo && !allowVideo) {
+			return this.setState({
+				imgSrc: VIDEO_IMAGE
+			})
+		}
 
-    onFail = (fallback) => {
-        if (this.displayImage) {
-            this.displayImage.onerror = null
-            this.displayImage.onload = null
-            this.displayImage.onabort = null
+		if (isVideo) {
+			this.displayVideo = document.createElement('video')
+			this.setDisplayVideo({
+				image: this.ipfsSrc(src),
+				fallback: this.ipfsSrc(fallbackSrc) || NO_IMAGE
+			})
 
-            this.clearLoadTimeout()
-            this.displayImage.src = fallback
-        }
+		} else {
+			this.displayImage = new Image()
+			this.setDisplayImage({
+				image: this.ipfsSrc(src),
+				fallback: this.ipfsSrc(fallbackSrc) || NO_IMAGE
+			})
+		}
+	}
 
-        this.clearLoadTimeout()
+	componentWillReceiveProps = (nextProps) => {
+		const nextSrc = this.ipfsSrc(nextProps.src)
+		const thisSrc = this.ipfsSrc(this.props.src)
+		const nextFallback = this.ipfsSrc(nextProps.fallbackSrc)
+		const { mediaMime } = nextProps
 
-        this.setState({
-            imgSrc: fallback || null
-        })
-    }
+		if (nextSrc !== thisSrc) {
+			const isVideo = !!mediaMime && isVideoMedia(mediaMime)
 
-    setDisplayImage = ({ image, fallback }) => {
-        this.loadTimeout = setTimeout(() => {
-            this.onFail(fallback)
-        }, MAX_IMG_LOAD_TIME)
+			if (isVideo) {
+				this.displayVideo =  this.displayVideo || document.createElement('video')
+				this.setDisplayVideo({
+					image: this.ipfsSrc(nextSrc),
+					fallback: this.ipfsSrc(nextFallback) || NO_IMAGE
+				})
+	
+			} else {
+				this.displayImage = this.displayImage || new Image()
+				this.setDisplayImage({
+					image: this.ipfsSrc(nextSrc),
+					fallback: this.ipfsSrc(nextFallback) || NO_IMAGE
+				})
+			}
+		}
+	}
 
-        this.displayImage.onerror = this.displayImage.onabort = this.onFail.bind(this, fallback)
+	componentWillUnmount() {
+		this.clearLoadTimeout()
+		if (this.displayImage) {
+			this.displayImage.onerror = null
+			this.displayImage.onload = null
+			this.displayImage.onabort = null
+			this.displayImage = null
+		}
+	}
 
-        this.displayImage.onload = () => {
-            this.clearLoadTimeout()
-            this.setState({
-                imgSrc: image
-            })
-        }
+	clearLoadTimeout = () => {
+		if (this.loadTimeout) {
+			clearTimeout(this.loadTimeout)
+			this.loadTimeout = null
+		}
+	}
 
-        this.displayImage.src = image
-    }
+	onFail = (fallback) => {
+		if (this.displayImage) {
+			this.displayImage.onerror = null
+			this.displayImage.onload = null
+			this.displayImage.onabort = null
 
-    renderFullscreenDialog() {
-        const { allowFullscreen, className, alt, classes, t, ...other } = this.props
+			this.clearLoadTimeout()
+			this.displayImage.src = fallback
+		}
 
-        return (
-            <span>
-                <Button
-                    variant='fab'
-                    mini
-                    color='default'
-                    className={classnames(classes.fullscreenIcon)}
-                    onClick={() => { this.handleToggle() }}
-                >
-                    <FullscreenIcon />
-                </Button>
-                <Dialog
-                    open={this.state.active}
-                    type={this.props.type || 'normal'}
-                    maxWidth={false}
-                    onClose={this.handleToggle}
-                    classes={{ paper: classes.dialog }}
-                >
-                    <DialogContent className={classes.dialogImageParent}>
-                        <img
-                            {...other}
-                            alt={alt}
-                            src={this.state.imgSrc}
-                            draggable='false'
-                            className={classnames(classes.dialogImage, classes.imgLoading)}
-                            onDragStart={(event) => event.preventDefault() /*Firefox*/}
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button
-                            onClick={this.handleToggle}
-                            color='primary'
-                        >
-                            {t('CLOSE')}
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </span>
-        )
-    }
+		this.clearLoadTimeout()
 
-    render() {
-        const { alt, allowFullscreen, className, classes, t, ...other } = this.props
-        return (
-            this.state.imgSrc ?
-                <span className={classnames(classes.imgParent, className)}>
-                    <img
-                        {...other}
-                        alt={alt}
-                        src={this.state.imgSrc}
-                        draggable='false'
-                        className={classnames(classes.imgLoading, className)}
-                        onDragStart={(event) => event.preventDefault() /*Firefox*/}
-                    />
-                    {allowFullscreen ? this.renderFullscreenDialog() : null}
-                </span>
-                :
-                <span className={classnames(classes.imgLoading, className)}>
-                    <span
-                        className={classes.circular}
-                    >
-                        <CircularProgress />
-                    </span>
-                </span>
-        )
-    }
+		this.setState({
+			imgSrc: fallback || null
+		})
+	}
+
+	setDisplayImage = ({ image, fallback }) => {
+		this.loadTimeout = setTimeout(() => {
+			this.onFail(fallback)
+		}, MAX_IMG_LOAD_TIME)
+
+		this.displayImage.onerror = this.displayImage.onabort = this.onFail.bind(this, fallback)
+
+		this.displayImage.onload = () => {
+			this.clearLoadTimeout()
+			this.setState({
+				imgSrc: image
+			})
+		}
+
+		this.displayImage.src = image
+	}
+
+	setDisplayVideo = ({ image, fallback }) => {
+		this.displayVideo.src = image
+
+		this.loadTimeout = setTimeout(() => {
+			this.onFail(fallback)
+		}, MAX_IMG_LOAD_TIME)
+
+		this.displayVideo.onloadedmetadata = ({ target }) => {
+			this.clearLoadTimeout()
+			this.setState({
+				videoSrc: image
+			})
+		}
+	}
+
+	fullScreenBtn() {
+		const { classes } = this.props
+		return (
+			<span>
+				<Button
+					variant='fab'
+					mini
+					color='default'
+					className={classnames(classes.fullscreenIcon)}
+					onClick={() => { this.handleToggle() }}
+				>
+					<FullscreenIcon />
+				</Button>
+				{this.renderFullscreenDialog()}
+			</span>
+		)
+	}
+
+	renderFullscreenDialog() {
+		const { t, alt, classes, type } = this.props
+		const { active, imgSrc, videoSrc } = this.state
+
+		return (
+			<Dialog
+				open={active}
+				type={type || 'normal'}
+				maxWidth={false}
+				onClose={this.handleToggle}
+				classes={{ paper: classes.dialog }}
+			>
+				<DialogContent className={classes.dialogImageParent}>
+					{imgSrc ?
+						<img
+							alt={alt}
+							src={imgSrc}
+							draggable='false'
+							className={classnames(classes.dialogImage, classes.imgLoading)}
+							onDragStart={(event) => event.preventDefault() /*Firefox*/}
+						/>
+						: <video src={videoSrc} controls>
+						</video>
+					}
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={this.handleToggle}
+						color='primary'
+					>
+						{t('CLOSE')}
+					</Button>
+				</DialogActions>
+			</Dialog>
+		)
+	}
+
+	render() {
+		const { alt, allowFullscreen, className, classes, fullScreenOnClick } = this.props
+		const { imgSrc, videoSrc } = this.state
+		return (
+			imgSrc || videoSrc ?
+				<div className={classnames(classes.imgParent, className, classes.wrapper)}>
+					{!!imgSrc ?
+
+						<img
+							alt={alt}
+							src={this.state.imgSrc}
+							draggable='false'
+							className={classnames(classes.imgLoading, className, classes.img)}
+							onDragStart={(event) => event.preventDefault() /*Firefox*/}
+							onClick={fullScreenOnClick && (() => { console.log('click'); this.handleToggle() })}
+						/>
+						: <video src={videoSrc} controls>
+						</video>
+					}
+					{allowFullscreen && this.fullScreenBtn()}
+					{fullScreenOnClick && this.renderFullscreenDialog()}
+				</div>
+				:
+				<span className={classnames(classes.imgLoading, className)}>
+					<span
+						className={classes.circular}
+					>
+						<CircularProgress />
+					</span>
+				</span>
+		)
+	}
 }
 
 Img.propTypes = {
-    src: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-    fallbackSrc: PropTypes.string,
-    alt: PropTypes.string
+	src: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+	fallbackSrc: PropTypes.string,
+	alt: PropTypes.string,
+	allowFullscreen: PropTypes.bool,
+	fullScreenOnClick: PropTypes.bool,
+	mediaMime: PropTypes.string
 }
 
 export default Translate(withStyles(styles)(Img))

@@ -4,24 +4,24 @@ import { Base } from 'adex-models'
 
 
 export default function currentItemReducer(state = initialState.currentItem, action) {
-    let newState
+	let newState
 
-    if (!action.item) return state
+	if (!action.item) return state
 
-    switch (action.type) {
-        case SET_CURRENT_ITEM:
-            newState = { ...action.item } || {}
-            newState.dirty = false
-            newState.dirtyProps = []
+	switch (action.type) {
+	case SET_CURRENT_ITEM:
+		newState = { ...action.item } || {}
+		newState.dirty = false
+		newState.dirtyProps = []
 
-            return newState
+		return newState
 
-        case UPDATE_CURRENT_ITEM:
-            newState = Base.updateMeta(state || action.item, action.meta, state.dirtyProps)
-            newState._meta.dirty = true
-            return newState
+	case UPDATE_CURRENT_ITEM:
+		newState = Base.updateMeta(state || action.item, action.meta, state.dirtyProps)
+		newState._meta.dirty = true
+		return newState
 
-        default:
-            return state
-    }
+	default:
+		return state
+	}
 }

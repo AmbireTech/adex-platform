@@ -3,206 +3,180 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
+import Grid from '@material-ui/core/Grid'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
 import ItemsList from 'components/dashboard/containers/ItemsList'
-import DatePicker from 'components/common/DatePicker'
-import AddItem from 'components/dashboard/containers/AddItem'
-import moment from 'moment'
 import Translate from 'components/translate/Translate'
+import Button from '@material-ui/core/Button'
 import { AdUnit as AdUnitModel, Campaign as CampaignModel } from 'adex-models'
-import { groupItemsForCollection } from 'helpers/itemsHelpers'
 import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
-import { items as ItemsConstants } from 'adex-constants'
-import { NewUnitSteps } from 'components/dashboard/forms/items/NewItems'
-import WithDialog from 'components/common/dialog/WithDialog'
-import AddIcon from '@material-ui/icons/Add'
-import AppBar from '@material-ui/core/AppBar'
-import Typography from '@material-ui/core/Typography'
-import Toolbar from '@material-ui/core/Toolbar'
-import EditIcon from '@material-ui/icons/Edit'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-
-const { ItemsTypes } = ItemsConstants
+import { CampaignProps } from 'components/dashboard/containers/ItemCommon'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import AppBar from '@material-ui/core/AppBar'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
+import ListSubheader from '@material-ui/core/ListSubheader'
+import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
+// import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
 const VIEW_MODE = 'campaignRowsView'
-const VIEW_MODE_UNITS = 'campaignAdUNitsRowsView'
-const AddItemWithDialog = WithDialog(AddItem)
 
 export class Campaign extends Component {
-    constructor(props, context) {
-        super(props, context);
+	constructor(props, context) {
+		super(props, context);
 
-        this.state = {
-            tabIndex: 0
-        }
-    }
+		this.state = {
+			tabIndex: 0,
+			statistics: {}
+		}
+	}
 
-    handleTabChange = (index) => {
-        this.setState({ tabIndex: index })
-    }
+	componentDidMount = () => {
+		this.props.actions.updateCampaignState({ campaign: this.props.item })
+		// this.props.actions.updateCampaignStatistics({ campaign: this.props.item })
+	}
 
-    inputFormat = (value) => {
-        return moment(value).format('DD MMMM')
-    }
+	handleTabChange = (event, index) => {
+		this.setState({ tabIndex: index })
+	}
 
-    render() {
-        // let side = this.props.match.params.side
-        const { t, classes, item, setActiveFields, handleChange, activeFields, isDemo } = this.props
-        const propsUnits = { ...this.props.units }
+	CampaignActions = ({ campaign, actions, t }) => {
+		return (
+			<Grid container spacing={16}>
+				<Grid item xs={12}>
+					<Button
+						color='secondary'
+						onClick={() => actions.closeCampaign({ campaign })}
+					>
+						{t('BTN_CLOSE_CAMPAIGN')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
+	}
 
-        if (!item) return (<h1>'404'</h1>)
+	render() {
+		const { t, classes, item, setActiveFields, handleChange, activeFields, isDemo, actions, ...rest } = this.props
+		const { tabIndex } = this.state
 
-        const from = item.from ? new Date(item.from) : null
-        const to = item.to ? new Date(item.to) : null
-        const now = new Date()
-        now.setHours(0, 0, 0, 0)
+		const units = item.spec.adUnits
+		const campaign = new CampaignModel(item)
 
-        //TODO: Make it wit HOC for collection (campaing/channel)
-        const groupedUnits = groupItemsForCollection({ collectionId: item._id, allItems: propsUnits })
+		const balances = campaign.state &&
+			campaign.state.lastApproved
+			? campaign.state.lastApproved.newState.msg.balances
+			: {}
 
-        const units = groupedUnits.items
-        const otherUnits = groupedUnits.otherItems
-        const editFrom = !!activeFields.from
-        const editTo = !!activeFields.to
+		return (
+			<div>
+				<CampaignProps
+					item={campaign}
+					t={t}
+					rightComponent={
+						// <UnitTargets
+						// 	{...rest}
+						// 	targets={campaign.targeting}
+						// 	t={t}
+						// 	subHeader={t('CAMPAIGN_TARGETING')}
+						// />
+						<this.CampaignActions campaign={campaign} t={t} actions={actions} />
+					}
 
-        return (
-            <div>
-                <div>
-                    <DatePicker
-                        calendarIcon
-                        icon={!editFrom || isDemo ? <EditIcon /> : undefined}
-                        iconColor={!editFrom && !isDemo ? 'secondary' : undefined}
-                        label={t('from', { isProp: true })}
-                        onIconClick={(ev) => {
-                            if (!editFrom && !isDemo) {
-                                setActiveFields('from', true)
-                            }
-                        }}
-                        onBlur={(ev) => {
-                            setActiveFields('from', false)
-                        }}
-                        minDate={editFrom ? now : null}
-                        maxDate={editFrom ? to : null}
-                        onChange={(val) => handleChange('from', val)}
-                        value={from}
-                        className={classes.datepicker}
-                        disabled={!editFrom || isDemo}
-                    // inputFormat={this.inputFormat}
-                    // size={moment(from).format('DD MMMM').length} /** temp fix */
-                    // readonly
-                    />
-                    <DatePicker
-                        calendarIcon
-                        icon={!editTo || isDemo ? <EditIcon /> : undefined}
-                        iconColor={!editTo && !isDemo ? 'secondary' : undefined}
-                        onIconClick={(ev) => {
-                            if (!editTo && !isDemo) {
-                                setActiveFields('to', true)
-                            }
-                        }}
-                        onBlur={(ev) => {
-                            setActiveFields('to', false)
-                        }}
-                        label={t('to', { isProp: true })}
-                        minDate={editTo ? (from || now) : null}
-                        onChange={(val) => handleChange('to', val)}
-                        value={to}
-                        className={classes.datepicker}
-                        disabled={!editTo || isDemo}
-                    // inputFormat={this.inputFormat}
-                    // size={moment(to).format('DD MMMM').length} /** temp fix */
-                    // readonly
-                    />
-                </div>
-                <AppBar
-                    position='static'
-                    color='primary'
-                    className={classes.appBar}
-                >
-                    <Toolbar>
-                        <Typography
-                            variant="title"
-                            color="inherit"
-                            className={classes.flex}
-                        >
-                            {this.props.t('UNITS_IN_CAMPAIGN', { args: [units.length] })}
-                        </Typography>
+				/>
+				<div>
+					<AppBar
+						position='static'
+						color='default'
+					>
+						<Tabs
+							value={tabIndex}
+							onChange={this.handleTabChange}
+							scrollable
+							scrollButtons='off'
+							indicatorColor='primary'
+							textColor='primary'
+						>
+							<Tab label={t('STATE')} />
+							<Tab label={t('CAMPAIGN_UNITS')} />
+						</Tabs>
+					</AppBar>
+					<div
+						style={{ marginTop: 10 }}
+					>
+						{
+							(tabIndex === 0) &&
+							<List
+								subheader={
+									<ListSubheader component='div'>
+										{t('BALANCES')}
+									</ListSubheader>
+								}
+							>
+								{Object.keys(balances).map(key =>
+									<ListItem key={key}>
+										<ListItemText
+											primary={formatTokenAmount(balances[key]) + ' DAI'}
+											secondary={key}
+										/>
+									</ListItem>
+								)}
 
-                        <AddItemWithDialog
-                            color='inherit'
-                            icon={<AddIcon />}
-                            addCampaign={this.props.actions.addCampaign}
-                            btnLabel={t('NEW_UNIT_TO_CAMPAIGN')}
-                            title={t('NEW_UNIT_TO_CAMPAIGN')}
-                            items={otherUnits}
-                            viewMode={VIEW_MODE_UNITS}
-                            listMode='rows'
-                            addTo={item}
-                            tabNewLabel={t('NEW_UNIT')}
-                            tabExsLabel={t('EXISTING_UNIT')}
-                            objModel={AdUnitModel}
-                            itemModel={AdUnitModel}
-                            sortProperties={SORT_PROPERTIES_ITEMS}
-                            filterProperties={FILTER_PROPERTIES_ITEMS}
-                            newForm={(props) =>
-                                <NewUnitSteps
-                                    {...props}
-                                    addTo={item}
-                                />
-                            }
-                        />
+							</List>
+						}
+						{
+							(tabIndex === 1) &&
+							<ItemsList
+								removeFromItem
+								items={units}
+								viewModeId={VIEW_MODE}
+								itemType='AdUnit'
+								objModel={AdUnitModel}
+								sortProperties={SORT_PROPERTIES_ITEMS}
+								filterProperties={FILTER_PROPERTIES_ITEMS}
+								uiStateId='campaign-units'
+							/>
+						}
 
-                    </Toolbar>
-                </AppBar>
-                <ItemsList
-                    parentItem={item}
-                    removeFromItem
-                    items={units}
-                    viewModeId={VIEW_MODE}
-                    bjModel={AdUnitModel}
-                    sortProperties={SORT_PROPERTIES_ITEMS}
-                    filterProperties={FILTER_PROPERTIES_ITEMS}
-                    uiStateId='campaign-units'
-                />
-            </div>
-        )
-    }
+					</div>
+
+				</div>
+			</div>
+		)
+	}
 }
 
 Campaign.propTypes = {
-    actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired,
-    units: PropTypes.object.isRequired,
-    rowsView: PropTypes.bool.isRequired
+	actions: PropTypes.object.isRequired,
+	account: PropTypes.object.isRequired,
+	units: PropTypes.object.isRequired,
+	rowsView: PropTypes.bool.isRequired,
+	item: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state) {
-    let persist = state.persist
-    // let memory = state.memory
-    return {
-        account: persist.account,
-        units: persist.items[ItemsTypes.AdUnit.id],
-        rowsView: !!persist.ui[VIEW_MODE],
-        objModel: CampaignModel,
-        itemType: ItemsTypes.Campaign.id,
-        updateImgInfoLabel: 'CAMPAIGN_IMG_ADDITIONAL_INFO',
-        updateImgLabel: 'CAMPAIGN_LOGO',
-        updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
-        updateImgExact: false,
-        canEditImg: true,
-        showLogo: true
-    }
+	const { persist } = state
+	// let memory = state.memory
+	return {
+		account: persist.account,
+		units: persist.items['AdUnit'],
+		rowsView: !!persist.ui[VIEW_MODE],
+		objModel: CampaignModel,
+		itemType: 'Campaign',
+	}
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    }
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	}
 }
 
 const CampaignItem = ItemHoc(withStyles(styles)(Campaign))
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Translate(CampaignItem))
