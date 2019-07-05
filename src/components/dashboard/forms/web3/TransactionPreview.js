@@ -8,7 +8,6 @@ import Tooltip from '@material-ui/core/Tooltip'
 import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
 // import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
-import GasPrice from 'components/dashboard/account/GasPrice'
 import { WalletAction } from 'components/dashboard/forms/FormsCommon'
 import { PropRow, ContentBox, ContentBody, ContentStickyTop, FullContentSpinner } from 'components/common/dialog/content'
 import Helper from 'helpers/miscHelpers'
@@ -32,9 +31,9 @@ class TransactionPreview extends Component {
 
 			this.props.actions.updateSpinner(this.props.txId, true)
 			this.props.getFeesFn({ acc: this.props.account, transaction: this.props.transaction })
-				.then((estimatedGas) => {
-					this.setState({ gas: estimatedGas })
-					this.props.handleChange('gas', estimatedGas)
+				.then((fees) => {
+					this.setState({ fees })
+					this.props.handleChange('fees', fees)
 					this.props.actions.updateSpinner(this.props.txId, false)
 				})
 				.catch((err) => {
@@ -45,48 +44,12 @@ class TransactionPreview extends Component {
 		}
 	}
 
-	// gasRow = ({ gas, gasPrice }) => {
-	// 	let eGas = gas.gas ? gas.gas : gas
-	// 	// TODO: ethers
-	// 	let fee = '00' //web3Utils.fromWei((eGas * parseInt(gasPrice, 10)).toString(), 'ether')
-	// 	return (
-	// 		<PropRow
-	// 			left={
-	// 				<Tooltip
-	// 					title={this.props.t('OPERATION_FEE_TOOLTIP')}
-	// 				>
-	// 					<strong>{this.props.t(gas.trMethod || 'OPERATION_FEE')}</strong>
-	// 				</Tooltip>
-	// 			}
-	// 			right={<strong>{fee} ETH</strong>}
-	// 		/>
-	// 	)
-	// }
-
-	// gasInfo = ({ gasPrice }) => {
-	// 	if (!this.state.gas) return null
-
-	// 	if (Array.isArray(this.state.gas)) {
-	// 		return (
-	// 			<div>
-	// 				{this.state.gas.map((gas, index) =>
-	// 					<this.gasRow key={index} gas={gas} gasPrice={gasPrice} />
-	// 				)}
-	// 			</div>
-	// 		)
-	// 	} else {
-	// 		return (<this.gasRow gas={this.state.gas} gasPrice={gasPrice} />)
-	// 	}
-	// }
-
-	feesRow = ({ fee }) => {
+	feesRow = ({ feeс }) => {
 
 	}
 
 	render() {
 		const { transaction = {}, t, classes, account, previewWarnMsgs, spinner } = this.props
-		// TODO: ethers
-		// const gasPrice = account.settings.gasPrice ? account.settings.gasPrice :  '300000000'//DEFAULT_GAS_PRICE
 		const errors = transaction.errors || []
 		return (
 			<div>
@@ -121,14 +84,6 @@ class TransactionPreview extends Component {
 									/>
 								)
 								: null}
-
-							{/* {!errors.length ?
-								<PropRow
-									right={<GasPrice disabled={!!transaction.waitingForWalletAction} />}
-								/> : null} */}
-
-							{/* <this.gasInfo gasPrice={gasPrice} /> */}
-
 							{
 								Object
 									.keys(transaction)

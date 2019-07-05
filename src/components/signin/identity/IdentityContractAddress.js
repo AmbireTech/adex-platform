@@ -12,7 +12,6 @@ import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
-import GasPrice from 'components/dashboard/account/GasPrice'
 import { getDeployTx, getRandomAddressForDeployTx } from 'services/idenity/contract-address'
 import { tokens } from 'services/smart-contracts/tokensConfig'
 import { validateNumber } from 'helpers/validators'
@@ -117,10 +116,6 @@ class IdentityContractAddress extends Component {
     				</Grid>
     				<Grid item sm={6}>
     					<this.tokenAmount t={t} feeTokenAmount={identity.feeTokenAmount} handleChange={handleChange} />
-    				</Grid>
-
-    				<Grid item sm={6}>
-    					<GasPrice />
     				</Grid>
     				<Grid item sm={6}>
     					<Button
