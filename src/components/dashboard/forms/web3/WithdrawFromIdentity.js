@@ -8,7 +8,7 @@ import NewTransactionHoc from './TransactionHoc'
 import TextField from '@material-ui/core/TextField'
 import { validateNumber, isEthAddress } from 'helpers/validators'
 
-class WithdrawFromExchange extends Component {
+class WithdrawFromIdentity extends Component {
 
 	componentDidMount() {
 		if (!this.props.transaction.withdrawAmount) {
@@ -24,10 +24,10 @@ class WithdrawFromExchange extends Component {
 		let isValid = validateNumber(numStr)
 		let msg = 'ERR_INVALID_AMOUNT_VALUE'
 		let errMsgArgs = []
-		if (isValid && (parseFloat(numStr) > parseFloat(this.props.exchangeAvailable))) {
+		if (isValid && (parseFloat(numStr) > parseFloat(this.props.identityAvailable))) {
 			isValid = false
 			msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'
-			errMsgArgs = [this.props.exchangeAvailable, 'ADX']
+			errMsgArgs = [this.props.identityAvailable, 'DAI']
 		}
 
 		this.props.validate('withdrawAmount', { isValid: isValid, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
@@ -40,14 +40,14 @@ class WithdrawFromExchange extends Component {
 	}
 
 	render() {
-		const { transaction, t, invalidFields, exchangeAvailable, handleChange } = this.props
+		const { transaction, t, invalidFields, identityAvailable, handleChange } = this.props
 		const { withdrawTo, withdrawAmount } = transaction || {}
 		const errAmount = invalidFields['withdrawAmount']
 		const errAddr = invalidFields['withdrawTo']
 
 		return (
 			<div>
-				<div> {t('EXCHANGE_CURRENT_DAI_BALANCE_AVAILABLE_ON_IDENTITY')} {exchangeAvailable} </div>
+				<div> {t('EXCHANGE_CURRENT_DAI_BALANCE_AVAILABLE_ON_IDENTITY')} {identityAvailable} </div>
 				<TextField
 					type='text'
 					required
@@ -73,7 +73,7 @@ class WithdrawFromExchange extends Component {
 					onFocus={() => this.validateAmount(withdrawAmount, false)}
 					error={errAmount && !!errAmount.dirty}
 					helperText={errAmount && !!errAmount.dirty ?
-						errAmount.errMsg : t('MAX_AMOUNT_TO_WITHDRAW', { args: [exchangeAvailable, 'ADX'] })
+						errAmount.errMsg : t('MAX_AMOUNT_TO_WITHDRAW', { args: [identityAvailable, 'DAI'] })
 					}
 				/>
 			</div>
@@ -81,7 +81,7 @@ class WithdrawFromExchange extends Component {
 	}
 }
 
-WithdrawFromExchange.propTypes = {
+WithdrawFromIdentity.propTypes = {
 	actions: PropTypes.object.isRequired,
 	label: PropTypes.string,
 	txId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
@@ -105,8 +105,8 @@ function mapDispatchToProps(dispatch) {
 	}
 }
 
-const WithdrawFromExchangeForm = NewTransactionHoc(WithdrawFromExchange)
+const WithdrawFromIdentityForm = NewTransactionHoc(WithdrawFromIdentity)
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(WithdrawFromExchangeForm)
+)(WithdrawFromIdentityForm)

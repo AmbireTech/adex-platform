@@ -1,5 +1,5 @@
 import React from 'react'
-import WithdrawFromExchangePage from './WithdrawFromExchange'
+import WithdrawFromExchangePage from './WithdrawFromIdentity'
 import TransactionPreview from './TransactionPreview'
 import Button from '@material-ui/core/Button'
 import TransactionHoc from './TransactionHoc'
@@ -64,6 +64,7 @@ export const WithdrawTokenFromIdentity = (props) =>
 		}}
 		getFeesFn={({ transaction } = {}) => {
 			return withdrawFromIdentity({
+				amountToWithdraw: transaction.withdrawAmount,
 				getFeesOnly: true
 			})
 		}}
