@@ -85,11 +85,11 @@ const convertItemToJSON = (item) => {
 	return JSON.stringify(itemToConvert)
 }
 
-export const getAdUnits = ({ authSig }) => {
+export const getAdUnits = ({ identity }) => {
 	return requester.fetch({
 		route: 'units',
 		method: 'GET',
-		authSig
+		queryParams: { identity }
 	}).then(processResponse)
 }
 
@@ -113,11 +113,11 @@ export const updateAdUnit = ({ unit, authSig }) => {
 	}).then(processResponse)
 }
 
-export const getAdSlots = ({ authSig }) => {
+export const getAdSlots = ({ identity }) => {
 	return requester.fetch({
 		route: 'slots',
 		method: 'GET',
-		authSig
+		queryParams: { identity }
 	}).then(processResponse)
 }
 
