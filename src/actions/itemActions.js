@@ -161,9 +161,11 @@ export function addSlot(item, itemType, authSig) {
 export function getAllItems() {
 	return async function (dispatch, getState) {
 		try {
-			const { authSig } = getState().persist.account.wallet
-			const units = getAdUnits({ authSig })
-			const slots = getAdSlots({ authSig })
+			const { account } = getState().persist
+			const { authSig } = account.wallet
+			const { address } = account.identity
+			const units = getAdUnits({ identity: address })
+			const slots = getAdSlots({ identity: address })
 			const campaigns = getCampaigns({ authSig })
 
 			const [resUnits, resSlots, resCampaigns]
