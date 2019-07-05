@@ -6,9 +6,6 @@ import actions from 'actions'
 import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import {
-	WithdrawEth,
-	WithdrawTokens,
-	DepositToken,
 	WithdrawTokenFromIdentity
 } from 'components/dashboard/forms/web3/transactions'
 import { withStyles } from '@material-ui/core/styles'
@@ -17,6 +14,7 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
+import Button from '@material-ui/core/Button'
 import CopyIcon from '@material-ui/icons/FileCopy'
 import DownloadIcon from '@material-ui/icons/SaveAlt'
 import { styles } from './styles.js'
@@ -86,6 +84,23 @@ class AccountInfo extends React.Component {
 								: t('IDENTITY_ETH_ADDR')
 							}
 						/>
+						{walletJsonData && 
+						<label htmlFor='download-wallet-json'>
+							<a
+								id='download-wallet-json'
+								href={this.localWalletDownloadHref()}
+								download={`adex-account-data-${email}.json`}
+							>
+								<Button
+									size='small'
+									variant='contained'
+								>
+									{t('BACKUP_LOCAL_WALLET')} 
+									<DownloadIcon />
+								</Button>
+							</a>
+						</label>
+						}
 						<IconButton
 							color='default'
 							onClick={() => {
@@ -98,83 +113,17 @@ class AccountInfo extends React.Component {
 						</IconButton>
 					</ListItem>
 					<ListDivider />
-
 					<ListItem>
 						<ListItemText
 							className={classes.address}
-							primary={walletAddress}
-							secondary={(account.authType === 'demo')
+							secondary={walletAddress}
+							primary={(account.authType === 'demo')
 								? t('DEMO_ACCOUNT_WALLET_ADDRESS', { args: [walletAuthType, walletPrivileges] })
 								: t('WALLET_INFO_LABEL', { args: [walletAuthType, walletPrivileges, authType] })
 							}
-						/>				
-						{walletJsonData && 
-						<label htmlFor='download-wallet-json'>
-							<a
-								id='download-wallet-json'
-								href={this.localWalletDownloadHref()}
-								download={`adex-account-data-${email}.json`}
-							>
-								<IconButton  >
-									<DownloadIcon />
-								</IconButton>
-							</a>
-						</label>
-						}
-						<IconButton
-							color='default'
-							onClick={() => {
-								copy(walletAddress)
-								this.props.actions
-									.addToast({ type: 'accept', action: 'X', label: t('COPIED_TO_CLIPBOARD'), timeout: 5000 })
-							}}
-						>
-							<CopyIcon />
-						</IconButton>
+						/>
 					</ListItem>
 					<ListDivider />
-
-					{/* <ListItem
-					>
-						<ListItemText
-							primary={walletBalanceEth + ' ETH'}
-							secondary={t('WALLET_ETH_BALANCE')}
-						/>
-						<div className={classes.itemActions}>
-							<WithdrawEth
-								variant='contained'
-								color='primary'
-								onSave={this.onSave}
-								availableAmount={walletBalanceEth}
-								tokenName='ETH'
-								accAddr={walletAddress}
-								className={classes.actionBtn}
-								size='small'
-							/>
-						</div>
-					</ListItem>
-					<ListDivider />
-					<ListItem
-					>
-						<ListItemText
-							primary={walletBalanceDai + ' DAI'}
-							secondary={t('WALLET_DAI_BALANCE')}
-						/>
-						<div className={classes.itemActions}>
-							<WithdrawTokens
-								variant='contained'
-								color='primary'
-								onSave={this.onSave}
-								availableAmount={walletBalanceDai}
-								tokenName='DAI'
-								accAddr={walletAddress}
-								className={classes.actionBtn}
-								size='small'
-							/>
-						</div>
-					</ListItem>
-					<ListDivider /> */}
-
 					<ListItem
 					>
 						<ListItemText
@@ -182,20 +131,12 @@ class AccountInfo extends React.Component {
 							secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
 						/>
 						<div className={classes.itemActions}>
-							{/* <DepositToken
-								variant='contained'
-								color='secondary'
-								onSave={this.onSave}
-								walletBalance={walletBalanceDai}
-								token='DAI'
-								className={classes.actionBtn}
-								size='small'
-							/> */}
 							<WithdrawTokenFromIdentity
 								variant='contained'
 								color='primary'
 								onSave={this.onSave}
 								identityAvailable={identityBalanceDai}
+								identityAvailableRaw={identityBalanceDai}
 								token='DAI'
 								className={classes.actionBtn}
 								size='small'
