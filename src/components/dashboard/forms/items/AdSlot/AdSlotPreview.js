@@ -50,7 +50,6 @@ class AdSlotPreview extends Component {
 			temp,
 			targeting,
 			targetUrl,
-			tags
 		} = newItem
 
 		return (
@@ -74,17 +73,6 @@ class AdSlotPreview extends Component {
 					/>
 					{temp.useFallback &&
 						<SlotFallback img={temp} targetUrl={targetUrl} t={t} classes={classes} />}
-					{tags && <PropRow
-						left={t('tags', { isProp: true })}
-						right={
-							<UnitTargets
-								{...rest}
-								targets={tags}
-								t={t}
-							// subHeader={'TAGS'}
-							/>
-						}
-					/>}
 					{/* </Grid> */}
 					<br />
 				</ContentBody>
