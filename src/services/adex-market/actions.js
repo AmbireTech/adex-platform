@@ -116,7 +116,7 @@ export const updateAdUnit = ({ unit, authSig }) => {
 export const getAdSlots = ({ identity }) => {
 	return requester.fetch({
 		route: 'slots',
-		method: 'GET',		
+		method: 'GET',
 		queryParams: { identity }
 	}).then(processResponse)
 }
