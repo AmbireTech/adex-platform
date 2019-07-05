@@ -24,7 +24,6 @@ class AdUnitFormPreview extends Component {
 			description,
 			temp,
 			targeting,
-			tags
 		} = newItem
 
 		return (
@@ -67,17 +66,6 @@ class AdUnitFormPreview extends Component {
 								targets={targeting}
 								t={t}
 							// subHeader={'TARGETING'}
-							/>
-						}
-					/>}
-					{tags && <PropRow
-						left={t('tags', { isProp: true })}
-						right={
-							<UnitTargets
-								{...rest}
-								targets={tags}
-								t={t}
-							// subHeader={'TAGS'}
 							/>
 						}
 					/>}
