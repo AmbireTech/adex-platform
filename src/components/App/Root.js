@@ -19,7 +19,6 @@ import Translate from 'components/translate/Translate'
 import { getSig } from 'services/auth/auth'
 import { AUTH_TYPES } from 'constants/misc'
 import { logOut } from 'services/store-data/auth'
-import checkGasData from 'services/store-data/gas'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(CreateGrantIdentity)
 const ConnectedGrantLogin = ConnectHoc(LoginGrantIdentity)
@@ -98,11 +97,9 @@ class Root extends Component {
 	}
 
 	componentWillUnmount() {
-		// checkGasData.stop()
 	}
 
 	componentWillMount() {
-		// checkGasData.start()
 		// this.checkForMetamaskAccountChange()
 		// this.onMetamaskNetworkChanged()
 

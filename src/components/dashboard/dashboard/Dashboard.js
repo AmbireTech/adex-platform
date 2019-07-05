@@ -21,7 +21,6 @@ import Account from 'components/dashboard/account/AccountInfo'
 import Translate from 'components/translate/Translate'
 import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, } from 'components/dashboard/forms/items/NewItems'
 import checkTransactions from 'services/store-data/transactions'
-// import checkGasData from 'services/store-data/gas'
 import {
 	SORT_PROPERTIES_ITEMS,
 	FILTER_PROPERTIES_ITEMS,
@@ -49,7 +48,6 @@ class Dashboard extends React.Component {
 
 	componentWillUnmount() {
 		checkTransactions.stop()
-		// checkGasData.stop()
 	}
 
 	componentDidMount() {
@@ -60,7 +58,6 @@ class Dashboard extends React.Component {
 		actions.getAllItems()
 		actions.updateAccountStats()
 		checkTransactions.start()
-		// checkGasData.start()
 	}
 
 	// shouldComponentUpdate(nextProps, nextState) {
