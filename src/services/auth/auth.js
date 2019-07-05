@@ -1,25 +1,25 @@
-export const addSig = ({ addr, sig, mode, expiryTime }) => {
-    if (!addr || !sig || !expiryTime || mode === undefined) {
-        throw new Error('addSig - all args are required')
-    }
+export const addSig = ({ addr = '', sig, mode, expiryTime }) => {
+	if (!addr || !sig || !expiryTime || mode === undefined) {
+		throw new Error('addSig - all args are required')
+	}
 
-    localStorage.setItem('addr-' + mode + '-' + addr, sig + '-' + expiryTime)
+	localStorage.setItem('addr-' + mode + '-' + addr.toLowerCase(), sig + '-' + expiryTime)
 }
 
-export const getSig = ({ addr, mode }) => {
-    let sigAndTIme = localStorage.getItem('addr-' + mode + '-' + addr)
+export const getSig = ({ addr = '', mode }) => {
+	let sigAndTIme = localStorage.getItem('addr-' + mode + '-' + addr.toLowerCase())
 
-    if (!sigAndTIme) {
-        return null
-    }
+	if (!sigAndTIme) {
+		return null
+	}
 
-    sigAndTIme = sigAndTIme.split('-')
-    let sig = sigAndTIme[0]
-    let time = sigAndTIme[1]
+	sigAndTIme = sigAndTIme.split('-')
+	let sig = sigAndTIme[0]
+	let time = sigAndTIme[1]
 
-    if (!time || (parseInt(time, 10) <= Date.now())) {
-        return null
-    } else {
-        return sig
-    }
+	if (!time || (parseInt(time, 10) <= Date.now())) {
+		return null
+	} else {
+		return sig
+	}
 }

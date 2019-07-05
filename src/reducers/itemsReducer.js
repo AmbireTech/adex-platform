@@ -4,80 +4,80 @@ import { Item } from 'adex-models'
 
 export default function itemsReducer(state = initialState.items, action) {
 
-    let newState
-    let newCollection
-    let newItem
-    let collectionId
-    let item
+	let newState
+	let newCollection
+	let newItem
+	let collectionId
+	let item
 
-    const collection = (state = {}, action) => {
-        if (!action.item) return state
-        return {
-            ...state,
-            [action.item._id]: action.item,
-        }
-    }
+	const collection = (state = {}, action) => {
+		if (!action.item) return state
+		return {
+			...state,
+			[action.item.id]: action.item,
+		}
+	}
 
-    const removeCollectionProp = (collection = {}, prop) => {
-        let newCol = { ...collection }
-        delete newCol[prop]
-        return newCol
-    }
+	const removeCollectionProp = (collection = {}, prop) => {
+		let newCol = { ...collection }
+		delete newCol[prop]
+		return newCol
+	}
 
-    if (action.item && action.item._meta) {
-        newState = { ...state }
-        item = { ...action.item }
-        collectionId = item._type || item._meta.type
-    }
+	if (action.item && action.itemType) {
+		newState = { ...state }
+		item = { ...action.item }
+		collectionId = action.itemType
+	}
 
-    switch (action.type) {
-        case ADD_ITEM:
-            // TODO: the item should come here ready (with id from bc and ipsf)
-            // id is going to be set when it comes here
-            newItem = item
-            newCollection = collection(newState[collectionId], { ...action, item: newItem })
-            newState[collectionId] = newCollection
-            return newState
+	switch (action.type) {
+	case ADD_ITEM:
+		// TODO: the item should come here ready (with id from bc and ipsf)
+		// id is going to be set when it comes here
+		newItem = item
+		newCollection = collection(newState[collectionId], { ...action, item: newItem })
+		newState[collectionId] = newCollection
+		return newState
 
-        case ADD_ITEM_TO_ITEM:
-            newItem = Item.addItem(newState[collectionId][item._id], action.toAdd)
-            newCollection = collection(newState[collectionId], { ...action, item: newItem })
-            newState[collectionId] = newCollection
-            return newState
+	case ADD_ITEM_TO_ITEM:
+		newItem = Item.addItem(newState[collectionId][item._id], action.toAdd)
+		newCollection = collection(newState[collectionId], { ...action, item: newItem })
+		newState[collectionId] = newCollection
+		return newState
 
-        case DELETE_ITEM:
-            newCollection = removeCollectionProp(newState[collectionId], item._id)
-            newState[collectionId] = newCollection
-            return newState
+	case DELETE_ITEM:
+		newCollection = removeCollectionProp(newState[collectionId], item._id)
+		newState[collectionId] = newCollection
+		return newState
 
-        case REMOVE_ITEM_FROM_ITEM:
-            newItem = Item.removeItem(newState[collectionId][item._id], action.toRemove)
-            newCollection = collection(newState[collectionId], { ...action, item: newItem })
-            newState[collectionId] = newCollection
-            return newState
+	case REMOVE_ITEM_FROM_ITEM:
+		newItem = Item.removeItem(newState[collectionId][item._id], action.toRemove)
+		newCollection = collection(newState[collectionId], { ...action, item: newItem })
+		newState[collectionId] = newCollection
+		return newState
 
-        case UPDATE_ITEM:
-            newItem = item
-            newCollection = collection(newState[collectionId], { ...action, item: newItem })
-            newState[collectionId] = newCollection
-            return newState
+	case UPDATE_ITEM:
+		newItem = item
+		newCollection = collection(newState[collectionId], { ...action, item: newItem })
+		newState[collectionId] = newCollection
+		return newState
 
-        case UPDATE_ALL_ITEMS:
-            //TEMP:
-            newState = { ...state }
-            let newItems = action.items.reduce((memo, item, index) => {
-                let newItem = { ...item }
-                memo[newItem._id] = newItem
-                return memo
-            }, {})
+	case UPDATE_ALL_ITEMS:
+		newState = { ...state }
+		const newItems = action.items.reduce((items, item, index) => {
+			const currentItems = {...items}
+			const newItem = { ...item }
+			currentItems[newItem.id || newItem.ipfs] = newItem
+			return currentItems
+		}, newState[action.itemType])
 
-            newState[action.itemsType] = newItems
-            return newState
-        case RESET_ALL_ITEMS:
-            newState = { ...initialState.items }
-            return newState
+		newState[action.itemType] = newItems
+		return newState
+	case RESET_ALL_ITEMS:
+		newState = { ...initialState.items }
+		return newState
 
-        default:
-            return state
-    }
+	default:
+		return state
+	}
 }

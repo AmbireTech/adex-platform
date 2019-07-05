@@ -11,8 +11,8 @@ import localStorage from 'redux-persist/es/storage'
 const reduxRouterMiddleware = routerMiddleware(history)
 
 const configStorage = {
-  key: 'persist',
-  storage: localStorage,
+	key: 'persist',
+	storage: localStorage,
 }
 
 // const configSession = {
@@ -24,73 +24,73 @@ const configStorage = {
 
 // TODO: make session reducer(signin) - RAM reducer (no persist)
 const rootReducer = combineReducers({
-  persist: persistCombineReducers(configStorage, persistReducers),
-  memory: combineReducers(memoryReducers), // persistCombineReducers(configSession, sessionReducers), //
+	persist: persistCombineReducers(configStorage, persistReducers),
+	memory: combineReducers(memoryReducers), // persistCombineReducers(configSession, sessionReducers), //
 })
 
 const logger = store => next => action => {
-  // if (action.type === 'UPDATE_NEWITEM') {
-  //   return next(action)
-  // }
+	// if (action.type === 'UPDATE_NEWITEM') {
+	//   return next(action)
+	// }
 
-  console.groupCollapsed(action.type)
-  console.info('dispatching', action)
-  let result = next(action)
-  console.log('next state', store.getState())
-  console.groupEnd(action.type)
-  return result
+	console.groupCollapsed(action.type)
+	console.info('dispatching', action)
+	let result = next(action)
+	console.log('next state', store.getState())
+	console.groupEnd(action.type)
+	return result
 }
 
 function configureStoreProd(initialState) {
-  const middlewares = [
-    // Add other middleware on this line...
+	const middlewares = [
+		// Add other middleware on this line...
 
-    // thunk middleware can also accept an extra argument to be passed to each thunk action
-    // https://github.com/gaearon/redux-thunk#injecting-a-custom-argument
-    thunk,
-    reduxRouterMiddleware,
-    // logger
-  ]
+		// thunk middleware can also accept an extra argument to be passed to each thunk action
+		// https://github.com/gaearon/redux-thunk#injecting-a-custom-argument
+		thunk,
+		reduxRouterMiddleware,
+		// logger
+	]
 
-  let store = createStore(rootReducer, initialState, compose(
-    applyMiddleware(...middlewares)
-  ))
+	let store = createStore(rootReducer, initialState, compose(
+		applyMiddleware(...middlewares)
+	))
 
-  let persistor = persistStore(store)
+	let persistor = persistStore(store)
 
-  return { persistor, store }
+	return { persistor, store }
 }
 
 function configureStoreDev(initialState) {
-  const middlewares = [
-    // Add other middleware on this line...
+	const middlewares = [
+		// Add other middleware on this line...
 
-    // Redux middleware that spits an error on you when you try to mutate your state either inside a dispatch or between dispatches.
-    reduxImmutableStateInvariant(),
+		// Redux middleware that spits an error on you when you try to mutate your state either inside a dispatch or between dispatches.
+		reduxImmutableStateInvariant(),
 
-    // thunk middleware can also accept an extra argument to be passed to each thunk action
-    // https://github.com/gaearon/redux-thunk#injecting-a-custom-argument
-    thunk,
-    reduxRouterMiddleware,
-    logger
-  ];
+		// thunk middleware can also accept an extra argument to be passed to each thunk action
+		// https://github.com/gaearon/redux-thunk#injecting-a-custom-argument
+		thunk,
+		reduxRouterMiddleware,
+		logger
+	];
 
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // add support for Redux dev tools
-  const store = createStore(rootReducer, initialState, composeEnhancers(
-    applyMiddleware(...middlewares)
-  )
-  );
+	const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // add support for Redux dev tools
+	const store = createStore(rootReducer, initialState, composeEnhancers(
+		applyMiddleware(...middlewares)
+	)
+	);
 
-  if (module.hot) {
-    // Enable Webpack hot module replacement for reducers
-    module.hot.accept('../reducers', () => {
-      const nextReducer = require('../reducers').default; // eslint-disable-line global-require
-      store.replaceReducer(nextReducer)
-    })
-  }
+	if (module.hot) {
+		// Enable Webpack hot module replacement for reducers
+		module.hot.accept('../reducers', () => {
+			const nextReducer = require('../reducers').default; // eslint-disable-line global-require
+			store.replaceReducer(nextReducer)
+		})
+	}
 
-  let persistor = persistStore(store)
-  return { persistor, store }
+	let persistor = persistStore(store)
+	return { persistor, store }
 }
 
 const configureStore = process.env.NODE_ENV === 'production' ? configureStoreProd : configureStoreDev

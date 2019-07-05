@@ -3,64 +3,64 @@ import actions from 'actions'
 import { getGasData, DEFAULT_DATA } from 'services/eth/gas'
 
 const { store } = configureStore
+const GAS_CHECK_INTERVAL = 30 * 60 * 1000
 
 let gasDataCheckTimeout = null
 
 const clearGasDataTimeout = () => {
-    if (gasDataCheckTimeout) {
-        clearTimeout(gasDataCheckTimeout)
-        gasDataCheckTimeout = null
-    }
+	if (gasDataCheckTimeout) {
+		clearTimeout(gasDataCheckTimeout)
+		gasDataCheckTimeout = null
+	}
 }
 
 const syncGasData = () => {
-    const persist = store.getState().persist
-    const account = persist.account
-    let settings = { ...account._settings }
+	const persist = store.getState().persist
+	const currentGasData = persist.ethNetwork.gasData
+	return getGasData()
+		.then((gasData) => {
 
-    return getGasData()
-        .then((gasData)=> {
-            
-            settings.gasData = gasData
+			// TODO: fix where it is used (web3 transactions)
+			let action = actions.updateGasData({ gasData })
+			action(store.dispatch)
+		})
+		.catch(() => {
+			const setDefault = !currentGasData.safeLow // never set beforw
 
-            let action = actions.updateAccount({ ownProps: { settings: settings } })
-            action(store.dispatch)
-        })
-        .catch(()=> {
-            settings.gasData = DEFAULT_DATA
-
-            let action = actions.updateAccount({ ownProps: { settings: settings } })
-            action(store.dispatch)
-        })
+			if (setDefault) {
+				let action = actions.updateGasData({ gasData: DEFAULT_DATA })
+				action(store.dispatch)
+			}
+		})
 }
 
 const checkGasData = () => {
-    syncGasData()
-        .then(() => {
-            checkGasDataLoop()
-        })
-        .catch(() => {
-            checkGasDataLoop()
-        })
+	syncGasData()
+		.then(() => {
+			checkGasDataLoop()
+		})
+		.catch(() => {
+			checkGasDataLoop()
+		})
 }
 
 const checkGasDataLoop = () => {
-    clearGasDataTimeout()
+	clearGasDataTimeout()
 
-    gasDataCheckTimeout = setTimeout(checkGasData, 30 * 60 * 1000)
+	gasDataCheckTimeout = setTimeout(checkGasData, GAS_CHECK_INTERVAL)
 }
 
 const start = () => {
-    clearGasDataTimeout()
-    checkGasData()
+	clearGasDataTimeout()
+	checkGasData()
 }
 
 const stop = () => {
-    clearGasDataTimeout()
+	clearGasDataTimeout()
 }
 
 
 export default {
-    start,
-    stop
+	start,
+	stop
 }

@@ -1,0 +1,248 @@
+{
+  "contractName": "AdExCore",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "withdrawn",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "withdrawnPerUser",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "states",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "channelId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "LogChannelOpen",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "channelId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "LogChannelWithdrawExpired",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "channelId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "LogChannelWithdraw",
+      "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "name": "creator",
+              "type": "address"
+            },
+            {
+              "name": "tokenAddr",
+              "type": "address"
+            },
+            {
+              "name": "tokenAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "validUntil",
+              "type": "uint256"
+            },
+            {
+              "name": "validators",
+              "type": "address[]"
+            },
+            {
+              "name": "spec",
+              "type": "bytes32"
+            }
+          ],
+          "name": "channel",
+          "type": "tuple"
+        }
+      ],
+      "name": "channelOpen",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "name": "creator",
+              "type": "address"
+            },
+            {
+              "name": "tokenAddr",
+              "type": "address"
+            },
+            {
+              "name": "tokenAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "validUntil",
+              "type": "uint256"
+            },
+            {
+              "name": "validators",
+              "type": "address[]"
+            },
+            {
+              "name": "spec",
+              "type": "bytes32"
+            }
+          ],
+          "name": "channel",
+          "type": "tuple"
+        }
+      ],
+      "name": "channelWithdrawExpired",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "name": "creator",
+              "type": "address"
+            },
+            {
+              "name": "tokenAddr",
+              "type": "address"
+            },
+            {
+              "name": "tokenAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "validUntil",
+              "type": "uint256"
+            },
+            {
+              "name": "validators",
+              "type": "address[]"
+            },
+            {
+              "name": "spec",
+              "type": "bytes32"
+            }
+          ],
+          "name": "channel",
+          "type": "tuple"
+        },
+        {
+          "name": "stateRoot",
+          "type": "bytes32"
+        },
+        {
+          "name": "signatures",
+          "type": "bytes32[3][]"
+        },
+        {
+          "name": "proof",
+          "type": "bytes32[]"
+        },
+        {
+          "name": "amountInTree",
+          "type": "uint256"
+        }
+      ],
+      "name": "channelWithdraw",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
+}

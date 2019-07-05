@@ -4,85 +4,157 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Translate from 'components/translate/Translate'
+import { isVideoMedia } from 'helpers/mediaHelpers.js'
+
+// Allow higher res images with same aspect ratio
+function checkExactish(widthTarget, width, heightTarget, height) {
+	const targetAspect = parseFloat(widthTarget / heightTarget).toFixed(3)
+	const aspect = parseFloat(width / height).toFixed(3)
+
+	const isValid = (widthTarget <= width) &&
+		(heightTarget <= height) &&
+		(targetAspect === aspect)
+
+	return isValid
+}
 
 export default function ValidImageHoc(Decorated) {
 
-    class ValidImage extends Component {
-        /* TODO: Make it not depend on NewItemHoc (props.handleChange)
-        * Now NewItemHoc mus be add before this
-        * Add here initial validation
-        * */
-        validateImg = ({propsName, widthTarget, heightTarget, msg, exact, required, onChange} = {}, img) => {
-            if (!required && !img.tempUrl && this.props.handleChange) {
-                this.props.validate(propsName, { isValid: true, err: { msg: msg, args: [] }, dirty: true })
-                // TODO: fix this
-                this.props.handleChange(propsName, img)
-                return
-            }
-            let image = new Image()
-            image.src = img.tempUrl
-            let that = this
+	class ValidImage extends Component {
 
-            image.onload = function () {
-                let width = this.width
-                let height = this.height
+		validate = ({
+			propsName,
+			widthTarget,
+			heightTarget,
+			mediaWidth,
+			mediaHeight,
+			msg,
+			exact,
+			required,
+			onChange,
+			mime,
+			tempUrl
+		}) => {
+			let isValid = true
 
-                let isValid = true
-                let masgArgs = []
+			if (exact) {
+				isValid = checkExactish(widthTarget, mediaWidth, heightTarget, mediaHeight)
+			}
 
-                if (exact && (widthTarget !== width || heightTarget !== height)) {
-                    isValid = false
+			if (!exact && (widthTarget < mediaWidth || heightTarget < mediaHeight)) {
+				isValid = false
+			}
 
-                }
-                if (!exact && (widthTarget < width || heightTarget < height)) {
-                    isValid = false
-                }
+			const masgArgs = [widthTarget, heightTarget, 'px']
 
-                masgArgs = [widthTarget, heightTarget, 'px']
+			this.props.validate(propsName, { isValid: isValid, err: { msg: msg, args: masgArgs }, dirty: true })
 
-                that.props.validate(propsName, { isValid: isValid, err: { msg: msg, args: masgArgs }, dirty: true })
-                img.width = width
-                img.height = height
-                // TODO: temp fix make this HOC independent
-                if(typeof that.props.handleChange === 'function') {
-                    that.props.handleChange(propsName, img)
-                }else if(typeof that.handleChange === 'function') {
-                    that.handleChange(propsName, img)
-                }else if (typeof onChange === 'function') {
-                    onChange(propsName, img)
-                }
-            }
-        }
+			const resMedia = {
+				width: mediaWidth,
+				height: mediaHeight,
+				mime,
+				tempUrl
+			}
 
-        render() {
-            const props = this.props
-            return (
-                <Decorated {...props} validateImg={this.validateImg} />
-            )
-        }
-    }
+			if (typeof onChange === 'function') {
+				onChange(propsName, resMedia)
+			}
 
-    ValidImage.propTypes = {
-        actions: PropTypes.object.isRequired,
-        validateId: PropTypes.string.isRequired
-    }
+		}
 
-    function mapStateToProps(state, props) {
-        let memory = state.memory
-        return {
-            validations: memory.validations[props.validateId]
-        }
-    }
+		getVideoSize = (src) =>
+			new Promise(resolve => {
+				const video = document.createElement('video')
+				video.src = src.tempUrl
 
-    function mapDispatchToProps(dispatch) {
-        return {
-            actions: bindActionCreators(actions, dispatch)
-        }
-    }
+				video.onloadedmetadata = ({ target }) => {
+					return resolve({
+						width: target.videoWidth,
+						height: target.videoHeight
+					})
+				}
+			})
 
-    return connect(
-        mapStateToProps,
-        mapDispatchToProps
-    )(Translate(ValidImage))
+		getImageSize = (src) =>
+			new Promise(resolve => {
+				const image = new Image()
+				image.src = src.tempUrl
+
+				image.onload = function () {
+					return resolve({
+						width: this.width,
+						height: this.height
+					})
+				}
+			})
+
+		validateMedia = async ({
+			propsName,
+			widthTarget,
+			heightTarget,
+			msg,
+			exact,
+			required,
+			onChange
+		} = {}, media) => {
+
+			if (!required && !media.tempUrl && onChange) {
+				this.props.validate(propsName, { isValid: true, err: { msg: msg, args: [] }, dirty: true })
+				// TODO: fix this
+				onChange(propsName, media)
+				return
+			}
+
+			const getSize = isVideoMedia(media.mime)
+				? () => this.getVideoSize(media)
+				: () => this.getImageSize(media)
+
+			const size = await getSize()
+
+			this.validate({
+				propsName,
+				widthTarget,
+				heightTarget,
+				mediaWidth: size.width,
+				mediaHeight: size.height,
+				msg,
+				exact,
+				required,
+				onChange,
+				mime: media.mime,
+				tempUrl: media.tempUrl
+			})
+		}
+
+		render() {
+			const props = this.props
+			return (
+				<Decorated {...props} validateMedia={this.validateMedia} />
+			)
+		}
+	}
+
+	ValidImage.propTypes = {
+		actions: PropTypes.object.isRequired,
+		validateId: PropTypes.string.isRequired
+	}
+
+	function mapStateToProps(state, props) {
+		const { memory } = state
+		return {
+			validations: memory.validations[props.validateId]
+		}
+	}
+
+	function mapDispatchToProps(dispatch) {
+		return {
+			actions: bindActionCreators(actions, dispatch)
+		}
+	}
+
+	return connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)(Translate(ValidImage))
 }
 

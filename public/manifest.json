@@ -1,9 +1,9 @@
 {
-  "short_name": "AdEx dapp",
+  "short_name": "AdEx Platform",
   "name": "AdEx - A Decentralized Ad Exchange",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "favicon.png",
       "sizes": "192x192",
       "type": "image/png"
     }

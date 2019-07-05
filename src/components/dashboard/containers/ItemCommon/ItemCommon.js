@@ -8,195 +8,331 @@ import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
 import EditIcon from '@material-ui/icons/Edit'
 import Img from 'components/common/img/Img'
-import { items as ItemsConstants } from 'adex-constants'
-import { Item } from 'adex-models'
 import { validUrl } from 'helpers/validators'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Anchor from 'components/common/anchor/anchor'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import classnames from 'classnames'
+import { utils } from 'ethers'
+import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
+import { bigNumberify } from 'ethers/utils'
 
-const { AdSizesByValue, AdTypesByValue } = ItemsConstants
 
 const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, isDemo, ...rest }) => {
-    let errFallbackAdUrl = rest.invalidFields['fallbackAdUrl']
+	const errFallbackAdUrl = rest.invalidFields['fallbackAdUrl']
 
-    return (
-        <div>
-            <div
-                className={classes.label}
-            >
-                {t('FALLBACK_DATA')}
-            </div>
-            <Card
-                className={classes.card}
-                raised={false}
-            >
-                <CardMedia
-                    classes={{ root: classes.mediaRoot }}
-                >
-                    <Img
-                        allowFullscreen={true}
-                        className={classes.img}
-                        src={Item.getImgUrl(item.fallbackAdImg, process.env.IPFS_GATEWAY) || ''}
-                        alt={item.fallbackAdUrl}
-                        style={{ cursor: 'pointer' }}
-                    />
-                </CardMedia>
-                <Button
-                    variant='fab'
-                    mini
-                    color='secondary'
-                    onClick={rest.toggleFallbackImgEdit}
-                    className={classes.editIcon}
-                    disabled={isDemo}
-                >
-                    <EditIcon />
-                </Button>
-                <CardContent>
-                    {rest.activeFields.fallbackAdUrl ?
-                        <TextField
-                            // required
-                            autoFocus
-                            type='text'
-                            label={t('fallbackAdUrl', { isProp: true })}
-                            value={item.fallbackAdUrl || ''}
-                            onChange={(ev) => rest.handleChange('fallbackAdUrl', ev.target.value)}
-                            // maxLength={1024}
-                            onBlur={() => { rest.setActiveFields('fallbackAdUrl', false); rest.validate('fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true }); }}
-                            onFocus={() => rest.validate('fallbackAdUrl', { isValid: !item.fallbackAdUrl || validUrl(item.fallbackAdUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
-                            error={errFallbackAdUrl && !!errFallbackAdUrl.dirty ? <span> {errFallbackAdUrl.errMsg} </span> : null}
-                            helperText={!errFallbackAdUrl || !errFallbackAdUrl.dirty ?
-                                <div>
-                                    {t('SLOT_FALLBACK_AD_URL_DESCRIPTION')}
-                                </div> : null}
-                        />
-                        :
-                        <div >
-                            <div>
-                                {item.fallbackAdUrl ?
-                                    <Anchor href={item.fallbackAdUrl} target='_blank'>
-                                        {item.fallbackAdUrl}
-                                    </Anchor>
-                                    :
-                                    <span style={{ opacity: 0.3 }}> {t('NO_FALLBACK_URL_YET')}</span>
-                                }
-                                <span>
-                                    <IconButton
-                                        disabled={!canEditImg}
-                                        size='small'
-                                        className={classes.buttonRight}
-                                        color='secondary'
-                                        onClick={() => rest.setActiveFields('fallbackAdUrl', true)}
-                                    >
-                                        <EditIcon />
-                                    </IconButton>
-                                </span>
-                            </div>
-                            {errFallbackAdUrl && !!errFallbackAdUrl.dirty ?
-                                <div>
-                                    <span className={classes.error}> {errFallbackAdUrl.errMsg} </span>
-                                </div> : null}
-                        </div>
-                    }
-                </CardContent>
-            </Card>
-        </div >
-    )
+	return (
+		<Card
+			className={classes.card}
+			raised={false}
+		>
+			<CardMedia
+				classes={{ root: classes.mediaRoot }}
+				src=''
+			>
+				<Img
+					allowFullscreen={true}
+					className={classes.img}
+					src={item.fallbackMediaUrl}
+					alt={item.fallbackTargetUrl}
+					style={{ cursor: 'pointer' }}
+				/>
+			</CardMedia>
+			<Button
+				variant='fab'
+				mini
+				color='secondary'
+				onClick={rest.toggleFallbackImgEdit}
+				className={classes.editIcon}
+				disabled={isDemo}
+			>
+				<EditIcon />
+			</Button>
+			<CardContent>
+				{rest.activeFields.fallbackTargetUrl ?
+					<TextField
+						// required
+						autoFocus
+						type='text'
+						label={t('fallbackTargetUrl', { isProp: true })}
+						value={item.fallbackTargetUrl || ''}
+						onChange={(ev) => rest.handleChange('fallbackTargetUrl', ev.target.value)}
+						// maxLength={1024}
+						onBlur={() => { rest.setActiveFields('fallbackTargetUrl', false); rest.validate('fallbackTargetUrl', { isValid: !item.fallbackTargetUrl || validUrl(item.fallbackTargetUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: true }); }}
+						onFocus={() => rest.validate('fallbackTargetUrl', { isValid: !item.fallbackTargetUrl || validUrl(item.fallbackTargetUrl), err: { msg: 'ERR_INVALID_URL' }, dirty: false })}
+						error={errFallbackAdUrl && !!errFallbackAdUrl.dirty ? <span> {errFallbackAdUrl.errMsg} </span> : null}
+						helperText={!errFallbackAdUrl || !errFallbackAdUrl.dirty ?
+							<div>
+								{t('SLOT_FALLBACK_AD_URL_DESCRIPTION')}
+							</div> : null}
+					/>
+					:
+					<div >
+						<div>
+							{item.fallbackTargetUrl ?
+								<Anchor href={item.fallbackTargetUrl} target='_blank'>
+									{item.fallbackTargetUrl}
+								</Anchor>
+								:
+								<span style={{ opacity: 0.3 }}> {t('NO_FALLBACK_URL_YET')}</span>
+							}
+							<span>
+								<IconButton
+									disabled={!canEditImg}
+									size='small'
+									className={classes.buttonRight}
+									color='secondary'
+									onClick={() => rest.setActiveFields('fallbackTargetUrl', true)}
+								>
+									<EditIcon />
+								</IconButton>
+							</span>
+						</div>
+						{errFallbackAdUrl && !!errFallbackAdUrl.dirty ?
+							<div>
+								<span className={classes.error}> {errFallbackAdUrl.errMsg} </span>
+							</div> : null}
+					</div>
+				}
+			</CardContent>
+		</Card>
+	)
 }
 
 const ValidatedFallbackAdData = ValidItemHoc(FallbackAdData)
 
-const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, ...rest }) => {
-    const adSize = (AdSizesByValue[item._meta.size] || {})
-    return (
-        <div >
-            <Grid container spacing={16}>
-                <Grid item xs={12} sm={12} md={12} lg={7}>
-                    <div >
-                        <div
-                            className={classes.basicInfo}
-                        >
-                            <Card
-                                className={classes.card}
-                                raised={false}
-                            >
-                                <CardMedia
-                                    classes={{ root: classes.mediaRoot }}
-                                >
-                                    <Img
-                                        allowFullscreen={true}
-                                        src={Item.getImgUrl(item.meta.img, process.env.IPFS_GATEWAY) || ''}
-                                        alt={item.fullName}
-                                        className={classes.img}
-                                    />
-                                </CardMedia>
-                                {canEditImg &&
-                                    <Button
-                                        variant='fab'
-                                        mini
-                                        color='secondary'
-                                        onClick={rest.toggleImgEdit}
-                                        className={classes.editIcon}
-                                    >
-                                        <EditIcon />
-                                    </Button>
-                                }
+const MediaCard = ({ classes, mediaUrl, mediaMime, title, canEditImg, toggleImgEdit, url }) => <Card
+	className={classes.card}
+	raised={false}
+>
+	<CardMedia
+		classes={{ root: classes.mediaRoot }}
+	>
+		<Img
+			allowFullscreen={true}
+			src={mediaUrl}
+			alt={title}
+			className={classes.img}
+			mediaMime={mediaMime}
+			allowVideo
+		/>
+	</CardMedia>
+	{canEditImg &&
+		<Button
+			variant='fab'
+			mini
+			color='secondary'
+			onClick={toggleImgEdit}
+			className={classes.editIcon}
+		>
+			<EditIcon />
+		</Button>
+	}
 
-                                {url &&
-                                    <CardContent>
-                                        <Anchor href={url} target='_blank'>
-                                            {url}
-                                        </Anchor>
-                                    </CardContent>
-                                }
-                            </Card>
-                            <div>
-                                <div>
-                                    <TextField
-                                        // type='text'
-                                        value={(AdTypesByValue[item.adType] || {}).label}
-                                        label={t('adType', { isProp: true })}
-                                        disabled
-                                        margin='dense'
-                                    />
-                                </div>
-                                <div>
-                                    <TextField
-                                        // type='text'
-                                        value={t(adSize.label, { args: adSize.labelArgs || [] })}
-                                        label={t('size', { isProp: true })}
-                                        disabled
-                                        margin='dense'
-                                    />
-                                </div>
-                                {Array.isArray(item.tags) &&
-                                    <div>
-                                        <TextField
-                                            value={item.tags.join(', ')}
-                                            label={t('tags', { isProp: true }) + ` (${item.tags.length})`}
-                                            disabled
-                                            margin='dense'
-                                        />
-                                    </div>
-                                }
-                            </div>
-                        </div>
+	{url &&
+		<CardContent>
+			<Anchor href={url} target='_blank'>
+				{url}
+			</Anchor>
+		</CardContent>
+	}
+</Card>
 
-                    </div>
-                    <br />
-                    {item.fallbackAdImg || item.fallbackAdUrl ?
-                        <ValidatedFallbackAdData validateId={item._id} item={item} t={t} url={url} classes={classes} canEditImg={canEditImg} {...rest} />
-                        : null
-                    }
-                </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={5}>
-                    {rightComponent}
-                </Grid>
-            </Grid>
-        </div >
-    )
+const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, itemType, ...rest }) => {
+	const mediaUrl = item.mediaUrl
+	const mediaMime = item.mediaMime
+
+	return (
+		<Grid container spacing={16}>
+			<Grid item xs={12} sm={12} md={12} lg={7}>
+				<Grid container spacing={16}>
+					<Grid item xs={12} sm={5} md={5} lg={5} >
+						{
+							itemType === 'AdSlot'
+								? <ValidatedFallbackAdData validateId={item._id} item={item} t={t} url={url} classes={classes} canEditImg={canEditImg} {...rest} />
+								:
+								<MediaCard
+									classes={classes}
+									mediaUrl={mediaUrl}
+									mediaMime={mediaMime}
+									title={item.title}
+									canEditImg={canEditImg}
+									toggleImgEdit={rest.toggleImgEdit}
+									url={url}
+								/>
+						}
+					</Grid>
+					<Grid item xs={12} sm={7} md={7} lg={7} >
+						<Grid container spacing={8}>
+							<Grid item xs={12} >
+
+								<TextField
+									// type='text'
+									value={item.type}
+									label={t('type', { isProp: true })}
+									disabled
+									margin='dense'
+									fullWidth
+								/>
+							</Grid>
+							{Array.isArray(item.tags) &&
+								<Grid item xs={12} >
+									<TextField
+										value={item.tags.map(tag => `"${tag.tag}(${tag.score})"`).join(',\n')}
+										label={t('tags', { isProp: true }) + ` (${item.tags.length})`}
+										disabled
+										margin='dense'
+										multiline
+										fullWidth
+										rows={7}
+									/>
+								</Grid>
+							}
+						</Grid>
+					</Grid>
+				</Grid>
+			</Grid>
+			<Grid item xs={12} sm={12} md={12} lg={5}>
+				{rightComponent}
+			</Grid>
+		</Grid>
+
+	)
 }
 
 export const BasicProps = withStyles(styles)(basicProps)
+
+const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, itemType, ...rest }) => {
+	const mediaUrl = item.mediaUrl
+	const status = item.status || {}
+	// console.log('item', item)
+	return (
+		<div >
+			<Grid container spacing={16}>
+				<Grid item xs={12} sm={12} md={12} lg={8}>
+					<div >
+						<div
+							className={classes.basicInfo}
+						>
+							<Grid container spacing={16}>
+								<Grid item xs={12} sm={5} md={5} lg={5} >
+									<MediaCard
+										classes={classes}
+										mediaUrl={mediaUrl}
+										title={item.title}
+										canEditImg={canEditImg}
+										toggleImgEdit={rest.toggleImgEdit}
+										url={url}
+									/>
+								</Grid>
+								<Grid item xs={12} sm={7} md={7} lg={7} >
+									<Grid container spacing={8}>
+										<Grid item xs={12} sm={12} md={6} >
+											<Grid container spacing={8}>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={item.id}
+														label={t('id', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={formatDateTime(item.created)}
+														label={t('created', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={formatDateTime(item.activeFrom)
+														}
+														label={t('activeFrom', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={formatDateTime(item.withdrawPeriodStart)}
+														label={t('withdrawPeriodStart', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+
+											</Grid>
+										</Grid>
+										<Grid item xs={12} sm={12} md={6} >
+											<Grid container spacing={8}>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={status.name}
+														label={t('status', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={((status.fundsDistributedRatio || 0) / 10).toFixed(2)}
+														label={t('PROP_DISTRIBUTED', { args: ['%'] })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={formatTokenAmount(item.depositAmount, 18) + ' DAI'}
+														label={t('depositAmount', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+												<Grid item xs={12} >
+													<TextField
+														// type='text'
+														value={formatTokenAmount(
+															bigNumberify(item.minPerImpression).mul(1000),
+															18, true) + ' DAI'}
+														label={t('CPM', { isProp: true })}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
+											</Grid>
+										</Grid>
+									</Grid>
+								</Grid>
+							</Grid>
+						</div>
+					</div>
+					<br />
+				</Grid>
+				<Grid item xs={12} sm={12} md={12} lg={4}>
+					{rightComponent}
+				</Grid>
+			</Grid>
+		</div >
+	)
+}
+
+// ((status.fundsDistributedRatio || 0) / 10).toFixed(2)
+export const CampaignProps = withStyles(styles)(campaignProps)

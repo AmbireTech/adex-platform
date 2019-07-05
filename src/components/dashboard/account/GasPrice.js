@@ -5,105 +5,112 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Dropdown from 'components/common/dropdown'
 import Translate from 'components/translate/Translate'
-import { web3Utils } from 'services/smart-contracts/ADX'
+import { utils } from 'ethers'
 import { getGasData, DEFAULT_DATA } from 'services/eth/gas'
 import { styles } from './styles'
 
 import { withStyles } from '@material-ui/core/styles'
 
-// TODO: Move component to side nav ?
+// TODO: Make common component
 class GasPrice extends React.Component {
-    constructor(props, context) {
-        super(props, context)
+	constructor(props, context) {
+		super(props, context)
 
-        this.state = {
-            gasPrices: null
-        }
-    }
+		this.state = {
+			gasPrices: null
+		}
+	}
 
     mapGasPrices = (gasData, t) => {
-        let prices = Object.keys(gasData).map((key) => {
-            let pr = gasData[key]
-            let inGwei = pr.price
-            let inWei = web3Utils.toWei(inGwei.toString(), 'Gwei')
+    	let prices = Object.keys(gasData).reduce((memo, key) => {
+    		let pr = gasData[key]
+    		let inGwei = pr.price
+    		if (inGwei) {
+    			// TODO: ethers
+    			let inWei = '' //utils.toWei(inGwei.toString(), 'Gwei')
+    			// TODO: Translations
+    			memo.push({ value: inWei, label: t('GAS_PRICE_OPTION_LABEL', { args: [inGwei, 'Gwei', pr.wait] }) })
+    		} 
 
-            // TODO: Translations
-            return { value: inWei, label: t('GAS_PRICE_OPTION_LABEL', { args: [inGwei, 'Gwei', pr.wait] }) }
-        })
+    		return memo
+    	}, [])
 
-        return prices
+    	return prices
     }
 
     getGasPrices = () => {
-        getGasData()
-            .then((gasData) => {
-                let prices = this.mapGasPrices(gasData, this.props.t)
-                this.setState({ gasPrices: prices })
-            })
+    	getGasData()
+    		.then((gasData) => {
+    			let prices = this.mapGasPrices(gasData, this.props.t)
+    			this.setState({ gasPrices: prices })
+    		})
     }
 
     componentWillMount() {
-        this.setState({ gasPrices: this.mapGasPrices(this.props.account._settings.gasData || DEFAULT_DATA, this.props.t) })
-        // this.getGasPrices()
-        // Use interval check for that - services/store-data/gas
+
+    	let gasData = this.props.account.settings ? this.props.account.settings.gasData : null
+    	this.setState({ gasPrices: this.mapGasPrices(gasData || DEFAULT_DATA, this.props.t) })
+    	// this.getGasPrices()
+    	// Use interval check for that - services/store-data/gas
+
     }
 
     changeGasPrice = (val) => {
-        let settings = { ...this.props.account._settings }
-        settings.gasPrice = val
-        this.props.actions.updateAccount({ ownProps: { settings: settings } })
+    	let settings = { ...this.props.account.settings }
+    	settings.gasPrice = val
+    	this.props.actions.updateAccount({ newValues: { settings: settings } })
     }
 
     render() {
-        let account = this.props.account
-        let settings = account._settings
-        let gasPrice
+    	let account = this.props.account
+    	let settings = account.settings
+    	let gasPrice
 
-        if (settings && settings.gasPrice) {
-            gasPrice = settings.gasPrice
-        } else {
-            gasPrice = this.state.gasPrices[1].value
-        }
+    	if (settings && settings.gasPrice) {
+    		gasPrice = settings.gasPrice
+    	} else {
+    		gasPrice = this.state.gasPrices[1].value
+    	}
 
-        console.log(gasPrice)
-        return (
-            <span>
-                <Dropdown
-                    auto={false}
-                    label={this.props.t('GAS_PRICE_LABEL')}
-                    onChange={this.changeGasPrice}
-                    source={this.state.gasPrices}
-                    value={gasPrice}
-                    disabled={this.props.disabled}
-                    htmlId='get-gas-price-dd'
-                    name='gasPrice'
-                />
-            </span>
-        )
+    	console.log(gasPrice)
+    	return (
+    		<span>
+    			<Dropdown
+    				auto={false}
+    				label={this.props.t('GAS_PRICE_LABEL')}
+    				onChange={this.changeGasPrice}
+    				source={this.state.gasPrices}
+    				value={gasPrice}
+    				disabled={this.props.disabled}
+    				htmlId='get-gas-price-dd'
+    				name='gasPrice'
+    			/>
+    		</span>
+    	)
     }
 }
 
 GasPrice.propTypes = {
-    actions: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired
+	actions: PropTypes.object.isRequired,
+	account: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state, props) {
-    let persist = state.persist
-    // let memory = state.memory
-    let account = persist.account
-    return {
-        account: account
-    }
+	let persist = state.persist
+	// let memory = state.memory
+	let account = persist.account
+	return {
+		account: account
+	}
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators(actions, dispatch)
-    }
+	return {
+		actions: bindActionCreators(actions, dispatch)
+	}
 }
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Translate(withStyles(styles)(GasPrice)))
