@@ -9,6 +9,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import GrantInfo from './GrantInfo'
 import GrantDeploy from './GrantDeploy'
 import GrantLogin from './GrantLogin'
+import FullLogin from './FullLogin'
 import IdentitySteps from './IdentitySteps'
 // import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
@@ -86,10 +87,10 @@ export const LoginStandardIdentity = (props) =>
 		{...common}
 		stepsId='full-identity-login'
 		stepsPages={[
-			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner }
+			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
+			{ title: 'LOGIN_STANDARD_IDENTITY', page: FullLogin },
 		]}
 	/>
-
 
 export const DemoIdentity = (props) =>
 	<IdentitySteps

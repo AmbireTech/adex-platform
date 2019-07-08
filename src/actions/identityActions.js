@@ -4,7 +4,8 @@ import { updateSpinner } from './uiActions'
 import { deployIdentityContract } from 'services/smart-contracts/actions/identity'
 import {
 	registerFullIdentity,
-	registerExpectedIdentity
+	registerExpectedIdentity,
+	getOwnerIdentities
 } from 'services/adex-relayer/actions'
 import { translate } from 'services/translations/translations'
 import { addToast } from './uiActions'
@@ -252,5 +253,24 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 				timeout: 20000
 			})(dispatch)
 		}
+	}
+}
+
+export function ownerIdentities({ owner }) {
+	return async function (dispatch) {
+		updateSpinner('getting-owner-identities', true)(dispatch)
+		try {
+			const identityData = await getOwnerIdentities({ owner })
+			updateIdentity('ownerIdentities', identityData)(dispatch)
+		} catch (err) {
+			console.error('ERR_GETTING_OWNER_IDENTITIES', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_GETTING_OWNER_IDENTITIES',
+					{ args: [err] }),
+				timeout: 20000
+			})(dispatch)
+		}
+		updateSpinner('getting-owner-identities', false)(dispatch)
 	}
 }
