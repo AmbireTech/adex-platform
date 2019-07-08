@@ -64,7 +64,7 @@ export const LoginGrantIdentity = (props) =>
 		{...common}
 		stepsId='grant-identity-login'
 		stepsPages={[
-			{ title: 'GRANT_LOGIN', page: GrantLogin,  final: true  }
+			{ title: 'GRANT_LOGIN', page: GrantLogin, final: true }
 		]}
 	/>
 
@@ -77,6 +77,16 @@ export const CreteFullIdentity = (props) =>
 			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
 			{ title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthDeploy, final: true },
 			// { title: 'DEPLOY_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthTransaction, final: true }
+		]}
+	/>
+
+export const LoginStandardIdentity = (props) =>
+	<IdentitySteps
+		{...props}
+		{...common}
+		stepsId='full-identity-login'
+		stepsPages={[
+			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner }
 		]}
 	/>
 
