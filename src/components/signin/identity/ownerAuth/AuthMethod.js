@@ -71,7 +71,7 @@ class AuthMethod extends Component {
 									className={classes.tabLogo}
 								/>}
 							/>
-							<Tab
+							{/* <Tab
 							// label={t('LEDGER')}
 								classes={{ label: classes.tabLabel }}
 								label={<Img
@@ -79,7 +79,7 @@ class AuthMethod extends Component {
 									alt={t('AUTH_WITH_LEDGER')}
 									className={classes.tabLogo}
 								/>}
-							/>
+							/> */}
 						</Tabs>
 					</AppBar>
 				</Grid>
