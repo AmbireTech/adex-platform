@@ -46,7 +46,7 @@ class AuthMetamask extends Component {
 
 				const metamaskSigner = await getSigner({ wallet, provider })
 				const address = await metamaskSigner.getAddress()
-				const stats = await getAddressBalances({ address: { address }, authType })
+				const stats = await getAddressBalances({ address: { address }, authType })				
 
 				this.setState({
 					address,
@@ -63,7 +63,7 @@ class AuthMetamask extends Component {
 				})
 			} catch (err) {
 				console.error('Error: catch', err)
-				this.setState({ waitingTrezorAction: false, waitingAddrsData: false })
+				this.setState({ waitingMetamaskAction: false, waitingAddrsData: false })
 				this.props.actions.addToast({
 					type: 'cancel',
 					action: 'X',
