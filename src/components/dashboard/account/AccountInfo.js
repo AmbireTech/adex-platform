@@ -6,7 +6,8 @@ import actions from 'actions'
 import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import {
-	WithdrawTokenFromIdentity
+	WithdrawTokenFromIdentity,
+	SetIdentityPrivilege
 } from 'components/dashboard/forms/web3/transactions'
 import { withStyles } from '@material-ui/core/styles'
 import List from '@material-ui/core/List'
@@ -41,11 +42,11 @@ class AccountInfo extends React.Component {
 	localWalletDownloadHref = () => {
 		const { account } = this.props
 		const { email, password } = account.wallet
-		const obj = getRecoveryWalletData({email, password})
-		if(!obj) {
+		const obj = getRecoveryWalletData({ email, password })
+		if (!obj) {
 			return null
 		}
-		const data = "data:text/json;charset=utf-8," 
+		const data = "data:text/json;charset=utf-8,"
 			+ encodeURIComponent(JSON.stringify(obj))
 		return data
 	}
@@ -68,7 +69,7 @@ class AccountInfo extends React.Component {
 		} = formatted
 
 		const { authType, email } = account.wallet
-		const { walletJsonData } =this.state
+		const { walletJsonData } = this.state
 
 		return (
 			<div>
@@ -84,22 +85,22 @@ class AccountInfo extends React.Component {
 								: t('IDENTITY_ETH_ADDR')
 							}
 						/>
-						{walletJsonData && 
-						<label htmlFor='download-wallet-json'>
-							<a
-								id='download-wallet-json'
-								href={this.localWalletDownloadHref()}
-								download={`adex-account-data-${email}.json`}
-							>
-								<Button
-									size='small'
-									variant='contained'
+						{walletJsonData &&
+							<label htmlFor='download-wallet-json'>
+								<a
+									id='download-wallet-json'
+									href={this.localWalletDownloadHref()}
+									download={`adex-account-data-${email}.json`}
 								>
-									{t('BACKUP_LOCAL_WALLET')} 
-									<DownloadIcon />
-								</Button>
-							</a>
-						</label>
+									<Button
+										size='small'
+										variant='contained'
+									>
+										{t('BACKUP_LOCAL_WALLET')}
+										<DownloadIcon />
+									</Button>
+								</a>
+							</label>
 						}
 						<IconButton
 							color='default'
@@ -119,9 +120,21 @@ class AccountInfo extends React.Component {
 							secondary={walletAddress}
 							primary={(account.authType === 'demo')
 								? t('DEMO_ACCOUNT_WALLET_ADDRESS', { args: [walletAuthType, walletPrivileges] })
-								: t('WALLET_INFO_LABEL', { args: [walletAuthType, walletPrivileges, authType] })
+								: t('WALLET_INFO_LABEL', { args: [walletAuthType, walletPrivileges || ' - ', authType] })
 							}
 						/>
+						<div className={classes.itemActions}>
+							<SetIdentityPrivilege
+								variant='contained'
+								color='primary'
+								onSave={this.onSave}
+								token='DAI'
+								className={classes.actionBtn}
+								size='small'
+								actions={actions}
+
+							/>
+						</div>
 					</ListItem>
 					<ListDivider />
 					<ListItem
