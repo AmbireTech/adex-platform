@@ -14,7 +14,7 @@ import {
 } from 'ethers/utils'
 import { generateAddress2 } from 'ethereumjs-util'
 import { splitSig, Transaction } from 'adex-protocol-eth/js'
-import { identityBytecode, executeTx } from 'services/adex-relayer/actions'
+import { identityBytecode, executeTx, setAddrPriv } from 'services/adex-relayer/actions'
 import { formatTokenAmount } from 'helpers/formatters'
 import { contracts } from '../contractsCfg'
 const { DAI } = contracts
@@ -266,10 +266,12 @@ export async function setIdentityPrivilege({
 	const data = {
 		txnsRaw: txns,
 		signatures,
-		identityAddr: identity.address
+		identityAddr: identity.address,
+		setAddr,
+		privLevel
 	}
 
-	const result = await executeTx(data)
+	const result = await setAddrPriv(data)
 
 	return {
 		result

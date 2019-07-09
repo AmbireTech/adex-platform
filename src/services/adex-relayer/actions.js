@@ -145,3 +145,19 @@ export const executeTx = ({ txnsRaw, signatures, identityAddr }) => {
 		headers: { 'Content-Type': 'application/json' }
 	}).then(processResponse)
 }
+
+export const setAddrPriv = ({ txnsRaw, signatures, identityAddr, privLevel, setAddr }) => {
+	return requester.fetch({
+		route: 'identity/set-addr-privilege',
+		method: 'POST',
+		body: JSON.stringify({
+			txnsRaw,
+			signatures,
+			identityAddr,
+			setAddr,
+			privLevel
+		}),
+		headers: { 'Content-Type': 'application/json' }
+	}).then(processResponse)
+}
+
