@@ -88,7 +88,7 @@ export const LoginStandardIdentity = (props) =>
 		stepsId='full-identity-login'
 		stepsPages={[
 			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
-			{ title: 'LOGIN_STANDARD_IDENTITY', page: FullLogin },
+			{ title: 'LOGIN_STANDARD_IDENTITY', page: FullLogin, final: true },
 		]}
 	/>
 

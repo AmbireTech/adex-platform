@@ -17,22 +17,35 @@ class GrantLogin extends Component {
 
 	validateIdentity = (dirty) => {
 		const { identity, handleChange, validate } = this.props
-		const { ownerIdentities, wallet, identityContractOwner } = identity
+		const { wallet, identityContractAddress } = identity
 
-		validate('identityContractOwner', {
-			isValid: !!identityContractOwner,
+		handleChange('wallet', wallet)
+		handleChange('walletAddr', wallet.address)
+		handleChange('identityData', {
+			address: identityContractAddress,
+			// TODO: get privileges
+			privileges: 3
+		})
+
+		validate('identityContractAddress', {
+			isValid: !!identityContractAddress,
 			err: { msg: 'ERR_LOCAL_WALLET_LOGIN' },
 			dirty: dirty
 		})
 	}
 
+	componentDidUpdate(prevProps) {
+		if (prevProps.identity.identityContractAddress !==
+			this.props.identity.identityContractAddress) {
+			this.validateIdentity(true)
+		}
+	}
+
 	render() {
-		const { t, identity, handleChange, invalidFields, classes, actions } = this.props
-		const { ownerIdentities = [], identityContractOwner } = identity
-		// Errors
-		const { wallet } = invalidFields
+		const { t, identity, handleChange } = this.props
+		const { ownerIdentities = [], identityContractAddress } = identity
+
 		return (
-			// <div>
 			<Grid
 				container
 				spacing={16}
@@ -54,10 +67,10 @@ class GrantLogin extends Component {
 							<Dropdown
 								label={t('SELECT_IDENTITY')}
 								helperText={t('SELECT_IDENTITY_INFO')}
-								onChange={(val) => handleChange(identityContractOwner, val)}
+								onChange={(val) => handleChange('identityContractAddress', val)}
 								source={ownerIdentities.map(i => { return { value: i, label: i } })}
-								value={identityContractOwner || ''}
-								htmlId='label-identityContractOwner'
+								value={identityContractAddress || ''}
+								htmlId='label-identityContractAddress'
 								fullWidth
 							/>
 
