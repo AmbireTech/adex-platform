@@ -23,6 +23,7 @@ const IDENTITY_BASE_ADDR = process.env.IDENTITY_BASE_ADDR
 const IDENTITY_FACTORY_ADDR = process.env.IDENTITY_FACTORY_ADDR
 const GAS_LIMIT_DEPLOY_CONTRACT = 150000
 const feeAmountTransfer = '150000000000000000'
+const feeAmountSetPrivileges = '150000000000000000'
 const ERC20 = new Interface(DAI.abi)
 
 export async function getIdentityBytecode({ owner, privLevel }) {
@@ -207,3 +208,64 @@ export async function withdrawFromIdentity({
 	}
 }
 
+export async function setIdentityPrivilege({
+	account,
+	setAddr,
+	privLevel,
+	getFeesOnly
+}) {
+	const fees = bigNumberify(feeAmountSetPrivileges)
+
+	if (getFeesOnly) {
+		return {
+			fees: formatTokenAmount(fees.toString(), 18)
+		}
+	}
+
+	const { wallet, identity } = account
+	const {
+		provider,
+		Dai,
+		Identity } = await getEthers(wallet.authType)
+	const signer = await getSigner({ wallet, provider })
+	const identityAddr = identity.address
+
+	const identityContract = new Contract(
+		identityAddr,
+		Identity.abi,
+		provider
+	)
+
+	const initialNonce = (await identityContract.nonce())
+		.toNumber()
+
+	const tx1 = {
+		identityContract: identityAddr,
+		nonce: initialNonce,
+		feeTokenAddr: Dai.address,
+		feeAmount: feeAmountTransfer,
+		to: Identity.address,
+		data: ERC20.functions.approve
+			.encode([setAddr, privLevel])
+	}
+
+	const signTx = (tx) =>
+		signer
+			.signMessage(new Transaction(tx).hashHex(), { hex: true })
+			.then(sig => splitSig(sig.signature))
+
+	const txns = [tx1]
+	const signatures = await Promise.all(txns.map(signTx))
+
+	const data = {
+		txnsRaw: txns,
+		signatures,
+		identityAddr: identity.address
+	}
+
+	const result = await executeTx(data)
+
+	return {
+		result
+	}
+}
