@@ -236,6 +236,10 @@ export async function setIdentityPrivilege({
 		provider
 	)
 
+	const identityInterface = new Interface(
+		Identity.abi
+	)
+
 	const initialNonce = (await identityContract.nonce())
 		.toNumber()
 
@@ -243,9 +247,11 @@ export async function setIdentityPrivilege({
 		identityContract: identityAddr,
 		nonce: initialNonce,
 		feeTokenAddr: Dai.address,
-		feeAmount: feeAmountTransfer,
-		to: Identity.address,
-		data: ERC20.functions.approve
+		feeAmount: feeAmountSetPrivileges,
+		to: identityAddr,
+		data: identityInterface
+			.functions
+			.setAddrPrivilege
 			.encode([setAddr, privLevel])
 	}
 
