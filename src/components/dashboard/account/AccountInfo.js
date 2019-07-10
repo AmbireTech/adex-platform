@@ -18,6 +18,11 @@ import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
 import CopyIcon from '@material-ui/icons/FileCopy'
 import DownloadIcon from '@material-ui/icons/SaveAlt'
+import ExpansionPanel from '@material-ui/core/ExpansionPanel'
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
+import Typography from '@material-ui/core/Typography'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { getRecoveryWalletData } from 'services/wallet/wallet'
 
@@ -28,7 +33,8 @@ class AccountInfo extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			walletJsonData: this.localWalletDownloadHref()
+			walletJsonData: this.localWalletDownloadHref(),
+			expanded: false
 		}
 	}
 
@@ -55,6 +61,10 @@ class AccountInfo extends React.Component {
 		// this.getStats()
 	}
 
+	handleExpandChange = () => {
+		this.setState({ expanded: !this.state.expanded })
+	}
+
 	render() {
 		const { t, account, classes, actions } = this.props
 		const formatted = account.stats.formatted || {}
@@ -69,7 +79,7 @@ class AccountInfo extends React.Component {
 		} = formatted
 
 		const { authType, email } = account.wallet
-		const { walletJsonData } = this.state
+		const { walletJsonData, expanded } = this.state
 
 		return (
 			<div>
@@ -123,18 +133,6 @@ class AccountInfo extends React.Component {
 								: t('WALLET_INFO_LABEL', { args: [walletAuthType, walletPrivileges || ' - ', authType] })
 							}
 						/>
-						<div className={classes.itemActions}>
-							<SetIdentityPrivilege
-								variant='contained'
-								color='primary'
-								onSave={this.onSave}
-								token='DAI'
-								className={classes.actionBtn}
-								size='small'
-								actions={actions}
-
-							/>
-						</div>
 					</ListItem>
 					<ListDivider />
 					<ListItem
@@ -159,6 +157,36 @@ class AccountInfo extends React.Component {
 						</div>
 					</ListItem>
 					<ListDivider />
+					<ExpansionPanel expanded={expanded} onChange={this.handleExpandChange}>
+						<ExpansionPanelSummary
+							expandIcon={<ExpandMoreIcon />}
+							aria-controls="panel1bh-content"
+							id="panel1bh-header"
+						>
+							<Typography className={classes.heading}>{t('ACCOUNT_ADVANCED_INFO_AND_ACTIONS')}</Typography>
+						</ExpansionPanelSummary>
+						<ExpansionPanelDetails>
+							<ListItem>
+								<ListItemText
+									className={classes.address}
+									secondary={''}
+									primary={t('MANAGE_IDENTITY')}
+								/>
+								<div className={classes.itemActions}>
+									<SetIdentityPrivilege
+										variant='contained'
+										color='secondary'
+										onSave={this.onSave}
+										token='DAI'
+										className={classes.actionBtn}
+										size='small'
+										actions={actions}
+
+									/>
+								</div>
+							</ListItem>
+						</ExpansionPanelDetails>
+					</ExpansionPanel>
 				</List>
 			</div>
 		)
