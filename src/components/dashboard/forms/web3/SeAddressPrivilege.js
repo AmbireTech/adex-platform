@@ -79,7 +79,7 @@ class SeAddressPrivilege extends Component {
 					helperText={t('SELECT_PRIV_LEVEL_HELPER_TXT')}
 					onChange={(val) => handleChange('privLevel', val)}
 					source={PRIV_LEVELS_SRC}
-					value={privLevel || ''}
+					value={typeof privLevel === 'number' ? privLevel : ''}
 					htmlId='label-privLevel'
 					fullWidth
 				/>

@@ -20,7 +20,7 @@ const SaveBtn = ({ save, saveBtnLabel, saveBtnIcon, t, transaction, waitingForWa
 		<Button
 			color='primary'
 			onClick={save}
-			disabled={(transaction.errors && transaction.errors.length) || transaction.waitingForWalletAction || spinner}
+			disabled={(!!transaction.errors && !!transaction.errors.length) || !!transaction.waitingForWalletAction || !!spinner}
 		>
 			{transaction.waitingForWalletAction ? <HourglassEmptyIcon /> : (saveBtnIcon || '')}
 			{t(saveBtnLabel || 'DO_IT')}

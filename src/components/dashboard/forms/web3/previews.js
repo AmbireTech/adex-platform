@@ -1,6 +1,9 @@
 import React from 'react'
 import ListItemText from '@material-ui/core/ListItemText'
 import { PropRow } from 'components/common/dialog/content'
+import { constants } from 'adex-models'
+
+const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
 
 export const IdentityWithdrawPreview = ({ t, withdrawTo, classes, fees, withdrawAmount }) =>
 	<div>
@@ -36,7 +39,7 @@ export const SetPrivilegePreview = ({ t, setAddr, classes, fees, privLevel }) =>
 				<ListItemText
 					className={classes.address}
 					secondary={t('PRIV_LEVEL_INFO_AND_FEES', { args: [fees.fees, 'DAI'] })}
-					primary={privLevel}
+					primary={privilegesNames[privLevel]}
 				/>
 			}
 		/>

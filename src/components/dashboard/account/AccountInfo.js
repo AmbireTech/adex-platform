@@ -181,7 +181,7 @@ class AccountInfo extends React.Component {
 										className={classes.actionBtn}
 										size='small'
 										actions={actions}
-
+										identityAvailable={identityBalanceDai}
 									/>
 								</div>
 							</ListItem>
