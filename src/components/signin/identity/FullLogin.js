@@ -3,10 +3,28 @@ import IdentityHoc from './IdentityHoc'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import Translate from 'components/translate/Translate'
+import { bigNumberify } from 'ethers/utils'
+import { formatTokenAmount } from 'helpers/formatters'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
 import Dropdown from 'components/common/dropdown'
+
+const getIdentitiesForDropdown = (ownerIdentities, t) =>
+	ownerIdentities.map(id => {
+		return {
+			value: id.identity,
+			label: t('IDENTITY_OPTION_DATA',
+				{
+					args: [
+						id.identity,
+						id.privLevel,
+						formatTokenAmount(bigNumberify(id.balanceDAI).toString(), 18, true),
+						'DAI'
+					]
+				})
+		}
+	})
 
 class GrantLogin extends Component {
 	componentDidMount() {
@@ -68,7 +86,7 @@ class GrantLogin extends Component {
 								label={t('SELECT_IDENTITY')}
 								helperText={t('SELECT_IDENTITY_INFO')}
 								onChange={(val) => handleChange('identityContractAddress', val)}
-								source={ownerIdentities.map(i => { return { value: i, label: i } })}
+								source={getIdentitiesForDropdown(ownerIdentities, t)}
 								value={identityContractAddress || ''}
 								htmlId='label-identityContractAddress'
 								fullWidth
