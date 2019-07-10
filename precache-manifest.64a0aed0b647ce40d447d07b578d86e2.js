@@ -4,7 +4,7 @@ self.__precacheManifest = [
     "url": "/static/media/rekt-eddie.png"
   },
   {
-    "revision": "cc456b1ea9bc47685ba8",
+    "revision": "8b01e923e9e7c905c3d6",
     "url": "/static/css/main.css"
   },
   {
@@ -20,7 +20,7 @@ self.__precacheManifest = [
     "url": "/static/media/download-metamask.png"
   },
   {
-    "revision": "cc456b1ea9bc47685ba8",
+    "revision": "8b01e923e9e7c905c3d6",
     "url": "/static/js/main.js"
   },
   {
@@ -40,7 +40,7 @@ self.__precacheManifest = [
     "url": "/static/media/background.png"
   },
   {
-    "revision": "53ca83b5264248edcbc5010b904ecfff",
+    "revision": "0a5d0d502755454a8bc6d9451b57d66a",
     "url": "/index.html"
   }
 ];
