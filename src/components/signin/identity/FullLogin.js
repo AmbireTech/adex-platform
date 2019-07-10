@@ -13,7 +13,7 @@ import Dropdown from 'components/common/dropdown'
 const getIdentitiesForDropdown = (ownerIdentities, t) =>
 	ownerIdentities.map(id => {
 		return {
-			value: id.identity,
+			value: id.identity + '-' + id.privLevel,
 			label: t('IDENTITY_OPTION_DATA',
 				{
 					args: [
@@ -37,16 +37,18 @@ class GrantLogin extends Component {
 		const { identity, handleChange, validate } = this.props
 		const { wallet, identityContractAddress } = identity
 
+		const identityDataSplit = (identityContractAddress || '').split('-')
+		const identityData = {
+			address: identityDataSplit[0],
+			privileges: parseInt(identityDataSplit[1] || 0)
+		}
+
 		handleChange('wallet', wallet)
 		handleChange('walletAddr', wallet.address)
-		handleChange('identityData', {
-			address: identityContractAddress,
-			// TODO: get privileges
-			privileges: 3
-		})
+		handleChange('identityData', identityData)
 
 		validate('identityContractAddress', {
-			isValid: !!identityContractAddress,
+			isValid: !!identityData.address,
 			err: { msg: 'ERR_LOCAL_WALLET_LOGIN' },
 			dirty: dirty
 		})
