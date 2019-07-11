@@ -96,9 +96,7 @@ export default class TrezorSigner extends Signer {
 
 			return res
 		} else {
-			return {
-				error: payload.error
-			}
+			throw new Error(payload.error)
 		}
 	}
 

@@ -1,5 +1,10 @@
 import { getEthers } from 'services/smart-contracts/ethers'
-import { getSigner, prepareTx, processTx } from 'services/smart-contracts/actions/ethers'
+import {
+	getSigner,
+	prepareTx,
+	processTx,
+	getMultipleTxSignatures
+} from 'services/smart-contracts/actions/ethers'
 import {
 	ethers,
 	Contract
@@ -187,13 +192,8 @@ export async function withdrawFromIdentity({
 			.encode([withdrawTo, tokenAmount])
 	}
 
-	const signTx = (tx) =>
-		signer
-			.signMessage(new Transaction(tx).hashHex(), { hex: true })
-			.then(sig => splitSig(sig.signature))
-
 	const txns = [tx1, tx2]
-	const signatures = await Promise.all(txns.map(signTx))
+	const signatures = await getMultipleTxSignatures({ txns, signer })
 
 	const data = {
 		txnsRaw: txns,
@@ -255,13 +255,8 @@ export async function setIdentityPrivilege({
 			.encode([setAddr, privLevel])
 	}
 
-	const signTx = (tx) =>
-		signer
-			.signMessage(new Transaction(tx).hashHex(), { hex: true })
-			.then(sig => splitSig(sig.signature))
-
 	const txns = [tx1]
-	const signatures = await Promise.all(txns.map(signTx))
+	const signatures = await getMultipleTxSignatures({ txns, signer })
 
 	const data = {
 		txnsRaw: txns,
