@@ -10,6 +10,7 @@ import { execute } from 'actions/common'
 import { addWeb3Transaction, updateWeb3Transaction } from 'actions/transactionActions'
 import { addToast } from 'actions/uiActions'
 import { updateAccount } from 'actions/accountActions'
+import { splitSig, Transaction } from 'adex-protocol-eth/js'
 
 /** 
  * NOTE: DO NOT CALL WITH CONNECTED SIGNER
@@ -177,4 +178,20 @@ export async function getTransactionsReceipts({ txHashes = [], authType }) {
 	)
 
 	return Promise.all(receipts)
+}
+
+export async function signTx({ tx, signer, }) {
+	const sig = await signer
+		.signMessage(new Transaction(tx).hashHex(), { hex: true })
+	const signature = splitSig(sig.signature)
+	return signature
+}
+
+export async function getMultipleTxSignatures({ txns, signer, }) {
+	const signatures = []
+	for (const tx of txns) {
+		signatures.push(await signTx({ tx, signer }))
+	}
+
+	return signatures
 }
