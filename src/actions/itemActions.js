@@ -150,10 +150,10 @@ export function addSlot(item, itemType, authSig) {
 				itemType: 'AdSlot'
 			})
 
-			addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_CREATING_ITEM', args: ['AdUnit', newItem.title] })
+			addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_CREATING_ITEM', args: ['AdSlot', newItem.title] })
 		} catch (err) {
 			console.error('ERR_CREATING_ITEM', err)
-			addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_CREATING_ITEM', args: ['AdUnit', err] })
+			addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_CREATING_ITEM', args: ['AdSlot', err] })
 		}
 	}
 }
@@ -200,7 +200,7 @@ export function openCampaign({ campaign, account }) {
 				item: readyCampaign,
 				itemType: 'Campaign'
 			})
-
+			addToast({ dispatch: dispatch, type: 'accept', toastStr: 'OPENING_CAMPAIGN_SENT_TO_RELAYER', args: [readyCampaign.id] })
 		} catch (err) {
 			console.error('ERR_OPENING_CAMPAIGN', err)
 			addToast({
