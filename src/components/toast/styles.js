@@ -32,6 +32,7 @@ export const styles = theme => {
 		message: {
 			display: 'flex',
 			alignItems: 'center',
+			wordBreak: 'break-all'
 		},
 		top: {
 			width: '98vw',
