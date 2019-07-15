@@ -35,15 +35,21 @@ export default function NewCampaignHoc(Decorated) {
 			}
 		}
 
-		save = () => {
+		save = async () => {
 			const { actions, newItem, account } = this.props
-			actions.openCampaign({ campaign: newItem, account })	
+			const { temp } = newItem
+			const newTemp = { ...temp }
+			newTemp.waitingAction = true
+			this.handleChange('temp', newTemp)
+			await actions.openCampaign({ campaign: newItem, account })
 
+			newTemp.waitingAction = false
+			this.handleChange('temp', newTemp)
 			this.onSave()
 			actions.resetNewItem('Campaign')
 		}
 
-		cancel = () => {	
+		cancel = () => {
 			this.onSave()
 			this.props.actions.resetNewItem('Campaign')
 		}
@@ -68,7 +74,7 @@ export default function NewCampaignHoc(Decorated) {
 		title: PropTypes.string,
 		addTo: PropTypes.object
 	}
-
+	
 	function mapStateToProps(state, props) {
 		const { persist, memory } = state
 
@@ -78,7 +84,8 @@ export default function NewCampaignHoc(Decorated) {
 			account: persist.account,
 			newItem: new Campaign(memory.newItem['Campaign']),
 			adUnits,
-			adUnitsArray
+			adUnitsArray,
+			spinner: memory.spinners['opening-campaign']
 		}
 	}
 
