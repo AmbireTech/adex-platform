@@ -20,28 +20,30 @@ import AdSlotBasic from './AdSlot/AdSlotBasic'
 import AdSlotMedia from './AdSlot/AdSlotMedia'
 import AdSlotTargeting from './AdSlot/AdSlotTargeting'
 import AdSlotPreview from './AdSlot/AdSlotPreview'
+import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 
-const SaveBtn = ({ ...props }) => {
+const SaveBtn = ({ newItem, t, save, ...rest }) => {
 	return (
 		<Button
 			color='primary'
-			onClick={props.save}
+			onClick={save}
 		>
 			{/*TODO: withStyles */}
 			<SaveIcon style={{ marginRight: 8 }} />
-			{props.t('SAVE')}
+			{t('SAVE')}
 		</Button>
 	)
 }
 
-const SendBtn = ({ ...props }) => {
+const SendBtn = ({ saveBtnLabel, saveBtnIcon, newItem, t, save, ...rest }) => {
 	return (
 		<Button
 			color='primary'
-			onClick={props.save}
+			onClick={save}
+			disabled={newItem.temp.waitingAction}
 		>
-			<SaveIcon style={{ marginRight: 8 }} />
-			{props.t('OPEN_CAMPAIGN')}
+			{newItem.temp.waitingAction ? <HourglassEmptyIcon /> : (saveBtnIcon || <SaveIcon style={{ marginRight: 8 }} />)}
+			{t(saveBtnLabel || 'OPEN_CAMPAIGN')}
 		</Button>
 	)
 }
