@@ -4,13 +4,15 @@ import { updateSpinner } from './uiActions'
 import { deployIdentityContract } from 'services/smart-contracts/actions/identity'
 import {
 	registerFullIdentity,
-	registerExpectedIdentity
+	registerExpectedIdentity,
+	getOwnerIdentities
 } from 'services/adex-relayer/actions'
 import { translate } from 'services/translations/translations'
 import { addToast } from './uiActions'
 import {
 	getIdentityDeployData,
-	withdrawFromIdentity
+	withdrawFromIdentity,
+	setIdentityPrivilege
 } from 'services/smart-contracts/actions/identity'
 import { addDataToWallet } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
@@ -248,6 +250,54 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_IDENTITY_WITHDRAW_NOTIFICATION',
+					{ args: [err] }),
+				timeout: 20000
+			})(dispatch)
+		}
+	}
+}
+
+export function ownerIdentities({ owner }) {
+	return async function (dispatch) {
+		updateSpinner('getting-owner-identities', true)(dispatch)
+		try {
+			const identityData = await getOwnerIdentities({ owner })
+			updateIdentity('ownerIdentities', identityData)(dispatch)
+		} catch (err) {
+			console.error('ERR_GETTING_OWNER_IDENTITIES', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_GETTING_OWNER_IDENTITIES',
+					{ args: [err] }),
+				timeout: 20000
+			})(dispatch)
+		}
+		updateSpinner('getting-owner-identities', false)(dispatch)
+	}
+}
+
+export function addrIdentityPrivilege({ setAddr, privLevel }) {
+	return async function (dispatch, getState) {
+		try {
+			const { account } = getState().persist
+
+			const result = await setIdentityPrivilege({
+				account,
+				setAddr,
+				privLevel
+			})
+
+			addToast({
+				type: 'accept',
+				label: translate('IDENTITY_SET_ADDR_PRIV_NOTIFICATION',
+					{ args: [result] }),
+				timeout: 20000
+			})(dispatch)
+		} catch (err) {
+			console.error('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION',
 					{ args: [err] }),
 				timeout: 20000
 			})(dispatch)

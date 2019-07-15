@@ -83,12 +83,10 @@ export async function getAccountStats({ account }) {
 		aggregates
 	}
 
-	// console.log('raw', raw)
-
 	const formatted = {
 		walletAddress: wallet.address,
 		walletAuthType: wallet.authType,
-		walletPrivilege: privilegesNames[walletPrivileges],
+		walletPrivileges: privilegesNames[walletPrivileges],
 		walletBalanceEth: formatEther(walletBalanceEth),
 		walletBalanceDai: formatUnits(walletBalanceDai, 18),
 		identityAddress: identity.address,
