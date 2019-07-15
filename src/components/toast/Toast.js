@@ -112,7 +112,8 @@ export class Toast extends Component {
 							[classes.accept]: toast.type === 'accept',
 							[classes.cancel]: toast.type === 'cancel',
 							[classes.warning]: toast.type === 'warning',
-						})}
+						})
+					}
 				/>
 			</Snackbar>
 		)

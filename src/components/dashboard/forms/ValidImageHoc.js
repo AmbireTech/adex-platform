@@ -8,8 +8,8 @@ import { isVideoMedia } from 'helpers/mediaHelpers.js'
 
 // Allow higher res images with same aspect ratio
 function checkExactish(widthTarget, width, heightTarget, height) {
-	const targetAspect = parseFloat(widthTarget / heightTarget).toFixed(3)
-	const aspect = parseFloat(width / height).toFixed(3)
+	const targetAspect = parseFloat(widthTarget / heightTarget).toFixed(2)
+	const aspect = parseFloat(width / height).toFixed(2)
 
 	const isValid = (widthTarget <= width) &&
 		(heightTarget <= height) &&

@@ -2,7 +2,7 @@
 import crypto from 'crypto'
 import { Channel, splitSig, Transaction } from 'adex-protocol-eth/js'
 import { getEthers } from 'services/smart-contracts/ethers'
-import { getSigner } from 'services/smart-contracts/actions/ethers'
+import { getSigner, getMultipleTxSignatures } from 'services/smart-contracts/actions/ethers'
 import { contracts } from '../contractsCfg'
 import { sendOpenChannel } from 'services/adex-relayer/actions'
 import { closeCampaign } from 'services/adex-validator/actions'
@@ -123,12 +123,8 @@ export async function openChannel({ campaign, account }) {
 			.encode([ethChannel.toSolidityTuple()])
 	}
 
-	const signTx = (tx) =>
-		signer
-			.signMessage(new Transaction(tx).hashHex(), { hex: true })
-			.then(sig => splitSig(sig.signature))
 	const txns = [tx1, tx2]
-	const signatures = await Promise.all(txns.map(signTx))
+	const signatures = await getMultipleTxSignatures({txns, signer})
 
 	const data = {
 		txnsRaw: txns,

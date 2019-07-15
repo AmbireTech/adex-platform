@@ -1,13 +1,13 @@
-export const addSig = ({ addr = '', sig, mode, expiryTime }) => {
+export const addSig = ({ addr = '', sig, mode, expiryTime, identity = 'notset' }) => {
 	if (!addr || !sig || !expiryTime || mode === undefined) {
 		throw new Error('addSig - all args are required')
 	}
 
-	localStorage.setItem('addr-' + mode + '-' + addr.toLowerCase(), sig + '-' + expiryTime)
+	localStorage.setItem('addr-' + mode + '-' + addr.toLowerCase() + '-' + identity, sig + '-' + expiryTime)
 }
 
-export const getSig = ({ addr = '', mode }) => {
-	let sigAndTIme = localStorage.getItem('addr-' + mode + '-' + addr.toLowerCase())
+export const getSig = ({ addr = '', identity = '', mode }) => {
+	let sigAndTIme = localStorage.getItem('addr-' + mode + '-' + addr.toLowerCase() + '-' + identity)
 
 	if (!sigAndTIme) {
 		return null

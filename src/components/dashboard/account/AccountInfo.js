@@ -6,7 +6,8 @@ import actions from 'actions'
 import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import {
-	WithdrawTokenFromIdentity
+	WithdrawTokenFromIdentity,
+	SetIdentityPrivilege
 } from 'components/dashboard/forms/web3/transactions'
 import { withStyles } from '@material-ui/core/styles'
 import List from '@material-ui/core/List'
@@ -17,6 +18,11 @@ import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
 import CopyIcon from '@material-ui/icons/FileCopy'
 import DownloadIcon from '@material-ui/icons/SaveAlt'
+import ExpansionPanel from '@material-ui/core/ExpansionPanel'
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
+import Typography from '@material-ui/core/Typography'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { getRecoveryWalletData } from 'services/wallet/wallet'
 
@@ -27,7 +33,8 @@ class AccountInfo extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			walletJsonData: this.localWalletDownloadHref()
+			walletJsonData: this.localWalletDownloadHref(),
+			expanded: false
 		}
 	}
 
@@ -41,17 +48,21 @@ class AccountInfo extends React.Component {
 	localWalletDownloadHref = () => {
 		const { account } = this.props
 		const { email, password } = account.wallet
-		const obj = getRecoveryWalletData({email, password})
-		if(!obj) {
+		const obj = getRecoveryWalletData({ email, password })
+		if (!obj) {
 			return null
 		}
-		const data = "data:text/json;charset=utf-8," 
+		const data = "data:text/json;charset=utf-8,"
 			+ encodeURIComponent(JSON.stringify(obj))
 		return data
 	}
 
 	onSave = () => {
 		// this.getStats()
+	}
+
+	handleExpandChange = () => {
+		this.setState({ expanded: !this.state.expanded })
 	}
 
 	render() {
@@ -68,7 +79,7 @@ class AccountInfo extends React.Component {
 		} = formatted
 
 		const { authType, email } = account.wallet
-		const { walletJsonData } =this.state
+		const { walletJsonData, expanded } = this.state
 
 		return (
 			<div>
@@ -84,22 +95,22 @@ class AccountInfo extends React.Component {
 								: t('IDENTITY_ETH_ADDR')
 							}
 						/>
-						{walletJsonData && 
-						<label htmlFor='download-wallet-json'>
-							<a
-								id='download-wallet-json'
-								href={this.localWalletDownloadHref()}
-								download={`adex-account-data-${email}.json`}
-							>
-								<Button
-									size='small'
-									variant='contained'
+						{walletJsonData &&
+							<label htmlFor='download-wallet-json'>
+								<a
+									id='download-wallet-json'
+									href={this.localWalletDownloadHref()}
+									download={`adex-account-data-${email}.json`}
 								>
-									{t('BACKUP_LOCAL_WALLET')} 
-									<DownloadIcon />
-								</Button>
-							</a>
-						</label>
+									<Button
+										size='small'
+										variant='contained'
+									>
+										{t('BACKUP_LOCAL_WALLET')}
+										<DownloadIcon />
+									</Button>
+								</a>
+							</label>
 						}
 						<IconButton
 							color='default'
@@ -119,7 +130,7 @@ class AccountInfo extends React.Component {
 							secondary={walletAddress}
 							primary={(account.authType === 'demo')
 								? t('DEMO_ACCOUNT_WALLET_ADDRESS', { args: [walletAuthType, walletPrivileges] })
-								: t('WALLET_INFO_LABEL', { args: [walletAuthType, walletPrivileges, authType] })
+								: t('WALLET_INFO_LABEL', { args: [walletAuthType, walletPrivileges || ' - ', authType] })
 							}
 						/>
 					</ListItem>
@@ -146,6 +157,36 @@ class AccountInfo extends React.Component {
 						</div>
 					</ListItem>
 					<ListDivider />
+					<ExpansionPanel expanded={expanded} onChange={this.handleExpandChange}>
+						<ExpansionPanelSummary
+							expandIcon={<ExpandMoreIcon />}
+							aria-controls="panel1bh-content"
+							id="panel1bh-header"
+						>
+							<Typography className={classes.heading}>{t('ACCOUNT_ADVANCED_INFO_AND_ACTIONS')}</Typography>
+						</ExpansionPanelSummary>
+						<ExpansionPanelDetails>
+							<ListItem>
+								<ListItemText
+									className={classes.address}
+									secondary={''}
+									primary={t('MANAGE_IDENTITY')}
+								/>
+								<div className={classes.itemActions}>
+									<SetIdentityPrivilege
+										variant='contained'
+										color='secondary'
+										onSave={this.onSave}
+										token='DAI'
+										className={classes.actionBtn}
+										size='small'
+										actions={actions}
+										identityAvailable={identityBalanceDai}
+									/>
+								</div>
+							</ListItem>
+						</ExpansionPanelDetails>
+					</ExpansionPanel>
 				</List>
 			</div>
 		)

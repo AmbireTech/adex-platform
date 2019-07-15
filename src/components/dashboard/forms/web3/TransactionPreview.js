@@ -14,6 +14,10 @@ import Helper from 'helpers/miscHelpers'
 import ListItemText from '@material-ui/core/ListItemText'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import {
+	IdentityWithdrawPreview,
+	SetPrivilegePreview
+} from './previews'
 
 class TransactionPreview extends Component {
 
@@ -28,27 +32,37 @@ class TransactionPreview extends Component {
 	}
 
 	componentDidMount() {
-		if (this.props.getFeesFn && Object.keys(this.props.transaction).length) {
+		const { getFeesFn, actions, handleChange, identityAvailable, transaction, txId, t, account } = this.props
+		if (getFeesFn && Object.keys(transaction).length) {
 
-			this.props.actions.updateSpinner(this.props.txId, true)
-			this.props.getFeesFn({ acc: this.props.account, transaction: this.props.transaction })
+			actions.updateSpinner(txId, true)
+			getFeesFn({ acc: account, transaction: transaction })
 				.then((fees) => {
-					this.setState({ fees })
-					this.props.handleChange('fees', fees)
-					this.props.actions.updateSpinner(this.props.txId, false)
+					handleChange('fees', fees)
+					this.setState({ fees: fees })
+					actions.updateSpinner(txId, false)
+
+					if (parseFloat(fees.fees || 0) > parseFloat(identityAvailable)) {
+						handleChange('errors', [t('INSUFFICIENT_BALANCE_FOR_FEES', { args: [identityAvailable, 'DAI', fees.fees, 'DAI'] })])
+					}
 				})
 				.catch((err) => {
 					console.log(err)
-					this.props.actions.updateSpinner(this.props.txId, false)
-					this.props.handleChange('errors', [Helper.getErrMsg(err)])
+					actions.updateSpinner(txId, false)
+					handleChange('errors', [Helper.getErrMsg(err)])
 				})
 		}
 	}
 
 	render() {
-		const { transaction = {}, t, classes, account, previewWarnMsgs, spinner } = this.props
+		const { transaction = {}, t, classes, account, previewWarnMsgs, spinner, stepsId } = this.props
 		const errors = transaction.errors || []
-		const { withdrawTo, withdrawAmount, fees = {} } = transaction
+		const {
+			withdrawTo,
+			withdrawAmount,
+			setAddr,
+			privLevel,
+			fees = {} } = transaction
 		return (
 			<div>
 				{spinner ?
@@ -83,22 +97,26 @@ class TransactionPreview extends Component {
 								)
 								: null}
 
-							<PropRow
-								key='withdrawTo'
-								left={t('withdrawTo', { isProp: true })}
-								right={(withdrawTo || '').toString()}
-							/>
-							<PropRow
-								key='withdrawAmount'
-								left={t('withdrawAmount', { isProp: true })}
-								right={
-									<ListItemText
-										className={classes.address}
-										secondary={t('AMOUNT_WITHDRAW_INFO', { args: [fees.fees, 'DAI', fees.toGet, 'DAI'] })}
-										primary={withdrawAmount + ' DAI'}
-									/>
-								}
-							/>
+
+							{(stepsId === 'withdrawFromIdentity') &&
+								<IdentityWithdrawPreview
+									t={t}
+									withdrawTo={withdrawTo}
+									classes={classes}
+									fees={fees}
+									withdrawAmount={withdrawAmount}
+								/>
+							}
+
+							{(stepsId === 'setIdentityPrivilege') &&
+								<SetPrivilegePreview
+									t={t}
+									setAddr={setAddr}
+									classes={classes}
+									fees={fees}
+									privLevel={privLevel}
+								/>
+							}
 						</ContentBody>
 					</ContentBox>
 				}

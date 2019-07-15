@@ -92,7 +92,8 @@ export function createSession({ wallet, identity, email }) {
 			const newWallet = { ...wallet }
 			const sessionSignature = getSig({
 				addr: newWallet.address,
-				mode: newWallet.authType
+				mode: newWallet.authType,
+				identity: identity.address
 			}) || null
 
 			const hasSession = !!sessionSignature
@@ -127,7 +128,8 @@ export function createSession({ wallet, identity, email }) {
 						addr: wallet.address,
 						sig: signature,
 						mode: wallet.authType,
-						expiryTime: expiryTime
+						expiryTime: expiryTime,
+						identity: identity.address
 					})
 					newWallet.authSig = signature
 				}
