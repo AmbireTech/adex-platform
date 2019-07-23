@@ -23,7 +23,9 @@ export const styles = theme => {
 			bottom: spacing
 		},
 		adexLogoTop: {
-			textAlign: 'center'
+			margin: 'auto',
+			textAlign: 'center',
+			maxWidth: 1000
 		},
 		logo: {
 			marginTop: '1.5vh',
@@ -46,14 +48,15 @@ export const styles = theme => {
 			display: 'flex',
 			flexDirection: 'column',
 			flex: '1 1 auto',
-			position: 'relative',
+			// position: 'relative',
 			justifyContent: 'center',
-			padding: 0,
-			margin: `${spacing}px ${spacing}px ${spacing}px ${spacing}px`,
+			padding: 24,
+			// margin: `${spacing}px ${spacing}px ${spacing}px ${spacing}px`,
 			// '&:first-child': {
 			// 	paddingTop: spacing,
 			// },
-			overflow: 'visible'
+			// overflow: 'visible',
+			// maxHeight: '100vh'
 		},
 
 	}

@@ -25,7 +25,7 @@ export default function ConnectHoc(Decorated) {
 					<div className={classes.container}>
 						<div className="adex-dapp">
 							<div className={classes.adexLogoTop} >
-								<Logo className={classes.logo} />
+								<Logo className={classes.logo} />			
 							</div>
 							<div>
 								<Dialog
