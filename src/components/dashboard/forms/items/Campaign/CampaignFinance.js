@@ -9,6 +9,7 @@ import DateTimePicker from 'components/common/DateTimePicker'
 import { utils } from 'ethers'
 import { validations } from 'adex-models'
 import MomentUtils from '@date-io/moment'
+import { totalFeesFormatted } from 'services/smart-contracts/actions/core'
 const moment = new MomentUtils()
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
@@ -164,7 +165,7 @@ class CampaignFinance extends Component {
 			const depositAmount = (prop === 'depositAmount') ? value : newItem.depositAmount
 			const minPerImpression = (prop === 'minPerImpression') ? value : newItem.minPerImpression
 
-			const result = validateAmounts({ maxDeposit: identityBalanceDai, depositAmount, minPerImpression })
+			const result = validateAmounts({ maxDeposit: identityBalanceDai - totalFeesFormatted, depositAmount, minPerImpression })
 
 			this.props.validate(
 				prop,
@@ -273,7 +274,12 @@ class CampaignFinance extends Component {
 							fullWidth
 							type='text'
 							required
-							label={t('DEPOSIT_AMOUNT_LABEL', { args: [t(identityBalanceDai), 'DAI'] })}
+							label={t('DEPOSIT_AMOUNT_LABEL', {
+								args: [
+									(identityBalanceDai - totalFeesFormatted).toFixed(2), 'DAI',
+									totalFeesFormatted, 'DAI'
+								]
+							})}
 							name='depositAmount'
 							value={depositAmount}
 							onChange={(ev) => {
@@ -285,7 +291,7 @@ class CampaignFinance extends Component {
 							helperText={
 								(errDepAmnt && !!errDepAmnt.dirty)
 									? errDepAmnt.errMsg
-									: t('DEPOSIT_AMOUNT_HELPER_TXT')
+									: t('DEPOSIT_AMOUNT_HELPER_TXT', { args: [totalFeesFormatted, 'DAI'] })
 							}
 						/>
 					</Grid>
