@@ -26,15 +26,15 @@ const AuthCard = ({
 	<Card className={classes.card} raised>
 		<CardContent>
 			<Typography
-				variant='h4' 
-				color='primary' 
+				variant='h4'
+				color='primary'
 				gutterBottom
-			>			
+			>
 				{title}
 			</Typography>
 			{authPoints.map((point, index) =>
-				<Typography 
-					key={index} 
+				<Typography
+					key={index}
 					variant='subtitle1'
 				>
 					{point}
@@ -44,7 +44,7 @@ const AuthCard = ({
 		<CardActions className={classes.actions}>
 			{btnCreateTitle && <RRButton
 				variant='contained'
-				to={toCreate} 
+				to={toCreate}
 				size='large'
 				color='primary'
 				disabled={disabled}
@@ -53,7 +53,7 @@ const AuthCard = ({
 			</RRButton>}
 			{btnLoginTitle && <RRButton
 				variant='contained'
-				to={toLogin} 
+				to={toLogin}
 				size='large'
 				color='primary'
 				disabled={disabled}
@@ -74,7 +74,19 @@ class AuthSelect extends Component {
 	render() {
 		let { t, classes } = this.props
 		return (
-			<Grid container spacing={16} alignItems='center'>
+			<Grid
+				container
+				spacing={16}
+				alignItems='center'
+			>
+				<Grid item xs={12}>
+					<Typography variant="h6" gutterBottom>
+						{t('GET_IN_TOUCH')}
+					</Typography>
+					<Typography variant="h6" gutterBottom>
+						{'contactus@adex.network'}
+					</Typography>
+				</Grid>
 
 				<Grid item xs={12} md={6}>
 					<AuthCard
