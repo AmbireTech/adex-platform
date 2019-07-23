@@ -11,7 +11,8 @@ import {
 	bigNumberify,
 	randomBytes,
 	parseUnits,
-	Interface
+	Interface,
+	formatUnits
 } from 'ethers/utils'
 import { Contract } from 'ethers'
 
@@ -23,6 +24,12 @@ const feeAmountOpen = '160000000000000000'
 const timeframe = 15000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 1.5
 const VALID_UNTIL_MIN_PERIOD = 7 * 24 * 60 * 60 * 1000// 7 days in ms
+
+export const totalFeesFormatted = formatUnits(
+	bigNumberify(feeAmountApprove)
+		.add(bigNumberify(feeAmountOpen))
+		.toString(),
+	18)
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
@@ -124,7 +131,7 @@ export async function openChannel({ campaign, account }) {
 	}
 
 	const txns = [tx1, tx2]
-	const signatures = await getMultipleTxSignatures({txns, signer})
+	const signatures = await getMultipleTxSignatures({ txns, signer })
 
 	const data = {
 		txnsRaw: txns,

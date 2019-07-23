@@ -1,6 +1,10 @@
 {
   "name": "adex-dapp",
+<<<<<<< HEAD
   "version": "4.0.38",
+=======
+  "version": "4.0.39",
+>>>>>>> 41c6c0e001b67ea3eb5cc076852220b6015df813
   "private": true,
   "dependencies": {
     "@babel/core": "7.1.0",
