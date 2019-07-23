@@ -1,7 +1,7 @@
 import * as types from 'constants/actionTypes'
 import { uploadImage, postAdUnit, postAdSlot } from 'services/adex-market/actions'
 import { Base, AdSlot, AdUnit } from 'adex-models'
-import { addToast as AddToastUi } from './uiActions'
+import { addToast as AddToastUi, updateSpinner } from './uiActions'
 import { updateAccount } from './accountActions'
 import { translate } from 'services/translations/translations'
 import { getAdUnits, getAdSlots, getCampaigns } from 'services/adex-market/actions'
@@ -192,6 +192,7 @@ export function getAllItems() {
 
 export function openCampaign({ campaign, account }) {
 	return async function (dispatch) {
+		updateSpinner('opening-campaign', true)(dispatch)
 		try {
 			const { readyCampaign } = await openChannel({ campaign, account })
 
@@ -210,6 +211,8 @@ export function openCampaign({ campaign, account }) {
 				args: [err]
 			})
 		}
+		updateSpinner('opening-campaign', false)(dispatch)
+		return true
 	}
 }
 
@@ -382,9 +385,10 @@ export const updateCampaignState = ({ campaign }) => {
 
 export function closeCampaign({ campaign }) {
 	return async function (dispatch, getState) {
+		updateSpinner('closing-campaign', true)(dispatch)
 		try {
 			const { account } = getState().persist
-			const { authTokens } = closeChannel({ account, campaign })
+			const { authTokens } = await closeChannel({ account, campaign })
 
 			const newIdentity = { ...account.identity }
 			const newTokens = { ...newIdentity.validatorAuthTokens, authTokens }
@@ -400,5 +404,6 @@ export function closeCampaign({ campaign }) {
 				args: [err]
 			})
 		}
+		updateSpinner('closing-campaign', false)(dispatch)
 	}
 }

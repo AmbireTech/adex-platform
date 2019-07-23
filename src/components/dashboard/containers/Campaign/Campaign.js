@@ -71,6 +71,8 @@ export class Campaign extends Component {
 			? campaign.state.lastApproved.newState.msg.balances
 			: {}
 
+		const status = (campaign.status || {}).name
+
 		return (
 			<div>
 				<CampaignProps
@@ -83,6 +85,11 @@ export class Campaign extends Component {
 						// 	t={t}
 						// 	subHeader={t('CAMPAIGN_TARGETING')}
 						// />
+						(
+							status === 'Ready' ||
+							status === 'Active' ||
+							status === 'Unhealthy'
+						) &&
 						<this.CampaignActions campaign={campaign} t={t} actions={actions} />
 					}
 

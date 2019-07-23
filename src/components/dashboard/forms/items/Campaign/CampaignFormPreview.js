@@ -5,12 +5,17 @@ import NewCampaignHoc from './NewCampaignHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import ItemsList from 'components/dashboard/containers/ItemsList'
-import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
+import { WalletAction } from 'components/dashboard/forms/FormsCommon'
+import {
+	PropRow,
+	ContentBox,
+	ContentBody,
+	ContentStickyTop,
+} from 'components/common/dialog/content'
 import { AdUnit } from 'adex-models'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from '../styles'
-import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
-import { bigNumberify, parseUnits } from 'ethers/utils'
+import { formatDateTime } from 'helpers/formatters'
 
 class CampaignFormPreview extends Component {
 	constructor(props) {
@@ -40,8 +45,7 @@ class CampaignFormPreview extends Component {
 	}
 
 	render() {
-		const { classes, account, ...rest } = this.props
-		const { newItem, t } = rest
+		const { account, newItem, t } = this.props
 		const {
 			// targeting,
 			adUnits,
@@ -52,12 +56,15 @@ class CampaignFormPreview extends Component {
 			// depositAsset,
 			withdrawPeriodStart,
 			activeFrom,
-			created,
 			// nonce
 		} = newItem
 
 		return (
 			<ContentBox>
+				{newItem.temp.waitingAction ?
+					<ContentStickyTop>
+						<WalletAction t={t} authType={account.wallet.authType} />
+					</ContentStickyTop> : null}
 				<ContentBody>
 					<PropRow
 						left={t('owner', { isProp: true })}
