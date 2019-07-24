@@ -26,6 +26,7 @@ class AdUnitBasic extends Component {
 		this.validateTitle(newItem.title, false)
 		this.validateDescription(newItem.description, false)
 		this.validateTargetUrl(newItem.targetUrl, false)
+		this.validateAndUpdateType(false, newItem.type)
 	}
 
 	validateTitle(name, dirty, errMsg) {
