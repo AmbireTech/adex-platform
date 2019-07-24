@@ -23,6 +23,7 @@ class AdSlotBasic extends Component {
 		const { newItem } = this.props
 		this.validateTitle(newItem.title, false)
 		this.validateDescription(newItem.description, false)
+		this.validateAndUpdateType(false, newItem.type)
 	}
 
 	validateTitle(name, dirty, errMsg) {
