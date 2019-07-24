@@ -23,7 +23,8 @@ const autocompleteTagsSingleSelect = () => {
 const AcTags = autocompleteTagsSingleSelect()
 
 const SOURCES = {
-	tags: { src: AcTags, collection: 'tags' }
+	tags: { src: AcTags, collection: 'tags' },
+	custom: { src: [], collection: 'tags'}
 }
 
 const styles = {
@@ -133,7 +134,7 @@ class AdSlotTargeting extends Component {
 						value={target.tag}
 						suggestionMatch='anywhere'
 						showSuggestionsWhenValueIsSet={true}
-						allowCreate={false}
+						allowCreate={!source.length}
 					/>
 				</Grid>
 				<Grid item xs={12} md={6} >

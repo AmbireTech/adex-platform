@@ -45,7 +45,7 @@ const AcTags = autocompleteTagsSingleSelect()
 const SOURCES = {
 	locations: { src: AcLocations, collection: 'targeting' },
 	genders: { src: AcGenders, collection: 'targeting' },
-	tags: { src: AcTags, collection: 'tags' },
+	tags: { src: AcTags, collection: 'targeting' },
 	custom: { src: [], collection: 'targeting'}
 }
 
