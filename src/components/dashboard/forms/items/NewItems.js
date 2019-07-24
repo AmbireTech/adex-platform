@@ -50,7 +50,7 @@ const SendBtn = ({ saveBtnLabel, saveBtnIcon, newItem, t, save, ...rest }) => {
 
 const SaveBtnWithAdUnit = NewAdUnitHoc(SaveBtn)
 const SaveBtnWithCampaign = NewCampaignHoc(SendBtn)
-const SaveBtnWithAdSlot = NewAdSlotHoc(SendBtn)
+const SaveBtnWithAdSlot = NewAdSlotHoc(SaveBtn)
 
 const CancelBtn = ({ ...props }) => {
 	return (
