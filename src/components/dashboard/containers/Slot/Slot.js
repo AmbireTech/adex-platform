@@ -16,12 +16,25 @@ import { contracts } from 'services/smart-contracts/contractsCfg'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import AppBar from '@material-ui/core/AppBar'
+import url from 'url'
 
-const AUTO_HIDE_STRING = "window.addEventListener('message', function(ev) { if (ev.data.hasOwnProperty('adexHeight') && ev.origin === '{origin}') for (f of document.getElementsByTagName('iframe')) if (f.contentWindow === ev.source) f.height = ev.data.adexHeight }, false)"
+const ADVIEW_URL = process.env.ADVIEW_URL
+const adviewUrl = url.parse(ADVIEW_URL)
+const origin =  `${adviewUrl.protocol}//${adviewUrl.host}`
+
+const AUTO_HIDE_STRING =
+	`window.addEventListener('message', function(ev) { 
+		if (ev.data.hasOwnProperty('adexHeight') && ('${origin}' === ev.origin)) {
+			for (let f of document.getElementsByTagName('iframe')) {	
+				if (f.contentWindow === ev.source) {
+					f.height = ev.data.adexHeight;
+				}
+			}	
+		}
+	}, false)`
 
 const { DAI } = contracts
 
-const ADVIEW_URL = process.env.ADVIEW_URL
 const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
 
 const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
@@ -53,13 +66,14 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 	let src = ADVIEW_URL + query
 
 	let iframeStr =
-		`<iframe src="${src}"\n` +
-		`   width="${sizes.width}"\n` +
-		`   height="${sizes.height}"\n` +
-		`   scrolling="no"\n` +
-		`   frameBorder="0"\n` +
-		`   style="border: 0;"\n` +
-		`	onload={${AUTO_HIDE_STRING}}` +
+		`<iframe\n` +
+		`	src="${src}"\n` +
+		`	width="${sizes.width}"\n` +
+		`	height="${sizes.height}"\n` +
+		`	scrolling="no"\n` +
+		`	frameborder="0"\n` +
+		`	style="border: 0;"\n` +
+		`	onload="${AUTO_HIDE_STRING}"\n` +
 		`></iframe>`
 
 	// TODO: Add copy to clipboard and tooltip or description how to use it
