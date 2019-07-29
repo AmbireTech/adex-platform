@@ -22,6 +22,8 @@ npm start
 * Ensure the tests pass (`npm test`)
 * Create a PR back to the original repo
 
+**NOTE:** If you're here because of a Gitcoin hackathon, please open new issues in the repository if you run into problems.
+
 ### Built with 
 * [ethers.js](https://docs.ethers.io/ethers.js/html/) - Ethereum JavaScript API
 * [React](https://github.com/facebook/react) - The web framework used
