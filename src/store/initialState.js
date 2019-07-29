@@ -51,6 +51,10 @@ let initialState = {
 		relayer: {},
 		market: {},
 		validators: {}
+	},
+	ens: {
+		ensName: '',
+		address: ''
 	}
 }
 
