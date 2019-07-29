@@ -65,7 +65,7 @@ const getInjectedWeb3 = async () => {
 			return results
 
 		} catch (err) {
-			console.error(err.message)
+			console.error(err)
 			throw new Error(err.message)
 		}
 	}
