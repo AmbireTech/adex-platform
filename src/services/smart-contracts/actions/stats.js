@@ -46,7 +46,7 @@ export async function getAccountStats({ account }) {
 		await identityContract.deployed()
 		privilegesAction = identityContract.privileges(wallet.address)
 	} catch {
-		privilegesAction = status.type || 'Not Deployed'
+		privilegesAction = Promise.resolve(status.type || 'Not Deployed')
 	}
 
 	const calls = [
