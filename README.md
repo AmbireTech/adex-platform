@@ -1,7 +1,7 @@
 ## Adex dapp
 ### This is the main UI of AdEx Network Platform, AdEx is trust-minimized solution for digital advertising that reduces ad fraud, improves ad budgets and protects user privacy.
 
-### It's built primarily with React.js, ethers.js and MATERIAL-UI and it interacts directly with Ethereum, [AdEx Market](https://github.com/AdExNetwork/adex-market) and Adex Relayer.
+### It's built primarily with React.js, ethers.js and MATERIAL-UI and it interacts directly with Ethereum, [AdEx Market](https://github.com/AdExNetwork/adex-market), the [Validators](https://github.com/adexnetwork/adex-validator) and the AdEx Relayer.
 
 ## Running in development mode
 
@@ -16,6 +16,11 @@ npm start
 * Once you open `http://localhost:3000`, go to Standard account -> Sign up; follow the instructions; the email does not matter
 
 
+### Contribution guide
+
+* Fork the repo, work in a separate branch created from `master`
+* Ensure the tests pass (`npm test`)
+* Create a PR back to the original repo
 
 ### Built with 
 * [ethers.js](https://docs.ethers.io/ethers.js/html/) - Ethereum JavaScript API
