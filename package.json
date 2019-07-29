@@ -106,7 +106,7 @@
     "build": "node --max-old-space-size=2048 scripts/build.js",
     "predeploy": "npm run build && cp CNAME ./build",
     "deploy": "gh-pages -d build",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "eslint src/"
   },
   "eslintConfig": {
     "extends": "react-app"
