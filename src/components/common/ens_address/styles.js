@@ -4,16 +4,16 @@ export const styles = theme => ({
 		display: "flex",
 		alignItems: "center",
 		height: 60,
-		width: '100%'
+		width: "100%"
 	},
 	input: {
-		marginLeft: 8,
+		marginLeft: `${theme.spacing.unit}`,
 		flex: 1
 	},
 	iconButton: {
-		padding: 10
+		padding: `${theme.spacing.unit + 2}`
 	},
 	progress: {
-		width: 40,
+		width: `${theme.spacing.unit * 5}`
 	}
-});
+})
