@@ -3,13 +3,14 @@ import ListItemText from '@material-ui/core/ListItemText'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { utils } from 'ethers'
+import ReverseENS from 'helpers/ReverseENS'
 
 export const addrItem = ({ stats, t, classes }) => {
 	const { balanceEth, balanceDai, address } = stats
 
 	return (
 		<ListItemText
-			primary={address}
+			primary={<ReverseENS lookup={address} />}
 			secondary={
 				<span className={classes.addrInfo}>
 					<span>
