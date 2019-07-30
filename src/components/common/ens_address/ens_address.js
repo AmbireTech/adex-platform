@@ -7,10 +7,11 @@ import SearchIcon from "@material-ui/icons/Search"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import { withStyles } from "@material-ui/core/styles"
 import classnames from "classnames"
+import Translate from "components/translate/Translate"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import actions from "actions"
-import { resolveENS } from 'services/adex-ens/actions'
+import { resolveENS } from "services/adex-ens/actions"
 import { styles } from "./styles"
 import { isEthAddress } from "helpers/validators"
 
@@ -29,8 +30,9 @@ class ENSAddress extends Component {
 
   componentDidUpdate = async (prevProps, prevState) => {
   	const { address } = this.state
+  	const { t, actions } = this.props
   	if (address !== prevState.address) {
-  		const { updateENSResolution } = this.props.actions
+  		const { updateENSResolution } = actions
   		updateENSResolution({
   			ensName: "",
   			address
@@ -38,25 +40,28 @@ class ENSAddress extends Component {
   		if (isEthAddress(address)) {
   			this.setState({
   				isSearching: true
-			  })
-			  try {
-				  const result = await resolveENS(address)
-				  if (result.error) {
-					  this.setState({
-						  error: result.error,
-						  isSearching: false
-					  })
-				  } else {
-					  this.setState({
-						  isSearching: false,
-					  })
-					  updateENSResolution({ ensName: result.ensName, address: result.address })
-				  }
-			  } catch(error) {
-				  this.setState({
-					  error: error
-				  })
-			  }
+  			})
+  			try {
+  				const result = await resolveENS(address, t('ENS_NOT_ASSOCIATED'))
+  				if (result.error) {
+  					this.setState({
+  						error: result.error,
+  						isSearching: false
+  					})
+  				} else {
+  					this.setState({
+  						isSearching: false
+  					})
+  					updateENSResolution({
+  						ensName: result.ensName,
+  						address: result.address
+  					})
+  				}
+  			} catch (error) {
+  				this.setState({
+  					error: error
+  				})
+  			}
   		}
   	}
   }
@@ -105,7 +110,7 @@ class ENSAddress extends Component {
 }
 
 ENSAddress.propTypes = {
-	placeholder: PropTypes.string.isRequired,
+	placeholder: PropTypes.string.isRequired
 }
 
 ENSAddress.defaultProps = {
@@ -131,4 +136,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(withStyles(styles)(ENSAddress))
+)(Translate(withStyles(styles)(ENSAddress)))
