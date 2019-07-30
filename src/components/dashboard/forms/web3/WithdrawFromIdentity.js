@@ -6,6 +6,7 @@ import actions from 'actions'
 // import Translate from 'components/translate/Translate'
 import NewTransactionHoc from './TransactionHoc'
 import TextField from '@material-ui/core/TextField'
+import ENSAddress from 'components/common/ens_address/ens_address'
 import { validateNumber, isEthAddress } from 'helpers/validators'
 
 class WithdrawFromIdentity extends Component {
@@ -40,7 +41,7 @@ class WithdrawFromIdentity extends Component {
 	}
 
 	render() {
-		const { transaction, t, invalidFields, identityAvailable, handleChange } = this.props
+		const { transaction, t, invalidFields, identityAvailable, handleChange, ens } = this.props
 		const { withdrawTo, withdrawAmount } = transaction || {}
 		const errAmount = invalidFields['withdrawAmount']
 		const errAddr = invalidFields['withdrawTo']
@@ -48,18 +49,15 @@ class WithdrawFromIdentity extends Component {
 		return (
 			<div>
 				<div> {t('EXCHANGE_CURRENT_DAI_BALANCE_AVAILABLE_ON_IDENTITY')} {identityAvailable} </div>
-				<TextField
-					type='text'
+				<ENSAddress
+					text='text'
 					required
 					fullWidth
-					label={t('WITHDRAW_TO')}
-					name='withdrawTo'
-					value={withdrawTo || ''}
-					onChange={(ev) => handleChange('withdrawTo', ev.target.value)}
-					onBlur={() => this.validateAddress(withdrawTo, true)}
-					onFocus={() => this.validateAddress(withdrawTo, false)}
-					error={errAddr && !!errAddr.dirty}
-					helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
+					label={t('ADDR_TO_SET_PRIV_LEVEL')}
+					name='setAddr'
+					onBlur={() => this.validateAddress(ens.address, true)}
+					onFocus={() => this.validateAddress(ens.address, false)}
+					value={ens.address || ''}
 				/>
 				<TextField
 					type='text'
@@ -87,15 +85,20 @@ WithdrawFromIdentity.propTypes = {
 	txId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	transaction: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired
+	account: PropTypes.object.isRequired,
+	ens: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state, props) {
 	// const persist = state.persist
 	// const memory = state.memory
 	const txId = props.stepsId
+	const {
+		memory: { ens }
+	} = state
 	return {
-		txId: txId
+		txId: txId,
+		ens
 	}
 }
 

@@ -2,7 +2,7 @@ import { ethers } from "ethers"
 
 const provider = ethers.getDefaultProvider()
 
-const resolveENS = async (address, error_message) => {
+const resolveENS = async (address) => {
 	return await provider.lookupAddress(address).then(async ensName => {
 		if (ensName !== null) {
 			const resolvedAddress = await provider.resolveName(ensName)
@@ -14,7 +14,7 @@ const resolveENS = async (address, error_message) => {
 			}
 		} else {
 			return {
-				error: error_message
+				error: 'ENS_NOT_ASSOCIATED'
 			}
 		}
 	})

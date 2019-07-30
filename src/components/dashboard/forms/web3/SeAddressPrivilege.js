@@ -7,6 +7,7 @@ import actions from 'actions'
 import NewTransactionHoc from './TransactionHoc'
 import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
+import ENSAddress from 'components/common/ens_address/ens_address'
 import { validateNumber, isEthAddress } from 'helpers/validators'
 import { constants } from 'adex-models'
 
@@ -52,7 +53,7 @@ class SeAddressPrivilege extends Component {
 	}
 
 	render() {
-		const { transaction, t, invalidFields, identityAvailable, handleChange } = this.props
+		const { transaction, t, invalidFields, identityAvailable, handleChange, ens } = this.props
 		const { setAddr, privLevel } = transaction || {}
 		// const errAmount = invalidFields['withdrawAmount']
 		const errAddr = invalidFields['withdrawTo']
@@ -60,18 +61,13 @@ class SeAddressPrivilege extends Component {
 		return (
 			<div>
 				<div> {t('SET_IDENTITY_PRIVILEGE_MAIN_INFO')} {identityAvailable} </div>
-				<TextField
-					type='text'
+				<ENSAddress
+					text='text'
 					required
 					fullWidth
 					label={t('ADDR_TO_SET_PRIV_LEVEL')}
 					name='setAddr'
-					value={setAddr || ''}
-					onChange={(ev) => handleChange('setAddr', ev.target.value)}
-					onBlur={() => this.validateAddress(setAddr, true)}
-					onFocus={() => this.validateAddress(setAddr, false)}
-					error={errAddr && !!errAddr.dirty}
-					helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
+					value={ens.address || ''}
 				/>
 				<Dropdown
 					required
@@ -94,15 +90,20 @@ SeAddressPrivilege.propTypes = {
 	txId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	transaction: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired
+	account: PropTypes.object.isRequired,
+	ens: PropTypes.object
 }
 
 function mapStateToProps(state, props) {
 	// const persist = state.persist
 	// const memory = state.memory
+	const {
+		memory: { ens }
+	} = state
 	const txId = props.stepsId
 	return {
-		txId: txId
+		txId: txId,
+		ens
 	}
 }
 

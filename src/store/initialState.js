@@ -54,7 +54,8 @@ let initialState = {
 	},
 	ens: {
 		ensName: '',
-		address: ''
+		address: '',
+		error: ''
 	}
 }
 
