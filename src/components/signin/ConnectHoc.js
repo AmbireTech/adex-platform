@@ -11,6 +11,8 @@ import packageJson from './../../../package.json'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
+import AuthSelect from 'components/signin/auth-select/AuthSelect'
+
 export default function ConnectHoc(Decorated) {
 	class Connect extends Component {
 
@@ -18,30 +20,44 @@ export default function ConnectHoc(Decorated) {
 			const { classes, t, noBackground, ...rest } = this.props
 			return (
 				<div
-					className={classes.signinContainer}
-					style={{ backgroundImage: `url(${require('resources/background.png')})` }}
+					className={classes.root}
 				>
-					<div className={classes.container}>
-						<div className="adex-dapp">
-							<Grid container className={classes.root} spacing={2}>
-								<Grid item xs={12} md={8}>
-									<div className={classes.adexLogoTop} >
-										<Logo className={classes.logo} />
-									</div>
-									<small className={classes.adxVersion} >
-										{`v.${packageJson.version}-beta`}
-									</small>
-								</Grid>
-								<Grid item xs={12} md={4}>
-									<Decorated
-										{...rest}
-									/>
-								</Grid>
+					<Grid
+						className={classes.container}
+						container
+					// spacing={16}
+					>
+						<Grid
+							className={classes.actions}
+							item
+							xs={12}
+							md={8}
+						>
+							<Decorated
+								{...rest}
+							/>
+						</Grid>
+						<Grid
+							item xs={12}
+							md={4}
+						>
+							<Grid
+								container
+								direction='column'
+								alignItems='center'
+								justify='space-between'
+							>
+								<div className={classes.adexLogoTop} >
+									<Logo className={classes.logo} />
+								</div>
+								<AuthSelect  {...rest} />
+								<small className={classes.adxVersion} >
+									{`v.${packageJson.version}-beta`}
+								</small>
 							</Grid>
-
-						</div>
-					</div>
-				</div >
+						</Grid>
+					</Grid>
+				</div>
 			)
 		}
 	}
