@@ -11,13 +11,13 @@ export function updateENSResolution({ ensName, address }) {
 	}
 }
 
-export function updateENSResolutionError(error) {
+export function updateENSResolutionError(error, address) {
 	return function(dispatch) {
 		return dispatch({
 			type: types.UPDATE_ENS_RESOLUTION_ERROR,
 			error,
 			ensName: "",
-			address: ""
+			address: address
 		})
 	}
 }
