@@ -5,8 +5,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Logo from 'components/common/icons/AdexIconTxt'
 import Translate from 'components/translate/Translate'
-import Dialog from '@material-ui/core/Dialog'
-import DialogContent from '@material-ui/core/DialogContent'
+import Grid from '@material-ui/core/Grid'
 import classnames from 'classnames'
 import packageJson from './../../../package.json'
 import { withStyles } from '@material-ui/core/styles'
@@ -24,44 +23,25 @@ export default function ConnectHoc(Decorated) {
 				>
 					<div className={classes.container}>
 						<div className="adex-dapp">
-							<div className={classes.adexLogoTop} >
-								<Logo className={classes.logo} />			
-							</div>
-							<div>
-								<Dialog
-									open={true}
-									classes={{
-										paper:
-											classnames(
-												classes.dialogPaper,
-												{
-													[classes.noBg]: noBackground
-												})
-									}}
-									BackdropProps={{
-										classes: {
-											root: classes.backdrop
-										}
-									}}
-									fullWidth
-									maxWidth='md'
-								>
-									<DialogContent
-										classes={{ root: classes.content }}
-									>
-										<Decorated
-											{...rest}
-										/>
-									</DialogContent>
+							<Grid container className={classes.root} spacing={2}>
+								<Grid item xs={12} md={8}>
+									<div className={classes.adexLogoTop} >
+										<Logo className={classes.logo} />
+									</div>
+									<small className={classes.adxVersion} >
+										{`v.${packageJson.version}-beta`}
+									</small>
+								</Grid>
+								<Grid item xs={12} md={4}>
+									<Decorated
+										{...rest}
+									/>
+								</Grid>
+							</Grid>
 
-								</Dialog>
-							</div>
-							<small className={classes.adxVersion} >
-								v.{packageJson.version}-beta
-  					</small>
 						</div>
 					</div>
-				</div>
+				</div >
 			)
 		}
 	}

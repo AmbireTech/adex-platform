@@ -1,6 +1,9 @@
 export const styles = theme => {
 	const spacing = theme.spacing.unit
 	return {
+		root: {
+			flexGrow: 1,
+		},
 		signinContainer: {
 			overflowX: 'hidden',
 			overflowY: 'auto',
