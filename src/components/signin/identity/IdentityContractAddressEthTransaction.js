@@ -99,7 +99,7 @@ class IdentityContractAddressEthTransaction extends Component {
 IdentityContractAddressEthTransaction.propTypes = {
 	actions: PropTypes.object.isRequired,
 	account: PropTypes.object.isRequired,
-	identity: PropTypes.object.isRegistered,
+	identity: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state) {
