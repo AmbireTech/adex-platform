@@ -25,6 +25,7 @@ export default function ConnectHoc(Decorated) {
 					<Grid
 						className={classes.container}
 						container
+						alignItems='stretch'
 					// spacing={16}
 					>
 						<Grid
@@ -38,8 +39,12 @@ export default function ConnectHoc(Decorated) {
 							/>
 						</Grid>
 						<Grid
-							item xs={12}
+							item
+							container
+							xs={12}
 							md={4}
+							alignItems='stretch'
+							className={classes.buttons}
 						>
 							<Grid
 								container

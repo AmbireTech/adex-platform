@@ -2,11 +2,11 @@ import { yellow } from "@material-ui/core/colors"
 
 export const styles = theme => {
 	const spacing = theme.spacing.unit
+	console.log(theme.palette)
 	return {
 		root: {
 			// flexGrow: 1,
 			height: '100vh',
-			backgroundColor: 'yellow'
 		},
 		signinContainer: {
 			overflowX: 'hidden',
@@ -22,7 +22,11 @@ export const styles = theme => {
 			flexGrow: '1'
 		},
 		actions: {
-			position: 'relative'
+			position: 'relative',
+			height: '100vh',
+		},
+		buttons: {
+			backgroundColor: theme.palette.grey[50]
 		},
 		adxVersion: {
 			// position: 'absolute',
@@ -30,9 +34,7 @@ export const styles = theme => {
 			// bottom: spacing
 		},
 		adexLogoTop: {
-			margin: 'auto',
 			textAlign: 'center',
-			maxWidth: 1000
 		},
 		logo: {
 			marginTop: '1.5vh',
