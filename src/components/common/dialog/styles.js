@@ -1,6 +1,4 @@
-
 import grey from '@material-ui/core/colors/grey'
-import { relative } from 'path';
 
 export const styles = theme => {
 	const spacing = theme.spacing.unit * 3

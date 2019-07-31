@@ -13,7 +13,7 @@ import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Anchor from 'components/common/anchor/anchor'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { utils } from 'ethers'
+// import { utils } from 'ethers'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 
