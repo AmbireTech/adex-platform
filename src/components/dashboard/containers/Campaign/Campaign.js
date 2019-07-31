@@ -60,7 +60,17 @@ export class Campaign extends Component {
 	}
 
 	render() {
-		const { t, classes, item, setActiveFields, handleChange, activeFields, isDemo, actions, ...rest } = this.props
+		const {
+			t,
+			// classes,
+			item,
+			// setActiveFields,
+			// handleChange,
+			// activeFields,
+			// isDemo,
+			actions,
+			// ...rest
+		} = this.props
 		const { tabIndex } = this.state
 
 		const units = item.spec.adUnits

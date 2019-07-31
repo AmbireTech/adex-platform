@@ -1,4 +1,4 @@
-import { ethers, utils, Wallet } from 'ethers'
+import { ethers, utils } from 'ethers'
 import { encrypt, decrypt } from 'services/crypto/crypto'
 import { loadFromLocalStorage, saveToLocalStorage } from 'helpers/localStorageHelpers'
 

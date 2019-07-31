@@ -1,7 +1,4 @@
 import { AdUnit, AdSlot, Campaign, Account } from 'adex-models'
-import { items as ItemsConstants } from 'adex-constants'
-
-const { ItemsTypes } = ItemsConstants
 
 let initialState = {
 	account: new Account(),
