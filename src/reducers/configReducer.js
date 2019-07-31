@@ -1,9 +1,9 @@
 import { UPDATE_RELAYER_CFG } from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
-const updateCfg = (current, type, newCfg) => {
+const updateCfg = (current, type, cfg) => {
 	const newCfg = { ...current }
-	newCfg[type] = { ...newCfg }
+	newCfg[type] = { ...cfg }
 	return newCfg
 }
 

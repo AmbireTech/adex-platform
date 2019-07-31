@@ -98,7 +98,7 @@ class ItemsList extends Component {
 
 	renderTableRow = (item, index, { to, selected }) => {
 		const {
-			t,
+			// t,
 			classes,
 			selectMode,
 			selectedItems,
@@ -204,13 +204,13 @@ class ItemsList extends Component {
 	renderActions = ({ item, to }) => {
 		const {
 			t,
-			account,
-			actions,
-			itemType
+			// account,
+			// actions,
+			// itemType
 		} = this.props
-		const itemName = item.title
-		const itemTypeName = t(itemType, { isProp: true })
-		const isDemo = account.wallet.address === 'demo'
+		// const itemName = item.title
+		// const itemTypeName = t(itemType, { isProp: true })
+		// const isDemo = account.wallet.address === 'demo'
 
 		return (
 			<TableCell>

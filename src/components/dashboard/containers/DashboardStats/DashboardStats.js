@@ -58,20 +58,20 @@ export class DashboardStats extends Component {
 	mapClosedBidsToStats = (bids) => {
 		return bids.reduce((memo, bid) => {
 			switch (bid._state) {
-				case BID_STATES.Canceled.id:
-					memo.canceled.count += 1
-					memo.canceled.amount += parseInt(bid._amount, 10)
-					break
-				case BID_STATES.Expired.id:
-					memo.expired.count += 1
-					memo.expired.amount += parseInt(bid._amount, 10)
-					break
-				case BID_STATES.Completed.id:
-					memo.completed.count += 1
-					memo.completed.amount += parseInt(bid._amount, 10)
-					break
-				default:
-					break
+			case BID_STATES.Canceled.id:
+				memo.canceled.count += 1
+				memo.canceled.amount += parseInt(bid._amount, 10)
+				break
+			case BID_STATES.Expired.id:
+				memo.expired.count += 1
+				memo.expired.amount += parseInt(bid._amount, 10)
+				break
+			case BID_STATES.Completed.id:
+				memo.completed.count += 1
+				memo.completed.amount += parseInt(bid._amount, 10)
+				break
+			default:
+				break
 			}
 
 			return memo

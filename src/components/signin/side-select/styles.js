@@ -1,5 +1,5 @@
 export const styles = theme => {
-	const spacing = theme.spacing.unit
+	// const spacing = theme.spacing.unit
 	return {
 		backdrop: {
 			backgroundColor: 'rgba(255, 255, 255, 0.5)'
