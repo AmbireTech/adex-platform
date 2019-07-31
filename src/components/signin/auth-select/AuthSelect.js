@@ -50,23 +50,23 @@ class AuthSelect extends Component {
 					<Grid item xs={12}>
 						<RRButton
 							variant='contained'
-							to='/identity/full'
+							to='/login/full?metamask'
 							size='large'
 							color='primary'
 							fullWidth
 						>
-							{t('CREATE_FULL_ACCOUNT_')}
+							{t('METAMASK')}
 						</RRButton>
 					</Grid>
 					<Grid item xs={12}>
 						<RRButton
 							variant='contained'
-							to='/login/full'
+							to='/login/full?trezor'
 							size='large'
 							color='primary'
 							fullWidth
 						>
-							{t('LOGIN_FULL_ACCOUNT_')}
+							{t('TREZOR')}
 						</RRButton>
 					</Grid>
 

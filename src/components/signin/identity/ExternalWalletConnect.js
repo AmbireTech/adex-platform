@@ -19,14 +19,14 @@ export function ExternalConnect(props) {
 					color='primary'
 					onClick={() => setConnectType('login')}
 				>
-					{/* {props.t('USE_EXISTING_IDENTITY')} */}
+					{props.t('USE_EXISTING_IDENTITY')}
 				</Button>
 				<Button
 					variant='contained'
 					color='secondary'
 					onClick={() => setConnectType('create')}
 				>
-					{/* {props.t('CREATE_NEW_IDENTITY')} */}
+					{props.t('CREATE_NEW_IDENTITY')}
 				</Button>
 			</div>
 		}
