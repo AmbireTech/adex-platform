@@ -22,7 +22,7 @@ import { SideSwitch } from './SideSwitch'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
-import Badge from '@material-ui/core/Badge'
+// import Badge from '@material-ui/core/Badge'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 
@@ -41,7 +41,13 @@ class SideNav extends Component {
 	}
 
 	render() {
-		const { side, identity, t, transactions, classes } = this.props
+		const {
+			side,
+			identity,
+			t,
+			// transactions,
+			classes
+		} = this.props
 		if (side !== 'advertiser' && side !== 'publisher') {
 			return null
 		}
@@ -52,7 +58,7 @@ class SideNav extends Component {
 		const items = (isAdvertiser ? 'units' : 'slots')
 		const NewItemBtn = (isAdvertiser ? NewUnitDialog : NewSlotDialog)
 		const itemsIcon = (isAdvertiser ? 'format_list_bulleted' : 'format_list_bulleted')
-		const pendingTrsCount = (transactions.pendingTxs || []).length
+		// const pendingTrsCount = (transactions.pendingTxs || []).length
 
 		return (
 			<div

@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
+// import { connect } from 'react-redux'
+// import { bindActionCreators } from 'redux'
+// import actions from 'actions'
 import MaterialStepper from 'components/dashboard/forms/stepper/MaterialUiStepper'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Translate from 'components/translate/Translate'
@@ -18,7 +18,7 @@ class FormSteps extends Component {
 		const cancelButton = () => <CancelBtn  {...rest} stepsId={stepsId} onSave={onSave} t={t} />
 		const validateId = (validateIdBase || '') + '-' + stepsId
 
-		stepsPages.map((page, index) => {
+		stepsPages.foreach((page, index) => {
 			pages.push({
 				title: t(page.title),
 				cancelBtn: cancelButton,

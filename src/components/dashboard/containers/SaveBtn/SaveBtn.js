@@ -16,7 +16,7 @@ import { styles } from './styles'
 class SaveBtn extends Component {
 
 	render() {
-		let { t, spinner, classes, success, dirtyProps, save, validations, validationId, className, spinnerId, ...other } = this.props
+		let { spinner, classes, success, dirtyProps, save, validations, validationId } = this.props
 		return (
 
 			<div className={classes.position}>
@@ -27,7 +27,7 @@ class SaveBtn extends Component {
 						// className={buttonClassname}
 						onClick={() => save()}
 						disabled={spinner || !dirtyProps.length || !!Object.keys(validations[validationId] || {}).length}
-						// {...other}
+					// {...other}
 					>
 						{/*TODO: Success */}
 						{success ? <CheckIcon /> : <SaveIcon />}

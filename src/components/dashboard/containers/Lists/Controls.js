@@ -1,11 +1,11 @@
 import React from 'react'
-import Slider from '@material-ui/lab/Slider'
+// import Slider from '@material-ui/lab/Slider'
 import classnames from 'classnames'
 import IconButton from '@material-ui/core/IconButton'
 import ChevronLeft from '@material-ui/icons/ChevronLeft'
 import ChevronRight from '@material-ui/icons/ChevronRight'
 import Dropdown from 'components/common/dropdown'
-import Typography from '@material-ui/core/Typography'
+// import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -21,12 +21,12 @@ const pagination = (props) => {
 	const {
 		page,
 		pages,
-		pageSize,
+		// pageSize,
 		classes,
 		goToPrevPage,
 		goToNextPage,
 		goToPage,
-		changePageSize,
+		// changePageSize,
 		// className,
 		t
 	} = props

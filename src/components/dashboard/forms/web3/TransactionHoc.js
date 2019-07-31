@@ -5,9 +5,9 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Translate from 'components/translate/Translate'
 import Helper from 'helpers/miscHelpers'
-import { exchange as ExchangeConstants } from 'adex-constants'
+// import { exchange as ExchangeConstants } from 'adex-constants'
 
-const { TX_STATUS } = ExchangeConstants
+// const { TX_STATUS } = ExchangeConstants
 
 export default function NewTransactionHoc(Decorated) {
 	// TODO: make it common for bids and items
@@ -45,7 +45,7 @@ export default function NewTransactionHoc(Decorated) {
 
 		handleSaveRes = ({ err, res }) => {
 			const { t, actions } = this.props
-			const areManyTxs = Array.isArray(res)
+			// const areManyTxs = Array.isArray(res)
 
 			if (err) {
 				actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [Helper.getErrMsg(err)] }), timeout: 50000 })

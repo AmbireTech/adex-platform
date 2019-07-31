@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { AUTH_TYPES } from 'constants/misc'
 
 export default function IdentityHoc(Decorated) {
 
