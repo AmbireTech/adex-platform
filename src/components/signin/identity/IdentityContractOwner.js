@@ -34,7 +34,7 @@ class IdentityContractAddress extends Component {
 
 	render() {
 		return (
-			<AuthMethod />
+			<AuthMethod {...this.props} />
 		)
 	}
 }

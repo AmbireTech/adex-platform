@@ -4,7 +4,6 @@ import IdentityHoc from './IdentityHoc'
 import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
 // import IdentityContractAddressEthTransaction from './IdentityContractAddressEthTransaction'
 import IdentityContractOwner from './IdentityContractOwner'
-import AllInOneTest from './OneStepToTestThemAll'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import GrantInfo from './GrantInfo'
 import GrantDeploy from './GrantDeploy'
@@ -98,6 +97,5 @@ export const DemoIdentity = (props) =>
 		{...props}
 		{...common}
 		stepsPages={[
-			{ title: 'TEST_THIS_DEMO_IF_YOU_WANT_TEST', page: AllInOneTest }
 		]}
 	/>

@@ -24,7 +24,7 @@ export const styles = theme => {
 			height: '100vh',
 		},
 		buttons: {
-			backgroundColor: theme.palette.grey[50]
+			backgroundColor: theme.palette.grey[200]
 		},
 		adxVersion: {
 			// position: 'absolute',
