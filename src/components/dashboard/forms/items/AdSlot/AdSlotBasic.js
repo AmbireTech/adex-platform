@@ -68,8 +68,8 @@ class AdSlotBasic extends Component {
 			newItem,
 			invalidFields,
 			handleChange,
-			nameHelperTxt,
-			descriptionHelperTxt
+			// nameHelperTxt,
+			// descriptionHelperTxt
 		} = this.props
 		const { type, title, description } = newItem
 		const errTitle = invalidFields['title']

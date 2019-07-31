@@ -20,7 +20,7 @@ import url from 'url'
 
 const ADVIEW_URL = process.env.ADVIEW_URL
 const adviewUrl = url.parse(ADVIEW_URL)
-const origin =  `${adviewUrl.protocol}//${adviewUrl.host}`
+const origin = `${adviewUrl.protocol}//${adviewUrl.host}`
 
 const AUTO_HIDE_STRING =
 	`window.addEventListener('message', function(ev) { 
@@ -127,7 +127,14 @@ export class Slot extends Component {
 	}
 
 	render() {
-		const { t, classes, isDemo, item, account, ...rest } = this.props
+		const {
+			t,
+			classes,
+			isDemo,
+			item,
+			account,
+			// ...rest
+		} = this.props
 		const { tabIndex } = this.state
 
 		return (

@@ -187,7 +187,7 @@ class CampaignTargeting extends Component {
 	render() {
 		const {
 			t,
-			newItem,
+			// newItem,
 			classes
 		} = this.props
 		// const { targeting, tags } = newItem

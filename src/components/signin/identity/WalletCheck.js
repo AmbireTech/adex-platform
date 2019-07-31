@@ -96,7 +96,6 @@ class WalletCheck extends Component {
     					disabled={!!word.used}
     					key={index}
     					label={word.word}
-    					disabled={word.used}
     					onClick={!word.used ? this.addUserWord.bind(this, word, index) : null}
     				/>
     			)}
@@ -119,7 +118,7 @@ class WalletCheck extends Component {
     }
 
     render() {
-    	const { t, identity } = this.props
+    	const { t } = this.props
     	const { wordsChecked } = this.state
     	return (
     		<div>

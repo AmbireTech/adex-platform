@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import NewAdSlotHoc from './NewAdSlotHoc'
 import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
-import UnitTargets from 'components/dashboard/containers/UnitTargets'
+// import UnitTargets from 'components/dashboard/containers/UnitTargets'
 import Anchor from 'components/common/anchor/anchor'
 import { PropRow, ContentBox, ContentBody } from 'components/common/dialog/content'
 import { withStyles } from '@material-ui/core/styles'
@@ -48,7 +48,7 @@ class AdSlotPreview extends Component {
 			title,
 			description,
 			temp,
-			targeting,
+			// targeting,
 			targetUrl,
 		} = newItem
 

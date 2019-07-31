@@ -217,7 +217,7 @@ class CampaignFinance extends Component {
 			validators,
 			depositAmount,
 			minPerImpression,
-			depositAsset,
+			// depositAsset,
 			activeFrom,
 			withdrawPeriodStart
 		} = newItem
