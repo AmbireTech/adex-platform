@@ -21,53 +21,58 @@ class AuthSelect extends Component {
 		let { t, classes } = this.props
 		return (
 			<div>
-				<List
+				<Grid
 					container
-					// spacing={16}
-					alignItems='center'
+					spacing={16}
+					direction='column'
+					alignItems='stretch'					
 				>
-					<ListItem item xs={12}>
+					<Grid item xs={12}>
 						<RRButton
 							variant='contained'
 							to='/identity/grant'
 							size='large'
 							color='primary'
+							fullWidth
 						>
-							{t('CREATE_GRANT_ACCOUNT')}
+							{t('CREATE_GRANT_ACCOUNT_')}
 						</RRButton>
-					</ListItem>
-					<ListItem item xs={12}>
+					</Grid>
+					<Grid item xs={12}>
 						<RRButton
 							variant='contained'
 							to='/login/grant'
 							size='large'
 							color='primary'
+							fullWidth
 						>
-							{t('LOGIN_GRANT_ACCOUNT')}
+							{t('LOGIN_GRANT_ACCOUNT_')}
 						</RRButton>
-					</ListItem>
-					<ListItem item xs={12}>
+					</Grid>
+					<Grid item xs={12}>
 						<RRButton
 							variant='contained'
 							to='/identity/full'
 							size='large'
 							color='primary'
+							fullWidth
 						>
-							{t('CREATE_FULL_ACCOUNT')}
+							{t('CREATE_FULL_ACCOUNT_')}
 						</RRButton>
-					</ListItem>
-					<ListItem item xs={12}>
+					</Grid>
+					<Grid item xs={12}>
 						<RRButton
 							variant='contained'
 							to='/login/full'
 							size='large'
 							color='primary'
+							fullWidth
 						>
-							{t('LOGIN_FULL_ACCOUNT')}
+							{t('LOGIN_FULL_ACCOUNT_')}
 						</RRButton>
-					</ListItem>
+					</Grid>
 
-				</List>
+				</Grid>
 			</div>
 		)
 	}
