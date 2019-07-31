@@ -11,16 +11,16 @@ import TableRow from '@material-ui/core/TableRow'
 import Tooltip from '@material-ui/core/Tooltip'
 import Button from '@material-ui/core/Button'
 import Checkbox from '@material-ui/core/Checkbox'
-import IconButton from '@material-ui/core/IconButton'
+// import IconButton from '@material-ui/core/IconButton'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Img from 'components/common/img/Img'
 import Rows from 'components/dashboard/collection/Rows'
 import Translate from 'components/translate/Translate'
 // import DeleteIcon from '@material-ui/icons/Delete'
-import ArchiveIcon from '@material-ui/icons/Archive'
-import UnarchiveIcon from '@material-ui/icons/Unarchive'
-import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline'
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
+// import ArchiveIcon from '@material-ui/icons/Archive'
+// import UnarchiveIcon from '@material-ui/icons/Unarchive'
+// import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline'
+// import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
@@ -40,7 +40,13 @@ const RRButton = withReactRouterLink(Button)
 
 class ItemsList extends Component {
 	renderTableHead = ({ selected }) => {
-		const { t, selectedItems, selectMode, noActions, itemType } = this.props
+		const {
+			t,
+			selectedItems,
+			selectMode,
+			noActions,
+			// itemType
+		} = this.props
 		return (
 			<TableHead>
 				<TableRow>

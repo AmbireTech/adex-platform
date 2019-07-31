@@ -1,5 +1,3 @@
-import { yellow } from "@material-ui/core/colors"
-
 export const styles = theme => {
 	const spacing = theme.spacing.unit
 	console.log(theme.palette)

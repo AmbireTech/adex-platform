@@ -107,7 +107,7 @@ export default function ItemHoc(Decorated) {
 
 			const btnLabel = t(this.props.btnLabel, { args: this.props.btnLabelArgs || [''] })
 			// TODO: fix it for fab wit text
-			const isIconBtn = (this.props.variant == 'fab') || this.props.iconButton
+			const isIconBtn = (this.props.variant === 'fab') || this.props.iconButton
 			const isDemo = isDemoMode()
 
 			const { open } = this.state

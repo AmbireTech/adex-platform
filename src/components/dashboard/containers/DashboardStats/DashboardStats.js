@@ -58,20 +58,20 @@ export class DashboardStats extends Component {
 	mapClosedBidsToStats = (bids) => {
 		return bids.reduce((memo, bid) => {
 			switch (bid._state) {
-			case BID_STATES.Canceled.id:
-				memo.canceled.count += 1
-				memo.canceled.amount += parseInt(bid._amount, 10)
-				break
-			case BID_STATES.Expired.id:
-				memo.expired.count += 1
-				memo.expired.amount += parseInt(bid._amount, 10)
-				break
-			case BID_STATES.Completed.id:
-				memo.completed.count += 1
-				memo.completed.amount += parseInt(bid._amount, 10)
-				break
-			default:
-				break
+				case BID_STATES.Canceled.id:
+					memo.canceled.count += 1
+					memo.canceled.amount += parseInt(bid._amount, 10)
+					break
+				case BID_STATES.Expired.id:
+					memo.expired.count += 1
+					memo.expired.amount += parseInt(bid._amount, 10)
+					break
+				case BID_STATES.Completed.id:
+					memo.completed.count += 1
+					memo.completed.amount += parseInt(bid._amount, 10)
+					break
+				default:
+					break
 			}
 
 			return memo
@@ -172,16 +172,20 @@ export class DashboardStats extends Component {
 
 	// TODO: Common func to get account stats for here and account component
 	InfoStats = ({ stats }) => {
-		const { t, side, account } = this.props
-		const spentEarned = side === 'publisher' ? 'LABEL_TOTAL_REVENUE' : 'LABEL_TOTAL_EXPENSES'
+		const {
+			t,
+			// side,
+			account
+		} = this.props
+		// const spentEarned = side === 'publisher' ? 'LABEL_TOTAL_REVENUE' : 'LABEL_TOTAL_EXPENSES'
 
 		const formatted = account.stats.formatted || {}
 		const {
 			// walletAddress,
 			// walletAuthType,
 			// walletPrivileges,
-			walletBalanceEth,
-			walletBalanceDai,
+			// walletBalanceEth,
+			// walletBalanceDai,
 			// identityAddress,
 			identityBalanceDai,
 			outstandingBalanceDai,
@@ -248,7 +252,13 @@ export class DashboardStats extends Component {
 	}
 
 	render() {
-		const { side, sideBids, classes, t, account } = this.props
+		const {
+			side,
+			// sideBids,
+			classes,
+			t,
+			account
+		} = this.props
 		if (side !== 'advertiser' && side !== 'publisher') {
 			return (
 				<SideSelect active={true} />

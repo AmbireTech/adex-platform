@@ -61,7 +61,7 @@ class IdentityContractAddressEthTransaction extends Component {
 	}
 
 	render() {
-		const { identity, t, classes, handleChange } = this.props
+		const { identity, t, classes } = this.props
 		const { identityAddr } = identity || {}
 
 		return (

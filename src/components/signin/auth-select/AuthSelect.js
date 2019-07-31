@@ -5,8 +5,6 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
 
 const RRButton = withReactRouterLink(Button)
 
@@ -18,7 +16,7 @@ class AuthSelect extends Component {
 	}
 
 	render() {
-		let { t, classes } = this.props
+		let { t } = this.props
 		return (
 			<div>
 				<Grid

@@ -23,31 +23,31 @@ const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
 		})
 }
 
-const uploadImages = ({ item, authSig }) => {
-	let imgIpfsProm = Promise.resolve()
-	let fallbackImgIpfsProm = Promise.resolve()
+// const uploadImages = ({ item, authSig }) => {
+// 	let imgIpfsProm = Promise.resolve()
+// 	let fallbackImgIpfsProm = Promise.resolve()
 
-	if (item._meta.img.tempUrl) {
-		imgIpfsProm = getImgsIpfsFromBlob({ tempUrl: item._meta.img.tempUrl, authSig: authSig })
-	}
+// 	if (item._meta.img.tempUrl) {
+// 		imgIpfsProm = getImgsIpfsFromBlob({ tempUrl: item._meta.img.tempUrl, authSig: authSig })
+// 	}
 
-	if (item._fallbackAdImg && item._fallbackAdImg.tempUrl) {
-		fallbackImgIpfsProm = getImgsIpfsFromBlob({ tempUrl: item._fallbackAdImg.tempUrl, authSig: authSig })
-	}
+// 	if (item._fallbackAdImg && item._fallbackAdImg.tempUrl) {
+// 		fallbackImgIpfsProm = getImgsIpfsFromBlob({ tempUrl: item._fallbackAdImg.tempUrl, authSig: authSig })
+// 	}
 
-	return Promise.all([imgIpfsProm, fallbackImgIpfsProm])
-		.then(([imgIpf, fallbackImgIpfs]) => {
-			if (imgIpf) {
-				item._meta.img = { ipfs: imgIpf.ipfs }
-			}
+// 	return Promise.all([imgIpfsProm, fallbackImgIpfsProm])
+// 		.then(([imgIpf, fallbackImgIpfs]) => {
+// 			if (imgIpf) {
+// 				item._meta.img = { ipfs: imgIpf.ipfs }
+// 			}
 
-			if (fallbackImgIpfs) {
-				item._fallbackAdImg = { ipfs: fallbackImgIpfs.ipfs }
-			}
+// 			if (fallbackImgIpfs) {
+// 				item._fallbackAdImg = { ipfs: fallbackImgIpfs.ipfs }
+// 			}
 
-			return item
-		})
-}
+// 			return item
+// 		})
+// }
 
 export function updateNewItem(item, newValues, itemType, objModel) {
 	item = Base.updateObject({ item, newValues, objModel })

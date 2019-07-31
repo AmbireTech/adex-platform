@@ -72,8 +72,8 @@ class AccountInfo extends React.Component {
 			walletAddress,
 			walletAuthType,
 			walletPrivileges,
-			walletBalanceEth,
-			walletBalanceDai,
+			// walletBalanceEth,
+			// walletBalanceDai,
 			identityAddress,
 			identityBalanceDai
 		} = formatted
