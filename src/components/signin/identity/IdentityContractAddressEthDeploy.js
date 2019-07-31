@@ -209,7 +209,7 @@ class IdentityContractAddressEthDeploy extends Component {
 						<Typography paragraph variant='body1'>
 							{t('GENERATE_FULL_IDENTITY_INFO_ADDRESS')}
 						</Typography>
-						{!identityData
+						{!(identityData || {}).address
 							?
 							<span className={classes.buttonProgressWrapper}>
 								<Button
