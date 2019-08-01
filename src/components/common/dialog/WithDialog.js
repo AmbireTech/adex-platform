@@ -90,7 +90,9 @@ export default function ItemHoc(Decorated) {
 			const {
 				iconButton,
 				textButton,
+				fabButton,
 				variant,
+				fabVariant,
 				color,
 				size,
 				mini,
@@ -107,23 +109,22 @@ export default function ItemHoc(Decorated) {
 
 			let ButtonComponent = Button
 
+			const btnProps = {
+				color,
+				size,
+				mini,
+				variant
+			}
+
 			if (iconButton) {
 				ButtonComponent = IconButton
 			} else if (textButton) {
 				ButtonComponent = TextBtn
-			} else if (variant === 'fab') {
+			} else if (fabButton) {
 				ButtonComponent = Fab
 			}
 
-			const btnProps = {
-				color,
-				size,
-				mini
-			}
-
 			const btnLabel = t(this.props.btnLabel, { args: btnLabelArgs || [''] })
-			// TODO: fix it for fab wit text
-			const isIconBtn = (variant === 'fab') || iconButton
 			const isDemo = isDemoMode()
 
 			const { open } = this.state
@@ -139,13 +140,13 @@ export default function ItemHoc(Decorated) {
 						// style={this.props.style}
 						className={classnames(
 							className,
-							{ [classes.floating]: variant === 'fab' },
+							{ [classes.floating]: !!fabButton },
 							{ [classes.first]: color === 'first' },
 							{ [classes.second]: color === 'second' }
 						)}
 					>
-						{icon && <Icon className={classnames({ [classes.btnIconLeft]: !isIconBtn })} > {icon}</Icon>}
-						{!isIconBtn && btnLabel}
+						{icon && <Icon className={classnames({ [classes.btnIconLeft]: !iconButton })} > {icon}</Icon>}
+						{!iconButton && btnLabel}
 					</ButtonComponent>
 					<Dialog
 						// disableBackdropClick
