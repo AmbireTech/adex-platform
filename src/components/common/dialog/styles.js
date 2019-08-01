@@ -1,7 +1,7 @@
 import grey from '@material-ui/core/colors/grey'
 
 export const styles = theme => {
-	const spacing = theme.spacing.unit * 3
+	const spacing = theme.spacing(3)
 	const fullHeight = Math.max(window.innerHeight - spacing, 400)
 	return {
 		dialog: {
@@ -12,10 +12,10 @@ export const styles = theme => {
 			// maxHeight: `${fullHeight}`,
 			'@media(max-width:1080px)': {
 				maxWidth: '100%',
-				minWidth: `calc(100vw - ${theme.spacing.unit * 2}px)`,
+				minWidth: `calc(100vw - ${theme.spacing(2)}px)`,
 			},
 			'@media(max-height:823px)': {
-				minHeight: `calc(${fullHeight} - ${theme.spacing.unit * 2}px)`,
+				minHeight: `calc(${fullHeight} - ${theme.spacing(2)}px)`,
 			}
 		},
 		dialogTitle: {
@@ -56,21 +56,21 @@ export const styles = theme => {
 		},
 		contentTopLoadingCircular: {
 			flexShrink: 0,
-			marginRight: theme.spacing.unit
+			marginRight: theme.spacing(1)
 		},
 		contentTopLoading: {
 			display: 'flex',
 			flexDirection: 'row',
 			alignItems: 'center',
 			'& > div': {
-				padding: theme.spacing.unit
+				padding: theme.spacing(1)
 			}
 		},
 		textBtn: {
 			cursor: 'pointer'
 		},
 		btnIconLeft: {
-			marginRight: theme.spacing.unit
+			marginRight: theme.spacing(1)
 		},
 		leftCol: {
 			textTransform: 'uppercase',

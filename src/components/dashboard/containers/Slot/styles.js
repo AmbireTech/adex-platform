@@ -1,5 +1,5 @@
 export const styles = theme => {
-	const spacing = theme.spacing.unit
+	const spacing = theme.spacing(1)
 	return {
 		integrationLabel: {
 			marginBottom: spacing,

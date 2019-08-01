@@ -1,5 +1,5 @@
 export const styles = theme => {
-	const spacing = theme.spacing.unit
+	const spacing = theme.spacing(1)
 	return {
 		snackbar: {
 			border: '3px solid',
@@ -27,7 +27,7 @@ export const styles = theme => {
 		},
 		iconVariant: {
 			opacity: 0.9,
-			marginRight: theme.spacing.unit,
+			marginRight: spacing,
 		},
 		message: {
 			display: 'flex',
