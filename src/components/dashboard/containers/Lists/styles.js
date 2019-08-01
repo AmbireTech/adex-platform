@@ -1,5 +1,5 @@
 export const styles = theme => {
-	const spacing = theme.spacing.unit
+	const spacing = theme.spacing(1)
 	// const iconButtonSize = 48 - (spacing * 2)
 	return {
 		controls: {

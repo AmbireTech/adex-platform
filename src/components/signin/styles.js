@@ -1,6 +1,5 @@
 export const styles = theme => {
-	const spacing = theme.spacing.unit
-	console.log(theme.palette)
+	const spacing = theme.spacing(1)
 	return {
 		root: {
 			// flexGrow: 1,

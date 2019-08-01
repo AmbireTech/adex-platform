@@ -36,13 +36,13 @@ export const styles = theme => {
 			display: 'flex',
 			alignItems: 'center',
 			flexBasis: '100%',
-			paddingTop: theme.spacing.unit * 0.5,
-			paddingBottom: theme.spacing.unit * 0.5,
+			paddingTop: theme.spacing(0.5),
+			paddingBottom: theme.spacing(0.5),
 			'&:last-child': {
 				paddingRight: 100,
-				paddingTop: theme.spacing.unit * 1.5,
-				paddingBottom: theme.spacing.unit * 1.5,
-				paddingLeft: theme.spacing.unit * 1.5,
+				paddingTop: theme.spacing(1.5),
+				paddingBottom: theme.spacing(1.5),
+				paddingLeft: theme.spacing(1.5),
 			},
 
 		},
@@ -73,8 +73,8 @@ export const styles = theme => {
 		content: {
 			flexGrow: 1,
 			backgroundColor: theme.palette.background.default,
-			padding: theme.spacing.unit * 3,
-			paddingTop: theme.spacing.unit * 5,
+			padding: theme.spacing(3),
+			paddingTop: theme.spacing(5),
 			overflow: 'auto',
 			[theme.breakpoints.up('md')]: {
 				marginLeft: drawerWidth,
@@ -88,7 +88,7 @@ export const styles = theme => {
 			height: 36,
 			width: 'auto',
 			// marginRight: 10,
-			// paddingLeft: theme.spacing.unit * 1.5,
+			// paddingLeft: theme.spacing(1.5),
 			// [theme.breakpoints.down('xs')]: {
 			//     display: 'none',
 			// },
@@ -146,7 +146,7 @@ export const styles = theme => {
 			opacity: 0.5
 		},
 		actionCount: {
-			marginTop: theme.spacing.unit,
+			marginTop: theme.spacing(1),
 		}
 	}
 }
