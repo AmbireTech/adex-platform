@@ -95,7 +95,7 @@ class SideNav extends Component {
 							<ListItemIcon>
 								<DashboardIcon />
 							</ListItemIcon>
-							<ListItemText inset primary={t('DASHBOARD')} />
+							<ListItemText primary={t('DASHBOARD')} />
 						</RRListItem>
 						<ListDivider
 						/>
@@ -109,7 +109,7 @@ class SideNav extends Component {
 									<ListItemIcon>
 										<CampaignIcon />
 									</ListItemIcon>
-									<ListItemText inset primary={t('CAMPAIGNS')} />
+									<ListItemText primary={t('CAMPAIGNS')} />
 								</RRListItem>
 
 								<ListItem
@@ -133,7 +133,7 @@ class SideNav extends Component {
 							<ListItemIcon>
 								<Icon>{itemsIcon}</Icon>
 							</ListItemIcon>
-							<ListItemText inset primary={t(items.toUpperCase())} />
+							<ListItemText primary={t(items.toUpperCase())} />
 						</RRListItem>
 						<ListItem
 							className={classes.newItemBtn}
@@ -164,7 +164,7 @@ class SideNav extends Component {
 										</Badge> : <SwapHorizontalIcon />}
 								</span>
 							</ListItemIcon>
-							<ListItemText inset primary={t('TRANSACTIONS')} />
+							<ListItemText primary={t('TRANSACTIONS')} />
                         </RRListItem> */}
 					</div>
 					<div>
@@ -175,7 +175,7 @@ class SideNav extends Component {
 								<ListItemIcon>
 									<HelpOutlineIcon />
 								</ListItemIcon>
-								<ListItemText inset primary={t('HELP')} />
+								<ListItemText primary={t('HELP')} />
 							</ListItem>
 						</Anchor>
 
@@ -186,7 +186,7 @@ class SideNav extends Component {
 								<ListItemIcon>
 									<SwapHorizontalIcon />
 								</ListItemIcon>
-								<ListItemText inset primary={t('TRANSACTIONS')} />
+								<ListItemText primary={t('TRANSACTIONS')} />
 							</ListItem>
 						</Anchor>
 
@@ -198,7 +198,7 @@ class SideNav extends Component {
 							<ListItemIcon>
 								<AccountBoxIcon />
 							</ListItemIcon>
-							<ListItemText inset primary={t('ACCOUNT')} />
+							<ListItemText primary={t('ACCOUNT')} />
 						</RRListItem>
 					</div>
 				</List>
