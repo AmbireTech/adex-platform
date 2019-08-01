@@ -34,7 +34,7 @@ class CampaignFormPreview extends Component {
 						listMode
 						itemType={'AdUnit'}
 						noControls
-						padding='dense'
+						size='small'
 						noActions
 						sortProperties={[]}
 						viewModeId={'newCampaignAdUnitsPreview'}
