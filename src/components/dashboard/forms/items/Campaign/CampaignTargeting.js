@@ -126,7 +126,7 @@ class CampaignTargeting extends Component {
 		return (
 			<Grid
 				container
-				spacing={16}
+				spacing={2}
 			>
 				<Grid item xs={12} md={6} >
 					<Autocomplete
@@ -198,7 +198,7 @@ class CampaignTargeting extends Component {
 			<div>
 				<Grid
 					container
-					spacing={24}
+					spacing={1}
 				>
 					<Grid item sm={12}>
 						{[...targets].map(({

@@ -109,7 +109,7 @@ class IdentityContractAddress extends Component {
 			<div>
 				<Grid
 					container
-					spacing={16}
+					spacing={2}
 				>
 					<Grid item sm={6}>
 						<this.tokenSelect classes={classes} />

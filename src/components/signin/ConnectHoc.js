@@ -25,7 +25,7 @@ export default function ConnectHoc(Decorated) {
 						className={classes.container}
 						container
 						alignItems='stretch'
-					// spacing={16}
+					// spacing={2}
 					>
 						<Grid
 							className={classes.actions}

@@ -127,7 +127,7 @@ class IdentityContractAddressEthDeploy extends Component {
 			<div>
 				<Grid
 					container
-					spacing={16}
+					spacing={2}
 				>
 					{ACCESS_CODE_CHECK &&
 						<Grid item xs={12}>
