@@ -120,8 +120,8 @@ class Root extends Component {
 		// TODO: check if computedMatch or language change need to update
 		const authChanged = this.props.auth !== nextProps.auth
 		const locationChanged =
-			JSON.stringify(this.props.location.pathname) !==
-			JSON.stringify(nextProps.location.pathname)
+			JSON.stringify(this.props.location) !==
+			JSON.stringify(nextProps.location)
 
 		return authChanged || locationChanged
 	}
