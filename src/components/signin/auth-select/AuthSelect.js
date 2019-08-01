@@ -5,6 +5,9 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import { getAuthLogo } from 'helpers/logosHelpers'
+import Img from 'components/common/img/Img'
+import classnames from 'classnames'
 
 const RRButton = withReactRouterLink(Button)
 
@@ -16,14 +19,14 @@ class AuthSelect extends Component {
 	}
 
 	render() {
-		let { t } = this.props
+		const { t, classes } = this.props
 		return (
 			<div>
 				<Grid
 					container
 					spacing={2}
 					direction='column'
-					alignItems='stretch'					
+					alignItems='stretch'
 				>
 					<Grid item xs={12}>
 						<RRButton
@@ -54,7 +57,13 @@ class AuthSelect extends Component {
 							size='large'
 							color='primary'
 							fullWidth
+							className={classes.metamaskBtn}
 						>
+							<Img
+								src={getAuthLogo('metamask')}
+								alt={t('AUTH_WITH_METAMASK')}
+								className={classes.btnLogo}
+							/>
 							{t('METAMASK')}
 						</RRButton>
 					</Grid>
@@ -65,8 +74,17 @@ class AuthSelect extends Component {
 							size='large'
 							color='primary'
 							fullWidth
+							className={classes.trezorBtn}
 						>
-							{t('TREZOR')}
+							<Img
+								src={getAuthLogo('trezor')}
+								alt={t('AUTH_WITH_TREZOR')}
+								className={classnames(
+									classes.btnLogo,
+									classes.btnLogoNoTxt
+								)}
+							/>
+							{/* {t('TREZOR')} */}
 						</RRButton>
 					</Grid>
 
