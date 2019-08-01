@@ -12,6 +12,7 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
+import Fab from '@material-ui/core/Fab'
 import Translate from 'components/translate/Translate'
 import { validations, helpers } from 'adex-models'
 import { isVideoMedia } from 'helpers/mediaHelpers.js'
@@ -167,15 +168,14 @@ class Img extends Component {
 		const { classes } = this.props
 		return (
 			<span>
-				<Button
-					variant='fab'
+				<Fab
 					mini
 					color='default'
 					className={classnames(classes.fullscreenIcon)}
 					onClick={() => { this.handleToggle() }}
 				>
 					<FullscreenIcon />
-				</Button>
+				</Fab>
 				{this.renderFullscreenDialog()}
 			</span>
 		)
