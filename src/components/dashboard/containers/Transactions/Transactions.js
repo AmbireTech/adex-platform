@@ -25,7 +25,6 @@ const SORT_PROPERTIES = [
 
 const TableCell = ({ children, ...rest }) =>
 	<TableCellMui
-		padding='dense'
 		{...rest}
 	>
 		{!!children && children}

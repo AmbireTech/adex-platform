@@ -29,7 +29,6 @@ import { bigNumberify } from 'ethers/utils'
 
 const TableCell = ({ children, ...rest }) =>
 	<TableCellMui
-		padding='dense'
 		{...rest}
 	>
 		{!!children && children}
