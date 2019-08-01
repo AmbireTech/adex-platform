@@ -4,6 +4,7 @@ import pink from '@material-ui/core/colors/pink'
 import lime from '@material-ui/core/colors/lime'
 import deepOrange from '@material-ui/core/colors/deepOrange'
 import amber from '@material-ui/core/colors/amber'
+import grey from '@material-ui/core/colors/grey'
 
 const palette = {
 	primary: blue,
@@ -13,6 +14,7 @@ const palette = {
 	first: lime,
 	contrastThreshold: 3,
 	tonalOffset: 0.2,
+	text: grey
 }
 
 export const themeMUI = createMuiTheme({
