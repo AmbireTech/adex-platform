@@ -336,7 +336,7 @@ export default function ItemHoc(Decorated) {
 														className={classnames(classes.img, { [classes.pointer]: this.props.canEditImg && !isDemo })}
 													/>
 													<Button
-														variant='fab'
+														fabButton
 														mini
 														color='secondary'
 														className={classes.editIcon}
