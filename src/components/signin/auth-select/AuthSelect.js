@@ -55,7 +55,7 @@ class AuthSelect extends Component {
 							variant='contained'
 							to='/login/full?metamask'
 							size='large'
-							color='primary'
+							color='default'
 							fullWidth
 							className={classes.metamaskBtn}
 						>
@@ -72,7 +72,7 @@ class AuthSelect extends Component {
 							variant='contained'
 							to='/login/full?trezor'
 							size='large'
-							color='primary'
+							color='default'
 							fullWidth
 							className={classes.trezorBtn}
 						>
