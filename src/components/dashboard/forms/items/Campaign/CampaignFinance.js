@@ -241,7 +241,7 @@ class CampaignFinance extends Component {
 			<div>
 				<Grid
 					container
-					spacing={16}
+					spacing={2}
 				>
 					<Grid item xs={12}>
 						<Dropdown

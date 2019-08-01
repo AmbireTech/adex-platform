@@ -10,7 +10,7 @@ export function ExternalConnect(props) {
 
 	return (<Grid
 		container
-		spacing={16}
+		spacing={2}
 	>
 		{!connectType &&
 			<div>

@@ -68,7 +68,7 @@ class IdentityContractAddressEthTransaction extends Component {
 			<div>
 				<Grid
 					container
-					spacing={16}
+					spacing={2}
 				>
 					<Grid item sm={12} >
 						<Paper className={classes.infoPaper} elevation={1}>

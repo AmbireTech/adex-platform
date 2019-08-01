@@ -27,7 +27,7 @@ class AuthMethod extends Component {
 		return (
 			<Grid
 				container
-				spacing={16}
+				spacing={2}
 				direction='row'
 				alignContent='flex-start'
 			>

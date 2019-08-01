@@ -143,9 +143,9 @@ const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, itemTyp
 	const mediaMime = item.mediaMime
 
 	return (
-		<Grid container spacing={16}>
+		<Grid container spacing={2}>
 			<Grid item xs={12} sm={12} md={12} lg={7}>
-				<Grid container spacing={16}>
+				<Grid container spacing={2}>
 					<Grid item xs={12} sm={5} md={5} lg={5} >
 						{
 							itemType === 'AdSlot'
@@ -163,7 +163,7 @@ const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, itemTyp
 						}
 					</Grid>
 					<Grid item xs={12} sm={7} md={7} lg={7} >
-						<Grid container spacing={8}>
+						<Grid container spacing={1}>
 							<Grid item xs={12} >
 
 								<TextField
@@ -208,13 +208,13 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 	// console.log('item', item)
 	return (
 		<div >
-			<Grid container spacing={16}>
+			<Grid container spacing={2}>
 				<Grid item xs={12} sm={12} md={12} lg={8}>
 					<div >
 						<div
 							className={classes.basicInfo}
 						>
-							<Grid container spacing={16}>
+							<Grid container spacing={2}>
 								<Grid item xs={12} sm={5} md={5} lg={5} >
 									<MediaCard
 										classes={classes}
@@ -226,9 +226,9 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 									/>
 								</Grid>
 								<Grid item xs={12} sm={7} md={7} lg={7} >
-									<Grid container spacing={8}>
+									<Grid container spacing={1}>
 										<Grid item xs={12} sm={12} md={6} >
-											<Grid container spacing={8}>
+											<Grid container spacing={1}>
 												<Grid item xs={12} >
 													<TextField
 														// type='text'
@@ -274,7 +274,7 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 											</Grid>
 										</Grid>
 										<Grid item xs={12} sm={12} md={6} >
-											<Grid container spacing={8}>
+											<Grid container spacing={1}>
 												<Grid item xs={12} >
 													<TextField
 														// type='text'

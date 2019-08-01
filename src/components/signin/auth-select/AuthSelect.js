@@ -21,7 +21,7 @@ class AuthSelect extends Component {
 			<div>
 				<Grid
 					container
-					spacing={16}
+					spacing={2}
 					direction='column'
 					alignItems='stretch'					
 				>
