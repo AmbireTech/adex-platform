@@ -13,12 +13,12 @@ class FormSteps extends Component {
 	}
 
 	render() {
-		let pages = []
+		const pages = []
 		const { t, SaveBtn, CancelBtn, onSave, stepsId, stepsPages, stepsPreviewPage, validateIdBase, ...rest } = this.props
 		const cancelButton = () => <CancelBtn  {...rest} stepsId={stepsId} onSave={onSave} t={t} />
 		const validateId = (validateIdBase || '') + '-' + stepsId
 
-		stepsPages.foreach((page, index) => {
+		stepsPages.forEach((page, index) => {
 			pages.push({
 				title: t(page.title),
 				cancelBtn: cancelButton,
@@ -47,6 +47,7 @@ FormSteps.propTypes = {
 	title: PropTypes.string,
 	itemPages: PropTypes.arrayOf(PropTypes.func),
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+	stepsPages: PropTypes.arrayOf(PropTypes.object)
 }
 
 export default Translate(FormSteps)
