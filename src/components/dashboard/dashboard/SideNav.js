@@ -12,7 +12,6 @@ import Icon from '@material-ui/core/Icon'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
 import Translate from 'components/translate/Translate'
-import { NewUnitDialog, NewCampaignDialog, NewSlotDialog } from 'components/dashboard/forms/items/NewItems'
 import classnames from 'classnames'
 import packageJson from './../../../../package.json'
 import Anchor from 'components/common/anchor/anchor'
@@ -56,7 +55,6 @@ class SideNav extends Component {
 		const location = this.props.location.pathname.split('/')[3]
 		const isAdvertiser = side === 'advertiser'
 		const items = (isAdvertiser ? 'units' : 'slots')
-		const NewItemBtn = (isAdvertiser ? NewUnitDialog : NewSlotDialog)
 		const itemsIcon = (isAdvertiser ? 'format_list_bulleted' : 'format_list_bulleted')
 		// const pendingTrsCount = (transactions.pendingTxs || []).length
 
@@ -100,7 +98,7 @@ class SideNav extends Component {
 						<ListDivider
 						/>
 						{side === 'advertiser' &&
-							<div>
+							<>
 								<RRListItem
 									button
 									to={{ pathname: '/dashboard/advertiser/campaigns' }}
@@ -111,19 +109,8 @@ class SideNav extends Component {
 									</ListItemIcon>
 									<ListItemText primary={t('CAMPAIGNS')} />
 								</RRListItem>
-
-								<ListItem
-									className={classes.newItemBtn}
-								>
-									<NewCampaignDialog
-										className={classes.newItemBtn}
-										color='primary'
-										variant='contained'
-									// btnClasses={classes.newItemBtn}
-									/>
-								</ListItem>
 								<ListDivider />
-							</div>
+							</>
 						}
 						<RRListItem
 							button
@@ -135,15 +122,6 @@ class SideNav extends Component {
 							</ListItemIcon>
 							<ListItemText primary={t(items.toUpperCase())} />
 						</RRListItem>
-						<ListItem
-							className={classes.newItemBtn}
-						>
-							<NewItemBtn
-								className={classes.newItemBtn}
-								color='primary'
-								variant='contained'
-							/>
-						</ListItem>
 						<ListDivider
 						/>
 
