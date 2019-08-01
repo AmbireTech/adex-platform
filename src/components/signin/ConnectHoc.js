@@ -6,6 +6,7 @@ import actions from 'actions'
 import Logo from 'components/common/icons/AdexIconTxt'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
+import Box from '@material-ui/core/Box'
 import packageJson from './../../../package.json'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
@@ -33,9 +34,21 @@ export default function ConnectHoc(Decorated) {
 							xs={12}
 							md={8}
 						>
-							<Decorated
-								{...rest}
-							/>
+							<Box
+								width={1}
+								height={1}
+								p={4}
+							>
+								<Box
+									width={1}
+									height={1}
+									position='relative'
+								>
+									<Decorated
+										{...rest}
+									/>
+								</Box>
+							</Box>
 						</Grid>
 						<Grid
 							item
