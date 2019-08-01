@@ -6,6 +6,7 @@ import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
+import Fab from '@material-ui/core/Fab'
 import EditIcon from '@material-ui/icons/Edit'
 import Img from 'components/common/img/Img'
 import { validUrl } from 'helpers/validators'
@@ -38,8 +39,7 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, isD
 					style={{ cursor: 'pointer' }}
 				/>
 			</CardMedia>
-			<Button
-				variant='fab'
+			<Fab
 				mini
 				color='secondary'
 				onClick={rest.toggleFallbackImgEdit}
@@ -47,7 +47,7 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, isD
 				disabled={isDemo}
 			>
 				<EditIcon />
-			</Button>
+			</Fab>
 			<CardContent>
 				{rest.activeFields.fallbackTargetUrl ?
 					<TextField
