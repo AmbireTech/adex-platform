@@ -13,9 +13,9 @@ import {
 	LoginGrantIdentity,
 	LoginStandardIdentity
 } from 'components/signin/identity/Identity'
-import AuthSelect from 'components/signin/auth-select/AuthSelect'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
+import Home from 'components/signin/Home'
 import Translate from 'components/translate/Translate'
 // import { getSig } from 'services/auth/auth'
 import { AUTH_TYPES } from 'constants/misc'
@@ -23,9 +23,9 @@ import { AUTH_TYPES } from 'constants/misc'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(CreateGrantIdentity)
 const ConnectedGrantLogin = ConnectHoc(LoginGrantIdentity)
-const ConnectedAuthSelect = ConnectHoc(AuthSelect)
 const ConnectedCreateFullIdentity = ConnectHoc(CreteFullIdentity)
 const ConnectedLoginStandardIdentity = ConnectHoc(LoginStandardIdentity)
+const ConnectedRoot = ConnectHoc(Home)
 
 function PrivateRoute({ component: Component, auth, ...other }) {
 	return (
@@ -121,8 +121,8 @@ class Root extends Component {
 		// TODO: check if computedMatch or language change need to update
 		const authChanged = this.props.auth !== nextProps.auth
 		const locationChanged =
-			JSON.stringify(this.props.location.pathname) !== 
-			JSON.stringify(nextProps.location.pathname)
+			JSON.stringify(this.props.location) !==
+			JSON.stringify(nextProps.location)
 
 		return authChanged || locationChanged
 	}
@@ -132,7 +132,7 @@ class Root extends Component {
 			<Switch >
 				<PrivateRoute auth={this.props.auth} path="/dashboard/:side" component={Dashboard} />
 				<PrivateRoute auth={this.props.auth} path="/side-select" component={SideSelect} />
-				<Route exact path="/" component={(props) => <ConnectedAuthSelect {...props} noBackground />} />
+				<Route exact path="/" component={(props) => <ConnectedRoot {...props} noBackground />} />
 				<Route exact path="/identity/grant" component={(props) => <ConnectedCreateGrantIdentity {...props} noBackground />} />
 				<Route exact path="/login/grant" component={(props) => <ConnectedGrantLogin {...props} noBackground />} />
 				<Route exact path="/login/full" component={(props) => <ConnectedLoginStandardIdentity {...props} noBackground />} />

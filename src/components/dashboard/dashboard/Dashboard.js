@@ -88,7 +88,12 @@ class Dashboard extends React.Component {
 				header={this.props.t('ALL_UNITS')}
 				viewModeId='rowsViewUnits'
 				itemType={'AdUnit'}
-				newItemBtn={() => <NewUnitDialog variant='fab' color='secondary' />}
+				newItemBtn={() => <NewUnitDialog
+					fabButton
+					variant='extended'
+					color='secondary'
+					btnLabel='NEW_UNIT'
+				/>}
 				objModel={AdUnitModel}
 				sortProperties={SORT_PROPERTIES_ITEMS}
 				filterProperties={FILTER_PROPERTIES_ITEMS}
@@ -103,7 +108,13 @@ class Dashboard extends React.Component {
 				header={this.props.t('ALL_CAMPAIGNS')}
 				viewModeId='rowsViewCampaigns'
 				itemType={'Campaign'}
-				newItemBtn={() => <NewCampaignDialog variant='fab' accent color='secondary' />}
+				newItemBtn={() => <NewCampaignDialog
+					fabButton
+					variant='extended'
+					accent
+					color='secondary'
+					btnLabel='NEW_CAMPAIGN'
+				/>}
 				objModel={CampaignModel}
 				sortProperties={SORT_PROPERTIES_CAMPAIGN}
 				uiStateId='campaigns'
@@ -118,7 +129,13 @@ class Dashboard extends React.Component {
 				header={this.props.t('ALL_SLOTS')}
 				viewModeId='rowsViewSlots'
 				itemType={'AdSlot'}
-				newItemBtn={() => <NewSlotDialog variant='fab' accent color='secondary' />}
+				newItemBtn={() => <NewSlotDialog
+					fabButton
+					variant='extended'
+					accent
+					color='secondary'
+					btnLabel='NEW_SLOT'
+				/>}
 				objModel={AdSlotModel}
 				sortProperties={SORT_PROPERTIES_ITEMS}
 				filterProperties={FILTER_PROPERTIES_ITEMS}

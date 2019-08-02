@@ -2,14 +2,14 @@ import React from 'react'
 import Button from '@material-ui/core/Button'
 import IdentityHoc from './IdentityHoc'
 import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
-import IdentityContractAddressEthTransaction from './IdentityContractAddressEthTransaction'
+// import IdentityContractAddressEthTransaction from './IdentityContractAddressEthTransaction'
 import IdentityContractOwner from './IdentityContractOwner'
-import AllInOneTest from './OneStepToTestThemAll'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import GrantInfo from './GrantInfo'
 import GrantDeploy from './GrantDeploy'
 import GrantLogin from './GrantLogin'
-import FullLogin from './FullLogin'
+// import FullLogin from './FullLogin'
+import { ExternalConnect } from './ExternalWalletConnect'
 import IdentitySteps from './IdentitySteps'
 // import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
@@ -88,7 +88,7 @@ export const LoginStandardIdentity = (props) =>
 		stepsId='full-identity-login'
 		stepsPages={[
 			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
-			{ title: 'LOGIN_STANDARD_IDENTITY', page: FullLogin, final: true },
+			{ title: 'CONNECT_STANDARD_IDENTITY', page: ExternalConnect, final: true },
 		]}
 	/>
 
@@ -97,6 +97,5 @@ export const DemoIdentity = (props) =>
 		{...props}
 		{...common}
 		stepsPages={[
-			{ title: 'TEST_THIS_DEMO_IF_YOU_WANT_TEST', page: AllInOneTest }
 		]}
 	/>

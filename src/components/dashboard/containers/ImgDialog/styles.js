@@ -1,5 +1,5 @@
 export const styles = theme => {
-	// const spacing = theme.spacing.unit * 3
+	// const spacing = theme.spacing(3)
 	return {
 	}
 }

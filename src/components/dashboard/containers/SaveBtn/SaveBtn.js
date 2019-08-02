@@ -6,7 +6,7 @@ import actions from 'actions'
 import Translate from 'components/translate/Translate'
 // import classnames from 'classnames'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import Button from '@material-ui/core/Button'
+import Fab from '@material-ui/core/Fab'
 import CheckIcon from '@material-ui/icons/Check'
 import SaveIcon from '@material-ui/icons/Save'
 import { withStyles } from '@material-ui/core/styles'
@@ -16,22 +16,22 @@ import { styles } from './styles'
 class SaveBtn extends Component {
 
 	render() {
-		let { t, spinner, classes, success, dirtyProps, save, validations, validationId, className, spinnerId, ...other } = this.props
+		let { spinner, classes, success, dirtyProps, save, validations, validationId } = this.props
 		return (
 
 			<div className={classes.position}>
 				<div className={classes.wrapper}>
-					<Button
-						variant="fab"
-						color="primary"
+					<Fab
+						variant='fab'
+						color='primary'
 						// className={buttonClassname}
 						onClick={() => save()}
 						disabled={spinner || !dirtyProps.length || !!Object.keys(validations[validationId] || {}).length}
-						// {...other}
+					// {...other}
 					>
 						{/*TODO: Success */}
 						{success ? <CheckIcon /> : <SaveIcon />}
-					</Button>
+					</Fab>
 					{!!spinner && <CircularProgress size={68} className={classes.fabProgress} />}
 				</div>
 			</div>

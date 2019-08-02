@@ -1,8 +1,8 @@
 import configureStore from 'store/configureStore'
 import actions from 'actions'
 import { getTransactionsReceipts } from 'services/smart-contracts/actions/ethers'
-import { exchange as ExchangeConstants } from 'adex-constants'
-const { TX_STATUS } = ExchangeConstants
+// import { exchange as ExchangeConstants } from 'adex-constants'
+// const { TX_STATUS } = ExchangeConstants
 const { store } = configureStore
 
 let transactionsCheckTimeout = null

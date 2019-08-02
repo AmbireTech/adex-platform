@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles'
 
 // TODO: fix responsive styles
 const propRow = ({ classes, left, right, className, classNameLeft, classNameRight, style = {} }) =>
-	<Grid item container spacing={16} xs={12} className={classnames(className)} style={style}>
+	<Grid item container spacing={2} xs={12} className={classnames(className)} style={style}>
 		<Grid item xs={12} sm={4} lg={3} className={classnames(classes.leftCol, classes.uppercase, classNameLeft)}>{left}</Grid >
 		<Grid item xs={12} sm={8} lg={9} className={classnames(classes.rightCol, classes.breakLong, classNameRight)}>{right}</Grid >
 	</Grid>

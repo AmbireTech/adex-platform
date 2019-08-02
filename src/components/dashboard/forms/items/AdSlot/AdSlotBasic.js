@@ -68,8 +68,8 @@ class AdSlotBasic extends Component {
 			newItem,
 			invalidFields,
 			handleChange,
-			nameHelperTxt,
-			descriptionHelperTxt
+			// nameHelperTxt,
+			// descriptionHelperTxt
 		} = this.props
 		const { type, title, description } = newItem
 		const errTitle = invalidFields['title']
@@ -79,7 +79,7 @@ class AdSlotBasic extends Component {
 			<div>
 				<Grid
 					container
-					spacing={16}
+					spacing={2}
 				>
 					<Grid item sm={12}>
 						<TextField

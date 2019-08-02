@@ -1,6 +1,10 @@
 
 import crypto from 'crypto'
-import { Channel, splitSig, Transaction } from 'adex-protocol-eth/js'
+import {
+	Channel,
+	// splitSig,
+	// Transaction
+} from 'adex-protocol-eth/js'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { getSigner, getMultipleTxSignatures } from 'services/smart-contracts/actions/ethers'
 import { contracts } from '../contractsCfg'

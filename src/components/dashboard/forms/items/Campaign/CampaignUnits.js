@@ -65,7 +65,7 @@ class CampaignUnits extends Component {
 			<div>
 				<Grid
 					container
-					spacing={16}
+					spacing={2}
 				>
 					<Grid item sm={12}>
 

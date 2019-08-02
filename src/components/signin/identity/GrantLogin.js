@@ -58,7 +58,7 @@ class GrantLogin extends Component {
 			// <div>
 			<Grid
 				container
-				spacing={16}
+				spacing={2}
 				// direction='row'
 				alignContent='space-between'
 				alignItems='center'
@@ -66,7 +66,7 @@ class GrantLogin extends Component {
 				<Grid item xs={12}>
 					<Grid
 						container
-						spacing={16}
+						spacing={2}
 					>
 						<Grid item xs={12}>
 							<Typography variant='body2' color='primary' gutterBottom>

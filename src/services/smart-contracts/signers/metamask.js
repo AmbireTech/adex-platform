@@ -1,4 +1,4 @@
-import { Signer, utils, Wallet } from 'ethers'
+import { Signer, utils } from 'ethers'
 import { constants } from 'adex-models'
 
 export default class MetaMaskSigner extends Signer {

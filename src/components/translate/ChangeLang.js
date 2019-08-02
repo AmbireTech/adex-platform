@@ -68,7 +68,7 @@ class ChangeLang extends Component {
   						<ListItemIcon >
   							<FlagIcon code={lng.split('-')[1].toLowerCase()} />
   						</ListItemIcon>
-  						<ListItemText inset primary={lng} />
+  						<ListItemText primary={lng} />
   					</MenuItem>
   				)}
   			</Menu>
