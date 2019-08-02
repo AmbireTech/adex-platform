@@ -16,11 +16,15 @@ export const styles = theme => {
 		},
 		container: {
 			height: '100vh',
-			flexGrow: '1'
+			flexGrow: '1',
 		},
 		actions: {
 			position: 'relative',
 			height: '100vh',
+			backgroundImage: `url(${require('resources/home-wallpaper.jpg')})`,
+			backgroundRepeat: 'no-repeat',
+			backgroundSize: 'cover',
+			backgroundPosition: 'center',
 		},
 		buttons: {
 			backgroundColor: theme.palette.grey[200]

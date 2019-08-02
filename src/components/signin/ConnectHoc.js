@@ -32,7 +32,7 @@ export default function ConnectHoc(Decorated) {
 							className={classes.actions}
 							item
 							xs={12}
-							md={8}
+							md={9}
 						>
 							<Box
 								width={1}
@@ -45,6 +45,7 @@ export default function ConnectHoc(Decorated) {
 									position='relative'
 								>
 									<Decorated
+										t={t}
 										{...rest}
 									/>
 								</Box>
@@ -54,7 +55,7 @@ export default function ConnectHoc(Decorated) {
 							item
 							container
 							xs={12}
-							md={4}
+							md={3}
 							alignItems='stretch'
 							className={classes.buttons}
 						>
