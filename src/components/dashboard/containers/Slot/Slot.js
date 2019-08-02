@@ -35,7 +35,7 @@ const AUTO_HIDE_STRING =
 
 const { DAI } = contracts
 
-const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
+// const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
 
 const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 	const { type, tags, fallbackUnit } = slot
@@ -53,7 +53,7 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 		whitelistedType: type,
 		randomize: true,
 		targeting: tags || [],
-		marketURL: ADEX_MARKET_HOST,
+		// marketURL: ADEX_MARKET_HOST,
 		width: sizes.width,
 		height: sizes.height,
 		minPerImpression: '0',
