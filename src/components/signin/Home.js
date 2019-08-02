@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
@@ -16,6 +16,10 @@ const useStyles = makeStyles(theme => ({
 		backgroundPosition: 'center',
 		backgroundRepeat: 'no-repeat',
 		backgroundSize: 'contain'
+	},
+	container: {
+		maxWidth: theme.breakpoints.values.md,
+		margin: 'auto'
 	}
 }))
 
@@ -27,6 +31,7 @@ export default function Home({ t, ...rest }) {
 		width={1}
 		height={1}
 		className={classes.root}
+		alignItems='center'
 	>
 		<Box
 			height={1}
@@ -34,6 +39,8 @@ export default function Home({ t, ...rest }) {
 			flexDirection='column'
 			alignItems='center'
 			justifyContent='center'
+			maxWidth='md'
+			className={classes.container}
 		>
 			<Img
 				src={ADEX_LOGO}
@@ -72,6 +79,5 @@ export default function Home({ t, ...rest }) {
 			>
 			</Box>
 		</Box>
-
 	</Box>)
 }
