@@ -65,13 +65,17 @@ export default function ConnectHoc(Decorated) {
 								alignItems='center'
 								justify='space-between'
 							>
-								<div className={classes.adexLogoTop} >
-									<Logo className={classes.logo} />
-								</div>
+								<Box p={2}>
+									<div className={classes.adexLogoTop} >
+										<Logo className={classes.logo} />
+									</div>
+								</Box>
 								<AuthSelect  {...rest} />
-								<small className={classes.adxVersion} >
-									{`v.${packageJson.version}-beta`}
-								</small>
+								<Box p={2}>
+									<small className={classes.adxVersion} >
+										{`v.${packageJson.version}-beta`}
+									</small>
+								</Box>
 							</Grid>
 						</Grid>
 					</Grid>

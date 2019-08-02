@@ -36,7 +36,7 @@ class AuthSelect extends Component {
 							color='primary'
 							fullWidth
 						>
-							{t('CREATE_GRANT_ACCOUNT_')}
+							{t('CREATE_GRANT_ACCOUNT')}
 						</RRButton>
 					</Grid>
 					<Grid item xs={12}>
@@ -44,10 +44,10 @@ class AuthSelect extends Component {
 							variant='contained'
 							to='/login/grant'
 							size='large'
-							color='primary'
+							color='secondary'
 							fullWidth
 						>
-							{t('LOGIN_GRANT_ACCOUNT_')}
+							{t('LOGIN_GRANT_ACCOUNT')}
 						</RRButton>
 					</Grid>
 					<Grid item xs={12}>
