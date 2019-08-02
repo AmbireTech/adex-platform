@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
 import FullLogin from './FullLogin'
 import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
 
@@ -43,7 +44,7 @@ export function ExternalConnect({ t, ...rest }) {
 						<Button
 							className={classes.button}
 							variant='contained'
-							color='default'
+							color='secondary'
 							onClick={() => setConnectType('login')}
 							fullWidth
 						>
@@ -74,17 +75,17 @@ export function ExternalConnect({ t, ...rest }) {
 		}
 		{
 			connectType === 'login' &&
-			<div>
-				<h3>{t('SELECT_EXISTING_IDENTITY')}</h3>
+			<>
+				<Typography variant='h5' gutterBottom>{t('SELECT_EXISTING_IDENTITY')}</Typography>
 				<FullLogin {...rest} />
-			</div>
+			</>
 		}
 		{
 			connectType === 'create' &&
-			<div>
-				<h3>{t('CREATE_NEW_IDENTITY')}</h3>
+			<>
+				<Typography  variant='h5' gutterBottom>{t('CREATE_NEW_IDENTITY')}</Typography>
 				<IdentityContractAddressEthDeploy {...rest} />
-			</div>
+			</>
 		}
 	</Box>)
 }
