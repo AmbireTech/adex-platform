@@ -68,7 +68,7 @@ class CampaignFormPreview extends Component {
 				<ContentBody>
 					<PropRow
 						left={t('owner', { isProp: true })}
-						right={account.wallet.address}
+						right={account.identity.address}
 					/>
 					{/* <PropRow
 						left={t('targeting', { isProp: true })}
