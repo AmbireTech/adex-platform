@@ -15,6 +15,7 @@ import {
 } from 'components/signin/identity/Identity'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
+import Home from 'components/signin/Home'
 import Translate from 'components/translate/Translate'
 // import { getSig } from 'services/auth/auth'
 import { AUTH_TYPES } from 'constants/misc'
@@ -24,7 +25,7 @@ const ConnectedCreateGrantIdentity = ConnectHoc(CreateGrantIdentity)
 const ConnectedGrantLogin = ConnectHoc(LoginGrantIdentity)
 const ConnectedCreateFullIdentity = ConnectHoc(CreteFullIdentity)
 const ConnectedLoginStandardIdentity = ConnectHoc(LoginStandardIdentity)
-const ConnectedRoot = ConnectHoc(() => 'root')
+const ConnectedRoot = ConnectHoc(Home)
 
 function PrivateRoute({ component: Component, auth, ...other }) {
 	return (
