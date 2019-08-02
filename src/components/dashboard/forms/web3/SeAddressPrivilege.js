@@ -54,7 +54,7 @@ class SeAddressPrivilege extends Component {
 	render() {
 		const { transaction, t, invalidFields, identityAvailable, handleChange } = this.props
 		const { setAddr, privLevel } = transaction || {}
-		const errAmount = invalidFields['withdrawAmount']
+		// const errAmount = invalidFields['withdrawAmount']
 		const errAddr = invalidFields['withdrawTo']
 
 		return (

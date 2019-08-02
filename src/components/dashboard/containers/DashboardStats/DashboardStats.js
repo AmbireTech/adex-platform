@@ -172,16 +172,20 @@ export class DashboardStats extends Component {
 
 	// TODO: Common func to get account stats for here and account component
 	InfoStats = ({ stats }) => {
-		const { t, side, account } = this.props
-		const spentEarned = side === 'publisher' ? 'LABEL_TOTAL_REVENUE' : 'LABEL_TOTAL_EXPENSES'
+		const {
+			t,
+			// side,
+			account
+		} = this.props
+		// const spentEarned = side === 'publisher' ? 'LABEL_TOTAL_REVENUE' : 'LABEL_TOTAL_EXPENSES'
 
 		const formatted = account.stats.formatted || {}
 		const {
 			// walletAddress,
 			// walletAuthType,
 			// walletPrivileges,
-			walletBalanceEth,
-			walletBalanceDai,
+			// walletBalanceEth,
+			// walletBalanceDai,
 			// identityAddress,
 			identityBalanceDai,
 			outstandingBalanceDai,
@@ -248,7 +252,13 @@ export class DashboardStats extends Component {
 	}
 
 	render() {
-		const { side, sideBids, classes, t, account } = this.props
+		const {
+			side,
+			// sideBids,
+			classes,
+			t,
+			account
+		} = this.props
 		if (side !== 'advertiser' && side !== 'publisher') {
 			return (
 				<SideSelect active={true} />

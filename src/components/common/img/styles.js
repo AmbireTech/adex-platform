@@ -23,13 +23,13 @@ export const styles = theme => ({
 	},
 	fullscreenIcon: {
 		position: 'absolute',
-		top: theme.spacing.unit,
-		right: theme.spacing.unit,
+		top: theme.spacing(1),
+		right: theme.spacing(1),
 		cursor: 'pointer'
 	},
 	dialog: {
 		'@media(max-width:744px)': {
-			minWidth: `calc(100vw - ${theme.spacing.unit * 2}px)`,
+			minWidth: `calc(100vw - ${theme.spacing(2)}px)`,
 		},
 		'@media(max-height:823px)': {
 			minHeight: 'auto',

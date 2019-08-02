@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { PublisherStatistics } from 'components/dashboard/charts/revenue'
 
 const getHourId = (_id) => {

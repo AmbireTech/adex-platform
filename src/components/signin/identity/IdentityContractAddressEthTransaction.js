@@ -61,14 +61,14 @@ class IdentityContractAddressEthTransaction extends Component {
 	}
 
 	render() {
-		const { identity, t, classes, handleChange } = this.props
+		const { identity, t, classes } = this.props
 		const { identityAddr } = identity || {}
 
 		return (
 			<div>
 				<Grid
 					container
-					spacing={16}
+					spacing={2}
 				>
 					<Grid item sm={12} >
 						<Paper className={classes.infoPaper} elevation={1}>
@@ -99,7 +99,7 @@ class IdentityContractAddressEthTransaction extends Component {
 IdentityContractAddressEthTransaction.propTypes = {
 	actions: PropTypes.object.isRequired,
 	account: PropTypes.object.isRequired,
-	identity: PropTypes.object.isRegistered,
+	identity: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state) {

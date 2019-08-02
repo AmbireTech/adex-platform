@@ -6,6 +6,7 @@ import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
+import Fab from '@material-ui/core/Fab'
 import EditIcon from '@material-ui/icons/Edit'
 import Img from 'components/common/img/Img'
 import { validUrl } from 'helpers/validators'
@@ -13,7 +14,7 @@ import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Anchor from 'components/common/anchor/anchor'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { utils } from 'ethers'
+// import { utils } from 'ethers'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 
@@ -38,8 +39,7 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, isD
 					style={{ cursor: 'pointer' }}
 				/>
 			</CardMedia>
-			<Button
-				variant='fab'
+			<Fab
 				mini
 				color='secondary'
 				onClick={rest.toggleFallbackImgEdit}
@@ -47,7 +47,7 @@ const FallbackAdData = ({ item, t, rightComponent, url, classes, canEditImg, isD
 				disabled={isDemo}
 			>
 				<EditIcon />
-			</Button>
+			</Fab>
 			<CardContent>
 				{rest.activeFields.fallbackTargetUrl ?
 					<TextField
@@ -143,9 +143,9 @@ const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, itemTyp
 	const mediaMime = item.mediaMime
 
 	return (
-		<Grid container spacing={16}>
+		<Grid container spacing={2}>
 			<Grid item xs={12} sm={12} md={12} lg={7}>
-				<Grid container spacing={16}>
+				<Grid container spacing={2}>
 					<Grid item xs={12} sm={5} md={5} lg={5} >
 						{
 							itemType === 'AdSlot'
@@ -163,7 +163,7 @@ const basicProps = ({ item, t, rightComponent, url, classes, canEditImg, itemTyp
 						}
 					</Grid>
 					<Grid item xs={12} sm={7} md={7} lg={7} >
-						<Grid container spacing={8}>
+						<Grid container spacing={1}>
 							<Grid item xs={12} >
 
 								<TextField
@@ -208,13 +208,13 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 	// console.log('item', item)
 	return (
 		<div >
-			<Grid container spacing={16}>
+			<Grid container spacing={2}>
 				<Grid item xs={12} sm={12} md={12} lg={8}>
 					<div >
 						<div
 							className={classes.basicInfo}
 						>
-							<Grid container spacing={16}>
+							<Grid container spacing={2}>
 								<Grid item xs={12} sm={5} md={5} lg={5} >
 									<MediaCard
 										classes={classes}
@@ -226,9 +226,9 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 									/>
 								</Grid>
 								<Grid item xs={12} sm={7} md={7} lg={7} >
-									<Grid container spacing={8}>
+									<Grid container spacing={1}>
 										<Grid item xs={12} sm={12} md={6} >
-											<Grid container spacing={8}>
+											<Grid container spacing={1}>
 												<Grid item xs={12} >
 													<TextField
 														// type='text'
@@ -274,7 +274,7 @@ const campaignProps = ({ item, t, rightComponent, url, classes, canEditImg, item
 											</Grid>
 										</Grid>
 										<Grid item xs={12} sm={12} md={6} >
-											<Grid container spacing={8}>
+											<Grid container spacing={1}>
 												<Grid item xs={12} >
 													<TextField
 														// type='text'

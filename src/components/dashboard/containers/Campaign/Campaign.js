@@ -20,7 +20,7 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
-import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
+import { formatTokenAmount } from 'helpers/formatters'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
 const VIEW_MODE = 'campaignRowsView'
@@ -46,7 +46,7 @@ export class Campaign extends Component {
 
 	CampaignActions = ({ campaign, actions, t }) => {
 		return (
-			<Grid container spacing={16}>
+			<Grid container spacing={2}>
 				<Grid item xs={12}>
 					<Button
 						color='secondary'
@@ -60,7 +60,17 @@ export class Campaign extends Component {
 	}
 
 	render() {
-		const { t, classes, item, setActiveFields, handleChange, activeFields, isDemo, actions, ...rest } = this.props
+		const {
+			t,
+			// classes,
+			item,
+			// setActiveFields,
+			// handleChange,
+			// activeFields,
+			// isDemo,
+			actions,
+			// ...rest
+		} = this.props
 		const { tabIndex } = this.state
 
 		const units = item.spec.adUnits

@@ -18,7 +18,6 @@ import {
 	hexlify
 } from 'ethers/utils'
 import { generateAddress2 } from 'ethereumjs-util'
-import { splitSig, Transaction } from 'adex-protocol-eth/js'
 import { identityBytecode, executeTx, setAddrPriv } from 'services/adex-relayer/actions'
 import { formatTokenAmount } from 'helpers/formatters'
 import { contracts } from '../contractsCfg'

@@ -1,6 +1,10 @@
 export const styles = theme => {
-	const spacing = theme.spacing.unit
+	const spacing = theme.spacing(1)
 	return {
+		root: {
+			// flexGrow: 1,
+			height: '100vh',
+		},
 		signinContainer: {
 			overflowX: 'hidden',
 			overflowY: 'auto',
@@ -11,21 +15,27 @@ export const styles = theme => {
 			position: 'relative'
 		},
 		container: {
-			position: 'absolute',
-			left: 0,
-			top: 0,
-			right: 0,
-			bottom: 0,
+			height: '100vh',
+			flexGrow: '1',
+		},
+		actions: {
+			position: 'relative',
+			height: '100vh',
+			backgroundImage: `url(${require('resources/home-wallpaper.jpg')})`,
+			backgroundRepeat: 'no-repeat',
+			backgroundSize: 'cover',
+			backgroundPosition: 'center',
+		},
+		buttons: {
+			backgroundColor: theme.palette.grey[200]
 		},
 		adxVersion: {
-			position: 'absolute',
-			left: spacing,
-			bottom: spacing
+			// position: 'absolute',
+			// left: spacing,
+			// bottom: spacing
 		},
 		adexLogoTop: {
-			margin: 'auto',
 			textAlign: 'center',
-			maxWidth: 1000
 		},
 		logo: {
 			marginTop: '1.5vh',

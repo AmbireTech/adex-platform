@@ -5,12 +5,13 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Logo from 'components/common/icons/AdexIconTxt'
 import Translate from 'components/translate/Translate'
-import Dialog from '@material-ui/core/Dialog'
-import DialogContent from '@material-ui/core/DialogContent'
-import classnames from 'classnames'
+import Grid from '@material-ui/core/Grid'
+import Box from '@material-ui/core/Box'
 import packageJson from './../../../package.json'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+
+import AuthSelect from 'components/signin/auth-select/AuthSelect'
 
 export default function ConnectHoc(Decorated) {
 	class Connect extends Component {
@@ -19,48 +20,65 @@ export default function ConnectHoc(Decorated) {
 			const { classes, t, noBackground, ...rest } = this.props
 			return (
 				<div
-					className={classes.signinContainer}
-					style={{ backgroundImage: `url(${require('resources/background.png')})` }}
+					className={classes.root}
 				>
-					<div className={classes.container}>
-						<div className="adex-dapp">
-							<div className={classes.adexLogoTop} >
-								<Logo className={classes.logo} />			
-							</div>
-							<div>
-								<Dialog
-									open={true}
-									classes={{
-										paper:
-											classnames(
-												classes.dialogPaper,
-												{
-													[classes.noBg]: noBackground
-												})
-									}}
-									BackdropProps={{
-										classes: {
-											root: classes.backdrop
-										}
-									}}
-									fullWidth
-									maxWidth='md'
+					<Grid
+						className={classes.container}
+						container
+						alignItems='stretch'
+					// spacing={2}
+					>
+						<Grid
+							className={classes.actions}
+							item
+							xs={12}
+							md={9}
+						>
+							<Box
+								width={1}
+								height={1}
+								p={4}
+							>
+								<Box
+									width={1}
+									height={1}
+									position='relative'
 								>
-									<DialogContent
-										classes={{ root: classes.content }}
-									>
-										<Decorated
-											{...rest}
-										/>
-									</DialogContent>
-
-								</Dialog>
-							</div>
-							<small className={classes.adxVersion} >
-								v.{packageJson.version}-beta
-  					</small>
-						</div>
-					</div>
+									<Decorated
+										t={t}
+										{...rest}
+									/>
+								</Box>
+							</Box>
+						</Grid>
+						<Grid
+							item
+							container
+							xs={12}
+							md={3}
+							alignItems='stretch'
+							className={classes.buttons}
+						>
+							<Grid
+								container
+								direction='column'
+								alignItems='center'
+								justify='space-between'
+							>
+								<Box p={2}>
+									<div className={classes.adexLogoTop} >
+										<Logo className={classes.logo} />
+									</div>
+								</Box>
+								<AuthSelect  {...rest} />
+								<Box p={2}>
+									<small className={classes.adxVersion} >
+										{`v.${packageJson.version}-beta`}
+									</small>
+								</Box>
+							</Grid>
+						</Grid>
+					</Grid>
 				</div>
 			)
 		}

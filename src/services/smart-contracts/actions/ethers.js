@@ -7,7 +7,10 @@ import LocalSigner from 'services/smart-contracts/signers/local'
 import MetaMaskSigner from 'services/smart-contracts/signers/metamask'
 import { translate } from 'services/translations/translations'
 import { execute } from 'actions/common'
-import { addWeb3Transaction, updateWeb3Transaction } from 'actions/transactionActions'
+import {
+	// addWeb3Transaction,
+	updateWeb3Transaction
+} from 'actions/transactionActions'
 import { addToast } from 'actions/uiActions'
 import { updateAccount } from 'actions/accountActions'
 import { splitSig, Transaction } from 'adex-protocol-eth/js'

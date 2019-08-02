@@ -34,7 +34,7 @@ class CsvDownloadBtn extends Component {
     	return (
     		<span>
     			<a
-    				ref={(i) => this.dlAnchor = i}
+    				href={(i) => this.dlAnchor = i}
     				download={csvFileName}
     				style={{ visibility: 'hidden', width: 0, height: 0, display: 'inline-block' }}
     			>

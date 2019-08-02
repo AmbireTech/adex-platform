@@ -64,8 +64,8 @@ IdentitySteps.propTypes = {
 	actions: PropTypes.object.isRequired,
 }
 
-function mapStateToProps(state) {
-	const persist = state.persist
+function mapStateToProps() {
+	// const persist = state.persist
 	// const memory = state.memory
 	return {
 		// account: persist.account

@@ -30,7 +30,7 @@ class PageNotFound extends React.Component {
 			>
 				<Grid
 					container
-					spacing={16}
+					spacing={2}
 					justify='center'
 					alignItems='center'
 				>

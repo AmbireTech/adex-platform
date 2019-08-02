@@ -1,6 +1,4 @@
-export const styles = theme => {
-	const spacing = theme.spacing.unit * 1
-
+export const styles = () => {
 	return {
 		cellImg: {
 			width: 'auto',

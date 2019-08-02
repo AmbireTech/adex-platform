@@ -113,7 +113,7 @@ class AdSlotTargeting extends Component {
 		return (
 			<Grid
 				container
-				spacing={16}
+				spacing={2}
 			>
 				<Grid item xs={12} md={6} >
 					<Autocomplete
@@ -174,7 +174,7 @@ class AdSlotTargeting extends Component {
 	render() {
 		const {
 			t,
-			newItem,
+			// newItem,
 			classes
 		} = this.props
 		// const { targeting, tags } = newItem
@@ -185,7 +185,7 @@ class AdSlotTargeting extends Component {
 			<div>
 				<Grid
 					container
-					spacing={24}
+					spacing={1}
 				>
 					<Grid item sm={12}>
 						{[...targets].map(({

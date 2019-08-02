@@ -85,8 +85,7 @@ class TopNav extends Component {
   									<Icon>account_box</Icon>
   								</ListItemIcon>
   								<ListItemText
-  									classes={{ primary: classes.primary }}
-  									inset
+  									classes={{ primary: classes.primary }}  									
   									primary={t('ACCOUNT')}
   								/>
   							</RRMenuItem>
@@ -98,7 +97,7 @@ class TopNav extends Component {
   								<ListItemIcon >
   									<Icon>exit_to_app</Icon>
   								</ListItemIcon>
-  								<ListItemText classes={{ primary: classes.primary }} inset primary={t('LOGOUT')} />
+  								<ListItemText classes={{ primary: classes.primary }} primary={t('LOGOUT')} />
   							</MenuItem>
   						</ButtonMenu>
   					</div>

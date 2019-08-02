@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Button from '@material-ui/core/Button'
+import Fab from '@material-ui/core/Fab'
 import IconButton from '@material-ui/core/IconButton'
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
@@ -86,28 +87,44 @@ export default function ItemHoc(Decorated) {
 		}
 
 		render() {
-			let ButtonComponent = Button
-			// NOTE: to avoid some warnings
-			let btnProps = {}
+			const {
+				iconButton,
+				textButton,
+				fabButton,
+				variant,
+				fabVariant,
+				color,
+				size,
+				mini,
+				classes,
+				t,
+				btnLabelArgs,
+				disabled,
+				className,
+				icon,
+				title,
+				dialogActions,
+				...rest
+			} = this.props
 
-			if (this.props.iconButton) {
-				ButtonComponent = IconButton
-			} else if (this.props.textButton) {
-				ButtonComponent = TextBtn
-			} else {
-				btnProps = {
-					variant: this.props.variant,
-					color: this.props.color,
-					size: this.props.size,
-					mini: !!this.props.mini
-				}
+			let ButtonComponent = Button
+
+			const btnProps = {
+				color,
+				size,
+				mini,
+				variant
 			}
 
-			const { classes, t, ...rest } = this.props
+			if (iconButton) {
+				ButtonComponent = IconButton
+			} else if (textButton) {
+				ButtonComponent = TextBtn
+			} else if (fabButton) {
+				ButtonComponent = Fab
+			}
 
-			const btnLabel = t(this.props.btnLabel, { args: this.props.btnLabelArgs || [''] })
-			// TODO: fix it for fab wit text
-			const isIconBtn = (this.props.variant == 'fab') || this.props.iconButton
+			const btnLabel = t(this.props.btnLabel, { args: btnLabelArgs || [''] })
 			const isDemo = isDemoMode()
 
 			const { open } = this.state
@@ -115,21 +132,21 @@ export default function ItemHoc(Decorated) {
 			return (
 				<div >
 					<ButtonComponent
-						disabled={this.props.disabled}
+						disabled={disabled}
 						aria-label={btnLabel}
 						label={btnLabel}
 						onClick={this.handleToggle}
 						{...btnProps}
 						// style={this.props.style}
 						className={classnames(
-							this.props.className,
-							{ [classes.floating]: this.props.variant === 'fab' },
-							{ [classes.first]: this.props.color === 'first' },
-							{ [classes.second]: this.props.color === 'second' }
+							className,
+							{ [classes.floating]: !!fabButton },
+							{ [classes.first]: color === 'first' },
+							{ [classes.second]: color === 'second' }
 						)}
 					>
-						{this.props.icon && <Icon className={classnames({ [classes.btnIconLeft]: !isIconBtn })} > {this.props.icon}</Icon>}
-						{!isIconBtn && btnLabel}
+						{icon && <Icon className={classnames({ [classes.btnIconLeft]: !iconButton })} > {icon}</Icon>}
+						{!iconButton && btnLabel}
 					</ButtonComponent>
 					<Dialog
 						// disableBackdropClick
@@ -155,7 +172,7 @@ export default function ItemHoc(Decorated) {
 									{ title: classnames(classes.dialogTitle, classes.breakLong) }
 								}
 							>
-								{t(this.props.title)}
+								{t(title)}
 								<IconButton
 									onClick={this.handleToggle}
 								>
@@ -180,9 +197,9 @@ export default function ItemHoc(Decorated) {
 							}
 
 						</DialogContent>
-						{this.props.dialogActions &&
+						{dialogActions &&
 							<DialogActions>
-								{this.props.dialogActions}
+								{dialogActions}
 							</DialogActions>
 						}
 					</Dialog>

@@ -114,7 +114,7 @@ class AdSlotMedia extends Component {
 			<div>
 				<Grid
 					container
-					spacing={16}
+					spacing={2}
 				>
 					<Grid item xs={12}>
 						<FormControlLabel
@@ -134,7 +134,7 @@ class AdSlotMedia extends Component {
 					<Collapse in={useFallback}>
 						<Grid
 							container
-							spacing={16}
+							spacing={2}
 						>
 							<Grid item xs={12}>
 								<TextField

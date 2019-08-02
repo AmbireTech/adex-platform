@@ -1,5 +1,5 @@
 export const styles = theme => {
-	const spacing = theme.spacing.unit
+	const spacing = theme.spacing(1)
 	return {
 		flex: {
 			flex: 1

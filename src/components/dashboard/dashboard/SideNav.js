@@ -12,7 +12,6 @@ import Icon from '@material-ui/core/Icon'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
 import Translate from 'components/translate/Translate'
-import { NewUnitDialog, NewCampaignDialog, NewSlotDialog } from 'components/dashboard/forms/items/NewItems'
 import classnames from 'classnames'
 import packageJson from './../../../../package.json'
 import Anchor from 'components/common/anchor/anchor'
@@ -22,7 +21,7 @@ import { SideSwitch } from './SideSwitch'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
-import Badge from '@material-ui/core/Badge'
+// import Badge from '@material-ui/core/Badge'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 
@@ -41,7 +40,13 @@ class SideNav extends Component {
 	}
 
 	render() {
-		const { side, identity, t, transactions, classes } = this.props
+		const {
+			side,
+			identity,
+			t,
+			// transactions,
+			classes
+		} = this.props
 		if (side !== 'advertiser' && side !== 'publisher') {
 			return null
 		}
@@ -50,9 +55,8 @@ class SideNav extends Component {
 		const location = this.props.location.pathname.split('/')[3]
 		const isAdvertiser = side === 'advertiser'
 		const items = (isAdvertiser ? 'units' : 'slots')
-		const NewItemBtn = (isAdvertiser ? NewUnitDialog : NewSlotDialog)
 		const itemsIcon = (isAdvertiser ? 'format_list_bulleted' : 'format_list_bulleted')
-		const pendingTrsCount = (transactions.pendingTxs || []).length
+		// const pendingTrsCount = (transactions.pendingTxs || []).length
 
 		return (
 			<div
@@ -89,12 +93,12 @@ class SideNav extends Component {
 							<ListItemIcon>
 								<DashboardIcon />
 							</ListItemIcon>
-							<ListItemText inset primary={t('DASHBOARD')} />
+							<ListItemText primary={t('DASHBOARD')} />
 						</RRListItem>
 						<ListDivider
 						/>
 						{side === 'advertiser' &&
-							<div>
+							<>
 								<RRListItem
 									button
 									to={{ pathname: '/dashboard/advertiser/campaigns' }}
@@ -103,21 +107,10 @@ class SideNav extends Component {
 									<ListItemIcon>
 										<CampaignIcon />
 									</ListItemIcon>
-									<ListItemText inset primary={t('CAMPAIGNS')} />
+									<ListItemText primary={t('CAMPAIGNS')} />
 								</RRListItem>
-
-								<ListItem
-									className={classes.newItemBtn}
-								>
-									<NewCampaignDialog
-										className={classes.newItemBtn}
-										color='primary'
-										variant='contained'
-									// btnClasses={classes.newItemBtn}
-									/>
-								</ListItem>
 								<ListDivider />
-							</div>
+							</>
 						}
 						<RRListItem
 							button
@@ -127,17 +120,8 @@ class SideNav extends Component {
 							<ListItemIcon>
 								<Icon>{itemsIcon}</Icon>
 							</ListItemIcon>
-							<ListItemText inset primary={t(items.toUpperCase())} />
+							<ListItemText primary={t(items.toUpperCase())} />
 						</RRListItem>
-						<ListItem
-							className={classes.newItemBtn}
-						>
-							<NewItemBtn
-								className={classes.newItemBtn}
-								color='primary'
-								variant='contained'
-							/>
-						</ListItem>
 						<ListDivider
 						/>
 
@@ -158,7 +142,7 @@ class SideNav extends Component {
 										</Badge> : <SwapHorizontalIcon />}
 								</span>
 							</ListItemIcon>
-							<ListItemText inset primary={t('TRANSACTIONS')} />
+							<ListItemText primary={t('TRANSACTIONS')} />
                         </RRListItem> */}
 					</div>
 					<div>
@@ -169,7 +153,7 @@ class SideNav extends Component {
 								<ListItemIcon>
 									<HelpOutlineIcon />
 								</ListItemIcon>
-								<ListItemText inset primary={t('HELP')} />
+								<ListItemText primary={t('HELP')} />
 							</ListItem>
 						</Anchor>
 
@@ -180,7 +164,7 @@ class SideNav extends Component {
 								<ListItemIcon>
 									<SwapHorizontalIcon />
 								</ListItemIcon>
-								<ListItemText inset primary={t('TRANSACTIONS')} />
+								<ListItemText primary={t('TRANSACTIONS')} />
 							</ListItem>
 						</Anchor>
 
@@ -192,7 +176,7 @@ class SideNav extends Component {
 							<ListItemIcon>
 								<AccountBoxIcon />
 							</ListItemIcon>
-							<ListItemText inset primary={t('ACCOUNT')} />
+							<ListItemText primary={t('ACCOUNT')} />
 						</RRListItem>
 					</div>
 				</List>

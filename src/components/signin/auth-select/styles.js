@@ -1,20 +1,21 @@
-export const styles = theme => {
-	const spacing = theme.spacing.unit
+export const styles = (theme) => {
 	return {
-		backdrop: {
-			backgroundColor: 'rgba(255, 255, 255, 0.5)'
-		},
-		card: {
-			display: 'block',
-			width: '100%',
-			opacity: 0.7,
-			'&.disabled': {
-				opacity: 0.3
-			},
-			textAlign: 'center'
-		},
 		actions: {
 			justifyContent: 'center'
+		},
+		btnLogo: {
+			height: '2rem',
+			marginRight: theme.spacing(1)
+		},
+		btnLogoNoTxt: {
+			marginRight: 0
+		},
+		metamaskBtn: {
+			backgroundColor: theme.palette.grey[800],
+			color: theme.palette.common.white
+		},
+		trezorBtn: {
+			backgroundColor: theme.palette.common.white
 		}
 	}
 }

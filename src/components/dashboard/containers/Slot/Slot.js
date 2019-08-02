@@ -20,7 +20,7 @@ import url from 'url'
 
 const ADVIEW_URL = process.env.ADVIEW_URL
 const adviewUrl = url.parse(ADVIEW_URL)
-const origin =  `${adviewUrl.protocol}//${adviewUrl.host}`
+const origin = `${adviewUrl.protocol}//${adviewUrl.host}`
 
 const AUTO_HIDE_STRING =
 	`window.addEventListener('message', function(ev) { 
@@ -35,7 +35,7 @@ const AUTO_HIDE_STRING =
 
 const { DAI } = contracts
 
-const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
+// const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
 
 const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 	const { type, tags, fallbackUnit } = slot
@@ -53,7 +53,7 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 		whitelistedType: type,
 		randomize: true,
 		targeting: tags || [],
-		marketURL: ADEX_MARKET_HOST,
+		// marketURL: ADEX_MARKET_HOST,
 		width: sizes.width,
 		height: sizes.height,
 		minPerImpression: '0',
@@ -127,7 +127,14 @@ export class Slot extends Component {
 	}
 
 	render() {
-		const { t, classes, isDemo, item, account, ...rest } = this.props
+		const {
+			t,
+			classes,
+			isDemo,
+			item,
+			account,
+			// ...rest
+		} = this.props
 		const { tabIndex } = this.state
 
 		return (

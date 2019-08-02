@@ -46,7 +46,7 @@ export class ItemIpfsDetails extends Component {
 
     itemDetails = ({ details = {}, t } = {}) => {
     	return (
-    		<Grid container spacing={8} >
+    		<Grid container spacing={1} >
     			<PropRow
     				left={t('PROP_FULLNAME')}
     				right={details.fullName}
@@ -87,7 +87,7 @@ export class ItemIpfsDetails extends Component {
 
     reportDetails = ({ report = {}, t } = {}) => {
     	return (
-    		<Grid container spacing={8} >
+    		<Grid container spacing={1} >
     			<PropRow
     				left={t('PROP_BIDID')}
     				right={report.bidId}
@@ -129,7 +129,7 @@ export class ItemIpfsDetails extends Component {
     	return (
     		<ContentBox>
     			{/* NOTE: show the ipfs link in case of long loading */}
-    			<Grid container spacing={8} style={{ marginBottom: 8 }}>
+    			<Grid container spacing={1} style={{ marginBottom: 8 }}>
     				<PropRow
     					left={t('IPFS')}
     					right={<Anchor target='_blank' href={this.state.itemIpfsUrl} > {this.props.itemIpfs} </Anchor>}
