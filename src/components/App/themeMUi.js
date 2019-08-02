@@ -1,14 +1,15 @@
 import { createMuiTheme } from '@material-ui/core/styles'
-import blue from '@material-ui/core/colors/blue'
-import pink from '@material-ui/core/colors/pink'
 import lime from '@material-ui/core/colors/lime'
 import deepOrange from '@material-ui/core/colors/deepOrange'
 import amber from '@material-ui/core/colors/amber'
 import grey from '@material-ui/core/colors/grey'
 
+const ADEX_BLUE = '#1B75BC'
+const ADEX_GREEN = '#14DC9C'
+
 const palette = {
-	primary: blue,
-	secondary: pink,
+	primary: { main: ADEX_BLUE, contrastText: '#fff' },
+	secondary: { main: ADEX_GREEN, contrastText: '#fff' },
 	error: deepOrange,
 	warning: amber,
 	first: lime,
