@@ -141,6 +141,7 @@ class AdSlotTargeting extends Component {
 					<div>
 						<Typography
 							id={`target-score-${index}`}
+							gutterBottom
 						>
 							{/*TODO: Translate target name*/}
 							{t('TARGET_SCORE_LABEL',
@@ -149,12 +150,14 @@ class AdSlotTargeting extends Component {
 								})}
 						</Typography>
 						<Slider
-							classes={{ container: classes.slider }}
+							// classes={{ container: classes.slider }}
 							aria-labelledby={`target-score-${index}`}
-							min={0} max={100}
+							min={1} 
+							max={100}
 							step={1}
 							disabled={!target.tag}
 							value={target.score}
+							valueLabelDisplay='auto'
 							onChange={(ev, newValue) =>
 								this.handleTargetChange(
 									index,
