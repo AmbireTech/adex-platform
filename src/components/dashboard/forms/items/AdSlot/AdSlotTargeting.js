@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import NewAdSlotHoc from './NewAdSlotHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
-import Slider from '@material-ui/lab/Slider'
+import Slider from '@material-ui/core/Slider'
 import Autocomplete from 'components/common/autocomplete'
 import Typography from '@material-ui/core/Typography'
 import Dropdown from 'components/common/dropdown'
@@ -40,7 +40,7 @@ const SourcesSelect = Object.keys(SOURCES)
 				key: key, // FOR DROPDOWN
 				source: key,
 				collection: SOURCES[key].collection,
-				target: { tag: '', score: 0 },
+				target: { tag: '', score: 1 },
 				label: translate(`TARGET_LABEL_${key.toUpperCase()}`),
 				placeholder: translate(`TARGET_LABEL_${key.toUpperCase()}`)
 			},
