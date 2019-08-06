@@ -141,9 +141,8 @@ export function getFullIdentityTxData({ owner, privLevel }) {
 	return async function (dispatch) {
 		try {
 			const txData = await getIdentityDeployData({ owner, privLevel })
-			console.log('txData', txData)
-			// updateIdentity('identityAddr', txData.expectedAddr)(dispatch)
-			// updateIdentity('identityTxData', txData)(dispatch)
+			updateIdentity('identityAddr', txData.expectedAddr)(dispatch)
+			updateIdentity('identityTxData', txData)(dispatch)
 		} catch (err) {
 			console.error('ERR_GET_IDENTITY_TX_DATA', err)
 			addToast({
