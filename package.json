@@ -112,8 +112,8 @@
     "workbox-webpack-plugin": "4.2.0"
   },
   "scripts": {
-    "start": "node --max-old-space-size=4096 scripts/start.js",
-    "build": "node --max-old-space-size=2048 scripts/build.js",
+    "start": "node --max-old-space-size=8096 scripts/start.js",
+    "build": "node --max-old-space-size=8048 scripts/build.js",
     "predeploy": "npm run build && cp CNAME ./build",
     "deploy": "gh-pages -d build",
     "test": "eslint src/"
