@@ -110,8 +110,8 @@ class IdentityContractAddressEthDeploy extends Component {
 	getIdentityContractData = async () => {
 		const { actions, identity } = this.props
 		const { wallet, email } = identity
-
-		actions.getRegisterExpectedIdentity({
+		// getRegisterExpectedIdentity
+		actions.getFullIdentityTxData({
 			owner: wallet.address,
 			mail: email
 		})

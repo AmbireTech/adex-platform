@@ -7,10 +7,10 @@ import {
 } from 'services/smart-contracts/actions/ethers'
 import {
 	ethers,
-	Contract
+	Contract,
+	Interface
 } from 'ethers'
 import {
-	Interface,
 	bigNumberify,
 	parseUnits,
 	randomBytes,
@@ -21,28 +21,94 @@ import { generateAddress2 } from 'ethereumjs-util'
 import { identityBytecode, executeTx, setAddrPriv } from 'services/adex-relayer/actions'
 import { formatTokenAmount } from 'helpers/formatters'
 import { contracts } from '../contractsCfg'
+import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
+import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
+// import FactoryABI from 'adex-protocol-eth/abi/IdentityFactory'
+
 const { DAI } = contracts
 
-const IDENTITY_BASE_ADDR = process.env.IDENTITY_BASE_ADDR
-const IDENTITY_FACTORY_ADDR = process.env.IDENTITY_FACTORY_ADDR
+// const Factory = new Interface(FactoryABI)
+
+const {
+	IDENTITY_BASE_ADDR,
+	IDENTITY_FACTORY_ADDR,
+	ADEX_RELAYER_ADDR,
+	ADEX_CORE_ADDR,
+	VALIDATOR_REGISTRY,
+	DAI_TOKEN_ADDR
+} = process.env
+
 const GAS_LIMIT_DEPLOY_CONTRACT = 150000
 const feeAmountTransfer = '150000000000000000'
 const feeAmountSetPrivileges = '150000000000000000'
 const ERC20 = new Interface(DAI.abi)
+const GRANT_ROUTINE_AUTH_VALID_UNTIL = 10648454444
+
+// export async function getIdentityBytecode({ owner, privLevel }) {
+// 	const res = await identityBytecode({
+// 		owner,
+// 		privLevel,
+// 		identityBaseAddr: IDENTITY_BASE_ADDR
+// 	})
+// 	return res.bytecode
+// }
 
 export async function getIdentityBytecode({ owner, privLevel }) {
-	const res = await identityBytecode({
-		owner,
-		privLevel,
-		identityBaseAddr: IDENTITY_BASE_ADDR
+
+	const privileges = [
+		[owner, 3]
+	]
+
+	const relayerAuth = new RoutineAuthorization({
+		relayer: ADEX_RELAYER_ADDR,
+		outpace: ADEX_CORE_ADDR,
+		registry: VALIDATOR_REGISTRY,
+		validUntil: GRANT_ROUTINE_AUTH_VALID_UNTIL,
+		feeTokenAddr: DAI_TOKEN_ADDR,
+		weeklyFeeAmount: 0
 	})
-	return res.bytecode
+
+	const routineAuthorizations = [relayerAuth]
+	const bytecode = getProxyDeployBytecode(
+		IDENTITY_BASE_ADDR,
+		privileges,
+		{
+			privSlot: 0,
+			routineAuthsSlot: 1,
+			routineAuthorizations: routineAuthorizations
+				.map(a => a.hash())
+		}
+	)
+
+	return bytecode
 }
+
+// export async function getIdentityDeployData({ owner, privLevel }) {
+// 	const bytecode = await getIdentityBytecode({ owner, privLevel })
+// 	const salt =
+// 		`0x${Buffer.from(randomBytes(32)).toString('hex')}`
+// 	const expectedAddr = getAddress(
+// 		`0x${generateAddress2(IDENTITY_FACTORY_ADDR, salt, bytecode)
+// 			.toString('hex')}`
+// 	)
+
+// 	return {
+// 		bytecode,
+// 		salt,
+// 		expectedAddr
+// 	}
+// }
 
 export async function getIdentityDeployData({ owner, privLevel }) {
 	const bytecode = await getIdentityBytecode({ owner, privLevel })
 	const salt =
 		`0x${Buffer.from(randomBytes(32)).toString('hex')}`
+
+	// const data = Factory
+	// 	.functions
+	// 	.deploy
+	// 	.encode([bytecode, salt])
+
 	const expectedAddr = getAddress(
 		`0x${generateAddress2(IDENTITY_FACTORY_ADDR, salt, bytecode)
 			.toString('hex')}`
