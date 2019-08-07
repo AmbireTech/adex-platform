@@ -7,29 +7,43 @@ import {
 } from 'services/smart-contracts/actions/ethers'
 import {
 	ethers,
-	Contract
+	Contract,
 } from 'ethers'
 import {
-	Interface,
 	bigNumberify,
 	parseUnits,
-	randomBytes,
+	// randomBytes,
 	getAddress,
-	hexlify
+	hexlify,
+	Interface,
+	keccak256
 } from 'ethers/utils'
 import { generateAddress2 } from 'ethereumjs-util'
-import { identityBytecode, executeTx, setAddrPriv } from 'services/adex-relayer/actions'
+import {
+	// identityBytecode,
+	executeTx,
+	setAddrPriv
+} from 'services/adex-relayer/actions'
 import { formatTokenAmount } from 'helpers/formatters'
 import { contracts } from '../contractsCfg'
+import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
+// import FactoryABI from 'adex-protocol-eth/abi/IdentityFactory'
+// const Factory = new Interface(FactoryABI)
+
+import solc from 'solcBrowser'
+
 const { DAI } = contracts
 
-const IDENTITY_BASE_ADDR = process.env.IDENTITY_BASE_ADDR
-const IDENTITY_FACTORY_ADDR = process.env.IDENTITY_FACTORY_ADDR
+const {
+	IDENTITY_BASE_ADDR,
+	IDENTITY_FACTORY_ADDR,
+} = process.env
+
 const GAS_LIMIT_DEPLOY_CONTRACT = 150000
 const feeAmountTransfer = '150000000000000000'
 const feeAmountSetPrivileges = '150000000000000000'
 const ERC20 = new Interface(DAI.abi)
-
+/*
 export async function getIdentityBytecode({ owner, privLevel }) {
 	const res = await identityBytecode({
 		owner,
@@ -49,6 +63,43 @@ export async function getIdentityDeployData({ owner, privLevel }) {
 	)
 
 	return {
+		bytecode,
+		salt,
+		expectedAddr
+	}
+}
+*/
+
+export async function getIdentityBytecode({ owner, privLevel }) {
+
+	const privileges = [
+		[owner, 3]
+	]
+
+	const bytecode = getProxyDeployBytecode(
+		IDENTITY_BASE_ADDR,
+		privileges,
+		{
+			privSlot: 0
+		},
+		solc
+	)
+
+	return bytecode
+}
+
+export async function getIdentityDeployData({ owner, privLevel }) {
+	const bytecode = await getIdentityBytecode({ owner, privLevel })
+	const salt = keccak256(owner)
+
+	const expectedAddr = getAddress(
+		`0x${generateAddress2(IDENTITY_FACTORY_ADDR, salt, bytecode)
+			.toString('hex')}`
+	)
+
+	return {
+		IDENTITY_FACTORY_ADDR,
+		IDENTITY_BASE_ADDR,
 		bytecode,
 		salt,
 		expectedAddr
