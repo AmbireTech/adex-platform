@@ -42,6 +42,15 @@ export default function Home({ t, ...rest }) {
 			maxWidth='md'
 			className={classes.container}
 		>
+			
+			<Typography
+				variant='h6'
+				component='h6'
+				gutterBottom
+			>
+				{t('GET_IN_TOUCH')}
+			</Typography>
+
 			<Img
 				src={ADEX_LOGO}
 				alt='AdEx logo'
@@ -77,7 +86,7 @@ export default function Home({ t, ...rest }) {
 				className={classes.vitalik}
 				alignSelf='stretch'
 			>
-			</Box>
+			</Box>			
 		</Box>
 	</Box>)
 }
