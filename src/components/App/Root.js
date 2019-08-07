@@ -20,11 +20,12 @@ import Translate from 'components/translate/Translate'
 // import { getSig } from 'services/auth/auth'
 import { AUTH_TYPES } from 'constants/misc'
 // import { logOut } from 'services/store-data/auth'
+import JustDialog from 'components/common/dialog/JustDialog'
 
-const ConnectedCreateGrantIdentity = ConnectHoc(CreateGrantIdentity)
-const ConnectedGrantLogin = ConnectHoc(LoginGrantIdentity)
-const ConnectedCreateFullIdentity = ConnectHoc(CreteFullIdentity)
-const ConnectedLoginStandardIdentity = ConnectHoc(LoginStandardIdentity)
+const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
+const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
+const ConnectedCreateFullIdentity = ConnectHoc(JustDialog(CreteFullIdentity))
+const ConnectedLoginStandardIdentity = ConnectHoc(JustDialog(LoginStandardIdentity))
 const ConnectedRoot = ConnectHoc(Home)
 
 function PrivateRoute({ component: Component, auth, ...other }) {
