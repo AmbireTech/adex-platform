@@ -30,14 +30,14 @@ export const FILTER_PROPERTIES_BIDS_NO_STATE = {
 }
 
 export const SORT_PROPERTIES_ITEMS = [
-	{ value: 'title' },
 	{ value: 'created' },
+	{ value: 'title' },
 	{ value: 'type' },
 ]
 
 export const SORT_PROPERTIES_COLLECTION = [
+	{ value: 'created' },
 	{ value: 'title' },
-	{ value: 'created' }
 ]
 
 export const FILTER_PROPERTIES_ITEMS = {
@@ -60,8 +60,8 @@ export const NETWORK_STATUS = {
 }
 
 export const SORT_PROPERTIES_CAMPAIGN = [
-	{ value: 'status.name', label: 'Status' },
 	{ value: 'created', label: 'Created' },
+	{ value: 'status.name', label: 'Status' },	
 	{ value: 'withdrawPeriodStart', label: 'Ends' },
 	{ value: 'activeFrom', label: 'Starts' },
 	{ value: 'depositAmount', label: 'depositAmount' },

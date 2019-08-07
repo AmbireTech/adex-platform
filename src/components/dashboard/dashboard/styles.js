@@ -128,9 +128,10 @@ export const styles = theme => {
 			paddingTop: 0
 		},
 		active: {
-			backgroundColor: theme.palette.primary[100],
+			color: theme.palette.common.white,
+			backgroundColor: theme.palette.primary.light,
 			'&:focus': {
-				backgroundColor: theme.palette.primary[100],
+				backgroundColor: theme.palette.primary.light,
 			}
 		},
 		newItemBtn: {

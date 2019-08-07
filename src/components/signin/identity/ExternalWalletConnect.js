@@ -6,11 +6,14 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import FullLogin from './FullLogin'
 import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
+import Anchor from 'components/common/anchor/anchor'
 
 const useStyles = makeStyles(theme => ({
 	button: {
 		height: '50%',
 		minHeight: theme.spacing(4)
+	},
+	container: {
 	}
 }))
 
@@ -19,73 +22,53 @@ export function ExternalConnect({ t, ...rest }) {
 	const classes = useStyles()
 	const [connectType, setConnectType] = useState('')
 
-	return (<Box
-		width={1}
-		height={1}
-	>
-		{!connectType &&
-			<Box
-				width={1}
-				height={1}
-				display='flex'
+	return (
+		<Grid
+			container
+			alignItems='stretch'
+			className={classes.buttons}
+		>
+			<Grid
+				item
+				container
+				direction='column'
+				alignItems='stretch'
+				justify='space-evenly'
 			>
-				<Grid
-					container
-					spacing={2}
-					alignItems='stretch'
-				>
-					<Grid
-						item
-						container
-						xs={12}
-						sm={6}
-						alignItems='center'
-					>
-						<Button
-							className={classes.button}
-							variant='contained'
-							color='secondary'
-							onClick={() => setConnectType('login')}
-							fullWidth
-						>
-							{t('USE_EXISTING_IDENTITY')}
-						</Button>
-					</Grid>
-					<Grid
-						item
-						container
-						xs={12}
-						sm={6}
-						alignItems='center'
-					>
-						<Button
-							className={classes.button}
-							variant='contained'
-							color='primary'
-							contrast
-							onClick={() => setConnectType('create')}
-							fullWidth
 
+				{
+					connectType !== 'create' &&
+					<>
+						<Box>
+							<Typography variant='h5' gutterBottom>{t('SELECT_EXISTING_IDENTITY')}</Typography>
+							<FullLogin {...rest} />
+						</Box>
+						<Grid
+							container
+							// alignItems='stretch'
+							className={classes.buttons}
 						>
-							{t('CREATE_NEW_IDENTITY')}
-						</Button>
-					</Grid>
-				</Grid>
-			</Box>
-		}
-		{
-			connectType === 'login' &&
-			<>
-				<Typography variant='h5' gutterBottom>{t('SELECT_EXISTING_IDENTITY')}</Typography>
-				<FullLogin {...rest} />
-			</>
-		}
-		{
-			connectType === 'create' &&
-			<>
-				<Typography  variant='h5' gutterBottom>{t('CREATE_NEW_IDENTITY')}</Typography>
-				<IdentityContractAddressEthDeploy {...rest} />
-			</>
-		}
-	</Box>)
+							<Grid
+								item
+								xs={12}
+							>
+								<Button
+									onClick={() => setConnectType('create')}
+								>
+									{t('CREATE_NEW_IDENTITY_LINK')}
+								</Button>
+							</Grid>
+						</Grid>
+					</>
+				}
+				{
+					connectType === 'create' &&
+					<>
+						<Typography variant='h5' gutterBottom>{t('CREATE_NEW_IDENTITY')}</Typography>
+						<IdentityContractAddressEthDeploy {...rest} />
+					</>
+				}
+			</Grid>
+		</Grid>
+	)
 }
