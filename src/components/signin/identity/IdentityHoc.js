@@ -32,7 +32,8 @@ export default function IdentityHoc(Decorated) {
 			const {
 				wallet,
 				email,
-				identityData
+				identityData,
+				deleteLegacyKey
 			} = identity
 
 			const newWallet = { ...wallet }
@@ -40,7 +41,8 @@ export default function IdentityHoc(Decorated) {
 				identity: identityData,
 				wallet: newWallet,
 				email,
-				registerExpected: !identityData
+				registerExpected: !identityData,
+				deleteLegacyKey
 			})
 		}
 
