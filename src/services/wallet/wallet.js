@@ -46,6 +46,10 @@ export function createLocalWallet({ email = '', password = '', mnemonic = '' }) 
 	return walletData
 }
 
+export function rewriteLegacyWallet({ email = '', password = '', wallet}) {
+	
+}
+
 export function addDataToWallet({
 	email = '',
 	password = '',
@@ -118,7 +122,7 @@ function walletInfo(key, index, wallet) {
 	const split = key.split('-')
 	const mail = split[1]
 	const type = mail ? 'quick' : 'grant'
-	const name = mail || `Grant account # ${index}`
+	const name = mail || `Grant account # ${index + 1}`
 
 	const info = {
 		key,
