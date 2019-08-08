@@ -19,6 +19,10 @@ export function saveToLocalStorage(data, key) {
 	}
 }
 
+export function removeFromLocalStorage(key) {
+	localStorage.removeItem(key)
+}
+
 export function getKeys() {
 	return Object.keys(localStorage)
 }
