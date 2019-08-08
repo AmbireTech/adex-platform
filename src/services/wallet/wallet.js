@@ -1,6 +1,11 @@
 import { ethers, utils } from 'ethers'
 import { encrypt, decrypt } from 'services/crypto/crypto'
-import { loadFromLocalStorage, saveToLocalStorage, getKeys } from 'helpers/localStorageHelpers'
+import {
+	loadFromLocalStorage,
+	saveToLocalStorage,
+	getKeys,
+	removeFromLocalStorage
+} from 'helpers/localStorageHelpers'
 
 // Returns 12 random words
 export function getRandomMnemonic() {
@@ -22,9 +27,14 @@ export function generateWallet(mnemonic) {
 	}
 }
 
-function encrKey({ email, password }) {
-	const key = encrypt(email, password)
-	return key
+function encrKey({ email, password, type }) {
+	if (!type) {
+		return encrypt(email, password)
+	} else if (typeof type === 'string') {
+		return `adex-${type}-wallet-${email}`
+	} else {
+		throw new Error('Invalid type')
+	}
 }
 
 function encrData({ email, password, data }) {
@@ -37,29 +47,43 @@ function decrData({ email, password, data }) {
 	return decr
 }
 
-export function createLocalWallet({ email = '', password = '', mnemonic = '' }) {
+export function createLocalWallet({ email = '', password = '', mnemonic = '', type = '' }) {
 	const walletData = generateWallet(mnemonic)
-	const key = encrKey({ email, password })
+	const key = encrKey({ email, password, type })
 	const data = encrData({ data: walletData, email, password })
 	saveToLocalStorage({ data }, key)
 
 	return walletData
 }
 
-export function rewriteLegacyWallet({ email = '', password = '', wallet}) {
-	
+export function migrateLegacyWallet({ email = '', password = '' }) {
+	const wallet = getLocalWallet({
+		email,
+		password,
+		getEncrypted: true
+	})
+
+	const newKey = encrKey({ email, password, type: 'grant' })
+	saveToLocalStorage(wallet, newKey)
+}
+
+export function removeLegacyKey({ email = '', password = '' }) {
+	const key = encrKey({ email, password })
+	removeFromLocalStorage(key)
 }
 
 export function addDataToWallet({
 	email = '',
 	password = '',
 	dataKey = '',
-	dataValue = '' }) {
+	dataValue = '',
+	type
+}) {
 	if (dataKey === 'data') {
 		throw new Error('Invalid data key')
 	}
 
-	const key = encrKey({ email, password })
+	const key = encrKey({ email, password, type })
 	const wallet = loadFromLocalStorage(key)
 
 	if (!wallet) {
@@ -71,12 +95,12 @@ export function addDataToWallet({
 	saveToLocalStorage(wallet, key)
 }
 
-export function getRecoveryWalletData({ email, password }) {
+export function getRecoveryWalletData({ email, password, type }) {
 	if (!email || !password) {
 		return null
 	}
 
-	const key = encrKey({ email, password })
+	const key = encrKey({ email, password, type })
 	const wallet = loadFromLocalStorage(key)
 
 	return {
@@ -85,15 +109,19 @@ export function getRecoveryWalletData({ email, password }) {
 	}
 }
 
-export function getLocalWallet({ email, password }) {
+export function getLocalWallet({ email, password, type, getEncrypted }) {
 	if (!email || !password) {
 		throw new Error('email and password are required')
 	}
 
-	const key = encrKey({ email, password })
+	const key = encrKey({ email, password, type })
 	const wallet = loadFromLocalStorage(key)
 
 	if (wallet) {
+		if (getEncrypted) {
+			return wallet
+		}
+
 		const data = Object.keys(wallet)
 			.reduce((props, key) => {
 				props[key] = decrData({
@@ -120,8 +148,10 @@ function isWallet(item) {
 
 function walletInfo(key, index, wallet) {
 	const split = key.split('-')
-	const mail = split[1]
-	const type = mail ? 'quick' : 'grant'
+	const mail = (split.length >= 3)
+		? split.slice(3, split.length).join('-')
+		: null
+	const type = split[1] || 'grant'
 	const name = mail || `Grant account # ${index + 1}`
 
 	const info = {
