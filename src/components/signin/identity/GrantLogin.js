@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { getLocalWallet } from 'services/wallet/wallet'
+import { getLocalWallet, migrateLegacyWallet } from 'services/wallet/wallet'
 import { AUTH_TYPES } from 'constants/misc'
 
 class GrantLogin extends Component {
@@ -36,6 +36,10 @@ class GrantLogin extends Component {
 					address: walletData.identity,
 					privileges: walletData.identityPrivileges
 				}
+
+				migrateLegacyWallet({ email, password })
+				handleChange('deleteLegacyKey', true)
+				handleChange('identityAddr', walletData.identity)
 			}
 
 			handleChange('wallet', wallet)
@@ -49,7 +53,7 @@ class GrantLogin extends Component {
 			dirty: dirty
 		})
 	}
-	
+
 	render() {
 		const { t, identity, handleChange, invalidFields, classes, actions } = this.props
 		// Errors
@@ -96,22 +100,22 @@ class GrantLogin extends Component {
 							/>
 						</Grid>
 						{(wallet && !!wallet.dirty) &&
-						<Grid item xs={12}>
-							<Typography variant='body2' color='error' gutterBottom>
-								{wallet.errMsg}
-							</Typography>
-						</Grid>
+							<Grid item xs={12}>
+								<Typography variant='body2' color='error' gutterBottom>
+									{wallet.errMsg}
+								</Typography>
+							</Grid>
 						}
 						<Grid item xs={12}>
 							{(!!identity.walletAddr) &&
-							<div>
-								<Typography variant='body1' >
-									{t('GRANT_WALLET_ADDRESS', { args: [identity.walletAddr] })}
-								</Typography>
-								<Typography variant='body1' gutterBottom>
-									{t('GRANT_IDENTITY_ADDRESS', { args: [identity.identityAddr] })}
-								</Typography>
-							</div>
+								<div>
+									<Typography variant='body1' >
+										{t('GRANT_WALLET_ADDRESS', { args: [identity.walletAddr] })}
+									</Typography>
+									<Typography variant='body1' gutterBottom>
+										{t('GRANT_IDENTITY_ADDRESS', { args: [identity.identityAddr] })}
+									</Typography>
+								</div>
 							}
 							<Button
 								variant='contained'
@@ -134,9 +138,9 @@ class GrantLogin extends Component {
 						onChange={actions.onUploadLocalWallet}
 					/>
 					<label htmlFor="contained-button-file">
-						<Button 							
+						<Button
 							// variant="contained" 
-							component="span" 
+							component="span"
 							className={classes.button}
 						>
 							{t('UPLOAD_ACCOUNT_DATA_JSON')}
