@@ -3,6 +3,9 @@ import PropTypes from 'prop-types'
 import NewCampaignHoc from './NewCampaignHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
+import FormGroup from '@material-ui/core/FormGroup'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Checkbox from '@material-ui/core/Checkbox'
 import Dropdown from 'components/common/dropdown'
 import TextField from '@material-ui/core/TextField'
 import DateTimePicker from 'components/common/DateTimePicker'
@@ -219,7 +222,8 @@ class CampaignFinance extends Component {
 			minPerImpression,
 			// depositAsset,
 			activeFrom,
-			withdrawPeriodStart
+			withdrawPeriodStart,
+			minTargetingScore
 		} = newItem
 
 		const { identityBalanceDai } = account.stats.formatted
@@ -356,8 +360,25 @@ class CampaignFinance extends Component {
 							}
 						/>
 					</Grid>
+					<Grid item sm={12} md={6}>
+						<FormGroup row>
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={!!minTargetingScore}
+										onChange={(ev) =>
+											handleChange('minTargetingScore',
+												ev.target.checked ? 1 : null)
+										}
+										value='minTargetingScore'
+									/>
+								}
+								label={t('CAMPAIGN_MIN_TARGETING')}
+							/>
+						</FormGroup>
+					</Grid>
 				</Grid>
-			</div>
+			</div >
 		)
 	}
 }

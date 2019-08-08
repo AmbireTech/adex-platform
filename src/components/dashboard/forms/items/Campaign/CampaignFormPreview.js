@@ -56,6 +56,7 @@ class CampaignFormPreview extends Component {
 			// depositAsset,
 			withdrawPeriodStart,
 			activeFrom,
+			minTargetingScore
 			// nonce
 		} = newItem
 
@@ -120,6 +121,11 @@ class CampaignFormPreview extends Component {
 						left={t('withdrawPeriodStart', { isProp: true })}
 						right={formatDateTime(withdrawPeriodStart)}
 					/>
+					{minTargetingScore &&
+						<PropRow
+							right={t('CAMPAIGN_MIN_TARGETING')}
+						/>
+					}
 					{/* <PropRow
 						left={t('created', { isProp: true })}
 						right={formatDateTime(created)}
