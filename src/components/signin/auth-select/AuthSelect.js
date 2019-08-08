@@ -8,26 +8,51 @@ import { styles } from './styles'
 import { getAuthLogo } from 'helpers/logosHelpers'
 import Img from 'components/common/img/Img'
 import classnames from 'classnames'
+import { getAllWallets } from 'services/wallet/wallet'
 
 const RRButton = withReactRouterLink(Button)
 
 class AuthSelect extends Component {
+	constructor(props) {
+		super(props)
+
+		this.state = {
+			wallets: []
+		}
+	}
+
 	componentDidMount() {
 		// NOTE: reset identity if someone press backspace 
 		// to go to this page
 		this.props.actions.resetIdentity()
+		this.setState({ wallets: getAllWallets() })
 	}
 
 	render() {
 		const { t, classes } = this.props
+		const { wallets } = this.state
 		return (
-			<div>
+			< div >
 				<Grid
 					container
 					spacing={2}
 					direction='column'
 					alignItems='stretch'
 				>
+					{
+						wallets.map(w =>
+							<Grid item xs={12}>
+								<RRButton
+									variant='contained'
+									to='/identity/grant'
+									size='large'
+									color='primary'
+									fullWidth
+								>
+									{t('SIGN_IN_TO' + w.name)}
+								</RRButton>
+							</Grid>)
+					}
 					<Grid item xs={12}>
 						<RRButton
 							variant='contained'
@@ -89,7 +114,7 @@ class AuthSelect extends Component {
 					</Grid>
 
 				</Grid>
-			</div>
+			</div >
 		)
 	}
 }
