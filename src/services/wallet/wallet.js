@@ -1,6 +1,6 @@
 import { ethers, utils } from 'ethers'
 import { encrypt, decrypt } from 'services/crypto/crypto'
-import { loadFromLocalStorage, saveToLocalStorage } from 'helpers/localStorageHelpers'
+import { loadFromLocalStorage, saveToLocalStorage, getKeys } from 'helpers/localStorageHelpers'
 
 // Returns 12 random words
 export function getRandomMnemonic() {
@@ -64,11 +64,10 @@ export function addDataToWallet({
 
 	const data = encrData({ data: dataValue, email, password })
 	wallet[dataKey] = data
-	
 	saveToLocalStorage(wallet, key)
 }
 
-export function getRecoveryWalletData({email, password}) {
+export function getRecoveryWalletData({ email, password }) {
 	if (!email || !password) {
 		return null
 	}
@@ -106,4 +105,41 @@ export function getLocalWallet({ email, password }) {
 	} else {
 		return null
 	}
+}
+
+function isWallet(item) {
+	return item
+		&& item.data
+		&& item.identity
+		&& item.privileges
+}
+
+function walletInfo(key, index, wallet) {
+	const split = key.split('-')
+	const mail = split[1]
+	const type = mail ? 'quick' : 'grant'
+	const name = mail || `Grant account # ${index}`
+
+	const info = {
+		key,
+		wallet,
+		name,
+		type
+	}
+
+	return info
+}
+
+export function getAllWallets() {
+	const walletKeys = getKeys()
+		.map(key => {
+			return {
+				key,
+				item: loadFromLocalStorage(key)
+			}
+		})
+		.filter(({ item }) => isWallet(item))
+		.map(({ item, key }, index) => walletInfo(key, index, item))
+
+	return walletKeys
 }
