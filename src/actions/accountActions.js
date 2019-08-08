@@ -7,6 +7,7 @@ import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
 import { getAccountStats } from 'services/smart-contracts/actions/stats'
 import { addToast } from './uiActions'
+import { removeLegacyKey } from 'services/wallet/wallet'
 
 // MEMORY STORAGE
 export function updateSignin(prop, value) {
@@ -85,7 +86,7 @@ export function updateAccountStats() {
 	}
 }
 
-export function createSession({ wallet, identity, email }) {
+export function createSession({ wallet, identity, email, deleteLegacyKey }) {
 	return async function (dispatch) {
 		updateSpinner('creating-session', true)(dispatch)
 		try {
@@ -142,6 +143,13 @@ export function createSession({ wallet, identity, email }) {
 					identity: identity
 				}
 			})(dispatch)
+
+			if (deleteLegacyKey) {
+				removeLegacyKey({
+					email: wallet.email,
+					password: wallet.password
+				})
+			}
 		} catch (err) {
 			console.error('ERR_GETTING_SESSION', err)
 			addToast({
