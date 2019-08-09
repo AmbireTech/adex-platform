@@ -151,7 +151,7 @@ function walletInfo(key, index, wallet) {
 	const mail = (split.length >= 3)
 		? split.slice(3, split.length).join('-')
 		: null
-	const type = split[1] || 'grant'
+	const type = split[1] || 'legacy'
 	const name = mail || `Grant account # ${index + 1}`
 
 	const info = {
