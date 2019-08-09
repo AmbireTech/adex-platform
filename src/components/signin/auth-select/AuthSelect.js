@@ -17,7 +17,8 @@ class AuthSelect extends Component {
 		super(props)
 
 		this.state = {
-			wallets: []
+			wallets: [],
+			hasLegacyWallet: false
 		}
 	}
 
@@ -25,12 +26,15 @@ class AuthSelect extends Component {
 		// NOTE: reset identity if someone press backspace 
 		// to go to this page
 		this.props.actions.resetIdentity()
-		this.setState({ wallets: getAllWallets() })
+		const allWallets = getAllWallets()
+		const wallets = allWallets.filter(w => w.type !== 'legacy')
+		const hasLegacyWallet = allWallets.length > wallets
+		this.setState({ wallets, hasLegacyWallet })
 	}
 
 	render() {
 		const { t, classes } = this.props
-		const { wallets } = this.state
+		const { wallets, hasLegacyWallet } = this.state
 		return (
 			< div >
 				<Grid
@@ -64,17 +68,19 @@ class AuthSelect extends Component {
 							{t('CREATE_GRANT_ACCOUNT')}
 						</RRButton>
 					</Grid>
-					<Grid item xs={12}>
-						<RRButton
-							variant='contained'
-							to='/login/grant'
-							size='large'
-							color='secondary'
-							fullWidth
-						>
-							{t('LOGIN_GRANT_ACCOUNT')}
-						</RRButton>
-					</Grid>
+					{hasLegacyWallet &&
+						<Grid item xs={12}>
+							<RRButton
+								variant='contained'
+								to='/login/grant'
+								size='large'
+								color='secondary'
+								fullWidth
+							>
+								{t('LOGIN_GRANT_ACCOUNT')}
+							</RRButton>
+						</Grid>
+					}
 					<Grid item xs={12}>
 						<RRButton
 							variant='contained'
