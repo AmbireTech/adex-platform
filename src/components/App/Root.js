@@ -21,6 +21,7 @@ import Translate from 'components/translate/Translate'
 import { AUTH_TYPES } from 'constants/misc'
 // import { logOut } from 'services/store-data/auth'
 import JustDialog from 'components/common/dialog/JustDialog'
+import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
 const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
@@ -40,6 +41,19 @@ function PrivateRoute({ component: Component, auth, ...other }) {
 }
 
 class Root extends Component {
+
+	handleLegacyWallet = () => {
+		const { wallet } = this.props.account
+		const { type, email, password, authType } = wallet || {}
+
+		if (!type
+			&& email
+			&& password
+			&& authType === 'grant') {
+			migrateLegacyWallet({ email, password })
+			removeLegacyKey({ email, password })
+		}
+	}
 
 	checkForMetamaskAccountChange = () => {
 		let acc = this.props.account
@@ -103,6 +117,7 @@ class Root extends Component {
 	}
 
 	componentWillMount() {
+		this.handleLegacyWallet()
 		// this.checkForMetamaskAccountChange()
 		// this.onMetamaskNetworkChanged()
 
