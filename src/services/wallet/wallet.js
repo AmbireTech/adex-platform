@@ -63,8 +63,10 @@ export function migrateLegacyWallet({ email = '', password = '' }) {
 		getEncrypted: true
 	})
 
-	const newKey = encrKey({ email, password, type: 'grant' })
-	saveToLocalStorage(wallet, newKey)
+	if (wallet && wallet.data) {
+		const newKey = encrKey({ email, password, type: 'grant' })
+		saveToLocalStorage(wallet, newKey)
+	}
 }
 
 export function removeLegacyKey({ email = '', password = '' }) {
