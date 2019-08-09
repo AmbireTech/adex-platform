@@ -6,7 +6,6 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import FullLogin from './FullLogin'
 import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
-import Anchor from 'components/common/anchor/anchor'
 
 const useStyles = makeStyles(theme => ({
 	button: {

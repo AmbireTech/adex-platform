@@ -45,7 +45,11 @@ class AuthSelect extends Component {
 				>
 					{
 						wallets.map(w =>
-							<Grid item xs={12}>
+							<Grid
+								key={w.name}
+								item
+								xs={12}
+							>
 								<RRButton
 									variant='contained'
 									to='/identity/grant'
@@ -53,7 +57,7 @@ class AuthSelect extends Component {
 									color='primary'
 									fullWidth
 								>
-									{t('SIGN_IN_TO' + w.name)}
+									{t('SIGN_IN_TO', { args: [w.name] })}
 								</RRButton>
 							</Grid>)
 					}
