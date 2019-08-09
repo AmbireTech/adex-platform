@@ -11,11 +11,10 @@ import Confirm from 'components/confirm/Confirm'
 import { PersistGate } from 'redux-persist/es/integration/react'
 import Root from './Root'
 import { MuiThemeProvider } from '@material-ui/core/styles'
-import { themeMUI, globalStyles } from './themeMUi'
+import { themeMUI } from './themeMUi'
 import MomentUtils from '@date-io/moment'
 import { MuiPickersUtilsProvider } from 'material-ui-pickers'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { withStyles } from '@material-ui/core/styles'
 
 const { persistor, store } = configureStore
 // console.log('initial store', store.getState())
@@ -24,25 +23,12 @@ const onBeforeLift = () => {
 	// take some action before the gate lifts
 }
 
-const cssBaselineStyled = ({ classes }) =>
-// Might break something
-	<CssBaseline classes={
-		classes.globalStyles
-	} />
-
-
-const CssBaselineStyled = withStyles(globalStyles)(cssBaselineStyled)
-
 class App extends Component {
 
 	render() {
 		return (
 			<React.Fragment>
-				<CssBaselineStyled
-					// classes={
-					//   { children: classes.globalStyles }
-					// }
-				/>
+				<CssBaseline />
 				<MuiThemeProvider theme={themeMUI}>
 					<MuiPickersUtilsProvider utils={MomentUtils}>
 						<Provider store={store}>
@@ -51,12 +37,12 @@ class App extends Component {
 								persistor={persistor}>
 								<ConnectedRouter history={history} >
 									<Router>
-										<div className="adex-dapp">									
+										<div className="adex-dapp">
 											<Switch >
 												<Root />
 											</Switch>
 											<Toast />
-											<Confirm />									
+											<Confirm />
 										</div>
 									</Router>
 								</ConnectedRouter>
