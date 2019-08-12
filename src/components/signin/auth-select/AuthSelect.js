@@ -25,7 +25,7 @@ class AuthSelect extends Component {
 	componentDidMount() {
 		// NOTE: reset identity if someone press backspace 
 		// to go to this page
-		this.props.actions.resetIdentity()
+		// this.props.actions.resetIdentity()
 		const allWallets = getAllWallets()
 		const wallets = allWallets.filter(w => w.type !== 'legacy')
 		const hasLegacyWallet = allWallets.length > wallets
@@ -33,10 +33,12 @@ class AuthSelect extends Component {
 	}
 
 	render() {
-		const { t, classes } = this.props
+		const { t, classes, actions } = this.props
 		const { wallets, hasLegacyWallet } = this.state
+		const { initQuickIdentity } = actions
+
 		return (
-			< div >
+			<div>
 				<Grid
 					container
 					spacing={2}
@@ -52,10 +54,11 @@ class AuthSelect extends Component {
 							>
 								<RRButton
 									variant='contained'
-									to='/identity/grant'
+									to={`/login/quick`}
 									size='large'
 									color='primary'
 									fullWidth
+									onClick={initQuickIdentity({ email: w.name, type: w.type })}
 								>
 									{t('SIGN_IN_TO', { args: [w.name] })}
 								</RRButton>
