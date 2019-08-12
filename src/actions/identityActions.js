@@ -35,6 +35,26 @@ export function resetIdentity() {
 	}
 }
 
+export function initQuickIdentity({ email, type }) {
+	return function (dispatch) {
+		dispatch({
+			type: types.RESET_IDENTITY
+		})
+
+		dispatch({
+			type: types.UPDATE_IDENTITY,
+			prop: 'email',
+			value: email
+		})
+
+		return dispatch({
+			type: types.UPDATE_IDENTITY,
+			prop: 'type',
+			value: type
+		})
+	}
+}
+
 // MEMORY STORAGE
 export function updateWallet(prop, value) {
 	return function (dispatch) {
