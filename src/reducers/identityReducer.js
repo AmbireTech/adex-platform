@@ -4,26 +4,26 @@ import initialState from 'store/initialState'
 export default function identityReducer(state = initialState.identity, action) {
 
 	let newState
-	let newidentity
+	let newIdentity
 
 	newState = { ...state }
 
 	switch (action.type) {
 	case UPDATE_IDENTITY:
-		newidentity = newState
-		if (Array.isArray(newidentity[action.prop])) {
-			newidentity[action.prop] = [...action.value]
+		newIdentity = newState
+		if (Array.isArray(newIdentity[action.prop])) {
+			newIdentity[action.prop] = [...action.value]
 		} else {
-			newidentity[action.prop] = action.value
+			newIdentity[action.prop] = action.value
 		}
 
-		newState = newidentity
+		newState = newIdentity
 
 		return newState
 
 	case RESET_IDENTITY:
-		newidentity = { ...initialState.identity }
-		newState = newidentity
+		newIdentity = { ...initialState.identity }
+		newState = newIdentity
 		return newState
 
 	default:
