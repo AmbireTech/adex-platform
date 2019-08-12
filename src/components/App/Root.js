@@ -11,7 +11,8 @@ import {
 	CreteFullIdentity,
 	// DemoIdentity,
 	LoginGrantIdentity,
-	LoginStandardIdentity
+	LoginStandardIdentity,
+	LoginQuickIdentity
 } from 'components/signin/identity/Identity'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
@@ -25,6 +26,7 @@ import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
 const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
+const ConnectedQuickLogin = ConnectHoc(JustDialog(LoginQuickIdentity))
 const ConnectedCreateFullIdentity = ConnectHoc(JustDialog(CreteFullIdentity))
 const ConnectedLoginStandardIdentity = ConnectHoc(JustDialog(LoginStandardIdentity))
 const ConnectedRoot = ConnectHoc(Home)
@@ -152,6 +154,7 @@ class Root extends Component {
 				<Route exact path="/identity/grant" component={(props) => <ConnectedCreateGrantIdentity {...props} noBackground />} />
 				<Route exact path="/login/grant" component={(props) => <ConnectedGrantLogin {...props} noBackground />} />
 				<Route exact path="/login/full" component={(props) => <ConnectedLoginStandardIdentity {...props} noBackground />} />
+				<Route exact path="/login/quick" component={(props) => <ConnectedQuickLogin {...props} noBackground />} />
 				<Route exact path="/identity/full" component={(props) => <ConnectedCreateFullIdentity {...props} noBackground />} />
 				{/* <Route exact path="/identity/demo" component={DemoIdentity} /> */}
 				<Route component={PageNotFound} />
