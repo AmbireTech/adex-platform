@@ -35,7 +35,7 @@ export function resetIdentity() {
 	}
 }
 
-export function initQuickIdentity({ email, type }) {
+export function initIdentity({ email, authType }) {
 	return function (dispatch) {
 		dispatch({
 			type: types.RESET_IDENTITY
@@ -49,8 +49,8 @@ export function initQuickIdentity({ email, type }) {
 
 		return dispatch({
 			type: types.UPDATE_IDENTITY,
-			prop: 'type',
-			value: type
+			prop: 'authType',
+			value: authType
 		})
 	}
 }

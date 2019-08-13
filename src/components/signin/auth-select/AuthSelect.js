@@ -27,7 +27,7 @@ class AuthSelect extends Component {
 		// to go to this page
 		// this.props.actions.resetIdentity()
 		const allWallets = getAllWallets()
-		const wallets = allWallets.filter(w => w.type !== 'legacy')
+		const wallets = allWallets.filter(w => w.authType !== 'legacy')
 		const hasLegacyWallet = allWallets.length > wallets
 		this.setState({ wallets, hasLegacyWallet })
 	}
@@ -35,7 +35,7 @@ class AuthSelect extends Component {
 	render() {
 		const { t, classes, actions } = this.props
 		const { wallets, hasLegacyWallet } = this.state
-		const { initQuickIdentity } = actions
+		const { initIdentity } = actions
 
 		return (
 			<div>
@@ -58,7 +58,7 @@ class AuthSelect extends Component {
 									size='large'
 									color='primary'
 									fullWidth
-									onClick={initQuickIdentity({ email: w.name, type: w.type })}
+									onClick={initIdentity({ email: w.name, authType: w.authType })}
 								>
 									{t('SIGN_IN_TO', { args: [w.name] })}
 								</RRButton>

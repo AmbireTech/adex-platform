@@ -127,8 +127,10 @@ export async function getSigner({ wallet, provider }) {
 		const signer = new TrezorSigner(provider, { path })
 		return signer
 	}
-	if (authType === AUTH_TYPES.GRANT.name) {
-		const signer = new LocalSigner(provider, { email, password })
+	if (authType === AUTH_TYPES.GRANT.name
+		|| authType === AUTH_TYPES.QUICK.name
+	) {
+		const signer = new LocalSigner(provider, { email, password, authType })
 
 		return signer
 	}

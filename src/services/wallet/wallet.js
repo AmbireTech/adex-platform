@@ -6,6 +6,7 @@ import {
 	getKeys,
 	removeFromLocalStorage
 } from 'helpers/localStorageHelpers'
+import { AUTH_TYPES } from 'constants/misc'
 
 // Returns 12 random words
 export function getRandomMnemonic() {
@@ -27,11 +28,11 @@ export function generateWallet(mnemonic) {
 	}
 }
 
-function encrKey({ email, password, type }) {
-	if (!type) {
+function encrKey({ email, password, authType }) {
+	if (!authType) {
 		return encrypt(email, password)
-	} else if (typeof type === 'string') {
-		return `adex-${type}-wallet-${email}`
+	} else if (typeof authType === 'string') {
+		return `adex-${authType}-wallet-${email}`
 	} else {
 		throw new Error('Invalid type')
 	}
@@ -47,9 +48,9 @@ function decrData({ email, password, data }) {
 	return decr
 }
 
-export function createLocalWallet({ email = '', password = '', mnemonic = '', type = '' }) {
+export function createLocalWallet({ email = '', password = '', mnemonic = '', authType = '' }) {
 	const walletData = generateWallet(mnemonic)
-	const key = encrKey({ email, password, type })
+	const key = encrKey({ email, password, authType })
 	const data = encrData({ data: walletData, email, password })
 	saveToLocalStorage({ data }, key)
 
@@ -64,7 +65,7 @@ export function migrateLegacyWallet({ email = '', password = '' }) {
 	})
 
 	if (wallet && wallet.data) {
-		const newKey = encrKey({ email, password, type: 'grant' })
+		const newKey = encrKey({ email, password, authType: AUTH_TYPES.GRANT.name })
 		saveToLocalStorage(wallet, newKey)
 	}
 }
@@ -79,13 +80,13 @@ export function addDataToWallet({
 	password = '',
 	dataKey = '',
 	dataValue = '',
-	type
+	authType
 }) {
 	if (dataKey === 'data') {
 		throw new Error('Invalid data key')
 	}
 
-	const key = encrKey({ email, password, type })
+	const key = encrKey({ email, password, authType })
 	const wallet = loadFromLocalStorage(key)
 
 	if (!wallet) {
@@ -97,12 +98,12 @@ export function addDataToWallet({
 	saveToLocalStorage(wallet, key)
 }
 
-export function getRecoveryWalletData({ email, password, type }) {
+export function getRecoveryWalletData({ email, password, authType }) {
 	if (!email || !password) {
 		return null
 	}
 
-	const key = encrKey({ email, password, type })
+	const key = encrKey({ email, password, authType })
 	const wallet = loadFromLocalStorage(key)
 
 	return {
@@ -111,12 +112,12 @@ export function getRecoveryWalletData({ email, password, type }) {
 	}
 }
 
-export function getLocalWallet({ email, password, type, getEncrypted }) {
+export function getLocalWallet({ email, password, authType, getEncrypted }) {
 	if (!email || !password) {
 		throw new Error('email and password are required')
 	}
 
-	const key = encrKey({ email, password, type })
+	const key = encrKey({ email, password, authType })
 	const wallet = loadFromLocalStorage(key)
 
 	if (wallet) {
@@ -153,14 +154,14 @@ function walletInfo(key, index, wallet) {
 	const mail = (split.length >= 3)
 		? split.slice(3, split.length).join('-')
 		: null
-	const type = split[1] || 'legacy'
+	const authType = split[1] || 'legacy'
 	const name = mail || `Grant account # ${index + 1}`
 
 	const info = {
 		key,
 		wallet,
 		name,
-		type
+		authType
 	}
 
 	return info
