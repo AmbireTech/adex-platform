@@ -6,35 +6,39 @@ export const withReactRouterLink = Component => {
 
 	class Decorated extends React.Component {
 
-    resolveToLocation = to => {
-    	return typeof to === 'object' ? to['pathname'] : to
-    }
+		resolveToLocation = to => {
+			return typeof to === 'object' ? to['pathname'] : to
+		}
 
-    handleClick = event => {
-    	event.preventDefault()
-    	const { to } = this.props
+		handleClick = event => {
+			event.preventDefault()
+			const { to, onClick } = this.props
 
-    	this.props.history.push(to)
-    }
+			if (typeof onClick === 'function') {
+				onClick()
+			}
 
-    // TODO: check if it works without infinite loops
-    // shouldComponentUpdate(nextProps, nextState) {
-    //   // const { to } = this.props;
-    //   return this.resolveToLocation(this.props.to) !== this.resolveToLocation(nextProps.to)
-    // }
+			this.props.history.push(to)
+		}
 
-    render() {
-    	const { to, match, location, history, staticContext, ...rest } = this.props
-    	const toLocation = this.resolveToLocation(to)
-    	return (
-    		<Component
-    			{...rest}
+		// TODO: check if it works without infinite loops
+		// shouldComponentUpdate(nextProps, nextState) {
+		//   // const { to } = this.props;
+		//   return this.resolveToLocation(this.props.to) !== this.resolveToLocation(nextProps.to)
+		// }
 
-    			href={toLocation}
-    			onClick={this.handleClick}
-    		/>
-    	)
-    }
+		render() {
+			const { to, match, location, history, staticContext, ...rest } = this.props
+			const toLocation = this.resolveToLocation(to)
+			return (
+				<Component
+					{...rest}
+
+					href={toLocation}
+					onClick={this.handleClick}
+				/>
+			)
+		}
 	}
 
 	return withRouter(Decorated)
