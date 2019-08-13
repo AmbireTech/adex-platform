@@ -8,6 +8,7 @@ import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import ConnectHoc from 'components/signin/ConnectHoc'
 import {
 	CreateGrantIdentity,
+	CreateQuickIdentity,
 	CreteFullIdentity,
 	// DemoIdentity,
 	LoginGrantIdentity,
@@ -26,6 +27,7 @@ import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
 const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
+const ConnectedCreateQuickIdentity = ConnectHoc(JustDialog(CreateQuickIdentity))
 const ConnectedQuickLogin = ConnectHoc(JustDialog(LoginQuickIdentity))
 const ConnectedCreateFullIdentity = ConnectHoc(JustDialog(CreteFullIdentity))
 const ConnectedLoginStandardIdentity = ConnectHoc(JustDialog(LoginStandardIdentity))
@@ -152,6 +154,7 @@ class Root extends Component {
 				<PrivateRoute auth={this.props.auth} path="/side-select" component={SideSelect} />
 				<Route exact path="/" component={(props) => <ConnectedRoot {...props} noBackground />} />
 				<Route exact path="/identity/grant" component={(props) => <ConnectedCreateGrantIdentity {...props} noBackground />} />
+				<Route exact path="/identity/quick" component={(props) => <ConnectedCreateQuickIdentity {...props} noBackground />} />
 				<Route exact path="/login/grant" component={(props) => <ConnectedGrantLogin {...props} noBackground />} />
 				<Route exact path="/login/full" component={(props) => <ConnectedLoginStandardIdentity {...props} noBackground />} />
 				<Route exact path="/login/quick" component={(props) => <ConnectedQuickLogin {...props} noBackground />} />

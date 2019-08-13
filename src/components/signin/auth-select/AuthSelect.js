@@ -58,7 +58,7 @@ class AuthSelect extends Component {
 									size='large'
 									color='primary'
 									fullWidth
-									onClick={initIdentity({ email: w.name, authType: w.authType })}
+									onClick={() => initIdentity({ email: w.name, authType: w.authType })}
 								>
 									{t('SIGN_IN_TO', { args: [w.name] })}
 								</RRButton>
@@ -73,6 +73,17 @@ class AuthSelect extends Component {
 							fullWidth
 						>
 							{t('CREATE_GRANT_ACCOUNT')}
+						</RRButton>
+					</Grid>
+					<Grid item xs={12}>
+						<RRButton
+							variant='contained'
+							to='/identity/quick'
+							size='large'
+							color='secondary'
+							fullWidth
+						>
+							{t('CREATE_QUICK_ACCOUNT')}
 						</RRButton>
 					</Grid>
 					{hasLegacyWallet &&
