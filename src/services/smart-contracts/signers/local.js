@@ -5,11 +5,14 @@ import { constants } from 'adex-models'
 export default class LocalSigner extends Signer {
 	constructor(provider, opts = {}) {
 		super()
+
+		const { email, password, authType } = opts
 		this._provider = provider
 
 		const walletData = getLocalWallet({
-			email: opts.email,
-			password: opts.password
+			email,
+			password,
+			authType
 		})
 
 		this._wallet = new Wallet(

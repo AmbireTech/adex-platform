@@ -9,7 +9,6 @@ import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { getLocalWallet } from 'services/wallet/wallet'
-import { AUTH_TYPES } from 'constants/misc'
 
 const RRButton = withReactRouterLink(Button)
 
@@ -20,8 +19,7 @@ class QuickLogin extends Component {
 
 	validateWallet = (dirty) => {
 		const { identity, handleChange, validate } = this.props
-		const { password, email, type } = identity
-
+		const { password, email, authType } = identity
 		if (!email) {
 
 		}
@@ -32,14 +30,14 @@ class QuickLogin extends Component {
 			const walletData = getLocalWallet({
 				email,
 				password,
-				type
+				authType
 			})
 
 			if (!!walletData && walletData.data) {
 				wallet = { ...walletData.data }
 				wallet.email = email
 				wallet.password = password
-				wallet.authType = AUTH_TYPES.QUICK.name
+				wallet.authType = authType
 				wallet.identity = {
 					address: walletData.identity,
 					privileges: walletData.identityPrivileges
