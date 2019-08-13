@@ -8,6 +8,8 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import GrantInfo from './GrantInfo'
 import GrantDeploy from './GrantDeploy'
 import GrantLogin from './GrantLogin'
+import QuickInfo from './QuickInfo'
+import QuickDeploy from './QuickDeploy'
 import QuickLogin from './QuickLogin'
 // import FullLogin from './FullLogin'
 import { ExternalConnect } from './ExternalWalletConnect'
@@ -90,6 +92,17 @@ export const LoginStandardIdentity = (props) =>
 		stepsPages={[
 			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
 			{ title: 'CONNECT_STANDARD_IDENTITY', page: ExternalConnect, final: true },
+		]}
+	/>
+
+export const CreateQuickIdentity = (props) =>
+	<IdentitySteps
+		{...props}
+		{...common}
+		stepsId='quick-identity-create'
+		stepsPages={[
+			{ title: 'QUICK_INFO', page: QuickInfo },
+			{ title: 'QUICK_DEPLOY', page: QuickDeploy, final: true }
 		]}
 	/>
 
