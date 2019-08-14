@@ -5,10 +5,10 @@ import 'react-image-crop/dist/ReactCrop.css'
 import { Provider } from 'react-redux'
 import configureStore from 'store/configureStore'
 import history from 'store/history'
-import { ConnectedRouter } from 'react-router-redux'
+import { ConnectedRouter } from 'connected-react-router'
 import Toast from 'components/toast/Toast'
 import Confirm from 'components/confirm/Confirm'
-import { PersistGate } from 'redux-persist/es/integration/react'
+import { PersistGate } from 'redux-persist/integration/react'
 import Root from './Root'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import { themeMUI } from './themeMUi'
@@ -35,7 +35,7 @@ class App extends Component {
 							<PersistGate
 								onBeforeLift={onBeforeLift}
 								persistor={persistor}>
-								<ConnectedRouter history={history} >
+								<ConnectedRouter history={history}>
 									<Router>
 										<div className="adex-dapp">
 											<Switch >
