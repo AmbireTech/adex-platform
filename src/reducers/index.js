@@ -16,7 +16,6 @@ import newTransactions from './newTransactionsReducer'
 import web3Transactions from './web3TransactionsReducer'
 import tags from './tagsReducer'
 import ethNetwork from './ethNetworkReducer'
-import { routerReducer, LOCATION_CHANGE, CALL_HISTORY_METHOD } from 'react-router-redux'
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
 
@@ -50,7 +49,6 @@ export const memoryReducers = {
 	toasts: toasts,
 	confirm: filterActions(confirm, [types.CONFIRM_ACTION]),
 	nav: filterActions(nav, [types.UPDATE_NAV]),
-	routing: filterActions(routerReducer, [LOCATION_CHANGE, CALL_HISTORY_METHOD]),
 	// language: language,
 	validations: validations,
 	newTransactions: newTransactions
