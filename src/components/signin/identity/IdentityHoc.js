@@ -47,8 +47,6 @@ export default function IdentityHoc(Decorated) {
 		}
 
 		cancel = () => {
-			const { resetIdentity } = this.props.actions
-			resetIdentity()
 			this.props.history.push('/')
 		}
 
