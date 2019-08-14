@@ -3,7 +3,7 @@ import reduxImmutableStateInvariant from 'redux-immutable-state-invariant'
 import thunk from 'redux-thunk'
 import { persistReducers, memoryReducers } from 'reducers'
 import history from './history'
-import { routerMiddleware } from 'react-router-redux'
+import { routerMiddleware, connectRouter } from 'connected-react-router'
 import { persistStore, persistCombineReducers } from 'redux-persist'
 import localStorage from 'redux-persist/es/storage'
 // import session from 'redux-persist/lib/storage/session'
@@ -26,6 +26,7 @@ const configStorage = {
 const rootReducer = combineReducers({
 	persist: persistCombineReducers(configStorage, persistReducers),
 	memory: combineReducers(memoryReducers), // persistCombineReducers(configSession, sessionReducers), //
+	router: connectRouter(history)
 })
 
 const logger = store => next => action => {
