@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import Img from 'components/common/img/Img'
-
+import { execute, resetIdentity } from 'actions'
 import ADEX_LOGO from 'resources/adex-logo-txt-sm.svg'
 import SNT_VITALIK_BUTERIN_RIDES_EDDIE_WHILE_PUMPING_IT_UP from 'resources/eddie/eddie-20.png'
 
@@ -27,6 +27,10 @@ export default function Home({ t, ...rest }) {
 
 	const classes = useStyles()
 
+	useEffect(() => {
+		execute(resetIdentity())
+	}, [])
+
 	return (<Box
 		width={1}
 		height={1}
@@ -42,7 +46,7 @@ export default function Home({ t, ...rest }) {
 			maxWidth='md'
 			className={classes.container}
 		>
-			
+
 			<Typography
 				variant='h6'
 				component='h6'
@@ -86,7 +90,7 @@ export default function Home({ t, ...rest }) {
 				className={classes.vitalik}
 				alignSelf='stretch'
 			>
-			</Box>			
+			</Box>
 		</Box>
 	</Box>)
 }
