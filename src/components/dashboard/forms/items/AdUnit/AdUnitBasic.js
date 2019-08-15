@@ -27,16 +27,13 @@ class AdUnitBasic extends Component {
 		this.validateDescription(newItem.description, false)
 		this.validateTargetUrl(newItem.targetUrl, false)
 		this.validateAndUpdateType(false, newItem.type)
-		const { addUtmLink } = newItem.temp || {}
-		this.state = {
-			addUtmLink: addUtmLink || true
-		}
 	}
 
 	componentDidUpdate(prevProps) {
 		if (
 			prevProps.newItem.title !== this.props.newItem.title ||
-			prevProps.newItem.type !== this.props.newItem.type
+			prevProps.newItem.type !== this.props.newItem.type ||
+			prevProps.newItem.temp.addUtmLink !== this.props.newItem.temp.addUtmLink
 		) {
 			this.addUtmParameters()
 		}
@@ -84,8 +81,8 @@ class AdUnitBasic extends Component {
 
 	addUtmParameters() {
 		const { handleChange, newItem } = this.props
-		const { targetUrl, title, type } = newItem
-		const { addUtmLink } = this.state
+		const { targetUrl, title, type, temp } = newItem
+		const { addUtmLink } = temp
 		if (!!targetUrl && addUtmLink) {
 			const newTargetUrl = addUrlUtmTracking(targetUrl, null, null, title, type)
 			handleChange('targetUrl', newTargetUrl);
@@ -98,9 +95,6 @@ class AdUnitBasic extends Component {
 		// Need this to keep the state if user get back
 		newTemp.addUtmLink = ev.target.checked
 		this.props.handleChange('temp', newTemp)
-		this.setState({ addUtmLink: newTemp.addUtmLink }, () => {
-			this.addUtmParameters()
-		})
 	}
 
 	render() {
@@ -110,8 +104,8 @@ class AdUnitBasic extends Component {
 			invalidFields,
 			handleChange
 		} = this.props
-		const { targetUrl, type, title, description } = newItem
-		const { addUtmLink } = this.state
+		const { targetUrl, type, title, description, temp } = newItem
+		const { addUtmLink } = temp
 		const errTitle = invalidFields['title']
 		const errDescription = invalidFields['description']
 		const errTargetUrl = invalidFields['targetUrl']
