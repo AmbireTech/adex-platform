@@ -86,3 +86,17 @@ export const FILTER_PROPERTIES_CAMPAIGN = {
 		]
 	},
 }
+
+export const UTM_ATTRIBUTES = {
+	SOURCE: "utm_source",
+	MEDIUM: "utm_medium",
+	CAMPAIGN: "utm_campaign",
+	CONTENT: "utm_content",
+}
+
+export const UTM_DEFAULT_VALUE = {
+	SOURCE: "ADEX",
+	MEDIUM: "CPM",
+	CAMPAIGN: "none",
+	CONTENT: "none",
+}
