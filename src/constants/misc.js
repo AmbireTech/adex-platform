@@ -61,7 +61,7 @@ export const NETWORK_STATUS = {
 
 export const SORT_PROPERTIES_CAMPAIGN = [
 	{ value: 'created', label: 'Created' },
-	{ value: 'status.name', label: 'Status' },	
+	{ value: 'status.name', label: 'Status' },
 	{ value: 'withdrawPeriodStart', label: 'Ends' },
 	{ value: 'activeFrom', label: 'Starts' },
 	{ value: 'depositAmount', label: 'depositAmount' },
@@ -85,4 +85,11 @@ export const FILTER_PROPERTIES_CAMPAIGN = {
 			{ value: 'Expired', label: 'Expired' },
 		]
 	},
+}
+
+export const UTM_PARAMS = {
+	'utm_source': 'ADEX',
+	'utm_medium': 'CPM',
+	'utm_campaign': 'none',
+	'utm_content': 'none',
 }
