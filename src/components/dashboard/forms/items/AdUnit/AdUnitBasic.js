@@ -8,7 +8,7 @@ import Dropdown from 'components/common/dropdown'
 import { constants, schemas, Joi } from 'adex-models'
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import { addUrlUtmTracking } from 'helpers/utmHelpers';
+import { addUrlUtmTracking } from 'helpers/utmHelpers'
 
 const { adUnitPost } = schemas
 
@@ -30,10 +30,9 @@ class AdUnitBasic extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		if (
-			prevProps.newItem.title !== this.props.newItem.title ||
-			prevProps.newItem.type !== this.props.newItem.type ||
-			prevProps.newItem.temp.addUtmLink !== this.props.newItem.temp.addUtmLink
+		if (prevProps.newItem.title !== this.props.newItem.title
+			|| prevProps.newItem.type !== this.props.newItem.type
+			|| prevProps.newItem.temp.addUtmLink !== this.props.newItem.temp.addUtmLink
 		) {
 			this.addUtmParameters()
 		}
@@ -84,13 +83,13 @@ class AdUnitBasic extends Component {
 		const { targetUrl, title, type, temp } = newItem
 		const { addUtmLink } = temp
 		if (!!targetUrl) {
-			const newTargetUrl = addUrlUtmTracking({ 
-				targetUrl, 
-				campaign: title, 
-				content: type, 
+			const newTargetUrl = addUrlUtmTracking({
+				targetUrl,
+				campaign: title,
+				content: type,
 				removeFromUrl: !addUtmLink
 			})
-			handleChange('targetUrl', newTargetUrl);
+			handleChange('targetUrl', newTargetUrl)
 		}
 	}
 
