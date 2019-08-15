@@ -86,7 +86,7 @@ class AdUnitBasic extends Component {
 		const { handleChange, newItem } = this.props
 		const { targetUrl, title, type } = newItem
 		const { addUtmLink } = this.state
-		if (targetUrl !== '' && addUtmLink) {
+		if (!!targetUrl && addUtmLink) {
 			const newTargetUrl = addUrlUtmTracking(targetUrl, null, null, title, type)
 			handleChange('targetUrl', newTargetUrl);
 		}
@@ -187,7 +187,7 @@ class AdUnitBasic extends Component {
 									color='primary'
 								/>
 							}
-							label={t('ADD_UTM_LINK', { isProp: false })}
+							label={t('ADD_UTM_LINK')}
 						/>
 					</Grid>
 					<Grid item sm={12} md={12}>
