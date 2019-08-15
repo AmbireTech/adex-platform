@@ -11,7 +11,7 @@ export const addUrlUtmTracking = (targetUrl, source, medium, campaign, content) 
 				[UTM_ATTRIBUTES.CAMPAIGN]: (campaign ? campaign : UTM_DEFAULT_VALUE.CAMPAIGN),
 				[UTM_ATTRIBUTES.CONTENT]: (content ? content : UTM_DEFAULT_VALUE.CONTENT),
 			}
-			URL.query = { ...utmParams, ...URL.query };
+			URL.query = { ...URL.query, ...utmParams };
 			delete URL.search
 			return url.format(URL)
 		}
