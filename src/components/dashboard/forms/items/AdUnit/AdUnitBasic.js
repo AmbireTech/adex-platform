@@ -8,8 +8,7 @@ import Dropdown from 'components/common/dropdown'
 import { constants, schemas, Joi } from 'adex-models'
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import queryString from 'query-string'
-import { UTM_ATTRIBUTES, UTM_DEFAULT_VALUE } from '../../../../../constants/misc'
+import { addUrlUtmTracking } from 'helpers/utmHelpers';
 
 const { adUnitPost } = schemas
 
@@ -40,7 +39,6 @@ class AdUnitBasic extends Component {
 			prevProps.newItem.type !== this.props.newItem.type
 		) {
 			this.addUtmParameters()
-			console.log('Test')
 		}
 	}
 
@@ -89,15 +87,8 @@ class AdUnitBasic extends Component {
 		const { targetUrl, title, type } = newItem
 		const { addUtmLink } = this.state
 		if (targetUrl !== '' && addUtmLink) {
-			const url = targetUrl.split('?')
-			const params = queryString.parse(url[1])
-			params[UTM_ATTRIBUTES.SOURCE] = UTM_DEFAULT_VALUE.SOURCE
-			params[UTM_ATTRIBUTES.MEDIUM] = UTM_DEFAULT_VALUE.MEDIUM
-			params[UTM_ATTRIBUTES.CAMPAIGN] = title ? title : UTM_DEFAULT_VALUE.CAMPAIGN
-			params[UTM_ATTRIBUTES.CONTENT] = type ? type : UTM_DEFAULT_VALUE.CONTENT
-			const qs = queryString.stringify(params)
-			const newTargetUrl = url[0].concat('?', qs)
-			handleChange('targetUrl', newTargetUrl)
+			const newTargetUrl = addUrlUtmTracking(targetUrl, null, null, title, type)
+			handleChange('targetUrl', newTargetUrl);
 		}
 	}
 
@@ -113,7 +104,12 @@ class AdUnitBasic extends Component {
 	}
 
 	render() {
-		const { t, newItem, invalidFields, handleChange } = this.props
+		const {
+			t,
+			newItem,
+			invalidFields,
+			handleChange
+		} = this.props
 		const { targetUrl, type, title, description } = newItem
 		const { addUtmLink } = this.state
 		const errTitle = invalidFields['title']
@@ -126,10 +122,10 @@ class AdUnitBasic extends Component {
 					<Grid item sm={12}>
 						<TextField
 							fullWidth
-							type="text"
+							type='text'
 							required
 							label={t('title', { isProp: true })}
-							name="name"
+							name='name'
 							value={title}
 							onChange={ev => handleChange('title', ev.target.value)}
 							onBlur={() => this.validateTitle(title, true)}
@@ -142,7 +138,7 @@ class AdUnitBasic extends Component {
 					<Grid item sm={12}>
 						<TextField
 							fullWidth
-							type="text"
+							type='text'
 							multiline
 							rows={3}
 							label={t('description', { isProp: true })}
@@ -155,24 +151,30 @@ class AdUnitBasic extends Component {
 							error={errDescription && !!errDescription.dirty}
 							maxLength={300}
 							helperText={
-								errDescription && !!errDescription.dirty
+								(errDescription && !!errDescription.dirty)
 									? errDescription.errMsg
-									: t('DESCRIPTION_HELPER')
+									: (t('DESCRIPTION_HELPER'))
 							}
 						/>
 					</Grid>
 					<Grid item xs={12}>
 						<TextField
 							fullWidth
-							type="text"
+							type='text'
 							required
 							label={t('targetUrl', { isProp: true })}
 							value={targetUrl}
-							onChange={ev => handleChange('targetUrl', ev.target.value)}
+							onChange={ev =>
+								handleChange('targetUrl', ev.target.value)
+							}
 							onBlur={() => this.validateTargetUrl(targetUrl, true)}
 							onFocus={() => this.validateTargetUrl(targetUrl, false)}
 							error={errTargetUrl && !!errTargetUrl.dirty}
-							helperText={errTargetUrl && !!errTargetUrl.dirty ? errTargetUrl.errMsg : ''}
+							helperText={
+								(errTargetUrl && !!errTargetUrl.dirty)
+									? errTargetUrl.errMsg
+									: ''
+							}
 						/>
 					</Grid>
 					<Grid item xs={12}>
@@ -181,8 +183,8 @@ class AdUnitBasic extends Component {
 								<Checkbox
 									checked={addUtmLink}
 									onChange={ev => this.handleChangeAddUtmLink(ev)}
-									value="checkedB"
-									color="primary"
+									value='checkedB'
+									color='primary'
 								/>
 							}
 							label={t('ADD_UTM_LINK', { isProp: false })}
@@ -196,8 +198,8 @@ class AdUnitBasic extends Component {
 							source={AdTypes}
 							value={type + ''}
 							label={t('adType', { isProp: true })}
-							htmlId="ad-type-dd"
-							name="adType"
+							htmlId='ad-type-dd'
+							name='adType'
 						/>
 					</Grid>
 				</Grid>
@@ -210,7 +212,7 @@ AdUnitBasic.propTypes = {
 	newItem: PropTypes.object.isRequired,
 	title: PropTypes.string,
 	descriptionHelperTxt: PropTypes.string,
-	nameHelperTxt: PropTypes.string
+	nameHelperTxt: PropTypes.string,
 }
 
 const NewAdUnitBasic = NewAdUnitHoc(AdUnitBasic)
