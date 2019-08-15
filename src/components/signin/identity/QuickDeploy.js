@@ -43,7 +43,7 @@ class QuickDeploy extends Component {
 	}
 
 	initLocalWallet = () => {
-		const { handleChange, identity } = this.props
+		const { handleChange, identity, actions } = this.props
 		const { email, password } = identity
 
 		const walletData = createLocalWallet({
@@ -51,18 +51,19 @@ class QuickDeploy extends Component {
 			password
 		})
 
-		walletData.authType =  AUTH_TYPES.QUICK.name
+		walletData.authType = AUTH_TYPES.QUICK.name
 		walletData.email = email
 		walletData.password = password
 
+		const walletAddr = walletData.address
+
+		actions.getIdentityTxData({
+			owner: walletAddr,
+			privLevel: 3
+		})
+
 		handleChange('wallet', walletData)
-		handleChange('walletAddr', walletData.address)
-	}
-
-	getIdentity = () => {
-		// const { identity, actions } = this.props
-		// const { email, password, coupon, walletAddr } = identity
-
+		handleChange('walletAddr', walletAddr)
 	}
 
 	render() {
@@ -83,8 +84,11 @@ class QuickDeploy extends Component {
 						<Typography paragraph variant='body2'>
 							{t('QUICK_WALLET_ADDRESS_INFO')}
 						</Typography>
-
-
+						<Typography paragraph variant='subheading'>
+							{t('IDENTITY_ADDRESS_INFO', {
+								args: [identityAddr]
+							})}
+						</Typography>
 					</Grid>
 					{
 
@@ -100,7 +104,7 @@ class QuickDeploy extends Component {
 									<Typography paragraph variant='subheading'>
 										{t('IDENTITY_ADDRESS_INFO_1')}
 									</Typography>
-									<span className={classes.buttonProgressWrapper}>
+									{/* <span className={classes.buttonProgressWrapper}>
 										<Button
 											variant='contained'
 											color='primary'
@@ -115,7 +119,7 @@ class QuickDeploy extends Component {
 												size={24}
 												className={classes.buttonProgress}
 											/>}
-									</span >
+									</span > */}
 								</div>
 							}
 						</Grid>
