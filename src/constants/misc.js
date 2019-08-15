@@ -61,7 +61,7 @@ export const NETWORK_STATUS = {
 
 export const SORT_PROPERTIES_CAMPAIGN = [
 	{ value: 'created', label: 'Created' },
-	{ value: 'status.name', label: 'Status' },	
+	{ value: 'status.name', label: 'Status' },
 	{ value: 'withdrawPeriodStart', label: 'Ends' },
 	{ value: 'activeFrom', label: 'Starts' },
 	{ value: 'depositAmount', label: 'depositAmount' },
@@ -87,16 +87,9 @@ export const FILTER_PROPERTIES_CAMPAIGN = {
 	},
 }
 
-export const UTM_ATTRIBUTES = {
-	SOURCE: "utm_source",
-	MEDIUM: "utm_medium",
-	CAMPAIGN: "utm_campaign",
-	CONTENT: "utm_content",
-}
-
-export const UTM_DEFAULT_VALUE = {
-	SOURCE: "ADEX",
-	MEDIUM: "CPM",
-	CAMPAIGN: "none",
-	CONTENT: "none",
+export const UTM_PARAMS = {
+	'utm_source': 'ADEX',
+	'utm_medium': 'CPM',
+	'utm_campaign': 'none',
+	'utm_content': 'none',
 }
