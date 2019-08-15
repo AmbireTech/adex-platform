@@ -5,12 +5,13 @@ export const addUrlUtmTracking = (targetUrl, source, medium, campaign, content) 
 	if (!!targetUrl) {
 		const URL = url.parse(targetUrl, true)
 		if (URL.protocol && URL.host) {
-			URL.query = {
+			const utmParams = {
 				[UTM_ATTRIBUTES.SOURCE]: (source ? source : UTM_DEFAULT_VALUE.SOURCE),
 				[UTM_ATTRIBUTES.MEDIUM]: (medium ? medium : UTM_DEFAULT_VALUE.MEDIUM),
 				[UTM_ATTRIBUTES.CAMPAIGN]: (campaign ? campaign : UTM_DEFAULT_VALUE.CAMPAIGN),
 				[UTM_ATTRIBUTES.CONTENT]: (content ? content : UTM_DEFAULT_VALUE.CONTENT),
 			}
+			URL.query = { ...URL.query, ...utmParams };
 			delete URL.search
 			return url.format(URL)
 		}
