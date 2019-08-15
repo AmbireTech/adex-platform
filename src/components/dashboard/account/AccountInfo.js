@@ -47,8 +47,8 @@ class AccountInfo extends React.Component {
 
 	localWalletDownloadHref = () => {
 		const { account } = this.props
-		const { email, password } = account.wallet
-		const obj = getRecoveryWalletData({ email, password })
+		const { email, password, authType } = account.wallet
+		const obj = getRecoveryWalletData({ email, password, authType })
 		if (!obj) {
 			return null
 		}
