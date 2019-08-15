@@ -83,8 +83,13 @@ class AdUnitBasic extends Component {
 		const { handleChange, newItem } = this.props
 		const { targetUrl, title, type, temp } = newItem
 		const { addUtmLink } = temp
-		if (!!targetUrl && addUtmLink) {
-			const newTargetUrl = addUrlUtmTracking(targetUrl, null, null, title, type)
+		if (!!targetUrl) {
+			const newTargetUrl = addUrlUtmTracking({ 
+				targetUrl, 
+				campaign: title, 
+				content: type, 
+				removeFromUrl: !addUtmLink
+			})
 			handleChange('targetUrl', newTargetUrl);
 		}
 	}
