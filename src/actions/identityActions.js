@@ -157,7 +157,7 @@ export function deployFullIdentity({ wallet, email, identityTxData, identityAddr
 	}
 }
 
-export function getFullIdentityTxData({ owner, privLevel }) {
+export function getIdentityTxData({ owner, privLevel }) {
 	return async function (dispatch) {
 		try {
 			const txData = await getIdentityDeployData({ owner, privLevel })
