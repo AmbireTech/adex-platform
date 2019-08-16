@@ -1,4 +1,4 @@
-import { ethers, utils } from 'ethers'
+import { ethers, utils, constants } from 'ethers'
 import { getEthers } from '../services/smart-contracts/ethers';
 
 /*eslint-disable */
@@ -89,6 +89,8 @@ export const isEthAddressERC20 = async (addr) => {
 			const eth = await getEthers()
 			const contract = new ethers.Contract(addr, ERC20TokenABI, eth.provider)
 			await contract.totalSupply()
+			await contract.balanceOf(constants.AddressZero)
+			await contract.allowance(constants.AddressZero, constants.AddressZero)
 			return true
 		}
 		return false
