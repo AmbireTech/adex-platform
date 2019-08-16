@@ -75,3 +75,9 @@ export const isEthAddress = (addr = '') => {
 	}
 	return true
 }
+
+export const isEthAddressZero = (addr) => {
+	return isEthAddress(addr)
+		? utils.bigNumberify(addr).isZero()
+		: false;
+}

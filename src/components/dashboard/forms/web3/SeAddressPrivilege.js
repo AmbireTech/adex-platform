@@ -7,7 +7,7 @@ import actions from 'actions'
 import NewTransactionHoc from './TransactionHoc'
 import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
-import { validateNumber, isEthAddress } from 'helpers/validators'
+import { validateNumber, isEthAddress, isEthAddressZero } from 'helpers/validators'
 import { constants } from 'adex-models'
 
 const { IdentityPrivilegeLevel } = constants
@@ -46,8 +46,8 @@ class SeAddressPrivilege extends Component {
 	}
 
 	validateAddress = (addr, dirty) => {
-		const isValid = isEthAddress(addr)
-		const msg = 'ERR_INVALID_ETH_ADDRESS'
+		const isValid = isEthAddress(addr) && !isEthAddressZero(addr)
+		const msg = isEthAddressZero(addr) ? 'ERR_INVALID_ETH_ADDRESS_ZERO' : 'ERR_INVALID_ETH_ADDRESS'
 		this.props.validate('setAddr', { isValid: isValid, err: { msg: msg }, dirty: dirty })
 	}
 
