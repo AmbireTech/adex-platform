@@ -6,7 +6,12 @@ import actions from 'actions'
 // import Translate from 'components/translate/Translate'
 import NewTransactionHoc from './TransactionHoc'
 import TextField from '@material-ui/core/TextField'
-import { validateNumber, isEthAddress, isEthAddressZero } from 'helpers/validators'
+import {
+	validateNumber,
+	isEthAddress,
+	isEthAddressZero,
+	isEthAddressERC20
+} from 'helpers/validators'
 
 class WithdrawFromIdentity extends Component {
 
@@ -33,9 +38,11 @@ class WithdrawFromIdentity extends Component {
 		this.props.validate('withdrawAmount', { isValid: isValid, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
 	}
 
-	validateAddress = (addr, dirty) => {
-		const isValid = isEthAddress(addr) && !isEthAddressZero(addr)
-		const msg = isEthAddressZero(addr) ? 'ERR_INVALID_ETH_ADDRESS_ZERO' :'ERR_INVALID_ETH_ADDRESS'
+	validateAddress = async (addr, dirty) => {
+		const isERC20 = await isEthAddressERC20(addr);
+		const isValid = isEthAddress(addr) && !isEthAddressZero(addr) && !isERC20
+		let msg = isEthAddressZero(addr) ? 'ERR_INVALID_ETH_ADDRESS_ZERO' : 'ERR_INVALID_ETH_ADDRESS'
+		if (isERC20) msg = 'ERR_INVALID_ETH_ADDRESS_TOKEN'
 		this.props.validate('withdrawTo', { isValid: isValid, err: { msg: msg }, dirty: dirty })
 	}
 

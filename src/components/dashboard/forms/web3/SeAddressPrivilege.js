@@ -7,7 +7,12 @@ import actions from 'actions'
 import NewTransactionHoc from './TransactionHoc'
 import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
-import { validateNumber, isEthAddress, isEthAddressZero } from 'helpers/validators'
+import { 
+	validateNumber, 
+	isEthAddress, 
+	isEthAddressZero, 
+	isEthAddressERC20 
+} from 'helpers/validators'
 import { constants } from 'adex-models'
 
 const { IdentityPrivilegeLevel } = constants
@@ -45,9 +50,11 @@ class SeAddressPrivilege extends Component {
 		this.props.validate('withdrawAmount', { isValid: isValid, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
 	}
 
-	validateAddress = (addr, dirty) => {
-		const isValid = isEthAddress(addr) && !isEthAddressZero(addr)
-		const msg = isEthAddressZero(addr) ? 'ERR_INVALID_ETH_ADDRESS_ZERO' : 'ERR_INVALID_ETH_ADDRESS'
+	validateAddress = async (addr, dirty) => {
+		const isERC20 = await isEthAddressERC20(addr);
+		const isValid = isEthAddress(addr) && !isEthAddressZero(addr) && !isERC20
+		let msg = isEthAddressZero(addr) ? 'ERR_INVALID_ETH_ADDRESS_ZERO' : 'ERR_INVALID_ETH_ADDRESS'
+		if (isERC20) msg = 'ERR_INVALID_ETH_ADDRESS_TOKEN'
 		this.props.validate('setAddr', { isValid: isValid, err: { msg: msg }, dirty: dirty })
 	}
 
