@@ -27,16 +27,26 @@ export default function IdentityHoc(Decorated) {
 			}
 		}
 
-		save = () => {
+		save = async () => {
 			const { identity, actions } = this.props
 			const {
 				wallet,
 				email,
 				identityData,
-				deleteLegacyKey
+				deleteLegacyKey,
+				registerAccount
 			} = identity
 
 			const newWallet = { ...wallet }
+
+			if (registerAccount) {
+				await actions.registerAccount({
+					wallet: newWallet,
+					identityData,
+					email
+				})
+			}
+
 			actions.createSession({
 				identity: identityData,
 				wallet: newWallet,
