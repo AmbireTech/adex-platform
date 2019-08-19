@@ -1,5 +1,5 @@
-import { ethers, utils, constants } from 'ethers'
-import { getEthers } from '../services/smart-contracts/ethers';
+import { utils } from 'ethers'
+import { isEthAddressERC20, isConnectionLost } from '../services/smart-contracts/actions/erc20';
 
 /*eslint-disable */
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
@@ -8,7 +8,6 @@ const onlyDigitsRegex = /^([1-9]+\d*)$/
 // Min 8 chars - at least 1 uppercase, 1 lowercase, 1 digit
 const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/
 const couponRegex = /^[a-fA-F0-9]{8}$/
-const ERC20TokenABI = [{ "constant": true, "inputs": [], "name": "name", "outputs": [{ "name": "", "type": "string" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_spender", "type": "address" }, { "name": "_value", "type": "uint256" }], "name": "approve", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "totalSupply", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_from", "type": "address" }, { "name": "_to", "type": "address" }, { "name": "_value", "type": "uint256" }], "name": "transferFrom", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "decimals", "outputs": [{ "name": "", "type": "uint8" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "_owner", "type": "address" }], "name": "balanceOf", "outputs": [{ "name": "balance", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "symbol", "outputs": [{ "name": "", "type": "string" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_to", "type": "address" }, { "name": "_value", "type": "uint256" }], "name": "transfer", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "_owner", "type": "address" }, { "name": "_spender", "type": "address" }], "name": "allowance", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "payable": true, "stateMutability": "payable", "type": "fallback" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "owner", "type": "address" }, { "indexed": true, "name": "spender", "type": "address" }, { "indexed": false, "name": "value", "type": "uint256" }], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "from", "type": "address" }, { "indexed": true, "name": "to", "type": "address" }, { "indexed": false, "name": "value", "type": "uint256" }], "name": "Transfer", "type": "event" }];
 /*eslint-enable */
 
 
@@ -70,31 +69,34 @@ export const validQuickAccountCoupon = (coupon) => {
 
 export const isEthAddress = (addr = '') => {
 	try {
-		utils.getAddress(addr)
+		const test = utils.getAddress(addr)
+		console.log(test);
 	} catch (e) {
 		return false
 	}
 	return true
 }
 
-export const isEthAddressZero = (addr) => {
+export const isEthAddressZero = (addr = '') => {
 	return isEthAddress(addr)
-		? utils.bigNumberify(addr).isZero()
+		? utils.bigNumberify(utils.getAddress(addr)).isZero()
 		: false;
 }
 
-export const isEthAddressERC20 = async (addr) => {
+export const validEthAddress = async ({ addr = '', nonZeroAddr, nonERC20 }) => {
 	try {
-		if (isEthAddress(addr)) {
-			const eth = await getEthers()
-			const contract = new ethers.Contract(addr, ERC20TokenABI, eth.provider)
-			await contract.totalSupply()
-			await contract.balanceOf(constants.AddressZero)
-			await contract.allowance(constants.AddressZero, constants.AddressZero)
-			return true
-		}
-		return false
+		let msg = ''
+		if (!isEthAddress(addr))
+			msg = 'ERR_INVALID_ETH_ADDRESS'
+		if (nonZeroAddr && isEthAddressZero(addr))
+			msg = 'ERR_INVALID_ETH_ADDRESS_ZERO'
+		if (nonERC20 && await isEthAddressERC20(addr))
+			msg = 'ERR_INVALID_ETH_ADDRESS_TOKEN'
+		if (await isConnectionLost(addr))
+			msg = "ERR_INVALID_CONNECTION_LOST"
+		return { msg }
 	} catch (error) {
-		return false
+		console.log(error);
+		return { msg: error.message }
 	}
 }
