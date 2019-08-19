@@ -7,11 +7,9 @@ import actions from 'actions'
 import NewTransactionHoc from './TransactionHoc'
 import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
-import { 
-	validateNumber, 
-	isEthAddress, 
-	isEthAddressZero, 
-	isEthAddressERC20 
+import {
+	validateNumber,
+	validEthAddress
 } from 'helpers/validators'
 import { constants } from 'adex-models'
 
@@ -51,11 +49,12 @@ class SeAddressPrivilege extends Component {
 	}
 
 	validateAddress = async (addr, dirty) => {
-		const isERC20 = await isEthAddressERC20(addr);
-		const isValid = isEthAddress(addr) && !isEthAddressZero(addr) && !isERC20
-		let msg = isEthAddressZero(addr) ? 'ERR_INVALID_ETH_ADDRESS_ZERO' : 'ERR_INVALID_ETH_ADDRESS'
-		if (isERC20) msg = 'ERR_INVALID_ETH_ADDRESS_TOKEN'
-		this.props.validate('setAddr', { isValid: isValid, err: { msg: msg }, dirty: dirty })
+		// As we are using async validation so we need to make 
+		// the form show a message that it is waiting for validation
+		this.props.validate('withdrawTo', { err: { msg: "ERR_VALIDATION_ASYNC" }, dirty: dirty });
+		const { msg } = await validEthAddress({ addr, nonZeroAddr: true, nonERC20: true })
+		const isValid = !msg
+		this.props.validate('withdrawTo', { isValid: isValid, err: { msg: msg }, dirty: dirty })
 	}
 
 	render() {
