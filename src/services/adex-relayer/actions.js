@@ -161,3 +161,18 @@ export const setAddrPriv = ({ txnsRaw, signatures, identityAddr, privLevel, setA
 	}).then(processResponse)
 }
 
+export const regAccount = ({ owner, email, txnsRaw, signatures, identityAddr }) => {
+	return requester.fetch({
+		route: 'accounts/register',
+		method: 'POST',
+		body: JSON.stringify({
+			owner,
+			email,
+			txnsRaw,
+			identityAddr,
+			signatures,
+		}),
+		headers: { 'Content-Type': 'application/json' }
+	}).then(processResponse)
+}
+

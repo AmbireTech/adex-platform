@@ -64,6 +64,7 @@ class QuickDeploy extends Component {
 
 		handleChange('wallet', walletData)
 		handleChange('walletAddr', walletAddr)
+		handleChange('registerAccount', true)
 	}
 
 	render() {
@@ -90,40 +91,6 @@ class QuickDeploy extends Component {
 							})}
 						</Typography>
 					</Grid>
-					{
-
-						<Grid item sm={12}>
-							{!!identityAddr
-								? <Typography paragraph variant='subheading'>
-									{t('IDENTITY_ADDRESS_INFO', {
-										args: [identityAddr]
-									})}
-								</Typography>
-								:
-								<div>
-									<Typography paragraph variant='subheading'>
-										{t('IDENTITY_ADDRESS_INFO_1')}
-									</Typography>
-									{/* <span className={classes.buttonProgressWrapper}>
-										<Button
-											variant='contained'
-											color='primary'
-											size='large'
-											onClick={this.getIdentity}
-											disabled={waitingQuick}
-										>
-											{t('GET_QUICK_IDENTITY')}
-										</Button>
-										{waitingQuick &&
-											<CircularProgress
-												size={24}
-												className={classes.buttonProgress}
-											/>}
-									</span > */}
-								</div>
-							}
-						</Grid>
-					}
 				</Grid>
 			</div>
 		)
