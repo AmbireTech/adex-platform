@@ -7,10 +7,7 @@ import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import {
-	validEmail,
-	validQuickAccountCoupon
-} from 'helpers/validators'
+import { validEmail, validQuickAccountCoupon } from 'helpers/validators'
 import { checkAccessCode } from 'services/adex-relayer/actions'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
@@ -18,13 +15,8 @@ import { styles } from './styles'
 const ACCESS_CODE_CHECK = process.env.ACCESS_CODE_CHECK === 'true'
 
 class IdentityContractAddressEthDeploy extends Component {
-
 	componentDidMount() {
-		const {
-			email,
-			emailCheck,
-			code
-		} = this.props.identity
+		const { email, emailCheck, code } = this.props.identity
 
 		this.validateIdentity()
 		this.validateEmail(email, false)
@@ -34,8 +26,10 @@ class IdentityContractAddressEthDeploy extends Component {
 
 	componentDidUpdate(prevProps) {
 		const currIdentity = this.props.identity.identityData
-		if (!!currIdentity &&
-			(currIdentity.address !== (prevProps.identity.identityData || {}).address)) {
+		if (
+			!!currIdentity &&
+			currIdentity.address !== (prevProps.identity.identityData || {}).address
+		) {
 			this.validateIdentity()
 		}
 	}
@@ -47,7 +41,7 @@ class IdentityContractAddressEthDeploy extends Component {
 		validate('identityData', {
 			isValid: !!identityData,
 			err: { msg: 'ERR_IDENTITY_NOT_GENERATED' },
-			dirty: false
+			dirty: false,
 		})
 	}
 
@@ -56,16 +50,16 @@ class IdentityContractAddressEthDeploy extends Component {
 		this.props.validate('email', {
 			isValid: isValid,
 			err: { msg: 'ERR_EMAIL' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
 	validateEmailCheck(emailCheck, email, dirty) {
-		const isValid = !!emailCheck && !!email && (emailCheck === email)
+		const isValid = !!emailCheck && !!email && emailCheck === email
 		this.props.validate('emailCheck', {
 			isValid: isValid,
 			err: { msg: 'ERR_EMAIL_CHECK' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
@@ -76,13 +70,13 @@ class IdentityContractAddressEthDeploy extends Component {
 			this.props.validate('code', {
 				isValid: isValidFormat,
 				err: { msg: 'ERR_ACCESS_CODE_FORMAT' },
-				dirty: dirty
+				dirty: dirty,
 			})
 		} else {
 			this.setState({ waitingCheck: true }, () => {
 				checkAccessCode({ code })
 					.then((cpn = {}) => {
-						const isValid = (cpn.exist === true) && (cpn.used === false)
+						const isValid = cpn.exist === true && cpn.used === false
 						let msg = ''
 						if (cpn.exist === false) {
 							msg = 'ERR_ACCESS_CODE_NOT_EXIST'
@@ -93,14 +87,14 @@ class IdentityContractAddressEthDeploy extends Component {
 						this.props.validate('code', {
 							isValid: isValid,
 							err: { msg: msg },
-							dirty: dirty
+							dirty: dirty,
 						})
 					})
 					.catch(err => {
 						this.props.validate('code', {
 							isValid: false,
 							err: { msg: 'ERR_ACCESS_CODE_NETWORK' },
-							dirty: true
+							dirty: true,
 						})
 					})
 			})
@@ -112,30 +106,34 @@ class IdentityContractAddressEthDeploy extends Component {
 		const { wallet, email } = identity
 		actions.getRegisterExpectedIdentity({
 			owner: wallet.address,
-			mail: email
+			mail: email,
 		})
 	}
 
 	render() {
-		const { t, identity, handleChange, invalidFields, waitingExpected, classes } = this.props
+		const {
+			t,
+			identity,
+			handleChange,
+			invalidFields,
+			waitingExpected,
+			classes,
+		} = this.props
 		const { identityData } = identity
 		// Errors
 		const { email, emailCheck, code } = invalidFields
 
 		return (
 			<div>
-				<Grid
-					container
-					spacing={2}
-				>
-					{ACCESS_CODE_CHECK &&
+				<Grid container spacing={2}>
+					{ACCESS_CODE_CHECK && (
 						<Grid item xs={12}>
 							<Typography paragraph variant='body1'>
 								{t('ACCESS_CODE_INFO')}
 							</Typography>
 						</Grid>
-					}
-					{ACCESS_CODE_CHECK &&
+					)}
+					{ACCESS_CODE_CHECK && (
 						<Grid item xs={12}>
 							<TextField
 								fullWidth
@@ -144,19 +142,17 @@ class IdentityContractAddressEthDeploy extends Component {
 								label={t('code', { isProp: true })}
 								name='code'
 								value={identity.code || ''}
-								onChange={(ev) => handleChange('code', ev.target.value)}
+								onChange={ev => handleChange('code', ev.target.value)}
 								onBlur={() => this.validateCode(identity.code, true)}
 								onFocus={() => this.validateCode(identity.code, false)}
 								error={code && !!code.dirty}
 								maxLength={128}
 								helperText={
-									code && !!code.dirty ?
-										code.errMsg :
-										t('ENTER_VALID_CODE')
+									code && !!code.dirty ? code.errMsg : t('ENTER_VALID_CODE')
 								}
 							/>
 						</Grid>
-					}
+					)}
 
 					<Grid item xs={12}>
 						<Typography paragraph variant='body1'>
@@ -171,15 +167,13 @@ class IdentityContractAddressEthDeploy extends Component {
 							label={t('email', { isProp: true })}
 							name='email'
 							value={identity.email || ''}
-							onChange={(ev) => handleChange('email', ev.target.value)}
+							onChange={ev => handleChange('email', ev.target.value)}
 							onBlur={() => this.validateEmail(identity.email, true)}
 							onFocus={() => this.validateEmail(identity.email, false)}
 							error={email && !!email.dirty}
 							maxLength={128}
 							helperText={
-								email && !!email.dirty ?
-									email.errMsg :
-									t('ENTER_VALID_EMAIL')
+								email && !!email.dirty ? email.errMsg : t('ENTER_VALID_EMAIL')
 							}
 						/>
 					</Grid>
@@ -191,15 +185,27 @@ class IdentityContractAddressEthDeploy extends Component {
 							label={t('emailCheck', { isProp: true })}
 							name='emailCheck'
 							value={identity.emailCheck || ''}
-							onChange={(ev) => handleChange('emailCheck', ev.target.value)}
-							onBlur={() => this.validateEmailCheck(identity.emailCheck, identity.email, true)}
-							onFocus={() => this.validateEmailCheck(identity.emailCheck, identity.email, false)}
+							onChange={ev => handleChange('emailCheck', ev.target.value)}
+							onBlur={() =>
+								this.validateEmailCheck(
+									identity.emailCheck,
+									identity.email,
+									true
+								)
+							}
+							onFocus={() =>
+								this.validateEmailCheck(
+									identity.emailCheck,
+									identity.email,
+									false
+								)
+							}
 							error={emailCheck && !!emailCheck.dirty}
 							maxLength={128}
 							helperText={
-								emailCheck && !!emailCheck.dirty ?
-									emailCheck.errMsg :
-									t('ENTER_SAME_EMAIL')
+								emailCheck && !!emailCheck.dirty
+									? emailCheck.errMsg
+									: t('ENTER_SAME_EMAIL')
 							}
 						/>
 					</Grid>
@@ -208,8 +214,7 @@ class IdentityContractAddressEthDeploy extends Component {
 						<Typography paragraph variant='body1'>
 							{t('GENERATE_FULL_IDENTITY_INFO_ADDRESS')}
 						</Typography>
-						{!(identityData || {}).address
-							?
+						{!(identityData || {}).address ? (
 							<span className={classes.buttonProgressWrapper}>
 								<Button
 									variant='contained'
@@ -219,19 +224,23 @@ class IdentityContractAddressEthDeploy extends Component {
 								>
 									{t('GENERATE_IDENTITY_ADDRESS')}
 								</Button>
-								{waitingExpected && <CircularProgress size={24} className={classes.buttonProgress} />}
-							</span >
-
-							:
+								{waitingExpected && (
+									<CircularProgress
+										size={24}
+										className={classes.buttonProgress}
+									/>
+								)}
+							</span>
+						) : (
 							<div>
 								<Typography paragraph variant='subtitle2' color='primary'>
 									{t('IDENTITY_CONTRACT_IS', { args: [identityData.address] })}
 								</Typography>
 							</div>
-						}
+						)}
 					</Grid>
 				</Grid>
-			</div >
+			</div>
 		)
 	}
 }
@@ -243,8 +252,10 @@ IdentityContractAddressEthDeploy.propTypes = {
 	handleChange: PropTypes.func.isRequired,
 	t: PropTypes.func.isRequired,
 	invalidFields: PropTypes.object.isRequired,
-	validate: PropTypes.func.isRequired
+	validate: PropTypes.func.isRequired,
 }
 
-const IdentityContractAddressStep = IdentityHoc(IdentityContractAddressEthDeploy)
+const IdentityContractAddressStep = IdentityHoc(
+	IdentityContractAddressEthDeploy
+)
 export default Translate(withStyles(styles)(IdentityContractAddressStep))

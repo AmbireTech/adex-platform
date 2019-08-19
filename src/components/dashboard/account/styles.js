@@ -6,13 +6,13 @@ export const styles = theme => {
 			flex: '0 0 187px',
 			flexDirection: 'column',
 			alignItems: 'flex-end',
-			justifyContent: 'space-around'
+			justifyContent: 'space-around',
 		},
 		actionBtn: {
-			marginBottom: spacing
+			marginBottom: spacing,
 		},
 		address: {
-			wordWrap: 'break-word'
-		}
+			wordWrap: 'break-word',
+		},
 	}
 }

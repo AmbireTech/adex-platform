@@ -5,19 +5,19 @@ import IdentityFactory from './build/IdentityFactory.json'
 
 export const contracts = {
 	Identity: {
-		abi: Identity.abi
+		abi: Identity.abi,
 	},
 	AdExCore: {
 		address: process.env.ADEX_CORE_ADDR,
-		abi: AdExCore.abi
+		abi: AdExCore.abi,
 	},
 	DAI: {
-		address: process.env.DAI_TOKEN_ADDR,		
+		address: process.env.DAI_TOKEN_ADDR,
 		abi: Dai.abi,
-		decimals: 18
+		decimals: 18,
 	},
 	IdentityFactory: {
 		address: process.env.IDENTITY_FACTORY_ADDR,
-		abi: IdentityFactory.abi
-	}
+		abi: IdentityFactory.abi,
+	},
 }

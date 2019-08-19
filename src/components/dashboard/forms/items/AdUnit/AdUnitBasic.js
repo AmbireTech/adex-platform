@@ -15,7 +15,7 @@ const { adUnitPost } = schemas
 const AdTypes = constants.AdUnitsTypes.map(type => {
 	return {
 		value: type,
-		label: type.split('_')[1]
+		label: type.split('_')[1],
 	}
 })
 
@@ -30,9 +30,10 @@ class AdUnitBasic extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		if (prevProps.newItem.title !== this.props.newItem.title
-			|| prevProps.newItem.type !== this.props.newItem.type
-			|| prevProps.newItem.temp.addUtmLink !== this.props.newItem.temp.addUtmLink
+		if (
+			prevProps.newItem.title !== this.props.newItem.title ||
+			prevProps.newItem.type !== this.props.newItem.type ||
+			prevProps.newItem.temp.addUtmLink !== this.props.newItem.temp.addUtmLink
 		) {
 			this.addUtmParameters()
 		}
@@ -44,7 +45,7 @@ class AdUnitBasic extends Component {
 		this.props.validate('title', {
 			isValid: !result.error,
 			err: { msg: result.error ? result.error.message : '' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
@@ -54,7 +55,7 @@ class AdUnitBasic extends Component {
 		this.props.validate('description', {
 			isValid: !result.error,
 			err: { msg: result.error ? result.error.message : '' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
@@ -63,7 +64,7 @@ class AdUnitBasic extends Component {
 		this.props.validate('targetUrl', {
 			isValid: !result.error,
 			err: { msg: result.error ? result.error.message : '' },
-			dirty: dirty
+			dirty: dirty,
 		})
 		if (!result.error) this.addUtmParameters(targetUrl)
 	}
@@ -74,7 +75,7 @@ class AdUnitBasic extends Component {
 		this.props.validate('type', {
 			isValid: !result.error,
 			err: { msg: result.error ? result.error.message : '' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
@@ -87,7 +88,7 @@ class AdUnitBasic extends Component {
 				targetUrl,
 				campaign: title,
 				content: type,
-				removeFromUrl: !addUtmLink
+				removeFromUrl: !addUtmLink,
 			})
 			handleChange('targetUrl', newTargetUrl)
 		}
@@ -102,12 +103,7 @@ class AdUnitBasic extends Component {
 	}
 
 	render() {
-		const {
-			t,
-			newItem,
-			invalidFields,
-			handleChange
-		} = this.props
+		const { t, newItem, invalidFields, handleChange } = this.props
 		const { targetUrl, type, title, description, temp } = newItem
 		const { addUtmLink } = temp
 		const errTitle = invalidFields['title']
@@ -130,7 +126,11 @@ class AdUnitBasic extends Component {
 							onFocus={() => this.validateTitle(title, false)}
 							error={errTitle && !!errTitle.dirty}
 							maxLength={120}
-							helperText={errTitle && !!errTitle.dirty ? errTitle.errMsg : t('TITLE_HELPER')}
+							helperText={
+								errTitle && !!errTitle.dirty
+									? errTitle.errMsg
+									: t('TITLE_HELPER')
+							}
 						/>
 					</Grid>
 					<Grid item sm={12}>
@@ -149,9 +149,9 @@ class AdUnitBasic extends Component {
 							error={errDescription && !!errDescription.dirty}
 							maxLength={300}
 							helperText={
-								(errDescription && !!errDescription.dirty)
+								errDescription && !!errDescription.dirty
 									? errDescription.errMsg
-									: (t('DESCRIPTION_HELPER'))
+									: t('DESCRIPTION_HELPER')
 							}
 						/>
 					</Grid>
@@ -162,16 +162,12 @@ class AdUnitBasic extends Component {
 							required
 							label={t('targetUrl', { isProp: true })}
 							value={targetUrl}
-							onChange={ev =>
-								handleChange('targetUrl', ev.target.value)
-							}
+							onChange={ev => handleChange('targetUrl', ev.target.value)}
 							onBlur={() => this.validateTargetUrl(targetUrl, true)}
 							onFocus={() => this.validateTargetUrl(targetUrl, false)}
 							error={errTargetUrl && !!errTargetUrl.dirty}
 							helperText={
-								(errTargetUrl && !!errTargetUrl.dirty)
-									? errTargetUrl.errMsg
-									: ''
+								errTargetUrl && !!errTargetUrl.dirty ? errTargetUrl.errMsg : ''
 							}
 						/>
 					</Grid>

@@ -19,13 +19,12 @@ import { isVideoMedia } from 'helpers/mediaHelpers.js'
 
 const MAX_IMG_LOAD_TIME = 3000
 class Img extends Component {
-
 	constructor(props) {
 		super(props)
 		this.state = {
 			imgSrc: null,
 			active: false,
-			videoSrc: null
+			videoSrc: null,
 		}
 
 		this.setDisplayImage = this.setDisplayImage.bind(this)
@@ -33,7 +32,7 @@ class Img extends Component {
 		this.loadTimeout = null
 	}
 
-	ipfsSrc = (src) => {
+	ipfsSrc = src => {
 		if (!!src && validations.Regexes.ipfsRegex.test(src)) {
 			return helpers.getMediaUrlWithProvider(src, process.env.IPFS_GATEWAY)
 		}
@@ -52,7 +51,7 @@ class Img extends Component {
 
 		if (isVideo && !allowVideo) {
 			return this.setState({
-				imgSrc: VIDEO_IMAGE
+				imgSrc: VIDEO_IMAGE,
 			})
 		}
 
@@ -60,19 +59,18 @@ class Img extends Component {
 			this.displayVideo = document.createElement('video')
 			this.setDisplayVideo({
 				image: this.ipfsSrc(src),
-				fallback: this.ipfsSrc(fallbackSrc) || NO_IMAGE
+				fallback: this.ipfsSrc(fallbackSrc) || NO_IMAGE,
 			})
-
 		} else {
 			this.displayImage = new Image()
 			this.setDisplayImage({
 				image: this.ipfsSrc(src),
-				fallback: this.ipfsSrc(fallbackSrc) || NO_IMAGE
+				fallback: this.ipfsSrc(fallbackSrc) || NO_IMAGE,
 			})
 		}
 	}
 
-	componentWillReceiveProps = (nextProps) => {
+	componentWillReceiveProps = nextProps => {
 		const nextSrc = this.ipfsSrc(nextProps.src)
 		const thisSrc = this.ipfsSrc(this.props.src)
 		const nextFallback = this.ipfsSrc(nextProps.fallbackSrc)
@@ -82,17 +80,16 @@ class Img extends Component {
 			const isVideo = !!mediaMime && isVideoMedia(mediaMime)
 
 			if (isVideo) {
-				this.displayVideo =  this.displayVideo || document.createElement('video')
+				this.displayVideo = this.displayVideo || document.createElement('video')
 				this.setDisplayVideo({
 					image: this.ipfsSrc(nextSrc),
-					fallback: this.ipfsSrc(nextFallback) || NO_IMAGE
+					fallback: this.ipfsSrc(nextFallback) || NO_IMAGE,
 				})
-	
 			} else {
 				this.displayImage = this.displayImage || new Image()
 				this.setDisplayImage({
 					image: this.ipfsSrc(nextSrc),
-					fallback: this.ipfsSrc(nextFallback) || NO_IMAGE
+					fallback: this.ipfsSrc(nextFallback) || NO_IMAGE,
 				})
 			}
 		}
@@ -115,7 +112,7 @@ class Img extends Component {
 		}
 	}
 
-	onFail = (fallback) => {
+	onFail = fallback => {
 		if (this.displayImage) {
 			this.displayImage.onerror = null
 			this.displayImage.onload = null
@@ -128,7 +125,7 @@ class Img extends Component {
 		this.clearLoadTimeout()
 
 		this.setState({
-			imgSrc: fallback || null
+			imgSrc: fallback || null,
 		})
 	}
 
@@ -137,12 +134,15 @@ class Img extends Component {
 			this.onFail(fallback)
 		}, MAX_IMG_LOAD_TIME)
 
-		this.displayImage.onerror = this.displayImage.onabort = this.onFail.bind(this, fallback)
+		this.displayImage.onerror = this.displayImage.onabort = this.onFail.bind(
+			this,
+			fallback
+		)
 
 		this.displayImage.onload = () => {
 			this.clearLoadTimeout()
 			this.setState({
-				imgSrc: image
+				imgSrc: image,
 			})
 		}
 
@@ -159,7 +159,7 @@ class Img extends Component {
 		this.displayVideo.onloadedmetadata = ({ target }) => {
 			this.clearLoadTimeout()
 			this.setState({
-				videoSrc: image
+				videoSrc: image,
 			})
 		}
 	}
@@ -172,7 +172,9 @@ class Img extends Component {
 					mini
 					color='default'
 					className={classnames(classes.fullscreenIcon)}
-					onClick={() => { this.handleToggle() }}
+					onClick={() => {
+						this.handleToggle()
+					}}
 				>
 					<FullscreenIcon />
 				</Fab>
@@ -194,23 +196,20 @@ class Img extends Component {
 				classes={{ paper: classes.dialog }}
 			>
 				<DialogContent className={classes.dialogImageParent}>
-					{imgSrc ?
+					{imgSrc ? (
 						<img
 							alt={alt}
 							src={imgSrc}
 							draggable='false'
 							className={classnames(classes.dialogImage, classes.imgLoading)}
-							onDragStart={(event) => event.preventDefault() /*Firefox*/}
+							onDragStart={event => event.preventDefault() /*Firefox*/}
 						/>
-						: <video src={videoSrc} controls>
-						</video>
-					}
+					) : (
+						<video src={videoSrc} controls></video>
+					)}
 				</DialogContent>
 				<DialogActions>
-					<Button
-						onClick={this.handleToggle}
-						color='primary'
-					>
+					<Button onClick={this.handleToggle} color='primary'>
 						{t('CLOSE')}
 					</Button>
 				</DialogActions>
@@ -219,35 +218,45 @@ class Img extends Component {
 	}
 
 	render() {
-		const { alt, allowFullscreen, className, classes, fullScreenOnClick } = this.props
+		const {
+			alt,
+			allowFullscreen,
+			className,
+			classes,
+			fullScreenOnClick,
+		} = this.props
 		const { imgSrc, videoSrc } = this.state
-		return (
-			imgSrc || videoSrc ?
-				<div className={classnames(classes.imgParent, className, classes.wrapper)}>
-					{!!imgSrc ?
-
-						<img
-							alt={alt}
-							src={this.state.imgSrc}
-							draggable='false'
-							className={classnames(classes.imgLoading, className, classes.img)}
-							onDragStart={(event) => event.preventDefault() /*Firefox*/}
-							onClick={fullScreenOnClick && (() => { console.log('click'); this.handleToggle() })}
-						/>
-						: <video src={videoSrc} controls>
-						</video>
-					}
-					{allowFullscreen && this.fullScreenBtn()}
-					{fullScreenOnClick && this.renderFullscreenDialog()}
-				</div>
-				:
-				<span className={classnames(classes.imgLoading, className)}>
-					<span
-						className={classes.circular}
-					>
-						<CircularProgress />
-					</span>
+		return imgSrc || videoSrc ? (
+			<div
+				className={classnames(classes.imgParent, className, classes.wrapper)}
+			>
+				{!!imgSrc ? (
+					<img
+						alt={alt}
+						src={this.state.imgSrc}
+						draggable='false'
+						className={classnames(classes.imgLoading, className, classes.img)}
+						onDragStart={event => event.preventDefault() /*Firefox*/}
+						onClick={
+							fullScreenOnClick &&
+							(() => {
+								console.log('click')
+								this.handleToggle()
+							})
+						}
+					/>
+				) : (
+					<video src={videoSrc} controls></video>
+				)}
+				{allowFullscreen && this.fullScreenBtn()}
+				{fullScreenOnClick && this.renderFullscreenDialog()}
+			</div>
+		) : (
+			<span className={classnames(classes.imgLoading, className)}>
+				<span className={classes.circular}>
+					<CircularProgress />
 				</span>
+			</span>
 		)
 	}
 }
@@ -258,7 +267,7 @@ Img.propTypes = {
 	alt: PropTypes.string,
 	allowFullscreen: PropTypes.bool,
 	fullScreenOnClick: PropTypes.bool,
-	mediaMime: PropTypes.string
+	mediaMime: PropTypes.string,
 }
 
 export default Translate(withStyles(styles)(Img))

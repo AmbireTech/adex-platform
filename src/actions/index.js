@@ -13,5 +13,5 @@ export default {
 	...accountActions,
 	...identityActions,
 	...bidActions,
-	...transactionActions
+	...transactionActions,
 }

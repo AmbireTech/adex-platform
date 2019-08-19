@@ -33,6 +33,6 @@ export const styles = theme => ({
 		position: 'fixed',
 		top: 86,
 		right: 40,
-		zIndex: theme.zIndex.appBar
-	}
+		zIndex: theme.zIndex.appBar,
+	},
 })

@@ -10,7 +10,7 @@ const interpolate = (tpl, args) => {
 	if (typeof tpl !== 'string') {
 		return ''
 	}
-	
+
 	return tpl.replace(/\${(\w+)}/g, (_, v) => {
 		let arg = args[v]
 		if (typeof arg === 'object' && arg.component) {
@@ -21,10 +21,14 @@ const interpolate = (tpl, args) => {
 	})
 }
 
-export const translate = (val = '', { isProp = false, args = [''] } = {}, language = lang) => {
+export const translate = (
+	val = '',
+	{ isProp = false, args = [''] } = {},
+	language = lang
+) => {
 	let key = val + ''
 	if (isProp) {
-		key = 'PROP_' + (key.replace(/^_/, ''))
+		key = 'PROP_' + key.replace(/^_/, '')
 	}
 
 	key = key.toUpperCase()
@@ -39,6 +43,6 @@ export const translate = (val = '', { isProp = false, args = [''] } = {}, langua
 }
 
 // TODO: fix that
-export const setLang = (lng) => {
+export const setLang = lng => {
 	lang = lng
 }

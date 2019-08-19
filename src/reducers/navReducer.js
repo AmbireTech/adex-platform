@@ -5,12 +5,12 @@ export default function navReducer(state = initialState.nav, action) {
 	let newState
 
 	switch (action.type) {
-	case UPDATE_NAV:
-		newState = { ...state }
-		newState[action.item] = action.value
-		return newState
+		case UPDATE_NAV:
+			newState = { ...state }
+			newState[action.item] = action.value
+			return newState
 
-	default:
-		return state
+		default:
+			return state
 	}
 }

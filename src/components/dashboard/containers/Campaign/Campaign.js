@@ -27,11 +27,11 @@ const VIEW_MODE = 'campaignRowsView'
 
 export class Campaign extends Component {
 	constructor(props, context) {
-		super(props, context);
+		super(props, context)
 
 		this.state = {
 			tabIndex: 0,
-			statistics: {}
+			statistics: {},
 		}
 	}
 
@@ -76,10 +76,10 @@ export class Campaign extends Component {
 		const units = item.spec.adUnits
 		const campaign = new CampaignModel(item)
 
-		const balances = campaign.state &&
-			campaign.state.lastApproved
-			? campaign.state.lastApproved.newState.msg.balances
-			: {}
+		const balances =
+			campaign.state && campaign.state.lastApproved
+				? campaign.state.lastApproved.newState.msg.balances
+				: {}
 
 		const status = (campaign.status || {}).name
 
@@ -95,20 +95,19 @@ export class Campaign extends Component {
 						// 	t={t}
 						// 	subHeader={t('CAMPAIGN_TARGETING')}
 						// />
-						(
-							status === 'Ready' ||
+						(status === 'Ready' ||
 							status === 'Active' ||
-							status === 'Unhealthy'
-						) &&
-						<this.CampaignActions campaign={campaign} t={t} actions={actions} />
+							status === 'Unhealthy') && (
+							<this.CampaignActions
+								campaign={campaign}
+								t={t}
+								actions={actions}
+							/>
+						)
 					}
-
 				/>
 				<div>
-					<AppBar
-						position='static'
-						color='default'
-					>
+					<AppBar position='static' color='default'>
 						<Tabs
 							value={tabIndex}
 							onChange={this.handleTabChange}
@@ -121,31 +120,24 @@ export class Campaign extends Component {
 							<Tab label={t('CAMPAIGN_UNITS')} />
 						</Tabs>
 					</AppBar>
-					<div
-						style={{ marginTop: 10 }}
-					>
-						{
-							(tabIndex === 0) &&
+					<div style={{ marginTop: 10 }}>
+						{tabIndex === 0 && (
 							<List
 								subheader={
-									<ListSubheader component='div'>
-										{t('BALANCES')}
-									</ListSubheader>
+									<ListSubheader component='div'>{t('BALANCES')}</ListSubheader>
 								}
 							>
-								{Object.keys(balances).map(key =>
+								{Object.keys(balances).map(key => (
 									<ListItem key={key}>
 										<ListItemText
 											primary={formatTokenAmount(balances[key]) + ' DAI'}
 											secondary={key}
 										/>
 									</ListItem>
-								)}
-
+								))}
 							</List>
-						}
-						{
-							(tabIndex === 1) &&
+						)}
+						{tabIndex === 1 && (
 							<ItemsList
 								removeFromItem
 								items={units}
@@ -156,10 +148,8 @@ export class Campaign extends Component {
 								filterProperties={FILTER_PROPERTIES_ITEMS}
 								uiStateId='campaign-units'
 							/>
-						}
-
+						)}
 					</div>
-
 				</div>
 			</div>
 		)
@@ -171,7 +161,7 @@ Campaign.propTypes = {
 	account: PropTypes.object.isRequired,
 	units: PropTypes.object.isRequired,
 	rowsView: PropTypes.bool.isRequired,
-	item: PropTypes.object.isRequired
+	item: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state) {
@@ -188,7 +178,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

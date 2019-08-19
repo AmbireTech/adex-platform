@@ -4,23 +4,39 @@ import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
 
 export const BidsTimeStatistics = ({ data, options = {}, t }) => {
-
 	if (!Object.keys(data).length) return null
-	data = Object.keys(data).reduce((memo, key) => {
-		const item = data[key]
+	data = Object.keys(data).reduce(
+		(memo, key) => {
+			const item = data[key]
 
-		memo.labels.push(key)
-		memo.clicks.push(item.clicks || 0)
-		memo.uniqueClicks.push(item.uniqueClicks || 0)
-		memo.loaded.push(item.loaded || 0)
+			memo.labels.push(key)
+			memo.clicks.push(item.clicks || 0)
+			memo.uniqueClicks.push(item.uniqueClicks || 0)
+			memo.loaded.push(item.loaded || 0)
 
-		memo.step.min = Math.min(memo.step.min, item.clicks, item.uniqueClicks, item.loaded)
-		memo.step.max = Math.max(memo.step.max, item.clicks, item.uniqueClicks, item.loaded)
+			memo.step.min = Math.min(
+				memo.step.min,
+				item.clicks,
+				item.uniqueClicks,
+				item.loaded
+			)
+			memo.step.max = Math.max(
+				memo.step.max,
+				item.clicks,
+				item.uniqueClicks,
+				item.loaded
+			)
 
-		return memo
-
-	}, { labels: [], clicks: [], uniqueClicks: [], loaded: [], step: { min: 0, max: 0 } })
-
+			return memo
+		},
+		{
+			labels: [],
+			clicks: [],
+			uniqueClicks: [],
+			loaded: [],
+			step: { min: 0, max: 0 },
+		}
+	)
 
 	// console.log('data', data)
 
@@ -59,8 +75,8 @@ export const BidsTimeStatistics = ({ data, options = {}, t }) => {
 				backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[4], 0.6),
 				borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[4], 0.6),
 				// yAxisID: 'y-axis-1'
-			}
-		]
+			},
+		],
 	}
 
 	const maxTickLimit = 10
@@ -68,9 +84,9 @@ export const BidsTimeStatistics = ({ data, options = {}, t }) => {
 	const min = data.step.min || 0
 	const step = Math.ceil(max / maxTickLimit) || 1
 
-	let maxTick = (step * maxTickLimit)
+	let maxTick = step * maxTickLimit
 
-	if (max < (maxTickLimit)) {
+	if (max < maxTickLimit) {
 		maxTick = max
 	}
 
@@ -78,12 +94,12 @@ export const BidsTimeStatistics = ({ data, options = {}, t }) => {
 		responsive: true,
 		title: {
 			display: true,
-			text: options.title
+			text: options.title,
 		},
 		elements: {
 			line: {
-				fill: true
-			}
+				fill: true,
+			},
 		},
 		tooltips: {
 			mode: 'index',
@@ -99,7 +115,7 @@ export const BidsTimeStatistics = ({ data, options = {}, t }) => {
 					// labels: {
 					//     show: true
 					// }
-				}
+				},
 			],
 			yAxes: [
 				{
@@ -113,15 +129,12 @@ export const BidsTimeStatistics = ({ data, options = {}, t }) => {
 					},
 					gridLines: {
 						display: true,
-						beginAtZero: true
+						beginAtZero: true,
 					},
-				}
-			]
-		}
+				},
+			],
+		},
 	}
 
-	return (
-		<Line data={chartData} options={linesOptions} />
-	)
-
+	return <Line data={chartData} options={linesOptions} />
 }

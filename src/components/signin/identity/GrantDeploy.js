@@ -15,7 +15,6 @@ import { styles } from './styles'
 import { AUTH_TYPES } from 'constants/misc'
 
 class GrantDeploy extends Component {
-
 	componentDidMount() {
 		this.validateIdentity()
 		if (!this.props.identity.identityAddr) {
@@ -25,8 +24,7 @@ class GrantDeploy extends Component {
 
 	componentDidUpdate(prevProps) {
 		const currIdentity = this.props.identity.identityAddr
-		if (!!currIdentity &&
-			(currIdentity !== prevProps.identity.identityAddr)) {
+		if (!!currIdentity && currIdentity !== prevProps.identity.identityAddr) {
 			this.validateIdentity()
 		}
 	}
@@ -38,7 +36,7 @@ class GrantDeploy extends Component {
 		validate('identityAddr', {
 			isValid: !!identityAddr,
 			err: { msg: 'ERR_IDENTITY_NOT_GENERATED' },
-			dirty: false
+			dirty: false,
 		})
 	}
 
@@ -48,10 +46,10 @@ class GrantDeploy extends Component {
 
 		const walletData = createLocalWallet({
 			email,
-			password
+			password,
 		})
 
-		walletData.authType =  AUTH_TYPES.GRANT.name
+		walletData.authType = AUTH_TYPES.GRANT.name
 		walletData.email = email
 		walletData.password = password
 
@@ -67,7 +65,7 @@ class GrantDeploy extends Component {
 			walletAddr,
 			email,
 			password,
-			coupon
+			coupon,
 		})
 	}
 
@@ -77,10 +75,7 @@ class GrantDeploy extends Component {
 
 		return (
 			<div>
-				<Grid
-					container
-					spacing={2}
-				>
+				<Grid container spacing={2}>
 					<Grid item sm={12}>
 						<Typography paragraph variant='subheading'>
 							{t('GRANT_WALLET_ADDRESS')}
@@ -89,19 +84,16 @@ class GrantDeploy extends Component {
 						<Typography paragraph variant='body2'>
 							{t('GRANT_WALLET_ADDRESS_INFO')}
 						</Typography>
-
-
 					</Grid>
 					{
-
 						<Grid item sm={12}>
-							{!!identityAddr
-								? <Typography paragraph variant='subheading'>
+							{!!identityAddr ? (
+								<Typography paragraph variant='subheading'>
 									{t('IDENTITY_ADDRESS_INFO', {
-										args: [identityAddr, grantAmount]
+										args: [identityAddr, grantAmount],
 									})}
 								</Typography>
-								:
+							) : (
 								<div>
 									<Typography paragraph variant='subheading'>
 										{t('IDENTITY_ADDRESS_INFO_1')}
@@ -116,14 +108,15 @@ class GrantDeploy extends Component {
 										>
 											{t('GET_GRANT_IDENTITY')}
 										</Button>
-										{waitingGrant &&
+										{waitingGrant && (
 											<CircularProgress
 												size={24}
 												className={classes.buttonProgress}
-											/>}
-									</span >
+											/>
+										)}
+									</span>
 								</div>
-							}
+							)}
 						</Grid>
 					}
 				</Grid>
@@ -134,20 +127,20 @@ class GrantDeploy extends Component {
 
 GrantDeploy.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired
+	account: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state) {
 	const { memory } = state
 
 	return {
-		waitingGrant: memory.spinners['getting-grant-identity']
+		waitingGrant: memory.spinners['getting-grant-identity'],
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 
