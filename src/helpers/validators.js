@@ -69,8 +69,7 @@ export const validQuickAccountCoupon = (coupon) => {
 
 export const isEthAddress = (addr = '') => {
 	try {
-		const test = utils.getAddress(addr)
-		console.log(test);
+		utils.getAddress(addr)
 	} catch (e) {
 		return false
 	}
