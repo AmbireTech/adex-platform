@@ -21,7 +21,7 @@ const syncTransactions = async () => {
 		...(web3Transactions[account.identity.address] || {}),
 	}
 	const txHashes = Object.keys(transactions).reduce((memo, key) => {
-		if (key && ((key.toString()).length === 66)) {
+		if (key && key.toString().length === 66) {
 			memo.push(key)
 		}
 		return memo
@@ -31,15 +31,28 @@ const syncTransactions = async () => {
 		return
 	}
 
-	const receipts = await getTransactionsReceipts({ txHashes, authType: account.wallet.authType })
+	const receipts = await getTransactionsReceipts({
+		txHashes,
+		authType: account.wallet.authType,
+	})
 
 	// return
-	receipts.forEach((rec) => {
+	receipts.forEach(rec => {
 		if (rec && rec.transactionHash && rec.status) {
 			// NOTE: web3.eth.getTransactionReceipt changed status vale from 0x1 to true for success but we keep bot now
-			const status = ((rec.status === 1) || (rec.status === '0x1') || (rec.status === true)) ? 'success' : 'failed'
+			const status =
+				rec.status === 1 || rec.status === '0x1' || rec.status === true
+					? 'success'
+					: 'failed'
 			if (transactions[rec.transactionHash].status !== status) {
-				actions.execute(actions.updateWeb3Transaction({ tx: rec.transactionHash, key: 'status', value: status, addr: rec.from }))
+				actions.execute(
+					actions.updateWeb3Transaction({
+						tx: rec.transactionHash,
+						key: 'status',
+						value: status,
+						addr: rec.from,
+					})
+				)
 			}
 		}
 	})
@@ -72,8 +85,7 @@ const stop = () => {
 
 // const addTransaction
 
-
 export default {
 	start,
-	stop
+	stop,
 }

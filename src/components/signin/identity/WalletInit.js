@@ -12,11 +12,10 @@ import { styles } from './styles'
 import { getRandomMnemonic } from 'services/wallet/wallet'
 
 class WalletInit extends Component {
-
 	constructor(props, context) {
 		super(props, context)
 		this.state = {
-			mnemonic: props.wallet.mnemonic
+			mnemonic: props.wallet.mnemonic,
 		}
 	}
 
@@ -24,48 +23,49 @@ class WalletInit extends Component {
 		this.props.validate('mnemonic', {
 			isValid: !!this.props.identity.identityContractAddress,
 			err: { msg: 'ERR_NO_MNEMONIC' },
-			dirty: false
+			dirty: false,
 		})
 	}
 
-    getMnemonic = () => {
-    	const mnemonic = getRandomMnemonic()
-    	this.props.handleChange('mnemonic', mnemonic)
-    	this.props.validate('mnemonic', {
-    		isValid: true
-    	})
-    } 
+	getMnemonic = () => {
+		const mnemonic = getRandomMnemonic()
+		this.props.handleChange('mnemonic', mnemonic)
+		this.props.validate('mnemonic', {
+			isValid: true,
+		})
+	}
 
-    render() {
-    	const {t, identity} = this.props
-    	return (
-    		<div>
-    			<Button
-    				onClick={this.getMnemonic}
-    				variant='contained'
-    				color='primary'
-    				disabled={this.state.waitingAddrData}
-    			>
-    				{t('WALLET_GET_RANDOM_MNEMONIC_BTN')}
-    			</Button>
-    			<Typography paragraph variant='subheading'>
-    				{t('WALLET_GET_RANDOM_MNEMONIC_INFO')}
-    			</Typography>
-    			<Typography paragraph variant='subheading'>
-    				{identity.mnemonic}
-    			</Typography>
-    			{identity.mnemonic &&
-                <Typography paragraph variant='subheading'>
-                	{t('WALLET_GET_RANDOM_MNEMONIC_WRITE_DOWN_INFO')}
-                </Typography>}
-    		</div>
-    	)
-    }
+	render() {
+		const { t, identity } = this.props
+		return (
+			<div>
+				<Button
+					onClick={this.getMnemonic}
+					variant='contained'
+					color='primary'
+					disabled={this.state.waitingAddrData}
+				>
+					{t('WALLET_GET_RANDOM_MNEMONIC_BTN')}
+				</Button>
+				<Typography paragraph variant='subheading'>
+					{t('WALLET_GET_RANDOM_MNEMONIC_INFO')}
+				</Typography>
+				<Typography paragraph variant='subheading'>
+					{identity.mnemonic}
+				</Typography>
+				{identity.mnemonic && (
+					<Typography paragraph variant='subheading'>
+						{t('WALLET_GET_RANDOM_MNEMONIC_WRITE_DOWN_INFO')}
+					</Typography>
+				)}
+			</div>
+		)
+	}
 }
 
 WalletInit.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired
+	account: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state) {
@@ -73,13 +73,13 @@ function mapStateToProps(state) {
 	let memory = state.memory
 	return {
 		account: persist.account,
-		wallet: memory.wallet
+		wallet: memory.wallet,
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

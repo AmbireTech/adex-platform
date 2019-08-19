@@ -12,7 +12,10 @@ import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
-import { getDeployTx, getRandomAddressForDeployTx } from 'services/idenity/contract-address'
+import {
+	getDeployTx,
+	getRandomAddressForDeployTx,
+} from 'services/idenity/contract-address'
 import { tokens } from 'services/smart-contracts/tokensConfig'
 import { validateNumber } from 'helpers/validators'
 import { withStyles } from '@material-ui/core/styles'
@@ -21,18 +24,16 @@ import { styles } from './styles'
 const RELAYER_ADDR = '0x0A8fe6e91eaAb3758dF18f546f7364343667E957'
 
 class IdentityContractAddress extends Component {
-
 	constructor(props, context) {
 		super(props, context)
-		this.state = {
-		}
+		this.state = {}
 	}
 
 	componentDidMount() {
 		this.props.validate('identityContractAddress', {
 			isValid: !!this.props.identity.identityContractAddress,
 			err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
-			dirty: false
+			dirty: false,
 		})
 	}
 
@@ -41,37 +42,44 @@ class IdentityContractAddress extends Component {
 		let msg = 'ERR_INVALID_AMOUNT_VALUE'
 		let errMsgArgs = []
 
-		this.props.validate('withdrawAmount', { isValid: isValid, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
+		this.props.validate('withdrawAmount', {
+			isValid: isValid,
+			err: { msg: msg, args: errMsgArgs },
+			dirty: dirty,
+		})
 	}
 
 	getIdentityContractAddress = () => {
 		const { identityContractOwner } = this.props.identity
 
 		const deployTx = getDeployTx({
-			addr: identityContractOwner || '0x2aecF52ABe359820c48986046959B4136AfDfbe2',
+			addr:
+				identityContractOwner || '0x2aecF52ABe359820c48986046959B4136AfDfbe2',
 			privLevel: 3,
 			feeTokenAddr: '0x4470BB87d77b963A013DB939BE332f927f2b992e', //this.props.identity.feeTokenAddr, // '0x4470BB87d77b963A013DB939BE332f927f2b992e',
 			feeBeneficiary: RELAYER_ADDR,
-			feeTokenAmount: '10000'
+			feeTokenAmount: '10000',
 		})
 
-		// NOTE: we need 
+		// NOTE: we need
 
 		const addrData = getRandomAddressForDeployTx({ deployTx })
 		this.props.handleChange('identityContractAddress', addrData.idContractAddr)
 		this.props.validate('identityContractAddress', {
 			isValid: !!addrData.idContractAddr,
 			err: { msg: 'ERR_NO_IDENTITY_CONTRACT_ADDRESS' },
-			dirty: true
+			dirty: true,
 		})
 	}
 
-	tokenSelect = () =>
-		<FormControl className={this.props.classes.formControl} >
+	tokenSelect = () => (
+		<FormControl className={this.props.classes.formControl}>
 			<InputLabel htmlFor='fee-token'>Fee Token</InputLabel>
 			<Select
 				value={this.props.identity.feeTokenAddr || ''}
-				onChange={(event) => this.props.handleChange('feeTokenAddr', event.target.value)}
+				onChange={event =>
+					this.props.handleChange('feeTokenAddr', event.target.value)
+				}
 				inputProps={{
 					name: 'fee-token',
 					id: 'fee-token',
@@ -80,15 +88,16 @@ class IdentityContractAddress extends Component {
 				<MenuItem value=''>
 					<em>None</em>
 				</MenuItem>
-				{tokens.map((token) =>
+				{tokens.map(token => (
 					<MenuItem key={token.symbol} value={token.contractAddress.kovan}>
 						{token.symbol}
 					</MenuItem>
-				)}
+				))}
 			</Select>
 		</FormControl>
+	)
 
-	tokenAmount = ({ t, feeTokenAmount, handleChange }) =>
+	tokenAmount = ({ t, feeTokenAmount, handleChange }) => (
 		<TextField
 			type='text'
 			fullWidth
@@ -96,10 +105,11 @@ class IdentityContractAddress extends Component {
 			label={t('FEE_TOKEN_AMOUNT')}
 			name='feeTokenAmount'
 			value={feeTokenAmount || ''}
-			onChange={(ev) => handleChange('feeTokenAmount', ev.target.value)}
+			onChange={ev => handleChange('feeTokenAmount', ev.target.value)}
 			onBlur={() => this.validateAmount(feeTokenAmount, true)}
 			onFocus={() => this.validateAmount(feeTokenAmount, false)}
 		/>
+	)
 
 	render() {
 		const { identity, t, classes, handleChange } = this.props
@@ -107,36 +117,32 @@ class IdentityContractAddress extends Component {
 
 		return (
 			<div>
-				<Grid
-					container
-					spacing={2}
-				>
+				<Grid container spacing={2}>
 					<Grid item sm={6}>
 						<this.tokenSelect classes={classes} />
 					</Grid>
 					<Grid item sm={6}>
-						<this.tokenAmount t={t} feeTokenAmount={identity.feeTokenAmount} handleChange={handleChange} />
+						<this.tokenAmount
+							t={t}
+							feeTokenAmount={identity.feeTokenAmount}
+							handleChange={handleChange}
+						/>
 					</Grid>
 					<Grid item sm={6}>
-						<Button
-							onClick={this.getIdentityContractAddress}
-						>
+						<Button onClick={this.getIdentityContractAddress}>
 							{'Get addr'}
 						</Button>
-						<div>
-							{identityContractAddress || ''}
-						</div>
-
+						<div>{identityContractAddress || ''}</div>
 					</Grid>
 				</Grid>
-			</div >
+			</div>
 		)
 	}
 }
 
 IdentityContractAddress.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired
+	account: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state) {
@@ -149,7 +155,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

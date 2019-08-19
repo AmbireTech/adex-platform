@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -19,7 +18,7 @@ export class Confirm extends Component {
 		this.cancel = this.cancel.bind(this)
 		this.confirm = this.confirm.bind(this)
 		this.state = {
-			active: false
+			active: false,
 		}
 	}
 
@@ -44,21 +43,19 @@ export class Confirm extends Component {
 
 	render() {
 		return (
-			<Dialog
-				open={this.state.active}
-			>
-				<DialogTitle id="alert-dialog-title">{this.props.title}</DialogTitle>
+			<Dialog open={this.state.active}>
+				<DialogTitle id='alert-dialog-title'>{this.props.title}</DialogTitle>
 				<DialogContent>
-					<DialogContentText id="alert-dialog-description">
+					<DialogContentText id='alert-dialog-description'>
 						{this.props.text}
 					</DialogContentText>
 					{this.props.children}
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={this.cancel} color="primary">
+					<Button onClick={this.cancel} color='primary'>
 						{this.props.cancelLabel || this.props.t('CANCEL')}
 					</Button>
-					<Button onClick={this.confirm} color="primary" autoFocus>
+					<Button onClick={this.confirm} color='primary' autoFocus>
 						{this.props.confirmLabel || this.props.t('OK')}
 					</Button>
 				</DialogActions>
@@ -76,8 +73,8 @@ Confirm.propTypes = {
 	confirm: PropTypes.func,
 	cancel: PropTypes.func,
 	visible: PropTypes.bool,
-	calledOn: PropTypes.number
-};
+	calledOn: PropTypes.number,
+}
 
 function mapStateToProps(state) {
 	state = state.memory
@@ -89,14 +86,14 @@ function mapStateToProps(state) {
 		confirm: state.confirm.onConfirm,
 		cancel: state.confirm.onCancel,
 		visible: state.confirm.active || false,
-		calledOn: state.confirm.calledOn
-	};
+		calledOn: state.confirm.calledOn,
+	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
-	};
+		actions: bindActionCreators(actions, dispatch),
+	}
 }
 
 export default connect(

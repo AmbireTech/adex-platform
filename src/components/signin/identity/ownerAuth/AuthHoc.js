@@ -8,13 +8,12 @@ import IdentityHoc from '../IdentityHoc'
 import ValidItemHoc from 'components/common/stepper/ValidItemHoc'
 
 export default function AuthHoc(Decorated) {
-
 	class Auth extends Component {
 		constructor(props) {
 			super(props)
 			this.state = {
 				method: '',
-				sideSelect: false
+				sideSelect: false,
 			}
 		}
 
@@ -27,7 +26,7 @@ export default function AuthHoc(Decorated) {
 			chainId,
 			signType,
 			balanceEth,
-			balanceDai
+			balanceDai,
 		}) => {
 			const wallet = {
 				address,
@@ -38,7 +37,7 @@ export default function AuthHoc(Decorated) {
 				chainId,
 				signType,
 				balanceEth,
-				balanceDai
+				balanceDai,
 			}
 
 			this.props.handleChange('identityContractOwner', address)
@@ -64,13 +63,13 @@ export default function AuthHoc(Decorated) {
 		let persist = state.persist
 		// let memory = state.memory
 		return {
-			account: persist.account
+			account: persist.account,
 		}
 	}
 
 	function mapDispatchToProps(dispatch) {
 		return {
-			actions: bindActionCreators(actions, dispatch)
+			actions: bindActionCreators(actions, dispatch),
 		}
 	}
 

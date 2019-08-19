@@ -5,7 +5,6 @@ import Paper from '@material-ui/core/Paper'
 import { renderInput, getSuggestions, renderSuggestion } from './common'
 
 class DownshiftSingle extends React.Component {
-
 	handleChange = item => {
 		const selectedItem = item.value || item.label
 		this.props.onChange(selectedItem)
@@ -23,14 +22,14 @@ class DownshiftSingle extends React.Component {
 			value,
 			openOnClick,
 			allowCreate,
-			validateCreation
+			validateCreation,
 		} = this.props
 		const allValues = source //Object.keys(source).map(key => { return { value: key, label: source[key] } })
 
 		return (
 			<Downshift
 				onChange={this.handleChange}
-				itemToString={(item) => (item || {}).label || item || ''}
+				itemToString={item => (item || {}).label || item || ''}
 				selectedItem={value}
 			>
 				{({
@@ -40,7 +39,7 @@ class DownshiftSingle extends React.Component {
 					inputValue,
 					selectedItem,
 					highlightedIndex,
-					toggleMenu
+					toggleMenu,
 				}) => (
 					<div className={classes.container}>
 						{renderInput({
@@ -52,20 +51,25 @@ class DownshiftSingle extends React.Component {
 							InputProps: getInputProps({
 								id,
 								onClick: () => openOnClick && toggleMenu(),
-								placeholder
+								placeholder,
 							}),
 						})}
 						{isOpen ? (
 							<Paper className={classes.paper} square>
-								{getSuggestions(inputValue, allValues, allowCreate, validateCreation).map((suggestion, index) =>
+								{getSuggestions(
+									inputValue,
+									allValues,
+									allowCreate,
+									validateCreation
+								).map((suggestion, index) =>
 									renderSuggestion({
 										suggestion,
 										index,
 										itemProps: getItemProps({ item: suggestion }),
 										highlightedIndex,
 										selectedItem,
-										showSelected
-									}),
+										showSelected,
+									})
 								)}
 							</Paper>
 						) : null}

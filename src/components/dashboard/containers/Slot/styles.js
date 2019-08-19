@@ -7,14 +7,14 @@ export const styles = theme => {
 			display: 'flex',
 			flexDirection: 'row',
 			alignItems: 'center',
-			justifyContent: 'space-between'
+			justifyContent: 'space-between',
 		},
 		integrationCode: {
 			whiteSpace: 'pre-wrap',
 			wordBreak: 'break-word',
 			padding: spacing,
 			margin: 0,
-			alignSelf: 'flex-start'
-		}
+			alignSelf: 'flex-start',
+		},
 	}
 }

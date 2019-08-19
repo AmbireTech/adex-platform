@@ -29,50 +29,59 @@ const INT_STRING = /^[0-9]+$/
 const PAGE_SIZE = 50
 
 const mapFilterProps = ({ filterProps = {}, t }) => {
-	return Object.keys(filterProps)
-		.map((key) => {
-			const prop = filterProps[key]
-			const label = prop.label || key
-			return {
-				label: t(label, { isProp: prop.labelIsProp || !prop.label, args: prop.labelArgs || [] }),
-				value: key
-			}
-		})
+	return Object.keys(filterProps).map(key => {
+		const prop = filterProps[key]
+		const label = prop.label || key
+		return {
+			label: t(label, {
+				isProp: prop.labelIsProp || !prop.label,
+				args: prop.labelArgs || [],
+			}),
+			value: key,
+		}
+	})
 }
 
 const mapSortProperties = ({ sortProps = [], t }) => {
-	return sortProps.map((prop) => {
+	return sortProps.map(prop => {
 		const label = prop.label || prop.value
-		const value = ((prop.value !== null && prop.value !== undefined)
-			? prop.value : '').toString()
+		const value = (prop.value !== null && prop.value !== undefined
+			? prop.value
+			: ''
+		).toString()
 
 		return {
 			value,
-			label: t(label, { isProp: !prop.label, args: prop.labelArgs || [] })
+			label: t(label, { isProp: !prop.label, args: prop.labelArgs || [] }),
 		}
 	})
 }
 
 class ListWithControls extends Component {
 	constructor(props, context) {
-		super(props, context);
+		super(props, context)
 
 		const uiStateId = props.uiStateId
 
-
-		const sortProperties = mapSortProperties({ sortProps: props.sortProperties || [{}], t: props.t })
+		const sortProperties = mapSortProperties({
+			sortProps: props.sortProperties || [{}],
+			t: props.t,
+		})
 		// TODO: update on ComponentWillReceiveProps
 		this.state = {
 			items: [],
 			page: 0, //
 			search: '', //
 			sortProperties: sortProperties,
-			filterProperties: mapFilterProps({ filterProps: props.filterProperties, t: props.t }),
+			filterProperties: mapFilterProps({
+				filterProps: props.filterProperties,
+				t: props.t,
+			}),
 			filteredItems: [],
 			filterBy: '', //
 			filterByValues: [],
 			filterByValueFilter: '', //
-			uiStateId: uiStateId
+			uiStateId: uiStateId,
 		}
 	}
 
@@ -84,10 +93,12 @@ class ListWithControls extends Component {
 		let newStateValue = { [name]: value }
 		if (name === 'search') newStateValue.page = 0
 		if (name === 'filterBy') {
-			newStateValue.filterByValues = ([{ label: 'ALL', value: '' }].concat(this.props.filterProperties[value].values))
+			newStateValue.filterByValues = [{ label: 'ALL', value: '' }].concat(
+				this.props.filterProperties[value].values
+			)
 			newStateValue.filterByValueFilter = ''
 		}
-		this.setState(newStateValue);
+		this.setState(newStateValue)
 	}
 
 	// For changing redux state
@@ -95,7 +106,12 @@ class ListWithControls extends Component {
 		this.props.actions.updateUi(name, value, this.state.uiStateId)
 	}
 
-	changePageSize = (name, { itemsLength, page, pages } = {}, ev, newPageSize) => {
+	changePageSize = (
+		name,
+		{ itemsLength, page, pages } = {},
+		ev,
+		newPageSize
+	) => {
 		/*
     	let currentPageSize = this.props.pageSize
     	let currentFirstIndex = page * currentPageSize // To have at least the first item on current page on the next page
@@ -112,43 +128,55 @@ class ListWithControls extends Component {
 		} else if (typeof searchMatch === 'string' && !!searchMatch) {
 			matchString = searchMatch
 		} else {
-			matchString =
-				(item.title || '') +
-				(item.description || '')
+			matchString = (item.title || '') + (item.description || '')
 		}
 
 		const match = regex.exec(matchString)
 		return !!match
 	}
 
-	filterItems = ({ items, search, sortProperty, sortOrder, page, pageSize, searchMatch, filterBy, filterArchived }) => {
+	filterItems = ({
+		items,
+		search,
+		sortProperty,
+		sortOrder,
+		page,
+		pageSize,
+		searchMatch,
+		filterBy,
+		filterArchived,
+	}) => {
 		// TODO: optimize filter
 		// TODO: maybe filter deleted before this?
-		let filtered = (items || [])
-			.filter((i) => {
-				const isItem = (!!i && (i.id || i.ipfs))
-				if (!isItem) return isItem
+		let filtered = (items || []).filter(i => {
+			const isItem = !!i && (i.id || i.ipfs)
+			if (!isItem) return isItem
 
-				if ((filterArchived !== '') && (i.archived !== undefined) && (filterArchived.toString() !== i.archived.toString())) {
+			if (
+				filterArchived !== '' &&
+				i.archived !== undefined &&
+				filterArchived.toString() !== i.archived.toString()
+			) {
+				return false
+			}
+
+			if (filterBy && filterBy.key && filterBy.value) {
+				let itemValue =
+					filterBy.key.split('.').reduce((o, p) => (o ? o[p] : 'noprop'), i) ||
+					''
+
+				let passFilter = itemValue.toString() === filterBy.value.toString()
+
+				if (!passFilter) {
 					return false
 				}
+			}
 
-				if (filterBy && filterBy.key && (filterBy.value)) {
-					let itemValue = filterBy.key.split('.')
-						.reduce((o, p) => o ? o[p] : 'noprop', i) || ''
+			let hasSearch = !!search
+			if (!hasSearch) return isItem
 
-					let passFilter = itemValue.toString() === filterBy.value.toString()
-
-					if (!passFilter) {
-						return false
-					}
-				}
-
-				let hasSearch = !!search
-				if (!hasSearch) return isItem
-
-				return this.search({ item: i, search, searchMatch })
-			})
+			return this.search({ item: i, search, searchMatch })
+		})
 
 		if (sortProperty) {
 			filtered = filtered.sort((a, b) => {
@@ -158,10 +186,10 @@ class ListWithControls extends Component {
 				if (INT_STRING.test(propA) && INT_STRING.test(propB)) {
 					propA = bigNumberify(propA)
 					propB = bigNumberify(propB)
-					return (propA.lt(propB) ? -1 : (propA.gt(propB) ? 1 : 0)) * sortOrder
+					return (propA.lt(propB) ? -1 : propA.gt(propB) ? 1 : 0) * sortOrder
 				}
 
-				return (propA < propB ? -1 : (propA > propB ? 1 : 0)) * sortOrder
+				return (propA < propB ? -1 : propA > propB ? 1 : 0) * sortOrder
 			})
 		}
 
@@ -169,17 +197,14 @@ class ListWithControls extends Component {
 
 		let maxPages = Math.ceil(filteredLength / pageSize)
 
-		let paged = filtered.slice(
-			page * pageSize,
-			(page * pageSize) + pageSize
-		)
+		let paged = filtered.slice(page * pageSize, page * pageSize + pageSize)
 
 		return {
 			items: paged,
 			page: page,
 			pages: maxPages,
 			itemsLength: filteredLength,
-			pageSize: pageSize
+			pageSize: pageSize,
 		}
 	}
 
@@ -187,13 +212,17 @@ class ListWithControls extends Component {
 		let data = this.filterItems({
 			items: this.props.items,
 			search: this.state.search,
-			sortProperty: this.props.sortProperty || (this.state.sortProperties)[0].value,
+			sortProperty:
+				this.props.sortProperty || this.state.sortProperties[0].value,
 			sortOrder: this.props.sortOrder || -1,
 			page: this.state.page,
 			pageSize: PAGE_SIZE, // this.props.pageSize || 10,
 			searchMatch: this.props.searchMatch,
-			filterBy: { key: this.state.filterBy, value: this.state.filterByValueFilter },
-			filterArchived: this.props.filterArchived || 'false'
+			filterBy: {
+				key: this.state.filterBy,
+				value: this.state.filterByValueFilter,
+			},
+			filterArchived: this.props.filterArchived || 'false',
 		})
 
 		let items = data.items
@@ -205,38 +234,38 @@ class ListWithControls extends Component {
 
 		return (
 			<Paper>
-				<div
-					className={classes.controlsRoot}
-				>
-					<div
-						className={classes.controls}
-					>
-						<FormControl
-							className={classnames(classes.flexItem)}
-						>
-							<InputLabel htmlFor="search">{t('LIST_CONTROL_LABEL_SEARCH')}</InputLabel>
+				<div className={classes.controlsRoot}>
+					<div className={classes.controls}>
+						<FormControl className={classnames(classes.flexItem)}>
+							<InputLabel htmlFor='search'>
+								{t('LIST_CONTROL_LABEL_SEARCH')}
+							</InputLabel>
 							<Input
 								name='search'
-								id="search"
+								id='search'
 								value={this.state.search}
-								onChange={(ev) => this.handleChange('search', ev.target.value)}
-								startAdornment={<InputAdornment position="start"><SearchIcon /></InputAdornment>}
+								onChange={ev => this.handleChange('search', ev.target.value)}
+								startAdornment={
+									<InputAdornment position='start'>
+										<SearchIcon />
+									</InputAdornment>
+								}
 							/>
 						</FormControl>
-						<div
-							className={classnames(classes.flexRow, classes.flexItem)}
-						>
+						<div className={classnames(classes.flexRow, classes.flexItem)}>
 							<Dropdown
 								label={t('LIST_CONTROL_LABEL_SORT')}
 								onChange={this.handleChangeRxState.bind(this, 'sortProperty')}
 								source={this.state.sortProperties}
-								value={this.props.sortProperty || (this.state.sortProperties)[0].value}
+								value={
+									this.props.sortProperty || this.state.sortProperties[0].value
+								}
 								htmlId='sort-by-prop'
 								name='sortProperty'
 							/>
 							<div>
 								<IconButton
-									color={(this.props.sortOrder === 1) ? 'primary' : 'default'}
+									color={this.props.sortOrder === 1 ? 'primary' : 'default'}
 									onClick={this.handleChangeRxState.bind(this, 'sortOrder', 1)}
 									className={classes.rowButton}
 									size='small'
@@ -244,7 +273,7 @@ class ListWithControls extends Component {
 									<ArrowUpwardIcon />
 								</IconButton>
 								<IconButton
-									color={(this.props.sortOrder === -1) ? 'primary' : 'default'}
+									color={this.props.sortOrder === -1 ? 'primary' : 'default'}
 									onClick={this.handleChangeRxState.bind(this, 'sortOrder', -1)}
 									className={classes.rowButton}
 									size='small'
@@ -311,20 +340,18 @@ class ListWithControls extends Component {
 								goToNextPage={this.goToPage.bind(this, data.page + 1)}
 								goToFirstPage={this.goToPage.bind(this, 0)}
 								goToPrevPage={this.goToPage.bind(this, data.page - 1)}
-								changePageSize={this.changePageSize.bind(this, 'pageSize',
-									{ page: data.page, pages: data.pages, itemsLength: data.itemsLength })
-								}
+								changePageSize={this.changePageSize.bind(this, 'pageSize', {
+									page: data.page,
+									pages: data.pages,
+									itemsLength: data.itemsLength,
+								})}
 							/>
-						</div >
-					</div >
-				</div >
-				<Divider />
-				<div
-					className={classnames(classes.listRoot)}
-				>
-					{renderItems(items)}
+						</div>
+					</div>
 				</div>
-			</Paper >
+				<Divider />
+				<div className={classnames(classes.listRoot)}>{renderItems(items)}</div>
+			</Paper>
 		)
 	}
 }
@@ -338,7 +365,7 @@ ListWithControls.propTypes = {
 	objModel: PropTypes.func,
 	sortProperties: PropTypes.array.isRequired,
 	filterProperties: PropTypes.object,
-	uiStateId: PropTypes.string.isRequired
+	uiStateId: PropTypes.string.isRequired,
 }
 
 function mapStateToProps(state, props) {
@@ -350,21 +377,29 @@ function mapStateToProps(state, props) {
 	const uiStateId = props.uiStateId || 'default'
 	return {
 		rowsView: !!persist.ui[props.viewModeId],
-		pageSize: persist.ui[uiStateId] ? persist.ui[uiStateId]['pageSize'] || 10 : 10,
-		sortProperty: persist.ui[uiStateId] ? persist.ui[uiStateId]['sortProperty'] : null,
-		sortOrder: persist.ui[uiStateId] ? persist.ui[uiStateId]['sortOrder'] || - 1 : -1,
-		filterArchived: persist.ui[uiStateId] ? persist.ui[uiStateId]['filterArchived'] || false : false,
+		pageSize: persist.ui[uiStateId]
+			? persist.ui[uiStateId]['pageSize'] || 10
+			: 10,
+		sortProperty: persist.ui[uiStateId]
+			? persist.ui[uiStateId]['sortProperty']
+			: null,
+		sortOrder: persist.ui[uiStateId]
+			? persist.ui[uiStateId]['sortOrder'] || -1
+			: -1,
+		filterArchived: persist.ui[uiStateId]
+			? persist.ui[uiStateId]['filterArchived'] || false
+			: false,
 		side: memory.nav.side,
 		account: persist.account,
 		sortProperties: props.sortProperties || [],
 		filterProperties: props.filterProperties,
-		uiStateId: uiStateId
+		uiStateId: uiStateId,
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

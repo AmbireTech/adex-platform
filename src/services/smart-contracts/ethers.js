@@ -4,20 +4,23 @@ import { AUTH_TYPES } from 'constants/misc'
 
 const { AdExCore, Identity, DAI, IdentityFactory } = contracts
 const localWeb3 = async () => {
-	const provider = new ethers.providers.JsonRpcProvider(process.env.WEB3_NODE_ADDR)
+	const provider = new ethers.providers.JsonRpcProvider(
+		process.env.WEB3_NODE_ADDR
+	)
 	const adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
 	const dai = new ethers.Contract(DAI.address, DAI.abi, provider)
 	const identityFactory = new ethers.Contract(
 		IdentityFactory.address,
 		IdentityFactory.abi,
-		provider)
+		provider
+	)
 
 	const results = {
 		provider: provider,
 		AdExCore: adexCore,
 		Identity: Identity,
 		Dai: dai,
-		IdentityFactory: identityFactory
+		IdentityFactory: identityFactory,
 	}
 
 	return results
@@ -29,7 +32,7 @@ const loadInjectedWeb3 = new Promise((resolve, reject) => {
 		const web3 = window.web3
 		return resolve({
 			ethereum,
-			web3
+			web3,
 		})
 	})
 })
@@ -53,17 +56,17 @@ const getInjectedWeb3 = async () => {
 			identityFactory = new ethers.Contract(
 				IdentityFactory.address,
 				IdentityFactory.abi,
-				provider)
+				provider
+			)
 			const results = {
 				provider: provider,
 				AdExCore: adexCore,
 				Identity: Identity,
 				Dai: dai,
-				IdentityFactory: identityFactory
+				IdentityFactory: identityFactory,
 			}
 
 			return results
-
 		} catch (err) {
 			console.error(err)
 			throw new Error(err.message)
@@ -77,7 +80,8 @@ const getInjectedWeb3 = async () => {
 		identityFactory = new ethers.Contract(
 			IdentityFactory.address,
 			IdentityFactory.abi,
-			provider)
+			provider
+		)
 
 		console.log('Injected legacy web3 detected.')
 		const results = {
@@ -85,7 +89,7 @@ const getInjectedWeb3 = async () => {
 			AdExCore: adexCore,
 			Identity: Identity,
 			Dai: dai,
-			IdentityFactory: identityFactory
+			IdentityFactory: identityFactory,
 		}
 
 		return results
@@ -95,15 +99,15 @@ const getInjectedWeb3 = async () => {
 	}
 }
 
-const getLocalWeb3 = new Promise(function (resolve, reject) {
+const getLocalWeb3 = new Promise(function(resolve, reject) {
 	console.log('getLocalWeb3')
 	resolve(localWeb3())
 })
 
-const getEthers = async (mode) => {
+const getEthers = async mode => {
 	/* NOTE: use Promise wrapper because despite getWeb3 is Promise itself it is not called by user action
-	*   and this results in Trezor popup block by the browser
-	*/
+	 *   and this results in Trezor popup block by the browser
+	 */
 	if (mode === AUTH_TYPES.METAMASK.name) {
 		const injected = await getInjectedWeb3()
 		return injected
@@ -112,6 +116,4 @@ const getEthers = async (mode) => {
 	}
 }
 
-export {
-	getEthers
-}
+export { getEthers }

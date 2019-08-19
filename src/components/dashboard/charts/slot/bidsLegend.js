@@ -10,7 +10,9 @@ class BidsLegend extends Component {
 	}
 
 	toggleLabelCross(label) {
-		label.style.textDecoration === 'line-through' ? label.style.textDecoration = 'none' : label.style.textDecoration = 'line-through'
+		label.style.textDecoration === 'line-through'
+			? (label.style.textDecoration = 'none')
+			: (label.style.textDecoration = 'line-through')
 	}
 
 	render() {
@@ -23,16 +25,17 @@ class BidsLegend extends Component {
 							<li
 								key={i}
 								className={classes.legendListItem}
-								onClick={(event) => {
+								onClick={event => {
 									this.toggleChartItem(event, i)
 									this.toggleLabelCross(event.currentTarget)
 								}}
 							>
 								<span
-									style={{ backgroundColor: chart.data.datasets[0].backgroundColor[i] }}
+									style={{
+										backgroundColor: chart.data.datasets[0].backgroundColor[i],
+									}}
 									className={classes.legendSpan}
-								>
-								</span>
+								></span>
 								{chart.data.labels[i] ? chart.data.labels[i] : null}
 							</li>
 						)

@@ -52,9 +52,11 @@ function configureStoreProd(initialState) {
 		// logger
 	]
 
-	let store = createStore(rootReducer, initialState, compose(
-		applyMiddleware(...middlewares)
-	))
+	let store = createStore(
+		rootReducer,
+		initialState,
+		compose(applyMiddleware(...middlewares))
+	)
 
 	let persistor = persistStore(store)
 
@@ -72,19 +74,21 @@ function configureStoreDev(initialState) {
 		// https://github.com/gaearon/redux-thunk#injecting-a-custom-argument
 		thunk,
 		reduxRouterMiddleware,
-		logger
-	];
+		logger,
+	]
 
-	const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // add support for Redux dev tools
-	const store = createStore(rootReducer, initialState, composeEnhancers(
-		applyMiddleware(...middlewares)
+	const composeEnhancers =
+		window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose // add support for Redux dev tools
+	const store = createStore(
+		rootReducer,
+		initialState,
+		composeEnhancers(applyMiddleware(...middlewares))
 	)
-	);
 
 	if (module.hot) {
 		// Enable Webpack hot module replacement for reducers
 		module.hot.accept('../reducers', () => {
-			const nextReducer = require('../reducers').default; // eslint-disable-line global-require
+			const nextReducer = require('../reducers').default // eslint-disable-line global-require
 			store.replaceReducer(nextReducer)
 		})
 	}
@@ -93,6 +97,7 @@ function configureStoreDev(initialState) {
 	return { persistor, store }
 }
 
-const configureStore = process.env.NODE_ENV === 'production' ? configureStoreProd : configureStoreDev
+const configureStore =
+	process.env.NODE_ENV === 'production' ? configureStoreProd : configureStoreDev
 
 export default configureStore()

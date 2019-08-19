@@ -9,12 +9,12 @@ function Autocomplete(props) {
 	const { classes, source, multiple, ...rest } = props
 
 	return (
-		<div >
-			{multiple ?
+		<div>
+			{multiple ? (
 				<DownshiftMultiple classes={classes} source={source} {...rest} />
-				:
+			) : (
 				<DownshiftSingle classes={classes} source={source} {...rest} />
-			}
+			)}
 		</div>
 	)
 }
