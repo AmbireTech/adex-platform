@@ -1,5 +1,6 @@
 import { utils } from 'ethers'
-import { isEthAddressERC20, isConnectionLost } from '../services/smart-contracts/actions/erc20';
+import { isEthAddressERC20 } from '../services/smart-contracts/actions/erc20';
+import { getEthers } from 'services/smart-contracts/ethers';
 
 /*eslint-disable */
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
@@ -80,6 +81,16 @@ export const isEthAddressZero = (addr = '') => {
 	return isEthAddress(addr)
 		? utils.bigNumberify(utils.getAddress(addr)).isZero()
 		: false;
+}
+
+export const isConnectionLost = async () => {
+	try {
+		const eth = await getEthers()
+		await eth.provider.getBlockNumber()
+		return false
+	} catch (error) {
+		return true
+	}
 }
 
 export const validEthAddress = async ({ addr = '', nonZeroAddr, nonERC20 }) => {

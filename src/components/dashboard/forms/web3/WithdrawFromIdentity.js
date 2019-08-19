@@ -10,6 +10,9 @@ import {
 	validateNumber,
 	validEthAddress
 } from 'helpers/validators'
+import {
+	TopLoading
+} from 'components/common/dialog/content'
 
 class WithdrawFromIdentity extends Component {
 
@@ -37,16 +40,18 @@ class WithdrawFromIdentity extends Component {
 	}
 
 	validateAddress = async (addr, dirty) => {
-		// As we are using async validation so we need to make 
-		// the form show a message that it is waiting for validation
-		this.props.validate('withdrawTo', { err: { msg: "ERR_VALIDATION_ASYNC" }, dirty: dirty });
+		const { actions, txId }  = this.props
+		// Using txId as there are not many addresses that will be
+		// checked at the same time in order to use `check-addr-${addr}`
+		actions.updateSpinner(txId, true)
 		const { msg } = await validEthAddress({ addr, nonZeroAddr: true, nonERC20: true })
 		const isValid = !msg
 		this.props.validate('withdrawTo', { isValid: isValid, err: { msg: msg }, dirty: dirty })
+		actions.updateSpinner(txId, false)
 	}
 
 	render() {
-		const { transaction, t, invalidFields, identityAvailable, handleChange } = this.props
+		const { transaction, t, invalidFields, identityAvailable, handleChange, spinner } = this.props
 		const { withdrawTo, withdrawAmount } = transaction || {}
 		const errAmount = invalidFields['withdrawAmount']
 		const errAddr = invalidFields['withdrawTo']
@@ -82,6 +87,10 @@ class WithdrawFromIdentity extends Component {
 						errAmount.errMsg : t('MAX_AMOUNT_TO_WITHDRAW', { args: [identityAvailable, 'DAI'] })
 					}
 				/>
+				{spinner ? (				
+					<TopLoading msg={t('ERR_VALIDATION_ASYNC')} />
+				)
+					:	null}
 			</div>
 		)
 	}
@@ -98,10 +107,11 @@ WithdrawFromIdentity.propTypes = {
 
 function mapStateToProps(state, props) {
 	// const persist = state.persist
-	// const memory = state.memory
+	const memory = state.memory
 	const txId = props.stepsId
 	return {
-		txId: txId
+		txId: txId,
+		spinner: memory.spinners[txId],
 	}
 }
 

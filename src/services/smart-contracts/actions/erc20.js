@@ -9,24 +9,14 @@ export const isEthAddressERC20 = async (addr = '') => {
 		if (isEthAddress(addr)) {
 			const eth = await getEthers()
 			const contract = new ethers.Contract(addr, ERC20TokenABI, eth.provider)
-			await contract.totalSupply()
-			await contract.balanceOf(constants.AddressZero)
-			await contract.allowance(constants.AddressZero, constants.AddressZero)
+			await Promise.all([
+				contract.totalSupply(), 
+				contract.balanceOf(constants.AddressZero),  
+				contract.allowance(constants.AddressZero, constants.AddressZero)]
+			)
 			return true
 		}
 	} catch (error) {
 		return false
-	}
-}
-
-export const isConnectionLost = async (addr = '') => {
-	try {
-		if (isEthAddress(addr)) {
-			const eth = await getEthers()
-			new ethers.Contract(addr, ERC20TokenABI, eth.provider)
-			return false
-		}
-	} catch (error) {
-		return true
 	}
 }
