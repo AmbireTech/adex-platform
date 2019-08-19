@@ -1,7 +1,7 @@
 import * as types from 'constants/actionTypes'
 import { addSig, getSig } from 'services/auth/auth'
 import { getSession, checkSession } from 'services/adex-market/actions'
-import { relayerConfig } from 'services/adex-relayer/actions'
+import { relayerConfig, regAccount } from 'services/adex-relayer/actions'
 import { updateSpinner } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
@@ -83,6 +83,32 @@ export function updateAccountStats() {
 				timeout: 20000
 			})(dispatch)
 		}
+	}
+}
+
+export function registerAccount({ wallet, identityData, email }) {
+	return async function (dispatch) {
+		updateSpinner('registering-account', true)(dispatch)
+		try {
+			const { txnsRaw, signatures, identityAddr } = identityData
+			await regAccount({
+				owner: wallet.address,
+				email,
+				txnsRaw,
+				identityAddr,
+				signatures,
+			})
+		} catch (err) {
+			console.error('ERR_REGISTERING_ACCOUNT', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_REGISTERING_ACCOUNT',
+					{ args: [err] }),
+				timeout: 20000
+			})(dispatch)
+		}
+
+		updateSpinner('registering-account', false)(dispatch)
 	}
 }
 
