@@ -96,6 +96,5 @@ export const validEthAddress = async ({ addr = '', nonZeroAddr, nonERC20 }) => {
 		return { msg }
 	} catch (error) {
 		console.log(error);
-		return { msg: error.message }
 	}
 }
