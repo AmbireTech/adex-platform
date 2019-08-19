@@ -14,7 +14,7 @@ let initialState = {
 	},
 	newItem: {
 		Campaign: new Campaign().plainObj(),
-		AdUnit: new AdUnit().plainObj(),
+		AdUnit: new AdUnit({ temp: { addUtmLink: true } }).plainObj(),
 		AdSlot: new AdSlot().plainObj()
 	},
 	currentItem: {},
