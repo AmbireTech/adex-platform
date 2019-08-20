@@ -8,7 +8,6 @@ import NewTransactionHoc from './TransactionHoc'
 import TextField from '@material-ui/core/TextField'
 import {
 	validateNumber,
-	validEthAddress
 } from 'helpers/validators'
 import { InputLoading } from 'components/common/spinners/';
 
@@ -38,20 +37,8 @@ class WithdrawFromIdentity extends Component {
 		this.props.validate('withdrawAmount', { isValid: isValid, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
 	}
 
-	validateAddress = async (addr, dirty) => {
-		const { actions, txId, validate }  = this.props
-		// Using txId as there are not many addresses that will be
-		// checked at the same time in order to use `check-addr-${addr}`
-		validate('withdrawTo', { isValid: false})
-		actions.updateSpinner(txId, dirty)
-		const { msg } = await validEthAddress({ addr, nonZeroAddr: true, nonERC20: true })
-		const isValid = !msg
-		validate('withdrawTo', { isValid: isValid, err: { msg: msg }, dirty: dirty})
-		actions.updateSpinner(txId, false)
-	}
-
 	render() {
-		const { transaction, t, invalidFields, identityAvailable, handleChange, spinner } = this.props
+		const { actions, txId, validate, transaction, t, invalidFields, identityAvailable, handleChange, spinner } = this.props
 		const { withdrawTo, withdrawAmount } = transaction || {}
 		const errAmount = invalidFields['withdrawAmount']
 		const errAddr = invalidFields['withdrawTo']
@@ -66,8 +53,8 @@ class WithdrawFromIdentity extends Component {
 					name='withdrawTo'
 					value={withdrawTo || ''}
 					onChange={(ev) => handleChange('withdrawTo', ev.target.value)}
-					onBlur={() => this.validateAddress(withdrawTo, true)}
-					onFocus={() => this.validateAddress(withdrawTo, false)}
+					onBlur={() => actions.validateAddress({addr: withdrawTo, dirty: true, txId, validate, name: 'withdrawTo'})}
+					onFocus={() => actions.validateAddress({addr: withdrawTo, dirty: false, txId, validate, name: 'withdrawTo'})}
 					error={errAddr && !!errAddr.dirty}
 					helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
 				/>
