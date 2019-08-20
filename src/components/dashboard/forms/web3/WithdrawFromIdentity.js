@@ -11,7 +11,7 @@ import {
 	validEthAddress
 } from 'helpers/validators'
 import {
-	TopLoading
+	InputLoading
 } from 'components/common/dialog/content'
 
 class WithdrawFromIdentity extends Component {
@@ -43,10 +43,11 @@ class WithdrawFromIdentity extends Component {
 		const { actions, txId }  = this.props
 		// Using txId as there are not many addresses that will be
 		// checked at the same time in order to use `check-addr-${addr}`
-		actions.updateSpinner(txId, true)
+		this.props.validate('withdrawTo', { isValid: false})
+		actions.updateSpinner(txId, dirty)
 		const { msg } = await validEthAddress({ addr, nonZeroAddr: true, nonERC20: true })
 		const isValid = !msg
-		this.props.validate('withdrawTo', { isValid: isValid, err: { msg: msg }, dirty: dirty })
+		this.props.validate('withdrawTo', { isValid: isValid, err: { msg: msg }, dirty: dirty})
 		actions.updateSpinner(txId, false)
 	}
 
@@ -55,7 +56,6 @@ class WithdrawFromIdentity extends Component {
 		const { withdrawTo, withdrawAmount } = transaction || {}
 		const errAmount = invalidFields['withdrawAmount']
 		const errAddr = invalidFields['withdrawTo']
-
 		return (
 			<div>
 				<div> {t('EXCHANGE_CURRENT_DAI_BALANCE_AVAILABLE_ON_IDENTITY')} {identityAvailable} </div>
@@ -68,10 +68,11 @@ class WithdrawFromIdentity extends Component {
 					value={withdrawTo || ''}
 					onChange={(ev) => handleChange('withdrawTo', ev.target.value)}
 					onBlur={() => this.validateAddress(withdrawTo, true)}
-					// onFocus={() => this.validateAddress(withdrawTo, false)}
+					onFocus={() => this.validateAddress(withdrawTo, false)}
 					error={errAddr && !!errAddr.dirty}
 					helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
 				/>
+				{spinner ? (<InputLoading />) : null}
 				<TextField
 					type='text'
 					fullWidth
@@ -87,10 +88,6 @@ class WithdrawFromIdentity extends Component {
 						errAmount.errMsg : t('MAX_AMOUNT_TO_WITHDRAW', { args: [identityAvailable, 'DAI'] })
 					}
 				/>
-				{spinner ? (				
-					<TopLoading msg={t('ERR_VALIDATION_ASYNC')} />
-				)
-					:	null}
 			</div>
 		)
 	}

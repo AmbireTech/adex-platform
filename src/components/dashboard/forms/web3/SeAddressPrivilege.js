@@ -12,6 +12,9 @@ import {
 	validEthAddress
 } from 'helpers/validators'
 import { constants } from 'adex-models'
+import {
+	InputLoading
+} from 'components/common/dialog/content'
 
 const { IdentityPrivilegeLevel } = constants
 
@@ -49,16 +52,19 @@ class SeAddressPrivilege extends Component {
 	}
 
 	validateAddress = async (addr, dirty) => {
-		// As we are using async validation so we need to make 
-		// the form show a message that it is waiting for validation
-		this.props.validate('withdrawTo', { err: { msg: "ERR_VALIDATION_ASYNC" }, dirty: dirty });
+		const { actions, txId }  = this.props
+		// Using txId as there are not many addresses that will be
+		// checked at the same time in order to use `check-addr-${addr}`
+		this.props.validate('withdrawTo', { isValid: false})
+		actions.updateSpinner(txId, dirty)
 		const { msg } = await validEthAddress({ addr, nonZeroAddr: true, nonERC20: true })
 		const isValid = !msg
-		this.props.validate('withdrawTo', { isValid: isValid, err: { msg: msg }, dirty: dirty })
+		this.props.validate('withdrawTo', { isValid: isValid, err: { msg: msg }, dirty: dirty})
+		actions.updateSpinner(txId, false)
 	}
 
 	render() {
-		const { transaction, t, invalidFields, identityAvailable, handleChange } = this.props
+		const { transaction, t, invalidFields, identityAvailable, handleChange, spinner } = this.props
 		const { setAddr, privLevel } = transaction || {}
 		// const errAmount = invalidFields['withdrawAmount']
 		const errAddr = invalidFields['withdrawTo']
@@ -78,7 +84,8 @@ class SeAddressPrivilege extends Component {
 					onFocus={() => this.validateAddress(setAddr, false)}
 					error={errAddr && !!errAddr.dirty}
 					helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
-				/>
+				/>				
+				{spinner ? (<InputLoading />) : null}
 				<Dropdown
 					required
 					label={t('SELECT_PRIV_LEVEL')}
@@ -105,10 +112,11 @@ SeAddressPrivilege.propTypes = {
 
 function mapStateToProps(state, props) {
 	// const persist = state.persist
-	// const memory = state.memory
+	const memory = state.memory
 	const txId = props.stepsId
 	return {
-		txId: txId
+		txId: txId,
+		spinner: memory.spinners[txId],
 	}
 }
 

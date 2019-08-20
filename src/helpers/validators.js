@@ -1,6 +1,6 @@
 import { utils } from 'ethers'
-import { isEthAddressERC20 } from '../services/smart-contracts/actions/erc20';
-import { getEthers } from 'services/smart-contracts/ethers';
+import { isEthAddressERC20 } from 'services/smart-contracts/actions/erc20';
+import { isConnectionLost } from 'services/smart-contracts/actions/common';
 
 /*eslint-disable */
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
@@ -83,16 +83,6 @@ export const isEthAddressZero = (addr = '') => {
 		: false;
 }
 
-export const isConnectionLost = async () => {
-	try {
-		const eth = await getEthers()
-		await eth.provider.getBlockNumber()
-		return false
-	} catch (error) {
-		return true
-	}
-}
-
 export const validEthAddress = async ({ addr = '', nonZeroAddr, nonERC20 }) => {
 	try {
 		let msg = ''
@@ -102,7 +92,7 @@ export const validEthAddress = async ({ addr = '', nonZeroAddr, nonERC20 }) => {
 			msg = 'ERR_INVALID_ETH_ADDRESS_ZERO'
 		if (nonERC20 && await isEthAddressERC20(addr))
 			msg = 'ERR_INVALID_ETH_ADDRESS_TOKEN'
-		if (await isConnectionLost(addr))
+		if (await isConnectionLost())
 			msg = "ERR_INVALID_CONNECTION_LOST"
 		return { msg }
 	} catch (error) {
