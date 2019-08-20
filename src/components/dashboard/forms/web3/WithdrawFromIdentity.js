@@ -10,9 +10,8 @@ import {
 	validateNumber,
 	validEthAddress
 } from 'helpers/validators'
-import {
-	InputLoading
-} from 'components/common/dialog/content'
+import { InputLoading } from 'components/common/spinners/';
+
 
 class WithdrawFromIdentity extends Component {
 
@@ -40,14 +39,14 @@ class WithdrawFromIdentity extends Component {
 	}
 
 	validateAddress = async (addr, dirty) => {
-		const { actions, txId }  = this.props
+		const { actions, txId, validate }  = this.props
 		// Using txId as there are not many addresses that will be
 		// checked at the same time in order to use `check-addr-${addr}`
-		this.props.validate('withdrawTo', { isValid: false})
+		validate('withdrawTo', { isValid: false})
 		actions.updateSpinner(txId, dirty)
 		const { msg } = await validEthAddress({ addr, nonZeroAddr: true, nonERC20: true })
 		const isValid = !msg
-		this.props.validate('withdrawTo', { isValid: isValid, err: { msg: msg }, dirty: dirty})
+		validate('withdrawTo', { isValid: isValid, err: { msg: msg }, dirty: dirty})
 		actions.updateSpinner(txId, false)
 	}
 

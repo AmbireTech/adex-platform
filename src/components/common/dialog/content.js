@@ -1,6 +1,6 @@
 import React from 'react'
 import Grid from '@material-ui/core/Grid'
-import { CircularProgress, LinearProgress} from '@material-ui/core'
+import { CircularProgress } from '@material-ui/core'
 import { styles } from './styles.js'
 import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
@@ -33,12 +33,6 @@ const topLoading = ({ classes, msg, className }) =>
 		<div> {msg} </div>
 	</div>
 
-const inputLoading = ({ classes, msg, className }) =>
-	<div className={classnames(classes.contentInputLoading)}>
-		<LinearProgress className={classes.contentInputLoadingLinear} size={50} />
-		<div> {msg} </div>
-	</div>
-
 const fullContentSpinner = ({ classes }) =>
 	<CircularProgress className={classnames(classes.progressCircleCenter)} size={50} />
 
@@ -47,5 +41,4 @@ export const ContentBox = withStyles(styles)(contentBox)
 export const ContentBody = withStyles(styles)(contentBody)
 export const ContentStickyTop = withStyles(styles)(contentStickyTop)
 export const TopLoading = withStyles(styles)(topLoading)
-export const InputLoading = withStyles(styles)(inputLoading)
 export const FullContentSpinner = withStyles(styles)(fullContentSpinner)
