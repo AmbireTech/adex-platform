@@ -84,18 +84,23 @@ export const isEthAddressZero = (addr = '') => {
 }
 
 export const validEthAddress = async ({ addr = '', nonZeroAddr, nonERC20 }) => {
+	let msg = ''
 	try {
-		let msg = ''
-		if (!isEthAddress(addr))
+		const notEthAddress = !isEthAddress(addr)
+		if (notEthAddress)
 			msg = 'ERR_INVALID_ETH_ADDRESS'
-		if (nonZeroAddr && isEthAddressZero(addr))
+		const ethAddressZero = isEthAddressZero(addr)
+		if (nonZeroAddr && ethAddressZero)
 			msg = 'ERR_INVALID_ETH_ADDRESS_ZERO'
-		if (nonERC20 && await isEthAddressERC20(addr))
+		const ethAddressERC20 = await isEthAddressERC20(addr)
+		if (nonERC20 && ethAddressERC20)
 			msg = 'ERR_INVALID_ETH_ADDRESS_TOKEN'
-		if (await isConnectionLost())
+		const connectionLost = await isConnectionLost()
+		if (connectionLost)
 			msg = "ERR_INVALID_CONNECTION_LOST"
-		return { msg }
 	} catch (error) {
-		console.log(error);
+		if(error === "Non-Ethereum browser detected.")
+			msg = "ERR_INVALID_CONNECTION_LOST"
 	}
+	return { msg }
 }
