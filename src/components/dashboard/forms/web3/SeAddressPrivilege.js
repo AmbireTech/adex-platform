@@ -27,8 +27,9 @@ const PRIV_LEVELS_SRC = Object.keys(IdentityPrivilegeLevel)
 class SeAddressPrivilege extends Component {
 
 	componentDidMount() {
-		if (!this.props.transaction.withdrawAmount) {
-			this.props.validate('setAddr', {
+		const { transaction, validate } = this.props;
+		if (!transaction.withdrawAmount) {
+			validate('setAddr', {
 				isValid: false,
 				err: { msg: 'ERR_REQUIRED_FIELD' },
 				dirty: false
@@ -36,36 +37,11 @@ class SeAddressPrivilege extends Component {
 		}
 	}
 
-	validateAmount = (numStr, dirty) => {
-		let isValid = validateNumber(numStr)
-		let msg = 'ERR_INVALID_AMOUNT_VALUE'
-		let errMsgArgs = []
-		if (isValid && (parseFloat(numStr) > parseFloat(this.props.identityAvailable))) {
-			isValid = false
-			msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'
-			errMsgArgs = [this.props.identityAvailable, 'DAI']
-		}
-
-		this.props.validate('withdrawAmount', { isValid: isValid, err: { msg: msg, args: errMsgArgs }, dirty: dirty })
-	}
-
-	validateAddress = async (addr, dirty) => {
-		const { actions, txId, validate }  = this.props
-		// Using txId as there are not many addresses that will be
-		// checked at the same time in order to use `check-addr-${addr}`
-		validate('withdrawTo', { isValid: false})
-		actions.updateSpinner(txId, dirty)
-		const { msg } = await validEthAddress({ addr, nonZeroAddr: true, nonERC20: true })
-		const isValid = !msg
-		validate('withdrawTo', { isValid: isValid, err: { msg: msg }, dirty: dirty})
-		actions.updateSpinner(txId, false)
-	}
-
 	render() {
-		const { transaction, t, invalidFields, identityAvailable, handleChange, spinner } = this.props
+		const { actions, transaction, t, invalidFields, identityAvailable, handleChange, setAddrSpinner, validate } = this.props
 		const { setAddr, privLevel } = transaction || {}
 		// const errAmount = invalidFields['withdrawAmount']
-		const errAddr = invalidFields['withdrawTo']
+		const errAddr = invalidFields['setAddr']
 
 		return (
 			<div>
@@ -78,12 +54,12 @@ class SeAddressPrivilege extends Component {
 					name='setAddr'
 					value={setAddr || ''}
 					onChange={(ev) => handleChange('setAddr', ev.target.value)}
-					onBlur={() => this.validateAddress(setAddr, true)}
-					onFocus={() => this.validateAddress(setAddr, false)}
+					onBlur={() => actions.validateAddress({addr: setAddr, dirty: true, validate, name: 'setAddr'})}
+					onFocus={() => actions.validateAddress({addr: setAddr, dirty: false, validate, name: 'setAddr'})}
 					error={errAddr && !!errAddr.dirty}
 					helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
 				/>				
-				{spinner ? (<InputLoading />) : null}
+				{setAddrSpinner ? (<InputLoading />) : null}
 				<Dropdown
 					required
 					label={t('SELECT_PRIV_LEVEL')}
@@ -114,7 +90,7 @@ function mapStateToProps(state, props) {
 	const txId = props.stepsId
 	return {
 		txId: txId,
-		spinner: memory.spinners[txId],
+		setAddrSpinner: memory.spinners['setAddr'],
 	}
 }
 
