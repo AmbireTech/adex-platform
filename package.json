@@ -109,8 +109,8 @@
     "predeploy": "npm run build && cp CNAME ./build",
     "deploy": "gh-pages -d build",
     "test": "eslint src/",
-    "lint": "eslint src/**/*.{js,jsx} && echo Linting check finished",
-    "lint:fix": "eslint --fix src/**/*.{js,jsx} && echo Linting fix finished",
+    "lint": "eslint \"src/**/*.{js,jsx}\" && echo Linting check finished",
+    "lint:fix": "eslint --fix \"src/**/*.{js,jsx}\" && echo Linting fix finished",
     "eslint-check": "eslint --print-config src/App.js | eslint-config-prettier-check"
   },
   "eslintConfig": {
