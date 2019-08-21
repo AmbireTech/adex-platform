@@ -11,12 +11,13 @@ import TableRow from '@material-ui/core/TableRow'
 import Tooltip from '@material-ui/core/Tooltip'
 import Button from '@material-ui/core/Button'
 import Checkbox from '@material-ui/core/Checkbox'
-// import IconButton from '@material-ui/core/IconButton'
+import IconButton from '@material-ui/core/IconButton'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Img from 'components/common/img/Img'
 import Rows from 'components/dashboard/collection/Rows'
 import Translate from 'components/translate/Translate'
 // import DeleteIcon from '@material-ui/icons/Delete'
+import { FileCopy } from '@material-ui/icons'
 // import ArchiveIcon from '@material-ui/icons/Archive'
 // import UnarchiveIcon from '@material-ui/icons/Unarchive'
 // import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline'
@@ -203,13 +204,13 @@ class ItemsList extends Component {
 	renderActions = ({ item, to }) => {
 		const {
 			t,
-			// account,
-			// actions,
-			// itemType
+			account,
+			actions,
+			itemType
 		} = this.props
-		// const itemName = item.title
-		// const itemTypeName = t(itemType, { isProp: true })
-		// const isDemo = account.wallet.address === 'demo'
+		const itemName = item.title
+		const itemTypeName = t(itemType, { isProp: true })
+		const isDemo = account.wallet.address === 'demo'
 
 		return (
 			<TableCell>
@@ -225,6 +226,28 @@ class ItemsList extends Component {
 					>
 						{t('LABEL_VIEW')}
 					</RRButton>
+				</Tooltip>
+				<Tooltip
+					title={t('TOOLTIP_ARCHIVE')}
+					// placement='top'
+					enterDelay={1000}
+				>
+					<IconButton
+						disabled={isDemo}
+						// label={t('ARCHIVE')}
+						// className={RTButtonTheme.danger}
+						onClick={actions.confirmAction.bind(this,
+							actions.cloneItem.bind(this, { item: item, authSig: account.wallet.authSig }),
+							null,
+							{
+								confirmLabel: t('CONFIRM_YES'),
+								cancelLabel: t('CONFIRM_NO'),
+								text: t('CLONE_ITEM', { args: [itemTypeName, itemName] }),
+								title: t('CONFIRM_SURE')
+							})}
+					>
+						<FileCopy />
+					</IconButton>
 				</Tooltip>
 				{/* {!item.archived &&
 					<Tooltip

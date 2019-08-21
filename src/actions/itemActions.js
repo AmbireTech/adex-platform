@@ -103,6 +103,27 @@ export function addItem(item, itemType, authSig) {
 	}
 }
 
+export function cloneItem(item, itemType, authSig) {
+	return async function (dispatch) {
+		item.id = ''		
+		try {
+			const resItem = await postAdUnit({
+				unit: new AdUnit(item).marketAdd,
+				authSig
+			})
+			dispatch({
+				type: types.ADD_ITEM,
+				item: new AdUnit(resItem).plainObj(),
+				itemType: 'AdUnit'
+			})
+			addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_CREATING_ITEM', args: ['AdUnit', item.title] })
+		} catch (err) {
+			console.error('ERR_CREATING_ITEM', err)
+			addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_CREATING_ITEM', args: ['AdUnit', err] })
+		}
+	}
+}
+
 export function addSlot(item, itemType, authSig) {
 	const newItem = { ...item }
 	return async function (dispatch) {
