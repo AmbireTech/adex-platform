@@ -59,8 +59,8 @@ class CampaignUnits extends Component {
 	}
 
 	render() {
-		// const { adUnitsArray } = this.props
-		const adUnitsArray = []
+		const { adUnitsArray } = this.props
+		// const adUnitsArray = []
 		return (
 			<div>
 				<Grid
