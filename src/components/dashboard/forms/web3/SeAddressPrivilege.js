@@ -7,10 +7,6 @@ import actions from 'actions'
 import NewTransactionHoc from './TransactionHoc'
 import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
-import {
-	validateNumber,
-	validEthAddress
-} from 'helpers/validators'
 import { constants } from 'adex-models'
 import { InputLoading } from 'components/common/spinners/';
 
