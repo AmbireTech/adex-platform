@@ -15,10 +15,17 @@ import { InputLoading } from 'components/common/spinners/';
 class WithdrawFromIdentity extends Component {
 
 	componentDidMount() {
-		if (!this.props.transaction.withdrawAmount) {
-			this.props.validate('withdrawAmount', {
+		const { validate, transaction } = this.props;
+		// If nothing entered will validate
+		if (!transaction.withdrawAmount) {
+			validate('withdrawAmount', {
+				isValid: true,
+				dirty: false
+			})
+		}
+		if (!transaction.withdrawTo) {
+			validate('withdrawTo', {
 				isValid: false,
-				err: { msg: 'ERR_REQUIRED_FIELD' },
 				dirty: false
 			})
 		}
@@ -38,7 +45,7 @@ class WithdrawFromIdentity extends Component {
 	}
 
 	render() {
-		const { actions, txId, validate, transaction, t, invalidFields, identityAvailable, handleChange, spinner } = this.props
+		const { actions, validate, transaction, t, invalidFields, identityAvailable, handleChange, withdrawToSpinner } = this.props
 		const { withdrawTo, withdrawAmount } = transaction || {}
 		const errAmount = invalidFields['withdrawAmount']
 		const errAddr = invalidFields['withdrawTo']
@@ -53,12 +60,12 @@ class WithdrawFromIdentity extends Component {
 					name='withdrawTo'
 					value={withdrawTo || ''}
 					onChange={(ev) => handleChange('withdrawTo', ev.target.value)}
-					onBlur={() => actions.validateAddress({addr: withdrawTo, dirty: true, txId, validate, name: 'withdrawTo'})}
-					onFocus={() => actions.validateAddress({addr: withdrawTo, dirty: false, txId, validate, name: 'withdrawTo'})}
+					onBlur={() => actions.validateAddress({addr: withdrawTo, dirty: true, validate, name: 'withdrawTo'})}
+					onFocus={() => actions.validateAddress({addr: withdrawTo, dirty: false, validate, name: 'withdrawTo'})}
 					error={errAddr && !!errAddr.dirty}
 					helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
 				/>
-				{spinner ? (<InputLoading />) : null}
+				{withdrawToSpinner ? (<InputLoading />) : null}
 				<TextField
 					type='text'
 					fullWidth
@@ -94,7 +101,7 @@ function mapStateToProps(state, props) {
 	const txId = props.stepsId
 	return {
 		txId: txId,
-		spinner: memory.spinners[txId],
+		withdrawToSpinner: memory.spinners['withdrawTo'],
 	}
 }
 
