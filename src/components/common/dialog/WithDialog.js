@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import Button from '@material-ui/core/Button'
 import Fab from '@material-ui/core/Fab'
@@ -130,7 +130,7 @@ export default function ItemHoc(Decorated) {
 			const { open } = this.state
 
 			return (
-				<div >
+				<Fragment >
 					<ButtonComponent
 						disabled={disabled}
 						aria-label={btnLabel}
@@ -203,8 +203,7 @@ export default function ItemHoc(Decorated) {
 							</DialogActions>
 						}
 					</Dialog>
-
-				</div >
+				</Fragment >
 			)
 		}
 	}

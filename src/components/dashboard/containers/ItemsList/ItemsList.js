@@ -228,34 +228,19 @@ class ItemsList extends Component {
 						{t('LABEL_VIEW')}
 					</RRButton>
 				</Tooltip>
-				<Tooltip
-					title={t('TOOLTIP_CLONE')}
-					// placement='top'
-					enterDelay={1000}
-				>
-					<NewUnitDialog
-						fabButton
-						variant='extended'
-						color='secondary'
-						btnLabel='NEW_UNIT'
-					/>
-					{/* <IconButton
-						disabled={isDemo}
-						// label={t('ARCHIVE')}
-						// className={RTButtonTheme.danger}
-						onClick={actions.confirmAction.bind(this,
-							actions.cloneItem.bind(this, { item: item, authSig: account.wallet.authSig }),
-							null,
-							{
-								confirmLabel: t('CONFIRM_YES'),
-								cancelLabel: t('CONFIRM_NO'),
-								text: t('CLONE_ITEM', { args: [itemTypeName, itemName] }),
-								title: t('CONFIRM_SURE')
-							})}
+				{itemType === "AdUnit" ? (
+					<Tooltip
+						title={t('CLONE_ITEM')}
+						// placement='top'
+						enterDelay={1000}
 					>
-						<FileCopy />
-					</IconButton> */}
-				</Tooltip>
+						<NewUnitDialog
+							variant='extended'
+							color='secondary'
+							btnLabel='TESST'
+						/>
+					</Tooltip>
+				) : null }
 				{/* {!item.archived &&
 					<Tooltip
 						title={t('TOOLTIP_ARCHIVE')}
