@@ -26,6 +26,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
+import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems';
 
 
 const TableCell = ({ children, ...rest }) =>
@@ -232,7 +233,13 @@ class ItemsList extends Component {
 					// placement='top'
 					enterDelay={1000}
 				>
-					<IconButton
+					<NewUnitDialog
+						fabButton
+						variant='extended'
+						color='secondary'
+						btnLabel='NEW_UNIT'
+					/>
+					{/* <IconButton
 						disabled={isDemo}
 						// label={t('ARCHIVE')}
 						// className={RTButtonTheme.danger}
@@ -247,7 +254,7 @@ class ItemsList extends Component {
 							})}
 					>
 						<FileCopy />
-					</IconButton>
+					</IconButton> */}
 				</Tooltip>
 				{/* {!item.archived &&
 					<Tooltip
