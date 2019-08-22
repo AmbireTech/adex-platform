@@ -60,7 +60,6 @@ class CampaignUnits extends Component {
 
 	render() {
 		const { adUnitsArray } = this.props
-		// const adUnitsArray = []
 		return (
 			<div>
 				<Grid
@@ -70,25 +69,21 @@ class CampaignUnits extends Component {
 					<Grid item sm={12}>
 
 						<ContentBody>
-							{(adUnitsArray && adUnitsArray.length) ? 
-								(<ItemsList
-									objModel={AdUnit}
-									selectMode
-									selectedItems={this.state.selected}
-									onSelect={(unit, checked) => {
-										this.handleSelect(unit, checked)
-									}}
-									items={adUnitsArray}
-									listMode='rows'
-									itemType={'AdUnit'}
-									viewModeId={'newCampaignAdUnits'}
-									sortProperties={SORT_PROPERTIES_ITEMS}
-									filterProperties={FILTER_PROPERTIES_ITEMS}
-									noActions
-								/>)
-								: 
-								(<div>Should have at least one ad unit!</div>)
-							}
+							<ItemsList
+								objModel={AdUnit}
+								selectMode
+								selectedItems={this.state.selected}
+								onSelect={(unit, checked) => {
+									this.handleSelect(unit, checked)
+								}}
+								items={adUnitsArray}
+								listMode='rows'
+								itemType={'AdUnit'}
+								viewModeId={'newCampaignAdUnits'}
+								sortProperties={SORT_PROPERTIES_ITEMS}
+								filterProperties={FILTER_PROPERTIES_ITEMS}
+								noActions
+							/>
 						</ContentBody>
 					</Grid>
 				</Grid>
