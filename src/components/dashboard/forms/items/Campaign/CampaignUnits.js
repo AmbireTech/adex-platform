@@ -73,7 +73,7 @@ class CampaignUnits extends Component {
 					<Grid item sm={12}>
 
 						<ContentBody>
-							{(adUnitsArray && adUnitsArray.length) ? 
+							{(hasAdUnits) ? 
 								(<ItemsList
 									objModel={AdUnit}
 									selectMode
