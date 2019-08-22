@@ -6,6 +6,7 @@ import Grid from '@material-ui/core/Grid'
 import { ContentBody } from 'components/common/dialog/content'
 import ItemsList from 'components/dashboard/containers/ItemsList'
 import { AdUnit } from 'adex-models'
+import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems';
 import {
 	SORT_PROPERTIES_ITEMS,
 	FILTER_PROPERTIES_ITEMS
@@ -59,13 +60,15 @@ class CampaignUnits extends Component {
 	}
 
 	render() {
-		// const { adUnitsArray } = this.props
-		const adUnitsArray = []
+		const { adUnitsArray, t } = this.props
+		const hasAdUnits = (adUnitsArray && adUnitsArray.length)
 		return (
 			<div>
 				<Grid
 					container
 					spacing={2}
+					direction={hasAdUnits ? "" : "column"}
+					alignItems={hasAdUnits ? "" : "center"}
 				>
 					<Grid item sm={12}>
 
@@ -87,7 +90,18 @@ class CampaignUnits extends Component {
 									noActions
 								/>)
 								: 
-								(<div>Should have at least one ad unit!</div>)
+								(<Grid 				
+									container
+									direction="column"
+									alignItems="center"
+								>
+									<p>{t('ERR_CAMPAIGN_REQUIRES_UNITS')}</p>
+									<NewUnitDialog
+										variant='extended'
+										color='secondary'
+										btnLabel='NEW_UNIT'
+									/>
+								</Grid>)
 							}
 						</ContentBody>
 					</Grid>
