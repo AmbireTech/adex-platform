@@ -11,12 +11,11 @@ export const getAccount = ({ privateKey, authType } = {}) => {
 }
 
 export const sigDemoMsg = ({ msg = 'demo-sign', account }) => {
-
 	// let typedData = [
 	// 	{ type: 'uint', name: 'Auth token', value: msg }
 	// ]
 
-	let hash = ''// getTypedDataHash({ typedData: typedData })
+	let hash = '' // getTypedDataHash({ typedData: typedData })
 
 	const sig = account.sign(hash)
 

@@ -5,7 +5,7 @@ const moment = new MomentUtils()
 const DEFAULT_DATETIME_FORMAT = 'YYYY-MM-DD HH:mm'
 
 export const formatDateTime = (timestamp, format = DEFAULT_DATETIME_FORMAT) => {
-	if(!timestamp) {
+	if (!timestamp) {
 		return 'no date'
 	}
 	const date = moment.date(timestamp)

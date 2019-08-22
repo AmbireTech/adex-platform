@@ -6,21 +6,21 @@ export const styles = theme => {
 			borderRadius: 0,
 			backgroundColor: '#222',
 			'&.active': {
-				transform: 'translateY(-20%)'
+				transform: 'translateY(-20%)',
 			},
-			margin: spacing
+			margin: spacing,
 		},
 		warning: {
 			borderColor: '#FFAB00',
-			color: '#FFAB00'
+			color: '#FFAB00',
 		},
 		cancel: {
 			borderColor: '#FF5722',
-			color: '#FF5722'
+			color: '#FF5722',
 		},
 		accept: {
 			borderColor: '#00E676',
-			color: '#00E676'
+			color: '#00E676',
 		},
 		icon: {
 			fontSize: 20,
@@ -32,11 +32,11 @@ export const styles = theme => {
 		message: {
 			display: 'flex',
 			alignItems: 'center',
-			wordBreak: 'break-all'
+			wordBreak: 'break-all',
 		},
 		top: {
 			width: '98vw',
-			maxWidth: '98vw'
-		}
+			maxWidth: '98vw',
+		},
 	}
 }

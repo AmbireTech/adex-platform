@@ -2,7 +2,6 @@ import Helper from 'helpers/miscHelpers'
 import { isDemoMode, getAccount } from 'services/store-data/auth'
 
 class AdexNodeRequester {
-
 	constructor({ baseUrl }) {
 		this.baseUrl = baseUrl
 	}
@@ -28,7 +27,16 @@ class AdexNodeRequester {
 		return url
 	}
 
-	fetch = ({ route = '', queryParams = {}, method = 'GET', body, headers = {}, userAddr, authSig = '', authToken }) => {
+	fetch = ({
+		route = '',
+		queryParams = {},
+		method = 'GET',
+		body,
+		headers = {},
+		userAddr,
+		authSig = '',
+		authToken,
+	}) => {
 		const qp = { ...queryParams }
 		if (isDemoMode()) {
 			qp.demo = true
@@ -39,16 +47,15 @@ class AdexNodeRequester {
 
 		let hdrs = {
 			...this.getAuthHeaders({ authSig }),
-			...headers
+			...headers,
 		}
 
 		return fetch(url, {
 			method: method,
 			headers: hdrs,
-			body: body
+			body: body,
 		})
 	}
 }
 
 export default AdexNodeRequester
-

@@ -2,7 +2,7 @@ export const styles = theme => {
 	const spacing = theme.spacing(1)
 	return {
 		header: {
-			marginBottom: spacing
+			marginBottom: spacing,
 		},
 		dropzone: {
 			display: 'flex',
@@ -16,7 +16,7 @@ export const styles = theme => {
 			justifyContent: 'center',
 			padding: 10,
 			cursor: 'pointer',
-			overflow: 'hidden'
+			overflow: 'hidden',
 		},
 		droppedImgContainer: {
 			textAlign: 'center',
@@ -28,7 +28,7 @@ export const styles = theme => {
 			alignItems: 'center',
 			'@media(max-width:768px)': {
 				display: 'grid',
-			}
+			},
 		},
 		imgDropzonePreview: {
 			maxHeight: 320,
@@ -36,18 +36,18 @@ export const styles = theme => {
 			width: 'auto',
 			'@media(max-width:500px)': {
 				// TODO: Find out why it breaks this limit after a new pic is uploaded
-				width: '100%'
-			}
+				width: '100%',
+			},
 		},
 		dropzoneBtn: {
 			marginBottom: spacing,
-			marginRight: spacing
+			marginRight: spacing,
 		},
 		leftIcon: {
-			marginRight: spacing
+			marginRight: spacing,
 		},
 		uploadActions: {
-			marginTop: spacing
+			marginTop: spacing,
 		},
 	}
 }

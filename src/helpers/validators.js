@@ -10,33 +10,33 @@ const couponRegex = /^[a-fA-F0-9]{8}$/
 
 /*eslint-enable */
 
-
-export const validUrl = (url) => {
+export const validUrl = url => {
 	url = url || ''
 	const isValid = urlRegex.test(url)
 	return isValid
 }
 
-export const validEmail = (email) => {
+export const validEmail = email => {
 	email = email || ''
 	const isValid = emailRegex.test(email)
 	return isValid
 }
 
-export const validateNumber = (numberStr) => {
+export const validateNumber = numberStr => {
 	numberStr = numberStr || ''
-	const isValid = !isNaN(parseFloat(numberStr)) && isFinite(numberStr) && (numberStr > 0)
+	const isValid =
+		!isNaN(parseFloat(numberStr)) && isFinite(numberStr) && numberStr > 0
 	return isValid
 }
 
 // > 0
-export const validPositiveInt = (intStr) => {
+export const validPositiveInt = intStr => {
 	intStr = intStr || ''
 	const isValid = onlyDigitsRegex.test(intStr)
 	return isValid
 }
 
-export const validName = (name) => {
+export const validName = name => {
 	let msg = ''
 	const errMsgArgs = []
 	if (!name) {
@@ -51,17 +51,17 @@ export const validName = (name) => {
 
 	return {
 		msg,
-		errMsgArgs
+		errMsgArgs,
 	}
 }
 
-export const validPassword = (password) => {
+export const validPassword = password => {
 	password = password || ''
 	const isValid = passwordRegex.test(password)
 	return isValid
 }
 
-export const validQuickAccountCoupon = (coupon) => {
+export const validQuickAccountCoupon = coupon => {
 	coupon = coupon || ''
 	const isValid = couponRegex.test(coupon)
 	return isValid
