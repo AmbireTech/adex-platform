@@ -7,9 +7,9 @@ export const isConnectionLost = async authType => {
 		// return that connection is lost
 		const eth = await Promise.race([
 			getEthers(authType),
-			new Promise.reject(() => {
+			new Promise((resolve, reject) => {
 				setTimeout(() => {
-					new Error('Timed out')
+					reject('Timed out')
 				}, 5000)
 			}),
 		])
