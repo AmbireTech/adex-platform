@@ -27,26 +27,18 @@ const StepperNav = ({ pages, currentPage, classes, ...other }) => {
 					activeStep={currentPage}
 					steps={pages.length}
 					position={'static'}
-					variant="progress"
+					variant='progress'
 					className={classes.mobileStepper}
-				>
-				</MobileStepper>
+				></MobileStepper>
 			</div>
 		)
 	}
 	return (
-		<StepperMUI
-			alternativeLabel
-			activeStep={currentPage}
-		>
+		<StepperMUI alternativeLabel activeStep={currentPage}>
 			{pages.map((page, i) => {
 				return (
-					<Step key={page.title} >
-						<StepLabel
-						>
-							{page.title}
-						</StepLabel>
-
+					<Step key={page.title}>
+						<StepLabel>{page.title}</StepLabel>
 					</Step>
 				)
 			})}
@@ -55,7 +47,6 @@ const StepperNav = ({ pages, currentPage, classes, ...other }) => {
 }
 
 class MaterialStepper extends React.Component {
-
 	// onComplete() {
 	//     // console.log('currPage', this.currPage)
 	//     let props = this.props
@@ -65,7 +56,8 @@ class MaterialStepper extends React.Component {
 	// }
 
 	goToPage(nextStep) {
-		let canAdvance = (nextStep > this.props.currentPage) && this.canAdvanceNextToPage()
+		let canAdvance =
+			nextStep > this.props.currentPage && this.canAdvanceNextToPage()
 		let canGoBack = nextStep < this.props.currentPage
 
 		if (canAdvance || canGoBack) {
@@ -75,9 +67,12 @@ class MaterialStepper extends React.Component {
 
 	canAdvanceNextToPage() {
 		/* TODO: add check for optional steps that can be skipped
-        */
+		 */
 		let page = this.props.pages[this.props.currentPage]
-		if (this.props.canAdvance && !Object.keys(this.props.validations[page.props.validateId] || {}).length) {
+		if (
+			this.props.canAdvance &&
+			!Object.keys(this.props.validations[page.props.validateId] || {}).length
+		) {
 			return true
 		} else {
 			return false
@@ -86,11 +81,14 @@ class MaterialStepper extends React.Component {
 
 	isValidPage() {
 		let page = this.props.pages[this.props.currentPage]
-		return !Object.keys(this.props.validations[page.props.validateId] || {}).length
+		return !Object.keys(this.props.validations[page.props.validateId] || {})
+			.length
 	}
 
 	render() {
-		let { pages, component, validations, currentPage, t, classes, ...props } = { ...this.props }
+		let { pages, component, validations, currentPage, t, classes, ...props } = {
+			...this.props,
+		}
 		let page = pages[currentPage]
 		let Comp = page.component
 
@@ -98,71 +96,78 @@ class MaterialStepper extends React.Component {
 			<div className={classes.stepperWrapper}>
 				<Paper
 					classes={{
-						root: classes.stepperNav
-					}} >
-					<StepperNav {...props} pages={pages} classes={classes} currentPage={currentPage} goToPage={this.goToPage.bind(this)} />
+						root: classes.stepperNav,
+					}}
+				>
+					<StepperNav
+						{...props}
+						pages={pages}
+						classes={classes}
+						currentPage={currentPage}
+						goToPage={this.goToPage.bind(this)}
+					/>
 				</Paper>
 				<br />
 
 				<Paper
 					classes={{
-						root: classes.pagePaper
+						root: classes.pagePaper,
 					}}
 				>
-					<div
-						className={classes.pageContent}
-					>
-						{<Comp {...page.props} />}
-					</div>
+					<div className={classes.pageContent}>{<Comp {...page.props} />}</div>
 
-					<div
-						className={classes.controls}
-					>
-						<div
-							className={classes.left}
-						>
-							{props.canReverse ?
-								<Button onClick={() => props.setPageIndex(currentPage - 1)} >
+					<div className={classes.controls}>
+						<div className={classes.left}>
+							{props.canReverse ? (
+								<Button onClick={() => props.setPageIndex(currentPage - 1)}>
 									{t('BACK')}
 								</Button>
-								: ''}
+							) : (
+								''
+							)}
 						</div>
 
 						<div className={classes.right}>
 							{/* <Button label='Cancel' onClick={this.cancel}/> */}
-							{page.cancelBtn ?
-								<page.cancelBtn />
-								: null}
-							{this.canAdvanceNextToPage() && !page.completeBtn ?
-								<Button variant='contained' color='primary' onClick={this.goToPage.bind(this, currentPage + 1)} >
+							{page.cancelBtn ? <page.cancelBtn /> : null}
+							{this.canAdvanceNextToPage() && !page.completeBtn ? (
+								<Button
+									variant='contained'
+									color='primary'
+									onClick={this.goToPage.bind(this, currentPage + 1)}
+								>
 									{t('CONTINUE')}
 								</Button>
-								:
-								!page.completeBtn ?
-									<Button label='Continue' disabled >
-										{t('CONTINUE')}
-									</Button >
-									: null}
-							{page.completeBtn && this.isValidPage() ?
+							) : !page.completeBtn ? (
+								<Button label='Continue' disabled>
+									{t('CONTINUE')}
+								</Button>
+							) : null}
+							{page.completeBtn && this.isValidPage() ? (
 								<page.completeBtn />
-								: ''}
+							) : (
+								''
+							)}
 						</div>
 					</div>
 				</Paper>
-
 			</div>
 		)
 	}
 }
 
-const WithMaterialStepper = withStepper(withStyles(styles)(Translate(MaterialStepper)))
+const WithMaterialStepper = withStepper(
+	withStyles(styles)(Translate(MaterialStepper))
+)
 
 class MyMaterialStepper extends React.Component {
-
 	render() {
 		return (
 			<Stepper pages={this.props.pages} style={{ display: 'block' }}>
-				<WithMaterialStepper itemType={this.props.itemType} validations={this.props.validations} />
+				<WithMaterialStepper
+					itemType={this.props.itemType}
+					validations={this.props.validations}
+				/>
 			</Stepper>
 		)
 	}
@@ -171,7 +176,7 @@ class MyMaterialStepper extends React.Component {
 MyMaterialStepper.propTypes = {
 	actions: PropTypes.object.isRequired,
 	account: PropTypes.object.isRequired,
-	pages: PropTypes.array.isRequired
+	pages: PropTypes.array.isRequired,
 }
 
 function mapStateToProps(state, props) {
@@ -179,17 +184,17 @@ function mapStateToProps(state, props) {
 	let memory = state.memory
 	return {
 		account: persist.account,
-		validations: memory.validations
+		validations: memory.validations,
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)((MyMaterialStepper))
+)(MyMaterialStepper)

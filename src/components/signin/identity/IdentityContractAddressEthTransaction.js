@@ -13,12 +13,11 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
 class IdentityContractAddressEthTransaction extends Component {
-
 	constructor(props, context) {
 		super(props, context)
 		this.state = {
 			waitingIdentityDeploy: false,
-			identityDeployed: false
+			identityDeployed: false,
 		}
 	}
 
@@ -27,8 +26,7 @@ class IdentityContractAddressEthTransaction extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		if (prevProps.identity.isRegistered
-			!== this.props.identity.isRegistered) {
+		if (prevProps.identity.isRegistered !== this.props.identity.isRegistered) {
 			this.validateRegistered()
 		}
 	}
@@ -38,25 +36,19 @@ class IdentityContractAddressEthTransaction extends Component {
 		validate('isRegistered', {
 			isValid: !!identity.isRegistered,
 			err: { msg: 'ERR_IDENTITY_NOT_REGISTERED' },
-			dirty: false
+			dirty: false,
 		})
 	}
 
 	deployIdentity = async () => {
 		const { identity, actions } = this.props
-		const {
-			identityTxData,
-			wallet,
-			identityAddr,
-			email
-
-		} = identity
+		const { identityTxData, wallet, identityAddr, email } = identity
 
 		actions.deployFullIdentity({
 			wallet,
 			email,
 			identityAddr,
-			identityTxData
+			identityTxData,
 		})
 	}
 
@@ -66,32 +58,24 @@ class IdentityContractAddressEthTransaction extends Component {
 
 		return (
 			<div>
-				<Grid
-					container
-					spacing={2}
-				>
-					<Grid item sm={12} >
+				<Grid container spacing={2}>
+					<Grid item sm={12}>
 						<Paper className={classes.infoPaper} elevation={1}>
-							<Typography variant="h5" component="h3">
+							<Typography variant='h5' component='h3'>
 								{identityAddr}
 							</Typography>
-							<Typography component="p">
+							<Typography component='p'>
 								{t('IDENTITY_PREDEPLOY_INFO')}
 							</Typography>
 						</Paper>
 					</Grid>
 					<Grid item sm={6}>
-
-						<Button
-							onClick={this.deployIdentity}
-							variant='contained'
-						>
+						<Button onClick={this.deployIdentity} variant='contained'>
 							{t('SIGN_IDENTITY_TX_NOW')}
 						</Button>
-
 					</Grid>
 				</Grid>
-			</div >
+			</div>
 		)
 	}
 }
@@ -112,11 +96,13 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 
-const IdentityContractAddressStep = IdentityHoc(IdentityContractAddressEthTransaction)
+const IdentityContractAddressStep = IdentityHoc(
+	IdentityContractAddressEthTransaction
+)
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps

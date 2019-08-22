@@ -13,7 +13,6 @@ import { styles } from './styles'
 const RRButton = withReactRouterLink(Button)
 
 class PageNotFound extends React.Component {
-
 	render() {
 		const {
 			t,
@@ -22,34 +21,21 @@ class PageNotFound extends React.Component {
 			subtitle,
 			goToTxt,
 			goToPath,
-			skipGoToButton
+			skipGoToButton,
 		} = this.props
 		return (
-			<div
-				className={classes.wrapper}
-			>
-				<Grid
-					container
-					spacing={2}
-					justify='center'
-					alignItems='center'
-				>
+			<div className={classes.wrapper}>
+				<Grid container spacing={2} justify='center' alignItems='center'>
 					<Grid item sm={12}>
-						<Typography
-							className={classes.text}
-							variant='h3'
-						>
+						<Typography className={classes.text} variant='h3'>
 							{t(title || '404_TEXT')}
 						</Typography>
 
-						{subtitle &&
-							<Typography
-								className={classes.text}
-								variant='subtitle1'
-							>
+						{subtitle && (
+							<Typography className={classes.text} variant='subtitle1'>
 								{t(subtitle)}
 							</Typography>
-						}
+						)}
 					</Grid>
 
 					<Grid item sm={12}>
@@ -72,20 +58,20 @@ class PageNotFound extends React.Component {
 					</Grid>
 
 					<Grid item sm={12}>
-						{!skipGoToButton && <RRButton
-							variant='contained'
-							to={goToPath || '/'}
-							size='large'
-							color='primary'
-						>
-							{t(goToTxt || 'GO_HOME')}
-						</RRButton>
-						}
+						{!skipGoToButton && (
+							<RRButton
+								variant='contained'
+								to={goToPath || '/'}
+								size='large'
+								color='primary'
+							>
+								{t(goToTxt || 'GO_HOME')}
+							</RRButton>
+						)}
 					</Grid>
-
 				</Grid>
 			</div>
-		);
+		)
 	}
 }
 
@@ -94,7 +80,7 @@ PageNotFound.propTypes = {
 	subtitle: PropTypes.string,
 	goToTxt: PropTypes.string,
 	goToPath: PropTypes.string,
-	skipGoToButton: PropTypes.bool
+	skipGoToButton: PropTypes.bool,
 }
 
 export default Translate(withStyles(styles)(PageNotFound))

@@ -4,10 +4,7 @@ import pure from 'recompose/pure'
 
 export default (path, displayName, viewBox = '') => {
 	let Icon = props => (
-		<SvgIcon
-			viewBox={viewBox}
-			{...props}
-		>
+		<SvgIcon viewBox={viewBox} {...props}>
 			{path}
 		</SvgIcon>
 	)

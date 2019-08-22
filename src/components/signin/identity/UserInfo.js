@@ -13,11 +13,10 @@ import { styles } from './styles'
 import { validEmail, validPassword } from 'helpers/validators'
 
 class UserInfo extends Component {
-
 	constructor(props, context) {
 		super(props, context)
 		this.state = {
-			mnemonic: props.wallet.mnemonic
+			mnemonic: props.wallet.mnemonic,
 		}
 	}
 
@@ -25,22 +24,22 @@ class UserInfo extends Component {
 		this.props.validate('email', {
 			isValid: !!this.props.identity.email,
 			err: { msg: 'ERR_NO_EMAIL' },
-			dirty: false
+			dirty: false,
 		})
 		this.props.validate('emailCheck', {
 			isValid: !!this.props.identity.emailCheck,
 			err: { msg: 'ERR_NO_EMAIL_CHECK' },
-			dirty: false
+			dirty: false,
 		})
 		this.props.validate('password', {
 			isValid: !!this.props.identity.password,
 			err: { msg: 'ERR_NO_PASSWORD' },
-			dirty: false
+			dirty: false,
 		})
 		this.props.validate('passwordCheck', {
 			isValid: !!this.props.identity.passwordCheck,
 			err: { msg: 'ERR_NO_PASSWORD_CHECK' },
-			dirty: false
+			dirty: false,
 		})
 	}
 
@@ -49,16 +48,16 @@ class UserInfo extends Component {
 		this.props.validate('email', {
 			isValid: isValid,
 			err: { msg: 'ERR_EMAIL' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
 	validateEmailCheck(emailCheck, email, dirty) {
-		const isValid = !!emailCheck && !!email && (emailCheck === email)
+		const isValid = !!emailCheck && !!email && emailCheck === email
 		this.props.validate('emailCheck', {
 			isValid: isValid,
 			err: { msg: 'ERR_EMAIL_CHECK' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
@@ -67,16 +66,16 @@ class UserInfo extends Component {
 		this.props.validate('password', {
 			isValid: isValid,
 			err: { msg: 'ERR_PASSWORD' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
 	validatePasswordCheck(passwordCheck, password, dirty) {
-		const isValid = !!passwordCheck && !!password && (passwordCheck === password)
+		const isValid = !!passwordCheck && !!password && passwordCheck === password
 		this.props.validate('passwordCheck', {
 			isValid: isValid,
 			err: { msg: 'ERR_EMAIL_CHECK' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
@@ -86,10 +85,7 @@ class UserInfo extends Component {
 		const { email, emailCheck, password, passwordCheck } = invalidFields
 		return (
 			<div>
-				<Grid
-					container
-					spacing={2}
-				>
+				<Grid container spacing={2}>
 					<Grid item sm={12}>
 						<TextField
 							fullWidth
@@ -98,15 +94,13 @@ class UserInfo extends Component {
 							label={t('email', { isProp: true })}
 							name='email'
 							value={identity.email}
-							onChange={(ev) => handleChange('email', ev.target.value)}
+							onChange={ev => handleChange('email', ev.target.value)}
 							onBlur={() => this.validateEmail(identity.email, true)}
 							onFocus={() => this.validateEmail(identity.email, false)}
 							error={email && !!email.dirty}
 							maxLength={128}
 							helperText={
-								email && !!email.dirty ?
-									email.errMsg :
-									t('ENTER_VALID_EMAIL')
+								email && !!email.dirty ? email.errMsg : t('ENTER_VALID_EMAIL')
 							}
 						/>
 					</Grid>
@@ -118,15 +112,27 @@ class UserInfo extends Component {
 							label={t('emailCheck', { isProp: true })}
 							name='emailCheck'
 							value={identity.emailCheck}
-							onChange={(ev) => handleChange('emailCheck', ev.target.value)}
-							onBlur={() => this.validateEmailCheck(identity.emailCheck, identity.email, true)}
-							onFocus={() => this.validateEmailCheck(identity.emailCheck, identity.email, false)}
+							onChange={ev => handleChange('emailCheck', ev.target.value)}
+							onBlur={() =>
+								this.validateEmailCheck(
+									identity.emailCheck,
+									identity.email,
+									true
+								)
+							}
+							onFocus={() =>
+								this.validateEmailCheck(
+									identity.emailCheck,
+									identity.email,
+									false
+								)
+							}
 							error={emailCheck && !!emailCheck.dirty}
 							maxLength={128}
 							helperText={
-								emailCheck && !!emailCheck.dirty ?
-									emailCheck.errMsg :
-									t('ENTER_SAME_EMAIL')
+								emailCheck && !!emailCheck.dirty
+									? emailCheck.errMsg
+									: t('ENTER_SAME_EMAIL')
 							}
 						/>
 					</Grid>
@@ -138,15 +144,15 @@ class UserInfo extends Component {
 							label={t('password', { isProp: true })}
 							name='password'
 							value={identity.password}
-							onChange={(ev) => handleChange('password', ev.target.value)}
+							onChange={ev => handleChange('password', ev.target.value)}
 							onBlur={() => this.validatePassword(identity.password, true)}
 							onFocus={() => this.validatePassword(identity.password, false)}
 							error={password && !!password.dirty}
 							maxLength={128}
 							helperText={
-								password && !!password.dirty ?
-									password.errMsg :
-									t('PASSWORD_RULES')
+								password && !!password.dirty
+									? password.errMsg
+									: t('PASSWORD_RULES')
 							}
 						/>
 					</Grid>
@@ -158,15 +164,27 @@ class UserInfo extends Component {
 							label={t('passwordCheck', { isProp: true })}
 							name='passwordCheck'
 							value={identity.passwordCheck}
-							onChange={(ev) => handleChange('passwordCheck', ev.target.value)}
-							onBlur={() => this.validatePasswordCheck(identity.passwordCheck, identity.password, true)}
-							onFocus={() => this.validatePasswordCheck(identity.passwordCheck, identity.password, false)}
+							onChange={ev => handleChange('passwordCheck', ev.target.value)}
+							onBlur={() =>
+								this.validatePasswordCheck(
+									identity.passwordCheck,
+									identity.password,
+									true
+								)
+							}
+							onFocus={() =>
+								this.validatePasswordCheck(
+									identity.passwordCheck,
+									identity.password,
+									false
+								)
+							}
 							error={passwordCheck && !!passwordCheck.dirty}
 							maxLength={128}
 							helperText={
-								passwordCheck && !!passwordCheck.dirty ?
-									passwordCheck.errMsg :
-									t('PASSWORD_CHECK_RULES')
+								passwordCheck && !!passwordCheck.dirty
+									? passwordCheck.errMsg
+									: t('PASSWORD_CHECK_RULES')
 							}
 						/>
 					</Grid>
@@ -178,7 +196,7 @@ class UserInfo extends Component {
 
 UserInfo.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired
+	account: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state) {
@@ -186,13 +204,13 @@ function mapStateToProps(state) {
 	let memory = state.memory
 	return {
 		account: persist.account,
-		wallet: memory.wallet
+		wallet: memory.wallet,
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

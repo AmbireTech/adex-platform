@@ -7,7 +7,7 @@ export const styles = theme => {
 			height: 0,
 			paddingTop: aspect, // 16:9
 			position: 'relative',
-			overflow: 'hidden'
+			overflow: 'hidden',
 		},
 		img: {
 			position: 'absolute',
@@ -19,26 +19,26 @@ export const styles = theme => {
 			// minWidth: '50%',
 			// minHeight: '50%',
 			height: 'auto',
-			width: '100%'
+			width: '100%',
 		},
 		buttonRight: {
-			marginLeft: spacing
+			marginLeft: spacing,
 		},
 		buttonLeft: {
-			marginRight: spacing
+			marginRight: spacing,
 		},
 		error: {
-			color: theme.palette.error.main
+			color: theme.palette.error.main,
 		},
 		textField: {
 			marginBottom: spacing,
-			marginRight: spacing
+			marginRight: spacing,
 		},
 		top: {
 			display: 'flex',
 			flexDirection: 'column',
 			flexWrap: 'wrap',
-			maxWidth: '70%'
+			maxWidth: '70%',
 		},
 		changesLine: {
 			display: 'flex',
@@ -46,16 +46,16 @@ export const styles = theme => {
 			flexWrap: 'wrap',
 			alignItems: 'center',
 			color: theme.palette.secondary.main,
-			marginBottom: spacing
+			marginBottom: spacing,
 		},
 		changeChip: {
 			margin: spacing,
-			marginLeft: 0
+			marginLeft: 0,
 		},
 		editIcon: {
 			position: 'absolute',
 			bottom: spacing,
-			right: spacing
-		}
+			right: spacing,
+		},
 	}
 }

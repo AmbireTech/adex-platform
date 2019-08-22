@@ -9,9 +9,9 @@ const updateCfg = (current, type, cfg) => {
 
 export default function uiReducer(state = initialState.config, action) {
 	switch (action.type) {
-	case UPDATE_RELAYER_CFG:
-		return updateCfg(state, 'relayer', action.cfg)
-	default:
-		return state
+		case UPDATE_RELAYER_CFG:
+			return updateCfg(state, 'relayer', action.cfg)
+		default:
+			return state
 	}
 }

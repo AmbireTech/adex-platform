@@ -13,7 +13,7 @@ const RRButton = withReactRouterLink(Button)
 
 class AuthSelect extends Component {
 	componentDidMount() {
-		// NOTE: reset identity if someone press backspace 
+		// NOTE: reset identity if someone press backspace
 		// to go to this page
 		this.props.actions.resetIdentity()
 	}
@@ -22,12 +22,7 @@ class AuthSelect extends Component {
 		const { t, classes } = this.props
 		return (
 			<div>
-				<Grid
-					container
-					spacing={2}
-					direction='column'
-					alignItems='stretch'
-				>
+				<Grid container spacing={2} direction='column' alignItems='stretch'>
 					<Grid item xs={12}>
 						<RRButton
 							variant='contained'
@@ -79,15 +74,11 @@ class AuthSelect extends Component {
 							<Img
 								src={getAuthLogo('trezor')}
 								alt={t('AUTH_WITH_TREZOR')}
-								className={classnames(
-									classes.btnLogo,
-									classes.btnLogoNoTxt
-								)}
+								className={classnames(classes.btnLogo, classes.btnLogoNoTxt)}
 							/>
 							{/* {t('TREZOR')} */}
 						</RRButton>
 					</Grid>
-
 				</Grid>
 			</div>
 		)

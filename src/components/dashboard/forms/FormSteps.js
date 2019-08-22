@@ -9,13 +9,25 @@ import Translate from 'components/translate/Translate'
 
 class FormSteps extends Component {
 	shouldComponentUpdate(nextProps) {
-		return (JSON.stringify(this.props) !== JSON.stringify(nextProps))
+		return JSON.stringify(this.props) !== JSON.stringify(nextProps)
 	}
 
 	render() {
 		const pages = []
-		const { t, SaveBtn, CancelBtn, onSave, stepsId, stepsPages, stepsPreviewPage, validateIdBase, ...rest } = this.props
-		const cancelButton = () => <CancelBtn  {...rest} stepsId={stepsId} onSave={onSave} t={t} />
+		const {
+			t,
+			SaveBtn,
+			CancelBtn,
+			onSave,
+			stepsId,
+			stepsPages,
+			stepsPreviewPage,
+			validateIdBase,
+			...rest
+		} = this.props
+		const cancelButton = () => (
+			<CancelBtn {...rest} stepsId={stepsId} onSave={onSave} t={t} />
+		)
 		const validateId = (validateIdBase || '') + '-' + stepsId
 
 		stepsPages.forEach((page, index) => {
@@ -23,16 +35,21 @@ class FormSteps extends Component {
 				title: t(page.title),
 				cancelBtn: cancelButton,
 				component: ValidItemHoc(page.page || page),
-				props: { ...this.props, stepsId, validateId: validateId + '-' + index }
+				props: { ...this.props, stepsId, validateId: validateId + '-' + index },
 			})
 		})
 
 		pages.push({
 			title: t(stepsPreviewPage.title || 'PREVIEW'),
-			completeBtn: () => <SaveBtn {...rest} stepsId={stepsId} onSave={onSave} t={t} />,
+			completeBtn: () => (
+				<SaveBtn {...rest} stepsId={stepsId} onSave={onSave} t={t} />
+			),
 			cancelBtn: cancelButton,
 			component: ValidItemHoc(stepsPreviewPage.page || stepsPreviewPage),
-			props: { ...this.props, validateId: validateId + '-' + stepsPages.length }
+			props: {
+				...this.props,
+				validateId: validateId + '-' + stepsPages.length,
+			},
 		})
 
 		return (
@@ -47,7 +64,7 @@ FormSteps.propTypes = {
 	title: PropTypes.string,
 	itemPages: PropTypes.arrayOf(PropTypes.func),
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	stepsPages: PropTypes.arrayOf(PropTypes.object)
+	stepsPages: PropTypes.arrayOf(PropTypes.object),
 }
 
 export default Translate(FormSteps)

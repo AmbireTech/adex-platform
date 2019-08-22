@@ -8,43 +8,57 @@ import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
 // import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
 import { WalletAction } from 'components/dashboard/forms/FormsCommon'
-import { PropRow, ContentBox, ContentBody, ContentStickyTop, FullContentSpinner } from 'components/common/dialog/content'
+import {
+	PropRow,
+	ContentBox,
+	ContentBody,
+	ContentStickyTop,
+	FullContentSpinner,
+} from 'components/common/dialog/content'
 import Helper from 'helpers/miscHelpers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import {
-	IdentityWithdrawPreview,
-	SetPrivilegePreview
-} from './previews'
+import { IdentityWithdrawPreview, SetPrivilegePreview } from './previews'
 
 class TransactionPreview extends Component {
-
 	constructor(props, context) {
 		super(props, context)
 
 		this.state = {
 			gas: null,
 			fees: null,
-			errors: []
+			errors: [],
 		}
 	}
 
 	componentDidMount() {
-		const { getFeesFn, actions, handleChange, identityAvailable, transaction, txId, t, account } = this.props
+		const {
+			getFeesFn,
+			actions,
+			handleChange,
+			identityAvailable,
+			transaction,
+			txId,
+			t,
+			account,
+		} = this.props
 		if (getFeesFn && Object.keys(transaction).length) {
-
 			actions.updateSpinner(txId, true)
 			getFeesFn({ acc: account, transaction: transaction })
-				.then((fees) => {
+				.then(fees => {
 					handleChange('fees', fees)
 					this.setState({ fees: fees })
 					actions.updateSpinner(txId, false)
 
 					if (parseFloat(fees.fees || 0) > parseFloat(identityAvailable)) {
-						handleChange('errors', [t('INSUFFICIENT_BALANCE_FOR_FEES', { args: [identityAvailable, 'DAI', fees.fees, 'DAI'] })])
+						handleChange('errors', [
+							t('INSUFFICIENT_BALANCE_FOR_FEES', {
+								args: [identityAvailable, 'DAI', fees.fees, 'DAI'],
+							}),
+						])
 					}
 				})
-				.catch((err) => {
+				.catch(err => {
 					console.log(err)
 					actions.updateSpinner(txId, false)
 					handleChange('errors', [Helper.getErrMsg(err)])
@@ -53,50 +67,60 @@ class TransactionPreview extends Component {
 	}
 
 	render() {
-		const { transaction = {}, t, classes, account, previewWarnMsgs, spinner, stepsId } = this.props
+		const {
+			transaction = {},
+			t,
+			classes,
+			account,
+			previewWarnMsgs,
+			spinner,
+			stepsId,
+		} = this.props
 		const errors = transaction.errors || []
 		const {
 			withdrawTo,
 			withdrawAmount,
 			setAddr,
 			privLevel,
-			fees = {} } = transaction
+			fees = {},
+		} = transaction
 		return (
 			<div>
-				{spinner ?
+				{spinner ? (
 					<FullContentSpinner />
-					:
+				) : (
 					<ContentBox>
-						{transaction.waitingForWalletAction ?
+						{transaction.waitingForWalletAction ? (
 							<ContentStickyTop>
 								<WalletAction t={t} authType={account.wallet.authType} />
-							</ContentStickyTop> : null}
+							</ContentStickyTop>
+						) : null}
 						<ContentBody>
-							{errors.length ?
-								errors.map((err, index) =>
-									<PropRow
-										key={index}
-										classNameLeft={classes.error}
-										classNameRight={classes.error}
-										left={<ErrorIcon />}
-										right={err}
-									/>)
+							{errors.length
+								? errors.map((err, index) => (
+										<PropRow
+											key={index}
+											classNameLeft={classes.error}
+											classNameRight={classes.error}
+											left={<ErrorIcon />}
+											right={err}
+										/>
+								  ))
 								: null}
 
-							{previewWarnMsgs ?
-								previewWarnMsgs.map((msg, index) =>
-									<PropRow
-										key={index}
-										classNameLeft={classes.warning}
-										classNameRight={classes.warning}
-										left={<WarningIcon />}
-										right={t(msg.msg, { args: msg.args })}
-									/>
-								)
+							{previewWarnMsgs
+								? previewWarnMsgs.map((msg, index) => (
+										<PropRow
+											key={index}
+											classNameLeft={classes.warning}
+											classNameRight={classes.warning}
+											left={<WarningIcon />}
+											right={t(msg.msg, { args: msg.args })}
+										/>
+								  ))
 								: null}
 
-
-							{(stepsId === 'withdrawFromIdentity') &&
+							{stepsId === 'withdrawFromIdentity' && (
 								<IdentityWithdrawPreview
 									t={t}
 									withdrawTo={withdrawTo}
@@ -104,9 +128,9 @@ class TransactionPreview extends Component {
 									fees={fees}
 									withdrawAmount={withdrawAmount}
 								/>
-							}
+							)}
 
-							{(stepsId === 'setIdentityPrivilege') &&
+							{stepsId === 'setIdentityPrivilege' && (
 								<SetPrivilegePreview
 									t={t}
 									setAddr={setAddr}
@@ -114,10 +138,10 @@ class TransactionPreview extends Component {
 									fees={fees}
 									privLevel={privLevel}
 								/>
-							}
+							)}
 						</ContentBody>
 					</ContentBox>
-				}
+				)}
 			</div>
 		)
 	}
@@ -131,7 +155,7 @@ TransactionPreview.propTypes = {
 	transaction: PropTypes.object.isRequired,
 	account: PropTypes.object.isRequired,
 	previewMsgs: PropTypes.array,
-	estimateGasFn: PropTypes.func
+	estimateGasFn: PropTypes.func,
 }
 
 function mapStateToProps(state, props) {
@@ -142,13 +166,13 @@ function mapStateToProps(state, props) {
 		transaction: memory.newTransactions[txId] || {},
 		txId: txId,
 		spinner: memory.spinners[txId],
-		account: persist.account
+		account: persist.account,
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

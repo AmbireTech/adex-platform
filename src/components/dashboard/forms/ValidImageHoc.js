@@ -11,17 +11,14 @@ function checkExactish(widthTarget, width, heightTarget, height) {
 	const targetAspect = parseFloat(widthTarget / heightTarget).toFixed(2)
 	const aspect = parseFloat(width / height).toFixed(2)
 
-	const isValid = (widthTarget <= width) &&
-		(heightTarget <= height) &&
-		(targetAspect === aspect)
+	const isValid =
+		widthTarget <= width && heightTarget <= height && targetAspect === aspect
 
 	return isValid
 }
 
 export default function ValidImageHoc(Decorated) {
-
 	class ValidImage extends Component {
-
 		validate = ({
 			propsName,
 			widthTarget,
@@ -33,12 +30,17 @@ export default function ValidImageHoc(Decorated) {
 			required,
 			onChange,
 			mime,
-			tempUrl
+			tempUrl,
 		}) => {
 			let isValid = true
 
 			if (exact) {
-				isValid = checkExactish(widthTarget, mediaWidth, heightTarget, mediaHeight)
+				isValid = checkExactish(
+					widthTarget,
+					mediaWidth,
+					heightTarget,
+					mediaHeight
+				)
 			}
 
 			if (!exact && (widthTarget < mediaWidth || heightTarget < mediaHeight)) {
@@ -47,22 +49,25 @@ export default function ValidImageHoc(Decorated) {
 
 			const masgArgs = [widthTarget, heightTarget, 'px']
 
-			this.props.validate(propsName, { isValid: isValid, err: { msg: msg, args: masgArgs }, dirty: true })
+			this.props.validate(propsName, {
+				isValid: isValid,
+				err: { msg: msg, args: masgArgs },
+				dirty: true,
+			})
 
 			const resMedia = {
 				width: mediaWidth,
 				height: mediaHeight,
 				mime,
-				tempUrl
+				tempUrl,
 			}
 
 			if (typeof onChange === 'function') {
 				onChange(propsName, resMedia)
 			}
-
 		}
 
-		getVideoSize = (src) =>
+		getVideoSize = src =>
 			new Promise(resolve => {
 				const video = document.createElement('video')
 				video.src = src.tempUrl
@@ -70,36 +75,42 @@ export default function ValidImageHoc(Decorated) {
 				video.onloadedmetadata = ({ target }) => {
 					return resolve({
 						width: target.videoWidth,
-						height: target.videoHeight
+						height: target.videoHeight,
 					})
 				}
 			})
 
-		getImageSize = (src) =>
+		getImageSize = src =>
 			new Promise(resolve => {
 				const image = new Image()
 				image.src = src.tempUrl
 
-				image.onload = function () {
+				image.onload = function() {
 					return resolve({
 						width: this.width,
-						height: this.height
+						height: this.height,
 					})
 				}
 			})
 
-		validateMedia = async ({
-			propsName,
-			widthTarget,
-			heightTarget,
-			msg,
-			exact,
-			required,
-			onChange
-		} = {}, media) => {
-
+		validateMedia = async (
+			{
+				propsName,
+				widthTarget,
+				heightTarget,
+				msg,
+				exact,
+				required,
+				onChange,
+			} = {},
+			media
+		) => {
 			if (!required && !media.tempUrl && onChange) {
-				this.props.validate(propsName, { isValid: true, err: { msg: msg, args: [] }, dirty: true })
+				this.props.validate(propsName, {
+					isValid: true,
+					err: { msg: msg, args: [] },
+					dirty: true,
+				})
 				// TODO: fix this
 				onChange(propsName, media)
 				return
@@ -122,33 +133,31 @@ export default function ValidImageHoc(Decorated) {
 				required,
 				onChange,
 				mime: media.mime,
-				tempUrl: media.tempUrl
+				tempUrl: media.tempUrl,
 			})
 		}
 
 		render() {
 			const props = this.props
-			return (
-				<Decorated {...props} validateMedia={this.validateMedia} />
-			)
+			return <Decorated {...props} validateMedia={this.validateMedia} />
 		}
 	}
 
 	ValidImage.propTypes = {
 		actions: PropTypes.object.isRequired,
-		validateId: PropTypes.string.isRequired
+		validateId: PropTypes.string.isRequired,
 	}
 
 	function mapStateToProps(state, props) {
 		const { memory } = state
 		return {
-			validations: memory.validations[props.validateId]
+			validations: memory.validations[props.validateId],
 		}
 	}
 
 	function mapDispatchToProps(dispatch) {
 		return {
-			actions: bindActionCreators(actions, dispatch)
+			actions: bindActionCreators(actions, dispatch),
 		}
 	}
 
@@ -157,4 +166,3 @@ export default function ValidImageHoc(Decorated) {
 		mapDispatchToProps
 	)(Translate(ValidImage))
 }
-
