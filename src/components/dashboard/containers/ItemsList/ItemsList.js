@@ -228,7 +228,7 @@ class ItemsList extends Component {
 					</RRButton>
 				</Tooltip>
 				<Tooltip
-					title={t('TOOLTIP_ARCHIVE')}
+					title={t('TOOLTIP_CLONE')}
 					// placement='top'
 					enterDelay={1000}
 				>
