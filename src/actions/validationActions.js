@@ -4,11 +4,12 @@ import { translate } from 'services/translations/translations'
 import { addToast } from './uiActions'
 
 export function validateAddress({ addr, dirty, validate, name }) {
-	return async function (dispatch) {
+	return async function (dispatch, getState) {
+		const { authType } = getState().persist.account.wallet
 		try {
 			if(validate) validate(name, { isValid: false})
 			updateSpinner(name, dirty)(dispatch)
-			const { msg } = await validEthAddress({ addr, nonZeroAddr: true, nonERC20: true })
+			const { msg } = await validEthAddress({ addr, nonZeroAddr: true, nonERC20: true, authType })
 			const isValid = !msg
 			updateSpinner(name, false)(dispatch)
 			if(validate) validate(name, { isValid: isValid, err: { msg: msg }, dirty: dirty})
