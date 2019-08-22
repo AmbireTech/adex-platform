@@ -83,21 +83,27 @@ export const isEthAddressZero = (addr = '') => {
 		: false;
 }
 
-export const validEthAddress = async ({ addr = '', nonZeroAddr, nonERC20 }) => {
+export const validEthAddress = async ({ addr = '', nonZeroAddr, nonERC20, authType }) => {
 	let msg = ''
 	try {
-		const notEthAddress = !isEthAddress(addr)
-		if (notEthAddress)
-			msg = 'ERR_INVALID_ETH_ADDRESS'
 		const ethAddressZero = isEthAddressZero(addr)
-		if (nonZeroAddr && ethAddressZero)
-			msg = 'ERR_INVALID_ETH_ADDRESS_ZERO'
-		const ethAddressERC20 = await isEthAddressERC20(addr)
-		if (nonERC20 && ethAddressERC20)
-			msg = 'ERR_INVALID_ETH_ADDRESS_TOKEN'
-		const connectionLost = await isConnectionLost()
-		if (connectionLost)
-			msg = "ERR_INVALID_CONNECTION_LOST"
+		const notEthAddress = !isEthAddress(addr)
+		if (notEthAddress) {
+			msg = 'ERR_INVALID_ETH_ADDRESS'
+		} else {
+			if (nonZeroAddr && ethAddressZero) {
+				msg = 'ERR_INVALID_ETH_ADDRESS_ZERO'
+			} else {
+				const connectionLost = await isConnectionLost(authType)
+				if (connectionLost){
+					msg = "ERR_INVALID_CONNECTION_LOST"
+				} else {
+					const ethAddressERC20 = await isEthAddressERC20(addr)
+					if (!ethAddressZero && nonERC20 && ethAddressERC20)
+						msg = 'ERR_INVALID_ETH_ADDRESS_TOKEN'
+				}
+			}
+		}
 	} catch (error) {
 		if(error === "Non-Ethereum browser detected.")
 			msg = "ERR_INVALID_CONNECTION_LOST"
