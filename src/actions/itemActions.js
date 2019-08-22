@@ -103,23 +103,28 @@ export function addItem(item, itemType, authSig) {
 	}
 }
 
-export function cloneItem(item, itemType, authSig) {
+export function cloneItem({ item, authSig } = {}) {
+	const newItem = { ...item }
 	return async function (dispatch) {
-		item.id = ''		
 		try {
+			newItem.id = ''
+			newItem.created = Date.now()
+
 			const resItem = await postAdUnit({
-				unit: new AdUnit(item).marketAdd,
+				unit: new AdUnit(newItem).marketAdd,
 				authSig
 			})
+
 			dispatch({
 				type: types.ADD_ITEM,
 				item: new AdUnit(resItem).plainObj(),
 				itemType: 'AdUnit'
 			})
-			addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_CREATING_ITEM', args: ['AdUnit', item.title] })
+
+			addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_CLONING_ITEM', args: ['AdUnit', newItem.title] })
 		} catch (err) {
 			console.error('ERR_CREATING_ITEM', err)
-			addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_CREATING_ITEM', args: ['AdUnit', err] })
+			addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_CLONING_ITEM', args: ['AdUnit', err] })
 		}
 	}
 }
