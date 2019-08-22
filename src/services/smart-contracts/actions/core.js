@@ -1,4 +1,3 @@
-
 import crypto from 'crypto'
 import {
 	Channel,
@@ -6,7 +5,10 @@ import {
 	// Transaction
 } from 'adex-protocol-eth/js'
 import { getEthers } from 'services/smart-contracts/ethers'
-import { getSigner, getMultipleTxSignatures } from 'services/smart-contracts/actions/ethers'
+import {
+	getSigner,
+	getMultipleTxSignatures,
+} from 'services/smart-contracts/actions/ethers'
 import { contracts } from '../contractsCfg'
 import { sendOpenChannel } from 'services/adex-relayer/actions'
 import { closeCampaign } from 'services/adex-validator/actions'
@@ -16,7 +18,7 @@ import {
 	randomBytes,
 	parseUnits,
 	Interface,
-	formatUnits
+	formatUnits,
 } from 'ethers/utils'
 import { Contract } from 'ethers'
 
@@ -27,13 +29,14 @@ const feeAmountApprove = '150000000000000000'
 const feeAmountOpen = '160000000000000000'
 const timeframe = 15000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 1.5
-const VALID_UNTIL_MIN_PERIOD = 7 * 24 * 60 * 60 * 1000// 7 days in ms
+const VALID_UNTIL_MIN_PERIOD = 7 * 24 * 60 * 60 * 1000 // 7 days in ms
 
 export const totalFeesFormatted = formatUnits(
 	bigNumberify(feeAmountApprove)
 		.add(bigNumberify(feeAmountOpen))
 		.toString(),
-	18)
+	18
+)
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
@@ -47,13 +50,15 @@ function toEthereumChannel(channel) {
 		tokenAmount: channel.depositAmount,
 		validUntil: channel.validUntil,
 		validators: channel.spec.validators.map(v => v.id),
-		spec: specHash
+		spec: specHash,
 	})
 }
 
 function getValidUntil(created, withdrawPeriodStart) {
 	const period = withdrawPeriodStart - created
-	const validUntil = withdrawPeriodStart + Math.max((period * VALID_UNTIL_COEFFICIENT), VALID_UNTIL_MIN_PERIOD)
+	const validUntil =
+		withdrawPeriodStart +
+		Math.max(period * VALID_UNTIL_COEFFICIENT, VALID_UNTIL_MIN_PERIOD)
 
 	return Math.floor(validUntil / 1000)
 }
@@ -62,13 +67,22 @@ function getReadyCampaign(campaign, identity, Dai) {
 	const newCampaign = new Campaign(campaign)
 	newCampaign.creator = identity.address
 	newCampaign.created = Date.now()
-	newCampaign.validUntil = getValidUntil(newCampaign.created, newCampaign.withdrawPeriodStart)
+	newCampaign.validUntil = getValidUntil(
+		newCampaign.created,
+		newCampaign.withdrawPeriodStart
+	)
 	newCampaign.nonce = bigNumberify(randomBytes(32)).toString()
-	newCampaign.adUnits = newCampaign.adUnits.map(unit => (new AdUnit(unit)).spec)
-	newCampaign.depositAmount = parseUnits(newCampaign.depositAmount, DAI.decimals).toString()
+	newCampaign.adUnits = newCampaign.adUnits.map(unit => new AdUnit(unit).spec)
+	newCampaign.depositAmount = parseUnits(
+		newCampaign.depositAmount,
+		DAI.decimals
+	).toString()
 
 	// NOTE: TEMP in UI its set per 1000 impressions (CPM)
-	newCampaign.minPerImpression = parseUnits(newCampaign.minPerImpression, DAI.decimals)
+	newCampaign.minPerImpression = parseUnits(
+		newCampaign.minPerImpression,
+		DAI.decimals
+	)
 		.div(bigNumberify(1000))
 		.toString()
 	newCampaign.maxPerImpression = newCampaign.minPerImpression
@@ -76,9 +90,15 @@ function getReadyCampaign(campaign, identity, Dai) {
 	newCampaign.depositAsset = newCampaign.depositAsset || Dai.address
 	newCampaign.eventSubmission = {
 		allow: [
-			{ uids: [newCampaign.creator, newCampaign.validators[0].id, newCampaign.validators[1].id] },
-			{ uids: null, rateLimit: { type: "ip", timeframe } }
-		]
+			{
+				uids: [
+					newCampaign.creator,
+					newCampaign.validators[0].id,
+					newCampaign.validators[1].id,
+				],
+			},
+			{ uids: null, rateLimit: { type: 'ip', timeframe } },
+		],
 	}
 
 	newCampaign.status = { name: 'Pending', lastChecked: Date.now() }
@@ -88,12 +108,7 @@ function getReadyCampaign(campaign, identity, Dai) {
 
 export async function openChannel({ campaign, account }) {
 	const { wallet, identity } = account
-	const {
-		provider,
-		AdExCore,
-		Dai,
-		Identity
-	} = await getEthers(wallet.authType)
+	const { provider, AdExCore, Dai, Identity } = await getEthers(wallet.authType)
 
 	const readyCampaign = getReadyCampaign(campaign, identity, Dai)
 	const openReady = readyCampaign.openReady
@@ -101,16 +116,11 @@ export async function openChannel({ campaign, account }) {
 	const signer = await getSigner({ wallet, provider })
 	const channel = {
 		...openReady,
-		id: ethChannel.hashHex(AdExCore.address)
+		id: ethChannel.hashHex(AdExCore.address),
 	}
 	const identityAddr = openReady.creator
-	const identityContract = new Contract(
-		identityAddr,
-		Identity.abi,
-		provider
-	)
-	const initialNonce = (await identityContract.nonce())
-		.toNumber()
+	const identityContract = new Contract(identityAddr, Identity.abi, provider)
+	const initialNonce = (await identityContract.nonce()).toNumber()
 
 	const feeTokenAddr = campaign.temp.feeTokenAddr || Dai.address
 
@@ -120,8 +130,10 @@ export async function openChannel({ campaign, account }) {
 		feeTokenAddr: feeTokenAddr,
 		feeAmount: feeAmountApprove,
 		to: Dai.address,
-		data: ERC20.functions.approve
-			.encode([AdExCore.address, channel.depositAmount])
+		data: ERC20.functions.approve.encode([
+			AdExCore.address,
+			channel.depositAmount,
+		]),
 	}
 
 	const tx2 = {
@@ -130,8 +142,7 @@ export async function openChannel({ campaign, account }) {
 		feeTokenAddr: feeTokenAddr,
 		feeAmount: feeAmountOpen,
 		to: AdExCore.address,
-		data: Core.functions.channelOpen
-			.encode([ethChannel.toSolidityTuple()])
+		data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
 	}
 
 	const txns = [tx1, tx2]
@@ -141,14 +152,14 @@ export async function openChannel({ campaign, account }) {
 		txnsRaw: txns,
 		signatures,
 		channel,
-		identityAddr: identity.address
+		identityAddr: identity.address,
 	}
 
 	const result = await sendOpenChannel(data)
 	readyCampaign.id = channel.id
 	return {
 		result,
-		readyCampaign
+		readyCampaign,
 	}
 }
 

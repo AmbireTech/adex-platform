@@ -8,13 +8,15 @@ export default class MetaMaskSigner extends Signer {
 		this._signer = provider.getSigner()
 	}
 
-	get provider() { return this._provider }
+	get provider() {
+		return this._provider
+	}
 
 	getAddress = async () => {
 		return this._signer.getAddress()
 	}
 
-	sendTransaction = async (params) => {
+	sendTransaction = async params => {
 		return this._signer.sendTransaction(params)
 	}
 
@@ -23,20 +25,19 @@ export default class MetaMaskSigner extends Signer {
 			message = utils.arrayify(message)
 		}
 
-		const signature = await this._signer
-			.signMessage(message)
+		const signature = await this._signer.signMessage(message)
 		// TODO: support EIP712
 		const res = {
 			signature,
 			hash: message,
 			mode: constants.SignatureModes.GETH,
-			address: await this._signer.getAddress()
+			address: await this._signer.getAddress(),
 		}
 
 		return res
 	}
 
-	connect = (provider) => {
+	connect = provider => {
 		return new MetaMaskSigner(provider)
 	}
 }

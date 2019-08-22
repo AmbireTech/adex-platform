@@ -2,12 +2,12 @@ import { items as ItemsConstants } from 'adex-constants'
 
 const { ItemsTypes, AdTypesByValue, AdSizesByValue } = ItemsConstants
 
-export const sortCollections = (items) => {
+export const sortCollections = items => {
 	let collections = {
 		campaigns: [],
 		adUnits: [],
 		channels: [],
-		adSlots: []
+		adSlots: [],
 	}
 
 	for (let i = 0; i < items.length; i++) {
@@ -21,11 +21,11 @@ export const sortCollections = (items) => {
 	return collections
 }
 
-export const cloneObject = (obj) => {
+export const cloneObject = obj => {
 	return Object.assign(Object.create(obj), obj)
 }
 
-export const getTypeName = (id) => {
+export const getTypeName = id => {
 	for (var key in ItemsTypes) {
 		if (ItemsTypes.hasOwnProperty(key)) {
 			if (ItemsTypes[key].id === id) {
@@ -36,9 +36,8 @@ export const getTypeName = (id) => {
 }
 
 export const groupItemsForCollection = ({ collectionId, allItems = {} }) => {
-
-	let grouped = Array.from(Object.values(allItems))
-		.reduce((memo, item, index) => {
+	let grouped = Array.from(Object.values(allItems)).reduce(
+		(memo, item, index) => {
 			if (item._items.indexOf(collectionId) > -1) {
 				memo.items.push(item)
 			} else {
@@ -46,7 +45,9 @@ export const groupItemsForCollection = ({ collectionId, allItems = {} }) => {
 			}
 
 			return memo
-		}, { items: [], otherItems: [] })
+		},
+		{ items: [], otherItems: [] }
+	)
 
 	return grouped
 }
@@ -56,7 +57,6 @@ export const itemAdTypeLabel = ({ adType }) => {
 }
 
 export const itemAdSizeLabel = ({ size, t }) => {
-	const adSize = (AdSizesByValue[size] || {})
+	const adSize = AdSizesByValue[size] || {}
 	return t(adSize.label, { args: adSize.labelArgs || [] })
 }
-

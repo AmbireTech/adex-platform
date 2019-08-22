@@ -1,4 +1,4 @@
-export const loadFromLocalStorage = (key) => {
+export const loadFromLocalStorage = key => {
 	try {
 		const data = localStorage.getItem(key)
 		if (data === null) {

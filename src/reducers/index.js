@@ -16,14 +16,18 @@ import newTransactions from './newTransactionsReducer'
 import web3Transactions from './web3TransactionsReducer'
 import tags from './tagsReducer'
 import ethNetwork from './ethNetworkReducer'
-import { routerReducer, LOCATION_CHANGE, CALL_HISTORY_METHOD } from 'react-router-redux'
+import {
+	routerReducer,
+	LOCATION_CHANGE,
+	CALL_HISTORY_METHOD,
+} from 'react-router-redux'
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
 
 export const persistReducers = {
 	// signin: signin,
 	account: account,
-	items: filterActions(items, (action => action.type.match(/_ITEM/))),
+	items: filterActions(items, action => action.type.match(/_ITEM/)),
 	// newItem: filterActions(newItem, (action => action.type.match(/_NEWITEM/))),
 	// spinners: filterActions(spinners, [types.UPDATE_SPINNER]),
 	ui: filterActions(ui, [types.UPDATE_UI]),
@@ -35,7 +39,7 @@ export const persistReducers = {
 	// validations: validations,
 	web3Transactions: web3Transactions,
 	tags: tags,
-	ethNetwork: ethNetwork
+	ethNetwork: ethNetwork,
 }
 
 export const memoryReducers = {
@@ -44,7 +48,7 @@ export const memoryReducers = {
 	wallet: wallet,
 	// account: account,
 	// items: filterActions(items, (action => action.type.match(/_ITEM/))),
-	newItem: filterActions(newItem, (action => action.type.match(/_NEWITEM/))),
+	newItem: filterActions(newItem, action => action.type.match(/_NEWITEM/)),
 	spinners: filterActions(spinners, [types.UPDATE_SPINNER]),
 	// ui: filterActions(ui, [types.UPDATE_UI]),
 	toasts: toasts,
@@ -53,5 +57,5 @@ export const memoryReducers = {
 	routing: filterActions(routerReducer, [LOCATION_CHANGE, CALL_HISTORY_METHOD]),
 	// language: language,
 	validations: validations,
-	newTransactions: newTransactions
+	newTransactions: newTransactions,
 }

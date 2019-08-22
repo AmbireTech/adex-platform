@@ -5,7 +5,7 @@ export const styles = theme => ({
 		width: 'auto',
 		height: '100%',
 		position: 'relative',
-		display: 'inline-block'
+		display: 'inline-block',
 	},
 	imgParent: {
 		top: 0,
@@ -13,19 +13,19 @@ export const styles = theme => ({
 		width: 'auto',
 		height: 'max-content',
 		position: 'relative',
-		display: 'inline-block'
+		display: 'inline-block',
 	},
 	circular: {
 		position: 'relative',
 		top: 'calc(50% - 20px)', //UGLY but works best - DEFAULT circular size is 40px
 		left: 'calc(50% - 20px)',
-		display: 'inline-block'
+		display: 'inline-block',
 	},
 	fullscreenIcon: {
 		position: 'absolute',
 		top: theme.spacing(1),
 		right: theme.spacing(1),
-		cursor: 'pointer'
+		cursor: 'pointer',
 	},
 	dialog: {
 		'@media(max-width:744px)': {
@@ -33,7 +33,7 @@ export const styles = theme => ({
 		},
 		'@media(max-height:823px)': {
 			minHeight: 'auto',
-		}
+		},
 	},
 	dialogImageParent: {
 		'@media(max-width:1080px)': {
@@ -44,19 +44,19 @@ export const styles = theme => ({
 		},
 		'@media(max-width:744px)': {
 			paddingLeft: 0,
-			paddingRight: 0
-		}
+			paddingRight: 0,
+		},
 	},
 	dialogImage: {
 		height: 'auto',
-		maxWidth: '80vw'
+		maxWidth: '80vw',
 	},
 	img: {
 		width: 'auto',
-		height: 'auto'
+		height: 'auto',
 	},
 	wrapper: {
 		height: 'max-content',
-		width: 'max-content'	
-	}
+		width: 'max-content',
+	},
 })

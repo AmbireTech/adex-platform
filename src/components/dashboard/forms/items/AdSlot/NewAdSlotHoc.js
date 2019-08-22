@@ -6,16 +6,15 @@ import actions from 'actions'
 import { AdSlot } from 'adex-models'
 
 export default function NewAdUnitHoc(Decorated) {
-
 	class ItemForm extends Component {
 		constructor(props) {
 			super(props)
 
-			this.save = this.save.bind(this);
+			this.save = this.save.bind(this)
 
 			this.state = {
 				active: false,
-				saved: false
+				saved: false,
 			}
 		}
 
@@ -39,13 +38,13 @@ export default function NewAdUnitHoc(Decorated) {
 			const { actions, newItem, account } = this.props
 			newItem.owner = account.wallet.address
 
-			actions.addSlot(newItem, 'AdSlot', account.wallet.authSig)			
+			actions.addSlot(newItem, 'AdSlot', account.wallet.authSig)
 
 			this.onSave()
 			actions.resetNewItem('AdSlot')
 		}
 
-		cancel = () => {			
+		cancel = () => {
 			this.onSave()
 			this.props.actions.resetNewItem('AdSlot')
 		}
@@ -68,20 +67,20 @@ export default function NewAdUnitHoc(Decorated) {
 		account: PropTypes.object.isRequired,
 		newItem: PropTypes.object.isRequired,
 		title: PropTypes.string,
-		addTo: PropTypes.object
+		addTo: PropTypes.object,
 	}
 
 	function mapStateToProps(state, props) {
 		const { persist, memory } = state
 		return {
 			account: persist.account,
-			newItem: new AdSlot(memory.newItem['AdSlot'])
+			newItem: new AdSlot(memory.newItem['AdSlot']),
 		}
 	}
 
 	function mapDispatchToProps(dispatch) {
 		return {
-			actions: bindActionCreators(actions, dispatch)
+			actions: bindActionCreators(actions, dispatch),
 		}
 	}
 
@@ -90,4 +89,3 @@ export default function NewAdUnitHoc(Decorated) {
 		mapDispatchToProps
 	)(ItemForm)
 }
-

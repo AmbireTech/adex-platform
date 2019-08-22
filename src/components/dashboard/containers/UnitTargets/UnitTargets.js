@@ -12,26 +12,23 @@ import WcIcon from '@material-ui/icons/Wc'
 import ChildCareIcon from '@material-ui/icons/ChildCare'
 import CompareArrows from '@material-ui/icons/CompareArrows'
 
-
 const targetIcon = {
-	'location': LocationOnIcon,
-	'gender': WcIcon,
-	'age': ChildCareIcon
+	location: LocationOnIcon,
+	gender: WcIcon,
+	age: ChildCareIcon,
 }
 
-const getTargetType = (tag) => {
+const getTargetType = tag => {
 	const type = tag.split('_')[0] || 'tags'
 	return type
 }
 
 class UnitTargets extends Component {
-
 	targetArrayValues = (target, type, t, index) => {
 		const TargetIcon = targetIcon[type] || CompareArrows
 		return (
 			<span key={target.tag + target.score + index}>
-				<ListItem
-				>
+				<ListItem>
 					<ListItemIcon>
 						<TargetIcon />
 					</ListItemIcon>
@@ -39,40 +36,34 @@ class UnitTargets extends Component {
 						primary={t(target.tag, { isTarget: true })}
 						secondary={target.score}
 					/>
-					<ListItemSecondaryAction>
-						{target.score}
-					</ListItemSecondaryAction>
+					<ListItemSecondaryAction>{target.score}</ListItemSecondaryAction>
 				</ListItem>
 				<Divider />
 			</span>
 		)
 	}
 
-	TargetsList = ({ targets = [], subHeader, t, ...rest }) =>
+	TargetsList = ({ targets = [], subHeader, t, ...rest }) => (
 		<List
 			dense
-			subheader={
-				subHeader
-					? <ListSubheader caption={t(subHeader)} />
-					: null}
+			subheader={subHeader ? <ListSubheader caption={t(subHeader)} /> : null}
 		>
-			{(targets.map((target) => {
+			{targets.map(target => {
 				const type = getTargetType(target.tag)
 				return this.targetArrayValues(target, type, t)
-			}))}
+			})}
 		</List>
+	)
 
 	render() {
-		return (
-			<this.TargetsList {...this.props} />
-		)
+		return <this.TargetsList {...this.props} />
 	}
 }
 
 UnitTargets.propTypes = {
 	targets: PropTypes.array.isRequired,
 	subHeader: PropTypes.string,
-	t: PropTypes.func.isRequired
+	t: PropTypes.func.isRequired,
 }
 
 export default UnitTargets

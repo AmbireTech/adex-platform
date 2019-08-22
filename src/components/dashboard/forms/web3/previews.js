@@ -5,7 +5,13 @@ import { constants } from 'adex-models'
 
 const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
 
-export const IdentityWithdrawPreview = ({ t, withdrawTo, classes, fees, withdrawAmount }) =>
+export const IdentityWithdrawPreview = ({
+	t,
+	withdrawTo,
+	classes,
+	fees,
+	withdrawAmount,
+}) => (
 	<div>
 		<PropRow
 			key='withdrawTo'
@@ -18,14 +24,23 @@ export const IdentityWithdrawPreview = ({ t, withdrawTo, classes, fees, withdraw
 			right={
 				<ListItemText
 					className={classes.address}
-					secondary={t('AMOUNT_WITHDRAW_INFO', { args: [fees.fees, 'DAI', fees.toGet, 'DAI'] })}
+					secondary={t('AMOUNT_WITHDRAW_INFO', {
+						args: [fees.fees, 'DAI', fees.toGet, 'DAI'],
+					})}
 					primary={withdrawAmount + ' DAI'}
 				/>
 			}
 		/>
 	</div>
+)
 
-export const SetPrivilegePreview = ({ t, setAddr, classes, fees, privLevel }) =>
+export const SetPrivilegePreview = ({
+	t,
+	setAddr,
+	classes,
+	fees,
+	privLevel,
+}) => (
 	<div>
 		<PropRow
 			key='setAddr'
@@ -38,9 +53,12 @@ export const SetPrivilegePreview = ({ t, setAddr, classes, fees, privLevel }) =>
 			right={
 				<ListItemText
 					className={classes.address}
-					secondary={t('PRIV_LEVEL_INFO_AND_FEES', { args: [fees.fees, 'DAI'] })}
+					secondary={t('PRIV_LEVEL_INFO_AND_FEES', {
+						args: [fees.fees, 'DAI'],
+					})}
 					primary={privilegesNames[privLevel]}
 				/>
 			}
 		/>
 	</div>
+)

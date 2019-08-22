@@ -19,14 +19,13 @@ const syncNonce = () => {
 	let settings = { ...account.settings }
 
 	return getNonce()
-		.then((gasData)=> {
-            
+		.then(gasData => {
 			settings.gasData = gasData
 
 			let action = actions.updateAccount({ newValues: { settings: settings } })
 			action(store.dispatch)
 		})
-		.catch(()=> {
+		.catch(() => {
 			settings.gasData = DEFAULT_DATA
 
 			let action = actions.updateAccount({ newValues: { settings: settings } })
@@ -59,8 +58,7 @@ const stop = () => {
 	clearNonceTimeout()
 }
 
-
 export default {
 	start,
-	stop
+	stop,
 }
