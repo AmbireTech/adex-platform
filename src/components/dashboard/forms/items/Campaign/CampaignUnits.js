@@ -6,21 +6,19 @@ import Grid from '@material-ui/core/Grid'
 import { ContentBody } from 'components/common/dialog/content'
 import ItemsList from 'components/dashboard/containers/ItemsList'
 import { AdUnit } from 'adex-models'
-import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems';
-import {
-	SORT_PROPERTIES_ITEMS,
-	FILTER_PROPERTIES_ITEMS
-} from 'constants/misc'
+import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems'
+import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 
 class CampaignUnits extends Component {
 	constructor(props) {
 		super(props)
 
 		this.state = {
-			selected: (props.newItem.adUnits.reduce((selected, unit) => {
-				selected[unit.ipfs] = true
-				return selected
-			}, {})) || {}
+			selected:
+				props.newItem.adUnits.reduce((selected, unit) => {
+					selected[unit.ipfs] = true
+					return selected
+				}, {}) || {},
 		}
 	}
 
@@ -31,13 +29,11 @@ class CampaignUnits extends Component {
 
 	validateUnits(adUnits, dirty) {
 		const isValid = !!adUnits.length
-		this.props.validate(
-			'adUnits',
-			{
-				isValid: isValid,
-				err: { msg: 'ERR_ADUNITS_REQIURED' },
-				dirty: dirty
-			})
+		this.props.validate('adUnits', {
+			isValid: isValid,
+			err: { msg: 'ERR_ADUNITS_REQIURED' },
+			dirty: dirty,
+		})
 	}
 
 	handleSelect = (ipfs, checked) => {
@@ -61,20 +57,19 @@ class CampaignUnits extends Component {
 
 	render() {
 		const { adUnitsArray, t } = this.props
-		const hasAdUnits = (adUnitsArray && adUnitsArray.length)
+		const hasAdUnits = adUnitsArray && adUnitsArray.length
 		return (
 			<div>
 				<Grid
 					container
 					spacing={2}
-					direction={hasAdUnits ? "" : "column"}
-					alignItems={hasAdUnits ? "" : "center"}
+					direction={hasAdUnits ? '' : 'column'}
+					alignItems={hasAdUnits ? '' : 'center'}
 				>
 					<Grid item sm={12}>
-
 						<ContentBody>
-							{(hasAdUnits) ? 
-								(<ItemsList
+							{hasAdUnits ? (
+								<ItemsList
 									objModel={AdUnit}
 									selectMode
 									selectedItems={this.state.selected}
@@ -88,21 +83,17 @@ class CampaignUnits extends Component {
 									sortProperties={SORT_PROPERTIES_ITEMS}
 									filterProperties={FILTER_PROPERTIES_ITEMS}
 									noActions
-								/>)
-								: 
-								(<Grid 				
-									container
-									direction="column"
-									alignItems="center"
-								>
+								/>
+							) : (
+								<Grid container direction='column' alignItems='center'>
 									<p>{t('ERR_CAMPAIGN_REQUIRES_UNITS')}</p>
 									<NewUnitDialog
 										variant='extended'
 										color='secondary'
 										btnLabel='NEW_UNIT'
 									/>
-								</Grid>)
-							}
+								</Grid>
+							)}
 						</ContentBody>
 					</Grid>
 				</Grid>
@@ -117,7 +108,7 @@ CampaignUnits.propTypes = {
 	descriptionHelperTxt: PropTypes.string,
 	nameHelperTxt: PropTypes.string,
 	adUnits: PropTypes.object.isRequired,
-	adUnitsArray: PropTypes.array.isRequired
+	adUnitsArray: PropTypes.array.isRequired,
 }
 
 const NewCampaignUnits = NewCampaignHoc(CampaignUnits)
