@@ -14,15 +14,14 @@ const getIdentitiesForDropdown = (ownerIdentities, t) =>
 	ownerIdentities.map(id => {
 		return {
 			value: id.identity + '-' + id.privLevel,
-			label: t('IDENTITY_OPTION_DATA',
-				{
-					args: [
-						id.identity,
-						id.privLevel,
-						formatTokenAmount(bigNumberify(id.balanceDAI).toString(), 18, true),
-						'DAI'
-					]
-				})
+			label: t('IDENTITY_OPTION_DATA', {
+				args: [
+					id.identity,
+					id.privLevel,
+					formatTokenAmount(bigNumberify(id.balanceDAI).toString(), 18, true),
+					'DAI',
+				],
+			}),
 		}
 	})
 
@@ -33,14 +32,14 @@ class GrantLogin extends Component {
 		this.validateIdentity(false)
 	}
 
-	validateIdentity = (dirty) => {
+	validateIdentity = dirty => {
 		const { identity, handleChange, validate } = this.props
 		const { wallet, identityContractAddress } = identity
 
 		const identityDataSplit = (identityContractAddress || '').split('-')
 		const identityData = {
 			address: identityDataSplit[0],
-			privileges: parseInt(identityDataSplit[1] || 0)
+			privileges: parseInt(identityDataSplit[1] || 0),
 		}
 
 		handleChange('wallet', wallet)
@@ -50,13 +49,15 @@ class GrantLogin extends Component {
 		validate('identityContractAddress', {
 			isValid: !!identityData.address,
 			err: { msg: 'ERR_LOCAL_WALLET_LOGIN' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
 	componentDidUpdate(prevProps) {
-		if (prevProps.identity.identityContractAddress !==
-			this.props.identity.identityContractAddress) {
+		if (
+			prevProps.identity.identityContractAddress !==
+			this.props.identity.identityContractAddress
+		) {
 			this.validateIdentity(true)
 		}
 	}
@@ -74,10 +75,7 @@ class GrantLogin extends Component {
 				alignItems='center'
 			>
 				<Grid item xs={12}>
-					<Grid
-						container
-						spacing={2}
-					>
+					<Grid container spacing={2}>
 						<Grid item xs={12}>
 							<Typography variant='body2' color='primary' gutterBottom>
 								{t('FULL_LOGIN_INFO')}
@@ -87,17 +85,14 @@ class GrantLogin extends Component {
 							<Dropdown
 								label={t('SELECT_IDENTITY')}
 								helperText={t('SELECT_IDENTITY_INFO')}
-								onChange={(val) => handleChange('identityContractAddress', val)}
+								onChange={val => handleChange('identityContractAddress', val)}
 								source={getIdentitiesForDropdown(ownerIdentities, t)}
 								value={identityContractAddress || ''}
 								htmlId='label-identityContractAddress'
 								fullWidth
 							/>
-
 						</Grid>
-
 					</Grid>
-
 				</Grid>
 			</Grid>
 			// </div>

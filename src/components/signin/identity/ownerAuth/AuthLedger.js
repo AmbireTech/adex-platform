@@ -16,7 +16,7 @@ import {
 	ContentBox,
 	ContentBody,
 	ContentStickyTop,
-	TopLoading
+	TopLoading,
 } from 'components/common/dialog/content'
 import LEDGER_DL_IMG from 'resources/ledger_logo_header.png'
 import { withStyles } from '@material-ui/core/styles'
@@ -34,18 +34,17 @@ class AuthLedger extends Component {
 			waitingLedgerAction: false,
 			waitingAddrsData: false,
 			selectedAddress: null,
-			hdPath: ''
+			hdPath: '',
 		}
 	}
 
 	connectLedger = async () => {
-
 		this.setState({ waitingLedgerAction: true }, async () => {
 			try {
 				const { provider } = await getEthers(AUTH_TYPES.LEDGER.name)
 
 				const wallet = {
-					authType: AUTH_TYPES.LEDGER.name
+					authType: AUTH_TYPES.LEDGER.name,
 				}
 
 				const ledgerSigner = await getSigner({ wallet, provider })
@@ -62,7 +61,7 @@ class AuthLedger extends Component {
 						hdPath: ledgerSigner.path,
 						addresses: results,
 						waitingAddrsData: false,
-						waitingLedgerAction: false
+						waitingLedgerAction: false,
 					})
 				})
 			} catch (err) {
@@ -71,12 +70,10 @@ class AuthLedger extends Component {
 				this.props.actions.addToast({
 					type: 'cancel',
 					action: 'X',
-					label: this.props.t(
-						'ERR_AUTH_LEDGER',
-						{
-							args: [Helper.getErrMsg(err)]
-						}),
-					timeout: 5000
+					label: this.props.t('ERR_AUTH_LEDGER', {
+						args: [Helper.getErrMsg(err)],
+					}),
+					timeout: 5000,
 				})
 			}
 		})
@@ -86,15 +83,15 @@ class AuthLedger extends Component {
 		return (
 			<ContentBox className={classes.tabBox}>
 				<ContentStickyTop>
-					{waitingLedgerAction ?
+					{waitingLedgerAction ? (
 						<TopLoading msg={t('LEDGER_WAITING_ACTION')} />
-						:
+					) : (
 						t('SELECT_ADDR_LEDGER')
-					}
+					)}
 				</ContentStickyTop>
 				<ContentBody>
-					<List >
-						{addresses.map((res, index) =>
+					<List>
+						{addresses.map((res, index) => (
 							<ListItem
 								classes={{ root: classes.addrListItem }}
 								key={res.address}
@@ -103,7 +100,7 @@ class AuthLedger extends Component {
 							>
 								<AddrItem stats={res} t={t} />
 							</ListItem>
-						)}
+						))}
 					</List>
 				</ContentBody>
 			</ContentBox>
@@ -111,12 +108,7 @@ class AuthLedger extends Component {
 	}
 
 	onAddrSelect = (addrData, hdWalletAddrIdx) => {
-		const {
-			address,
-			path,
-			balanceEth,
-			balanceDai,
-		} = addrData
+		const { address, path, balanceEth, balanceDai } = addrData
 
 		this.props.updateWallet({
 			address,
@@ -126,7 +118,7 @@ class AuthLedger extends Component {
 			balanceDai,
 			hdWalletAddrPath: this.state.hdPath,
 			hdWalletAddrIdx,
-			signType: AUTH_TYPES.LEDGER.signType
+			signType: AUTH_TYPES.LEDGER.signType,
 		})
 
 		this.setState({ selectedAddress: address })
@@ -137,25 +129,24 @@ class AuthLedger extends Component {
 
 		return (
 			<div>
-				{this.state.addresses.length ?
+				{this.state.addresses.length ? (
 					<this.AddressSelect
 						waitingLedgerAction={this.state.waitingLedgerAction}
 						addresses={this.state.addresses}
 						t={t}
 						classes={classes}
 					/>
-					:
+				) : (
 					<ContentBox className={classes.tabBox}>
-						{this.state.waitingAddrsData ?
+						{this.state.waitingAddrsData ? (
 							<ContentStickyTop>
 								<TopLoading msg={t('LEDGER_WAITING_ADDRS_INFO')} />
 							</ContentStickyTop>
-							:
-							this.state.waitingLedgerAction ?
-								<ContentStickyTop>
-									<TopLoading msg={t('LEDGER_WAITING_ACTION')} />
-								</ContentStickyTop> : null
-						}
+						) : this.state.waitingLedgerAction ? (
+							<ContentStickyTop>
+								<TopLoading msg={t('LEDGER_WAITING_ACTION')} />
+							</ContentStickyTop>
+						) : null}
 
 						<ContentBody>
 							<Typography paragraph variant='subheading'>
@@ -163,22 +154,22 @@ class AuthLedger extends Component {
 							</Typography>
 							<Typography paragraph>
 								<span
-									dangerouslySetInnerHTML={
-										{
-											__html: t('LEDGER_BASIC_USAGE_INFO',
+									dangerouslySetInnerHTML={{
+										__html: t('LEDGER_BASIC_USAGE_INFO', {
+											args: [
 												{
-													args: [{
-														component:
-															<Anchor
-																href='https://www.ledgerwallet.com/'
-																target='_blank'
-															>
-																LEDGER
-															   </Anchor>
-													}]
-												})
-										}
-									}
+													component: (
+														<Anchor
+															href='https://www.ledgerwallet.com/'
+															target='_blank'
+														>
+															LEDGER
+														</Anchor>
+													),
+												},
+											],
+										}),
+									}}
 								/>
 							</Typography>
 							<Typography paragraph>
@@ -191,7 +182,7 @@ class AuthLedger extends Component {
 								</Anchor>
 							</Typography>
 
-							{(!this.state.waitingAddrsData && !this.state.waitingLedgerAction) &&
+							{!this.state.waitingAddrsData && !this.state.waitingLedgerAction && (
 								<Button
 									onClick={this.connectLedger}
 									variant='contained'
@@ -199,11 +190,10 @@ class AuthLedger extends Component {
 								>
 									{t('CONNECT_WITH_LEDGER')}
 								</Button>
-							}
-
+							)}
 						</ContentBody>
 					</ContentBox>
-				}
+				)}
 			</div>
 		)
 	}
@@ -213,7 +203,7 @@ AuthLedger.propTypes = {
 	actions: PropTypes.object.isRequired,
 	updateWallet: PropTypes.func.isRequired,
 	t: PropTypes.func.isRequired,
-	classes: PropTypes.object.isRequired
+	classes: PropTypes.object.isRequired,
 }
 
 export default Translate(AuthHoc(withStyles(styles)(AuthLedger)))

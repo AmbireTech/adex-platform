@@ -7,7 +7,7 @@ import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import {
 	WithdrawTokenFromIdentity,
-	SetIdentityPrivilege
+	SetIdentityPrivilege,
 } from 'components/dashboard/forms/web3/transactions'
 import { withStyles } from '@material-ui/core/styles'
 import List from '@material-ui/core/List'
@@ -34,7 +34,7 @@ class AccountInfo extends React.Component {
 		super(props)
 		this.state = {
 			walletJsonData: this.localWalletDownloadHref(),
-			expanded: false
+			expanded: false,
 		}
 	}
 
@@ -52,8 +52,8 @@ class AccountInfo extends React.Component {
 		if (!obj) {
 			return null
 		}
-		const data = "data:text/json;charset=utf-8,"
-			+ encodeURIComponent(JSON.stringify(obj))
+		const data =
+			'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj))
 		return data
 	}
 
@@ -75,7 +75,7 @@ class AccountInfo extends React.Component {
 			// walletBalanceEth,
 			// walletBalanceDai,
 			identityAddress,
-			identityBalanceDai
+			identityBalanceDai,
 		} = formatted
 
 		const { authType, email } = account.wallet
@@ -90,34 +90,36 @@ class AccountInfo extends React.Component {
 						<ListItemText
 							className={classes.address}
 							primary={identityAddress}
-							secondary={(account._authType === 'demo')
-								? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
-								: t('IDENTITY_ETH_ADDR')
+							secondary={
+								account._authType === 'demo'
+									? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
+									: t('IDENTITY_ETH_ADDR')
 							}
 						/>
-						{walletJsonData &&
+						{walletJsonData && (
 							<label htmlFor='download-wallet-json'>
 								<a
 									id='download-wallet-json'
 									href={this.localWalletDownloadHref()}
 									download={`adex-account-data-${email}.json`}
 								>
-									<Button
-										size='small'
-										variant='contained'
-									>
+									<Button size='small' variant='contained'>
 										{t('BACKUP_LOCAL_WALLET')}
 										<DownloadIcon />
 									</Button>
 								</a>
 							</label>
-						}
+						)}
 						<IconButton
 							color='default'
 							onClick={() => {
 								copy(identityAddress)
-								this.props.actions
-									.addToast({ type: 'accept', action: 'X', label: t('COPIED_TO_CLIPBOARD'), timeout: 5000 })
+								this.props.actions.addToast({
+									type: 'accept',
+									action: 'X',
+									label: t('COPIED_TO_CLIPBOARD'),
+									timeout: 5000,
+								})
 							}}
 						>
 							<CopyIcon />
@@ -128,15 +130,23 @@ class AccountInfo extends React.Component {
 						<ListItemText
 							className={classes.address}
 							secondary={walletAddress}
-							primary={(account.authType === 'demo')
-								? t('DEMO_ACCOUNT_WALLET_ADDRESS', { args: [walletAuthType, walletPrivileges] })
-								: t('WALLET_INFO_LABEL', { args: [walletAuthType, walletPrivileges || ' - ', authType] })
+							primary={
+								account.authType === 'demo'
+									? t('DEMO_ACCOUNT_WALLET_ADDRESS', {
+											args: [walletAuthType, walletPrivileges],
+									  })
+									: t('WALLET_INFO_LABEL', {
+											args: [
+												walletAuthType,
+												walletPrivileges || ' - ',
+												authType,
+											],
+									  })
 							}
 						/>
 					</ListItem>
 					<ListDivider />
-					<ListItem
-					>
+					<ListItem>
 						<ListItemText
 							primary={identityBalanceDai + ' DAI'}
 							secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
@@ -152,18 +162,22 @@ class AccountInfo extends React.Component {
 								className={classes.actionBtn}
 								size='small'
 								actions={actions}
-
 							/>
 						</div>
 					</ListItem>
 					<ListDivider />
-					<ExpansionPanel expanded={expanded} onChange={this.handleExpandChange}>
+					<ExpansionPanel
+						expanded={expanded}
+						onChange={this.handleExpandChange}
+					>
 						<ExpansionPanelSummary
 							expandIcon={<ExpandMoreIcon />}
-							aria-controls="panel1bh-content"
-							id="panel1bh-header"
+							aria-controls='panel1bh-content'
+							id='panel1bh-header'
 						>
-							<Typography className={classes.heading}>{t('ACCOUNT_ADVANCED_INFO_AND_ACTIONS')}</Typography>
+							<Typography className={classes.heading}>
+								{t('ACCOUNT_ADVANCED_INFO_AND_ACTIONS')}
+							</Typography>
 						</ExpansionPanelSummary>
 						<ExpansionPanelDetails>
 							<ListItem>
@@ -195,7 +209,7 @@ class AccountInfo extends React.Component {
 
 AccountInfo.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired
+	account: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state, props) {
@@ -204,13 +218,13 @@ function mapStateToProps(state, props) {
 
 	return {
 		account: account,
-		side: memory.nav.side
+		side: memory.nav.side,
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

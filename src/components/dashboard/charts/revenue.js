@@ -5,14 +5,18 @@ import Helper from 'helpers/miscHelpers'
 import { formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 
-const getChannelName = (channel) => {
+const getChannelName = channel => {
 	if (!channel || !channel.spec) {
 		return 'unknown'
 	}
 	const amount = formatTokenAmount(channel.depositAmount, 18, true)
 	const cpm = formatTokenAmount(
-		bigNumberify(channel.spec.minPerImpression).mul(1000).toString()
-		, 18, true)
+		bigNumberify(channel.spec.minPerImpression)
+			.mul(1000)
+			.toString(),
+		18,
+		true
+	)
 
 	return `Deposit ${amount} DAI for CPM ${cpm} DAI`
 }
@@ -27,42 +31,54 @@ export const PublisherStatistics = ({ data, channels, options = {}, t }) => {
 		return defaults
 	}, {})
 
-	const labelsWithData = dataKeys.reduce(({ labels, sets }, k) => {
-		const values = Object.keys(data[k]).reduce((memo, key) => {
-			const value = data[k][key]
+	const labelsWithData = dataKeys.reduce(
+		({ labels, sets }, k) => {
+			const values = Object.keys(data[k]).reduce(
+				(memo, key) => {
+					const value = data[k][key]
 
-			labels[key] = labels[key] || { ...defaultValues }
-			labels[key][k] = value
+					labels[key] = labels[key] || { ...defaultValues }
+					labels[key][k] = value
 
-			memo.labels.push(key)
-			memo.value.push(value || 0)
+					memo.labels.push(key)
+					memo.value.push(value || 0)
 
-			memo.step.min = Math.min(memo.step.min, value)
-			memo.step.max = Math.max(memo.step.max, value)
+					memo.step.min = Math.min(memo.step.min, value)
+					memo.step.max = Math.max(memo.step.max, value)
 
-			return memo
+					return memo
+				},
+				{ label: k, labels: [], value: [], step: { min: 0, max: 0 } }
+			)
 
-		}, { label: k, labels: [], value: [], step: { min: 0, max: 0 } })
+			sets.push(values)
 
-		sets.push(values)
-
-		return {
-			labels,
-			sets
-		}
-	}, { labels: {}, sets: [] })
+			return {
+				labels,
+				sets,
+			}
+		},
+		{ labels: {}, sets: [] }
+	)
 
 	const labelsKeys = Object.keys(labelsWithData.labels)
-	const datasets = labelsKeys.reduce(({ sets }, key) => {
-		const set = labelsWithData.labels[key]
+	const datasets = labelsKeys.reduce(
+		({ sets }, key) => {
+			const set = labelsWithData.labels[key]
 
-		dataKeys.forEach((dataKey, index) => {
-			sets[index].data.push(set[dataKey])
-			sets[index].label = dataKey
-		})
+			dataKeys.forEach((dataKey, index) => {
+				sets[index].data.push(set[dataKey])
+				sets[index].label = dataKey
+			})
 
-		return { sets }
-	}, { sets: dataKeys.map(key => { return { label: '', data: [] } }) })
+			return { sets }
+		},
+		{
+			sets: dataKeys.map(key => {
+				return { label: '', data: [] }
+			}),
+		}
+	)
 
 	let commonDsProps = {
 		fill: true,
@@ -80,11 +96,14 @@ export const PublisherStatistics = ({ data, channels, options = {}, t }) => {
 				...commonDsProps,
 				label: getChannelName(channels[set.label]) + ` - ${index}`,
 				data: set.data,
-				backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[index % CHARTS_COLORS.length], 1),
+				backgroundColor: Helper.hexToRgbaColorString(
+					CHARTS_COLORS[index % CHARTS_COLORS.length],
+					1
+				),
 				// borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[index % CHARTS_COLORS.length], 1),
 				// yAxisID: 'y-axis-1'
 			}
-		})
+		}),
 	}
 
 	// const maxTickLimit = 10
@@ -102,7 +121,7 @@ export const PublisherStatistics = ({ data, channels, options = {}, t }) => {
 		responsive: true,
 		title: {
 			display: true,
-			text: options.title
+			text: options.title,
 		},
 		// elements: {
 		// 	line: {
@@ -125,9 +144,9 @@ export const PublisherStatistics = ({ data, channels, options = {}, t }) => {
 					// }
 					scaleLabel: {
 						display: true,
-						labelString: t('TIMEFRAME')
-					}
-				}
+						labelString: t('TIMEFRAME'),
+					},
+				},
 			],
 			yAxes: [
 				{
@@ -146,15 +165,12 @@ export const PublisherStatistics = ({ data, channels, options = {}, t }) => {
 					},
 					scaleLabel: {
 						display: true,
-						labelString: t('VIEWS')
-					}
-				}
-			]
-		}
+						labelString: t('VIEWS'),
+					},
+				},
+			],
+		},
 	}
 
-	return (
-		<Line data={chartData} options={linesOptions} />
-	)
-
+	return <Line data={chartData} options={linesOptions} />
 }

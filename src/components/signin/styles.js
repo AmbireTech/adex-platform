@@ -12,7 +12,7 @@ export const styles = theme => {
 			backgroundRepeat: 'no-repeat',
 			backgroundSize: 'cover',
 			backgroundPosition: 'center',
-			position: 'relative'
+			position: 'relative',
 		},
 		container: {
 			height: '100vh',
@@ -27,7 +27,7 @@ export const styles = theme => {
 			backgroundPosition: 'center',
 		},
 		buttons: {
-			backgroundColor: theme.palette.grey[200]
+			backgroundColor: theme.palette.grey[200],
 		},
 		adxVersion: {
 			// position: 'absolute',
@@ -40,19 +40,19 @@ export const styles = theme => {
 		logo: {
 			marginTop: '1.5vh',
 			width: '17.92vh',
-			height: '6vh'
+			height: '6vh',
 		},
 		dialogPaper: {
 			height: '80vh',
-			margin: spacing * 2
+			margin: spacing * 2,
 		},
 		noBg: {
 			background: 0,
 			boxShadow: 'none',
-			overflow: 'visible'
+			overflow: 'visible',
 		},
 		backdrop: {
-			backgroundColor: 'rgba(255, 255, 255, 0.5)'
+			backgroundColor: 'rgba(255, 255, 255, 0.5)',
 		},
 		content: {
 			display: 'flex',
@@ -68,6 +68,5 @@ export const styles = theme => {
 			// overflow: 'visible',
 			// maxHeight: '100vh'
 		},
-
 	}
 }

@@ -48,7 +48,12 @@ export default function NewTransactionHoc(Decorated) {
 			// const areManyTxs = Array.isArray(res)
 
 			if (err) {
-				actions.addToast({ type: 'cancel', action: 'X', label: t('ERR_TRANSACTION', { args: [Helper.getErrMsg(err)] }), timeout: 50000 })
+				actions.addToast({
+					type: 'cancel',
+					action: 'X',
+					label: t('ERR_TRANSACTION', { args: [Helper.getErrMsg(err)] }),
+					timeout: 50000,
+				})
 			}
 
 			this.onSave(err, res, Array.isArray(res))
@@ -56,7 +61,11 @@ export default function NewTransactionHoc(Decorated) {
 
 		save = () => {
 			this.handleChange('waitingForWalletAction', true)
-			this.props.saveFn({ acc: this.props.account, transaction: this.props.transaction })
+			this.props
+				.saveFn({
+					acc: this.props.account,
+					transaction: this.props.transaction,
+				})
 				.then((res = {}) => {
 					console.log('res on save', res)
 
@@ -99,10 +108,11 @@ export default function NewTransactionHoc(Decorated) {
 	TransactionHoc.propTypes = {
 		actions: PropTypes.object.isRequired,
 		label: PropTypes.string,
-		stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+		stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+			.isRequired,
 		transaction: PropTypes.object.isRequired,
 		account: PropTypes.object.isRequired,
-		saveFn: PropTypes.func
+		saveFn: PropTypes.func,
 	}
 
 	function mapStateToProps(state, props) {
@@ -119,7 +129,7 @@ export default function NewTransactionHoc(Decorated) {
 
 	function mapDispatchToProps(dispatch) {
 		return {
-			actions: bindActionCreators(actions, dispatch)
+			actions: bindActionCreators(actions, dispatch),
 		}
 	}
 

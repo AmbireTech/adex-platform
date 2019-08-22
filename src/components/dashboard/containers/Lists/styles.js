@@ -25,10 +25,10 @@ export const styles = theme => {
 			margin: spacing / 2,
 		},
 		row: {
-			display: 'block'
+			display: 'block',
 		},
 		bottomControls: {
-			justifyContent: 'flex-start'
+			justifyContent: 'flex-start',
 		},
 		listRoot: {
 			paddingBottom: spacing * 1.5,
@@ -40,7 +40,7 @@ export const styles = theme => {
 			// marginBottom: spacing * 2
 		},
 		pageSize: {
-			width: '100px'
-		}
+			width: '100px',
+		},
 	}
 }

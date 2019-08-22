@@ -15,17 +15,21 @@ import Transactions from 'components/dashboard/containers/Transactions'
 import {
 	AdUnit as AdUnitModel,
 	AdSlot as AdSlotModel,
-	Campaign as CampaignModel
+	Campaign as CampaignModel,
 } from 'adex-models'
 import Account from 'components/dashboard/account/AccountInfo'
 import Translate from 'components/translate/Translate'
-import { NewUnitDialog, NewCampaignDialog, NewSlotDialog, } from 'components/dashboard/forms/items/NewItems'
+import {
+	NewUnitDialog,
+	NewCampaignDialog,
+	NewSlotDialog,
+} from 'components/dashboard/forms/items/NewItems'
 import checkTransactions from 'services/store-data/transactions'
 import {
 	SORT_PROPERTIES_ITEMS,
 	FILTER_PROPERTIES_ITEMS,
 	FILTER_PROPERTIES_CAMPAIGN,
-	SORT_PROPERTIES_CAMPAIGN
+	SORT_PROPERTIES_CAMPAIGN,
 } from 'constants/misc'
 import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
@@ -38,12 +42,12 @@ class Dashboard extends React.Component {
 			drawerActive: false,
 			drawerPinned: false,
 			sidebarPinned: false,
-			mobileOpen: false
+			mobileOpen: false,
 		}
 	}
 
 	handleDrawerToggle = () => {
-		this.setState({ mobileOpen: !this.state.mobileOpen });
+		this.setState({ mobileOpen: !this.state.mobileOpen })
 	}
 
 	componentWillUnmount() {
@@ -88,12 +92,14 @@ class Dashboard extends React.Component {
 				header={this.props.t('ALL_UNITS')}
 				viewModeId='rowsViewUnits'
 				itemType={'AdUnit'}
-				newItemBtn={() => <NewUnitDialog
-					fabButton
-					variant='extended'
-					color='secondary'
-					btnLabel='NEW_UNIT'
-				/>}
+				newItemBtn={() => (
+					<NewUnitDialog
+						fabButton
+						variant='extended'
+						color='secondary'
+						btnLabel='NEW_UNIT'
+					/>
+				)}
 				objModel={AdUnitModel}
 				sortProperties={SORT_PROPERTIES_ITEMS}
 				filterProperties={FILTER_PROPERTIES_ITEMS}
@@ -108,13 +114,15 @@ class Dashboard extends React.Component {
 				header={this.props.t('ALL_CAMPAIGNS')}
 				viewModeId='rowsViewCampaigns'
 				itemType={'Campaign'}
-				newItemBtn={() => <NewCampaignDialog
-					fabButton
-					variant='extended'
-					accent
-					color='secondary'
-					btnLabel='NEW_CAMPAIGN'
-				/>}
+				newItemBtn={() => (
+					<NewCampaignDialog
+						fabButton
+						variant='extended'
+						accent
+						color='secondary'
+						btnLabel='NEW_CAMPAIGN'
+					/>
+				)}
 				objModel={CampaignModel}
 				sortProperties={SORT_PROPERTIES_CAMPAIGN}
 				uiStateId='campaigns'
@@ -129,13 +137,15 @@ class Dashboard extends React.Component {
 				header={this.props.t('ALL_SLOTS')}
 				viewModeId='rowsViewSlots'
 				itemType={'AdSlot'}
-				newItemBtn={() => <NewSlotDialog
-					fabButton
-					variant='extended'
-					accent
-					color='secondary'
-					btnLabel='NEW_SLOT'
-				/>}
+				newItemBtn={() => (
+					<NewSlotDialog
+						fabButton
+						variant='extended'
+						accent
+						color='secondary'
+						btnLabel='NEW_SLOT'
+					/>
+				)}
 				objModel={AdSlotModel}
 				sortProperties={SORT_PROPERTIES_ITEMS}
 				filterProperties={FILTER_PROPERTIES_ITEMS}
@@ -145,11 +155,11 @@ class Dashboard extends React.Component {
 	}
 
 	handleDrawerOpen = () => {
-		this.setState({ open: true });
+		this.setState({ open: true })
 	}
 
 	handleDrawerClose = () => {
-		this.setState({ open: false });
+		this.setState({ open: false })
 	}
 
 	render() {
@@ -167,11 +177,15 @@ class Dashboard extends React.Component {
 		)
 
 		return (
-			<div className={classes.root} >
-				<TopBar side={side} open={this.state.open} handleDrawerToggle={this.handleDrawerToggle} />
+			<div className={classes.root}>
+				<TopBar
+					side={side}
+					open={this.state.open}
+					handleDrawerToggle={this.handleDrawerToggle}
+				/>
 				<Hidden mdUp>
 					<Drawer
-						variant="temporary"
+						variant='temporary'
 						anchor={theme.direction === 'rtl' ? 'right' : 'left'}
 						open={this.state.mobileOpen}
 						onClose={this.handleDrawerToggle}
@@ -185,10 +199,9 @@ class Dashboard extends React.Component {
 						{drawer}
 					</Drawer>
 				</Hidden>
-				<Hidden smDown
-					implementation="css">
+				<Hidden smDown implementation='css'>
 					<Drawer
-						variant="permanent"
+						variant='permanent'
 						open
 						classes={{
 							paper: classes.drawerPaper,
@@ -204,33 +217,85 @@ class Dashboard extends React.Component {
 
 						<Switch locatiom={this.props.location}>
 							TODO: Make things dynamic if easier
-    						<Route auth={this.props.auth} exact path='/dashboard/advertiser/campaigns' component={this.renderCampaigns} />
-							<Route auth={this.props.auth} exact path='/dashboard/advertiser/units' component={this.renderAdUnits} />
-							<Route auth={this.props.auth} exact path='/dashboard/advertiser/Campaign/:itemId' component={Campaign} />
-							<Route auth={this.props.auth} exact path='/dashboard/advertiser/AdUnit/:itemId' component={Unit} />
-							<Route auth={this.props.auth} exact path='/dashboard/publisher/channels' component={this.renderChannels} />
-							<Route auth={this.props.auth} exact path='/dashboard/publisher/slots' component={this.renderAdSlots} />
-							<Route auth={this.props.auth} exact path='/dashboard/publisher/AdSlot/:itemId' component={Slot} />
-							<Route auth={this.props.auth} exact path={'/dashboard/:side/account'} component={Account} />
-							<Route auth={this.props.auth} exact path={'/dashboard/:side/transactions'} component={Transactions} />
-							<Route auth={this.props.auth} exact path='/dashboard/:side' component={DashboardStats} />
-							<Route auth={this.props.auth} component={() => <h1>404 at {side} side</h1>} />
+							<Route
+								auth={this.props.auth}
+								exact
+								path='/dashboard/advertiser/campaigns'
+								component={this.renderCampaigns}
+							/>
+							<Route
+								auth={this.props.auth}
+								exact
+								path='/dashboard/advertiser/units'
+								component={this.renderAdUnits}
+							/>
+							<Route
+								auth={this.props.auth}
+								exact
+								path='/dashboard/advertiser/Campaign/:itemId'
+								component={Campaign}
+							/>
+							<Route
+								auth={this.props.auth}
+								exact
+								path='/dashboard/advertiser/AdUnit/:itemId'
+								component={Unit}
+							/>
+							<Route
+								auth={this.props.auth}
+								exact
+								path='/dashboard/publisher/channels'
+								component={this.renderChannels}
+							/>
+							<Route
+								auth={this.props.auth}
+								exact
+								path='/dashboard/publisher/slots'
+								component={this.renderAdSlots}
+							/>
+							<Route
+								auth={this.props.auth}
+								exact
+								path='/dashboard/publisher/AdSlot/:itemId'
+								component={Slot}
+							/>
+							<Route
+								auth={this.props.auth}
+								exact
+								path={'/dashboard/:side/account'}
+								component={Account}
+							/>
+							<Route
+								auth={this.props.auth}
+								exact
+								path={'/dashboard/:side/transactions'}
+								component={Transactions}
+							/>
+							<Route
+								auth={this.props.auth}
+								exact
+								path='/dashboard/:side'
+								component={DashboardStats}
+							/>
+							<Route
+								auth={this.props.auth}
+								component={() => <h1>404 at {side} side</h1>}
+							/>
 						</Switch>
 					</div>
 				</main>
-
 			</div>
 		)
 	}
 }
 
 Dashboard.propTypes = {
-	actions: PropTypes.object.isRequired
+	actions: PropTypes.object.isRequired,
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

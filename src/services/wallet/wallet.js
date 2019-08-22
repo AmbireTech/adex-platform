@@ -1,6 +1,9 @@
 import { ethers, utils } from 'ethers'
 import { encrypt, decrypt } from 'services/crypto/crypto'
-import { loadFromLocalStorage, saveToLocalStorage } from 'helpers/localStorageHelpers'
+import {
+	loadFromLocalStorage,
+	saveToLocalStorage,
+} from 'helpers/localStorageHelpers'
 
 // Returns 12 random words
 export function getRandomMnemonic() {
@@ -18,7 +21,7 @@ export function generateWallet(mnemonic) {
 		mnemonic,
 		privateKey: wallet.privateKey,
 		address: wallet.address,
-		path: wallet.path
+		path: wallet.path,
 	}
 }
 
@@ -37,7 +40,11 @@ function decrData({ email, password, data }) {
 	return decr
 }
 
-export function createLocalWallet({ email = '', password = '', mnemonic = '' }) {
+export function createLocalWallet({
+	email = '',
+	password = '',
+	mnemonic = '',
+}) {
 	const walletData = generateWallet(mnemonic)
 	const key = encrKey({ email, password })
 	const data = encrData({ data: walletData, email, password })
@@ -50,7 +57,8 @@ export function addDataToWallet({
 	email = '',
 	password = '',
 	dataKey = '',
-	dataValue = '' }) {
+	dataValue = '',
+}) {
 	if (dataKey === 'data') {
 		throw new Error('Invalid data key')
 	}
@@ -64,11 +72,11 @@ export function addDataToWallet({
 
 	const data = encrData({ data: dataValue, email, password })
 	wallet[dataKey] = data
-	
+
 	saveToLocalStorage(wallet, key)
 }
 
-export function getRecoveryWalletData({email, password}) {
+export function getRecoveryWalletData({ email, password }) {
 	if (!email || !password) {
 		return null
 	}
@@ -78,7 +86,7 @@ export function getRecoveryWalletData({email, password}) {
 
 	return {
 		key,
-		wallet
+		wallet,
 	}
 }
 
@@ -91,16 +99,15 @@ export function getLocalWallet({ email, password }) {
 	const wallet = loadFromLocalStorage(key)
 
 	if (wallet) {
-		const data = Object.keys(wallet)
-			.reduce((props, key) => {
-				props[key] = decrData({
-					data: wallet[key],
-					email,
-					password
-				})
+		const data = Object.keys(wallet).reduce((props, key) => {
+			props[key] = decrData({
+				data: wallet[key],
+				email,
+				password,
+			})
 
-				return props
-			}, {})
+			return props
+		}, {})
 
 		return data
 	} else {
