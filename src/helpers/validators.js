@@ -115,4 +115,3 @@ export const validEthAddress = async ({
 	}
 	return { msg }
 }
-
