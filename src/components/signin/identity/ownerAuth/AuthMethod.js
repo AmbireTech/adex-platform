@@ -8,12 +8,11 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
 class AuthMethod extends Component {
-
 	constructor(props) {
 		super(props)
 		this.state = {
 			tabIndex: 0,
-			bids: []
+			bids: [],
 		}
 	}
 
@@ -25,25 +24,11 @@ class AuthMethod extends Component {
 		const { classes, location } = this.props
 		const { search } = location || {}
 		return (
-			<Grid
-				container
-				spacing={2}
-				direction='row'
-				alignContent='flex-start'
-			>
-				<Grid
-					item xs={12}
-					className={classes.tabsContainer}
-				>
-					{(search === '?metamask') &&
-						<AuthMetamask />
-					}
-					{(search === '?trezor') &&
-						<AuthTrezor />
-					}
-					{(search === '?ledger') &&
-						<AuthLedger />
-					}
+			<Grid container spacing={2} direction='row' alignContent='flex-start'>
+				<Grid item xs={12} className={classes.tabsContainer}>
+					{search === '?metamask' && <AuthMetamask />}
+					{search === '?trezor' && <AuthTrezor />}
+					{search === '?ledger' && <AuthLedger />}
 				</Grid>
 			</Grid>
 		)

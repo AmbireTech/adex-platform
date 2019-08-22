@@ -15,7 +15,7 @@ const autocompleteLocationsSingleSelect = () => {
 	return constants.AllCountries.map(country => {
 		return {
 			label: country.name,
-			value: country.value
+			value: country.value,
 		}
 	})
 }
@@ -24,7 +24,7 @@ const autocompleteGendersSingleSelect = () => {
 	return constants.Genders.map(gender => {
 		return {
 			label: translate(gender.split('_')[1]),
-			value: gender
+			value: gender,
 		}
 	})
 }
@@ -40,23 +40,22 @@ const SOURCES = {
 const styles = {
 	slider: {
 		padding: '22px 0px',
-	}
+	},
 }
 
-const SourcesSelect = Object.keys(SOURCES)
-	.map(key => {
-		return {
-			value: {
-				key: key, // FOR DROPDOWN
-				source: key,
-				collection: SOURCES[key].collection,
-				target: { tag: '', score: 0 },
-				label: `TARGET_LABEL_${key.toUpperCase()}`,
-				placeholder: `TARGET_LABEL_${key.toUpperCase()}`
-			},
-			label: `ADD_NEW_${key.toUpperCase()}_TARGET`
-		}
-	})
+const SourcesSelect = Object.keys(SOURCES).map(key => {
+	return {
+		value: {
+			key: key, // FOR DROPDOWN
+			source: key,
+			collection: SOURCES[key].collection,
+			target: { tag: '', score: 0 },
+			label: `TARGET_LABEL_${key.toUpperCase()}`,
+			placeholder: `TARGET_LABEL_${key.toUpperCase()}`,
+		},
+		label: `ADD_NEW_${key.toUpperCase()}_TARGET`,
+	}
+})
 
 class CampaignTargeting extends Component {
 	constructor(props) {
@@ -64,7 +63,7 @@ class CampaignTargeting extends Component {
 
 		const { targets } = props.newItem.temp || {}
 		this.state = {
-			targets: targets || []
+			targets: targets || [],
 		}
 
 		// Call it 1 step before finance
@@ -72,16 +71,15 @@ class CampaignTargeting extends Component {
 	}
 
 	updateNewItemCollections(targets) {
-		const collections = [...targets]
-			.reduce((all, tg) => {
-				const newCollection = ((all[tg.collection] || []))
-				// NOTE: just skip empty tags
-				if (!!tg.target.tag) {
-					newCollection.push(tg.target)
-				}
-				all[tg.collection] = newCollection
-				return all
-			}, {})
+		const collections = [...targets].reduce((all, tg) => {
+			const newCollection = all[tg.collection] || []
+			// NOTE: just skip empty tags
+			if (!!tg.target.tag) {
+				newCollection.push(tg.target)
+			}
+			all[tg.collection] = newCollection
+			return all
+		}, {})
 
 		const { temp } = this.props.newItem
 		const newTemp = { ...temp }
@@ -104,7 +102,7 @@ class CampaignTargeting extends Component {
 		this.setState({ targets: newTargets })
 	}
 
-	newTarget = (target) => {
+	newTarget = target => {
 		const newTargets = [...this.state.targets]
 		const newTarget = { ...target }
 		newTarget.key = newTargets.length
@@ -121,25 +119,17 @@ class CampaignTargeting extends Component {
 		index,
 		target,
 		t,
-		classes
+		classes,
 	}) => {
 		return (
-			<Grid
-				container
-				spacing={2}
-			>
-				<Grid item xs={12} md={6} >
+			<Grid container spacing={2}>
+				<Grid item xs={12} md={6}>
 					<Autocomplete
 						id={'target-' + index}
-						direction="auto"
+						direction='auto'
 						openOnClick
-						onChange={(newValue) =>
-							this.handleTargetChange(
-								index,
-								'tag',
-								newValue,
-								collection
-							)
+						onChange={newValue =>
+							this.handleTargetChange(index, 'tag', newValue, collection)
 						}
 						label={label}
 						placeholder={placeholder}
@@ -150,37 +140,29 @@ class CampaignTargeting extends Component {
 						allowCreate={false}
 					/>
 				</Grid>
-				<Grid item xs={12} md={6} >
+				<Grid item xs={12} md={6}>
 					<div>
-						<Typography
-							id={`target-score-${index}`}
-						>
+						<Typography id={`target-score-${index}`}>
 							{/*TODO: Translate target name*/}
-							{t('TARGET_SCORE_LABEL',
-								{
-									args: [target.score]
-								})}
+							{t('TARGET_SCORE_LABEL', {
+								args: [target.score],
+							})}
 						</Typography>
 						<Slider
 							classes={{ container: classes.slider }}
 							aria-labelledby={`target-score-${index}`}
-							min={0} max={100}
+							min={0}
+							max={100}
 							step={1}
 							disabled={!target.tag}
 							value={target.score}
 							onChange={(ev, newValue) =>
-								this.handleTargetChange(
-									index,
-									'score',
-									newValue,
-									collection
-								)
+								this.handleTargetChange(index, 'score', newValue, collection)
 							}
 						/>
 					</div>
 				</Grid>
-
-			</Grid >
+			</Grid>
 		)
 	}
 
@@ -188,7 +170,7 @@ class CampaignTargeting extends Component {
 		const {
 			t,
 			// newItem,
-			classes
+			classes,
 		} = this.props
 		// const { targeting, tags } = newItem
 
@@ -196,36 +178,32 @@ class CampaignTargeting extends Component {
 
 		return (
 			<div>
-				<Grid
-					container
-					spacing={1}
-				>
+				<Grid container spacing={1}>
 					<Grid item sm={12}>
-						{[...targets].map(({
-							source,
-							collection,
-							label,
-							placeholder,
-							target = {}
-						} = {}, index) =>
-							<this.targetTag
-								key={index} // TODO
-								label={t(label)}
-								placeholder={t(placeholder)}
-								index={index}
-								source={SOURCES[source].src}
-								collection={collection}
-								target={target}
-								t={t}
-								classes={classes}
-							/>
+						{[...targets].map(
+							(
+								{ source, collection, label, placeholder, target = {} } = {},
+								index
+							) => (
+								<this.targetTag
+									key={index} // TODO
+									label={t(label)}
+									placeholder={t(placeholder)}
+									index={index}
+									source={SOURCES[source].src}
+									collection={collection}
+									target={target}
+									t={t}
+									classes={classes}
+								/>
+							)
 						)}
 					</Grid>
 					<Grid item sm={12}>
 						<Dropdown
 							variant='filled'
 							fullWidth
-							onChange={(target) => {
+							onChange={target => {
 								this.newTarget({ ...target })
 							}}
 							source={[...SourcesSelect]}
@@ -236,7 +214,7 @@ class CampaignTargeting extends Component {
 						/>
 					</Grid>
 				</Grid>
-			</div >
+			</div>
 		)
 	}
 }
@@ -250,6 +228,8 @@ CampaignTargeting.propTypes = {
 	nameHelperTxt: PropTypes.string,
 }
 
-const NewCampaignTargeting = NewCampaignHoc(withStyles(styles)(CampaignTargeting))
+const NewCampaignTargeting = NewCampaignHoc(
+	withStyles(styles)(CampaignTargeting)
+)
 
 export default Translate(NewCampaignTargeting)

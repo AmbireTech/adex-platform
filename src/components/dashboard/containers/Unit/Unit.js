@@ -13,7 +13,7 @@ export class Unit extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			closeDialog: false
+			closeDialog: false,
 		}
 	}
 	// shouldComponentUpdate(nextProps, nextState) {
@@ -22,10 +22,9 @@ export class Unit extends Component {
 	//     return diffProps || diffState
 	// }
 	render() {
-
 		const { item, t, ...rest } = this.props
 
-		if (!item) return (<h1>Unit '404'</h1>)
+		if (!item) return <h1>Unit '404'</h1>
 
 		return (
 			<div>
@@ -39,7 +38,8 @@ export class Unit extends Component {
 							targets={item.targeting}
 							t={t}
 							subHeader={true}
-						/>}
+						/>
+					}
 				/>
 			</div>
 		)
@@ -49,18 +49,18 @@ export class Unit extends Component {
 Unit.propTypes = {
 	actions: PropTypes.object.isRequired,
 	item: PropTypes.object.isRequired,
-};
+}
 
 function mapStateToProps(state, props) {
 	return {
 		objModel: AdUnit,
-		itemType: 'AdUnit'
+		itemType: 'AdUnit',
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

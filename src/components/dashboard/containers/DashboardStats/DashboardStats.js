@@ -21,12 +21,11 @@ const { BidStatesLabels, BID_STATES } = ExchangeConstants
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#EBE', '#FAC']
 
 export class DashboardStats extends Component {
-
 	constructor(props) {
 		super(props)
 		this.state = {
 			bidsData: [],
-			bidsStats: {}
+			bidsStats: {},
 		}
 	}
 
@@ -42,44 +41,60 @@ export class DashboardStats extends Component {
 		this.props.actions.updateNav('navTitle', this.props.t('DASHBOARD'))
 	}
 
-	handleTabChange = (index) => {
+	handleTabChange = index => {
 		this.setState({ tabIndex: index })
 	}
 
 	mapBidsToStats = (bids, initialValue) => {
-		return bids.reduce((memo, bid) => {
-			memo.count += 1
-			memo.amount += parseInt(bid._amount, 10)
+		return bids.reduce(
+			(memo, bid) => {
+				memo.count += 1
+				memo.amount += parseInt(bid._amount, 10)
 
-			return memo
-		}, { amount: 0, count: 0 })
+				return memo
+			},
+			{ amount: 0, count: 0 }
+		)
 	}
 
-	mapClosedBidsToStats = (bids) => {
-		return bids.reduce((memo, bid) => {
-			switch (bid._state) {
-			case BID_STATES.Canceled.id:
-				memo.canceled.count += 1
-				memo.canceled.amount += parseInt(bid._amount, 10)
-				break
-			case BID_STATES.Expired.id:
-				memo.expired.count += 1
-				memo.expired.amount += parseInt(bid._amount, 10)
-				break
-			case BID_STATES.Completed.id:
-				memo.completed.count += 1
-				memo.completed.amount += parseInt(bid._amount, 10)
-				break
-			default:
-				break
-			}
+	mapClosedBidsToStats = bids => {
+		return bids.reduce(
+			(memo, bid) => {
+				switch (bid._state) {
+					case BID_STATES.Canceled.id:
+						memo.canceled.count += 1
+						memo.canceled.amount += parseInt(bid._amount, 10)
+						break
+					case BID_STATES.Expired.id:
+						memo.expired.count += 1
+						memo.expired.amount += parseInt(bid._amount, 10)
+						break
+					case BID_STATES.Completed.id:
+						memo.completed.count += 1
+						memo.completed.amount += parseInt(bid._amount, 10)
+						break
+					default:
+						break
+				}
 
-			return memo
-		}, { completed: { amount: 0, count: 0 }, canceled: { amount: 0, count: 0 }, expired: { amount: 0, count: 0 } })
+				return memo
+			},
+			{
+				completed: { amount: 0, count: 0 },
+				canceled: { amount: 0, count: 0 },
+				expired: { amount: 0, count: 0 },
+			}
+		)
 	}
 
 	getLabel = (state, count, extraLabel) => {
-		return this.props.t(BidStatesLabels[state]) + (extraLabel ? extraLabel : '') + ' [' + count + ']'
+		return (
+			this.props.t(BidStatesLabels[state]) +
+			(extraLabel ? extraLabel : '') +
+			' [' +
+			count +
+			']'
+		)
 	}
 
 	mapData = ({ action = [], active = [], closed = [], open = [] }) => {
@@ -95,7 +110,13 @@ export class DashboardStats extends Component {
 
 		stats.action = this.mapBidsToStats(action)
 		const actionCount = stats.action.count
-		PieLabels.push(this.getLabel(BID_STATES.Accepted.id, actionCount, ' (' + this.props.t('BIDS_READY_TO_VERIFY') + ')'))
+		PieLabels.push(
+			this.getLabel(
+				BID_STATES.Accepted.id,
+				actionCount,
+				' (' + this.props.t('BIDS_READY_TO_VERIFY') + ')'
+			)
+		)
 		PieDataCount.push(actionCount)
 		PieDataAmount.push(stats.action.amount)
 		totalCount += actionCount
@@ -103,7 +124,13 @@ export class DashboardStats extends Component {
 
 		stats.active = this.mapBidsToStats(active)
 		const activeCount = stats.active.count
-		PieLabels.push(this.getLabel(BID_STATES.Accepted.id, activeCount, ' (' + this.props.t('BIDS_ACTIVE') + ')'))
+		PieLabels.push(
+			this.getLabel(
+				BID_STATES.Accepted.id,
+				activeCount,
+				' (' + this.props.t('BIDS_ACTIVE') + ')'
+			)
+		)
 		PieDataCount.push(activeCount)
 		PieDataAmount.push(stats.active.amount)
 		totalCount += activeCount
@@ -143,7 +170,7 @@ export class DashboardStats extends Component {
 		stats.pieData = {
 			labels: PieLabels,
 			data: PieDataCount,
-			totalCount: totalCount
+			totalCount: totalCount,
 		}
 
 		stats.tabs = tabs
@@ -160,7 +187,7 @@ export class DashboardStats extends Component {
 					pieData={stats.pieData}
 					t={t}
 					chartTitle={t('TITLE_STATS_BY_BID_STATUS')}
-					onPieClick={(ev) => {
+					onPieClick={ev => {
 						if (ev && !isNaN(ev._index)) {
 							this.goToBids(stats.tabs[ev._index])
 						}
@@ -175,7 +202,7 @@ export class DashboardStats extends Component {
 		const {
 			t,
 			// side,
-			account
+			account,
 		} = this.props
 		// const spentEarned = side === 'publisher' ? 'LABEL_TOTAL_REVENUE' : 'LABEL_TOTAL_EXPENSES'
 
@@ -189,8 +216,7 @@ export class DashboardStats extends Component {
 			// identityAddress,
 			identityBalanceDai,
 			outstandingBalanceDai,
-			totalIdentityBalanceDai
-
+			totalIdentityBalanceDai,
 		} = formatted
 		const classes = this.props.classes
 		return (
@@ -242,11 +268,10 @@ export class DashboardStats extends Component {
 					linkCard
 					onClick={this.goToAccount}
 					subtitle={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
-						args: [identityBalanceDai, outstandingBalanceDai]
+						args: [identityBalanceDai, outstandingBalanceDai],
 					})}
 					title={totalIdentityBalanceDai + ' DAI'}
-				>
-				</StatsCard>
+				></StatsCard>
 			</div>
 		)
 	}
@@ -257,16 +282,16 @@ export class DashboardStats extends Component {
 			// sideBids,
 			classes,
 			t,
-			account
+			account,
 		} = this.props
 		if (side !== 'advertiser' && side !== 'publisher') {
-			return (
-				<SideSelect active={true} />
-			)
+			return <SideSelect active={true} />
 		}
 
-		const aggregates = (account && account.stats && account.stats.raw) ?
-			account.stats.raw.aggregates : null
+		const aggregates =
+			account && account.stats && account.stats.raw
+				? account.stats.raw.aggregates
+				: null
 
 		// const stats = this.mapData(sideBids)
 
@@ -274,14 +299,16 @@ export class DashboardStats extends Component {
 			<div>
 				<Grid container>
 					<Grid item md={12} lg={12} xs={12}>
-						<Card
-							className={classnames(classes.dashboardCardBody)}
-						>
+						<Card className={classnames(classes.dashboardCardBody)}>
 							<CardContent>
-								{aggregates ?
-									<PublisherStats aggregates={account.stats.raw.aggregates} t={t} />
-									: t('NO_STATS_YET')
-								}
+								{aggregates ? (
+									<PublisherStats
+										aggregates={account.stats.raw.aggregates}
+										t={t}
+									/>
+								) : (
+									t('NO_STATS_YET')
+								)}
 							</CardContent>
 						</Card>
 					</Grid>
@@ -291,7 +318,6 @@ export class DashboardStats extends Component {
 						/>
 					</Grid>
 				</Grid>
-
 			</div>
 		)
 	}
@@ -307,13 +333,13 @@ function mapStateToProps(state, props) {
 
 	return {
 		account: persist.account,
-		side: memory.nav.side
+		side: memory.nav.side,
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

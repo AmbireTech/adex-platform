@@ -5,7 +5,7 @@ export const styles = () => {
 			height: 'auto',
 			maxHeight: 70,
 			maxWidth: 180,
-			cursor: 'pointer'
-		}
+			cursor: 'pointer',
+		},
 	}
 }

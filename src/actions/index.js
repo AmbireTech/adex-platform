@@ -5,6 +5,7 @@ import * as accountActions from './accountActions'
 import * as identityActions from './identityActions'
 import * as bidActions from './bidActions'
 import * as transactionActions from './transactionActions'
+import * as validationActions from './validationActions'
 
 export default {
 	...common,
@@ -13,5 +14,6 @@ export default {
 	...accountActions,
 	...identityActions,
 	...bidActions,
-	...transactionActions
+	...transactionActions,
+	...validationActions,
 }

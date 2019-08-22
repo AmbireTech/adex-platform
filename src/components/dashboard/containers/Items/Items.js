@@ -7,7 +7,6 @@ import ItemsList from 'components/dashboard/containers/ItemsList'
 import Translate from 'components/translate/Translate'
 
 class Items extends Component {
-
 	componentWillMount() {
 		this.props.actions.updateNav('navTitle', this.props.header)
 	}
@@ -40,7 +39,7 @@ Items.propTypes = {
 	header: PropTypes.string.isRequired,
 	objModel: PropTypes.func.isRequired,
 	itemType: PropTypes.string.isRequired,
-	sortProperties: PropTypes.array.isRequired
+	sortProperties: PropTypes.array.isRequired,
 }
 
 function mapStateToProps(state, props) {
@@ -54,7 +53,7 @@ function mapStateToProps(state, props) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

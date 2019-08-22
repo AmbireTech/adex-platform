@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import NewAdSlotHoc from './NewAdSlotHoc'
 import Translate from 'components/translate/Translate'
@@ -14,25 +14,23 @@ import { schemas, Joi } from 'adex-models'
 
 const { adUnitPost } = schemas
 
-
-const getWidAndHightFromType = (type) => {
+const getWidAndHightFromType = type => {
 	type = type || 'legacy_300x250'
 	if (!type) {
 		return {
 			width: 0,
-			height: 0
+			height: 0,
 		}
 	}
 
-	const sizes = (type.split('_')[1]).split('x')
+	const sizes = type.split('_')[1].split('x')
 	return {
 		width: parseInt(sizes[0], 10),
-		height: parseInt(sizes[1], 10)
+		height: parseInt(sizes[1], 10),
 	}
 }
 
 class AdSlotMedia extends Component {
-
 	componentDidMount() {
 		const { newItem } = this.props
 		const { temp, targetUrl } = newItem
@@ -44,43 +42,40 @@ class AdSlotMedia extends Component {
 		}
 	}
 
-	validateImage = (useFallback) => {
+	validateImage = useFallback => {
 		const { newItem, validate } = this.props
 		const { type, temp } = newItem
 		const { tempUrl } = temp
 
-		const { width, height } =
-			getWidAndHightFromType(type)
+		const { width, height } = getWidAndHightFromType(type)
 
 		const isValidMediaSize =
-			!useFallback || (
-				tempUrl &&
+			!useFallback ||
+			(tempUrl &&
 				// TODO: validate ration not exact
-				(temp.width === width) &&
-				(temp.height === height)
-			)
+				temp.width === width &&
+				temp.height === height)
 
 		validate('temp', {
 			isValid: isValidMediaSize,
 			err: {
 				msg: 'ERR_IMG_SIZE_EXACT',
-				args: [width, height, 'px']
+				args: [width, height, 'px'],
 			},
-			dirty: true
+			dirty: true,
 		})
 	}
 
 	validateFallbackUrl = (targetUrl, dirty, useFallback) => {
 		const result = Joi.validate(targetUrl, adUnitPost.targetUrl)
-		this.props.validate('targetUrl',
-			{
-				isValid: !useFallback || !result.error,
-				err: { msg: result.error ? result.error.message : '' },
-				dirty: dirty
-			})
+		this.props.validate('targetUrl', {
+			isValid: !useFallback || !result.error,
+			err: { msg: result.error ? result.error.message : '' },
+			dirty: dirty,
+		})
 	}
 
-	handleFallbackChange = (useFallback) => {
+	handleFallbackChange = useFallback => {
 		const { temp, targetUrl } = this.props.newItem
 		const newTemp = { ...temp }
 		newTemp.useFallback = useFallback
@@ -102,7 +97,7 @@ class AdSlotMedia extends Component {
 			t,
 			validateMedia,
 			invalidFields,
-			handleChange
+			handleChange,
 		} = this.props
 		const { targetUrl, type, temp } = newItem
 		const useFallback = temp.useFallback || false
@@ -112,30 +107,21 @@ class AdSlotMedia extends Component {
 
 		return (
 			<div>
-				<Grid
-					container
-					spacing={2}
-				>
+				<Grid container spacing={2}>
 					<Grid item xs={12}>
 						<FormControlLabel
 							control={
 								<Switch
 									checked={useFallback}
-									onChange={ev =>
-										this.handleFallbackChange(ev.target.checked)
-									}
-								/>}
+									onChange={ev => this.handleFallbackChange(ev.target.checked)}
+								/>
+							}
 							label={t('USE_FALLBACK_DATA')}
 						/>
-						<FormHelperText>
-							{t('USE_FALLBACK_DATA_INFO')}
-						</FormHelperText>
+						<FormHelperText>{t('USE_FALLBACK_DATA_INFO')}</FormHelperText>
 					</Grid>
 					<Collapse in={useFallback}>
-						<Grid
-							container
-							spacing={2}
-						>
+						<Grid container spacing={2}>
 							<Grid item xs={12}>
 								<TextField
 									fullWidth
@@ -143,14 +129,16 @@ class AdSlotMedia extends Component {
 									required
 									label={t('targetUrl', { isProp: true })}
 									value={targetUrl}
-									onChange={(ev) =>
-										handleChange('targetUrl', ev.target.value)
+									onChange={ev => handleChange('targetUrl', ev.target.value)}
+									onBlur={() =>
+										this.validateFallbackUrl(targetUrl, true, useFallback)
 									}
-									onBlur={() => this.validateFallbackUrl(targetUrl, true, useFallback)}
-									onFocus={() => this.validateFallbackUrl(targetUrl, false, useFallback)}
+									onFocus={() =>
+										this.validateFallbackUrl(targetUrl, false, useFallback)
+									}
 									error={errFallbackUrl && !!errFallbackUrl.dirty}
 									helperText={
-										(errFallbackUrl && !!errFallbackUrl.dirty)
+										errFallbackUrl && !!errFallbackUrl.dirty
 											? errFallbackUrl.errMsg
 											: t('FALLBACKTARGETURL_HELPER')
 									}
@@ -160,40 +148,36 @@ class AdSlotMedia extends Component {
 								<ImgForm
 									label={t('SLOT_FALLBACK_MEDIA_LABEL')}
 									imgSrc={temp.tempUrl || ''}
-									onChange={
-										validateMedia.bind(this,
-											{
-												propsName: 'temp',
-												widthTarget: width,
-												heightTarget: height,
-												msg: 'ERR_IMG_SIZE_EXACT',
-												exact: true,
-												required: true,
-												onChange: this.handleImgChange
-											})
-									}
-									additionalInfo={t('SLOT_FALLBACK_MEDIA_INFO',
-										{
-											args: [width, height, 'px']
-										})}
+									onChange={validateMedia.bind(this, {
+										propsName: 'temp',
+										widthTarget: width,
+										heightTarget: height,
+										msg: 'ERR_IMG_SIZE_EXACT',
+										exact: true,
+										required: true,
+										onChange: this.handleImgChange,
+									})}
+									additionalInfo={t('SLOT_FALLBACK_MEDIA_INFO', {
+										args: [width, height, 'px'],
+									})}
 									errMsg={errImg ? errImg.errMsg : ''}
 									size={{
 										width: width,
-										height: height
+										height: height,
 									}}
 								/>
 							</Grid>
 						</Grid>
-					</Collapse >
+					</Collapse>
 				</Grid>
-			</div >
+			</div>
 		)
 	}
 }
 
 AdSlotMedia.propTypes = {
 	title: PropTypes.string,
-	newItem: PropTypes.object.isRequired
+	newItem: PropTypes.object.isRequired,
 }
 
 const NewAdSlotMedia = NewAdSlotHoc(ValidImageHoc(AdSlotMedia))

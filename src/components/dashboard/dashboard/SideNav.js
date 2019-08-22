@@ -29,14 +29,23 @@ const RRListItem = withReactRouterLink(ListItem)
 const { ETH_SCAN_ADDR_HOST } = process.env
 
 class SideNav extends Component {
-
 	shouldComponentUpdate(nextProps, nextState) {
 		let langChanged = this.props.language !== nextProps.language
 		let sideChanged = this.props.side !== nextProps.side
-		let locationChanged = this.props.location.pathname !== nextProps.location.pathname
-		let transactionsChanged = (this.props.transactions.pendingTxs || []).length !== (nextProps.transactions.pendingTxs || []).length
-		let bidsAwaitingActionChanged = this.bidsAwaitingActionCount !== nextProps.bidsAwaitingActionCount
-		return langChanged || sideChanged || locationChanged || transactionsChanged || bidsAwaitingActionChanged
+		let locationChanged =
+			this.props.location.pathname !== nextProps.location.pathname
+		let transactionsChanged =
+			(this.props.transactions.pendingTxs || []).length !==
+			(nextProps.transactions.pendingTxs || []).length
+		let bidsAwaitingActionChanged =
+			this.bidsAwaitingActionCount !== nextProps.bidsAwaitingActionCount
+		return (
+			langChanged ||
+			sideChanged ||
+			locationChanged ||
+			transactionsChanged ||
+			bidsAwaitingActionChanged
+		)
 	}
 
 	render() {
@@ -45,7 +54,7 @@ class SideNav extends Component {
 			identity,
 			t,
 			// transactions,
-			classes
+			classes,
 		} = this.props
 		if (side !== 'advertiser' && side !== 'publisher') {
 			return null
@@ -54,18 +63,18 @@ class SideNav extends Component {
 		// TODO: test location
 		const location = this.props.location.pathname.split('/')[3]
 		const isAdvertiser = side === 'advertiser'
-		const items = (isAdvertiser ? 'units' : 'slots')
-		const itemsIcon = (isAdvertiser ? 'format_list_bulleted' : 'format_list_bulleted')
+		const items = isAdvertiser ? 'units' : 'slots'
+		const itemsIcon = isAdvertiser
+			? 'format_list_bulleted'
+			: 'format_list_bulleted'
 		// const pendingTrsCount = (transactions.pendingTxs || []).length
 
 		return (
-			<div
-				className={classes.navigation}
-			>
+			<div className={classes.navigation}>
 				<List
 					classes={{
 						padding: classes.sntPadding,
-						root: classes.navListRoot
+						root: classes.navListRoot,
 					}}
 					className={classes.navList}
 					component='nav'
@@ -75,14 +84,9 @@ class SideNav extends Component {
 							className={classnames(classes.toolbar, classes.sideNavToolbar)}
 						>
 							<ListItem>
-								<AdexIconTxt
-									className={classes.icon}
-								/>
+								<AdexIconTxt className={classes.icon} />
 							</ListItem>
-							<SideSwitch
-								side={side}
-								t={t}
-							/>
+							<SideSwitch side={side} t={t} />
 						</div>
 						<ListDivider />
 						<RRListItem
@@ -95,14 +99,15 @@ class SideNav extends Component {
 							</ListItemIcon>
 							<ListItemText primary={t('DASHBOARD')} />
 						</RRListItem>
-						<ListDivider
-						/>
-						{side === 'advertiser' &&
+						<ListDivider />
+						{side === 'advertiser' && (
 							<>
 								<RRListItem
 									button
 									to={{ pathname: '/dashboard/advertiser/campaigns' }}
-									className={classnames({ [classes.active]: location === 'campaigns' })}
+									className={classnames({
+										[classes.active]: location === 'campaigns',
+									})}
 								>
 									<ListItemIcon>
 										<CampaignIcon />
@@ -111,7 +116,7 @@ class SideNav extends Component {
 								</RRListItem>
 								<ListDivider />
 							</>
-						}
+						)}
 						<RRListItem
 							button
 							to={{ pathname: '/dashboard/' + side + '/' + items }}
@@ -122,8 +127,7 @@ class SideNav extends Component {
 							</ListItemIcon>
 							<ListItemText primary={t(items.toUpperCase())} />
 						</RRListItem>
-						<ListDivider
-						/>
+						<ListDivider />
 
 						{/* <RRListItem
 							button
@@ -146,10 +150,11 @@ class SideNav extends Component {
                         </RRListItem> */}
 					</div>
 					<div>
-						<Anchor target='_blank' href='https://medium.com/adex-network-tips-and-tricks' >
-							<ListItem
-								button
-							>
+						<Anchor
+							target='_blank'
+							href='https://medium.com/adex-network-tips-and-tricks'
+						>
+							<ListItem button>
 								<ListItemIcon>
 									<HelpOutlineIcon />
 								</ListItemIcon>
@@ -158,9 +163,7 @@ class SideNav extends Component {
 						</Anchor>
 
 						<Anchor target='_blank' href={`${ETH_SCAN_ADDR_HOST + identity}`}>
-							<ListItem
-								button
-							>
+							<ListItem button>
 								<ListItemIcon>
 									<SwapHorizontalIcon />
 								</ListItemIcon>
@@ -171,7 +174,9 @@ class SideNav extends Component {
 						<RRListItem
 							button
 							to={{ pathname: '/dashboard/' + side + '/account' }}
-							className={classnames({ [classes.active]: location === 'account' })}
+							className={classnames({
+								[classes.active]: location === 'account',
+							})}
 						>
 							<ListItemIcon>
 								<AccountBoxIcon />
@@ -180,11 +185,11 @@ class SideNav extends Component {
 						</RRListItem>
 					</div>
 				</List>
-				<div
-					className={classes.version}
-				>
+				<div className={classes.version}>
 					<div className={classes.adxLink}>
-						<small> &copy; {(new Date()).getFullYear()}  &nbsp;
+						<small>
+							{' '}
+							&copy; {new Date().getFullYear()} &nbsp;
 							<Anchor
 								className={classes.adxLink}
 								target='_blank'
@@ -199,7 +204,9 @@ class SideNav extends Component {
 							<Anchor
 								className={classes.adxLink}
 								target='_blank'
-								href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_TOKEN_ADDR}
+								href={
+									process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_TOKEN_ADDR
+								}
 							>
 								AdEx (ADX) Token
 							</Anchor>
@@ -209,7 +216,9 @@ class SideNav extends Component {
 							<Anchor
 								className={classes.adxLink}
 								target='_blank'
-								href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADEX_CORE_ADDR}
+								href={
+									process.env.ETH_SCAN_ADDR_HOST + process.env.ADEX_CORE_ADDR
+								}
 							>
 								AdExCore
 							</Anchor>
@@ -227,28 +236,28 @@ class SideNav extends Component {
 						</small>
 					</div>
 				</div>
-			</div >
+			</div>
 		)
 	}
 }
 
 SideNav.propTypes = {
-	actions: PropTypes.object.isRequired
+	actions: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state) {
-	const { persist, /*memory*/ } = state
+	const { persist /*memory*/ } = state
 
 	return {
 		// account: persist.account,
 		transactions: persist.web3Transactions[persist.account._addr] || {},
-		identity: persist.account.identity.address
+		identity: persist.account.identity.address,
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

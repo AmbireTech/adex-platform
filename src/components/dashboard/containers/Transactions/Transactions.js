@@ -23,15 +23,11 @@ const SORT_PROPERTIES = [
 	{ value: 'id', label: '' },
 ]
 
-const TableCell = ({ children, ...rest }) =>
-	<TableCellMui
-		{...rest}
-	>
-		{!!children && children}
-	</TableCellMui >
+const TableCell = ({ children, ...rest }) => (
+	<TableCellMui {...rest}>{!!children && children}</TableCellMui>
+)
 
 class Transactions extends Component {
-
 	componentWillMount() {
 		this.props.actions.updateNav('navTitle', this.props.t('TRANSACTIONS'))
 	}
@@ -51,7 +47,7 @@ class Transactions extends Component {
 		)
 	}
 
-	// TODO: make something common with unit bids 
+	// TODO: make something common with unit bids
 	renderTableRow(transaction, index, { to, selected }) {
 		if (!transaction) return null
 
@@ -60,22 +56,25 @@ class Transactions extends Component {
 		return (
 			<TableRow key={transaction.id || index}>
 				<TableCell> {t(transaction.txMethod)} </TableCell>
-				<TableCell
-					className={classnames(classes.compactCol)}
-				>
+				<TableCell className={classnames(classes.compactCol)}>
 					<Typography noWrap>
-						<Anchor target='_blank' href={process.env.ETH_SCAN_TX_HOST + transaction.id} > {transaction.id} </Anchor>
+						<Anchor
+							target='_blank'
+							href={process.env.ETH_SCAN_TX_HOST + transaction.id}
+						>
+							{' '}
+							{transaction.id}{' '}
+						</Anchor>
 					</Typography>
 				</TableCell>
 				<TableCell> {transaction.nonce} </TableCell>
-				<TableCell> {(transaction.status)} </TableCell>
+				<TableCell> {transaction.status} </TableCell>
 				<TableCell> {formatDateTime(transaction.sendingTime)} </TableCell>
-
-			</TableRow >
+			</TableRow>
 		)
 	}
 
-	renderRows = (items) =>
+	renderRows = items => (
 		<Rows
 			multiSelectable={false}
 			selectable={false}
@@ -85,13 +84,16 @@ class Transactions extends Component {
 			rowRenderer={this.renderTableRow.bind(this)}
 			tableHeadRenderer={this.renderTableHead.bind(this)}
 		/>
+	)
 
-	searchMatch = (transaction) => {
-		return (transaction.id || '') +
+	searchMatch = transaction => {
+		return (
+			(transaction.id || '') +
 			(transaction.status || '') +
 			(transaction.bidId || '') +
 			(transaction.state || '') +
 			(transaction.sendingTime || '')
+		)
 	}
 
 	render() {
@@ -99,7 +101,7 @@ class Transactions extends Component {
 		const { transactions } = this.props
 
 		const reduced = Object.keys(transactions).reduce((memo, key) => {
-			if (key && ((key.toString()).length === 66)) {
+			if (key && key.toString().length === 66) {
 				const itm = { ...transactions[key] }
 				itm.id = key
 				memo.push(itm)
@@ -133,7 +135,7 @@ class Transactions extends Component {
 Transactions.propTypes = {
 	actions: PropTypes.object.isRequired,
 	account: PropTypes.object.isRequired,
-	transactions: PropTypes.object.isRequired
+	transactions: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state, props) {
@@ -145,13 +147,13 @@ function mapStateToProps(state, props) {
 		transactions: {
 			...(web3Transactions[account.wallet.address] || {}),
 			...(web3Transactions[account.identity.address] || {}),
-		}
+		},
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

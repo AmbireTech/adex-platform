@@ -15,39 +15,20 @@ import AuthSelect from 'components/signin/auth-select/AuthSelect'
 
 export default function ConnectHoc(Decorated) {
 	class Connect extends Component {
-
 		render() {
 			const { classes, t, noBackground, ...rest } = this.props
 			return (
-				<div
-					className={classes.root}
-				>
+				<div className={classes.root}>
 					<Grid
 						className={classes.container}
 						container
 						alignItems='stretch'
-					// spacing={2}
+						// spacing={2}
 					>
-						<Grid
-							className={classes.actions}
-							item
-							xs={12}
-							md={9}
-						>
-							<Box
-								width={1}
-								height={1}
-								p={4}
-							>
-								<Box
-									width={1}
-									height={1}
-									position='relative'
-								>
-									<Decorated
-										t={t}
-										{...rest}
-									/>
+						<Grid className={classes.actions} item xs={12} md={9}>
+							<Box width={1} height={1} p={4}>
+								<Box width={1} height={1} position='relative'>
+									<Decorated t={t} {...rest} />
 								</Box>
 							</Box>
 						</Grid>
@@ -66,13 +47,13 @@ export default function ConnectHoc(Decorated) {
 								justify='space-between'
 							>
 								<Box p={2}>
-									<div className={classes.adexLogoTop} >
+									<div className={classes.adexLogoTop}>
 										<Logo className={classes.logo} />
 									</div>
 								</Box>
-								<AuthSelect  {...rest} />
+								<AuthSelect {...rest} />
 								<Box p={2}>
-									<small className={classes.adxVersion} >
+									<small className={classes.adxVersion}>
 										{`v.${packageJson.version}-beta`}
 									</small>
 								</Box>
@@ -98,7 +79,7 @@ export default function ConnectHoc(Decorated) {
 
 	function mapDispatchToProps(dispatch) {
 		return {
-			actions: bindActionCreators(actions, dispatch)
+			actions: bindActionCreators(actions, dispatch),
 		}
 	}
 

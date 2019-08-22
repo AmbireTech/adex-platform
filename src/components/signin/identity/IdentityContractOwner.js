@@ -8,15 +8,13 @@ import AuthMethod from 'components/signin/identity/ownerAuth/AuthMethod'
 import Translate from 'components/translate/Translate'
 
 class IdentityContractAddress extends Component {
-
 	componentDidMount() {
 		this.validateContractOwner()
 	}
 
 	componentDidUpdate(prevProps) {
 		const currOwner = this.props.identity.identityContractOwner
-		if (!!currOwner &&
-			(currOwner !== prevProps.identity.identityContractOwner)) {
+		if (!!currOwner && currOwner !== prevProps.identity.identityContractOwner) {
 			this.validateContractOwner()
 		}
 	}
@@ -28,20 +26,18 @@ class IdentityContractAddress extends Component {
 		validate('identityContractOwner', {
 			isValid: !!identityContractOwner,
 			err: { msg: 'ERR_NO_IDENTITY_CONTRACT_OWNER' },
-			dirty: false
+			dirty: false,
 		})
 	}
 
 	render() {
-		return (
-			<AuthMethod {...this.props} />
-		)
+		return <AuthMethod {...this.props} />
 	}
 }
 
 IdentityContractAddress.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired
+	account: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state) {
@@ -53,7 +49,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

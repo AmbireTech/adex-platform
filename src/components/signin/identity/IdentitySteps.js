@@ -14,7 +14,7 @@ class IdentitySteps extends Component {
 		super(props)
 
 		this.state = {
-			pages: this.mapPages()
+			pages: this.mapPages(),
 		}
 
 		// TODO: Check if it is possible to need state update
@@ -33,8 +33,9 @@ class IdentitySteps extends Component {
 			...rest
 		} = this.props
 
-		const cancelButton = () =>
-			<CancelBtn  {...rest} stepsId={stepsId} onSave={onSave} t={t} />
+		const cancelButton = () => (
+			<CancelBtn {...rest} stepsId={stepsId} onSave={onSave} t={t} />
+		)
 
 		const validateId = (validateIdBase || '') + '-' + stepsId
 
@@ -46,7 +47,7 @@ class IdentitySteps extends Component {
 				props: { ...this.props, validateId: validateId + '-' + index },
 				completeBtn: page.final
 					? () => <GoBtn {...rest} stepsId={stepsId} onSave={onSave} t={t} />
-					: undefined
+					: undefined,
 			}
 		})
 
@@ -54,9 +55,7 @@ class IdentitySteps extends Component {
 	}
 
 	render() {
-		return (
-			<MaterialStepper pages={this.state.pages} />
-		)
+		return <MaterialStepper pages={this.state.pages} />
 	}
 }
 
@@ -74,7 +73,7 @@ function mapStateToProps() {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 
