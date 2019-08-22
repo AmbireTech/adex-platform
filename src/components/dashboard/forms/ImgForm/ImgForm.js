@@ -19,20 +19,17 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
 class ImgForm extends Component {
-
 	constructor(props) {
 		super(props)
 		const { size } = props
-		const aspect = size
-			? (size.width / size.height)
-			: undefined
+		const aspect = size ? size.width / size.height : undefined
 
 		this.state = {
 			imgSrc: props.imgSrc || '',
 			mime: '',
 			imgName: '',
 			cropMode: false,
-			crop: { aspect: aspect }
+			crop: { aspect: aspect },
 		}
 	}
 
@@ -45,16 +42,16 @@ class ImgForm extends Component {
 		that.setState({
 			imgSrc: objectUrl,
 			imgName: file.name,
-			mime: file.type
+			mime: file.type,
 		})
 		// TODO: Maybe get width and height here instead on ing validation hoc
 		this.props.onChange({
 			tempUrl: objectUrl,
-			mime: file.type
+			mime: file.type,
 		})
 	}
 
-	onRemove = (e) => {
+	onRemove = e => {
 		this.preventBubbling(e)
 
 		const { imgSrc } = this.state
@@ -66,8 +63,8 @@ class ImgForm extends Component {
 		}
 	}
 
-	onCropChange = (crop) => {
-		this.setState({ crop });
+	onCropChange = crop => {
+		this.setState({ crop })
 	}
 
 	saveCropped = () => {
@@ -77,19 +74,18 @@ class ImgForm extends Component {
 			objUrl: imgSrc,
 			pixelCrop: crop,
 			fileName: `cropped-${imgName}`,
-			size
-		})
-			.then((croppedBlob) => {
-				URL.revokeObjectURL(imgSrc)
-				this.setState({ imgSrc: croppedBlob, cropMode: false })
-				onChange({
-					tempUrl: croppedBlob,
-					mime
-				})
+			size,
+		}).then(croppedBlob => {
+			URL.revokeObjectURL(imgSrc)
+			this.setState({ imgSrc: croppedBlob, cropMode: false })
+			onChange({
+				tempUrl: croppedBlob,
+				mime,
 			})
+		})
 	}
 
-	preventBubbling = (e) => {
+	preventBubbling = e => {
 		if (e.stopPropagation) {
 			e.stopPropagation()
 		}
@@ -103,15 +99,15 @@ class ImgForm extends Component {
 		const { imgSrc, mime } = this.state
 		return (
 			<div className={classes.uploadInfo}>
-				{imgSrc && !isVideoMedia(mime) ?
+				{imgSrc && !isVideoMedia(mime) ? (
 					<div className={classes.uploadActions}>
 						{/* TEMP: make size required */}
-						{!!size &&
+						{!!size && (
 							<Button
 								variant='contained'
 								color='primary'
-								onClick={(e) => {
-									this.preventBubbling(e);
+								onClick={e => {
+									this.preventBubbling(e)
 									this.setState({ cropMode: true })
 								}}
 								className={classes.dropzoneBtn}
@@ -119,9 +115,9 @@ class ImgForm extends Component {
 								<CropIcon className={classes.leftIcon} />
 								{t('IMG_FORM_CROP')}
 							</Button>
-						}
+						)}
 						&nbsp;
-  					<Button
+						<Button
 							variant='contained'
 							onClick={this.onRemove}
 							className={classes.dropzoneBtn}
@@ -130,14 +126,14 @@ class ImgForm extends Component {
 							{t('IMG_FORM_CLEAR')}
 						</Button>
 					</div>
-					:
+				) : (
 					<FileUploadIcon />
-				}
+				)}
 				<div>
 					<span> {t('DRAG_AND_DROP_TO_UPLOAD')} </span>
 				</div>
 				<div>
-					<small> (max 2MB; .jpeg, .jpg)  </small>
+					<small> (max 2MB; .jpeg, .jpg) </small>
 				</div>
 				<div>
 					<Typography className={classes.errMsg} color='error'>
@@ -150,61 +146,40 @@ class ImgForm extends Component {
 
 	// TODO: CLEAR IMG BLOB!!!!
 	render() {
-		const {
-			t,
-			classes,
-			label,
-			additionalInfo
-		} = this.props
-		const {
-			crop,
-			cropMode,
-			imgName,
-			imgSrc,
-			mime
-		} = this.state
+		const { t, classes, label, additionalInfo } = this.props
+		const { crop, cropMode, imgName, imgSrc, mime } = this.state
 
 		const videoSrc = isVideoMedia(mime)
 		return (
-			<div
-				className={classes.imgForm}
-			>
+			<div className={classes.imgForm}>
 				<AppBar
 					position='static'
 					color='default'
 					classes={{
-						root: classes.header
+						root: classes.header,
 					}}
 				>
 					<Toolbar>
-
-						{imgSrc && imgName ?
+						{imgSrc && imgName ? (
 							<span>
 								{label || 'Image'}: {imgName}
 							</span>
-							:
+						) : (
 							<span> {label || 'Upload image'} </span>
-						}
+						)}
 					</Toolbar>
-
 				</AppBar>
 				<div>
-
-					{cropMode ?
-						<div
-							className={classes.dropzone}
-							onClick={this.preventBubbling}
-						>
-							<div
-								className={classes.droppedImgContainer}
-							>
+					{cropMode ? (
+						<div className={classes.dropzone} onClick={this.preventBubbling}>
+							<div className={classes.droppedImgContainer}>
 								<ReactCrop
 									style={{ maxWidth: '70%', maxHeight: 320 }}
 									imageStyle={{
 										maxWidth: '100%',
 										maxHeight: '320px',
 										width: 'auto',
-										height: 'auto'
+										height: 'auto',
 									}}
 									className={classes.imgDropzonePreview}
 									crop={crop}
@@ -232,33 +207,30 @@ class ImgForm extends Component {
 									>
 										<ClearIcon className={classes.leftIcon} />
 										{t('IMG_FORM_CANCEL_CROP')}
-									</Button >
+									</Button>
 								</div>
 							</div>
 						</div>
-						:
+					) : (
 						<Dropzone
 							accept='.jpeg,.jpg,.png,.mp4'
 							onDrop={this.onDrop}
-							className={classes.dropzone} >
-							<div
-								className={classes.droppedImgContainer}
-							>
-								{videoSrc ?
-									<video controls src={imgSrc}  type='video/mp4'>
-									</video>
-									:
+							className={classes.dropzone}
+						>
+							<div className={classes.droppedImgContainer}>
+								{videoSrc ? (
+									<video controls src={imgSrc} type='video/mp4'></video>
+								) : (
 									<Img
 										src={imgSrc}
 										alt={'name'}
 										className={classes.imgDropzonePreview}
 									/>
-								}
+								)}
 								<this.UploadInfo />
 							</div>
 						</Dropzone>
-					}
-
+					)}
 				</div>
 				<div>
 					<small> {additionalInfo} </small>
@@ -271,7 +243,7 @@ class ImgForm extends Component {
 ImgForm.propTypes = {
 	imgSrc: PropTypes.string,
 	label: PropTypes.string,
-	size: PropTypes.object
+	size: PropTypes.object,
 }
 
 export default Translate(withStyles(styles)(ImgForm))

@@ -23,13 +23,13 @@ export const styles = theme => {
 				left: drawerWidth,
 			},
 			backgroundColor: '#eee',
-			color: '#000'
+			color: '#000',
 		},
 		flex: {
 			flex: 1,
 			flexDirection: 'row',
 			display: 'flex',
-			alignItems: 'center'
+			alignItems: 'center',
 		},
 
 		flexRow: {
@@ -44,13 +44,12 @@ export const styles = theme => {
 				paddingBottom: theme.spacing(1.5),
 				paddingLeft: theme.spacing(1.5),
 			},
-
 		},
 		toolbarControls: {
-			justifyContent: 'flex-end'
+			justifyContent: 'flex-end',
 		},
 		toolbarTitle: {
-			justifyContent: 'flex-start'
+			justifyContent: 'flex-start',
 		},
 		navIconHide: {
 			marginRight: 10,
@@ -61,14 +60,14 @@ export const styles = theme => {
 		toolbar: {
 			flexFlow: 'wrap',
 			height: 114,
-			...theme.mixins.toolbar
+			...theme.mixins.toolbar,
 		},
 		drawerPaper: {
 			width: drawerWidth,
 			[theme.breakpoints.up('md')]: {
 				position: 'fixed',
 			},
-			backgroundColor: '#fff'
+			backgroundColor: '#fff',
 		},
 		content: {
 			flexGrow: 1,
@@ -82,7 +81,7 @@ export const styles = theme => {
 		},
 		contentInner: {
 			maxWidth: 1600,
-			margin: 'auto'
+			margin: 'auto',
 		},
 		icon: {
 			height: 36,
@@ -94,7 +93,7 @@ export const styles = theme => {
 			// },
 		},
 		navigation: {
-			backgroundColor: theme.palette.background.paper
+			backgroundColor: theme.palette.background.paper,
 		},
 		version: {
 			position: 'absolute',
@@ -105,7 +104,7 @@ export const styles = theme => {
 			paddingLeft: 16,
 			borderTopWidth: 1,
 			borderTopColor: theme.palette.divider,
-			borderTopStyle: 'solid'
+			borderTopStyle: 'solid',
 		},
 		navList: {
 			position: 'absolute',
@@ -120,34 +119,33 @@ export const styles = theme => {
 			color: theme.palette.text.secondary,
 			display: 'flex',
 			flexDirection: 'column',
-			justifyContent: 'space-between'
+			justifyContent: 'space-between',
 		},
-		sideNavToolbar: {
-		},
+		sideNavToolbar: {},
 		sntPadding: {
-			paddingTop: 0
+			paddingTop: 0,
 		},
 		active: {
 			color: theme.palette.common.white,
 			backgroundColor: theme.palette.primary.light,
 			'&:focus': {
 				backgroundColor: theme.palette.primary.light,
-			}
+			},
 		},
 		newItemBtn: {
-			width: '200px' // TODO
+			width: '200px', // TODO
 		},
 		adxLink: {
 			color: theme.palette.text.hint,
 			'&:hover': {
-				color: theme.palette.text.secondary
-			}
+				color: theme.palette.text.secondary,
+			},
 		},
 		bar: {
-			opacity: 0.5
+			opacity: 0.5,
 		},
 		actionCount: {
 			marginTop: theme.spacing(1),
-		}
+		},
 	}
 }

@@ -6,20 +6,18 @@ import Grid from '@material-ui/core/Grid'
 import { ContentBody } from 'components/common/dialog/content'
 import ItemsList from 'components/dashboard/containers/ItemsList'
 import { AdUnit } from 'adex-models'
-import {
-	SORT_PROPERTIES_ITEMS,
-	FILTER_PROPERTIES_ITEMS
-} from 'constants/misc'
+import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 
 class CampaignUnits extends Component {
 	constructor(props) {
 		super(props)
 
 		this.state = {
-			selected: (props.newItem.adUnits.reduce((selected, unit) => {
-				selected[unit.ipfs] = true
-				return selected
-			}, {})) || {}
+			selected:
+				props.newItem.adUnits.reduce((selected, unit) => {
+					selected[unit.ipfs] = true
+					return selected
+				}, {}) || {},
 		}
 	}
 
@@ -30,13 +28,11 @@ class CampaignUnits extends Component {
 
 	validateUnits(adUnits, dirty) {
 		const isValid = !!adUnits.length
-		this.props.validate(
-			'adUnits',
-			{
-				isValid: isValid,
-				err: { msg: 'ERR_ADUNITS_REQIURED' },
-				dirty: dirty
-			})
+		this.props.validate('adUnits', {
+			isValid: isValid,
+			err: { msg: 'ERR_ADUNITS_REQIURED' },
+			dirty: dirty,
+		})
 	}
 
 	handleSelect = (ipfs, checked) => {
@@ -63,12 +59,8 @@ class CampaignUnits extends Component {
 
 		return (
 			<div>
-				<Grid
-					container
-					spacing={2}
-				>
+				<Grid container spacing={2}>
 					<Grid item sm={12}>
-
 						<ContentBody>
 							<ItemsList
 								objModel={AdUnit}
@@ -99,7 +91,7 @@ CampaignUnits.propTypes = {
 	descriptionHelperTxt: PropTypes.string,
 	nameHelperTxt: PropTypes.string,
 	adUnits: PropTypes.object.isRequired,
-	adUnitsArray: PropTypes.array.isRequired
+	adUnitsArray: PropTypes.array.isRequired,
 }
 
 const NewCampaignUnits = NewCampaignHoc(CampaignUnits)

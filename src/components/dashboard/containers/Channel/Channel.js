@@ -28,93 +28,86 @@ const AddItemWitgDialog = WithDialog(AddItem)
 
 export class Channel extends Component {
 	constructor(props, context) {
-		super(props, context);
+		super(props, context)
 
 		this.state = {
-			tabIndex: 0
+			tabIndex: 0,
 		}
 	}
 
-    handleTabChange = (index) => {
-    	this.setState({ tabIndex: index })
-    }
+	handleTabChange = index => {
+		this.setState({ tabIndex: index })
+	}
 
-    render() {
-    	// let side = this.props.match.params.side
-    	const { t, classes, item, } = this.props
-    	// let items = item._items || []
-    	const propsSlots = { ...this.props.slots }
+	render() {
+		// let side = this.props.match.params.side
+		const { t, classes, item } = this.props
+		// let items = item._items || []
+		const propsSlots = { ...this.props.slots }
 
+		if (!item) return <h1>'404'</h1>
 
-    	if (!item) return (<h1>'404'</h1>)
+		//TODO: Make it wit HOC for collection (campaing/channel)
+		const groupedSlots = groupItemsForCollection({
+			collectionId: item._id,
+			allItems: propsSlots,
+		})
 
-    	//TODO: Make it wit HOC for collection (campaing/channel)
-    	const groupedSlots = groupItemsForCollection({ collectionId: item._id, allItems: propsSlots })
+		const slots = groupedSlots.items
+		const otherSlots = groupedSlots.otherItems
 
-    	const slots = groupedSlots.items
-    	const otherSlots = groupedSlots.otherItems
+		return (
+			<div>
+				<AppBar position='static' color='primary' className={classes.appBar}>
+					<Toolbar>
+						<Typography
+							variant='title'
+							color='inherit'
+							className={classes.flex}
+						>
+							{t('SLOTS_IN_CHANNEL', { args: [slots.length] })}
+						</Typography>
 
-    	return (
-    		<div>
-    			<AppBar
-    				position='static'
-    				color='primary'
-    				className={classes.appBar}
-    			>
-    				<Toolbar>
-    					<Typography
-    						variant="title"
-    						color="inherit"
-    						className={classes.flex}
-    					>
-    						{t('SLOTS_IN_CHANNEL', { args: [slots.length] })}
-    					</Typography>
-
-    					<AddItemWitgDialog
-    						color='inherit'
-    						icon={<AddIcon />}
-    						addCampaign={this.props.actions.addCampaign}
-    						btnLabel={t('NEW_SLOT_TO_CHANNEL')}
-    						title={t('NEW_SLOT_TO_CHANNEL')}
-    						items={otherSlots}
-    						viewMode={VIEW_MODE_UNITS}
-    						listMode='rows'
-    						addTo={item}
-    						tabNewLabel={t('NEW_SLOT')}
-    						tabExsLabel={t('EXISTING_SLOT')}
-    						objModel={AdSlotModel}
-    						sortProperties={SORT_PROPERTIES_ITEMS}
-    						filterProperties={FILTER_PROPERTIES_ITEMS}
-    						newForm={(props) =>
-    							<NewSlotSteps
-    								{...props}
-    								addTo={item}
-    							/>
-    						}
-    					/>
-    				</Toolbar>
-    			</AppBar>
-    			<ItemsList
-    				{...this.props}
-    				parentItem={item}
-    				removeFromItem
-    				items={slots}
-    				viewModeId={VIEW_MODE}
-    				objModel={AdSlotModel}
-    				sortProperties={SORT_PROPERTIES_ITEMS}
-    				filterProperties={FILTER_PROPERTIES_ITEMS}
-    				uiStateId='channel-slots'
-    			/>
-    		</div>
-    	)
-    }
+						<AddItemWitgDialog
+							color='inherit'
+							icon={<AddIcon />}
+							addCampaign={this.props.actions.addCampaign}
+							btnLabel={t('NEW_SLOT_TO_CHANNEL')}
+							title={t('NEW_SLOT_TO_CHANNEL')}
+							items={otherSlots}
+							viewMode={VIEW_MODE_UNITS}
+							listMode='rows'
+							addTo={item}
+							tabNewLabel={t('NEW_SLOT')}
+							tabExsLabel={t('EXISTING_SLOT')}
+							objModel={AdSlotModel}
+							sortProperties={SORT_PROPERTIES_ITEMS}
+							filterProperties={FILTER_PROPERTIES_ITEMS}
+							newForm={props => <NewSlotSteps {...props} addTo={item} />}
+						/>
+					</Toolbar>
+				</AppBar>
+				<ItemsList
+					{...this.props}
+					parentItem={item}
+					removeFromItem
+					items={slots}
+					viewModeId={VIEW_MODE}
+					objModel={AdSlotModel}
+					sortProperties={SORT_PROPERTIES_ITEMS}
+					filterProperties={FILTER_PROPERTIES_ITEMS}
+					uiStateId='channel-slots'
+				/>
+			</div>
+		)
+	}
 }
 
 Channel.propTypes = {
 	actions: PropTypes.object.isRequired,
 	account: PropTypes.object.isRequired,
 	slots: PropTypes.object.isRequired,
-	rowsView: PropTypes.bool.isRequired
+	rowsView: PropTypes.bool.isRequired,
 }
 
 function mapStateToProps(state) {
@@ -131,13 +124,13 @@ function mapStateToProps(state) {
 		updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
 		updateImgExact: false,
 		canEditImg: true,
-		showLogo: true
+		showLogo: true,
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

@@ -15,7 +15,7 @@ const autocompleteLocationsSingleSelect = () => {
 	return constants.AllCountries.map(country => {
 		return {
 			label: country.name,
-			value: country.value
+			value: country.value,
 		}
 	})
 }
@@ -24,7 +24,7 @@ const autocompleteGendersSingleSelect = () => {
 	return constants.Genders.map(gender => {
 		return {
 			label: translate(gender.split('_')[1]),
-			value: gender
+			value: gender,
 		}
 	})
 }
@@ -33,7 +33,7 @@ const autocompleteTagsSingleSelect = () => {
 	return constants.PredefinedTags.map(tag => {
 		return {
 			label: tag._id,
-			value: tag._id
+			value: tag._id,
 		}
 	})
 }
@@ -46,29 +46,28 @@ const SOURCES = {
 	locations: { src: AcLocations, collection: 'targeting' },
 	genders: { src: AcGenders, collection: 'targeting' },
 	tags: { src: AcTags, collection: 'targeting' },
-	custom: { src: [], collection: 'targeting'}
+	custom: { src: [], collection: 'targeting' },
 }
 
 const styles = {
 	slider: {
 		padding: '22px 0px',
-	}
+	},
 }
 
-const SourcesSelect = Object.keys(SOURCES)
-	.map(key => {
-		return {
-			value: {
-				key: key, // FOR DROPDOWN
-				source: key,
-				collection: SOURCES[key].collection,
-				target: { tag: '', score: 1 },
-				label: translate(`TARGET_LABEL_${key.toUpperCase()}`),
-				placeholder: translate(`TARGET_LABEL_${key.toUpperCase()}`)
-			},
-			label: translate(`ADD_NEW_${key.toUpperCase()}_TARGET`)
-		}
-	})
+const SourcesSelect = Object.keys(SOURCES).map(key => {
+	return {
+		value: {
+			key: key, // FOR DROPDOWN
+			source: key,
+			collection: SOURCES[key].collection,
+			target: { tag: '', score: 1 },
+			label: translate(`TARGET_LABEL_${key.toUpperCase()}`),
+			placeholder: translate(`TARGET_LABEL_${key.toUpperCase()}`),
+		},
+		label: translate(`ADD_NEW_${key.toUpperCase()}_TARGET`),
+	}
+})
 
 class AdUnitTargeting extends Component {
 	constructor(props) {
@@ -76,21 +75,20 @@ class AdUnitTargeting extends Component {
 
 		const { targets } = props.newItem.temp || {}
 		this.state = {
-			targets: targets || []
+			targets: targets || [],
 		}
 	}
 
 	updateNewItemCollections(targets) {
-		const collections = [...targets]
-			.reduce((all, tg) => {
-				const newCollection = ((all[tg.collection] || []))
-				// NOTE: just skip empty tags
-				if (!!tg.target.tag) {
-					newCollection.push(tg.target)
-				}
-				all[tg.collection] = newCollection
-				return all
-			}, {})
+		const collections = [...targets].reduce((all, tg) => {
+			const newCollection = all[tg.collection] || []
+			// NOTE: just skip empty tags
+			if (!!tg.target.tag) {
+				newCollection.push(tg.target)
+			}
+			all[tg.collection] = newCollection
+			return all
+		}, {})
 
 		const { temp } = this.props.newItem
 		const newTemp = { ...temp }
@@ -113,7 +111,7 @@ class AdUnitTargeting extends Component {
 		this.setState({ targets: newTargets })
 	}
 
-	newTarget = (target) => {
+	newTarget = target => {
 		const newTargets = [...this.state.targets]
 		const newTarget = { ...target }
 		newTarget.key = newTargets.length
@@ -130,25 +128,17 @@ class AdUnitTargeting extends Component {
 		index,
 		target,
 		t,
-		classes
+		classes,
 	}) => {
 		return (
-			<Grid
-				container
-				spacing={2}
-			>
-				<Grid item xs={12} md={6} >
+			<Grid container spacing={2}>
+				<Grid item xs={12} md={6}>
 					<Autocomplete
 						id={'target-' + index}
-						direction="auto"
+						direction='auto'
 						openOnClick
-						onChange={(newValue) =>
-							this.handleTargetChange(
-								index,
-								'tag',
-								newValue,
-								collection
-							)
+						onChange={newValue =>
+							this.handleTargetChange(index, 'tag', newValue, collection)
 						}
 						label={label}
 						placeholder={placeholder}
@@ -159,39 +149,30 @@ class AdUnitTargeting extends Component {
 						allowCreate={!source.length}
 					/>
 				</Grid>
-				<Grid item xs={12} md={6} >
+				<Grid item xs={12} md={6}>
 					<div>
-						<Typography
-							id={`target-score-${index}`}
-						>
+						<Typography id={`target-score-${index}`}>
 							{/*TODO: Translate target name*/}
-							{t('TARGET_SCORE_LABEL',
-								{
-									args: [target.score]
-								})}
+							{t('TARGET_SCORE_LABEL', {
+								args: [target.score],
+							})}
 						</Typography>
 						<Slider
 							// classes={{ container: classes.slider }}
 							aria-labelledby={`target-score-${index}`}
-							min={1} 
+							min={1}
 							max={100}
 							step={1}
 							valueLabelDisplay='auto'
 							disabled={!target.tag}
 							value={target.score}
 							onChange={(ev, newValue) =>
-								this.handleTargetChange(
-									index,
-									'score',
-									newValue,
-									collection
-								)
+								this.handleTargetChange(index, 'score', newValue, collection)
 							}
 						/>
 					</div>
 				</Grid>
-
-			</Grid >
+			</Grid>
 		)
 	}
 
@@ -199,7 +180,7 @@ class AdUnitTargeting extends Component {
 		const {
 			t,
 			// newItem,
-			classes
+			classes,
 		} = this.props
 		// const { targeting, tags } = newItem
 
@@ -207,36 +188,32 @@ class AdUnitTargeting extends Component {
 
 		return (
 			<div>
-				<Grid
-					container
-					spacing={1}
-				>
+				<Grid container spacing={1}>
 					<Grid item sm={12}>
-						{[...targets].map(({
-							source,
-							collection,
-							label,
-							placeholder,
-							target = {}
-						} = {}, index) =>
-							<this.targetTag
-								key={index} // TODO
-								label={t(label)}
-								placeholder={t(placeholder)}
-								index={index}
-								source={SOURCES[source].src}
-								collection={collection}
-								target={target}
-								t={t}
-								classes={classes}
-							/>
+						{[...targets].map(
+							(
+								{ source, collection, label, placeholder, target = {} } = {},
+								index
+							) => (
+								<this.targetTag
+									key={index} // TODO
+									label={t(label)}
+									placeholder={t(placeholder)}
+									index={index}
+									source={SOURCES[source].src}
+									collection={collection}
+									target={target}
+									t={t}
+									classes={classes}
+								/>
+							)
 						)}
 					</Grid>
 					<Grid item sm={12}>
 						<Dropdown
 							variant='filled'
 							fullWidth
-							onChange={(target) => {
+							onChange={target => {
 								this.newTarget({ ...target })
 							}}
 							source={[...SourcesSelect]}
@@ -247,7 +224,7 @@ class AdUnitTargeting extends Component {
 						/>
 					</Grid>
 				</Grid>
-			</div >
+			</div>
 		)
 	}
 }

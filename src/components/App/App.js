@@ -24,39 +24,34 @@ const onBeforeLift = () => {
 	// take some action before the gate lifts
 }
 
-const cssBaselineStyled = ({ classes }) =>
-// Might break something
-	<CssBaseline classes={
-		classes.globalStyles
-	} />
-
+const cssBaselineStyled = ({ classes }) => (
+	// Might break something
+	<CssBaseline classes={classes.globalStyles} />
+)
 
 const CssBaselineStyled = withStyles(globalStyles)(cssBaselineStyled)
 
 class App extends Component {
-
 	render() {
 		return (
 			<React.Fragment>
 				<CssBaselineStyled
-					// classes={
-					//   { children: classes.globalStyles }
-					// }
+				// classes={
+				//   { children: classes.globalStyles }
+				// }
 				/>
 				<MuiThemeProvider theme={themeMUI}>
 					<MuiPickersUtilsProvider utils={MomentUtils}>
 						<Provider store={store}>
-							<PersistGate
-								onBeforeLift={onBeforeLift}
-								persistor={persistor}>
-								<ConnectedRouter history={history} >
+							<PersistGate onBeforeLift={onBeforeLift} persistor={persistor}>
+								<ConnectedRouter history={history}>
 									<Router>
-										<div className="adex-dapp">									
-											<Switch >
+										<div className='adex-dapp'>
+											<Switch>
 												<Root />
 											</Switch>
 											<Toast />
-											<Confirm />									
+											<Confirm />
 										</div>
 									</Router>
 								</ConnectedRouter>

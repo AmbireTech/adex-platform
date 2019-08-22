@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import NewCampaignHoc from './NewCampaignHoc'
@@ -25,7 +25,6 @@ class CampaignFormPreview extends Component {
 
 	AdUnitsTable = ({ items }) => {
 		return (
-
 			<Grid item sm={12}>
 				<ContentBody>
 					<ItemsList
@@ -56,16 +55,17 @@ class CampaignFormPreview extends Component {
 			// depositAsset,
 			withdrawPeriodStart,
 			activeFrom,
-			minTargetingScore
+			minTargetingScore,
 			// nonce
 		} = newItem
 
 		return (
 			<ContentBox>
-				{newItem.temp.waitingAction ?
+				{newItem.temp.waitingAction ? (
 					<ContentStickyTop>
 						<WalletAction t={t} authType={account.wallet.authType} />
-					</ContentStickyTop> : null}
+					</ContentStickyTop>
+				) : null}
 				<ContentBody>
 					<PropRow
 						left={t('owner', { isProp: true })}
@@ -84,20 +84,15 @@ class CampaignFormPreview extends Component {
 					/> */}
 					<PropRow
 						left={t('adUnits', { isProp: true })}
-						right={
-							<this.AdUnitsTable
-								items={adUnits}
-							/>
-						}
+						right={<this.AdUnitsTable items={adUnits} />}
 					/>
 					<PropRow
 						left={t('validators', { isProp: true })}
 						right={
 							<div>
-								{validators.map(val =>
-									<div key={val.id}>
-										{`${val.url} - ${val.id}`}
-									</div>)}
+								{validators.map(val => (
+									<div key={val.id}>{`${val.url} - ${val.id}`}</div>
+								))}
 							</div>
 						}
 					/>
@@ -121,11 +116,7 @@ class CampaignFormPreview extends Component {
 						left={t('withdrawPeriodStart', { isProp: true })}
 						right={formatDateTime(withdrawPeriodStart)}
 					/>
-					{minTargetingScore &&
-						<PropRow
-							right={t('CAMPAIGN_MIN_TARGETING')}
-						/>
-					}
+					{minTargetingScore && <PropRow right={t('CAMPAIGN_MIN_TARGETING')} />}
 					{/* <PropRow
 						left={t('created', { isProp: true })}
 						right={formatDateTime(created)}
@@ -143,17 +134,17 @@ CampaignFormPreview.propTypes = {
 	actions: PropTypes.object.isRequired,
 	account: PropTypes.object.isRequired,
 	newItem: PropTypes.object.isRequired,
-	title: PropTypes.string
+	title: PropTypes.string,
 }
 
 function mapStateToProps(state) {
 	const { persist } = state
 	return {
-		account: persist.account
+		account: persist.account,
 	}
 }
 
-const NewCampaignFormPreview = NewCampaignHoc(withStyles(styles)(CampaignFormPreview))
-export default connect(
-	mapStateToProps
-)(Translate(NewCampaignFormPreview))
+const NewCampaignFormPreview = NewCampaignHoc(
+	withStyles(styles)(CampaignFormPreview)
+)
+export default connect(mapStateToProps)(Translate(NewCampaignFormPreview))

@@ -13,7 +13,7 @@ import {
 	ContentBox,
 	ContentBody,
 	ContentStickyTop,
-	TopLoading
+	TopLoading,
 } from 'components/common/dialog/content'
 import Helper from 'helpers/miscHelpers'
 import { withStyles } from '@material-ui/core/styles'
@@ -31,7 +31,7 @@ class AuthMetamask extends Component {
 			address: null,
 			stats: null,
 			waitingMetamaskAction: false,
-			waitingAddrsData: false
+			waitingAddrsData: false,
 		}
 	}
 
@@ -41,17 +41,20 @@ class AuthMetamask extends Component {
 				const authType = AUTH_TYPES.METAMASK.name
 				const { provider } = await getEthers(authType)
 				const wallet = {
-					authType: authType
+					authType: authType,
 				}
 
 				const metamaskSigner = await getSigner({ wallet, provider })
 				const address = await metamaskSigner.getAddress()
-				const stats = await getAddressBalances({ address: { address }, authType })				
+				const stats = await getAddressBalances({
+					address: { address },
+					authType,
+				})
 
 				this.setState({
 					address,
 					stats,
-					waitingAddrsData: false
+					waitingAddrsData: false,
 				})
 
 				this.props.updateWallet({
@@ -59,7 +62,7 @@ class AuthMetamask extends Component {
 					authType: AUTH_TYPES.METAMASK.name,
 					balanceEth: stats.balanceEth,
 					balanceDai: stats.balanceDai,
-					signType: AUTH_TYPES.METAMASK.signType
+					signType: AUTH_TYPES.METAMASK.signType,
 				})
 			} catch (err) {
 				console.error('Error: catch', err)
@@ -67,12 +70,10 @@ class AuthMetamask extends Component {
 				this.props.actions.addToast({
 					type: 'cancel',
 					action: 'X',
-					label: this.props.t(
-						'ERR_AUTH_METAMASK',
-						{
-							args: [Helper.getErrMsg(err)]
-						}),
-					timeout: 5000
+					label: this.props.t('ERR_AUTH_METAMASK', {
+						args: [Helper.getErrMsg(err)],
+					}),
+					timeout: 5000,
 				})
 			}
 		})
@@ -83,37 +84,33 @@ class AuthMetamask extends Component {
 		const { address, stats } = this.state
 
 		return (
-			<ContentBox className={classes.tabBox} >
-				{this.state.waitingMetamaskAction ?
+			<ContentBox className={classes.tabBox}>
+				{this.state.waitingMetamaskAction ? (
 					<ContentStickyTop>
 						<TopLoading msg={t('METAMASK_WAITING_ACTION')} />
 					</ContentStickyTop>
-					: this.state.waitingAddrsData ?
-						<TopLoading msg={t('METAMASK_WAITING_ADDR_INFO')} />
-						: null
-				}
+				) : this.state.waitingAddrsData ? (
+					<TopLoading msg={t('METAMASK_WAITING_ADDR_INFO')} />
+				) : null}
 				<ContentBody>
 					<Typography paragraph variant='subheading'>
 						{t('METAMASK_INFO')}
 					</Typography>
 					<Typography paragraph>
 						<span
-							dangerouslySetInnerHTML={
-								{
-									__html: t('METAMASK_BASIC_USAGE_INFO',
+							dangerouslySetInnerHTML={{
+								__html: t('METAMASK_BASIC_USAGE_INFO', {
+									args: [
 										{
-											args: [{
-												component:
-													<Anchor
-														href='https://metamask.io/'
-														target='_blank'
-													>
-														https://metamask.io/
-													  </Anchor>
-											}]
-										})
-								}
-							}
+											component: (
+												<Anchor href='https://metamask.io/' target='_blank'>
+													https://metamask.io/
+												</Anchor>
+											),
+										},
+									],
+								}),
+							}}
 						/>
 					</Typography>
 					<Typography paragraph>
@@ -125,24 +122,20 @@ class AuthMetamask extends Component {
 							/>
 						</Anchor>
 					</Typography>
-					{address ?
+					{address ? (
 						<div className={classes.metamaskLAbel}>
-							{stats ?
+							{stats ? (
 								<div>
-									<Typography
-										paragraph
-										variant='subheading'
-										color='primary'
-									>
+									<Typography paragraph variant='subheading' color='primary'>
 										{t('METAMASK_CONTINUE_TO_NEXT_STEP')}
 									</Typography>
 									<AddrItem stats={stats} t={t} addr={address} />
 								</div>
-								: t('AUTH_WITH_METAMASK_LABEL', { args: [address] })
-							}
-
+							) : (
+								t('AUTH_WITH_METAMASK_LABEL', { args: [address] })
+							)}
 						</div>
-						:
+					) : (
 						<Button
 							onClick={this.checkMetamask}
 							variant='contained'
@@ -151,8 +144,7 @@ class AuthMetamask extends Component {
 						>
 							{t('AUTH_CONNECT_WITH_METAMASK')}
 						</Button>
-
-					}
+					)}
 				</ContentBody>
 			</ContentBox>
 		)
@@ -162,8 +154,8 @@ class AuthMetamask extends Component {
 AuthMetamask.propTypes = {
 	actions: PropTypes.object.isRequired,
 	updateWallet: PropTypes.func.isRequired,
-	t: PropTypes.func.isRequired,	
-	classes: PropTypes.object.isRequired
+	t: PropTypes.func.isRequired,
+	classes: PropTypes.object.isRequired,
 }
 
 export default Translate(AuthHoc(withStyles(styles)(AuthMetamask)))

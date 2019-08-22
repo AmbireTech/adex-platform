@@ -1,1 +1,1 @@
-export {default} from './ItemHoc'
+export { default } from './ItemHoc'

@@ -1,20 +1,22 @@
 import React, { Component } from 'react'
-import { DateTimePicker  as MuiDateTimePicker  } from 'material-ui-pickers'
+import { DateTimePicker as MuiDateTimePicker } from 'material-ui-pickers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import IconButton from '@material-ui/core/IconButton'
 import CalendarIcon from '@material-ui/icons/DateRange'
 import InputAdornment from '@material-ui/core/InputAdornment'
 
-const CalendarIconAdor = ({ icon = <CalendarIcon />, iconColor, onIconClick }) =>
-	<InputAdornment position="end">
-		<IconButton
-			color={iconColor}
-			onClick={onIconClick}
-		>
+const CalendarIconAdor = ({
+	icon = <CalendarIcon />,
+	iconColor,
+	onIconClick,
+}) => (
+	<InputAdornment position='end'>
+		<IconButton color={iconColor} onClick={onIconClick}>
 			{icon}
 		</IconButton>
 	</InputAdornment>
+)
 
 export class DateTimePicker extends Component {
 	render() {
@@ -23,13 +25,13 @@ export class DateTimePicker extends Component {
 			<MuiDateTimePicker
 				InputProps={{
 					disabled: rest.disabled,
-					endAdornment: calendarIcon
-						? <CalendarIconAdor
+					endAdornment: calendarIcon ? (
+						<CalendarIconAdor
 							icon={icon}
 							iconColor={iconColor}
 							onIconClick={onIconClick}
 						/>
-						: null
+					) : null,
 				}}
 				{...rest}
 			/>
@@ -49,15 +51,15 @@ const dateTimePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 				FormLabelClasses: {
 					root: classes.datepickerContrastLabel,
 					focused: classes.datepickerContrastLabelFocused,
-				}
+				},
 			}}
 			InputProps={{
 				disabled: rest.disabled,
 				classes: {
 					root: classes.datepickerContrastInput,
-					underline: classes.datepickerContrastUnderline
+					underline: classes.datepickerContrastUnderline,
 				},
-				endAdornment: calendarIcon ? <CalendarIconAdor icon={icon} /> : null
+				endAdornment: calendarIcon ? <CalendarIconAdor icon={icon} /> : null,
 			}}
 			{...rest}
 		/>

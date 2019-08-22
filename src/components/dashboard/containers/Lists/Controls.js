@@ -16,8 +16,7 @@ export const PAGE_SIZES = [
 	{ value: 46, label: 46 },
 ]
 
-const pagination = (props) => {
-
+const pagination = props => {
 	const {
 		page,
 		pages,
@@ -28,18 +27,13 @@ const pagination = (props) => {
 		goToPage,
 		// changePageSize,
 		// className,
-		t
+		t,
 	} = props
 	return (
-		<div
-			className={classes.flexRow}
-		>
-			{pages > 1 &&
-				<div
-					className={classnames(classes.flexItem, classes.flexRow)}
-				>
-					<div
-					>
+		<div className={classes.flexRow}>
+			{pages > 1 && (
+				<div className={classnames(classes.flexItem, classes.flexRow)}>
+					<div>
 						<Dropdown
 							label={t('LIST_CONTROL_LABEL_PAGE')}
 							helperText={t('LIST_CONTROL_LABEL_PAGE_OF', { args: [pages] })}
@@ -60,7 +54,7 @@ const pagination = (props) => {
 					</IconButton>
 					<IconButton
 						color='primary'
-						disabled={!(page < (pages - 1))}
+						disabled={!(page < pages - 1)}
 						onClick={goToNextPage}
 						className={classes.rowButton}
 						size='small'
@@ -68,14 +62,13 @@ const pagination = (props) => {
 						<ChevronRight />
 					</IconButton>
 				</div>
-			}
+			)}
 			{/* <div
 				className={classnames(classes.flexItem, classes.pageSize)}
 			>
 				<Typography noWrap id="page-size">{t('LIST_CONTROL_LABEL_PAGE_SIZE')} <strong>{pageSize}</strong> </Typography>
 				<Slider style={{ padding: '22px 0' }} aria-labelledby="page-size" min={5} max={25} step={5} value={pageSize} onChange={changePageSize} />
 			</div> */}
-
 		</div>
 	)
 }

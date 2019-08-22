@@ -12,16 +12,16 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
 class WalletCheck extends Component {
-
 	constructor(props, context) {
 		super(props, context)
 
 		const words = props.identity.mnemonic.split(' ')
 		this.state = {
-			shuffledWords: Helper.shuffleArray(words)
-				.map((word, index) => { return { word: word, used: false, index: index } }),
+			shuffledWords: Helper.shuffleArray(words).map((word, index) => {
+				return { word: word, used: false, index: index }
+			}),
 			userWords: [],
-			wordsChecked: false
+			wordsChecked: false,
 		}
 	}
 
@@ -29,114 +29,119 @@ class WalletCheck extends Component {
 		this.props.validate('mnemonicChecked', {
 			isValid: !!this.props.identity.mnemonicChecked,
 			err: { msg: 'ERR_MNEMONIC_NOT_CHECKED' },
-			dirty: false
+			dirty: false,
 		})
 	}
 
-    validateMnemonic = (valid) => {
-    	this.props.handleChange('mnemonicChecked', true)
-    	this.props.validate('mnemonicChecked', {
-    		isValid: valid
-    	})
-    }
+	validateMnemonic = valid => {
+		this.props.handleChange('mnemonicChecked', true)
+		this.props.validate('mnemonicChecked', {
+			isValid: valid,
+		})
+	}
 
-    checkWordsOrder = (userWords) => {
-    	const checked = userWords.map(word => word.word).join(' ') === this.props.identity.mnemonic
-    	if(checked) {
-    		this.validateMnemonic(true)
-    	}
-        
-    	return checked
-    }
+	checkWordsOrder = userWords => {
+		const checked =
+			userWords.map(word => word.word).join(' ') ===
+			this.props.identity.mnemonic
+		if (checked) {
+			this.validateMnemonic(true)
+		}
 
-    addUserWord = (word, index) => {
-    	const shuffledWords = [...this.state.shuffledWords]
-    	const usedWord = { ...shuffledWords[index] }
-    	usedWord.used = true
-    	shuffledWords[index] = usedWord
-    	const userWord = { ...word }
-    	userWord.index = index
+		return checked
+	}
 
-    	const userWords = [...this.state.userWords, userWord]
-    	const wordsChecked = this.checkWordsOrder(userWords)
+	addUserWord = (word, index) => {
+		const shuffledWords = [...this.state.shuffledWords]
+		const usedWord = { ...shuffledWords[index] }
+		usedWord.used = true
+		shuffledWords[index] = usedWord
+		const userWord = { ...word }
+		userWord.index = index
 
-    	this.setState({
-    		userWords: userWords,
-    		shuffledWords: shuffledWords,
-    		wordsChecked: wordsChecked
-    	})
-    }
+		const userWords = [...this.state.userWords, userWord]
+		const wordsChecked = this.checkWordsOrder(userWords)
 
-    removeUserWord = (word, index) => {
-    	const userWord = { ...word }
-    	const usedWord = { ...this.state.shuffledWords[userWord.index] }
-    	usedWord.used = false
+		this.setState({
+			userWords: userWords,
+			shuffledWords: shuffledWords,
+			wordsChecked: wordsChecked,
+		})
+	}
 
-    	const shuffledWords = [...this.state.shuffledWords]
-    	shuffledWords[userWord.index] = usedWord
+	removeUserWord = (word, index) => {
+		const userWord = { ...word }
+		const usedWord = { ...this.state.shuffledWords[userWord.index] }
+		usedWord.used = false
 
-    	const userWords = ([...this.state.userWords])
-    	userWords.splice(index, 1)
+		const shuffledWords = [...this.state.shuffledWords]
+		shuffledWords[userWord.index] = usedWord
 
-    	const wordsChecked = this.checkWordsOrder(userWords)
-    	this.setState({
-    		userWords: userWords,
-    		shuffledWords: shuffledWords,
-    		wordsChecked: wordsChecked
-    	})
-    }
+		const userWords = [...this.state.userWords]
+		userWords.splice(index, 1)
 
-    ShuffledWords = () => {
-    	return (
-    		<div>
-    			{this.state.shuffledWords.map((word, index) =>
-    				<Chip
-    					color={word.used ? 'default' : 'primary'}
-    					clickable={!word.used}
-    					disabled={!!word.used}
-    					key={index}
-    					label={word.word}
-    					onClick={!word.used ? this.addUserWord.bind(this, word, index) : null}
-    				/>
-    			)}
-    		</div>
-    	)
-    }
+		const wordsChecked = this.checkWordsOrder(userWords)
+		this.setState({
+			userWords: userWords,
+			shuffledWords: shuffledWords,
+			wordsChecked: wordsChecked,
+		})
+	}
 
-    OrderedWords = () => {
-    	return (
-    		<div>
-    			{this.state.userWords.map((word, index) =>
-    				<Chip
-    					color='secondary'
-    					key={word + index}
-    					label={word.word}
-    					onDelete={this.removeUserWord.bind(this, word, index)}
-    				/>)}
-    		</div>
-    	)
-    }
+	ShuffledWords = () => {
+		return (
+			<div>
+				{this.state.shuffledWords.map((word, index) => (
+					<Chip
+						color={word.used ? 'default' : 'primary'}
+						clickable={!word.used}
+						disabled={!!word.used}
+						key={index}
+						label={word.word}
+						onClick={
+							!word.used ? this.addUserWord.bind(this, word, index) : null
+						}
+					/>
+				))}
+			</div>
+		)
+	}
 
-    render() {
-    	const { t } = this.props
-    	const { wordsChecked } = this.state
-    	return (
-    		<div>
-    			<this.ShuffledWords />
-    			<this.OrderedWords />
-    			{wordsChecked &&
-                    <Typography paragraph variant='subheading'>
-                    	{t('WALLET_WORDS_CHECK_SUCCESS')}
-                    </Typography>
-    			}
-    		</div>
-    	)
-    }
+	OrderedWords = () => {
+		return (
+			<div>
+				{this.state.userWords.map((word, index) => (
+					<Chip
+						color='secondary'
+						key={word + index}
+						label={word.word}
+						onDelete={this.removeUserWord.bind(this, word, index)}
+					/>
+				))}
+			</div>
+		)
+	}
+
+	render() {
+		const { t } = this.props
+		const { wordsChecked } = this.state
+		return (
+			<div>
+				<this.ShuffledWords />
+				<this.OrderedWords />
+				{wordsChecked && (
+					<Typography paragraph variant='subheading'>
+						{t('WALLET_WORDS_CHECK_SUCCESS')}
+					</Typography>
+				)}
+			</div>
+		)
+	}
 }
 
 WalletCheck.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired
+	account: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state) {
@@ -144,13 +149,13 @@ function mapStateToProps(state) {
 	let memory = state.memory
 	return {
 		account: persist.account,
-		wallet: memory.wallet
+		wallet: memory.wallet,
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 
