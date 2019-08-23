@@ -6,6 +6,7 @@ import Grid from '@material-ui/core/Grid'
 import { ContentBody } from 'components/common/dialog/content'
 import ItemsList from 'components/dashboard/containers/ItemsList'
 import { AdUnit } from 'adex-models'
+import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems'
 import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 
 class CampaignUnits extends Component {
@@ -55,28 +56,44 @@ class CampaignUnits extends Component {
 	}
 
 	render() {
-		const { adUnitsArray } = this.props
-
+		const { adUnitsArray, t } = this.props
+		const hasAdUnits = adUnitsArray && adUnitsArray.length
 		return (
 			<div>
-				<Grid container spacing={2}>
+				<Grid
+					container
+					spacing={2}
+					direction={hasAdUnits ? '' : 'column'}
+					alignItems={hasAdUnits ? '' : 'center'}
+				>
 					<Grid item sm={12}>
 						<ContentBody>
-							<ItemsList
-								objModel={AdUnit}
-								selectMode
-								selectedItems={this.state.selected}
-								onSelect={(unit, checked) => {
-									this.handleSelect(unit, checked)
-								}}
-								items={adUnitsArray}
-								listMode='rows'
-								itemType={'AdUnit'}
-								viewModeId={'newCampaignAdUnits'}
-								sortProperties={SORT_PROPERTIES_ITEMS}
-								filterProperties={FILTER_PROPERTIES_ITEMS}
-								noActions
-							/>
+							{hasAdUnits ? (
+								<ItemsList
+									objModel={AdUnit}
+									selectMode
+									selectedItems={this.state.selected}
+									onSelect={(unit, checked) => {
+										this.handleSelect(unit, checked)
+									}}
+									items={adUnitsArray}
+									listMode='rows'
+									itemType={'AdUnit'}
+									viewModeId={'newCampaignAdUnits'}
+									sortProperties={SORT_PROPERTIES_ITEMS}
+									filterProperties={FILTER_PROPERTIES_ITEMS}
+									noActions
+								/>
+							) : (
+								<Grid container direction='column' alignItems='center'>
+									<p>{t('ERR_CAMPAIGN_REQUIRES_UNITS')}</p>
+									<NewUnitDialog
+										variant='extended'
+										color='secondary'
+										btnLabel='NEW_UNIT'
+									/>
+								</Grid>
+							)}
 						</ContentBody>
 					</Grid>
 				</Grid>
