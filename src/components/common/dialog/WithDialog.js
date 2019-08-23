@@ -15,19 +15,32 @@ import Icon from '@material-ui/core/Icon'
 import CancelIcon from '@material-ui/icons/Cancel'
 import DialogActions from '@material-ui/core/DialogActions'
 import Typography from '@material-ui/core/Typography'
-import { ContentBox, ContentBody, ContentStickyTop } from 'components/common/dialog/content'
+import {
+	ContentBox,
+	ContentBody,
+	ContentStickyTop,
+} from 'components/common/dialog/content'
 import { logOut, isDemoMode } from 'services/store-data/auth'
 import DEMO_IMAGE from 'resources/rekt-eddie.png'
 import Img from 'components/common/img/Img'
 
 const textBtn = ({ label, className, classes, style, onClick, ...rest }) => {
-	return <span className={classnames(classes.textBtn, className)} style={style} onClick={onClick}> {label} </span>
+	return (
+		<span
+			className={classnames(classes.textBtn, className)}
+			style={style}
+			onClick={onClick}
+		>
+			{' '}
+			{label}{' '}
+		</span>
+	)
 }
 
 const TextBtn = withStyles(styles)(textBtn)
 
-const Transition = (props) => {
-	return <Slide direction="up" {...props} />;
+const Transition = props => {
+	return <Slide direction='up' {...props} />
 }
 
 export default function ItemHoc(Decorated) {
@@ -35,13 +48,14 @@ export default function ItemHoc(Decorated) {
 		constructor(props) {
 			super(props)
 			this.state = {
-				open: false
+				open: false,
 			}
 		}
 
 		shouldComponentUpdate(nextProps, nextState) {
-			const shouldUpdate = (this.state.open !== nextState.open)
-				|| (JSON.stringify(this.props) !== JSON.stringify(nextProps))
+			const shouldUpdate =
+				this.state.open !== nextState.open ||
+				JSON.stringify(this.props) !== JSON.stringify(nextProps)
 
 			return shouldUpdate
 		}
@@ -65,11 +79,7 @@ export default function ItemHoc(Decorated) {
 					</ContentStickyTop>
 					<ContentBody>
 						<div>
-							<Button
-								onClick={logOut}
-								variant='contained'
-								color='primary'
-							>
+							<Button onClick={logOut} variant='contained' color='primary'>
 								{t('DEMO_GO_AUTH_BTN')}
 							</Button>
 						</div>
@@ -113,7 +123,7 @@ export default function ItemHoc(Decorated) {
 				color,
 				size,
 				mini,
-				variant
+				variant,
 			}
 
 			if (iconButton) {
@@ -130,7 +140,7 @@ export default function ItemHoc(Decorated) {
 			const { open } = this.state
 
 			return (
-				<div >
+				<div>
 					<ButtonComponent
 						disabled={disabled}
 						aria-label={btnLabel}
@@ -145,7 +155,14 @@ export default function ItemHoc(Decorated) {
 							{ [classes.second]: color === 'second' }
 						)}
 					>
-						{icon && <Icon className={classnames({ [classes.btnIconLeft]: !iconButton })} > {icon}</Icon>}
+						{icon && (
+							<Icon
+								className={classnames({ [classes.btnIconLeft]: !iconButton })}
+							>
+								{' '}
+								{icon}
+							</Icon>
+						)}
 						{!iconButton && btnLabel}
 					</ButtonComponent>
 					<Dialog
@@ -157,54 +174,37 @@ export default function ItemHoc(Decorated) {
 						onClose={this.handleToggle}
 						TransitionComponent={Transition}
 						classes={{ paper: classes.dialog }}
-					// onEscKeyDown={this.handleToggle}
-					// onOverlayClick={this.handleToggle}
+						// onEscKeyDown={this.handleToggle}
+						// onOverlayClick={this.handleToggle}
 					>
 						{/* <AppBar className={classes.appBar}>
                             <Toolbar> */}
-						<DialogTitle
-							disableTypography
-
-						>
+						<DialogTitle disableTypography>
 							<Typography
 								variant='title'
-								classes={
-									{ title: classnames(classes.dialogTitle, classes.breakLong) }
-								}
+								classes={{
+									title: classnames(classes.dialogTitle, classes.breakLong),
+								}}
 							>
 								{t(title)}
-								<IconButton
-									onClick={this.handleToggle}
-								>
+								<IconButton onClick={this.handleToggle}>
 									<CancelIcon />
 								</IconButton>
 							</Typography>
 						</DialogTitle>
 						{/* </Toolbar>
                         </AppBar> */}
-						<DialogContent
-							classes={{ root: classes.content }}
-						>
-							{
-								isDemo ?
-									// NOTE: ugly but it's temp and saves a lot of work!
-									this.renderDemoModeAction()
-									:
-									<Decorated
-										{...rest}
-										closeDialog={this.closeDialog}
-									/>
-							}
-
+						<DialogContent classes={{ root: classes.content }}>
+							{isDemo ? (
+								// NOTE: ugly but it's temp and saves a lot of work!
+								this.renderDemoModeAction()
+							) : (
+								<Decorated {...rest} closeDialog={this.closeDialog} />
+							)}
 						</DialogContent>
-						{dialogActions &&
-							<DialogActions>
-								{dialogActions}
-							</DialogActions>
-						}
+						{dialogActions && <DialogActions>{dialogActions}</DialogActions>}
 					</Dialog>
-
-				</div >
+				</div>
 			)
 		}
 	}
@@ -212,9 +212,8 @@ export default function ItemHoc(Decorated) {
 	WithDialog.propTypes = {
 		btnLabel: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
-		floating: PropTypes.bool
+		floating: PropTypes.bool,
 	}
 
 	return Translate(withStyles(styles)(WithDialog))
 }
-

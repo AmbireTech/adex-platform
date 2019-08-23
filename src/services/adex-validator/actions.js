@@ -14,29 +14,22 @@ const getRequesters = ({ campaign }) => {
 
 	return {
 		leader: { requester: leaderRequester, validator: leader },
-		follower: { requester: followerRequester, validator: follower }
+		follower: { requester: followerRequester, validator: follower },
 	}
 }
 
-const processResponse = (res) => {
+const processResponse = res => {
 	if (res.status >= 200 && res.status < 400) {
 		return res.json()
 	}
 
-	return res
-		.text()
-		.then(text => {
-			throw new Error(
-				translate('SERVICE_ERROR_MSG',
-					{
-						args: [
-							res.url,
-							res.status,
-							res.statusText,
-							text
-						]
-					}))
-		})
+	return res.text().then(text => {
+		throw new Error(
+			translate('SERVICE_ERROR_MSG', {
+				args: [res.url, res.status, res.statusText, text],
+			})
+		)
+	})
 }
 
 const getAuthToken = async ({ account, validator }) => {
@@ -52,7 +45,7 @@ const getAuthToken = async ({ account, validator }) => {
 	const payload = {
 		id: validator.id,
 		identity: identity.address,
-		era: Math.floor(Date.now() / 60000)
+		era: Math.floor(Date.now() / 60000),
 	}
 
 	const token = ewt.sign(signer, payload)
@@ -63,18 +56,33 @@ const getAuthToken = async ({ account, validator }) => {
 const sendMessage = async ({ account, campaign, options }) => {
 	const { follower, leader } = getRequesters({ campaign })
 
-	const followerAuthToken = await getAuthToken({ account, validator: follower.validator })
-	const leaderAuthToken = await getAuthToken({ account, validator: leader.validator })
-	const followerResult = await follower.requester.fetch({
-		...options,
-		headers: { ...options.headers, authorization: BEARER_PREFIX + followerAuthToken }
-	}).then(processResponse)
+	const followerAuthToken = await getAuthToken({
+		account,
+		validator: follower.validator,
+	})
+	const leaderAuthToken = await getAuthToken({
+		account,
+		validator: leader.validator,
+	})
+	const followerResult = await follower.requester
+		.fetch({
+			...options,
+			headers: {
+				...options.headers,
+				authorization: BEARER_PREFIX + followerAuthToken,
+			},
+		})
+		.then(processResponse)
 
-	const leaderResult = await leader.requester.fetch({
-		...options,
-		headers: { ...options.headers, authorization: BEARER_PREFIX + leaderAuthToken }
-	}).then(processResponse)
-
+	const leaderResult = await leader.requester
+		.fetch({
+			...options,
+			headers: {
+				...options.headers,
+				authorization: BEARER_PREFIX + leaderAuthToken,
+			},
+		})
+		.then(processResponse)
 
 	return {
 		authTokens: {
@@ -83,18 +91,20 @@ const sendMessage = async ({ account, campaign, options }) => {
 		},
 		results: {
 			followerResult,
-			leaderResult
-		}
+			leaderResult,
+		},
 	}
 }
 
 export const lastApprovedState = ({ campaign }) => {
 	const { leader } = getRequesters({ campaign })
 
-	return leader.requester.fetch({
-		route: `channel/${campaign.id}/last-approved`,
-		method: 'GET'
-	}).then(processResponse)
+	return leader.requester
+		.fetch({
+			route: `channel/${campaign.id}/last-approved`,
+			method: 'GET',
+		})
+		.then(processResponse)
 }
 
 export const closeCampaign = ({ account, campaign }) => {
@@ -102,7 +112,7 @@ export const closeCampaign = ({ account, campaign }) => {
 		route: `channel/${campaign.id}/events`,
 		method: 'POST',
 		body: JSON.stringify({ events: [{ type: 'CLOSE' }] }),
-		headers: { 'Content-Type': 'application/json' }
+		headers: { 'Content-Type': 'application/json' },
 	}
 
 	return sendMessage({ account, campaign, options })
@@ -111,8 +121,10 @@ export const closeCampaign = ({ account, campaign }) => {
 export const eventsAggregates = ({ agrArgs, campaign }) => {
 	const { follower } = getRequesters({ campaign })
 
-	return follower.requester.fetch({
-		route: `channel/${campaign.id}/events-aggregates/${agrArgs}`,
-		method: 'GET'
-	}).then(processResponse)
+	return follower.requester
+		.fetch({
+			route: `channel/${campaign.id}/events-aggregates/${agrArgs}`,
+			method: 'GET',
+		})
+		.then(processResponse)
 }

@@ -16,14 +16,14 @@ export const styles = theme => {
 			},
 			'@media(max-height:823px)': {
 				minHeight: `calc(${fullHeight} - ${theme.spacing(2)}px)`,
-			}
+			},
 		},
 		dialogTitle: {
 			display: 'flex',
 			flexDirection: 'row',
 			alignItems: 'center',
 			justifyContent: 'space-between',
-			wordWrap: 'break-word'
+			wordWrap: 'break-word',
 		},
 		content: {
 			display: 'flex',
@@ -36,7 +36,7 @@ export const styles = theme => {
 				paddingTop: spacing,
 			},
 			overflow: 'visible',
-			overflowY: 'auto'
+			overflowY: 'auto',
 		},
 		contentBox: {
 			// position: 'absolute',
@@ -45,32 +45,32 @@ export const styles = theme => {
 			// bottom: 0,
 			// right: 0,
 			display: 'flex',
-			flexDirection: 'column'
+			flexDirection: 'column',
 		},
 		propRow: {
 			margin: '10px 0',
-			width: '100%'
+			width: '100%',
 		},
 		contentBody: {
 			flexGrow: 1,
 		},
 		contentTopLoadingCircular: {
 			flexShrink: 0,
-			marginRight: theme.spacing(1)
+			marginRight: theme.spacing(1),
 		},
 		contentTopLoading: {
 			display: 'flex',
 			flexDirection: 'row',
 			alignItems: 'center',
 			'& > div': {
-				padding: theme.spacing(1)
-			}
+				padding: theme.spacing(1),
+			},
 		},
 		textBtn: {
-			cursor: 'pointer'
+			cursor: 'pointer',
 		},
 		btnIconLeft: {
-			marginRight: theme.spacing(1)
+			marginRight: theme.spacing(1),
 		},
 		leftCol: {
 			textTransform: 'uppercase',
@@ -81,23 +81,23 @@ export const styles = theme => {
 			},
 		},
 		rightCol: {
-			textAlign: 'left'
+			textAlign: 'left',
 		},
 		progressCircleCenter: {
 			position: 'absolute',
 			left: 'calc(50% - 30px)',
-			top: 'calc(50% - 30px)'
+			top: 'calc(50% - 30px)',
 		},
 		floating: {
 			position: 'fixed',
 			top: 86,
 			right: 40,
-			zIndex: theme.zIndex.appBar
+			zIndex: theme.zIndex.appBar,
 		},
 		breakLong: {
 			wordBreak: 'break-word',
 			overflowWrap: 'break-word',
-			hyphens: 'auto'
+			hyphens: 'auto',
 		},
 		demoImg: {
 			top: 'auto',
@@ -106,10 +106,10 @@ export const styles = theme => {
 			bottom: 0,
 			width: '100px',
 			height: 'auto',
-			position: 'absolute'
+			position: 'absolute',
 		},
 		demoBody: {
-			position: 'relative'
-		}
+			position: 'relative',
+		},
 	}
 }

@@ -1,4 +1,4 @@
-import { ADD_TOAST, REMOVE_TOAST} from 'constants/actionTypes'
+import { ADD_TOAST, REMOVE_TOAST } from 'constants/actionTypes'
 import initialState from 'store/initialState'
 import Helper from 'helpers/miscHelpers'
 // import { items as ItemsConstants } from 'adex-constants'
@@ -20,17 +20,17 @@ export default function toastsReducer(state = initialState.toasts, action) {
 	// }
 
 	switch (action.type) {
-	case ADD_TOAST:
-		newToast = { ...action.toast }
-		newToast.id = Helper.getGuid()
-		newToast.added = Date.now()
-		newState = [newToast, ...state,]
-		return newState
+		case ADD_TOAST:
+			newToast = { ...action.toast }
+			newToast.id = Helper.getGuid()
+			newToast.added = Date.now()
+			newState = [newToast, ...state]
+			return newState
 
-	case REMOVE_TOAST:
-		newState = state.filter((t) => t.id !== action.toast)
-		return newState
-	default:
-		return state
+		case REMOVE_TOAST:
+			newState = state.filter(t => t.id !== action.toast)
+			return newState
+		default:
+			return state
 	}
 }

@@ -11,45 +11,44 @@ import { removeLegacyKey } from 'services/wallet/wallet'
 
 // MEMORY STORAGE
 export function updateSignin(prop, value) {
-	return function (dispatch) {
+	return function(dispatch) {
 		return dispatch({
 			type: types.UPDATE_SIGNIN,
 			prop: prop,
-			value: value
+			value: value,
 		})
 	}
 }
 
 export function resetSignin() {
-	return function (dispatch) {
+	return function(dispatch) {
 		return dispatch({
-			type: types.RESET_SIGNIN
+			type: types.RESET_SIGNIN,
 		})
 	}
 }
 
-
 // PERSISTENT STORAGE
 export function createAccount(acc) {
-	return function (dispatch) {
+	return function(dispatch) {
 		return dispatch({
 			type: types.CREATE_ACCOUNT,
-			account: acc
+			account: acc,
 		})
 	}
 }
 
 // LOGOUT
 export function resetAccount() {
-	return function (dispatch) {
+	return function(dispatch) {
 		return dispatch({
-			type: types.RESET_ACCOUNT
+			type: types.RESET_ACCOUNT,
 		})
 	}
 }
 
 export function updateAccount({ meta, newValues }) {
-	return function (dispatch) {
+	return function(dispatch) {
 		return dispatch({
 			type: types.UPDATE_ACCOUNT,
 			meta: meta,
@@ -59,16 +58,16 @@ export function updateAccount({ meta, newValues }) {
 }
 
 export function updateGasData({ gasData }) {
-	return function (dispatch) {
+	return function(dispatch) {
 		return dispatch({
 			type: types.UPDATE_GAS_DATA,
-			gasData: gasData
+			gasData: gasData,
 		})
 	}
 }
 
 export function updateAccountStats() {
-	return async function (dispatch, getState) {
+	return async function(dispatch, getState) {
 		const { account } = getState().persist
 		try {
 			const stats = await getAccountStats({ account })
@@ -78,16 +77,15 @@ export function updateAccountStats() {
 			console.error('ERR_STATS', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_STATS',
-					{ args: [err] }),
-				timeout: 20000
+				label: translate('ERR_STATS', { args: [err] }),
+				timeout: 20000,
 			})(dispatch)
 		}
 	}
 }
 
 export function registerAccount({ wallet, identityData, email }) {
-	return async function (dispatch) {
+	return async function(dispatch) {
 		updateSpinner('registering-account', true)(dispatch)
 		try {
 			const { txnsRaw, signatures, identityAddr } = identityData
@@ -102,9 +100,8 @@ export function registerAccount({ wallet, identityData, email }) {
 			console.error('ERR_REGISTERING_ACCOUNT', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_REGISTERING_ACCOUNT',
-					{ args: [err] }),
-				timeout: 20000
+				label: translate('ERR_REGISTERING_ACCOUNT', { args: [err] }),
+				timeout: 20000,
 			})(dispatch)
 		}
 
@@ -113,20 +110,22 @@ export function registerAccount({ wallet, identityData, email }) {
 }
 
 export function createSession({ wallet, identity, email, deleteLegacyKey }) {
-	return async function (dispatch) {
+	return async function(dispatch) {
 		updateSpinner('creating-session', true)(dispatch)
 		try {
 			const newWallet = { ...wallet }
-			const sessionSignature = getSig({
-				addr: newWallet.address,
-				mode: newWallet.authType,
-				identity: identity.address
-			}) || null
+			const sessionSignature =
+				getSig({
+					addr: newWallet.address,
+					mode: newWallet.authType,
+					identity: identity.address,
+				}) || null
 
-			const hasSession = !!sessionSignature
-				&& (await checkSession({
+			const hasSession =
+				!!sessionSignature &&
+				(await checkSession({
 					authSig: sessionSignature,
-					skipErrToast: true
+					skipErrToast: true,
 				}))
 
 			if (hasSession) {
@@ -137,7 +136,7 @@ export function createSession({ wallet, identity, email, deleteLegacyKey }) {
 					mode,
 					authToken,
 					hash,
-					typedData
+					typedData,
 				} = await getAuthSig({ wallet: newWallet })
 
 				const { status, expiryTime } = await getSession({
@@ -147,7 +146,7 @@ export function createSession({ wallet, identity, email, deleteLegacyKey }) {
 					authToken: authToken,
 					hash,
 					typedData,
-					signerAddress: newWallet.address
+					signerAddress: newWallet.address,
 				})
 
 				if (status === 'OK') {
@@ -156,7 +155,7 @@ export function createSession({ wallet, identity, email, deleteLegacyKey }) {
 						sig: signature,
 						mode: wallet.authType,
 						expiryTime: expiryTime,
-						identity: identity.address
+						identity: identity.address,
 					})
 					newWallet.authSig = signature
 				}
@@ -166,23 +165,22 @@ export function createSession({ wallet, identity, email, deleteLegacyKey }) {
 				newValues: {
 					email: email,
 					wallet: newWallet,
-					identity: identity
-				}
+					identity: identity,
+				},
 			})(dispatch)
 
 			if (deleteLegacyKey) {
 				removeLegacyKey({
 					email: wallet.email,
-					password: wallet.password
+					password: wallet.password,
 				})
 			}
 		} catch (err) {
 			console.error('ERR_GETTING_SESSION', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_GETTING_SESSION',
-					{ args: [err] }),
-				timeout: 20000
+				label: translate('ERR_GETTING_SESSION', { args: [err] }),
+				timeout: 20000,
 			})(dispatch)
 		}
 
@@ -191,11 +189,11 @@ export function createSession({ wallet, identity, email, deleteLegacyKey }) {
 }
 
 export function getRelayerConfig() {
-	return async function (dispatch) {
+	return async function(dispatch) {
 		const cfg = await relayerConfig()
 		return dispatch({
 			type: types.UPDATE_RELAYER_CFG,
-			cfg
+			cfg,
 		})
 	}
 }

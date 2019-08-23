@@ -26,28 +26,25 @@ const AdvPlatformValidators = {
 	[VALIDATOR_LEADER_ID]: {
 		id: VALIDATOR_LEADER_ID,
 		url: VALIDATOR_LEADER_URL,
-		fee: VALIDATOR_LEADER_FEE
-	}
+		fee: VALIDATOR_LEADER_FEE,
+	},
 }
 
 const PubPlatformValidators = {
 	[VALIDATOR_FOLLOWER_ID]: {
 		id: VALIDATOR_FOLLOWER_ID,
 		url: VALIDATOR_FOLLOWER_URL,
-		fee: VALIDATOR_FOLLOWER_FEE
-	}
+		fee: VALIDATOR_FOLLOWER_FEE,
+	},
 }
 
-const VALIDATOR_SOURCES = [
-	AdvPlatformValidators,
-	PubPlatformValidators
-]
+const VALIDATOR_SOURCES = [AdvPlatformValidators, PubPlatformValidators]
 
 const AdvValidatorsSrc = Object.keys(AdvPlatformValidators).map(key => {
 	const val = AdvPlatformValidators[key]
 	return {
 		value: key,
-		label: `${val.url} - ${val.id}`
+		label: `${val.url} - ${val.id}`,
 	}
 })
 
@@ -55,7 +52,7 @@ const PubValidatorsSrc = Object.keys(PubPlatformValidators).map(key => {
 	const val = PubPlatformValidators[key]
 	return {
 		value: key,
-		label: `${val.url} - ${val.id}`
+		label: `${val.url} - ${val.id}`,
 	}
 })
 
@@ -67,20 +64,23 @@ const getTotalImpressions = ({ depositAmount, minPerImpression, t }) => {
 	} else if (!min) {
 		return t('CPM_NOT_SET')
 	} else {
-		const impressions = utils.commify(
-			Math.floor((dep / min) * 1000))
+		const impressions = utils.commify(Math.floor((dep / min) * 1000))
 		return t('TOTAL_IMPRESSIONS', { args: [impressions] })
 	}
 }
 
-const validateCampaignDates = ({ created = Date.now(), withdrawPeriodStart, activeFrom }) => {
+const validateCampaignDates = ({
+	created = Date.now(),
+	withdrawPeriodStart,
+	activeFrom,
+}) => {
 	let error = null
 
-	if (withdrawPeriodStart && activeFrom && (withdrawPeriodStart <= activeFrom)) {
+	if (withdrawPeriodStart && activeFrom && withdrawPeriodStart <= activeFrom) {
 		error = { message: 'ERR_END_BEFORE_START', prop: 'activeFrom' }
-	} else if (withdrawPeriodStart && (withdrawPeriodStart < created)) {
+	} else if (withdrawPeriodStart && withdrawPeriodStart < created) {
 		error = { message: 'ERR_END_BEFORE_NOW', prop: 'withdrawPeriodStart' }
-	} else if (activeFrom && (activeFrom < created)) {
+	} else if (activeFrom && activeFrom < created) {
 		error = { message: 'ERR_START_BEFORE_NOW', prop: 'activeFrom' }
 	} else if (activeFrom && !withdrawPeriodStart) {
 		error = { message: 'ERR_NO_END', prop: 'withdrawPeriodStart' }
@@ -91,19 +91,29 @@ const validateCampaignDates = ({ created = Date.now(), withdrawPeriodStart, acti
 	return { error }
 }
 
-const validateAmounts = ({ maxDeposit = 0, depositAmount, minPerImpression }) => {
+const validateAmounts = ({
+	maxDeposit = 0,
+	depositAmount,
+	minPerImpression,
+}) => {
 	const maxDep = parseFloat(maxDeposit)
 	const dep = parseFloat(depositAmount)
 	const min = parseFloat(minPerImpression)
 
 	let error = null
-	if (dep && (dep > maxDep)) {
-		error = { message: 'ERR_INSUFFICIENT_IDENTITY_BALANCE', prop: 'depositAmount' }
-	} if (dep && (dep < min)) {
+	if (dep && dep > maxDep) {
+		error = {
+			message: 'ERR_INSUFFICIENT_IDENTITY_BALANCE',
+			prop: 'depositAmount',
+		}
+	}
+	if (dep && dep < min) {
 		error = { message: 'ERR_CPM_OVER_DEPOSIT', prop: 'minPerImpression' }
-	} if (dep <= 0) {
+	}
+	if (dep <= 0) {
 		error = { message: 'ERR_ZERO_DEPOSIT', prop: 'depositAmount' }
-	} if (min <= 0) {
+	}
+	if (min <= 0) {
 		error = { message: 'ERR_ZERO_CPM', prop: 'minPerImpression' }
 	}
 
@@ -115,8 +125,18 @@ class CampaignFinance extends Component {
 		const { newItem } = this.props
 		this.validateAndUpdateValidator(false, 0, newItem.validators[0])
 		this.validateAndUpdateValidator(false, 1, newItem.validators[1])
-		this.validateAmount(newItem.depositAmount, 'depositAmount', false, 'REQUIRED_FIELD')
-		this.validateAmount(newItem.minPerImpression, 'minPerImpression', false, 'REQUIRED_FIELD')
+		this.validateAmount(
+			newItem.depositAmount,
+			'depositAmount',
+			false,
+			'REQUIRED_FIELD'
+		)
+		this.validateAmount(
+			newItem.minPerImpression,
+			'minPerImpression',
+			false,
+			'REQUIRED_FIELD'
+		)
 		this.handleDates('activeFrom', newItem.activeFrom, false)
 		this.handleDates('withdrawPeriodStart', newItem.withdrawPeriodStart, false)
 	}
@@ -144,7 +164,7 @@ class CampaignFinance extends Component {
 		validate('validators', {
 			isValid: isValid,
 			err: { msg: 'ERR_VALIDATORS' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
@@ -153,55 +173,56 @@ class CampaignFinance extends Component {
 		const isValid = isValidNumber && utils.parseUnits(value, 18)
 
 		if (!isValid) {
-			this.props.validate(
-				prop,
-				{
-					isValid: isValid,
-					err: { msg: errMsg || 'ERR_INVALID_AMOUNT' },
-					dirty: dirty
-				})
+			this.props.validate(prop, {
+				isValid: isValid,
+				err: { msg: errMsg || 'ERR_INVALID_AMOUNT' },
+				dirty: dirty,
+			})
 		} else {
-
 			const { newItem, account } = this.props
 
 			const { identityBalanceDai } = account.stats.formatted
-			const depositAmount = (prop === 'depositAmount') ? value : newItem.depositAmount
-			const minPerImpression = (prop === 'minPerImpression') ? value : newItem.minPerImpression
+			const depositAmount =
+				prop === 'depositAmount' ? value : newItem.depositAmount
+			const minPerImpression =
+				prop === 'minPerImpression' ? value : newItem.minPerImpression
 
-			const result = validateAmounts({ maxDeposit: identityBalanceDai - totalFeesFormatted, depositAmount, minPerImpression })
+			const result = validateAmounts({
+				maxDeposit: identityBalanceDai - totalFeesFormatted,
+				depositAmount,
+				minPerImpression,
+			})
 
-			this.props.validate(
-				prop,
-				{
-					isValid: !result.error,
-					err: { msg: result.error ? result.error.message : '' },
-					dirty: dirty
-				})
+			this.props.validate(prop, {
+				isValid: !result.error,
+				err: { msg: result.error ? result.error.message : '' },
+				dirty: dirty,
+			})
 		}
 	}
 
 	handleDates = (prop, value, dirty) => {
-
 		const { newItem, handleChange, validate } = this.props
-		const withdrawPeriodStart = (prop === 'withdrawPeriodStart') ? value : newItem.withdrawPeriodStart
-		const activeFrom = (prop === 'activeFrom') ? value : newItem.activeFrom
-		const result = validateCampaignDates({ withdrawPeriodStart, activeFrom, created: newItem.created })
+		const withdrawPeriodStart =
+			prop === 'withdrawPeriodStart' ? value : newItem.withdrawPeriodStart
+		const activeFrom = prop === 'activeFrom' ? value : newItem.activeFrom
+		const result = validateCampaignDates({
+			withdrawPeriodStart,
+			activeFrom,
+			created: newItem.created,
+		})
 
-		validate(
-			'activeFrom',
-			{
-				isValid: !result.error,
-				err: { msg: result.error ? result.error.message : '' },
-				dirty: dirty
-			})
+		validate('activeFrom', {
+			isValid: !result.error,
+			err: { msg: result.error ? result.error.message : '' },
+			dirty: dirty,
+		})
 
-		validate(
-			'withdrawPeriodStart',
-			{
-				isValid: !result.error,
-				err: { msg: result.error ? result.error.message : '' },
-				dirty: dirty
-			})
+		validate('withdrawPeriodStart', {
+			isValid: !result.error,
+			err: { msg: result.error ? result.error.message : '' },
+			dirty: dirty,
+		})
 
 		if (value) {
 			handleChange(prop, value)
@@ -209,13 +230,7 @@ class CampaignFinance extends Component {
 	}
 
 	render() {
-		const {
-			handleChange,
-			newItem,
-			t,
-			invalidFields,
-			account
-		} = this.props
+		const { handleChange, newItem, t, invalidFields, account } = this.props
 		const {
 			validators,
 			depositAmount,
@@ -223,7 +238,7 @@ class CampaignFinance extends Component {
 			// depositAsset,
 			activeFrom,
 			withdrawPeriodStart,
-			minTargetingScore
+			minTargetingScore,
 		} = newItem
 
 		const { identityBalanceDai } = account.stats.formatted
@@ -243,16 +258,14 @@ class CampaignFinance extends Component {
 
 		return (
 			<div>
-				<Grid
-					container
-					spacing={2}
-				>
+				<Grid container spacing={2}>
 					<Grid item xs={12}>
 						<Dropdown
 							fullWidth
 							required
-							onChange={(value) =>
-								this.validateAndUpdateValidator(true, 0, value, true)}
+							onChange={value =>
+								this.validateAndUpdateValidator(true, 0, value, true)
+							}
 							source={AdvValidatorsSrc}
 							value={(validators[0] || {}).id + ''}
 							label={t('ADV_PLATFORM_VALIDATOR')}
@@ -264,8 +277,9 @@ class CampaignFinance extends Component {
 						<Dropdown
 							fullWidth
 							required
-							onChange={(value) =>
-								this.validateAndUpdateValidator(true, 1, value, true)}
+							onChange={value =>
+								this.validateAndUpdateValidator(true, 1, value, true)
+							}
 							source={PubValidatorsSrc}
 							value={(validators[1] || {}).id + ''}
 							label={t('PUB_PLATFORM_VALIDATOR')}
@@ -280,22 +294,26 @@ class CampaignFinance extends Component {
 							required
 							label={t('DEPOSIT_AMOUNT_LABEL', {
 								args: [
-									(identityBalanceDai - totalFeesFormatted).toFixed(2), 'DAI',
-									totalFeesFormatted, 'DAI'
-								]
+									(identityBalanceDai - totalFeesFormatted).toFixed(2),
+									'DAI',
+									totalFeesFormatted,
+									'DAI',
+								],
 							})}
 							name='depositAmount'
 							value={depositAmount}
-							onChange={(ev) => {
+							onChange={ev => {
 								this.validateAmount(ev.target.value, 'depositAmount', true)
 								handleChange('depositAmount', ev.target.value)
 							}}
 							error={errDepAmnt && !!errDepAmnt.dirty}
 							maxLength={120}
 							helperText={
-								(errDepAmnt && !!errDepAmnt.dirty)
+								errDepAmnt && !!errDepAmnt.dirty
 									? errDepAmnt.errMsg
-									: t('DEPOSIT_AMOUNT_HELPER_TXT', { args: [totalFeesFormatted, 'DAI'] })
+									: t('DEPOSIT_AMOUNT_HELPER_TXT', {
+											args: [totalFeesFormatted, 'DAI'],
+									  })
 							}
 						/>
 					</Grid>
@@ -307,16 +325,14 @@ class CampaignFinance extends Component {
 							label={t('CPM_LABEL', { args: [impressions] })}
 							name='minPerImpression'
 							value={minPerImpression}
-							onChange={(ev) => {
+							onChange={ev => {
 								this.validateAmount(ev.target.value, 'minPerImpression', true)
 								handleChange('minPerImpression', ev.target.value)
 							}}
 							error={errMin && !!errMin.dirty}
 							maxLength={120}
 							helperText={
-								(errMin && !!errMin.dirty)
-									? errMin.errMsg
-									: t('CPM_HELPER_TXT')
+								errMin && !!errMin.dirty ? errMin.errMsg : t('CPM_HELPER_TXT')
 							}
 						/>
 					</Grid>
@@ -329,13 +345,13 @@ class CampaignFinance extends Component {
 							label={t('CAMPAIGN_STARTS')}
 							minDate={now}
 							maxDate={to}
-							onChange={(val) => {
+							onChange={val => {
 								this.handleDates('activeFrom', val.valueOf(), true)
 							}}
 							value={from || null}
 							error={errFrom && !!errFrom.dirty}
 							helperText={
-								(errFrom && !!errFrom.dirty)
+								errFrom && !!errFrom.dirty
 									? errFrom.errMsg
 									: t('CAMPAIGN_STARTS_FROM_HELPER_TXT')
 							}
@@ -349,12 +365,13 @@ class CampaignFinance extends Component {
 							calendarIcon
 							label={t('CAMPAIGN_ENDS')}
 							minDate={from || now}
-							onChange={(val) =>
-								this.handleDates('withdrawPeriodStart', val.valueOf(), true)}
+							onChange={val =>
+								this.handleDates('withdrawPeriodStart', val.valueOf(), true)
+							}
 							value={to || null}
 							error={errTo && !!errTo.dirty}
 							helperText={
-								(errTo && !!errTo.dirty)
+								errTo && !!errTo.dirty
 									? errTo.errMsg
 									: t('CAMPAIGN_ENDS_HELPER_TXT')
 							}
@@ -366,9 +383,11 @@ class CampaignFinance extends Component {
 								control={
 									<Checkbox
 										checked={!!minTargetingScore}
-										onChange={(ev) =>
-											handleChange('minTargetingScore',
-												ev.target.checked ? 1 : null)
+										onChange={ev =>
+											handleChange(
+												'minTargetingScore',
+												ev.target.checked ? 1 : null
+											)
 										}
 										value='minTargetingScore'
 									/>
@@ -378,7 +397,7 @@ class CampaignFinance extends Component {
 						</FormGroup>
 					</Grid>
 				</Grid>
-			</div >
+			</div>
 		)
 	}
 }
@@ -388,7 +407,7 @@ CampaignFinance.propTypes = {
 	title: PropTypes.string,
 	descriptionHelperTxt: PropTypes.string,
 	nameHelperTxt: PropTypes.string,
-	adUnits: PropTypes.array.isRequired
+	adUnits: PropTypes.array.isRequired,
 }
 
 const NewCampaignFinance = NewCampaignHoc(CampaignFinance)

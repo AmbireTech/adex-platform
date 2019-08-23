@@ -1,8 +1,7 @@
 import React from 'react'
 import Link from '@material-ui/core/Link'
 
-const getUrl = (url) => {
-
+const getUrl = url => {
 	url = (url || '').replace(/^(https?:)?\/\//i, '')
 	if (url) {
 		url = '//' + url

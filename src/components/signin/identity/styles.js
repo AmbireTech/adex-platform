@@ -8,7 +8,7 @@ export const styles = theme => {
 			backgroundRepeat: 'no-repeat',
 			backgroundSize: 'cover',
 			backgroundPosition: 'center',
-			position: 'relative'
+			position: 'relative',
 		},
 		container: {
 			position: 'absolute',
@@ -20,18 +20,18 @@ export const styles = theme => {
 		adxVersion: {
 			position: 'absolute',
 			left: spacing,
-			bottom: spacing
+			bottom: spacing,
 		},
 		adexLogoTop: {
-			textAlign: 'center'
+			textAlign: 'center',
 		},
 		logo: {
 			marginTop: '1.5vh',
 			width: '17.92vh',
-			height: '6vh'
+			height: '6vh',
 		},
 		formControl: {
-			display: 'flex'
+			display: 'flex',
 		},
 		buttonProgressWrapper: {
 			margin: spacing,
@@ -51,6 +51,6 @@ export const styles = theme => {
 		},
 		input: {
 			display: 'none',
-		  },
+		},
 	}
 }

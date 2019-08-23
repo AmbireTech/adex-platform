@@ -15,37 +15,37 @@ const palette = {
 	first: lime,
 	contrastThreshold: 3,
 	tonalOffset: 0.2,
-	text: grey
+	text: grey,
 }
 
 export const themeMUI = createMuiTheme({
 	typography: {
 		fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-		fontSize: 13
+		fontSize: 13,
 	},
 	palette: { ...palette },
 	overrides: {
 		MuiButton: {
 			root: {
-				borderRadius: 0
+				borderRadius: 0,
 			},
 			outlined: {
-				borderRadius: 0
-			}
+				borderRadius: 0,
+			},
 		},
 		MuiTableCell: {
 			head: {
-				whiteSpace: 'nowrap'
+				whiteSpace: 'nowrap',
 			},
 			root: {
-				whiteSpace: 'nowrap'
-			}
+				whiteSpace: 'nowrap',
+			},
 		},
 		MuiPaper: {
 			rounded: {
-				borderRadius: 0
-			}
-		}
+				borderRadius: 0,
+			},
+		},
 		// MuiStepIcon: {
 		//     root: {
 		//         color: 'yellow',

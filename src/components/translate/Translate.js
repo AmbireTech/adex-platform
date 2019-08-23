@@ -5,29 +5,25 @@ import { translate } from 'services/translations/translations'
 
 export default function Translate(Decorated) {
 	class Translated extends Component {
-
 		t(val, { isProp = false, args = [''] } = {}) {
-
 			const translation = translate(val, { isProp, args }, this.props.language)
 
 			return translation
 		}
 
 		render() {
-			return (
-				<Decorated {...this.props} t={this.t.bind(this)} />
-			)
+			return <Decorated {...this.props} t={this.t.bind(this)} />
 		}
 	}
 
 	Translated.propTypes = {
-		language: PropTypes.string.isRequired
+		language: PropTypes.string.isRequired,
 	}
 
 	function mapStateToProps(state) {
 		const { persist } = state
 		return {
-			language: persist.language
+			language: persist.language,
 		}
 	}
 

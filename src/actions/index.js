@@ -15,7 +15,7 @@ export default {
 	...accountActions,
 	...identityActions,
 	...bidActions,
-	...transactionActions
+	...transactionActions,
 }
 
 // used for minimal deps in hook components

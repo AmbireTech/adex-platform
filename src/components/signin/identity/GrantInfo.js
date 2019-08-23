@@ -12,7 +12,7 @@ import { styles } from './styles'
 import {
 	validEmail,
 	validPassword,
-	validQuickAccountCoupon
+	validQuickAccountCoupon,
 } from 'helpers/validators'
 import { checkCoupon } from 'services/adex-relayer/actions'
 
@@ -24,7 +24,7 @@ class GrantInfo extends Component {
 			password,
 			passwordCheck,
 			coupon,
-			tosCheck
+			tosCheck,
 		} = this.props.identity
 
 		this.validateEmail(email, false)
@@ -40,16 +40,16 @@ class GrantInfo extends Component {
 		this.props.validate('email', {
 			isValid: isValid,
 			err: { msg: 'ERR_EMAIL' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
 	validateEmailCheck(emailCheck, email, dirty) {
-		const isValid = !!emailCheck && !!email && (emailCheck === email)
+		const isValid = !!emailCheck && !!email && emailCheck === email
 		this.props.validate('emailCheck', {
 			isValid: isValid,
 			err: { msg: 'ERR_EMAIL_CHECK' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
@@ -58,16 +58,16 @@ class GrantInfo extends Component {
 		this.props.validate('password', {
 			isValid: isValid,
 			err: { msg: 'ERR_PASSWORD' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
 	validatePasswordCheck(passwordCheck, password, dirty) {
-		const isValid = !!passwordCheck && !!password && (passwordCheck === password)
+		const isValid = !!passwordCheck && !!password && passwordCheck === password
 		this.props.validate('passwordCheck', {
 			isValid: isValid,
 			err: { msg: 'ERR_PASSWORD_CHECK' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
@@ -78,13 +78,13 @@ class GrantInfo extends Component {
 			this.props.validate('coupon', {
 				isValid: isValidFormat,
 				err: { msg: 'ERR_COUPON_FORMAT' },
-				dirty: dirty
+				dirty: dirty,
 			})
 		} else {
 			this.setState({ waitingCheck: true }, () => {
 				checkCoupon({ coupon })
 					.then((cpn = {}) => {
-						const isValid = (cpn.exist === true) && (cpn.used === false)
+						const isValid = cpn.exist === true && cpn.used === false
 						let msg = ''
 						if (cpn.exist === false) {
 							msg = 'ERR_COUPON_NOT_EXIST'
@@ -95,14 +95,14 @@ class GrantInfo extends Component {
 						this.props.validate('coupon', {
 							isValid: isValid,
 							err: { msg: msg },
-							dirty: dirty
+							dirty: dirty,
 						})
 					})
 					.catch(err => {
 						this.props.validate('coupon', {
 							isValid: false,
 							err: { msg: 'ERR_COUPON_NETWORK' },
-							dirty: true
+							dirty: true,
 						})
 					})
 			})
@@ -113,7 +113,7 @@ class GrantInfo extends Component {
 		this.props.validate('tosCheck', {
 			isValid: !!accepted,
 			err: { msg: 'ERR_TOS_CHECK' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
@@ -125,13 +125,17 @@ class GrantInfo extends Component {
 	render() {
 		const { t, identity, handleChange, invalidFields } = this.props
 		// Errors
-		const { coupon, email, emailCheck, password, passwordCheck, tosCheck } = invalidFields
+		const {
+			coupon,
+			email,
+			emailCheck,
+			password,
+			passwordCheck,
+			tosCheck,
+		} = invalidFields
 		return (
 			<div>
-				<Grid
-					container
-					spacing={2}
-				>
+				<Grid container spacing={2}>
 					<Grid item xs={12}>
 						<TextField
 							fullWidth
@@ -140,15 +144,15 @@ class GrantInfo extends Component {
 							label={t('coupon', { isProp: true })}
 							name='coupon'
 							value={identity.coupon || ''}
-							onChange={(ev) => handleChange('coupon', ev.target.value)}
+							onChange={ev => handleChange('coupon', ev.target.value)}
 							onBlur={() => this.validateCoupon(identity.coupon, true)}
 							onFocus={() => this.validateCoupon(identity.coupon, false)}
 							error={coupon && !!coupon.dirty}
 							maxLength={128}
 							helperText={
-								coupon && !!coupon.dirty ?
-									coupon.errMsg :
-									t('ENTER_VALID_COUPON')
+								coupon && !!coupon.dirty
+									? coupon.errMsg
+									: t('ENTER_VALID_COUPON')
 							}
 						/>
 					</Grid>
@@ -160,15 +164,13 @@ class GrantInfo extends Component {
 							label={t('email', { isProp: true })}
 							name='email'
 							value={identity.email || ''}
-							onChange={(ev) => handleChange('email', ev.target.value)}
+							onChange={ev => handleChange('email', ev.target.value)}
 							onBlur={() => this.validateEmail(identity.email, true)}
 							onFocus={() => this.validateEmail(identity.email, false)}
 							error={email && !!email.dirty}
 							maxLength={128}
 							helperText={
-								email && !!email.dirty ?
-									email.errMsg :
-									t('ENTER_VALID_EMAIL')
+								email && !!email.dirty ? email.errMsg : t('ENTER_VALID_EMAIL')
 							}
 						/>
 					</Grid>
@@ -180,15 +182,27 @@ class GrantInfo extends Component {
 							label={t('emailCheck', { isProp: true })}
 							name='emailCheck'
 							value={identity.emailCheck || ''}
-							onChange={(ev) => handleChange('emailCheck', ev.target.value)}
-							onBlur={() => this.validateEmailCheck(identity.emailCheck, identity.email, true)}
-							onFocus={() => this.validateEmailCheck(identity.emailCheck, identity.email, false)}
+							onChange={ev => handleChange('emailCheck', ev.target.value)}
+							onBlur={() =>
+								this.validateEmailCheck(
+									identity.emailCheck,
+									identity.email,
+									true
+								)
+							}
+							onFocus={() =>
+								this.validateEmailCheck(
+									identity.emailCheck,
+									identity.email,
+									false
+								)
+							}
 							error={emailCheck && !!emailCheck.dirty}
 							maxLength={128}
 							helperText={
-								emailCheck && !!emailCheck.dirty ?
-									emailCheck.errMsg :
-									t('ENTER_SAME_EMAIL')
+								emailCheck && !!emailCheck.dirty
+									? emailCheck.errMsg
+									: t('ENTER_SAME_EMAIL')
 							}
 						/>
 					</Grid>
@@ -200,15 +214,15 @@ class GrantInfo extends Component {
 							label={t('password', { isProp: true })}
 							name='password'
 							value={identity.password || ''}
-							onChange={(ev) => handleChange('password', ev.target.value)}
+							onChange={ev => handleChange('password', ev.target.value)}
 							onBlur={() => this.validatePassword(identity.password, true)}
 							onFocus={() => this.validatePassword(identity.password, false)}
 							error={password && !!password.dirty}
 							maxLength={128}
 							helperText={
-								password && !!password.dirty ?
-									password.errMsg :
-									t('PASSWORD_RULES')
+								password && !!password.dirty
+									? password.errMsg
+									: t('PASSWORD_RULES')
 							}
 						/>
 					</Grid>
@@ -220,15 +234,27 @@ class GrantInfo extends Component {
 							label={t('passwordCheck', { isProp: true })}
 							name='passwordCheck'
 							value={identity.passwordCheck || ''}
-							onChange={(ev) => handleChange('passwordCheck', ev.target.value)}
-							onBlur={() => this.validatePasswordCheck(identity.passwordCheck, identity.password, true)}
-							onFocus={() => this.validatePasswordCheck(identity.passwordCheck, identity.password, false)}
+							onChange={ev => handleChange('passwordCheck', ev.target.value)}
+							onBlur={() =>
+								this.validatePasswordCheck(
+									identity.passwordCheck,
+									identity.password,
+									true
+								)
+							}
+							onFocus={() =>
+								this.validatePasswordCheck(
+									identity.passwordCheck,
+									identity.password,
+									false
+								)
+							}
 							error={passwordCheck && !!passwordCheck.dirty}
 							maxLength={128}
 							helperText={
-								passwordCheck && !!passwordCheck.dirty ?
-									passwordCheck.errMsg :
-									t('PASSWORD_CHECK_RULES')
+								passwordCheck && !!passwordCheck.dirty
+									? passwordCheck.errMsg
+									: t('PASSWORD_CHECK_RULES')
 							}
 						/>
 					</Grid>
@@ -236,27 +262,27 @@ class GrantInfo extends Component {
 						<FormControl
 							required
 							error={tosCheck && tosCheck.dirty}
-							component="fieldset"
-						// className={classes.formControl}
+							component='fieldset'
+							// className={classes.formControl}
 						>
 							<FormControlLabel
 								control={
 									<Checkbox
 										checked={!!identity.tosCheck}
-										onChange={(ev) => this.tosCheck(ev.target.checked)}
+										onChange={ev => this.tosCheck(ev.target.checked)}
 										value='tosCheck'
 										color='primary'
 									/>
 								}
 								label={t('TOS_CHECK')}
 							/>
-							{(tosCheck && !!tosCheck.dirty) &&
+							{tosCheck && !!tosCheck.dirty && (
 								<FormHelperText>{tosCheck.errMsg}</FormHelperText>
-							}
+							)}
 						</FormControl>
 					</Grid>
 				</Grid>
-			</div >
+			</div>
 		)
 	}
 }

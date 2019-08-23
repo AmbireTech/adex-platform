@@ -12,30 +12,28 @@ export default class LocalSigner extends Signer {
 		const walletData = getLocalWallet({
 			email,
 			password,
-			authType
+			authType,
 		})
 
-		this._wallet = new Wallet(
-			walletData.data.privateKey,
-			provider
-		)
+		this._wallet = new Wallet(walletData.data.privateKey, provider)
 	}
 
-	get provider() { return this._provider }
+	get provider() {
+		return this._provider
+	}
 
 	getAddress = async () => {
 		return this._wallet.address
 	}
 
-	signTx = async (params) => {
+	signTx = async params => {
 		const signetTx = this._wallet.sign(params)
 		return signetTx
 	}
 
-	sendTransaction = async (params) => {
+	sendTransaction = async params => {
 		const txSigned = await this.signTx(params)
-		const txData = this.provider
-			.sendTransaction(txSigned)
+		const txData = this.provider.sendTransaction(txSigned)
 		return txData
 	}
 
@@ -44,24 +42,21 @@ export default class LocalSigner extends Signer {
 			message = utils.arrayify(message)
 		}
 
-		const signature = await this._wallet
-			.signMessage(message)
+		const signature = await this._wallet.signMessage(message)
 		const res = {
 			signature,
 			hash: message,
 			mode: constants.SignatureModes.GETH,
-			address: this._wallet.address
+			address: this._wallet.address,
 		}
 
 		return res
 	}
 
-	connect = (provider) => {
-		return new LocalSigner(
-			provider,
-			{
-				email: this.email,
-				password: this.password
-			})
+	connect = provider => {
+		return new LocalSigner(provider, {
+			email: this.email,
+			password: this.password,
+		})
 	}
 }
