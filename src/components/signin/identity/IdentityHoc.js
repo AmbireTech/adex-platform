@@ -5,15 +5,14 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 
 export default function IdentityHoc(Decorated) {
-
 	class IdentityForm extends Component {
 		constructor(props) {
 			super(props)
 
-			this.save = this.save.bind(this);
+			this.save = this.save.bind(this)
 
 			this.state = {
-				ready: false
+				ready: false,
 			}
 		}
 
@@ -34,7 +33,7 @@ export default function IdentityHoc(Decorated) {
 				email,
 				identityData,
 				deleteLegacyKey,
-				registerAccount
+				registerAccount,
 			} = identity
 
 			const newWallet = { ...wallet }
@@ -43,7 +42,7 @@ export default function IdentityHoc(Decorated) {
 				await actions.registerAccount({
 					wallet: newWallet,
 					identityData,
-					email
+					email,
 				})
 			}
 
@@ -52,7 +51,7 @@ export default function IdentityHoc(Decorated) {
 				wallet: newWallet,
 				email,
 				registerExpected: !identityData,
-				deleteLegacyKey
+				deleteLegacyKey,
 			})
 		}
 
@@ -80,7 +79,7 @@ export default function IdentityHoc(Decorated) {
 	IdentityForm.propTypes = {
 		actions: PropTypes.object.isRequired,
 		account: PropTypes.object.isRequired,
-		identity: PropTypes.object.isRequired
+		identity: PropTypes.object.isRequired,
 	}
 
 	function mapStateToProps(state, props) {
@@ -90,13 +89,13 @@ export default function IdentityHoc(Decorated) {
 			identity: memory.identity,
 			spinner: memory.spinners['creating-session'],
 			waitingExpected: memory.spinners['getting-expected-identity'],
-			waitingUpload: memory.spinners['uploading-account-data']
+			waitingUpload: memory.spinners['uploading-account-data'],
 		}
 	}
 
 	function mapDispatchToProps(dispatch) {
 		return {
-			actions: bindActionCreators(actions, dispatch)
+			actions: bindActionCreators(actions, dispatch),
 		}
 	}
 
@@ -105,4 +104,3 @@ export default function IdentityHoc(Decorated) {
 		mapDispatchToProps
 	)(IdentityForm)
 }
-

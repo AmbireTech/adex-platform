@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -10,8 +9,8 @@ import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
 import InfoIcon from '@material-ui/icons/Info'
 import CloseIcon from '@material-ui/icons/Close'
-import IconButton from '@material-ui/core/IconButton';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
+import IconButton from '@material-ui/core/IconButton'
+import SnackbarContent from '@material-ui/core/SnackbarContent'
 import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
@@ -31,7 +30,7 @@ export class Toast extends Component {
 
 		this.state = {
 			active: false,
-			toast: {}
+			toast: {},
 		}
 	}
 
@@ -39,7 +38,7 @@ export class Toast extends Component {
 		let toast = this.state.toast
 		let nextToast = nextProps.toasts[0]
 
-		let isNewToast = !!nextToast && (toast.id !== nextToast.id)
+		let isNewToast = !!nextToast && toast.id !== nextToast.id
 
 		if (isNewToast) {
 			// this.setState({ active: true, toast: nextToast })
@@ -54,10 +53,9 @@ export class Toast extends Component {
 		}
 	}
 
-	close = (id) => {
+	close = id => {
 		this.setState({ active: false })
 		this.props.actions.removeToast(id)
-
 	}
 
 	render() {
@@ -85,35 +83,32 @@ export class Toast extends Component {
 				anchorOrigin={anchorOrigin}
 			>
 				<SnackbarContent
-					aria-describedby="client-snackbar"
+					aria-describedby='client-snackbar'
 					message={
-						<span id="client-snackbar" className={classes.message}>
+						<span id='client-snackbar' className={classes.message}>
 							<Icon className={classnames(classes.icon, classes.iconVariant)} />
 							{(toast.label || '').toString()}
 						</span>
-
 					}
 					action={[
-						!toast.unclosable &&
-						<IconButton
-							key="close"
-							aria-label="Close"
-							color="inherit"
-							className={classes.close}
-							onClick={() => !toast.unclosable && this.close(toast.id)}
-						>
-							<CloseIcon className={classes.icon} />
-						</IconButton>,]}
-
-					className={classnames(
-						classes.snackbar,
-						{
-							[classes.top]: !!toast.top,
-							[classes.accept]: toast.type === 'accept',
-							[classes.cancel]: toast.type === 'cancel',
-							[classes.warning]: toast.type === 'warning',
-						})
-					}
+						!toast.unclosable && (
+							<IconButton
+								key='close'
+								aria-label='Close'
+								color='inherit'
+								className={classes.close}
+								onClick={() => !toast.unclosable && this.close(toast.id)}
+							>
+								<CloseIcon className={classes.icon} />
+							</IconButton>
+						),
+					]}
+					className={classnames(classes.snackbar, {
+						[classes.top]: !!toast.top,
+						[classes.accept]: toast.type === 'accept',
+						[classes.cancel]: toast.type === 'cancel',
+						[classes.warning]: toast.type === 'warning',
+					})}
 				/>
 			</Snackbar>
 		)
@@ -122,21 +117,21 @@ export class Toast extends Component {
 
 Toast.propTypes = {
 	actions: PropTypes.object.isRequired,
-	toasts: PropTypes.array.isRequired
-};
+	toasts: PropTypes.array.isRequired,
+}
 
 function mapStateToProps(state) {
 	// let persist = state.persist
 	let memory = state.memory
 	return {
-		toasts: memory.toasts || []
-	};
+		toasts: memory.toasts || [],
+	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
-	};
+		actions: bindActionCreators(actions, dispatch),
+	}
 }
 
 export default connect(

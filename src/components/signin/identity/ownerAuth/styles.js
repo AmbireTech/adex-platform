@@ -3,8 +3,8 @@ export const styles = theme => {
 	return {
 		addrListItem: {
 			'&:hover': {
-				cursor: 'pointer'
-			}
+				cursor: 'pointer',
+			},
 		},
 		addrInfo: {
 			display: 'flex',
@@ -13,12 +13,12 @@ export const styles = theme => {
 			paddingTop: spacing,
 			whiteSpace: 'normal',
 			'& strong': {
-				marginRight: spacing * 2
-			}
+				marginRight: spacing * 2,
+			},
 		},
 		addrInfoLabel: {
 			color: theme.palette.text.hint,
-			fontWeight: 'bold'
+			fontWeight: 'bold',
 		},
 		dialogPaper: {
 			height: '80vh',
@@ -34,7 +34,7 @@ export const styles = theme => {
 			'&:first-child': {
 				paddingTop: spacing,
 			},
-			overflow: 'visible'
+			overflow: 'visible',
 		},
 		tabsContainer: {
 			display: 'flex',
@@ -50,37 +50,37 @@ export const styles = theme => {
 			// bottom: 0
 		},
 		backdrop: {
-			backgroundColor: 'rgba(255, 255, 255, 0.5)'
+			backgroundColor: 'rgba(255, 255, 255, 0.5)',
 		},
 		tabLogo: {
 			maxWidth: '100%',
 			height: spacing * 4,
 			maxHeight: '100%',
-			width: 'auto'
+			width: 'auto',
 		},
 		tabLabel: {
 			display: 'flex',
 			flexDirection: 'row',
 			alignItems: 'center',
-			justifyContent: 'center'
+			justifyContent: 'center',
 		},
 		dlBtnImg: {
 			maxWidth: '100%',
 			maxHeight: spacing * 9,
 			width: 'auto',
-			height: 'auto'
+			height: 'auto',
 		},
 		leftBtnIcon: {
-			marginRight: spacing
+			marginRight: spacing,
 		},
 		adexLogoTop: {
 			position: 'absolute',
 			top: '-6vh',
-			left: 0
+			left: 0,
 		},
 		logo: {
 			width: '12.8vh',
-			height: '5vh'
-		}
+			height: '5vh',
+		},
 	}
 }

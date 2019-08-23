@@ -10,23 +10,17 @@ import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy
 const useStyles = makeStyles(theme => ({
 	button: {
 		height: '50%',
-		minHeight: theme.spacing(4)
+		minHeight: theme.spacing(4),
 	},
-	container: {
-	}
+	container: {},
 }))
 
 export function ExternalConnect({ t, ...rest }) {
-
 	const classes = useStyles()
 	const [connectType, setConnectType] = useState('')
 
 	return (
-		<Grid
-			container
-			alignItems='stretch'
-			className={classes.buttons}
-		>
+		<Grid container alignItems='stretch' className={classes.buttons}>
 			<Grid
 				item
 				container
@@ -34,12 +28,12 @@ export function ExternalConnect({ t, ...rest }) {
 				alignItems='stretch'
 				justify='space-evenly'
 			>
-
-				{
-					connectType !== 'create' &&
+				{connectType !== 'create' && (
 					<>
 						<Box>
-							<Typography variant='h5' gutterBottom>{t('SELECT_EXISTING_IDENTITY')}</Typography>
+							<Typography variant='h5' gutterBottom>
+								{t('SELECT_EXISTING_IDENTITY')}
+							</Typography>
 							<FullLogin {...rest} />
 						</Box>
 						<Grid
@@ -47,26 +41,22 @@ export function ExternalConnect({ t, ...rest }) {
 							// alignItems='stretch'
 							className={classes.buttons}
 						>
-							<Grid
-								item
-								xs={12}
-							>
-								<Button
-									onClick={() => setConnectType('create')}
-								>
+							<Grid item xs={12}>
+								<Button onClick={() => setConnectType('create')}>
 									{t('CREATE_NEW_IDENTITY_LINK')}
 								</Button>
 							</Grid>
 						</Grid>
 					</>
-				}
-				{
-					connectType === 'create' &&
+				)}
+				{connectType === 'create' && (
 					<>
-						<Typography variant='h5' gutterBottom>{t('CREATE_NEW_IDENTITY')}</Typography>
+						<Typography variant='h5' gutterBottom>
+							{t('CREATE_NEW_IDENTITY')}
+						</Typography>
 						<IdentityContractAddressEthDeploy {...rest} />
 					</>
-				}
+				)}
 			</Grid>
 		</Grid>
 	)

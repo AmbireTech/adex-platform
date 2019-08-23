@@ -22,7 +22,7 @@ import * as types from 'constants/actionTypes'
 export const persistReducers = {
 	// signin: signin,
 	account: account,
-	items: filterActions(items, (action => action.type.match(/_ITEM/))),
+	items: filterActions(items, action => action.type.match(/_ITEM/)),
 	// newItem: filterActions(newItem, (action => action.type.match(/_NEWITEM/))),
 	// spinners: filterActions(spinners, [types.UPDATE_SPINNER]),
 	ui: filterActions(ui, [types.UPDATE_UI]),
@@ -34,7 +34,7 @@ export const persistReducers = {
 	// validations: validations,
 	web3Transactions: web3Transactions,
 	tags: tags,
-	ethNetwork: ethNetwork
+	ethNetwork: ethNetwork,
 }
 
 export const memoryReducers = {
@@ -43,7 +43,7 @@ export const memoryReducers = {
 	wallet: wallet,
 	// account: account,
 	// items: filterActions(items, (action => action.type.match(/_ITEM/))),
-	newItem: filterActions(newItem, (action => action.type.match(/_NEWITEM/))),
+	newItem: filterActions(newItem, action => action.type.match(/_NEWITEM/)),
 	spinners: filterActions(spinners, [types.UPDATE_SPINNER]),
 	// ui: filterActions(ui, [types.UPDATE_UI]),
 	toasts: toasts,
@@ -51,5 +51,5 @@ export const memoryReducers = {
 	nav: filterActions(nav, [types.UPDATE_NAV]),
 	// language: language,
 	validations: validations,
-	newTransactions: newTransactions
+	newTransactions: newTransactions,
 }

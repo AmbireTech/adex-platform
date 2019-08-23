@@ -42,13 +42,16 @@ export default function ItemHoc(Decorated) {
 				initialItemState: {},
 				dirtyProps: [],
 				editImg: false,
-				_activeInput: null
+				_activeInput: null,
 			}
 		}
 
 		updateNav = (item = {}) => {
 			const { actions, t, itemType } = this.props
-			actions.updateNav('navTitle', t(itemType, { isProp: true }) + ' > ' + item.title || '')
+			actions.updateNav(
+				'navTitle',
+				t(itemType, { isProp: true }) + ' > ' + item.title || ''
+			)
 		}
 
 		componentWillMount() {
@@ -81,8 +84,16 @@ export default function ItemHoc(Decorated) {
 			let nexItemInst = new objModel(nextItem || {})
 
 			// if (currentItemInst.modifiedOn !== nexItemInst.modifiedOn) {
-			if (JSON.stringify(currentItemInst.plainObj()) !== JSON.stringify(nexItemInst.plainObj())) {
-				this.setState({ item: nexItemInst.plainObj(), initialItemState: nexItemInst, activeFields: {}, dirtyProps: [] })
+			if (
+				JSON.stringify(currentItemInst.plainObj()) !==
+				JSON.stringify(nexItemInst.plainObj())
+			) {
+				this.setState({
+					item: nexItemInst.plainObj(),
+					initialItemState: nexItemInst,
+					activeFields: {},
+					dirtyProps: [],
+				})
 			}
 
 			this.updateNav(nexItemInst)
@@ -110,14 +121,16 @@ export default function ItemHoc(Decorated) {
 			this.setState({ item: newItem.plainObj(), dirtyProps: dp })
 		}
 
-		returnPropToInitialState = (propName) => {
+		returnPropToInitialState = propName => {
 			const { objModel, actions } = this.props
 			const { dirtyProps, initialItemState, item } = this.state
 			const initialItemStateValue = initialItemState[propName]
 			const newItem = new objModel(item)
 			newItem[propName] = initialItemStateValue
 
-			const dp = dirtyProps.filter((dp) => { return dp !== propName })
+			const dp = dirtyProps.filter(dp => {
+				return dp !== propName
+			})
 
 			this.setState({ item: newItem.plainObj(), dirtyProps: dp })
 			// TEMP fix, we assume that the initial values are validated
@@ -132,12 +145,11 @@ export default function ItemHoc(Decorated) {
 
 		//TODO: Do not save if not dirty!
 		save = () => {
-
 			if (this.state.dirtyProps.length && !this.props.spinner) {
 				let item = { ...this.state.item }
 				this.props.actions.updateItem({
 					item: item,
-					authSig: this.props.account.wallet.authSig
+					authSig: this.props.account.wallet.authSig,
 				})
 				this.props.actions.updateSpinner('update' + item.id, true)
 				this.setState({ dirtyProps: [] })
@@ -163,22 +175,34 @@ export default function ItemHoc(Decorated) {
 		}
 
 		render() {
-			const { validations, classes, t, account, itemType, objModel, matchId, side, ...rest } = this.props
+			const {
+				validations,
+				classes,
+				t,
+				account,
+				itemType,
+				objModel,
+				matchId,
+				side,
+				...rest
+			} = this.props
 			const propsItem = this.props.item
 
 			if (!propsItem) {
 				return (
 					<PageNotFound
 						title={t('ITEM_NOT_FOUND_TITLE')}
-						subtitle={t('ITEM_NOT_FOUND_SUBTITLE', { args: [itemType, matchId] })}
+						subtitle={t('ITEM_NOT_FOUND_SUBTITLE', {
+							args: [itemType, matchId],
+						})}
 						skipGoToButton
 					/>
 				)
 			}
-        	/*
-                * NOTE: using instance of the item, the instance is passes to the Unit, Slot, Channel and Campaign components,
-                * in this case there is no need to make instance inside them
-            */
+			/*
+			 * NOTE: using instance of the item, the instance is passes to the Unit, Slot, Channel and Campaign components,
+			 * in this case there is no need to make instance inside them
+			 */
 
 			const isDemo = account._authType === 'demo'
 			const item = new objModel(this.state.item || {})
@@ -193,9 +217,9 @@ export default function ItemHoc(Decorated) {
 						when={!!this.state.dirtyProps.length}
 						message={t('UNSAVED_CHANGES_ALERT')}
 					/>
-					{(itemType !== 'Campaign') &&
+					{itemType !== 'Campaign' && (
 						<div>
-							<div >
+							<div>
 								<ImgDialog
 									{...rest}
 									imgSrc={imgSrc}
@@ -203,8 +227,14 @@ export default function ItemHoc(Decorated) {
 									active={this.state.editImg}
 									onChangeReady={this.handleChange}
 									validateId={item._id}
-									width={this.props.updateImgWidth || (AdSizesByValue[item.size] || {}).width}
-									height={this.props.updateImgHeight || (AdSizesByValue[item.size] || {}).height}
+									width={
+										this.props.updateImgWidth ||
+										(AdSizesByValue[item.size] || {}).width
+									}
+									height={
+										this.props.updateImgHeight ||
+										(AdSizesByValue[item.size] || {}).height
+									}
 									title={t(this.props.updateImgLabel)}
 									additionalInfo={t(this.props.updateImgInfoLabel)}
 									exact={this.props.updateImgExact}
@@ -213,28 +243,27 @@ export default function ItemHoc(Decorated) {
 								/>
 							</div>
 							<div>
-								{!!this.state.dirtyProps.length &&
-									<div
-										className={classes.changesLine}
-									>
+								{!!this.state.dirtyProps.length && (
+									<div className={classes.changesLine}>
 										<InfoOutlineIcon className={classes.buttonLeft} />
 										<span className={classes.buttonLeft}>
 											{t('UNSAVED_CHANGES')}:
-                            	</span>
-										{this.state.dirtyProps.map((p) => {
+										</span>
+										{this.state.dirtyProps.map(p => {
 											return (
 												<Chip
 													className={classes.changeChip}
 													key={p}
 													label={t(p, { isProp: true })}
 													onDelete={() => this.returnPropToInitialState(p)}
-												/>)
+												/>
+											)
 										})}
 									</div>
-								}
+								)}
 							</div>
 							<div>
-								<Grid container spacing={2} >
+								<Grid container spacing={2}>
 									<Grid item xs={12} sm={12} md={12} lg={7}>
 										<div>
 											<FormControl
@@ -243,43 +272,45 @@ export default function ItemHoc(Decorated) {
 												margin='dense'
 												error={!!titleErr.msg}
 											>
-												<InputLabel >{t('title', { isProp: true })}</InputLabel>
+												<InputLabel>{t('title', { isProp: true })}</InputLabel>
 												<Input
 													fullWidth
 													autoFocus
 													type='text'
 													name={t('title', { isProp: true })}
 													value={item.title}
-													onChange={(ev) => this.handleChange('title', ev.target.value)}
+													onChange={ev =>
+														this.handleChange('title', ev.target.value)
+													}
 													maxLength={1024}
-													onBlur={(ev) => {
+													onBlur={ev => {
 														this.setActiveFields('title', false)
 													}}
 													disabled={!this.state.activeFields.title}
 													helperText={
-														titleErr && !!titleErr.msg ?
-															titleErr.msg : ''
+														titleErr && !!titleErr.msg ? titleErr.msg : ''
 													}
 													endAdornment={
-														<InputAdornment position="end">
+														<InputAdornment position='end'>
 															<IconButton
 																disabled
 																// size='small'
 																color='secondary'
 																className={classes.buttonRight}
-																onClick={(ev) => this.setActiveFields('title', true)}
+																onClick={ev =>
+																	this.setActiveFields('title', true)
+																}
 															>
 																<EditIcon />
 															</IconButton>
 														</InputAdornment>
 													}
 												/>
-												{(titleErr && !!titleErr.msg) &&
-													<FormHelperText >
+												{titleErr && !!titleErr.msg && (
+													<FormHelperText>
 														{t(titleErr.msg, { args: titleErr.errMsgArgs })}
-													</FormHelperText >
-												}
-
+													</FormHelperText>
+												)}
 											</FormControl>
 										</div>
 										<div>
@@ -288,7 +319,9 @@ export default function ItemHoc(Decorated) {
 												fullWidth
 												className={classes.textField}
 											>
-												<InputLabel htmlFor="adornment-password">{t('description', { isProp: true })}</InputLabel>
+												<InputLabel htmlFor='adornment-password'>
+													{t('description', { isProp: true })}
+												</InputLabel>
 												<Input
 													fullWidth
 													autoFocus
@@ -297,43 +330,55 @@ export default function ItemHoc(Decorated) {
 													type='text'
 													name='description'
 													value={item.description || ''}
-													onChange={(ev) => this.handleChange('description', ev.target.value)}
+													onChange={ev =>
+														this.handleChange('description', ev.target.value)
+													}
 													maxLength={1024}
-													onBlur={(ev) => this.setActiveFields('description', false)}
+													onBlur={ev =>
+														this.setActiveFields('description', false)
+													}
 													disabled={!this.state.activeFields.description}
 													endAdornment={
-														<InputAdornment position="end">
+														<InputAdornment position='end'>
 															<IconButton
 																// size='small'
 																color='secondary'
 																className={classes.buttonRight}
 																disabled={isDemo || true}
-																onClick={(ev) => this.setActiveFields('description', true)}
+																onClick={ev =>
+																	this.setActiveFields('description', true)
+																}
 															>
 																<EditIcon />
 															</IconButton>
 														</InputAdornment>
 													}
 												/>
-												{!item.description &&
-													<FormHelperText >
+												{!item.description && (
+													<FormHelperText>
 														{t('NO_DESCRIPTION_YET')}
-													</FormHelperText >
-												}
+													</FormHelperText>
+												)}
 											</FormControl>
 										</div>
-									</Grid >
+									</Grid>
 									<Grid item xs={12} sm={12} md={12} lg={5}>
-										{this.props.showLogo &&
+										{this.props.showLogo && (
 											<div style={{ width: 270 }}>
 												<Paper
-													className={classnames(classes.mediaRoot, classes.imgContainer)}
+													className={classnames(
+														classes.mediaRoot,
+														classes.imgContainer
+													)}
 												>
 													<Img
 														allowFullscreen={true}
 														src={imgSrc}
 														alt={item.fullName}
-														className={classnames(classes.img, { [classes.pointer]: this.props.canEditImg && !isDemo })}
+														className={classnames(classes.img, {
+															[classes.pointer]:
+																this.props.canEditImg && !isDemo,
+														})}
 													/>
 													<Button
 														fabButton
@@ -346,10 +391,9 @@ export default function ItemHoc(Decorated) {
 														<EditIcon />
 													</Button>
 												</Paper>
-
 											</div>
-										}
-									</Grid >
+										)}
+									</Grid>
 								</Grid>
 							</div>
 							<div>
@@ -359,11 +403,14 @@ export default function ItemHoc(Decorated) {
 									dirtyProps={this.state.dirtyProps}
 									save={this.save}
 									// TODO: validate wit item validation HOC!!!
-									disabled={!this.state.dirtyProps.length || !this.isNameValid(this.state.item.title)}
+									disabled={
+										!this.state.dirtyProps.length ||
+										!this.isNameValid(this.state.item.title)
+									}
 								/>
 							</div>
 						</div>
-					}
+					)}
 
 					<div>
 						<Decorated
@@ -382,7 +429,7 @@ export default function ItemHoc(Decorated) {
 							isDemo={isDemo}
 						/>
 					</div>
-				</div >
+				</div>
 			)
 		}
 	}
@@ -393,11 +440,10 @@ export default function ItemHoc(Decorated) {
 		item: PropTypes.object.isRequired,
 		spinner: PropTypes.bool,
 		itemType: PropTypes.string.isRequired,
-		objModel: PropTypes.func.isRequired
+		objModel: PropTypes.func.isRequired,
 	}
 
 	const tryGetItemByIpfs = ({ items, ipfs }) => {
-
 		let keys = Object.keys(items)
 
 		for (let index = 0; index < keys.length; index++) {
@@ -419,7 +465,7 @@ export default function ItemHoc(Decorated) {
 		const id = props.match.params.itemId
 		let item = items[id]
 
-		if (!item && (props.itemType !== undefined)) {
+		if (!item && props.itemType !== undefined) {
 			item = tryGetItemByIpfs({ items: items, ipfs: id })
 		}
 
@@ -427,13 +473,13 @@ export default function ItemHoc(Decorated) {
 			account: persist.account,
 			item: item,
 			validateId: 'update-' + item,
-			matchId: id
+			matchId: id,
 		}
 	}
 
 	function mapDispatchToProps(dispatch) {
 		return {
-			actions: bindActionCreators(actions, dispatch)
+			actions: bindActionCreators(actions, dispatch),
 		}
 	}
 

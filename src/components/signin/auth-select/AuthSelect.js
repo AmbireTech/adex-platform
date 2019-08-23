@@ -18,12 +18,12 @@ class AuthSelect extends Component {
 
 		this.state = {
 			wallets: [],
-			hasLegacyWallet: false
+			hasLegacyWallet: false,
 		}
 	}
 
 	componentDidMount() {
-		// NOTE: reset identity if someone press backspace 
+		// NOTE: reset identity if someone press backspace
 		// to go to this page
 		// this.props.actions.resetIdentity()
 		const allWallets = getAllWallets()
@@ -39,31 +39,23 @@ class AuthSelect extends Component {
 
 		return (
 			<div>
-				<Grid
-					container
-					spacing={2}
-					direction='column'
-					alignItems='stretch'
-				>
-					{
-						wallets.map(w =>
-							<Grid
-								key={w.name}
-								item
-								xs={12}
+				<Grid container spacing={2} direction='column' alignItems='stretch'>
+					{wallets.map(w => (
+						<Grid key={w.name} item xs={12}>
+							<RRButton
+								variant='contained'
+								to={`/login/quick`}
+								size='large'
+								color='primary'
+								fullWidth
+								onClick={() =>
+									initIdentity({ email: w.name, authType: w.authType })
+								}
 							>
-								<RRButton
-									variant='contained'
-									to={`/login/quick`}
-									size='large'
-									color='primary'
-									fullWidth
-									onClick={() => initIdentity({ email: w.name, authType: w.authType })}
-								>
-									{t('SIGN_IN_TO', { args: [w.name] })}
-								</RRButton>
-							</Grid>)
-					}
+								{t('SIGN_IN_TO', { args: [w.name] })}
+							</RRButton>
+						</Grid>
+					))}
 					<Grid item xs={12}>
 						<RRButton
 							variant='contained'
@@ -86,7 +78,7 @@ class AuthSelect extends Component {
 							{t('CREATE_QUICK_ACCOUNT')}
 						</RRButton>
 					</Grid>
-					{hasLegacyWallet &&
+					{hasLegacyWallet && (
 						<Grid item xs={12}>
 							<RRButton
 								variant='contained'
@@ -98,7 +90,7 @@ class AuthSelect extends Component {
 								{t('LOGIN_GRANT_ACCOUNT')}
 							</RRButton>
 						</Grid>
-					}
+					)}
 					<Grid item xs={12}>
 						<RRButton
 							variant='contained'
@@ -128,17 +120,13 @@ class AuthSelect extends Component {
 							<Img
 								src={getAuthLogo('trezor')}
 								alt={t('AUTH_WITH_TREZOR')}
-								className={classnames(
-									classes.btnLogo,
-									classes.btnLogoNoTxt
-								)}
+								className={classnames(classes.btnLogo, classes.btnLogoNoTxt)}
 							/>
 							{/* {t('TREZOR')} */}
 						</RRButton>
 					</Grid>
-
 				</Grid>
-			</div >
+			</div>
 		)
 	}
 }

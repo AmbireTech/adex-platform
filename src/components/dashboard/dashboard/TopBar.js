@@ -28,105 +28,105 @@ import { styles } from './styles'
 const RRMenuItem = withReactRouterLink(MenuItem)
 
 class TopNav extends Component {
+	state = {
+		auth: true,
+	}
 
-  state = {
-  	auth: true
-  }
+	render() {
+		const {
+			t,
+			handleDrawerToggle,
+			account,
+			side,
+			navTitle,
+			classes,
+		} = this.props
+		let imgSrc = getAuthLogo(account.wallet.authType)
 
-  render() {
-  	const { t, handleDrawerToggle, account, side, navTitle, classes } = this.props
-  	let imgSrc = getAuthLogo(account.wallet.authType)
+		const btnMenueLabel =
+			account.wallet.authType === 'demo'
+				? t('DEMO_MODE')
+				: account.email || account.wallet.address || t('NOT_LOGGED')
 
-  	const btnMenueLabel = account.wallet.authType === 'demo' ? t('DEMO_MODE') : (account.email || account.wallet.address || t('NOT_LOGGED'))
+		return (
+			<AppBar className={classes.appBar} position='sticky'>
+				<Toolbar className={classes.toolbar}>
+					<div className={classes.flexRow}>
+						<IconButton
+							color='inherit'
+							aria-label='open drawer'
+							onClick={handleDrawerToggle}
+							className={classnames(classes.navIconHide)}
+						>
+							<Icon>menu</Icon>
+						</IconButton>
 
-  	return (
-  		<AppBar
-  			className={classes.appBar}
-  			position="sticky"
-  		>
-  			<Toolbar
-  				className={classes.toolbar}
-  			>
-  				<div
-  					className={classes.flexRow}
-  				>
-
-  					<IconButton
-  						color="inherit"
-  						aria-label="open drawer"
-  						onClick={handleDrawerToggle}
-  						className={classnames(classes.navIconHide)}
-  					>
-  						<Icon>menu</Icon>
-  					</IconButton>
-
-  					{/* <AdexIconTxt
+						{/* <AdexIconTxt
               className={classes.icon}
             /> */}
-  					<div
-  						className={classnames(classes.flex, classes.toolbarControls)}
-  					>
-  						{/* <Navigation type='horizontal' className={theme.rightNavigation}> */}
-  						{/* At the moment we use translations only for proper items properties display names */}
-  						{/* <ChangeLang /> */}
-  						<ButtonMenu
-  							leftIconSrc={imgSrc}
-  							icon={<ExpandMoreIcon />}
-  							label={btnMenueLabel}
-  							active={true}
-  							iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
-  						>
-  							<RRMenuItem
-  								value='account'
-  								to={{ pathname: '/dashboard/' + side + '/account' }}
-  								caption={t('ACCOUNT')}
-  							>
-  								<ListItemIcon >
-  									<Icon>account_box</Icon>
-  								</ListItemIcon>
-  								<ListItemText
-  									classes={{ primary: classes.primary }}  									
-  									primary={t('ACCOUNT')}
-  								/>
-  							</RRMenuItem>
-  							{/* <MenuDivider /> */}
-  							<MenuItem
-  								value='logout'
-  								onClick={() => { logOut() }}
-  							>
-  								<ListItemIcon >
-  									<Icon>exit_to_app</Icon>
-  								</ListItemIcon>
-  								<ListItemText classes={{ primary: classes.primary }} primary={t('LOGOUT')} />
-  							</MenuItem>
-  						</ButtonMenu>
-  					</div>
-  				</div>
-  				<div
-  					className={classes.flexRow}
-  				>
-  					<div
-  						className={classnames(classes.flex, classes.toolbarTitle)}
-  					>
-  						<Typography
-  							variant="title"
-  							color="inherit"
-  							className={classes.flex}
-  							noWrap
-  						>
-  							{t(navTitle)}
-  						</Typography>
-  					</div>
-  				</div>
-  			</Toolbar>
-  		</AppBar>
-  	)
-  }
+						<div className={classnames(classes.flex, classes.toolbarControls)}>
+							{/* <Navigation type='horizontal' className={theme.rightNavigation}> */}
+							{/* At the moment we use translations only for proper items properties display names */}
+							{/* <ChangeLang /> */}
+							<ButtonMenu
+								leftIconSrc={imgSrc}
+								icon={<ExpandMoreIcon />}
+								label={btnMenueLabel}
+								active={true}
+								iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
+							>
+								<RRMenuItem
+									value='account'
+									to={{ pathname: '/dashboard/' + side + '/account' }}
+									caption={t('ACCOUNT')}
+								>
+									<ListItemIcon>
+										<Icon>account_box</Icon>
+									</ListItemIcon>
+									<ListItemText
+										classes={{ primary: classes.primary }}
+										primary={t('ACCOUNT')}
+									/>
+								</RRMenuItem>
+								{/* <MenuDivider /> */}
+								<MenuItem
+									value='logout'
+									onClick={() => {
+										logOut()
+									}}
+								>
+									<ListItemIcon>
+										<Icon>exit_to_app</Icon>
+									</ListItemIcon>
+									<ListItemText
+										classes={{ primary: classes.primary }}
+										primary={t('LOGOUT')}
+									/>
+								</MenuItem>
+							</ButtonMenu>
+						</div>
+					</div>
+					<div className={classes.flexRow}>
+						<div className={classnames(classes.flex, classes.toolbarTitle)}>
+							<Typography
+								variant='title'
+								color='inherit'
+								className={classes.flex}
+								noWrap
+							>
+								{t(navTitle)}
+							</Typography>
+						</div>
+					</div>
+				</Toolbar>
+			</AppBar>
+		)
+	}
 }
 
 TopNav.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired
+	account: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state) {
@@ -134,13 +134,13 @@ function mapStateToProps(state) {
 	const memory = state.memory
 	return {
 		account: persist.account,
-		navTitle: memory.nav.navTitle || ''
+		navTitle: memory.nav.navTitle || '',
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 
@@ -148,4 +148,3 @@ export default connect(
 	mapStateToProps,
 	mapDispatchToProps
 )(Translate(withStyles(styles)(TopNav)))
-

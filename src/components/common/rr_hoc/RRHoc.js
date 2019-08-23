@@ -3,9 +3,7 @@ import React from 'react'
 import { withRouter } from 'react-router-dom'
 
 export const withReactRouterLink = Component => {
-
 	class Decorated extends React.Component {
-
 		resolveToLocation = to => {
 			return typeof to === 'object' ? to['pathname'] : to
 		}
@@ -28,15 +26,17 @@ export const withReactRouterLink = Component => {
 		// }
 
 		render() {
-			const { to, match, location, history, staticContext, ...rest } = this.props
+			const {
+				to,
+				match,
+				location,
+				history,
+				staticContext,
+				...rest
+			} = this.props
 			const toLocation = this.resolveToLocation(to)
 			return (
-				<Component
-					{...rest}
-
-					href={toLocation}
-					onClick={this.handleClick}
-				/>
+				<Component {...rest} href={toLocation} onClick={this.handleClick} />
 			)
 		}
 	}

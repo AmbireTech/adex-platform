@@ -9,22 +9,18 @@ import { translate } from 'services/translations/translations'
 import { execute } from 'actions/common'
 import {
 	// addWeb3Transaction,
-	updateWeb3Transaction
+	updateWeb3Transaction,
 } from 'actions/transactionActions'
 import { addToast } from 'actions/uiActions'
 import { updateAccount } from 'actions/accountActions'
 import { splitSig, Transaction } from 'adex-protocol-eth/js'
 
-/** 
+/**
  * NOTE: DO NOT CALL WITH CONNECTED SIGNER
- * Will fill missing props gasLimit, nonce, chainId, etc..  * 
+ * Will fill missing props gasLimit, nonce, chainId, etc..  *
  * */
 export async function prepareTx({ tx, provider, sender, gasLimit, gasPrice }) {
-	const pTx = await utils.populateTransaction(
-		tx,
-		provider,
-		sender
-	)
+	const pTx = await utils.populateTransaction(tx, provider, sender)
 
 	// TO work with all signers
 	pTx.gasLimit = gasLimit || pTx.gasLimit.toHexString()
@@ -40,7 +36,7 @@ export async function processTx({
 	txSuccessData,
 	from,
 	fromType,
-	account
+	account,
 }) {
 	try {
 		const txRes = await tx
@@ -61,12 +57,10 @@ export async function processTx({
 			addToast({
 				type: 'accept',
 				action: 'X',
-				label: translate(
-					'TRANSACTION_SENT_MSG',
-					{
-						args: [txRes.hash]
-					}),
-				timeout: 50000
+				label: translate('TRANSACTION_SENT_MSG', {
+					args: [txRes.hash],
+				}),
+				timeout: 50000,
 			})
 		)
 
@@ -75,7 +69,7 @@ export async function processTx({
 		settings[fromType].nextNonce = txRes.nonce + 1
 		execute(
 			updateAccount({
-				newValues: { settings }
+				newValues: { settings },
 			})
 		)
 
@@ -85,25 +79,25 @@ export async function processTx({
 			updateWeb3Transaction({
 				tx: txRes.hash,
 				key: 'status',
-				value: ((receipt.status === 1) || (receipt.status === '0x1') || (receipt.status === true))
-					? 'success'
-					: 'failed',
-				addr: from
+				value:
+					receipt.status === 1 ||
+					receipt.status === '0x1' ||
+					receipt.status === true
+						? 'success'
+						: 'failed',
+				addr: from,
 			})
 		)
-
 	} catch (err) {
 		console.error(err)
 		execute(
 			addToast({
 				type: 'cancel',
 				action: 'X',
-				label: translate(
-					'TRANSACTION_ERR_MSG',
-					{
-						args: [err]
-					}),
-				timeout: 50000
+				label: translate('TRANSACTION_ERR_MSG', {
+					args: [err],
+				}),
+				timeout: 50000,
 			})
 		)
 	}
@@ -118,7 +112,6 @@ export async function getSigner({ wallet, provider }) {
 		return signer
 	}
 	if (authType === AUTH_TYPES.LEDGER.name) {
-
 		const signer = new LedgerSigner(provider, { path })
 
 		return signer
@@ -127,8 +120,9 @@ export async function getSigner({ wallet, provider }) {
 		const signer = new TrezorSigner(provider, { path })
 		return signer
 	}
-	if (authType === AUTH_TYPES.GRANT.name
-		|| authType === AUTH_TYPES.QUICK.name
+	if (
+		authType === AUTH_TYPES.GRANT.name ||
+		authType === AUTH_TYPES.QUICK.name
 	) {
 		const signer = new LocalSigner(provider, { email, password, authType })
 
@@ -138,16 +132,18 @@ export async function getSigner({ wallet, provider }) {
 	throw new Error(`Invalid wallet authType ${wallet.authType}`)
 }
 
-// NOTE: works with typed data in format {type: 'solidity data type', name: 'string (label)', value: 'preferable string'} 
+// NOTE: works with typed data in format {type: 'solidity data type', name: 'string (label)', value: 'preferable string'}
 export const getTypedDataHash = ({ typedData }) => {
-	const values = typedData.map((entry) => {
+	const values = typedData.map(entry => {
 		return typeof entry.value === 'string'
 			? utils.toUtf8Bytes(entry.value)
 			: utils.hexlify(entry.value)
 	})
 	const valuesHash = utils.keccak256.apply(null, values)
 
-	const schema = typedData.map((entry) => { return utils.toUtf8Bytes(entry.type + ' ' + entry.name) })
+	const schema = typedData.map(entry => {
+		return utils.toUtf8Bytes(entry.type + ' ' + entry.name)
+	})
 	const schemaHash = utils.keccak256.apply(null, schema)
 
 	const hash = utils.keccak256(schemaHash, valuesHash)
@@ -159,11 +155,10 @@ export async function getAuthSig({ wallet }) {
 	const { provider } = await getEthers(wallet.authType)
 	const signer = await getSigner({ wallet, provider })
 
-	const authToken = (Math.floor(Math.random() * Number.MAX_SAFE_INTEGER))
-		.toString()
-	const typedData = [
-		{ type: 'uint', name: 'Auth token', value: authToken }
-	]
+	const authToken = Math.floor(
+		Math.random() * Number.MAX_SAFE_INTEGER
+	).toString()
+	const typedData = [{ type: 'uint', name: 'Auth token', value: authToken }]
 
 	const hash = getTypedDataHash({ typedData })
 
@@ -172,27 +167,26 @@ export async function getAuthSig({ wallet }) {
 	return {
 		...signature,
 		authToken,
-		hash
+		hash,
 	}
 }
 
 export async function getTransactionsReceipts({ txHashes = [], authType }) {
 	const { provider } = await getEthers(authType)
-	const receipts = txHashes.map(tx =>
-		provider.getTransactionReceipt(tx)
-	)
+	const receipts = txHashes.map(tx => provider.getTransactionReceipt(tx))
 
 	return Promise.all(receipts)
 }
 
-export async function signTx({ tx, signer, }) {
-	const sig = await signer
-		.signMessage(new Transaction(tx).hashHex(), { hex: true })
+export async function signTx({ tx, signer }) {
+	const sig = await signer.signMessage(new Transaction(tx).hashHex(), {
+		hex: true,
+	})
 	const signature = splitSig(sig.signature)
 	return signature
 }
 
-export async function getMultipleTxSignatures({ txns, signer, }) {
+export async function getMultipleTxSignatures({ txns, signer }) {
 	const signatures = []
 	for (const tx of txns) {
 		signatures.push(await signTx({ tx, signer }))

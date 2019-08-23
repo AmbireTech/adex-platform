@@ -24,7 +24,6 @@ const onBeforeLift = () => {
 }
 
 class App extends Component {
-
 	render() {
 		return (
 			<React.Fragment>
@@ -32,13 +31,11 @@ class App extends Component {
 				<MuiThemeProvider theme={themeMUI}>
 					<MuiPickersUtilsProvider utils={MomentUtils}>
 						<Provider store={store}>
-							<PersistGate
-								onBeforeLift={onBeforeLift}
-								persistor={persistor}>
+							<PersistGate onBeforeLift={onBeforeLift} persistor={persistor}>
 								<ConnectedRouter history={history}>
 									<Router>
-										<div className="adex-dapp">
-											<Switch >
+										<div className='adex-dapp'>
+											<Switch>
 												<Root />
 											</Switch>
 											<Toast />

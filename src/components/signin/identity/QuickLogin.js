@@ -17,11 +17,10 @@ class QuickLogin extends Component {
 		this.validateWallet(false)
 	}
 
-	validateWallet = (dirty) => {
+	validateWallet = dirty => {
 		const { identity, handleChange, validate } = this.props
 		const { password, email, authType } = identity
 		if (!email) {
-
 		}
 
 		let wallet = {}
@@ -30,7 +29,7 @@ class QuickLogin extends Component {
 			const walletData = getLocalWallet({
 				email,
 				password,
-				authType
+				authType,
 			})
 
 			if (!!walletData && walletData.data) {
@@ -40,7 +39,7 @@ class QuickLogin extends Component {
 				wallet.authType = authType
 				wallet.identity = {
 					address: walletData.identity,
-					privileges: walletData.identityPrivileges
+					privileges: walletData.identityPrivileges,
 				}
 
 				handleChange('identityAddr', walletData.identity)
@@ -54,7 +53,7 @@ class QuickLogin extends Component {
 		validate('wallet', {
 			isValid: !!wallet.address,
 			err: { msg: 'ERR_QUICK_WALLET_LOGIN' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
 
@@ -71,13 +70,7 @@ class QuickLogin extends Component {
 		const { wallet } = invalidFields
 
 		if (!identity.email) {
-			return (
-				<RRButton
-					to='/'
-				>
-					{'Email error'}
-				</RRButton>
-			)
+			return <RRButton to='/'>{'Email error'}</RRButton>
 		}
 
 		return (
@@ -90,10 +83,7 @@ class QuickLogin extends Component {
 				alignItems='center'
 			>
 				<Grid item xs={12}>
-					<Grid
-						container
-						spacing={2}
-					>
+					<Grid container spacing={2}>
 						<Grid item xs={12}>
 							<Typography variant='body2' color='primary' gutterBottom>
 								{t('QUICK_LOGIN_INFO', { args: [identity.email] })}
@@ -107,27 +97,29 @@ class QuickLogin extends Component {
 								label={t('password', { isProp: true })}
 								name='password'
 								value={identity.password || ''}
-								onChange={(ev) => handleChange('password', ev.target.value)}
+								onChange={ev => handleChange('password', ev.target.value)}
 							/>
 						</Grid>
-						{(wallet && !!wallet.dirty) &&
+						{wallet && !!wallet.dirty && (
 							<Grid item xs={12}>
 								<Typography variant='body2' color='error' gutterBottom>
 									{wallet.errMsg}
 								</Typography>
 							</Grid>
-						}
+						)}
 						<Grid item xs={12}>
-							{(!!identity.walletAddr) &&
+							{!!identity.walletAddr && (
 								<div>
-									<Typography variant='body1' >
+									<Typography variant='body1'>
 										{t('QUICK_WALLET_ADDRESS', { args: [identity.walletAddr] })}
 									</Typography>
 									<Typography variant='body1' gutterBottom>
-										{t('QUICK_IDENTITY_ADDRESS', { args: [identity.identityAddr] })}
+										{t('QUICK_IDENTITY_ADDRESS', {
+											args: [identity.identityAddr],
+										})}
 									</Typography>
 								</div>
-							}
+							)}
 							<Button
 								variant='contained'
 								color='primary'
@@ -138,7 +130,6 @@ class QuickLogin extends Component {
 							</Button>
 						</Grid>
 					</Grid>
-
 				</Grid>
 			</Grid>
 			// </div>

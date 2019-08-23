@@ -4,7 +4,7 @@ import {
 	loadFromLocalStorage,
 	saveToLocalStorage,
 	getKeys,
-	removeFromLocalStorage
+	removeFromLocalStorage,
 } from 'helpers/localStorageHelpers'
 import { AUTH_TYPES } from 'constants/misc'
 
@@ -24,7 +24,7 @@ export function generateWallet(mnemonic) {
 		mnemonic,
 		privateKey: wallet.privateKey,
 		address: wallet.address,
-		path: wallet.path
+		path: wallet.path,
 	}
 }
 
@@ -48,7 +48,12 @@ function decrData({ email, password, data }) {
 	return decr
 }
 
-export function createLocalWallet({ email = '', password = '', mnemonic = '', authType = '' }) {
+export function createLocalWallet({
+	email = '',
+	password = '',
+	mnemonic = '',
+	authType = '',
+}) {
 	const walletData = generateWallet(mnemonic)
 	const key = encrKey({ email, password, authType })
 	const data = encrData({ data: walletData, email, password })
@@ -61,7 +66,7 @@ export function migrateLegacyWallet({ email = '', password = '' }) {
 	const wallet = getLocalWallet({
 		email,
 		password,
-		getEncrypted: true
+		getEncrypted: true,
 	})
 
 	if (wallet && wallet.data) {
@@ -80,7 +85,7 @@ export function addDataToWallet({
 	password = '',
 	dataKey = '',
 	dataValue = '',
-	authType
+	authType,
 }) {
 	if (dataKey === 'data') {
 		throw new Error('Invalid data key')
@@ -108,7 +113,7 @@ export function getRecoveryWalletData({ email, password, authType }) {
 
 	return {
 		key,
-		wallet
+		wallet,
 	}
 }
 
@@ -125,16 +130,15 @@ export function getLocalWallet({ email, password, authType, getEncrypted }) {
 			return wallet
 		}
 
-		const data = Object.keys(wallet)
-			.reduce((props, key) => {
-				props[key] = decrData({
-					data: wallet[key],
-					email,
-					password
-				})
+		const data = Object.keys(wallet).reduce((props, key) => {
+			props[key] = decrData({
+				data: wallet[key],
+				email,
+				password,
+			})
 
-				return props
-			}, {})
+			return props
+		}, {})
 
 		return data
 	} else {
@@ -143,17 +147,12 @@ export function getLocalWallet({ email, password, authType, getEncrypted }) {
 }
 
 function isWallet(item) {
-	return item
-		&& item.data
-		&& item.identity
-		&& item.privileges
+	return item && item.data && item.identity && item.privileges
 }
 
 function walletInfo(key, index, wallet) {
 	const split = key.split('-')
-	const mail = (split.length >= 3)
-		? split.slice(3, split.length).join('-')
-		: null
+	const mail = split.length >= 3 ? split.slice(3, split.length).join('-') : null
 	const authType = split[1] || 'legacy'
 	const name = mail || `Grant account # ${index + 1}`
 
@@ -161,7 +160,7 @@ function walletInfo(key, index, wallet) {
 		key,
 		wallet,
 		name,
-		authType
+		authType,
 	}
 
 	return info
@@ -172,7 +171,7 @@ export function getAllWallets() {
 		.map(key => {
 			return {
 				key,
-				item: loadFromLocalStorage(key)
+				item: loadFromLocalStorage(key),
 			}
 		})
 		.filter(({ item }) => isWallet(item))

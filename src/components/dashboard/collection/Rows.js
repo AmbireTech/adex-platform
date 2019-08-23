@@ -8,7 +8,7 @@ class Rows extends Component {
 
 		this.state = {
 			// TODO: maybe in the store?
-			selected: []
+			selected: [],
 		}
 	}
 
@@ -20,30 +20,23 @@ class Rows extends Component {
 		}
 	}
 
-	handleRowSelect = (selected) => {
-		let newSelected = selected.map((index) => this.props.rows[index].id)
-		this.setState({ selected: newSelected });
+	handleRowSelect = selected => {
+		let newSelected = selected.map(index => this.props.rows[index].id)
+		this.setState({ selected: newSelected })
 	}
 
 	render() {
 		const { side, rows, padding, itemType, size } = this.props
 		return (
 			<div>
-				<Table
-					size={size || 'small'}
-					padding={padding || 'default'}
-				>
+				<Table size={size || 'small'} padding={padding || 'default'}>
 					{this.props.tableHeadRenderer({ selected: this.state.selected })}
 					<TableBody>
-						{
-							rows.map((u, i) => {
-								let to = `/dashboard/${side}/${itemType}/${u.id || u.ipfs}`
-								let selected = this.state.selected.indexOf(u.id) !== -1
-								return (
-									this.props.rowRenderer(u, i, { to, selected, itemType })
-								)
-							})
-						}
+						{rows.map((u, i) => {
+							let to = `/dashboard/${side}/${itemType}/${u.id || u.ipfs}`
+							let selected = this.state.selected.indexOf(u.id) !== -1
+							return this.props.rowRenderer(u, i, { to, selected, itemType })
+						})}
 					</TableBody>
 				</Table>
 			</div>

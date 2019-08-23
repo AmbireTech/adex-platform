@@ -19,80 +19,84 @@ const FlagIcon = FlagIconFactory(React, { useCssModules: false })
 const ITEM_HEIGHT = 48
 
 class ChangeLang extends Component {
+	state = {
+		anchorEl: null,
+	}
 
-  state = {
-  	anchorEl: null,
-  }
+	handleClick = event => {
+		this.setState({ anchorEl: event.currentTarget })
+	}
 
-  handleClick = event => {
-  	this.setState({ anchorEl: event.currentTarget })
-  }
+	handleClose = () => {
+		this.setState({ anchorEl: null })
+	}
 
-  handleClose = () => {
-  	this.setState({ anchorEl: null })
-  }
+	changeLanguage(newLng) {
+		if (this.props.language !== newLng) {
+			this.props.actions.changeLanguage(newLng)
+		}
+	}
 
-
-  changeLanguage(newLng) {
-  	if (this.props.language !== newLng) {
-  		this.props.actions.changeLanguage(newLng)
-  	}
-  }
-
-  render() {
-  	const { anchorEl } = this.state
-  	return (
-  		<span>
-  			<IconButton
-  				aria-label="More"
-  				aria-owns={anchorEl ? 'long-menu' : null}
-  				aria-haspopup="true"
-  				onClick={this.handleClick}
-  			>
-  				<FlagIcon code={this.props.language.split('-')[1].toLowerCase()} />
-  			</IconButton>
-  			<Menu
-  				id="long-menu"
-  				anchorEl={anchorEl}
-  				open={Boolean(anchorEl)}
-  				onClose={this.handleClose}
-  				PaperProps={{
-  					style: {
-  						maxHeight: ITEM_HEIGHT * 4.5,
-  						width: 200,
-  					},
-  				}}
-  			>
-  				{allLangs.sort((a, b) => a.split('-')[1].localeCompare(b.split('-')[1])).map((lng) =>
-  					<MenuItem key={lng} value={lng} onClick={() => this.changeLanguage(lng)} >
-  						<ListItemIcon >
-  							<FlagIcon code={lng.split('-')[1].toLowerCase()} />
-  						</ListItemIcon>
-  						<ListItemText primary={lng} />
-  					</MenuItem>
-  				)}
-  			</Menu>
-  		</span >
-  	)
-  }
+	render() {
+		const { anchorEl } = this.state
+		return (
+			<span>
+				<IconButton
+					aria-label='More'
+					aria-owns={anchorEl ? 'long-menu' : null}
+					aria-haspopup='true'
+					onClick={this.handleClick}
+				>
+					<FlagIcon code={this.props.language.split('-')[1].toLowerCase()} />
+				</IconButton>
+				<Menu
+					id='long-menu'
+					anchorEl={anchorEl}
+					open={Boolean(anchorEl)}
+					onClose={this.handleClose}
+					PaperProps={{
+						style: {
+							maxHeight: ITEM_HEIGHT * 4.5,
+							width: 200,
+						},
+					}}
+				>
+					{allLangs
+						.sort((a, b) => a.split('-')[1].localeCompare(b.split('-')[1]))
+						.map(lng => (
+							<MenuItem
+								key={lng}
+								value={lng}
+								onClick={() => this.changeLanguage(lng)}
+							>
+								<ListItemIcon>
+									<FlagIcon code={lng.split('-')[1].toLowerCase()} />
+								</ListItemIcon>
+								<ListItemText primary={lng} />
+							</MenuItem>
+						))}
+				</Menu>
+			</span>
+		)
+	}
 }
 
 ChangeLang.propTypes = {
 	actions: PropTypes.object.isRequired,
-	language: PropTypes.string.isRequired
+	language: PropTypes.string.isRequired,
 }
 
 function mapStateToProps(state, props) {
 	let persist = state.persist
 	// let memory = state.memory
 	return {
-		language: persist.language
+		language: persist.language,
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

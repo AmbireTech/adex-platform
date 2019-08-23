@@ -3,25 +3,27 @@ import moment from 'moment'
 // TODO: separate exports - not class
 class Helper {
 	getGuid() {
-		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-			var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8) // eslint-disable-line no-mixed-operators
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+			var r = (Math.random() * 16) | 0,
+				v = c === 'x' ? r : (r & 0x3) | 0x8 // eslint-disable-line no-mixed-operators
 			return v.toString(16)
 		})
 	}
 
 	getRndHash32(prefix) {
-		let h = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-			var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8); // eslint-disable-line no-mixed-operators
+		let h = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, c => {
+			var r = (Math.random() * 16) | 0,
+				v = c === 'x' ? r : (r & 0x3) | 0x8 // eslint-disable-line no-mixed-operators
 			return v.toString(16)
 		})
 		if (prefix) {
-			h = prefix + (h.substring(prefix.length))
+			h = prefix + h.substring(prefix.length)
 		}
 		return h
 	}
 
 	getRandomInt(min, max) {
-		return Math.floor(Math.random() * (max - min + 1) + min);
+		return Math.floor(Math.random() * (max - min + 1) + min)
 	}
 
 	getRandomBool() {
@@ -30,18 +32,19 @@ class Helper {
 
 	getRandomPropFromObj(obj) {
 		var keys = Object.keys(obj)
-		return obj[keys[keys.length * Math.random() << 0]];
+		return obj[keys[(keys.length * Math.random()) << 0]]
 	}
 
 	getRandomKeyFromObj(obj) {
 		var keys = Object.keys(obj)
-		return keys[keys.length * Math.random() << 0]
+		return keys[(keys.length * Math.random()) << 0]
 	}
 
 	geRandomMoment(maxDaysPast, maxDaysAhead, initialMoment) {
 		// TODO: fix +/- 1 day bug
-		let initial = moment.isMoment(initialMoment) ?
-			initialMoment.valueOf() : undefined
+		let initial = moment.isMoment(initialMoment)
+			? initialMoment.valueOf()
+			: undefined
 
 		return moment(initial)
 			.add(this.getRandomInt(-maxDaysPast, maxDaysAhead), 'd')
@@ -50,7 +53,7 @@ class Helper {
 	}
 
 	hexToRgbaColorString = (hex, alpha) => {
-		if (!hex || (typeof hex !== 'string')) {
+		if (!hex || typeof hex !== 'string') {
 			throw new Error('Invalid color')
 		} else if (hex.length === 4) {
 			hex = hex + hex.substr(1, 4)
@@ -60,8 +63,8 @@ class Helper {
 			alpha = 1
 		}
 
-		const hexToDec = (h) => {
-			return parseInt("0x" + h, 16)
+		const hexToDec = h => {
+			return parseInt('0x' + h, 16)
 		}
 
 		let r = hexToDec(hex.substr(1, 2))
@@ -72,32 +75,41 @@ class Helper {
 	}
 
 	getQuery(queryParams) {
-		if (!queryParams ||
-			((typeof queryParams === 'object') &&
-				!Object.keys(queryParams).length)
+		if (
+			!queryParams ||
+			(typeof queryParams === 'object' && !Object.keys(queryParams).length)
 		) {
 			return ''
 		}
-		return '?' + Object.keys(queryParams).map((key) => {
-			return encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key])
-		}, '').join('&') || ''
+		return (
+			'?' +
+				Object.keys(queryParams)
+					.map(key => {
+						return (
+							encodeURIComponent(key) +
+							'=' +
+							encodeURIComponent(queryParams[key])
+						)
+					}, '')
+					.join('&') || ''
+		)
 	}
 
-	getErrMsg = (err) => {
-		let stack = ((err.message || err || '').toString()).split(/\r\n|\n|\r/g)
+	getErrMsg = err => {
+		let stack = (err.message || err || '').toString().split(/\r\n|\n|\r/g)
 
 		if (stack.length > 1) {
-			return (err.name ? err.name + ': ' : '') + (stack[0]).toString()
+			return (err.name ? err.name + ': ' : '') + stack[0].toString()
 		} else {
 			return (err.error || err || '').toString()
 		}
 	}
 
-	isInt = (int) => {
-		return typeof int === 'number' && (int % 1 === 0)
+	isInt = int => {
+		return typeof int === 'number' && int % 1 === 0
 	}
 
-	shuffleArray = (array) => {
+	shuffleArray = array => {
 		return [...array].sort(() => Math.random() - 0.5)
 	}
 }

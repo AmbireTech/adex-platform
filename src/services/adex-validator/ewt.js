@@ -7,7 +7,7 @@ import ethers from 'ethers'
 const HEADER = base64.encode(
 	JSON.stringify({
 		type: 'JWT',
-		alg: 'ETH'
+		alg: 'ETH',
 	})
 )
 
@@ -17,7 +17,7 @@ function sign(signer, payload) {
 	const payloadEncoded = base64.encode(
 		JSON.stringify({
 			...payload,
-			address: signer.address
+			address: signer.address,
 		})
 	)
 	return signer.signMessage(`${HEADER}.${payloadEncoded}`).then(function(sig) {

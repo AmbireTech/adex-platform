@@ -7,21 +7,21 @@ export const styles = theme => {
 			flexDirection: 'row',
 			flexWrap: 'wrap',
 			justifyContent: 'stretch',
-			height: '100%'
+			height: '100%',
 		},
 		infoCard: {
 			margin: spacing,
-			flexGrow: 1
+			flexGrow: 1,
 		},
 		linkCard: {
 			'&:hover, &:focus': {
-				cursor: 'pointer'
-			}
+				cursor: 'pointer',
+			},
 		},
 		dashboardCardBody: {
 			margin: spacing,
 			padding: spacing,
-			width: `calc(100% - ${spacing * 2}px)`
-		}
+			width: `calc(100% - ${spacing * 2}px)`,
+		},
 	}
 }
