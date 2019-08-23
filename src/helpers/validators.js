@@ -1,4 +1,6 @@
 import { utils } from 'ethers'
+import { isEthAddressERC20 } from 'services/smart-contracts/actions/erc20'
+import { isConnectionLost } from 'services/smart-contracts/actions/common'
 
 /*eslint-disable */
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
@@ -7,7 +9,6 @@ const onlyDigitsRegex = /^([1-9]+\d*)$/
 // Min 8 chars - at least 1 uppercase, 1 lowercase, 1 digit
 const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/
 const couponRegex = /^[a-fA-F0-9]{8}$/
-
 /*eslint-enable */
 
 export const validUrl = url => {
@@ -74,4 +75,43 @@ export const isEthAddress = (addr = '') => {
 		return false
 	}
 	return true
+}
+
+export const isEthAddressZero = (addr = '') => {
+	return isEthAddress(addr)
+		? utils.bigNumberify(utils.getAddress(addr)).isZero()
+		: false
+}
+
+export const validEthAddress = async ({
+	addr = '',
+	nonZeroAddr,
+	nonERC20,
+	authType,
+}) => {
+	let msg = ''
+	try {
+		const ethAddressZero = isEthAddressZero(addr)
+		const notEthAddress = !isEthAddress(addr)
+		if (notEthAddress) {
+			msg = 'ERR_INVALID_ETH_ADDRESS'
+		} else {
+			if (nonZeroAddr && ethAddressZero) {
+				msg = 'ERR_INVALID_ETH_ADDRESS_ZERO'
+			} else {
+				const connectionLost = await isConnectionLost(authType)
+				if (connectionLost) {
+					msg = 'ERR_INVALID_CONNECTION_LOST'
+				} else {
+					const ethAddressERC20 = await isEthAddressERC20(addr)
+					if (!ethAddressZero && nonERC20 && ethAddressERC20)
+						msg = 'ERR_INVALID_ETH_ADDRESS_TOKEN'
+				}
+			}
+		}
+	} catch (error) {
+		if (error === 'Non-Ethereum browser detected.')
+			msg = 'ERR_INVALID_CONNECTION_LOST'
+	}
+	return { msg }
 }

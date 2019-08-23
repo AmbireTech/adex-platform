@@ -124,7 +124,6 @@ class Root extends Component {
 		this.handleLegacyWallet()
 		// this.checkForMetamaskAccountChange()
 		// this.onMetamaskNetworkChanged()
-
 		// if (window.ethereum) {
 		// 	window.ethereum.on('accountsChanged', (accounts) => {
 		// 		console.log('acc changed', accounts[0])
