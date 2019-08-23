@@ -1,7 +1,6 @@
 import React from 'react'
 
-const getUrl = (url) => {
-
+const getUrl = url => {
 	url = (url || '').replace(/^(https?:)?\/\//i, '')
 	if (url) {
 		url = '//' + url

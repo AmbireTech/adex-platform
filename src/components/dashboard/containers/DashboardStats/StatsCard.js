@@ -13,27 +13,23 @@ const StatsCard = props => {
 	return (
 		<Card
 			// raised
-			className={classnames(classes.infoCard,
-				{ [classes.linkCard]: !!linkCard })
-			}
+			className={classnames(classes.infoCard, {
+				[classes.linkCard]: !!linkCard,
+			})}
 			onClick={onClick}
 		>
 			<CardContent>
-				{title &&
-                    <Typography
-                    	variant="headline"
-                    	component="h2"
-                    	noWrap
-                    >
-                    	{title}
-                    </Typography>
-				}
+				{title && (
+					<Typography variant='headline' component='h2' noWrap>
+						{title}
+					</Typography>
+				)}
 
-				{subtitle &&
-                    <Typography component="p" noWrap>
-                    	{subtitle}
-                    </Typography>
-				}
+				{subtitle && (
+					<Typography component='p' noWrap>
+						{subtitle}
+					</Typography>
+				)}
 				{children}
 			</CardContent>
 		</Card>
@@ -44,7 +40,7 @@ StatsCard.propTypes = {
 	classes: PropTypes.object.isRequired,
 	title: PropTypes.string,
 	subtitle: PropTypes.string,
-	linkCard: PropTypes.bool
+	linkCard: PropTypes.bool,
 }
 
 export default withStyles(styles)(StatsCard)

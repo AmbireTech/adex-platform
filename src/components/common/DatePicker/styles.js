@@ -13,11 +13,11 @@ export const styles = theme => {
 		datepickerContrastUnderline: {
 			'&:after': {
 				// borderBottomColor: theme.palette.common.white,
-				border: '0 !important'
+				border: '0 !important',
 			},
 			'&:before': {
-				border: '0 !important'
-			}
+				border: '0 !important',
+			},
 		},
 	}
 }

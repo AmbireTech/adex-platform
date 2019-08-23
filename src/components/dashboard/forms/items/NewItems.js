@@ -24,10 +24,7 @@ import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 
 const SaveBtn = ({ newItem, t, save, ...rest }) => {
 	return (
-		<Button
-			color='primary'
-			onClick={save}
-		>
+		<Button color='primary' onClick={save}>
 			{/*TODO: withStyles */}
 			<SaveIcon style={{ marginRight: 8 }} />
 			{t('SAVE')}
@@ -42,7 +39,11 @@ const SendBtn = ({ saveBtnLabel, saveBtnIcon, newItem, t, save, ...rest }) => {
 			onClick={save}
 			disabled={newItem.temp.waitingAction}
 		>
-			{newItem.temp.waitingAction ? <HourglassEmptyIcon /> : (saveBtnIcon || <SaveIcon style={{ marginRight: 8 }} />)}
+			{newItem.temp.waitingAction ? (
+				<HourglassEmptyIcon />
+			) : (
+				saveBtnIcon || <SaveIcon style={{ marginRight: 8 }} />
+			)}
 			{t(saveBtnLabel || 'OPEN_CAMPAIGN')}
 		</Button>
 	)
@@ -53,11 +54,7 @@ const SaveBtnWithCampaign = NewCampaignHoc(SendBtn)
 const SaveBtnWithAdSlot = NewAdSlotHoc(SaveBtn)
 
 const CancelBtn = ({ ...props }) => {
-	return (
-		<Button onClick={props.cancel} >
-			{props.t('CANCEL')}
-		</Button>
-	)
+	return <Button onClick={props.cancel}>{props.t('CANCEL')}</Button>
 }
 
 const CancelBtnWithItem = NewAdUnitHoc(CancelBtn)
@@ -66,11 +63,11 @@ const CancelBtnWithAdSlot = NewAdSlotHoc(CancelBtn)
 
 const dialogCommon = {
 	darkerBackground: true,
-	icon: <AddIcon />
+	icon: <AddIcon />,
 }
 
 // Ad unit
-export const NewUnitSteps = (props) =>
+export const NewUnitSteps = props => (
 	<FormSteps
 		{...props}
 		SaveBtn={SaveBtnWithAdUnit}
@@ -81,26 +78,31 @@ export const NewUnitSteps = (props) =>
 		stepsPages={[
 			{ title: 'UNIT_BASIC_STEP', page: AdUnitBasic },
 			{ title: 'UNIT_MEDIA_STEP', page: AdUnitMedia },
-			{ title: 'UNIT_TARGETS_STEP', page: AdUnitTargeting }
+			{ title: 'UNIT_TARGETS_STEP', page: AdUnitTargeting },
 		]}
-		stepsPreviewPage={{ title: 'PREVIEW_AND_SAVE_ITEM', page: AdUnitFormPreview }}
+		stepsPreviewPage={{
+			title: 'PREVIEW_AND_SAVE_ITEM',
+			page: AdUnitFormPreview,
+		}}
 		imgLabel='UNIT_BANNER_IMG_LABEL'
 		noDefaultImg
 		itemModel={AdUnit}
 	/>
+)
 
 const NewUnitStepsWithDialog = WithDialog(NewUnitSteps)
 
-export const NewUnitDialog = (props) =>
+export const NewUnitDialog = props => (
 	<NewUnitStepsWithDialog
 		{...props}
 		{...dialogCommon}
 		btnLabel='NEW_UNIT'
 		title='CREATE_NEW_UNIT'
 	/>
+)
 
 // Campaign
-export const NewCampaignSteps = (props) =>
+export const NewCampaignSteps = props => (
 	<FormSteps
 		{...props}
 		SaveBtn={SaveBtnWithCampaign}
@@ -114,23 +116,28 @@ export const NewCampaignSteps = (props) =>
 			// { title: 'CAMPAIGN_TARGETING_STEP', page: CampaignTargeting },
 			{ title: 'CAMPAIGN_FINANCE_STEP', page: CampaignFinance },
 		]}
-		stepsPreviewPage={{ title: 'PREVIEW_AND_SAVE_ITEM', page: CampaignFormPreview }}
+		stepsPreviewPage={{
+			title: 'PREVIEW_AND_SAVE_ITEM',
+			page: CampaignFormPreview,
+		}}
 		itemModel={Campaign}
 		imgAdditionalInfo='CAMPAIGN_IMG_ADDITIONAL_INFO'
 	/>
+)
 
 const NewCampaignStepsWithDialog = WithDialog(NewCampaignSteps)
 
-export const NewCampaignDialog = (props) =>
+export const NewCampaignDialog = props => (
 	<NewCampaignStepsWithDialog
 		{...props}
 		{...dialogCommon}
 		btnLabel='NEW_CAMPAIGN'
 		title='CREATE_NEW_CAMPAIGN'
 	/>
+)
 
 // Ad slot
-export const NewSlotSteps = (props) =>
+export const NewSlotSteps = props => (
 	<FormSteps
 		{...props}
 		SaveBtn={SaveBtnWithAdSlot}
@@ -141,7 +148,7 @@ export const NewSlotSteps = (props) =>
 		stepsPages={[
 			{ title: 'SLOT_BASIC_STEP', page: AdSlotBasic },
 			{ title: 'SLOT_PASSBACK_STEP', page: AdSlotMedia },
-			{ title: 'SLOT_TAGS_STEP', page: AdSlotTargeting }
+			{ title: 'SLOT_TAGS_STEP', page: AdSlotTargeting },
 		]}
 		stepsPreviewPage={{ title: 'PREVIEW_AND_SAVE_ITEM', page: AdSlotPreview }}
 		imgLabel='SLOT_AVATAR_IMG_LABEL'
@@ -149,13 +156,15 @@ export const NewSlotSteps = (props) =>
 		descriptionHelperTxt='SLOT_DESCRIPTION_HELPER'
 		itemModel={AdSlot}
 	/>
+)
 
 const NewSlotStepsWithDialog = WithDialog(NewSlotSteps)
 
-export const NewSlotDialog = (props) =>
+export const NewSlotDialog = props => (
 	<NewSlotStepsWithDialog
 		{...props}
 		{...dialogCommon}
 		btnLabel='NEW_SLOT'
 		title='CREATE_NEW_SLOT'
 	/>
+)

@@ -10,48 +10,46 @@ let initialState = {
 		seed: '',
 		publicKey: '',
 		seedCheck: [],
-		authenticated: false
+		authenticated: false,
 	},
 	newItem: {
 		Campaign: new Campaign().plainObj(),
 		AdUnit: new AdUnit({ temp: { addUtmLink: true } }).plainObj(),
-		AdSlot: new AdSlot().plainObj()
+		AdSlot: new AdSlot().plainObj(),
 	},
 	currentItem: {},
 	items: {
 		Campaign: {},
 		AdUnit: {},
-		AdSlot: {}
+		AdSlot: {},
 	},
 	spinners: {},
 	ui: {},
 	toasts: [],
 	confirm: {
-		data: {}
+		data: {},
 	},
 	nav: {
-		side: ''
+		side: '',
 	},
 	language: 'en-US',
 	validations: {},
 	newTransactions: {
-		default: {}
+		default: {},
 	},
 	web3Transactions: {},
 	tags: {},
-	identity: {
-	},
+	identity: {},
 	ethNetwork: {
 		networkId: null,
-		gasData: {}
+		gasData: {},
 	},
-	wallet: {
-	},
+	wallet: {},
 	config: {
 		relayer: {},
 		market: {},
-		validators: {}
-	}
+		validators: {},
+	},
 }
 
 export default initialState

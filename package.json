@@ -17,7 +17,7 @@
     "adex-constants": "1.0.10",
     "adex-models": "git+https://git@github.com/AdExBlockchain/adex-models.git#10bf4f71d55ae86de214efde484082d15f558a66",
     "adex-protocol-eth": "github:AdExNetwork/adex-protocol-eth#8f93d90fc312a77151f277717f5d36ad84e86086",
-    "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#fbe63932db172632a29a7eeb2ebd1548dde3f371",
+    "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#356df11c8e8ebb4bdb5120a82dfb8771de6c5466",
     "autoprefixer": "7.1.6",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
@@ -39,14 +39,6 @@
     "dotenv": "6.2.0",
     "dotenv-expand": "4.2.0",
     "downshift": "^2.0.10",
-    "eslint": "^5.16.0",
-    "eslint-config-react-app": "^4.0.1",
-    "eslint-loader": "2.1.2",
-    "eslint-plugin-flowtype": "2.50.1",
-    "eslint-plugin-import": "2.16.0",
-    "eslint-plugin-jsx-a11y": "6.2.1",
-    "eslint-plugin-react": "7.12.4",
-    "eslint-plugin-react-hooks": "^1.5.0",
     "ethereumjs-util": "^6.1.0",
     "ethers": "^4.0.27",
     "file-loader": "3.0.1",
@@ -116,7 +108,10 @@
     "build": "node --max-old-space-size=2048 scripts/build.js",
     "predeploy": "npm run build && cp CNAME ./build",
     "deploy": "gh-pages -d build",
-    "test": "eslint src/"
+    "test": "eslint src/",
+    "lint": "eslint \"src/**/*.{js,jsx}\" && echo Linting check finished",
+    "lint:fix": "eslint --fix \"src/**/*.{js,jsx}\" && echo Linting fix finished",
+    "eslint-check": "eslint --print-config src/App.js | eslint-config-prettier-check"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -176,5 +171,20 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-config-prettier-react": "0.0.24",
+    "eslint-config-react-app": "^4.0.1",
+    "eslint-loader": "^2.1.2",
+    "eslint-plugin-flowtype": "^2.50.1",
+    "eslint-plugin-html": "^6.0.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "prettier": "^1.18.2"
   }
 }
