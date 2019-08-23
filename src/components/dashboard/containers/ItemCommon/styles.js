@@ -13,13 +13,13 @@ export const styles = theme => {
 			'@media(max-width:380px)': {
 				margin: 0,
 				marginBottom: spacing,
-			}
+			},
 		},
 		mediaRoot: {
 			height: 0,
 			paddingTop: aspect, // 16:9
 			position: 'relative',
-			overflow: 'hidden'
+			overflow: 'hidden',
 		},
 		img: {
 			position: 'absolute',
@@ -33,29 +33,29 @@ export const styles = theme => {
 			height: 'auto',
 			maxWidth: '100%',
 			width: 'auto',
-			maxHeight: '100%'
+			maxHeight: '100%',
 		},
 		basicInfo: {
 			display: 'flex',
 			flexDirection: 'row',
 			alignItems: 'start',
-			flexWrap: 'wrap'
+			flexWrap: 'wrap',
 		},
 		buttonRight: {
-			marginLeft: spacing
+			marginLeft: spacing,
 		},
 		error: {
-			color: theme.palette.error.main
+			color: theme.palette.error.main,
 		},
 		label: {
 			marginBottom: spacing,
-			color: theme.palette.text.hint
+			color: theme.palette.text.hint,
 		},
 		editIcon: {
 			position: 'absolute',
 			marginTop: `calc(56.25% - ${40 + spacing}px)`,
 			top: 0,
-			right: spacing
-		}
+			right: spacing,
+		},
 	}
 }

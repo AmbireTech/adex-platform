@@ -22,8 +22,7 @@ const ADVIEW_URL = process.env.ADVIEW_URL
 const adviewUrl = url.parse(ADVIEW_URL)
 const origin = `${adviewUrl.protocol}//${adviewUrl.host}`
 
-const AUTO_HIDE_STRING =
-	`window.addEventListener('message', function(ev) { 
+const AUTO_HIDE_STRING = `window.addEventListener('message', function(ev) { 
 		if (ev.data.hasOwnProperty('adexHeight') && ('${origin}' === ev.origin)) {
 			for (let f of document.getElementsByTagName('iframe')) {	
 				if (f.contentWindow === ev.source) {
@@ -44,7 +43,7 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 	let sizes = type.split('_')[1].split('x')
 	sizes = {
 		width: sizes[0],
-		height: sizes[1]
+		height: sizes[1],
 	}
 
 	const options = {
@@ -58,7 +57,7 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 		height: sizes.height,
 		minPerImpression: '0',
 		minTargetingScore: '0',
-		fallbackUnit
+		fallbackUnit,
 	}
 
 	let query = encodeURIComponent(JSON.stringify({ options }))
@@ -92,23 +91,20 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 				</IconButton>
 			</div>
 			<Paper>
-				<pre className={classes.integrationCode}>
-					{iframeStr}
-				</pre>
+				<pre className={classes.integrationCode}>{iframeStr}</pre>
 			</Paper>
-			{(process.env.NODE_ENV !== 'production') &&
+			{process.env.NODE_ENV !== 'production' && (
 				<div>
 					<br />
 					<div className={classes.integrationLabel}> {t('AD_PREVIEW')}</div>
 					<div dangerouslySetInnerHTML={{ __html: iframeStr }} />
 				</div>
-			}
+			)}
 		</div>
 	)
 }
 
 export class Slot extends Component {
-
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -147,10 +143,7 @@ export class Slot extends Component {
 					rightComponent={null}
 				/>
 				<div>
-					<AppBar
-						position='static'
-						color='default'
-					>
+					<AppBar position='static' color='default'>
 						<Tabs
 							value={tabIndex}
 							onChange={this.handleTabChange}
@@ -163,29 +156,26 @@ export class Slot extends Component {
 							<Tab label={t('INTEGRATION')} />
 						</Tabs>
 					</AppBar>
-					<div
-						style={{ marginTop: 10 }}
-					>
-						{
-							(tabIndex === 0) &&
-							null
-						}
-						{
-							(tabIndex === 1) &&
+					<div style={{ marginTop: 10 }}>
+						{tabIndex === 0 && null}
+						{tabIndex === 1 && (
 							<IntegrationCode
 								classes={classes}
 								t={t}
 								account={account}
 								slot={item}
 								onCopy={() =>
-									this.props.actions
-										.addToast({ type: 'accept', action: 'X', label: t('COPIED_TO_CLIPBOARD'), timeout: 5000 })}
+									this.props.actions.addToast({
+										type: 'accept',
+										action: 'X',
+										label: t('COPIED_TO_CLIPBOARD'),
+										timeout: 5000,
+									})
+								}
 							/>
-						}
-
+						)}
 					</div>
 				</div>
-
 			</div>
 		)
 	}
@@ -208,13 +198,13 @@ function mapStateToProps(state) {
 		updateImgInfoLabel: 'SLOT_AVATAR_IMG_INFO',
 		updateImgLabel: 'SLOT_AVATAR_IMG_LABEL',
 		updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
-		updateImgExact: true
+		updateImgExact: true,
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

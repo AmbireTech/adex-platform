@@ -15,16 +15,16 @@ class GrantLogin extends Component {
 		this.validateWallet(false)
 	}
 
-	validateWallet = (dirty) => {
+	validateWallet = dirty => {
 		const { identity, handleChange, validate } = this.props
-		const { email, password, } = identity
+		const { email, password } = identity
 
 		let wallet = {}
 
 		if (email && password) {
 			const walletData = getLocalWallet({
 				email,
-				password
+				password,
 			})
 
 			if (!!walletData && walletData.data) {
@@ -34,7 +34,7 @@ class GrantLogin extends Component {
 				wallet.authType = AUTH_TYPES.GRANT.name
 				wallet.identity = {
 					address: walletData.identity,
-					privileges: walletData.identityPrivileges
+					privileges: walletData.identityPrivileges,
 				}
 			}
 
@@ -46,12 +46,19 @@ class GrantLogin extends Component {
 		validate('wallet', {
 			isValid: !!wallet.address,
 			err: { msg: 'ERR_LOCAL_WALLET_LOGIN' },
-			dirty: dirty
+			dirty: dirty,
 		})
 	}
-	
+
 	render() {
-		const { t, identity, handleChange, invalidFields, classes, actions } = this.props
+		const {
+			t,
+			identity,
+			handleChange,
+			invalidFields,
+			classes,
+			actions,
+		} = this.props
 		// Errors
 		const { wallet } = invalidFields
 		return (
@@ -64,10 +71,7 @@ class GrantLogin extends Component {
 				alignItems='center'
 			>
 				<Grid item xs={12}>
-					<Grid
-						container
-						spacing={2}
-					>
+					<Grid container spacing={2}>
 						<Grid item xs={12}>
 							<Typography variant='body2' color='primary' gutterBottom>
 								{t('GRANT_LOGIN_INFO')}
@@ -81,7 +85,7 @@ class GrantLogin extends Component {
 								label={t('email', { isProp: true })}
 								name='email'
 								value={identity.email || ''}
-								onChange={(ev) => handleChange('email', ev.target.value)}
+								onChange={ev => handleChange('email', ev.target.value)}
 							/>
 						</Grid>
 						<Grid item xs={12}>
@@ -92,27 +96,29 @@ class GrantLogin extends Component {
 								label={t('password', { isProp: true })}
 								name='password'
 								value={identity.password || ''}
-								onChange={(ev) => handleChange('password', ev.target.value)}
+								onChange={ev => handleChange('password', ev.target.value)}
 							/>
 						</Grid>
-						{(wallet && !!wallet.dirty) &&
-						<Grid item xs={12}>
-							<Typography variant='body2' color='error' gutterBottom>
-								{wallet.errMsg}
-							</Typography>
-						</Grid>
-						}
-						<Grid item xs={12}>
-							{(!!identity.walletAddr) &&
-							<div>
-								<Typography variant='body1' >
-									{t('GRANT_WALLET_ADDRESS', { args: [identity.walletAddr] })}
+						{wallet && !!wallet.dirty && (
+							<Grid item xs={12}>
+								<Typography variant='body2' color='error' gutterBottom>
+									{wallet.errMsg}
 								</Typography>
-								<Typography variant='body1' gutterBottom>
-									{t('GRANT_IDENTITY_ADDRESS', { args: [identity.identityAddr] })}
-								</Typography>
-							</div>
-							}
+							</Grid>
+						)}
+						<Grid item xs={12}>
+							{!!identity.walletAddr && (
+								<div>
+									<Typography variant='body1'>
+										{t('GRANT_WALLET_ADDRESS', { args: [identity.walletAddr] })}
+									</Typography>
+									<Typography variant='body1' gutterBottom>
+										{t('GRANT_IDENTITY_ADDRESS', {
+											args: [identity.identityAddr],
+										})}
+									</Typography>
+								</div>
+							)}
 							<Button
 								variant='contained'
 								color='primary'
@@ -123,20 +129,19 @@ class GrantLogin extends Component {
 							</Button>
 						</Grid>
 					</Grid>
-
 				</Grid>
 				<Grid item xs={12}>
 					<input
-						accept="text/json"
+						accept='text/json'
 						className={classes.input}
-						id="contained-button-file"
-						type="file"
+						id='contained-button-file'
+						type='file'
 						onChange={actions.onUploadLocalWallet}
 					/>
-					<label htmlFor="contained-button-file">
-						<Button 							
-							// variant="contained" 
-							component="span" 
+					<label htmlFor='contained-button-file'>
+						<Button
+							// variant="contained"
+							component='span'
 							className={classes.button}
 						>
 							{t('UPLOAD_ACCOUNT_DATA_JSON')}

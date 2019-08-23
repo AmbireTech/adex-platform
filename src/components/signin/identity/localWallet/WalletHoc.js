@@ -5,16 +5,15 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 
 export default function WalletHoc(Decorated) {
-
 	class Wallet extends Component {
 		constructor(props) {
 			super(props)
 
-			this.save = this.save.bind(this);
+			this.save = this.save.bind(this)
 
 			this.state = {
 				wallet: {},
-				ready: false
+				ready: false,
 			}
 		}
 
@@ -26,28 +25,33 @@ export default function WalletHoc(Decorated) {
 			this.setState({ wallet: this.props.wallet })
 		}
 
-        handleChange = (prop, value) => {
-        	this.props.actions.updateWallet(prop, value)
-        }
+		handleChange = (prop, value) => {
+			this.props.actions.updateWallet(prop, value)
+		}
 
-        save = () => {
-        	console.log('wallet', this.state.wallet)
-        }
+		save = () => {
+			console.log('wallet', this.state.wallet)
+		}
 
-        render() {
-        	const props = this.props
-        	const { wallet } = this.state
+		render() {
+			const props = this.props
+			const { wallet } = this.state
 
-        	return (
-        		<Decorated {...props} wallet={wallet} save={this.save} handleChange={this.handleChange} />
-        	)
-        }
+			return (
+				<Decorated
+					{...props}
+					wallet={wallet}
+					save={this.save}
+					handleChange={this.handleChange}
+				/>
+			)
+		}
 	}
 
 	Wallet.propTypes = {
 		actions: PropTypes.object.isRequired,
 		account: PropTypes.object.isRequired,
-		wallet: PropTypes.object.isRequired
+		wallet: PropTypes.object.isRequired,
 	}
 
 	function mapStateToProps(state, props) {
@@ -55,13 +59,13 @@ export default function WalletHoc(Decorated) {
 		let memory = state.memory
 		return {
 			account: persist.account,
-			wallet: memory.wallet
+			wallet: memory.wallet,
 		}
 	}
 
 	function mapDispatchToProps(dispatch) {
 		return {
-			actions: bindActionCreators(actions, dispatch)
+			actions: bindActionCreators(actions, dispatch),
 		}
 	}
 
@@ -70,4 +74,3 @@ export default function WalletHoc(Decorated) {
 		mapDispatchToProps
 	)(Wallet)
 }
-

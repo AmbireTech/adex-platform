@@ -28,13 +28,9 @@ import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems';
 
-
-const TableCell = ({ children, ...rest }) =>
-	<TableCellMui
-		{...rest}
-	>
-		{!!children && children}
-	</TableCellMui >
+const TableCell = ({ children, ...rest }) => (
+	<TableCellMui {...rest}>{!!children && children}</TableCellMui>
+)
 
 const RRTableCell = withReactRouterLink(TableCell)
 const RRButton = withReactRouterLink(Button)
@@ -51,19 +47,15 @@ class ItemsList extends Component {
 		return (
 			<TableHead>
 				<TableRow>
-					{selectMode &&
-						<TableCell>
-							{Object.keys(selectedItems).length || ''}
-						</TableCell>
-					}
+					{selectMode && (
+						<TableCell>{Object.keys(selectedItems).length || ''}</TableCell>
+					)}
 					<TableCell> {t('PROP_MEDIA')}</TableCell>
 					<TableCell> {t('PROP_TITLE')} </TableCell>
 					<TableCell> {t('PROP_TYPE')} </TableCell>
 					<TableCell> {t('PROP_CREATED')} </TableCell>
 
-					{!noActions &&
-						<TableCell> {t('ACTIONS')} </TableCell>
-					}
+					{!noActions && <TableCell> {t('ACTIONS')} </TableCell>}
 				</TableRow>
 			</TableHead>
 		)
@@ -74,11 +66,9 @@ class ItemsList extends Component {
 		return (
 			<TableHead>
 				<TableRow>
-					{selectMode &&
-						<TableCell>
-							{Object.keys(selectedItems).length || ''}
-						</TableCell>
-					}
+					{selectMode && (
+						<TableCell>{Object.keys(selectedItems).length || ''}</TableCell>
+					)}
 					<TableCell> {t('PROP_MEDIA')}</TableCell>
 					<TableCell> {t('PROP_STATUS')} </TableCell>
 					<TableCell> {t('PROP_DEPOSIT')} </TableCell>
@@ -89,9 +79,7 @@ class ItemsList extends Component {
 						{t('PROP_STARTS')}/ <br />
 						{t('PROP_ENDS')}
 					</TableCell>
-					{!noActions &&
-						<TableCell> {t('ACTIONS')} </TableCell>
-					}
+					{!noActions && <TableCell> {t('ACTIONS')} </TableCell>}
 				</TableRow>
 			</TableHead>
 		)
@@ -104,26 +92,23 @@ class ItemsList extends Component {
 			selectMode,
 			selectedItems,
 			onSelect,
-			noActions
+			noActions,
 		} = this.props
 		// const ImagCell = noActions ? TableCell : RRTableCell
 
 		return (
-			<TableRow
-				key={item.ipfs || index}
-				selected={selectedItems[item.ipfs]}
-			>
-				{selectMode &&
-					<TableCell padding="checkbox">
+			<TableRow key={item.ipfs || index} selected={selectedItems[item.ipfs]}>
+				{selectMode && (
+					<TableCell padding='checkbox'>
 						<Checkbox
 							// indeterminate={numSelected > 0 && numSelected < rowCount}
 							checked={selectedItems[item.ipfs]}
-							onChange={(event) => {
+							onChange={event => {
 								onSelect(item.ipfs, event.target.checked)
 							}}
 						/>
 					</TableCell>
-				}
+				)}
 				<TableCell>
 					<Img
 						fullScreenOnClick={true}
@@ -140,13 +125,10 @@ class ItemsList extends Component {
 				</RRTableCell>
 				<TableCell> {item.type} </TableCell>
 				<TableCell> {formatDateTime(item.created)} </TableCell>
-				{!noActions &&
-					this.renderActions({ item, to })
-				}
+				{!noActions && this.renderActions({ item, to })}
 			</TableRow>
 		)
 	}
-
 
 	renderCampaignTableRow = (item, index, { to, selected }) => {
 		const {
@@ -154,50 +136,57 @@ class ItemsList extends Component {
 			selectedItems,
 			onSelect,
 			noActions,
-			classes
+			classes,
 		} = this.props
 
 		const status = item.status || {}
 		return (
-			<TableRow
-				key={item.ipfs || index}
-				selected={selectedItems[item.ipfs]}
-			>
-				{selectMode &&
-					<TableCell padding="checkbox">
+			<TableRow key={item.ipfs || index} selected={selectedItems[item.ipfs]}>
+				{selectMode && (
+					<TableCell padding='checkbox'>
 						<Checkbox
 							// indeterminate={numSelected > 0 && numSelected < rowCount}
 							checked={selectedItems[item.ipfs]}
-							onChange={(event) => {
+							onChange={event => {
 								onSelect(item.ipfs, event.target.checked)
 							}}
 						/>
 					</TableCell>
-				}
+				)}
 				<TableCell>
 					<Img
 						fullScreenOnClick={true}
 						className={classnames(classes.cellImg)}
-						src={item.mediaUrl || (item.adUnits ? item.adUnits[0].mediaUrl || '' : '')}
+						src={
+							item.mediaUrl ||
+							(item.adUnits ? item.adUnits[0].mediaUrl || '' : '')
+						}
 						alt={item.title}
 					/>
 				</TableCell>
 				<TableCell> {status.name} </TableCell>
-				<TableCell>	{formatTokenAmount(item.depositAmount, 18, true)} DAI </TableCell>
-				<TableCell> {((status.fundsDistributedRatio || 0) / 10).toFixed(2)}</TableCell>
+				<TableCell>
+					{' '}
+					{formatTokenAmount(item.depositAmount, 18, true)} DAI{' '}
+				</TableCell>
+				<TableCell>
+					{' '}
+					{((status.fundsDistributedRatio || 0) / 10).toFixed(2)}
+				</TableCell>
 				<TableCell>
 					{formatTokenAmount(
 						bigNumberify(item.minPerImpression).mul(1000),
-						18, true)} DAI
+						18,
+						true
+					)}{' '}
+					DAI
 				</TableCell>
 				<TableCell>
 					{/* {formatDateTime(item.created)} <br /> */}
 					{formatDateTime(item.activeFrom)} <br />
 					{formatDateTime(item.withdrawPeriodStart)}
 				</TableCell>
-				{!noActions &&
-					this.renderActions({ item, to })
-				}
+				{!noActions && this.renderActions({ item, to })}
 			</TableRow>
 		)
 	}
@@ -220,11 +209,7 @@ class ItemsList extends Component {
 					// placement='top'
 					enterDelay={1000}
 				>
-					<RRButton
-						to={to}
-						variant='contained'
-						color='primary'
-					>
+					<RRButton to={to} variant='contained' color='primary'>
 						{t('LABEL_VIEW')}
 					</RRButton>
 				</Tooltip>
@@ -293,31 +278,30 @@ class ItemsList extends Component {
 		)
 	}
 
-	renderRows = (items) => {
+	renderRows = items => {
 		const { itemType, side, padding } = this.props
-		return (<Rows
-			padding={padding}
-			side={side}
-			rows={items}
-			itemType={itemType}
-			rowRenderer={itemType === 'Campaign'
-				? this.renderCampaignTableRow
-				: this.renderTableRow}
-			tableHeadRenderer={itemType === 'Campaign'
-				? this.renderCampaignTableHead
-				: this.renderTableHead}
-		/>)
+		return (
+			<Rows
+				padding={padding}
+				side={side}
+				rows={items}
+				itemType={itemType}
+				rowRenderer={
+					itemType === 'Campaign'
+						? this.renderCampaignTableRow
+						: this.renderTableRow
+				}
+				tableHeadRenderer={
+					itemType === 'Campaign'
+						? this.renderCampaignTableHead
+						: this.renderTableHead
+				}
+			/>
+		)
 	}
 
 	render() {
-		const {
-			items,
-			viewModeId,
-			side,
-			noControls,
-			classes,
-			...rest
-		} = this.props
+		const { items, viewModeId, side, noControls, classes, ...rest } = this.props
 
 		if (noControls) {
 			return this.renderRows(items)
@@ -347,7 +331,7 @@ ItemsList.propTypes = {
 	selectMode: PropTypes.bool,
 	onSelect: PropTypes.func,
 	noControls: PropTypes.bool,
-	noActions: PropTypes.bool
+	noActions: PropTypes.bool,
 }
 
 function mapStateToProps(state, props) {
@@ -356,13 +340,13 @@ function mapStateToProps(state, props) {
 	return {
 		account: persist.account,
 		side: memory.nav.side,
-		selectedItems: props.selectedItems || {}
+		selectedItems: props.selectedItems || {},
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(actions, dispatch)
+		actions: bindActionCreators(actions, dispatch),
 	}
 }
 

@@ -14,7 +14,7 @@ export const styles = theme => ({
 		left: 0,
 		right: 0,
 		overflow: 'auto',
-		maxHeight: 150
+		maxHeight: 150,
 	},
 	chip: {
 		margin: `${theme.spacing(1) / 2}px ${theme.spacing(1) / 2}px`,

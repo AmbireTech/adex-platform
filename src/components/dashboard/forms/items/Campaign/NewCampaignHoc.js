@@ -6,16 +6,15 @@ import actions from 'actions'
 import { Campaign } from 'adex-models'
 
 export default function NewCampaignHoc(Decorated) {
-
 	class ItemForm extends Component {
 		constructor(props) {
 			super(props)
 
-			this.save = this.save.bind(this);
+			this.save = this.save.bind(this)
 
 			this.state = {
 				active: false,
-				saved: false
+				saved: false,
 			}
 		}
 
@@ -72,9 +71,9 @@ export default function NewCampaignHoc(Decorated) {
 		account: PropTypes.object.isRequired,
 		newItem: PropTypes.object.isRequired,
 		title: PropTypes.string,
-		addTo: PropTypes.object
+		addTo: PropTypes.object,
 	}
-	
+
 	function mapStateToProps(state, props) {
 		const { persist, memory } = state
 
@@ -85,7 +84,7 @@ export default function NewCampaignHoc(Decorated) {
 			newItem: new Campaign(memory.newItem['Campaign']),
 			adUnits,
 			adUnitsArray,
-			spinner: memory.spinners['opening-campaign']
+			spinner: memory.spinners['opening-campaign'],
 		}
 	}
 
@@ -100,4 +99,3 @@ export default function NewCampaignHoc(Decorated) {
 		mapDispatchToProps
 	)(ItemForm)
 }
-

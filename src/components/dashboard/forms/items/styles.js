@@ -6,10 +6,10 @@ export const styles = theme => {
 			width: 'auto',
 			maxWidth: '100%',
 			height: 'auto',
-			boxShadow: theme.shadows[2]
+			boxShadow: theme.shadows[2],
 		},
 		imgPreviewWrapper: {
-			height: 'max-content'
-		}
+			height: 'max-content',
+		},
 	}
 }
