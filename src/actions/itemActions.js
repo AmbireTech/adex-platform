@@ -18,6 +18,8 @@ import {
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
 import { lastApprovedState } from 'services/adex-validator/actions'
+import initialState from 'store/initialState'
+import { getSize } from 'helpers/mediaHelpers'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -129,32 +131,6 @@ export function addItem(item, itemType, authSig) {
 				toastStr: 'ERR_CREATING_ITEM',
 				args: ['AdUnit', err],
 			})
-		}
-	}
-}
-
-export function cloneItem({ item, authSig } = {}) {
-	const newItem = { ...item }
-	return async function (dispatch) {
-		try {
-			newItem.id = ''
-			newItem.created = Date.now()
-
-			const resItem = await postAdUnit({
-				unit: new AdUnit(newItem).marketAdd,
-				authSig
-			})
-
-			dispatch({
-				type: types.ADD_ITEM,
-				item: new AdUnit(resItem).plainObj(),
-				itemType: 'AdUnit'
-			})
-
-			addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_CLONING_ITEM', args: ['AdUnit', newItem.title] })
-		} catch (err) {
-			console.error('ERR_CREATING_ITEM', err)
-			addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_CLONING_ITEM', args: ['AdUnit', err] })
 		}
 	}
 }
@@ -366,6 +342,29 @@ export function restoreItem({ item, authSig } = {}) {
 		successMsg: 'SUCCESS_RESTORE_ITEM',
 		errMsg: 'ERR_RESTORING_ITEM',
 	})
+}
+
+export function cloneItem({ item, itemType, objModel } = {}) {
+	return function(dispatch) {
+		item = { ...item }
+		item.id = ''
+		getSize(item.mediaUrl).then(res => {
+			
+		})
+		item.temp = {
+			...initialState.newItem[itemType].temp,
+			mime: item.mediaMime,
+			tempUrl: item.mediaUrl,
+			width: 300,
+			height: 100,
+		}
+		item = Base.updateObject({ item, objModel })
+		return dispatch({
+			type: types.UPDATE_NEW_ITEM,
+			item,
+			itemType,
+		})
+	}
 }
 
 export function archiveItem({ item, authSig } = {}) {

@@ -11,13 +11,13 @@ import TableRow from '@material-ui/core/TableRow'
 import Tooltip from '@material-ui/core/Tooltip'
 import Button from '@material-ui/core/Button'
 import Checkbox from '@material-ui/core/Checkbox'
-import IconButton from '@material-ui/core/IconButton'
+// import IconButton from '@material-ui/core/IconButton'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Img from 'components/common/img/Img'
 import Rows from 'components/dashboard/collection/Rows'
 import Translate from 'components/translate/Translate'
 // import DeleteIcon from '@material-ui/icons/Delete'
-import { FileCopy } from '@material-ui/icons'
+// import { FileCopy } from '@material-ui/icons'
 // import ArchiveIcon from '@material-ui/icons/Archive'
 // import UnarchiveIcon from '@material-ui/icons/Unarchive'
 // import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline'
@@ -26,7 +26,9 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
-import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems';
+// import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems'
+import { NewCloneUnitDialog } from '../../forms/items/NewItems'
+import { AdUnit } from 'adex-models'
 
 const TableCell = ({ children, ...rest }) => (
 	<TableCellMui {...rest}>{!!children && children}</TableCellMui>
@@ -192,12 +194,7 @@ class ItemsList extends Component {
 	}
 
 	renderActions = ({ item, to }) => {
-		const {
-			t,
-			account,
-			actions,
-			itemType
-		} = this.props
+		const { t, account, actions, authSig, itemType } = this.props
 		const itemName = item.title
 		const itemTypeName = t(itemType, { isProp: true })
 		const isDemo = account.wallet.address === 'demo'
@@ -213,19 +210,23 @@ class ItemsList extends Component {
 						{t('LABEL_VIEW')}
 					</RRButton>
 				</Tooltip>
-				{itemType === "AdUnit" ? (
+				{itemType === 'AdUnit' ? (
 					<Tooltip
-						title={t('CLONE_ITEM')}
+						title={t('TOOLTIP_CLONE')}
 						// placement='top'
 						enterDelay={1000}
 					>
-						<NewUnitDialog
-							variant='extended'
-							color='secondary'
-							btnLabel='TESST'
-						/>
+						<span>
+							<NewCloneUnitDialog
+								onClick={() =>
+									actions.cloneItem({ item, itemType, objModel: AdUnit })
+								}
+								variant='extended'
+								color='secondary'
+							/>
+						</span>
 					</Tooltip>
-				) : null }
+				) : null}
 				{/* {!item.archived &&
 					<Tooltip
 						title={t('TOOLTIP_ARCHIVE')}
