@@ -114,6 +114,7 @@ export default function ItemHoc(Decorated) {
 				icon,
 				title,
 				dialogActions,
+				onClick,
 				...rest
 			} = this.props
 
@@ -140,12 +141,15 @@ export default function ItemHoc(Decorated) {
 			const { open } = this.state
 
 			return (
-				<div>
+				<Fragment>
 					<ButtonComponent
 						disabled={disabled}
 						aria-label={btnLabel}
 						label={btnLabel}
-						onClick={this.handleToggle}
+						onClick={() => {
+							this.handleToggle()
+							if (onClick) onClick()
+						}}
 						{...btnProps}
 						// style={this.props.style}
 						className={classnames(
@@ -204,7 +208,7 @@ export default function ItemHoc(Decorated) {
 						</DialogContent>
 						{dialogActions && <DialogActions>{dialogActions}</DialogActions>}
 					</Dialog>
-				</div>
+				</Fragment>
 			)
 		}
 	}
