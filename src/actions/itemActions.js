@@ -347,8 +347,9 @@ export function restoreItem({ item, authSig } = {}) {
 export function cloneItem({ item, itemType, objModel } = {}) {
 	return function(dispatch) {
 		item = { ...item }
-		item = Base.updateObject({ item, objModel })
 		item.id = ''
+		item.targeting = []
+		item = Base.updateObject({ item, objModel })
 		item.temp = {
 			...initialState.newItem[itemType].temp,
 		}
