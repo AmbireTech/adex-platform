@@ -17,9 +17,8 @@ const getImageSize = src =>
 	new Promise(resolve => {
 		const image = new Image()
 		image.src = src.tempUrl
-
 		image.onload = function() {
-			return resolve({
+			resolve({
 				width: this.width,
 				height: this.height,
 			})
@@ -27,6 +26,4 @@ const getImageSize = src =>
 	})
 
 export const getSize = media =>
-	isVideoMedia(media.mime)
-		? () => getVideoSize(media)
-		: () => getImageSize(media)
+	isVideoMedia(media.mime) ? getVideoSize(media) : getImageSize(media)

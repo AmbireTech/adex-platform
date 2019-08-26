@@ -347,23 +347,41 @@ export function restoreItem({ item, authSig } = {}) {
 export function cloneItem({ item, itemType, objModel } = {}) {
 	return function(dispatch) {
 		item = { ...item }
+		item = Base.updateObject({ item, objModel })
 		item.id = ''
-		getSize(item.mediaUrl).then(res => {
-			
-		})
 		item.temp = {
 			...initialState.newItem[itemType].temp,
-			mime: item.mediaMime,
-			tempUrl: item.mediaUrl,
-			width: 300,
-			height: 100,
 		}
-		item = Base.updateObject({ item, objModel })
-		return dispatch({
+		dispatch({
 			type: types.UPDATE_NEW_ITEM,
 			item,
 			itemType,
 		})
+		// Need to fetch image and save it as blob and get size for validation
+		const tempUrl = `${process.env.IPFS_GATEWAY}${item.mediaUrl.split('//')[1]}`
+		return fetch(tempUrl)
+			.then(response => response.blob())
+			.then(image => {
+				// Then create a local URL for that image and print it
+				const imageBlogUrl = URL.createObjectURL(image)
+				getSize({
+					mime: item.mediaMime,
+					tempUrl: imageBlogUrl,
+				}).then(size => {
+					item.temp = {
+						...item.temp,
+						mime: item.mediaMime,
+						tempUrl: imageBlogUrl,
+						width: size.width,
+						height: size.height,
+					}
+					dispatch({
+						type: types.UPDATE_NEW_ITEM,
+						item,
+						itemType,
+					})
+				})
+			})
 	}
 }
 
