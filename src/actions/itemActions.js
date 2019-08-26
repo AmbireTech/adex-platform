@@ -363,15 +363,15 @@ export function cloneItem({ item, itemType, objModel } = {}) {
 			.then(response => response.blob())
 			.then(image => {
 				// Then create a local URL for that image and print it
-				const imageBlogUrl = URL.createObjectURL(image)
+				const imageBlobUrl = URL.createObjectURL(image)
 				getSize({
 					mime: item.mediaMime,
-					tempUrl: imageBlogUrl,
+					tempUrl: imageBlobUrl,
 				}).then(size => {
 					item.temp = {
 						...item.temp,
 						mime: item.mediaMime,
-						tempUrl: imageBlogUrl,
+						tempUrl: imageBlobUrl,
 						width: size.width,
 						height: size.height,
 					}
