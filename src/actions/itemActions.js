@@ -19,7 +19,7 @@ import {
 } from 'services/smart-contracts/actions/core'
 import { lastApprovedState } from 'services/adex-validator/actions'
 import initialState from 'store/initialState'
-import { getSize } from 'helpers/mediaHelpers'
+import { getMediaSize } from 'helpers/mediaHelpers'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -365,9 +365,9 @@ export function cloneItem({ item, itemType, objModel } = {}) {
 			.then(image => {
 				// Then create a local URL for that image and print it
 				const imageBlobUrl = URL.createObjectURL(image)
-				getSize({
+				getMediaSize({
 					mime: item.mediaMime,
-					tempUrl: imageBlobUrl,
+					src: imageBlobUrl,
 				}).then(size => {
 					item.temp = {
 						...item.temp,
