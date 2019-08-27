@@ -25,8 +25,6 @@ import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { getRecoveryWalletData } from 'services/wallet/wallet'
-import { getGrantType } from 'services/adex-relayer/actions'
-import Box from '@material-ui/core/Box'
 // const RRButton = withReactRouterLink(Button)
 
 class AccountInfo extends React.Component {
@@ -36,15 +34,6 @@ class AccountInfo extends React.Component {
 		this.state = {
 			walletJsonData: this.localWalletDownloadHref(),
 			expanded: false,
-			disableWithdraw: true,
-		}
-	}
-
-	async componentDidMount() {
-		const { identity } = this.props
-		const grantType = await getGrantType({ identity })
-		if (grantType.type !== 'advertiser') {
-			this.setState({ disableWithdraw: false })
 		}
 	}
 
@@ -76,7 +65,7 @@ class AccountInfo extends React.Component {
 	}
 
 	render() {
-		const { t, account, classes, actions } = this.props
+		const { t, account, classes, actions, grantType } = this.props
 		const formatted = account.stats.formatted || {}
 		const {
 			walletAddress,
@@ -87,9 +76,8 @@ class AccountInfo extends React.Component {
 			identityAddress,
 			identityBalanceDai,
 		} = formatted
-
 		const { authType, email } = account.wallet
-		const { walletJsonData, expanded, disableWithdraw } = this.state
+		const { walletJsonData, expanded } = this.state
 
 		return (
 			<div>
@@ -162,7 +150,7 @@ class AccountInfo extends React.Component {
 							secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
 						/>
 						<div className={classes.itemActions}>
-							{disableWithdraw ? null : (
+							{grantType === 'advertiser' ? null : (
 								<WithdrawTokenFromIdentity
 									variant='contained'
 									color='primary'
@@ -231,7 +219,7 @@ function mapStateToProps(state, props) {
 	return {
 		account: account,
 		side: memory.nav.side,
-		identity: persist.account.identity.address,
+		grantType: account.settings.grantType.type,
 	}
 }
 
