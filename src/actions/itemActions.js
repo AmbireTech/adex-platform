@@ -4,7 +4,7 @@ import {
 	postAdUnit,
 	postAdSlot,
 } from 'services/adex-market/actions'
-import { Base, AdSlot, AdUnit } from 'adex-models'
+import { Base, AdSlot, AdUnit, helpers } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
 import { updateAccount } from './accountActions'
 import { translate } from 'services/translations/translations'
@@ -345,44 +345,52 @@ export function restoreItem({ item, authSig } = {}) {
 }
 
 export function cloneItem({ item, itemType, objModel } = {}) {
-	return function(dispatch) {
-		item = { ...item }
-		item.id = ''
-		item.targeting = []
-		item = Base.updateObject({ item, objModel })
-		item.temp = {
-			...initialState.newItem[itemType].temp,
-		}
-		dispatch({
-			type: types.UPDATE_NEW_ITEM,
-			item,
-			itemType,
-		})
-		// Need to fetch image and save it as blob and get size for validation
-		const tempUrl = `${process.env.IPFS_GATEWAY}${item.mediaUrl.split('//')[1]}`
-		return fetch(tempUrl)
-			.then(response => response.blob())
-			.then(image => {
-				// Then create a local URL for that image and print it
-				const imageBlobUrl = URL.createObjectURL(image)
-				getMediaSize({
-					mime: item.mediaMime,
-					src: imageBlobUrl,
-				}).then(size => {
-					item.temp = {
-						...item.temp,
-						mime: item.mediaMime,
-						tempUrl: imageBlobUrl,
-						width: size.width,
-						height: size.height,
-					}
-					dispatch({
-						type: types.UPDATE_NEW_ITEM,
-						item,
-						itemType,
-					})
-				})
+	return async function(dispatch) {
+		try {
+			const newItem = Base.updateObject({ item, objModel })
+			newItem.id = ''
+			newItem.targeting = []
+			newItem.temp = {
+				...initialState.newItem[itemType].temp,
+				// targets: [...item.targeting],
+			}
+
+			const tempUrl = helpers.getMediaUrlWithProvider(
+				newItem.mediaUrl,
+				process.env.IPFS_GATEWAY
+			)
+
+			const response = await fetch(tempUrl)
+			const mediaURL = URL.createObjectURL(await response.blob())
+			const mediaSize = await getMediaSize({
+				mime: newItem.mediaMime,
+				src: mediaURL,
 			})
+
+			const temp = {
+				...newItem.temp,
+				mime: item.mediaMime,
+				tempUrl: mediaURL,
+				width: mediaSize.width,
+				height: mediaSize.height,
+			}
+
+			newItem.temp = temp
+
+			dispatch({
+				type: types.UPDATE_NEW_ITEM,
+				item: newItem,
+				itemType,
+			})
+		} catch (err) {
+			console.error(err)
+			addToast({
+				dispatch: dispatch,
+				type: 'cancel',
+				toastStr: 'ERR_CLONING_ITEM',
+				args: [itemType, err],
+			})
+		}
 	}
 }
 
