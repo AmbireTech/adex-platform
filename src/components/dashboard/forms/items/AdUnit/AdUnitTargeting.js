@@ -4,6 +4,8 @@ import NewAdUnitHoc from './NewAdUnitHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import Slider from '@material-ui/core/Slider'
+import IconButton from '@material-ui/core/IconButton'
+import CancelIcon from '@material-ui/icons/Cancel'
 import Autocomplete from 'components/common/autocomplete'
 import Typography from '@material-ui/core/Typography'
 import Dropdown from 'components/common/dropdown'
@@ -81,16 +83,19 @@ class AdUnitTargeting extends Component {
 
 	updateNewItemCollections(targets) {
 		const { newItem, handleChange } = this.props
-		const collections = [...targets].reduce((all, tg) => {
-			const newCollection = all[tg.collection] || []
+		const collections = [...targets].reduce(
+			(all, tg) => {
+				const newCollection = all[tg.collection] || []
 
-			// NOTE: just skip empty tags
-			if (!!tg.target.tag) {
-				newCollection.push(tg.target)
-			}
-			all[tg.collection] = newCollection
-			return all
-		}, {})
+				// NOTE: just skip empty tags
+				if (!!tg.target.tag) {
+					newCollection.push(tg.target)
+				}
+				all[tg.collection] = newCollection
+				return all
+			},
+			{ targeting: [], tags: [] }
+		)
 
 		const { temp } = newItem
 		const newTemp = { ...temp }
@@ -117,6 +122,13 @@ class AdUnitTargeting extends Component {
 		newTarget.key = newTargets.length
 		newTarget.target = { ...target.target }
 		newTargets.push(newTarget)
+		this.setState({ targets: newTargets })
+	}
+
+	removeTarget = index => {
+		const newTargets = [...this.state.targets]
+		newTargets.splice(index, 1)
+		this.updateNewItemCollections(newTargets)
 		this.setState({ targets: newTargets })
 	}
 
@@ -149,7 +161,7 @@ class AdUnitTargeting extends Component {
 						allowCreate={!source.length}
 					/>
 				</Grid>
-				<Grid item xs={12} md={6}>
+				<Grid item xs={11} md={5}>
 					<div>
 						<Typography id={`target-score-${index}`}>
 							{/*TODO: Translate target name*/}
@@ -170,6 +182,13 @@ class AdUnitTargeting extends Component {
 								this.handleTargetChange(index, 'score', newValue, collection)
 							}
 						/>
+					</div>
+				</Grid>
+				<Grid item xs={1} md={1}>
+					<div>
+						<IconButton onClick={() => this.removeTarget(index)}>
+							<CancelIcon />
+						</IconButton>
 					</div>
 				</Grid>
 			</Grid>
