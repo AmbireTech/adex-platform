@@ -3,7 +3,7 @@ export const isVideoMedia = (mime = '') => mime.split('/')[0] === 'video'
 const getVideoSize = src =>
 	new Promise(resolve => {
 		const video = document.createElement('video')
-		video.src = src.tempUrl
+		video.src = src
 
 		video.onloadedmetadata = ({ target }) => {
 			return resolve({
@@ -16,14 +16,14 @@ const getVideoSize = src =>
 const getImageSize = src =>
 	new Promise(resolve => {
 		const image = new Image()
-		image.src = src.tempUrl
+		image.src = src
 		image.onload = function() {
-			resolve({
+			return resolve({
 				width: this.width,
 				height: this.height,
 			})
 		}
 	})
 
-export const getSize = media =>
-	isVideoMedia(media.mime) ? getVideoSize(media) : getImageSize(media)
+export const getMediaSize = ({ mime, src }) =>
+	isVideoMedia(mime) ? getVideoSize(src) : getImageSize(src)
