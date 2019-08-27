@@ -218,7 +218,7 @@ class ItemsList extends Component {
 					>
 						<span>
 							<NewCloneUnitDialog
-								onClick={() =>
+								onBeforeOpen={() =>
 									actions.cloneItem({ item, itemType, objModel: AdUnit })
 								}
 								variant='extended'
