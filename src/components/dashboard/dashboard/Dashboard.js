@@ -61,6 +61,7 @@ class Dashboard extends React.Component {
 		actions.getRelayerConfig()
 		actions.getAllItems()
 		actions.updateAccountStats()
+		actions.updateAccountSettings()
 		checkTransactions.start()
 	}
 
