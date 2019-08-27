@@ -75,13 +75,15 @@ class AdUnitTargeting extends Component {
 
 		const { targets } = props.newItem.temp || {}
 		this.state = {
-			targets: targets || [],
+			targets: [...(targets || [])],
 		}
 	}
 
 	updateNewItemCollections(targets) {
+		const { newItem, handleChange } = this.props
 		const collections = [...targets].reduce((all, tg) => {
 			const newCollection = all[tg.collection] || []
+
 			// NOTE: just skip empty tags
 			if (!!tg.target.tag) {
 				newCollection.push(tg.target)
@@ -90,23 +92,21 @@ class AdUnitTargeting extends Component {
 			return all
 		}, {})
 
-		const { temp } = this.props.newItem
+		const { temp } = newItem
 		const newTemp = { ...temp }
 
 		// Need this to keep the state if user get back
 		newTemp.targets = [...targets]
 		collections.temp = newTemp
 
-		this.props.handleChange(null, null, collections)
+		handleChange(null, null, collections)
 	}
 
 	handleTargetChange = (index, prop, newValue) => {
 		const newTargets = [...this.state.targets]
-		const target = newTargets[index]
-		const newTarget = { ...target }
-		newTarget.target[prop] = newValue
-		newTargets[index] = { ...target }
-
+		const newTarget = { ...newTargets[index].target }
+		newTarget[prop] = newValue
+		newTargets[index] = { ...newTargets[index], target: newTarget }
 		this.updateNewItemCollections(newTargets)
 		this.setState({ targets: newTargets })
 	}

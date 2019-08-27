@@ -349,10 +349,16 @@ export function cloneItem({ item, itemType, objModel } = {}) {
 		try {
 			const newItem = Base.updateObject({ item, objModel })
 			newItem.id = ''
-			newItem.targeting = []
 			newItem.temp = {
 				...initialState.newItem[itemType].temp,
-				// targets: [...item.targeting],
+				targets: item.targeting.map((t, index) => {
+					return {
+						key: index,
+						collection: 'targeting',
+						source: 'custom',
+						target: { ...t },
+					}
+				}),
 			}
 
 			const tempUrl = helpers.getMediaUrlWithProvider(
