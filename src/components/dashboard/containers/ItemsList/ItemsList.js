@@ -221,8 +221,7 @@ class ItemsList extends Component {
 								onBeforeOpen={() =>
 									actions.cloneItem({ item, itemType, objModel: AdUnit })
 								}
-								variant='extended'
-								color='secondary'
+								iconButton
 							/>
 						</span>
 					</Tooltip>
