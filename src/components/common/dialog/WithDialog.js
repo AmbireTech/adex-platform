@@ -60,7 +60,12 @@ export default function ItemHoc(Decorated) {
 			return shouldUpdate
 		}
 
-		handleToggle = () => {
+		handleToggle = async () => {
+			const { onBeforeOpen } = this.props
+			if (typeof onBeforeOpen === 'function' && !this.state.open) {
+				await onBeforeOpen()
+			}
+
 			this.setState({ open: !this.state.open })
 		}
 
@@ -217,6 +222,7 @@ export default function ItemHoc(Decorated) {
 		btnLabel: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 		floating: PropTypes.bool,
+		onBeforeOpen: PropTypes.func,
 	}
 
 	return Translate(withStyles(styles)(WithDialog))
