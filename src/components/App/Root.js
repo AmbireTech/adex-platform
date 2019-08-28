@@ -19,8 +19,9 @@ import Home from 'components/signin/Home'
 import Translate from 'components/translate/Translate'
 // import { getSig } from 'services/auth/auth'
 import { AUTH_TYPES } from 'constants/misc'
-// import { logOut } from 'services/store-data/auth'
+import { logOut } from 'services/store-data/auth'
 import JustDialog from 'components/common/dialog/JustDialog'
+import { getEthers } from 'services/smart-contracts/ethers'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
 const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
@@ -46,56 +47,51 @@ function PrivateRoute({ component: Component, auth, ...other }) {
 }
 
 class Root extends Component {
-	checkForMetamaskAccountChange = () => {
-		let acc = this.props.account
-		if (acc._authType === AUTH_TYPES.METAMASK.name) {
-			// getAccountMetamask()
-			// 	.then(({ addr, mode }) => {
-			// 		addr = (addr || '').toLowerCase()
-			// 		if (addr && acc._addr && acc._authType !== undefined) {
-			// 			let accSigCheck = getSig({ addr: acc._addr, mode: acc._authType })
-			// 			let mmAddrSigCheck = getSig({ addr: addr, mode: AUTH_TYPES.METAMASK.name })
-			// 			if (!!mmAddrSigCheck && !!accSigCheck && (mmAddrSigCheck === accSigCheck)) {
-			// 				return // user authenticated and not changed
-			// 			} else {
-			// 				// logout on metamask addr change
-			// 				logOut()
-			// 			}
-			// 		} else {
-			// 			logOut()
-			// 		}
-			// 	})
+	onMetamaskAccountChange = async accountAddress => {
+		const { account } = this.props
+		const { authType } = account.wallet
+		if (authType === AUTH_TYPES.METAMASK.name || !authType) {
+			logOut()
 		}
 	}
 
-	onMetamaskNetworkChanged = () => {
-		if (process.env.NODE_ENV !== 'production') {
-			return
+	getNetworkId = async () => {
+		const { provider } = await getEthers(AUTH_TYPES.METAMASK.name)
+		const networkId = (await provider.getNetwork()).chainId
+
+		return networkId
+	}
+
+	onMetamaskNetworkChanged = async id => {
+		const { actions, t } = this.props
+
+		const networkId = id || (await this.getNetworkId())
+
+		const networks = {
+			1: { name: 'Mainnet', for: 'production' },
+			5: { name: 'Georli', for: 'development' },
 		}
 
-		let acc = this.props.account
-		if (acc._authType === AUTH_TYPES.METAMASK.name || !acc._authType) {
-			// getWeb3('metamask')
-			// 	.then(({ web3 }) => {
-			// 		console.log(web3)
-			// 		web3.eth.net.getNetworkType()
-			// 			.then((currentNetwork) => {
-			// 				if (currentNetwork != 'main') {
-			// 					this.props.actions.addToast({
-			// 						type: 'warning',
-			// 						// action,
-			// 						label: 'WATNING_NO_MAINNET',
-			// 						top: true,
-			// 						unclosable: true,
-			// 						timeout: 30 * 24 * 60 * 1000
-			// 					})
-			// 				}
-			// 				// console.log('getNetwork currentNetwork', currentNetwork)
-			// 			})
-			// 			.catch((err) => {
-			// 				// console.log('getNetwork err', err)
-			// 			})
-			// 	})
+		const network = networks[networkId]
+
+		if (process.env.NODE_ENV !== network.for) {
+			actions.addToast({
+				type: 'warning',
+				// action,
+				label: t('WATNING_METAMASK_INVALID_NETWORK', {
+					args: [network.name],
+				}),
+				top: true,
+				unclosable: true,
+				timeout: 30 * 24 * 60 * 1000,
+			})
+		} else {
+			actions.addToast({
+				type: 'accept',
+				// action,
+				label: t('METAMASK_CORRECT_NETWORK'),
+				timeout: 0 * 1000,
+			})
 		}
 	}
 
@@ -105,19 +101,18 @@ class Root extends Component {
 
 	componentWillUnmount() {}
 
-	componentWillMount() {
-		// this.checkForMetamaskAccountChange()
-		// this.onMetamaskNetworkChanged()
-		// if (window.ethereum) {
-		// 	window.ethereum.on('accountsChanged', (accounts) => {
-		// 		console.log('acc changed', accounts[0])
-		// 		this.checkForMetamaskAccountChange()
-		// 	})
-		// 	window.ethereum.on('networkChanged', (network) => {
-		// 		console.log('networkChanged', network)
-		// 		this.onMetamaskNetworkChanged()
-		// 	})
-		// }
+	componentDidMount() {
+		this.onMetamaskNetworkChanged()
+		if (window.ethereum) {
+			window.ethereum.on('accountsChanged', accounts => {
+				console.log('acc changed', accounts[0])
+				this.onMetamaskAccountChange(accounts[0])
+			})
+			window.ethereum.on('networkChanged', network => {
+				console.log('networkChanged', network)
+				this.onMetamaskNetworkChanged()
+			})
+		}
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
