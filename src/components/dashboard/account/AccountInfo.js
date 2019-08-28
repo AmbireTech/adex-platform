@@ -65,7 +65,8 @@ class AccountInfo extends React.Component {
 	}
 
 	render() {
-		const { t, account, classes, actions, grantType } = this.props
+		const { t, account, classes, actions } = this.props
+		const { grantType } = account.settings
 		const formatted = account.stats.formatted || {}
 		const {
 			walletAddress,
@@ -219,7 +220,6 @@ function mapStateToProps(state, props) {
 	return {
 		account: account,
 		side: memory.nav.side,
-		grantType: account.settings.grantType,
 	}
 }
 
