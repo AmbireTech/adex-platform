@@ -69,6 +69,7 @@ class AdUnitMedia extends Component {
 						<ImgForm
 							label={t('UNIT_BANNER_IMG_LABEL')}
 							imgSrc={temp.tempUrl || ''}
+							mime={temp.mime || ''}
 							onChange={validateMedia.bind(this, {
 								propsName: 'temp',
 								widthTarget: width,
