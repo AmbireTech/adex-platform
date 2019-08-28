@@ -89,7 +89,9 @@ export function updateAccountSettings() {
 		try {
 			const settings = {}
 			if (settings.grantType === undefined) {
-				settings.grantType = await getGrantType({ identity: identity.address })
+				settings.grantType = (await getGrantType({
+					identity: identity.address,
+				})).type
 				updateAccount({ newValues: { settings } })(dispatch)
 			}
 		} catch (err) {
