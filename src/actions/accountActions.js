@@ -88,8 +88,10 @@ export function updateAccountSettings() {
 		const { identity } = getState().persist.account
 		try {
 			const settings = {}
-			settings.grantType = await getGrantType({ identity: identity.address })
-			updateAccount({ newValues: { settings } })(dispatch)
+			if (settings.grantType === undefined) {
+				settings.grantType = await getGrantType({ identity: identity.address })
+				updateAccount({ newValues: { settings } })(dispatch)
+			}
 		} catch (err) {
 			console.error('ERR_SETTINGS', err)
 			addToast({
