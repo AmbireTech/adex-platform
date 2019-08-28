@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import Button from '@material-ui/core/Button'
 import Fab from '@material-ui/core/Fab'
@@ -60,7 +60,12 @@ export default function ItemHoc(Decorated) {
 			return shouldUpdate
 		}
 
-		handleToggle = () => {
+		handleToggle = async () => {
+			const { onBeforeOpen } = this.props
+			if (typeof onBeforeOpen === 'function' && !this.state.open) {
+				await onBeforeOpen()
+			}
+
 			this.setState({ open: !this.state.open })
 		}
 
@@ -114,6 +119,7 @@ export default function ItemHoc(Decorated) {
 				icon,
 				title,
 				dialogActions,
+				onClick,
 				...rest
 			} = this.props
 
@@ -140,12 +146,15 @@ export default function ItemHoc(Decorated) {
 			const { open } = this.state
 
 			return (
-				<div>
+				<Fragment>
 					<ButtonComponent
 						disabled={disabled}
 						aria-label={btnLabel}
 						label={btnLabel}
-						onClick={this.handleToggle}
+						onClick={() => {
+							this.handleToggle()
+							if (onClick) onClick()
+						}}
 						{...btnProps}
 						// style={this.props.style}
 						className={classnames(
@@ -204,7 +213,7 @@ export default function ItemHoc(Decorated) {
 						</DialogContent>
 						{dialogActions && <DialogActions>{dialogActions}</DialogActions>}
 					</Dialog>
-				</div>
+				</Fragment>
 			)
 		}
 	}
@@ -213,6 +222,7 @@ export default function ItemHoc(Decorated) {
 		btnLabel: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 		floating: PropTypes.bool,
+		onBeforeOpen: PropTypes.func,
 	}
 
 	return Translate(withStyles(styles)(WithDialog))
