@@ -1,7 +1,7 @@
 import * as types from 'constants/actionTypes'
 import { addSig, getSig } from 'services/auth/auth'
 import { getSession, checkSession } from 'services/adex-market/actions'
-import { relayerConfig } from 'services/adex-relayer/actions'
+import { relayerConfig, getGrantType } from 'services/adex-relayer/actions'
 import { updateSpinner } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
@@ -77,6 +77,28 @@ export function updateAccountStats() {
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_STATS', { args: [err] }),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function updateAccountSettings() {
+	return async function(dispatch, getState) {
+		const { identity } = getState().persist.account
+		try {
+			const settings = {}
+			if (settings.grantType === undefined) {
+				settings.grantType = (await getGrantType({
+					identity: identity.address,
+				})).type
+				updateAccount({ newValues: { settings } })(dispatch)
+			}
+		} catch (err) {
+			console.error('ERR_SETTINGS', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_SETTINGS', { args: [err] }),
 				timeout: 20000,
 			})(dispatch)
 		}
