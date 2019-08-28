@@ -151,7 +151,7 @@ class AccountInfo extends React.Component {
 							secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
 						/>
 						<div className={classes.itemActions}>
-							{grantType === 'advertiser' ? null : (
+							{grantType !== 'advertiser' && (
 								<WithdrawTokenFromIdentity
 									variant='contained'
 									color='primary'
