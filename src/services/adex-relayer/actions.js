@@ -48,6 +48,15 @@ export const grantAccount = ({ ownerAddr, mail, couponCode }) => {
 		.then(processResponse)
 }
 
+export const getGrantType = ({ identity }) => {
+	return requester
+		.fetch({
+			route: `identity/grant-type/${identity}`,
+			method: 'GET',
+		})
+		.then(processResponse)
+}
+
 export const checkCoupon = ({ coupon }) => {
 	return requester
 		.fetch({

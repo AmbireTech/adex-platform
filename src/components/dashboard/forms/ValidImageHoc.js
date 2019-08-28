@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Translate from 'components/translate/Translate'
-import { isVideoMedia } from 'helpers/mediaHelpers.js'
+import { getMediaSize } from 'helpers/mediaHelpers'
 
 // Allow higher res images with same aspect ratio
 function checkExactish(widthTarget, width, heightTarget, height) {
@@ -67,32 +67,6 @@ export default function ValidImageHoc(Decorated) {
 			}
 		}
 
-		getVideoSize = src =>
-			new Promise(resolve => {
-				const video = document.createElement('video')
-				video.src = src.tempUrl
-
-				video.onloadedmetadata = ({ target }) => {
-					return resolve({
-						width: target.videoWidth,
-						height: target.videoHeight,
-					})
-				}
-			})
-
-		getImageSize = src =>
-			new Promise(resolve => {
-				const image = new Image()
-				image.src = src.tempUrl
-
-				image.onload = function() {
-					return resolve({
-						width: this.width,
-						height: this.height,
-					})
-				}
-			})
-
 		validateMedia = async (
 			{
 				propsName,
@@ -116,11 +90,7 @@ export default function ValidImageHoc(Decorated) {
 				return
 			}
 
-			const getSize = isVideoMedia(media.mime)
-				? () => this.getVideoSize(media)
-				: () => this.getImageSize(media)
-
-			const size = await getSize()
+			const size = await getMediaSize({ mime: media.mime, src: media.tempUrl })
 
 			this.validate({
 				propsName,

@@ -4,7 +4,7 @@ import {
 	postAdUnit,
 	postAdSlot,
 } from 'services/adex-market/actions'
-import { Base, AdSlot, AdUnit } from 'adex-models'
+import { Base, AdSlot, AdUnit, helpers } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
 import { updateAccount } from './accountActions'
 import { translate } from 'services/translations/translations'
@@ -18,6 +18,8 @@ import {
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
 import { lastApprovedState } from 'services/adex-validator/actions'
+import initialState from 'store/initialState'
+import { getMediaSize } from 'helpers/mediaHelpers'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -340,6 +342,62 @@ export function restoreItem({ item, authSig } = {}) {
 		successMsg: 'SUCCESS_RESTORE_ITEM',
 		errMsg: 'ERR_RESTORING_ITEM',
 	})
+}
+
+export function cloneItem({ item, itemType, objModel } = {}) {
+	return async function(dispatch) {
+		try {
+			const newItem = Base.updateObject({ item, objModel })
+			newItem.id = ''
+			newItem.temp = {
+				...initialState.newItem[itemType].temp,
+				targets: item.targeting.map((t, index) => {
+					return {
+						key: index,
+						collection: 'targeting',
+						source: 'custom',
+						target: { ...t },
+					}
+				}),
+			}
+
+			const tempUrl = helpers.getMediaUrlWithProvider(
+				newItem.mediaUrl,
+				process.env.IPFS_GATEWAY
+			)
+
+			const response = await fetch(tempUrl)
+			const mediaURL = URL.createObjectURL(await response.blob())
+			const mediaSize = await getMediaSize({
+				mime: newItem.mediaMime,
+				src: mediaURL,
+			})
+
+			const temp = {
+				...newItem.temp,
+				mime: item.mediaMime,
+				tempUrl: mediaURL,
+				width: mediaSize.width,
+				height: mediaSize.height,
+			}
+
+			newItem.temp = temp
+
+			dispatch({
+				type: types.UPDATE_NEW_ITEM,
+				item: newItem,
+				itemType,
+			})
+		} catch (err) {
+			console.error(err)
+			addToast({
+				dispatch: dispatch,
+				type: 'cancel',
+				toastStr: 'ERR_CLONING_ITEM',
+				args: [itemType, err],
+			})
+		}
+	}
 }
 
 export function archiveItem({ item, authSig } = {}) {

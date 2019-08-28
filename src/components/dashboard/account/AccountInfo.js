@@ -25,7 +25,6 @@ import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { getRecoveryWalletData } from 'services/wallet/wallet'
-
 // const RRButton = withReactRouterLink(Button)
 
 class AccountInfo extends React.Component {
@@ -67,6 +66,7 @@ class AccountInfo extends React.Component {
 
 	render() {
 		const { t, account, classes, actions } = this.props
+		const { grantType } = account.settings
 		const formatted = account.stats.formatted || {}
 		const {
 			walletAddress,
@@ -77,7 +77,6 @@ class AccountInfo extends React.Component {
 			identityAddress,
 			identityBalanceDai,
 		} = formatted
-
 		const { authType, email } = account.wallet
 		const { walletJsonData, expanded } = this.state
 
@@ -152,17 +151,19 @@ class AccountInfo extends React.Component {
 							secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
 						/>
 						<div className={classes.itemActions}>
-							<WithdrawTokenFromIdentity
-								variant='contained'
-								color='primary'
-								onSave={this.onSave}
-								identityAvailable={identityBalanceDai}
-								identityAvailableRaw={identityBalanceDai}
-								token='DAI'
-								className={classes.actionBtn}
-								size='small'
-								actions={actions}
-							/>
+							{grantType !== 'advertiser' && (
+								<WithdrawTokenFromIdentity
+									variant='contained'
+									color='primary'
+									onSave={this.onSave}
+									identityAvailable={identityBalanceDai}
+									identityAvailableRaw={identityBalanceDai}
+									token='DAI'
+									className={classes.actionBtn}
+									size='small'
+									actions={actions}
+								/>
+							)}
 						</div>
 					</ListItem>
 					<ListDivider />
