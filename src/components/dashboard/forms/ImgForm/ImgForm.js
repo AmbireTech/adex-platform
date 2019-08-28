@@ -21,12 +21,12 @@ import { styles } from './styles'
 class ImgForm extends Component {
 	constructor(props) {
 		super(props)
-		const { size } = props
+		const { size, imgSrc, mime } = props
 		const aspect = size ? size.width / size.height : undefined
 
 		this.state = {
-			imgSrc: props.imgSrc || '',
-			mime: '',
+			imgSrc: imgSrc || '',
+			mime: mime || '',
 			imgName: '',
 			cropMode: false,
 			crop: { aspect: aspect },

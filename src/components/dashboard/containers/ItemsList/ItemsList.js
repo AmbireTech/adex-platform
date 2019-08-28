@@ -17,6 +17,7 @@ import Img from 'components/common/img/Img'
 import Rows from 'components/dashboard/collection/Rows'
 import Translate from 'components/translate/Translate'
 // import DeleteIcon from '@material-ui/icons/Delete'
+// import { FileCopy } from '@material-ui/icons'
 // import ArchiveIcon from '@material-ui/icons/Archive'
 // import UnarchiveIcon from '@material-ui/icons/Unarchive'
 // import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline'
@@ -25,6 +26,9 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
+// import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems'
+import { NewCloneUnitDialog } from '../../forms/items/NewItems'
+import { AdUnit } from 'adex-models'
 
 const TableCell = ({ children, ...rest }) => (
 	<TableCellMui {...rest}>{!!children && children}</TableCellMui>
@@ -190,15 +194,10 @@ class ItemsList extends Component {
 	}
 
 	renderActions = ({ item, to }) => {
-		const {
-			t,
-			// account,
-			// actions,
-			// itemType
-		} = this.props
-		// const itemName = item.title
-		// const itemTypeName = t(itemType, { isProp: true })
-		// const isDemo = account.wallet.address === 'demo'
+		const { t, account, actions, authSig, itemType } = this.props
+		const itemName = item.title
+		const itemTypeName = t(itemType, { isProp: true })
+		const isDemo = account.wallet.address === 'demo'
 
 		return (
 			<TableCell>
@@ -211,6 +210,22 @@ class ItemsList extends Component {
 						{t('LABEL_VIEW')}
 					</RRButton>
 				</Tooltip>
+				{itemType === 'AdUnit' ? (
+					<Tooltip
+						title={t('TOOLTIP_CLONE')}
+						// placement='top'
+						enterDelay={1000}
+					>
+						<span>
+							<NewCloneUnitDialog
+								onBeforeOpen={() =>
+									actions.cloneItem({ item, itemType, objModel: AdUnit })
+								}
+								iconButton
+							/>
+						</span>
+					</Tooltip>
+				) : null}
 				{/* {!item.archived &&
 					<Tooltip
 						title={t('TOOLTIP_ARCHIVE')}

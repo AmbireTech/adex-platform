@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button'
 import FormSteps from 'components/dashboard/forms/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
 import { AdUnit, AdSlot, Campaign } from 'adex-models'
+import FileCopyIcon from '@material-ui/icons/FileCopy'
 import AddIcon from '@material-ui/icons/Add'
 import SaveIcon from '@material-ui/icons/Save'
 import NewAdUnitHoc from './AdUnit/NewAdUnitHoc'
@@ -99,6 +100,15 @@ export const NewUnitDialog = props => (
 		btnLabel='NEW_UNIT'
 		title='CREATE_NEW_UNIT'
 	/>
+)
+
+const copyProps = {
+	darkerBackground: true,
+	icon: <FileCopyIcon />,
+}
+
+export const NewCloneUnitDialog = props => (
+	<NewUnitStepsWithDialog {...props} {...copyProps} title='CLONE_AD_UNIT' />
 )
 
 // Campaign
