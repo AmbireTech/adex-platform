@@ -150,7 +150,7 @@ class AccountInfo extends React.Component {
 							secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
 						/>
 						<div className={classes.itemActions}>
-							{grantType === 'advertiser' ? null : (
+							{!!grantType && grantType.type === 'advertiser' ? null : (
 								<WithdrawTokenFromIdentity
 									variant='contained'
 									color='primary'
@@ -219,7 +219,7 @@ function mapStateToProps(state, props) {
 	return {
 		account: account,
 		side: memory.nav.side,
-		grantType: account.settings.grantType.type,
+		grantType: account.settings.grantType,
 	}
 }
 
