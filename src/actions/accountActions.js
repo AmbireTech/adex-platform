@@ -6,7 +6,9 @@ import { updateSpinner } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
 import { getAccountStats } from 'services/smart-contracts/actions/stats'
-import { addToast } from './uiActions'
+import { addToast, confirmAction } from './uiActions'
+import { getEthers } from 'services/smart-contracts/ethers'
+import { AUTH_TYPES } from 'constants/misc'
 
 // MEMORY STORAGE
 export function updateSignin(prop, value) {
@@ -184,5 +186,52 @@ export function getRelayerConfig() {
 			type: types.UPDATE_RELAYER_CFG,
 			cfg,
 		})
+	}
+}
+
+async function getNetworkId() {
+	const { provider } = await getEthers(AUTH_TYPES.METAMASK.name)
+	const networkId = (await provider.getNetwork()).chainId
+
+	return networkId
+}
+
+// TEMP
+const networks = {
+	1: { name: 'Mainnet', for: 'production' },
+	5: { name: 'Georli', for: 'development' },
+	production: { name: 'Mainnet', for: 'production' },
+	development: { name: 'Georli', for: 'development' },
+}
+
+export function metamaskNetworkCheck({ id, location }) {
+	return async function(dispatch, getState) {
+		const { persist, memory } = getState()
+		const { account } = persist
+		const { search } = location || memory.routing.location
+		const { authType } = account.wallet
+
+		const networkId = id || (await getNetworkId())
+		const isMetamaskMatters =
+			authType === AUTH_TYPES.METAMASK.name ||
+			(!authType && search === '?metamask')
+
+		const network = networks[networkId] || {}
+
+		if (process.env.NODE_ENV !== network.for && isMetamaskMatters) {
+			confirmAction(
+				null,
+				null,
+				{
+					title: translate('WARNING'),
+					text: translate('WATNING_METAMASK_INVALID_NETWORK', {
+						args: [networks[process.env.NODE_ENV].name],
+					}),
+				},
+				true
+			)(dispatch)
+		} else {
+			confirmAction(null, null, {}, true, false)(dispatch)
+		}
 	}
 }

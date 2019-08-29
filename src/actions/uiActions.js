@@ -50,7 +50,9 @@ export function removeToast(toastId) {
 export function confirmAction(
 	onConfirm,
 	onCancel,
-	{ confirmLabel = '', cancelLabel = '', title = '', text = '' } = {}
+	{ confirmLabel = '', cancelLabel = '', title = '', text = '' } = {},
+	noActionBtns,
+	active
 ) {
 	return function(dispatch) {
 		return dispatch({
@@ -64,6 +66,8 @@ export function confirmAction(
 					title: title,
 					text: text,
 				},
+				noActionBtns,
+				active,
 			},
 		})
 	}

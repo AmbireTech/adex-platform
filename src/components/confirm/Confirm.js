@@ -42,23 +42,34 @@ export class Confirm extends Component {
 	}
 
 	render() {
+		const {
+			title,
+			text,
+			children,
+			cancelLabel,
+			confirmLabel,
+			t,
+			noActionBtns,
+		} = this.props
 		return (
 			<Dialog open={this.state.active}>
-				<DialogTitle id='alert-dialog-title'>{this.props.title}</DialogTitle>
+				<DialogTitle id='alert-dialog-title'>{title}</DialogTitle>
 				<DialogContent>
 					<DialogContentText id='alert-dialog-description'>
-						{this.props.text}
+						{text}
 					</DialogContentText>
-					{this.props.children}
+					{children}
 				</DialogContent>
-				<DialogActions>
-					<Button onClick={this.cancel} color='primary'>
-						{this.props.cancelLabel || this.props.t('CANCEL')}
-					</Button>
-					<Button onClick={this.confirm} color='primary' autoFocus>
-						{this.props.confirmLabel || this.props.t('OK')}
-					</Button>
-				</DialogActions>
+				{!noActionBtns && (
+					<DialogActions>
+						<Button onClick={this.cancel} color='primary'>
+							{cancelLabel || t('CANCEL')}
+						</Button>
+						<Button onClick={this.confirm} color='primary' autoFocus>
+							{confirmLabel || t('OK')}
+						</Button>
+					</DialogActions>
+				)}
 			</Dialog>
 		)
 	}
@@ -74,6 +85,7 @@ Confirm.propTypes = {
 	cancel: PropTypes.func,
 	visible: PropTypes.bool,
 	calledOn: PropTypes.number,
+	noActionBtns: PropTypes.bool,
 }
 
 function mapStateToProps(state) {
@@ -87,6 +99,7 @@ function mapStateToProps(state) {
 		cancel: state.confirm.onCancel,
 		visible: state.confirm.active || false,
 		calledOn: state.confirm.calledOn,
+		noActionBtns: state.confirm.noActionBtns,
 	}
 }
 
