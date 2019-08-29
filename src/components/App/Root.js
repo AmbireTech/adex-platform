@@ -20,10 +20,11 @@ import PageNotFound from 'components/page_not_found/PageNotFound'
 import Home from 'components/signin/Home'
 import Translate from 'components/translate/Translate'
 // import { getSig } from 'services/auth/auth'
+import { logOut } from 'services/store-data/auth'
 import { AUTH_TYPES } from 'constants/misc'
-// import { logOut } from 'services/store-data/auth'
 import JustDialog from 'components/common/dialog/JustDialog'
 import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
+import { getEthers } from 'services/smart-contracts/ethers'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
 const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
@@ -60,58 +61,19 @@ class Root extends Component {
 			removeLegacyKey({ email, password })
 		}
 	}
-
-	checkForMetamaskAccountChange = () => {
-		let acc = this.props.account
-		if (acc._authType === AUTH_TYPES.METAMASK.name) {
-			// getAccountMetamask()
-			// 	.then(({ addr, mode }) => {
-			// 		addr = (addr || '').toLowerCase()
-			// 		if (addr && acc._addr && acc._authType !== undefined) {
-			// 			let accSigCheck = getSig({ addr: acc._addr, mode: acc._authType })
-			// 			let mmAddrSigCheck = getSig({ addr: addr, mode: AUTH_TYPES.METAMASK.name })
-			// 			if (!!mmAddrSigCheck && !!accSigCheck && (mmAddrSigCheck === accSigCheck)) {
-			// 				return // user authenticated and not changed
-			// 			} else {
-			// 				// logout on metamask addr change
-			// 				logOut()
-			// 			}
-			// 		} else {
-			// 			logOut()
-			// 		}
-			// 	})
+	onMetamaskAccountChange = async accountAddress => {
+		const { account } = this.props
+		const { authType } = account.wallet
+		if (authType === AUTH_TYPES.METAMASK.name || !authType) {
+			logOut()
 		}
 	}
 
-	onMetamaskNetworkChanged = () => {
-		if (process.env.NODE_ENV !== 'production') {
-			return
-		}
+	getNetworkId = async () => {
+		const { provider } = await getEthers(AUTH_TYPES.METAMASK.name)
+		const networkId = (await provider.getNetwork()).chainId
 
-		let acc = this.props.account
-		if (acc._authType === AUTH_TYPES.METAMASK.name || !acc._authType) {
-			// getWeb3('metamask')
-			// 	.then(({ web3 }) => {
-			// 		console.log(web3)
-			// 		web3.eth.net.getNetworkType()
-			// 			.then((currentNetwork) => {
-			// 				if (currentNetwork != 'main') {
-			// 					this.props.actions.addToast({
-			// 						type: 'warning',
-			// 						// action,
-			// 						label: 'WATNING_NO_MAINNET',
-			// 						top: true,
-			// 						unclosable: true,
-			// 						timeout: 30 * 24 * 60 * 1000
-			// 					})
-			// 				}
-			// 				// console.log('getNetwork currentNetwork', currentNetwork)
-			// 			})
-			// 			.catch((err) => {
-			// 				// console.log('getNetwork err', err)
-			// 			})
-			// 	})
-		}
+		return networkId
 	}
 
 	componentDidCatch(error, info) {
@@ -122,18 +84,30 @@ class Root extends Component {
 
 	componentWillMount() {
 		this.handleLegacyWallet()
-		// this.checkForMetamaskAccountChange()
-		// this.onMetamaskNetworkChanged()
-		// if (window.ethereum) {
-		// 	window.ethereum.on('accountsChanged', (accounts) => {
-		// 		console.log('acc changed', accounts[0])
-		// 		this.checkForMetamaskAccountChange()
-		// 	})
-		// 	window.ethereum.on('networkChanged', (network) => {
-		// 		console.log('networkChanged', network)
-		// 		this.onMetamaskNetworkChanged()
-		// 	})
-		// }
+	}
+
+	componentDidUpdate() {
+		const { actions, location } = this.props
+		const { metamaskNetworkCheck } = actions
+
+		metamaskNetworkCheck({ location })
+	}
+
+	componentDidMount() {
+		const { actions, location } = this.props
+		const { metamaskNetworkCheck } = actions
+
+		metamaskNetworkCheck({ location })
+		if (window.ethereum) {
+			window.ethereum.on('accountsChanged', accounts => {
+				console.log('acc changed', accounts[0])
+				this.onMetamaskAccountChange(accounts[0])
+			})
+			window.ethereum.on('networkChanged', network => {
+				console.log('networkChanged', network)
+				metamaskNetworkCheck({ id: network, location })
+			})
+		}
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
