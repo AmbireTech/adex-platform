@@ -62,47 +62,24 @@ class Root extends Component {
 		return networkId
 	}
 
-	onMetamaskNetworkChanged = async id => {
-		const { actions, t } = this.props
-
-		const networkId = id || (await this.getNetworkId())
-
-		const networks = {
-			1: { name: 'Mainnet', for: 'production' },
-			5: { name: 'Georli', for: 'development' },
-		}
-
-		const network = networks[networkId]
-
-		if (process.env.NODE_ENV !== network.for) {
-			actions.addToast({
-				type: 'warning',
-				// action,
-				label: t('WATNING_METAMASK_INVALID_NETWORK', {
-					args: [network.name],
-				}),
-				top: true,
-				unclosable: true,
-				timeout: 30 * 24 * 60 * 1000,
-			})
-		} else {
-			actions.addToast({
-				type: 'accept',
-				// action,
-				label: t('METAMASK_CORRECT_NETWORK'),
-				timeout: 0 * 1000,
-			})
-		}
-	}
-
 	componentDidCatch(error, info) {
 		// TODO: catch errors
 	}
 
 	componentWillUnmount() {}
 
+	componentDidUpdate() {
+		const { actions, location } = this.props
+		const { metamaskNetworkCheck } = actions
+
+		metamaskNetworkCheck({ location })
+	}
+
 	componentDidMount() {
-		this.onMetamaskNetworkChanged()
+		const { actions, location } = this.props
+		const { metamaskNetworkCheck } = actions
+
+		metamaskNetworkCheck({ location })
 		if (window.ethereum) {
 			window.ethereum.on('accountsChanged', accounts => {
 				console.log('acc changed', accounts[0])
@@ -110,7 +87,7 @@ class Root extends Component {
 			})
 			window.ethereum.on('networkChanged', network => {
 				console.log('networkChanged', network)
-				this.onMetamaskNetworkChanged()
+				metamaskNetworkCheck({ id: network, location })
 			})
 		}
 	}
