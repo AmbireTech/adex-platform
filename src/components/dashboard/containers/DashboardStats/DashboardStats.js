@@ -34,11 +34,13 @@ export class DashboardStats extends Component {
 	// }
 
 	goToAccount = () => {
-		this.props.history.push('/dashboard/' + this.props.side + '/account')
+		const { history, side } = this.props
+		history.push('/dashboard/' + side + '/account')
 	}
 
 	componentDidMount() {
-		this.props.actions.updateNav('navTitle', this.props.t('DASHBOARD'))
+		const { actions, t } = this.props
+		actions.updateNav('navTitle', t('DASHBOARD'))
 	}
 
 	handleTabChange = index => {
