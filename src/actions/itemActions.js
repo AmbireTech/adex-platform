@@ -4,7 +4,7 @@ import {
 	postAdUnit,
 	postAdSlot,
 } from 'services/adex-market/actions'
-import { parseUnits } from 'ethers/utils'
+import { parseUnits, bigNumberify } from 'ethers/utils'
 import { Base, AdSlot, AdUnit, helpers } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
 import { updateAccount } from './accountActions'
@@ -176,10 +176,9 @@ export function addSlot(item, itemType, authSig) {
 
 			if (newItem.temp.minPerImpression) {
 				newItem.minPerImpression = {
-					[DAI.address]: parseUnits(
-						newItem.temp.minPerImpression,
-						DAI.decimals
-					).toString(),
+					[DAI.address]: parseUnits(newItem.temp.minPerImpression, DAI.decimals)
+						.div(bigNumberify(1000))
+						.toString(),
 				}
 			}
 
