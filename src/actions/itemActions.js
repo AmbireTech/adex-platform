@@ -4,6 +4,7 @@ import {
 	postAdUnit,
 	postAdSlot,
 } from 'services/adex-market/actions'
+import { parseUnits } from 'ethers/utils'
 import { Base, AdSlot, AdUnit, helpers } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
 import { updateAccount } from './accountActions'
@@ -20,6 +21,9 @@ import {
 import { lastApprovedState } from 'services/adex-validator/actions'
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
+
+import { contracts } from 'services/smart-contracts/contractsCfg'
+const { DAI } = contracts
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -169,6 +173,15 @@ export function addSlot(item, itemType, authSig) {
 
 			newItem.fallbackUnit = fallbackUnit
 			newItem.created = Date.now()
+
+			if (newItem.temp.minPerImpression) {
+				newItem.minPerImpression = {
+					[DAI.address]: parseUnits(
+						newItem.temp.minPerImpression,
+						DAI.decimals
+					).toString(),
+				}
+			}
 
 			const resItem = await postAdSlot({
 				slot: new AdSlot(newItem).marketAdd,
