@@ -123,24 +123,19 @@ export class Slot extends Component {
 	}
 
 	render() {
-		const {
-			t,
-			classes,
-			isDemo,
-			item,
-			account,
-			// ...rest
-		} = this.props
+		const { t, classes, isDemo, item, account, itemType, ...rest } = this.props
 		const { tabIndex } = this.state
 
 		return (
 			<div>
 				<BasicProps
 					item={item}
+					itemType={itemType}
 					t={t}
 					url={item.adUrl}
 					canEditImg={!isDemo}
 					rightComponent={null}
+					{...rest}
 				/>
 				<div>
 					<AppBar position='static' color='default'>
