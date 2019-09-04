@@ -3,6 +3,8 @@ import {
 	uploadImage,
 	postAdUnit,
 	postAdSlot,
+	updateAdSlot,
+	updateAdUnit,
 } from 'services/adex-market/actions'
 import { parseUnits, bigNumberify } from 'ethers/utils'
 import { Base, AdSlot, AdUnit, helpers } from 'adex-models'
@@ -227,6 +229,8 @@ export function getAllItems() {
 				campaigns,
 			])
 
+			console.log('resSlots', resSlots)
+
 			const campaignsMapped = resCampaigns.map(c => {
 				return { ...c, ...c.spec }
 			})
@@ -313,8 +317,56 @@ export function addItemToItem({ item, toAdd, authSig } = {}) {
 }
 
 // Accepts the entire new item and replace so be careful!
-export function updateItem({ item, authSig, successMsg, errMsg } = {}) {
-	return function(dispatch) {
+export function updateItem({ item, itemType } = {}) {
+	return async function(dispatch, getState) {
+		updateSpinner('update' + item.id, true)(dispatch)
+		try {
+			const { account } = getState().persist
+			const { authSig } = account.wallet
+
+			let updatedItem = null
+			let objModel = null
+
+			const { id } = item
+
+			switch (itemType) {
+				case 'AdSlot':
+					const slot = new AdSlot(item).marketUpdate
+					updatedItem = await updateAdSlot({ slot, id, authSig })
+					objModel = AdSlot
+					break
+				case 'AdUnit':
+					const unit = new AdUnit(item).marketUpdate
+					updatedItem = await updateAdUnit({ unit, id, authSig })
+					objModel = AdUnit
+					break
+				default:
+					break
+			}
+
+			dispatch({
+				type: types.UPDATE_ITEM,
+				item: new objModel(updatedItem).plainObj(),
+				itemType,
+			})
+
+			addToast({
+				dispatch,
+				type: 'accept',
+				toastStr: 'SUCCESS_UPDATING_ITEM',
+				args: [itemType],
+			})
+		} catch (err) {
+			console.error('ERR_UPDATING_ITEM', err)
+			addToast({
+				dispatch,
+				type: 'cancel',
+				toastStr: 'ERR_UPDATING_ITEM',
+				args: [itemType, err],
+			})
+		}
+		updateSpinner('update' + item.id, false)(dispatch)
+
 		// uploadImages({ item: { ...item }, authSig: authSig })
 		// 	.then((updatedItem) => {
 		// 		return updateItm({ item: updatedItem, authSig })
