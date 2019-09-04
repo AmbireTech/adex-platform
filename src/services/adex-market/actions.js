@@ -107,10 +107,10 @@ export const postAdUnit = ({ unit, authSig }) => {
 		.then(processResponse)
 }
 
-export const updateAdUnit = ({ unit, authSig }) => {
+export const updateAdUnit = ({ unit, id, authSig }) => {
 	return requester
 		.fetch({
-			route: 'units',
+			route: `units/${id}`,
 			method: 'PUT',
 			body: convertItemToJSON(unit),
 			authSig,
@@ -141,10 +141,10 @@ export const postAdSlot = ({ slot, authSig }) => {
 		.then(processResponse)
 }
 
-export const updateAdSlot = ({ slot, authSig }) => {
+export const updateAdSlot = ({ slot, id, authSig }) => {
 	return requester
 		.fetch({
-			route: 'slots',
+			route: `slots/${id}`,
 			method: 'PUT',
 			body: convertItemToJSON(slot),
 			authSig,

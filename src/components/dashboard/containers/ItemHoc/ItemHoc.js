@@ -145,13 +145,15 @@ export default function ItemHoc(Decorated) {
 
 		//TODO: Do not save if not dirty!
 		save = () => {
-			if (this.state.dirtyProps.length && !this.props.spinner) {
-				let item = { ...this.state.item }
-				this.props.actions.updateItem({
-					item: item,
-					authSig: this.props.account.wallet.authSig,
+			const { itemType, spinner, actions } = this.props
+			const { item, dirtyProps } = this.state
+
+			if (dirtyProps.length && !spinner) {
+				actions.updateItem({
+					itemType,
+					item,
 				})
-				this.props.actions.updateSpinner('update' + item.id, true)
+				actions.updateSpinner('update' + item.id, true)
 				this.setState({ dirtyProps: [] })
 			}
 		}
@@ -293,7 +295,7 @@ export default function ItemHoc(Decorated) {
 													endAdornment={
 														<InputAdornment position='end'>
 															<IconButton
-																disabled
+																// disabled
 																// size='small'
 																color='secondary'
 																className={classes.buttonRight}
