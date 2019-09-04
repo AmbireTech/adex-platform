@@ -17,6 +17,8 @@ import { styles } from './styles'
 // import { utils } from 'ethers'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
+import { contracts } from 'services/smart-contracts/contractsCfg'
+const { DAI } = contracts
 
 const FallbackAdData = ({
 	item,
@@ -189,6 +191,8 @@ const basicProps = ({
 	const mediaUrl = item.mediaUrl
 	const mediaMime = item.mediaMime
 
+	const minPerImpression = (item.minPerImpression || {})[DAI.address] || '0'
+
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12} sm={12} md={12} lg={7}>
@@ -218,6 +222,24 @@ const basicProps = ({
 					</Grid>
 					<Grid item xs={12} sm={7} md={7} lg={7}>
 						<Grid container spacing={1}>
+							{itemType === 'AdSlot' && (
+								<Grid item xs={12}>
+									<TextField
+										// type='text'
+										value={
+											formatTokenAmount(
+												bigNumberify(minPerImpression).mul(1000),
+												18,
+												true
+											) + ' DAI'
+										}
+										label={t('SLOT_MIN_CPM')}
+										disabled
+										margin='dense'
+										fullWidth
+									/>
+								</Grid>
+							)}
 							<Grid item xs={12}>
 								<TextField
 									// type='text'
