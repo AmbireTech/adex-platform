@@ -297,6 +297,7 @@ export default function ItemHoc(Decorated) {
 															<IconButton
 																// disabled
 																// size='small'
+																disabled={isDemo}
 																color='secondary'
 																className={classes.buttonRight}
 																onClick={ev =>
@@ -346,7 +347,7 @@ export default function ItemHoc(Decorated) {
 																// size='small'
 																color='secondary'
 																className={classes.buttonRight}
-																disabled={isDemo || true}
+																disabled={isDemo}
 																onClick={ev =>
 																	this.setActiveFields('description', true)
 																}
