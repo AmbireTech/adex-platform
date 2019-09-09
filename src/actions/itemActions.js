@@ -332,12 +332,12 @@ export function updateItem({ item, itemType } = {}) {
 			switch (itemType) {
 				case 'AdSlot':
 					const slot = new AdSlot(item).marketUpdate
-					updatedItem = await updateAdSlot({ slot, id, authSig })
+					updatedItem = (await updateAdSlot({ slot, id, authSig })).slot
 					objModel = AdSlot
 					break
 				case 'AdUnit':
 					const unit = new AdUnit(item).marketUpdate
-					updatedItem = await updateAdUnit({ unit, id, authSig })
+					updatedItem = (await updateAdUnit({ unit, id, authSig })).unit
 					objModel = AdUnit
 					break
 				default:
