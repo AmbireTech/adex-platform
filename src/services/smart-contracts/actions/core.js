@@ -28,7 +28,7 @@ const ERC20 = new Interface(DAI.abi)
 const feeAmountApprove = '150000000000000000'
 const feeAmountOpen = '160000000000000000'
 const timeframe = 15000 // 1 event per 15 seconds
-const VALID_UNTIL_COEFFICIENT = 1.5
+const VALID_UNTIL_COEFFICIENT = 0.5
 const VALID_UNTIL_MIN_PERIOD = 7 * 24 * 60 * 60 * 1000 // 7 days in ms
 
 export const totalFeesFormatted = formatUnits(
@@ -54,8 +54,8 @@ function toEthereumChannel(channel) {
 	})
 }
 
-function getValidUntil(created, withdrawPeriodStart) {
-	const period = withdrawPeriodStart - created
+function getValidUntil(activeFrom, withdrawPeriodStart) {
+	const period = withdrawPeriodStart - activeFrom
 	const validUntil =
 		withdrawPeriodStart +
 		Math.max(period * VALID_UNTIL_COEFFICIENT, VALID_UNTIL_MIN_PERIOD)
@@ -68,7 +68,7 @@ function getReadyCampaign(campaign, identity, Dai) {
 	newCampaign.creator = identity.address
 	newCampaign.created = Date.now()
 	newCampaign.validUntil = getValidUntil(
-		newCampaign.created,
+		newCampaign.activeFrom,
 		newCampaign.withdrawPeriodStart
 	)
 	newCampaign.nonce = bigNumberify(randomBytes(32)).toString()
