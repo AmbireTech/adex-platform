@@ -123,8 +123,8 @@ class AdSlotBasic extends Component {
 							label={t('description', { isProp: true })}
 							value={description}
 							onChange={ev => handleChange('description', ev.target.value)}
-							onBlur={() => this.validateDescription(title, true)}
-							onFocus={() => this.validateDescription(title, false)}
+							onBlur={() => this.validateDescription(description, true)}
+							onFocus={() => this.validateDescription(description, false)}
 							error={errDescription && !!errDescription.dirty}
 							maxLength={300}
 							helperText={
