@@ -4,6 +4,11 @@ import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
+import Input from '@material-ui/core/Input'
+import InputLabel from '@material-ui/core/InputLabel'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import FormControl from '@material-ui/core/FormControl'
+import FormHelperText from '@material-ui/core/FormHelperText'
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
 import Fab from '@material-ui/core/Fab'
@@ -28,9 +33,15 @@ const FallbackAdData = ({
 	classes,
 	canEditImg,
 	isDemo,
+	activeFields,
+	setActiveFields,
+	validate,
+	invalidFields,
+	toggleFallbackImgEdit,
+	handleChange,
 	...rest
 }) => {
-	const errFallbackAdUrl = rest.invalidFields['fallbackAdUrl']
+	const errFallbackAdUrl = invalidFields['fallbackAdUrl']
 
 	return (
 		<Card className={classes.card} raised={false}>
@@ -46,27 +57,25 @@ const FallbackAdData = ({
 			<Fab
 				mini
 				color='secondary'
-				onClick={rest.toggleFallbackImgEdit}
+				onClick={toggleFallbackImgEdit}
 				className={classes.editIcon}
 				disabled={isDemo}
 			>
 				<EditIcon />
 			</Fab>
 			<CardContent>
-				{rest.activeFields.fallbackTargetUrl ? (
+				{activeFields.fallbackTargetUrl ? (
 					<TextField
 						// required
 						autoFocus
 						type='text'
 						label={t('fallbackTargetUrl', { isProp: true })}
 						value={item.fallbackTargetUrl || ''}
-						onChange={ev =>
-							rest.handleChange('fallbackTargetUrl', ev.target.value)
-						}
+						onChange={ev => handleChange('fallbackTargetUrl', ev.target.value)}
 						// maxLength={1024}
 						onBlur={() => {
-							rest.setActiveFields('fallbackTargetUrl', false)
-							rest.validate('fallbackTargetUrl', {
+							setActiveFields('fallbackTargetUrl', false)
+							validate('fallbackTargetUrl', {
 								isValid:
 									!item.fallbackTargetUrl || validUrl(item.fallbackTargetUrl),
 								err: { msg: 'ERR_INVALID_URL' },
@@ -136,6 +145,98 @@ const FallbackAdData = ({
 
 const ValidatedFallbackAdData = ValidItemHoc(FallbackAdData)
 
+const updateItemTemp = ({ prop = '', value = '', item = {} } = {}) => {
+	const { temp } = item
+	const newTemp = { ...temp }
+	newTemp[prop] = value
+
+	return newTemp
+}
+
+const SlotMinCPM = ({
+	item,
+	t,
+	rightComponent,
+	url,
+	classes,
+	canEditImg,
+	isDemo,
+	activeFields,
+	setActiveFields,
+	validate,
+	invalidFields,
+	toggleFallbackImgEdit,
+	handleChange,
+	...rest
+}) => {
+	const errMin = invalidFields['minPerImpression']
+	const minCPM = formatTokenAmount(
+		bigNumberify((item.minPerImpression || {})[DAI.address] || '0').mul(1000),
+		18,
+		true
+	)
+
+	const minPerImpression =
+		activeFields['minPerImpression'] || item.temp.minPerImpression
+			? item.temp.minPerImpression || minCPM
+			: minCPM + ' DAI'
+
+	return (
+		<FormControl
+			fullWidth
+			className={classes.textField}
+			margin='dense'
+			error={!!errMin}
+		>
+			<InputLabel>{t('MIN_CPM_SLOT_LABEL')}</InputLabel>
+			<Input
+				fullWidth
+				autoFocus
+				type='text'
+				name={t('MIN_CPM_SLOT_LABEL')}
+				value={minPerImpression}
+				onChange={ev =>
+					handleChange(
+						'temp',
+						updateItemTemp({
+							prop: 'minPerImpression',
+							value: ev.target.value,
+							item,
+						})
+					)
+				}
+				maxLength={1024}
+				onBlur={ev => {
+					setActiveFields('minPerImpression', false)
+				}}
+				disabled={!activeFields.minPerImpression}
+				helperText={errMin && !!errMin.msg ? errMin.msg : ''}
+				endAdornment={
+					<InputAdornment position='end'>
+						<IconButton
+							// disabled
+							// size='small'
+							disabled={activeFields['minPerImpression'] || isDemo}
+							color='secondary'
+							className={classes.buttonRight}
+							onClick={ev => setActiveFields('minPerImpression', true)}
+						>
+							<EditIcon />
+						</IconButton>
+					</InputAdornment>
+				}
+			/>
+			{errMin && !!errMin.msg && (
+				<FormHelperText>
+					{t(errMin.msg, { args: errMin.errMsgArgs })}
+				</FormHelperText>
+			)}
+		</FormControl>
+	)
+}
+
+const ValidatedSlotMinCPM = ValidItemHoc(SlotMinCPM)
+
 const MediaCard = ({
 	classes,
 	mediaUrl,
@@ -186,12 +287,11 @@ const basicProps = ({
 	classes,
 	canEditImg,
 	itemType,
+	activeFields,
 	...rest
 }) => {
 	const mediaUrl = item.mediaUrl
 	const mediaMime = item.mediaMime
-
-	const minPerImpression = (item.minPerImpression || {})[DAI.address] || '0'
 
 	return (
 		<Grid container spacing={2}>
@@ -206,6 +306,7 @@ const basicProps = ({
 								url={url}
 								classes={classes}
 								canEditImg={canEditImg}
+								activeFields={activeFields}
 								{...rest}
 							/>
 						) : (
@@ -224,19 +325,15 @@ const basicProps = ({
 						<Grid container spacing={1}>
 							{itemType === 'AdSlot' && (
 								<Grid item xs={12}>
-									<TextField
-										// type='text'
-										value={
-											formatTokenAmount(
-												bigNumberify(minPerImpression).mul(1000),
-												18,
-												true
-											) + ' DAI'
-										}
-										label={t('SLOT_MIN_CPM')}
-										disabled
-										margin='dense'
-										fullWidth
+									<ValidatedSlotMinCPM
+										validateId={item._id}
+										item={item}
+										t={t}
+										url={url}
+										classes={classes}
+										canEditImg={canEditImg}
+										activeFields={activeFields}
+										{...rest}
 									/>
 								</Grid>
 							)}
