@@ -153,7 +153,6 @@ export default function ItemHoc(Decorated) {
 					itemType,
 					item,
 				})
-				actions.updateSpinner('update' + item.id, true)
 				this.setState({ dirtyProps: [] })
 			}
 		}
