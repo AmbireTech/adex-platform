@@ -331,6 +331,16 @@ export function updateItem({ item, itemType } = {}) {
 
 			switch (itemType) {
 				case 'AdSlot':
+					if (item.temp.minPerImpression) {
+						item.minPerImpression = {
+							[DAI.address]: parseUnits(
+								item.temp.minPerImpression,
+								DAI.decimals
+							)
+								.div(bigNumberify(1000))
+								.toString(),
+						}
+					}
 					const slot = new AdSlot(item).marketUpdate
 					updatedItem = (await updateAdSlot({ slot, id, authSig })).slot
 					objModel = AdSlot
