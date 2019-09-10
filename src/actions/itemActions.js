@@ -229,8 +229,6 @@ export function getAllItems() {
 				campaigns,
 			])
 
-			console.log('resSlots', resSlots)
-
 			const campaignsMapped = resCampaigns.map(c => {
 				return { ...c, ...c.spec }
 			})
