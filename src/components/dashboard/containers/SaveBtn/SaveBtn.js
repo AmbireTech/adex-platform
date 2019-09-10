@@ -23,6 +23,7 @@ class SaveBtn extends Component {
 			save,
 			validations,
 			validationId,
+			disabled,
 		} = this.props
 		return (
 			<div className={classes.position}>
@@ -33,6 +34,7 @@ class SaveBtn extends Component {
 						// className={buttonClassname}
 						onClick={() => save()}
 						disabled={
+							disabled ||
 							spinner ||
 							!dirtyProps.length ||
 							!!Object.keys(validations[validationId] || {}).length
@@ -56,6 +58,7 @@ SaveBtn.propTypes = {
 	validationId: PropTypes.string,
 	itemId: PropTypes.string,
 	validations: PropTypes.object,
+	disabled: PropTypes.bool,
 }
 
 function mapStateToProps(state, props) {
