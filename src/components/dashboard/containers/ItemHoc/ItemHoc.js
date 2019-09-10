@@ -8,7 +8,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
 import EditIcon from '@material-ui/icons/Edit'
 import ImgDialog from 'components/dashboard/containers/ImgDialog'
-// import { Models } from 'adex-models'
+import { schemas, Joi } from 'adex-models'
 import classnames from 'classnames'
 import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
@@ -29,6 +29,7 @@ import { validName } from 'helpers/validators'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 
+const { adSlotPut, adUnitPut } = schemas
 const { AdSizesByValue } = ItemsConstants
 
 export default function ItemHoc(Decorated) {
@@ -83,11 +84,11 @@ export default function ItemHoc(Decorated) {
 			let nextItem = nextProps.item
 			let nexItemInst = new objModel(nextItem || {})
 
-			// if (currentItemInst.modifiedOn !== nexItemInst.modifiedOn) {
-			if (
-				JSON.stringify(currentItemInst.plainObj()) !==
-				JSON.stringify(nexItemInst.plainObj())
-			) {
+			if (currentItemInst.modifiedOn !== nexItemInst.modifiedOn) {
+				// if (
+				// 	JSON.stringify(currentItemInst.plainObj()) !==
+				// 	JSON.stringify(nexItemInst.plainObj())
+				// ) {
 				this.setState({
 					item: nexItemInst.plainObj(),
 					initialItemState: nexItemInst,
@@ -175,6 +176,51 @@ export default function ItemHoc(Decorated) {
 			return !msg
 		}
 
+		validateTitle(name, dirty, errMsg) {
+			const { itemType, validate } = this.props
+			let schema = null
+
+			switch (itemType) {
+				case 'AdSlot':
+					schema = adSlotPut.title
+					break
+				case 'AdUnit':
+					schema = adUnitPut.title
+					break
+				default:
+					break
+			}
+
+			const result = Joi.validate(name, schema)
+			validate('title', {
+				isValid: !result.error,
+				err: { msg: result.error ? result.error.message : '' },
+				dirty: dirty,
+			})
+		}
+
+		validateDescription(name, dirty, errMsg) {
+			const { itemType, validate } = this.props
+			let schema = null
+
+			switch (itemType) {
+				case 'AdSlot':
+					schema = adSlotPut.description
+					break
+				case 'AdUnit':
+					schema = adUnitPut.description
+					break
+				default:
+					break
+			}
+			const result = Joi.validate(name, schema)
+			validate('description', {
+				isValid: !result.error,
+				err: { msg: result.error ? result.error.message : '' },
+				dirty: dirty,
+			})
+		}
+
 		render() {
 			const {
 				validations,
@@ -185,6 +231,8 @@ export default function ItemHoc(Decorated) {
 				objModel,
 				matchId,
 				side,
+				invalidFields,
+				validateId,
 				...rest
 			} = this.props
 			const propsItem = this.props.item
@@ -210,7 +258,8 @@ export default function ItemHoc(Decorated) {
 			let canEdit = itemType === 'AdSlot'
 			let imgSrc = item.temp.tempUrl || item.mediaUrl || item.fallbackMediaUrl
 
-			const titleErr = validName(item.title)
+			const titleErr = invalidFields['title']
+			const descriptionErr = invalidFields['description']
 
 			return (
 				<div>
@@ -271,7 +320,7 @@ export default function ItemHoc(Decorated) {
 												fullWidth
 												className={classes.textField}
 												margin='dense'
-												error={!!titleErr.msg}
+												error={!!titleErr && !!titleErr.errMsg}
 											>
 												<InputLabel>{t('title', { isProp: true })}</InputLabel>
 												<Input
@@ -280,17 +329,16 @@ export default function ItemHoc(Decorated) {
 													type='text'
 													name={t('title', { isProp: true })}
 													value={item.title}
-													onChange={ev =>
+													onChange={ev => {
+														this.validateTitle(ev.target.value, true)
 														this.handleChange('title', ev.target.value)
-													}
+													}}
 													maxLength={1024}
 													onBlur={ev => {
 														this.setActiveFields('title', false)
 													}}
+													onFocus={() => this.validateTitle(item.title, false)}
 													disabled={!this.state.activeFields.title}
-													helperText={
-														titleErr && !!titleErr.msg ? titleErr.msg : ''
-													}
 													endAdornment={
 														<InputAdornment position='end'>
 															<IconButton
@@ -308,9 +356,9 @@ export default function ItemHoc(Decorated) {
 														</InputAdornment>
 													}
 												/>
-												{titleErr && !!titleErr.msg && (
+												{titleErr && titleErr.errMsg && titleErr.dirty && (
 													<FormHelperText>
-														{t(titleErr.msg, { args: titleErr.errMsgArgs })}
+														{t(titleErr.errMsg, { args: titleErr.errMsgArgs })}
 													</FormHelperText>
 												)}
 											</FormControl>
@@ -320,8 +368,9 @@ export default function ItemHoc(Decorated) {
 												margin='dense'
 												fullWidth
 												className={classes.textField}
+												error={!!descriptionErr && !!descriptionErr.errMsg}
 											>
-												<InputLabel htmlFor='adornment-password'>
+												<InputLabel htmlFor='description'>
 													{t('description', { isProp: true })}
 												</InputLabel>
 												<Input
@@ -332,12 +381,16 @@ export default function ItemHoc(Decorated) {
 													type='text'
 													name='description'
 													value={item.description || ''}
-													onChange={ev =>
+													onChange={ev => {
+														this.validateDescription(ev.target.value, true)
 														this.handleChange('description', ev.target.value)
-													}
+													}}
 													maxLength={1024}
-													onBlur={ev =>
+													onBlur={ev => {
 														this.setActiveFields('description', false)
+													}}
+													onFocus={() =>
+														this.validateDescription(item.description, false)
 													}
 													disabled={!this.state.activeFields.description}
 													endAdornment={
@@ -356,10 +409,18 @@ export default function ItemHoc(Decorated) {
 														</InputAdornment>
 													}
 												/>
-												{!item.description && (
+												{descriptionErr && !!descriptionErr.errMsg ? (
 													<FormHelperText>
-														{t('NO_DESCRIPTION_YET')}
+														{t(descriptionErr.errMsg, {
+															args: descriptionErr.errMsgArgs,
+														})}
 													</FormHelperText>
+												) : (
+													!item.description && (
+														<FormHelperText>
+															{t('NO_DESCRIPTION_YET')}
+														</FormHelperText>
+													)
 												)}
 											</FormControl>
 										</div>
@@ -401,13 +462,12 @@ export default function ItemHoc(Decorated) {
 							<div>
 								<SaveBtn
 									spinnerId={'update' + item.id}
-									validationId={'update-' + item.id}
+									validationId={'update-' + validateId}
 									dirtyProps={this.state.dirtyProps}
 									save={this.save}
-									// TODO: validate wit item validation HOC!!!
 									disabled={
 										!this.state.dirtyProps.length ||
-										!this.isNameValid(this.state.item.title)
+										!!Object.keys(invalidFields).length
 									}
 								/>
 							</div>
@@ -474,7 +534,7 @@ export default function ItemHoc(Decorated) {
 		return {
 			account: persist.account,
 			item: item,
-			validateId: 'update-' + item,
+			validateId: 'update-' + (item.id || item.ipfs),
 			matchId: id,
 		}
 	}
