@@ -23,6 +23,9 @@ import { styles } from './styles'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 import { contracts } from 'services/smart-contracts/contractsCfg'
+import { validations } from 'adex-models'
+import { utils } from 'ethers'
+
 const { DAI } = contracts
 
 const FallbackAdData = ({
@@ -153,6 +156,17 @@ const updateItemTemp = ({ prop = '', value = '', item = {} } = {}) => {
 	return newTemp
 }
 
+const validateAmount = (value = '', prop, dirty, errMsg, validate) => {
+	const isValidNumber = validations.isNumberString(value)
+	const isValid = isValidNumber && utils.parseUnits(value, 18)
+
+	validate(prop, {
+		isValid: isValid,
+		err: { msg: errMsg || 'ERR_INVALID_AMOUNT' },
+		dirty: dirty,
+	})
+}
+
 const SlotMinCPM = ({
 	item,
 	t,
@@ -195,7 +209,14 @@ const SlotMinCPM = ({
 				type='text'
 				name={t('MIN_CPM_SLOT_LABEL')}
 				value={minPerImpression}
-				onChange={ev =>
+				onChange={ev => {
+					validateAmount(
+						ev.target.value,
+						'minPerImpression',
+						true,
+						'',
+						validate
+					)
 					handleChange(
 						'temp',
 						updateItemTemp({
@@ -204,13 +225,12 @@ const SlotMinCPM = ({
 							item,
 						})
 					)
-				}
+				}}
 				maxLength={1024}
 				onBlur={ev => {
 					setActiveFields('minPerImpression', false)
 				}}
 				disabled={!activeFields.minPerImpression}
-				helperText={errMin && !!errMin.msg ? errMin.msg : ''}
 				endAdornment={
 					<InputAdornment position='end'>
 						<IconButton
@@ -226,11 +246,12 @@ const SlotMinCPM = ({
 					</InputAdornment>
 				}
 			/>
-			{errMin && !!errMin.msg && (
-				<FormHelperText>
-					{t(errMin.msg, { args: errMin.errMsgArgs })}
-				</FormHelperText>
-			)}
+
+			<FormHelperText>
+				{errMin && !!errMin.errMsg
+					? t(errMin.errMsg, { args: errMin.errMsgArgs })
+					: t('SLOT_MIN_CPM_HELPER')}
+			</FormHelperText>
 		</FormControl>
 	)
 }
