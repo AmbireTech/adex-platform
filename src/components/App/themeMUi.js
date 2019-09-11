@@ -64,9 +64,6 @@ export const globalStyles = theme => {
 			},
 			a: {
 				textDecoration: 'none',
-				'&:link, &:visited': {
-					color: 'inherit',
-				},
 			},
 		},
 	}
