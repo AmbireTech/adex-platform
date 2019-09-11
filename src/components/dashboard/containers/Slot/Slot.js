@@ -37,7 +37,7 @@ const { DAI } = contracts
 // const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
 
 const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
-	const { type, tags, fallbackUnit } = slot
+	const { id, type, tags, fallbackUnit } = slot
 	const identityAddr = account.identity.address
 
 	let sizes = type.split('_')[1].split('x')
@@ -58,6 +58,7 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 		minPerImpression: '0',
 		minTargetingScore: '0',
 		fallbackUnit,
+		marketSlot: id,
 	}
 
 	let query = encodeURIComponent(JSON.stringify({ options }))
