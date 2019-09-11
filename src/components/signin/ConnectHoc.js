@@ -7,6 +7,7 @@ import Logo from 'components/common/icons/AdexIconTxt'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
+import Anchor from 'components/common/anchor/anchor'
 import packageJson from './../../../package.json'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
@@ -52,7 +53,20 @@ export default function ConnectHoc(Decorated) {
 									</div>
 								</Box>
 								<AuthSelect {...rest} />
-								<Box p={2}>
+								<Box
+									p={2}
+									display='flex'
+									flexDirection='column'
+									alignItems='center'
+									flexWrap='wrap'
+								>
+									<Anchor
+										className={classes.adxLink}
+										target='_blank'
+										href='https://medium.com/adex-network-tips-and-tricks'
+									>
+										{t('HELP')}
+									</Anchor>
 									<small className={classes.adxVersion}>
 										{`v.${packageJson.version}-beta`}
 									</small>
