@@ -191,9 +191,9 @@ const SlotMinCPM = ({
 	)
 
 	const minPerImpression =
-		activeFields['minPerImpression'] || item.temp.minPerImpression
-			? item.temp.minPerImpression || minCPM
-			: minCPM + ' DAI'
+		item.temp.minPerImpression !== undefined
+			? item.temp.minPerImpression
+			: minCPM
 
 	return (
 		<FormControl
@@ -202,13 +202,13 @@ const SlotMinCPM = ({
 			margin='dense'
 			error={!!errMin}
 		>
-			<InputLabel>{t('MIN_CPM_SLOT_LABEL')}</InputLabel>
+			<InputLabel>{t('MIN_CPM_SLOT_LABEL', { args: ['DAI'] })}</InputLabel>
 			<Input
 				fullWidth
 				autoFocus
 				type='text'
-				name={t('MIN_CPM_SLOT_LABEL')}
-				value={minPerImpression}
+				name={'minPerImpression'}
+				value={minPerImpression || ''}
 				onChange={ev => {
 					validateAmount(
 						ev.target.value,
