@@ -118,7 +118,6 @@ class AdSlotBasic extends Component {
 							fullWidth
 							type='text'
 							multiline
-							required
 							rows={3}
 							label={t('description', { isProp: true })}
 							value={description}
@@ -151,7 +150,7 @@ class AdSlotBasic extends Component {
 							fullWidth
 							type='text'
 							required
-							label={t('MIN_CPM_SLOT_LABEL')}
+							label={t('MIN_CPM_SLOT_LABEL', { args: ['DAI'] })}
 							name='minPerImpression'
 							value={minPerImpression}
 							onChange={ev => {
@@ -163,7 +162,7 @@ class AdSlotBasic extends Component {
 							helperText={
 								errMin && !!errMin.dirty
 									? errMin.errMsg
-									: t('MIN_CPM_HELPER_TXT')
+									: t('SLOT_MIN_CPM_HELPER')
 							}
 						/>
 					</Grid>
