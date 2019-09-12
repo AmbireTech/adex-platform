@@ -5,7 +5,8 @@ import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
-import { constants, schemas, Joi } from 'adex-models'
+import { utils } from 'ethers'
+import { validations, constants, schemas, Joi } from 'adex-models'
 
 const { adSlotPost } = schemas
 
@@ -55,6 +56,25 @@ class AdSlotBasic extends Component {
 		})
 	}
 
+	validateAmount(value = '', prop, dirty, errMsg) {
+		const isValidNumber = validations.isNumberString(value)
+		const isValid = isValidNumber && utils.parseUnits(value, 18)
+
+		this.props.validate(prop, {
+			isValid: isValid,
+			err: { msg: errMsg || 'ERR_INVALID_AMOUNT' },
+			dirty: dirty,
+		})
+	}
+
+	updateMinPerImpression(value = '') {
+		const { temp } = this.props.newItem
+		const newTemp = { ...temp }
+		newTemp.minPerImpression = value
+
+		this.props.handleChange('temp', newTemp)
+	}
+
 	render() {
 		const {
 			t,
@@ -64,9 +84,11 @@ class AdSlotBasic extends Component {
 			// nameHelperTxt,
 			// descriptionHelperTxt
 		} = this.props
-		const { type, title, description } = newItem
+		const { type, title, description, temp } = newItem
+		const { minPerImpression } = temp
 		const errTitle = invalidFields['title']
 		const errDescription = invalidFields['description']
+		const errMin = invalidFields['minPerImpression']
 
 		return (
 			<div>
@@ -96,13 +118,12 @@ class AdSlotBasic extends Component {
 							fullWidth
 							type='text'
 							multiline
-							required
 							rows={3}
 							label={t('description', { isProp: true })}
 							value={description}
 							onChange={ev => handleChange('description', ev.target.value)}
-							onBlur={() => this.validateDescription(title, true)}
-							onFocus={() => this.validateDescription(title, false)}
+							onBlur={() => this.validateDescription(description, true)}
+							onFocus={() => this.validateDescription(description, false)}
 							error={errDescription && !!errDescription.dirty}
 							maxLength={300}
 							helperText={
@@ -122,6 +143,27 @@ class AdSlotBasic extends Component {
 							label={t('adType', { isProp: true })}
 							htmlId='ad-type-dd'
 							name='adType'
+						/>
+					</Grid>
+					<Grid item sm={12} md={12}>
+						<TextField
+							fullWidth
+							type='text'
+							required
+							label={t('MIN_CPM_SLOT_LABEL', { args: ['DAI'] })}
+							name='minPerImpression'
+							value={minPerImpression}
+							onChange={ev => {
+								this.validateAmount(ev.target.value, 'minPerImpression', true)
+								this.updateMinPerImpression(ev.target.value)
+							}}
+							error={errMin && !!errMin.dirty}
+							maxLength={120}
+							helperText={
+								errMin && !!errMin.dirty
+									? errMin.errMsg
+									: t('SLOT_MIN_CPM_HELPER')
+							}
 						/>
 					</Grid>
 				</Grid>
