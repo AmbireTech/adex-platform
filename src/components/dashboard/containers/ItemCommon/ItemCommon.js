@@ -57,7 +57,7 @@ const FallbackAdData = ({
 					style={{ cursor: 'pointer' }}
 				/>
 			</CardMedia>
-			<Fab
+			{/* <Fab
 				mini
 				color='secondary'
 				onClick={toggleFallbackImgEdit}
@@ -65,7 +65,7 @@ const FallbackAdData = ({
 				disabled={isDemo}
 			>
 				<EditIcon />
-			</Fab>
+			</Fab> */}
 			<CardContent>
 				{activeFields.fallbackTargetUrl ? (
 					<TextField
@@ -117,9 +117,9 @@ const FallbackAdData = ({
 									{t('NO_FALLBACK_URL_YET')}
 								</span>
 							)}
-							<span>
+							{/* <span>
 								<IconButton
-									disabled={!canEditImg}
+									// disabled={!canEditImg}
 									size='small'
 									className={classes.buttonRight}
 									color='secondary'
@@ -129,7 +129,7 @@ const FallbackAdData = ({
 								>
 									<EditIcon />
 								</IconButton>
-							</span>
+							</span> */}
 						</div>
 						{errFallbackAdUrl && !!errFallbackAdUrl.dirty ? (
 							<div>
