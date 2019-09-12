@@ -349,7 +349,7 @@ export function updateItem({ item, itemType } = {}) {
 					objModel = AdUnit
 					break
 				default:
-					break
+					throw new Error(translate('INVALID_ITEM_TYPE'))
 			}
 
 			dispatch({
@@ -362,7 +362,7 @@ export function updateItem({ item, itemType } = {}) {
 				dispatch,
 				type: 'accept',
 				toastStr: 'SUCCESS_UPDATING_ITEM',
-				args: [itemType],
+				args: [itemType, item.title],
 			})
 		} catch (err) {
 			console.error('ERR_UPDATING_ITEM', err)
@@ -374,26 +374,6 @@ export function updateItem({ item, itemType } = {}) {
 			})
 		}
 		updateSpinner('update' + item.id, false)(dispatch)
-
-		// uploadImages({ item: { ...item }, authSig: authSig })
-		// 	.then((updatedItem) => {
-		// 		return updateItm({ item: updatedItem, authSig })
-		// 	})
-		// 	.then((res) => {
-		// 		dispatch({
-		// 			type: types.UPDATE_ITEM,
-		// 			item: res
-		// 		})
-		// 		addToast({ dispatch: dispatch, type: 'accept', toastStr: successMsg || 'SUCCESS_UPDATING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName] })
-		// 		return dispatch({
-		// 			type: types.UPDATE_SPINNER,
-		// 			spinner: 'update' + res._id,
-		// 			value: false
-		// 		})
-		// 	})
-		// 	.catch((err) => {
-		// 		return addToast({ dispatch: dispatch, type: 'cancel', toastStr: errMsg || 'ERR_UPDATING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, err] })
-		// 	})
 	}
 }
 
