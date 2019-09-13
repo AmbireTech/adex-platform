@@ -3,7 +3,10 @@ import {
 	uploadImage,
 	postAdUnit,
 	postAdSlot,
+	updateAdSlot,
+	updateAdUnit,
 } from 'services/adex-market/actions'
+import { parseUnits, bigNumberify } from 'ethers/utils'
 import { Base, AdSlot, AdUnit, helpers } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
 import { updateAccount } from './accountActions'
@@ -20,6 +23,9 @@ import {
 import { lastApprovedState } from 'services/adex-validator/actions'
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
+
+import { contracts } from 'services/smart-contracts/contractsCfg'
+const { DAI } = contracts
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -170,6 +176,14 @@ export function addSlot(item, itemType, authSig) {
 			newItem.fallbackUnit = fallbackUnit
 			newItem.created = Date.now()
 
+			if (newItem.temp.minPerImpression) {
+				newItem.minPerImpression = {
+					[DAI.address]: parseUnits(newItem.temp.minPerImpression, DAI.decimals)
+						.div(bigNumberify(1000))
+						.toString(),
+				}
+			}
+
 			const resItem = await postAdSlot({
 				slot: new AdSlot(newItem).marketAdd,
 				authSig,
@@ -301,27 +315,65 @@ export function addItemToItem({ item, toAdd, authSig } = {}) {
 }
 
 // Accepts the entire new item and replace so be careful!
-export function updateItem({ item, authSig, successMsg, errMsg } = {}) {
-	return function(dispatch) {
-		// uploadImages({ item: { ...item }, authSig: authSig })
-		// 	.then((updatedItem) => {
-		// 		return updateItm({ item: updatedItem, authSig })
-		// 	})
-		// 	.then((res) => {
-		// 		dispatch({
-		// 			type: types.UPDATE_ITEM,
-		// 			item: res
-		// 		})
-		// 		addToast({ dispatch: dispatch, type: 'accept', toastStr: successMsg || 'SUCCESS_UPDATING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName] })
-		// 		return dispatch({
-		// 			type: types.UPDATE_SPINNER,
-		// 			spinner: 'update' + res._id,
-		// 			value: false
-		// 		})
-		// 	})
-		// 	.catch((err) => {
-		// 		return addToast({ dispatch: dispatch, type: 'cancel', toastStr: errMsg || 'ERR_UPDATING_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, err] })
-		// 	})
+export function updateItem({ item, itemType } = {}) {
+	return async function(dispatch, getState) {
+		updateSpinner('update' + item.id, true)(dispatch)
+		try {
+			const { account } = getState().persist
+			const { authSig } = account.wallet
+
+			let updatedItem = null
+			let objModel = null
+
+			const { id } = item
+
+			switch (itemType) {
+				case 'AdSlot':
+					if (item.temp.minPerImpression) {
+						item.minPerImpression = {
+							[DAI.address]: parseUnits(
+								item.temp.minPerImpression,
+								DAI.decimals
+							)
+								.div(bigNumberify(1000))
+								.toString(),
+						}
+					}
+					const slot = new AdSlot(item).marketUpdate
+					updatedItem = (await updateAdSlot({ slot, id, authSig })).slot
+					objModel = AdSlot
+					break
+				case 'AdUnit':
+					const unit = new AdUnit(item).marketUpdate
+					updatedItem = (await updateAdUnit({ unit, id, authSig })).unit
+					objModel = AdUnit
+					break
+				default:
+					throw new Error(translate('INVALID_ITEM_TYPE'))
+			}
+
+			dispatch({
+				type: types.UPDATE_ITEM,
+				item: new objModel(updatedItem).plainObj(),
+				itemType,
+			})
+
+			addToast({
+				dispatch,
+				type: 'accept',
+				toastStr: 'SUCCESS_UPDATING_ITEM',
+				args: [itemType, item.title],
+			})
+		} catch (err) {
+			console.error('ERR_UPDATING_ITEM', err)
+			addToast({
+				dispatch,
+				type: 'cancel',
+				toastStr: 'ERR_UPDATING_ITEM',
+				args: [itemType, err],
+			})
+		}
+		updateSpinner('update' + item.id, false)(dispatch)
 	}
 }
 
