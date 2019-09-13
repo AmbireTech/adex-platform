@@ -55,6 +55,7 @@ class AdSlotPreview extends Component {
 		const { classes, account, ...rest } = this.props
 		const { newItem, t } = rest
 		const { type, title, description, temp, tags, targetUrl } = newItem
+		const { minPerImpression } = temp
 
 		return (
 			<ContentBox>
@@ -68,6 +69,10 @@ class AdSlotPreview extends Component {
 					<PropRow
 						left={t('description', { isProp: true })}
 						right={description}
+					/>
+					<PropRow
+						left={t('MIN_CPM_SLOT_LABEL')}
+						right={minPerImpression + ' DAI'}
 					/>
 					{temp.useFallback && (
 						<SlotFallback

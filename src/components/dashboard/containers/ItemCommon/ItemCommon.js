@@ -4,6 +4,11 @@ import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
+import Input from '@material-ui/core/Input'
+import InputLabel from '@material-ui/core/InputLabel'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import FormControl from '@material-ui/core/FormControl'
+import FormHelperText from '@material-ui/core/FormHelperText'
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
 import Fab from '@material-ui/core/Fab'
@@ -17,6 +22,11 @@ import { styles } from './styles'
 // import { utils } from 'ethers'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
+import { contracts } from 'services/smart-contracts/contractsCfg'
+import { validations } from 'adex-models'
+import { utils } from 'ethers'
+
+const { DAI } = contracts
 
 const FallbackAdData = ({
 	item,
@@ -26,9 +36,15 @@ const FallbackAdData = ({
 	classes,
 	canEditImg,
 	isDemo,
+	activeFields,
+	setActiveFields,
+	validate,
+	invalidFields,
+	toggleFallbackImgEdit,
+	handleChange,
 	...rest
 }) => {
-	const errFallbackAdUrl = rest.invalidFields['fallbackAdUrl']
+	const errFallbackAdUrl = invalidFields['fallbackAdUrl']
 
 	return (
 		<Card className={classes.card} raised={false}>
@@ -41,30 +57,28 @@ const FallbackAdData = ({
 					style={{ cursor: 'pointer' }}
 				/>
 			</CardMedia>
-			<Fab
+			{/* <Fab
 				mini
 				color='secondary'
-				onClick={rest.toggleFallbackImgEdit}
+				onClick={toggleFallbackImgEdit}
 				className={classes.editIcon}
 				disabled={isDemo}
 			>
 				<EditIcon />
-			</Fab>
+			</Fab> */}
 			<CardContent>
-				{rest.activeFields.fallbackTargetUrl ? (
+				{activeFields.fallbackTargetUrl ? (
 					<TextField
 						// required
 						autoFocus
 						type='text'
 						label={t('fallbackTargetUrl', { isProp: true })}
 						value={item.fallbackTargetUrl || ''}
-						onChange={ev =>
-							rest.handleChange('fallbackTargetUrl', ev.target.value)
-						}
+						onChange={ev => handleChange('fallbackTargetUrl', ev.target.value)}
 						// maxLength={1024}
 						onBlur={() => {
-							rest.setActiveFields('fallbackTargetUrl', false)
-							rest.validate('fallbackTargetUrl', {
+							setActiveFields('fallbackTargetUrl', false)
+							validate('fallbackTargetUrl', {
 								isValid:
 									!item.fallbackTargetUrl || validUrl(item.fallbackTargetUrl),
 								err: { msg: 'ERR_INVALID_URL' },
@@ -103,9 +117,9 @@ const FallbackAdData = ({
 									{t('NO_FALLBACK_URL_YET')}
 								</span>
 							)}
-							<span>
+							{/* <span>
 								<IconButton
-									disabled={!canEditImg}
+									// disabled={!canEditImg}
 									size='small'
 									className={classes.buttonRight}
 									color='secondary'
@@ -115,7 +129,7 @@ const FallbackAdData = ({
 								>
 									<EditIcon />
 								</IconButton>
-							</span>
+							</span> */}
 						</div>
 						{errFallbackAdUrl && !!errFallbackAdUrl.dirty ? (
 							<div>
@@ -133,6 +147,116 @@ const FallbackAdData = ({
 }
 
 const ValidatedFallbackAdData = ValidItemHoc(FallbackAdData)
+
+const updateItemTemp = ({ prop = '', value = '', item = {} } = {}) => {
+	const { temp } = item
+	const newTemp = { ...temp }
+	newTemp[prop] = value
+
+	return newTemp
+}
+
+const validateAmount = (value = '', prop, dirty, errMsg, validate) => {
+	const isValidNumber = validations.isNumberString(value)
+	const isValid = isValidNumber && utils.parseUnits(value, 18)
+
+	validate(prop, {
+		isValid: isValid,
+		err: { msg: errMsg || 'ERR_INVALID_AMOUNT' },
+		dirty: dirty,
+	})
+}
+
+const SlotMinCPM = ({
+	item,
+	t,
+	rightComponent,
+	url,
+	classes,
+	canEditImg,
+	isDemo,
+	activeFields,
+	setActiveFields,
+	validate,
+	invalidFields,
+	toggleFallbackImgEdit,
+	handleChange,
+	...rest
+}) => {
+	const errMin = invalidFields['minPerImpression']
+	const minCPM = formatTokenAmount(
+		bigNumberify((item.minPerImpression || {})[DAI.address] || '0').mul(1000),
+		18,
+		true
+	)
+
+	const minPerImpression =
+		item.temp.minPerImpression !== undefined
+			? item.temp.minPerImpression
+			: minCPM
+
+	return (
+		<FormControl
+			fullWidth
+			className={classes.textField}
+			margin='dense'
+			error={!!errMin}
+		>
+			<InputLabel>{t('MIN_CPM_SLOT_LABEL', { args: ['DAI'] })}</InputLabel>
+			<Input
+				fullWidth
+				autoFocus
+				type='text'
+				name={'minPerImpression'}
+				value={minPerImpression || ''}
+				onChange={ev => {
+					validateAmount(
+						ev.target.value,
+						'minPerImpression',
+						true,
+						'',
+						validate
+					)
+					handleChange(
+						'temp',
+						updateItemTemp({
+							prop: 'minPerImpression',
+							value: ev.target.value,
+							item,
+						})
+					)
+				}}
+				maxLength={1024}
+				onBlur={ev => {
+					setActiveFields('minPerImpression', false)
+				}}
+				disabled={!activeFields.minPerImpression}
+				endAdornment={
+					<InputAdornment position='end'>
+						<IconButton
+							// disabled
+							// size='small'
+							disabled={activeFields['minPerImpression'] || isDemo}
+							color='secondary'
+							className={classes.buttonRight}
+							onClick={ev => setActiveFields('minPerImpression', true)}
+						>
+							<EditIcon />
+						</IconButton>
+					</InputAdornment>
+				}
+			/>
+
+			<FormHelperText>
+				{errMin && !!errMin.errMsg
+					? t(errMin.errMsg, { args: errMin.errMsgArgs })
+					: t('SLOT_MIN_CPM_HELPER')}
+			</FormHelperText>
+		</FormControl>
+	)
+}
+
+const ValidatedSlotMinCPM = ValidItemHoc(SlotMinCPM)
 
 const MediaCard = ({
 	classes,
@@ -184,6 +308,7 @@ const basicProps = ({
 	classes,
 	canEditImg,
 	itemType,
+	activeFields,
 	...rest
 }) => {
 	const mediaUrl = item.mediaUrl
@@ -202,6 +327,7 @@ const basicProps = ({
 								url={url}
 								classes={classes}
 								canEditImg={canEditImg}
+								activeFields={activeFields}
 								{...rest}
 							/>
 						) : (
@@ -218,6 +344,20 @@ const basicProps = ({
 					</Grid>
 					<Grid item xs={12} sm={7} md={7} lg={7}>
 						<Grid container spacing={1}>
+							{itemType === 'AdSlot' && (
+								<Grid item xs={12}>
+									<ValidatedSlotMinCPM
+										validateId={item._id}
+										item={item}
+										t={t}
+										url={url}
+										classes={classes}
+										canEditImg={canEditImg}
+										activeFields={activeFields}
+										{...rest}
+									/>
+								</Grid>
+							)}
 							<Grid item xs={12}>
 								<TextField
 									// type='text'
