@@ -10,6 +10,8 @@ import { addToast, confirmAction } from './uiActions'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES } from 'constants/misc'
 
+const UPDATE_SETTINGS_INTERVAL = 24 * 60 * 60 * 1000 // 1 hour
+
 // MEMORY STORAGE
 export function updateSignin(prop, value) {
 	return function(dispatch) {
@@ -87,14 +89,20 @@ export function updateAccountStats() {
 
 export function updateAccountSettings() {
 	return async function(dispatch, getState) {
-		const { identity } = getState().persist.account
+		const { identity, settings } = getState().persist.account
+		const { grantType, updated } = settings
+		const now = Date.now()
+		const doUpdate =
+			!grantType || now - (updated || 0) > UPDATE_SETTINGS_INTERVAL
+
 		try {
-			const settings = {}
-			if (settings.grantType === undefined) {
-				settings.grantType = (await getGrantType({
+			if (doUpdate) {
+				const newSettings = { ...settings }
+				newSettings.grantType = (await getGrantType({
 					identity: identity.address,
 				})).type
-				updateAccount({ newValues: { settings } })(dispatch)
+				newSettings.updated = now
+				updateAccount({ newValues: { settings: newSettings } })(dispatch)
 			}
 		} catch (err) {
 			console.error('ERR_SETTINGS', err)
