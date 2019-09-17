@@ -47,6 +47,7 @@ class QuickDeploy extends Component {
 		const walletData = createLocalWallet({
 			email,
 			password,
+			authType: AUTH_TYPES.QUICK.name,
 		})
 
 		walletData.authType = AUTH_TYPES.QUICK.name
