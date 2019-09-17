@@ -92,17 +92,14 @@ export function updateAccountStats() {
 	}
 }
 
-export function registerAccount({ wallet, identityData, email }) {
+export function registerAccount({ wallet, identityTxData, email }) {
 	return async function(dispatch) {
 		updateSpinner('registering-account', true)(dispatch)
 		try {
-			const { txnsRaw, signatures, identityAddr } = identityData
 			await regAccount({
 				owner: wallet.address,
 				email,
-				txnsRaw,
-				identityAddr,
-				signatures,
+				...identityTxData,
 			})
 		} catch (err) {
 			console.error('ERR_REGISTERING_ACCOUNT', err)
