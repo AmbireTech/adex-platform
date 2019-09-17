@@ -33,6 +33,7 @@ export default function IdentityHoc(Decorated) {
 				wallet,
 				email,
 				identityData,
+				identityTxData,
 				deleteLegacyKey,
 				registerAccount,
 			} = identity
@@ -41,8 +42,8 @@ export default function IdentityHoc(Decorated) {
 
 			if (registerAccount) {
 				await actions.registerAccount({
-					wallet: newWallet,
-					identityData,
+					owner: newWallet.address,
+					identityTxData,
 					email,
 				})
 			}
