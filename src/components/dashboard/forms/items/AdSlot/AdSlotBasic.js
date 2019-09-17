@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
 import { utils } from 'ethers'
 import { validations, constants, schemas, Joi } from 'adex-models'
+import { getUnitsStatsByType } from 'services/adex-market/aggregates'
 
 const { adSlotPost } = schemas
 
@@ -18,11 +19,36 @@ const AdTypes = constants.AdUnitsTypes.map(type => {
 })
 
 class AdSlotBasic extends Component {
-	componentDidMount() {
+	constructor(props) {
+		super(props)
+		this.state = {
+			adTypes: AdTypes,
+		}
+	}
+
+	async componentDidMount() {
 		const { newItem } = this.props
 		this.validateTitle(newItem.title, false)
 		this.validateDescription(newItem.description, false)
 		this.validateAndUpdateType(false, newItem.type)
+
+		const unitsStats = await getUnitsStatsByType()
+
+		// TEMP: will do it with action and keep in the store
+		const adTypes = AdTypes.map(adType => {
+			const { totalVolume, avgCPM } =
+				(unitsStats[adType.value] || {}).formatted || {}
+			return {
+				value: adType.value,
+				label: `${adType.label}, avg CPM: ${avgCPM ||
+					' N/A'} DAI, total volume: ${totalVolume || ' N/A'} DAI `,
+				sort: parseFloat(avgCPM || 0),
+			}
+		})
+
+		adTypes.sort((a, b) => b.sort - a.sort)
+
+		this.setState({ adTypes })
 	}
 
 	validateTitle(name, dirty, errMsg) {
@@ -84,6 +110,7 @@ class AdSlotBasic extends Component {
 			// nameHelperTxt,
 			// descriptionHelperTxt
 		} = this.props
+		const { adTypes } = this.state
 		const { type, title, description, temp } = newItem
 		const { minPerImpression } = temp
 		const errTitle = invalidFields['title']
@@ -138,7 +165,7 @@ class AdSlotBasic extends Component {
 							fullWidth
 							required
 							onChange={this.validateAndUpdateType.bind(this, true)}
-							source={AdTypes}
+							source={adTypes}
 							value={type + ''}
 							label={t('adType', { isProp: true })}
 							htmlId='ad-type-dd'
