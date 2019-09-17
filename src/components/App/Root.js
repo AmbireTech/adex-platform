@@ -97,6 +97,8 @@ class Root extends Component {
 		const { actions, location } = this.props
 		const { metamaskNetworkCheck } = actions
 
+		actions.getRelayerConfig()
+
 		metamaskNetworkCheck({ location })
 		if (window.ethereum) {
 			window.ethereum.on('accountsChanged', accounts => {
