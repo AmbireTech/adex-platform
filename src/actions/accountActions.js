@@ -206,7 +206,7 @@ async function getNetworkId() {
 
 // TEMP
 const networks = {
-	1: { name: 'Mainnet', for: 'production' },
+	1: { name: 'Mainnet', for: 'development' },
 	5: { name: 'Georli', for: 'development' },
 	production: { name: 'Mainnet', for: 'production' },
 	development: { name: 'Georli', for: 'development' },

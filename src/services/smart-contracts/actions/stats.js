@@ -192,6 +192,7 @@ async function getValidatorData({ wallet, identity }) {
 		address,
 		withBalance,
 	})
+	console.log('WITH_BALANCE', withBalance)
 	const aggregates = await getIdentityStatistics({ withBalance, address })
 
 	return {

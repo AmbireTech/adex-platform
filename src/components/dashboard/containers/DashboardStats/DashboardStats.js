@@ -15,6 +15,8 @@ import StatsCard from './StatsCard'
 import { styles } from './styles'
 import Grid from '@material-ui/core/Grid'
 import { PublisherStats } from './PublisherStats'
+import { getAllCampaigns } from 'services/adex-market/actions'
+import { eventsAggregates } from 'services/adex-validator/actions'
 
 const { BidStatesLabels, BID_STATES } = ExchangeConstants
 
@@ -37,8 +39,17 @@ export class DashboardStats extends Component {
 		this.props.history.push('/dashboard/' + this.props.side + '/account')
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		this.props.actions.updateNav('navTitle', this.props.t('DASHBOARD'))
+		// testing
+		const allCampaigns = await getAllCampaigns()
+		const mapped = await allCampaigns.map(async campaign => {
+			const agrArgs = `${this.props.account.identity.address}`
+			const stats = await eventsAggregates({ agrArgs, campaign })
+			console.log(stats)
+			return stats
+		})
+		console.log(allCampaigns)
 	}
 
 	handleTabChange = index => {
@@ -294,6 +305,7 @@ export class DashboardStats extends Component {
 				: null
 
 		// const stats = this.mapData(sideBids)
+		// const advStats = await getAllCampaigns()
 
 		return (
 			<div>

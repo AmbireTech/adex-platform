@@ -1,6 +1,6 @@
 import React from 'react'
 import { PublisherStatistics } from 'components/dashboard/charts/revenue'
-
+import { BidsTimeStatistics } from 'components/dashboard/charts/slot/bidsStatistics'
 const getHourId = _id => {
 	return `${_id.year}-${_id.month}-${_id.day}-${_id.hour}`
 }

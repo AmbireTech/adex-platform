@@ -31,7 +31,7 @@
     "camelcase": "^5.2.0",
     "case-sensitive-paths-webpack-plugin": "2.2.0",
     "chalk": "2.4.1",
-    "chart.js": "^2.7.2",
+    "chart.js": "^2.8.0",
     "classnames": "^2.2.5",
     "copy-to-clipboard": "^3.0.8",
     "css-loader": "2.1.1",
