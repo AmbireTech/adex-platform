@@ -17,6 +17,7 @@ import Grid from '@material-ui/core/Grid'
 import { PublisherStats } from './PublisherStats'
 import { getAllCampaigns } from 'services/adex-market/actions'
 import { eventsAggregates } from 'services/adex-validator/actions'
+import { AdvertiserStats } from './AdvertiserStats'
 
 const { BidStatesLabels, BID_STATES } = ExchangeConstants
 
@@ -313,11 +314,16 @@ export class DashboardStats extends Component {
 					<Grid item md={12} lg={12} xs={12}>
 						<Card className={classnames(classes.dashboardCardBody)}>
 							<CardContent>
-								{aggregates ? (
+								{side === 'publisher' && aggregates ? (
 									<PublisherStats
 										aggregates={account.stats.raw.aggregates}
 										t={t}
 									/>
+								) : side === 'advertiser' && aggregates ? (
+									<AdvertiserStats
+										aggregates={account.stats.raw.aggregates}
+										t={t}
+									></AdvertiserStats>
 								) : (
 									t('NO_STATS_YET')
 								)}
