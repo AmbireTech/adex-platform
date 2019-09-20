@@ -207,9 +207,9 @@ async function getNetworkId() {
 // TEMP
 const networks = {
 	1: { name: 'Mainnet', for: 'production' },
-	5: { name: 'Georli', for: 'development' },
+	5: { name: 'Goerli', for: 'development' },
 	production: { name: 'Mainnet', for: 'production' },
-	development: { name: 'Georli', for: 'development' },
+	development: { name: 'Goerli', for: 'development' },
 }
 
 export function metamaskNetworkCheck({ id, location }) {
