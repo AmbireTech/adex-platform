@@ -1,5 +1,9 @@
 import React from 'react'
 import { PublisherStatistics } from 'components/dashboard/charts/revenue'
+import InputLabel from '@material-ui/core/InputLabel'
+import MenuItem from '@material-ui/core/MenuItem'
+import FormControl from '@material-ui/core/FormControl'
+import Select from '@material-ui/core/Select'
 
 const getHourId = _id => {
 	return `${_id.year}-${_id.month}-${_id.day}-${_id.hour}`
@@ -49,21 +53,37 @@ const mapAggregates = ({ aggregates = [] }) => {
 }
 
 export const PublisherStats = ({ aggregates, t }) => {
+	const [values, setValues] = React.useState({
+		period: 'hourly',
+	})
+	const handleChange = event => {
+		setValues(oldValues => ({
+			...oldValues,
+			[event.target.name]: event.target.value,
+		}))
+	}
 	const data = mapAggregates({ aggregates })
-
-	// console.log('data', data)
 	return (
 		<div>
+			<form autoComplete='off'>
+				<FormControl>
+					<InputLabel htmlFor='age-simple'>Age</InputLabel>
+					<Select
+						value={values.period}
+						onChange={handleChange}
+						inputProps={{
+							name: 'period',
+						}}
+					>
+						<MenuItem value={'hourly'}>Hourly</MenuItem>
+						<MenuItem value={'daily'}>Daily</MenuItem>
+					</Select>
+				</FormControl>
+			</form>
 			<PublisherStatistics
-				data={data.daily}
+				data={data[values.period]}
 				channels={data.channels}
-				options={{ title: t('DAILY') }}
-				t={t}
-			/>
-			<PublisherStatistics
-				data={data.hourly}
-				channels={data.channels}
-				options={{ title: t('HOURLY') }}
+				options={{ title: t(values.period) }}
 				t={t}
 			/>
 		</div>
