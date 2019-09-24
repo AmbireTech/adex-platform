@@ -211,7 +211,7 @@ export const regAccount = ({
 }) => {
 	return requester
 		.fetch({
-			route: 'accounts/register',
+			route: 'identity/register',
 			method: 'POST',
 			body: JSON.stringify({
 				owner,
