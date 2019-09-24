@@ -2,7 +2,7 @@ import * as types from 'constants/actionTypes'
 import { addSig, getSig } from 'services/auth/auth'
 import { getSession, checkSession } from 'services/adex-market/actions'
 import {
-	relayerConfig,
+	getRelayerConfigData,
 	regAccount,
 	getGrantType,
 } from 'services/adex-relayer/actions'
@@ -223,7 +223,7 @@ export function createSession({ wallet, identity, email, deleteLegacyKey }) {
 
 export function getRelayerConfig() {
 	return async function(dispatch) {
-		const cfg = await relayerConfig()
+		const cfg = await getRelayerConfigData()
 		return dispatch({
 			type: types.UPDATE_RELAYER_CFG,
 			cfg,

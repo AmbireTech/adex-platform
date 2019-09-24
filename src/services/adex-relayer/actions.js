@@ -155,7 +155,7 @@ export const registerExpectedIdentity = ({ owner, mail }) => {
 		.then(processResponse)
 }
 
-export const relayerConfig = () => {
+export const getRelayerConfigData = () => {
 	return requester
 		.fetch({
 			route: 'relayer/cfg',
