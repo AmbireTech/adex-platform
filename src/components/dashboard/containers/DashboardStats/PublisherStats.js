@@ -44,6 +44,7 @@ const mapAggregates = ({
 			const channelData = aggr.reduce(
 				({ result }, e) => {
 					const { _id, value } = e
+					// TODO: filter if not in range
 					let id = getHourId(_id)
 					switch (timeframe) {
 						case 'minute':
@@ -65,6 +66,7 @@ const mapAggregates = ({
 				},
 				{ result: {} }
 			)
+			// TODO: add missing dates / time to result[channel.id]
 			result[channel.id] = channelData.result
 			channels[channel.id] = channel
 			return { result, channels }
