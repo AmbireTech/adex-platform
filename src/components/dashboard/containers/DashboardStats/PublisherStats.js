@@ -36,91 +36,41 @@ const mapAggregates = ({
 	let period = eachDayOfInterval({
 		start: selectedFromDate,
 		end: selectedToDate,
-	}).map(p => (daysPeriod[format(new Date(p), 'MM-dd-yyyy')] = 0))
-	console.log(daysPeriod)
-	return aggregates.map(item => {
-		const { aggr = [] } = item
-		return aggr.reduce((acc = {}, curr) => {
-			console.log('CURR', curr)
-			const { _id, value } = curr
-			let id
-			switch (timeframe) {
-				case 'minute':
-					id = getMinuteId(_id)
-					break
-				case 'hour':
-					id = getHourId(_id)
-					break
-				case 'day':
-					id = getDayId(_id)
-					break
-				default:
-					id = getHourId(_id)
-					break
-			}
-			console.log(acc)
-			acc[id] = acc[id] || 0
-			return (acc[id] += value)
-		})
 	})
 
-	// return aggregates.reduce(
-	// 	({ minute, hour, day, week, month, channels }, a) => {
-	// 		const { aggr = [], channel = {} } = a
-
-	// 		const channelData = aggr.reduce(
-	// 			(
-	// 				{
-	// 					channelLive,
-	// 					channelHourly,
-	// 					channelDaily,
-	// 					channelWeekly,
-	// 					channelMonthly,
-	// 				},
-	// 				e
-	// 			) => {
-	// 				const { _id, value } = e
-
-	// 				const hourId = getHourId(_id)
-	// 				channelHourly[hourId] = channelHourly[hourId] || 0
-	// 				channelHourly[hourId] += value
-
-	// 				const dayId = getDayId(_id)
-	// 				channelDaily[dayId] = channelDaily[dayId] || 0
-	// 				channelDaily[dayId] += value
-
-	// 				return {
-	// 					channelLive,
-	// 					channelHourly,
-	// 					channelDaily,
-	// 					channelWeekly,
-	// 					channelMonthly,
-	// 				}
-	// 			},
-	// 			{
-	// 				channelLive: {},
-	// 				channelHourly: {},
-	// 				channelDaily: {},
-	// 				channelWeekly: {},
-	// 				channelMonthly: {},
-	// 			}
-	// 		)
-	// 		console.log(channelData.channelHourly)
-	// 		hour[channel.id] = channelData.channelHourly
-	// 		day[channel.id] = channelData.channelDaily
-	// 		channels[channel.id] = channel
-
-	// 		return {
-	// 			minute,
-	// 			hour,
-	// 			day,
-	// 			week,
-	// 			month,
-	// 			channels,
-	// 		}
-	// 	},
-	// 	{ minute: {}, hour: {}, day: {}, week: {}, month: {}, channels: {} }
-	// )
+	return aggregates.reduce(
+		({ result, channels }, a) => {
+			const { aggr = [], channel = {} } = a
+			const channelData = aggr.reduce(
+				({ result }, e) => {
+					const { _id, value } = e
+					let id = getHourId(_id)
+					switch (timeframe) {
+						case 'minute':
+							id = getMinuteId(_id)
+							break
+						case 'hour':
+							id = getHourId(_id)
+							break
+						case 'day':
+							id = getDayId(_id)
+							break
+						default:
+							id = getHourId(_id)
+							break
+					}
+					result[id] = result[id] || 0
+					result[id] += value
+					return { result }
+				},
+				{ result: {} }
+			)
+			result[channel.id] = channelData.result
+			channels[channel.id] = channel
+			return { result, channels }
+		},
+		{ result: {}, channels: {} }
+	)
 }
 
 export const PublisherStats = ({ aggregates, t }) => {
@@ -219,7 +169,7 @@ export const PublisherStats = ({ aggregates, t }) => {
 				</Box>
 			</form>
 			<PublisherStatistics
-				data={data[timeframe] || []}
+				data={data.result || []}
 				channels={data.channels}
 				options={{ title: t(timeframe.toUpperCase()) }}
 				t={t}
