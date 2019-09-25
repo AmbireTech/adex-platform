@@ -205,8 +205,10 @@ export const setAddrPriv = ({
 export const regAccount = ({
 	owner,
 	email,
-	txnsRaw,
-	signatures,
+	bytecode,
+	identityFactoryAddr,
+	identityBaseAddr,
+	salt,
 	identityAddr,
 }) => {
 	return requester
@@ -216,9 +218,11 @@ export const regAccount = ({
 			body: JSON.stringify({
 				owner,
 				email,
-				txnsRaw,
+				bytecode,
+				identityFactoryAddr,
+				identityBaseAddr,
+				salt,
 				identityAddr,
-				signatures,
 			}),
 			headers: { 'Content-Type': 'application/json' },
 		})
