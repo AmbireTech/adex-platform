@@ -152,7 +152,7 @@ export async function getIdentityDeployData({
 	const bytecode = await getIdentityBytecode(opts)
 	const salt = keccak256(owner)
 
-	const expectedAddr = getAddress(
+	const identityAddr = getAddress(
 		`0x${generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')}`
 	)
 
@@ -161,7 +161,7 @@ export async function getIdentityDeployData({
 		identityBaseAddr,
 		bytecode,
 		salt,
-		expectedAddr,
+		identityAddr,
 	}
 }
 
