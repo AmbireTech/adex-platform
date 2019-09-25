@@ -303,6 +303,7 @@ export class DashboardStats extends Component {
 							<CardContent>
 								{aggregates ? (
 									<PublisherStats
+										account={account}
 										aggregates={account.stats.raw.aggregates}
 										t={t}
 									/>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { PublisherStatistics } from 'components/dashboard/charts/revenue'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -6,6 +6,7 @@ import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
 import { Box } from '@material-ui/core'
 import DateFnsUtils from '@date-io/date-fns'
+import { getValidatorStats } from 'services/smart-contracts/actions/stats'
 import {
 	MuiPickersUtilsProvider,
 	KeyboardDatePicker,
@@ -21,7 +22,7 @@ const getDayId = _id => {
 
 const mapAggregates = ({ aggregates = [] }) => {
 	return aggregates.reduce(
-		({ hourly, daily, channels }, a) => {
+		({ hour, day, channels }, a) => {
 			const { aggr = [], channel = {} } = a
 
 			const channelData = aggr.reduce(
@@ -44,27 +45,32 @@ const mapAggregates = ({ aggregates = [] }) => {
 				{ channelHourly: {}, channelDaily: {} }
 			)
 
-			hourly[channel.id] = channelData.channelHourly
-			daily[channel.id] = channelData.channelDaily
+			hour[channel.id] = channelData.channelHourly
+			day[channel.id] = channelData.channelDaily
 			channels[channel.id] = channel
 
 			return {
-				hourly,
-				daily,
+				hour,
+				day,
 				channels,
 			}
 		},
-		{ hourly: {}, daily: {}, channels: {} }
+		{ hour: {}, day: {}, channels: {} }
 	)
 }
 
-export const PublisherStats = ({ aggregates, t }) => {
-	const [values, setValues] = React.useState({
-		timeframe: 'hourly',
+export const PublisherStats = async ({ account, aggregates, t }) => {
+	const [values, setValues] = useState({
+		timeframe: 'hour',
 		period: 'today',
 	})
-	const [selectedFromDate, setSelectedFromDate] = React.useState(Date.now())
-	const [selectedToDate, setSelectedToDate] = React.useState(Date.now())
+	const [selectedFromDate, setSelectedFromDate] = useState(Date.now())
+	const [selectedToDate, setSelectedToDate] = useState(Date.now())
+	const validatorData = await getValidatorStats({
+		account,
+		timeframe: values.timeframe,
+		period: { from: selectedFromDate, to: selectedToDate },
+	})
 	const handleChange = event => {
 		setValues(oldValues => ({
 			...oldValues,
@@ -78,16 +84,20 @@ export const PublisherStats = ({ aggregates, t }) => {
 				<Box display='flex' flexWrap='wrap'>
 					<Box m={2}>
 						<FormControl>
-							<InputLabel htmlFor='age-simple'>Age</InputLabel>
+							<InputLabel htmlFor='timeframe'>Timeframe</InputLabel>
 							<Select
 								value={values.timeframe}
 								onChange={handleChange}
 								inputProps={{
-									name: 'period',
+									name: 'timeframe',
 								}}
 							>
-								<MenuItem value={'hourly'}>Hourly</MenuItem>
-								<MenuItem value={'daily'}>Daily</MenuItem>
+								<MenuItem value={'minute'}>Live</MenuItem>
+								<MenuItem value={'hour'}>Hourly</MenuItem>
+								<MenuItem value={'day'}>Daily</MenuItem>
+								<MenuItem value={'week'}>Weekly</MenuItem>
+								<MenuItem value={'month'}>Monthly</MenuItem>
+								<MenuItem value={'year'}>Yearly</MenuItem>
 							</Select>
 						</FormControl>
 					</Box>
@@ -99,7 +109,7 @@ export const PublisherStats = ({ aggregates, t }) => {
 									variant='inline'
 									format='MM/dd/yyyy'
 									id='date-picker-inline'
-									label='Date picker inline'
+									label='From'
 									value={selectedFromDate}
 									onChange={setSelectedFromDate}
 									KeyboardButtonProps={{
@@ -117,7 +127,7 @@ export const PublisherStats = ({ aggregates, t }) => {
 									variant='inline'
 									format='MM/dd/yyyy'
 									id='date-picker-inline'
-									label='Date picker inline'
+									label='To'
 									value={selectedToDate}
 									onChange={setSelectedToDate}
 									KeyboardButtonProps={{
@@ -129,7 +139,7 @@ export const PublisherStats = ({ aggregates, t }) => {
 					</Box>
 					<Box m={2}>
 						<FormControl>
-							<InputLabel htmlFor='age-simple'>Age</InputLabel>
+							<InputLabel htmlFor='period'>Period</InputLabel>
 							<Select
 								value={values.period}
 								onChange={handleChange}
@@ -138,14 +148,18 @@ export const PublisherStats = ({ aggregates, t }) => {
 								}}
 							>
 								<MenuItem value={'today'}>Today</MenuItem>
-								<MenuItem value={'daily'}>Daily</MenuItem>
+								<MenuItem value={'yesterday'}>Yesterday</MenuItem>
+								<MenuItem value={'7Days'}>Last 7 Days</MenuItem>
+								<MenuItem value={'30Days'}>Last 30 Days</MenuItem>
+								<MenuItem value={'thisMonth'}>This Month</MenuItem>
+								<MenuItem value={'lastMonth'}>Last Month</MenuItem>
 							</Select>
 						</FormControl>
 					</Box>
 				</Box>
 			</form>
 			<PublisherStatistics
-				data={data[values.timeframe]}
+				data={data[values.timeframe] || []}
 				channels={data.channels}
 				options={{ title: t(values.timeframe.toUpperCase()) }}
 				t={t}
