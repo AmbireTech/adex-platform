@@ -161,7 +161,7 @@ export function getIdentityTxData({ owner, privLevel }) {
 	return async function(dispatch) {
 		try {
 			const txData = await getIdentityDeployData({ owner, privLevel })
-			updateIdentity('identityAddr', txData.expectedAddr)(dispatch)
+			updateIdentity('identityAddr', txData.identityAddr)(dispatch)
 			updateIdentity('identityTxData', txData)(dispatch)
 		} catch (err) {
 			console.error('ERR_GET_IDENTITY_TX_DATA', err)
