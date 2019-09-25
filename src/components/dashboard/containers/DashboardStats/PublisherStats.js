@@ -4,6 +4,12 @@ import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
+import { Box } from '@material-ui/core'
+import DateFnsUtils from '@date-io/date-fns'
+import {
+	MuiPickersUtilsProvider,
+	KeyboardDatePicker,
+} from '@material-ui/pickers'
 
 const getHourId = _id => {
 	return `${_id.year}-${_id.month}-${_id.day}-${_id.hour}`
@@ -54,8 +60,11 @@ const mapAggregates = ({ aggregates = [] }) => {
 
 export const PublisherStats = ({ aggregates, t }) => {
 	const [values, setValues] = React.useState({
-		period: 'hourly',
+		timeframe: 'hourly',
+		period: 'today',
 	})
+	const [selectedFromDate, setSelectedFromDate] = React.useState(Date.now())
+	const [selectedToDate, setSelectedToDate] = React.useState(Date.now())
 	const handleChange = event => {
 		setValues(oldValues => ({
 			...oldValues,
@@ -66,24 +75,79 @@ export const PublisherStats = ({ aggregates, t }) => {
 	return (
 		<div>
 			<form autoComplete='off'>
-				<FormControl>
-					<InputLabel htmlFor='age-simple'>Age</InputLabel>
-					<Select
-						value={values.period}
-						onChange={handleChange}
-						inputProps={{
-							name: 'period',
-						}}
-					>
-						<MenuItem value={'hourly'}>Hourly</MenuItem>
-						<MenuItem value={'daily'}>Daily</MenuItem>
-					</Select>
-				</FormControl>
+				<Box display='flex' flexWrap='wrap'>
+					<Box m={2}>
+						<FormControl>
+							<InputLabel htmlFor='age-simple'>Age</InputLabel>
+							<Select
+								value={values.timeframe}
+								onChange={handleChange}
+								inputProps={{
+									name: 'period',
+								}}
+							>
+								<MenuItem value={'hourly'}>Hourly</MenuItem>
+								<MenuItem value={'daily'}>Daily</MenuItem>
+							</Select>
+						</FormControl>
+					</Box>
+					<Box m={2}>
+						<FormControl>
+							<MuiPickersUtilsProvider utils={DateFnsUtils}>
+								<KeyboardDatePicker
+									disableToolbar
+									variant='inline'
+									format='MM/dd/yyyy'
+									id='date-picker-inline'
+									label='Date picker inline'
+									value={selectedFromDate}
+									onChange={setSelectedFromDate}
+									KeyboardButtonProps={{
+										'aria-label': 'change date',
+									}}
+								/>
+							</MuiPickersUtilsProvider>
+						</FormControl>
+					</Box>
+					<Box m={2}>
+						<FormControl>
+							<MuiPickersUtilsProvider utils={DateFnsUtils}>
+								<KeyboardDatePicker
+									disableToolbar
+									variant='inline'
+									format='MM/dd/yyyy'
+									id='date-picker-inline'
+									label='Date picker inline'
+									value={selectedToDate}
+									onChange={setSelectedToDate}
+									KeyboardButtonProps={{
+										'aria-label': 'change date',
+									}}
+								/>
+							</MuiPickersUtilsProvider>
+						</FormControl>
+					</Box>
+					<Box m={2}>
+						<FormControl>
+							<InputLabel htmlFor='age-simple'>Age</InputLabel>
+							<Select
+								value={values.period}
+								onChange={handleChange}
+								inputProps={{
+									name: 'period',
+								}}
+							>
+								<MenuItem value={'today'}>Today</MenuItem>
+								<MenuItem value={'daily'}>Daily</MenuItem>
+							</Select>
+						</FormControl>
+					</Box>
+				</Box>
 			</form>
 			<PublisherStatistics
-				data={data[values.period]}
+				data={data[values.timeframe]}
 				channels={data.channels}
-				options={{ title: t(values.period) }}
+				options={{ title: t(values.timeframe.toUpperCase()) }}
 				t={t}
 			/>
 		</div>

@@ -177,6 +177,26 @@ async function getIdentityStatistics({ withBalance, address }) {
 	return aggregates
 }
 
+export async function getValidatorStats({ address, timeframe, period }) {
+	const withBalance = await getAllChannelsForIdentity({ address })
+	const allCalls = withBalance.map(async ({ channel }) => {
+		const agrArgs = `${address}?timeframe=${timeframe}`
+		const stats = await eventsAggregates({ agrArgs, campaign: channel })
+		return stats
+	})
+	const aggregates = await Promise.all(
+		allCalls.map(ag =>
+			ag
+				//filter period
+				.then(res => res)
+				.catch(e => {
+					return {}
+				})
+		)
+	)
+	return aggregates
+}
+
 async function getAllChannelsForIdentity({ address }) {
 	const allActive = await getAllChannels()
 	const withBalance = await getAllChannelsWhereHasBalance(allActive, address)
