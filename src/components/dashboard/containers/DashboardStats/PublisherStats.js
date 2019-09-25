@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { format, eachDayOfInterval, subDays } from 'date-fns'
 import { PublisherStatistics } from 'components/dashboard/charts/revenue'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -11,16 +12,26 @@ import {
 	MuiPickersUtilsProvider,
 	KeyboardDatePicker,
 } from '@material-ui/pickers'
+import { type } from 'os'
 
-const getHourId = _id => {
-	return `${_id.year}-${_id.month}-${_id.day}-${_id.hour}`
+const getHourId = ({ year, month, day, hour }) => {
+	return format(new Date(year, month, day, hour), 'MM-dd-yyyy HH')
 }
 
 const getDayId = _id => {
 	return `${_id.year}-${_id.month}-${_id.day}`
 }
 
-const mapAggregates = ({ aggregates = [] }) => {
+const mapAggregates = ({
+	aggregates = [],
+	selectedFromDate,
+	selectedToDate,
+	timeframe,
+}) => {
+	const period = eachDayOfInterval({
+		start: selectedFromDate,
+		end: selectedToDate,
+	})
 	return aggregates.reduce(
 		({ hour, day, channels }, a) => {
 			const { aggr = [], channel = {} } = a
@@ -30,7 +41,8 @@ const mapAggregates = ({ aggregates = [] }) => {
 					const { _id, value } = e
 
 					const hourId = getHourId(_id)
-					channelHourly[hourId] = value
+					channelHourly[hourId] = channelHourly[hourId] || 0
+					channelHourly[hourId] += value
 
 					const dayId = getDayId(_id)
 
@@ -44,7 +56,7 @@ const mapAggregates = ({ aggregates = [] }) => {
 				},
 				{ channelHourly: {}, channelDaily: {} }
 			)
-
+			console.log(channelData.channelHourly)
 			hour[channel.id] = channelData.channelHourly
 			day[channel.id] = channelData.channelDaily
 			channels[channel.id] = channel
@@ -59,25 +71,21 @@ const mapAggregates = ({ aggregates = [] }) => {
 	)
 }
 
-export const PublisherStats = async ({ account, aggregates, t }) => {
-	const [values, setValues] = useState({
-		timeframe: 'hour',
-		period: 'today',
-	})
-	const [selectedFromDate, setSelectedFromDate] = useState(Date.now())
+export const PublisherStats = ({ aggregates, t }) => {
+	const [timeframe, setTimeframe] = useState('hour')
+	const [period, setPeriod] = useState('today')
+	const [selectedFromDate, setSelectedFromDate] = useState(
+		subDays(Date.now(), 1)
+	)
+	// Gets initial state form the store aggregates that are passed down
+	const [stats, setStats] = useState(aggregates)
 	const [selectedToDate, setSelectedToDate] = useState(Date.now())
-	const validatorData = await getValidatorStats({
-		account,
-		timeframe: values.timeframe,
-		period: { from: selectedFromDate, to: selectedToDate },
+	const data = mapAggregates({
+		aggregates: stats,
+		selectedFromDate,
+		selectedToDate,
+		timeframe,
 	})
-	const handleChange = event => {
-		setValues(oldValues => ({
-			...oldValues,
-			[event.target.name]: event.target.value,
-		}))
-	}
-	const data = mapAggregates({ aggregates })
 	return (
 		<div>
 			<form autoComplete='off'>
@@ -86,8 +94,8 @@ export const PublisherStats = async ({ account, aggregates, t }) => {
 						<FormControl>
 							<InputLabel htmlFor='timeframe'>Timeframe</InputLabel>
 							<Select
-								value={values.timeframe}
-								onChange={handleChange}
+								value={timeframe}
+								onChange={e => setTimeframe(e.target.value)}
 								inputProps={{
 									name: 'timeframe',
 								}}
@@ -141,8 +149,8 @@ export const PublisherStats = async ({ account, aggregates, t }) => {
 						<FormControl>
 							<InputLabel htmlFor='period'>Period</InputLabel>
 							<Select
-								value={values.period}
-								onChange={handleChange}
+								value={period}
+								onChange={e => setPeriod(e.target.value)}
 								inputProps={{
 									name: 'period',
 								}}
@@ -159,9 +167,9 @@ export const PublisherStats = async ({ account, aggregates, t }) => {
 				</Box>
 			</form>
 			<PublisherStatistics
-				data={data[values.timeframe] || []}
+				data={data[timeframe] || []}
 				channels={data.channels}
-				options={{ title: t(values.timeframe.toUpperCase()) }}
+				options={{ title: t(timeframe.toUpperCase()) }}
 				t={t}
 			/>
 		</div>
