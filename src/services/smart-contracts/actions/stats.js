@@ -5,6 +5,7 @@ import { getAllCampaigns } from 'services/adex-market/actions'
 import {
 	lastApprovedState,
 	eventsAggregates,
+	getValidatorAuthToken,
 } from 'services/adex-validator/actions'
 import { bigNumberify } from 'ethers/utils'
 import { Channel, MerkleTree } from 'adex-protocol-eth/js'
@@ -54,7 +55,7 @@ export async function getAccountStats({ account }) {
 		Dai.balanceOf(wallet.address),
 		Dai.balanceOf(identity.address),
 		privilegesAction,
-		getValidatorData({ wallet, identity }),
+		getValidatorData({ wallet, account }),
 	]
 
 	const [
@@ -73,7 +74,11 @@ export async function getAccountStats({ account }) {
 		)
 	)
 
-	const { outstandingBalanceDai = 0, aggregates = [] } = validatorsData
+	const {
+		outstandingBalanceDai = 0,
+		aggregates = [],
+		validatorsAuth,
+	} = validatorsData
 
 	// BigNumber values for balances
 	const raw = {
@@ -102,6 +107,7 @@ export async function getAccountStats({ account }) {
 	return {
 		raw,
 		formatted,
+		validatorsAuth,
 	}
 }
 
@@ -158,11 +164,61 @@ async function getOutstandingBalance({ wallet, address, withBalance }) {
 	return totalOutstanding || bigNumberify('0')
 }
 
-async function getIdentityStatistics({ withBalance, address }) {
+async function getIdentityStatistics({
+	withBalance,
+	address,
+	account = {},
+} = {}) {
+	const validatorAuthTokens = account.identity.validatorAuthTokens || {}
+
+	const allValidators = withBalance.reduce((all, { channel }) => {
+		const leader = (channel.validators || channel.spec.validators)[0].id
+		const follower = (channel.validators || channel.spec.validators)[1].id
+
+		const validators = {
+			...all,
+			[leader]: all[leader] || validatorAuthTokens[leader] || null,
+			[follower]: all[follower] || validatorAuthTokens[follower] || null,
+		}
+
+		return validators
+	}, {})
+
+	const keys = Object.keys(allValidators)
+
+	const tokenCalls = keys.map(async key => {
+		if (allValidators[key]) {
+			return allValidators[key]
+		} else {
+			const token = await getValidatorAuthToken({
+				validatorId: key,
+				account,
+			})
+
+			return token
+		}
+	})
+
+	const allTokens = await Promise.all(tokenCalls)
+
+	const validatorsAuth = keys.reduce((all, key, index) => {
+		const validators = {
+			...all,
+			[key]: allTokens[index],
+		}
+
+		return validators
+	}, {})
+
 	const allCalls = withBalance.map(async ({ channel }) => {
-		const agrArgs = `${address}?timeframe=hour`
-		const stats = await eventsAggregates({ agrArgs, campaign: channel })
-		return stats
+		const agrArgs = `?timeframe=hour`
+		const { aggregates, authTokens } = await eventsAggregates({
+			agrArgs,
+			campaign: channel,
+			account,
+			validatorsAuth,
+		})
+		return { aggregates, authTokens }
 	})
 
 	const aggregates = await Promise.all(
@@ -174,7 +230,7 @@ async function getIdentityStatistics({ withBalance, address }) {
 				})
 		)
 	)
-	return aggregates
+	return { aggregates, validatorsAuth }
 }
 
 async function getAllChannelsForIdentity({ address }) {
@@ -184,18 +240,24 @@ async function getAllChannelsForIdentity({ address }) {
 	return withBalance
 }
 
-async function getValidatorData({ wallet, identity }) {
-	const { address } = identity
+async function getValidatorData({ wallet, account }) {
+	const { address } = account.identity
 	const withBalance = await getAllChannelsForIdentity({ address })
 	const outstandingBalanceDai = await getOutstandingBalance({
 		wallet,
 		address,
 		withBalance,
 	})
-	const aggregates = await getIdentityStatistics({ withBalance, address })
+
+	const { aggregates, validatorsAuth } = await getIdentityStatistics({
+		withBalance,
+		address,
+		account,
+	})
 
 	return {
 		outstandingBalanceDai,
 		aggregates,
+		validatorsAuth,
 	}
 }
