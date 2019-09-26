@@ -5,8 +5,14 @@ import { relayerConfig, getGrantType } from 'services/adex-relayer/actions'
 import { updateSpinner } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
-import { getAccountStats } from 'services/smart-contracts/actions/stats'
-import { addToast, confirmAction } from './uiActions'
+import {
+	getAllChannelsForIdentity,
+	getAccountStats,
+	getOutstandingBalance,
+	getAllValidatorsAuthForIdentity,
+	getIdentityStatistics,
+} from 'services/smart-contracts/actions/stats'
+import { addToast, removeToast, confirmAction } from './uiActions'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES } from 'constants/misc'
 
@@ -73,11 +79,52 @@ export function updateAccountStats() {
 	return async function(dispatch, getState) {
 		const { account } = getState().persist
 		try {
-			const { formatted, raw, validatorsAuth } = await getAccountStats({
+			const { identity, wallet } = account
+			const { address } = identity
+
+			const withBalance = await getAllChannelsForIdentity({ address })
+
+			const outstandingBalanceDai = await getOutstandingBalance({
+				wallet,
+				address,
+				withBalance,
+			}).catch(err => {
+				console.error('ERR_OUTSTANDING_BALANCES', err)
+			})
+
+			const { formatted, raw } = await getAccountStats({
 				account,
+				outstandingBalanceDai,
 			})
 
 			updateAccount({ newValues: { stats: { formatted, raw } } })(dispatch)
+
+			const toastId = addToast({
+				type: 'warning',
+				label: translate('SIGN_VALIDATORS_AUTH'),
+				timeout: false,
+				unclosable: true,
+				top: true,
+			})(dispatch)
+
+			const validatorsAuth = await getAllValidatorsAuthForIdentity({
+				withBalance,
+				account,
+			})
+
+			removeToast(toastId)(dispatch)
+
+			updateValidatorAuthTokens({ newAuth: validatorsAuth })(dispatch, getState)
+
+			const { aggregates } = await getIdentityStatistics({
+				withBalance,
+				account,
+				validatorsAuth,
+			})
+
+			updateAccount({ newValues: { stats: { formatted, raw, aggregates } } })(
+				dispatch
+			)
 			updateValidatorAuthTokens({ newAuth: validatorsAuth })(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_STATS', err)
@@ -227,7 +274,7 @@ async function getNetworkId() {
 
 // TEMP
 const networks = {
-	1: { name: 'Mainnet', for: 'production' },
+	1: { name: 'Mainnet', for: 'development' },
 	5: { name: 'Goerli', for: 'development' },
 	production: { name: 'Mainnet', for: 'production' },
 	development: { name: 'Goerli', for: 'development' },
