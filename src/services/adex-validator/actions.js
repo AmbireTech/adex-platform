@@ -32,9 +32,9 @@ const processResponse = res => {
 	})
 }
 
-const getAuthToken = async ({ account, validator }) => {
+export const getValidatorAuthToken = async ({ validatorId, account }) => {
 	const { identity, wallet } = account
-	const existingAuth = (identity.validatorAuthTokens || {})[validator.id]
+	const existingAuth = (identity.validatorAuthTokens || {})[validatorId]
 	if (existingAuth) {
 		return existingAuth
 	}
@@ -43,7 +43,7 @@ const getAuthToken = async ({ account, validator }) => {
 	const signer = await getSigner({ wallet, provider })
 
 	const payload = {
-		id: validator.id,
+		id: validatorId,
 		identity: identity.address,
 		era: Math.floor(Date.now() / 60000),
 	}
@@ -53,16 +53,16 @@ const getAuthToken = async ({ account, validator }) => {
 	return token
 }
 
-const sendMessage = async ({ account, campaign, options }) => {
+const sendMessage = async ({ campaign, options, account }) => {
 	const { follower, leader } = getRequesters({ campaign })
 
-	const followerAuthToken = await getAuthToken({
+	const followerAuthToken = await getValidatorAuthToken({
+		validatorId: follower.validator.id,
 		account,
-		validator: follower.validator,
 	})
-	const leaderAuthToken = await getAuthToken({
+	const leaderAuthToken = await getValidatorAuthToken({
+		validatorId: leader.validator.id,
 		account,
-		validator: leader.validator,
 	})
 	const followerResult = await follower.requester
 		.fetch({
@@ -85,13 +85,13 @@ const sendMessage = async ({ account, campaign, options }) => {
 		.then(processResponse)
 
 	return {
-		authTokens: {
-			[follower.validator.id]: followerAuthToken,
-			[leader.validator.id]: leaderAuthToken,
-		},
 		results: {
 			followerResult,
 			leaderResult,
+		},
+		authTokens: {
+			[follower.id]: followerAuthToken,
+			[leader.id]: leaderAuthToken,
 		},
 	}
 }
@@ -107,7 +107,7 @@ export const lastApprovedState = ({ campaign }) => {
 		.then(processResponse)
 }
 
-export const closeCampaign = ({ account, campaign }) => {
+export const closeCampaign = ({ campaign, account }) => {
 	const options = {
 		route: `channel/${campaign.id}/events`,
 		method: 'POST',
@@ -115,16 +115,29 @@ export const closeCampaign = ({ account, campaign }) => {
 		headers: { 'Content-Type': 'application/json' },
 	}
 
-	return sendMessage({ account, campaign, options })
+	return sendMessage({ campaign, options, account })
 }
 
-export const eventsAggregates = ({ agrArgs, campaign }) => {
+export const eventsAggregates = async ({
+	agrArgs,
+	campaign,
+	validatorsAuth,
+}) => {
 	const { follower } = getRequesters({ campaign })
+	const followerId = follower.validator.id
 
-	return follower.requester
+	const aggregates = await follower.requester
 		.fetch({
 			route: `channel/${campaign.id}/events-aggregates/${agrArgs}`,
 			method: 'GET',
+			headers: { authorization: BEARER_PREFIX + validatorsAuth[follower.id] },
 		})
 		.then(processResponse)
+
+	return {
+		authTokens: {
+			[followerId]: validatorsAuth[followerId],
+		},
+		aggregates,
+	}
 }
