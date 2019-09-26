@@ -11,6 +11,7 @@ import { Base, AdSlot, AdUnit, helpers } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
 import { updateValidatorAuthTokens } from './accountActions'
 import { translate } from 'services/translations/translations'
+import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
 import {
 	getAdUnits,
 	getAdSlots,
@@ -252,6 +253,11 @@ export function openCampaign({ campaign, account }) {
 	return async function(dispatch) {
 		updateSpinner('opening-campaign', true)(dispatch)
 		try {
+			await getAllValidatorsAuthForIdentity({
+				withBalance: [{ channel: campaign }],
+				account,
+			})
+
 			const { readyCampaign } = await openChannel({ campaign, account })
 
 			dispatch({
