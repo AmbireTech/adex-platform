@@ -1,4 +1,5 @@
 import * as types from 'constants/actionTypes'
+import Helper from 'helpers/miscHelpers'
 
 export function updateSpinner(item, value) {
 	return function(dispatch) {
@@ -31,10 +32,22 @@ export function addToast({
 	top,
 }) {
 	return function(dispatch) {
-		return dispatch({
+		const id = Helper.getGuid()
+		dispatch({
 			type: types.ADD_TOAST,
-			toast: { type, action, label, timeout, unclosable, anchorOrigin, top },
+			toast: {
+				type,
+				action,
+				label,
+				timeout,
+				unclosable,
+				anchorOrigin,
+				top,
+				id,
+			},
 		})
+
+		return id
 	}
 }
 
