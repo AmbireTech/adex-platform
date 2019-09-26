@@ -123,6 +123,9 @@ export const PublisherStatistics = ({ data, channels, options = {}, t }) => {
 			display: true,
 			text: options.title,
 		},
+		// legend: {
+		// 	display: false,
+		// },
 		// elements: {
 		// 	line: {
 		// 		fill: true
@@ -140,8 +143,8 @@ export const PublisherStatistics = ({ data, channels, options = {}, t }) => {
 						// beginAtZero: true
 					},
 					// labels: {
-					//     show: true
-					// }
+					// 	show: false,
+					// },
 					scaleLabel: {
 						display: true,
 						labelString: t('TIMEFRAME'),

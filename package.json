@@ -12,6 +12,7 @@
     "@material-ui/icons": "^4.2.1",
     "@material-ui/lab": "^4.0.0-alpha.21",
     "@material-ui/pickers": "^3.2.6",
+    "@matharumanpreet00/react-daterange-picker": "^1.0.5",
     "@svgr/webpack": "4.1.0",
     "@typescript-eslint/eslint-plugin": "1.6.0",
     "@typescript-eslint/parser": "1.6.0",
