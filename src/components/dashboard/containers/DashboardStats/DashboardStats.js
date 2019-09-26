@@ -289,8 +289,8 @@ export class DashboardStats extends Component {
 		}
 
 		const aggregates =
-			account && account.stats && account.stats.raw
-				? account.stats.raw.aggregates
+			account && account.stats && account.stats.aggregates
+				? account.stats.aggregates
 				: null
 
 		// const stats = this.mapData(sideBids)
@@ -302,10 +302,7 @@ export class DashboardStats extends Component {
 						<Card className={classnames(classes.dashboardCardBody)}>
 							<CardContent>
 								{aggregates ? (
-									<PublisherStats
-										aggregates={account.stats.raw.aggregates}
-										t={t}
-									/>
+									<PublisherStats aggregates={aggregates} t={t} />
 								) : (
 									t('NO_STATS_YET')
 								)}
