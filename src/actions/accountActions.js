@@ -73,9 +73,12 @@ export function updateAccountStats() {
 	return async function(dispatch, getState) {
 		const { account } = getState().persist
 		try {
-			const stats = await getAccountStats({ account })
+			const { formatted, raw, validatorsAuth } = await getAccountStats({
+				account,
+			})
 
-			updateAccount({ newValues: { stats } })(dispatch)
+			updateAccount({ newValues: { stats: { formatted, raw } } })(dispatch)
+			updateValidatorAuthTokens({ newAuth: validatorsAuth })(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_STATS', err)
 			addToast({
@@ -111,6 +114,24 @@ export function updateAccountSettings() {
 				label: translate('ERR_SETTINGS', { args: [err] }),
 				timeout: 20000,
 			})(dispatch)
+		}
+	}
+}
+
+export function updateValidatorAuthTokens({ newAuth }) {
+	return async function(dispatch, getState) {
+		const { identity } = getState().persist.account
+
+		const newIdentity = { ...identity }
+		const newTokens = { ...(newIdentity.validatorAuthTokens || {}), ...newAuth }
+
+		// We don't want to update account if there is no actual change
+		if (
+			JSON.stringify(newIdentity.validatorAuthTokens) !==
+			JSON.stringify(newTokens)
+		) {
+			newIdentity.validatorAuthTokens = newTokens
+			updateAccount({ newValues: { identity: newIdentity } })(dispatch)
 		}
 	}
 }
