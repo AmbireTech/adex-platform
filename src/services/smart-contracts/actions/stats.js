@@ -32,7 +32,10 @@ export async function getAddressBalances({ address, authType }) {
 	return formatted
 }
 
-export async function getAccountStats({ account }) {
+export async function getAccountStats({
+	account,
+	outstandingBalanceDai = bigNumberify(0),
+}) {
 	const { wallet, identity } = account
 	const { provider, Dai, Identity } = await getEthers(wallet.authType)
 
@@ -55,30 +58,22 @@ export async function getAccountStats({ account }) {
 		Dai.balanceOf(wallet.address),
 		Dai.balanceOf(identity.address),
 		privilegesAction,
-		getValidatorData({ wallet, account }),
 	]
 
 	const [
 		walletBalanceEth,
 		walletBalanceDai,
-		identityBalanceDai,
+		identityBalanceDai = bigNumberify(0),
 		walletPrivileges,
-		validatorsData,
 	] = await Promise.all(
 		calls.map(c =>
 			c
 				.then(res => res)
 				.catch(e => {
-					return {}
+					return undefined
 				})
 		)
 	)
-
-	const {
-		outstandingBalanceDai = 0,
-		aggregates = [],
-		validatorsAuth,
-	} = validatorsData
 
 	// BigNumber values for balances
 	const raw = {
@@ -88,7 +83,6 @@ export async function getAccountStats({ account }) {
 		walletPrivileges,
 		outstandingBalanceDai,
 		totalIdentityBalanceDai: identityBalanceDai.add(outstandingBalanceDai),
-		aggregates,
 	}
 
 	const formatted = {
@@ -101,13 +95,11 @@ export async function getAccountStats({ account }) {
 		identityBalanceDai: formatUnits(identityBalanceDai, 18),
 		outstandingBalanceDai: formatUnits(outstandingBalanceDai, 18),
 		totalIdentityBalanceDai: formatUnits(raw.totalIdentityBalanceDai, 18),
-		aggregates,
 	}
 
 	return {
 		raw,
 		formatted,
-		validatorsAuth,
 	}
 }
 
@@ -143,7 +135,7 @@ async function getAllChannelsWhereHasBalance(allActive, addr) {
 		}))
 }
 
-async function getOutstandingBalance({ wallet, address, withBalance }) {
+export async function getOutstandingBalance({ wallet, address, withBalance }) {
 	const { authType } = wallet
 	const { AdExCore } = await getEthers(authType)
 
@@ -164,11 +156,10 @@ async function getOutstandingBalance({ wallet, address, withBalance }) {
 	return totalOutstanding || bigNumberify('0')
 }
 
-async function getIdentityStatistics({
+export async function getAllValidatorsAuthForIdentity({
 	withBalance,
-	address,
-	account = {},
-} = {}) {
+	account,
+}) {
 	const validatorAuthTokens = account.identity.validatorAuthTokens || {}
 
 	const allValidators = withBalance.reduce((all, { channel }) => {
@@ -210,6 +201,15 @@ async function getIdentityStatistics({
 		return validators
 	}, {})
 
+	return validatorsAuth
+}
+
+export async function getIdentityStatistics({
+	withBalance,
+	address,
+	account = {},
+	validatorsAuth,
+} = {}) {
 	const allCalls = withBalance.map(async ({ channel }) => {
 		const agrArgs = `?timeframe=hour`
 		const { aggregates, authTokens } = await eventsAggregates({
@@ -230,34 +230,12 @@ async function getIdentityStatistics({
 				})
 		)
 	)
-	return { aggregates, validatorsAuth }
+	return { aggregates }
 }
 
-async function getAllChannelsForIdentity({ address }) {
+export async function getAllChannelsForIdentity({ address }) {
 	const allActive = await getAllChannels()
 	const withBalance = await getAllChannelsWhereHasBalance(allActive, address)
 
 	return withBalance
-}
-
-async function getValidatorData({ wallet, account }) {
-	const { address } = account.identity
-	const withBalance = await getAllChannelsForIdentity({ address })
-	const outstandingBalanceDai = await getOutstandingBalance({
-		wallet,
-		address,
-		withBalance,
-	})
-
-	const { aggregates, validatorsAuth } = await getIdentityStatistics({
-		withBalance,
-		address,
-		account,
-	})
-
-	return {
-		outstandingBalanceDai,
-		aggregates,
-		validatorsAuth,
-	}
 }
