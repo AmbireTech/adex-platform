@@ -9,7 +9,7 @@ import {
 import { parseUnits, bigNumberify } from 'ethers/utils'
 import { Base, AdSlot, AdUnit, helpers } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
-import { updateAccount } from './accountActions'
+import { updateValidatorAuthTokens } from './accountActions'
 import { translate } from 'services/translations/translations'
 import {
 	getAdUnits,
@@ -560,13 +560,17 @@ export function closeCampaign({ campaign }) {
 		updateSpinner('closing-campaign', true)(dispatch)
 		try {
 			const { account } = getState().persist
-			const { authTokens } = await closeChannel({ account, campaign })
+			const { results, authTokens } = await closeChannel({ account, campaign })
 
-			const newIdentity = { ...account.identity }
-			const newTokens = { ...newIdentity.validatorAuthTokens, authTokens }
-			newIdentity.validatorAuthTokens = newTokens
+			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch)
+			// TODO: update campaign state
 
-			updateAccount({ newValues: { identity: newIdentity } })(dispatch)
+			addToast({
+				dispatch,
+				type: 'accept',
+				toastStr: 'SUCCESS_CLOSING_CAMPAIGN',
+				args: [campaign.id],
+			})
 		} catch (err) {
 			console.error('ERR_CLOSING_CAMPAIGN', err)
 			addToast({
