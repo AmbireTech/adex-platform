@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { format, eachDayOfInterval, subDays, isWithinInterval } from 'date-fns'
+import {
+	format,
+	subDays,
+	isWithinInterval,
+	addMinutes,
+	addHours,
+} from 'date-fns'
 import { PublisherStatistics } from 'components/dashboard/charts/revenue'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -14,17 +20,34 @@ import {
 	DateRange,
 } from '@matharumanpreet00/react-daterange-picker'
 import { Popover, Chip } from '@material-ui/core'
+import { addDays } from 'date-fns/esm'
 
-const getMinuteId = ({ year, month, day, hour }) => {
-	return format(new Date(year, month, day, hour), 'MM-dd-yyyy HH:MM')
+const FORMAT_MINUTE = 'MM-dd-yyyy HH:MM'
+const FORMAT_HOUR = 'MM-dd-yyyy HH'
+const FORMAT_DAY = 'MM-dd-yyyy'
+
+const getFormatedDate = ({ year, month, day, hour, minute }, formatString) => {
+	return format(new Date(year, month, day, hour, minute), formatString)
+}
+const mapByTimeframe = timeframe => {
+	switch (timeframe) {
+		case 'minute':
+			return { formatString: FORMAT_MINUTE, addFunction: addMinutes }
+		case 'hour':
+			return { formatString: FORMAT_HOUR, addFunction: addHours }
+		case 'day':
+			return { formatString: FORMAT_DAY, addFunction: addDays }
+		default:
+			return { formatString: FORMAT_HOUR, addFunction: addHours }
+	}
 }
 
-const getHourId = ({ year, month, day, hour }) => {
-	return format(new Date(year, month, day, hour), 'MM-dd-yyyy HH')
-}
-
-const getDayId = ({ year, month, day, hour }) => {
-	return format(new Date(year, month, day, hour), 'MM-dd-yyyy')
+const getRangeTime = ({ start, end }, addFunction, formatString) => {
+	let time = {}
+	for (let p = start; p <= end; p = addFunction(p, 1)) {
+		time[format(p, formatString)] = 0
+	}
+	return time
 }
 
 const mapAggregates = ({ aggregates = [], dateRange, timeframe }) => {
@@ -32,33 +55,21 @@ const mapAggregates = ({ aggregates = [], dateRange, timeframe }) => {
 		start: dateRange.startDate,
 		end: dateRange.endDate,
 	}
-	let period = eachDayOfInterval(interval)
+	const { formatString, addFunction } = mapByTimeframe(timeframe)
+	const rangeTime = getRangeTime(interval, addFunction, formatString)
+	console.log('RANGETIME:', rangeTime)
 
 	return aggregates.reduce(
 		({ result, channels }, a) => {
 			const { aggr = [], channel = {} } = a
+
 			const channelData = aggr.reduce(
 				({ result }, e) => {
 					const { _id, value } = e
-					// TODO: filter if not in range
 					const { year, month, day } = _id
 					const itemDate = new Date(year, month, day)
 					if (isWithinInterval(itemDate, interval)) {
-						let id = getHourId(_id)
-						switch (timeframe) {
-							case 'minute':
-								id = getMinuteId(_id)
-								break
-							case 'hour':
-								id = getHourId(_id)
-								break
-							case 'day':
-								id = getDayId(_id)
-								break
-							default:
-								id = getHourId(_id)
-								break
-						}
+						const id = getFormatedDate(_id, formatString)
 						result[id] = result[id] || 0
 						result[id] += value
 					}
