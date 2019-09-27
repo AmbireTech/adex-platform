@@ -178,7 +178,7 @@ export const PublisherStats = ({ aggregates, t }) => {
 							/>
 						</Popover>
 					</Box>
-					<Box m={2} display='flex' alignItems='flex-end'>
+					{/* <Box m={2} display='flex' alignItems='flex-end'>
 						<Chip
 							label={
 								campaigns.length > 0
@@ -208,7 +208,7 @@ export const PublisherStats = ({ aggregates, t }) => {
 						>
 							Filter Campaigns
 						</Popover>
-					</Box>
+					</Box> */}
 				</Box>
 			</form>
 			<PublisherStatistics
