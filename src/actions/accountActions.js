@@ -79,8 +79,9 @@ export function updateAccountStats() {
 	return async function(dispatch, getState) {
 		const { account } = getState().persist
 		try {
-			const { identity, wallet } = account
+			const { identity, wallet, stats } = account
 			const { address } = identity
+			const oldAggregates = stats.aggregates
 
 			const withBalance = await getAllChannelsForIdentity({ address })
 
@@ -97,7 +98,9 @@ export function updateAccountStats() {
 				outstandingBalanceDai,
 			})
 
-			updateAccount({ newValues: { stats: { formatted, raw } } })(dispatch)
+			updateAccount({
+				newValues: { stats: { formatted, raw, aggregates: oldAggregates } },
+			})(dispatch)
 
 			const toastId = addToast({
 				type: 'warning',
