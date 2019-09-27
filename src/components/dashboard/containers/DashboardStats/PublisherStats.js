@@ -5,28 +5,30 @@ import {
 	isWithinInterval,
 	addMinutes,
 	addHours,
+	addYears,
 } from 'date-fns'
 import { PublisherStatistics } from 'components/dashboard/charts/revenue'
+import FilterListIcon from '@material-ui/icons/FilterList'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
 import DateRangeIcon from '@material-ui/icons/DateRange'
 import { Box } from '@material-ui/core'
-import DateFnsUtils from '@date-io/date-fns'
-import { getValidatorStats } from 'services/smart-contracts/actions/stats'
-import {
-	DateRangePicker,
-	DateRange,
-} from '@matharumanpreet00/react-daterange-picker'
+import { DateRangePicker } from '@matharumanpreet00/react-daterange-picker'
 import { Popover, Chip } from '@material-ui/core'
-import { addDays } from 'date-fns/esm'
+import { addDays, addMonths } from 'date-fns/esm'
 
-const FORMAT_MINUTE = 'MM-dd-yyyy HH:MM'
-const FORMAT_HOUR = 'MM-dd-yyyy HH'
-const FORMAT_DAY = 'MM-dd-yyyy'
+const FORMAT_MINUTE = 'MM/dd/yyyy HH:mm'
+const FORMAT_HOUR = 'MM/dd/yyyy HH:mm'
+const FORMAT_DAY = 'MM/dd/yyyy'
+const FORMAT_MONTH = 'MM/yyyy'
+const FORMAT_YEAR = 'MM/yyyy'
 
-const getFormatedDate = ({ year, month, day, hour, minute }, formatString) => {
+const getFormatedDate = (
+	{ year, month, day = 1, hour = 0, minute = 0 },
+	formatString
+) => {
 	return format(new Date(year, month, day, hour, minute), formatString)
 }
 const mapByTimeframe = timeframe => {
@@ -37,6 +39,10 @@ const mapByTimeframe = timeframe => {
 			return { formatString: FORMAT_HOUR, addFunction: addHours }
 		case 'day':
 			return { formatString: FORMAT_DAY, addFunction: addDays }
+		case 'month':
+			return { formatString: FORMAT_MONTH, addFunction: addMonths }
+		case 'year':
+			return { formatString: FORMAT_YEAR, addFunction: addYears }
 		default:
 			return { formatString: FORMAT_HOUR, addFunction: addHours }
 	}
@@ -45,7 +51,7 @@ const mapByTimeframe = timeframe => {
 const getRangeTime = ({ start, end }, addFunction, formatString) => {
 	let time = {}
 	for (let p = start; p <= end; p = addFunction(p, 1)) {
-		time[format(p, formatString)] = 0
+		time[format(p, formatString)] = null
 	}
 	return time
 }
@@ -56,17 +62,17 @@ const mapAggregates = ({ aggregates = [], dateRange, timeframe }) => {
 		end: dateRange.endDate,
 	}
 	const { formatString, addFunction } = mapByTimeframe(timeframe)
-	const rangeTime = getRangeTime(interval, addFunction, formatString)
-	console.log('RANGETIME:', rangeTime)
+	// const rangeTime = getRangeTime(interval, addFunction, formatString)
+	// console.log('RANGETIME:', rangeTime)
 
 	return aggregates.reduce(
 		({ result, channels }, a) => {
 			const { aggr = [], channel = {} } = a
 
 			const channelData = aggr.reduce(
-				({ result }, e) => {
+				({ result = [] }, e) => {
 					const { _id, value } = e
-					const { year, month, day } = _id
+					const { year, month, day = 1, hour = 0, minute = 0 } = _id
 					const itemDate = new Date(year, month, day)
 					if (isWithinInterval(itemDate, interval)) {
 						const id = getFormatedDate(_id, formatString)
@@ -75,8 +81,9 @@ const mapAggregates = ({ aggregates = [], dateRange, timeframe }) => {
 					}
 					return { result }
 				},
-				{ result: {} }
+				{ result: [] }
 			)
+			console.log('DATA', channelData.result)
 			// TODO: add missing dates / time to result[channel.id]
 			result[channel.id] = channelData.result
 			channels[channel.id] = channel
@@ -88,6 +95,7 @@ const mapAggregates = ({ aggregates = [], dateRange, timeframe }) => {
 
 export const PublisherStats = ({ aggregates, t }) => {
 	const [timeframe, setTimeframe] = useState('hour')
+	const [campaigns, setCampaigns] = useState([])
 	const [anchorEl, setAnchorEl] = React.useState(null)
 	const handleClick = event => {
 		setAnchorEl(event.currentTarget)
@@ -96,6 +104,8 @@ export const PublisherStats = ({ aggregates, t }) => {
 	const handleClose = () => {
 		setAnchorEl(null)
 	}
+
+	//TODO: check how to open two separate
 	const open = Boolean(anchorEl)
 	const id = open ? 'simple-popover' : undefined
 
@@ -168,9 +178,41 @@ export const PublisherStats = ({ aggregates, t }) => {
 							/>
 						</Popover>
 					</Box>
+					<Box m={2} display='flex' alignItems='flex-end'>
+						<Chip
+							label={
+								campaigns.length > 0
+									? `${campaigns[0]}${
+											campaigns.length > 1
+												? `, and ${campaigns.length - 1} more`
+												: ''
+									  }`
+									: 'All Campaigns'
+							}
+							onClick={handleClick}
+							icon={<FilterListIcon />}
+						/>
+						<Popover
+							id={id}
+							open={open}
+							anchorEl={anchorEl}
+							onClose={handleClose}
+							anchorOrigin={{
+								vertical: 'bottom',
+								horizontal: 'left',
+							}}
+							transformOrigin={{
+								vertical: 'top',
+								horizontal: 'left',
+							}}
+						>
+							Filter Campaigns
+						</Popover>
+					</Box>
 				</Box>
 			</form>
 			<PublisherStatistics
+				timeframe={timeframe}
 				data={data.result || []}
 				channels={data.channels}
 				options={{ title: t(timeframe.toUpperCase()) }}
