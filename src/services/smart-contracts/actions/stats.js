@@ -161,7 +161,7 @@ async function getOutstandingBalance({ wallet, address, withBalance }) {
 async function getIdentityStatistics({ withBalance, address, timeframe }) {
 	const allCalls = withBalance.map(async ({ channel }) => {
 		const agrArgs = `${address}?timeframe=${timeframe}`
-		const stats = await eventsAggregates({ agrArgs, campaign: channel })
+		const stats = eventsAggregates({ agrArgs, campaign: channel })
 		return stats
 	})
 
@@ -216,6 +216,7 @@ async function getValidatorData({ wallet, identity }) {
 		withBalance,
 	})
 
+	// TODO: those are sync and should be redone
 	const stats = [
 		getIdentityStatistics({ withBalance, address, timeframe: 'minute' }),
 		getIdentityStatistics({ withBalance, address, timeframe: 'hour' }),
@@ -224,7 +225,9 @@ async function getValidatorData({ wallet, identity }) {
 		getIdentityStatistics({ withBalance, address, timeframe: 'month' }),
 		getIdentityStatistics({ withBalance, address, timeframe: 'year' }),
 	]
+	console.time('Waiting stats:')
 	const [minute, hour, day, week, month, year] = await Promise.all(stats)
+	console.timeEnd('Waiting stats:')
 
 	return {
 		outstandingBalanceDai,

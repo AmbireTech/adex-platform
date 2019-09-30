@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react'
 import {
 	format,
 	subDays,
+	subHours,
+	subWeeks,
+	subMonths,
+	startOfWeek,
+	endOfWeek,
+	endOfMonth,
+	startOfMonth,
 	isWithinInterval,
 	addMinutes,
 	addHours,
@@ -27,34 +34,27 @@ const FORMAT_MONTH = 'MM/yyyy'
 const FORMAT_YEAR = 'MM/yyyy'
 
 const getFormatedDate = (
-	{ year, month, day = 1, hour = 0, minutes = 0 },
+	{ year, month, day = 1, hour = 0, minute = 0 },
 	formatString
 ) => {
-	return format(new Date(year, month, day, hour, minutes), formatString)
+	return format(new Date(year, month, day, hour, minute), formatString)
 }
 
-const mapByTimeframe = timeframe => {
-	switch (timeframe) {
-		case 'minute':
-			return { formatString: FORMAT_MINUTE, addFunction: addMinutes }
-		case 'hour':
-			return { formatString: FORMAT_HOUR, addFunction: addHours }
-		case 'day':
-			return { formatString: FORMAT_DAY, addFunction: addDays }
-		case 'month':
-			return { formatString: FORMAT_MONTH, addFunction: addMonths }
-		case 'year':
-			return { formatString: FORMAT_YEAR, addFunction: addYears }
-		default:
-			return { formatString: FORMAT_HOUR, addFunction: addHours }
-	}
+const timeframeMap = {
+	minute: { formatString: FORMAT_MINUTE, addFunction: addMinutes },
+	hour: { formatString: FORMAT_HOUR, addFunction: addHours },
+	day: { formatString: FORMAT_DAY, addFunction: addDays },
+	month: { formatString: FORMAT_MONTH, addFunction: addMonths },
+	year: { formatString: FORMAT_YEAR, addFunction: addYears },
 }
 
 const getRangeTime = ({ start, end }, addFunction, formatString) => {
+	console.time('time')
 	let time = {}
 	for (let p = start; p <= end; p = addFunction(p, 1)) {
 		time[format(p, formatString)] = null
 	}
+	console.timeEnd('time')
 	return time
 }
 
@@ -63,17 +63,16 @@ const mapAggregates = ({ aggregates = [], dateRange, timeframe }) => {
 		start: dateRange.startDate,
 		end: dateRange.endDate,
 	}
-	const { formatString, addFunction } = mapByTimeframe(timeframe)
+	const { formatString, addFunction } = timeframeMap[timeframe]
 	const rangeTime = getRangeTime(interval, addFunction, formatString)
-
-	return aggregates.reduce(
+	console.time('aggrInside')
+	const resultData = aggregates.reduce(
 		({ result, channels }, a) => {
 			const { aggr = [], channel = {} } = a
-
 			const channelData = aggr.reduce(
 				({ result = [] }, e) => {
 					const { _id, value } = e
-					const { year, month, day = 1, hour = 0, minute = 0 } = _id
+					const { year, month, day = 1 } = _id
 					const itemDate = new Date(year, month, day)
 					if (isWithinInterval(itemDate, interval)) {
 						const id = getFormatedDate(_id, formatString)
@@ -84,19 +83,63 @@ const mapAggregates = ({ aggregates = [], dateRange, timeframe }) => {
 				},
 				{ result: [] }
 			)
+			// This puts the missing time / date to the chart
 			result[channel.id] = { ...rangeTime, ...channelData.result }
 			channels[channel.id] = channel
 			return { result, channels }
 		},
 		{ result: {}, channels: {} }
 	)
+	console.timeEnd('aggrInside')
+	return resultData
 }
 
 export const PublisherStats = ({ aggregates, t }) => {
 	const [timeframe, setTimeframe] = useState('hour')
+	const [stats, setStats] = useState(aggregates[timeframe])
 	const [minDate, setMinDate] = useState()
 	const [campaigns, setCampaigns] = useState([])
-	const [anchorEl, setAnchorEl] = React.useState(null)
+	const [anchorEl, setAnchorEl] = useState(null)
+	const [data, setData] = useState([])
+	const open = Boolean(anchorEl)
+	const id = open ? 'simple-popover' : undefined
+	const [dateRange, setDateRange] = useState({
+		startDate: subDays(new Date(), 7),
+		endDate: new Date(),
+	})
+	const minTime = {
+		minute: subHours(Date.now(), 24),
+		hour: subMonths(Date.now(), 1),
+		day: subMonths(Date.now(), 12),
+		week: subMonths(Date.now(), 24),
+	}
+
+	//TODO: check how to open two separate
+
+	useEffect(() => {
+		setData(
+			mapAggregates({
+				aggregates: stats,
+				dateRange,
+				timeframe,
+			})
+		)
+	}, [dateRange])
+
+	useEffect(() => {
+		setMinDate(minTime[timeframe])
+		if (minTime[timeframe] > dateRange.startDate) {
+			setDateRange(prevValue => ({
+				...prevValue,
+				startDate: minTime[timeframe],
+			}))
+		}
+		setStats(aggregates[timeframe])
+	}, [timeframe])
+
+	// Gets initial state form the store aggregates that are passed
+	useEffect(() => {}, [dateRange, timeframe])
+
 	const handleClick = event => {
 		setAnchorEl(event.currentTarget)
 	}
@@ -104,45 +147,48 @@ export const PublisherStats = ({ aggregates, t }) => {
 	const handleClose = () => {
 		setAnchorEl(null)
 	}
-
-	//TODO: check how to open two separate
-	const open = Boolean(anchorEl)
-	const id = open ? 'simple-popover' : undefined
-
-	const [dateRange, setDateRange] = useState({
-		startDate: subDays(new Date(), 7),
-		endDate: new Date(),
-	})
-	// Gets initial state form the store aggregates that are passed
-	const [stats, setStats] = useState(aggregates[timeframe])
-	useEffect(() => {
-		setStats(aggregates[timeframe])
-	}, [aggregates, timeframe])
-
-	useEffect(() => {
-		switch (timeframe) {
-			case 'minute':
-				setMinDate(subDays(Date.now(), 1))
+	// This is used for the quick swithc chips on top of the chart
+	const handleQuickSwitchPeriodChange = period => {
+		switch (period) {
+			case '24-hours':
+				setDateRange({
+					startDate: subHours(Date.now(), 24),
+					endDate: Date.now(),
+				})
+				setTimeframe('hour')
 				break
-			case 'hour':
-				setMinDate(subDays(Date.now(), 7))
+			case 'this-week':
+				setDateRange({
+					startDate: startOfWeek(Date.now()),
+					endDate: Date.now(),
+				})
+				setTimeframe('hour')
 				break
-			case 'day':
-				setMinDate(subDays(Date.now(), 90))
+			case 'last-week':
+				setDateRange({
+					startDate: startOfWeek(subWeeks(Date.now(), 1)),
+					endDate: endOfWeek(subWeeks(Date.now(), 1)),
+				})
+				setTimeframe('hour')
 				break
-			case 'week':
-				setMinDate(subDays(Date.now(), 356))
+			case 'this-month':
+				setDateRange({
+					startDate: startOfMonth(Date.now()),
+					endDate: Date.now(),
+				})
+				setTimeframe('day')
+				break
+			case 'last-month':
+				setDateRange({
+					startDate: startOfMonth(subMonths(Date.now(), 1)),
+					endDate: endOfMonth(subMonths(Date.now(), 1)),
+				})
+				setTimeframe('day')
 				break
 			default:
 				break
 		}
-	})
-
-	const data = mapAggregates({
-		aggregates: stats,
-		dateRange,
-		timeframe,
-	})
+	}
 
 	return (
 		<div>
@@ -219,17 +265,36 @@ export const PublisherStats = ({ aggregates, t }) => {
 						<Chip
 							color='primary'
 							label={'LAST 24 HOURS'}
-							onClick={() => console.log('24')}
+							onClick={() => handleQuickSwitchPeriodChange('24-hours')}
 						/>
 					</Box>
 					<Box m={1}>
-						<Chip color='primary' label={'THIS WEEK'} />
+						<Chip
+							color='primary'
+							label={'THIS WEEK'}
+							onClick={() => handleQuickSwitchPeriodChange('this-week')}
+						/>
 					</Box>
 					<Box m={1}>
-						<Chip color='primary' label={'THIS MONTH'} />
+						<Chip
+							color='primary'
+							label={'LAST WEEK'}
+							onClick={() => handleQuickSwitchPeriodChange('last-week')}
+						/>
 					</Box>
 					<Box m={1}>
-						<Chip color='primary' label={'LAST MONTH'} />
+						<Chip
+							color='primary'
+							label={'THIS MONTH'}
+							onClick={() => handleQuickSwitchPeriodChange('this-month')}
+						/>
+					</Box>
+					<Box m={1}>
+						<Chip
+							color='primary'
+							label={'LAST MONTH'}
+							onClick={() => handleQuickSwitchPeriodChange('last-month')}
+						/>
 					</Box>
 				</Box>
 				<Divider light />
