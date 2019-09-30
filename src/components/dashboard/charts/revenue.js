@@ -174,3 +174,74 @@ export const PublisherStatistics = ({ data, channels, options = {}, t }) => {
 
 	return <Line data={chartData} options={linesOptions} />
 }
+
+export const PublisherSimpleStatistics = ({ data, options = {}, t }) => {
+	const { labels, datasets } = data.reduce(
+		(memo, item) => {
+			memo.labels.push(item.time.toString())
+			memo.datasets.push(item.value)
+
+			return memo
+		},
+		{
+			labels: [],
+			datasets: [],
+		}
+	)
+
+	let commonDsProps = {
+		fill: true,
+		lineTension: 0.3,
+		borderWidth: 0,
+		pointRadius: 1,
+		pointHitRadius: 10,
+	}
+
+	let chartData = {
+		labels: labels,
+		datasets: [{ ...commonDsProps, data: datasets }],
+	}
+
+	const linesOptions = {
+		responsive: true,
+		title: {
+			display: true,
+			text: options.title,
+		},
+		tooltips: {
+			mode: 'index',
+		},
+		scales: {
+			xAxes: [
+				{
+					display: true,
+					gridLines: {
+						display: true,
+						// beginAtZero: true
+					},
+					// labels: {
+					//     show: true
+					// }
+					scaleLabel: {
+						display: true,
+						labelString: t('TIMEFRAME'),
+					},
+				},
+			],
+			yAxes: [
+				{
+					gridLines: {
+						display: true,
+						// beginAtZero: true
+					},
+					scaleLabel: {
+						display: true,
+						labelString: t('PAYOUTS'),
+					},
+				},
+			],
+		},
+	}
+
+	return <Line data={chartData} options={linesOptions} />
+}
