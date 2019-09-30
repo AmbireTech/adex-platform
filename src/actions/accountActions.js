@@ -2,6 +2,7 @@ import * as types from 'constants/actionTypes'
 import { addSig, getSig } from 'services/auth/auth'
 import { getSession, checkSession } from 'services/adex-market/actions'
 import { relayerConfig, getGrantType } from 'services/adex-relayer/actions'
+import { getValidatorAuthToken } from 'services/adex-validator/actions'
 import { updateSpinner } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
@@ -17,6 +18,7 @@ import { getEthers } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES } from 'constants/misc'
 
 const UPDATE_SETTINGS_INTERVAL = 24 * 60 * 60 * 1000 // 1 hour
+const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
 // MEMORY STORAGE
 export function updateSignin(prop, value) {
@@ -238,12 +240,23 @@ export function createSession({ wallet, identity, email }) {
 				}
 			}
 
+			const account = {
+				email: email,
+				wallet: newWallet,
+				identity: { ...identity },
+			}
+
+			const leaderValidatorAuth = await getValidatorAuthToken({
+				validatorId: VALIDATOR_LEADER_ID,
+				account,
+			})
+
+			account.identity.validatorAuthTokens = {
+				[VALIDATOR_LEADER_ID]: leaderValidatorAuth,
+			}
+
 			updateAccount({
-				newValues: {
-					email: email,
-					wallet: newWallet,
-					identity: identity,
-				},
+				newValues: { ...account },
 			})(dispatch)
 		} catch (err) {
 			console.error('ERR_GETTING_SESSION', err)
