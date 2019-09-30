@@ -6,11 +6,17 @@ import ewt from './ewt'
 
 const BEARER_PREFIX = 'Bearer '
 
+const getValidatorRequester = ({ baseUrl }) => {
+	return new Requester({ baseUrl })
+}
+
 const getRequesters = ({ campaign }) => {
 	const leader = (campaign.validators || campaign.spec.validators)[0]
 	const follower = (campaign.validators || campaign.spec.validators)[1]
-	const leaderRequester = new Requester({ baseUrl: leader.url })
-	const followerRequester = new Requester({ baseUrl: follower.url })
+	const leaderRequester = getValidatorRequester({ baseUrl: leader.url })
+	const followerRequester = getValidatorRequester({
+		baseUrl: follower.url,
+	})
 
 	return {
 		leader: { requester: leaderRequester, validator: leader },
@@ -118,26 +124,31 @@ export const closeCampaign = ({ campaign, account }) => {
 	return sendMessage({ campaign, options, account })
 }
 
-export const eventsAggregates = async ({
-	agrArgs,
+export const identityAnalytics = async ({
+	idenityAddr,
 	campaign,
+	campaignId,
 	validatorsAuth,
+	eventType,
+	metric,
+	timeframe,
+	limit,
 }) => {
-	const { follower } = getRequesters({ campaign })
-	const followerId = follower.validator.id
+	const leaderId = '0xc0ffee254729296a45a3885639AC7E10F9d54979'
 
-	const aggregates = await follower.requester
+	const baseUrl = 'http://localhost:8005' // GET from GLOBAL cfg, leader will be only TOM
+	const requester = getValidatorRequester({ baseUrl })
+
+	const aggregates = await requester
 		.fetch({
-			route: `channel/${campaign.id}/events-aggregates/${agrArgs}`,
+			route: `/analytics/for-user${campaignId || ''}`,
 			method: 'GET',
-			headers: { authorization: BEARER_PREFIX + validatorsAuth[follower.id] },
+			queryParams: { eventType, metric, timeframe, limit },
+			headers: {
+				authorization: BEARER_PREFIX + validatorsAuth[leaderId],
+			},
 		})
 		.then(processResponse)
 
-	return {
-		authTokens: {
-			[followerId]: validatorsAuth[followerId],
-		},
-		aggregates,
-	}
+	return aggregates
 }
