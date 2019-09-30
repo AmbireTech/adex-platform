@@ -175,7 +175,7 @@ export const PublisherStatistics = ({ data, channels, options = {}, t }) => {
 	return <Line data={chartData} options={linesOptions} />
 }
 
-export const PublisherSimpleStatistics = ({ data, options = {}, t }) => {
+export const PublisherSimpleStatistics = ({ data = [], options = {}, t }) => {
 	const { labels, datasets } = data.reduce(
 		(memo, item) => {
 			memo.labels.push(item.time.toString())
