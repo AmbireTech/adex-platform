@@ -4,8 +4,8 @@ import { utils, Contract } from 'ethers'
 import { getAllCampaigns } from 'services/adex-market/actions'
 import {
 	lastApprovedState,
-	eventsAggregates,
 	getValidatorAuthToken,
+	identityAnalytics,
 } from 'services/adex-validator/actions'
 import { bigNumberify } from 'ethers/utils'
 import { Channel, MerkleTree } from 'adex-protocol-eth/js'
@@ -210,26 +210,73 @@ export async function getIdentityStatistics({
 	account = {},
 	validatorsAuth,
 } = {}) {
-	const allCalls = withBalance.map(async ({ channel }) => {
-		const agrArgs = `?timeframe=hour`
-		const { aggregates, authTokens } = await eventsAggregates({
-			agrArgs,
-			campaign: channel,
-			account,
+	const callsParams = [
+		// Publisher
+		{
+			metric: 'eventPayouts',
+			timeframe: 'hour',
+		},
+		{
+			metric: 'eventPayouts',
+			timeframe: 'day',
+		},
+		{
+			metric: 'eventPayouts',
+			timeframe: 'week',
+		},
+		{
+			metric: 'eventPayouts',
+			timeframe: 'month',
+		},
+		{
+			metric: 'eventPayouts',
+			timeframe: 'year',
+		},
+		// // Advertiser
+		{
+			metric: 'eventCounts',
+			timeframe: 'hour',
+		},
+		{
+			metric: 'eventCounts',
+			timeframe: 'day',
+		},
+		{
+			metric: 'eventCounts',
+			timeframe: 'week',
+		},
+		{
+			metric: 'eventCounts',
+			timeframe: 'month',
+		},
+		{
+			metric: 'eventCounts',
+			timeframe: 'year',
+		},
+	]
+
+	const allCalls = callsParams.map(async opts => {
+		const aggr = identityAnalytics({
+			...opts,
 			validatorsAuth,
 		})
-		return { aggregates, authTokens }
+		return aggr
 	})
 
 	const aggregates = await Promise.all(
-		allCalls.map(ag =>
-			ag
-				.then(res => res)
+		allCalls.map((ag, index) => {
+			const params = callsParams[index]
+
+			return ag
+				.then(res => {
+					return { ...res, ...params }
+				})
 				.catch(e => {
 					return {}
 				})
-		)
+		})
 	)
+
 	return { aggregates }
 }
 
