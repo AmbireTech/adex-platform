@@ -139,11 +139,11 @@ export const PublisherStatistics = ({
 		// },
 		tooltips: {
 			backgroundColor: '#000',
-			mode: 'nearest',
+			mode: 'index',
 			intersect: false,
 		},
 		hover: {
-			mode: 'nearest',
+			mode: 'index',
 			intersect: false,
 		},
 		scales: {

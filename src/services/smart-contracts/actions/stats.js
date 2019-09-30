@@ -158,9 +158,9 @@ async function getOutstandingBalance({ wallet, address, withBalance }) {
 	return totalOutstanding || bigNumberify('0')
 }
 
-async function getIdentityStatistics({ withBalance, address }) {
+async function getIdentityStatistics({ withBalance, address, timeframe }) {
 	const allCalls = withBalance.map(async ({ channel }) => {
-		const agrArgs = `${address}?timeframe=hour`
+		const agrArgs = `${address}?timeframe=${timeframe}`
 		const stats = await eventsAggregates({ agrArgs, campaign: channel })
 		return stats
 	})
@@ -177,8 +177,9 @@ async function getIdentityStatistics({ withBalance, address }) {
 	return aggregates
 }
 
+// Rangel - testing how much time it takes to get validator stats
 export async function getValidatorStats({ address, timeframe, period }) {
-	console.time('Validator Call')
+	console.time('Validator Statistics')
 	console.log(address, timeframe, period)
 	const withBalance = await getAllChannelsForIdentity({ address })
 	const allCalls = withBalance.map(({ channel }) => {
@@ -195,7 +196,7 @@ export async function getValidatorStats({ address, timeframe, period }) {
 				})
 		)
 	)
-	console.timeEnd('Validator Call')
+	console.timeEnd('Validator Statistics')
 	return aggregates
 }
 
@@ -214,10 +215,26 @@ async function getValidatorData({ wallet, identity }) {
 		address,
 		withBalance,
 	})
-	const aggregates = await getIdentityStatistics({ withBalance, address })
+
+	const stats = [
+		getIdentityStatistics({ withBalance, address, timeframe: 'minute' }),
+		getIdentityStatistics({ withBalance, address, timeframe: 'hour' }),
+		getIdentityStatistics({ withBalance, address, timeframe: 'day' }),
+		getIdentityStatistics({ withBalance, address, timeframe: 'week' }),
+		getIdentityStatistics({ withBalance, address, timeframe: 'month' }),
+		getIdentityStatistics({ withBalance, address, timeframe: 'year' }),
+	]
+	const [minute, hour, day, week, month, year] = await Promise.all(stats)
 
 	return {
 		outstandingBalanceDai,
-		aggregates,
+		aggregates: {
+			minute,
+			hour,
+			day,
+			week,
+			month,
+			year,
+		},
 	}
 }

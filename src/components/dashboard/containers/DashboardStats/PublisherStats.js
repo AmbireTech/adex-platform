@@ -8,6 +8,7 @@ import {
 	addYears,
 } from 'date-fns'
 import { PublisherStatistics } from 'components/dashboard/charts/revenue'
+import Divider from '@material-ui/core/Divider'
 import FilterListIcon from '@material-ui/icons/FilterList'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -20,17 +21,18 @@ import { Popover, Chip } from '@material-ui/core'
 import { addDays, addMonths } from 'date-fns/esm'
 
 const FORMAT_MINUTE = 'MM/dd/yyyy HH:mm'
-const FORMAT_HOUR = 'MM/dd/yyyy HH:mm'
+const FORMAT_HOUR = 'MM/dd/yyyy HH'
 const FORMAT_DAY = 'MM/dd/yyyy'
 const FORMAT_MONTH = 'MM/yyyy'
 const FORMAT_YEAR = 'MM/yyyy'
 
 const getFormatedDate = (
-	{ year, month, day = 1, hour = 0, minute = 0 },
+	{ year, month, day = 1, hour = 0, minutes = 0 },
 	formatString
 ) => {
-	return format(new Date(year, month, day, hour, minute), formatString)
+	return format(new Date(year, month, day, hour, minutes), formatString)
 }
+
 const mapByTimeframe = timeframe => {
 	switch (timeframe) {
 		case 'minute':
@@ -62,8 +64,7 @@ const mapAggregates = ({ aggregates = [], dateRange, timeframe }) => {
 		end: dateRange.endDate,
 	}
 	const { formatString, addFunction } = mapByTimeframe(timeframe)
-	// const rangeTime = getRangeTime(interval, addFunction, formatString)
-	// console.log('RANGETIME:', rangeTime)
+	const rangeTime = getRangeTime(interval, addFunction, formatString)
 
 	return aggregates.reduce(
 		({ result, channels }, a) => {
@@ -83,9 +84,7 @@ const mapAggregates = ({ aggregates = [], dateRange, timeframe }) => {
 				},
 				{ result: [] }
 			)
-			console.log('DATA', channelData.result)
-			// TODO: add missing dates / time to result[channel.id]
-			result[channel.id] = channelData.result
+			result[channel.id] = { ...rangeTime, ...channelData.result }
 			channels[channel.id] = channel
 			return { result, channels }
 		},
@@ -95,6 +94,7 @@ const mapAggregates = ({ aggregates = [], dateRange, timeframe }) => {
 
 export const PublisherStats = ({ aggregates, t }) => {
 	const [timeframe, setTimeframe] = useState('hour')
+	const [minDate, setMinDate] = useState()
 	const [campaigns, setCampaigns] = useState([])
 	const [anchorEl, setAnchorEl] = React.useState(null)
 	const handleClick = event => {
@@ -114,71 +114,41 @@ export const PublisherStats = ({ aggregates, t }) => {
 		endDate: new Date(),
 	})
 	// Gets initial state form the store aggregates that are passed
-	const [stats, setStats] = useState(aggregates)
+	const [stats, setStats] = useState(aggregates[timeframe])
+	useEffect(() => {
+		setStats(aggregates[timeframe])
+	}, [aggregates, timeframe])
+
+	useEffect(() => {
+		switch (timeframe) {
+			case 'minute':
+				setMinDate(subDays(Date.now(), 1))
+				break
+			case 'hour':
+				setMinDate(subDays(Date.now(), 7))
+				break
+			case 'day':
+				setMinDate(subDays(Date.now(), 90))
+				break
+			case 'week':
+				setMinDate(subDays(Date.now(), 356))
+				break
+			default:
+				break
+		}
+	})
+
 	const data = mapAggregates({
 		aggregates: stats,
 		dateRange,
 		timeframe,
 	})
+
 	return (
 		<div>
 			<form autoComplete='off'>
-				<Box display='flex' flexWrap='wrap'>
-					<Box m={2}>
-						<FormControl>
-							<InputLabel htmlFor='timeframe'>Timeframe</InputLabel>
-							<Select
-								value={timeframe}
-								onChange={e => setTimeframe(e.target.value)}
-								inputProps={{
-									name: 'timeframe',
-								}}
-							>
-								<MenuItem value={'minute'}>Live</MenuItem>
-								<MenuItem value={'hour'}>Hourly</MenuItem>
-								<MenuItem value={'day'}>Daily</MenuItem>
-								<MenuItem value={'week'}>Weekly</MenuItem>
-								<MenuItem value={'month'}>Monthly</MenuItem>
-								<MenuItem value={'year'}>Yearly</MenuItem>
-							</Select>
-						</FormControl>
-					</Box>
-					<Box m={2} display='flex' alignItems='flex-end'>
-						<Chip
-							label={
-								dateRange.startDate && dateRange.endDate
-									? `${format(dateRange.startDate, 'MM/dd/yyyy')} - ${format(
-											dateRange.endDate,
-											'MM/dd/yyyy'
-									  )}`
-									: 'Choose Date Range'
-							}
-							onClick={handleClick}
-							icon={<DateRangeIcon />}
-						/>
-						<Popover
-							id={id}
-							open={open}
-							anchorEl={anchorEl}
-							onClose={handleClose}
-							anchorOrigin={{
-								vertical: 'bottom',
-								horizontal: 'left',
-							}}
-							transformOrigin={{
-								vertical: 'top',
-								horizontal: 'left',
-							}}
-						>
-							<DateRangePicker
-								initialDateRange={dateRange}
-								maxDate={Date.now()}
-								open={open}
-								onChange={range => setDateRange(range)}
-							/>
-						</Popover>
-					</Box>
-					{/* <Box m={2} display='flex' alignItems='flex-end'>
+				<Box mb={3} display='flex' flexWrap='wrap'>
+					<Box m={1}>
 						<Chip
 							label={
 								campaigns.length > 0
@@ -208,7 +178,81 @@ export const PublisherStats = ({ aggregates, t }) => {
 						>
 							Filter Campaigns
 						</Popover>
-					</Box> */}
+					</Box>
+					<Box m={1}>
+						<Chip
+							label={
+								dateRange.startDate && dateRange.endDate
+									? `${format(dateRange.startDate, 'MM/dd/yyyy')} - ${format(
+											dateRange.endDate,
+											'MM/dd/yyyy'
+									  )}`
+									: 'Choose Date Range'
+							}
+							onClick={handleClick}
+							icon={<DateRangeIcon />}
+						/>
+						<Popover
+							id={id}
+							open={open}
+							anchorEl={anchorEl}
+							onClose={handleClose}
+							anchorOrigin={{
+								vertical: 'bottom',
+								horizontal: 'left',
+							}}
+							transformOrigin={{
+								vertical: 'top',
+								horizontal: 'left',
+							}}
+						>
+							<DateRangePicker
+								initialDateRange={dateRange}
+								minDate={minDate}
+								maxDate={Date.now()}
+								open={open}
+								onChange={range => setDateRange(range)}
+							/>
+						</Popover>
+					</Box>
+					<Box m={1}>
+						<Chip
+							color='primary'
+							label={'LAST 24 HOURS'}
+							onClick={() => console.log('24')}
+						/>
+					</Box>
+					<Box m={1}>
+						<Chip color='primary' label={'THIS WEEK'} />
+					</Box>
+					<Box m={1}>
+						<Chip color='primary' label={'THIS MONTH'} />
+					</Box>
+					<Box m={1}>
+						<Chip color='primary' label={'LAST MONTH'} />
+					</Box>
+				</Box>
+				<Divider light />
+				<Box display='flex' flexWrap='wrap'>
+					<Box m={2}>
+						<FormControl>
+							<InputLabel htmlFor='timeframe'>Timeframe</InputLabel>
+							<Select
+								value={timeframe}
+								onChange={e => setTimeframe(e.target.value)}
+								inputProps={{
+									name: 'timeframe',
+								}}
+							>
+								<MenuItem value={'minute'}>Live</MenuItem>
+								<MenuItem value={'hour'}>Hourly</MenuItem>
+								<MenuItem value={'day'}>Daily</MenuItem>
+								<MenuItem value={'week'}>Weekly</MenuItem>
+								<MenuItem value={'month'}>Monthly</MenuItem>
+								<MenuItem value={'year'}>Yearly</MenuItem>
+							</Select>
+						</FormControl>
+					</Box>
 				</Box>
 			</form>
 			<PublisherStatistics
