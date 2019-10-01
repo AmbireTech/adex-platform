@@ -15,6 +15,7 @@ import {
 	addYears,
 } from 'date-fns'
 import { PublisherStatistics } from 'components/dashboard/charts/revenue'
+import TransferList from 'components/common/transferList/TransferList'
 import Divider from '@material-ui/core/Divider'
 import FilterListIcon from '@material-ui/icons/FilterList'
 import InputLabel from '@material-ui/core/InputLabel'
@@ -32,6 +33,12 @@ const FORMAT_HOUR = 'MM/dd/yyyy HH'
 const FORMAT_DAY = 'MM/dd/yyyy'
 const FORMAT_MONTH = 'MM/yyyy'
 const FORMAT_YEAR = 'MM/yyyy'
+
+const shorten = address => {
+	const beginning = address.substring(0, 6)
+	const ending = address.substring(address.length - 4)
+	return beginning.concat('...', ending)
+}
 
 const getFormatedDate = (
 	{ year, month, day = 1, hour = 0, minute = 0 },
@@ -99,10 +106,17 @@ export const PublisherStats = ({ aggregates, t }) => {
 	const [stats, setStats] = useState(aggregates[timeframe])
 	const [minDate, setMinDate] = useState()
 	const [campaigns, setCampaigns] = useState([])
-	const [anchorEl, setAnchorEl] = useState(null)
+	const [left, setLeft] = useState(
+		aggregates.hour.reduce((array, curr) => {
+			const id = curr.channel.id
+			array.push({ id, text: shorten(id) })
+			return array
+		}, [])
+	)
+	const [right, setRight] = useState([])
+	const [anchorCampaignFilter, setAnchorCampaignFilter] = useState(null)
+	const [anchorDatePicker, setAnchorDatePicker] = useState(null)
 	const [data, setData] = useState([])
-	const open = Boolean(anchorEl)
-	const id = open ? 'simple-popover' : undefined
 	const [dateRange, setDateRange] = useState({
 		startDate: subDays(new Date(), 7),
 		endDate: new Date(),
@@ -114,7 +128,20 @@ export const PublisherStats = ({ aggregates, t }) => {
 		week: subMonths(Date.now(), 24),
 	}
 
-	//TODO: check how to open two separate
+	useEffect(() => {
+		if (right.length > 0) {
+			const test = Object.keys(aggregates).map(item => {
+				const values = aggregates[item].filter(function(e) {
+					return (
+						this.map(j => {
+							return j.id
+						}).indexOf(e.channel.id) >= 0
+					)
+				}, right)
+				return { [item]: values }
+			})
+		}
+	}, [right])
 
 	useEffect(() => {
 		setData(
@@ -140,12 +167,12 @@ export const PublisherStats = ({ aggregates, t }) => {
 	// Gets initial state form the store aggregates that are passed
 	useEffect(() => {}, [dateRange, timeframe])
 
-	const handleClick = event => {
-		setAnchorEl(event.currentTarget)
+	const handleClick = (setter, event) => {
+		setter(event.currentTarget)
 	}
 
-	const handleClose = () => {
-		setAnchorEl(null)
+	const handleClose = setter => {
+		setter(null)
 	}
 	// This is used for the quick swithc chips on top of the chart
 	const handleQuickSwitchPeriodChange = period => {
@@ -205,14 +232,14 @@ export const PublisherStats = ({ aggregates, t }) => {
 									  }`
 									: 'All Campaigns'
 							}
-							onClick={handleClick}
+							onClick={e => handleClick(setAnchorCampaignFilter, e)}
 							icon={<FilterListIcon />}
 						/>
 						<Popover
-							id={id}
-							open={open}
-							anchorEl={anchorEl}
-							onClose={handleClose}
+							id={'campaign-filter'}
+							open={Boolean(anchorCampaignFilter)}
+							anchorEl={anchorCampaignFilter}
+							onClose={e => handleClose(setAnchorCampaignFilter, e)}
 							anchorOrigin={{
 								vertical: 'bottom',
 								horizontal: 'left',
@@ -222,7 +249,10 @@ export const PublisherStats = ({ aggregates, t }) => {
 								horizontal: 'left',
 							}}
 						>
-							Filter Campaigns
+							<TransferList
+								unfilteredState={[left, setLeft]}
+								filteredState={[right, setRight]}
+							/>
 						</Popover>
 					</Box>
 					<Box m={1}>
@@ -235,14 +265,14 @@ export const PublisherStats = ({ aggregates, t }) => {
 									  )}`
 									: 'Choose Date Range'
 							}
-							onClick={handleClick}
+							onClick={e => handleClick(setAnchorDatePicker, e)}
 							icon={<DateRangeIcon />}
 						/>
 						<Popover
-							id={id}
-							open={open}
-							anchorEl={anchorEl}
-							onClose={handleClose}
+							id={'daterange-picker'}
+							open={Boolean(anchorDatePicker)}
+							anchorEl={anchorDatePicker}
+							onClose={e => handleClose(setAnchorDatePicker, e)}
 							anchorOrigin={{
 								vertical: 'bottom',
 								horizontal: 'left',
@@ -254,9 +284,10 @@ export const PublisherStats = ({ aggregates, t }) => {
 						>
 							<DateRangePicker
 								initialDateRange={dateRange}
+								definedRanges={[]}
 								minDate={minDate}
 								maxDate={Date.now()}
-								open={open}
+								open={Boolean(setAnchorDatePicker)}
 								onChange={range => setDateRange(range)}
 							/>
 						</Popover>
