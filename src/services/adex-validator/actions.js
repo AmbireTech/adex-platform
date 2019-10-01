@@ -128,14 +128,12 @@ export const identityAnalytics = async ({
 	idenityAddr,
 	campaign,
 	campaignId,
-	validatorsAuth,
+	leaderAuth,
 	eventType,
 	metric,
 	timeframe,
 	limit,
 }) => {
-	const leaderId = '0xc0ffee254729296a45a3885639AC7E10F9d54979'
-
 	const baseUrl = 'http://localhost:8005' // GET from GLOBAL cfg, leader will be only TOM
 	const requester = getValidatorRequester({ baseUrl })
 
@@ -145,7 +143,7 @@ export const identityAnalytics = async ({
 			method: 'GET',
 			queryParams: { eventType, metric, timeframe, limit },
 			headers: {
-				authorization: BEARER_PREFIX + validatorsAuth[leaderId],
+				authorization: BEARER_PREFIX + leaderAuth,
 			},
 		})
 		.then(processResponse)
