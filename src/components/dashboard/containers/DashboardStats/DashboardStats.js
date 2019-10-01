@@ -14,7 +14,7 @@ import { withStyles } from '@material-ui/core/styles'
 import StatsCard from './StatsCard'
 import { styles } from './styles'
 import Grid from '@material-ui/core/Grid'
-import { PublisherStats } from './PublisherStats'
+import { BasicStats } from './BasicStats'
 
 const { BidStatesLabels, BID_STATES } = ExchangeConstants
 
@@ -302,7 +302,7 @@ export class DashboardStats extends Component {
 						<Card className={classnames(classes.dashboardCardBody)}>
 							<CardContent>
 								{aggregates ? (
-									<PublisherStats aggregates={aggregates} t={t} />
+									<BasicStats side={side} aggregates={aggregates} t={t} />
 								) : (
 									t('NO_STATS_YET')
 								)}
