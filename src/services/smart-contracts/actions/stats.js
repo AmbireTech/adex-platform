@@ -208,62 +208,72 @@ export async function getIdentityStatistics({
 	withBalance,
 	address,
 	account = {},
-	validatorsAuth,
+	leaderAuth,
 } = {}) {
 	const callsParams = [
 		// Publisher
 		{
 			metric: 'eventPayouts',
 			timeframe: 'hour',
+			for: 'publisher',
 		},
 		{
 			metric: 'eventPayouts',
 			timeframe: 'day',
+			for: 'publisher',
 		},
 		{
 			metric: 'eventPayouts',
 			timeframe: 'week',
+			for: 'publisher',
 		},
 		{
 			metric: 'eventPayouts',
 			timeframe: 'month',
+			for: 'publisher',
 		},
 		{
 			metric: 'eventPayouts',
 			timeframe: 'year',
+			for: 'publisher',
 		},
 		// // Advertiser
 		{
 			metric: 'eventCounts',
 			timeframe: 'hour',
+			for: 'advertiser',
 		},
 		{
 			metric: 'eventCounts',
 			timeframe: 'day',
+			for: 'advertiser',
 		},
 		{
 			metric: 'eventCounts',
 			timeframe: 'week',
+			for: 'advertiser',
 		},
 		{
 			metric: 'eventCounts',
 			timeframe: 'month',
+			for: 'advertiser',
 		},
 		{
 			metric: 'eventCounts',
 			timeframe: 'year',
+			for: 'advertiser',
 		},
 	]
 
 	const allCalls = callsParams.map(async opts => {
 		const aggr = identityAnalytics({
 			...opts,
-			validatorsAuth,
+			leaderAuth,
 		})
 		return aggr
 	})
 
-	const aggregates = await Promise.all(
+	const results = await Promise.all(
 		allCalls.map((ag, index) => {
 			const params = callsParams[index]
 
@@ -272,9 +282,23 @@ export async function getIdentityStatistics({
 					return { ...res, ...params }
 				})
 				.catch(e => {
-					return {}
+					return {
+						...params,
+						aggr: [],
+					}
 				})
 		})
+	)
+
+	const aggregates = results.reduce(
+		(aggrs, res) => {
+			aggrs[res.for][res.timeframe] = res
+			return aggrs
+		},
+		{
+			publisher: {},
+			advertiser: {},
+		}
 	)
 
 	return { aggregates }
