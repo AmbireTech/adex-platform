@@ -112,25 +112,24 @@ export function updateAccountStats() {
 				top: true,
 			})(dispatch)
 
-			const validatorsAuth = await getAllValidatorsAuthForIdentity({
-				withBalance,
+			const leaderAuth = await getValidatorAuthToken({
+				validatorId: VALIDATOR_LEADER_ID,
 				account,
 			})
 
 			removeToast(toastId)(dispatch)
 
-			updateValidatorAuthTokens({ newAuth: validatorsAuth })(dispatch, getState)
+			updateValidatorAuthTokens({ newAuth: leaderAuth })(dispatch, getState)
 
 			const { aggregates } = await getIdentityStatistics({
 				withBalance,
 				account,
-				validatorsAuth,
+				leaderAuth,
 			})
 
 			updateAccount({ newValues: { stats: { formatted, raw, aggregates } } })(
 				dispatch
 			)
-			updateValidatorAuthTokens({ newAuth: validatorsAuth })(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_STATS', err)
 			addToast({
