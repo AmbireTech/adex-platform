@@ -134,7 +134,8 @@ export const identityAnalytics = async ({
 	timeframe,
 	limit,
 }) => {
-	const baseUrl = 'http://localhost:8005' // GET from GLOBAL cfg, leader will be only TOM
+	// const baseUrl = 'http://localhost:8005' // GET from GLOBAL cfg, leader will be only TOM
+	const baseUrl = 'https://tom.adex.network' // GET from GLOBAL cfg, leader will be only TOM
 	const requester = getValidatorRequester({ baseUrl })
 
 	const aggregates = await requester

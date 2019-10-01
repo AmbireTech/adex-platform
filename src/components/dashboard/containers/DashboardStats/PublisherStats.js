@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { PublisherSimpleStatistics } from 'components/dashboard/charts/revenue'
+import Dropdown from 'components/common/dropdown'
 import {
 	format,
 	subDays,
@@ -14,19 +16,22 @@ import {
 	addHours,
 	addYears,
 } from 'date-fns'
-import { PublisherStatistics } from 'components/dashboard/charts/revenue'
+// import { PublisherStatistics } from 'components/dashboard/charts/revenue'
 import TransferList from 'components/common/transferList/TransferList'
-import Divider from '@material-ui/core/Divider'
 import FilterListIcon from '@material-ui/icons/FilterList'
-import InputLabel from '@material-ui/core/InputLabel'
-import MenuItem from '@material-ui/core/MenuItem'
-import FormControl from '@material-ui/core/FormControl'
-import Select from '@material-ui/core/Select'
 import DateRangeIcon from '@material-ui/icons/DateRange'
-import { Box } from '@material-ui/core'
+import { Box, Divider } from '@material-ui/core'
 import { DateRangePicker } from '@matharumanpreet00/react-daterange-picker'
 import { Popover, Chip } from '@material-ui/core'
 import { addDays, addMonths } from 'date-fns/esm'
+
+const timeFrames = [
+	{ label: 'Hour', value: 'hour' },
+	{ label: 'Day', value: 'day' },
+	{ label: 'Week', value: 'week' },
+	{ label: 'Month', value: 'month' },
+	{ label: 'Year', value: 'year' },
+]
 
 const FORMAT_MINUTE = 'MM/dd/yyyy HH:mm'
 const FORMAT_HOUR = 'MM/dd/yyyy HH'
@@ -103,17 +108,18 @@ const mapAggregates = ({ aggregates = [], dateRange, timeframe }) => {
 
 export const PublisherStats = ({ aggregates, t }) => {
 	const [timeframe, setTimeframe] = useState('hour')
+	const aggr = aggregates.publisher || {}
 	const [stats, setStats] = useState(aggregates[timeframe])
 	const [minDate, setMinDate] = useState()
 	const [campaigns, setCampaigns] = useState([])
-	const [left, setLeft] = useState(
-		aggregates.hour.reduce((array, curr) => {
-			const id = curr.channel.id
-			array.push({ id, text: shorten(id) })
-			return array
-		}, [])
-	)
-	const [right, setRight] = useState([])
+	// const [left, setLeft] = useState(
+	// 	aggregates.hour.reduce((array, curr) => {
+	// 		const id = curr.channel.id
+	// 		array.push({ id, text: shorten(id) })
+	// 		return array
+	// 	}, [])
+	// )
+	// const [right, setRight] = useState([])
 	const [anchorCampaignFilter, setAnchorCampaignFilter] = useState(null)
 	const [anchorDatePicker, setAnchorDatePicker] = useState(null)
 	const [data, setData] = useState([])
@@ -128,30 +134,30 @@ export const PublisherStats = ({ aggregates, t }) => {
 		week: subMonths(Date.now(), 24),
 	}
 
-	useEffect(() => {
-		if (right.length > 0) {
-			const test = Object.keys(aggregates).map(item => {
-				const values = aggregates[item].filter(function(e) {
-					return (
-						this.map(j => {
-							return j.id
-						}).indexOf(e.channel.id) >= 0
-					)
-				}, right)
-				return { [item]: values }
-			})
-		}
-	}, [right])
+	// useEffect(() => {
+	// 	if (right.length > 0) {
+	// 		const test = Object.keys(aggregates).map(item => {
+	// 			const values = aggregates[item].filter(function(e) {
+	// 				return (
+	// 					this.map(j => {
+	// 						return j.id
+	// 					}).indexOf(e.channel.id) >= 0
+	// 				)
+	// 			}, right)
+	// 			return { [item]: values }
+	// 		})
+	// 	}
+	// }, [right])
 
-	useEffect(() => {
-		setData(
-			mapAggregates({
-				aggregates: stats,
-				dateRange,
-				timeframe,
-			})
-		)
-	}, [dateRange])
+	// useEffect(() => {
+	// 	setData(
+	// 		mapAggregates({
+	// 			aggregates: stats,
+	// 			dateRange,
+	// 			timeframe,
+	// 		})
+	// 	)
+	// }, [dateRange])
 
 	useEffect(() => {
 		setMinDate(minTime[timeframe])
@@ -249,10 +255,10 @@ export const PublisherStats = ({ aggregates, t }) => {
 								horizontal: 'left',
 							}}
 						>
-							<TransferList
+							{/* <TransferList
 								unfilteredState={[left, setLeft]}
 								filteredState={[right, setRight]}
-							/>
+							/> */}
 						</Popover>
 					</Box>
 					<Box m={1}>
@@ -331,31 +337,19 @@ export const PublisherStats = ({ aggregates, t }) => {
 				<Divider light />
 				<Box display='flex' flexWrap='wrap'>
 					<Box m={2}>
-						<FormControl>
-							<InputLabel htmlFor='timeframe'>Timeframe</InputLabel>
-							<Select
-								value={timeframe}
-								onChange={e => setTimeframe(e.target.value)}
-								inputProps={{
-									name: 'timeframe',
-								}}
-							>
-								<MenuItem value={'minute'}>Live</MenuItem>
-								<MenuItem value={'hour'}>Hourly</MenuItem>
-								<MenuItem value={'day'}>Daily</MenuItem>
-								<MenuItem value={'week'}>Weekly</MenuItem>
-								<MenuItem value={'month'}>Monthly</MenuItem>
-								<MenuItem value={'year'}>Yearly</MenuItem>
-							</Select>
-						</FormControl>
+						<Dropdown
+							label={t('SELECT_TIMEFRAME')}
+							onChange={val => setTimeframe(val)}
+							source={timeFrames}
+							value={timeframe}
+							htmlId='page-size-select'
+						/>
 					</Box>
 				</Box>
 			</form>
-			<PublisherStatistics
-				timeframe={timeframe}
-				data={data.result || []}
-				channels={data.channels}
-				options={{ title: t(timeframe.toUpperCase()) }}
+			<PublisherSimpleStatistics
+				data={(aggr[timeframe] || {}).aggr}
+				options={{ title: t(timeframe) }}
 				t={t}
 			/>
 		</div>

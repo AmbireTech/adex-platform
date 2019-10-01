@@ -21,13 +21,7 @@ const getChannelName = channel => {
 	return `Deposit ${amount} DAI for CPM ${cpm} DAI`
 }
 
-export const PublisherStatistics = ({
-	data,
-	channels,
-	options = {},
-	timeframe,
-	t,
-}) => {
+export const PublisherStatistics = ({ data, channels, options = {}, t }) => {
 	// TODO: refine mapping, format values and labels
 	if (!Object.keys(data).length) return null
 	const dataKeys = Object.keys(data)
@@ -129,38 +123,25 @@ export const PublisherStatistics = ({
 			display: true,
 			text: options.title,
 		},
-		legend: {
-			display: false,
-		},
 		// elements: {
 		// 	line: {
-		// 		fill: true,
-		// 	},
+		// 		fill: true
+		// 	}
 		// },
 		tooltips: {
-			backgroundColor: '#000',
 			mode: 'index',
-			intersect: false,
-		},
-		hover: {
-			mode: 'index',
-			intersect: false,
 		},
 		scales: {
 			xAxes: [
 				{
 					display: true,
-					// type: 'time',
-					// time: {
-					// 	unit: timeframe,
-					// },
 					gridLines: {
 						display: true,
 						// beginAtZero: true
 					},
 					// labels: {
-					// 	show: false,
-					// },
+					//     show: true
+					// }
 					scaleLabel: {
 						display: true,
 						labelString: t('TIMEFRAME'),
