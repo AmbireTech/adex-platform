@@ -5,6 +5,10 @@ import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormControl from '@material-ui/core/FormControl'
+import FormHelperText from '@material-ui/core/FormHelperText'
+import Input from '@material-ui/core/Input'
+import InputLabel from '@material-ui/core/InputLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 import Dropdown from 'components/common/dropdown'
 import TextField from '@material-ui/core/TextField'
@@ -157,6 +161,27 @@ class CampaignFinance extends Component {
 			!!newValidators[1].id &&
 			!!newValidators[1].url
 
+		// TEMP - update like this to avoid changing the flow and other functions
+		// <---
+		if (!isValid) {
+			const tempaValidators = [
+				{ id: VALIDATOR_LEADER_ID, url: VALIDATOR_LEADER_URL },
+				{ id: VALIDATOR_FOLLOWER_ID, url: VALIDATOR_FOLLOWER_URL },
+			]
+
+			handleChange('validators', tempaValidators)
+
+			validate('validators', {
+				isValid: true,
+				err: { msg: 'ERR_VALIDATORS' },
+				dirty: dirty,
+			})
+
+			return
+		}
+
+		// END TEMP --->
+
 		if (update) {
 			handleChange('validators', newValidators)
 		}
@@ -181,7 +206,7 @@ class CampaignFinance extends Component {
 		} else {
 			const { newItem, account } = this.props
 
-			const { identityBalanceDai } = account.stats.formatted
+			const { identityBalanceDai = 0 } = account.stats.formatted || {}
 			const depositAmount =
 				prop === 'depositAmount' ? value : newItem.depositAmount
 			const minPerImpression =
@@ -241,7 +266,7 @@ class CampaignFinance extends Component {
 			minTargetingScore,
 		} = newItem
 
-		const { identityBalanceDai } = account.stats.formatted
+		const { identityBalanceDai = 0 } = account.stats.formatted || {}
 
 		const from = activeFrom || undefined
 		const to = withdrawPeriodStart || undefined
@@ -256,11 +281,15 @@ class CampaignFinance extends Component {
 			? getTotalImpressions({ depositAmount, minPerImpression, t })
 			: ''
 
+		const leader = validators[0] || {}
+		const follower = validators[1] || {}
+
 		return (
 			<div>
 				<Grid container spacing={2}>
-					<Grid item xs={12}>
-						<Dropdown
+					{/* <Grid item xs={12}> */}
+					<Grid item sm={12} md={6}>
+						{/* <Dropdown
 							fullWidth
 							required
 							onChange={value =>
@@ -271,10 +300,18 @@ class CampaignFinance extends Component {
 							label={t('ADV_PLATFORM_VALIDATOR')}
 							htmlId='leader-validator-dd'
 							name='leader-validator'
-						/>
+						/> */}
+						<FormControl fullWidth disabled>
+							<InputLabel htmlFor='leader-validator'>
+								{t('ADV_PLATFORM_VALIDATOR')}
+							</InputLabel>
+							<Input id='leader-validator' value={leader.url || ''} />
+							<FormHelperText>{leader.id}</FormHelperText>
+						</FormControl>
 					</Grid>
-					<Grid item xs={12}>
-						<Dropdown
+					{/* <Grid item xs={12}> */}
+					<Grid item sm={12} md={6}>
+						{/* <Dropdown
 							fullWidth
 							required
 							onChange={value =>
@@ -285,7 +322,14 @@ class CampaignFinance extends Component {
 							label={t('PUB_PLATFORM_VALIDATOR')}
 							htmlId='follower-validator-dd'
 							name='follower-validator'
-						/>
+						/> */}
+						<FormControl fullWidth disabled>
+							<InputLabel htmlFor='follower-validator'>
+								{t('PUB_PLATFORM_VALIDATOR')}
+							</InputLabel>
+							<Input id='follower-validator' value={follower.url || ''} />
+							<FormHelperText>{follower.id}</FormHelperText>
+						</FormControl>
 					</Grid>
 					<Grid item sm={12} md={6}>
 						<TextField
