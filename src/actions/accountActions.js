@@ -127,6 +127,19 @@ export function updateAccountStats() {
 				leaderAuth,
 			})
 
+			// getIdentityStatistics tooks to long some times
+			// if the account is change we do not update the account
+			// TODO: we can use something for abortable tasks
+			const accountCheck = getState().persist.account
+			if (
+				!accountCheck.wallet.address ||
+				accountCheck.wallet.address !== account.wallet.address ||
+				!accountCheck.identity.address ||
+				!accountCheck.identity.address !== !account.identity.address
+			) {
+				return
+			}
+
 			updateAccount({ newValues: { stats: { formatted, raw, aggregates } } })(
 				dispatch
 			)
