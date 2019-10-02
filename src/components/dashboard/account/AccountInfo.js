@@ -27,6 +27,11 @@ import { styles } from './styles.js'
 import { getRecoveryWalletData } from 'services/wallet/wallet'
 // const RRButton = withReactRouterLink(Button)
 
+const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
+const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
+const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
+const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
+
 class AccountInfo extends React.Component {
 	// eslint-disable-next-line no-useless-constructor
 	constructor(props) {
@@ -181,25 +186,50 @@ class AccountInfo extends React.Component {
 							</Typography>
 						</ExpansionPanelSummary>
 						<ExpansionPanelDetails>
-							<ListItem>
-								<ListItemText
-									className={classes.address}
-									secondary={''}
-									primary={t('MANAGE_IDENTITY')}
-								/>
-								<div className={classes.itemActions}>
-									<SetIdentityPrivilege
-										variant='contained'
-										color='secondary'
-										onSave={this.onSave}
-										token='DAI'
-										className={classes.actionBtn}
-										size='small'
-										actions={actions}
-										identityAvailable={identityBalanceDai}
+							<List classes={{ root: classes.advancedList }}>
+								<ListItem>
+									<ListItemText
+										className={classes.address}
+										secondary={''}
+										primary={t('MANAGE_IDENTITY')}
 									/>
-								</div>
-							</ListItem>
+									<div className={classes.itemActions}>
+										<SetIdentityPrivilege
+											variant='contained'
+											color='secondary'
+											onSave={this.onSave}
+											token='DAI'
+											className={classes.actionBtn}
+											size='small'
+											actions={actions}
+											identityAvailable={identityBalanceDai}
+										/>
+									</div>
+								</ListItem>
+								<ListDivider />
+								<ListItem>
+									<ListItemText
+										className={classes.address}
+										primary={t('VALIDATOR_LEADER_ID', {
+											args: [VALIDATOR_LEADER_ID],
+										})}
+										secondary={t('VALIDATOR_LEADER_URL', {
+											args: [VALIDATOR_LEADER_URL],
+										})}
+									/>
+								</ListItem>
+								<ListItem>
+									<ListItemText
+										className={classes.address}
+										primary={t('VALIDATOR_FOLLOWER_ID', {
+											args: [VALIDATOR_FOLLOWER_ID],
+										})}
+										secondary={t('VALIDATOR_FOLLOWER_URL', {
+											args: [VALIDATOR_FOLLOWER_URL],
+										})}
+									/>
+								</ListItem>
+							</List>
 						</ExpansionPanelDetails>
 					</ExpansionPanel>
 				</List>
