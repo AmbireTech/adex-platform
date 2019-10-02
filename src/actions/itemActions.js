@@ -99,6 +99,15 @@ export function resetNewItem(item) {
 	}
 }
 
+export function resetAllNewItems() {
+	return function(dispatch) {
+		return dispatch({
+			type: types.RESET_ALL_NEW_ITEMS,
+			kor: 'hoi',
+		})
+	}
+}
+
 // register item
 export function addItem(item, itemType, authSig) {
 	const newItem = { ...item }
