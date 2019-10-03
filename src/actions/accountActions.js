@@ -119,7 +119,9 @@ export function updateAccountStats() {
 
 			removeToast(toastId)(dispatch)
 
-			updateValidatorAuthTokens({ newAuth: leaderAuth })(dispatch, getState)
+			updateValidatorAuthTokens({
+				newAuth: { [VALIDATOR_LEADER_ID]: leaderAuth },
+			})(dispatch, getState)
 
 			const { aggregates } = await getIdentityStatistics({
 				withBalance,
