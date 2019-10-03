@@ -227,42 +227,41 @@ export async function getIdentityStatistics({
 			timeframe: 'week',
 			for: 'publisher',
 		},
-		{
-			metric: 'eventPayouts',
-			timeframe: 'month',
-			for: 'publisher',
-		},
-		{
-			metric: 'eventPayouts',
-			timeframe: 'year',
-			for: 'publisher',
-		},
-		// // Advertiser
+		// {
+		// 	metric: 'eventPayouts',
+		// 	timeframe: 'month',
+		// 	for: 'publisher',
+		// },
+		// {
+		// 	metric: 'eventPayouts',
+		// 	timeframe: 'year',
+		// 	for: 'publisher',
+		// },
 		{
 			metric: 'eventCounts',
 			timeframe: 'hour',
-			for: 'advertiser',
+			for: 'publisher',
 		},
 		{
 			metric: 'eventCounts',
 			timeframe: 'day',
-			for: 'advertiser',
+			for: 'publisher',
 		},
 		{
 			metric: 'eventCounts',
 			timeframe: 'week',
-			for: 'advertiser',
+			for: 'publisher',
 		},
-		{
-			metric: 'eventCounts',
-			timeframe: 'month',
-			for: 'advertiser',
-		},
-		{
-			metric: 'eventCounts',
-			timeframe: 'year',
-			for: 'advertiser',
-		},
+		// {
+		// 	metric: 'eventCounts',
+		// 	timeframe: 'month',
+		// 	for: 'publisher',
+		// },
+		// {
+		// 	metric: 'eventCounts',
+		// 	timeframe: 'year',
+		// 	for: 'publisher',
+		// },
 	]
 
 	const allCalls = callsParams.map(async opts => {
