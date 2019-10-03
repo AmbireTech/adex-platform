@@ -10,7 +10,7 @@ import FormHelperText from '@material-ui/core/FormHelperText'
 import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
 import Checkbox from '@material-ui/core/Checkbox'
-import Dropdown from 'components/common/dropdown'
+// import Dropdown from 'components/common/dropdown'
 import TextField from '@material-ui/core/TextField'
 import DateTimePicker from 'components/common/DateTimePicker'
 import { utils } from 'ethers'
@@ -44,21 +44,21 @@ const PubPlatformValidators = {
 
 const VALIDATOR_SOURCES = [AdvPlatformValidators, PubPlatformValidators]
 
-const AdvValidatorsSrc = Object.keys(AdvPlatformValidators).map(key => {
-	const val = AdvPlatformValidators[key]
-	return {
-		value: key,
-		label: `${val.url} - ${val.id}`,
-	}
-})
+// const AdvValidatorsSrc = Object.keys(AdvPlatformValidators).map(key => {
+// 	const val = AdvPlatformValidators[key]
+// 	return {
+// 		value: key,
+// 		label: `${val.url} - ${val.id}`,
+// 	}
+// })
 
-const PubValidatorsSrc = Object.keys(PubPlatformValidators).map(key => {
-	const val = PubPlatformValidators[key]
-	return {
-		value: key,
-		label: `${val.url} - ${val.id}`,
-	}
-})
+// const PubValidatorsSrc = Object.keys(PubPlatformValidators).map(key => {
+// 	const val = PubPlatformValidators[key]
+// 	return {
+// 		value: key,
+// 		label: `${val.url} - ${val.id}`,
+// 	}
+// })
 
 const getTotalImpressions = ({ depositAmount, minPerImpression, t }) => {
 	const dep = parseFloat(depositAmount)
@@ -448,10 +448,6 @@ class CampaignFinance extends Component {
 
 CampaignFinance.propTypes = {
 	newItem: PropTypes.object.isRequired,
-	title: PropTypes.string,
-	descriptionHelperTxt: PropTypes.string,
-	nameHelperTxt: PropTypes.string,
-	adUnits: PropTypes.array.isRequired,
 }
 
 const NewCampaignFinance = NewCampaignHoc(CampaignFinance)
