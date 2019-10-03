@@ -190,9 +190,9 @@ export default function ItemHoc(Decorated) {
                             <Toolbar> */}
 						<DialogTitle disableTypography>
 							<Typography
-								variant='title'
+								variant='subtitle1'
 								classes={{
-									title: classnames(classes.dialogTitle, classes.breakLong),
+									root: classnames(classes.dialogTitle, classes.breakLong),
 								}}
 							>
 								{t(title)}

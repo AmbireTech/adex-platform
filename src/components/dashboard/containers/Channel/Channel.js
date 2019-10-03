@@ -61,7 +61,7 @@ export class Channel extends Component {
 				<AppBar position='static' color='primary' className={classes.appBar}>
 					<Toolbar>
 						<Typography
-							variant='title'
+							variant='subtitle1'
 							color='inherit'
 							className={classes.flex}
 						>
