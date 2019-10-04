@@ -6,6 +6,7 @@ import {
 	resetAllBids,
 	resetIdentity,
 	resetAccount,
+	resetAnalytics,
 } from 'actions'
 export const logOut = () => {
 	execute(resetAllItems())
@@ -13,6 +14,7 @@ export const logOut = () => {
 	execute(resetAllBids())
 	execute(resetIdentity())
 	execute(resetAccount())
+	execute(resetAnalytics())
 }
 
 export const isDemoMode = () => {
