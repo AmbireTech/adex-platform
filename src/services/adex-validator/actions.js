@@ -5,6 +5,7 @@ import { getSigner } from 'services/smart-contracts/actions/ethers'
 import ewt from './ewt'
 
 const BEARER_PREFIX = 'Bearer '
+const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
 
 const getValidatorRequester = ({ baseUrl }) => {
 	return new Requester({ baseUrl })
@@ -135,7 +136,7 @@ export const identityAnalytics = async ({
 	limit,
 	side,
 }) => {
-	const baseUrl = 'http://localhost:8005' // GET from GLOBAL cfg, leader will be only TOM
+	const baseUrl = VALIDATOR_LEADER_URL
 	const requester = getValidatorRequester({ baseUrl })
 
 	const aggregates = await requester
