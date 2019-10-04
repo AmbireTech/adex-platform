@@ -20,7 +20,7 @@ const StatsCard = props => {
 		>
 			<CardContent>
 				{title && (
-					<Typography variant='headline' component='h2' noWrap>
+					<Typography variant='h5' noWrap>
 						{title}
 					</Typography>
 				)}
