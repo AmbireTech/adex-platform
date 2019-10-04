@@ -19,9 +19,10 @@ export const SimpleStatistics = ({
 	data = [],
 	options = {},
 	t,
-	metric,
+	metric = '',
 	xLabel,
 	yLabel,
+	eventType = '',
 }) => {
 	const { labels, datasets } = data.reduce(
 		(memo, item) => {
@@ -45,6 +46,7 @@ export const SimpleStatistics = ({
 		pointHitRadius: 10,
 		backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 0.7),
 		borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 1),
+		label: t(`TOTAL_${metric.toUpperCase()}_${eventType.toUpperCase()}`),
 	}
 
 	let chartData = {
