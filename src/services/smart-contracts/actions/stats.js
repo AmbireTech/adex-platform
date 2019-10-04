@@ -204,66 +204,44 @@ export async function getAllValidatorsAuthForIdentity({
 	return validatorsAuth
 }
 
+const analyticsParams = () => {
+	const metrics = ['eventPayouts', 'eventCounts']
+	const sides = [
+		'advertiser',
+		'publisher', //
+	]
+	const timeframes = [
+		'hour',
+		'day',
+		'week',
+		'month',
+		'year', //
+	]
+
+	const callsParams = []
+
+	sides.forEach(side =>
+		metrics.forEach(metric =>
+			timeframes.forEach(timeframe =>
+				callsParams.push({
+					metric,
+					timeframe,
+					side,
+				})
+			)
+		)
+	)
+
+	return callsParams
+}
+
 export async function getIdentityStatistics({
 	withBalance,
 	address,
 	account = {},
 	leaderAuth,
 } = {}) {
-	const callsParams = [
-		// Publisher
-		{
-			metric: 'eventPayouts',
-			timeframe: 'hour',
-			for: 'publisher',
-		},
-		{
-			metric: 'eventPayouts',
-			timeframe: 'day',
-			for: 'publisher',
-		},
-		{
-			metric: 'eventPayouts',
-			timeframe: 'week',
-			for: 'publisher',
-		},
-		// {
-		// 	metric: 'eventPayouts',
-		// 	timeframe: 'month',
-		// 	for: 'publisher',
-		// },
-		// {
-		// 	metric: 'eventPayouts',
-		// 	timeframe: 'year',
-		// 	for: 'publisher',
-		// },
-		{
-			metric: 'eventCounts',
-			timeframe: 'hour',
-			for: 'publisher',
-		},
-		{
-			metric: 'eventCounts',
-			timeframe: 'day',
-			for: 'publisher',
-		},
-		{
-			metric: 'eventCounts',
-			timeframe: 'week',
-			for: 'publisher',
-		},
-		// {
-		// 	metric: 'eventCounts',
-		// 	timeframe: 'month',
-		// 	for: 'publisher',
-		// },
-		// {
-		// 	metric: 'eventCounts',
-		// 	timeframe: 'year',
-		// 	for: 'publisher',
-		// },
-	]
-
+	const callsParams = analyticsParams()
 	const allCalls = callsParams.map(async opts => {
 		const aggr = identityAnalytics({
 			...opts,
@@ -291,7 +269,7 @@ export async function getIdentityStatistics({
 
 	const aggregates = results.reduce(
 		(aggrs, res) => {
-			aggrs[res.for][res.timeframe] = res
+			aggrs[res.side][res.timeframe] = res
 			return aggrs
 		},
 		{
