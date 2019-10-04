@@ -84,6 +84,7 @@ class Helper {
 		return (
 			'?' +
 				Object.keys(queryParams)
+					.filter(key => queryParams[key] !== undefined)
 					.map(key => {
 						return (
 							encodeURIComponent(key) +

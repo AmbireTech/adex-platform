@@ -5,12 +5,19 @@ import { getSigner } from 'services/smart-contracts/actions/ethers'
 import ewt from './ewt'
 
 const BEARER_PREFIX = 'Bearer '
+const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
+
+const getValidatorRequester = ({ baseUrl }) => {
+	return new Requester({ baseUrl })
+}
 
 const getRequesters = ({ campaign }) => {
 	const leader = (campaign.validators || campaign.spec.validators)[0]
 	const follower = (campaign.validators || campaign.spec.validators)[1]
-	const leaderRequester = new Requester({ baseUrl: leader.url })
-	const followerRequester = new Requester({ baseUrl: follower.url })
+	const leaderRequester = getValidatorRequester({ baseUrl: leader.url })
+	const followerRequester = getValidatorRequester({
+		baseUrl: follower.url,
+	})
 
 	return {
 		leader: { requester: leaderRequester, validator: leader },
@@ -32,9 +39,9 @@ const processResponse = res => {
 	})
 }
 
-const getAuthToken = async ({ account, validator }) => {
+export const getValidatorAuthToken = async ({ validatorId, account }) => {
 	const { identity, wallet } = account
-	const existingAuth = (identity.validatorAuthTokens || {})[validator.id]
+	const existingAuth = (identity.validatorAuthTokens || {})[validatorId]
 	if (existingAuth) {
 		return existingAuth
 	}
@@ -43,7 +50,7 @@ const getAuthToken = async ({ account, validator }) => {
 	const signer = await getSigner({ wallet, provider })
 
 	const payload = {
-		id: validator.id,
+		id: validatorId,
 		identity: identity.address,
 		era: Math.floor(Date.now() / 60000),
 	}
@@ -53,16 +60,16 @@ const getAuthToken = async ({ account, validator }) => {
 	return token
 }
 
-const sendMessage = async ({ account, campaign, options }) => {
+const sendMessage = async ({ campaign, options, account }) => {
 	const { follower, leader } = getRequesters({ campaign })
 
-	const followerAuthToken = await getAuthToken({
+	const followerAuthToken = await getValidatorAuthToken({
+		validatorId: follower.validator.id,
 		account,
-		validator: follower.validator,
 	})
-	const leaderAuthToken = await getAuthToken({
+	const leaderAuthToken = await getValidatorAuthToken({
+		validatorId: leader.validator.id,
 		account,
-		validator: leader.validator,
 	})
 	const followerResult = await follower.requester
 		.fetch({
@@ -85,13 +92,13 @@ const sendMessage = async ({ account, campaign, options }) => {
 		.then(processResponse)
 
 	return {
-		authTokens: {
-			[follower.validator.id]: followerAuthToken,
-			[leader.validator.id]: leaderAuthToken,
-		},
 		results: {
 			followerResult,
 			leaderResult,
+		},
+		authTokens: {
+			[follower.id]: followerAuthToken,
+			[leader.id]: leaderAuthToken,
 		},
 	}
 }
@@ -107,7 +114,7 @@ export const lastApprovedState = ({ campaign }) => {
 		.then(processResponse)
 }
 
-export const closeCampaign = ({ account, campaign }) => {
+export const closeCampaign = ({ campaign, account }) => {
 	const options = {
 		route: `channel/${campaign.id}/events`,
 		method: 'POST',
@@ -115,16 +122,33 @@ export const closeCampaign = ({ account, campaign }) => {
 		headers: { 'Content-Type': 'application/json' },
 	}
 
-	return sendMessage({ account, campaign, options })
+	return sendMessage({ campaign, options, account })
 }
 
-export const eventsAggregates = ({ agrArgs, campaign }) => {
-	const { follower } = getRequesters({ campaign })
+export const identityAnalytics = async ({
+	idenityAddr,
+	campaign,
+	campaignId,
+	leaderAuth,
+	eventType,
+	metric,
+	timeframe,
+	limit,
+	side,
+}) => {
+	const baseUrl = VALIDATOR_LEADER_URL
+	const requester = getValidatorRequester({ baseUrl })
 
-	return follower.requester
+	const aggregates = await requester
 		.fetch({
-			route: `channel/${campaign.id}/events-aggregates/${agrArgs}`,
+			route: `/analytics/for-${side}${campaignId || ''}`,
 			method: 'GET',
+			queryParams: { eventType, metric, timeframe, limit },
+			headers: {
+				authorization: BEARER_PREFIX + leaderAuth,
+			},
 		})
 		.then(processResponse)
+
+	return aggregates
 }

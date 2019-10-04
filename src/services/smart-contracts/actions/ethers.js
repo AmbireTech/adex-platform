@@ -137,13 +137,15 @@ export const getTypedDataHash = ({ typedData }) => {
 			: utils.hexlify(entry.value)
 	})
 	const valuesHash = utils.keccak256.apply(null, values)
-
 	const schema = typedData.map(entry => {
 		return utils.toUtf8Bytes(entry.type + ' ' + entry.name)
 	})
-	const schemaHash = utils.keccak256.apply(null, schema)
 
-	const hash = utils.keccak256(schemaHash, valuesHash)
+	const schemaHash = utils.keccak256.apply(null, schema)
+	const hash = utils.solidityKeccak256(
+		['bytes32', 'bytes32'],
+		[schemaHash, valuesHash]
+	)
 
 	return hash
 }
@@ -155,10 +157,9 @@ export async function getAuthSig({ wallet }) {
 	const authToken = Math.floor(
 		Math.random() * Number.MAX_SAFE_INTEGER
 	).toString()
+
 	const typedData = [{ type: 'uint', name: 'Auth token', value: authToken }]
-
 	const hash = getTypedDataHash({ typedData })
-
 	const signature = await signer.signMessage(hash, { hex: true })
 
 	return {

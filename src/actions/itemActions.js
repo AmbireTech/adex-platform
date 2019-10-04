@@ -9,8 +9,9 @@ import {
 import { parseUnits, bigNumberify } from 'ethers/utils'
 import { Base, AdSlot, AdUnit, helpers } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
-import { updateAccount } from './accountActions'
+import { updateValidatorAuthTokens } from './accountActions'
 import { translate } from 'services/translations/translations'
+import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
 import {
 	getAdUnits,
 	getAdSlots,
@@ -94,6 +95,15 @@ export function resetNewItem(item) {
 		return dispatch({
 			type: types.RESET_NEW_ITEM,
 			item: item,
+		})
+	}
+}
+
+export function resetAllNewItems() {
+	return function(dispatch) {
+		return dispatch({
+			type: types.RESET_ALL_NEW_ITEMS,
+			kor: 'hoi',
 		})
 	}
 }
@@ -252,6 +262,11 @@ export function openCampaign({ campaign, account }) {
 	return async function(dispatch) {
 		updateSpinner('opening-campaign', true)(dispatch)
 		try {
+			await getAllValidatorsAuthForIdentity({
+				withBalance: [{ channel: campaign }],
+				account,
+			})
+
 			const { readyCampaign } = await openChannel({ campaign, account })
 
 			dispatch({
@@ -560,13 +575,17 @@ export function closeCampaign({ campaign }) {
 		updateSpinner('closing-campaign', true)(dispatch)
 		try {
 			const { account } = getState().persist
-			const { authTokens } = await closeChannel({ account, campaign })
+			const { results, authTokens } = await closeChannel({ account, campaign })
 
-			const newIdentity = { ...account.identity }
-			const newTokens = { ...newIdentity.validatorAuthTokens, authTokens }
-			newIdentity.validatorAuthTokens = newTokens
+			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch)
+			// TODO: update campaign state
 
-			updateAccount({ newValues: { identity: newIdentity } })(dispatch)
+			addToast({
+				dispatch,
+				type: 'accept',
+				toastStr: 'SUCCESS_CLOSING_CAMPAIGN',
+				args: [campaign.id],
+			})
 		} catch (err) {
 			console.error('ERR_CLOSING_CAMPAIGN', err)
 			addToast({

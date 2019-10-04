@@ -14,5 +14,8 @@ export const styles = theme => {
 		address: {
 			wordWrap: 'break-word',
 		},
+		advancedList: {
+			width: '100%',
+		},
 	}
 }

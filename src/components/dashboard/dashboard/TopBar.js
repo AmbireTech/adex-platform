@@ -109,7 +109,7 @@ class TopNav extends Component {
 					<div className={classes.flexRow}>
 						<div className={classnames(classes.flex, classes.toolbarTitle)}>
 							<Typography
-								variant='title'
+								variant='subtitle1'
 								color='inherit'
 								className={classes.flex}
 								noWrap
