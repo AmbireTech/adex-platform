@@ -254,16 +254,9 @@ export async function getIdentityStatistics({
 		allCalls.map((ag, index) => {
 			const params = callsParams[index]
 
-			return ag
-				.then(res => {
-					return { ...res, ...params }
-				})
-				.catch(e => {
-					return {
-						...params,
-						aggr: [],
-					}
-				})
+			return ag.then(res => {
+				return { ...res, ...params }
+			})
 		})
 	)
 
