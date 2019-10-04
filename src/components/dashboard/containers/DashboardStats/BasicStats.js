@@ -7,8 +7,8 @@ const timeFrames = [
 	{ label: 'hour', value: 'hour' },
 	{ label: 'day', value: 'day' },
 	{ label: 'week', value: 'week' },
-	// { label: 'month', value: 'month' },
-	// { label: 'year', value: 'year' },
+	{ label: 'month', value: 'month' },
+	{ label: 'year', value: 'year' },
 ]
 
 const metrics = {
@@ -22,12 +22,12 @@ const metrics = {
 	],
 }
 
-const getYlabel = side => {
-	switch (side) {
-		case 'advertiser':
-			return 'IMPRESSION'
-		case 'publisher':
-			return 'REVENUE'
+const getYlabel = metric => {
+	switch (metric) {
+		case 'eventCounts':
+			return 'IMPRESSIONS'
+		case 'eventPayouts':
+			return 'DAI'
 		default:
 			return 'DATA'
 	}
@@ -62,10 +62,10 @@ export function BasicStats({ aggregates, side, t }) {
 			</Grid>
 			<Grid item xs={12}>
 				<SimpleStatistics
-					data={(data[timeframe] || {}).aggr}
-					metric={(data[timeframe] || {}).metric}
+					data={((data[timeframe] || {})[metric] || {}).aggr}
+					metric={metric}
 					options={{ title: t(timeframe) }}
-					yLabel={getYlabel(side)}
+					yLabel={getYlabel(metric)}
 					t={t}
 				/>
 			</Grid>
