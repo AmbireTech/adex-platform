@@ -5,7 +5,6 @@ import { getAllCampaigns } from 'services/adex-market/actions'
 import {
 	lastApprovedState,
 	getValidatorAuthToken,
-	identityAnalytics,
 } from 'services/adex-validator/actions'
 import { bigNumberify } from 'ethers/utils'
 import { Channel, MerkleTree } from 'adex-protocol-eth/js'
@@ -202,78 +201,6 @@ export async function getAllValidatorsAuthForIdentity({
 	}, {})
 
 	return validatorsAuth
-}
-
-const analyticsParams = () => {
-	const metrics = ['eventPayouts', 'eventCounts']
-	const sides = [
-		'advertiser',
-		'publisher', //
-	]
-	const timeframes = [
-		'hour',
-		'day',
-		'week',
-		'month',
-		'year', //
-	]
-
-	const callsParams = []
-
-	sides.forEach(side =>
-		metrics.forEach(metric =>
-			timeframes.forEach(timeframe =>
-				callsParams.push({
-					metric,
-					timeframe,
-					side,
-					eventType: 'IMPRESSION',
-				})
-			)
-		)
-	)
-
-	return callsParams
-}
-
-export async function getIdentityStatistics({
-	withBalance,
-	address,
-	account = {},
-	leaderAuth,
-} = {}) {
-	const callsParams = analyticsParams()
-	const allCalls = callsParams.map(async opts => {
-		const aggr = identityAnalytics({
-			...opts,
-			leaderAuth,
-		})
-		return aggr
-	})
-
-	const results = await Promise.all(
-		allCalls.map((ag, index) => {
-			const params = callsParams[index]
-
-			return ag.then(res => {
-				return { ...res, ...params }
-			})
-		})
-	)
-
-	const aggregates = results.reduce(
-		(aggrs, res) => {
-			aggrs[res.side][res.timeframe] = aggrs[res.side][res.timeframe] || {}
-			aggrs[res.side][res.timeframe][res.metric] = res
-			return aggrs
-		},
-		{
-			publisher: {},
-			advertiser: {},
-		}
-	)
-
-	return { aggregates }
 }
 
 export async function getAllChannelsForIdentity({ address }) {
