@@ -10,10 +10,8 @@ import {
 	getAllChannelsForIdentity,
 	getAccountStats,
 	getOutstandingBalance,
-	getAllValidatorsAuthForIdentity,
-	getIdentityStatistics,
 } from 'services/smart-contracts/actions/stats'
-import { addToast, removeToast, confirmAction } from './uiActions'
+import { addToast, confirmAction } from './uiActions'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES } from 'constants/misc'
 
@@ -103,48 +101,6 @@ export function updateAccountStats() {
 			updateAccount({
 				newValues: { stats: { formatted, raw, aggregates: oldAggregates } },
 			})(dispatch)
-
-			const toastId = addToast({
-				type: 'warning',
-				label: translate('SIGN_VALIDATORS_AUTH'),
-				timeout: false,
-				unclosable: true,
-				top: true,
-			})(dispatch)
-
-			const leaderAuth = await getValidatorAuthToken({
-				validatorId: VALIDATOR_LEADER_ID,
-				account,
-			})
-
-			removeToast(toastId)(dispatch)
-
-			updateValidatorAuthTokens({
-				newAuth: { [VALIDATOR_LEADER_ID]: leaderAuth },
-			})(dispatch, getState)
-
-			const { aggregates } = await getIdentityStatistics({
-				withBalance,
-				account,
-				leaderAuth,
-			})
-
-			// getIdentityStatistics tooks to long some times
-			// if the account is change we do not update the account
-			// TODO: we can use something for abortable tasks
-			const accountCheck = getState().persist.account
-			if (
-				!accountCheck.wallet.address ||
-				accountCheck.wallet.address !== account.wallet.address ||
-				!accountCheck.identity.address ||
-				!accountCheck.identity.address !== !account.identity.address
-			) {
-				return
-			}
-
-			updateAccount({ newValues: { stats: { formatted, raw, aggregates } } })(
-				dispatch
-			)
 		} catch (err) {
 			console.error('ERR_STATS', err)
 			addToast({

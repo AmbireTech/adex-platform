@@ -6,6 +6,7 @@ import * as identityActions from './identityActions'
 import * as bidActions from './bidActions'
 import * as transactionActions from './transactionActions'
 import * as validationActions from './validationActions'
+import * as analyticsActions from './analyticsActions'
 
 // keep it for class components that use connect and actions prop
 // without needing to change the code
@@ -18,6 +19,7 @@ export default {
 	...bidActions,
 	...transactionActions,
 	...validationActions,
+	...analyticsActions,
 }
 
 // used for minimal deps in hook components
@@ -30,3 +32,4 @@ export * from './accountActions'
 export * from './identityActions'
 export * from './bidActions'
 export * from './transactionActions'
+export * from './analyticsActions'

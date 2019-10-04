@@ -16,6 +16,7 @@ import newTransactions from './newTransactionsReducer'
 import web3Transactions from './web3TransactionsReducer'
 import tags from './tagsReducer'
 import ethNetwork from './ethNetworkReducer'
+import analytics from './analyticsReducer'
 import {
 	routerReducer,
 	LOCATION_CHANGE,
@@ -40,6 +41,7 @@ export const persistReducers = {
 	web3Transactions: web3Transactions,
 	tags: tags,
 	ethNetwork: ethNetwork,
+	analytics,
 }
 
 export const memoryReducers = {
