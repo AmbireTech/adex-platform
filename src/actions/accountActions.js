@@ -2,15 +2,23 @@ import * as types from 'constants/actionTypes'
 import { addSig, getSig } from 'services/auth/auth'
 import { getSession, checkSession } from 'services/adex-market/actions'
 import { relayerConfig, getGrantType } from 'services/adex-relayer/actions'
+import { getValidatorAuthToken } from 'services/adex-validator/actions'
 import { updateSpinner } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
-import { getAccountStats } from 'services/smart-contracts/actions/stats'
-import { addToast, confirmAction } from './uiActions'
+import {
+	getAllChannelsForIdentity,
+	getAccountStats,
+	getOutstandingBalance,
+	getAllValidatorsAuthForIdentity,
+	getIdentityStatistics,
+} from 'services/smart-contracts/actions/stats'
+import { addToast, removeToast, confirmAction } from './uiActions'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES } from 'constants/misc'
 
 const UPDATE_SETTINGS_INTERVAL = 24 * 60 * 60 * 1000 // 1 hour
+const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
 // MEMORY STORAGE
 export function updateSignin(prop, value) {
@@ -73,9 +81,70 @@ export function updateAccountStats() {
 	return async function(dispatch, getState) {
 		const { account } = getState().persist
 		try {
-			const stats = await getAccountStats({ account })
+			const { identity, wallet, stats } = account
+			const { address } = identity
+			const oldAggregates = stats.aggregates
 
-			updateAccount({ newValues: { stats } })(dispatch)
+			const withBalance = await getAllChannelsForIdentity({ address })
+
+			const outstandingBalanceDai = await getOutstandingBalance({
+				wallet,
+				address,
+				withBalance,
+			}).catch(err => {
+				console.error('ERR_OUTSTANDING_BALANCES', err)
+			})
+
+			const { formatted, raw } = await getAccountStats({
+				account,
+				outstandingBalanceDai,
+			})
+
+			updateAccount({
+				newValues: { stats: { formatted, raw, aggregates: oldAggregates } },
+			})(dispatch)
+
+			const toastId = addToast({
+				type: 'warning',
+				label: translate('SIGN_VALIDATORS_AUTH'),
+				timeout: false,
+				unclosable: true,
+				top: true,
+			})(dispatch)
+
+			const leaderAuth = await getValidatorAuthToken({
+				validatorId: VALIDATOR_LEADER_ID,
+				account,
+			})
+
+			removeToast(toastId)(dispatch)
+
+			updateValidatorAuthTokens({
+				newAuth: { [VALIDATOR_LEADER_ID]: leaderAuth },
+			})(dispatch, getState)
+
+			const { aggregates } = await getIdentityStatistics({
+				withBalance,
+				account,
+				leaderAuth,
+			})
+
+			// getIdentityStatistics tooks to long some times
+			// if the account is change we do not update the account
+			// TODO: we can use something for abortable tasks
+			const accountCheck = getState().persist.account
+			if (
+				!accountCheck.wallet.address ||
+				accountCheck.wallet.address !== account.wallet.address ||
+				!accountCheck.identity.address ||
+				!accountCheck.identity.address !== !account.identity.address
+			) {
+				return
+			}
+
+			updateAccount({ newValues: { stats: { formatted, raw, aggregates } } })(
+				dispatch
+			)
 		} catch (err) {
 			console.error('ERR_STATS', err)
 			addToast({
@@ -111,6 +180,24 @@ export function updateAccountSettings() {
 				label: translate('ERR_SETTINGS', { args: [err] }),
 				timeout: 20000,
 			})(dispatch)
+		}
+	}
+}
+
+export function updateValidatorAuthTokens({ newAuth }) {
+	return async function(dispatch, getState) {
+		const { identity } = getState().persist.account
+
+		const newIdentity = { ...identity }
+		const newTokens = { ...(newIdentity.validatorAuthTokens || {}), ...newAuth }
+
+		// We don't want to update account if there is no actual change
+		if (
+			JSON.stringify(newIdentity.validatorAuthTokens) !==
+			JSON.stringify(newTokens)
+		) {
+			newIdentity.validatorAuthTokens = newTokens
+			updateAccount({ newValues: { identity: newIdentity } })(dispatch)
 		}
 	}
 }
@@ -167,12 +254,23 @@ export function createSession({ wallet, identity, email }) {
 				}
 			}
 
+			const account = {
+				email: email,
+				wallet: newWallet,
+				identity: { ...identity },
+			}
+
+			const leaderValidatorAuth = await getValidatorAuthToken({
+				validatorId: VALIDATOR_LEADER_ID,
+				account,
+			})
+
+			account.identity.validatorAuthTokens = {
+				[VALIDATOR_LEADER_ID]: leaderValidatorAuth,
+			}
+
 			updateAccount({
-				newValues: {
-					email: email,
-					wallet: newWallet,
-					identity: identity,
-				},
+				newValues: { ...account },
 			})(dispatch)
 		} catch (err) {
 			console.error('ERR_GETTING_SESSION', err)
