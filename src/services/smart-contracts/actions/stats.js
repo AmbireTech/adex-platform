@@ -269,7 +269,8 @@ export async function getIdentityStatistics({
 
 	const aggregates = results.reduce(
 		(aggrs, res) => {
-			aggrs[res.side][res.timeframe] = res
+			aggrs[res.side][res.timeframe] = aggrs[res.side][res.timeframe] || {}
+			aggrs[res.side][res.timeframe][res.metric] = res
 			return aggrs
 		},
 		{
