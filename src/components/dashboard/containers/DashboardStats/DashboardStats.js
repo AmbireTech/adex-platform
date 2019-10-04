@@ -282,16 +282,11 @@ export class DashboardStats extends Component {
 			// sideBids,
 			classes,
 			t,
-			account,
+			analytics,
 		} = this.props
 		if (side !== 'advertiser' && side !== 'publisher') {
 			return <SideSelect active={true} />
 		}
-
-		const aggregates =
-			account && account.stats && account.stats.aggregates
-				? account.stats.aggregates
-				: null
 
 		// const stats = this.mapData(sideBids)
 
@@ -301,8 +296,8 @@ export class DashboardStats extends Component {
 					<Grid item md={12} lg={12} xs={12}>
 						<Card className={classnames(classes.dashboardCardBody)}>
 							<CardContent>
-								{aggregates ? (
-									<BasicStats side={side} aggregates={aggregates} t={t} />
+								{analytics ? (
+									<BasicStats side={side} analytics={analytics} t={t} />
 								) : (
 									t('NO_STATS_YET')
 								)}
@@ -331,6 +326,7 @@ function mapStateToProps(state, props) {
 	return {
 		account: persist.account,
 		side: memory.nav.side,
+		analytics: persist.analytics,
 	}
 }
 

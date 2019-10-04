@@ -34,16 +34,14 @@ const getYlabel = metric => {
 	}
 }
 
-const getDataLabel = (metric, side) => {}
-
 const getData = ({ data, timeframe, metric } = {}) => {
-	return (data[timeframe] || {})[metric] || {}
+	return data['IMPRESSION'][metric][timeframe] || {}
 }
 
-export function BasicStats({ aggregates, side, t }) {
+export function BasicStats({ analytics, side, t }) {
 	const [timeframe, setTimeframe] = useState(timeFrames[0].value)
 	const [metric, setMetric] = useState(metrics[side][0].value)
-	const data = aggregates[side] || {}
+	const data = analytics[side] || {}
 
 	return (
 		<Grid container spacing={2}>
@@ -73,7 +71,7 @@ export function BasicStats({ aggregates, side, t }) {
 					metric={metric}
 					options={{ title: t(timeframe) }}
 					yLabel={getYlabel(metric)}
-					eventType={getData({ data, metric, timeframe }).eventType}
+					eventType={'IMPRESSION'}
 					t={t}
 				/>
 			</Grid>

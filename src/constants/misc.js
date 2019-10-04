@@ -98,3 +98,21 @@ export const UTM_PARAMS = {
 	utm_campaign: 'none',
 	utm_content: 'none',
 }
+
+export const VALIDATOR_ANALYTICS_METRICS = [
+	'eventPayouts', //
+	'eventCounts',
+]
+export const VALIDATOR_ANALYTICS_SIDES = [
+	'advertiser',
+	'publisher', //
+]
+export const VALIDATOR_ANALYTICS_EVENT_TYPES = ['IMPRESSION']
+
+export const VALIDATOR_ANALYTICS_TIMEFRAMES = [
+	'hour',
+	'day',
+	'week',
+	'month',
+	'year', //
+]
