@@ -133,13 +133,14 @@ export const identityAnalytics = async ({
 	metric,
 	timeframe,
 	limit,
+	side,
 }) => {
 	const baseUrl = 'http://localhost:8005' // GET from GLOBAL cfg, leader will be only TOM
 	const requester = getValidatorRequester({ baseUrl })
 
 	const aggregates = await requester
 		.fetch({
-			route: `/analytics/for-user${campaignId || ''}`,
+			route: `/analytics/for-${side}${campaignId || ''}`,
 			method: 'GET',
 			queryParams: { eventType, metric, timeframe, limit },
 			headers: {
