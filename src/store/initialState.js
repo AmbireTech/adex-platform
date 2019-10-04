@@ -66,12 +66,7 @@ let initialState = {
 	},
 	web3Transactions: {},
 	tags: {},
-	identity: {
-		email: 'klatikureca@gmail.com',
-		emailCheck: 'klatikureca@gmail.com',
-		password: 'PassWord123',
-		passwordCheck: 'PassWord123',
-	},
+	identity: {},
 	ethNetwork: {
 		networkId: null,
 		gasData: {},
@@ -84,7 +79,5 @@ let initialState = {
 	},
 	analytics: getValidatorAnalyticsInitialState(),
 }
-
-console.log('initialState', initialState)
 
 export default initialState
