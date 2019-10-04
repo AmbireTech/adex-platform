@@ -2,23 +2,24 @@ import React, { useState } from 'react'
 import { SimpleStatistics } from 'components/dashboard/charts/simplified'
 import Dropdown from 'components/common/dropdown'
 import Grid from '@material-ui/core/Grid'
+import { translate } from 'services/translations/translations'
 
 const timeFrames = [
-	{ label: 'hour', value: 'hour' },
-	{ label: 'day', value: 'day' },
-	{ label: 'week', value: 'week' },
-	{ label: 'month', value: 'month' },
-	{ label: 'year', value: 'year' },
+	{ label: translate('LABEL_HOUR'), value: 'hour' },
+	{ label: translate('LABEL_DAY'), value: 'day' },
+	{ label: translate('LABEL_WEEK'), value: 'week' },
+	{ label: translate('LABEL_MONTH'), value: 'month' },
+	{ label: translate('LABEL_YEAR'), value: 'year' },
 ]
 
 const metrics = {
 	publisher: [
-		{ label: 'Revenue', value: 'eventPayouts' },
-		{ label: 'Impressions', value: 'eventCounts' },
+		{ label: translate('LABEL_REVENUE'), value: 'eventPayouts' },
+		{ label: translate('LABEL_IMPRESSIONS'), value: 'eventCounts' },
 	],
 	advertiser: [
-		{ label: 'Spent', value: 'eventPayouts' },
-		{ label: 'Impressions', value: 'eventCounts' },
+		{ label: translate('LABEL_SPENT'), value: 'eventPayouts' },
+		{ label: translate('LABEL_IMPRESSIONS'), value: 'eventCounts' },
 	],
 }
 
@@ -31,6 +32,12 @@ const getYlabel = metric => {
 		default:
 			return 'DATA'
 	}
+}
+
+const getDataLabel = (metric, side) => {}
+
+const getData = ({ data, timeframe, metric } = {}) => {
+	return (data[timeframe] || {})[metric] || {}
 }
 
 export function BasicStats({ aggregates, side, t }) {
@@ -62,10 +69,11 @@ export function BasicStats({ aggregates, side, t }) {
 			</Grid>
 			<Grid item xs={12}>
 				<SimpleStatistics
-					data={((data[timeframe] || {})[metric] || {}).aggr}
+					data={getData({ data, metric, timeframe }).aggr}
 					metric={metric}
 					options={{ title: t(timeframe) }}
 					yLabel={getYlabel(metric)}
+					eventType={getData({ data, metric, timeframe }).eventType}
 					t={t}
 				/>
 			</Grid>
