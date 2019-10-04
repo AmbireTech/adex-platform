@@ -227,6 +227,7 @@ const analyticsParams = () => {
 					metric,
 					timeframe,
 					side,
+					eventType: 'IMPRESSION',
 				})
 			)
 		)
