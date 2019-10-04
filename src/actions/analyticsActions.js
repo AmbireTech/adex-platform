@@ -75,8 +75,6 @@ export function updateAccountAnalytics(KOR) {
 
 			const params = analyticsParams()
 			let accountChanged = false
-
-			console.log('KOR', KOR)
 			const allAnalytics = params.map(async opts => {
 				identityAnalytics({
 					...opts,
