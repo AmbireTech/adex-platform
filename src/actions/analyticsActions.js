@@ -93,16 +93,16 @@ export function updateAccountAnalytics(KOR) {
 						}
 					})
 					.catch(err => {
-						console.error('ERR_ANALYTICS', err)
+						console.error('ERR_ANALYTICS_SINGLE', err)
 					})
 			})
 
 			await Promise.all(allAnalytics)
 		} catch (err) {
-			console.error('ERR_STATS', err)
+			console.error('ERR_ANALYTICS', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_STATS', { args: [err] }),
+				label: translate('ERR_ANALYTICS', { args: [err] }),
 				timeout: 20000,
 			})(dispatch)
 		}
