@@ -67,7 +67,7 @@ export const SimpleStatistics = ({
 		borderWidth: 0,
 		pointRadius: 3,
 		pointHitRadius: 10,
-		backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 0.7),
+		backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 0.5),
 		borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 1),
 		label: t(`TOTAL_${metric.toUpperCase()}_${eventType.toUpperCase()}`),
 	}
@@ -84,11 +84,11 @@ export const SimpleStatistics = ({
 			text: options.title,
 		},
 		tooltips: {
-			mode: 'nearest',
+			mode: 'index',
 			intersect: false,
 		},
 		hover: {
-			mode: 'nearest',
+			mode: 'index',
 			intersect: false,
 		},
 		scales: {
