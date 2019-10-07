@@ -42,7 +42,7 @@ export const SimpleStatistics = ({
 		fill: true,
 		lineTension: 0.3,
 		borderWidth: 0,
-		pointRadius: 1,
+		pointRadius: 3,
 		pointHitRadius: 10,
 		backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 0.7),
 		borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 1),
@@ -61,7 +61,12 @@ export const SimpleStatistics = ({
 			text: options.title,
 		},
 		tooltips: {
-			mode: 'index',
+			mode: 'nearest',
+			intersect: false,
+		},
+		hover: {
+			mode: 'nearest',
+			intersect: false,
 		},
 		scales: {
 			xAxes: [
@@ -69,7 +74,6 @@ export const SimpleStatistics = ({
 					display: true,
 					gridLines: {
 						display: true,
-						// beginAtZero: true,
 					},
 					// labels: {
 					//     show: true
@@ -84,6 +88,8 @@ export const SimpleStatistics = ({
 				{
 					gridLines: {
 						display: true,
+					},
+					ticks: {
 						beginAtZero: true,
 					},
 					scaleLabel: {
