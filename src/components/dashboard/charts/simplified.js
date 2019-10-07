@@ -24,16 +24,16 @@ export const SimpleStatistics = ({
 	yLabel,
 	eventType = '',
 }) => {
+	// Vertical line / crosshair
 	useEffect(() => {
 		Chart.pluginService.register({
-			afterDraw: function(chart, easing) {
+			afterDraw: function(chart) {
 				if (chart.tooltip._active && chart.tooltip._active.length) {
 					const activePoint = chart.controller.tooltip._active[0]
 					const ctx = chart.ctx
 					const x = activePoint.tooltipPosition().x
 					const topY = chart.scales['y-axis-0'].top
 					const bottomY = chart.scales['y-axis-0'].bottom
-
 					ctx.save()
 					ctx.beginPath()
 					ctx.moveTo(x, topY)
@@ -84,6 +84,7 @@ export const SimpleStatistics = ({
 			text: options.title,
 		},
 		tooltips: {
+			backgroundColor: 'black',
 			mode: 'index',
 			intersect: false,
 		},
