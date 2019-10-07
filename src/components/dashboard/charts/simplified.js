@@ -1,5 +1,6 @@
-import React from 'react'
-import { Line } from 'react-chartjs-2'
+import React, { useEffect } from 'react'
+import 'chartjs-plugin-crosshair'
+import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
@@ -24,6 +25,29 @@ export const SimpleStatistics = ({
 	yLabel,
 	eventType = '',
 }) => {
+	useEffect(() => {
+		Chart.pluginService.register({
+			afterDraw: function(chart, easing) {
+				if (chart.tooltip._active && chart.tooltip._active.length) {
+					const activePoint = chart.controller.tooltip._active[0]
+					const ctx = chart.ctx
+					const x = activePoint.tooltipPosition().x
+					const topY = chart.scales['y-axis-0'].top
+					const bottomY = chart.scales['y-axis-0'].bottom
+
+					ctx.save()
+					ctx.beginPath()
+					ctx.moveTo(x, topY)
+					ctx.lineTo(x, bottomY)
+					ctx.lineWidth = 1 // line width
+					ctx.strokeStyle = '#C0C0C0' // color of the vertical line
+					ctx.stroke()
+					ctx.restore()
+				}
+			},
+		})
+	})
+
 	const { labels, datasets } = data.reduce(
 		(memo, item) => {
 			const { time, value } = item
@@ -59,6 +83,35 @@ export const SimpleStatistics = ({
 		title: {
 			display: true,
 			text: options.title,
+		},
+		plugins: {
+			crosshair: {
+				line: {
+					color: '#F66', // crosshair line color
+					width: 1, // crosshair line width
+				},
+				sync: {
+					enabled: true, // enable trace line syncing with other charts
+					group: 1, // chart group
+					suppressTooltips: false, // suppress tooltips when showing a synced tracer
+				},
+				zoom: {
+					enabled: true, // enable zooming
+					zoomboxBackgroundColor: 'rgba(66,133,244,0.2)', // background color of zoom box
+					zoomboxBorderColor: '#48F', // border color of zoom box
+					zoomButtonText: 'Reset Zoom', // reset zoom button text
+					zoomButtonClass: 'reset-zoom', // reset zoom button class
+				},
+				callbacks: {
+					beforeZoom: function(start, end) {
+						// called before zoom, return false to prevent zoom
+						return true
+					},
+					afterZoom: function(start, end) {
+						// called after zoom
+					},
+				},
+			},
 		},
 		tooltips: {
 			mode: 'nearest',
