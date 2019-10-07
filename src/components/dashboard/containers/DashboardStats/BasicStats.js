@@ -69,7 +69,9 @@ export function BasicStats({ analytics, side, t }) {
 				<SimpleStatistics
 					data={getData({ data, metric, timeframe }).aggr}
 					metric={metric}
-					options={{ title: t(timeframe) }}
+					options={{
+						title: t(timeFrames.find(a => a.value === timeframe).label),
+					}}
 					yLabel={getYlabel(metric)}
 					eventType={'IMPRESSION'}
 					t={t}
