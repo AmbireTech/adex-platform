@@ -81,9 +81,9 @@ export const SimpleStatistics = ({
 	const linesOptions = {
 		responsive: true,
 		maintainAspectRatio: false,
-		legend: {
-			display: false,
-		},
+		// legend: {
+		// 	display: false,
+		// },
 		title: {
 			display: true,
 			text: options.title,
