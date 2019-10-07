@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import 'chartjs-plugin-crosshair'
 import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
