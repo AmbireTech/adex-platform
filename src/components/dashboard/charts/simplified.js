@@ -3,6 +3,7 @@ import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
+import { height } from '@material-ui/system'
 
 const parseValueByMetric = ({ value, metric }) => {
 	switch (metric) {
@@ -79,6 +80,10 @@ export const SimpleStatistics = ({
 
 	const linesOptions = {
 		responsive: true,
+		maintainAspectRatio: false,
+		legend: {
+			display: false,
+		},
 		title: {
 			display: true,
 			text: options.title,
@@ -125,5 +130,9 @@ export const SimpleStatistics = ({
 		},
 	}
 
-	return <Line data={chartData} options={linesOptions} />
+	return (
+		<div style={{ height: '500px' }}>
+			<Line data={chartData} options={linesOptions} />
+		</div>
+	)
 }
