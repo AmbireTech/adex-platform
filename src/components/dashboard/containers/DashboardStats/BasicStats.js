@@ -55,7 +55,7 @@ export function BasicStats({ analytics, side, t }) {
 					htmlId='timeframe-select'
 				/>
 			</Grid>
-			<Grid item xs={12} sm={6} md={3}>
+			{/* <Grid item xs={12} sm={6} md={3}>
 				<Dropdown
 					fullWidth
 					label={t('SELECT_METRICS')}
@@ -64,11 +64,12 @@ export function BasicStats({ analytics, side, t }) {
 					value={metric}
 					htmlId='metric-select'
 				/>
-			</Grid>
+			</Grid> */}
 			<Grid item xs={12}>
 				<SimpleStatistics
-					data={getData({ data, metric, timeframe }).aggr}
+					data={data['IMPRESSION']}
 					metric={metric}
+					timeframe={timeframe}
 					options={{
 						title: t(timeFrames.find(a => a.value === timeframe).label),
 					}}

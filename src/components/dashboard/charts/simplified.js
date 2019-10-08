@@ -17,9 +17,10 @@ const parseValueByMetric = ({ value, metric }) => {
 
 export const SimpleStatistics = ({
 	data = [],
+	timeframe = '',
 	options = {},
 	t,
-	metric = '',
+	// metric = '',
 	xLabel,
 	yLabel,
 	eventType = '',
@@ -32,8 +33,8 @@ export const SimpleStatistics = ({
 					const activePoint = chart.controller.tooltip._active[0]
 					const ctx = chart.ctx
 					const x = activePoint.tooltipPosition().x
-					const topY = chart.scales['y-axis-0'].top
-					const bottomY = chart.scales['y-axis-0'].bottom
+					const topY = chart.scales['y-axis-1'].top
+					const bottomY = chart.scales['y-axis-1'].bottom
 					ctx.save()
 					ctx.beginPath()
 					ctx.moveTo(x, topY)
@@ -48,34 +49,52 @@ export const SimpleStatistics = ({
 		})
 	})
 
-	const { labels, datasets } = data.reduce(
-		(memo, item) => {
-			const { time, value } = item
-			memo.labels.push(formatDateTime(time))
-			memo.datasets.push(parseValueByMetric({ value, metric }))
-
-			return memo
-		},
-		{
-			labels: [],
-			datasets: [],
-		}
-	)
+	const parseData = metric => {
+		const aggr = data[metric][timeframe].aggr || []
+		return aggr.reduce(
+			(memo, item) => {
+				const { time, value } = item
+				memo.labels.push(formatDateTime(time))
+				memo.datasets.push(parseValueByMetric({ value, metric }))
+				return memo
+			},
+			{
+				labels: [],
+				datasets: [],
+			}
+		)
+	}
 
 	let commonDsProps = {
-		fill: true,
+		fill: false,
 		lineTension: 0.3,
 		borderWidth: 0,
 		pointRadius: 3,
 		pointHitRadius: 10,
 		backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 0.5),
 		borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 1),
-		label: t(`TOTAL_${metric.toUpperCase()}_${eventType.toUpperCase()}`),
 	}
 
 	let chartData = {
-		labels: labels,
-		datasets: [{ ...commonDsProps, data: datasets }],
+		labels: parseData('eventPayouts').labels,
+		datasets: [
+			{
+				...commonDsProps,
+				backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 0.5),
+				borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 1),
+				label: 'DAI', //t('TOTAL_EVENTPAYOUTS_IMPRESSION'),
+				data: parseData('eventPayouts').datasets,
+				yAxisID: 'y-axis-1',
+			},
+			{
+				...commonDsProps,
+				backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[2], 0.5),
+				borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[2], 1),
+				label: 'Impressions', //t('TOTAL_EVENTCOUNTS_IMPRESSION'),
+				data: parseData('eventCounts').datasets,
+				yAxisID: 'y-axis-2',
+			},
+		],
 	}
 
 	const linesOptions = {
@@ -124,6 +143,21 @@ export const SimpleStatistics = ({
 					scaleLabel: {
 						display: true,
 						labelString: t(yLabel || 'PAYOUTS'),
+					},
+					id: 'y-axis-1',
+				},
+				{
+					type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+					display: true,
+					position: 'right',
+					id: 'y-axis-2',
+					labelString: t('LABEL_IMPRESSIONS'),
+					ticks: {
+						precision: 0,
+					},
+					// grid line settings
+					gridLines: {
+						drawOnChartArea: false, // only want the grid lines for one axis to show up
 					},
 				},
 			],
