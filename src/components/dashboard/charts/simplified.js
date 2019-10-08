@@ -158,6 +158,7 @@ export const SimpleStatistics = ({
 					},
 					id: 'y-axis-2',
 					ticks: {
+						beginAtZero: true,
 						precision: 0,
 					},
 					// grid line settings
