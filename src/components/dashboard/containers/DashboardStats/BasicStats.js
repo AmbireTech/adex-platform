@@ -23,24 +23,8 @@ const metrics = {
 	],
 }
 
-const getYlabel = metric => {
-	switch (metric) {
-		case 'eventCounts':
-			return 'IMPRESSIONS'
-		case 'eventPayouts':
-			return 'DAI'
-		default:
-			return 'DATA'
-	}
-}
-
-const getData = ({ data, timeframe, metric } = {}) => {
-	return data['IMPRESSION'][metric][timeframe] || {}
-}
-
 export function BasicStats({ analytics, side, t }) {
 	const [timeframe, setTimeframe] = useState(timeFrames[0].value)
-	const [metric, setMetric] = useState(metrics[side][0].value)
 	const data = analytics[side] || {}
 
 	return (
@@ -55,25 +39,15 @@ export function BasicStats({ analytics, side, t }) {
 					htmlId='timeframe-select'
 				/>
 			</Grid>
-			{/* <Grid item xs={12} sm={6} md={3}>
-				<Dropdown
-					fullWidth
-					label={t('SELECT_METRICS')}
-					onChange={val => setMetric(val)}
-					source={metrics[side]}
-					value={metric}
-					htmlId='metric-select'
-				/>
-			</Grid> */}
 			<Grid item xs={12}>
 				<SimpleStatistics
 					data={data['IMPRESSION']}
-					metric={metric}
 					timeframe={timeframe}
 					options={{
 						title: t(timeFrames.find(a => a.value === timeframe).label),
 					}}
-					yLabel={getYlabel(metric)}
+					y1Label={metrics[side][0].label}
+					y2Label={metrics[side][1].label}
 					eventType={'IMPRESSION'}
 					t={t}
 				/>
