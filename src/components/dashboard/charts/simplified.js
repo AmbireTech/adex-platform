@@ -39,6 +39,7 @@ export const SimpleStatistics = ({
 					ctx.moveTo(x, topY)
 					ctx.lineTo(x, bottomY)
 					ctx.lineWidth = 1 // line width
+					ctx.setLineDash([1, 5])
 					ctx.strokeStyle = '#C0C0C0' // color of the vertical line
 					ctx.stroke()
 					ctx.restore()
@@ -101,7 +102,7 @@ export const SimpleStatistics = ({
 				{
 					display: true,
 					gridLines: {
-						display: true,
+						display: false,
 					},
 					// labels: {
 					//     show: true
