@@ -20,10 +20,9 @@ export const SimpleStatistics = ({
 	timeframe = '',
 	options = {},
 	t,
-	// metric = '',
 	xLabel,
-	yLabel,
-	eventType = '',
+	y1Label,
+	y2Label,
 }) => {
 	// Vertical line / crosshair
 	useEffect(() => {
@@ -82,7 +81,7 @@ export const SimpleStatistics = ({
 				...commonDsProps,
 				backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 0.5),
 				borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 1),
-				label: 'DAI', //t('TOTAL_EVENTPAYOUTS_IMPRESSION'),
+				label: y1Label,
 				data: parseData('eventPayouts').datasets,
 				yAxisID: 'y-axis-1',
 			},
@@ -90,7 +89,7 @@ export const SimpleStatistics = ({
 				...commonDsProps,
 				backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[2], 0.5),
 				borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[2], 1),
-				label: 'Impressions', //t('TOTAL_EVENTCOUNTS_IMPRESSION'),
+				label: y2Label,
 				data: parseData('eventCounts').datasets,
 				yAxisID: 'y-axis-2',
 			},
@@ -99,10 +98,8 @@ export const SimpleStatistics = ({
 
 	const linesOptions = {
 		responsive: true,
+		// This and fixed height are used for proper mobile display of the chart
 		maintainAspectRatio: false,
-		// legend: {
-		// 	display: false,
-		// },
 		title: {
 			display: true,
 			text: options.title,
@@ -111,6 +108,14 @@ export const SimpleStatistics = ({
 			backgroundColor: 'black',
 			mode: 'index',
 			intersect: false,
+			callbacks: {
+				label: function(t, d) {
+					// This adds currency DAI to y1Label in the tooltips
+					var xLabel = d.datasets[t.datasetIndex].label
+					var yLabel = xLabel === y1Label ? `${t.yLabel} DAI` : t.yLabel
+					return `${xLabel}: ${yLabel}`
+				},
+			},
 		},
 		hover: {
 			mode: 'index',
@@ -123,9 +128,6 @@ export const SimpleStatistics = ({
 					gridLines: {
 						display: false,
 					},
-					// labels: {
-					//     show: true
-					// }
 					scaleLabel: {
 						display: true,
 						labelString: t(xLabel || 'TIMEFRAME'),
@@ -142,7 +144,7 @@ export const SimpleStatistics = ({
 					},
 					scaleLabel: {
 						display: true,
-						labelString: t(yLabel || 'PAYOUTS'),
+						labelString: y1Label,
 					},
 					id: 'y-axis-1',
 				},
@@ -150,8 +152,11 @@ export const SimpleStatistics = ({
 					type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
 					display: true,
 					position: 'right',
+					scaleLabel: {
+						display: true,
+						labelString: y2Label,
+					},
 					id: 'y-axis-2',
-					labelString: t('LABEL_IMPRESSIONS'),
 					ticks: {
 						precision: 0,
 					},
