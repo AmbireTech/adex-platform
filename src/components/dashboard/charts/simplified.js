@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { Line, Chart } from 'react-chartjs-2'
+import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
 
@@ -17,14 +18,13 @@ const parseValueByMetric = ({ value, metric }) => {
 export const SimpleStatistics = ({
 	data = [],
 	timeframe = '',
-	side = '',
 	options = {},
 	t,
-	xLabel,
-	y1Label, //default values
-	y2Label,
-	y1Color,
-	y2Color,
+	xLabel = 'TIMEFRAME',
+	y1Label = 'DATA1',
+	y2Label = 'DATA2',
+	y1Color = CHARTS_COLORS[1],
+	y2Color = CHARTS_COLORS[2],
 }) => {
 	// Vertical line / crosshair
 	useEffect(() => {
