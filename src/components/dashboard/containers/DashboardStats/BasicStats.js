@@ -3,6 +3,7 @@ import { SimpleStatistics } from 'components/dashboard/charts/simplified'
 import Dropdown from 'components/common/dropdown'
 import Grid from '@material-ui/core/Grid'
 import { translate } from 'services/translations/translations'
+import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 
 const timeFrames = [
 	{ label: translate('LABEL_HOUR'), value: 'hour' },
@@ -14,12 +15,28 @@ const timeFrames = [
 
 const metrics = {
 	publisher: [
-		{ label: translate('LABEL_REVENUE'), value: 'eventPayouts' },
-		{ label: translate('LABEL_IMPRESSIONS'), value: 'eventCounts' },
+		{
+			label: translate('LABEL_REVENUE'),
+			value: 'eventPayouts',
+			color: CHARTS_COLORS[3],
+		},
+		{
+			label: translate('LABEL_IMPRESSIONS'),
+			value: 'eventCounts',
+			color: CHARTS_COLORS[1],
+		},
 	],
 	advertiser: [
-		{ label: translate('LABEL_SPENT'), value: 'eventPayouts' },
-		{ label: translate('LABEL_IMPRESSIONS'), value: 'eventCounts' },
+		{
+			label: translate('LABEL_SPENT'),
+			value: 'eventPayouts',
+			color: CHARTS_COLORS[2],
+		},
+		{
+			label: translate('LABEL_IMPRESSIONS'),
+			value: 'eventCounts',
+			color: CHARTS_COLORS[1],
+		},
 	],
 }
 
@@ -47,7 +64,9 @@ export function BasicStats({ analytics, side, t }) {
 						title: t(timeFrames.find(a => a.value === timeframe).label),
 					}}
 					y1Label={metrics[side][0].label}
+					y1Color={metrics[side][0].color}
 					y2Label={metrics[side][1].label}
+					y2Color={metrics[side][1].color}
 					eventType={'IMPRESSION'}
 					t={t}
 				/>
