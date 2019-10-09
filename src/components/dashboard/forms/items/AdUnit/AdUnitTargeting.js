@@ -4,6 +4,7 @@ import NewAdUnitHoc from './NewAdUnitHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import Slider from '@material-ui/core/Slider'
+import Box from '@material-ui/core/Box'
 import IconButton from '@material-ui/core/IconButton'
 import CancelIcon from '@material-ui/icons/Cancel'
 import Autocomplete from 'components/common/autocomplete'
@@ -55,7 +56,24 @@ const styles = {
 	slider: {
 		padding: '22px 0px',
 	},
+	markLabel: {
+		top: '30px',
+	},
 }
+const marks = [
+	{
+		value: 5,
+		label: 'Low',
+	},
+	{
+		value: 50,
+		label: 'Medium',
+	},
+	{
+		value: 95,
+		label: 'High',
+	},
+]
 
 const SourcesSelect = Object.keys(SOURCES).map(key => {
 	return {
@@ -163,14 +181,14 @@ class AdUnitTargeting extends Component {
 				</Grid>
 				<Grid item xs={11} md={5}>
 					<div>
-						<Typography id={`target-score-${index}`}>
+						<Typography id={`tbaget-score-${index}`}>
 							{/*TODO: Translate target name*/}
 							{t('TARGET_SCORE_LABEL', {
 								args: [target.score],
 							})}
 						</Typography>
 						<Slider
-							// classes={{ container: classes.slider }}
+							classes={{ root: classes.slider, markLabel: classes.markLabel }}
 							aria-labelledby={`target-score-${index}`}
 							min={1}
 							max={100}
@@ -178,18 +196,17 @@ class AdUnitTargeting extends Component {
 							valueLabelDisplay='auto'
 							disabled={!target.tag}
 							value={target.score}
+							marks={marks}
 							onChange={(ev, newValue) =>
 								this.handleTargetChange(index, 'score', newValue, collection)
 							}
 						/>
 					</div>
 				</Grid>
-				<Grid item xs={1} md={1}>
-					<div>
-						<IconButton onClick={() => this.removeTarget(index)}>
-							<CancelIcon />
-						</IconButton>
-					</div>
+				<Grid item container xs={1} md={1} alignItems='center'>
+					<IconButton onClick={() => this.removeTarget(index)}>
+						<CancelIcon />
+					</IconButton>
 				</Grid>
 			</Grid>
 		)
