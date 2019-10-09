@@ -28,7 +28,7 @@ const metrics = {
 	],
 	advertiser: [
 		{
-			label: translate('LABEL_SPENT'),
+			label: translate('LABEL_SPEND'),
 			value: 'eventPayouts',
 			color: CHARTS_COLORS[2],
 		},
