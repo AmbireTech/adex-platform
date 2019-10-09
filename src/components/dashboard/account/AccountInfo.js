@@ -16,6 +16,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
+import Box from '@material-ui/core/Box'
 import CopyIcon from '@material-ui/icons/FileCopy'
 import DownloadIcon from '@material-ui/icons/SaveAlt'
 import ExpansionPanel from '@material-ui/core/ExpansionPanel'
@@ -100,34 +101,45 @@ class AccountInfo extends React.Component {
 									: t('IDENTITY_ETH_ADDR')
 							}
 						/>
-						{walletJsonData && (
-							<label htmlFor='download-wallet-json'>
-								<a
-									id='download-wallet-json'
-									href={this.localWalletDownloadHref()}
-									download={`adex-account-data-${email}.json`}
-								>
-									<Button size='small' variant='contained'>
-										{t('BACKUP_LOCAL_WALLET')}
-										<DownloadIcon />
-									</Button>
-								</a>
-							</label>
-						)}
-						<IconButton
-							color='default'
-							onClick={() => {
-								copy(identityAddress)
-								this.props.actions.addToast({
-									type: 'accept',
-									action: 'X',
-									label: t('COPIED_TO_CLIPBOARD'),
-									timeout: 5000,
-								})
-							}}
+						<Box
+							display='flex'
+							flexWrap='wrap'
+							justifyContent='center'
+							alignItems='center'
 						>
-							<CopyIcon />
-						</IconButton>
+							<Box m={1}>
+								{/* {walletJsonData && ( */}
+								<label htmlFor='download-wallet-json'>
+									<a
+										id='download-wallet-json'
+										href={this.localWalletDownloadHref()}
+										download={`adex-account-data-${email}.json`}
+									>
+										<Button size='small' variant='contained'>
+											{t('BACKUP_LOCAL_WALLET')}
+											<DownloadIcon />
+										</Button>
+									</a>
+								</label>
+								{/* )} */}
+							</Box>
+							<Box m={1}>
+								<IconButton
+									color='default'
+									onClick={() => {
+										copy(identityAddress)
+										this.props.actions.addToast({
+											type: 'accept',
+											action: 'X',
+											label: t('COPIED_TO_CLIPBOARD'),
+											timeout: 5000,
+										})
+									}}
+								>
+									<CopyIcon />
+								</IconButton>
+							</Box>
+						</Box>
 					</ListItem>
 					<ListDivider />
 					<ListItem>
