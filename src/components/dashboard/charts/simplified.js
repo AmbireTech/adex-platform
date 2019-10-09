@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { Line, Chart } from 'react-chartjs-2'
-import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
 
@@ -18,11 +17,14 @@ const parseValueByMetric = ({ value, metric }) => {
 export const SimpleStatistics = ({
 	data = [],
 	timeframe = '',
+	side = '',
 	options = {},
 	t,
 	xLabel,
-	y1Label,
+	y1Label, //default values
 	y2Label,
+	y1Color,
+	y2Color,
 }) => {
 	// Vertical line / crosshair
 	useEffect(() => {
@@ -70,8 +72,6 @@ export const SimpleStatistics = ({
 		borderWidth: 0,
 		pointRadius: 3,
 		pointHitRadius: 10,
-		backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 0.5),
-		borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 1),
 	}
 
 	let chartData = {
@@ -79,16 +79,16 @@ export const SimpleStatistics = ({
 		datasets: [
 			{
 				...commonDsProps,
-				backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 0.5),
-				borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[1], 1),
+				backgroundColor: Helper.hexToRgbaColorString(y1Color, 0.5),
+				borderColor: Helper.hexToRgbaColorString(y1Color, 1),
 				label: y1Label,
 				data: parseData('eventPayouts').datasets,
 				yAxisID: 'y-axis-1',
 			},
 			{
 				...commonDsProps,
-				backgroundColor: Helper.hexToRgbaColorString(CHARTS_COLORS[2], 0.5),
-				borderColor: Helper.hexToRgbaColorString(CHARTS_COLORS[2], 1),
+				backgroundColor: Helper.hexToRgbaColorString(y2Color, 0.5),
+				borderColor: Helper.hexToRgbaColorString(y2Color, 1),
 				label: y2Label,
 				data: parseData('eventCounts').datasets,
 				yAxisID: 'y-axis-2',
