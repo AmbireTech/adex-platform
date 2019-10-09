@@ -76,8 +76,8 @@ class AccountInfo extends React.Component {
 		const formatted = account.stats.formatted || {}
 		const {
 			walletAddress,
-			walletAuthType,
-			walletPrivileges,
+			walletAuthType = '',
+			walletPrivileges = '',
 			// walletBalanceEth,
 			// walletBalanceDai,
 			identityAddress,
@@ -108,20 +108,20 @@ class AccountInfo extends React.Component {
 							alignItems='center'
 						>
 							<Box m={1}>
-								{/* {walletJsonData && ( */}
-								<label htmlFor='download-wallet-json'>
-									<a
-										id='download-wallet-json'
-										href={this.localWalletDownloadHref()}
-										download={`adex-account-data-${email}.json`}
-									>
-										<Button size='small' variant='contained'>
-											{t('BACKUP_LOCAL_WALLET')}
-											<DownloadIcon />
-										</Button>
-									</a>
-								</label>
-								{/* )} */}
+								{walletJsonData && (
+									<label htmlFor='download-wallet-json'>
+										<a
+											id='download-wallet-json'
+											href={this.localWalletDownloadHref()}
+											download={`adex-account-data-${email}.json`}
+										>
+											<Button size='small' variant='contained'>
+												{t('BACKUP_LOCAL_WALLET')}
+												<DownloadIcon />
+											</Button>
+										</a>
+									</label>
+								)}
 							</Box>
 							<Box m={1}>
 								<IconButton
@@ -145,15 +145,17 @@ class AccountInfo extends React.Component {
 					<ListItem>
 						<ListItemText
 							className={classes.address}
-							secondary={walletAddress}
-							primary={
+							primary={walletAddress}
+							secondary={
 								account.authType === 'demo'
 									? t('DEMO_ACCOUNT_WALLET_ADDRESS', {
 											args: [walletAuthType, walletPrivileges],
 									  })
 									: t('WALLET_INFO_LABEL', {
 											args: [
-												walletAuthType,
+												walletAuthType.replace(/^\w/, chr => {
+													return chr.toUpperCase()
+												}),
 												walletPrivileges || ' - ',
 												authType,
 											],
