@@ -26,6 +26,7 @@ import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { getRecoveryWalletData } from 'services/wallet/wallet'
+import { LoadingSection } from 'components/common/spinners'
 // const RRButton = withReactRouterLink(Button)
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
@@ -165,10 +166,16 @@ class AccountInfo extends React.Component {
 					</ListItem>
 					<ListDivider />
 					<ListItem>
-						<ListItemText
-							primary={identityBalanceDai + ' DAI'}
-							secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
-						/>
+						<Box display='flex' flex='1 1 auto'>
+							<LoadingSection
+								loading={!identityBalanceDai && identityBalanceDai !== 0}
+							>
+								<ListItemText
+									primary={`${identityBalanceDai || 0} DAI`}
+									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
+								/>
+							</LoadingSection>
+						</Box>
 						<div className={classes.itemActions}>
 							{grantType !== 'advertiser' && (
 								<WithdrawTokenFromIdentity
