@@ -81,7 +81,7 @@ const validateCampaignDates = ({
 	let error = null
 
 	if (withdrawPeriodStart && activeFrom && withdrawPeriodStart <= activeFrom) {
-		error = { message: 'ERR_END_BEFORE_START', prop: 'activeFrom' }
+		error = { message: 'ERR_END_BEFORE_START', prop: 'withdrawPeriodStart' }
 	} else if (withdrawPeriodStart && withdrawPeriodStart < created) {
 		error = { message: 'ERR_END_BEFORE_NOW', prop: 'withdrawPeriodStart' }
 	} else if (activeFrom && activeFrom < created) {
@@ -238,13 +238,13 @@ class CampaignFinance extends Component {
 		})
 
 		validate('activeFrom', {
-			isValid: !result.error,
+			isValid: !(result.error && result.error.prop === 'activeFrom'),
 			err: { msg: result.error ? result.error.message : '' },
 			dirty: dirty,
 		})
 
 		validate('withdrawPeriodStart', {
-			isValid: !result.error,
+			isValid: !(result.error && result.error.prop === 'withdrawPeriodStart'),
 			err: { msg: result.error ? result.error.message : '' },
 			dirty: dirty,
 		})
