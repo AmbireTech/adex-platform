@@ -271,9 +271,9 @@ export class DashboardStats extends Component {
 						args: [identityBalanceDai || 0, outstandingBalanceDai || 0],
 					})}
 					loading={
-						!identityBalanceDai ||
-						!outstandingBalanceDai ||
-						!totalIdentityBalanceDai
+						(!identityBalanceDai && identityBalanceDai !== 0) ||
+						(!outstandingBalanceDai && outstandingBalanceDai !== 0) ||
+						(!totalIdentityBalanceDai && totalIdentityBalanceDai !== 0)
 					}
 					title={`${totalIdentityBalanceDai || 0} DAI`}
 				></StatsCard>
