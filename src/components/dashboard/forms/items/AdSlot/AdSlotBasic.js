@@ -98,7 +98,7 @@ class AdSlotBasic extends Component {
 							fullWidth
 							type='text'
 							required
-							label={'Ad Unit ' + t('title', { isProp: true })}
+							label={'Ad Slot ' + t('title', { isProp: true })}
 							name='name'
 							value={title}
 							onChange={ev => handleChange('title', ev.target.value)}
