@@ -26,6 +26,9 @@ export const styles = theme => ({
 		top: theme.spacing(1),
 		right: theme.spacing(1),
 		cursor: 'pointer',
+		width: '30px',
+		height: '30px',
+		minHeight: '24px',
 	},
 	dialog: {
 		'@media(max-width:744px)': {

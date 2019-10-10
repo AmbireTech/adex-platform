@@ -2,7 +2,7 @@ export const styles = theme => {
 	// const spacing = theme.spacing(1)
 	return {
 		imgPreview: {
-			maxHeight: 120,
+			maxHeight: 225,
 			width: 'auto',
 			maxWidth: '100%',
 			height: 'auto',
