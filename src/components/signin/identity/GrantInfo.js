@@ -164,7 +164,7 @@ class GrantInfo extends Component {
 							label={t('email', { isProp: true })}
 							name='email'
 							value={identity.email || ''}
-							onChange={ev => handleChange('email', ev.target.value)}
+							onChange={ev => handleChange('email', ev.target.value.trim())}
 							onBlur={() => this.validateEmail(identity.email, true)}
 							onFocus={() => this.validateEmail(identity.email, false)}
 							error={email && !!email.dirty}
@@ -182,7 +182,9 @@ class GrantInfo extends Component {
 							label={t('emailCheck', { isProp: true })}
 							name='emailCheck'
 							value={identity.emailCheck || ''}
-							onChange={ev => handleChange('emailCheck', ev.target.value)}
+							onChange={ev =>
+								handleChange('emailCheck', ev.target.value.trim())
+							}
 							onBlur={() =>
 								this.validateEmailCheck(
 									identity.emailCheck,
