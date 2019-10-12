@@ -109,10 +109,11 @@ export const VALIDATOR_ANALYTICS_SIDES = [
 ]
 export const VALIDATOR_ANALYTICS_EVENT_TYPES = ['IMPRESSION']
 
+// TEMP: disable long periods
 export const VALIDATOR_ANALYTICS_TIMEFRAMES = [
-	'hour',
-	'day',
-	'week',
-	'month',
-	'year', //
+	{ label: 'LABEL_HOUR', value: 'hour' },
+	{ label: 'LABEL_DAY', value: 'day' },
+	{ label: 'LABEL_WEEK', value: 'week' },
+	// { label: 'LABEL_MONTH', value: 'month' },
+	// { label: 'LABEL_YEAR', value: 'year' },
 ]
