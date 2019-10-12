@@ -15,8 +15,32 @@ const parseValueByMetric = ({ value, metric }) => {
 	}
 }
 
+const commonDsProps = {
+	fill: false,
+	lineTension: 0.3,
+	borderWidth: 0,
+	pointRadius: 3,
+	pointHitRadius: 10,
+}
+
+const parseData = ({ data, metric, timeframe }) => {
+	const aggr = data[metric][timeframe].aggr || []
+	return aggr.reduce(
+		(memo, item) => {
+			const { time, value } = item
+			memo.labels.push(formatDateTime(time))
+			memo.datasets.push(parseValueByMetric({ value, metric }))
+			return memo
+		},
+		{
+			labels: [],
+			datasets: [],
+		}
+	)
+}
+
 export const SimpleStatistics = ({
-	data = [],
+	data = {},
 	timeframe = '',
 	options = {},
 	t,
@@ -50,39 +74,17 @@ export const SimpleStatistics = ({
 		})
 	})
 
-	const parseData = metric => {
-		const aggr = data[metric][timeframe].aggr || []
-		return aggr.reduce(
-			(memo, item) => {
-				const { time, value } = item
-				memo.labels.push(formatDateTime(time))
-				memo.datasets.push(parseValueByMetric({ value, metric }))
-				return memo
-			},
-			{
-				labels: [],
-				datasets: [],
-			}
-		)
-	}
+	const payoutsData = parseData({ data, metric: 'eventPayouts', timeframe })
 
-	let commonDsProps = {
-		fill: false,
-		lineTension: 0.3,
-		borderWidth: 0,
-		pointRadius: 3,
-		pointHitRadius: 10,
-	}
-
-	let chartData = {
-		labels: parseData('eventPayouts').labels,
+	const chartData = {
+		labels: payoutsData.labels,
 		datasets: [
 			{
 				...commonDsProps,
 				backgroundColor: Helper.hexToRgbaColorString(y1Color, 0.5),
 				borderColor: Helper.hexToRgbaColorString(y1Color, 1),
 				label: y1Label,
-				data: parseData('eventPayouts').datasets,
+				data: payoutsData.datasets,
 				yAxisID: 'y-axis-1',
 			},
 			{
@@ -90,7 +92,7 @@ export const SimpleStatistics = ({
 				backgroundColor: Helper.hexToRgbaColorString(y2Color, 0.5),
 				borderColor: Helper.hexToRgbaColorString(y2Color, 1),
 				label: y2Label,
-				data: parseData('eventCounts').datasets,
+				data: parseData({ data, metric: 'eventCounts', timeframe }).datasets,
 				yAxisID: 'y-axis-2',
 			},
 		],
