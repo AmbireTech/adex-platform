@@ -24,7 +24,7 @@ const analyticsParams = () => {
 				VALIDATOR_ANALYTICS_TIMEFRAMES.forEach(timeframe => {
 					callsParams.push({
 						metric,
-						timeframe,
+						timeframe: timeframe.value,
 						side,
 						eventType,
 					})
