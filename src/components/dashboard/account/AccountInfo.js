@@ -16,6 +16,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
+import Box from '@material-ui/core/Box'
 import CopyIcon from '@material-ui/icons/FileCopy'
 import DownloadIcon from '@material-ui/icons/SaveAlt'
 import ExpansionPanel from '@material-ui/core/ExpansionPanel'
@@ -25,6 +26,7 @@ import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { getRecoveryWalletData } from 'services/wallet/wallet'
+import { LoadingSection } from 'components/common/spinners'
 // const RRButton = withReactRouterLink(Button)
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
@@ -75,8 +77,8 @@ class AccountInfo extends React.Component {
 		const formatted = account.stats.formatted || {}
 		const {
 			walletAddress,
-			walletAuthType,
-			walletPrivileges,
+			walletAuthType = '',
+			walletPrivileges = '',
 			// walletBalanceEth,
 			// walletBalanceDai,
 			identityAddress,
@@ -100,48 +102,61 @@ class AccountInfo extends React.Component {
 									: t('IDENTITY_ETH_ADDR')
 							}
 						/>
-						{walletJsonData && (
-							<label htmlFor='download-wallet-json'>
-								<a
-									id='download-wallet-json'
-									href={this.localWalletDownloadHref()}
-									download={`adex-account-data-${email}.json`}
-								>
-									<Button size='small' variant='contained'>
-										{t('BACKUP_LOCAL_WALLET')}
-										<DownloadIcon />
-									</Button>
-								</a>
-							</label>
-						)}
-						<IconButton
-							color='default'
-							onClick={() => {
-								copy(identityAddress)
-								this.props.actions.addToast({
-									type: 'accept',
-									action: 'X',
-									label: t('COPIED_TO_CLIPBOARD'),
-									timeout: 5000,
-								})
-							}}
+						<Box
+							display='flex'
+							flexWrap='wrap'
+							justifyContent='center'
+							alignItems='center'
 						>
-							<CopyIcon />
-						</IconButton>
+							<Box m={1}>
+								{walletJsonData && (
+									<label htmlFor='download-wallet-json'>
+										<a
+											id='download-wallet-json'
+											href={this.localWalletDownloadHref()}
+											download={`adex-account-data-${email}.json`}
+										>
+											<Button size='small' variant='contained'>
+												{t('BACKUP_LOCAL_WALLET')}
+												<DownloadIcon />
+											</Button>
+										</a>
+									</label>
+								)}
+							</Box>
+							<Box m={1}>
+								<IconButton
+									color='default'
+									onClick={() => {
+										copy(identityAddress)
+										this.props.actions.addToast({
+											type: 'accept',
+											action: 'X',
+											label: t('COPIED_TO_CLIPBOARD'),
+											timeout: 5000,
+										})
+									}}
+								>
+									<CopyIcon />
+								</IconButton>
+							</Box>
+						</Box>
 					</ListItem>
 					<ListDivider />
 					<ListItem>
 						<ListItemText
 							className={classes.address}
-							secondary={walletAddress}
-							primary={
+							primary={walletAddress}
+							secondary={
 								account.authType === 'demo'
 									? t('DEMO_ACCOUNT_WALLET_ADDRESS', {
 											args: [walletAuthType, walletPrivileges],
 									  })
 									: t('WALLET_INFO_LABEL', {
 											args: [
-												walletAuthType,
+												walletAuthType.replace(/^\w/, chr => {
+													return chr.toUpperCase()
+												}),
 												walletPrivileges || ' - ',
 												authType,
 											],
@@ -151,10 +166,16 @@ class AccountInfo extends React.Component {
 					</ListItem>
 					<ListDivider />
 					<ListItem>
-						<ListItemText
-							primary={identityBalanceDai + ' DAI'}
-							secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
-						/>
+						<Box display='flex' flex='1 1 auto'>
+							<LoadingSection
+								loading={!identityBalanceDai && identityBalanceDai !== 0}
+							>
+								<ListItemText
+									primary={`${identityBalanceDai || 0} DAI`}
+									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
+								/>
+							</LoadingSection>
+						</Box>
 						<div className={classes.itemActions}>
 							{grantType !== 'advertiser' && (
 								<WithdrawTokenFromIdentity
