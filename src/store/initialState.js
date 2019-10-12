@@ -17,8 +17,8 @@ export const getValidatorAnalyticsInitialState = () => {
 					initialState[side][eventType] = initialState[side][eventType] || {}
 					initialState[side][eventType][metric] =
 						initialState[side][eventType][metric] || {}
-					initialState[side][eventType][metric][timeframe] =
-						initialState[side][eventType][metric][timeframe] || {}
+					initialState[side][eventType][metric][timeframe.value] =
+						initialState[side][eventType][metric][timeframe.value] || {}
 				})
 			)
 		)

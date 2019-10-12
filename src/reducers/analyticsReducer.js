@@ -17,9 +17,6 @@ export default function analyticsReducer(
 			newState[action.side][action.eventType][action.metric] = {
 				...newState[action.side][action.eventType][action.metric],
 			}
-			newState[action.side][action.eventType][action.metric] = {
-				...newState[action.side][action.eventType][action.metric],
-			}
 			newState[action.side][action.eventType][action.metric][
 				action.timeframe
 			] = { ...action.value }

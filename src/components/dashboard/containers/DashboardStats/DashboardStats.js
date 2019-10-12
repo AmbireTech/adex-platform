@@ -268,9 +268,14 @@ export class DashboardStats extends Component {
 					linkCard
 					onClick={this.goToAccount}
 					subtitle={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
-						args: [identityBalanceDai, outstandingBalanceDai],
+						args: [identityBalanceDai || 0, outstandingBalanceDai || 0],
 					})}
-					title={totalIdentityBalanceDai + ' DAI'}
+					loading={
+						(!identityBalanceDai && identityBalanceDai !== 0) ||
+						(!outstandingBalanceDai && outstandingBalanceDai !== 0) ||
+						(!totalIdentityBalanceDai && totalIdentityBalanceDai !== 0)
+					}
+					title={`${totalIdentityBalanceDai || 0} DAI`}
 				></StatsCard>
 			</div>
 		)
