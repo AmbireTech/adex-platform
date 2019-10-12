@@ -3,44 +3,44 @@ import { SimpleStatistics } from 'components/dashboard/charts/simplified'
 import Dropdown from 'components/common/dropdown'
 import Grid from '@material-ui/core/Grid'
 import { translate } from 'services/translations/translations'
+import { CHARTS_COLORS } from 'components/dashboard/charts/options'
+import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
 
-const timeFrames = [
-	{ label: translate('LABEL_HOUR'), value: 'hour' },
-	{ label: translate('LABEL_DAY'), value: 'day' },
-	{ label: translate('LABEL_WEEK'), value: 'week' },
-	{ label: translate('LABEL_MONTH'), value: 'month' },
-	{ label: translate('LABEL_YEAR'), value: 'year' },
-]
+const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
+	const translated = { ...tf }
+	translated.label = translate(tf.label)
+	return translated
+})
 
 const metrics = {
 	publisher: [
-		{ label: translate('LABEL_REVENUE'), value: 'eventPayouts' },
-		{ label: translate('LABEL_IMPRESSIONS'), value: 'eventCounts' },
+		{
+			label: translate('LABEL_REVENUE'),
+			value: 'eventPayouts',
+			color: CHARTS_COLORS[3],
+		},
+		{
+			label: translate('LABEL_IMPRESSIONS'),
+			value: 'eventCounts',
+			color: CHARTS_COLORS[1],
+		},
 	],
 	advertiser: [
-		{ label: translate('LABEL_SPENT'), value: 'eventPayouts' },
-		{ label: translate('LABEL_IMPRESSIONS'), value: 'eventCounts' },
+		{
+			label: translate('LABEL_SPEND'),
+			value: 'eventPayouts',
+			color: CHARTS_COLORS[2],
+		},
+		{
+			label: translate('LABEL_IMPRESSIONS'),
+			value: 'eventCounts',
+			color: CHARTS_COLORS[1],
+		},
 	],
-}
-
-const getYlabel = metric => {
-	switch (metric) {
-		case 'eventCounts':
-			return 'IMPRESSIONS'
-		case 'eventPayouts':
-			return 'DAI'
-		default:
-			return 'DATA'
-	}
-}
-
-const getData = ({ data, timeframe, metric } = {}) => {
-	return data['IMPRESSION'][metric][timeframe] || {}
 }
 
 export function BasicStats({ analytics, side, t }) {
 	const [timeframe, setTimeframe] = useState(timeFrames[0].value)
-	const [metric, setMetric] = useState(metrics[side][0].value)
 	const data = analytics[side] || {}
 
 	return (
@@ -55,22 +55,17 @@ export function BasicStats({ analytics, side, t }) {
 					htmlId='timeframe-select'
 				/>
 			</Grid>
-			<Grid item xs={12} sm={6} md={3}>
-				<Dropdown
-					fullWidth
-					label={t('SELECT_METRICS')}
-					onChange={val => setMetric(val)}
-					source={metrics[side]}
-					value={metric}
-					htmlId='metric-select'
-				/>
-			</Grid>
 			<Grid item xs={12}>
 				<SimpleStatistics
-					data={getData({ data, metric, timeframe }).aggr}
-					metric={metric}
-					options={{ title: t(timeframe) }}
-					yLabel={getYlabel(metric)}
+					data={data['IMPRESSION']}
+					timeframe={timeframe}
+					options={{
+						title: t(timeFrames.find(a => a.value === timeframe).label),
+					}}
+					y1Label={metrics[side][0].label}
+					y1Color={metrics[side][0].color}
+					y2Label={metrics[side][1].label}
+					y2Color={metrics[side][1].color}
 					eventType={'IMPRESSION'}
 					t={t}
 				/>
