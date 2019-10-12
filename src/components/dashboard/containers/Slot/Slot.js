@@ -112,6 +112,7 @@ export class Slot extends Component {
 			editFallbackImg: false,
 			tabIndex: 0,
 		}
+		this.tabsFocus = React.createRef()
 	}
 
 	handleFallbackImgUpdateToggle = () => {
@@ -120,7 +121,14 @@ export class Slot extends Component {
 	}
 
 	handleTabChange = (event, index) => {
-		this.setState({ tabIndex: index })
+		this.setState({ tabIndex: index }, () => {
+			if (this.tabsFocus.current) {
+				this.tabsFocus.current.scrollIntoView({
+					behavior: 'smooth',
+					block: 'start',
+				})
+			}
+		})
 	}
 
 	render() {
@@ -142,7 +150,8 @@ export class Slot extends Component {
 					<AppBar position='static' color='default'>
 						<Tabs
 							value={tabIndex}
-							onChange={this.handleTabChange}
+							onChange={this.handleTabChange.bind(this)}
+							ref={this.tabsFocus}
 							scrollable
 							scrollButtons='off'
 							indicatorColor='primary'
