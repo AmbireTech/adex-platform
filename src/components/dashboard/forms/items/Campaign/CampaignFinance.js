@@ -164,12 +164,20 @@ class CampaignFinance extends Component {
 		// TEMP - update like this to avoid changing the flow and other functions
 		// <---
 		if (!isValid) {
-			const tempaValidators = [
-				{ id: VALIDATOR_LEADER_ID, url: VALIDATOR_LEADER_URL },
-				{ id: VALIDATOR_FOLLOWER_ID, url: VALIDATOR_FOLLOWER_URL },
+			const tempValidators = [
+				{
+					id: VALIDATOR_LEADER_ID,
+					url: VALIDATOR_LEADER_URL,
+					fee: VALIDATOR_LEADER_FEE,
+				},
+				{
+					id: VALIDATOR_FOLLOWER_ID,
+					url: VALIDATOR_FOLLOWER_URL,
+					fee: VALIDATOR_FOLLOWER_FEE,
+				},
 			]
 
-			handleChange('validators', tempaValidators)
+			handleChange('validators', tempValidators)
 
 			validate('validators', {
 				isValid: true,
