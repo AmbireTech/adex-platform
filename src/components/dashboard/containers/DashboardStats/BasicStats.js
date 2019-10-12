@@ -4,14 +4,13 @@ import Dropdown from 'components/common/dropdown'
 import Grid from '@material-ui/core/Grid'
 import { translate } from 'services/translations/translations'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
+import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
 
-const timeFrames = [
-	{ label: translate('LABEL_HOUR'), value: 'hour' },
-	{ label: translate('LABEL_DAY'), value: 'day' },
-	{ label: translate('LABEL_WEEK'), value: 'week' },
-	{ label: translate('LABEL_MONTH'), value: 'month' },
-	{ label: translate('LABEL_YEAR'), value: 'year' },
-]
+const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
+	const translated = { ...tf }
+	translated.label = translate(tf.label)
+	return translated
+})
 
 const metrics = {
 	publisher: [
