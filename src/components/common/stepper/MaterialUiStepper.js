@@ -86,16 +86,7 @@ class MaterialStepper extends React.Component {
 	}
 
 	render() {
-		let {
-			pages,
-			component,
-			validations,
-			currentPage,
-			canReverse,
-			t,
-			classes,
-			...props
-		} = {
+		let { pages, component, validations, currentPage, t, classes, ...props } = {
 			...this.props,
 		}
 		let page = pages[currentPage]
@@ -127,7 +118,8 @@ class MaterialStepper extends React.Component {
 
 					<div className={classes.controls}>
 						<div className={classes.left}>
-							{props.canReverse ? (
+							{props.canReverse &&
+							!(page.disableBtnsIfValid && this.isValidPage()) ? (
 								<Button onClick={() => props.setPageIndex(currentPage - 1)}>
 									{t('BACK')}
 								</Button>
@@ -138,7 +130,10 @@ class MaterialStepper extends React.Component {
 
 						<div className={classes.right}>
 							{/* <Button label='Cancel' onClick={this.cancel}/> */}
-							{page.cancelBtn ? <page.cancelBtn /> : null}
+							{page.cancelBtn &&
+							!(page.disableBtnsIfValid && this.isValidPage()) ? (
+								<page.cancelBtn />
+							) : null}
 							{this.canAdvanceNextToPage() && !page.completeBtn ? (
 								<Button
 									variant='contained'

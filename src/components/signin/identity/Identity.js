@@ -49,8 +49,12 @@ export const CreateGrantIdentity = props => (
 		stepsId='grant-identity-create'
 		stepsPages={[
 			{ title: 'GRANT_INFO', page: GrantInfo },
-			// { title: 'GRANT_DEPLOY', page: GrantDeploy },
-			{ title: 'GRANT_DEPLOY', page: GrantDeploy, final: true },
+			{
+				title: 'GRANT_DEPLOY',
+				page: GrantDeploy,
+				final: true,
+				disableBtnsIfValid: true,
+			},
 		]}
 	/>
 )
