@@ -22,6 +22,7 @@ import { AUTH_TYPES } from 'constants/misc'
 import { logOut } from 'services/store-data/auth'
 import JustDialog from 'components/common/dialog/JustDialog'
 import { getEthers } from 'services/smart-contracts/ethers'
+import { withRouter } from 'react-router-dom'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
 const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
@@ -48,10 +49,11 @@ function PrivateRoute({ component: Component, auth, ...other }) {
 
 class Root extends Component {
 	onMetamaskAccountChange = async accountAddress => {
-		const { account } = this.props
+		const { account, history } = this.props
 		const { authType } = account.wallet
-		if (authType === AUTH_TYPES.METAMASK.name || !authType) {
+		if (authType === AUTH_TYPES.METAMASK.name || !authType || !accountAddress) {
 			logOut()
+			history.push('/')
 		}
 	}
 
@@ -67,13 +69,6 @@ class Root extends Component {
 	}
 
 	componentWillUnmount() {}
-
-	componentDidUpdate() {
-		const { actions, location } = this.props
-		const { metamaskNetworkCheck } = actions
-
-		metamaskNetworkCheck({ location })
-	}
 
 	componentDidMount() {
 		const { actions, location } = this.props
@@ -184,4 +179,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(Translate(Root))
+)(Translate(withRouter(Root)))

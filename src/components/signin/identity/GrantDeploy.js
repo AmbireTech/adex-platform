@@ -33,11 +33,11 @@ class GrantDeploy extends Component {
 		const { validate, identity } = this.props
 		const { identityAddr } = identity
 
-		validate('identityAddr', {
-			isValid: !!identityAddr,
-			err: { msg: 'ERR_IDENTITY_NOT_GENERATED' },
-			dirty: false,
-		})
+		// validate('identityAddr', {
+		// 	isValid: !!identityAddr,
+		// 	err: { msg: 'ERR_IDENTITY_NOT_GENERATED' },
+		// 	dirty: false,
+		// })
 	}
 
 	initLocalWallet = () => {

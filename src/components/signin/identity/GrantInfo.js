@@ -31,7 +31,7 @@ class GrantInfo extends Component {
 		this.validateEmailCheck(emailCheck, false)
 		this.validatePassword(password, false)
 		this.validatePasswordCheck(passwordCheck, false)
-		this.validateCoupon(coupon, false)
+		// this.validateCoupon(coupon, false)
 		this.validateTOS(tosCheck, false)
 	}
 
@@ -145,8 +145,8 @@ class GrantInfo extends Component {
 							name='coupon'
 							value={identity.coupon || ''}
 							onChange={ev => handleChange('coupon', ev.target.value)}
-							onBlur={() => this.validateCoupon(identity.coupon, true)}
-							onFocus={() => this.validateCoupon(identity.coupon, false)}
+							// onBlur={() => this.validateCoupon(identity.coupon, true)}
+							// onFocus={() => this.validateCoupon(identity.coupon, false)}
 							error={coupon && !!coupon.dirty}
 							maxLength={128}
 							helperText={
