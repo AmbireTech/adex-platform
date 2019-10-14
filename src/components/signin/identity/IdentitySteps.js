@@ -42,9 +42,9 @@ class IdentitySteps extends Component {
 		const pages = stepsPages.map((page, index) => {
 			return {
 				title: t(page.title),
-				cancelBtn: page.final ? null : cancelButton,
-				canReverse: page.final ? false : true,
+				cancelBtn: cancelButton,
 				component: ValidItemHoc(page.page),
+				disableBtnsIfValid: page.disableBtnsIfValid,
 				props: { ...this.props, validateId: validateId + '-' + index },
 				completeBtn: page.final
 					? () => <GoBtn {...rest} stepsId={stepsId} onSave={onSave} t={t} />
