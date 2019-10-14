@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Button from '@material-ui/core/Button'
 import IdentityHoc from './IdentityHoc'
 import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
@@ -49,6 +49,7 @@ export const CreateGrantIdentity = props => (
 		stepsId='grant-identity-create'
 		stepsPages={[
 			{ title: 'GRANT_INFO', page: GrantInfo },
+			// { title: 'GRANT_DEPLOY', page: GrantDeploy },
 			{ title: 'GRANT_DEPLOY', page: GrantDeploy, final: true },
 		]}
 	/>
@@ -80,21 +81,28 @@ export const CreteFullIdentity = props => (
 	/>
 )
 
-export const LoginStandardIdentity = props => (
-	<IdentitySteps
-		{...props}
-		{...common}
-		stepsId='full-identity-login'
-		stepsPages={[
-			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
-			{
-				title: 'CONNECT_STANDARD_IDENTITY',
-				page: ExternalConnect,
-				final: true,
-			},
-		]}
-	/>
-)
+export const LoginStandardIdentity = props => {
+	useEffect(() => {
+		const { actions, location } = props
+		const { metamaskNetworkCheck } = actions
+		metamaskNetworkCheck({ location })
+	}, [])
+	return (
+		<IdentitySteps
+			{...props}
+			{...common}
+			stepsId='full-identity-login'
+			stepsPages={[
+				{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
+				{
+					title: 'CONNECT_STANDARD_IDENTITY',
+					page: ExternalConnect,
+					final: true,
+				},
+			]}
+		/>
+	)
+}
 
 export const DemoIdentity = props => (
 	<IdentitySteps {...props} {...common} stepsPages={[]} />
