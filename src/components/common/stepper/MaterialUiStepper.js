@@ -86,7 +86,16 @@ class MaterialStepper extends React.Component {
 	}
 
 	render() {
-		let { pages, component, validations, currentPage, t, classes, ...props } = {
+		let {
+			pages,
+			component,
+			validations,
+			currentPage,
+			canReverse,
+			t,
+			classes,
+			...props
+		} = {
 			...this.props,
 		}
 		let page = pages[currentPage]
