@@ -42,7 +42,8 @@ class IdentitySteps extends Component {
 		const pages = stepsPages.map((page, index) => {
 			return {
 				title: t(page.title),
-				cancelBtn: cancelButton,
+				cancelBtn: page.final ? null : cancelButton,
+				canReverse: page.final ? false : true,
 				component: ValidItemHoc(page.page),
 				props: { ...this.props, validateId: validateId + '-' + index },
 				completeBtn: page.final
