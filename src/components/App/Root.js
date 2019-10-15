@@ -49,11 +49,14 @@ function PrivateRoute({ component: Component, auth, ...other }) {
 
 class Root extends Component {
 	onMetamaskAccountChange = async accountAddress => {
-		const { account, history } = this.props
+		const { account, history, memoryIdentity } = this.props
+		const { identityContractOwner } = memoryIdentity
 		const { authType } = account.wallet
+		if (identityContractOwner && identityContractOwner !== accountAddress) {
+			history.push('/')
+		}
 		if (authType === AUTH_TYPES.METAMASK.name || !authType || !accountAddress) {
 			logOut()
-			history.push('/')
 		}
 	}
 
@@ -153,7 +156,7 @@ Root.propTypes = {
 }
 
 function mapStateToProps(state) {
-	const { persist } = state
+	const { persist, memory } = state
 	const { account } = persist
 	const { wallet, identity } = account
 
@@ -167,6 +170,7 @@ function mapStateToProps(state) {
 	return {
 		account: account,
 		auth: hasAuth,
+		memoryIdentity: memory.identity,
 	}
 }
 
