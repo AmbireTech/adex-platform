@@ -44,6 +44,7 @@ const AcLocations = autocompleteLocationsSingleSelect()
 const AcGenders = autocompleteGendersSingleSelect()
 const AcTags = autocompleteTagsSingleSelect()
 
+// TODO: Extract in contstants and add labels
 const SOURCES = {
 	locations: { src: AcLocations, collection: 'targeting' },
 	genders: { src: AcGenders, collection: 'targeting' },
@@ -237,7 +238,7 @@ class AdUnitTargeting extends Component {
 								<this.targetTag
 									key={index} // TODO
 									label={t(label)}
-									placeholder={t(placeholder)}
+									placeholder={t(placeholder)} // TODO: Get from SOURCE
 									index={index}
 									source={SOURCES[source].src}
 									collection={collection}

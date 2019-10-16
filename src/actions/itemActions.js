@@ -422,7 +422,7 @@ export function cloneItem({ item, itemType, objModel } = {}) {
 					return {
 						key: index,
 						collection: 'targeting',
-						source: 'custom',
+						source: 'custom', // TODO: Find where the source is!
 						target: { ...t },
 					}
 				}),
