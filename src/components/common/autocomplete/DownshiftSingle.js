@@ -87,7 +87,7 @@ class DownshiftSingle extends React.Component {
 							</Paper>
 						) : null}
 						{error && dirty && (
-							<FormHelperText id='component-error-text'>
+							<FormHelperText error id='component-error-text'>
 								{errorText}
 							</FormHelperText>
 						)}
