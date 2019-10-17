@@ -133,10 +133,6 @@ class AdUnitTargeting extends Component {
 						}
 						label={label}
 						placeholder={placeholder}
-						// onBlur={() => {
-						// 	console.log('blured')
-						// }}
-						// onFocus={() => console.log('focused')}
 						source={source}
 						value={target.tag}
 						suggestionMatch='anywhere'
