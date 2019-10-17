@@ -9,48 +9,9 @@ import CancelIcon from '@material-ui/icons/Cancel'
 import Autocomplete from 'components/common/autocomplete'
 import Typography from '@material-ui/core/Typography'
 import Dropdown from 'components/common/dropdown'
-import { constants } from 'adex-models'
 import { translate } from 'services/translations/translations'
 import { withStyles } from '@material-ui/core/styles'
-
-const autocompleteLocationsSingleSelect = () => {
-	return constants.AllCountries.map(country => {
-		return {
-			label: country.name,
-			value: country.value,
-		}
-	})
-}
-
-const autocompleteGendersSingleSelect = () => {
-	return constants.Genders.map(gender => {
-		return {
-			label: translate(gender.split('_')[1]),
-			value: gender,
-		}
-	})
-}
-
-const autocompleteTagsSingleSelect = () => {
-	return constants.PredefinedTags.map(tag => {
-		return {
-			label: tag._id,
-			value: tag._id,
-		}
-	})
-}
-
-const AcLocations = autocompleteLocationsSingleSelect()
-const AcGenders = autocompleteGendersSingleSelect()
-const AcTags = autocompleteTagsSingleSelect()
-
-// TODO: Extract in contstants and add labels
-const SOURCES = {
-	locations: { src: AcLocations, collection: 'targeting' },
-	genders: { src: AcGenders, collection: 'targeting' },
-	tags: { src: AcTags, collection: 'targeting' },
-	custom: { src: [], collection: 'targeting' },
-}
+import { SOURCES } from 'constants/misc'
 
 const styles = {
 	slider: {
@@ -172,10 +133,10 @@ class AdUnitTargeting extends Component {
 						}
 						label={label}
 						placeholder={placeholder}
-						onBlur={() => {
-							console.log('blured')
-						}}
-						onFocus={() => console.log('focused')}
+						// onBlur={() => {
+						// 	console.log('blured')
+						// }}
+						// onFocus={() => console.log('focused')}
 						source={source}
 						value={target.tag}
 						suggestionMatch='anywhere'
