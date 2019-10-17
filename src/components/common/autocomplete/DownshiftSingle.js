@@ -50,7 +50,10 @@ class DownshiftSingle extends React.Component {
 							helperText,
 							InputProps: getInputProps({
 								id,
-								onClick: () => openOnClick && toggleMenu(),
+								onFocus: () => openOnClick && toggleMenu(),
+								// onBlur: () => console.log('blur'),
+								error: true,
+								errorText: 'TITLE_HELPER',
 								placeholder,
 							}),
 						})}
