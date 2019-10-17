@@ -128,6 +128,9 @@ class AdUnitTargeting extends Component {
 						id={'target-' + index}
 						direction='auto'
 						openOnClick
+						required={true}
+						error={target.tag === ''}
+						errorText={translate('TARGETING_REQUIRED')}
 						onChange={newValue =>
 							this.handleTargetChange(index, 'tag', newValue, collection)
 						}
