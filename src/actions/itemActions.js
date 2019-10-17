@@ -26,6 +26,7 @@ import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
 
 import { contracts } from 'services/smart-contracts/contractsCfg'
+import { SOURCES } from 'constants/misc'
 const { DAI } = contracts
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
@@ -411,6 +412,12 @@ export function restoreItem({ item, authSig } = {}) {
 	})
 }
 
+const findSourceByTag = tag => {
+	return Object.keys(SOURCES).find(
+		item => SOURCES[item].src.filter(data => data.value === tag).length > 0
+	)
+}
+
 export function cloneItem({ item, itemType, objModel } = {}) {
 	return async function(dispatch) {
 		try {
@@ -419,10 +426,13 @@ export function cloneItem({ item, itemType, objModel } = {}) {
 			newItem.temp = {
 				...initialState.newItem[itemType].temp,
 				targets: item.targeting.map((t, index) => {
+					const key = findSourceByTag(t.tag)
 					return {
 						key: index,
 						collection: 'targeting',
-						source: 'custom', // TODO: Find where the source is!
+						source: key,
+						label: translate(`TARGET_LABEL_${key.toUpperCase()}`),
+						placeholder: translate(`TARGET_LABEL_${key.toUpperCase()}`),
 						target: { ...t },
 					}
 				}),
