@@ -26,7 +26,7 @@ import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
 
 import { contracts } from 'services/smart-contracts/contractsCfg'
-import { SOURCES } from 'constants/misc'
+import { SOURCES } from 'constants/targeting'
 const { DAI } = contracts
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
