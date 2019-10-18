@@ -129,7 +129,7 @@ class AdUnitTargeting extends Component {
 						direction='auto'
 						openOnClick
 						required={true}
-						error={target.tag === ''}
+						error={!target.tag}
 						errorText={translate('TARGETING_REQUIRED')}
 						onChange={newValue =>
 							this.handleTargetChange(index, 'tag', newValue, collection)
@@ -138,7 +138,6 @@ class AdUnitTargeting extends Component {
 						placeholder={placeholder}
 						source={source}
 						value={target.tag}
-						helperText='TEST'
 						suggestionMatch='anywhere'
 						showSuggestionsWhenValueIsSet={true}
 						allowCreate={!source.length}
