@@ -14,7 +14,7 @@ class DownshiftSingle extends React.Component {
 	}
 
 	handleChange = item => {
-		const selectedItem = item.value || item.label
+		const selectedItem = item ? item.value || item.label : item
 		this.props.onChange(selectedItem)
 	}
 
@@ -50,6 +50,7 @@ class DownshiftSingle extends React.Component {
 					inputValue,
 					selectedItem,
 					highlightedIndex,
+					clearSelection,
 					toggleMenu,
 				}) => (
 					<div className={classes.container}>
@@ -58,12 +59,17 @@ class DownshiftSingle extends React.Component {
 							value: inputValue,
 							fullWidth: true,
 							classes,
+							helperText,
 							InputProps: getInputProps({
 								id,
-								onFocus: () => openOnClick && toggleMenu(),
+								onClick: () => {
+									if (openOnClick) {
+										clearSelection()
+										toggleMenu()
+									}
+								},
 								onBlur: () => this.setState({ dirty: true }),
 								error: error & dirty,
-								errorText: 'TITLE_HELPER',
 								placeholder,
 							}),
 						})}
