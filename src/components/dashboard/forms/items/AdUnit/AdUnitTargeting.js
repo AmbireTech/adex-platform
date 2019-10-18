@@ -109,6 +109,19 @@ class AdUnitTargeting extends Component {
 		newTargets.splice(index, 1)
 		this.updateNewItemCollections(newTargets)
 		this.setState({ targets: newTargets })
+		this.validateAutocomplete({
+			id: 'target-' + index,
+			isValid: true,
+			dirty: false,
+		})
+	}
+
+	validateAutocomplete = ({ id, isValid, dirty }) => {
+		this.props.validate(id, {
+			isValid,
+			err: { msg: 'TARGETING_REQUIRED' },
+			dirty,
+		})
 	}
 
 	targetTag = ({
@@ -129,12 +142,26 @@ class AdUnitTargeting extends Component {
 						direction='auto'
 						openOnClick
 						required={true}
-						error={!target.tag}
-						errorText={translate('TARGETING_REQUIRED')}
-						onChange={newValue =>
+						// error={!target.tag}
+						// errorText={translate('TARGETING_REQUIRED')}
+						onChange={newValue => {
 							this.handleTargetChange(index, 'tag', newValue, collection)
+							this.validateAutocomplete({
+								id: 'target-' + index,
+								isValid: newValue,
+								dirty: true,
+							})
+						}}
+						onInit={() =>
+							this.validateAutocomplete({
+								id: 'target-' + index,
+								isValid: target.tag,
+								dirty: true,
+							})
 						}
+						// validate={validate}
 						label={label}
+						//TODO: pass validation error to be displayed ?
 						placeholder={placeholder}
 						source={source}
 						value={target.tag}
@@ -185,7 +212,7 @@ class AdUnitTargeting extends Component {
 		// const { targeting, tags } = newItem
 
 		const { targets } = this.state
-
+		const { validate } = this.props
 		return (
 			<div>
 				<Grid container spacing={1}>
@@ -202,6 +229,7 @@ class AdUnitTargeting extends Component {
 									index={index}
 									source={SOURCES[source].src}
 									collection={collection}
+									validate={validate}
 									target={target}
 									t={t}
 									classes={classes}

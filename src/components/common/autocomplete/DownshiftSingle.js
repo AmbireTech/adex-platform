@@ -8,9 +8,7 @@ import FormHelperText from '@material-ui/core/FormHelperText'
 class DownshiftSingle extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = {
-			dirty: false,
-		}
+		this.props.onInit()
 	}
 
 	handleChange = item => {
@@ -34,7 +32,6 @@ class DownshiftSingle extends React.Component {
 			allowCreate,
 			validateCreation,
 		} = this.props
-		const { dirty } = this.state
 		const allValues = source //Object.keys(source).map(key => { return { value: key, label: source[key] } })
 
 		return (
@@ -68,8 +65,7 @@ class DownshiftSingle extends React.Component {
 										toggleMenu()
 									}
 								},
-								onBlur: () => this.setState({ dirty: true }),
-								error: error & dirty,
+								// error: error & dirty,
 								placeholder,
 							}),
 						})}
@@ -92,11 +88,11 @@ class DownshiftSingle extends React.Component {
 								)}
 							</Paper>
 						) : null}
-						{error && dirty && (
+						{/* {error && dirty && (
 							<FormHelperText error id='component-error-text'>
 								{errorText}
 							</FormHelperText>
-						)}
+						)} */}
 					</div>
 				)}
 			</Downshift>
