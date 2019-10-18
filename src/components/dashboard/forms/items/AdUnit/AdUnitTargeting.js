@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography'
 import Dropdown from 'components/common/dropdown'
 import { translate } from 'services/translations/translations'
 import { withStyles } from '@material-ui/core/styles'
-import { SOURCES } from 'constants/misc'
+import { SOURCES } from 'constants/targeting'
 
 const styles = {
 	slider: {
@@ -167,7 +167,6 @@ class AdUnitTargeting extends Component {
 						}
 						// validate={validate}
 						label={label}
-						//TODO: pass validation error to be displayed ?
 						placeholder={placeholder}
 						source={source}
 						value={target.tag}
@@ -229,9 +228,9 @@ class AdUnitTargeting extends Component {
 								index
 							) => (
 								<this.targetTag
-									key={index} // TODO
+									key={index}
 									label={t(label)}
-									placeholder={t(placeholder)} // TODO: Get from SOURCE
+									placeholder={t(placeholder)}
 									index={index}
 									source={SOURCES[source].src}
 									collection={collection}
