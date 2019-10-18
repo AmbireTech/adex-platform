@@ -110,7 +110,7 @@ class AdUnitTargeting extends Component {
 		this.updateNewItemCollections(newTargets)
 		this.setState({ targets: newTargets })
 		this.validateAutocomplete({
-			id: 'target-' + index,
+			id: `target-${index}`,
 			isValid: true,
 			dirty: false,
 		})
