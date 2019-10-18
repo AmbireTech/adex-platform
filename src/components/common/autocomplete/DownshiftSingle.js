@@ -65,7 +65,7 @@ class DownshiftSingle extends React.Component {
 										toggleMenu()
 									}
 								},
-								// error: error & dirty,
+								error,
 								placeholder,
 							}),
 						})}
@@ -88,11 +88,11 @@ class DownshiftSingle extends React.Component {
 								)}
 							</Paper>
 						) : null}
-						{/* {error && dirty && (
+						{error && (
 							<FormHelperText error id='component-error-text'>
 								{errorText}
 							</FormHelperText>
-						)} */}
+						)}
 					</div>
 				)}
 			</Downshift>

@@ -133,30 +133,36 @@ class AdUnitTargeting extends Component {
 		target,
 		t,
 		classes,
+		invalidFields,
 	}) => {
+		const id = `target-${index}`
 		return (
 			<Grid container spacing={2}>
 				<Grid item xs={12} md={6}>
 					<Autocomplete
-						id={'target-' + index}
+						id={id}
 						direction='auto'
 						openOnClick
 						required={true}
-						// error={!target.tag}
-						// errorText={translate('TARGETING_REQUIRED')}
+						error={invalidFields[id] && invalidFields[id].dirty}
+						errorText={
+							invalidFields[id] && !!invalidFields[id].dirty
+								? invalidFields[id].errMsg
+								: null
+						}
 						onChange={newValue => {
 							this.handleTargetChange(index, 'tag', newValue, collection)
 							this.validateAutocomplete({
-								id: 'target-' + index,
+								id,
 								isValid: newValue,
 								dirty: true,
 							})
 						}}
 						onInit={() =>
 							this.validateAutocomplete({
-								id: 'target-' + index,
+								id,
 								isValid: target.tag,
-								dirty: true,
+								dirty: false,
 							})
 						}
 						// validate={validate}
@@ -208,11 +214,11 @@ class AdUnitTargeting extends Component {
 			t,
 			// newItem,
 			classes,
+			...rest
 		} = this.props
 		// const { targeting, tags } = newItem
 
 		const { targets } = this.state
-		const { validate } = this.props
 		return (
 			<div>
 				<Grid container spacing={1}>
@@ -229,10 +235,10 @@ class AdUnitTargeting extends Component {
 									index={index}
 									source={SOURCES[source].src}
 									collection={collection}
-									validate={validate}
 									target={target}
 									t={t}
 									classes={classes}
+									{...rest}
 								/>
 							)
 						)}
