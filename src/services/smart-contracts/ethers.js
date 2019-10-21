@@ -95,7 +95,7 @@ const getInjectedWeb3 = async () => {
 		return results
 	} else {
 		console.error('Non-Ethereum browser detected.')
-		throw new Error('Non-Ethereum browser detected.')
+		// throw new Error('Non-Ethereum browser detected.')
 	}
 }
 

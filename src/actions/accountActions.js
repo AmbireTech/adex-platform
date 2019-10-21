@@ -273,10 +273,11 @@ export function metamaskNetworkCheck({ id, location }) {
 		const { search } = location || memory.routing.location
 		const { authType } = account.wallet
 
-		const networkId = id || (await getNetworkId())
+		const networkId = window.web3 ? id || (await getNetworkId()) : null
 		const isMetamaskMatters =
-			authType === AUTH_TYPES.METAMASK.name ||
-			(!authType && search === '?metamask')
+			(authType === AUTH_TYPES.METAMASK.name ||
+				(!authType && search === '?metamask')) &&
+			window.web3
 
 		const network = networks[networkId] || {}
 
