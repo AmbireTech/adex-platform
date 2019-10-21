@@ -96,32 +96,36 @@ class AuthMetamask extends Component {
 					<Typography paragraph variant='subheading'>
 						{t('METAMASK_INFO')}
 					</Typography>
-					<Typography paragraph>
-						<span
-							dangerouslySetInnerHTML={{
-								__html: t('METAMASK_BASIC_USAGE_INFO', {
-									args: [
-										{
-											component: (
-												<Anchor href='https://metamask.io/' target='_blank'>
-													https://metamask.io/
-												</Anchor>
-											),
-										},
-									],
-								}),
-							}}
-						/>
-					</Typography>
-					<Typography paragraph>
-						<Anchor href='https://metamask.io/' target='_blank'>
-							<Img
-								src={METAMASK_DL_IMG}
-								alt={'Downlad metamask'}
-								className={classes.dlBtnImg}
-							/>
-						</Anchor>
-					</Typography>
+					{!window.web3 || !window.web3.currentProvider.isMetaMask ? (
+						<React.Fragment>
+							<Typography paragraph>
+								<span
+									dangerouslySetInnerHTML={{
+										__html: t('METAMASK_BASIC_USAGE_INFO', {
+											args: [
+												{
+													component: (
+														<Anchor href='https://metamask.io/' target='_blank'>
+															https://metamask.io/
+														</Anchor>
+													),
+												},
+											],
+										}),
+									}}
+								/>
+							</Typography>
+							<Typography paragraph>
+								<Anchor href='https://metamask.io/' target='_blank'>
+									<Img
+										src={METAMASK_DL_IMG}
+										alt={'Downlad metamask'}
+										className={classes.dlBtnImg}
+									/>
+								</Anchor>
+							</Typography>
+						</React.Fragment>
+					) : null}
 					{address ? (
 						<div className={classes.metamaskLAbel}>
 							{stats ? (
@@ -135,7 +139,7 @@ class AuthMetamask extends Component {
 								t('AUTH_WITH_METAMASK_LABEL', { args: [address] })
 							)}
 						</div>
-					) : (
+					) : window.web3 && window.web3.currentProvider.isMetaMask ? (
 						<Button
 							onClick={this.checkMetamask}
 							variant='contained'
@@ -144,7 +148,7 @@ class AuthMetamask extends Component {
 						>
 							{t('AUTH_CONNECT_WITH_METAMASK')}
 						</Button>
-					)}
+					) : null}
 				</ContentBody>
 			</ContentBox>
 		)
