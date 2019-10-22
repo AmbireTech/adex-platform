@@ -52,7 +52,7 @@ class Root extends Component {
 		const { identityContractOwner } = memoryIdentity
 		const { authType } = account.wallet
 		if (authType === AUTH_TYPES.METAMASK.name || !authType || !accountAddress) {
-			logOut(identityContractOwner && identityContractOwner !== accountAddress)
+			logOut(!identityContractOwner || identityContractOwner === accountAddress)
 		}
 	}
 
