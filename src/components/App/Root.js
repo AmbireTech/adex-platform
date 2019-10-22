@@ -70,10 +70,10 @@ class Root extends Component {
 	componentWillUnmount() {}
 
 	componentDidMount() {
-		const { actions, location } = this.props
+		const { actions } = this.props
 		const { metamaskNetworkCheck } = actions
 
-		metamaskNetworkCheck({ location })
+		metamaskNetworkCheck()
 		if (window.ethereum) {
 			window.ethereum.on('accountsChanged', accounts => {
 				console.log('acc changed', accounts[0])
@@ -81,7 +81,7 @@ class Root extends Component {
 			})
 			window.ethereum.on('networkChanged', network => {
 				console.log('networkChanged', network)
-				metamaskNetworkCheck({ id: network, location })
+				metamaskNetworkCheck({ id: network })
 			})
 		}
 	}
