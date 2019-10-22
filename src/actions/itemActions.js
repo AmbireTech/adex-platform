@@ -103,7 +103,6 @@ export function resetAllNewItems() {
 	return function(dispatch) {
 		return dispatch({
 			type: types.RESET_ALL_NEW_ITEMS,
-			kor: 'hoi',
 		})
 	}
 }
