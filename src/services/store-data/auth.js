@@ -11,8 +11,10 @@ import {
 
 import { push } from 'connected-react-router'
 
-export const logOut = () => {
-	execute(push('/'))
+export const logOut = skipRedirect => {
+	if (!skipRedirect) {
+		execute(push('/'))
+	}
 	execute(resetIdentity())
 	execute(resetAllItems())
 	execute(resetAllNewItems())
