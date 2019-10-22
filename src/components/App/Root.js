@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { Route, Switch, Redirect } from 'react-router'
+import { Route, Switch, Redirect, withRouter } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import ConnectHoc from 'components/signin/ConnectHoc'
 import {
@@ -22,7 +22,6 @@ import { AUTH_TYPES } from 'constants/misc'
 import { logOut } from 'services/store-data/auth'
 import JustDialog from 'components/common/dialog/JustDialog'
 import { getEthers } from 'services/smart-contracts/ethers'
-import { withRouter } from 'react-router-dom'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
 const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
