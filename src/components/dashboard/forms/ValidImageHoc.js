@@ -90,6 +90,14 @@ export default function ValidImageHoc(Decorated) {
 				return
 			}
 
+			if (!media.mime || !media.tempUrl) {
+				this.props.validate(propsName, {
+					isValid: false,
+					dirty: true,
+				})
+				return
+			}
+
 			const size = await getMediaSize({ mime: media.mime, src: media.tempUrl })
 
 			this.validate({
