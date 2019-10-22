@@ -106,8 +106,8 @@
   "scripts": {
     "start": "node --max-old-space-size=4096 scripts/start.js",
     "build": "node --max-old-space-size=2048 scripts/build.js",
-    "predeploy": "npm run build && cp CNAME ./build",
-    "deploy": "gh-pages -d build",
+    "deploy": "npm run build && cp ./domains/platform/CNAME ./build && gh-pages -d build",
+    "deploy-staging": "npm run build && cp ./domains/staging/CNAME ./build && gh-pages -d build -r git@github.com:AdExNetwork/adex-platform-staging.git",
     "test": "eslint src/",
     "unit-tests": "node scripts/test.js --env=jsdom",
     "lint": "eslint \"src/**/*.{js,jsx}\" && echo Linting check finished",
