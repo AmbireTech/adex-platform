@@ -266,11 +266,12 @@ const networks = {
 	development: { name: 'Goerli', for: 'development' },
 }
 
-export function metamaskNetworkCheck({ id, location }) {
+export function metamaskNetworkCheck({ id } = {}) {
 	return async function(dispatch, getState) {
-		const { persist, memory } = getState()
+		const { persist, router } = getState()
+		const { location } = router
 		const { account } = persist
-		const { search } = location || memory.routing.location
+		const { search } = location
 		const { authType } = account.wallet
 
 		const networkId = id || (await getNetworkId())

@@ -50,7 +50,7 @@ function checkAccountChanged(getState, account) {
 	return accountChanged
 }
 
-export function updateAccountAnalytics(KOR) {
+export function updateAccountAnalytics() {
 	return async function(dispatch, getState) {
 		const { account } = getState().persist
 		try {

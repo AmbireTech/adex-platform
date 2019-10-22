@@ -8,11 +8,17 @@ import {
 	resetAccount,
 	resetAnalytics,
 } from 'actions'
-export const logOut = () => {
+
+import { push } from 'connected-react-router'
+
+export const logOut = skipRedirect => {
+	if (!skipRedirect) {
+		execute(push('/'))
+	}
+	execute(resetIdentity())
 	execute(resetAllItems())
 	execute(resetAllNewItems())
 	execute(resetAllBids())
-	execute(resetIdentity())
 	execute(resetAccount())
 	execute(resetAnalytics())
 }
