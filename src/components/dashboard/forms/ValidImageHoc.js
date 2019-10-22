@@ -4,18 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Translate from 'components/translate/Translate'
-import { getMediaSize } from 'helpers/mediaHelpers'
-
-// Allow higher res images with same aspect ratio
-function checkExactish(widthTarget, width, heightTarget, height) {
-	const targetAspect = parseFloat(widthTarget / heightTarget).toFixed(2)
-	const aspect = parseFloat(width / height).toFixed(2)
-
-	const isValid =
-		widthTarget <= width && heightTarget <= height && targetAspect === aspect
-
-	return isValid
-}
+import { getMediaSize, checkExactishAspect } from 'helpers/mediaHelpers'
 
 export default function ValidImageHoc(Decorated) {
 	class ValidImage extends Component {
@@ -35,7 +24,7 @@ export default function ValidImageHoc(Decorated) {
 			let isValid = true
 
 			if (exact) {
-				isValid = checkExactish(
+				isValid = checkExactishAspect(
 					widthTarget,
 					mediaWidth,
 					heightTarget,
