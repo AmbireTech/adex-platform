@@ -86,11 +86,6 @@ export const CreteFullIdentity = props => (
 )
 
 export const LoginStandardIdentity = props => {
-	useEffect(() => {
-		const { actions, location } = props
-		const { metamaskNetworkCheck } = actions
-		metamaskNetworkCheck({ location })
-	}, [])
 	return (
 		<IdentitySteps
 			{...props}
