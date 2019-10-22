@@ -9,47 +9,9 @@ import CancelIcon from '@material-ui/icons/Cancel'
 import Autocomplete from 'components/common/autocomplete'
 import Typography from '@material-ui/core/Typography'
 import Dropdown from 'components/common/dropdown'
-import { constants } from 'adex-models'
 import { translate } from 'services/translations/translations'
 import { withStyles } from '@material-ui/core/styles'
-
-const autocompleteLocationsSingleSelect = () => {
-	return constants.AllCountries.map(country => {
-		return {
-			label: country.name,
-			value: country.value,
-		}
-	})
-}
-
-const autocompleteGendersSingleSelect = () => {
-	return constants.Genders.map(gender => {
-		return {
-			label: translate(gender.split('_')[1]),
-			value: gender,
-		}
-	})
-}
-
-const autocompleteTagsSingleSelect = () => {
-	return constants.PredefinedTags.map(tag => {
-		return {
-			label: tag._id,
-			value: tag._id,
-		}
-	})
-}
-
-const AcLocations = autocompleteLocationsSingleSelect()
-const AcGenders = autocompleteGendersSingleSelect()
-const AcTags = autocompleteTagsSingleSelect()
-
-const SOURCES = {
-	locations: { src: AcLocations, collection: 'targeting' },
-	genders: { src: AcGenders, collection: 'targeting' },
-	tags: { src: AcTags, collection: 'targeting' },
-	custom: { src: [], collection: 'targeting' },
-}
+import { SOURCES } from 'constants/targeting'
 
 const styles = {
 	slider: {
@@ -147,6 +109,19 @@ class AdUnitTargeting extends Component {
 		newTargets.splice(index, 1)
 		this.updateNewItemCollections(newTargets)
 		this.setState({ targets: newTargets })
+		this.validateAutocomplete({
+			id: `target-${index}`,
+			isValid: true,
+			dirty: false,
+		})
+	}
+
+	validateAutocomplete = ({ id, isValid, dirty }) => {
+		this.props.validate(id, {
+			isValid,
+			err: { msg: 'TARGETING_REQUIRED' },
+			dirty,
+		})
 	}
 
 	targetTag = ({
@@ -158,17 +133,39 @@ class AdUnitTargeting extends Component {
 		target,
 		t,
 		classes,
+		invalidFields,
 	}) => {
+		const id = `target-${index}`
 		return (
 			<Grid container spacing={2}>
 				<Grid item xs={12} md={6}>
 					<Autocomplete
-						id={'target-' + index}
+						id={id}
 						direction='auto'
 						openOnClick
-						onChange={newValue =>
-							this.handleTargetChange(index, 'tag', newValue, collection)
+						required={true}
+						error={invalidFields[id] && invalidFields[id].dirty}
+						errorText={
+							invalidFields[id] && !!invalidFields[id].dirty
+								? invalidFields[id].errMsg
+								: null
 						}
+						onChange={newValue => {
+							this.handleTargetChange(index, 'tag', newValue, collection)
+							this.validateAutocomplete({
+								id,
+								isValid: newValue,
+								dirty: true,
+							})
+						}}
+						onInit={() =>
+							this.validateAutocomplete({
+								id,
+								isValid: target.tag,
+								dirty: false,
+							})
+						}
+						// validate={validate}
 						label={label}
 						placeholder={placeholder}
 						source={source}
@@ -216,11 +213,11 @@ class AdUnitTargeting extends Component {
 			t,
 			// newItem,
 			classes,
+			...rest
 		} = this.props
 		// const { targeting, tags } = newItem
 
 		const { targets } = this.state
-
 		return (
 			<div>
 				<Grid container spacing={1}>
@@ -231,7 +228,7 @@ class AdUnitTargeting extends Component {
 								index
 							) => (
 								<this.targetTag
-									key={index} // TODO
+									key={index}
 									label={t(label)}
 									placeholder={t(placeholder)}
 									index={index}
@@ -240,6 +237,7 @@ class AdUnitTargeting extends Component {
 									target={target}
 									t={t}
 									classes={classes}
+									{...rest}
 								/>
 							)
 						)}

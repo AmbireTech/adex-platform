@@ -3,10 +3,16 @@ import PropTypes from 'prop-types'
 import Downshift from 'downshift'
 import Paper from '@material-ui/core/Paper'
 import { renderInput, getSuggestions, renderSuggestion } from './common'
+import FormHelperText from '@material-ui/core/FormHelperText'
 
 class DownshiftSingle extends React.Component {
+	constructor(props) {
+		super(props)
+		this.props.onInit()
+	}
+
 	handleChange = item => {
-		const selectedItem = item.value || item.label
+		const selectedItem = item ? item.value || item.label : item
 		this.props.onChange(selectedItem)
 	}
 
@@ -14,10 +20,12 @@ class DownshiftSingle extends React.Component {
 		const {
 			classes,
 			source,
+			error,
 			label,
 			id,
 			placeholder,
 			helperText,
+			errorText,
 			showSelected,
 			value,
 			openOnClick,
@@ -39,6 +47,7 @@ class DownshiftSingle extends React.Component {
 					inputValue,
 					selectedItem,
 					highlightedIndex,
+					clearSelection,
 					toggleMenu,
 				}) => (
 					<div className={classes.container}>
@@ -50,7 +59,13 @@ class DownshiftSingle extends React.Component {
 							helperText,
 							InputProps: getInputProps({
 								id,
-								onClick: () => openOnClick && toggleMenu(),
+								onClick: () => {
+									if (openOnClick) {
+										clearSelection()
+										toggleMenu()
+									}
+								},
+								error,
 								placeholder,
 							}),
 						})}
@@ -73,6 +88,11 @@ class DownshiftSingle extends React.Component {
 								)}
 							</Paper>
 						) : null}
+						{error && (
+							<FormHelperText error id='component-error-text'>
+								{errorText}
+							</FormHelperText>
+						)}
 					</div>
 				)}
 			</Downshift>
