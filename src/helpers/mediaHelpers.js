@@ -1,3 +1,5 @@
+const MAX_ASPECT_TOLERANCE = 5
+
 export const isVideoMedia = (mime = '') => mime.split('/')[0] === 'video'
 
 const getVideoSize = src =>
@@ -27,3 +29,23 @@ const getImageSize = src =>
 
 export const getMediaSize = ({ mime, src }) =>
 	isVideoMedia(mime) ? getVideoSize(src) : getImageSize(src)
+
+export const checkExactishAspect = (
+	widthTarget,
+	width,
+	heightTarget,
+	height,
+	maxPercentTolerance = MAX_ASPECT_TOLERANCE
+) => {
+	const targetAspect = parseFloat(widthTarget / heightTarget)
+	const aspect = parseFloat(width / height)
+
+	const aspectDiff = Math.abs(((targetAspect - aspect) / targetAspect) * 100)
+
+	const isValid =
+		widthTarget <= width &&
+		heightTarget <= height &&
+		aspectDiff <= maxPercentTolerance
+
+	return isValid
+}
