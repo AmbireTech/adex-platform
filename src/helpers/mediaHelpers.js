@@ -37,6 +37,9 @@ export const checkExactishAspect = (
 	height,
 	maxPercentTolerance = MAX_ASPECT_TOLERANCE
 ) => {
+	if (widthTarget <= 0 || width <= 0 || heightTarget <= 0 || height <= 0) {
+		return false
+	}
 	const targetAspect = parseFloat(widthTarget / heightTarget)
 	const aspect = parseFloat(width / height)
 
