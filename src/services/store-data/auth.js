@@ -8,11 +8,15 @@ import {
 	resetAccount,
 	resetAnalytics,
 } from 'actions'
+
+import { push } from 'connected-react-router'
+
 export const logOut = () => {
+	execute(push('/'))
+	execute(resetIdentity())
 	execute(resetAllItems())
 	execute(resetAllNewItems())
 	execute(resetAllBids())
-	execute(resetIdentity())
 	execute(resetAccount())
 	execute(resetAnalytics())
 }
