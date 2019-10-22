@@ -44,6 +44,7 @@ class IdentitySteps extends Component {
 				title: t(page.title),
 				cancelBtn: cancelButton,
 				component: ValidItemHoc(page.page),
+				disableBtnsIfValid: page.disableBtnsIfValid,
 				props: { ...this.props, validateId: validateId + '-' + index },
 				completeBtn: page.final
 					? () => <GoBtn {...rest} stepsId={stepsId} onSave={onSave} t={t} />

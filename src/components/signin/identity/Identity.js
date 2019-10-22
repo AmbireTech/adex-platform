@@ -49,7 +49,12 @@ export const CreateGrantIdentity = props => (
 		stepsId='grant-identity-create'
 		stepsPages={[
 			{ title: 'GRANT_INFO', page: GrantInfo },
-			{ title: 'GRANT_DEPLOY', page: GrantDeploy, final: true },
+			{
+				title: 'GRANT_DEPLOY',
+				page: GrantDeploy,
+				final: true,
+				disableBtnsIfValid: true,
+			},
 		]}
 	/>
 )
@@ -80,21 +85,23 @@ export const CreteFullIdentity = props => (
 	/>
 )
 
-export const LoginStandardIdentity = props => (
-	<IdentitySteps
-		{...props}
-		{...common}
-		stepsId='full-identity-login'
-		stepsPages={[
-			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
-			{
-				title: 'CONNECT_STANDARD_IDENTITY',
-				page: ExternalConnect,
-				final: true,
-			},
-		]}
-	/>
-)
+export const LoginStandardIdentity = props => {
+	return (
+		<IdentitySteps
+			{...props}
+			{...common}
+			stepsId='full-identity-login'
+			stepsPages={[
+				{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
+				{
+					title: 'CONNECT_STANDARD_IDENTITY',
+					page: ExternalConnect,
+					final: true,
+				},
+			]}
+		/>
+	)
+}
 
 export const DemoIdentity = props => (
 	<IdentitySteps {...props} {...common} stepsPages={[]} />
