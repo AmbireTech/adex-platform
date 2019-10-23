@@ -125,6 +125,17 @@ class AuthSelect extends Component {
 							{/* {t('TREZOR')} */}
 						</RRButton>
 					</Grid>
+					<Grid item xs={12}>
+						<RRButton
+							variant='link'
+							to='/recover/quick'
+							size='large'
+							color='secondary'
+							fullWidth
+						>
+							{t('RECOVER_QUICK_ACCOUNT')}
+						</RRButton>
+					</Grid>
 				</Grid>
 			</div>
 		)
