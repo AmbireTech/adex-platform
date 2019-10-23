@@ -24,35 +24,41 @@ class QuickLogin extends Component {
 		}
 
 		let wallet = {}
+		let error = null
 
-		if (email && password) {
-			const walletData = getLocalWallet({
-				email,
-				password,
-				authType,
-			})
+		try {
+			if (email && password) {
+				const walletData = getLocalWallet({
+					email,
+					password,
+					authType,
+				})
 
-			if (!!walletData && walletData.data) {
-				wallet = { ...walletData.data }
-				wallet.email = email
-				wallet.password = password
-				wallet.authType = authType
-				wallet.identity = {
-					address: walletData.identity,
-					privileges: walletData.identityPrivileges,
+				if (!!walletData && walletData.data) {
+					wallet = { ...walletData.data }
+					wallet.email = email
+					wallet.password = password
+					wallet.authType = authType
+					wallet.identity = {
+						address: walletData.identity,
+						privileges: walletData.identityPrivileges,
+					}
+
+					handleChange('identityAddr', walletData.identity)
 				}
 
-				handleChange('identityAddr', walletData.identity)
+				handleChange('wallet', wallet)
+				handleChange('walletAddr', wallet.address)
+				handleChange('identityData', wallet.identity)
 			}
-
-			handleChange('wallet', wallet)
-			handleChange('walletAddr', wallet.address)
-			handleChange('identityData', wallet.identity)
+		} catch (err) {
+			console.error(err)
+			error = err && err.message ? err.message : err
 		}
 
 		validate('wallet', {
 			isValid: !!wallet.address,
-			err: { msg: 'ERR_QUICK_WALLET_LOGIN' },
+			err: { msg: 'ERR_QUICK_WALLET_LOGIN', args: [error] },
 			dirty: dirty,
 		})
 	}
