@@ -11,6 +11,7 @@ import GrantLogin from './GrantLogin'
 import QuickInfo from './QuickInfo'
 import QuickDeploy from './QuickDeploy'
 import QuickLogin from './QuickLogin'
+import QuickRecover from './QuickRecover'
 // import FullLogin from './FullLogin'
 import { ExternalConnect } from './ExternalWalletConnect'
 import IdentitySteps from './IdentitySteps'
@@ -124,6 +125,18 @@ export const LoginQuickIdentity = props => (
 		{...common}
 		stepsId='quick-identity-login'
 		stepsPages={[{ title: 'QUICK_LOGIN', page: QuickLogin, final: true }]}
+	/>
+)
+
+export const RecoverQuickIdentity = props => (
+	<IdentitySteps
+		{...props}
+		{...common}
+		stepsId='quick-identity-recover'
+		stepsPages={[
+			{ title: 'QUICK_RECOVER_DATA', page: QuickRecover },
+			{ title: 'QUICK_LOGIN', page: QuickLogin, final: true },
+		]}
 	/>
 )
 
