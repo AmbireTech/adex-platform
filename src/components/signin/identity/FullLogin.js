@@ -25,7 +25,7 @@ const getIdentitiesForDropdown = (ownerIdentities, t) =>
 		}
 	})
 
-class GrantLogin extends Component {
+class FullLogin extends Component {
 	componentDidMount() {
 		const { actions, identity } = this.props
 		actions.ownerIdentities({ owner: identity.wallet.address })
@@ -56,7 +56,8 @@ class GrantLogin extends Component {
 	componentDidUpdate(prevProps) {
 		if (
 			prevProps.identity.identityContractAddress !==
-			this.props.identity.identityContractAddress
+				this.props.identity.identityContractAddress &&
+			this.props.identity.wallet
 		) {
 			this.validateIdentity(true)
 		}
@@ -100,5 +101,5 @@ class GrantLogin extends Component {
 	}
 }
 
-const IdentityGrantLoginStep = IdentityHoc(GrantLogin)
-export default Translate(withStyles(styles)(IdentityGrantLoginStep))
+const IdentityFullLoginStep = IdentityHoc(FullLogin)
+export default Translate(withStyles(styles)(IdentityFullLoginStep))

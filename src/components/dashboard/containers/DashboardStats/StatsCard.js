@@ -6,9 +6,18 @@ import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import { styles } from './styles'
 import classnames from 'classnames'
+import { LoadingSection } from 'components/common/spinners'
 
 const StatsCard = props => {
-	const { classes, title, subtitle, linkCard, children, onClick } = props
+	const {
+		classes,
+		title,
+		subtitle,
+		linkCard,
+		loading,
+		children,
+		onClick,
+	} = props
 
 	return (
 		<Card
@@ -18,20 +27,22 @@ const StatsCard = props => {
 			})}
 			onClick={onClick}
 		>
-			<CardContent>
-				{title && (
-					<Typography variant='headline' component='h2' noWrap>
-						{title}
-					</Typography>
-				)}
+			<LoadingSection loading={loading}>
+				<CardContent>
+					{title && (
+						<Typography variant='h5' noWrap>
+							{title}
+						</Typography>
+					)}
 
-				{subtitle && (
-					<Typography component='p' noWrap>
-						{subtitle}
-					</Typography>
-				)}
-				{children}
-			</CardContent>
+					{subtitle && (
+						<Typography component='p' noWrap>
+							{subtitle}
+						</Typography>
+					)}
+					{children}
+				</CardContent>
+			</LoadingSection>
 		</Card>
 	)
 }

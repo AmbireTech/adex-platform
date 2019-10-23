@@ -9,13 +9,19 @@ import {
 import { updateSpinner } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
-import { getAccountStats } from 'services/smart-contracts/actions/stats'
 import { removeLegacyKey } from 'services/wallet/wallet'
+import { getValidatorAuthToken } from 'services/adex-validator/actions'
+import {
+	getAllChannelsForIdentity,
+	getAccountStats,
+	getOutstandingBalance,
+} from 'services/smart-contracts/actions/stats'
 import { addToast, confirmAction } from './uiActions'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES } from 'constants/misc'
 
 const UPDATE_SETTINGS_INTERVAL = 24 * 60 * 60 * 1000 // 1 hour
+const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
 // MEMORY STORAGE
 export function updateSignin(prop, value) {
@@ -78,9 +84,28 @@ export function updateAccountStats() {
 	return async function(dispatch, getState) {
 		const { account } = getState().persist
 		try {
-			const stats = await getAccountStats({ account })
+			const { identity, wallet, stats } = account
+			const { address } = identity
+			const oldAggregates = stats.aggregates
 
-			updateAccount({ newValues: { stats } })(dispatch)
+			const withBalance = await getAllChannelsForIdentity({ address })
+
+			const outstandingBalanceDai = await getOutstandingBalance({
+				wallet,
+				address,
+				withBalance,
+			}).catch(err => {
+				console.error('ERR_OUTSTANDING_BALANCES', err)
+			})
+
+			const { formatted, raw } = await getAccountStats({
+				account,
+				outstandingBalanceDai,
+			})
+
+			updateAccount({
+				newValues: { stats: { formatted, raw, aggregates: oldAggregates } },
+			})(dispatch)
 		} catch (err) {
 			console.error('ERR_STATS', err)
 			addToast({
@@ -142,6 +167,24 @@ export function updateAccountSettings() {
 	}
 }
 
+export function updateValidatorAuthTokens({ newAuth }) {
+	return async function(dispatch, getState) {
+		const { identity } = getState().persist.account
+
+		const newIdentity = { ...identity }
+		const newTokens = { ...(newIdentity.validatorAuthTokens || {}), ...newAuth }
+
+		// We don't want to update account if there is no actual change
+		if (
+			JSON.stringify(newIdentity.validatorAuthTokens) !==
+			JSON.stringify(newTokens)
+		) {
+			newIdentity.validatorAuthTokens = newTokens
+			updateAccount({ newValues: { identity: newIdentity } })(dispatch)
+		}
+	}
+}
+
 export function createSession({ wallet, identity, email, deleteLegacyKey }) {
 	return async function(dispatch) {
 		updateSpinner('creating-session', true)(dispatch)
@@ -194,12 +237,23 @@ export function createSession({ wallet, identity, email, deleteLegacyKey }) {
 				}
 			}
 
+			const account = {
+				email: email,
+				wallet: newWallet,
+				identity: { ...identity },
+			}
+
+			const leaderValidatorAuth = await getValidatorAuthToken({
+				validatorId: VALIDATOR_LEADER_ID,
+				account,
+			})
+
+			account.identity.validatorAuthTokens = {
+				[VALIDATOR_LEADER_ID]: leaderValidatorAuth,
+			}
+
 			updateAccount({
-				newValues: {
-					email: email,
-					wallet: newWallet,
-					identity: identity,
-				},
+				newValues: { ...account },
 			})(dispatch)
 
 			if (deleteLegacyKey) {
@@ -241,17 +295,17 @@ async function getNetworkId() {
 // TEMP
 const networks = {
 	1: { name: 'Mainnet', for: 'production' },
-	5: { name: 'Georli', for: 'development' },
+	5: { name: 'Goerli', for: 'development' },
 	production: { name: 'Mainnet', for: 'production' },
-	development: { name: 'Georli', for: 'development' },
+	development: { name: 'Goerli', for: 'development' },
 }
 
-export function metamaskNetworkCheck({ id, location }) {
+export function metamaskNetworkCheck({ id } = {}) {
 	return async function(dispatch, getState) {
 		const { persist, router } = getState()
-
+		const { location } = router
 		const { account } = persist
-		const { search } = location || router.location
+		const { search } = location
 		const { authType } = account.wallet
 
 		const networkId = id || (await getNetworkId())

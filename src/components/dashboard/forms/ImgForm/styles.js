@@ -12,32 +12,15 @@ export const styles = theme => {
 			width: 'auto',
 			border: `2px dashed ${theme.palette.grey[500]}`,
 			background: theme.palette.background.default,
-			alignItems: 'center',
-			justifyContent: 'center',
 			padding: 10,
 			cursor: 'pointer',
 			overflow: 'hidden',
 		},
-		droppedImgContainer: {
-			textAlign: 'center',
-			alignSelf: 'stretch',
-			flex: '1 1',
-			flexDirection: 'row',
-			display: 'flex',
-			justifyContent: ' space-around',
-			alignItems: 'center',
-			'@media(max-width:768px)': {
-				display: 'grid',
-			},
-		},
 		imgDropzonePreview: {
 			maxHeight: 320,
+			maxWidth: '100%',
 			height: 'auto',
 			width: 'auto',
-			'@media(max-width:500px)': {
-				// TODO: Find out why it breaks this limit after a new pic is uploaded
-				width: '100%',
-			},
 		},
 		dropzoneBtn: {
 			marginBottom: spacing,

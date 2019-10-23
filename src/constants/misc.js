@@ -1,5 +1,6 @@
 import { exchange as ExchangeConstants } from 'adex-constants'
 import { constants } from 'adex-models'
+
 const { BID_STATES, TIMEOUTS } = ExchangeConstants
 const { SignatureModes } = constants
 const AdTypes = constants.AdUnitsTypes.map(type => {
@@ -99,3 +100,22 @@ export const UTM_PARAMS = {
 	utm_campaign: 'none',
 	utm_content: 'none',
 }
+
+export const VALIDATOR_ANALYTICS_METRICS = [
+	'eventPayouts', //
+	'eventCounts',
+]
+export const VALIDATOR_ANALYTICS_SIDES = [
+	'advertiser',
+	'publisher', //
+]
+export const VALIDATOR_ANALYTICS_EVENT_TYPES = ['IMPRESSION']
+
+// TEMP: disable long periods
+export const VALIDATOR_ANALYTICS_TIMEFRAMES = [
+	{ label: 'LABEL_HOUR', value: 'hour' },
+	{ label: 'LABEL_DAY', value: 'day' },
+	{ label: 'LABEL_WEEK', value: 'week' },
+	// { label: 'LABEL_MONTH', value: 'month' },
+	// { label: 'LABEL_YEAR', value: 'year' },
+]

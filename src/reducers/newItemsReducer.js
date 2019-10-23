@@ -1,4 +1,8 @@
-import { UPDATE_NEW_ITEM, RESET_NEW_ITEM } from 'constants/actionTypes'
+import {
+	UPDATE_NEW_ITEM,
+	RESET_NEW_ITEM,
+	RESET_ALL_NEW_ITEMS,
+} from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
 export default function newItemsReducer(state = initialState.newItem, action) {
@@ -17,6 +21,11 @@ export default function newItemsReducer(state = initialState.newItem, action) {
 			newState = { ...state }
 			newItem = { ...initialState.newItem[action.item] }
 			newState[action.item] = newItem
+
+			return newState
+
+		case RESET_ALL_NEW_ITEMS:
+			newState = { ...initialState.newItem }
 
 			return newState
 

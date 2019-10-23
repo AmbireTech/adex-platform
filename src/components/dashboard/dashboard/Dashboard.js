@@ -1,7 +1,7 @@
 import React from 'react'
 import SideNav from './SideNav'
 import TopBar from './TopBar'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch } from 'react-router'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -61,6 +61,7 @@ class Dashboard extends React.Component {
 		actions.getAllItems()
 		actions.updateAccountStats()
 		actions.updateAccountSettings()
+		actions.updateAccountAnalytics()
 		checkTransactions.start()
 	}
 

@@ -104,7 +104,7 @@ class ItemsList extends Component {
 					<TableCell padding='checkbox'>
 						<Checkbox
 							// indeterminate={numSelected > 0 && numSelected < rowCount}
-							checked={selectedItems[item.ipfs]}
+							checked={!!selectedItems[item.ipfs]}
 							onChange={event => {
 								onSelect(item.ipfs, event.target.checked)
 							}}
@@ -148,7 +148,7 @@ class ItemsList extends Component {
 					<TableCell padding='checkbox'>
 						<Checkbox
 							// indeterminate={numSelected > 0 && numSelected < rowCount}
-							checked={selectedItems[item.ipfs]}
+							checked={!!selectedItems[item.ipfs]}
 							onChange={event => {
 								onSelect(item.ipfs, event.target.checked)
 							}}

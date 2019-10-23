@@ -63,8 +63,8 @@ class CampaignUnits extends Component {
 				<Grid
 					container
 					spacing={2}
-					direction={hasAdUnits ? '' : 'column'}
-					alignItems={hasAdUnits ? '' : 'center'}
+					direction={hasAdUnits ? null : 'column'}
+					alignItems={hasAdUnits ? null : 'center'}
 				>
 					<Grid item sm={12}>
 						<ContentBody>
