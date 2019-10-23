@@ -34,7 +34,7 @@ function encrKey({ email, password, authType }) {
 	} else if (typeof authType === 'string') {
 		return `adex-${authType}-wallet-${email}`
 	} else {
-		throw new Error('Invalid type')
+		throw new Error('INVALID_TYPE')
 	}
 }
 
@@ -44,8 +44,13 @@ function encrData({ email, password, data }) {
 }
 
 function decrData({ email, password, data }) {
-	const decr = JSON.parse(decrypt(data, email + password))
-	return decr
+	const decryptedStr = decrypt(data, email + password)
+	try {
+		const decr = JSON.parse(decryptedStr)
+		return decr
+	} catch (err) {
+		throw new Error('INVALID_PASSWORD_OR_EMAIL', err)
+	}
 }
 
 export function createLocalWallet({
@@ -88,14 +93,14 @@ export function addDataToWallet({
 	authType,
 }) {
 	if (dataKey === 'data') {
-		throw new Error('Invalid data key')
+		throw new Error('INVALID_DATA_KEY')
 	}
 
 	const key = encrKey({ email, password, authType })
 	const wallet = loadFromLocalStorage(key)
 
 	if (!wallet) {
-		throw new Error('Wallet not found')
+		throw new Error('WALLET_NOT_FOUND')
 	}
 
 	const data = encrData({ data: dataValue, email, password })
@@ -119,7 +124,7 @@ export function getRecoveryWalletData({ email, password, authType }) {
 
 export function getLocalWallet({ email, password, authType, getEncrypted }) {
 	if (!email || !password) {
-		throw new Error('email and password are required')
+		throw new Error('REQUIRED_EMAIL_AND_PASSWORD')
 	}
 
 	const key = encrKey({ email, password, authType })
