@@ -14,6 +14,7 @@ import {
 	LoginGrantIdentity,
 	LoginStandardIdentity,
 	LoginQuickIdentity,
+	RecoverQuickIdentity,
 } from 'components/signin/identity/Identity'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
@@ -30,6 +31,7 @@ const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
 const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
 const ConnectedCreateQuickIdentity = ConnectHoc(JustDialog(CreateQuickIdentity))
 const ConnectedQuickLogin = ConnectHoc(JustDialog(LoginQuickIdentity))
+const ConnectedQuickRecovery = ConnectHoc(JustDialog(RecoverQuickIdentity))
 const ConnectedCreateFullIdentity = ConnectHoc(JustDialog(CreteFullIdentity))
 const ConnectedLoginStandardIdentity = ConnectHoc(
 	JustDialog(LoginStandardIdentity)
@@ -169,6 +171,13 @@ class Root extends Component {
 					exact
 					path='/login/quick'
 					component={props => <ConnectedQuickLogin {...props} noBackground />}
+				/>
+				<Route
+					exact
+					path='/recover/quick'
+					component={props => (
+						<ConnectedQuickRecovery {...props} noBackground />
+					)}
 				/>
 				<Route
 					exact
