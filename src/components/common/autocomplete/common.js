@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
 import { translate } from 'services/translations/translations'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
 
 export const renderInput = inputProps => {
 	const { InputProps, classes, ref, ...other } = inputProps
@@ -29,30 +31,22 @@ export const renderSuggestion = ({
 	selectedItem,
 	showSelected,
 }) => {
-	const isHighlighted = highlightedIndex === index
-	// TODO: make it better
-	// Note wo work with obj and array
-	const isSelected =
-		((selectedItem || {}).value || selectedItem || '').indexOf(
-			suggestion.value
-		) > -1
+	// const isHighlighted = highlightedIndex === index
+	// // TODO: make it better
+	// // Note wo work with obj and array
+	// const isSelected =
+	// 	((selectedItem || {}).value || selectedItem || '').indexOf(
+	// 		suggestion.value
+	// 	) > -1
 
-	if (!showSelected && isSelected) {
-		return null
-	}
+	// if (!showSelected && isSelected) {
+	// 	return null
+	// }
 
 	return (
-		<MenuItem
-			{...itemProps}
-			key={suggestion.value || suggestion.label}
-			selected={isHighlighted}
-			component='div'
-			style={{
-				fontWeight: isSelected ? 500 : 400,
-			}}
-		>
-			{suggestion.label}
-		</MenuItem>
+		<ListItem button key={index}>
+			<ListItemText primary={suggestion.label} />
+		</ListItem>
 	)
 }
 
