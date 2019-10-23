@@ -14,6 +14,7 @@ import CropIcon from '@material-ui/icons/Crop'
 import ClearIcon from '@material-ui/icons/Clear'
 import SaveIcon from '@material-ui/icons/Save'
 import FileUploadIcon from '@material-ui/icons/CloudUpload'
+import Grid from '@material-ui/core/Grid'
 import { isVideoMedia } from 'helpers/mediaHelpers.js'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
@@ -172,21 +173,29 @@ class ImgForm extends Component {
 				<div>
 					{cropMode ? (
 						<div className={classes.dropzone} onClick={this.preventBubbling}>
-							<div className={classes.droppedImgContainer}>
-								<ReactCrop
-									style={{ maxWidth: '70%', maxHeight: 320 }}
-									imageStyle={{
-										maxWidth: '100%',
-										maxHeight: '320px',
-										width: 'auto',
-										height: 'auto',
-									}}
-									className={classes.imgDropzonePreview}
-									crop={crop}
-									src={imgSrc || ''}
-									onChange={this.onCropChange}
-								/>
-								<div>
+							<Grid
+								container
+								spacing={2}
+								alignContent='center'
+								alignItems='center'
+							>
+								<Grid item sm={12} md={8}>
+									<ReactCrop
+										style={{ maxWidth: '100%', maxHeight: 320 }}
+										imageStyle={{
+											maxWidth: '100%',
+											maxHeight: '320px',
+											width: 'auto',
+											height: 'auto',
+										}}
+										className={classes.imgDropzonePreview}
+										crop={crop}
+										src={imgSrc || ''}
+										onChange={this.onCropChange}
+									/>
+								</Grid>
+
+								<Grid item sm={12} md={4}>
 									<Typography color='primary' gutterBottom>
 										{t('CROP_MODE_MSG')}
 									</Typography>
@@ -208,8 +217,8 @@ class ImgForm extends Component {
 										<ClearIcon className={classes.leftIcon} />
 										{t('IMG_FORM_CANCEL_CROP')}
 									</Button>
-								</div>
-							</div>
+								</Grid>
+							</Grid>
 						</div>
 					) : (
 						<Dropzone
@@ -217,18 +226,27 @@ class ImgForm extends Component {
 							onDrop={this.onDrop}
 							className={classes.dropzone}
 						>
-							<div className={classes.droppedImgContainer}>
-								{videoSrc ? (
-									<video controls src={imgSrc} type='video/mp4'></video>
-								) : (
-									<Img
-										src={imgSrc}
-										alt={'name'}
-										className={classes.imgDropzonePreview}
-									/>
-								)}
-								<this.UploadInfo />
-							</div>
+							<Grid
+								container
+								spacing={2}
+								alignContent='center'
+								alignItems='center'
+							>
+								<Grid item sm={12} md={8}>
+									{videoSrc ? (
+										<video controls src={imgSrc} type='video/mp4'></video>
+									) : (
+										<Img
+											src={imgSrc}
+											alt={'name'}
+											className={classes.imgDropzonePreview}
+										/>
+									)}
+								</Grid>
+								<Grid item sm={12} md={4}>
+									<this.UploadInfo />
+								</Grid>
+							</Grid>
 						</Dropzone>
 					)}
 				</div>

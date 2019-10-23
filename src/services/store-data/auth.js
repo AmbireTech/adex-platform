@@ -1,18 +1,32 @@
-// import configureStore from 'store/configureStore'
-import actions from 'actions'
-import configureStore from 'store/configureStore'
-const { store } = configureStore
+import {
+	getState,
+	execute,
+	resetAllNewItems,
+	resetAllItems,
+	resetAllBids,
+	resetIdentity,
+	resetAccount,
+	resetAnalytics,
+} from 'actions'
 
-export const logOut = () => {
-	actions.execute(actions.resetAccount())
-	actions.execute(actions.resetAllItems())
-	actions.execute(actions.resetAllBids())
+import { push } from 'connected-react-router'
+
+export const logOut = skipRedirect => {
+	if (!skipRedirect) {
+		execute(push('/'))
+	}
+	execute(resetIdentity())
+	execute(resetAllItems())
+	execute(resetAllNewItems())
+	execute(resetAllBids())
+	execute(resetAccount())
+	execute(resetAnalytics())
 }
 
 export const isDemoMode = () => {
-	return store.getState().persist.account._authType === 'demo'
+	return getState().persist.account._authType === 'demo'
 }
 
 export const getAccount = () => {
-	return store.getState().persist.account
+	return getState().persist.account
 }

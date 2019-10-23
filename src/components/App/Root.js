@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { Route, Switch, Redirect } from 'react-router-dom'
+import { Route, Switch, Redirect, withRouter } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import ConnectHoc from 'components/signin/ConnectHoc'
 import {
@@ -62,10 +62,11 @@ class Root extends Component {
 		}
 	}
 	onMetamaskAccountChange = async accountAddress => {
-		const { account } = this.props
+		const { account, memoryIdentity } = this.props
+		const { identityContractOwner } = memoryIdentity
 		const { authType } = account.wallet
-		if (authType === AUTH_TYPES.METAMASK.name || !authType) {
-			logOut()
+		if (authType === AUTH_TYPES.METAMASK.name || !authType || !accountAddress) {
+			logOut(!identityContractOwner || identityContractOwner === accountAddress)
 		}
 	}
 
@@ -94,12 +95,11 @@ class Root extends Component {
 	}
 
 	componentDidMount() {
-		const { actions, location } = this.props
-		const { metamaskNetworkCheck } = actions
+		const { actions } = this.props
+		const { metamaskNetworkCheck, getRelayerConfig } = actions
 
-		actions.getRelayerConfig()
-
-		metamaskNetworkCheck({ location })
+		getRelayerConfig()
+		metamaskNetworkCheck()
 		if (window.ethereum) {
 			window.ethereum.on('accountsChanged', accounts => {
 				console.log('acc changed', accounts[0])
@@ -107,7 +107,7 @@ class Root extends Component {
 			})
 			window.ethereum.on('networkChanged', network => {
 				console.log('networkChanged', network)
-				metamaskNetworkCheck({ id: network, location })
+				metamaskNetworkCheck({ id: network })
 			})
 		}
 	}
@@ -190,7 +190,7 @@ Root.propTypes = {
 }
 
 function mapStateToProps(state) {
-	const { persist } = state
+	const { persist, memory } = state
 	const { account } = persist
 	const { wallet, identity } = account
 
@@ -204,6 +204,7 @@ function mapStateToProps(state) {
 	return {
 		account: account,
 		auth: hasAuth,
+		memoryIdentity: memory.identity,
 	}
 }
 
@@ -216,4 +217,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(Translate(Root))
+)(Translate(withRouter(Root)))

@@ -9,53 +9,32 @@ import CancelIcon from '@material-ui/icons/Cancel'
 import Autocomplete from 'components/common/autocomplete'
 import Typography from '@material-ui/core/Typography'
 import Dropdown from 'components/common/dropdown'
-import { constants } from 'adex-models'
 import { translate } from 'services/translations/translations'
 import { withStyles } from '@material-ui/core/styles'
-
-const autocompleteLocationsSingleSelect = () => {
-	return constants.AllCountries.map(country => {
-		return {
-			label: country.name,
-			value: country.value,
-		}
-	})
-}
-
-const autocompleteGendersSingleSelect = () => {
-	return constants.Genders.map(gender => {
-		return {
-			label: translate(gender.split('_')[1]),
-			value: gender,
-		}
-	})
-}
-
-const autocompleteTagsSingleSelect = () => {
-	return constants.PredefinedTags.map(tag => {
-		return {
-			label: tag._id,
-			value: tag._id,
-		}
-	})
-}
-
-const AcLocations = autocompleteLocationsSingleSelect()
-const AcGenders = autocompleteGendersSingleSelect()
-const AcTags = autocompleteTagsSingleSelect()
-
-const SOURCES = {
-	locations: { src: AcLocations, collection: 'targeting' },
-	genders: { src: AcGenders, collection: 'targeting' },
-	tags: { src: AcTags, collection: 'targeting' },
-	custom: { src: [], collection: 'targeting' },
-}
+import { SOURCES } from 'constants/targeting'
 
 const styles = {
 	slider: {
 		padding: '22px 0px',
 	},
+	markLabel: {
+		top: '30px',
+	},
 }
+const marks = [
+	{
+		value: 5,
+		label: 'Low',
+	},
+	{
+		value: 50,
+		label: 'Medium',
+	},
+	{
+		value: 95,
+		label: 'High',
+	},
+]
 
 const SourcesSelect = Object.keys(SOURCES).map(key => {
 	return {
@@ -130,6 +109,19 @@ class AdUnitTargeting extends Component {
 		newTargets.splice(index, 1)
 		this.updateNewItemCollections(newTargets)
 		this.setState({ targets: newTargets })
+		this.validateAutocomplete({
+			id: `target-${index}`,
+			isValid: true,
+			dirty: false,
+		})
+	}
+
+	validateAutocomplete = ({ id, isValid, dirty }) => {
+		this.props.validate(id, {
+			isValid,
+			err: { msg: 'TARGETING_REQUIRED' },
+			dirty,
+		})
 	}
 
 	targetTag = ({
@@ -141,17 +133,39 @@ class AdUnitTargeting extends Component {
 		target,
 		t,
 		classes,
+		invalidFields,
 	}) => {
+		const id = `target-${index}`
 		return (
 			<Grid container spacing={2}>
 				<Grid item xs={12} md={6}>
 					<Autocomplete
-						id={'target-' + index}
+						id={id}
 						direction='auto'
 						openOnClick
-						onChange={newValue =>
-							this.handleTargetChange(index, 'tag', newValue, collection)
+						required={true}
+						error={invalidFields[id] && invalidFields[id].dirty}
+						errorText={
+							invalidFields[id] && !!invalidFields[id].dirty
+								? invalidFields[id].errMsg
+								: null
 						}
+						onChange={newValue => {
+							this.handleTargetChange(index, 'tag', newValue, collection)
+							this.validateAutocomplete({
+								id,
+								isValid: newValue,
+								dirty: true,
+							})
+						}}
+						onInit={() =>
+							this.validateAutocomplete({
+								id,
+								isValid: target.tag,
+								dirty: false,
+							})
+						}
+						// validate={validate}
 						label={label}
 						placeholder={placeholder}
 						source={source}
@@ -163,14 +177,14 @@ class AdUnitTargeting extends Component {
 				</Grid>
 				<Grid item xs={11} md={5}>
 					<div>
-						<Typography id={`target-score-${index}`}>
+						<Typography id={`tbaget-score-${index}`}>
 							{/*TODO: Translate target name*/}
 							{t('TARGET_SCORE_LABEL', {
 								args: [target.score],
 							})}
 						</Typography>
 						<Slider
-							// classes={{ container: classes.slider }}
+							classes={{ root: classes.slider, markLabel: classes.markLabel }}
 							aria-labelledby={`target-score-${index}`}
 							min={1}
 							max={100}
@@ -178,18 +192,17 @@ class AdUnitTargeting extends Component {
 							valueLabelDisplay='auto'
 							disabled={!target.tag}
 							value={target.score}
+							marks={marks}
 							onChange={(ev, newValue) =>
 								this.handleTargetChange(index, 'score', newValue, collection)
 							}
 						/>
 					</div>
 				</Grid>
-				<Grid item xs={1} md={1}>
-					<div>
-						<IconButton onClick={() => this.removeTarget(index)}>
-							<CancelIcon />
-						</IconButton>
-					</div>
+				<Grid item container xs={1} md={1} alignItems='center'>
+					<IconButton onClick={() => this.removeTarget(index)}>
+						<CancelIcon />
+					</IconButton>
 				</Grid>
 			</Grid>
 		)
@@ -200,11 +213,11 @@ class AdUnitTargeting extends Component {
 			t,
 			// newItem,
 			classes,
+			...rest
 		} = this.props
 		// const { targeting, tags } = newItem
 
 		const { targets } = this.state
-
 		return (
 			<div>
 				<Grid container spacing={1}>
@@ -215,7 +228,7 @@ class AdUnitTargeting extends Component {
 								index
 							) => (
 								<this.targetTag
-									key={index} // TODO
+									key={index}
 									label={t(label)}
 									placeholder={t(placeholder)}
 									index={index}
@@ -224,6 +237,7 @@ class AdUnitTargeting extends Component {
 									target={target}
 									t={t}
 									classes={classes}
+									{...rest}
 								/>
 							)
 						)}

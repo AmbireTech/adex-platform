@@ -1,6 +1,6 @@
 import React from 'react'
 // import PropTypes from 'prop-types'
-import { withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router'
 
 export const withReactRouterLink = Component => {
 	class Decorated extends React.Component {

@@ -4,7 +4,7 @@ import { utils, Contract } from 'ethers'
 import { getAllCampaigns } from 'services/adex-market/actions'
 import {
 	lastApprovedState,
-	eventsAggregates,
+	getValidatorAuthToken,
 } from 'services/adex-validator/actions'
 import { bigNumberify } from 'ethers/utils'
 import { Channel, MerkleTree } from 'adex-protocol-eth/js'
@@ -31,7 +31,10 @@ export async function getAddressBalances({ address, authType }) {
 	return formatted
 }
 
-export async function getAccountStats({ account }) {
+export async function getAccountStats({
+	account,
+	outstandingBalanceDai = bigNumberify(0),
+}) {
 	const { wallet, identity } = account
 	const { provider, Dai, Identity } = await getEthers(wallet.authType)
 
@@ -54,26 +57,22 @@ export async function getAccountStats({ account }) {
 		Dai.balanceOf(wallet.address),
 		Dai.balanceOf(identity.address),
 		privilegesAction,
-		getValidatorData({ wallet, identity }),
 	]
 
 	const [
 		walletBalanceEth,
 		walletBalanceDai,
-		identityBalanceDai,
+		identityBalanceDai = bigNumberify(0),
 		walletPrivileges,
-		validatorsData,
 	] = await Promise.all(
 		calls.map(c =>
 			c
 				.then(res => res)
 				.catch(e => {
-					return {}
+					return undefined
 				})
 		)
 	)
-
-	const { outstandingBalanceDai = 0, aggregates = [] } = validatorsData
 
 	// BigNumber values for balances
 	const raw = {
@@ -83,7 +82,6 @@ export async function getAccountStats({ account }) {
 		walletPrivileges,
 		outstandingBalanceDai,
 		totalIdentityBalanceDai: identityBalanceDai.add(outstandingBalanceDai),
-		aggregates,
 	}
 
 	const formatted = {
@@ -96,7 +94,6 @@ export async function getAccountStats({ account }) {
 		identityBalanceDai: formatUnits(identityBalanceDai, 18),
 		outstandingBalanceDai: formatUnits(outstandingBalanceDai, 18),
 		totalIdentityBalanceDai: formatUnits(raw.totalIdentityBalanceDai, 18),
-		aggregates,
 	}
 
 	return {
@@ -137,7 +134,7 @@ async function getAllChannelsWhereHasBalance(allActive, addr) {
 		}))
 }
 
-async function getOutstandingBalance({ wallet, address, withBalance }) {
+export async function getOutstandingBalance({ wallet, address, withBalance }) {
 	const { authType } = wallet
 	const { AdExCore } = await getEthers(authType)
 
@@ -158,44 +155,57 @@ async function getOutstandingBalance({ wallet, address, withBalance }) {
 	return totalOutstanding || bigNumberify('0')
 }
 
-async function getIdentityStatistics({ withBalance, address }) {
-	const allCalls = withBalance.map(async ({ channel }) => {
-		const agrArgs = `${address}?timeframe=hour`
-		const stats = await eventsAggregates({ agrArgs, campaign: channel })
-		return stats
+export async function getAllValidatorsAuthForIdentity({
+	withBalance,
+	account,
+}) {
+	const validatorAuthTokens = account.identity.validatorAuthTokens || {}
+
+	const allValidators = withBalance.reduce((all, { channel }) => {
+		const leader = (channel.validators || channel.spec.validators)[0].id
+		const follower = (channel.validators || channel.spec.validators)[1].id
+
+		const validators = {
+			...all,
+			[leader]: all[leader] || validatorAuthTokens[leader] || null,
+			[follower]: all[follower] || validatorAuthTokens[follower] || null,
+		}
+
+		return validators
+	}, {})
+
+	const keys = Object.keys(allValidators)
+
+	const tokenCalls = keys.map(async key => {
+		if (allValidators[key]) {
+			return allValidators[key]
+		} else {
+			const token = await getValidatorAuthToken({
+				validatorId: key,
+				account,
+			})
+
+			return token
+		}
 	})
 
-	const aggregates = await Promise.all(
-		allCalls.map(ag =>
-			ag
-				.then(res => res)
-				.catch(e => {
-					return {}
-				})
-		)
-	)
-	return aggregates
+	const allTokens = await Promise.all(tokenCalls)
+
+	const validatorsAuth = keys.reduce((all, key, index) => {
+		const validators = {
+			...all,
+			[key]: allTokens[index],
+		}
+
+		return validators
+	}, {})
+
+	return validatorsAuth
 }
 
-async function getAllChannelsForIdentity({ address }) {
+export async function getAllChannelsForIdentity({ address }) {
 	const allActive = await getAllChannels()
 	const withBalance = await getAllChannelsWhereHasBalance(allActive, address)
 
 	return withBalance
-}
-
-async function getValidatorData({ wallet, identity }) {
-	const { address } = identity
-	const withBalance = await getAllChannelsForIdentity({ address })
-	const outstandingBalanceDai = await getOutstandingBalance({
-		wallet,
-		address,
-		withBalance,
-	})
-	const aggregates = await getIdentityStatistics({ withBalance, address })
-
-	return {
-		outstandingBalanceDai,
-		aggregates,
-	}
 }

@@ -14,7 +14,7 @@ import { withStyles } from '@material-ui/core/styles'
 import StatsCard from './StatsCard'
 import { styles } from './styles'
 import Grid from '@material-ui/core/Grid'
-import { PublisherStats } from './PublisherStats'
+import { BasicStats } from './BasicStats'
 
 const { BidStatesLabels, BID_STATES } = ExchangeConstants
 
@@ -270,9 +270,14 @@ export class DashboardStats extends Component {
 					linkCard
 					onClick={this.goToAccount}
 					subtitle={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
-						args: [identityBalanceDai, outstandingBalanceDai],
+						args: [identityBalanceDai || 0, outstandingBalanceDai || 0],
 					})}
-					title={totalIdentityBalanceDai + ' DAI'}
+					loading={
+						(!identityBalanceDai && identityBalanceDai !== 0) ||
+						(!outstandingBalanceDai && outstandingBalanceDai !== 0) ||
+						(!totalIdentityBalanceDai && totalIdentityBalanceDai !== 0)
+					}
+					title={`${totalIdentityBalanceDai || 0} DAI`}
 				></StatsCard>
 			</div>
 		)
@@ -284,16 +289,11 @@ export class DashboardStats extends Component {
 			// sideBids,
 			classes,
 			t,
-			account,
+			analytics,
 		} = this.props
 		if (side !== 'advertiser' && side !== 'publisher') {
 			return <SideSelect active={true} />
 		}
-
-		const aggregates =
-			account && account.stats && account.stats.raw
-				? account.stats.raw.aggregates
-				: null
 
 		// const stats = this.mapData(sideBids)
 
@@ -303,11 +303,8 @@ export class DashboardStats extends Component {
 					<Grid item md={12} lg={12} xs={12}>
 						<Card className={classnames(classes.dashboardCardBody)}>
 							<CardContent>
-								{aggregates ? (
-									<PublisherStats
-										aggregates={account.stats.raw.aggregates}
-										t={t}
-									/>
+								{analytics ? (
+									<BasicStats side={side} analytics={analytics} t={t} />
 								) : (
 									t('NO_STATS_YET')
 								)}
@@ -336,6 +333,7 @@ function mapStateToProps(state, props) {
 	return {
 		account: persist.account,
 		side: memory.nav.side,
+		analytics: persist.analytics,
 	}
 }
 
