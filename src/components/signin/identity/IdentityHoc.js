@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import actions from 'actions'
+import actions, { execute } from 'actions'
+import { push } from 'connected-react-router'
 
 export default function IdentityHoc(Decorated) {
 	class IdentityForm extends Component {
@@ -42,7 +43,7 @@ export default function IdentityHoc(Decorated) {
 		cancel = () => {
 			const { resetIdentity } = this.props.actions
 			resetIdentity()
-			this.props.history.push('/')
+			execute(push('/'))
 		}
 
 		render() {
