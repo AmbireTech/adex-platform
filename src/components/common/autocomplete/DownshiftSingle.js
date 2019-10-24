@@ -91,27 +91,33 @@ class DownshiftSingle extends React.Component {
 									placeholder,
 								}),
 							})}
-							{isOpen ? (
+							{isOpen && suggestions.length > 0 ? (
 								<Paper className={classes.paper} square>
-									<FixedSizeList
-										className={classes.paper}
-										height={400}
-										width={360}
-										itemSize={46}
-										itemCount={suggestions.length}
-									>
-										{({ index, style }) =>
-											renderSuggestion({
-												suggestion: suggestions[index],
-												index,
-												style,
-												itemProps: getItemProps({ item: suggestions[index] }),
-												highlightedIndex,
-												selectedItem,
-												showSelected,
-											})
-										}
-									</FixedSizeList>
+									<AutoSizer>
+										{({ height, width }) => (
+											<FixedSizeList
+												className={classes.paper}
+												height={height}
+												width={width}
+												itemSize={46}
+												itemCount={suggestions.length}
+											>
+												{({ index, style }) =>
+													renderSuggestion({
+														suggestion: suggestions[index],
+														index,
+														style,
+														itemProps: getItemProps({
+															item: suggestions[index],
+														}),
+														highlightedIndex,
+														selectedItem,
+														showSelected,
+													})
+												}
+											</FixedSizeList>
+										)}
+									</AutoSizer>
 								</Paper>
 							) : null}
 							{error && (
