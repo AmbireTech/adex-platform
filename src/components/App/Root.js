@@ -56,13 +56,6 @@ class Root extends Component {
 		}
 	}
 
-	getNetworkId = async () => {
-		const { provider } = await getEthers(AUTH_TYPES.METAMASK.name)
-		const networkId = (await provider.getNetwork()).chainId
-
-		return networkId
-	}
-
 	componentDidCatch(error, info) {
 		// TODO: catch errors
 	}
