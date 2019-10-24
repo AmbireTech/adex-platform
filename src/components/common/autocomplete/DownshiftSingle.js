@@ -47,13 +47,6 @@ class DownshiftSingle extends React.Component {
 			allowCreate,
 			validateCreation
 		)
-		// const Row = ({ index, style }) => (
-		// 	<div style={style}>
-		// 		<ListItem button key={index}>
-		// 			<ListItemText primary={suggestions[index].label} />
-		// 		</ListItem>
-		// 	</div>
-		// )
 		return (
 			<Downshift
 				onChange={this.handleChange}
