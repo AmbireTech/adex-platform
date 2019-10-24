@@ -26,27 +26,39 @@ export const renderInput = inputProps => {
 export const renderSuggestion = ({
 	suggestion,
 	index,
+	style,
 	itemProps,
 	highlightedIndex,
 	selectedItem,
 	showSelected,
 }) => {
-	// const isHighlighted = highlightedIndex === index
-	// // TODO: make it better
-	// // Note wo work with obj and array
-	// const isSelected =
-	// 	((selectedItem || {}).value || selectedItem || '').indexOf(
-	// 		suggestion.value
-	// 	) > -1
+	const isHighlighted = highlightedIndex === index
+	// TODO: make it better
+	// Note wo work with obj and array
+	const isSelected =
+		((selectedItem || {}).value || selectedItem || '').indexOf(
+			suggestion.value
+		) > -1
 
-	// if (!showSelected && isSelected) {
-	// 	return null
-	// }
+	if (!showSelected && isSelected) {
+		return null
+	}
 
 	return (
-		<ListItem button key={index}>
-			<ListItemText primary={suggestion.label} />
-		</ListItem>
+		<div style={style}>
+			<ListItem
+				button
+				{...itemProps}
+				key={suggestion.value || suggestion.label}
+				selected={isHighlighted}
+				component='div'
+				style={{
+					fontWeight: isSelected ? 500 : 400,
+				}}
+			>
+				<ListItemText primary={suggestion.label} />
+			</ListItem>
+		</div>
 	)
 }
 
