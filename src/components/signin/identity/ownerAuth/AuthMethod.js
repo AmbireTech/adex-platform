@@ -1,38 +1,41 @@
-import React, { Component } from 'react'
-import Translate from 'components/translate/Translate'
+import React from 'react'
 import Grid from '@material-ui/core/Grid'
+import { makeStyles } from '@material-ui/core/styles'
+import { useSelector } from 'react-redux'
+import { selectLocation } from 'selectors'
 import AuthMetamask from './AuthMetamask'
 import AuthTrezor from './AuthTrezor'
 import AuthLedger from './AuthLedger'
-import { withStyles } from '@material-ui/core/styles'
-import { styles } from './styles'
 
-class AuthMethod extends Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			tabIndex: 0,
-			bids: [],
-		}
+const useStyles = makeStyles(theme => {
+	const spacing = theme.spacing(1)
+
+	return {
+		tabsContainer: {
+			display: 'flex',
+			flexGrow: 1,
+			overflowY: 'auto',
+			position: 'relative',
+			margin: spacing,
+		},
 	}
+})
 
-	handleTabChange = (event, index) => {
-		this.setState({ tabIndex: index })
-	}
+function AuthMethod() {
+	const classes = useStyles()
+	const location = useSelector(selectLocation) || {}
+	const { search } = location
 
-	render() {
-		const { classes, location } = this.props
-		const { search } = location || {}
-		return (
-			<Grid container spacing={2} direction='row' alignContent='flex-start'>
-				<Grid item xs={12} className={classes.tabsContainer}>
-					{search === '?metamask' && <AuthMetamask />}
-					{search === '?trezor' && <AuthTrezor />}
-					{search === '?ledger' && <AuthLedger />}
-				</Grid>
+	return (
+		<Grid container spacing={2} direction='row' alignContent='flex-start'>
+			<Grid item xs={12} className={classes.tabsContainer}>
+				{search === '?metamask' && <AuthMetamask />}
+				{search === '?trezor' && <AuthTrezor />}
+				{search === '?ledger' && <AuthLedger />}
+				{!search && <div>kor</div>}
 			</Grid>
-		)
-	}
+		</Grid>
+	)
 }
 
-export default Translate(withStyles(styles)(AuthMethod))
+export default AuthMethod
