@@ -14,6 +14,8 @@ import {
 import { addToast, confirmAction } from './uiActions'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES } from 'constants/misc'
+import { selectAccount, selectIdentity } from 'selectors'
+import { logOut } from 'services/store-data/auth'
 
 const UPDATE_SETTINGS_INTERVAL = 24 * 60 * 60 * 1000 // 1 hour
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -258,6 +260,13 @@ async function getNetworkId() {
 	return networkId
 }
 
+async function getAddress() {
+	const { provider } = await getEthers(AUTH_TYPES.METAMASK.name)
+	const address = await provider.getSigner().getAddress()
+
+	return address
+}
+
 // TEMP
 const networks = {
 	1: { name: 'Mainnet', for: 'production' },
@@ -296,5 +305,25 @@ export function metamaskNetworkCheck({ id } = {}) {
 		} else {
 			confirmAction(null, null, {}, true, false)(dispatch)
 		}
+	}
+}
+
+export const onMetamaskAccountChange = accountAddress => {
+	return async function(_, getState) {
+		const state = getState()
+		const account = selectAccount(state)
+		const identity = selectIdentity(state)
+		const { identityContractOwner } = identity
+		const { authType } = account.wallet
+		if (authType === AUTH_TYPES.METAMASK.name || !authType || !accountAddress) {
+			logOut(!identityContractOwner || identityContractOwner === accountAddress)
+		}
+	}
+}
+
+export function metamaskAccountCheck() {
+	return async function(_, getState) {
+		const address = await getAddress()
+		onMetamaskAccountChange(address)(_, getState)
 	}
 }
