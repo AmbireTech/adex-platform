@@ -106,6 +106,19 @@ class AdSlotTargeting extends Component {
 		newTargets.splice(index, 1)
 		this.updateNewItemCollections(newTargets)
 		this.setState({ targets: newTargets })
+		this.validateAutocomplete({
+			id: `target-${index}`,
+			isValid: true,
+			dirty: false,
+		})
+	}
+
+	validateAutocomplete = ({ id, isValid, dirty }) => {
+		this.props.validate(id, {
+			isValid,
+			err: { msg: 'TARGETING_REQUIRED' },
+			dirty,
+		})
 	}
 
 	targetTag = ({
@@ -118,15 +131,28 @@ class AdSlotTargeting extends Component {
 		t,
 		classes,
 	}) => {
+		const id = `target-${index}`
 		return (
 			<Grid container spacing={2}>
 				<Grid item xs={12} md={6}>
 					<Autocomplete
-						id={'target-' + index}
+						id={id}
 						direction='auto'
 						openOnClick
-						onChange={newValue =>
+						onChange={newValue => {
 							this.handleTargetChange(index, 'tag', newValue, collection)
+							this.validateAutocomplete({
+								id,
+								isValid: newValue,
+								dirty: true,
+							})
+						}}
+						onInit={() =>
+							this.validateAutocomplete({
+								id,
+								isValid: target.tag,
+								dirty: false,
+							})
 						}
 						label={label}
 						placeholder={placeholder}
