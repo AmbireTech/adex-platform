@@ -32,7 +32,6 @@ function AuthMethod() {
 				{search === '?metamask' && <AuthMetamask />}
 				{search === '?trezor' && <AuthTrezor />}
 				{search === '?ledger' && <AuthLedger />}
-				{!search && <div>kor</div>}
 			</Grid>
 		</Grid>
 	)
