@@ -33,7 +33,24 @@ const styles = {
 	slider: {
 		padding: '22px 0px',
 	},
+	markLabel: {
+		top: '30px',
+	},
 }
+const marks = [
+	{
+		value: 5,
+		label: 'Low',
+	},
+	{
+		value: 50,
+		label: 'Medium',
+	},
+	{
+		value: 95,
+		label: 'High',
+	},
+]
 
 const SourcesSelect = Object.keys(SOURCES).map(key => {
 	return {
@@ -106,6 +123,19 @@ class AdSlotTargeting extends Component {
 		newTargets.splice(index, 1)
 		this.updateNewItemCollections(newTargets)
 		this.setState({ targets: newTargets })
+		this.validateAutocomplete({
+			id: `target-${index}`,
+			isValid: true,
+			dirty: false,
+		})
+	}
+
+	validateAutocomplete = ({ id, isValid, dirty }) => {
+		this.props.validate(id, {
+			isValid,
+			err: { msg: 'TARGETING_REQUIRED' },
+			dirty,
+		})
 	}
 
 	targetTag = ({
@@ -117,17 +147,39 @@ class AdSlotTargeting extends Component {
 		target,
 		t,
 		classes,
+		invalidFields,
 	}) => {
+		const id = `target-${index}`
 		return (
 			<Grid container spacing={2}>
 				<Grid item xs={12} md={6}>
 					<Autocomplete
-						id={'target-' + index}
+						id={id}
 						direction='auto'
 						openOnClick
-						onChange={newValue =>
-							this.handleTargetChange(index, 'tag', newValue, collection)
+						required={true}
+						error={invalidFields[id] && invalidFields[id].dirty}
+						errorText={
+							invalidFields[id] && !!invalidFields[id].dirty
+								? invalidFields[id].errMsg
+								: null
 						}
+						onChange={newValue => {
+							this.handleTargetChange(index, 'tag', newValue, collection)
+							this.validateAutocomplete({
+								id,
+								isValid: newValue,
+								dirty: true,
+							})
+						}}
+						onInit={() =>
+							this.validateAutocomplete({
+								id,
+								isValid: target.tag,
+								dirty: false,
+							})
+						}
+						// validate={validate}
 						label={label}
 						placeholder={placeholder}
 						source={source}
@@ -139,33 +191,32 @@ class AdSlotTargeting extends Component {
 				</Grid>
 				<Grid item xs={11} md={5}>
 					<div>
-						<Typography id={`target-score-${index}`} gutterBottom>
+						<Typography id={`target-score-${index}`}>
 							{/*TODO: Translate target name*/}
 							{t('TARGET_SCORE_LABEL', {
 								args: [target.score],
 							})}
 						</Typography>
 						<Slider
-							// classes={{ container: classes.slider }}
+							classes={{ root: classes.slider, markLabel: classes.markLabel }}
 							aria-labelledby={`target-score-${index}`}
 							min={1}
 							max={100}
 							step={1}
+							valueLabelDisplay='auto'
 							disabled={!target.tag}
 							value={target.score}
-							valueLabelDisplay='auto'
+							marks={marks}
 							onChange={(ev, newValue) =>
 								this.handleTargetChange(index, 'score', newValue, collection)
 							}
 						/>
 					</div>
 				</Grid>
-				<Grid item xs={1} md={1}>
-					<div>
-						<IconButton onClick={() => this.removeTarget(index)}>
-							<CancelIcon />
-						</IconButton>
-					</div>
+				<Grid item container xs={1} md={1} alignItems='center'>
+					<IconButton onClick={() => this.removeTarget(index)}>
+						<CancelIcon />
+					</IconButton>
 				</Grid>
 			</Grid>
 		)
@@ -176,6 +227,7 @@ class AdSlotTargeting extends Component {
 			t,
 			// newItem,
 			classes,
+			...rest
 		} = this.props
 		// const { targeting, tags } = newItem
 
@@ -200,6 +252,7 @@ class AdSlotTargeting extends Component {
 									target={target}
 									t={t}
 									classes={classes}
+									{...rest}
 								/>
 							)
 						)}
