@@ -1,5 +1,6 @@
 import { exchange as ExchangeConstants } from 'adex-constants'
 import { constants } from 'adex-models'
+
 const { BID_STATES, TIMEOUTS } = ExchangeConstants
 const { SignatureModes } = constants
 const AdTypes = constants.AdUnitsTypes.map(type => {
