@@ -18,6 +18,7 @@ import {
 	getCampaigns,
 } from 'services/adex-market/actions'
 import {
+	sweepChannels,
 	openChannel,
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
@@ -266,7 +267,11 @@ export function openCampaign({ campaign, account }) {
 				withBalance: [{ channel: campaign }],
 				account,
 			})
+			const { identityBalanceDai } = account.stats.formatted
 
+			if (parseFloat(campaign.depositAmount) > parseFloat(identityBalanceDai)) {
+				await sweepChannels({ campaign, account })
+			}
 			const { readyCampaign } = await openChannel({ campaign, account })
 
 			dispatch({
