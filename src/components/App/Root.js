@@ -1,11 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import {
-	onMetamaskAccountChange,
-	metamaskNetworkCheck,
-	metamaskAccountCheck,
-	execute,
-} from 'actions'
+import { metamaskChecks, execute } from 'actions'
 import { Route, Switch, Redirect } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import ConnectHoc from 'components/signin/ConnectHoc'
@@ -19,9 +14,8 @@ import {
 import SideSelect from 'components/signin/side-select/SideSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import Home from 'components/signin/Home'
-import Translate from 'components/translate/Translate'
 import JustDialog from 'components/common/dialog/JustDialog'
-import { selectAuth, selectLocation } from 'selectors'
+import { selectAuth } from 'selectors'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
 const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
@@ -48,26 +42,11 @@ const PrivateRoute = ({ component: Component, auth, ...other }) => {
 
 const Root = () => {
 	const auth = useSelector(selectAuth)
-	const location = useSelector(selectLocation)
-
-	const metamaskChecks = async () => {
-		execute(metamaskNetworkCheck())
-		execute(metamaskAccountCheck())
-		if (window.ethereum) {
-			window.ethereum.on('accountsChanged', accounts => {
-				console.log('acc changed', accounts[0])
-				execute(onMetamaskAccountChange(accounts[0]))
-			})
-			window.ethereum.on('networkChanged', network => {
-				console.log('networkChanged', network)
-				execute(metamaskNetworkCheck({ id: network }))
-			})
-		}
-	}
 
 	useEffect(() => {
-		metamaskChecks()
+		execute(metamaskChecks())
 	}, [])
+
 	return (
 		<Switch>
 			<PrivateRoute auth={auth} path='/dashboard/:side' component={Dashboard} />
@@ -104,9 +83,11 @@ const Root = () => {
 				)}
 			/>
 			{/* <Route exact path="/identity/demo" component={DemoIdentity} /> */}
-			<Route component={PageNotFound} />
+			<Route>
+				<PageNotFound />
+			</Route>
 		</Switch>
 	)
 }
 
-export default Translate(Root)
+export default Root
