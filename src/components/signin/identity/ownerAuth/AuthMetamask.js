@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import Translate from 'components/translate/Translate'
 import METAMASK_DL_IMG from 'resources/download-metamask.png'
+import METAMASK_IMG from 'resources/metamask.png'
 import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
 import AuthHoc from './AuthHoc'
@@ -21,6 +22,7 @@ import { styles } from './styles'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { getSigner } from 'services/smart-contracts/actions/ethers'
 import { getAddressBalances } from 'services/smart-contracts/actions/stats'
+import Box from '@material-ui/core/Box'
 
 class AuthMetamask extends Component {
 	constructor(props) {
@@ -96,59 +98,79 @@ class AuthMetamask extends Component {
 					<Typography paragraph variant='subheading'>
 						{t('METAMASK_INFO')}
 					</Typography>
-					{!window.web3 || !window.web3.currentProvider.isMetaMask ? (
-						<React.Fragment>
+					<Box
+						display='flex'
+						flexDirection='column'
+						alignItems='center'
+						justifyContent='center'
+						width={1}
+					>
+						{!window.web3 || !window.web3.currentProvider.isMetaMask ? (
+							<React.Fragment>
+								<Typography paragraph>
+									<span
+										dangerouslySetInnerHTML={{
+											__html: t('METAMASK_BASIC_USAGE_INFO', {
+												args: [
+													{
+														component: (
+															<Anchor
+																href='https://metamask.io/'
+																target='_blank'
+															>
+																https://metamask.io/
+															</Anchor>
+														),
+													},
+												],
+											}),
+										}}
+									/>
+								</Typography>
+								<Typography paragraph>
+									<Anchor href='https://metamask.io/' target='_blank'>
+										<Img
+											src={METAMASK_DL_IMG}
+											alt={'Downlad metamask'}
+											className={classes.dlBtnImg}
+										/>
+									</Anchor>
+								</Typography>
+							</React.Fragment>
+						) : (
 							<Typography paragraph>
-								<span
-									dangerouslySetInnerHTML={{
-										__html: t('METAMASK_BASIC_USAGE_INFO', {
-											args: [
-												{
-													component: (
-														<Anchor href='https://metamask.io/' target='_blank'>
-															https://metamask.io/
-														</Anchor>
-													),
-												},
-											],
-										}),
-									}}
+								<Img
+									src={METAMASK_IMG}
+									alt={'Downlad metamask'}
+									className={classes.dlBtnImg}
 								/>
 							</Typography>
-							<Typography paragraph>
-								<Anchor href='https://metamask.io/' target='_blank'>
-									<Img
-										src={METAMASK_DL_IMG}
-										alt={'Downlad metamask'}
-										className={classes.dlBtnImg}
-									/>
-								</Anchor>
-							</Typography>
-						</React.Fragment>
-					) : null}
-					{address ? (
-						<div className={classes.metamaskLAbel}>
-							{stats ? (
-								<div>
-									<Typography paragraph variant='subheading' color='primary'>
-										{t('METAMASK_CONTINUE_TO_NEXT_STEP')}
-									</Typography>
-									<AddrItem stats={stats} t={t} addr={address} />
-								</div>
-							) : (
-								t('AUTH_WITH_METAMASK_LABEL', { args: [address] })
-							)}
-						</div>
-					) : window.web3 && window.web3.currentProvider.isMetaMask ? (
-						<Button
-							onClick={this.checkMetamask}
-							variant='contained'
-							color='primary'
-							disabled={this.state.waitingAddrsData}
-						>
-							{t('AUTH_CONNECT_WITH_METAMASK')}
-						</Button>
-					) : null}
+						)}
+
+						{address ? (
+							<div className={classes.metamaskLAbel}>
+								{stats ? (
+									<div>
+										<Typography paragraph variant='subheading' color='primary'>
+											{t('METAMASK_CONTINUE_TO_NEXT_STEP')}
+										</Typography>
+										<AddrItem stats={stats} t={t} addr={address} />
+									</div>
+								) : (
+									t('AUTH_WITH_METAMASK_LABEL', { args: [address] })
+								)}
+							</div>
+						) : window.web3 && window.web3.currentProvider.isMetaMask ? (
+							<Button
+								onClick={this.checkMetamask}
+								variant='contained'
+								color='primary'
+								disabled={this.state.waitingAddrsData}
+							>
+								{t('AUTH_CONNECT_WITH_METAMASK')}
+							</Button>
+						) : null}
+					</Box>
 				</ContentBody>
 			</ContentBox>
 		)
