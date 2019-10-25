@@ -314,8 +314,12 @@ export const onMetamaskAccountChange = accountAddress => {
 		const account = selectAccount(state)
 		const identity = selectIdentity(state)
 		const { identityContractOwner } = identity
-		const { authType } = account.wallet
-		if (authType === AUTH_TYPES.METAMASK.name || !authType || !accountAddress) {
+		const { authType, address } = account.wallet
+		if (
+			!authType ||
+			!accountAddress ||
+			(authType === AUTH_TYPES.METAMASK.name && address !== accountAddress)
+		) {
 			logOut(!identityContractOwner || identityContractOwner === accountAddress)
 		}
 	}
