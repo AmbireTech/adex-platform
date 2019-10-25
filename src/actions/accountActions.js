@@ -327,3 +327,20 @@ export function metamaskAccountCheck() {
 		onMetamaskAccountChange(address)(_, getState)
 	}
 }
+
+export function metamaskChecks() {
+	return async function(_, getState) {
+		metamaskNetworkCheck()(_, getState)
+		metamaskAccountCheck()(_, getState)
+		if (window.ethereum) {
+			window.ethereum.on('accountsChanged', accounts => {
+				console.log('acc changed', accounts[0])
+				onMetamaskAccountChange(accounts[0])(_, getState)
+			})
+			window.ethereum.on('networkChanged', network => {
+				console.log('networkChanged', network)
+				metamaskNetworkCheck({ id: network })(_, getState)
+			})
+		}
+	}
+}
