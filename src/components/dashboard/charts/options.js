@@ -22,8 +22,6 @@ export let CHARTS_COMMON_OPTIONS = {
 	},
 }
 
-window.hoi = CHARTS_COMMON_OPTIONS
-
 export const hexColorsToRgbaArray = (colors, alpha) => {
 	return colors.map(color => {
 		return Helper.hexToRgbaColorString(color, alpha)

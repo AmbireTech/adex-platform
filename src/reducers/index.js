@@ -17,47 +17,29 @@ import web3Transactions from './web3TransactionsReducer'
 import tags from './tagsReducer'
 import ethNetwork from './ethNetworkReducer'
 import analytics from './analyticsReducer'
-import {
-	routerReducer,
-	LOCATION_CHANGE,
-	CALL_HISTORY_METHOD,
-} from 'react-router-redux'
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
 
 export const persistReducers = {
-	// signin: signin,
-	account: account,
+	account,
 	items: filterActions(items, action => action.type.match(/_ITEM/)),
-	// newItem: filterActions(newItem, (action => action.type.match(/_NEWITEM/))),
-	// spinners: filterActions(spinners, [types.UPDATE_SPINNER]),
 	ui: filterActions(ui, [types.UPDATE_UI]),
-	// toasts: toasts,
-	// confirm: filterActions(confirm, [types.CONFIRM_ACTION]),
-	// nav: filterActions(nav, [types.UPDATE_NAV]),
-	// routing: filterActions(routerReducer, [LOCATION_CHANGE, CALL_HISTORY_METHOD]),
-	language: language,
-	// validations: validations,
-	web3Transactions: web3Transactions,
-	tags: tags,
-	ethNetwork: ethNetwork,
+	language,
+	web3Transactions,
+	tags,
+	ethNetwork,
 	analytics,
 }
 
 export const memoryReducers = {
-	signin: signin,
-	identity: identity,
-	wallet: wallet,
-	// account: account,
-	// items: filterActions(items, (action => action.type.match(/_ITEM/))),
+	signin,
+	identity,
+	wallet,
 	newItem: filterActions(newItem, action => action.type.match(/_NEWITEM/)),
 	spinners: filterActions(spinners, [types.UPDATE_SPINNER]),
-	// ui: filterActions(ui, [types.UPDATE_UI]),
-	toasts: toasts,
+	toasts,
 	confirm: filterActions(confirm, [types.CONFIRM_ACTION]),
 	nav: filterActions(nav, [types.UPDATE_NAV]),
-	routing: filterActions(routerReducer, [LOCATION_CHANGE, CALL_HISTORY_METHOD]),
-	// language: language,
-	validations: validations,
-	newTransactions: newTransactions,
+	validations,
+	newTransactions,
 }
