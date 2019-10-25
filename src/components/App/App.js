@@ -47,9 +47,7 @@ class App extends Component {
 								<ConnectedRouter history={history}>
 									<Router>
 										<div className='adex-dapp'>
-											<Switch>
-												<Root />
-											</Switch>
+											<Root />
 											<Toast />
 											<Confirm />
 										</div>
