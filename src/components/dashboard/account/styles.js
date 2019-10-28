@@ -17,5 +17,11 @@ export const styles = theme => {
 		advancedList: {
 			width: '100%',
 		},
+		fab: {
+			margin: theme.spacing(1),
+		},
+		extendedIcon: {
+			marginRight: theme.spacing(1),
+		},
 	}
 }

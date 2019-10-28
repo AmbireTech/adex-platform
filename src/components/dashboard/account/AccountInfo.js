@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect, useStyles } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
+import { updateNav, updateAccountStats, execute } from 'actions'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import copy from 'copy-to-clipboard'
@@ -9,7 +11,7 @@ import {
 	WithdrawTokenFromIdentity,
 	SetIdentityPrivilege,
 } from 'components/dashboard/forms/web3/transactions'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
@@ -27,6 +29,12 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { getRecoveryWalletData } from 'services/wallet/wallet'
 import { LoadingSection } from 'components/common/spinners'
+import Fab from '@material-ui/core/Fab'
+import CreditCardIcon from '@material-ui/icons/CreditCard'
+import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
+import { selectAccount } from 'selectors'
+import { translate } from 'services/translations/translations'
+
 // const RRButton = withReactRouterLink(Button)
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
@@ -34,25 +42,10 @@ const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
 const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 
-class AccountInfo extends React.Component {
+function AccountInfo() {
 	// eslint-disable-next-line no-useless-constructor
-	constructor(props) {
-		super(props)
-		this.state = {
-			walletJsonData: this.localWalletDownloadHref(),
-			expanded: false,
-		}
-	}
-
-	UNSAFE_componentWillMount() {
-		const { t, actions, account } = this.props
-		const { updateNav, updateAccountStats } = actions
-		updateNav('navTitle', t('ACCOUNT'))
-		updateAccountStats(account)
-	}
-
-	localWalletDownloadHref = () => {
-		const { account } = this.props
+	const account = useSelector(selectAccount)
+	const localWalletDownloadHref = () => {
 		const { email, password } = account.wallet
 		const obj = getRecoveryWalletData({ email, password })
 		if (!obj) {
@@ -62,201 +55,224 @@ class AccountInfo extends React.Component {
 			'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj))
 		return data
 	}
+	const [walletJsonData, setWalletJsonData] = useState(localWalletDownloadHref)
+	const [expanded, setExpanded] = useState(false)
+	const useStyles = makeStyles(styles)
+	const classes = useStyles()
+	useEffect(() => {
+		execute(updateNav('navTitle', translate('ACCOUNT')))
+		updateAccountStats(account)
+	}, [])
 
-	onSave = () => {
+	const displayRampWidget = () => {
+		const widget = new RampInstantSDK({
+			hostAppName: 'AdExNetwork',
+			hostLogoUrl: 'https://www.adex.network/img/Adex-logo@2x.png',
+			variant: 'auto',
+			swapAsset: 'DAI',
+			userAddress: account.identity.address,
+		})
+		widget.domNodes.overlay.style.zIndex = 1000
+		widget.show()
+	}
+
+	const onSave = () => {
 		// this.getStats()
 	}
 
-	handleExpandChange = () => {
-		this.setState({ expanded: !this.state.expanded })
+	const handleExpandChange = () => {
+		setExpanded(!expanded)
 	}
 
-	render() {
-		const { t, account, classes, actions } = this.props
-		const { grantType } = account.settings
-		const formatted = account.stats.formatted || {}
-		const {
-			walletAddress,
-			walletAuthType = '',
-			walletPrivileges = '',
-			// walletBalanceEth,
-			// walletBalanceDai,
-			identityAddress,
-			identityBalanceDai,
-		} = formatted
-		const { authType, email } = account.wallet
-		const { walletJsonData, expanded } = this.state
+	// const { t, account, classes, actions } = this.props
+	const { grantType } = account.settings
+	const formatted = account.stats.formatted || {}
+	const {
+		walletAddress,
+		walletAuthType = '',
+		walletPrivileges = '',
+		// walletBalanceEth,
+		// walletBalanceDai,
+		identityAddress,
+		identityBalanceDai,
+	} = formatted
+	const { authType, email } = account.wallet
 
-		return (
-			<div>
-				<List
-				// dense={true}
-				>
-					<ListItem>
-						<ListItemText
-							className={classes.address}
-							primary={identityAddress}
-							secondary={
-								account._authType === 'demo'
-									? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
-									: t('IDENTITY_ETH_ADDR')
-							}
-						/>
-						<Box
-							display='flex'
-							flexWrap='wrap'
-							justifyContent='center'
-							alignItems='center'
-						>
-							<Box m={1}>
-								{walletJsonData && (
-									<label htmlFor='download-wallet-json'>
-										<a
-											id='download-wallet-json'
-											href={this.localWalletDownloadHref()}
-											download={`adex-account-data-${email}.json`}
-										>
-											<Button size='small' variant='contained'>
-												{t('BACKUP_LOCAL_WALLET')}
-												<DownloadIcon />
-											</Button>
-										</a>
-									</label>
-								)}
-							</Box>
-							<Box m={1}>
-								<IconButton
-									color='default'
-									onClick={() => {
-										copy(identityAddress)
-										this.props.actions.addToast({
-											type: 'accept',
-											action: 'X',
-											label: t('COPIED_TO_CLIPBOARD'),
-											timeout: 5000,
-										})
-									}}
-								>
-									<CopyIcon />
-								</IconButton>
-							</Box>
-						</Box>
-					</ListItem>
-					<ListDivider />
-					<ListItem>
-						<ListItemText
-							className={classes.address}
-							primary={walletAddress}
-							secondary={
-								account.authType === 'demo'
-									? t('DEMO_ACCOUNT_WALLET_ADDRESS', {
-											args: [walletAuthType, walletPrivileges],
-									  })
-									: t('WALLET_INFO_LABEL', {
-											args: [
-												walletAuthType.replace(/^\w/, chr => {
-													return chr.toUpperCase()
-												}),
-												walletPrivileges || ' - ',
-												authType,
-											],
-									  })
-							}
-						/>
-					</ListItem>
-					<ListDivider />
-					<ListItem>
-						<Box display='flex' flex='1 1 auto'>
-							<LoadingSection
-								loading={!identityBalanceDai && identityBalanceDai !== 0}
-							>
-								<ListItemText
-									primary={`${identityBalanceDai || 0} DAI`}
-									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
-								/>
-							</LoadingSection>
-						</Box>
-						<div className={classes.itemActions}>
-							{grantType !== 'advertiser' && (
-								<WithdrawTokenFromIdentity
-									variant='contained'
-									color='primary'
-									onSave={this.onSave}
-									identityAvailable={identityBalanceDai}
-									identityAvailableRaw={identityBalanceDai}
-									token='DAI'
-									className={classes.actionBtn}
-									size='small'
-									actions={actions}
-								/>
-							)}
-						</div>
-					</ListItem>
-					<ListDivider />
-					<ExpansionPanel
-						expanded={expanded}
-						onChange={this.handleExpandChange}
+	return (
+		<div>
+			<List
+			// dense={true}
+			>
+				<ListItem>
+					<ListItemText
+						className={classes.address}
+						primary={identityAddress}
+						secondary={
+							account._authType === 'demo'
+								? translate('DEMO_ACCOUNT_IDENTITY_ADDRESS')
+								: translate('IDENTITY_ETH_ADDR')
+						}
+					/>
+					<Box
+						display='flex'
+						flexWrap='wrap'
+						justifyContent='center'
+						alignItems='center'
 					>
-						<ExpansionPanelSummary
-							expandIcon={<ExpandMoreIcon />}
-							aria-controls='panel1bh-content'
-							id='panel1bh-header'
+						<Box m={1}>
+							{walletJsonData && (
+								<label htmlFor='download-wallet-json'>
+									<a
+										id='download-wallet-json'
+										href={this.localWalletDownloadHref()}
+										download={`adex-account-data-${email}.json`}
+									>
+										<Button size='small' variant='contained'>
+											{translate('BACKUP_LOCAL_WALLET')}
+											<DownloadIcon />
+										</Button>
+									</a>
+								</label>
+							)}
+						</Box>
+						<Box m={1}>
+							<IconButton
+								color='default'
+								onClick={() => {
+									copy(identityAddress)
+									this.props.actions.addToast({
+										type: 'accept',
+										action: 'X',
+										label: translate('COPIED_TO_CLIPBOARD'),
+										timeout: 5000,
+									})
+								}}
+							>
+								<CopyIcon />
+							</IconButton>
+						</Box>
+					</Box>
+				</ListItem>
+				<ListDivider />
+				<ListItem>
+					<ListItemText
+						className={classes.address}
+						primary={walletAddress}
+						secondary={
+							account.authType === 'demo'
+								? translate('DEMO_ACCOUNT_WALLET_ADDRESS', {
+										args: [walletAuthType, walletPrivileges],
+								  })
+								: translate('WALLET_INFO_LABEL', {
+										args: [
+											walletAuthType.replace(/^\w/, chr => {
+												return chr.toUpperCase()
+											}),
+											walletPrivileges || ' - ',
+											authType,
+										],
+								  })
+						}
+					/>
+				</ListItem>
+				<ListDivider />
+				<ListItem>
+					<Box display='flex' flex='1 1 auto'>
+						<LoadingSection
+							loading={!identityBalanceDai && identityBalanceDai !== 0}
 						>
-							<Typography className={classes.heading}>
-								{t('ACCOUNT_ADVANCED_INFO_AND_ACTIONS')}
-							</Typography>
-						</ExpansionPanelSummary>
-						<ExpansionPanelDetails>
-							<List classes={{ root: classes.advancedList }}>
-								<ListItem>
-									<ListItemText
-										className={classes.address}
-										secondary={''}
-										primary={t('MANAGE_IDENTITY')}
+							<ListItemText
+								primary={`${identityBalanceDai || 0} DAI`}
+								secondary={translate('IDENTITY_DAI_BALANCE_AVAILABLE')}
+							/>
+						</LoadingSection>
+						<Fab
+							variant='contained'
+							aria-label='delete'
+							className={classes.fab}
+							onClick={() => displayRampWidget()}
+						>
+							<CreditCardIcon className={classes.extendedIcon} />
+							{translate('TOP_UP_IDENTITY')}
+						</Fab>
+					</Box>
+					<div className={classes.itemActions}>
+						{grantType !== 'advertiser' && (
+							<WithdrawTokenFromIdentity
+								variant='contained'
+								color='primary'
+								onSave={onSave}
+								identityAvailable={identityBalanceDai}
+								identityAvailableRaw={identityBalanceDai}
+								token='DAI'
+								className={classes.actionBtn}
+								size='small'
+								actions={actions}
+							/>
+						)}
+					</div>
+				</ListItem>
+				<ListDivider />
+				<ExpansionPanel expanded={expanded} onChange={handleExpandChange}>
+					<ExpansionPanelSummary
+						expandIcon={<ExpandMoreIcon />}
+						aria-controls='panel1bh-content'
+						id='panel1bh-header'
+					>
+						<Typography className={classes.heading}>
+							{translate('ACCOUNT_ADVANCED_INFO_AND_ACTIONS')}
+						</Typography>
+					</ExpansionPanelSummary>
+					<ExpansionPanelDetails>
+						<List classes={{ root: classes.advancedList }}>
+							<ListItem>
+								<ListItemText
+									className={classes.address}
+									secondary={''}
+									primary={translate('MANAGE_IDENTITY')}
+								/>
+								<div className={classes.itemActions}>
+									<SetIdentityPrivilege
+										variant='contained'
+										color='secondary'
+										onSave={onSave}
+										token='DAI'
+										className={classes.actionBtn}
+										size='small'
+										actions={actions}
+										identityAvailable={identityBalanceDai}
 									/>
-									<div className={classes.itemActions}>
-										<SetIdentityPrivilege
-											variant='contained'
-											color='secondary'
-											onSave={this.onSave}
-											token='DAI'
-											className={classes.actionBtn}
-											size='small'
-											actions={actions}
-											identityAvailable={identityBalanceDai}
-										/>
-									</div>
-								</ListItem>
-								<ListDivider />
-								<ListItem>
-									<ListItemText
-										className={classes.address}
-										primary={t('VALIDATOR_LEADER_ID', {
-											args: [VALIDATOR_LEADER_ID],
-										})}
-										secondary={t('VALIDATOR_LEADER_URL', {
-											args: [VALIDATOR_LEADER_URL],
-										})}
-									/>
-								</ListItem>
-								<ListItem>
-									<ListItemText
-										className={classes.address}
-										primary={t('VALIDATOR_FOLLOWER_ID', {
-											args: [VALIDATOR_FOLLOWER_ID],
-										})}
-										secondary={t('VALIDATOR_FOLLOWER_URL', {
-											args: [VALIDATOR_FOLLOWER_URL],
-										})}
-									/>
-								</ListItem>
-							</List>
-						</ExpansionPanelDetails>
-					</ExpansionPanel>
-				</List>
-			</div>
-		)
-	}
+								</div>
+							</ListItem>
+							<ListDivider />
+							<ListItem>
+								<ListItemText
+									className={classes.address}
+									primary={translate('VALIDATOR_LEADER_ID', {
+										args: [VALIDATOR_LEADER_ID],
+									})}
+									secondary={translate('VALIDATOR_LEADER_URL', {
+										args: [VALIDATOR_LEADER_URL],
+									})}
+								/>
+							</ListItem>
+							<ListItem>
+								<ListItemText
+									className={classes.address}
+									primary={translate('VALIDATOR_FOLLOWER_ID', {
+										args: [VALIDATOR_FOLLOWER_ID],
+									})}
+									secondary={translate('VALIDATOR_FOLLOWER_URL', {
+										args: [VALIDATOR_FOLLOWER_URL],
+									})}
+								/>
+							</ListItem>
+						</List>
+					</ExpansionPanelDetails>
+				</ExpansionPanel>
+			</List>
+		</div>
+	)
 }
 
 AccountInfo.propTypes = {
@@ -264,23 +280,4 @@ AccountInfo.propTypes = {
 	account: PropTypes.object.isRequired,
 }
 
-function mapStateToProps(state, props) {
-	const { persist, memory } = state
-	const { account } = persist
-
-	return {
-		account: account,
-		side: memory.nav.side,
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch),
-	}
-}
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(withStyles(styles)(Translate(AccountInfo)))
+export default Translate(AccountInfo)
