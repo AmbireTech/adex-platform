@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useStyles } from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
 import { useSelector } from 'react-redux'
-import { updateNav, updateAccountStats, execute } from 'actions'
-import { bindActionCreators } from 'redux'
+import { updateNav, addToast, updateAccountStats, execute } from 'actions'
 import actions from 'actions'
 import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
@@ -29,11 +27,9 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { getRecoveryWalletData } from 'services/wallet/wallet'
 import { LoadingSection } from 'components/common/spinners'
-import Fab from '@material-ui/core/Fab'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import { selectAccount } from 'selectors'
-import { translate } from 'services/translations/translations'
 
 // const RRButton = withReactRouterLink(Button)
 
@@ -42,7 +38,7 @@ const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
 const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 
-function AccountInfo() {
+function AccountInfo({ t }) {
 	// eslint-disable-next-line no-useless-constructor
 	const account = useSelector(selectAccount)
 	const localWalletDownloadHref = () => {
@@ -59,8 +55,9 @@ function AccountInfo() {
 	const [expanded, setExpanded] = useState(false)
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
+
 	useEffect(() => {
-		execute(updateNav('navTitle', translate('ACCOUNT')))
+		execute(updateNav('navTitle', t('ACCOUNT')))
 		updateAccountStats(account)
 	}, [])
 
@@ -76,23 +73,16 @@ function AccountInfo() {
 		widget.show()
 	}
 
-	const onSave = () => {
-		// this.getStats()
-	}
-
 	const handleExpandChange = () => {
 		setExpanded(!expanded)
 	}
 
-	// const { t, account, classes, actions } = this.props
 	const { grantType } = account.settings
 	const formatted = account.stats.formatted || {}
 	const {
 		walletAddress,
 		walletAuthType = '',
 		walletPrivileges = '',
-		// walletBalanceEth,
-		// walletBalanceDai,
 		identityAddress,
 		identityBalanceDai,
 	} = formatted
@@ -109,8 +99,8 @@ function AccountInfo() {
 						primary={identityAddress}
 						secondary={
 							account._authType === 'demo'
-								? translate('DEMO_ACCOUNT_IDENTITY_ADDRESS')
-								: translate('IDENTITY_ETH_ADDR')
+								? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
+								: t('IDENTITY_ETH_ADDR')
 						}
 					/>
 					<Box
@@ -124,11 +114,11 @@ function AccountInfo() {
 								<label htmlFor='download-wallet-json'>
 									<a
 										id='download-wallet-json'
-										href={this.localWalletDownloadHref()}
+										href={localWalletDownloadHref()}
 										download={`adex-account-data-${email}.json`}
 									>
 										<Button size='small' variant='contained'>
-											{translate('BACKUP_LOCAL_WALLET')}
+											{t('BACKUP_LOCAL_WALLET')}
 											<DownloadIcon />
 										</Button>
 									</a>
@@ -140,12 +130,14 @@ function AccountInfo() {
 								color='default'
 								onClick={() => {
 									copy(identityAddress)
-									this.props.actions.addToast({
-										type: 'accept',
-										action: 'X',
-										label: translate('COPIED_TO_CLIPBOARD'),
-										timeout: 5000,
-									})
+									execute(
+										addToast({
+											type: 'accept',
+											action: 'X',
+											label: t('COPIED_TO_CLIPBOARD'),
+											timeout: 5000,
+										})
+									)
 								}}
 							>
 								<CopyIcon />
@@ -160,10 +152,10 @@ function AccountInfo() {
 						primary={walletAddress}
 						secondary={
 							account.authType === 'demo'
-								? translate('DEMO_ACCOUNT_WALLET_ADDRESS', {
+								? t('DEMO_ACCOUNT_WALLET_ADDRESS', {
 										args: [walletAuthType, walletPrivileges],
 								  })
-								: translate('WALLET_INFO_LABEL', {
+								: t('WALLET_INFO_LABEL', {
 										args: [
 											walletAuthType.replace(/^\w/, chr => {
 												return chr.toUpperCase()
@@ -177,31 +169,31 @@ function AccountInfo() {
 				</ListItem>
 				<ListDivider />
 				<ListItem>
-					<Box display='flex' flex='1 1 auto'>
+					<Box display='flex' flex='1'>
 						<LoadingSection
 							loading={!identityBalanceDai && identityBalanceDai !== 0}
 						>
 							<ListItemText
 								primary={`${identityBalanceDai || 0} DAI`}
-								secondary={translate('IDENTITY_DAI_BALANCE_AVAILABLE')}
+								secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
 							/>
 						</LoadingSection>
-						<Fab
+						<Button
+							size='small'
 							variant='contained'
 							aria-label='delete'
 							className={classes.fab}
 							onClick={() => displayRampWidget()}
 						>
 							<CreditCardIcon className={classes.extendedIcon} />
-							{translate('TOP_UP_IDENTITY')}
-						</Fab>
+							{t('TOP_UP_IDENTITY')}
+						</Button>
 					</Box>
 					<div className={classes.itemActions}>
 						{grantType !== 'advertiser' && (
 							<WithdrawTokenFromIdentity
 								variant='contained'
 								color='primary'
-								onSave={onSave}
 								identityAvailable={identityBalanceDai}
 								identityAvailableRaw={identityBalanceDai}
 								token='DAI'
@@ -220,7 +212,7 @@ function AccountInfo() {
 						id='panel1bh-header'
 					>
 						<Typography className={classes.heading}>
-							{translate('ACCOUNT_ADVANCED_INFO_AND_ACTIONS')}
+							{t('ACCOUNT_ADVANCED_INFO_AND_ACTIONS')}
 						</Typography>
 					</ExpansionPanelSummary>
 					<ExpansionPanelDetails>
@@ -229,13 +221,12 @@ function AccountInfo() {
 								<ListItemText
 									className={classes.address}
 									secondary={''}
-									primary={translate('MANAGE_IDENTITY')}
+									primary={t('MANAGE_IDENTITY')}
 								/>
 								<div className={classes.itemActions}>
 									<SetIdentityPrivilege
 										variant='contained'
 										color='secondary'
-										onSave={onSave}
 										token='DAI'
 										className={classes.actionBtn}
 										size='small'
@@ -248,10 +239,10 @@ function AccountInfo() {
 							<ListItem>
 								<ListItemText
 									className={classes.address}
-									primary={translate('VALIDATOR_LEADER_ID', {
+									primary={t('VALIDATOR_LEADER_ID', {
 										args: [VALIDATOR_LEADER_ID],
 									})}
-									secondary={translate('VALIDATOR_LEADER_URL', {
+									secondary={t('VALIDATOR_LEADER_URL', {
 										args: [VALIDATOR_LEADER_URL],
 									})}
 								/>
@@ -259,10 +250,10 @@ function AccountInfo() {
 							<ListItem>
 								<ListItemText
 									className={classes.address}
-									primary={translate('VALIDATOR_FOLLOWER_ID', {
+									primary={t('VALIDATOR_FOLLOWER_ID', {
 										args: [VALIDATOR_FOLLOWER_ID],
 									})}
-									secondary={translate('VALIDATOR_FOLLOWER_URL', {
+									secondary={t('VALIDATOR_FOLLOWER_URL', {
 										args: [VALIDATOR_FOLLOWER_URL],
 									})}
 								/>
@@ -276,8 +267,7 @@ function AccountInfo() {
 }
 
 AccountInfo.propTypes = {
-	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
+	t: PropTypes.object.isRequired,
 }
 
 export default Translate(AccountInfo)
