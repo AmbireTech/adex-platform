@@ -169,40 +169,42 @@ function AccountInfo({ t }) {
 				</ListItem>
 				<ListDivider />
 				<ListItem>
-					<Box display='flex' flex='1'>
-						<LoadingSection
-							loading={!identityBalanceDai && identityBalanceDai !== 0}
-						>
-							<ListItemText
-								primary={`${identityBalanceDai || 0} DAI`}
-								secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
-							/>
-						</LoadingSection>
-						<Button
-							size='small'
-							variant='contained'
-							aria-label='delete'
-							className={classes.fab}
-							onClick={() => displayRampWidget()}
-						>
-							<CreditCardIcon className={classes.extendedIcon} />
-							{t('TOP_UP_IDENTITY')}
-						</Button>
-					</Box>
-					<div className={classes.itemActions}>
-						{grantType !== 'advertiser' && (
-							<WithdrawTokenFromIdentity
-								variant='contained'
-								color='primary'
-								identityAvailable={identityBalanceDai}
-								identityAvailableRaw={identityBalanceDai}
-								token='DAI'
-								className={classes.actionBtn}
+					<Box display='flex' flexWrap={'wrap'} flex='1'>
+						<Box display='flex' flexWrap={'wrap'} flex='1'>
+							<LoadingSection
+								loading={!identityBalanceDai && identityBalanceDai !== 0}
+							>
+								<ListItemText
+									primary={`${identityBalanceDai || 0} DAI`}
+									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
+								/>
+							</LoadingSection>
+							<Button
 								size='small'
-								actions={actions}
-							/>
-						)}
-					</div>
+								variant='contained'
+								aria-label='delete'
+								className={classes.actionBtn}
+								onClick={() => displayRampWidget()}
+							>
+								<CreditCardIcon className={classes.extendedIcon} />
+								{t('TOP_UP_IDENTITY')}
+							</Button>
+						</Box>
+						<Box className={classes.itemActions}>
+							{grantType !== 'advertiser' && (
+								<WithdrawTokenFromIdentity
+									variant='contained'
+									color='primary'
+									identityAvailable={identityBalanceDai}
+									identityAvailableRaw={identityBalanceDai}
+									token='DAI'
+									className={classes.actionBtn}
+									size='small'
+									actions={actions}
+								/>
+							)}
+						</Box>
+					</Box>
 				</ListItem>
 				<ListDivider />
 				<ExpansionPanel expanded={expanded} onChange={handleExpandChange}>
