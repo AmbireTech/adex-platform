@@ -65,6 +65,13 @@ export const NETWORK_STATUS = {
 	2: 'failed',
 }
 
+export const ETHEREUM_NETWORKS = {
+	1: { name: 'Mainnet', for: 'production' },
+	5: { name: 'Goerli', for: 'development' },
+	production: { name: 'Mainnet', for: 'production' },
+	development: { name: 'Goerli', for: 'development' },
+}
+
 export const SORT_PROPERTIES_CAMPAIGN = [
 	{ value: 'created', label: 'Created' },
 	{ value: 'status.name', label: 'Status' },
