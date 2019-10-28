@@ -117,6 +117,7 @@ class ItemsList extends Component {
 						className={classnames(classes.cellImg)}
 						src={item.mediaUrl || item.fallbackMediaiUrl || ''}
 						alt={item.title}
+						mediaMime={item.mediaMime}
 					/>
 				</TableCell>
 				<RRTableCell
@@ -164,6 +165,7 @@ class ItemsList extends Component {
 							(item.adUnits ? item.adUnits[0].mediaUrl || '' : '')
 						}
 						alt={item.title}
+						mediaMime={item.mediaMime}
 					/>
 				</TableCell>
 				<TableCell> {status.name} </TableCell>
