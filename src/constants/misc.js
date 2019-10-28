@@ -125,3 +125,6 @@ export const VALIDATOR_ANALYTICS_TIMEFRAMES = [
 	// { label: 'LABEL_MONTH', value: 'month' },
 	// { label: 'LABEL_YEAR', value: 'year' },
 ]
+
+export const MOON_GRAVITY_ACCELERATION = 1.625
+export const MOON_TO_EARTH_WEIGHT = 0.166
