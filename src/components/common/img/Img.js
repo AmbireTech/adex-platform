@@ -17,7 +17,7 @@ import Translate from 'components/translate/Translate'
 import { validations, helpers } from 'adex-models'
 import { isVideoMedia } from 'helpers/mediaHelpers.js'
 
-const MAX_IMG_LOAD_TIME = 3000
+const MAX_IMG_LOAD_TIME = 7000
 class Img extends Component {
 	constructor(props) {
 		super(props)
