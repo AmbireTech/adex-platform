@@ -118,6 +118,7 @@ class ItemsList extends Component {
 						src={item.mediaUrl || item.fallbackMediaiUrl || ''}
 						alt={item.title}
 						mediaMime={item.mediaMime}
+						allowVideo
 					/>
 				</TableCell>
 				<RRTableCell
@@ -166,6 +167,7 @@ class ItemsList extends Component {
 						}
 						alt={item.title}
 						mediaMime={item.mediaMime}
+						allowVideo
 					/>
 				</TableCell>
 				<TableCell> {status.name} </TableCell>
