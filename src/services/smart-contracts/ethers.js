@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { ethers, utils } from 'ethers'
 import { contracts } from './contractsCfg'
 import { AUTH_TYPES } from 'constants/misc'
 
@@ -119,7 +119,11 @@ const getEthers = async mode => {
 
 const ethereumSelectedAddress = async () => {
 	const { ethereum } = await loadInjectedWeb3.then()
-	return ethereum ? ethereum.selectedAddress : null
+	if (ethereum && ethereum.selectedAddress) {
+		return utils.getAddress(ethereum.selectedAddress)
+	} else {
+		return null
+	}
 }
 
 const ethereumNetworkId = async () => {
