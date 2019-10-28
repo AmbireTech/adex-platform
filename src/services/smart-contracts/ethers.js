@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { ethers, utils } from 'ethers'
 import { contracts } from './contractsCfg'
 import { AUTH_TYPES } from 'constants/misc'
 
@@ -68,7 +68,7 @@ const getInjectedWeb3 = async () => {
 
 			return results
 		} catch (err) {
-			console.error(err)
+			console.error('Err getting injected ethereum.', err)
 			throw new Error(err.message)
 		}
 	}
@@ -95,7 +95,8 @@ const getInjectedWeb3 = async () => {
 		return results
 	} else {
 		console.error('Non-Ethereum browser detected.')
-		throw new Error('Non-Ethereum browser detected.')
+		console.error('Fallback to local web3 provider')
+		return await localWeb3()
 	}
 }
 
@@ -116,4 +117,23 @@ const getEthers = async mode => {
 	}
 }
 
-export { getEthers }
+const ethereumSelectedAddress = async () => {
+	const { ethereum } = await loadInjectedWeb3.then()
+	if (ethereum && ethereum.selectedAddress) {
+		return utils.getAddress(ethereum.selectedAddress)
+	} else {
+		return null
+	}
+}
+
+const ethereumNetworkId = async () => {
+	const { ethereum } = await loadInjectedWeb3.then()
+	if (ethereum) {
+		const id = parseInt(ethereum.networkVersion, 10)
+		return id
+	} else {
+		return null
+	}
+}
+
+export { getEthers, ethereumSelectedAddress, ethereumNetworkId }
