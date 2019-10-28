@@ -9,12 +9,15 @@ import {
 	resetAnalytics,
 } from 'actions'
 
+import campaignsLoop from 'services/store-data/campaigns'
+
 import { push } from 'connected-react-router'
 
 export const logOut = skipRedirect => {
 	if (!skipRedirect) {
 		execute(push('/'))
 	}
+	campaignsLoop.stop()
 	execute(resetIdentity())
 	execute(resetAllItems())
 	execute(resetAllNewItems())

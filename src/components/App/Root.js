@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { metamaskChecks, execute } from 'actions'
+import { metamaskChecks, metamaskNetworkCheck, execute } from 'actions'
 import { Route, Switch, Redirect } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import ConnectHoc from 'components/signin/ConnectHoc'
@@ -15,7 +15,7 @@ import SideSelect from 'components/signin/side-select/SideSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import Home from 'components/signin/Home'
 import JustDialog from 'components/common/dialog/JustDialog'
-import { selectAuth } from 'selectors'
+import { selectAuth, selectLocation } from 'selectors'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
 const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
@@ -42,10 +42,15 @@ const PrivateRoute = ({ component: Component, auth, ...other }) => {
 
 const Root = () => {
 	const auth = useSelector(selectAuth)
+	const location = useSelector(selectLocation)
 
 	useEffect(() => {
 		execute(metamaskChecks())
 	}, [])
+
+	useEffect(() => {
+		execute(metamaskNetworkCheck())
+	}, [location])
 
 	return (
 		<Switch>
