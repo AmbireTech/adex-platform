@@ -205,7 +205,14 @@ class Img extends Component {
 							onDragStart={event => event.preventDefault() /*Firefox*/}
 						/>
 					) : (
-						<video src={videoSrc} controls></video>
+						<video
+							src={videoSrc}
+							autoPlay='true'
+							muted='true'
+							loop='true'
+							controls
+							className={classnames(classes.dialogImage, classes.imgLoading)}
+						></video>
 					)}
 				</DialogContent>
 				<DialogActions>
@@ -240,13 +247,24 @@ class Img extends Component {
 						onClick={
 							fullScreenOnClick &&
 							(() => {
-								console.log('click')
 								this.handleToggle()
 							})
 						}
 					/>
 				) : (
-					<video src={videoSrc} controls></video>
+					<video
+						src={videoSrc}
+						className={classnames(classes.imgLoading, className, classes.img)}
+						autoPlay='true'
+						muted='true'
+						loop='true'
+						onClick={
+							fullScreenOnClick &&
+							(() => {
+								this.handleToggle()
+							})
+						}
+					></video>
 				)}
 				{allowFullscreen && this.fullScreenBtn()}
 				{fullScreenOnClick && this.renderFullscreenDialog()}
