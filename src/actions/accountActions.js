@@ -282,7 +282,7 @@ export function onMetamaskNetworkChange({ id } = {}) {
 		const isMetamaskMatters =
 			(authType === AUTH_TYPES.METAMASK.name ||
 				(!authType && search === '?metamask')) &&
-			window.web3
+			window.ethereum
 
 		if (
 			isMetamaskMatters &&
