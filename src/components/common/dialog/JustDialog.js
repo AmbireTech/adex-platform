@@ -8,6 +8,7 @@ const useStyles = makeStyles(theme => ({
 		height: '100vh',
 		width: theme.maxWidth || 1200,
 		maxWidth: '100%',
+		margin: '100px',
 	},
 }))
 

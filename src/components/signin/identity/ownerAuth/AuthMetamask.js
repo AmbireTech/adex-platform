@@ -105,7 +105,7 @@ class AuthMetamask extends Component {
 						justifyContent='center'
 						width={1}
 					>
-						{!window.web3 || !window.web3.currentProvider.isMetaMask ? (
+						{!window.ethereum || !window.ethereum.isMetaMask ? (
 							<React.Fragment>
 								<Typography paragraph>
 									<span
@@ -160,7 +160,7 @@ class AuthMetamask extends Component {
 									t('AUTH_WITH_METAMASK_LABEL', { args: [address] })
 								)}
 							</div>
-						) : window.web3 && window.web3.currentProvider.isMetaMask ? (
+						) : window.ethereum && window.ethereum.isMetaMask ? (
 							<Button
 								onClick={this.checkMetamask}
 								variant='contained'
