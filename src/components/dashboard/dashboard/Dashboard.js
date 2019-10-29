@@ -24,7 +24,7 @@ import {
 	NewCampaignDialog,
 	NewSlotDialog,
 } from 'components/dashboard/forms/items/NewItems'
-import checkTransactions from 'services/store-data/transactions'
+import campaignsLoop from 'services/store-data/campaigns'
 import {
 	SORT_PROPERTIES_ITEMS,
 	FILTER_PROPERTIES_ITEMS,
@@ -51,7 +51,7 @@ class Dashboard extends React.Component {
 	}
 
 	componentWillUnmount() {
-		checkTransactions.stop()
+		campaignsLoop.stop()
 	}
 
 	componentDidMount() {
@@ -63,7 +63,7 @@ class Dashboard extends React.Component {
 		actions.updateAccountStats()
 		actions.updateAccountSettings()
 		actions.updateAccountAnalytics()
-		checkTransactions.start()
+		campaignsLoop.start()
 	}
 
 	// shouldComponentUpdate(nextProps, nextState) {

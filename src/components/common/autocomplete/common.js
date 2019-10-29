@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
 import { translate } from 'services/translations/translations'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
 
 export const renderInput = inputProps => {
 	const { InputProps, classes, ref, ...other } = inputProps
@@ -24,6 +26,7 @@ export const renderInput = inputProps => {
 export const renderSuggestion = ({
 	suggestion,
 	index,
+	style,
 	itemProps,
 	highlightedIndex,
 	selectedItem,
@@ -42,17 +45,20 @@ export const renderSuggestion = ({
 	}
 
 	return (
-		<MenuItem
-			{...itemProps}
-			key={suggestion.value || suggestion.label}
-			selected={isHighlighted}
-			component='div'
-			style={{
-				fontWeight: isSelected ? 500 : 400,
-			}}
-		>
-			{suggestion.label}
-		</MenuItem>
+		<div style={style}>
+			<ListItem
+				button
+				{...itemProps}
+				key={suggestion.value || suggestion.label}
+				selected={isHighlighted}
+				component='div'
+				style={{
+					fontWeight: isSelected ? 500 : 400,
+				}}
+			>
+				<ListItemText primary={suggestion.label} />
+			</ListItem>
+		</div>
 	)
 }
 

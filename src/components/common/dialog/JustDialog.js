@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
 import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
@@ -23,12 +22,6 @@ export default function DialogHoc(Decorated) {
 				</DialogContent>
 			</Dialog>
 		)
-	}
-
-	JustDialog.propTypes = {
-		btnLabel: PropTypes.string.isRequired,
-		title: PropTypes.string.isRequired,
-		floating: PropTypes.bool,
 	}
 
 	return JustDialog
