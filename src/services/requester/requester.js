@@ -49,7 +49,6 @@ class AdexNodeRequester {
 			...this.getAuthHeaders({ authSig }),
 			...headers,
 		}
-
 		return fetch(url, {
 			method: method,
 			headers: hdrs,
