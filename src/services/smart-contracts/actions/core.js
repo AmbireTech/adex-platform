@@ -111,26 +111,8 @@ function getReadyCampaign(campaign, identity, Dai) {
 	return newCampaign
 }
 
-async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
-	const STATES = [
-		'Active',
-		'Ready',
-		'Exhausted',
-		'Offline',
-		'Unhealthy',
-		'Withdraw',
-	]
-	const requester = new Requester({ baseUrl: ADEX_MARKET_HOST })
-	const channels = await requester
-		.fetch({
-			route: '/campaigns',
-			method: 'GET',
-			queryParams: {
-				status: STATES.join(','),
-			},
-		})
-		.then(res => res.json())
-	const activeChannels = Promise.all(
+async function getActiveChannels({ channels, identityAddr }) {
+	return Promise.all(
 		channels
 			.map(async channel => {
 				const url = `${channel.spec.validators[0].url}/channel/${channel.id}/last-approved`
@@ -161,7 +143,33 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
 				)
 			})
 	)
+}
 
+async function getExpiredChannels() {
+	return Promise.resolve() // TODO
+}
+
+async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
+	const STATES = [
+		'Active',
+		'Ready',
+		'Exhausted',
+		'Offline',
+		'Unhealthy',
+		'Withdraw',
+	]
+	const requester = new Requester({ baseUrl: ADEX_MARKET_HOST })
+	const channels = await requester
+		.fetch({
+			route: '/campaigns',
+			method: 'GET',
+			queryParams: {
+				status: STATES.join(','),
+			},
+		})
+		.then(res => res.json())
+	const activeChannels = await getActiveChannels({ channels, identityAddr })
+	const expiredChannels = await getExpiredChannels()
 	// Could be done with map/reduce but figured this for loop is much simpler in this case
 	const channelsToWithdrawFrom = []
 	const sum = new BN('0')
@@ -191,7 +199,6 @@ export async function sweepChannels({ campaign, account }) {
 		amountToSweep,
 		identityAddr,
 	})
-
 	const identityContract = new Contract(identityAddr, Identity.abi, provider)
 	const initialNonce = (await identityContract.nonce()).toNumber()
 	const feeTokenAddr = campaign.temp.feeTokenAddr || Dai.address
@@ -212,7 +219,6 @@ export async function sweepChannels({ campaign, account }) {
 	const signer = await getSigner({ wallet, provider })
 
 	const signatures = await getMultipleTxSignatures({ txns, signer })
-
 	const data = {
 		txnsRaw: txns,
 		signatures,
@@ -220,7 +226,6 @@ export async function sweepChannels({ campaign, account }) {
 	}
 
 	const result = await executeTx(data)
-
 	return {
 		result,
 	}
