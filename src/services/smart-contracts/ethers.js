@@ -82,8 +82,7 @@ const getInjectedWeb3 = async () => {
 		// 	IdentityFactory.abi,
 		// 	provider
 		// )
-
-		console.error('Injected legacy web3 detected.')
+		// console.log('Injected legacy web3 detected.')
 		// const results = {
 		// 	provider: provider,
 		// 	AdExCore: adexCore,
@@ -91,7 +90,6 @@ const getInjectedWeb3 = async () => {
 		// 	Dai: dai,
 		// 	IdentityFactory: identityFactory,
 		// }
-
 		// return results
 	} else {
 		console.error('Non-Ethereum browser detected.')
