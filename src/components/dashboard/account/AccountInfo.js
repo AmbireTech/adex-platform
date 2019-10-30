@@ -51,15 +51,18 @@ function AccountInfo({ t }) {
 			'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj))
 		return data
 	}
-	const [walletJsonData, setWalletJsonData] = useState(localWalletDownloadHref)
+	const walletJsonData = localWalletDownloadHref()
 	const [expanded, setExpanded] = useState(false)
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 
 	useEffect(() => {
-		execute(updateNav('navTitle', t('ACCOUNT')))
-		updateAccountStats(account)
+		execute(updateAccountStats())
 	}, [])
+
+	useEffect(() => {
+		execute(updateNav('navTitle', t('ACCOUNT')))
+	}, [t])
 
 	const displayRampWidget = () => {
 		const widget = new RampInstantSDK({
