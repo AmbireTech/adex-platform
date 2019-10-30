@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { updateNav, addToast, updateAccountStats, execute } from 'actions'
-import actions from 'actions'
 import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import {
@@ -203,7 +202,6 @@ function AccountInfo({ t }) {
 									token='DAI'
 									className={classes.actionBtn}
 									size='small'
-									actions={actions}
 								/>
 							)}
 						</Box>
@@ -235,7 +233,6 @@ function AccountInfo({ t }) {
 										token='DAI'
 										className={classes.actionBtn}
 										size='small'
-										actions={actions}
 										identityAvailable={identityBalanceDai}
 									/>
 								</div>
