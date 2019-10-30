@@ -34,7 +34,8 @@ function AuthMetamask(props) {
 	const [waitingMetamaskAction, setWaitingMetamaskAction] = useState(false)
 	const [waitingAddrsData, setWaitingAddrsData] = useState(false)
 	const { t, classes } = props
-
+	const isOpera =
+		!!window.opr || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0
 	if (installingMetamask) {
 		// Refreshes page after user comes back
 		// from installing Metamask
@@ -116,7 +117,14 @@ function AuthMetamask(props) {
 											args: [
 												{
 													component: (
-														<Anchor href='https://metamask.io/' target='_blank'>
+														<Anchor
+															href={
+																isOpera
+																	? 'https://chrome.google.com/webstore/detail/nkbihfbeogaeaoehlefnkodbefgpgknn'
+																	: 'https://metamask.io/'
+															}
+															target='_blank'
+														>
 															https://metamask.io/
 														</Anchor>
 													),
@@ -128,7 +136,11 @@ function AuthMetamask(props) {
 							</Typography>
 							<Typography paragraph>
 								<Anchor
-									href='https://metamask.io/'
+									href={
+										isOpera
+											? 'https://chrome.google.com/webstore/detail/nkbihfbeogaeaoehlefnkodbefgpgknn'
+											: 'https://metamask.io/'
+									}
 									target='_blank'
 									onClick={() => setInstallingMetamask(true)}
 								>
