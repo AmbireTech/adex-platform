@@ -125,6 +125,10 @@ class GrantInfo extends Component {
 	render() {
 		const { t, identity, handleChange, invalidFields } = this.props
 		// Errors
+		const TOS = {
+			t: t('TOS_CHECK'),
+			link: 'https://www.adex.network/tos/',
+		}
 		const {
 			coupon,
 			email,
@@ -276,7 +280,18 @@ class GrantInfo extends Component {
 										color='primary'
 									/>
 								}
-								label={t('TOS_CHECK')}
+								label={
+									<label>
+										{TOS.t.substr(0, TOS.t.indexOf(' '))}
+										<a
+											href={TOS.link}
+											rel='noopener noreferrer'
+											target='_blank'
+										>
+											{` ${TOS.t.substr(TOS.t.indexOf(' ') + 1)}`}
+										</a>
+									</label>
+								}
 							/>
 							{tosCheck && !!tosCheck.dirty && (
 								<FormHelperText>{tosCheck.errMsg}</FormHelperText>
