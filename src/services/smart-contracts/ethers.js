@@ -74,23 +74,7 @@ const getInjectedWeb3 = async () => {
 	}
 	// Legacy dapp browsers...
 	else if (web3) {
-		// provider = new ethers.providers.Web3Provider(window.web3.currentProvider)
-		// adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
-		// dai = new ethers.Contract(DAI.address, DAI.abi, provider)
-		// identityFactory = new ethers.Contract(
-		// 	IdentityFactory.address,
-		// 	IdentityFactory.abi,
-		// 	provider
-		// )
-		// console.log('Injected legacy web3 detected.')
-		// const results = {
-		// 	provider: provider,
-		// 	AdExCore: adexCore,
-		// 	Identity: Identity,
-		// 	Dai: dai,
-		// 	IdentityFactory: identityFactory,
-		// }
-		// return results
+		// web3 your mother if you want web3
 	} else {
 		console.error('Non-Ethereum browser detected.')
 		console.error('Fallback to local web3 provider')
