@@ -126,7 +126,7 @@ async function getChannelsWithBalance({ identityAddr, requester, STATES }) {
 		channels
 			.map(channel => {
 				const { lastApprovedBalances } = channel.status
-				if (channel.status.lastApprovedBalances) {
+				if (lastApprovedBalances) {
 					const allLeafs = Object.keys(lastApprovedBalances).map(k =>
 						Channel.getBalanceLeaf(k, lastApprovedBalances[k])
 					)
@@ -148,8 +148,8 @@ async function getChannelsWithBalance({ identityAddr, requester, STATES }) {
 			}))
 			.sort((c1, c2) => {
 				// Sorting by most balance so we can get top N needed using amountToSweep so we send as few transactions as possible
-				return new BN(c2.lastApprovedBalances[identityAddr]).gte(
-					new BN(c1.lastApprovedBalances[identityAddr])
+				return new BN(c2.status.lastApprovedBalances[identityAddr]).gte(
+					new BN(c1.status.lastApprovedBalances[identityAddr])
 				)
 			})
 	)
@@ -180,7 +180,9 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
 		if (sum.gte(new BN(amountToSweep))) {
 			break
 		}
-		const balance = new BN(allChannels[i].lastApprovedBalances[identityAddr])
+		const balance = new BN(
+			allChannels[i].status.lastApprovedBalances[identityAddr]
+		)
 		sum.iadd(balance)
 		channelsToWithdrawFrom.push(allChannels[i])
 	}
@@ -205,7 +207,7 @@ export async function sweepChannels({ campaign, account }) {
 	const feeTokenAddr = campaign.temp.feeTokenAddr || Dai.address
 
 	const txns = channelsToSweep.map((c, i) => {
-		const toWithdraw = c.lastApproved.newState.msg.balances[identityAddr]
+		const toWithdraw = c.status.lastApprovedBalances[identityAddr]
 		return {
 			identityContract: identityAddr,
 			nonce: initialNonce + i,
