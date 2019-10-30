@@ -12,6 +12,7 @@ import {
 	withdrawFromIdentity,
 	setIdentityPrivilege,
 } from 'services/smart-contracts/actions/identity'
+import { addrIdentityPrivilege, identityWithdraw, execute } from 'actions'
 
 const FormStepsWithDialog = WithDialog(FormSteps)
 
@@ -78,10 +79,12 @@ export const WithdrawTokenFromIdentity = props => (
 			page: TransactionPreview,
 		}}
 		saveFn={({ transaction } = {}) => {
-			return props.actions.identityWithdraw({
-				amountToWithdraw: transaction.withdrawAmount,
-				withdrawTo: transaction.withdrawTo,
-			})
+			return execute(
+				identityWithdraw({
+					amountToWithdraw: transaction.withdrawAmount,
+					withdrawTo: transaction.withdrawTo,
+				})
+			)
 		}}
 		getFeesFn={({ transaction } = {}) => {
 			return withdrawFromIdentity({
@@ -111,10 +114,12 @@ export const SetIdentityPrivilege = props => (
 			page: TransactionPreview,
 		}}
 		saveFn={({ transaction } = {}) => {
-			return props.actions.addrIdentityPrivilege({
-				privLevel: transaction.privLevel,
-				setAddr: transaction.setAddr,
-			})
+			return execute(
+				addrIdentityPrivilege({
+					privLevel: transaction.privLevel,
+					setAddr: transaction.setAddr,
+				})
+			)
 		}}
 		getFeesFn={({ transaction } = {}) => {
 			return setIdentityPrivilege({
