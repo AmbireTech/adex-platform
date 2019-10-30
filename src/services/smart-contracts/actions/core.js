@@ -22,7 +22,7 @@ import {
 	Interface,
 	formatUnits,
 } from 'ethers/utils'
-import { Contract } from 'ethers'
+import { Contract, providers } from 'ethers'
 import { BN } from 'ethereumjs-util'
 
 const { AdExCore, DAI } = contracts
@@ -111,42 +111,48 @@ function getReadyCampaign(campaign, identity, Dai) {
 	return newCampaign
 }
 
-async function getActiveChannels({ channels, identityAddr }) {
+async function getChannelsWithBalance({ identityAddr, requester, STATES }) {
+	const channels = await requester
+		.fetch({
+			route: '/campaigns',
+			method: 'GET',
+			queryParams: {
+				status: STATES.join(','),
+			},
+		})
+		.then(res => res.json())
+
 	return Promise.all(
 		channels
-			.map(async channel => {
-				const url = `${channel.spec.validators[0].url}/channel/${channel.id}/last-approved`
-				const { lastApproved } = await fetch(url).then(r => r.json())
-				if (lastApproved) {
-					const balancesTree = lastApproved.newState.msg.balances
-					const allLeafs = Object.keys(balancesTree).map(k =>
-						Channel.getBalanceLeaf(k, balancesTree[k])
+			.map(channel => {
+				const { lastApprovedBalances } = channel.status
+				if (channel.status.lastApprovedBalances) {
+					const allLeafs = Object.keys(lastApprovedBalances).map(k =>
+						Channel.getBalanceLeaf(k, lastApprovedBalances[k])
 					)
 					const mTree = new MerkleTree(allLeafs)
-					return { lastApproved, mTree, channel }
+					return { lastApprovedBalances, mTree, channel }
 				} else {
-					return { lastApproved: null, mTree: null, channel }
+					return { lastApprovedBalances: null, mTree: null, channel }
 				}
 			})
-			.filter(
-				({ lastApproved }) =>
-					lastApproved && !!lastApproved.newState.msg.balances[identityAddr]
-			)
-			.map(({ channel, lastApproved }) => ({
+			.filter(({ channel, lastApprovedBalances }) => {
+				if (channel.status.name === 'Expired') {
+					return channel.creator === identityAddr
+				}
+				return lastApprovedBalances && !!lastApprovedBalances[identityAddr]
+			})
+			.map(({ channel, lastApprovedBalances }) => ({
 				channel,
-				balance: lastApproved.newState.msg.balances[identityAddr],
+				balance: lastApprovedBalances[identityAddr],
 			}))
 			.sort((c1, c2) => {
 				// Sorting by most balance so we can get top N needed using amountToSweep so we send as few transactions as possible
-				return new BN(c2.lastApproved.newState.msg.balances[identityAddr]).gte(
-					new BN(c1.lastApproved.newState.msg.balances[identityAddr])
+				return new BN(c2.lastApprovedBalances[identityAddr]).gte(
+					new BN(c1.lastApprovedBalances[identityAddr])
 				)
 			})
 	)
-}
-
-async function getExpiredChannels() {
-	return Promise.resolve() // TODO
 }
 
 async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
@@ -157,31 +163,26 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
 		'Offline',
 		'Unhealthy',
 		'Withdraw',
+		'Expired',
 	]
+
 	const requester = new Requester({ baseUrl: ADEX_MARKET_HOST })
-	const channels = await requester
-		.fetch({
-			route: '/campaigns',
-			method: 'GET',
-			queryParams: {
-				status: STATES.join(','),
-			},
-		})
-		.then(res => res.json())
-	const activeChannels = await getActiveChannels({ channels, identityAddr })
-	const expiredChannels = await getExpiredChannels()
+	const allChannels = await getChannelsWithBalance({
+		identityAddr,
+		requester,
+		STATES,
+	})
+
 	// Could be done with map/reduce but figured this for loop is much simpler in this case
 	const channelsToWithdrawFrom = []
 	const sum = new BN('0')
-	for (let i = 0; i < activeChannels.length; i++) {
+	for (let i = 0; i < allChannels.length; i++) {
 		if (sum.gte(new BN(amountToSweep))) {
 			break
 		}
-		const balance = new BN(
-			activeChannels[i].lastApproved.newState.msg.balances[identityAddr]
-		)
+		const balance = new BN(allChannels[i].lastApprovedBalances[identityAddr])
 		sum.iadd(balance)
-		channelsToWithdrawFrom.push(activeChannels[i])
+		channelsToWithdrawFrom.push(allChannels[i])
 	}
 
 	return channelsToWithdrawFrom
