@@ -26,6 +26,7 @@ import { getAddressBalances } from 'services/smart-contracts/actions/stats'
 import Box from '@material-ui/core/Box'
 
 function AuthMetamask(props) {
+	const [installingMetamask, setInstallingMetamask] = useState(false)
 	const [method, setMethod] = useState('')
 	const [sideSelect, setSideSelect] = useState(false)
 	const [address, setAddress] = useState(null)
@@ -33,6 +34,15 @@ function AuthMetamask(props) {
 	const [waitingMetamaskAction, setWaitingMetamaskAction] = useState(false)
 	const [waitingAddrsData, setWaitingAddrsData] = useState(false)
 	const { t, classes } = props
+
+	if (installingMetamask) {
+		// Refreshes page after user comes back
+		// from installing Metamask
+		window.onfocus = () => {
+			window.location.reload()
+			setInstallingMetamask(false)
+		}
+	}
 
 	const checkMetamask = async () => {
 		setWaitingAddrsData(true)
@@ -117,7 +127,11 @@ function AuthMetamask(props) {
 								/>
 							</Typography>
 							<Typography paragraph>
-								<Anchor href='https://metamask.io/' target='_blank'>
+								<Anchor
+									href='https://metamask.io/'
+									target='_blank'
+									onClick={() => setInstallingMetamask(true)}
+								>
 									<Img
 										src={METAMASK_DL_IMG}
 										alt={'Downlad metamask'}
