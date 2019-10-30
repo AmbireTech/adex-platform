@@ -170,7 +170,7 @@ function AccountInfo({ t }) {
 				<ListDivider />
 				<ListItem>
 					<Box display='flex' flexWrap={'wrap'} flex='1'>
-						<Box display='flex' flexWrap={'wrap'} flex='1'>
+						<Box display='flex' flex='1'>
 							<LoadingSection
 								loading={!identityBalanceDai && identityBalanceDai !== 0}
 							>
@@ -179,6 +179,8 @@ function AccountInfo({ t }) {
 									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
 								/>
 							</LoadingSection>
+						</Box>
+						<Box className={classes.itemActions}>
 							<Button
 								size='small'
 								variant='contained'
@@ -189,8 +191,6 @@ function AccountInfo({ t }) {
 								<CreditCardIcon className={classes.extendedIcon} />
 								{t('TOP_UP_IDENTITY')}
 							</Button>
-						</Box>
-						<Box className={classes.itemActions}>
 							{grantType !== 'advertiser' && (
 								<WithdrawTokenFromIdentity
 									variant='contained'

@@ -5,7 +5,6 @@ export const styles = theme => {
 			display: 'flex',
 			flex: '0 0 187px',
 			flexDirection: 'column',
-			alignItems: 'flex-end',
 			justifyContent: 'space-around',
 		},
 		actionBtn: {
