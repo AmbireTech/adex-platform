@@ -41,11 +41,12 @@ function AccountInfo({ t }) {
 	const account = useSelector(selectAccount)
 
 	const localWalletDownloadHref = () => {
-		const { email, password } = account.wallet
-		const obj = getRecoveryWalletData({ email, password })
-		if (!obj) {
+		const { email, password, authType } = account.wallet
+		const obj = getRecoveryWalletData({ email, password, authType })
+		if (!obj || !obj.wallet) {
 			return null
 		}
+
 		const data =
 			'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj))
 		return data
