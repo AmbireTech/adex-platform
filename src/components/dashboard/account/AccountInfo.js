@@ -83,6 +83,7 @@ class AccountInfo extends React.Component {
 			// walletBalanceDai,
 			identityAddress,
 			identityBalanceDai,
+			totalIdentityBalanceDai,
 		} = formatted
 		const { authType, email } = account.wallet
 		const { walletJsonData, expanded } = this.state
@@ -182,8 +183,8 @@ class AccountInfo extends React.Component {
 									variant='contained'
 									color='primary'
 									onSave={this.onSave}
-									identityAvailable={identityBalanceDai}
-									identityAvailableRaw={identityBalanceDai}
+									identityAvailable={totalIdentityBalanceDai}
+									identityAvailableRaw={totalIdentityBalanceDai}
 									token='DAI'
 									className={classes.actionBtn}
 									size='small'
@@ -223,7 +224,7 @@ class AccountInfo extends React.Component {
 											className={classes.actionBtn}
 											size='small'
 											actions={actions}
-											identityAvailable={identityBalanceDai}
+											identityAvailable={totalIdentityBalanceDai}
 										/>
 									</div>
 								</ListItem>
