@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import actions from 'actions'
+import actions, { execute } from 'actions'
 import { BidsStatusPie } from 'components/dashboard/charts/slot'
 import Translate from 'components/translate/Translate'
 import { exchange as ExchangeConstants } from 'adex-constants'
@@ -15,6 +15,7 @@ import StatsCard from './StatsCard'
 import { styles } from './styles'
 import Grid from '@material-ui/core/Grid'
 import { BasicStats } from './BasicStats'
+import { push } from 'connected-react-router'
 
 const { BidStatesLabels, BID_STATES } = ExchangeConstants
 
@@ -29,13 +30,9 @@ export class DashboardStats extends Component {
 		}
 	}
 
-	// goToBids = (tab) => {
-	// 	this.props.history.push('/dashboard/' + this.props.side + '/bids/' + tab)
-	// }
-
 	goToAccount = () => {
-		const { history, side } = this.props
-		history.push('/dashboard/' + side + '/account')
+		const { side } = this.props
+		execute(push('/dashboard/' + side + '/account'))
 	}
 
 	componentDidMount() {
