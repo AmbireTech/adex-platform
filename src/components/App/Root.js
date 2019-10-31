@@ -19,7 +19,6 @@ import PageNotFound from 'components/page_not_found/PageNotFound'
 import Home from 'components/signin/Home'
 import JustDialog from 'components/common/dialog/JustDialog'
 import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
-import JustDialog from 'components/common/dialog/JustDialog'
 import {
 	selectAuth,
 	selectAccount,
