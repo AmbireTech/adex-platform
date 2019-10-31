@@ -175,6 +175,7 @@ export async function withdrawFromIdentity({
 	amountToWithdraw,
 	withdrawTo,
 	getFeesOnly,
+	sweepTxns,
 }) {
 	const toWithdraw = parseUnits(amountToWithdraw, 18)
 	const fees = bigNumberify(feeAmountTransfer).mul(bigNumberify('2'))
@@ -214,7 +215,7 @@ export async function withdrawFromIdentity({
 		data: ERC20.functions.transfer.encode([withdrawTo, tokenAmount]),
 	}
 
-	const txns = [tx1, tx2]
+	const txns = [...sweepTxns, tx1, tx2]
 	const signatures = await getMultipleTxSignatures({ txns, signer })
 
 	const data = {

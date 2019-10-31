@@ -244,6 +244,7 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 				identityBalanceDai,
 				totalIdentityBalanceDai,
 			} = account.stats.formatteds
+			let sweepTxns
 			if (
 				amountToWithdraw > parseFloat(identityBalanceDai) &&
 				amountToWithdraw < parseFloat(totalIdentityBalanceDai)
@@ -251,12 +252,16 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 				const amountToSweep =
 					parseFloat(this.props.identityAvailable) - identityBalanceDai
 
-				await sweepChannels({ account: this.props.account, amountToSweep })
+				sweepTxns = await sweepChannels({
+					account: this.props.account,
+					amountToSweep,
+				})
 			}
 			const result = await withdrawFromIdentity({
 				account,
 				amountToWithdraw,
 				withdrawTo,
+				sweepTxns,
 			})
 
 			addToast({
