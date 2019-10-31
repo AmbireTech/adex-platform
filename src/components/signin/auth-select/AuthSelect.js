@@ -26,12 +26,14 @@ const AuthSelect = ({ t, classes }) => {
 
 	useEffect(() => {
 		const allWallets = getAllWallets()
-		const wallets = allWallets.filter(w => w.authType !== 'legacy')
+		const wallets = allWallets.filter(
+			w => w.authType !== 'legacy' && w.name !== wallet.email
+		)
 		const hasLegacy = allWallets.length > wallets
 
 		setWallets(wallets)
 		setHasLegacyWallets(hasLegacy)
-	}, [])
+	}, [wallet])
 
 	return (
 		<Grid
