@@ -10,7 +10,7 @@ import { getAuthLogo } from 'helpers/logosHelpers'
 import Img from 'components/common/img/Img'
 import classnames from 'classnames'
 import { getAllWallets } from 'services/wallet/wallet'
-import { execute, resetIdentity, initIdentity } from 'actions'
+import { execute, initIdentity } from 'actions'
 import { selectAuth, selectAccount } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 
@@ -31,10 +31,6 @@ const AuthSelect = ({ t, classes }) => {
 
 		setWallets(wallets)
 		setHasLegacyWallets(hasLegacy)
-
-		// NOTE: reset identity if someone press backspace
-		// to go to this page
-		execute(resetIdentity())
 	}, [])
 
 	return (
@@ -69,7 +65,7 @@ const AuthSelect = ({ t, classes }) => {
 						color='primary'
 						fullWidth
 						onClick={() =>
-							initIdentity({ email: w.name, authType: w.authType })
+							execute(initIdentity({ email: w.name, authType: w.authType }))
 						}
 					>
 						{t('SIGN_IN_TO', { args: [w.name] })}
