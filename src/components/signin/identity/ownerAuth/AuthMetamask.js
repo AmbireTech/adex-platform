@@ -1,14 +1,16 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import Translate from 'components/translate/Translate'
 import METAMASK_DL_IMG from 'resources/download-metamask.png'
+import METAMASK_IMG from 'resources/metamask.png'
 import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
 import AuthHoc from './AuthHoc'
 import { AUTH_TYPES } from 'constants/misc'
 import { AddrItem } from './AuthCommon'
+import { addToast, execute } from 'actions'
 import {
 	ContentBox,
 	ContentBody,
@@ -18,110 +20,163 @@ import {
 import Helper from 'helpers/miscHelpers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { getEthers } from 'services/smart-contracts/ethers'
+import { getEthers, getEthereumProvider } from 'services/smart-contracts/ethers'
 import { getSigner } from 'services/smart-contracts/actions/ethers'
 import { getAddressBalances } from 'services/smart-contracts/actions/stats'
+import Box from '@material-ui/core/Box'
 
-class AuthMetamask extends Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			method: '',
-			sideSelect: false,
-			address: null,
-			stats: null,
-			waitingMetamaskAction: false,
-			waitingAddrsData: false,
+function AuthMetamask(props) {
+	const [installingMetamask, setInstallingMetamask] = useState(false)
+	const [address, setAddress] = useState(null)
+	const [stats, setStats] = useState(null)
+	const [waitingMetamaskAction, setWaitingMetamaskAction] = useState(false)
+	const [waitingAddrsData, setWaitingAddrsData] = useState(false)
+	const { t, classes } = props
+	const isOpera =
+		!!window.opr || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0
+	const [isMetamaskEthereumProvider, setIsMetamaskEthereumProvider] = useState(
+		false
+	)
+
+	useEffect(() => {
+		const setEth = async () => {
+			const ethereumProvider = await getEthereumProvider()
+			setIsMetamaskEthereumProvider(
+				ethereumProvider === AUTH_TYPES.METAMASK.name
+			)
 		}
-	}
 
-	checkMetamask = async () => {
-		this.setState({ waitingAddrsData: true }, async () => {
-			try {
-				const authType = AUTH_TYPES.METAMASK.name
-				const { provider } = await getEthers(authType)
-				const wallet = {
-					authType: authType,
-				}
+		setEth()
+	}, [])
 
-				const metamaskSigner = await getSigner({ wallet, provider })
-				const address = await metamaskSigner.getAddress()
-				const stats = await getAddressBalances({
-					address: { address },
-					authType,
-				})
+	useEffect(() => {
+		if (installingMetamask) {
+			// Refreshes page after user comes back
+			// from installing Metamask
+			window.onfocus = () => {
+				window.location.reload()
+				setInstallingMetamask(false)
+			}
+		}
+	}, [installingMetamask])
 
-				this.setState({
-					address,
-					stats,
-					waitingAddrsData: false,
-				})
+	const checkMetamask = async () => {
+		setWaitingAddrsData(true)
+		try {
+			const authType = AUTH_TYPES.METAMASK.name
+			const { provider } = await getEthers(authType)
+			const wallet = {
+				authType: authType,
+			}
 
-				this.props.updateWallet({
-					address,
-					authType: AUTH_TYPES.METAMASK.name,
-					balanceEth: stats.balanceEth,
-					balanceDai: stats.balanceDai,
-					signType: AUTH_TYPES.METAMASK.signType,
-				})
-			} catch (err) {
-				console.error('Error: catch', err)
-				this.setState({ waitingMetamaskAction: false, waitingAddrsData: false })
-				this.props.actions.addToast({
+			const metamaskSigner = await getSigner({ wallet, provider })
+			const address = await metamaskSigner.getAddress()
+			const stats = await getAddressBalances({
+				address: { address },
+				authType,
+			})
+			setAddress(address)
+			setStats(stats)
+			setWaitingAddrsData(false)
+
+			props.updateWallet({
+				address,
+				authType: AUTH_TYPES.METAMASK.name,
+				balanceEth: stats.balanceEth,
+				balanceDai: stats.balanceDai,
+				signType: AUTH_TYPES.METAMASK.signType,
+			})
+		} catch (err) {
+			console.error('Error: catch', err)
+			setWaitingMetamaskAction(false)
+			setWaitingAddrsData(false)
+			execute(
+				addToast({
 					type: 'cancel',
 					action: 'X',
-					label: this.props.t('ERR_AUTH_METAMASK', {
+					label: t('ERR_AUTH_METAMASK', {
 						args: [Helper.getErrMsg(err)],
 					}),
 					timeout: 5000,
 				})
-			}
-		})
+			)
+		}
 	}
 
-	render() {
-		const { t, classes } = this.props
-		const { address, stats } = this.state
-
-		return (
-			<ContentBox className={classes.tabBox}>
-				{this.state.waitingMetamaskAction ? (
-					<ContentStickyTop>
-						<TopLoading msg={t('METAMASK_WAITING_ACTION')} />
-					</ContentStickyTop>
-				) : this.state.waitingAddrsData ? (
-					<TopLoading msg={t('METAMASK_WAITING_ADDR_INFO')} />
-				) : null}
-				<ContentBody>
-					<Typography paragraph variant='subheading'>
-						{t('METAMASK_INFO')}
-					</Typography>
-					<Typography paragraph>
-						<span
-							dangerouslySetInnerHTML={{
-								__html: t('METAMASK_BASIC_USAGE_INFO', {
-									args: [
-										{
-											component: (
-												<Anchor href='https://metamask.io/' target='_blank'>
-													https://metamask.io/
-												</Anchor>
-											),
-										},
-									],
-								}),
-							}}
-						/>
-					</Typography>
-					<Typography paragraph>
-						<Anchor href='https://metamask.io/' target='_blank'>
+	return (
+		<ContentBox className={classes.tabBox}>
+			{waitingMetamaskAction ? (
+				<ContentStickyTop>
+					<TopLoading msg={t('METAMASK_WAITING_ACTION')} />
+				</ContentStickyTop>
+			) : waitingAddrsData ? (
+				<TopLoading msg={t('METAMASK_WAITING_ADDR_INFO')} />
+			) : null}
+			<ContentBody>
+				<Typography paragraph variant='subheading'>
+					{t('METAMASK_INFO')}
+				</Typography>
+				<Box
+					display='flex'
+					flexDirection='column'
+					alignItems='center'
+					justifyContent='center'
+					width={1}
+				>
+					{!isMetamaskEthereumProvider ? (
+						<React.Fragment>
+							<Typography paragraph>
+								<span
+									dangerouslySetInnerHTML={{
+										__html: t('METAMASK_BASIC_USAGE_INFO', {
+											args: [
+												{
+													component: (
+														<Anchor
+															href={
+																isOpera
+																	? 'https://chrome.google.com/webstore/detail/nkbihfbeogaeaoehlefnkodbefgpgknn'
+																	: 'https://metamask.io/'
+															}
+															target='_blank'
+														>
+															https://metamask.io/
+														</Anchor>
+													),
+												},
+											],
+										}),
+									}}
+								/>
+							</Typography>
+							<Typography paragraph>
+								<Anchor
+									href={
+										isOpera
+											? 'https://chrome.google.com/webstore/detail/nkbihfbeogaeaoehlefnkodbefgpgknn'
+											: 'https://metamask.io/'
+									}
+									target='_blank'
+									onClick={() => setInstallingMetamask(true)}
+								>
+									<Img
+										src={METAMASK_DL_IMG}
+										alt={'Downlad metamask'}
+										className={classes.dlBtnImg}
+									/>
+								</Anchor>
+							</Typography>
+						</React.Fragment>
+					) : (
+						<Typography paragraph>
 							<Img
-								src={METAMASK_DL_IMG}
+								src={METAMASK_IMG}
 								alt={'Downlad metamask'}
 								className={classes.dlBtnImg}
 							/>
-						</Anchor>
-					</Typography>
+						</Typography>
+					)}
+
 					{address ? (
 						<div className={classes.metamaskLAbel}>
 							{stats ? (
@@ -135,24 +190,23 @@ class AuthMetamask extends Component {
 								t('AUTH_WITH_METAMASK_LABEL', { args: [address] })
 							)}
 						</div>
-					) : (
+					) : isMetamaskEthereumProvider ? (
 						<Button
-							onClick={this.checkMetamask}
+							onClick={checkMetamask}
 							variant='contained'
 							color='primary'
-							disabled={this.state.waitingAddrsData}
+							disabled={waitingAddrsData}
 						>
 							{t('AUTH_CONNECT_WITH_METAMASK')}
 						</Button>
-					)}
-				</ContentBody>
-			</ContentBox>
-		)
-	}
+					) : null}
+				</Box>
+			</ContentBody>
+		</ContentBox>
+	)
 }
 
 AuthMetamask.propTypes = {
-	actions: PropTypes.object.isRequired,
 	updateWallet: PropTypes.func.isRequired,
 	t: PropTypes.func.isRequired,
 	classes: PropTypes.object.isRequired,

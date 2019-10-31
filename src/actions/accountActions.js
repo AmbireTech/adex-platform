@@ -12,8 +12,15 @@ import {
 	getOutstandingBalance,
 } from 'services/smart-contracts/actions/stats'
 import { addToast, confirmAction } from './uiActions'
-import { getEthers } from 'services/smart-contracts/ethers'
-import { AUTH_TYPES } from 'constants/misc'
+import {
+	getEthers,
+	getEthereumProvider,
+	ethereumSelectedAddress,
+	ethereumNetworkId,
+} from 'services/smart-contracts/ethers'
+import { AUTH_TYPES, ETHEREUM_NETWORKS } from 'constants/misc'
+import { selectAccount, selectIdentity, selectAuth } from 'selectors'
+import { logOut } from 'services/store-data/auth'
 
 const UPDATE_SETTINGS_INTERVAL = 24 * 60 * 60 * 1000 // 1 hour
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -258,15 +265,14 @@ async function getNetworkId() {
 	return networkId
 }
 
-// TEMP
-const networks = {
-	1: { name: 'Mainnet', for: 'production' },
-	5: { name: 'Goerli', for: 'development' },
-	production: { name: 'Mainnet', for: 'production' },
-	development: { name: 'Goerli', for: 'development' },
+async function getNetworkData({ id }) {
+	const networkId = id || (await getNetworkId())
+	const network = ETHEREUM_NETWORKS[networkId] || {}
+
+	return network
 }
 
-export function metamaskNetworkCheck({ id } = {}) {
+export function onMetamaskNetworkChange({ id } = {}) {
 	return async function(dispatch, getState) {
 		const { persist, router } = getState()
 		const { location } = router
@@ -274,27 +280,80 @@ export function metamaskNetworkCheck({ id } = {}) {
 		const { search } = location
 		const { authType } = account.wallet
 
-		const networkId = id || (await getNetworkId())
 		const isMetamaskMatters =
-			authType === AUTH_TYPES.METAMASK.name ||
-			(!authType && search === '?metamask')
+			(authType === AUTH_TYPES.METAMASK.name ||
+				(!authType && search === '?metamask')) &&
+			(await getEthereumProvider()) === AUTH_TYPES.METAMASK.name
 
-		const network = networks[networkId] || {}
-
-		if (process.env.NODE_ENV !== network.for && isMetamaskMatters) {
+		if (
+			isMetamaskMatters &&
+			process.env.NODE_ENV !== (await getNetworkData({ id })).for
+		) {
 			confirmAction(
 				null,
 				null,
 				{
 					title: translate('WARNING'),
 					text: translate('WATNING_METAMASK_INVALID_NETWORK', {
-						args: [networks[process.env.NODE_ENV].name],
+						args: [ETHEREUM_NETWORKS[process.env.NODE_ENV].name],
 					}),
 				},
 				true
 			)(dispatch)
 		} else {
 			confirmAction(null, null, {}, true, false)(dispatch)
+		}
+	}
+}
+
+export const onMetamaskAccountChange = accountAddress => {
+	return async function(_, getState) {
+		const state = getState()
+		const hasAuth = selectAuth(state)
+		const account = selectAccount(state)
+		const { authType, address } = account.wallet
+
+		if (
+			hasAuth &&
+			authType === AUTH_TYPES.METAMASK.name &&
+			(!accountAddress || address !== accountAddress)
+		) {
+			logOut()
+		} else if (!hasAuth) {
+			const identity = selectIdentity(state)
+			const { identityContractOwner } = identity
+			logOut(!identityContractOwner || identityContractOwner === accountAddress)
+		}
+	}
+}
+
+export function metamaskAccountCheck() {
+	return async function(_, getState) {
+		const address = await ethereumSelectedAddress()
+		onMetamaskAccountChange(address)(_, getState)
+	}
+}
+
+export function metamaskNetworkCheck() {
+	return async function(_, getState) {
+		const id = await ethereumNetworkId()
+		onMetamaskNetworkChange({ id })(_, getState)
+	}
+}
+
+export function metamaskChecks() {
+	return async function(_, getState) {
+		metamaskNetworkCheck()(_, getState)
+		metamaskAccountCheck()(_, getState)
+		if (window.ethereum) {
+			window.ethereum.on('accountsChanged', accounts => {
+				console.log('acc changed', accounts[0])
+				onMetamaskAccountChange(accounts[0])(_, getState)
+			})
+			window.ethereum.on('networkChanged', network => {
+				console.log('networkChanged', network)
+				onMetamaskNetworkChange({ id: network })(_, getState)
+			})
 		}
 	}
 }
