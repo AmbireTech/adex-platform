@@ -16,6 +16,8 @@ import {
 } from 'services/smart-contracts/actions/identity'
 import { addDataToWallet } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
+import { sweepChannels } from 'services/smart-contracts/actions/core'
+
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
 	return function(dispatch) {
@@ -238,7 +240,19 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 	return async function(dispatch, getState) {
 		try {
 			const { account } = getState().persist
+			const {
+				identityBalanceDai,
+				totalIdentityBalanceDai,
+			} = account.stats.formatteds
+			if (
+				amountToWithdraw > parseFloat(identityBalanceDai) &&
+				amountToWithdraw < parseFloat(totalIdentityBalanceDai)
+			) {
+				const amountToSweep =
+					parseFloat(this.props.identityAvailable) - identityBalanceDai
 
+				await sweepChannels({ account: this.props.account, amountToSweep })
+			}
 			const result = await withdrawFromIdentity({
 				account,
 				amountToWithdraw,

@@ -8,12 +8,6 @@ import NewTransactionHoc from './TransactionHoc'
 import TextField from '@material-ui/core/TextField'
 import { validateNumber } from 'helpers/validators'
 import { InputLoading } from 'components/common/spinners/'
-import { sweepChannels } from 'services/smart-contracts/actions/core'
-import {
-	getAllChannelsForIdentity,
-	getAccountStats,
-	getOutstandingBalance,
-} from 'services/smart-contracts/actions/stats'
 
 class WithdrawFromIdentity extends Component {
 	componentDidMount() {
@@ -38,25 +32,12 @@ class WithdrawFromIdentity extends Component {
 		let msg = 'ERR_INVALID_AMOUNT_VALUE'
 		let errMsgArgs = []
 		let amount = parseFloat(numStr)
-		const {
-			identityBalanceDai = 0,
-			totalIdentityBalanceDai,
-		} = this.props.account.stats.formatted
-
 		if (isValid && amount > parseFloat(this.props.identityAvailable)) {
 			isValid = false
 			msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'
 			errMsgArgs = [this.props.identityAvailable, 'DAI']
 		}
-		if (
-			amount > parseFloat(identityBalanceDai) &&
-			amount < parseFloat(totalIdentityBalanceDai)
-		) {
-			const amountToSweep =
-				parseFloat(this.props.identityAvailable) - identityBalanceDai
 
-			sweepChannels({ account: this.props.account, amountToSweep })
-		}
 		this.props.validate('withdrawAmount', {
 			isValid: isValid,
 			err: { msg: msg, args: errMsgArgs },
