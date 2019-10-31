@@ -66,6 +66,13 @@ export const NETWORK_STATUS = {
 	2: 'failed',
 }
 
+export const ETHEREUM_NETWORKS = {
+	1: { name: 'Mainnet', for: 'production' },
+	5: { name: 'Goerli', for: 'development' },
+	production: { name: 'Mainnet', for: 'production' },
+	development: { name: 'Goerli', for: 'development' },
+}
+
 export const SORT_PROPERTIES_CAMPAIGN = [
 	{ value: 'created', label: 'Created' },
 	{ value: 'status.name', label: 'Status' },
@@ -119,3 +126,6 @@ export const VALIDATOR_ANALYTICS_TIMEFRAMES = [
 	// { label: 'LABEL_MONTH', value: 'month' },
 	// { label: 'LABEL_YEAR', value: 'year' },
 ]
+
+export const MOON_GRAVITY_ACCELERATION = 1.625
+export const MOON_TO_EARTH_WEIGHT = 0.166

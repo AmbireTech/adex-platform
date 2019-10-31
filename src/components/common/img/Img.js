@@ -17,7 +17,7 @@ import Translate from 'components/translate/Translate'
 import { validations, helpers } from 'adex-models'
 import { isVideoMedia } from 'helpers/mediaHelpers.js'
 
-const MAX_IMG_LOAD_TIME = 3000
+const MAX_IMG_LOAD_TIME = 7000
 class Img extends Component {
 	constructor(props) {
 		super(props)
@@ -205,7 +205,14 @@ class Img extends Component {
 							onDragStart={event => event.preventDefault() /*Firefox*/}
 						/>
 					) : (
-						<video src={videoSrc} controls></video>
+						<video
+							src={videoSrc}
+							autoPlay='true'
+							muted='true'
+							loop='true'
+							controls
+							className={classnames(classes.dialogImage, classes.imgLoading)}
+						></video>
 					)}
 				</DialogContent>
 				<DialogActions>
@@ -240,13 +247,24 @@ class Img extends Component {
 						onClick={
 							fullScreenOnClick &&
 							(() => {
-								console.log('click')
 								this.handleToggle()
 							})
 						}
 					/>
 				) : (
-					<video src={videoSrc} controls></video>
+					<video
+						src={videoSrc}
+						className={classnames(classes.imgLoading, className, classes.img)}
+						autoPlay='true'
+						muted='true'
+						loop='true'
+						onClick={
+							fullScreenOnClick &&
+							(() => {
+								this.handleToggle()
+							})
+						}
+					></video>
 				)}
 				{allowFullscreen && this.fullScreenBtn()}
 				{fullScreenOnClick && this.renderFullscreenDialog()}

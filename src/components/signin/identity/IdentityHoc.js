@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import actions from 'actions'
+import actions, { execute } from 'actions'
+import { push } from 'connected-react-router'
 
 export default function IdentityHoc(Decorated) {
 	class IdentityForm extends Component {
@@ -21,9 +22,9 @@ export default function IdentityHoc(Decorated) {
 		}
 
 		componentDidUpdate = () => {
-			const { account, history } = this.props
-			if (!!history && account.wallet.authSig) {
-				history.push('/side-select')
+			const { account } = this.props
+			if (account.wallet.authSig) {
+				execute(push('/side-select'))
 			}
 		}
 
@@ -58,7 +59,9 @@ export default function IdentityHoc(Decorated) {
 		}
 
 		cancel = () => {
-			this.props.history.push('/')
+			const { resetIdentity } = this.props.actions
+			resetIdentity()
+			execute(push('/'))
 		}
 
 		render() {

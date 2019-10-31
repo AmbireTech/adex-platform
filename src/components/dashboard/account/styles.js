@@ -17,5 +17,8 @@ export const styles = theme => {
 		advancedList: {
 			width: '100%',
 		},
+		extendedIcon: {
+			marginRight: theme.spacing(1),
+		},
 	}
 }

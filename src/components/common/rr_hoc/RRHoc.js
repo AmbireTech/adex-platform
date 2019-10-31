@@ -12,7 +12,7 @@ export const withReactRouterLink = Component => {
 			event.preventDefault()
 			const { to, onClick } = this.props
 
-			if (typeof onClick === 'function') {
+			if (onClick && typeof onClick === 'function') {
 				onClick()
 			}
 
@@ -32,6 +32,7 @@ export const withReactRouterLink = Component => {
 				location,
 				history,
 				staticContext,
+				onClick,
 				...rest
 			} = this.props
 			const toLocation = this.resolveToLocation(to)
