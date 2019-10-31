@@ -97,6 +97,16 @@ function getClientEnvironment(publicUrl) {
 				ADVIEW_URL: process.env.ADVIEW_URL,
 			}
 		)
+
+	const notSetEnvVars = Object.keys(raw).filter(key => {
+		const value = raw[key]
+		return value === undefined
+	})
+
+	if (notSetEnvVars.length > 0) {
+		throw new Error(`process.env missing values: ${notSetEnvVars.join(', ')} `)
+	}
+
 	// Stringify all values so we can feed into Webpack DefinePlugin
 	const stringified = {
 		'process.env': Object.keys(raw).reduce((env, key) => {

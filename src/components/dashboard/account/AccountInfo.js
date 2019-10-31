@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { updateNav, addToast, updateAccountStats, execute } from 'actions'
-import actions from 'actions'
 import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import {
@@ -51,15 +50,18 @@ function AccountInfo({ t }) {
 			'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj))
 		return data
 	}
-	const [walletJsonData, setWalletJsonData] = useState(localWalletDownloadHref)
+	const walletJsonData = localWalletDownloadHref()
 	const [expanded, setExpanded] = useState(false)
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 
 	useEffect(() => {
-		execute(updateNav('navTitle', t('ACCOUNT')))
-		updateAccountStats(account)
+		execute(updateAccountStats())
 	}, [])
+
+	useEffect(() => {
+		execute(updateNav('navTitle', t('ACCOUNT')))
+	}, [t])
 
 	const displayRampWidget = () => {
 		const widget = new RampInstantSDK({
@@ -187,7 +189,7 @@ function AccountInfo({ t }) {
 								onClick={() => displayRampWidget()}
 							>
 								<CreditCardIcon className={classes.extendedIcon} />
-								{t('TOP_UP_IDENTITY')}
+								{t('TOP_UP_IDENTITY_EUR')}
 							</Button>
 						</Box>
 						<Box className={classes.itemActions}>
@@ -200,7 +202,6 @@ function AccountInfo({ t }) {
 									token='DAI'
 									className={classes.actionBtn}
 									size='small'
-									actions={actions}
 								/>
 							)}
 						</Box>
@@ -232,7 +233,6 @@ function AccountInfo({ t }) {
 										token='DAI'
 										className={classes.actionBtn}
 										size='small'
-										actions={actions}
 										identityAvailable={identityBalanceDai}
 									/>
 								</div>

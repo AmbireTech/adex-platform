@@ -39,7 +39,7 @@ export const styles = theme => {
 			paddingTop: theme.spacing(0.5),
 			paddingBottom: theme.spacing(0.5),
 			'&:last-child': {
-				paddingRight: 100,
+				// paddingRight: 100,
 				paddingTop: theme.spacing(1.5),
 				paddingBottom: theme.spacing(1.5),
 				paddingLeft: theme.spacing(1.5),
