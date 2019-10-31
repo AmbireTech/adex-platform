@@ -7,6 +7,7 @@ import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
+import Anchor from 'components/common/anchor/anchor'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import {
@@ -15,6 +16,8 @@ import {
 	validQuickAccountCoupon,
 } from 'helpers/validators'
 import { checkCoupon } from 'services/adex-relayer/actions'
+
+const TOS_LINK = 'https://www.adex.network/tos/'
 
 class GrantInfo extends Component {
 	componentDidMount() {
@@ -276,7 +279,14 @@ class GrantInfo extends Component {
 										color='primary'
 									/>
 								}
-								label={t('TOS_CHECK')}
+								label={
+									<span>
+										{t('ACCEPT_TOS_CHECK')}
+										<Anchor href={TOS_LINK} target='_blank'>
+											{` ${t('TOS_CHECK')}`}
+										</Anchor>
+									</span>
+								}
 							/>
 							{tosCheck && !!tosCheck.dirty && (
 								<FormHelperText>{tosCheck.errMsg}</FormHelperText>
