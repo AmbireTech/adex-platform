@@ -272,11 +272,19 @@ export function openCampaign({ campaign, account }) {
 			const amountToSweep =
 				parseFloat(campaign.depositAmount) -
 				parseFloat(account.stats.formatted.identityBalanceDai)
-
+			let sweepTxns
 			if (parseFloat(campaign.depositAmount) > parseFloat(identityBalanceDai)) {
-				await sweepChannels({ feeTokenAddr, account, amountToSweep })
+				sweepTxns = await sweepChannels({
+					feeTokenAddr,
+					account,
+					amountToSweep,
+				})
 			}
-			const { readyCampaign } = await openChannel({ campaign, account })
+			const { readyCampaign } = await openChannel({
+				campaign,
+				account,
+				sweepTxns,
+			})
 
 			dispatch({
 				type: types.ADD_ITEM,

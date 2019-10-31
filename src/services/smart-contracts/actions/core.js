@@ -216,6 +216,14 @@ export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
 				? getExpiredToWithdraw(c)
 				: c.status.lastApprovedBalances[identityAddr]
 
+		const data =
+			c.status.name === 'Expired'
+				? Core.functions.channelWithdrawExpired.encode([
+						identityAddr,
+						toWithdraw,
+				  ])
+				: Core.functions.channelWithdraw.encode([identityAddr, toWithdraw])
+
 		return {
 			identityContract: identityAddr,
 			nonce: initialNonce + i,
@@ -223,26 +231,14 @@ export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
 			to: identityAddr,
 			feeTokenAddr: feeTokenAddr || Dai.address,
 			feeAmount: feeAmountTransfer, // Same fee as withdrawFromIdentity
-			data: ERC20.functions.transfer.encode([identityAddr, toWithdraw]),
+			data,
 		}
 	})
 
-	const signer = await getSigner({ wallet, provider })
-
-	const signatures = await getMultipleTxSignatures({ txns, signer })
-	const data = {
-		txnsRaw: txns,
-		signatures,
-		identityAddr,
-	}
-
-	const result = await executeTx(data)
-	return {
-		result,
-	}
+	return txns
 }
 
-export async function openChannel({ campaign, account }) {
+export async function openChannel({ campaign, account, sweepTxns }) {
 	const { wallet, identity } = account
 	const { provider, AdExCore, Dai, Identity } = await getEthers(wallet.authType)
 
@@ -281,7 +277,7 @@ export async function openChannel({ campaign, account }) {
 		data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
 	}
 
-	const txns = [tx1, tx2]
+	const txns = [...sweepTxns, tx1, tx2]
 	const signatures = await getMultipleTxSignatures({ txns, signer })
 
 	const data = {
