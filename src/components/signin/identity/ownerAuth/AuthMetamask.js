@@ -20,7 +20,7 @@ import {
 import Helper from 'helpers/miscHelpers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { getEthers } from 'services/smart-contracts/ethers'
+import { getEthers, getEthereumProvider } from 'services/smart-contracts/ethers'
 import { getSigner } from 'services/smart-contracts/actions/ethers'
 import { getAddressBalances } from 'services/smart-contracts/actions/stats'
 import Box from '@material-ui/core/Box'
@@ -34,6 +34,20 @@ function AuthMetamask(props) {
 	const { t, classes } = props
 	const isOpera =
 		!!window.opr || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0
+	const [isMetamaskEthereumProvider, setIsMetamaskEthereumProvider] = useState(
+		false
+	)
+
+	useEffect(() => {
+		const setEth = async () => {
+			const ethereumProvider = await getEthereumProvider()
+			setIsMetamaskEthereumProvider(
+				ethereumProvider === AUTH_TYPES.METAMASK.name
+			)
+		}
+
+		setEth()
+	}, [])
 
 	useEffect(() => {
 		if (installingMetamask) {
@@ -109,7 +123,7 @@ function AuthMetamask(props) {
 					justifyContent='center'
 					width={1}
 				>
-					{!window.ethereum || !window.ethereum.isMetaMask ? (
+					{!isMetamaskEthereumProvider ? (
 						<React.Fragment>
 							<Typography paragraph>
 								<span
@@ -176,7 +190,7 @@ function AuthMetamask(props) {
 								t('AUTH_WITH_METAMASK_LABEL', { args: [address] })
 							)}
 						</div>
-					) : window.ethereum && window.ethereum.isMetaMask ? (
+					) : isMetamaskEthereumProvider ? (
 						<Button
 							onClick={checkMetamask}
 							variant='contained'
