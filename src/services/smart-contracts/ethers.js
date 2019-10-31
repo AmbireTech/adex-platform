@@ -73,26 +73,12 @@ const getInjectedWeb3 = async () => {
 		}
 	}
 	// Legacy dapp browsers...
+	// TODO: we just have to throw or show notification
+	// At the moment if it throws it will show error toast but not always.
 	else if (web3) {
-		provider = new ethers.providers.Web3Provider(window.web3.currentProvider)
-		adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
-		dai = new ethers.Contract(DAI.address, DAI.abi, provider)
-		identityFactory = new ethers.Contract(
-			IdentityFactory.address,
-			IdentityFactory.abi,
-			provider
-		)
-
-		console.log('Injected legacy web3 detected.')
-		const results = {
-			provider: provider,
-			AdExCore: adexCore,
-			Identity: Identity,
-			Dai: dai,
-			IdentityFactory: identityFactory,
-		}
-
-		return results
+		console.error('Legacy web3 browser detected. It is not supported!')
+		console.error('Fallback to local web3 provider')
+		return await localWeb3()
 	} else {
 		console.error('Non-Ethereum browser detected.')
 		console.error('Fallback to local web3 provider')
@@ -136,4 +122,22 @@ const ethereumNetworkId = async () => {
 	}
 }
 
-export { getEthers, ethereumSelectedAddress, ethereumNetworkId }
+const getEthereumProvider = async () => {
+	const { ethereum } = await loadInjectedWeb3.then()
+	if (!ethereum) {
+		return null
+	}
+
+	if (ethereum.isMetaMask) {
+		return AUTH_TYPES.METAMASK.name
+	}
+
+	return null
+}
+
+export {
+	getEthers,
+	ethereumSelectedAddress,
+	ethereumNetworkId,
+	getEthereumProvider,
+}
