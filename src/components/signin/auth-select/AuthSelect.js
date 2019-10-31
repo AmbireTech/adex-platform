@@ -84,21 +84,21 @@ const AuthSelect = ({ t, classes }) => {
 					{t('CREATE_GRANT_ACCOUNT')}
 				</RRButton>
 			</Grid>
-			{hasLegacyWallets && (
-				<Grid item xs={12}>
-					<RRButton
-						variant='contained'
-						to='/login/grant'
-						size='large'
-						color='secondary'
-						fullWidth
-						onClick={logOut}
-					>
-						{t('LOGIN_GRANT_ACCOUNT')}
-					</RRButton>
-				</Grid>
-			)}
+			{/* {hasLegacyWallets && ( */}
 			<Grid item xs={12}>
+				<RRButton
+					variant='contained'
+					to='/login/grant'
+					size='large'
+					color='secondary'
+					fullWidth
+					onClick={logOut}
+				>
+					{t('LOGIN_GRANT_ACCOUNT')}
+				</RRButton>
+			</Grid>
+			{/* )} */}
+			{/* <Grid item xs={12}>
 				<RRButton
 					variant='contained'
 					to='/identity/quick'
@@ -108,7 +108,7 @@ const AuthSelect = ({ t, classes }) => {
 				>
 					{t('CREATE_QUICK_ACCOUNT')}
 				</RRButton>
-			</Grid>
+			</Grid> */}
 			<Grid item xs={12}>
 				<RRButton
 					variant='contained'
@@ -145,7 +145,7 @@ const AuthSelect = ({ t, classes }) => {
 					{/* {t('TREZOR')} */}
 				</RRButton>
 			</Grid>
-			<Grid item xs={12}>
+			{/* <Grid item xs={12}>
 				<RRButton
 					variant='link'
 					to='/recover/quick'
@@ -155,7 +155,7 @@ const AuthSelect = ({ t, classes }) => {
 				>
 					{t('RECOVER_QUICK_ACCOUNT')}
 				</RRButton>
-			</Grid>
+			</Grid> */}
 		</Grid>
 	)
 }
