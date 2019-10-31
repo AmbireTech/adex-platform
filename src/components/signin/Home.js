@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import Img from 'components/common/img/Img'
-import { execute, resetIdentity } from 'actions'
 import ADEX_LOGO from 'resources/adex-logo-txt-sm.svg'
 import SNT_VITALIK_BUTERIN_RIDES_EDDIE_WHILE_PUMPING_IT_UP from 'resources/eddie/eddie-20.png'
 
@@ -25,10 +24,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function Home({ t, ...rest }) {
 	const classes = useStyles()
-
-	useEffect(() => {
-		execute(resetIdentity())
-	}, [])
 
 	return (
 		<Box width={1} height={1} className={classes.root} alignItems='center'>
