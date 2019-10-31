@@ -14,6 +14,7 @@ import {
 import { addToast, confirmAction } from './uiActions'
 import {
 	getEthers,
+	getEthereumProvider,
 	ethereumSelectedAddress,
 	ethereumNetworkId,
 } from 'services/smart-contracts/ethers'
@@ -280,8 +281,9 @@ export function onMetamaskNetworkChange({ id } = {}) {
 		const { authType } = account.wallet
 
 		const isMetamaskMatters =
-			authType === AUTH_TYPES.METAMASK.name ||
-			(!authType && search === '?metamask')
+			(authType === AUTH_TYPES.METAMASK.name ||
+				(!authType && search === '?metamask')) &&
+			(await getEthereumProvider()) === AUTH_TYPES.METAMASK.name
 
 		if (
 			isMetamaskMatters &&

@@ -68,5 +68,14 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+		<script>
+			const moveChatToBack = setInterval(function() {
+				const chat = document.querySelector('#tidio-chat iframe')
+				if (chat) {
+					chat.style.zIndex = 1
+					clearInterval(moveChatToBack)
+				}
+			}, 100)
+		</script>
 	</body>
 </html>
