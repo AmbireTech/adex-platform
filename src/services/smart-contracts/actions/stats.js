@@ -106,17 +106,16 @@ async function getAllChannels() {
 	const channels = await getAllCampaigns(true)
 	return Promise.all(
 		channels.map(async channel => {
-			const { lastApproved } = await lastApprovedState({ campaign: channel })
+			const { lastApprovedBalances } = channel.status || {}
 
-			if (lastApproved) {
-				const balancesTree = lastApproved.newState.msg.balances
-				const allLeafs = Object.keys(balancesTree).map(k =>
-					Channel.getBalanceLeaf(k, balancesTree[k])
+			if (lastApprovedBalances) {
+				const allLeafs = Object.entries(lastApprovedBalances).map(([k, v]) =>
+					Channel.getBalanceLeaf(k, v)
 				)
 				const mTree = new MerkleTree(allLeafs)
-				return { lastApproved, mTree, channel }
+				return { lastApprovedBalances, mTree, channel }
 			} else {
-				return { lastApproved: null, mTree: null, channel }
+				return { lastApprovedBalances: null, mTree: null, channel }
 			}
 		})
 	)
@@ -125,12 +124,12 @@ async function getAllChannels() {
 async function getAllChannelsWhereHasBalance(allActive, addr) {
 	return allActive
 		.filter(
-			({ lastApproved }) =>
-				lastApproved && !!lastApproved.newState.msg.balances[addr]
+			({ lastApprovedBalances }) =>
+				lastApprovedBalances && !!lastApprovedBalances[addr]
 		)
-		.map(({ channel, lastApproved }) => ({
+		.map(({ channel, lastApprovedBalances }) => ({
 			channel,
-			balance: lastApproved.newState.msg.balances[addr],
+			balance: lastApprovedBalances[addr],
 		}))
 }
 

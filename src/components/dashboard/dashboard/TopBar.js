@@ -1,8 +1,5 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
+import React from 'react'
+import { useSelector } from 'react-redux'
 // import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import ButtonMenu from 'components/common/button_menu/ButtonMenuMui'
 import Translate from 'components/translate/Translate'
@@ -18,133 +15,109 @@ import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
 import Icon from '@material-ui/core/Icon'
 
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import MenuItem from '@material-ui/core/MenuItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import { LoadingSection } from 'components/common/spinners'
+import { selectNavTitle, selectAccount } from 'selectors'
 import { styles } from './styles'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
+const useStyles = makeStyles(styles)
 
-class TopNav extends Component {
-	state = {
-		auth: true,
-	}
+function TopNav({ handleDrawerToggle, side, t }) {
+	const classes = useStyles()
+	const navTitle = useSelector(selectNavTitle)
+	const account = useSelector(selectAccount)
+	const { totalIdentityBalanceDai } = account.stats.formatted || {}
+	const imgSrc = getAuthLogo(account.wallet.authType)
+	const btnMenueLabel =
+		account.wallet.authType === 'demo'
+			? t('DEMO_MODE')
+			: account.email || account.wallet.address || t('NOT_LOGGED')
 
-	render() {
-		const {
-			t,
-			handleDrawerToggle,
-			account,
-			side,
-			navTitle,
-			classes,
-		} = this.props
-		let imgSrc = getAuthLogo(account.wallet.authType)
+	return (
+		<AppBar className={classes.appBar} position='sticky'>
+			<Toolbar className={classes.toolbar}>
+				<div className={classes.flexRow}>
+					<IconButton
+						color='inherit'
+						aria-label='open drawer'
+						onClick={handleDrawerToggle}
+						className={classnames(classes.navIconHide)}
+					>
+						<Icon>menu</Icon>
+					</IconButton>
 
-		const btnMenueLabel =
-			account.wallet.authType === 'demo'
-				? t('DEMO_MODE')
-				: account.email || account.wallet.address || t('NOT_LOGGED')
-
-		return (
-			<AppBar className={classes.appBar} position='sticky'>
-				<Toolbar className={classes.toolbar}>
-					<div className={classes.flexRow}>
-						<IconButton
-							color='inherit'
-							aria-label='open drawer'
-							onClick={handleDrawerToggle}
-							className={classnames(classes.navIconHide)}
-						>
-							<Icon>menu</Icon>
-						</IconButton>
-
-						{/* <AdexIconTxt
+					{/* <AdexIconTxt
               className={classes.icon}
             /> */}
-						<div className={classnames(classes.flex, classes.toolbarControls)}>
-							{/* <Navigation type='horizontal' className={theme.rightNavigation}> */}
-							{/* At the moment we use translations only for proper items properties display names */}
-							{/* <ChangeLang /> */}
-							<ButtonMenu
-								leftIconSrc={imgSrc}
-								icon={<ExpandMoreIcon />}
-								label={btnMenueLabel}
-								active={true}
-								iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
+					<div className={classnames(classes.flex, classes.toolbarControls)}>
+						{/* <Navigation type='horizontal' className={theme.rightNavigation}> */}
+						{/* At the moment we use translations only for proper items properties display names */}
+						{/* <ChangeLang /> */}
+						<ButtonMenu
+							leftIconSrc={imgSrc}
+							icon={<ExpandMoreIcon />}
+							label={btnMenueLabel}
+							active={true}
+							iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
+						>
+							<RRMenuItem
+								value='account'
+								to={{ pathname: '/dashboard/' + side + '/account' }}
+								caption={t('ACCOUNT')}
 							>
-								<RRMenuItem
-									value='account'
-									to={{ pathname: '/dashboard/' + side + '/account' }}
-									caption={t('ACCOUNT')}
-								>
-									<ListItemIcon>
-										<Icon>account_box</Icon>
-									</ListItemIcon>
-									<ListItemText
-										classes={{ primary: classes.primary }}
-										primary={t('ACCOUNT')}
-									/>
-								</RRMenuItem>
-								{/* <MenuDivider /> */}
-								<MenuItem
-									value='logout'
-									onClick={() => {
-										logOut()
-									}}
-								>
-									<ListItemIcon>
-										<Icon>exit_to_app</Icon>
-									</ListItemIcon>
-									<ListItemText
-										classes={{ primary: classes.primary }}
-										primary={t('LOGOUT')}
-									/>
-								</MenuItem>
-							</ButtonMenu>
-						</div>
-					</div>
-					<div className={classes.flexRow}>
-						<div className={classnames(classes.flex, classes.toolbarTitle)}>
-							<Typography
-								variant='subtitle1'
-								color='inherit'
-								className={classes.flex}
-								noWrap
+								<ListItemIcon>
+									<Icon>account_box</Icon>
+								</ListItemIcon>
+								<ListItemText
+									classes={{ primary: classes.primary }}
+									primary={t('ACCOUNT')}
+								/>
+							</RRMenuItem>
+							{/* <MenuDivider /> */}
+							<MenuItem
+								value='logout'
+								onClick={() => {
+									logOut()
+								}}
 							>
-								{t(navTitle)}
-							</Typography>
-						</div>
+								<ListItemIcon>
+									<Icon>exit_to_app</Icon>
+								</ListItemIcon>
+								<ListItemText
+									classes={{ primary: classes.primary }}
+									primary={t('LOGOUT')}
+								/>
+							</MenuItem>
+						</ButtonMenu>
 					</div>
-				</Toolbar>
-			</AppBar>
-		)
-	}
+				</div>
+				<div className={classes.flexRow}>
+					<div className={classnames(classes.flex, classes.toolbarTitle)}>
+						<Typography
+							variant='subtitle1'
+							color='inherit'
+							className={classes.flex}
+							noWrap
+						>
+							{t(navTitle)}
+						</Typography>
+						<LoadingSection
+							loading={
+								!totalIdentityBalanceDai && totalIdentityBalanceDai !== 0
+							}
+						>
+							<ListItemText primary={`${totalIdentityBalanceDai || 0} DAI`} />
+						</LoadingSection>
+					</div>
+				</div>
+			</Toolbar>
+		</AppBar>
+	)
 }
 
-TopNav.propTypes = {
-	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
-}
-
-function mapStateToProps(state) {
-	const persist = state.persist
-	const memory = state.memory
-	return {
-		account: persist.account,
-		navTitle: memory.nav.navTitle || '',
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch),
-	}
-}
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(Translate(withStyles(styles)(TopNav)))
+export default Translate(TopNav)

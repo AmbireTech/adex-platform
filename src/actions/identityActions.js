@@ -17,6 +17,7 @@ import {
 import { addDataToWallet } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
 import { sweepChannels } from 'services/smart-contracts/actions/core'
+import { selectAccount } from 'selectors'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -239,7 +240,7 @@ export function onUploadLocalWallet(event) {
 export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 	return async function(dispatch, getState) {
 		try {
-			const { account } = getState().persist
+			const account = selectAccount(getState())
 			const {
 				identityBalanceDai,
 				totalIdentityBalanceDai,
@@ -301,14 +302,12 @@ export function ownerIdentities({ owner }) {
 export function addrIdentityPrivilege({ setAddr, privLevel }) {
 	return async function(dispatch, getState) {
 		try {
-			const { account } = getState().persist
-
+			const account = selectAccount(getState())
 			const result = await setIdentityPrivilege({
 				account,
 				setAddr,
 				privLevel,
 			})
-
 			addToast({
 				type: 'accept',
 				label: translate('IDENTITY_SET_ADDR_PRIV_NOTIFICATION', {

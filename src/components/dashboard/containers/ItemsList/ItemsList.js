@@ -117,6 +117,8 @@ class ItemsList extends Component {
 						className={classnames(classes.cellImg)}
 						src={item.mediaUrl || item.fallbackMediaiUrl || ''}
 						alt={item.title}
+						mediaMime={item.mediaMime}
+						allowVideo
 					/>
 				</TableCell>
 				<RRTableCell
@@ -142,6 +144,10 @@ class ItemsList extends Component {
 		} = this.props
 
 		const status = item.status || {}
+		const firstUnit = item.adUnits[0] || {}
+		const mediaUrl = firstUnit.mediaUrl || ''
+		const mediaMime = firstUnit.mediaMime || ''
+
 		return (
 			<TableRow key={item.ipfs || index} selected={selectedItems[item.ipfs]}>
 				{selectMode && (
@@ -159,11 +165,10 @@ class ItemsList extends Component {
 					<Img
 						fullScreenOnClick={true}
 						className={classnames(classes.cellImg)}
-						src={
-							item.mediaUrl ||
-							(item.adUnits ? item.adUnits[0].mediaUrl || '' : '')
-						}
+						src={mediaUrl}
 						alt={item.title}
+						mediaMime={mediaMime}
+						allowVideo
 					/>
 				</TableCell>
 				<TableCell> {status.name} </TableCell>

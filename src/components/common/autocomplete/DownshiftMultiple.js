@@ -121,6 +121,7 @@ class DownshiftMultiple extends React.Component {
 						})}
 						{isOpen ? (
 							<Paper className={classes.paper} square>
+								//TODO: use FixedSizeList!
 								{getSuggestions(
 									inputValue2,
 									allValues,
