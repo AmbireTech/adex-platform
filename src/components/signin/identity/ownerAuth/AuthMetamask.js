@@ -27,8 +27,6 @@ import Box from '@material-ui/core/Box'
 
 function AuthMetamask(props) {
 	const [installingMetamask, setInstallingMetamask] = useState(false)
-	const [method, setMethod] = useState('')
-	const [sideSelect, setSideSelect] = useState(false)
 	const [address, setAddress] = useState(null)
 	const [stats, setStats] = useState(null)
 	const [waitingMetamaskAction, setWaitingMetamaskAction] = useState(false)
