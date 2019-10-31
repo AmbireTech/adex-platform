@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
@@ -34,14 +34,17 @@ function AuthMetamask(props) {
 	const { t, classes } = props
 	const isOpera =
 		!!window.opr || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0
-	if (installingMetamask) {
-		// Refreshes page after user comes back
-		// from installing Metamask
-		window.onfocus = () => {
-			window.location.reload()
-			setInstallingMetamask(false)
+
+	useEffect(() => {
+		if (installingMetamask) {
+			// Refreshes page after user comes back
+			// from installing Metamask
+			window.onfocus = () => {
+				window.location.reload()
+				setInstallingMetamask(false)
+			}
 		}
-	}
+	}, [installingMetamask])
 
 	const checkMetamask = async () => {
 		setWaitingAddrsData(true)
