@@ -190,11 +190,16 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
 	return channelsToWithdrawFrom
 }
 
-export async function sweepChannels({ campaign, account }) {
-	// Assuming there would be enough outstanding balance due to validations working, if not relayer will return error
-	const amountToSweep =
-		parseFloat(campaign.depositAmount) -
-		parseFloat(account.stats.formatted.identityBalanceDai)
+function getExpiredToWithdraw(channel) {
+	const { lastApprovedBalances } = channel.status
+	const toWithdraw = Object.keys(lastApprovedBalances).reduce((acc, val) => {
+		return acc.sub(new BN(lastApprovedBalances[val]))
+	}, new BN(channel.depositAmount))
+
+	return toWithdraw.toString()
+}
+
+export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
 	const { wallet } = account
 	const { provider, Dai, Identity } = await getEthers(wallet.authType)
 	const identityAddr = account.identity.address
@@ -204,16 +209,19 @@ export async function sweepChannels({ campaign, account }) {
 	})
 	const identityContract = new Contract(identityAddr, Identity.abi, provider)
 	const initialNonce = (await identityContract.nonce()).toNumber()
-	const feeTokenAddr = campaign.temp.feeTokenAddr || Dai.address
 
 	const txns = channelsToSweep.map((c, i) => {
-		const toWithdraw = c.status.lastApprovedBalances[identityAddr]
+		const toWithdraw =
+			c.status.name === 'Expired'
+				? getExpiredToWithdraw(c)
+				: c.status.lastApprovedBalances[identityAddr]
+
 		return {
 			identityContract: identityAddr,
 			nonce: initialNonce + i,
 			from: c.id,
 			to: identityAddr,
-			feeTokenAddr,
+			feeTokenAddr: feeTokenAddr || Dai.address,
 			feeAmount: feeAmountTransfer, // Same fee as withdrawFromIdentity
 			data: ERC20.functions.transfer.encode([identityAddr, toWithdraw]),
 		}
