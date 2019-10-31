@@ -1,6 +1,11 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { metamaskChecks, metamaskNetworkCheck, execute } from 'actions'
+import {
+	metamaskChecks,
+	metamaskNetworkCheck,
+	getRelayerConfig,
+	execute,
+} from 'actions'
 import { Route, Switch, Redirect } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import ConnectHoc from 'components/signin/ConnectHoc'
@@ -19,12 +24,7 @@ import PageNotFound from 'components/page_not_found/PageNotFound'
 import Home from 'components/signin/Home'
 import JustDialog from 'components/common/dialog/JustDialog'
 import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
-import {
-	selectAuth,
-	selectAccount,
-	selectLocation,
-	getRelayerConfig,
-} from 'selectors'
+import { selectAuth, selectAccount, selectLocation } from 'selectors'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
 const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
