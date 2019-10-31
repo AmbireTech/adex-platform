@@ -7,6 +7,7 @@ import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
+import Anchor from 'components/common/anchor/anchor'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import {
@@ -15,6 +16,8 @@ import {
 	validQuickAccountCoupon,
 } from 'helpers/validators'
 import { checkCoupon } from 'services/adex-relayer/actions'
+
+const TOS_LINK = 'https://www.adex.network/tos/'
 
 class GrantInfo extends Component {
 	componentDidMount() {
@@ -125,10 +128,6 @@ class GrantInfo extends Component {
 	render() {
 		const { t, identity, handleChange, invalidFields } = this.props
 		// Errors
-		const TOS = {
-			t: t('TOS_CHECK'),
-			link: 'https://www.adex.network/tos/',
-		}
 		const {
 			coupon,
 			email,
@@ -281,16 +280,12 @@ class GrantInfo extends Component {
 									/>
 								}
 								label={
-									<label>
-										{TOS.t.substr(0, TOS.t.indexOf(' '))}
-										<a
-											href={TOS.link}
-											rel='noopener noreferrer'
-											target='_blank'
-										>
-											{` ${TOS.t.substr(TOS.t.indexOf(' ') + 1)}`}
-										</a>
-									</label>
+									<span>
+										{t('ACCEPT_TOS_CHECK')}
+										<Anchor href={TOS_LINK} target='_blank'>
+											{` ${t('TOS_CHECK')}`}
+										</Anchor>
+									</span>
 								}
 							/>
 							{tosCheck && !!tosCheck.dirty && (
