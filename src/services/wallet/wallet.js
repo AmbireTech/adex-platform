@@ -119,6 +119,7 @@ export function getRecoveryWalletData({ email, password, authType }) {
 	return {
 		key,
 		wallet,
+		email,
 	}
 }
 
