@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import IdentityHoc from './IdentityHoc'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
@@ -7,49 +8,57 @@ import Typography from '@material-ui/core/Typography'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { getLocalWallet, migrateLegacyWallet } from 'services/wallet/wallet'
-import { AUTH_TYPES } from 'constants/misc'
+import { getLocalWallet } from 'services/wallet/wallet'
 
-class GrantLogin extends Component {
+const RRButton = withReactRouterLink(Button)
+
+class QuickLogin extends Component {
 	componentDidMount() {
 		this.validateWallet(false)
 	}
 
 	validateWallet = dirty => {
 		const { identity, handleChange, validate } = this.props
-		const { email, password } = identity
+		const { password, email, authType } = identity
+		if (!email) {
+		}
 
 		let wallet = {}
+		let error = null
 
-		if (email && password) {
-			const walletData = getLocalWallet({
-				email,
-				password,
-			})
+		try {
+			if (email && password) {
+				const walletData = getLocalWallet({
+					email,
+					password,
+					authType,
+				})
 
-			if (!!walletData && walletData.data) {
-				wallet = { ...walletData.data }
-				wallet.email = email
-				wallet.password = password
-				wallet.authType = AUTH_TYPES.GRANT.name
-				wallet.identity = {
-					address: walletData.identity,
-					privileges: walletData.identityPrivileges,
+				if (!!walletData && walletData.data) {
+					wallet = { ...walletData.data }
+					wallet.email = email
+					wallet.password = password
+					wallet.authType = authType
+					wallet.identity = {
+						address: walletData.identity,
+						privileges: walletData.identityPrivileges,
+					}
+
+					handleChange('identityAddr', walletData.identity)
 				}
 
-				migrateLegacyWallet({ email, password })
-				handleChange('deleteLegacyKey', true)
-				handleChange('identityAddr', walletData.identity)
+				handleChange('wallet', wallet)
+				handleChange('walletAddr', wallet.address)
+				handleChange('identityData', wallet.identity)
 			}
-
-			handleChange('wallet', wallet)
-			handleChange('walletAddr', wallet.address)
-			handleChange('identityData', wallet.identity)
+		} catch (err) {
+			console.error(err)
+			error = err && err.message ? err.message : err
 		}
 
 		validate('wallet', {
 			isValid: !!wallet.address,
-			err: { msg: 'ERR_LOCAL_WALLET_LOGIN' },
+			err: { msg: 'ERR_QUICK_WALLET_LOGIN', args: [error] },
 			dirty: dirty,
 		})
 	}
@@ -60,11 +69,16 @@ class GrantLogin extends Component {
 			identity,
 			handleChange,
 			invalidFields,
-			classes,
-			actions,
+			// classes,
+			// actions
 		} = this.props
 		// Errors
 		const { wallet } = invalidFields
+
+		if (!identity.email) {
+			return <RRButton to='/'>{'Email error'}</RRButton>
+		}
+
 		return (
 			// <div>
 			<Grid
@@ -78,19 +92,8 @@ class GrantLogin extends Component {
 					<Grid container spacing={2}>
 						<Grid item xs={12}>
 							<Typography variant='body2' color='primary' gutterBottom>
-								{t('GRANT_LOGIN_INFO')}
+								{t('QUICK_LOGIN_INFO', { args: [identity.email] })}
 							</Typography>
-						</Grid>
-						<Grid item xs={12}>
-							<TextField
-								fullWidth
-								type='text'
-								required
-								label={t('email', { isProp: true })}
-								name='email'
-								value={identity.email || ''}
-								onChange={ev => handleChange('email', ev.target.value)}
-							/>
 						</Grid>
 						<Grid item xs={12}>
 							<TextField
@@ -114,10 +117,10 @@ class GrantLogin extends Component {
 							{!!identity.walletAddr && (
 								<div>
 									<Typography variant='body1'>
-										{t('GRANT_WALLET_ADDRESS', { args: [identity.walletAddr] })}
+										{t('QUICK_WALLET_ADDRESS', { args: [identity.walletAddr] })}
 									</Typography>
 									<Typography variant='body1' gutterBottom>
-										{t('GRANT_IDENTITY_ADDRESS', {
+										{t('QUICK_IDENTITY_ADDRESS', {
 											args: [identity.identityAddr],
 										})}
 									</Typography>
@@ -129,28 +132,10 @@ class GrantLogin extends Component {
 								size='large'
 								onClick={() => this.validateWallet(true)}
 							>
-								{t('CHECK_GRANT_IDENTITY')}
+								{t('CHECK_QUICK_IDENTITY')}
 							</Button>
 						</Grid>
 					</Grid>
-				</Grid>
-				<Grid item xs={12}>
-					<input
-						accept='text/json'
-						className={classes.input}
-						id='contained-button-file'
-						type='file'
-						onChange={actions.onUploadLocalWallet}
-					/>
-					<label htmlFor='contained-button-file'>
-						<Button
-							// variant="contained"
-							component='span'
-							className={classes.button}
-						>
-							{t('UPLOAD_ACCOUNT_DATA_JSON')}
-						</Button>
-					</label>
 				</Grid>
 			</Grid>
 			// </div>
@@ -158,5 +143,5 @@ class GrantLogin extends Component {
 	}
 }
 
-const IdentityGrantLoginStep = IdentityHoc(GrantLogin)
-export default Translate(withStyles(styles)(IdentityGrantLoginStep))
+const IdentityQuickLoginStep = IdentityHoc(QuickLogin)
+export default Translate(withStyles(styles)(IdentityQuickLoginStep))
