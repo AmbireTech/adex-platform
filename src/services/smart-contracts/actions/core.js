@@ -3,8 +3,7 @@ import Requester from 'services/requester'
 import {
 	Channel,
 	MerkleTree,
-	// splitSig,
-	// Transaction
+	splitSig,
 } from 'adex-protocol-eth/js'
 import { getEthers } from 'services/smart-contracts/ethers'
 import {
@@ -209,20 +208,33 @@ export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
 	})
 	const identityContract = new Contract(identityAddr, Identity.abi, provider)
 	const initialNonce = (await identityContract.nonce()).toNumber()
+	const signatures = await getMultipleTxSignatures({ txns, signer })
 
 	const txns = channelsToSweep.map((c, i) => {
 		const toWithdraw =
 			c.status.name === 'Expired'
 				? getExpiredToWithdraw(c)
 				: c.status.lastApprovedBalances[identityAddr]
-
+		const allLeafs = Object.keys(c.status.lastApprovedBalances).map(k =>
+			Channel.getBalanceLeaf(k, c.status.lastApprovedBalances[k])
+		)
+		const mTree = new MerkleTree(allLeafs)
+		const leaf = Channel.getBalanceLeaf(identityAddr, toWithdraw)
+		const proof = mTree.proof(leaf)
+		const vsig1 = splitSig(c.status.lastApprovedSigs[0])
+		const vsig2 = splitSig(c.status.lastApprovedSigs[1])
 		const data =
 			c.status.name === 'Expired'
 				? Core.functions.channelWithdrawExpired.encode([
-						identityAddr,
-						toWithdraw,
+						toEthereumChannel(c).toSolidityTuple(),
 				  ])
-				: Core.functions.channelWithdraw.encode([identityAddr, toWithdraw])
+				: Core.functions.channelWithdraw.encode([
+						toEthereumChannel(c).toSolidityTuple(),
+						mTree,
+						[vsig1, vsig2],
+						proof,
+						toWithdraw,
+				])
 
 		return {
 			identityContract: identityAddr,
