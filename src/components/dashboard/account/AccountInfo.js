@@ -79,20 +79,17 @@ function AccountInfo({ t }) {
 		setExpanded(!expanded)
 	}
 
-	render() {
-		const { t, account, classes, actions } = this.props
-		const { grantType } = account.settings
-		const formatted = account.stats.formatted || {}
-		const {
-			walletAddress,
-			walletAuthType = '',
-			walletPrivileges = '',
-			identityAddress,
-			identityBalanceDai,
-			totalIdentityBalanceDai,
-		} = formatted
-		const { authType, email } = account.wallet
-		const { walletJsonData, expanded } = this.state
+	const { grantType } = account.settings
+	const formatted = account.stats.formatted || {}
+	const {
+		walletAddress,
+		walletAuthType = '',
+		walletPrivileges = '',
+		identityAddress,
+		identityBalanceDai,
+		totalIdentityBalanceDai,
+	} = formatted
+	const { authType, email } = account.wallet
 
 	return (
 		<div>

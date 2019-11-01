@@ -1,19 +1,15 @@
 import crypto from 'crypto'
-import Requester from 'services/requester'
-import {
-	Channel,
-	MerkleTree,
-	splitSig,
-} from 'adex-protocol-eth/js'
+import { Channel, MerkleTree, splitSig } from 'adex-protocol-eth/js'
 import { getEthers } from 'services/smart-contracts/ethers'
 import {
 	getSigner,
 	getMultipleTxSignatures,
 } from 'services/smart-contracts/actions/ethers'
 import { contracts } from '../contractsCfg'
-import { sendOpenChannel, executeTx } from 'services/adex-relayer/actions'
+import { sendOpenChannel } from 'services/adex-relayer/actions'
 import { closeCampaign } from 'services/adex-validator/actions'
 import { Campaign, AdUnit } from 'adex-models'
+import { getAllCampaigns } from 'services/adex-market/actions'
 import {
 	bigNumberify,
 	randomBytes,
@@ -21,7 +17,7 @@ import {
 	Interface,
 	formatUnits,
 } from 'ethers/utils'
-import { Contract, providers } from 'ethers'
+import { Contract } from 'ethers'
 import { BN } from 'ethereumjs-util'
 
 const { AdExCore, DAI } = contracts
@@ -33,7 +29,6 @@ const feeAmountOpen = '160000000000000000'
 const timeframe = 15000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 0.5
 const VALID_UNTIL_MIN_PERIOD = 7 * 24 * 60 * 60 * 1000 // 7 days in ms
-const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
 
 export const totalFeesFormatted = formatUnits(
 	bigNumberify(feeAmountApprove)
@@ -110,29 +105,26 @@ function getReadyCampaign(campaign, identity, Dai) {
 	return newCampaign
 }
 
-async function getChannelsWithBalance({ identityAddr, requester, STATES }) {
-	const channels = await requester
-		.fetch({
-			route: '/campaigns',
-			method: 'GET',
-			queryParams: {
-				status: STATES.join(','),
-			},
-		})
-		.then(res => res.json())
+async function getChannelsWithBalance({ identityAddr }) {
+	const channels = getAllCampaigns(true)
 
 	return Promise.all(
 		channels
 			.map(channel => {
-				const { lastApprovedBalances } = channel.status
+				const { lastApprovedSigs, lastApprovedBalances } = channel.status
 				if (lastApprovedBalances) {
-					const allLeafs = Object.keys(lastApprovedBalances).map(k =>
-						Channel.getBalanceLeaf(k, lastApprovedBalances[k])
+					const allLeafs = Object.entries(lastApprovedBalances).map(([k, v]) =>
+						Channel.getBalanceLeaf(k, v)
 					)
-					const mTree = new MerkleTree(allLeafs)
-					return { lastApprovedBalances, mTree, channel }
+					const mTree = new MerkleTree(allLeafs) // TODO
+					return { lastApprovedSigs, lastApprovedBalances, mTree, channel }
 				} else {
-					return { lastApprovedBalances: null, mTree: null, channel }
+					return {
+						lastApprovedSigs: null,
+						lastApprovedBalances: null,
+						mTree: null,
+						channel,
+					}
 				}
 			})
 			.filter(({ channel, lastApprovedBalances }) => {
@@ -144,32 +136,21 @@ async function getChannelsWithBalance({ identityAddr, requester, STATES }) {
 			.map(({ channel, lastApprovedBalances }) => ({
 				channel,
 				balance: lastApprovedBalances[identityAddr],
+				outstanding:
+					channel.status.name === 'Expired'
+						? channel.deposit - Core.functions.withdrawn(channel.id)
+						: lastApprovedBalances[identityAddr] -
+						  Core.functions.withdrawnPerUser(channel.id, identityAddr),
 			}))
 			.sort((c1, c2) => {
-				// Sorting by most balance so we can get top N needed using amountToSweep so we send as few transactions as possible
-				return new BN(c2.status.lastApprovedBalances[identityAddr]).gte(
-					new BN(c1.status.lastApprovedBalances[identityAddr])
-				)
+				return new BN(c2.outstanding).gte(new BN(c1.outstanding))
 			})
 	)
 }
 
 async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
-	const STATES = [
-		'Active',
-		'Ready',
-		'Exhausted',
-		'Offline',
-		'Unhealthy',
-		'Withdraw',
-		'Expired',
-	]
-
-	const requester = new Requester({ baseUrl: ADEX_MARKET_HOST })
 	const allChannels = await getChannelsWithBalance({
 		identityAddr,
-		requester,
-		STATES,
 	})
 
 	// Could be done with map/reduce but figured this for loop is much simpler in this case
@@ -208,7 +189,6 @@ export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
 	})
 	const identityContract = new Contract(identityAddr, Identity.abi, provider)
 	const initialNonce = (await identityContract.nonce()).toNumber()
-	const signatures = await getMultipleTxSignatures({ txns, signer })
 
 	const txns = channelsToSweep.map((c, i) => {
 		const toWithdraw =
@@ -234,7 +214,7 @@ export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
 						[vsig1, vsig2],
 						proof,
 						toWithdraw,
-				])
+				  ])
 
 		return {
 			identityContract: identityAddr,
