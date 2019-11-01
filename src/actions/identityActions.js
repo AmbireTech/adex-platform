@@ -241,15 +241,9 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 	return async function(dispatch, getState) {
 		try {
 			const account = selectAccount(getState())
-			const {
-				identityBalanceDai,
-				totalIdentityBalanceDai,
-			} = account.stats.formatteds
+			const { identityBalanceDai } = account.stats.formatteds
 			let sweepTxns
-			if (
-				amountToWithdraw > parseFloat(identityBalanceDai) &&
-				amountToWithdraw < parseFloat(totalIdentityBalanceDai)
-			) {
+			if (amountToWithdraw > parseFloat(identityBalanceDai)) {
 				const amountToSweep =
 					parseFloat(this.props.identityAvailable) - identityBalanceDai
 
