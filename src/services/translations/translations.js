@@ -13,10 +13,10 @@ const interpolate = (tpl, args) => {
 
 	return tpl.replace(/\${(\w+)}/g, (_, v) => {
 		let arg = args[v]
-		if (typeof arg === 'object' && arg.component) {
+		if (typeof arg === 'object' && !!arg && arg.component) {
 			return renderToString(arg.component)
 		} else {
-			return arg
+			return arg || ''
 		}
 	})
 }
@@ -36,7 +36,15 @@ export const translate = (
 	let translation = translations[language][key] || val
 
 	if (args.length && Array.isArray(args)) {
-		translation = interpolate(translation, args)
+		const translatedArgs = args.map(a => {
+			if (typeof a === 'string') {
+				return translations[language][a] || a
+			} else {
+				return a
+			}
+		})
+
+		translation = interpolate(translation, translatedArgs)
 	}
 
 	return translation

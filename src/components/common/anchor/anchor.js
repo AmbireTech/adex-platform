@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from '@material-ui/core/Link'
 
 const getUrl = url => {
 	url = (url || '').replace(/^(https?:)?\/\//i, '')
@@ -12,7 +13,9 @@ const getUrl = url => {
 const Anchor = ({ href, target, children, label, ...rest }) => {
 	let url = target && target === '_blank' ? getUrl(href) : href
 	return (
-		<a
+		<Link
+			underline='none'
+			color='inherit'
 			draggable='false'
 			rel='noopener noreferrer'
 			{...rest}
@@ -21,7 +24,7 @@ const Anchor = ({ href, target, children, label, ...rest }) => {
 			style={{ wordBreak: 'break-all' }} // TODO: add it where needed only
 		>
 			{children || label}
-		</a>
+		</Link>
 	)
 }
 

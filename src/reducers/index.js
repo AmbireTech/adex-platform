@@ -16,6 +16,7 @@ import newTransactions from './newTransactionsReducer'
 import web3Transactions from './web3TransactionsReducer'
 import tags from './tagsReducer'
 import ethNetwork from './ethNetworkReducer'
+import config from './configReducer'
 import analytics from './analyticsReducer'
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
@@ -28,6 +29,7 @@ export const persistReducers = {
 	web3Transactions,
 	tags,
 	ethNetwork,
+	config,
 	analytics,
 }
 

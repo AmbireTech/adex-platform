@@ -20,7 +20,8 @@ import {
 	// identityBytecode,
 	executeTx,
 	setAddrPriv,
-} from 'services/adex-relayer/actions'
+	relayerConfig,
+} from 'services/adex-relayer'
 import { formatTokenAmount } from 'helpers/formatters'
 import { contracts } from '../contractsCfg'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
@@ -28,6 +29,7 @@ import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy
 // const Factory = new Interface(FactoryABI)
 
 import solc from 'solcBrowser'
+import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 
 const { DAI } = contracts
 
@@ -64,37 +66,99 @@ export async function getIdentityDeployData({ owner, privLevel }) {
 }
 */
 
-export async function getIdentityBytecode({ owner, privLevel }) {
-	const privileges = [[owner, 3]]
+async function getRelayerRoutinesAuthAuth({
+	relayer,
+	outpace,
+	registry,
+	validUntil,
+	feeTokenAddr,
+	weeklyFeeAmount,
+}) {
+	const relayerAuth = new RoutineAuthorization({
+		relayer,
+		outpace,
+		registry,
+		validUntil,
+		feeTokenAddr,
+		weeklyFeeAmount,
+	})
+
+	return relayerAuth
+}
+
+export async function getIdentityBytecode({
+	identityBaseAddr,
+	routineAuthorizations,
+	privileges = [],
+}) {
+	const opts = {
+		privSlot: 0,
+	}
+
+	if (!!routineAuthorizations && routineAuthorizations.length) {
+		opts.routineAuthsSlot = 1
+		opts.routineAuthorizations = routineAuthorizations.map(a => a.hash())
+	}
 
 	const bytecode = getProxyDeployBytecode(
-		IDENTITY_BASE_ADDR,
+		identityBaseAddr,
 		privileges,
-		{
-			privSlot: 0,
-		},
+		opts,
 		solc
 	)
 
 	return bytecode
 }
 
-export async function getIdentityDeployData({ owner, privLevel }) {
-	const bytecode = await getIdentityBytecode({ owner, privLevel })
+export async function getIdentityDeployData({
+	owner,
+	privLevel,
+	addReleyerRoutinesAuth,
+	relayerRoutineAuthValidUntil = 10648454444,
+}) {
+	const {
+		identityFactoryAddr,
+		registryAddr,
+		identityBaseAddr,
+		identityRecoveryAddr,
+		coreAddr,
+		feeTokenWhitelist,
+		weeklyFeeAmount,
+	} = relayerConfig()
+
+	const privileges = [[owner, 3], [identityRecoveryAddr, 3]]
+
+	const opts = {
+		identityBaseAddr,
+		privileges,
+	}
+
+	if (addReleyerRoutinesAuth) {
+		const relayerAuth = getRelayerRoutinesAuthAuth({
+			registry: registryAddr,
+			outpace: coreAddr,
+			validUntil: relayerRoutineAuthValidUntil,
+			feeTokenAddr: feeTokenWhitelist[0].address,
+			weeklyFeeAmount,
+		})
+
+		opts.routineAuthorizations = [relayerAuth]
+	}
+
+	const bytecode = await getIdentityBytecode(opts)
 	const salt = keccak256(owner)
 
-	const expectedAddr = getAddress(
-		`0x${generateAddress2(IDENTITY_FACTORY_ADDR, salt, bytecode).toString(
-			'hex'
-		)}`
+	const identityAddr = getAddress(
+		`0x${generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')}`
 	)
 
 	return {
-		IDENTITY_FACTORY_ADDR,
-		IDENTITY_BASE_ADDR,
+		identityFactoryAddr,
+		identityBaseAddr,
 		bytecode,
 		salt,
-		expectedAddr,
+		identityAddr,
+		privileges,
 	}
 }
 
