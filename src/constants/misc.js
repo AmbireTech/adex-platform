@@ -56,6 +56,7 @@ export const AUTH_TYPES = {
 	LEDGER: { name: 'ledger', signType: SignatureModes.GETH, limit: 0 },
 	DEMO: { name: 'demo', signType: SignatureModes.GETH, limit: 0 },
 	GRANT: { name: 'grant', signType: SignatureModes.GETH, limit: 50 },
+	QUICK: { name: 'quick', signType: SignatureModes.GETH, limit: 50 },
 	SEED: { name: 'seed', signType: SignatureModes.GETH, limit: 500 },
 }
 

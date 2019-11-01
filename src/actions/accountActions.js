@@ -1,11 +1,16 @@
 import * as types from 'constants/actionTypes'
 import { addSig, getSig } from 'services/auth/auth'
 import { getSession, checkSession } from 'services/adex-market/actions'
-import { relayerConfig, getGrantType } from 'services/adex-relayer/actions'
-import { getValidatorAuthToken } from 'services/adex-validator/actions'
+import {
+	getRelayerConfigData,
+	regAccount,
+	getGrantType,
+} from 'services/adex-relayer/actions'
 import { updateSpinner } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
+import { removeLegacyKey } from 'services/wallet/wallet'
+import { getValidatorAuthToken } from 'services/adex-validator/actions'
 import {
 	getAllChannelsForIdentity,
 	getAccountStats,
@@ -119,6 +124,28 @@ export function updateAccountStats() {
 	}
 }
 
+export function registerAccount({ owner, identityTxData, email }) {
+	return async function(dispatch) {
+		updateSpinner('registering-account', true)(dispatch)
+		try {
+			await regAccount({
+				owner,
+				email,
+				...identityTxData,
+			})
+		} catch (err) {
+			console.error('ERR_REGISTERING_ACCOUNT', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_REGISTERING_ACCOUNT', { args: [err] }),
+				timeout: 20000,
+			})(dispatch)
+		}
+
+		updateSpinner('registering-account', false)(dispatch)
+	}
+}
+
 export function updateAccountSettings() {
 	return async function(dispatch, getState) {
 		const { identity, settings } = getState().persist.account
@@ -165,7 +192,7 @@ export function updateValidatorAuthTokens({ newAuth }) {
 	}
 }
 
-export function createSession({ wallet, identity, email }) {
+export function createSession({ wallet, identity, email, deleteLegacyKey }) {
 	return async function(dispatch) {
 		updateSpinner('creating-session', true)(dispatch)
 		try {
@@ -235,6 +262,13 @@ export function createSession({ wallet, identity, email }) {
 			updateAccount({
 				newValues: { ...account },
 			})(dispatch)
+
+			if (deleteLegacyKey) {
+				removeLegacyKey({
+					email: wallet.email,
+					password: wallet.password,
+				})
+			}
 		} catch (err) {
 			console.error('ERR_GETTING_SESSION', err)
 			addToast({
@@ -250,7 +284,7 @@ export function createSession({ wallet, identity, email }) {
 
 export function getRelayerConfig() {
 	return async function(dispatch) {
-		const cfg = await relayerConfig()
+		const cfg = await getRelayerConfigData()
 		return dispatch({
 			type: types.UPDATE_RELAYER_CFG,
 			cfg,

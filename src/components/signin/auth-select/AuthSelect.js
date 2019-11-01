@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
@@ -9,22 +9,31 @@ import { styles } from './styles'
 import { getAuthLogo } from 'helpers/logosHelpers'
 import Img from 'components/common/img/Img'
 import classnames from 'classnames'
-import { execute, resetIdentity } from 'actions'
+import { getAllWallets } from 'services/wallet/wallet'
+import { execute, initIdentity } from 'actions'
 import { selectAuth, selectAccount } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 
 const RRButton = withReactRouterLink(Button)
 
 const AuthSelect = ({ t, classes }) => {
+	const [wallets, setWallets] = useState([])
+	const [hasLegacyWallets, setHasLegacyWallets] = useState(false)
+
 	const auth = useSelector(selectAuth)
 	const account = useSelector(selectAccount)
 	const { wallet } = account || {}
 
 	useEffect(() => {
-		// NOTE: reset identity if someone press backspace
-		// to go to this page
-		execute(resetIdentity())
-	}, [])
+		const allWallets = getAllWallets()
+		const wallets = allWallets.filter(
+			w => w.authType !== 'legacy' && w.name !== wallet.email
+		)
+		const hasLegacy = allWallets.length > wallets
+
+		setWallets(wallets)
+		setHasLegacyWallets(hasLegacy)
+	}, [wallet])
 
 	return (
 		<Grid
@@ -49,6 +58,22 @@ const AuthSelect = ({ t, classes }) => {
 					</RRButton>
 				</Grid>
 			)}
+			{wallets.map(w => (
+				<Grid key={w.name} item xs={12}>
+					<RRButton
+						variant='contained'
+						to={`/login/quick`}
+						size='large'
+						color='primary'
+						fullWidth
+						onClick={() =>
+							execute(initIdentity({ email: w.name, authType: w.authType }))
+						}
+					>
+						{t('SIGN_IN_TO', { args: [w.name] })}
+					</RRButton>
+				</Grid>
+			))}
 			<Grid item xs={12}>
 				<RRButton
 					variant='contained'
@@ -61,6 +86,7 @@ const AuthSelect = ({ t, classes }) => {
 					{t('CREATE_GRANT_ACCOUNT')}
 				</RRButton>
 			</Grid>
+			{/* {hasLegacyWallets && ( */}
 			<Grid item xs={12}>
 				<RRButton
 					variant='contained'
@@ -73,6 +99,18 @@ const AuthSelect = ({ t, classes }) => {
 					{t('LOGIN_GRANT_ACCOUNT')}
 				</RRButton>
 			</Grid>
+			{/* )} */}
+			{/* <Grid item xs={12}>
+				<RRButton
+					variant='contained'
+					to='/identity/quick'
+					size='large'
+					color='secondary'
+					fullWidth
+				>
+					{t('CREATE_QUICK_ACCOUNT')}
+				</RRButton>
+			</Grid> */}
 			<Grid item xs={12}>
 				<RRButton
 					variant='contained'
@@ -109,6 +147,17 @@ const AuthSelect = ({ t, classes }) => {
 					{/* {t('TREZOR')} */}
 				</RRButton>
 			</Grid>
+			{/* <Grid item xs={12}>
+				<RRButton
+					variant='link'
+					to='/recover/quick'
+					size='large'
+					color='secondary'
+					fullWidth
+				>
+					{t('RECOVER_QUICK_ACCOUNT')}
+				</RRButton>
+			</Grid> */}
 		</Grid>
 	)
 }
