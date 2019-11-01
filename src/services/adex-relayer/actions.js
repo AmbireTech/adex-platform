@@ -155,7 +155,7 @@ export const registerExpectedIdentity = ({ owner, mail }) => {
 		.then(processResponse)
 }
 
-export const relayerConfig = () => {
+export const getRelayerConfigData = () => {
 	return requester
 		.fetch({
 			route: 'relayer/cfg',
@@ -196,6 +196,35 @@ export const setAddrPriv = ({
 				identityAddr,
 				setAddr,
 				privLevel,
+			}),
+			headers: { 'Content-Type': 'application/json' },
+		})
+		.then(processResponse)
+}
+
+export const regAccount = ({
+	owner,
+	email,
+	bytecode,
+	identityFactoryAddr,
+	identityBaseAddr,
+	salt,
+	identityAddr,
+	privileges,
+}) => {
+	return requester
+		.fetch({
+			route: 'identity/register',
+			method: 'POST',
+			body: JSON.stringify({
+				owner,
+				email,
+				bytecode,
+				identityFactoryAddr,
+				identityBaseAddr,
+				salt,
+				identityAddr,
+				privileges,
 			}),
 			headers: { 'Content-Type': 'application/json' },
 		})

@@ -1,4 +1,4 @@
-export const loadFromLocalStorage = key => {
+export function loadFromLocalStorage(key) {
 	try {
 		const data = localStorage.getItem(key)
 		if (data === null) {
@@ -17,4 +17,12 @@ export function saveToLocalStorage(data, key) {
 	} catch (err) {
 		console.warn(err)
 	}
+}
+
+export function removeFromLocalStorage(key) {
+	localStorage.removeItem(key)
+}
+
+export function getKeys() {
+	return Object.keys(localStorage)
 }
