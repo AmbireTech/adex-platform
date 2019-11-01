@@ -87,14 +87,10 @@ async function getRelayerRoutinesAuthAuth({
 }
 
 export async function getIdentityBytecode({
-	owner,
-	privLevel,
-	identityRecoveryAddr,
 	identityBaseAddr,
 	routineAuthorizations,
+	privileges = [],
 }) {
-	const privileges = [[owner, 3], [identityRecoveryAddr, 3]]
-
 	const opts = {
 		privSlot: 0,
 	}
@@ -130,11 +126,11 @@ export async function getIdentityDeployData({
 		weeklyFeeAmount,
 	} = relayerConfig()
 
+	const privileges = [[owner, 3], [identityRecoveryAddr, 3]]
+
 	const opts = {
-		owner,
-		privLevel,
 		identityBaseAddr,
-		identityRecoveryAddr,
+		privileges,
 	}
 
 	if (addReleyerRoutinesAuth) {
@@ -162,6 +158,7 @@ export async function getIdentityDeployData({
 		bytecode,
 		salt,
 		identityAddr,
+		privileges,
 	}
 }
 

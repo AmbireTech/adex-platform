@@ -210,6 +210,7 @@ export const regAccount = ({
 	identityBaseAddr,
 	salt,
 	identityAddr,
+	privileges,
 }) => {
 	return requester
 		.fetch({
@@ -223,6 +224,7 @@ export const regAccount = ({
 				identityBaseAddr,
 				salt,
 				identityAddr,
+				privileges,
 			}),
 			headers: { 'Content-Type': 'application/json' },
 		})
