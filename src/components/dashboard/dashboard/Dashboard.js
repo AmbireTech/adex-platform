@@ -217,8 +217,7 @@ class Dashboard extends React.Component {
 					<div className={classes.contentInner}>
 						<div className={classes.toolbar} />
 
-						<Switch locatiom={this.props.location}>
-							TODO: Make things dynamic if easier
+						<Switch>
 							<Route
 								auth={this.props.auth}
 								exact
@@ -235,13 +234,13 @@ class Dashboard extends React.Component {
 								auth={this.props.auth}
 								exact
 								path='/dashboard/advertiser/Campaign/:itemId'
-								component={Campaign}
+								component={props => <Campaign {...props} />}
 							/>
 							<Route
 								auth={this.props.auth}
 								exact
 								path='/dashboard/advertiser/AdUnit/:itemId'
-								component={Unit}
+								component={props => <Unit {...props} />}
 							/>
 							<Route
 								auth={this.props.auth}
@@ -259,25 +258,25 @@ class Dashboard extends React.Component {
 								auth={this.props.auth}
 								exact
 								path='/dashboard/publisher/AdSlot/:itemId'
-								component={Slot}
+								component={props => <Slot {...props} />}
 							/>
 							<Route
 								auth={this.props.auth}
 								exact
 								path={'/dashboard/:side/account'}
-								component={Account}
+								component={props => <Account {...props} />}
 							/>
-							<Route
+							{/* <Route
 								auth={this.props.auth}
 								exact
 								path={'/dashboard/:side/transactions'}
-								component={Transactions}
-							/>
+								component={props => <Transactions {...props} />}
+							/> */}
 							<Route
 								auth={this.props.auth}
 								exact
 								path='/dashboard/:side'
-								component={DashboardStats}
+								component={props => <DashboardStats {...props} />}
 							/>
 							<Route
 								auth={this.props.auth}
