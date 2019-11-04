@@ -17,16 +17,21 @@ const clearCampaignsTimeout = () => {
 
 const syncCampaigns = async () => {
 	const hasAuth = selectAuth(getState())
-	const { wallet } = selectAccount(getState())
+	const { wallet, identity } = selectAccount(getState())
 	const { authSig } = wallet
+	const { address } = identity
 
-	if (hasAuth && authSig) {
+	if (hasAuth && authSig && address) {
 		try {
 			const campaigns = await getCampaigns({ authSig: wallet.authSig })
 
-			const campaignsMapped = campaigns.map(c => {
-				return { ...c, ...c.spec }
-			})
+			const campaignsMapped = campaigns
+				.filter(
+					c => c.creator && c.creator.toLowerCase() === address.toLowerCase()
+				)
+				.map(c => {
+					return { ...c, ...c.spec }
+				})
 
 			execute(updateItems({ items: campaignsMapped, itemType: 'Campaign' }))
 		} catch (err) {
