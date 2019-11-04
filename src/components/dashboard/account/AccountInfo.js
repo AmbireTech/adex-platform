@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import { updateNav, addToast, updateAccountStats, execute } from 'actions'
+import { updateNav, addToast, execute } from 'actions'
 import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import {
@@ -54,10 +54,6 @@ function AccountInfo({ t }) {
 	const [expanded, setExpanded] = useState(false)
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
-
-	useEffect(() => {
-		execute(updateAccountStats())
-	}, [])
 
 	useEffect(() => {
 		execute(updateNav('navTitle', t('ACCOUNT')))
