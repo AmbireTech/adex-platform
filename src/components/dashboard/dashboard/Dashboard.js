@@ -11,7 +11,7 @@ import DashboardStats from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
 import Items from 'components/dashboard/containers/Items'
-import Transactions from 'components/dashboard/containers/Transactions'
+// import Transactions from 'components/dashboard/containers/Transactions'
 import {
 	AdUnit as AdUnitModel,
 	AdSlot as AdSlotModel,
@@ -25,6 +25,7 @@ import {
 	NewSlotDialog,
 } from 'components/dashboard/forms/items/NewItems'
 import campaignsLoop from 'services/store-data/campaigns'
+import statsLoop from 'services/store-data/account'
 import {
 	SORT_PROPERTIES_ITEMS,
 	FILTER_PROPERTIES_ITEMS,
@@ -52,6 +53,7 @@ class Dashboard extends React.Component {
 
 	componentWillUnmount() {
 		campaignsLoop.stop()
+		statsLoop.stop()
 	}
 
 	componentDidMount() {
@@ -60,10 +62,10 @@ class Dashboard extends React.Component {
 		actions.updateNav('side', this.props.match.params.side)
 		actions.getRelayerConfig()
 		actions.getAllItems()
-		actions.updateAccountStats()
 		actions.updateAccountSettings()
 		actions.updateAccountAnalytics()
 		campaignsLoop.start()
+		statsLoop.start()
 	}
 
 	// shouldComponentUpdate(nextProps, nextState) {
