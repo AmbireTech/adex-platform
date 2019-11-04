@@ -15,6 +15,12 @@ class AdexNodeRequester {
 		}
 	}
 
+	noCacheHeaders = {
+		'Cache-Control': 'no-cache',
+		Expires: '0',
+		Pragma: 'no-cache',
+	}
+
 	getUrl = (base, route, query) => {
 		let url = base + '/'
 		if (route) {
@@ -36,16 +42,18 @@ class AdexNodeRequester {
 		userAddr,
 		authSig = '',
 		authToken,
+		noCache = false,
 	}) => {
 		const qp = { ...queryParams }
 		if (isDemoMode()) {
 			qp.demo = true
 		}
 
-		let query = Helper.getQuery(qp)
-		let url = this.getUrl(this.baseUrl, route, query)
+		const query = Helper.getQuery(qp)
+		const url = this.getUrl(this.baseUrl, route, query)
 
-		let hdrs = {
+		const hdrs = {
+			...(noCache ? this.noCacheHeaders : {}),
 			...this.getAuthHeaders({ authSig }),
 			...headers,
 		}
