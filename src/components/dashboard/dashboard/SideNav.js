@@ -24,6 +24,7 @@ import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
 // import Badge from '@material-ui/core/Badge'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
+import { LoadingSection } from 'components/common/spinners'
 
 const RRListItem = withReactRouterLink(ListItem)
 const { ETH_SCAN_ADDR_HOST } = process.env
@@ -55,6 +56,7 @@ class SideNav extends Component {
 			t,
 			// transactions,
 			classes,
+			account,
 		} = this.props
 		if (side !== 'advertiser' && side !== 'publisher') {
 			return null
@@ -68,6 +70,7 @@ class SideNav extends Component {
 			? 'format_list_bulleted'
 			: 'format_list_bulleted'
 		// const pendingTrsCount = (transactions.pendingTxs || []).length
+		const { totalIdentityBalanceDai } = account.stats.formatted || {}
 
 		return (
 			<div className={classes.navigation}>
@@ -86,8 +89,22 @@ class SideNav extends Component {
 							<ListItem>
 								<AdexIconTxt className={classes.icon} />
 							</ListItem>
-							<SideSwitch side={side} t={t} />
+							<ListItem>
+								<LoadingSection
+									loading={
+										!totalIdentityBalanceDai && totalIdentityBalanceDai !== 0
+									}
+								>
+									<ListItemText
+										primary={`${parseFloat(
+											totalIdentityBalanceDai || 0
+										).toFixed(2)} DAI`}
+									/>
+								</LoadingSection>
+							</ListItem>
 						</div>
+						<ListDivider />
+						<SideSwitch side={side} t={t} />
 						<ListDivider />
 						<RRListItem
 							button
@@ -249,7 +266,7 @@ function mapStateToProps(state) {
 	const { persist /*memory*/ } = state
 
 	return {
-		// account: persist.account,
+		account: persist.account,
 		transactions: persist.web3Transactions[persist.account._addr] || {},
 		identity: persist.account.identity.address,
 	}
