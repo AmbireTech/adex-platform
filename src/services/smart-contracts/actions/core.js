@@ -105,8 +105,8 @@ function getReadyCampaign(campaign, identity, Dai) {
 	return newCampaign
 }
 
-async function getChannelsWithBalance({ identityAddr }) {
-	const channels = getAllCampaigns(true)
+async function getChannelsWithOutstanding({ identityAddr }) {
+	const channels = await getAllCampaigns(true)
 
 	return Promise.all(
 		channels
@@ -116,7 +116,7 @@ async function getChannelsWithBalance({ identityAddr }) {
 					const allLeafs = Object.entries(lastApprovedBalances).map(([k, v]) =>
 						Channel.getBalanceLeaf(k, v)
 					)
-					const mTree = new MerkleTree(allLeafs) // TODO
+					const mTree = new MerkleTree(allLeafs)
 					return { lastApprovedSigs, lastApprovedBalances, mTree, channel }
 				} else {
 					return {
@@ -133,58 +133,68 @@ async function getChannelsWithBalance({ identityAddr }) {
 				}
 				return lastApprovedBalances && !!lastApprovedBalances[identityAddr]
 			})
-			.map(async ({ channel, lastApprovedBalances }) => ({
-				channel,
-				balance: lastApprovedBalances[identityAddr],
-				outstanding:
+			.map(async ({ channel, lastApprovedBalances }) => {
+				const outstanding =
 					channel.status.name === 'Expired'
-						? channel.deposit - (await Core.functions.withdrawn(channel.id))
-						: lastApprovedBalances[identityAddr] -
-						  (await Core.functions.withdrawnPerUser(channel.id, identityAddr)),
-			}))
+						? bigNumberify(channel.deposit).sub(
+								bigNumberify(await Core.functions.withdrawn(channel.id))
+						  )
+						: bigNumberify(lastApprovedBalances[identityAddr]).sub(
+								bigNumberify(
+									await Core.functions.withdrawnPerUser(
+										channel.id,
+										identityAddr
+									)
+								)
+						  )
+				const outstandingMinusFee = new BN(outstanding).sub(
+					new BN(feeAmountTransfer)
+				)
+				return {
+					channel,
+					balance: lastApprovedBalances[identityAddr],
+					outstanding,
+					outstandingMinusFee,
+				}
+			})
+			.filter(({ outstandingMinusFee }) => {
+				return outstandingMinusFee.gten(0)
+			})
 			.sort((c1, c2) => {
-				return new BN(c2.outstanding).gte(new BN(c1.outstanding))
+				return new BN(c2.outstandingMinusFee).gte(
+					new BN(c1.outstandingMinusFee)
+				)
 			})
 	)
 }
 
 async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
-	const allChannels = await getChannelsWithBalance({
+	const allChannels = await getChannelsWithOutstanding({
 		identityAddr,
 	})
 
 	// Could be done with map/reduce but figured this for loop is much simpler in this case
 	const channelsToWithdrawFrom = []
 	const sum = new BN('0')
-	for (let i = 0; i < allChannels.length; i++) {
+	for (const channel of allChannels) {
 		if (sum.gte(new BN(amountToSweep))) {
 			break
 		}
 
-		const balance = new BN(
-			allChannels[i].status.lastApprovedBalances[identityAddr]
-		)
-		const balanceAfterFee = balance.sub(new BN(feeAmountTransfer))
-
-		// Skipping channels which would result in a negative balance
-		if (balanceAfterFee.lten(0)) {
-			break
-		}
-
-		sum.iadd(balance)
-		channelsToWithdrawFrom.push(allChannels[i])
+		sum.iadd(channel.outstandingMinusFee)
+		channelsToWithdrawFrom.push(channel)
 	}
 
 	return channelsToWithdrawFrom
 }
 
-function getExpiredToWithdraw(channel) {
+function getExpiredOutstanding(channel) {
 	const { lastApprovedBalances } = channel.status
-	const toWithdraw = Object.keys(lastApprovedBalances).reduce((acc, val) => {
+	const outstanding = Object.keys(lastApprovedBalances).reduce((acc, val) => {
 		return acc.sub(new BN(lastApprovedBalances[val]))
 	}, new BN(channel.depositAmount))
 
-	return toWithdraw.toString()
+	return outstanding.toString()
 }
 
 export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
@@ -199,15 +209,11 @@ export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
 	const initialNonce = (await identityContract.nonce()).toNumber()
 
 	const txns = channelsToSweep.map((c, i) => {
-		const toWithdraw =
-			c.status.name === 'Expired'
-				? getExpiredToWithdraw(c)
-				: c.status.lastApprovedBalances[identityAddr]
-		const allLeafs = Object.keys(c.status.lastApprovedBalances).map(k =>
-			Channel.getBalanceLeaf(k, c.status.lastApprovedBalances[k])
+		const { outstandingMinusFee, mTree } = c
+		const leaf = Channel.getBalanceLeaf(
+			identityAddr,
+			c.status.lastApprovedBalances[identityAddr]
 		)
-		const mTree = new MerkleTree(allLeafs)
-		const leaf = Channel.getBalanceLeaf(identityAddr, toWithdraw)
 		const proof = mTree.proof(leaf)
 		const vsig1 = splitSig(c.status.lastApprovedSigs[0])
 		const vsig2 = splitSig(c.status.lastApprovedSigs[1])
@@ -221,7 +227,7 @@ export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
 						mTree,
 						[vsig1, vsig2],
 						proof,
-						toWithdraw,
+						outstandingMinusFee,
 				  ])
 
 		return {
@@ -276,8 +282,7 @@ export async function openChannel({ campaign, account, sweepTxns }) {
 		to: AdExCore.address,
 		data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
 	}
-
-	const txns = [...sweepTxns, tx1, tx2]
+	const txns = sweepTxns ? [...sweepTxns, tx1, tx2] : [tx1, tx2]
 	const signatures = await getMultipleTxSignatures({ txns, signer })
 
 	const data = {
