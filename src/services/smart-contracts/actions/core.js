@@ -160,9 +160,17 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
 		if (sum.gte(new BN(amountToSweep))) {
 			break
 		}
+
 		const balance = new BN(
 			allChannels[i].status.lastApprovedBalances[identityAddr]
 		)
+		const balanceAfterFee = balance.sub(new BN(feeAmountTransfer))
+
+		// Skipping channels which would result in a negative balance
+		if (balanceAfterFee.lten(0)) {
+			break
+		}
+
 		sum.iadd(balance)
 		channelsToWithdrawFrom.push(allChannels[i])
 	}
