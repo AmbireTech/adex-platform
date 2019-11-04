@@ -1,5 +1,7 @@
 import Helper from 'helpers/miscHelpers'
-import { isDemoMode, getAccount } from 'services/store-data/auth'
+import { getState } from 'actions'
+import { selectAuthSig } from 'selectors'
+import { isDemoMode } from 'services/store-data/auth'
 
 class AdexNodeRequester {
 	constructor({ baseUrl }) {
@@ -7,11 +9,9 @@ class AdexNodeRequester {
 	}
 
 	getAuthHeaders = ({ authSig } = {}) => {
-		const acc = getAccount()
+		const authSignature = selectAuthSig(getState())
 		return {
-			'X-User-Address': acc._addr,
-			'X-User-Signature': authSig || acc._authSig,
-			'X-Auth-Token': acc._authToken,
+			'X-User-Signature': authSig || authSignature,
 		}
 	}
 
