@@ -189,7 +189,7 @@ function AccountInfo({ t }) {
 								onClick={() => displayRampWidget()}
 							>
 								<CreditCardIcon className={classes.extendedIcon} />
-								{t('TOP_UP_IDENTITY_EUR')}
+								{t('TOP_UP_IDENTITY_GBP')}
 							</Button>
 						</Box>
 						<Box className={classes.itemActions}>
