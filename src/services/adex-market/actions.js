@@ -153,11 +153,13 @@ export const updateAdSlot = ({ slot, id, authSig }) => {
 		.then(processResponse)
 }
 
-export const getCampaigns = ({ authSig }) => {
+export const getCampaigns = ({ authSig, creator }) => {
 	return requester
 		.fetch({
 			route: 'campaigns/by-owner',
 			method: 'GET',
+			noCache: true,
+			queryParams: { byCreator: creator },
 			authSig,
 		})
 		.then(processResponse)

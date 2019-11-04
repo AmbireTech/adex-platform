@@ -23,7 +23,7 @@ const syncCampaigns = async () => {
 
 	if (hasAuth && authSig && address) {
 		try {
-			const campaigns = await getCampaigns({ authSig: wallet.authSig })
+			const campaigns = await getCampaigns({ authSig, creator: address })
 
 			const campaignsMapped = campaigns
 				.filter(
