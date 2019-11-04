@@ -20,9 +20,12 @@ import MenuItem from '@material-ui/core/MenuItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { LoadingSection } from 'components/common/spinners'
 import { selectNavTitle, selectAccount } from 'selectors'
 import { styles } from './styles'
+
+const getAddrLabel = (address = '') => {
+	return `${address.substring(0, 8)}...${address.substring(36, 42)}`
+}
 
 const RRMenuItem = withReactRouterLink(MenuItem)
 const useStyles = makeStyles(styles)
@@ -31,12 +34,11 @@ function TopNav({ handleDrawerToggle, side, t }) {
 	const classes = useStyles()
 	const navTitle = useSelector(selectNavTitle)
 	const account = useSelector(selectAccount)
-	const { totalIdentityBalanceDai } = account.stats.formatted || {}
 	const imgSrc = getAuthLogo(account.wallet.authType)
 	const btnMenueLabel =
 		account.wallet.authType === 'demo'
 			? t('DEMO_MODE')
-			: account.email || account.wallet.address || t('NOT_LOGGED')
+			: account.email || getAddrLabel(account.wallet.address) || t('NOT_LOGGED')
 
 	return (
 		<AppBar className={classes.appBar} position='sticky'>
@@ -106,13 +108,6 @@ function TopNav({ handleDrawerToggle, side, t }) {
 						>
 							{t(navTitle)}
 						</Typography>
-						<LoadingSection
-							loading={
-								!totalIdentityBalanceDai && totalIdentityBalanceDai !== 0
-							}
-						>
-							<ListItemText primary={`${totalIdentityBalanceDai || 0} DAI`} />
-						</LoadingSection>
 					</div>
 				</div>
 			</Toolbar>
