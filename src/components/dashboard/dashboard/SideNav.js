@@ -31,21 +31,27 @@ const { ETH_SCAN_ADDR_HOST } = process.env
 
 class SideNav extends Component {
 	shouldComponentUpdate(nextProps, nextState) {
-		let langChanged = this.props.language !== nextProps.language
-		let sideChanged = this.props.side !== nextProps.side
-		let locationChanged =
-			this.props.location.pathname !== nextProps.location.pathname
-		let transactionsChanged =
-			(this.props.transactions.pendingTxs || []).length !==
+		const thisProps = this.props
+		const langChanged = thisProps.language !== nextProps.language
+		const sideChanged = thisProps.side !== nextProps.side
+		const locationChanged =
+			thisProps.location.pathname !== nextProps.location.pathname
+		const transactionsChanged =
+			(thisProps.transactions.pendingTxs || []).length !==
 			(nextProps.transactions.pendingTxs || []).length
-		let bidsAwaitingActionChanged =
+		const bidsAwaitingActionChanged =
 			this.bidsAwaitingActionCount !== nextProps.bidsAwaitingActionCount
+		const balanceChanged =
+			(this.props.account.stats.formatted || {}).totalIdentityBalanceDai !==
+			(nextProps.account.stats.formatted || {}).totalIdentityBalanceDai
+
 		return (
 			langChanged ||
 			sideChanged ||
 			locationChanged ||
 			transactionsChanged ||
-			bidsAwaitingActionChanged
+			bidsAwaitingActionChanged ||
+			balanceChanged
 		)
 	}
 
