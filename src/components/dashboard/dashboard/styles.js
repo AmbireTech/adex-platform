@@ -36,13 +36,13 @@ export const styles = theme => {
 			display: 'flex',
 			alignItems: 'center',
 			flexBasis: '100%',
-			paddingTop: theme.spacing(0.5),
-			paddingBottom: theme.spacing(0.5),
+			paddingTop: theme.spacing(1),
+			paddingBottom: theme.spacing(1),
 			'&:last-child': {
 				paddingRight: 240,
-				paddingTop: theme.spacing(1.5),
-				paddingBottom: theme.spacing(1.5),
-				paddingLeft: theme.spacing(1.5),
+				paddingTop: theme.spacing(1),
+				paddingBottom: theme.spacing(1),
+				paddingLeft: theme.spacing(1),
 			},
 		},
 		toolbarControls: {
