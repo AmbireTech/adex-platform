@@ -269,7 +269,7 @@ function AccountInfo({ t }) {
 }
 
 AccountInfo.propTypes = {
-	t: PropTypes.object.isRequired,
+	t: PropTypes.func.isRequired,
 }
 
 export default Translate(AccountInfo)
