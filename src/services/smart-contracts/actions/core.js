@@ -133,14 +133,14 @@ async function getChannelsWithBalance({ identityAddr }) {
 				}
 				return lastApprovedBalances && !!lastApprovedBalances[identityAddr]
 			})
-			.map(({ channel, lastApprovedBalances }) => ({
+			.map(async ({ channel, lastApprovedBalances }) => ({
 				channel,
 				balance: lastApprovedBalances[identityAddr],
 				outstanding:
 					channel.status.name === 'Expired'
-						? channel.deposit - Core.functions.withdrawn(channel.id)
+						? channel.deposit - (await Core.functions.withdrawn(channel.id))
 						: lastApprovedBalances[identityAddr] -
-						  Core.functions.withdrawnPerUser(channel.id, identityAddr),
+						  (await Core.functions.withdrawnPerUser(channel.id, identityAddr)),
 			}))
 			.sort((c1, c2) => {
 				return new BN(c2.outstanding).gte(new BN(c1.outstanding))
