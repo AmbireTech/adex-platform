@@ -252,7 +252,7 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 				)
 
 				sweepTxns = await sweepChannels({
-					account: this.props.account,
+					account,
 					amountToSweep,
 				})
 			}
