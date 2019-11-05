@@ -18,7 +18,6 @@ import {
 	formatUnits,
 } from 'ethers/utils'
 import { Contract } from 'ethers'
-import { BN } from 'ethereumjs-util'
 
 const { AdExCore, DAI } = contracts
 const Core = new Interface(AdExCore.abi)
