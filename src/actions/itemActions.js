@@ -271,13 +271,15 @@ export function openCampaign({ campaign, account }) {
 				withBalance: [{ channel: campaign }],
 				account,
 			})
-			const { identityBalanceDai } = account.stats.formatted
+			const identityBalanceDai = bigNumberify(
+				account.stats.raw.identityBalanceDai
+			)
+			const depositAmount = bigNumberify(campaign.depositAmount)
 			const feeTokenAddr = campaign.temp.feeTokenAddr
-			const amountToSweep =
-				parseFloat(campaign.depositAmount) -
-				parseFloat(account.stats.formatted.identityBalanceDai)
+
+			const amountToSweep = depositAmount.sub(identityBalanceDai)
 			let sweepTxns
-			if (parseFloat(campaign.depositAmount) > parseFloat(identityBalanceDai)) {
+			if (depositAmount.gt(identityBalanceDai)) {
 				sweepTxns = await sweepChannels({
 					feeTokenAddr,
 					account,
