@@ -147,8 +147,8 @@ async function getChannelsWithOutstanding({ identityAddr }) {
 									)
 								)
 						  )
-				const outstandingMinusFee = new BN(outstanding).sub(
-					new BN(feeAmountTransfer)
+				const outstandingMinusFee = bigNumberify(outstanding).sub(
+					bigNumberify(feeAmountTransfer)
 				)
 				return {
 					channel,
@@ -158,12 +158,10 @@ async function getChannelsWithOutstanding({ identityAddr }) {
 				}
 			})
 			.filter(({ outstandingMinusFee }) => {
-				return outstandingMinusFee.gten(0)
+				return outstandingMinusFee.gt(0)
 			})
 			.sort((c1, c2) => {
-				return new BN(c2.outstandingMinusFee).gte(
-					new BN(c1.outstandingMinusFee)
-				)
+				c2.outstandingMinusFee.gte(c1.outstandingMinusFee)
 			})
 	)
 }
@@ -175,9 +173,9 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
 
 	// Could be done with map/reduce but figured this for loop is much simpler in this case
 	const channelsToWithdrawFrom = []
-	const sum = new BN('0')
+	const sum = bigNumberify('0')
 	for (const channel of allChannels) {
-		if (sum.gte(new BN(amountToSweep))) {
+		if (sum.gte(bigNumberify(amountToSweep))) {
 			break
 		}
 
@@ -186,15 +184,6 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
 	}
 
 	return channelsToWithdrawFrom
-}
-
-function getExpiredOutstanding(channel) {
-	const { lastApprovedBalances } = channel.status
-	const outstanding = Object.keys(lastApprovedBalances).reduce((acc, val) => {
-		return acc.sub(new BN(lastApprovedBalances[val]))
-	}, new BN(channel.depositAmount))
-
-	return outstanding.toString()
 }
 
 export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
@@ -209,7 +198,7 @@ export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
 	const initialNonce = (await identityContract.nonce()).toNumber()
 
 	const txns = channelsToSweep.map((c, i) => {
-		const { outstandingMinusFee, mTree } = c
+		const { mTree } = c
 		const leaf = Channel.getBalanceLeaf(
 			identityAddr,
 			c.status.lastApprovedBalances[identityAddr]
@@ -227,7 +216,7 @@ export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
 						mTree,
 						[vsig1, vsig2],
 						proof,
-						outstandingMinusFee,
+						c.status.lastApprovedBalances[identityAddr],
 				  ])
 
 		return {

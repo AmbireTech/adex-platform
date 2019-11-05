@@ -241,7 +241,7 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 	return async function(dispatch, getState) {
 		try {
 			const account = selectAccount(getState())
-			const { identityBalanceDai } = account.stats.formatteds
+			const { identityBalanceDai } = account.stats.formatted
 			let sweepTxns
 			if (amountToWithdraw > parseFloat(identityBalanceDai)) {
 				const amountToSweep =
