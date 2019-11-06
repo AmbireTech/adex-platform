@@ -23,9 +23,8 @@ const commonDsProps = {
 	pointHitRadius: 10,
 }
 
-const parseData = ({ data, metric, timeframe, noLastOne = false }) => {
-	const allData = data[metric][timeframe].aggr || []
-	let aggr = noLastOne ? allData.slice(0, -1) : allData
+const parseData = ({ data, metric, timeframe }) => {
+	let aggr = data[metric][timeframe].aggr || []
 	return aggr.reduce(
 		(memo, item) => {
 			const { time, value } = item
@@ -75,40 +74,70 @@ export const SimpleStatistics = ({
 		})
 	})
 
+	const dataPayouts = parseData({
+		data,
+		metric: 'eventPayouts',
+		timeframe,
+	})
+
+	const dataEventCounts = parseData({
+		data,
+		metric: 'eventCounts',
+		timeframe,
+	})
+
+	const nullifyItemsWithoutLast = array => {
+		let newArray = [...array]
+		for (let i = 0; i < newArray.length - 2; i++) {
+			newArray[i] = null
+		}
+		return newArray
+	}
+
+	const removeLastTwoElements = array => {
+		let newArray = [...array]
+		for (let i = newArray.length - 1; i > newArray.length - 2; i--) {
+			newArray[i] = null
+		}
+		return newArray
+	}
+
 	const chartData = {
-		labels: parseData({
-			data,
-			metric: 'eventPayouts',
-			timeframe,
-			noLastOne: true,
-		}).labels,
+		labels: dataPayouts.labels,
 		datasets: [
 			{
 				...commonDsProps,
 				backgroundColor: Helper.hexToRgbaColorString(y1Color, 0.5),
 				borderColor: Helper.hexToRgbaColorString(y1Color, 1),
 				label: y1Label,
-				data: parseData({
-					data,
-					metric: 'eventPayouts',
-					timeframe,
-					noLastOne: true,
-				}).datasets,
+				data: removeLastTwoElements(dataPayouts.datasets),
 				yAxisID: 'y-axis-1',
-				pointBackgroundColor: 'transparent',
+			},
+			{
+				...commonDsProps,
+				backgroundColor: Helper.hexToRgbaColorString('#000', 0.5),
+				borderColor: Helper.hexToRgbaColorString('#000', 1),
+				borderDash: [10, 5],
+				label: y1Label + 'last',
+				data: nullifyItemsWithoutLast(dataPayouts.datasets),
+				yAxisID: 'y-axis-last',
 			},
 			{
 				...commonDsProps,
 				backgroundColor: Helper.hexToRgbaColorString(y2Color, 0.5),
 				borderColor: Helper.hexToRgbaColorString(y2Color, 1),
 				label: y2Label,
-				data: parseData({
-					data,
-					metric: 'eventCounts',
-					timeframe,
-					noLastOne: true,
-				}).datasets,
+				data: removeLastTwoElements(dataEventCounts.datasets),
 				yAxisID: 'y-axis-2',
+			},
+			{
+				...commonDsProps,
+				backgroundColor: Helper.hexToRgbaColorString('#000', 0.5),
+				borderColor: Helper.hexToRgbaColorString('#000', 1),
+				borderDash: [10, 5],
+				label: y2Label + 'last',
+				data: nullifyItemsWithoutLast(dataEventCounts.datasets),
+				yAxisID: 'y-axis-last',
 			},
 		],
 	}
@@ -166,6 +195,19 @@ export const SimpleStatistics = ({
 					id: 'y-axis-1',
 				},
 				{
+					gridLines: {
+						display: true,
+					},
+					ticks: {
+						beginAtZero: true,
+					},
+					scaleLabel: {
+						display: true,
+						labelString: y1Label,
+					},
+					id: 'y-axis-last',
+				},
+				{
 					type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
 					display: true,
 					position: 'right',
@@ -174,6 +216,24 @@ export const SimpleStatistics = ({
 						labelString: y2Label,
 					},
 					id: 'y-axis-2',
+					ticks: {
+						beginAtZero: true,
+						precision: 0,
+					},
+					// grid line settings
+					gridLines: {
+						drawOnChartArea: false, // only want the grid lines for one axis to show up
+					},
+				},
+				{
+					type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+					display: true,
+					position: 'right',
+					scaleLabel: {
+						display: true,
+						labelString: y2Label,
+					},
+					id: 'y-axis-last',
 					ticks: {
 						beginAtZero: true,
 						precision: 0,
