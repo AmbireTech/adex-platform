@@ -160,7 +160,7 @@ async function getChannelsWithOutstanding({ identityAddr }) {
 				return outstandingMinusFee.gt(0)
 			})
 			.sort((c1, c2) => {
-				c2.outstandingMinusFee.gte(c1.outstandingMinusFee)
+				return c2.outstandingMinusFee.gte(c1.outstandingMinusFee)
 			})
 	)
 }
