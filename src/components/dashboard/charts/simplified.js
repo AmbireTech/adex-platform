@@ -201,10 +201,10 @@ export const SimpleStatistics = ({
 					ticks: {
 						beginAtZero: true,
 					},
-					scaleLabel: {
-						display: true,
-						labelString: y1Label,
-					},
+					// scaleLabel: {
+					// 	display: false,
+					// 	labelString: y1Label + 'last',
+					// },
 					id: 'y-axis-last',
 				},
 				{
@@ -227,12 +227,12 @@ export const SimpleStatistics = ({
 				},
 				{
 					type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-					display: true,
+					display: false,
 					position: 'right',
-					scaleLabel: {
-						display: true,
-						labelString: y2Label,
-					},
+					// scaleLabel: {
+					// 	display: false,
+					// 	labelString: y2Label + 'last',
+					// },
 					id: 'y-axis-last',
 					ticks: {
 						beginAtZero: true,
