@@ -609,7 +609,7 @@ export function closeCampaign({ campaign }) {
 			const { account } = getState().persist
 			const { results, authTokens } = await closeChannel({ account, campaign })
 
-			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch)
+			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch, getState)
 			// TODO: update campaign state
 
 			addToast({
