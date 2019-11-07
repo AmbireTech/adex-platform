@@ -147,8 +147,8 @@ const minToSweep = () => {
 	const { feeTokenWhitelist = {} } = relayerConfig()
 	const minFee = feeTokenWhitelist.min || '150000000000000000'
 
-	const fee = bigNumberify(minFee).mul(bigNumberify(2))
-	const min = bigNumberify(minFee).mul(bigNumberify(3))
+	const fee = bigNumberify(minFee).mul(bigNumberify('2'))
+	const min = bigNumberify(minFee).mul(bigNumberify('3'))
 	return { fee, min }
 }
 
@@ -168,11 +168,9 @@ export async function getOutstandingBalance({ wallet, address, withBalance }) {
 
 	const initial = { total: bigNumberify('0'), available: bigNumberify('0') }
 
-	const totalOutstanding = withOutstanding.reduce((amounts, ch) => {
-		const { outstanding } = ch.outstanding
-
+	const allOutstanding = withOutstanding.reduce((amounts, ch) => {
+		const { outstanding } = ch
 		const current = { ...amounts }
-
 		current.total = current.total.add(outstanding)
 
 		if (outstanding.gt(sweepMin.min)) {
@@ -182,7 +180,7 @@ export async function getOutstandingBalance({ wallet, address, withBalance }) {
 		return current
 	}, initial)
 
-	return totalOutstanding || initial
+	return allOutstanding || initial
 }
 
 export async function getAllValidatorsAuthForIdentity({
