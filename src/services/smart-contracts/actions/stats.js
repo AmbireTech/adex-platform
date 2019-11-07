@@ -5,6 +5,7 @@ import { getAllCampaigns } from 'services/adex-market/actions'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
 import { bigNumberify } from 'ethers/utils'
 import { Channel, MerkleTree } from 'adex-protocol-eth/js'
+import { relayerConfig } from 'services/adex-relayer'
 
 const { formatEther, formatUnits } = utils
 const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
@@ -30,7 +31,10 @@ export async function getAddressBalances({ address, authType }) {
 
 export async function getAccountStats({
 	account,
-	outstandingBalanceDai = bigNumberify(0),
+	outstandingBalanceDai = {
+		total: bigNumberify('0'),
+		available: bigNumberify('0'),
+	},
 }) {
 	const { wallet, identity } = account
 	const { provider, Dai, Identity } = await getEthers(wallet.authType)
@@ -59,7 +63,7 @@ export async function getAccountStats({
 	const [
 		walletBalanceEth,
 		walletBalanceDai,
-		identityBalanceDai = bigNumberify(0),
+		identityBalanceDai = bigNumberify('0'),
 		walletPrivileges,
 	] = await Promise.all(
 		calls.map(c =>
@@ -77,8 +81,14 @@ export async function getAccountStats({
 		walletBalanceDai,
 		identityBalanceDai,
 		walletPrivileges,
-		outstandingBalanceDai,
-		totalIdentityBalanceDai: identityBalanceDai.add(outstandingBalanceDai),
+		outstandingBalanceDai: outstandingBalanceDai.available,
+		totalOutstandingBalanceDai: outstandingBalanceDai.total,
+		availableIdentityBalanceDai: identityBalanceDai.add(
+			outstandingBalanceDai.available
+		),
+		totalIdentityBalanceDai: identityBalanceDai.add(
+			outstandingBalanceDai.total
+		),
 	}
 
 	const formatted = {
@@ -89,7 +99,12 @@ export async function getAccountStats({
 		walletBalanceDai: formatUnits(walletBalanceDai, 18),
 		identityAddress: identity.address,
 		identityBalanceDai: formatUnits(identityBalanceDai, 18),
-		outstandingBalanceDai: formatUnits(outstandingBalanceDai, 18),
+		outstandingBalanceDai: formatUnits(raw.outstandingBalanceDai, 18),
+		totalOutstandingBalanceDai: formatUnits(raw.totalOutstandingBalanceDai, 18),
+		availableIdentityBalanceDai: formatUnits(
+			raw.availableIdentityBalanceDai,
+			18
+		),
 		totalIdentityBalanceDai: formatUnits(raw.totalIdentityBalanceDai, 18),
 	}
 
@@ -130,9 +145,19 @@ async function getAllChannelsWhereHasBalance(allActive, addr) {
 		}))
 }
 
+const minToSweep = () => {
+	const { feeTokenWhitelist = {} } = relayerConfig()
+	const minFee = feeTokenWhitelist.min || '150000000000000000'
+
+	const fee = bigNumberify(minFee).mul(bigNumberify('2'))
+	const min = bigNumberify(minFee).mul(bigNumberify('3'))
+	return { fee, min }
+}
+
 export async function getOutstandingBalance({ wallet, address, withBalance }) {
 	const { authType } = wallet
 	const { AdExCore } = await getEthers(authType)
+	const sweepMin = minToSweep()
 
 	const withOutstanding = await Promise.all(
 		withBalance.map(async ({ channel, balance }) => {
@@ -143,12 +168,21 @@ export async function getOutstandingBalance({ wallet, address, withBalance }) {
 		})
 	)
 
-	const totalOutstanding = withOutstanding.reduce((sum, ch) => {
-		const currentSum = sum.add(ch.outstanding)
-		return currentSum
-	}, bigNumberify('0'))
+	const initial = { total: bigNumberify('0'), available: bigNumberify('0') }
 
-	return totalOutstanding || bigNumberify('0')
+	const allOutstanding = withOutstanding.reduce((amounts, ch) => {
+		const { outstanding } = ch
+		const current = { ...amounts }
+		current.total = current.total.add(outstanding)
+
+		if (outstanding.gt(sweepMin.min)) {
+			current.total = current.available.add(outstanding.sub(sweepMin.fee))
+		}
+
+		return current
+	}, initial)
+
+	return allOutstanding || initial
 }
 
 export async function getAllValidatorsAuthForIdentity({
