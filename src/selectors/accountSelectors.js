@@ -11,3 +11,8 @@ export const selectAuth = createSelector(
 		!!wallet.authType &&
 		!!identity.address
 )
+
+export const selectAuthSig = createSelector(
+	selectAccount,
+	({ wallet }) => wallet.authSig
+)
