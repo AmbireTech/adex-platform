@@ -42,8 +42,8 @@ class SideNav extends Component {
 		const bidsAwaitingActionChanged =
 			this.bidsAwaitingActionCount !== nextProps.bidsAwaitingActionCount
 		const balanceChanged =
-			(this.props.account.stats.formatted || {}).totalIdentityBalanceDai !==
-			(nextProps.account.stats.formatted || {}).totalIdentityBalanceDai
+			(this.props.account.stats.formatted || {}).availableIdentityBalanceDai !==
+			(nextProps.account.stats.formatted || {}).availableIdentityBalanceDai
 
 		return (
 			langChanged ||
@@ -76,7 +76,7 @@ class SideNav extends Component {
 			? 'format_list_bulleted'
 			: 'format_list_bulleted'
 		// const pendingTrsCount = (transactions.pendingTxs || []).length
-		const { totalIdentityBalanceDai } = account.stats.formatted || {}
+		const { availableIdentityBalanceDai } = account.stats.formatted || {}
 
 		return (
 			<div className={classes.navigation}>
@@ -98,12 +98,13 @@ class SideNav extends Component {
 							<ListItem>
 								<LoadingSection
 									loading={
-										!totalIdentityBalanceDai && totalIdentityBalanceDai !== 0
+										!availableIdentityBalanceDai &&
+										availableIdentityBalanceDai !== 0
 									}
 								>
 									<ListItemText
 										primary={`${parseFloat(
-											totalIdentityBalanceDai || 0
+											availableIdentityBalanceDai || 0
 										).toFixed(2)} DAI`}
 									/>
 								</LoadingSection>

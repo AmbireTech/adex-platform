@@ -31,7 +31,10 @@ export async function getAddressBalances({ address, authType }) {
 
 export async function getAccountStats({
 	account,
-	outstandingBalanceDai = bigNumberify(0),
+	outstandingBalanceDai = {
+		total: bigNumberify('0'),
+		available: bigNumberify('0'),
+	},
 }) {
 	const { wallet, identity } = account
 	const { provider, Dai, Identity } = await getEthers(wallet.authType)
@@ -79,7 +82,12 @@ export async function getAccountStats({
 		identityBalanceDai,
 		walletPrivileges,
 		outstandingBalanceDai,
-		totalIdentityBalanceDai: identityBalanceDai.add(outstandingBalanceDai),
+		availableIdentityBalanceDai: identityBalanceDai.add(
+			outstandingBalanceDai.available
+		),
+		totalIdentityBalanceDai: identityBalanceDai.add(
+			outstandingBalanceDai.total
+		),
 	}
 
 	const formatted = {
@@ -91,6 +99,10 @@ export async function getAccountStats({
 		identityAddress: identity.address,
 		identityBalanceDai: formatUnits(identityBalanceDai, 18),
 		outstandingBalanceDai: formatUnits(outstandingBalanceDai, 18),
+		availableIdentityBalanceDai: formatUnits(
+			raw.availableIdentityBalanceDai,
+			18
+		),
 		totalIdentityBalanceDai: formatUnits(raw.totalIdentityBalanceDai, 18),
 	}
 
@@ -154,24 +166,23 @@ export async function getOutstandingBalance({ wallet, address, withBalance }) {
 		})
 	)
 
-	const totalOutstanding = withOutstanding.reduce(
-		(amounts, ch) => {
-			const { outstanding } = ch.outstanding
+	const initial = { total: bigNumberify('0'), available: bigNumberify('0') }
 
-			const current = { ...amounts }
+	const totalOutstanding = withOutstanding.reduce((amounts, ch) => {
+		const { outstanding } = ch.outstanding
 
-			current.total = current.total.add(outstanding)
+		const current = { ...amounts }
 
-			if (outstanding.gt(sweepMin.min)) {
-				current.total = current.avialble.add(outstanding.sub(sweepMin.fee))
-			}
+		current.total = current.total.add(outstanding)
 
-			return current
-		},
-		{ total: bigNumberify('0'), avialble: bigNumberify('0') }
-	)
+		if (outstanding.gt(sweepMin.min)) {
+			current.total = current.available.add(outstanding.sub(sweepMin.fee))
+		}
 
-	return totalOutstanding || bigNumberify('0')
+		return current
+	}, initial)
+
+	return totalOutstanding || initial
 }
 
 export async function getAllValidatorsAuthForIdentity({
