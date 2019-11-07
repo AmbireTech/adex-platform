@@ -1,24 +1,36 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { metamaskChecks, metamaskNetworkCheck, execute } from 'actions'
+import {
+	metamaskChecks,
+	metamaskNetworkCheck,
+	getRelayerConfig,
+	execute,
+} from 'actions'
 import { Route, Switch, Redirect } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import ConnectHoc from 'components/signin/ConnectHoc'
 import {
 	CreateGrantIdentity,
+	CreateQuickIdentity,
 	CreteFullIdentity,
 	// DemoIdentity,
 	LoginGrantIdentity,
 	LoginStandardIdentity,
+	LoginQuickIdentity,
+	RecoverQuickIdentity,
 } from 'components/signin/identity/Identity'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import Home from 'components/signin/Home'
 import JustDialog from 'components/common/dialog/JustDialog'
-import { selectAuth, selectLocation } from 'selectors'
+import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
+import { selectAuth, selectAccount, selectLocation } from 'selectors'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
 const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
+const ConnectedCreateQuickIdentity = ConnectHoc(JustDialog(CreateQuickIdentity))
+const ConnectedQuickLogin = ConnectHoc(JustDialog(LoginQuickIdentity))
+const ConnectedQuickRecovery = ConnectHoc(JustDialog(RecoverQuickIdentity))
 const ConnectedCreateFullIdentity = ConnectHoc(JustDialog(CreteFullIdentity))
 const ConnectedLoginStandardIdentity = ConnectHoc(
 	JustDialog(LoginStandardIdentity)
@@ -40,13 +52,29 @@ const PrivateRoute = ({ component: Component, auth, ...other }) => {
 	)
 }
 
+const handleLegacyWallet = account => {
+	const { wallet } = account
+	const { type, email, password, authType } = wallet || {}
+
+	if (!type && email && password && authType === 'grant') {
+		migrateLegacyWallet({ email, password })
+		removeLegacyKey({ email, password })
+	}
+}
+
 const Root = () => {
 	const auth = useSelector(selectAuth)
+	const account = useSelector(selectAccount)
 	const location = useSelector(selectLocation)
 
 	useEffect(() => {
+		execute(getRelayerConfig())
 		execute(metamaskChecks())
 	}, [])
+
+	useEffect(() => {
+		handleLegacyWallet(account)
+	}, [account])
 
 	useEffect(() => {
 		execute(metamaskNetworkCheck())
@@ -70,6 +98,13 @@ const Root = () => {
 			/>
 			<Route
 				exact
+				path='/identity/quick'
+				component={props => (
+					<ConnectedCreateQuickIdentity {...props} noBackground />
+				)}
+			/>
+			<Route
+				exact
 				path='/login/grant'
 				component={props => <ConnectedGrantLogin {...props} noBackground />}
 			/>
@@ -79,6 +114,16 @@ const Root = () => {
 				component={props => (
 					<ConnectedLoginStandardIdentity {...props} noBackground />
 				)}
+			/>
+			<Route
+				exact
+				path='/login/quick'
+				component={props => <ConnectedQuickLogin {...props} noBackground />}
+			/>
+			<Route
+				exact
+				path='/recover/quick'
+				component={props => <ConnectedQuickRecovery {...props} noBackground />}
 			/>
 			<Route
 				exact
