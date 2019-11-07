@@ -23,8 +23,9 @@ const commonDsProps = {
 	pointHitRadius: 10,
 }
 
-const parseData = ({ data, metric, timeframe }) => {
-	const aggr = data[metric][timeframe].aggr || []
+const parseData = ({ data, metric, timeframe, noLastOne = false }) => {
+	const allData = data[metric][timeframe].aggr || []
+	let aggr = noLastOne ? allData.slice(0, -1) : allData
 	return aggr.reduce(
 		(memo, item) => {
 			const { time, value } = item
@@ -74,25 +75,39 @@ export const SimpleStatistics = ({
 		})
 	})
 
-	const payoutsData = parseData({ data, metric: 'eventPayouts', timeframe })
-
 	const chartData = {
-		labels: payoutsData.labels,
+		labels: parseData({
+			data,
+			metric: 'eventPayouts',
+			timeframe,
+			noLastOne: true,
+		}).labels,
 		datasets: [
 			{
 				...commonDsProps,
 				backgroundColor: Helper.hexToRgbaColorString(y1Color, 0.5),
 				borderColor: Helper.hexToRgbaColorString(y1Color, 1),
 				label: y1Label,
-				data: payoutsData.datasets,
+				data: parseData({
+					data,
+					metric: 'eventPayouts',
+					timeframe,
+					noLastOne: true,
+				}).datasets,
 				yAxisID: 'y-axis-1',
+				pointBackgroundColor: 'transparent',
 			},
 			{
 				...commonDsProps,
 				backgroundColor: Helper.hexToRgbaColorString(y2Color, 0.5),
 				borderColor: Helper.hexToRgbaColorString(y2Color, 1),
 				label: y2Label,
-				data: parseData({ data, metric: 'eventCounts', timeframe }).datasets,
+				data: parseData({
+					data,
+					metric: 'eventCounts',
+					timeframe,
+					noLastOne: true,
+				}).datasets,
 				yAxisID: 'y-axis-2',
 			},
 		],
