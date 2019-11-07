@@ -2,10 +2,7 @@ import { getEthers } from 'services/smart-contracts/ethers'
 import { constants } from 'adex-models'
 import { utils, Contract } from 'ethers'
 import { getAllCampaigns } from 'services/adex-market/actions'
-import {
-	lastApprovedState,
-	getValidatorAuthToken,
-} from 'services/adex-validator/actions'
+import { getValidatorAuthToken } from 'services/adex-validator/actions'
 import { bigNumberify } from 'ethers/utils'
 import { Channel, MerkleTree } from 'adex-protocol-eth/js'
 

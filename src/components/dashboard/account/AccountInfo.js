@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import { updateNav, addToast, updateAccountStats, execute } from 'actions'
+import { updateNav, addToast, execute } from 'actions'
 import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import {
@@ -58,10 +58,6 @@ function AccountInfo({ t }) {
 	const classes = useStyles()
 
 	useEffect(() => {
-		execute(updateAccountStats())
-	}, [])
-
-	useEffect(() => {
 		execute(updateNav('navTitle', t('ACCOUNT')))
 	}, [t])
 
@@ -81,20 +77,17 @@ function AccountInfo({ t }) {
 		setExpanded(!expanded)
 	}
 
-	render() {
-		const { t, account, classes, actions } = this.props
-		const { grantType } = account.settings
-		const formatted = account.stats.formatted || {}
-		const {
-			walletAddress,
-			walletAuthType = '',
-			walletPrivileges = '',
-			identityAddress,
-			identityBalanceDai,
-			totalIdentityBalanceDai,
-		} = formatted
-		const { authType, email } = account.wallet
-		const { walletJsonData, expanded } = this.state
+	const { grantType } = account.settings
+	const formatted = account.stats.formatted || {}
+	const {
+		walletAddress,
+		walletAuthType = '',
+		walletPrivileges = '',
+		identityAddress,
+		identityBalanceDai,
+		totalIdentityBalanceDai,
+	} = formatted
+	const { authType, email } = account.wallet
 
 	return (
 		<div>
@@ -195,7 +188,7 @@ function AccountInfo({ t }) {
 								onClick={() => displayRampWidget()}
 							>
 								<CreditCardIcon className={classes.extendedIcon} />
-								{t('TOP_UP_IDENTITY_EUR')}
+								{t('TOP_UP_IDENTITY_GBP')}
 							</Button>
 						</Box>
 						<Box className={classes.itemActions}>
@@ -275,7 +268,7 @@ function AccountInfo({ t }) {
 }
 
 AccountInfo.propTypes = {
-	t: PropTypes.object.isRequired,
+	t: PropTypes.func.isRequired,
 }
 
 export default Translate(AccountInfo)

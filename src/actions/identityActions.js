@@ -18,6 +18,7 @@ import { addDataToWallet } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
 import { sweepChannels } from 'services/smart-contracts/actions/core'
 import { selectAccount } from 'selectors'
+import { bigNumberify } from 'ethers/utils'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -261,20 +262,17 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 	return async function(dispatch, getState) {
 		try {
 			const account = selectAccount(getState())
-			const {
-				identityBalanceDai,
-				totalIdentityBalanceDai,
-			} = account.stats.formatteds
+			const identityBalanceDai = bigNumberify(
+				account.stats.raw.identityBalanceDai
+			)
 			let sweepTxns
-			if (
-				amountToWithdraw > parseFloat(identityBalanceDai) &&
-				amountToWithdraw < parseFloat(totalIdentityBalanceDai)
-			) {
-				const amountToSweep =
-					parseFloat(this.props.identityAvailable) - identityBalanceDai
+			if (bigNumberify(amountToWithdraw).gt(identityBalanceDai)) {
+				const amountToSweep = bigNumberify(amountToWithdraw).sub(
+					identityBalanceDai
+				)
 
 				sweepTxns = await sweepChannels({
-					account: this.props.account,
+					account,
 					amountToSweep,
 				})
 			}
