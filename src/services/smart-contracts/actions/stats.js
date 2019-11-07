@@ -5,6 +5,7 @@ import { getAllCampaigns } from 'services/adex-market/actions'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
 import { bigNumberify } from 'ethers/utils'
 import { Channel, MerkleTree } from 'adex-protocol-eth/js'
+import { relayerConfig } from 'services/adex-relayer'
 
 const { formatEther, formatUnits } = utils
 const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
@@ -130,9 +131,19 @@ async function getAllChannelsWhereHasBalance(allActive, addr) {
 		}))
 }
 
+const minToSweep = () => {
+	const { feeTokenWhitelist = {} } = relayerConfig()
+	const minFee = feeTokenWhitelist.min || '150000000000000000'
+
+	const fee = bigNumberify(minFee).mul(bigNumberify(2))
+	const min = bigNumberify(minFee).mul(bigNumberify(3))
+	return { fee, min }
+}
+
 export async function getOutstandingBalance({ wallet, address, withBalance }) {
 	const { authType } = wallet
 	const { AdExCore } = await getEthers(authType)
+	const sweepMin = minToSweep()
 
 	const withOutstanding = await Promise.all(
 		withBalance.map(async ({ channel, balance }) => {
@@ -143,10 +154,22 @@ export async function getOutstandingBalance({ wallet, address, withBalance }) {
 		})
 	)
 
-	const totalOutstanding = withOutstanding.reduce((sum, ch) => {
-		const currentSum = sum.add(ch.outstanding)
-		return currentSum
-	}, bigNumberify('0'))
+	const totalOutstanding = withOutstanding.reduce(
+		(amounts, ch) => {
+			const { outstanding } = ch.outstanding
+
+			const current = { ...amounts }
+
+			current.total = current.total.add(outstanding)
+
+			if (outstanding.gt(sweepMin.min)) {
+				current.total = current.avialble.add(outstanding.sub(sweepMin.fee))
+			}
+
+			return current
+		},
+		{ total: bigNumberify('0'), avialble: bigNumberify('0') }
+	)
 
 	return totalOutstanding || bigNumberify('0')
 }
