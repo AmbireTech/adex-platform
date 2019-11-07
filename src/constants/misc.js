@@ -66,7 +66,7 @@ export const NETWORK_STATUS = {
 }
 
 export const ETHEREUM_NETWORKS = {
-	1: { name: 'Mainnet', for: 'development' },
+	1: { name: 'Mainnet', for: 'production' },
 	5: { name: 'Goerli', for: 'development' },
 	production: { name: 'Mainnet', for: 'production' },
 	development: { name: 'Goerli', for: 'development' },
