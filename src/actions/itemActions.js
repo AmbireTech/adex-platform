@@ -448,7 +448,7 @@ export function cloneItem({ item, itemType, objModel } = {}) {
 			newItem.temp = {
 				...initialState.newItem[itemType].temp,
 				targets: item.targeting.map((t, index) => {
-					const key = findSourceByTag(t.tag)
+					const key = findSourceByTag(t.tag) || ''
 					return {
 						key: index,
 						collection: 'targeting',

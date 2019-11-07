@@ -11,7 +11,7 @@ import DashboardStats from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
 import Items from 'components/dashboard/containers/Items'
-import Transactions from 'components/dashboard/containers/Transactions'
+// import Transactions from 'components/dashboard/containers/Transactions'
 import {
 	AdUnit as AdUnitModel,
 	AdSlot as AdSlotModel,
@@ -25,6 +25,7 @@ import {
 	NewSlotDialog,
 } from 'components/dashboard/forms/items/NewItems'
 import campaignsLoop from 'services/store-data/campaigns'
+import statsLoop from 'services/store-data/account'
 import {
 	SORT_PROPERTIES_ITEMS,
 	FILTER_PROPERTIES_ITEMS,
@@ -52,6 +53,7 @@ class Dashboard extends React.Component {
 
 	componentWillUnmount() {
 		campaignsLoop.stop()
+		statsLoop.stop()
 	}
 
 	componentDidMount() {
@@ -59,10 +61,10 @@ class Dashboard extends React.Component {
 
 		actions.updateNav('side', this.props.match.params.side)
 		actions.getAllItems()
-		actions.updateAccountStats()
 		actions.updateAccountSettings()
 		actions.updateAccountAnalytics()
 		campaignsLoop.start()
+		statsLoop.start()
 	}
 
 	// shouldComponentUpdate(nextProps, nextState) {
@@ -216,8 +218,7 @@ class Dashboard extends React.Component {
 					<div className={classes.contentInner}>
 						<div className={classes.toolbar} />
 
-						<Switch locatiom={this.props.location}>
-							TODO: Make things dynamic if easier
+						<Switch>
 							<Route
 								auth={this.props.auth}
 								exact
@@ -234,13 +235,13 @@ class Dashboard extends React.Component {
 								auth={this.props.auth}
 								exact
 								path='/dashboard/advertiser/Campaign/:itemId'
-								component={Campaign}
+								component={props => <Campaign {...props} />}
 							/>
 							<Route
 								auth={this.props.auth}
 								exact
 								path='/dashboard/advertiser/AdUnit/:itemId'
-								component={Unit}
+								component={props => <Unit {...props} />}
 							/>
 							<Route
 								auth={this.props.auth}
@@ -258,25 +259,25 @@ class Dashboard extends React.Component {
 								auth={this.props.auth}
 								exact
 								path='/dashboard/publisher/AdSlot/:itemId'
-								component={Slot}
+								component={props => <Slot {...props} />}
 							/>
 							<Route
 								auth={this.props.auth}
 								exact
 								path={'/dashboard/:side/account'}
-								component={Account}
+								component={props => <Account {...props} />}
 							/>
-							<Route
+							{/* <Route
 								auth={this.props.auth}
 								exact
 								path={'/dashboard/:side/transactions'}
-								component={Transactions}
-							/>
+								component={props => <Transactions {...props} />}
+							/> */}
 							<Route
 								auth={this.props.auth}
 								exact
 								path='/dashboard/:side'
-								component={DashboardStats}
+								component={props => <DashboardStats {...props} />}
 							/>
 							<Route
 								auth={this.props.auth}

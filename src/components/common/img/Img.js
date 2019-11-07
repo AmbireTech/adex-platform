@@ -207,9 +207,9 @@ class Img extends Component {
 					) : (
 						<video
 							src={videoSrc}
-							autoPlay='true'
-							muted='true'
-							loop='true'
+							autoPlay
+							muted
+							loop
 							controls
 							className={classnames(classes.dialogImage, classes.imgLoading)}
 						></video>
@@ -255,9 +255,9 @@ class Img extends Component {
 					<video
 						src={videoSrc}
 						className={classnames(classes.imgLoading, className, classes.img)}
-						autoPlay='true'
-						muted='true'
-						loop='true'
+						autoPlay
+						muted
+						loop
 						onClick={
 							fullScreenOnClick &&
 							(() => {
