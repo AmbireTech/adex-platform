@@ -526,6 +526,20 @@ const campaignProps = ({
 														fullWidth
 													/>
 												</Grid>
+												<Grid item xs={12}>
+													<TextField
+														// type='text'
+														value={
+															item.minTargetingScore
+																? t('CONFIRM_YES')
+																: t('CONFIRM_NO')
+														}
+														label={t('CAMPAIGN_MIN_TARGETING')}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
 											</Grid>
 										</Grid>
 									</Grid>
