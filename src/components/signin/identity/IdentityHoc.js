@@ -22,21 +22,39 @@ export default function IdentityHoc(Decorated) {
 		}
 
 		componentDidUpdate = () => {
-			if (this.props.account.wallet.authSig) {
+			const { account } = this.props
+			if (account.wallet.authSig) {
 				execute(push('/side-select'))
 			}
 		}
 
-		save = () => {
+		save = async () => {
 			const { identity, actions } = this.props
-			const { wallet, email, identityData } = identity
+			const {
+				wallet,
+				email,
+				identityData,
+				identityTxData,
+				deleteLegacyKey,
+				registerAccount,
+			} = identity
 
 			const newWallet = { ...wallet }
+
+			if (registerAccount) {
+				await actions.registerAccount({
+					owner: newWallet.address,
+					identityTxData,
+					email,
+				})
+			}
+
 			actions.createSession({
 				identity: identityData,
 				wallet: newWallet,
 				email,
 				registerExpected: !identityData,
+				deleteLegacyKey,
 			})
 		}
 

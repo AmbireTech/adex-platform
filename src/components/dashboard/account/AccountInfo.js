@@ -38,18 +38,20 @@ const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
 const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 
 function AccountInfo({ t }) {
-	// eslint-disable-next-line no-useless-constructor
 	const account = useSelector(selectAccount)
+
 	const localWalletDownloadHref = () => {
-		const { email, password } = account.wallet
-		const obj = getRecoveryWalletData({ email, password })
-		if (!obj) {
+		const { email, password, authType } = account.wallet
+		const obj = getRecoveryWalletData({ email, password, authType })
+		if (!obj || !obj.wallet) {
 			return null
 		}
+
 		const data =
 			'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj))
 		return data
 	}
+
 	const walletJsonData = localWalletDownloadHref()
 	const [expanded, setExpanded] = useState(false)
 	const useStyles = makeStyles(styles)

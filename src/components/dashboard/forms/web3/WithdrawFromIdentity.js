@@ -22,6 +22,7 @@ class WithdrawFromIdentity extends Component {
 		if (!transaction.withdrawTo) {
 			validate('withdrawTo', {
 				isValid: false,
+				err: { msg: 'ERR_REQUIRED_FIELD' },
 				dirty: false,
 			})
 		}
