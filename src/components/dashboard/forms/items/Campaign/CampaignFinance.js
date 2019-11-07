@@ -214,14 +214,14 @@ class CampaignFinance extends Component {
 		} else {
 			const { newItem, account } = this.props
 
-			const { totalIdentityBalanceDai = 0 } = account.stats.formatted || {}
+			const { availableIdentityBalanceDai = 0 } = account.stats.formatted || {}
 
 			const depositAmount =
 				prop === 'depositAmount' ? value : newItem.depositAmount
 			const minPerImpression =
 				prop === 'minPerImpression' ? value : newItem.minPerImpression
 			const maxDeposit =
-				parseFloat(totalIdentityBalanceDai) - parseFloat(totalFeesFormatted)
+				parseFloat(availableIdentityBalanceDai) - parseFloat(totalFeesFormatted)
 			const result = validateAmounts({
 				maxDeposit,
 				depositAmount,
@@ -276,7 +276,7 @@ class CampaignFinance extends Component {
 			minTargetingScore,
 		} = newItem
 
-		const { totalIdentityBalanceDai = 0 } = account.stats.formatted || {}
+		const { availableIdentityBalanceDai = 0 } = account.stats.formatted || {}
 
 		const from = activeFrom || undefined
 		const to = withdrawPeriodStart || undefined
@@ -349,7 +349,7 @@ class CampaignFinance extends Component {
 							label={t('DEPOSIT_AMOUNT_LABEL', {
 								args: [
 									(
-										parseFloat(totalIdentityBalanceDai) -
+										parseFloat(availableIdentityBalanceDai) -
 										parseFloat(totalFeesFormatted)
 									).toFixed(2),
 									'DAI',

@@ -85,7 +85,7 @@ function AccountInfo({ t }) {
 		walletPrivileges = '',
 		identityAddress,
 		identityBalanceDai,
-		totalIdentityBalanceDai,
+		availableIdentityBalanceDai,
 	} = formatted
 	const { authType, email } = account.wallet
 
@@ -196,8 +196,8 @@ function AccountInfo({ t }) {
 								<WithdrawTokenFromIdentity
 									variant='contained'
 									color='primary'
-									identityAvailable={totalIdentityBalanceDai}
-									identityAvailableRaw={totalIdentityBalanceDai}
+									identityAvailable={availableIdentityBalanceDai}
+									identityAvailableRaw={availableIdentityBalanceDai}
 									token='DAI'
 									className={classes.actionBtn}
 									size='small'
@@ -232,7 +232,7 @@ function AccountInfo({ t }) {
 										token='DAI'
 										className={classes.actionBtn}
 										size='small'
-										identityAvailable={totalIdentityBalanceDai}
+										identityAvailable={availableIdentityBalanceDai}
 									/>
 								</div>
 							</ListItem>
