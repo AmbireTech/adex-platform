@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import { updateNav, addToast, updateAccountStats, execute } from 'actions'
+import { updateNav, addToast, execute } from 'actions'
 import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import {
@@ -56,10 +56,6 @@ function AccountInfo({ t }) {
 	const [expanded, setExpanded] = useState(false)
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
-
-	useEffect(() => {
-		execute(updateAccountStats())
-	}, [])
 
 	useEffect(() => {
 		execute(updateNav('navTitle', t('ACCOUNT')))
@@ -191,7 +187,7 @@ function AccountInfo({ t }) {
 								onClick={() => displayRampWidget()}
 							>
 								<CreditCardIcon className={classes.extendedIcon} />
-								{t('TOP_UP_IDENTITY_EUR')}
+								{t('TOP_UP_IDENTITY_GBP')}
 							</Button>
 						</Box>
 						<Box className={classes.itemActions}>
@@ -271,7 +267,7 @@ function AccountInfo({ t }) {
 }
 
 AccountInfo.propTypes = {
-	t: PropTypes.object.isRequired,
+	t: PropTypes.func.isRequired,
 }
 
 export default Translate(AccountInfo)
