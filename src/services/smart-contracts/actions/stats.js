@@ -63,7 +63,7 @@ export async function getAccountStats({
 	const [
 		walletBalanceEth,
 		walletBalanceDai,
-		identityBalanceDai = bigNumberify(0),
+		identityBalanceDai = bigNumberify('0'),
 		walletPrivileges,
 	] = await Promise.all(
 		calls.map(c =>
@@ -81,7 +81,8 @@ export async function getAccountStats({
 		walletBalanceDai,
 		identityBalanceDai,
 		walletPrivileges,
-		outstandingBalanceDai,
+		outstandingBalanceDai: outstandingBalanceDai.available,
+		totalOutstandingBalanceDai: outstandingBalanceDai.total,
 		availableIdentityBalanceDai: identityBalanceDai.add(
 			outstandingBalanceDai.available
 		),
@@ -98,7 +99,8 @@ export async function getAccountStats({
 		walletBalanceDai: formatUnits(walletBalanceDai, 18),
 		identityAddress: identity.address,
 		identityBalanceDai: formatUnits(identityBalanceDai, 18),
-		outstandingBalanceDai: formatUnits(outstandingBalanceDai, 18),
+		outstandingBalanceDai: formatUnits(raw.outstandingBalanceDai, 18),
+		totalOutstandingBalanceDai: formatUnits(raw.totalOutstandingBalanceDai, 18),
 		availableIdentityBalanceDai: formatUnits(
 			raw.availableIdentityBalanceDai,
 			18
