@@ -271,13 +271,15 @@ export function openCampaign({ campaign, account }) {
 				withBalance: [{ channel: campaign }],
 				account,
 			})
-			const { identityBalanceDai } = account.stats.formatted
+			const identityBalanceDai = bigNumberify(
+				account.stats.raw.identityBalanceDai
+			)
+			const depositAmount = bigNumberify(campaign.depositAmount)
 			const feeTokenAddr = campaign.temp.feeTokenAddr
-			const amountToSweep =
-				parseFloat(campaign.depositAmount) -
-				parseFloat(account.stats.formatted.identityBalanceDai)
+
+			const amountToSweep = depositAmount.sub(identityBalanceDai)
 			let sweepTxns
-			if (parseFloat(campaign.depositAmount) > parseFloat(identityBalanceDai)) {
+			if (depositAmount.gt(identityBalanceDai)) {
 				sweepTxns = await sweepChannels({
 					feeTokenAddr,
 					account,
@@ -446,7 +448,7 @@ export function cloneItem({ item, itemType, objModel } = {}) {
 			newItem.temp = {
 				...initialState.newItem[itemType].temp,
 				targets: item.targeting.map((t, index) => {
-					const key = findSourceByTag(t.tag)
+					const key = findSourceByTag(t.tag) || ''
 					return {
 						key: index,
 						collection: 'targeting',
@@ -607,7 +609,7 @@ export function closeCampaign({ campaign }) {
 			const { account } = getState().persist
 			const { results, authTokens } = await closeChannel({ account, campaign })
 
-			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch)
+			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch, getState)
 			// TODO: update campaign state
 
 			addToast({
