@@ -176,7 +176,7 @@ export async function getOutstandingBalance({ wallet, address, withBalance }) {
 		current.total = current.total.add(outstanding)
 
 		if (outstanding.gt(sweepMin.min)) {
-			current.total = current.available.add(outstanding.sub(sweepMin.fee))
+			current.available = current.available.add(outstanding.sub(sweepMin.fee))
 		}
 
 		return current
