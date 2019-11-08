@@ -34,6 +34,7 @@ import {
 } from 'constants/misc'
 import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
+import PageNotFound from 'components/page_not_found/PageNotFound'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 class Dashboard extends React.Component {
@@ -67,7 +68,11 @@ class Dashboard extends React.Component {
 		statsLoop.start()
 	}
 
-	componentWillUpdate(nextProps) {
+	shouldComponentUpdate(nextProps) {
+		return nextProps.match !== this.props.match
+	}
+
+	componentDidUpdate(nextProps) {
 		if (nextProps.match.params.side !== this.props.match.params.side) {
 			this.props.actions.updateNav('side', nextProps.match.params.side)
 		}
@@ -162,8 +167,8 @@ class Dashboard extends React.Component {
 	}
 
 	render() {
-		const side = this.props.side || this.props.match.params.side
-		const { classes, theme } = this.props
+		const { classes, theme, match } = this.props
+		const side = match.params.side
 
 		const drawer = (
 			<div>
@@ -265,7 +270,7 @@ class Dashboard extends React.Component {
 								path='/dashboard/:side'
 								component={props => <DashboardStats {...props} />}
 							/>
-							<Route component={() => <h1>404 at {side} side</h1>} />
+							<Route component={props => <PageNotFound {...props} />} />
 						</Switch>
 					</div>
 				</main>
