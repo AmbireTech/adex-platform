@@ -278,8 +278,7 @@ export async function withdrawFromIdentity({
 		to: Dai.address,
 		data: ERC20.functions.transfer.encode([withdrawTo, tokenAmount]),
 	}
-
-	const txns = [...sweepTxns, tx1, tx2]
+	const txns = sweepTxns ? [...sweepTxns, tx1, tx2] : [tx1, tx2]
 	const signatures = await getMultipleTxSignatures({ txns, signer })
 
 	const data = {
