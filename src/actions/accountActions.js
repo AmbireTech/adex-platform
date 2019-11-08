@@ -91,10 +91,8 @@ export function updateAccountStats() {
 	return async function(dispatch, getState) {
 		const { account } = getState().persist
 		try {
-			const { identity, wallet, stats } = account
+			const { identity, wallet } = account
 			const { address } = identity
-			const oldAggregates = stats.aggregates
-
 			const withBalance = await getAllChannelsForIdentity({ address })
 
 			const outstandingBalanceDai = await getOutstandingBalance({
@@ -111,7 +109,7 @@ export function updateAccountStats() {
 			})
 
 			updateAccount({
-				newValues: { stats: { formatted, raw, aggregates: oldAggregates } },
+				newValues: { stats: { formatted, raw } },
 			})(dispatch)
 		} catch (err) {
 			console.error('ERR_STATS', err)
