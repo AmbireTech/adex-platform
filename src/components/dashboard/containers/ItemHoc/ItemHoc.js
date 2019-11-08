@@ -534,7 +534,7 @@ export default function ItemHoc(Decorated) {
 		return {
 			account: persist.account,
 			item: item,
-			validateId: 'update-' + (item.id || item.ipfs),
+			validateId: 'update-' + (item && (item.id || item.ipfs)),
 			matchId: id,
 		}
 	}
