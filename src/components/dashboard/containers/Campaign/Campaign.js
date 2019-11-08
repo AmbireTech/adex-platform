@@ -158,7 +158,6 @@ export class Campaign extends Component {
 
 Campaign.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
 	units: PropTypes.object.isRequired,
 	rowsView: PropTypes.bool.isRequired,
 	item: PropTypes.object.isRequired,
@@ -168,7 +167,6 @@ function mapStateToProps(state) {
 	const { persist } = state
 	// let memory = state.memory
 	return {
-		account: persist.account,
 		units: persist.items['AdUnit'],
 		rowsView: !!persist.ui[VIEW_MODE],
 		objModel: CampaignModel,
