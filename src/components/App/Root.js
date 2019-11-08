@@ -24,7 +24,7 @@ import PageNotFound from 'components/page_not_found/PageNotFound'
 import Home from 'components/signin/Home'
 import JustDialog from 'components/common/dialog/JustDialog'
 import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
-import { selectAuth, selectAccount, selectLocation } from 'selectors'
+import { selectAuth, selectWallet, selectLocation } from 'selectors'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
 const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
@@ -52,8 +52,7 @@ const PrivateRoute = ({ component: Component, auth, ...other }) => {
 	)
 }
 
-const handleLegacyWallet = account => {
-	const { wallet } = account
+const handleLegacyWallet = wallet => {
 	const { type, email, password, authType } = wallet || {}
 
 	if (!type && email && password && authType === 'grant') {
@@ -64,7 +63,7 @@ const handleLegacyWallet = account => {
 
 const Root = () => {
 	const auth = useSelector(selectAuth)
-	const account = useSelector(selectAccount)
+	const wallet = useSelector(selectWallet)
 	const location = useSelector(selectLocation)
 
 	useEffect(() => {
@@ -73,8 +72,8 @@ const Root = () => {
 	}, [])
 
 	useEffect(() => {
-		handleLegacyWallet(account)
-	}, [account])
+		handleLegacyWallet(wallet)
+	}, [wallet])
 
 	useEffect(() => {
 		execute(metamaskNetworkCheck())
