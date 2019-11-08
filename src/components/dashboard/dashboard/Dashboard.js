@@ -67,10 +67,6 @@ class Dashboard extends React.Component {
 		statsLoop.start()
 	}
 
-	// shouldComponentUpdate(nextProps, nextState) {
-
-	// }
-
 	componentWillUpdate(nextProps) {
 		if (nextProps.match.params.side !== this.props.match.params.side) {
 			this.props.actions.updateNav('side', nextProps.match.params.side)
@@ -175,7 +171,7 @@ class Dashboard extends React.Component {
                     <SideSwitch side={side} t={this.props.t} />
                 </div>
                 <Divider /> */}
-				<SideNav location={this.props.location} side={side} />
+				<SideNav side={side} />
 			</div>
 		)
 
@@ -217,52 +213,43 @@ class Dashboard extends React.Component {
 				<main className={classes.content}>
 					<div className={classes.contentInner}>
 						<div className={classes.toolbar} />
-
 						<Switch>
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/advertiser/campaigns'
 								component={this.renderCampaigns}
 							/>
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/advertiser/units'
 								component={this.renderAdUnits}
 							/>
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/advertiser/Campaign/:itemId'
 								component={props => <Campaign {...props} />}
 							/>
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/advertiser/AdUnit/:itemId'
 								component={props => <Unit {...props} />}
 							/>
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/publisher/channels'
 								component={this.renderChannels}
 							/>
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/publisher/slots'
 								component={this.renderAdSlots}
 							/>
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/publisher/AdSlot/:itemId'
 								component={props => <Slot {...props} />}
 							/>
 							<Route
-								auth={this.props.auth}
 								exact
 								path={'/dashboard/:side/account'}
 								component={props => <Account {...props} />}
@@ -274,15 +261,11 @@ class Dashboard extends React.Component {
 								component={props => <Transactions {...props} />}
 							/> */}
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/:side'
 								component={props => <DashboardStats {...props} />}
 							/>
-							<Route
-								auth={this.props.auth}
-								component={() => <h1>404 at {side} side</h1>}
-							/>
+							<Route component={() => <h1>404 at {side} side</h1>} />
 						</Switch>
 					</div>
 				</main>
