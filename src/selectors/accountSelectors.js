@@ -16,3 +16,8 @@ export const selectAuthSig = createSelector(
 	selectAccount,
 	({ wallet }) => wallet.authSig
 )
+
+export const selectWallet = createSelector(
+	selectAccount,
+	({ wallet }) => wallet
+)
