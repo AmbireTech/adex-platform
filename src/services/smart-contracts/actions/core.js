@@ -106,7 +106,6 @@ function getReadyCampaign(campaign, identity, Dai) {
 
 async function getChannelsWithOutstanding({ identityAddr }) {
 	const channels = await getAllCampaigns(true)
-
 	return Promise.all(
 		channels
 			.map(channel => {
@@ -136,15 +135,13 @@ async function getChannelsWithOutstanding({ identityAddr }) {
 				const outstanding =
 					channel.status.name === 'Expired'
 						? bigNumberify(channel.deposit).sub(
-								bigNumberify(await Core.functions.withdrawn(channel.id))
+								await Core.functions.withdrawn.encode([channel.id])
 						  )
 						: bigNumberify(lastApprovedBalances[identityAddr]).sub(
-								bigNumberify(
-									await Core.functions.withdrawnPerUser(
-										channel.id,
-										identityAddr
-									)
-								)
+								await Core.functions.withdrawnPerUser.encode([
+									channel.id,
+									identityAddr,
+								])
 						  )
 				const outstandingMinusFee = bigNumberify(outstanding).sub(
 					bigNumberify(feeAmountTransfer)
@@ -156,10 +153,13 @@ async function getChannelsWithOutstanding({ identityAddr }) {
 					outstandingMinusFee,
 				}
 			})
-			.filter(({ outstandingMinusFee }) => {
+			.filter(async res => {
+				const { outstandingMinusFee } = await res
 				return outstandingMinusFee.gt(0)
 			})
-			.sort((c1, c2) => {
+			.sort(async (c1, c2) => {
+				c1 = await c1
+				c2 = await c2
 				return c2.outstandingMinusFee.gte(c1.outstandingMinusFee)
 			})
 	)
@@ -169,7 +169,6 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
 	const allChannels = await getChannelsWithOutstanding({
 		identityAddr,
 	})
-
 	// Could be done with map/reduce but figured this for loop is much simpler in this case
 	const channelsToWithdrawFrom = []
 	const sum = bigNumberify('0')
@@ -178,10 +177,9 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
 			break
 		}
 
-		sum.iadd(channel.outstandingMinusFee)
+		sum.add(channel.outstandingMinusFee)
 		channelsToWithdrawFrom.push(channel)
 	}
-
 	return channelsToWithdrawFrom
 }
 
