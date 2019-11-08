@@ -12,7 +12,9 @@ import Dropdown from 'components/common/dropdown'
 import { translate } from 'services/translations/translations'
 import { withStyles } from '@material-ui/core/styles'
 import { SOURCES } from 'constants/targeting'
-
+import { Button } from '@material-ui/core'
+import { labelDetection } from 'services/google-services/googleVision'
+import { getGoogleVisionLabels } from 'services/adex-market/actions'
 const styles = {
 	slider: {
 		padding: '22px 0px',
@@ -54,9 +56,10 @@ class AdUnitTargeting extends Component {
 	constructor(props) {
 		super(props)
 
-		const { targets } = props.newItem.temp || {}
+		const { targets, tempUrl } = props.newItem.temp || {}
 		this.state = {
 			targets: [...(targets || [])],
+			tempUrl,
 		}
 	}
 
@@ -213,11 +216,13 @@ class AdUnitTargeting extends Component {
 			t,
 			// newItem,
 			classes,
+			account,
 			...rest
 		} = this.props
 		// const { targeting, tags } = newItem
+		const { authSig } = account.wallet
 
-		const { targets } = this.state
+		const { targets, tempUrl } = this.state
 		return (
 			<div>
 				<Grid container spacing={1}>
@@ -255,6 +260,17 @@ class AdUnitTargeting extends Component {
 							htmlId='ad-type-dd'
 							name='adType'
 						/>
+					</Grid>
+					<Grid item container justify='center'>
+						<Button
+							onClick={() =>
+								getGoogleVisionLabels(new File([tempUrl], 'temp'), authSig)
+							}
+							variant='contained'
+							color='primary'
+						>
+							{t('AUTH_CONNECT_WITH_METAMASK')}
+						</Button>
 					</Grid>
 				</Grid>
 			</div>

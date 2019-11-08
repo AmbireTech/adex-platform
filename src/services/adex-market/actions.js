@@ -95,6 +95,18 @@ export const getAdUnits = ({ identity }) => {
 		.then(processResponse)
 }
 
+export const getGoogleVisionLabels = ({ image, authSig }) => {
+	return requester
+		.fetch({
+			route: 'tags/gVLabels',
+			method: 'POST',
+			body: convertItemToJSON({ test: 'test' }),
+			headers: { 'Content-Type': 'application/json' },
+		})
+		.then(processResponse)
+		.catch(error => console.log(error))
+}
+
 export const postAdUnit = ({ unit, authSig }) => {
 	return requester
 		.fetch({
