@@ -33,7 +33,6 @@ class Items extends Component {
 
 Items.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
 	items: PropTypes.object.isRequired,
 	viewModeId: PropTypes.string.isRequired,
 	header: PropTypes.string.isRequired,
@@ -45,7 +44,6 @@ Items.propTypes = {
 function mapStateToProps(state, props) {
 	const { persist, memory } = state
 	return {
-		account: persist.account,
 		items: persist.items[props.itemType] || [],
 		side: memory.nav.side,
 	}
