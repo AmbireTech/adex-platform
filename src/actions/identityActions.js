@@ -16,7 +16,7 @@ import {
 } from 'services/smart-contracts/actions/identity'
 import { addDataToWallet } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
-import { sweepChannels } from 'services/smart-contracts/actions/core'
+import { getSweepChannelsTxns } from 'services/smart-contracts/actions/core'
 import { selectAccount } from 'selectors'
 import { parseUnits } from 'ethers/utils'
 
@@ -267,7 +267,7 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 			const amountToWithdrawBN = parseUnits(amountToWithdraw, 18)
 			if (amountToWithdrawBN.gt(identityBalanceDai)) {
 				const amountToSweep = amountToWithdrawBN.sub(identityBalanceDai)
-				sweepTxns = await sweepChannels({
+				sweepTxns = await getSweepChannelsTxns({
 					account,
 					amountToSweep,
 				})
