@@ -5,6 +5,7 @@ import {
 	postAdSlot,
 	updateAdSlot,
 	updateAdUnit,
+	getImageCategories,
 } from 'services/adex-market/actions'
 import { parseUnits, bigNumberify } from 'ethers/utils'
 import { Base, AdSlot, AdUnit, helpers } from 'adex-models'
@@ -259,6 +260,46 @@ export function getAllItems() {
 				args: [err],
 			})
 		}
+	}
+}
+
+export function addCategorySuggestions({ newItem, itemType }) {
+	return async function(dispatch) {
+		updateSpinner('category-suggestions', true)(dispatch)
+		const tempItem = newItem
+		const { tempUrl } = tempItem.temp
+		try {
+			const { categories } = await getImageCategories({ tempUrl })
+			const newTargets = categories.map(i => ({
+				tag: i.name,
+				score: Math.round(i.confidence * 100),
+			}))
+			const targetWithSource = newTargets.map((t, index) => {
+				return {
+					key: index,
+					collection: 'targeting',
+					source: 'GOOGLE_VISION',
+					label: translate(`TARGET_LABEL_GOOGLE_VISION`),
+					placeholder: translate(`TARGET_LABEL_GOOGLE_VISION`),
+					target: { ...t },
+				}
+			})
+			updateNewItem(
+				newItem,
+				{ temp: { ...newItem.temp, targets: targetWithSource } },
+				itemType,
+				AdUnit
+			)
+		} catch (err) {
+			console.error('ERR_GETTING_CATEGORY_SUGGESTIONS', err)
+			addToast({
+				dispatch,
+				type: 'cancel',
+				toastStr: 'ERR_GETTING_CATEGORY_SUGGESTIONS',
+				args: [err],
+			})
+		}
+		updateSpinner('category-suggestions', false)(dispatch)
 	}
 }
 

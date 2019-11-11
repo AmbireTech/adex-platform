@@ -76,6 +76,25 @@ export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
 		.then(processResponse)
 }
 
+export const getImageCategories = ({ tempUrl }) => {
+	return fetch(tempUrl)
+		.then(resp => {
+			return resp.blob()
+		})
+		.then(imageBlob => {
+			const formData = new FormData()
+			formData.append('media', imageBlob, 'image.jpeg')
+			return requester
+				.fetch({
+					route: 'tags/imageCategories',
+					method: 'POST',
+					body: formData,
+				})
+				.then(processResponse)
+				.catch(error => console.log(error))
+		})
+}
+
 const convertItemToJSON = item => {
 	const itemToConvert = { ...item }
 	if (itemToConvert.created && moment.isMoment(itemToConvert.created)) {
@@ -93,18 +112,6 @@ export const getAdUnits = ({ identity }) => {
 			queryParams: { identity },
 		})
 		.then(processResponse)
-}
-
-export const getGoogleVisionLabels = ({ image, authSig }) => {
-	return requester
-		.fetch({
-			route: 'tags/gVLabels',
-			method: 'POST',
-			body: convertItemToJSON({ test: 'test' }),
-			headers: { 'Content-Type': 'application/json' },
-		})
-		.then(processResponse)
-		.catch(error => console.log(error))
 }
 
 export const postAdUnit = ({ unit, authSig }) => {
