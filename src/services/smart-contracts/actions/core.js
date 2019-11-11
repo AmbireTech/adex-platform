@@ -104,9 +104,8 @@ function getReadyCampaign(campaign, identity, Dai) {
 	return newCampaign
 }
 
-async function getChannelsWithOutstanding({ identityAddr }) {
+async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 	const channels = await getAllCampaigns(true)
-
 	return Promise.all(
 		channels
 			.map(channel => {
@@ -132,18 +131,18 @@ async function getChannelsWithOutstanding({ identityAddr }) {
 				}
 				return lastApprovedBalances && !!lastApprovedBalances[identityAddr]
 			})
-			.map(async ({ channel, lastApprovedBalances }) => {
+			.map(async ({ channel, lastApprovedBalances, mTree }) => {
+				const { authType } = wallet
+				const { AdExCore } = await getEthers(authType)
 				const outstanding =
 					channel.status.name === 'Expired'
-						? bigNumberify(channel.deposit).sub(
-								bigNumberify(await Core.functions.withdrawn(channel.id))
+						? bigNumberify(channel.depositAmount).sub(
+								await AdExCore.functions.withdrawn(channel.id)
 						  )
 						: bigNumberify(lastApprovedBalances[identityAddr]).sub(
-								bigNumberify(
-									await Core.functions.withdrawnPerUser(
-										channel.id,
-										identityAddr
-									)
+								await AdExCore.functions.withdrawnPerUser(
+									channel.id,
+									identityAddr
 								)
 						  )
 				const outstandingMinusFee = bigNumberify(outstanding).sub(
@@ -154,34 +153,34 @@ async function getChannelsWithOutstanding({ identityAddr }) {
 					balance: lastApprovedBalances[identityAddr],
 					outstanding,
 					outstandingMinusFee,
+					mTree,
 				}
 			})
-			.filter(({ outstandingMinusFee }) => {
+			.filter(async res => {
+				const { outstandingMinusFee } = await res
 				return outstandingMinusFee.gt(0)
-			})
-			.sort((c1, c2) => {
-				return c2.outstandingMinusFee.gte(c1.outstandingMinusFee)
 			})
 	)
 }
 
-async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
+async function getChannelsToSweepFrom({ amountToSweep, identityAddr, wallet }) {
 	const allChannels = await getChannelsWithOutstanding({
 		identityAddr,
+		wallet,
 	})
-
+	const channelsSorted = allChannels.sort((c1, c2) => {
+		return c2.outstandingMinusFee.gt(c1.outstandingMinusFee)
+	})
 	// Could be done with map/reduce but figured this for loop is much simpler in this case
 	const channelsToWithdrawFrom = []
-	const sum = bigNumberify('0')
-	for (const channel of allChannels) {
+	let sum = bigNumberify('0')
+	for (const c of channelsSorted) {
 		if (sum.gte(bigNumberify(amountToSweep))) {
 			break
 		}
-
-		sum.iadd(channel.outstandingMinusFee)
-		channelsToWithdrawFrom.push(channel)
+		sum = sum.add(c.outstandingMinusFee)
+		channelsToWithdrawFrom.push(c)
 	}
-
 	return channelsToWithdrawFrom
 }
 
@@ -192,36 +191,37 @@ export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
 	const channelsToSweep = await getChannelsToSweepFrom({
 		amountToSweep,
 		identityAddr,
+		wallet,
 	})
 	const identityContract = new Contract(identityAddr, Identity.abi, provider)
 	const initialNonce = (await identityContract.nonce()).toNumber()
 
 	const txns = channelsToSweep.map((c, i) => {
-		const { mTree } = c
+		const { mTree, channel } = c
 		const leaf = Channel.getBalanceLeaf(
 			identityAddr,
-			c.status.lastApprovedBalances[identityAddr]
+			channel.status.lastApprovedBalances[identityAddr]
 		)
 		const proof = mTree.proof(leaf)
-		const vsig1 = splitSig(c.status.lastApprovedSigs[0])
-		const vsig2 = splitSig(c.status.lastApprovedSigs[1])
+		const vsig1 = splitSig(channel.status.lastApprovedSigs[0])
+		const vsig2 = splitSig(channel.status.lastApprovedSigs[1])
 		const data =
-			c.status.name === 'Expired'
+			channel.status.name === 'Expired'
 				? Core.functions.channelWithdrawExpired.encode([
-						toEthereumChannel(c).toSolidityTuple(),
+						toEthereumChannel(channel).toSolidityTuple(),
 				  ])
 				: Core.functions.channelWithdraw.encode([
-						toEthereumChannel(c).toSolidityTuple(),
-						mTree,
+						toEthereumChannel(channel).toSolidityTuple(),
+						mTree.getRoot(),
 						[vsig1, vsig2],
 						proof,
-						c.status.lastApprovedBalances[identityAddr],
+						channel.status.lastApprovedBalances[identityAddr],
 				  ])
 
 		return {
 			identityContract: identityAddr,
 			nonce: initialNonce + i,
-			from: c.id,
+			from: channel.id,
 			to: identityAddr,
 			feeTokenAddr: feeTokenAddr || Dai.address,
 			feeAmount: feeAmountTransfer, // Same fee as withdrawFromIdentity

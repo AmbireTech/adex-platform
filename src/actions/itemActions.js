@@ -280,12 +280,12 @@ export function openCampaign({ campaign }) {
 			const identityBalanceDai = bigNumberify(
 				account.stats.raw.identityBalanceDai
 			)
-			const depositAmount = bigNumberify(campaign.depositAmount)
+			const depositAmount = parseUnits(campaign.depositAmount)
 			const feeTokenAddr = campaign.temp.feeTokenAddr
 
-			const amountToSweep = depositAmount.sub(identityBalanceDai)
 			let sweepTxns
 			if (depositAmount.gt(identityBalanceDai)) {
+				const amountToSweep = depositAmount.sub(identityBalanceDai)
 				sweepTxns = await sweepChannels({
 					feeTokenAddr,
 					account,
