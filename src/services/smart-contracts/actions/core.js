@@ -201,29 +201,27 @@ export async function getSweepChannelsTxns({
 
 	const txns = channelsToSweep.map((c, i) => {
 		const { mTree, channel } = c
-		const leaf = Channel.getBalanceLeaf(
-			identityAddr,
-			channel.status.lastApprovedBalances[identityAddr]
-		)
+		const amout = channel.status.lastApprovedBalances[identityAddr]
+		const leaf = Channel.getBalanceLeaf(identityAddr, amout)
 		const proof = mTree.proof(leaf)
 		const vsig1 = splitSig(channel.status.lastApprovedSigs[0])
 		const vsig2 = splitSig(channel.status.lastApprovedSigs[1])
+		const ethChannel = toEthereumChannel(channel)
 		const data =
 			channel.status.name === 'Expired'
 				? Core.functions.channelWithdrawExpired.encode([
-						toEthereumChannel(channel).toSolidityTuple(),
+						ethChannel.toSolidityTuple(),
 				  ])
 				: Core.functions.channelWithdraw.encode([
-						toEthereumChannel(channel).toSolidityTuple(),
+						ethChannel.toSolidityTuple(),
 						mTree.getRoot(),
 						[vsig1, vsig2],
 						proof,
-						channel.status.lastApprovedBalances[identityAddr],
+						amout,
 				  ])
 
 		return {
 			identityContract: identityAddr,
-			from: channel.id,
 			to: identityAddr,
 			feeTokenAddr: feeTokenAddr || Dai.address,
 			feeAmount: feeAmountTransfer, // Same fee as withdrawFromIdentity
