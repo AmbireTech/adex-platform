@@ -186,9 +186,9 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr }) {
 }
 
 export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
-	const { wallet } = account
+	const { wallet, identity } = account
 	const { provider, Dai, Identity } = await getEthers(wallet.authType)
-	const identityAddr = account.identity.address
+	const identityAddr = identity.address
 	const channelsToSweep = await getChannelsToSweepFrom({
 		amountToSweep,
 		identityAddr,
