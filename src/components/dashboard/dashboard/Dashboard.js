@@ -11,6 +11,7 @@ import DashboardStats from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
 import Items from 'components/dashboard/containers/Items'
+import isEqual from 'lodash.isequal'
 // import Transactions from 'components/dashboard/containers/Transactions'
 import {
 	AdUnit as AdUnitModel,
@@ -69,7 +70,8 @@ class Dashboard extends React.Component {
 	}
 
 	shouldComponentUpdate(nextProps) {
-		return nextProps.match !== this.props.match
+		const should = isEqual(nextProps.match, this.props.match)
+		return should
 	}
 
 	componentDidUpdate(nextProps) {
@@ -92,69 +94,69 @@ class Dashboard extends React.Component {
 
 	renderAdUnits = () => {
 		return (
-			<Items
-				header={this.props.t('ALL_UNITS')}
-				viewModeId='rowsViewUnits'
-				itemType={'AdUnit'}
-				newItemBtn={() => (
-					<NewUnitDialog
-						fabButton
-						variant='extended'
-						color='secondary'
-						btnLabel='NEW_UNIT'
-					/>
-				)}
-				objModel={AdUnitModel}
-				sortProperties={SORT_PROPERTIES_ITEMS}
-				filterProperties={FILTER_PROPERTIES_ITEMS}
-				uiStateId='units'
-			/>
+			<>
+				<NewUnitDialog
+					fabButton
+					variant='extended'
+					color='secondary'
+					btnLabel='NEW_UNIT'
+				/>
+				<Items
+					header={this.props.t('ALL_UNITS')}
+					viewModeId='rowsViewUnits'
+					itemType={'AdUnit'}
+					objModel={AdUnitModel}
+					sortProperties={SORT_PROPERTIES_ITEMS}
+					filterProperties={FILTER_PROPERTIES_ITEMS}
+					uiStateId='units'
+				/>
+			</>
 		)
 	}
 
 	renderCampaigns = () => {
 		return (
-			<Items
-				header={this.props.t('ALL_CAMPAIGNS')}
-				viewModeId='rowsViewCampaigns'
-				itemType={'Campaign'}
-				newItemBtn={() => (
-					<NewCampaignDialog
-						fabButton
-						variant='extended'
-						accent
-						color='secondary'
-						btnLabel='NEW_CAMPAIGN'
-					/>
-				)}
-				objModel={CampaignModel}
-				sortProperties={SORT_PROPERTIES_CAMPAIGN}
-				uiStateId='campaigns'
-				filterProperties={FILTER_PROPERTIES_CAMPAIGN}
-			/>
+			<>
+				<NewCampaignDialog
+					fabButton
+					variant='extended'
+					accent
+					color='secondary'
+					btnLabel='NEW_CAMPAIGN'
+				/>
+				<Items
+					header={this.props.t('ALL_CAMPAIGNS')}
+					viewModeId='rowsViewCampaigns'
+					itemType={'Campaign'}
+					objModel={CampaignModel}
+					sortProperties={SORT_PROPERTIES_CAMPAIGN}
+					uiStateId='campaigns'
+					filterProperties={FILTER_PROPERTIES_CAMPAIGN}
+				/>
+			</>
 		)
 	}
 
 	renderAdSlots = () => {
 		return (
-			<Items
-				header={this.props.t('ALL_SLOTS')}
-				viewModeId='rowsViewSlots'
-				itemType={'AdSlot'}
-				newItemBtn={() => (
-					<NewSlotDialog
-						fabButton
-						variant='extended'
-						accent
-						color='secondary'
-						btnLabel='NEW_SLOT'
-					/>
-				)}
-				objModel={AdSlotModel}
-				sortProperties={SORT_PROPERTIES_ITEMS}
-				filterProperties={FILTER_PROPERTIES_ITEMS}
-				uiStateId='slots'
-			/>
+			<>
+				<NewSlotDialog
+					fabButton
+					variant='extended'
+					accent
+					color='secondary'
+					btnLabel='NEW_SLOT'
+				/>
+				<Items
+					header={this.props.t('ALL_SLOTS')}
+					viewModeId='rowsViewSlots'
+					itemType={'AdSlot'}
+					objModel={AdSlotModel}
+					sortProperties={SORT_PROPERTIES_ITEMS}
+					filterProperties={FILTER_PROPERTIES_ITEMS}
+					uiStateId='slots'
+				/>
+			</>
 		)
 	}
 
