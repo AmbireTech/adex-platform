@@ -18,7 +18,7 @@ import {
 	// getCampaigns,
 } from 'services/adex-market/actions'
 import {
-	sweepChannels,
+	getSweepChannelsTxns,
 	openChannel,
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
@@ -286,7 +286,7 @@ export function openCampaign({ campaign }) {
 			let sweepTxns
 			if (depositAmount.gt(identityBalanceDai)) {
 				const amountToSweep = depositAmount.sub(identityBalanceDai)
-				sweepTxns = await sweepChannels({
+				sweepTxns = await getSweepChannelsTxns({
 					feeTokenAddr,
 					account,
 					amountToSweep,

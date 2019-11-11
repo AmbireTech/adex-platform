@@ -1,6 +1,7 @@
 import crypto from 'crypto'
 import { Channel, MerkleTree, splitSig } from 'adex-protocol-eth/js'
 import { getEthers } from 'services/smart-contracts/ethers'
+import { getIdentityTnxsWithNonces } from 'services/smart-contracts/actions/identity'
 import {
 	getSigner,
 	getMultipleTxSignatures,
@@ -184,17 +185,19 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr, wallet }) {
 	return channelsToWithdrawFrom
 }
 
-export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
+export async function getSweepChannelsTxns({
+	feeTokenAddr,
+	account,
+	amountToSweep,
+}) {
 	const { wallet, identity } = account
-	const { provider, Dai, Identity } = await getEthers(wallet.authType)
+	const { Dai } = await getEthers(wallet.authType)
 	const identityAddr = identity.address
 	const channelsToSweep = await getChannelsToSweepFrom({
 		amountToSweep,
 		identityAddr,
 		wallet,
 	})
-	const identityContract = new Contract(identityAddr, Identity.abi, provider)
-	const initialNonce = (await identityContract.nonce()).toNumber()
 
 	const txns = channelsToSweep.map((c, i) => {
 		const { mTree, channel } = c
@@ -220,7 +223,6 @@ export async function sweepChannels({ feeTokenAddr, account, amountToSweep }) {
 
 		return {
 			identityContract: identityAddr,
-			nonce: initialNonce + i,
 			from: channel.id,
 			to: identityAddr,
 			feeTokenAddr: feeTokenAddr || Dai.address,
@@ -245,14 +247,11 @@ export async function openChannel({ campaign, account, sweepTxns }) {
 		id: ethChannel.hashHex(AdExCore.address),
 	}
 	const identityAddr = openReady.creator
-	const identityContract = new Contract(identityAddr, Identity.abi, provider)
-	const initialNonce = (await identityContract.nonce()).toNumber()
 
 	const feeTokenAddr = campaign.temp.feeTokenAddr || Dai.address
 
 	const tx1 = {
 		identityContract: identityAddr,
-		nonce: initialNonce,
 		feeTokenAddr: feeTokenAddr,
 		feeAmount: feeAmountApprove,
 		to: Dai.address,
@@ -264,20 +263,25 @@ export async function openChannel({ campaign, account, sweepTxns }) {
 
 	const tx2 = {
 		identityContract: identityAddr,
-		nonce: initialNonce + 1,
 		feeTokenAddr: feeTokenAddr,
 		feeAmount: feeAmountOpen,
 		to: AdExCore.address,
 		data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
 	}
 	const txns = sweepTxns ? [...sweepTxns, tx1, tx2] : [tx1, tx2]
-	const signatures = await getMultipleTxSignatures({ txns, signer })
+	const txnsRaw = await getIdentityTnxsWithNonces({
+		txns,
+		identityAddr,
+		provider,
+		Identity,
+	})
+	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
 
 	const data = {
-		txnsRaw: txns,
+		txnsRaw,
 		signatures,
 		channel,
-		identityAddr: identity.address,
+		identityAddr,
 	}
 
 	const result = await sendOpenChannel(data)
