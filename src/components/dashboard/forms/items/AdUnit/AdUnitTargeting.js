@@ -13,8 +13,7 @@ import { translate } from 'services/translations/translations'
 import { withStyles } from '@material-ui/core/styles'
 import { SOURCES } from 'constants/targeting'
 import { Button } from '@material-ui/core'
-import { labelDetection } from 'services/google-services/googleVision'
-import { getGoogleVisionLabels } from 'services/adex-market/actions'
+import { getImageCategories } from 'services/adex-market/actions'
 const styles = {
 	slider: {
 		padding: '22px 0px',
@@ -56,10 +55,9 @@ class AdUnitTargeting extends Component {
 	constructor(props) {
 		super(props)
 
-		const { targets, tempUrl } = props.newItem.temp || {}
+		const { targets } = props.newItem.temp || {}
 		this.state = {
 			targets: [...(targets || [])],
-			tempUrl,
 		}
 	}
 
@@ -214,15 +212,16 @@ class AdUnitTargeting extends Component {
 	render() {
 		const {
 			t,
-			// newItem,
+			newItem,
+			actions,
 			classes,
 			account,
+			itemType,
 			...rest
 		} = this.props
 		// const { targeting, tags } = newItem
-		const { authSig } = account.wallet
 
-		const { targets, tempUrl } = this.state
+		const { targets } = this.state
 		return (
 			<div>
 				<Grid container spacing={1}>
@@ -264,7 +263,7 @@ class AdUnitTargeting extends Component {
 					<Grid item container justify='center'>
 						<Button
 							onClick={() =>
-								getGoogleVisionLabels(new File([tempUrl], 'temp'), authSig)
+								actions.addCategorySuggestions({ newItem, itemType })
 							}
 							variant='contained'
 							color='primary'

@@ -1,6 +1,6 @@
 import { execute, updateAccountStats } from 'actions'
 
-const LOOP_TIMEOUT = 15 * 1000
+const LOOP_TIMEOUT = 60 * 1000
 
 let statsCheckTimeout = null
 
