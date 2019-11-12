@@ -77,8 +77,8 @@ export class Campaign extends Component {
 		const campaign = new CampaignModel(item)
 
 		const balances =
-			campaign.state && campaign.state.lastApproved
-				? campaign.state.lastApproved.newState.msg.balances
+			campaign.status && campaign.status.lastApprovedBalances
+				? campaign.status.lastApprovedBalances
 				: {}
 
 		const status = (campaign.status || {}).name
