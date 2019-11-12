@@ -12,10 +12,10 @@ import { getAuthSig } from 'services/smart-contracts/actions/ethers'
 import { removeLegacyKey } from 'services/wallet/wallet'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
 import {
-	getAllChannelsForIdentity,
 	getAccountStats,
 	getOutstandingBalance,
 } from 'services/smart-contracts/actions/stats'
+import { getChannelsWithOutstanding } from 'services/smart-contracts/actions/core'
 import { addToast, confirmAction } from './uiActions'
 import {
 	getEthers,
@@ -93,7 +93,10 @@ export function updateAccountStats() {
 		try {
 			const { identity, wallet } = account
 			const { address } = identity
-			const withBalance = await getAllChannelsForIdentity({ address })
+			const withBalance = await getChannelsWithOutstanding({
+				identityAddr: address,
+				wallet,
+			})
 
 			const outstandingBalanceDai = await getOutstandingBalance({
 				wallet,
