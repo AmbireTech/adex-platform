@@ -13,7 +13,9 @@ import { translate } from 'services/translations/translations'
 import { withStyles } from '@material-ui/core/styles'
 import { SOURCES } from 'constants/targeting'
 import { Button } from '@material-ui/core'
-import { Img } from 'components/common/img/Img';
+import classnames from 'classnames'
+import Img from 'components/common/img/Img'
+import EddieThinking from 'resources/eddie/eddie-13.png'
 
 const styles = {
 	slider: {
@@ -21,6 +23,13 @@ const styles = {
 	},
 	markLabel: {
 		top: '30px',
+	},
+	loadingImg: {
+		width: 'auto',
+		height: 'auto',
+		maxHeight: 150,
+		maxWidth: 150,
+		cursor: 'pointer',
 	},
 }
 const marks = [
@@ -276,9 +285,13 @@ class AdUnitTargeting extends Component {
 						>
 							{t('AUTH_CONNECT_WITH_METAMASK')}
 						</Button>
-						<Grid className='pulse'>
-							<Img src=''></Img>
-						</Grid>
+					</Grid>
+					<Grid item container justify='center' className='pulse'>
+						<Img
+							className={classnames(classes.loadingImg)}
+							src={EddieThinking}
+						></Img>
+						<div>{t('WORKING_ON_SUGGESTIONS')}</div>
 					</Grid>
 				</Grid>
 			</div>
