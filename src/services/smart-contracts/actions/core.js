@@ -132,31 +132,35 @@ async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 				}
 				return lastApprovedBalances && !!lastApprovedBalances[identityAddr]
 			})
-			.map(async ({ channel, lastApprovedBalances, mTree }) => {
-				const { authType } = wallet
-				const { AdExCore } = await getEthers(authType)
-				const outstanding =
-					channel.status.name === 'Expired'
-						? bigNumberify(channel.depositAmount).sub(
-								await AdExCore.functions.withdrawn(channel.id)
-						  )
-						: bigNumberify(lastApprovedBalances[identityAddr]).sub(
-								await AdExCore.functions.withdrawnPerUser(
-									channel.id,
-									identityAddr
-								)
-						  )
-				const outstandingMinusFee = bigNumberify(outstanding).sub(
-					bigNumberify(feeAmountTransfer)
-				)
-				return {
-					channel,
-					balance: lastApprovedBalances[identityAddr],
-					outstanding,
-					outstandingMinusFee,
-					mTree,
+			.map(
+				async ({ channel, lastApprovedBalances, lastApprovedSigs, mTree }) => {
+					const { authType } = wallet
+					const { AdExCore } = await getEthers(authType)
+					const outstanding =
+						channel.status.name === 'Expired'
+							? bigNumberify(channel.depositAmount).sub(
+									await AdExCore.functions.withdrawn(channel.id)
+							  )
+							: bigNumberify(lastApprovedBalances[identityAddr]).sub(
+									await AdExCore.functions.withdrawnPerUser(
+										channel.id,
+										identityAddr
+									)
+							  )
+					const outstandingMinusFee = bigNumberify(outstanding).sub(
+						bigNumberify(feeAmountTransfer)
+					)
+					return {
+						channel,
+						balance: lastApprovedBalances[identityAddr],
+						lastApprovedBalances,
+						lastApprovedSigs,
+						outstanding,
+						outstandingMinusFee,
+						mTree,
+					}
 				}
-			})
+			)
 			.filter(async res => {
 				const { outstandingMinusFee } = await res
 				return outstandingMinusFee.gt(0)
@@ -191,7 +195,7 @@ export async function getSweepChannelsTxns({
 	amountToSweep,
 }) {
 	const { wallet, identity } = account
-	const { Dai } = await getEthers(wallet.authType)
+	const { Dai, AdExCore } = await getEthers(wallet.authType)
 	const identityAddr = identity.address
 	const channelsToSweep = await getChannelsToSweepFrom({
 		amountToSweep,
@@ -200,13 +204,14 @@ export async function getSweepChannelsTxns({
 	})
 
 	const txns = channelsToSweep.map((c, i) => {
-		const { mTree, channel } = c
-		const amout = channel.status.lastApprovedBalances[identityAddr]
+		const { mTree, channel, lastApprovedSigs, balance } = c
+		const amout = balance
 		const leaf = Channel.getBalanceLeaf(identityAddr, amout)
 		const proof = mTree.proof(leaf)
-		const vsig1 = splitSig(channel.status.lastApprovedSigs[0])
-		const vsig2 = splitSig(channel.status.lastApprovedSigs[1])
+		const vsig1 = splitSig(lastApprovedSigs[0])
+		const vsig2 = splitSig(lastApprovedSigs[1])
 		const ethChannel = toEthereumChannel(channel)
+
 		const data =
 			channel.status.name === 'Expired'
 				? Core.functions.channelWithdrawExpired.encode([
@@ -222,7 +227,7 @@ export async function getSweepChannelsTxns({
 
 		return {
 			identityContract: identityAddr,
-			to: identityAddr,
+			to: AdExCore.address,
 			feeTokenAddr: feeTokenAddr || Dai.address,
 			feeAmount: feeAmountTransfer, // Same fee as withdrawFromIdentity
 			data,
@@ -273,6 +278,7 @@ export async function openChannel({ campaign, account, sweepTxns }) {
 		provider,
 		Identity,
 	})
+
 	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
 
 	const data = {
