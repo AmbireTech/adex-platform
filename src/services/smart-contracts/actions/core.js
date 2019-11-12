@@ -18,7 +18,7 @@ import {
 	Interface,
 	formatUnits,
 } from 'ethers/utils'
-import { Contract } from 'ethers'
+import { relayerConfig } from 'services/adex-relayer'
 
 const { AdExCore, DAI } = contracts
 const Core = new Interface(AdExCore.abi)
@@ -105,9 +105,16 @@ function getReadyCampaign(campaign, identity, Dai) {
 	return newCampaign
 }
 
-async function getChannelsWithOutstanding({ identityAddr, wallet }) {
+export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
+	const { authType } = wallet
 	const channels = await getAllCampaigns(true)
-	return Promise.all(
+	const { AdExCore } = await getEthers(authType)
+	const { feeTokenWhitelist = {} } = relayerConfig()
+	const channelWothdrawFee = bigNumberify(
+		feeTokenWhitelist.min || feeAmountTransfer
+	)
+
+	const all = await Promise.all(
 		channels
 			.map(channel => {
 				const { lastApprovedSigs, lastApprovedBalances } = channel.status
@@ -134,8 +141,6 @@ async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 			})
 			.map(
 				async ({ channel, lastApprovedBalances, lastApprovedSigs, mTree }) => {
-					const { authType } = wallet
-					const { AdExCore } = await getEthers(authType)
 					const outstanding =
 						channel.status.name === 'Expired'
 							? bigNumberify(channel.depositAmount).sub(
@@ -147,25 +152,24 @@ async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 										identityAddr
 									)
 							  )
-					const outstandingMinusFee = bigNumberify(outstanding).sub(
-						bigNumberify(feeAmountTransfer)
+					const outstandingAvailable = bigNumberify(outstanding).sub(
+						channelWothdrawFee
 					)
+
 					return {
 						channel,
 						balance: lastApprovedBalances[identityAddr],
 						lastApprovedBalances,
 						lastApprovedSigs,
 						outstanding,
-						outstandingMinusFee,
+						outstandingAvailable,
 						mTree,
 					}
 				}
 			)
-			.filter(async res => {
-				const { outstandingMinusFee } = await res
-				return outstandingMinusFee.gt(0)
-			})
 	)
+
+	return all
 }
 
 async function getChannelsToSweepFrom({ amountToSweep, identityAddr, wallet }) {
@@ -173,17 +177,26 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr, wallet }) {
 		identityAddr,
 		wallet,
 	})
-	const channelsSorted = allChannels.sort((c1, c2) => {
-		return c2.outstandingMinusFee.gt(c1.outstandingMinusFee)
-	})
+
+	const bigZero = bigNumberify(0)
+
+	const eligible = allChannels
+		.filter(c => {
+			const { outstandingAvailable } = c
+			return outstandingAvailable.gt(bigZero)
+		})
+		.sort((c1, c2) => {
+			return c2.outstandingAvailable.gt(c1.outstandingAvailable)
+		})
+
 	// Could be done with map/reduce but figured this for loop is much simpler in this case
 	const channelsToWithdrawFrom = []
 	let sum = bigNumberify('0')
-	for (const c of channelsSorted) {
+	for (const c of eligible) {
 		if (sum.gte(bigNumberify(amountToSweep))) {
 			break
 		}
-		sum = sum.add(c.outstandingMinusFee)
+		sum = sum.add(c.outstandingAvailable)
 		channelsToWithdrawFrom.push(c)
 	}
 	return channelsToWithdrawFrom
