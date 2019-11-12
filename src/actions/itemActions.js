@@ -263,33 +263,30 @@ export function getAllItems() {
 	}
 }
 
-export function addCategorySuggestions({ newItem, itemType }) {
+export function getCategorySuggestions({ newItem, itemType }) {
 	return async function(dispatch) {
 		updateSpinner('category-suggestions', true)(dispatch)
 		const tempItem = newItem
 		const { tempUrl } = tempItem.temp
 		try {
-			const { categories } = await getImageCategories({ tempUrl })
-			const newTargets = categories.map(i => ({
-				tag: i.name,
-				score: Math.round(i.confidence * 100),
-			}))
-			const targetWithSource = newTargets.map((t, index) => {
-				return {
-					key: index,
-					collection: 'targeting',
-					source: 'GOOGLE_VISION',
-					label: translate(`TARGET_LABEL_GOOGLE_VISION`),
-					placeholder: translate(`TARGET_LABEL_GOOGLE_VISION`),
-					target: { ...t },
-				}
-			})
-			updateNewItem(
-				newItem,
-				{ temp: { ...newItem.temp, targets: targetWithSource } },
-				itemType,
-				AdUnit
-			)
+			const response = await getImageCategories({ tempUrl })
+			if (response) {
+				const newTargets = response.categories.map(i => ({
+					tag: i.name,
+					score: Math.round(i.confidence * 100),
+				}))
+				const targetsWithSource = newTargets.map((t, index) => {
+					return {
+						key: index,
+						collection: 'targeting',
+						source: 'custom',
+						label: translate(`TARGET_LABEL_GOOGLE_VISION`),
+						placeholder: translate(`TARGET_LABEL_GOOGLE_VISION`),
+						target: { ...t },
+					}
+				})
+				return targetsWithSource
+			}
 		} catch (err) {
 			console.error('ERR_GETTING_CATEGORY_SUGGESTIONS', err)
 			addToast({
@@ -298,6 +295,7 @@ export function addCategorySuggestions({ newItem, itemType }) {
 				toastStr: 'ERR_GETTING_CATEGORY_SUGGESTIONS',
 				args: [err],
 			})
+			return []
 		}
 		updateSpinner('category-suggestions', false)(dispatch)
 	}
