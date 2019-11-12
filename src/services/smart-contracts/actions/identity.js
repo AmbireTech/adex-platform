@@ -280,6 +280,7 @@ export async function withdrawFromIdentity({
 		provider,
 		Identity,
 	})
+
 	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
 
 	const data = {

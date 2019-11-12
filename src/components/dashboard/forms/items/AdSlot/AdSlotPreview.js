@@ -104,7 +104,6 @@ class AdSlotPreview extends Component {
 }
 
 AdSlotPreview.propTypes = {
-	actions: PropTypes.object.isRequired,
 	account: PropTypes.object.isRequired,
 	newItem: PropTypes.object.isRequired,
 	title: PropTypes.string,
