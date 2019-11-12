@@ -13,7 +13,8 @@ import { translate } from 'services/translations/translations'
 import { withStyles } from '@material-ui/core/styles'
 import { SOURCES } from 'constants/targeting'
 import { Button } from '@material-ui/core'
-import { getImageCategories } from 'services/adex-market/actions'
+import { Img } from 'components/common/img/Img';
+
 const styles = {
 	slider: {
 		padding: '22px 0px',
@@ -115,6 +116,13 @@ class AdUnitTargeting extends Component {
 			isValid: true,
 			dirty: false,
 		})
+	}
+	addCategorySuggestions = async ({ newItem, itemType }) => {
+		const { getCategorySuggestions } = this.props.actions
+		const targets = await getCategorySuggestions({ newItem, itemType })
+		// TODO: categories by label as well
+		// TODO: categories by web entities
+		targets && targets.map(target => this.newTarget(target))
 	}
 
 	validateAutocomplete = ({ id, isValid, dirty }) => {
@@ -262,14 +270,15 @@ class AdUnitTargeting extends Component {
 					</Grid>
 					<Grid item container justify='center'>
 						<Button
-							onClick={() =>
-								actions.addCategorySuggestions({ newItem, itemType })
-							}
+							onClick={() => this.addCategorySuggestions({ newItem, itemType })}
 							variant='contained'
 							color='primary'
 						>
 							{t('AUTH_CONNECT_WITH_METAMASK')}
 						</Button>
+						<Grid className='pulse'>
+							<Img src=''></Img>
+						</Grid>
 					</Grid>
 				</Grid>
 			</div>

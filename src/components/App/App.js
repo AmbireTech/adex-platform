@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Switch, HashRouter as Router } from 'react-router-dom'
 import 'react-image-crop/dist/ReactCrop.css'
-// import './App.css'
+import './App.css'
 import { Provider } from 'react-redux'
 import configureStore from 'store/configureStore'
 import history from 'store/history'
