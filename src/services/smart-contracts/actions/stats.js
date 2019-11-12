@@ -1,12 +1,8 @@
 import { getEthers } from 'services/smart-contracts/ethers'
 import { constants } from 'adex-models'
 import { utils, Contract } from 'ethers'
-import { getAllCampaigns } from 'services/adex-market/actions'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
 import { bigNumberify } from 'ethers/utils'
-import { Channel, MerkleTree } from 'adex-protocol-eth/js'
-import { relayerConfig } from 'services/adex-relayer'
-
 const { formatEther, formatUnits } = utils
 const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
 
@@ -114,69 +110,19 @@ export async function getAccountStats({
 	}
 }
 
-async function getAllChannels() {
-	const channels = await getAllCampaigns(true)
-	return Promise.all(
-		channels.map(async channel => {
-			const { lastApprovedBalances } = channel.status || {}
-
-			if (lastApprovedBalances) {
-				const allLeafs = Object.entries(lastApprovedBalances).map(([k, v]) =>
-					Channel.getBalanceLeaf(k, v)
-				)
-				const mTree = new MerkleTree(allLeafs)
-				return { lastApprovedBalances, mTree, channel }
-			} else {
-				return { lastApprovedBalances: null, mTree: null, channel }
-			}
-		})
-	)
-}
-
-async function getAllChannelsWhereHasBalance(allActive, addr) {
-	return allActive
-		.filter(
-			({ lastApprovedBalances }) =>
-				lastApprovedBalances && !!lastApprovedBalances[addr]
-		)
-		.map(({ channel, lastApprovedBalances }) => ({
-			channel,
-			balance: lastApprovedBalances[addr],
-		}))
-}
-
-const minToSweep = () => {
-	const { feeTokenWhitelist = {} } = relayerConfig()
-	const minFee = feeTokenWhitelist.min || '150000000000000000'
-
-	const fee = bigNumberify(minFee).mul(bigNumberify('2'))
-	const min = bigNumberify(minFee).mul(bigNumberify('3'))
-	return { fee, min }
-}
-
 export async function getOutstandingBalance({ wallet, address, withBalance }) {
-	const { authType } = wallet
-	const { AdExCore } = await getEthers(authType)
-	const sweepMin = minToSweep()
-
-	const withOutstanding = await Promise.all(
-		withBalance.map(async ({ channel, balance }) => {
-			const outstanding = bigNumberify(balance).sub(
-				await AdExCore.withdrawnPerUser(channel.id, address)
-			)
-			return { channel, outstanding }
-		})
-	)
+	// const sweepMin = minToSweep()
+	const bigZero = bigNumberify(0)
 
 	const initial = { total: bigNumberify('0'), available: bigNumberify('0') }
 
-	const allOutstanding = withOutstanding.reduce((amounts, ch) => {
-		const { outstanding } = ch
+	const allOutstanding = withBalance.reduce((amounts, ch) => {
+		const { outstanding, outstandingAvailable } = ch
 		const current = { ...amounts }
 		current.total = current.total.add(outstanding)
 
-		if (outstanding.gt(sweepMin.min)) {
-			current.available = current.available.add(outstanding.sub(sweepMin.fee))
+		if (outstandingAvailable.gt(bigZero)) {
+			current.available = current.available.add(outstandingAvailable)
 		}
 
 		return current
@@ -231,11 +177,4 @@ export async function getAllValidatorsAuthForIdentity({
 	}, {})
 
 	return validatorsAuth
-}
-
-export async function getAllChannelsForIdentity({ address }) {
-	const allActive = await getAllChannels()
-	const withBalance = await getAllChannelsWhereHasBalance(allActive, address)
-
-	return withBalance
 }
