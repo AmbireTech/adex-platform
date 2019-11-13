@@ -285,9 +285,14 @@ export function getCategorySuggestions({ newItem, itemType }) {
 						target: { ...t },
 					}
 				})
+				addToast({
+					dispatch: dispatch,
+					type: 'accept',
+					toastStr: 'ADDED_CATEGORY_SUGGESTIONS_IF_MISSING',
+					args: [targetsWithSource.length],
+				})
 				updateSpinner('targeting-suggestions', false)(dispatch)
 				return targetsWithSource
-				// TODO: don't return b
 			}
 		} catch (err) {
 			console.error('ERR_GETTING_CATEGORY_SUGGESTIONS', err)
