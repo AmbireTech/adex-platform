@@ -35,10 +35,10 @@ export class Campaign extends Component {
 		}
 	}
 
-	componentDidMount = () => {
-		this.props.actions.updateCampaignState({ campaign: this.props.item })
-		// this.props.actions.updateCampaignStatistics({ campaign: this.props.item })
-	}
+	// componentDidMount = () => {
+	// 	this.props.actions.updateCampaignState({ campaign: this.props.item })
+	// 	// this.props.actions.updateCampaignStatistics({ campaign: this.props.item })
+	// }
 
 	handleTabChange = (event, index) => {
 		this.setState({ tabIndex: index })
