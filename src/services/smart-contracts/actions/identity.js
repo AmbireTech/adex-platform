@@ -5,6 +5,7 @@ import {
 	processTx,
 	getMultipleTxSignatures,
 } from 'services/smart-contracts/actions/ethers'
+import { getSweepingTxnsIfNeeded } from 'services/smart-contracts/actions/core'
 import { ethers, Contract } from 'ethers'
 import {
 	bigNumberify,
@@ -239,11 +240,14 @@ export async function withdrawFromIdentity({
 	amountToWithdraw,
 	withdrawTo,
 	getFeesOnly,
-	sweepTxns = [],
 }) {
 	const toWithdraw = parseUnits(amountToWithdraw, 18)
+	const sweepTxns = await getSweepingTxnsIfNeeded({
+		amountNeeded: toWithdraw,
+		account,
+	})
 	const sweepFees = sweepTxns.reduce(
-		(total, tx) => total.add(tx.feeAmount),
+		(total, tx) => total.add(bigNumberify(tx.feeAmount)),
 		bigNumberify(0)
 	)
 	const fees = bigNumberify(feeAmountTransfer)
