@@ -285,12 +285,19 @@ export function getCategorySuggestions({ newItem, itemType }) {
 						target: { ...t },
 					}
 				})
-				addToast({
-					dispatch: dispatch,
-					type: 'accept',
-					toastStr: 'ADDED_CATEGORY_SUGGESTIONS_IF_MISSING',
-					args: [targetsWithSource.length],
-				})
+				targetsWithSource.length > 0
+					? addToast({
+							dispatch: dispatch,
+							type: 'accept',
+							toastStr: 'ADDED_CATEGORY_SUGGESTIONS_IF_MISSING',
+							args: [targetsWithSource.length],
+					  })
+					: addToast({
+							dispatch: dispatch,
+							type: 'warning',
+							toastStr: 'NO_CATEGORY_SUGGESTIONS_FOUND',
+							args: [targetsWithSource.length],
+					  })
 				updateSpinner('targeting-suggestions', false)(dispatch)
 				return targetsWithSource
 			}
