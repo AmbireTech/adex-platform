@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import NewCampaignHoc from './NewCampaignHoc'
 import Translate from 'components/translate/Translate'
@@ -461,8 +462,16 @@ class CampaignFinance extends Component {
 
 CampaignFinance.propTypes = {
 	newItem: PropTypes.object.isRequired,
+	account: PropTypes.object.isRequired,
+}
+
+function mapStateToProps(state) {
+	const { persist } = state
+	return {
+		account: persist.account,
+	}
 }
 
 const NewCampaignFinance = NewCampaignHoc(CampaignFinance)
 
-export default Translate(NewCampaignFinance)
+export default connect(mapStateToProps)(Translate(NewCampaignFinance))

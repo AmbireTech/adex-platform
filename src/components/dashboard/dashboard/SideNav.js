@@ -270,12 +270,13 @@ SideNav.propTypes = {
 }
 
 function mapStateToProps(state) {
-	const { persist /*memory*/ } = state
+	const { persist, router } = state
 
 	return {
 		account: persist.account,
 		transactions: persist.web3Transactions[persist.account._addr] || {},
 		identity: persist.account.identity.address,
+		location: router.location,
 	}
 }
 

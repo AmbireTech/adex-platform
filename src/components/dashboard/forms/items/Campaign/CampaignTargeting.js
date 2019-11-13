@@ -221,7 +221,6 @@ class CampaignTargeting extends Component {
 
 CampaignTargeting.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
 	newItem: PropTypes.object.isRequired,
 	title: PropTypes.string,
 	descriptionHelperTxt: PropTypes.string,
