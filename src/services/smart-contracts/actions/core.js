@@ -180,7 +180,7 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr, wallet }) {
 
 	const bigZero = bigNumberify(0)
 
-	const eligible = allChannels
+	const { eligible } = allChannels
 		.filter(c => {
 			const { outstandingAvailable } = c
 			return outstandingAvailable.gt(bigZero)
@@ -188,18 +188,21 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr, wallet }) {
 		.sort((c1, c2) => {
 			return c2.outstandingAvailable.gt(c1.outstandingAvailable)
 		})
+		.reduce(
+			(data, c) => {
+				const current = { ...data }
+				if (current.sum.lt(amountToSweep)) {
+					current.eligible.push(c)
+				}
 
-	// Could be done with map/reduce but figured this for loop is much simpler in this case
-	const channelsToWithdrawFrom = []
-	let sum = bigNumberify('0')
-	for (const c of eligible) {
-		if (sum.gte(bigNumberify(amountToSweep))) {
-			break
-		}
-		sum = sum.add(c.outstandingAvailable)
-		channelsToWithdrawFrom.push(c)
-	}
-	return channelsToWithdrawFrom
+				current.sum = current.sum.add(c.outstandingAvailable)
+
+				return current
+			},
+			{ sum: bigZero, eligible: [] }
+		)
+
+	return eligible
 }
 
 export async function getSweepChannelsTxns({
