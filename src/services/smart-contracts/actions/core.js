@@ -18,6 +18,7 @@ import {
 	Interface,
 	formatUnits,
 } from 'ethers/utils'
+import { formatTokenAmount } from 'helpers/formatters'
 import { relayerConfig } from 'services/adex-relayer'
 
 const { AdExCore, DAI } = contracts
@@ -253,9 +254,41 @@ export async function getSweepChannelsTxns({
 	return txns
 }
 
-export async function openChannel({ campaign, account, sweepTxns }) {
+export async function getSweepingTxnsIfNeeded({ amountNeeded, account }) {
+	const needed = bigNumberify(amountNeeded)
+	const accountBalance = bigNumberify(account.stats.raw.identityBalanceDai)
+	if (needed.gt(accountBalance)) {
+		return await getSweepChannelsTxns({
+			account,
+			amountToSweep: needed.sub(accountBalance),
+		})
+	} else {
+		return []
+	}
+}
+
+export async function openChannel({ campaign, account, getFeesOnly }) {
 	const { wallet, identity } = account
 	const { provider, AdExCore, Dai, Identity } = await getEthers(wallet.authType)
+	const depositAmount = parseUnits(campaign.depositAmount)
+	const sweepTxns = await getSweepingTxnsIfNeeded({
+		amountNeeded: depositAmount,
+		account,
+	})
+	const sweepFees = sweepTxns.reduce(
+		(total, tx) => total.add(bigNumberify(tx.feeAmount)),
+		bigNumberify(0)
+	)
+
+	const fees = bigNumberify(feeAmountApprove)
+		.add(bigNumberify(feeAmountOpen))
+		.add(sweepFees)
+
+	if (getFeesOnly) {
+		return {
+			fees: formatTokenAmount(fees.toString(), 18),
+		}
+	}
 
 	const readyCampaign = getReadyCampaign(campaign, identity, Dai)
 	const openReady = readyCampaign.openReady
