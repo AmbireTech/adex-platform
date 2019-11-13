@@ -35,10 +35,8 @@ export default function NewAdUnitHoc(Decorated) {
 		}
 
 		save = () => {
-			const { actions, newItem, account, addTo } = this.props
-			newItem.owner = account.wallet.address
-
-			actions.addItem(newItem, addTo, account.wallet.authSig)
+			const { actions, newItem } = this.props
+			actions.addUnit(newItem)
 
 			this.onSave()
 			actions.resetNewItem('AdUnit')
@@ -64,16 +62,14 @@ export default function NewAdUnitHoc(Decorated) {
 
 	ItemForm.propTypes = {
 		actions: PropTypes.object.isRequired,
-		account: PropTypes.object.isRequired,
 		newItem: PropTypes.object.isRequired,
 		title: PropTypes.string,
 		addTo: PropTypes.object,
 	}
 
 	function mapStateToProps(state, props) {
-		const { persist, memory } = state
+		const { memory } = state
 		return {
-			account: persist.account,
 			newItem: new AdUnit(memory.newItem['AdUnit']),
 		}
 	}

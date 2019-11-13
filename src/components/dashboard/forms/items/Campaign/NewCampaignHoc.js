@@ -35,12 +35,12 @@ export default function NewCampaignHoc(Decorated) {
 		}
 
 		save = async () => {
-			const { actions, newItem, account } = this.props
+			const { actions, newItem } = this.props
 			const { temp } = newItem
 			const newTemp = { ...temp }
 			newTemp.waitingAction = true
 			this.handleChange('temp', newTemp)
-			await actions.openCampaign({ campaign: newItem, account })
+			await actions.openCampaign({ campaign: newItem })
 
 			newTemp.waitingAction = false
 			this.handleChange('temp', newTemp)
@@ -68,7 +68,6 @@ export default function NewCampaignHoc(Decorated) {
 
 	ItemForm.propTypes = {
 		actions: PropTypes.object.isRequired,
-		account: PropTypes.object.isRequired,
 		newItem: PropTypes.object.isRequired,
 		title: PropTypes.string,
 		addTo: PropTypes.object,
@@ -80,7 +79,6 @@ export default function NewCampaignHoc(Decorated) {
 		const adUnits = persist.items['AdUnit'] || {}
 		const adUnitsArray = Array.from(Object.values(adUnits)) || []
 		return {
-			account: persist.account,
 			newItem: new Campaign(memory.newItem['Campaign']),
 			adUnits,
 			adUnitsArray,

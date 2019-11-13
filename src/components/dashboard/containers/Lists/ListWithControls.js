@@ -390,7 +390,6 @@ function mapStateToProps(state, props) {
 			? persist.ui[uiStateId]['filterArchived'] || false
 			: false,
 		side: memory.nav.side,
-		account: persist.account,
 		sortProperties: props.sortProperties || [],
 		filterProperties: props.filterProperties,
 		uiStateId: uiStateId,

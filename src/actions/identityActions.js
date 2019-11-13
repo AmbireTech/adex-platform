@@ -16,9 +16,7 @@ import {
 } from 'services/smart-contracts/actions/identity'
 import { addDataToWallet } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
-import { sweepChannels } from 'services/smart-contracts/actions/core'
 import { selectAccount } from 'selectors'
-import { parseUnits } from 'ethers/utils'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -262,21 +260,10 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 	return async function(dispatch, getState) {
 		try {
 			const account = selectAccount(getState())
-			const identityBalanceDai = account.stats.raw.identityBalanceDai
-			let sweepTxns
-			const amountToWithdrawBN = parseUnits(amountToWithdraw, 18)
-			if (amountToWithdrawBN.gt(identityBalanceDai)) {
-				const amountToSweep = amountToWithdrawBN.sub(identityBalanceDai)
-				sweepTxns = await sweepChannels({
-					account,
-					amountToSweep,
-				})
-			}
 			const result = await withdrawFromIdentity({
 				account,
 				amountToWithdraw,
 				withdrawTo,
-				sweepTxns,
 			})
 
 			addToast({

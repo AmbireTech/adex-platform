@@ -5,6 +5,7 @@ import {
 	processTx,
 	getMultipleTxSignatures,
 } from 'services/smart-contracts/actions/ethers'
+import { getSweepingTxnsIfNeeded } from 'services/smart-contracts/actions/core'
 import { ethers, Contract } from 'ethers'
 import {
 	bigNumberify,
@@ -239,10 +240,19 @@ export async function withdrawFromIdentity({
 	amountToWithdraw,
 	withdrawTo,
 	getFeesOnly,
-	sweepTxns,
 }) {
 	const toWithdraw = parseUnits(amountToWithdraw, 18)
-	const fees = bigNumberify(feeAmountTransfer).mul(bigNumberify('2'))
+	const sweepTxns = await getSweepingTxnsIfNeeded({
+		amountNeeded: toWithdraw,
+		account,
+	})
+	const sweepFees = sweepTxns.reduce(
+		(total, tx) => total.add(bigNumberify(tx.feeAmount)),
+		bigNumberify(0)
+	)
+	const fees = bigNumberify(feeAmountTransfer)
+		.mul(bigNumberify('2'))
+		.add(sweepFees)
 	const tokenAmount = toWithdraw.sub(fees).toString()
 
 	if (getFeesOnly) {
@@ -257,13 +267,8 @@ export async function withdrawFromIdentity({
 	const signer = await getSigner({ wallet, provider })
 	const identityAddr = identity.address
 
-	const identityContract = new Contract(identityAddr, Identity.abi, provider)
-
-	const initialNonce = (await identityContract.nonce()).toNumber()
-
 	const tx1 = {
 		identityContract: identityAddr,
-		nonce: initialNonce,
 		feeTokenAddr: Dai.address,
 		feeAmount: feeAmountTransfer,
 		to: Dai.address,
@@ -272,19 +277,26 @@ export async function withdrawFromIdentity({
 
 	const tx2 = {
 		identityContract: identityAddr,
-		nonce: initialNonce + 1,
 		feeTokenAddr: Dai.address,
 		feeAmount: feeAmountTransfer,
 		to: Dai.address,
 		data: ERC20.functions.transfer.encode([withdrawTo, tokenAmount]),
 	}
-	const txns = sweepTxns ? [...sweepTxns, tx1, tx2] : [tx1, tx2]
-	const signatures = await getMultipleTxSignatures({ txns, signer })
+	const txns = [...sweepTxns, tx1, tx2]
+
+	const txnsRaw = await getIdentityTnxsWithNonces({
+		txns,
+		identityAddr,
+		provider,
+		Identity,
+	})
+
+	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
 
 	const data = {
-		txnsRaw: txns,
+		txnsRaw,
 		signatures,
-		identityAddr: identity.address,
+		identityAddr,
 	}
 
 	const result = await executeTx(data)
@@ -313,15 +325,10 @@ export async function setIdentityPrivilege({
 	const signer = await getSigner({ wallet, provider })
 	const identityAddr = identity.address
 
-	const identityContract = new Contract(identityAddr, Identity.abi, provider)
-
 	const identityInterface = new Interface(Identity.abi)
-
-	const initialNonce = (await identityContract.nonce()).toNumber()
 
 	const tx1 = {
 		identityContract: identityAddr,
-		nonce: initialNonce,
 		feeTokenAddr: Dai.address,
 		feeAmount: feeAmountSetPrivileges,
 		to: identityAddr,
@@ -332,12 +339,19 @@ export async function setIdentityPrivilege({
 	}
 
 	const txns = [tx1]
-	const signatures = await getMultipleTxSignatures({ txns, signer })
+	const txnsRaw = await getIdentityTnxsWithNonces({
+		txns,
+		identityAddr,
+		provider,
+		Identity,
+	})
+
+	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
 
 	const data = {
-		txnsRaw: txns,
+		txnsRaw,
 		signatures,
-		identityAddr: identity.address,
+		identityAddr,
 		setAddr,
 		privLevel,
 	}
@@ -347,4 +361,22 @@ export async function setIdentityPrivilege({
 	return {
 		result,
 	}
+}
+
+export async function getIdentityTnxsWithNonces({
+	txns = [],
+	identityAddr,
+	provider,
+	Identity,
+}) {
+	const identityContract = new Contract(identityAddr, Identity.abi, provider)
+	const initialNonce = (await identityContract.nonce()).toNumber()
+	const withNonce = txns.map((tx, i) => {
+		return {
+			...tx,
+			nonce: initialNonce + i,
+		}
+	})
+
+	return withNonce
 }
