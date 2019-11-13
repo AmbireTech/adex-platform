@@ -62,6 +62,10 @@ const SourcesSelect = Object.keys(SOURCES).map(key => {
 	}
 })
 
+// TODO: Remove setState from component and use redux state for rendering
+// This causes the issue of running the suggestions and if you back and go
+// to the targeting page again you won't receive suggestions, but you will get
+// a success toast
 class AdUnitTargeting extends Component {
 	constructor(props) {
 		super(props)
