@@ -320,7 +320,7 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 		to: AdExCore.address,
 		data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
 	}
-	const txns = sweepTxns ? [...sweepTxns, tx1, tx2] : [tx1, tx2]
+	const txns = [...sweepTxns, tx1, tx2]
 	const txnsRaw = await getIdentityTnxsWithNonces({
 		txns,
 		identityAddr,
