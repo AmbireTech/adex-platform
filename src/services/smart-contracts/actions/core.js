@@ -135,7 +135,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 				}
 			})
 			.filter(({ channel, lastApprovedBalances }) => {
-				if (channel.status.name === 'Expired') {
+				if (!!channel.status && channel.status.name === 'Expired') {
 					return channel.creator === identityAddr
 				}
 				return lastApprovedBalances && !!lastApprovedBalances[identityAddr]
