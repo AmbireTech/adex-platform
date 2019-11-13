@@ -297,14 +297,14 @@ class AdUnitTargeting extends Component {
 								: t('GET_CATEGORY_SUGGESTIONS')}
 						</ButtonLoading>
 					</Grid>
-					{/* {loadingTargetingSuggestions && (
+					{loadingTargetingSuggestions && (
 						<Grid item container justify='center' className='pulse'>
 							<Img
 								className={classnames(classes.loadingImg)}
 								src={EddieThinking}
 							></Img>
 						</Grid>
-					)} */}
+					)}
 				</Grid>
 			</div>
 		)
