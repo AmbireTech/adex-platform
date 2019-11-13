@@ -86,10 +86,11 @@ export const WithdrawTokenFromIdentity = props => (
 				})
 			)
 		}}
-		getFeesFn={({ transaction } = {}) => {
+		getFeesFn={({ transaction, account } = {}) => {
 			return withdrawFromIdentity({
 				amountToWithdraw: transaction.withdrawAmount,
 				getFeesOnly: true,
+				account,
 			})
 		}}
 	/>
