@@ -18,7 +18,6 @@ import {
 	// getCampaigns,
 } from 'services/adex-market/actions'
 import {
-	getSweepChannelsTxns,
 	openChannel,
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
@@ -28,7 +27,7 @@ import { getMediaSize } from 'helpers/mediaHelpers'
 
 import { contracts } from 'services/smart-contracts/contractsCfg'
 import { SOURCES } from 'constants/targeting'
-import { selectAccount, selectAuthSig, selectAuth } from 'selectors'
+import { selectAccount, selectAuthSig } from 'selectors'
 const { DAI } = contracts
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
@@ -277,25 +276,10 @@ export function openCampaign({ campaign }) {
 				withBalance: [{ channel: campaign }],
 				account,
 			})
-			const identityBalanceDai = bigNumberify(
-				account.stats.raw.identityBalanceDai
-			)
-			const depositAmount = parseUnits(campaign.depositAmount)
-			const feeTokenAddr = campaign.temp.feeTokenAddr
 
-			let sweepTxns
-			if (depositAmount.gt(identityBalanceDai)) {
-				const amountToSweep = depositAmount.sub(identityBalanceDai)
-				sweepTxns = await getSweepChannelsTxns({
-					feeTokenAddr,
-					account,
-					amountToSweep,
-				})
-			}
 			const { readyCampaign } = await openChannel({
 				campaign,
 				account,
-				sweepTxns,
 			})
 
 			dispatch({
