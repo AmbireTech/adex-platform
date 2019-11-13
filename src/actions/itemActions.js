@@ -265,7 +265,7 @@ export function getAllItems() {
 
 export function getCategorySuggestions({ newItem, itemType }) {
 	return async function(dispatch) {
-		updateSpinner('category-suggestions', true)(dispatch)
+		updateSpinner('targeting-suggestions', true)(dispatch)
 		const tempItem = newItem
 		const { tempUrl } = tempItem.temp
 		try {
@@ -285,7 +285,9 @@ export function getCategorySuggestions({ newItem, itemType }) {
 						target: { ...t },
 					}
 				})
+				updateSpinner('targeting-suggestions', false)(dispatch)
 				return targetsWithSource
+				// TODO: don't return b
 			}
 		} catch (err) {
 			console.error('ERR_GETTING_CATEGORY_SUGGESTIONS', err)
@@ -297,7 +299,7 @@ export function getCategorySuggestions({ newItem, itemType }) {
 			})
 			return []
 		}
-		updateSpinner('category-suggestions', false)(dispatch)
+		updateSpinner('targeting-suggestions', false)(dispatch)
 	}
 }
 

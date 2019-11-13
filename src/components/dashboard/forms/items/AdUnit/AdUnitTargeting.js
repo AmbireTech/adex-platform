@@ -12,10 +12,11 @@ import Dropdown from 'components/common/dropdown'
 import { translate } from 'services/translations/translations'
 import { withStyles } from '@material-ui/core/styles'
 import { SOURCES } from 'constants/targeting'
-import { Button } from '@material-ui/core'
 import classnames from 'classnames'
 import Img from 'components/common/img/Img'
 import EddieThinking from 'resources/eddie/eddie-13.png'
+import ButtonLoading from 'components/common/spinners/ButtonLoading'
+import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects'
 
 const styles = {
 	slider: {
@@ -127,11 +128,18 @@ class AdUnitTargeting extends Component {
 		})
 	}
 	addCategorySuggestions = async ({ newItem, itemType }) => {
+		const stateTargets = this.state.targets
 		const { getCategorySuggestions } = this.props.actions
 		const targets = await getCategorySuggestions({ newItem, itemType })
-		// TODO: categories by label as well
-		// TODO: categories by web entities
-		targets && targets.map(target => this.newTarget(target))
+		const uniqueTargets = [...stateTargets, ...targets].filter(
+			(value, index, self) => {
+				value.key = index
+				return self.findIndex(v => v.target.tag === value.target.tag) === index
+			}
+		)
+		this.setState({
+			targets: uniqueTargets,
+		})
 	}
 
 	validateAutocomplete = ({ id, isValid, dirty }) => {
@@ -234,6 +242,7 @@ class AdUnitTargeting extends Component {
 			classes,
 			account,
 			itemType,
+			loadingTargetingSuggestions,
 			...rest
 		} = this.props
 		// const { targeting, tags } = newItem
@@ -278,21 +287,24 @@ class AdUnitTargeting extends Component {
 						/>
 					</Grid>
 					<Grid item container justify='center'>
-						<Button
+						<ButtonLoading
+							loading={loadingTargetingSuggestions}
 							onClick={() => this.addCategorySuggestions({ newItem, itemType })}
-							variant='contained'
-							color='primary'
 						>
-							{t('AUTH_CONNECT_WITH_METAMASK')}
-						</Button>
+							<EmojiObjectsIcon />
+							{loadingTargetingSuggestions
+								? t('WAITING_CATEGORY_SUGGESTIONS')
+								: t('GET_CATEGORY_SUGGESTIONS')}
+						</ButtonLoading>
 					</Grid>
-					<Grid item container justify='center' className='pulse'>
-						<Img
-							className={classnames(classes.loadingImg)}
-							src={EddieThinking}
-						></Img>
-						<div>{t('WORKING_ON_SUGGESTIONS')}</div>
-					</Grid>
+					{loadingTargetingSuggestions && (
+						<Grid item container justify='center' className='pulse'>
+							<Img
+								className={classnames(classes.loadingImg)}
+								src={EddieThinking}
+							></Img>
+						</Grid>
+					)}
 				</Grid>
 			</div>
 		)

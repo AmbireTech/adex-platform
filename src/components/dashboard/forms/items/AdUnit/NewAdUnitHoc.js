@@ -75,6 +75,7 @@ export default function NewAdUnitHoc(Decorated) {
 		return {
 			account: persist.account,
 			newItem: new AdUnit(memory.newItem['AdUnit']),
+			loadingTargetingSuggestions: memory.spinners['targeting-suggestions'],
 		}
 	}
 
