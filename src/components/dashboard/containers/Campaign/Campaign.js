@@ -20,6 +20,7 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
+import Anchor from 'components/common/anchor/anchor'
 import { formatTokenAmount } from 'helpers/formatters'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
@@ -82,6 +83,8 @@ export class Campaign extends Component {
 				: {}
 
 		const status = (campaign.status || {}).name
+		const leader = campaign.spec.validators[0]
+		const follower = campaign.spec.validators[1]
 
 		return (
 			<div>
@@ -118,6 +121,7 @@ export class Campaign extends Component {
 						>
 							<Tab label={t('STATE')} />
 							<Tab label={t('CAMPAIGN_UNITS')} />
+							<Tab label={t('VALIDATORS')} />
 						</Tabs>
 					</AppBar>
 					<div style={{ marginTop: 10 }}>
@@ -148,6 +152,42 @@ export class Campaign extends Component {
 								filterProperties={FILTER_PROPERTIES_ITEMS}
 								uiStateId='campaign-units'
 							/>
+						)}
+						{tabIndex === 2 && (
+							<List>
+								<Anchor
+									target='_blank'
+									href={`${leader.url}/channel/${campaign.id}/status`}
+								>
+									<ListItem button>
+										<ListItemText primary={t('LEADER_STATUS')} />
+									</ListItem>
+								</Anchor>
+								<Anchor
+									target='_blank'
+									href={`${leader.url}/channel/${campaign.id}/last-approved`}
+								>
+									<ListItem button>
+										<ListItemText primary={t('LEADER_LAST_APPROVED')} />
+									</ListItem>
+								</Anchor>
+								<Anchor
+									target='_blank'
+									href={`${follower.url}/channel/${campaign.id}/status`}
+								>
+									<ListItem button>
+										<ListItemText primary={t('FOLOWER_STATUS')} />
+									</ListItem>
+								</Anchor>
+								<Anchor
+									target='_blank'
+									href={`${follower.url}/channel/${campaign.id}/last-approved`}
+								>
+									<ListItem button>
+										<ListItemText primary={t('FOLOWER_LAST_APPROVED')} />
+									</ListItem>
+								</Anchor>
+							</List>
 						)}
 					</div>
 				</div>
