@@ -270,37 +270,43 @@ export function getCategorySuggestions({ newItem, itemType }) {
 		const { tempUrl } = tempItem.temp
 		try {
 			const response = await getImageCategories({ tempUrl })
-			if (response) {
-				const newTargets = response.categories.map(i => ({
-					tag: i.name,
-					score: Math.round(i.confidence * 100),
-				}))
-				const targetsWithSource = newTargets.map((t, index) => {
-					return {
-						key: index,
-						collection: 'targeting',
-						source: 'custom',
-						label: translate(`TARGET_LABEL_GOOGLE_VISION`),
-						placeholder: translate(`TARGET_LABEL_GOOGLE_VISION`),
-						target: { ...t },
-					}
+			const targetCounts = Math.max.apply(
+				Math,
+				newItem.temp.targets.map(function(o) {
+					return o.key + 1
 				})
-
-				targetsWithSource.length > 0
+			)
+			if (response) {
+				const newTargets = response.categories
+					.map(i => ({
+						tag: i.name,
+						score: Math.round(i.confidence * 100),
+					}))
+					.map((t, index) => {
+						return {
+							// key: t.tag,
+							collection: 'targeting',
+							source: 'custom',
+							label: translate(`TARGET_LABEL_GOOGLE_VISION`),
+							placeholder: translate(`TARGET_LABEL_GOOGLE_VISION`),
+							target: { ...t },
+						}
+					})
+				newTargets.length > 0
 					? addToast({
 							dispatch: dispatch,
 							type: 'accept',
 							toastStr: 'ADDED_CATEGORY_SUGGESTIONS_IF_MISSING',
-							args: [targetsWithSource.length],
+							args: [newTargets.length],
 					  })
 					: addToast({
 							dispatch: dispatch,
 							type: 'warning',
 							toastStr: 'NO_CATEGORY_SUGGESTIONS_FOUND',
-							args: [targetsWithSource.length],
+							args: [newTargets.length],
 					  })
 				updateSpinner('targeting-suggestions', false)(dispatch)
-				return targetsWithSource
+				return newTargets
 			}
 		} catch (err) {
 			console.error('ERR_GETTING_CATEGORY_SUGGESTIONS', err)
@@ -485,7 +491,7 @@ export function cloneItem({ item, itemType, objModel } = {}) {
 				targets: item.targeting.map((t, index) => {
 					const key = findSourceByTag(t.tag) || ''
 					return {
-						key: index,
+						// key: t.tag,
 						collection: 'targeting',
 						source: key,
 						label: translate(`TARGET_LABEL_${key.toUpperCase()}`),
