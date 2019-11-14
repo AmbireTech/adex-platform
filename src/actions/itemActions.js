@@ -285,6 +285,7 @@ export function getCategorySuggestions({ newItem, itemType }) {
 						target: { ...t },
 					}
 				})
+
 				targetsWithSource.length > 0
 					? addToast({
 							dispatch: dispatch,
