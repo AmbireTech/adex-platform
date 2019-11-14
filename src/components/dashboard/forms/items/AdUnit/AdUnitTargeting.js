@@ -118,6 +118,7 @@ function AdUnitTargeting(props) {
 						suggestionMatch='anywhere'
 						showSuggestionsWhenValueIsSet={true}
 						allowCreate={!source.length}
+						showSelected
 					/>
 				</Grid>
 				<Grid item xs={11} md={5}>
@@ -196,7 +197,7 @@ function AdUnitTargeting(props) {
 		validateAutocomplete({
 			id: `target-${newTarget.key}`,
 			isValid: target.tag,
-			dirty: false,
+			dirty: true,
 		})
 	}
 
