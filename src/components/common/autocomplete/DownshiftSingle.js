@@ -9,6 +9,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 class DownshiftSingle extends React.Component {
 	constructor(props) {
 		super(props)
+		// this.props.onInit()
 		this.state = {
 			inputValue: '',
 		}
