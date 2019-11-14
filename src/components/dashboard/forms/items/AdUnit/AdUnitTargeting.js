@@ -62,99 +62,20 @@ const SourcesSelect = Object.keys(SOURCES).map(key => {
 	}
 })
 
-// TODO: Remove setState from component and use redux state for rendering
-// This causes the issue of running the suggestions and if you back and go
-// to the targeting page again you won't receive suggestions, but you will get
-// a success toast
-class AdUnitTargeting extends Component {
-	constructor(props) {
-		super(props)
+function AdUnitTargeting(props) {
+	const {
+		t,
+		newItem,
+		actions,
+		classes,
+		account,
+		itemType,
+		loadingTargetingSuggestions,
+		...rest
+	} = props
+	const { targets } = newItem.temp || {}
 
-		const { targets } = props.newItem.temp || {}
-		this.state = {
-			targets: [...(targets || [])],
-		}
-	}
-
-	updateNewItemCollections(targets) {
-		const { newItem, handleChange } = this.props
-		const collections = [...targets].reduce(
-			(all, tg) => {
-				const newCollection = all[tg.collection] || []
-
-				// NOTE: just skip empty tags
-				if (!!tg.target.tag) {
-					newCollection.push(tg.target)
-				}
-				all[tg.collection] = newCollection
-				return all
-			},
-			{ targeting: [], tags: [] }
-		)
-
-		const { temp } = newItem
-		const newTemp = { ...temp }
-
-		// Need this to keep the state if user get back
-		newTemp.targets = [...targets]
-		collections.temp = newTemp
-
-		handleChange(null, null, collections)
-	}
-
-	handleTargetChange = (index, prop, newValue) => {
-		const newTargets = [...this.state.targets]
-		const newTarget = { ...newTargets[index].target }
-		newTarget[prop] = newValue
-		newTargets[index] = { ...newTargets[index], target: newTarget }
-		this.updateNewItemCollections(newTargets)
-		this.setState({ targets: newTargets })
-	}
-
-	newTarget = target => {
-		const newTargets = [...this.state.targets]
-		const newTarget = { ...target }
-		newTarget.key = newTargets.length
-		newTarget.target = { ...target.target }
-		newTargets.push(newTarget)
-		this.setState({ targets: newTargets })
-	}
-
-	removeTarget = index => {
-		const newTargets = [...this.state.targets]
-		newTargets.splice(index, 1)
-		this.updateNewItemCollections(newTargets)
-		this.setState({ targets: newTargets })
-		this.validateAutocomplete({
-			id: `target-${index}`,
-			isValid: true,
-			dirty: false,
-		})
-	}
-	addCategorySuggestions = async ({ newItem, itemType }) => {
-		const stateTargets = this.state.targets
-		const { getCategorySuggestions } = this.props.actions
-		const targets = await getCategorySuggestions({ newItem, itemType })
-		const uniqueTargets = [...stateTargets, ...targets].filter(
-			(value, index, self) => {
-				value.key = index
-				return self.findIndex(v => v.target.tag === value.target.tag) === index
-			}
-		)
-		this.setState({
-			targets: uniqueTargets,
-		})
-	}
-
-	validateAutocomplete = ({ id, isValid, dirty }) => {
-		this.props.validate(id, {
-			isValid,
-			err: { msg: 'TARGETING_REQUIRED' },
-			dirty,
-		})
-	}
-
-	targetTag = ({
+	const TargetingTag = ({
 		source,
 		collection,
 		placeholder,
@@ -181,21 +102,13 @@ class AdUnitTargeting extends Component {
 								: null
 						}
 						onChange={newValue => {
-							this.handleTargetChange(index, 'tag', newValue, collection)
-							this.validateAutocomplete({
+							handleTargetChange(index, 'tag', newValue, collection)
+							validateAutocomplete({
 								id,
 								isValid: newValue,
 								dirty: true,
 							})
 						}}
-						onInit={() =>
-							this.validateAutocomplete({
-								id,
-								isValid: target.tag,
-								dirty: false,
-							})
-						}
-						// validate={validate}
 						label={label}
 						placeholder={placeholder}
 						source={source}
@@ -224,104 +137,163 @@ class AdUnitTargeting extends Component {
 							value={target.score}
 							marks={marks}
 							onChange={(ev, newValue) =>
-								this.handleTargetChange(index, 'score', newValue, collection)
+								handleTargetChange(index, 'score', newValue, collection)
 							}
 						/>
 					</div>
 				</Grid>
 				<Grid item container xs={1} md={1} alignItems='center'>
-					<IconButton onClick={() => this.removeTarget(index)}>
+					<IconButton onClick={() => removeTarget(index)}>
 						<CancelIcon />
 					</IconButton>
 				</Grid>
 			</Grid>
 		)
 	}
+	const updateNewItemCollections = targets => {
+		const { newItem, handleChange } = props
+		const collections = [...targets].reduce(
+			(all, tg) => {
+				const newCollection = all[tg.collection] || []
 
-	render() {
-		const {
-			t,
-			newItem,
-			actions,
-			classes,
-			account,
-			itemType,
-			loadingTargetingSuggestions,
-			...rest
-		} = this.props
-		// const { targeting, tags } = newItem
+				// NOTE: just skip empty tags
+				if (!!tg.target.tag) {
+					newCollection.push(tg.target)
+				}
+				all[tg.collection] = newCollection
+				return all
+			},
+			{ targeting: [], tags: [] }
+		)
 
-		const { targets } = this.state
-		return (
-			<div>
-				<Grid container spacing={1}>
-					<Grid item sm={12}>
-						{[...targets].map(
-							(
-								{ source, collection, label, placeholder, target = {} } = {},
-								index
-							) => (
-								<this.targetTag
-									key={index}
-									label={t(label)}
-									placeholder={t(placeholder)}
-									index={index}
-									source={SOURCES[source].src}
-									collection={collection}
-									target={target}
-									t={t}
-									classes={classes}
-									{...rest}
-								/>
-							)
-						)}
-					</Grid>
-					<Grid item sm={12}>
-						<Dropdown
-							variant='filled'
-							fullWidth
-							onChange={target => {
-								this.newTarget({ ...target })
-							}}
-							source={[...SourcesSelect]}
-							value={''}
-							label={t('NEW_TARGET')}
-							htmlId='ad-type-dd'
-							name='adType'
-						/>
-					</Grid>
-					<Grid item container justify='center'>
-						<ButtonLoading
-							loading={loadingTargetingSuggestions}
-							onClick={() => this.addCategorySuggestions({ newItem, itemType })}
-						>
-							<EmojiObjectsIcon />
-							{loadingTargetingSuggestions
-								? t('WAITING_CATEGORY_SUGGESTIONS')
-								: t('GET_CATEGORY_SUGGESTIONS')}
-						</ButtonLoading>
-					</Grid>
-					{loadingTargetingSuggestions && (
-						<Grid item container justify='center' className='pulse'>
-							<Img
-								className={classnames(classes.loadingImg)}
-								src={EddieThinking}
-							></Img>
-						</Grid>
+		const { temp } = newItem
+		const newTemp = { ...temp }
+
+		// Need this to keep the state if user get back
+		newTemp.targets = [...targets]
+		collections.temp = newTemp
+
+		handleChange(null, null, collections)
+	}
+
+	const handleTargetChange = (index, prop, newValue) => {
+		const newTargets = [...targets]
+		const newTarget = { ...newTargets[index].target }
+		newTarget[prop] = newValue
+		newTargets[index] = { ...newTargets[index], target: newTarget }
+		updateNewItemCollections(newTargets)
+	}
+
+	const newTarget = target => {
+		const newTargets = [...targets]
+		const newTarget = { ...target }
+		newTarget.key = newTargets.length
+		newTarget.target = { ...target.target }
+		newTargets.push(newTarget)
+		updateNewItemCollections(newTargets)
+		validateAutocomplete({
+			id: `target-${newTarget.key}`,
+			isValid: target.tag,
+			dirty: false,
+		})
+	}
+
+	const removeTarget = index => {
+		const newTargets = [...targets]
+		newTargets.splice(index, 1)
+		updateNewItemCollections(newTargets)
+		validateAutocomplete({
+			id: `target-${index}`,
+			isValid: true,
+			dirty: false,
+		})
+	}
+
+	const addCategorySuggestions = async ({ newItem, itemType }) => {
+		const { getCategorySuggestions } = props.actions
+		const suggestedTargets = await getCategorySuggestions({ newItem, itemType })
+		const uniqueTargets = [...targets, ...suggestedTargets].filter(
+			(value, index, self) => {
+				value.key = index
+				return self.findIndex(v => v.target.tag === value.target.tag) === index
+			}
+		)
+		updateNewItemCollections(uniqueTargets)
+	}
+
+	const validateAutocomplete = ({ id, isValid, dirty }) => {
+		props.validate(id, {
+			isValid,
+			err: { msg: 'TARGETING_REQUIRED' },
+			dirty,
+		})
+	}
+
+	return (
+		<div>
+			<Grid container spacing={1}>
+				<Grid item sm={12}>
+					{[...targets].map(
+						(
+							{ source, collection, label, placeholder, target = {} } = {},
+							index
+						) => (
+							<TargetingTag
+								key={index}
+								label={t(label)}
+								placeholder={t(placeholder)}
+								index={index}
+								source={SOURCES[source].src}
+								collection={collection}
+								target={target}
+								t={t}
+								classes={classes}
+								{...rest}
+							/>
+						)
 					)}
 				</Grid>
-			</div>
-		)
-	}
+				<Grid item sm={12}>
+					<Dropdown
+						variant='filled'
+						fullWidth
+						onChange={target => {
+							newTarget({ ...target })
+						}}
+						source={[...SourcesSelect]}
+						value={''}
+						label={t('NEW_TARGET')}
+						htmlId='ad-type-dd'
+						name='adType'
+					/>
+				</Grid>
+				<Grid item container justify='center'>
+					<ButtonLoading
+						loading={loadingTargetingSuggestions}
+						onClick={() => addCategorySuggestions({ newItem, itemType })}
+					>
+						<EmojiObjectsIcon />
+						{loadingTargetingSuggestions
+							? t('WAITING_CATEGORY_SUGGESTIONS')
+							: t('GET_CATEGORY_SUGGESTIONS')}
+					</ButtonLoading>
+				</Grid>
+				{loadingTargetingSuggestions && (
+					<Grid item container justify='center' className='pulse'>
+						<Img
+							className={classnames(classes.loadingImg)}
+							src={EddieThinking}
+						></Img>
+					</Grid>
+				)}
+			</Grid>
+		</div>
+	)
 }
 
 AdUnitTargeting.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
 	newItem: PropTypes.object.isRequired,
-	title: PropTypes.string,
-	descriptionHelperTxt: PropTypes.string,
-	nameHelperTxt: PropTypes.string,
 }
 
 const NewAdUnitTargeting = NewAdUnitHoc(withStyles(styles)(AdUnitTargeting))
