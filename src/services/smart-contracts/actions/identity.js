@@ -250,9 +250,7 @@ export async function withdrawFromIdentity({
 		(total, tx) => total.add(bigNumberify(tx.feeAmount)),
 		bigNumberify(0)
 	)
-	const fees = bigNumberify(feeAmountTransfer)
-		.mul(bigNumberify('2'))
-		.add(sweepFees)
+	const fees = bigNumberify(feeAmountTransfer).add(sweepFees)
 	const tokenAmount = toWithdraw.sub(fees).toString()
 
 	if (getFeesOnly) {
@@ -272,17 +270,9 @@ export async function withdrawFromIdentity({
 		feeTokenAddr: Dai.address,
 		feeAmount: feeAmountTransfer,
 		to: Dai.address,
-		data: ERC20.functions.approve.encode([identityAddr, tokenAmount]),
-	}
-
-	const tx2 = {
-		identityContract: identityAddr,
-		feeTokenAddr: Dai.address,
-		feeAmount: feeAmountTransfer,
-		to: Dai.address,
 		data: ERC20.functions.transfer.encode([withdrawTo, tokenAmount]),
 	}
-	const txns = [...sweepTxns, tx1, tx2]
+	const txns = [...sweepTxns, tx1]
 
 	const txnsRaw = await getIdentityTnxsWithNonces({
 		txns,
