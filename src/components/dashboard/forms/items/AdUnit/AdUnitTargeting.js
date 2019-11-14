@@ -102,12 +102,14 @@ function AdUnitTargeting(props) {
 								: null
 						}
 						onChange={newValue => {
-							handleTargetChange(index, 'tag', newValue, collection)
-							validateAutocomplete({
-								id,
-								isValid: newValue,
-								dirty: true,
-							})
+							if (newValue) {
+								handleTargetChange(index, 'tag', newValue, collection)
+								validateAutocomplete({
+									id,
+									isValid: newValue,
+									dirty: true,
+								})
+							}
 						}}
 						label={label}
 						placeholder={placeholder}
