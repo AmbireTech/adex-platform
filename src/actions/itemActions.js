@@ -263,28 +263,21 @@ export function getAllItems() {
 	}
 }
 
-export function getCategorySuggestions({ newItem, itemType }) {
+export function getCategorySuggestions({ newItem }) {
 	return async function(dispatch) {
 		updateSpinner('targeting-suggestions', true)(dispatch)
 		const tempItem = newItem
 		const { tempUrl } = tempItem.temp
 		try {
 			const response = await getImageCategories({ tempUrl })
-			const targetCounts = Math.max.apply(
-				Math,
-				newItem.temp.targets.map(function(o) {
-					return o.key + 1
-				})
-			)
 			if (response) {
 				const newTargets = response.categories
 					.map(i => ({
 						tag: i.name,
 						score: Math.round(i.confidence * 100),
 					}))
-					.map((t, index) => {
+					.map(t => {
 						return {
-							// key: t.tag,
 							collection: 'targeting',
 							source: 'custom',
 							label: translate(`TARGET_LABEL_GOOGLE_VISION`),

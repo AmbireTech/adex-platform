@@ -212,10 +212,11 @@ function AdUnitTargeting(props) {
 		})
 	}
 
-	const addCategorySuggestions = async ({ newItem, itemType }) => {
+	// TODO: bug when removing initial targeting while waiting for suggestions
+	const addCategorySuggestions = async ({ newItem }) => {
 		props.validate('wait', { isValid: false })
 		const { getCategorySuggestions } = props.actions
-		const suggestedTargets = await getCategorySuggestions({ newItem, itemType })
+		const suggestedTargets = await getCategorySuggestions({ newItem })
 		const uniqueTargets = [...targets, ...suggestedTargets].filter(
 			(value, index, self) => {
 				return self.findIndex(v => v.target.tag === value.target.tag) === index
@@ -275,7 +276,7 @@ function AdUnitTargeting(props) {
 				<Grid item container justify='center'>
 					<ButtonLoading
 						loading={loadingTargetingSuggestions}
-						onClick={() => addCategorySuggestions({ newItem, itemType })}
+						onClick={() => addCategorySuggestions({ newItem })}
 					>
 						<EmojiObjectsIcon />
 						{loadingTargetingSuggestions
