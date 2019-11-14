@@ -165,7 +165,7 @@ export class Campaign extends Component {
 								</Anchor>
 								<Anchor
 									target='_blank'
-									href={`${leader.url}/channel/${campaign.id}/last-approved`}
+									href={`${leader.url}/channel/${campaign.id}/last-approved?withHeartbeat=true`}
 								>
 									<ListItem button>
 										<ListItemText primary={t('LEADER_LAST_APPROVED')} />
@@ -181,7 +181,7 @@ export class Campaign extends Component {
 								</Anchor>
 								<Anchor
 									target='_blank'
-									href={`${follower.url}/channel/${campaign.id}/last-approved`}
+									href={`${follower.url}/channel/${campaign.id}/last-approved?withHeartbeat=true`}
 								>
 									<ListItem button>
 										<ListItemText primary={t('FOLOWER_LAST_APPROVED')} />
