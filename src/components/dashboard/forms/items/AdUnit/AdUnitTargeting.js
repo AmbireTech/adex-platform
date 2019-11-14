@@ -185,7 +185,7 @@ function AdUnitTargeting(props) {
 	}
 
 	const newTarget = target => {
-		const newTargets = [...targets]
+		const newTargets = [...(targets || [])]
 		const newTarget = { ...target }
 		newTarget.key = newTargets.length
 		newTarget.target = { ...target.target }
@@ -210,15 +210,16 @@ function AdUnitTargeting(props) {
 	}
 
 	const addCategorySuggestions = async ({ newItem, itemType }) => {
+		props.validate('wait', { isValid: false })
 		const { getCategorySuggestions } = props.actions
 		const suggestedTargets = await getCategorySuggestions({ newItem, itemType })
 		const uniqueTargets = [...targets, ...suggestedTargets].filter(
 			(value, index, self) => {
-				value.key = index
 				return self.findIndex(v => v.target.tag === value.target.tag) === index
 			}
 		)
 		updateNewItemCollections(uniqueTargets)
+		props.validate('wait', { isValid: true })
 	}
 
 	const validateAutocomplete = ({ id, isValid, dirty }) => {
@@ -233,25 +234,26 @@ function AdUnitTargeting(props) {
 		<div>
 			<Grid container spacing={1}>
 				<Grid item sm={12}>
-					{[...targets].map(
-						(
-							{ source, collection, label, placeholder, target = {} } = {},
-							index
-						) => (
-							<TargetingTag
-								key={index}
-								label={t(label)}
-								placeholder={t(placeholder)}
-								index={index}
-								source={SOURCES[source].src}
-								collection={collection}
-								target={target}
-								t={t}
-								classes={classes}
-								{...rest}
-							/>
-						)
-					)}
+					{targets &&
+						[...targets].map(
+							(
+								{ source, collection, label, placeholder, target = {} } = {},
+								index
+							) => (
+								<TargetingTag
+									key={index}
+									label={t(label)}
+									placeholder={t(placeholder)}
+									index={index}
+									source={SOURCES[source].src}
+									collection={collection}
+									target={target}
+									t={t}
+									classes={classes}
+									{...rest}
+								/>
+							)
+						)}
 				</Grid>
 				<Grid item sm={12}>
 					<Dropdown
