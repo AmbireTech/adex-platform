@@ -176,7 +176,7 @@ export class Campaign extends Component {
 									href={`${follower.url}/channel/${campaign.id}/status`}
 								>
 									<ListItem button>
-										<ListItemText primary={t('FOLOWER_STATUS')} />
+										<ListItemText primary={t('FOLLOWER_STATUS')} />
 									</ListItem>
 								</Anchor>
 								<Anchor
@@ -184,7 +184,7 @@ export class Campaign extends Component {
 									href={`${follower.url}/channel/${campaign.id}/last-approved?withHeartbeat=true`}
 								>
 									<ListItem button>
-										<ListItemText primary={t('FOLOWER_LAST_APPROVED')} />
+										<ListItemText primary={t('FOLLOWER_LAST_APPROVED')} />
 									</ListItem>
 								</Anchor>
 							</List>
