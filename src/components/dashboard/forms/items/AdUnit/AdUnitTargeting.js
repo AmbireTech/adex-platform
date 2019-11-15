@@ -190,13 +190,12 @@ function AdUnitTargeting(props) {
 	const newTarget = target => {
 		const newTargets = [...(targets || [])]
 		const newTarget = { ...target }
-		newTarget.key = newTargets.length
 		newTarget.target = { ...target.target }
 		newTargets.push(newTarget)
 		updateNewItemCollections(newTargets)
 		validateAutocomplete({
-			id: `target-${newTarget.key}`,
-			isValid: target.tag,
+			id: `target-${newTargets.length - 1}`,
+			isValid: !!target.tag,
 			dirty: true,
 		})
 	}
@@ -204,11 +203,14 @@ function AdUnitTargeting(props) {
 	const removeTarget = index => {
 		const newTargets = [...targets]
 		newTargets.splice(index, 1)
+		validateAutocomplete({ isValid: true, removeAll: true })
 		updateNewItemCollections(newTargets)
-		validateAutocomplete({
-			id: `target-${index}`,
-			isValid: true,
-			dirty: false,
+		newTargets.forEach((element, index) => {
+			validateAutocomplete({
+				id: `target-${index}`,
+				isValid: !!element.target.tag,
+				dirty: true,
+			})
 		})
 	}
 
@@ -226,7 +228,8 @@ function AdUnitTargeting(props) {
 		props.validate('wait', { isValid: true })
 	}
 
-	const validateAutocomplete = ({ id, isValid, dirty }) => {
+	const validateAutocomplete = ({ id = '', isValid, dirty }) => {
+		// take from actions
 		props.validate(id, {
 			isValid,
 			err: { msg: 'TARGETING_REQUIRED' },
