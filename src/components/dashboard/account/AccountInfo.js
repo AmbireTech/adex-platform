@@ -86,6 +86,7 @@ function AccountInfo({ t }) {
 		identityAddress,
 		identityBalanceDai,
 		availableIdentityBalanceDai,
+		outstandingBalanceDai,
 	} = formatted
 	const { authType, email } = account.wallet
 
@@ -176,8 +177,10 @@ function AccountInfo({ t }) {
 								loading={!identityBalanceDai && identityBalanceDai !== 0}
 							>
 								<ListItemText
-									primary={`${identityBalanceDai || 0} DAI`}
-									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
+									primary={`${availableIdentityBalanceDai || 0} DAI`}
+									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
+										args: [identityBalanceDai || 0, outstandingBalanceDai || 0],
+									})}
 								/>
 							</LoadingSection>
 							<Button
