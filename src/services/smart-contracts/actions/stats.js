@@ -1,11 +1,8 @@
 import { getEthers } from 'services/smart-contracts/ethers'
 import { constants } from 'adex-models'
 import { utils, Contract } from 'ethers'
-import { getAllCampaigns } from 'services/adex-market/actions'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
 import { bigNumberify } from 'ethers/utils'
-import { Channel, MerkleTree } from 'adex-protocol-eth/js'
-
 const { formatEther, formatUnits } = utils
 const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
 
@@ -30,7 +27,10 @@ export async function getAddressBalances({ address, authType }) {
 
 export async function getAccountStats({
 	account,
-	outstandingBalanceDai = bigNumberify(0),
+	outstandingBalanceDai = {
+		total: bigNumberify('0'),
+		available: bigNumberify('0'),
+	},
 }) {
 	const { wallet, identity } = account
 	const { provider, Dai, Identity } = await getEthers(wallet.authType)
@@ -59,7 +59,7 @@ export async function getAccountStats({
 	const [
 		walletBalanceEth,
 		walletBalanceDai,
-		identityBalanceDai = bigNumberify(0),
+		identityBalanceDai = bigNumberify('0'),
 		walletPrivileges,
 	] = await Promise.all(
 		calls.map(c =>
@@ -77,8 +77,14 @@ export async function getAccountStats({
 		walletBalanceDai,
 		identityBalanceDai,
 		walletPrivileges,
-		outstandingBalanceDai,
-		totalIdentityBalanceDai: identityBalanceDai.add(outstandingBalanceDai),
+		outstandingBalanceDai: outstandingBalanceDai.available,
+		totalOutstandingBalanceDai: outstandingBalanceDai.total,
+		availableIdentityBalanceDai: identityBalanceDai.add(
+			outstandingBalanceDai.available
+		),
+		totalIdentityBalanceDai: identityBalanceDai.add(
+			outstandingBalanceDai.total
+		),
 	}
 
 	const formatted = {
@@ -89,7 +95,12 @@ export async function getAccountStats({
 		walletBalanceDai: formatUnits(walletBalanceDai, 18),
 		identityAddress: identity.address,
 		identityBalanceDai: formatUnits(identityBalanceDai, 18),
-		outstandingBalanceDai: formatUnits(outstandingBalanceDai, 18),
+		outstandingBalanceDai: formatUnits(raw.outstandingBalanceDai, 18),
+		totalOutstandingBalanceDai: formatUnits(raw.totalOutstandingBalanceDai, 18),
+		availableIdentityBalanceDai: formatUnits(
+			raw.availableIdentityBalanceDai,
+			18
+		),
 		totalIdentityBalanceDai: formatUnits(raw.totalIdentityBalanceDai, 18),
 	}
 
@@ -99,56 +110,25 @@ export async function getAccountStats({
 	}
 }
 
-async function getAllChannels() {
-	const channels = await getAllCampaigns(true)
-	return Promise.all(
-		channels.map(async channel => {
-			const { lastApprovedBalances } = channel.status || {}
-
-			if (lastApprovedBalances) {
-				const allLeafs = Object.entries(lastApprovedBalances).map(([k, v]) =>
-					Channel.getBalanceLeaf(k, v)
-				)
-				const mTree = new MerkleTree(allLeafs)
-				return { lastApprovedBalances, mTree, channel }
-			} else {
-				return { lastApprovedBalances: null, mTree: null, channel }
-			}
-		})
-	)
-}
-
-async function getAllChannelsWhereHasBalance(allActive, addr) {
-	return allActive
-		.filter(
-			({ lastApprovedBalances }) =>
-				lastApprovedBalances && !!lastApprovedBalances[addr]
-		)
-		.map(({ channel, lastApprovedBalances }) => ({
-			channel,
-			balance: lastApprovedBalances[addr],
-		}))
-}
-
 export async function getOutstandingBalance({ wallet, address, withBalance }) {
-	const { authType } = wallet
-	const { AdExCore } = await getEthers(authType)
+	// const sweepMin = minToSweep()
+	const bigZero = bigNumberify(0)
 
-	const withOutstanding = await Promise.all(
-		withBalance.map(async ({ channel, balance }) => {
-			const outstanding = bigNumberify(balance).sub(
-				await AdExCore.withdrawnPerUser(channel.id, address)
-			)
-			return { channel, outstanding }
-		})
-	)
+	const initial = { total: bigNumberify('0'), available: bigNumberify('0') }
 
-	const totalOutstanding = withOutstanding.reduce((sum, ch) => {
-		const currentSum = sum.add(ch.outstanding)
-		return currentSum
-	}, bigNumberify('0'))
+	const allOutstanding = withBalance.reduce((amounts, ch) => {
+		const { outstanding, outstandingAvailable } = ch
+		const current = { ...amounts }
+		current.total = current.total.add(outstanding)
 
-	return totalOutstanding || bigNumberify('0')
+		if (outstandingAvailable.gt(bigZero)) {
+			current.available = current.available.add(outstandingAvailable)
+		}
+
+		return current
+	}, initial)
+
+	return allOutstanding || initial
 }
 
 export async function getAllValidatorsAuthForIdentity({
@@ -197,11 +177,4 @@ export async function getAllValidatorsAuthForIdentity({
 	}, {})
 
 	return validatorsAuth
-}
-
-export async function getAllChannelsForIdentity({ address }) {
-	const allActive = await getAllChannels()
-	const withBalance = await getAllChannelsWhereHasBalance(allActive, address)
-
-	return withBalance
 }

@@ -7,8 +7,10 @@ import MenuItem from '@material-ui/core/MenuItem'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
+import { InputLoading } from 'components/common/spinners/'
 import classnames from 'classnames'
 import { styles } from './styles'
+import { t } from 'selectors'
 
 class Dropdown extends React.Component {
 	handleChange = event => {
@@ -20,7 +22,7 @@ class Dropdown extends React.Component {
 			classes,
 			label = '',
 			value,
-			source,
+			source = [],
 			htmlId = 'some-id',
 			name = '',
 			disabled = false,
@@ -30,6 +32,8 @@ class Dropdown extends React.Component {
 			fullWidth = false,
 			className,
 			required,
+			loading,
+			noSrcLabel,
 		} = this.props
 
 		// TODO: add native renderer for mobile devices when supported
@@ -43,22 +47,31 @@ class Dropdown extends React.Component {
 				<InputLabel htmlFor={htmlId} required={required}>
 					{label}
 				</InputLabel>
-				<Select
-					value={value.id || value}
-					onChange={this.handleChange}
-					input={<Input name={name} id={htmlId} />}
-				>
-					{[...source].map(src => {
-						return (
-							<MenuItem
-								key={src.value.key || src.value.id || src.value}
-								value={src.value.id || src.value}
-							>
-								{src.label}
-							</MenuItem>
-						)
-					})}
-				</Select>
+				{!!source.length && !loading ? (
+					<Select
+						value={value.id || value}
+						onChange={this.handleChange}
+						input={<Input name={name} id={htmlId} />}
+					>
+						{[...source].map(src => {
+							return (
+								<MenuItem
+									key={src.value.key || src.value.id || src.value}
+									value={src.value.id || src.value}
+								>
+									{src.label}
+								</MenuItem>
+							)
+						})}
+					</Select>
+				) : !loading ? (
+					<Input disabled value={noSrcLabel} />
+				) : (
+					<>
+						<Input disabled value={t('LOADING_DATA')} />
+						<InputLoading />
+					</>
+				)}
 				{helperText && <FormHelperText>{helperText}</FormHelperText>}
 			</FormControl>
 		)

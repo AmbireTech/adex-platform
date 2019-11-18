@@ -260,7 +260,6 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 	return async function(dispatch, getState) {
 		try {
 			const account = selectAccount(getState())
-
 			const result = await withdrawFromIdentity({
 				account,
 				amountToWithdraw,

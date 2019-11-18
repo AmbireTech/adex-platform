@@ -85,6 +85,8 @@ function AccountInfo({ t }) {
 		walletPrivileges = '',
 		identityAddress,
 		identityBalanceDai,
+		availableIdentityBalanceDai,
+		outstandingBalanceDai,
 	} = formatted
 	const { authType, email } = account.wallet
 
@@ -175,8 +177,10 @@ function AccountInfo({ t }) {
 								loading={!identityBalanceDai && identityBalanceDai !== 0}
 							>
 								<ListItemText
-									primary={`${identityBalanceDai || 0} DAI`}
-									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE')}
+									primary={`${availableIdentityBalanceDai || 0} DAI`}
+									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
+										args: [identityBalanceDai || 0, outstandingBalanceDai || 0],
+									})}
 								/>
 							</LoadingSection>
 							<Button
@@ -195,8 +199,8 @@ function AccountInfo({ t }) {
 								<WithdrawTokenFromIdentity
 									variant='contained'
 									color='primary'
-									identityAvailable={identityBalanceDai}
-									identityAvailableRaw={identityBalanceDai}
+									identityAvailable={availableIdentityBalanceDai}
+									identityAvailableRaw={availableIdentityBalanceDai}
 									token='DAI'
 									className={classes.actionBtn}
 									size='small'
@@ -231,7 +235,7 @@ function AccountInfo({ t }) {
 										token='DAI'
 										className={classes.actionBtn}
 										size='small'
-										identityAvailable={identityBalanceDai}
+										identityAvailable={availableIdentityBalanceDai}
 									/>
 								</div>
 							</ListItem>

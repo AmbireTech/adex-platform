@@ -11,6 +11,7 @@ import DashboardStats from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
 import Items from 'components/dashboard/containers/Items'
+import isEqual from 'lodash.isequal'
 // import Transactions from 'components/dashboard/containers/Transactions'
 import {
 	AdUnit as AdUnitModel,
@@ -34,6 +35,7 @@ import {
 } from 'constants/misc'
 import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
+import PageNotFound from 'components/page_not_found/PageNotFound'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 class Dashboard extends React.Component {
@@ -67,11 +69,12 @@ class Dashboard extends React.Component {
 		statsLoop.start()
 	}
 
-	// shouldComponentUpdate(nextProps, nextState) {
+	shouldComponentUpdate(nextProps) {
+		const should = isEqual(nextProps.match, this.props.match)
+		return should
+	}
 
-	// }
-
-	componentWillUpdate(nextProps) {
+	componentDidUpdate(nextProps) {
 		if (nextProps.match.params.side !== this.props.match.params.side) {
 			this.props.actions.updateNav('side', nextProps.match.params.side)
 		}
@@ -91,69 +94,69 @@ class Dashboard extends React.Component {
 
 	renderAdUnits = () => {
 		return (
-			<Items
-				header={this.props.t('ALL_UNITS')}
-				viewModeId='rowsViewUnits'
-				itemType={'AdUnit'}
-				newItemBtn={() => (
-					<NewUnitDialog
-						fabButton
-						variant='extended'
-						color='secondary'
-						btnLabel='NEW_UNIT'
-					/>
-				)}
-				objModel={AdUnitModel}
-				sortProperties={SORT_PROPERTIES_ITEMS}
-				filterProperties={FILTER_PROPERTIES_ITEMS}
-				uiStateId='units'
-			/>
+			<>
+				<NewUnitDialog
+					fabButton
+					variant='extended'
+					color='secondary'
+					btnLabel='NEW_UNIT'
+				/>
+				<Items
+					header={this.props.t('ALL_UNITS')}
+					viewModeId='rowsViewUnits'
+					itemType={'AdUnit'}
+					objModel={AdUnitModel}
+					sortProperties={SORT_PROPERTIES_ITEMS}
+					filterProperties={FILTER_PROPERTIES_ITEMS}
+					uiStateId='units'
+				/>
+			</>
 		)
 	}
 
 	renderCampaigns = () => {
 		return (
-			<Items
-				header={this.props.t('ALL_CAMPAIGNS')}
-				viewModeId='rowsViewCampaigns'
-				itemType={'Campaign'}
-				newItemBtn={() => (
-					<NewCampaignDialog
-						fabButton
-						variant='extended'
-						accent
-						color='secondary'
-						btnLabel='NEW_CAMPAIGN'
-					/>
-				)}
-				objModel={CampaignModel}
-				sortProperties={SORT_PROPERTIES_CAMPAIGN}
-				uiStateId='campaigns'
-				filterProperties={FILTER_PROPERTIES_CAMPAIGN}
-			/>
+			<>
+				<NewCampaignDialog
+					fabButton
+					variant='extended'
+					accent
+					color='secondary'
+					btnLabel='NEW_CAMPAIGN'
+				/>
+				<Items
+					header={this.props.t('ALL_CAMPAIGNS')}
+					viewModeId='rowsViewCampaigns'
+					itemType={'Campaign'}
+					objModel={CampaignModel}
+					sortProperties={SORT_PROPERTIES_CAMPAIGN}
+					uiStateId='campaigns'
+					filterProperties={FILTER_PROPERTIES_CAMPAIGN}
+				/>
+			</>
 		)
 	}
 
 	renderAdSlots = () => {
 		return (
-			<Items
-				header={this.props.t('ALL_SLOTS')}
-				viewModeId='rowsViewSlots'
-				itemType={'AdSlot'}
-				newItemBtn={() => (
-					<NewSlotDialog
-						fabButton
-						variant='extended'
-						accent
-						color='secondary'
-						btnLabel='NEW_SLOT'
-					/>
-				)}
-				objModel={AdSlotModel}
-				sortProperties={SORT_PROPERTIES_ITEMS}
-				filterProperties={FILTER_PROPERTIES_ITEMS}
-				uiStateId='slots'
-			/>
+			<>
+				<NewSlotDialog
+					fabButton
+					variant='extended'
+					accent
+					color='secondary'
+					btnLabel='NEW_SLOT'
+				/>
+				<Items
+					header={this.props.t('ALL_SLOTS')}
+					viewModeId='rowsViewSlots'
+					itemType={'AdSlot'}
+					objModel={AdSlotModel}
+					sortProperties={SORT_PROPERTIES_ITEMS}
+					filterProperties={FILTER_PROPERTIES_ITEMS}
+					uiStateId='slots'
+				/>
+			</>
 		)
 	}
 
@@ -166,8 +169,8 @@ class Dashboard extends React.Component {
 	}
 
 	render() {
-		const side = this.props.side || this.props.match.params.side
-		const { classes, theme } = this.props
+		const { classes, theme, match } = this.props
+		const side = match.params.side
 
 		const drawer = (
 			<div>
@@ -175,7 +178,7 @@ class Dashboard extends React.Component {
                     <SideSwitch side={side} t={this.props.t} />
                 </div>
                 <Divider /> */}
-				<SideNav location={this.props.location} side={side} />
+				<SideNav side={side} />
 			</div>
 		)
 
@@ -217,52 +220,43 @@ class Dashboard extends React.Component {
 				<main className={classes.content}>
 					<div className={classes.contentInner}>
 						<div className={classes.toolbar} />
-
 						<Switch>
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/advertiser/campaigns'
 								component={this.renderCampaigns}
 							/>
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/advertiser/units'
 								component={this.renderAdUnits}
 							/>
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/advertiser/Campaign/:itemId'
 								component={props => <Campaign {...props} />}
 							/>
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/advertiser/AdUnit/:itemId'
 								component={props => <Unit {...props} />}
 							/>
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/publisher/channels'
 								component={this.renderChannels}
 							/>
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/publisher/slots'
 								component={this.renderAdSlots}
 							/>
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/publisher/AdSlot/:itemId'
 								component={props => <Slot {...props} />}
 							/>
 							<Route
-								auth={this.props.auth}
 								exact
 								path={'/dashboard/:side/account'}
 								component={props => <Account {...props} />}
@@ -274,15 +268,11 @@ class Dashboard extends React.Component {
 								component={props => <Transactions {...props} />}
 							/> */}
 							<Route
-								auth={this.props.auth}
 								exact
 								path='/dashboard/:side'
 								component={props => <DashboardStats {...props} />}
 							/>
-							<Route
-								auth={this.props.auth}
-								component={() => <h1>404 at {side} side</h1>}
-							/>
+							<Route component={props => <PageNotFound {...props} />} />
 						</Switch>
 					</div>
 				</main>
