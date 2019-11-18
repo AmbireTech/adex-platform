@@ -37,7 +37,7 @@ const loadInjectedWeb3 = new Promise((resolve, reject) => {
 	})
 })
 
-const getInjectedWeb3 = async () => {
+const injectedWeb3 = async () => {
 	const { web3, ethereum } = await loadInjectedWeb3.then()
 	let provider = null
 	// let mode = null // metamask, and as some point trezor, ledger, ...
@@ -86,18 +86,21 @@ const getInjectedWeb3 = async () => {
 	}
 }
 
+const getInjectedWeb3 = new Promise((resolve, reject) => {
+	return resolve(injectedWeb3())
+})
+
 const getLocalWeb3 = new Promise(function(resolve, reject) {
 	console.log('getLocalWeb3')
 	resolve(localWeb3())
 })
 
-const getEthers = async mode => {
+const getEthers = mode => {
 	/* NOTE: use Promise wrapper because despite getWeb3 is Promise itself it is not called by user action
 	 *   and this results in Trezor popup block by the browser
 	 */
 	if (mode === AUTH_TYPES.METAMASK.name) {
-		const injected = await getInjectedWeb3()
-		return injected
+		return getInjectedWeb3
 	} else {
 		return getLocalWeb3
 	}
