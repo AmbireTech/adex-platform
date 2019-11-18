@@ -76,7 +76,7 @@ export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
 		.then(processResponse)
 }
 
-export const getImageCategories = ({ tempUrl }) => {
+export const getImageCategories = ({ tempUrl, targetUrl }) => {
 	return fetch(tempUrl)
 		.then(resp => {
 			return resp.blob()
@@ -84,6 +84,7 @@ export const getImageCategories = ({ tempUrl }) => {
 		.then(imageBlob => {
 			const formData = new FormData()
 			formData.append('media', imageBlob, 'image.jpeg')
+			formData.append('targetUrl', targetUrl)
 			return requester
 				.fetch({
 					route: 'tags/imageCategories',

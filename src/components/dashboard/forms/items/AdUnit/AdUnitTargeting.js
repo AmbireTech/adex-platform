@@ -155,7 +155,7 @@ function AdUnitTargeting(props) {
 	}
 	const updateNewItemCollections = targets => {
 		const { newItem, handleChange } = props
-		const collections = [...targets].reduce(
+		const collections = [...(targets || [])].reduce(
 			(all, tg) => {
 				const newCollection = all[tg.collection] || []
 
@@ -173,7 +173,7 @@ function AdUnitTargeting(props) {
 		const newTemp = { ...temp }
 
 		// Need this to keep the state if user get back
-		newTemp.targets = [...targets]
+		newTemp.targets = [...(targets || [])]
 		collections.temp = newTemp
 
 		handleChange(null, null, collections)
@@ -214,7 +214,6 @@ function AdUnitTargeting(props) {
 		})
 	}
 
-	// TODO: bug when removing initial targeting while waiting for suggestions
 	const addCategorySuggestions = async ({ newItem, itemType }) => {
 		props.validate('wait', { isValid: false })
 		const { getCategorySuggestions } = props.actions
