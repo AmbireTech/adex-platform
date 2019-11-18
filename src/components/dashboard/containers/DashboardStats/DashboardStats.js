@@ -215,7 +215,7 @@ export class DashboardStats extends Component {
 			// identityAddress,
 			identityBalanceDai,
 			outstandingBalanceDai,
-			totalIdentityBalanceDai,
+			availableIdentityBalanceDai,
 		} = formatted
 		const classes = this.props.classes
 		return (
@@ -272,9 +272,9 @@ export class DashboardStats extends Component {
 					loading={
 						(!identityBalanceDai && identityBalanceDai !== 0) ||
 						(!outstandingBalanceDai && outstandingBalanceDai !== 0) ||
-						(!totalIdentityBalanceDai && totalIdentityBalanceDai !== 0)
+						(!availableIdentityBalanceDai && availableIdentityBalanceDai !== 0)
 					}
-					title={`${totalIdentityBalanceDai || 0} DAI`}
+					title={`${availableIdentityBalanceDai || 0} DAI`}
 				></StatsCard>
 			</div>
 		)

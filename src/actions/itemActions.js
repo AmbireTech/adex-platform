@@ -27,6 +27,7 @@ import { getMediaSize } from 'helpers/mediaHelpers'
 
 import { contracts } from 'services/smart-contracts/contractsCfg'
 import { SOURCES } from 'constants/targeting'
+import { selectAccount, selectAuthSig } from 'selectors'
 const { DAI } = contracts
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
@@ -109,10 +110,12 @@ export function resetAllNewItems() {
 }
 
 // register item
-export function addItem(item, itemType, authSig) {
+export function addUnit(item) {
 	const newItem = { ...item }
-	return async function(dispatch) {
+	return async function(dispatch, getState) {
 		try {
+			const state = getState()
+			const authSig = selectAuthSig(state)
 			const imageIpfs = (await getImgsIpfsFromBlob({
 				tempUrl: newItem.temp.tempUrl,
 				authSig,
@@ -151,10 +154,12 @@ export function addItem(item, itemType, authSig) {
 	}
 }
 
-export function addSlot(item, itemType, authSig) {
+export function addSlot(item) {
 	const newItem = { ...item }
-	return async function(dispatch) {
+	return async function(dispatch, getState) {
 		try {
+			const state = getState()
+			const authSig = selectAuthSig(state)
 			let fallbackUnit = null
 			if (newItem.temp.useFallback) {
 				const imageIpfs = (await getImgsIpfsFromBlob({
@@ -162,7 +167,7 @@ export function addSlot(item, itemType, authSig) {
 					authSig,
 				})).ipfs
 
-				const unit = new AdUnit({
+				const unit = new AdSlot({
 					type: newItem.type,
 					mediaUrl: `ipfs://${imageIpfs}`,
 					targetUrl: newItem.targetUrl,
@@ -262,16 +267,20 @@ export function getAllItems() {
 	}
 }
 
-export function openCampaign({ campaign, account }) {
-	return async function(dispatch) {
+export function openCampaign({ campaign }) {
+	return async function(dispatch, getState) {
 		updateSpinner('opening-campaign', true)(dispatch)
+		const account = selectAccount(getState())
 		try {
 			await getAllValidatorsAuthForIdentity({
 				withBalance: [{ channel: campaign }],
 				account,
 			})
 
-			const { readyCampaign } = await openChannel({ campaign, account })
+			const { readyCampaign } = await openChannel({
+				campaign,
+				account,
+			})
 
 			dispatch({
 				type: types.ADD_ITEM,
@@ -590,7 +599,7 @@ export function closeCampaign({ campaign }) {
 			const { account } = getState().persist
 			const { results, authTokens } = await closeChannel({ account, campaign })
 
-			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch)
+			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch, getState)
 			// TODO: update campaign state
 
 			addToast({

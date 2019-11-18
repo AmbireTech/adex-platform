@@ -1,34 +1,20 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import React from 'react'
+import { useSelector } from 'react-redux'
 import { translate } from 'services/translations/translations'
+import { selectLang } from 'selectors'
 
 export default function Translate(Decorated) {
-	class Translated extends Component {
-		t(val, { isProp = false, args = [''] } = {}) {
-			const translation = translate(val, { isProp, args }, this.props.language)
+	function Translated(props) {
+		const language = useSelector(selectLang)
+
+		const t = (val, { isProp = false, args = [''] } = {}) => {
+			const translation = translate(val, { isProp, args }, language)
 
 			return translation
 		}
 
-		render() {
-			return <Decorated {...this.props} t={this.t.bind(this)} />
-		}
+		return <Decorated {...props} t={t} />
 	}
 
-	Translated.propTypes = {
-		language: PropTypes.string.isRequired,
-	}
-
-	function mapStateToProps(state) {
-		const { persist } = state
-		return {
-			language: persist.language,
-		}
-	}
-
-	return connect(
-		mapStateToProps,
-		null
-	)(Translated)
+	return Translated
 }

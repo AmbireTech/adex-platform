@@ -44,7 +44,7 @@ class TransactionPreview extends Component {
 		} = this.props
 		if (getFeesFn && Object.keys(transaction).length) {
 			actions.updateSpinner(txId, true)
-			getFeesFn({ acc: account, transaction: transaction })
+			getFeesFn({ account, transaction })
 				.then(fees => {
 					handleChange('fees', fees)
 					this.setState({ fees: fees })

@@ -32,10 +32,8 @@ class WithdrawFromIdentity extends Component {
 		let isValid = validateNumber(numStr)
 		let msg = 'ERR_INVALID_AMOUNT_VALUE'
 		let errMsgArgs = []
-		if (
-			isValid &&
-			parseFloat(numStr) > parseFloat(this.props.identityAvailable)
-		) {
+		let amount = parseFloat(numStr)
+		if (isValid && amount > parseFloat(this.props.identityAvailable)) {
 			isValid = false
 			msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'
 			errMsgArgs = [this.props.identityAvailable, 'DAI']
