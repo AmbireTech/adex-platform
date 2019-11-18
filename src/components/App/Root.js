@@ -24,6 +24,7 @@ import PageNotFound from 'components/page_not_found/PageNotFound'
 import Home from 'components/signin/Home'
 import JustDialog from 'components/common/dialog/JustDialog'
 import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
+import Translate from 'components/translate/Translate'
 import { selectAuth, selectWallet, selectLocation } from 'selectors'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
@@ -139,4 +140,4 @@ const Root = () => {
 	)
 }
 
-export default Root
+export default Translate(Root)
