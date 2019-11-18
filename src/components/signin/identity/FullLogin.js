@@ -3,13 +3,13 @@ import { useSelector } from 'react-redux'
 import IdentityHoc from './IdentityHoc'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
-import Translate from 'components/translate/Translate'
 import { bigNumberify } from 'ethers/utils'
 import { formatTokenAmount } from 'helpers/formatters'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { execute, ownerIdentities as updateOwnerIdentities } from 'actions'
-import { selectSpinnerById } from 'selectors'
+import { selectSpinnerById, t } from 'selectors'
+import ChangeLang from 'components/translate/ChangeLang'
 
 import Dropdown from 'components/common/dropdown'
 
@@ -29,7 +29,7 @@ const getIdentitiesForDropdown = (ownerIdentities = [], t) =>
 	})
 
 function FullLogin(props) {
-	const { t, identity, handleChange, validate } = props
+	const { identity, handleChange, validate } = props
 	const { wallet, ownerIdentities, identityContractAddress } = identity
 	const { address } = wallet
 	const spinner = useSelector(state =>
@@ -79,6 +79,7 @@ function FullLogin(props) {
 			<Grid item xs={12}>
 				<Grid container spacing={2}>
 					<Grid item xs={12}>
+						<ChangeLang />
 						<Typography variant='body2' color='primary' gutterBottom>
 							{t('FULL_LOGIN_INFO')}
 						</Typography>
@@ -103,4 +104,4 @@ function FullLogin(props) {
 }
 
 const IdentityFullLoginStep = IdentityHoc(FullLogin)
-export default Translate(withStyles(styles)(IdentityFullLoginStep))
+export default withStyles(styles)(IdentityFullLoginStep)
