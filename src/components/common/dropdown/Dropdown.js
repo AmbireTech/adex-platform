@@ -10,6 +10,7 @@ import Select from '@material-ui/core/Select'
 import { InputLoading } from 'components/common/spinners/'
 import classnames from 'classnames'
 import { styles } from './styles'
+import { t } from 'selectors'
 
 class Dropdown extends React.Component {
 	handleChange = event => {
@@ -67,7 +68,7 @@ class Dropdown extends React.Component {
 					<Input disabled value={noSrcLabel} />
 				) : (
 					<>
-						<Input disabled value={'...'} />
+						<Input disabled value={t('LOADING_DATA')} />
 						<InputLoading />
 					</>
 				)}
