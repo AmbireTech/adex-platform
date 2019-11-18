@@ -2,6 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 // import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import ButtonMenu from 'components/common/button_menu/ButtonMenuMui'
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import Translate from 'components/translate/Translate'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 // import ChangeLang from 'components/translate/ChangeLang'
@@ -35,7 +36,7 @@ function TopNav({ handleDrawerToggle, side, t }) {
 	const navTitle = useSelector(selectNavTitle)
 	const account = useSelector(selectAccount)
 	const imgSrc = getAuthLogo(account.wallet.authType)
-	const btnMenueLabel =
+	const btnMenuLabel =
 		account.wallet.authType === 'demo'
 			? t('DEMO_MODE')
 			: account.email || getAddrLabel(account.wallet.address) || t('NOT_LOGGED')
@@ -60,10 +61,14 @@ function TopNav({ handleDrawerToggle, side, t }) {
 						{/* <Navigation type='horizontal' className={theme.rightNavigation}> */}
 						{/* At the moment we use translations only for proper items properties display names */}
 						{/* <ChangeLang /> */}
+						<Jazzicon
+							diameter={30}
+							seed={jsNumberForAddress(account.wallet.address)}
+						/>
 						<ButtonMenu
 							leftIconSrc={imgSrc}
 							icon={<ExpandMoreIcon />}
-							label={btnMenueLabel}
+							label={btnMenuLabel}
 							active={true}
 							iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
 						>
