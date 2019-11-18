@@ -67,7 +67,7 @@ class Dropdown extends React.Component {
 					<Input disabled value={noSrcLabel} />
 				) : (
 					<>
-						<Input disabled value={''} />
+						<Input disabled value={'...'} />
 						<InputLoading />
 					</>
 				)}
