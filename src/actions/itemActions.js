@@ -263,8 +263,8 @@ export function getAllItems() {
 	}
 }
 
-export function getCategorySuggestions({ newItem }) {
-	return async function(dispatch) {
+export function getCategorySuggestions({ newItem, itemType }) {
+	return async function(dispatch, getState) {
 		updateSpinner('targeting-suggestions', true)(dispatch)
 		const tempItem = newItem
 		const { tempUrl } = tempItem.temp
@@ -285,7 +285,16 @@ export function getCategorySuggestions({ newItem }) {
 							target: { ...t },
 						}
 					})
-				newTargets.length > 0
+				const { targets } = getState().memory.newItem[itemType].temp
+				const uniqueTargets = [...targets, ...newTargets].filter(
+					(value, index, self) => {
+						return (
+							self.findIndex(v => v.target.tag === value.target.tag) === index
+						)
+					}
+				)
+				const newTargetCount = uniqueTargets.length - targets.length
+				newTargetCount > 0
 					? addToast({
 							dispatch: dispatch,
 							type: 'accept',
@@ -299,7 +308,7 @@ export function getCategorySuggestions({ newItem }) {
 							args: [newTargets.length],
 					  })
 				updateSpinner('targeting-suggestions', false)(dispatch)
-				return newTargets
+				return uniqueTargets
 			}
 		} catch (err) {
 			console.error('ERR_GETTING_CATEGORY_SUGGESTIONS', err)
