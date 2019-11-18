@@ -1,5 +1,10 @@
 import crypto from 'crypto'
-import { Channel, MerkleTree, splitSig } from 'adex-protocol-eth/js'
+import {
+	Channel,
+	MerkleTree,
+	splitSig,
+	ChannelState,
+} from 'adex-protocol-eth/js'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { getIdentityTnxsWithNonces } from 'services/smart-contracts/actions/identity'
 import {
@@ -27,7 +32,7 @@ const ERC20 = new Interface(DAI.abi)
 const feeAmountApprove = '150000000000000000'
 const feeAmountTransfer = '150000000000000000'
 const feeAmountOpen = '160000000000000000'
-const timeframe = 15000 // 1 event per 15 seconds
+const timeframe = 15 * 1000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 0.5
 const VALID_UNTIL_MIN_PERIOD = 7 * 24 * 60 * 60 * 1000 // 7 days in ms
 
@@ -106,12 +111,36 @@ function getReadyCampaign(campaign, identity, Dai) {
 	return newCampaign
 }
 
+const getExpiredWithdrawnOutstanding = async ({ channel, AdExCore }) => {
+	const [withdrawn, state] = await Promise.all([
+		AdExCore.functions.withdrawn(channel.id),
+		AdExCore.functions.states(channel.id),
+	])
+
+	if (state === ChannelState.Active) {
+		return bigNumberify(channel.depositAmount).sub(withdrawn)
+	} else {
+		return bigNumberify('0')
+	}
+}
+
+const getWithdrawnPerUserOutstanding = async ({
+	AdExCore,
+	channel,
+	balance,
+	identityAddr,
+}) => {
+	return bigNumberify(balance).sub(
+		await AdExCore.functions.withdrawnPerUser(channel.id, identityAddr)
+	)
+}
+
 export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 	const { authType } = wallet
 	const channels = await getAllCampaigns(true)
 	const { AdExCore } = await getEthers(authType)
 	const { feeTokenWhitelist = {} } = relayerConfig()
-	const channelWothdrawFee = bigNumberify(
+	const channelWithdrawFee = bigNumberify(
 		feeTokenWhitelist.min || feeAmountTransfer
 	)
 
@@ -142,24 +171,25 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 			})
 			.map(
 				async ({ channel, lastApprovedBalances, lastApprovedSigs, mTree }) => {
+					const balance = lastApprovedBalances[identityAddr]
+
 					const outstanding =
 						channel.status.name === 'Expired'
-							? bigNumberify(channel.depositAmount).sub(
-									await AdExCore.functions.withdrawn(channel.id)
-							  )
-							: bigNumberify(lastApprovedBalances[identityAddr]).sub(
-									await AdExCore.functions.withdrawnPerUser(
-										channel.id,
-										identityAddr
-									)
-							  )
+							? await getExpiredWithdrawnOutstanding({ channel, AdExCore })
+							: await getWithdrawnPerUserOutstanding({
+									AdExCore,
+									channel,
+									balance,
+									identityAddr,
+							  })
+
 					const outstandingAvailable = bigNumberify(outstanding).sub(
-						channelWothdrawFee
+						channelWithdrawFee
 					)
 
 					return {
 						channel,
-						balance: lastApprovedBalances[identityAddr],
+						balance,
 						lastApprovedBalances,
 						lastApprovedSigs,
 						outstanding,
@@ -206,6 +236,27 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr, wallet }) {
 	return eligible
 }
 
+const getChannelWithdrawData = ({
+	identityAddr,
+	balance,
+	mTree,
+	lastApprovedSigs,
+	ethChannelTuple,
+}) => {
+	const leaf = Channel.getBalanceLeaf(identityAddr, balance)
+	const proof = mTree.proof(leaf)
+	const vsig1 = splitSig(lastApprovedSigs[0])
+	const vsig2 = splitSig(lastApprovedSigs[1])
+
+	Core.functions.channelWithdraw.encode([
+		ethChannelTuple,
+		mTree.getRoot(),
+		[vsig1, vsig2],
+		proof,
+		balance,
+	])
+}
+
 export async function getSweepChannelsTxns({
 	feeTokenAddr,
 	account,
@@ -222,25 +273,18 @@ export async function getSweepChannelsTxns({
 
 	const txns = channelsToSweep.map((c, i) => {
 		const { mTree, channel, lastApprovedSigs, balance } = c
-		const amout = balance
-		const leaf = Channel.getBalanceLeaf(identityAddr, amout)
-		const proof = mTree.proof(leaf)
-		const vsig1 = splitSig(lastApprovedSigs[0])
-		const vsig2 = splitSig(lastApprovedSigs[1])
-		const ethChannel = toEthereumChannel(channel)
+		const ethChannelTuple = toEthereumChannel(channel).toSolidityTuple()
 
 		const data =
 			channel.status.name === 'Expired'
-				? Core.functions.channelWithdrawExpired.encode([
-						ethChannel.toSolidityTuple(),
-				  ])
-				: Core.functions.channelWithdraw.encode([
-						ethChannel.toSolidityTuple(),
-						mTree.getRoot(),
-						[vsig1, vsig2],
-						proof,
-						amout,
-				  ])
+				? Core.functions.channelWithdrawExpired.encode([ethChannelTuple])
+				: getChannelWithdrawData({
+						identityAddr,
+						balance,
+						mTree,
+						lastApprovedSigs,
+						ethChannelTuple,
+				  })
 
 		return {
 			identityContract: identityAddr,
