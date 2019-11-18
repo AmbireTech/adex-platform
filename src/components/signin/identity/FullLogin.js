@@ -9,7 +9,6 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { execute, ownerIdentities as updateOwnerIdentities } from 'actions'
 import { selectSpinnerById, t } from 'selectors'
-import ChangeLang from 'components/translate/ChangeLang'
 
 import Dropdown from 'components/common/dropdown'
 
@@ -79,7 +78,6 @@ function FullLogin(props) {
 			<Grid item xs={12}>
 				<Grid container spacing={2}>
 					<Grid item xs={12}>
-						<ChangeLang />
 						<Typography variant='body2' color='primary' gutterBottom>
 							{t('FULL_LOGIN_INFO')}
 						</Typography>

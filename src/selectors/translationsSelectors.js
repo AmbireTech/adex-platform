@@ -11,12 +11,9 @@ export const selectTranslations = createSelector(
 			return { val, opts }
 		},
 	],
-	(lang, props) => {
-		return translate(
-			props.val + lang,
-			{ isProp: props.opts.isProp, args: props.opts.args },
-			lang
-		)
+	(lang, { val, opts }) => {
+		const { isProp = false, args = [''] } = opts
+		return translate(val, { isProp, args }, lang)
 	}
 )
 
