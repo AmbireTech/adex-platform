@@ -285,7 +285,7 @@ export function getCategorySuggestions({ newItem, itemType }) {
 							target: { ...t },
 						}
 					})
-				const { targets } = getState().memory.newItem[itemType].temp
+				const targets = getState().memory.newItem[itemType].temp.targets || []
 				const uniqueTargets = [...targets, ...newTargets].filter(
 					(value, index, self) => {
 						return (
