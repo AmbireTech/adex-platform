@@ -18,6 +18,7 @@ const StatsCard = props => {
 		onClick,
 		bgColor,
 		textColor,
+		subtitleStyle,
 	} = props
 
 	return (
@@ -37,7 +38,11 @@ const StatsCard = props => {
 				)}
 
 				{subtitle && (
-					<Typography style={textColor} component='p' noWrap>
+					<Typography
+						style={{ ...textColor, ...subtitleStyle }}
+						component='p'
+						noWrap
+					>
 						{subtitle}
 					</Typography>
 				)}

@@ -50,6 +50,12 @@ const metrics = {
 	],
 }
 
+const timeHints = {
+	hour: 'SHOWING_LAST_HOUR',
+	day: 'SHOWING_LAST_24_HOURS',
+	week: 'SHOWING_LAST_7_DAYS',
+}
+
 export function BasicStats({ analytics, side, t }) {
 	const [timeframe, setTimeframe] = useState(timeFrames[0].value)
 	const data = analytics[side] || {}
@@ -58,12 +64,26 @@ export function BasicStats({ analytics, side, t }) {
 
 	return (
 		<Grid container spacing={2}>
-			<Grid item xs={6}>
+			<Grid item xs={12} md={8} lg={8}>
 				<div className={classes.infoStatsContainer}>
 					<StatsCard
-						linkCard
+						title={
+							<Dropdown
+								fullWidth
+								label={t('SELECT_TIMEFRAME')}
+								onChange={val => setTimeframe(val)}
+								source={timeFrames}
+								value={timeframe}
+								htmlId='timeframe-select'
+							/>
+						}
+						textColor={{ color: 'grey' }}
+						subtitleStyle={{ paddingTop: '10px' }}
+						subtitle={t(timeHints[timeframe])}
+					></StatsCard>
+					<StatsCard
 						bgColor={{
-							backgroundColor: blue[500],
+							backgroundColor: blue[300],
 						}}
 						textColor={{ color: 'white' }}
 						subtitle={t('LABEL_TOTAL_IMPRESSIONS')}
@@ -71,9 +91,8 @@ export function BasicStats({ analytics, side, t }) {
 					></StatsCard>
 					{side === 'advertiser' && (
 						<StatsCard
-							linkCard
 							bgColor={{
-								backgroundColor: red[500],
+								backgroundColor: red[300],
 							}}
 							textColor={{ color: 'white' }}
 							subtitle={t('LABEL_TOTAL_SPENT')}
@@ -83,7 +102,6 @@ export function BasicStats({ analytics, side, t }) {
 
 					{side === 'publisher' && (
 						<StatsCard
-							linkCard
 							bgColor={{
 								backgroundColor: green[200],
 							}}
@@ -93,25 +111,14 @@ export function BasicStats({ analytics, side, t }) {
 						></StatsCard>
 					)}
 					<StatsCard
-						linkCard
 						bgColor={{
-							backgroundColor: blueGrey[500],
+							backgroundColor: blueGrey[300],
 						}}
 						textColor={{ color: 'white' }}
 						subtitle={t('LABEL_AVG_CPM')}
 						title={`${0} DAI`}
 					></StatsCard>
 				</div>
-			</Grid>
-			<Grid item xs={12} sm={6} md={3}>
-				<Dropdown
-					fullWidth
-					label={t('SELECT_TIMEFRAME')}
-					onChange={val => setTimeframe(val)}
-					source={timeFrames}
-					value={timeframe}
-					htmlId='timeframe-select'
-				/>
 			</Grid>
 			<Grid item xs={12}>
 				<SimpleStatistics
