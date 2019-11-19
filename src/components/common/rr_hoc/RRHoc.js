@@ -12,6 +12,7 @@ export const withReactRouterLink = Component => {
 
 		handleClick = event => {
 			event.preventDefault()
+			event.stopPropagation()
 			const { to, onClick } = this.props
 
 			if (onClick && typeof onClick === 'function') {
