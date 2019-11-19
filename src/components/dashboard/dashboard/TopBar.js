@@ -14,7 +14,9 @@ import Toolbar from '@material-ui/core/Toolbar'
 import classnames from 'classnames'
 import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
-import Icon from '@material-ui/core/Icon'
+import AccountBoxIcon from '@material-ui/icons/AccountBox'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import MenuIcon from '@material-ui/icons/Menu'
 
 import { makeStyles } from '@material-ui/core/styles'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -51,7 +53,7 @@ function TopNav({ handleDrawerToggle, side, t }) {
 						onClick={handleDrawerToggle}
 						className={classnames(classes.navIconHide)}
 					>
-						<Icon>menu</Icon>
+						<MenuIcon />
 					</IconButton>
 
 					{/* <AdexIconTxt
@@ -78,7 +80,7 @@ function TopNav({ handleDrawerToggle, side, t }) {
 								caption={t('ACCOUNT')}
 							>
 								<ListItemIcon>
-									<Icon>account_box</Icon>
+									<AccountBoxIcon />
 								</ListItemIcon>
 								<ListItemText
 									classes={{ primary: classes.primary }}
@@ -93,7 +95,7 @@ function TopNav({ handleDrawerToggle, side, t }) {
 								}}
 							>
 								<ListItemIcon>
-									<Icon>exit_to_app</Icon>
+									<ExitToAppIcon />
 								</ListItemIcon>
 								<ListItemText
 									classes={{ primary: classes.primary }}
