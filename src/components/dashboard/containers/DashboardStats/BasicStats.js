@@ -16,6 +16,7 @@ import {
 	brown,
 } from '@material-ui/core/colors'
 import { styles } from './styles'
+import { formatTokenAmount } from 'helpers/formatters'
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
 	const translated = { ...tf }
@@ -61,10 +62,22 @@ export function BasicStats({ analytics, side, t }) {
 	const data = analytics[side] || {}
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
-
+	const totalImpressions = (
+		analytics[side]['IMPRESSION'].eventCounts[timeframe].aggr || []
+	).reduce((a, { value }) => a + Number(value) || 0, 0)
+	const totalMoney = formatTokenAmount(
+		(analytics[side]['IMPRESSION'].eventPayouts[timeframe].aggr || [])
+			.reduce((a, { value }) => a + Number(value) || 0, 0)
+			.toString(),
+		18,
+		true
+	)
+	const averageCPM =
+		totalMoney && totalImpressions ? (1000 * totalMoney) / totalImpressions : 0
+	// console.log(totalImpressions)
 	return (
 		<Grid container spacing={2}>
-			<Grid item xs={12} md={8} lg={8}>
+			<Grid item xs={12} md={10} lg={10}>
 				<div className={classes.infoStatsContainer}>
 					<StatsCard
 						title={
@@ -79,7 +92,7 @@ export function BasicStats({ analytics, side, t }) {
 						}
 						textColor={{ color: 'grey' }}
 						subtitleStyle={{ paddingTop: '10px' }}
-						subtitle={t(timeHints[timeframe])}
+						explain={t(timeHints[timeframe])}
 					></StatsCard>
 					<StatsCard
 						bgColor={{
@@ -87,7 +100,9 @@ export function BasicStats({ analytics, side, t }) {
 						}}
 						textColor={{ color: 'white' }}
 						subtitle={t('LABEL_TOTAL_IMPRESSIONS')}
-						title={`${0}`}
+						loading={!averageCPM}
+						title={`${totalImpressions}`}
+						explain={t('EXPLAIN_TOTLA_IMPRESSIONS')}
 					></StatsCard>
 					{side === 'advertiser' && (
 						<StatsCard
@@ -96,7 +111,9 @@ export function BasicStats({ analytics, side, t }) {
 							}}
 							textColor={{ color: 'white' }}
 							subtitle={t('LABEL_TOTAL_SPENT')}
-							title={`${0} DAI`}
+							explain={t('EXPLAIN_TOTAL_SPENT')}
+							title={`~ ${parseFloat(totalMoney || 0).toFixed(2)} DAI`}
+							loading={!averageCPM}
 						></StatsCard>
 					)}
 
@@ -107,7 +124,9 @@ export function BasicStats({ analytics, side, t }) {
 							}}
 							textColor={{ color: 'white' }}
 							subtitle={t('LABEL_TOTAL_REVENUE')}
-							title={`${0} DAI`}
+							explain={t('EXPLAIN_TOTAL_REVENUE')}
+							title={`~ ${parseFloat(totalMoney || 0).toFixed(2)} DAI`}
+							loading={!averageCPM}
 						></StatsCard>
 					)}
 					<StatsCard
@@ -116,7 +135,9 @@ export function BasicStats({ analytics, side, t }) {
 						}}
 						textColor={{ color: 'white' }}
 						subtitle={t('LABEL_AVG_CPM')}
-						title={`${0} DAI`}
+						explain={t('EXPLAIN_AVG_CPM')}
+						loading={!averageCPM}
+						title={`~ ${parseFloat(averageCPM || 0).toFixed(2)} DAI / CPM`}
 					></StatsCard>
 				</div>
 			</Grid>
