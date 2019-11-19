@@ -14,35 +14,35 @@ const StatsCard = props => {
 		title,
 		subtitle,
 		linkCard,
-		loading,
 		children,
 		onClick,
+		bgColor,
+		textColor,
 	} = props
 
 	return (
 		<Card
+			style={bgColor}
 			// raised
 			className={classnames(classes.infoCard, {
 				[classes.linkCard]: !!linkCard,
 			})}
 			onClick={onClick}
 		>
-			<LoadingSection loading={loading}>
-				<CardContent>
-					{title && (
-						<Typography variant='h5' noWrap>
-							{title}
-						</Typography>
-					)}
+			<CardContent>
+				{title && (
+					<Typography style={textColor} variant='h5' noWrap>
+						{title}
+					</Typography>
+				)}
 
-					{subtitle && (
-						<Typography component='p' noWrap>
-							{subtitle}
-						</Typography>
-					)}
-					{children}
-				</CardContent>
-			</LoadingSection>
+				{subtitle && (
+					<Typography style={textColor} component='p' noWrap>
+						{subtitle}
+					</Typography>
+				)}
+				{children}
+			</CardContent>
 		</Card>
 	)
 }
