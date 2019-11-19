@@ -70,7 +70,7 @@ class Dashboard extends React.Component {
 	}
 
 	shouldComponentUpdate(nextProps) {
-		const should = isEqual(nextProps.match, this.props.match)
+		const should = !isEqual(nextProps.match, this.props.match)
 		return should
 	}
 
