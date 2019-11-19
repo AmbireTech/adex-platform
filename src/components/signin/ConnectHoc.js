@@ -26,21 +26,13 @@ export default function ConnectHoc(Decorated) {
 							</Box>
 						</Box>
 					</Grid>
-					<Grid
-						item
-						container
-						xs={12}
-						md={5}
-						lg={4}
-						xl={3}
-						alignItems='stretch'
-						className={classes.buttons}
-					>
-						<Grid
-							container
-							direction='column'
+					<Grid item xs={12} md={5} lg={4} xl={3}>
+						<Box
+							display='flex'
+							flexDirection='column'
 							alignItems='stretch'
-							justify='space-between'
+							justifyContent='space-between'
+							style={{ height: '100%' }}
 						>
 							<Box p={2}>
 								<div className={classes.adexLogoTop}>
@@ -68,7 +60,7 @@ export default function ConnectHoc(Decorated) {
 									{`v.${packageJson.version}-beta`}
 								</small>
 							</Box>
-						</Grid>
+						</Box>
 					</Grid>
 				</Grid>
 			</div>
