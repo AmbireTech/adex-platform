@@ -2,15 +2,17 @@ import React from 'react'
 import Logo from 'components/common/icons/AdexIconTxt'
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
+import Hidden from '@material-ui/core/Hidden'
 import Anchor from 'components/common/anchor/anchor'
 import packageJson from './../../../package.json'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import AuthSelect from 'components/signin/auth-select/AuthSelect'
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import { t } from 'selectors'
 
 export default function ConnectHoc(Decorated) {
-	function Connect({ classes, noBackground, rest }) {
+	function Connect({ classes, ...rest }) {
 		return (
 			<div className={classes.root}>
 				<Grid
@@ -23,6 +25,11 @@ export default function ConnectHoc(Decorated) {
 						<Box width={1} height={1} p={4}>
 							<Box width={1} height={1} position='relative'>
 								<Decorated t={t} {...rest} />
+								<Hidden mdUp>
+									<Box display='flex' justifyContent='center'>
+										<ArrowDropDownIcon color='primary' fontSize='large' />
+									</Box>
+								</Hidden>
 							</Box>
 						</Box>
 					</Grid>
