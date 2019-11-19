@@ -69,14 +69,18 @@ class Dashboard extends React.Component {
 		statsLoop.start()
 	}
 
-	shouldComponentUpdate(nextProps) {
-		const should = !isEqual(nextProps.match, this.props.match)
+	shouldComponentUpdate(nextProps, nextState) {
+		const should =
+			!isEqual(nextProps.match, this.props.match) ||
+			!isEqual(nextState, this.state)
 		return should
 	}
 
-	componentDidUpdate(nextProps) {
-		if (nextProps.match.params.side !== this.props.match.params.side) {
-			this.props.actions.updateNav('side', nextProps.match.params.side)
+	componentDidUpdate(prevProps) {
+		const prevSide = prevProps.match.params.side
+		const thisSide = this.props.match.params.side
+		if (prevSide !== thisSide) {
+			this.props.actions.updateNav('side', thisSide)
 		}
 	}
 
@@ -174,10 +178,6 @@ class Dashboard extends React.Component {
 
 		const drawer = (
 			<div>
-				{/* <div className={classes.toolbar}>
-                    <SideSwitch side={side} t={this.props.t} />
-                </div>
-                <Divider /> */}
 				<SideNav side={side} />
 			</div>
 		)
