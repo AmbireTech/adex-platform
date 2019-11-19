@@ -17,8 +17,10 @@ const StatsCard = props => {
 		children,
 		onClick,
 		bgColor,
+		loading,
 		textColor,
 		subtitleStyle,
+		explain,
 	} = props
 
 	return (
@@ -30,24 +32,36 @@ const StatsCard = props => {
 			})}
 			onClick={onClick}
 		>
-			<CardContent>
-				{title && (
-					<Typography style={textColor} variant='h5' noWrap>
-						{title}
-					</Typography>
-				)}
+			<LoadingSection loading={loading}>
+				<CardContent>
+					{title && (
+						<Typography style={textColor} variant='h5' noWrap>
+							{title}
+						</Typography>
+					)}
 
-				{subtitle && (
-					<Typography
-						style={{ ...textColor, ...subtitleStyle }}
-						component='p'
-						noWrap
-					>
-						{subtitle}
-					</Typography>
-				)}
-				{children}
-			</CardContent>
+					{subtitle && (
+						<Typography
+							style={{ ...textColor, ...subtitleStyle }}
+							component='p'
+							noWrap
+						>
+							{subtitle}
+						</Typography>
+					)}
+					{explain && (
+						<Typography
+							style={textColor}
+							component='p'
+							noWrap
+							variant='caption'
+						>
+							{explain}
+						</Typography>
+					)}
+					{children}
+				</CardContent>
+			</LoadingSection>
 		</Card>
 	)
 }
