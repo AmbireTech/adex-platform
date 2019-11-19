@@ -8,7 +8,6 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
-import Icon from '@material-ui/core/Icon'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
 import Translate from 'components/translate/Translate'
@@ -24,6 +23,7 @@ import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
 // import Badge from '@material-ui/core/Badge'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
+import ListIcon from '@material-ui/icons/List'
 import { LoadingSection } from 'components/common/spinners'
 
 const RRListItem = withReactRouterLink(ListItem)
@@ -72,9 +72,6 @@ class SideNav extends Component {
 		const location = this.props.location.pathname.split('/')[3]
 		const isAdvertiser = side === 'advertiser'
 		const items = isAdvertiser ? 'units' : 'slots'
-		const itemsIcon = isAdvertiser
-			? 'format_list_bulleted'
-			: 'format_list_bulleted'
 		// const pendingTrsCount = (transactions.pendingTxs || []).length
 		const { availableIdentityBalanceDai } = account.stats.formatted || {}
 
@@ -147,7 +144,7 @@ class SideNav extends Component {
 							className={classnames({ [classes.active]: location === items })}
 						>
 							<ListItemIcon>
-								<Icon>{itemsIcon}</Icon>
+								<ListIcon />
 							</ListItemIcon>
 							<ListItemText primary={t(items.toUpperCase())} />
 						</RRListItem>
