@@ -5,7 +5,9 @@ import { withRouter } from 'react-router'
 export const withReactRouterLink = Component => {
 	class Decorated extends React.Component {
 		resolveToLocation = to => {
-			return typeof to === 'object' ? to['pathname'] : to
+			const path = typeof to === 'object' ? to : { pathname: to }
+			const href = this.props.history.createHref(path)
+			return href
 		}
 
 		handleClick = event => {
@@ -36,6 +38,7 @@ export const withReactRouterLink = Component => {
 				...rest
 			} = this.props
 			const toLocation = this.resolveToLocation(to)
+
 			return (
 				<Component {...rest} href={toLocation} onClick={this.handleClick} />
 			)
