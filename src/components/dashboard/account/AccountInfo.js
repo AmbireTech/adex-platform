@@ -185,7 +185,7 @@ function AccountInfo({ t }) {
 						justifyContent='space-between'
 						alignItems='center'
 					>
-						<Box pr={1} flexGrow='3'>
+						<Box pr={1} flexGrow='8'>
 							<LoadingSection
 								loading={!identityBalanceDai && identityBalanceDai !== 0}
 							>
@@ -249,7 +249,7 @@ function AccountInfo({ t }) {
 									justifyContent='space-between'
 									alignItems='center'
 								>
-									<Box pr={1} flexGrow='3'>
+									<Box pr={1} flexGrow='8'>
 										<ListItemText
 											className={classes.address}
 											secondary={''}
