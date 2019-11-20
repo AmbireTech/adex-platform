@@ -89,8 +89,7 @@ const AuthSelect = ({ t, classes }) => {
 					className={classes.limitedWidthBtn}
 					onClick={logOut}
 				>
-					{t('CREATE_GRANT_ACCOUNT') +
-						'0xa5c126d99dadf49583cc107a7e2d2d260cf380eb0xa5c126d99dadf49583cc107a7e2d2d260cf380eb'}
+					{t('CREATE_GRANT_ACCOUNT')}
 				</RRButton>
 			</Box>
 			{/* {hasLegacyWallets && ( */}
