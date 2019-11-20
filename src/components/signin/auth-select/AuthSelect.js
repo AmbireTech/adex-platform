@@ -13,6 +13,7 @@ import { getAllWallets } from 'services/wallet/wallet'
 import { execute, initIdentity } from 'actions'
 import { selectAuth, selectAccount } from 'selectors'
 import { logOut } from 'services/store-data/auth'
+import { formatAddress } from 'helpers/formatters'
 
 const RRButton = withReactRouterLink(Button)
 
@@ -52,7 +53,10 @@ const AuthSelect = ({ t, classes }) => {
 						fullWidth
 					>
 						{t('CONTINUE_AS', {
-							args: [wallet.email || wallet.address, wallet.authType],
+							args: [
+								wallet.email || formatAddress(wallet.address),
+								wallet.authType,
+							],
 						})}
 					</RRButton>
 				</Box>

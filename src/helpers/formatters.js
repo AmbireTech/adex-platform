@@ -20,3 +20,7 @@ export const formatTokenAmount = (amountString, decimals = 18, pretty) => {
 		return formatted
 	}
 }
+
+export const formatAddress = (address = '') => {
+	return `${address.substring(0, 8)}...${address.substring(36, 42)}`
+}

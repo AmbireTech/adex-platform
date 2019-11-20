@@ -64,7 +64,6 @@ export function BasicStats({ analytics, side, t }) {
 		(a, { value }) => a + Number(value) || 0,
 		0
 	)
-	// TODO: fix bug on weekly
 	const totalMoney = formatTokenAmount(
 		(eventPayouts || [])
 			.reduce((a, { value }) => a + Number(value) || 0, 0)
