@@ -62,7 +62,10 @@ export const LightTooltip = withStyles(theme => ({
 const useStylesArrow = makeStyles(theme => ({
 	tooltip: {
 		position: 'relative',
+		borderRadius: 0,
+		backgroundColor: theme.palette.common.black,
 	},
+	popper: arrowGenerator(theme.palette.common.black),
 	arrow: {
 		position: 'absolute',
 		fontSize: 6,
@@ -75,7 +78,6 @@ const useStylesArrow = makeStyles(theme => ({
 			borderStyle: 'solid',
 		},
 	},
-	popper: arrowGenerator(theme.palette.grey[700]),
 }))
 
 export function ArrowTooltip(props) {
@@ -107,70 +109,6 @@ export function ArrowTooltip(props) {
 }
 
 ArrowTooltip.propTypes = {
-	title: PropTypes.node,
-}
-
-const useStylesBootstrap = makeStyles(theme => ({
-	arrow: {
-		position: 'absolute',
-		fontSize: 6,
-		'&::before': {
-			content: '""',
-			margin: 'auto',
-			display: 'block',
-			width: 0,
-			height: 0,
-			borderStyle: 'solid',
-		},
-	},
-	popper: arrowGenerator(theme.palette.common.black),
-	tooltip: {
-		position: 'relative',
-		backgroundColor: theme.palette.common.black,
-	},
-	tooltipPlacementLeft: {
-		margin: '0 8px',
-	},
-	tooltipPlacementRight: {
-		margin: '0 8px',
-	},
-	tooltipPlacementTop: {
-		margin: '8px 0',
-	},
-	tooltipPlacementBottom: {
-		margin: '8px 0',
-	},
-}))
-
-export function BootstrapTooltip(props) {
-	const { arrow, ...classes } = useStylesBootstrap()
-	const [arrowRef, setArrowRef] = React.useState(null)
-
-	return (
-		<Tooltip
-			classes={classes}
-			PopperProps={{
-				popperOptions: {
-					modifiers: {
-						arrow: {
-							enabled: Boolean(arrowRef),
-							element: arrowRef,
-						},
-					},
-				},
-			}}
-			{...props}
-			title={
-				<React.Fragment>
-					{props.title}
-					<span className={arrow} ref={setArrowRef} />
-				</React.Fragment>
-			}
-		/>
-	)
-}
-
-BootstrapTooltip.propTypes = {
 	title: PropTypes.node,
 }
 
