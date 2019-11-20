@@ -9,7 +9,7 @@ import StatsCard from './StatsCard'
 import { makeStyles } from '@material-ui/core/styles'
 import { red, green, blue, blueGrey } from '@material-ui/core/colors'
 import { styles } from './styles'
-import { formatTokenAmount } from 'helpers/formatters'
+import { formatTokenAmount, formatNumberWithCommas } from 'helpers/formatters'
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
 	const translated = { ...tf }
@@ -64,15 +64,12 @@ export function BasicStats({ analytics, side, t }) {
 		(a, { value }) => a + Number(value) || 0,
 		0
 	)
-	const totalMoney = formatTokenAmount(
-		(eventPayouts || [])
-			.reduce((a, { value }) => a + Number(value) || 0, 0)
-			.toString(),
-		18,
-		true
+	const totalMoney = (eventPayouts || []).reduce(
+		(a, { value }) => a + Number(formatTokenAmount(value, 18)) || 0,
+		0
 	)
-	const averageCPM = (1000 * totalMoney) / totalImpressions
-	// console.log(totalImpressions)
+
+	const averageCPM = (1000 * Number(totalMoney)) / Number(totalImpressions)
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12}>
@@ -95,7 +92,7 @@ export function BasicStats({ analytics, side, t }) {
 						textColor={{ color: 'white' }}
 						subtitle={t('LABEL_TOTAL_IMPRESSIONS')}
 						loading={!eventCounts}
-						title={`${totalImpressions}`}
+						title={`${formatNumberWithCommas(totalImpressions)}`}
 						explain={t('EXPLAIN_TOTAL_IMPRESSIONS')}
 					></StatsCard>
 					{side === 'advertiser' && (
@@ -106,7 +103,9 @@ export function BasicStats({ analytics, side, t }) {
 							textColor={{ color: 'white' }}
 							subtitle={t('LABEL_TOTAL_SPENT')}
 							explain={t('EXPLAIN_TOTAL_SPENT')}
-							title={`~ ${parseFloat(totalMoney || 0).toFixed(2)} DAI`}
+							title={`~ ${formatNumberWithCommas(
+								parseFloat(totalMoney || 0).toFixed(2)
+							)} DAI`}
 							loading={!eventPayouts}
 						></StatsCard>
 					)}
@@ -119,7 +118,9 @@ export function BasicStats({ analytics, side, t }) {
 							textColor={{ color: 'white' }}
 							subtitle={t('LABEL_TOTAL_REVENUE')}
 							explain={t('EXPLAIN_TOTAL_REVENUE')}
-							title={`~ ${parseFloat(totalMoney || 0).toFixed(2)} DAI`}
+							title={`~ ${formatNumberWithCommas(
+								parseFloat(totalMoney || 0).toFixed(2)
+							)} DAI`}
 							loading={!eventPayouts}
 						></StatsCard>
 					)}
@@ -131,7 +132,9 @@ export function BasicStats({ analytics, side, t }) {
 						subtitle={t('LABEL_AVG_CPM')}
 						explain={t('EXPLAIN_AVG_CPM')}
 						loading={!eventPayouts || !eventCounts}
-						title={`~ ${parseFloat(averageCPM || 0).toFixed(2)} DAI / CPM`}
+						title={`~ ${formatNumberWithCommas(
+							parseFloat(averageCPM || 0).toFixed(2)
+						)} DAI / CPM`}
 					></StatsCard>
 				</div>
 			</Grid>
