@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
 import { SimpleStatistics } from 'components/dashboard/charts/simplified'
 import Dropdown from 'components/common/dropdown'
 import Grid from '@material-ui/core/Grid'
@@ -8,7 +9,14 @@ import StatsCard from './StatsCard'
 import { makeStyles } from '@material-ui/core/styles'
 import { EDDIE_PINK, EDDIE_BLUE, EDDIE_GREEN } from 'components/App/themeMUi'
 import { styles } from './styles'
-import { formatTokenAmount, formatNumberWithCommas } from 'helpers/formatters'
+import { formatNumberWithCommas } from 'helpers/formatters'
+import {
+	t,
+	selectAnalyticsData,
+	selectTotalImpressions,
+	selectTotalMoney,
+	selectAverageCPM,
+} from 'selectors'
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
 	const translated = { ...tf }
@@ -49,26 +57,37 @@ const timeHints = {
 	week: 'SHOWING_LAST_7_DAYS',
 }
 
-export function BasicStats({ analytics, side, t }) {
+export function BasicStats({ side }) {
 	const [timeframe, setTimeframe] = useState(timeFrames[0].value)
-	const data = analytics[side] || {}
+	const data = useSelector(state => selectAnalyticsData(state, side))
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
-	const eventCounts = analytics[side]['IMPRESSION'].eventCounts[timeframe].aggr
-	const eventPayouts =
-		analytics[side]['IMPRESSION'].eventPayouts[timeframe].aggr
-	const totalImpressions = (eventCounts || []).reduce(
-		(a, { value }) => a + Number(value) || 0,
-		0
+
+	const totalImpressions = useSelector(state =>
+		selectTotalImpressions(state, {
+			side,
+			timeframe,
+		})
 	)
-	const totalMoney = (eventPayouts || []).reduce(
-		(a, { value }) => a + Number(formatTokenAmount(value, 18)) || 0,
-		0
+
+	const totalMoney = useSelector(state =>
+		selectTotalMoney(state, {
+			side,
+			timeframe,
+		})
 	)
-	const averageCPM =
-		eventCounts && eventPayouts
-			? (1000 * Number(totalMoney)) / Number(totalImpressions)
-			: 0
+
+	const averageCPM = useSelector(state =>
+		selectAverageCPM(state, {
+			side,
+			timeframe,
+		})
+	)
+
+	const loadingImpressions = totalImpressions === null
+	const loadingMoney = totalMoney === null
+	const loadingCPM = averageCPM === null
+
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12}>
@@ -87,8 +106,8 @@ export function BasicStats({ analytics, side, t }) {
 					<StatsCard
 						bgColor='eddieBlue'
 						subtitle={t('LABEL_TOTAL_IMPRESSIONS')}
-						loading={!eventCounts}
-						title={`${formatNumberWithCommas(totalImpressions)}`}
+						loading={loadingImpressions}
+						title={`${formatNumberWithCommas(totalImpressions || 0)}`}
 						explain={t('EXPLAIN_TOTAL_IMPRESSIONS')}
 					></StatsCard>
 					{side === 'advertiser' && (
@@ -99,7 +118,7 @@ export function BasicStats({ analytics, side, t }) {
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
 							)} DAI`}
-							loading={!eventPayouts}
+							loading={loadingMoney}
 						></StatsCard>
 					)}
 
@@ -111,14 +130,14 @@ export function BasicStats({ analytics, side, t }) {
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
 							)} DAI`}
-							loading={!eventPayouts}
+							loading={loadingMoney}
 						></StatsCard>
 					)}
 					<StatsCard
 						bgColor='adexGrey'
 						subtitle={t('LABEL_AVG_CPM')}
 						explain={t('EXPLAIN_AVG_CPM')}
-						loading={!eventPayouts || !eventCounts}
+						loading={loadingCPM}
 						title={`~ ${formatNumberWithCommas(
 							parseFloat(averageCPM || 0).toFixed(2)
 						)} DAI / CPM`}
