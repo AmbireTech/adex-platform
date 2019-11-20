@@ -1,18 +1,37 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
-import { styles } from './styles'
 import classnames from 'classnames'
 import { LoadingSection } from 'components/common/spinners'
 import InfoIcon from '@material-ui/icons/Info'
 import { ArrowTooltip } from 'components/common/tooltips'
 
+const useStyles = makeStyles(theme => {
+	return {
+		root: {
+			backgroundColor: ({ bgColor = '' }) =>
+				(theme.palette[bgColor] || {}).main || theme.palette.background.default,
+			color: ({ bgColor = '' }) =>
+				(theme.palette[bgColor] || {}).contrastText ||
+				theme.palette.text.primary,
+		},
+		infoCard: {
+			margin: theme.spacing(1),
+			flexGrow: 1,
+		},
+		linkCard: {
+			'&:hover, &:focus': {
+				cursor: 'pointer',
+			},
+		},
+	}
+})
+
 const StatsCard = props => {
 	const {
-		classes,
 		title,
 		subtitle,
 		linkCard,
@@ -21,15 +40,15 @@ const StatsCard = props => {
 		bgColor,
 		loading,
 		textColor,
-		subtitleStyle,
 		explain,
 	} = props
 
+	const classes = useStyles({ bgColor })
+
 	return (
 		<Card
-			style={bgColor}
 			// raised
-			className={classnames(classes.infoCard, {
+			className={classnames(classes.root, classes.infoCard, {
 				[classes.linkCard]: !!linkCard,
 			})}
 			onClick={onClick}
@@ -37,16 +56,12 @@ const StatsCard = props => {
 			<LoadingSection loading={loading}>
 				<CardContent>
 					{title && (
-						<Typography style={textColor} variant='h5' noWrap>
+						<Typography variant='h5' noWrap>
 							{title}
 						</Typography>
 					)}
 					{subtitle && (
-						<Typography
-							style={{ ...textColor, ...subtitleStyle }}
-							component='p'
-							noWrap
-						>
+						<Typography component='p' noWrap>
 							{subtitle}{' '}
 							{explain && (
 								<ArrowTooltip
@@ -60,7 +75,7 @@ const StatsCard = props => {
 										</Typography>
 									}
 								>
-									<InfoIcon style={{ ...textColor, fontSize: 12 }}></InfoIcon>
+									<InfoIcon style={{ fontSize: 12 }}></InfoIcon>
 								</ArrowTooltip>
 							)}
 						</Typography>
@@ -79,4 +94,4 @@ StatsCard.propTypes = {
 	linkCard: PropTypes.bool,
 }
 
-export default withStyles(styles)(StatsCard)
+export default StatsCard
