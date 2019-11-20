@@ -86,10 +86,7 @@ export function BasicStats({ analytics, side, t }) {
 						/>
 					</StatsCard>
 					<StatsCard
-						bgColor={{
-							backgroundColor: blue[300],
-						}}
-						textColor={{ color: 'white' }}
+						bgColor='eddieBlue'
 						subtitle={t('LABEL_TOTAL_IMPRESSIONS')}
 						loading={!eventCounts}
 						title={`${formatNumberWithCommas(totalImpressions)}`}
@@ -97,10 +94,7 @@ export function BasicStats({ analytics, side, t }) {
 					></StatsCard>
 					{side === 'advertiser' && (
 						<StatsCard
-							bgColor={{
-								backgroundColor: red[300],
-							}}
-							textColor={{ color: 'white' }}
+							bgColor='eddiePink'
 							subtitle={t('LABEL_TOTAL_SPENT')}
 							explain={t('EXPLAIN_TOTAL_SPENT')}
 							title={`~ ${formatNumberWithCommas(
@@ -112,10 +106,7 @@ export function BasicStats({ analytics, side, t }) {
 
 					{side === 'publisher' && (
 						<StatsCard
-							bgColor={{
-								backgroundColor: green[200],
-							}}
-							textColor={{ color: 'white' }}
+							bgColor='eddieGreen'
 							subtitle={t('LABEL_TOTAL_REVENUE')}
 							explain={t('EXPLAIN_TOTAL_REVENUE')}
 							title={`~ ${formatNumberWithCommas(
@@ -125,10 +116,7 @@ export function BasicStats({ analytics, side, t }) {
 						></StatsCard>
 					)}
 					<StatsCard
-						bgColor={{
-							backgroundColor: blueGrey[300],
-						}}
-						textColor={{ color: 'white' }}
+						bgColor='adexGrey'
 						subtitle={t('LABEL_AVG_CPM')}
 						explain={t('EXPLAIN_AVG_CPM')}
 						loading={!eventPayouts || !eventCounts}
