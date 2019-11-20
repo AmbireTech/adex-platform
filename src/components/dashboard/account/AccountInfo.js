@@ -29,6 +29,7 @@ import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import { selectAccount } from 'selectors'
+import { Grid } from '@material-ui/core'
 
 // const RRButton = withReactRouterLink(Button)
 
@@ -171,8 +172,8 @@ function AccountInfo({ t }) {
 				</ListItem>
 				<ListDivider />
 				<ListItem>
-					<Box display='flex' flexWrap={'wrap'} flex='1'>
-						<Box display='flex' flexWrap={'wrap'} flex='1'>
+					<Grid container>
+						<Grid lg={10} md={6} xs={12}>
 							<LoadingSection
 								loading={!identityBalanceDai && identityBalanceDai !== 0}
 							>
@@ -183,31 +184,37 @@ function AccountInfo({ t }) {
 									})}
 								/>
 							</LoadingSection>
-							<Button
-								size='small'
-								variant='contained'
-								aria-label='delete'
-								className={classes.actionBtn}
-								onClick={() => displayRampWidget()}
-							>
-								<CreditCardIcon className={classes.extendedIcon} />
-								{t('TOP_UP_IDENTITY_GBP')}
-							</Button>
-						</Box>
-						<Box className={classes.itemActions}>
-							{grantType !== 'advertiser' && (
-								<WithdrawTokenFromIdentity
+						</Grid>
+						<Grid lg={2} md={6} xs={12}>
+							<Grid xs={12}>
+								<Button
+									// size='small'
+									fullWidth
 									variant='contained'
-									color='primary'
-									identityAvailable={availableIdentityBalanceDai}
-									identityAvailableRaw={availableIdentityBalanceDai}
-									token='DAI'
+									aria-label='delete'
 									className={classes.actionBtn}
-									size='small'
-								/>
-							)}
-						</Box>
-					</Box>
+									onClick={() => displayRampWidget()}
+								>
+									<CreditCardIcon className={classes.extendedIcon} />
+									{t('TOP_UP_IDENTITY_GBP')}
+								</Button>
+							</Grid>
+							<Grid xs={12}>
+								{grantType !== 'advertiser' && (
+									<WithdrawTokenFromIdentity
+										fullWidth
+										variant='contained'
+										color='primary'
+										identityAvailable={availableIdentityBalanceDai}
+										identityAvailableRaw={availableIdentityBalanceDai}
+										token='DAI'
+										className={classes.actionBtn}
+										// size='small'
+									/>
+								)}
+							</Grid>
+						</Grid>
+					</Grid>
 				</ListItem>
 				<ListDivider />
 				<ExpansionPanel expanded={expanded} onChange={handleExpandChange}>
