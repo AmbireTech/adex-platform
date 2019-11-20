@@ -8,7 +8,7 @@ import { styles } from './styles'
 import classnames from 'classnames'
 import { LoadingSection } from 'components/common/spinners'
 import InfoIcon from '@material-ui/icons/Info'
-import { BootstrapTooltip } from 'components/common/tooltips'
+import { ArrowTooltip } from 'components/common/tooltips'
 
 const StatsCard = props => {
 	const {
@@ -49,7 +49,7 @@ const StatsCard = props => {
 						>
 							{subtitle}{' '}
 							{explain && (
-								<BootstrapTooltip
+								<ArrowTooltip
 									title={
 										<Typography
 											style={textColor}
@@ -61,7 +61,7 @@ const StatsCard = props => {
 									}
 								>
 									<InfoIcon style={{ ...textColor, fontSize: 12 }}></InfoIcon>
-								</BootstrapTooltip>
+								</ArrowTooltip>
 							)}
 						</Typography>
 					)}
