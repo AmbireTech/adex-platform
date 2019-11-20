@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
-import Grid from '@material-ui/core/Grid'
+import Box from '@material-ui/core/Box'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
@@ -36,15 +36,14 @@ const AuthSelect = ({ t, classes }) => {
 	}, [wallet])
 
 	return (
-		<Grid
-			container
-			spacing={2}
-			direction='column'
+		<Box
+			display='flex'
+			flexDirection='column'
 			alignItems='stretch'
-			wrap='nowrap'
+			justifyContent='space-between'
 		>
 			{auth && (
-				<Grid item xs={12}>
+				<Box m={1}>
 					<RRButton
 						variant='contained'
 						to='/side-select'
@@ -56,10 +55,10 @@ const AuthSelect = ({ t, classes }) => {
 							args: [wallet.email || wallet.address, wallet.authType],
 						})}
 					</RRButton>
-				</Grid>
+				</Box>
 			)}
 			{wallets.map(w => (
-				<Grid key={w.name} item xs={12}>
+				<Box key={w.name} m={1}>
 					<RRButton
 						variant='contained'
 						to={`/login/quick`}
@@ -72,9 +71,9 @@ const AuthSelect = ({ t, classes }) => {
 					>
 						{t('SIGN_IN_TO', { args: [w.name] })}
 					</RRButton>
-				</Grid>
+				</Box>
 			))}
-			<Grid item xs={12}>
+			<Box m={1}>
 				<RRButton
 					variant='contained'
 					to='/identity/grant'
@@ -85,9 +84,9 @@ const AuthSelect = ({ t, classes }) => {
 				>
 					{t('CREATE_GRANT_ACCOUNT')}
 				</RRButton>
-			</Grid>
+			</Box>
 			{/* {hasLegacyWallets && ( */}
-			<Grid item xs={12}>
+			<Box m={1}>
 				<RRButton
 					variant='contained'
 					to='/login/grant'
@@ -98,9 +97,9 @@ const AuthSelect = ({ t, classes }) => {
 				>
 					{t('LOGIN_GRANT_ACCOUNT')}
 				</RRButton>
-			</Grid>
+			</Box>
 			{/* )} */}
-			{/* <Grid item xs={12}>
+			{/* <Box m={1}>
 				<RRButton
 					variant='contained'
 					to='/identity/quick'
@@ -110,8 +109,8 @@ const AuthSelect = ({ t, classes }) => {
 				>
 					{t('CREATE_QUICK_ACCOUNT')}
 				</RRButton>
-			</Grid> */}
-			<Grid item xs={12}>
+			</Box> */}
+			<Box m={1}>
 				<RRButton
 					variant='contained'
 					to='/login/full?metamask'
@@ -128,8 +127,8 @@ const AuthSelect = ({ t, classes }) => {
 					/>
 					{t('METAMASK')}
 				</RRButton>
-			</Grid>
-			<Grid item xs={12}>
+			</Box>
+			<Box m={1}>
 				<RRButton
 					variant='contained'
 					to='/login/full?trezor'
@@ -146,8 +145,8 @@ const AuthSelect = ({ t, classes }) => {
 					/>
 					{/* {t('TREZOR')} */}
 				</RRButton>
-			</Grid>
-			{/* <Grid item xs={12}>
+			</Box>
+			{/* <Box m={1}>
 				<RRButton
 					variant='link'
 					to='/recover/quick'
@@ -157,8 +156,8 @@ const AuthSelect = ({ t, classes }) => {
 				>
 					{t('RECOVER_QUICK_ACCOUNT')}
 				</RRButton>
-			</Grid> */}
-		</Grid>
+			</Box> */}
+		</Box>
 	)
 }
 
