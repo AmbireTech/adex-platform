@@ -7,14 +7,7 @@ import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
 import StatsCard from './StatsCard'
 import { makeStyles } from '@material-ui/core/styles'
-import {
-	red,
-	green,
-	blue,
-	blueGrey,
-	amber,
-	brown,
-} from '@material-ui/core/colors'
+import { red, green, blue, blueGrey } from '@material-ui/core/colors'
 import { styles } from './styles'
 import { formatTokenAmount } from 'helpers/formatters'
 
@@ -83,23 +76,19 @@ export function BasicStats({ analytics, side, t }) {
 	// console.log(totalImpressions)
 	return (
 		<Grid container spacing={2}>
-			<Grid item xs={12} md={10} lg={10}>
+			<Grid item xs={12}>
 				<div className={classes.infoStatsContainer}>
-					<StatsCard
-						title={
-							<Dropdown
-								fullWidth
-								label={t('SELECT_TIMEFRAME')}
-								onChange={val => setTimeframe(val)}
-								source={timeFrames}
-								value={timeframe}
-								htmlId='timeframe-select'
-							/>
-						}
-						textColor={{ color: 'grey' }}
-						subtitleStyle={{ paddingTop: '10px' }}
-						explain={t(timeHints[timeframe])}
-					></StatsCard>
+					<StatsCard>
+						<Dropdown
+							fullWidth
+							label={t('SELECT_TIMEFRAME')}
+							helperText={t(timeHints[timeframe])}
+							onChange={val => setTimeframe(val)}
+							source={timeFrames}
+							value={timeframe}
+							htmlId='timeframe-select'
+						/>
+					</StatsCard>
 					<StatsCard
 						bgColor={{
 							backgroundColor: blue[300],
@@ -108,7 +97,7 @@ export function BasicStats({ analytics, side, t }) {
 						subtitle={t('LABEL_TOTAL_IMPRESSIONS')}
 						loading={!eventCounts}
 						title={`${totalImpressions}`}
-						explain={t('EXPLAIN_TOTLA_IMPRESSIONS')}
+						explain={t('EXPLAIN_TOTAL_IMPRESSIONS')}
 					></StatsCard>
 					{side === 'advertiser' && (
 						<StatsCard
