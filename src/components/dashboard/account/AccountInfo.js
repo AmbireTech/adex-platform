@@ -29,7 +29,6 @@ import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import { selectAccount } from 'selectors'
-import { Grid } from '@material-ui/core'
 
 // const RRButton = withReactRouterLink(Button)
 
@@ -93,44 +92,34 @@ function AccountInfo({ t }) {
 
 	return (
 		<div>
-			<List
-			// dense={true}
-			>
+			<List dense={true}>
 				<ListItem>
-					<ListItemText
-						className={classes.address}
-						primary={identityAddress}
-						secondary={
-							account._authType === 'demo'
-								? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
-								: t('IDENTITY_ETH_ADDR')
-						}
-					/>
 					<Box
 						display='flex'
-						flexWrap='wrap'
-						justifyContent='center'
+						flex='1'
+						flexWrap={'wrap'}
+						justifyContent='space-between'
 						alignItems='center'
 					>
-						<Box m={1}>
-							{walletJsonData && (
-								<label htmlFor='download-wallet-json'>
-									<a
-										id='download-wallet-json'
-										href={localWalletDownloadHref()}
-										download={`adex-account-data-${email}.json`}
-									>
-										<Button size='small' variant='contained'>
-											{t('BACKUP_LOCAL_WALLET')}
-											<DownloadIcon />
-										</Button>
-									</a>
-								</label>
-							)}
-						</Box>
-						<Box m={1}>
+						<Box
+							flexGrow='3'
+							mr={1}
+							flexWrap={'wrap'}
+							display='flex'
+							alignItems='center'
+							justifyContent='start'
+						>
+							<ListItemText
+								className={classes.address}
+								primary={identityAddress}
+								secondary={
+									account._authType === 'demo'
+										? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
+										: t('IDENTITY_ETH_ADDR')
+								}
+							/>
 							<IconButton
-								color='default'
+								color='primary'
 								onClick={() => {
 									copy(identityAddress)
 									execute(
@@ -146,6 +135,23 @@ function AccountInfo({ t }) {
 								<CopyIcon />
 							</IconButton>
 						</Box>
+
+						{walletJsonData && (
+							<Box py={1} flexGrow='1'>
+								<label htmlFor='download-wallet-json'>
+									<a
+										id='download-wallet-json'
+										href={localWalletDownloadHref()}
+										download={`adex-account-data-${email}.json`}
+									>
+										<Button size='small' variant='contained' fullWidth>
+											{t('BACKUP_LOCAL_WALLET')}
+											<DownloadIcon />
+										</Button>
+									</a>
+								</label>
+							</Box>
+						)}
 					</Box>
 				</ListItem>
 				<ListDivider />
@@ -172,8 +178,14 @@ function AccountInfo({ t }) {
 				</ListItem>
 				<ListDivider />
 				<ListItem>
-					<Grid container>
-						<Grid lg={10} md={6} xs={12}>
+					<Box
+						display='flex'
+						flexWrap={'wrap'}
+						flex='1'
+						justifyContent='space-between'
+						alignItems='center'
+					>
+						<Box pr={1} flexGrow='3'>
 							<LoadingSection
 								loading={!identityBalanceDai && identityBalanceDai !== 0}
 							>
@@ -184,23 +196,24 @@ function AccountInfo({ t }) {
 									})}
 								/>
 							</LoadingSection>
-						</Grid>
-						<Grid lg={2} md={6} xs={12}>
-							<Grid xs={12}>
+						</Box>
+						<Box flexGrow='1'>
+							<Box py={1}>
 								<Button
-									// size='small'
 									fullWidth
 									variant='contained'
+									color='secondary'
 									aria-label='delete'
-									className={classes.actionBtn}
 									onClick={() => displayRampWidget()}
+									size='small'
 								>
 									<CreditCardIcon className={classes.extendedIcon} />
 									{t('TOP_UP_IDENTITY_GBP')}
 								</Button>
-							</Grid>
-							<Grid xs={12}>
-								{grantType !== 'advertiser' && (
+							</Box>
+
+							{grantType !== 'advertiser' && (
+								<Box py={1}>
 									<WithdrawTokenFromIdentity
 										fullWidth
 										variant='contained'
@@ -208,13 +221,12 @@ function AccountInfo({ t }) {
 										identityAvailable={availableIdentityBalanceDai}
 										identityAvailableRaw={availableIdentityBalanceDai}
 										token='DAI'
-										className={classes.actionBtn}
-										// size='small'
+										size='small'
 									/>
-								)}
-							</Grid>
-						</Grid>
-					</Grid>
+								</Box>
+							)}
+						</Box>
+					</Box>
 				</ListItem>
 				<ListDivider />
 				<ExpansionPanel expanded={expanded} onChange={handleExpandChange}>
@@ -230,21 +242,31 @@ function AccountInfo({ t }) {
 					<ExpansionPanelDetails>
 						<List classes={{ root: classes.advancedList }}>
 							<ListItem>
-								<ListItemText
-									className={classes.address}
-									secondary={''}
-									primary={t('MANAGE_IDENTITY')}
-								/>
-								<div className={classes.itemActions}>
-									<SetIdentityPrivilege
-										variant='contained'
-										color='secondary'
-										token='DAI'
-										className={classes.actionBtn}
-										size='small'
-										identityAvailable={availableIdentityBalanceDai}
-									/>
-								</div>
+								<Box
+									display='flex'
+									flexWrap={'wrap'}
+									flex='1'
+									justifyContent='space-between'
+									alignItems='center'
+								>
+									<Box pr={1} flexGrow='3'>
+										<ListItemText
+											className={classes.address}
+											secondary={''}
+											primary={t('MANAGE_IDENTITY')}
+										/>
+									</Box>
+									<Box py={1} flexGrow='1'>
+										<SetIdentityPrivilege
+											fullWidth
+											variant='contained'
+											color='secondary'
+											token='DAI'
+											size='small'
+											identityAvailable={availableIdentityBalanceDai}
+										/>
+									</Box>
+								</Box>
 							</ListItem>
 							<ListDivider />
 							<ListItem>
