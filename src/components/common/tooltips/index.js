@@ -62,7 +62,6 @@ export const LightTooltip = withStyles(theme => ({
 const useStylesArrow = makeStyles(theme => ({
 	tooltip: {
 		position: 'relative',
-		borderRadius: 0,
 		backgroundColor: theme.palette.common.black,
 	},
 	popper: arrowGenerator(theme.palette.common.black),
