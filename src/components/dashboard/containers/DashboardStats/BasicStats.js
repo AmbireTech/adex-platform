@@ -3,11 +3,10 @@ import { SimpleStatistics } from 'components/dashboard/charts/simplified'
 import Dropdown from 'components/common/dropdown'
 import Grid from '@material-ui/core/Grid'
 import { translate } from 'services/translations/translations'
-import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
 import StatsCard from './StatsCard'
 import { makeStyles } from '@material-ui/core/styles'
-import { red, green, blue, blueGrey } from '@material-ui/core/colors'
+import { EDDIE_PINK, EDDIE_BLUE, EDDIE_GREEN } from 'components/App/themeMUi'
 import { styles } from './styles'
 import { formatTokenAmount, formatNumberWithCommas } from 'helpers/formatters'
 
@@ -22,24 +21,24 @@ const metrics = {
 		{
 			label: translate('LABEL_REVENUE'),
 			value: 'eventPayouts',
-			color: CHARTS_COLORS[3],
+			color: EDDIE_GREEN,
 		},
 		{
 			label: translate('LABEL_IMPRESSIONS'),
 			value: 'eventCounts',
-			color: CHARTS_COLORS[1],
+			color: EDDIE_BLUE,
 		},
 	],
 	advertiser: [
 		{
 			label: translate('LABEL_SPEND'),
 			value: 'eventPayouts',
-			color: CHARTS_COLORS[2],
+			color: EDDIE_PINK,
 		},
 		{
 			label: translate('LABEL_IMPRESSIONS'),
 			value: 'eventCounts',
-			color: CHARTS_COLORS[1],
+			color: EDDIE_BLUE,
 		},
 	],
 }
