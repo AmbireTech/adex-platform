@@ -51,6 +51,7 @@ const AuthSelect = ({ t, classes }) => {
 						size='large'
 						color='default'
 						fullWidth
+						className={classes.limitedWidthBtn}
 					>
 						{t('CONTINUE_AS', {
 							args: [
@@ -69,6 +70,7 @@ const AuthSelect = ({ t, classes }) => {
 						size='large'
 						color='primary'
 						fullWidth
+						className={classes.limitedWidthBtn}
 						onClick={() =>
 							execute(initIdentity({ email: w.name, authType: w.authType }))
 						}
@@ -84,6 +86,7 @@ const AuthSelect = ({ t, classes }) => {
 					size='large'
 					color='primary'
 					fullWidth
+					className={classes.limitedWidthBtn}
 					onClick={logOut}
 				>
 					{t('CREATE_GRANT_ACCOUNT')}
@@ -97,6 +100,7 @@ const AuthSelect = ({ t, classes }) => {
 					size='large'
 					color='secondary'
 					fullWidth
+					className={classes.limitedWidthBtn}
 					onClick={logOut}
 				>
 					{t('LOGIN_GRANT_ACCOUNT')}
@@ -110,6 +114,7 @@ const AuthSelect = ({ t, classes }) => {
 					size='large'
 					color='secondary'
 					fullWidth
+					className={classes.limitedWidthBtn}
 				>
 					{t('CREATE_QUICK_ACCOUNT')}
 				</RRButton>
@@ -121,7 +126,7 @@ const AuthSelect = ({ t, classes }) => {
 					size='large'
 					color='default'
 					fullWidth
-					className={classes.metamaskBtn}
+					className={classnames(classes.metamaskBtn, classes.limitedWidthBtn)}
 					onClick={logOut}
 				>
 					<Img
@@ -145,7 +150,11 @@ const AuthSelect = ({ t, classes }) => {
 					<Img
 						src={getAuthLogo('trezor')}
 						alt={t('AUTH_WITH_TREZOR')}
-						className={classnames(classes.btnLogo, classes.btnLogoNoTxt)}
+						className={classnames(
+							classes.btnLogo,
+							classes.btnLogoNoTxt,
+							classes.limitedWidthBtn
+						)}
 					/>
 					{/* {t('TREZOR')} */}
 				</RRButton>
@@ -156,6 +165,7 @@ const AuthSelect = ({ t, classes }) => {
 					to='/recover/quick'
 					size='large'
 					color='secondary'
+					className={classes.limitedWidthBtn}
 					fullWidth
 				>
 					{t('RECOVER_QUICK_ACCOUNT')}

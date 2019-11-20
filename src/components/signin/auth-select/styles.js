@@ -3,6 +3,10 @@ export const styles = theme => {
 		actions: {
 			justifyContent: 'center',
 		},
+		limitedWidthBtn: {
+			wordBreak: 'break-word',
+			textAlign: 'center',
+		},
 		btnLogo: {
 			height: '2rem',
 			marginRight: theme.spacing(1),
