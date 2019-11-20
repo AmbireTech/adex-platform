@@ -6,10 +6,19 @@ import grey from '@material-ui/core/colors/grey'
 
 const ADEX_BLUE = '#1B75BC'
 const ADEX_GREEN = '#14DC9C'
+const ADEX_GREY = '#3c3c3c'
+const EDDIE_PINK = '#ff9fa8'
+const EDDIE_BLUE = '#00baff'
+const EDDIE_GREEN = '#61ffb2'
+const WHITE = '#fff'
 
 const palette = {
-	primary: { main: ADEX_BLUE, contrastText: '#fff' },
-	secondary: { main: ADEX_GREEN, contrastText: '#fff' },
+	primary: { main: ADEX_BLUE, contrastText: WHITE },
+	secondary: { main: ADEX_GREEN, contrastText: WHITE },
+	eddiePink: { main: EDDIE_PINK, contrastText: WHITE },
+	eddieBlue: { main: EDDIE_BLUE, contrastText: WHITE },
+	eddieGreen: { main: EDDIE_GREEN, contrastText: WHITE },
+	adexGrey: { main: ADEX_GREY, contrastText: WHITE },
 	error: deepOrange,
 	warning: amber,
 	first: lime,
