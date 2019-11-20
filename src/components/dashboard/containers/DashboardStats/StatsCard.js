@@ -7,6 +7,8 @@ import Typography from '@material-ui/core/Typography'
 import { styles } from './styles'
 import classnames from 'classnames'
 import { LoadingSection } from 'components/common/spinners'
+import InfoIcon from '@material-ui/icons/Info'
+import { BootstrapTooltip } from 'components/common/tooltips'
 
 const StatsCard = props => {
 	const {
@@ -39,24 +41,28 @@ const StatsCard = props => {
 							{title}
 						</Typography>
 					)}
-
 					{subtitle && (
 						<Typography
 							style={{ ...textColor, ...subtitleStyle }}
 							component='p'
 							noWrap
 						>
-							{subtitle}
-						</Typography>
-					)}
-					{explain && (
-						<Typography
-							style={textColor}
-							component='p'
-							noWrap
-							variant='caption'
-						>
-							{explain}
+							{subtitle}{' '}
+							{explain && (
+								<BootstrapTooltip
+									title={
+										<Typography
+											style={textColor}
+											component='p'
+											variant='caption'
+										>
+											{explain}
+										</Typography>
+									}
+								>
+									<InfoIcon style={{ ...textColor, fontSize: 12 }}></InfoIcon>
+								</BootstrapTooltip>
+							)}
 						</Typography>
 					)}
 					{children}
