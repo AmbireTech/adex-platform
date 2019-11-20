@@ -145,8 +145,8 @@ function AccountInfo({ t }) {
 										download={`adex-account-data-${email}.json`}
 									>
 										<Button size='small' variant='contained' fullWidth>
+											<DownloadIcon className={classes.iconBtnLeft} />
 											{t('BACKUP_LOCAL_WALLET')}
-											<DownloadIcon />
 										</Button>
 									</a>
 								</label>
@@ -207,7 +207,7 @@ function AccountInfo({ t }) {
 									onClick={() => displayRampWidget()}
 									size='small'
 								>
-									<CreditCardIcon className={classes.extendedIcon} />
+									<CreditCardIcon className={classes.iconBtnLeft} />
 									{t('TOP_UP_IDENTITY_GBP')}
 								</Button>
 							</Box>
