@@ -40,15 +40,13 @@ const loadInjectedWeb3 = new Promise((resolve, reject) => {
 const injectedWeb3 = async () => {
 	const { web3, ethereum } = await loadInjectedWeb3.then()
 	let provider = null
-	// let mode = null // metamask, and as some point trezor, ledger, ...
 	let adexCore = null
 	let dai = null
 	let identityFactory = null
 
 	if (ethereum) {
 		try {
-			const enabled = await ethereum.enable()
-			console.log('Injected ethereum detected.', enabled)
+			await ethereum.enable()
 
 			provider = new ethers.providers.Web3Provider(ethereum)
 			adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
@@ -86,21 +84,18 @@ const injectedWeb3 = async () => {
 	}
 }
 
-const getInjectedWeb3 = new Promise((resolve, reject) => {
-	return resolve(injectedWeb3())
-})
-
 const getLocalWeb3 = new Promise(function(resolve, reject) {
 	console.log('getLocalWeb3')
 	resolve(localWeb3())
 })
 
 const getEthers = mode => {
+	console.log('getEthers', getEthers)
 	/* NOTE: use Promise wrapper because despite getWeb3 is Promise itself it is not called by user action
 	 *   and this results in Trezor popup block by the browser
 	 */
 	if (mode === AUTH_TYPES.METAMASK.name) {
-		return getInjectedWeb3
+		return injectedWeb3()
 	} else {
 		return getLocalWeb3
 	}
