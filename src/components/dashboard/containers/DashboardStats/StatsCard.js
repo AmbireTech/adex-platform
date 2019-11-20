@@ -5,13 +5,14 @@ import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import classnames from 'classnames'
-import { LoadingSection } from 'components/common/spinners'
 import InfoIcon from '@material-ui/icons/Info'
 import { ArrowTooltip } from 'components/common/tooltips'
+import LinearProgress from '@material-ui/core/LinearProgress'
 
 const useStyles = makeStyles(theme => {
 	return {
 		root: {
+			position: 'relative',
 			backgroundColor: ({ bgColor = '' }) =>
 				(theme.palette[bgColor] || {}).main || theme.palette.background.default,
 			color: ({ bgColor = '' }) =>
@@ -27,6 +28,11 @@ const useStyles = makeStyles(theme => {
 				cursor: 'pointer',
 			},
 		},
+		progress: {
+			bottom: 0,
+			position: 'absolute',
+			width: '100%',
+		},
 	}
 })
 
@@ -39,7 +45,6 @@ const StatsCard = props => {
 		onClick,
 		bgColor,
 		loading,
-		textColor,
 		explain,
 	} = props
 
@@ -53,36 +58,31 @@ const StatsCard = props => {
 			})}
 			onClick={onClick}
 		>
-			<LoadingSection loading={loading}>
-				<CardContent>
-					{title && (
-						<Typography variant='h5' noWrap>
-							{title}
-						</Typography>
-					)}
-					{subtitle && (
-						<Typography component='p' noWrap>
-							{subtitle}{' '}
-							{explain && (
-								<ArrowTooltip
-									title={
-										<Typography
-											style={textColor}
-											component='p'
-											variant='caption'
-										>
-											{explain}
-										</Typography>
-									}
-								>
-									<InfoIcon style={{ fontSize: 12 }}></InfoIcon>
-								</ArrowTooltip>
-							)}
-						</Typography>
-					)}
-					{children}
-				</CardContent>
-			</LoadingSection>
+			<CardContent>
+				{title && (
+					<Typography variant='h5' noWrap>
+						{title}
+					</Typography>
+				)}
+				{subtitle && (
+					<Typography component='p' noWrap>
+						{subtitle}{' '}
+						{explain && (
+							<ArrowTooltip
+								title={
+									<Typography component='p' variant='caption'>
+										{explain}
+									</Typography>
+								}
+							>
+								<InfoIcon style={{ fontSize: 12 }}></InfoIcon>
+							</ArrowTooltip>
+						)}
+					</Typography>
+				)}
+				{children}
+			</CardContent>
+			{loading && <LinearProgress className={classes.progress} />}
 		</Card>
 	)
 }
