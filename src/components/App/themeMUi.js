@@ -46,6 +46,9 @@ export const themeMUI = createMuiTheme({
 				borderRadius: 0,
 			},
 		},
+		MuiTooltip: {
+			tooltip: { borderRadius: 0 },
+		},
 		// MuiStepIcon: {
 		//     root: {
 		//         color: 'yellow',
