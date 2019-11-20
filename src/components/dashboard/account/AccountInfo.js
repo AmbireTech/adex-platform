@@ -92,7 +92,7 @@ function AccountInfo({ t }) {
 
 	return (
 		<div>
-			<List dense={true}>
+			<List>
 				<ListItem>
 					<Box
 						display='flex'
