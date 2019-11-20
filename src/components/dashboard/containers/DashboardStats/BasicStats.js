@@ -55,11 +55,9 @@ export function BasicStats({ analytics, side, t }) {
 	const data = analytics[side] || {}
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
-
 	const eventCounts = analytics[side]['IMPRESSION'].eventCounts[timeframe].aggr
 	const eventPayouts =
 		analytics[side]['IMPRESSION'].eventPayouts[timeframe].aggr
-
 	const totalImpressions = (eventCounts || []).reduce(
 		(a, { value }) => a + Number(value) || 0,
 		0
@@ -68,8 +66,10 @@ export function BasicStats({ analytics, side, t }) {
 		(a, { value }) => a + Number(formatTokenAmount(value, 18)) || 0,
 		0
 	)
-
-	const averageCPM = (1000 * Number(totalMoney)) / Number(totalImpressions)
+	const averageCPM =
+		eventCounts && eventPayouts
+			? (1000 * Number(totalMoney)) / Number(totalImpressions)
+			: 0
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12}>
