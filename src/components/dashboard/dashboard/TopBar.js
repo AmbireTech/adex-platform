@@ -67,11 +67,11 @@ function TopNav({ handleDrawerToggle, side, t }) {
 							seed={jsNumberForAddress(account.wallet.address)}
 						/>
 						<ButtonMenu
+							id='menu-appbar'
 							leftIconSrc={imgSrc}
-							icon={<ExpandMoreIcon />}
+							rightIcon={<ExpandMoreIcon />}
 							label={btnMenuLabel}
 							active={true}
-							iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
 						>
 							<RRMenuItem
 								value='account'
