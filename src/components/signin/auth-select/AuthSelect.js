@@ -20,7 +20,6 @@ const AuthSelect = ({ t, classes }) => {
 	const [wallets, setWallets] = useState([])
 	const [hasLegacyWallets, setHasLegacyWallets] = useState(false)
 
-	const auth = useSelector(selectAuth)
 	const account = useSelector(selectAccount)
 	const { wallet } = account || {}
 
@@ -42,21 +41,6 @@ const AuthSelect = ({ t, classes }) => {
 			alignItems='stretch'
 			justifyContent='space-between'
 		>
-			{auth && (
-				<Box m={1}>
-					<RRButton
-						variant='contained'
-						to='/side-select'
-						size='large'
-						color='default'
-						fullWidth
-					>
-						{t('CONTINUE_AS', {
-							args: [wallet.email || wallet.address, wallet.authType],
-						})}
-					</RRButton>
-				</Box>
-			)}
 			{wallets.map(w => (
 				<Box key={w.name} m={1}>
 					<RRButton

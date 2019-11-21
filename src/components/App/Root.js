@@ -84,6 +84,7 @@ const Root = () => {
 		<Switch>
 			<PrivateRoute auth={auth} path='/dashboard/:side' component={Dashboard} />
 			<PrivateRoute auth={auth} path='/side-select' component={SideSelect} />
+			{auth && <Redirect to='/side-select' />}
 			<Route
 				exact
 				path='/'
