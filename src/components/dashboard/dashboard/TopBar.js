@@ -25,10 +25,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { selectNavTitle, selectAccount } from 'selectors'
 import { styles } from './styles'
-
-const getAddrLabel = (address = '') => {
-	return `${address.substring(0, 8)}...${address.substring(36, 42)}`
-}
+import { formatAddress } from 'helpers/formatters'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
 const useStyles = makeStyles(styles)
@@ -41,7 +38,9 @@ function TopNav({ handleDrawerToggle, side, t }) {
 	const btnMenuLabel =
 		account.wallet.authType === 'demo'
 			? t('DEMO_MODE')
-			: account.email || getAddrLabel(account.wallet.address) || t('NOT_LOGGED')
+			: account.email ||
+			  formatAddress(account.wallet.address) ||
+			  t('NOT_LOGGED')
 
 	return (
 		<AppBar className={classes.appBar} position='sticky'>

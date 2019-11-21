@@ -1,48 +1,88 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
-import { styles } from './styles'
 import classnames from 'classnames'
-import { LoadingSection } from 'components/common/spinners'
+import InfoIcon from '@material-ui/icons/Info'
+import { ArrowTooltip } from 'components/common/tooltips'
+import LinearProgress from '@material-ui/core/LinearProgress'
+
+const useStyles = makeStyles(theme => {
+	return {
+		root: {
+			position: 'relative',
+			backgroundColor: ({ bgColor = '' }) =>
+				(theme.palette[bgColor] || {}).main || theme.palette.background.default,
+			color: ({ bgColor = '' }) =>
+				(theme.palette[bgColor] || {}).contrastText ||
+				theme.palette.text.primary,
+		},
+		infoCard: {
+			margin: theme.spacing(1),
+			flexGrow: 1,
+		},
+		linkCard: {
+			'&:hover, &:focus': {
+				cursor: 'pointer',
+			},
+		},
+		progress: {
+			bottom: 0,
+			position: 'absolute',
+			width: '100%',
+		},
+	}
+})
 
 const StatsCard = props => {
 	const {
-		classes,
 		title,
 		subtitle,
 		linkCard,
-		loading,
 		children,
 		onClick,
+		bgColor,
+		loading,
+		explain,
 	} = props
+
+	const classes = useStyles({ bgColor })
 
 	return (
 		<Card
 			// raised
-			className={classnames(classes.infoCard, {
+			className={classnames(classes.root, classes.infoCard, {
 				[classes.linkCard]: !!linkCard,
 			})}
 			onClick={onClick}
 		>
-			<LoadingSection loading={loading}>
-				<CardContent>
-					{title && (
-						<Typography variant='h5' noWrap>
-							{title}
-						</Typography>
-					)}
-
-					{subtitle && (
-						<Typography component='p' noWrap>
-							{subtitle}
-						</Typography>
-					)}
-					{children}
-				</CardContent>
-			</LoadingSection>
+			<CardContent>
+				{title && (
+					<Typography variant='h5' noWrap>
+						{title}
+					</Typography>
+				)}
+				{subtitle && (
+					<Typography component='p' noWrap>
+						{subtitle}{' '}
+						{explain && (
+							<ArrowTooltip
+								title={
+									<Typography component='p' variant='caption'>
+										{explain}
+									</Typography>
+								}
+							>
+								<InfoIcon style={{ fontSize: 12 }}></InfoIcon>
+							</ArrowTooltip>
+						)}
+					</Typography>
+				)}
+				{children}
+			</CardContent>
+			{loading && <LinearProgress className={classes.progress} />}
 		</Card>
 	)
 }
@@ -54,4 +94,4 @@ StatsCard.propTypes = {
 	linkCard: PropTypes.bool,
 }
 
-export default withStyles(styles)(StatsCard)
+export default StatsCard
