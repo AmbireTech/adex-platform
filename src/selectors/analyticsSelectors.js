@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-import { formatTokenAmount } from 'helpers/formatters'
+import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
 
 export const selectAnalytics = state => state.persist.analytics
 
@@ -12,8 +12,8 @@ export const selectAnalyticsData = createSelector(
 
 export const selectAnalyticsDataAggr = createSelector(
 	[selectAnalytics, (_, opts = {}) => opts],
-	(analytics, { side, eventType, collection, timeframe }) => {
-		return analytics[side][eventType][collection][timeframe].aggr
+	(analytics, { side, eventType, metric, timeframe }) => {
+		return analytics[side][eventType][metric][timeframe].aggr
 	}
 )
 
@@ -23,7 +23,7 @@ export const selectTotalImpressions = createSelector(
 			side,
 			timeframe,
 			eventType: 'IMPRESSION',
-			collection: 'eventCounts',
+			metric: 'eventCounts',
 		}),
 	eventCounts =>
 		eventCounts
@@ -37,7 +37,7 @@ export const selectTotalMoney = createSelector(
 			side,
 			timeframe,
 			eventType: 'IMPRESSION',
-			collection: 'eventPayouts',
+			metric: 'eventPayouts',
 		}),
 	eventPayouts =>
 		eventPayouts
@@ -59,4 +59,38 @@ export const selectAverageCPM = createSelector(
 		totalMoney !== null && totalImpressions !== null
 			? (1000 * Number(totalMoney)) / Number(totalImpressions)
 			: null
+)
+
+const parseValueByMetric = ({ value, metric }) => {
+	switch (metric) {
+		case 'eventPayouts':
+			return parseFloat(formatTokenAmount(value, 18))
+		case 'eventCounts':
+			return parseInt(value, 10)
+		default:
+			return value
+	}
+}
+
+export const selectStatsChartData = createSelector(
+	[
+		(state, { noLastOne, ...rest } = {}) => {
+			return { data: selectAnalyticsDataAggr(state, rest), noLastOne, ...rest }
+		},
+	],
+	({ data = [], noLastOne, metric, ...rest }) => {
+		const aggr = noLastOne ? data.slice(0, -1) : data
+		return aggr.reduce(
+			(memo, item) => {
+				const { time, value } = item
+				memo.labels.push(formatDateTime(time))
+				memo.datasets.push(parseValueByMetric({ value, metric }))
+				return memo
+			},
+			{
+				labels: [],
+				datasets: [],
+			}
+		)
+	}
 )
