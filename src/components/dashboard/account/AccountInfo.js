@@ -92,44 +92,34 @@ function AccountInfo({ t }) {
 
 	return (
 		<div>
-			<List
-			// dense={true}
-			>
+			<List>
 				<ListItem>
-					<ListItemText
-						className={classes.address}
-						primary={identityAddress}
-						secondary={
-							account._authType === 'demo'
-								? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
-								: t('IDENTITY_ETH_ADDR')
-						}
-					/>
 					<Box
 						display='flex'
-						flexWrap='wrap'
-						justifyContent='center'
+						flex='1'
+						flexWrap={'wrap'}
+						justifyContent='space-between'
 						alignItems='center'
 					>
-						<Box m={1}>
-							{walletJsonData && (
-								<label htmlFor='download-wallet-json'>
-									<a
-										id='download-wallet-json'
-										href={localWalletDownloadHref()}
-										download={`adex-account-data-${email}.json`}
-									>
-										<Button size='small' variant='contained'>
-											{t('BACKUP_LOCAL_WALLET')}
-											<DownloadIcon />
-										</Button>
-									</a>
-								</label>
-							)}
-						</Box>
-						<Box m={1}>
+						<Box
+							flexGrow='3'
+							mr={1}
+							flexWrap={'wrap'}
+							display='flex'
+							alignItems='center'
+							justifyContent='start'
+						>
+							<ListItemText
+								className={classes.address}
+								primary={identityAddress}
+								secondary={
+									account._authType === 'demo'
+										? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
+										: t('IDENTITY_ETH_ADDR')
+								}
+							/>
 							<IconButton
-								color='default'
+								color='primary'
 								onClick={() => {
 									copy(identityAddress)
 									execute(
@@ -145,6 +135,23 @@ function AccountInfo({ t }) {
 								<CopyIcon />
 							</IconButton>
 						</Box>
+
+						{walletJsonData && (
+							<Box py={1} flexGrow='1'>
+								<label htmlFor='download-wallet-json'>
+									<a
+										id='download-wallet-json'
+										href={localWalletDownloadHref()}
+										download={`adex-account-data-${email}.json`}
+									>
+										<Button size='small' variant='contained' fullWidth>
+											<DownloadIcon className={classes.iconBtnLeft} />
+											{t('BACKUP_LOCAL_WALLET')}
+										</Button>
+									</a>
+								</label>
+							</Box>
+						)}
 					</Box>
 				</ListItem>
 				<ListDivider />
@@ -171,8 +178,14 @@ function AccountInfo({ t }) {
 				</ListItem>
 				<ListDivider />
 				<ListItem>
-					<Box display='flex' flexWrap={'wrap'} flex='1'>
-						<Box display='flex' flexWrap={'wrap'} flex='1'>
+					<Box
+						display='flex'
+						flexWrap={'wrap'}
+						flex='1'
+						justifyContent='space-between'
+						alignItems='center'
+					>
+						<Box pr={1} flexGrow='8'>
 							<LoadingSection
 								loading={!identityBalanceDai && identityBalanceDai !== 0}
 							>
@@ -183,28 +196,34 @@ function AccountInfo({ t }) {
 									})}
 								/>
 							</LoadingSection>
-							<Button
-								size='small'
-								variant='contained'
-								aria-label='delete'
-								className={classes.actionBtn}
-								onClick={() => displayRampWidget()}
-							>
-								<CreditCardIcon className={classes.extendedIcon} />
-								{t('TOP_UP_IDENTITY_GBP')}
-							</Button>
 						</Box>
-						<Box className={classes.itemActions}>
-							{grantType !== 'advertiser' && (
-								<WithdrawTokenFromIdentity
+						<Box flexGrow='1'>
+							<Box py={1}>
+								<Button
+									fullWidth
 									variant='contained'
-									color='primary'
-									identityAvailable={availableIdentityBalanceDai}
-									identityAvailableRaw={availableIdentityBalanceDai}
-									token='DAI'
-									className={classes.actionBtn}
+									color='secondary'
+									aria-label='delete'
+									onClick={() => displayRampWidget()}
 									size='small'
-								/>
+								>
+									<CreditCardIcon className={classes.iconBtnLeft} />
+									{t('TOP_UP_IDENTITY_GBP')}
+								</Button>
+							</Box>
+
+							{grantType !== 'advertiser' && (
+								<Box py={1}>
+									<WithdrawTokenFromIdentity
+										fullWidth
+										variant='contained'
+										color='primary'
+										identityAvailable={availableIdentityBalanceDai}
+										identityAvailableRaw={availableIdentityBalanceDai}
+										token='DAI'
+										size='small'
+									/>
+								</Box>
 							)}
 						</Box>
 					</Box>
@@ -223,21 +242,31 @@ function AccountInfo({ t }) {
 					<ExpansionPanelDetails>
 						<List classes={{ root: classes.advancedList }}>
 							<ListItem>
-								<ListItemText
-									className={classes.address}
-									secondary={''}
-									primary={t('MANAGE_IDENTITY')}
-								/>
-								<div className={classes.itemActions}>
-									<SetIdentityPrivilege
-										variant='contained'
-										color='secondary'
-										token='DAI'
-										className={classes.actionBtn}
-										size='small'
-										identityAvailable={availableIdentityBalanceDai}
-									/>
-								</div>
+								<Box
+									display='flex'
+									flexWrap={'wrap'}
+									flex='1'
+									justifyContent='space-between'
+									alignItems='center'
+								>
+									<Box pr={1} flexGrow='8'>
+										<ListItemText
+											className={classes.address}
+											secondary={''}
+											primary={t('MANAGE_IDENTITY')}
+										/>
+									</Box>
+									<Box py={1} flexGrow='1'>
+										<SetIdentityPrivilege
+											fullWidth
+											variant='contained'
+											color='secondary'
+											token='DAI'
+											size='small'
+											identityAvailable={availableIdentityBalanceDai}
+										/>
+									</Box>
+								</Box>
 							</ListItem>
 							<ListDivider />
 							<ListItem>

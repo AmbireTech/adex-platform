@@ -285,8 +285,6 @@ export class DashboardStats extends Component {
 			side,
 			// sideBids,
 			classes,
-			t,
-			analytics,
 		} = this.props
 		if (side !== 'advertiser' && side !== 'publisher') {
 			return <SideSelect active={true} />
@@ -300,11 +298,7 @@ export class DashboardStats extends Component {
 					<Grid item md={12} lg={12} xs={12}>
 						<Card className={classnames(classes.dashboardCardBody)}>
 							<CardContent>
-								{analytics ? (
-									<BasicStats side={side} analytics={analytics} t={t} />
-								) : (
-									t('NO_STATS_YET')
-								)}
+								<BasicStats side={side} />
 							</CardContent>
 						</Card>
 					</Grid>
@@ -330,7 +324,6 @@ function mapStateToProps(state, props) {
 	return {
 		account: persist.account,
 		side: memory.nav.side,
-		analytics: persist.analytics,
 	}
 }
 

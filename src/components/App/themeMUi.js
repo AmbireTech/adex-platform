@@ -4,12 +4,21 @@ import deepOrange from '@material-ui/core/colors/deepOrange'
 import amber from '@material-ui/core/colors/amber'
 import grey from '@material-ui/core/colors/grey'
 
-const ADEX_BLUE = '#1B75BC'
-const ADEX_GREEN = '#14DC9C'
+const WHITE = '#fff'
+export const ADEX_BLUE = '#1B75BC'
+export const ADEX_GREEN = '#14DC9C'
+export const ADEX_GREY = '#3c3c3c'
+export const EDDIE_PINK = '#ff9fa8'
+export const EDDIE_BLUE = '#00baff'
+export const EDDIE_GREEN = '#61ffb2'
 
 const palette = {
-	primary: { main: ADEX_BLUE, contrastText: '#fff' },
-	secondary: { main: ADEX_GREEN, contrastText: '#fff' },
+	primary: { main: ADEX_BLUE, contrastText: WHITE },
+	secondary: { main: ADEX_GREEN, contrastText: WHITE },
+	eddiePink: { main: EDDIE_PINK, contrastText: WHITE },
+	eddieBlue: { main: EDDIE_BLUE, contrastText: WHITE },
+	eddieGreen: { main: EDDIE_GREEN, contrastText: WHITE },
+	adexGrey: { main: ADEX_GREY, contrastText: WHITE },
 	error: deepOrange,
 	warning: amber,
 	first: lime,
@@ -45,6 +54,9 @@ export const themeMUI = createMuiTheme({
 			rounded: {
 				borderRadius: 0,
 			},
+		},
+		MuiTooltip: {
+			tooltip: { borderRadius: 0 },
 		},
 		// MuiStepIcon: {
 		//     root: {
