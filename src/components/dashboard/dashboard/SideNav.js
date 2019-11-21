@@ -31,12 +31,74 @@ import {
 const RRListItem = withReactRouterLink(ListItem)
 const { ETH_SCAN_ADDR_HOST } = process.env
 
-const useStyles = makeStyles(styles)
+const useStyles = makeStyles(theme => {
+	const activeColor = ({ side }) =>
+		side === 'advertiser'
+			? theme.palette.eddiePink.contrastText
+			: theme.palette.eddieGreen.contrastText
+
+	const activeBgColor = ({ side }) =>
+		side === 'advertiser'
+			? theme.palette.eddiePink.main
+			: theme.palette.eddieGreen.main
+
+	return {
+		navigation: {
+			backgroundColor: theme.palette.background.paper,
+		},
+		sntPadding: {
+			paddingTop: 0,
+		},
+		navListRoot: {
+			color: theme.palette.text.secondary,
+			display: 'flex',
+			flexDirection: 'column',
+			justifyContent: 'space-between',
+		},
+		navList: {
+			position: 'absolute',
+			top: 0,
+			left: 0,
+			right: 0,
+			bottom: 80,
+			overflowY: 'auto',
+			overflowX: 'hidden',
+		},
+		sideNavToolbar: {},
+		version: {
+			position: 'absolute',
+			bottom: 0,
+			left: 0,
+			right: 0,
+			padding: 10,
+			paddingLeft: 16,
+			borderTopWidth: 1,
+			borderTopColor: theme.palette.divider,
+			borderTopStyle: 'solid',
+		},
+		active: {
+			color: activeColor,
+			backgroundColor: activeBgColor,
+			'&:focus': {
+				backgroundColor: activeBgColor,
+			},
+		},
+		adxLink: {
+			color: theme.palette.text.hint,
+			'&:hover': {
+				color: theme.palette.text.secondary,
+			},
+		},
+	}
+})
+
+const useCommonStyles = makeStyles(styles)
 
 function SideNav(props) {
 	const side = useSelector(selectSide)
 	const identity = useSelector(selectAccountIdentityAddr)
-	const classes = useStyles()
+	const classes = useStyles({ side })
+	const commonClasses = useCommonStyles()
 	const routerLocation = useSelector(selectLocation)
 
 	// TODO: test location
@@ -58,9 +120,14 @@ function SideNav(props) {
 				component='nav'
 			>
 				<div>
-					<div className={classnames(classes.toolbar, classes.sideNavToolbar)}>
+					<div
+						className={classnames(
+							commonClasses.toolbar,
+							classes.sideNavToolbar
+						)}
+					>
 						<ListItem>
-							<AdexIconTxt className={classes.icon} />
+							<AdexIconTxt className={commonClasses.icon} />
 						</ListItem>
 						<ListItem>
 							<LoadingSection
