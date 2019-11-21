@@ -120,6 +120,7 @@ export default function ItemHoc(Decorated) {
 				title,
 				dialogActions,
 				onClick,
+				fullWidth,
 				...rest
 			} = this.props
 
@@ -130,6 +131,7 @@ export default function ItemHoc(Decorated) {
 				size,
 				mini,
 				variant,
+				fullWidth,
 			}
 
 			if (iconButton) {
