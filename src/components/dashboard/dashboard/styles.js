@@ -141,9 +141,6 @@ export const styles = theme => {
 				color: theme.palette.text.secondary,
 			},
 		},
-		bar: {
-			opacity: 0.5,
-		},
 		actionCount: {
 			marginTop: theme.spacing(1),
 		},
