@@ -12,7 +12,6 @@ import { styles } from './styles'
 import { formatNumberWithCommas } from 'helpers/formatters'
 import {
 	t,
-	selectAnalyticsData,
 	selectTotalImpressions,
 	selectTotalMoney,
 	selectAverageCPM,
@@ -59,7 +58,6 @@ const timeHints = {
 
 export function BasicStats({ side }) {
 	const [timeframe, setTimeframe] = useState(timeFrames[0].value)
-	const data = useSelector(state => selectAnalyticsData(state, side))
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 
@@ -146,7 +144,7 @@ export function BasicStats({ side }) {
 			</Grid>
 			<Grid item xs={12}>
 				<SimpleStatistics
-					data={data['IMPRESSION']}
+					side={side}
 					timeframe={timeframe}
 					options={{
 						title: t(timeFrames.find(a => a.value === timeframe).label),
