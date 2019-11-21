@@ -2,7 +2,10 @@ import { ethers, utils } from 'ethers'
 import { contracts } from './contractsCfg'
 import { AUTH_TYPES } from 'constants/misc'
 
+ethers.errors.setLogLevel('error')
+
 const { AdExCore, Identity, DAI, IdentityFactory } = contracts
+
 const localWeb3 = async () => {
 	const provider = new ethers.providers.JsonRpcProvider(
 		process.env.WEB3_NODE_ADDR
@@ -90,7 +93,6 @@ const getLocalWeb3 = new Promise(function(resolve, reject) {
 })
 
 const getEthers = mode => {
-	console.log('getEthers', getEthers)
 	/* NOTE: use Promise wrapper because despite getWeb3 is Promise itself it is not called by user action
 	 *   and this results in Trezor popup block by the browser
 	 */
