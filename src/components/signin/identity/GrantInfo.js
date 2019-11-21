@@ -125,6 +125,22 @@ class GrantInfo extends Component {
 		this.validateTOS(checked, true)
 	}
 
+	keyDown(e) {
+		if (e.key === 'Enter') {
+			const { identity } = this.props
+			this.validateCoupon(identity.coupon, true)
+			this.validateEmail(identity.email, true)
+			this.validateEmailCheck(identity.emailCheck, identity.email, true)
+			this.validatePassword(identity.password, true)
+			this.validatePasswordCheck(
+				identity.passwordCheck,
+				identity.password,
+				true
+			)
+			this.validateTOS(identity.tosCheck, true)
+		}
+	}
+
 	render() {
 		const { t, identity, handleChange, invalidFields } = this.props
 		// Errors
@@ -138,9 +154,10 @@ class GrantInfo extends Component {
 		} = invalidFields
 		return (
 			<div>
-				<Grid container spacing={2}>
+				<Grid container spacing={2} onKeyDown={e => this.keyDown(e)}>
 					<Grid item xs={12}>
 						<TextField
+							autoFocus
 							fullWidth
 							type='text'
 							required

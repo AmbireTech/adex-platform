@@ -54,6 +54,10 @@ class GrantLogin extends Component {
 		})
 	}
 
+	keyDown(e) {
+		if (e.key === 'Enter') this.validateWallet(true)
+	}
+
 	render() {
 		const {
 			t,
@@ -73,6 +77,7 @@ class GrantLogin extends Component {
 				// direction='row'
 				alignContent='space-between'
 				alignItems='center'
+				onKeyDown={e => this.keyDown(e)}
 			>
 				<Grid item xs={12}>
 					<Grid container spacing={2}>
@@ -83,6 +88,7 @@ class GrantLogin extends Component {
 						</Grid>
 						<Grid item xs={12}>
 							<TextField
+								autoFocus
 								fullWidth
 								type='text'
 								required

@@ -64,19 +64,35 @@ export default function IdentityHoc(Decorated) {
 			execute(push('/'))
 		}
 
+		keyDown(e) {
+			switch (e.key) {
+				case 'Enter':
+					console.log('validate')
+					break
+				case 'Escape':
+					this.cancel()
+					break
+				default:
+					break
+			}
+		}
+
 		render() {
 			const { identity, spinner, waitingExpected, ...rest } = this.props
 
 			return (
-				<Decorated
-					{...rest}
-					identity={identity}
-					save={this.save}
-					handleChange={this.handleChange}
-					cancel={this.cancel}
-					waiting={spinner}
-					waitingExpected={waitingExpected}
-				/>
+				<span onKeyDown={e => this.keyDown(e)}>
+					<Decorated
+						{...rest}
+						autoFocus
+						identity={identity}
+						save={this.save}
+						handleChange={this.handleChange}
+						cancel={this.cancel}
+						waiting={spinner}
+						waitingExpected={waitingExpected}
+					/>
+				</span>
 			)
 		}
 	}

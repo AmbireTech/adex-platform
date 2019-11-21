@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
@@ -31,6 +31,7 @@ function AuthMetamask(props) {
 	const [stats, setStats] = useState(null)
 	const [waitingMetamaskAction, setWaitingMetamaskAction] = useState(false)
 	const [waitingAddrsData, setWaitingAddrsData] = useState(false)
+	const connectBtn = useRef(null)
 	const { t, classes } = props
 	const isOpera =
 		!!window.opr || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0
@@ -48,6 +49,10 @@ function AuthMetamask(props) {
 
 		setEth()
 	}, [])
+
+	useEffect(() => {
+		connectBtn.focus()
+	}, [connectBtn])
 
 	useEffect(() => {
 		if (installingMetamask) {
@@ -192,6 +197,7 @@ function AuthMetamask(props) {
 						</div>
 					) : isMetamaskEthereumProvider ? (
 						<Button
+							ref={connectBtn}
 							onClick={checkMetamask}
 							variant='contained'
 							color='primary'
