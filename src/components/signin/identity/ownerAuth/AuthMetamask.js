@@ -40,6 +40,7 @@ function AuthMetamask(props) {
 	)
 
 	useEffect(() => {
+		console.log(connectBtn)
 		const setEth = async () => {
 			const ethereumProvider = await getEthereumProvider()
 			setIsMetamaskEthereumProvider(
@@ -49,10 +50,6 @@ function AuthMetamask(props) {
 
 		setEth()
 	}, [])
-
-	useEffect(() => {
-		connectBtn.focus()
-	}, [connectBtn])
 
 	useEffect(() => {
 		if (installingMetamask) {
