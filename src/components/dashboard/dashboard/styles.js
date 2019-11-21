@@ -86,66 +86,6 @@ export const styles = theme => {
 		icon: {
 			height: 36,
 			width: 'auto',
-			// marginRight: 10,
-			// paddingLeft: theme.spacing(1.5),
-			// [theme.breakpoints.down('xs')]: {
-			//     display: 'none',
-			// },
-		},
-		navigation: {
-			backgroundColor: theme.palette.background.paper,
-		},
-		version: {
-			position: 'absolute',
-			bottom: 0,
-			left: 0,
-			right: 0,
-			padding: 10,
-			paddingLeft: 16,
-			borderTopWidth: 1,
-			borderTopColor: theme.palette.divider,
-			borderTopStyle: 'solid',
-		},
-		navList: {
-			position: 'absolute',
-			top: 0,
-			left: 0,
-			right: 0,
-			bottom: 80,
-			overflowY: 'auto',
-			overflowX: 'hidden',
-		},
-		navListRoot: {
-			color: theme.palette.text.secondary,
-			display: 'flex',
-			flexDirection: 'column',
-			justifyContent: 'space-between',
-		},
-		sideNavToolbar: {},
-		sntPadding: {
-			paddingTop: 0,
-		},
-		active: {
-			color: theme.palette.common.white,
-			backgroundColor: theme.palette.primary.light,
-			'&:focus': {
-				backgroundColor: theme.palette.primary.light,
-			},
-		},
-		newItemBtn: {
-			width: '200px', // TODO
-		},
-		adxLink: {
-			color: theme.palette.text.hint,
-			'&:hover': {
-				color: theme.palette.text.secondary,
-			},
-		},
-		bar: {
-			opacity: 0.5,
-		},
-		actionCount: {
-			marginTop: theme.spacing(1),
 		},
 	}
 }

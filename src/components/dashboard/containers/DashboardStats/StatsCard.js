@@ -88,7 +88,6 @@ const StatsCard = props => {
 }
 
 StatsCard.propTypes = {
-	classes: PropTypes.object.isRequired,
 	title: PropTypes.string,
 	subtitle: PropTypes.string,
 	linkCard: PropTypes.bool,
