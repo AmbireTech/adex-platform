@@ -30,7 +30,7 @@ import {
 import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
 import PageNotFound from 'components/page_not_found/PageNotFound'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import {
 	updateNav,
@@ -103,11 +103,14 @@ const AdSlots = () => (
 	</>
 )
 
+const useStyles = makeStyles(styles)
+
 function Dashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
 
-	const { match, classes, theme } = props
+	const { match } = props
 	const { side } = match.params
+	const classes = useStyles()
 
 	useEffect(() => {
 		execute(updateNav('side', side))
@@ -144,7 +147,7 @@ function Dashboard(props) {
 			<Hidden mdUp>
 				<Drawer
 					variant='temporary'
-					anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+					anchor='left'
 					open={mobileOpen}
 					onClose={handleDrawerToggle}
 					classes={{
@@ -227,4 +230,4 @@ function Dashboard(props) {
 	)
 }
 
-export default withStyles(styles, { withTheme: true })(Dashboard)
+export default Dashboard
