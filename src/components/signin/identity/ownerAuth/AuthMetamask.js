@@ -31,7 +31,6 @@ function AuthMetamask(props) {
 	const [stats, setStats] = useState(null)
 	const [waitingMetamaskAction, setWaitingMetamaskAction] = useState(false)
 	const [waitingAddrsData, setWaitingAddrsData] = useState(false)
-	const connectBtn = useRef(null)
 	const { t, classes } = props
 	const isOpera =
 		!!window.opr || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0
@@ -40,7 +39,6 @@ function AuthMetamask(props) {
 	)
 
 	useEffect(() => {
-		console.log(connectBtn)
 		const setEth = async () => {
 			const ethereumProvider = await getEthereumProvider()
 			setIsMetamaskEthereumProvider(
@@ -194,7 +192,6 @@ function AuthMetamask(props) {
 						</div>
 					) : isMetamaskEthereumProvider ? (
 						<Button
-							ref={connectBtn}
 							onClick={checkMetamask}
 							variant='contained'
 							color='primary'
