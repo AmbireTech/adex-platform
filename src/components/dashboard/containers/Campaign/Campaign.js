@@ -100,6 +100,7 @@ export class Campaign extends Component {
 						// />
 						(status === 'Ready' ||
 							status === 'Active' ||
+							status === 'Withdraw' ||
 							status === 'Unhealthy') && (
 							<this.CampaignActions
 								campaign={campaign}
