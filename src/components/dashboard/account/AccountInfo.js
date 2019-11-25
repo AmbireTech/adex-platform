@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import { updateNav, addToast, execute } from 'actions'
+import { updateNav, addToast, execute, setIdentityENS } from 'actions'
 import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import {
@@ -209,6 +209,19 @@ function AccountInfo({ t }) {
 								>
 									<CreditCardIcon className={classes.iconBtnLeft} />
 									{t('TOP_UP_IDENTITY_GBP')}
+								</Button>
+								<Button
+									fullWidth
+									variant='contained'
+									color='secondary'
+									aria-label='delete'
+									onClick={() =>
+										execute(setIdentityENS({ username: 'rangel' }))
+									}
+									size='small'
+								>
+									<CreditCardIcon className={classes.iconBtnLeft} />
+									{t('TEST_ENS')}
 								</Button>
 							</Box>
 

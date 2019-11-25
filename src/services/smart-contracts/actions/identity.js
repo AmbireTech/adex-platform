@@ -33,7 +33,7 @@ import solc from 'solcBrowser'
 import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 
 const { DAI } = contracts
-
+const publicResolver = '0x226159d592E2b063810a10Ebf6dcbADA94Ed68b8'
 const { IDENTITY_BASE_ADDR, IDENTITY_FACTORY_ADDR } = process.env
 
 const GAS_LIMIT_DEPLOY_CONTRACT = 150000
@@ -351,6 +351,46 @@ export async function setIdentityPrivilege({
 	return {
 		result,
 	}
+}
+
+export async function addIdentityENS({ username, account }) {
+	const { wallet, identity } = account
+	const { provider, EnsManager, Identity } = await getEthers(wallet.authType)
+	const signer = await getSigner({ wallet, provider })
+	const identityAddr = identity.address
+
+	const ensTx = await prepareTx({
+		tx: EnsManager.registerAndSetup(
+			publicResolver,
+			keccak256(username),
+			identityAddr
+		),
+		provider,
+		sender: wallet.address,
+	})
+	const txns = [ensTx]
+
+	const txnsRaw = await getIdentityTnxsWithNonces({
+		txns,
+		identityAddr,
+		provider,
+		Identity,
+	})
+
+	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
+
+	const data = {
+		txnsRaw,
+		signatures,
+		identityAddr,
+	}
+
+	const result = await executeTx(data)
+
+	return {
+		result,
+	}
+	//registerAndSetup(0x226159d592E2b063810a10Ebf6dcbADA94Ed68b8, keccak256('username'), identityAddr)
 }
 
 export async function getIdentityTnxsWithNonces({
