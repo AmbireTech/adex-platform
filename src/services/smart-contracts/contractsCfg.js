@@ -2,10 +2,17 @@ import Identity from './build/Identity.json'
 import AdExCore from './build/AdExCore.json'
 import Dai from './build/Dai.json'
 import IdentityFactory from './build/IdentityFactory.json'
+import AdExENSManager from './build/AdExENSManager.json'
 
+console.log(process.env)
 export const contracts = {
 	Identity: {
 		abi: Identity.abi,
+	},
+	AdExENSManager: {
+		address:
+			process.env.ADEX_ENS_ADDR || '0xa3F69F48D4a45419d48b56b1CfBF4aF2d4586728',
+		abi: AdExENSManager.abi,
 	},
 	AdExCore: {
 		address: process.env.ADEX_CORE_ADDR,

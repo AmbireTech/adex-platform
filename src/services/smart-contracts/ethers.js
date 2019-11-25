@@ -4,7 +4,7 @@ import { AUTH_TYPES } from 'constants/misc'
 
 ethers.errors.setLogLevel('error')
 
-const { AdExCore, Identity, DAI, IdentityFactory } = contracts
+const { AdExCore, Identity, DAI, IdentityFactory, AdExENSManager } = contracts
 
 const localWeb3 = async () => {
 	const provider = new ethers.providers.JsonRpcProvider(
@@ -12,6 +12,11 @@ const localWeb3 = async () => {
 	)
 	const adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
 	const dai = new ethers.Contract(DAI.address, DAI.abi, provider)
+	const ensManager = new ethers.Contract(
+		AdExENSManager.address,
+		AdExENSManager.abi,
+		provider
+	)
 	const identityFactory = new ethers.Contract(
 		IdentityFactory.address,
 		IdentityFactory.abi,
@@ -23,6 +28,7 @@ const localWeb3 = async () => {
 		AdExCore: adexCore,
 		Identity: Identity,
 		Dai: dai,
+		EnsManager: ensManager,
 		IdentityFactory: identityFactory,
 	}
 
@@ -59,11 +65,17 @@ const injectedWeb3 = async () => {
 				IdentityFactory.abi,
 				provider
 			)
+			const ensManager = new ethers.Contract(
+				AdExENSManager.address,
+				AdExENSManager.abi,
+				provider
+			)
 			const results = {
 				provider: provider,
 				AdExCore: adexCore,
 				Identity: Identity,
 				Dai: dai,
+				EnsManager: ensManager,
 				IdentityFactory: identityFactory,
 			}
 
