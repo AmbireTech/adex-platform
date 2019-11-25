@@ -66,7 +66,7 @@ function AccountInfo({ t }) {
 			hostAppName: 'AdExNetwork',
 			hostLogoUrl: 'https://www.adex.network/img/Adex-logo@2x.png',
 			variant: 'auto',
-			swapAsset: 'DAI',
+			swapAsset: 'SAI',
 			userAddress: account.identity.address,
 		})
 		widget.domNodes.overlay.style.zIndex = 1000
@@ -190,7 +190,7 @@ function AccountInfo({ t }) {
 								loading={!identityBalanceDai && identityBalanceDai !== 0}
 							>
 								<ListItemText
-									primary={`${availableIdentityBalanceDai || 0} DAI`}
+									primary={`${availableIdentityBalanceDai || 0} SAI`}
 									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
 										args: [identityBalanceDai || 0, outstandingBalanceDai || 0],
 									})}
@@ -220,7 +220,7 @@ function AccountInfo({ t }) {
 										color='primary'
 										identityAvailable={availableIdentityBalanceDai}
 										identityAvailableRaw={availableIdentityBalanceDai}
-										token='DAI'
+										token='SAI'
 										size='small'
 									/>
 								</Box>
@@ -261,7 +261,6 @@ function AccountInfo({ t }) {
 											fullWidth
 											variant='contained'
 											color='secondary'
-											token='DAI'
 											size='small'
 											identityAvailable={availableIdentityBalanceDai}
 										/>

@@ -135,7 +135,7 @@ export class Campaign extends Component {
 								{Object.keys(balances).map(key => (
 									<ListItem key={key}>
 										<ListItemText
-											primary={formatTokenAmount(balances[key]) + ' DAI'}
+											primary={formatTokenAmount(balances[key]) + ' SAI'}
 											secondary={key}
 										/>
 									</ListItem>

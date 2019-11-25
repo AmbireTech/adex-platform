@@ -139,7 +139,7 @@ function SideNav(props) {
 								<ListItemText
 									primary={`${parseFloat(
 										availableIdentityBalanceDai || 0
-									).toFixed(2)} DAI`}
+									).toFixed(2)} SAI`}
 								/>
 							</LoadingSection>
 						</ListItem>

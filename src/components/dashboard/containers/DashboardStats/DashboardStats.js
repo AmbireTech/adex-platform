@@ -48,7 +48,7 @@ export function DashboardStats(props) {
 						(!outstandingBalanceDai && outstandingBalanceDai !== 0) ||
 						(!availableIdentityBalanceDai && availableIdentityBalanceDai !== 0)
 					}
-					title={`${availableIdentityBalanceDai || 0} DAI`}
+					title={`${availableIdentityBalanceDai || 0} SAI`}
 				></StatsCard>
 			</div>
 		)

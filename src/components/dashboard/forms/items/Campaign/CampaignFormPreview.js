@@ -98,11 +98,11 @@ class CampaignFormPreview extends Component {
 					/>
 					<PropRow
 						left={t('depositAmount', { isProp: true })}
-						right={depositAmount + ' DAI'}
+						right={depositAmount + ' SAI'}
 					/>
 					<PropRow
 						left={t('CPM', { isProp: true })}
-						right={minPerImpression + ' DAI'}
+						right={minPerImpression + ' SAI'}
 					/>
 					{/* <PropRow
 						left={t('maxPerImpression', { isProp: true })}

@@ -115,7 +115,7 @@ export function BasicStats({ side }) {
 							explain={t('EXPLAIN_TOTAL_SPENT')}
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
-							)} DAI`}
+							)} SAI`}
 							loading={loadingMoney}
 						></StatsCard>
 					)}
@@ -127,7 +127,7 @@ export function BasicStats({ side }) {
 							explain={t('EXPLAIN_TOTAL_REVENUE')}
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
-							)} DAI`}
+							)} SAI`}
 							loading={loadingMoney}
 						></StatsCard>
 					)}
@@ -138,7 +138,7 @@ export function BasicStats({ side }) {
 						loading={loadingCPM}
 						title={`~ ${formatNumberWithCommas(
 							parseFloat(averageCPM || 0).toFixed(2)
-						)} DAI / CPM`}
+						)} SAI / CPM`}
 					></StatsCard>
 				</div>
 			</Grid>

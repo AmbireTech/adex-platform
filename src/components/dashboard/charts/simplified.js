@@ -108,7 +108,7 @@ export const SimpleStatistics = ({
 				label: function(t, d) {
 					// This adds currency DAI to y1Label in the tooltips
 					var xLabel = d.datasets[t.datasetIndex].label
-					var yLabel = xLabel === y1Label ? `${t.yLabel} DAI` : t.yLabel
+					var yLabel = xLabel === y1Label ? `${t.yLabel} SAI` : t.yLabel
 					return `${xLabel}: ${yLabel}`
 				},
 			},
