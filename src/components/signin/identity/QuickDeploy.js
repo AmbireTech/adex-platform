@@ -50,7 +50,6 @@ class QuickDeploy extends Component {
 			authType: AUTH_TYPES.QUICK.name,
 		})
 
-		walletData.authType = AUTH_TYPES.QUICK.name
 		walletData.email = email
 		walletData.password = password
 

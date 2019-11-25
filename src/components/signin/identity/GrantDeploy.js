@@ -47,9 +47,9 @@ class GrantDeploy extends Component {
 		const walletData = createLocalWallet({
 			email,
 			password,
+			authType: AUTH_TYPES.GRANT.name,
 		})
 
-		walletData.authType = AUTH_TYPES.GRANT.name
 		walletData.email = email
 		walletData.password = password
 
