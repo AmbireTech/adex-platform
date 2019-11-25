@@ -10,7 +10,7 @@ import { getAuthLogo } from 'helpers/logosHelpers'
 import Img from 'components/common/img/Img'
 import classnames from 'classnames'
 import { getAllWallets } from 'services/wallet/wallet'
-import { execute, initIdentity } from 'actions'
+import { execute, initIdentity, confirmAction } from 'actions'
 import { selectAuth, selectAccount } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { formatAddress } from 'helpers/formatters'
@@ -35,6 +35,19 @@ const AuthSelect = ({ t, classes }) => {
 		setWallets(wallets)
 		setHasLegacyWallets(hasLegacy)
 	}, [wallet])
+
+	const confirmedLogOut = () => {
+		if (auth) {
+			execute(
+				confirmAction(logOut, null, {
+					confirmLabel: 'CONTINUE_NEW_AUTH',
+					cancelLabel: 'KEEP_MY_SESSION',
+					title: 'CONFIR_DIALOG_NEW_AUTH_TITLE',
+					text: 'CONFIR_DIALOG_NEW_AUTH_TEXT',
+				})
+			)
+		} else logOut()
+	}
 
 	return (
 		<Box
@@ -87,7 +100,7 @@ const AuthSelect = ({ t, classes }) => {
 					color='primary'
 					fullWidth
 					className={classes.limitedWidthBtn}
-					onClick={logOut}
+					onClick={confirmedLogOut}
 				>
 					{t('CREATE_GRANT_ACCOUNT')}
 				</RRButton>
@@ -101,7 +114,7 @@ const AuthSelect = ({ t, classes }) => {
 					color='secondary'
 					fullWidth
 					className={classes.limitedWidthBtn}
-					onClick={logOut}
+					onClick={confirmedLogOut}
 				>
 					{t('LOGIN_GRANT_ACCOUNT')}
 				</RRButton>
@@ -127,7 +140,7 @@ const AuthSelect = ({ t, classes }) => {
 					color='default'
 					fullWidth
 					className={classnames(classes.metamaskBtn, classes.limitedWidthBtn)}
-					onClick={logOut}
+					onClick={confirmedLogOut}
 				>
 					<Img
 						src={getAuthLogo('metamask')}
@@ -145,7 +158,7 @@ const AuthSelect = ({ t, classes }) => {
 					color='default'
 					fullWidth
 					className={classes.trezorBtn}
-					onClick={logOut}
+					onClick={confirmedLogOut}
 				>
 					<Img
 						src={getAuthLogo('trezor')}
