@@ -7,7 +7,7 @@ import { translate } from 'services/translations/translations'
 import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
 import StatsCard from './StatsCard'
 import { makeStyles } from '@material-ui/core/styles'
-import { EDDIE_PINK, EDDIE_BLUE, EDDIE_GREEN } from 'components/App/themeMUi'
+import { PRIMARY, ACCENT_ONE, ACCENT_TWO } from 'components/App/themeMUi'
 import { styles } from './styles'
 import { formatNumberWithCommas } from 'helpers/formatters'
 import {
@@ -28,24 +28,24 @@ const metrics = {
 		{
 			label: translate('LABEL_REVENUE'),
 			value: 'eventPayouts',
-			color: EDDIE_GREEN,
+			color: ACCENT_TWO,
 		},
 		{
 			label: translate('LABEL_IMPRESSIONS'),
 			value: 'eventCounts',
-			color: EDDIE_BLUE,
+			color: PRIMARY,
 		},
 	],
 	advertiser: [
 		{
 			label: translate('LABEL_SPEND'),
 			value: 'eventPayouts',
-			color: EDDIE_PINK,
+			color: ACCENT_ONE,
 		},
 		{
 			label: translate('LABEL_IMPRESSIONS'),
 			value: 'eventCounts',
-			color: EDDIE_BLUE,
+			color: PRIMARY,
 		},
 	],
 }
@@ -102,7 +102,7 @@ export function BasicStats({ side }) {
 						/>
 					</StatsCard>
 					<StatsCard
-						bgColor='eddieBlue'
+						bgColor='primary'
 						subtitle={t('LABEL_TOTAL_IMPRESSIONS')}
 						loading={loadingImpressions}
 						title={`${formatNumberWithCommas(totalImpressions || 0)}`}
@@ -110,7 +110,7 @@ export function BasicStats({ side }) {
 					></StatsCard>
 					{side === 'advertiser' && (
 						<StatsCard
-							bgColor='eddiePink'
+							bgColor='accentOne'
 							subtitle={t('LABEL_TOTAL_SPENT')}
 							explain={t('EXPLAIN_TOTAL_SPENT')}
 							title={`~ ${formatNumberWithCommas(
@@ -122,7 +122,7 @@ export function BasicStats({ side }) {
 
 					{side === 'publisher' && (
 						<StatsCard
-							bgColor='eddieGreen'
+							bgColor='accentTwo'
 							subtitle={t('LABEL_TOTAL_REVENUE')}
 							explain={t('EXPLAIN_TOTAL_REVENUE')}
 							title={`~ ${formatNumberWithCommas(
@@ -132,7 +132,7 @@ export function BasicStats({ side }) {
 						></StatsCard>
 					)}
 					<StatsCard
-						bgColor='adexGrey'
+						bgColor='grey'
 						subtitle={t('LABEL_AVG_CPM')}
 						explain={t('EXPLAIN_AVG_CPM')}
 						loading={loadingCPM}
