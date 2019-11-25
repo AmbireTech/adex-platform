@@ -57,7 +57,7 @@ const timeHints = {
 }
 
 export function BasicStats({ side }) {
-	const [timeframe, setTimeframe] = useState(timeFrames[0].value)
+	const [timeframe, setTimeframe] = useState(timeFrames[1].value)
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 
