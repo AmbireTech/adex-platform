@@ -40,30 +40,26 @@ const AuthSelect = ({ t, classes }) => {
 	}, [wallet])
 
 	const goTo = (to, confirmLogout, onConfirm) => {
-		if (auth && confirmLogout) {
-			execute(
-				confirmAction(
-					() => {
-						logOut()
-						execute(push(to))
-						if (onConfirm && typeof onConfirm === 'function') {
-							onConfirm()
-						}
-					},
-					null,
-					{
-						confirmLabel: t('CONTINUE_NEW_AUTH'),
-						cancelLabel: t('KEEP_MY_SESSION'),
-						title: t('CONFIR_DIALOG_NEW_AUTH_TITLE'),
-						text: t('CONFIR_DIALOG_NEW_AUTH_TEXT', {
-							args: [wallet.authType, wallet.address],
-						}),
-					}
-				)
-			)
-		} else {
+		const toExecute = () => {
 			logOut()
 			execute(push(to))
+			if (onConfirm && typeof onConfirm === 'function') {
+				onConfirm()
+			}
+		}
+		if (auth && confirmLogout) {
+			execute(
+				confirmAction(toExecute, null, {
+					confirmLabel: t('CONTINUE_NEW_AUTH'),
+					cancelLabel: t('KEEP_MY_SESSION'),
+					title: t('CONFIR_DIALOG_NEW_AUTH_TITLE'),
+					text: t('CONFIR_DIALOG_NEW_AUTH_TEXT', {
+						args: [wallet.authType, wallet.address],
+					}),
+				})
+			)
+		} else {
+			toExecute()
 		}
 	}
 
