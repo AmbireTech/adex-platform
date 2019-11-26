@@ -59,13 +59,15 @@ class GrantDeploy extends Component {
 
 	getIdentity = () => {
 		const { identity, actions } = this.props
-		const { email, password, coupon, walletAddr } = identity
+		const { email, password, coupon, walletAddr, wallet } = identity
+		const { authType } = wallet
 
 		actions.getGrantAccount({
 			walletAddr,
 			email,
 			password,
 			coupon,
+			authType,
 		})
 	}
 
