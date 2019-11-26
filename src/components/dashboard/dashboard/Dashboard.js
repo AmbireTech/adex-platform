@@ -21,6 +21,7 @@ import {
 } from 'components/dashboard/forms/items/NewItems'
 import campaignsLoop from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
+import analyticsLoop from 'services/store-data/analytics'
 import {
 	SORT_PROPERTIES_ITEMS,
 	FILTER_PROPERTIES_ITEMS,
@@ -117,6 +118,7 @@ function Dashboard(props) {
 		execute(getAllItems())
 		execute(updateAccountSettings())
 		execute(updateAccountAnalytics())
+		analyticsLoop.start()
 		campaignsLoop.start()
 		statsLoop.start()
 
