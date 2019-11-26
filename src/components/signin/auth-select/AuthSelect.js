@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button'
 import Box from '@material-ui/core/Box'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import Translate from 'components/translate/Translate'
+import { Typography } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { getAuthLogo } from 'helpers/logosHelpers'
@@ -67,6 +68,11 @@ const AuthSelect = ({ t, classes }) => {
 			alignItems='stretch'
 			justifyContent='space-between'
 		>
+			<Box p={2} alignItems='center'>
+				<Typography align='center' variant='subtitle1' display='block'>
+					{t('SIGN_UP_IN_SELECT')}
+				</Typography>
+			</Box>
 			{auth && (
 				<Box m={1}>
 					<RRButton
