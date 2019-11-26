@@ -16,6 +16,7 @@ import { selectAuth, selectAccount } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { formatAddress } from 'helpers/formatters'
 import { push } from 'connected-react-router'
+import { t } from 'selectors'
 
 const RRButton = withReactRouterLink(Button)
 
@@ -51,10 +52,12 @@ const AuthSelect = ({ t, classes }) => {
 					},
 					null,
 					{
-						confirmLabel: 'CONTINUE_NEW_AUTH',
-						cancelLabel: 'KEEP_MY_SESSION',
-						title: 'CONFIR_DIALOG_NEW_AUTH_TITLE',
-						text: 'CONFIR_DIALOG_NEW_AUTH_TEXT',
+						confirmLabel: t('CONTINUE_NEW_AUTH'),
+						cancelLabel: t('KEEP_MY_SESSION'),
+						title: t('CONFIR_DIALOG_NEW_AUTH_TITLE'),
+						text: t('CONFIR_DIALOG_NEW_AUTH_TEXT', {
+							args: [wallet.authType, wallet.address],
+						}),
 					}
 				)
 			)
