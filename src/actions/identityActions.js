@@ -76,7 +76,13 @@ export function resetWallet() {
 	}
 }
 
-export function getGrantAccount({ walletAddr, email, password, coupon }) {
+export function getGrantAccount({
+	walletAddr,
+	email,
+	password,
+	coupon,
+	authType,
+}) {
 	return async function(dispatch) {
 		updateSpinner('getting-grant-identity', true)(dispatch)
 		try {
@@ -92,12 +98,14 @@ export function getGrantAccount({ walletAddr, email, password, coupon }) {
 				addDataToWallet({
 					email,
 					password,
+					authType,
 					dataKey: 'identity',
 					dataValue: identityData.address,
 				})
 				addDataToWallet({
 					email,
 					password,
+					authType,
 					dataKey: 'privileges',
 					dataValue: identityData.privileges,
 				})
