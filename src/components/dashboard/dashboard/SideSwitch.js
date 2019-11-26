@@ -7,8 +7,8 @@ import ListItemText from '@material-ui/core/ListItemText'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 
 const EddieSwitch = withStyles(theme => {
-	const advColor = theme.palette.eddiePink.main
-	const pubColor = theme.palette.eddieGreen.main
+	const advColor = theme.palette.accentOne.main
+	const pubColor = theme.palette.accentTwo.main
 	return {
 		switchBase: {
 			color: advColor,

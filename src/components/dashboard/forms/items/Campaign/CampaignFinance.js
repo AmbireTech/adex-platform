@@ -353,9 +353,9 @@ class CampaignFinance extends Component {
 										parseFloat(availableIdentityBalanceDai) -
 										parseFloat(totalFeesFormatted)
 									).toFixed(2),
-									'DAI',
+									'SAI',
 									totalFeesFormatted,
-									'DAI',
+									'SAI',
 								],
 							})}
 							name='depositAmount'
@@ -370,7 +370,7 @@ class CampaignFinance extends Component {
 								errDepAmnt && !!errDepAmnt.dirty
 									? errDepAmnt.errMsg
 									: t('DEPOSIT_AMOUNT_HELPER_TXT', {
-											args: [totalFeesFormatted, 'DAI'],
+											args: [totalFeesFormatted, 'SAI'],
 									  })
 							}
 						/>

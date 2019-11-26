@@ -36,7 +36,7 @@ class WithdrawFromIdentity extends Component {
 		if (isValid && amount > parseFloat(this.props.identityAvailable)) {
 			isValid = false
 			msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'
-			errMsgArgs = [this.props.identityAvailable, 'DAI']
+			errMsgArgs = [this.props.identityAvailable, 'SAI']
 		}
 
 		this.props.validate('withdrawAmount', {
@@ -111,7 +111,7 @@ class WithdrawFromIdentity extends Component {
 						errAmount && !!errAmount.dirty
 							? errAmount.errMsg
 							: t('MAX_AMOUNT_TO_WITHDRAW', {
-									args: [identityAvailable, 'DAI'],
+									args: [identityAvailable, 'SAI'],
 							  })
 					}
 				/>

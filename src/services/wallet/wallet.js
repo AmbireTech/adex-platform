@@ -64,6 +64,7 @@ export function createLocalWallet({
 	const data = encrData({ data: walletData, email, password })
 	saveToLocalStorage({ data }, key)
 
+	walletData.authType = authType
 	return walletData
 }
 
