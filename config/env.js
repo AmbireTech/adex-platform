@@ -78,6 +78,7 @@ function getClientEnvironment(publicUrl) {
 				IPFS_GATEWAY: process.env.IPFS_GATEWAY,
 				WEB3_NODE_ADDR: process.env.WEB3_NODE_ADDR, // set in .env.(production/development).local
 				ADEX_CORE_ADDR: process.env.ADEX_CORE_ADDR,
+				ADEX_ENS_ADDR: process.env.ADEX_ENS_ADDR,
 				ADX_TOKEN_ADDR: process.env.ADX_TOKEN_ADDR,
 				ETH_SCAN_ADDR_HOST: process.env.ETH_SCAN_ADDR_HOST,
 				ETH_SCAN_TX_HOST: process.env.ETH_SCAN_ADDR_HOST,

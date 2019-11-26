@@ -10,8 +10,7 @@ export const contracts = {
 		abi: Identity.abi,
 	},
 	AdExENSManager: {
-		address:
-			process.env.ADEX_ENS_ADDR || '0xa3F69F48D4a45419d48b56b1CfBF4aF2d4586728',
+		address: process.env.ADEX_ENS_ADDR,
 		abi: AdExENSManager.abi,
 	},
 	AdExCore: {

@@ -15,6 +15,7 @@ import {
 	hexlify,
 	Interface,
 	keccak256,
+	formatBytes32String,
 } from 'ethers/utils'
 import { generateAddress2 } from 'ethereumjs-util'
 import {
@@ -358,11 +359,11 @@ export async function addIdentityENS({ username, account }) {
 	const { provider, EnsManager, Identity } = await getEthers(wallet.authType)
 	const signer = await getSigner({ wallet, provider })
 	const identityAddr = identity.address
-
+	const hexUsername = formatBytes32String(username)
 	const ensTx = await prepareTx({
 		tx: EnsManager.registerAndSetup(
 			publicResolver,
-			keccak256(username),
+			keccak256(hexUsername),
 			identityAddr
 		),
 		provider,
