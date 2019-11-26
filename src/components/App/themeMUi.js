@@ -1,4 +1,4 @@
-import { createMuiTheme } from '@material-ui/core/styles'
+import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
 import lime from '@material-ui/core/colors/lime'
 import deepOrange from '@material-ui/core/colors/deepOrange'
 import amber from '@material-ui/core/colors/amber'
@@ -25,7 +25,7 @@ const palette = {
 	text: grey,
 }
 
-export const themeMUI = createMuiTheme({
+const theme = createMuiTheme({
 	typography: {
 		fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
 		fontSize: 13,
@@ -68,4 +68,9 @@ export const themeMUI = createMuiTheme({
 		//     }
 		// }
 	},
+})
+
+export const themeMUI = responsiveFontSizes(theme, {
+	options: ['xs', 'sm', 'md', 'lg', 'xl'],
+	factor: 3,
 })
