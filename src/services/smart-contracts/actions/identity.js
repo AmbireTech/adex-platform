@@ -33,7 +33,7 @@ import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy
 import solc from 'solcBrowser'
 import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 
-const { DAI } = contracts
+const { DAI, AdExENSManager } = contracts
 const publicResolver = '0x226159d592E2b063810a10Ebf6dcbADA94Ed68b8'
 const { IDENTITY_BASE_ADDR, IDENTITY_FACTORY_ADDR } = process.env
 
@@ -41,6 +41,7 @@ const GAS_LIMIT_DEPLOY_CONTRACT = 150000
 const feeAmountTransfer = '150000000000000000'
 const feeAmountSetPrivileges = '150000000000000000'
 const ERC20 = new Interface(DAI.abi)
+const IAdExENSManager = new Interface(AdExENSManager.abi)
 /*
 export async function getIdentityBytecode({ owner, privLevel }) {
 	const res = await identityBytecode({
@@ -356,20 +357,26 @@ export async function setIdentityPrivilege({
 
 export async function addIdentityENS({ username, account }) {
 	const { wallet, identity } = account
-	const { provider, EnsManager, Identity } = await getEthers(wallet.authType)
+	const { provider, Dai, EnsManager, Identity } = await getEthers(
+		wallet.authType
+	)
 	const signer = await getSigner({ wallet, provider })
 	const identityAddr = identity.address
 	const hexUsername = formatBytes32String(username)
-	const ensTx = await prepareTx({
-		tx: EnsManager.registerAndSetup(
+
+	const tx1 = {
+		identityContract: identityAddr,
+		feeTokenAddr: Dai.address,
+		feeAmount: feeAmountSetPrivileges,
+		to: EnsManager.address,
+		data: IAdExENSManager.functions.registerAndSetup.encode([
 			publicResolver,
 			keccak256(hexUsername),
-			identityAddr
-		),
-		provider,
-		sender: wallet.address,
-	})
-	const txns = [ensTx]
+			identityAddr,
+		]),
+	}
+
+	const txns = [tx1]
 
 	const txnsRaw = await getIdentityTnxsWithNonces({
 		txns,
