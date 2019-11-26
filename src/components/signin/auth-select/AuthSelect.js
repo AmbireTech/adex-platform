@@ -14,6 +14,7 @@ import { execute, initIdentity, confirmAction } from 'actions'
 import { selectAuth, selectAccount } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { formatAddress } from 'helpers/formatters'
+import { push } from 'connected-react-router'
 
 const RRButton = withReactRouterLink(Button)
 
@@ -36,17 +37,27 @@ const AuthSelect = ({ t, classes }) => {
 		setHasLegacyWallets(hasLegacy)
 	}, [wallet])
 
-	const confirmedLogOut = () => {
-		if (auth) {
+	const goTo = (to, confirmLogout) => {
+		if (auth && confirmLogout) {
 			execute(
-				confirmAction(logOut, null, {
-					confirmLabel: 'CONTINUE_NEW_AUTH',
-					cancelLabel: 'KEEP_MY_SESSION',
-					title: 'CONFIR_DIALOG_NEW_AUTH_TITLE',
-					text: 'CONFIR_DIALOG_NEW_AUTH_TEXT',
-				})
+				confirmAction(
+					() => {
+						logOut()
+						execute(push(to))
+					},
+					null,
+					{
+						confirmLabel: 'CONTINUE_NEW_AUTH',
+						cancelLabel: 'KEEP_MY_SESSION',
+						title: 'CONFIR_DIALOG_NEW_AUTH_TITLE',
+						text: 'CONFIR_DIALOG_NEW_AUTH_TEXT',
+					}
+				)
 			)
-		} else logOut()
+		} else {
+			logOut()
+			execute(push(to))
+		}
 	}
 
 	return (
@@ -93,31 +104,30 @@ const AuthSelect = ({ t, classes }) => {
 				</Box>
 			))}
 			<Box m={1}>
-				<RRButton
+				<Button
 					variant='contained'
 					to='/identity/grant'
 					size='large'
 					color='primary'
 					fullWidth
 					className={classes.limitedWidthBtn}
-					onClick={confirmedLogOut}
+					onClick={() => goTo('/identity/grant', true)}
 				>
 					{t('CREATE_GRANT_ACCOUNT')}
-				</RRButton>
+				</Button>
 			</Box>
 			{/* {hasLegacyWallets && ( */}
 			<Box m={1}>
-				<RRButton
+				<Button
 					variant='contained'
-					to='/login/grant'
 					size='large'
 					color='secondary'
 					fullWidth
 					className={classes.limitedWidthBtn}
-					onClick={confirmedLogOut}
+					onClick={() => goTo('/login/grant', true)}
 				>
 					{t('LOGIN_GRANT_ACCOUNT')}
-				</RRButton>
+				</Button>
 			</Box>
 			{/* )} */}
 			{/* <Box m={1}>
@@ -133,14 +143,13 @@ const AuthSelect = ({ t, classes }) => {
 				</RRButton>
 			</Box> */}
 			<Box m={1}>
-				<RRButton
+				<Button
 					variant='contained'
-					to='/login/full?metamask'
 					size='large'
 					color='default'
 					fullWidth
 					className={classnames(classes.metamaskBtn, classes.limitedWidthBtn)}
-					onClick={confirmedLogOut}
+					onClick={() => goTo('/login/full?metamask', true)}
 				>
 					<Img
 						src={getAuthLogo('metamask')}
@@ -148,17 +157,16 @@ const AuthSelect = ({ t, classes }) => {
 						className={classes.btnLogo}
 					/>
 					{t('METAMASK')}
-				</RRButton>
+				</Button>
 			</Box>
 			<Box m={1}>
-				<RRButton
+				<Button
 					variant='contained'
-					to='/login/full?trezor'
 					size='large'
 					color='default'
 					fullWidth
 					className={classes.trezorBtn}
-					onClick={confirmedLogOut}
+					onClick={() => goTo('/login/full?trezor', true)}
 				>
 					<Img
 						src={getAuthLogo('trezor')}
@@ -170,7 +178,7 @@ const AuthSelect = ({ t, classes }) => {
 						)}
 					/>
 					{/* {t('TREZOR')} */}
-				</RRButton>
+				</Button>
 			</Box>
 			{/* <Box m={1}>
 				<RRButton
