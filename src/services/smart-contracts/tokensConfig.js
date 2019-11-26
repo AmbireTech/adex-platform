@@ -10,7 +10,7 @@ export const tokens = [
 		},
 	},
 	{
-		symbol: 'DAI',
+		symbol: 'SAI',
 		decimals: 18,
 		contractAddress: {
 			mainnet: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',

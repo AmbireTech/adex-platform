@@ -34,13 +34,13 @@ const { ETH_SCAN_ADDR_HOST } = process.env
 const useStyles = makeStyles(theme => {
 	const activeColor = ({ side }) =>
 		side === 'advertiser'
-			? theme.palette.eddiePink.contrastText
-			: theme.palette.eddieGreen.contrastText
+			? theme.palette.accentOne.contrastText
+			: theme.palette.accentTwo.contrastText
 
 	const activeBgColor = ({ side }) =>
 		side === 'advertiser'
-			? theme.palette.eddiePink.main
-			: theme.palette.eddieGreen.main
+			? theme.palette.accentOne.main
+			: theme.palette.accentTwo.main
 
 	return {
 		navigation: {
@@ -139,7 +139,7 @@ function SideNav(props) {
 								<ListItemText
 									primary={`${parseFloat(
 										availableIdentityBalanceDai || 0
-									).toFixed(2)} DAI`}
+									).toFixed(2)} SAI`}
 								/>
 							</LoadingSection>
 						</ListItem>

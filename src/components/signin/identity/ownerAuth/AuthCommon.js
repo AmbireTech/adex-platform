@@ -17,7 +17,7 @@ export const addrItem = ({ stats, t, classes }) => {
 						<strong> {utils.formatEther(balanceEth)} </strong>
 					</span>
 					<span>
-						<span> DAI </span>
+						<span> SAI </span>
 						<strong> {utils.formatEther(balanceDai)} </strong>
 					</span>
 				</span>

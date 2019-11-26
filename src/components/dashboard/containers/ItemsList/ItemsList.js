@@ -174,7 +174,7 @@ class ItemsList extends Component {
 				<TableCell> {status.name} </TableCell>
 				<TableCell>
 					{' '}
-					{formatTokenAmount(item.depositAmount, 18, true)} DAI{' '}
+					{formatTokenAmount(item.depositAmount, 18, true)} SAI{' '}
 				</TableCell>
 				<TableCell>
 					{' '}
@@ -186,7 +186,7 @@ class ItemsList extends Component {
 						18,
 						true
 					)}{' '}
-					DAI
+					SAI
 				</TableCell>
 				<TableCell>
 					{/* {formatDateTime(item.created)} <br /> */}

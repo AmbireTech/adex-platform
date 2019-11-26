@@ -150,7 +150,7 @@ class AdSlotBasic extends Component {
 							fullWidth
 							type='text'
 							required
-							label={t('MIN_CPM_SLOT_LABEL', { args: ['DAI'] })}
+							label={t('MIN_CPM_SLOT_LABEL', { args: ['SAI'] })}
 							name='minPerImpression'
 							value={minPerImpression}
 							onChange={ev => {

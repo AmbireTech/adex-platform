@@ -53,7 +53,7 @@ class TransactionPreview extends Component {
 					if (parseFloat(fees.fees || 0) > parseFloat(identityAvailable)) {
 						handleChange('errors', [
 							t('INSUFFICIENT_BALANCE_FOR_FEES', {
-								args: [identityAvailable, 'DAI', fees.fees, 'DAI'],
+								args: [identityAvailable, 'SAI', fees.fees, 'SAI'],
 							}),
 						])
 					}

@@ -11,10 +11,12 @@ import {
 
 import campaignsLoop from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
+import analyticsLoop from 'services/store-data/analytics'
 
 import { push } from 'connected-react-router'
 
 export const logOut = skipRedirect => {
+	analyticsLoop.stop()
 	campaignsLoop.stop()
 	statsLoop.stop()
 	if (!skipRedirect) {

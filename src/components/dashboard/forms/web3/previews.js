@@ -25,9 +25,9 @@ export const IdentityWithdrawPreview = ({
 				<ListItemText
 					className={classes.address}
 					secondary={t('AMOUNT_WITHDRAW_INFO', {
-						args: [fees.fees, 'DAI', fees.toGet, 'DAI'],
+						args: [fees.fees, 'SAI', fees.toGet, 'SAI'],
 					})}
-					primary={withdrawAmount + ' DAI'}
+					primary={withdrawAmount + ' SAI'}
 				/>
 			}
 		/>
@@ -54,7 +54,7 @@ export const SetPrivilegePreview = ({
 				<ListItemText
 					className={classes.address}
 					secondary={t('PRIV_LEVEL_INFO_AND_FEES', {
-						args: [fees.fees, 'DAI'],
+						args: [fees.fees, 'SAI'],
 					})}
 					primary={privilegesNames[privLevel]}
 				/>

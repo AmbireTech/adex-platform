@@ -21,7 +21,7 @@ const getIdentitiesForDropdown = (ownerIdentities = [], t) =>
 					id.identity,
 					id.privLevel,
 					formatTokenAmount(bigNumberify(id.balanceDAI).toString(), 18, true),
-					'DAI',
+					'SAI',
 				],
 			}),
 		}
