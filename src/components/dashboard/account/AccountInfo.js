@@ -29,6 +29,7 @@ import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import { selectAccount } from 'selectors'
+import ReverseENS from 'helpers/EnsResolver'
 
 // const RRButton = withReactRouterLink(Button)
 
@@ -111,7 +112,7 @@ function AccountInfo({ t }) {
 						>
 							<ListItemText
 								className={classes.address}
-								primary={identityAddress}
+								primary={<ReverseENS lookup={identityAddress} />}
 								secondary={
 									account._authType === 'demo'
 										? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
