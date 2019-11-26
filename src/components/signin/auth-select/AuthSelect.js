@@ -38,13 +38,16 @@ const AuthSelect = ({ t, classes }) => {
 		setHasLegacyWallets(hasLegacy)
 	}, [wallet])
 
-	const goTo = (to, confirmLogout) => {
+	const goTo = (to, confirmLogout, onConfirm) => {
 		if (auth && confirmLogout) {
 			execute(
 				confirmAction(
 					() => {
 						logOut()
 						execute(push(to))
+						if (onConfirm && typeof onConfirm === 'function') {
+							onConfirm()
+						}
 					},
 					null,
 					{
@@ -94,19 +97,20 @@ const AuthSelect = ({ t, classes }) => {
 			)}
 			{wallets.map(w => (
 				<Box key={w.name} m={1}>
-					<RRButton
+					<Button
 						variant='contained'
-						to={`/login/quick`}
 						size='large'
 						color='primary'
 						fullWidth
 						className={classes.limitedWidthBtn}
-						onClick={() =>
-							execute(initIdentity({ email: w.name, authType: w.authType }))
-						}
+						onClick={() => {
+							goTo('/login/quick', true, () =>
+								execute(initIdentity({ email: w.name, authType: w.authType }))
+							)
+						}}
 					>
 						{t('SIGN_IN_TO', { args: [w.name] })}
-					</RRButton>
+					</Button>
 				</Box>
 			))}
 			<Box m={1}>
