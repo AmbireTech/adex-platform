@@ -268,11 +268,11 @@ export function setIdentityENS({ username }) {
 
 			addToast({
 				type: 'accept',
-				label: translate('IDENTITY_WITHDRAW_NOTIFICATION', { args: [result] }),
+				label: translate('ENS_SETUP_NOTIFICATION', { args: [result] }),
 				timeout: 20000,
 			})(dispatch)
 		} catch (err) {
-			console.error('ERR_IDENTITY_WITHDRAW_NOTIFICATION', err)
+			console.error('ERR_ENS_SETUP_NOTIFICATION', err)
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_IDENTITY_WITHDRAW_NOTIFICATION', { args: [err] }),
