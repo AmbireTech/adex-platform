@@ -112,7 +112,7 @@ const AuthSelect = ({ t, classes }) => {
 					</Button>
 				</Box>
 			))}
-			<Box m={1}>
+			{/* <Box m={1}>
 				<Button
 					variant='contained'
 					to='/identity/grant'
@@ -124,9 +124,9 @@ const AuthSelect = ({ t, classes }) => {
 				>
 					{t('CREATE_GRANT_ACCOUNT')}
 				</Button>
-			</Box>
+			</Box> */}
 			{/* {hasLegacyWallets && ( */}
-			<Box m={1}>
+			{/* <Box m={1}>
 				<Button
 					variant='contained'
 					size='large'
@@ -137,9 +137,9 @@ const AuthSelect = ({ t, classes }) => {
 				>
 					{t('LOGIN_GRANT_ACCOUNT')}
 				</Button>
-			</Box>
+			</Box> */}
 			{/* )} */}
-			{/* <Box m={1}>
+			<Box m={1}>
 				<RRButton
 					variant='contained'
 					to='/identity/quick'
@@ -150,7 +150,7 @@ const AuthSelect = ({ t, classes }) => {
 				>
 					{t('CREATE_QUICK_ACCOUNT')}
 				</RRButton>
-			</Box> */}
+			</Box>
 			<Box m={1}>
 				<Button
 					variant='contained'
@@ -189,7 +189,7 @@ const AuthSelect = ({ t, classes }) => {
 					{/* {t('TREZOR')} */}
 				</Button>
 			</Box>
-			{/* <Box m={1}>
+			<Box m={1}>
 				<RRButton
 					variant='link'
 					to='/recover/quick'
@@ -200,7 +200,7 @@ const AuthSelect = ({ t, classes }) => {
 				>
 					{t('RECOVER_QUICK_ACCOUNT')}
 				</RRButton>
-			</Box> */}
+			</Box>
 		</Box>
 	)
 }
