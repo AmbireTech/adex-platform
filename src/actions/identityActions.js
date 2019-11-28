@@ -227,6 +227,7 @@ export function onUploadLocalWallet(event) {
 					throw new Error(translate('INVALID_JSON_DATA'))
 				} else {
 					saveToLocalStorage(obj.wallet, obj.key)
+					updateIdentity('uploadedLocalWallet', obj.key)(dispatch)
 					addToast({
 						type: 'accept',
 						label: translate('SUCCESS_UPLOADING_ACCOUNT_DATA'),
@@ -344,9 +345,11 @@ export function addrIdentityPrivilege({ setAddr, privLevel }) {
 
 export function getQuickWalletSalt({ email }) {
 	return async function(dispatch, getState) {
+		updateSpinner('getting-quick-wallet-salt', true)(dispatch)
 		try {
 			const { salt } = await quickWaletSalt({ email })
 			updateIdentity('backupSalt', salt)(dispatch)
+			return salt
 		} catch (err) {
 			console.error('ERR_GETTING_WALLET_SALT', err)
 			addToast({
@@ -357,11 +360,13 @@ export function getQuickWalletSalt({ email }) {
 				timeout: 20000,
 			})(dispatch)
 		}
+		updateSpinner('getting-quick-wallet-salt', false)(dispatch)
 	}
 }
 
 export function getQuickWalletBackup({ email, salt, hash, encryptedWallet }) {
 	return async function(dispatch, getState) {
+		updateSpinner('getting-quick-wallet-backup', true)(dispatch)
 		try {
 			const { wallet } = await getQuickWallet({
 				email,
@@ -380,5 +385,6 @@ export function getQuickWalletBackup({ email, salt, hash, encryptedWallet }) {
 				timeout: 20000,
 			})(dispatch)
 		}
+		updateSpinner('getting-quick-wallet-backup', false)(dispatch)
 	}
 }
