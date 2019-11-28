@@ -240,7 +240,7 @@ export const quickWaletSalt = ({ email }) => {
 		.then(processResponse)
 }
 
-export const quickWallet = ({ hash }) => {
+export const getQuickWallet = ({ hash }) => {
 	return requester
 		.fetch({
 			route: `wallet/${encodeURIComponent(hash)}`,

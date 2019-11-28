@@ -1,5 +1,10 @@
 import * as types from 'constants/actionTypes'
-import { grantAccount } from 'services/adex-relayer/actions'
+import {
+	grantAccount,
+	quickWaletSalt,
+	getQuickWallet,
+	// backupWallet,
+} from 'services/adex-relayer/actions'
 import { updateSpinner } from './uiActions'
 import { deployIdentityContract } from 'services/smart-contracts/actions/identity'
 import {
@@ -329,6 +334,47 @@ export function addrIdentityPrivilege({ setAddr, privLevel }) {
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', {
+					args: [err],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function getQuickWalletSalt({ email }) {
+	return async function(dispatch, getState) {
+		try {
+			const { salt } = await quickWaletSalt({ email })
+			updateIdentity('backupSalt', salt)(dispatch)
+		} catch (err) {
+			console.error('ERR_GETTING_WALLET_SALT', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_GETTING_WALLET_SALT', {
+					args: [err],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function getQuickWalletBackup({ email, salt, hash, encryptedWallet }) {
+	return async function(dispatch, getState) {
+		try {
+			const { wallet } = await getQuickWallet({
+				email,
+				salt,
+				hash,
+				encryptedWallet,
+			})
+			updateIdentity('backupWallet', wallet)(dispatch)
+		} catch (err) {
+			console.error('ERR_GETTING_QUICK_WALLET_BACKUP', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_GETTING_QUICK_WALLET_BACKUP', {
 					args: [err],
 				}),
 				timeout: 20000,
