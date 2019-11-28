@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 		margin: 'auto',
 	},
 	logo: {
-		height: '4rem',
+		height: '5rem',
 		width: '100%',
 	},
 }))
@@ -109,19 +109,23 @@ export default function Home({ t, ...rest }) {
 				</Box> */}
 				<Box p={2}>
 					<Typography variant='h2' gutterBottom>
-						{t('HOME_TITLE')}
+						<Box fontWeight='fontWeightNormal' m={1}>
+							{t('HOME_TITLE')}
+						</Box>
 					</Typography>
 				</Box>
 				<Box p={2}>
 					<Typography variant='h3' gutterBottom>
-						{t('HOME_SUBTITLE')}
+						<Box fontWeight='fontWeightLight' m={1}>
+							{t('HOME_SUBTITLE')}
+						</Box>
 					</Typography>
 				</Box>
-				<Box p={1}>
+				{/* <Box p={1}>
 					<Typography variant='h6' component='h6' gutterBottom>
 						{t('GET_IN_TOUCH')}
 					</Typography>
-				</Box>
+				</Box> */}
 				<Box
 					height='30%'
 					position='relative'
