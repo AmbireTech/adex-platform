@@ -230,3 +230,37 @@ export const regAccount = ({
 		})
 		.then(processResponse)
 }
+
+export const quickWaletSalt = ({ email }) => {
+	return requester
+		.fetch({
+			route: `wallet/salt/${encodeURIComponent(email)}`,
+			method: 'GET',
+		})
+		.then(processResponse)
+}
+
+export const quickWallet = ({ hash }) => {
+	return requester
+		.fetch({
+			route: `wallet/${encodeURIComponent(hash)}`,
+			method: 'GET',
+		})
+		.then(processResponse)
+}
+
+export const backupWallet = ({ email, salt, hash, encryptedWallet }) => {
+	return requester
+		.fetch({
+			route: `wallet`,
+			method: 'POST',
+			body: JSON.stringify({
+				email,
+				salt,
+				hash,
+				encryptedWallet,
+			}),
+			headers: { 'Content-Type': 'application/json' },
+		})
+		.then(processResponse)
+}
