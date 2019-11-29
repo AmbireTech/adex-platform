@@ -174,7 +174,7 @@ class ItemsList extends Component {
 				<TableCell> {status.name} </TableCell>
 				<TableCell>
 					{' '}
-					{formatTokenAmount(item.depositAmount, 18, true)} DAI{' '}
+					{formatTokenAmount(item.depositAmount, 18, true)} SAI{' '}
 				</TableCell>
 				<TableCell>
 					{' '}
@@ -186,7 +186,7 @@ class ItemsList extends Component {
 						18,
 						true
 					)}{' '}
-					DAI
+					SAI
 				</TableCell>
 				<TableCell>
 					{/* {formatDateTime(item.created)} <br /> */}
@@ -199,10 +199,9 @@ class ItemsList extends Component {
 	}
 
 	renderActions = ({ item, to }) => {
-		const { t, account, actions, authSig, itemType } = this.props
-		const itemName = item.title
-		const itemTypeName = t(itemType, { isProp: true })
-		const isDemo = account.wallet.address === 'demo'
+		const { t, actions, itemType } = this.props
+		// const itemName = item.title
+		// const itemTypeName = t(itemType, { isProp: true })
 
 		return (
 			<TableCell>
@@ -325,7 +324,6 @@ class ItemsList extends Component {
 
 ItemsList.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
 	items: PropTypes.array.isRequired,
 	viewModeId: PropTypes.string.isRequired,
 	header: PropTypes.string,
@@ -340,10 +338,8 @@ ItemsList.propTypes = {
 }
 
 function mapStateToProps(state, props) {
-	const persist = state.persist
 	const memory = state.memory
 	return {
-		account: persist.account,
 		side: memory.nav.side,
 		selectedItems: props.selectedItems || {},
 	}

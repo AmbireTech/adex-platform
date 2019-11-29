@@ -72,7 +72,7 @@ class AdSlotPreview extends Component {
 					/>
 					<PropRow
 						left={t('MIN_CPM_SLOT_LABEL')}
-						right={minPerImpression + ' DAI'}
+						right={minPerImpression + ' SAI'}
 					/>
 					{temp.useFallback && (
 						<SlotFallback
@@ -104,7 +104,6 @@ class AdSlotPreview extends Component {
 }
 
 AdSlotPreview.propTypes = {
-	actions: PropTypes.object.isRequired,
 	account: PropTypes.object.isRequired,
 	newItem: PropTypes.object.isRequired,
 	title: PropTypes.string,

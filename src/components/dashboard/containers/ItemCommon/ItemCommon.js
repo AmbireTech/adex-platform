@@ -202,7 +202,7 @@ const SlotMinCPM = ({
 			margin='dense'
 			error={!!errMin}
 		>
-			<InputLabel>{t('MIN_CPM_SLOT_LABEL', { args: ['DAI'] })}</InputLabel>
+			<InputLabel>{t('MIN_CPM_SLOT_LABEL', { args: ['SAI'] })}</InputLabel>
 			<Input
 				fullWidth
 				autoFocus
@@ -502,7 +502,7 @@ const campaignProps = ({
 													<TextField
 														// type='text'
 														value={
-															formatTokenAmount(item.depositAmount, 18) + ' DAI'
+															formatTokenAmount(item.depositAmount, 18) + ' SAI'
 														}
 														label={t('depositAmount', { isProp: true })}
 														disabled
@@ -518,7 +518,7 @@ const campaignProps = ({
 																bigNumberify(item.minPerImpression).mul(1000),
 																18,
 																true
-															) + ' DAI'
+															) + ' SAI'
 														}
 														label={t('CPM', { isProp: true })}
 														disabled

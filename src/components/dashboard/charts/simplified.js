@@ -1,19 +1,9 @@
 import React, { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
-import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
-
-const parseValueByMetric = ({ value, metric }) => {
-	switch (metric) {
-		case 'eventPayouts':
-			return parseFloat(formatTokenAmount(value, 18))
-		case 'eventCounts':
-			return parseInt(value, 10)
-		default:
-			return value
-	}
-}
+import { selectStatsChartData } from 'selectors'
 
 const commonDsProps = {
 	fill: false,
@@ -23,26 +13,10 @@ const commonDsProps = {
 	pointHitRadius: 10,
 }
 
-const parseData = ({ data, metric, timeframe, noLastOne = false }) => {
-	const allData = data[metric][timeframe].aggr || []
-	let aggr = noLastOne ? allData.slice(0, -1) : allData
-	return aggr.reduce(
-		(memo, item) => {
-			const { time, value } = item
-			memo.labels.push(formatDateTime(time))
-			memo.datasets.push(parseValueByMetric({ value, metric }))
-			return memo
-		},
-		{
-			labels: [],
-			datasets: [],
-		}
-	)
-}
-
 export const SimpleStatistics = ({
-	data = {},
+	side,
 	timeframe = '',
+	eventType,
 	options = {},
 	t,
 	xLabel = 'TIMEFRAME',
@@ -51,6 +25,26 @@ export const SimpleStatistics = ({
 	y1Color = CHARTS_COLORS[1],
 	y2Color = CHARTS_COLORS[2],
 }) => {
+	const payouts = useSelector(state =>
+		selectStatsChartData(state, {
+			side,
+			timeframe,
+			eventType,
+			metric: 'eventPayouts',
+			noLastOne: true,
+		})
+	)
+
+	const counts = useSelector(state =>
+		selectStatsChartData(state, {
+			side,
+			timeframe,
+			eventType,
+			metric: 'eventCounts',
+			noLastOne: true,
+		})
+	)
+
 	// Vertical line / crosshair
 	useEffect(() => {
 		Chart.pluginService.register({
@@ -76,24 +70,14 @@ export const SimpleStatistics = ({
 	})
 
 	const chartData = {
-		labels: parseData({
-			data,
-			metric: 'eventPayouts',
-			timeframe,
-			noLastOne: true,
-		}).labels,
+		labels: payouts.labels,
 		datasets: [
 			{
 				...commonDsProps,
 				backgroundColor: Helper.hexToRgbaColorString(y1Color, 0.5),
 				borderColor: Helper.hexToRgbaColorString(y1Color, 1),
 				label: y1Label,
-				data: parseData({
-					data,
-					metric: 'eventPayouts',
-					timeframe,
-					noLastOne: true,
-				}).datasets,
+				data: payouts.datasets,
 				yAxisID: 'y-axis-1',
 				pointBackgroundColor: 'transparent',
 			},
@@ -102,12 +86,7 @@ export const SimpleStatistics = ({
 				backgroundColor: Helper.hexToRgbaColorString(y2Color, 0.5),
 				borderColor: Helper.hexToRgbaColorString(y2Color, 1),
 				label: y2Label,
-				data: parseData({
-					data,
-					metric: 'eventCounts',
-					timeframe,
-					noLastOne: true,
-				}).datasets,
+				data: counts.datasets,
 				yAxisID: 'y-axis-2',
 			},
 		],
@@ -129,7 +108,7 @@ export const SimpleStatistics = ({
 				label: function(t, d) {
 					// This adds currency DAI to y1Label in the tooltips
 					var xLabel = d.datasets[t.datasetIndex].label
-					var yLabel = xLabel === y1Label ? `${t.yLabel} DAI` : t.yLabel
+					var yLabel = xLabel === y1Label ? `${t.yLabel} SAI` : t.yLabel
 					return `${xLabel}: ${yLabel}`
 				},
 			},

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Switch, HashRouter as Router } from 'react-router-dom'
+import { HashRouter as Router } from 'react-router-dom'
 import 'react-image-crop/dist/ReactCrop.css'
 import './App.css'
 import { Provider } from 'react-redux'

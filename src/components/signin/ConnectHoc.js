@@ -1,17 +1,18 @@
 import React from 'react'
-import Logo from 'components/common/icons/AdexIconTxt'
-import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
+import Hidden from '@material-ui/core/Hidden'
 import Anchor from 'components/common/anchor/anchor'
 import packageJson from './../../../package.json'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-
 import AuthSelect from 'components/signin/auth-select/AuthSelect'
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
+import { t } from 'selectors'
+import { Typography } from '@material-ui/core'
 
 export default function ConnectHoc(Decorated) {
-	function Connect({ classes, t, noBackground, rest }) {
+	function Connect({ classes, ...rest }) {
 		return (
 			<div className={classes.root}>
 				<Grid
@@ -24,29 +25,26 @@ export default function ConnectHoc(Decorated) {
 						<Box width={1} height={1} p={4}>
 							<Box width={1} height={1} position='relative'>
 								<Decorated t={t} {...rest} />
+								<Hidden mdUp>
+									<Box display='flex' justifyContent='center'>
+										<ArrowDropDownIcon color='primary' fontSize='large' />
+									</Box>
+								</Hidden>
 							</Box>
 						</Box>
 					</Grid>
-					<Grid
-						item
-						container
-						xs={12}
-						md={5}
-						lg={4}
-						xl={3}
-						alignItems='stretch'
-						className={classes.buttons}
-					>
-						<Grid
-							container
-							direction='column'
+					<Grid item xs={12} md={5} lg={4} xl={3}>
+						<Box
+							display='flex'
+							flexDirection='column'
 							alignItems='stretch'
-							justify='space-between'
+							justifyContent='space-between'
+							style={{ height: '100%' }}
 						>
-							<Box p={2}>
-								<div className={classes.adexLogoTop}>
-									<Logo className={classes.logo} />
-								</div>
+							<Box p={4} alignItems='center'>
+								<Typography align='center' variant='h3'>
+									{t('SIGN_UP_IN')}
+								</Typography>
 							</Box>
 							<Box p={2}>
 								<AuthSelect {...rest} />
@@ -69,12 +67,12 @@ export default function ConnectHoc(Decorated) {
 									{`v.${packageJson.version}-beta`}
 								</small>
 							</Box>
-						</Grid>
+						</Box>
 					</Grid>
 				</Grid>
 			</div>
 		)
 	}
 
-	return Translate(withStyles(styles)(Connect))
+	return withStyles(styles)(Connect)
 }

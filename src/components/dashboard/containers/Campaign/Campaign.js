@@ -20,6 +20,7 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
+import Anchor from 'components/common/anchor/anchor'
 import { formatTokenAmount } from 'helpers/formatters'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
@@ -35,10 +36,10 @@ export class Campaign extends Component {
 		}
 	}
 
-	componentDidMount = () => {
-		this.props.actions.updateCampaignState({ campaign: this.props.item })
-		// this.props.actions.updateCampaignStatistics({ campaign: this.props.item })
-	}
+	// componentDidMount = () => {
+	// 	this.props.actions.updateCampaignState({ campaign: this.props.item })
+	// 	// this.props.actions.updateCampaignStatistics({ campaign: this.props.item })
+	// }
 
 	handleTabChange = (event, index) => {
 		this.setState({ tabIndex: index })
@@ -77,11 +78,13 @@ export class Campaign extends Component {
 		const campaign = new CampaignModel(item)
 
 		const balances =
-			campaign.state && campaign.state.lastApproved
-				? campaign.state.lastApproved.newState.msg.balances
+			campaign.status && campaign.status.lastApprovedBalances
+				? campaign.status.lastApprovedBalances
 				: {}
 
 		const status = (campaign.status || {}).name
+		const leader = campaign.spec.validators[0]
+		const follower = campaign.spec.validators[1]
 
 		return (
 			<div>
@@ -97,6 +100,7 @@ export class Campaign extends Component {
 						// />
 						(status === 'Ready' ||
 							status === 'Active' ||
+							status === 'Withdraw' ||
 							status === 'Unhealthy') && (
 							<this.CampaignActions
 								campaign={campaign}
@@ -118,6 +122,7 @@ export class Campaign extends Component {
 						>
 							<Tab label={t('STATE')} />
 							<Tab label={t('CAMPAIGN_UNITS')} />
+							<Tab label={t('VALIDATORS')} />
 						</Tabs>
 					</AppBar>
 					<div style={{ marginTop: 10 }}>
@@ -130,7 +135,7 @@ export class Campaign extends Component {
 								{Object.keys(balances).map(key => (
 									<ListItem key={key}>
 										<ListItemText
-											primary={formatTokenAmount(balances[key]) + ' DAI'}
+											primary={formatTokenAmount(balances[key]) + ' SAI'}
 											secondary={key}
 										/>
 									</ListItem>
@@ -149,6 +154,42 @@ export class Campaign extends Component {
 								uiStateId='campaign-units'
 							/>
 						)}
+						{tabIndex === 2 && (
+							<List>
+								<Anchor
+									target='_blank'
+									href={`${leader.url}/channel/${campaign.id}/status`}
+								>
+									<ListItem button>
+										<ListItemText primary={t('LEADER_STATUS')} />
+									</ListItem>
+								</Anchor>
+								<Anchor
+									target='_blank'
+									href={`${leader.url}/channel/${campaign.id}/last-approved?withHeartbeat=true`}
+								>
+									<ListItem button>
+										<ListItemText primary={t('LEADER_LAST_APPROVED')} />
+									</ListItem>
+								</Anchor>
+								<Anchor
+									target='_blank'
+									href={`${follower.url}/channel/${campaign.id}/status`}
+								>
+									<ListItem button>
+										<ListItemText primary={t('FOLLOWER_STATUS')} />
+									</ListItem>
+								</Anchor>
+								<Anchor
+									target='_blank'
+									href={`${follower.url}/channel/${campaign.id}/last-approved?withHeartbeat=true`}
+								>
+									<ListItem button>
+										<ListItemText primary={t('FOLLOWER_LAST_APPROVED')} />
+									</ListItem>
+								</Anchor>
+							</List>
+						)}
 					</div>
 				</div>
 			</div>
@@ -158,7 +199,6 @@ export class Campaign extends Component {
 
 Campaign.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
 	units: PropTypes.object.isRequired,
 	rowsView: PropTypes.bool.isRequired,
 	item: PropTypes.object.isRequired,
@@ -168,7 +208,6 @@ function mapStateToProps(state) {
 	const { persist } = state
 	// let memory = state.memory
 	return {
-		account: persist.account,
 		units: persist.items['AdUnit'],
 		rowsView: !!persist.ui[VIEW_MODE],
 		objModel: CampaignModel,
