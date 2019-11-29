@@ -2,6 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 // import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import ButtonMenu from 'components/common/button_menu/ButtonMenuMui'
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import Translate from 'components/translate/Translate'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 // import ChangeLang from 'components/translate/ChangeLang'
@@ -13,7 +14,9 @@ import Toolbar from '@material-ui/core/Toolbar'
 import classnames from 'classnames'
 import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
-import Icon from '@material-ui/core/Icon'
+import AccountBoxIcon from '@material-ui/icons/AccountBox'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import MenuIcon from '@material-ui/icons/Menu'
 
 import { makeStyles } from '@material-ui/core/styles'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -22,10 +25,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { selectNavTitle, selectAccount } from 'selectors'
 import { styles } from './styles'
-
-const getAddrLabel = (address = '') => {
-	return `${address.substring(0, 8)}...${address.substring(36, 42)}`
-}
+import { formatAddress } from 'helpers/formatters'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
 const useStyles = makeStyles(styles)
@@ -35,10 +35,12 @@ function TopNav({ handleDrawerToggle, side, t }) {
 	const navTitle = useSelector(selectNavTitle)
 	const account = useSelector(selectAccount)
 	const imgSrc = getAuthLogo(account.wallet.authType)
-	const btnMenueLabel =
+	const btnMenuLabel =
 		account.wallet.authType === 'demo'
 			? t('DEMO_MODE')
-			: account.email || getAddrLabel(account.wallet.address) || t('NOT_LOGGED')
+			: account.email ||
+			  formatAddress(account.wallet.address) ||
+			  t('NOT_LOGGED')
 
 	return (
 		<AppBar className={classes.appBar} position='sticky'>
@@ -50,7 +52,7 @@ function TopNav({ handleDrawerToggle, side, t }) {
 						onClick={handleDrawerToggle}
 						className={classnames(classes.navIconHide)}
 					>
-						<Icon>menu</Icon>
+						<MenuIcon />
 					</IconButton>
 
 					{/* <AdexIconTxt
@@ -60,12 +62,16 @@ function TopNav({ handleDrawerToggle, side, t }) {
 						{/* <Navigation type='horizontal' className={theme.rightNavigation}> */}
 						{/* At the moment we use translations only for proper items properties display names */}
 						{/* <ChangeLang /> */}
+						<Jazzicon
+							diameter={30}
+							seed={jsNumberForAddress(account.wallet.address)}
+						/>
 						<ButtonMenu
+							id='menu-appbar'
 							leftIconSrc={imgSrc}
-							icon={<ExpandMoreIcon />}
-							label={btnMenueLabel}
+							rightIcon={<ExpandMoreIcon />}
+							label={btnMenuLabel}
 							active={true}
-							iconStyle={{ marginTop: -2, marginLeft: 10, fontSize: 20 }}
 						>
 							<RRMenuItem
 								value='account'
@@ -73,7 +79,7 @@ function TopNav({ handleDrawerToggle, side, t }) {
 								caption={t('ACCOUNT')}
 							>
 								<ListItemIcon>
-									<Icon>account_box</Icon>
+									<AccountBoxIcon />
 								</ListItemIcon>
 								<ListItemText
 									classes={{ primary: classes.primary }}
@@ -88,7 +94,7 @@ function TopNav({ handleDrawerToggle, side, t }) {
 								}}
 							>
 								<ListItemIcon>
-									<Icon>exit_to_app</Icon>
+									<ExitToAppIcon />
 								</ListItemIcon>
 								<ListItemText
 									classes={{ primary: classes.primary }}

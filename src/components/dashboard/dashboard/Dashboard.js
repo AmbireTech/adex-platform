@@ -1,11 +1,7 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import SideNav from './SideNav'
 import TopBar from './TopBar'
 import { Route, Switch } from 'react-router'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
 import Campaign from 'components/dashboard/containers/Campaign'
 import DashboardStats from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
@@ -18,7 +14,6 @@ import {
 	Campaign as CampaignModel,
 } from 'adex-models'
 import Account from 'components/dashboard/account/AccountInfo'
-import Translate from 'components/translate/Translate'
 import {
 	NewUnitDialog,
 	NewCampaignDialog,
@@ -26,6 +21,7 @@ import {
 } from 'components/dashboard/forms/items/NewItems'
 import campaignsLoop from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
+import analyticsLoop from 'services/store-data/analytics'
 import {
 	SORT_PROPERTIES_ITEMS,
 	FILTER_PROPERTIES_ITEMS,
@@ -34,274 +30,206 @@ import {
 } from 'constants/misc'
 import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
-import { withStyles } from '@material-ui/core/styles'
+import PageNotFound from 'components/page_not_found/PageNotFound'
+import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-class Dashboard extends React.Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			drawerActive: false,
-			drawerPinned: false,
-			sidebarPinned: false,
-			mobileOpen: false,
-		}
-	}
+import {
+	updateNav,
+	getAllItems,
+	updateAccountSettings,
+	updateAccountAnalytics,
+	execute,
+} from 'actions'
+import { t } from 'selectors'
 
-	handleDrawerToggle = () => {
-		this.setState({ mobileOpen: !this.state.mobileOpen })
-	}
+const Campaigns = () => (
+	<>
+		<NewCampaignDialog
+			fabButton
+			variant='extended'
+			accent
+			color='secondary'
+			btnLabel='NEW_CAMPAIGN'
+		/>
+		<Items
+			header={t('ALL_CAMPAIGNS')}
+			viewModeId='rowsViewCampaigns'
+			itemType={'Campaign'}
+			objModel={CampaignModel}
+			sortProperties={SORT_PROPERTIES_CAMPAIGN}
+			uiStateId='campaigns'
+			filterProperties={FILTER_PROPERTIES_CAMPAIGN}
+		/>
+	</>
+)
 
-	componentWillUnmount() {
-		campaignsLoop.stop()
-		statsLoop.stop()
-	}
+const AdUnits = () => (
+	<>
+		<NewUnitDialog
+			fabButton
+			variant='extended'
+			color='secondary'
+			btnLabel='NEW_UNIT'
+		/>
+		<Items
+			header={t('ALL_UNITS')}
+			viewModeId='rowsViewUnits'
+			itemType={'AdUnit'}
+			objModel={AdUnitModel}
+			sortProperties={SORT_PROPERTIES_ITEMS}
+			filterProperties={FILTER_PROPERTIES_ITEMS}
+			uiStateId='units'
+		/>
+	</>
+)
 
-	componentDidMount() {
-		const { actions } = this.props
+const AdSlots = () => (
+	<>
+		<NewSlotDialog
+			fabButton
+			variant='extended'
+			accent
+			color='secondary'
+			btnLabel='NEW_SLOT'
+		/>
+		<Items
+			header={t('ALL_SLOTS')}
+			viewModeId='rowsViewSlots'
+			itemType={'AdSlot'}
+			objModel={AdSlotModel}
+			sortProperties={SORT_PROPERTIES_ITEMS}
+			filterProperties={FILTER_PROPERTIES_ITEMS}
+			uiStateId='slots'
+		/>
+	</>
+)
 
-		actions.updateNav('side', this.props.match.params.side)
-		actions.getAllItems()
-		actions.updateAccountSettings()
-		actions.updateAccountAnalytics()
+const useStyles = makeStyles(styles)
+
+function Dashboard(props) {
+	const [mobileOpen, setMobileOpen] = useState(false)
+
+	const { match } = props
+	const { side } = match.params
+	const classes = useStyles()
+
+	useEffect(() => {
+		execute(updateNav('side', side))
+		execute(getAllItems())
+		execute(updateAccountSettings())
+		execute(updateAccountAnalytics())
+		analyticsLoop.start()
 		campaignsLoop.start()
 		statsLoop.start()
-	}
 
-	// shouldComponentUpdate(nextProps, nextState) {
-
-	// }
-
-	componentWillUpdate(nextProps) {
-		if (nextProps.match.params.side !== this.props.match.params.side) {
-			this.props.actions.updateNav('side', nextProps.match.params.side)
+		return () => {
+			campaignsLoop.stop()
+			statsLoop.stop()
 		}
+	}, [side])
+
+	useEffect(() => {}, [match, mobileOpen])
+	useEffect(() => {
+		execute(updateNav('side', side))
+	}, [side])
+
+	const handleDrawerToggle = () => {
+		setMobileOpen(!mobileOpen)
 	}
 
-	toggleDrawerActive = () => {
-		this.setState({ drawerActive: !this.state.drawerActive })
-	}
+	const drawer = <SideNav side={side} />
 
-	toggleDrawerPinned = () => {
-		this.setState({ drawerPinned: !this.state.drawerPinned })
-	}
-
-	toggleSidebar = () => {
-		this.setState({ sidebarPinned: !this.state.sidebarPinned })
-	}
-
-	renderAdUnits = () => {
-		return (
-			<Items
-				header={this.props.t('ALL_UNITS')}
-				viewModeId='rowsViewUnits'
-				itemType={'AdUnit'}
-				newItemBtn={() => (
-					<NewUnitDialog
-						fabButton
-						variant='extended'
-						color='secondary'
-						btnLabel='NEW_UNIT'
-					/>
-				)}
-				objModel={AdUnitModel}
-				sortProperties={SORT_PROPERTIES_ITEMS}
-				filterProperties={FILTER_PROPERTIES_ITEMS}
-				uiStateId='units'
+	return (
+		<div className={classes.root}>
+			<TopBar
+				side={side}
+				open={mobileOpen}
+				handleDrawerToggle={handleDrawerToggle}
 			/>
-		)
-	}
+			<Hidden mdUp>
+				<Drawer
+					variant='temporary'
+					anchor='left'
+					open={mobileOpen}
+					onClose={handleDrawerToggle}
+					classes={{
+						paper: classes.drawerPaper,
+					}}
+					ModalProps={{
+						keepMounted: true, // Better open performance on mobile.
+					}}
+				>
+					{drawer}
+				</Drawer>
+			</Hidden>
+			<Hidden smDown implementation='css'>
+				<Drawer
+					variant='permanent'
+					open
+					classes={{
+						paper: classes.drawerPaper,
+					}}
+				>
+					{drawer}
+				</Drawer>
+			</Hidden>
 
-	renderCampaigns = () => {
-		return (
-			<Items
-				header={this.props.t('ALL_CAMPAIGNS')}
-				viewModeId='rowsViewCampaigns'
-				itemType={'Campaign'}
-				newItemBtn={() => (
-					<NewCampaignDialog
-						fabButton
-						variant='extended'
-						accent
-						color='secondary'
-						btnLabel='NEW_CAMPAIGN'
-					/>
-				)}
-				objModel={CampaignModel}
-				sortProperties={SORT_PROPERTIES_CAMPAIGN}
-				uiStateId='campaigns'
-				filterProperties={FILTER_PROPERTIES_CAMPAIGN}
-			/>
-		)
-	}
-
-	renderAdSlots = () => {
-		return (
-			<Items
-				header={this.props.t('ALL_SLOTS')}
-				viewModeId='rowsViewSlots'
-				itemType={'AdSlot'}
-				newItemBtn={() => (
-					<NewSlotDialog
-						fabButton
-						variant='extended'
-						accent
-						color='secondary'
-						btnLabel='NEW_SLOT'
-					/>
-				)}
-				objModel={AdSlotModel}
-				sortProperties={SORT_PROPERTIES_ITEMS}
-				filterProperties={FILTER_PROPERTIES_ITEMS}
-				uiStateId='slots'
-			/>
-		)
-	}
-
-	handleDrawerOpen = () => {
-		this.setState({ open: true })
-	}
-
-	handleDrawerClose = () => {
-		this.setState({ open: false })
-	}
-
-	render() {
-		const side = this.props.side || this.props.match.params.side
-		const { classes, theme } = this.props
-
-		const drawer = (
-			<div>
-				{/* <div className={classes.toolbar}>
-                    <SideSwitch side={side} t={this.props.t} />
-                </div>
-                <Divider /> */}
-				<SideNav location={this.props.location} side={side} />
-			</div>
-		)
-
-		return (
-			<div className={classes.root}>
-				<TopBar
-					side={side}
-					open={this.state.open}
-					handleDrawerToggle={this.handleDrawerToggle}
-				/>
-				<Hidden mdUp>
-					<Drawer
-						variant='temporary'
-						anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-						open={this.state.mobileOpen}
-						onClose={this.handleDrawerToggle}
-						classes={{
-							paper: classes.drawerPaper,
-						}}
-						ModalProps={{
-							keepMounted: true, // Better open performance on mobile.
-						}}
-					>
-						{drawer}
-					</Drawer>
-				</Hidden>
-				<Hidden smDown implementation='css'>
-					<Drawer
-						variant='permanent'
-						open
-						classes={{
-							paper: classes.drawerPaper,
-						}}
-					>
-						{drawer}
-					</Drawer>
-				</Hidden>
-
-				<main className={classes.content}>
-					<div className={classes.contentInner}>
-						<div className={classes.toolbar} />
-
-						<Switch>
-							<Route
-								auth={this.props.auth}
-								exact
-								path='/dashboard/advertiser/campaigns'
-								component={this.renderCampaigns}
-							/>
-							<Route
-								auth={this.props.auth}
-								exact
-								path='/dashboard/advertiser/units'
-								component={this.renderAdUnits}
-							/>
-							<Route
-								auth={this.props.auth}
-								exact
-								path='/dashboard/advertiser/Campaign/:itemId'
-								component={props => <Campaign {...props} />}
-							/>
-							<Route
-								auth={this.props.auth}
-								exact
-								path='/dashboard/advertiser/AdUnit/:itemId'
-								component={props => <Unit {...props} />}
-							/>
-							<Route
-								auth={this.props.auth}
-								exact
-								path='/dashboard/publisher/channels'
-								component={this.renderChannels}
-							/>
-							<Route
-								auth={this.props.auth}
-								exact
-								path='/dashboard/publisher/slots'
-								component={this.renderAdSlots}
-							/>
-							<Route
-								auth={this.props.auth}
-								exact
-								path='/dashboard/publisher/AdSlot/:itemId'
-								component={props => <Slot {...props} />}
-							/>
-							<Route
-								auth={this.props.auth}
-								exact
-								path={'/dashboard/:side/account'}
-								component={props => <Account {...props} />}
-							/>
-							{/* <Route
+			<main className={classes.content}>
+				<div className={classes.contentInner}>
+					<div className={classes.toolbar} />
+					<Switch>
+						<Route
+							exact
+							path='/dashboard/advertiser/campaigns'
+							component={Campaigns}
+						/>
+						<Route
+							exact
+							path='/dashboard/advertiser/units'
+							component={AdUnits}
+						/>
+						<Route
+							exact
+							path='/dashboard/advertiser/Campaign/:itemId'
+							component={props => <Campaign {...props} />}
+						/>
+						<Route
+							exact
+							path='/dashboard/advertiser/AdUnit/:itemId'
+							component={props => <Unit {...props} />}
+						/>
+						<Route
+							exact
+							path='/dashboard/publisher/slots'
+							component={AdSlots}
+						/>
+						<Route
+							exact
+							path='/dashboard/publisher/AdSlot/:itemId'
+							component={props => <Slot {...props} />}
+						/>
+						<Route
+							exact
+							path={'/dashboard/:side/account'}
+							component={props => <Account {...props} />}
+						/>
+						{/* <Route
 								auth={this.props.auth}
 								exact
 								path={'/dashboard/:side/transactions'}
 								component={props => <Transactions {...props} />}
 							/> */}
-							<Route
-								auth={this.props.auth}
-								exact
-								path='/dashboard/:side'
-								component={props => <DashboardStats {...props} />}
-							/>
-							<Route
-								auth={this.props.auth}
-								component={() => <h1>404 at {side} side</h1>}
-							/>
-						</Switch>
-					</div>
-				</main>
-			</div>
-		)
-	}
+						<Route
+							exact
+							path='/dashboard/:side'
+							component={props => <DashboardStats {...props} />}
+						/>
+						<Route component={props => <PageNotFound {...props} />} />
+					</Switch>
+				</div>
+			</main>
+		</div>
+	)
 }
 
-Dashboard.propTypes = {
-	actions: PropTypes.object.isRequired,
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch),
-	}
-}
-
-export default connect(
-	null,
-	mapDispatchToProps
-)(Translate(withStyles(styles, { withTheme: true })(Dashboard)))
+export default Dashboard

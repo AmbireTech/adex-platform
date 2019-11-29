@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import NewCampaignHoc from './NewCampaignHoc'
 import Translate from 'components/translate/Translate'
@@ -214,14 +215,16 @@ class CampaignFinance extends Component {
 		} else {
 			const { newItem, account } = this.props
 
-			const { identityBalanceDai = 0 } = account.stats.formatted || {}
+			const { availableIdentityBalanceDai = 0 } = account.stats.formatted || {}
+
 			const depositAmount =
 				prop === 'depositAmount' ? value : newItem.depositAmount
 			const minPerImpression =
 				prop === 'minPerImpression' ? value : newItem.minPerImpression
-
+			const maxDeposit =
+				parseFloat(availableIdentityBalanceDai) - parseFloat(totalFeesFormatted)
 			const result = validateAmounts({
-				maxDeposit: identityBalanceDai - totalFeesFormatted,
+				maxDeposit,
 				depositAmount,
 				minPerImpression,
 			})
@@ -274,7 +277,7 @@ class CampaignFinance extends Component {
 			minTargetingScore,
 		} = newItem
 
-		const { identityBalanceDai = 0 } = account.stats.formatted || {}
+		const { availableIdentityBalanceDai = 0 } = account.stats.formatted || {}
 
 		const from = activeFrom || undefined
 		const to = withdrawPeriodStart || undefined
@@ -346,10 +349,13 @@ class CampaignFinance extends Component {
 							required
 							label={t('DEPOSIT_AMOUNT_LABEL', {
 								args: [
-									(identityBalanceDai - totalFeesFormatted).toFixed(2),
-									'DAI',
+									(
+										parseFloat(availableIdentityBalanceDai) -
+										parseFloat(totalFeesFormatted)
+									).toFixed(2),
+									'SAI',
 									totalFeesFormatted,
-									'DAI',
+									'SAI',
 								],
 							})}
 							name='depositAmount'
@@ -364,7 +370,7 @@ class CampaignFinance extends Component {
 								errDepAmnt && !!errDepAmnt.dirty
 									? errDepAmnt.errMsg
 									: t('DEPOSIT_AMOUNT_HELPER_TXT', {
-											args: [totalFeesFormatted, 'DAI'],
+											args: [totalFeesFormatted, 'SAI'],
 									  })
 							}
 						/>
@@ -456,8 +462,16 @@ class CampaignFinance extends Component {
 
 CampaignFinance.propTypes = {
 	newItem: PropTypes.object.isRequired,
+	account: PropTypes.object.isRequired,
+}
+
+function mapStateToProps(state) {
+	const { persist } = state
+	return {
+		account: persist.account,
+	}
 }
 
 const NewCampaignFinance = NewCampaignHoc(CampaignFinance)
 
-export default Translate(NewCampaignFinance)
+export default connect(mapStateToProps)(Translate(NewCampaignFinance))

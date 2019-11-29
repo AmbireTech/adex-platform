@@ -44,7 +44,7 @@ class TransactionPreview extends Component {
 		} = this.props
 		if (getFeesFn && Object.keys(transaction).length) {
 			actions.updateSpinner(txId, true)
-			getFeesFn({ acc: account, transaction: transaction })
+			getFeesFn({ account, transaction })
 				.then(fees => {
 					handleChange('fees', fees)
 					this.setState({ fees: fees })
@@ -53,7 +53,7 @@ class TransactionPreview extends Component {
 					if (parseFloat(fees.fees || 0) > parseFloat(identityAvailable)) {
 						handleChange('errors', [
 							t('INSUFFICIENT_BALANCE_FOR_FEES', {
-								args: [identityAvailable, 'DAI', fees.fees, 'DAI'],
+								args: [identityAvailable, 'SAI', fees.fees, 'SAI'],
 							}),
 						])
 					}
