@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import NewAdSlotHoc from './NewAdSlotHoc'
 import Translate from 'components/translate/Translate'
@@ -9,25 +9,14 @@ import CancelIcon from '@material-ui/icons/Cancel'
 import Autocomplete from 'components/common/autocomplete'
 import Typography from '@material-ui/core/Typography'
 import Dropdown from 'components/common/dropdown'
-import { constants } from 'adex-models'
 import { translate } from 'services/translations/translations'
 import { withStyles } from '@material-ui/core/styles'
-
-const autocompleteTagsSingleSelect = () => {
-	return constants.PredefinedTags.map(tag => {
-		return {
-			label: tag._id,
-			value: tag._id,
-		}
-	})
-}
-
-const AcTags = autocompleteTagsSingleSelect()
-
-const SOURCES = {
-	tags: { src: AcTags, collection: 'tags' },
-	custom: { src: [], collection: 'tags' },
-}
+import { SOURCES } from 'constants/targeting'
+import classnames from 'classnames'
+import Img from 'components/common/img/Img'
+import EddieThinking from 'resources/eddie/eddie-13.png'
+import ButtonLoading from 'components/common/spinners/ButtonLoading'
+import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects'
 
 const styles = {
 	slider: {
@@ -35,6 +24,13 @@ const styles = {
 	},
 	markLabel: {
 		top: '30px',
+	},
+	loadingImg: {
+		width: 'auto',
+		height: 'auto',
+		maxHeight: 150,
+		maxWidth: 150,
+		cursor: 'pointer',
 	},
 }
 const marks = [
@@ -66,79 +62,20 @@ const SourcesSelect = Object.keys(SOURCES).map(key => {
 	}
 })
 
-class AdSlotTargeting extends Component {
-	constructor(props) {
-		super(props)
+function AdSlotTargeting(props) {
+	const {
+		t,
+		newItem,
+		actions,
+		classes,
+		account,
+		itemType,
+		loadingTargetingSuggestions,
+		...rest
+	} = props
+	const { targets } = newItem.temp || {}
 
-		const { targets } = props.newItem.temp || {}
-		this.state = {
-			targets: targets || [],
-		}
-	}
-
-	updateNewItemCollections(targets) {
-		const collections = [...targets].reduce(
-			(all, tg) => {
-				const newCollection = all[tg.collection] || []
-				// NOTE: just skip empty tags
-				if (!!tg.target.tag) {
-					newCollection.push(tg.target)
-				}
-				all[tg.collection] = newCollection
-				return all
-			},
-			{ targeting: [], tags: [] }
-		)
-
-		const { temp } = this.props.newItem
-		const newTemp = { ...temp }
-
-		// Need this to keep the state if user get back
-		newTemp.targets = [...targets]
-		collections.temp = newTemp
-
-		this.props.handleChange(null, null, collections)
-	}
-
-	handleTargetChange = (index, prop, newValue) => {
-		const newTargets = [...this.state.targets]
-		const newTarget = { ...newTargets[index].target }
-		newTarget[prop] = newValue
-		newTargets[index] = { ...newTargets[index], target: newTarget }
-		this.updateNewItemCollections(newTargets)
-		this.setState({ targets: newTargets })
-	}
-
-	newTarget = target => {
-		const newTargets = [...this.state.targets]
-		const newTarget = { ...target }
-		newTarget.key = newTargets.length
-		newTarget.target = { ...target.target }
-		newTargets.push(newTarget)
-		this.setState({ targets: newTargets })
-	}
-
-	removeTarget = index => {
-		const newTargets = [...this.state.targets]
-		newTargets.splice(index, 1)
-		this.updateNewItemCollections(newTargets)
-		this.setState({ targets: newTargets })
-		this.validateAutocomplete({
-			id: `target-${index}`,
-			isValid: true,
-			dirty: false,
-		})
-	}
-
-	validateAutocomplete = ({ id, isValid, dirty }) => {
-		this.props.validate(id, {
-			isValid,
-			err: { msg: 'TARGETING_REQUIRED' },
-			dirty,
-		})
-	}
-
-	targetTag = ({
+	const TargetingTag = ({
 		source,
 		collection,
 		placeholder,
@@ -165,21 +102,15 @@ class AdSlotTargeting extends Component {
 								: null
 						}
 						onChange={newValue => {
-							this.handleTargetChange(index, 'tag', newValue, collection)
-							this.validateAutocomplete({
-								id,
-								isValid: newValue,
-								dirty: true,
-							})
+							if (newValue) {
+								handleTargetChange(index, 'tag', newValue, collection)
+								validateAutocomplete({
+									id,
+									isValid: newValue,
+									dirty: true,
+								})
+							}
 						}}
-						onInit={() =>
-							this.validateAutocomplete({
-								id,
-								isValid: target.tag,
-								dirty: false,
-							})
-						}
-						// validate={validate}
 						label={label}
 						placeholder={placeholder}
 						source={source}
@@ -187,11 +118,12 @@ class AdSlotTargeting extends Component {
 						suggestionMatch='anywhere'
 						showSuggestionsWhenValueIsSet={true}
 						allowCreate={!source.length}
+						showSelected
 					/>
 				</Grid>
 				<Grid item xs={11} md={5}>
 					<div>
-						<Typography id={`target-score-${index}`}>
+						<Typography id={`tbaget-score-${index}`}>
 							{/*TODO: Translate target name*/}
 							{t('TARGET_SCORE_LABEL', {
 								args: [target.score],
@@ -208,42 +140,109 @@ class AdSlotTargeting extends Component {
 							value={target.score}
 							marks={marks}
 							onChange={(ev, newValue) =>
-								this.handleTargetChange(index, 'score', newValue, collection)
+								handleTargetChange(index, 'score', newValue, collection)
 							}
 						/>
 					</div>
 				</Grid>
 				<Grid item container xs={1} md={1} alignItems='center'>
-					<IconButton onClick={() => this.removeTarget(index)}>
+					<IconButton onClick={() => removeTarget(index)}>
 						<CancelIcon />
 					</IconButton>
 				</Grid>
 			</Grid>
 		)
 	}
+	const updateNewItemCollections = targets => {
+		const { newItem, handleChange } = props
+		const collections = [...(targets || [])].reduce(
+			(all, tg) => {
+				const newCollection = all[tg.collection] || []
 
-	render() {
-		const {
-			t,
-			// newItem,
-			classes,
-			...rest
-		} = this.props
-		// const { targeting, tags } = newItem
+				// NOTE: just skip empty tags
+				if (!!tg.target.tag) {
+					newCollection.push(tg.target)
+				}
+				all[tg.collection] = newCollection
+				return all
+			},
+			{ targeting: [], tags: [] }
+		)
 
-		const { targets } = this.state
+		const { temp } = newItem
+		const newTemp = { ...temp }
 
-		return (
-			<div>
-				<Grid container spacing={1}>
-					<Grid item sm={12}>
-						{[...targets].map(
+		// Need this to keep the state if user get back
+		newTemp.targets = [...(targets || [])]
+		collections.temp = newTemp
+
+		handleChange(null, null, collections)
+	}
+
+	const handleTargetChange = (index, prop, newValue) => {
+		const newTargets = [...targets]
+		const newTarget = { ...newTargets[index].target }
+		newTarget[prop] = newValue
+		newTargets[index] = { ...newTargets[index], target: newTarget }
+		updateNewItemCollections(newTargets)
+	}
+
+	const newTarget = target => {
+		const newTargets = [...(targets || [])]
+		const newTarget = { ...target }
+		newTarget.target = { ...target.target }
+		newTargets.push(newTarget)
+		updateNewItemCollections(newTargets)
+		validateAutocomplete({
+			id: `target-${newTargets.length - 1}`,
+			isValid: !!target.tag,
+			dirty: true,
+		})
+	}
+
+	const removeTarget = index => {
+		const newTargets = [...targets]
+		newTargets.splice(index, 1)
+		validateAutocomplete({ isValid: true, removeAll: true })
+		updateNewItemCollections(newTargets)
+		newTargets.forEach((element, index) => {
+			validateAutocomplete({
+				id: `target-${index}`,
+				isValid: !!element.target.tag,
+				dirty: true,
+			})
+		})
+	}
+
+	const addCategorySuggestions = async ({ newItem, itemType }) => {
+		props.validate('wait', { isValid: false })
+		const { getCategorySuggestions } = props.actions
+		const uniqueTargets = await getCategorySuggestions({ newItem, itemType })
+		updateNewItemCollections(uniqueTargets)
+		props.validate('wait', { isValid: true })
+	}
+
+	const validateAutocomplete = ({ id = '', isValid, dirty }) => {
+		// take from actions
+		props.validate(id, {
+			isValid,
+			err: { msg: 'TARGETING_REQUIRED' },
+			dirty,
+		})
+	}
+
+	return (
+		<div>
+			<Grid container spacing={1}>
+				<Grid item sm={12}>
+					{targets &&
+						[...targets].map(
 							(
 								{ source, collection, label, placeholder, target = {} } = {},
 								index
 							) => (
-								<this.targetTag
-									key={index} // TODO
+								<TargetingTag
+									key={index}
 									label={t(label)}
 									placeholder={t(placeholder)}
 									index={index}
@@ -256,33 +255,48 @@ class AdSlotTargeting extends Component {
 								/>
 							)
 						)}
-					</Grid>
-					<Grid item sm={12}>
-						<Dropdown
-							variant='filled'
-							fullWidth
-							onChange={target => {
-								this.newTarget({ ...target })
-							}}
-							source={[...SourcesSelect]}
-							value={''}
-							label={t('NEW_TARGET')}
-							htmlId='ad-type-dd'
-							name='adType'
-						/>
-					</Grid>
 				</Grid>
-			</div>
-		)
-	}
+				<Grid item sm={12}>
+					<Dropdown
+						variant='filled'
+						fullWidth
+						onChange={target => {
+							newTarget({ ...target })
+						}}
+						source={[...SourcesSelect]}
+						value={''}
+						label={t('NEW_TARGET')}
+						htmlId='ad-type-dd'
+						name='adType'
+					/>
+				</Grid>
+				<Grid item container justify='center'>
+					<ButtonLoading
+						loading={loadingTargetingSuggestions}
+						onClick={() => addCategorySuggestions({ newItem, itemType })}
+					>
+						<EmojiObjectsIcon />
+						{loadingTargetingSuggestions
+							? t('WAITING_CATEGORY_SUGGESTIONS')
+							: t('GET_CATEGORY_SUGGESTIONS')}
+					</ButtonLoading>
+				</Grid>
+				{loadingTargetingSuggestions && (
+					<Grid item container justify='center' className='pulse'>
+						<Img
+							className={classnames(classes.loadingImg)}
+							src={EddieThinking}
+						></Img>
+					</Grid>
+				)}
+			</Grid>
+		</div>
+	)
 }
 
 AdSlotTargeting.propTypes = {
 	actions: PropTypes.object.isRequired,
 	newItem: PropTypes.object.isRequired,
-	title: PropTypes.string,
-	descriptionHelperTxt: PropTypes.string,
-	nameHelperTxt: PropTypes.string,
 }
 
 const NewAdSlotTargeting = NewAdSlotHoc(withStyles(styles)(AdSlotTargeting))
