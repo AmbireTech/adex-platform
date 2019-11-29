@@ -22,6 +22,7 @@ class AdSlotBasic extends Component {
 		const { newItem } = this.props
 		this.validateTitle(newItem.title, false)
 		this.validateDescription(newItem.description, false)
+		this.validateTargetUrl(newItem.targetUrl, false)
 		this.validateAndUpdateType(false, newItem.type)
 	}
 
@@ -67,6 +68,21 @@ class AdSlotBasic extends Component {
 		})
 	}
 
+	isUrl(str) {
+		const regex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/gm
+		let isValid = regex.test(str)
+		return isValid
+	}
+
+	validateTargetUrl(value = '', dirty, errMsg) {
+		const isValidURL = this.isUrl(value)
+		this.props.validate('targetUrl', {
+			isValid: isValidURL,
+			err: { msg: errMsg || 'ERR_INVALID_URL' },
+			dirty: dirty,
+		})
+	}
+
 	updateMinPerImpression(value = '') {
 		const { temp } = this.props.newItem
 		const newTemp = { ...temp }
@@ -84,9 +100,10 @@ class AdSlotBasic extends Component {
 			// nameHelperTxt,
 			// descriptionHelperTxt
 		} = this.props
-		const { type, title, description, temp } = newItem
+		const { type, title, description, temp, targetUrl } = newItem
 		const { minPerImpression } = temp
 		const errTitle = invalidFields['title']
+		const errUrl = invalidFields['targetUrl']
 		const errDescription = invalidFields['description']
 		const errMin = invalidFields['minPerImpression']
 
@@ -110,6 +127,24 @@ class AdSlotBasic extends Component {
 								errTitle && !!errTitle.dirty
 									? errTitle.errMsg
 									: t('TITLE_HELPER')
+							}
+						/>
+					</Grid>
+					<Grid item sm={12}>
+						<TextField
+							fullWidth
+							type='text'
+							required
+							label={'Ad Slot ' + t('Url', { isProp: true })}
+							name='url'
+							value={targetUrl}
+							onChange={ev => handleChange('targetUrl', ev.target.value)}
+							onBlur={() => this.validateTargetUrl(targetUrl, true)}
+							onFocus={() => this.validateTargetUrl(targetUrl, false)}
+							error={errUrl && !!errUrl.dirty}
+							maxLength={120}
+							helperText={
+								errUrl && !!errUrl.dirty ? errUrl.errMsg : t('URL_HELPER')
 							}
 						/>
 					</Grid>
