@@ -76,14 +76,14 @@ export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {
 		.then(processResponse)
 }
 
-export const getImageCategories = ({ tempUrl, targetUrl }) => {
+export const getCategories = ({ tempUrl, targetUrl }) => {
 	return fetch(tempUrl)
 		.then(resp => {
 			return resp.blob()
 		})
 		.then(imageBlob => {
 			const formData = new FormData()
-			formData.append('media', imageBlob, 'image.jpeg')
+			tempUrl && formData.append('media', imageBlob, 'image.jpeg')
 			formData.append('targetUrl', targetUrl)
 			return requester
 				.fetch({
