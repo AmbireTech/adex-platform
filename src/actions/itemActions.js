@@ -5,7 +5,7 @@ import {
 	postAdSlot,
 	updateAdSlot,
 	updateAdUnit,
-	getImageCategories,
+	getCategories,
 } from 'services/adex-market/actions'
 import { parseUnits, bigNumberify } from 'ethers/utils'
 import { Base, AdSlot, AdUnit, helpers } from 'adex-models'
@@ -268,13 +268,14 @@ export function getAllItems() {
 	}
 }
 
+// Used bot for AdUnit and AdSlot
 export function getCategorySuggestions({ newItem, itemType }) {
 	return async function(dispatch, getState) {
 		updateSpinner('targeting-suggestions', true)(dispatch)
 		const { temp, targetUrl } = newItem
 		const { tempUrl } = temp
 		try {
-			const response = await getImageCategories({ tempUrl, targetUrl })
+			const response = await getCategories({ tempUrl, targetUrl })
 			if (response) {
 				const newTargets = response.categories
 					.map(i => ({
