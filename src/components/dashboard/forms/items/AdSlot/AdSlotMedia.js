@@ -122,7 +122,7 @@ class AdSlotMedia extends Component {
 					</Grid>
 					<Collapse in={useFallback}>
 						<Grid container spacing={2}>
-							{/* <Grid item xs={12}>
+							<Grid item xs={12}>
 								<TextField
 									fullWidth
 									type='text'
@@ -143,7 +143,7 @@ class AdSlotMedia extends Component {
 											: t('FALLBACKTARGETURL_HELPER')
 									}
 								/>
-							</Grid> */}
+							</Grid>
 							<Grid item sm={12}>
 								<ImgForm
 									label={t('SLOT_FALLBACK_MEDIA_LABEL')}

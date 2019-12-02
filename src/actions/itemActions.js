@@ -273,9 +273,11 @@ export function getCategorySuggestions({ newItem, itemType }) {
 	return async function(dispatch, getState) {
 		updateSpinner('targeting-suggestions', true)(dispatch)
 		const { temp, targetUrl } = newItem
-		const { tempUrl } = temp
+		const { tempUrl, destinationUrl } = temp
 		try {
-			const response = await getCategories({ tempUrl, targetUrl })
+			const response = destinationUrl
+				? await getCategories({ tempUrl: null, targetUrl: destinationUrl })
+				: await getCategories({ tempUrl, targetUrl })
 			if (response) {
 				const newTargets = response.categories
 					.map(i => ({
@@ -286,8 +288,8 @@ export function getCategorySuggestions({ newItem, itemType }) {
 						return {
 							collection: 'targeting',
 							source: 'googleCategories',
-							label: translate(`TARGET_LABEL_GOOGLE_VISION`),
-							placeholder: translate(`TARGET_LABEL_GOOGLE_VISION`),
+							label: translate(`TARGET_LABEL_GOOGLECATEGORIES`),
+							placeholder: translate(`TARGET_LABEL_GOOGLECATEGORIES`),
 							target: { ...t },
 						}
 					})

@@ -72,6 +72,7 @@ export default function NewAdUnitHoc(Decorated) {
 		const { memory } = state
 		return {
 			newItem: new AdSlot(memory.newItem['AdSlot']),
+			loadingTargetingSuggestions: memory.spinners['targeting-suggestions'],
 		}
 	}
 
