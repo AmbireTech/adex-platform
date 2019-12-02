@@ -87,12 +87,11 @@ export const getCategories = ({ tempUrl, targetUrl }) => {
 			formData.append('targetUrl', targetUrl)
 			return requester
 				.fetch({
-					route: 'tags/imageCategories',
+					route: 'tags/getCategories',
 					method: 'POST',
 					body: formData,
 				})
 				.then(processResponse)
-				.catch(error => console.log(error))
 		})
 }
 

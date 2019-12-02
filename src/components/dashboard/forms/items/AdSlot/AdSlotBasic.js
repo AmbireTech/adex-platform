@@ -22,7 +22,7 @@ class AdSlotBasic extends Component {
 		const { newItem } = this.props
 		this.validateTitle(newItem.title, false)
 		this.validateDescription(newItem.description, false)
-		this.validateTargetUrl(newItem.targetUrl, false)
+		this.validateDestinationUrl(newItem.temp.destinationUrl, false)
 		this.validateAndUpdateType(false, newItem.type)
 	}
 
@@ -74,20 +74,19 @@ class AdSlotBasic extends Component {
 		return isValid
 	}
 
-	validateTargetUrl(value = '', dirty, errMsg) {
+	validateDestinationUrl(value = '', dirty, errMsg) {
 		const isValidURL = this.isUrl(value)
-		this.props.validate('targetUrl', {
+		this.props.validate('destinationUrl', {
 			isValid: isValidURL,
 			err: { msg: errMsg || 'ERR_INVALID_URL' },
 			dirty: dirty,
 		})
 	}
 
-	updateMinPerImpression(value = '') {
+	updateTempVariable(value = '', name) {
 		const { temp } = this.props.newItem
 		const newTemp = { ...temp }
-		newTemp.minPerImpression = value
-
+		newTemp[name] = value
 		this.props.handleChange('temp', newTemp)
 	}
 
@@ -96,15 +95,15 @@ class AdSlotBasic extends Component {
 			t,
 			newItem,
 			invalidFields,
-			handleChange,
+			handleChange: updateDestinationUrl,
 			// nameHelperTxt,
 			// descriptionHelperTxt
 		} = this.props
-		const { type, title, description, temp, targetUrl } = newItem
-		const { minPerImpression } = temp
+		const { type, title, description, temp } = newItem
+		const { minPerImpression, destinationUrl } = temp
 		const errTitle = invalidFields['title']
-		const errUrl = invalidFields['targetUrl']
 		const errDescription = invalidFields['description']
+		const errUrl = invalidFields['destinationUrl']
 		const errMin = invalidFields['minPerImpression']
 
 		return (
@@ -118,7 +117,7 @@ class AdSlotBasic extends Component {
 							label={'Ad Slot ' + t('title', { isProp: true })}
 							name='name'
 							value={title}
-							onChange={ev => handleChange('title', ev.target.value)}
+							onChange={ev => updateDestinationUrl('title', ev.target.value)}
 							onBlur={() => this.validateTitle(title, true)}
 							onFocus={() => this.validateTitle(title, false)}
 							error={errTitle && !!errTitle.dirty}
@@ -137,10 +136,12 @@ class AdSlotBasic extends Component {
 							required
 							label={'Ad Slot ' + t('Url', { isProp: true })}
 							name='url'
-							value={targetUrl}
-							onChange={ev => handleChange('targetUrl', ev.target.value)}
-							onBlur={() => this.validateTargetUrl(targetUrl, true)}
-							onFocus={() => this.validateTargetUrl(targetUrl, false)}
+							value={destinationUrl}
+							onChange={ev =>
+								this.updateTempVariable(ev.target.value, 'destinationUrl')
+							}
+							onBlur={() => this.validateDestinationUrl(destinationUrl, true)}
+							onFocus={() => this.validateDestinationUrl(destinationUrl, false)}
 							error={errUrl && !!errUrl.dirty}
 							maxLength={120}
 							helperText={
@@ -156,7 +157,9 @@ class AdSlotBasic extends Component {
 							rows={3}
 							label={t('description', { isProp: true })}
 							value={description}
-							onChange={ev => handleChange('description', ev.target.value)}
+							onChange={ev =>
+								updateDestinationUrl('description', ev.target.value)
+							}
 							onBlur={() => this.validateDescription(description, true)}
 							onFocus={() => this.validateDescription(description, false)}
 							error={errDescription && !!errDescription.dirty}
@@ -190,7 +193,7 @@ class AdSlotBasic extends Component {
 							value={minPerImpression}
 							onChange={ev => {
 								this.validateAmount(ev.target.value, 'minPerImpression', true)
-								this.updateMinPerImpression(ev.target.value)
+								this.updateTempVariable(ev.target.value, 'minPerImpression')
 							}}
 							error={errMin && !!errMin.dirty}
 							maxLength={120}
