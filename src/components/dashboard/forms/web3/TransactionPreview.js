@@ -18,7 +18,11 @@ import {
 import Helper from 'helpers/miscHelpers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { IdentityWithdrawPreview, SetPrivilegePreview } from './previews'
+import {
+	IdentityWithdrawPreview,
+	SetPrivilegePreview,
+	IdentityWithdrawAnyPreview,
+} from './previews'
 
 class TransactionPreview extends Component {
 	constructor(props, context) {
@@ -82,6 +86,7 @@ class TransactionPreview extends Component {
 			withdrawAmount,
 			setAddr,
 			privLevel,
+			tokenAddress,
 			fees = {},
 		} = transaction
 		return (
@@ -137,6 +142,17 @@ class TransactionPreview extends Component {
 									classes={classes}
 									fees={fees}
 									privLevel={privLevel}
+								/>
+							)}
+
+							{stepsId === 'withdrawAnyFromIdentity' && (
+								<IdentityWithdrawAnyPreview
+									t={t}
+									withdrawTo={withdrawTo}
+									classes={classes}
+									fees={fees}
+									withdrawAmount={withdrawAmount}
+									tokenAddress={tokenAddress}
 								/>
 							)}
 						</ContentBody>

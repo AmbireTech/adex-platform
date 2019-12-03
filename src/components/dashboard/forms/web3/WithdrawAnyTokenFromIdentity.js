@@ -66,14 +66,14 @@ class WithdrawAnyTokenFromIdentity extends Component {
 			<div>
 				<div>
 					{' '}
-					{t('EXCHANGE_CURRENT_BALANCE_AVAILABLE_ON_IDENTITY')} {tokenBalance}{' '}
+					{t('TOKENS_BALANCE_AVAILABLE_ON_IDENTITY')} {tokenBalance}{' '}
 				</div>
 				<TextField
 					disabled={balanceAnySpinner}
 					type='text'
 					required
 					fullWidth
-					label={t('WITHDRAW_TOTOKE_ADDRESS')}
+					label={t('WITHDRAW_TOKEN_ADDRESS')}
 					name='tokenAddress'
 					value={tokenAddress || ''}
 					onChange={ev => handleChange('tokenAddress', ev.target.value)}
@@ -142,7 +142,7 @@ class WithdrawAnyTokenFromIdentity extends Component {
 					helperText={
 						errAmount && !!errAmount.dirty
 							? errAmount.errMsg
-							: t('MAX_AMOUNT_TO_WITHDRAW_ANY', {
+							: t('MAX_AMOUNT_TO_WITHDRAW', {
 									args: [tokenBalance],
 							  })
 					}
