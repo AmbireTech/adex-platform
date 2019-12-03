@@ -32,6 +32,7 @@ import { AdUnit } from 'adex-models'
 import { t, selectSide } from 'selectors'
 import { execute, cloneItem } from 'actions'
 import { useSelector } from 'react-redux'
+import { setLength } from 'ethereumjs-util'
 
 const RRIconButton = withReactRouterLink(IconButton)
 
@@ -55,16 +56,23 @@ const RRIconButton = withReactRouterLink(IconButton)
 // 	createData('Oreo', 437, 18.0, 63, 4.0),
 // ]
 
-function desc(a, b, orderBy) {
+function desc(a, b, orderBy, numeric) {
 	const subCategories = orderBy.split('.')
 	subCategories.forEach(prop => {
 		a = a[prop]
 		b = b[prop]
 	})
+	if (numeric) {
+		a = Number(a)
+		b = Number(b)
+	}
+
 	if (b < a) return -1
 	if (b > a) return 1
 	return 0
 }
+// 5000000000000000000
+// 20000000000000000000
 
 function stableSort(array, cmp) {
 	const stabilizedThis = array.map((el, index) => [el, index])
@@ -76,10 +84,10 @@ function stableSort(array, cmp) {
 	return stabilizedThis.map(el => el[0])
 }
 
-function getSorting(order, orderBy) {
+function getSorting(order, orderBy, orderToken) {
 	return order === 'desc'
-		? (a, b) => desc(a, b, orderBy)
-		: (a, b) => -desc(a, b, orderBy)
+		? (a, b) => desc(a, b, orderBy, orderToken)
+		: (a, b) => -desc(a, b, orderBy, orderToken)
 }
 
 const headCells = [
@@ -145,8 +153,8 @@ function EnhancedTableHead(props) {
 		rowCount,
 		onRequestSort,
 	} = props
-	const createSortHandler = property => event => {
-		onRequestSort(event, property)
+	const createSortHandler = (property, numeric) => event => {
+		onRequestSort(event, property, numeric)
 	}
 
 	return (
@@ -171,7 +179,7 @@ function EnhancedTableHead(props) {
 							<TableSortLabel
 								active={orderBy === headCell.id}
 								direction={order}
-								onClick={createSortHandler(headCell.id)}
+								onClick={createSortHandler(headCell.id, headCell.numeric)}
 							>
 								{headCell.label}
 								{orderBy === headCell.id ? (
@@ -341,16 +349,18 @@ export default function EnhancedTable(props) {
 	const side = useSelector(selectSide)
 	const { items, itemType } = props
 	const [order, setOrder] = React.useState('desc')
-	const [orderBy, setOrderBy] = React.useState('activeFrom')
+	const [orderBy, setOrderBy] = React.useState('depositAmount')
+	const [orderIsNumeric, setOrderisNumeric] = React.useState(true)
 	const [selected, setSelected] = React.useState([])
 	const [page, setPage] = React.useState(0)
 	const [dense, setDense] = React.useState(false)
 	const [rowsPerPage, setRowsPerPage] = React.useState(5)
 
-	const handleRequestSort = (event, property) => {
+	const handleRequestSort = (event, property, numeric) => {
 		const isDesc = orderBy === property && order === 'desc'
 		setOrder(isDesc ? 'asc' : 'desc')
 		setOrderBy(property)
+		setOrderisNumeric(numeric)
 	}
 
 	const handleSelectAllClick = event => {
@@ -424,7 +434,7 @@ export default function EnhancedTable(props) {
 							rowCount={items.length}
 						/>
 						<TableBody>
-							{stableSort(items, getSorting(order, orderBy))
+							{stableSort(items, getSorting(order, orderBy, orderIsNumeric))
 								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 								.map((item, index) => {
 									// Campaigns renderer
