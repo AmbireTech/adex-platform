@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import ListWithControls from 'components/dashboard/containers/Lists/ListWithControls'
+import SortingTable from 'components/dashboard/containers/Lists/SortingTable'
 import classnames from 'classnames'
 import TableCellMui from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
@@ -305,17 +306,33 @@ class ItemsList extends Component {
 	}
 
 	render() {
-		const { items, viewModeId, side, noControls, classes, ...rest } = this.props
+		const {
+			items,
+			viewModeId,
+			itemType,
+			side,
+			noControls,
+			classes,
+			...rest
+		} = this.props
 
 		if (noControls) {
 			return this.renderRows(items)
 		}
 		return (
-			<ListWithControls
+			// <ListWithControls
+			// 	{...rest}
+			// 	items={items}
+			// 	viewModeId={viewModeId}
+			// 	archive
+			// 	renderRows={this.renderRows}
+			// />
+			<SortingTable
 				{...rest}
 				items={items}
 				viewModeId={viewModeId}
 				archive
+				itemType={itemType}
 				renderRows={this.renderRows}
 			/>
 		)
