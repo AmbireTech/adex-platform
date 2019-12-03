@@ -264,7 +264,11 @@ export function onUploadLocalWallet(event) {
 	}
 }
 
-export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
+export function identityWithdraw({
+	amountToWithdraw,
+	withdrawTo,
+	tokenAddress,
+}) {
 	return async function(dispatch, getState) {
 		try {
 			const account = selectAccount(getState())
@@ -272,6 +276,7 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 				account,
 				amountToWithdraw,
 				withdrawTo,
+				tokenAddress,
 			})
 
 			addToast({

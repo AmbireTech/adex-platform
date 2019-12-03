@@ -62,3 +62,38 @@ export const SetPrivilegePreview = ({
 		/>
 	</div>
 )
+
+export const IdentityWithdrawAnyPreview = ({
+	t,
+	withdrawTo,
+	tokenAddress,
+	classes,
+	fees,
+	withdrawAmount,
+}) => (
+	<div>
+		<PropRow
+			key='withdrawTo'
+			left={t('withdrawTo', { isProp: true })}
+			right={(withdrawTo || '').toString()}
+		/>
+		<PropRow
+			key='tokenAddress'
+			left={t('tokenAddress', { isProp: true })}
+			right={(tokenAddress || '').toString()}
+		/>
+		<PropRow
+			key='withdrawAmount'
+			left={t('withdrawAmount', { isProp: true })}
+			right={
+				<ListItemText
+					className={classes.address}
+					secondary={t('AMOUNT_WITHDRAW_INFO', {
+						args: [fees.fees, '', fees.toGet, ''],
+					})}
+					primary={withdrawAmount + ' '}
+				/>
+			}
+		/>
+	</div>
+)
