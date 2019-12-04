@@ -60,10 +60,17 @@ const contentStickyTop = ({ classes, children, className }) => (
 	<div className={classnames(classes.contentStickyTop)}>{children}</div>
 )
 
-const topLoading = ({ classes, msg, className }) => (
+const topLoading = ({ classes, msg, subMsg, className }) => (
 	<div className={classnames(classes.contentTopLoading)}>
 		<CircularProgress className={classes.contentTopLoadingCircular} size={50} />
-		<div> {msg} </div>
+		<div>
+			<div> {msg} </div>
+			{subMsg && (
+				<div>
+					<b>{subMsg}</b>
+				</div>
+			)}
+		</div>
 	</div>
 )
 
