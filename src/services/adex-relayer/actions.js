@@ -231,7 +231,7 @@ export const regAccount = ({
 		.then(processResponse)
 }
 
-export const quickWaletSalt = ({ email }) => {
+export const quickWalletSalt = ({ email }) => {
 	return requester
 		.fetch({
 			route: `wallet/salt/${encodeURIComponent(email)}`,
