@@ -143,8 +143,10 @@ function SideNav(props) {
 											2
 										)} SAI`}
 									</Typography>
+									<Typography variant='button' display='block' gutterBottom>
+										{t('IDENTITY_BALANCE')}
+									</Typography>
 								</ListItemText>
-								<ListItemText secondary={t('IDENTITY_BALANCE')} />
 							</LoadingSection>
 						</ListItem>
 					</div>
