@@ -1,9 +1,8 @@
 import * as types from 'constants/actionTypes'
 import {
 	grantAccount,
-	quickWaletSalt,
+	quickWalletSalt,
 	getQuickWallet,
-	// backupWallet,
 } from 'services/adex-relayer/actions'
 import { updateSpinner } from './uiActions'
 import { deployIdentityContract } from 'services/smart-contracts/actions/identity'
@@ -352,7 +351,7 @@ export function getQuickWalletSalt({ email }) {
 	return async function(dispatch, getState) {
 		updateSpinner('getting-quick-wallet-salt', true)(dispatch)
 		try {
-			const { salt } = await quickWaletSalt({ email })
+			const { salt } = await quickWalletSalt({ email })
 			updateIdentity('backupSalt', salt)(dispatch)
 			return salt
 		} catch (err) {
