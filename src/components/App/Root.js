@@ -5,6 +5,7 @@ import {
 	metamaskNetworkCheck,
 	getRelayerConfig,
 	execute,
+	ensureQuickWalletBackup,
 } from 'actions'
 import { Route, Switch, Redirect } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
@@ -59,6 +60,10 @@ const handleLegacyWallet = wallet => {
 	if (!type && email && password && authType === 'grant') {
 		migrateLegacyWallet({ email, password })
 		removeLegacyKey({ email, password })
+	}
+
+	if (email && password && authType) {
+		execute(ensureQuickWalletBackup())
 	}
 }
 
