@@ -20,3 +20,20 @@ export const isEthAddressERC20 = async (addr = '', authType) => {
 		return false
 	}
 }
+
+export const getERC20Balance = async ({
+	addr = '',
+	balanceFor = '',
+	authType,
+}) => {
+	try {
+		const { provider } = await getEthers(authType)
+		const contract = new ethers.Contract(addr, ERC20TokenABI, provider)
+		const balance = await contract.balanceOf(balanceFor)
+
+		return balance
+	} catch (error) {
+		console.error('ERR_GETTING_ERC20_BALANCE')
+		return null
+	}
+}

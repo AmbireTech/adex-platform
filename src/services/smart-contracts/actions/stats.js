@@ -1,9 +1,8 @@
 import { getEthers } from 'services/smart-contracts/ethers'
 import { constants } from 'adex-models'
-import { utils, Contract } from 'ethers'
+import { Contract } from 'ethers'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
-import { bigNumberify } from 'ethers/utils'
-const { formatEther, formatUnits } = utils
+import { bigNumberify, formatEther, formatUnits } from 'ethers/utils'
 const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
 
 export async function getAddressBalances({ address, authType }) {

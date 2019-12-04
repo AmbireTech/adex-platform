@@ -1,6 +1,6 @@
 {
   "name": "adex-dapp",
-  "version": "4.2.5",
+  "version": "4.2.6",
   "private": true,
   "dependencies": {
     "@babel/core": "7.4.3",
@@ -18,7 +18,7 @@
     "adex-constants": "1.0.10",
     "adex-models": "git+https://git@github.com/AdExBlockchain/adex-models.git#163e17664c89d68ee996249382ee8f93b1e39755",
     "adex-protocol-eth": "3.3.0",
-    "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#4c7b5cf3e4a41992ea2359cde814c7be111833ef",
+    "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#45bcad5e2b89397214517c4cfc9e5be215e343b3",
     "autoprefixer": "7.1.6",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
