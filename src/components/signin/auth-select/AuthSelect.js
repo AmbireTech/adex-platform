@@ -52,8 +52,8 @@ const AuthSelect = ({ t, classes }) => {
 				confirmAction(toExecute, null, {
 					confirmLabel: t('CONTINUE_NEW_AUTH'),
 					cancelLabel: t('KEEP_MY_SESSION'),
-					title: t('CONFIR_DIALOG_NEW_AUTH_TITLE'),
-					text: t('CONFIR_DIALOG_NEW_AUTH_TEXT', {
+					title: t('CONFIRM_DIALOG_NEW_AUTH_TITLE'),
+					text: t('CONFIRM_DIALOG_NEW_AUTH_TITLE', {
 						args: [wallet.authType, wallet.address],
 					}),
 				})
