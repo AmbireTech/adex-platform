@@ -61,6 +61,7 @@ export const styles = theme => {
 		contentTopLoading: {
 			display: 'flex',
 			flexDirection: 'row',
+			justifyContent: 'center',
 			alignItems: 'center',
 			'& > div': {
 				padding: theme.spacing(1),

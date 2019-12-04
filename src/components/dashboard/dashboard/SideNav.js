@@ -18,6 +18,7 @@ import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import ListIcon from '@material-ui/icons/List'
+import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { LoadingSection } from 'components/common/spinners'
 import {
@@ -136,11 +137,14 @@ function SideNav(props) {
 									availableIdentityBalanceDai !== 0
 								}
 							>
-								<ListItemText
-									primary={`${parseFloat(
-										availableIdentityBalanceDai || 0
-									).toFixed(2)} SAI`}
-								/>
+								<ListItemText>
+									<Typography variant='h6' component='div' color='textPrimary'>
+										{`${parseFloat(availableIdentityBalanceDai || 0).toFixed(
+											2
+										)} SAI`}
+									</Typography>
+								</ListItemText>
+								<ListItemText secondary={t('IDENTITY_BALANCE')} />
 							</LoadingSection>
 						</ListItem>
 					</div>
