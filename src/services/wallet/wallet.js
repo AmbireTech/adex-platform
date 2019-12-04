@@ -185,3 +185,10 @@ export function getAllWallets() {
 
 	return walletKeys
 }
+
+export function generateSalt() {
+	const randomData = utils.randomBytes(32)
+	const salt = utils.solidityKeccak256(['bytes32'], [randomData])
+
+	return salt
+}
