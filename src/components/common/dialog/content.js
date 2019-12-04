@@ -65,7 +65,7 @@ const topLoading = ({ classes, msg, subMsg, className }) => (
 	<div className={classnames(classes.contentTopLoading)}>
 		<CircularProgress className={classes.contentTopLoadingCircular} size={50} />
 		<div>
-			<div> {msg} </div>
+			<Typography component='div'> {msg} </Typography>
 			{subMsg && (
 				<Typography component='div'>
 					<strong>{subMsg}</strong>
