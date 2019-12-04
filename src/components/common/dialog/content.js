@@ -1,5 +1,6 @@
 import React from 'react'
 import Grid from '@material-ui/core/Grid'
+import Typography from '@material-ui/core/Typography'
 import { CircularProgress } from '@material-ui/core'
 import { styles } from './styles.js'
 import classnames from 'classnames'
@@ -66,9 +67,9 @@ const topLoading = ({ classes, msg, subMsg, className }) => (
 		<div>
 			<div> {msg} </div>
 			{subMsg && (
-				<div>
-					<b>{subMsg}</b>
-				</div>
+				<Typography component='div'>
+					<strong>{subMsg}</strong>
+				</Typography>
 			)}
 		</div>
 	</div>
