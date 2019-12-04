@@ -180,12 +180,12 @@ export function addSlot(item) {
 					passback: true,
 				})
 
-				const resUnit = await postAdUnit({
-					unit: unit.marketAdd,
+				const resItem = await postAdSlot({
+					slot: unit.marketAdd,
 					authSig,
 				})
 
-				fallbackUnit = resUnit.ipfs
+				fallbackUnit = resItem.ipfs
 			}
 
 			newItem.fallbackUnit = fallbackUnit
