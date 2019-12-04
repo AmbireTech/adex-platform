@@ -167,7 +167,7 @@ export function addSlot(item) {
 					authSig,
 				})).ipfs
 
-				const unit = new AdSlot({
+				const unit = new AdUnit({
 					type: newItem.type,
 					mediaUrl: `ipfs://${imageIpfs}`,
 					targetUrl: newItem.targetUrl,
@@ -180,12 +180,12 @@ export function addSlot(item) {
 					passback: true,
 				})
 
-				const resItem = await postAdSlot({
-					slot: unit.marketAdd,
+				const resUnit = await postAdUnit({
+					unit: unit.marketAdd,
 					authSig,
 				})
 
-				fallbackUnit = resItem.ipfs
+				fallbackUnit = resUnit.ipfs
 			}
 
 			newItem.fallbackUnit = fallbackUnit
