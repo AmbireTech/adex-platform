@@ -112,5 +112,8 @@ export const styles = theme => {
 		demoBody: {
 			position: 'relative',
 		},
+		contentStickyTop: {
+			marginBottom: '2rem',
+		},
 	}
 }
