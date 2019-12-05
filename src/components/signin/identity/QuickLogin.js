@@ -7,7 +7,8 @@ import Typography from '@material-ui/core/Typography'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { getLocalWallet } from 'services/wallet/wallet'
+import { getLocalWallet, migrateLegacyWallet } from 'services/wallet/wallet'
+import { AUTH_TYPES } from 'constants/misc'
 
 class QuickLogin extends Component {
 	componentDidMount() {
@@ -31,14 +32,19 @@ class QuickLogin extends Component {
 					authType,
 				})
 
-				if (!!walletData && walletData.data) {
+				if (!!walletData && walletData.data && walletData.data.address) {
 					wallet = { ...walletData.data }
 					wallet.email = email
 					wallet.password = password
-					wallet.authType = authType
+					wallet.authType = authType || AUTH_TYPES.GRANT.name
 					wallet.identity = {
 						address: walletData.identity,
-						privileges: walletData.identityPrivileges,
+						privileges: walletData.privileges || walletData.identityPrivileges,
+					}
+
+					if (!authType) {
+						migrateLegacyWallet({ email, password })
+						handleChange('deleteLegacyKey', true)
 					}
 
 					handleChange('identityAddr', walletData.identity)
@@ -50,14 +56,21 @@ class QuickLogin extends Component {
 			}
 		} catch (err) {
 			console.error(err)
-			error = err && err.message ? err.message : err
+			error =
+				(err && err.message ? err.message : err) || 'INVALID_EMAIL_OR_PASSWORD'
 		}
 
+		const isValid = !!wallet.address
+
 		validate('wallet', {
-			isValid: !!wallet.address,
+			isValid,
 			err: { msg: 'ERR_QUICK_WALLET_LOGIN', args: [error] },
 			dirty: dirty,
 		})
+
+		if (isValid) {
+			save()
+		}
 	}
 
 	render() {
@@ -138,7 +151,7 @@ class QuickLogin extends Component {
 								size='large'
 								onClick={() => this.validateWallet(true)}
 							>
-								{t('CHECK_QUICK_IDENTITY')}
+								{t('LOG_IN_BTN')}
 							</Button>
 						</Grid>
 					</Grid>
