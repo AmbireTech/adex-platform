@@ -4,6 +4,10 @@ import clsx from 'clsx'
 import classnames from 'classnames'
 import Img from 'components/common/img/Img'
 import Button from '@material-ui/core/Button'
+import FormControl from '@material-ui/core/FormControl'
+import InputLabel from '@material-ui/core/InputLabel'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import Input from '@material-ui/core/Input'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
@@ -19,6 +23,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
+import SearchIcon from '@material-ui/icons/Search'
 import DeleteIcon from '@material-ui/icons/Delete'
 import ArchiveIcon from '@material-ui/icons/Archive'
 import VisibilityIcon from '@material-ui/icons/Visibility'
@@ -232,7 +237,7 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
 	const classes = useToolbarStyles()
-	const { numSelected, itemType } = props
+	const { numSelected, itemType, search, setSearch } = props
 
 	return (
 		<Toolbar
@@ -249,9 +254,19 @@ const EnhancedTableToolbar = props => {
 					{numSelected} selected
 				</Typography>
 			) : (
-				<Typography className={classes.title} variant='h6' id='tableTitle'>
-					{`${itemType}s`}
-				</Typography>
+				<FormControl className={classnames(classes.flexItem)}>
+					<Input
+						name='search'
+						id='search'
+						value={search}
+						onChange={ev => setSearch(ev.target.value)}
+						startAdornment={
+							<InputAdornment position='start'>
+								<SearchIcon />
+							</InputAdornment>
+						}
+					/>
+				</FormControl>
 			)}
 
 			{numSelected > 0 ? (
@@ -351,6 +366,7 @@ export default function EnhancedTable(props) {
 	const [order, setOrder] = React.useState('desc')
 	const [orderBy, setOrderBy] = React.useState('depositAmount')
 	const [orderIsNumeric, setOrderisNumeric] = React.useState(true)
+	const [search, setSearch] = React.useState('')
 	const [selected, setSelected] = React.useState([])
 	const [page, setPage] = React.useState(0)
 	const [dense, setDense] = React.useState(false)
@@ -396,6 +412,21 @@ export default function EnhancedTable(props) {
 		setPage(newPage)
 	}
 
+	const filterBySearch = (items, search) => {
+		return items.filter(
+			item =>
+				(item.title &&
+					item.title.toLowerCase().includes(search.toLowerCase())) ||
+				(item.description &&
+					item.description.toLowerCase().includes(search.toLowerCase())) ||
+				(item.status &&
+					item.status.name &&
+					item.status.name.toLowerCase().includes(search.toLowerCase())) ||
+				(item.id && item.id.toLowerCase() === search.toLowerCase())
+			// We can search on more fields as well
+		)
+	}
+
 	const handleChangeRowsPerPage = event => {
 		setRowsPerPage(parseInt(event.target.value, 10))
 		setPage(0)
@@ -416,6 +447,8 @@ export default function EnhancedTable(props) {
 				<EnhancedTableToolbar
 					numSelected={selected.length}
 					itemType={itemType}
+					search={search}
+					setSearch={setSearch}
 				/>
 				<div className={classes.tableWrapper}>
 					<Table
@@ -434,7 +467,10 @@ export default function EnhancedTable(props) {
 							rowCount={items.length}
 						/>
 						<TableBody>
-							{stableSort(items, getSorting(order, orderBy, orderIsNumeric))
+							{stableSort(
+								filterBySearch(items, search),
+								getSorting(order, orderBy, orderIsNumeric)
+							)
 								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 								.map((item, index) => {
 									// Campaigns renderer
