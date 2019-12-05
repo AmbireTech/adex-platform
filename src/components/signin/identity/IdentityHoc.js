@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import actions, { execute } from 'actions'
+import actions, { execute, login } from 'actions'
 import { push } from 'connected-react-router'
 
 export default function IdentityHoc(Decorated) {
@@ -29,33 +29,7 @@ export default function IdentityHoc(Decorated) {
 		}
 
 		save = async () => {
-			const { identity, actions } = this.props
-			const {
-				wallet,
-				email,
-				identityData,
-				identityTxData,
-				deleteLegacyKey,
-				registerAccount,
-			} = identity
-
-			const newWallet = { ...wallet }
-
-			if (registerAccount) {
-				await actions.registerAccount({
-					owner: newWallet.address,
-					identityTxData,
-					email,
-				})
-			}
-
-			actions.createSession({
-				identity: identityData,
-				wallet: newWallet,
-				email,
-				registerExpected: !identityData,
-				deleteLegacyKey,
-			})
+			execute(login())
 		}
 
 		cancel = () => {
