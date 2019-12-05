@@ -4,7 +4,7 @@ import {
 	quickWalletSalt,
 	getQuickWallet,
 } from 'services/adex-relayer/actions'
-import { updateSpinner } from './uiActions'
+import { updateSpinner, addToast } from './uiActions'
 import { deployIdentityContract } from 'services/smart-contracts/actions/identity'
 import {
 	registerFullIdentity,
@@ -12,7 +12,11 @@ import {
 	getOwnerIdentities,
 } from 'services/adex-relayer/actions'
 import { translate } from 'services/translations/translations'
-import { addToast } from './uiActions'
+import {
+	createSession,
+	registerAccount as registerAccountAction,
+} from './accountActions'
+
 import {
 	getIdentityDeployData,
 	withdrawFromIdentity,
@@ -20,7 +24,7 @@ import {
 } from 'services/smart-contracts/actions/identity'
 import { addDataToWallet } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
-import { selectAccount } from 'selectors'
+import { selectAccount, selectIdentity } from 'selectors'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -390,5 +394,37 @@ export function getQuickWalletBackup({ email, salt, hash, encryptedWallet }) {
 			})(dispatch)
 		}
 		updateSpinner('getting-quick-wallet-backup', false)(dispatch)
+	}
+}
+
+export function login() {
+	return async function(dispatch, getState) {
+		const identity = selectIdentity(getState())
+		const {
+			wallet,
+			email,
+			identityData,
+			identityTxData,
+			deleteLegacyKey,
+			registerAccount,
+		} = identity
+
+		const newWallet = { ...wallet }
+
+		if (registerAccount) {
+			await registerAccountAction({
+				owner: newWallet.address,
+				identityTxData,
+				email,
+			})(dispatch)
+		}
+
+		createSession({
+			identity: identityData,
+			wallet: newWallet,
+			email,
+			registerExpected: !identityData,
+			deleteLegacyKey,
+		})(dispatch)
 	}
 }
