@@ -33,7 +33,7 @@ const AuthSelect = ({ t, classes }) => {
 		const wallets = allWallets.filter(
 			w => w.authType !== 'legacy' && w.name !== wallet.email
 		)
-		const hasLegacy = allWallets.length > wallets
+		const hasLegacy = allWallets.length > wallets.length
 
 		setWallets(wallets)
 		setHasLegacyWallets(hasLegacy)
@@ -125,31 +125,34 @@ const AuthSelect = ({ t, classes }) => {
 					{t('CREATE_GRANT_ACCOUNT')}
 				</Button>
 			</Box> */}
-			{/* {hasLegacyWallets && ( */}
-			{/* <Box m={1}>
-				<Button
-					variant='contained'
-					size='large'
-					color='secondary'
-					fullWidth
-					className={classes.limitedWidthBtn}
-					onClick={() => goTo('/login/grant', true)}
-				>
-					{t('LOGIN_GRANT_ACCOUNT')}
-				</Button>
-			</Box> */}
-			{/* )} */}
+			{hasLegacyWallets && (
+				<Box m={1}>
+					<Button
+						variant='contained'
+						size='large'
+						color='secondary'
+						fullWidth
+						className={classes.limitedWidthBtn}
+						onClick={() => goTo('/login/quick', true)}
+					>
+						{t('LOGIN_GRANT_ACCOUNT')}
+					</Button>
+				</Box>
+			)}
 			<Box m={1}>
-				<RRButton
+				<Button
 					variant='contained'
 					to='/identity/quick'
 					size='large'
 					color='secondary'
 					fullWidth
 					className={classes.limitedWidthBtn}
+					onClick={() => {
+						goTo('/identity/quick', true)
+					}}
 				>
 					{t('CREATE_QUICK_ACCOUNT')}
-				</RRButton>
+				</Button>
 			</Box>
 			<Box m={1}>
 				<Button
@@ -190,16 +193,16 @@ const AuthSelect = ({ t, classes }) => {
 				</Button>
 			</Box>
 			<Box m={1}>
-				<RRButton
+				<Button
 					variant='link'
-					to='/recover/quick'
 					size='large'
 					color='secondary'
 					className={classes.limitedWidthBtn}
 					fullWidth
+					onClick={() => goTo('/recover/quick', true)}
 				>
 					{t('RECOVER_QUICK_ACCOUNT')}
-				</RRButton>
+				</Button>
 			</Box>
 		</Box>
 	)
