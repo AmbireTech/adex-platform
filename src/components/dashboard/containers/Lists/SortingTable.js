@@ -28,6 +28,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import ArchiveIcon from '@material-ui/icons/Archive'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import FilterListIcon from '@material-ui/icons/FilterList'
+import DateRangeIcon from '@material-ui/icons/DateRange'
 import { lighten, makeStyles } from '@material-ui/core/styles'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { NewCloneUnitDialog } from '../../forms/items/NewItems'
@@ -276,11 +277,18 @@ const EnhancedTableToolbar = props => {
 					</IconButton>
 				</Tooltip>
 			) : (
-				<Tooltip title='Filter list'>
-					<IconButton aria-label='filter list'>
-						<FilterListIcon />
-					</IconButton>
-				</Tooltip>
+				<React.Fragment>
+					<Tooltip title='Filter list'>
+						<IconButton aria-label='filter list'>
+							<FilterListIcon />
+						</IconButton>
+					</Tooltip>
+					<Tooltip title='Select Date Range'>
+						<IconButton aria-label='date range'>
+							<DateRangeIcon />
+						</IconButton>
+					</Tooltip>
+				</React.Fragment>
 			)}
 		</Toolbar>
 	)
@@ -476,9 +484,9 @@ export default function EnhancedTable(props) {
 									// Campaigns renderer
 									const isItemSelected = isSelected(item.id)
 									const labelId = `enhanced-table-checkbox-${index}`
-									const firstUnit = item.adUnits[0] || {}
-									const mediaUrl = firstUnit.mediaUrl || ''
-									const mediaMime = firstUnit.mediaMime || ''
+									const firstUnit = (item.adUnits && item.adUnits[0]) || {}
+									const mediaUrl = firstUnit.mediaUrl || item.mediaUrl || ''
+									const mediaMime = firstUnit.mediaMime || item.mediaMime || ''
 									return (
 										<TableRow
 											hover
@@ -505,33 +513,34 @@ export default function EnhancedTable(props) {
 													allowVideo
 												/>
 											</TableCell>
-											<TableCell> {item.status.name} </TableCell>
-											<TableCell>
-												{' '}
-												{formatTokenAmount(
-													item.depositAmount,
-													18,
-													true
-												)} SAI{' '}
-											</TableCell>
-											<TableCell>
-												{' '}
-												{(
-													(item.status.fundsDistributedRatio || 0) / 10
-												).toFixed(2)}
-											</TableCell>
-											<TableCell>
-												{formatTokenAmount(
-													bigNumberify(item.minPerImpression).mul(1000),
-													18,
-													true
-												)}{' '}
-												SAI
-											</TableCell>
-											<TableCell>{formatDateTime(item.activeFrom)}</TableCell>
-											<TableCell>
-												{formatDateTime(item.withdrawPeriodStart)}
-											</TableCell>
+											{itemType === 'Campaign' && (
+												<React.Fragment>
+													<TableCell> {item.status.name} </TableCell>
+													<TableCell>
+														{formatTokenAmount(item.depositAmount, 18, true)}{' '}
+														SAI{' '}
+													</TableCell>
+													<TableCell>
+														{(
+															(item.status.fundsDistributedRatio || 0) / 10
+														).toFixed(2)}
+													</TableCell>
+													<TableCell>
+														{formatTokenAmount(
+															bigNumberify(item.minPerImpression).mul(1000),
+															18,
+															true
+														)}{' '}
+														SAI
+													</TableCell>
+													<TableCell>
+														{formatDateTime(item.activeFrom)}
+													</TableCell>
+													<TableCell>
+														{formatDateTime(item.withdrawPeriodStart)}
+													</TableCell>
+												</React.Fragment>
+											)}
 											{renderActions({
 												item,
 												to: `/dashboard/${side}/${itemType}/${item.id}`,
