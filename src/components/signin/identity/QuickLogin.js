@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import IdentityHoc from './IdentityHoc'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
@@ -10,15 +9,13 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { getLocalWallet } from 'services/wallet/wallet'
 
-const RRButton = withReactRouterLink(Button)
-
 class QuickLogin extends Component {
 	componentDidMount() {
 		this.validateWallet(false)
 	}
 
 	validateWallet = dirty => {
-		const { identity, handleChange, validate } = this.props
+		const { identity, handleChange, validate, save } = this.props
 		const { password, email, authType } = identity
 		if (!email) {
 		}
@@ -75,10 +72,6 @@ class QuickLogin extends Component {
 		// Errors
 		const { wallet } = invalidFields
 
-		if (!identity.email) {
-			return <RRButton to='/'>{'Email error'}</RRButton>
-		}
-
 		return (
 			// <div>
 			<Grid
@@ -95,6 +88,19 @@ class QuickLogin extends Component {
 								{t('QUICK_LOGIN_INFO', { args: [identity.email] })}
 							</Typography>
 						</Grid>
+
+						<Grid item xs={12}>
+							<TextField
+								fullWidth
+								type='text'
+								required
+								label={t('email', { isProp: true })}
+								name='email'
+								value={identity.email || ''}
+								onChange={ev => handleChange('email', ev.target.value)}
+							/>
+						</Grid>
+
 						<Grid item xs={12}>
 							<TextField
 								fullWidth
