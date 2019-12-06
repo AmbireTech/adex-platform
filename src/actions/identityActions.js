@@ -22,9 +22,16 @@ import {
 	withdrawFromIdentity,
 	setIdentityPrivilege,
 } from 'services/smart-contracts/actions/identity'
-import { addDataToWallet } from 'services/wallet/wallet'
+import {
+	addDataToWallet,
+	getWalletHash,
+	getLocalWallet,
+	migrateLegacyWallet,
+	walletInfo,
+} from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
 import { selectAccount, selectIdentity } from 'selectors'
+import { AUTH_TYPES } from 'constants/misc'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -372,31 +379,6 @@ export function getQuickWalletSalt({ email }) {
 	}
 }
 
-export function getQuickWalletBackup({ email, salt, hash, encryptedWallet }) {
-	return async function(dispatch, getState) {
-		updateSpinner('getting-quick-wallet-backup', true)(dispatch)
-		try {
-			const { wallet } = await getQuickWallet({
-				email,
-				salt,
-				hash,
-				encryptedWallet,
-			})
-			updateIdentity('backupWallet', wallet)(dispatch)
-		} catch (err) {
-			console.error('ERR_GETTING_QUICK_WALLET_BACKUP', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_GETTING_QUICK_WALLET_BACKUP', {
-					args: [err],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-		updateSpinner('getting-quick-wallet-backup', false)(dispatch)
-	}
-}
-
 export function login() {
 	return async function(dispatch, getState) {
 		const identity = selectIdentity(getState())
@@ -426,5 +408,88 @@ export function login() {
 			registerExpected: !identityData,
 			deleteLegacyKey,
 		})(dispatch)
+	}
+}
+
+export function validateQuickLogin({ validate, handleChange, save, dirty }) {
+	return async function(dispatch, getState) {
+		updateSpinner('validating-quick-wallet', true)(dispatch)
+		const identity = selectIdentity(getState())
+		const { password, email, authType, backupSalt } = identity
+
+		let wallet = {}
+		let error = null
+		let actualAuthType = authType
+
+		try {
+			if (email && password) {
+				if (backupSalt) {
+					const hash = getWalletHash({ salt: backupSalt, password })
+					const { encryptedWallet } =
+						(await getQuickWallet({
+							hash,
+						})) || {}
+
+					const resetWallet = encryptedWallet || {}
+
+					if (
+						resetWallet.wallet &&
+						resetWallet.key &&
+						resetWallet.wallet.data &&
+						resetWallet.wallet.identity &&
+						resetWallet.wallet.privileges
+					) {
+						const info = walletInfo(resetWallet.key, 'backup', null)
+						actualAuthType = info.authType
+						saveToLocalStorage(resetWallet.wallet, resetWallet.key)
+					}
+				}
+
+				const walletData =
+					getLocalWallet({
+						email,
+						password,
+						authType: actualAuthType,
+					}) || {}
+
+				if (!!walletData && walletData.data && walletData.data.address) {
+					wallet = { ...walletData.data }
+					wallet.email = email
+					wallet.password = password
+					wallet.authType = actualAuthType || AUTH_TYPES.GRANT.name
+					wallet.identity = {
+						address: walletData.identity,
+						privileges: walletData.privileges || walletData.identityPrivileges,
+					}
+
+					if (!authType) {
+						migrateLegacyWallet({ email, password })
+						handleChange('deleteLegacyKey', true)
+					}
+				}
+
+				handleChange('identityAddr', walletData.identity)
+				handleChange('wallet', wallet)
+				handleChange('walletAddr', wallet.address)
+				handleChange('identityData', wallet.identity)
+			}
+		} catch (err) {
+			console.error(err)
+			error =
+				(err && err.message ? err.message : err) || 'INVALID_EMAIL_OR_PASSWORD'
+		}
+
+		const isValid = !!wallet.address
+
+		validate('wallet', {
+			isValid,
+			err: { msg: 'ERR_QUICK_WALLET_LOGIN', args: [error] },
+			dirty: dirty,
+		})
+
+		if (isValid) {
+			save()
+		}
+		updateSpinner('validating-quick-wallet', false)(dispatch)
 	}
 }
