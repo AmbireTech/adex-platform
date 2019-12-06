@@ -156,7 +156,7 @@ function isWallet(item) {
 	return item && item.data && item.identity && item.privileges
 }
 
-function walletInfo(key, index, wallet) {
+export function walletInfo(key, index, wallet) {
 	const split = key.split('-')
 	const mail = split.length >= 3 ? split.slice(3, split.length).join('-') : null
 	const authType = split[1] || 'legacy'
