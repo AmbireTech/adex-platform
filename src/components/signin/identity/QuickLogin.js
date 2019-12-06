@@ -7,8 +7,7 @@ import Typography from '@material-ui/core/Typography'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { getLocalWallet, migrateLegacyWallet } from 'services/wallet/wallet'
-import { AUTH_TYPES } from 'constants/misc'
+import { execute, validateQuickLogin } from 'actions'
 
 class QuickLogin extends Component {
 	componentDidMount() {
@@ -16,61 +15,8 @@ class QuickLogin extends Component {
 	}
 
 	validateWallet = dirty => {
-		const { identity, handleChange, validate, save } = this.props
-		const { password, email, authType } = identity
-		if (!email) {
-		}
-
-		let wallet = {}
-		let error = null
-
-		try {
-			if (email && password) {
-				const walletData = getLocalWallet({
-					email,
-					password,
-					authType,
-				})
-
-				if (!!walletData && walletData.data && walletData.data.address) {
-					wallet = { ...walletData.data }
-					wallet.email = email
-					wallet.password = password
-					wallet.authType = authType || AUTH_TYPES.GRANT.name
-					wallet.identity = {
-						address: walletData.identity,
-						privileges: walletData.privileges || walletData.identityPrivileges,
-					}
-
-					if (!authType) {
-						migrateLegacyWallet({ email, password })
-						handleChange('deleteLegacyKey', true)
-					}
-
-					handleChange('identityAddr', walletData.identity)
-				}
-
-				handleChange('wallet', wallet)
-				handleChange('walletAddr', wallet.address)
-				handleChange('identityData', wallet.identity)
-			}
-		} catch (err) {
-			console.error(err)
-			error =
-				(err && err.message ? err.message : err) || 'INVALID_EMAIL_OR_PASSWORD'
-		}
-
-		const isValid = !!wallet.address
-
-		validate('wallet', {
-			isValid,
-			err: { msg: 'ERR_QUICK_WALLET_LOGIN', args: [error] },
-			dirty: dirty,
-		})
-
-		if (isValid) {
-			save()
-		}
+		const { handleChange, validate, save } = this.props
+		execute(validateQuickLogin({ validate, handleChange, save, dirty }))
 	}
 
 	render() {
