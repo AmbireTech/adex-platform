@@ -18,6 +18,7 @@ import IdentitySteps from './IdentitySteps'
 // import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import { execute, validateQuickRecovery } from 'actions'
 
 const GoBtn = ({ waiting, save, t, classes, ...rest }) => {
 	return (
@@ -134,7 +135,13 @@ export const RecoverQuickIdentity = props => (
 		{...common}
 		stepsId='quick-identity-recover'
 		stepsPages={[
-			{ title: 'QUICK_RECOVER_DATA', page: QuickRecover },
+			{
+				title: 'QUICK_RECOVER_DATA',
+				page: QuickRecover,
+				pageValidation: validateId =>
+					execute(validateQuickRecovery({ validateId, dirty: true })),
+				goToNextPageIfValid: true,
+			},
 			{ title: 'QUICK_LOGIN', page: QuickLogin, final: true },
 		]}
 	/>
