@@ -414,9 +414,9 @@ export function login() {
 	}
 }
 
-export function validateQuickLogin({ validate, handleChange, save, dirty }) {
+export function validateQuickLogin({ validateId, dirty }) {
 	return async function(dispatch, getState) {
-		updateSpinner('validating-quick-wallet', true)(dispatch)
+		updateSpinner(validateId, true)(dispatch)
 		const identity = selectIdentity(getState())
 		const { password, email, authType, backupSalt } = identity
 
@@ -467,14 +467,14 @@ export function validateQuickLogin({ validate, handleChange, save, dirty }) {
 
 					if (!authType) {
 						migrateLegacyWallet({ email, password })
-						handleChange('deleteLegacyKey', true)
+						updateIdentity('deleteLegacyKey', true)(dispatch)
 					}
 				}
 
-				handleChange('identityAddr', walletData.identity)
-				handleChange('wallet', wallet)
-				handleChange('walletAddr', wallet.address)
-				handleChange('identityData', wallet.identity)
+				updateIdentity('identityAddr', walletData.identity)(dispatch)
+				updateIdentity('wallet', wallet)(dispatch)
+				updateIdentity('walletAddr', wallet.address)(dispatch)
+				updateIdentity('identityData', wallet.identity)(dispatch)
 			}
 		} catch (err) {
 			console.error(err)
@@ -484,16 +484,16 @@ export function validateQuickLogin({ validate, handleChange, save, dirty }) {
 
 		const isValid = !!wallet.address
 
-		validate('wallet', {
+		validate(validateId, 'wallet', {
 			isValid,
 			err: { msg: 'ERR_QUICK_WALLET_LOGIN', args: [error] },
 			dirty: dirty,
-		})
+		})(dispatch)
 
 		if (isValid) {
-			save()
+			login()(dispatch, getState)
 		}
-		updateSpinner('validating-quick-wallet', false)(dispatch)
+		updateSpinner(validateId, false)(dispatch)
 	}
 }
 
