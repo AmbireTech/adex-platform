@@ -363,10 +363,9 @@ export function addrIdentityPrivilege({ setAddr, privLevel }) {
 export function getQuickWalletSalt({ email }) {
 	return async function(dispatch, getState) {
 		updateSpinner('getting-quick-wallet-salt', true)(dispatch)
+		let salt = null
 		try {
-			const { salt } = await quickWalletSalt({ email })
-			updateIdentity('backupSalt', salt)(dispatch)
-			return salt
+			salt = (await quickWalletSalt({ email })).salt
 		} catch (err) {
 			console.error('ERR_GETTING_WALLET_SALT', err)
 			addToast({
@@ -377,7 +376,9 @@ export function getQuickWalletSalt({ email }) {
 				timeout: 20000,
 			})(dispatch)
 		}
+		updateIdentity('backupSalt', salt)(dispatch)
 		updateSpinner('getting-quick-wallet-salt', false)(dispatch)
+		return salt
 	}
 }
 
@@ -496,28 +497,36 @@ export function validateQuickLogin({ validate, handleChange, save, dirty }) {
 	}
 }
 
-export function validateQuickRecovery({ validateId, dirty }) {
+export function validateQuickRecovery({
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
 	return async function(dispatch, getState) {
 		updateSpinner('validating-quick-wallet-recovery', true)(dispatch)
 		const identity = selectIdentity(getState())
 		const { email } = identity
 
-		const isValid = validEmail(email)
+		let isValid = false
 
-		if (isValid) {
-			const hasSalt = await getQuickWalletSalt({ email })(dispatch)
-			validate(validateId, 'email', {
-				isValid: !!hasSalt,
-				err: { msg: 'ERR_EMAIL_BACKUP_NOT_FOUND' },
-				dirty: dirty,
-			})(dispatch)
-		} else {
-			validate(validateId, 'email', {
-				isValid: isValid,
-				err: { msg: 'ERR_EMAIL' },
-				dirty: dirty,
-			})(dispatch)
+		if (validEmail(email)) {
+			isValid = !!(await getQuickWalletSalt({ email })(dispatch))
 		}
+
+		validate(validateId, 'email', {
+			isValid,
+			err: { msg: 'ERR_EMAIL_BACKUP_NOT_FOUND' },
+			dirty: dirty,
+		})(dispatch)
+
+		if (isValid && typeof onValid === 'function') {
+			onValid()
+		}
+		if (!isValid && typeof onInvalid === 'function') {
+			onInvalid()
+		}
+
 		updateSpinner('validating-quick-recovery', false)(dispatch)
 	}
 }
