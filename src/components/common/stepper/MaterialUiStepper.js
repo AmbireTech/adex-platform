@@ -1,19 +1,17 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
-import { Stepper } from 'react-step/lib/stepper'
-import { withStepper } from 'react-step/lib/with-stepper'
+import { useSelector } from 'react-redux'
+import { makeStyles } from '@material-ui/core/styles'
 import StepperMUI from '@material-ui/core/Stepper'
 import MobileStepper from '@material-ui/core/MobileStepper'
 import Step from '@material-ui/core/Step'
 import StepLabel from '@material-ui/core/StepLabel'
 import Button from '@material-ui/core/Button'
-import { withStyles } from '@material-ui/core/styles'
-import Translate from 'components/translate/Translate'
 import { styles } from './styles'
 import Paper from '@material-ui/core/Paper'
+import { t, selectValidationsById } from 'selectors'
+
+const useStyles = makeStyles(styles)
 
 // const MyStep = ({ page, active, index, children, theme, canAdvance, canFinish, canReverse, setPageIndex, canAdvanceToPage, currentPage, goToPage, ...other }) => {}
 const StepperNav = ({ pages, currentPage, classes, ...other }) => {
@@ -46,156 +44,131 @@ const StepperNav = ({ pages, currentPage, classes, ...other }) => {
 	)
 }
 
-class MaterialStepper extends React.Component {
-	// onComplete() {
-	//     // console.log('currPage', this.currPage)
-	//     let props = this.props
-	//     let page = props.pages[props.currentPage]
+const MaterialStepper = props => {
+	const {
+		pages = [],
+		// ...props
+	} = props
+	const classes = useStyles()
 
-	//     // console.log('props.pages[props.currentPage]', page.component)
-	// }
+	const [currentPage, setCurrentPage] = useState(0)
+	const [goingBack, setGoingBack] = useState(false)
 
-	goToPage(nextStep) {
-		let canAdvance =
-			nextStep > this.props.currentPage && this.canAdvanceNextToPage()
-		let canGoBack = nextStep < this.props.currentPage
+	const page = pages[currentPage]
+	const Comp = page.component
+	const ValidationBtn = page.validationBtn || null
 
-		if (canAdvance || canGoBack) {
-			this.props.setPageIndex(nextStep)
-		}
-	}
+	const validations = useSelector(state =>
+		selectValidationsById(state, page.props.validateId)
+	)
 
-	canAdvanceNextToPage() {
+	const canAdvanceNextToPage = () => {
 		/* TODO: add check for optional steps that can be skipped
 		 */
-		let page = this.props.pages[this.props.currentPage]
-		if (
-			this.props.canAdvance &&
-			!Object.keys(this.props.validations[page.props.validateId] || {}).length
-		) {
+		if (!Object.keys(validations || {}).length) {
 			return true
 		} else {
 			return false
 		}
 	}
 
-	isValidPage() {
-		let page = this.props.pages[this.props.currentPage]
-		return !Object.keys(this.props.validations[page.props.validateId] || {})
-			.length
-	}
+	const goToPage = nextStep => {
+		const canAdvance = nextStep > currentPage && canAdvanceNextToPage()
+		const canGoBack = nextStep < currentPage
 
-	render() {
-		let { pages, component, validations, currentPage, t, classes, ...props } = {
-			...this.props,
+		if (canGoBack) {
+			setGoingBack(true)
 		}
-		let page = pages[currentPage]
-		let Comp = page.component
-
-		return (
-			<div className={classes.stepperWrapper}>
-				<Paper
-					classes={{
-						root: classes.stepperNav,
-					}}
-				>
-					<StepperNav
-						{...props}
-						pages={pages}
-						classes={classes}
-						currentPage={currentPage}
-						goToPage={this.goToPage.bind(this)}
-					/>
-				</Paper>
-				<br />
-
-				<Paper
-					classes={{
-						root: classes.pagePaper,
-					}}
-				>
-					<div className={classes.pageContent}>{<Comp {...page.props} />}</div>
-
-					<div className={classes.controls}>
-						<div className={classes.left}>
-							{props.canReverse &&
-							!(page.disableBtnsIfValid && this.isValidPage()) ? (
-								<Button onClick={() => props.setPageIndex(currentPage - 1)}>
-									{t('BACK')}
-								</Button>
-							) : (
-								''
-							)}
-						</div>
-
-						<div className={classes.right}>
-							{/* <Button label='Cancel' onClick={this.cancel}/> */}
-							{page.cancelBtn &&
-							!(page.disableBtnsIfValid && this.isValidPage()) ? (
-								<page.cancelBtn />
-							) : null}
-							{this.canAdvanceNextToPage() && !page.completeBtn ? (
-								<Button
-									variant='contained'
-									color='primary'
-									onClick={this.goToPage.bind(this, currentPage + 1)}
-								>
-									{t('CONTINUE')}
-								</Button>
-							) : !page.completeBtn ? (
-								<Button label='Continue' disabled>
-									{t('CONTINUE')}
-								</Button>
-							) : null}
-							{page.completeBtn && this.isValidPage() ? (
-								<page.completeBtn />
-							) : (
-								''
-							)}
-						</div>
-					</div>
-				</Paper>
-			</div>
-		)
+		if (canAdvance) {
+			setGoingBack(false)
+		}
+		if (canAdvance || canGoBack) {
+			setCurrentPage(nextStep)
+		}
 	}
-}
 
-const WithMaterialStepper = withStepper(
-	withStyles(styles)(Translate(MaterialStepper))
-)
+	const isValidPage = () => {
+		return !Object.keys(validations || {}).length
+	}
 
-class MyMaterialStepper extends React.Component {
-	render() {
-		return (
-			<Stepper pages={this.props.pages} style={{ display: 'block' }}>
-				<WithMaterialStepper
-					itemType={this.props.itemType}
-					validations={this.props.validations}
+	useEffect(() => {
+		if (
+			!goingBack &&
+			!!ValidationBtn &&
+			canAdvanceNextToPage() &&
+			page.goToNextPageIfValid
+		) {
+			goToPage(currentPage + 1)
+		}
+	})
+
+	return (
+		<div className={classes.stepperWrapper}>
+			<Paper
+				classes={{
+					root: classes.stepperNav,
+				}}
+			>
+				<StepperNav
+					{...props}
+					pages={pages}
+					classes={classes}
+					currentPage={currentPage}
+					goToPage={goToPage}
 				/>
-			</Stepper>
-		)
-	}
+			</Paper>
+			<br />
+
+			<Paper
+				classes={{
+					root: classes.pagePaper,
+				}}
+			>
+				<div className={classes.pageContent}>{<Comp {...page.props} />}</div>
+
+				<div className={classes.controls}>
+					<div className={classes.left}>
+						{props.canReverse && !(page.disableBtnsIfValid && isValidPage()) ? (
+							<Button onClick={() => goToPage(currentPage - 1)}>
+								{t('BACK')}
+							</Button>
+						) : (
+							''
+						)}
+					</div>
+
+					<div className={classes.right}>
+						{/* <Button label='Cancel' onClick={this.cancel}/> */}
+						{page.cancelBtn && !(page.disableBtnsIfValid && isValidPage()) ? (
+							<page.cancelBtn />
+						) : null}
+						{ValidationBtn && <ValidationBtn {...page.props} />}
+
+						{canAdvanceNextToPage() &&
+						!page.completeBtn &&
+						!page.goToNextPageIfValid ? (
+							<Button
+								variant='contained'
+								color='primary'
+								onClick={() => goToPage(currentPage + 1)}
+							>
+								{t('CONTINUE')}
+							</Button>
+						) : !page.completeBtn ? (
+							<Button label='Continue' disabled>
+								{t('CONTINUE')}
+							</Button>
+						) : null}
+						{page.completeBtn && isValidPage() ? <page.completeBtn /> : ''}
+					</div>
+				</div>
+			</Paper>
+		</div>
+	)
 }
 
-MyMaterialStepper.propTypes = {
-	actions: PropTypes.object.isRequired,
+MaterialStepper.propTypes = {
 	pages: PropTypes.array.isRequired,
 }
 
-function mapStateToProps(state, props) {
-	let memory = state.memory
-	return {
-		validations: memory.validations,
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch),
-	}
-}
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(MyMaterialStepper)
+export default MaterialStepper
