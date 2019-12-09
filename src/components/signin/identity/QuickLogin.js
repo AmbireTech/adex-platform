@@ -50,6 +50,7 @@ class QuickLogin extends Component {
 
 						<Grid item xs={12}>
 							<TextField
+								disabled={!!identity.authType}
 								fullWidth
 								type='text'
 								required
