@@ -52,7 +52,6 @@ const MaterialStepper = props => {
 	const classes = useStyles()
 
 	const [currentPage, setCurrentPage] = useState(0)
-	const [goingBack, setGoingBack] = useState(false)
 	const canReverse = pages.length > currentPage && currentPage > 0
 
 	const page = pages[currentPage] || {}
@@ -71,56 +70,39 @@ const MaterialStepper = props => {
 
 	const canAdvance = isValidPage() && !page.completeBtn
 
-	const canAdvanceNextToPage = useCallback(() => {
-		return isValidPage()
-	}, [isValidPage])
-
 	const goToPage = useCallback(
 		async nextStep => {
-			const canAdvance = nextStep > currentPage && canAdvanceNextToPage()
+			const canAdvance = nextStep > currentPage
 			const canGoBack = nextStep < currentPage
 
-			if (canGoBack) {
-				setGoingBack(true)
-			}
-			if (canAdvance) {
-				setGoingBack(false)
-			}
 			if (canAdvance || canGoBack) {
 				setCurrentPage(nextStep)
 			}
 		},
-		[canAdvanceNextToPage, currentPage]
+		[currentPage]
 	)
 
 	const goToPreviousPage = useCallback(() => {
 		if (canReverse) {
-			setGoingBack(true)
 			goToPage(currentPage - 1)
 		}
 	})
 
 	const goToNextPage = useCallback(async () => {
 		if (pageValidation) {
-			await pageValidation(validateId)
-			setGoingBack(false)
+			pageValidation({
+				validateId,
+				dirty: true,
+				onValid: () => goToPage(currentPage + 1),
+			})
 		}
-
-		goToPage(currentPage + 1)
 	})
 
 	useEffect(() => {
-		if (!!pageValidation && page.goToNextPageIfValid && !goingBack) {
-			goToPage(currentPage + 1)
+		if (pageValidation) {
+			pageValidation({ validateId, dirty: false })
 		}
-	}, [
-		currentPage,
-		goToPage,
-		goingBack,
-		page.goToNextPageIfValid,
-		pageValidation,
-		validations,
-	])
+	}, [currentPage, pageValidation, validateId])
 
 	return (
 		<div className={classes.stepperWrapper}>
