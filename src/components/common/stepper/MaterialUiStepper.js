@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
@@ -53,54 +53,74 @@ const MaterialStepper = props => {
 
 	const [currentPage, setCurrentPage] = useState(0)
 	const [goingBack, setGoingBack] = useState(false)
+	const canReverse = pages.length > currentPage && currentPage > 0
 
-	const page = pages[currentPage]
-	const Comp = page.component
-	const ValidationBtn = page.validationBtn || null
+	const page = pages[currentPage] || {}
+	const pageProps = page.props || {}
+	const { validateId } = pageProps
+	const Comp = page.component || null
+	const pageValidation = page.pageValidation || null
 
 	const validations = useSelector(state =>
-		selectValidationsById(state, page.props.validateId)
+		selectValidationsById(state, validateId)
 	)
 
-	const canAdvanceNextToPage = () => {
-		/* TODO: add check for optional steps that can be skipped
-		 */
-		if (!Object.keys(validations || {}).length) {
-			return true
-		} else {
-			return false
-		}
-	}
-
-	const goToPage = nextStep => {
-		const canAdvance = nextStep > currentPage && canAdvanceNextToPage()
-		const canGoBack = nextStep < currentPage
-
-		if (canGoBack) {
-			setGoingBack(true)
-		}
-		if (canAdvance) {
-			setGoingBack(false)
-		}
-		if (canAdvance || canGoBack) {
-			setCurrentPage(nextStep)
-		}
-	}
-
-	const isValidPage = () => {
+	const isValidPage = useCallback(() => {
 		return !Object.keys(validations || {}).length
-	}
+	}, [validations])
 
-	useEffect(() => {
-		if (
-			!goingBack &&
-			!!ValidationBtn &&
-			canAdvanceNextToPage() &&
-			page.goToNextPageIfValid
-		) {
-			goToPage(currentPage + 1)
+	const canAdvance = isValidPage() && !page.completeBtn
+
+	const canAdvanceNextToPage = useCallback(() => {
+		return isValidPage()
+	}, [isValidPage])
+
+	const goToPage = useCallback(
+		async nextStep => {
+			const canAdvance = nextStep > currentPage && canAdvanceNextToPage()
+			const canGoBack = nextStep < currentPage
+
+			if (canGoBack) {
+				setGoingBack(true)
+			}
+			if (canAdvance) {
+				setGoingBack(false)
+			}
+			if (canAdvance || canGoBack) {
+				setCurrentPage(nextStep)
+			}
+		},
+		[canAdvanceNextToPage, currentPage]
+	)
+
+	const goToPreviousPage = useCallback(() => {
+		if (canReverse) {
+			setGoingBack(true)
+			goToPage(currentPage - 1)
 		}
 	})
+
+	const goToNextPage = useCallback(async () => {
+		if (pageValidation) {
+			await pageValidation(validateId)
+			setGoingBack(false)
+		}
+
+		goToPage(currentPage + 1)
+	})
+
+	useEffect(() => {
+		if (!!pageValidation && page.goToNextPageIfValid && !goingBack) {
+			goToPage(currentPage + 1)
+		}
+	}, [
+		currentPage,
+		goToPage,
+		goingBack,
+		page.goToNextPageIfValid,
+		pageValidation,
+		validations,
+	])
 
 	return (
 		<div className={classes.stepperWrapper}>
@@ -124,14 +144,14 @@ const MaterialStepper = props => {
 					root: classes.pagePaper,
 				}}
 			>
-				<div className={classes.pageContent}>{<Comp {...page.props} />}</div>
+				<div className={classes.pageContent}>
+					{!!Comp && <Comp {...pageProps} />}
+				</div>
 
 				<div className={classes.controls}>
 					<div className={classes.left}>
-						{props.canReverse && !(page.disableBtnsIfValid && isValidPage()) ? (
-							<Button onClick={() => goToPage(currentPage - 1)}>
-								{t('BACK')}
-							</Button>
+						{canReverse && !(page.disableBtnsIfValid && isValidPage()) ? (
+							<Button onClick={goToPreviousPage}>{t('BACK')}</Button>
 						) : (
 							''
 						)}
@@ -142,20 +162,15 @@ const MaterialStepper = props => {
 						{page.cancelBtn && !(page.disableBtnsIfValid && isValidPage()) ? (
 							<page.cancelBtn />
 						) : null}
-						{ValidationBtn && <ValidationBtn {...page.props} />}
+						{/* {ValidationBtn && <ValidationBtn {...page.props} />} */}
 
-						{canAdvanceNextToPage() &&
-						!page.completeBtn &&
-						!page.goToNextPageIfValid ? (
+						{!page.completeBtn ? (
 							<Button
+								disabled={!isValidPage() && !pageValidation}
 								variant='contained'
 								color='primary'
-								onClick={() => goToPage(currentPage + 1)}
+								onClick={goToNextPage}
 							>
-								{t('CONTINUE')}
-							</Button>
-						) : !page.completeBtn ? (
-							<Button label='Continue' disabled>
 								{t('CONTINUE')}
 							</Button>
 						) : null}
