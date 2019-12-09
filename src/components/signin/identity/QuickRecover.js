@@ -7,37 +7,22 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { t } from 'selectors'
-import { execute, onUploadLocalWallet, getQuickWalletSalt } from 'actions'
-import { validEmail } from 'helpers/validators'
+import { execute, onUploadLocalWallet, validateQuickRecovery } from 'actions'
 
 const useStyles = makeStyles(styles)
 
-const QuickRecover = ({ validate, handleChange, identity, invalidFields }) => {
+const QuickRecover = ({
+	handleChange,
+	identity,
+	invalidFields,
+	validateId,
+}) => {
 	const classes = useStyles()
-	const { email, uploadedLocalWallet } = identity
+	const { uploadedLocalWallet } = identity
 	const emailErr = invalidFields.email
 
-	const validateEmail = async (email, dirty) => {
-		const isValid = validEmail(email)
-
-		if (isValid) {
-			const hasSalt = await execute(getQuickWalletSalt({ email }))
-			validate('email', {
-				isValid: !!hasSalt,
-				err: { msg: 'ERR_EMAIL_BACKUP_NOT_FOUND' },
-				dirty: dirty,
-			})
-		} else {
-			validate('email', {
-				isValid: isValid,
-				err: { msg: 'ERR_EMAIL' },
-				dirty: dirty,
-			})
-		}
-	}
-
 	useEffect(() => {
-		validateEmail(email, false)
+		validateQuickRecovery({ validateId, dirty: false })
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
@@ -52,8 +37,6 @@ const QuickRecover = ({ validate, handleChange, identity, invalidFields }) => {
 					name='email'
 					value={identity.email || ''}
 					onChange={ev => handleChange('email', ev.target.value)}
-					onBlur={() => validateEmail(email, true)}
-					onFocus={() => validateEmail(email, false)}
 					error={emailErr && !!emailErr.dirty}
 					maxLength={128}
 					helperText={
