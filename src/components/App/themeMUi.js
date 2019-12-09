@@ -15,7 +15,7 @@ const palette = {
 	primary: { main: PRIMARY, contrastText: WHITE },
 	secondary: { main: SECONDARY, contrastText: WHITE },
 	accentOne: { main: ACCENT_ONE, contrastText: WHITE },
-	accentTwo: { main: ACCENT_TWO, contrastText: ALEX_GREY },
+	accentTwo: { main: ACCENT_TWO, contrastText: WHITE },
 	grey: { main: ALEX_GREY, contrastText: WHITE },
 	error: deepOrange,
 	warning: amber,
