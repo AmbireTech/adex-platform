@@ -2,23 +2,12 @@ import React, { Component } from 'react'
 import IdentityHoc from './IdentityHoc'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { execute, validateQuickLogin } from 'actions'
 
 class QuickLogin extends Component {
-	componentDidMount() {
-		this.validateWallet(false)
-	}
-
-	validateWallet = dirty => {
-		const { handleChange, validate, save } = this.props
-		execute(validateQuickLogin({ validate, handleChange, save, dirty }))
-	}
-
 	render() {
 		const {
 			t,
@@ -92,14 +81,6 @@ class QuickLogin extends Component {
 									</Typography>
 								</div>
 							)}
-							<Button
-								variant='contained'
-								color='primary'
-								size='large'
-								onClick={() => this.validateWallet(true)}
-							>
-								{t('LOG_IN_BTN')}
-							</Button>
 						</Grid>
 					</Grid>
 				</Grid>
