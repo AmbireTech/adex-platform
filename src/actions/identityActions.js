@@ -32,6 +32,7 @@ import {
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
 import { selectAccount, selectIdentity } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
+import { validEmail } from 'helpers/validators'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -491,5 +492,31 @@ export function validateQuickLogin({ validate, handleChange, save, dirty }) {
 			save()
 		}
 		updateSpinner('validating-quick-wallet', false)(dispatch)
+	}
+}
+
+export function validateQuickRecovery({ validate, dirty }) {
+	return async function(dispatch, getState) {
+		updateSpinner('validating-quick-wallet-recovery', true)(dispatch)
+		const identity = selectIdentity(getState())
+		const { email } = identity
+
+		const isValid = validEmail(email)
+
+		if (isValid) {
+			const hasSalt = await getQuickWalletSalt({ email })(dispatch)
+			validate('email', {
+				isValid: !!hasSalt,
+				err: { msg: 'ERR_EMAIL_BACKUP_NOT_FOUND' },
+				dirty: dirty,
+			})
+		} else {
+			validate('email', {
+				isValid: isValid,
+				err: { msg: 'ERR_EMAIL' },
+				dirty: dirty,
+			})
+		}
+		updateSpinner('validating-quick-recovery', false)(dispatch)
 	}
 }
