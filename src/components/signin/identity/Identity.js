@@ -138,8 +138,10 @@ export const RecoverQuickIdentity = props => (
 			{
 				title: 'QUICK_RECOVER_DATA',
 				page: QuickRecover,
-				pageValidation: validateId =>
-					execute(validateQuickRecovery({ validateId, dirty: true })),
+				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
+					execute(
+						validateQuickRecovery({ validateId, dirty, onValid, onInvalid })
+					),
 				goToNextPageIfValid: true,
 			},
 			{ title: 'QUICK_LOGIN', page: QuickLogin, final: true },

@@ -70,7 +70,7 @@ export function validate(
 	key,
 	{ isValid, err = { msg: '', args: [] }, dirty = false, removeAll = false }
 ) {
-	return function(dispatch, getState) {
+	return async function(dispatch, getState) {
 		if (!isValid) {
 			let errors = {}
 			errors[key] = {
