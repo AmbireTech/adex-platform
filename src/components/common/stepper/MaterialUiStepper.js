@@ -9,7 +9,8 @@ import StepLabel from '@material-ui/core/StepLabel'
 import Button from '@material-ui/core/Button'
 import { styles } from './styles'
 import Paper from '@material-ui/core/Paper'
-import { t, selectValidationsById } from 'selectors'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import { t, selectValidationsById, selectSpinnerById } from 'selectors'
 
 const useStyles = makeStyles(styles)
 
@@ -64,11 +65,13 @@ const MaterialStepper = props => {
 		selectValidationsById(state, validateId)
 	)
 
+	const spinner = useSelector(state => selectSpinnerById(state, validateId))
+
 	const isValidPage = useCallback(() => {
 		return !Object.keys(validations || {}).length
 	}, [validations])
 
-	const canAdvance = isValidPage() && !page.completeBtn
+	// const canAdvance = isValidPage() && !page.completeBtn
 
 	const goToPage = useCallback(
 		async nextStep => {
@@ -95,6 +98,8 @@ const MaterialStepper = props => {
 				dirty: true,
 				onValid: () => goToPage(currentPage + 1),
 			})
+		} else {
+			goToPage(currentPage + 1)
 		}
 	})
 
@@ -146,17 +151,29 @@ const MaterialStepper = props => {
 						) : null}
 						{/* {ValidationBtn && <ValidationBtn {...page.props} />} */}
 
-						{!page.completeBtn ? (
-							<Button
-								disabled={!isValidPage() && !pageValidation}
-								variant='contained'
-								color='primary'
-								onClick={goToNextPage}
-							>
-								{t('CONTINUE')}
-							</Button>
+						{!page.completeBtn || !!pageValidation ? (
+							<span className={classes.buttonProgressWrapper}>
+								<Button
+									disabled={spinner || (!isValidPage() && !pageValidation)}
+									variant='contained'
+									color='primary'
+									onClick={goToNextPage}
+								>
+									{t('CONTINUE')}
+								</Button>
+								{spinner && (
+									<CircularProgress
+										size={24}
+										className={classes.buttonProgress}
+									/>
+								)}
+							</span>
 						) : null}
-						{page.completeBtn && isValidPage() ? <page.completeBtn /> : ''}
+						{page.completeBtn && !pageValidation && isValidPage() ? (
+							<page.completeBtn />
+						) : (
+							''
+						)}
 					</div>
 				</div>
 			</Paper>
