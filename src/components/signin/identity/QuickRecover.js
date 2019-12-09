@@ -11,20 +11,10 @@ import { execute, onUploadLocalWallet, validateQuickRecovery } from 'actions'
 
 const useStyles = makeStyles(styles)
 
-const QuickRecover = ({
-	handleChange,
-	identity,
-	invalidFields,
-	validateId,
-}) => {
+const QuickRecover = ({ handleChange, identity, invalidFields }) => {
 	const classes = useStyles()
 	const { uploadedLocalWallet } = identity
 	const emailErr = invalidFields.email
-
-	useEffect(() => {
-		validateQuickRecovery({ validateId, dirty: false })
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
 
 	return (
 		<Grid container spacing={2} alignContent='flex-start' alignItems='center'>
