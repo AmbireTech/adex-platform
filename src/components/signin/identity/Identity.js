@@ -18,22 +18,12 @@ import IdentitySteps from './IdentitySteps'
 // import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { execute, validateQuickRecovery, validateQuickLogin } from 'actions'
-
-const GoBtn = ({ waiting, save, t, classes, ...rest }) => {
-	return (
-		<span className={classes.buttonProgressWrapper}>
-			<Button color='primary' onClick={save} disabled={waiting}>
-				{t('LETS_GO')}
-			</Button>
-			{waiting && (
-				<CircularProgress size={24} className={classes.buttonProgress} />
-			)}
-		</span>
-	)
-}
-
-const GoBtnWithIdentity = withStyles(styles)(IdentityHoc(GoBtn))
+import {
+	execute,
+	validateQuickRecovery,
+	validateQuickLogin,
+	validateStandardLogin,
+} from 'actions'
 
 const CancelBtn = ({ ...props }) => {
 	return <Button onClick={props.cancel}>{props.t('CANCEL')}</Button>
@@ -41,8 +31,13 @@ const CancelBtn = ({ ...props }) => {
 
 const CancelBtnWithIdentity = IdentityHoc(CancelBtn)
 
+const finalValidationQuick = ({ validateId, dirty, onValid, onInvalid }) =>
+	execute(validateQuickLogin({ validateId, dirty }))
+
+const finalValidationStandard = ({ validateId, dirty, onValid, onInvalid }) =>
+	execute(validateStandardLogin({ validateId, dirty }))
+
 const common = {
-	GoBtn: GoBtnWithIdentity,
 	CancelBtn: CancelBtnWithIdentity,
 	validateIdBase: 'identity-',
 }
@@ -58,6 +53,7 @@ export const CreateGrantIdentity = props => (
 				title: 'GRANT_DEPLOY',
 				page: GrantDeploy,
 				final: true,
+				pageValidation: finalValidationQuick,
 				disableBtnsIfValid: true,
 			},
 		]}
@@ -69,7 +65,14 @@ export const LoginGrantIdentity = props => (
 		{...props}
 		{...common}
 		stepsId='grant-identity-login'
-		stepsPages={[{ title: 'GRANT_LOGIN', page: GrantLogin, final: true }]}
+		stepsPages={[
+			{
+				title: 'GRANT_LOGIN',
+				page: GrantLogin,
+				pageValidation: finalValidationQuick,
+				final: true,
+			},
+		]}
 	/>
 )
 
@@ -83,6 +86,7 @@ export const CreteFullIdentity = props => (
 			{
 				title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS',
 				page: IdentityContractAddressEthDeploy,
+				pageValidation: finalValidationStandard,
 				final: true,
 			},
 			// { title: 'DEPLOY_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthTransaction, final: true }
@@ -101,6 +105,7 @@ export const LoginStandardIdentity = props => {
 				{
 					title: 'CONNECT_STANDARD_IDENTITY',
 					page: ExternalConnect,
+					pageValidation: finalValidationStandard,
 					final: true,
 				},
 			]}
@@ -115,7 +120,12 @@ export const CreateQuickIdentity = props => (
 		stepsId='quick-identity-create'
 		stepsPages={[
 			{ title: 'QUICK_INFO', page: QuickInfo },
-			{ title: 'QUICK_DEPLOY', page: QuickDeploy, final: true },
+			{
+				title: 'QUICK_DEPLOY',
+				page: QuickDeploy,
+				pageValidation: finalValidationQuick,
+				final: true,
+			},
 		]}
 	/>
 )
@@ -125,7 +135,14 @@ export const LoginQuickIdentity = props => (
 		{...props}
 		{...common}
 		stepsId='quick-identity-login'
-		stepsPages={[{ title: 'QUICK_LOGIN', page: QuickLogin, final: true }]}
+		stepsPages={[
+			{
+				title: 'QUICK_LOGIN',
+				page: QuickLogin,
+				pageValidation: finalValidationQuick,
+				final: true,
+			},
+		]}
 	/>
 )
 
@@ -147,9 +164,7 @@ export const RecoverQuickIdentity = props => (
 			{
 				title: 'QUICK_LOGIN',
 				page: QuickLogin,
-				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
-					execute(validateQuickLogin({ validateId, dirty })),
-				// goToNextPageIfValid: true,
+				pageValidation: finalValidationQuick,
 				final: true,
 			},
 		]}
