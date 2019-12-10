@@ -38,6 +38,7 @@ import { AdUnit } from 'adex-models'
 import { t, selectSide } from 'selectors'
 import { execute, cloneItem } from 'actions'
 import { useSelector } from 'react-redux'
+import ChipDateRangePicker from 'common/DatePicker/ChipDateRangePicker'
 
 const RRTableCell = withReactRouterLink(TableCell)
 const RRIconButton = withReactRouterLink(IconButton)
@@ -296,15 +297,9 @@ const EnhancedTableToolbar = props => {
 			) : (
 				<React.Fragment>
 					<Tooltip title='Filter list'>
-						<IconButton aria-label='filter list'>
-							<FilterListIcon />
-						</IconButton>
+						<ChipDateRangePicker dateRange={} setDateRange={}/>
 					</Tooltip>
-					<Tooltip title='Select Date Range'>
-						<IconButton aria-label='date range'>
-							<DateRangeIcon />
-						</IconButton>
-					</Tooltip>
+					<Tooltip title='Select Date Range'></Tooltip>
 				</React.Fragment>
 			)}
 		</Toolbar>
