@@ -109,8 +109,15 @@ const MaterialStepper = props => {
 		}
 	}, [currentPage, pageValidation, validateId])
 
+	const onKeyPressed = useCallback(async ev => {
+		if (ev.key === 'Enter') {
+			ev.preventDefault()
+			goToNextPage()
+		}
+	})
+
 	return (
-		<div className={classes.stepperWrapper}>
+		<div className={classes.stepperWrapper} onKeyPress={onKeyPressed}>
 			<Paper
 				classes={{
 					root: classes.stepperNav,
