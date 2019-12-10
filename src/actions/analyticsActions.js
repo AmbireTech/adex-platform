@@ -12,6 +12,7 @@ import {
 	VALIDATOR_ANALYTICS_METRICS,
 	VALIDATOR_ANALYTICS_TIMEFRAMES,
 } from 'constants/misc'
+import { getErrorMsg } from 'helpers/errors'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
@@ -102,7 +103,7 @@ export function updateAccountAnalytics() {
 			console.error('ERR_ANALYTICS', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_ANALYTICS', { args: [err] }),
+				label: translate('ERR_ANALYTICS', { args: [getErrorMsg(err)] }),
 				timeout: 20000,
 			})(dispatch)
 		}

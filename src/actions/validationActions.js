@@ -7,6 +7,7 @@ import { getERC20Balance } from 'services/smart-contracts/actions/erc20'
 import { formatUnits, bigNumberify } from 'ethers/utils'
 import { validEmail, validPassword } from 'helpers/validators'
 import { t } from 'selectors'
+import { getErrorMsg } from 'helpers/errors'
 
 export function validateAddress({ addr, dirty, validate, name, setBalance }) {
 	return async function(dispatch, getState) {
@@ -34,11 +35,13 @@ export function validateAddress({ addr, dirty, validate, name, setBalance }) {
 			}
 			if (validate)
 				validate(name, { isValid: isValid, err: { msg: msg }, dirty: dirty })
-		} catch (error) {
-			console.error('ERR_VALIDATING_ETH_ADDRESS', error)
+		} catch (err) {
+			console.error('ERR_VALIDATING_ETH_ADDRESS', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_VALIDATING_ETH_ADDRESS', { args: [error] }),
+				label: translate('ERR_VALIDATING_ETH_ADDRESS', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}
