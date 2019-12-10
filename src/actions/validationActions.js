@@ -5,6 +5,7 @@ import { translate } from 'services/translations/translations'
 import { addToast } from './uiActions'
 import { getERC20Balance } from 'services/smart-contracts/actions/erc20'
 import { formatUnits, bigNumberify } from 'ethers/utils'
+import { validEmail, validPassword } from 'helpers/validators'
 import { t } from 'selectors'
 
 export function validateAddress({ addr, dirty, validate, name, setBalance }) {
@@ -49,7 +50,7 @@ export function updateValidationErrors(item, newErrors) {
 	return function(dispatch) {
 		return dispatch({
 			type: types.UPDATE_ITEM_VALIDATION,
-			item: item,
+			item,
 			errors: newErrors,
 		})
 	}
@@ -59,8 +60,8 @@ export function resetValidationErrors(item, key) {
 	return function(dispatch) {
 		return dispatch({
 			type: types.RESET_ITEM_VALIDATION,
-			item: item,
-			key: key,
+			item,
+			key,
 		})
 	}
 }
@@ -84,5 +85,75 @@ export function validate(
 		} else {
 			resetValidationErrors(validateId, key)(dispatch)
 		}
+	}
+}
+
+export function validateEmail(validateId, email, dirty) {
+	return async function(dispatch, getState) {
+		const isValid = validEmail(email)
+		validate(validateId, 'email', {
+			isValid,
+			err: { msg: 'ERR_EMAIL' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateEmailCheck(validateId, emailCheck, email, dirty) {
+	return async function(dispatch, getState) {
+		const isValid = !!emailCheck && !!email && emailCheck === email
+		validate(validateId, 'emailCheck', {
+			isValid,
+			err: { msg: 'ERR_EMAIL_CHECK' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validatePassword(validateId, password, dirty) {
+	return async function(dispatch, getState) {
+		const isValid = validPassword(password)
+		validate(validateId, 'password', {
+			isValid,
+			err: { msg: 'ERR_PASSWORD' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validatePasswordCheck(
+	validateId,
+	passwordCheck,
+	password,
+	dirty
+) {
+	return async function(dispatch, getState) {
+		const isValid = !!passwordCheck && !!password && passwordCheck === password
+		validate(validateId, 'passwordCheck', {
+			isValid: isValid,
+			err: { msg: 'ERR_PASSWORD_CHECK' },
+			dirty: dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateTOS(validateId, accepted, dirty) {
+	return async function(dispatch, getState) {
+		const isValid = !!accepted
+		validate(validateId, 'tosCheck', {
+			isValid: isValid,
+			err: { msg: 'ERR_TOS_CHECK' },
+			dirty,
+		})(dispatch)
+
+		return isValid
 	}
 }
