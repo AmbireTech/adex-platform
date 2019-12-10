@@ -504,7 +504,7 @@ export function validateQuickRecovery({
 	onInvalid,
 }) {
 	return async function(dispatch, getState) {
-		updateSpinner('validating-quick-wallet-recovery', true)(dispatch)
+		updateSpinner(validateId, true)(dispatch)
 		const identity = selectIdentity(getState())
 		const { email } = identity
 
@@ -529,7 +529,7 @@ export function validateQuickRecovery({
 			onInvalid()
 		}
 
-		updateSpinner('validating-quick-recovery', false)(dispatch)
+		updateSpinner(validateId, false)(dispatch)
 	}
 }
 
