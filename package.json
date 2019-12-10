@@ -11,6 +11,7 @@
     "@material-ui/core": "4.6.1",
     "@material-ui/icons": "4.5.1",
     "@material-ui/lab": "4.0.0-alpha.32",
+    "@matharumanpreet00/react-daterange-picker": "^1.0.5",
     "@ramp-network/ramp-instant-sdk": "^1.5.1",
     "@svgr/webpack": "4.1.0",
     "@typescript-eslint/eslint-plugin": "1.6.0",
