@@ -9,8 +9,22 @@ import StepLabel from '@material-ui/core/StepLabel'
 import Button from '@material-ui/core/Button'
 import { styles } from './styles'
 import Paper from '@material-ui/core/Paper'
+import Box from '@material-ui/core/Box'
+import Chip from '@material-ui/core/Chip'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { t, selectValidationsById, selectSpinnerById } from 'selectors'
+
+const getDirtyValidationErrors = (validations = {}) => {
+	const errors = Object.keys(validations).reduce((dirtyErrs, key) => {
+		const err = validations[key]
+		if (err.dirty) {
+			dirtyErrs.push({ msg: err.errMsg, field: t(key, { isProp: true }) })
+		}
+		return dirtyErrs
+	}, [])
+
+	return errors
+}
 
 const useStyles = makeStyles(styles)
 
@@ -64,6 +78,8 @@ const MaterialStepper = props => {
 	const validations = useSelector(state =>
 		selectValidationsById(state, validateId)
 	)
+
+	const dirtyErrors = getDirtyValidationErrors(validations)
 
 	const spinner = useSelector(state => selectSpinnerById(state, validateId))
 
@@ -139,7 +155,25 @@ const MaterialStepper = props => {
 				}}
 			>
 				<div className={classes.pageContent}>
-					{!!Comp && <Comp {...pageProps} />}
+					{!!Comp && (
+						<Box>
+							<Comp {...pageProps} />{' '}
+						</Box>
+					)}
+
+					{!!dirtyErrors && (
+						<Box color='error.main'>
+							{dirtyErrors.map(err => (
+								<Chip
+									classes={{ root: classes.errChip }}
+									variant='outlined'
+									size='small'
+									label={`${err.field}: ${err.msg}`}
+									color='default'
+								/>
+							))}
+						</Box>
+					)}
 				</div>
 
 				<div className={classes.controls}>
