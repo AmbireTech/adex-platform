@@ -508,15 +508,17 @@ export function validateQuickRecovery({
 		const identity = selectIdentity(getState())
 		const { email } = identity
 
-		let isValid = false
+		let isValid = validEmail(email)
+		let msg = 'ERR_EMAIL'
 
-		if (validEmail(email)) {
+		if (isValid) {
 			isValid = !!(await getQuickWalletSalt({ email })(dispatch))
+			msg = 'ERR_EMAIL_BACKUP_NOT_FOUND'
 		}
 
 		validate(validateId, 'email', {
 			isValid,
-			err: { msg: 'ERR_EMAIL_BACKUP_NOT_FOUND' },
+			err: { msg },
 			dirty: dirty,
 		})(dispatch)
 
