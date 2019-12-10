@@ -530,3 +530,36 @@ export function validateQuickRecovery({
 		updateSpinner('validating-quick-recovery', false)(dispatch)
 	}
 }
+
+export function validateStandardLogin({ validateId, dirty }) {
+	return async function(dispatch, getState) {
+		updateSpinner(validateId, true)(dispatch)
+		const identity = selectIdentity(getState())
+		const { wallet, identityContractAddress } = identity
+		const { address } = wallet
+
+		const identityDataSplit = (identityContractAddress || '').split('-')
+		const identityData = {
+			address: identityDataSplit[0],
+			privileges: parseInt(identityDataSplit[1] || 0),
+		}
+
+		updateIdentity('wallet', wallet)(dispatch)
+		updateIdentity('walletAddr', address)(dispatch)
+		updateIdentity('identityData', identityData)(dispatch)
+
+		const isValid = !!identityData.address
+
+		validate(validateId, 'identityContractAddress', {
+			isValid: isValid,
+			err: { msg: 'ERR_EXTERNAL_WALLET_LOGIN' },
+			dirty: dirty,
+		})(dispatch)
+
+		if (isValid) {
+			await login()(dispatch, getState)
+		}
+
+		updateSpinner(validateId, false)(dispatch)
+	}
+}
