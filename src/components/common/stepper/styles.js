@@ -35,6 +35,9 @@ export const styles = theme => {
 			overflowY: 'auto',
 			overflowX: 'hidden',
 			display: 'flex',
+			flex: 1,
+			justifyContent: 'space-between',
+			flexDirection: 'column',
 			WebkitOverflowScrolling: 'touch',
 			'@media(max-width:500px)': {
 				paddingLeft: 0,
@@ -88,6 +91,10 @@ export const styles = theme => {
 			left: '50%',
 			marginTop: -12,
 			marginLeft: -12,
+		},
+		errChip: {
+			color: theme.palette.error.main,
+			borderColor: theme.palette.error.main,
 		},
 	}
 }
