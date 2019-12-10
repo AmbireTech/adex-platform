@@ -39,6 +39,7 @@ import {
 	selectWallet,
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
+import { getErrorMsg } from 'helpers/errors'
 
 const UPDATE_SETTINGS_INTERVAL = 24 * 60 * 60 * 1000 // 1 hour
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -131,7 +132,7 @@ export function updateAccountStats() {
 			console.error('ERR_STATS', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_STATS', { args: [err] }),
+				label: translate('ERR_STATS', { args: [getErrorMsg(err)] }),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -151,7 +152,9 @@ export function registerAccount({ owner, identityTxData, email }) {
 			console.error('ERR_REGISTERING_ACCOUNT', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_REGISTERING_ACCOUNT', { args: [err] }),
+				label: translate('ERR_REGISTERING_ACCOUNT', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -181,7 +184,7 @@ export function updateAccountSettings() {
 			console.error('ERR_SETTINGS', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_SETTINGS', { args: [err] }),
+				label: translate('ERR_SETTINGS', { args: [getErrorMsg(err)] }),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -287,7 +290,7 @@ export function createSession({ wallet, identity, email, deleteLegacyKey }) {
 			console.error('ERR_GETTING_SESSION', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_GETTING_SESSION', { args: [err] }),
+				label: translate('ERR_GETTING_SESSION', { args: [getErrorMsg(err)] }),
 				timeout: 20000,
 			})(dispatch)
 		}

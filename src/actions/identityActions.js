@@ -42,6 +42,7 @@ import {
 	validatePasswordCheck,
 	validateTOS,
 } from './validationActions'
+import { getErrorMsg } from 'helpers/errors'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -141,7 +142,9 @@ export function getGrantAccount({
 			console.error('ERR_REGISTER_GRANT_IDENTITY', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_REGISTER_GRANT_IDENTITY', { args: [err] }),
+				label: translate('ERR_REGISTER_GRANT_IDENTITY', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -184,7 +187,7 @@ export function deployFullIdentity({
 			console.error('ERR_REGISTER_IDENTITY', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_REGISTER_IDENTITY', { args: [err] }),
+				label: translate('ERR_REGISTER_IDENTITY', { args: [getErrorMsg(err)] }),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -202,7 +205,9 @@ export function getIdentityTxData({ owner, privLevel }) {
 			console.error('ERR_GET_IDENTITY_TX_DATA', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_GET_IDENTITY_TX_DATA', { args: [err] }),
+				label: translate('ERR_GET_IDENTITY_TX_DATA', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -219,7 +224,9 @@ export function getRegisterExpectedIdentity({ owner, mail }) {
 			console.error('ERR_REGISTERING_EXPECTED_IDENTITY', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_REGISTERING_EXPECTED_IDENTITY', { args: [err] }),
+				label: translate('ERR_REGISTERING_EXPECTED_IDENTITY', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -271,7 +278,9 @@ export function onUploadLocalWallet(event) {
 			console.error('Error uploading account data.', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_UPLOADING_ACCOUNT_DATA', { args: [err] }),
+				label: translate('ERR_UPLOADING_ACCOUNT_DATA', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 5000,
 			})(dispatch)
 			updateSpinner('uploading-account-data', true)(dispatch)
@@ -314,7 +323,9 @@ export function identityWithdraw({
 			console.error('ERR_IDENTITY_WITHDRAW_NOTIFICATION', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_IDENTITY_WITHDRAW_NOTIFICATION', { args: [err] }),
+				label: translate('ERR_IDENTITY_WITHDRAW_NOTIFICATION', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -331,7 +342,9 @@ export function ownerIdentities({ owner }) {
 			console.error('ERR_GETTING_OWNER_IDENTITIES', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_GETTING_OWNER_IDENTITIES', { args: [err] }),
+				label: translate('ERR_GETTING_OWNER_IDENTITIES', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -360,7 +373,7 @@ export function addrIdentityPrivilege({ setAddr, privLevel }) {
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', {
-					args: [err],
+					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
 			})(dispatch)
@@ -379,7 +392,7 @@ export function getQuickWalletSalt({ email }) {
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_GETTING_WALLET_SALT', {
-					args: [err],
+					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
 			})(dispatch)
@@ -423,7 +436,7 @@ export function login() {
 		} catch (err) {
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_LOGIN', { args: [err] }),
+				label: translate('ERR_LOGIN', { args: [getErrorMsg(err)] }),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -502,7 +515,7 @@ export function validateQuickLogin({ validateId, dirty }) {
 
 		validate(validateId, 'wallet', {
 			isValid,
-			err: { msg: 'ERR_QUICK_WALLET_LOGIN', args: [error] },
+			err: { msg: 'ERR_QUICK_WALLET_LOGIN', args: [getErrorMsg(error)] },
 			dirty: dirty,
 		})(dispatch)
 
@@ -552,7 +565,9 @@ export function validateQuickRecovery({
 		} catch (err) {
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_VALIDATING_QUICK_RECOVERY', { args: [err] }),
+				label: translate('ERR_VALIDATING_QUICK_RECOVERY', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -593,7 +608,9 @@ export function validateStandardLogin({ validateId, dirty }) {
 		} catch (err) {
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_VALIDATING_STANDARD_LOGIN', { args: [err] }),
+				label: translate('ERR_VALIDATING_STANDARD_LOGIN', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -643,7 +660,9 @@ export function validateQuickDeploy({ validateId, dirty }) {
 		} catch (err) {
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_VALIDATING_STANDARD_LOGIN', { args: [err] }),
+				label: translate('ERR_VALIDATING_STANDARD_LOGIN', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}
