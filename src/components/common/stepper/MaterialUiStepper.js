@@ -115,7 +115,7 @@ const MaterialStepper = props => {
 				dirty: true,
 				onValid: () => goToPage(currentPage + 1),
 			})
-		} else {
+		} else if (isValidPage()) {
 			goToPage(currentPage + 1)
 		}
 	})
