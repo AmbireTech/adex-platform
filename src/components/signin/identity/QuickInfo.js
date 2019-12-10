@@ -7,8 +7,6 @@ import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
-import { withStyles } from '@material-ui/core/styles'
-import { styles } from './styles'
 import {
 	t,
 	// selectIdentity,
@@ -165,7 +163,6 @@ const GrantInfo = props => {
 						required
 						error={tosCheck && tosCheck.dirty}
 						component='fieldset'
-						// className={classes.formControl}
 					>
 						<FormControlLabel
 							control={
@@ -189,4 +186,4 @@ const GrantInfo = props => {
 }
 
 const IdentityGrantInfoStep = IdentityHoc(GrantInfo)
-export default withStyles(styles)(IdentityGrantInfoStep)
+export default IdentityGrantInfoStep
