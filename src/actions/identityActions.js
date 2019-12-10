@@ -384,33 +384,41 @@ export function getQuickWalletSalt({ email }) {
 
 export function login() {
 	return async function(dispatch, getState) {
-		const identity = selectIdentity(getState())
-		const {
-			wallet,
-			email,
-			identityData,
-			identityTxData,
-			deleteLegacyKey,
-			registerAccount,
-		} = identity
-
-		const newWallet = { ...wallet }
-
-		if (registerAccount) {
-			await registerAccountAction({
-				owner: newWallet.address,
-				identityTxData,
+		try {
+			const identity = selectIdentity(getState())
+			const {
+				wallet,
 				email,
+				identityData,
+				identityTxData,
+				deleteLegacyKey,
+				registerAccount,
+			} = identity
+
+			const newWallet = { ...wallet }
+
+			if (registerAccount) {
+				await registerAccountAction({
+					owner: newWallet.address,
+					identityTxData,
+					email,
+				})(dispatch)
+			}
+
+			await createSession({
+				identity: identityData,
+				wallet: newWallet,
+				email,
+				registerExpected: !identityData,
+				deleteLegacyKey,
+			})(dispatch)
+		} catch (err) {
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_LOGIN', { args: [err] }),
+				timeout: 20000,
 			})(dispatch)
 		}
-
-		await createSession({
-			identity: identityData,
-			wallet: newWallet,
-			email,
-			registerExpected: !identityData,
-			deleteLegacyKey,
-		})(dispatch)
 	}
 }
 
@@ -505,28 +513,36 @@ export function validateQuickRecovery({
 }) {
 	return async function(dispatch, getState) {
 		updateSpinner(validateId, true)(dispatch)
-		const identity = selectIdentity(getState())
-		const { email } = identity
+		try {
+			const identity = selectIdentity(getState())
+			const { email } = identity
 
-		let isValid = validEmail(email)
-		let msg = 'ERR_EMAIL'
+			let isValid = validEmail(email)
+			let msg = 'ERR_EMAIL'
 
-		if (isValid) {
-			isValid = !!(await getQuickWalletSalt({ email })(dispatch))
-			msg = 'ERR_EMAIL_BACKUP_NOT_FOUND'
-		}
+			if (isValid) {
+				isValid = !!(await getQuickWalletSalt({ email })(dispatch))
+				msg = 'ERR_EMAIL_BACKUP_NOT_FOUND'
+			}
 
-		validate(validateId, 'email', {
-			isValid,
-			err: { msg },
-			dirty: dirty,
-		})(dispatch)
+			validate(validateId, 'email', {
+				isValid,
+				err: { msg },
+				dirty: dirty,
+			})(dispatch)
 
-		if (isValid && typeof onValid === 'function') {
-			onValid()
-		}
-		if (!isValid && typeof onInvalid === 'function') {
-			onInvalid()
+			if (isValid && typeof onValid === 'function') {
+				onValid()
+			}
+			if (!isValid && typeof onInvalid === 'function') {
+				onInvalid()
+			}
+		} catch (err) {
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_VALIDATING_QUICK_RECOVERY', { args: [err] }),
+				timeout: 20000,
+			})(dispatch)
 		}
 
 		updateSpinner(validateId, false)(dispatch)
@@ -536,30 +552,38 @@ export function validateQuickRecovery({
 export function validateStandardLogin({ validateId, dirty }) {
 	return async function(dispatch, getState) {
 		updateSpinner(validateId, true)(dispatch)
-		const identity = selectIdentity(getState())
-		const { wallet, identityContractAddress } = identity
-		const { address } = wallet
+		try {
+			const identity = selectIdentity(getState())
+			const { wallet, identityContractAddress } = identity
+			const { address } = wallet
 
-		const identityDataSplit = (identityContractAddress || '').split('-')
-		const identityData = {
-			address: identityDataSplit[0],
-			privileges: parseInt(identityDataSplit[1] || 0),
-		}
+			const identityDataSplit = (identityContractAddress || '').split('-')
+			const identityData = {
+				address: identityDataSplit[0],
+				privileges: parseInt(identityDataSplit[1] || 0),
+			}
 
-		updateIdentity('wallet', wallet)(dispatch)
-		updateIdentity('walletAddr', address)(dispatch)
-		updateIdentity('identityData', identityData)(dispatch)
+			updateIdentity('wallet', wallet)(dispatch)
+			updateIdentity('walletAddr', address)(dispatch)
+			updateIdentity('identityData', identityData)(dispatch)
 
-		const isValid = !!identityData.address
+			const isValid = !!identityData.address
 
-		validate(validateId, 'identityContractAddress', {
-			isValid: isValid,
-			err: { msg: 'ERR_EXTERNAL_WALLET_LOGIN' },
-			dirty: dirty,
-		})(dispatch)
+			validate(validateId, 'identityContractAddress', {
+				isValid: isValid,
+				err: { msg: 'ERR_EXTERNAL_WALLET_LOGIN' },
+				dirty: dirty,
+			})(dispatch)
 
-		if (isValid) {
-			await login()(dispatch, getState)
+			if (isValid) {
+				await login()(dispatch, getState)
+			}
+		} catch (err) {
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_VALIDATING_STANDARD_LOGIN', { args: [err] }),
+				timeout: 20000,
+			})(dispatch)
 		}
 
 		updateSpinner(validateId, false)(dispatch)
