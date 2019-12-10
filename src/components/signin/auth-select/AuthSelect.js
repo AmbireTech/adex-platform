@@ -199,7 +199,11 @@ const AuthSelect = ({ t, classes }) => {
 					color='secondary'
 					className={classes.limitedWidthBtn}
 					fullWidth
-					onClick={() => goTo('/recover/quick', true)}
+					onClick={() => {
+						goTo('/recover/quick', true, () =>
+							execute(initIdentity({ authType: 'recover' }))
+						)
+					}}
 				>
 					{t('RECOVER_QUICK_ACCOUNT')}
 				</Button>
