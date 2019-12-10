@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import IdentityHoc from './IdentityHoc'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { t } from 'selectors'
-import { execute, onUploadLocalWallet, validateQuickRecovery } from 'actions'
+import { execute, onUploadLocalWallet } from 'actions'
 
 const useStyles = makeStyles(styles)
 
