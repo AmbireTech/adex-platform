@@ -404,7 +404,7 @@ export function login() {
 			})(dispatch)
 		}
 
-		createSession({
+		await createSession({
 			identity: identityData,
 			wallet: newWallet,
 			email,
@@ -491,7 +491,7 @@ export function validateQuickLogin({ validateId, dirty }) {
 		})(dispatch)
 
 		if (isValid) {
-			login()(dispatch, getState)
+			await login()(dispatch, getState)
 		}
 		updateSpinner(validateId, false)(dispatch)
 	}
