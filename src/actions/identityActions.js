@@ -28,12 +28,20 @@ import {
 	getLocalWallet,
 	migrateLegacyWallet,
 	walletInfo,
+	createLocalWallet,
 } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
 import { selectAccount, selectIdentity } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
 import { validEmail } from 'helpers/validators'
-import { validate } from './validationActions'
+import {
+	validate,
+	validateEmail,
+	validateEmailCheck,
+	validatePassword,
+	validatePasswordCheck,
+	validateTOS,
+} from './validationActions'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -505,6 +513,15 @@ export function validateQuickLogin({ validateId, dirty }) {
 	}
 }
 
+const handleAfterValidation = ({ isValid, onValid, onInvalid }) => {
+	if (isValid && typeof onValid === 'function') {
+		onValid()
+	}
+	if (!isValid && typeof onInvalid === 'function') {
+		onInvalid()
+	}
+}
+
 export function validateQuickRecovery({
 	validateId,
 	dirty,
@@ -531,12 +548,7 @@ export function validateQuickRecovery({
 				dirty: dirty,
 			})(dispatch)
 
-			if (isValid && typeof onValid === 'function') {
-				onValid()
-			}
-			if (!isValid && typeof onInvalid === 'function') {
-				onInvalid()
-			}
+			handleAfterValidation({ isValid, onValid, onInvalid })
 		} catch (err) {
 			addToast({
 				type: 'cancel',
@@ -585,6 +597,81 @@ export function validateStandardLogin({ validateId, dirty }) {
 				timeout: 20000,
 			})(dispatch)
 		}
+
+		updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function validateQuickDeploy({ validateId, dirty }) {
+	return async function(dispatch, getState) {
+		updateSpinner(validateId, true)(dispatch)
+		try {
+			const identity = selectIdentity(getState())
+			const { identityAddr, email, password } = identity
+
+			if (!identityAddr) {
+				const walletData = createLocalWallet({
+					email,
+					password,
+					authType: AUTH_TYPES.QUICK.name,
+				})
+
+				walletData.email = email
+				walletData.password = password
+
+				const walletAddr = walletData.address
+
+				getIdentityTxData({
+					owner: walletAddr,
+					privLevel: 3,
+				})(dispatch)
+
+				updateIdentity('wallet', walletData)(dispatch)
+				updateIdentity('walletAddr', walletAddr)(dispatch)
+				updateIdentity('registerAccount', true)(dispatch)
+			}
+
+			validate(validateId, 'identityAddr', {
+				isValid: !!identityAddr,
+				err: { msg: 'ERR_IDENTITY_NOT_GENERATED' },
+				dirty: dirty,
+			})(dispatch)
+
+			// if (isValid) {
+			// 	await login()(dispatch, getState)
+			// }
+		} catch (err) {
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_VALIDATING_STANDARD_LOGIN', { args: [err] }),
+				timeout: 20000,
+			})(dispatch)
+		}
+
+		updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
+	return async function(dispatch, getState) {
+		updateSpinner(validateId, true)(dispatch)
+
+		const identity = selectIdentity(getState())
+		const { email, emailCheck, password, passwordCheck, tosCheck } = identity
+
+		const validations = await Promise.all([
+			(validateEmail(validateId, email, dirty)(dispatch),
+			validateEmailCheck(validateId, emailCheck, email, dirty)(dispatch),
+			validatePassword(validateId, password, dirty)(dispatch),
+			validatePasswordCheck(validateId, passwordCheck, password, dirty)(
+				dispatch
+			),
+			validateTOS(validateId, tosCheck, dirty)(dispatch)),
+		])
+
+		const isValid = validations.every(v => v === true)
+
+		handleAfterValidation({ isValid, onValid, onInvalid })
 
 		updateSpinner(validateId, false)(dispatch)
 	}
