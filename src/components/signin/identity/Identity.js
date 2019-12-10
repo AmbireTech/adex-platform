@@ -2,9 +2,7 @@ import React from 'react'
 import Button from '@material-ui/core/Button'
 import IdentityHoc from './IdentityHoc'
 import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
-// import IdentityContractAddressEthTransaction from './IdentityContractAddressEthTransaction'
 import IdentityContractOwner from './IdentityContractOwner'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import GrantInfo from './GrantInfo'
 import GrantDeploy from './GrantDeploy'
 import GrantLogin from './GrantLogin'
@@ -12,17 +10,15 @@ import QuickInfo from './QuickInfo'
 import QuickDeploy from './QuickDeploy'
 import QuickLogin from './QuickLogin'
 import QuickRecover from './QuickRecover'
-// import FullLogin from './FullLogin'
 import { ExternalConnect } from './ExternalWalletConnect'
 import IdentitySteps from './IdentitySteps'
-// import Translate from 'components/translate/Translate'
-import { withStyles } from '@material-ui/core/styles'
-import { styles } from './styles'
+
 import {
 	execute,
 	validateQuickRecovery,
 	validateQuickLogin,
 	validateStandardLogin,
+	validateQuickInfo,
 } from 'actions'
 
 const CancelBtn = ({ ...props }) => {
@@ -119,7 +115,12 @@ export const CreateQuickIdentity = props => (
 		{...common}
 		stepsId='quick-identity-create'
 		stepsPages={[
-			{ title: 'QUICK_INFO', page: QuickInfo },
+			{
+				title: 'QUICK_INFO',
+				page: QuickInfo,
+				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
+					execute(validateQuickInfo({ validateId, dirty, onValid, onInvalid })),
+			},
 			{
 				title: 'QUICK_DEPLOY',
 				page: QuickDeploy,
