@@ -11,6 +11,7 @@ import { styles } from './styles'
 import Paper from '@material-ui/core/Paper'
 import Box from '@material-ui/core/Box'
 import Chip from '@material-ui/core/Chip'
+import ErrorIcon from '@material-ui/icons/Error'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { t, selectValidationsById, selectSpinnerById } from 'selectors'
 
@@ -166,6 +167,7 @@ const MaterialStepper = props => {
 							{dirtyErrors.map(err => (
 								<Chip
 									classes={{ root: classes.errChip }}
+									icon={<ErrorIcon />}
 									variant='outlined'
 									size='small'
 									label={`${err.field}: ${err.msg}`}
