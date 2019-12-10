@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import clsx from 'clsx'
 import classnames from 'classnames'
@@ -38,29 +38,9 @@ import { AdUnit } from 'adex-models'
 import { t, selectSide } from 'selectors'
 import { execute, cloneItem } from 'actions'
 import { useSelector } from 'react-redux'
-import { setLength } from 'ethereumjs-util'
 
+const RRTableCell = withReactRouterLink(TableCell)
 const RRIconButton = withReactRouterLink(IconButton)
-
-// function createData(name, calories, fat, carbs, protein) {
-// 	return { name, calories, fat, carbs, protein }
-// }
-
-// const rows = [
-// 	createData('Cupcake', 305, 3.7, 67, 4.3),
-// 	createData('Donut', 452, 25.0, 51, 4.9),
-// 	createData('Eclair', 262, 16.0, 24, 6.0),
-// 	createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-// 	createData('Gingerbread', 356, 16.0, 49, 3.9),
-// 	createData('Honeycomb', 408, 3.2, 87, 6.5),
-// 	createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-// 	createData('Jelly Bean', 375, 0.0, 94, 0.0),
-// 	createData('KitKat', 518, 26.0, 65, 7.0),
-// 	createData('Lollipop', 392, 0.2, 98, 0.0),
-// 	createData('Marshmallow', 318, 0, 81, 2.0),
-// 	createData('Nougat', 360, 19.0, 9, 37.0),
-// 	createData('Oreo', 437, 18.0, 63, 4.0),
-// ]
 
 function desc(a, b, orderBy, numeric) {
 	const subCategories = orderBy.split('.')
@@ -77,8 +57,6 @@ function desc(a, b, orderBy, numeric) {
 	if (b > a) return 1
 	return 0
 }
-// 5000000000000000000
-// 20000000000000000000
 
 function stableSort(array, cmp) {
 	const stabilizedThis = array.map((el, index) => [el, index])
@@ -96,58 +74,94 @@ function getSorting(order, orderBy, orderToken) {
 		: (a, b) => -desc(a, b, orderBy, orderToken)
 }
 
-const headCells = [
-	{
-		id: 'title',
-		numeric: false,
-		disablePadding: true,
-		disableOrdering: true,
-		label: t('PROP_MEDIA'),
-	},
-	{
-		id: 'status.name',
-		numeric: true,
-		disablePadding: false,
-		label: t('PROP_STATUS'),
-	},
-	{
-		id: 'depositAmount',
-		numeric: true,
-		disablePadding: false,
-		label: t('PROP_DEPOSIT'),
-	},
-	{
-		id: 'status.fundsDistributedRatio',
-		numeric: true,
-		disablePadding: false,
-		label: t('PROP_DISTRIBUTED', { args: ['%'] }),
-	},
-	{
-		id: 'minPerImpression',
-		numeric: true,
-		disablePadding: false,
-		label: t('PROP_CPM'),
-	},
-	{
-		id: 'activeFrom',
-		numeric: true,
-		disablePadding: false,
-		label: t('PROP_STARTS'),
-	},
-	{
-		id: 'withdrawPeriodStart',
-		numeric: true,
-		disablePadding: false,
-		label: t('PROP_ENDS'),
-	},
-	{
-		id: 'actions',
-		numeric: true,
-		disablePadding: false,
-		disableOrdering: true,
-		label: t('ACTIONS'),
-	},
-]
+const headCells = {
+	Campaign: [
+		{
+			id: 'title',
+			numeric: false,
+			disablePadding: true,
+			disableOrdering: true,
+			label: t('PROP_MEDIA'),
+		},
+		{
+			id: 'status.name',
+			numeric: true,
+			disablePadding: false,
+			label: t('PROP_STATUS'),
+		},
+		{
+			id: 'depositAmount',
+			numeric: true,
+			disablePadding: false,
+			label: t('PROP_DEPOSIT'),
+		},
+		{
+			id: 'status.fundsDistributedRatio',
+			numeric: true,
+			disablePadding: false,
+			label: t('PROP_DISTRIBUTED', { args: ['%'] }),
+		},
+		{
+			id: 'minPerImpression',
+			numeric: true,
+			disablePadding: false,
+			label: t('PROP_CPM'),
+		},
+		{
+			id: 'activeFrom',
+			numeric: true,
+			disablePadding: false,
+			label: t('PROP_STARTS'),
+		},
+		{
+			id: 'withdrawPeriodStart',
+			numeric: true,
+			disablePadding: false,
+			label: t('PROP_ENDS'),
+		},
+		{
+			id: 'actions',
+			numeric: true,
+			disablePadding: false,
+			disableOrdering: true,
+			label: t('ACTIONS'),
+		},
+	],
+	Other: [
+		{
+			id: 'id',
+			numeric: false,
+			disablePadding: true,
+			disableOrdering: true,
+			label: t('PROP_MEDIA'),
+		},
+		{
+			id: 'title',
+			numeric: false,
+			disablePadding: false,
+			label: t('PROP_TITLE'),
+		},
+		{
+			id: 'type',
+			numeric: false,
+			disablePadding: false,
+			label: t('PROP_TYPE'),
+		},
+		{
+			id: 'created',
+			numeric: false,
+			disablePadding: false,
+			label: t('PROP_CREATED'),
+		},
+		{
+			id: 'actions',
+			numeric: true,
+			disablePadding: false,
+			disableOrdering: true,
+			label: t('ACTIONS'),
+		},
+	],
+}
 
 function EnhancedTableHead(props) {
 	const {
@@ -158,10 +172,12 @@ function EnhancedTableHead(props) {
 		numSelected,
 		rowCount,
 		onRequestSort,
+		itemType,
 	} = props
 	const createSortHandler = (property, numeric) => event => {
 		onRequestSort(event, property, numeric)
 	}
+	let headSide = itemType === 'Campaign' ? itemType : 'Other'
 
 	return (
 		<TableHead>
@@ -174,7 +190,7 @@ function EnhancedTableHead(props) {
 						inputProps={{ 'aria-label': 'select all desserts' }}
 					/>
 				</TableCell>
-				{headCells.map(headCell => (
+				{headCells[headSide].map(headCell => (
 					<TableCell
 						key={headCell.id}
 						align={'left'}
@@ -207,6 +223,7 @@ function EnhancedTableHead(props) {
 }
 
 EnhancedTableHead.propTypes = {
+	itemType: PropTypes.object.isRequired,
 	classes: PropTypes.object.isRequired,
 	numSelected: PropTypes.number.isRequired,
 	onRequestSort: PropTypes.func.isRequired,
@@ -238,7 +255,7 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
 	const classes = useToolbarStyles()
-	const { numSelected, itemType, search, setSearch } = props
+	const { numSelected, search, setSearch } = props
 
 	return (
 		<Toolbar
@@ -427,6 +444,7 @@ export default function EnhancedTable(props) {
 					item.title.toLowerCase().includes(search.toLowerCase())) ||
 				(item.description &&
 					item.description.toLowerCase().includes(search.toLowerCase())) ||
+				(item.type && item.type.toLowerCase().includes(search.toLowerCase())) ||
 				(item.status &&
 					item.status.name &&
 					item.status.name.toLowerCase().includes(search.toLowerCase())) ||
@@ -466,6 +484,7 @@ export default function EnhancedTable(props) {
 						aria-label='enhanced table'
 					>
 						<EnhancedTableHead
+							itemType={itemType}
 							classes={classes}
 							numSelected={selected.length}
 							order={order}
@@ -490,7 +509,6 @@ export default function EnhancedTable(props) {
 									return (
 										<TableRow
 											hover
-											onClick={event => handleClick(event, item.id)}
 											role='checkbox'
 											aria-checked={isItemSelected}
 											tabIndex={-1}
@@ -501,6 +519,7 @@ export default function EnhancedTable(props) {
 												<Checkbox
 													checked={isItemSelected}
 													inputProps={{ 'aria-labelledby': labelId }}
+													onClick={event => handleClick(event, item.id)}
 												/>
 											</TableCell>
 											<TableCell>
@@ -513,7 +532,7 @@ export default function EnhancedTable(props) {
 													allowVideo
 												/>
 											</TableCell>
-											{itemType === 'Campaign' && (
+											{itemType === 'Campaign' ? (
 												<React.Fragment>
 													<TableCell> {item.status.name} </TableCell>
 													<TableCell>
@@ -538,6 +557,19 @@ export default function EnhancedTable(props) {
 													</TableCell>
 													<TableCell>
 														{formatDateTime(item.withdrawPeriodStart)}
+													</TableCell>
+												</React.Fragment>
+											) : (
+												<React.Fragment>
+													<RRTableCell
+														to={`/dashboard/${side}/${itemType}/${item.id}`}
+													>
+														{item.title}
+													</RRTableCell>
+													<TableCell> {item.type} </TableCell>
+													<TableCell>
+														{' '}
+														{formatDateTime(item.created)}{' '}
 													</TableCell>
 												</React.Fragment>
 											)}
