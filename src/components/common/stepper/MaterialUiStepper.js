@@ -166,6 +166,7 @@ const MaterialStepper = props => {
 						<Box color='error.main'>
 							{dirtyErrors.map(err => (
 								<Chip
+									key={err.field}
 									classes={{ root: classes.errChip }}
 									icon={<ErrorIcon />}
 									variant='outlined'
