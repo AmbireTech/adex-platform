@@ -142,13 +142,12 @@ const AuthSelect = ({ t, classes }) => {
 			<Box m={1}>
 				<Button
 					variant='contained'
-					to='/identity/quick'
 					size='large'
 					color='secondary'
 					fullWidth
 					className={classes.limitedWidthBtn}
 					onClick={() => {
-						goTo('/identity/quick', true)
+						goTo('/signup/quick', true)
 					}}
 				>
 					{t('CREATE_QUICK_ACCOUNT')}
