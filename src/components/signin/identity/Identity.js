@@ -5,7 +5,6 @@ import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy
 import IdentityContractOwner from './IdentityContractOwner'
 import GrantInfo from './GrantInfo'
 import GrantDeploy from './GrantDeploy'
-import GrantLogin from './GrantLogin'
 import QuickInfo from './QuickInfo'
 import QuickDeploy from './QuickDeploy'
 import QuickLogin from './QuickLogin'
@@ -51,22 +50,6 @@ export const CreateGrantIdentity = props => (
 				final: true,
 				pageValidation: finalValidationQuick,
 				disableBtnsIfValid: true,
-			},
-		]}
-	/>
-)
-
-export const LoginGrantIdentity = props => (
-	<IdentitySteps
-		{...props}
-		{...common}
-		stepsId='grant-identity-login'
-		stepsPages={[
-			{
-				title: 'GRANT_LOGIN',
-				page: GrantLogin,
-				pageValidation: finalValidationQuick,
-				final: true,
 			},
 		]}
 	/>
