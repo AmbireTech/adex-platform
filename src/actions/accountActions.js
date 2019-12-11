@@ -40,6 +40,7 @@ import {
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { getErrorMsg } from 'helpers/errors'
+import { push } from 'connected-react-router'
 
 const UPDATE_SETTINGS_INTERVAL = 24 * 60 * 60 * 1000 // 1 hour
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -286,6 +287,7 @@ export function createSession({ wallet, identity, email, deleteLegacyKey }) {
 					password: wallet.password,
 				})
 			}
+			dispatch(push('/side-select'))
 		} catch (err) {
 			console.error('ERR_GETTING_SESSION', err)
 			addToast({

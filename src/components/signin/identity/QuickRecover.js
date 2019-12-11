@@ -1,20 +1,24 @@
 import React from 'react'
-import IdentityHoc from './IdentityHoc'
+import { useSelector } from 'react-redux'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { t } from 'selectors'
-import { execute, onUploadLocalWallet } from 'actions'
+import { t, selectIdentity, selectValidationsById } from 'selectors'
+import { execute, onUploadLocalWallet, updateIdentity } from 'actions'
 
 const useStyles = makeStyles(styles)
 
-const QuickRecover = ({ handleChange, identity, invalidFields }) => {
+const QuickRecover = ({ validateId }) => {
+	const identity = useSelector(selectIdentity)
+	const validations = useSelector(
+		state => selectValidationsById(state, validateId) || {}
+	)
 	const classes = useStyles()
 	const { uploadedLocalWallet } = identity
-	const emailErr = invalidFields.email
+	const emailErr = validations.email
 
 	return (
 		<Grid container spacing={2} alignContent='flex-start' alignItems='center'>
@@ -26,7 +30,7 @@ const QuickRecover = ({ handleChange, identity, invalidFields }) => {
 					label={t('email', { isProp: true })}
 					name='email'
 					value={identity.email || ''}
-					onChange={ev => handleChange('email', ev.target.value)}
+					onChange={ev => execute(updateIdentity('email', ev.target.value))}
 					error={emailErr && !!emailErr.dirty}
 					maxLength={128}
 					helperText={
@@ -60,5 +64,4 @@ const QuickRecover = ({ handleChange, identity, invalidFields }) => {
 	)
 }
 
-const IdentityQuickRecoverStep = IdentityHoc(QuickRecover)
-export default IdentityQuickRecoverStep
+export default QuickRecover

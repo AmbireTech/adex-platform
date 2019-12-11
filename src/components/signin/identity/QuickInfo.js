@@ -1,5 +1,4 @@
 import React from 'react'
-import IdentityHoc from './IdentityHoc'
 import { useSelector } from 'react-redux'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
@@ -7,11 +6,7 @@ import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
-import {
-	t,
-	// selectIdentity,
-	selectValidationsById,
-} from 'selectors'
+import { t, selectIdentity, selectValidationsById } from 'selectors'
 import {
 	execute,
 	validateEmail,
@@ -19,16 +14,17 @@ import {
 	validatePassword,
 	validatePasswordCheck,
 	validateTOS,
+	updateIdentity,
 } from 'actions'
 
 const GrantInfo = props => {
 	const checkTos = checked => {
-		handleChange('tosCheck', checked)
+		execute(updateIdentity('tosCheck', checked))
 		execute(validateTOS(validateId, checked, true))
 	}
 
-	const { validateId, identity, handleChange } = props
-	// const identity = useSelector(selectIdentity)
+	const { validateId } = props
+	const identity = useSelector(selectIdentity)
 	const validations = useSelector(
 		state => selectValidationsById(state, validateId) || {}
 	)
@@ -46,7 +42,7 @@ const GrantInfo = props => {
 						label={t('email', { isProp: true })}
 						name='email'
 						value={identity.email || ''}
-						onChange={ev => handleChange('email', ev.target.value)}
+						onChange={ev => execute(updateIdentity('email', ev.target.value))}
 						onBlur={() =>
 							execute(validateEmail(validateId, identity.email, true))
 						}
@@ -68,7 +64,9 @@ const GrantInfo = props => {
 						label={t('emailCheck', { isProp: true })}
 						name='emailCheck'
 						value={identity.emailCheck || ''}
-						onChange={ev => handleChange('emailCheck', ev.target.value)}
+						onChange={ev =>
+							execute(updateIdentity('emailCheck', ev.target.value))
+						}
 						onBlur={() =>
 							execute(
 								validateEmailCheck(
@@ -80,11 +78,13 @@ const GrantInfo = props => {
 							)
 						}
 						onFocus={() =>
-							validateEmailCheck(
-								validateId,
-								identity.emailCheck,
-								identity.email,
-								false
+							execute(
+								validateEmailCheck(
+									validateId,
+									identity.emailCheck,
+									identity.email,
+									false
+								)
 							)
 						}
 						error={emailCheck && !!emailCheck.dirty}
@@ -104,7 +104,9 @@ const GrantInfo = props => {
 						label={t('password', { isProp: true })}
 						name='password'
 						value={identity.password || ''}
-						onChange={ev => handleChange('password', ev.target.value)}
+						onChange={ev =>
+							execute(updateIdentity('password', ev.target.value))
+						}
 						onBlur={() =>
 							execute(validatePassword(validateId, identity.password, true))
 						}
@@ -128,7 +130,9 @@ const GrantInfo = props => {
 						label={t('passwordCheck', { isProp: true })}
 						name='passwordCheck'
 						value={identity.passwordCheck || ''}
-						onChange={ev => handleChange('passwordCheck', ev.target.value)}
+						onChange={ev =>
+							execute(updateIdentity('passwordCheck', ev.target.value))
+						}
 						onBlur={() =>
 							execute(
 								validatePasswordCheck(
@@ -185,5 +189,4 @@ const GrantInfo = props => {
 	)
 }
 
-const IdentityGrantInfoStep = IdentityHoc(GrantInfo)
-export default IdentityGrantInfoStep
+export default GrantInfo
