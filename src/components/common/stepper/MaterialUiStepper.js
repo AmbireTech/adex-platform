@@ -193,6 +193,11 @@ const MaterialStepper = props => {
 						{page.cancelBtn && !(page.disableBtnsIfValid && isValidPage()) ? (
 							<page.cancelBtn />
 						) : null}
+
+						{typeof page.cancelFunction === 'function' &&
+						!(page.disableBtnsIfValid && isValidPage()) ? (
+							<Button onClick={page.cancelFunction}>{t('CANCEL')}</Button>
+						) : null}
 						{/* {ValidationBtn && <ValidationBtn {...page.props} />} */}
 
 						{!page.completeBtn || !!pageValidation ? (
