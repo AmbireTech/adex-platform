@@ -23,7 +23,7 @@ class IdentitySteps extends Component {
 	mapPages = () => {
 		const {
 			GoBtn,
-			CancelBtn,
+			cancelFunction,
 			t,
 			onSave,
 			stepsId,
@@ -33,16 +33,12 @@ class IdentitySteps extends Component {
 			...rest
 		} = this.props
 
-		const cancelButton = () => (
-			<CancelBtn {...rest} stepsId={stepsId} onSave={onSave} t={t} />
-		)
-
 		const validateId = (validateIdBase || '') + '-' + stepsId
 
 		const pages = stepsPages.map((page, index) => {
 			return {
 				title: t(page.title),
-				cancelBtn: cancelButton,
+				cancelFunction,
 				component: ValidItemHoc(page.page),
 				disableBtnsIfValid: page.disableBtnsIfValid,
 				props: { ...this.props, validateId: validateId + '-' + index },

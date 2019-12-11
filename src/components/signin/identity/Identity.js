@@ -11,6 +11,7 @@ import QuickLogin from './QuickLogin'
 import QuickRecover from './QuickRecover'
 import { ExternalConnect } from './ExternalWalletConnect'
 import IdentitySteps from './IdentitySteps'
+import { push } from 'connected-react-router'
 
 import {
 	execute,
@@ -18,13 +19,13 @@ import {
 	validateQuickLogin,
 	validateStandardLogin,
 	validateQuickInfo,
+	resetIdentity,
 } from 'actions'
 
-const CancelBtn = ({ ...props }) => {
-	return <Button onClick={props.cancel}>{props.t('CANCEL')}</Button>
+const cancelFunction = () => {
+	execute(resetIdentity())
+	execute(push('/'))
 }
-
-const CancelBtnWithIdentity = IdentityHoc(CancelBtn)
 
 const finalValidationQuick = ({ validateId, dirty, onValid, onInvalid }) =>
 	execute(validateQuickLogin({ validateId, dirty }))
@@ -33,7 +34,7 @@ const finalValidationStandard = ({ validateId, dirty, onValid, onInvalid }) =>
 	execute(validateStandardLogin({ validateId, dirty }))
 
 const common = {
-	CancelBtn: CancelBtnWithIdentity,
+	cancelFunction,
 	validateIdBase: 'identity-',
 }
 
