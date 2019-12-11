@@ -111,8 +111,10 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
+    "build-dev": "NODE_ENV=development node scripts/build.js",
     "deploy": "npm run build && cp ./domains/platform/CNAME ./build && gh-pages -d build",
     "deploy-staging": "npm run build && cp ./domains/staging/CNAME ./build && gh-pages -d build -r git@github.com:AdExNetwork/adex-platform-staging.git",
+    "deploy-goerli": "npm run build-dev && cp ./domains/goerli/CNAME ./build && gh-pages -d build -r git@github.com:AdExNetwork/adex-platform-goerli.git",
     "test": "eslint src/",
     "unit-tests": "node scripts/test.js --env=jsdom",
     "lint": "eslint \"src/**/*.{js,jsx}\" && echo Linting check finished",
