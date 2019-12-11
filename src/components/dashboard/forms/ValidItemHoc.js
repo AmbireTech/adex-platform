@@ -5,17 +5,16 @@ import PropTypes from 'prop-types'
 import { execute, validate } from 'actions'
 import { selectValidationsById } from 'selectors'
 
-export default function NewItemHoc(Decorated) {
-	const ValidItemHoc = props => {
-		const validations = useSelector(state =>
-			selectValidationsById(state, props.validateId)
-		)
+export default function ValidationHoc(Decorated) {
+	const ValidItem = props => {
+		const validations =
+			useSelector(state => selectValidationsById(state, props.validateId)) || {}
 
 		const makeValidation = (
 			key,
 			{ isValid, err = { msg: '', args: [] }, dirty = false, removeAll = false }
 		) => {
-			const { validateId } = this.props
+			const { validateId } = props
 			execute(validate(key, { isValid, err, dirty, removeAll }, validateId))
 		}
 
@@ -28,9 +27,9 @@ export default function NewItemHoc(Decorated) {
 		)
 	}
 
-	ValidItemHoc.propTypes = {
+	ValidItem.propTypes = {
 		validateId: PropTypes.string.isRequired,
 	}
 
-	return ValidItemHoc
+	return ValidItem
 }
