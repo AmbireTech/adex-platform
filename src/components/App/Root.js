@@ -15,7 +15,6 @@ import {
 	CreateQuickIdentity,
 	CreteFullIdentity,
 	// DemoIdentity,
-	LoginGrantIdentity,
 	LoginStandardIdentity,
 	LoginQuickIdentity,
 	RecoverQuickIdentity,
@@ -29,7 +28,6 @@ import Translate from 'components/translate/Translate'
 import { selectAuth, selectWallet, selectLocation } from 'selectors'
 
 const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
-const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
 const ConnectedCreateQuickIdentity = ConnectHoc(JustDialog(CreateQuickIdentity))
 const ConnectedQuickLogin = ConnectHoc(JustDialog(LoginQuickIdentity))
 const ConnectedQuickRecovery = ConnectHoc(JustDialog(RecoverQuickIdentity))
@@ -103,15 +101,10 @@ const Root = () => {
 			/>
 			<Route
 				exact
-				path='/identity/quick'
+				path='/signup/quick'
 				component={props => (
 					<ConnectedCreateQuickIdentity {...props} noBackground />
 				)}
-			/>
-			<Route
-				exact
-				path='/login/grant'
-				component={props => <ConnectedGrantLogin {...props} noBackground />}
 			/>
 			<Route
 				exact
@@ -132,7 +125,7 @@ const Root = () => {
 			/>
 			<Route
 				exact
-				path='/identity/full'
+				path='/signup/full'
 				component={props => (
 					<ConnectedCreateFullIdentity {...props} noBackground />
 				)}
