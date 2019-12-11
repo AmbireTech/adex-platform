@@ -21,12 +21,12 @@ export default function IdentityHoc(Decorated) {
 			this.props.actions.updateIdentity(prop, value)
 		}
 
-		componentDidUpdate = () => {
-			const { account } = this.props
-			if (account.wallet.authSig) {
-				execute(push('/side-select'))
-			}
-		}
+		// componentDidUpdate = () => {
+		// 	const { account } = this.props
+		// 	if (account.wallet.authSig) {
+		// 		execute(push('/side-select'))
+		// 	}
+		// }
 
 		save = async () => {
 			execute(login())

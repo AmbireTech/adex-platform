@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import IdentityHoc from './IdentityHoc'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import { bigNumberify } from 'ethers/utils'
 import { formatTokenAmount } from 'helpers/formatters'
-import { execute, ownerIdentities as updateOwnerIdentities } from 'actions'
-import { selectSpinnerById, t } from 'selectors'
+import {
+	execute,
+	updateIdentity,
+	ownerIdentities as updateOwnerIdentities,
+} from 'actions'
+import { selectSpinnerById, selectIdentity, t } from 'selectors'
 import Dropdown from 'components/common/dropdown'
 
 const getIdentitiesForDropdown = (ownerIdentities = [], t) =>
@@ -25,7 +28,7 @@ const getIdentitiesForDropdown = (ownerIdentities = [], t) =>
 	})
 
 function FullLogin(props) {
-	const { identity, handleChange } = props
+	const identity = useSelector(selectIdentity)
 	const { wallet, ownerIdentities, identityContractAddress } = identity
 	const { address } = wallet
 	const spinner = useSelector(state =>
@@ -57,7 +60,9 @@ function FullLogin(props) {
 						<Dropdown
 							label={t('SELECT_IDENTITY')}
 							helperText={t('SELECT_IDENTITY_INFO')}
-							onChange={val => handleChange('identityContractAddress', val)}
+							onChange={val =>
+								execute(updateIdentity('identityContractAddress', val))
+							}
 							source={getIdentitiesForDropdown(ownerIdentities, t)}
 							value={identityContractAddress || ''}
 							htmlId='label-identityContractAddress'
@@ -72,5 +77,4 @@ function FullLogin(props) {
 	)
 }
 
-const IdentityFullLoginStep = IdentityHoc(FullLogin)
-export default IdentityFullLoginStep
+export default FullLogin

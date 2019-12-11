@@ -1,5 +1,4 @@
 import React from 'react'
-import IdentityHoc from './IdentityHoc'
 import { useSelector } from 'react-redux'
 // import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
@@ -11,7 +10,7 @@ import { t, selectIdentity } from 'selectors'
 
 const QuickDeploy = props => {
 	// const classes = useStyles()
-	const { identity } = props //  useSelector(selectIdentity)
+	const { identity } = useSelector(selectIdentity)
 	const { walletAddr, identityAddr } = identity
 
 	return (
@@ -36,4 +35,4 @@ const QuickDeploy = props => {
 	)
 }
 
-export default IdentityHoc(QuickDeploy)
+export default QuickDeploy
