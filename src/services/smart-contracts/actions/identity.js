@@ -163,37 +163,6 @@ export async function getIdentityDeployData({
 	}
 }
 
-export async function deployIdentityContract({
-	wallet,
-	bytecode,
-	salt,
-	expectedAddr,
-}) {
-	const { provider, IdentityFactory } = await getEthers(wallet.authType)
-	const signer = await getSigner({ wallet, provider })
-
-	const pTx = await prepareTx({
-		tx: IdentityFactory.deploy(bytecode, salt),
-		provider,
-		sender: wallet.address,
-		gasLimit: hexlify(GAS_LIMIT_DEPLOY_CONTRACT),
-	})
-
-	pTx.gasLimit = hexlify(GAS_LIMIT_DEPLOY_CONTRACT)
-	const identityFactoryWithSigner = IdentityFactory.connect(signer)
-
-	const tx = identityFactoryWithSigner.deploy(bytecode, salt, pTx)
-
-	processTx({
-		tx,
-		txSuccessData: {},
-		from: wallet.address,
-		account: {},
-	})
-
-	return tx
-}
-
 export function getPrivileges({ walletAddr, identityAddr, walletAuthType }) {
 	return getEthers(walletAuthType).then(({ provider, Identity }) => {
 		const contract = new ethers.Contract(identityAddr, Identity.abi, provider)

@@ -99,27 +99,6 @@ export const identityBytecode = ({ owner, privLevel, identityBaseAddr }) => {
 		.then(processResponse)
 }
 
-export const registerFullIdentity = ({
-	txHash,
-	identity,
-	privileges,
-	mail,
-}) => {
-	return requester
-		.fetch({
-			route: 'identity/register-identity',
-			method: 'POST',
-			body: JSON.stringify({
-				txHash,
-				identity,
-				privileges,
-				mail,
-			}),
-			headers: { 'Content-Type': 'application/json' },
-		})
-		.then(processResponse)
-}
-
 export const sendOpenChannel = ({
 	txnsRaw,
 	signatures,

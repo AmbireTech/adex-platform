@@ -5,9 +5,7 @@ import {
 	getQuickWallet,
 } from 'services/adex-relayer/actions'
 import { updateSpinner, addToast } from './uiActions'
-import { deployIdentityContract } from 'services/smart-contracts/actions/identity'
 import {
-	registerFullIdentity,
 	registerExpectedIdentity,
 	getOwnerIdentities,
 } from 'services/adex-relayer/actions'
@@ -150,48 +148,6 @@ export function getGrantAccount({
 		}
 
 		updateSpinner('getting-grant-identity', false)(dispatch)
-	}
-}
-
-export function deployFullIdentity({
-	wallet,
-	email,
-	identityTxData,
-	identityAddr,
-}) {
-	return async function(dispatch) {
-		updateSpinner('getting-full-identity', true)(dispatch)
-		try {
-			const tx = await deployIdentityContract({
-				...identityTxData,
-				wallet,
-			})
-
-			const regInfo = await registerFullIdentity({
-				txHash: tx.hash,
-				identity: identityAddr,
-				privileges: [wallet.address, 3],
-				mail: email,
-			})
-
-			if (regInfo) {
-				updateIdentity('isRegistered', true)(dispatch)
-			} else {
-				addToast({
-					type: 'cancel',
-					label: translate('ERR_REGISTER_IDENTITY', { args: [tx.hash] }),
-					timeout: 20000,
-				})(dispatch)
-			}
-		} catch (err) {
-			console.error('ERR_REGISTER_IDENTITY', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_REGISTER_IDENTITY', { args: [getErrorMsg(err)] }),
-				timeout: 20000,
-			})(dispatch)
-		}
-		updateSpinner('getting-full-identity', false)(dispatch)
 	}
 }
 
