@@ -3,7 +3,10 @@ import PropTypes from 'prop-types'
 import clsx from 'clsx'
 import classnames from 'classnames'
 import Img from 'components/common/img/Img'
+import ChipDateRangePicker from 'components/common/DatePicker/ChipDateRangePicker'
+import ChipMultipleSelect from 'components/common/dropdown/ChipMultipleSelect'
 import Button from '@material-ui/core/Button'
+import Chip from '@material-ui/core/Chip'
 import FormControl from '@material-ui/core/FormControl'
 import InputLabel from '@material-ui/core/InputLabel'
 import InputAdornment from '@material-ui/core/InputAdornment'
@@ -25,6 +28,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
 import SearchIcon from '@material-ui/icons/Search'
 import DeleteIcon from '@material-ui/icons/Delete'
+import ClearIcon from '@material-ui/icons/Clear'
 import ArchiveIcon from '@material-ui/icons/Archive'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import FilterListIcon from '@material-ui/icons/FilterList'
@@ -38,7 +42,6 @@ import { AdUnit } from 'adex-models'
 import { t, selectSide } from 'selectors'
 import { execute, cloneItem } from 'actions'
 import { useSelector } from 'react-redux'
-import ChipDateRangePicker from 'components/common/DatePicker/ChipDateRangePicker'
 import { isOverlapping, isBetween } from 'helpers/compareHelpers'
 
 const RRTableCell = withReactRouterLink(TableCell)
@@ -179,8 +182,7 @@ function EnhancedTableHead(props) {
 	const createSortHandler = (property, numeric) => event => {
 		onRequestSort(event, property, numeric)
 	}
-	let headSide = itemType === 'Campaign' ? itemType : 'Other'
-
+	const headSide = itemType === 'Campaign' ? itemType : 'Other'
 	return (
 		<TableHead>
 			<TableRow>
@@ -255,10 +257,29 @@ const useToolbarStyles = makeStyles(theme => ({
 	},
 }))
 
+const filterTags = {
+	Campaign: [
+		{ name: 'exhausted', label: 'Exhausted' },
+		{ name: 'expired', label: 'Expired' },
+		{ name: 'active', label: 'Active' },
+		{ name: 'pending', label: 'Pending' },
+		{ name: 'closed', label: 'Closed' },
+	],
+	Other: [{ name: 'test1', label: 'This is first label' }],
+}
 const EnhancedTableToolbar = props => {
 	const classes = useToolbarStyles()
-	const { numSelected, search, setSearch, dateRange, setDateRange } = props
-
+	const {
+		numSelected,
+		search,
+		setSearch,
+		dateRange,
+		setDateRange,
+		filters,
+		setFilters,
+		itemType,
+	} = props
+	const filterSide = itemType === 'Campaign' ? itemType : 'Other'
 	return (
 		<Toolbar
 			className={clsx(classes.root, {
@@ -298,16 +319,27 @@ const EnhancedTableToolbar = props => {
 			) : (
 				<React.Fragment>
 					<Tooltip title='Filter list'>
-						<IconButton aria-label='archive'>
-							<ArchiveIcon />
-						</IconButton>
+						<ChipMultipleSelect
+							items={filterTags[filterSide]}
+							state={filters}
+							setState={setFilters}
+							label='Filter'
+						/>
 					</Tooltip>
+
 					<Tooltip title='Select Date Range'>
 						<ChipDateRangePicker
 							dateRange={dateRange}
 							setDateRange={setDateRange}
 						/>
 					</Tooltip>
+					<Chip
+						label={'Clear All Filters'}
+						onClick={() => console.log('clear')}
+						icon={<ClearIcon />}
+						className={classes.chip}
+						color='primary'
+					/>
 				</React.Fragment>
 			)}
 		</Toolbar>
@@ -400,7 +432,10 @@ export default function EnhancedTable(props) {
 	const [dense, setDense] = React.useState(false)
 	const [rowsPerPage, setRowsPerPage] = React.useState(5)
 	const [dateRange, setDateRange] = React.useState({})
-
+	const [filters, setFilters] = React.useState({})
+	useEffect(() => {
+		console.log(filters)
+	}, [filters])
 	const handleRequestSort = (event, property, numeric) => {
 		const isDesc = orderBy === property && order === 'desc'
 		setOrder(isDesc ? 'asc' : 'desc')
@@ -492,6 +527,8 @@ export default function EnhancedTable(props) {
 					setSearch={setSearch}
 					dateRange={dateRange}
 					setDateRange={setDateRange}
+					filters={filters}
+					setFilters={setFilters}
 				/>
 				<div className={classes.tableWrapper}>
 					<Table
