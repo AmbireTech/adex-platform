@@ -27,6 +27,7 @@ import {
 	migrateLegacyWallet,
 	walletInfo,
 	createLocalWallet,
+	generateSalt,
 } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
 import { selectAccount, selectIdentity } from 'selectors'
@@ -342,7 +343,7 @@ export function getQuickWalletSalt({ email }) {
 		updateSpinner('getting-quick-wallet-salt', true)(dispatch)
 		let salt = null
 		try {
-			salt = (await quickWalletSalt({ email })).salt
+			salt = generateSalt(email)
 		} catch (err) {
 			console.error('ERR_GETTING_WALLET_SALT', err)
 			addToast({
@@ -390,6 +391,7 @@ export function login() {
 				deleteLegacyKey,
 			})(dispatch)
 		} catch (err) {
+			console.error('ERR_LOGIN', err)
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_LOGIN', { args: [getErrorMsg(err)] }),
@@ -507,8 +509,8 @@ export function validateQuickRecovery({
 			let msg = 'ERR_EMAIL'
 
 			if (isValid) {
-				isValid = !!(await getQuickWalletSalt({ email })(dispatch))
-				msg = 'ERR_EMAIL_BACKUP_NOT_FOUND'
+				const salt = generateSalt(email)
+				updateIdentity('backupSalt', salt)(dispatch)
 			}
 
 			validate(validateId, 'email', {
@@ -519,6 +521,7 @@ export function validateQuickRecovery({
 
 			handleAfterValidation({ isValid, onValid, onInvalid })
 		} catch (err) {
+			console.error('ERR_VALIDATING_QUICK_RECOVERY', err)
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_VALIDATING_QUICK_RECOVERY', {
@@ -562,6 +565,7 @@ export function validateStandardLogin({ validateId, dirty }) {
 				await login()(dispatch, getState)
 			}
 		} catch (err) {
+			console.error('ERR_VALIDATING_STANDARD_LOGIN', err)
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_VALIDATING_STANDARD_LOGIN', {
