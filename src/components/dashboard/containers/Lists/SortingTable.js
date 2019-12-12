@@ -38,7 +38,8 @@ import { AdUnit } from 'adex-models'
 import { t, selectSide } from 'selectors'
 import { execute, cloneItem } from 'actions'
 import { useSelector } from 'react-redux'
-import ChipDateRangePicker from 'common/DatePicker/ChipDateRangePicker'
+import ChipDateRangePicker from 'components/common/DatePicker/ChipDateRangePicker'
+import { isOverlapping, isBetween } from 'helpers/compareHelpers'
 
 const RRTableCell = withReactRouterLink(TableCell)
 const RRIconButton = withReactRouterLink(IconButton)
@@ -256,7 +257,7 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
 	const classes = useToolbarStyles()
-	const { numSelected, search, setSearch } = props
+	const { numSelected, search, setSearch, dateRange, setDateRange } = props
 
 	return (
 		<Toolbar
@@ -297,9 +298,16 @@ const EnhancedTableToolbar = props => {
 			) : (
 				<React.Fragment>
 					<Tooltip title='Filter list'>
-						<ChipDateRangePicker dateRange={} setDateRange={}/>
+						<IconButton aria-label='archive'>
+							<ArchiveIcon />
+						</IconButton>
 					</Tooltip>
-					<Tooltip title='Select Date Range'></Tooltip>
+					<Tooltip title='Select Date Range'>
+						<ChipDateRangePicker
+							dateRange={dateRange}
+							setDateRange={setDateRange}
+						/>
+					</Tooltip>
 				</React.Fragment>
 			)}
 		</Toolbar>
@@ -391,6 +399,7 @@ export default function EnhancedTable(props) {
 	const [page, setPage] = React.useState(0)
 	const [dense, setDense] = React.useState(false)
 	const [rowsPerPage, setRowsPerPage] = React.useState(5)
+	const [dateRange, setDateRange] = React.useState({})
 
 	const handleRequestSort = (event, property, numeric) => {
 		const isDesc = orderBy === property && order === 'desc'
@@ -448,6 +457,14 @@ export default function EnhancedTable(props) {
 		)
 	}
 
+	const filterByDate = (items, dateRange) => {
+		return items.filter(item =>
+			item.created
+				? isBetween(item.created, dateRange)
+				: isOverlapping(item.activeFrom, item.withdrawPeriodStart, dateRange)
+		)
+	}
+
 	const handleChangeRowsPerPage = event => {
 		setRowsPerPage(parseInt(event.target.value, 10))
 		setPage(0)
@@ -459,8 +476,11 @@ export default function EnhancedTable(props) {
 
 	const isSelected = id => selected.indexOf(id) !== -1
 
+	let filteredItems = filterByDate(filterBySearch(items, search), dateRange)
+
 	const emptyRows =
-		rowsPerPage - Math.min(rowsPerPage, items.length - 1 - page * rowsPerPage)
+		rowsPerPage -
+		Math.min(rowsPerPage, filteredItems.length - 1 - page * rowsPerPage)
 
 	return (
 		<div className={classes.root}>
@@ -470,6 +490,8 @@ export default function EnhancedTable(props) {
 					itemType={itemType}
 					search={search}
 					setSearch={setSearch}
+					dateRange={dateRange}
+					setDateRange={setDateRange}
 				/>
 				<div className={classes.tableWrapper}>
 					<Table
@@ -490,7 +512,7 @@ export default function EnhancedTable(props) {
 						/>
 						<TableBody>
 							{stableSort(
-								filterBySearch(items, search),
+								filteredItems,
 								getSorting(order, orderBy, orderIsNumeric)
 							)
 								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -588,7 +610,7 @@ export default function EnhancedTable(props) {
 					rowsPerPageOptions={[5, 10, 25]}
 					component='div'
 					classes={{ spacer: classes.spacer }}
-					count={items.length}
+					count={filteredItems.length}
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onChangePage={handleChangePage}
