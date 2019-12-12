@@ -64,6 +64,7 @@
     "mini-css-extract-plugin": "0.5.0",
     "object-assign": "^4.1.1",
     "optimize-css-assets-webpack-plugin": "5.0.1",
+    "pbkdf2": "^3.0.17",
     "pnp-webpack-plugin": "1.2.1",
     "postcss-flexbugs-fixes": "4.1.0",
     "postcss-loader": "3.0.0",
