@@ -1,4 +1,5 @@
 import { ethers, utils } from 'ethers'
+import pbkdf2 from 'pbkdf2'
 import { encrypt, decrypt } from 'services/crypto/crypto'
 import {
 	loadFromLocalStorage,
@@ -189,16 +190,20 @@ export function getAllWallets() {
 export function getWalletHash({ salt, password }) {
 	const passwordId = utils.id(password)
 
-	const hash = utils.solidityKeccak256(
-		['bytes32', 'bytes32'],
-		[salt, passwordId]
-	)
+	const dk = pbkdf2.pbkdf2Sync(passwordId, salt, 10000, 64, 'sha512')
 
+	const hash = utils.keccak256(dk)
 	return hash
 }
 
-export function generateSalt() {
-	const randomData = utils.randomBytes(64)
-	const salt = utils.keccak256(randomData)
+export function generateSalt(dataStr) {
+	if (typeof dataStr !== 'string') {
+		throw new Error('ERR_GEN_SALT_INPUT_NOT_STR')
+	} else if (dataStr.length < 8) {
+		throw new Error('ERR_GEN_SALT_INPUT_TOO_SHORT')
+	}
+
+	const id = utils.id(dataStr)
+	const salt = utils.keccak256(id)
 	return salt
 }

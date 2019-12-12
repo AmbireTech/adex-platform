@@ -3,10 +3,10 @@ const { generateSalt, getWalletHash } = require('./wallet')
 describe('generateSalt', () => {
 	it('should generate different values every time', () => {
 		const salts = {}
-		const count = 1000
+		const count = 2
 
 		for (let index = 0; index < count; index++) {
-			const salt = generateSalt()
+			const salt = generateSalt(`somepass${index}`)
 			salts[salt] = true
 		}
 
@@ -15,7 +15,7 @@ describe('generateSalt', () => {
 })
 
 describe('getWalletHash', () => {
-	const salt = generateSalt()
+	const salt = generateSalt('somepass')
 	const password = 'somepasswordqnkokura'
 
 	it('should return same hash', () => {
@@ -28,7 +28,7 @@ describe('getWalletHash', () => {
 	it('should return different hash with same salt and different password', () => {
 		const hashes = {}
 
-		const count = 1000
+		const count = 2
 
 		for (let index = 0; index < count; index++) {
 			const hash = getWalletHash({ salt, password: password + index })
@@ -41,10 +41,13 @@ describe('getWalletHash', () => {
 	it('should return different hash with same password and different salt', () => {
 		const hashes = {}
 
-		const count = 1000
+		const count = 2
 
 		for (let index = 0; index < count; index++) {
-			const hash = getWalletHash({ salt: generateSalt(), password })
+			const hash = getWalletHash({
+				salt: generateSalt(`somepass${index}`),
+				password,
+			})
 			hashes[hash] = true
 		}
 
