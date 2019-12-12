@@ -6,17 +6,20 @@ import { Popover, Chip } from '@material-ui/core'
 import { formatDateTime } from 'helpers/formatters'
 import { PropTypes } from 'prop-types'
 
-export default function ChipDateRangePicker(dateRange, setDateRange, minDate) {
-	const [anchorDatePicker, setAnchorDatePicker] = useState(null)
+const DATE_FORMAT = 'YYYY-MM-DD'
 
+export default function ChipDateRangePicker(props) {
+	const [anchorDatePicker, setAnchorDatePicker] = useState(null)
+	const { dateRange, setDateRange, minDate } = props
 	return (
 		<React.Fragment>
 			<Chip
 				label={
 					dateRange.startDate && dateRange.endDate
-						? `${formatDateTime(dateRange.startDate)} - ${formatDateTime(
-								dateRange.endDate
-						  )}`
+						? `${formatDateTime(
+								dateRange.startDate,
+								DATE_FORMAT
+						  )} to ${formatDateTime(dateRange.endDate, DATE_FORMAT)}`
 						: 'Choose Date Range'
 				}
 				onClick={e => setAnchorDatePicker(e.currentTarget)}
@@ -38,7 +41,6 @@ export default function ChipDateRangePicker(dateRange, setDateRange, minDate) {
 			>
 				<DateRangePicker
 					initialDateRange={dateRange}
-					definedRanges={[]}
 					minDate={minDate}
 					maxDate={Date.now()}
 					open={Boolean(setAnchorDatePicker)}
