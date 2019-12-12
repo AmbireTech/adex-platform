@@ -1,6 +1,11 @@
 import { ethers, utils } from 'ethers'
 import pbkdf2 from 'pbkdf2'
-import { encrypt, decrypt } from 'services/crypto/crypto'
+import {
+	encrypt,
+	decrypt,
+	encryptLegacy,
+	decryptLegacy,
+} from 'services/crypto/crypto'
 import {
 	loadFromLocalStorage,
 	saveToLocalStorage,
@@ -8,6 +13,40 @@ import {
 	removeFromLocalStorage,
 } from 'helpers/localStorageHelpers'
 import { AUTH_TYPES } from 'constants/misc'
+
+function getCipherKey({ email, password }) {
+	const pass = generateSalt(password)
+	const salt = generateSalt(email)
+
+	const key = pbkdf2.pbkdf2Sync(pass, salt, 10000, 64, 'sha512').toString('hex')
+
+	return key
+}
+
+function wEncrypt({ email, password, data, isLegacy }) {
+	const jsonData = JSON.stringify(data)
+	if (isLegacy) {
+		return encryptLegacy(jsonData, email + password)
+	} else {
+		return encrypt(jsonData, getCipherKey({ email, password }))
+	}
+}
+
+function wDecrypt({ email, password, data, isLegacy }) {
+	let decryptedStr = ''
+	if (isLegacy) {
+		decryptedStr = decryptLegacy(data, email + password)
+	} else {
+		decryptedStr = decrypt(data, getCipherKey({ email, password }))
+	}
+
+	try {
+		const decr = JSON.parse(decryptedStr)
+		return decr
+	} catch (err) {
+		throw new Error('INVALID_PASSWORD_OR_EMAIL', err)
+	}
+}
 
 // Returns 12 random words
 export function getRandomMnemonic() {
@@ -31,7 +70,7 @@ export function generateWallet(mnemonic) {
 
 function encrKey({ email, password, authType }) {
 	if (!authType) {
-		return encrypt(email, password)
+		return encryptLegacy(email, password)
 	} else if (typeof authType === 'string') {
 		return `adex-${authType}-wallet-${email}`
 	} else {
@@ -40,12 +79,12 @@ function encrKey({ email, password, authType }) {
 }
 
 function encrData({ email, password, data }) {
-	const encr = encrypt(JSON.stringify(data), email + password)
+	const encr = wEncrypt({ data: JSON.stringify(data), email, password })
 	return encr
 }
 
 function decrData({ email, password, data }) {
-	const decryptedStr = decrypt(data, email + password)
+	const decryptedStr = wDecrypt({ data, email, password })
 	try {
 		const decr = JSON.parse(decryptedStr)
 		return decr
@@ -190,16 +229,17 @@ export function getAllWallets() {
 export function getWalletHash({ salt, password }) {
 	const passwordId = utils.id(password)
 
-	const dk = pbkdf2.pbkdf2Sync(passwordId, salt, 10000, 64, 'sha512')
+	const hash = pbkdf2
+		.pbkdf2Sync(passwordId, salt, 10000, 64, 'sha512')
+		.toString('hex')
 
-	const hash = utils.keccak256(dk)
 	return hash
 }
 
 export function generateSalt(dataStr) {
 	if (typeof dataStr !== 'string') {
 		throw new Error('ERR_GEN_SALT_INPUT_NOT_STR')
-	} else if (dataStr.length < 8) {
+	} else if (!dataStr.length) {
 		throw new Error('ERR_GEN_SALT_INPUT_TOO_SHORT')
 	}
 
