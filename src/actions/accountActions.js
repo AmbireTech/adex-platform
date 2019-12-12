@@ -412,20 +412,15 @@ export function metamaskChecks() {
 }
 
 async function hasBackup({ email, password }) {
-	const { salt } = await quickWalletSalt({ email })
-
-	if (!salt) {
-		return false
-	}
-
+	const salt = generateSalt(email)
 	const hash = getWalletHash({ salt, password })
-	const { wallet } = await getQuickWallet({ hash })
+	const { encryptedWallet } = await getQuickWallet({ hash })
 
-	return !!wallet
+	return !!encryptedWallet && encryptedWallet.wallet
 }
 
 async function makeBackup({ email, password, authType }) {
-	const walletSalt = generateSalt()
+	const walletSalt = generateSalt(email)
 	const walletHash = getWalletHash({ salt: walletSalt, password })
 	const encryptedWallet = getRecoveryWalletData({
 		email,
