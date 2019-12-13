@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import DateRangeIcon from '@material-ui/icons/DateRange'
 import { makeStyles } from '@material-ui/core/styles'
 import { DateRangePicker } from '@matharumanpreet00/react-daterange-picker'
+import { defaultRanges } from '@matharumanpreet00/react-daterange-picker/build/defaults'
 import { Popover, Chip } from '@material-ui/core'
 import { formatDateTime } from 'helpers/formatters'
 import { PropTypes } from 'prop-types'
@@ -36,6 +37,9 @@ export default function ChipDateRangePicker(props) {
 						  )} to ${formatDateTime(dateRange.endDate, DATE_FORMAT)}`
 						: 'Choose Date Range'
 				}
+				color={
+					!(dateRange.startDate && dateRange.endDate) ? 'default' : 'secondary'
+				}
 				onClick={e => setAnchorDatePicker(e.currentTarget)}
 				icon={<DateRangeIcon />}
 				className={classes.chip}
@@ -60,6 +64,10 @@ export default function ChipDateRangePicker(props) {
 					maxDate={Date.now()}
 					open={Boolean(setAnchorDatePicker)}
 					onChange={range => setDateRange(range)}
+					definedRanges={[
+						...defaultRanges,
+						{ label: 'All Time', startDate: undefined, endDate: undefined },
+					]}
 				/>
 			</Popover>
 		</React.Fragment>

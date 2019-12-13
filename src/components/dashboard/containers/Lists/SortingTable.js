@@ -257,6 +257,7 @@ const useToolbarStyles = makeStyles(theme => ({
 	},
 }))
 
+// Can be improved
 const filterTags = {
 	Campaign: [
 		{ name: 'exhausted', label: 'Exhausted' },
@@ -280,6 +281,11 @@ const EnhancedTableToolbar = props => {
 		itemType,
 	} = props
 	const filterSide = itemType === 'Campaign' ? itemType : 'Other'
+	const filtersTagsCount = Array.from(Object.values(filters)).filter(e => e)
+		.length
+	const filtersPresent =
+		filtersTagsCount < filterTags[filterSide].length ||
+		(dateRange.startDate && dateRange.endDate)
 	return (
 		<Toolbar
 			className={clsx(classes.root, {
@@ -333,13 +339,15 @@ const EnhancedTableToolbar = props => {
 							setDateRange={setDateRange}
 						/>
 					</Tooltip>
-					<Chip
-						label={'Clear All Filters'}
-						onClick={() => console.log('clear')}
-						icon={<ClearIcon />}
-						className={classes.chip}
-						color='primary'
-					/>
+					{filtersPresent && (
+						<Chip
+							label={'Clear All Filters'}
+							onClick={() => console.log('clear')}
+							icon={<ClearIcon />}
+							className={classes.chip}
+							color='primary'
+						/>
+					)}
 				</React.Fragment>
 			)}
 		</Toolbar>
@@ -433,9 +441,11 @@ export default function EnhancedTable(props) {
 	const [rowsPerPage, setRowsPerPage] = React.useState(5)
 	const [dateRange, setDateRange] = React.useState({})
 	const [filters, setFilters] = React.useState({})
+
 	useEffect(() => {
 		console.log(filters)
 	}, [filters])
+
 	const handleRequestSort = (event, property, numeric) => {
 		const isDesc = orderBy === property && order === 'desc'
 		setOrder(isDesc ? 'asc' : 'desc')
@@ -492,6 +502,13 @@ export default function EnhancedTable(props) {
 		)
 	}
 
+	const filterByTags = (items, filters) => {
+		const tags = Object.keys(filters).filter(function(key) {
+			return filters[key] === true
+		})
+		return items.filter(item => tags.includes(item.status.name.toLowerCase()))
+	}
+
 	const filterByDate = (items, dateRange) => {
 		return items.filter(item =>
 			item.created
@@ -511,7 +528,10 @@ export default function EnhancedTable(props) {
 
 	const isSelected = id => selected.indexOf(id) !== -1
 
-	let filteredItems = filterByDate(filterBySearch(items, search), dateRange)
+	let filteredItems = filterByDate(
+		filterBySearch(filterByTags(items, filters), search),
+		dateRange
+	)
 
 	const emptyRows =
 		rowsPerPage -
