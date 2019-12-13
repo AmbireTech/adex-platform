@@ -9,7 +9,7 @@ const HASH_ALG = 'sha256'
 const getKeyHash = key => {
 	const hash = crypto.createHash(HASH_ALG)
 	hash.update(key)
-	const hashed = hash.digest('UTF-16')
+	const hashed = hash.digest('utf-16')
 	return hashed
 }
 

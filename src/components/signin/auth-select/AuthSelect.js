@@ -143,7 +143,7 @@ const AuthSelect = ({ t, classes }) => {
 				<Button
 					variant='contained'
 					size='large'
-					color='secondary'
+					color='default'
 					fullWidth
 					className={classes.limitedWidthBtn}
 					onClick={() => {
