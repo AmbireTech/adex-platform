@@ -124,7 +124,7 @@ export default function ChipMultipleSelect(props) {
 										value={item.name}
 									/>
 								}
-								label={item.label}
+								label={item.name.replace(/^\w/, c => c.toUpperCase())}
 							/>
 						))}
 					</FormGroup>
