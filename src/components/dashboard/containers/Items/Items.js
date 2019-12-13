@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import ItemsList from 'components/dashboard/containers/ItemsList'
+import SortingTable from 'components/dashboard/containers/Tables/SortingTable'
 import Translate from 'components/translate/Translate'
 
 class Items extends Component {
@@ -12,20 +12,13 @@ class Items extends Component {
 	}
 
 	render() {
-		const { classes, itemType, ...rest } = this.props
+		const { classes, itemType } = this.props
 		const items = Array.from(Object.values(this.props.items || {})) || []
 
 		return (
 			<div>
 				{!!this.props.newItemBtn && <this.props.newItemBtn />}
-
-				<ItemsList
-					{...rest}
-					itemType={itemType}
-					items={items}
-					viewModeId={this.props.viewModeId}
-					archive
-				/>
+				<SortingTable itemType={itemType} items={items} noActions />
 			</div>
 		)
 	}
