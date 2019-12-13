@@ -1,4 +1,11 @@
-const { generateSalt, getWalletHash } = require('./wallet')
+const {
+	generateSalt,
+	getWalletHash,
+	getRandomMnemonic,
+	generateWallet,
+	encrData,
+	decrData,
+} = require('./wallet')
 
 describe('generateSalt', () => {
 	it('should generate different values every time', () => {
@@ -52,5 +59,23 @@ describe('getWalletHash', () => {
 		}
 
 		expect(Object.keys(hashes).length).toEqual(count)
+	})
+})
+
+describe('wallet', () => {
+	const mnemonic = getRandomMnemonic()
+	const wallet = generateWallet(mnemonic)
+	const password = 'somePassWord1282'
+	const email = 'kor@mi.qnko'
+	it('should generate wallet', () => {
+		expect(wallet).toHaveProperty('mnemonic', 'privateKey', 'address', 'path')
+	})
+
+	it('can  be encrypted', () => {
+		expect(wallet).toHaveProperty('mnemonic', 'privateKey', 'address', 'path')
+
+		const encrypted = encrData({ email, password, data: wallet })
+		const decrypted = decrData({ email, password, data: encrypted })
+		expect(decrypted).toEqual(wallet)
 	})
 })

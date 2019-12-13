@@ -78,12 +78,12 @@ function encrKey({ email, password, authType }) {
 	}
 }
 
-function encrData({ email, password, data }) {
+export function encrData({ email, password, data }) {
 	const encr = wEncrypt({ data: JSON.stringify(data), email, password })
 	return encr
 }
 
-function decrData({ email, password, data }) {
+export function decrData({ email, password, data }) {
 	const decryptedStr = wDecrypt({ data, email, password })
 	try {
 		const decr = JSON.parse(decryptedStr)
