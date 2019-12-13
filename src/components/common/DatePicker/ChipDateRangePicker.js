@@ -9,7 +9,7 @@ import { formatDateTime } from 'helpers/formatters'
 import { PropTypes } from 'prop-types'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
-
+const DEFAULT_MIN_DATE = new Date(1970, 0, 1)
 const useStyles = makeStyles(theme => ({
 	root: {
 		display: 'flex',
@@ -60,13 +60,17 @@ export default function ChipDateRangePicker(props) {
 			>
 				<DateRangePicker
 					initialDateRange={dateRange}
-					minDate={minDate}
+					minDate={minDate || DEFAULT_MIN_DATE}
 					maxDate={Date.now()}
 					open={Boolean(setAnchorDatePicker)}
 					onChange={range => setDateRange(range)}
 					definedRanges={[
 						...defaultRanges,
-						{ label: 'All Time', startDate: undefined, endDate: undefined },
+						{
+							label: 'All Time',
+							startDate: minDate || DEFAULT_MIN_DATE,
+							endDate: Date.now(),
+						},
 					]}
 				/>
 			</Popover>

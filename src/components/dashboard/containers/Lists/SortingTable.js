@@ -260,13 +260,26 @@ const useToolbarStyles = makeStyles(theme => ({
 // Can be improved
 const filterTags = {
 	Campaign: [
-		{ name: 'exhausted', label: 'Exhausted' },
-		{ name: 'expired', label: 'Expired' },
-		{ name: 'active', label: 'Active' },
-		{ name: 'pending', label: 'Pending' },
-		{ name: 'closed', label: 'Closed' },
+		{ name: 'exhausted' },
+		{ name: 'expired' },
+		{ name: 'active' },
+		{ name: 'pending' },
+		{ name: 'closed' },
 	],
-	Other: [{ name: 'test1', label: 'This is first label' }],
+	Other: [
+		{ name: 'legacy_300x250' },
+		{ name: 'legacy_250x250' },
+		{ name: 'legacy_240x400' },
+		{ name: 'legacy_336x280' },
+		{ name: 'legacy_180x150' },
+		{ name: 'legacy_300x100' },
+		{ name: 'legacy_720x300' },
+		{ name: 'legacy_468x60' },
+		{ name: 'legacy_728x90' },
+		{ name: 'legacy_160x600' },
+		{ name: 'legacy_120x600' },
+		{ name: 'legacy_300x600' },
+	],
 }
 const EnhancedTableToolbar = props => {
 	const classes = useToolbarStyles()
@@ -285,7 +298,10 @@ const EnhancedTableToolbar = props => {
 		.length
 	const filtersPresent =
 		filtersTagsCount < filterTags[filterSide].length ||
-		(dateRange.startDate && dateRange.endDate)
+		(dateRange.startDate && dateRange.endDate) ||
+		search
+	const initialFilterTags = {}
+	filterTags[filterSide].map(n => (initialFilterTags[n.name] = true))
 	return (
 		<Toolbar
 			className={clsx(classes.root, {
@@ -342,7 +358,11 @@ const EnhancedTableToolbar = props => {
 					{filtersPresent && (
 						<Chip
 							label={'Clear All Filters'}
-							onClick={() => console.log('clear')}
+							onClick={() => {
+								setSearch('')
+								setFilters(initialFilterTags)
+								setDateRange({})
+							}}
 							icon={<ClearIcon />}
 							className={classes.chip}
 							color='primary'
@@ -434,11 +454,11 @@ export default function EnhancedTable(props) {
 	const [order, setOrder] = React.useState('desc')
 	const [orderBy, setOrderBy] = React.useState('depositAmount')
 	const [orderIsNumeric, setOrderisNumeric] = React.useState(true)
-	const [search, setSearch] = React.useState('')
 	const [selected, setSelected] = React.useState([])
 	const [page, setPage] = React.useState(0)
 	const [dense, setDense] = React.useState(false)
 	const [rowsPerPage, setRowsPerPage] = React.useState(5)
+	const [search, setSearch] = React.useState('')
 	const [dateRange, setDateRange] = React.useState({})
 	const [filters, setFilters] = React.useState({})
 
@@ -502,11 +522,17 @@ export default function EnhancedTable(props) {
 		)
 	}
 
-	const filterByTags = (items, filters) => {
+	const filterByTags = (items, filters, itemType) => {
 		const tags = Object.keys(filters).filter(function(key) {
 			return filters[key] === true
 		})
-		return items.filter(item => tags.includes(item.status.name.toLowerCase()))
+		return items.filter(item =>
+			tags.includes(
+				itemType === 'Campaign'
+					? item.status.name.toLowerCase()
+					: item.type.toLowerCase()
+			)
+		)
 	}
 
 	const filterByDate = (items, dateRange) => {
@@ -529,7 +555,7 @@ export default function EnhancedTable(props) {
 	const isSelected = id => selected.indexOf(id) !== -1
 
 	let filteredItems = filterByDate(
-		filterBySearch(filterByTags(items, filters), search),
+		filterBySearch(filterByTags(items, filters, itemType), search),
 		dateRange
 	)
 
