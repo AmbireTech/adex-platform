@@ -4,7 +4,7 @@ import NewCampaignHoc from './NewCampaignHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import { ContentBody } from 'components/common/dialog/content'
-import ItemsList from 'components/dashboard/containers/ItemsList'
+import SortingTable from 'components/dashboard/containers/Tables/SortingTable'
 import { AdUnit } from 'adex-models'
 import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems'
 import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
@@ -69,19 +69,9 @@ class CampaignUnits extends Component {
 					<Grid item sm={12}>
 						<ContentBody>
 							{hasAdUnits ? (
-								<ItemsList
-									objModel={AdUnit}
-									selectMode
-									selectedItems={this.state.selected}
-									onSelect={(unit, checked) => {
-										this.handleSelect(unit, checked)
-									}}
-									items={adUnitsArray}
-									listMode='rows'
+								<SortingTable
 									itemType={'AdUnit'}
-									viewModeId={'newCampaignAdUnits'}
-									sortProperties={SORT_PROPERTIES_ITEMS}
-									filterProperties={FILTER_PROPERTIES_ITEMS}
+									items={adUnitsArray}
 									noActions
 								/>
 							) : (

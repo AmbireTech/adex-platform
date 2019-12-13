@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Grid from '@material-ui/core/Grid'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
-import ItemsList from 'components/dashboard/containers/ItemsList'
+import SortingTable from 'components/dashboard/containers/Tables/SortingTable'
 import Translate from 'components/translate/Translate'
 import Button from '@material-ui/core/Button'
 import { AdUnit as AdUnitModel, Campaign as CampaignModel } from 'adex-models'
@@ -143,16 +143,7 @@ export class Campaign extends Component {
 							</List>
 						)}
 						{tabIndex === 1 && (
-							<ItemsList
-								removeFromItem
-								items={units}
-								viewModeId={VIEW_MODE}
-								itemType='AdUnit'
-								objModel={AdUnitModel}
-								sortProperties={SORT_PROPERTIES_ITEMS}
-								filterProperties={FILTER_PROPERTIES_ITEMS}
-								uiStateId='campaign-units'
-							/>
+							<SortingTable itemType={'AdUnit'} items={units} noActions />
 						)}
 						{tabIndex === 2 && (
 							<List>
