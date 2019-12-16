@@ -4,14 +4,12 @@ import IdentityContractOwner from './IdentityContractOwner'
 import QuickInfo from './QuickInfo'
 import QuickDeploy from './QuickDeploy'
 import QuickLogin from './QuickLogin'
-import QuickRecover from './QuickRecover'
 import { ExternalConnect } from './ExternalWalletConnect'
 import IdentitySteps from './IdentitySteps'
 import { push } from 'connected-react-router'
 
 import {
 	execute,
-	validateQuickRecovery,
 	validateQuickLogin,
 	validateStandardLogin,
 	validateQuickInfo,
@@ -99,31 +97,6 @@ export const LoginQuickIdentity = props => (
 		{...common}
 		stepsId='quick-identity-login'
 		stepsPages={[
-			{
-				title: 'QUICK_LOGIN',
-				page: QuickLogin,
-				pageValidation: finalValidationQuick,
-				final: true,
-			},
-		]}
-	/>
-)
-
-export const RecoverQuickIdentity = props => (
-	<IdentitySteps
-		{...props}
-		{...common}
-		stepsId='quick-identity-recover'
-		stepsPages={[
-			{
-				title: 'QUICK_RECOVER_DATA',
-				page: QuickRecover,
-				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
-					execute(
-						validateQuickRecovery({ validateId, dirty, onValid, onInvalid })
-					),
-				goToNextPageIfValid: true,
-			},
 			{
 				title: 'QUICK_LOGIN',
 				page: QuickLogin,

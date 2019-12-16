@@ -406,7 +406,7 @@ export function validateQuickLogin({ validateId, dirty }) {
 	return async function(dispatch, getState) {
 		updateSpinner(validateId, true)(dispatch)
 		const identity = selectIdentity(getState())
-		const { password, email, authType, backupSalt } = identity
+		const { password, email, authType } = identity
 
 		let wallet = {}
 		let error = null
@@ -414,8 +414,15 @@ export function validateQuickLogin({ validateId, dirty }) {
 
 		try {
 			if (email && password) {
-				if (backupSalt) {
-					const hash = getWalletHash({ salt: backupSalt, password })
+				const walletData = getLocalWallet({
+					email,
+					password,
+					authType: actualAuthType,
+				})
+
+				if (!walletData) {
+					const salt = generateSalt(email)
+					const hash = getWalletHash({ salt, password })
 					const { encryptedWallet } =
 						(await getQuickWallet({
 							hash,
@@ -435,13 +442,6 @@ export function validateQuickLogin({ validateId, dirty }) {
 						saveToLocalStorage(resetWallet.wallet, resetWallet.key)
 					}
 				}
-
-				const walletData =
-					getLocalWallet({
-						email,
-						password,
-						authType: actualAuthType,
-					}) || {}
 
 				if (!!walletData && walletData.data && walletData.data.address) {
 					wallet = { ...walletData.data }
@@ -491,48 +491,6 @@ const handleAfterValidation = ({ isValid, onValid, onInvalid }) => {
 	}
 	if (!isValid && typeof onInvalid === 'function') {
 		onInvalid()
-	}
-}
-
-export function validateQuickRecovery({
-	validateId,
-	dirty,
-	onValid,
-	onInvalid,
-}) {
-	return async function(dispatch, getState) {
-		updateSpinner(validateId, true)(dispatch)
-		try {
-			const identity = selectIdentity(getState())
-			const { email } = identity
-
-			let isValid = validEmail(email)
-			let msg = 'ERR_EMAIL'
-
-			if (isValid) {
-				const salt = generateSalt(email)
-				updateIdentity('backupSalt', salt)(dispatch)
-			}
-
-			validate(validateId, 'email', {
-				isValid,
-				err: { msg },
-				dirty: dirty,
-			})(dispatch)
-
-			handleAfterValidation({ isValid, onValid, onInvalid })
-		} catch (err) {
-			console.error('ERR_VALIDATING_QUICK_RECOVERY', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_VALIDATING_QUICK_RECOVERY', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-
-		updateSpinner(validateId, false)(dispatch)
 	}
 }
 

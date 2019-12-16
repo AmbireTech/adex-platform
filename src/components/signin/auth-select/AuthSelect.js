@@ -122,7 +122,7 @@ const AuthSelect = ({ t, classes }) => {
 						className={classes.limitedWidthBtn}
 						onClick={() => goTo('/login/quick', true)}
 					>
-						{t('LOGIN_GRANT_ACCOUNT')}
+						{t('LOGIN_QUICK_ACCOUNT')}
 					</Button>
 				</Box>
 			)}
@@ -176,22 +176,6 @@ const AuthSelect = ({ t, classes }) => {
 						)}
 					/>
 					{/* {t('TREZOR')} */}
-				</Button>
-			</Box>
-			<Box m={1}>
-				<Button
-					variant='link'
-					size='large'
-					color='secondary'
-					className={classes.limitedWidthBtn}
-					fullWidth
-					onClick={() => {
-						goTo('/recover/quick', true, () =>
-							execute(initIdentity({ authType: 'recover' }))
-						)
-					}}
-				>
-					{t('RECOVER_QUICK_ACCOUNT')}
 				</Button>
 			</Box>
 		</Box>
