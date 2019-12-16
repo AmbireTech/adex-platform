@@ -6,3 +6,8 @@ export const selectValidationsById = createSelector(
 	[selectValidations, (_, id) => id],
 	(validations, id) => validations[id]
 )
+
+export const selectMultipleValidationsByIds = createSelector(
+	[selectValidations, (_, ids) => ids],
+	(validations, ids) => ids.map(id => validations[id])
+)
