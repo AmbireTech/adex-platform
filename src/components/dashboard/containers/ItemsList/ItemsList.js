@@ -7,10 +7,12 @@ import SortingTable from 'components/dashboard/containers/Tables/SortingTable'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+
+// DEPRECATED
 class ItemsList extends Component {
 	render() {
 		const { items, itemType } = this.props
-		return <SortingTable itemType={itemType} items={items} noActions />
+		return <SortingTable itemType={itemType} items={items} />
 	}
 }
 

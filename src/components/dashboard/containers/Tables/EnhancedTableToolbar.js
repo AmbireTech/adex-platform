@@ -49,6 +49,8 @@ export default function EnhancedTableToolbar(props) {
 		filters,
 		setFilters,
 		itemType,
+		noActions,
+		listMode,
 	} = props
 	const filterSide = itemType === 'Campaign' ? itemType : 'Other'
 	const filtersTagsCount = Array.from(Object.values(filters)).filter(e => e)
@@ -59,6 +61,7 @@ export default function EnhancedTableToolbar(props) {
 		search
 	const initialFilterTags = {}
 	filterTags[filterSide].map(n => (initialFilterTags[n.name] = true))
+
 	return (
 		<Toolbar
 			className={clsx(classes.root, {
@@ -90,11 +93,13 @@ export default function EnhancedTableToolbar(props) {
 			)}
 
 			{numSelected > 0 ? (
-				<Tooltip title='Archive'>
-					<IconButton aria-label='archive'>
-						<ArchiveIcon />
-					</IconButton>
-				</Tooltip>
+				!noActions && (
+					<Tooltip title='Archive'>
+						<IconButton aria-label='archive'>
+							<ArchiveIcon />
+						</IconButton>
+					</Tooltip>
+				)
 			) : (
 				<React.Fragment>
 					<Tooltip title='Filter list'>

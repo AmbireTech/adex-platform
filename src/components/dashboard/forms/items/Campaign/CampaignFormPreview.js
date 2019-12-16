@@ -27,7 +27,7 @@ class CampaignFormPreview extends Component {
 		return (
 			<Grid item sm={12}>
 				<ContentBody>
-					<SortingTable itemType={'AdUnit'} items={items} noActions />
+					<SortingTable itemType={'AdUnit'} items={items} noActions listMode />
 				</ContentBody>
 			</Grid>
 		)
