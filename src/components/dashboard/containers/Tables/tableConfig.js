@@ -11,7 +11,7 @@ const headCells = {
 		},
 		{
 			id: 'status.name',
-			numeric: true,
+			numeric: false,
 			disablePadding: false,
 			label: t('PROP_STATUS'),
 		},
@@ -32,6 +32,12 @@ const headCells = {
 			numeric: true,
 			disablePadding: false,
 			label: t('PROP_CPM'),
+		},
+		{
+			id: 'created',
+			numeric: true,
+			disablePadding: false,
+			label: t('PROP_CREATED'),
 		},
 		{
 			id: 'activeFrom',
