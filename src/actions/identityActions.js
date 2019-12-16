@@ -39,6 +39,7 @@ import {
 	validateEmailCheck,
 	validatePassword,
 	validatePasswordCheck,
+	validateGrantCode,
 	validateTOS,
 } from './validationActions'
 import { getErrorMsg } from 'helpers/errors'
@@ -636,16 +637,25 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 		updateSpinner(validateId, true)(dispatch)
 
 		const identity = selectIdentity(getState())
-		const { email, emailCheck, password, passwordCheck, tosCheck } = identity
+		const {
+			email,
+			emailCheck,
+			password,
+			passwordCheck,
+			hasGrantCode,
+			grantCode,
+			tosCheck,
+		} = identity
 
 		const validations = await Promise.all([
-			(validateEmail(validateId, email, dirty)(dispatch),
+			validateEmail(validateId, email, dirty)(dispatch),
 			validateEmailCheck(validateId, emailCheck, email, dirty)(dispatch),
 			validatePassword(validateId, password, dirty)(dispatch),
 			validatePasswordCheck(validateId, passwordCheck, password, dirty)(
 				dispatch
 			),
-			validateTOS(validateId, tosCheck, dirty)(dispatch)),
+			validateGrantCode(validateId, hasGrantCode, grantCode, dirty)(dispatch),
+			validateTOS(validateId, tosCheck, dirty)(dispatch),
 		])
 
 		const isValid = validations.every(v => v === true)
