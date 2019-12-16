@@ -205,5 +205,6 @@ export function validateGrantCode(validateId, hasGrantCode, coupon, dirty) {
 			dirty,
 		})(dispatch)
 		updateSpinner(validateId + 'grant-check', false)(dispatch)
+		return isValid
 	}
 }
