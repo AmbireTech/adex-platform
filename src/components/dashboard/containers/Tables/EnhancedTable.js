@@ -10,8 +10,6 @@ import Paper from '@material-ui/core/Paper'
 import Checkbox from '@material-ui/core/Checkbox'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Switch from '@material-ui/core/Switch'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import { makeStyles } from '@material-ui/core/styles'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
@@ -22,6 +20,7 @@ import { AdUnit } from 'adex-models'
 import { t, selectSide } from 'selectors'
 import { execute, cloneItem } from 'actions'
 import { useSelector } from 'react-redux'
+import { missingData, headCells } from './tableConfig'
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolbar'
 import {
@@ -114,7 +113,6 @@ export default function EnhancedTable(props) {
 	const [orderIsNumeric, setOrderisNumeric] = React.useState(true)
 	const [selected, setSelected] = React.useState([])
 	const [page, setPage] = React.useState(0)
-	const [dense, setDense] = React.useState(true)
 	const [rowsPerPage, setRowsPerPage] = React.useState(5)
 	const [search, setSearch] = React.useState('')
 	const [dateRange, setDateRange] = React.useState({})
@@ -177,18 +175,19 @@ export default function EnhancedTable(props) {
 		setPage(0)
 	}
 
-	// const handleChangeDense = event => {
-	// 	setDense(event.target.checked)
-	// }
-
 	const isSelected = id => selected.indexOf(id) !== -1
 
-	let filteredItems = listMode
+	const filteredItems = listMode
 		? items
 		: filterByDate(
 				filterBySearch(filterByTags(items, filters, itemType), search),
 				dateRange
 		  )
+
+	const sortedItems = stableSort(
+		filteredItems,
+		getSorting(order, orderBy, orderIsNumeric)
+	)
 
 	const emptyRows =
 		rowsPerPage -
@@ -216,7 +215,7 @@ export default function EnhancedTable(props) {
 					<Table
 						className={classes.table}
 						aria-labelledby='tableTitle'
-						size={dense ? 'small' : 'medium'}
+						size='small'
 						aria-label='enhanced table'
 					>
 						<EnhancedTableHead
@@ -232,10 +231,7 @@ export default function EnhancedTable(props) {
 							listMode={listMode}
 						/>
 						<TableBody>
-							{stableSort(
-								filteredItems,
-								getSorting(order, orderBy, orderIsNumeric)
-							)
+							{sortedItems
 								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 								.map((item, index) => {
 									// Campaigns renderer
@@ -321,8 +317,27 @@ export default function EnhancedTable(props) {
 									)
 								})}
 							{emptyRows > 0 && (
-								<TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-									<TableCell colSpan={6} />
+								<TableRow style={{ height: 33 * emptyRows }}>
+									{items.length > 0 ? (
+										<TableCell
+											colSpan={
+												(headCells[itemType]
+													? headCells[itemType].length
+													: headCells.Other.length) + 2
+											}
+										/>
+									) : (
+										<TableCell
+											align='center'
+											colSpan={
+												(headCells[itemType]
+													? headCells[itemType].length
+													: headCells.Other.length) + 2
+											}
+										>
+											{missingData[itemType]}
+										</TableCell>
+									)}
 								</TableRow>
 							)}
 						</TableBody>
@@ -339,11 +354,6 @@ export default function EnhancedTable(props) {
 					onChangeRowsPerPage={handleChangeRowsPerPage}
 				/>
 			</Paper>
-			{/* Dense Switch */}
-			{/* <FormControlLabel
-				control={<Switch checked={dense} onChange={handleChangeDense} />}
-				label='Dense padding'
-			/> */}
 		</div>
 	)
 }

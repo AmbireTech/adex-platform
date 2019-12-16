@@ -112,4 +112,10 @@ const filterTags = {
 	],
 }
 
-export { headCells, filterTags }
+const missingData = {
+	Campaign: t('NO_CAMPAINGS_INFORMATION'),
+	AdUnit: t('NO_ADUNITS_INFORMATION'),
+	AdSlot: t('NO_ADSLOTS_INFORMATION'),
+}
+
+export { headCells, filterTags, missingData }
