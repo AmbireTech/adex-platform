@@ -13,6 +13,7 @@ import {
 	validateQuickLogin,
 	validateStandardLogin,
 	validateQuickInfo,
+	validateQuickDeploy,
 	resetIdentity,
 } from 'actions'
 
@@ -84,7 +85,10 @@ export const CreateQuickIdentity = props => (
 			{
 				title: 'QUICK_DEPLOY',
 				page: QuickDeploy,
-				pageValidation: finalValidationQuick,
+				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
+					execute(
+						validateQuickDeploy({ validateId, dirty, onValid, onInvalid })
+					),
 				final: true,
 			},
 		]}
