@@ -9,7 +9,7 @@ const HASH_ALG = 'sha256'
 const getKeyHash = key => {
 	const hash = crypto.createHash(HASH_ALG)
 	hash.update(key)
-	const hashed = hash.digest('utf-16')
+	const hashed = hash.digest()
 	return hashed
 }
 
@@ -19,11 +19,7 @@ export const encrypt = (text, key) => {
 		throw new Error('ERR_ENCRYPTING_NO_PASS')
 	}
 	const iv = crypto.randomBytes(IV_LENGTH)
-	const cipher = crypto.createCipheriv(
-		CIPHER_ALG,
-		Buffer.from(getKeyHash(key)),
-		iv
-	)
+	const cipher = crypto.createCipheriv(CIPHER_ALG, getKeyHash(key), iv)
 	const encr = cipher.update(text)
 	const encrypted = Buffer.concat([encr, cipher.final()])
 
@@ -34,11 +30,7 @@ export const decrypt = (text, key) => {
 	const textParts = text.split(':')
 	const iv = Buffer.from(textParts.shift(), 'hex')
 	const encryptedText = Buffer.from(textParts.join(':'), 'hex')
-	const decipher = crypto.createDecipheriv(
-		CIPHER_ALG,
-		Buffer.from(getKeyHash(key)),
-		iv
-	)
+	const decipher = crypto.createDecipheriv(CIPHER_ALG, getKeyHash(key), iv)
 	const decr = decipher.update(encryptedText)
 	const decrypted = Buffer.concat([decr, decipher.final()])
 
