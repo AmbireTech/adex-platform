@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 import AppBar from '@material-ui/core/AppBar'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
-import SortingTable from 'components/dashboard/containers/Tables/SortingTable'
-// import classnames from 'classnames'
+import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTablele'
 import Translate from 'components/translate/Translate'
 import { ContentBox, ContentBody } from 'components/common/dialog/content'
 import { withStyles } from '@material-ui/core/styles'
@@ -54,7 +53,7 @@ export class AddItem extends Component {
 
 						{tabIndex === 1 && (
 							<ContentBody>
-								<SortingTable
+								<EnhancedTable
 									{...rest}
 									objModel={this.props.objModel}
 									parentItem={this.props.addTo}

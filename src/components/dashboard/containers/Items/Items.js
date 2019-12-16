@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import SortingTable from 'components/dashboard/containers/Tables/SortingTable'
+import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
 import Translate from 'components/translate/Translate'
 
 class Items extends Component {
@@ -18,7 +18,7 @@ class Items extends Component {
 		return (
 			<div>
 				{!!this.props.newItemBtn && <this.props.newItemBtn />}
-				<SortingTable itemType={itemType} items={items} />
+				<EnhancedTable itemType={itemType} items={items} />
 			</div>
 		)
 	}

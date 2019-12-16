@@ -110,7 +110,7 @@ export default function EnhancedTable(props) {
 	const side = useSelector(selectSide)
 	const { items, itemType, noActions, validate, handleSelect, listMode } = props
 	const [order, setOrder] = React.useState('desc')
-	const [orderBy, setOrderBy] = React.useState('activeFrom')
+	const [orderBy, setOrderBy] = React.useState('created')
 	const [orderIsNumeric, setOrderisNumeric] = React.useState(true)
 	const [selected, setSelected] = React.useState([])
 	const [page, setPage] = React.useState(0)
@@ -292,6 +292,7 @@ export default function EnhancedTable(props) {
 														)}{' '}
 														SAI
 													</TableCell>
+													<TableCell>{formatDateTime(item.created)}</TableCell>
 													<TableCell>
 														{formatDateTime(item.activeFrom)}
 													</TableCell>
@@ -307,10 +308,7 @@ export default function EnhancedTable(props) {
 														{item.title}
 													</RRTableCell>
 													<TableCell> {item.type} </TableCell>
-													<TableCell>
-														{' '}
-														{formatDateTime(item.created)}{' '}
-													</TableCell>
+													<TableCell>{formatDateTime(item.created)}</TableCell>
 												</React.Fragment>
 											)}
 											{!noActions &&

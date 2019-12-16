@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import SortingTable from 'components/dashboard/containers/Tables/SortingTable'
+import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
@@ -12,7 +12,7 @@ import { styles } from './styles'
 class ItemsList extends Component {
 	render() {
 		const { items, itemType } = this.props
-		return <SortingTable itemType={itemType} items={items} />
+		return <EnhancedTable itemType={itemType} items={items} />
 	}
 }
 
