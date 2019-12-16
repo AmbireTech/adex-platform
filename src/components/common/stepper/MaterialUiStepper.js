@@ -102,11 +102,11 @@ const MaterialStepper = props => {
 		[currentPage]
 	)
 
-	const goToPreviousPage = useCallback(() => {
+	const goToPreviousPage = useCallback(async () => {
 		if (canReverse) {
 			goToPage(currentPage - 1)
 		}
-	})
+	}, [canReverse, currentPage, goToPage])
 
 	const goToNextPage = useCallback(async () => {
 		if (pageValidation) {
@@ -118,7 +118,7 @@ const MaterialStepper = props => {
 		} else if (isValidPage()) {
 			goToPage(currentPage + 1)
 		}
-	})
+	}, [currentPage, goToPage, isValidPage, pageValidation, validateId])
 
 	useEffect(() => {
 		if (pageValidation) {
@@ -126,12 +126,15 @@ const MaterialStepper = props => {
 		}
 	}, [currentPage, pageValidation, validateId])
 
-	const onKeyPressed = useCallback(async ev => {
-		if (ev.key === 'Enter') {
-			ev.preventDefault()
-			goToNextPage()
-		}
-	})
+	const onKeyPressed = useCallback(
+		async ev => {
+			if (ev.key === 'Enter') {
+				ev.preventDefault()
+				goToNextPage()
+			}
+		},
+		[goToNextPage]
+	)
 
 	return (
 		<div className={classes.stepperWrapper} onKeyPress={onKeyPressed}>
