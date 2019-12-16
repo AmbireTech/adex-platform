@@ -409,7 +409,7 @@ export function validateQuickLogin({ validateId, dirty }) {
 		const { password, email, authType } = identity
 
 		let wallet = {}
-		let error = null
+		let error = 'INVALID_EMAIL_OR_PASSWORD'
 		let actualAuthType = authType
 
 		try {
@@ -459,15 +459,16 @@ export function validateQuickLogin({ validateId, dirty }) {
 					}
 				}
 
-				updateIdentity('identityAddr', walletData.identity)(dispatch)
+				updateIdentity('identityAddr', walletData ? walletData.identity : null)(
+					dispatch
+				)
 				updateIdentity('wallet', wallet)(dispatch)
 				updateIdentity('walletAddr', wallet.address)(dispatch)
 				updateIdentity('identityData', wallet.identity)(dispatch)
 			}
 		} catch (err) {
-			console.error(err)
-			error =
-				(err && err.message ? err.message : err) || 'INVALID_EMAIL_OR_PASSWORD'
+			console.error('ERR_QUICK_WALLET_LOGIN', err)
+			error = err
 		}
 
 		const isValid = !!wallet.address
