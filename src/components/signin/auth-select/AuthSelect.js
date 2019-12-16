@@ -112,19 +112,6 @@ const AuthSelect = ({ t, classes }) => {
 					</Button>
 				</Box>
 			))}
-			{/* <Box m={1}>
-				<Button
-					variant='contained'
-					to='/identity/grant'
-					size='large'
-					color='primary'
-					fullWidth
-					className={classes.limitedWidthBtn}
-					onClick={() => goTo('/identity/grant', true)}
-				>
-					{t('CREATE_GRANT_ACCOUNT')}
-				</Button>
-			</Box> */}
 			{hasLegacyWallets && (
 				<Box m={1}>
 					<Button

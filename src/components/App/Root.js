@@ -11,7 +11,6 @@ import { Route, Switch, Redirect } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import ConnectHoc from 'components/signin/ConnectHoc'
 import {
-	CreateGrantIdentity,
 	CreateQuickIdentity,
 	CreteFullIdentity,
 	// DemoIdentity,
@@ -27,7 +26,6 @@ import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
 import Translate from 'components/translate/Translate'
 import { selectAuth, selectWallet, selectLocation } from 'selectors'
 
-const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
 const ConnectedCreateQuickIdentity = ConnectHoc(JustDialog(CreateQuickIdentity))
 const ConnectedQuickLogin = ConnectHoc(JustDialog(LoginQuickIdentity))
 const ConnectedQuickRecovery = ConnectHoc(JustDialog(RecoverQuickIdentity))
@@ -91,13 +89,6 @@ const Root = () => {
 				exact
 				path='/'
 				component={props => <ConnectedRoot {...props} noBackground />}
-			/>
-			<Route
-				exact
-				path='/identity/grant'
-				component={props => (
-					<ConnectedCreateGrantIdentity {...props} noBackground />
-				)}
 			/>
 			<Route
 				exact
