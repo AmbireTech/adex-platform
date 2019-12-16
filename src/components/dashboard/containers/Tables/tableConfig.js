@@ -51,13 +51,6 @@ const headCells = {
 			disablePadding: false,
 			label: t('PROP_ENDS'),
 		},
-		// {
-		// 	id: 'actions',
-		// 	numeric: true,
-		// 	disablePadding: false,
-		// 	disableOrdering: true,
-		// 	label: t('ACTIONS'),
-		// },
 	],
 	Other: [
 		{
@@ -85,18 +78,12 @@ const headCells = {
 			disablePadding: false,
 			label: t('PROP_CREATED'),
 		},
-		// {
-		// 	id: 'actions',
-		// 	numeric: true,
-		// 	disablePadding: false,
-		// 	disableOrdering: true,
-		// 	label: t('ACTIONS'),
-		// },
 	],
 }
 
 const filterTags = {
 	Campaign: [
+		{ name: 'pending' },
 		{ name: 'expired' },
 		{ name: 'exhausted' },
 		{ name: 'withdraw' },

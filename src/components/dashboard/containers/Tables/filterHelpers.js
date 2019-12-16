@@ -57,7 +57,7 @@ const filterByTags = (items, filters, itemType) => {
 			itemType === 'Campaign'
 				? item.status
 					? item.status.name.toLowerCase()
-					: ''
+					: 'pending'
 				: item.type.toLowerCase()
 		)
 	)
