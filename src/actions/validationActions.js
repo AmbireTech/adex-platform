@@ -5,9 +5,14 @@ import { translate } from 'services/translations/translations'
 import { addToast } from './uiActions'
 import { getERC20Balance } from 'services/smart-contracts/actions/erc20'
 import { formatUnits, bigNumberify } from 'ethers/utils'
-import { validEmail, validPassword } from 'helpers/validators'
+import {
+	validEmail,
+	validPassword,
+	validQuickAccountCoupon,
+} from 'helpers/validators'
 import { t } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
+import { checkCoupon } from 'services/adex-relayer/actions'
 
 export function validateAddress({ addr, dirty, validate, name, setBalance }) {
 	return async function(dispatch, getState) {
@@ -158,5 +163,47 @@ export function validateTOS(validateId, accepted, dirty) {
 		})(dispatch)
 
 		return isValid
+	}
+}
+
+export function validateGrantCode(validateId, hasGrantCode, coupon, dirty) {
+	return async function(dispatch, getState) {
+		updateSpinner(validateId + 'grant-check', true)(dispatch)
+		let isValid = true
+		let msg = ''
+		try {
+			if (hasGrantCode) {
+				isValid = validQuickAccountCoupon(coupon)
+
+				if (isValid) {
+					const cpn = await checkCoupon({ coupon })
+					isValid = cpn.exist === true && cpn.used === false
+					if (cpn.exist === false) {
+						msg = 'ERR_COUPON_NOT_EXIST'
+					} else if (cpn.used === true) {
+						msg = 'ERR_COUPON_USED'
+					}
+				} else {
+					msg = 'ERR_COUPON_FORMAT'
+				}
+			}
+		} catch (err) {
+			isValid = false
+			msg = err
+			console.error('ERR_CHECKING_GRANT_CODE', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_CHECKING_GRANT_CODE', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+		validate(validateId, 'grantCode', {
+			isValid,
+			err: { msg },
+			dirty,
+		})(dispatch)
+		updateSpinner(validateId + 'grant-check', false)(dispatch)
 	}
 }
