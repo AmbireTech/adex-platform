@@ -6,6 +6,8 @@ import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
+import Collapse from '@material-ui/core/Collapse'
+import Switch from '@material-ui/core/Switch'
 import { t, selectIdentity, selectValidationsById } from 'selectors'
 import {
 	execute,
@@ -14,10 +16,11 @@ import {
 	validatePassword,
 	validatePasswordCheck,
 	validateTOS,
+	validateGrantCode,
 	updateIdentity,
 } from 'actions'
 
-const GrantInfo = props => {
+const QuickInfo = props => {
 	const checkTos = checked => {
 		execute(updateIdentity('tosCheck', checked))
 		execute(validateTOS(validateId, checked, true))
@@ -30,7 +33,14 @@ const GrantInfo = props => {
 	)
 
 	// Errors
-	const { email, emailCheck, password, passwordCheck, tosCheck } = validations
+	const {
+		email,
+		emailCheck,
+		password,
+		passwordCheck,
+		tosCheck,
+		grantCode,
+	} = validations
 	return (
 		<div>
 			<Grid container spacing={2}>
@@ -163,6 +173,58 @@ const GrantInfo = props => {
 					/>
 				</Grid>
 				<Grid item xs={12}>
+					<FormControlLabel
+						control={
+							<Switch
+								color='primary'
+								checked={!!identity.hasGrantCode}
+								onChange={() =>
+									execute(
+										updateIdentity('hasGrantCode', !identity.hasGrantCode)
+									)
+								}
+							/>
+						}
+						label={t('HAVE_GRANT_CODE')}
+					/>
+					<Collapse in={identity.hasGrantCode}>
+						<TextField
+							fullWidth
+							type='text'
+							required
+							label={t('grantCode', { isProp: true })}
+							name='grantCode'
+							value={identity.grantCode || ''}
+							onChange={ev =>
+								execute(updateIdentity('grantCode', ev.target.value))
+							}
+							onBlur={() =>
+								validateGrantCode(
+									validateId,
+									identity.hasGrantCode,
+									identity.grantCode,
+									true
+								)
+							}
+							onFocus={() =>
+								validateGrantCode(
+									validateId,
+									identity.hasGrantCode,
+									identity.grantCode,
+									false
+								)
+							}
+							error={grantCode && !!grantCode.dirty}
+							maxLength={128}
+							helperText={
+								grantCode && !!grantCode.dirty
+									? grantCode.errMsg
+									: t('ENTER_VALID_COUPON')
+							}
+						/>
+					</Collapse>
+				</Grid>
+				<Grid item xs={12}>
 					<FormControl
 						required
 						error={tosCheck && tosCheck.dirty}
@@ -189,4 +251,4 @@ const GrantInfo = props => {
 	)
 }
 
-export default GrantInfo
+export default QuickInfo
