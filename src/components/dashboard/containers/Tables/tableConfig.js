@@ -91,12 +91,17 @@ const headCells = {
 
 const filterTags = {
 	Campaign: [
-		{ name: 'exhausted' },
-		{ name: 'initializing' },
 		{ name: 'expired' },
+		{ name: 'exhausted' },
+		{ name: 'withdraw' },
+		{ name: 'initializing' },
+		{ name: 'offline' },
+		{ name: 'disconnected' },
+		{ name: 'invalid' },
+		{ name: 'unhealthy' },
 		{ name: 'active' },
-		{ name: 'pending' },
-		{ name: 'closed' },
+		{ name: 'ready' },
+		{ name: 'waiting' },
 	],
 	Other: [
 		{ name: 'legacy_300x250' },
