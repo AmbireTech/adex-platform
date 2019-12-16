@@ -106,16 +106,17 @@ export function getGrantAccount({
 	walletAddr,
 	email,
 	password,
-	coupon,
+	grantCode,
 	authType,
 }) {
 	return async function(dispatch) {
 		updateSpinner('getting-grant-identity', true)(dispatch)
+		let identityAddr = null
 		try {
 			const identityData = await grantAccount({
 				ownerAddr: walletAddr,
 				mail: email,
-				couponCode: coupon,
+				couponCode: grantCode,
 			})
 
 			// TODO: validate identityData
@@ -137,6 +138,7 @@ export function getGrantAccount({
 				})
 				updateIdentity('identityAddr', identityData.address)(dispatch)
 				updateIdentity('identityData', identityData)(dispatch)
+				identityAddr = identityData.address
 			}
 		} catch (err) {
 			console.error('ERR_REGISTER_GRANT_IDENTITY', err)
@@ -150,6 +152,7 @@ export function getGrantAccount({
 		}
 
 		updateSpinner('getting-grant-identity', false)(dispatch)
+		return identityAddr
 	}
 }
 
@@ -388,7 +391,6 @@ export function login() {
 				identity: identityData,
 				wallet: newWallet,
 				email,
-				registerExpected: !identityData,
 				deleteLegacyKey,
 			})(dispatch)
 		} catch (err) {
@@ -544,7 +546,8 @@ export function validateQuickDeploy({ validateId, dirty }) {
 		updateSpinner(validateId, true)(dispatch)
 		try {
 			const identity = selectIdentity(getState())
-			const { identityAddr, email, password } = identity
+			const { identityAddr, email, password, grantCode } = identity
+			let grantIdentity = null
 
 			if (!identityAddr) {
 				const walletData = createLocalWallet({
@@ -558,29 +561,42 @@ export function validateQuickDeploy({ validateId, dirty }) {
 
 				const walletAddr = walletData.address
 
-				getIdentityTxData({
-					owner: walletAddr,
-					privLevel: 3,
-				})(dispatch)
+				if (grantCode) {
+					grantIdentity = await getGrantAccount({
+						walletAddr,
+						email,
+						password,
+						grantCode,
+						authType: AUTH_TYPES.GRANT.name,
+					})(dispatch)
+				} else {
+					await getIdentityTxData({
+						owner: walletAddr,
+						privLevel: 3,
+					})(dispatch)
+				}
 
 				updateIdentity('wallet', walletData)(dispatch)
 				updateIdentity('walletAddr', walletAddr)(dispatch)
-				updateIdentity('registerAccount', true)(dispatch)
+				updateIdentity('registerAccount', !grantCode)(dispatch)
 			}
 
+			const isValid = !!identityAddr || !!grantIdentity
+
 			validate(validateId, 'identityAddr', {
-				isValid: !!identityAddr,
+				isValid,
 				err: { msg: 'ERR_IDENTITY_NOT_GENERATED' },
-				dirty: dirty,
+				dirty,
 			})(dispatch)
 
 			// if (isValid) {
 			// 	await login()(dispatch, getState)
 			// }
 		} catch (err) {
+			console.error('ERR_VALIDATING_QUICK_DEPLOY', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_VALIDATING_STANDARD_LOGIN', {
+				label: translate('ERR_VALIDATING_QUICK_DEPLOY', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
