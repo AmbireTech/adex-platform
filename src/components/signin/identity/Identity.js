@@ -1,8 +1,6 @@
 import React from 'react'
 import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
 import IdentityContractOwner from './IdentityContractOwner'
-import GrantInfo from './GrantInfo'
-import GrantDeploy from './GrantDeploy'
 import QuickInfo from './QuickInfo'
 import QuickDeploy from './QuickDeploy'
 import QuickLogin from './QuickLogin'
@@ -35,24 +33,6 @@ const common = {
 	cancelFunction,
 	validateIdBase: 'identity-',
 }
-
-export const CreateGrantIdentity = props => (
-	<IdentitySteps
-		{...props}
-		{...common}
-		stepsId='grant-identity-create'
-		stepsPages={[
-			{ title: 'GRANT_INFO', page: GrantInfo },
-			{
-				title: 'GRANT_DEPLOY',
-				page: GrantDeploy,
-				final: true,
-				pageValidation: finalValidationQuick,
-				disableBtnsIfValid: true,
-			},
-		]}
-	/>
-)
 
 export const CreteFullIdentity = props => (
 	<IdentitySteps
