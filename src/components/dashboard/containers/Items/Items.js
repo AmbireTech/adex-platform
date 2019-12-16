@@ -18,7 +18,7 @@ class Items extends Component {
 		return (
 			<div>
 				{!!this.props.newItemBtn && <this.props.newItemBtn />}
-				<SortingTable itemType={itemType} items={items} noActions />
+				<SortingTable itemType={itemType} items={items} />
 			</div>
 		)
 	}

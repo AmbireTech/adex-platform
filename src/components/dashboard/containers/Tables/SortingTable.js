@@ -43,7 +43,9 @@ const useStyles = makeStyles(theme => ({
 		marginBottom: theme.spacing(2),
 	},
 	table: {
-		minWidth: 750,
+		// minWidth: 750,
+		tableLayout: 'auto',
+		width: '100%',
 	},
 	tableWrapper: {
 		overflowX: 'auto',
@@ -106,17 +108,29 @@ const renderActions = ({ item, to, itemType }) => {
 export default function EnhancedTable(props) {
 	const classes = useStyles()
 	const side = useSelector(selectSide)
-	const { items, itemType } = props
+	const { items, itemType, noActions, validate, handleSelect, listMode } = props
 	const [order, setOrder] = React.useState('desc')
-	const [orderBy, setOrderBy] = React.useState('depositAmount')
+	const [orderBy, setOrderBy] = React.useState('activeFrom')
 	const [orderIsNumeric, setOrderisNumeric] = React.useState(true)
 	const [selected, setSelected] = React.useState([])
 	const [page, setPage] = React.useState(0)
-	const [dense, setDense] = React.useState(false)
+	const [dense, setDense] = React.useState(true)
 	const [rowsPerPage, setRowsPerPage] = React.useState(5)
 	const [search, setSearch] = React.useState('')
 	const [dateRange, setDateRange] = React.useState({})
 	const [filters, setFilters] = React.useState({})
+
+	React.useEffect(() => {
+		const isValid = !!selected.length
+		if (validate && handleSelect) {
+			validate('adUnits', {
+				isValid: isValid,
+				err: { msg: 'ERR_ADUNITS_REQIURED' },
+				dirty: true,
+			})
+			isValid && handleSelect(selected)
+		}
+	}, [handleSelect, selected, validate])
 
 	const handleRequestSort = (event, property, numeric) => {
 		const isDesc = orderBy === property && order === 'desc'
@@ -169,10 +183,12 @@ export default function EnhancedTable(props) {
 
 	const isSelected = id => selected.indexOf(id) !== -1
 
-	let filteredItems = filterByDate(
-		filterBySearch(filterByTags(items, filters, itemType), search),
-		dateRange
-	)
+	let filteredItems = listMode
+		? items
+		: filterByDate(
+				filterBySearch(filterByTags(items, filters, itemType), search),
+				dateRange
+		  )
 
 	const emptyRows =
 		rowsPerPage -
@@ -181,16 +197,21 @@ export default function EnhancedTable(props) {
 	return (
 		<div className={classes.root}>
 			<Paper className={classes.paper}>
-				<EnhancedTableToolbar
-					numSelected={selected.length}
-					itemType={itemType}
-					search={search}
-					setSearch={setSearch}
-					dateRange={dateRange}
-					setDateRange={setDateRange}
-					filters={filters}
-					setFilters={setFilters}
-				/>
+				{!listMode && (
+					<EnhancedTableToolbar
+						numSelected={selected.length}
+						itemType={itemType}
+						search={search}
+						setSearch={setSearch}
+						dateRange={dateRange}
+						setDateRange={setDateRange}
+						filters={filters}
+						setFilters={setFilters}
+						noActions={noActions}
+						listMode={listMode}
+					/>
+				)}
+
 				<div className={classes.tableWrapper}>
 					<Table
 						className={classes.table}
@@ -207,6 +228,8 @@ export default function EnhancedTable(props) {
 							onSelectAllClick={handleSelectAllClick}
 							onRequestSort={handleRequestSort}
 							rowCount={items.length}
+							noActions={noActions}
+							listMode={listMode}
 						/>
 						<TableBody>
 							{stableSort(
@@ -230,13 +253,15 @@ export default function EnhancedTable(props) {
 											key={item.id}
 											selected={isItemSelected}
 										>
-											<TableCell padding='checkbox'>
-												<Checkbox
-													checked={isItemSelected}
-													inputProps={{ 'aria-labelledby': labelId }}
-													onClick={event => handleClick(event, item.id)}
-												/>
-											</TableCell>
+											{!listMode && (
+												<TableCell padding='checkbox'>
+													<Checkbox
+														checked={isItemSelected}
+														inputProps={{ 'aria-labelledby': labelId }}
+														onClick={event => handleClick(event, item.id)}
+													/>
+												</TableCell>
+											)}
 											<TableCell>
 												<Img
 													fullScreenOnClick={true}
@@ -288,11 +313,12 @@ export default function EnhancedTable(props) {
 													</TableCell>
 												</React.Fragment>
 											)}
-											{renderActions({
-												item,
-												to: `/dashboard/${side}/${itemType}/${item.id}`,
-												itemType,
-											})}
+											{!noActions &&
+												renderActions({
+													item,
+													to: `/dashboard/${side}/${itemType}/${item.id}`,
+													itemType,
+												})}
 										</TableRow>
 									)
 								})}
@@ -315,10 +341,11 @@ export default function EnhancedTable(props) {
 					onChangeRowsPerPage={handleChangeRowsPerPage}
 				/>
 			</Paper>
-			<FormControlLabel
+			{/* Dense Switch */}
+			{/* <FormControlLabel
 				control={<Switch checked={dense} onChange={handleChangeDense} />}
 				label='Dense padding'
-			/>
+			/> */}
 		</div>
 	)
 }

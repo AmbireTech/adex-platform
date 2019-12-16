@@ -10,49 +10,13 @@ import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems'
 import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 
 class CampaignUnits extends Component {
-	constructor(props) {
-		super(props)
-
-		this.state = {
-			selected:
-				props.newItem.adUnits.reduce((selected, unit) => {
-					selected[unit.ipfs] = true
-					return selected
-				}, {}) || {},
-		}
-	}
-
-	componentDidMount() {
-		const { newItem } = this.props
-		this.validateUnits(newItem.adUnits, true)
-	}
-
-	validateUnits(adUnits, dirty) {
-		const isValid = !!adUnits.length
-		this.props.validate('adUnits', {
-			isValid: isValid,
-			err: { msg: 'ERR_ADUNITS_REQIURED' },
-			dirty: dirty,
-		})
-	}
-
-	handleSelect = (ipfs, checked) => {
-		const newSelected = { ...this.state.selected }
+	handleSelect = selected => {
 		const { adUnits, handleChange } = this.props
-
-		if (checked) {
-			newSelected[ipfs] = true
-		} else {
-			delete newSelected[ipfs]
-		}
-
-		this.setState({ selected: newSelected })
-		const units = Object.keys(newSelected).map(key => {
-			return adUnits[key]
+		const units = Array.from(Object.values(selected)).map(value => {
+			return adUnits[value]
 		})
 
 		handleChange('adUnits', units)
-		this.validateUnits(units, true)
 	}
 
 	render() {
@@ -72,6 +36,8 @@ class CampaignUnits extends Component {
 								<SortingTable
 									itemType={'AdUnit'}
 									items={adUnitsArray}
+									validate={this.props.validate}
+									handleSelect={this.handleSelect}
 									noActions
 								/>
 							) : (
