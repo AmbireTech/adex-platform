@@ -55,7 +55,9 @@ const filterByTags = (items, filters, itemType) => {
 	return items.filter(item =>
 		tags.includes(
 			itemType === 'Campaign'
-				? item.status.name.toLowerCase()
+				? item.status
+					? item.status.name.toLowerCase()
+					: ''
 				: item.type.toLowerCase()
 		)
 	)
