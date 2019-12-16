@@ -6,8 +6,8 @@ import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
-// import Collapse from '@material-ui/core/Collapse'
-// import Switch from '@material-ui/core/Switch'
+import Collapse from '@material-ui/core/Collapse'
+import Switch from '@material-ui/core/Switch'
 import { t, selectIdentity, selectValidationsById } from 'selectors'
 import {
 	execute,
@@ -16,7 +16,7 @@ import {
 	validatePassword,
 	validatePasswordCheck,
 	validateTOS,
-	// validateGrantCode,
+	validateGrantCode,
 	updateIdentity,
 } from 'actions'
 
@@ -39,7 +39,7 @@ const QuickInfo = props => {
 		password,
 		passwordCheck,
 		tosCheck,
-		// grantCode,
+		grantCode,
 	} = validations
 	return (
 		<div>
@@ -172,7 +172,7 @@ const QuickInfo = props => {
 						}
 					/>
 				</Grid>
-				{/* <Grid item xs={12}>
+				<Grid item xs={12}>
 					<FormControlLabel
 						control={
 							<Switch
@@ -223,7 +223,7 @@ const QuickInfo = props => {
 							}
 						/>
 					</Collapse>
-				</Grid> */}
+				</Grid>
 				<Grid item xs={12}>
 					<FormControl
 						required
