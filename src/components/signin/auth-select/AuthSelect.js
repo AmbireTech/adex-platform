@@ -20,9 +20,8 @@ import { t } from 'selectors'
 
 const RRButton = withReactRouterLink(Button)
 
-const AuthSelect = ({ t, classes }) => {
+const AuthSelect = ({ classes }) => {
 	const [wallets, setWallets] = useState([])
-	const [hasLegacyWallets, setHasLegacyWallets] = useState(false)
 
 	const auth = useSelector(selectAuth)
 	const account = useSelector(selectAccount)
@@ -33,10 +32,7 @@ const AuthSelect = ({ t, classes }) => {
 		const wallets = allWallets.filter(
 			w => w.authType !== 'legacy' && w.name !== wallet.email
 		)
-		const hasLegacy = allWallets.length > wallets.length
-
 		setWallets(wallets)
-		setHasLegacyWallets(hasLegacy)
 	}, [wallet])
 
 	const goTo = (to, confirmLogout, onConfirm) => {
@@ -112,34 +108,6 @@ const AuthSelect = ({ t, classes }) => {
 					</Button>
 				</Box>
 			))}
-			{hasLegacyWallets && (
-				<Box m={1}>
-					<Button
-						variant='contained'
-						size='large'
-						color='secondary'
-						fullWidth
-						className={classes.limitedWidthBtn}
-						onClick={() => goTo('/login/quick', true)}
-					>
-						{t('LOGIN_QUICK_ACCOUNT')}
-					</Button>
-				</Box>
-			)}
-			<Box m={1}>
-				<Button
-					variant='contained'
-					size='large'
-					color='default'
-					fullWidth
-					className={classes.limitedWidthBtn}
-					onClick={() => {
-						goTo('/signup/quick', true)
-					}}
-				>
-					{t('CREATE_QUICK_ACCOUNT')}
-				</Button>
-			</Box>
 			<Box m={1}>
 				<Button
 					variant='contained'
@@ -176,6 +144,32 @@ const AuthSelect = ({ t, classes }) => {
 						)}
 					/>
 					{/* {t('TREZOR')} */}
+				</Button>
+			</Box>
+			<Box m={1}>
+				<Button
+					variant='contained'
+					size='large'
+					color='primary'
+					fullWidth
+					className={classes.limitedWidthBtn}
+					onClick={() => goTo('/login/quick', true)}
+				>
+					{t('LOGIN_QUICK_ACCOUNT')}
+				</Button>
+			</Box>
+			<Box m={1}>
+				<Button
+					variant='contained'
+					size='large'
+					color='secondary'
+					fullWidth
+					className={classes.limitedWidthBtn}
+					onClick={() => {
+						goTo('/signup/quick', true)
+					}}
+				>
+					{t('CREATE_QUICK_ACCOUNT')}
 				</Button>
 			</Box>
 		</Box>
