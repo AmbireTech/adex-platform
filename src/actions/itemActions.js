@@ -22,6 +22,7 @@ import {
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
 import { lastApprovedState } from 'services/adex-validator/actions'
+import { closeCampaignMarket } from 'services/adex-market/actions'
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
 
@@ -596,9 +597,11 @@ export function closeCampaign({ campaign }) {
 	return async function(dispatch, getState) {
 		updateSpinner('closing-campaign', true)(dispatch)
 		try {
-			const { account } = getState().persist
+			const state = getState()
+			const authSig = selectAuthSig(state)
+			const { account } = state.persist
 			const { results, authTokens } = await closeChannel({ account, campaign })
-
+			const closedCampaign = await closeCampaignMarket({ campaign, authSig })
 			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch, getState)
 			// TODO: update campaign state
 
