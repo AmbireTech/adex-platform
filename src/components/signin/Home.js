@@ -34,6 +34,8 @@ export default function Home({ t, ...rest }) {
 			width={1}
 			height={1}
 			className={classes.root}
+			display='flex'
+			flexDirection='column'
 			alignItems='center'
 			justifyContent='center'
 		>
@@ -77,7 +79,7 @@ export default function Home({ t, ...rest }) {
 				</Box>
 			</Box>
 			<Box
-				height={1}
+				flexGrow={1}
 				display='flex'
 				flexDirection='column'
 				alignItems='center'
