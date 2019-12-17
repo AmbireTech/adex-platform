@@ -599,9 +599,9 @@ export function validateQuickDeploy({ validateId, dirty }) {
 				dirty,
 			})(dispatch)
 
-			// if (isValid) {
-			// 	await login()(dispatch, getState)
-			// }
+			if (isValid) {
+				await login()(dispatch, getState)
+			}
 		} catch (err) {
 			console.error('ERR_VALIDATING_QUICK_DEPLOY', err)
 			addToast({
