@@ -7,7 +7,7 @@ import IdentityHoc from './IdentityHoc'
 import AuthMethod from 'components/signin/identity/ownerAuth/AuthMethod'
 import Translate from 'components/translate/Translate'
 
-class IdentityContractAddress extends Component {
+class IdentityContractOwner extends Component {
 	componentDidMount() {
 		this.validateContractOwner()
 	}
@@ -35,7 +35,7 @@ class IdentityContractAddress extends Component {
 	}
 }
 
-IdentityContractAddress.propTypes = {
+IdentityContractOwner.propTypes = {
 	actions: PropTypes.object.isRequired,
 	account: PropTypes.object.isRequired,
 }
@@ -53,8 +53,8 @@ function mapDispatchToProps(dispatch) {
 	}
 }
 
-const IdentityContractAddressStep = IdentityHoc(IdentityContractAddress)
+const IdentityContractOwnerStep = IdentityHoc(IdentityContractOwner)
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(Translate(IdentityContractAddressStep))
+)(Translate(IdentityContractOwnerStep))

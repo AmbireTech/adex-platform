@@ -99,27 +99,6 @@ export const identityBytecode = ({ owner, privLevel, identityBaseAddr }) => {
 		.then(processResponse)
 }
 
-export const registerFullIdentity = ({
-	txHash,
-	identity,
-	privileges,
-	mail,
-}) => {
-	return requester
-		.fetch({
-			route: 'identity/register-identity',
-			method: 'POST',
-			body: JSON.stringify({
-				txHash,
-				identity,
-				privileges,
-				mail,
-			}),
-			headers: { 'Content-Type': 'application/json' },
-		})
-		.then(processResponse)
-}
-
 export const sendOpenChannel = ({
 	txnsRaw,
 	signatures,
@@ -225,6 +204,40 @@ export const regAccount = ({
 				salt,
 				identityAddr,
 				privileges,
+			}),
+			headers: { 'Content-Type': 'application/json' },
+		})
+		.then(processResponse)
+}
+
+export const quickWalletSalt = ({ email }) => {
+	return requester
+		.fetch({
+			route: `wallet/salt/${encodeURIComponent(email)}`,
+			method: 'GET',
+		})
+		.then(processResponse)
+}
+
+export const getQuickWallet = ({ hash }) => {
+	return requester
+		.fetch({
+			route: `wallet/${encodeURIComponent(hash)}`,
+			method: 'GET',
+		})
+		.then(processResponse)
+}
+
+export const backupWallet = ({ email, salt, hash, encryptedWallet }) => {
+	return requester
+		.fetch({
+			route: `wallet`,
+			method: 'POST',
+			body: JSON.stringify({
+				email,
+				salt,
+				hash,
+				encryptedWallet,
 			}),
 			headers: { 'Content-Type': 'application/json' },
 		})
