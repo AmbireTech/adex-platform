@@ -3,9 +3,8 @@ import { useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import Box from '@material-ui/core/Box'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
-import Translate from 'components/translate/Translate'
 import { Typography } from '@material-ui/core'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { getAuthLogo } from 'helpers/logosHelpers'
 import Img from 'components/common/img/Img'
@@ -19,8 +18,10 @@ import { push } from 'connected-react-router'
 import { t } from 'selectors'
 
 const RRButton = withReactRouterLink(Button)
+const useStyles = makeStyles(styles)
 
-const AuthSelect = ({ classes }) => {
+const AuthSelect = () => {
+	const classes = useStyles()
 	const [wallets, setWallets] = useState([])
 
 	const auth = useSelector(selectAuth)
@@ -176,4 +177,4 @@ const AuthSelect = ({ classes }) => {
 	)
 }
 
-export default Translate(withStyles(styles)(AuthSelect))
+export default AuthSelect
