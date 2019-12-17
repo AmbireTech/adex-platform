@@ -1,5 +1,11 @@
 import { ethers, utils } from 'ethers'
-import { encrypt, decrypt } from 'services/crypto/crypto'
+import pbkdf2 from 'pbkdf2'
+import {
+	encrypt,
+	decrypt,
+	encryptLegacy,
+	decryptLegacy,
+} from 'services/crypto/crypto'
 import {
 	loadFromLocalStorage,
 	saveToLocalStorage,
@@ -7,6 +13,40 @@ import {
 	removeFromLocalStorage,
 } from 'helpers/localStorageHelpers'
 import { AUTH_TYPES } from 'constants/misc'
+
+function getCipherKey({ email, password }) {
+	const pass = generateSalt(password)
+	const salt = generateSalt(email)
+
+	const key = pbkdf2.pbkdf2Sync(pass, salt, 10000, 64, 'sha512').toString('hex')
+
+	return key
+}
+
+function wEncrypt({ email, password, data, isLegacy }) {
+	const jsonData = JSON.stringify(data)
+	if (isLegacy) {
+		return encryptLegacy(jsonData, email + password)
+	} else {
+		return encrypt(jsonData, getCipherKey({ email, password }))
+	}
+}
+
+function wDecrypt({ email, password, data, isLegacy }) {
+	let decryptedStr = ''
+	if (isLegacy) {
+		decryptedStr = decryptLegacy(data, email + password)
+	} else {
+		decryptedStr = decrypt(data, getCipherKey({ email, password }))
+	}
+
+	try {
+		const decr = JSON.parse(decryptedStr)
+		return decr
+	} catch (err) {
+		throw new Error('INVALID_PASSWORD_OR_EMAIL', err)
+	}
+}
 
 // Returns 12 random words
 export function getRandomMnemonic() {
@@ -30,7 +70,7 @@ export function generateWallet(mnemonic) {
 
 function encrKey({ email, password, authType }) {
 	if (!authType) {
-		return encrypt(email, password)
+		return encryptLegacy(email, password)
 	} else if (typeof authType === 'string') {
 		return `adex-${authType}-wallet-${email}`
 	} else {
@@ -38,13 +78,13 @@ function encrKey({ email, password, authType }) {
 	}
 }
 
-function encrData({ email, password, data }) {
-	const encr = encrypt(JSON.stringify(data), email + password)
+export function encrData({ email, password, data }) {
+	const encr = wEncrypt({ data: JSON.stringify(data), email, password })
 	return encr
 }
 
-function decrData({ email, password, data }) {
-	const decryptedStr = decrypt(data, email + password)
+export function decrData({ email, password, data }) {
+	const decryptedStr = wDecrypt({ data, email, password })
 	try {
 		const decr = JSON.parse(decryptedStr)
 		return decr
@@ -156,7 +196,7 @@ function isWallet(item) {
 	return item && item.data && item.identity && item.privileges
 }
 
-function walletInfo(key, index, wallet) {
+export function walletInfo(key, index, wallet) {
 	const split = key.split('-')
 	const mail = split.length >= 3 ? split.slice(3, split.length).join('-') : null
 	const authType = split[1] || 'legacy'
@@ -184,4 +224,26 @@ export function getAllWallets() {
 		.map(({ item, key }, index) => walletInfo(key, index, item))
 
 	return walletKeys
+}
+
+export function getWalletHash({ salt, password }) {
+	const passwordId = utils.id(password)
+
+	const hash = pbkdf2
+		.pbkdf2Sync(passwordId, salt, 10000, 64, 'sha512')
+		.toString('hex')
+
+	return hash
+}
+
+export function generateSalt(dataStr) {
+	if (typeof dataStr !== 'string') {
+		throw new Error('ERR_GEN_SALT_INPUT_NOT_STR')
+	} else if (!dataStr.length) {
+		throw new Error('ERR_GEN_SALT_INPUT_TOO_SHORT')
+	}
+
+	const id = utils.id(dataStr)
+	const salt = utils.keccak256(id)
+	return salt
 }

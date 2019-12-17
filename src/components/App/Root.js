@@ -5,19 +5,17 @@ import {
 	metamaskNetworkCheck,
 	getRelayerConfig,
 	execute,
+	ensureQuickWalletBackup,
 } from 'actions'
 import { Route, Switch, Redirect } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import ConnectHoc from 'components/signin/ConnectHoc'
 import {
-	CreateGrantIdentity,
 	CreateQuickIdentity,
 	CreteFullIdentity,
 	// DemoIdentity,
-	LoginGrantIdentity,
 	LoginStandardIdentity,
 	LoginQuickIdentity,
-	RecoverQuickIdentity,
 } from 'components/signin/identity/Identity'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
@@ -27,11 +25,8 @@ import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
 import Translate from 'components/translate/Translate'
 import { selectAuth, selectWallet, selectLocation } from 'selectors'
 
-const ConnectedCreateGrantIdentity = ConnectHoc(JustDialog(CreateGrantIdentity))
-const ConnectedGrantLogin = ConnectHoc(JustDialog(LoginGrantIdentity))
 const ConnectedCreateQuickIdentity = ConnectHoc(JustDialog(CreateQuickIdentity))
 const ConnectedQuickLogin = ConnectHoc(JustDialog(LoginQuickIdentity))
-const ConnectedQuickRecovery = ConnectHoc(JustDialog(RecoverQuickIdentity))
 const ConnectedCreateFullIdentity = ConnectHoc(JustDialog(CreteFullIdentity))
 const ConnectedLoginStandardIdentity = ConnectHoc(
 	JustDialog(LoginStandardIdentity)
@@ -59,6 +54,10 @@ const handleLegacyWallet = wallet => {
 	if (!type && email && password && authType === 'grant') {
 		migrateLegacyWallet({ email, password })
 		removeLegacyKey({ email, password })
+	}
+
+	if (email && password && authType) {
+		execute(ensureQuickWalletBackup())
 	}
 }
 
@@ -91,22 +90,10 @@ const Root = () => {
 			/>
 			<Route
 				exact
-				path='/identity/grant'
-				component={props => (
-					<ConnectedCreateGrantIdentity {...props} noBackground />
-				)}
-			/>
-			<Route
-				exact
-				path='/identity/quick'
+				path='/signup/quick'
 				component={props => (
 					<ConnectedCreateQuickIdentity {...props} noBackground />
 				)}
-			/>
-			<Route
-				exact
-				path='/login/grant'
-				component={props => <ConnectedGrantLogin {...props} noBackground />}
 			/>
 			<Route
 				exact
@@ -122,12 +109,7 @@ const Root = () => {
 			/>
 			<Route
 				exact
-				path='/recover/quick'
-				component={props => <ConnectedQuickRecovery {...props} noBackground />}
-			/>
-			<Route
-				exact
-				path='/identity/full'
+				path='/signup/full'
 				component={props => (
 					<ConnectedCreateFullIdentity {...props} noBackground />
 				)}
