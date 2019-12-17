@@ -118,7 +118,6 @@ export function getGrantAccount({
 				mail: email,
 				couponCode: grantCode,
 			})
-
 			// TODO: validate identityData
 
 			if (identityData) {
@@ -416,7 +415,7 @@ export function validateQuickLogin({ validateId, dirty }) {
 
 		try {
 			if (email && password) {
-				const walletData = getLocalWallet({
+				let walletData = getLocalWallet({
 					email,
 					password,
 					authType: actualAuthType,
@@ -430,18 +429,24 @@ export function validateQuickLogin({ validateId, dirty }) {
 							hash,
 						})) || {}
 
-					const resetWallet = encryptedWallet || {}
+					const backupWallet = encryptedWallet || {}
 
 					if (
-						resetWallet.wallet &&
-						resetWallet.key &&
-						resetWallet.wallet.data &&
-						resetWallet.wallet.identity &&
-						resetWallet.wallet.privileges
+						backupWallet.wallet &&
+						backupWallet.key &&
+						backupWallet.wallet.data &&
+						backupWallet.wallet.identity &&
+						backupWallet.wallet.privileges
 					) {
-						const info = walletInfo(resetWallet.key, 'backup', null)
+						const info = walletInfo(backupWallet.key, 'backup', null)
 						actualAuthType = info.authType
-						saveToLocalStorage(resetWallet.wallet, resetWallet.key)
+						saveToLocalStorage(backupWallet.wallet, backupWallet.key)
+
+						walletData = getLocalWallet({
+							email,
+							password,
+							authType: actualAuthType,
+						})
 					}
 				}
 
@@ -547,13 +552,18 @@ export function validateQuickDeploy({ validateId, dirty }) {
 		try {
 			const identity = selectIdentity(getState())
 			const { identityAddr, email, password, grantCode } = identity
+
 			let grantIdentity = null
 
 			if (!identityAddr) {
+				const authType = !!grantCode
+					? AUTH_TYPES.GRANT.name
+					: AUTH_TYPES.QUICK.name
+
 				const walletData = createLocalWallet({
 					email,
 					password,
-					authType: AUTH_TYPES.QUICK.name,
+					authType,
 				})
 
 				walletData.email = email
@@ -567,7 +577,7 @@ export function validateQuickDeploy({ validateId, dirty }) {
 						email,
 						password,
 						grantCode,
-						authType: AUTH_TYPES.GRANT.name,
+						authType,
 					})(dispatch)
 				} else {
 					await getIdentityTxData({
