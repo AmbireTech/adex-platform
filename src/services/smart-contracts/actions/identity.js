@@ -240,6 +240,7 @@ export async function withdrawFromIdentity({
 	amountToWithdraw,
 	withdrawTo,
 	getFeesOnly,
+	tokenAddress,
 }) {
 	const toWithdraw = parseUnits(amountToWithdraw, 18)
 	const sweepTxns = await getSweepingTxnsIfNeeded({
@@ -264,12 +265,15 @@ export async function withdrawFromIdentity({
 	const { provider, Dai, Identity } = await getEthers(wallet.authType)
 	const signer = await getSigner({ wallet, provider })
 	const identityAddr = identity.address
+	// TEMP HOTFIX
+	// TODO: Make it work with multiple tokens
+	const tokenAddr = tokenAddress || Dai.address
 
 	const tx1 = {
 		identityContract: identityAddr,
-		feeTokenAddr: Dai.address,
+		feeTokenAddr: tokenAddr,
 		feeAmount: feeAmountTransfer,
-		to: Dai.address,
+		to: tokenAddr,
 		data: ERC20.functions.transfer.encode([withdrawTo, tokenAmount]),
 	}
 	const txns = [...sweepTxns, tx1]
