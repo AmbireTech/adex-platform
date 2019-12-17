@@ -2,21 +2,33 @@ import { updateSpinner } from './uiActions'
 import { validEthAddress } from '../helpers/validators'
 import { translate } from 'services/translations/translations'
 import { addToast } from './uiActions'
+import { getERC20Balance } from 'services/smart-contracts/actions/erc20'
+import { formatUnits, bigNumberify } from 'ethers/utils'
 
-export function validateAddress({ addr, dirty, validate, name }) {
+export function validateAddress({ addr, dirty, validate, name, setBalance }) {
 	return async function(dispatch, getState) {
-		const { authType } = getState().persist.account.wallet
+		const { wallet, identity } = getState().persist.account
+		const { authType } = wallet
 		try {
 			if (validate) validate(name, { isValid: false })
 			updateSpinner(name, dirty)(dispatch)
 			const { msg } = await validEthAddress({
 				addr,
 				nonZeroAddr: true,
-				nonERC20: true,
+				nonERC20: !setBalance,
 				authType,
 			})
 			const isValid = !msg
-			updateSpinner(name, false)(dispatch)
+
+			if (typeof setBalance === 'function') {
+				const balance =
+					(await getERC20Balance({
+						addr,
+						authType,
+						balanceFor: identity.address,
+					})) || bigNumberify('0')
+				setBalance(formatUnits(balance, 18))
+			}
 			if (validate)
 				validate(name, { isValid: isValid, err: { msg: msg }, dirty: dirty })
 		} catch (error) {
@@ -27,5 +39,6 @@ export function validateAddress({ addr, dirty, validate, name }) {
 				timeout: 20000,
 			})(dispatch)
 		}
+		updateSpinner(name, false)(dispatch)
 	}
 }

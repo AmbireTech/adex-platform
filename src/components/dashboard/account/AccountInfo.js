@@ -6,6 +6,7 @@ import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import {
 	WithdrawTokenFromIdentity,
+	WithdrawAnyTokenFromIdentity,
 	SetIdentityPrivilege,
 } from 'components/dashboard/forms/web3/transactions'
 import { makeStyles } from '@material-ui/core/styles'
@@ -29,6 +30,7 @@ import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import { selectAccount } from 'selectors'
+import { formatAddress } from 'helpers/formatters'
 
 // const RRButton = withReactRouterLink(Button)
 
@@ -135,46 +137,62 @@ function AccountInfo({ t }) {
 								<CopyIcon />
 							</IconButton>
 						</Box>
-
-						{walletJsonData && (
-							<Box py={1} flexGrow='1'>
-								<label htmlFor='download-wallet-json'>
-									<a
-										id='download-wallet-json'
-										href={localWalletDownloadHref()}
-										download={`adex-account-data-${email}.json`}
-									>
-										<Button size='small' variant='contained' fullWidth>
-											<DownloadIcon className={classes.iconBtnLeft} />
-											{t('BACKUP_LOCAL_WALLET')}
-										</Button>
-									</a>
-								</label>
-							</Box>
-						)}
 					</Box>
 				</ListItem>
 				<ListDivider />
 				<ListItem>
-					<ListItemText
-						className={classes.address}
-						primary={walletAddress}
-						secondary={
-							account.authType === 'demo'
-								? t('DEMO_ACCOUNT_WALLET_ADDRESS', {
-										args: [walletAuthType, walletPrivileges],
-								  })
-								: t('WALLET_INFO_LABEL', {
-										args: [
-											walletAuthType.replace(/^\w/, chr => {
-												return chr.toUpperCase()
-											}),
-											walletPrivileges || ' - ',
-											authType,
-										],
-								  })
-						}
-					/>
+					<Box
+						display='flex'
+						flex='1'
+						flexWrap={'wrap'}
+						justifyContent='space-between'
+						alignItems='center'
+					>
+						<Box
+							flexGrow='3'
+							mr={1}
+							flexWrap={'wrap'}
+							display='flex'
+							alignItems='center'
+							justifyContent='start'
+						>
+							<ListItemText
+								className={classes.address}
+								primary={formatAddress(walletAddress)}
+								secondary={
+									account.authType === 'demo'
+										? t('DEMO_ACCOUNT_WALLET_ADDRESS', {
+												args: [walletAuthType, walletPrivileges],
+										  })
+										: t('WALLET_INFO_LABEL', {
+												args: [
+													walletAuthType.replace(/^\w/, chr => {
+														return chr.toUpperCase()
+													}),
+													walletPrivileges || ' - ',
+													authType,
+												],
+										  })
+								}
+							/>
+							{walletJsonData && (
+								<Box py={1} flexGrow='1'>
+									<label htmlFor='download-wallet-json'>
+										<a
+											id='download-wallet-json'
+											href={localWalletDownloadHref()}
+											download={`adex-account-data-${email}.json`}
+										>
+											<Button size='small' variant='contained' fullWidth>
+												<DownloadIcon className={classes.iconBtnLeft} />
+												{t('BACKUP_LOCAL_WALLET')}
+											</Button>
+										</a>
+									</label>
+								</Box>
+							)}
+						</Box>
+					</Box>
 				</ListItem>
 				<ListDivider />
 				<ListItem>
@@ -289,6 +307,27 @@ function AccountInfo({ t }) {
 										args: [VALIDATOR_FOLLOWER_URL],
 									})}
 								/>
+							</ListItem>
+							<ListDivider />
+							<ListItem>
+								<Box
+									display='flex'
+									flexWrap={'wrap'}
+									flex='1'
+									justifyContent='space-between'
+									alignItems='center'
+								>
+									<Box flexGrow='1'>
+										<Box py={1}>
+											<WithdrawAnyTokenFromIdentity
+												fullWidth
+												variant='contained'
+												color='primary'
+												size='small'
+											/>
+										</Box>
+									</Box>
+								</Box>
 							</ListItem>
 						</List>
 					</ExpansionPanelDetails>

@@ -1,5 +1,6 @@
 import React from 'react'
 import WithdrawFromExchangePage from './WithdrawFromIdentity'
+import WithdrawAnyTokenFromIdentityPage from './WithdrawAnyTokenFromIdentity'
 import SeAddressPrivilege from './SeAddressPrivilege'
 import TransactionPreview from './TransactionPreview'
 import Button from '@material-ui/core/Button'
@@ -83,6 +84,7 @@ export const WithdrawTokenFromIdentity = props => (
 				identityWithdraw({
 					amountToWithdraw: transaction.withdrawAmount,
 					withdrawTo: transaction.withdrawTo,
+					tokenAddr: transaction.tokenAddress,
 				})
 			)
 		}}
@@ -127,6 +129,42 @@ export const SetIdentityPrivilege = props => (
 				privLevel: transaction.privLevel,
 				setAddr: transaction.setAddr,
 				getFeesOnly: true,
+			})
+		}}
+	/>
+)
+
+export const WithdrawAnyTokenFromIdentity = props => (
+	<FormStepsWithDialog
+		{...props}
+		btnLabel='ACCOUNT_WITHDRAW_ANY_FROM_IDENTITY_BTN'
+		saveBtnLabel='ACCOUNT_WITHDRAW_FROM_IDENTITY_SAVE_BTN'
+		title='ACCOUNT_WITHDRAW_FROM_IDENTITY_TITLE'
+		stepsId='withdrawAnyFromIdentity'
+		{...txCommon}
+		stepsPages={[
+			{
+				title: 'ACCOUNT_WITHDRAW_FROM_IDENTITY_STEP',
+				page: WithdrawAnyTokenFromIdentityPage,
+			},
+		]}
+		stepsPreviewPage={{
+			title: 'PREVIEW_AND_MAKE_TR',
+			page: TransactionPreview,
+		}}
+		saveFn={({ transaction } = {}) => {
+			return execute(
+				identityWithdraw({
+					amountToWithdraw: transaction.withdrawAmount,
+					withdrawTo: transaction.withdrawTo,
+				})
+			)
+		}}
+		getFeesFn={({ transaction, account } = {}) => {
+			return withdrawFromIdentity({
+				amountToWithdraw: transaction.withdrawAmount,
+				getFeesOnly: true,
+				account,
 			})
 		}}
 	/>
