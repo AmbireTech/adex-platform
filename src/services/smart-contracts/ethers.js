@@ -13,10 +13,10 @@ const getAdexCore = provider => {
 }
 
 const getMainToken = provider => {
-	const { mainTokenAddr, mainTokenStandard } = selectRelayerConfig()
+	const { mainToken = {} } = selectRelayerConfig()
 	return new ethers.Contract(
-		mainTokenAddr,
-		contracts[mainTokenStandard].abi,
+		mainToken.address,
+		contracts[mainToken.standard].abi,
 		provider
 	)
 }
