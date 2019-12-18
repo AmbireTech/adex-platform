@@ -343,3 +343,10 @@ export async function getIdentityTnxsWithNonces({
 
 	return withNonce
 }
+
+export async function getIdentityBalance({ identityAddr, authType }) {
+	const { Dai } = await getEthers(authType)
+	const balance = await Dai.balanceOf(identityAddr)
+
+	return balance.toString()
+}
