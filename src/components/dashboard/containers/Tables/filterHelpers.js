@@ -64,10 +64,10 @@ const filterByTags = (items, filters, itemType) => {
 }
 
 const filterByDate = (items, dateRange) => {
-	return items.filter(item =>
-		item.created
-			? isBetween(item.created, dateRange)
-			: isOverlapping(item.activeFrom, item.withdrawPeriodStart, dateRange)
+	return items.filter(
+		item => isBetween(item.created, dateRange)
+		// In campaigns we can search date for overlapping period between Starts Ends
+		// searchOverlap && isOverlapping(item.activeFrom, item.withdrawPeriodStart, dateRange))
 	)
 }
 

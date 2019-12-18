@@ -15,7 +15,7 @@ import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/action
 import {
 	getAdUnits,
 	getAdSlots,
-	// getCampaigns,
+	getCampaigns,
 } from 'services/adex-market/actions'
 import {
 	openChannel,
@@ -600,17 +600,19 @@ export function closeCampaign({ campaign }) {
 			const state = getState()
 			const authSig = selectAuthSig(state)
 			const { account } = state.persist
+			const { identity } = account
 			const { results, authTokens } = await closeChannel({ account, campaign })
 			const closedCampaign = await closeCampaignMarket({ campaign, authSig })
 			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch, getState)
-			// TODO: update campaign state
-
+			const resCampaigns = getCampaigns({ identity: identity.address })
+			// TODO: redirect to campaigns list
 			addToast({
 				dispatch,
 				type: 'accept',
 				toastStr: 'SUCCESS_CLOSING_CAMPAIGN',
 				args: [campaign.id],
 			})
+			updateItems({ items: resCampaigns, itemType: 'Campaign' })(dispatch)
 		} catch (err) {
 			console.error('ERR_CLOSING_CAMPAIGN', err)
 			addToast({

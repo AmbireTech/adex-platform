@@ -20,7 +20,7 @@ import { AdUnit } from 'adex-models'
 import { t, selectSide } from 'selectors'
 import { execute, cloneItem } from 'actions'
 import { useSelector } from 'react-redux'
-import { missingData, headCells } from './tableConfig'
+import { missingData, headCells, mapStatusNames } from './tableConfig'
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolbar'
 import {
@@ -270,7 +270,9 @@ export default function EnhancedTable(props) {
 											</TableCell>
 											{itemType === 'Campaign' ? (
 												<React.Fragment>
-													<TableCell> {item.status.name} </TableCell>
+													<TableCell>
+														{mapStatusNames(item.status.name)}
+													</TableCell>
 													<TableCell>
 														{formatTokenAmount(item.depositAmount, 18, true)}{' '}
 														SAI{' '}
