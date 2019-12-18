@@ -78,7 +78,7 @@ export const checkAccessCode = ({ code }) => {
 export const getOwnerIdentities = ({ owner }) => {
 	return requester
 		.fetch({
-			route: `identity/owners/${owner}`,
+			route: `identity/by-owner/${owner}`,
 			method: 'GET',
 		})
 		.then(processResponse)
