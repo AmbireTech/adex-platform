@@ -83,18 +83,14 @@ const headCells = {
 
 const filterTags = {
 	Campaign: [
-		{ name: 'pending' },
-		{ name: 'completed' },
+		{
+			name: 'active',
+			alias: ['ready, active'],
+			loading: ['pending', 'initializing', 'waiting'],
+			warning: ['offline, disconnected, unhealthy, invalid'],
+		},
+		{ name: 'completed', alias: ['expired, exhausted, withdraw'] },
 		{ name: 'closed' },
-		{ name: 'withdraw' },
-		{ name: 'initializing' },
-		{ name: 'offline' },
-		{ name: 'disconnected' },
-		{ name: 'invalid' },
-		{ name: 'unhealthy' },
-		{ name: 'active' },
-		{ name: 'ready' },
-		{ name: 'waiting' },
 	],
 	Other: [
 		{ name: 'legacy_300x250' },
@@ -118,4 +114,27 @@ const missingData = {
 	AdSlot: t('NO_ADSLOTS_INFORMATION'),
 }
 
-export { headCells, filterTags, missingData }
+const mapStatusNames = status => {
+	switch (status.toLowerCase()) {
+		case 'active':
+		case 'ready':
+		case 'pending':
+		case 'initializing':
+		case 'waiting':
+		case 'offline':
+		case 'disconnected':
+		case 'unhealthy':
+		case 'invalid':
+			return 'Active'
+		case 'expired':
+		case 'exhausted':
+		case 'withdraw':
+			return 'Complete'
+		case 'closed':
+			return 'Closed'
+		default:
+			break
+	}
+}
+
+export { headCells, filterTags, missingData, mapStatusNames }
