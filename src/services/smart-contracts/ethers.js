@@ -1,22 +1,38 @@
 import { ethers, utils } from 'ethers'
 import { contracts } from './contractsCfg'
 import { AUTH_TYPES } from 'constants/misc'
+import { selectRelayerConfig } from 'selectors'
 
 ethers.errors.setLogLevel('error')
 
-const { AdExCore, Identity, DAI, IdentityFactory } = contracts
+const { AdExCore, Identity, IdentityFactory } = contracts
 
-const localWeb3 = async () => {
+const getAdexCore = provider => {
+	const { coreAddr } = selectRelayerConfig()
+	return new ethers.Contract(coreAddr, AdExCore.abi, provider)
+}
+
+const getMainToken = provider => {
+	const { mainTokenAddr, mainTokenStandard } = selectRelayerConfig()
+	return new ethers.Contract(
+		mainTokenAddr,
+		contracts[mainTokenStandard].abi,
+		provider
+	)
+}
+
+const getIdentityFactory = provider => {
+	const { identityFactoryAddr } = selectRelayerConfig()
+	return new ethers.Contract(identityFactoryAddr, IdentityFactory.abi, provider)
+}
+
+const localWeb3 = () => {
 	const provider = new ethers.providers.JsonRpcProvider(
 		process.env.WEB3_NODE_ADDR
 	)
-	const adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
-	const dai = new ethers.Contract(DAI.address, DAI.abi, provider)
-	const identityFactory = new ethers.Contract(
-		IdentityFactory.address,
-		IdentityFactory.abi,
-		provider
-	)
+	const adexCore = getAdexCore(provider)
+	const dai = getMainToken(provider)
+	const identityFactory = getIdentityFactory(provider)
 
 	const results = {
 		provider: provider,
@@ -52,13 +68,9 @@ const injectedWeb3 = async () => {
 			await ethereum.enable()
 
 			provider = new ethers.providers.Web3Provider(ethereum)
-			adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
-			dai = new ethers.Contract(DAI.address, DAI.abi, provider)
-			identityFactory = new ethers.Contract(
-				IdentityFactory.address,
-				IdentityFactory.abi,
-				provider
-			)
+			adexCore = getAdexCore(provider)
+			dai = getMainToken(provider)
+			identityFactory = getIdentityFactory(provider)
 			const results = {
 				provider: provider,
 				AdExCore: adexCore,
@@ -87,10 +99,10 @@ const injectedWeb3 = async () => {
 	}
 }
 
-const getLocalWeb3 = new Promise(function(resolve, reject) {
+const getLocalWeb3 = async () => {
 	console.log('getLocalWeb3')
-	resolve(localWeb3())
-})
+	return localWeb3()
+}
 
 const getEthers = mode => {
 	/* NOTE: use Promise wrapper because despite getWeb3 is Promise itself it is not called by user action
@@ -99,7 +111,7 @@ const getEthers = mode => {
 	if (mode === AUTH_TYPES.METAMASK.name) {
 		return injectedWeb3()
 	} else {
-		return getLocalWeb3
+		return getLocalWeb3()
 	}
 }
 

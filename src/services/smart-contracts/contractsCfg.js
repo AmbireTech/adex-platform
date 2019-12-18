@@ -2,6 +2,7 @@ import Identity from './build/Identity.json'
 import AdExCore from './build/AdExCore.json'
 import Dai from './build/Dai.json'
 import IdentityFactory from './build/IdentityFactory.json'
+import ERC20 from './abi/ERC20Token.json'
 
 export const contracts = {
 	Identity: {
@@ -19,5 +20,8 @@ export const contracts = {
 	IdentityFactory: {
 		address: process.env.IDENTITY_FACTORY_ADDR,
 		abi: IdentityFactory.abi,
+	},
+	ERC20: {
+		abi: ERC20,
 	},
 }
