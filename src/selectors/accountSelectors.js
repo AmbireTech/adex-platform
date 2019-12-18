@@ -13,14 +13,19 @@ export const selectAuth = createSelector(
 		!!identity.address
 )
 
-export const selectAuthSig = createSelector(
-	selectAccount,
-	({ wallet }) => wallet.authSig
-)
-
 export const selectWallet = createDeepEqualSelector(
 	selectAccount,
 	({ wallet }) => wallet
+)
+
+export const selectAuthSig = createSelector(
+	selectWallet,
+	({ authSig }) => authSig
+)
+
+export const selectAuthType = createSelector(
+	selectWallet,
+	({ authType }) => authType
 )
 
 export const selectAccountIdentity = createSelector(
