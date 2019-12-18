@@ -19,6 +19,7 @@ import {
 	getIdentityDeployData,
 	withdrawFromIdentity,
 	setIdentityPrivilege,
+	getIdentityBalance,
 } from 'services/smart-contracts/actions/identity'
 import {
 	addDataToWallet,
@@ -30,7 +31,7 @@ import {
 	generateSalt,
 } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
-import { selectAccount, selectIdentity } from 'selectors'
+import { selectAccount, selectIdentity, selectAuthType } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
 import { validEmail } from 'helpers/validators'
 import {
@@ -293,11 +294,29 @@ export function identityWithdraw({
 }
 
 export function ownerIdentities({ owner }) {
-	return async function(dispatch) {
+	return async function(dispatch, getState) {
 		updateSpinner('getting-owner-identities', true)(dispatch)
 		try {
 			const identityData = await getOwnerIdentities({ owner })
-			updateIdentity('ownerIdentities', identityData)(dispatch)
+			const authType = selectAuthType(getState())
+			const data = Object.entries(identityData).map(
+				async ([identityAddr, privLevel]) => {
+					const balanceDAI = await getIdentityBalance({
+						identityAddr,
+						authType,
+					})
+
+					return {
+						identity: identityAddr,
+						privLevel,
+						balanceDAI,
+					}
+				}
+			)
+
+			const ownerIdentities = await Promise.all(data)
+
+			updateIdentity('ownerIdentities', ownerIdentities)(dispatch)
 		} catch (err) {
 			console.error('ERR_GETTING_OWNER_IDENTITIES', err)
 			addToast({
