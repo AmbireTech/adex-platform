@@ -43,6 +43,11 @@ export const selectAccountStats = createSelector(
 	({ stats }) => stats || {}
 )
 
+export const selectAccountSettings = createSelector(
+	selectAccount,
+	({ settings }) => settings || {}
+)
+
 export const selectAccountStatsRaw = createSelector(
 	selectAccountStats,
 	({ raw }) => raw || {}
