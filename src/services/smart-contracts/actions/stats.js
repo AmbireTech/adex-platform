@@ -109,7 +109,9 @@ export async function getAccountStats({
 		),
 		availableIdentityBalanceDai: formatTokenAmount(
 			raw.availableIdentityBalanceDai,
-			18
+			18,
+			false,
+			2
 		),
 		totalIdentityBalanceDai: formatTokenAmount(
 			raw.totalIdentityBalanceDai,
