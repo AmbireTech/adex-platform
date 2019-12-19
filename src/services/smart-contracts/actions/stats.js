@@ -113,21 +113,18 @@ export async function getOutstandingBalance({ wallet, address, withBalance }) {
 	// const sweepMin = minToSweep()
 	const bigZero = bigNumberify(0)
 
-	const initial = { total: bigNumberify('0'), available: bigNumberify('0') }
+	const initial = { total: bigZero, available: bigZero }
 
 	const allOutstanding = withBalance.reduce((amounts, ch) => {
 		const { outstanding, outstandingAvailable } = ch
 		const current = { ...amounts }
 		current.total = current.total.add(outstanding)
-
-		if (outstandingAvailable.gt(bigZero)) {
-			current.available = current.available.add(outstandingAvailable)
-		}
+		current.available = current.available.add(outstandingAvailable)
 
 		return current
 	}, initial)
 
-	return allOutstanding || initial
+	return allOutstanding
 }
 
 export async function getAllValidatorsAuthForIdentity({
