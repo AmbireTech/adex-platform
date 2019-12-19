@@ -79,10 +79,11 @@ export const regAccount = ({
 	salt,
 	identityAddr,
 	privileges,
+	routineAuthorizationsRaw,
 }) => {
 	return requester
 		.fetch({
-			route: 'identity/register',
+			route: `identity/${identityAddr}`,
 			method: 'POST',
 			body: JSON.stringify({
 				owner,
@@ -93,6 +94,7 @@ export const regAccount = ({
 				salt,
 				identityAddr,
 				privileges,
+				routineAuthorizationsRaw,
 			}),
 			headers: { 'Content-Type': 'application/json' },
 		})
