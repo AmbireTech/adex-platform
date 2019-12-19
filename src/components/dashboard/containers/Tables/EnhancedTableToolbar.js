@@ -17,6 +17,7 @@ import ClearIcon from '@material-ui/icons/Clear'
 import ArchiveIcon from '@material-ui/icons/Archive'
 import { lighten, makeStyles } from '@material-ui/core/styles'
 import { filterTags } from './tableConfig'
+import { t } from 'selectors'
 
 const useToolbarStyles = makeStyles(theme => ({
 	root: {
@@ -92,26 +93,26 @@ export default function EnhancedTableToolbar(props) {
 				</FormControl>
 			)}
 
-			{numSelected > 0 ? (
-				!noActions && (
+			{numSelected > 0 ? null : (
+				// This is for the multiple select and
+				// will be implemented when we add achive to the market
+				/*!noActions && (
 					<Tooltip title='Archive'>
 						<IconButton aria-label='archive'>
 							<ArchiveIcon />
 						</IconButton>
 					</Tooltip>
-				)
-			) : (
+				)*/
 				<React.Fragment>
-					<Tooltip title='Filter list'>
+					<Tooltip title={t('FILTER_LIST')}>
 						<ChipMultipleSelect
 							items={filterTags[filterSide]}
 							state={filters}
 							setState={setFilters}
-							label='Filter'
+							label={t('FILTER')}
 						/>
 					</Tooltip>
-
-					<Tooltip title='Select Date Range'>
+					<Tooltip title={t('SELECT_DATE_RANGE')}>
 						<ChipDateRangePicker
 							dateRange={dateRange}
 							setDateRange={setDateRange}
@@ -119,7 +120,7 @@ export default function EnhancedTableToolbar(props) {
 					</Tooltip>
 					{filtersPresent && (
 						<Chip
-							label={'Clear All Filters'}
+							label={t('CLEAR_ALL_FILTERS')}
 							onClick={() => {
 								setSearch('')
 								setFilters(initialFilterTags)

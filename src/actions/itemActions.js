@@ -233,29 +233,29 @@ export function getAllItems() {
 	return async function(dispatch, getState) {
 		try {
 			const { account } = getState().persist
-			// const { authSig } = account.wallet
+			const { authSig } = account.wallet
 			const { address } = account.identity
 			const units = getAdUnits({ identity: address })
 			const slots = getAdSlots({ identity: address })
-			// const campaigns = getCampaigns({ authSig })
+			const campaigns = getCampaigns({ authSig })
 
 			const [
 				resUnits,
 				resSlots,
-				// resCampaigns,
+				resCampaigns, //
 			] = await Promise.all([
 				units,
 				slots,
-				//	campaigns
+				campaigns, //
 			])
 
-			// const campaignsMapped = resCampaigns.map(c => {
-			// 	return { ...c, ...c.spec }
-			// })
+			const campaignsMapped = resCampaigns.map(c => {
+				return { ...c, ...c.spec }
+			})
 
 			updateItems({ items: resUnits, itemType: 'AdUnit' })(dispatch)
 			updateItems({ items: resSlots, itemType: 'AdSlot' })(dispatch)
-			// updateItems({ items: campaignsMapped, itemType: 'Campaign' })(dispatch)
+			updateItems({ items: campaignsMapped, itemType: 'Campaign' })(dispatch)
 		} catch (err) {
 			console.error('ERR_GETTING_ITEMS', err)
 			addToast({
@@ -600,11 +600,10 @@ export function closeCampaign({ campaign }) {
 			const state = getState()
 			const authSig = selectAuthSig(state)
 			const { account } = state.persist
-			const { identity } = account
-			const { results, authTokens } = await closeChannel({ account, campaign })
-			const closedCampaign = await closeCampaignMarket({ campaign, authSig })
+			const { authTokens } = await closeChannel({ account, campaign })
+			await closeCampaignMarket({ campaign, authSig })
 			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch, getState)
-			const resCampaigns = getCampaigns({ identity: identity.address })
+			getAllItems()
 			// TODO: redirect to campaigns list
 			addToast({
 				dispatch,
@@ -612,7 +611,6 @@ export function closeCampaign({ campaign }) {
 				toastStr: 'SUCCESS_CLOSING_CAMPAIGN',
 				args: [campaign.id],
 			})
-			updateItems({ items: resCampaigns, itemType: 'Campaign' })(dispatch)
 		} catch (err) {
 			console.error('ERR_CLOSING_CAMPAIGN', err)
 			addToast({

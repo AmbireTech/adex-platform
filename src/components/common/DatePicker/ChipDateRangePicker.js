@@ -7,6 +7,7 @@ import { defaultRanges } from '@matharumanpreet00/react-daterange-picker/build/d
 import { Popover, Chip } from '@material-ui/core'
 import { formatDateTime } from 'helpers/formatters'
 import { PropTypes } from 'prop-types'
+import { t } from 'selectors'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 const DEFAULT_MIN_DATE = new Date(1970, 0, 1)
@@ -31,11 +32,13 @@ export default function ChipDateRangePicker(props) {
 			<Chip
 				label={
 					dateRange.startDate && dateRange.endDate
-						? `${formatDateTime(
-								dateRange.startDate,
-								DATE_FORMAT
-						  )} to ${formatDateTime(dateRange.endDate, DATE_FORMAT)}`
-						: 'Choose Date Range'
+						? t('TIME_PERIOD', {
+								args: [
+									formatDateTime(dateRange.startDate, DATE_FORMAT),
+									formatDateTime(dateRange.endDate, DATE_FORMAT),
+								],
+						  })
+						: t('CHOOSE_DATE_RANGE')
 				}
 				color={
 					!(dateRange.startDate && dateRange.endDate) ? 'default' : 'secondary'

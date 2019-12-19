@@ -11,6 +11,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import Checkbox from '@material-ui/core/Checkbox'
 import Divider from '@material-ui/core/Divider'
+import { t } from 'selectors'
 const useStyles = makeStyles(theme => ({
 	root: {
 		display: 'flex',
@@ -59,9 +60,11 @@ export default function ChipMultipleSelect(props) {
 		}
 		return numberToShowGreater
 			? result.join(', ')
-			: result
-					.join(', ')
-					.concat(` and ${selected.length - numberToShow} more selected...`)
+			: result.join(', ').concat(
+					t('MORE_SELECTED', {
+						args: [selected.length - numberToShow],
+					})
+			  )
 	}
 
 	return (
@@ -69,9 +72,9 @@ export default function ChipMultipleSelect(props) {
 			<Chip
 				label={
 					selected.length === items.length
-						? `${label} (All Selected)`
+						? `${label} (${t('ALL_SELECTED')})`
 						: selected.length === 0
-						? `${label} (None Selected)`
+						? `${label} (${t('NONE_SELECTED')})`
 						: labelParser(selected, 2)
 				}
 				color={selected.length === items.length ? 'default' : 'secondary'}
@@ -94,7 +97,7 @@ export default function ChipMultipleSelect(props) {
 				}}
 			>
 				<FormControl component='fieldset' className={classes.formControl}>
-					<FormLabel component='legend'>Filter by Status</FormLabel>
+					<FormLabel component='legend'>{t('FILTER_BY_STATUS')}</FormLabel>
 					<FormGroup>
 						<FormControlLabel
 							control={
@@ -107,7 +110,7 @@ export default function ChipMultipleSelect(props) {
 									inputProps={{ 'aria-label': 'select all filters' }}
 								/>
 							}
-							label={'Select All'}
+							label={t('SELECT_ALL')}
 						/>
 						<Divider />
 						{items.map(item => (
@@ -128,7 +131,7 @@ export default function ChipMultipleSelect(props) {
 							/>
 						))}
 					</FormGroup>
-					<FormHelperText>{'SELECT_INFORMATION'}</FormHelperText>
+					<FormHelperText>{t('SELECT_INFORMATION')}</FormHelperText>
 				</FormControl>
 			</Popover>
 		</React.Fragment>
