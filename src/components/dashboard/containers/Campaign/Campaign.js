@@ -26,7 +26,7 @@ import { formatTokenAmount } from 'helpers/formatters'
 import { Joi } from 'adex-models'
 
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
-const campaignTitleSchema = Joi.string() // TODO get from models
+const campaignTitleSchema = Joi.string()
 	.min(3)
 	.max(120)
 	.allow('') // empty string not allowed by default
@@ -39,6 +39,7 @@ export class Campaign extends Component {
 		this.state = {
 			tabIndex: 0,
 			statistics: {},
+			dirtyProps: [],
 		}
 	}
 
@@ -72,7 +73,7 @@ export class Campaign extends Component {
 
 	validateTitle(title, dirty) {
 		const result = Joi.validate(title, campaignTitleSchema)
-		return this.props.validate('title', {
+		this.props.validate('title', {
 			isValid: !result.error,
 			err: { msg: result.error ? result.error.message : '' },
 			dirty: dirty,
@@ -84,7 +85,7 @@ export class Campaign extends Component {
 			t,
 			// classes,
 			item,
-			// setActiveFields,
+			setActiveFields,
 			// handleChange,
 			// activeFields,
 			// isDemo,
@@ -104,7 +105,6 @@ export class Campaign extends Component {
 		const status = (campaign.status || {}).name
 		const leader = campaign.spec.validators[0]
 		const follower = campaign.spec.validators[1]
-
 		return (
 			<div>
 				<CampaignProps
@@ -132,6 +132,9 @@ export class Campaign extends Component {
 					handleChange={this.props.handleChange}
 					editTitle={this.editTitle}
 					account={this.props.account}
+					dirtyProps={this.state.dirtyProps}
+					setActiveFields={setActiveFields}
+					campaignTitleSchema={campaignTitleSchema}
 				/>
 				<div>
 					<AppBar position='static' color='default'>
