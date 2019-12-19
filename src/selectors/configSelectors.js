@@ -8,8 +8,8 @@ export const selectRelayerConfig = state => {
 
 // - relayer cfg
 // network,
-// feeTokenWhitelist, { address, symbol, decimals, min, minDeploy },
-// routineWithdrawTokens, { address, symbol, decimals, minWeekly, minFinal },
+// feeTokenWhitelist, // [{ address, symbol, decimals, standard, min, minDeploy }],
+// routineWithdrawTokens, // [{ address, symbol, decimals, standard, minWeekly, minFinal }],
 // coreAddr,
 // identityBaseAddr,
 // identityFactoryAddr,
@@ -18,10 +18,32 @@ export const selectRelayerConfig = state => {
 // marketUrl,
 // identityRecoveryAddr,
 // weeklyFeeAmount,
-// mainTokenAddr,
-// mainTokenSymbol,
-// mainTokenDecimals,
+// mainToken, // { address, symbol, decimals, standard },
 // advertiserMinGrantAmount
+
+export const selectFeeTokenWhitelist = createSelector(
+	[selectRelayerConfig],
+	({ feeTokenWhitelist }) => {
+		return feeTokenWhitelist.reduce((all, t) => {
+			const tokens = { ...all }
+			tokens[t.address] = t
+
+			return tokens
+		}, {})
+	}
+)
+
+export const selectRoutineWithdrawTokens = createSelector(
+	[selectRelayerConfig],
+	({ routineWithdrawTokens }) => {
+		return routineWithdrawTokens.reduce((all, t) => {
+			const tokens = { ...all }
+			tokens[t.address] = t
+
+			return tokens
+		}, {})
+	}
+)
 
 export const selectConfig = createSelector(
 	[selectRelayerConfig],
