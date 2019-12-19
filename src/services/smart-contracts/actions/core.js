@@ -12,7 +12,7 @@ import {
 	getMultipleTxSignatures,
 } from 'services/smart-contracts/actions/ethers'
 import { contracts } from '../contractsCfg'
-import { sendOpenChannel } from 'services/adex-relayer/actions'
+import { executeTx } from 'services/adex-relayer/actions'
 import { closeCampaign } from 'services/adex-validator/actions'
 import { Campaign, AdUnit } from 'adex-models'
 import { getAllCampaigns } from 'services/adex-market/actions'
@@ -387,7 +387,7 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 		identityAddr,
 	}
 
-	const result = await sendOpenChannel(data)
+	const result = await executeTx(data)
 	readyCampaign.id = channel.id
 	return {
 		result,

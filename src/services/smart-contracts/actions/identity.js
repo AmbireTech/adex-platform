@@ -319,7 +319,7 @@ export async function setIdentityPrivilege({
 		privLevel,
 	}
 
-	const result = await setAddrPriv(data)
+	const result = await executeTx(data)
 
 	return {
 		result,
