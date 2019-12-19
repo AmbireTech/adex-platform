@@ -1,14 +1,7 @@
 import * as types from 'constants/actionTypes'
-import {
-	grantAccount,
-	quickWalletSalt,
-	getQuickWallet,
-} from 'services/adex-relayer/actions'
+import { getQuickWallet } from 'services/adex-relayer/actions'
 import { updateSpinner, addToast } from './uiActions'
-import {
-	registerExpectedIdentity,
-	getOwnerIdentities,
-} from 'services/adex-relayer/actions'
+import { getOwnerIdentities } from 'services/adex-relayer/actions'
 import { translate } from 'services/translations/translations'
 import {
 	createSession,
@@ -33,7 +26,6 @@ import {
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
 import { selectAccount, selectIdentity, selectAuthType } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
-import { validEmail } from 'helpers/validators'
 import {
 	validate,
 	validateEmail,
@@ -103,59 +95,6 @@ export function resetWallet() {
 	}
 }
 
-export function getGrantAccount({
-	walletAddr,
-	email,
-	password,
-	grantCode,
-	authType,
-}) {
-	return async function(dispatch) {
-		updateSpinner('getting-grant-identity', true)(dispatch)
-		let identityAddr = null
-		try {
-			const identityData = await grantAccount({
-				ownerAddr: walletAddr,
-				mail: email,
-				couponCode: grantCode,
-			})
-			// TODO: validate identityData
-
-			if (identityData) {
-				addDataToWallet({
-					email,
-					password,
-					authType,
-					dataKey: 'identity',
-					dataValue: identityData.address,
-				})
-				addDataToWallet({
-					email,
-					password,
-					authType,
-					dataKey: 'privileges',
-					dataValue: identityData.privileges,
-				})
-				updateIdentity('identityAddr', identityData.address)(dispatch)
-				updateIdentity('identityData', identityData)(dispatch)
-				identityAddr = identityData.address
-			}
-		} catch (err) {
-			console.error('ERR_REGISTER_GRANT_IDENTITY', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_REGISTER_GRANT_IDENTITY', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-
-		updateSpinner('getting-grant-identity', false)(dispatch)
-		return identityAddr
-	}
-}
-
 export function getIdentityTxData({ owner, privLevel }) {
 	return async function(dispatch) {
 		try {
@@ -172,26 +111,6 @@ export function getIdentityTxData({ owner, privLevel }) {
 				timeout: 20000,
 			})(dispatch)
 		}
-	}
-}
-
-export function getRegisterExpectedIdentity({ owner, mail }) {
-	return async function(dispatch) {
-		updateSpinner('getting-expected-identity', true)(dispatch)
-		try {
-			const identityData = await registerExpectedIdentity({ owner, mail })
-			updateIdentity('identityData', identityData)(dispatch)
-		} catch (err) {
-			console.error('ERR_REGISTERING_EXPECTED_IDENTITY', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_REGISTERING_EXPECTED_IDENTITY', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-		updateSpinner('getting-expected-identity', false)(dispatch)
 	}
 }
 
@@ -570,14 +489,12 @@ export function validateQuickDeploy({ validateId, dirty }) {
 		updateSpinner(validateId, true)(dispatch)
 		try {
 			const identity = selectIdentity(getState())
-			const { identityAddr, email, password, grantCode } = identity
+			const { identityAddr, email, password } = identity
 
 			let grantIdentity = null
 
 			if (!identityAddr) {
-				const authType = !!grantCode
-					? AUTH_TYPES.GRANT.name
-					: AUTH_TYPES.QUICK.name
+				const authType = AUTH_TYPES.QUICK.name
 
 				const walletData = createLocalWallet({
 					email,
@@ -590,24 +507,14 @@ export function validateQuickDeploy({ validateId, dirty }) {
 
 				const walletAddr = walletData.address
 
-				if (grantCode) {
-					grantIdentity = await getGrantAccount({
-						walletAddr,
-						email,
-						password,
-						grantCode,
-						authType,
-					})(dispatch)
-				} else {
-					await getIdentityTxData({
-						owner: walletAddr,
-						privLevel: 3,
-					})(dispatch)
-				}
+				await getIdentityTxData({
+					owner: walletAddr,
+					privLevel: 3,
+				})(dispatch)
 
 				updateIdentity('wallet', walletData)(dispatch)
 				updateIdentity('walletAddr', walletAddr)(dispatch)
-				updateIdentity('registerAccount', !grantCode)(dispatch)
+				updateIdentity('registerAccount', true)(dispatch)
 			}
 
 			const isValid = !!identityAddr || !!grantIdentity
