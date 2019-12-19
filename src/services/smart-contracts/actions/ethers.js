@@ -14,6 +14,7 @@ import {
 import { addToast } from 'actions/uiActions'
 import { updateAccount } from 'actions/accountActions'
 import { splitSig, Transaction } from 'adex-protocol-eth/js'
+import { getErrorMsg } from 'helpers/errors'
 
 /**
  * NOTE: DO NOT CALL WITH CONNECTED SIGNER
@@ -95,7 +96,7 @@ export async function processTx({
 				type: 'cancel',
 				action: 'X',
 				label: translate('TRANSACTION_ERR_MSG', {
-					args: [err],
+					args: [getErrorMsg(err)],
 				}),
 				timeout: 50000,
 			})

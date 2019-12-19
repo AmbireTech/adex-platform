@@ -9,3 +9,8 @@ export const selectSpinnerById = createSelector(
 	[selectSpinners, (_, id) => id],
 	(spinners, id) => spinners[id]
 )
+
+export const selectMultipleSpinnersByIds = createSelector(
+	[selectSpinners, (_, ids) => ids],
+	(spinners, ids) => ids.map(id => spinners[id])
+)
