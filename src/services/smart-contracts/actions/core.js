@@ -50,6 +50,7 @@ function toEthereumChannel(channel) {
 		.digest()
 
 	return new Channel({
+		title: channel.title,
 		creator: channel.creator,
 		tokenAddr: channel.depositAsset,
 		tokenAmount: channel.depositAmount,
@@ -380,7 +381,6 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 		channel,
 		identityAddr,
 	}
-
 	const result = await sendOpenChannel(data)
 	readyCampaign.id = channel.id
 	return {

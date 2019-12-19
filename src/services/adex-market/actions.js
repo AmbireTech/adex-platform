@@ -183,3 +183,15 @@ export const getAllCampaigns = all => {
 		})
 		.then(processResponse)
 }
+
+export const updateCampaign = ({ campaign, id, authSig }) => {
+	return requester
+		.fetch({
+			route: `campaigns/${id}`,
+			method: 'PUT',
+			body: convertItemToJSON(campaign),
+			authSig,
+			headers: { 'Content-Type': 'application/json' },
+		})
+		.then(processResponse)
+}
