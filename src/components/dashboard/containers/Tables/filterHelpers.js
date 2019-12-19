@@ -55,8 +55,8 @@ const filterByTags = (items, filters, itemType) => {
 	return items.filter(item =>
 		tags.includes(
 			itemType === 'Campaign'
-				? item.status
-					? item.status.name.toLowerCase()
+				? item.status && item.status.humanFriendlyName
+					? item.status.humanFriendlyName.toLowerCase()
 					: 'pending'
 				: item.type.toLowerCase()
 		)

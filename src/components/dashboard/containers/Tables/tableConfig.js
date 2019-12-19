@@ -1,4 +1,9 @@
+import React from 'react'
 import { t } from 'selectors'
+import DoneAllIcon from '@material-ui/icons/DoneAll'
+import WarningIcon from '@material-ui/icons/Warning'
+import HourglassFullIcon from '@material-ui/icons/HourglassFull'
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
 
 const headCells = {
 	Campaign: [
@@ -10,7 +15,7 @@ const headCells = {
 			label: t('PROP_MEDIA'),
 		},
 		{
-			id: 'status.name',
+			id: 'status.humanFriendlyName',
 			numeric: false,
 			disablePadding: false,
 			label: t('PROP_STATUS'),
@@ -82,16 +87,7 @@ const headCells = {
 }
 
 const filterTags = {
-	Campaign: [
-		{
-			name: 'active',
-			alias: ['ready, active'],
-			loading: ['pending', 'initializing', 'waiting'],
-			warning: ['offline, disconnected, unhealthy, invalid'],
-		},
-		{ name: 'completed', alias: ['expired, exhausted, withdraw'] },
-		{ name: 'closed' },
-	],
+	Campaign: [{ name: 'active' }, { name: 'completed' }, { name: 'closed' }],
 	Other: [
 		{ name: 'legacy_300x250' },
 		{ name: 'legacy_250x250' },
@@ -114,27 +110,36 @@ const missingData = {
 	AdSlot: t('NO_ADSLOTS_INFORMATION'),
 }
 
-const mapStatusNames = status => {
+const mapStatusIcons = (humanFriendlyStatus, status, size) => {
+	const icon = {
+		xs: { fontSize: 10 },
+		md: { fontSize: 15 },
+		ls: { fontSize: 20 },
+	}
+	const waitIcon = <HourglassFullIcon style={icon[size]} color={'secondary'} />
+	const doneIcon = <DoneAllIcon style={icon[size]} color={'primary'} />
+	const warningIcon = <WarningIcon style={icon[size]} color={'error'} />
+	const cashIcon = <MonetizationOnIcon style={icon[size]} color={'accentTwo'} />
+	if (humanFriendlyStatus === 'Closed' && status.toLowerCase() !== 'exhausted')
+		return waitIcon
 	switch (status.toLowerCase()) {
 		case 'active':
 		case 'ready':
+			return doneIcon
 		case 'pending':
 		case 'initializing':
 		case 'waiting':
+			return waitIcon
 		case 'offline':
 		case 'disconnected':
 		case 'unhealthy':
 		case 'invalid':
-			return 'Active'
-		case 'expired':
-		case 'exhausted':
+			return warningIcon
 		case 'withdraw':
-			return 'Complete'
-		case 'closed':
-			return 'Closed'
+			return cashIcon
 		default:
-			break
+			return ''
 	}
 }
 
-export { headCells, filterTags, missingData, mapStatusNames }
+export { headCells, filterTags, missingData, mapStatusIcons }

@@ -20,9 +20,10 @@ import { AdUnit } from 'adex-models'
 import { t, selectSide } from 'selectors'
 import { execute, cloneItem } from 'actions'
 import { useSelector } from 'react-redux'
-import { missingData, headCells, mapStatusNames } from './tableConfig'
+import { missingData, headCells, mapStatusIcons } from './tableConfig'
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolbar'
+import Typography from '@material-ui/core/Typography'
 import {
 	filterBySearch,
 	filterByTags,
@@ -107,7 +108,15 @@ const renderActions = ({ item, to, itemType }) => {
 export default function EnhancedTable(props) {
 	const classes = useStyles()
 	const side = useSelector(selectSide)
-	const { items, itemType, noActions, validate, handleSelect, listMode } = props
+	// const items = []
+	const {
+		items, //
+		itemType,
+		noActions,
+		validate,
+		handleSelect,
+		listMode,
+	} = props
 	const [order, setOrder] = React.useState('desc')
 	const [orderBy, setOrderBy] = React.useState('created')
 	const [orderIsNumeric, setOrderisNumeric] = React.useState(true)
@@ -129,6 +138,10 @@ export default function EnhancedTable(props) {
 			isValid && handleSelect(selected)
 		}
 	}, [handleSelect, selected, validate])
+
+	React.useEffect(() => {
+		setPage(0)
+	}, [search, dateRange, filters])
 
 	const handleRequestSort = (event, property, numeric) => {
 		const isDesc = orderBy === property && order === 'desc'
@@ -271,7 +284,12 @@ export default function EnhancedTable(props) {
 											{itemType === 'Campaign' ? (
 												<React.Fragment>
 													<TableCell>
-														{mapStatusNames(item.status.name)}
+														{item.status.humanFriendlyName}{' '}
+														{mapStatusIcons(
+															item.status.humanFriendlyName,
+															item.status.name,
+															'xs'
+														)}
 													</TableCell>
 													<TableCell>
 														{formatTokenAmount(item.depositAmount, 18, true)}{' '}
