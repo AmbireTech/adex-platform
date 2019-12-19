@@ -17,12 +17,8 @@ import {
 	keccak256,
 } from 'ethers/utils'
 import { generateAddress2 } from 'ethereumjs-util'
-import {
-	// identityBytecode,
-	executeTx,
-	setAddrPriv,
-	relayerConfig,
-} from 'services/adex-relayer'
+import { executeTx } from 'services/adex-relayer'
+import { selectRelayerConfig } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import { contracts } from '../contractsCfg'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
@@ -123,9 +119,9 @@ export async function getIdentityDeployData({
 		identityBaseAddr,
 		identityRecoveryAddr,
 		coreAddr,
-		feeTokenWhitelist,
+		mainToken,
 		weeklyFeeAmount,
-	} = relayerConfig()
+	} = selectRelayerConfig()
 
 	const privileges = [[owner, 3], [identityRecoveryAddr, 3]]
 
@@ -139,7 +135,7 @@ export async function getIdentityDeployData({
 			registry: registryAddr,
 			outpace: coreAddr,
 			validUntil: relayerRoutineAuthValidUntil,
-			feeTokenAddr: feeTokenWhitelist[0].address,
+			feeTokenAddr: mainToken.address,
 			weeklyFeeAmount,
 		})
 
@@ -160,6 +156,7 @@ export async function getIdentityDeployData({
 		salt,
 		identityAddr,
 		privileges,
+		routineAuthorizationsRaw: opts.routineAuthorizations,
 	}
 }
 

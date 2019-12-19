@@ -210,7 +210,12 @@ export function updateValidatorAuthTokens({ newAuth }) {
 	}
 }
 
-export function createSession({ wallet, identity, email, deleteLegacyKey }) {
+export function createSession({
+	wallet,
+	identity = {},
+	email,
+	deleteLegacyKey,
+}) {
 	return async function(dispatch) {
 		updateSpinner('creating-session', true)(dispatch)
 		try {

@@ -98,7 +98,11 @@ export function resetWallet() {
 export function getIdentityTxData({ owner, privLevel }) {
 	return async function(dispatch) {
 		try {
-			const txData = await getIdentityDeployData({ owner, privLevel })
+			const txData = await getIdentityDeployData({
+				owner,
+				privLevel,
+				addReleyerRoutinesAuth: true,
+			})
 			updateIdentity('identityAddr', txData.identityAddr)(dispatch)
 			updateIdentity('identityTxData', txData)(dispatch)
 		} catch (err) {
