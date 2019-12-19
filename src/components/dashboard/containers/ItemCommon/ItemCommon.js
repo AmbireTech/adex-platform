@@ -24,6 +24,7 @@ import { contracts } from 'services/smart-contracts/contractsCfg'
 import { validations, Campaign } from 'adex-models'
 import { utils } from 'ethers'
 import SaveBtn from 'components/dashboard/containers/SaveBtn'
+import { Joi } from 'adex-models'
 
 const { DAI } = contracts
 
@@ -409,11 +410,15 @@ const campaignProps = ({
 	handleChange,
 	editTitle,
 	account,
+	dirtyProps,
+	setActiveFields,
+	campaignTitleSchema,
 	...rest
 }) => {
 	const mediaUrl = item.mediaUrl
 	const status = item.status || {}
-	const dirtyProps = [] // TODO
+
+	const titleError = Joi.validate(item.title, campaignTitleSchema).error
 	return (
 		<div>
 			<Grid container spacing={2}>
@@ -438,7 +443,7 @@ const campaignProps = ({
 												fullWidth
 												className={classes.textField}
 												margin='dense'
-												error={false} // TODO
+												error={!!titleError}
 											>
 												<InputLabel>{t('TITLE_LABEL')}</InputLabel>
 												<Input
@@ -452,10 +457,9 @@ const campaignProps = ({
 														validateTitle(item.title, false)
 														handleChange('title', ev.target.value)
 													}}
-													// onBlur={ev => {
-													// 	setActiveFields('title', false)
-													// }} // TODO
-													disabled={false} // TODO
+													onBlur={ev => {
+														setActiveFields('title', false)
+													}}
 													endAdornment={
 														<InputAdornment position='end'>
 															<SaveBtn
@@ -468,20 +472,16 @@ const campaignProps = ({
 																	account.wallet.authSig
 																)}
 																dirtyProps={dirtyProps}
-																disabled={false} // TODO
-																// disabled={
-																// 	!dirtyProps.length ||
-																// 	!!Object.keys(invalidFields).length
-																// }
+																disabled={titleError || dirtyProps.length === 0}
 															/>
 														</InputAdornment>
 													}
 												/>
 
 												<FormHelperText>
-													{/* {errMin && !!errMin.errMsg
-														? t(errMin.errMsg, { args: errMin.errMsgArgs })
-														: t('SLOT_MIN_CPM_HELPER')} */}
+													{titleError
+														? titleError.message.replace('"value"', '"title"')
+														: t('TITLE_HELPER_TXT')}
 												</FormHelperText>
 											</FormControl>
 										</Grid>

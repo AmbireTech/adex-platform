@@ -19,7 +19,7 @@ import { validations, Joi } from 'adex-models'
 import MomentUtils from '@date-io/moment'
 import { totalFeesFormatted } from 'services/smart-contracts/actions/core'
 const moment = new MomentUtils()
-const campaignTitleSchema = Joi.string() // TODO import from models
+const campaignTitleSchema = Joi.string()
 	.min(3)
 	.max(120)
 	.allow('') // empty string not allowed by default
