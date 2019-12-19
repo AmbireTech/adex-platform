@@ -146,6 +146,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 
 	const all = await Promise.all(
 		channels
+			.filter(channel => channel && channel.status)
 			.map(channel => {
 				const { lastApprovedSigs, lastApprovedBalances } = channel.status
 				if (lastApprovedBalances) {

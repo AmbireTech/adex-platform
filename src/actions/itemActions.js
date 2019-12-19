@@ -25,7 +25,7 @@ import { lastApprovedState } from 'services/adex-validator/actions'
 import { closeCampaignMarket } from 'services/adex-market/actions'
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
-
+import { getErrorMsg } from 'helpers/errors'
 import { contracts } from 'services/smart-contracts/contractsCfg'
 import { SOURCES } from 'constants/targeting'
 import { selectAccount, selectAuthSig } from 'selectors'
@@ -262,7 +262,7 @@ export function getAllItems() {
 				dispatch,
 				type: 'cancel',
 				toastStr: 'ERR_GETTING_ITEMS',
-				args: [err],
+				args: [getErrorMsg(err)],
 			})
 		}
 	}
@@ -300,7 +300,7 @@ export function openCampaign({ campaign }) {
 				dispatch,
 				type: 'cancel',
 				toastStr: 'ERR_OPENING_CAMPAIGN',
-				args: [err],
+				args: [getErrorMsg(err)],
 			})
 		}
 		updateSpinner('opening-campaign', false)(dispatch)
@@ -587,7 +587,7 @@ export const updateCampaignState = ({ campaign }) => {
 				dispatch: dispatch,
 				type: 'cancel',
 				toastStr: 'ERR_GETTING_CAMPAIGN_LAST_STATUS',
-				args: [err],
+				args: [getErrorMsg(err)],
 			})
 		}
 	}
@@ -619,7 +619,7 @@ export function closeCampaign({ campaign }) {
 				dispatch,
 				type: 'cancel',
 				toastStr: 'ERR_CLOSING_CAMPAIGN',
-				args: [err],
+				args: [getErrorMsg(err)],
 			})
 		}
 		updateSpinner('closing-campaign', false)(dispatch)
