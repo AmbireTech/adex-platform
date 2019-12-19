@@ -16,7 +16,7 @@
     "@typescript-eslint/eslint-plugin": "1.6.0",
     "@typescript-eslint/parser": "1.6.0",
     "adex-constants": "1.0.10",
-    "adex-models": "git+https://git@github.com/AdExBlockchain/adex-models.git#163e17664c89d68ee996249382ee8f93b1e39755",
+    "adex-models": "git+https://git@github.com/AdExBlockchain/adex-models.git#9ab56f47352114f97e7b10861e42b554c331f51a",
     "adex-protocol-eth": "3.3.0",
     "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#4c7b5cf3e4a41992ea2359cde814c7be111833ef",
     "autoprefixer": "7.1.6",

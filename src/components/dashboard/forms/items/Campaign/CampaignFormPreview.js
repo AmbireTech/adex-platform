@@ -46,6 +46,7 @@ class CampaignFormPreview extends Component {
 	render() {
 		const { account, newItem, t } = this.props
 		const {
+			title,
 			// targeting,
 			adUnits,
 			validators,
@@ -67,6 +68,7 @@ class CampaignFormPreview extends Component {
 					</ContentStickyTop>
 				) : null}
 				<ContentBody>
+					<PropRow left={t('title', { isProp: true })} right={title} />
 					<PropRow
 						left={t('owner', { isProp: true })}
 						right={account.identity.address}

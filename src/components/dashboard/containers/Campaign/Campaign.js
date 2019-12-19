@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
+import { updateCampaign } from 'services/adex-market/actions'
 import Grid from '@material-ui/core/Grid'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
 import ItemsList from 'components/dashboard/containers/ItemsList'
@@ -22,8 +23,13 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import Anchor from 'components/common/anchor/anchor'
 import { formatTokenAmount } from 'helpers/formatters'
-// import UnitTargets from 'components/dashboard/containers/UnitTargets'
+import { Joi } from 'adex-models'
 
+// import UnitTargets from 'components/dashboard/containers/UnitTargets'
+const campaignTitleSchema = Joi.string() // TODO get from models
+	.min(3)
+	.max(120)
+	.allow('') // empty string not allowed by default
 const VIEW_MODE = 'campaignRowsView'
 
 export class Campaign extends Component {
@@ -40,6 +46,10 @@ export class Campaign extends Component {
 	// 	this.props.actions.updateCampaignState({ campaign: this.props.item })
 	// 	// this.props.actions.updateCampaignStatistics({ campaign: this.props.item })
 	// }
+
+	editTitle = (campaign, id, authSig) => {
+		updateCampaign({ campaign, id, authSig })
+	}
 
 	handleTabChange = (event, index) => {
 		this.setState({ tabIndex: index })
@@ -58,6 +68,15 @@ export class Campaign extends Component {
 				</Grid>
 			</Grid>
 		)
+	}
+
+	validateTitle(title, dirty) {
+		const result = Joi.validate(title, campaignTitleSchema)
+		return this.props.validate('title', {
+			isValid: !result.error,
+			err: { msg: result.error ? result.error.message : '' },
+			dirty: dirty,
+		})
 	}
 
 	render() {
@@ -109,6 +128,10 @@ export class Campaign extends Component {
 							/>
 						)
 					}
+					validateTitle={this.validateTitle.bind(this)}
+					handleChange={this.props.handleChange}
+					editTitle={this.editTitle}
+					account={this.props.account}
 				/>
 				<div>
 					<AppBar position='static' color='default'>

@@ -15,10 +15,14 @@ import Checkbox from '@material-ui/core/Checkbox'
 import TextField from '@material-ui/core/TextField'
 import DateTimePicker from 'components/common/DateTimePicker'
 import { utils } from 'ethers'
-import { validations } from 'adex-models'
+import { validations, Joi } from 'adex-models'
 import MomentUtils from '@date-io/moment'
 import { totalFeesFormatted } from 'services/smart-contracts/actions/core'
 const moment = new MomentUtils()
+const campaignTitleSchema = Joi.string() // TODO import from models
+	.min(3)
+	.max(120)
+	.allow('') // empty string not allowed by default
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -142,6 +146,7 @@ class CampaignFinance extends Component {
 			false,
 			'REQUIRED_FIELD'
 		)
+		this.validateTitle(newItem.title, false, 'TITLE_HELPER_TEXT')
 		this.handleDates('activeFrom', newItem.activeFrom, false)
 		this.handleDates('withdrawPeriodStart', newItem.withdrawPeriodStart, false)
 	}
@@ -237,6 +242,16 @@ class CampaignFinance extends Component {
 		}
 	}
 
+	validateTitle(name, dirty) {
+		const result = Joi.validate(name, campaignTitleSchema)
+
+		this.props.validate('title', {
+			isValid: !result.error,
+			err: { msg: result.error ? result.error.message : '' },
+			dirty: dirty,
+		})
+	}
+
 	handleDates = (prop, value, dirty) => {
 		const { newItem, handleChange, validate } = this.props
 		const withdrawPeriodStart =
@@ -268,6 +283,7 @@ class CampaignFinance extends Component {
 	render() {
 		const { handleChange, newItem, t, invalidFields, account } = this.props
 		const {
+			title,
 			validators,
 			depositAmount,
 			minPerImpression,
@@ -276,13 +292,13 @@ class CampaignFinance extends Component {
 			withdrawPeriodStart,
 			minTargetingScore,
 		} = newItem
-
 		const { availableIdentityBalanceDai = 0 } = account.stats.formatted || {}
 
 		const from = activeFrom || undefined
 		const to = withdrawPeriodStart || undefined
 		const now = moment.date().valueOf()
 
+		const errTitle = invalidFields['title']
 		const errDepAmnt = invalidFields['depositAmount']
 		const errMin = invalidFields['minPerImpression']
 		const errFrom = invalidFields['activeFrom']
@@ -298,6 +314,27 @@ class CampaignFinance extends Component {
 		return (
 			<div>
 				<Grid container spacing={2}>
+					<Grid item sm={12} md={12}>
+						<TextField
+							fullWidth
+							type='text'
+							required
+							label={t('title', { isProp: true })}
+							name='title'
+							value={title}
+							onChange={ev => {
+								this.validateTitle(ev.target.value, 'title', true)
+								handleChange('title', ev.target.value)
+							}}
+							error={errTitle && !!errTitle.dirty}
+							maxLength={120}
+							helperText={
+								errTitle && !!errTitle.dirty
+									? errTitle.errMsg
+									: t('TITLE_HELPER_TXT') // TODO
+							}
+						/>
+					</Grid>
 					{/* <Grid item xs={12}> */}
 					<Grid item sm={12} md={6}>
 						{/* <Dropdown
