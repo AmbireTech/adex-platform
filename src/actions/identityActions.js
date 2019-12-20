@@ -1,12 +1,9 @@
 import * as types from 'constants/actionTypes'
 import { getQuickWallet } from 'services/adex-relayer/actions'
 import { updateSpinner, addToast } from './uiActions'
-import { getOwnerIdentities } from 'services/adex-relayer/actions'
+import { getOwnerIdentities, regAccount } from 'services/adex-relayer/actions'
 import { translate } from 'services/translations/translations'
-import {
-	createSession,
-	registerAccount as registerAccountAction,
-} from './accountActions'
+import { createSession } from './accountActions'
 
 import {
 	getIdentityDeployData,
@@ -92,30 +89,6 @@ export function resetWallet() {
 		return dispatch({
 			type: types.RESET_WALLET,
 		})
-	}
-}
-
-export function getIdentityTxData({ owner, privLevel }) {
-	return async function(dispatch) {
-		try {
-			const txData = await getIdentityDeployData({
-				owner,
-				privLevel,
-				addReleyerRoutinesAuth: true,
-			})
-			updateIdentity('identityAddr', txData.identityAddr)(dispatch)
-			updateIdentity('identityTxData', txData)(dispatch)
-			updateIdentity('identityData', { address: txData.identityAddr })(dispatch)
-		} catch (err) {
-			console.error('ERR_GET_IDENTITY_TX_DATA', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_GET_IDENTITY_TX_DATA', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
 	}
 }
 
@@ -284,32 +257,9 @@ export function addrIdentityPrivilege({ setAddr, privLevel }) {
 	}
 }
 
-export function getQuickWalletSalt({ email }) {
-	return async function(dispatch, getState) {
-		updateSpinner('getting-quick-wallet-salt', true)(dispatch)
-		let salt = null
-		try {
-			salt = generateSalt(email)
-		} catch (err) {
-			console.error('ERR_GETTING_WALLET_SALT', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_GETTING_WALLET_SALT', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-		updateIdentity('backupSalt', salt)(dispatch)
-		updateSpinner('getting-quick-wallet-salt', false)(dispatch)
-		return salt
-	}
-}
-
 export function login() {
 	return async function(dispatch, getState) {
 		try {
-			const identity = selectIdentity(getState())
 			const {
 				wallet,
 				email,
@@ -317,21 +267,19 @@ export function login() {
 				identityTxData,
 				deleteLegacyKey,
 				registerAccount,
-			} = identity
-
-			const newWallet = { ...wallet }
+			} = selectIdentity(getState())
 
 			if (registerAccount) {
-				await registerAccountAction({
-					owner: newWallet.address,
-					identityTxData,
+				await regAccount({
+					owner: wallet.address,
 					email,
-				})(dispatch)
+					...identityTxData,
+				})
 			}
 
 			await createSession({
 				identity: identityData,
-				wallet: newWallet,
+				wallet,
 				email,
 				deleteLegacyKey,
 			})(dispatch)
@@ -496,8 +444,6 @@ export function validateQuickDeploy({ validateId, dirty }) {
 			const identity = selectIdentity(getState())
 			const { identityAddr, email, password } = identity
 
-			let grantIdentity = null
-
 			if (!identityAddr) {
 				const authType = AUTH_TYPES.QUICK.name
 
@@ -512,17 +458,37 @@ export function validateQuickDeploy({ validateId, dirty }) {
 
 				const walletAddr = walletData.address
 
-				await getIdentityTxData({
-					owner: walletAddr,
-					privLevel: 3,
-				})(dispatch)
+				const txData = await getIdentityDeployData({ owner: walletAddr })
+				const identityData = {
+					address: txData.identityAddr,
+					privileges: txData.privileges,
+				}
+
+				addDataToWallet({
+					email,
+					password,
+					authType,
+					dataKey: 'identity',
+					dataValue: identityData.address,
+				})
+				addDataToWallet({
+					email,
+					password,
+					authType,
+					dataKey: 'privileges',
+					dataValue: identityData.privileges,
+				})
+
+				updateIdentity('identityAddr', txData.identityAddr)(dispatch)
+				updateIdentity('identityTxData', txData)(dispatch)
+				updateIdentity('identityData', identityData)(dispatch)
 
 				updateIdentity('wallet', walletData)(dispatch)
 				updateIdentity('walletAddr', walletAddr)(dispatch)
 				updateIdentity('registerAccount', true)(dispatch)
 			}
 
-			const isValid = !!identityAddr || !!grantIdentity
+			const isValid = !!identityAddr
 
 			validate(validateId, 'identityAddr', {
 				isValid,

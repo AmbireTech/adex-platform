@@ -32,8 +32,6 @@ const ERC20 = new Interface(DAI.abi)
 
 export async function getIdentityDeployData({
 	owner,
-	privLevel,
-	addReleyerRoutinesAuth,
 	relayerRoutineAuthValidUntil = 10648454444,
 }) {
 	const {

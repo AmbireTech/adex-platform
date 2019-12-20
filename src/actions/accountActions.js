@@ -5,7 +5,6 @@ import {
 	getRelayerConfigData,
 	regAccount,
 	getGrantType,
-	quickWalletSalt,
 	getQuickWallet,
 	backupWallet,
 } from 'services/adex-relayer/actions'
@@ -137,30 +136,6 @@ export function updateAccountStats() {
 				timeout: 20000,
 			})(dispatch)
 		}
-	}
-}
-
-export function registerAccount({ owner, identityTxData, email }) {
-	return async function(dispatch) {
-		updateSpinner('registering-account', true)(dispatch)
-		try {
-			await regAccount({
-				owner,
-				email,
-				...identityTxData,
-			})
-		} catch (err) {
-			console.error('ERR_REGISTERING_ACCOUNT', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_REGISTERING_ACCOUNT', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-
-		updateSpinner('registering-account', false)(dispatch)
 	}
 }
 
