@@ -69,6 +69,7 @@
 				const chat = document.querySelector('#tidio-chat iframe')
 				if (chat) {
 					chat.style.zIndex = 1
+					chat.style.userSelect = 'none'
 					clearInterval(moveChatToBack)
 				}
 			}, 100)
