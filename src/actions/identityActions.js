@@ -105,6 +105,7 @@ export function getIdentityTxData({ owner, privLevel }) {
 			})
 			updateIdentity('identityAddr', txData.identityAddr)(dispatch)
 			updateIdentity('identityTxData', txData)(dispatch)
+			updateIdentity('identityData', { address: txData.identityAddr })(dispatch)
 		} catch (err) {
 			console.error('ERR_GET_IDENTITY_TX_DATA', err)
 			addToast({
