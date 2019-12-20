@@ -11,14 +11,17 @@ import { styles } from './styles'
 import Grid from '@material-ui/core/Grid'
 import { BasicStats } from './BasicStats'
 import { push } from 'connected-react-router'
-import { t, selectSide, selectAccount } from 'selectors'
+import { t, selectSide, selectAccountStatsFormatted } from 'selectors'
 
 const useStyles = makeStyles(styles)
 
 export function DashboardStats(props) {
 	const side = useSelector(selectSide)
-	const account = useSelector(selectAccount)
 	const classes = useStyles()
+	const {
+		availableIdentityBalanceDai,
+		outstandingBalanceDai,
+	} = useSelector(selectAccountStatsFormatted)
 
 	useEffect(() => {
 		execute(updateNav('navTitle', t('DASHBOARD')))
@@ -29,8 +32,6 @@ export function DashboardStats(props) {
 	}
 
 	const InfoStats = () => {
-		const formatted = account.stats.formatted || {}
-		const { outstandingBalanceDai, availableIdentityBalanceDai } = formatted
 		return (
 			<div className={classes.infoStatsContainer}>
 				<StatsCard

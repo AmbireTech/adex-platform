@@ -51,15 +51,7 @@ const Campaigns = () => (
 			color='secondary'
 			btnLabel='NEW_CAMPAIGN'
 		/>
-		<Items
-			header={t('ALL_CAMPAIGNS')}
-			viewModeId='rowsViewCampaigns'
-			itemType={'Campaign'}
-			objModel={CampaignModel}
-			sortProperties={SORT_PROPERTIES_CAMPAIGN}
-			uiStateId='campaigns'
-			filterProperties={FILTER_PROPERTIES_CAMPAIGN}
-		/>
+		<Items header={t('ALL_CAMPAIGNS')} itemType={'Campaign'} />
 	</>
 )
 
@@ -71,15 +63,7 @@ const AdUnits = () => (
 			color='secondary'
 			btnLabel='NEW_UNIT'
 		/>
-		<Items
-			header={t('ALL_UNITS')}
-			viewModeId='rowsViewUnits'
-			itemType={'AdUnit'}
-			objModel={AdUnitModel}
-			sortProperties={SORT_PROPERTIES_ITEMS}
-			filterProperties={FILTER_PROPERTIES_ITEMS}
-			uiStateId='units'
-		/>
+		<Items header={t('ALL_UNITS')} itemType={'AdUnit'} />
 	</>
 )
 
@@ -92,15 +76,7 @@ const AdSlots = () => (
 			color='secondary'
 			btnLabel='NEW_SLOT'
 		/>
-		<Items
-			header={t('ALL_SLOTS')}
-			viewModeId='rowsViewSlots'
-			itemType={'AdSlot'}
-			objModel={AdSlotModel}
-			sortProperties={SORT_PROPERTIES_ITEMS}
-			filterProperties={FILTER_PROPERTIES_ITEMS}
-			uiStateId='slots'
-		/>
+		<Items header={t('ALL_SLOTS')} itemType={'AdSlot'} />
 	</>
 )
 

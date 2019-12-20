@@ -139,9 +139,7 @@ function SideNav(props) {
 							>
 								<ListItemText>
 									<Typography variant='h6' component='div' color='textPrimary'>
-										<strong>{`${parseFloat(
-											availableIdentityBalanceDai || 0
-										).toFixed(2)} SAI`}</strong>
+										<strong>{`${availableIdentityBalanceDai || 0} SAI`}</strong>
 									</Typography>
 									<Typography variant='button' display='block' gutterBottom>
 										{t('IDENTITY_BALANCE')}

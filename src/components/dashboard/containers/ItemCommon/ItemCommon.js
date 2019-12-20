@@ -25,6 +25,7 @@ import { bigNumberify } from 'ethers/utils'
 import { contracts } from 'services/smart-contracts/contractsCfg'
 import { validations } from 'adex-models'
 import { utils } from 'ethers'
+import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableConfig'
 
 const { DAI } = contracts
 
@@ -479,11 +480,22 @@ const campaignProps = ({
 												<Grid item xs={12}>
 													<TextField
 														// type='text'
-														value={status.name}
+														value={status.humanFriendlyName}
 														label={t('status', { isProp: true })}
 														disabled
 														margin='dense'
 														fullWidth
+														InputProps={{
+															endAdornment: (
+																<InputAdornment position='end'>
+																	{mapStatusIcons(
+																		status.humanFriendlyName,
+																		status.name,
+																		'md'
+																	)}
+																</InputAdornment>
+															),
+														}}
 													/>
 												</Grid>
 												<Grid item xs={12}>

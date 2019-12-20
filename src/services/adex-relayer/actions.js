@@ -18,36 +18,6 @@ const processResponse = res => {
 	})
 }
 
-export const identityToEmail = ({ identity, privileges, mail }) => {
-	return requester
-		.fetch({
-			route: 'identity/info-mail',
-			method: 'POST',
-			body: JSON.stringify({
-				identity,
-				privileges,
-				mail,
-			}),
-			headers: { 'Content-Type': 'application/json' },
-		})
-		.then(processResponse)
-}
-
-export const grantAccount = ({ ownerAddr, mail, couponCode }) => {
-	return requester
-		.fetch({
-			route: 'identity/grant-account',
-			method: 'POST',
-			body: JSON.stringify({
-				mail,
-				ownerAddr,
-				couponCode,
-			}),
-			headers: { 'Content-Type': 'application/json' },
-		})
-		.then(processResponse)
-}
-
 export const getGrantType = ({ identity }) => {
 	return requester
 		.fetch({
@@ -66,70 +36,11 @@ export const checkCoupon = ({ coupon }) => {
 		.then(processResponse)
 }
 
-export const checkAccessCode = ({ code }) => {
-	return requester
-		.fetch({
-			route: `identity/valid-accesscode/${code}`,
-			method: 'GET',
-		})
-		.then(processResponse)
-}
-
 export const getOwnerIdentities = ({ owner }) => {
 	return requester
 		.fetch({
-			route: `identity/owners/${owner}`,
+			route: `identity/by-owner/${owner}`,
 			method: 'GET',
-		})
-		.then(processResponse)
-}
-
-export const identityBytecode = ({ owner, privLevel, identityBaseAddr }) => {
-	return requester
-		.fetch({
-			route: 'identity/identity-bytecode',
-			method: 'POST',
-			body: JSON.stringify({
-				owner,
-				privLevel,
-				identityBaseAddr,
-			}),
-			headers: { 'Content-Type': 'application/json' },
-		})
-		.then(processResponse)
-}
-
-export const sendOpenChannel = ({
-	txnsRaw,
-	signatures,
-	channel,
-	identityAddr,
-}) => {
-	return requester
-		.fetch({
-			route: 'channel/open',
-			method: 'POST',
-			body: JSON.stringify({
-				txnsRaw,
-				signatures,
-				channel,
-				identityAddr,
-			}),
-			headers: { 'Content-Type': 'application/json' },
-		})
-		.then(processResponse)
-}
-
-export const registerExpectedIdentity = ({ owner, mail }) => {
-	return requester
-		.fetch({
-			route: 'identity/register-expected',
-			method: 'POST',
-			body: JSON.stringify({
-				owner,
-				mail,
-			}),
-			headers: { 'Content-Type': 'application/json' },
 		})
 		.then(processResponse)
 }
@@ -143,38 +54,16 @@ export const getRelayerConfigData = () => {
 		.then(processResponse)
 }
 
-export const executeTx = ({ txnsRaw, signatures, identityAddr }) => {
+export const executeTx = ({ txnsRaw, signatures, identityAddr, channel }) => {
 	return requester
 		.fetch({
-			route: 'identity/execute',
+			route: `identity/${identityAddr}/execute`,
 			method: 'POST',
 			body: JSON.stringify({
 				txnsRaw,
 				signatures,
 				identityAddr,
-			}),
-			headers: { 'Content-Type': 'application/json' },
-		})
-		.then(processResponse)
-}
-
-export const setAddrPriv = ({
-	txnsRaw,
-	signatures,
-	identityAddr,
-	privLevel,
-	setAddr,
-}) => {
-	return requester
-		.fetch({
-			route: 'identity/set-addr-privilege',
-			method: 'POST',
-			body: JSON.stringify({
-				txnsRaw,
-				signatures,
-				identityAddr,
-				setAddr,
-				privLevel,
+				channel,
 			}),
 			headers: { 'Content-Type': 'application/json' },
 		})
@@ -186,35 +75,28 @@ export const regAccount = ({
 	email,
 	bytecode,
 	identityFactoryAddr,
-	identityBaseAddr,
+	baseIdentityAddr,
 	salt,
 	identityAddr,
 	privileges,
+	routineAuthorizationsRaw,
 }) => {
 	return requester
 		.fetch({
-			route: 'identity/register',
+			route: `identity/${identityAddr}`,
 			method: 'POST',
 			body: JSON.stringify({
 				owner,
 				email,
 				bytecode,
 				identityFactoryAddr,
-				identityBaseAddr,
+				baseIdentityAddr,
 				salt,
 				identityAddr,
 				privileges,
+				routineAuthorizationsRaw,
 			}),
 			headers: { 'Content-Type': 'application/json' },
-		})
-		.then(processResponse)
-}
-
-export const quickWalletSalt = ({ email }) => {
-	return requester
-		.fetch({
-			route: `wallet/salt/${encodeURIComponent(email)}`,
-			method: 'GET',
 		})
 		.then(processResponse)
 }
