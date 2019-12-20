@@ -11,7 +11,7 @@ export const selectRelayerConfig = state => {
 // feeTokenWhitelist, // [{ address, symbol, decimals, standard, min, minDeploy }],
 // routineWithdrawTokens, // [{ address, symbol, decimals, standard, minWeekly, minFinal }],
 // coreAddr,
-// identityBaseAddr,
+// baseIdentityAddr,
 // identityFactoryAddr,
 // registryAddr,
 // daiAddr,
@@ -20,6 +20,7 @@ export const selectRelayerConfig = state => {
 // weeklyFeeAmount,
 // mainToken, // { address, symbol, decimals, standard },
 // advertiserMinGrantAmount
+// relayerAddr
 
 export const selectFeeTokenWhitelist = createSelector(
 	[selectRelayerConfig],
