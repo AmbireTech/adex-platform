@@ -486,7 +486,7 @@ const campaignProps = ({
 														margin='dense'
 														fullWidth
 														InputProps={{
-															startAdornment: (
+															endAdornment: (
 																<InputAdornment position='start'>
 																	{mapStatusIcons(
 																		item.status.humanFriendlyName,
