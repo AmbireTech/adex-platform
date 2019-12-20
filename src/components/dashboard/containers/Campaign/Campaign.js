@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import actions, { execute } from 'actions'
-import { push } from 'connected-react-router'
+import actions from 'actions'
 import Grid from '@material-ui/core/Grid'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
 import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
@@ -54,7 +53,6 @@ export class Campaign extends Component {
 						color='secondary'
 						onClick={() => {
 							actions.closeCampaign({ campaign })
-							// execute(push('/dashboard/advertiser/campaigns'))
 						}}
 					>
 						{t('BTN_CLOSE_CAMPAIGN')}

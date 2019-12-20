@@ -6,6 +6,8 @@ import {
 	updateAdSlot,
 	updateAdUnit,
 } from 'services/adex-market/actions'
+import { execute } from 'actions'
+import { push } from 'connected-react-router'
 import { parseUnits, bigNumberify } from 'ethers/utils'
 import { Base, AdSlot, AdUnit, helpers } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
@@ -603,14 +605,18 @@ export function closeCampaign({ campaign }) {
 			const { authTokens } = await closeChannel({ account, campaign })
 			await closeCampaignMarket({ campaign, authSig })
 			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch, getState)
-			getAllItems()
-			// TODO: redirect to campaigns list
+			execute(push('/dashboard/advertiser/campaigns'))
 			addToast({
 				dispatch,
 				type: 'accept',
 				toastStr: 'SUCCESS_CLOSING_CAMPAIGN',
 				args: [campaign.id],
 			})
+			const campaigns = await getCampaigns({ authSig })
+			const campaignsMapped = campaigns.map(c => {
+				return { ...c, ...c.spec }
+			})
+			updateItems({ items: campaignsMapped, itemType: 'Campaign' })(dispatch)
 		} catch (err) {
 			console.error('ERR_CLOSING_CAMPAIGN', err)
 			addToast({

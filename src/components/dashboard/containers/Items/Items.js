@@ -12,12 +12,11 @@ class Items extends Component {
 	}
 
 	render() {
-		const { classes, itemType } = this.props
+		const { itemType } = this.props
 		const items = Array.from(Object.values(this.props.items || {})) || []
 
 		return (
 			<div>
-				{!!this.props.newItemBtn && <this.props.newItemBtn />}
 				<EnhancedTable itemType={itemType} items={items} />
 			</div>
 		)
@@ -27,11 +26,8 @@ class Items extends Component {
 Items.propTypes = {
 	actions: PropTypes.object.isRequired,
 	items: PropTypes.object.isRequired,
-	viewModeId: PropTypes.string.isRequired,
 	header: PropTypes.string.isRequired,
-	objModel: PropTypes.func.isRequired,
 	itemType: PropTypes.string.isRequired,
-	sortProperties: PropTypes.array.isRequired,
 }
 
 function mapStateToProps(state, props) {
