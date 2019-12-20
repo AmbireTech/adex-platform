@@ -1,5 +1,4 @@
 import React from 'react'
-import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
 import IdentityContractOwner from './IdentityContractOwner'
 import QuickInfo from './QuickInfo'
 import QuickDeploy from './QuickDeploy'
@@ -32,24 +31,6 @@ const common = {
 	cancelFunction,
 	validateIdBase: 'identity-',
 }
-
-export const CreteFullIdentity = props => (
-	<IdentitySteps
-		{...props}
-		{...common}
-		stepsId='full-identity-create'
-		stepsPages={[
-			{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
-			{
-				title: 'GENERATE_IDENTITY_CONTRACT_ADDRESS',
-				page: IdentityContractAddressEthDeploy,
-				pageValidation: finalValidationStandard,
-				final: true,
-			},
-			// { title: 'DEPLOY_IDENTITY_CONTRACT_ADDRESS', page: IdentityContractAddressEthTransaction, final: true }
-		]}
-	/>
-)
 
 export const LoginStandardIdentity = props => {
 	return (

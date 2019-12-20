@@ -1,8 +1,7 @@
-import configureStore from 'store/configureStore'
-const { store } = configureStore
+import { getState } from 'store'
 
 export const relayerConfig = () => {
-	const cfg = store.getState().persist.config.relayer
+	const cfg = getState().persist.config.relayer
 
 	return cfg
 }

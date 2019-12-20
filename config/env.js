@@ -83,7 +83,6 @@ function getClientEnvironment(publicUrl) {
 				ETH_SCAN_TX_HOST: process.env.ETH_SCAN_ADDR_HOST,
 				ADEX_SITE_HOST: process.env.ADEX_SITE_HOST,
 				ADEX_RELAYER_HOST: process.env.ADEX_RELAYER_HOST,
-				ADEX_RELAYER_ADDR: process.env.ADEX_RELAYER_ADDR,
 				ADEX_MARKET_HOST: process.env.ADEX_MARKET_HOST,
 				IDENTITY_BASE_ADDR: process.env.IDENTITY_BASE_ADDR,
 				IDENTITY_FACTORY_ADDR: process.env.IDENTITY_FACTORY_ADDR,
