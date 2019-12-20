@@ -85,13 +85,6 @@ export async function getIdentityDeployData({
 	}
 }
 
-export function getPrivileges({ walletAddr, identityAddr, walletAuthType }) {
-	return getEthers(walletAuthType).then(({ provider, Identity }) => {
-		const contract = new ethers.Contract(identityAddr, Identity.abi, provider)
-		return contract.privileges(walletAddr)
-	})
-}
-
 export async function sendDaiToIdentity({
 	account,
 	amountToSend,
