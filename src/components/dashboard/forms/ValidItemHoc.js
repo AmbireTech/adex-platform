@@ -15,7 +15,7 @@ export default function ValidationHoc(Decorated) {
 			{ isValid, err = { msg: '', args: [] }, dirty = false, removeAll = false }
 		) => {
 			const { validateId } = props
-			execute(validate(key, { isValid, err, dirty, removeAll }, validateId))
+			execute(validate(validateId, key, { isValid, err, dirty, removeAll }))
 		}
 
 		return (
