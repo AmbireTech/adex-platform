@@ -235,29 +235,14 @@ export function getAllItems() {
 	return async function(dispatch, getState) {
 		try {
 			const { account } = getState().persist
-			const { authSig } = account.wallet
 			const { address } = account.identity
 			const units = getAdUnits({ identity: address })
 			const slots = getAdSlots({ identity: address })
-			const campaigns = getCampaigns({ authSig })
 
-			const [
-				resUnits,
-				resSlots,
-				resCampaigns, //
-			] = await Promise.all([
-				units,
-				slots,
-				campaigns, //
-			])
-
-			const campaignsMapped = resCampaigns.map(c => {
-				return { ...c, ...c.spec }
-			})
+			const [resUnits, resSlots] = await Promise.all([units, slots])
 
 			updateItems({ items: resUnits, itemType: 'AdUnit' })(dispatch)
 			updateItems({ items: resSlots, itemType: 'AdSlot' })(dispatch)
-			updateItems({ items: campaignsMapped, itemType: 'Campaign' })(dispatch)
 		} catch (err) {
 			console.error('ERR_GETTING_ITEMS', err)
 			addToast({
