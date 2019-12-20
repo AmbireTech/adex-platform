@@ -106,7 +106,11 @@ function getReadyCampaign(campaign, identity, Dai) {
 		],
 	}
 
-	newCampaign.status = { name: 'Pending', lastChecked: Date.now() }
+	newCampaign.status = {
+		name: 'Pending',
+		humanFriendlyName: 'Active',
+		lastChecked: Date.now(),
+	}
 
 	return newCampaign
 }

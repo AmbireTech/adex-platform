@@ -1,11 +1,11 @@
 import React from 'react'
-// import Slider from '@material-ui/core/Slider'
+import Slider from '@material-ui/core/Slider'
 import classnames from 'classnames'
 import IconButton from '@material-ui/core/IconButton'
 import ChevronLeft from '@material-ui/icons/ChevronLeft'
 import ChevronRight from '@material-ui/icons/ChevronRight'
 import Dropdown from 'components/common/dropdown'
-// import Typography from '@material-ui/core/Typography'
+import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -20,13 +20,13 @@ const pagination = props => {
 	const {
 		page,
 		pages,
-		// pageSize,
+		pageSize,
 		classes,
 		goToPrevPage,
 		goToNextPage,
 		goToPage,
-		// changePageSize,
-		// className,
+		changePageSize,
+		className,
 		t,
 	} = props
 	return (
@@ -63,12 +63,20 @@ const pagination = props => {
 					</IconButton>
 				</div>
 			)}
-			{/* <div
-				className={classnames(classes.flexItem, classes.pageSize)}
-			>
-				<Typography noWrap id="page-size">{t('LIST_CONTROL_LABEL_PAGE_SIZE')} <strong>{pageSize}</strong> </Typography>
-				<Slider style={{ padding: '22px 0' }} aria-labelledby="page-size" min={5} max={25} step={5} value={pageSize} onChange={changePageSize} />
-			</div> */}
+			<div className={classnames(classes.flexItem, classes.pageSize)}>
+				<Typography noWrap id='page-size'>
+					{t('LIST_CONTROL_LABEL_PAGE_SIZE')} <strong>{pageSize}</strong>{' '}
+				</Typography>
+				<Slider
+					style={{ padding: '22px 0' }}
+					aria-labelledby='page-size'
+					min={5}
+					max={25}
+					step={5}
+					value={pageSize}
+					onChange={changePageSize}
+				/>
+			</div>
 		</div>
 	)
 }
@@ -79,7 +87,7 @@ const getAllPagedValues = (current, max) => {
 	// let pages = {}
 
 	// for (var index = 0; index < max; index++) {
-	//     pages[index + ''] = index + 1 + ''
+	// pages[index + ''] = index + 1 + ''
 	// }
 
 	let pages = []
