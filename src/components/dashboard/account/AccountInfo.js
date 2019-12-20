@@ -29,7 +29,12 @@ import { getRecoveryWalletData } from 'services/wallet/wallet'
 import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
-import { selectAccount } from 'selectors'
+import {
+	selectWallet,
+	selectAccountStatsFormatted,
+	selectAccountIdentity,
+	selectAccountSettings,
+} from 'selectors'
 import { formatAddress } from 'helpers/formatters'
 
 // const RRButton = withReactRouterLink(Button)
@@ -40,10 +45,20 @@ const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
 const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 
 function AccountInfo({ t }) {
-	const account = useSelector(selectAccount)
+	const { authType, email, password } = useSelector(selectWallet)
+	const identity = useSelector(selectAccountIdentity)
+	const { grantType } = useSelector(selectAccountSettings)
+	const {
+		walletAddress,
+		walletAuthType = '',
+		walletPrivileges = '',
+		identityAddress,
+		identityBalanceDai,
+		availableIdentityBalanceDai,
+		outstandingBalanceDai,
+	} = useSelector(selectAccountStatsFormatted)
 
 	const localWalletDownloadHref = () => {
-		const { email, password, authType } = account.wallet
 		const obj = getRecoveryWalletData({ email, password, authType })
 		if (!obj || !obj.wallet) {
 			return null
@@ -69,7 +84,7 @@ function AccountInfo({ t }) {
 			hostLogoUrl: 'https://www.adex.network/img/Adex-logo@2x.png',
 			variant: 'auto',
 			swapAsset: 'SAI',
-			userAddress: account.identity.address,
+			userAddress: identity.address,
 		})
 		widget.domNodes.overlay.style.zIndex = 1000
 		widget.show()
@@ -78,19 +93,6 @@ function AccountInfo({ t }) {
 	const handleExpandChange = () => {
 		setExpanded(!expanded)
 	}
-
-	const { grantType } = account.settings
-	const formatted = account.stats.formatted || {}
-	const {
-		walletAddress,
-		walletAuthType = '',
-		walletPrivileges = '',
-		identityAddress,
-		identityBalanceDai,
-		availableIdentityBalanceDai,
-		outstandingBalanceDai,
-	} = formatted
-	const { authType, email } = account.wallet
 
 	return (
 		<div>
@@ -115,7 +117,7 @@ function AccountInfo({ t }) {
 								className={classes.address}
 								primary={identityAddress}
 								secondary={
-									account._authType === 'demo'
+									authType === 'demo'
 										? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
 										: t('IDENTITY_ETH_ADDR')
 								}
@@ -160,7 +162,7 @@ function AccountInfo({ t }) {
 								className={classes.address}
 								primary={formatAddress(walletAddress)}
 								secondary={
-									account.authType === 'demo'
+									authType === 'demo'
 										? t('DEMO_ACCOUNT_WALLET_ADDRESS', {
 												args: [walletAuthType, walletPrivileges],
 										  })

@@ -96,7 +96,7 @@ export function decrData({ email, password, data }) {
 export function createLocalWallet({
 	email = '',
 	password = '',
-	mnemonic = '',
+	mnemonic,
 	authType = '',
 }) {
 	const walletData = generateWallet(mnemonic)
