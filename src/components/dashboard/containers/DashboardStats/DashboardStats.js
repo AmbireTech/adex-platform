@@ -20,7 +20,6 @@ export function DashboardStats(props) {
 	const classes = useStyles()
 	const {
 		availableIdentityBalanceDai,
-		identityBalanceDai,
 		outstandingBalanceDai,
 	} = useSelector(selectAccountStatsFormatted)
 
@@ -39,10 +38,9 @@ export function DashboardStats(props) {
 					linkCard
 					onClick={goToAccount}
 					subtitle={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
-						args: [identityBalanceDai || 0, outstandingBalanceDai || 0],
+						args: [outstandingBalanceDai || 0],
 					})}
 					loading={
-						(!identityBalanceDai && identityBalanceDai !== 0) ||
 						(!outstandingBalanceDai && outstandingBalanceDai !== 0) ||
 						(!availableIdentityBalanceDai && availableIdentityBalanceDai !== 0)
 					}

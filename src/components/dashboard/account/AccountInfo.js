@@ -212,7 +212,7 @@ function AccountInfo({ t }) {
 								<ListItemText
 									primary={`${availableIdentityBalanceDai || 0} SAI`}
 									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
-										args: [identityBalanceDai || 0, outstandingBalanceDai || 0],
+										args: [outstandingBalanceDai || 0],
 									})}
 								/>
 							</LoadingSection>
