@@ -12,7 +12,7 @@ import {
 	getMultipleTxSignatures,
 } from 'services/smart-contracts/actions/ethers'
 import { contracts } from '../contractsCfg'
-import { sendOpenChannel } from 'services/adex-relayer/actions'
+import { executeTx } from 'services/adex-relayer/actions'
 import { closeCampaign } from 'services/adex-validator/actions'
 import { Campaign, AdUnit } from 'adex-models'
 import { getAllCampaigns } from 'services/adex-market/actions'
@@ -24,7 +24,7 @@ import {
 	formatUnits,
 } from 'ethers/utils'
 import { formatTokenAmount } from 'helpers/formatters'
-import { relayerConfig } from 'services/adex-relayer'
+import { selectFeeTokenWhitelist, selectRoutineWithdrawTokens } from 'selectors'
 
 const { AdExCore, DAI } = contracts
 const Core = new Interface(AdExCore.abi)
@@ -139,14 +139,17 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 	const { authType } = wallet
 	const channels = await getAllCampaigns(true)
 	const { AdExCore } = await getEthers(authType)
-	const { feeTokenWhitelist = {} } = relayerConfig()
-	const channelWithdrawFee = bigNumberify(
-		feeTokenWhitelist.min || feeAmountTransfer
-	)
+	const feeTokenWhitelist = selectFeeTokenWhitelist()
+	const routineWithdrawTokens = selectRoutineWithdrawTokens()
 
 	const all = await Promise.all(
 		channels
-			.filter(channel => channel && channel.status)
+			.filter(
+				channel =>
+					channel &&
+					channel.status &&
+					routineWithdrawTokens[channel.depositAsset]
+			)
 			.map(channel => {
 				const { lastApprovedSigs, lastApprovedBalances } = channel.status
 				if (lastApprovedBalances) {
@@ -184,8 +187,8 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 									identityAddr,
 							  })
 
-					const outstandingAvailable = bigNumberify(outstanding).sub(
-						channelWithdrawFee
+					const outstandingAvailable = outstanding.sub(
+						feeTokenWhitelist[channel.depositAsset].min
 					)
 
 					return {
@@ -201,7 +204,15 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 			)
 	)
 
-	return all
+	const eligible = all.filter(x => {
+		return (
+			x.outstanding.gt(
+				bigNumberify(routineWithdrawTokens[x.channel.depositAsset].minWeekly)
+			) && x.outstandingAvailable.gt(bigNumberify('0'))
+		)
+	})
+
+	return eligible
 }
 
 async function getChannelsToSweepFrom({ amountToSweep, identityAddr, wallet }) {
@@ -210,13 +221,7 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr, wallet }) {
 		wallet,
 	})
 
-	const bigZero = bigNumberify(0)
-
 	const { eligible } = allChannels
-		.filter(c => {
-			const { outstandingAvailable } = c
-			return outstandingAvailable.gt(bigZero)
-		})
 		.sort((c1, c2) => {
 			return c2.outstandingAvailable.gt(c1.outstandingAvailable)
 		})
@@ -231,7 +236,7 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr, wallet }) {
 
 				return current
 			},
-			{ sum: bigZero, eligible: [] }
+			{ sum: bigNumberify(0), eligible: [] }
 		)
 
 	return eligible
@@ -382,7 +387,7 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 		identityAddr,
 	}
 
-	const result = await sendOpenChannel(data)
+	const result = await executeTx(data)
 	readyCampaign.id = channel.id
 	return {
 		result,
