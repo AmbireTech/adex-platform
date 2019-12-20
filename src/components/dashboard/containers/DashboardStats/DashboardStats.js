@@ -30,21 +30,16 @@ export function DashboardStats(props) {
 
 	const InfoStats = () => {
 		const formatted = account.stats.formatted || {}
-		const {
-			identityBalanceDai,
-			outstandingBalanceDai,
-			availableIdentityBalanceDai,
-		} = formatted
+		const { outstandingBalanceDai, availableIdentityBalanceDai } = formatted
 		return (
 			<div className={classes.infoStatsContainer}>
 				<StatsCard
 					linkCard
 					onClick={goToAccount}
 					subtitle={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
-						args: [identityBalanceDai || 0, outstandingBalanceDai || 0],
+						args: [outstandingBalanceDai || 0],
 					})}
 					loading={
-						(!identityBalanceDai && identityBalanceDai !== 0) ||
 						(!outstandingBalanceDai && outstandingBalanceDai !== 0) ||
 						(!availableIdentityBalanceDai && availableIdentityBalanceDai !== 0)
 					}
