@@ -25,10 +25,11 @@ import {
 } from 'ethers/utils'
 import { formatTokenAmount } from 'helpers/formatters'
 import { selectFeeTokenWhitelist, selectRoutineWithdrawTokens } from 'selectors'
+import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 
 const { AdExCore, DAI } = contracts
 const Core = new Interface(AdExCore.abi)
-const ERC20 = new Interface(DAI.abi)
+const ERC20 = new Interface(ERC20TokenABI)
 const feeAmountApprove = '150000000000000000'
 const feeAmountTransfer = '150000000000000000'
 const feeAmountOpen = '160000000000000000'

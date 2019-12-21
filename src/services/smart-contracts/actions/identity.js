@@ -1,12 +1,10 @@
 import { getEthers } from 'services/smart-contracts/ethers'
 import {
 	getSigner,
-	prepareTx,
-	processTx,
 	getMultipleTxSignatures,
 } from 'services/smart-contracts/actions/ethers'
 import { getSweepingTxnsIfNeeded } from 'services/smart-contracts/actions/core'
-import { ethers, Contract } from 'ethers'
+import { Contract } from 'ethers'
 import {
 	bigNumberify,
 	parseUnits,
@@ -18,17 +16,17 @@ import { generateAddress2 } from 'ethereumjs-util'
 import { executeTx } from 'services/adex-relayer'
 import { selectRelayerConfig } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
-import { contracts } from '../contractsCfg'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
 
 import solc from 'solcBrowser'
 import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 
-const { DAI } = contracts
+import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 
 const feeAmountTransfer = '150000000000000000'
 const feeAmountSetPrivileges = '150000000000000000'
-const ERC20 = new Interface(DAI.abi)
+
+const ERC20 = new Interface(ERC20TokenABI)
 
 export async function getIdentityDeployData({
 	owner,
@@ -83,40 +81,6 @@ export async function getIdentityDeployData({
 		privileges,
 		routineAuthorizationsRaw,
 	}
-}
-
-export async function sendDaiToIdentity({
-	account,
-	amountToSend,
-	// gas,
-	estimateGasOnly,
-}) {
-	const { wallet, identity } = account
-	const { provider, Dai } = await getEthers(wallet.authType)
-	const signer = await getSigner({ wallet, provider })
-	const daiWithSigner = Dai.connect(signer)
-	const tokenAmount = parseUnits(amountToSend, 18).toString()
-
-	const pTx = await prepareTx({
-		tx: Dai.transfer(identity.address, tokenAmount),
-		provider,
-		// gasLimit,
-		sender: wallet.address,
-	})
-
-	if (estimateGasOnly) {
-		return pTx.gasLimit
-	}
-
-	processTx({
-		tx: daiWithSigner.transfer(identity.address, tokenAmount, pTx),
-		txSuccessData: { txMethod: 'TX_SEND_DAI_TO_IDENTITY' },
-		from: wallet.address,
-		fromType: 'wallet',
-		account,
-	})
-
-	return {}
 }
 
 export async function withdrawFromIdentity({
