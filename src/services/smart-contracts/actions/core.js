@@ -24,10 +24,14 @@ import {
 	formatUnits,
 } from 'ethers/utils'
 import { formatTokenAmount } from 'helpers/formatters'
-import { selectFeeTokenWhitelist, selectRoutineWithdrawTokens } from 'selectors'
+import {
+	selectFeeTokenWhitelist,
+	selectRoutineWithdrawTokens,
+	selectRelayerConfig,
+} from 'selectors'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 
-const { AdExCore, DAI } = contracts
+const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
 const ERC20 = new Interface(ERC20TokenABI)
 const feeAmountApprove = '150000000000000000'
@@ -70,6 +74,7 @@ function getValidUntil(activeFrom, withdrawPeriodStart) {
 }
 
 function getReadyCampaign(campaign, identity, Dai) {
+	const { mainToken } = selectRelayerConfig()
 	const newCampaign = new Campaign(campaign)
 	newCampaign.creator = identity.address
 	newCampaign.created = Date.now()
@@ -81,13 +86,13 @@ function getReadyCampaign(campaign, identity, Dai) {
 	newCampaign.adUnits = newCampaign.adUnits.map(unit => new AdUnit(unit).spec)
 	newCampaign.depositAmount = parseUnits(
 		newCampaign.depositAmount,
-		DAI.decimals
+		mainToken.decimals
 	).toString()
 
 	// NOTE: TEMP in UI its set per 1000 impressions (CPM)
 	newCampaign.minPerImpression = parseUnits(
 		newCampaign.minPerImpression,
-		DAI.decimals
+		mainToken.decimals
 	)
 		.div(bigNumberify(1000))
 		.toString()
