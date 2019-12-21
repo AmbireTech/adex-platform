@@ -25,10 +25,8 @@ import { lastApprovedState } from 'services/adex-validator/actions'
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
 import { getErrorMsg } from 'helpers/errors'
-import { contracts } from 'services/smart-contracts/contractsCfg'
 import { SOURCES } from 'constants/targeting'
-import { selectAccount, selectAuthSig } from 'selectors'
-const { DAI } = contracts
+import { selectAccount, selectRelayerConfig, selectAuthSig } from 'selectors'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -160,6 +158,7 @@ export function addSlot(item) {
 		try {
 			const state = getState()
 			const authSig = selectAuthSig(state)
+			const { mainToken } = selectRelayerConfig()
 			let fallbackUnit = null
 			if (newItem.temp.useFallback) {
 				const imageIpfs = (await getImgsIpfsFromBlob({
@@ -193,7 +192,10 @@ export function addSlot(item) {
 
 			if (newItem.temp.minPerImpression) {
 				newItem.minPerImpression = {
-					[DAI.address]: parseUnits(newItem.temp.minPerImpression, DAI.decimals)
+					[mainToken.address]: parseUnits(
+						newItem.temp.minPerImpression,
+						mainToken.decimals
+					)
 						.div(bigNumberify(1000))
 						.toString(),
 				}
@@ -349,6 +351,7 @@ export function updateItem({ item, itemType } = {}) {
 		try {
 			const { account } = getState().persist
 			const { authSig } = account.wallet
+			const { mainToken } = selectRelayerConfig()
 
 			let updatedItem = null
 			let objModel = null
@@ -359,9 +362,9 @@ export function updateItem({ item, itemType } = {}) {
 				case 'AdSlot':
 					if (item.temp.minPerImpression) {
 						item.minPerImpression = {
-							[DAI.address]: parseUnits(
+							[mainToken.address]: parseUnits(
 								item.temp.minPerImpression,
-								DAI.decimals
+								mainToken.decimals
 							)
 								.div(bigNumberify(1000))
 								.toString(),
