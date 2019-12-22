@@ -1,4 +1,5 @@
-## Adex dapp
+# AdEx Platform
+
 ### This is the main UI of AdEx Network Platform, AdEx is trust-minimized solution for digital advertising that reduces ad fraud, improves ad budgets and protects user privacy.
 
 ### It's built primarily with React.js, ethers.js and MATERIAL-UI and it interacts directly with Ethereum, [AdEx Market](https://github.com/AdExNetwork/adex-market), the [Validators](https://github.com/adexnetwork/adex-validator) and the AdEx Relayer.
