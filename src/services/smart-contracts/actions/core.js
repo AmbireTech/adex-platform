@@ -6,7 +6,10 @@ import {
 	ChannelState,
 } from 'adex-protocol-eth/js'
 import { getEthers } from 'services/smart-contracts/ethers'
-import { getIdentityTnxsWithNonces } from 'services/smart-contracts/actions/identity'
+import {
+	getIdentityTxnsWithNoncesAndFees,
+	getIdentityTxnsTotalFees,
+} from 'services/smart-contracts/actions/identity'
 import {
 	getSigner,
 	getMultipleTxSignatures,
@@ -23,7 +26,6 @@ import {
 	Interface,
 	formatUnits,
 } from 'ethers/utils'
-import { formatTokenAmount } from 'helpers/formatters'
 import {
 	selectFeeTokenWhitelist,
 	selectRoutineWithdrawTokens,
@@ -335,20 +337,6 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 		amountNeeded: depositAmount,
 		account,
 	})
-	const sweepFees = sweepTxns.reduce(
-		(total, tx) => total.add(bigNumberify(tx.feeAmount)),
-		bigNumberify(0)
-	)
-
-	const fees = bigNumberify(feeAmountApprove)
-		.add(bigNumberify(feeAmountOpen))
-		.add(sweepFees)
-
-	if (getFeesOnly) {
-		return {
-			fees: formatTokenAmount(fees.toString(), 18),
-		}
-	}
 
 	const readyCampaign = getReadyCampaign(campaign, identity, Dai)
 	const openReady = readyCampaign.openReady
@@ -381,12 +369,18 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 		data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
 	}
 	const txns = [...sweepTxns, tx1, tx2]
-	const txnsRaw = await getIdentityTnxsWithNonces({
+	const txnsRaw = await getIdentityTxnsWithNoncesAndFees({
 		txns,
 		identityAddr,
 		provider,
 		Identity,
 	})
+
+	if (getFeesOnly) {
+		return {
+			fees: await getIdentityTxnsTotalFees(txnsRaw),
+		}
+	}
 
 	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
 

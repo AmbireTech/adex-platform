@@ -14,7 +14,7 @@ import {
 } from 'ethers/utils'
 import { generateAddress2 } from 'ethereumjs-util'
 import { executeTx } from 'services/adex-relayer'
-import { selectRelayerConfig } from 'selectors'
+import { selectRelayerConfig, selectMainFeeToken } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
 
@@ -95,19 +95,6 @@ export async function withdrawFromIdentity({
 		amountNeeded: toWithdraw,
 		account,
 	})
-	const sweepFees = sweepTxns.reduce(
-		(total, tx) => total.add(bigNumberify(tx.feeAmount)),
-		bigNumberify(0)
-	)
-	const fees = bigNumberify(feeAmountTransfer).add(sweepFees)
-	const tokenAmount = toWithdraw.sub(fees).toString()
-
-	if (getFeesOnly) {
-		return {
-			fees: formatTokenAmount(fees.toString(), 18),
-			toGet: formatTokenAmount(tokenAmount, 18),
-		}
-	}
 
 	const { wallet, identity } = account
 	const { provider, Dai, Identity } = await getEthers(wallet.authType)
@@ -122,16 +109,23 @@ export async function withdrawFromIdentity({
 		feeTokenAddr: tokenAddr,
 		feeAmount: feeAmountTransfer,
 		to: tokenAddr,
-		data: ERC20.functions.transfer.encode([withdrawTo, tokenAmount]),
+		data: ERC20.functions.transfer.encode([withdrawTo, toWithdraw]),
 	}
 	const txns = [...sweepTxns, tx1]
 
-	const txnsRaw = await getIdentityTnxsWithNonces({
+	const txnsRaw = await getIdentityTxnsWithNoncesAndFees({
 		txns,
 		identityAddr,
 		provider,
 		Identity,
 	})
+
+	if (getFeesOnly) {
+		return {
+			fees: await getIdentityTxnsTotalFees(txnsRaw),
+			toGet: formatTokenAmount(toWithdraw, 18),
+		}
+	}
 
 	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
 
@@ -154,14 +148,6 @@ export async function setIdentityPrivilege({
 	privLevel,
 	getFeesOnly,
 }) {
-	const fees = bigNumberify(feeAmountSetPrivileges)
-
-	if (getFeesOnly) {
-		return {
-			fees: formatTokenAmount(fees.toString(), 18),
-		}
-	}
-
 	const { wallet, identity } = account
 	const { provider, Dai, Identity } = await getEthers(wallet.authType)
 	const signer = await getSigner({ wallet, provider })
@@ -181,12 +167,18 @@ export async function setIdentityPrivilege({
 	}
 
 	const txns = [tx1]
-	const txnsRaw = await getIdentityTnxsWithNonces({
+	const txnsRaw = await getIdentityTxnsWithNoncesAndFees({
 		txns,
 		identityAddr,
 		provider,
 		Identity,
 	})
+
+	if (getFeesOnly) {
+		return {
+			fees: await getIdentityTxnsTotalFees(txnsRaw),
+		}
+	}
 
 	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
 
@@ -205,22 +197,43 @@ export async function setIdentityPrivilege({
 	}
 }
 
-export async function getIdentityTnxsWithNonces({
+export async function getIdentityTxnsWithNoncesAndFees({
 	txns = [],
 	identityAddr,
 	provider,
 	Identity,
 }) {
-	const identityContract = new Contract(identityAddr, Identity.abi, provider)
-	const initialNonce = (await identityContract.nonce()).toNumber()
+	let identityContract = null
+	let isDeployed = (await provider.getCode(identityAddr)) !== '0x'
+
+	if (isDeployed) {
+		identityContract = new Contract(identityAddr, Identity.abi, provider)
+	}
+	const { min, minDeploy } = selectMainFeeToken()
+
+	const initialNonce = isDeployed
+		? (await identityContract.nonce()).toNumber()
+		: 0
 	const withNonce = txns.map((tx, i) => {
+		const nonce = initialNonce + i
+		const feeAmount = nonce === 0 ? minDeploy : min
+
 		return {
 			...tx,
-			nonce: initialNonce + i,
+			feeAmount,
+			nonce,
 		}
 	})
 
 	return withNonce
+}
+
+export async function getIdentityTxnsTotalFees(txns) {
+	const fees = txns.reduce((sum, tx) => {
+		return sum.add(bigNumberify(tx.feeAmount))
+	}, bigNumberify('0'))
+
+	return formatTokenAmount(fees.toString(), 18)
 }
 
 export async function getIdentityBalance({ identityAddr, authType }) {
