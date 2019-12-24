@@ -342,7 +342,6 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 	const readyCampaign = getReadyCampaign(campaign, identity, Dai)
 	const openReady = readyCampaign.openReady
 	const ethChannel = toEthereumChannel(openReady)
-	const signer = await getSigner({ wallet, provider })
 	const channel = {
 		...openReady,
 		id: ethChannel.hashHex(AdExCore.address),
@@ -381,6 +380,7 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 		}
 	}
 
+	const signer = await getSigner({ wallet, provider })
 	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
 
 	const data = {
