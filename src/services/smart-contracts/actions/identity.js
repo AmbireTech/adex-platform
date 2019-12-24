@@ -23,9 +23,6 @@ import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 
-const feeAmountTransfer = '150000000000000000'
-const feeAmountSetPrivileges = '150000000000000000'
-
 const ERC20 = new Interface(ERC20TokenABI)
 
 export async function getIdentityDeployData({
@@ -98,7 +95,6 @@ export async function withdrawFromIdentity({
 
 	const { wallet, identity } = account
 	const { provider, Dai, Identity } = await getEthers(wallet.authType)
-	const signer = await getSigner({ wallet, provider })
 	const identityAddr = identity.address
 	// TEMP HOTFIX
 	// TODO: Make it work with multiple tokens
@@ -107,7 +103,6 @@ export async function withdrawFromIdentity({
 	const tx1 = {
 		identityContract: identityAddr,
 		feeTokenAddr: tokenAddr,
-		feeAmount: feeAmountTransfer,
 		to: tokenAddr,
 		data: ERC20.functions.transfer.encode([withdrawTo, toWithdraw]),
 	}
@@ -127,6 +122,7 @@ export async function withdrawFromIdentity({
 		}
 	}
 
+	const signer = await getSigner({ wallet, provider })
 	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
 
 	const data = {
@@ -150,7 +146,6 @@ export async function setIdentityPrivilege({
 }) {
 	const { wallet, identity } = account
 	const { provider, Dai, Identity } = await getEthers(wallet.authType)
-	const signer = await getSigner({ wallet, provider })
 	const identityAddr = identity.address
 
 	const identityInterface = new Interface(Identity.abi)
@@ -158,7 +153,6 @@ export async function setIdentityPrivilege({
 	const tx1 = {
 		identityContract: identityAddr,
 		feeTokenAddr: Dai.address,
-		feeAmount: feeAmountSetPrivileges,
 		to: identityAddr,
 		data: identityInterface.functions.setAddrPrivilege.encode([
 			setAddr,
@@ -180,6 +174,7 @@ export async function setIdentityPrivilege({
 		}
 	}
 
+	const signer = await getSigner({ wallet, provider })
 	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
 
 	const data = {
