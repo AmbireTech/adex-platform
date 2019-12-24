@@ -30,25 +30,27 @@ import {
 	selectFeeTokenWhitelist,
 	selectRoutineWithdrawTokens,
 	selectRelayerConfig,
+	selectMainFeeToken,
 } from 'selectors'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
 const ERC20 = new Interface(ERC20TokenABI)
-const feeAmountApprove = '150000000000000000'
-const feeAmountTransfer = '150000000000000000'
-const feeAmountOpen = '160000000000000000'
 const timeframe = 15 * 1000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 0.5
 const VALID_UNTIL_MIN_PERIOD = 7 * 24 * 60 * 60 * 1000 // 7 days in ms
 
-export const totalFeesFormatted = formatUnits(
-	bigNumberify(feeAmountApprove)
-		.add(bigNumberify(feeAmountOpen))
-		.toString(),
-	18
-)
+// TODO: fix it in the component used
+export const totalFeesFormatted = () => {
+	const { min } = selectMainFeeToken()
+	return formatUnits(
+		bigNumberify(min)
+			.mil(bigNumberify(2))
+			.toString(),
+		18
+	)
+}
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
@@ -308,7 +310,6 @@ export async function getSweepChannelsTxns({
 			identityContract: identityAddr,
 			to: AdExCore.address,
 			feeTokenAddr: feeTokenAddr || Dai.address,
-			feeAmount: feeAmountTransfer, // Same fee as withdrawFromIdentity
 			data,
 		}
 	})
@@ -353,7 +354,6 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 	const tx1 = {
 		identityContract: identityAddr,
 		feeTokenAddr: feeTokenAddr,
-		feeAmount: feeAmountApprove,
 		to: Dai.address,
 		data: ERC20.functions.approve.encode([
 			AdExCore.address,
@@ -364,7 +364,6 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 	const tx2 = {
 		identityContract: identityAddr,
 		feeTokenAddr: feeTokenAddr,
-		feeAmount: feeAmountOpen,
 		to: AdExCore.address,
 		data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
 	}
