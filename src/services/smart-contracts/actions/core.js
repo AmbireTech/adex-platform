@@ -277,13 +277,9 @@ const getChannelWithdrawData = ({
 	])
 }
 
-export async function getSweepChannelsTxns({
-	feeTokenAddr,
-	account,
-	amountToSweep,
-}) {
+export async function getSweepChannelsTxns({ account, amountToSweep }) {
 	const { wallet, identity } = account
-	const { Dai, AdExCore } = await getEthers(wallet.authType)
+	const { AdExCore } = await getEthers(wallet.authType)
 	const identityAddr = identity.address
 	const channelsToSweep = await getChannelsToSweepFrom({
 		amountToSweep,
@@ -309,7 +305,7 @@ export async function getSweepChannelsTxns({
 		return {
 			identityContract: identityAddr,
 			to: AdExCore.address,
-			feeTokenAddr: feeTokenAddr || Dai.address,
+			feeTokenAddr: c.depositAsset,
 			data,
 		}
 	})
