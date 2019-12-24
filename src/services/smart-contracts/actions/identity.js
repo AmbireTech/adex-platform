@@ -121,7 +121,7 @@ export async function withdrawFromIdentity({
 
 	if (getFeesOnly) {
 		return {
-			fees: await getIdentityTxnsTotalFees(txnsRaw),
+			fees: (await getIdentityTxnsTotalFees(txnsRaw)).total,
 			toGet: formatTokenAmount(toWithdraw, 18),
 		}
 	}
@@ -174,7 +174,7 @@ export async function setIdentityPrivilege({
 
 	if (getFeesOnly) {
 		return {
-			fees: await getIdentityTxnsTotalFees(txnsRaw),
+			fees: (await getIdentityTxnsTotalFees(txnsRaw)).total,
 		}
 	}
 
@@ -233,12 +233,45 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	return withNonce
 }
 
+// TODO: use byToken where needed
 export async function getIdentityTxnsTotalFees(txns) {
-	const fees = txns.reduce((sum, tx) => {
-		return sum.add(bigNumberify(tx.feeAmount))
-	}, bigNumberify('0'))
+	const feeTokenWhitelist = selectFeeTokenWhitelist()
+	const bigZero = bigNumberify('0')
+	const feesData = txns.reduce(
+		(result, tx) => {
+			const txFeeAmount = bigNumberify(tx.feeAmount)
+			result.total = result.total.add(txFeeAmount)
 
-	return formatTokenAmount(fees.toString(), 18)
+			result.byToken[tx.feeTokenAddr] = (
+				result.byToken[tx.feeTokenAddr] || bigZero
+			).add(txFeeAmount)
+
+			return result
+		},
+		{ total: bigZero, byToken: {} }
+	)
+
+	const byToken = Object.entries(feesData.byToken).map(([key, value]) => {
+		const { decimals, symbol } = feeTokenWhitelist[key]
+		return {
+			address: key,
+			fee: formatTokenAmount(value.toString(), decimals),
+			symbol,
+			feeFormatted: `${formatTokenAmount(
+				value.toString(),
+				decimals,
+				false,
+				4
+			)} ${symbol}`,
+		}
+	})
+
+	const fees = {
+		total: formatTokenAmount(feesData.total.toString(), 18),
+		byToken,
+	}
+
+	return fees
 }
 
 export async function getIdentityBalance({ identityAddr, authType }) {

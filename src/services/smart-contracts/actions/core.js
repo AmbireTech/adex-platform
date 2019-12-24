@@ -372,7 +372,7 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 
 	if (getFeesOnly) {
 		return {
-			fees: await getIdentityTxnsTotalFees(txnsRaw),
+			fees: (await getIdentityTxnsTotalFees(txnsRaw)).total,
 		}
 	}
 
