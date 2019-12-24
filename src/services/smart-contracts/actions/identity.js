@@ -14,7 +14,11 @@ import {
 } from 'ethers/utils'
 import { generateAddress2 } from 'ethereumjs-util'
 import { executeTx } from 'services/adex-relayer'
-import { selectRelayerConfig, selectMainFeeToken } from 'selectors'
+import {
+	selectRelayerConfig,
+	selectMainFeeToken,
+	selectFeeTokenWhitelist,
+} from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
 
@@ -198,23 +202,29 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	provider,
 	Identity,
 }) {
-	let identityContract = null
+	const feeTokenWhitelist = selectFeeTokenWhitelist()
+	const mainToken = selectMainFeeToken()
+
 	let isDeployed = (await provider.getCode(identityAddr)) !== '0x'
+	let identityContract = null
 
 	if (isDeployed) {
 		identityContract = new Contract(identityAddr, Identity.abi, provider)
 	}
-	const { min, minDeploy } = selectMainFeeToken()
 
 	const initialNonce = isDeployed
 		? (await identityContract.nonce()).toNumber()
 		: 0
+
 	const withNonce = txns.map((tx, i) => {
 		const nonce = initialNonce + i
-		const feeAmount = nonce === 0 ? minDeploy : min
+		const feeToken =
+			feeTokenWhitelist[tx.feeTokenAddr] || feeTokenWhitelist[mainToken.address]
+		const feeAmount = nonce === 0 ? feeToken.minDeploy : feeToken.min
 
 		return {
 			...tx,
+			feeTokenAddr: feeToken.address,
 			feeAmount,
 			nonce,
 		}
