@@ -5,9 +5,10 @@ import {
 	postAdSlot,
 	updateAdSlot,
 	updateAdUnit,
+	updateCampaign,
 } from 'services/adex-market/actions'
 import { parseUnits, bigNumberify } from 'ethers/utils'
-import { Base, AdSlot, AdUnit, helpers } from 'adex-models'
+import { Base, AdSlot, AdUnit, helpers, Campaign } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
 import { updateValidatorAuthTokens } from './accountActions'
 import { translate } from 'services/translations/translations'
@@ -375,6 +376,12 @@ export function updateItem({ item, itemType } = {}) {
 					const unit = new AdUnit(item).marketUpdate
 					updatedItem = (await updateAdUnit({ unit, id, authSig })).unit
 					objModel = AdUnit
+					break
+				case 'Campaign':
+					const campaign = new Campaign(item).marketUpdate
+					updatedItem = (await updateCampaign({ campaign, id, authSig }))
+						.campaign
+					objModel = Campaign
 					break
 				default:
 					throw new Error(translate('INVALID_ITEM_TYPE'))

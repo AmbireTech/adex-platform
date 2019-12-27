@@ -21,9 +21,8 @@ import { styles } from './styles'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 import { contracts } from 'services/smart-contracts/contractsCfg'
-import { validations, Campaign } from 'adex-models'
+import { validations } from 'adex-models'
 import { utils } from 'ethers'
-import SaveBtn from 'components/dashboard/containers/SaveBtn'
 import { Joi } from 'adex-models'
 
 const { DAI } = contracts
@@ -438,53 +437,6 @@ const campaignProps = ({
 								</Grid>
 								<Grid item xs={12} sm={7} md={7} lg={7}>
 									<Grid container spacing={1}>
-										<Grid item xs={12} sm={12} md={12} lg={12}>
-											<FormControl
-												fullWidth
-												className={classes.textField}
-												margin='dense'
-												error={!!titleError}
-											>
-												<InputLabel>{t('TITLE_LABEL')}</InputLabel>
-												<Input
-													fullWidth
-													autoFocus
-													type='text'
-													name='title'
-													value={item.title}
-													onChange={ev => {
-														dirtyProps.push('title')
-														validateTitle(item.title, false)
-														handleChange('title', ev.target.value)
-													}}
-													onBlur={ev => {
-														setActiveFields('title', false)
-													}}
-													endAdornment={
-														<InputAdornment position='end'>
-															<SaveBtn
-																spinnerId={'update' + item.id}
-																validationId={'update-' + item.id}
-																save={editTitle.bind(
-																	this,
-																	new Campaign(item).marketDbUpdate,
-																	item.id,
-																	account.wallet.authSig
-																)}
-																dirtyProps={dirtyProps}
-																disabled={titleError || dirtyProps.length === 0}
-															/>
-														</InputAdornment>
-													}
-												/>
-
-												<FormHelperText>
-													{titleError
-														? titleError.message.replace('"value"', '"title"')
-														: t('TITLE_HELPER_TXT')}
-												</FormHelperText>
-											</FormControl>
-										</Grid>
 										<Grid item xs={12} sm={12} md={6}>
 											<Grid container spacing={1}>
 												<Grid item xs={12}>

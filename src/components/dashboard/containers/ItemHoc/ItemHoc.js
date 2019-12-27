@@ -29,7 +29,7 @@ import { validName } from 'helpers/validators'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 
-const { adSlotPut, adUnitPut } = schemas
+const { adSlotPut, adUnitPut, campaignPut } = schemas
 const { AdSizesByValue } = ItemsConstants
 
 export default function ItemHoc(Decorated) {
@@ -187,6 +187,9 @@ export default function ItemHoc(Decorated) {
 				case 'AdUnit':
 					schema = adUnitPut.title
 					break
+				case 'Campaign':
+					schema = campaignPut.title
+					break
 				default:
 					break
 			}
@@ -260,13 +263,59 @@ export default function ItemHoc(Decorated) {
 
 			const titleErr = invalidFields['title']
 			const descriptionErr = invalidFields['description']
-
 			return (
 				<div>
 					<Prompt
 						when={!!this.state.dirtyProps.length}
 						message={t('UNSAVED_CHANGES_ALERT')}
 					/>
+					<div>
+						<FormControl
+							fullWidth
+							className={classes.textField}
+							margin='dense'
+							error={!!titleErr && !!titleErr.errMsg}
+						>
+							<InputLabel>{t('title', { isProp: true })}</InputLabel>
+							<Input
+								fullWidth
+								autoFocus
+								type='text'
+								name={t('title', { isProp: true })}
+								value={item.title}
+								onChange={ev => {
+									this.validateTitle(ev.target.value, true)
+									this.handleChange('title', ev.target.value)
+								}}
+								maxLength={1024}
+								onBlur={ev => {
+									this.setActiveFields('title', false)
+								}}
+								onFocus={() => this.validateTitle(item.title, false)}
+								disabled={!this.state.activeFields.title}
+								endAdornment={
+									<InputAdornment position='end'>
+										<IconButton
+											// disabled
+											// size='small'
+											disabled={isDemo}
+											color='secondary'
+											className={classes.buttonRight}
+											onClick={ev => this.setActiveFields('title', true)}
+										>
+											<EditIcon />
+										</IconButton>
+									</InputAdornment>
+								}
+							/>
+							{titleErr && titleErr.errMsg && titleErr.dirty && (
+								<FormHelperText>
+									{t(titleErr.errMsg, { args: titleErr.errMsgArgs })}
+								</FormHelperText>
+							)}
+						</FormControl>
+					</div>
+
 					{itemType !== 'Campaign' && (
 						<div>
 							<div>
@@ -315,54 +364,6 @@ export default function ItemHoc(Decorated) {
 							<div>
 								<Grid container spacing={2}>
 									<Grid item xs={12} sm={12} md={12} lg={7}>
-										<div>
-											<FormControl
-												fullWidth
-												className={classes.textField}
-												margin='dense'
-												error={!!titleErr && !!titleErr.errMsg}
-											>
-												<InputLabel>{t('title', { isProp: true })}</InputLabel>
-												<Input
-													fullWidth
-													autoFocus
-													type='text'
-													name={t('title', { isProp: true })}
-													value={item.title}
-													onChange={ev => {
-														this.validateTitle(ev.target.value, true)
-														this.handleChange('title', ev.target.value)
-													}}
-													maxLength={1024}
-													onBlur={ev => {
-														this.setActiveFields('title', false)
-													}}
-													onFocus={() => this.validateTitle(item.title, false)}
-													disabled={!this.state.activeFields.title}
-													endAdornment={
-														<InputAdornment position='end'>
-															<IconButton
-																// disabled
-																// size='small'
-																disabled={isDemo}
-																color='secondary'
-																className={classes.buttonRight}
-																onClick={ev =>
-																	this.setActiveFields('title', true)
-																}
-															>
-																<EditIcon />
-															</IconButton>
-														</InputAdornment>
-													}
-												/>
-												{titleErr && titleErr.errMsg && titleErr.dirty && (
-													<FormHelperText>
-														{t(titleErr.errMsg, { args: titleErr.errMsgArgs })}
-													</FormHelperText>
-												)}
-											</FormControl>
-										</div>
 										<div>
 											<FormControl
 												margin='dense'
@@ -459,21 +460,20 @@ export default function ItemHoc(Decorated) {
 									</Grid>
 								</Grid>
 							</div>
-							<div>
-								<SaveBtn
-									spinnerId={'update' + item.id}
-									validationId={'update-' + validateId}
-									dirtyProps={this.state.dirtyProps}
-									save={this.save}
-									disabled={
-										!this.state.dirtyProps.length ||
-										!!Object.keys(invalidFields).length
-									}
-								/>
-							</div>
 						</div>
 					)}
-
+					<div>
+						<SaveBtn
+							spinnerId={'update' + item.id}
+							validationId={'update-' + validateId}
+							dirtyProps={this.state.dirtyProps}
+							save={this.save}
+							disabled={
+								!this.state.dirtyProps.length ||
+								!!Object.keys(invalidFields).length
+							}
+						/>
+					</div>
 					<div>
 						<Decorated
 							{...rest}
