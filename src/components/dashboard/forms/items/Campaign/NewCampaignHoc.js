@@ -77,7 +77,7 @@ export default function NewCampaignHoc(Decorated) {
 		const { persist, memory } = state
 
 		const adUnits = persist.items['AdUnit'] || {}
-		const adUnitsArray = Array.from(Object.values(adUnits)) || []
+		const adUnitsArray = Object.values(adUnits) || []
 		return {
 			newItem: new Campaign(memory.newItem['Campaign']),
 			adUnits,

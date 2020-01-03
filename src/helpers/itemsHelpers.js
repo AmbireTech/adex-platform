@@ -36,7 +36,7 @@ export const getTypeName = id => {
 }
 
 export const groupItemsForCollection = ({ collectionId, allItems = {} }) => {
-	let grouped = Array.from(Object.values(allItems)).reduce(
+	let grouped = Object.values(allItems).reduce(
 		(memo, item, index) => {
 			if (item._items.indexOf(collectionId) > -1) {
 				memo.items.push(item)

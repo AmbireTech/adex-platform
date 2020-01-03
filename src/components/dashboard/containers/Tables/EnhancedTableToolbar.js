@@ -54,8 +54,7 @@ export default function EnhancedTableToolbar(props) {
 		listMode,
 	} = props
 	const filterSide = itemType === 'Campaign' ? itemType : 'Other'
-	const filtersTagsCount = Array.from(Object.values(filters)).filter(e => e)
-		.length
+	const filtersTagsCount = Object.values(filters).filter(e => e).length
 	const filtersPresent =
 		filtersTagsCount < filterTags[filterSide].length ||
 		(dateRange.startDate && dateRange.endDate) ||
