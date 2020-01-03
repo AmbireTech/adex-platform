@@ -304,6 +304,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 			to: AdExCore.address,
 			feeTokenAddr: c.depositAsset,
 			data,
+			withdrawAmount: balance,
 		}
 	})
 
