@@ -1,152 +1,71 @@
 import { getEthers } from 'services/smart-contracts/ethers'
 import {
 	getSigner,
-	prepareTx,
-	processTx,
 	getMultipleTxSignatures,
 } from 'services/smart-contracts/actions/ethers'
 import { getSweepingTxnsIfNeeded } from 'services/smart-contracts/actions/core'
-import { ethers, Contract } from 'ethers'
+import { Contract } from 'ethers'
 import {
 	bigNumberify,
 	parseUnits,
-	// randomBytes,
 	getAddress,
-	hexlify,
 	Interface,
 	keccak256,
 } from 'ethers/utils'
 import { generateAddress2 } from 'ethereumjs-util'
-import {
-	// identityBytecode,
-	executeTx,
-	setAddrPriv,
-	relayerConfig,
-} from 'services/adex-relayer'
+import { executeTx } from 'services/adex-relayer'
+import { selectRelayerConfig } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
-import { contracts } from '../contractsCfg'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
-// import FactoryABI from 'adex-protocol-eth/abi/IdentityFactory'
-// const Factory = new Interface(FactoryABI)
 
 import solc from 'solcBrowser'
 import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 
-const { DAI } = contracts
+import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 
-const { IDENTITY_BASE_ADDR, IDENTITY_FACTORY_ADDR } = process.env
-
-const GAS_LIMIT_DEPLOY_CONTRACT = 150000
 const feeAmountTransfer = '150000000000000000'
 const feeAmountSetPrivileges = '150000000000000000'
-const ERC20 = new Interface(DAI.abi)
-/*
-export async function getIdentityBytecode({ owner, privLevel }) {
-	const res = await identityBytecode({
-		owner,
-		privLevel,
-		identityBaseAddr: IDENTITY_BASE_ADDR
-	})
-	return res.bytecode
-}
 
-export async function getIdentityDeployData({ owner, privLevel }) {
-	const bytecode = await getIdentityBytecode({ owner, privLevel })
-	const salt =
-		`0x${Buffer.from(randomBytes(32)).toString('hex')}`
-	const expectedAddr = getAddress(
-		`0x${generateAddress2(IDENTITY_FACTORY_ADDR, salt, bytecode)
-			.toString('hex')}`
-	)
-
-	return {
-		bytecode,
-		salt,
-		expectedAddr
-	}
-}
-*/
-
-async function getRelayerRoutinesAuthAuth({
-	relayer,
-	outpace,
-	registry,
-	validUntil,
-	feeTokenAddr,
-	weeklyFeeAmount,
-}) {
-	const relayerAuth = new RoutineAuthorization({
-		relayer,
-		outpace,
-		registry,
-		validUntil,
-		feeTokenAddr,
-		weeklyFeeAmount,
-	})
-
-	return relayerAuth
-}
-
-export async function getIdentityBytecode({
-	identityBaseAddr,
-	routineAuthorizations,
-	privileges = [],
-}) {
-	const opts = {
-		privSlot: 0,
-	}
-
-	if (!!routineAuthorizations && routineAuthorizations.length) {
-		opts.routineAuthsSlot = 1
-		opts.routineAuthorizations = routineAuthorizations.map(a => a.hash())
-	}
-
-	const bytecode = getProxyDeployBytecode(
-		identityBaseAddr,
-		privileges,
-		opts,
-		solc
-	)
-
-	return bytecode
-}
+const ERC20 = new Interface(ERC20TokenABI)
 
 export async function getIdentityDeployData({
 	owner,
-	privLevel,
-	addReleyerRoutinesAuth,
 	relayerRoutineAuthValidUntil = 10648454444,
 }) {
 	const {
 		identityFactoryAddr,
-		registryAddr,
-		identityBaseAddr,
+		relayerAddr,
+		baseIdentityAddr,
 		identityRecoveryAddr,
 		coreAddr,
-		feeTokenWhitelist,
-		weeklyFeeAmount,
-	} = relayerConfig()
+		mainToken,
+	} = selectRelayerConfig()
 
-	const privileges = [[owner, 3], [identityRecoveryAddr, 3]]
+	const privileges = [[owner, 2], [identityRecoveryAddr, 2]]
 
-	const opts = {
-		identityBaseAddr,
-		privileges,
-	}
-
-	if (addReleyerRoutinesAuth) {
-		const relayerAuth = getRelayerRoutinesAuthAuth({
-			registry: registryAddr,
+	const routineAuthorizationsRaw = [
+		{
+			relayer: relayerAddr,
 			outpace: coreAddr,
 			validUntil: relayerRoutineAuthValidUntil,
-			feeTokenAddr: feeTokenWhitelist[0].address,
-			weeklyFeeAmount,
-		})
+			feeTokenAddr: mainToken.address,
+			feeTokenAmount: '0x00',
+		},
+	]
 
-		opts.routineAuthorizations = [relayerAuth]
-	}
+	const bytecode = getProxyDeployBytecode(
+		baseIdentityAddr,
+		privileges,
+		{
+			privSlot: 0,
+			routineAuthsSlot: 1,
+			routineAuthorizations: routineAuthorizationsRaw.map(x =>
+				new RoutineAuthorization(x).hash()
+			),
+		},
+		solc
+	)
 
-	const bytecode = await getIdentityBytecode(opts)
 	const salt = keccak256(owner)
 
 	const identityAddr = getAddress(
@@ -155,84 +74,13 @@ export async function getIdentityDeployData({
 
 	return {
 		identityFactoryAddr,
-		identityBaseAddr,
+		baseIdentityAddr,
 		bytecode,
 		salt,
 		identityAddr,
 		privileges,
+		routineAuthorizationsRaw,
 	}
-}
-
-export async function deployIdentityContract({
-	wallet,
-	bytecode,
-	salt,
-	expectedAddr,
-}) {
-	const { provider, IdentityFactory } = await getEthers(wallet.authType)
-	const signer = await getSigner({ wallet, provider })
-
-	const pTx = await prepareTx({
-		tx: IdentityFactory.deploy(bytecode, salt),
-		provider,
-		sender: wallet.address,
-		gasLimit: hexlify(GAS_LIMIT_DEPLOY_CONTRACT),
-	})
-
-	pTx.gasLimit = hexlify(GAS_LIMIT_DEPLOY_CONTRACT)
-	const identityFactoryWithSigner = IdentityFactory.connect(signer)
-
-	const tx = identityFactoryWithSigner.deploy(bytecode, salt, pTx)
-
-	processTx({
-		tx,
-		txSuccessData: {},
-		from: wallet.address,
-		account: {},
-	})
-
-	return tx
-}
-
-export function getPrivileges({ walletAddr, identityAddr, walletAuthType }) {
-	return getEthers(walletAuthType).then(({ provider, Identity }) => {
-		const contract = new ethers.Contract(identityAddr, Identity.abi, provider)
-		return contract.privileges(walletAddr)
-	})
-}
-
-export async function sendDaiToIdentity({
-	account,
-	amountToSend,
-	// gas,
-	estimateGasOnly,
-}) {
-	const { wallet, identity } = account
-	const { provider, Dai } = await getEthers(wallet.authType)
-	const signer = await getSigner({ wallet, provider })
-	const daiWithSigner = Dai.connect(signer)
-	const tokenAmount = parseUnits(amountToSend, 18).toString()
-
-	const pTx = await prepareTx({
-		tx: Dai.transfer(identity.address, tokenAmount),
-		provider,
-		// gasLimit,
-		sender: wallet.address,
-	})
-
-	if (estimateGasOnly) {
-		return pTx.gasLimit
-	}
-
-	processTx({
-		tx: daiWithSigner.transfer(identity.address, tokenAmount, pTx),
-		txSuccessData: { txMethod: 'TX_SEND_DAI_TO_IDENTITY' },
-		from: wallet.address,
-		fromType: 'wallet',
-		account,
-	})
-
-	return {}
 }
 
 export async function withdrawFromIdentity({
@@ -240,6 +88,7 @@ export async function withdrawFromIdentity({
 	amountToWithdraw,
 	withdrawTo,
 	getFeesOnly,
+	tokenAddress,
 }) {
 	const toWithdraw = parseUnits(amountToWithdraw, 18)
 	const sweepTxns = await getSweepingTxnsIfNeeded({
@@ -264,12 +113,15 @@ export async function withdrawFromIdentity({
 	const { provider, Dai, Identity } = await getEthers(wallet.authType)
 	const signer = await getSigner({ wallet, provider })
 	const identityAddr = identity.address
+	// TEMP HOTFIX
+	// TODO: Make it work with multiple tokens
+	const tokenAddr = tokenAddress || Dai.address
 
 	const tx1 = {
 		identityContract: identityAddr,
-		feeTokenAddr: Dai.address,
+		feeTokenAddr: tokenAddr,
 		feeAmount: feeAmountTransfer,
-		to: Dai.address,
+		to: tokenAddr,
 		data: ERC20.functions.transfer.encode([withdrawTo, tokenAmount]),
 	}
 	const txns = [...sweepTxns, tx1]
@@ -346,7 +198,7 @@ export async function setIdentityPrivilege({
 		privLevel,
 	}
 
-	const result = await setAddrPriv(data)
+	const result = await executeTx(data)
 
 	return {
 		result,
@@ -369,4 +221,11 @@ export async function getIdentityTnxsWithNonces({
 	})
 
 	return withNonce
+}
+
+export async function getIdentityBalance({ identityAddr, authType }) {
+	const { Dai } = await getEthers(authType)
+	const balance = await Dai.balanceOf(identityAddr)
+
+	return balance.toString()
 }

@@ -7,6 +7,8 @@ import {
 	updateAdUnit,
 	updateCampaign,
 } from 'services/adex-market/actions'
+import { execute } from 'actions'
+import { push } from 'connected-react-router'
 import { parseUnits, bigNumberify } from 'ethers/utils'
 import { Base, AdSlot, AdUnit, helpers, Campaign } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
@@ -16,20 +18,19 @@ import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/action
 import {
 	getAdUnits,
 	getAdSlots,
-	// getCampaigns,
+	getCampaigns,
 } from 'services/adex-market/actions'
 import {
 	openChannel,
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
 import { lastApprovedState } from 'services/adex-validator/actions'
+import { closeCampaignMarket } from 'services/adex-market/actions'
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
-
-import { contracts } from 'services/smart-contracts/contractsCfg'
+import { getErrorMsg } from 'helpers/errors'
 import { SOURCES } from 'constants/targeting'
-import { selectAccount, selectAuthSig } from 'selectors'
-const { DAI } = contracts
+import { selectAccount, selectRelayerConfig, selectAuthSig } from 'selectors'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -161,6 +162,7 @@ export function addSlot(item) {
 		try {
 			const state = getState()
 			const authSig = selectAuthSig(state)
+			const { mainToken } = selectRelayerConfig()
 			let fallbackUnit = null
 			if (newItem.temp.useFallback) {
 				const imageIpfs = (await getImgsIpfsFromBlob({
@@ -168,7 +170,7 @@ export function addSlot(item) {
 					authSig,
 				})).ipfs
 
-				const unit = new AdSlot({
+				const unit = new AdUnit({
 					type: newItem.type,
 					mediaUrl: `ipfs://${imageIpfs}`,
 					targetUrl: newItem.targetUrl,
@@ -194,7 +196,10 @@ export function addSlot(item) {
 
 			if (newItem.temp.minPerImpression) {
 				newItem.minPerImpression = {
-					[DAI.address]: parseUnits(newItem.temp.minPerImpression, DAI.decimals)
+					[mainToken.address]: parseUnits(
+						newItem.temp.minPerImpression,
+						mainToken.decimals
+					)
 						.div(bigNumberify(1000))
 						.toString(),
 				}
@@ -233,36 +238,21 @@ export function getAllItems() {
 	return async function(dispatch, getState) {
 		try {
 			const { account } = getState().persist
-			// const { authSig } = account.wallet
 			const { address } = account.identity
 			const units = getAdUnits({ identity: address })
 			const slots = getAdSlots({ identity: address })
-			// const campaigns = getCampaigns({ authSig })
 
-			const [
-				resUnits,
-				resSlots,
-				// resCampaigns,
-			] = await Promise.all([
-				units,
-				slots,
-				//	campaigns
-			])
-
-			// const campaignsMapped = resCampaigns.map(c => {
-			// 	return { ...c, ...c.spec }
-			// })
+			const [resUnits, resSlots] = await Promise.all([units, slots])
 
 			updateItems({ items: resUnits, itemType: 'AdUnit' })(dispatch)
 			updateItems({ items: resSlots, itemType: 'AdSlot' })(dispatch)
-			// updateItems({ items: campaignsMapped, itemType: 'Campaign' })(dispatch)
 		} catch (err) {
 			console.error('ERR_GETTING_ITEMS', err)
 			addToast({
 				dispatch,
 				type: 'cancel',
 				toastStr: 'ERR_GETTING_ITEMS',
-				args: [err],
+				args: [getErrorMsg(err)],
 			})
 		}
 	}
@@ -300,7 +290,7 @@ export function openCampaign({ campaign }) {
 				dispatch,
 				type: 'cancel',
 				toastStr: 'ERR_OPENING_CAMPAIGN',
-				args: [err],
+				args: [getErrorMsg(err)],
 			})
 		}
 		updateSpinner('opening-campaign', false)(dispatch)
@@ -350,6 +340,7 @@ export function updateItem({ item, itemType } = {}) {
 		try {
 			const { account } = getState().persist
 			const { authSig } = account.wallet
+			const { mainToken } = selectRelayerConfig()
 
 			let updatedItem = null
 			let objModel = null
@@ -360,9 +351,9 @@ export function updateItem({ item, itemType } = {}) {
 				case 'AdSlot':
 					if (item.temp.minPerImpression) {
 						item.minPerImpression = {
-							[DAI.address]: parseUnits(
+							[mainToken.address]: parseUnits(
 								item.temp.minPerImpression,
-								DAI.decimals
+								mainToken.decimals
 							)
 								.div(bigNumberify(1000))
 								.toString(),
@@ -593,7 +584,7 @@ export const updateCampaignState = ({ campaign }) => {
 				dispatch: dispatch,
 				type: 'cancel',
 				toastStr: 'ERR_GETTING_CAMPAIGN_LAST_STATUS',
-				args: [err],
+				args: [getErrorMsg(err)],
 			})
 		}
 	}
@@ -603,25 +594,31 @@ export function closeCampaign({ campaign }) {
 	return async function(dispatch, getState) {
 		updateSpinner('closing-campaign', true)(dispatch)
 		try {
-			const { account } = getState().persist
-			const { results, authTokens } = await closeChannel({ account, campaign })
-
+			const state = getState()
+			const authSig = selectAuthSig(state)
+			const { account } = state.persist
+			const { authTokens } = await closeChannel({ account, campaign })
+			await closeCampaignMarket({ campaign, authSig })
 			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch, getState)
-			// TODO: update campaign state
-
+			execute(push('/dashboard/advertiser/campaigns'))
 			addToast({
 				dispatch,
 				type: 'accept',
 				toastStr: 'SUCCESS_CLOSING_CAMPAIGN',
 				args: [campaign.id],
 			})
+			const campaigns = await getCampaigns({ authSig })
+			const campaignsMapped = campaigns.map(c => {
+				return { ...c, ...c.spec }
+			})
+			updateItems({ items: campaignsMapped, itemType: 'Campaign' })(dispatch)
 		} catch (err) {
 			console.error('ERR_CLOSING_CAMPAIGN', err)
 			addToast({
 				dispatch,
 				type: 'cancel',
 				toastStr: 'ERR_CLOSING_CAMPAIGN',
-				args: [err],
+				args: [getErrorMsg(err)],
 			})
 		}
 		updateSpinner('closing-campaign', false)(dispatch)

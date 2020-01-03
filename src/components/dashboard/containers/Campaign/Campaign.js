@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Grid from '@material-ui/core/Grid'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
-import ItemsList from 'components/dashboard/containers/ItemsList'
+import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
 import Translate from 'components/translate/Translate'
 import Button from '@material-ui/core/Button'
 import { AdUnit as AdUnitModel, Campaign as CampaignModel } from 'adex-models'
@@ -46,7 +46,9 @@ export class Campaign extends Component {
 				<Grid item xs={12}>
 					<Button
 						color='secondary'
-						onClick={() => actions.closeCampaign({ campaign })}
+						onClick={() => {
+							actions.closeCampaign({ campaign })
+						}}
 					>
 						{t('BTN_CLOSE_CAMPAIGN')}
 					</Button>
@@ -64,6 +66,7 @@ export class Campaign extends Component {
 			// activeFields,
 			// isDemo,
 			actions,
+			history,
 			// ...rest
 		} = this.props
 		const { tabIndex } = this.state
@@ -99,6 +102,7 @@ export class Campaign extends Component {
 								campaign={campaign}
 								t={t}
 								actions={actions}
+								history={history}
 							/>
 						)
 					}
@@ -136,16 +140,7 @@ export class Campaign extends Component {
 							</List>
 						)}
 						{tabIndex === 1 && (
-							<ItemsList
-								removeFromItem
-								items={units}
-								viewModeId={VIEW_MODE}
-								itemType='AdUnit'
-								objModel={AdUnitModel}
-								sortProperties={SORT_PROPERTIES_ITEMS}
-								filterProperties={FILTER_PROPERTIES_ITEMS}
-								uiStateId='campaign-units'
-							/>
+							<EnhancedTable itemType={'AdUnit'} items={units} noActions />
 						)}
 						{tabIndex === 2 && (
 							<List>

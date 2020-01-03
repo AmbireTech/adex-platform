@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import ItemsList from 'components/dashboard/containers/ItemsList'
+import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
 import Translate from 'components/translate/Translate'
 
 class Items extends Component {
@@ -12,20 +12,12 @@ class Items extends Component {
 	}
 
 	render() {
-		const { classes, itemType, ...rest } = this.props
+		const { itemType } = this.props
 		const items = Array.from(Object.values(this.props.items || {})) || []
 
 		return (
 			<div>
-				{!!this.props.newItemBtn && <this.props.newItemBtn />}
-
-				<ItemsList
-					{...rest}
-					itemType={itemType}
-					items={items}
-					viewModeId={this.props.viewModeId}
-					archive
-				/>
+				<EnhancedTable itemType={itemType} items={items} />
 			</div>
 		)
 	}
@@ -34,11 +26,8 @@ class Items extends Component {
 Items.propTypes = {
 	actions: PropTypes.object.isRequired,
 	items: PropTypes.object.isRequired,
-	viewModeId: PropTypes.string.isRequired,
 	header: PropTypes.string.isRequired,
-	objModel: PropTypes.func.isRequired,
 	itemType: PropTypes.string.isRequired,
-	sortProperties: PropTypes.array.isRequired,
 }
 
 function mapStateToProps(state, props) {

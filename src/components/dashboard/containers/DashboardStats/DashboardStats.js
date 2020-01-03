@@ -11,14 +11,17 @@ import { styles } from './styles'
 import Grid from '@material-ui/core/Grid'
 import { BasicStats } from './BasicStats'
 import { push } from 'connected-react-router'
-import { t, selectSide, selectAccount } from 'selectors'
+import { t, selectSide, selectAccountStatsFormatted } from 'selectors'
 
 const useStyles = makeStyles(styles)
 
 export function DashboardStats(props) {
 	const side = useSelector(selectSide)
-	const account = useSelector(selectAccount)
 	const classes = useStyles()
+	const {
+		availableIdentityBalanceDai,
+		outstandingBalanceDai,
+	} = useSelector(selectAccountStatsFormatted)
 
 	useEffect(() => {
 		execute(updateNav('navTitle', t('DASHBOARD')))
@@ -29,22 +32,15 @@ export function DashboardStats(props) {
 	}
 
 	const InfoStats = () => {
-		const formatted = account.stats.formatted || {}
-		const {
-			identityBalanceDai,
-			outstandingBalanceDai,
-			availableIdentityBalanceDai,
-		} = formatted
 		return (
 			<div className={classes.infoStatsContainer}>
 				<StatsCard
 					linkCard
 					onClick={goToAccount}
 					subtitle={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
-						args: [identityBalanceDai || 0, outstandingBalanceDai || 0],
+						args: [outstandingBalanceDai || 0],
 					})}
 					loading={
-						(!identityBalanceDai && identityBalanceDai !== 0) ||
 						(!outstandingBalanceDai && outstandingBalanceDai !== 0) ||
 						(!availableIdentityBalanceDai && availableIdentityBalanceDai !== 0)
 					}

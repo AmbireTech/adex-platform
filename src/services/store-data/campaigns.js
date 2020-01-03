@@ -3,6 +3,7 @@ import { getState, updateItems, execute, addToast } from 'actions'
 import { getCampaigns } from 'services/adex-market/actions'
 import { selectAccount, selectAuth } from 'selectors'
 import { MOON_GRAVITY_ACCELERATION, MOON_TO_EARTH_WEIGHT } from 'constants/misc'
+import { getErrorMsg } from 'helpers/errors'
 
 const LOOP_TIMEOUT =
 	(69 - Math.floor(MOON_GRAVITY_ACCELERATION / MOON_TO_EARTH_WEIGHT)) * 500
@@ -32,7 +33,7 @@ const syncCampaigns = async () => {
 				addToast({
 					type: 'cancel',
 					toastStr: 'ERR_GETTING_ITEMS',
-					args: [err],
+					args: [getErrorMsg(err)],
 				})
 			)
 		}
