@@ -61,6 +61,7 @@ export const styles = theme => {
 		contentTopLoading: {
 			display: 'flex',
 			flexDirection: 'row',
+			justifyContent: 'center',
 			alignItems: 'center',
 			'& > div': {
 				padding: theme.spacing(1),
@@ -110,6 +111,9 @@ export const styles = theme => {
 		},
 		demoBody: {
 			position: 'relative',
+		},
+		contentStickyTop: {
+			marginBottom: '2rem',
 		},
 	}
 }

@@ -1,22 +1,38 @@
 import * as types from 'constants/actionTypes'
-import { grantAccount } from 'services/adex-relayer/actions'
-import { updateSpinner } from './uiActions'
-import { deployIdentityContract } from 'services/smart-contracts/actions/identity'
-import {
-	registerFullIdentity,
-	registerExpectedIdentity,
-	getOwnerIdentities,
-} from 'services/adex-relayer/actions'
+import { getQuickWallet } from 'services/adex-relayer/actions'
+import { updateSpinner, addToast } from './uiActions'
+import { getOwnerIdentities, regAccount } from 'services/adex-relayer/actions'
 import { translate } from 'services/translations/translations'
-import { addToast } from './uiActions'
+import { createSession } from './accountActions'
+
 import {
 	getIdentityDeployData,
 	withdrawFromIdentity,
 	setIdentityPrivilege,
+	getIdentityBalance,
 } from 'services/smart-contracts/actions/identity'
-import { addDataToWallet } from 'services/wallet/wallet'
+import {
+	addDataToWallet,
+	getWalletHash,
+	getLocalWallet,
+	migrateLegacyWallet,
+	walletInfo,
+	createLocalWallet,
+	generateSalt,
+} from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
-import { selectAccount } from 'selectors'
+import { selectAccount, selectIdentity, selectAuthType } from 'selectors'
+import { AUTH_TYPES } from 'constants/misc'
+import {
+	validate,
+	validateEmail,
+	validateEmailCheck,
+	validatePassword,
+	validatePasswordCheck,
+	validateGrantCode,
+	validateTOS,
+} from './validationActions'
+import { getErrorMsg } from 'helpers/errors'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -76,132 +92,6 @@ export function resetWallet() {
 	}
 }
 
-export function getGrantAccount({
-	walletAddr,
-	email,
-	password,
-	coupon,
-	authType,
-}) {
-	return async function(dispatch) {
-		updateSpinner('getting-grant-identity', true)(dispatch)
-		try {
-			const identityData = await grantAccount({
-				ownerAddr: walletAddr,
-				mail: email,
-				couponCode: coupon,
-			})
-
-			// TODO: validate identityData
-
-			if (identityData) {
-				addDataToWallet({
-					email,
-					password,
-					authType,
-					dataKey: 'identity',
-					dataValue: identityData.address,
-				})
-				addDataToWallet({
-					email,
-					password,
-					authType,
-					dataKey: 'privileges',
-					dataValue: identityData.privileges,
-				})
-				updateIdentity('identityAddr', identityData.address)(dispatch)
-				updateIdentity('identityData', identityData)(dispatch)
-			}
-		} catch (err) {
-			console.error('ERR_REGISTER_GRANT_IDENTITY', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_REGISTER_GRANT_IDENTITY', { args: [err] }),
-				timeout: 20000,
-			})(dispatch)
-		}
-
-		updateSpinner('getting-grant-identity', false)(dispatch)
-	}
-}
-
-export function deployFullIdentity({
-	wallet,
-	email,
-	identityTxData,
-	identityAddr,
-}) {
-	return async function(dispatch) {
-		updateSpinner('getting-full-identity', true)(dispatch)
-		try {
-			const tx = await deployIdentityContract({
-				...identityTxData,
-				wallet,
-			})
-
-			const regInfo = await registerFullIdentity({
-				txHash: tx.hash,
-				identity: identityAddr,
-				privileges: [wallet.address, 3],
-				mail: email,
-			})
-
-			if (regInfo) {
-				updateIdentity('isRegistered', true)(dispatch)
-			} else {
-				addToast({
-					type: 'cancel',
-					label: translate('ERR_REGISTER_IDENTITY', { args: [tx.hash] }),
-					timeout: 20000,
-				})(dispatch)
-			}
-		} catch (err) {
-			console.error('ERR_REGISTER_IDENTITY', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_REGISTER_IDENTITY', { args: [err] }),
-				timeout: 20000,
-			})(dispatch)
-		}
-		updateSpinner('getting-full-identity', false)(dispatch)
-	}
-}
-
-export function getIdentityTxData({ owner, privLevel }) {
-	return async function(dispatch) {
-		try {
-			const txData = await getIdentityDeployData({ owner, privLevel })
-			updateIdentity('identityAddr', txData.identityAddr)(dispatch)
-			updateIdentity('identityTxData', txData)(dispatch)
-		} catch (err) {
-			console.error('ERR_GET_IDENTITY_TX_DATA', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_GET_IDENTITY_TX_DATA', { args: [err] }),
-				timeout: 20000,
-			})(dispatch)
-		}
-	}
-}
-
-export function getRegisterExpectedIdentity({ owner, mail }) {
-	return async function(dispatch) {
-		updateSpinner('getting-expected-identity', true)(dispatch)
-		try {
-			const identityData = await registerExpectedIdentity({ owner, mail })
-			updateIdentity('identityData', identityData)(dispatch)
-		} catch (err) {
-			console.error('ERR_REGISTERING_EXPECTED_IDENTITY', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_REGISTERING_EXPECTED_IDENTITY', { args: [err] }),
-				timeout: 20000,
-			})(dispatch)
-		}
-		updateSpinner('getting-expected-identity', false)(dispatch)
-	}
-}
-
 export function onUploadLocalWallet(event) {
 	return async function(dispatch) {
 		updateSpinner('uploading-account-data', true)(dispatch)
@@ -222,6 +112,7 @@ export function onUploadLocalWallet(event) {
 					throw new Error(translate('INVALID_JSON_DATA'))
 				} else {
 					saveToLocalStorage(obj.wallet, obj.key)
+					updateIdentity('uploadedLocalWallet', obj.key)(dispatch)
 					addToast({
 						type: 'accept',
 						label: translate('SUCCESS_UPLOADING_ACCOUNT_DATA'),
@@ -245,7 +136,9 @@ export function onUploadLocalWallet(event) {
 			console.error('Error uploading account data.', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_UPLOADING_ACCOUNT_DATA', { args: [err] }),
+				label: translate('ERR_UPLOADING_ACCOUNT_DATA', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 5000,
 			})(dispatch)
 			updateSpinner('uploading-account-data', true)(dispatch)
@@ -264,7 +157,11 @@ export function onUploadLocalWallet(event) {
 	}
 }
 
-export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
+export function identityWithdraw({
+	amountToWithdraw,
+	withdrawTo,
+	tokenAddress,
+}) {
 	return async function(dispatch, getState) {
 		try {
 			const account = selectAccount(getState())
@@ -272,6 +169,7 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 				account,
 				amountToWithdraw,
 				withdrawTo,
+				tokenAddress,
 			})
 
 			addToast({
@@ -283,7 +181,9 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 			console.error('ERR_IDENTITY_WITHDRAW_NOTIFICATION', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_IDENTITY_WITHDRAW_NOTIFICATION', { args: [err] }),
+				label: translate('ERR_IDENTITY_WITHDRAW_NOTIFICATION', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -291,16 +191,36 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 }
 
 export function ownerIdentities({ owner }) {
-	return async function(dispatch) {
+	return async function(dispatch, getState) {
 		updateSpinner('getting-owner-identities', true)(dispatch)
 		try {
 			const identityData = await getOwnerIdentities({ owner })
-			updateIdentity('ownerIdentities', identityData)(dispatch)
+			const authType = selectAuthType(getState())
+			const data = Object.entries(identityData).map(
+				async ([identityAddr, privLevel]) => {
+					const balanceDAI = await getIdentityBalance({
+						identityAddr,
+						authType,
+					})
+
+					return {
+						identity: identityAddr,
+						privLevel,
+						balanceDAI,
+					}
+				}
+			)
+
+			const ownerIdentities = await Promise.all(data)
+
+			updateIdentity('ownerIdentities', ownerIdentities)(dispatch)
 		} catch (err) {
 			console.error('ERR_GETTING_OWNER_IDENTITIES', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_GETTING_OWNER_IDENTITIES', { args: [err] }),
+				label: translate('ERR_GETTING_OWNER_IDENTITIES', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -329,10 +249,301 @@ export function addrIdentityPrivilege({ setAddr, privLevel }) {
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', {
-					args: [err],
+					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
 			})(dispatch)
 		}
+	}
+}
+
+export function login() {
+	return async function(dispatch, getState) {
+		try {
+			const {
+				wallet,
+				email,
+				identityData,
+				identityTxData,
+				deleteLegacyKey,
+				registerAccount,
+			} = selectIdentity(getState())
+
+			if (registerAccount) {
+				await regAccount({
+					owner: wallet.address,
+					email,
+					...identityTxData,
+				})
+			}
+
+			await createSession({
+				identity: identityData,
+				wallet,
+				email,
+				deleteLegacyKey,
+			})(dispatch)
+		} catch (err) {
+			console.error('ERR_LOGIN', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_LOGIN', { args: [getErrorMsg(err)] }),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function validateQuickLogin({ validateId, dirty }) {
+	return async function(dispatch, getState) {
+		updateSpinner(validateId, true)(dispatch)
+		const identity = selectIdentity(getState())
+		const { password, email, authType } = identity
+
+		let wallet = {}
+		let error = 'INVALID_EMAIL_OR_PASSWORD'
+		let actualAuthType = authType
+
+		try {
+			if (email && password) {
+				let walletData = getLocalWallet({
+					email,
+					password,
+					authType: actualAuthType,
+				})
+
+				if (!walletData) {
+					const salt = generateSalt(email)
+					const hash = getWalletHash({ salt, password })
+					const { encryptedWallet } =
+						(await getQuickWallet({
+							hash,
+						})) || {}
+
+					const backupWallet = encryptedWallet || {}
+
+					if (
+						backupWallet.wallet &&
+						backupWallet.key &&
+						backupWallet.wallet.data &&
+						backupWallet.wallet.identity &&
+						backupWallet.wallet.privileges
+					) {
+						const info = walletInfo(backupWallet.key, 'backup', null)
+						actualAuthType = info.authType
+						saveToLocalStorage(backupWallet.wallet, backupWallet.key)
+
+						walletData = getLocalWallet({
+							email,
+							password,
+							authType: actualAuthType,
+						})
+					}
+				}
+
+				if (!!walletData && walletData.data && walletData.data.address) {
+					wallet = { ...walletData.data }
+					wallet.email = email
+					wallet.password = password
+					wallet.authType = actualAuthType || AUTH_TYPES.GRANT.name
+					wallet.identity = {
+						address: walletData.identity,
+						privileges: walletData.privileges || walletData.identityPrivileges,
+					}
+
+					if (!authType) {
+						migrateLegacyWallet({ email, password })
+						updateIdentity('deleteLegacyKey', true)(dispatch)
+					}
+				}
+
+				updateIdentity('identityAddr', walletData ? walletData.identity : null)(
+					dispatch
+				)
+				updateIdentity('wallet', wallet)(dispatch)
+				updateIdentity('walletAddr', wallet.address)(dispatch)
+				updateIdentity('identityData', wallet.identity)(dispatch)
+			}
+		} catch (err) {
+			console.error('ERR_QUICK_WALLET_LOGIN', err)
+			error = err
+		}
+
+		const isValid = !!wallet.address
+
+		validate(validateId, 'wallet', {
+			isValid,
+			err: { msg: 'ERR_QUICK_WALLET_LOGIN', args: [getErrorMsg(error)] },
+			dirty: dirty,
+		})(dispatch)
+
+		if (isValid) {
+			await login()(dispatch, getState)
+		}
+		updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+const handleAfterValidation = ({ isValid, onValid, onInvalid }) => {
+	if (isValid && typeof onValid === 'function') {
+		onValid()
+	}
+	if (!isValid && typeof onInvalid === 'function') {
+		onInvalid()
+	}
+}
+
+export function validateStandardLogin({ validateId, dirty }) {
+	return async function(dispatch, getState) {
+		updateSpinner(validateId, true)(dispatch)
+		try {
+			const identity = selectIdentity(getState())
+			const { wallet, identityContractAddress } = identity
+			const { address } = wallet
+
+			const identityDataSplit = (identityContractAddress || '').split('-')
+			const identityData = {
+				address: identityDataSplit[0],
+				privileges: parseInt(identityDataSplit[1] || 0),
+			}
+
+			updateIdentity('wallet', wallet)(dispatch)
+			updateIdentity('walletAddr', address)(dispatch)
+			updateIdentity('identityData', identityData)(dispatch)
+
+			const isValid = !!identityData.address
+
+			validate(validateId, 'identityContractAddress', {
+				isValid: isValid,
+				err: { msg: 'ERR_EXTERNAL_WALLET_LOGIN' },
+				dirty: dirty,
+			})(dispatch)
+
+			if (isValid) {
+				await login()(dispatch, getState)
+			}
+		} catch (err) {
+			console.error('ERR_VALIDATING_STANDARD_LOGIN', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_VALIDATING_STANDARD_LOGIN', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+
+		updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function validateQuickDeploy({ validateId, dirty }) {
+	return async function(dispatch, getState) {
+		updateSpinner(validateId, true)(dispatch)
+		try {
+			const identity = selectIdentity(getState())
+			const { identityAddr, email, password } = identity
+
+			if (!identityAddr) {
+				const authType = AUTH_TYPES.QUICK.name
+
+				const walletData = createLocalWallet({
+					email,
+					password,
+					authType,
+				})
+
+				walletData.email = email
+				walletData.password = password
+
+				const walletAddr = walletData.address
+
+				const txData = await getIdentityDeployData({ owner: walletAddr })
+				const identityData = {
+					address: txData.identityAddr,
+					privileges: txData.privileges,
+				}
+
+				addDataToWallet({
+					email,
+					password,
+					authType,
+					dataKey: 'identity',
+					dataValue: identityData.address,
+				})
+				addDataToWallet({
+					email,
+					password,
+					authType,
+					dataKey: 'privileges',
+					dataValue: identityData.privileges,
+				})
+
+				updateIdentity('identityAddr', txData.identityAddr)(dispatch)
+				updateIdentity('identityTxData', txData)(dispatch)
+				updateIdentity('identityData', identityData)(dispatch)
+
+				updateIdentity('wallet', walletData)(dispatch)
+				updateIdentity('walletAddr', walletAddr)(dispatch)
+				updateIdentity('registerAccount', true)(dispatch)
+			}
+
+			const isValid = !!identityAddr
+
+			validate(validateId, 'identityAddr', {
+				isValid,
+				err: { msg: 'ERR_IDENTITY_NOT_GENERATED' },
+				dirty,
+			})(dispatch)
+
+			if (isValid) {
+				await login()(dispatch, getState)
+			}
+		} catch (err) {
+			console.error('ERR_VALIDATING_QUICK_DEPLOY', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_VALIDATING_QUICK_DEPLOY', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+
+		updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
+	return async function(dispatch, getState) {
+		updateSpinner(validateId, true)(dispatch)
+
+		const identity = selectIdentity(getState())
+		const {
+			email,
+			emailCheck,
+			password,
+			passwordCheck,
+			hasGrantCode,
+			grantCode,
+			tosCheck,
+		} = identity
+
+		const validations = await Promise.all([
+			validateEmail(validateId, email, dirty)(dispatch),
+			validateEmailCheck(validateId, emailCheck, email, dirty)(dispatch),
+			validatePassword(validateId, password, dirty)(dispatch),
+			validatePasswordCheck(validateId, passwordCheck, password, dirty)(
+				dispatch
+			),
+			validateGrantCode(validateId, hasGrantCode, grantCode, dirty)(dispatch),
+			validateTOS(validateId, tosCheck, dirty)(dispatch),
+		])
+
+		const isValid = validations.every(v => v === true)
+
+		handleAfterValidation({ isValid, onValid, onInvalid })
+
+		updateSpinner(validateId, false)(dispatch)
 	}
 }

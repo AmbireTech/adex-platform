@@ -1,82 +1,35 @@
-import React, { Component } from 'react'
+import React from 'react'
+import { useSelector } from 'react-redux'
+
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
-import Translate from 'components/translate/Translate'
+import { execute, validate } from 'actions'
+import { selectValidationsById } from 'selectors'
 
-export default function NewItemHoc(Decorated) {
-	class ValidItemHoc extends Component {
-		constructor(props) {
-			super(props)
+export default function ValidationHoc(Decorated) {
+	const ValidItem = props => {
+		const validations =
+			useSelector(state => selectValidationsById(state, props.validateId)) || {}
 
-			this.state = {
-				invalidFields: {},
-			}
-
-			this.validate = this.validate.bind(this)
-		}
-
-		componentWillReceiveProps(nextProps) {
-			this.setState({ invalidFields: nextProps.validations || {} })
-		}
-
-		componentWillMount() {
-			this.setState({ invalidFields: this.props.validations || {} })
-		}
-
-		validate = (
+		const makeValidation = (
 			key,
 			{ isValid, err = { msg: '', args: [] }, dirty = false, removeAll = false }
 		) => {
-			if (!isValid) {
-				let errors = {}
-				errors[key] = {
-					errMsg: this.props.t(err.msg, { args: err.args }),
-					dirty: dirty,
-				}
-
-				this.props.actions.updateValidationErrors(this.props.validateId, errors)
-			} else if (removeAll) {
-				this.props.actions.resetValidationErrors(this.props.validateId)
-			} else {
-				this.props.actions.resetValidationErrors(this.props.validateId, key)
-			}
+			const { validateId } = props
+			execute(validate(validateId, key, { isValid, err, dirty, removeAll }))
 		}
 
-		render() {
-			const props = this.props
-			return (
-				<Decorated
-					{...props}
-					validate={this.validate}
-					invalidFields={this.state.invalidFields}
-				/>
-			)
-		}
+		return (
+			<Decorated
+				{...props}
+				validate={makeValidation}
+				invalidFields={validations}
+			/>
+		)
 	}
 
-	ValidItemHoc.propTypes = {
-		actions: PropTypes.object.isRequired,
+	ValidItem.propTypes = {
 		validateId: PropTypes.string.isRequired,
 	}
 
-	function mapStateToProps(state, props) {
-		// let persist = state.persist
-		let memory = state.memory
-		return {
-			validations: memory.validations[props.validateId],
-		}
-	}
-
-	function mapDispatchToProps(dispatch) {
-		return {
-			actions: bindActionCreators(actions, dispatch),
-		}
-	}
-
-	return connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)(Translate(ValidItemHoc))
+	return ValidItem
 }
