@@ -9,13 +9,9 @@ import { getEthers } from 'services/smart-contracts/ethers'
 import {
 	getIdentityTxnsWithNoncesAndFees,
 	getIdentityTxnsTotalFees,
+	processExecuteByFeeTokens,
 } from 'services/smart-contracts/actions/identity'
-import {
-	getSigner,
-	getMultipleTxSignatures,
-} from 'services/smart-contracts/actions/ethers'
 import { contracts } from '../contractsCfg'
-import { executeTx } from 'services/adex-relayer/actions'
 import { closeCampaign } from 'services/adex-validator/actions'
 import { Campaign, AdUnit } from 'adex-models'
 import { getAllCampaigns } from 'services/adex-market/actions'
@@ -361,7 +357,7 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 		data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
 	}
 	const txns = [...sweepTxns, tx1, tx2]
-	const txnsRaw = await getIdentityTxnsWithNoncesAndFees({
+	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
 		txns,
 		identityAddr,
 		provider,
@@ -370,21 +366,17 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 
 	if (getFeesOnly) {
 		return {
-			fees: (await getIdentityTxnsTotalFees(txnsRaw)).total,
+			fees: (await getIdentityTxnsTotalFees(txnsByFeeToken)).total,
 		}
 	}
 
-	const signer = await getSigner({ wallet, provider })
-	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
+	const result = await processExecuteByFeeTokens({
+		txnsByFeeToken,
+		wallet,
+		provider,
+		extraData: { channel },
+	})
 
-	const data = {
-		txnsRaw,
-		signatures,
-		channel,
-		identityAddr,
-	}
-
-	const result = await executeTx(data)
 	readyCampaign.id = channel.id
 	return {
 		result,
