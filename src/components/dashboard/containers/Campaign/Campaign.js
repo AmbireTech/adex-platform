@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import { updateCampaign } from 'services/adex-market/actions'
 import Grid from '@material-ui/core/Grid'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
 import ItemsList from 'components/dashboard/containers/ItemsList'
@@ -23,13 +22,8 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import Anchor from 'components/common/anchor/anchor'
 import { formatTokenAmount } from 'helpers/formatters'
-import { Joi } from 'adex-models'
 
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
-const campaignTitleSchema = Joi.string()
-	.min(3)
-	.max(120)
-	.allow('') // empty string not allowed by default
 const VIEW_MODE = 'campaignRowsView'
 
 export class Campaign extends Component {
@@ -39,17 +33,7 @@ export class Campaign extends Component {
 		this.state = {
 			tabIndex: 0,
 			statistics: {},
-			dirtyProps: [],
 		}
-	}
-
-	// componentDidMount = () => {
-	// 	this.props.actions.updateCampaignState({ campaign: this.props.item })
-	// 	// this.props.actions.updateCampaignStatistics({ campaign: this.props.item })
-	// }
-
-	editTitle = (campaign, id, authSig) => {
-		updateCampaign({ campaign, id, authSig })
 	}
 
 	handleTabChange = (event, index) => {
@@ -71,21 +55,11 @@ export class Campaign extends Component {
 		)
 	}
 
-	validateTitle(title, dirty) {
-		const result = Joi.validate(title, campaignTitleSchema)
-		this.props.validate('title', {
-			isValid: !result.error,
-			err: { msg: result.error ? result.error.message : '' },
-			dirty: dirty,
-		})
-	}
-
 	render() {
 		const {
 			t,
 			// classes,
 			item,
-			setActiveFields,
 			// handleChange,
 			// activeFields,
 			// isDemo,
@@ -128,13 +102,6 @@ export class Campaign extends Component {
 							/>
 						)
 					}
-					validateTitle={this.validateTitle.bind(this)}
-					handleChange={this.props.handleChange}
-					editTitle={this.editTitle}
-					account={this.props.account}
-					dirtyProps={this.state.dirtyProps}
-					setActiveFields={setActiveFields}
-					campaignTitleSchema={campaignTitleSchema}
 				/>
 				<div>
 					<AppBar position='static' color='default'>
