@@ -23,7 +23,6 @@ import { bigNumberify } from 'ethers/utils'
 import { contracts } from 'services/smart-contracts/contractsCfg'
 import { validations } from 'adex-models'
 import { utils } from 'ethers'
-import { Joi } from 'adex-models'
 
 const { DAI } = contracts
 
@@ -405,19 +404,11 @@ const campaignProps = ({
 	classes,
 	canEditImg,
 	itemType,
-	validateTitle,
-	handleChange,
-	editTitle,
-	account,
-	dirtyProps,
-	setActiveFields,
-	campaignTitleSchema,
 	...rest
 }) => {
 	const mediaUrl = item.mediaUrl
 	const status = item.status || {}
 
-	const titleError = Joi.validate(item.title, campaignTitleSchema).error
 	return (
 		<div>
 			<Grid container spacing={2}>
