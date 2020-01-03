@@ -97,11 +97,11 @@ export async function withdrawFromIdentity({
 	})
 
 	const { wallet, identity } = account
-	const { provider, Dai, Identity } = await getEthers(wallet.authType)
+	const { provider, MainToken, Identity } = await getEthers(wallet.authType)
 	const identityAddr = identity.address
 	// TEMP HOTFIX
 	// TODO: Make it work with multiple tokens
-	const tokenAddr = tokenAddress || Dai.address
+	const tokenAddr = tokenAddress || MainToken.address
 
 	const tx1 = {
 		identityContract: identityAddr,
@@ -111,7 +111,7 @@ export async function withdrawFromIdentity({
 	}
 	const txns = [...sweepTxns, tx1]
 
-	const txnsRaw = await getIdentityTxnsWithNoncesAndFees({
+	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
 		txns,
 		identityAddr,
 		provider,
@@ -120,21 +120,16 @@ export async function withdrawFromIdentity({
 
 	if (getFeesOnly) {
 		return {
-			fees: (await getIdentityTxnsTotalFees(txnsRaw)).total,
+			fees: (await getIdentityTxnsTotalFees(txnsByFeeToken)).total,
 			toGet: formatTokenAmount(toWithdraw, 18),
 		}
 	}
 
-	const signer = await getSigner({ wallet, provider })
-	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
-
-	const data = {
-		txnsRaw,
-		signatures,
-		identityAddr,
-	}
-
-	const result = await executeTx(data)
+	const result = await processExecuteByFeeTokens({
+		txnsByFeeToken,
+		wallet,
+		provider,
+	})
 
 	return {
 		result,
@@ -148,14 +143,14 @@ export async function setIdentityPrivilege({
 	getFeesOnly,
 }) {
 	const { wallet, identity } = account
-	const { provider, Dai, Identity } = await getEthers(wallet.authType)
+	const { provider, MainToken, Identity } = await getEthers(wallet.authType)
 	const identityAddr = identity.address
 
 	const identityInterface = new Interface(Identity.abi)
 
 	const tx1 = {
 		identityContract: identityAddr,
-		feeTokenAddr: Dai.address,
+		feeTokenAddr: MainToken.address,
 		to: identityAddr,
 		data: identityInterface.functions.setAddrPrivilege.encode([
 			setAddr,
@@ -164,7 +159,7 @@ export async function setIdentityPrivilege({
 	}
 
 	const txns = [tx1]
-	const txnsRaw = await getIdentityTxnsWithNoncesAndFees({
+	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
 		txns,
 		identityAddr,
 		provider,
@@ -173,22 +168,19 @@ export async function setIdentityPrivilege({
 
 	if (getFeesOnly) {
 		return {
-			fees: (await getIdentityTxnsTotalFees(txnsRaw)).total,
+			fees: (await getIdentityTxnsTotalFees(txnsByFeeToken)).total,
 		}
 	}
 
-	const signer = await getSigner({ wallet, provider })
-	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
-
-	const data = {
-		txnsRaw,
-		signatures,
-		identityAddr,
-		setAddr,
-		privLevel,
-	}
-
-	const result = await executeTx(data)
+	const result = await processExecuteByFeeTokens({
+		txnsByFeeToken,
+		wallet,
+		provider,
+		extraData: {
+			setAddr,
+			privLevel,
+		},
+	})
 
 	return {
 		result,
@@ -302,22 +294,25 @@ function swapSaiToDaiTxns({ identityAddr, daiAddr, saiAddr, withdrawAmount }) {
 }
 
 // TODO: use byToken where needed
-export async function getIdentityTxnsTotalFees(txns) {
+// currently works because only using SAI and DAI only
+export async function getIdentityTxnsTotalFees(txnsByFeeToken) {
 	const feeTokenWhitelist = selectFeeTokenWhitelist()
 	const bigZero = bigNumberify('0')
-	const feesData = txns.reduce(
-		(result, tx) => {
-			const txFeeAmount = bigNumberify(tx.feeAmount)
-			result.total = result.total.add(txFeeAmount)
+	const feesData = Object.values(txnsByFeeToken)
+		.reduce((all, byFeeToken) => all.concat(byFeeToken), [])
+		.reduce(
+			(result, tx) => {
+				const txFeeAmount = bigNumberify(tx.feeAmount)
+				result.total = result.total.add(txFeeAmount)
 
-			result.byToken[tx.feeTokenAddr] = (
-				result.byToken[tx.feeTokenAddr] || bigZero
-			).add(txFeeAmount)
+				result.byToken[tx.feeTokenAddr] = (
+					result.byToken[tx.feeTokenAddr] || bigZero
+				).add(txFeeAmount)
 
-			return result
-		},
-		{ total: bigZero, byToken: {} }
-	)
+				return result
+			},
+			{ total: bigZero, byToken: {} }
+		)
 
 	const byToken = Object.entries(feesData.byToken).map(([key, value]) => {
 		const { decimals, symbol } = feeTokenWhitelist[key]
@@ -347,4 +342,33 @@ export async function getIdentityBalance({ identityAddr, authType }) {
 	const balance = await Dai.balanceOf(identityAddr)
 
 	return balance.toString()
+}
+
+export async function processExecuteByFeeTokens({
+	txnsByFeeToken,
+	wallet,
+	provider,
+	identityAddr,
+	extraData = {},
+}) {
+	const signer = await getSigner({ wallet, provider })
+	const all = Object.values(txnsByFeeToken).map(async txnsRaw => {
+		const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
+		const data = {
+			txnsRaw,
+			signatures,
+			identityAddr,
+			...extraData,
+		}
+
+		const result = await executeTx(data)
+
+		return {
+			result,
+		}
+	})
+
+	const results = await Promise.all(all)
+
+	return results
 }
