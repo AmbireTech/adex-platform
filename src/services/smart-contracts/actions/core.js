@@ -371,6 +371,7 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 	}
 
 	const result = await processExecuteByFeeTokens({
+		identityAddr,
 		txnsByFeeToken,
 		wallet,
 		provider,

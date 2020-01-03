@@ -126,6 +126,7 @@ export async function withdrawFromIdentity({
 	}
 
 	const result = await processExecuteByFeeTokens({
+		identityAddr,
 		txnsByFeeToken,
 		wallet,
 		provider,
@@ -174,6 +175,7 @@ export async function setIdentityPrivilege({
 
 	const result = await processExecuteByFeeTokens({
 		txnsByFeeToken,
+		identityAddr,
 		wallet,
 		provider,
 		extraData: {
@@ -209,7 +211,6 @@ export async function getIdentityTxnsWithNoncesAndFees({
 
 	const { txnsByFeeToken, saiWithdrawAmount } = txns.reduce(
 		(current, tx, i) => {
-			const newTxns = { ...current }
 			const { withdrawAmount } = tx
 
 			const needSaiToDaiSwap =
@@ -221,16 +222,22 @@ export async function getIdentityTxnsWithNoncesAndFees({
 			let feeTokenAddr = ''
 
 			if (needSaiToDaiSwap) {
-				newTxns.saiWithdrawAmount.add(bigNumberify(withdrawAmount))
+				current.saiWithdrawAmount = current.saiWithdrawAmount.add(
+					bigNumberify(withdrawAmount)
+				)
 				feeTokenAddr = daiAddr
 			}
 
 			feeTokenAddr = feeTokenAddr || tx.feeTokenAddr || mainToken.address
+			// normalize tx
 			tx.feeTokenAddr = feeTokenAddr
+			tx.identityContract = (tx.identityContract || identityAddr).toLowerCase()
 
-			newTxns.txnsByFeeToken[feeTokenAddr].push(tx)
+			current.txnsByFeeToken[feeTokenAddr] = (
+				current.txnsByFeeToken[feeTokenAddr] || []
+			).concat([tx])
 
-			return newTxns
+			return current
 		},
 		{
 			saiWithdrawAmount: bigNumberify('0'),
@@ -238,7 +245,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 		}
 	)
 
-	if (!saiWithdrawAmount.idZero()) {
+	if (!saiWithdrawAmount.isZero()) {
 		txnsByFeeToken[daiAddr].concat(
 			swapSaiToDaiTxns({
 				identityAddr,
@@ -251,7 +258,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 
 	let currentNonce = initialNonce
 
-	const withNonce = Object.keys(txnsByFeeToken).forEach(key => {
+	Object.keys(txnsByFeeToken).forEach(key => {
 		txnsByFeeToken[key] = txnsByFeeToken[key].map(tx => {
 			const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
 			const feeAmount = currentNonce === 0 ? feeToken.minDeploy : feeToken.min
@@ -269,7 +276,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 		})
 	})
 
-	return withNonce
+	return txnsByFeeToken
 }
 
 function swapSaiToDaiTxns({ identityAddr, daiAddr, saiAddr, withdrawAmount }) {
