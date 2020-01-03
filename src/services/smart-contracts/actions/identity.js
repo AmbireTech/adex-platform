@@ -14,11 +14,7 @@ import {
 } from 'ethers/utils'
 import { generateAddress2 } from 'ethereumjs-util'
 import { executeTx } from 'services/adex-relayer'
-import {
-	selectRelayerConfig,
-	selectMainFeeToken,
-	selectFeeTokenWhitelist,
-} from 'selectors'
+import { selectRelayerConfig, selectFeeTokenWhitelist } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
 
@@ -26,8 +22,11 @@ import solc from 'solcBrowser'
 import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
+import ScdMcdMigrationABI from 'services/smart-contracts/abi/ScdMcdMigration'
 
 const ERC20 = new Interface(ERC20TokenABI)
+const ScdMcdMigration = new Interface(ScdMcdMigrationABI)
+const { SCD_MCD_MIGRATION_ADDR } = process.env
 
 export async function getIdentityDeployData({
 	owner,
@@ -203,7 +202,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	Identity,
 }) {
 	const feeTokenWhitelist = selectFeeTokenWhitelist()
-	const mainToken = selectMainFeeToken()
+	const { mainToken, daiAddr, saiAddr } = selectRelayerConfig()
 
 	let isDeployed = (await provider.getCode(identityAddr)) !== '0x'
 	let identityContract = null
@@ -216,21 +215,90 @@ export async function getIdentityTxnsWithNoncesAndFees({
 		? (await identityContract.nonce()).toNumber()
 		: 0
 
-	const withNonce = txns.map((tx, i) => {
-		const nonce = initialNonce + i
-		const feeToken =
-			feeTokenWhitelist[tx.feeTokenAddr] || feeTokenWhitelist[mainToken.address]
-		const feeAmount = nonce === 0 ? feeToken.minDeploy : feeToken.min
+	const { txnsByFeeToken, saiWithdrawAmount } = txns.reduce(
+		(current, tx, i) => {
+			const newTxns = { ...current }
+			const { withdrawAmount } = tx
 
-		return {
-			...tx,
-			feeTokenAddr: feeToken.address,
-			feeAmount,
-			nonce,
+			const needSaiToDaiSwap =
+				withdrawAmount &&
+				tx.feeTokenAddr === saiAddr &&
+				mainToken === daiAddr &&
+				saiAddr !== daiAddr
+
+			let feeTokenAddr = ''
+
+			if (needSaiToDaiSwap) {
+				newTxns.saiWithdrawAmount.add(bigNumberify(withdrawAmount))
+				feeTokenAddr = daiAddr
+			}
+
+			feeTokenAddr = feeTokenAddr || tx.feeTokenAddr || mainToken.address
+			tx.feeTokenAddr = feeTokenAddr
+
+			newTxns.txnsByFeeToken[feeTokenAddr].push(tx)
+
+			return newTxns
+		},
+		{
+			saiWithdrawAmount: bigNumberify('0'),
+			txnsByFeeToken: {},
 		}
+	)
+
+	if (!saiWithdrawAmount.idZero()) {
+		txnsByFeeToken[daiAddr].concat(
+			swapSaiToDaiTxns({
+				identityAddr,
+				daiAddr,
+				saiAddr,
+				withdrawAmount: saiWithdrawAmount.toString(),
+			})
+		)
+	}
+
+	let currentNonce = initialNonce
+
+	const withNonce = Object.keys(txnsByFeeToken).forEach(key => {
+		txnsByFeeToken[key] = txnsByFeeToken[key].map(tx => {
+			const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
+			const feeAmount = currentNonce === 0 ? feeToken.minDeploy : feeToken.min
+
+			const txWithNonce = {
+				...tx,
+				feeTokenAddr: feeToken.address,
+				feeAmount,
+				nonce: currentNonce,
+			}
+
+			currentNonce += 1
+
+			return txWithNonce
+		})
 	})
 
 	return withNonce
+}
+
+function swapSaiToDaiTxns({ identityAddr, daiAddr, saiAddr, withdrawAmount }) {
+	const approveTx = {
+		identityContract: identityAddr,
+		feeTokenAddr: daiAddr,
+		to: saiAddr,
+		data: ERC20.functions.approve.encode([
+			SCD_MCD_MIGRATION_ADDR,
+			withdrawAmount,
+		]),
+	}
+
+	const swapTx = {
+		identityContract: identityAddr,
+		feeTokenAddr: daiAddr,
+		to: SCD_MCD_MIGRATION_ADDR,
+		data: ScdMcdMigration.functions.swapSaiToDai.encode([withdrawAmount]),
+	}
+
+	return [approveTx, swapTx]
 }
 
 // TODO: use byToken where needed
