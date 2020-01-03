@@ -342,26 +342,6 @@ export default function ItemHoc(Decorated) {
 								/>
 							</div>
 							<div>
-								{!!this.state.dirtyProps.length && (
-									<div className={classes.changesLine}>
-										<InfoOutlineIcon className={classes.buttonLeft} />
-										<span className={classes.buttonLeft}>
-											{t('UNSAVED_CHANGES')}:
-										</span>
-										{this.state.dirtyProps.map(p => {
-											return (
-												<Chip
-													className={classes.changeChip}
-													key={p}
-													label={t(p, { isProp: true })}
-													onDelete={() => this.returnPropToInitialState(p)}
-												/>
-											)
-										})}
-									</div>
-								)}
-							</div>
-							<div>
 								<Grid container spacing={2}>
 									<Grid item xs={12} sm={12} md={12} lg={7}>
 										<div>
@@ -462,6 +442,26 @@ export default function ItemHoc(Decorated) {
 							</div>
 						</div>
 					)}
+					<div>
+						{!!this.state.dirtyProps.length && (
+							<div className={classes.changesLine}>
+								<InfoOutlineIcon className={classes.buttonLeft} />
+								<span className={classes.buttonLeft}>
+									{t('UNSAVED_CHANGES')}:
+								</span>
+								{this.state.dirtyProps.map(p => {
+									return (
+										<Chip
+											className={classes.changeChip}
+											key={p}
+											label={t(p, { isProp: true })}
+											onDelete={() => this.returnPropToInitialState(p)}
+										/>
+									)
+								})}
+							</div>
+						)}
+					</div>
 					<div>
 						<SaveBtn
 							spinnerId={'update' + item.id}
