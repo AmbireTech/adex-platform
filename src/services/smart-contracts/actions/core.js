@@ -291,16 +291,13 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 		const { mTree, channel, lastApprovedSigs, balance } = c
 		const ethChannelTuple = toEthereumChannel(channel).toSolidityTuple()
 
-		const data =
-			channel.status.name === 'Expired'
-				? Core.functions.channelWithdrawExpired.encode([ethChannelTuple])
-				: getChannelWithdrawData({
-						identityAddr,
-						balance,
-						mTree,
-						lastApprovedSigs,
-						ethChannelTuple,
-				  })
+		const data = getChannelWithdrawData({
+			identityAddr,
+			balance,
+			mTree,
+			lastApprovedSigs,
+			ethChannelTuple,
+		})
 
 		return {
 			identityContract: identityAddr,
