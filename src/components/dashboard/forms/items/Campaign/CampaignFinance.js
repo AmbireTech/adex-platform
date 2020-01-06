@@ -15,9 +15,9 @@ import Checkbox from '@material-ui/core/Checkbox'
 import TextField from '@material-ui/core/TextField'
 import DateTimePicker from 'components/common/DateTimePicker'
 import { utils } from 'ethers'
+import { openChannelFeesWithoutSweeping } from 'services/smart-contracts/actions/core'
 import { validations } from 'adex-models'
 import MomentUtils from '@date-io/moment'
-import { totalFeesFormatted } from 'services/smart-contracts/actions/core'
 const moment = new MomentUtils()
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
@@ -126,6 +126,14 @@ const validateAmounts = ({
 }
 
 class CampaignFinance extends Component {
+	constructor(props) {
+		super(props)
+
+		this.state = {
+			openChannelFees: parseFloat(openChannelFeesWithoutSweeping()),
+		}
+	}
+
 	componentDidMount() {
 		const { newItem } = this.props
 		this.validateAndUpdateValidator(false, 0, newItem.validators[0])
@@ -222,7 +230,7 @@ class CampaignFinance extends Component {
 			const minPerImpression =
 				prop === 'minPerImpression' ? value : newItem.minPerImpression
 			const maxDeposit =
-				parseFloat(availableIdentityBalanceDai) - parseFloat(totalFeesFormatted)
+				parseFloat(availableIdentityBalanceDai) - this.state.openChannelFees
 			const result = validateAmounts({
 				maxDeposit,
 				depositAmount,
@@ -276,6 +284,8 @@ class CampaignFinance extends Component {
 			withdrawPeriodStart,
 			minTargetingScore,
 		} = newItem
+
+		const { openChannelFees } = this.state
 
 		const { availableIdentityBalanceDai = 0 } = account.stats.formatted || {}
 
@@ -349,12 +359,12 @@ class CampaignFinance extends Component {
 							required
 							label={t('DEPOSIT_AMOUNT_LABEL', {
 								args: [
-									(
-										parseFloat(availableIdentityBalanceDai) -
-										parseFloat(totalFeesFormatted)
+									parseFloat(
+										availableIdentityBalanceDai - openChannelFees
 									).toFixed(2),
+
 									'SAI',
-									totalFeesFormatted,
+									openChannelFees,
 									'SAI',
 								],
 							})}
@@ -370,7 +380,7 @@ class CampaignFinance extends Component {
 								errDepAmnt && !!errDepAmnt.dirty
 									? errDepAmnt.errMsg
 									: t('DEPOSIT_AMOUNT_HELPER_TXT', {
-											args: [totalFeesFormatted, 'SAI'],
+											args: [openChannelFees, 'SAI'],
 									  })
 							}
 						/>
