@@ -37,17 +37,6 @@ const timeframe = 15 * 1000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 0.5
 const VALID_UNTIL_MIN_PERIOD = 7 * 24 * 60 * 60 * 1000 // 7 days in ms
 
-// TODO: fix it in the component used
-export const totalFeesFormatted = () => {
-	const { min } = selectMainFeeToken()
-	return formatUnits(
-		bigNumberify(min)
-			.mil(bigNumberify(2))
-			.toString(),
-		18
-	)
-}
-
 function toEthereumChannel(channel) {
 	const specHash = crypto
 		.createHash('sha256')
@@ -318,6 +307,16 @@ export async function getSweepingTxnsIfNeeded({ amountNeeded, account }) {
 	} else {
 		return []
 	}
+}
+
+export function openChannelFeesWithoutSweeping() {
+	const { min, decimals } = selectMainFeeToken()
+	return formatUnits(
+		bigNumberify(min)
+			.mul(bigNumberify(2))
+			.toString(),
+		decimals
+	)
 }
 
 export async function openChannel({ campaign, account, getFeesOnly }) {
