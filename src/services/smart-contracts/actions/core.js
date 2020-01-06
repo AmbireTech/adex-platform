@@ -6,13 +6,12 @@ import {
 	ChannelState,
 } from 'adex-protocol-eth/js'
 import { getEthers } from 'services/smart-contracts/ethers'
-import { getIdentityTnxsWithNonces } from 'services/smart-contracts/actions/identity'
 import {
-	getSigner,
-	getMultipleTxSignatures,
-} from 'services/smart-contracts/actions/ethers'
+	getIdentityTxnsWithNoncesAndFees,
+	getIdentityTxnsTotalFees,
+	processExecuteByFeeTokens,
+} from 'services/smart-contracts/actions/identity'
 import { contracts } from '../contractsCfg'
-import { executeTx } from 'services/adex-relayer/actions'
 import { closeCampaign } from 'services/adex-validator/actions'
 import { Campaign, AdUnit } from 'adex-models'
 import { getAllCampaigns } from 'services/adex-market/actions'
@@ -23,30 +22,20 @@ import {
 	Interface,
 	formatUnits,
 } from 'ethers/utils'
-import { formatTokenAmount } from 'helpers/formatters'
 import {
 	selectFeeTokenWhitelist,
 	selectRoutineWithdrawTokens,
 	selectRelayerConfig,
+	selectMainFeeToken,
 } from 'selectors'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
 const ERC20 = new Interface(ERC20TokenABI)
-const feeAmountApprove = '150000000000000000'
-const feeAmountTransfer = '150000000000000000'
-const feeAmountOpen = '160000000000000000'
 const timeframe = 15 * 1000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 0.5
 const VALID_UNTIL_MIN_PERIOD = 7 * 24 * 60 * 60 * 1000 // 7 days in ms
-
-export const totalFeesFormatted = formatUnits(
-	bigNumberify(feeAmountApprove)
-		.add(bigNumberify(feeAmountOpen))
-		.toString(),
-	18
-)
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
@@ -274,13 +263,9 @@ const getChannelWithdrawData = ({
 	])
 }
 
-export async function getSweepChannelsTxns({
-	feeTokenAddr,
-	account,
-	amountToSweep,
-}) {
+export async function getSweepChannelsTxns({ account, amountToSweep }) {
 	const { wallet, identity } = account
-	const { Dai, AdExCore } = await getEthers(wallet.authType)
+	const { AdExCore } = await getEthers(wallet.authType)
 	const identityAddr = identity.address
 	const channelsToSweep = await getChannelsToSweepFrom({
 		amountToSweep,
@@ -292,23 +277,20 @@ export async function getSweepChannelsTxns({
 		const { mTree, channel, lastApprovedSigs, balance } = c
 		const ethChannelTuple = toEthereumChannel(channel).toSolidityTuple()
 
-		const data =
-			channel.status.name === 'Expired'
-				? Core.functions.channelWithdrawExpired.encode([ethChannelTuple])
-				: getChannelWithdrawData({
-						identityAddr,
-						balance,
-						mTree,
-						lastApprovedSigs,
-						ethChannelTuple,
-				  })
+		const data = getChannelWithdrawData({
+			identityAddr,
+			balance,
+			mTree,
+			lastApprovedSigs,
+			ethChannelTuple,
+		})
 
 		return {
 			identityContract: identityAddr,
 			to: AdExCore.address,
-			feeTokenAddr: feeTokenAddr || Dai.address,
-			feeAmount: feeAmountTransfer, // Same fee as withdrawFromIdentity
+			feeTokenAddr: c.depositAsset,
 			data,
+			withdrawAmount: balance,
 		}
 	})
 
@@ -328,6 +310,16 @@ export async function getSweepingTxnsIfNeeded({ amountNeeded, account }) {
 	}
 }
 
+export function openChannelFeesWithoutSweeping() {
+	const { min, decimals } = selectMainFeeToken()
+	return formatUnits(
+		bigNumberify(min)
+			.mul(bigNumberify(2))
+			.toString(),
+		decimals
+	)
+}
+
 export async function openChannel({ campaign, account, getFeesOnly }) {
 	const { wallet, identity } = account
 	const { provider, AdExCore, Dai, Identity } = await getEthers(wallet.authType)
@@ -336,25 +328,10 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 		amountNeeded: depositAmount,
 		account,
 	})
-	const sweepFees = sweepTxns.reduce(
-		(total, tx) => total.add(bigNumberify(tx.feeAmount)),
-		bigNumberify(0)
-	)
-
-	const fees = bigNumberify(feeAmountApprove)
-		.add(bigNumberify(feeAmountOpen))
-		.add(sweepFees)
-
-	if (getFeesOnly) {
-		return {
-			fees: formatTokenAmount(fees.toString(), 18),
-		}
-	}
 
 	const readyCampaign = getReadyCampaign(campaign, identity, Dai)
 	const openReady = readyCampaign.openReady
 	const ethChannel = toEthereumChannel(openReady)
-	const signer = await getSigner({ wallet, provider })
 	const channel = {
 		...openReady,
 		id: ethChannel.hashHex(AdExCore.address),
@@ -366,7 +343,6 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 	const tx1 = {
 		identityContract: identityAddr,
 		feeTokenAddr: feeTokenAddr,
-		feeAmount: feeAmountApprove,
 		to: Dai.address,
 		data: ERC20.functions.approve.encode([
 			AdExCore.address,
@@ -377,28 +353,31 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 	const tx2 = {
 		identityContract: identityAddr,
 		feeTokenAddr: feeTokenAddr,
-		feeAmount: feeAmountOpen,
 		to: AdExCore.address,
 		data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
 	}
 	const txns = [...sweepTxns, tx1, tx2]
-	const txnsRaw = await getIdentityTnxsWithNonces({
+	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
 		txns,
 		identityAddr,
 		provider,
 		Identity,
 	})
 
-	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
-
-	const data = {
-		txnsRaw,
-		signatures,
-		channel,
-		identityAddr,
+	if (getFeesOnly) {
+		return {
+			fees: (await getIdentityTxnsTotalFees(txnsByFeeToken)).total,
+		}
 	}
 
-	const result = await executeTx(data)
+	const result = await processExecuteByFeeTokens({
+		identityAddr,
+		txnsByFeeToken,
+		wallet,
+		provider,
+		extraData: { channel },
+	})
+
 	readyCampaign.id = channel.id
 	return {
 		result,

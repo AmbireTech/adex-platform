@@ -5,14 +5,12 @@ import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import { ContentBody } from 'components/common/dialog/content'
 import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
-import { AdUnit } from 'adex-models'
 import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems'
-import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 
 class CampaignUnits extends Component {
 	handleSelect = selected => {
 		const { adUnits, handleChange } = this.props
-		const units = Array.from(Object.values(selected)).map(value => {
+		const units = Object.values(selected).map(value => {
 			return adUnits[value]
 		})
 

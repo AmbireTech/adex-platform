@@ -4,7 +4,6 @@ import { getSession, checkSession } from 'services/adex-market/actions'
 import {
 	getRelayerConfigData,
 	regAccount,
-	getGrantType,
 	getQuickWallet,
 	backupWallet,
 } from 'services/adex-relayer/actions'
@@ -133,34 +132,6 @@ export function updateAccountStats() {
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_STATS', { args: [getErrorMsg(err)] }),
-				timeout: 20000,
-			})(dispatch)
-		}
-	}
-}
-
-export function updateAccountSettings() {
-	return async function(dispatch, getState) {
-		const { identity, settings } = getState().persist.account
-		const { grantType, updated } = settings
-		const now = Date.now()
-		const doUpdate =
-			!grantType || now - (updated || 0) > UPDATE_SETTINGS_INTERVAL
-
-		try {
-			if (doUpdate) {
-				const newSettings = { ...settings }
-				newSettings.grantType = (await getGrantType({
-					identity: identity.address,
-				})).type
-				newSettings.updated = now
-				updateAccount({ newValues: { settings: newSettings } })(dispatch)
-			}
-		} catch (err) {
-			console.error('ERR_SETTINGS', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_SETTINGS', { args: [getErrorMsg(err)] }),
 				timeout: 20000,
 			})(dispatch)
 		}

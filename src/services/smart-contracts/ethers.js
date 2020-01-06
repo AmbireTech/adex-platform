@@ -26,23 +26,28 @@ const getIdentityFactory = provider => {
 	return new ethers.Contract(identityFactoryAddr, IdentityFactory.abi, provider)
 }
 
-const localWeb3 = () => {
-	const provider = new ethers.providers.JsonRpcProvider(
-		process.env.WEB3_NODE_ADDR
-	)
+const getEthersResult = provider => {
 	const adexCore = getAdexCore(provider)
-	const dai = getMainToken(provider)
+	const mainToken = getMainToken(provider)
 	const identityFactory = getIdentityFactory(provider)
 
 	const results = {
 		provider: provider,
 		AdExCore: adexCore,
 		Identity: Identity,
-		Dai: dai,
+		Dai: mainToken,
+		MainToken: mainToken,
 		IdentityFactory: identityFactory,
 	}
 
 	return results
+}
+
+const localWeb3 = () => {
+	const provider = new ethers.providers.JsonRpcProvider(
+		process.env.WEB3_NODE_ADDR
+	)
+	return getEthersResult(provider)
 }
 
 const loadInjectedWeb3 = new Promise((resolve, reject) => {
@@ -59,27 +64,14 @@ const loadInjectedWeb3 = new Promise((resolve, reject) => {
 const injectedWeb3 = async () => {
 	const { web3, ethereum } = await loadInjectedWeb3.then()
 	let provider = null
-	let adexCore = null
-	let dai = null
-	let identityFactory = null
 
 	if (ethereum) {
 		try {
 			await ethereum.enable()
 
 			provider = new ethers.providers.Web3Provider(ethereum)
-			adexCore = getAdexCore(provider)
-			dai = getMainToken(provider)
-			identityFactory = getIdentityFactory(provider)
-			const results = {
-				provider: provider,
-				AdExCore: adexCore,
-				Identity: Identity,
-				Dai: dai,
-				IdentityFactory: identityFactory,
-			}
 
-			return results
+			return getEthersResult(provider)
 		} catch (err) {
 			console.error('Err getting injected ethereum.', err)
 			throw new Error(err.message)
