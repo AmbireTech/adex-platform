@@ -7,12 +7,6 @@ import DashboardStats from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
 import Items from 'components/dashboard/containers/Items'
-// import Transactions from 'components/dashboard/containers/Transactions'
-import {
-	AdUnit as AdUnitModel,
-	AdSlot as AdSlotModel,
-	Campaign as CampaignModel,
-} from 'adex-models'
 import Account from 'components/dashboard/account/AccountInfo'
 import {
 	NewUnitDialog,
