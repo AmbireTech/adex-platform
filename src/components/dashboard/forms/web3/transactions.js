@@ -84,7 +84,6 @@ export const WithdrawTokenFromIdentity = props => (
 				identityWithdraw({
 					amountToWithdraw: transaction.withdrawAmount,
 					withdrawTo: transaction.withdrawTo,
-					tokenAddr: transaction.tokenAddress,
 					account,
 				})
 			)
@@ -92,6 +91,7 @@ export const WithdrawTokenFromIdentity = props => (
 		getFeesFn={({ transaction, account } = {}) => {
 			return withdrawFromIdentity({
 				amountToWithdraw: transaction.withdrawAmount,
+				withdrawTo: transaction.withdrawTo,
 				getFeesOnly: true,
 				account,
 			})
@@ -158,14 +158,19 @@ export const WithdrawAnyTokenFromIdentity = props => (
 			return execute(
 				identityWithdraw({
 					amountToWithdraw: transaction.withdrawAmount,
+					tokenAddress: transaction.tokenAddress,
 					withdrawTo: transaction.withdrawTo,
+					tokenDecimals: transaction.tokenDecimals,
 				})
 			)
 		}}
 		getFeesFn={({ transaction, account } = {}) => {
 			return withdrawFromIdentity({
 				amountToWithdraw: transaction.withdrawAmount,
+				tokenAddress: transaction.tokenAddress,
+				withdrawTo: transaction.withdrawTo,
 				getFeesOnly: true,
+				tokenDecimals: transaction.tokenDecimals,
 				account,
 			})
 		}}

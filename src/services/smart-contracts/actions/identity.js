@@ -88,20 +88,22 @@ export async function withdrawFromIdentity({
 	amountToWithdraw,
 	withdrawTo,
 	getFeesOnly,
-	tokenAddress,
+	// tokenAddress,
+	// tokenDecimals,
 }) {
-	const toWithdraw = parseUnits(amountToWithdraw, 18)
+	const { mainToken } = selectRelayerConfig()
+	const { wallet, identity } = account
+	const { provider, Identity } = await getEthers(wallet.authType)
+
+	const toWithdraw = parseUnits(amountToWithdraw, mainToken.decimals)
 	const sweepTxns = await getSweepingTxnsIfNeeded({
 		amountNeeded: toWithdraw,
 		account,
 	})
 
-	const { wallet, identity } = account
-	const { provider, MainToken, Identity } = await getEthers(wallet.authType)
 	const identityAddr = identity.address
-	// TEMP HOTFIX
-	// TODO: Make it work with multiple tokens
-	const tokenAddr = tokenAddress || MainToken.address
+
+	const tokenAddr = mainToken.address
 
 	const tx1 = {
 		identityContract: identityAddr,
