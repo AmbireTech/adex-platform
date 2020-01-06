@@ -6,7 +6,7 @@ import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import {
 	WithdrawTokenFromIdentity,
-	WithdrawAnyTokenFromIdentity,
+	// WithdrawAnyTokenFromIdentity,
 	SetIdentityPrivilege,
 } from 'components/dashboard/forms/web3/transactions'
 import { makeStyles } from '@material-ui/core/styles'
@@ -308,7 +308,7 @@ function AccountInfo({ t }) {
 								/>
 							</ListItem>
 							<ListDivider />
-							<ListItem>
+							{/* <ListItem>
 								<Box
 									display='flex'
 									flexWrap={'wrap'}
@@ -327,7 +327,7 @@ function AccountInfo({ t }) {
 										</Box>
 									</Box>
 								</Box>
-							</ListItem>
+							</ListItem> */}
 						</List>
 					</ExpansionPanelDetails>
 				</ExpansionPanel>
