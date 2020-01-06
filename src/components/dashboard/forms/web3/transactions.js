@@ -79,12 +79,13 @@ export const WithdrawTokenFromIdentity = props => (
 			title: 'PREVIEW_AND_MAKE_TR',
 			page: TransactionPreview,
 		}}
-		saveFn={({ transaction } = {}) => {
+		saveFn={({ transaction, account } = {}) => {
 			return execute(
 				identityWithdraw({
 					amountToWithdraw: transaction.withdrawAmount,
 					withdrawTo: transaction.withdrawTo,
 					tokenAddr: transaction.tokenAddress,
+					account,
 				})
 			)
 		}}
@@ -124,11 +125,12 @@ export const SetIdentityPrivilege = props => (
 				})
 			)
 		}}
-		getFeesFn={({ transaction } = {}) => {
+		getFeesFn={({ transaction, account } = {}) => {
 			return setIdentityPrivilege({
 				privLevel: transaction.privLevel,
 				setAddr: transaction.setAddr,
 				getFeesOnly: true,
+				account,
 			})
 		}}
 	/>

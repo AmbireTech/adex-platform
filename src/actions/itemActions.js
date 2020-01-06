@@ -57,32 +57,6 @@ const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
 		})
 }
 
-// const uploadImages = ({ item, authSig }) => {
-// 	let imgIpfsProm = Promise.resolve()
-// 	let fallbackImgIpfsProm = Promise.resolve()
-
-// 	if (item._meta.img.tempUrl) {
-// 		imgIpfsProm = getImgsIpfsFromBlob({ tempUrl: item._meta.img.tempUrl, authSig: authSig })
-// 	}
-
-// 	if (item._fallbackAdImg && item._fallbackAdImg.tempUrl) {
-// 		fallbackImgIpfsProm = getImgsIpfsFromBlob({ tempUrl: item._fallbackAdImg.tempUrl, authSig: authSig })
-// 	}
-
-// 	return Promise.all([imgIpfsProm, fallbackImgIpfsProm])
-// 		.then(([imgIpf, fallbackImgIpfs]) => {
-// 			if (imgIpf) {
-// 				item._meta.img = { ipfs: imgIpf.ipfs }
-// 			}
-
-// 			if (fallbackImgIpfs) {
-// 				item._fallbackAdImg = { ipfs: fallbackImgIpfs.ipfs }
-// 			}
-
-// 			return item
-// 		})
-// }
-
 export function updateNewItem(item, newValues, itemType, objModel) {
 	item = Base.updateObject({ item, newValues, objModel })
 	return function(dispatch) {
@@ -295,41 +269,6 @@ export function openCampaign({ campaign }) {
 		}
 		updateSpinner('opening-campaign', false)(dispatch)
 		return true
-	}
-}
-
-export function removeItemFromItem({ item, toRemove, authSig } = {}) {
-	return function(dispatch) {
-		// removeItmFromItm({ item: item._id, collection: toRemove._id || toRemove, authSig: authSig })
-		// 	.then((res) => {
-		// 		addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_REMOVE_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, ItemTypesNames[toRemove._type], toRemove._meta.fullName,] })
-		// 		return dispatch({
-		// 			type: types.REMOVE_ITEM_FROM_ITEM,
-		// 			item: item,
-		// 			toRemove: toRemove,
-		// 		})
-		// 	})
-		// 	.catch((err) => {
-		// 		return addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_REMOVE_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], ItemTypesNames[toRemove._type], err] })
-		// 	})
-	}
-}
-
-export function addItemToItem({ item, toAdd, authSig } = {}) {
-	return function(dispatch) {
-		// addItmToItm({ item: item._id, collection: toAdd._id || toAdd, authSig: authSig })
-		// 	.then((res) => {
-		// 		//TODO: use response and UPDATE_ITEM
-		// 		addToast({ dispatch: dispatch, type: 'accept', toastStr: 'SUCCESS_ADD_ITEM_TO_ITEM', args: [ItemTypesNames[item._type], item._meta.fullName, ItemTypesNames[toAdd._type], toAdd._meta.fullName,] })
-		// 		return dispatch({
-		// 			type: types.ADD_ITEM_TO_ITEM,
-		// 			item: item,
-		// 			toAdd: toAdd,
-		// 		})
-		// 	})
-		// 	.catch((err) => {
-		// 		return addToast({ dispatch: dispatch, type: 'cancel', toastStr: 'ERR_ADD_ITEM_FROM_ITEM', args: [ItemTypesNames[item._type], ItemTypesNames[toAdd._type], err] })
-		// 	})
 	}
 }
 

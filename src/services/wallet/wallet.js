@@ -23,29 +23,8 @@ function getCipherKey({ email, password }) {
 	return key
 }
 
-function wEncrypt({ email, password, data, isLegacy }) {
-	const jsonData = JSON.stringify(data)
-	if (isLegacy) {
-		return encryptLegacy(jsonData, email + password)
-	} else {
-		return encrypt(jsonData, getCipherKey({ email, password }))
-	}
-}
-
-function wDecrypt({ email, password, data, isLegacy }) {
-	let decryptedStr = ''
-	if (isLegacy) {
-		decryptedStr = decryptLegacy(data, email + password)
-	} else {
-		decryptedStr = decrypt(data, getCipherKey({ email, password }))
-	}
-
-	try {
-		const decr = JSON.parse(decryptedStr)
-		return decr
-	} catch (err) {
-		throw new Error('INVALID_PASSWORD_OR_EMAIL', err)
-	}
+function isLegacyCrypto(authType) {
+	return !authType || authType === 'legacy' || authType === 'grant'
 }
 
 // Returns 12 random words
@@ -78,13 +57,32 @@ function encrKey({ email, password, authType }) {
 	}
 }
 
-export function encrData({ email, password, data }) {
-	const encr = wEncrypt({ data: JSON.stringify(data), email, password })
-	return encr
+export function encrData({ email = '', password, data, authType }) {
+	const isLegacy = isLegacyCrypto(authType)
+	const jsonData = JSON.stringify(data)
+	if (isLegacy) {
+		return encryptLegacy(jsonData, email + password)
+	} else {
+		return encrypt(
+			jsonData,
+			getCipherKey({ email: email.toLocaleLowerCase(), password })
+		)
+	}
 }
 
-export function decrData({ email, password, data }) {
-	const decryptedStr = wDecrypt({ data, email, password })
+export function decrData({ email = '', password, data, authType }) {
+	let decryptedStr = ''
+	const isLegacy = isLegacyCrypto(authType)
+
+	if (isLegacy) {
+		decryptedStr = decryptLegacy(data, email + password)
+	} else {
+		decryptedStr = decrypt(
+			data,
+			getCipherKey({ email: email.toLocaleLowerCase(), password })
+		)
+	}
+
 	try {
 		const decr = JSON.parse(decryptedStr)
 		return decr
@@ -101,7 +99,7 @@ export function createLocalWallet({
 }) {
 	const walletData = generateWallet(mnemonic)
 	const key = encrKey({ email, password, authType })
-	const data = encrData({ data: walletData, email, password })
+	const data = encrData({ data: walletData, email, password, authType })
 	saveToLocalStorage({ data }, key)
 
 	walletData.authType = authType
@@ -144,7 +142,7 @@ export function addDataToWallet({
 		throw new Error('WALLET_NOT_FOUND')
 	}
 
-	const data = encrData({ data: dataValue, email, password })
+	const data = encrData({ data: dataValue, email, password, authType })
 	wallet[dataKey] = data
 	saveToLocalStorage(wallet, key)
 }
@@ -181,6 +179,7 @@ export function getLocalWallet({ email, password, authType, getEncrypted }) {
 				data: wallet[key],
 				email,
 				password,
+				authType,
 			})
 
 			return props
