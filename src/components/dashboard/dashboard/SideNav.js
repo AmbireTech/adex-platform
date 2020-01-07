@@ -154,7 +154,10 @@ function SideNav(props) {
 					<RRListItem
 						button
 						to={{ pathname: '/dashboard/' + side }}
-						className={classnames({ [classes.active]: !location })}
+						className={classnames({
+							[classes.active]: !location,
+							[`joyride-${items}`]: true,
+						})}
 					>
 						<ListItemIcon>
 							<DashboardIcon />
@@ -218,6 +221,7 @@ function SideNav(props) {
 						to={{ pathname: '/dashboard/' + side + '/account' }}
 						className={classnames({
 							[classes.active]: location === 'account',
+							'joyride-account': true,
 						})}
 					>
 						<ListItemIcon>

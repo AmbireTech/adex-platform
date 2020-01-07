@@ -12,16 +12,26 @@ import Grid from '@material-ui/core/Grid'
 import { BasicStats } from './BasicStats'
 import { push } from 'connected-react-router'
 import { t, selectSide, selectAccountStatsFormatted } from 'selectors'
+import Joyride from 'react-joyride'
 
+const steps = [
+	{
+		target: '.joyride-account',
+		content: 'This is your account!',
+	},
+	{
+		target: '.joyride-units',
+		content: 'This are the ad units!',
+	},
+]
 const useStyles = makeStyles(styles)
 
 export function DashboardStats(props) {
 	const side = useSelector(selectSide)
 	const classes = useStyles()
-	const {
-		availableIdentityBalanceDai,
-		outstandingBalanceDai,
-	} = useSelector(selectAccountStatsFormatted)
+	const { availableIdentityBalanceDai, outstandingBalanceDai } = useSelector(
+		selectAccountStatsFormatted
+	)
 
 	useEffect(() => {
 		execute(updateNav('navTitle', t('DASHBOARD')))
@@ -56,6 +66,7 @@ export function DashboardStats(props) {
 		<div>
 			<Grid container>
 				<Grid item md={12} lg={12} xs={12}>
+					<Joyride steps={steps} continuous />
 					<Card className={classnames(classes.dashboardCardBody)}>
 						<CardContent>
 							<BasicStats side={side} />
