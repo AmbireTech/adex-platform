@@ -253,7 +253,7 @@ const getChannelWithdrawData = ({
 	const vsig1 = splitSig(lastApprovedSigs[0])
 	const vsig2 = splitSig(lastApprovedSigs[1])
 
-	Core.functions.channelWithdraw.encode([
+	return Core.functions.channelWithdraw.encode([
 		ethChannelTuple,
 		mTree.getRoot(),
 		[vsig1, vsig2],
@@ -287,7 +287,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 		return {
 			identityContract: identityAddr,
 			to: AdExCore.address,
-			feeTokenAddr: c.depositAsset,
+			feeTokenAddr: channel.depositAsset,
 			data,
 			withdrawAmount: balance,
 		}
