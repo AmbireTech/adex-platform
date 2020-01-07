@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import clsx from 'clsx'
 import classnames from 'classnames'
-import ChipDateRangePicker from 'components/common/DatePicker/ChipDateRangePicker'
 import ChipMultipleSelect from 'components/common/dropdown/ChipMultipleSelect'
 import Chip from '@material-ui/core/Chip'
 import FormControl from '@material-ui/core/FormControl'
@@ -45,20 +44,14 @@ export default function EnhancedTableToolbar(props) {
 		numSelected,
 		search,
 		setSearch,
-		dateRange,
-		setDateRange,
 		filters,
 		setFilters,
 		itemType,
-		noActions,
-		listMode,
 	} = props
 	const filterSide = itemType === 'Campaign' ? itemType : 'Other'
 	const filtersTagsCount = Object.values(filters).filter(e => e).length
 	const filtersPresent =
-		filtersTagsCount < filterTags[filterSide].length ||
-		(dateRange.startDate && dateRange.endDate) ||
-		search
+		filtersTagsCount < filterTags[filterSide].length || search
 	const initialFilterTags = {}
 	filterTags[filterSide].map(n => (initialFilterTags[n.name] = true))
 
@@ -111,19 +104,12 @@ export default function EnhancedTableToolbar(props) {
 							label={t('FILTER')}
 						/>
 					</Tooltip>
-					<Tooltip title={t('SELECT_DATE_RANGE')}>
-						<ChipDateRangePicker
-							dateRange={dateRange}
-							setDateRange={setDateRange}
-						/>
-					</Tooltip>
 					{filtersPresent && (
 						<Chip
 							label={t('CLEAR_ALL_FILTERS')}
 							onClick={() => {
 								setSearch('')
 								setFilters(initialFilterTags)
-								setDateRange({})
 							}}
 							icon={<ClearIcon />}
 							className={classes.chip}
