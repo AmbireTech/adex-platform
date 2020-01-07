@@ -248,14 +248,12 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	)
 
 	if (!saiWithdrawAmount.isZero()) {
-		txnsByFeeToken[daiAddr] = (txnsByFeeToken[daiAddr] || []).concat(
-			swapSaiToDaiTxns({
-				identityAddr,
-				daiAddr,
-				saiAddr,
-				withdrawAmount: saiWithdrawAmount.toString(),
-			})
-		)
+		txnsByFeeToken[daiAddr] = swapSaiToDaiTxns({
+			identityAddr,
+			daiAddr,
+			saiAddr,
+			withdrawAmount: saiWithdrawAmount.toString(),
+		}).concat(txnsByFeeToken[daiAddr] || [])
 	}
 
 	let currentNonce = initialNonce
