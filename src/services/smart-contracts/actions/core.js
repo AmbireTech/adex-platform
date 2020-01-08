@@ -249,7 +249,7 @@ const getChannelWithdrawData = ({
 	const vsig1 = splitSig(lastApprovedSigs[0])
 	const vsig2 = splitSig(lastApprovedSigs[1])
 
-	Core.functions.channelWithdraw.encode([
+	return Core.functions.channelWithdraw.encode([
 		ethChannelTuple,
 		mTree.getRoot(),
 		[vsig1, vsig2],
