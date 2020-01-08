@@ -1,4 +1,4 @@
-import { ethers, utils } from 'ethers'
+import { ethers, utils, Contract } from 'ethers'
 import { contracts } from './contractsCfg'
 import { AUTH_TYPES } from 'constants/misc'
 import { selectRelayerConfig } from 'selectors'
@@ -9,21 +9,31 @@ const { AdExCore, Identity, IdentityFactory } = contracts
 
 const getAdexCore = provider => {
 	const { coreAddr } = selectRelayerConfig()
-	return new ethers.Contract(coreAddr, AdExCore.abi, provider)
+	return new Contract(coreAddr, AdExCore.abi, provider)
 }
 
 const getMainToken = provider => {
 	const { mainToken = {} } = selectRelayerConfig()
-	return new ethers.Contract(
+	return new Contract(
 		mainToken.address,
 		contracts[mainToken.standard].abi,
 		provider
 	)
 }
 
+const getToken = ({ provider, standard, address }) => {
+	return new Contract(address, contracts[standard].abi, provider)
+}
+
+const getIdentity = ({ provider, address }) => {
+	const identityContract = new Contract(address, Identity.abi, provider)
+
+	return identityContract
+}
+
 const getIdentityFactory = provider => {
 	const { identityFactoryAddr } = selectRelayerConfig()
-	return new ethers.Contract(identityFactoryAddr, IdentityFactory.abi, provider)
+	return new Contract(identityFactoryAddr, IdentityFactory.abi, provider)
 }
 
 const getEthersResult = provider => {
@@ -32,12 +42,15 @@ const getEthersResult = provider => {
 	const identityFactory = getIdentityFactory(provider)
 
 	const results = {
-		provider: provider,
+		provider,
 		AdExCore: adexCore,
 		Identity: Identity,
 		Dai: mainToken,
 		MainToken: mainToken,
 		IdentityFactory: identityFactory,
+		getToken: ({ standard, address }) =>
+			getToken({ provider, standard, address }),
+		getIdentity: ({ address }) => getIdentity({ provider, address }),
 	}
 
 	return results
