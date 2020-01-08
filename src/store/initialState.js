@@ -3,23 +3,25 @@ import {
 	VALIDATOR_ANALYTICS_SIDES,
 	VALIDATOR_ANALYTICS_EVENT_TYPES,
 	VALIDATOR_ANALYTICS_METRICS,
-	VALIDATOR_ANALYTICS_TIMEFRAMES,
+	// VALIDATOR_ANALYTICS_TIMEFRAMES,
 } from 'constants/misc'
 
 export const getValidatorAnalyticsInitialState = () => {
 	const initialState = {}
-
+	const tf = 'day' // must be somewhere else
 	VALIDATOR_ANALYTICS_SIDES.forEach(side =>
 		VALIDATOR_ANALYTICS_EVENT_TYPES.forEach(eventType =>
-			VALIDATOR_ANALYTICS_METRICS.forEach(metric =>
-				VALIDATOR_ANALYTICS_TIMEFRAMES.forEach(timeframe => {
+			VALIDATOR_ANALYTICS_METRICS.forEach(
+				metric => {
 					initialState[side] = initialState[side] || {}
 					initialState[side][eventType] = initialState[side][eventType] || {}
 					initialState[side][eventType][metric] =
 						initialState[side][eventType][metric] || {}
-					initialState[side][eventType][metric][timeframe.value] =
-						initialState[side][eventType][metric][timeframe.value] || {}
-				})
+					initialState[side][eventType][metric][tf] =
+						initialState[side][eventType][metric][tf] || {}
+					initialState.tf = tf
+				}
+				// VALIDATOR_ANALYTICS_TIMEFRAMES.forEach(timeframe => {})
 			)
 		)
 	)
