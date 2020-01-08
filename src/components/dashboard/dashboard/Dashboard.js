@@ -7,12 +7,6 @@ import DashboardStats from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
 import Items from 'components/dashboard/containers/Items'
-// import Transactions from 'components/dashboard/containers/Transactions'
-import {
-	AdUnit as AdUnitModel,
-	AdSlot as AdSlotModel,
-	Campaign as CampaignModel,
-} from 'adex-models'
 import Account from 'components/dashboard/account/AccountInfo'
 import {
 	NewUnitDialog,
@@ -22,12 +16,6 @@ import {
 import campaignsLoop from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
 import analyticsLoop from 'services/store-data/analytics'
-import {
-	SORT_PROPERTIES_ITEMS,
-	FILTER_PROPERTIES_ITEMS,
-	FILTER_PROPERTIES_CAMPAIGN,
-	SORT_PROPERTIES_CAMPAIGN,
-} from 'constants/misc'
 import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
 import PageNotFound from 'components/page_not_found/PageNotFound'
@@ -36,7 +24,6 @@ import { styles } from './styles'
 import {
 	updateNav,
 	getAllItems,
-	updateAccountSettings,
 	updateAccountAnalytics,
 	execute,
 } from 'actions'
@@ -92,7 +79,6 @@ function Dashboard(props) {
 	useEffect(() => {
 		execute(updateNav('side', side))
 		execute(getAllItems())
-		execute(updateAccountSettings())
 		execute(updateAccountAnalytics())
 		analyticsLoop.start()
 		campaignsLoop.start()

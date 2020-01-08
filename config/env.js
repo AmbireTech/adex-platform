@@ -94,6 +94,7 @@ function getClientEnvironment(publicUrl) {
 				DAI_TOKEN_ADDR: process.env.DAI_TOKEN_ADDR,
 				ACCESS_CODE_CHECK: process.env.ACCESS_CODE_CHECK,
 				ADVIEW_URL: process.env.ADVIEW_URL,
+				SCD_MCD_MIGRATION_ADDR: process.env.SCD_MCD_MIGRATION_ADDR,
 			}
 		)
 
