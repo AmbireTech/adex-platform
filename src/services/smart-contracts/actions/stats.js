@@ -1,9 +1,10 @@
 import { getEthers } from 'services/smart-contracts/ethers'
 import { constants } from 'adex-models'
-import { Contract } from 'ethers'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
-import { bigNumberify, formatEther, formatUnits } from 'ethers/utils'
+import { bigNumberify, formatUnits, parseUnits } from 'ethers/utils'
 import { formatTokenAmount } from 'helpers/formatters'
+import { selectRelayerConfig, selectMainToken } from 'selectors'
+
 const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
 
 export async function getAddressBalances({ address, authType }) {
@@ -25,6 +26,21 @@ export async function getAddressBalances({ address, authType }) {
 	return formatted
 }
 
+const getWithdrawTokensBalances = async ({ getToken, address }) => {
+	const { routineWithdrawTokens } = selectRelayerConfig()
+	const balancesCalls = routineWithdrawTokens.map(async token => {
+		const tokenContract = getToken(token)
+
+		const balance = await tokenContract.balanceOf(address)
+		const balanceUSD = await valueInUSD({ token, balance })
+		const balanceMainToken = await usdToMainTokenBalance({ balanceUSD })
+
+		return { token, balance, balanceUSD, balanceMainToken }
+	})
+
+	return Promise.all(balancesCalls)
+}
+
 export async function getAccountStats({
 	account,
 	outstandingBalanceDai = {
@@ -33,14 +49,11 @@ export async function getAccountStats({
 	},
 }) {
 	const { wallet, identity } = account
-	const { provider, Dai, Identity } = await getEthers(wallet.authType)
+	const { address } = identity
+	const { getIdentity, getToken } = await getEthers(wallet.authType)
 
 	const { status = {} } = identity
-	const identityContract = new Contract(
-		identity.address,
-		Identity.abi,
-		provider
-	)
+	const identityContract = getIdentity({ address })
 	let privilegesAction
 	try {
 		await identityContract.deployed()
@@ -50,16 +63,12 @@ export async function getAccountStats({
 	}
 
 	const calls = [
-		provider.getBalance(wallet.address),
-		Dai.balanceOf(wallet.address),
-		Dai.balanceOf(identity.address),
+		getWithdrawTokensBalances({ getToken, address }),
 		privilegesAction,
 	]
 
 	const [
-		walletBalanceEth,
-		walletBalanceDai,
-		identityBalanceDai = bigNumberify('0'),
+		identityWithdrawTokensBalancesBalances = [],
 		walletPrivileges,
 	] = await Promise.all(
 		calls.map(c =>
@@ -71,18 +80,36 @@ export async function getAccountStats({
 		)
 	)
 
+	const {
+		identityBalanceUsd,
+		identityBalanceMainToken,
+	} = identityWithdrawTokensBalancesBalances.reduce(
+		(balances, t) => {
+			balances.identityBalanceUsd += t.balanceUSD
+			balances.identityBalanceMainToken = balances.identityBalanceMainToken.add(
+				t.balanceMainToken
+			)
+
+			return balances
+		},
+		{
+			identityBalanceUsd: 0,
+			identityBalanceMainToken: bigNumberify(0),
+		}
+	)
+
 	// BigNumber values for balances
 	const raw = {
-		walletBalanceEth,
-		walletBalanceDai,
-		identityBalanceDai,
+		identityWithdrawTokensBalancesBalances,
 		walletPrivileges,
+		identityBalanceUsd,
+		identityBalanceMainToken,
 		outstandingBalanceDai: outstandingBalanceDai.available,
 		totalOutstandingBalanceDai: outstandingBalanceDai.total,
-		availableIdentityBalanceDai: identityBalanceDai.add(
+		availableIdentityBalanceDai: identityBalanceMainToken.add(
 			outstandingBalanceDai.available
 		),
-		totalIdentityBalanceDai: identityBalanceDai.add(
+		totalIdentityBalanceDai: identityBalanceMainToken.add(
 			outstandingBalanceDai.total
 		),
 	}
@@ -91,10 +118,13 @@ export async function getAccountStats({
 		walletAddress: wallet.address,
 		walletAuthType: wallet.authType,
 		walletPrivileges: privilegesNames[walletPrivileges],
-		walletBalanceEth: formatEther(walletBalanceEth),
-		walletBalanceDai: formatTokenAmount(walletBalanceDai, 18, false, 2),
 		identityAddress: identity.address,
-		identityBalanceDai: formatTokenAmount(identityBalanceDai, 18, false, 2),
+		identityBalanceDai: formatTokenAmount(
+			identityBalanceMainToken,
+			18,
+			false,
+			2
+		),
 		outstandingBalanceDai: formatTokenAmount(
 			raw.outstandingBalanceDai,
 			18,
@@ -191,4 +221,36 @@ export async function getAllValidatorsAuthForIdentity({
 	}, {})
 
 	return validatorsAuth
+}
+
+const usdPriceMapping = {
+	// SAI
+	'0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359': [1.0],
+	// DAI
+	'0x6b175474e89094c44da98b954eedeac495271d0f': [1.0],
+}
+
+async function valueInUSD({ token, balance }) {
+	const { address, decimals } = token
+	const [price, mappingDecimals = decimals] = usdPriceMapping[
+		address.toLowerCase()
+	] || [1.0, 18]
+
+	const balanceInUSD = bigNumberify(balance)
+		.mul(bigNumberify(price))
+		.toString()
+
+	return parseFloat(formatUnits(balanceInUSD, mappingDecimals))
+}
+
+async function usdToMainTokenBalance({ balanceUSD }) {
+	const { address, decimals } = selectMainToken()
+
+	const [price, mappingDecimals = decimals] = usdPriceMapping[
+		address.toLowerCase()
+	] || [1.0, 18]
+
+	const balanceInMainToken = (balanceUSD * price).toString()
+
+	return parseUnits(balanceInMainToken, mappingDecimals)
 }
