@@ -6,7 +6,7 @@ import copy from 'copy-to-clipboard'
 import Translate from 'components/translate/Translate'
 import {
 	WithdrawTokenFromIdentity,
-	WithdrawAnyTokenFromIdentity,
+	// WithdrawAnyTokenFromIdentity,
 	SetIdentityPrivilege,
 } from 'components/dashboard/forms/web3/transactions'
 import { makeStyles } from '@material-ui/core/styles'
@@ -47,7 +47,6 @@ const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 function AccountInfo({ t }) {
 	const { authType, email, password } = useSelector(selectWallet)
 	const identity = useSelector(selectAccountIdentity)
-	const { grantType } = useSelector(selectAccountSettings)
 	const {
 		walletAddress,
 		walletAuthType = '',
@@ -232,19 +231,17 @@ function AccountInfo({ t }) {
 								</Button>
 							</Box>
 
-							{grantType !== 'advertiser' && (
-								<Box py={1}>
-									<WithdrawTokenFromIdentity
-										fullWidth
-										variant='contained'
-										color='primary'
-										identityAvailable={availableIdentityBalanceDai}
-										identityAvailableRaw={availableIdentityBalanceDai}
-										token='SAI'
-										size='small'
-									/>
-								</Box>
-							)}
+							<Box py={1}>
+								<WithdrawTokenFromIdentity
+									fullWidth
+									variant='contained'
+									color='primary'
+									identityAvailable={availableIdentityBalanceDai}
+									identityAvailableRaw={availableIdentityBalanceDai}
+									token='SAI'
+									size='small'
+								/>
+							</Box>
 						</Box>
 					</Box>
 				</ListItem>
@@ -311,7 +308,7 @@ function AccountInfo({ t }) {
 								/>
 							</ListItem>
 							<ListDivider />
-							<ListItem>
+							{/* <ListItem>
 								<Box
 									display='flex'
 									flexWrap={'wrap'}
@@ -330,7 +327,7 @@ function AccountInfo({ t }) {
 										</Box>
 									</Box>
 								</Box>
-							</ListItem>
+							</ListItem> */}
 						</List>
 					</ExpansionPanelDetails>
 				</ExpansionPanel>

@@ -13,7 +13,7 @@ class Items extends Component {
 
 	render() {
 		const { itemType } = this.props
-		const items = Array.from(Object.values(this.props.items || {})) || []
+		const items = Object.values(this.props.items || {}) || []
 
 		return (
 			<div>

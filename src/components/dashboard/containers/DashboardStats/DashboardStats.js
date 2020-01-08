@@ -18,10 +18,9 @@ const useStyles = makeStyles(styles)
 export function DashboardStats(props) {
 	const side = useSelector(selectSide)
 	const classes = useStyles()
-	const {
-		availableIdentityBalanceDai,
-		outstandingBalanceDai,
-	} = useSelector(selectAccountStatsFormatted)
+	const { availableIdentityBalanceDai, outstandingBalanceDai } = useSelector(
+		selectAccountStatsFormatted
+	)
 
 	useEffect(() => {
 		execute(updateNav('navTitle', t('DASHBOARD')))

@@ -53,3 +53,15 @@ export const selectConfig = createSelector(
 		return cfg
 	}
 )
+
+export const selectMainToken = createSelector(
+	[selectRelayerConfig],
+	({ mainToken }) => mainToken
+)
+
+export const selectMainFeeToken = createSelector(
+	[selectRelayerConfig, selectFeeTokenWhitelist],
+	({ mainToken }, feeTokenWhitelist) => {
+		return feeTokenWhitelist[mainToken.address]
+	}
+)

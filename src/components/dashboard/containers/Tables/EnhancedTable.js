@@ -124,7 +124,6 @@ export default function EnhancedTable(props) {
 	const [page, setPage] = React.useState(0)
 	const [rowsPerPage, setRowsPerPage] = React.useState(5)
 	const [search, setSearch] = React.useState('')
-	const [dateRange, setDateRange] = React.useState({})
 	const [filters, setFilters] = React.useState({})
 
 	React.useEffect(() => {
@@ -141,7 +140,7 @@ export default function EnhancedTable(props) {
 
 	React.useEffect(() => {
 		setPage(0)
-	}, [search, dateRange, filters])
+	}, [search, filters])
 
 	const handleRequestSort = (event, property, numeric) => {
 		const isDesc = orderBy === property && order === 'desc'
@@ -192,10 +191,7 @@ export default function EnhancedTable(props) {
 
 	const filteredItems = listMode
 		? items
-		: filterByDate(
-				filterBySearch(filterByTags(items, filters, itemType), search),
-				dateRange
-		  )
+		: filterBySearch(filterByTags(items, filters, itemType), search)
 
 	const sortedItems = stableSort(
 		filteredItems,
@@ -215,8 +211,6 @@ export default function EnhancedTable(props) {
 						itemType={itemType}
 						search={search}
 						setSearch={setSearch}
-						dateRange={dateRange}
-						setDateRange={setDateRange}
 						filters={filters}
 						setFilters={setFilters}
 						noActions={noActions}
