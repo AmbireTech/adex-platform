@@ -16,19 +16,17 @@ import { getErrorMsg } from 'helpers/errors'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
-const analyticsParams = () => {
+const analyticsParams = tf => {
 	const callsParams = []
 
 	VALIDATOR_ANALYTICS_SIDES.forEach(side =>
 		VALIDATOR_ANALYTICS_EVENT_TYPES.forEach(eventType =>
 			VALIDATOR_ANALYTICS_METRICS.forEach(metric =>
-				VALIDATOR_ANALYTICS_TIMEFRAMES.forEach(timeframe => {
-					callsParams.push({
-						metric,
-						timeframe: timeframe.value,
-						side,
-						eventType,
-					})
+				callsParams.push({
+					metric,
+					timeframe: tf,
+					side,
+					eventType,
 				})
 			)
 		)
@@ -53,7 +51,8 @@ function checkAccountChanged(getState, account) {
 
 export function updateAccountAnalytics() {
 	return async function(dispatch, getState) {
-		const { account } = getState().persist
+		const { account, analytics } = getState().persist
+		const { tf } = analytics
 		try {
 			const toastId = addToast({
 				type: 'warning',
@@ -74,7 +73,7 @@ export function updateAccountAnalytics() {
 				newAuth: { [VALIDATOR_LEADER_ID]: leaderAuth },
 			})(dispatch, getState)
 
-			const params = analyticsParams()
+			const params = analyticsParams(tf)
 			let accountChanged = false
 			const allAnalytics = params.map(async opts => {
 				identityAnalytics({
@@ -99,6 +98,26 @@ export function updateAccountAnalytics() {
 			})
 
 			await Promise.all(allAnalytics)
+		} catch (err) {
+			console.error('ERR_ANALYTICS', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_ANALYTICS', { args: [getErrorMsg(err)] }),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function updateAnalyticsTimeframe(tf) {
+	return async function(dispatch, getState) {
+		try {
+			console.log('tf', tf)
+			dispatch({
+				type: types.UPDATE_ANALYTICS_TIMEFRAME,
+				value: tf,
+			})
+			updateAccountAnalytics()(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_ANALYTICS', err)
 			addToast({
