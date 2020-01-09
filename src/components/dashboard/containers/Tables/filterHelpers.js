@@ -49,18 +49,18 @@ const filterBySearch = (items, search) => {
 }
 
 const filterByTags = (items, filters, itemType) => {
-	const tags = Object.keys(filters).filter(function(key) {
-		return filters[key] === true
-	})
-	return items.filter(item =>
-		tags.includes(
+	const filtered = items.filter(item => {
+		const tag =
 			itemType === 'Campaign'
 				? item.status && item.status.humanFriendlyName
 					? item.status.humanFriendlyName.toLowerCase()
 					: 'pending'
 				: item.type.toLowerCase()
-		)
-	)
+
+		return !!filters[tag]
+	})
+
+	return filtered
 }
 
 const filterByDate = (items, dateRange) => {
