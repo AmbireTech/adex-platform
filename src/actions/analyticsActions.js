@@ -16,19 +16,17 @@ import { getErrorMsg } from 'helpers/errors'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
-const analyticsParams = tf => {
+const analyticsParams = (timeframe, side) => {
 	const callsParams = []
 
-	VALIDATOR_ANALYTICS_SIDES.forEach(side =>
-		VALIDATOR_ANALYTICS_EVENT_TYPES.forEach(eventType =>
-			VALIDATOR_ANALYTICS_METRICS.forEach(metric =>
-				callsParams.push({
-					metric,
-					timeframe: tf,
-					side,
-					eventType,
-				})
-			)
+	VALIDATOR_ANALYTICS_EVENT_TYPES.forEach(eventType =>
+		VALIDATOR_ANALYTICS_METRICS.forEach(metric =>
+			callsParams.push({
+				metric,
+				timeframe,
+				side,
+				eventType,
+			})
 		)
 	)
 
@@ -52,6 +50,7 @@ function checkAccountChanged(getState, account) {
 export function updateAccountAnalytics() {
 	return async function(dispatch, getState) {
 		const { account, analytics } = getState().persist
+		const { side } = getState().memory.nav
 		const { tf } = analytics
 		try {
 			const toastId = addToast({
@@ -73,7 +72,7 @@ export function updateAccountAnalytics() {
 				newAuth: { [VALIDATOR_LEADER_ID]: leaderAuth },
 			})(dispatch, getState)
 
-			const params = analyticsParams(tf)
+			const params = analyticsParams(tf, side)
 			let accountChanged = false
 			const allAnalytics = params.map(async opts => {
 				identityAnalytics({
