@@ -17,12 +17,7 @@ const getIdentitiesForDropdown = (ownerIdentities = [], t) =>
 		return {
 			value: id.identity + '-' + id.privLevel,
 			label: t('IDENTITY_OPTION_DATA', {
-				args: [
-					id.identity,
-					id.privLevel,
-					formatTokenAmount(bigNumberify(id.balanceDAI).toString(), 18, true),
-					'SAI',
-				],
+				args: [id.identity, id.privLevel, id.data.email || '-'],
 			}),
 		}
 	})

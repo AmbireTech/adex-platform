@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
 import { utils } from 'ethers'
 import { validations, constants, schemas, Joi } from 'adex-models'
+import { selectMainToken } from 'selectors'
 
 const { adSlotPost } = schemas
 
@@ -89,6 +90,7 @@ class AdSlotBasic extends Component {
 		const errTitle = invalidFields['title']
 		const errDescription = invalidFields['description']
 		const errMin = invalidFields['minPerImpression']
+		const { symbol } = selectMainToken
 
 		return (
 			<div>
@@ -150,7 +152,7 @@ class AdSlotBasic extends Component {
 							fullWidth
 							type='text'
 							required
-							label={t('MIN_CPM_SLOT_LABEL', { args: ['SAI'] })}
+							label={t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}
 							name='minPerImpression'
 							value={minPerImpression}
 							onChange={ev => {

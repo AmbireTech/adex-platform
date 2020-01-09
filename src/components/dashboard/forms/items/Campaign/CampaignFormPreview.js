@@ -12,10 +12,14 @@ import {
 	ContentBody,
 	ContentStickyTop,
 } from 'components/common/dialog/content'
-import { AdUnit } from 'adex-models'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from '../styles'
 import { formatDateTime } from 'helpers/formatters'
+import {
+	selectAccountIdentityAddr,
+	selectAuthType,
+	selectMainToken,
+} from 'selectors'
 
 class CampaignFormPreview extends Component {
 	constructor(props) {
@@ -34,7 +38,7 @@ class CampaignFormPreview extends Component {
 	}
 
 	render() {
-		const { account, newItem, t } = this.props
+		const { identityAddr, authType, newItem, mainToken, t } = this.props
 		const {
 			// targeting,
 			adUnits,
@@ -49,18 +53,17 @@ class CampaignFormPreview extends Component {
 			// nonce
 		} = newItem
 
+		const { symbol } = mainToken
+
 		return (
 			<ContentBox>
 				{newItem.temp.waitingAction ? (
 					<ContentStickyTop>
-						<WalletAction t={t} authType={account.wallet.authType} />
+						<WalletAction t={t} authType={authType} />
 					</ContentStickyTop>
 				) : null}
 				<ContentBody>
-					<PropRow
-						left={t('owner', { isProp: true })}
-						right={account.identity.address}
-					/>
+					<PropRow left={t('owner', { isProp: true })} right={identityAddr} />
 					{/* <PropRow
 						left={t('targeting', { isProp: true })}
 						right={
@@ -88,11 +91,11 @@ class CampaignFormPreview extends Component {
 					/>
 					<PropRow
 						left={t('depositAmount', { isProp: true })}
-						right={depositAmount + ' SAI'}
+						right={`${depositAmount} ${symbol}`}
 					/>
 					<PropRow
 						left={t('CPM', { isProp: true })}
-						right={minPerImpression + ' SAI'}
+						right={`${minPerImpression} ${symbol}`}
 					/>
 					{/* <PropRow
 						left={t('maxPerImpression', { isProp: true })}
@@ -122,15 +125,15 @@ class CampaignFormPreview extends Component {
 
 CampaignFormPreview.propTypes = {
 	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
 	newItem: PropTypes.object.isRequired,
 	title: PropTypes.string,
 }
 
 function mapStateToProps(state) {
-	const { persist } = state
 	return {
-		account: persist.account,
+		identityAddr: selectAccountIdentityAddr(state),
+		authType: selectAuthType(state),
+		mainToken: selectMainToken(state),
 	}
 }
 

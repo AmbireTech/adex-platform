@@ -15,6 +15,7 @@ import {
 	selectTotalImpressions,
 	selectTotalMoney,
 	selectAverageCPM,
+	selectMainToken,
 } from 'selectors'
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
@@ -60,6 +61,7 @@ export function BasicStats({ side }) {
 	const [timeframe, setTimeframe] = useState(timeFrames[1].value)
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
+	const { symbol } = useSelector(selectMainToken)
 
 	const totalImpressions = useSelector(state =>
 		selectTotalImpressions(state, {
@@ -115,7 +117,7 @@ export function BasicStats({ side }) {
 							explain={t('EXPLAIN_TOTAL_SPENT')}
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
-							)} SAI`}
+							)} ${symbol}`}
 							loading={loadingMoney}
 						></StatsCard>
 					)}
@@ -127,7 +129,7 @@ export function BasicStats({ side }) {
 							explain={t('EXPLAIN_TOTAL_REVENUE')}
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
-							)} SAI`}
+							)} ${symbol}`}
 							loading={loadingMoney}
 						></StatsCard>
 					)}
@@ -138,7 +140,7 @@ export function BasicStats({ side }) {
 						loading={loadingCPM}
 						title={`~ ${formatNumberWithCommas(
 							parseFloat(averageCPM || 0).toFixed(2)
-						)} SAI / CPM`}
+						)} ${symbol} / CPM`}
 					></StatsCard>
 				</div>
 			</Grid>
