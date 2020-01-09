@@ -36,6 +36,15 @@ export const getOwnerIdentities = ({ owner }) => {
 		.then(processResponse)
 }
 
+export const getIdentityData = ({ identityAddr }) => {
+	return requester
+		.fetch({
+			route: `identity/${identityAddr}`,
+			method: 'GET',
+		})
+		.then(processResponse)
+}
+
 export const getRelayerConfigData = () => {
 	return requester
 		.fetch({
