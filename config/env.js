@@ -83,7 +83,6 @@ function getClientEnvironment(publicUrl) {
 				ETH_SCAN_TX_HOST: process.env.ETH_SCAN_ADDR_HOST,
 				ADEX_SITE_HOST: process.env.ADEX_SITE_HOST,
 				ADEX_RELAYER_HOST: process.env.ADEX_RELAYER_HOST,
-				ADEX_RELAYER_ADDR: process.env.ADEX_RELAYER_ADDR,
 				ADEX_MARKET_HOST: process.env.ADEX_MARKET_HOST,
 				IDENTITY_BASE_ADDR: process.env.IDENTITY_BASE_ADDR,
 				IDENTITY_FACTORY_ADDR: process.env.IDENTITY_FACTORY_ADDR,
@@ -95,6 +94,7 @@ function getClientEnvironment(publicUrl) {
 				DAI_TOKEN_ADDR: process.env.DAI_TOKEN_ADDR,
 				ACCESS_CODE_CHECK: process.env.ACCESS_CODE_CHECK,
 				ADVIEW_URL: process.env.ADVIEW_URL,
+				SCD_MCD_MIGRATION_ADDR: process.env.SCD_MCD_MIGRATION_ADDR,
 			}
 		)
 

@@ -12,7 +12,6 @@ import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import ConnectHoc from 'components/signin/ConnectHoc'
 import {
 	CreateQuickIdentity,
-	CreteFullIdentity,
 	// DemoIdentity,
 	LoginStandardIdentity,
 	LoginQuickIdentity,
@@ -27,7 +26,6 @@ import { selectAuth, selectWallet, selectLocation } from 'selectors'
 
 const ConnectedCreateQuickIdentity = ConnectHoc(JustDialog(CreateQuickIdentity))
 const ConnectedQuickLogin = ConnectHoc(JustDialog(LoginQuickIdentity))
-const ConnectedCreateFullIdentity = ConnectHoc(JustDialog(CreteFullIdentity))
 const ConnectedLoginStandardIdentity = ConnectHoc(
 	JustDialog(LoginStandardIdentity)
 )
@@ -106,13 +104,6 @@ const Root = () => {
 				exact
 				path='/login/quick'
 				component={props => <ConnectedQuickLogin {...props} noBackground />}
-			/>
-			<Route
-				exact
-				path='/signup/full'
-				component={props => (
-					<ConnectedCreateFullIdentity {...props} noBackground />
-				)}
 			/>
 			{/* <Route exact path="/identity/demo" component={DemoIdentity} /> */}
 			<Route>

@@ -48,6 +48,7 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 
 	const options = {
 		publisherAddr: identityAddr,
+		// @TODO: SAI and DAI
 		whitelistedToken: DAI.address,
 		whitelistedType: type,
 		randomize: true,

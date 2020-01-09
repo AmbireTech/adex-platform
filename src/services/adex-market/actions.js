@@ -168,6 +168,17 @@ export const getCampaigns = ({ authSig, creator }) => {
 		.then(processResponse)
 }
 
+export const closeCampaignMarket = ({ campaign, authSig }) => {
+	return requester
+		.fetch({
+			route: `campaigns/${campaign.id}/close`,
+			method: 'PUT',
+			authSig,
+			headers: { 'Content-Type': 'application/json' },
+		})
+		.then(processResponse)
+}
+
 export const getAllCampaigns = all => {
 	const queryParams = all
 		? {

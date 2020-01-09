@@ -7,12 +7,6 @@ import DashboardStats from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
 import Items from 'components/dashboard/containers/Items'
-// import Transactions from 'components/dashboard/containers/Transactions'
-import {
-	AdUnit as AdUnitModel,
-	AdSlot as AdSlotModel,
-	Campaign as CampaignModel,
-} from 'adex-models'
 import Account from 'components/dashboard/account/AccountInfo'
 import {
 	NewUnitDialog,
@@ -22,12 +16,6 @@ import {
 import campaignsLoop from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
 import analyticsLoop from 'services/store-data/analytics'
-import {
-	SORT_PROPERTIES_ITEMS,
-	FILTER_PROPERTIES_ITEMS,
-	FILTER_PROPERTIES_CAMPAIGN,
-	SORT_PROPERTIES_CAMPAIGN,
-} from 'constants/misc'
 import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
 import PageNotFound from 'components/page_not_found/PageNotFound'
@@ -36,8 +24,6 @@ import { styles } from './styles'
 import {
 	updateNav,
 	getAllItems,
-	updateAccountSettings,
-	updateAccountAnalytics,
 	execute,
 } from 'actions'
 import { t } from 'selectors'
@@ -51,15 +37,7 @@ const Campaigns = () => (
 			color='secondary'
 			btnLabel='NEW_CAMPAIGN'
 		/>
-		<Items
-			header={t('ALL_CAMPAIGNS')}
-			viewModeId='rowsViewCampaigns'
-			itemType={'Campaign'}
-			objModel={CampaignModel}
-			sortProperties={SORT_PROPERTIES_CAMPAIGN}
-			uiStateId='campaigns'
-			filterProperties={FILTER_PROPERTIES_CAMPAIGN}
-		/>
+		<Items header={t('ALL_CAMPAIGNS')} itemType={'Campaign'} />
 	</>
 )
 
@@ -71,15 +49,7 @@ const AdUnits = () => (
 			color='secondary'
 			btnLabel='NEW_UNIT'
 		/>
-		<Items
-			header={t('ALL_UNITS')}
-			viewModeId='rowsViewUnits'
-			itemType={'AdUnit'}
-			objModel={AdUnitModel}
-			sortProperties={SORT_PROPERTIES_ITEMS}
-			filterProperties={FILTER_PROPERTIES_ITEMS}
-			uiStateId='units'
-		/>
+		<Items header={t('ALL_UNITS')} itemType={'AdUnit'} />
 	</>
 )
 
@@ -92,15 +62,7 @@ const AdSlots = () => (
 			color='secondary'
 			btnLabel='NEW_SLOT'
 		/>
-		<Items
-			header={t('ALL_SLOTS')}
-			viewModeId='rowsViewSlots'
-			itemType={'AdSlot'}
-			objModel={AdSlotModel}
-			sortProperties={SORT_PROPERTIES_ITEMS}
-			filterProperties={FILTER_PROPERTIES_ITEMS}
-			uiStateId='slots'
-		/>
+		<Items header={t('ALL_SLOTS')} itemType={'AdSlot'} />
 	</>
 )
 
@@ -116,7 +78,6 @@ function Dashboard(props) {
 	useEffect(() => {
 		execute(updateNav('side', side))
 		execute(getAllItems())
-		execute(updateAccountSettings())
 		analyticsLoop.start()
 		campaignsLoop.start()
 		statsLoop.start()
