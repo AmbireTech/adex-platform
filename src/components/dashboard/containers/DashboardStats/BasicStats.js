@@ -59,11 +59,10 @@ const timeHints = {
 }
 
 export function BasicStats({ side }) {
-	// const [timeframe, setTimeframe] = useState(timeFrames[1].value)
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 
-	const timeframe = useSelector(selectAnalytics).tf || ''
+	const timeframe = useSelector(selectAnalytics).timeframe || ''
 	const totalImpressions = useSelector(state =>
 		selectTotalImpressions(state, {
 			side,

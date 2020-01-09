@@ -7,10 +7,8 @@ import {
 } from 'services/adex-validator/actions'
 import { updateValidatorAuthTokens } from './accountActions'
 import {
-	VALIDATOR_ANALYTICS_SIDES,
 	VALIDATOR_ANALYTICS_EVENT_TYPES,
 	VALIDATOR_ANALYTICS_METRICS,
-	VALIDATOR_ANALYTICS_TIMEFRAMES,
 } from 'constants/misc'
 import { getErrorMsg } from 'helpers/errors'
 
@@ -51,7 +49,7 @@ export function updateAccountAnalytics() {
 	return async function(dispatch, getState) {
 		const { account, analytics } = getState().persist
 		const { side } = getState().memory.nav
-		const { tf } = analytics
+		const { timeframe } = analytics
 		try {
 			const toastId = addToast({
 				type: 'warning',
@@ -72,7 +70,7 @@ export function updateAccountAnalytics() {
 				newAuth: { [VALIDATOR_LEADER_ID]: leaderAuth },
 			})(dispatch, getState)
 
-			const params = analyticsParams(tf, side)
+			const params = analyticsParams(timeframe, side)
 			let accountChanged = false
 			const allAnalytics = params.map(async opts => {
 				identityAnalytics({
@@ -108,13 +106,12 @@ export function updateAccountAnalytics() {
 	}
 }
 
-export function updateAnalyticsTimeframe(tf) {
+export function updateAnalyticsTimeframe(timeframe) {
 	return async function(dispatch, getState) {
 		try {
-			console.log('tf', tf)
 			dispatch({
 				type: types.UPDATE_ANALYTICS_TIMEFRAME,
-				value: tf,
+				value: timeframe,
 			})
 			updateAccountAnalytics()(dispatch, getState)
 		} catch (err) {
