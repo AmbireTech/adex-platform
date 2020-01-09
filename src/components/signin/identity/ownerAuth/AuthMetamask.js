@@ -184,7 +184,7 @@ function AuthMetamask(props) {
 									<Typography paragraph variant='subheading' color='primary'>
 										{t('METAMASK_CONTINUE_TO_NEXT_STEP')}
 									</Typography>
-									<AddrItem stats={stats} t={t} addr={address} />
+									<AddrItem stats={stats} addr={address} />
 								</div>
 							) : (
 								t('AUTH_WITH_METAMASK_LABEL', { args: [address] })

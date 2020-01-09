@@ -21,6 +21,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import Anchor from 'components/common/anchor/anchor'
 import { formatTokenAmount } from 'helpers/formatters'
+import { selectMainToken } from 'selectors'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
 const VIEW_MODE = 'campaignRowsView'
@@ -72,6 +73,7 @@ export class Campaign extends Component {
 			// isDemo,
 			actions,
 			history,
+			mainTokenSymbol,
 			// ...rest
 		} = this.props
 		const { tabIndex } = this.state
@@ -138,7 +140,9 @@ export class Campaign extends Component {
 								{Object.keys(balances).map(key => (
 									<ListItem key={key}>
 										<ListItemText
-											primary={formatTokenAmount(balances[key]) + ' SAI'}
+											primary={
+												formatTokenAmount(balances[key]) + ' ' + mainTokenSymbol
+											}
 											secondary={key}
 										/>
 									</ListItem>
@@ -206,6 +210,7 @@ function mapStateToProps(state) {
 		rowsView: !!persist.ui[VIEW_MODE],
 		objModel: CampaignModel,
 		itemType: 'Campaign',
+		mainTokenSymbol: selectMainToken(state),
 	}
 }
 
