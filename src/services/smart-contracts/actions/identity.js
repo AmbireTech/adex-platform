@@ -376,6 +376,18 @@ export async function addIdentityENS({ username, account }) {
 		]),
 	}
 
+	const tx2 = {
+		identityContract: identityAddr,
+		feeTokenAddr: Dai.address,
+		feeAmount: feeAmountSetPrivileges,
+		to: '0x314159265dd8dbb310642f98f50c066173c1259b', // ENS address is the same as the one the AdExENSRegistrar is deployed with
+		data: IAdExENSManager.functions.registerAndSetup.encode([
+			publicResolver,
+			keccak256(hexUsername),
+			identityAddr,
+		]),
+	}
+
 	const txns = [tx1]
 
 	const txnsRaw = await getIdentityTnxsWithNonces({
