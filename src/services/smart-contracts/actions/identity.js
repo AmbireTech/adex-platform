@@ -344,13 +344,6 @@ export async function getIdentityTxnsTotalFees(txnsByFeeToken) {
 	return fees
 }
 
-export async function getIdentityBalance({ identityAddr, authType }) {
-	const { Dai } = await getEthers(authType)
-	const balance = await Dai.balanceOf(identityAddr)
-
-	return balance.toString()
-}
-
 export async function processExecuteByFeeTokens({
 	txnsByFeeToken,
 	wallet,
