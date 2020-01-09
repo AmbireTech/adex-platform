@@ -18,6 +18,7 @@ const steps = [
 	{
 		target: '.joyride-account',
 		content: 'This is your account!',
+		disableBeacon: true,
 	},
 	{
 		target: '.joyride-units',

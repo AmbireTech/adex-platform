@@ -130,7 +130,7 @@ function SideNav(props) {
 						<ListItem>
 							<AdexIconTxt className={commonClasses.icon} />
 						</ListItem>
-						<ListItem>
+						<ListItem calssName='joyride-balance'>
 							<LoadingSection
 								loading={
 									!availableIdentityBalanceDai &&
