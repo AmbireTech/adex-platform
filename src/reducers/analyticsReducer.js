@@ -14,7 +14,7 @@ export default function analyticsReducer(
 	switch (action.type) {
 		case UPDATE_ANALYTICS_TIMEFRAME:
 			newState = { ...state }
-			newState.tf = action.value
+			newState.timeframe = action.value
 			return newState
 		case UPDATE_ANALYTICS:
 			newState = { ...state }
