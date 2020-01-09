@@ -111,7 +111,7 @@ export function updateAccountStats() {
 				wallet,
 			})
 
-			const outstandingBalanceDai = await getOutstandingBalance({
+			const outstandingBalanceMainToken = await getOutstandingBalance({
 				wallet,
 				address,
 				withBalance,
@@ -121,7 +121,7 @@ export function updateAccountStats() {
 
 			const { formatted, raw } = await getAccountStats({
 				account,
-				outstandingBalanceDai,
+				outstandingBalanceMainToken,
 			})
 
 			updateAccount({

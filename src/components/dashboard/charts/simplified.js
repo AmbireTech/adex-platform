@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
-import { selectStatsChartData } from 'selectors'
+import { selectStatsChartData, selectMainToken } from 'selectors'
 
 const commonDsProps = {
 	fill: false,
@@ -25,6 +25,7 @@ export const SimpleStatistics = ({
 	y1Color = CHARTS_COLORS[1],
 	y2Color = CHARTS_COLORS[2],
 }) => {
+	const { symbol } = useSelector(selectMainToken)
 	const payouts = useSelector(state =>
 		selectStatsChartData(state, {
 			side,
@@ -106,9 +107,9 @@ export const SimpleStatistics = ({
 			intersect: false,
 			callbacks: {
 				label: function(t, d) {
-					// This adds currency DAI to y1Label in the tooltips
+					// This adds currency MainToken (DAI) to y1Label in the tooltips
 					var xLabel = d.datasets[t.datasetIndex].label
-					var yLabel = xLabel === y1Label ? `${t.yLabel} SAI` : t.yLabel
+					var yLabel = xLabel === y1Label ? `${t.yLabel} ${symbol}` : t.yLabel
 					return `${xLabel}: ${yLabel}`
 				},
 			},

@@ -1,11 +1,13 @@
 import React from 'react'
 import ListItemText from '@material-ui/core/ListItemText'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { utils } from 'ethers'
 
-export const addrItem = ({ stats, t, classes }) => {
-	const { balanceEth, balanceDai, address } = stats
+const useStyles = makeStyles(styles)
+
+export function AddrItem({ stats }) {
+	const { balanceEth, tokensBalances, address } = stats
+	const classes = useStyles()
 
 	return (
 		<ListItemText
@@ -14,16 +16,16 @@ export const addrItem = ({ stats, t, classes }) => {
 				<span className={classes.addrInfo}>
 					<span>
 						<span> ETH </span>
-						<strong> {utils.formatEther(balanceEth)} </strong>
+						<strong> {balanceEth} </strong>
 					</span>
-					<span>
-						<span> SAI </span>
-						<strong> {utils.formatEther(balanceDai)} </strong>
-					</span>
+					{tokensBalances.map(({ symbol, balance }) => (
+						<span>
+							<span> {symbol} </span>
+							<strong> {balance} </strong>
+						</span>
+					))}
 				</span>
 			}
 		/>
 	)
 }
-
-export const AddrItem = withStyles(styles)(addrItem)

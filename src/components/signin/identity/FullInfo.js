@@ -14,7 +14,6 @@ import {
 	validateEmail,
 	validateEmailCheck,
 	validateTOS,
-	validateGrantCode,
 	updateIdentity,
 } from 'actions'
 
@@ -32,7 +31,7 @@ const FulInfo = props => {
 	)
 
 	// Errors
-	const { email, emailCheck, tosCheck, grantCode } = validations
+	const { email, emailCheck, tosCheck } = validations
 	return (
 		<div>
 			<Grid container spacing={2}>
@@ -97,58 +96,6 @@ const FulInfo = props => {
 								: t('ENTER_SAME_EMAIL')
 						}
 					/>
-				</Grid>
-				<Grid item xs={12}>
-					<FormControlLabel
-						control={
-							<Switch
-								color='primary'
-								checked={!!identity.hasGrantCode}
-								onChange={() =>
-									execute(
-										updateIdentity('hasGrantCode', !identity.hasGrantCode)
-									)
-								}
-							/>
-						}
-						label={t('HAVE_GRANT_CODE')}
-					/>
-					<Collapse in={identity.hasGrantCode}>
-						<TextField
-							fullWidth
-							type='text'
-							required
-							label={t('grantCode', { isProp: true })}
-							name='grantCode'
-							value={identity.grantCode || ''}
-							onChange={ev =>
-								execute(updateIdentity('grantCode', ev.target.value))
-							}
-							onBlur={() =>
-								validateGrantCode(
-									validateId,
-									identity.hasGrantCode,
-									identity.grantCode,
-									true
-								)
-							}
-							onFocus={() =>
-								validateGrantCode(
-									validateId,
-									identity.hasGrantCode,
-									identity.grantCode,
-									false
-								)
-							}
-							error={grantCode && !!grantCode.dirty}
-							maxLength={128}
-							helperText={
-								grantCode && !!grantCode.dirty
-									? grantCode.errMsg
-									: t('ENTER_VALID_COUPON')
-							}
-						/>
-					</Collapse>
 				</Grid>
 				<Grid item xs={12}>
 					<FormControl

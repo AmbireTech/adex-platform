@@ -17,17 +17,15 @@ import { NewCloneUnitDialog } from '../../forms/items/NewItems'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 import { AdUnit } from 'adex-models'
-import { t, selectSide } from 'selectors'
+import { t, selectSide, selectMainToken } from 'selectors'
 import { execute, cloneItem } from 'actions'
 import { useSelector } from 'react-redux'
 import { missingData, headCells, mapStatusIcons } from './tableConfig'
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolbar'
-import Typography from '@material-ui/core/Typography'
 import {
 	filterBySearch,
 	filterByTags,
-	filterByDate,
 	stableSort,
 	getSorting,
 } from './filterHelpers'
@@ -108,6 +106,7 @@ const renderActions = ({ item, to, itemType }) => {
 export default function EnhancedTable(props) {
 	const classes = useStyles()
 	const side = useSelector(selectSide)
+	const { symbol, decimals } = useSelector(selectMainToken)
 	// const items = []
 	const {
 		items, //
@@ -286,8 +285,12 @@ export default function EnhancedTable(props) {
 														)}
 													</TableCell>
 													<TableCell>
-														{formatTokenAmount(item.depositAmount, 18, true)}{' '}
-														SAI{' '}
+														{formatTokenAmount(
+															item.depositAmount,
+															decimals,
+															true
+														)}
+														{` ${symbol}`}
 													</TableCell>
 													<TableCell>
 														{(
@@ -297,10 +300,10 @@ export default function EnhancedTable(props) {
 													<TableCell>
 														{formatTokenAmount(
 															bigNumberify(item.minPerImpression).mul(1000),
-															18,
+															decimals,
 															true
-														)}{' '}
-														SAI
+														)}
+														{` ${symbol}`}
 													</TableCell>
 													<TableCell>{formatDateTime(item.created)}</TableCell>
 													<TableCell>

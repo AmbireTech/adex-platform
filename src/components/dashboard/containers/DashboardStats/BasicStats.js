@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import { execute, updateAnalyticsTimeframe } from 'actions'
 import { SimpleStatistics } from 'components/dashboard/charts/simplified'
@@ -16,6 +16,7 @@ import {
 	selectTotalImpressions,
 	selectTotalMoney,
 	selectAverageCPM,
+	selectMainToken,
 	selectAnalytics,
 } from 'selectors'
 
@@ -61,6 +62,7 @@ const timeHints = {
 export function BasicStats({ side }) {
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
+	const { symbol } = useSelector(selectMainToken)
 
 	const timeframe = useSelector(selectAnalytics).timeframe || ''
 	const totalImpressions = useSelector(state =>
@@ -117,7 +119,7 @@ export function BasicStats({ side }) {
 							explain={t('EXPLAIN_TOTAL_SPENT')}
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
-							)} SAI`}
+							)} ${symbol}`}
 							loading={loadingMoney}
 						></StatsCard>
 					)}
@@ -129,7 +131,7 @@ export function BasicStats({ side }) {
 							explain={t('EXPLAIN_TOTAL_REVENUE')}
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
-							)} SAI`}
+							)} ${symbol}`}
 							loading={loadingMoney}
 						></StatsCard>
 					)}
@@ -140,7 +142,7 @@ export function BasicStats({ side }) {
 						loading={loadingCPM}
 						title={`~ ${formatNumberWithCommas(
 							parseFloat(averageCPM || 0).toFixed(2)
-						)} SAI / CPM`}
+						)} ${symbol} / CPM`}
 					></StatsCard>
 				</div>
 			</Grid>

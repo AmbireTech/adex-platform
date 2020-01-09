@@ -18,19 +18,19 @@ const processResponse = res => {
 	})
 }
 
-export const checkCoupon = ({ coupon }) => {
+export const getOwnerIdentities = ({ owner }) => {
 	return requester
 		.fetch({
-			route: `identity/valid-coupon/${coupon}`,
+			route: `identity/by-owner/${owner}`,
 			method: 'GET',
 		})
 		.then(processResponse)
 }
 
-export const getOwnerIdentities = ({ owner }) => {
+export const getIdentityData = ({ identityAddr }) => {
 	return requester
 		.fetch({
-			route: `identity/by-owner/${owner}`,
+			route: `identity/${identityAddr}`,
 			method: 'GET',
 		})
 		.then(processResponse)

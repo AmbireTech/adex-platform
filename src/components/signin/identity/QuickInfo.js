@@ -16,7 +16,6 @@ import {
 	validatePassword,
 	validatePasswordCheck,
 	validateTOS,
-	validateGrantCode,
 	updateIdentity,
 } from 'actions'
 
@@ -187,42 +186,6 @@ const QuickInfo = props => {
 						}
 						label={t('HAVE_GRANT_CODE')}
 					/>
-					<Collapse in={identity.hasGrantCode}>
-						<TextField
-							fullWidth
-							type='text'
-							required
-							label={t('grantCode', { isProp: true })}
-							name='grantCode'
-							value={identity.grantCode || ''}
-							onChange={ev =>
-								execute(updateIdentity('grantCode', ev.target.value))
-							}
-							onBlur={() =>
-								validateGrantCode(
-									validateId,
-									identity.hasGrantCode,
-									identity.grantCode,
-									true
-								)
-							}
-							onFocus={() =>
-								validateGrantCode(
-									validateId,
-									identity.hasGrantCode,
-									identity.grantCode,
-									false
-								)
-							}
-							error={grantCode && !!grantCode.dirty}
-							maxLength={128}
-							helperText={
-								grantCode && !!grantCode.dirty
-									? grantCode.errMsg
-									: t('ENTER_VALID_COUPON')
-							}
-						/>
-					</Collapse>
 				</Grid>
 				<Grid item xs={12}>
 					<FormControl
