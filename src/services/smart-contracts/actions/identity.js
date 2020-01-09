@@ -15,7 +15,7 @@ import {
 	hexlify,
 	Interface,
 	keccak256,
-	formatBytes32String,
+	id,
 } from 'ethers/utils'
 import { generateAddress2 } from 'ethereumjs-util'
 import {
@@ -362,7 +362,6 @@ export async function addIdentityENS({ username, account }) {
 	)
 	const signer = await getSigner({ wallet, provider })
 	const identityAddr = identity.address
-	const hexUsername = formatBytes32String(username)
 
 	const tx1 = {
 		identityContract: identityAddr,
@@ -371,19 +370,7 @@ export async function addIdentityENS({ username, account }) {
 		to: '0xa3F69F48D4a45419d48b56b1CfBF4aF2d4586728',
 		data: IAdExENSManager.functions.registerAndSetup.encode([
 			publicResolver,
-			keccak256(hexUsername),
-			identityAddr,
-		]),
-	}
-
-	const tx2 = {
-		identityContract: identityAddr,
-		feeTokenAddr: Dai.address,
-		feeAmount: feeAmountSetPrivileges,
-		to: '0x314159265dd8dbb310642f98f50c066173c1259b', // ENS address is the same as the one the AdExENSRegistrar is deployed with
-		data: IAdExENSManager.functions.registerAndSetup.encode([
-			publicResolver,
-			keccak256(hexUsername),
+			id(username),
 			identityAddr,
 		]),
 	}
