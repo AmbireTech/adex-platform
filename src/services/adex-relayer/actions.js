@@ -18,15 +18,6 @@ const processResponse = res => {
 	})
 }
 
-export const checkCoupon = ({ coupon }) => {
-	return requester
-		.fetch({
-			route: `identity/valid-coupon/${coupon}`,
-			method: 'GET',
-		})
-		.then(processResponse)
-}
-
 export const getOwnerIdentities = ({ owner }) => {
 	return requester
 		.fetch({
