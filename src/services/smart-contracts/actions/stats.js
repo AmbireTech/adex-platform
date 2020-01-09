@@ -1,7 +1,12 @@
 import { getEthers } from 'services/smart-contracts/ethers'
 import { constants } from 'adex-models'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
-import { bigNumberify, formatUnits, parseUnits } from 'ethers/utils'
+import {
+	bigNumberify,
+	formatUnits,
+	parseUnits,
+	formatEther,
+} from 'ethers/utils'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
 	selectRelayerConfig,
@@ -10,25 +15,6 @@ import {
 } from 'selectors'
 
 const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
-
-export async function getAddressBalances({ address, authType }) {
-	const { provider, Dai } = await getEthers(authType)
-
-	const calls = [
-		provider.getBalance(address.address),
-		Dai.balanceOf(address.address),
-	]
-
-	const balances = await Promise.all(calls)
-	const formatted = {
-		address: address.address,
-		path: address.serializedPath || address.path, // we are going to keep the entire path
-		balanceEth: balances[0].toString(),
-		balanceDai: balances[1].toString(),
-	}
-
-	return formatted
-}
 
 const getWithdrawTokensBalances = async ({ getToken, address }) => {
 	const { routineWithdrawTokens } = selectRelayerConfig()
@@ -42,6 +28,30 @@ const getWithdrawTokensBalances = async ({ getToken, address }) => {
 	})
 
 	return Promise.all(balancesCalls)
+}
+
+export async function getAddressBalances({ address, authType }) {
+	const { provider, getToken } = await getEthers(authType)
+
+	const calls = [
+		provider.getBalance(address.address),
+		getWithdrawTokensBalances({ getToken, address: address.address }),
+	]
+
+	const balances = await Promise.all(calls)
+	const formatted = {
+		address: address.address,
+		path: address.serializedPath || address.path, // we are going to keep the entire path
+		balanceEth: formatEther(balances[0].toString()),
+		tokensBalances: balances[1].map(({ token, balance }) => {
+			return {
+				balance: formatTokenAmount(balance, token.decimals, false, 2),
+				symbol: token.symbol,
+			}
+		}),
+	}
+
+	return formatted
 }
 
 export async function getAccountStats({
