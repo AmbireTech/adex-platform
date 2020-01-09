@@ -117,7 +117,6 @@ function Dashboard(props) {
 		execute(updateNav('side', side))
 		execute(getAllItems())
 		execute(updateAccountSettings())
-		execute(updateAccountAnalytics())
 		analyticsLoop.start()
 		campaignsLoop.start()
 		statsLoop.start()
