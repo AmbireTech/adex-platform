@@ -1,24 +1,15 @@
 import * as types from 'constants/actionTypes'
-import {
-	grantAccount,
-	quickWalletSalt,
-	getQuickWallet,
-} from 'services/adex-relayer/actions'
+import { getQuickWallet } from 'services/adex-relayer/actions'
 import { updateSpinner, addToast } from './uiActions'
-import {
-	registerExpectedIdentity,
-	getOwnerIdentities,
-} from 'services/adex-relayer/actions'
+import { getOwnerIdentities, regAccount } from 'services/adex-relayer/actions'
 import { translate } from 'services/translations/translations'
-import {
-	createSession,
-	registerAccount as registerAccountAction,
-} from './accountActions'
+import { createSession } from './accountActions'
 
 import {
 	getIdentityDeployData,
 	withdrawFromIdentity,
 	setIdentityPrivilege,
+	getIdentityBalance,
 } from 'services/smart-contracts/actions/identity'
 import {
 	addDataToWallet,
@@ -30,9 +21,8 @@ import {
 	generateSalt,
 } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
-import { selectAccount, selectIdentity } from 'selectors'
+import { selectAccount, selectIdentity, selectAuthType } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
-import { validEmail } from 'helpers/validators'
 import {
 	validate,
 	validateEmail,
@@ -99,98 +89,6 @@ export function resetWallet() {
 		return dispatch({
 			type: types.RESET_WALLET,
 		})
-	}
-}
-
-export function getGrantAccount({
-	walletAddr,
-	email,
-	password,
-	grantCode,
-	authType,
-}) {
-	return async function(dispatch) {
-		updateSpinner('getting-grant-identity', true)(dispatch)
-		let identityAddr = null
-		try {
-			const identityData = await grantAccount({
-				ownerAddr: walletAddr,
-				mail: email,
-				couponCode: grantCode,
-			})
-			// TODO: validate identityData
-
-			if (identityData) {
-				addDataToWallet({
-					email,
-					password,
-					authType,
-					dataKey: 'identity',
-					dataValue: identityData.address,
-				})
-				addDataToWallet({
-					email,
-					password,
-					authType,
-					dataKey: 'privileges',
-					dataValue: identityData.privileges,
-				})
-				updateIdentity('identityAddr', identityData.address)(dispatch)
-				updateIdentity('identityData', identityData)(dispatch)
-				identityAddr = identityData.address
-			}
-		} catch (err) {
-			console.error('ERR_REGISTER_GRANT_IDENTITY', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_REGISTER_GRANT_IDENTITY', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-
-		updateSpinner('getting-grant-identity', false)(dispatch)
-		return identityAddr
-	}
-}
-
-export function getIdentityTxData({ owner, privLevel }) {
-	return async function(dispatch) {
-		try {
-			const txData = await getIdentityDeployData({ owner, privLevel })
-			updateIdentity('identityAddr', txData.identityAddr)(dispatch)
-			updateIdentity('identityTxData', txData)(dispatch)
-		} catch (err) {
-			console.error('ERR_GET_IDENTITY_TX_DATA', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_GET_IDENTITY_TX_DATA', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-	}
-}
-
-export function getRegisterExpectedIdentity({ owner, mail }) {
-	return async function(dispatch) {
-		updateSpinner('getting-expected-identity', true)(dispatch)
-		try {
-			const identityData = await registerExpectedIdentity({ owner, mail })
-			updateIdentity('identityData', identityData)(dispatch)
-		} catch (err) {
-			console.error('ERR_REGISTERING_EXPECTED_IDENTITY', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_REGISTERING_EXPECTED_IDENTITY', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-		updateSpinner('getting-expected-identity', false)(dispatch)
 	}
 }
 
@@ -293,11 +191,29 @@ export function identityWithdraw({
 }
 
 export function ownerIdentities({ owner }) {
-	return async function(dispatch) {
+	return async function(dispatch, getState) {
 		updateSpinner('getting-owner-identities', true)(dispatch)
 		try {
 			const identityData = await getOwnerIdentities({ owner })
-			updateIdentity('ownerIdentities', identityData)(dispatch)
+			const authType = selectAuthType(getState())
+			const data = Object.entries(identityData).map(
+				async ([identityAddr, privLevel]) => {
+					const balanceDAI = await getIdentityBalance({
+						identityAddr,
+						authType,
+					})
+
+					return {
+						identity: identityAddr,
+						privLevel,
+						balanceDAI,
+					}
+				}
+			)
+
+			const ownerIdentities = await Promise.all(data)
+
+			updateIdentity('ownerIdentities', ownerIdentities)(dispatch)
 		} catch (err) {
 			console.error('ERR_GETTING_OWNER_IDENTITIES', err)
 			addToast({
@@ -341,32 +257,9 @@ export function addrIdentityPrivilege({ setAddr, privLevel }) {
 	}
 }
 
-export function getQuickWalletSalt({ email }) {
-	return async function(dispatch, getState) {
-		updateSpinner('getting-quick-wallet-salt', true)(dispatch)
-		let salt = null
-		try {
-			salt = generateSalt(email)
-		} catch (err) {
-			console.error('ERR_GETTING_WALLET_SALT', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_GETTING_WALLET_SALT', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-		updateIdentity('backupSalt', salt)(dispatch)
-		updateSpinner('getting-quick-wallet-salt', false)(dispatch)
-		return salt
-	}
-}
-
 export function login() {
 	return async function(dispatch, getState) {
 		try {
-			const identity = selectIdentity(getState())
 			const {
 				wallet,
 				email,
@@ -374,21 +267,19 @@ export function login() {
 				identityTxData,
 				deleteLegacyKey,
 				registerAccount,
-			} = identity
-
-			const newWallet = { ...wallet }
+			} = selectIdentity(getState())
 
 			if (registerAccount) {
-				await registerAccountAction({
-					owner: newWallet.address,
-					identityTxData,
+				await regAccount({
+					owner: wallet.address,
 					email,
-				})(dispatch)
+					...identityTxData,
+				})
 			}
 
 			await createSession({
 				identity: identityData,
-				wallet: newWallet,
+				wallet,
 				email,
 				deleteLegacyKey,
 			})(dispatch)
@@ -551,14 +442,10 @@ export function validateQuickDeploy({ validateId, dirty }) {
 		updateSpinner(validateId, true)(dispatch)
 		try {
 			const identity = selectIdentity(getState())
-			const { identityAddr, email, password, grantCode } = identity
-
-			let grantIdentity = null
+			const { identityAddr, email, password } = identity
 
 			if (!identityAddr) {
-				const authType = !!grantCode
-					? AUTH_TYPES.GRANT.name
-					: AUTH_TYPES.QUICK.name
+				const authType = AUTH_TYPES.QUICK.name
 
 				const walletData = createLocalWallet({
 					email,
@@ -571,27 +458,37 @@ export function validateQuickDeploy({ validateId, dirty }) {
 
 				const walletAddr = walletData.address
 
-				if (grantCode) {
-					grantIdentity = await getGrantAccount({
-						walletAddr,
-						email,
-						password,
-						grantCode,
-						authType,
-					})(dispatch)
-				} else {
-					await getIdentityTxData({
-						owner: walletAddr,
-						privLevel: 3,
-					})(dispatch)
+				const txData = await getIdentityDeployData({ owner: walletAddr })
+				const identityData = {
+					address: txData.identityAddr,
+					privileges: txData.privileges,
 				}
+
+				addDataToWallet({
+					email,
+					password,
+					authType,
+					dataKey: 'identity',
+					dataValue: identityData.address,
+				})
+				addDataToWallet({
+					email,
+					password,
+					authType,
+					dataKey: 'privileges',
+					dataValue: identityData.privileges,
+				})
+
+				updateIdentity('identityAddr', txData.identityAddr)(dispatch)
+				updateIdentity('identityTxData', txData)(dispatch)
+				updateIdentity('identityData', identityData)(dispatch)
 
 				updateIdentity('wallet', walletData)(dispatch)
 				updateIdentity('walletAddr', walletAddr)(dispatch)
-				updateIdentity('registerAccount', !grantCode)(dispatch)
+				updateIdentity('registerAccount', true)(dispatch)
 			}
 
-			const isValid = !!identityAddr || !!grantIdentity
+			const isValid = !!identityAddr
 
 			validate(validateId, 'identityAddr', {
 				isValid,

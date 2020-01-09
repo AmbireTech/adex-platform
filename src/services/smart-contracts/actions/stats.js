@@ -3,6 +3,7 @@ import { constants } from 'adex-models'
 import { Contract } from 'ethers'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
 import { bigNumberify, formatEther, formatUnits } from 'ethers/utils'
+import { formatTokenAmount } from 'helpers/formatters'
 const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
 
 export async function getAddressBalances({ address, authType }) {
@@ -91,16 +92,33 @@ export async function getAccountStats({
 		walletAuthType: wallet.authType,
 		walletPrivileges: privilegesNames[walletPrivileges],
 		walletBalanceEth: formatEther(walletBalanceEth),
-		walletBalanceDai: formatUnits(walletBalanceDai, 18),
+		walletBalanceDai: formatTokenAmount(walletBalanceDai, 18, false, 2),
 		identityAddress: identity.address,
-		identityBalanceDai: formatUnits(identityBalanceDai, 18),
-		outstandingBalanceDai: formatUnits(raw.outstandingBalanceDai, 18),
-		totalOutstandingBalanceDai: formatUnits(raw.totalOutstandingBalanceDai, 18),
-		availableIdentityBalanceDai: formatUnits(
-			raw.availableIdentityBalanceDai,
-			18
+		identityBalanceDai: formatTokenAmount(identityBalanceDai, 18, false, 2),
+		outstandingBalanceDai: formatTokenAmount(
+			raw.outstandingBalanceDai,
+			18,
+			false,
+			2
 		),
-		totalIdentityBalanceDai: formatUnits(raw.totalIdentityBalanceDai, 18),
+		totalOutstandingBalanceDai: formatTokenAmount(
+			raw.totalOutstandingBalanceDai,
+			18,
+			false,
+			2
+		),
+		availableIdentityBalanceDai: formatTokenAmount(
+			raw.availableIdentityBalanceDai,
+			18,
+			false,
+			2
+		),
+		totalIdentityBalanceDai: formatTokenAmount(
+			raw.totalIdentityBalanceDai,
+			18,
+			false,
+			2
+		),
 	}
 
 	return {
@@ -113,21 +131,18 @@ export async function getOutstandingBalance({ wallet, address, withBalance }) {
 	// const sweepMin = minToSweep()
 	const bigZero = bigNumberify(0)
 
-	const initial = { total: bigNumberify('0'), available: bigNumberify('0') }
+	const initial = { total: bigZero, available: bigZero }
 
 	const allOutstanding = withBalance.reduce((amounts, ch) => {
 		const { outstanding, outstandingAvailable } = ch
 		const current = { ...amounts }
 		current.total = current.total.add(outstanding)
-
-		if (outstandingAvailable.gt(bigZero)) {
-			current.available = current.available.add(outstandingAvailable)
-		}
+		current.available = current.available.add(outstandingAvailable)
 
 		return current
 	}, initial)
 
-	return allOutstanding || initial
+	return allOutstanding
 }
 
 export async function getAllValidatorsAuthForIdentity({
