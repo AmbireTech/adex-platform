@@ -1,12 +1,10 @@
-import React, { Component } from 'react'
+import React, { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { makeStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
 import NewTransactionHoc from './TransactionHoc'
 import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
-// import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
 import { WalletAction } from 'components/dashboard/forms/FormsCommon'
 import {
 	PropRow,
@@ -16,184 +14,158 @@ import {
 	FullContentSpinner,
 } from 'components/common/dialog/content'
 import Helper from 'helpers/miscHelpers'
-import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import {
 	IdentityWithdrawPreview,
 	SetPrivilegePreview,
 	IdentityWithdrawAnyPreview,
 } from './previews'
+import {
+	selectMainToken,
+	t,
+	selectSpinnerById,
+	selectAccount,
+	selectNewTransactionById,
+} from 'selectors'
+import { execute, updateSpinner } from 'actions'
 
-class TransactionPreview extends Component {
-	constructor(props, context) {
-		super(props, context)
+const useStyles = makeStyles(styles)
 
-		this.state = {
-			gas: null,
-			fees: null,
-			errors: [],
-		}
-	}
+function TransactionPreview(props) {
+	const classes = useStyles()
+	const {
+		getFeesFn,
+		handleChange,
+		identityAvailable,
+		previewWarnMsgs,
+		stepsId,
+	} = props
 
-	componentDidMount() {
-		const {
-			getFeesFn,
-			actions,
-			handleChange,
-			identityAvailable,
-			transaction,
-			txId,
-			t,
-			account,
-		} = this.props
+	const txId = stepsId
+	const account = useSelector(selectAccount)
+	const { symbol } = useSelector(selectMainToken)
+	const transaction = useSelector(state =>
+		selectNewTransactionById(state, stepsId)
+	)
+	const spinner = useStyles(state => selectSpinnerById(state, stepsId))
+
+	useEffect(() => {
 		if (getFeesFn && Object.keys(transaction).length) {
-			actions.updateSpinner(txId, true)
+			execute(updateSpinner(txId, true))
 			getFeesFn({ account, transaction })
 				.then(fees => {
 					handleChange('fees', fees)
 					this.setState({ fees: fees })
-					actions.updateSpinner(txId, false)
+					execute(updateSpinner(txId, false))
 
 					if (parseFloat(fees.fees || 0) > parseFloat(identityAvailable)) {
 						handleChange('errors', [
 							t('INSUFFICIENT_BALANCE_FOR_FEES', {
-								args: [identityAvailable, 'SAI', fees.fees, 'SAI'],
+								args: [identityAvailable, symbol, fees.fees, symbol],
 							}),
 						])
 					}
 				})
 				.catch(err => {
 					console.log(err)
-					actions.updateSpinner(txId, false)
+					execute(updateSpinner(txId, false))
 					handleChange('errors', [Helper.getErrMsg(err)])
 				})
 		}
-	}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
-	render() {
-		const {
-			transaction = {},
-			t,
-			classes,
-			account,
-			previewWarnMsgs,
-			spinner,
-			stepsId,
-		} = this.props
-		const errors = transaction.errors || []
-		const {
-			withdrawTo,
-			withdrawAmount,
-			setAddr,
-			privLevel,
-			tokenAddress,
-			fees = {},
-		} = transaction
-		return (
-			<div>
-				{spinner ? (
-					<FullContentSpinner />
-				) : (
-					<ContentBox>
-						{transaction.waitingForWalletAction ? (
-							<ContentStickyTop>
-								<WalletAction t={t} authType={account.wallet.authType} />
-							</ContentStickyTop>
-						) : null}
-						<ContentBody>
-							{errors.length
-								? errors.map((err, index) => (
-										<PropRow
-											key={index}
-											classNameLeft={classes.error}
-											classNameRight={classes.error}
-											left={<ErrorIcon />}
-											right={err}
-										/>
-								  ))
-								: null}
+	const {
+		withdrawTo,
+		withdrawAmount,
+		setAddr,
+		privLevel,
+		tokenAddress,
+		fees = {},
+		errors = [],
+	} = transaction
 
-							{previewWarnMsgs
-								? previewWarnMsgs.map((msg, index) => (
-										<PropRow
-											key={index}
-											classNameLeft={classes.warning}
-											classNameRight={classes.warning}
-											left={<WarningIcon />}
-											right={t(msg.msg, { args: msg.args })}
-										/>
-								  ))
-								: null}
+	return (
+		<div>
+			{spinner ? (
+				<FullContentSpinner />
+			) : (
+				<ContentBox>
+					{transaction.waitingForWalletAction ? (
+						<ContentStickyTop>
+							<WalletAction t={t} authType={account.wallet.authType} />
+						</ContentStickyTop>
+					) : null}
+					<ContentBody>
+						{errors.length
+							? errors.map((err, index) => (
+									<PropRow
+										key={index}
+										classNameLeft={classes.error}
+										classNameRight={classes.error}
+										left={<ErrorIcon />}
+										right={err}
+									/>
+							  ))
+							: null}
 
-							{stepsId === 'withdrawFromIdentity' && (
-								<IdentityWithdrawPreview
-									t={t}
-									withdrawTo={withdrawTo}
-									classes={classes}
-									fees={fees}
-									withdrawAmount={withdrawAmount}
-								/>
-							)}
+						{previewWarnMsgs
+							? previewWarnMsgs.map((msg, index) => (
+									<PropRow
+										key={index}
+										classNameLeft={classes.warning}
+										classNameRight={classes.warning}
+										left={<WarningIcon />}
+										right={t(msg.msg, { args: msg.args })}
+									/>
+							  ))
+							: null}
 
-							{stepsId === 'setIdentityPrivilege' && (
-								<SetPrivilegePreview
-									t={t}
-									setAddr={setAddr}
-									classes={classes}
-									fees={fees}
-									privLevel={privLevel}
-								/>
-							)}
+						{stepsId === 'withdrawFromIdentity' && (
+							<IdentityWithdrawPreview
+								t={t}
+								withdrawTo={withdrawTo}
+								classes={classes}
+								fees={fees}
+								withdrawAmount={withdrawAmount}
+								symbol={symbol}
+							/>
+						)}
 
-							{stepsId === 'withdrawAnyFromIdentity' && (
-								<IdentityWithdrawAnyPreview
-									t={t}
-									withdrawTo={withdrawTo}
-									classes={classes}
-									fees={fees}
-									withdrawAmount={withdrawAmount}
-									tokenAddress={tokenAddress}
-								/>
-							)}
-						</ContentBody>
-					</ContentBox>
-				)}
-			</div>
-		)
-	}
+						{stepsId === 'setIdentityPrivilege' && (
+							<SetPrivilegePreview
+								t={t}
+								setAddr={setAddr}
+								classes={classes}
+								fees={fees}
+								privLevel={privLevel}
+								symbol={symbol}
+							/>
+						)}
+
+						{stepsId === 'withdrawAnyFromIdentity' && (
+							<IdentityWithdrawAnyPreview
+								t={t}
+								withdrawTo={withdrawTo}
+								classes={classes}
+								fees={fees}
+								withdrawAmount={withdrawAmount}
+								tokenAddress={tokenAddress}
+								symbol={symbol}
+							/>
+						)}
+					</ContentBody>
+				</ContentBox>
+			)}
+		</div>
+	)
 }
 
 TransactionPreview.propTypes = {
-	actions: PropTypes.object.isRequired,
 	label: PropTypes.string,
-	txId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	transaction: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
 	previewMsgs: PropTypes.array,
-	estimateGasFn: PropTypes.func,
-}
-
-function mapStateToProps(state, props) {
-	const persist = state.persist
-	const memory = state.memory
-	const txId = props.stepsId
-	return {
-		transaction: memory.newTransactions[txId] || {},
-		txId: txId,
-		spinner: memory.spinners[txId],
-		account: persist.account,
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch),
-	}
 }
 
 const TransactionPreviewForm = NewTransactionHoc(TransactionPreview)
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(withStyles(styles)(TransactionPreviewForm))
+export default TransactionPreviewForm
