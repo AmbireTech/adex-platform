@@ -24,7 +24,6 @@ import { styles } from './styles'
 import {
 	updateNav,
 	getAllItems,
-	updateAccountAnalytics,
 	execute,
 } from 'actions'
 import { t } from 'selectors'
@@ -79,7 +78,6 @@ function Dashboard(props) {
 	useEffect(() => {
 		execute(updateNav('side', side))
 		execute(getAllItems())
-		execute(updateAccountAnalytics())
 		analyticsLoop.start()
 		campaignsLoop.start()
 		statsLoop.start()
