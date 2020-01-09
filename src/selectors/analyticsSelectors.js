@@ -13,8 +13,7 @@ export const selectAnalyticsData = createSelector(
 export const selectAnalyticsDataAggr = createSelector(
 	[selectAnalytics, (_, opts = {}) => opts],
 	(analytics, { side, eventType, metric, timeframe }) => {
-		const data = analytics[side][eventType][metric][timeframe]
-		return data ? data.aggr : []
+		return analytics[side][eventType][metric][timeframe].aggr
 	}
 )
 
