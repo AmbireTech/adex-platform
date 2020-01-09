@@ -33,7 +33,6 @@ import {
 	selectWallet,
 	selectAccountStatsFormatted,
 	selectAccountIdentity,
-	selectAccountSettings,
 } from 'selectors'
 import { formatAddress } from 'helpers/formatters'
 
@@ -53,8 +52,8 @@ function AccountInfo({ t }) {
 		walletPrivileges = '',
 		identityAddress,
 		identityBalanceDai,
-		availableIdentityBalanceDai,
-		outstandingBalanceDai,
+		availableIdentityBalanceMainToken,
+		outstandingBalanceMainToken,
 	} = useSelector(selectAccountStatsFormatted)
 
 	const localWalletDownloadHref = () => {
@@ -209,9 +208,9 @@ function AccountInfo({ t }) {
 								loading={!identityBalanceDai && identityBalanceDai !== 0}
 							>
 								<ListItemText
-									primary={`${availableIdentityBalanceDai || 0} SAI`}
+									primary={`${availableIdentityBalanceMainToken || 0} SAI`}
 									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
-										args: [outstandingBalanceDai || 0],
+										args: [outstandingBalanceMainToken || 0],
 									})}
 								/>
 							</LoadingSection>
@@ -236,8 +235,8 @@ function AccountInfo({ t }) {
 									fullWidth
 									variant='contained'
 									color='primary'
-									identityAvailable={availableIdentityBalanceDai}
-									identityAvailableRaw={availableIdentityBalanceDai}
+									identityAvailable={availableIdentityBalanceMainToken}
+									identityAvailableRaw={availableIdentityBalanceMainToken}
 									token='SAI'
 									size='small'
 								/>
@@ -279,7 +278,7 @@ function AccountInfo({ t }) {
 											variant='contained'
 											color='secondary'
 											size='small'
-											identityAvailable={availableIdentityBalanceDai}
+											identityAvailable={availableIdentityBalanceMainToken}
 										/>
 									</Box>
 								</Box>

@@ -223,14 +223,16 @@ class CampaignFinance extends Component {
 		} else {
 			const { newItem, account } = this.props
 
-			const { availableIdentityBalanceDai = 0 } = account.stats.formatted || {}
+			const { availableIdentityBalanceMainToken = 0 } =
+				account.stats.formatted || {}
 
 			const depositAmount =
 				prop === 'depositAmount' ? value : newItem.depositAmount
 			const minPerImpression =
 				prop === 'minPerImpression' ? value : newItem.minPerImpression
 			const maxDeposit =
-				parseFloat(availableIdentityBalanceDai) - this.state.openChannelFees
+				parseFloat(availableIdentityBalanceMainToken) -
+				this.state.openChannelFees
 			const result = validateAmounts({
 				maxDeposit,
 				depositAmount,
@@ -287,7 +289,8 @@ class CampaignFinance extends Component {
 
 		const { openChannelFees } = this.state
 
-		const { availableIdentityBalanceDai = 0 } = account.stats.formatted || {}
+		const { availableIdentityBalanceMainToken = 0 } =
+			account.stats.formatted || {}
 
 		const from = activeFrom || undefined
 		const to = withdrawPeriodStart || undefined
@@ -360,7 +363,7 @@ class CampaignFinance extends Component {
 							label={t('DEPOSIT_AMOUNT_LABEL', {
 								args: [
 									parseFloat(
-										availableIdentityBalanceDai - openChannelFees
+										availableIdentityBalanceMainToken - openChannelFees
 									).toFixed(2),
 
 									'SAI',
