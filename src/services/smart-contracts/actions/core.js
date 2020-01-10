@@ -309,7 +309,7 @@ function getIdntityRoutineAuthTuple(identity) {
 		: null
 }
 
-function hasValudExecuteRoutines(routineAuthTuple) {
+function hasValidExecuteRoutines(routineAuthTuple) {
 	const hasValidRoutines =
 		routineAuthTuple &&
 		parseInt(routineAuthTuple[3], 16) * 1000 < Date.now() &&
@@ -351,7 +351,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 	const routineAuthTuple = getIdntityRoutineAuthTuple(identity)
 
 	let encodedTxns = null
-	if (hasValudExecuteRoutines(routineAuthTuple)) {
+	if (hasValidExecuteRoutines(routineAuthTuple)) {
 		encodedTxns = getSweepExecuteRoutineTx({
 			txns,
 			identityAddr,
