@@ -216,7 +216,7 @@ function AccountInfo({ t }) {
 									variant='contained'
 									color='secondary'
 									aria-label='delete'
-									onClick={() => execute(setIdentityENS({ username: 'test' }))}
+									onClick={() => execute(setIdentityENS({ username: 'test4' }))}
 									size='small'
 								>
 									<CreditCardIcon className={classes.iconBtnLeft} />

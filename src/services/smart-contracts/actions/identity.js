@@ -33,15 +33,13 @@ import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy
 import solc from 'solcBrowser'
 import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 
-const { DAI, AdExENSManager } = contracts
+const { DAI } = contracts
 const publicResolver = '0x226159d592E2b063810a10Ebf6dcbADA94Ed68b8'
-const { IDENTITY_BASE_ADDR, IDENTITY_FACTORY_ADDR } = process.env
 
 const GAS_LIMIT_DEPLOY_CONTRACT = 150000
 const feeAmountTransfer = '150000000000000000'
 const feeAmountSetPrivileges = '150000000000000000'
 const ERC20 = new Interface(DAI.abi)
-const IAdExENSManager = new Interface(AdExENSManager.abi)
 /*
 export async function getIdentityBytecode({ owner, privLevel }) {
 	const res = await identityBytecode({
@@ -357,25 +355,42 @@ export async function setIdentityPrivilege({
 
 export async function addIdentityENS({ username, account }) {
 	const { wallet, identity } = account
-	const { provider, Dai, EnsManager, Identity } = await getEthers(
-		wallet.authType
-	)
+	const {
+		provider,
+		Dai,
+		EnsManager,
+		Identity,
+		ReverseRegistrar,
+	} = await getEthers(wallet.authType)
 	const signer = await getSigner({ wallet, provider })
 	const identityAddr = identity.address
+
+	const EnsManagerInterface = new Interface(EnsManager.abi)
+	const ReverseRegistrarInterface = new Interface(ReverseRegistrar.abi)
 
 	const tx1 = {
 		identityContract: identityAddr,
 		feeTokenAddr: Dai.address,
 		feeAmount: feeAmountSetPrivileges,
-		to: '0xa3F69F48D4a45419d48b56b1CfBF4aF2d4586728', //use ENV
-		data: IAdExENSManager.functions.registerAndSetup.encode([
+		to: EnsManager.address,
+		data: EnsManagerInterface.functions.registerAndSetup.encode([
 			publicResolver,
 			id(username),
 			identityAddr,
 		]),
 	}
 
-	const txns = [tx1]
+	const tx2 = {
+		identityContract: identityAddr,
+		feeTokenAddr: Dai.address,
+		feeAmount: feeAmountSetPrivileges,
+		to: ReverseRegistrar.address,
+		data: ReverseRegistrarInterface.functions.setName.encode([
+			`${username}.${ReverseRegistrar.parentDomain}`,
+		]),
+	}
+
+	const txns = [tx1, tx2]
 
 	const txnsRaw = await getIdentityTnxsWithNonces({
 		txns,
@@ -397,7 +412,6 @@ export async function addIdentityENS({ username, account }) {
 	return {
 		result,
 	}
-	//registerAndSetup(0x226159d592E2b063810a10Ebf6dcbADA94Ed68b8, keccak256('username'), identityAddr)
 }
 
 export async function getIdentityTnxsWithNonces({

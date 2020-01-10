@@ -17,6 +17,8 @@ const localWeb3 = async () => {
 	const provider = new ethers.providers.JsonRpcProvider(
 		process.env.WEB3_NODE_ADDR
 	)
+	console.log(ReverseRegistrar)
+	console.log(AdExENSManager)
 	const adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
 	const dai = new ethers.Contract(DAI.address, DAI.abi, provider)
 	const identityFactory = new ethers.Contract(
