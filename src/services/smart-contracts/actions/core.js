@@ -345,7 +345,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 			to: AdExCore.address,
 			feeTokenAddr: channel.depositAsset,
 			data,
-			withdrawAmount: balance,
+			withdrawAmountByToken: { [channel.depositAsset]: balance },
 		}
 	})
 	const routineAuthTuple = getIdntityRoutineAuthTuple(identity)

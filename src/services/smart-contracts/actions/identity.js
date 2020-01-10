@@ -213,11 +213,12 @@ export async function getIdentityTxnsWithNoncesAndFees({
 
 	const { txnsByFeeToken, saiWithdrawAmount } = txns.reduce(
 		(current, tx, i) => {
-			const { withdrawAmount } = tx
+			const { withdrawAmountByToken } = tx
 
 			const needSaiToDaiSwap =
-				!!withdrawAmount &&
-				tx.feeTokenAddr === saiAddr &&
+				!!withdrawAmountByToken &&
+				!!withdrawAmountByToken[saiAddr] &&
+				(tx.feeTokenAddr === saiAddr || !tx.feeTokenAddr) &&
 				mainToken.address === daiAddr &&
 				saiAddr !== daiAddr
 
@@ -225,7 +226,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 
 			if (needSaiToDaiSwap) {
 				current.saiWithdrawAmount = current.saiWithdrawAmount.add(
-					bigNumberify(withdrawAmount)
+					bigNumberify(withdrawAmountByToken[saiAddr])
 				)
 				feeTokenAddr = daiAddr
 			}
