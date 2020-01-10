@@ -1,7 +1,11 @@
 import * as types from 'constants/actionTypes'
 import { getQuickWallet } from 'services/adex-relayer/actions'
 import { updateSpinner, addToast } from './uiActions'
-import { getOwnerIdentities, regAccount } from 'services/adex-relayer/actions'
+import {
+	getOwnerIdentities,
+	regAccount,
+	getIdentityData,
+} from 'services/adex-relayer/actions'
 import { translate } from 'services/translations/translations'
 import { createSession } from './accountActions'
 
@@ -9,7 +13,6 @@ import {
 	getIdentityDeployData,
 	withdrawFromIdentity,
 	setIdentityPrivilege,
-	getIdentityBalance,
 } from 'services/smart-contracts/actions/identity'
 import {
 	addDataToWallet,
@@ -21,7 +24,7 @@ import {
 	generateSalt,
 } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
-import { selectAccount, selectIdentity, selectAuthType } from 'selectors'
+import { selectAccount, selectIdentity } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
 import {
 	validate,
@@ -29,7 +32,6 @@ import {
 	validateEmailCheck,
 	validatePassword,
 	validatePasswordCheck,
-	validateGrantCode,
 	validateTOS,
 } from './validationActions'
 import { getErrorMsg } from 'helpers/errors'
@@ -195,18 +197,13 @@ export function ownerIdentities({ owner }) {
 		updateSpinner('getting-owner-identities', true)(dispatch)
 		try {
 			const identityData = await getOwnerIdentities({ owner })
-			const authType = selectAuthType(getState())
 			const data = Object.entries(identityData).map(
 				async ([identityAddr, privLevel]) => {
-					const balanceDAI = await getIdentityBalance({
-						identityAddr,
-						authType,
-					})
-
+					const data = await getIdentityData({ identityAddr })
 					return {
 						identity: identityAddr,
 						privLevel,
-						balanceDAI,
+						data,
 					}
 				}
 			)
@@ -519,15 +516,7 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 		updateSpinner(validateId, true)(dispatch)
 
 		const identity = selectIdentity(getState())
-		const {
-			email,
-			emailCheck,
-			password,
-			passwordCheck,
-			hasGrantCode,
-			grantCode,
-			tosCheck,
-		} = identity
+		const { email, emailCheck, password, passwordCheck, tosCheck } = identity
 
 		const validations = await Promise.all([
 			validateEmail(validateId, email, dirty)(dispatch),
@@ -536,7 +525,6 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 			validatePasswordCheck(validateId, passwordCheck, password, dirty)(
 				dispatch
 			),
-			validateGrantCode(validateId, hasGrantCode, grantCode, dirty)(dispatch),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
 		])
 

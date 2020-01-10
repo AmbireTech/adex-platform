@@ -1,25 +1,54 @@
 import { getEthers } from 'services/smart-contracts/ethers'
 import { constants } from 'adex-models'
-import { Contract } from 'ethers'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
-import { bigNumberify, formatEther, formatUnits } from 'ethers/utils'
+import {
+	bigNumberify,
+	formatUnits,
+	parseUnits,
+	formatEther,
+} from 'ethers/utils'
 import { formatTokenAmount } from 'helpers/formatters'
+import {
+	selectRelayerConfig,
+	selectMainToken,
+	selectRoutineWithdrawTokens,
+} from 'selectors'
+
 const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
 
+const getWithdrawTokensBalances = async ({ getToken, address }) => {
+	const { routineWithdrawTokens } = selectRelayerConfig()
+	const balancesCalls = routineWithdrawTokens.map(async token => {
+		const tokenContract = getToken(token)
+
+		const balance = await tokenContract.balanceOf(address)
+		const balanceMainToken = await tokenInMainTokenValue({ token, balance })
+
+		return { token, balance, balanceMainToken }
+	})
+
+	return Promise.all(balancesCalls)
+}
+
 export async function getAddressBalances({ address, authType }) {
-	const { provider, Dai } = await getEthers(authType)
+	const { provider, getToken } = await getEthers(authType)
 
 	const calls = [
 		provider.getBalance(address.address),
-		Dai.balanceOf(address.address),
+		getWithdrawTokensBalances({ getToken, address: address.address }),
 	]
 
 	const balances = await Promise.all(calls)
 	const formatted = {
 		address: address.address,
 		path: address.serializedPath || address.path, // we are going to keep the entire path
-		balanceEth: balances[0].toString(),
-		balanceDai: balances[1].toString(),
+		balanceEth: formatEther(balances[0].toString()),
+		tokensBalances: balances[1].map(({ token, balance }) => {
+			return {
+				balance: formatTokenAmount(balance, token.decimals, false, 2),
+				symbol: token.symbol,
+			}
+		}),
 	}
 
 	return formatted
@@ -27,20 +56,18 @@ export async function getAddressBalances({ address, authType }) {
 
 export async function getAccountStats({
 	account,
-	outstandingBalanceDai = {
+	outstandingBalanceMainToken = {
 		total: bigNumberify('0'),
 		available: bigNumberify('0'),
 	},
 }) {
 	const { wallet, identity } = account
-	const { provider, Dai, Identity } = await getEthers(wallet.authType)
+	const { address } = identity
+	const { getIdentity, getToken } = await getEthers(wallet.authType)
+	const { decimals, symbol } = selectMainToken()
 
 	const { status = {} } = identity
-	const identityContract = new Contract(
-		identity.address,
-		Identity.abi,
-		provider
-	)
+	const identityContract = getIdentity({ address })
 	let privilegesAction
 	try {
 		await identityContract.deployed()
@@ -50,16 +77,12 @@ export async function getAccountStats({
 	}
 
 	const calls = [
-		provider.getBalance(wallet.address),
-		Dai.balanceOf(wallet.address),
-		Dai.balanceOf(identity.address),
+		getWithdrawTokensBalances({ getToken, address }),
 		privilegesAction,
 	]
 
 	const [
-		walletBalanceEth,
-		walletBalanceDai,
-		identityBalanceDai = bigNumberify('0'),
+		identityWithdrawTokensBalancesBalances = [],
 		walletPrivileges,
 	] = await Promise.all(
 		calls.map(c =>
@@ -71,51 +94,77 @@ export async function getAccountStats({
 		)
 	)
 
+	const {
+		identityBalanceUsd,
+		identityBalanceMainToken,
+	} = identityWithdrawTokensBalancesBalances.reduce(
+		(balances, t) => {
+			balances.identityBalanceMainToken = balances.identityBalanceMainToken.add(
+				t.balanceMainToken
+			)
+
+			return balances
+		},
+		{
+			identityBalanceMainToken: bigNumberify(0),
+		}
+	)
+
+	const common = {
+		mainTokenDecimals: decimals,
+		mainTokenSymbol: symbol,
+	}
+
 	// BigNumber values for balances
 	const raw = {
-		walletBalanceEth,
-		walletBalanceDai,
-		identityBalanceDai,
+		...common,
+		identityWithdrawTokensBalancesBalances,
 		walletPrivileges,
-		outstandingBalanceDai: outstandingBalanceDai.available,
-		totalOutstandingBalanceDai: outstandingBalanceDai.total,
-		availableIdentityBalanceDai: identityBalanceDai.add(
-			outstandingBalanceDai.available
+		identityBalanceUsd,
+		identityBalanceMainToken,
+		outstandingBalanceMainToken: outstandingBalanceMainToken.available,
+		totalOutstandingBalanceMainToken: outstandingBalanceMainToken.total,
+		availableIdentityBalanceMainToken: identityBalanceMainToken.add(
+			outstandingBalanceMainToken.available
 		),
-		totalIdentityBalanceDai: identityBalanceDai.add(
-			outstandingBalanceDai.total
+		totalIdentityBalanceDai: identityBalanceMainToken.add(
+			outstandingBalanceMainToken.total
 		),
 	}
 
 	const formatted = {
+		...common,
 		walletAddress: wallet.address,
 		walletAuthType: wallet.authType,
 		walletPrivileges: privilegesNames[walletPrivileges],
-		walletBalanceEth: formatEther(walletBalanceEth),
-		walletBalanceDai: formatTokenAmount(walletBalanceDai, 18, false, 2),
 		identityAddress: identity.address,
-		identityBalanceDai: formatTokenAmount(identityBalanceDai, 18, false, 2),
-		outstandingBalanceDai: formatTokenAmount(
-			raw.outstandingBalanceDai,
-			18,
+		identityBalanceDai: formatTokenAmount(
+			identityBalanceMainToken,
+			decimals,
 			false,
 			2
 		),
-		totalOutstandingBalanceDai: formatTokenAmount(
-			raw.totalOutstandingBalanceDai,
-			18,
+		outstandingBalanceMainToken: formatTokenAmount(
+			raw.outstandingBalanceMainToken,
+			decimals,
 			false,
 			2
 		),
-		availableIdentityBalanceDai: formatTokenAmount(
-			raw.availableIdentityBalanceDai,
-			18,
+		totalOutstandingBalanceMainToken: formatTokenAmount(
+			raw.totalOutstandingBalanceMainToken,
+			decimals,
+			false,
+			2
+		),
+		availableIdentityBalanceMainToken: formatTokenAmount(
+			raw.availableIdentityBalanceMainToken,
+			decimals,
 			false,
 			2
 		),
 		totalIdentityBalanceDai: formatTokenAmount(
 			raw.totalIdentityBalanceDai,
-			18,
+			decimals,
 			false,
 			2
 		),
@@ -127,8 +176,9 @@ export async function getAccountStats({
 	}
 }
 
-export async function getOutstandingBalance({ wallet, address, withBalance }) {
-	// const sweepMin = minToSweep()
+// NOTE: currently working because DAI and SAI has the same price and decimals
+// We should use getOutstandingBalanceMainToken if changed
+export async function getOutstandingBalance({ withBalance }) {
 	const bigZero = bigNumberify(0)
 
 	const initial = { total: bigZero, available: bigZero }
@@ -138,6 +188,33 @@ export async function getOutstandingBalance({ wallet, address, withBalance }) {
 		const current = { ...amounts }
 		current.total = current.total.add(outstanding)
 		current.available = current.available.add(outstandingAvailable)
+
+		return current
+	}, initial)
+
+	return allOutstanding
+}
+
+export async function getOutstandingBalanceMainToken({ withBalance }) {
+	const tokens = selectRoutineWithdrawTokens()
+	const bigZero = bigNumberify(0)
+
+	const initial = { total: bigZero, available: bigZero }
+
+	const allOutstanding = withBalance.reduce((amounts, ch) => {
+		const { outstanding, outstandingAvailable, channel } = ch
+		const { depositAsset } = channel
+		const token = tokens[depositAsset]
+
+		const outstandingMT = tokenInMainTokenValue({ token, balance: outstanding })
+		const outstandingAvailableMT = tokenInMainTokenValue({
+			token,
+			balance: outstandingAvailable,
+		})
+
+		const current = { ...amounts }
+		current.total = current.total.add(outstandingMT)
+		current.available = current.available.add(outstandingAvailableMT)
 
 		return current
 	}, initial)
@@ -191,4 +268,38 @@ export async function getAllValidatorsAuthForIdentity({
 	}, {})
 
 	return validatorsAuth
+}
+
+const usdPriceMapping = {
+	// SAI
+	'0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359': [1.0],
+	// DAI
+	'0x6b175474e89094c44da98b954eedeac495271d0f': [1.0],
+}
+
+async function valueInUSD({ token, balance }) {
+	const { address, decimals } = token
+	const [price] = usdPriceMapping[address.toLowerCase()] || [1.0]
+
+	const balanceInUSD =
+		parseFloat(formatUnits(balance.toString(), decimals)) * price
+
+	return balanceInUSD
+}
+
+async function usdToMainTokenBalance({ balanceUSD }) {
+	const { address, decimals } = selectMainToken()
+
+	const [price] = usdPriceMapping[address.toLowerCase()] || [1.0]
+
+	const balanceInMainToken = (balanceUSD * price).toString()
+
+	return parseUnits(balanceInMainToken, decimals)
+}
+
+async function tokenInMainTokenValue({ token, balance }) {
+	const balanceUSD = await valueInUSD({ token, balance })
+	const balanceMainToken = await usdToMainTokenBalance({ balanceUSD })
+
+	return balanceMainToken
 }

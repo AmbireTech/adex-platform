@@ -18,9 +18,11 @@ const useStyles = makeStyles(styles)
 export function DashboardStats(props) {
 	const side = useSelector(selectSide)
 	const classes = useStyles()
-	const { availableIdentityBalanceDai, outstandingBalanceDai } = useSelector(
-		selectAccountStatsFormatted
-	)
+	const {
+		availableIdentityBalanceMainToken,
+		outstandingBalanceMainToken,
+		mainTokenSymbol,
+	} = useSelector(selectAccountStatsFormatted)
 
 	useEffect(() => {
 		execute(updateNav('navTitle', t('DASHBOARD')))
@@ -37,13 +39,15 @@ export function DashboardStats(props) {
 					linkCard
 					onClick={goToAccount}
 					subtitle={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
-						args: [outstandingBalanceDai || 0],
+						args: [outstandingBalanceMainToken || 0],
 					})}
 					loading={
-						(!outstandingBalanceDai && outstandingBalanceDai !== 0) ||
-						(!availableIdentityBalanceDai && availableIdentityBalanceDai !== 0)
+						(!outstandingBalanceMainToken &&
+							outstandingBalanceMainToken !== 0) ||
+						(!availableIdentityBalanceMainToken &&
+							availableIdentityBalanceMainToken !== 0)
 					}
-					title={`${availableIdentityBalanceDai || 0} SAI`}
+					title={`${availableIdentityBalanceMainToken || 0} ${mainTokenSymbol}`}
 				></StatsCard>
 			</div>
 		)
