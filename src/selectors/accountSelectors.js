@@ -57,3 +57,13 @@ export const selectAccountStatsFormatted = createSelector(
 	selectAccountStats,
 	({ formatted }) => formatted || {}
 )
+
+export const selectAccountIdentityRoutineAuthTuple = createSelector(
+	selectAccountIdentity,
+	({ relayerData }) =>
+		relayerData &&
+		relayerData.routineAuthorizationsData &&
+		relayerData.routineAuthorizationsData[0]
+			? relayerData.routineAuthorizationsData[0]
+			: null
+)
