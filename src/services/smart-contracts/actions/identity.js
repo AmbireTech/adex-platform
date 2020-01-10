@@ -367,7 +367,7 @@ export async function addIdentityENS({ username, account }) {
 		identityContract: identityAddr,
 		feeTokenAddr: Dai.address,
 		feeAmount: feeAmountSetPrivileges,
-		to: '0xa3F69F48D4a45419d48b56b1CfBF4aF2d4586728',
+		to: '0xa3F69F48D4a45419d48b56b1CfBF4aF2d4586728', //use ENV
 		data: IAdExENSManager.functions.registerAndSetup.encode([
 			publicResolver,
 			id(username),
