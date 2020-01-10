@@ -278,8 +278,19 @@ export function login() {
 				})
 			}
 
+			const relayerData = await getIdentityData({
+				identityAddr: identityData.address,
+			})
+
+			const identity = {
+				...identityData,
+				currentPrivileges: relayerData.currentPrivileges,
+				isLimitedVolume: relayerData.isLimitedVolume,
+				relayerData,
+			}
+
 			await createSession({
-				identity: identityData,
+				identity,
 				wallet,
 				email,
 				deleteLegacyKey,
