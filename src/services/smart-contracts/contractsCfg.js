@@ -5,6 +5,7 @@ import IdentityFactory from './build/IdentityFactory.json'
 import AdExENSManager from './build/AdExENSManager.json'
 import ReverseRegistrar from './build/ReverseRegistrar.json'
 
+console.log('ENVS: ', process.env)
 export const contracts = {
 	Identity: {
 		abi: Identity.abi,
@@ -15,6 +16,7 @@ export const contracts = {
 	},
 	ReverseRegistrar: {
 		address: process.env.REVERSE_REGISTRAR_ADDR,
+		parentDomain: process.env.REVERSE_REGISTRAR_PARENT,
 		abi: ReverseRegistrar.abi,
 	},
 	AdExCore: {
