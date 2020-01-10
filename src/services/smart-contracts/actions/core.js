@@ -295,6 +295,7 @@ async function getSweepExecuteRoutineTx({
 		to: AdExCore.address,
 		data,
 		withdrawAmountByToken,
+		routinesTxCount: routineOpts.length,
 	}
 
 	return routinesTx
