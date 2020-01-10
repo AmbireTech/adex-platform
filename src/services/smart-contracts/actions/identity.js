@@ -358,22 +358,22 @@ export async function addIdentityENS({ username, account }) {
 	const {
 		provider,
 		Dai,
-		EnsManager,
 		Identity,
+		AdExENSManager,
 		ReverseRegistrar,
 	} = await getEthers(wallet.authType)
 	const signer = await getSigner({ wallet, provider })
 	const identityAddr = identity.address
 
-	const EnsManagerInterface = new Interface(EnsManager.abi)
+	const AdExENSManagerInterface = new Interface(AdExENSManager.abi)
 	const ReverseRegistrarInterface = new Interface(ReverseRegistrar.abi)
 
 	const tx1 = {
 		identityContract: identityAddr,
 		feeTokenAddr: Dai.address,
 		feeAmount: feeAmountSetPrivileges,
-		to: EnsManager.address,
-		data: EnsManagerInterface.functions.registerAndSetup.encode([
+		to: AdExENSManager.address,
+		data: AdExENSManagerInterface.functions.registerAndSetup.encode([
 			publicResolver,
 			id(username),
 			identityAddr,

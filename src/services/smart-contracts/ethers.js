@@ -26,24 +26,14 @@ const localWeb3 = async () => {
 		IdentityFactory.abi,
 		provider
 	)
-	const ensManager = new ethers.Contract(
-		AdExENSManager.address,
-		AdExENSManager.abi,
-		provider
-	)
-	const reverseRegistrar = new ethers.Contract(
-		ReverseRegistrar.address,
-		ReverseRegistrar.abi,
-		provider
-	)
 	const results = {
 		provider: provider,
 		AdExCore: adexCore,
 		Identity: Identity,
 		Dai: dai,
 		IdentityFactory: identityFactory,
-		EnsManager: ensManager,
-		ReverseRegistrar: reverseRegistrar,
+		AdExENSManager,
+		ReverseRegistrar,
 	}
 
 	return results
@@ -79,24 +69,14 @@ const injectedWeb3 = async () => {
 				IdentityFactory.abi,
 				provider
 			)
-			const ensManager = new ethers.Contract(
-				AdExENSManager.address,
-				AdExENSManager.abi,
-				provider
-			)
-			const reverseRegistrar = new ethers.Contract(
-				ReverseRegistrar.address,
-				ReverseRegistrar.abi,
-				provider
-			)
 			const results = {
 				provider: provider,
 				AdExCore: adexCore,
 				Identity: Identity,
 				Dai: dai,
 				IdentityFactory: identityFactory,
-				EnsManager: ensManager,
-				ReverseRegistrar: reverseRegistrar,
+				AdExENSManager,
+				ReverseRegistrar,
 			}
 
 			return results

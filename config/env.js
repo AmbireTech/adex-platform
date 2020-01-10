@@ -96,6 +96,8 @@ function getClientEnvironment(publicUrl) {
 				DAI_TOKEN_ADDR: process.env.DAI_TOKEN_ADDR,
 				ACCESS_CODE_CHECK: process.env.ACCESS_CODE_CHECK,
 				ADVIEW_URL: process.env.ADVIEW_URL,
+				REVERSE_REGISTRAR_ADDR: process.env.REVERSE_REGISTRAR_ADDR,
+				REVERSE_REGISTRAR_PARENT: process.env.REVERSE_REGISTRAR_PARENT,
 			}
 		)
 
