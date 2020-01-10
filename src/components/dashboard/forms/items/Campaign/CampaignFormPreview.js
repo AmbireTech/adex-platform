@@ -64,6 +64,7 @@ class CampaignFormPreview extends Component {
 					</ContentStickyTop>
 				) : null}
 				<ContentBody>
+					<PropRow left={t('title', { isProp: true })} right={title} />
 					<PropRow left={t('owner', { isProp: true })} right={identityAddr} />
 					{/* <PropRow
 						left={t('targeting', { isProp: true })}
