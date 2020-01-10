@@ -4,6 +4,7 @@ import {
 	MerkleTree,
 	splitSig,
 	ChannelState,
+	RoutineOps,
 } from 'adex-protocol-eth/js'
 import { getEthers } from 'services/smart-contracts/ethers'
 import {
@@ -29,10 +30,13 @@ import {
 	selectMainFeeToken,
 } from 'selectors'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
+import IdentityABI from 'adex-protocol-eth/abi/Identity'
 
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
 const ERC20 = new Interface(ERC20TokenABI)
+const Identity = new Interface(IdentityABI)
+
 const timeframe = 15 * 1000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 0.5
 const VALID_UNTIL_MIN_PERIOD = 7 * 24 * 60 * 60 * 1000 // 7 days in ms
@@ -263,6 +267,57 @@ const getChannelWithdrawData = ({
 	])
 }
 
+async function getSweepExecuteRoutineTx({
+	txns,
+	identityAddr,
+	routineAuthTuple,
+}) {
+	const { routineOpts, withdrawAmountByToken } = txns.reduce(
+		(data, tx) => {
+			const updated = { ...data }
+			updated.routineOpts.push(RoutineOps.channelWithdraw(tx.data))
+			updated.withdrawAmountByToken[tx.feeTokenAddr] = (
+				data.withdrawAmountByToken[tx.feeTokenAddr] || bigNumberify(0)
+			).add(bigNumberify(tx.withdrawAmount))
+
+			return updated
+		},
+		{ routineOpts: [], withdrawAmountByToken: {} }
+	)
+
+	const data = Identity.functions.executeRoutines.encode([
+		routineAuthTuple,
+		routineOpts,
+	])
+
+	const routinesTx = {
+		identityContract: identityAddr,
+		to: AdExCore.address,
+		data,
+		withdrawAmountByToken,
+	}
+
+	return routinesTx
+}
+
+function getIdntityRoutineAuthTuple(identity) {
+	return identity &&
+		identity.relayerData &&
+		identity.relayerData.routineAuthorizationsData &&
+		identity.relayerData.routineAuthorizationsData[0]
+		? identity.relayerData.routineAuthorizationsData[0]
+		: null
+}
+
+function hasValudExecuteRoutines(routineAuthTuple) {
+	const hasValidRoutines =
+		routineAuthTuple &&
+		parseInt(routineAuthTuple[3], 16) * 1000 < Date.now() &&
+		routineAuthTuple.length === 5
+
+	return hasValidRoutines
+}
+
 export async function getSweepChannelsTxns({ account, amountToSweep }) {
 	const { wallet, identity } = account
 	const { AdExCore } = await getEthers(wallet.authType)
@@ -293,8 +348,24 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 			withdrawAmount: balance,
 		}
 	})
+	const routineAuthTuple = getIdntityRoutineAuthTuple(identity)
 
-	return txns
+	let encodedTxns = null
+	if (hasValudExecuteRoutines(routineAuthTuple)) {
+		encodedTxns = getSweepExecuteRoutineTx({
+			txns,
+			identityAddr,
+			routineAuthTuple,
+		})
+	} else {
+		encodedTxns = txns.map(tx => {
+			tx.data = Core.functions.channelWithdraw.encode(tx.data)
+
+			return tx
+		})
+	}
+
+	return encodedTxns
 }
 
 export async function getSweepingTxnsIfNeeded({ amountNeeded, account }) {
