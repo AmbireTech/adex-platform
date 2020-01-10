@@ -24,6 +24,7 @@ import { formatTokenAmount } from 'helpers/formatters'
 import { selectMainToken } from 'selectors'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
+// import UnitTargets from 'components/dashboard/containers/UnitTargets'
 const VIEW_MODE = 'campaignRowsView'
 
 export class Campaign extends Component {
@@ -35,11 +36,6 @@ export class Campaign extends Component {
 			statistics: {},
 		}
 	}
-
-	// componentDidMount = () => {
-	// 	this.props.actions.updateCampaignState({ campaign: this.props.item })
-	// 	// this.props.actions.updateCampaignStatistics({ campaign: this.props.item })
-	// }
 
 	handleTabChange = (event, index) => {
 		this.setState({ tabIndex: index })
@@ -67,7 +63,6 @@ export class Campaign extends Component {
 			t,
 			// classes,
 			item,
-			// setActiveFields,
 			// handleChange,
 			// activeFields,
 			// isDemo,
@@ -89,7 +84,6 @@ export class Campaign extends Component {
 		const status = (campaign.status || {}).name
 		const leader = campaign.spec.validators[0]
 		const follower = campaign.spec.validators[1]
-
 		return (
 			<div>
 				<CampaignProps

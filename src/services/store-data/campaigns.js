@@ -23,7 +23,7 @@ const syncCampaigns = async () => {
 					c => c.creator && c.creator.toLowerCase() === address.toLowerCase()
 				)
 				.map(c => {
-					return { ...c, ...c.spec }
+					return { ...c.spec, ...c }
 				})
 
 			execute(updateItems({ items: campaignsMapped, itemType: 'Campaign' }))
