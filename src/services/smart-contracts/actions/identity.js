@@ -261,8 +261,15 @@ export async function getIdentityTxnsWithNoncesAndFees({
 
 	Object.keys(txnsByFeeToken).forEach(key => {
 		txnsByFeeToken[key] = txnsByFeeToken[key].map(tx => {
+			const { routinesTxCount } = tx
 			const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
-			const feeAmount = currentNonce === 0 ? feeToken.minDeploy : feeToken.min
+			let feeAmount = currentNonce === 0 ? feeToken.minDeploy : feeToken.min
+
+			if (routinesTxCount) {
+				feeAmount = bigNumberify(feeAmount)
+					.add(bigNumberify(feeToken.min).mul(bigNumberify(routinesTxCount)))
+					.toString()
+			}
 
 			const txWithNonce = {
 				...tx,
