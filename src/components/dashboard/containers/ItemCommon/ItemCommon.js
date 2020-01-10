@@ -20,12 +20,10 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
-import { contracts } from 'services/smart-contracts/contractsCfg'
 import { validations } from 'adex-models'
 import { utils } from 'ethers'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableConfig'
-
-const { DAI } = contracts
+import { selectMainToken } from 'selectors'
 
 const FallbackAdData = ({
 	item,
@@ -183,9 +181,10 @@ const SlotMinCPM = ({
 	...rest
 }) => {
 	const errMin = invalidFields['minPerImpression']
+	const { address, decimals, symbol } = selectMainToken()
 	const minCPM = formatTokenAmount(
-		bigNumberify((item.minPerImpression || {})[DAI.address] || '0').mul(1000),
-		18,
+		bigNumberify((item.minPerImpression || {})[address] || '0').mul(1000),
+		decimals,
 		true
 	)
 
@@ -201,7 +200,7 @@ const SlotMinCPM = ({
 			margin='dense'
 			error={!!errMin}
 		>
-			<InputLabel>{t('MIN_CPM_SLOT_LABEL', { args: ['SAI'] })}</InputLabel>
+			<InputLabel>{t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}</InputLabel>
 			<Input
 				fullWidth
 				autoFocus
@@ -409,7 +408,7 @@ const campaignProps = ({
 }) => {
 	const mediaUrl = item.mediaUrl
 	const status = item.status || {}
-
+	const { decimals, symbol } = selectMainToken()
 	return (
 		<div>
 			<Grid container spacing={2}>
@@ -512,7 +511,9 @@ const campaignProps = ({
 													<TextField
 														// type='text'
 														value={
-															formatTokenAmount(item.depositAmount, 18) + ' SAI'
+															formatTokenAmount(item.depositAmount, decimals) +
+															' ' +
+															symbol
 														}
 														label={t('depositAmount', { isProp: true })}
 														disabled
@@ -526,9 +527,11 @@ const campaignProps = ({
 														value={
 															formatTokenAmount(
 																bigNumberify(item.minPerImpression).mul(1000),
-																18,
+																decimals,
 																true
-															) + ' SAI'
+															) +
+															' ' +
+															symbol
 														}
 														label={t('CPM', { isProp: true })}
 														disabled

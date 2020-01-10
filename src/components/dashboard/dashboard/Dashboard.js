@@ -21,12 +21,7 @@ import Hidden from '@material-ui/core/Hidden'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import {
-	updateNav,
-	getAllItems,
-	updateAccountAnalytics,
-	execute,
-} from 'actions'
+import { updateNav, getAllItems, execute } from 'actions'
 import { t } from 'selectors'
 
 const Campaigns = () => (
@@ -79,7 +74,6 @@ function Dashboard(props) {
 	useEffect(() => {
 		execute(updateNav('side', side))
 		execute(getAllItems())
-		execute(updateAccountAnalytics())
 		analyticsLoop.start()
 		campaignsLoop.start()
 		statsLoop.start()

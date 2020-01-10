@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { updateNav, addToast, execute } from 'actions'
 import copy from 'copy-to-clipboard'
-import Translate from 'components/translate/Translate'
 import {
 	WithdrawTokenFromIdentity,
 	// WithdrawAnyTokenFromIdentity,
@@ -30,10 +28,10 @@ import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import {
+	t,
 	selectWallet,
 	selectAccountStatsFormatted,
 	selectAccountIdentity,
-	selectAccountSettings,
 } from 'selectors'
 import { formatAddress } from 'helpers/formatters'
 
@@ -44,7 +42,7 @@ const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
 const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 
-function AccountInfo({ t }) {
+function AccountInfo() {
 	const { authType, email, password } = useSelector(selectWallet)
 	const identity = useSelector(selectAccountIdentity)
 	const {
@@ -53,8 +51,9 @@ function AccountInfo({ t }) {
 		walletPrivileges = '',
 		identityAddress,
 		identityBalanceDai,
-		availableIdentityBalanceDai,
-		outstandingBalanceDai,
+		availableIdentityBalanceMainToken,
+		outstandingBalanceMainToken,
+		mainTokenSymbol,
 	} = useSelector(selectAccountStatsFormatted)
 
 	const localWalletDownloadHref = () => {
@@ -75,14 +74,14 @@ function AccountInfo({ t }) {
 
 	useEffect(() => {
 		execute(updateNav('navTitle', t('ACCOUNT')))
-	}, [t])
+	}, [])
 
 	const displayRampWidget = () => {
 		const widget = new RampInstantSDK({
 			hostAppName: 'AdExNetwork',
 			hostLogoUrl: 'https://www.adex.network/img/Adex-logo@2x.png',
 			variant: 'auto',
-			swapAsset: 'SAI',
+			swapAsset: mainTokenSymbol,
 			userAddress: identity.address,
 		})
 		widget.domNodes.overlay.style.zIndex = 1000
@@ -209,9 +208,10 @@ function AccountInfo({ t }) {
 								loading={!identityBalanceDai && identityBalanceDai !== 0}
 							>
 								<ListItemText
-									primary={`${availableIdentityBalanceDai || 0} SAI`}
+									primary={`${availableIdentityBalanceMainToken ||
+										0} ${mainTokenSymbol}`}
 									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
-										args: [outstandingBalanceDai || 0],
+										args: [outstandingBalanceMainToken || 0],
 									})}
 								/>
 							</LoadingSection>
@@ -236,9 +236,9 @@ function AccountInfo({ t }) {
 									fullWidth
 									variant='contained'
 									color='primary'
-									identityAvailable={availableIdentityBalanceDai}
-									identityAvailableRaw={availableIdentityBalanceDai}
-									token='SAI'
+									identityAvailable={availableIdentityBalanceMainToken}
+									identityAvailableRaw={availableIdentityBalanceMainToken}
+									token={mainTokenSymbol}
 									size='small'
 								/>
 							</Box>
@@ -279,7 +279,7 @@ function AccountInfo({ t }) {
 											variant='contained'
 											color='secondary'
 											size='small'
-											identityAvailable={availableIdentityBalanceDai}
+											identityAvailable={availableIdentityBalanceMainToken}
 										/>
 									</Box>
 								</Box>
@@ -336,8 +336,4 @@ function AccountInfo({ t }) {
 	)
 }
 
-AccountInfo.propTypes = {
-	t: PropTypes.func.isRequired,
-}
-
-export default Translate(AccountInfo)
+export default AccountInfo

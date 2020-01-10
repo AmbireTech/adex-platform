@@ -13,6 +13,7 @@ import {
 } from 'components/common/dialog/content'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from '../styles'
+import { selectMainToken } from 'selectors'
 
 const SlotFallback = ({ img, targetUrl, t, classes }) => {
 	return (
@@ -52,7 +53,7 @@ class AdSlotPreview extends Component {
 	}
 
 	render() {
-		const { classes, account, ...rest } = this.props
+		const { classes, account, mainTokenSymbol, ...rest } = this.props
 		const { newItem, t } = rest
 		const { type, title, description, temp, tags, targetUrl } = newItem
 		const { minPerImpression } = temp
@@ -72,7 +73,7 @@ class AdSlotPreview extends Component {
 					/>
 					<PropRow
 						left={t('MIN_CPM_SLOT_LABEL')}
-						right={minPerImpression + ' SAI'}
+						right={`${minPerImpression} ${mainTokenSymbol}`}
 					/>
 					{temp.useFallback && (
 						<SlotFallback
@@ -113,6 +114,7 @@ function mapStateToProps(state) {
 	const { persist } = state
 	return {
 		account: persist.account,
+		mainTokenSymbol: selectMainToken(state),
 	}
 }
 
