@@ -44,6 +44,7 @@ function toEthereumChannel(channel) {
 		.digest()
 
 	return new Channel({
+		title: channel.title,
 		creator: channel.creator,
 		tokenAddr: channel.depositAsset,
 		tokenAmount: channel.depositAmount,
