@@ -4,7 +4,14 @@ import { AUTH_TYPES } from 'constants/misc'
 
 ethers.errors.setLogLevel('error')
 
-const { AdExCore, Identity, DAI, IdentityFactory, AdExENSManager } = contracts
+const {
+	AdExCore,
+	Identity,
+	DAI,
+	IdentityFactory,
+	AdExENSManager,
+	ReverseRegistrar,
+} = contracts
 
 const localWeb3 = async () => {
 	const provider = new ethers.providers.JsonRpcProvider(
@@ -12,24 +19,29 @@ const localWeb3 = async () => {
 	)
 	const adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
 	const dai = new ethers.Contract(DAI.address, DAI.abi, provider)
-	const ensManager = new ethers.Contract(
-		AdExENSManager.address,
-		AdExENSManager.abi,
-		provider
-	)
 	const identityFactory = new ethers.Contract(
 		IdentityFactory.address,
 		IdentityFactory.abi,
 		provider
 	)
-
+	const ensManager = new ethers.Contract(
+		AdExENSManager.address,
+		AdExENSManager.abi,
+		provider
+	)
+	const reverseRegistrar = new ethers.Contract(
+		ReverseRegistrar.address,
+		ReverseRegistrar.abi,
+		provider
+	)
 	const results = {
 		provider: provider,
 		AdExCore: adexCore,
 		Identity: Identity,
 		Dai: dai,
-		EnsManager: ensManager,
 		IdentityFactory: identityFactory,
+		EnsManager: ensManager,
+		ReverseRegistrar: reverseRegistrar,
 	}
 
 	return results
@@ -70,13 +82,19 @@ const injectedWeb3 = async () => {
 				AdExENSManager.abi,
 				provider
 			)
+			const reverseRegistrar = new ethers.Contract(
+				ReverseRegistrar.address,
+				ReverseRegistrar.abi,
+				provider
+			)
 			const results = {
 				provider: provider,
 				AdExCore: adexCore,
 				Identity: Identity,
 				Dai: dai,
-				EnsManager: ensManager,
 				IdentityFactory: identityFactory,
+				EnsManager: ensManager,
+				ReverseRegistrar: reverseRegistrar,
 			}
 
 			return results
