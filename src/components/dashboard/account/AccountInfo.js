@@ -50,7 +50,7 @@ function AccountInfo() {
 		walletAuthType = '',
 		walletPrivileges = '',
 		identityAddress,
-		identityBalanceDai,
+		identityBalanceMainToken,
 		availableIdentityBalanceMainToken,
 		outstandingBalanceMainToken,
 		mainTokenSymbol,
@@ -205,13 +205,15 @@ function AccountInfo() {
 					>
 						<Box pr={1} flexGrow='8'>
 							<LoadingSection
-								loading={!identityBalanceDai && identityBalanceDai !== 0}
+								loading={
+									!identityBalanceMainToken && identityBalanceMainToken !== 0
+								}
 							>
 								<ListItemText
 									primary={`${availableIdentityBalanceMainToken ||
 										0} ${mainTokenSymbol}`}
-									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
-										args: [outstandingBalanceMainToken || 0],
+									secondary={t('IDENTITY_MAIN_TOKEN_BALANCE_AVAILABLE_INFO', {
+										args: [outstandingBalanceMainToken || 0, mainTokenSymbol],
 									})}
 								/>
 							</LoadingSection>
