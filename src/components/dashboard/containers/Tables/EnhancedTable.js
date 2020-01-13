@@ -361,7 +361,7 @@ export default function EnhancedTable(props) {
 					</Table>
 				</div>
 				<TablePagination
-					rowsPerPageOptions={[5, 10, 25]}
+					rowsPerPageOptions={[10, 20, 50]}
 					component='div'
 					classes={{ spacer: classes.spacer }}
 					count={filteredItems.length}
