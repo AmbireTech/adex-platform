@@ -88,20 +88,14 @@ export async function withdrawFromIdentity({
 	amountToWithdraw,
 	withdrawTo,
 	getFeesOnly,
-	// tokenAddress,
-	// tokenDecimals,
 }) {
 	const { mainToken } = selectRelayerConfig()
 	const { wallet, identity } = account
 	const { provider, Identity } = await getEthers(wallet.authType)
 
-	const toWithdraw = parseUnits(amountToWithdraw, mainToken.decimals)
-	const sweepTxns = await getSweepingTxnsIfNeeded({
-		amountNeeded: toWithdraw,
-		account,
-	})
-
 	const identityAddr = identity.address
+
+	const toWithdraw = parseUnits(amountToWithdraw, mainToken.decimals)
 
 	const tokenAddr = mainToken.address
 
@@ -111,13 +105,15 @@ export async function withdrawFromIdentity({
 		to: tokenAddr,
 		data: ERC20.functions.transfer.encode([withdrawTo, toWithdraw]),
 	}
-	const txns = [...sweepTxns, tx1]
+	const txns = [tx1]
 
 	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
+		amountInMainTokenNeeded: toWithdraw,
 		txns,
 		identityAddr,
 		provider,
 		Identity,
+		account,
 	})
 
 	if (getFeesOnly) {
@@ -167,6 +163,7 @@ export async function setIdentityPrivilege({
 		identityAddr,
 		provider,
 		Identity,
+		account,
 	})
 
 	if (getFeesOnly) {
@@ -190,27 +187,13 @@ export async function setIdentityPrivilege({
 		result,
 	}
 }
-
-export async function getIdentityTxnsWithNoncesAndFees({
-	txns = [],
+function txnsByTokenWithSaiToDaiSwap({
+	txns,
+	mainToken,
+	daiAddr,
+	saiAddr,
 	identityAddr,
-	provider,
-	Identity,
 }) {
-	const feeTokenWhitelist = selectFeeTokenWhitelist()
-	const { mainToken, daiAddr, saiAddr } = selectRelayerConfig()
-
-	let isDeployed = (await provider.getCode(identityAddr)) !== '0x'
-	let identityContract = null
-
-	if (isDeployed) {
-		identityContract = new Contract(identityAddr, Identity.abi, provider)
-	}
-
-	const initialNonce = isDeployed
-		? (await identityContract.nonce()).toNumber()
-		: 0
-
 	const { txnsByFeeToken, saiWithdrawAmount } = txns.reduce(
 		(current, tx, i) => {
 			const { withdrawAmountByToken } = tx
@@ -248,14 +231,89 @@ export async function getIdentityTxnsWithNoncesAndFees({
 		}
 	)
 
-	if (!saiWithdrawAmount.isZero()) {
-		txnsByFeeToken[daiAddr] = swapSaiToDaiTxns({
-			identityAddr,
-			daiAddr,
-			saiAddr,
-			withdrawAmount: saiWithdrawAmount.toString(),
-		}).concat(txnsByFeeToken[daiAddr] || [])
+	return { txnsByFeeToken, saiWithdrawAmount }
+}
+
+export async function getIdentityTxnsWithNoncesAndFees({
+	amountInMainTokenNeeded = '0',
+	txns = [],
+	identityAddr,
+	provider,
+	Identity,
+	account,
+}) {
+	const { sweepTxns, swapAmountsByToken } = await getSweepingTxnsIfNeeded({
+		amountInMainTokenNeeded,
+		account,
+	})
+	const feeTokenWhitelist = selectFeeTokenWhitelist()
+	const { mainToken, daiAddr, saiAddr } = selectRelayerConfig()
+
+	let isDeployed = (await provider.getCode(identityAddr)) !== '0x'
+	let identityContract = null
+
+	if (isDeployed) {
+		identityContract = new Contract(identityAddr, Identity.abi, provider)
 	}
+
+	const initialNonce = isDeployed
+		? (await identityContract.nonce()).toNumber()
+		: 0
+
+	// { txnsByFeeToken, saiWithdrawAmount }
+	const sweepTxnsByToken = txnsByTokenWithSaiToDaiSwap({
+		txns: sweepTxns,
+		mainToken,
+		daiAddr,
+		saiAddr,
+		identityAddr,
+	})
+
+	// { txnsByFeeToken, saiWithdrawAmount }
+	const otherTxnsByToken = txnsByTokenWithSaiToDaiSwap({
+		txns,
+		mainToken,
+		daiAddr,
+		saiAddr,
+		identityAddr,
+	})
+
+	// 1st - always get sweeping txns (channelWithdraw)
+	// 2nd - swap SAI to DAI if needed (main token is DAI)
+	// 3rd - make other txns with the main token only
+
+	// TODO: make it work with other tokens
+	const saiSwapAmount = sweepTxnsByToken.saiWithdrawAmount
+		.add(otherTxnsByToken.saiWithdrawAmount)
+		.add(bigNumberify(swapAmountsByToken[saiAddr]))
+
+	if (!saiSwapAmount.isZero()) {
+		sweepTxnsByToken.txnsByFeeToken[daiAddr] = [
+			...(sweepTxnsByToken.txnsByFeeToken[daiAddr] || []),
+			...swapSaiToDaiTxns({
+				identityAddr,
+				daiAddr,
+				saiAddr,
+				swapAmount: saiSwapAmount,
+			}),
+		]
+	}
+
+	const allFeeTokens = [
+		...new Set([
+			...Object.keys(sweepTxnsByToken.txnsByFeeToken),
+			...Object.keys(otherTxnsByToken.txnsByFeeToken),
+		]),
+	]
+
+	const txnsByFeeToken = allFeeTokens.reduce((txns, token) => {
+		txns[token] = [
+			...(sweepTxnsByToken.txnsByFeeToken[token] || []),
+			...(otherTxnsByToken.txnsByFeeToken[token] || []),
+		]
+
+		return txns
+	}, {})
 
 	let currentNonce = initialNonce
 
@@ -287,22 +345,19 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	return txnsByFeeToken
 }
 
-function swapSaiToDaiTxns({ identityAddr, daiAddr, saiAddr, withdrawAmount }) {
+function swapSaiToDaiTxns({ identityAddr, daiAddr, saiAddr, swapAmount }) {
 	const approveTx = {
 		identityContract: identityAddr,
 		feeTokenAddr: daiAddr,
 		to: saiAddr,
-		data: ERC20.functions.approve.encode([
-			SCD_MCD_MIGRATION_ADDR,
-			withdrawAmount,
-		]),
+		data: ERC20.functions.approve.encode([SCD_MCD_MIGRATION_ADDR, swapAmount]),
 	}
 
 	const swapTx = {
 		identityContract: identityAddr,
 		feeTokenAddr: daiAddr,
 		to: SCD_MCD_MIGRATION_ADDR,
-		data: ScdMcdMigration.functions.swapSaiToDai.encode([withdrawAmount]),
+		data: ScdMcdMigration.functions.swapSaiToDai.encode([swapAmount]),
 	}
 
 	return [approveTx, swapTx]
