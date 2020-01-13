@@ -45,9 +45,9 @@ function TransactionPreview(props) {
 	const account = useSelector(selectAccount)
 	const { symbol } = useSelector(selectMainToken)
 	const transaction = useSelector(state =>
-		selectNewTransactionById(state, stepsId)
+		selectNewTransactionById(state, txId)
 	)
-	const spinner = useStyles(state => selectSpinnerById(state, stepsId))
+	const spinner = useSelector(state => selectSpinnerById(state, txId))
 
 	useEffect(() => {
 		if (getFeesFn && Object.keys(transaction).length) {
@@ -55,7 +55,6 @@ function TransactionPreview(props) {
 			getFeesFn({ account, transaction })
 				.then(fees => {
 					handleChange('fees', fees)
-					this.setState({ fees: fees })
 					execute(updateSpinner(txId, false))
 
 					if (parseFloat(fees.fees || 0) > parseFloat(identityAvailable)) {
