@@ -258,13 +258,7 @@ const getChannelWithdrawData = ({
 	const vsig1 = splitSig(lastApprovedSigs[0])
 	const vsig2 = splitSig(lastApprovedSigs[1])
 
-	return Core.functions.channelWithdraw.encode([
-		ethChannelTuple,
-		mTree.getRoot(),
-		[vsig1, vsig2],
-		proof,
-		balance,
-	])
+	return [ethChannelTuple, mTree.getRoot(), [vsig1, vsig2], proof, balance]
 }
 
 async function getSweepExecuteRoutineTx({
@@ -360,6 +354,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 		})
 	} else {
 		encodedTxns = txns.map(tx => {
+			console.log('tx.data', tx.data)
 			tx.data = Core.functions.channelWithdraw.encode(tx.data)
 
 			return tx
@@ -371,7 +366,9 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 
 export async function getSweepingTxnsIfNeeded({ amountNeeded, account }) {
 	const needed = bigNumberify(amountNeeded)
-	const accountBalance = bigNumberify(account.stats.raw.identityBalanceDai)
+	const accountBalance = bigNumberify(
+		account.stats.raw.identityBalanceMainToken
+	)
 	if (needed.gt(accountBalance)) {
 		return await getSweepChannelsTxns({
 			account,
