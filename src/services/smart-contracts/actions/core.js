@@ -12,6 +12,7 @@ import {
 	getIdentityTxnsTotalFees,
 	processExecuteByFeeTokens,
 } from 'services/smart-contracts/actions/identity'
+import { getWithdrawTokensBalances } from 'services/smart-contracts/actions/stats'
 import { contracts } from '../contractsCfg'
 import { closeCampaign } from 'services/adex-validator/actions'
 import { Campaign, AdUnit } from 'adex-models'
@@ -364,19 +365,71 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 	return encodedTxns
 }
 
-export async function getSweepingTxnsIfNeeded({ amountNeeded, account }) {
-	const needed = bigNumberify(amountNeeded)
-	const accountBalance = bigNumberify(
-		account.stats.raw.identityBalanceMainToken
-	)
-	if (needed.gt(accountBalance)) {
-		return await getSweepChannelsTxns({
-			account,
-			amountToSweep: needed.sub(accountBalance),
-		})
-	} else {
-		return []
+function getSwapAmountsByToken({ balances, amountToSwapInMainToken }) {
+	const { swapsByToken, swapsSumInMainToken } = balances
+		.sort((b1, b2) => b2.balanceMainToken.gt(b1.balanceMainToken))
+		.reduce(
+			(swaps, balance) => {
+				if (swaps.swapsSumInMainToken.lt(amountToSwapInMainToken)) {
+					swaps.swapsSumInMainToken = swaps.swapsSumInMainToken.add(
+						balance.balanceMainToken
+					)
+
+					swaps.swapsByToken[balance.token.address] = balance.balance
+				}
+
+				return swaps
+			},
+			{
+				swapsSumInMainToken: bigNumberify(0),
+				swapsByToken: {},
+			}
+		)
+
+	return { swapsByToken, swapsSumInMainToken }
+}
+
+// NOTE: withdraw from channels + prop for amount to swap by token to main token
+// amountNeeded must be in MainToken
+export async function getSweepingTxnsIfNeeded({
+	amountInMainTokenNeeded,
+	account,
+}) {
+	const needed = bigNumberify(amountInMainTokenNeeded)
+	const { identity, wallet } = account
+	const { address } = identity
+	const { authType } = wallet
+
+	const { balances, mainTokenBalance } = await getWithdrawTokensBalances({
+		authType,
+		address,
+	})
+
+	let currentBalanceInUse = mainTokenBalance
+
+	const sweepData = {
+		sweepTxns: [],
+		swapAmountsByToken: {},
 	}
+
+	if (needed.gt(currentBalanceInUse)) {
+		const { swapsByToken, swapsSumInMainToken } = getSwapAmountsByToken({
+			balances,
+			amountToSwapInMainToken: needed.sub(currentBalanceInUse),
+		})
+
+		sweepData.swapAmountsByToken = swapsByToken
+		currentBalanceInUse = currentBalanceInUse.add(swapsSumInMainToken)
+	}
+
+	if (needed.gt(currentBalanceInUse)) {
+		sweepData.sweepTxns = await getSweepChannelsTxns({
+			account,
+			amountToSweep: needed.sub(currentBalanceInUse),
+		})
+	}
+
+	return sweepData
 }
 
 export function openChannelFeesWithoutSweeping() {
@@ -393,10 +446,6 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 	const { wallet, identity } = account
 	const { provider, AdExCore, Dai, Identity } = await getEthers(wallet.authType)
 	const depositAmount = parseUnits(campaign.depositAmount)
-	const sweepTxns = await getSweepingTxnsIfNeeded({
-		amountNeeded: depositAmount,
-		account,
-	})
 
 	const readyCampaign = getReadyCampaign(campaign, identity, Dai)
 	const openReady = readyCampaign.openReady
@@ -425,12 +474,14 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 		to: AdExCore.address,
 		data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
 	}
-	const txns = [...sweepTxns, tx1, tx2]
+	const txns = [tx1, tx2]
 	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
+		amountInMainTokenNeeded: depositAmount,
 		txns,
 		identityAddr,
 		provider,
 		Identity,
+		account,
 	})
 
 	if (getFeesOnly) {
