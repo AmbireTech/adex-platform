@@ -16,8 +16,9 @@ import {
 
 const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
 
-const getWithdrawTokensBalances = async ({ getToken, address }) => {
-	const { routineWithdrawTokens } = selectRelayerConfig()
+export const getWithdrawTokensBalances = async ({ authType, address }) => {
+	const { getToken } = await getEthers(authType)
+	const { routineWithdrawTokens, mainToken } = selectRelayerConfig()
 	const balancesCalls = routineWithdrawTokens.map(async token => {
 		const tokenContract = getToken(token)
 
@@ -27,15 +28,38 @@ const getWithdrawTokensBalances = async ({ getToken, address }) => {
 		return { token, balance, balanceMainToken }
 	})
 
-	return Promise.all(balancesCalls)
+	const balances = await Promise.all(balancesCalls)
+	const { totalBalanceInMainToken, mainTokenBalance } = balances.reduce(
+		(data, token) => {
+			data.totalBalanceInMainToken = data.totalBalanceInMainToken.add(
+				token.balanceMainToken
+			)
+
+			if (token.address === mainToken.address) {
+				data.mainTokenBalance = token.balance
+			}
+
+			return data
+		},
+		{
+			totalBalanceInMainToken: bigNumberify(0),
+			mainTokenBalance: bigNumberify(0),
+		}
+	)
+
+	return {
+		balances,
+		mainTokenBalance,
+		totalBalanceInMainToken,
+	}
 }
 
 export async function getAddressBalances({ address, authType }) {
-	const { provider, getToken } = await getEthers(authType)
+	const { provider } = await getEthers(authType)
 
 	const calls = [
 		provider.getBalance(address.address),
-		getWithdrawTokensBalances({ getToken, address: address.address }),
+		getWithdrawTokensBalances({ authType, address: address.address }),
 	]
 
 	const balances = await Promise.all(calls)
@@ -43,7 +67,7 @@ export async function getAddressBalances({ address, authType }) {
 		address: address.address,
 		path: address.serializedPath || address.path, // we are going to keep the entire path
 		balanceEth: formatEther(balances[0].toString()),
-		tokensBalances: balances[1].map(({ token, balance }) => {
+		tokensBalances: balances[1].balances.map(({ token, balance }) => {
 			return {
 				balance: formatTokenAmount(balance, token.decimals, false, 2),
 				symbol: token.symbol,
@@ -62,8 +86,9 @@ export async function getAccountStats({
 	},
 }) {
 	const { wallet, identity } = account
+	const { authType } = wallet
 	const { address } = identity
-	const { getIdentity, getToken } = await getEthers(wallet.authType)
+	const { getIdentity } = await getEthers(authType)
 	const { decimals, symbol } = selectMainToken()
 
 	const { status = {} } = identity
@@ -77,12 +102,12 @@ export async function getAccountStats({
 	}
 
 	const calls = [
-		getWithdrawTokensBalances({ getToken, address }),
+		getWithdrawTokensBalances({ authType, address }),
 		privilegesAction,
 	]
 
 	const [
-		identityWithdrawTokensBalancesBalances = [],
+		identityWithdrawTokensBalancesBalances = {},
 		walletPrivileges,
 	] = await Promise.all(
 		calls.map(c =>
@@ -94,21 +119,8 @@ export async function getAccountStats({
 		)
 	)
 
-	const {
-		identityBalanceUsd,
-		identityBalanceMainToken,
-	} = identityWithdrawTokensBalancesBalances.reduce(
-		(balances, t) => {
-			balances.identityBalanceMainToken = balances.identityBalanceMainToken.add(
-				t.balanceMainToken
-			)
-
-			return balances
-		},
-		{
-			identityBalanceMainToken: bigNumberify(0),
-		}
-	)
+	const identityBalanceMainToken =
+		identityWithdrawTokensBalancesBalances.totalBalanceInMainToken
 
 	const common = {
 		mainTokenDecimals: decimals,
@@ -120,7 +132,6 @@ export async function getAccountStats({
 		...common,
 		identityWithdrawTokensBalancesBalances,
 		walletPrivileges,
-		identityBalanceUsd,
 		identityBalanceMainToken,
 		outstandingBalanceMainToken: outstandingBalanceMainToken.available,
 		totalOutstandingBalanceMainToken: outstandingBalanceMainToken.total,
