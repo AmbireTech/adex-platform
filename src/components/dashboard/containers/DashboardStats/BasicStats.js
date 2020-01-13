@@ -116,7 +116,7 @@ export function BasicStats({ side }) {
 						<StatsCard
 							bgColor='accentOne'
 							subtitle={t('LABEL_TOTAL_SPENT')}
-							explain={t('EXPLAIN_TOTAL_SPENT')}
+							explain={t('EXPLAIN_TOTAL_SPENT', { args: [symbol] })}
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
 							)} ${symbol}`}

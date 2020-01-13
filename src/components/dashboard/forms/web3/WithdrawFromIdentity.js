@@ -66,8 +66,9 @@ class WithdrawFromIdentity extends Component {
 			<div>
 				<div>
 					{' '}
-					{t('EXCHANGE_CURRENT_DAI_BALANCE_AVAILABLE_ON_IDENTITY')}{' '}
-					{identityAvailable}{' '}
+					{t('EXCHANGE_CURRENT_MAIN_TOKEN_BALANCE_AVAILABLE_ON_IDENTITY', {
+						args: [identityAvailable, token],
+					})}
 				</div>
 				<TextField
 					disabled={withdrawToSpinner}
