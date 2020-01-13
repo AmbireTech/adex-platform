@@ -127,7 +127,7 @@ export async function getAccountStats({
 		availableIdentityBalanceMainToken: identityBalanceMainToken.add(
 			outstandingBalanceMainToken.available
 		),
-		totalIdentityBalanceDai: identityBalanceMainToken.add(
+		totalIdentityBalanceMainToken: identityBalanceMainToken.add(
 			outstandingBalanceMainToken.total
 		),
 	}
@@ -138,7 +138,7 @@ export async function getAccountStats({
 		walletAuthType: wallet.authType,
 		walletPrivileges: privilegesNames[walletPrivileges],
 		identityAddress: identity.address,
-		identityBalanceDai: formatTokenAmount(
+		identityBalanceMainToken: formatTokenAmount(
 			identityBalanceMainToken,
 			decimals,
 			false,
@@ -162,8 +162,8 @@ export async function getAccountStats({
 			false,
 			2
 		),
-		totalIdentityBalanceDai: formatTokenAmount(
-			raw.totalIdentityBalanceDai,
+		totalIdentityBalanceMainToken: formatTokenAmount(
+			raw.totalIdentityBalanceMainToken,
 			decimals,
 			false,
 			2

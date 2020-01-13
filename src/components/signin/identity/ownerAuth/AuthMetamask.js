@@ -82,8 +82,6 @@ function AuthMetamask(props) {
 			props.updateWallet({
 				address,
 				authType: AUTH_TYPES.METAMASK.name,
-				balanceEth: stats.balanceEth,
-				balanceDai: stats.balanceDai,
 				signType: AUTH_TYPES.METAMASK.signType,
 			})
 		} catch (err) {
