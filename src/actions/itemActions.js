@@ -30,7 +30,12 @@ import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
 import { getErrorMsg } from 'helpers/errors'
 import { SOURCES } from 'constants/targeting'
-import { selectAccount, selectRelayerConfig, selectAuthSig } from 'selectors'
+import {
+	selectAccount,
+	selectRelayerConfig,
+	selectAuthSig,
+	selectAuth,
+} from 'selectors'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -529,6 +534,68 @@ export const updateCampaignState = ({ campaign }) => {
 	}
 }
 
+// TEMP for testing in production until 4.1 is deployed
+function getHumanFriendlyName(campaign) {
+	if (campaign.status && campaign.status.humanFriendlyName === 'Closed')
+		return 'Closed'
+	switch (campaign.status.name) {
+		case 'Active':
+		case 'Ready':
+		case 'Pending':
+		case 'Initializing':
+		case 'Waiting':
+		case 'Offline':
+		case 'Disconnected':
+		case 'Unhealthy':
+		case 'Invalid':
+			return 'Active'
+		case 'Expired':
+		case 'Exhausted':
+		case 'Withdraw':
+			return 'Completed'
+		default:
+			return 'N/A'
+	}
+}
+
+export function updateUserCampaigns() {
+	return async function(dispatch, getState) {
+		const hasAuth = selectAuth(getState())
+		const { wallet, identity } = selectAccount(getState())
+		const { authSig } = wallet
+		const { address } = identity
+
+		if (hasAuth && authSig && address) {
+			try {
+				const campaigns = await getCampaigns({ authSig, creator: address })
+
+				const campaignsMapped = campaigns
+					.filter(
+						c => c.creator && c.creator.toLowerCase() === address.toLowerCase()
+					)
+					.map(c => {
+						const campaign = { ...c.spec, ...c }
+						if (!campaign.humanFriendlyName) {
+							campaign.status.humanFriendlyName = getHumanFriendlyName(campaign)
+						}
+
+						return campaign
+					})
+				updateItems({ items: campaignsMapped, itemType: 'Campaign' })(dispatch)
+			} catch (err) {
+				console.error('ERR_GETTING_CAMPAIGNS', err)
+
+				addToast({
+					dispatch,
+					type: 'cancel',
+					toastStr: 'ERR_GETTING_ITEMS',
+					args: [getErrorMsg(err)],
+				})
+			}
+		}
+	}
+}
+
 export function closeCampaign({ campaign }) {
 	return async function(dispatch, getState) {
 		updateSpinner('closing-campaign', true)(dispatch)
@@ -546,11 +613,7 @@ export function closeCampaign({ campaign }) {
 				toastStr: 'SUCCESS_CLOSING_CAMPAIGN',
 				args: [campaign.id],
 			})
-			const campaigns = await getCampaigns({ authSig })
-			const campaignsMapped = campaigns.map(c => {
-				return { ...c, ...c.spec }
-			})
-			updateItems({ items: campaignsMapped, itemType: 'Campaign' })(dispatch)
+			updateUserCampaigns(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_CLOSING_CAMPAIGN', err)
 			addToast({
