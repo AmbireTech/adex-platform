@@ -1,6 +1,7 @@
 import React from 'react'
 import WithdrawFromExchangePage from './WithdrawFromIdentity'
 import SeAddressPrivilege from './SeAddressPrivilege'
+import SetAccountENSPage from './SetAccountENSPage'
 import TransactionPreview from './TransactionPreview'
 import Button from '@material-ui/core/Button'
 import TransactionHoc from './TransactionHoc'
@@ -128,6 +129,42 @@ export const SetIdentityPrivilege = props => (
 				setAddr: transaction.setAddr,
 				getFeesOnly: true,
 			})
+		}}
+	/>
+)
+
+export const SetAccountENS = props => (
+	<FormStepsWithDialog
+		{...props}
+		btnLabel='ACCOUNT_SET_ENS_BTN'
+		saveBtnLabel='ACCOUNT_SET_ENS_SAVE_BTN'
+		title='ACCOUNT_SET_ENS_TITLE'
+		stepsId='setAccountENS'
+		{...txCommon}
+		stepsPages={[
+			{
+				title: 'ACCOUNT_SET_ENS_STEP',
+				page: SetAccountENSPage,
+			},
+		]}
+		stepsPreviewPage={{
+			title: 'PREVIEW_AND_MAKE_TR',
+			page: TransactionPreview,
+		}}
+		saveFn={({ transaction } = {}) => {
+			// return execute(
+			// 	addrIdentityPrivilege({
+			// 		privLevel: transaction.privLevel,
+			// 		setAddr: transaction.setAddr,
+			// 	})
+			// )
+		}}
+		getFeesFn={({ transaction } = {}) => {
+			// return setIdentityPrivilege({
+			// 	privLevel: transaction.privLevel,
+			// 	setAddr: transaction.setAddr,
+			// 	getFeesOnly: true,
+			// })
 		}}
 	/>
 )

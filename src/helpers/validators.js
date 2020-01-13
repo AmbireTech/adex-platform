@@ -1,7 +1,8 @@
 import { utils } from 'ethers'
 import { isEthAddressERC20 } from 'services/smart-contracts/actions/erc20'
 import { isConnectionLost } from 'services/smart-contracts/actions/common'
-
+import { getEthers } from 'services/smart-contracts/ethers'
+import { ethers } from 'ethers'
 /*eslint-disable */
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
 const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
@@ -112,6 +113,29 @@ export const validEthAddress = async ({
 	} catch (error) {
 		if (error === 'Non-Ethereum browser detected.')
 			msg = 'ERR_INVALID_CONNECTION_LOST'
+	}
+	return { msg }
+}
+
+export const freeAdExENS = async ({ ens = '', authType }) => {
+	let msg = ''
+	try {
+		if (ens === '') {
+			msg = 'ERR_ENS_REQUIRED'
+		} else {
+			const provider = ethers.getDefaultProvider()
+			const ensAddress = await provider.resolveName(
+				`${ens}.${process.env.REVERSE_REGISTRAR_PARENT}`
+			)
+
+			if (ensAddress && !isEthAddressZero(ensAddress)) msg = 'ERR_ENS_NOT_FREE'
+		}
+	} catch (error) {
+		if (error.code === 'INVALID_ARGUMENT') {
+			msg = 'ERR_INVALID_ARGUMENT_ENS'
+		} else {
+			msg = 'ERR_ENS_CHECK'
+		}
 	}
 	return { msg }
 }

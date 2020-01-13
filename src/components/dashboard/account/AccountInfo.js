@@ -7,6 +7,7 @@ import Translate from 'components/translate/Translate'
 import {
 	WithdrawTokenFromIdentity,
 	SetIdentityPrivilege,
+	SetAccountENS,
 } from 'components/dashboard/forms/web3/transactions'
 import { makeStyles } from '@material-ui/core/styles'
 import List from '@material-ui/core/List'
@@ -27,6 +28,7 @@ import { styles } from './styles.js'
 import { getRecoveryWalletData } from 'services/wallet/wallet'
 import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
+import EditIcon from '@material-ui/icons/Edit'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import { selectAccount } from 'selectors'
 import ReverseENS from 'helpers/EnsResolver'
@@ -103,22 +105,33 @@ function AccountInfo({ t }) {
 						alignItems='center'
 					>
 						<Box
-							flexGrow='3'
+							flexGrow='8'
 							mr={1}
 							flexWrap={'wrap'}
 							display='flex'
 							alignItems='center'
-							justifyContent='start'
+							justifyContent='space-between'
 						>
-							<ListItemText
-								className={classes.address}
-								primary={<ReverseENS lookup={identityAddress} />}
-								secondary={
-									account._authType === 'demo'
-										? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
-										: t('IDENTITY_ETH_ADDR')
-								}
-							/>
+							<Box>
+								<SetAccountENS
+									fullWidth
+									variant='contained'
+									color='primary'
+									token='DAI'
+									size='small'
+									identityAvailable={availableIdentityBalanceDai}
+								/>
+								<ListItemText
+									className={classes.address}
+									primary={<ReverseENS lookup={identityAddress} />}
+									secondary={
+										account._authType === 'demo'
+											? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
+											: t('IDENTITY_ETH_ADDR')
+									}
+								/>
+							</Box>
+
 							<IconButton
 								color='primary'
 								onClick={() => {
@@ -137,7 +150,7 @@ function AccountInfo({ t }) {
 							</IconButton>
 						</Box>
 
-						{walletJsonData && (
+						{/*walletJsonData*/ true && (
 							<Box py={1} flexGrow='1'>
 								<label htmlFor='download-wallet-json'>
 									<a
@@ -210,17 +223,6 @@ function AccountInfo({ t }) {
 								>
 									<CreditCardIcon className={classes.iconBtnLeft} />
 									{t('TOP_UP_IDENTITY_GBP')}
-								</Button>
-								<Button
-									fullWidth
-									variant='contained'
-									color='secondary'
-									aria-label='delete'
-									onClick={() => execute(setIdentityENS({ username: 'test4' }))}
-									size='small'
-								>
-									<CreditCardIcon className={classes.iconBtnLeft} />
-									{t('TEST_ENS')}
 								</Button>
 							</Box>
 
