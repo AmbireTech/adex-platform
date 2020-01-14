@@ -12,9 +12,24 @@ import {
 	selectRelayerConfig,
 	selectMainToken,
 	selectRoutineWithdrawTokens,
+	selectFeeTokenWhitelist,
 } from 'selectors'
 
 const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
+
+const tokenAvailableBalance = ({ token, balance, mainToken }) => {
+	if (token.address === mainToken.address) {
+		return balance
+	}
+
+	const feeToken = selectFeeTokenWhitelist()[token.address]
+
+	// approve + swap txns
+	const swapFees = bigNumberify(feeToken.min).mul(bigNumberify(2))
+
+	const isAvailable = swapFees.mul(bigNumberify(2)).lte(balance)
+	return isAvailable ? balance : bigNumberify(0)
+}
 
 export const getWithdrawTokensBalances = async ({ authType, address }) => {
 	const { getToken } = await getEthers(authType)
@@ -23,9 +38,19 @@ export const getWithdrawTokensBalances = async ({ authType, address }) => {
 		const tokenContract = getToken(token)
 
 		const balance = await tokenContract.balanceOf(address)
-		const balanceMainToken = await tokenInMainTokenValue({ token, balance })
 
-		return { token, balance, balanceMainToken }
+		const available = tokenAvailableBalance({
+			token,
+			mainToken,
+			balance,
+		})
+
+		const balanceMainToken = await tokenInMainTokenValue({
+			token,
+			balance: available,
+		})
+
+		return { token, balance: available, balanceMainToken }
 	})
 
 	const balances = await Promise.all(balancesCalls)
