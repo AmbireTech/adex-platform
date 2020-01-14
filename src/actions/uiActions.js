@@ -1,5 +1,6 @@
 import * as types from 'constants/actionTypes'
 import Helper from 'helpers/miscHelpers'
+import { translate } from 'services/translations/translations'
 
 export function updateSpinner(item, value) {
 	return function(dispatch) {
@@ -122,5 +123,19 @@ export function resetValidationErrors(item, key) {
 			item: item,
 			key: key,
 		})
+	}
+}
+
+export function refreshCacheAndReload(version) {
+	return function() {
+		console.log('Clearing cache and hard reloading...')
+		if (caches) {
+			// Service worker cache should be cleared with caches.delete()
+			caches.keys().then(async function(names) {
+				await Promise.all(names.map(name => caches.delete(name)))
+			})
+		}
+		// delete browser cache and hard reload
+		window.location = `/?updatedTo=${version}`
 	}
 }
