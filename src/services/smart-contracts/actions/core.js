@@ -30,12 +30,10 @@ import {
 	selectRoutineWithdrawTokens,
 	selectMainFeeToken,
 } from 'selectors'
-import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 import IdentityABI from 'adex-protocol-eth/abi/Identity'
 
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
-const ERC20 = new Interface(ERC20TokenABI)
 const Identity = new Interface(IdentityABI)
 
 const timeframe = 15 * 1000 // 1 event per 15 seconds
@@ -79,13 +77,13 @@ function getReadyCampaign(campaign, identity, mainToken) {
 	newCampaign.nonce = bigNumberify(randomBytes(32)).toString()
 	newCampaign.adUnits = newCampaign.adUnits.map(unit => new AdUnit(unit).spec)
 	newCampaign.depositAmount = parseUnits(
-		newCampaign.depositAmount,
+		newCampaign.depositAmount || '0',
 		mainToken.decimals
 	).toString()
 
 	// NOTE: TEMP in UI its set per 1000 impressions (CPM)
 	newCampaign.minPerImpression = parseUnits(
-		newCampaign.minPerImpression,
+		newCampaign.minPerImpression || '0',
 		mainToken.decimals
 	)
 		.div(bigNumberify(1000))
@@ -427,24 +425,22 @@ export async function getSweepingTxnsIfNeeded({
 	return sweepData
 }
 
-export function openChannelFeesWithoutSweeping() {
-	const { min, decimals } = selectMainFeeToken()
-	return formatUnits(
-		bigNumberify(min)
-			.mul(bigNumberify(2))
-			.toString(),
-		decimals
-	)
-}
-
-export async function openChannel({ campaign, account, getFeesOnly }) {
-	const { wallet, identity } = account
+export async function openChannel({
+	campaign,
+	account,
+	getFeesOnly,
+	getMaxFees,
+}) {
+	const { wallet, identity, stats } = account
+	const { availableIdentityBalanceMainToken } = stats.raw
 	const { provider, AdExCore, Identity, getToken } = await getEthers(
 		wallet.authType
 	)
 
 	const mainToken = selectMainFeeToken()
-	const depositAmount = parseUnits(campaign.depositAmount)
+	const depositAmount = getMaxFees
+		? availableIdentityBalanceMainToken
+		: parseUnits(campaign.depositAmount, mainToken.decimals).toString()
 
 	const readyCampaign = getReadyCampaign(campaign, identity, mainToken)
 	const openReady = readyCampaign.openReady
@@ -463,7 +459,7 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 		identityAddr,
 		feeTokenAddr: mainToken.address,
 		approveForAddress: AdExCore.address,
-		approveAmount: channel.depositAmount,
+		approveAmount: depositAmount,
 	})
 
 	const channelOpenTx = {
@@ -483,9 +479,14 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 		getToken,
 	})
 
+	const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken })
+	const mtBalance = bigNumberify(availableIdentityBalanceMainToken)
+	const maxAvailable = mtBalance.sub(fees.totalBN)
+
 	if (getFeesOnly) {
 		return {
-			fees: (await getIdentityTxnsTotalFees({ txnsByFeeToken })).total,
+			fees: fees.total,
+			maxAvailable,
 		}
 	}
 
