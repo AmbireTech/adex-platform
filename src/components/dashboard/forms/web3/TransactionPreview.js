@@ -53,14 +53,17 @@ function TransactionPreview(props) {
 		if (getFeesFn && Object.keys(transaction).length) {
 			execute(updateSpinner(txId, true))
 			getFeesFn({ account, transaction })
-				.then(fees => {
-					handleChange('fees', fees)
+				.then(feesData => {
+					handleChange('feesData', feesData)
+					// if (feesData.toGet) {
+					// 	handleChange('withdrawAmount', feesData.toGet)
+					// }
 					execute(updateSpinner(txId, false))
 
-					if (parseFloat(fees.fees || 0) > parseFloat(identityAvailable)) {
+					if (parseFloat(feesData.fees || 0) > parseFloat(identityAvailable)) {
 						handleChange('errors', [
 							t('INSUFFICIENT_BALANCE_FOR_FEES', {
-								args: [identityAvailable, symbol, fees.fees, symbol],
+								args: [identityAvailable, symbol, feesData.fees, symbol],
 							}),
 						])
 					}
@@ -80,7 +83,7 @@ function TransactionPreview(props) {
 		setAddr,
 		privLevel,
 		tokenAddress,
-		fees = {},
+		feesData = {},
 		errors = [],
 	} = transaction
 
@@ -125,7 +128,7 @@ function TransactionPreview(props) {
 								t={t}
 								withdrawTo={withdrawTo}
 								classes={classes}
-								fees={fees}
+								feesData={feesData}
 								withdrawAmount={withdrawAmount}
 								symbol={symbol}
 							/>
@@ -136,7 +139,7 @@ function TransactionPreview(props) {
 								t={t}
 								setAddr={setAddr}
 								classes={classes}
-								fees={fees}
+								feesData={feesData}
 								privLevel={privLevel}
 								symbol={symbol}
 							/>
@@ -147,7 +150,7 @@ function TransactionPreview(props) {
 								t={t}
 								withdrawTo={withdrawTo}
 								classes={classes}
-								fees={fees}
+								feesData={feesData}
 								withdrawAmount={withdrawAmount}
 								tokenAddress={tokenAddress}
 								symbol={symbol}
