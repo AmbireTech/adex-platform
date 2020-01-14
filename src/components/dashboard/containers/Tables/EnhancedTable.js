@@ -135,7 +135,9 @@ export default function EnhancedTable(props) {
 			})
 			isValid && handleSelect(selected)
 		}
-	}, [handleSelect, selected, validate])
+		// TODO: temp fix - need to redesign the table again
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selected])
 
 	React.useEffect(() => {
 		setPage(0)
