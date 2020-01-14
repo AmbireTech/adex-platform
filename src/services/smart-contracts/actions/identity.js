@@ -124,11 +124,16 @@ export async function withdrawFromIdentity({
 	})
 
 	const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken, mainToken })
-
-	// hack if not sufficient balance
 	const mtBalance = bigNumberify(availableIdentityBalanceMainToken)
 
 	const maxWithdraw = mtBalance.sub(fees.totalBN)
+
+	if (getFeesOnly) {
+		return {
+			fees: fees.total,
+			toGet: formatTokenAmount(maxWithdraw, mainToken.decimals),
+		}
+	}
 
 	if (toWithdraw.gt(maxWithdraw)) {
 		txnsByFeeToken[tokenAddr] = txnsByFeeToken[tokenAddr].map(tx => {
@@ -137,19 +142,10 @@ export async function withdrawFromIdentity({
 					withdrawTo,
 					maxWithdraw.toString(),
 				])
-
-				tx.maxWithdraw = maxWithdraw.toString()
 			}
 
 			return tx
 		})
-	}
-
-	if (getFeesOnly) {
-		return {
-			fees: fees.total,
-			toGet: formatTokenAmount(maxWithdraw, mainToken.decimals),
-		}
 	}
 
 	const result = await processExecuteByFeeTokens({
