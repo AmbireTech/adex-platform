@@ -95,7 +95,7 @@ export async function withdrawFromIdentity({
 	const { mainToken } = selectRelayerConfig()
 	const { wallet, identity, stats } = account
 	const { authType } = wallet
-	const { availableIdentityBalanceMainToken } = stats.formatted
+	const { availableIdentityBalanceMainToken } = stats.raw
 	const { provider, Identity, getToken } = await getEthers(authType)
 
 	const identityAddr = identity.address
@@ -123,25 +123,22 @@ export async function withdrawFromIdentity({
 		getToken,
 	})
 
-	// hack if not sufficient balance
 	const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken, mainToken })
 
-	const mtBalance = bigNumberify(
-		parseUnits(availableIdentityBalanceMainToken, mainToken.decimals)
-	)
+	// hack if not sufficient balance
+	const mtBalance = bigNumberify(availableIdentityBalanceMainToken)
 
-	const maxWithdraw = mtBalance
-		.sub(fees.totalBN)
-		.sub(bigNumberify(parseUnits('0.1', mainToken.decimals)))
+	const maxWithdraw = mtBalance.sub(fees.totalBN)
 
-	if (maxWithdraw.gt(mtBalance)) {
-		const maxWithdraw = mtBalance.sub(fees.totalBN)
+	if (toWithdraw.gt(maxWithdraw)) {
 		txnsByFeeToken[tokenAddr] = txnsByFeeToken[tokenAddr].map(tx => {
 			if (tx.withdrawTx) {
 				tx.data = ERC20.functions.transfer.encode([
 					withdrawTo,
 					maxWithdraw.toString(),
 				])
+
+				tx.maxWithdraw = maxWithdraw.toString()
 			}
 
 			return tx
@@ -523,6 +520,9 @@ export async function processExecuteByFeeTokens({
 			...extraData,
 		}
 
+		console.log('data', data)
+
+		// return data
 		const result = await executeTx(data)
 
 		return {
