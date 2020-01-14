@@ -538,7 +538,7 @@ export const updateCampaignState = ({ campaign }) => {
 function getHumanFriendlyName(campaign) {
 	if (campaign.status && campaign.status.humanFriendlyName === 'Closed')
 		return 'Closed'
-	switch (campaign.status.name) {
+	switch ((campaign.status || {}).name) {
 		case 'Active':
 		case 'Ready':
 		case 'Pending':
