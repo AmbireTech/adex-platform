@@ -66,6 +66,11 @@ export const selectMainToken = createSelector(
 	({ mainToken }) => mainToken
 )
 
+export const selectSaiToken = createSelector(
+	[selectRelayerConfig, selectRoutineWithdrawTokens],
+	({ saiAddr }, routineWithdrawTokens) => routineWithdrawTokens[saiAddr]
+)
+
 export const selectMainFeeToken = createSelector(
 	[selectRelayerConfig, selectFeeTokenWhitelist],
 	({ mainToken }, feeTokenWhitelist) => {
