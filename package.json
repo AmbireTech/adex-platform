@@ -111,7 +111,10 @@
   },
   "scripts": {
     "start": "node --max-old-space-size=4096 scripts/start.js",
+    "generate-build-version": "node scripts/generate-build-version.js",
+    "prebuild": "npm run generate-build-version",
     "build": "node --max-old-space-size=2048 scripts/build.js",
+    "serve": "serve build -p 3333",
     "deploy": "npm run build && cp ./domains/platform/CNAME ./build && gh-pages -d build",
     "deploy-staging": "npm run build && cp ./domains/staging/CNAME ./build && gh-pages -d build -r git@github.com:AdExNetwork/adex-platform-staging.git",
     "test": "eslint src/",
@@ -192,6 +195,7 @@
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-react-hooks": "^1.7.0",
-    "prettier": "^1.18.2"
+    "prettier": "^1.18.2",
+    "serve": "^10.1.2"
   }
 }

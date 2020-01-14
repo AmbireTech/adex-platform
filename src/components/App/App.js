@@ -15,6 +15,7 @@ import { themeMUI } from './themeMUi'
 import MomentUtils from '@date-io/moment'
 import { MuiPickersUtilsProvider } from 'material-ui-pickers'
 import CssBaseline from '@material-ui/core/CssBaseline'
+import CacheBuster from './CacheBuster'
 
 const { persistor, store } = configureStore
 // console.log('initial store', store.getState())
@@ -26,26 +27,28 @@ const onBeforeLift = () => {
 class App extends Component {
 	render() {
 		return (
-			<React.Fragment>
-				<CssBaseline />
-				<MuiThemeProvider theme={themeMUI}>
-					<MuiPickersUtilsProvider utils={MomentUtils}>
-						<Provider store={store}>
-							<PersistGate onBeforeLift={onBeforeLift} persistor={persistor}>
-								<ConnectedRouter history={history}>
-									<Router>
-										<div className='adex-dapp'>
-											<Root />
-											<Toast />
-											<Confirm />
-										</div>
-									</Router>
-								</ConnectedRouter>
-							</PersistGate>
-						</Provider>
-					</MuiPickersUtilsProvider>
-				</MuiThemeProvider>
-			</React.Fragment>
+			<CacheBuster>
+				<React.Fragment>
+					<CssBaseline />
+					<MuiThemeProvider theme={themeMUI}>
+						<MuiPickersUtilsProvider utils={MomentUtils}>
+							<Provider store={store}>
+								<PersistGate onBeforeLift={onBeforeLift} persistor={persistor}>
+									<ConnectedRouter history={history}>
+										<Router>
+											<div className='adex-dapp'>
+												<Root />
+												<Toast />
+												<Confirm />
+											</div>
+										</Router>
+									</ConnectedRouter>
+								</PersistGate>
+							</Provider>
+						</MuiPickersUtilsProvider>
+					</MuiThemeProvider>
+				</React.Fragment>
+			</CacheBuster>
 		)
 	}
 }
