@@ -39,6 +39,7 @@ const publicResolver = '0x226159d592E2b063810a10Ebf6dcbADA94Ed68b8'
 const GAS_LIMIT_DEPLOY_CONTRACT = 150000
 const feeAmountTransfer = '150000000000000000'
 const feeAmountSetPrivileges = '150000000000000000'
+const feeAmountSetENS = '300000000000000000'
 const ERC20 = new Interface(DAI.abi)
 /*
 export async function getIdentityBytecode({ owner, privLevel }) {
@@ -353,7 +354,13 @@ export async function setIdentityPrivilege({
 	}
 }
 
-export async function addIdentityENS({ username, account }) {
+export async function addIdentityENS({ username, account, getFeesOnly }) {
+	const fees = bigNumberify(feeAmountSetENS)
+	if (getFeesOnly) {
+		return {
+			fees: formatTokenAmount(fees.toString(), 18),
+		}
+	}
 	const { wallet, identity } = account
 	const {
 		provider,
