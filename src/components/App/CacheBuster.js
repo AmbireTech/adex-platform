@@ -1,16 +1,19 @@
-import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { selectLocation } from 'selectors'
 import packageJson from '../../../package.json'
 global.appVersion = packageJson.version
 
 export default function CacheBuster(props) {
-	let location = useLocation()
+	const [loading, setLoading] = useState(true)
+	const [isLatestVersion, setIsLatestVersion] = useState(true)
+	const location = useSelector(selectLocation) || {}
 	const refreshCacheAndReload = () => {
 		console.log('Clearing cache and hard reloading...')
 		if (caches) {
 			// Service worker cache should be cleared with caches.delete()
-			caches.keys().then(function(names) {
-				for (let name of names) caches.delete(name)
+			caches.keys().then(async function(names) {
+				await Promise.all(names.map(name => caches.delete(name)))
 			})
 		}
 		// delete browser cache and hard reload
@@ -48,15 +51,22 @@ export default function CacheBuster(props) {
 					console.log(
 						`We have a new version - ${latestVersion}. Should force refresh`
 					)
-					global.appVersion = meta.version
-					refreshCacheAndReload()
+					setLoading(false)
+					setIsLatestVersion(false)
 				} else {
 					console.log(
 						`You already have the latest version - ${latestVersion}. No cache refresh needed.`
 					)
+					setIsLatestVersion(true)
+					setLoading(false)
 				}
 			})
 	}, [location])
 
+	if (loading) return null
+	if (!loading && !isLatestVersion) {
+		// You can decide how and when you want to force reload
+		refreshCacheAndReload()
+	}
 	return props.children
 }
