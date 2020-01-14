@@ -14,7 +14,11 @@ import {
 } from 'ethers/utils'
 import { generateAddress2 } from 'ethereumjs-util'
 import { executeTx } from 'services/adex-relayer'
-import { selectRelayerConfig, selectFeeTokenWhitelist } from 'selectors'
+import {
+	selectRelayerConfig,
+	selectFeeTokenWhitelist,
+	selectSaiToken,
+} from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
 import solc from 'solcBrowser'
@@ -92,7 +96,7 @@ export async function withdrawFromIdentity({
 	const { wallet, identity, stats } = account
 	const { authType } = wallet
 	const { availableIdentityBalanceMainToken } = stats.formatted
-	const { provider, Identity } = await getEthers(authType)
+	const { provider, Identity, getToken } = await getEthers(authType)
 
 	const identityAddr = identity.address
 
@@ -100,14 +104,14 @@ export async function withdrawFromIdentity({
 
 	const tokenAddr = mainToken.address
 
-	const tx1 = {
+	const withdrawTx = {
 		identityContract: identityAddr,
 		feeTokenAddr: tokenAddr,
 		to: tokenAddr,
 		data: ERC20.functions.transfer.encode([withdrawTo, toWithdraw]),
 		withdrawTx: true,
 	}
-	const txns = [tx1]
+	const txns = [withdrawTx]
 
 	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
 		amountInMainTokenNeeded: toWithdraw,
@@ -116,6 +120,7 @@ export async function withdrawFromIdentity({
 		provider,
 		Identity,
 		account,
+		getToken,
 	})
 
 	// hack if not sufficient balance
@@ -133,7 +138,10 @@ export async function withdrawFromIdentity({
 		const maxWithdraw = mtBalance.sub(fees.totalBN)
 		txnsByFeeToken[tokenAddr] = txnsByFeeToken[tokenAddr].map(tx => {
 			if (tx.withdrawTx) {
-				tx.data = ERC20.functions.transfer.encode([withdrawTo, maxWithdraw])
+				tx.data = ERC20.functions.transfer.encode([
+					withdrawTo,
+					maxWithdraw.toString(),
+				])
 			}
 
 			return tx
@@ -166,7 +174,9 @@ export async function setIdentityPrivilege({
 	getFeesOnly,
 }) {
 	const { wallet, identity } = account
-	const { provider, MainToken, Identity } = await getEthers(wallet.authType)
+	const { provider, MainToken, Identity, getToken } = await getEthers(
+		wallet.authType
+	)
 	const identityAddr = identity.address
 
 	const identityInterface = new Interface(Identity.abi)
@@ -188,6 +198,7 @@ export async function setIdentityPrivilege({
 		provider,
 		Identity,
 		account,
+		getToken,
 	})
 
 	if (getFeesOnly) {
@@ -265,12 +276,14 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	provider,
 	Identity,
 	account,
+	getToken,
 }) {
 	const { sweepTxns, swapAmountsByToken } = await getSweepingTxnsIfNeeded({
 		amountInMainTokenNeeded,
 		account,
 	})
 	const feeTokenWhitelist = selectFeeTokenWhitelist()
+	const saiToken = selectSaiToken()
 	const { mainToken, daiAddr, saiAddr } = selectRelayerConfig()
 
 	let isDeployed = (await provider.getCode(identityAddr)) !== '0x'
@@ -314,12 +327,13 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	if (!saiSwapAmount.isZero()) {
 		sweepTxnsByToken.txnsByFeeToken[daiAddr] = [
 			...(sweepTxnsByToken.txnsByFeeToken[daiAddr] || []),
-			...swapSaiToDaiTxns({
+			...(await swapSaiToDaiTxns({
+				getToken,
 				identityAddr,
 				daiAddr,
-				saiAddr,
+				saiToken,
 				swapAmount: saiSwapAmount,
-			}),
+			})),
 		]
 	}
 
@@ -379,13 +393,57 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	return txnsByFeeToken
 }
 
-function swapSaiToDaiTxns({ identityAddr, daiAddr, saiAddr, swapAmount }) {
-	const approveTx = {
-		identityContract: identityAddr,
-		feeTokenAddr: daiAddr,
-		to: saiAddr,
-		data: ERC20.functions.approve.encode([SCD_MCD_MIGRATION_ADDR, swapAmount]),
+export async function getApproveTxns({
+	getToken,
+	token,
+	identityAddr,
+	feeTokenAddr,
+	approveForAddress,
+	approveAmount,
+}) {
+	const tokenContract = getToken(token)
+
+	const allowance = await tokenContract.allowance(
+		identityAddr,
+		approveForAddress
+	)
+
+	const approveTxns = []
+
+	if (!allowance.isZero()) {
+		approveTxns.push({
+			identityContract: identityAddr,
+			feeTokenAddr: feeTokenAddr,
+			to: token.address,
+			data: ERC20.functions.approve.encode([approveForAddress, 0]),
+		})
 	}
+
+	approveTxns.push({
+		identityContract: identityAddr,
+		feeTokenAddr: feeTokenAddr,
+		to: token.address,
+		data: ERC20.functions.approve.encode([approveForAddress, approveAmount]),
+	})
+
+	return approveTxns
+}
+
+async function swapSaiToDaiTxns({
+	identityAddr,
+	daiAddr,
+	saiToken,
+	swapAmount,
+	getToken,
+}) {
+	const approveTxns = await getApproveTxns({
+		getToken,
+		token: saiToken,
+		identityAddr,
+		feeTokenAddr: daiAddr,
+		approveForAddress: SCD_MCD_MIGRATION_ADDR,
+		approveAmount: swapAmount,
+	})
 
 	const swapTx = {
 		identityContract: identityAddr,
@@ -394,7 +452,7 @@ function swapSaiToDaiTxns({ identityAddr, daiAddr, saiAddr, swapAmount }) {
 		data: ScdMcdMigration.functions.swapSaiToDai.encode([swapAmount]),
 	}
 
-	return [approveTx, swapTx]
+	return [...approveTxns, swapTx]
 }
 
 // TODO: use byToken where needed
