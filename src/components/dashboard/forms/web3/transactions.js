@@ -12,8 +12,14 @@ import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 import {
 	withdrawFromIdentity,
 	setIdentityPrivilege,
+	addIdentityENS,
 } from 'services/smart-contracts/actions/identity'
-import { addrIdentityPrivilege, identityWithdraw, execute } from 'actions'
+import {
+	addrIdentityPrivilege,
+	identityWithdraw,
+	setIdentityENS,
+	execute,
+} from 'actions'
 
 const FormStepsWithDialog = WithDialog(FormSteps)
 
@@ -139,7 +145,7 @@ export const SetAccountENS = props => (
 		btnLabel='ACCOUNT_SET_ENS_BTN'
 		saveBtnLabel='ACCOUNT_SET_ENS_SAVE_BTN'
 		title='ACCOUNT_SET_ENS_TITLE'
-		stepsId='setAccountENS'
+		stepsId='setENS'
 		{...txCommon}
 		stepsPages={[
 			{
@@ -152,19 +158,16 @@ export const SetAccountENS = props => (
 			page: TransactionPreview,
 		}}
 		saveFn={({ transaction } = {}) => {
-			// return execute(
-			// 	addrIdentityPrivilege({
-			// 		privLevel: transaction.privLevel,
-			// 		setAddr: transaction.setAddr,
-			// 	})
-			// )
+			return execute(
+				setIdentityENS({
+					username: transaction.setEns,
+				})
+			)
 		}}
-		getFeesFn={({ transaction } = {}) => {
-			// return setIdentityPrivilege({
-			// 	privLevel: transaction.privLevel,
-			// 	setAddr: transaction.setAddr,
-			// 	getFeesOnly: true,
-			// })
+		getFeesFn={() => {
+			return addIdentityENS({
+				getFeesOnly: true,
+			})
 		}}
 	/>
 )

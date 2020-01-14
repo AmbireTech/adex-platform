@@ -18,7 +18,11 @@ import {
 import Helper from 'helpers/miscHelpers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { IdentityWithdrawPreview, SetPrivilegePreview } from './previews'
+import {
+	IdentityWithdrawPreview,
+	SetPrivilegePreview,
+	SetENSPreview,
+} from './previews'
 
 class TransactionPreview extends Component {
 	constructor(props, context) {
@@ -76,6 +80,8 @@ class TransactionPreview extends Component {
 			spinner,
 			stepsId,
 		} = this.props
+		const { identity } = account
+		const { address } = identity
 		const errors = transaction.errors || []
 		const {
 			withdrawTo,
@@ -137,6 +143,15 @@ class TransactionPreview extends Component {
 									classes={classes}
 									fees={fees}
 									privLevel={privLevel}
+								/>
+							)}
+							{stepsId === 'setENS' && (
+								<SetENSPreview
+									t={t}
+									setAddr={setAddr}
+									classes={classes}
+									fees={fees}
+									address={address}
 								/>
 							)}
 						</ContentBody>
