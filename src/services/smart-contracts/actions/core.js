@@ -11,6 +11,7 @@ import {
 	getIdentityTxnsWithNoncesAndFees,
 	getIdentityTxnsTotalFees,
 	processExecuteByFeeTokens,
+	getApproveTxns,
 } from 'services/smart-contracts/actions/identity'
 import { getWithdrawTokensBalances } from 'services/smart-contracts/actions/stats'
 import { contracts } from '../contractsCfg'
@@ -27,7 +28,6 @@ import {
 import {
 	selectFeeTokenWhitelist,
 	selectRoutineWithdrawTokens,
-	selectRelayerConfig,
 	selectMainFeeToken,
 } from 'selectors'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
@@ -68,8 +68,7 @@ function getValidUntil(activeFrom, withdrawPeriodStart) {
 	return Math.floor(validUntil / 1000)
 }
 
-function getReadyCampaign(campaign, identity, Dai) {
-	const { mainToken } = selectRelayerConfig()
+function getReadyCampaign(campaign, identity, mainToken) {
 	const newCampaign = new Campaign(campaign)
 	newCampaign.creator = identity.address
 	newCampaign.created = Date.now()
@@ -93,7 +92,7 @@ function getReadyCampaign(campaign, identity, Dai) {
 		.toString()
 	newCampaign.maxPerImpression = newCampaign.minPerImpression
 
-	newCampaign.depositAsset = newCampaign.depositAsset || Dai.address
+	newCampaign.depositAsset = mainToken.address
 	newCampaign.eventSubmission = {
 		allow: [
 			{
@@ -440,10 +439,14 @@ export function openChannelFeesWithoutSweeping() {
 
 export async function openChannel({ campaign, account, getFeesOnly }) {
 	const { wallet, identity } = account
-	const { provider, AdExCore, Dai, Identity } = await getEthers(wallet.authType)
+	const { provider, AdExCore, Identity, getToken } = await getEthers(
+		wallet.authType
+	)
+
+	const mainToken = selectMainFeeToken()
 	const depositAmount = parseUnits(campaign.depositAmount)
 
-	const readyCampaign = getReadyCampaign(campaign, identity, Dai)
+	const readyCampaign = getReadyCampaign(campaign, identity, mainToken)
 	const openReady = readyCampaign.openReady
 	const ethChannel = toEthereumChannel(openReady)
 	const channel = {
@@ -452,25 +455,24 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 	}
 	const identityAddr = openReady.creator
 
-	const feeTokenAddr = campaign.temp.feeTokenAddr || Dai.address
+	const feeTokenAddr = mainToken.address
 
-	const tx1 = {
-		identityContract: identityAddr,
-		feeTokenAddr: feeTokenAddr,
-		to: Dai.address,
-		data: ERC20.functions.approve.encode([
-			AdExCore.address,
-			channel.depositAmount,
-		]),
-	}
+	const approveTxns = await getApproveTxns({
+		getToken,
+		token: mainToken,
+		identityAddr,
+		feeTokenAddr: mainToken.address,
+		approveForAddress: AdExCore.address,
+		approveAmount: channel.depositAmount,
+	})
 
-	const tx2 = {
+	const channelOpenTx = {
 		identityContract: identityAddr,
 		feeTokenAddr: feeTokenAddr,
 		to: AdExCore.address,
 		data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
 	}
-	const txns = [tx1, tx2]
+	const txns = [...approveTxns, channelOpenTx]
 	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
 		amountInMainTokenNeeded: depositAmount,
 		txns,
@@ -478,6 +480,7 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 		provider,
 		Identity,
 		account,
+		getToken,
 	})
 
 	if (getFeesOnly) {
