@@ -17,7 +17,6 @@ import { executeTx } from 'services/adex-relayer'
 import { selectRelayerConfig, selectFeeTokenWhitelist } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
-
 import solc from 'solcBrowser'
 import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 
@@ -90,8 +89,10 @@ export async function withdrawFromIdentity({
 	getFeesOnly,
 }) {
 	const { mainToken } = selectRelayerConfig()
-	const { wallet, identity } = account
-	const { provider, Identity } = await getEthers(wallet.authType)
+	const { wallet, identity, stats } = account
+	const { authType } = wallet
+	const { availableIdentityBalanceMainToken } = stats.formatted
+	const { provider, Identity } = await getEthers(authType)
 
 	const identityAddr = identity.address
 
@@ -104,6 +105,7 @@ export async function withdrawFromIdentity({
 		feeTokenAddr: tokenAddr,
 		to: tokenAddr,
 		data: ERC20.functions.transfer.encode([withdrawTo, toWithdraw]),
+		withdrawTx: true,
 	}
 	const txns = [tx1]
 
@@ -116,10 +118,32 @@ export async function withdrawFromIdentity({
 		account,
 	})
 
+	// hack if not sufficient balance
+	const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken, mainToken })
+
+	const mtBalance = bigNumberify(
+		parseUnits(availableIdentityBalanceMainToken, mainToken.decimals)
+	)
+
+	const maxWithdraw = mtBalance
+		.sub(fees.totalBN)
+		.sub(bigNumberify(parseUnits('0.1', mainToken.decimals)))
+
+	if (maxWithdraw.gt(mtBalance)) {
+		const maxWithdraw = mtBalance.sub(fees.totalBN)
+		txnsByFeeToken[tokenAddr] = txnsByFeeToken[tokenAddr].map(tx => {
+			if (tx.withdrawTx) {
+				tx.data = ERC20.functions.transfer.encode([withdrawTo, maxWithdraw])
+			}
+
+			return tx
+		})
+	}
+
 	if (getFeesOnly) {
 		return {
-			fees: (await getIdentityTxnsTotalFees(txnsByFeeToken)).total,
-			toGet: formatTokenAmount(toWithdraw, 18),
+			fees: fees.total,
+			toGet: formatTokenAmount(maxWithdraw, mainToken.decimals),
 		}
 	}
 
@@ -168,7 +192,7 @@ export async function setIdentityPrivilege({
 
 	if (getFeesOnly) {
 		return {
-			fees: (await getIdentityTxnsTotalFees(txnsByFeeToken)).total,
+			fees: (await getIdentityTxnsTotalFees({ txnsByFeeToken })).total,
 		}
 	}
 
@@ -319,21 +343,31 @@ export async function getIdentityTxnsWithNoncesAndFees({
 
 	Object.keys(txnsByFeeToken).forEach(key => {
 		txnsByFeeToken[key] = txnsByFeeToken[key].map(tx => {
-			const { routinesTxCount } = tx
+			const { routinesTxCount = 0, routinesSweepTxCount = 0, isSweepTx } = tx
 			const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
-			let feeAmount = currentNonce === 0 ? feeToken.minDeploy : feeToken.min
+			const minFeeAmount = bigNumberify(
+				currentNonce === 0 ? feeToken.minDeploy : feeToken.min
+			)
 
-			if (routinesTxCount) {
-				feeAmount = bigNumberify(feeAmount)
-					.add(bigNumberify(feeToken.min).mul(bigNumberify(routinesTxCount)))
-					.toString()
-			}
+			const routinesFeeAmount = bigNumberify(routinesTxCount).mul(
+				bigNumberify(feeToken.min)
+			)
+
+			// Total relayer fees for the transaction
+			const feeAmount = minFeeAmount.add(routinesFeeAmount).toString()
+
+			// fees that are not pre calculated with in the total identity balance
+			const nonIdentityBalanceFeeAmount = bigNumberify(feeAmount)
+				.sub(bigNumberify(isSweepTx ? feeToken.min : 0))
+				.sub(bigNumberify(routinesSweepTxCount).mul(bigNumberify(feeToken.min)))
+				.toString()
 
 			const txWithNonce = {
 				...tx,
 				feeTokenAddr: feeToken.address,
 				feeAmount,
 				nonce: currentNonce,
+				nonIdentityBalanceFeeAmount,
 			}
 
 			currentNonce += 1
@@ -365,14 +399,17 @@ function swapSaiToDaiTxns({ identityAddr, daiAddr, saiAddr, swapAmount }) {
 
 // TODO: use byToken where needed
 // currently works because only using SAI and DAI only
-export async function getIdentityTxnsTotalFees(txnsByFeeToken) {
+export async function getIdentityTxnsTotalFees({
+	txnsByFeeToken,
+	mainToken = {},
+}) {
 	const feeTokenWhitelist = selectFeeTokenWhitelist()
 	const bigZero = bigNumberify('0')
 	const feesData = Object.values(txnsByFeeToken)
 		.reduce((all, byFeeToken) => all.concat(byFeeToken), [])
 		.reduce(
 			(result, tx) => {
-				const txFeeAmount = bigNumberify(tx.feeAmount)
+				const txFeeAmount = bigNumberify(tx.nonIdentityBalanceFeeAmount)
 				result.total = result.total.add(txFeeAmount)
 
 				result.byToken[tx.feeTokenAddr] = (
@@ -400,7 +437,11 @@ export async function getIdentityTxnsTotalFees(txnsByFeeToken) {
 	})
 
 	const fees = {
-		total: formatTokenAmount(feesData.total.toString(), 18),
+		total: formatTokenAmount(
+			feesData.total.toString(),
+			mainToken.decimals || 18
+		),
+		totalBN: feesData.total,
 		byToken,
 	}
 
