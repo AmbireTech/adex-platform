@@ -27,14 +27,14 @@ const onBeforeLift = () => {
 class App extends Component {
 	render() {
 		return (
-			<CacheBuster>
-				<React.Fragment>
-					<CssBaseline />
-					<MuiThemeProvider theme={themeMUI}>
-						<MuiPickersUtilsProvider utils={MomentUtils}>
-							<Provider store={store}>
-								<PersistGate onBeforeLift={onBeforeLift} persistor={persistor}>
-									<ConnectedRouter history={history}>
+			<React.Fragment>
+				<CssBaseline />
+				<MuiThemeProvider theme={themeMUI}>
+					<MuiPickersUtilsProvider utils={MomentUtils}>
+						<Provider store={store}>
+							<PersistGate onBeforeLift={onBeforeLift} persistor={persistor}>
+								<ConnectedRouter history={history}>
+									<CacheBuster>
 										<Router>
 											<div className='adex-dapp'>
 												<Root />
@@ -42,13 +42,13 @@ class App extends Component {
 												<Confirm />
 											</div>
 										</Router>
-									</ConnectedRouter>
-								</PersistGate>
-							</Provider>
-						</MuiPickersUtilsProvider>
-					</MuiThemeProvider>
-				</React.Fragment>
-			</CacheBuster>
+									</CacheBuster>
+								</ConnectedRouter>
+							</PersistGate>
+						</Provider>
+					</MuiPickersUtilsProvider>
+				</MuiThemeProvider>
+			</React.Fragment>
 		)
 	}
 }
