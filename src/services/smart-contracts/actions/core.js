@@ -291,12 +291,13 @@ async function getSweepExecuteRoutineTx({
 		data,
 		withdrawAmountByToken,
 		routinesTxCount: routineOpts.length,
+		routinesSweepTxCount: routineOpts.length,
 	}
 
 	return routinesTx
 }
 
-function getIdntityRoutineAuthTuple(identity) {
+function getIdentityRoutineAuthTuple(identity) {
 	return identity &&
 		identity.relayerData &&
 		identity.relayerData.routineAuthorizationsData &&
@@ -344,7 +345,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 			withdrawAmountByToken: { [channel.depositAsset]: balance },
 		}
 	})
-	const routineAuthTuple = getIdntityRoutineAuthTuple(identity)
+	const routineAuthTuple = getIdentityRoutineAuthTuple(identity)
 
 	let encodedTxns = null
 	if (hasValidExecuteRoutines(routineAuthTuple)) {
@@ -355,8 +356,8 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 		})
 	} else {
 		encodedTxns = txns.map(tx => {
-			console.log('tx.data', tx.data)
 			tx.data = Core.functions.channelWithdraw.encode(tx.data)
+			tx.isSweepTx = true
 
 			return tx
 		})
@@ -365,26 +366,20 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 	return encodedTxns
 }
 
-function getSwapAmountsByToken({ balances, amountToSwapInMainToken }) {
-	const { swapsByToken, swapsSumInMainToken } = balances
-		.sort((b1, b2) => b2.balanceMainToken.gt(b1.balanceMainToken))
-		.reduce(
-			(swaps, balance) => {
-				if (swaps.swapsSumInMainToken.lt(amountToSwapInMainToken)) {
-					swaps.swapsSumInMainToken = swaps.swapsSumInMainToken.add(
-						balance.balanceMainToken
-					)
-
-					swaps.swapsByToken[balance.token.address] = balance.balance
-				}
-
-				return swaps
-			},
-			{
-				swapsSumInMainToken: bigNumberify(0),
-				swapsByToken: {},
-			}
-		)
+function getSwapAmountsByToken({ balances }) {
+	const { swapsByToken, swapsSumInMainToken } = balances.reduce(
+		(swaps, balance) => {
+			swaps.swapsSumInMainToken = swaps.swapsSumInMainToken.add(
+				balance.balanceMainToken
+			)
+			swaps.swapsByToken[balance.token.address] = balance.balance
+			return swaps
+		},
+		{
+			swapsSumInMainToken: bigNumberify(0),
+			swapsByToken: {},
+		}
+	)
 
 	return { swapsByToken, swapsSumInMainToken }
 }
@@ -413,6 +408,7 @@ export async function getSweepingTxnsIfNeeded({
 	}
 
 	if (needed.gt(currentBalanceInUse)) {
+		// Swaps all balances
 		const { swapsByToken, swapsSumInMainToken } = getSwapAmountsByToken({
 			balances,
 			amountToSwapInMainToken: needed.sub(currentBalanceInUse),
@@ -486,7 +482,7 @@ export async function openChannel({ campaign, account, getFeesOnly }) {
 
 	if (getFeesOnly) {
 		return {
-			fees: (await getIdentityTxnsTotalFees(txnsByFeeToken)).total,
+			fees: (await getIdentityTxnsTotalFees({ txnsByFeeToken })).total,
 		}
 	}
 
