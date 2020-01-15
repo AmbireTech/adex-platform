@@ -1,11 +1,12 @@
 import crypto from 'crypto'
 import {
 	Channel,
-	MerkleTree,
+	// MerkleTree,
 	splitSig,
 	ChannelState,
 	RoutineOps,
 } from 'adex-protocol-eth/js'
+import BalanceTree from 'adex-protocol-eth/js/BalanceTree'
 import { getEthers } from 'services/smart-contracts/ethers'
 import {
 	getIdentityTxnsWithNoncesAndFees,
@@ -23,7 +24,8 @@ import {
 	randomBytes,
 	parseUnits,
 	Interface,
-	formatUnits,
+	// formatUnits,
+	// getAddress,
 } from 'ethers/utils'
 import {
 	selectFeeTokenWhitelist,
@@ -154,56 +156,65 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 			)
 			.map(channel => {
 				const { lastApprovedSigs, lastApprovedBalances } = channel.status
-				if (lastApprovedBalances) {
-					const allLeafs = Object.entries(lastApprovedBalances).map(([k, v]) =>
-						Channel.getBalanceLeaf(k, v)
-					)
-					const mTree = new MerkleTree(allLeafs)
-					return { lastApprovedSigs, lastApprovedBalances, mTree, channel }
-				} else {
-					return {
-						lastApprovedSigs: null,
-						lastApprovedBalances: null,
-						mTree: null,
-						channel,
+				try {
+					if (lastApprovedBalances) {
+						const bTree = new BalanceTree(lastApprovedBalances)
+						return {
+							lastApprovedSigs,
+							// mTree,
+							bTree,
+							channel,
+						}
+					} else {
+						return {
+							lastApprovedSigs: null,
+							// mTree: null,
+							bTree: null,
+							channel,
+						}
 					}
+				} catch (err) {
+					console.log('err', err)
+					console.log('channel', JSON.stringify(channel))
 				}
+
+				return {}
 			})
-			.filter(({ channel, lastApprovedBalances }) => {
+			.filter(({ channel, bTree }) => {
 				if (!!channel.status && channel.status.name === 'Expired') {
 					return channel.creator === identityAddr
 				}
-				return lastApprovedBalances && !!lastApprovedBalances[identityAddr]
+
+				return !bTree.getBalance(identityAddr).isZero()
 			})
-			.map(
-				async ({ channel, lastApprovedBalances, lastApprovedSigs, mTree }) => {
-					const balance = lastApprovedBalances[identityAddr]
+			.map(async ({ channel, lastApprovedSigs, bTree }) => {
+				//  mTree,
+				const balance = bTree.getBalance(identityAddr).toString()
 
-					const outstanding =
-						channel.status.name === 'Expired'
-							? await getExpiredWithdrawnOutstanding({ channel, AdExCore })
-							: await getWithdrawnPerUserOutstanding({
-									AdExCore,
-									channel,
-									balance,
-									identityAddr,
-							  })
+				const outstanding =
+					channel.status.name === 'Expired'
+						? await getExpiredWithdrawnOutstanding({ channel, AdExCore })
+						: await getWithdrawnPerUserOutstanding({
+								AdExCore,
+								channel,
+								balance,
+								identityAddr,
+						  })
 
-					const outstandingAvailable = outstanding.sub(
-						feeTokenWhitelist[channel.depositAsset].min
-					)
+				const outstandingAvailable = outstanding.sub(
+					feeTokenWhitelist[channel.depositAsset].min
+				)
 
-					return {
-						channel,
-						balance,
-						lastApprovedBalances,
-						lastApprovedSigs,
-						outstanding,
-						outstandingAvailable,
-						mTree,
-					}
+				return {
+					channel,
+					balance,
+					lastApprovedSigs,
+					outstanding,
+					outstandingAvailable,
+					// mTree,
+					bTree,
 				}
-			)
+			})
 	)
 
 	const eligible = all.filter(x => {
@@ -247,16 +258,24 @@ async function getChannelsToSweepFrom({ amountToSweep, identityAddr, wallet }) {
 const getChannelWithdrawData = ({
 	identityAddr,
 	balance,
-	mTree,
+	// mTree,
+	bTree,
 	lastApprovedSigs,
 	ethChannelTuple,
 }) => {
-	const leaf = Channel.getBalanceLeaf(identityAddr, balance)
-	const proof = mTree.proof(leaf)
+	// const leaf = Channel.getBalanceLeaf(identityAddr, balance)
+	// const proof = mTree.proof(leaf)
+	const proof = bTree.getProof(identityAddr)
 	const vsig1 = splitSig(lastApprovedSigs[0])
 	const vsig2 = splitSig(lastApprovedSigs[1])
 
-	return [ethChannelTuple, mTree.getRoot(), [vsig1, vsig2], proof, balance]
+	return [
+		ethChannelTuple,
+		bTree.mTree.getRoot(),
+		[vsig1, vsig2],
+		proof,
+		balance,
+	]
 }
 
 async function getSweepExecuteRoutineTx({
@@ -323,13 +342,20 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 	})
 
 	const txns = channelsToSweep.map((c, i) => {
-		const { mTree, channel, lastApprovedSigs, balance } = c
+		const {
+			bTree,
+			//  mTree,
+			channel,
+			lastApprovedSigs,
+			balance,
+		} = c
 		const ethChannelTuple = toEthereumChannel(channel).toSolidityTuple()
 
 		const data = getChannelWithdrawData({
 			identityAddr,
-			balance,
-			mTree,
+			// balance,
+			// mTree,
+			bTree,
 			lastApprovedSigs,
 			ethChannelTuple,
 		})
