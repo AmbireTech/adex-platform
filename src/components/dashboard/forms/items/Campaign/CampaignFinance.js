@@ -19,7 +19,7 @@ import { utils } from 'ethers'
 import { openChannel } from 'services/smart-contracts/actions/core'
 import { validations, Joi } from 'adex-models'
 import MomentUtils from '@date-io/moment'
-import { selectSpinnerById } from 'selectors'
+import { selectSpinnerById, selectMainToken } from 'selectors'
 
 const moment = new MomentUtils()
 const campaignTitleSchema = Joi.string()
@@ -317,6 +317,7 @@ class CampaignFinance extends Component {
 			invalidFields,
 			account,
 			spinner,
+			mainTokenSymbol,
 		} = this.props
 		const {
 			title,
@@ -331,7 +332,7 @@ class CampaignFinance extends Component {
 
 		const { maxChannelFees, loading } = this.state
 
-		const { availableIdentityBalanceMainToken = 0, mainTokenSymbol } =
+		const { availableIdentityBalanceMainToken = 0 } =
 			account.stats.formatted || {}
 
 		const from = activeFrom || undefined
@@ -552,6 +553,7 @@ function mapStateToProps(state) {
 	return {
 		account: persist.account,
 		spinner,
+		mainTokenSymbol: selectMainToken(state).symbol,
 	}
 }
 

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { HashRouter as Router } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import {
 	metamaskChecks,
@@ -13,7 +14,6 @@ import Dashboard from 'components/dashboard/dashboard/Dashboard'
 import ConnectHoc from 'components/signin/ConnectHoc'
 import {
 	CreateQuickIdentity,
-	// DemoIdentity,
 	LoginStandardIdentity,
 	LoginQuickIdentity,
 } from 'components/signin/identity/Identity'
@@ -80,38 +80,31 @@ const Root = () => {
 	}, [location])
 
 	return (
-		<Switch>
-			<PrivateRoute auth={auth} path='/dashboard/:side' component={Dashboard} />
-			<PrivateRoute auth={auth} path='/side-select' component={SideSelect} />
-			<Route
-				exact
-				path='/'
-				component={props => <ConnectedRoot {...props} noBackground />}
-			/>
-			<Route
-				exact
-				path='/signup/quick'
-				component={props => (
-					<ConnectedCreateQuickIdentity {...props} noBackground />
-				)}
-			/>
-			<Route
-				exact
-				path='/login/full'
-				component={props => (
-					<ConnectedLoginStandardIdentity {...props} noBackground />
-				)}
-			/>
-			<Route
-				exact
-				path='/login/quick'
-				component={props => <ConnectedQuickLogin {...props} noBackground />}
-			/>
-			{/* <Route exact path="/identity/demo" component={DemoIdentity} /> */}
-			<Route>
-				<PageNotFound />
-			</Route>
-		</Switch>
+		<Router>
+			<Switch>
+				<PrivateRoute
+					auth={auth}
+					path='/dashboard/:side'
+					component={Dashboard}
+				/>
+				<PrivateRoute auth={auth} path='/side-select' component={SideSelect} />
+				<Route exact path='/' component={ConnectedRoot} />
+				<Route
+					exact
+					path='/signup/quick'
+					component={ConnectedCreateQuickIdentity}
+				/>
+				<Route
+					exact
+					path='/login/full'
+					component={ConnectedLoginStandardIdentity}
+				/>
+				<Route exact path='/login/quick' component={ConnectedQuickLogin} />
+				<Route>
+					<PageNotFound />
+				</Route>
+			</Switch>
+		</Router>
 	)
 }
 

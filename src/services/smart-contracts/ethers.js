@@ -105,7 +105,7 @@ const injectedWeb3 = async () => {
 }
 
 const getLocalWeb3 = async () => {
-	console.log('getLocalWeb3')
+	// console.log('getLocalWeb3')
 	return localWeb3()
 }
 

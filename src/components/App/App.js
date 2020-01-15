@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { HashRouter as Router } from 'react-router-dom'
 import 'react-image-crop/dist/ReactCrop.css'
 // import './App.css'
 import { Provider } from 'react-redux'
@@ -34,13 +33,11 @@ class App extends Component {
 							<PersistGate onBeforeLift={onBeforeLift} persistor={persistor}>
 								<ConnectedRouter history={history}>
 									<CacheBuster>
-										<Router>
-											<div className='adex-dapp'>
-												<Root />
-												<Toast />
-												<Confirm />
-											</div>
-										</Router>
+										<div className='adex-dapp'>
+											<Root />
+											<Toast />
+											<Confirm />
+										</div>
 									</CacheBuster>
 								</ConnectedRouter>
 							</PersistGate>
