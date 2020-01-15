@@ -8,7 +8,17 @@ import NewTransactionHoc from './TransactionHoc'
 import TextField from '@material-ui/core/TextField'
 import { InputLoading } from 'components/common/spinners/'
 import InputAdornment from '@material-ui/core/InputAdornment'
+import Lottie from 'react-lottie'
+import * as success from 'resources/animations/success.json'
 
+const defaultOptions = {
+	loop: false,
+	autoplay: true,
+	animationData: success.default,
+	rendererSettings: {
+		preserveAspectRatio: 'xMidYMid slice',
+	},
+}
 class SetAccountENSPage extends Component {
 	componentDidMount() {
 		const { transaction, validate } = this.props
@@ -34,7 +44,13 @@ class SetAccountENSPage extends Component {
 		const { setEns } = transaction || {}
 		// const errAmount = invalidFields['withdrawAmount']
 		const errAddr = invalidFields['setEns']
-
+		handleENSTyping(evt) {
+			var searchText = evt.target.value; // this is the search text
+			if(this.timeout) clearTimeout(this.timeout);
+			this.timeout = setTimeout(() => {
+			  //search function
+			}, 300);
+		  }
 		return (
 			<div>
 				<div> {t('SET_ENS_MAIN_INFO')}</div>
@@ -75,6 +91,9 @@ class SetAccountENSPage extends Component {
 					/>
 					{setEnsSpinner ? <InputLoading /> : null}
 				</form>
+				{setEns && !errAddr && (
+					<Lottie options={defaultOptions} height={400} width={400}></Lottie>
+				)}
 			</div>
 		)
 	}
