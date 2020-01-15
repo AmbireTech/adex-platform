@@ -24,7 +24,10 @@ export default function CacheBuster(props) {
 	}
 
 	useEffect(() => {
-		fetch('/meta.json')
+		let r = Math.random()
+			.toString(36)
+			.substring(7)
+		fetch(`/meta.json?r=${r}`, { cache: 'no-cache' })
 			.then(response => response.json())
 			.then(meta => {
 				const latestVersion = meta.version
