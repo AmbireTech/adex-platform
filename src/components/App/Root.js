@@ -77,7 +77,6 @@ const Root = () => {
 	useEffect(() => {
 		execute(metamaskNetworkCheck())
 		execute(updateRegistrationAllowed(location.search))
-		console.log('locatio', location)
 	}, [location])
 
 	return (
