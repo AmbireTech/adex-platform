@@ -150,7 +150,7 @@ export function refreshCacheAndReload({ version, notification = false }) {
 			console.error('ERR_UPDATING_APP', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_REGISTERING_EXPECTED_IDENTITY', { args: [err] }),
+				label: translate('ERR_UPDATING_APP'),
 				timeout: 20000,
 			})(dispatch)
 		}
