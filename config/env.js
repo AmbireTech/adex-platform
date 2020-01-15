@@ -95,6 +95,7 @@ function getClientEnvironment(publicUrl) {
 				ACCESS_CODE_CHECK: process.env.ACCESS_CODE_CHECK,
 				ADVIEW_URL: process.env.ADVIEW_URL,
 				SCD_MCD_MIGRATION_ADDR: process.env.SCD_MCD_MIGRATION_ADDR,
+				REGISTRATION_OPEN: process.env.REGISTRATION_OPEN,
 			}
 		)
 

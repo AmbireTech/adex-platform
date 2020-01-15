@@ -25,8 +25,6 @@ export default function AuthHoc(Decorated) {
 			path,
 			chainId,
 			signType,
-			balanceEth,
-			balanceDai,
 		}) => {
 			const wallet = {
 				address,
@@ -36,8 +34,6 @@ export default function AuthHoc(Decorated) {
 				path,
 				chainId,
 				signType,
-				balanceEth,
-				balanceDai,
 			}
 
 			this.props.handleChange('identityContractOwner', address)

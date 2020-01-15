@@ -11,11 +11,13 @@ import Img from 'components/common/img/Img'
 import classnames from 'classnames'
 import { getAllWallets } from 'services/wallet/wallet'
 import { execute, initIdentity, confirmAction } from 'actions'
-import { selectAuth, selectAccount } from 'selectors'
+import { selectAuth, selectAccount, selectRegistrationAllowed } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { formatAddress } from 'helpers/formatters'
 import { push } from 'connected-react-router'
 import { t } from 'selectors'
+
+const REGISTRATION_OPEN = process.env.REGISTRATION_OPEN === 'true'
 
 const RRButton = withReactRouterLink(Button)
 const useStyles = makeStyles(styles)
@@ -24,6 +26,8 @@ const AuthSelect = () => {
 	const classes = useStyles()
 	const [wallets, setWallets] = useState([])
 
+	const regAllowed = useSelector(selectRegistrationAllowed)
+	const showRegistration = REGISTRATION_OPEN || regAllowed
 	const auth = useSelector(selectAuth)
 	const account = useSelector(selectAccount)
 	const { wallet } = account || {}
@@ -159,20 +163,22 @@ const AuthSelect = () => {
 					{t('LOGIN_QUICK_ACCOUNT')}
 				</Button>
 			</Box>
-			<Box m={1}>
-				<Button
-					variant='contained'
-					size='large'
-					color='secondary'
-					fullWidth
-					className={classes.limitedWidthBtn}
-					onClick={() => {
-						goTo('/signup/quick', true)
-					}}
-				>
-					{t('CREATE_QUICK_ACCOUNT')}
-				</Button>
-			</Box>
+			{showRegistration && (
+				<Box m={1}>
+					<Button
+						variant='contained'
+						size='large'
+						color='secondary'
+						fullWidth
+						className={classes.limitedWidthBtn}
+						onClick={() => {
+							goTo('/signup/quick', true)
+						}}
+					>
+						{t('CREATE_QUICK_ACCOUNT')}
+					</Button>
+				</Box>
+			)}
 		</Box>
 	)
 }

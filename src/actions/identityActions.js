@@ -199,16 +199,20 @@ export function ownerIdentities({ owner }) {
 			const identityData = await getOwnerIdentities({ owner })
 			const data = Object.entries(identityData).map(
 				async ([identityAddr, privLevel]) => {
-					const data = await getIdentityData({ identityAddr })
-					return {
-						identity: identityAddr,
-						privLevel,
-						data,
+					try {
+						const data = await getIdentityData({ identityAddr })
+						return {
+							identity: identityAddr,
+							privLevel,
+							data,
+						}
+					} catch {
+						return null
 					}
 				}
 			)
 
-			const ownerIdentities = await Promise.all(data)
+			const ownerIdentities = (await Promise.all(data)).filter(x => !!x)
 
 			updateIdentity('ownerIdentities', ownerIdentities)(dispatch)
 		} catch (err) {
@@ -274,8 +278,19 @@ export function login() {
 				})
 			}
 
+			const relayerData = await getIdentityData({
+				identityAddr: identityData.address,
+			})
+
+			const identity = {
+				...identityData,
+				currentPrivileges: relayerData.currentPrivileges,
+				isLimitedVolume: relayerData.isLimitedVolume,
+				relayerData,
+			}
+
 			await createSession({
-				identity: identityData,
+				identity,
 				wallet,
 				email,
 				deleteLegacyKey,

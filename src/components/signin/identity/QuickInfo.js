@@ -32,14 +32,7 @@ const QuickInfo = props => {
 	)
 
 	// Errors
-	const {
-		email,
-		emailCheck,
-		password,
-		passwordCheck,
-		tosCheck,
-		grantCode,
-	} = validations
+	const { email, emailCheck, password, passwordCheck, tosCheck } = validations
 	return (
 		<div>
 			<Grid container spacing={2}>
@@ -169,22 +162,6 @@ const QuickInfo = props => {
 								? passwordCheck.errMsg
 								: t('PASSWORD_CHECK_RULES')
 						}
-					/>
-				</Grid>
-				<Grid item xs={12}>
-					<FormControlLabel
-						control={
-							<Switch
-								color='primary'
-								checked={!!identity.hasGrantCode}
-								onChange={() =>
-									execute(
-										updateIdentity('hasGrantCode', !identity.hasGrantCode)
-									)
-								}
-							/>
-						}
-						label={t('HAVE_GRANT_CODE')}
 					/>
 				</Grid>
 				<Grid item xs={12}>
