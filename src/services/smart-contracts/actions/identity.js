@@ -271,7 +271,10 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	account,
 	getToken,
 }) {
-	const { sweepTxns, swapAmountsByToken } = await getSweepingTxnsIfNeeded({
+	const {
+		sweepTxns = [],
+		swapAmountsByToken = {},
+	} = await getSweepingTxnsIfNeeded({
 		amountInMainTokenNeeded,
 		account,
 	})
@@ -315,7 +318,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	// TODO: make it work with other tokens
 	const saiSwapAmount = sweepTxnsByToken.saiWithdrawAmount
 		.add(otherTxnsByToken.saiWithdrawAmount)
-		.add(bigNumberify(swapAmountsByToken[saiAddr]))
+		.add(bigNumberify(swapAmountsByToken[saiAddr] || 0))
 
 	if (!saiSwapAmount.isZero()) {
 		sweepTxnsByToken.txnsByFeeToken[daiAddr] = [
@@ -516,9 +519,6 @@ export async function processExecuteByFeeTokens({
 			...extraData,
 		}
 
-		console.log('data', data)
-
-		// return data
 		const result = await executeTx(data)
 
 		return {
