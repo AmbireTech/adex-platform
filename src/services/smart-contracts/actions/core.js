@@ -25,7 +25,7 @@ import {
 	parseUnits,
 	Interface,
 	// formatUnits,
-	// getAddress,
+	getAddress,
 } from 'ethers/utils'
 import {
 	selectFeeTokenWhitelist,
@@ -152,40 +152,47 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 				channel =>
 					channel &&
 					channel.status &&
+					channel.status.lastApprovedBalances &&
+					channel.status.lastApprovedSigs &&
 					routineWithdrawTokens[channel.depositAsset]
 			)
 			.map(channel => {
-				const { lastApprovedSigs, lastApprovedBalances } = channel.status
-				try {
-					if (lastApprovedBalances) {
-						const bTree = new BalanceTree(lastApprovedBalances)
-						return {
-							lastApprovedSigs,
-							// mTree,
-							bTree,
-							channel,
-						}
-					} else {
-						return {
-							lastApprovedSigs: null,
-							// mTree: null,
-							bTree: null,
-							channel,
-						}
-					}
-				} catch (err) {
-					console.log('err', err)
-					console.log('channel', JSON.stringify(channel))
-				}
+				const { lastApprovedBalances } = channel.status
 
-				return {}
+				const validBalances = Object.entries(lastApprovedBalances).reduce(
+					(balances, e) => {
+						const [address, balance] = e
+						try {
+							if (getAddress(address)) {
+								balances[address] = balance
+							}
+						} catch {}
+						return balances
+					},
+					{}
+				)
+
+				channel.status.lastApprovedBalances = validBalances
+
+				return channel
+			})
+			.map(channel => {
+				const { lastApprovedSigs, lastApprovedBalances } = channel.status
+
+				const bTree = new BalanceTree(lastApprovedBalances)
+				return {
+					lastApprovedSigs,
+					// mTree,
+					bTree,
+					channel,
+				}
 			})
 			.filter(({ channel, bTree }) => {
 				if (!!channel.status && channel.status.name === 'Expired') {
 					return channel.creator === identityAddr
 				}
 
-				return !bTree.getBalance(identityAddr).isZero()
+				return bTree && !bTree.getBalance(identityAddr).isZero()
 			})
 			.map(async ({ channel, lastApprovedSigs, bTree }) => {
 				//  mTree,
@@ -263,33 +270,22 @@ const getChannelWithdrawData = ({
 	lastApprovedSigs,
 	ethChannelTuple,
 }) => {
-	// const leaf = Channel.getBalanceLeaf(identityAddr, balance)
-	// const proof = mTree.proof(leaf)
 	const proof = bTree.getProof(identityAddr)
 	const vsig1 = splitSig(lastApprovedSigs[0])
 	const vsig2 = splitSig(lastApprovedSigs[1])
+	const root = bTree.mTree.getRoot()
 
-	return [
-		ethChannelTuple,
-		bTree.mTree.getRoot(),
-		[vsig1, vsig2],
-		proof,
-		balance,
-	]
+	return [ethChannelTuple, root, [vsig1, vsig2], proof, balance]
 }
 
-async function getSweepExecuteRoutineTx({
-	txns,
-	identityAddr,
-	routineAuthTuple,
-}) {
+function getSweepExecuteRoutineTx({ txns, identityAddr, routineAuthTuple }) {
 	const { routineOpts, withdrawAmountByToken } = txns.reduce(
 		(data, tx) => {
 			const updated = { ...data }
 			updated.routineOpts.push(RoutineOps.channelWithdraw(tx.data))
 			updated.withdrawAmountByToken[tx.feeTokenAddr] = (
 				data.withdrawAmountByToken[tx.feeTokenAddr] || bigNumberify(0)
-			).add(bigNumberify(tx.withdrawAmount))
+			).add(bigNumberify(tx.withdrawAmountByToken[tx.feeTokenAddr]))
 
 			return updated
 		},
@@ -303,7 +299,7 @@ async function getSweepExecuteRoutineTx({
 
 	const routinesTx = {
 		identityContract: identityAddr,
-		to: AdExCore.address,
+		to: identityAddr,
 		data,
 		withdrawAmountByToken,
 		routinesTxCount: routineOpts.length,
@@ -316,17 +312,19 @@ async function getSweepExecuteRoutineTx({
 function getIdentityRoutineAuthTuple(identity) {
 	return identity &&
 		identity.relayerData &&
-		identity.relayerData.routineAuthorizationsData &&
-		identity.relayerData.routineAuthorizationsData[0]
-		? identity.relayerData.routineAuthorizationsData[0]
+		identity.relayerData.deployData &&
+		identity.relayerData.deployData.routineAuthorizationsData &&
+		identity.relayerData.deployData.routineAuthorizationsData[0]
+		? identity.relayerData.deployData.routineAuthorizationsData[0]
 		: null
 }
 
 function hasValidExecuteRoutines(routineAuthTuple) {
 	const hasValidRoutines =
 		routineAuthTuple &&
-		parseInt(routineAuthTuple[3], 16) * 1000 < Date.now() &&
-		routineAuthTuple.length === 5
+		routineAuthTuple.length === 5 &&
+		// TODO: get relayer config for giveUpResubmitAfter
+		parseInt(routineAuthTuple[2], 16) * 1000 > Date.now() + 12 * 60 * 60 * 1000
 
 	return hasValidRoutines
 }
@@ -353,7 +351,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 
 		const data = getChannelWithdrawData({
 			identityAddr,
-			// balance,
+			balance,
 			// mTree,
 			bTree,
 			lastApprovedSigs,
@@ -372,11 +370,13 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 
 	let encodedTxns = null
 	if (hasValidExecuteRoutines(routineAuthTuple)) {
-		encodedTxns = getSweepExecuteRoutineTx({
-			txns,
-			identityAddr,
-			routineAuthTuple,
-		})
+		encodedTxns = [
+			getSweepExecuteRoutineTx({
+				txns,
+				identityAddr,
+				routineAuthTuple,
+			}),
+		]
 	} else {
 		encodedTxns = txns.map(tx => {
 			tx.data = Core.functions.channelWithdraw.encode(tx.data)
