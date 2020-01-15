@@ -1,3 +1,5 @@
+import React from 'react'
+import Button from '@material-ui/core/Button'
 import * as types from 'constants/actionTypes'
 import Helper from 'helpers/miscHelpers'
 import { translate } from 'services/translations/translations'
@@ -133,18 +135,30 @@ export function refreshCacheAndReload({ version, notification = false }) {
 			} else {
 				addToast({
 					type: 'accept',
+					action: (
+						// eslint-disable-next-line react/react-in-jsx-scope
+						<Button
+							color='primary'
+							size='small'
+							variant='contained'
+							onClick={() => {
+								if (caches) {
+									// Service worker cache should be cleared with caches.delete()
+									caches.keys().then(async function(names) {
+										await Promise.all(names.map(name => caches.delete(name)))
+									})
+								}
+								window.location.reload(true)
+							}}
+						>
+							{translate('REFRESH')}
+						</Button>
+					),
 					label: translate('SUCCESS_UPDATING_NEW_APP_VERSION', {
 						args: [version],
 					}),
 					timeout: 5000,
 				})(dispatch)
-				if (caches) {
-					// Service worker cache should be cleared with caches.delete()
-					caches.keys().then(async function(names) {
-						await Promise.all(names.map(name => caches.delete(name)))
-					})
-				}
-				window.location.reload(true)
 			}
 		} catch (err) {
 			console.error('ERR_UPDATING_APP', err)

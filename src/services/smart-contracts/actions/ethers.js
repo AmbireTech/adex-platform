@@ -56,7 +56,6 @@ export async function processTx({
 		execute(
 			addToast({
 				type: 'accept',
-				action: 'X',
 				label: translate('TRANSACTION_SENT_MSG', {
 					args: [txRes.hash],
 				}),
@@ -93,7 +92,6 @@ export async function processTx({
 		execute(
 			addToast({
 				type: 'cancel',
-				action: 'X',
 				label: translate('TRANSACTION_ERR_MSG', {
 					args: [err],
 				}),

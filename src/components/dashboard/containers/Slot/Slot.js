@@ -172,7 +172,6 @@ export class Slot extends Component {
 								onCopy={() =>
 									this.props.actions.addToast({
 										type: 'accept',
-										action: 'X',
 										label: t('COPIED_TO_CLIPBOARD'),
 										timeout: 5000,
 									})

@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Snackbar from '@material-ui/core/Snackbar'
+import Button from '@material-ui/core/Button'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
@@ -88,6 +89,7 @@ export class Toast extends Component {
 						</span>
 					}
 					action={[
+						toast.action && toast.action,
 						!toast.unclosable && (
 							<IconButton
 								key='close'
