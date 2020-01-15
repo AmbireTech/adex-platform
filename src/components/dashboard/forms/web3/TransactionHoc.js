@@ -50,7 +50,6 @@ export default function NewTransactionHoc(Decorated) {
 			if (err) {
 				actions.addToast({
 					type: 'cancel',
-					action: 'X',
 					label: t('ERR_TRANSACTION', { args: [Helper.getErrMsg(err)] }),
 					timeout: 50000,
 				})

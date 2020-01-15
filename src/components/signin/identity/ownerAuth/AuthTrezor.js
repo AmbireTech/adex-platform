@@ -71,7 +71,6 @@ class AuthTrezor extends Component {
 				this.setState({ waitingTrezorAction: false, waitingAddrsData: false })
 				this.props.actions.addToast({
 					type: 'cancel',
-					action: 'X',
 					label: this.props.t('ERR_AUTH_TREZOR', {
 						args: [Helper.getErrMsg(err)],
 					}),

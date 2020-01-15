@@ -34,7 +34,6 @@ const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
 		dispatch: dispatch,
 		type: type,
-		action: 'X',
 		label: translate(toastStr, { args: args }),
 		timeout: 5000,
 	})(dispatch)

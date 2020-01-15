@@ -33,7 +33,7 @@ export default function CacheBuster(props) {
 					latestVersion,
 					currentVersion
 				)
-				if (shouldForceRefresh) {
+				if (!shouldForceRefresh) {
 					execute(
 						refreshCacheAndReload({
 							version: latestVersion,
