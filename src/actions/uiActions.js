@@ -126,16 +126,33 @@ export function resetValidationErrors(item, key) {
 	}
 }
 
-export function refreshCacheAndReload(version) {
-	return function() {
-		console.log('Clearing cache and hard reloading...')
-		if (caches) {
-			// Service worker cache should be cleared with caches.delete()
-			caches.keys().then(async function(names) {
-				await Promise.all(names.map(name => caches.delete(name)))
-			})
+export function refreshCacheAndReload({ version, notification = false }) {
+	return function(dispatch) {
+		try {
+			if (notification) {
+			} else {
+				addToast({
+					type: 'accept',
+					label: translate('SUCCESS_UPDATING_NEW_APP_VERSION', {
+						args: [version],
+					}),
+					timeout: 5000,
+				})(dispatch)
+				if (caches) {
+					// Service worker cache should be cleared with caches.delete()
+					caches.keys().then(async function(names) {
+						await Promise.all(names.map(name => caches.delete(name)))
+					})
+				}
+				window.location.reload(true)
+			}
+		} catch (err) {
+			console.error('ERR_UPDATING_APP', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_REGISTERING_EXPECTED_IDENTITY', { args: [err] }),
+				timeout: 20000,
+			})(dispatch)
 		}
-		// delete browser cache and hard reload
-		window.location = `/?updatedTo=${version}`
 	}
 }
