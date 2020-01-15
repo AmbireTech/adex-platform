@@ -6,6 +6,7 @@ import {
 	getRelayerConfig,
 	execute,
 	ensureQuickWalletBackup,
+	updateRegistrationAllowed,
 } from 'actions'
 import { Route, Switch, Redirect } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
@@ -75,6 +76,8 @@ const Root = () => {
 
 	useEffect(() => {
 		execute(metamaskNetworkCheck())
+		execute(updateRegistrationAllowed(location.search))
+		console.log('locatio', location)
 	}, [location])
 
 	return (
