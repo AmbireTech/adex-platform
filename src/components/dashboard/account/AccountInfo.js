@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { updateNav, addToast, execute } from 'actions'
 import copy from 'copy-to-clipboard'
-import Translate from 'components/translate/Translate'
 import {
 	WithdrawTokenFromIdentity,
-	WithdrawAnyTokenFromIdentity,
+	// WithdrawAnyTokenFromIdentity,
 	SetIdentityPrivilege,
 } from 'components/dashboard/forms/web3/transactions'
 import { makeStyles } from '@material-ui/core/styles'
@@ -29,7 +27,12 @@ import { getRecoveryWalletData } from 'services/wallet/wallet'
 import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
-import { selectAccount } from 'selectors'
+import {
+	t,
+	selectWallet,
+	selectAccountStatsFormatted,
+	selectAccountIdentity,
+} from 'selectors'
 import { formatAddress } from 'helpers/formatters'
 
 // const RRButton = withReactRouterLink(Button)
@@ -39,11 +42,21 @@ const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
 const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 
-function AccountInfo({ t }) {
-	const account = useSelector(selectAccount)
+function AccountInfo() {
+	const { authType, email, password } = useSelector(selectWallet)
+	const identity = useSelector(selectAccountIdentity)
+	const {
+		walletAddress,
+		walletAuthType = '',
+		walletPrivileges = '',
+		identityAddress,
+		identityBalanceMainToken,
+		availableIdentityBalanceMainToken,
+		outstandingBalanceMainToken,
+		mainTokenSymbol,
+	} = useSelector(selectAccountStatsFormatted)
 
 	const localWalletDownloadHref = () => {
-		const { email, password, authType } = account.wallet
 		const obj = getRecoveryWalletData({ email, password, authType })
 		if (!obj || !obj.wallet) {
 			return null
@@ -61,15 +74,15 @@ function AccountInfo({ t }) {
 
 	useEffect(() => {
 		execute(updateNav('navTitle', t('ACCOUNT')))
-	}, [t])
+	}, [])
 
 	const displayRampWidget = () => {
 		const widget = new RampInstantSDK({
 			hostAppName: 'AdExNetwork',
 			hostLogoUrl: 'https://www.adex.network/img/Adex-logo@2x.png',
 			variant: 'auto',
-			swapAsset: 'SAI',
-			userAddress: account.identity.address,
+			swapAsset: mainTokenSymbol,
+			userAddress: identity.address,
 		})
 		widget.domNodes.overlay.style.zIndex = 1000
 		widget.show()
@@ -78,19 +91,6 @@ function AccountInfo({ t }) {
 	const handleExpandChange = () => {
 		setExpanded(!expanded)
 	}
-
-	const { grantType } = account.settings
-	const formatted = account.stats.formatted || {}
-	const {
-		walletAddress,
-		walletAuthType = '',
-		walletPrivileges = '',
-		identityAddress,
-		identityBalanceDai,
-		availableIdentityBalanceDai,
-		outstandingBalanceDai,
-	} = formatted
-	const { authType, email } = account.wallet
 
 	return (
 		<div>
@@ -115,7 +115,7 @@ function AccountInfo({ t }) {
 								className={classes.address}
 								primary={identityAddress}
 								secondary={
-									account._authType === 'demo'
+									authType === 'demo'
 										? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
 										: t('IDENTITY_ETH_ADDR')
 								}
@@ -159,7 +159,7 @@ function AccountInfo({ t }) {
 								className={classes.address}
 								primary={formatAddress(walletAddress)}
 								secondary={
-									account.authType === 'demo'
+									authType === 'demo'
 										? t('DEMO_ACCOUNT_WALLET_ADDRESS', {
 												args: [walletAuthType, walletPrivileges],
 										  })
@@ -204,12 +204,15 @@ function AccountInfo({ t }) {
 					>
 						<Box pr={1} flexGrow='8'>
 							<LoadingSection
-								loading={!identityBalanceDai && identityBalanceDai !== 0}
+								loading={
+									!identityBalanceMainToken && identityBalanceMainToken !== 0
+								}
 							>
 								<ListItemText
-									primary={`${availableIdentityBalanceDai || 0} SAI`}
-									secondary={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
-										args: [identityBalanceDai || 0, outstandingBalanceDai || 0],
+									primary={`${availableIdentityBalanceMainToken ||
+										0} ${mainTokenSymbol}`}
+									secondary={t('IDENTITY_MAIN_TOKEN_BALANCE_AVAILABLE_INFO', {
+										args: [outstandingBalanceMainToken || 0, mainTokenSymbol],
 									})}
 								/>
 							</LoadingSection>
@@ -229,19 +232,17 @@ function AccountInfo({ t }) {
 								</Button>
 							</Box>
 
-							{grantType !== 'advertiser' && (
-								<Box py={1}>
-									<WithdrawTokenFromIdentity
-										fullWidth
-										variant='contained'
-										color='primary'
-										identityAvailable={availableIdentityBalanceDai}
-										identityAvailableRaw={availableIdentityBalanceDai}
-										token='SAI'
-										size='small'
-									/>
-								</Box>
-							)}
+							<Box py={1}>
+								<WithdrawTokenFromIdentity
+									fullWidth
+									variant='contained'
+									color='primary'
+									identityAvailable={availableIdentityBalanceMainToken}
+									identityAvailableRaw={availableIdentityBalanceMainToken}
+									token={mainTokenSymbol}
+									size='small'
+								/>
+							</Box>
 						</Box>
 					</Box>
 				</ListItem>
@@ -279,7 +280,7 @@ function AccountInfo({ t }) {
 											variant='contained'
 											color='secondary'
 											size='small'
-											identityAvailable={availableIdentityBalanceDai}
+											identityAvailable={availableIdentityBalanceMainToken}
 										/>
 									</Box>
 								</Box>
@@ -308,7 +309,7 @@ function AccountInfo({ t }) {
 								/>
 							</ListItem>
 							<ListDivider />
-							<ListItem>
+							{/* <ListItem>
 								<Box
 									display='flex'
 									flexWrap={'wrap'}
@@ -327,7 +328,7 @@ function AccountInfo({ t }) {
 										</Box>
 									</Box>
 								</Box>
-							</ListItem>
+							</ListItem> */}
 						</List>
 					</ExpansionPanelDetails>
 				</ExpansionPanel>
@@ -336,8 +337,4 @@ function AccountInfo({ t }) {
 	)
 }
 
-AccountInfo.propTypes = {
-	t: PropTypes.func.isRequired,
-}
-
-export default Translate(AccountInfo)
+export default AccountInfo

@@ -9,8 +9,9 @@ export const IdentityWithdrawPreview = ({
 	t,
 	withdrawTo,
 	classes,
-	fees,
+	feesData,
 	withdrawAmount,
+	symbol,
 }) => (
 	<div>
 		<PropRow
@@ -25,9 +26,9 @@ export const IdentityWithdrawPreview = ({
 				<ListItemText
 					className={classes.address}
 					secondary={t('AMOUNT_WITHDRAW_INFO', {
-						args: [fees.fees, 'SAI', fees.toGet, 'SAI'],
+						args: [feesData.fees, symbol, feesData.toGet, symbol],
 					})}
-					primary={withdrawAmount + ' SAI'}
+					primary={`${withdrawAmount} ${symbol}`}
 				/>
 			}
 		/>
@@ -38,8 +39,9 @@ export const SetPrivilegePreview = ({
 	t,
 	setAddr,
 	classes,
-	fees,
+	feesData,
 	privLevel,
+	symbol,
 }) => (
 	<div>
 		<PropRow
@@ -54,7 +56,7 @@ export const SetPrivilegePreview = ({
 				<ListItemText
 					className={classes.address}
 					secondary={t('PRIV_LEVEL_INFO_AND_FEES', {
-						args: [fees.fees, 'SAI'],
+						args: [feesData.fees, symbol],
 					})}
 					primary={privilegesNames[privLevel]}
 				/>
@@ -68,7 +70,7 @@ export const IdentityWithdrawAnyPreview = ({
 	withdrawTo,
 	tokenAddress,
 	classes,
-	fees,
+	feesData,
 	withdrawAmount,
 }) => (
 	<div>
@@ -89,7 +91,7 @@ export const IdentityWithdrawAnyPreview = ({
 				<ListItemText
 					className={classes.address}
 					secondary={t('AMOUNT_WITHDRAW_INFO', {
-						args: [fees.fees, '', fees.toGet, ''],
+						args: [feesData.fees, '', feesData.toGet, ''],
 					})}
 					primary={withdrawAmount + ' '}
 				/>

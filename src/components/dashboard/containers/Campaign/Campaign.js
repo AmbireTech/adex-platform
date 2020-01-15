@@ -5,11 +5,10 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Grid from '@material-ui/core/Grid'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
-import ItemsList from 'components/dashboard/containers/ItemsList'
+import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
 import Translate from 'components/translate/Translate'
 import Button from '@material-ui/core/Button'
 import { AdUnit as AdUnitModel, Campaign as CampaignModel } from 'adex-models'
-import { SORT_PROPERTIES_ITEMS, FILTER_PROPERTIES_ITEMS } from 'constants/misc'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { CampaignProps } from 'components/dashboard/containers/ItemCommon'
@@ -22,8 +21,10 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import Anchor from 'components/common/anchor/anchor'
 import { formatTokenAmount } from 'helpers/formatters'
+import { selectMainToken } from 'selectors'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
+// import UnitTargets from 'components/dashboard/containers/UnitTargets'
 const VIEW_MODE = 'campaignRowsView'
 
 export class Campaign extends Component {
@@ -36,11 +37,6 @@ export class Campaign extends Component {
 		}
 	}
 
-	// componentDidMount = () => {
-	// 	this.props.actions.updateCampaignState({ campaign: this.props.item })
-	// 	// this.props.actions.updateCampaignStatistics({ campaign: this.props.item })
-	// }
-
 	handleTabChange = (event, index) => {
 		this.setState({ tabIndex: index })
 	}
@@ -51,7 +47,9 @@ export class Campaign extends Component {
 				<Grid item xs={12}>
 					<Button
 						color='secondary'
-						onClick={() => actions.closeCampaign({ campaign })}
+						onClick={() => {
+							actions.closeCampaign({ campaign })
+						}}
 					>
 						{t('BTN_CLOSE_CAMPAIGN')}
 					</Button>
@@ -65,11 +63,12 @@ export class Campaign extends Component {
 			t,
 			// classes,
 			item,
-			// setActiveFields,
 			// handleChange,
 			// activeFields,
 			// isDemo,
 			actions,
+			history,
+			mainTokenSymbol,
 			// ...rest
 		} = this.props
 		const { tabIndex } = this.state
@@ -85,7 +84,6 @@ export class Campaign extends Component {
 		const status = (campaign.status || {}).name
 		const leader = campaign.spec.validators[0]
 		const follower = campaign.spec.validators[1]
-
 		return (
 			<div>
 				<CampaignProps
@@ -106,6 +104,7 @@ export class Campaign extends Component {
 								campaign={campaign}
 								t={t}
 								actions={actions}
+								history={history}
 							/>
 						)
 					}
@@ -135,7 +134,9 @@ export class Campaign extends Component {
 								{Object.keys(balances).map(key => (
 									<ListItem key={key}>
 										<ListItemText
-											primary={formatTokenAmount(balances[key]) + ' SAI'}
+											primary={
+												formatTokenAmount(balances[key]) + ' ' + mainTokenSymbol
+											}
 											secondary={key}
 										/>
 									</ListItem>
@@ -143,16 +144,7 @@ export class Campaign extends Component {
 							</List>
 						)}
 						{tabIndex === 1 && (
-							<ItemsList
-								removeFromItem
-								items={units}
-								viewModeId={VIEW_MODE}
-								itemType='AdUnit'
-								objModel={AdUnitModel}
-								sortProperties={SORT_PROPERTIES_ITEMS}
-								filterProperties={FILTER_PROPERTIES_ITEMS}
-								uiStateId='campaign-units'
-							/>
+							<EnhancedTable itemType={'AdUnit'} items={units} noActions />
 						)}
 						{tabIndex === 2 && (
 							<List>
@@ -212,6 +204,7 @@ function mapStateToProps(state) {
 		rowsView: !!persist.ui[VIEW_MODE],
 		objModel: CampaignModel,
 		itemType: 'Campaign',
+		mainTokenSymbol: selectMainToken(state).symbol,
 	}
 }
 

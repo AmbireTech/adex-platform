@@ -12,11 +12,11 @@ import IconButton from '@material-ui/core/IconButton'
 import CopyIcon from '@material-ui/icons/FileCopy'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { contracts } from 'services/smart-contracts/contractsCfg'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import AppBar from '@material-ui/core/AppBar'
 import url from 'url'
+import { selectRoutineWithdrawTokensAddresses } from 'selectors'
 
 const ADVIEW_URL = process.env.ADVIEW_URL
 const adviewUrl = url.parse(ADVIEW_URL)
@@ -32,8 +32,6 @@ const AUTO_HIDE_STRING = `window.addEventListener('message', function(ev) {
 		}
 	}, false)`
 
-const { DAI } = contracts
-
 // const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
 
 const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
@@ -48,7 +46,7 @@ const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
 
 	const options = {
 		publisherAddr: identityAddr,
-		whitelistedToken: DAI.address,
+		whitelistedTokens: selectRoutineWithdrawTokensAddresses(),
 		whitelistedType: type,
 		randomize: true,
 		targeting: tags || [],

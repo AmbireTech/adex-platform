@@ -12,10 +12,17 @@ export const formatDateTime = (timestamp, format = DEFAULT_DATETIME_FORMAT) => {
 	return date.format(format)
 }
 
-export const formatTokenAmount = (amountString, decimals = 18, pretty) => {
+export const formatTokenAmount = (
+	amountString,
+	decimals = 18,
+	pretty,
+	toFixed
+) => {
 	const formatted = formatUnits(amountString, decimals)
 	if (pretty) {
 		return commify(formatted)
+	} else if (typeof toFixed === 'number') {
+		return parseFloat(formatted).toFixed(toFixed)
 	} else {
 		return formatted
 	}

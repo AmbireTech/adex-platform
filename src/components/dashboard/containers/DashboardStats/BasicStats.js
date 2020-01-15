@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
+import { execute, updateAnalyticsTimeframe } from 'actions'
 import { SimpleStatistics } from 'components/dashboard/charts/simplified'
 import Dropdown from 'components/common/dropdown'
 import Grid from '@material-ui/core/Grid'
@@ -15,6 +16,8 @@ import {
 	selectTotalImpressions,
 	selectTotalMoney,
 	selectAverageCPM,
+	selectMainToken,
+	selectAnalytics,
 } from 'selectors'
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
@@ -57,10 +60,11 @@ const timeHints = {
 }
 
 export function BasicStats({ side }) {
-	const [timeframe, setTimeframe] = useState(timeFrames[1].value)
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
+	const { symbol } = useSelector(selectMainToken)
 
+	const timeframe = useSelector(selectAnalytics).timeframe || ''
 	const totalImpressions = useSelector(state =>
 		selectTotalImpressions(state, {
 			side,
@@ -95,7 +99,7 @@ export function BasicStats({ side }) {
 							fullWidth
 							label={t('SELECT_TIMEFRAME')}
 							helperText={t(timeHints[timeframe])}
-							onChange={val => setTimeframe(val)}
+							onChange={val => execute(updateAnalyticsTimeframe(val))}
 							source={timeFrames}
 							value={timeframe}
 							htmlId='timeframe-select'
@@ -112,10 +116,10 @@ export function BasicStats({ side }) {
 						<StatsCard
 							bgColor='accentOne'
 							subtitle={t('LABEL_TOTAL_SPENT')}
-							explain={t('EXPLAIN_TOTAL_SPENT')}
+							explain={t('EXPLAIN_TOTAL_SPENT', { args: [symbol] })}
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
-							)} SAI`}
+							)} ${symbol}`}
 							loading={loadingMoney}
 						></StatsCard>
 					)}
@@ -127,7 +131,7 @@ export function BasicStats({ side }) {
 							explain={t('EXPLAIN_TOTAL_REVENUE')}
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
-							)} SAI`}
+							)} ${symbol}`}
 							loading={loadingMoney}
 						></StatsCard>
 					)}
@@ -138,7 +142,7 @@ export function BasicStats({ side }) {
 						loading={loadingCPM}
 						title={`~ ${formatNumberWithCommas(
 							parseFloat(averageCPM || 0).toFixed(2)
-						)} SAI / CPM`}
+						)} ${symbol} / CPM`}
 					></StatsCard>
 				</div>
 			</Grid>
