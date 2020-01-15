@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { selectLocation } from 'selectors'
 import packageJson from '../../../package.json'
@@ -29,19 +29,15 @@ export default function CacheBuster(props) {
 			.then(meta => {
 				const latestVersion = meta.version
 				const currentVersion = global.appVersion
-
 				const shouldForceRefresh = semverGreaterThan(
 					latestVersion,
 					currentVersion
 				)
 				if (shouldForceRefresh) {
-					console.log(
-						`We have a new version - ${latestVersion}. Should force refresh`
-					)
-					execute(refreshCacheAndReload(latestVersion))
-				} else {
-					console.log(
-						`You already have the latest version - ${latestVersion}. No cache refresh needed.`
+					execute(
+						refreshCacheAndReload({
+							version: latestVersion,
+						})
 					)
 				}
 			})
