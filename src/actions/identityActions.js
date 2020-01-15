@@ -284,6 +284,7 @@ export function login() {
 
 			const identity = {
 				...identityData,
+				address: relayerData.deployData._id,
 				currentPrivileges: relayerData.currentPrivileges,
 				isLimitedVolume: relayerData.isLimitedVolume,
 				relayerData,
