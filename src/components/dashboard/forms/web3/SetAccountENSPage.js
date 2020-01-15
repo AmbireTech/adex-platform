@@ -31,38 +31,51 @@ class SetAccountENSPage extends Component {
 		}
 	}
 
+	handleValidate = () => {
+		if (this._timeout) {
+			//if there is already a timeout in process cancel it
+			clearTimeout(this._timeout)
+		}
+		this._timeout = setTimeout(() => {
+			this._timeout = null
+			const { actions, transaction, validate } = this.props
+			const { setEns } = transaction || {}
+			actions.validateENS({
+				ens: setEns,
+				dirty: true,
+				validate,
+				name: 'setEns',
+			})
+		}, 500)
+	}
+
 	render() {
 		const {
-			actions,
 			transaction,
 			t,
 			invalidFields,
 			handleChange,
 			setEnsSpinner,
-			validate,
 		} = this.props
 		const { setEns } = transaction || {}
 		// const errAmount = invalidFields['withdrawAmount']
 		const errAddr = invalidFields['setEns']
-		handleENSTyping(evt) {
-			var searchText = evt.target.value; // this is the search text
-			if(this.timeout) clearTimeout(this.timeout);
-			this.timeout = setTimeout(() => {
-			  //search function
-			}, 300);
-		  }
 		return (
 			<div>
 				<div> {t('SET_ENS_MAIN_INFO')}</div>
 				<form noValidate>
 					<TextField
+						autoFocus
 						type='text'
 						required
 						fullWidth
 						label={t('ENS_TO_SET_TO_ADDR')}
 						name='setEns'
 						value={setEns || ''}
-						onChange={ev => handleChange('setEns', ev.target.value)}
+						onChange={ev => {
+							handleChange('setEns', ev.target.value)
+							this.handleValidate()
+						}}
 						InputProps={{
 							endAdornment: (
 								<InputAdornment position='end'>
@@ -70,22 +83,6 @@ class SetAccountENSPage extends Component {
 								</InputAdornment>
 							),
 						}}
-						onBlur={() =>
-							actions.validateENS({
-								ens: setEns,
-								dirty: true,
-								validate,
-								name: 'setEns',
-							})
-						}
-						onFocus={() =>
-							actions.validateENS({
-								ens: setEns,
-								dirty: false,
-								validate,
-								name: 'setEns',
-							})
-						}
 						error={errAddr && !!errAddr.dirty}
 						helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
 					/>
