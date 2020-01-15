@@ -147,14 +147,8 @@ export async function getAccountStats({
 	const identityBalanceMainToken =
 		identityWithdrawTokensBalancesBalances.totalBalanceInMainToken
 
-	const common = {
-		mainTokenDecimals: decimals,
-		mainTokenSymbol: symbol,
-	}
-
 	// BigNumber values for balances
 	const raw = {
-		...common,
 		identityWithdrawTokensBalancesBalances,
 		walletPrivileges,
 		identityBalanceMainToken,
@@ -169,7 +163,6 @@ export async function getAccountStats({
 	}
 
 	const formatted = {
-		...common,
 		walletAddress: wallet.address,
 		walletAuthType: wallet.authType,
 		walletPrivileges: privilegesNames[walletPrivileges],
