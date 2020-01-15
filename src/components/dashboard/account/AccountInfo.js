@@ -32,7 +32,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import { selectAccount } from 'selectors'
 import ReverseENS from 'helpers/EnsResolver'
-
+import EnsAddressResolver from 'components/common/ens/EnsAddressResolver'
 // const RRButton = withReactRouterLink(Button)
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
@@ -123,7 +123,7 @@ function AccountInfo({ t }) {
 								/>
 								<ListItemText
 									className={classes.address}
-									primary={<ReverseENS lookup={identityAddress} />}
+									primary={<EnsAddressResolver address={identityAddress} />}
 									secondary={
 										account._authType === 'demo'
 											? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
