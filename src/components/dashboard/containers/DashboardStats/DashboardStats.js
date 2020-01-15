@@ -11,17 +11,22 @@ import { styles } from './styles'
 import Grid from '@material-ui/core/Grid'
 import { BasicStats } from './BasicStats'
 import { push } from 'connected-react-router'
-import { t, selectSide, selectAccountStatsFormatted } from 'selectors'
+import {
+	t,
+	selectSide,
+	selectAccountStatsFormatted,
+	selectMainToken,
+} from 'selectors'
 
 const useStyles = makeStyles(styles)
 
 export function DashboardStats(props) {
 	const side = useSelector(selectSide)
 	const classes = useStyles()
+	const { symbol } = useSelector(selectMainToken)
 	const {
 		availableIdentityBalanceMainToken,
 		outstandingBalanceMainToken,
-		mainTokenSymbol,
 	} = useSelector(selectAccountStatsFormatted)
 
 	useEffect(() => {
@@ -39,7 +44,7 @@ export function DashboardStats(props) {
 					linkCard
 					onClick={goToAccount}
 					subtitle={t('IDENTITY_MAIN_TOKEN_BALANCE_AVAILABLE_INFO', {
-						args: [outstandingBalanceMainToken || 0, mainTokenSymbol],
+						args: [outstandingBalanceMainToken || 0, symbol],
 					})}
 					loading={
 						(!outstandingBalanceMainToken &&
@@ -47,7 +52,7 @@ export function DashboardStats(props) {
 						(!availableIdentityBalanceMainToken &&
 							availableIdentityBalanceMainToken !== 0)
 					}
-					title={`${availableIdentityBalanceMainToken || 0} ${mainTokenSymbol}`}
+					title={`${availableIdentityBalanceMainToken || 0} ${symbol}`}
 				></StatsCard>
 			</div>
 		)

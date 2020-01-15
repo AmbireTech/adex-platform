@@ -27,6 +27,7 @@ import {
 	selectLocation,
 	selectAccountIdentityAddr,
 	selectAccountStatsFormatted,
+	selectMainToken,
 } from 'selectors'
 
 const RRListItem = withReactRouterLink(ListItem)
@@ -101,12 +102,13 @@ function SideNav(props) {
 	const classes = useStyles({ side })
 	const commonClasses = useCommonStyles()
 	const routerLocation = useSelector(selectLocation)
+	const { symbol } = useSelector(selectMainToken)
 
 	// TODO: test location
 	const location = routerLocation.pathname.split('/')[3]
 	const isAdvertiser = side === 'advertiser'
 	const items = isAdvertiser ? 'units' : 'slots'
-	const { availableIdentityBalanceMainToken, mainTokenSymbol } = useSelector(
+	const { availableIdentityBalanceMainToken } = useSelector(
 		selectAccountStatsFormatted
 	)
 
@@ -140,7 +142,7 @@ function SideNav(props) {
 								<ListItemText>
 									<Typography variant='h6' component='div' color='textPrimary'>
 										<strong>{`${availableIdentityBalanceMainToken ||
-											0} ${mainTokenSymbol}`}</strong>
+											0} ${symbol}`}</strong>
 									</Typography>
 									<Typography variant='button' display='block' gutterBottom>
 										{t('IDENTITY_BALANCE')}
