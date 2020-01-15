@@ -204,7 +204,7 @@ function mapStateToProps(state) {
 		rowsView: !!persist.ui[VIEW_MODE],
 		objModel: CampaignModel,
 		itemType: 'Campaign',
-		mainTokenSymbol: selectMainToken(state),
+		mainTokenSymbol: selectMainToken(state).symbol,
 	}
 }
 
