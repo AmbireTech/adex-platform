@@ -13,14 +13,19 @@ export const selectAuth = createSelector(
 		!!identity.address
 )
 
-export const selectAuthSig = createSelector(
-	selectAccount,
-	({ wallet }) => wallet.authSig
-)
-
 export const selectWallet = createDeepEqualSelector(
 	selectAccount,
 	({ wallet }) => wallet
+)
+
+export const selectAuthSig = createSelector(
+	selectWallet,
+	({ authSig }) => authSig
+)
+
+export const selectAuthType = createSelector(
+	selectWallet,
+	({ authType }) => authType
 )
 
 export const selectAccountIdentity = createSelector(
@@ -38,6 +43,11 @@ export const selectAccountStats = createSelector(
 	({ stats }) => stats || {}
 )
 
+export const selectAccountSettings = createSelector(
+	selectAccount,
+	({ settings }) => settings || {}
+)
+
 export const selectAccountStatsRaw = createSelector(
 	selectAccountStats,
 	({ raw }) => raw || {}
@@ -46,4 +56,14 @@ export const selectAccountStatsRaw = createSelector(
 export const selectAccountStatsFormatted = createSelector(
 	selectAccountStats,
 	({ formatted }) => formatted || {}
+)
+
+export const selectAccountIdentityRoutineAuthTuple = createSelector(
+	selectAccountIdentity,
+	({ relayerData }) =>
+		relayerData &&
+		relayerData.routineAuthorizationsData &&
+		relayerData.routineAuthorizationsData[0]
+			? relayerData.routineAuthorizationsData[0]
+			: null
 )

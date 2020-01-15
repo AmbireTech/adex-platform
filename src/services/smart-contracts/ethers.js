@@ -1,32 +1,66 @@
-import { ethers, utils } from 'ethers'
+import { ethers, utils, Contract } from 'ethers'
 import { contracts } from './contractsCfg'
 import { AUTH_TYPES } from 'constants/misc'
+import { selectRelayerConfig } from 'selectors'
 
 ethers.errors.setLogLevel('error')
 
-const { AdExCore, Identity, DAI, IdentityFactory } = contracts
+const { AdExCore, Identity, IdentityFactory } = contracts
 
-const localWeb3 = async () => {
-	const provider = new ethers.providers.JsonRpcProvider(
-		process.env.WEB3_NODE_ADDR
-	)
-	const adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
-	const dai = new ethers.Contract(DAI.address, DAI.abi, provider)
-	const identityFactory = new ethers.Contract(
-		IdentityFactory.address,
-		IdentityFactory.abi,
+const getAdexCore = provider => {
+	const { coreAddr } = selectRelayerConfig()
+	return new Contract(coreAddr, AdExCore.abi, provider)
+}
+
+const getMainToken = provider => {
+	const { mainToken = {} } = selectRelayerConfig()
+	return new Contract(
+		mainToken.address,
+		contracts[mainToken.standard].abi,
 		provider
 	)
+}
+
+const getToken = ({ provider, standard, address }) => {
+	return new Contract(address, contracts[standard].abi, provider)
+}
+
+const getIdentity = ({ provider, address }) => {
+	const identityContract = new Contract(address, Identity.abi, provider)
+
+	return identityContract
+}
+
+const getIdentityFactory = provider => {
+	const { identityFactoryAddr } = selectRelayerConfig()
+	return new Contract(identityFactoryAddr, IdentityFactory.abi, provider)
+}
+
+const getEthersResult = provider => {
+	const adexCore = getAdexCore(provider)
+	const mainToken = getMainToken(provider)
+	const identityFactory = getIdentityFactory(provider)
 
 	const results = {
-		provider: provider,
+		provider,
 		AdExCore: adexCore,
 		Identity: Identity,
-		Dai: dai,
+		Dai: mainToken,
+		MainToken: mainToken,
 		IdentityFactory: identityFactory,
+		getToken: ({ standard, address }) =>
+			getToken({ provider, standard, address }),
+		getIdentity: ({ address }) => getIdentity({ provider, address }),
 	}
 
 	return results
+}
+
+const localWeb3 = () => {
+	const provider = new ethers.providers.JsonRpcProvider(
+		process.env.WEB3_NODE_ADDR
+	)
+	return getEthersResult(provider)
 }
 
 const loadInjectedWeb3 = new Promise((resolve, reject) => {
@@ -43,31 +77,14 @@ const loadInjectedWeb3 = new Promise((resolve, reject) => {
 const injectedWeb3 = async () => {
 	const { web3, ethereum } = await loadInjectedWeb3.then()
 	let provider = null
-	let adexCore = null
-	let dai = null
-	let identityFactory = null
 
 	if (ethereum) {
 		try {
 			await ethereum.enable()
 
 			provider = new ethers.providers.Web3Provider(ethereum)
-			adexCore = new ethers.Contract(AdExCore.address, AdExCore.abi, provider)
-			dai = new ethers.Contract(DAI.address, DAI.abi, provider)
-			identityFactory = new ethers.Contract(
-				IdentityFactory.address,
-				IdentityFactory.abi,
-				provider
-			)
-			const results = {
-				provider: provider,
-				AdExCore: adexCore,
-				Identity: Identity,
-				Dai: dai,
-				IdentityFactory: identityFactory,
-			}
 
-			return results
+			return getEthersResult(provider)
 		} catch (err) {
 			console.error('Err getting injected ethereum.', err)
 			throw new Error(err.message)
@@ -87,10 +104,10 @@ const injectedWeb3 = async () => {
 	}
 }
 
-const getLocalWeb3 = new Promise(function(resolve, reject) {
+const getLocalWeb3 = async () => {
 	console.log('getLocalWeb3')
-	resolve(localWeb3())
-})
+	return localWeb3()
+}
 
 const getEthers = mode => {
 	/* NOTE: use Promise wrapper because despite getWeb3 is Promise itself it is not called by user action
@@ -99,7 +116,7 @@ const getEthers = mode => {
 	if (mode === AUTH_TYPES.METAMASK.name) {
 		return injectedWeb3()
 	} else {
-		return getLocalWeb3
+		return getLocalWeb3()
 	}
 }
 

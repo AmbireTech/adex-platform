@@ -3,7 +3,7 @@ import { HashRouter as Router } from 'react-router-dom'
 import 'react-image-crop/dist/ReactCrop.css'
 // import './App.css'
 import { Provider } from 'react-redux'
-import configureStore from 'store/configureStore'
+import { persistor, store } from 'store'
 import history from 'store/history'
 import { ConnectedRouter } from 'connected-react-router'
 import Toast from 'components/toast/Toast'
@@ -17,7 +17,6 @@ import { MuiPickersUtilsProvider } from 'material-ui-pickers'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import CacheBuster from './CacheBuster'
 
-const { persistor, store } = configureStore
 // console.log('initial store', store.getState())
 
 const onBeforeLift = () => {

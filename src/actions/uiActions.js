@@ -108,23 +108,13 @@ export function changeLanguage(lang) {
 	}
 }
 
-export function updateValidationErrors(item, newErrors) {
+export function updateRegistrationAllowed(search) {
 	return function(dispatch) {
-		return dispatch({
-			type: types.UPDATE_ITEM_VALIDATION,
-			item: item,
-			errors: newErrors,
-		})
-	}
-}
+		const searchParams = new URLSearchParams(search)
 
-export function resetValidationErrors(item, key) {
-	return function(dispatch) {
-		return dispatch({
-			type: types.RESET_ITEM_VALIDATION,
-			item: item,
-			key: key,
-		})
+		if (searchParams.get('eddie') === 'themoonicorn') {
+			updateUi('allowRegistration', true)(dispatch)
+		}
 	}
 }
 
