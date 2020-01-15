@@ -6,8 +6,6 @@ import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
-import Collapse from '@material-ui/core/Collapse'
-import Switch from '@material-ui/core/Switch'
 import { t, selectIdentity, selectValidationsById } from 'selectors'
 import {
 	execute,
