@@ -128,24 +128,27 @@ export async function withdrawFromIdentity({
 
 	const maxWithdraw = mtBalance.sub(fees.totalBN)
 
-	if (getFeesOnly) {
-		return {
-			fees: fees.total,
-			toGet: formatTokenAmount(maxWithdraw, mainToken.decimals),
-		}
-	}
+	let actualWithdrawAmount = toWithdraw
 
 	if (toWithdraw.gt(maxWithdraw)) {
+		actualWithdrawAmount = maxWithdraw
 		txnsByFeeToken[tokenAddr] = txnsByFeeToken[tokenAddr].map(tx => {
 			if (tx.withdrawTx) {
 				tx.data = ERC20.functions.transfer.encode([
 					withdrawTo,
-					maxWithdraw.toString(),
+					actualWithdrawAmount.toString(),
 				])
 			}
 
 			return tx
 		})
+	}
+
+	if (getFeesOnly) {
+		return {
+			fees: fees.total,
+			toGet: formatTokenAmount(actualWithdrawAmount, mainToken.decimals),
+		}
 	}
 
 	const result = await processExecuteByFeeTokens({
