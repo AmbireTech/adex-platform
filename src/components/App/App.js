@@ -15,6 +15,7 @@ import { themeMUI } from './themeMUi'
 import MomentUtils from '@date-io/moment'
 import { MuiPickersUtilsProvider } from 'material-ui-pickers'
 import CssBaseline from '@material-ui/core/CssBaseline'
+import CacheBuster from './CacheBuster'
 
 // console.log('initial store', store.getState())
 
@@ -32,13 +33,15 @@ class App extends Component {
 						<Provider store={store}>
 							<PersistGate onBeforeLift={onBeforeLift} persistor={persistor}>
 								<ConnectedRouter history={history}>
-									<Router>
-										<div className='adex-dapp'>
-											<Root />
-											<Toast />
-											<Confirm />
-										</div>
-									</Router>
+									<CacheBuster>
+										<Router>
+											<div className='adex-dapp'>
+												<Root />
+												<Toast />
+												<Confirm />
+											</div>
+										</Router>
+									</CacheBuster>
 								</ConnectedRouter>
 							</PersistGate>
 						</Provider>

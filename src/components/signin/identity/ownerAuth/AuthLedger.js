@@ -69,7 +69,6 @@ class AuthLedger extends Component {
 				this.setState({ waitingLedgerAction: false, waitingAddrsData: false })
 				this.props.actions.addToast({
 					type: 'cancel',
-					action: 'X',
 					label: this.props.t('ERR_AUTH_LEDGER', {
 						args: [Helper.getErrMsg(err)],
 					}),

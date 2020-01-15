@@ -91,7 +91,6 @@ function AuthMetamask(props) {
 			execute(
 				addToast({
 					type: 'cancel',
-					action: 'X',
 					label: t('ERR_AUTH_METAMASK', {
 						args: [Helper.getErrMsg(err)],
 					}),
