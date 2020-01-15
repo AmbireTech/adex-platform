@@ -534,30 +534,6 @@ export const updateCampaignState = ({ campaign }) => {
 	}
 }
 
-// TEMP for testing in production until 4.1 is deployed
-function getHumanFriendlyName(campaign) {
-	if (campaign.status && campaign.status.humanFriendlyName === 'Closed')
-		return 'Closed'
-	switch ((campaign.status || {}).name) {
-		case 'Active':
-		case 'Ready':
-		case 'Pending':
-		case 'Initializing':
-		case 'Waiting':
-		case 'Offline':
-		case 'Disconnected':
-		case 'Unhealthy':
-		case 'Invalid':
-			return 'Active'
-		case 'Expired':
-		case 'Exhausted':
-		case 'Withdraw':
-			return 'Completed'
-		default:
-			return 'N/A'
-	}
-}
-
 export function updateUserCampaigns() {
 	return async function(dispatch, getState) {
 		const hasAuth = selectAuth(getState())
@@ -575,9 +551,6 @@ export function updateUserCampaigns() {
 					)
 					.map(c => {
 						const campaign = { ...c.spec, ...c }
-						if (!campaign.humanFriendlyName) {
-							campaign.status.humanFriendlyName = getHumanFriendlyName(campaign)
-						}
 
 						return campaign
 					})
