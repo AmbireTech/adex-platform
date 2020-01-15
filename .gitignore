@@ -9,6 +9,9 @@
 # production
 /build
 
+# custom meta
+/public/meta.json
+
 # env config
 /config/envCfg.js
 /config/envCfgProd.js

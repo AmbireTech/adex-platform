@@ -41,11 +41,11 @@ export function ExternalConnect({ t, ...rest }) {
 							// alignItems='stretch'
 							className={classes.buttons}
 						>
-							<Grid item xs={12}>
+							{/* <Grid item xs={12}>
 								<Button onClick={() => setConnectType('create')}>
 									{t('CREATE_NEW_IDENTITY_LINK')}
 								</Button>
-							</Grid>
+							</Grid> */}
 						</Grid>
 					</>
 				)}
