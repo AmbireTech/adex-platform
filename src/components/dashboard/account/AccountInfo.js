@@ -127,7 +127,6 @@ function AccountInfo() {
 									execute(
 										addToast({
 											type: 'accept',
-											action: 'X',
 											label: t('COPIED_TO_CLIPBOARD'),
 											timeout: 5000,
 										})
