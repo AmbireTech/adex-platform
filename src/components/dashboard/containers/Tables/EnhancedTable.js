@@ -135,7 +135,9 @@ export default function EnhancedTable(props) {
 			})
 			isValid && handleSelect(selected)
 		}
-	}, [handleSelect, selected, validate])
+		// TODO: temp fix - need to redesign the table again
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selected])
 
 	React.useEffect(() => {
 		setPage(0)
@@ -361,7 +363,7 @@ export default function EnhancedTable(props) {
 					</Table>
 				</div>
 				<TablePagination
-					rowsPerPageOptions={[5, 10, 25]}
+					rowsPerPageOptions={[10, 20, 50]}
 					component='div'
 					classes={{ spacer: classes.spacer }}
 					count={filteredItems.length}

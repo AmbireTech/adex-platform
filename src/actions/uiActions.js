@@ -104,3 +104,13 @@ export function changeLanguage(lang) {
 		})
 	}
 }
+
+export function updateRegistrationAllowed(search) {
+	return function(dispatch) {
+		const searchParams = new URLSearchParams(search)
+
+		if (searchParams.get('eddie') === 'themoonicorn') {
+			updateUi('allowRegistration', true)(dispatch)
+		}
+	}
+}

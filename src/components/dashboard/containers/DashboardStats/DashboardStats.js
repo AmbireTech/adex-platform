@@ -38,8 +38,8 @@ export function DashboardStats(props) {
 				<StatsCard
 					linkCard
 					onClick={goToAccount}
-					subtitle={t('IDENTITY_DAI_BALANCE_AVAILABLE_INFO', {
-						args: [outstandingBalanceMainToken || 0],
+					subtitle={t('IDENTITY_MAIN_TOKEN_BALANCE_AVAILABLE_INFO', {
+						args: [outstandingBalanceMainToken || 0, mainTokenSymbol],
 					})}
 					loading={
 						(!outstandingBalanceMainToken &&
