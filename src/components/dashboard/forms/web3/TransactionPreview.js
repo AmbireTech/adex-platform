@@ -69,7 +69,7 @@ function TransactionPreview(props) {
 					}
 				})
 				.catch(err => {
-					console.log(err)
+					console.error(err)
 					execute(updateSpinner(txId, false))
 					handleChange('errors', [Helper.getErrMsg(err)])
 				})
