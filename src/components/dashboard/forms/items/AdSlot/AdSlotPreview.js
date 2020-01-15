@@ -114,7 +114,7 @@ function mapStateToProps(state) {
 	const { persist } = state
 	return {
 		account: persist.account,
-		mainTokenSymbol: selectMainToken(state),
+		mainTokenSymbol: selectMainToken(state).symbol,
 	}
 }
 

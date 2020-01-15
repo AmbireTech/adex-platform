@@ -32,6 +32,7 @@ import {
 	selectWallet,
 	selectAccountStatsFormatted,
 	selectAccountIdentity,
+	selectMainToken,
 } from 'selectors'
 import { formatAddress } from 'helpers/formatters'
 
@@ -45,6 +46,7 @@ const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 function AccountInfo() {
 	const { authType, email, password } = useSelector(selectWallet)
 	const identity = useSelector(selectAccountIdentity)
+	const { symbol } = useSelector(selectMainToken)
 	const {
 		walletAddress,
 		walletAuthType = '',
@@ -53,7 +55,6 @@ function AccountInfo() {
 		identityBalanceMainToken,
 		availableIdentityBalanceMainToken,
 		outstandingBalanceMainToken,
-		mainTokenSymbol,
 	} = useSelector(selectAccountStatsFormatted)
 
 	const localWalletDownloadHref = () => {
@@ -81,7 +82,7 @@ function AccountInfo() {
 			hostAppName: 'AdExNetwork',
 			hostLogoUrl: 'https://www.adex.network/img/Adex-logo@2x.png',
 			variant: 'auto',
-			swapAsset: mainTokenSymbol,
+			swapAsset: symbol,
 			userAddress: identity.address,
 		})
 		widget.domNodes.overlay.style.zIndex = 1000
@@ -210,9 +211,9 @@ function AccountInfo() {
 							>
 								<ListItemText
 									primary={`${availableIdentityBalanceMainToken ||
-										0} ${mainTokenSymbol}`}
+										0} ${symbol}`}
 									secondary={t('IDENTITY_MAIN_TOKEN_BALANCE_AVAILABLE_INFO', {
-										args: [outstandingBalanceMainToken || 0, mainTokenSymbol],
+										args: [outstandingBalanceMainToken || 0, symbol],
 									})}
 								/>
 							</LoadingSection>
@@ -239,7 +240,7 @@ function AccountInfo() {
 									color='primary'
 									identityAvailable={availableIdentityBalanceMainToken}
 									identityAvailableRaw={availableIdentityBalanceMainToken}
-									token={mainTokenSymbol}
+									token={symbol}
 									size='small'
 								/>
 							</Box>
