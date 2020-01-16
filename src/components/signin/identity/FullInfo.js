@@ -16,6 +16,8 @@ import {
 	updateIdentity,
 } from 'actions'
 
+const ADEX_TOS_URL = process.env.ADEX_TOS_URL
+
 // TODO: work in progress - need to add validations, and generating identity for the address
 const FulInfo = props => {
 	const checkTos = checked => {
