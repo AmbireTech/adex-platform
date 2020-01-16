@@ -109,7 +109,7 @@ function AccountInfo() {
 			>
 				<Box
 					flexGrow='8'
-					flexBasis='60em'
+					flexBasis='40em'
 					mr={1}
 					flexWrap={'nowrap'}
 					display='flex'
