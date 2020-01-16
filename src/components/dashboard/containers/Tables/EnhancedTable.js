@@ -130,7 +130,7 @@ export default function EnhancedTable(props) {
 		if (validate && handleSelect) {
 			validate('adUnits', {
 				isValid: isValid,
-				err: { msg: 'ERR_ADUNITS_REQIURED' },
+				err: { msg: 'ERR_ADUNITS_REQUIRED' },
 				dirty: true,
 			})
 			isValid && handleSelect(selected)
