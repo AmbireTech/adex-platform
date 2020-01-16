@@ -177,10 +177,12 @@ export function setIdentityENS({ username }) {
 				timeout: 20000,
 			})(dispatch)
 		} catch (err) {
-			console.error('ERR_IDENTITY_WITHDRAW_NOTIFICATION', err)
+			console.error('ERR_SETTING_ENS', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_IDENTITY_WITHDRAW_NOTIFICATION', { args: [err] }),
+				label: translate('ERR_SETTING_ENS', {
+					args: [err],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}

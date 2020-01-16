@@ -252,32 +252,24 @@ function AccountInfo() {
 					</ExpansionPanelSummary>
 					<ExpansionPanelDetails>
 						<List classes={{ root: classes.advancedList }}>
-							<ListItem>
-								<Box
-									display='flex'
-									flexWrap={'wrap'}
-									flex='1'
-									justifyContent='space-between'
-									alignItems='center'
-								>
-									<Box pr={1} flexGrow='8'>
-										<ListItemText
-											className={classes.address}
-											secondary={''}
-											primary={t('MANAGE_IDENTITY')}
-										/>
-									</Box>
-									<Box py={1} flexGrow='1'>
-										<SetIdentityPrivilege
-											fullWidth
-											variant='contained'
-											color='secondary'
-											size='small'
-											identityAvailable={availableIdentityBalanceMainToken}
-										/>
-									</Box>
-								</Box>
-							</ListItem>
+							<AccountItem
+								left={
+									<ListItemText
+										className={classes.address}
+										secondary={''}
+										primary={t('MANAGE_IDENTITY')}
+									/>
+								}
+								right={
+									<SetIdentityPrivilege
+										fullWidth
+										variant='contained'
+										color='secondary'
+										size='small'
+										identityAvailable={availableIdentityBalanceMainToken}
+									/>
+								}
+							></AccountItem>
 							<ListDivider />
 							<ListItem>
 								<ListItemText
