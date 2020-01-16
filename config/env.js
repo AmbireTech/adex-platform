@@ -96,6 +96,7 @@ function getClientEnvironment(publicUrl) {
 				ADVIEW_URL: process.env.ADVIEW_URL,
 				SCD_MCD_MIGRATION_ADDR: process.env.SCD_MCD_MIGRATION_ADDR,
 				REGISTRATION_OPEN: process.env.REGISTRATION_OPEN,
+				ADEX_TOS_URL: process.env.ADEX_TOS_URL,
 			}
 		)
 
