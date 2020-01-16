@@ -59,7 +59,7 @@ export default function ConnectHoc(Decorated) {
 								<Anchor
 									className={classes.adxLink}
 									target='_blank'
-									href='https://medium.com/adex-network-tips-and-tricks'
+									href={`${process.env.ADEX_HELP_URL}`}
 								>
 									{t('HELP')}
 								</Anchor>

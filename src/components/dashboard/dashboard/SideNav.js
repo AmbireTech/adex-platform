@@ -195,10 +195,7 @@ function SideNav(props) {
 					<ListDivider />
 				</div>
 				<div>
-					<Anchor
-						target='_blank'
-						href='https://medium.com/adex-network-tips-and-tricks'
-					>
+					<Anchor target='_blank' href={`${process.env.ADEX_HELP_URL}`}>
 						<ListItem button>
 							<ListItemIcon>
 								<HelpOutlineIcon />

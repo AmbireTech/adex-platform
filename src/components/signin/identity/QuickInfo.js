@@ -6,8 +6,7 @@ import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
-import Collapse from '@material-ui/core/Collapse'
-import Switch from '@material-ui/core/Switch'
+import Anchor from 'components/common/anchor/anchor'
 import { t, selectIdentity, selectValidationsById } from 'selectors'
 import {
 	execute,
@@ -179,7 +178,11 @@ const QuickInfo = props => {
 									color='primary'
 								/>
 							}
-							label={t('TOS_CHECK')}
+							label={
+								<Anchor target='_blank' href={`${process.env.ADEX_TOS_URL}`}>
+									{t('TOS_CHECK')}
+								</Anchor>
+							}
 						/>
 						{tosCheck && !!tosCheck.dirty && (
 							<FormHelperText>{tosCheck.errMsg}</FormHelperText>

@@ -7,6 +7,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
 import { t, selectIdentity, selectValidationsById } from 'selectors'
+import Anchor from 'components/common/anchor/anchor'
 import {
 	execute,
 	validateEmail,
@@ -110,7 +111,11 @@ const FulInfo = props => {
 									color='primary'
 								/>
 							}
-							label={t('TOS_CHECK')}
+							label={
+								<Anchor target='_blank' href={`${process.env.ADEX_TOS_URL}`}>
+									{t('TOS_CHECK')}
+								</Anchor>
+							}
 						/>
 						{tosCheck && !!tosCheck.dirty && (
 							<FormHelperText>{tosCheck.errMsg}</FormHelperText>
