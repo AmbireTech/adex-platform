@@ -18,8 +18,6 @@ import {
 	updateIdentity,
 } from 'actions'
 
-const ADEX_TOS_URL = process.env.ADEX_TOS_URL
-
 const QuickInfo = props => {
 	const checkTos = checked => {
 		execute(updateIdentity('tosCheck', checked))
@@ -181,7 +179,7 @@ const QuickInfo = props => {
 								/>
 							}
 							label={
-								<Anchor target='_blank' href={`${ADEX_TOS_URL}`}>
+								<Anchor target='_blank' href={`${process.env.ADEX_TOS_URL}`}>
 									{t('TOS_CHECK')}
 								</Anchor>
 							}
