@@ -98,143 +98,120 @@ function AccountInfo() {
 		setExpanded(!expanded)
 	}
 
+	const AccountItem = props => (
+		<ListItem>
+			<Box
+				display='flex'
+				flexWrap={'wrap'}
+				flex='1'
+				justifyContent='space-between'
+				alignItems='center'
+			>
+				<Box
+					flexGrow='8'
+					flexBasis='60em'
+					mr={1}
+					flexWrap={'nowrap'}
+					display='flex'
+					alignItems='center'
+					justifyContent='space-between'
+				>
+					<Box flex='1'>{props.left}</Box>
+				</Box>
+				<Box flexGrow='1' flexBasis='20em'>
+					{props.right}
+				</Box>
+			</Box>
+		</ListItem>
+	)
+
 	return (
 		<div>
 			<List>
-				<ListItem>
-					<Box
-						display='flex'
-						flex='1'
-						flexWrap={'wrap'}
-						justifyContent='space-between'
-						alignItems='center'
-					>
-						<Box
-							flexGrow='8'
-							mr={1}
-							flexWrap={'wrap'}
-							display='flex'
-							alignItems='center'
-							justifyContent='space-between'
-						>
-							<Box>
-								<SetAccountENS
-									fullWidth
-									variant='contained'
-									color='primary'
-									token='DAI'
-									size='small'
-									identityAvailable={availableIdentityBalanceMainToken}
-								/>
-								<ListItemText
-									className={classes.address}
-									primary={<EnsAddressResolver address={identityAddress} />}
-									secondary={
-										authType === 'demo'
-											? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
-											: t('IDENTITY_ETH_ADDR')
-									}
-								/>
-							</Box>
-
-							<IconButton
-								color='primary'
-								onClick={() => {
-									copy(identityAddress)
-									execute(
-										addToast({
-											type: 'accept',
-											label: t('COPIED_TO_CLIPBOARD'),
-											timeout: 5000,
-										})
-									)
-								}}
-							>
-								<CopyIcon />
-							</IconButton>
-						</Box>
-					</Box>
-				</ListItem>
+				<AccountItem
+					left={
+						<React.Fragment>
+							<ListItemText
+								className={classes.address}
+								secondary={
+									authType === 'demo'
+										? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
+										: t('IDENTITY_ETH_ADDR')
+								}
+							/>
+							<EnsAddressResolver address={identityAddress} />
+						</React.Fragment>
+					}
+					right={
+						<SetAccountENS
+							fullWidth
+							variant='contained'
+							color='primary'
+							token='DAI'
+							size='small'
+							identityAvailable={availableIdentityBalanceMainToken}
+						/>
+					}
+				/>
 				<ListDivider />
-				<ListItem>
-					<Box
-						display='flex'
-						flex='1'
-						flexWrap={'wrap'}
-						justifyContent='space-between'
-						alignItems='center'
-					>
-						<Box
-							flexGrow='3'
-							mr={1}
-							flexWrap={'wrap'}
-							display='flex'
-							alignItems='center'
-							justifyContent='start'
+				<AccountItem
+					left={
+						<ListItemText
+							className={classes.address}
+							primary={formatAddress(walletAddress)}
+							secondary={
+								authType === 'demo'
+									? t('DEMO_ACCOUNT_WALLET_ADDRESS', {
+											args: [walletAuthType, walletPrivileges],
+									  })
+									: t('WALLET_INFO_LABEL', {
+											args: [
+												walletAuthType.replace(/^\w/, chr => {
+													return chr.toUpperCase()
+												}),
+												walletPrivileges || ' - ',
+												authType,
+											],
+									  })
+							}
+						/>
+					}
+					right={
+						!walletJsonData && (
+							<label htmlFor='download-wallet-json'>
+								<a
+									id='download-wallet-json'
+									href={localWalletDownloadHref()}
+									download={`adex-account-data-${email}.json`}
+								>
+									<Button size='small' variant='contained' fullWidth>
+										<DownloadIcon className={classes.iconBtnLeft} />
+										{t('BACKUP_LOCAL_WALLET')}
+									</Button>
+								</a>
+							</label>
+						)
+					}
+				/>
+				<ListDivider />
+				<AccountItem
+					left={
+						<LoadingSection
+							loading={
+								!identityBalanceMainToken && identityBalanceMainToken !== 0
+							}
 						>
 							<ListItemText
 								className={classes.address}
-								primary={formatAddress(walletAddress)}
-								secondary={
-									authType === 'demo'
-										? t('DEMO_ACCOUNT_WALLET_ADDRESS', {
-												args: [walletAuthType, walletPrivileges],
-										  })
-										: t('WALLET_INFO_LABEL', {
-												args: [
-													walletAuthType.replace(/^\w/, chr => {
-														return chr.toUpperCase()
-													}),
-													walletPrivileges || ' - ',
-													authType,
-												],
-										  })
-								}
+								primary={`${availableIdentityBalanceMainToken || 0} ${symbol}`}
+								secondary={t('IDENTITY_MAIN_TOKEN_BALANCE_AVAILABLE_INFO', {
+									args: [outstandingBalanceMainToken || 0, symbol],
+								})}
 							/>
-							{walletJsonData && (
-								<Box py={1} flexGrow='1'>
-									<label htmlFor='download-wallet-json'>
-										<a
-											id='download-wallet-json'
-											href={localWalletDownloadHref()}
-											download={`adex-account-data-${email}.json`}
-										>
-											<Button size='small' variant='contained' fullWidth>
-												<DownloadIcon className={classes.iconBtnLeft} />
-												{t('BACKUP_LOCAL_WALLET')}
-											</Button>
-										</a>
-									</label>
-								</Box>
-							)}
-						</Box>
-					</Box>
-				</ListItem>
-				<ListDivider />
-				<ListItem>
-					<Box
-						display='flex'
-						flexWrap={'wrap'}
-						flex='1'
-						justifyContent='space-between'
-						alignItems='center'
-					>
-						<Box pr={1} flexGrow='8'>
-							<LoadingSection
-								loading={
-									!identityBalanceMainToken && identityBalanceMainToken !== 0
-								}
-							>
-								<ListItemText
-									primary={`${availableIdentityBalanceMainToken ||
-										0} ${symbol}`}
-									secondary={t('IDENTITY_MAIN_TOKEN_BALANCE_AVAILABLE_INFO', {
-										args: [outstandingBalanceMainToken || 0, symbol],
-									})}
-								/>
-							</LoadingSection>
-						</Box>
-						<Box flexGrow='1'>
+						</LoadingSection>
+					}
+					right={
+						<React.Fragment>
 							<Box py={1}>
 								<Button
 									fullWidth
@@ -248,7 +225,6 @@ function AccountInfo() {
 									{t('TOP_UP_IDENTITY_GBP')}
 								</Button>
 							</Box>
-
 							<Box py={1}>
 								<WithdrawTokenFromIdentity
 									fullWidth
@@ -260,9 +236,9 @@ function AccountInfo() {
 									size='small'
 								/>
 							</Box>
-						</Box>
-					</Box>
-				</ListItem>
+						</React.Fragment>
+					}
+				/>
 				<ListDivider />
 				<ExpansionPanel expanded={expanded} onChange={handleExpandChange}>
 					<ExpansionPanelSummary
