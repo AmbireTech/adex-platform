@@ -277,21 +277,20 @@ export async function addIdentityENS({ username, account, getFeesOnly }) {
 	const { wallet, identity } = account
 	const {
 		provider,
-		Dai,
+		MainToken,
+		getToken,
 		Identity,
 		AdExENSManager,
 		ReverseRegistrar,
 	} = await getEthers(wallet.authType)
 	const signer = await getSigner({ wallet, provider })
 	const identityAddr = identity.address
-
 	const AdExENSManagerInterface = new Interface(AdExENSManager.abi)
 	const ReverseRegistrarInterface = new Interface(ReverseRegistrar.abi)
 
 	const tx1 = {
 		identityContract: identityAddr,
-		feeTokenAddr: Dai.address,
-		feeAmount: feeAmountSetENS,
+		feeTokenAddr: MainToken.address,
 		to: AdExENSManager.address,
 		data: AdExENSManagerInterface.functions.registerAndSetup.encode([
 			publicResolver,
@@ -302,8 +301,7 @@ export async function addIdentityENS({ username, account, getFeesOnly }) {
 
 	const tx2 = {
 		identityContract: identityAddr,
-		feeTokenAddr: Dai.address,
-		feeAmount: feeAmountSetENS,
+		feeTokenAddr: MainToken.address,
 		to: ReverseRegistrar.address,
 		data: ReverseRegistrarInterface.functions.setName.encode([
 			`${username}.${ReverseRegistrar.parentDomain}`,
@@ -312,27 +310,27 @@ export async function addIdentityENS({ username, account, getFeesOnly }) {
 
 	const txns = [tx1, tx2]
 
-	const txnsRaw = await getIdentityTxnsWithNoncesAndFees({
+	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
 		txns,
 		identityAddr,
 		provider,
 		Identity,
+		account,
+		getToken,
 	})
 
-	const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
-
-	const data = {
-		txnsRaw,
-		signatures,
+	const result = await processExecuteByFeeTokens({
 		identityAddr,
-	}
-
-	const result = await executeTx(data)
+		txnsByFeeToken,
+		wallet,
+		provider,
+	})
 
 	return {
 		result,
 	}
 }
+
 export async function getIdentityTxnsWithNoncesAndFees({
 	amountInMainTokenNeeded = '0',
 	txns = [],

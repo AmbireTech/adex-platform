@@ -65,7 +65,7 @@ export const SetPrivilegePreview = ({
 	</div>
 )
 
-export const SetENSPreview = ({ t, setEns, address, classes, fees }) => (
+export const SetENSPreview = ({ t, setEns, address, classes, feesData }) => (
 	<div>
 		<PropRow
 			key='addr'
@@ -79,7 +79,7 @@ export const SetENSPreview = ({ t, setEns, address, classes, fees }) => (
 				<ListItemText
 					className={classes.address}
 					secondary={t('ENS_INFO_AND_FEES', {
-						args: [fees.fees, 'DAI'],
+						args: [feesData.fees, 'DAI'],
 					})}
 					primary={setEns}
 				/>
