@@ -1,7 +1,6 @@
-import Requester from 'services/requester'
+import Requester, { handleRequesterErrorRes } from 'services/requester'
 import { logOut } from 'services/store-data/auth'
 import moment from 'moment'
-import { translate } from 'services/translations/translations'
 
 const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
 const requester = new Requester({ baseUrl: ADEX_MARKET_HOST })
@@ -16,11 +15,7 @@ const processResponse = (res, dontThrow) => {
 			logOut()
 		}
 		if (!dontThrow) {
-			throw new Error(
-				translate('SERVICE_ERROR_MSG', {
-					args: [res.url, res.status, res.statusText, text],
-				})
-			)
+			handleRequesterErrorRes({ res, text })
 		}
 	})
 }

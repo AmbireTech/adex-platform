@@ -2,6 +2,22 @@ import Helper from 'helpers/miscHelpers'
 import { getState } from 'actions'
 import { selectAuthSig } from 'selectors'
 import { isDemoMode } from 'services/store-data/auth'
+import { t } from 'selectors'
+
+export const handleRequesterErrorRes = ({ res, text }) => {
+	let message = text
+	try {
+		const textObj = JSON.parse(text)
+		message =
+			textObj.message || textObj.msg || textObj.errMsg || textObj.error || text
+	} catch {}
+
+	throw new Error(
+		t('SERVICE_ERROR_MSG', {
+			args: [res.url, res.status, res.statusText, message],
+		})
+	)
+}
 
 class AdexNodeRequester {
 	constructor({ baseUrl }) {
