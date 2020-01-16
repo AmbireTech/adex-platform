@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import Box from '@material-ui/core/Box'
@@ -10,46 +10,23 @@ import CopyIcon from '@material-ui/icons/FileCopy'
 import IconButton from '@material-ui/core/IconButton'
 import copy from 'copy-to-clipboard'
 import { addToast, execute } from 'actions'
-import { formatAddress } from 'helpers/formatters'
+import { makeStyles } from '@material-ui/core/styles'
+import { styles } from './styles.js'
 
-function useWindowSize() {
-	const [size, setSize] = useState([0, 0])
-	useLayoutEffect(() => {
-		function updateSize() {
-			setSize([window.innerWidth, window.innerHeight])
-		}
-		window.addEventListener('resize', updateSize)
-		updateSize()
-		return () => window.removeEventListener('resize', updateSize)
-	}, [])
-	return size
-}
-
-const FORMAT_BREAKPOINT = 500
 const EnsAddress = props => {
 	const { address } = props
-	const [width, height] = useWindowSize()
-	const [justifyContent, setJustifyContent] = useState()
-	const [idAddress, setIdAddress] = useState(address)
 	const [name, setName] = useState()
 	const [searching, setSearching] = useState(true)
+	const useStyles = makeStyles(styles)
+	const classes = useStyles()
 
 	useEffect(() => {
 		if (!address) return false
 		if (isEthAddress(address)) {
 			fetchName(address)
 		}
-	}, [address])
-
-	useEffect(() => {
-		if (width < FORMAT_BREAKPOINT) {
-			setIdAddress(formatAddress(address))
-			setJustifyContent('space-between')
-		} else {
-			setIdAddress(address)
-			setJustifyContent(false)
-		}
-	}, [address, width])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	const fetchName = lookup => {
 		const provider = ethers.getDefaultProvider()
@@ -65,20 +42,16 @@ const EnsAddress = props => {
 	}
 
 	return (
-		<Box
-			display='flex'
-			flexWrap={'nowrap'}
-			alignItems='center'
-			justifyContent={justifyContent}
-		>
+		<Box display='flex' flexWrap={'nowrap'} alignItems='center'>
 			<Box pr={1}>
 				<Jazzicon diameter={30} seed={jsNumberForAddress(address)} />
 			</Box>
 			<Box>
 				<ListItemText
-					primary={name ? name : idAddress}
+					className={classes.address}
+					primary={name ? name : address}
 					secondary={
-						searching ? t('SEARCHING_ENS') : name ? idAddress : t('ENS_NOT_SET')
+						searching ? t('SEARCHING_ENS') : name ? address : t('ENS_NOT_SET')
 					}
 				/>
 			</Box>
