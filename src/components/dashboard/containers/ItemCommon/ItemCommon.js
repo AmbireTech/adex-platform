@@ -11,7 +11,6 @@ import FormControl from '@material-ui/core/FormControl'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
-import Fab from '@material-ui/core/Fab'
 import EditIcon from '@material-ui/icons/Edit'
 import Img from 'components/common/img/Img'
 import { validUrl } from 'helpers/validators'
@@ -19,14 +18,12 @@ import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import Anchor from 'components/common/anchor/anchor'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-// import { utils } from 'ethers'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
-import { contracts } from 'services/smart-contracts/contractsCfg'
 import { validations } from 'adex-models'
 import { utils } from 'ethers'
-
-const { DAI } = contracts
+import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableConfig'
+import { selectMainToken } from 'selectors'
 
 const FallbackAdData = ({
 	item,
@@ -184,9 +181,10 @@ const SlotMinCPM = ({
 	...rest
 }) => {
 	const errMin = invalidFields['minPerImpression']
+	const { address, decimals, symbol } = selectMainToken()
 	const minCPM = formatTokenAmount(
-		bigNumberify((item.minPerImpression || {})[DAI.address] || '0').mul(1000),
-		18,
+		bigNumberify((item.minPerImpression || {})[address] || '0').mul(1000),
+		decimals,
 		true
 	)
 
@@ -202,7 +200,7 @@ const SlotMinCPM = ({
 			margin='dense'
 			error={!!errMin}
 		>
-			<InputLabel>{t('MIN_CPM_SLOT_LABEL', { args: ['DAI'] })}</InputLabel>
+			<InputLabel>{t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}</InputLabel>
 			<Input
 				fullWidth
 				autoFocus
@@ -410,7 +408,7 @@ const campaignProps = ({
 }) => {
 	const mediaUrl = item.mediaUrl
 	const status = item.status || {}
-	// console.log('item', item)
+	const { decimals, symbol } = selectMainToken()
 	return (
 		<div>
 			<Grid container spacing={2}>
@@ -479,11 +477,22 @@ const campaignProps = ({
 												<Grid item xs={12}>
 													<TextField
 														// type='text'
-														value={status.name}
+														value={status.humanFriendlyName}
 														label={t('status', { isProp: true })}
 														disabled
 														margin='dense'
 														fullWidth
+														InputProps={{
+															endAdornment: (
+																<InputAdornment position='end'>
+																	{mapStatusIcons(
+																		status.humanFriendlyName,
+																		status.name,
+																		'md'
+																	)}
+																</InputAdornment>
+															),
+														}}
 													/>
 												</Grid>
 												<Grid item xs={12}>
@@ -502,7 +511,9 @@ const campaignProps = ({
 													<TextField
 														// type='text'
 														value={
-															formatTokenAmount(item.depositAmount, 18) + ' DAI'
+															formatTokenAmount(item.depositAmount, decimals) +
+															' ' +
+															symbol
 														}
 														label={t('depositAmount', { isProp: true })}
 														disabled
@@ -516,9 +527,11 @@ const campaignProps = ({
 														value={
 															formatTokenAmount(
 																bigNumberify(item.minPerImpression).mul(1000),
-																18,
+																decimals,
 																true
-															) + ' DAI'
+															) +
+															' ' +
+															symbol
 														}
 														label={t('CPM', { isProp: true })}
 														disabled

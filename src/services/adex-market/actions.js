@@ -168,6 +168,17 @@ export const getCampaigns = ({ authSig, creator }) => {
 		.then(processResponse)
 }
 
+export const closeCampaignMarket = ({ campaign, authSig }) => {
+	return requester
+		.fetch({
+			route: `campaigns/${campaign.id}/close`,
+			method: 'PUT',
+			authSig,
+			headers: { 'Content-Type': 'application/json' },
+		})
+		.then(processResponse)
+}
+
 export const getAllCampaigns = all => {
 	const queryParams = all
 		? {
@@ -180,6 +191,18 @@ export const getAllCampaigns = all => {
 			route: 'campaigns',
 			method: 'GET',
 			queryParams,
+		})
+		.then(processResponse)
+}
+
+export const updateCampaign = ({ campaign, id, authSig }) => {
+	return requester
+		.fetch({
+			route: `campaigns/${id}`,
+			method: 'PUT',
+			body: convertItemToJSON(campaign),
+			authSig,
+			headers: { 'Content-Type': 'application/json' },
 		})
 		.then(processResponse)
 }

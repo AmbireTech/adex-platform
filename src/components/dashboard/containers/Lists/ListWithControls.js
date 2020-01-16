@@ -8,10 +8,9 @@ import Dropdown from 'components/common/dropdown'
 import Input from '@material-ui/core/Input'
 import { Pagination } from './Controls'
 import Translate from 'components/translate/Translate'
-// import classnames from 'classnasmes'
-// import Radio from '@material-ui/core/Radio'
-// import RadioGroup from '@material-ui/core/RadioGroup'
-// import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Radio from '@material-ui/core/Radio'
+import RadioGroup from '@material-ui/core/RadioGroup'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormControl from '@material-ui/core/FormControl'
 import InputLabel from '@material-ui/core/InputLabel'
 import InputAdornment from '@material-ui/core/InputAdornment'
@@ -283,17 +282,19 @@ class ListWithControls extends Component {
 							</div>
 						</div>
 
-						{/* {this.props.filterProperties &&
-							<div
-								className={classnames(classes.flexRow)}
-							>
+						{this.props.filterProperties && (
+							<div className={classnames(classes.flexRow)}>
 								<Dropdown
 									className={classnames(classes.flexItem)}
 									auto
 									label={t('LIST_CONTROL_LABEL_FILTER_BY')}
 									onChange={this.handleChange.bind(this, 'filterBy')}
 									source={this.state.filterProperties}
-									value={this.state.filterBy !== null ? this.state.filterBy.toString() : ''}
+									value={
+										this.state.filterBy !== null
+											? this.state.filterBy.toString()
+											: ''
+									}
 									htmlId='filter-by-prop-dd'
 									name='filterBy'
 									displayEmpty
@@ -303,8 +304,15 @@ class ListWithControls extends Component {
 									auto
 									label={t('LIST_CONTROL_LABEL_FILTER_BY_VALUE')}
 									onChange={this.handleChange.bind(this, 'filterByValueFilter')}
-									source={mapSortProperties({ sortProps: this.state.filterByValues, t: this.props.t })}
-									value={this.state.filterByValueFilter !== null ? this.state.filterByValueFilter.toString() : ''}
+									source={mapSortProperties({
+										sortProps: this.state.filterByValues,
+										t: this.props.t,
+									})}
+									value={
+										this.state.filterByValueFilter !== null
+											? this.state.filterByValueFilter.toString()
+											: ''
+									}
 									htmlId='filter-by-value-dd'
 									name='filterByValueFilter'
 									displayEmpty
@@ -312,20 +320,38 @@ class ListWithControls extends Component {
 									helperText={t('HELPER_TXT_FILTER_BY_VALUE')}
 								/>
 							</div>
-						} */}
+						)}
 
-						{/* {this.props.archive &&
+						{this.props.archive && (
 							<RadioGroup
 								name='archived'
-								value={typeof this.props.filterArchived === 'string' ? this.props.filterArchived.toString() : 'false'}
-								onChange={(ev) => this.handleChangeRxState('filterArchived', ev.target.value)}
+								value={
+									typeof this.props.filterArchived === 'string'
+										? this.props.filterArchived.toString()
+										: 'false'
+								}
+								onChange={ev =>
+									this.handleChangeRxState('filterArchived', ev.target.value)
+								}
 								className={classnames(classes.flexRow, classes.flexItem)}
 							>
-								<FormControlLabel value='false' control={<Radio color='primary' />} label={t('LABEL_ACTIVE')} />
-								<FormControlLabel value='true' control={<Radio color='primary' />} label={t('LABEL_ARCHIVED')} />
-								<FormControlLabel value='' control={<Radio color='primary' />} label={t('LABEL_ALL')} />
+								<FormControlLabel
+									value='false'
+									control={<Radio color='primary' />}
+									label={t('LABEL_ACTIVE')}
+								/>
+								<FormControlLabel
+									value='true'
+									control={<Radio color='primary' />}
+									label={t('LABEL_ARCHIVED')}
+								/>
+								<FormControlLabel
+									value=''
+									control={<Radio color='primary' />}
+									label={t('LABEL_ALL')}
+								/>
 							</RadioGroup>
-						} */}
+						)}
 						<div
 							className={classnames(classes.controls, classes.bottomControls)}
 						>

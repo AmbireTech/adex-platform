@@ -4,12 +4,18 @@ import { getSession, checkSession } from 'services/adex-market/actions'
 import {
 	getRelayerConfigData,
 	regAccount,
-	getGrantType,
+	getQuickWallet,
+	backupWallet,
 } from 'services/adex-relayer/actions'
 import { updateSpinner } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
-import { removeLegacyKey } from 'services/wallet/wallet'
+import {
+	removeLegacyKey,
+	getWalletHash,
+	generateSalt,
+	getRecoveryWalletData,
+} from 'services/wallet/wallet'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
 import {
 	getAccountStats,
@@ -24,8 +30,15 @@ import {
 	ethereumNetworkId,
 } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES, ETHEREUM_NETWORKS } from 'constants/misc'
-import { selectAccount, selectIdentity, selectAuth } from 'selectors'
+import {
+	selectAccount,
+	selectIdentity,
+	selectAuth,
+	selectWallet,
+} from 'selectors'
 import { logOut } from 'services/store-data/auth'
+import { getErrorMsg } from 'helpers/errors'
+import { push } from 'connected-react-router'
 
 const UPDATE_SETTINGS_INTERVAL = 24 * 60 * 60 * 1000 // 1 hour
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -98,7 +111,7 @@ export function updateAccountStats() {
 				wallet,
 			})
 
-			const outstandingBalanceDai = await getOutstandingBalance({
+			const outstandingBalanceMainToken = await getOutstandingBalance({
 				wallet,
 				address,
 				withBalance,
@@ -108,7 +121,7 @@ export function updateAccountStats() {
 
 			const { formatted, raw } = await getAccountStats({
 				account,
-				outstandingBalanceDai,
+				outstandingBalanceMainToken,
 			})
 
 			updateAccount({
@@ -118,57 +131,7 @@ export function updateAccountStats() {
 			console.error('ERR_STATS', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_STATS', { args: [err] }),
-				timeout: 20000,
-			})(dispatch)
-		}
-	}
-}
-
-export function registerAccount({ owner, identityTxData, email }) {
-	return async function(dispatch) {
-		updateSpinner('registering-account', true)(dispatch)
-		try {
-			await regAccount({
-				owner,
-				email,
-				...identityTxData,
-			})
-		} catch (err) {
-			console.error('ERR_REGISTERING_ACCOUNT', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_REGISTERING_ACCOUNT', { args: [err] }),
-				timeout: 20000,
-			})(dispatch)
-		}
-
-		updateSpinner('registering-account', false)(dispatch)
-	}
-}
-
-export function updateAccountSettings() {
-	return async function(dispatch, getState) {
-		const { identity, settings } = getState().persist.account
-		const { grantType, updated } = settings
-		const now = Date.now()
-		const doUpdate =
-			!grantType || now - (updated || 0) > UPDATE_SETTINGS_INTERVAL
-
-		try {
-			if (doUpdate) {
-				const newSettings = { ...settings }
-				newSettings.grantType = (await getGrantType({
-					identity: identity.address,
-				})).type
-				newSettings.updated = now
-				updateAccount({ newValues: { settings: newSettings } })(dispatch)
-			}
-		} catch (err) {
-			console.error('ERR_SETTINGS', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_SETTINGS', { args: [err] }),
+				label: translate('ERR_STATS', { args: [getErrorMsg(err)] }),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -193,7 +156,12 @@ export function updateValidatorAuthTokens({ newAuth }) {
 	}
 }
 
-export function createSession({ wallet, identity, email, deleteLegacyKey }) {
+export function createSession({
+	wallet,
+	identity = {},
+	email,
+	deleteLegacyKey,
+}) {
 	return async function(dispatch) {
 		updateSpinner('creating-session', true)(dispatch)
 		try {
@@ -270,11 +238,12 @@ export function createSession({ wallet, identity, email, deleteLegacyKey }) {
 					password: wallet.password,
 				})
 			}
+			dispatch(push('/side-select'))
 		} catch (err) {
 			console.error('ERR_GETTING_SESSION', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_GETTING_SESSION', { args: [err] }),
+				label: translate('ERR_GETTING_SESSION', { args: [getErrorMsg(err)] }),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -390,5 +359,45 @@ export function metamaskChecks() {
 				onMetamaskNetworkChange({ id: network })(_, getState)
 			})
 		}
+	}
+}
+
+async function hasBackup({ email, password }) {
+	const salt = generateSalt(email)
+	const hash = getWalletHash({ salt, password })
+	const { encryptedWallet } = await getQuickWallet({ hash })
+
+	return !!encryptedWallet && encryptedWallet.wallet
+}
+
+async function makeBackup({ email, password, authType }) {
+	const walletSalt = generateSalt(email)
+	const walletHash = getWalletHash({ salt: walletSalt, password })
+	const encryptedWallet = getRecoveryWalletData({
+		email,
+		password,
+		authType,
+	})
+
+	await backupWallet({
+		email,
+		salt: walletSalt,
+		hash: walletHash,
+		encryptedWallet,
+	})
+}
+
+export function ensureQuickWalletBackup() {
+	return async function(dispatch, getState) {
+		updateSpinner('quick-wallet-backup', true)(dispatch)
+		try {
+			const { email, password, authType } = selectWallet(getState())
+			const isLocal = authType === 'quick' || authType === 'grant'
+
+			if (isLocal && !(await hasBackup({ email, password }))) {
+				await makeBackup({ email, password, authType })
+			}
+		} catch (err) {}
+		updateSpinner('quick-wallet-backup', false)(dispatch)
 	}
 }

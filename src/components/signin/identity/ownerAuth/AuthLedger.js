@@ -69,7 +69,6 @@ class AuthLedger extends Component {
 				this.setState({ waitingLedgerAction: false, waitingAddrsData: false })
 				this.props.actions.addToast({
 					type: 'cancel',
-					action: 'X',
 					label: this.props.t('ERR_AUTH_LEDGER', {
 						args: [Helper.getErrMsg(err)],
 					}),
@@ -108,14 +107,12 @@ class AuthLedger extends Component {
 	}
 
 	onAddrSelect = (addrData, hdWalletAddrIdx) => {
-		const { address, path, balanceEth, balanceDai } = addrData
+		const { address, path } = addrData
 
 		this.props.updateWallet({
 			address,
 			authType: AUTH_TYPES.LEDGER.name,
 			path,
-			balanceEth,
-			balanceDai,
 			hdWalletAddrPath: this.state.hdPath,
 			hdWalletAddrIdx,
 			signType: AUTH_TYPES.LEDGER.signType,

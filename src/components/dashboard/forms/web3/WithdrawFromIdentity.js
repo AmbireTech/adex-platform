@@ -6,6 +6,7 @@ import actions from 'actions'
 // import Translate from 'components/translate/Translate'
 import NewTransactionHoc from './TransactionHoc'
 import TextField from '@material-ui/core/TextField'
+import Button from '@material-ui/core/Button'
 import { validateNumber } from 'helpers/validators'
 import { InputLoading } from 'components/common/spinners/'
 
@@ -29,14 +30,15 @@ class WithdrawFromIdentity extends Component {
 	}
 
 	validateAmount = (numStr, dirty) => {
+		const { token, identityAvailable } = this.props
 		let isValid = validateNumber(numStr)
 		let msg = 'ERR_INVALID_AMOUNT_VALUE'
 		let errMsgArgs = []
 		let amount = parseFloat(numStr)
-		if (isValid && amount > parseFloat(this.props.identityAvailable)) {
+		if (isValid && amount > parseFloat(identityAvailable)) {
 			isValid = false
 			msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'
-			errMsgArgs = [this.props.identityAvailable, 'DAI']
+			errMsgArgs = [identityAvailable, token]
 		}
 
 		this.props.validate('withdrawAmount', {
@@ -56,6 +58,7 @@ class WithdrawFromIdentity extends Component {
 			identityAvailable,
 			handleChange,
 			withdrawToSpinner,
+			token,
 		} = this.props
 		const { withdrawTo, withdrawAmount } = transaction || {}
 		const errAmount = invalidFields['withdrawAmount']
@@ -64,8 +67,9 @@ class WithdrawFromIdentity extends Component {
 			<div>
 				<div>
 					{' '}
-					{t('EXCHANGE_CURRENT_DAI_BALANCE_AVAILABLE_ON_IDENTITY')}{' '}
-					{identityAvailable}{' '}
+					{t('EXCHANGE_CURRENT_MAIN_TOKEN_BALANCE_AVAILABLE_ON_IDENTITY', {
+						args: [identityAvailable, token],
+					})}
 				</div>
 				<TextField
 					disabled={withdrawToSpinner}
@@ -108,11 +112,21 @@ class WithdrawFromIdentity extends Component {
 					onFocus={() => this.validateAmount(withdrawAmount, false)}
 					error={errAmount && !!errAmount.dirty}
 					helperText={
-						errAmount && !!errAmount.dirty
-							? errAmount.errMsg
-							: t('MAX_AMOUNT_TO_WITHDRAW', {
-									args: [identityAvailable, 'DAI'],
-							  })
+						errAmount && !!errAmount.dirty ? (
+							errAmount.errMsg
+						) : (
+							<Button
+								size='small'
+								onClick={() => {
+									handleChange('withdrawAmount', identityAvailable)
+									this.validateAmount(identityAvailable, true)
+								}}
+							>
+								{t('MAX_AMOUNT_TO_WITHDRAW', {
+									args: [identityAvailable, token],
+								})}
+							</Button>
+						)
 					}
 				/>
 			</div>

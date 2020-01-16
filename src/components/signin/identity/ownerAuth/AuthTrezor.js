@@ -71,7 +71,6 @@ class AuthTrezor extends Component {
 				this.setState({ waitingTrezorAction: false, waitingAddrsData: false })
 				this.props.actions.addToast({
 					type: 'cancel',
-					action: 'X',
 					label: this.props.t('ERR_AUTH_TREZOR', {
 						args: [Helper.getErrMsg(err)],
 					}),
@@ -110,13 +109,11 @@ class AuthTrezor extends Component {
 	}
 
 	onAddrSelect = (addrData, hdWalletAddrIdx) => {
-		const { address, path, balanceEth, balanceDai } = addrData
+		const { address, path } = addrData
 		this.props.updateWallet({
 			address,
 			authType: AUTH_TYPES.TREZOR.name,
 			path,
-			balanceEth,
-			balanceDai,
 			hdWalletAddrPath: this.state.hdPath,
 			hdWalletAddrIdx,
 			signType: AUTH_TYPES.TREZOR.signType,

@@ -1,5 +1,6 @@
 import React from 'react'
 import WithdrawFromExchangePage from './WithdrawFromIdentity'
+import WithdrawAnyTokenFromIdentityPage from './WithdrawAnyTokenFromIdentity'
 import SeAddressPrivilege from './SeAddressPrivilege'
 import SetAccountENSPage from './SetAccountENSPage'
 import TransactionPreview from './TransactionPreview'
@@ -85,17 +86,19 @@ export const WithdrawTokenFromIdentity = props => (
 			title: 'PREVIEW_AND_MAKE_TR',
 			page: TransactionPreview,
 		}}
-		saveFn={({ transaction } = {}) => {
+		saveFn={({ transaction, account } = {}) => {
 			return execute(
 				identityWithdraw({
 					amountToWithdraw: transaction.withdrawAmount,
 					withdrawTo: transaction.withdrawTo,
+					account,
 				})
 			)
 		}}
 		getFeesFn={({ transaction, account } = {}) => {
 			return withdrawFromIdentity({
 				amountToWithdraw: transaction.withdrawAmount,
+				withdrawTo: transaction.withdrawTo,
 				getFeesOnly: true,
 				account,
 			})
@@ -129,11 +132,53 @@ export const SetIdentityPrivilege = props => (
 				})
 			)
 		}}
-		getFeesFn={({ transaction } = {}) => {
+		getFeesFn={({ transaction, account } = {}) => {
 			return setIdentityPrivilege({
 				privLevel: transaction.privLevel,
 				setAddr: transaction.setAddr,
 				getFeesOnly: true,
+				account,
+			})
+		}}
+	/>
+)
+
+export const WithdrawAnyTokenFromIdentity = props => (
+	<FormStepsWithDialog
+		{...props}
+		btnLabel='ACCOUNT_WITHDRAW_ANY_FROM_IDENTITY_BTN'
+		saveBtnLabel='ACCOUNT_WITHDRAW_FROM_IDENTITY_SAVE_BTN'
+		title='ACCOUNT_WITHDRAW_FROM_IDENTITY_TITLE'
+		stepsId='withdrawAnyFromIdentity'
+		{...txCommon}
+		stepsPages={[
+			{
+				title: 'ACCOUNT_WITHDRAW_FROM_IDENTITY_STEP',
+				page: WithdrawAnyTokenFromIdentityPage,
+			},
+		]}
+		stepsPreviewPage={{
+			title: 'PREVIEW_AND_MAKE_TR',
+			page: TransactionPreview,
+		}}
+		saveFn={({ transaction } = {}) => {
+			return execute(
+				identityWithdraw({
+					amountToWithdraw: transaction.withdrawAmount,
+					tokenAddress: transaction.tokenAddress,
+					withdrawTo: transaction.withdrawTo,
+					tokenDecimals: transaction.tokenDecimals,
+				})
+			)
+		}}
+		getFeesFn={({ transaction, account } = {}) => {
+			return withdrawFromIdentity({
+				amountToWithdraw: transaction.withdrawAmount,
+				tokenAddress: transaction.tokenAddress,
+				withdrawTo: transaction.withdrawTo,
+				getFeesOnly: true,
+				tokenDecimals: transaction.tokenDecimals,
+				account,
 			})
 		}}
 	/>

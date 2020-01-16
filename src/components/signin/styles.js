@@ -19,8 +19,6 @@ export const styles = theme => {
 			flexGrow: '1',
 		},
 		actions: {
-			position: 'relative',
-			height: '100vh',
 			backgroundImage: `url(${require('resources/home-wallpaper.jpg')})`,
 			backgroundRepeat: 'no-repeat',
 			backgroundSize: 'cover',
@@ -38,9 +36,10 @@ export const styles = theme => {
 			textAlign: 'center',
 		},
 		logo: {
-			marginTop: '1.5vh',
-			width: '17.92vh',
-			height: '6vh',
+			// marginTop: '1.5vh',
+			// width: '17.92vh',
+			// height: '6vh',
+			height: '2rem',
 		},
 		dialogPaper: {
 			height: '80vh',

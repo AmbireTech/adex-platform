@@ -1,5 +1,6 @@
 import React from 'react'
 import Grid from '@material-ui/core/Grid'
+import Typography from '@material-ui/core/Typography'
 import { CircularProgress } from '@material-ui/core'
 import { styles } from './styles.js'
 import classnames from 'classnames'
@@ -60,10 +61,17 @@ const contentStickyTop = ({ classes, children, className }) => (
 	<div className={classnames(classes.contentStickyTop)}>{children}</div>
 )
 
-const topLoading = ({ classes, msg, className }) => (
+const topLoading = ({ classes, msg, subMsg, className }) => (
 	<div className={classnames(classes.contentTopLoading)}>
 		<CircularProgress className={classes.contentTopLoadingCircular} size={50} />
-		<div> {msg} </div>
+		<div>
+			<Typography component='div'> {msg} </Typography>
+			{subMsg && (
+				<Typography component='div'>
+					<strong>{subMsg}</strong>
+				</Typography>
+			)}
+		</div>
 	</div>
 )
 

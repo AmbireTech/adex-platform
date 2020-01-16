@@ -19,7 +19,7 @@
 		/>
 		<script
 			type="text/javascript"
-			src="https://solc-bin.ethereum.org/bin/soljson-v0.5.6+commit.b259423e.js"
+			src="https://solc-bin.ethereum.org/bin/soljson-v0.5.13+commit.5b0b510c.js"
 		></script>
 		<script src="//code.tidio.co/uunorh3olmaxanihmpkqj6owuntbei4n.js"></script>
 		<!-- Hotjar Tracking Code for www.adex.network -->
@@ -69,6 +69,7 @@
 				const chat = document.querySelector('#tidio-chat iframe')
 				if (chat) {
 					chat.style.zIndex = 1
+					chat.style.userSelect = 'none'
 					clearInterval(moveChatToBack)
 				}
 			}, 100)

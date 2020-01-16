@@ -4,8 +4,8 @@ import Dai from './build/Dai.json'
 import IdentityFactory from './build/IdentityFactory.json'
 import AdExENSManager from './build/AdExENSManager.json'
 import ReverseRegistrar from './build/ReverseRegistrar.json'
+import ERC20 from './abi/ERC20Token.json'
 
-console.log('ENVS: ', process.env)
 export const contracts = {
 	Identity: {
 		abi: Identity.abi,
@@ -31,5 +31,8 @@ export const contracts = {
 	IdentityFactory: {
 		address: process.env.IDENTITY_FACTORY_ADDR,
 		abi: IdentityFactory.abi,
+	},
+	ERC20: {
+		abi: ERC20,
 	},
 }
