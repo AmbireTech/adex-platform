@@ -51,7 +51,7 @@ function encrKey({ email, password, authType }) {
 	if (!authType) {
 		return encryptLegacy(email, password)
 	} else if (typeof authType === 'string') {
-		return `adex-${authType}-wallet-${email}`
+		return `adex-${authType}-wallet-${email.toLowerCase()}`
 	} else {
 		throw new Error('INVALID_TYPE')
 	}
@@ -65,7 +65,7 @@ export function encrData({ email = '', password, data, authType }) {
 	} else {
 		return encrypt(
 			jsonData,
-			getCipherKey({ email: email.toLocaleLowerCase(), password })
+			getCipherKey({ email: email.toLowerCase(), password })
 		)
 	}
 }
@@ -79,7 +79,7 @@ export function decrData({ email = '', password, data, authType }) {
 	} else {
 		decryptedStr = decrypt(
 			data,
-			getCipherKey({ email: email.toLocaleLowerCase(), password })
+			getCipherKey({ email: email.toLowerCase(), password })
 		)
 	}
 

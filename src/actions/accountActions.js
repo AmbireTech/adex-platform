@@ -194,8 +194,8 @@ export function createSession({
 				const { status, expiryTime } = await getSession({
 					identity: identity.address,
 					mode: mode,
-					signature: signature,
-					authToken: authToken,
+					signature,
+					authToken,
 					hash,
 					typedData,
 					signerAddress: newWallet.address,

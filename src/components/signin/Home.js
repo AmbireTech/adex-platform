@@ -52,16 +52,6 @@ export default function Home({ t, ...rest }) {
 						color='primary'
 						className={classes.adxLink}
 						target='_blank'
-						href='https://www.adex.network/publishers'
-					>
-						{t('LINK_BENEFITS_FOR_PUBLISHERS')}
-					</Anchor>
-				</Box>
-				<Box p={2}>
-					<Anchor
-						color='primary'
-						className={classes.adxLink}
-						target='_blank'
 						href='https://www.adex.network'
 					>
 						{t('LINK_ADEX_HOME')}
@@ -72,9 +62,19 @@ export default function Home({ t, ...rest }) {
 						color='primary'
 						className={classes.adxLink}
 						target='_blank'
-						href='https://www.adex.network/for-advertisers'
+						href='https://www.adex.network/publishers'
 					>
 						{t('LINK_BENEFITS_FOR_PUBLISHERS')}
+					</Anchor>
+				</Box>
+				<Box p={2}>
+					<Anchor
+						color='primary'
+						className={classes.adxLink}
+						target='_blank'
+						href='https://www.adex.network/for-advertisers'
+					>
+						{t('LINK_BENEFITS_FOR_ADVERTISERS')}
 					</Anchor>
 				</Box>
 			</Box>
