@@ -273,7 +273,7 @@ export function login() {
 			if (registerAccount) {
 				await regAccount({
 					owner: wallet.address,
-					email,
+					email: email.toLowerCase(),
 					...identityTxData,
 				})
 			}
@@ -453,11 +453,10 @@ export function validateStandardLogin({ validateId, dirty }) {
 export function validateQuickDeploy({ validateId, dirty }) {
 	return async function(dispatch, getState) {
 		updateSpinner(validateId, true)(dispatch)
+		const identity = selectIdentity(getState())
+		const { identityAddr, email, password } = identity
 		try {
-			const identity = selectIdentity(getState())
-			const { identityAddr, email, password } = identity
-
-			if (!identityAddr) {
+			if (!identityAddr && email && password) {
 				const authType = AUTH_TYPES.QUICK.name
 
 				const walletData = createLocalWallet({
@@ -501,7 +500,7 @@ export function validateQuickDeploy({ validateId, dirty }) {
 				updateIdentity('registerAccount', true)(dispatch)
 			}
 
-			const isValid = !!identityAddr
+			const isValid = !!identityAddr && email && password
 
 			validate(validateId, 'identityAddr', {
 				isValid,
