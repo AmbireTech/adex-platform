@@ -10,16 +10,17 @@ export const withReactRouterLink = Component => {
 			return href
 		}
 
-		handleClick = event => {
+		handleClick = async event => {
 			event.preventDefault()
 			event.stopPropagation()
 			const { to, onClick } = this.props
 
 			if (onClick && typeof onClick === 'function') {
-				onClick()
+				await onClick()
+				this.props.history.push(to)
+			} else {
+				this.props.history.push(to)
 			}
-
-			this.props.history.push(to)
 		}
 
 		// TODO: check if it works without infinite loops

@@ -1,8 +1,6 @@
-import configureStore from 'store/configureStore'
+import { store } from 'store'
 import actions from 'actions'
 import { getNonce, DEFAULT_DATA } from 'services/eth/gas'
-
-const { store } = configureStore
 
 let nonceTimeout = null
 

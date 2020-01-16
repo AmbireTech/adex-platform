@@ -18,6 +18,7 @@ import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import ListIcon from '@material-ui/icons/List'
+import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { LoadingSection } from 'components/common/spinners'
 import {
@@ -26,6 +27,7 @@ import {
 	selectLocation,
 	selectAccountIdentityAddr,
 	selectAccountStatsFormatted,
+	selectMainToken,
 } from 'selectors'
 
 const RRListItem = withReactRouterLink(ListItem)
@@ -34,13 +36,13 @@ const { ETH_SCAN_ADDR_HOST } = process.env
 const useStyles = makeStyles(theme => {
 	const activeColor = ({ side }) =>
 		side === 'advertiser'
-			? theme.palette.eddiePink.contrastText
-			: theme.palette.eddieGreen.contrastText
+			? theme.palette.accentOne.contrastText
+			: theme.palette.accentTwo.contrastText
 
 	const activeBgColor = ({ side }) =>
 		side === 'advertiser'
-			? theme.palette.eddiePink.main
-			: theme.palette.eddieGreen.main
+			? theme.palette.accentOne.main
+			: theme.palette.accentTwo.main
 
 	return {
 		navigation: {
@@ -100,12 +102,13 @@ function SideNav(props) {
 	const classes = useStyles({ side })
 	const commonClasses = useCommonStyles()
 	const routerLocation = useSelector(selectLocation)
+	const { symbol } = useSelector(selectMainToken)
 
 	// TODO: test location
 	const location = routerLocation.pathname.split('/')[3]
 	const isAdvertiser = side === 'advertiser'
 	const items = isAdvertiser ? 'units' : 'slots'
-	const { availableIdentityBalanceDai } = useSelector(
+	const { availableIdentityBalanceMainToken } = useSelector(
 		selectAccountStatsFormatted
 	)
 
@@ -132,15 +135,19 @@ function SideNav(props) {
 						<ListItem>
 							<LoadingSection
 								loading={
-									!availableIdentityBalanceDai &&
-									availableIdentityBalanceDai !== 0
+									!availableIdentityBalanceMainToken &&
+									availableIdentityBalanceMainToken !== 0
 								}
 							>
-								<ListItemText
-									primary={`${parseFloat(
-										availableIdentityBalanceDai || 0
-									).toFixed(2)} DAI`}
-								/>
+								<ListItemText>
+									<Typography variant='h6' component='div' color='textPrimary'>
+										<strong>{`${availableIdentityBalanceMainToken ||
+											0} ${symbol}`}</strong>
+									</Typography>
+									<Typography variant='button' display='block' gutterBottom>
+										{t('IDENTITY_BALANCE')}
+									</Typography>
+								</ListItemText>
 							</LoadingSection>
 						</ListItem>
 					</div>

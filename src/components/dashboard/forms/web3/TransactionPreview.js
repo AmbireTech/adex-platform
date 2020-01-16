@@ -1,12 +1,10 @@
-import React, { Component } from 'react'
+import React, { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { makeStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
 import NewTransactionHoc from './TransactionHoc'
 import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
-// import { DEFAULT_GAS_PRICE } from 'services/smart-contracts/constants'
 import { WalletAction } from 'components/dashboard/forms/FormsCommon'
 import {
 	PropRow,
@@ -16,183 +14,172 @@ import {
 	FullContentSpinner,
 } from 'components/common/dialog/content'
 import Helper from 'helpers/miscHelpers'
-import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import {
 	IdentityWithdrawPreview,
 	SetPrivilegePreview,
 	SetENSPreview,
+	IdentityWithdrawAnyPreview,
 } from './previews'
 
-class TransactionPreview extends Component {
-	constructor(props, context) {
-		super(props, context)
+import {
+	selectMainToken,
+	t,
+	selectSpinnerById,
+	selectAccount,
+	selectNewTransactionById,
+} from 'selectors'
+import { execute, updateSpinner } from 'actions'
 
-		this.state = {
-			gas: null,
-			fees: null,
-			errors: [],
-		}
-	}
+const useStyles = makeStyles(styles)
 
-	componentDidMount() {
-		const {
-			getFeesFn,
-			actions,
-			handleChange,
-			identityAvailable,
-			transaction,
-			txId,
-			t,
-			account,
-		} = this.props
+function TransactionPreview(props) {
+	const classes = useStyles()
+	const {
+		getFeesFn,
+		handleChange,
+		identityAvailable,
+		previewWarnMsgs,
+		stepsId,
+	} = props
+	const txId = stepsId
+	const account = useSelector(selectAccount)
+	const { address } = account.identity
+	const { symbol } = useSelector(selectMainToken)
+	const transaction = useSelector(state =>
+		selectNewTransactionById(state, txId)
+	)
+	const spinner = useSelector(state => selectSpinnerById(state, txId))
+
+	useEffect(() => {
 		if (getFeesFn && Object.keys(transaction).length) {
-			actions.updateSpinner(txId, true)
+			execute(updateSpinner(txId, true))
 			getFeesFn({ account, transaction })
-				.then(fees => {
-					handleChange('fees', fees)
-					this.setState({ fees: fees })
-					actions.updateSpinner(txId, false)
+				.then(feesData => {
+					handleChange('feesData', feesData)
+					// if (feesData.toGet) {
+					// 	handleChange('withdrawAmount', feesData.toGet)
+					// }
+					execute(updateSpinner(txId, false))
 
-					if (parseFloat(fees.fees || 0) > parseFloat(identityAvailable)) {
+					if (parseFloat(feesData.fees || 0) > parseFloat(identityAvailable)) {
 						handleChange('errors', [
 							t('INSUFFICIENT_BALANCE_FOR_FEES', {
-								args: [identityAvailable, 'DAI', fees.fees, 'DAI'],
+								args: [identityAvailable, symbol, feesData.fees, symbol],
 							}),
 						])
 					}
 				})
 				.catch(err => {
-					console.log(err)
-					actions.updateSpinner(txId, false)
+					console.error(err)
+					execute(updateSpinner(txId, false))
 					handleChange('errors', [Helper.getErrMsg(err)])
 				})
 		}
-	}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
-	render() {
-		const {
-			transaction = {},
-			t,
-			classes,
-			account,
-			previewWarnMsgs,
-			spinner,
-			stepsId,
-		} = this.props
-		const { identity } = account
-		const { address } = identity
-		const errors = transaction.errors || []
-		const {
-			withdrawTo,
-			withdrawAmount,
-			setAddr,
-			privLevel,
-			fees = {},
-		} = transaction
-		return (
-			<div>
-				{spinner ? (
-					<FullContentSpinner />
-				) : (
-					<ContentBox>
-						{transaction.waitingForWalletAction ? (
-							<ContentStickyTop>
-								<WalletAction t={t} authType={account.wallet.authType} />
-							</ContentStickyTop>
-						) : null}
-						<ContentBody>
-							{errors.length
-								? errors.map((err, index) => (
-										<PropRow
-											key={index}
-											classNameLeft={classes.error}
-											classNameRight={classes.error}
-											left={<ErrorIcon />}
-											right={err}
-										/>
-								  ))
-								: null}
+	const {
+		withdrawTo,
+		withdrawAmount,
+		setAddr,
+		privLevel,
+		tokenAddress,
+		feesData = {},
+		errors = [],
+	} = transaction
 
-							{previewWarnMsgs
-								? previewWarnMsgs.map((msg, index) => (
-										<PropRow
-											key={index}
-											classNameLeft={classes.warning}
-											classNameRight={classes.warning}
-											left={<WarningIcon />}
-											right={t(msg.msg, { args: msg.args })}
-										/>
-								  ))
-								: null}
+	return (
+		<div>
+			{spinner ? (
+				<FullContentSpinner />
+			) : (
+				<ContentBox>
+					{transaction.waitingForWalletAction ? (
+						<ContentStickyTop>
+							<WalletAction t={t} authType={account.wallet.authType} />
+						</ContentStickyTop>
+					) : null}
+					<ContentBody>
+						{errors.length
+							? errors.map((err, index) => (
+									<PropRow
+										key={index}
+										classNameLeft={classes.error}
+										classNameRight={classes.error}
+										left={<ErrorIcon />}
+										right={err}
+									/>
+							  ))
+							: null}
 
-							{stepsId === 'withdrawFromIdentity' && (
-								<IdentityWithdrawPreview
-									t={t}
-									withdrawTo={withdrawTo}
-									classes={classes}
-									fees={fees}
-									withdrawAmount={withdrawAmount}
-								/>
-							)}
+						{previewWarnMsgs
+							? previewWarnMsgs.map((msg, index) => (
+									<PropRow
+										key={index}
+										classNameLeft={classes.warning}
+										classNameRight={classes.warning}
+										left={<WarningIcon />}
+										right={t(msg.msg, { args: msg.args })}
+									/>
+							  ))
+							: null}
 
-							{stepsId === 'setIdentityPrivilege' && (
-								<SetPrivilegePreview
-									t={t}
-									setAddr={setAddr}
-									classes={classes}
-									fees={fees}
-									privLevel={privLevel}
-								/>
-							)}
-							{stepsId === 'setENS' && (
-								<SetENSPreview
-									t={t}
-									setAddr={setAddr}
-									classes={classes}
-									fees={fees}
-									address={address}
-								/>
-							)}
-						</ContentBody>
-					</ContentBox>
-				)}
-			</div>
-		)
-	}
+						{stepsId === 'withdrawFromIdentity' && (
+							<IdentityWithdrawPreview
+								t={t}
+								withdrawTo={withdrawTo}
+								classes={classes}
+								feesData={feesData}
+								withdrawAmount={withdrawAmount}
+								symbol={symbol}
+							/>
+						)}
+
+						{stepsId === 'setIdentityPrivilege' && (
+							<SetPrivilegePreview
+								t={t}
+								setAddr={setAddr}
+								classes={classes}
+								feesData={feesData}
+								privLevel={privLevel}
+								symbol={symbol}
+							/>
+						)}
+
+						{stepsId === 'withdrawAnyFromIdentity' && (
+							<IdentityWithdrawAnyPreview
+								t={t}
+								withdrawTo={withdrawTo}
+								classes={classes}
+								feesData={feesData}
+								withdrawAmount={withdrawAmount}
+								tokenAddress={tokenAddress}
+								symbol={symbol}
+							/>
+						)}
+
+						{stepsId === 'setENS' && (
+							<SetENSPreview
+								t={t}
+								setAddr={setAddr}
+								classes={classes}
+								feesData={feesData}
+								address={address}
+							/>
+						)}
+					</ContentBody>
+				</ContentBox>
+			)}
+		</div>
+	)
 }
 
 TransactionPreview.propTypes = {
-	actions: PropTypes.object.isRequired,
 	label: PropTypes.string,
-	txId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	transaction: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
 	previewMsgs: PropTypes.array,
-	estimateGasFn: PropTypes.func,
-}
-
-function mapStateToProps(state, props) {
-	const persist = state.persist
-	const memory = state.memory
-	const txId = props.stepsId
-	return {
-		transaction: memory.newTransactions[txId] || {},
-		txId: txId,
-		spinner: memory.spinners[txId],
-		account: persist.account,
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch),
-	}
 }
 
 const TransactionPreviewForm = NewTransactionHoc(TransactionPreview)
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(withStyles(styles)(TransactionPreviewForm))
+export default TransactionPreviewForm

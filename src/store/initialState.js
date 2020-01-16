@@ -7,8 +7,7 @@ import {
 } from 'constants/misc'
 
 export const getValidatorAnalyticsInitialState = () => {
-	const initialState = {}
-
+	const initialState = { timeframe: 'day' }
 	VALIDATOR_ANALYTICS_SIDES.forEach(side =>
 		VALIDATOR_ANALYTICS_EVENT_TYPES.forEach(eventType =>
 			VALIDATOR_ANALYTICS_METRICS.forEach(metric =>

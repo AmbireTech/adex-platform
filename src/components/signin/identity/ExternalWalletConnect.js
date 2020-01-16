@@ -5,7 +5,7 @@ import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import FullLogin from './FullLogin'
-import IdentityContractAddressEthDeploy from './IdentityContractAddressEthDeploy'
+import FullInfo from './FullInfo'
 
 const useStyles = makeStyles(theme => ({
 	button: {
@@ -41,11 +41,11 @@ export function ExternalConnect({ t, ...rest }) {
 							// alignItems='stretch'
 							className={classes.buttons}
 						>
-							<Grid item xs={12}>
+							{/* <Grid item xs={12}>
 								<Button onClick={() => setConnectType('create')}>
 									{t('CREATE_NEW_IDENTITY_LINK')}
 								</Button>
-							</Grid>
+							</Grid> */}
 						</Grid>
 					</>
 				)}
@@ -54,7 +54,7 @@ export function ExternalConnect({ t, ...rest }) {
 						<Typography variant='h5' gutterBottom>
 							{t('CREATE_NEW_IDENTITY')}
 						</Typography>
-						<IdentityContractAddressEthDeploy {...rest} />
+						<FullInfo {...rest} />
 					</>
 				)}
 			</Grid>

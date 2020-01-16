@@ -1,4 +1,8 @@
-import { UPDATE_ANALYTICS, RESET_ANALYTICS } from 'constants/actionTypes'
+import {
+	UPDATE_ANALYTICS,
+	RESET_ANALYTICS,
+	UPDATE_ANALYTICS_TIMEFRAME,
+} from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
 export default function analyticsReducer(
@@ -8,6 +12,10 @@ export default function analyticsReducer(
 	let newState
 
 	switch (action.type) {
+		case UPDATE_ANALYTICS_TIMEFRAME:
+			newState = { ...state }
+			newState.timeframe = action.value
+			return newState
 		case UPDATE_ANALYTICS:
 			newState = { ...state }
 			newState[action.side] = { ...newState[action.side] }

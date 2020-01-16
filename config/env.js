@@ -84,7 +84,6 @@ function getClientEnvironment(publicUrl) {
 				ETH_SCAN_TX_HOST: process.env.ETH_SCAN_ADDR_HOST,
 				ADEX_SITE_HOST: process.env.ADEX_SITE_HOST,
 				ADEX_RELAYER_HOST: process.env.ADEX_RELAYER_HOST,
-				ADEX_RELAYER_ADDR: process.env.ADEX_RELAYER_ADDR,
 				ADEX_MARKET_HOST: process.env.ADEX_MARKET_HOST,
 				IDENTITY_BASE_ADDR: process.env.IDENTITY_BASE_ADDR,
 				IDENTITY_FACTORY_ADDR: process.env.IDENTITY_FACTORY_ADDR,
@@ -98,6 +97,8 @@ function getClientEnvironment(publicUrl) {
 				ADVIEW_URL: process.env.ADVIEW_URL,
 				REVERSE_REGISTRAR_ADDR: process.env.REVERSE_REGISTRAR_ADDR,
 				REVERSE_REGISTRAR_PARENT: process.env.REVERSE_REGISTRAR_PARENT,
+				SCD_MCD_MIGRATION_ADDR: process.env.SCD_MCD_MIGRATION_ADDR,
+				REGISTRATION_OPEN: process.env.REGISTRATION_OPEN,
 			}
 		)
 

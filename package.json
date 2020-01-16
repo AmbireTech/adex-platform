@@ -1,6 +1,6 @@
 {
   "name": "adex-dapp",
-  "version": "4.2.4",
+  "version": "4.10.3",
   "private": true,
   "dependencies": {
     "@babel/core": "7.4.3",
@@ -16,9 +16,9 @@
     "@typescript-eslint/eslint-plugin": "1.6.0",
     "@typescript-eslint/parser": "1.6.0",
     "adex-constants": "1.0.10",
-    "adex-models": "git+https://git@github.com/AdExBlockchain/adex-models.git#163e17664c89d68ee996249382ee8f93b1e39755",
-    "adex-protocol-eth": "3.3.0",
-    "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#4c7b5cf3e4a41992ea2359cde814c7be111833ef",
+    "adex-models": "git+https://git@github.com/AdExBlockchain/adex-models.git#6163083888552241d11e7a00217a4225a76df7a2",
+    "adex-protocol-eth": "4.1.3",
+    "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#dfeb661e700d2020e2cdd17600f9b1a74dc03ee5",
     "autoprefixer": "7.1.6",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
@@ -34,7 +34,7 @@
     "chalk": "2.4.1",
     "chart.js": "^2.7.2",
     "classnames": "^2.2.5",
-    "connected-react-router": "^6.5.2",
+    "connected-react-router": "^6.6.1",
     "copy-to-clipboard": "^3.0.8",
     "css-loader": "2.1.1",
     "debounce": "^1.0.2",
@@ -64,6 +64,7 @@
     "mini-css-extract-plugin": "0.5.0",
     "object-assign": "^4.1.1",
     "optimize-css-assets-webpack-plugin": "5.0.1",
+    "pbkdf2": "^3.0.17",
     "pnp-webpack-plugin": "1.2.1",
     "postcss-flexbugs-fixes": "4.1.0",
     "postcss-loader": "3.0.0",
@@ -84,10 +85,9 @@
     "react-list": "^0.8.7",
     "react-lottie": "^1.2.3",
     "react-redux": "^7.0.1",
-    "react-router": "^4.1.2",
+    "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
     "react-select": "^1.2.1",
-    "react-step": "^0.4.1",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
     "recompose": "^0.25.0",
@@ -111,10 +111,14 @@
     "workbox-webpack-plugin": "4.2.0"
   },
   "scripts": {
-    "start": "node --max-old-space-size=4096 scripts/start.js",
+    "start": "node scripts/generate-build-version.js && node --max-old-space-size=4096 scripts/start.js",
+    "generate-build-version": "node scripts/generate-build-version.js",
+    "prebuild": "npm run generate-build-version",
     "build": "node --max-old-space-size=2048 scripts/build.js",
+    "serve": "serve build -p 3333",
     "deploy": "npm run build && cp ./domains/platform/CNAME ./build && gh-pages -d build",
     "deploy-staging": "npm run build && cp ./domains/staging/CNAME ./build && gh-pages -d build -r git@github.com:AdExNetwork/adex-platform-staging.git",
+    "deploy-goerli": "npm run build-dev && cp ./domains/goerli/CNAME ./build && gh-pages -d build -r git@github.com:AdExNetwork/adex-platform-goerli.git",
     "test": "eslint src/",
     "unit-tests": "node scripts/test.js --env=jsdom",
     "lint": "eslint \"src/**/*.{js,jsx}\" && echo Linting check finished",
@@ -193,6 +197,7 @@
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-react-hooks": "^1.7.0",
-    "prettier": "^1.18.2"
+    "prettier": "^1.18.2",
+    "serve": "^10.1.2"
   }
 }

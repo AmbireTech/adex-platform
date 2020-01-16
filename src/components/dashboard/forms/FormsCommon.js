@@ -4,10 +4,11 @@ import { TopLoading } from 'components/common/dialog/content'
 
 export const WalletAction = ({ t, authType }) => {
 	let msg = ''
-
+	let subMsg
 	switch (authType) {
 		case AUTH_TYPES.METAMASK.name:
 			msg = 'METAMASK_WAITING_ACTION'
+			subMsg = 'METAMASK_WAITING_ACTION_INFO'
 			break
 		case AUTH_TYPES.TREZOR.name:
 			msg = 'TREZOR_WAITING_ACTION'
@@ -20,5 +21,5 @@ export const WalletAction = ({ t, authType }) => {
 			break
 	}
 
-	return <TopLoading msg={t(msg)} />
+	return <TopLoading msg={t(msg)} subMsg={t(subMsg)} />
 }

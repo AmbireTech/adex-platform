@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
+import { execute, updateAnalyticsTimeframe } from 'actions'
 import { SimpleStatistics } from 'components/dashboard/charts/simplified'
 import Dropdown from 'components/common/dropdown'
 import Grid from '@material-ui/core/Grid'
@@ -7,7 +8,7 @@ import { translate } from 'services/translations/translations'
 import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
 import StatsCard from './StatsCard'
 import { makeStyles } from '@material-ui/core/styles'
-import { EDDIE_PINK, EDDIE_BLUE, EDDIE_GREEN } from 'components/App/themeMUi'
+import { PRIMARY, ACCENT_ONE, ACCENT_TWO } from 'components/App/themeMUi'
 import { styles } from './styles'
 import { formatNumberWithCommas } from 'helpers/formatters'
 import {
@@ -15,6 +16,8 @@ import {
 	selectTotalImpressions,
 	selectTotalMoney,
 	selectAverageCPM,
+	selectMainToken,
+	selectAnalytics,
 } from 'selectors'
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
@@ -28,24 +31,24 @@ const metrics = {
 		{
 			label: translate('LABEL_REVENUE'),
 			value: 'eventPayouts',
-			color: EDDIE_GREEN,
+			color: ACCENT_TWO,
 		},
 		{
 			label: translate('LABEL_IMPRESSIONS'),
 			value: 'eventCounts',
-			color: EDDIE_BLUE,
+			color: PRIMARY,
 		},
 	],
 	advertiser: [
 		{
 			label: translate('LABEL_SPEND'),
 			value: 'eventPayouts',
-			color: EDDIE_PINK,
+			color: ACCENT_ONE,
 		},
 		{
 			label: translate('LABEL_IMPRESSIONS'),
 			value: 'eventCounts',
-			color: EDDIE_BLUE,
+			color: PRIMARY,
 		},
 	],
 }
@@ -57,10 +60,11 @@ const timeHints = {
 }
 
 export function BasicStats({ side }) {
-	const [timeframe, setTimeframe] = useState(timeFrames[0].value)
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
+	const { symbol } = useSelector(selectMainToken)
 
+	const timeframe = useSelector(selectAnalytics).timeframe || ''
 	const totalImpressions = useSelector(state =>
 		selectTotalImpressions(state, {
 			side,
@@ -95,14 +99,14 @@ export function BasicStats({ side }) {
 							fullWidth
 							label={t('SELECT_TIMEFRAME')}
 							helperText={t(timeHints[timeframe])}
-							onChange={val => setTimeframe(val)}
+							onChange={val => execute(updateAnalyticsTimeframe(val))}
 							source={timeFrames}
 							value={timeframe}
 							htmlId='timeframe-select'
 						/>
 					</StatsCard>
 					<StatsCard
-						bgColor='eddieBlue'
+						bgColor='primary'
 						subtitle={t('LABEL_TOTAL_IMPRESSIONS')}
 						loading={loadingImpressions}
 						title={`${formatNumberWithCommas(totalImpressions || 0)}`}
@@ -110,35 +114,35 @@ export function BasicStats({ side }) {
 					></StatsCard>
 					{side === 'advertiser' && (
 						<StatsCard
-							bgColor='eddiePink'
+							bgColor='accentOne'
 							subtitle={t('LABEL_TOTAL_SPENT')}
-							explain={t('EXPLAIN_TOTAL_SPENT')}
+							explain={t('EXPLAIN_TOTAL_SPENT', { args: [symbol] })}
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
-							)} DAI`}
+							)} ${symbol}`}
 							loading={loadingMoney}
 						></StatsCard>
 					)}
 
 					{side === 'publisher' && (
 						<StatsCard
-							bgColor='eddieGreen'
+							bgColor='accentTwo'
 							subtitle={t('LABEL_TOTAL_REVENUE')}
 							explain={t('EXPLAIN_TOTAL_REVENUE')}
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
-							)} DAI`}
+							)} ${symbol}`}
 							loading={loadingMoney}
 						></StatsCard>
 					)}
 					<StatsCard
-						bgColor='adexGrey'
+						bgColor='grey'
 						subtitle={t('LABEL_AVG_CPM')}
 						explain={t('EXPLAIN_AVG_CPM')}
 						loading={loadingCPM}
 						title={`~ ${formatNumberWithCommas(
 							parseFloat(averageCPM || 0).toFixed(2)
-						)} DAI / CPM`}
+						)} ${symbol} / CPM`}
 					></StatsCard>
 				</div>
 			</Grid>

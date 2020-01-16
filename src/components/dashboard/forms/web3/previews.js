@@ -9,8 +9,9 @@ export const IdentityWithdrawPreview = ({
 	t,
 	withdrawTo,
 	classes,
-	fees,
+	feesData,
 	withdrawAmount,
+	symbol,
 }) => (
 	<div>
 		<PropRow
@@ -25,9 +26,9 @@ export const IdentityWithdrawPreview = ({
 				<ListItemText
 					className={classes.address}
 					secondary={t('AMOUNT_WITHDRAW_INFO', {
-						args: [fees.fees, 'DAI', fees.toGet, 'DAI'],
+						args: [feesData.fees, symbol, feesData.toGet, symbol],
 					})}
-					primary={withdrawAmount + ' DAI'}
+					primary={`${withdrawAmount} ${symbol}`}
 				/>
 			}
 		/>
@@ -38,8 +39,9 @@ export const SetPrivilegePreview = ({
 	t,
 	setAddr,
 	classes,
-	fees,
+	feesData,
 	privLevel,
+	symbol,
 }) => (
 	<div>
 		<PropRow
@@ -54,7 +56,7 @@ export const SetPrivilegePreview = ({
 				<ListItemText
 					className={classes.address}
 					secondary={t('PRIV_LEVEL_INFO_AND_FEES', {
-						args: [fees.fees, 'DAI'],
+						args: [feesData.fees, symbol],
 					})}
 					primary={privilegesNames[privLevel]}
 				/>
@@ -80,6 +82,41 @@ export const SetENSPreview = ({ t, setEns, address, classes, fees }) => (
 						args: [fees.fees, 'DAI'],
 					})}
 					primary={setEns}
+				/>
+			}
+		/>
+	</div>
+)
+
+export const IdentityWithdrawAnyPreview = ({
+	t,
+	withdrawTo,
+	tokenAddress,
+	classes,
+	feesData,
+	withdrawAmount,
+}) => (
+	<div>
+		<PropRow
+			key='withdrawTo'
+			left={t('withdrawTo', { isProp: true })}
+			right={(withdrawTo || '').toString()}
+		/>
+		<PropRow
+			key='tokenAddress'
+			left={t('tokenAddress', { isProp: true })}
+			right={(tokenAddress || '').toString()}
+		/>
+		<PropRow
+			key='withdrawAmount'
+			left={t('withdrawAmount', { isProp: true })}
+			right={
+				<ListItemText
+					className={classes.address}
+					secondary={t('AMOUNT_WITHDRAW_INFO', {
+						args: [feesData.fees, '', feesData.toGet, ''],
+					})}
+					primary={withdrawAmount + ' '}
 				/>
 			}
 		/>
