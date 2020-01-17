@@ -30,7 +30,7 @@ import CreditCardIcon from '@material-ui/icons/CreditCard'
 import EditIcon from '@material-ui/icons/Edit'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import { selectAccount } from 'selectors'
-import ReverseENS from 'helpers/EnsResolver'
+import ReverseENS from 'helpers/ensHelper'
 import EnsAddressResolver from 'components/common/ens/EnsAddressResolver'
 import {
 	t,
@@ -40,7 +40,7 @@ import {
 	selectMainToken,
 } from 'selectors'
 import { formatAddress } from 'helpers/formatters'
-
+import { fetchName } from 'helpers/ensHelper'
 // const RRButton = withReactRouterLink(Button)
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
@@ -51,6 +51,7 @@ const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 function AccountInfo() {
 	const { authType, email, password } = useSelector(selectWallet)
 	const identity = useSelector(selectAccountIdentity)
+	const { privileges } = identity
 	const { symbol } = useSelector(selectMainToken)
 	const {
 		walletAddress,
@@ -75,12 +76,19 @@ function AccountInfo() {
 
 	const walletJsonData = localWalletDownloadHref()
 	const [expanded, setExpanded] = useState(false)
+	const [ensSearching, setEnsSearching] = useState(true)
+	const [identityEnsName, setIdentityEnsName] = useState()
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 
 	useEffect(() => {
 		execute(updateNav('navTitle', t('ACCOUNT')))
-	}, [])
+		async function resolveENS() {
+			setIdentityEnsName(await fetchName(identityAddress))
+			setEnsSearching(false)
+		}
+		resolveENS()
+	}, [identityAddress])
 
 	const displayRampWidget = () => {
 		const widget = new RampInstantSDK({
@@ -139,18 +147,24 @@ function AccountInfo() {
 										: t('IDENTITY_ETH_ADDR')
 								}
 							/>
-							<EnsAddressResolver address={identityAddress} />
+							<EnsAddressResolver
+								address={identityAddress}
+								name={identityEnsName}
+							/>
 						</React.Fragment>
 					}
 					right={
-						<SetAccountENS
-							fullWidth
-							variant='contained'
-							color='primary'
-							token='DAI'
-							size='small'
-							identityAvailable={availableIdentityBalanceMainToken}
-						/>
+						privileges >= 2 &&
+						!ensSearching && (
+							<SetAccountENS
+								fullWidth
+								variant='contained'
+								color='primary'
+								token='DAI'
+								size='small'
+								identityAvailable={availableIdentityBalanceMainToken}
+							/>
+						)
 					}
 				/>
 				<ListDivider />
