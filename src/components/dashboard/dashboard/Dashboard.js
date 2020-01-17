@@ -147,12 +147,12 @@ function Dashboard(props) {
 						<Route
 							exact
 							path='/dashboard/advertiser/Campaign/:itemId'
-							component={props => <Campaign {...props} />}
+							component={Campaign}
 						/>
 						<Route
 							exact
 							path='/dashboard/advertiser/AdUnit/:itemId'
-							component={props => <Unit {...props} />}
+							component={Unit}
 						/>
 						<Route
 							exact
@@ -162,12 +162,12 @@ function Dashboard(props) {
 						<Route
 							exact
 							path='/dashboard/publisher/AdSlot/:itemId'
-							component={props => <Slot {...props} />}
+							component={Slot}
 						/>
 						<Route
 							exact
 							path={'/dashboard/:side/account'}
-							component={props => <Account {...props} />}
+							component={Account}
 						/>
 						{/* <Route
 								auth={this.props.auth}
@@ -175,12 +175,8 @@ function Dashboard(props) {
 								path={'/dashboard/:side/transactions'}
 								component={props => <Transactions {...props} />}
 							/> */}
-						<Route
-							exact
-							path='/dashboard/:side'
-							component={props => <DashboardStats {...props} />}
-						/>
-						<Route component={props => <PageNotFound {...props} />} />
+						<Route exact path='/dashboard/:side' component={DashboardStats} />
+						<Route component={PageNotFound} />
 					</Switch>
 				</div>
 			</main>
