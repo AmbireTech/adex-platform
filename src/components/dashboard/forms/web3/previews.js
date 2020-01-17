@@ -65,7 +65,14 @@ export const SetPrivilegePreview = ({
 	</div>
 )
 
-export const SetENSPreview = ({ t, setEns, address, classes, feesData }) => (
+export const SetENSPreview = ({
+	t,
+	setEns,
+	address,
+	classes,
+	feesData,
+	symbol,
+}) => (
 	<div>
 		<PropRow
 			key='addr'
@@ -79,9 +86,13 @@ export const SetENSPreview = ({ t, setEns, address, classes, feesData }) => (
 				<ListItemText
 					className={classes.address}
 					secondary={t('ENS_INFO_AND_FEES', {
-						args: [feesData.fees, 'DAI'],
+						args: [
+							feesData.fees,
+							symbol,
+							`${setEns}.${process.env.REVERSE_REGISTRAR_PARENT}`,
+						],
 					})}
-					primary={setEns}
+					primary={`${setEns}.${process.env.REVERSE_REGISTRAR_PARENT}`}
 				/>
 			}
 		/>
