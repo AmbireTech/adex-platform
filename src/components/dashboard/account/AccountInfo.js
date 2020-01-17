@@ -27,10 +27,8 @@ import { styles } from './styles.js'
 import { getRecoveryWalletData } from 'services/wallet/wallet'
 import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
-import EditIcon from '@material-ui/icons/Edit'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import { selectAccount } from 'selectors'
-import ReverseENS from 'helpers/ensHelper'
 import EnsAddressResolver from 'components/common/ens/EnsAddressResolver'
 import {
 	t,
@@ -41,6 +39,7 @@ import {
 } from 'selectors'
 import { formatAddress } from 'helpers/formatters'
 import { fetchName } from 'helpers/ensHelper'
+import { NODE_ENV } from '../../../../config/env'
 // const RRButton = withReactRouterLink(Button)
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
@@ -80,7 +79,12 @@ function AccountInfo() {
 	const [identityEnsName, setIdentityEnsName] = useState()
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
-	const canSetENS = privileges >= 2 && !ensSearching && !identityEnsName
+	const canSetENS =
+		privileges >= 2 &&
+		!ensSearching &&
+		!identityEnsName &&
+		NODE_ENV === 'production'
+
 	useEffect(() => {
 		execute(updateNav('navTitle', t('ACCOUNT')))
 		async function resolveENS() {
