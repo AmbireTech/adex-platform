@@ -155,7 +155,8 @@ function AccountInfo() {
 					}
 					right={
 						privileges >= 2 &&
-						!ensSearching && (
+						!ensSearching &&
+						!identityEnsName && (
 							<SetAccountENS
 								fullWidth
 								variant='contained'
