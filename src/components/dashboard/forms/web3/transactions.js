@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button'
 import TransactionHoc from './TransactionHoc'
 import FormSteps from 'components/dashboard/forms/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
+import { t } from 'selectors'
 // import SaveIcon from '@material-ui/icons/Save'
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 import {
@@ -203,6 +204,7 @@ export const SetAccountENS = props => (
 			page: TransactionPreview,
 		}}
 		saveFn={({ transaction } = {}) => {
+			props.setIdentityEnsName(t('WAITING_FOR_TRANSACTION'))
 			return execute(
 				setIdentityENS({
 					username: transaction.setEns,

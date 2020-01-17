@@ -164,6 +164,7 @@ function AccountInfo() {
 								token='DAI'
 								size='small'
 								identityAvailable={availableIdentityBalanceMainToken}
+								setIdentityEnsName={setIdentityEnsName}
 							/>
 						)
 					}
@@ -192,7 +193,7 @@ function AccountInfo() {
 						/>
 					}
 					right={
-						!walletJsonData && (
+						walletJsonData && (
 							<label htmlFor='download-wallet-json'>
 								<a
 									id='download-wallet-json'
