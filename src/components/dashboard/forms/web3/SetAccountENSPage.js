@@ -31,6 +31,10 @@ class SetAccountENSPage extends Component {
 		}
 	}
 
+	componentWillUnmount() {
+		this.props.handleChange('setEns', '')
+	}
+
 	handleValidate = () => {
 		if (this._timeout) {
 			//if there is already a timeout in process cancel it
