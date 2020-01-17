@@ -39,7 +39,6 @@ import {
 } from 'selectors'
 import { formatAddress } from 'helpers/formatters'
 import { fetchName } from 'helpers/ensHelper'
-import { NODE_ENV } from '../../../../config/env'
 // const RRButton = withReactRouterLink(Button)
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
@@ -79,11 +78,7 @@ function AccountInfo() {
 	const [identityEnsName, setIdentityEnsName] = useState()
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
-	const canSetENS =
-		privileges >= 2 &&
-		!ensSearching &&
-		!identityEnsName &&
-		NODE_ENV === 'production'
+	const canSetENS = privileges >= 2 && !ensSearching && !identityEnsName
 
 	useEffect(() => {
 		execute(updateNav('navTitle', t('ACCOUNT')))
