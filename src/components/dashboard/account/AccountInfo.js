@@ -179,9 +179,10 @@ function AccountInfo() {
 									  })
 									: t('WALLET_INFO_LABEL', {
 											args: [
-												walletAuthType.replace(/^\w/, chr => {
-													return chr.toUpperCase()
-												}),
+												walletAuthType
+													.split(' ')
+													.map(x => x[0].toUpperCase() + x.slice(1))
+													.join(' '),
 												walletPrivileges || ' - ',
 												authType,
 											],
