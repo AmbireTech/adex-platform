@@ -1,12 +1,7 @@
 import { getEthers } from 'services/smart-contracts/ethers'
 import { constants } from 'adex-models'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
-import {
-	bigNumberify,
-	formatUnits,
-	parseUnits,
-	formatEther,
-} from 'ethers/utils'
+import { bigNumberify, formatEther } from 'ethers/utils'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
 	selectRelayerConfig,
@@ -114,7 +109,7 @@ export async function getAccountStats({
 	const { authType } = wallet
 	const { address } = identity
 	const { getIdentity } = await getEthers(authType)
-	const { decimals, symbol } = selectMainToken()
+	const { decimals } = selectMainToken()
 
 	const { status = {} } = identity
 	const identityContract = getIdentity({ address })
@@ -299,36 +294,34 @@ export async function getAllValidatorsAuthForIdentity({
 	return validatorsAuth
 }
 
-const usdPriceMapping = {
+const saiDaiConversion = ({ token, balance }) => balance
+
+const valueInMainTokenConversions = {
 	// SAI
-	'0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359': [1.0],
+	'0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359': {
+		// DAI
+		'0x6b175474e89094c44da98b954eedeac495271d0f': saiDaiConversion,
+	},
 	// DAI
-	'0x6b175474e89094c44da98b954eedeac495271d0f': [1.0],
-}
-
-async function valueInUSD({ token, balance }) {
-	const { address, decimals } = token
-	const [price] = usdPriceMapping[address.toLowerCase()] || [1.0]
-
-	const balanceInUSD =
-		parseFloat(formatUnits(balance.toString(), decimals)) * price
-
-	return balanceInUSD
-}
-
-async function usdToMainTokenBalance({ balanceUSD }) {
-	const { address, decimals } = selectMainToken()
-
-	const [price] = usdPriceMapping[address.toLowerCase()] || [1.0]
-
-	const balanceInMainToken = (balanceUSD * price).toString()
-
-	return parseUnits(balanceInMainToken, decimals)
+	'0x6b175474e89094c44da98b954eedeac495271d0f': {
+		// SAI
+		'0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359': saiDaiConversion,
+	},
 }
 
 async function tokenInMainTokenValue({ token, balance }) {
-	const balanceUSD = await valueInUSD({ token, balance })
-	const balanceMainToken = await usdToMainTokenBalance({ balanceUSD })
+	const { address } = selectMainToken()
 
-	return balanceMainToken
+	if (address === token.address) {
+		return balance
+	}
+
+	const valueInMainToken = valueInMainTokenConversions[address.toLowerCase()][
+		token.address.toLowerCase()
+	]({
+		token,
+		balance,
+	})
+
+	return valueInMainToken
 }

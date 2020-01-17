@@ -91,6 +91,9 @@ const useStyles = makeStyles(theme => {
 				color: theme.palette.text.secondary,
 			},
 		},
+		sideSwitch: {
+			marginBottom: `${theme.spacing(2)}px`,
+		},
 	}
 })
 
@@ -152,7 +155,7 @@ function SideNav(props) {
 						</ListItem>
 					</div>
 					<ListDivider />
-					<SideSwitch side={side} t={t} />
+					<SideSwitch className={classes.sideSwitch} side={side} t={t} />
 					<ListDivider />
 					<RRListItem
 						button

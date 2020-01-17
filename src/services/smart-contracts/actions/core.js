@@ -345,6 +345,8 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 			//  mTree,
 			channel,
 			lastApprovedSigs,
+			outstanding,
+			// outstandingAvailable,
 			balance,
 		} = c
 		const ethChannelTuple = toEthereumChannel(channel).toSolidityTuple()
@@ -363,7 +365,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 			to: AdExCore.address,
 			feeTokenAddr: channel.depositAsset,
 			data,
-			withdrawAmountByToken: { [channel.depositAsset]: balance },
+			withdrawAmountByToken: { [channel.depositAsset]: outstanding },
 		}
 	})
 	const routineAuthTuple = getIdentityRoutineAuthTuple(identity)
