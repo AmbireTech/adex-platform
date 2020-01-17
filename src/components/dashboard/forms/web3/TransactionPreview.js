@@ -83,6 +83,7 @@ function TransactionPreview(props) {
 		withdrawTo,
 		withdrawAmount,
 		setAddr,
+		setEns,
 		privLevel,
 		tokenAddress,
 		feesData = {},
@@ -166,6 +167,8 @@ function TransactionPreview(props) {
 								classes={classes}
 								feesData={feesData}
 								address={address}
+								symbol={symbol}
+								setEns={setEns}
 							/>
 						)}
 					</ContentBody>

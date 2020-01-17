@@ -73,7 +73,7 @@ class SetAccountENSPage extends Component {
 						name='setEns'
 						value={setEns || ''}
 						onChange={ev => {
-							handleChange('setEns', ev.target.value)
+							handleChange('setEns', ev.target.value.toLowerCase())
 							this.handleValidate()
 						}}
 						InputProps={{
