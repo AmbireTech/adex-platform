@@ -11,7 +11,7 @@ import {
 	VALIDATOR_ANALYTICS_METRICS,
 } from 'constants/misc'
 import { getErrorMsg } from 'helpers/errors'
-
+import { fillEmptyTime } from 'helpers/timeHelpers'
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
 const analyticsParams = (timeframe, side) => {
@@ -78,6 +78,7 @@ export function updateAccountAnalytics() {
 					leaderAuth,
 				})
 					.then(res => {
+						res.args = fillEmptyTime(res.args, timeframe)
 						accountChanged =
 							accountChanged || checkAccountChanged(getState, account)
 
