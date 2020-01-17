@@ -1,6 +1,10 @@
 import moment from 'moment'
 
 export const intervalsMs = {
+	lastHour: {
+		start: Date.now() - 60 * 60 * 1000,
+		end: Date.now(),
+	},
 	last24Hours: {
 		start: Date.now() - 24 * 60 * 60 * 1000,
 		end: Date.now(),
@@ -43,18 +47,37 @@ export const intervalsMs = {
 	},
 }
 
-export const fillEmptyTime = (prevArgs, timeframe) => {
-	// TODO: loop through based on timeframe
-	// merge new and prev args
-	// return
-	// { label: 'LABEL_HOUR', value: 'hour' },
-	// { label: 'LABEL_DAY', value: 'day' },
-	// { label: 'LABEL_WEEK', value: 'week' },
-	// { label: 'LABEL_MONTH', value: 'month' },
-	// { label: 'LABEL_YEAR', value: 'year' },
-	// for (var m = moment(a); m.isBefore(b); m.add(1, 'days')) {
-	// 	console.log(m.format('YYYY-MM-DD'))
-	// }
+export const fillEmptyTime = (prevAggr, timeframe) => {
+	const time = {
+		interval: intervalsMs.lastHour,
+		step: { ammount: 1, unit: 'minute' },
+	}
+	switch (timeframe) {
+		case 'hour':
+			time.interval = intervalsMs.lastHour
+			time.step = { ammount: 1, unit: 'minute' }
+			break
+		case 'day':
+			time.interval = intervalsMs.last24Hours
+			time.step = { ammount: 1, unit: 'hour' }
+			break
+		case 'week':
+			time.interval = intervalsMs.lastWeek
+			time.step = { ammount: 6, unit: 'hour' }
+			break
+		default:
+			return prevAggr
+	}
+	const newAggr = []
+	for (
+		var m = moment(time.interval.start);
+		m.isBefore(time.interval.end);
+		m.add(time.step.ammount, time.step.unit)
+	) {
+		newAggr.push({ value: '0', time: m.unix() * 1000 })
+	}
+	const result = newAggr.map((item, i) => Object.assign({}, item, prevAggr[i]))
+	return result
 }
 
 export const DATETIME_EXPORT_FORMAT = 'YYYY-MM-DD HH:mm:ss'

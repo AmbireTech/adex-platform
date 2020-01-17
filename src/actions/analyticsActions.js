@@ -78,7 +78,7 @@ export function updateAccountAnalytics() {
 					leaderAuth,
 				})
 					.then(res => {
-						res.args = fillEmptyTime(res.args, timeframe)
+						res.aggr = fillEmptyTime(res.aggr, timeframe)
 						accountChanged =
 							accountChanged || checkAccountChanged(getState, account)
 
