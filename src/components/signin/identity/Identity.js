@@ -1,9 +1,11 @@
 import React from 'react'
 import IdentityContractOwner from './IdentityContractOwner'
 import QuickInfo from './QuickInfo'
+import FullInfo from './FullInfo'
 import QuickDeploy from './QuickDeploy'
 import QuickLogin from './QuickLogin'
-import { ExternalConnect } from './ExternalWalletConnect'
+import FullLogin from './FullLogin'
+import FullDeploy from './FullDeploy'
 import IdentitySteps from './IdentitySteps'
 import { push } from 'connected-react-router'
 
@@ -12,7 +14,9 @@ import {
 	validateQuickLogin,
 	validateStandardLogin,
 	validateQuickInfo,
+	validateFullInfo,
 	validateQuickDeploy,
+	validateFullDeploy,
 	resetIdentity,
 } from 'actions'
 
@@ -42,8 +46,36 @@ export const LoginStandardIdentity = props => {
 				{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
 				{
 					title: 'CONNECT_STANDARD_IDENTITY',
-					page: ExternalConnect,
+					page: FullLogin,
 					pageValidation: finalValidationStandard,
+					final: true,
+				},
+			]}
+		/>
+	)
+}
+
+export const CreateStandardIdentity = props => {
+	return (
+		<IdentitySteps
+			{...props}
+			{...common}
+			stepsId='full-identity-create'
+			stepsPages={[
+				{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
+				{
+					title: 'FULL_INFO',
+					page: FullInfo,
+					pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
+						execute(
+							validateFullInfo({ validateId, dirty, onValid, onInvalid })
+						),
+				},
+				{
+					title: 'DEPLOY_STANDARD_IDENTITY',
+					page: FullDeploy,
+					pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
+						execute(validateFullDeploy({ validateId, dirty })),
 					final: true,
 				},
 			]}
