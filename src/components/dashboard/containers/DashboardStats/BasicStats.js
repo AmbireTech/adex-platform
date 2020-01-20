@@ -18,6 +18,7 @@ import {
 	selectAverageCPM,
 	selectMainToken,
 	selectAnalytics,
+	selectTotalClicks,
 } from 'selectors'
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
@@ -72,6 +73,13 @@ export function BasicStats({ side }) {
 		})
 	)
 
+	const totlaClicks = useSelector(state =>
+		selectTotalClicks(state, {
+			side,
+			timeframe,
+		})
+	)
+
 	const totalMoney = useSelector(state =>
 		selectTotalMoney(state, {
 			side,
@@ -89,6 +97,7 @@ export function BasicStats({ side }) {
 	const loadingImpressions = totalImpressions === null
 	const loadingMoney = totalMoney === null
 	const loadingCPM = averageCPM === null
+	const loadingClicks = totlaClicks === null
 
 	return (
 		<Grid container spacing={2}>
@@ -135,6 +144,13 @@ export function BasicStats({ side }) {
 							loading={loadingMoney}
 						></StatsCard>
 					)}
+					<StatsCard
+						bgColor='secondary'
+						subtitle={t('LABEL_TOTAL_CLICK')}
+						explain={t('EXPLAIN_TOTAL_CLICKS')}
+						loading={loadingClicks}
+						title={`${totlaClicks || 0} ${t('CLICKS')}`}
+					></StatsCard>
 					<StatsCard
 						bgColor='grey'
 						subtitle={t('LABEL_AVG_CPM')}

@@ -67,7 +67,7 @@ export const NETWORK_STATUS = {
 }
 
 export const ETHEREUM_NETWORKS = {
-	1: { name: 'Mainnet', for: 'production' },
+	1: { name: 'Mainnet', for: 'development' },
 	5: { name: 'Goerli', for: 'development' },
 	production: { name: 'Mainnet', for: 'production' },
 	development: { name: 'Goerli', for: 'development' },
@@ -116,7 +116,7 @@ export const VALIDATOR_ANALYTICS_SIDES = [
 	'advertiser',
 	'publisher', //
 ]
-export const VALIDATOR_ANALYTICS_EVENT_TYPES = ['IMPRESSION']
+export const VALIDATOR_ANALYTICS_EVENT_TYPES = ['IMPRESSION', 'CLICK']
 
 // TEMP: disable long periods
 export const VALIDATOR_ANALYTICS_TIMEFRAMES = [
