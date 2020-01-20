@@ -31,6 +31,20 @@ export const selectTotalImpressions = createSelector(
 			: null
 )
 
+export const selectTotalClicks = createSelector(
+	(state, { side, timeframe } = {}) =>
+		selectAnalyticsDataAggr(state, {
+			side,
+			timeframe,
+			eventType: 'CLICK',
+			metric: 'eventCounts',
+		}),
+	eventCounts =>
+		eventCounts
+			? eventCounts.reduce((a, { value }) => a + Number(value) || 0, 0)
+			: null
+)
+
 export const selectTotalMoney = createSelector(
 	(state, { side, timeframe } = {}) =>
 		selectAnalyticsDataAggr(state, {
