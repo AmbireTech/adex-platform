@@ -1,13 +1,20 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import Grid from '@material-ui/core/Grid'
+import Button from '@material-ui/core/Button'
+import { push } from 'connected-react-router'
 import Typography from '@material-ui/core/Typography'
 import {
 	execute,
 	updateIdentity,
 	ownerIdentities as updateOwnerIdentities,
 } from 'actions'
-import { selectSpinnerById, selectIdentity, t } from 'selectors'
+import {
+	selectSpinnerById,
+	selectIdentity,
+	t,
+	selectSearchParams,
+} from 'selectors'
 import Dropdown from 'components/common/dropdown'
 
 const getIdentitiesForDropdown = (ownerIdentities = [], t) =>
@@ -22,14 +29,23 @@ const getIdentitiesForDropdown = (ownerIdentities = [], t) =>
 
 function FullLogin(props) {
 	const identity = useSelector(selectIdentity)
-	const { wallet, ownerIdentities, identityContractAddress } = identity
-	const { address } = wallet
+	const {
+		walletAddr,
+		wallet = {},
+		ownerIdentities,
+		identityContractAddress,
+	} = identity
+	const walletAddress = wallet.address || walletAddr
 	const spinner = useSelector(state =>
 		selectSpinnerById(state, 'getting-owner-identities')
 	)
+	const searchParams = useSelector(selectSearchParams)
+	searchParams.set('step', '1')
+
+	const search = searchParams.toString()
 
 	useEffect(() => {
-		execute(updateOwnerIdentities({ owner: address }))
+		execute(updateOwnerIdentities({ owner: walletAddress }))
 		// We need it just once on mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
@@ -61,8 +77,15 @@ function FullLogin(props) {
 							htmlId='label-identityContractAddress'
 							fullWidth
 							loading={!!spinner}
-							noSrcLabel={t('NO_IDENTITIES_FOR_ADDR', { args: [address] })}
+							noSrcLabel={t('NO_IDENTITIES_FOR_ADDR', {
+								args: [walletAddress],
+							})}
 						/>
+					</Grid>
+					<Grid item xs={12}>
+						<Button onClick={() => execute(push(`/signup/full?${search}`))}>
+							{t('CREATE_NEW_IDENTITY_LINK')}
+						</Button>
 					</Grid>
 				</Grid>
 			</Grid>
