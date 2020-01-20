@@ -24,7 +24,10 @@ import {
 	openChannel,
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
-import { lastApprovedState } from 'services/adex-validator/actions'
+import {
+	lastApprovedState,
+	campaignAnalytics,
+} from 'services/adex-validator/actions'
 import { closeCampaignMarket } from 'services/adex-market/actions'
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
@@ -567,7 +570,28 @@ export function updateUserCampaigns() {
 		if (hasAuth && authSig && address) {
 			try {
 				const campaigns = await getCampaigns({ authSig, creator: address })
-
+				campaigns.forEach(async c => {
+					const impressions = await campaignAnalytics({
+						campaign: c,
+						eventType: 'IMPRESSION',
+						metric: 'eventCounts',
+						timeframe: 'year',
+						limit: 200,
+					})
+					const clicks = await campaignAnalytics({
+						campaign: c,
+						eventType: 'CLICK',
+						metric: 'eventCounts',
+						timeframe: 'year',
+						limit: 200,
+					})
+					c.impressions = impressions.aggr.reduce(
+						(a, b) => a + (Number(b.value) || 0),
+						0
+					)
+					c.clicks = clicks.aggr.reduce((a, b) => a + (Number(b.value) || 0), 0)
+				})
+				console.log(campaigns)
 				const campaignsMapped = campaigns
 					.filter(
 						c => c.creator && c.creator.toLowerCase() === address.toLowerCase()
