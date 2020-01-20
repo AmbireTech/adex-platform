@@ -15,6 +15,7 @@ import ConnectHoc from 'components/signin/ConnectHoc'
 import {
 	CreateQuickIdentity,
 	LoginStandardIdentity,
+	CreateStandardIdentity,
 	LoginQuickIdentity,
 } from 'components/signin/identity/Identity'
 import SideSelect from 'components/signin/side-select/SideSelect'
@@ -29,6 +30,9 @@ const ConnectedCreateQuickIdentity = ConnectHoc(JustDialog(CreateQuickIdentity))
 const ConnectedQuickLogin = ConnectHoc(JustDialog(LoginQuickIdentity))
 const ConnectedLoginStandardIdentity = ConnectHoc(
 	JustDialog(LoginStandardIdentity)
+)
+const ConnectedCreateStandardIdentity = ConnectHoc(
+	JustDialog(CreateStandardIdentity)
 )
 const ConnectedRoot = ConnectHoc(Home)
 
@@ -98,6 +102,11 @@ const Root = () => {
 					exact
 					path='/login/full'
 					component={ConnectedLoginStandardIdentity}
+				/>
+				<Route
+					exact
+					path='/signup/full'
+					component={ConnectedCreateStandardIdentity}
 				/>
 				<Route exact path='/login/quick' component={ConnectedQuickLogin} />
 				<Route>
