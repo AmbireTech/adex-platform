@@ -1,5 +1,5 @@
 import React from 'react'
-import IdentityContractOwner from './IdentityContractOwner'
+import AuthMethod from './ownerAuth/AuthMethod'
 import QuickInfo from './QuickInfo'
 import FullInfo from './FullInfo'
 import QuickDeploy from './QuickDeploy'
@@ -17,6 +17,7 @@ import {
 	validateFullInfo,
 	validateQuickDeploy,
 	validateFullDeploy,
+	validateContractOwner,
 	resetIdentity,
 } from 'actions'
 
@@ -26,10 +27,13 @@ const cancelFunction = () => {
 }
 
 const finalValidationQuick = ({ validateId, dirty, onValid, onInvalid }) =>
-	execute(validateQuickLogin({ validateId, dirty }))
+	execute(validateQuickLogin({ validateId, dirty, onValid, onInvalid }))
 
 const finalValidationStandard = ({ validateId, dirty, onValid, onInvalid }) =>
-	execute(validateStandardLogin({ validateId, dirty }))
+	execute(validateStandardLogin({ validateId, dirty, onValid, onInvalid }))
+
+const validateOwner = ({ validateId, dirty, onValid, onInvalid }) =>
+	execute(validateContractOwner({ validateId, dirty, onValid, onInvalid }))
 
 const common = {
 	cancelFunction,
@@ -43,7 +47,11 @@ export const LoginStandardIdentity = props => {
 			{...common}
 			stepsId='full-identity-login'
 			stepsPages={[
-				{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
+				{
+					title: 'SET_IDENTITY_OWNER_ADDRESS',
+					page: AuthMethod,
+					pageValidation: validateOwner,
+				},
 				{
 					title: 'CONNECT_STANDARD_IDENTITY',
 					page: FullLogin,
@@ -62,7 +70,11 @@ export const CreateStandardIdentity = props => {
 			{...common}
 			stepsId='full-identity-create'
 			stepsPages={[
-				{ title: 'SET_IDENTITY_OWNER_ADDRESS', page: IdentityContractOwner },
+				{
+					title: 'SET_IDENTITY_OWNER_ADDRESS',
+					page: AuthMethod,
+					pageValidation: validateOwner,
+				},
 				{
 					title: 'FULL_INFO',
 					page: FullInfo,
