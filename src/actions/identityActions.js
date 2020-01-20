@@ -450,6 +450,56 @@ export function validateStandardLogin({ validateId, dirty }) {
 	}
 }
 
+export function validateFullDeploy({ validateId, dirty }) {
+	return async function(dispatch, getState) {
+		updateSpinner(validateId, true)(dispatch)
+		const identity = selectIdentity(getState())
+		const { identityAddr, email, wallet } = identity
+		try {
+			if (!identityAddr && email) {
+				const walletAddr = wallet.address
+
+				const txData = await getIdentityDeployData({ owner: walletAddr })
+				const identityData = {
+					address: txData.identityAddr,
+					privileges: txData.privileges,
+				}
+
+				updateIdentity('identityAddr', txData.identityAddr)(dispatch)
+				updateIdentity('identityTxData', txData)(dispatch)
+				updateIdentity('identityData', identityData)(dispatch)
+
+				updateIdentity('wallet', wallet)(dispatch)
+				updateIdentity('walletAddr', walletAddr)(dispatch)
+				updateIdentity('registerAccount', true)(dispatch)
+			}
+
+			const isValid = !!identityAddr && email
+
+			validate(validateId, 'identityAddr', {
+				isValid,
+				err: { msg: 'ERR_IDENTITY_NOT_GENERATED' },
+				dirty,
+			})(dispatch)
+
+			if (isValid) {
+				await login()(dispatch, getState)
+			}
+		} catch (err) {
+			console.error('ERR_VALIDATING_FULL_DEPLOY', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_VALIDATING_FULL_DEPLOY', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+
+		updateSpinner(validateId, false)(dispatch)
+	}
+}
+
 export function validateQuickDeploy({ validateId, dirty }) {
 	return async function(dispatch, getState) {
 		updateSpinner(validateId, true)(dispatch)
@@ -540,6 +590,27 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 			validatePasswordCheck(validateId, passwordCheck, password, dirty)(
 				dispatch
 			),
+			validateTOS(validateId, tosCheck, dirty)(dispatch),
+		])
+
+		const isValid = validations.every(v => v === true)
+
+		handleAfterValidation({ isValid, onValid, onInvalid })
+
+		updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
+	return async function(dispatch, getState) {
+		updateSpinner(validateId, true)(dispatch)
+
+		const identity = selectIdentity(getState())
+		const { email, emailCheck, tosCheck } = identity
+
+		const validations = await Promise.all([
+			validateEmail(validateId, email, dirty)(dispatch),
+			validateEmailCheck(validateId, emailCheck, email, dirty)(dispatch),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
 		])
 
