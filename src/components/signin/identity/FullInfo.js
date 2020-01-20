@@ -29,11 +29,16 @@ const FulInfo = props => {
 		state => selectValidationsById(state, validateId) || {}
 	)
 
+	const walletAddress = (identity.wallet || {}).address || identity.walletAddr
+
 	// Errors
 	const { email, emailCheck, tosCheck } = validations
 	return (
 		<div>
 			<Grid container spacing={2}>
+				<Grid item xs={12}>
+					{walletAddress}
+				</Grid>
 				<Grid item xs={12}>
 					<TextField
 						fullWidth
