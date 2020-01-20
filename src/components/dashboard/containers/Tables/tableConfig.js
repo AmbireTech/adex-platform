@@ -41,18 +41,21 @@ const headCells = {
 		{
 			id: 'created',
 			numeric: true,
+			isDate: true,
 			disablePadding: false,
 			label: t('PROP_CREATED'),
 		},
 		{
 			id: 'activeFrom',
 			numeric: true,
+			isDate: true,
 			disablePadding: false,
 			label: t('PROP_STARTS'),
 		},
 		{
 			id: 'withdrawPeriodStart',
 			numeric: true,
+			isDate: true,
 			disablePadding: false,
 			label: t('PROP_ENDS'),
 		},
@@ -80,6 +83,7 @@ const headCells = {
 		{
 			id: 'created',
 			numeric: false,
+			isDate: true,
 			disablePadding: false,
 			label: t('PROP_CREATED'),
 		},

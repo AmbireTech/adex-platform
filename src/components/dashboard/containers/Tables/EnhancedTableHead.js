@@ -20,8 +20,8 @@ export default function EnhancedTableHead(props) {
 		noActions,
 		listMode,
 	} = props
-	const createSortHandler = (property, numeric) => event => {
-		onRequestSort(event, property, numeric)
+	const createSortHandler = (property, numeric, isDate) => event => {
+		onRequestSort(event, property, numeric, isDate)
 	}
 	const headSide = itemType === 'Campaign' ? itemType : 'Other'
 	return (
@@ -48,7 +48,11 @@ export default function EnhancedTableHead(props) {
 							<TableSortLabel
 								active={orderBy === headCell.id}
 								direction={order}
-								onClick={createSortHandler(headCell.id, headCell.numeric)}
+								onClick={createSortHandler(
+									headCell.id,
+									headCell.numeric,
+									headCell.isDate
+								)}
 							>
 								{headCell.label}
 								{orderBy === headCell.id ? (

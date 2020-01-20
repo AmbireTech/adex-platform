@@ -118,7 +118,8 @@ export default function EnhancedTable(props) {
 	} = props
 	const [order, setOrder] = React.useState('desc')
 	const [orderBy, setOrderBy] = React.useState('created')
-	const [orderIsNumeric, setOrderisNumeric] = React.useState(true)
+	const [orderIsNumeric, setOrderisNumeric] = React.useState(false)
+	const [orderIsDate, setOrderisDate] = React.useState(true)
 	const [selected, setSelected] = React.useState([])
 	const [page, setPage] = React.useState(0)
 	const [rowsPerPage, setRowsPerPage] = React.useState(5)
@@ -143,11 +144,12 @@ export default function EnhancedTable(props) {
 		setPage(0)
 	}, [search, filters])
 
-	const handleRequestSort = (event, property, numeric) => {
+	const handleRequestSort = (event, property, numeric, isDate) => {
 		const isDesc = orderBy === property && order === 'desc'
 		setOrder(isDesc ? 'asc' : 'desc')
 		setOrderBy(property)
 		setOrderisNumeric(numeric)
+		setOrderisDate(isDate)
 	}
 
 	const handleSelectAllClick = event => {
@@ -196,7 +198,7 @@ export default function EnhancedTable(props) {
 
 	const sortedItems = stableSort(
 		filteredItems,
-		getSorting(order, orderBy, orderIsNumeric)
+		getSorting(order, orderBy, orderIsNumeric, orderIsDate)
 	)
 
 	const emptyRows =
