@@ -203,7 +203,7 @@ export default function EnhancedTable(props) {
 
 	const emptyRows =
 		rowsPerPage -
-		Math.min(rowsPerPage, filteredItems.length - 1 - page * rowsPerPage)
+		Math.min(rowsPerPage, filteredItems.length - page * rowsPerPage)
 
 	return (
 		<div className={classes.root}>
@@ -252,6 +252,7 @@ export default function EnhancedTable(props) {
 									const mediaMime = firstUnit.mediaMime || item.mediaMime || ''
 									return (
 										<TableRow
+											style={{ height: 90 }}
 											hover
 											role='checkbox'
 											aria-checked={isItemSelected}
@@ -268,7 +269,7 @@ export default function EnhancedTable(props) {
 													/>
 												</TableCell>
 											)}
-											<TableCell>
+											<TableCell padding={'none'}>
 												<Img
 													fullScreenOnClick={true}
 													className={classnames(classes.cellImg)}
@@ -338,7 +339,7 @@ export default function EnhancedTable(props) {
 									)
 								})}
 							{emptyRows > 0 && (
-								<TableRow style={{ height: 33 * emptyRows }}>
+								<TableRow style={{ height: 90 * emptyRows }}>
 									{items.length > 0 ? (
 										<TableCell
 											colSpan={

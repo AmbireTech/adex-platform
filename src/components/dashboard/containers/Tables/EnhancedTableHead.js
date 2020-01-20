@@ -41,7 +41,8 @@ export default function EnhancedTableHead(props) {
 					<TableCell
 						key={headCell.id}
 						align={'left'}
-						padding={'default'}
+						padding={'none'}
+						size={'small'}
 						sortDirection={orderBy === headCell.id ? order : false}
 					>
 						{!headCell.disableOrdering && !listMode ? (
