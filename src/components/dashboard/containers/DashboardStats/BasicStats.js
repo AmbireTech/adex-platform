@@ -8,7 +8,12 @@ import { translate } from 'services/translations/translations'
 import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
 import StatsCard from './StatsCard'
 import { makeStyles } from '@material-ui/core/styles'
-import { PRIMARY, ACCENT_ONE, ACCENT_TWO } from 'components/App/themeMUi'
+import {
+	PRIMARY,
+	SECONDARY,
+	ACCENT_ONE,
+	ACCENT_TWO,
+} from 'components/App/themeMUi'
 import { styles } from './styles'
 import { formatNumberWithCommas } from 'helpers/formatters'
 import {
@@ -19,6 +24,7 @@ import {
 	selectMainToken,
 	selectAnalytics,
 	selectTotalClicks,
+	selectStatsChartData,
 } from 'selectors'
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
@@ -39,6 +45,11 @@ const metrics = {
 			value: 'eventCounts',
 			color: PRIMARY,
 		},
+		{
+			label: translate('LABEL_CLICKS'),
+			value: 'eventCounts',
+			color: SECONDARY,
+		},
 	],
 	advertiser: [
 		{
@@ -50,6 +61,11 @@ const metrics = {
 			label: translate('LABEL_IMPRESSIONS'),
 			value: 'eventCounts',
 			color: PRIMARY,
+		},
+		{
+			label: translate('LABEL_CLICKS'),
+			value: 'eventCounts',
+			color: SECONDARY,
 		},
 	],
 }
@@ -73,7 +89,7 @@ export function BasicStats({ side }) {
 		})
 	)
 
-	const totlaClicks = useSelector(state =>
+	const totalClicks = useSelector(state =>
 		selectTotalClicks(state, {
 			side,
 			timeframe,
@@ -97,8 +113,41 @@ export function BasicStats({ side }) {
 	const loadingImpressions = totalImpressions === null
 	const loadingMoney = totalMoney === null
 	const loadingCPM = averageCPM === null
-	const loadingClicks = totlaClicks === null
+	const loadingClicks = totalClicks === null
 
+	const payouts = useSelector(state =>
+		selectStatsChartData(state, {
+			side,
+			timeframe,
+			eventType: 'IMPRESSION',
+			metric: 'eventPayouts',
+			noLastOne: true,
+		})
+	)
+
+	const impressions = useSelector(state =>
+		selectStatsChartData(state, {
+			side,
+			timeframe,
+			eventType: 'IMPRESSION',
+			metric: 'eventCounts',
+			noLastOne: true,
+		})
+	)
+
+	const clicks = useSelector(state =>
+		selectStatsChartData(state, {
+			side,
+			timeframe,
+			eventType: 'CLICK',
+			metric: 'eventCounts',
+			noLastOne: true,
+		})
+	)
+	const dataInSync =
+		(clicks.labels[clicks.labels.length - 1] ===
+			impressions[impressions.labels.length - 1]) ===
+		payouts[payouts.labels.length - 1]
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12}>
@@ -117,9 +166,18 @@ export function BasicStats({ side }) {
 					<StatsCard
 						bgColor='primary'
 						subtitle={t('LABEL_TOTAL_IMPRESSIONS')}
-						loading={loadingImpressions}
+						loading={loadingImpressions && !dataInSync}
 						title={`${formatNumberWithCommas(totalImpressions || 0)}`}
 						explain={t('EXPLAIN_TOTAL_IMPRESSIONS')}
+					></StatsCard>
+					<StatsCard
+						bgColor='secondary'
+						subtitle={t('LABEL_TOTAL_CLICKS')}
+						explain={t('EXPLAIN_TOTAL_CLICKS')}
+						loading={loadingClicks && loadingImpressions && !dataInSync}
+						title={`${formatNumberWithCommas(totalClicks || 0)} (${parseFloat(
+							(totalClicks / totalImpressions) * 100 || 0
+						).toFixed(2)}% ${t('LABEL_CTR')})`}
 					></StatsCard>
 					{side === 'advertiser' && (
 						<StatsCard
@@ -129,7 +187,7 @@ export function BasicStats({ side }) {
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
 							)} ${symbol}`}
-							loading={loadingMoney}
+							loading={loadingMoney && !dataInSync}
 						></StatsCard>
 					)}
 
@@ -141,21 +199,14 @@ export function BasicStats({ side }) {
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(totalMoney || 0).toFixed(2)
 							)} ${symbol}`}
-							loading={loadingMoney}
+							loading={loadingMoney && !dataInSync}
 						></StatsCard>
 					)}
-					<StatsCard
-						bgColor='secondary'
-						subtitle={t('LABEL_TOTAL_CLICK')}
-						explain={t('EXPLAIN_TOTAL_CLICKS')}
-						loading={loadingClicks}
-						title={`${totlaClicks || 0} ${t('CLICKS')}`}
-					></StatsCard>
 					<StatsCard
 						bgColor='grey'
 						subtitle={t('LABEL_AVG_CPM')}
 						explain={t('EXPLAIN_AVG_CPM')}
-						loading={loadingCPM}
+						loading={loadingCPM && !dataInSync}
 						title={`~ ${formatNumberWithCommas(
 							parseFloat(averageCPM || 0).toFixed(2)
 						)} ${symbol} / CPM`}
@@ -169,11 +220,15 @@ export function BasicStats({ side }) {
 					options={{
 						title: t(timeFrames.find(a => a.value === timeframe).label),
 					}}
+					payouts={payouts}
+					impressions={impressions}
+					clicks={clicks}
 					y1Label={metrics[side][0].label}
 					y1Color={metrics[side][0].color}
 					y2Label={metrics[side][1].label}
 					y2Color={metrics[side][1].color}
-					eventType={'IMPRESSION'}
+					y3Label={metrics[side][2].label}
+					y3Color={metrics[side][2].color}
 					t={t}
 				/>
 			</Grid>

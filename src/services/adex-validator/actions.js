@@ -147,3 +147,20 @@ export const identityAnalytics = async ({
 
 	return aggregates
 }
+
+export const campaignAnalytics = ({
+	campaign,
+	eventType,
+	metric,
+	timeframe,
+	limit,
+}) => {
+	const { leader } = getRequesters({ campaign })
+	return leader.requester
+		.fetch({
+			route: `/analytics/${campaign.id}`,
+			method: 'GET',
+			queryParams: { eventType, metric, timeframe, limit },
+		})
+		.then(processResponse)
+}
