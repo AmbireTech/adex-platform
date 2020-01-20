@@ -87,7 +87,7 @@ export const fillEmptyTime = (prevAggr, timeframe) => {
 	) {
 		newAggr.push({ value: '0', time: m.unix() * 1000 })
 	}
-	const result = newAggr.map((item, i) => Object.assign({}, item, prevAggr[i]))
+	const result = newAggr.map((item, i) => ({ ...item, ...prevAggr[i] }))
 	return result
 }
 
