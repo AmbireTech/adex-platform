@@ -62,12 +62,13 @@ const StepperNav = ({ pages, currentPage, classes, ...other }) => {
 
 const MaterialStepper = props => {
 	const {
+		initialPage = 0,
 		pages = [],
 		// ...props
 	} = props
 	const classes = useStyles()
 
-	const [currentPage, setCurrentPage] = useState(0)
+	const [currentPage, setCurrentPage] = useState(+initialPage)
 	const canReverse = pages.length > currentPage && currentPage > 0
 
 	const page = pages[currentPage] || {}
