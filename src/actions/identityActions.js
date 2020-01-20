@@ -621,3 +621,29 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 		updateSpinner(validateId, false)(dispatch)
 	}
 }
+
+export function validateContractOwner({
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		updateSpinner(validateId, true)(dispatch)
+
+		const identity = selectIdentity(getState())
+		const { identityContractOwner, wallet } = identity
+
+		const isValid = !!identityContractOwner && !!wallet.address
+
+		validate(validateId, 'identityContractOwner', {
+			isValid,
+			err: { msg: 'ERR_NO_IDENTITY_CONTRACT_OWNER' },
+			dirty,
+		})
+
+		handleAfterValidation({ isValid, onValid, onInvalid })
+
+		updateSpinner(validateId, false)(dispatch)
+	}
+}
