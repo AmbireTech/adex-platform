@@ -6,8 +6,19 @@ export const intervalsMs = {
 		end: Date.now(),
 	},
 	last24Hours: {
-		start: Date.now() - 24 * 60 * 60 * 1000,
-		end: Date.now(),
+		start: moment(Date.now() - 24 * 60 * 60 * 1000).startOf('hour'),
+		end: moment(Date.now()).startOf('hour'),
+	},
+	last7Days: {
+		start: moment()
+			.startOf('hour')
+			.subtract(4, 'hours')
+			.subtract(7, 'days')
+			.valueOf(),
+		end: moment()
+			.startOf('hour')
+			.subtract(4, 'hours')
+			.valueOf(),
 	},
 	thisWeek: {
 		start: moment()
@@ -62,7 +73,7 @@ export const fillEmptyTime = (prevAggr, timeframe) => {
 			time.step = { ammount: 1, unit: 'hour' }
 			break
 		case 'week':
-			time.interval = intervalsMs.lastWeek
+			time.interval = intervalsMs.last7Days
 			time.step = { ammount: 6, unit: 'hour' }
 			break
 		default:
@@ -71,7 +82,7 @@ export const fillEmptyTime = (prevAggr, timeframe) => {
 	const newAggr = []
 	for (
 		var m = moment(time.interval.start);
-		m.isBefore(time.interval.end);
+		m.diff(time.interval.end, time.step.unit) <= 0;
 		m.add(time.step.ammount, time.step.unit)
 	) {
 		newAggr.push({ value: '0', time: m.unix() * 1000 })
