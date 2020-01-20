@@ -8,6 +8,7 @@ import MaterialStepper from 'components/common/stepper/MaterialUiStepper'
 import Translate from 'components/translate/Translate'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import { selectLocationQuery } from 'selectors'
 
 class IdentitySteps extends Component {
 	constructor(props) {
@@ -54,7 +55,10 @@ class IdentitySteps extends Component {
 	}
 
 	render() {
-		return <MaterialStepper pages={this.state.pages} />
+		const { initialPage } = this.props
+		return (
+			<MaterialStepper initialPage={initialPage} pages={this.state.pages} />
+		)
 	}
 }
 
@@ -62,11 +66,11 @@ IdentitySteps.propTypes = {
 	actions: PropTypes.object.isRequired,
 }
 
-function mapStateToProps() {
+function mapStateToProps(state) {
 	// const persist = state.persist
 	// const memory = state.memory
 	return {
-		// account: persist.account
+		initialPage: selectLocationQuery(state)['step'] || 0,
 	}
 }
 
