@@ -33,6 +33,8 @@ import {
 	validatePassword,
 	validatePasswordCheck,
 	validateTOS,
+	validateWallet,
+	validateIdentityContractOwner,
 } from './validationActions'
 import { getErrorMsg } from 'helpers/errors'
 
@@ -397,12 +399,12 @@ export function validateQuickLogin({ validateId, dirty }) {
 	}
 }
 
-const handleAfterValidation = ({ isValid, onValid, onInvalid }) => {
+const handleAfterValidation = async ({ isValid, onValid, onInvalid }) => {
 	if (isValid && typeof onValid === 'function') {
-		onValid()
+		await onValid()
 	}
 	if (!isValid && typeof onInvalid === 'function') {
-		onInvalid()
+		await onInvalid()
 	}
 }
 
@@ -450,13 +452,14 @@ export function validateStandardLogin({ validateId, dirty }) {
 	}
 }
 
-export function validateFullDeploy({ validateId, dirty }) {
+export function validateFullDeploy({ validateId, dirty, skipSpinnerUpdate }) {
 	return async function(dispatch, getState) {
-		updateSpinner(validateId, true)(dispatch)
+		!skipSpinnerUpdate && updateSpinner(validateId, true)(dispatch)
 		const identity = selectIdentity(getState())
 		const { identityAddr, email, wallet } = identity
 		try {
-			if (!identityAddr && email) {
+			let isValid = !!identityAddr && !!wallet && !!email
+			if (!identityAddr && wallet && !!email) {
 				const walletAddr = wallet.address
 
 				const txData = await getIdentityDeployData({ owner: walletAddr })
@@ -472,11 +475,11 @@ export function validateFullDeploy({ validateId, dirty }) {
 				updateIdentity('wallet', wallet)(dispatch)
 				updateIdentity('walletAddr', walletAddr)(dispatch)
 				updateIdentity('registerAccount', true)(dispatch)
+
+				isValid = txData.identityAddr && !!wallet && !!email
 			}
 
-			const isValid = !!identityAddr && email
-
-			validate(validateId, 'identityAddr', {
+			await validate(validateId, 'identityAddr', {
 				isValid,
 				err: { msg: 'ERR_IDENTITY_NOT_GENERATED' },
 				dirty,
@@ -496,7 +499,7 @@ export function validateFullDeploy({ validateId, dirty }) {
 			})(dispatch)
 		}
 
-		updateSpinner(validateId, false)(dispatch)
+		!skipSpinnerUpdate && updateSpinner(validateId, false)(dispatch)
 	}
 }
 
@@ -552,7 +555,7 @@ export function validateQuickDeploy({ validateId, dirty }) {
 
 			const isValid = !!identityAddr && email && password
 
-			validate(validateId, 'identityAddr', {
+			await validate(validateId, 'identityAddr', {
 				isValid,
 				err: { msg: 'ERR_IDENTITY_NOT_GENERATED' },
 				dirty,
@@ -606,9 +609,22 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 		updateSpinner(validateId, true)(dispatch)
 
 		const identity = selectIdentity(getState())
-		const { email, emailCheck, tosCheck } = identity
+		const {
+			wallet,
+			identityContractOwner,
+			email,
+			emailCheck,
+			tosCheck,
+		} = identity
 
 		const validations = await Promise.all([
+			// validate wallet again in case of step skip
+			validateWallet(validateId, wallet, dirty)(dispatch),
+			validateIdentityContractOwner(validateId, identityContractOwner, dirty)(
+				dispatch
+			),
+
+			// validate step fields
 			validateEmail(validateId, email, dirty)(dispatch),
 			validateEmailCheck(validateId, emailCheck, email, dirty)(dispatch),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
@@ -616,7 +632,17 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 
 		const isValid = validations.every(v => v === true)
 
-		handleAfterValidation({ isValid, onValid, onInvalid })
+		if (isValid) {
+			await validateFullDeploy({
+				validateId,
+				dirty,
+				onValid,
+				onInvalid,
+				skipSpinnerUpdate: true,
+			})(dispatch, getState)
+		}
+
+		// handleAfterValidation({ isValid, onValid, onInvalid })
 
 		updateSpinner(validateId, false)(dispatch)
 	}
@@ -634,16 +660,42 @@ export function validateContractOwner({
 		const identity = selectIdentity(getState())
 		const { identityContractOwner, wallet } = identity
 
-		const isValid = !!identityContractOwner && !!wallet.address
+		const validations = await Promise.all([
+			validateWallet(validateId, wallet, dirty)(dispatch),
+			validateIdentityContractOwner(validateId, identityContractOwner, dirty)(
+				dispatch
+			),
+		])
 
-		validate(validateId, 'identityContractOwner', {
-			isValid,
-			err: { msg: 'ERR_NO_IDENTITY_CONTRACT_OWNER' },
-			dirty,
-		})
+		const isValid = validations.every(v => v === true)
 
-		handleAfterValidation({ isValid, onValid, onInvalid })
+		await handleAfterValidation({ isValid, onValid, onInvalid })
 
 		updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function updateIdentityWallet({
+	address,
+	authType,
+	hdWalletAddrPath,
+	hdWalletAddrIdx,
+	path,
+	chainId,
+	signType,
+}) {
+	return async function(dispatch, getState) {
+		const wallet = {
+			address,
+			authType,
+			hdWalletAddrPath,
+			hdWalletAddrIdx,
+			path,
+			chainId,
+			signType,
+		}
+
+		updateIdentity('identityContractOwner', wallet.address)(dispatch)
+		updateIdentity('wallet', wallet)(dispatch)
 	}
 }
