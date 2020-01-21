@@ -78,16 +78,8 @@ export const CreateStandardIdentity = props => {
 				{
 					title: 'FULL_INFO',
 					page: FullInfo,
-					pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
-						execute(
-							validateFullInfo({ validateId, dirty, onValid, onInvalid })
-						),
-				},
-				{
-					title: 'DEPLOY_STANDARD_IDENTITY',
-					page: FullDeploy,
-					pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
-						execute(validateFullDeploy({ validateId, dirty })),
+					pageValidation: ({ validateId, dirty }) =>
+						execute(validateFullInfo({ validateId, dirty })),
 					final: true,
 				},
 			]}
@@ -106,14 +98,6 @@ export const CreateQuickIdentity = props => (
 				page: QuickInfo,
 				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
 					execute(validateQuickInfo({ validateId, dirty, onValid, onInvalid })),
-			},
-			{
-				title: 'QUICK_DEPLOY',
-				page: QuickDeploy,
-				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
-					execute(
-						validateQuickDeploy({ validateId, dirty, onValid, onInvalid })
-					),
 				final: true,
 			},
 		]}
