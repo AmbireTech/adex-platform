@@ -160,3 +160,33 @@ export function validateTOS(validateId, accepted, dirty) {
 		return isValid
 	}
 }
+
+export function validateWallet(validateId, wallet, dirty) {
+	return async function(dispatch, getState) {
+		const isValid = !!wallet && !!wallet.address
+		validate(validateId, 'wallet', {
+			isValid: isValid,
+			err: { msg: 'ERR_NO_WALLET_SELECTED' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateIdentityContractOwner(
+	validateId,
+	identityContractOwner,
+	dirty
+) {
+	return async function(dispatch, getState) {
+		const isValid = !!identityContractOwner
+		validate(validateId, 'identityContractOwner', {
+			isValid: isValid,
+			err: { msg: 'ERR_NO_IDENTITY_CONTRACT_OWNER' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
