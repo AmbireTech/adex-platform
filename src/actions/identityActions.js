@@ -321,7 +321,7 @@ export function validateQuickLogin({ validateId, dirty }) {
 
 		try {
 			if (email && password) {
-				let walletData = getLocalWallet({
+				let walletData = await getLocalWallet({
 					email,
 					password,
 					authType: actualAuthType,
@@ -329,7 +329,7 @@ export function validateQuickLogin({ validateId, dirty }) {
 
 				if (!walletData) {
 					const salt = generateSalt(email)
-					const hash = getWalletHash({ salt, password })
+					const hash = await getWalletHash({ salt, password })
 					const { encryptedWallet } =
 						(await getQuickWallet({
 							hash,
@@ -348,7 +348,7 @@ export function validateQuickLogin({ validateId, dirty }) {
 						actualAuthType = info.authType
 						saveToLocalStorage(backupWallet.wallet, backupWallet.key)
 
-						walletData = getLocalWallet({
+						walletData = await getLocalWallet({
 							email,
 							password,
 							authType: actualAuthType,
@@ -367,7 +367,7 @@ export function validateQuickLogin({ validateId, dirty }) {
 					}
 
 					if (!authType) {
-						migrateLegacyWallet({ email, password })
+						await migrateLegacyWallet({ email, password })
 						updateIdentity('deleteLegacyKey', true)(dispatch)
 					}
 				}
@@ -514,7 +514,7 @@ export function validateQuickDeploy({ validateId, dirty }) {
 			if (!identityAddr && email && password) {
 				const authType = AUTH_TYPES.QUICK.name
 
-				const walletData = createLocalWallet({
+				const walletData = await createLocalWallet({
 					email,
 					password,
 					authType,
@@ -533,14 +533,14 @@ export function validateQuickDeploy({ validateId, dirty }) {
 					privileges: txData.privileges,
 				}
 
-				addDataToWallet({
+				await addDataToWallet({
 					email,
 					password,
 					authType,
 					dataKey: 'identity',
 					dataValue: identityAddr,
 				})
-				addDataToWallet({
+				await addDataToWallet({
 					email,
 					password,
 					authType,

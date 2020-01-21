@@ -51,12 +51,12 @@ const PrivateRoute = ({ component: Component, auth, ...other }) => {
 	)
 }
 
-const handleLegacyWallet = wallet => {
+const handleLegacyWallet = async wallet => {
 	const { type, email, password, authType } = wallet || {}
 
 	if (!type && email && password && authType === 'grant') {
-		migrateLegacyWallet({ email, password })
-		removeLegacyKey({ email, password })
+		await migrateLegacyWallet({ email, password })
+		await removeLegacyKey({ email, password })
 	}
 
 	if (email && password && authType) {

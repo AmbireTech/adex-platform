@@ -233,7 +233,7 @@ export function createSession({
 			})(dispatch)
 
 			if (deleteLegacyKey) {
-				removeLegacyKey({
+				await removeLegacyKey({
 					email: wallet.email,
 					password: wallet.password,
 				})
@@ -364,7 +364,7 @@ export function metamaskChecks() {
 
 async function hasBackup({ email, password }) {
 	const salt = generateSalt(email)
-	const hash = getWalletHash({ salt, password })
+	const hash = await getWalletHash({ salt, password })
 	const { encryptedWallet } = await getQuickWallet({ hash })
 
 	return !!encryptedWallet && encryptedWallet.wallet
@@ -372,8 +372,8 @@ async function hasBackup({ email, password }) {
 
 async function makeBackup({ email, password, authType }) {
 	const walletSalt = generateSalt(email)
-	const walletHash = getWalletHash({ salt: walletSalt, password })
-	const encryptedWallet = getRecoveryWalletData({
+	const walletHash = await getWalletHash({ salt: walletSalt, password })
+	const encryptedWallet = await getRecoveryWalletData({
 		email,
 		password,
 		authType,
