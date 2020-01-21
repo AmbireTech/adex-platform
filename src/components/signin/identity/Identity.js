@@ -2,10 +2,8 @@ import React from 'react'
 import AuthMethod from './ownerAuth/AuthMethod'
 import QuickInfo from './QuickInfo'
 import FullInfo from './FullInfo'
-import QuickDeploy from './QuickDeploy'
 import QuickLogin from './QuickLogin'
 import FullLogin from './FullLogin'
-import FullDeploy from './FullDeploy'
 import IdentitySteps from './IdentitySteps'
 import { push } from 'connected-react-router'
 
@@ -15,8 +13,6 @@ import {
 	validateStandardLogin,
 	validateQuickInfo,
 	validateFullInfo,
-	validateQuickDeploy,
-	validateFullDeploy,
 	validateContractOwner,
 	resetIdentity,
 } from 'actions'
