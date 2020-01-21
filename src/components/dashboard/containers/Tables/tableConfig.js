@@ -33,6 +33,18 @@ const headCells = {
 			label: t('PROP_DISTRIBUTED', { args: ['%'] }),
 		},
 		{
+			id: 'impressions',
+			numeric: true,
+			disablePadding: false,
+			label: t('PROP_IMPRESSIONS'),
+		},
+		{
+			id: 'clicks',
+			numeric: true,
+			disablePadding: false,
+			label: t('PROP_CLICKS'),
+		},
+		{
 			id: 'minPerImpression',
 			numeric: true,
 			disablePadding: false,

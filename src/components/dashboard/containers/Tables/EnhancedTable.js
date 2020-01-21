@@ -14,7 +14,11 @@ import VisibilityIcon from '@material-ui/icons/Visibility'
 import { makeStyles } from '@material-ui/core/styles'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { NewCloneUnitDialog } from '../../forms/items/NewItems'
-import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
+import {
+	formatDateTime,
+	formatTokenAmount,
+	formatNumberWithCommas,
+} from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 import { AdUnit } from 'adex-models'
 import { t, selectSide, selectMainToken } from 'selectors'
@@ -301,6 +305,12 @@ export default function EnhancedTable(props) {
 														{(
 															(item.status.fundsDistributedRatio || 0) / 10
 														).toFixed(2)}
+													</TableCell>
+													<TableCell>
+														{formatNumberWithCommas(item.impressions || 0)}
+													</TableCell>
+													<TableCell>
+														{formatNumberWithCommas(item.clicks || 0)}
 													</TableCell>
 													<TableCell>
 														{formatTokenAmount(

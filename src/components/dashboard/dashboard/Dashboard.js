@@ -13,7 +13,10 @@ import {
 	NewCampaignDialog,
 	NewSlotDialog,
 } from 'components/dashboard/forms/items/NewItems'
-import campaignsLoop from 'services/store-data/campaigns'
+import {
+	campaignsLoop,
+	campaignsLoopStats,
+} from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
 import analyticsLoop from 'services/store-data/analytics'
 import Drawer from '@material-ui/core/Drawer'
@@ -76,10 +79,13 @@ function Dashboard(props) {
 		execute(getAllItems())
 		analyticsLoop.start()
 		campaignsLoop.start()
+		campaignsLoopStats.start()
 		statsLoop.start()
 
 		return () => {
+			analyticsLoop.stop()
 			campaignsLoop.stop()
+			campaignsLoopStats.stop()
 			statsLoop.stop()
 		}
 	}, [side])

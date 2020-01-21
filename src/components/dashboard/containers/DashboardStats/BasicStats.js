@@ -174,7 +174,12 @@ export function BasicStats({ side }) {
 						bgColor='secondary'
 						subtitle={t('LABEL_TOTAL_CLICKS')}
 						explain={t('EXPLAIN_TOTAL_CLICKS')}
-						loading={loadingClicks && loadingImpressions && !dataInSync}
+						loading={
+							loadingClicks &&
+							loadingImpressions &&
+							!dataInSync &&
+							totalClicks / totalImpressions !== Infinity
+						}
 						title={`${formatNumberWithCommas(totalClicks || 0)} (${parseFloat(
 							(totalClicks / totalImpressions) * 100 || 0
 						).toFixed(2)}% ${t('LABEL_CTR')})`}
