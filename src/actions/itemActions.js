@@ -36,6 +36,7 @@ import { SOURCES } from 'constants/targeting'
 import {
 	selectAccount,
 	selectRelayerConfig,
+	selectCampaigns,
 	selectAuthSig,
 	selectAuth,
 } from 'selectors'
@@ -566,6 +567,7 @@ export function updateUserCampaigns(updateStats = true) {
 		const { wallet, identity } = selectAccount(getState())
 		const { authSig } = wallet
 		const { address } = identity
+		const campaignsFromStore = selectCampaigns(getState())
 		const campaignPromises = []
 		if (hasAuth && authSig && address) {
 			try {
@@ -599,7 +601,15 @@ export function updateUserCampaigns(updateStats = true) {
 						if (!campaign.humanFriendlyName) {
 							campaign.status.humanFriendlyName = getHumanFriendlyName(campaign)
 						}
-
+						if (!updateStats) {
+							//when not updating the stats keep the previous
+							const { impressions, clicks } = campaignsFromStore[c.id] || {
+								impressions: 0,
+								clicks: 0,
+							}
+							campaign.impressions = impressions
+							campaign.clicks = clicks
+						}
 						return campaign
 					})
 				if (updateStats) {
