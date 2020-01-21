@@ -21,7 +21,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import Anchor from 'components/common/anchor/anchor'
 import { formatTokenAmount } from 'helpers/formatters'
-import { selectMainToken } from 'selectors'
+import { selectMainToken, selectCampaignStats } from 'selectors'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
@@ -69,10 +69,11 @@ export class Campaign extends Component {
 			actions,
 			history,
 			mainTokenSymbol,
+			campaignStats,
 			// ...rest
 		} = this.props
 		const { tabIndex } = this.state
-
+		console.log(campaignStats)
 		const units = item.spec.adUnits
 		const campaign = new CampaignModel(item)
 
@@ -196,8 +197,9 @@ Campaign.propTypes = {
 	item: PropTypes.object.isRequired,
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
 	const { persist } = state
+	const { item } = ownProps
 	// let memory = state.memory
 	return {
 		units: persist.items['AdUnit'],
@@ -205,6 +207,10 @@ function mapStateToProps(state) {
 		objModel: CampaignModel,
 		itemType: 'Campaign',
 		mainTokenSymbol: selectMainToken(state).symbol,
+		campaignStats: selectCampaignStats(state, {
+			eventType: 'IMPRESSIONS',
+			campaignId: item.id,
+		}),
 	}
 }
 

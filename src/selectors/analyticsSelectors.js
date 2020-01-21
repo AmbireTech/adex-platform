@@ -1,7 +1,8 @@
+import { getState } from 'store'
 import { createSelector } from 'reselect'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
 
-export const selectAnalytics = state => state.persist.analytics
+export const selectAnalytics = state => (state || getState()).persist.analytics
 
 export const selectAnalyticsData = createSelector(
 	[selectAnalytics, (_, side) => side],
@@ -106,5 +107,15 @@ export const selectStatsChartData = createSelector(
 				datasets: [],
 			}
 		)
+	}
+)
+
+export const selectCampaignStats = createSelector(
+	[selectAnalytics, (_, opts = {}) => opts],
+	(analytics, { eventType, campaignId }) => {
+		console.log('EVENT TYPE', eventType)
+		console.log('ANAL', analytics)
+		console.log('CAMP', campaignId)
+		return analytics.campaigns[eventType]
 	}
 )
