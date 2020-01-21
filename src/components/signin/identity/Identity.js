@@ -92,8 +92,8 @@ export const CreateQuickIdentity = props => (
 			{
 				title: 'QUICK_INFO',
 				page: QuickInfo,
-				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
-					execute(validateQuickInfo({ validateId, dirty, onValid, onInvalid })),
+				pageValidation: ({ validateId, dirty }) =>
+					execute(validateQuickInfo({ validateId, dirty })),
 				final: true,
 			},
 		]}
