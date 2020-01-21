@@ -509,6 +509,8 @@ export function validateQuickDeploy({ validateId, dirty }) {
 		const identity = selectIdentity(getState())
 		const { identityAddr, email, password } = identity
 		try {
+			let isValid = !!identityAddr && email && password
+
 			if (!identityAddr && email && password) {
 				const authType = AUTH_TYPES.QUICK.name
 
@@ -524,8 +526,10 @@ export function validateQuickDeploy({ validateId, dirty }) {
 				const walletAddr = walletData.address
 
 				const txData = await getIdentityDeployData({ owner: walletAddr })
+
+				const identityAddr = txData.identityAddr
 				const identityData = {
-					address: txData.identityAddr,
+					address: identityAddr,
 					privileges: txData.privileges,
 				}
 
@@ -534,7 +538,7 @@ export function validateQuickDeploy({ validateId, dirty }) {
 					password,
 					authType,
 					dataKey: 'identity',
-					dataValue: identityData.address,
+					dataValue: identityAddr,
 				})
 				addDataToWallet({
 					email,
@@ -544,16 +548,16 @@ export function validateQuickDeploy({ validateId, dirty }) {
 					dataValue: identityData.privileges,
 				})
 
-				updateIdentity('identityAddr', txData.identityAddr)(dispatch)
+				updateIdentity('identityAddr', identityAddr)(dispatch)
 				updateIdentity('identityTxData', txData)(dispatch)
 				updateIdentity('identityData', identityData)(dispatch)
 
 				updateIdentity('wallet', walletData)(dispatch)
 				updateIdentity('walletAddr', walletAddr)(dispatch)
 				updateIdentity('registerAccount', true)(dispatch)
-			}
 
-			const isValid = !!identityAddr && email && password
+				isValid = !!identityAddr
+			}
 
 			await validate(validateId, 'identityAddr', {
 				isValid,
@@ -598,6 +602,13 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 
 		const isValid = validations.every(v => v === true)
 
+		if (isValid) {
+			await validateQuickDeploy({ validateId, dirty, skipSpinnerUpdate: true })(
+				dispatch,
+				getState
+			)
+		}
+
 		handleAfterValidation({ isValid, onValid, onInvalid })
 
 		updateSpinner(validateId, false)(dispatch)
@@ -636,8 +647,6 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 			await validateFullDeploy({
 				validateId,
 				dirty,
-				onValid,
-				onInvalid,
 				skipSpinnerUpdate: true,
 			})(dispatch, getState)
 		}
