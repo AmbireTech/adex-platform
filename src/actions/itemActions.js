@@ -560,43 +560,40 @@ function getHumanFriendlyName(campaign) {
 	}
 }
 
-export function updateUserCampaigns() {
+export function updateUserCampaigns(updateStats = true) {
 	return async function(dispatch, getState) {
 		const hasAuth = selectAuth(getState())
 		const { wallet, identity } = selectAccount(getState())
 		const { authSig } = wallet
 		const { address } = identity
-
+		const campaignPromises = []
 		if (hasAuth && authSig && address) {
 			try {
 				const campaigns = await getCampaigns({ authSig, creator: address })
-				campaigns.forEach(async c => {
-					const impressions = await campaignAnalytics({
-						campaign: c,
-						eventType: 'IMPRESSION',
-						metric: 'eventCounts',
-						timeframe: 'year',
-						limit: 200,
-					})
-					const clicks = await campaignAnalytics({
-						campaign: c,
-						eventType: 'CLICK',
-						metric: 'eventCounts',
-						timeframe: 'year',
-						limit: 200,
-					})
-					c.impressions = impressions.aggr.reduce(
-						(a, b) => a + (Number(b.value) || 0),
-						0
-					)
-					c.clicks = clicks.aggr.reduce((a, b) => a + (Number(b.value) || 0), 0)
-				})
-				console.log(campaigns)
-				const campaignsMapped = campaigns
+				let campaignsMapped = campaigns
 					.filter(
 						c => c.creator && c.creator.toLowerCase() === address.toLowerCase()
 					)
 					.map(c => {
+						if (updateStats) {
+							const impressions = campaignAnalytics({
+								campaign: c,
+								eventType: 'IMPRESSION',
+								metric: 'eventCounts',
+								timeframe: 'year',
+								limit: 200,
+							})
+							const clicks = campaignAnalytics({
+								campaign: c,
+								eventType: 'CLICK',
+								metric: 'eventCounts',
+								timeframe: 'year',
+								limit: 200,
+							})
+							campaignPromises.push(impressions)
+							campaignPromises.push(clicks)
+						}
+
 						const campaign = { ...c.spec, ...c }
 
 						if (!campaign.humanFriendlyName) {
@@ -605,7 +602,31 @@ export function updateUserCampaigns() {
 
 						return campaign
 					})
-				updateItems({ items: campaignsMapped, itemType: 'Campaign' })(dispatch)
+				if (updateStats) {
+					campaignsMapped = await Promise.all(campaignPromises).then(function(
+						results
+					) {
+						// replace promises with their resolved values
+						let index = 0
+						for (let i = 0; i < results.length; i += 2) {
+							campaignsMapped[index].impressions = results[i].aggr.reduce(
+								(a, b) => a + (Number(b.value) || 0),
+								0
+							)
+							campaignsMapped[index].clicks = results[i + 1].aggr.reduce(
+								(a, b) => a + (Number(b.value) || 0),
+								0
+							)
+							++index
+						}
+						return campaignsMapped
+					})
+				}
+
+				updateItems({
+					items: campaignsMapped,
+					itemType: 'Campaign',
+				})(dispatch)
 			} catch (err) {
 				console.error('ERR_GETTING_CAMPAIGNS', err)
 
