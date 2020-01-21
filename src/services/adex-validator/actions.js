@@ -148,6 +148,24 @@ export const identityAnalytics = async ({
 	return aggregates
 }
 
+export const identityCampaignsAnalytics = async ({ leaderAuth, eventType }) => {
+	const baseUrl = VALIDATOR_LEADER_URL
+	const requester = getValidatorRequester({ baseUrl })
+
+	const aggregates = await requester
+		.fetch({
+			route: `/analytics/advanced`,
+			method: 'GET',
+			queryParams: { eventType },
+			headers: {
+				authorization: BEARER_PREFIX + leaderAuth,
+			},
+		})
+		.then(processResponse)
+
+	return aggregates
+}
+
 export const campaignAnalytics = ({
 	campaign,
 	eventType,

@@ -4,6 +4,7 @@ import { translate } from 'services/translations/translations'
 import {
 	getValidatorAuthToken,
 	identityAnalytics,
+	identityCampaignsAnalytics,
 } from 'services/adex-validator/actions'
 import { updateValidatorAuthTokens } from './accountActions'
 import {
@@ -28,6 +29,14 @@ const analyticsParams = (timeframe, side) => {
 		)
 	)
 
+	return callsParams
+}
+
+const analyticsCampaignsParams = () => {
+	const callsParams = []
+	VALIDATOR_ANALYTICS_EVENT_TYPES.forEach(eventType =>
+		callsParams.push({ eventType })
+	)
 	return callsParams
 }
 
@@ -100,6 +109,67 @@ export function updateAccountAnalytics() {
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_ANALYTICS', { args: [getErrorMsg(err)] }),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function updateAccountCampaingsAnalytics() {
+	return async function(dispatch, getState) {
+		const { account } = getState().persist
+		try {
+			const toastId = addToast({
+				type: 'warning',
+				label: translate('SIGN_VALIDATORS_AUTH'),
+				timeout: false,
+				unclosable: true,
+				top: true,
+			})(dispatch)
+
+			const leaderAuth = await getValidatorAuthToken({
+				validatorId: VALIDATOR_LEADER_ID,
+				account,
+			})
+
+			removeToast(toastId)(dispatch)
+
+			updateValidatorAuthTokens({
+				newAuth: { [VALIDATOR_LEADER_ID]: leaderAuth },
+			})(dispatch, getState)
+
+			const params = analyticsCampaignsParams()
+			let accountChanged = false
+			const allAnalytics = params.map(async opts => {
+				identityCampaignsAnalytics({
+					...opts,
+					leaderAuth,
+				})
+					.then(res => {
+						accountChanged =
+							accountChanged || checkAccountChanged(getState, account)
+
+						if (!accountChanged) {
+							dispatch({
+								type: types.UPDATE_ADVANCED_CAMPAIGN_ANALYTICS,
+								...opts,
+								value: { ...res },
+							})
+						}
+					})
+					.catch(err => {
+						console.error('ERR_CAMPAIGN_ANALYTICS_SINGLE', err)
+					})
+			})
+
+			await Promise.all(allAnalytics)
+		} catch (err) {
+			console.error('ERR_CAMPAIGN_ANALYTICS', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_CAMPAIGN_ANALYTICS', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}

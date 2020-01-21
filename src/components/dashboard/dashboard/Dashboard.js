@@ -18,7 +18,10 @@ import {
 	campaignsLoopStats,
 } from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
-import analyticsLoop from 'services/store-data/analytics'
+import {
+	analyticsLoop,
+	analyticsCampaignsLoop,
+} from 'services/store-data/analytics'
 import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
 import PageNotFound from 'components/page_not_found/PageNotFound'
@@ -78,12 +81,14 @@ function Dashboard(props) {
 		execute(updateNav('side', side))
 		execute(getAllItems())
 		analyticsLoop.start()
+		analyticsCampaignsLoop.start()
 		campaignsLoop.start()
 		campaignsLoopStats.start()
 		statsLoop.start()
 
 		return () => {
 			analyticsLoop.stop()
+			analyticsCampaignsLoop.stop()
 			campaignsLoop.stop()
 			campaignsLoopStats.stop()
 			statsLoop.stop()
