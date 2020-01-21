@@ -189,7 +189,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 			})
 			.filter(({ channel, bTree }) => {
 				if (!!channel.status && channel.status.name === 'Expired') {
-					return channel.creator === identityAddr
+					return channel.creator.toLowerCase() === identityAddr.toLowerCase()
 				}
 
 				return bTree && !bTree.getBalance(identityAddr).isZero()
