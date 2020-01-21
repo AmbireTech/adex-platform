@@ -12,13 +12,13 @@ const syncCampaigns = async updateStats => {
 
 const campaignsLoop = new Loop({
 	timeout: LOOP_TIMEOUT,
-	syncAction: syncCampaigns,
+	syncAction: () => syncCampaigns(false),
 	loopName: '_CAMPAIGNS',
 })
 
 const campaignsLoopStats = new Loop({
 	timeout: LOOP_TIMEOUT * 2.5,
-	syncAction: syncCampaigns,
-	loopName: '_CAMPAIGNS',
+	syncAction: () => syncCampaigns(true),
+	loopName: '_CAMPAIGNS_STATS',
 })
-export default { campaignsLoop, campaignsLoopStats }
+export { campaignsLoop, campaignsLoopStats }
