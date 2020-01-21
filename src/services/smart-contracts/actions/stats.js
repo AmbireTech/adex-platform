@@ -26,7 +26,11 @@ const tokenAvailableBalance = ({ token, balance, mainToken }) => {
 	return isAvailable ? balance : bigNumberify(0)
 }
 
-export const getWithdrawTokensBalances = async ({ authType, address }) => {
+export const getWithdrawTokensBalances = async ({
+	authType,
+	address,
+	getFullBalances,
+}) => {
 	const { getToken } = await getEthers(authType)
 	const { routineWithdrawTokens, mainToken } = selectRelayerConfig()
 	const balancesCalls = routineWithdrawTokens.map(async token => {
@@ -34,11 +38,13 @@ export const getWithdrawTokensBalances = async ({ authType, address }) => {
 
 		const balance = await tokenContract.balanceOf(address)
 
-		const available = tokenAvailableBalance({
-			token,
-			mainToken,
-			balance,
-		})
+		const available = getFullBalances
+			? balance
+			: tokenAvailableBalance({
+					token,
+					mainToken,
+					balance,
+			  })
 
 		const balanceMainToken = await tokenInMainTokenValue({
 			token,
@@ -74,12 +80,20 @@ export const getWithdrawTokensBalances = async ({ authType, address }) => {
 	}
 }
 
-export async function getAddressBalances({ address, authType }) {
+export async function getAddressBalances({
+	address,
+	authType,
+	getFullBalances,
+}) {
 	const { provider } = await getEthers(authType)
 
 	const calls = [
 		provider.getBalance(address.address),
-		getWithdrawTokensBalances({ authType, address: address.address }),
+		getWithdrawTokensBalances({
+			authType,
+			address: address.address,
+			getFullBalances,
+		}),
 	]
 
 	const balances = await Promise.all(calls)
