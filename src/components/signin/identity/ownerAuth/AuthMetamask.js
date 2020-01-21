@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
+import { useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
-import Translate from 'components/translate/Translate'
 import METAMASK_DL_IMG from 'resources/download-metamask.png'
 import METAMASK_IMG from 'resources/metamask.png'
 import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
-import AuthHoc from './AuthHoc'
 import { AUTH_TYPES } from 'constants/misc'
 import { AddrItem } from './AuthCommon'
-import { addToast, execute } from 'actions'
 import {
 	ContentBox,
 	ContentBody,
@@ -18,20 +15,30 @@ import {
 	TopLoading,
 } from 'components/common/dialog/content'
 import Helper from 'helpers/miscHelpers'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { getEthers, getEthereumProvider } from 'services/smart-contracts/ethers'
 import { getSigner } from 'services/smart-contracts/actions/ethers'
 import { getAddressBalances } from 'services/smart-contracts/actions/stats'
 import Box from '@material-ui/core/Box'
+import {
+	addToast,
+	updateIdentity,
+	updateIdentityWallet,
+	execute,
+} from 'actions'
+import { t, selectIdentity } from 'selectors'
+
+const useStyles = makeStyles(styles)
 
 function AuthMetamask(props) {
+	const classes = useStyles()
+	const { wallet = {}, stats } = useSelector(selectIdentity)
+	const { address } = wallet
 	const [installingMetamask, setInstallingMetamask] = useState(false)
-	const [address, setAddress] = useState(null)
-	const [stats, setStats] = useState(null)
+	// const [stats, setStats] = useState(null)
 	const [waitingMetamaskAction, setWaitingMetamaskAction] = useState(false)
 	const [waitingAddrsData, setWaitingAddrsData] = useState(false)
-	const { t, classes } = props
 	const isOpera =
 		!!window.opr || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0
 	const [isMetamaskEthereumProvider, setIsMetamaskEthereumProvider] = useState(
@@ -74,16 +81,19 @@ function AuthMetamask(props) {
 			const stats = await getAddressBalances({
 				address: { address },
 				authType,
+				getFullBalances: true,
 			})
-			setAddress(address)
-			setStats(stats)
+
+			execute(updateIdentity('stats', stats))
 			setWaitingAddrsData(false)
 
-			props.updateWallet({
-				address,
-				authType: AUTH_TYPES.METAMASK.name,
-				signType: AUTH_TYPES.METAMASK.signType,
-			})
+			execute(
+				updateIdentityWallet({
+					address,
+					authType: AUTH_TYPES.METAMASK.name,
+					signType: AUTH_TYPES.METAMASK.signType,
+				})
+			)
 		} catch (err) {
 			console.error('Error: catch', err)
 			setWaitingMetamaskAction(false)
@@ -203,10 +213,4 @@ function AuthMetamask(props) {
 	)
 }
 
-AuthMetamask.propTypes = {
-	updateWallet: PropTypes.func.isRequired,
-	t: PropTypes.func.isRequired,
-	classes: PropTypes.object.isRequired,
-}
-
-export default Translate(AuthHoc(withStyles(styles)(AuthMetamask)))
+export default AuthMetamask
