@@ -98,11 +98,6 @@ const QuickLogin = props => {
 								<Grid item xs={12}>
 									{!!identity.walletAddr && (
 										<div>
-											<Typography variant='body1'>
-												{t('QUICK_WALLET_ADDRESS', {
-													args: [identity.walletAddr],
-												})}
-											</Typography>
 											<Typography variant='body1' gutterBottom>
 												{t('QUICK_IDENTITY_ADDRESS', {
 													args: [identity.identityAddr],
