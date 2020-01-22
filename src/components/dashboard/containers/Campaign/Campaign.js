@@ -21,8 +21,8 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Anchor from 'components/common/anchor/anchor'
 import { selectMainToken } from 'selectors'
-import MUIDataTableEnchanced from 'components/dashboard/containers/Tables/MUIDataTableEnchanced'
 import CampaignStatsDoughnut from 'components/dashboard/charts/campaigns/CampaignStatsDoughnut'
+import CampaignStatsBreakdownTable from 'components/dashboard/containers/Tables/CampaignStatsBreakdownTable'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
@@ -40,24 +40,6 @@ export class Campaign extends Component {
 
 	handleTabChange = (event, index) => {
 		this.setState({ tabIndex: index })
-	}
-
-	getTableData = (campaingAnalytics, campaignId) => {
-		//IMPRESSION.byChannelStats[""0x80b2d99df436d53660737d51b8a130d053279b46cb2ac9ba91dd79b34dab6687""]
-		const results = []
-		const campaign = type => campaingAnalytics[type].byChannelStats[campaignId]
-		const imprStats = campaign('IMPRESSION').reportChannelToHostname
-		const clickStats = campaign('CLICK').reportChannelToHostname
-		const earnStats = campaign('IMPRESSION').reportChannelToHostnamePay
-		Object.keys(imprStats).map(key => {
-			results.push({
-				website: key,
-				impressions: imprStats[key] || 0,
-				earnings: earnStats[key] || 0,
-				clicks: clickStats[key] || 0,
-			})
-		})
-		return results
 	}
 
 	CampaignActions = ({ campaign, actions, t }) => {
@@ -92,56 +74,8 @@ export class Campaign extends Component {
 			// ...rest
 		} = this.props
 		const { tabIndex } = this.state
-		const data = this.getTableData(campaingAnalytics, item.id)
-		// const pieData = this.getPieChartData(campaingAnalytics, item.id, 6)
-		const columns = [
-			{
-				name: 'website',
-				label: t('WEBSITE'),
-				options: {
-					filter: true,
-					sort: true,
-				},
-			},
-			{
-				name: 'impressions',
-				label: t('CHART_LABEL_IMPRESSIONS'),
-				options: {
-					filter: true,
-					sort: true,
-					customFilterListOptions: {
-						render: v => `${t('CHART_LABEL_IMPRESSIONS')}: >=${v}`,
-					},
-					filterOptions: {
-						names: ['100', '200', '500', '1000'],
-						logic: (impressions, filters) => {
-							if (filters.length) return Number(impressions) <= Number(filters)
-							return false
-						},
-					},
-					filterType: 'dropdown',
-				},
-			},
-			{
-				name: 'earnings',
-				label: t('WEBSITE_EARNINGS'),
-				options: {
-					filter: false,
-					sort: true,
-				},
-			},
-			{
-				name: 'clicks',
-				label: t('CHART_LABEL_CLICKS'),
-				options: {
-					filter: false,
-					sort: true,
-				},
-			},
-		]
 		const units = item.spec.adUnits
 		const campaign = new CampaignModel(item)
-
 		const balances =
 			campaign.status && campaign.status.lastApprovedBalances
 				? campaign.status.lastApprovedBalances
@@ -195,14 +129,9 @@ export class Campaign extends Component {
 							<Grid container spacing={2}>
 								<Box clone order={{ xs: 2, md: 2, lg: 1 }}>
 									<Grid item lg={8} md={12} xs={12}>
-										<MUIDataTableEnchanced
-											title={t('CAMPAIGN_STATS_BREAKDOWN')}
-											data={data}
-											columns={columns}
-											options={{
-												filterType: 'multiselect',
-												selectableRows: 'none',
-											}}
+										<CampaignStatsBreakdownTable
+											campaingAnalytics={campaingAnalytics}
+											campaignId={item.id}
 										/>
 									</Grid>
 								</Box>
