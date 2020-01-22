@@ -17,8 +17,6 @@ import { formatAddress } from 'helpers/formatters'
 import { push } from 'connected-react-router'
 import { t } from 'selectors'
 
-const REGISTRATION_OPEN = process.env.REGISTRATION_OPEN === 'true'
-
 const RRButton = withReactRouterLink(Button)
 const useStyles = makeStyles(styles)
 
@@ -26,8 +24,7 @@ const AuthSelect = () => {
 	const classes = useStyles()
 	const [wallets, setWallets] = useState([])
 
-	const regAllowed = useSelector(selectRegistrationAllowed)
-	const showRegistration = REGISTRATION_OPEN || regAllowed
+	const showRegistration = useSelector(selectRegistrationAllowed)
 	const auth = useSelector(selectAuth)
 	const account = useSelector(selectAccount)
 	const { wallet } = account || {}

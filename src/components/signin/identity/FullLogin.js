@@ -14,6 +14,7 @@ import {
 	selectIdentity,
 	t,
 	selectSearchParams,
+	selectRegistrationAllowed,
 } from 'selectors'
 import Dropdown from 'components/common/dropdown'
 import { GETTING_OWNER_IDENTITIES, CREATING_SESSION } from 'constants/spinners'
@@ -56,6 +57,8 @@ function FullLogin(props) {
 	searchParams.set('step', '1')
 
 	const search = searchParams.toString()
+
+	const showRegistration = useSelector(selectRegistrationAllowed)
 
 	useEffect(() => {
 		execute(updateOwnerIdentities({ owner: walletAddress }))
@@ -103,13 +106,15 @@ function FullLogin(props) {
 										})}
 									/>
 								</Grid>
-								<Grid item xs={12}>
-									<Button
-										onClick={() => execute(push(`/signup/full?${search}`))}
-									>
-										{t('CREATE_NEW_IDENTITY_LINK')}
-									</Button>
-								</Grid>
+								{showRegistration && (
+									<Grid item xs={12}>
+										<Button
+											onClick={() => execute(push(`/signup/full?${search}`))}
+										>
+											{t('CREATE_NEW_IDENTITY_LINK')}
+										</Button>
+									</Grid>
+								)}
 							</Grid>
 						</Grid>
 					</Grid>
