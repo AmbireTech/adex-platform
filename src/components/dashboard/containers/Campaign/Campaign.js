@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Grid from '@material-ui/core/Grid'
+import Box from '@material-ui/core/Box'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
 import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
 import Translate from 'components/translate/Translate'
@@ -18,10 +19,11 @@ import AppBar from '@material-ui/core/AppBar'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import ListSubheader from '@material-ui/core/ListSubheader'
 import Anchor from 'components/common/anchor/anchor'
-import { formatTokenAmount } from 'helpers/formatters'
-import { selectMainToken, selectCampaignStats } from 'selectors'
+import { t, selectMainToken } from 'selectors'
+import MUIDataTableEnchanced from 'components/dashboard/containers/Tables/MUIDataTableEnchanced'
+import { Doughnut } from 'react-chartjs-2'
+import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
@@ -39,6 +41,68 @@ export class Campaign extends Component {
 
 	handleTabChange = (event, index) => {
 		this.setState({ tabIndex: index })
+	}
+
+	getPieChartData = (campaingAnalytics, campaignId, maxDataSets) => {
+		const results = {
+			labels: [],
+			datasets: [
+				{
+					backgroundColor: CHARTS_COLORS,
+					hoverBackgroundColor: CHARTS_COLORS,
+					borderWidth: 0,
+					data: [],
+					label: t('CAMPAIGN_CHART_IMPRESSIONS'),
+				},
+				{
+					backgroundColor: CHARTS_COLORS,
+					hoverBackgroundColor: CHARTS_COLORS,
+					borderWidth: 0,
+					data: [],
+					label: t('CAMPAIGN_CHART_CLICKS'),
+				},
+			],
+		}
+		const campaign = type => campaingAnalytics[type].byChannelStats[campaignId]
+		const imprStats = campaign('IMPRESSION').reportChannelToHostname
+		const clickStats = campaign('CLICK').reportChannelToHostname
+		Object.keys(imprStats)
+			.sort((a, b) => imprStats[b] - imprStats[a])
+			.map((key, i) => {
+				if (i < maxDataSets) {
+					results.labels.push(key)
+					results.datasets[0].data.push(imprStats[key] || 0)
+					results.datasets[1].data.push(clickStats[key] || 0)
+				} else {
+					results.labels[maxDataSets] = t('PIE_CHART_OTHER')
+
+					results.datasets[0].data[maxDataSets] =
+						(results.datasets[0].data[maxDataSets] || 0) + (imprStats[key] || 0)
+
+					results.datasets[1].data[maxDataSets] =
+						(results.datasets[1].data[maxDataSets] || 0) +
+						(clickStats[key] || 0)
+				}
+			})
+		return results
+	}
+
+	getTableData = (campaingAnalytics, campaignId) => {
+		//IMPRESSION.byChannelStats[""0x80b2d99df436d53660737d51b8a130d053279b46cb2ac9ba91dd79b34dab6687""]
+		const results = []
+		const campaign = type => campaingAnalytics[type].byChannelStats[campaignId]
+		const imprStats = campaign('IMPRESSION').reportChannelToHostname
+		const clickStats = campaign('CLICK').reportChannelToHostname
+		const earnStats = campaign('IMPRESSION').reportChannelToHostnamePay
+		Object.keys(imprStats).map(key => {
+			results.push({
+				website: key,
+				impressions: imprStats[key] || 0,
+				earnings: earnStats[key] || 0,
+				clicks: clickStats[key] || 0,
+			})
+		})
+		return results
 	}
 
 	CampaignActions = ({ campaign, actions, t }) => {
@@ -69,11 +133,55 @@ export class Campaign extends Component {
 			actions,
 			history,
 			mainTokenSymbol,
-			campaignStats,
+			campaingAnalytics,
 			// ...rest
 		} = this.props
 		const { tabIndex } = this.state
-		console.log(campaignStats)
+		const data = this.getTableData(campaingAnalytics, item.id)
+		const pieData = this.getPieChartData(campaingAnalytics, item.id, 6)
+		const columns = [
+			{
+				name: 'website',
+				label: t('WEBSITE'),
+				options: {
+					filter: true,
+					sort: true,
+				},
+			},
+			{
+				name: 'impressions',
+				label: t('WEBSITE_IMPRESSIONS'),
+				options: {
+					filter: true,
+					sort: true,
+					customFilterListOptions: { render: v => `Impressions: >=${v}` },
+					filterOptions: {
+						names: ['100', '200', '500', '1000'],
+						logic: (impressions, filters) => {
+							if (filters.length) return Number(impressions) <= Number(filters)
+							return false
+						},
+					},
+					filterType: 'dropdown',
+				},
+			},
+			{
+				name: 'earnings',
+				label: t('WEBSITE_EARNINGS'),
+				options: {
+					filter: false,
+					sort: true,
+				},
+			},
+			{
+				name: 'clicks',
+				label: t('WEBSITE_CLICKS'),
+				options: {
+					filter: false,
+					sort: true,
+				},
+			},
+		]
 		const units = item.spec.adUnits
 		const campaign = new CampaignModel(item)
 
@@ -127,22 +235,60 @@ export class Campaign extends Component {
 					</AppBar>
 					<div style={{ marginTop: 10 }}>
 						{tabIndex === 0 && (
-							<List
-								subheader={
-									<ListSubheader component='div'>{t('BALANCES')}</ListSubheader>
-								}
-							>
-								{Object.keys(balances).map(key => (
-									<ListItem key={key}>
-										<ListItemText
-											primary={
-												formatTokenAmount(balances[key]) + ' ' + mainTokenSymbol
-											}
-											secondary={key}
+							<Grid container spacing={2}>
+								<Box clone order={{ xs: 2, md: 2, lg: 1 }}>
+									<Grid item lg={8} md={12} xs={12}>
+										<MUIDataTableEnchanced
+											title={t('CAMPAIGN_STATS_BREAKDOWN')}
+											data={data}
+											columns={columns}
+											options={{
+												filterType: 'multiselect',
+												selectableRows: 'none',
+											}}
 										/>
-									</ListItem>
-								))}
-							</List>
+									</Grid>
+								</Box>
+								<Box clone order={{ xs: 1, md: 1, lg: 2 }}>
+									<Grid item lg={4} md={12} xs={12}>
+										<Doughnut
+											width={450}
+											height={450}
+											data={pieData}
+											options={{
+												// responsive: true,
+												legend: {
+													position: 'bottom',
+												},
+												title: {
+													display: true,
+													text: t('CAMPAIGN_STATS_PIE_CHART'),
+												},
+												animation: {
+													animateScale: true,
+													animateRotate: true,
+												},
+												tooltips: {
+													callbacks: {
+														label: function(item, data) {
+															console.log(data.labels, item)
+															return (
+																data.datasets[item.datasetIndex].label +
+																': ' +
+																data.labels[item.index] +
+																': ' +
+																data.datasets[item.datasetIndex].data[
+																	item.index
+																]
+															)
+														},
+													},
+												},
+											}}
+										/>
+									</Grid>
+								</Box>
+							</Grid>
 						)}
 						{tabIndex === 1 && (
 							<EnhancedTable itemType={'AdUnit'} items={units} noActions />
@@ -199,7 +345,6 @@ Campaign.propTypes = {
 
 function mapStateToProps(state, ownProps) {
 	const { persist } = state
-	const { item } = ownProps
 	// let memory = state.memory
 	return {
 		units: persist.items['AdUnit'],
@@ -207,10 +352,7 @@ function mapStateToProps(state, ownProps) {
 		objModel: CampaignModel,
 		itemType: 'Campaign',
 		mainTokenSymbol: selectMainToken(state).symbol,
-		campaignStats: selectCampaignStats(state, {
-			eventType: 'IMPRESSIONS',
-			campaignId: item.id,
-		}),
+		campaingAnalytics: persist.analytics.campaigns,
 	}
 }
 
