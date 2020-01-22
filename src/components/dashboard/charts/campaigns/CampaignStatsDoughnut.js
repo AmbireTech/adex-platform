@@ -16,14 +16,14 @@ function CampaignStatsDoughnut(props) {
 					hoverBackgroundColor: CHARTS_COLORS,
 					borderWidth: 0,
 					data: [],
-					label: t('CAMPAIGN_CHART_IMPRESSIONS'),
+					label: t('CHART_LABEL_IMPRESSIONS'),
 				},
 				{
 					backgroundColor: CHARTS_COLORS,
 					hoverBackgroundColor: CHARTS_COLORS,
 					borderWidth: 0,
 					data: [],
-					label: t('CAMPAIGN_CHART_CLICKS'),
+					label: t('CHART_LABEL_CLICKS'),
 				},
 			],
 		}

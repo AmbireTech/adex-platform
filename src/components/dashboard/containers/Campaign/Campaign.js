@@ -105,11 +105,13 @@ export class Campaign extends Component {
 			},
 			{
 				name: 'impressions',
-				label: t('WEBSITE_IMPRESSIONS'),
+				label: t('CHART_LABEL_IMPRESSIONS'),
 				options: {
 					filter: true,
 					sort: true,
-					customFilterListOptions: { render: v => `Impressions: >=${v}` },
+					customFilterListOptions: {
+						render: v => `${t('CHART_LABEL_IMPRESSIONS')}: >=${v}`,
+					},
 					filterOptions: {
 						names: ['100', '200', '500', '1000'],
 						logic: (impressions, filters) => {
@@ -130,7 +132,7 @@ export class Campaign extends Component {
 			},
 			{
 				name: 'clicks',
-				label: t('WEBSITE_CLICKS'),
+				label: t('CHART_LABEL_CLICKS'),
 				options: {
 					filter: false,
 					sort: true,
