@@ -277,6 +277,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	const feeTokenWhitelist = selectFeeTokenWhitelist()
 	const saiToken = selectSaiToken()
 	const { mainToken, daiAddr, saiAddr } = selectRelayerConfig()
+	const mainTokenWithFees = feeTokenWhitelist[mainToken.address]
 
 	let isDeployed = (await provider.getCode(identityAddr)) !== '0x'
 	let identityContract = null
@@ -290,8 +291,10 @@ export async function getIdentityTxnsWithNoncesAndFees({
 		: 0
 
 	const feesForMainTxns = txns.length
-		? bigNumberify(!initialNonce ? mainToken.minDeploy : mainToken.min).add(
-				bigNumberify(mainToken.min).mul(txns.length - 1)
+		? bigNumberify(
+				!initialNonce ? mainTokenWithFees.minDeploy : mainTokenWithFees.min
+		  ).add(
+				bigNumberify(mainTokenWithFees.min).mul(bigNumberify(txns.length - 1))
 		  )
 		: bigNumberify(0)
 
