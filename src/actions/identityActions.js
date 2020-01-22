@@ -589,8 +589,6 @@ export function validateQuickDeploy({ validateId, dirty }) {
 
 export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 	return async function(dispatch, getState) {
-		updateSpinner(validateId, true)(dispatch)
-
 		const identity = selectIdentity(getState())
 		const { email, emailCheck, password, passwordCheck, tosCheck } = identity
 
@@ -607,6 +605,7 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 		const isValid = validations.every(v => v === true)
 
 		if (isValid) {
+			updateSpinner(validateId, true)(dispatch)
 			await validateQuickDeploy({ validateId, dirty, skipSpinnerUpdate: true })(
 				dispatch,
 				getState
@@ -621,8 +620,6 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 
 export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 	return async function(dispatch, getState) {
-		updateSpinner(validateId, true)(dispatch)
-
 		const identity = selectIdentity(getState())
 		const {
 			wallet,
@@ -648,6 +645,7 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 		const isValid = validations.every(v => v === true)
 
 		if (isValid) {
+			updateSpinner(validateId, true)(dispatch)
 			await validateFullDeploy({
 				validateId,
 				dirty,
