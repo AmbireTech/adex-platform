@@ -16,7 +16,13 @@ import {
 	selectSearchParams,
 } from 'selectors'
 import Dropdown from 'components/common/dropdown'
-import { GETTING_OWNER_IDENTITIES } from 'constants/spinners'
+import { GETTING_OWNER_IDENTITIES, CREATING_SESSION } from 'constants/spinners'
+import {
+	ContentBox,
+	ContentBody,
+	FullContentMessage,
+} from 'components/common/dialog/content'
+import { WALLET_ACTIONS_MSGS } from 'constants/misc'
 
 const getIdentitiesForDropdown = (ownerIdentities = [], t) =>
 	ownerIdentities.map(id => {
@@ -40,6 +46,12 @@ function FullLogin(props) {
 	const spinner = useSelector(state =>
 		selectSpinnerById(state, GETTING_OWNER_IDENTITIES)
 	)
+	const sessionSpinner = useSelector(state =>
+		selectSpinnerById(state, CREATING_SESSION)
+	)
+
+	const walletMsgs = WALLET_ACTIONS_MSGS[wallet.authType || 'default']
+
 	const searchParams = useSelector(selectSearchParams)
 	searchParams.set('step', '1')
 
@@ -52,45 +64,58 @@ function FullLogin(props) {
 	}, [])
 
 	return (
-		<Grid
-			container
-			spacing={2}
-			// direction='row'
-			alignContent='space-between'
-			alignItems='center'
-		>
-			<Grid item xs={12}>
-				<Grid container spacing={2}>
-					<Grid item xs={12}>
-						<Typography variant='body2' color='primary' gutterBottom>
-							{t('FULL_LOGIN_INFO')}
-						</Typography>
+		<ContentBox>
+			{sessionSpinner ? (
+				<FullContentMessage
+					msgs={walletMsgs}
+					spinner={true}
+				></FullContentMessage>
+			) : (
+				<ContentBody>
+					<Grid
+						container
+						spacing={2}
+						// direction='row'
+						alignContent='space-between'
+						alignItems='center'
+					>
+						<Grid item xs={12}>
+							<Grid container spacing={2}>
+								<Grid item xs={12}>
+									<Typography variant='body2' color='primary' gutterBottom>
+										{t('FULL_LOGIN_INFO')}
+									</Typography>
+								</Grid>
+								<Grid item xs={12}>
+									<Dropdown
+										label={t('SELECT_IDENTITY')}
+										helperText={t('SELECT_IDENTITY_INFO')}
+										onChange={val =>
+											execute(updateIdentity('identityContractAddress', val))
+										}
+										source={getIdentitiesForDropdown(ownerIdentities, t)}
+										value={identityContractAddress || ''}
+										htmlId='label-identityContractAddress'
+										fullWidth
+										loading={!!spinner}
+										noSrcLabel={t('NO_IDENTITIES_FOR_ADDR', {
+											args: [walletAddress],
+										})}
+									/>
+								</Grid>
+								<Grid item xs={12}>
+									<Button
+										onClick={() => execute(push(`/signup/full?${search}`))}
+									>
+										{t('CREATE_NEW_IDENTITY_LINK')}
+									</Button>
+								</Grid>
+							</Grid>
+						</Grid>
 					</Grid>
-					<Grid item xs={12}>
-						<Dropdown
-							label={t('SELECT_IDENTITY')}
-							helperText={t('SELECT_IDENTITY_INFO')}
-							onChange={val =>
-								execute(updateIdentity('identityContractAddress', val))
-							}
-							source={getIdentitiesForDropdown(ownerIdentities, t)}
-							value={identityContractAddress || ''}
-							htmlId='label-identityContractAddress'
-							fullWidth
-							loading={!!spinner}
-							noSrcLabel={t('NO_IDENTITIES_FOR_ADDR', {
-								args: [walletAddress],
-							})}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<Button onClick={() => execute(push(`/signup/full?${search}`))}>
-							{t('CREATE_NEW_IDENTITY_LINK')}
-						</Button>
-					</Grid>
-				</Grid>
-			</Grid>
-		</Grid>
+				</ContentBody>
+			)}
+		</ContentBox>
 	)
 }
 
