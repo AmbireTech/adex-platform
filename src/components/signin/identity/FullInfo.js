@@ -144,7 +144,7 @@ const FulInfo = props => {
 										/>
 									}
 									label={t('ACCESS_WARNING_FULL_CHECK', {
-										args: wallet.authType,
+										args: [wallet.authType],
 									})}
 								/>
 								{accessWarningCheck && !!accessWarningCheck.dirty && (
