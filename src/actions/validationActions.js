@@ -190,3 +190,16 @@ export function validateIdentityContractOwner(
 		return isValid
 	}
 }
+
+export function validateAccessWarning(validateId, accepted, dirty) {
+	return async function(dispatch, getState) {
+		const isValid = !!accepted
+		validate(validateId, 'accessWarningCheck', {
+			isValid: isValid,
+			err: { msg: 'ERR_ACCESS_WARNING_CHECK' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
