@@ -109,13 +109,3 @@ export const selectStatsChartData = createSelector(
 		)
 	}
 )
-
-export const selectCampaignStats = createSelector(
-	[selectAnalytics, (_, opts = {}) => opts],
-	(analytics, { eventType, campaignId }) => {
-		console.log('EVENT TYPE', eventType)
-		console.log('ANAL', analytics)
-		console.log('CAMP', campaignId)
-		return analytics.campaigns[eventType]
-	}
-)
