@@ -20,10 +20,9 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Anchor from 'components/common/anchor/anchor'
-import { t, selectMainToken } from 'selectors'
+import { selectMainToken } from 'selectors'
 import MUIDataTableEnchanced from 'components/dashboard/containers/Tables/MUIDataTableEnchanced'
-import { Doughnut } from 'react-chartjs-2'
-import { CHARTS_COLORS } from 'components/dashboard/charts/options'
+import CampaignStatsDoughnut from 'components/dashboard/charts/campaigns/CampaignStatsDoughnut'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
@@ -41,50 +40,6 @@ export class Campaign extends Component {
 
 	handleTabChange = (event, index) => {
 		this.setState({ tabIndex: index })
-	}
-
-	getPieChartData = (campaingAnalytics, campaignId, maxDataSets) => {
-		const results = {
-			labels: [],
-			datasets: [
-				{
-					backgroundColor: CHARTS_COLORS,
-					hoverBackgroundColor: CHARTS_COLORS,
-					borderWidth: 0,
-					data: [],
-					label: t('CAMPAIGN_CHART_IMPRESSIONS'),
-				},
-				{
-					backgroundColor: CHARTS_COLORS,
-					hoverBackgroundColor: CHARTS_COLORS,
-					borderWidth: 0,
-					data: [],
-					label: t('CAMPAIGN_CHART_CLICKS'),
-				},
-			],
-		}
-		const campaign = type => campaingAnalytics[type].byChannelStats[campaignId]
-		const imprStats = campaign('IMPRESSION').reportChannelToHostname
-		const clickStats = campaign('CLICK').reportChannelToHostname
-		Object.keys(imprStats)
-			.sort((a, b) => imprStats[b] - imprStats[a])
-			.map((key, i) => {
-				if (i < maxDataSets) {
-					results.labels.push(key)
-					results.datasets[0].data.push(imprStats[key] || 0)
-					results.datasets[1].data.push(clickStats[key] || 0)
-				} else {
-					results.labels[maxDataSets] = t('PIE_CHART_OTHER')
-
-					results.datasets[0].data[maxDataSets] =
-						(results.datasets[0].data[maxDataSets] || 0) + (imprStats[key] || 0)
-
-					results.datasets[1].data[maxDataSets] =
-						(results.datasets[1].data[maxDataSets] || 0) +
-						(clickStats[key] || 0)
-				}
-			})
-		return results
 	}
 
 	getTableData = (campaingAnalytics, campaignId) => {
@@ -138,7 +93,7 @@ export class Campaign extends Component {
 		} = this.props
 		const { tabIndex } = this.state
 		const data = this.getTableData(campaingAnalytics, item.id)
-		const pieData = this.getPieChartData(campaingAnalytics, item.id, 6)
+		// const pieData = this.getPieChartData(campaingAnalytics, item.id, 6)
 		const columns = [
 			{
 				name: 'website',
@@ -251,40 +206,9 @@ export class Campaign extends Component {
 								</Box>
 								<Box clone order={{ xs: 1, md: 1, lg: 2 }}>
 									<Grid item lg={4} md={12} xs={12}>
-										<Doughnut
-											width={450}
-											height={450}
-											data={pieData}
-											options={{
-												// responsive: true,
-												legend: {
-													position: 'bottom',
-												},
-												title: {
-													display: true,
-													text: t('CAMPAIGN_STATS_PIE_CHART'),
-												},
-												animation: {
-													animateScale: true,
-													animateRotate: true,
-												},
-												tooltips: {
-													callbacks: {
-														label: function(item, data) {
-															console.log(data.labels, item)
-															return (
-																data.datasets[item.datasetIndex].label +
-																': ' +
-																data.labels[item.index] +
-																': ' +
-																data.datasets[item.datasetIndex].data[
-																	item.index
-																]
-															)
-														},
-													},
-												},
-											}}
+										<CampaignStatsDoughnut
+											campaingAnalytics={campaingAnalytics}
+											campaignId={item.id}
 										/>
 									</Grid>
 								</Box>
