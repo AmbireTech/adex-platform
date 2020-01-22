@@ -37,6 +37,10 @@ import {
 	validateIdentityContractOwner,
 } from './validationActions'
 import { getErrorMsg } from 'helpers/errors'
+import {
+	GETTING_OWNER_IDENTITIES,
+	UPLOADING_ACCOUNT_DATA,
+} from 'constants/spinners'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -98,7 +102,7 @@ export function resetWallet() {
 
 export function onUploadLocalWallet(event) {
 	return async function(dispatch) {
-		updateSpinner('uploading-account-data', true)(dispatch)
+		updateSpinner(UPLOADING_ACCOUNT_DATA, true)(dispatch)
 		const file = event.target.files[0]
 		const reader = new FileReader()
 
@@ -133,7 +137,7 @@ export function onUploadLocalWallet(event) {
 					timeout: 5000,
 				})(dispatch)
 			}
-			updateSpinner('uploading-account-data', true)(dispatch)
+			updateSpinner(UPLOADING_ACCOUNT_DATA, true)(dispatch)
 		}
 
 		const onError = err => {
@@ -145,7 +149,7 @@ export function onUploadLocalWallet(event) {
 				}),
 				timeout: 5000,
 			})(dispatch)
-			updateSpinner('uploading-account-data', true)(dispatch)
+			updateSpinner(UPLOADING_ACCOUNT_DATA, false)(dispatch)
 		}
 
 		reader.onerror = ev => {
@@ -196,7 +200,7 @@ export function identityWithdraw({
 
 export function ownerIdentities({ owner }) {
 	return async function(dispatch, getState) {
-		updateSpinner('getting-owner-identities', true)(dispatch)
+		updateSpinner(GETTING_OWNER_IDENTITIES, true)(dispatch)
 		try {
 			const identityData = await getOwnerIdentities({ owner })
 			const data = Object.entries(identityData).map(
@@ -227,7 +231,7 @@ export function ownerIdentities({ owner }) {
 				timeout: 20000,
 			})(dispatch)
 		}
-		updateSpinner('getting-owner-identities', false)(dispatch)
+		updateSpinner(GETTING_OWNER_IDENTITIES, false)(dispatch)
 	}
 }
 

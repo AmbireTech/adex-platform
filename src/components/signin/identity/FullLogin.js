@@ -16,6 +16,7 @@ import {
 	selectSearchParams,
 } from 'selectors'
 import Dropdown from 'components/common/dropdown'
+import { GETTING_OWNER_IDENTITIES } from 'constants/spinners'
 
 const getIdentitiesForDropdown = (ownerIdentities = [], t) =>
 	ownerIdentities.map(id => {
@@ -37,7 +38,7 @@ function FullLogin(props) {
 	} = identity
 	const walletAddress = wallet.address || walletAddr
 	const spinner = useSelector(state =>
-		selectSpinnerById(state, 'getting-owner-identities')
+		selectSpinnerById(state, GETTING_OWNER_IDENTITIES)
 	)
 	const searchParams = useSelector(selectSearchParams)
 	searchParams.set('step', '1')
