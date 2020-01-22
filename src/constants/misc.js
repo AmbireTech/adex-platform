@@ -129,3 +129,21 @@ export const VALIDATOR_ANALYTICS_TIMEFRAMES = [
 
 export const MOON_GRAVITY_ACCELERATION = 1.625
 export const MOON_TO_EARTH_WEIGHT = 0.166
+
+export const WALLET_ACTIONS_MSGS = {
+	[AUTH_TYPES.METAMASK.name]: [
+		{ message: 'METAMASK_WAITING_ACTION' },
+		{ message: 'METAMASK_WAITING_ACTION_INFO', strong: true },
+	],
+	[AUTH_TYPES.TREZOR.name]: [{ message: 'TREZOR_WAITING_ACTION' }],
+	[AUTH_TYPES.LEDGER.name]: [{ message: 'LEDGER_WAITING_ACTION' }],
+	[AUTH_TYPES.QUICK.name]: [
+		{ message: 'QUICK_WAITING_MSG' },
+		{ message: 'QUICK_WAITING_MSG_INFO' },
+	],
+	[AUTH_TYPES.GRANT.name]: [
+		{ message: 'GRANT_WAITING_MSG' },
+		{ message: 'GRANT_WAITING_MSG_INFO' },
+	],
+	default: [{ message: 'WAITING_FOR_USER_ACTION' }],
+}
