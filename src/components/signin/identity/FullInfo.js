@@ -17,7 +17,6 @@ import {
 	execute,
 	validateEmail,
 	validateEmailCheck,
-	validateTOS,
 	updateIdentity,
 } from 'actions'
 import {
@@ -29,11 +28,6 @@ import { CREATING_SESSION } from 'constants/spinners'
 import { WALLET_ACTIONS_MSGS } from 'constants/misc'
 
 const FulInfo = props => {
-	const checkTos = checked => {
-		execute(updateIdentity('tosCheck', checked))
-		execute(validateTOS(validateId, checked, true))
-	}
-
 	const { validateId } = props
 	const identity = useSelector(selectIdentity)
 	const { wallet = {} } = identity
@@ -49,7 +43,7 @@ const FulInfo = props => {
 
 	const walletMsgs = WALLET_ACTIONS_MSGS[wallet.authType || 'default']
 	// Errors
-	const { email, emailCheck, tosCheck } = validations
+	const { email, emailCheck, tosCheck, accessWarningCheck } = validations
 	return (
 		<ContentBox>
 			{sessionSpinner ? (
@@ -130,6 +124,37 @@ const FulInfo = props => {
 						<Grid item xs={12}>
 							<FormControl
 								required
+								error={accessWarningCheck && accessWarningCheck.dirty}
+								component='fieldset'
+							>
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={!!identity.accessWarningCheck}
+											onChange={ev =>
+												execute(
+													updateIdentity(
+														'accessWarningCheck',
+														ev.target.checked
+													)
+												)
+											}
+											value='accessWarningCheck'
+											color='primary'
+										/>
+									}
+									label={t('ACCESS_WARNING_FULL_CHECK', {
+										args: wallet.authType,
+									})}
+								/>
+								{accessWarningCheck && !!accessWarningCheck.dirty && (
+									<FormHelperText>{accessWarningCheck.errMsg}</FormHelperText>
+								)}
+							</FormControl>
+						</Grid>
+						<Grid item xs={12}>
+							<FormControl
+								required
 								error={tosCheck && tosCheck.dirty}
 								component='fieldset'
 							>
@@ -137,7 +162,9 @@ const FulInfo = props => {
 									control={
 										<Checkbox
 											checked={!!identity.tosCheck}
-											onChange={ev => checkTos(ev.target.checked)}
+											onChange={ev =>
+												execute(updateIdentity('tosCheck', ev.target.checked))
+											}
 											value='tosCheck'
 											color='primary'
 										/>
