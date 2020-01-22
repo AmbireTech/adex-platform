@@ -160,11 +160,7 @@ const MaterialStepper = props => {
 				}}
 			>
 				<div className={classes.pageContent}>
-					{!!Comp && (
-						<Box>
-							<Comp {...pageProps} />{' '}
-						</Box>
-					)}
+					{!!Comp && <Comp {...pageProps} />}
 
 					{!!dirtyErrors && (
 						<Box color='error.main'>
