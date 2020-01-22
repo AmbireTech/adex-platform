@@ -20,6 +20,7 @@ import { openChannel } from 'services/smart-contracts/actions/core'
 import { validations, Joi } from 'adex-models'
 import MomentUtils from '@date-io/moment'
 import { selectSpinnerById, selectMainToken } from 'selectors'
+import { GETTING_CAMPAIGNS_FEES } from 'constants/spinners'
 
 const moment = new MomentUtils()
 const campaignTitleSchema = Joi.string()
@@ -159,7 +160,7 @@ class CampaignFinance extends Component {
 		const { newItem, actions, account } = this.props
 		const { updateSpinner } = actions
 
-		updateSpinner('getting-campaigns-fees', true)
+		updateSpinner(GETTING_CAMPAIGNS_FEES, true)
 		this.validateAndUpdateValidator(false, 0, newItem.validators[0])
 		this.validateAndUpdateValidator(false, 1, newItem.validators[1])
 		this.validateAmount(
@@ -188,7 +189,7 @@ class CampaignFinance extends Component {
 		})
 
 		this.setState({ maxChannelFees: feesData.fees, loading: false })
-		updateSpinner('getting-campaigns-fees', false)
+		updateSpinner(GETTING_CAMPAIGNS_FEES, false)
 	}
 
 	validateAndUpdateValidator = (dirty, index, key = {}, update) => {
@@ -549,7 +550,7 @@ CampaignFinance.propTypes = {
 
 function mapStateToProps(state) {
 	const { persist } = state
-	const spinner = selectSpinnerById(state, 'getting-campaigns-fees')
+	const spinner = selectSpinnerById(state, GETTING_CAMPAIGNS_FEES)
 	return {
 		account: persist.account,
 		spinner,
