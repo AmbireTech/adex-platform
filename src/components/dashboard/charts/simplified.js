@@ -40,17 +40,20 @@ export const SimpleStatistics = ({
 					const activePoint = chart.controller.tooltip._active[0]
 					const ctx = chart.ctx
 					const x = activePoint.tooltipPosition().x
-					const topY = chart.scales['y-axis-1'].top
-					const bottomY = chart.scales['y-axis-1'].bottom
-					ctx.save()
-					ctx.beginPath()
-					ctx.moveTo(x, topY)
-					ctx.lineTo(x, bottomY)
-					ctx.lineWidth = 1 // line width
-					ctx.setLineDash([1, 5])
-					ctx.strokeStyle = '#C0C0C0' // color of the vertical line
-					ctx.stroke()
-					ctx.restore()
+					const chartScalesy1 = chart.scales['y-axis-1']
+					if (chartScalesy1) {
+						const topY = chartScalesy1.top
+						const bottomY = chartScalesy1.bottom
+						ctx.save()
+						ctx.beginPath()
+						ctx.moveTo(x, topY)
+						ctx.lineTo(x, bottomY)
+						ctx.lineWidth = 1 // line width
+						ctx.setLineDash([1, 5])
+						ctx.strokeStyle = '#C0C0C0' // color of the vertical line
+						ctx.stroke()
+						ctx.restore()
+					}
 				}
 			},
 		})
