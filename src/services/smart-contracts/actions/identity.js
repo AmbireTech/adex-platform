@@ -274,16 +274,10 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	account,
 	getToken,
 }) {
-	const {
-		sweepTxns = [],
-		swapAmountsByToken = {},
-	} = await getSweepingTxnsIfNeeded({
-		amountInMainTokenNeeded,
-		account,
-	})
 	const feeTokenWhitelist = selectFeeTokenWhitelist()
 	const saiToken = selectSaiToken()
 	const { mainToken, daiAddr, saiAddr } = selectRelayerConfig()
+	const mainTokenWithFees = feeTokenWhitelist[mainToken.address]
 
 	let isDeployed = (await provider.getCode(identityAddr)) !== '0x'
 	let identityContract = null
@@ -295,6 +289,24 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	const initialNonce = isDeployed
 		? (await identityContract.nonce()).toNumber()
 		: 0
+
+	const feesForMainTxns = txns.length
+		? bigNumberify(
+				!initialNonce ? mainTokenWithFees.minDeploy : mainTokenWithFees.min
+		  ).add(
+				bigNumberify(mainTokenWithFees.min).mul(bigNumberify(txns.length - 1))
+		  )
+		: bigNumberify(0)
+
+	const {
+		sweepTxns = [],
+		swapAmountsByToken = {},
+	} = await getSweepingTxnsIfNeeded({
+		amountInMainTokenNeeded: feesForMainTxns.add(
+			bigNumberify(amountInMainTokenNeeded)
+		),
+		account,
+	})
 
 	// { txnsByFeeToken, saiWithdrawAmount }
 	const sweepTxnsByToken = txnsByTokenWithSaiToDaiSwap({
