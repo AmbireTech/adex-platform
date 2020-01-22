@@ -21,37 +21,37 @@ describe('generateSalt', () => {
 	})
 })
 
-describe('getWalletHash', () => {
+describe('getWalletHash', async () => {
 	const salt = generateSalt('somepass')
 	const password = 'somepasswordqnkokura'
 
-	it('should return same hash', () => {
-		const hahsOne = getWalletHash({ salt, password })
-		const hahsTwo = getWalletHash({ salt, password })
+	it('should return same hash', async () => {
+		const hahsOne = await getWalletHash({ salt, password })
+		const hahsTwo = await getWalletHash({ salt, password })
 
 		expect(hahsOne).toEqual(hahsTwo)
 	})
 
-	it('should return different hash with same salt and different password', () => {
+	it('should return different hash with same salt and different password', async () => {
 		const hashes = {}
 
 		const count = 2
 
 		for (let index = 0; index < count; index++) {
-			const hash = getWalletHash({ salt, password: password + index })
+			const hash = await getWalletHash({ salt, password: password + index })
 			hashes[hash] = true
 		}
 
 		expect(Object.keys(hashes).length).toEqual(count)
 	})
 
-	it('should return different hash with same password and different salt', () => {
+	it('should return different hash with same password and different salt', async () => {
 		const hashes = {}
 
 		const count = 2
 
 		for (let index = 0; index < count; index++) {
-			const hash = getWalletHash({
+			const hash = await getWalletHash({
 				salt: generateSalt(`somepass${index}`),
 				password,
 			})
@@ -71,11 +71,11 @@ describe('wallet', () => {
 		expect(wallet).toHaveProperty('mnemonic', 'privateKey', 'address', 'path')
 	})
 
-	it('can  be encrypted', () => {
+	it('can  be encrypted', async () => {
 		expect(wallet).toHaveProperty('mnemonic', 'privateKey', 'address', 'path')
 
-		const encrypted = encrData({ email, password, data: wallet })
-		const decrypted = decrData({ email, password, data: encrypted })
+		const encrypted = await encrData({ email, password, data: wallet })
+		const decrypted = await decrData({ email, password, data: encrypted })
 		expect(decrypted).toEqual(wallet)
 	})
 })

@@ -13,7 +13,7 @@ const getKeyHash = key => {
 	return hashed
 }
 
-export const encrypt = (text, key) => {
+export const encrypt = async (text, key) => {
 	if (!text) return ''
 	if (!key) {
 		throw new Error('ERR_ENCRYPTING_NO_PASS')
@@ -26,7 +26,7 @@ export const encrypt = (text, key) => {
 	return `${iv.toString('hex')}:${encrypted.toString('hex')}`
 }
 
-export const decrypt = (text, key) => {
+export const decrypt = async (text, key) => {
 	const textParts = text.split(':')
 	const iv = Buffer.from(textParts.shift(), 'hex')
 	const encryptedText = Buffer.from(textParts.join(':'), 'hex')
@@ -37,7 +37,7 @@ export const decrypt = (text, key) => {
 	return decrypted.toString()
 }
 
-export const encryptLegacy = (text, password) => {
+export const encryptLegacy = async (text, password) => {
 	if (!text) return ''
 	const cipher = crypto.createCipher(CIPHER_LEGACY_ALG, password)
 	let crypted = cipher.update(text, 'utf8', 'hex')
@@ -45,7 +45,7 @@ export const encryptLegacy = (text, password) => {
 	return crypted
 }
 
-export const decryptLegacy = (text, password) => {
+export const decryptLegacy = async (text, password) => {
 	if (!text) return ''
 	const decipher = crypto.createDecipher(CIPHER_LEGACY_ALG, password)
 	let dec = decipher.update(text, 'hex', 'utf8')

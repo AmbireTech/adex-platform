@@ -39,8 +39,8 @@ import {
 import { logOut } from 'services/store-data/auth'
 import { getErrorMsg } from 'helpers/errors'
 import { push } from 'connected-react-router'
+import { CREATING_SESSION, QUICK_WALLET_BACKUP } from 'constants/spinners'
 
-const UPDATE_SETTINGS_INTERVAL = 24 * 60 * 60 * 1000 // 1 hour
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
 // MEMORY STORAGE
@@ -163,7 +163,7 @@ export function createSession({
 	deleteLegacyKey,
 }) {
 	return async function(dispatch) {
-		updateSpinner('creating-session', true)(dispatch)
+		updateSpinner(CREATING_SESSION, true)(dispatch)
 		try {
 			const newWallet = { ...wallet }
 			const sessionSignature =
@@ -233,7 +233,7 @@ export function createSession({
 			})(dispatch)
 
 			if (deleteLegacyKey) {
-				removeLegacyKey({
+				await removeLegacyKey({
 					email: wallet.email,
 					password: wallet.password,
 				})
@@ -248,7 +248,7 @@ export function createSession({
 			})(dispatch)
 		}
 
-		updateSpinner('creating-session', false)(dispatch)
+		updateSpinner(CREATING_SESSION, false)(dispatch)
 	}
 }
 
@@ -364,7 +364,7 @@ export function metamaskChecks() {
 
 async function hasBackup({ email, password }) {
 	const salt = generateSalt(email)
-	const hash = getWalletHash({ salt, password })
+	const hash = await getWalletHash({ salt, password })
 	const { encryptedWallet } = await getQuickWallet({ hash })
 
 	return !!encryptedWallet && encryptedWallet.wallet
@@ -372,8 +372,8 @@ async function hasBackup({ email, password }) {
 
 async function makeBackup({ email, password, authType }) {
 	const walletSalt = generateSalt(email)
-	const walletHash = getWalletHash({ salt: walletSalt, password })
-	const encryptedWallet = getRecoveryWalletData({
+	const walletHash = await getWalletHash({ salt: walletSalt, password })
+	const encryptedWallet = await getRecoveryWalletData({
 		email,
 		password,
 		authType,
@@ -389,7 +389,7 @@ async function makeBackup({ email, password, authType }) {
 
 export function ensureQuickWalletBackup() {
 	return async function(dispatch, getState) {
-		updateSpinner('quick-wallet-backup', true)(dispatch)
+		updateSpinner(QUICK_WALLET_BACKUP, true)(dispatch)
 		try {
 			const { email, password, authType } = selectWallet(getState())
 			const isLocal = authType === 'quick' || authType === 'grant'
@@ -398,6 +398,6 @@ export function ensureQuickWalletBackup() {
 				await makeBackup({ email, password, authType })
 			}
 		} catch (err) {}
-		updateSpinner('quick-wallet-backup', false)(dispatch)
+		updateSpinner(QUICK_WALLET_BACKUP, false)(dispatch)
 	}
 }

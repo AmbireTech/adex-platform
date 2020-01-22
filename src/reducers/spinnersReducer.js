@@ -2,7 +2,7 @@ import { UPDATE_SPINNER, UPDATE_ITEM } from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
 export default function spinnersReducer(state = initialState.spinners, action) {
-	let newState = { ...state }
+	const newState = { ...state }
 
 	switch (action.type) {
 		case UPDATE_SPINNER:

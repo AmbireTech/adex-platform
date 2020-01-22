@@ -1,5 +1,7 @@
 import { createSelector } from 'reselect'
 
+const REGISTRATION_OPEN = process.env.REGISTRATION_OPEN === 'true'
+
 export const selectNavTitle = state => state.memory.nav.navTitle
 export const selectSide = state => state.memory.nav.side
 export const selectUi = state => state.persist.ui
@@ -18,5 +20,5 @@ export const selectMultipleSpinnersByIds = createSelector(
 
 export const selectRegistrationAllowed = createSelector(
 	selectUi,
-	({ allowRegistration }) => !!allowRegistration
+	({ allowRegistration }) => REGISTRATION_OPEN || !!allowRegistration
 )

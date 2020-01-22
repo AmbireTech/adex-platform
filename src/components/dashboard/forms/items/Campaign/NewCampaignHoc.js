@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Campaign } from 'adex-models'
+import { OPENING_CAMPAIGN } from 'constants/spinners'
 
 export default function NewCampaignHoc(Decorated) {
 	class ItemForm extends Component {
@@ -82,7 +83,7 @@ export default function NewCampaignHoc(Decorated) {
 			newItem: new Campaign(memory.newItem['Campaign']),
 			adUnits,
 			adUnitsArray,
-			spinner: memory.spinners['opening-campaign'],
+			spinner: memory.spinners[OPENING_CAMPAIGN],
 		}
 	}
 

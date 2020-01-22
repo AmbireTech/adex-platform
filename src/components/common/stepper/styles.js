@@ -99,6 +99,8 @@ export const styles = theme => {
 			'& svg': {
 				color: errColor,
 			},
+			marginRight: spacing,
+			marginBottom: spacing,
 		},
 	}
 }

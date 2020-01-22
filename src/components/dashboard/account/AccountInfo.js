@@ -57,8 +57,8 @@ function AccountInfo() {
 		outstandingBalanceMainToken,
 	} = useSelector(selectAccountStatsFormatted)
 
-	const localWalletDownloadHref = () => {
-		const obj = getRecoveryWalletData({ email, password, authType })
+	const localWalletDownloadHref = async () => {
+		const obj = await getRecoveryWalletData({ email, password, authType })
 		if (!obj || !obj.wallet) {
 			return null
 		}
@@ -68,7 +68,7 @@ function AccountInfo() {
 		return data
 	}
 
-	const walletJsonData = localWalletDownloadHref()
+	const walletJsonData = (async () => await localWalletDownloadHref())()
 	const [expanded, setExpanded] = useState(false)
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
