@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
+import CampagnsTable from 'components/dashboard/containers/Tables/CampagnsTable'
 import Translate from 'components/translate/Translate'
 
 class Items extends Component {
@@ -17,7 +18,8 @@ class Items extends Component {
 
 		return (
 			<div>
-				<EnhancedTable itemType={itemType} items={items} />
+				<CampagnsTable />
+				{/* <EnhancedTable itemType={itemType} items={items} /> */}
 			</div>
 		)
 	}
