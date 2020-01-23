@@ -9,7 +9,7 @@ import Translate from 'components/translate/Translate'
 
 class Items extends Component {
 	componentWillMount() {
-		this.props.actions.updateNav('navTitle', this.props.header)
+		// this.props.actions.updateNav('navTitle', this.props.header)
 	}
 
 	render() {
