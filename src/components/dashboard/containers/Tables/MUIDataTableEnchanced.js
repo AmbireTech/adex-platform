@@ -19,6 +19,11 @@ export default function MUIDataTableEnchanced(props) {
 						padding: 0,
 					},
 				},
+				MuiTableRow: {
+					root: {
+						// height: 90,
+					},
+				},
 			},
 		})
 	const generalTableOptions = {
