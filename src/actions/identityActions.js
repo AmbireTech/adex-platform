@@ -721,3 +721,16 @@ export function updateIdentityWallet({
 		updateIdentity('wallet', wallet)(dispatch)
 	}
 }
+
+export function handleSignupLink(search) {
+	return function(dispatch) {
+		const searchParams = new URLSearchParams(search)
+
+		const email = searchParams.get('signup-email')
+
+		if (email) {
+			updateIdentity('email', email)(dispatch)
+			updateIdentity('emailCheck', email)(dispatch)
+		}
+	}
+}
