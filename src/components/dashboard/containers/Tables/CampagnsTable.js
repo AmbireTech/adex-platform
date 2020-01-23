@@ -2,19 +2,25 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 import Img from 'components/common/img/Img'
+import Tooltip from '@material-ui/core/Tooltip'
+import IconButton from '@material-ui/core/IconButton'
+import VisibilityIcon from '@material-ui/icons/Visibility'
 import DoneAllIcon from '@material-ui/icons/DoneAll'
 import WarningIcon from '@material-ui/icons/Warning'
 import HourglassFullIcon from '@material-ui/icons/HourglassFull'
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
-import { t, selectCampaigns, selectMainToken } from 'selectors'
-import { makeStyles } from '@material-ui/core/styles'
 import MUIDataTableEnchanced from 'components/dashboard/containers/Tables/MUIDataTableEnchanced'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
+import { t, selectCampaigns, selectMainToken, selectSide } from 'selectors'
+import { makeStyles } from '@material-ui/core/styles'
+import { bigNumberify } from 'ethers/utils'
 import { useSelector } from 'react-redux'
 import {
 	formatNumberWithCommas,
 	formatDateTime,
 	formatTokenAmount,
 } from 'helpers/formatters'
+const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(theme => ({
 	cellImg: {
@@ -30,6 +36,7 @@ function CampagnsTable(props) {
 	const classes = useStyles()
 	const campaigns = useSelector(selectCampaigns)
 	const { symbol, decimals } = useSelector(selectMainToken)
+	const side = useSelector(selectSide)
 	const columns = [
 		{
 			name: 'media',
@@ -37,14 +44,18 @@ function CampagnsTable(props) {
 			options: {
 				filter: false,
 				sort: false,
-				customBodyRender: ({ id, mediaUrl, mediaMime }) => {
+				customBodyRender: ({ id, mediaUrl, mediaMime, adUnits }) => {
+					const firstUnit = (adUnits && adUnits[0]) || {}
+					const src = firstUnit.mediaUrl || mediaUrl || ''
+					const mime = firstUnit.mediaMime || mediaMime || ''
 					return (
+						// TODO: Images issue some stop displaying
 						<Img
 							fullScreenOnClick={true}
 							className={classnames(classes.cellImg)}
-							src={mediaUrl}
+							src={src}
 							alt={id}
-							mediaMime={mediaMime}
+							mediaMime={mime}
 							allowVideo
 						/>
 					)
@@ -57,6 +68,17 @@ function CampagnsTable(props) {
 			options: {
 				filter: true,
 				sort: true,
+				filterOptions: {
+					names: ['Active', 'Closed', 'Completed'],
+					logic: (status, filters) => {
+						console.log('Filters', filters)
+						console.log('stats', status.humanFriendlyName)
+						//TODO: filter issues
+						if (filters.length)
+							return filters.includes(status.humanFriendlyName)
+						return false
+					},
+				},
 				customBodyRender: ({ humanFriendlyName, originalName }) => (
 					<React.Fragment>
 						{humanFriendlyName}{' '}
@@ -86,9 +108,8 @@ function CampagnsTable(props) {
 			options: {
 				filter: false,
 				sort: true,
-				customBodyRender: ({ id, fullName }) => (
-					<a href={`/customers/`}>TEST</a>
-				),
+				customBodyRender: fundsDistributedRatio =>
+					((fundsDistributedRatio || 0) / 10).toFixed(2),
 			},
 		},
 		{
@@ -97,9 +118,8 @@ function CampagnsTable(props) {
 			options: {
 				filter: false,
 				sort: true,
-				customBodyRender: ({ id, fullName }) => (
-					<a href={`/customers/`}>TEST</a>
-				),
+				customBodyRender: impressions =>
+					formatNumberWithCommas(impressions || 0),
 			},
 		},
 		{
@@ -108,9 +128,7 @@ function CampagnsTable(props) {
 			options: {
 				filter: false,
 				sort: true,
-				customBodyRender: ({ id, fullName }) => (
-					<a href={`/customers/`}>TEST</a>
-				),
+				customBodyRender: clicks => formatNumberWithCommas(clicks || 0),
 			},
 		},
 		{
@@ -119,8 +137,15 @@ function CampagnsTable(props) {
 			options: {
 				filter: false,
 				sort: true,
-				customBodyRender: ({ id, fullName }) => (
-					<a href={`/customers/`}>TEST</a>
+				customBodyRender: minPerImpression => (
+					<React.Fragment>
+						{formatTokenAmount(
+							bigNumberify(minPerImpression).mul(1000),
+							decimals,
+							true
+						)}
+						{` ${symbol}`}
+					</React.Fragment>
 				),
 			},
 		},
@@ -130,9 +155,8 @@ function CampagnsTable(props) {
 			options: {
 				filter: false,
 				sort: true,
-				customBodyRender: ({ id, fullName }) => (
-					<a href={`/customers/`}>TEST</a>
-				),
+				sortDirection: 'desc',
+				customBodyRender: created => formatDateTime(created),
 			},
 		},
 		{
@@ -141,9 +165,7 @@ function CampagnsTable(props) {
 			options: {
 				filter: false,
 				sort: true,
-				customBodyRender: ({ id, fullName }) => (
-					<a href={`/customers/`}>TEST</a>
-				),
+				customBodyRender: activeFrom => formatDateTime(activeFrom),
 			},
 		},
 		{
@@ -152,8 +174,26 @@ function CampagnsTable(props) {
 			options: {
 				filter: false,
 				sort: true,
-				customBodyRender: ({ id, fullName }) => (
-					<a href={`/customers/`}>TEST</a>
+				customBodyRender: withdrawPeriodStart =>
+					formatDateTime(withdrawPeriodStart),
+			},
+		},
+		{
+			name: 'actions',
+			label: t('PROP_ACTIONS'),
+			options: {
+				filter: false,
+				sort: true,
+				customBodyRender: ({ to }) => (
+					<Tooltip
+						title={t('LABEL_VIEW')}
+						// placement='top'
+						enterDelay={1000}
+					>
+						<RRIconButton to={to} variant='contained' aria-label='preview'>
+							<VisibilityIcon color='primary' />
+						</RRIconButton>
+					</Tooltip>
 				),
 			},
 		},
@@ -161,8 +201,9 @@ function CampagnsTable(props) {
 	const data = Object.values(campaigns).map(item => ({
 		media: {
 			id: item.id,
-			mediaUrl: item.adUnits[0].mediaUrl,
-			mediaMime: item.adUnits[0].mediaMime,
+			adUnits: item.adUnits,
+			mediaUrl: item.mediaUrl,
+			mediaMime: item.mediaMime,
 		},
 		status: {
 			humanFriendlyName: item.status.humanFriendlyName,
@@ -176,15 +217,21 @@ function CampagnsTable(props) {
 		created: item.created,
 		activeFrom: item.spec.withdrawPeriodStart,
 		withdrawPeriodStart: item.spec.withdrawPeriodStart,
+		actions: {
+			to: `/dashboard/${side}/Campaign/${item.id}`,
+		},
 	}))
+	const [pageNum, setPageNum] = React.useState(0)
 	return (
 		<MUIDataTableEnchanced
-			title={t('CAMPAIGN_STATS_BREAKDOWN')}
+			title={t('ALL_CAMPAIGNS')}
 			data={data}
 			columns={columns}
 			options={{
 				filterType: 'multiselect',
 				selectableRows: 'none',
+				page: pageNum,
+				onChangePage: num => setPageNum(num),
 			}}
 		/>
 	)

@@ -21,7 +21,9 @@ export default function MUIDataTableEnchanced(props) {
 				},
 			},
 		})
-	const localizationOptions = {
+	const generalTableOptions = {
+		rowsPerPage: 5,
+		rowsPerPageOptions: [5, 10, 25, 50, 100, 500],
 		//TODO: Add to adex-translations
 		textLabels: {
 			body: {
@@ -64,7 +66,7 @@ export default function MUIDataTableEnchanced(props) {
 				title={title}
 				data={data}
 				columns={columns}
-				options={{ ...localizationOptions, ...options }}
+				options={{ ...generalTableOptions, ...options }}
 			/>
 		</MuiThemeProvider>
 	)
