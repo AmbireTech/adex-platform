@@ -56,13 +56,13 @@ export const getWithdrawTokensBalances = async ({
 
 	const balances = await Promise.all(balancesCalls)
 	const { totalBalanceInMainToken, mainTokenBalance } = balances.reduce(
-		(data, token) => {
+		(data, balanceData) => {
 			data.totalBalanceInMainToken = data.totalBalanceInMainToken.add(
-				token.balanceMainToken
+				balanceData.balanceMainToken
 			)
 
-			if (token.address === mainToken.address) {
-				data.mainTokenBalance = token.balance
+			if (balanceData.token.address === mainToken.address) {
+				data.mainTokenBalance = balanceData.balance
 			}
 
 			return data
