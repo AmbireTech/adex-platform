@@ -167,7 +167,7 @@ export function handleRedirectParams(search) {
 
 		const email = searchParams.get('confirm-email')
 		const identity = searchParams.get('confirm-identity')
-		const grant = searchParams.get('confirm-identity')
+		const grant = searchParams.get('confirm-grant')
 
 		if (email && identity && !grant) {
 			addToast({
