@@ -83,6 +83,7 @@ function CampaignStatsBreakdownTable(props) {
 			options={{
 				filterType: 'multiselect',
 				selectableRows: 'none',
+				rowsPerPage: 25,
 			}}
 		/>
 	)
