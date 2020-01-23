@@ -8,6 +8,7 @@ import {
 	execute,
 	ensureQuickWalletBackup,
 	updateRegistrationAllowed,
+	handleRedirectParams,
 } from 'actions'
 import { Route, Switch, Redirect } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
@@ -72,6 +73,8 @@ const Root = () => {
 	useEffect(() => {
 		execute(getRelayerConfig())
 		execute(metamaskChecks())
+		execute(handleRedirectParams(location.search))
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	useEffect(() => {
