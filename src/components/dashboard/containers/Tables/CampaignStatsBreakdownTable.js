@@ -1,9 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { t } from 'selectors'
+import { t, selectCampaignAnalytics, selectMainToken } from 'selectors'
 import MUIDataTableEnchanced from 'components/dashboard/containers/Tables/MUIDataTableEnchanced'
+import { useSelector } from 'react-redux'
+import { formatNumberWithCommas } from 'helpers/formatters'
 
+const IMPRESSION = 'IMPRESSION'
+const CLICK = 'CLICK'
 function CampaignStatsBreakdownTable(props) {
+	const { symbol } = useSelector(selectMainToken)
 	const columns = [
 		{
 			name: 'website',
@@ -50,20 +55,20 @@ function CampaignStatsBreakdownTable(props) {
 			},
 		},
 	]
-
-	const { campaingAnalytics, campaignId } = props
+	const { campaignId } = props
+	const campaingAnalytics = useSelector(selectCampaignAnalytics)
 	const getTableData = () => {
 		//(IMPRESSION | CLICK).byChannelStats["0x80b2d99df436d53660737d51b8a130d053279b46cb2ac9ba91dd79b34dab6687"]
 		const results = []
 		const campaign = type => campaingAnalytics[type].byChannelStats[campaignId]
-		const imprStats = campaign('IMPRESSION').reportChannelToHostname
-		const clickStats = campaign('CLICK').reportChannelToHostname
-		const earnStats = campaign('IMPRESSION').reportChannelToHostnamePay
+		const imprStats = campaign(IMPRESSION).reportChannelToHostname
+		const clickStats = campaign(CLICK).reportChannelToHostname
+		const earnStats = campaign(IMPRESSION).reportChannelToHostnamePay
 		Object.keys(imprStats).map(key => {
 			results.push({
 				website: key,
 				impressions: imprStats[key] || 0,
-				earnings: earnStats[key] || 0,
+				earnings: `${(earnStats[key] || 0).toFixed(2)} ${symbol}`,
 				clicks: clickStats[key] || 0,
 			})
 		})
@@ -84,7 +89,6 @@ function CampaignStatsBreakdownTable(props) {
 }
 
 CampaignStatsBreakdownTable.propTypes = {
-	campaingAnalytics: PropTypes.object.isRequired,
 	campaignId: PropTypes.string.isRequired,
 }
 

@@ -20,7 +20,6 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Anchor from 'components/common/anchor/anchor'
-import { selectMainToken } from 'selectors'
 import CampaignStatsDoughnut from 'components/dashboard/charts/campaigns/CampaignStatsDoughnut'
 import CampaignStatsBreakdownTable from 'components/dashboard/containers/Tables/CampaignStatsBreakdownTable'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
@@ -69,18 +68,11 @@ export class Campaign extends Component {
 			// isDemo,
 			actions,
 			history,
-			mainTokenSymbol,
-			campaingAnalytics,
 			// ...rest
 		} = this.props
 		const { tabIndex } = this.state
 		const units = item.spec.adUnits
 		const campaign = new CampaignModel(item)
-		const balances =
-			campaign.status && campaign.status.lastApprovedBalances
-				? campaign.status.lastApprovedBalances
-				: {}
-
 		const status = (campaign.status || {}).name
 		const leader = campaign.spec.validators[0]
 		const follower = campaign.spec.validators[1]
@@ -129,18 +121,12 @@ export class Campaign extends Component {
 							<Grid container spacing={2}>
 								<Box clone order={{ xs: 2, md: 2, lg: 1 }}>
 									<Grid item lg={8} md={12} xs={12}>
-										<CampaignStatsBreakdownTable
-											campaingAnalytics={campaingAnalytics}
-											campaignId={item.id}
-										/>
+										<CampaignStatsBreakdownTable campaignId={item.id} />
 									</Grid>
 								</Box>
 								<Box clone order={{ xs: 1, md: 1, lg: 2 }}>
 									<Grid item lg={4} md={12} xs={12}>
-										<CampaignStatsDoughnut
-											campaingAnalytics={campaingAnalytics}
-											campaignId={item.id}
-										/>
+										<CampaignStatsDoughnut campaignId={item.id} />
 									</Grid>
 								</Box>
 							</Grid>
@@ -206,8 +192,6 @@ function mapStateToProps(state, ownProps) {
 		rowsView: !!persist.ui[VIEW_MODE],
 		objModel: CampaignModel,
 		itemType: 'Campaign',
-		mainTokenSymbol: selectMainToken(state).symbol,
-		campaingAnalytics: persist.analytics.campaigns,
 	}
 }
 

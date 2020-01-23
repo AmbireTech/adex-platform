@@ -1,11 +1,13 @@
 import React from 'react'
 import { Doughnut } from 'react-chartjs-2'
-import { t } from 'selectors'
+import { t, selectCampaignAnalytics } from 'selectors'
+import { useSelector } from 'react-redux'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import PropTypes from 'prop-types'
 
 function CampaignStatsDoughnut(props) {
-	const { campaingAnalytics, campaignId } = props
+	const campaingAnalytics = useSelector(selectCampaignAnalytics)
+	const { campaignId } = props
 	const maxDataSets = props.maxDataSets || CHARTS_COLORS.length
 	const getPieChartData = () => {
 		const results = {
@@ -66,10 +68,7 @@ function CampaignStatsDoughnut(props) {
 					display: true,
 					text: t('CAMPAIGN_STATS_PIE_CHART'),
 				},
-				animation: {
-					animateScale: true,
-					animateRotate: true,
-				},
+				animation: false,
 				tooltips: {
 					callbacks: {
 						label: function(item, data) {
