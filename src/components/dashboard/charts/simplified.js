@@ -91,6 +91,7 @@ export const SimpleStatistics = ({
 	}
 
 	const linesOptions = {
+		animation: false,
 		responsive: true,
 		// This and fixed height are used for proper mobile display of the chart
 		maintainAspectRatio: false,

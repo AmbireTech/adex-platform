@@ -70,9 +70,9 @@ export function DashboardStats(props) {
 						</CardContent>
 					</Card>
 				</Grid>
-				<Grid item md={12} lg={6}>
+				{/* <Grid item md={12} lg={6}>
 					<InfoStats />
-				</Grid>
+				</Grid> */}
 			</Grid>
 		</div>
 	)

@@ -35,3 +35,7 @@ export const formatAddress = (address = '') => {
 export const formatNumberWithCommas = x => {
 	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
+
+export const formatNumberWithoutCommas = x => {
+	return x.toString().replace(',', '')
+}
