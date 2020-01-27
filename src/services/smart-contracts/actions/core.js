@@ -40,7 +40,7 @@ const Identity = new Interface(IdentityABI)
 
 const timeframe = 15 * 1000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 0.5
-const VALID_UNTIL_MIN_PERIOD = 7 * 24 * 60 * 60 * 1000 // 7 days in ms
+const VALID_UNTIL_MIN_PERIOD = 15 * 24 * 60 * 60 * 1000 // 15 days in ms
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
@@ -392,12 +392,15 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 }
 
 function getSwapAmountsByToken({ balances }) {
+	const mainToken = selectMainFeeToken()
 	const { swapsByToken, swapsSumInMainToken } = balances.reduce(
 		(swaps, balance) => {
-			swaps.swapsSumInMainToken = swaps.swapsSumInMainToken.add(
-				balance.balanceMainToken
-			)
-			swaps.swapsByToken[balance.token.address] = balance.balance
+			if (balance.token.address !== mainToken.address) {
+				swaps.swapsSumInMainToken = swaps.swapsSumInMainToken.add(
+					balance.balanceMainToken
+				)
+				swaps.swapsByToken[balance.token.address] = balance.balance
+			}
 			return swaps
 		},
 		{
@@ -433,7 +436,7 @@ export async function getSweepingTxnsIfNeeded({
 	}
 
 	if (needed.gt(currentBalanceInUse)) {
-		// Swaps all balances
+		// Swaps
 		const { swapsByToken, swapsSumInMainToken } = getSwapAmountsByToken({
 			balances,
 			amountToSwapInMainToken: needed.sub(currentBalanceInUse),
