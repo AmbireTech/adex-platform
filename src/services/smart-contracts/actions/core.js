@@ -37,7 +37,7 @@ import IdentityABI from 'adex-protocol-eth/abi/Identity'
 
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
-const Identity = new Interface(IdentityABI)
+const IdentityInterface = new Interface(IdentityABI)
 
 const timeframe = 15 * 1000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 0.5
@@ -293,7 +293,7 @@ function getSweepExecuteRoutineTx({ txns, identityAddr, routineAuthTuple }) {
 		{ routineOpts: [], withdrawAmountByToken: {} }
 	)
 
-	const data = Identity.functions.executeRoutines.encode([
+	const data = IdentityInterface.functions.executeRoutines.encode([
 		routineAuthTuple,
 		routineOpts,
 	])
@@ -500,7 +500,7 @@ export async function openChannel({
 			identityContract: identityAddr,
 			feeTokenAddr: feeTokenAddr,
 			to: identityAddr,
-			data: Identity.functions.channelOpen.encode([
+			data: IdentityInterface.functions.channelOpen.encode([
 				AdExCore.address,
 				ethChannel.toSolidityTuple(),
 			]),
