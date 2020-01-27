@@ -320,10 +320,15 @@ function getIdentityRoutineAuthTuple(identity) {
 		: null
 }
 
+function is41identity(routineAuthTuple) {
+	const is41 = routineAuthTuple && routineAuthTuple.length === 5
+
+	return is41
+}
+
 function hasValidExecuteRoutines(routineAuthTuple) {
 	const hasValidRoutines =
-		routineAuthTuple &&
-		routineAuthTuple.length === 5 &&
+		is41identity(routineAuthTuple) &&
 		// TODO: get relayer config for giveUpResubmitAfter
 		parseInt(routineAuthTuple[2], 16) * 1000 > Date.now() + 12 * 60 * 60 * 1000
 
@@ -483,25 +488,44 @@ export async function openChannel({
 		id: ethChannel.hashHex(AdExCore.address),
 	}
 	const identityAddr = openReady.creator
-
 	const feeTokenAddr = mainToken.address
 
-	const approveTxns = await getApproveTxns({
-		getToken,
-		token: mainToken,
-		identityAddr,
-		feeTokenAddr: mainToken.address,
-		approveForAddress: AdExCore.address,
-		approveAmount: depositAmount,
-	})
+	const routineAuthTuple = getIdentityRoutineAuthTuple(identity)
+	const hasIdentityChannelOpen = is41identity(routineAuthTuple)
 
-	const channelOpenTx = {
-		identityContract: identityAddr,
-		feeTokenAddr: feeTokenAddr,
-		to: AdExCore.address,
-		data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
+	const txns = []
+
+	if (hasIdentityChannelOpen) {
+		const identityChannelOpenTx = {
+			identityContract: identityAddr,
+			feeTokenAddr: feeTokenAddr,
+			to: identityAddr,
+			data: Identity.functions.channelOpen.encode([
+				AdExCore.address,
+				ethChannel.toSolidityTuple(),
+			]),
+			extraTxFeesCount: 1,
+		}
+		txns.push(identityChannelOpenTx)
+	} else {
+		const approveTxns = await getApproveTxns({
+			getToken,
+			token: mainToken,
+			identityAddr,
+			feeTokenAddr: mainToken.address,
+			approveForAddress: AdExCore.address,
+			approveAmount: depositAmount,
+		})
+
+		const channelOpenTx = {
+			identityContract: identityAddr,
+			feeTokenAddr: feeTokenAddr,
+			to: AdExCore.address,
+			data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
+		}
+		txns.push(...approveTxns, channelOpenTx)
 	}
-	const txns = [...approveTxns, channelOpenTx]
+
 	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
 		amountInMainTokenNeeded: depositAmount,
 		txns,
