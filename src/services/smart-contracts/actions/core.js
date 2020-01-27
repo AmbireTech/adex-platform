@@ -31,6 +31,7 @@ import {
 	selectFeeTokenWhitelist,
 	selectRoutineWithdrawTokens,
 	selectMainFeeToken,
+	selectSaiToken,
 } from 'selectors'
 import IdentityABI from 'adex-protocol-eth/abi/Identity'
 
@@ -392,10 +393,11 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 }
 
 function getSwapAmountsByToken({ balances }) {
-	const mainToken = selectMainFeeToken()
+	const saiToken = selectSaiToken()()
 	const { swapsByToken, swapsSumInMainToken } = balances.reduce(
 		(swaps, balance) => {
-			if (balance.token.address !== mainToken.address) {
+			// TODO: currently work only for SAI to DAI swap
+			if (balance.token.address === saiToken.address) {
 				swaps.swapsSumInMainToken = swaps.swapsSumInMainToken.add(
 					balance.balanceMainToken
 				)

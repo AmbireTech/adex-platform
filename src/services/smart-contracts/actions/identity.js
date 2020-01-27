@@ -331,6 +331,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	// 3rd - make other txns with the main token only
 
 	// TODO: make it work with other tokens
+	// TODO: change getSwapAmountsByToken if more swaps are supported
 	const saiSwapAmount = sweepTxnsByToken.saiWithdrawAmount
 		.add(otherTxnsByToken.saiWithdrawAmount)
 		.add(bigNumberify(swapAmountsByToken[saiAddr] || 0))
