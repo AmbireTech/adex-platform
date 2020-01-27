@@ -112,7 +112,12 @@ function CampagnsTable(props) {
 						{` ${symbol}`}
 					</React.Fragment>
 				),
-				...sliderFilterOptions([0, 5000], t('DEPOSIT_FILTER')),
+				...sliderFilterOptions({
+					initial: [0, 5000], // Find min max of deposits
+					filterTitle: t('DEPOSIT_FILTER'),
+					isToken: true,
+					decimals: decimals,
+				}),
 			},
 		},
 		{
