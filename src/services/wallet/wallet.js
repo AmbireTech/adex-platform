@@ -233,7 +233,6 @@ export async function getLocalWallet({
 			return props
 		}, {})
 
-		console.log('decryptedWallet', decryptedWallet)
 		return decryptedWallet
 	} else {
 		return null
