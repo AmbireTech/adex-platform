@@ -1,14 +1,32 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
+import {
+	TextField,
+	FormControlLabel,
+	FormGroup,
+	FormLabel,
+	FormControl,
+	ListItemText,
+	Checkbox,
+	Select,
+	InputLabel,
+	MenuItem,
+	Tooltip,
+	IconButton,
+	Typography,
+	Slider,
+	Box,
+} from '@material-ui/core'
+import {
+	Visibility,
+	DoneAll,
+	Warning,
+	HourglassFull,
+	MonetizationOn,
+} from '@material-ui/icons'
 import Img from 'components/common/img/Img'
-import Tooltip from '@material-ui/core/Tooltip'
-import IconButton from '@material-ui/core/IconButton'
-import VisibilityIcon from '@material-ui/icons/Visibility'
-import DoneAllIcon from '@material-ui/icons/DoneAll'
-import WarningIcon from '@material-ui/icons/Warning'
-import HourglassFullIcon from '@material-ui/icons/HourglassFull'
-import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
+
 import MUIDataTableEnchanced from 'components/dashboard/containers/Tables/MUIDataTableEnchanced'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { t, selectCampaigns, selectMainToken, selectSide } from 'selectors'
@@ -20,6 +38,7 @@ import {
 	formatDateTime,
 	formatTokenAmount,
 } from 'helpers/formatters'
+import { sliderFilterOptions } from './commonFilters'
 const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(theme => ({
@@ -37,6 +56,7 @@ function CampagnsTable(props) {
 	const campaigns = useSelector(selectCampaigns)
 	const { symbol, decimals } = useSelector(selectMainToken)
 	const side = useSelector(selectSide)
+	const [depositFilter, setDepositFilter] = React.useState([0, 100])
 	const columns = [
 		{
 			name: 'media',
@@ -44,18 +64,15 @@ function CampagnsTable(props) {
 			options: {
 				filter: false,
 				sort: false,
-				customBodyRender: ({ id, mediaUrl, mediaMime, adUnits }) => {
-					const firstUnit = (adUnits && adUnits[0]) || {}
-					const src = firstUnit.mediaUrl || mediaUrl || ''
-					const mime = firstUnit.mediaMime || mediaMime || ''
+				customBodyRender: ({ id, adUnits }) => {
 					return (
 						// TODO: Images issue some stop displaying
 						<Img
 							fullScreenOnClick={true}
 							className={classnames(classes.cellImg)}
-							src={src}
+							src={adUnits[0].mediaUrl}
 							alt={id}
-							mediaMime={mime}
+							mediaMime={adUnits[0].mediaMime}
 							allowVideo
 						/>
 					)
@@ -71,11 +88,8 @@ function CampagnsTable(props) {
 				filterOptions: {
 					names: ['Active', 'Closed', 'Completed'],
 					logic: (status, filters) => {
-						console.log('Filters', filters)
-						console.log('stats', status.humanFriendlyName)
-						//TODO: filter issues
 						if (filters.length)
-							return filters.includes(status.humanFriendlyName)
+							return !filters.includes(status.humanFriendlyName)
 						return false
 					},
 				},
@@ -92,21 +106,20 @@ function CampagnsTable(props) {
 			name: 'depositAmount',
 			label: t('PROP_DEPOSIT'),
 			options: {
-				filter: false,
-				sort: true,
 				customBodyRender: depositAmount => (
 					<React.Fragment>
 						{formatTokenAmount(depositAmount, decimals, true)}
 						{` ${symbol}`}
 					</React.Fragment>
 				),
+				...sliderFilterOptions([0, 5000], t('DEPOSIT_FILTER')),
 			},
 		},
 		{
 			name: 'fundsDistributedRatio',
 			label: t('PROP_DISTRIBUTED'),
 			options: {
-				filter: false,
+				filter: true,
 				sort: true,
 				customBodyRender: fundsDistributedRatio =>
 					((fundsDistributedRatio || 0) / 10).toFixed(2),
@@ -116,7 +129,7 @@ function CampagnsTable(props) {
 			name: 'impressions',
 			label: t('PROP_IMPRESSIONS'),
 			options: {
-				filter: false,
+				filter: true,
 				sort: true,
 				customBodyRender: impressions =>
 					formatNumberWithCommas(impressions || 0),
@@ -126,7 +139,7 @@ function CampagnsTable(props) {
 			name: 'clicks',
 			label: t('CHART_LABEL_CLICKS'),
 			options: {
-				filter: false,
+				filter: true,
 				sort: true,
 				customBodyRender: clicks => formatNumberWithCommas(clicks || 0),
 			},
@@ -191,7 +204,7 @@ function CampagnsTable(props) {
 						enterDelay={1000}
 					>
 						<RRIconButton to={to} variant='contained' aria-label='preview'>
-							<VisibilityIcon color='primary' />
+							<Visibility color='primary' />
 						</RRIconButton>
 					</Tooltip>
 				),
@@ -202,8 +215,6 @@ function CampagnsTable(props) {
 		media: {
 			id: item.id,
 			adUnits: item.adUnits,
-			mediaUrl: item.mediaUrl,
-			mediaMime: item.mediaMime,
 		},
 		status: {
 			humanFriendlyName: item.status.humanFriendlyName,
@@ -243,10 +254,10 @@ const mapStatusIcons = (humanFriendlyStatus, status, size) => {
 		md: { fontSize: 15 },
 		ls: { fontSize: 20 },
 	}
-	const waitIcon = <HourglassFullIcon style={icon[size]} color={'secondary'} />
-	const doneIcon = <DoneAllIcon style={icon[size]} color={'primary'} />
-	const warningIcon = <WarningIcon style={icon[size]} color={'error'} />
-	const cashIcon = <MonetizationOnIcon style={icon[size]} color={'accentTwo'} />
+	const waitIcon = <HourglassFull style={icon[size]} color={'secondary'} />
+	const doneIcon = <DoneAll style={icon[size]} color={'primary'} />
+	const warningIcon = <Warning style={icon[size]} color={'error'} />
+	const cashIcon = <MonetizationOn style={icon[size]} color={'accentTwo'} />
 	if (humanFriendlyStatus === 'Closed' && status.toLowerCase() !== 'exhausted')
 		return waitIcon
 	switch (status.toLowerCase()) {

@@ -24,6 +24,12 @@ export default function MUIDataTableEnchanced(props) {
 						// height: 90,
 					},
 				},
+				// Think of accessing an element not a class
+				MuiGridListTile: {
+					root: {
+						width: '100% !important',
+					},
+				},
 			},
 		})
 	const generalTableOptions = {
