@@ -331,6 +331,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	// 3rd - make other txns with the main token only
 
 	// TODO: make it work with other tokens
+	// TODO: change getSwapAmountsByToken if more swaps are supported
 	const saiSwapAmount = sweepTxnsByToken.saiWithdrawAmount
 		.add(otherTxnsByToken.saiWithdrawAmount)
 		.add(bigNumberify(swapAmountsByToken[saiAddr] || 0))
@@ -368,7 +369,12 @@ export async function getIdentityTxnsWithNoncesAndFees({
 
 	Object.keys(txnsByFeeToken).forEach(key => {
 		txnsByFeeToken[key] = txnsByFeeToken[key].map(tx => {
-			const { routinesTxCount = 0, routinesSweepTxCount = 0, isSweepTx } = tx
+			const {
+				routinesTxCount = 0,
+				routinesSweepTxCount = 0,
+				extraTxFeesCount = 0,
+				isSweepTx,
+			} = tx
 			const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
 			const minFeeAmount = bigNumberify(
 				currentNonce === 0 ? feeToken.minDeploy : feeToken.min
@@ -378,8 +384,15 @@ export async function getIdentityTxnsWithNoncesAndFees({
 				bigNumberify(feeToken.min)
 			)
 
+			const extraFeesAmount = bigNumberify(extraTxFeesCount).mul(
+				bigNumberify(feeToken.min)
+			)
+
 			// Total relayer fees for the transaction
-			const feeAmount = minFeeAmount.add(routinesFeeAmount).toString()
+			const feeAmount = minFeeAmount
+				.add(routinesFeeAmount)
+				.add(extraFeesAmount)
+				.toString()
 
 			// fees that are not pre calculated with in the total identity balance
 			const nonIdentityBalanceFeeAmount = bigNumberify(feeAmount)
