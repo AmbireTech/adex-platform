@@ -3,7 +3,6 @@ import { addSig, getSig } from 'services/auth/auth'
 import { getSession, checkSession } from 'services/adex-market/actions'
 import {
 	getRelayerConfigData,
-	regAccount,
 	getQuickWallet,
 	backupWallet,
 } from 'services/adex-relayer/actions'
@@ -35,6 +34,8 @@ import {
 	selectIdentity,
 	selectAuth,
 	selectWallet,
+	selectSearchParams,
+	selectAuthType,
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { getErrorMsg } from 'helpers/errors'
@@ -278,15 +279,13 @@ async function getNetworkData({ id }) {
 
 export function onMetamaskNetworkChange({ id } = {}) {
 	return async function(dispatch, getState) {
-		const { persist, router } = getState()
-		const { location } = router
-		const { account } = persist
-		const { search } = location
-		const { authType } = account.wallet
+		const state = getState()
+		const searchParams = selectSearchParams(state)
+		const authType = selectAuthType(state)
 
 		const isMetamaskMatters =
 			(authType === AUTH_TYPES.METAMASK.name ||
-				(!authType && search === '?metamask')) &&
+				(!authType && searchParams.get('external') === 'metamask')) &&
 			(await getEthereumProvider()) === AUTH_TYPES.METAMASK.name
 
 		if (
