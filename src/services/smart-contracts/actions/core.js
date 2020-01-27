@@ -393,7 +393,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 }
 
 function getSwapAmountsByToken({ balances }) {
-	const saiToken = selectSaiToken()()
+	const saiToken = selectSaiToken()
 	const { swapsByToken, swapsSumInMainToken } = balances.reduce(
 		(swaps, balance) => {
 			// TODO: currently work only for SAI to DAI swap
