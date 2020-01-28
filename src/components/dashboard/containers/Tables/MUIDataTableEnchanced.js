@@ -21,11 +21,6 @@ export default function MUIDataTableEnchanced(props) {
 						padding: 0,
 					},
 				},
-				MuiTableRow: {
-					root: {
-						// height: 90,
-					},
-				},
 				MUIDataTableFilter: {
 					root: {
 						maxWidth: '400px',
@@ -37,12 +32,26 @@ export default function MUIDataTableEnchanced(props) {
 						width: '100% !important',
 					},
 				},
+				MUIDataTableBodyCell: {
+					stackedCommon: {
+						height: '90px !important',
+					},
+				},
 			},
+			//TODO: mobile version fixes
 		})
 	const generalTableOptions = {
 		rowsPerPage: 5,
 		rowsPerPageOptions: [5, 10, 25, 50, 100, 500],
-		//TODO: Add to adex-translations
+		setTableProps: () => {
+			return {
+				padding: 'default',
+				size: 'small',
+				tableLayout: 'auto',
+				width: '100%',
+				align: 'center',
+			}
+		},
 		textLabels: {
 			body: {
 				noMatch: 'Sorry, no matching records found',

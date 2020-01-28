@@ -1,23 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
-import {
-	TextField,
-	FormControlLabel,
-	FormGroup,
-	FormLabel,
-	FormControl,
-	ListItemText,
-	Checkbox,
-	Select,
-	InputLabel,
-	MenuItem,
-	Tooltip,
-	IconButton,
-	Typography,
-	Slider,
-	Box,
-} from '@material-ui/core'
+import { Tooltip, IconButton } from '@material-ui/core'
 import {
 	Visibility,
 	DoneAll,
@@ -26,7 +10,6 @@ import {
 	MonetizationOn,
 } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
-
 import MUIDataTableEnchanced from 'components/dashboard/containers/Tables/MUIDataTableEnchanced'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { t, selectCampaigns, selectMainToken, selectSide } from 'selectors'
@@ -160,7 +143,7 @@ function CampagnsTable(props) {
 							...Object.values(campaigns).map(i => Number(i.impressions || 0))
 						),
 					],
-					filterTitle: t('DISTRIBUTED_FILTER'),
+					filterTitle: t('IMPRESSIONS_FILTER'),
 				}),
 			},
 		},
@@ -168,9 +151,17 @@ function CampagnsTable(props) {
 			name: 'clicks',
 			label: t('CHART_LABEL_CLICKS'),
 			options: {
-				filter: true,
 				sort: true,
 				customBodyRender: clicks => formatNumberWithCommas(clicks || 0),
+				...sliderFilterOptions({
+					initial: [
+						0,
+						Math.max(
+							...Object.values(campaigns).map(i => Number(i.clicks || 0))
+						),
+					],
+					filterTitle: t('CLICKS_FILTER'),
+				}),
 			},
 		},
 		{
