@@ -100,7 +100,7 @@ function AdUnitsTable(props) {
 								<Visibility color='primary' />
 							</RRIconButton>
 						</Tooltip>
-						{!props.campaignUnits && (
+						{!props.noActions && (
 							<Tooltip
 								title={t('TOOLTIP_CLONE')}
 								// placement='top'
@@ -136,6 +136,7 @@ function AdUnitsTable(props) {
 				filterType: 'multiselect',
 				selectableRows: 'none',
 			}}
+			{...props}
 		/>
 	)
 }
