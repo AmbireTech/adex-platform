@@ -13,7 +13,7 @@ import { styles } from './styles'
 import { formatDateTime } from 'helpers/formatters'
 const RRIconButton = withReactRouterLink(IconButton)
 
-function AdSlotsTable() {
+function AdSlotsTable(props) {
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 	const adSlots = useSelector(selectAdSlots)
@@ -108,6 +108,7 @@ function AdSlotsTable() {
 				filterType: 'multiselect',
 				selectableRows: 'none',
 			}}
+			{...props}
 		/>
 	)
 }

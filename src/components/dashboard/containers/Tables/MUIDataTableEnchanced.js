@@ -94,7 +94,18 @@ export default function MUIDataTableEnchanced(props) {
 				title={title}
 				data={data}
 				columns={columns}
-				options={{ ...generalTableOptions, ...options }}
+				options={{
+					...generalTableOptions,
+					...options,
+					download: !props.noDownload,
+					print: !props.noPrint,
+					selectableRows: props.rowSelectable ? 'multiple' : 'none',
+					customToolbarSelect: (
+						selectedRows,
+						displayData,
+						setSelectedRows
+					) => {},
+				}}
 			/>
 		</MuiThemeProvider>
 	)

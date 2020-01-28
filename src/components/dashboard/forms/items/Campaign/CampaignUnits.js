@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import NewCampaignHoc from './NewCampaignHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
+import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import { ContentBody } from 'components/common/dialog/content'
 import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
 import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems'
@@ -31,14 +32,22 @@ class CampaignUnits extends Component {
 					<Grid item sm={12}>
 						<ContentBody>
 							{hasAdUnits ? (
-								<EnhancedTable
-									itemType={'AdUnit'}
+								<AdUnitsTable
 									items={adUnitsArray}
 									validate={this.props.validate}
-									handleSelect={this.handleSelect}
 									noActions
+									noDownload
+									rowSelectable
+									noPrint
 								/>
 							) : (
+								// <EnhancedTable
+								// 	itemType={'AdUnit'}
+								// 	items={adUnitsArray}
+								// 	validate={this.props.validate}
+								// 	handleSelect={this.handleSelect}
+								// 	noActions
+								// />
 								<Grid container direction='column' alignItems='center'>
 									<p>{t('ERR_CAMPAIGN_REQUIRES_UNITS')}</p>
 									<NewUnitDialog

@@ -132,7 +132,9 @@ export class Campaign extends Component {
 								</Box>
 							</Grid>
 						)}
-						{tabIndex === 1 && <AdUnitsTable items={units} campaignUnits />}
+						{tabIndex === 1 && (
+							<AdUnitsTable items={units} campaignUnits noActions />
+						)}
 						{tabIndex === 2 && (
 							<List>
 								<Anchor

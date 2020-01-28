@@ -25,7 +25,7 @@ import {
 import { sliderFilterOptions } from './commonFilters'
 const RRIconButton = withReactRouterLink(IconButton)
 
-function CampaignsTable() {
+function CampaignsTable(props) {
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 	const campaigns = useSelector(selectCampaigns)
@@ -273,6 +273,7 @@ function CampaignsTable() {
 					return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
 				},
 			}}
+			{...props}
 		/>
 	)
 }
