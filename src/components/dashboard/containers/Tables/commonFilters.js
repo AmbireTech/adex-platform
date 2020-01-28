@@ -1,6 +1,6 @@
 import React from 'react'
 import { Typography, Slider, Box } from '@material-ui/core'
-import { formatTokenAmount } from 'helpers/formatters'
+import { formatTokenAmount, formatAbbrNum } from 'helpers/formatters'
 
 export const sliderFilterOptions = ({
 	initial,
@@ -8,12 +8,14 @@ export const sliderFilterOptions = ({
 	isToken = false,
 	decimals = 18,
 }) => {
+	console.log('INITIAL', initial)
 	return {
 		filter: true,
 		display: 'true',
 		filterType: 'custom',
 		customFilterListOptions: {
-			render: v => `${filterTitle}: ${v[0]} - ${v[1]}`,
+			render: v =>
+				`${filterTitle}: ${formatAbbrNum(v[0], 2)} - ${formatAbbrNum(v[1], 2)}`,
 		},
 
 		filterOptions: {
@@ -33,7 +35,7 @@ export const sliderFilterOptions = ({
 						<Typography id={`range-slider-${column.name}`} gutterBottom>
 							{filterTitle}
 						</Typography>
-						<Box m={3}>
+						<Box pl={2} pr={2} pt={2}>
 							<Slider
 								min={initial[0]}
 								max={initial[1]}
@@ -45,6 +47,8 @@ export const sliderFilterOptions = ({
 								}}
 								valueLabelDisplay='auto'
 								aria-labelledby={`range-slider-${column.name}`}
+								getAriaValueText={formatAbbrNum}
+								valueLabelFormat={formatAbbrNum}
 							/>
 						</Box>
 					</Box>
