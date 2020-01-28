@@ -6,7 +6,7 @@ import { Visibility } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnchanced from 'components/dashboard/containers/Tables/MUIDataTableEnchanced'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
-import { t, selectSlots, selectSide } from 'selectors'
+import { t, selectAdSlots, selectSide } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
@@ -16,7 +16,7 @@ const RRIconButton = withReactRouterLink(IconButton)
 function AdSlotsTable() {
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
-	const adSlots = useSelector(selectSlots)
+	const adSlots = useSelector(selectAdSlots)
 	const side = useSelector(selectSide)
 	const data = Object.values(adSlots).map(item => ({
 		media: {
