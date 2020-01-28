@@ -23,6 +23,8 @@ import AdSlotTargeting from './AdSlot/AdSlotTargeting'
 import AdSlotPreview from './AdSlot/AdSlotPreview'
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 
+import { execute, validateNewCampaignFinance } from 'actions'
+
 const SaveBtn = ({ newItem, t, save, ...rest }) => {
 	return (
 		<Button color='primary' onClick={save}>
@@ -124,7 +126,19 @@ export const NewCampaignSteps = props => (
 			{ title: 'CAMPAIGN_UNITS_STEP', page: CampaignUnits },
 			// NOTE: Only at ad units at the moment
 			// { title: 'CAMPAIGN_TARGETING_STEP', page: CampaignTargeting },
-			{ title: 'CAMPAIGN_FINANCE_STEP', page: CampaignFinance },
+			{
+				title: 'CAMPAIGN_FINANCE_STEP',
+				page: CampaignFinance,
+				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
+					execute(
+						validateNewCampaignFinance({
+							validateId,
+							dirty,
+							onValid,
+							onInvalid,
+						})
+					),
+			},
 		]}
 		stepsPreviewPage={{
 			title: 'PREVIEW_AND_SAVE_ITEM',
