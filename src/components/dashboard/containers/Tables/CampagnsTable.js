@@ -252,7 +252,6 @@ function CampagnsTable(props) {
 			to: `/dashboard/${side}/Campaign/${item.id}`,
 		},
 	}))
-	const [pageNum, setPageNum] = React.useState(0)
 	return (
 		<MUIDataTableEnchanced
 			title={t('ALL_CAMPAIGNS')}
@@ -261,8 +260,6 @@ function CampagnsTable(props) {
 			options={{
 				filterType: 'multiselect',
 				selectableRows: 'none',
-				page: pageNum,
-				onChangePage: num => setPageNum(num),
 			}}
 		/>
 	)
