@@ -16,6 +16,7 @@ import { t, selectCampaigns, selectMainToken, selectSide } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { bigNumberify } from 'ethers/utils'
 import { useSelector } from 'react-redux'
+import { styles } from './styles'
 import {
 	formatNumberWithCommas,
 	formatDateTime,
@@ -24,28 +25,33 @@ import {
 import { sliderFilterOptions } from './commonFilters'
 const RRIconButton = withReactRouterLink(IconButton)
 
-const useStyles = makeStyles(theme => ({
-	cellImg: {
-		width: 'auto',
-		height: 'auto',
-		maxHeight: 70,
-		maxWidth: 180,
-		cursor: 'pointer',
-	},
-}))
-
-function CampagnsTable(props) {
+function CampaignsTable() {
+	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 	const campaigns = useSelector(selectCampaigns)
 	const { symbol, decimals } = useSelector(selectMainToken)
-	console.log(
-		Math.max(
-			...Object.values(campaigns).map(i =>
-				Number(formatTokenAmount(i.depositAmount, decimals) || 0)
-			)
-		)
-	)
 	const side = useSelector(selectSide)
+	const data = Object.values(campaigns).map(item => ({
+		media: {
+			id: item.id,
+			adUnits: item.adUnits,
+		},
+		status: {
+			humanFriendlyName: item.status.humanFriendlyName,
+			originalName: item.status.name,
+		},
+		depositAmount: item.depositAmount || 0,
+		fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
+		impressions: item.impressions || 0,
+		clicks: item.clicks || 0,
+		minPerImpression: item.spec.minPerImpression || 0,
+		created: item.created,
+		activeFrom: item.spec.withdrawPeriodStart,
+		withdrawPeriodStart: item.spec.withdrawPeriodStart,
+		actions: {
+			to: `/dashboard/${side}/Campaign/${item.id}`,
+		},
+	}))
 	const columns = [
 		{
 			name: 'media',
@@ -231,27 +237,6 @@ function CampagnsTable(props) {
 			},
 		},
 	]
-	const data = Object.values(campaigns).map(item => ({
-		media: {
-			id: item.id,
-			adUnits: item.adUnits,
-		},
-		status: {
-			humanFriendlyName: item.status.humanFriendlyName,
-			originalName: item.status.name,
-		},
-		depositAmount: item.depositAmount || 0,
-		fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
-		impressions: item.impressions || 0,
-		clicks: item.clicks || 0,
-		minPerImpression: item.spec.minPerImpression || 0,
-		created: item.created,
-		activeFrom: item.spec.withdrawPeriodStart,
-		withdrawPeriodStart: item.spec.withdrawPeriodStart,
-		actions: {
-			to: `/dashboard/${side}/Campaign/${item.id}`,
-		},
-	}))
 	return (
 		<MUIDataTableEnchanced
 			title={t('ALL_CAMPAIGNS')}
@@ -297,8 +282,8 @@ const mapStatusIcons = (humanFriendlyStatus, status, size) => {
 	}
 }
 
-CampagnsTable.propTypes = {
+CampaignsTable.propTypes = {
 	campaignId: PropTypes.string.isRequired,
 }
 
-export default CampagnsTable
+export default CampaignsTable
