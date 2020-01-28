@@ -33,7 +33,7 @@ import {
 	selectAccountStatsFormatted,
 } from 'selectors'
 import { Campaign } from 'adex-models'
-import { OPENING_CAMPAIGN } from 'constants/spinners'
+import { OPENING_CAMPAIGN, GETTING_CAMPAIGNS_FEES } from 'constants/spinners'
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -206,7 +206,7 @@ export function closeCampaign({ campaign }) {
 export function updateNewCampaign(prop, value, newValues) {
 	return async function(dispatch, getState) {
 		const currentCampaign = selectNewCampaign(getState())
-		updateNewItem(
+		await updateNewItem(
 			currentCampaign,
 			newValues || { [prop]: value },
 			'Campaign',
@@ -235,8 +235,9 @@ export function validateNewCampaignFinance({
 	onInvalid,
 }) {
 	return async function(dispatch, getState) {
-		updateSpinner(validateId, true)(dispatch)
+		await updateSpinner(validateId, true)(dispatch)
 		const state = getState()
+		const campaign = selectNewCampaign(state)
 		const {
 			validators,
 			depositAmount,
@@ -245,15 +246,41 @@ export function validateNewCampaignFinance({
 			activeFrom,
 			withdrawPeriodStart,
 			created,
-		} = selectNewCampaign(state)
+			temp = {},
+		} = campaign
 
 		const { availableIdentityBalanceMainToken } = selectAccountStatsFormatted(
 			state
 		)
 
+		const newCampaign = { ...campaign }
+
 		if (!validators || !validators.length) {
 			// TODO: temp - will need dropdown selector for the follower validator
-			updateNewCampaign('validators', tempValidators)
+			newCampaign.validators = tempValidators
+			await updateNewCampaign('validators', newCampaign.validators)(
+				dispatch,
+				getState
+			)
+		}
+
+		if (typeof temp.maxChannelFees !== 'number') {
+			await updateSpinner(GETTING_CAMPAIGNS_FEES, true)(dispatch)
+
+			const account = selectAccount(state)
+
+			const feesData = await openChannel({
+				campaign: { ...newCampaign },
+				account,
+				getFeesOnly: true,
+				getMaxFees: true,
+			})
+
+			const newTemp = { ...temp }
+			newTemp.maxChannelFees = feesData.fees
+
+			await updateNewCampaign('temp', newTemp)(dispatch, getState)
+			await updateSpinner(GETTING_CAMPAIGNS_FEES, false)(dispatch)
 		}
 
 		const validations = await Promise.all([
@@ -307,6 +334,6 @@ export function validateNewCampaignFinance({
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
 
-		updateSpinner(validateId, false)(dispatch)
+		await updateSpinner(validateId, false)(dispatch)
 	}
 }
