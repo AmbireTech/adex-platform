@@ -27,7 +27,7 @@ function AdUnitsTable(props) {
 			mediaUrl: item.mediaUrl,
 			mediaMime: item.mediaMime,
 		},
-		title: item.title || adUnits[item.ipfs].title,
+		title: `${truncateString(item.title || adUnits[item.ipfs].title, 20)}`,
 		type: item.type.replace('legacy_', ''),
 		created: item.created,
 		actions: {
@@ -135,10 +135,18 @@ function AdUnitsTable(props) {
 			options={{
 				filterType: 'multiselect',
 				selectableRows: 'none',
+				onRowsSelect: (currentRowsSelected, allRowsSelected) => {
+					console.log(currentRowsSelected, allRowsSelected)
+				},
 			}}
 			{...props}
 		/>
 	)
+}
+const truncateString = (string, maxLength = 50) => {
+	if (!string) return null
+	if (string.length <= maxLength) return string
+	return `${string.substring(0, maxLength).trim()}...`
 }
 
 AdUnitsTable.propTypes = {
