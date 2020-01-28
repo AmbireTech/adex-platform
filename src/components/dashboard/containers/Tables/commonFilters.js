@@ -22,7 +22,7 @@ export const sliderFilterOptions = ({
 				const formatedDeposit = isToken
 					? formatTokenAmount(rowNumber, decimals)
 					: rowNumber
-				if (filters[0] && filters[1]) {
+				if (filters.length > 0) {
 					return formatedDeposit < filters[0] || formatedDeposit > filters[1]
 				}
 				return false
@@ -38,9 +38,7 @@ export const sliderFilterOptions = ({
 								min={initial[0]}
 								max={initial[1]}
 								value={
-									filterList[index][0] && filterList[index][1]
-										? filterList[index]
-										: initial
+									filterList[index].length > 0 ? filterList[index] : initial
 								}
 								onChange={(_, newValue) => {
 									onChange(newValue, index, column)
