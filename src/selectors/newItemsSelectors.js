@@ -10,15 +10,15 @@ export const selectNewItems = state => state.memory.newItem
 
 export const selectNewCampaign = createSelector(
 	selectNewItems,
-	Campaign => new CampaignModel(Campaign)
+	({ Campaign }) => new CampaignModel(Campaign)
 )
 
 export const selectNewAdUnit = createSelector(
 	selectNewItems,
-	AdUnit => new AdUnitModel(AdUnit)
+	({ AdUnit }) => new AdUnitModel(AdUnit)
 )
 
 export const selectNewAdSlot = createSelector(
 	selectNewItems,
-	AdSlot => new AdSlotModel(AdSlot)
+	({ AdSlot }) => new AdSlotModel(AdSlot)
 )
