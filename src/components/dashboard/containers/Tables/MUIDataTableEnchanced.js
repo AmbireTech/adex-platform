@@ -34,7 +34,7 @@ export default function MUIDataTableEnchanced(props) {
 				},
 				MUIDataTableBodyCell: {
 					stackedCommon: {
-						height: '90px !important',
+						height: '80px !important',
 					},
 				},
 				...theme.overrides,
@@ -51,6 +51,7 @@ export default function MUIDataTableEnchanced(props) {
 				tableLayout: 'auto',
 				width: '100%',
 				align: 'center',
+				whiteSpace: 'wrap',
 			}
 		},
 		textLabels: {
@@ -100,11 +101,9 @@ export default function MUIDataTableEnchanced(props) {
 					download: !props.noDownload,
 					print: !props.noPrint,
 					selectableRows: props.rowSelectable ? 'multiple' : 'none',
-					customToolbarSelect: (
-						selectedRows,
-						displayData,
-						setSelectedRows
-					) => {},
+					customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
+						//This disables toolbar when selected elements on all tables
+					},
 				}}
 			/>
 		</MuiThemeProvider>
