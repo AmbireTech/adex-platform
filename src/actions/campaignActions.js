@@ -5,6 +5,7 @@ import {
 	updateSpinner,
 	updateItems,
 	updateValidatorAuthTokens,
+	updateNewItem,
 } from 'actions'
 import { push } from 'connected-react-router'
 import { parseUnits, bigNumberify } from 'ethers/utils'
@@ -21,9 +22,11 @@ import {
 	t,
 	selectAccount,
 	selectRelayerConfig,
+	selectNewCampaign,
 	selectAuthSig,
 	selectAuth,
 } from 'selectors'
+import { Campaign } from 'adex-models'
 import { OPENING_CAMPAIGN } from 'constants/spinners'
 
 export function openCampaign({ campaign }) {
@@ -184,5 +187,17 @@ export function closeCampaign({ campaign }) {
 			})
 		}
 		updateSpinner('closing-campaign', false)(dispatch)
+	}
+}
+
+export function updateNewCampaign(prop, value, newValues) {
+	return async function(dispatch, getState) {
+		const currentCampaign = selectNewCampaign(getState())
+		updateNewItem(
+			currentCampaign,
+			newValues || { [prop]: value },
+			'Campaign',
+			Campaign
+		)(dispatch)
 	}
 }
