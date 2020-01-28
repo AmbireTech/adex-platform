@@ -27,12 +27,12 @@ function AdUnitsTable(props) {
 			mediaUrl: item.mediaUrl,
 			mediaMime: item.mediaMime,
 		},
-		title: item.title,
+		title: item.title || adUnits[item.ipfs].title,
 		type: item.type.replace('legacy_', ''),
 		created: item.created,
 		actions: {
-			to: `/dashboard/${side}/AdUnit/${item.id}`,
-			id: item.id,
+			to: `/dashboard/${side}/AdUnit/${item.id || item.ipfs}`,
+			id: item.id || item.ipfs,
 		},
 	}))
 	const columns = [
@@ -60,7 +60,6 @@ function AdUnitsTable(props) {
 			name: 'title',
 			label: t('PROP_TITLE'),
 			options: {
-				display: !props.campaignUnits,
 				filter: false,
 				sort: true,
 			},
@@ -88,7 +87,7 @@ function AdUnitsTable(props) {
 			label: t('PROP_ACTIONS'),
 			options: {
 				filter: false,
-				display: !props.campaignUnits,
+				// display: !props.campaignUnits,
 				sort: true,
 				customBodyRender: ({ to, id }) => (
 					<React.Fragment>
@@ -101,26 +100,28 @@ function AdUnitsTable(props) {
 								<Visibility color='primary' />
 							</RRIconButton>
 						</Tooltip>
-						<Tooltip
-							title={t('TOOLTIP_CLONE')}
-							// placement='top'
-							enterDelay={1000}
-						>
-							<span>
-								<NewCloneUnitDialog
-									onBeforeOpen={() =>
-										execute(
-											cloneItem({
-												item: adUnits[id],
-												itemType: 'AdUnit',
-												objModel: AdUnit,
-											})
-										)
-									}
-									iconButton
-								/>
-							</span>
-						</Tooltip>
+						{!props.campaignUnits && (
+							<Tooltip
+								title={t('TOOLTIP_CLONE')}
+								// placement='top'
+								enterDelay={1000}
+							>
+								<span>
+									<NewCloneUnitDialog
+										onBeforeOpen={() =>
+											execute(
+												cloneItem({
+													item: adUnits[id],
+													itemType: 'AdUnit',
+													objModel: AdUnit,
+												})
+											)
+										}
+										iconButton
+									/>
+								</span>
+							</Tooltip>
+						)}
 					</React.Fragment>
 				),
 			},
@@ -128,7 +129,7 @@ function AdUnitsTable(props) {
 	]
 	return (
 		<MUIDataTableEnchanced
-			title={t('ALL_UNITS')}
+			title={props.campaignUnits ? t('CAMPAIGN_AD_UNITS') : t('ALL_UNITS')}
 			data={data}
 			columns={columns}
 			options={{
