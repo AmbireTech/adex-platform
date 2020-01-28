@@ -37,7 +37,10 @@ export const formatNumberWithCommas = x => {
 }
 
 export const formatNumberWithoutCommas = x => {
-	return x.toString().replace(',', '')
+	return x
+		.toString()
+		.split(',')
+		.join('')
 }
 
 export const formatAbbrNum = (number, decPlaces) => {

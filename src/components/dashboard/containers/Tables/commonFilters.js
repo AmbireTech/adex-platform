@@ -1,14 +1,18 @@
 import React from 'react'
 import { Typography, Slider, Box } from '@material-ui/core'
-import { formatTokenAmount, formatAbbrNum } from 'helpers/formatters'
+import {
+	formatTokenAmount,
+	formatAbbrNum,
+	formatNumberWithoutCommas,
+} from 'helpers/formatters'
 
 export const sliderFilterOptions = ({
 	initial,
 	filterTitle,
+	stepSetting = 1,
 	isToken = false,
 	decimals = 18,
 }) => {
-	console.log('INITIAL', initial)
 	return {
 		filter: true,
 		display: 'true',
@@ -21,11 +25,14 @@ export const sliderFilterOptions = ({
 		filterOptions: {
 			names: [],
 			logic: (rowNumber, filters) => {
-				const formatedDeposit = isToken
+				const formated = isToken
 					? formatTokenAmount(rowNumber, decimals)
 					: rowNumber
 				if (filters.length > 0) {
-					return formatedDeposit < filters[0] || formatedDeposit > filters[1]
+					return (
+						Number(formatNumberWithoutCommas(formated)) < filters[0] ||
+						Number(formatNumberWithoutCommas(formated)) > filters[1]
+					)
 				}
 				return false
 			},
@@ -39,6 +46,7 @@ export const sliderFilterOptions = ({
 							<Slider
 								min={initial[0]}
 								max={initial[1]}
+								step={stepSetting}
 								value={
 									filterList[index].length > 0 ? filterList[index] : initial
 								}
@@ -47,8 +55,8 @@ export const sliderFilterOptions = ({
 								}}
 								valueLabelDisplay='auto'
 								aria-labelledby={`range-slider-${column.name}`}
-								getAriaValueText={formatAbbrNum}
-								valueLabelFormat={formatAbbrNum}
+								getAriaValueText={v => formatAbbrNum(v, 2)}
+								valueLabelFormat={v => formatAbbrNum(v, 2)}
 							/>
 						</Box>
 					</Box>
