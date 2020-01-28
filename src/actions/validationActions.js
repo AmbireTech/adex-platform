@@ -4,10 +4,13 @@ import { validEthAddress } from '../helpers/validators'
 import { translate } from 'services/translations/translations'
 import { addToast } from './uiActions'
 import { getERC20Balance } from 'services/smart-contracts/actions/erc20'
-import { formatUnits, bigNumberify } from 'ethers/utils'
+import { formatUnits, bigNumberify, parseUnits } from 'ethers/utils'
+import { validations, Joi, schemas } from 'adex-models'
 import { validEmail, validPassword } from 'helpers/validators'
 import { t } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
+
+const { campaignPut } = schemas
 
 export function validateAddress({ addr, dirty, validate, name, setBalance }) {
 	return async function(dispatch, getState) {
@@ -88,6 +91,19 @@ export function validate(
 		} else {
 			resetValidationErrors(validateId, key)(dispatch)
 		}
+	}
+}
+
+export const handleAfterValidation = async ({
+	isValid,
+	onValid,
+	onInvalid,
+}) => {
+	if (isValid && typeof onValid === 'function') {
+		await onValid()
+	}
+	if (!isValid && typeof onInvalid === 'function') {
+		await onInvalid()
 	}
 }
 
@@ -198,6 +214,191 @@ export function validateAccessWarning(validateId, accepted, dirty) {
 			isValid: isValid,
 			err: { msg: 'ERR_ACCESS_WARNING_CHECK' },
 			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateCampaignValidators({ validateId, validators, dirty }) {
+	return async function(dispatch, getState) {
+		const isValid =
+			!!validators &&
+			validators.length === 2 &&
+			!!validators[0] &&
+			!!validators[1] &&
+			!!validators[0].id &&
+			!!validators[0].url &&
+			!!validators[0].fee &&
+			!!validators[1].id &&
+			!!validators[1].url &&
+			!!validators[1].fee
+
+		validate(validateId, 'validators', {
+			isValid,
+			err: { msg: 'ERR_VALIDATORS' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+const validateAmounts = ({
+	maxDeposit = 0,
+	depositAmount,
+	minPerImpression,
+}) => {
+	const maxDep = parseFloat(maxDeposit)
+	const dep = parseFloat(depositAmount)
+	const min = parseFloat(minPerImpression)
+
+	let error = null
+	if (dep && dep > maxDep) {
+		error = {
+			message: 'ERR_INSUFFICIENT_IDENTITY_BALANCE',
+			prop: 'depositAmount',
+		}
+	}
+	if (dep && dep < min) {
+		error = { message: 'ERR_CPM_OVER_DEPOSIT', prop: 'minPerImpression' }
+	}
+	if (dep <= 0) {
+		error = { message: 'ERR_ZERO_DEPOSIT', prop: 'depositAmount' }
+	}
+	if (min <= 0) {
+		error = { message: 'ERR_ZERO_CPM', prop: 'minPerImpression' }
+	}
+
+	return { error }
+}
+
+export function validateCampaignAmount({
+	validateId,
+	prop,
+	value,
+	dirty,
+	errMsg,
+	depositAmount,
+	minPerImpression,
+	availableIdentityBalanceMainToken,
+}) {
+	return async function(dispatch, getState) {
+		const isValidNumber = validations.isNumberString(value)
+		let isValid = isValidNumber && parseUnits(value, 18)
+		let msg = errMsg || 'ERR_INVALID_AMOUNT'
+
+		if (isValid) {
+			const deposit = prop === 'depositAmount' ? value : depositAmount
+			const min = prop === 'minPerImpression' ? value : minPerImpression
+			const maxDeposit =
+				parseFloat(availableIdentityBalanceMainToken) -
+				this.state.maxChannelFees
+			const result = validateAmounts({
+				maxDeposit,
+				depositAmount: deposit,
+				minPerImpression: min,
+			})
+
+			isValid = !result.error
+			msg = result.error ? result.error.message : ''
+		}
+
+		validate(validateId, prop, {
+			isValid,
+			err: { msg },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+const getCampaignDatesValidation = ({
+	created = Date.now(),
+	withdrawPeriodStart,
+	activeFrom,
+}) => {
+	let error = null
+
+	if (withdrawPeriodStart && activeFrom && withdrawPeriodStart <= activeFrom) {
+		error = { message: 'ERR_END_BEFORE_START', prop: 'withdrawPeriodStart' }
+	} else if (withdrawPeriodStart && withdrawPeriodStart < created) {
+		error = { message: 'ERR_END_BEFORE_NOW', prop: 'withdrawPeriodStart' }
+	} else if (activeFrom && activeFrom < created) {
+		error = { message: 'ERR_START_BEFORE_NOW', prop: 'activeFrom' }
+	} else if (activeFrom && !withdrawPeriodStart) {
+		error = { message: 'ERR_NO_END', prop: 'withdrawPeriodStart' }
+	} else if (!(withdrawPeriodStart || activeFrom)) {
+		error = { message: 'ERR_NO_DATE_SET', prop: 'withdrawPeriodStart' }
+	}
+
+	return { error }
+}
+
+export function validateCampaignDates({
+	validateId,
+	prop,
+	value,
+	dirty,
+	withdrawPeriodStart,
+	activeFrom,
+	created,
+}) {
+	return async function(dispatch, getState) {
+		const withdraw =
+			prop === 'withdrawPeriodStart' ? value : withdrawPeriodStart
+		const from = prop === 'activeFrom' ? value : activeFrom
+
+		const result = getCampaignDatesValidation({
+			withdrawPeriodStart: withdraw,
+			activeFrom: from,
+			created,
+		})
+
+		validate(validateId, prop, {
+			isValid: !(result.error && result.error.prop === prop),
+			err: {
+				msg: result.error ? result.error.message : '',
+				args: result.args ? result.error.args : [],
+			},
+			dirty: dirty,
+		})(dispatch)
+
+		// validate(validateId, 'activeFrom', {
+		// 	isValid: !(result.error && result.error.prop === 'activeFrom'),
+		// 	err: {
+		// 		msg: result.error ? result.error.message : '',
+		// 		args: result.args ? result.error.args : [],
+		// 	},
+		// 	dirty: dirty,
+		// })(dispatch)
+
+		// validate(validateId, 'withdrawPeriodStart', {
+		// 	isValid: !(result.error && result.error.prop === 'withdrawPeriodStart'),
+		// 	err: {
+		// 		msg: result.error ? result.error.message : '',
+		// 		args: result.args ? result.error.args : [],
+		// 	},
+		// 	dirty: dirty,
+		// })(dispatch)
+
+		const isValid = !result.error
+
+		return isValid
+	}
+}
+
+export function validateCampaignTitle({ validateId, title, dirty }) {
+	return async function(dispatch, getState) {
+		const result = Joi.validate(title, campaignPut.title)
+
+		const isValid = !result.error
+
+		validate(validateId, 'title', {
+			isValid,
+			err: { msg: result.error ? result.error.message : '' },
+			dirty: dirty,
 		})(dispatch)
 
 		return isValid
