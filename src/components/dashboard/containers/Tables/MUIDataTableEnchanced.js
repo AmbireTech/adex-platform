@@ -37,6 +37,7 @@ export default function MUIDataTableEnchanced(props) {
 						height: '90px !important',
 					},
 				},
+				...theme.overrides,
 			},
 			//TODO: mobile version fixes
 		})

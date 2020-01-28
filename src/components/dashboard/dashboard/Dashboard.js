@@ -14,6 +14,11 @@ import {
 	NewSlotDialog,
 } from 'components/dashboard/forms/items/NewItems'
 import {
+	CampaignsTable,
+	AdSlotsTable,
+	AdUnitsTable,
+} from 'components/dashboard/containers/Tables'
+import {
 	campaignsLoop,
 	campaignsLoopStats,
 } from 'services/store-data/campaigns'
@@ -39,7 +44,7 @@ const Campaigns = () => (
 			color='secondary'
 			btnLabel='NEW_CAMPAIGN'
 		/>
-		<Items header={t('ALL_CAMPAIGNS')} itemType={'Campaign'} />
+		<CampaignsTable />
 	</>
 )
 
@@ -51,7 +56,7 @@ const AdUnits = () => (
 			color='secondary'
 			btnLabel='NEW_UNIT'
 		/>
-		<Items header={t('ALL_UNITS')} itemType={'AdUnit'} />
+		<AdUnitsTable />
 	</>
 )
 
@@ -64,7 +69,7 @@ const AdSlots = () => (
 			color='secondary'
 			btnLabel='NEW_SLOT'
 		/>
-		<Items header={t('ALL_SLOTS')} itemType={'AdSlot'} />
+		<AdSlotsTable />
 	</>
 )
 
