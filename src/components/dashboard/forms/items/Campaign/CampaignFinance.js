@@ -1,8 +1,6 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
+import React from 'react'
+import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
-import NewCampaignHoc from './NewCampaignHoc'
-import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
@@ -15,10 +13,16 @@ import TextField from '@material-ui/core/TextField'
 import DateTimePicker from 'components/common/DateTimePicker'
 import { FullContentSpinner } from 'components/common/dialog/content'
 import { utils } from 'ethers'
-import { openChannel } from 'services/smart-contracts/actions/core'
-import { validations, Joi } from 'adex-models'
 import MomentUtils from '@date-io/moment'
-import { selectSpinnerById, selectMainToken } from 'selectors'
+import {
+	selectSpinnerById,
+	selectMainToken,
+	selectNewCampaign,
+	selectAccountStatsFormatted,
+	selectValidationsById,
+	t,
+} from 'selectors'
+import { execute, updateNewCampaign } from 'actions'
 import { GETTING_CAMPAIGNS_FEES } from 'constants/spinners'
 
 const moment = new MomentUtils()
@@ -36,256 +40,220 @@ const getTotalImpressions = ({ depositAmount, minPerImpression, t }) => {
 	}
 }
 
-class CampaignFinance extends Component {
-	constructor(props) {
-		super(props)
+function CampaignFinance({ validateId }) {
+	const invalidFields = useSelector(
+		state => selectValidationsById(state, validateId) || {}
+	)
 
-		this.state = {
-			maxChannelFees: 1,
-			loading: true,
-		}
-	}
+	const { symbol } = useSelector(selectMainToken)
+	const campaign = useSelector(selectNewCampaign)
 
-	async componentDidMount() {
-		const { newItem, actions, account } = this.props
-		const { updateSpinner } = actions
+	const {
+		title,
+		validators,
+		depositAmount,
+		minPerImpression,
+		// depositAsset,
+		activeFrom,
+		withdrawPeriodStart,
+		minTargetingScore,
+		temp = {},
+	} = campaign
 
-		updateSpinner(GETTING_CAMPAIGNS_FEES, true)
+	const { maxChannelFees } = temp
 
-		// const campaign = { ...newItem }
-		// const feesData = await openChannel({
-		// 	campaign,
-		// 	account,
-		// 	getFeesOnly: true,
-		// 	getMaxFees: true,
-		// })
+	const { availableIdentityBalanceMainToken = 0 } = useSelector(
+		selectAccountStatsFormatted
+	)
 
-		// this.setState({ maxChannelFees: feesData.fees, loading: false })
-		updateSpinner(GETTING_CAMPAIGNS_FEES, false)
-	}
+	const spinner = useSelector(state =>
+		selectSpinnerById(state, GETTING_CAMPAIGNS_FEES)
+	)
 
-	render() {
-		const {
-			handleChange,
-			newItem,
-			t,
-			invalidFields,
-			account,
-			spinner,
-			mainTokenSymbol,
-		} = this.props
-		const {
-			title,
-			validators,
-			depositAmount,
-			minPerImpression,
-			// depositAsset,
-			activeFrom,
-			withdrawPeriodStart,
-			minTargetingScore,
-		} = newItem
+	const from = activeFrom || undefined
+	const to = withdrawPeriodStart || undefined
+	const now = moment.date().valueOf()
 
-		const { maxChannelFees, loading } = this.state
+	const errTitle = invalidFields['title']
+	const errDepAmnt = invalidFields['depositAmount']
+	const errMin = invalidFields['minPerImpression']
+	const errFrom = invalidFields['activeFrom']
+	const errTo = invalidFields['withdrawPeriodStart']
 
-		const { availableIdentityBalanceMainToken = 0 } =
-			account.stats.formatted || {}
+	const impressions = !(errDepAmnt || errMin)
+		? getTotalImpressions({ depositAmount, minPerImpression, t })
+		: ''
 
-		const from = activeFrom || undefined
-		const to = withdrawPeriodStart || undefined
-		const now = moment.date().valueOf()
+	const leader = validators[0] || {}
+	const follower = validators[1] || {}
 
-		const errTitle = invalidFields['title']
-		const errDepAmnt = invalidFields['depositAmount']
-		const errMin = invalidFields['minPerImpression']
-		const errFrom = invalidFields['activeFrom']
-		const errTo = invalidFields['withdrawPeriodStart']
+	return (
+		<div>
+			{spinner ? (
+				<FullContentSpinner />
+			) : (
+				<Grid container spacing={2}>
+					<Grid item sm={12} md={12}>
+						<TextField
+							fullWidth
+							type='text'
+							required
+							label={t('title', { isProp: true })}
+							name='title'
+							value={title}
+							onChange={ev => {
+								execute(updateNewCampaign('title', ev.target.value))
+							}}
+							error={errTitle && !!errTitle.dirty}
+							maxLength={120}
+							helperText={
+								errTitle && !!errTitle.dirty
+									? errTitle.errMsg
+									: t('TITLE_HELPER_TXT') // TODO
+							}
+						/>
+					</Grid>
 
-		const impressions = !(errDepAmnt || errMin)
-			? getTotalImpressions({ depositAmount, minPerImpression, t })
-			: ''
+					<Grid item sm={12} md={6}>
+						<FormControl fullWidth disabled>
+							<InputLabel htmlFor='leader-validator'>
+								{t('ADV_PLATFORM_VALIDATOR')}
+							</InputLabel>
+							<Input id='leader-validator' value={leader.url || ''} />
+							<FormHelperText>{leader.id}</FormHelperText>
+						</FormControl>
+					</Grid>
 
-		const leader = validators[0] || {}
-		const follower = validators[1] || {}
-
-		return (
-			<div>
-				{spinner || loading ? (
-					<FullContentSpinner />
-				) : (
-					<Grid container spacing={2}>
-						<Grid item sm={12} md={12}>
-							<TextField
-								fullWidth
-								type='text'
-								required
-								label={t('title', { isProp: true })}
-								name='title'
-								value={title}
-								onChange={ev => {
-									this.validateTitle(ev.target.value, 'title', true)
-									handleChange('title', ev.target.value)
-								}}
-								error={errTitle && !!errTitle.dirty}
-								maxLength={120}
-								helperText={
-									errTitle && !!errTitle.dirty
-										? errTitle.errMsg
-										: t('TITLE_HELPER_TXT') // TODO
-								}
-							/>
-						</Grid>
-
-						<Grid item sm={12} md={6}>
-							<FormControl fullWidth disabled>
-								<InputLabel htmlFor='leader-validator'>
-									{t('ADV_PLATFORM_VALIDATOR')}
-								</InputLabel>
-								<Input id='leader-validator' value={leader.url || ''} />
-								<FormHelperText>{leader.id}</FormHelperText>
-							</FormControl>
-						</Grid>
-
-						<Grid item sm={12} md={6}>
-							<FormControl fullWidth disabled>
-								<InputLabel htmlFor='follower-validator'>
-									{t('PUB_PLATFORM_VALIDATOR')}
-								</InputLabel>
-								<Input id='follower-validator' value={follower.url || ''} />
-								<FormHelperText>{follower.id}</FormHelperText>
-							</FormControl>
-						</Grid>
-						<Grid item sm={12} md={6}>
-							<TextField
-								fullWidth
-								type='text'
-								required
-								label={t('DEPOSIT_AMOUNT_LABEL', {
-									args: [
-										parseFloat(
-											availableIdentityBalanceMainToken - maxChannelFees
-										).toFixed(2),
-
-										mainTokenSymbol,
-										maxChannelFees,
-										mainTokenSymbol,
-									],
-								})}
-								name='depositAmount'
-								value={depositAmount}
-								onChange={ev => {
-									handleChange('depositAmount', ev.target.value)
-								}}
-								error={errDepAmnt && !!errDepAmnt.dirty}
-								maxLength={120}
-								helperText={
-									errDepAmnt && !!errDepAmnt.dirty
-										? errDepAmnt.errMsg
-										: t('DEPOSIT_AMOUNT_HELPER_TXT', {
-												args: [maxChannelFees, mainTokenSymbol],
-										  })
-								}
-							/>
-						</Grid>
-						<Grid item sm={12} md={6}>
-							<TextField
-								fullWidth
-								type='text'
-								required
-								label={t('CPM_LABEL', { args: [impressions] })}
-								name='minPerImpression'
-								value={minPerImpression}
-								onChange={ev => {
-									handleChange('minPerImpression', ev.target.value)
-								}}
-								error={errMin && !!errMin.dirty}
-								maxLength={120}
-								helperText={
-									errMin && !!errMin.dirty ? errMin.errMsg : t('CPM_HELPER_TXT')
-								}
-							/>
-						</Grid>
-						<Grid item sm={12} md={6}>
-							<DateTimePicker
-								emptyLabel={t('SET_CAMPAIGN_START')}
-								disablePast
-								fullWidth
-								calendarIcon
-								label={t('CAMPAIGN_STARTS')}
-								minDate={now}
-								maxDate={to}
-								onChange={val => {
-									handleChange('activeFrom', val.valueOf(), true)
-								}}
-								value={from || null}
-								error={errFrom && !!errFrom.dirty}
-								helperText={
-									errFrom && !!errFrom.dirty
-										? errFrom.errMsg
-										: t('CAMPAIGN_STARTS_FROM_HELPER_TXT')
-								}
-							/>
-						</Grid>
-						<Grid item sm={12} md={6}>
-							<DateTimePicker
-								emptyLabel={t('SET_CAMPAIGN_END')}
-								disablePast
-								fullWidth
-								calendarIcon
-								label={t('CAMPAIGN_ENDS')}
-								minDate={from || now}
-								onChange={val =>
-									handleChange('withdrawPeriodStart', val.valueOf(), true)
-								}
-								value={to || null}
-								error={errTo && !!errTo.dirty}
-								helperText={
-									errTo && !!errTo.dirty
-										? errTo.errMsg
-										: t('CAMPAIGN_ENDS_HELPER_TXT')
-								}
-							/>
-						</Grid>
-						<Grid item sm={12} md={6}>
-							<FormGroup row>
-								<FormControlLabel
-									control={
-										<Checkbox
-											checked={!!minTargetingScore}
-											onChange={ev =>
-												handleChange(
+					<Grid item sm={12} md={6}>
+						<FormControl fullWidth disabled>
+							<InputLabel htmlFor='follower-validator'>
+								{t('PUB_PLATFORM_VALIDATOR')}
+							</InputLabel>
+							<Input id='follower-validator' value={follower.url || ''} />
+							<FormHelperText>{follower.id}</FormHelperText>
+						</FormControl>
+					</Grid>
+					<Grid item sm={12} md={6}>
+						<TextField
+							fullWidth
+							type='text'
+							required
+							label={t('DEPOSIT_AMOUNT_LABEL', {
+								args: [
+									parseFloat(
+										availableIdentityBalanceMainToken - maxChannelFees
+									).toFixed(2),
+									symbol,
+									maxChannelFees,
+									symbol,
+								],
+							})}
+							name='depositAmount'
+							value={depositAmount}
+							onChange={ev => {
+								execute(updateNewCampaign('depositAmount', ev.target.value))
+							}}
+							error={errDepAmnt && !!errDepAmnt.dirty}
+							maxLength={120}
+							helperText={
+								errDepAmnt && !!errDepAmnt.dirty
+									? errDepAmnt.errMsg
+									: t('DEPOSIT_AMOUNT_HELPER_TXT', {
+											args: [maxChannelFees, symbol],
+									  })
+							}
+						/>
+					</Grid>
+					<Grid item sm={12} md={6}>
+						<TextField
+							fullWidth
+							type='text'
+							required
+							label={t('CPM_LABEL', { args: [impressions] })}
+							name='minPerImpression'
+							value={minPerImpression}
+							onChange={ev => {
+								execute(updateNewCampaign('minPerImpression', ev.target.value))
+							}}
+							error={errMin && !!errMin.dirty}
+							maxLength={120}
+							helperText={
+								errMin && !!errMin.dirty ? errMin.errMsg : t('CPM_HELPER_TXT')
+							}
+						/>
+					</Grid>
+					<Grid item sm={12} md={6}>
+						<DateTimePicker
+							emptyLabel={t('SET_CAMPAIGN_START')}
+							disablePast
+							fullWidth
+							calendarIcon
+							label={t('CAMPAIGN_STARTS')}
+							minDate={now}
+							maxDate={to}
+							onChange={val => {
+								execute(updateNewCampaign('activeFrom', val.valueOf(), true))
+							}}
+							value={from || null}
+							error={errFrom && !!errFrom.dirty}
+							helperText={
+								errFrom && !!errFrom.dirty
+									? errFrom.errMsg
+									: t('CAMPAIGN_STARTS_FROM_HELPER_TXT')
+							}
+						/>
+					</Grid>
+					<Grid item sm={12} md={6}>
+						<DateTimePicker
+							emptyLabel={t('SET_CAMPAIGN_END')}
+							disablePast
+							fullWidth
+							calendarIcon
+							label={t('CAMPAIGN_ENDS')}
+							minDate={from || now}
+							onChange={val =>
+								execute(
+									updateNewCampaign('withdrawPeriodStart', val.valueOf(), true)
+								)
+							}
+							value={to || null}
+							error={errTo && !!errTo.dirty}
+							helperText={
+								errTo && !!errTo.dirty
+									? errTo.errMsg
+									: t('CAMPAIGN_ENDS_HELPER_TXT')
+							}
+						/>
+					</Grid>
+					<Grid item sm={12} md={6}>
+						<FormGroup row>
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={!!minTargetingScore}
+										onChange={ev =>
+											execute(
+												updateNewCampaign(
 													'minTargetingScore',
 													ev.target.checked ? 1 : null
 												)
-											}
-											value='minTargetingScore'
-										/>
-									}
-									label={t('CAMPAIGN_MIN_TARGETING')}
-								/>
-							</FormGroup>
-						</Grid>
+											)
+										}
+										value='minTargetingScore'
+									/>
+								}
+								label={t('CAMPAIGN_MIN_TARGETING')}
+							/>
+						</FormGroup>
 					</Grid>
-				)}
-			</div>
-		)
-	}
+				</Grid>
+			)}
+		</div>
+	)
 }
 
 CampaignFinance.propTypes = {
-	newItem: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
+	validateId: PropTypes.string.isRequired,
 }
 
-function mapStateToProps(state) {
-	const { persist } = state
-	const spinner = selectSpinnerById(state, GETTING_CAMPAIGNS_FEES)
-	return {
-		account: persist.account,
-		spinner,
-		mainTokenSymbol: selectMainToken(state).symbol,
-	}
-}
-
-const NewCampaignFinance = NewCampaignHoc(CampaignFinance)
-
-export default connect(mapStateToProps)(Translate(NewCampaignFinance))
+export default CampaignFinance
