@@ -18,6 +18,7 @@ class FormSteps extends Component {
 			t,
 			SaveBtn,
 			CancelBtn,
+			cancelFunction,
 			onSave,
 			stepsId,
 			stepsPages,
@@ -35,6 +36,8 @@ class FormSteps extends Component {
 				title: t(page.title),
 				cancelBtn: cancelButton,
 				component: ValidItemHoc(page.page || page),
+				pageValidation: page.pageValidation,
+				goToNextPageIfValid: page.goToNextPageIfValid,
 				props: { ...this.props, stepsId, validateId: validateId + '-' + index },
 			})
 		})
