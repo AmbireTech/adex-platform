@@ -16,12 +16,12 @@ import { AdUnit } from 'adex-models'
 import { execute, cloneItem } from 'actions'
 const RRIconButton = withReactRouterLink(IconButton)
 
-function AdUnitsTable() {
+function AdUnitsTable(props) {
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 	const adUnits = useSelector(selectUnits)
 	const side = useSelector(selectSide)
-	const data = Object.values(adUnits).map(item => ({
+	const data = Object.values(props.items || adUnits).map(item => ({
 		media: {
 			id: item.id,
 			mediaUrl: item.mediaUrl,
@@ -58,8 +58,9 @@ function AdUnitsTable() {
 		},
 		{
 			name: 'title',
-			label: t('PROP_STATUS'),
+			label: t('PROP_TITLE'),
 			options: {
+				display: !props.campaignUnits,
 				filter: false,
 				sort: true,
 			},
@@ -87,6 +88,7 @@ function AdUnitsTable() {
 			label: t('PROP_ACTIONS'),
 			options: {
 				filter: false,
+				display: !props.campaignUnits,
 				sort: true,
 				customBodyRender: ({ to, id }) => (
 					<React.Fragment>

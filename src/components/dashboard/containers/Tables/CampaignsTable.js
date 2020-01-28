@@ -223,6 +223,7 @@ function CampaignsTable() {
 			options: {
 				filter: false,
 				sort: true,
+				download: false,
 				customBodyRender: ({ to }) => (
 					<Tooltip
 						title={t('LABEL_VIEW')}
@@ -245,6 +246,32 @@ function CampaignsTable() {
 			options={{
 				filterType: 'multiselect',
 				selectableRows: 'none',
+				onDownload: (buildHead, buildBody, columns, data) => {
+					const mappedData = data.map(i => ({
+						index: i.index,
+						data: [
+							i.data[0].id,
+							i.data[1].humanFriendlyName,
+							`${formatTokenAmount(
+								bigNumberify(i.data[2]).mul(1000),
+								decimals,
+								true
+							)} ${symbol}`,
+							`${((i.data[3] || 0) / 10).toFixed(2)}%`,
+							i.data[4],
+							i.data[5],
+							`${formatTokenAmount(
+								bigNumberify(i.data[6]).mul(1000),
+								decimals,
+								true
+							)} ${symbol}`,
+							formatDateTime(i.data[7]),
+							formatDateTime(i.data[8]),
+							formatDateTime(i.data[9]),
+						],
+					}))
+					return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
+				},
 			}}
 		/>
 	)
