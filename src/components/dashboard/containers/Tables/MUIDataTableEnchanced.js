@@ -1,11 +1,13 @@
 import React from 'react'
 import MUIDataTable from 'mui-datatables'
+import { theme } from 'components/App/themeMUi'
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles'
 
 export default function MUIDataTableEnchanced(props) {
 	const { title, data, columns, options } = props
 	const getMuiTheme = () =>
 		createMuiTheme({
+			...theme,
 			overrides: {
 				MuiTableFooter: {
 					root: {
@@ -22,6 +24,11 @@ export default function MUIDataTableEnchanced(props) {
 				MuiTableRow: {
 					root: {
 						// height: 90,
+					},
+				},
+				MUIDataTableFilter: {
+					root: {
+						maxWidth: '400px',
 					},
 				},
 				// Think of accessing an element not a class

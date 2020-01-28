@@ -55,6 +55,13 @@ function CampagnsTable(props) {
 	const classes = useStyles()
 	const campaigns = useSelector(selectCampaigns)
 	const { symbol, decimals } = useSelector(selectMainToken)
+	console.log(
+		Math.max(
+			...Object.values(campaigns).map(i =>
+				Number(formatTokenAmount(i.depositAmount, decimals) || 0)
+			)
+		)
+	)
 	const side = useSelector(selectSide)
 	const columns = [
 		{
@@ -115,11 +122,11 @@ function CampagnsTable(props) {
 					initial: [
 						0,
 						Math.max(
-							Object.values(campaigns).map(
-								i => formatTokenAmount(i.depositAmount, decimals) || 0
+							...Object.values(campaigns).map(i =>
+								Number(formatTokenAmount(i.depositAmount, decimals) || 0)
 							)
 						),
-					], // Find min max of deposits
+					],
 					filterTitle: t('DEPOSIT_FILTER'),
 					isToken: true,
 					decimals: decimals,
@@ -130,20 +137,31 @@ function CampagnsTable(props) {
 			name: 'fundsDistributedRatio',
 			label: t('PROP_DISTRIBUTED'),
 			options: {
-				filter: true,
 				sort: true,
 				customBodyRender: fundsDistributedRatio =>
 					((fundsDistributedRatio || 0) / 10).toFixed(2),
+				...sliderFilterOptions({
+					initial: [0, 100],
+					filterTitle: t('DISTRIBUTED_FILTER'),
+				}),
 			},
 		},
 		{
 			name: 'impressions',
 			label: t('PROP_IMPRESSIONS'),
 			options: {
-				filter: true,
 				sort: true,
 				customBodyRender: impressions =>
 					formatNumberWithCommas(impressions || 0),
+				...sliderFilterOptions({
+					initial: [
+						0,
+						Math.max(
+							...Object.values(campaigns).map(i => Number(i.impressions || 0))
+						),
+					],
+					filterTitle: t('DISTRIBUTED_FILTER'),
+				}),
 			},
 		},
 		{

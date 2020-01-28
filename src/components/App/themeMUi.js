@@ -25,7 +25,7 @@ const palette = {
 	text: grey,
 }
 
-const theme = createMuiTheme({
+export const theme = createMuiTheme({
 	typography: {
 		fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
 		fontSize: 13,
