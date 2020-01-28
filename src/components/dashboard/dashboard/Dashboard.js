@@ -6,7 +6,6 @@ import Campaign from 'components/dashboard/containers/Campaign'
 import DashboardStats from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
-import Items from 'components/dashboard/containers/Items'
 import Account from 'components/dashboard/account/AccountInfo'
 import {
 	NewUnitDialog,
