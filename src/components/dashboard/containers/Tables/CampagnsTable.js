@@ -56,7 +56,6 @@ function CampagnsTable(props) {
 	const campaigns = useSelector(selectCampaigns)
 	const { symbol, decimals } = useSelector(selectMainToken)
 	const side = useSelector(selectSide)
-	const [depositFilter, setDepositFilter] = React.useState([0, 100])
 	const columns = [
 		{
 			name: 'media',
@@ -113,7 +112,14 @@ function CampagnsTable(props) {
 					</React.Fragment>
 				),
 				...sliderFilterOptions({
-					initial: [0, 5000], // Find min max of deposits
+					initial: [
+						0,
+						Math.max(
+							Object.values(campaigns).map(
+								i => formatTokenAmount(i.depositAmount, decimals) || 0
+							)
+						),
+					], // Find min max of deposits
 					filterTitle: t('DEPOSIT_FILTER'),
 					isToken: true,
 					decimals: decimals,
