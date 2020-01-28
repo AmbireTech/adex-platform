@@ -6,6 +6,11 @@ import {
 	updateItems,
 	updateValidatorAuthTokens,
 	updateNewItem,
+	handleAfterValidation,
+	validateCampaignValidators,
+	validateCampaignAmount,
+	validateCampaignTitle,
+	validateCampaignDates,
 } from 'actions'
 import { push } from 'connected-react-router'
 import { parseUnits, bigNumberify } from 'ethers/utils'
@@ -25,9 +30,17 @@ import {
 	selectNewCampaign,
 	selectAuthSig,
 	selectAuth,
+	selectAccountStatsFormatted,
 } from 'selectors'
 import { Campaign } from 'adex-models'
 import { OPENING_CAMPAIGN } from 'constants/spinners'
+
+const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
+const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
+const VALIDATOR_LEADER_FEE = '0'
+const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
+const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
+const VALIDATOR_FOLLOWER_FEE = '0'
 
 export function openCampaign({ campaign }) {
 	return async function(dispatch, getState) {
@@ -199,5 +212,101 @@ export function updateNewCampaign(prop, value, newValues) {
 			'Campaign',
 			Campaign
 		)(dispatch)
+	}
+}
+
+const tempValidators = [
+	{
+		id: VALIDATOR_LEADER_ID,
+		url: VALIDATOR_LEADER_URL,
+		fee: VALIDATOR_LEADER_FEE,
+	},
+	{
+		id: VALIDATOR_FOLLOWER_ID,
+		url: VALIDATOR_FOLLOWER_URL,
+		fee: VALIDATOR_FOLLOWER_FEE,
+	},
+]
+
+export function validateNewCampaignFinance({
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		updateSpinner(validateId, true)(dispatch)
+		const state = getState()
+		const {
+			validators,
+			depositAmount,
+			minPerImpression,
+			title,
+			activeFrom,
+			withdrawPeriodStart,
+			created,
+		} = selectNewCampaign(state)
+
+		const { availableIdentityBalanceMainToken } = selectAccountStatsFormatted(
+			state
+		)
+
+		if (!validators || !validators.length) {
+			// TODO: temp - will need dropdown selector for the follower validator
+			updateNewCampaign('validators', tempValidators)
+		}
+
+		const validations = await Promise.all([
+			validateCampaignValidators({ validateId, validators, dirty }),
+			validateCampaignAmount({
+				validateId,
+				prop: 'depositAmount',
+				value: depositAmount,
+				dirty,
+				depositAmount,
+				minPerImpression,
+				availableIdentityBalanceMainToken,
+				errMsg: !dirty && 'REQUIRED_FIELD',
+			}),
+			validateCampaignAmount({
+				validateId,
+				prop: 'minPerImpression',
+				value: minPerImpression,
+				dirty,
+				depositAmount,
+				minPerImpression,
+				availableIdentityBalanceMainToken,
+				errMsg: !dirty && 'REQUIRED_FIELD',
+			}),
+			validateCampaignTitle({
+				validateId,
+				title,
+				dirty,
+			}),
+			validateCampaignDates({
+				validateId,
+				prop: 'activeFrom',
+				value: activeFrom,
+				dirty,
+				activeFrom,
+				withdrawPeriodStart,
+				created,
+			}),
+			validateCampaignDates({
+				validateId,
+				prop: 'withdrawPeriodStart',
+				value: withdrawPeriodStart,
+				dirty,
+				activeFrom,
+				withdrawPeriodStart,
+				created,
+			}),
+		])
+
+		const isValid = validations.every(v => v === true)
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
+
+		updateSpinner(validateId, false)(dispatch)
 	}
 }
