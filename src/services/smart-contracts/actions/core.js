@@ -33,6 +33,7 @@ import {
 	selectMainFeeToken,
 	selectSaiToken,
 } from 'selectors'
+import { formatTokenAmount } from 'helpers/formatters'
 import IdentityABI from 'adex-protocol-eth/abi/Identity'
 
 const { AdExCore } = contracts
@@ -536,14 +537,25 @@ export async function openChannel({
 		getToken,
 	})
 
-	const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken })
+	const { total, totalBN } = await getIdentityTxnsTotalFees({ txnsByFeeToken })
+	const bigZero = bigNumberify(0)
 	const mtBalance = bigNumberify(availableIdentityBalanceMainToken)
-	const maxAvailable = mtBalance.sub(fees.totalBN)
+	const maxAvailable = mtBalance.sub(totalBN).lt(bigZero)
+		? bigZero
+		: mtBalance.sub(totalBN)
+	const maxAvailableFormatted = formatTokenAmount(
+		maxAvailable.toString(),
+		mainToken.decimals || 18,
+		false,
+		true
+	)
 
 	if (getFeesOnly) {
 		return {
-			fees: fees.total,
+			feesFormatted: total,
+			fees: totalBN,
 			maxAvailable,
+			maxAvailableFormatted,
 		}
 	}
 
