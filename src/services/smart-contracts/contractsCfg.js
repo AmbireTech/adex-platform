@@ -17,6 +17,7 @@ export const contracts = {
 	ReverseRegistrar: {
 		address: process.env.REVERSE_REGISTRAR_ADDR,
 		parentDomain: process.env.REVERSE_REGISTRAR_PARENT,
+		publicResolver: process.env.REVERSE_REGISTRAR_PUBLIC_RESOLVER,
 		abi: ReverseRegistrar.abi,
 	},
 	AdExCore: {
