@@ -17,13 +17,18 @@ const isBetween = (date, dateRange) => {
 	else return true
 }
 
-const desc = (a, b, orderBy, numeric) => {
+const desc = (a, b, orderBy, numeric, orderIsDate) => {
 	const subCategories = orderBy.split('.')
 	subCategories.forEach(prop => {
 		a = a[prop]
 		b = b[prop]
 	})
-	if (numeric) {
+	if (orderIsDate) {
+		a = moment(a).unix()
+		b = moment(b).unix()
+	}
+
+	if (!orderIsDate && numeric) {
 		a = Number(a)
 		b = Number(b)
 	}
@@ -81,10 +86,10 @@ const stableSort = (array, cmp) => {
 	return stabilizedThis.map(el => el[0])
 }
 
-const getSorting = (order, orderBy, orderToken) => {
+const getSorting = (order, orderBy, orderisNumber, orderIsDate) => {
 	return order === 'desc'
-		? (a, b) => desc(a, b, orderBy, orderToken)
-		: (a, b) => -desc(a, b, orderBy, orderToken)
+		? (a, b) => desc(a, b, orderBy, orderisNumber, orderIsDate)
+		: (a, b) => -desc(a, b, orderBy, orderisNumber, orderIsDate)
 }
 
 export { filterBySearch, filterByTags, filterByDate, stableSort, getSorting }

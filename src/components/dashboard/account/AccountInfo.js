@@ -61,18 +61,19 @@ function AccountInfo() {
 		outstandingBalanceMainToken,
 	} = useSelector(selectAccountStatsFormatted)
 
-	const localWalletDownloadHref = () => {
-		const obj = getRecoveryWalletData({ email, password, authType })
-		if (!obj || !obj.wallet) {
-			return null
-		}
+	const [localWalletDownloadHref, setLocalWalletDownloadHref] = useState('')
 
-		const data =
-			'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj))
-		return data
+	const loadBackupHref = async () => {
+		const obj = await getRecoveryWalletData({ email, password, authType })
+		if (obj && obj.wallet) {
+			const data =
+				'data:text/json;charset=utf-8,' +
+				encodeURIComponent(JSON.stringify(obj))
+
+			setLocalWalletDownloadHref(data)
+		}
 	}
 
-	const walletJsonData = localWalletDownloadHref()
 	const [expanded, setExpanded] = useState(false)
 	const [ensSearching, setEnsSearching] = useState(true)
 	const [identityEnsName, setIdentityEnsName] = useState()
@@ -88,6 +89,11 @@ function AccountInfo() {
 		}
 		resolveENS()
 	}, [identityAddress])
+
+	useEffect(() => {
+		loadBackupHref()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	const displayRampWidget = () => {
 		const widget = new RampInstantSDK({
@@ -191,19 +197,21 @@ function AccountInfo() {
 						/>
 					}
 					right={
-						walletJsonData && (
-							<label htmlFor='download-wallet-json'>
-								<a
-									id='download-wallet-json'
-									href={localWalletDownloadHref()}
-									download={`adex-account-data-${email}.json`}
-								>
-									<Button size='small' variant='contained' fullWidth>
-										<DownloadIcon className={classes.iconBtnLeft} />
-										{t('BACKUP_LOCAL_WALLET')}
-									</Button>
-								</a>
-							</label>
+						localWalletDownloadHref && (
+							<Box py={1} flexGrow='1'>
+								<label htmlFor='download-wallet-json'>
+									<a
+										id='download-wallet-json'
+										href={localWalletDownloadHref}
+										download={`adex-account-data-${email}.json`}
+									>
+										<Button size='small' variant='contained' fullWidth>
+											<DownloadIcon className={classes.iconBtnLeft} />
+											{t('BACKUP_LOCAL_WALLET')}
+										</Button>
+									</a>
+								</label>
+							</Box>
 						)
 					}
 				/>

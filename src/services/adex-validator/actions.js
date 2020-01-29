@@ -1,5 +1,4 @@
-import Requester from 'services/requester'
-import { translate } from 'services/translations/translations'
+import Requester, { handleRequesterErrorRes } from 'services/requester'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { getSigner } from 'services/smart-contracts/actions/ethers'
 import ewt from './ewt'
@@ -31,11 +30,7 @@ const processResponse = res => {
 	}
 
 	return res.text().then(text => {
-		throw new Error(
-			translate('SERVICE_ERROR_MSG', {
-				args: [res.url, res.status, res.statusText, text],
-			})
-		)
+		handleRequesterErrorRes({ res, text })
 	})
 }
 

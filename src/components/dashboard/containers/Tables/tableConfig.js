@@ -4,6 +4,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll'
 import WarningIcon from '@material-ui/icons/Warning'
 import HourglassFullIcon from '@material-ui/icons/HourglassFull'
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
+import { constants } from 'adex-models'
 
 const headCells = {
 	Campaign: [
@@ -41,18 +42,21 @@ const headCells = {
 		{
 			id: 'created',
 			numeric: true,
+			isDate: true,
 			disablePadding: false,
 			label: t('PROP_CREATED'),
 		},
 		{
 			id: 'activeFrom',
 			numeric: true,
+			isDate: true,
 			disablePadding: false,
 			label: t('PROP_STARTS'),
 		},
 		{
 			id: 'withdrawPeriodStart',
 			numeric: true,
+			isDate: true,
 			disablePadding: false,
 			label: t('PROP_ENDS'),
 		},
@@ -80,6 +84,7 @@ const headCells = {
 		{
 			id: 'created',
 			numeric: false,
+			isDate: true,
 			disablePadding: false,
 			label: t('PROP_CREATED'),
 		},
@@ -88,20 +93,12 @@ const headCells = {
 
 const filterTags = {
 	Campaign: [{ name: 'active' }, { name: 'completed' }, { name: 'closed' }],
-	Other: [
-		{ name: 'legacy_300x250' },
-		{ name: 'legacy_250x250' },
-		{ name: 'legacy_240x400' },
-		{ name: 'legacy_336x280' },
-		{ name: 'legacy_180x150' },
-		{ name: 'legacy_300x100' },
-		{ name: 'legacy_720x300' },
-		{ name: 'legacy_468x60' },
-		{ name: 'legacy_728x90' },
-		{ name: 'legacy_160x600' },
-		{ name: 'legacy_120x600' },
-		{ name: 'legacy_300x600' },
-	],
+	Other: constants.AdUnitsTypes.map(type => {
+		return {
+			name: type,
+			label: type.split('_')[1],
+		}
+	}),
 }
 
 const missingData = {

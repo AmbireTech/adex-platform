@@ -1,60 +1,67 @@
 import React from 'react'
-import { withStyles } from '@material-ui/core/styles'
-import Switch from '@material-ui/core/Switch'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import ListItemText from '@material-ui/core/ListItemText'
-import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
+import { makeStyles } from '@material-ui/core/styles'
+import AppBar from '@material-ui/core/AppBar'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import { push } from 'connected-react-router'
+import { execute } from 'actions'
+import { t } from 'selectors'
 
-const EddieSwitch = withStyles(theme => {
-	const advColor = theme.palette.accentOne.main
-	const pubColor = theme.palette.accentTwo.main
+const sideIndex = {
+	advertiser: 0,
+	publisher: 1,
+	'0': 'advertiser',
+	'1': 'publisher',
+}
+
+const handleChange = (ev, index) => {
+	execute(push(`/dashboard/${sideIndex[index + '']}`))
+}
+
+const useStyles = makeStyles(theme => {
+	const activeColor = ({ side }) =>
+		side === 'advertiser'
+			? theme.palette.accentOne.main
+			: theme.palette.accentTwo.main
+
 	return {
-		switchBase: {
-			color: advColor,
-
-			'&$checked': {
-				color: pubColor,
-			},
-			'&$checked + $track': {
-				backgroundColor: pubColor,
+		// TODO: keep it everywhere in case of components update
+		root: {
+			minWidth: 30,
+			'&$selected': {
+				color: activeColor,
 			},
 		},
-		checked: {},
-		track: { backgroundColor: advColor },
+		selected: {
+			color: activeColor,
+			'&$selected': {
+				color: activeColor,
+			},
+		},
+		indicator: {
+			backgroundColor: activeColor,
+		},
 	}
-})(Switch)
+})
 
-const RRSwitch = withReactRouterLink(props => (
-	<ListItem>
-		<ListItemText primary={props.label} />
-		<ListItemSecondaryAction>
-			<EddieSwitch {...props} />
-		</ListItemSecondaryAction>
-	</ListItem>
-))
-
-const SideSwitch = ({ side, t }) => {
+const SideSwitch = ({ side, className }) => {
+	const classes = useStyles({ side })
 	return (
-		<div>
-			{/* Keep both if there is no valid side and force react to rerender at the same time */}
-			{side !== 'advertiser' && (
-				<RRSwitch
-					color='primary'
-					checked={true}
-					value='account'
-					to={{ pathname: '/dashboard/advertiser' }}
-					label={t('PUBLISHER')}
-				/>
-			)}
-			{side !== 'publisher' && (
-				<RRSwitch
-					color='primary'
-					checked={false}
-					to={{ pathname: '/dashboard/publisher' }}
-					label={t('ADVERTISER')}
-				/>
-			)}
+		<div className={className}>
+			<AppBar position='static' color='default'>
+				<Tabs
+					classes={classes}
+					value={sideIndex[side]}
+					onChange={handleChange}
+					indicatorColor='primary'
+					textColor='primary'
+					variant='fullWidth'
+					aria-label='side select'
+				>
+					<Tab classes={classes} label={t('ADVERTISER')} />
+					<Tab classes={classes} label={t('PUBLISHER')} />
+				</Tabs>
+			</AppBar>
 		</div>
 	)
 }

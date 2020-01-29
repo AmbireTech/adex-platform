@@ -160,3 +160,31 @@ export function refreshCacheAndReload({ version, notification = false }) {
 		}
 	}
 }
+
+export function handleRedirectParams(search) {
+	return function(dispatch) {
+		const searchParams = new URLSearchParams(search)
+
+		const email = searchParams.get('confirm-email')
+		const identity = searchParams.get('confirm-identity')
+		const grant = searchParams.get('confirm-grant')
+
+		if (email && identity && !grant) {
+			addToast({
+				type: 'accept',
+				label: translate('CONFIRM_IDENTITY_EMAIL', {
+					args: [email, identity],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		} else if (email && identity && grant) {
+			addToast({
+				type: 'accept',
+				label: translate('CONFIRM_IDENTITY_EMAIL_GRANT', {
+					args: [email, identity, grant],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}

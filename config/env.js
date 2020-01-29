@@ -101,6 +101,8 @@ function getClientEnvironment(publicUrl) {
 					process.env.REVERSE_REGISTRAR_PUBLIC_RESOLVER,
 				SCD_MCD_MIGRATION_ADDR: process.env.SCD_MCD_MIGRATION_ADDR,
 				REGISTRATION_OPEN: process.env.REGISTRATION_OPEN,
+				ADEX_TOS_URL: process.env.ADEX_TOS_URL,
+				ADEX_HELP_URL: process.env.ADEX_HELP_URL,
 			}
 		)
 

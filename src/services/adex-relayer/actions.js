@@ -1,5 +1,4 @@
-import Requester from 'services/requester'
-import { translate } from 'services/translations/translations'
+import Requester, { handleRequesterErrorRes } from 'services/requester'
 
 const ADEX_RELAYER_HOST = process.env.ADEX_RELAYER_HOST
 const requester = new Requester({ baseUrl: ADEX_RELAYER_HOST })
@@ -10,11 +9,7 @@ const processResponse = res => {
 	}
 
 	return res.text().then(text => {
-		throw new Error(
-			translate('SERVICE_ERROR_MSG', {
-				args: [res.url, res.status, res.statusText, text],
-			})
-		)
+		handleRequesterErrorRes({ res, text })
 	})
 }
 

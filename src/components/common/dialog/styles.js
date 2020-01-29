@@ -46,6 +46,7 @@ export const styles = theme => {
 			// right: 0,
 			display: 'flex',
 			flexDirection: 'column',
+			flex: 1,
 		},
 		propRow: {
 			margin: '10px 0',
@@ -114,6 +115,13 @@ export const styles = theme => {
 		},
 		contentStickyTop: {
 			marginBottom: '2rem',
+		},
+		fullContentMessage: {
+			display: 'flex',
+			flex: 1,
+			flexDirection: 'column',
+			justifyContent: 'center',
+			alignItems: 'center',
 		},
 	}
 }
