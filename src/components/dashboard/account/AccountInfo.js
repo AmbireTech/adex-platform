@@ -43,13 +43,12 @@ const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
 const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 
 function AccountInfo() {
-	const { authType, email, password } = useSelector(selectWallet)
+	const { authType = '', email, password } = useSelector(selectWallet)
 	const identity = useSelector(selectAccountIdentity)
 	const { privileges } = identity
 	const { symbol } = useSelector(selectMainToken)
 	const {
 		walletAddress,
-		walletAuthType = '',
 		walletPrivileges = '',
 		identityAddress,
 		identityBalanceMainToken,
@@ -174,22 +173,13 @@ function AccountInfo() {
 						<ListItemText
 							className={classes.address}
 							primary={formatAddress(walletAddress)}
-							secondary={
-								authType === 'demo'
-									? t('DEMO_ACCOUNT_WALLET_ADDRESS', {
-											args: [walletAuthType, walletPrivileges],
-									  })
-									: t('WALLET_INFO_LABEL', {
-											args: [
-												walletAuthType
-													.split(' ')
-													.map(x => x[0].toUpperCase() + x.slice(1))
-													.join(' '),
-												walletPrivileges || ' - ',
-												authType,
-											],
-									  })
-							}
+							secondary={t('WALLET_INFO_LABEL', {
+								args: [
+									`AUTH_${authType.toUpperCase()}`,
+									walletPrivileges || ' - ',
+									authType,
+								],
+							})}
 						/>
 					}
 					right={

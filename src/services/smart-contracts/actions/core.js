@@ -1,7 +1,6 @@
 import crypto from 'crypto'
 import {
 	Channel,
-	// MerkleTree,
 	splitSig,
 	ChannelState,
 	RoutineOps,
@@ -14,7 +13,6 @@ import {
 	processExecuteByFeeTokens,
 	getApproveTxns,
 } from 'services/smart-contracts/actions/identity'
-import { getWithdrawTokensBalances } from 'services/smart-contracts/actions/stats'
 import { contracts } from '../contractsCfg'
 import { closeCampaign } from 'services/adex-validator/actions'
 import { Campaign, AdUnit } from 'adex-models'
@@ -24,15 +22,16 @@ import {
 	randomBytes,
 	parseUnits,
 	Interface,
-	// formatUnits,
 	getAddress,
 } from 'ethers/utils'
 import {
 	selectFeeTokenWhitelist,
 	selectRoutineWithdrawTokens,
 	selectMainFeeToken,
+	selectMainToken,
 	selectSaiToken,
 } from 'selectors'
+import { formatTokenAmount } from 'helpers/formatters'
 import IdentityABI from 'adex-protocol-eth/abi/Identity'
 
 const { AdExCore } = contracts
@@ -236,13 +235,8 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 	return eligible
 }
 
-async function getChannelsToSweepFrom({ amountToSweep, identityAddr, wallet }) {
-	const allChannels = await getChannelsWithOutstanding({
-		identityAddr,
-		wallet,
-	})
-
-	const { eligible } = allChannels
+async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
+	const { eligible } = withBalance
 		.sort((c1, c2) => {
 			return c2.outstandingAvailable.gt(c1.outstandingAvailable)
 		})
@@ -336,13 +330,14 @@ function hasValidExecuteRoutines(routineAuthTuple) {
 }
 
 export async function getSweepChannelsTxns({ account, amountToSweep }) {
-	const { wallet, identity } = account
+	const { wallet, identity, stats } = account
+	const { withBalance } = stats
 	const { AdExCore } = await getEthers(wallet.authType)
 	const identityAddr = identity.address
 	const channelsToSweep = await getChannelsToSweepFrom({
 		amountToSweep,
 		identityAddr,
-		wallet,
+		withBalance,
 	})
 
 	const txns = channelsToSweep.map((c, i) => {
@@ -398,11 +393,16 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 }
 
 function getSwapAmountsByToken({ balances }) {
+	const mainToken = selectMainToken()
 	const saiToken = selectSaiToken()
 	const { swapsByToken, swapsSumInMainToken } = balances.reduce(
 		(swaps, balance) => {
 			// TODO: currently work only for SAI to DAI swap
-			if (balance.token.address === saiToken.address) {
+			if (
+				balance.token.address !== mainToken.address &&
+				// TEMP: remove that check when all tokens swaps are available
+				balance.token.address === saiToken.address
+			) {
 				swaps.swapsSumInMainToken = swaps.swapsSumInMainToken.add(
 					balance.balanceMainToken
 				)
@@ -426,16 +426,12 @@ export async function getSweepingTxnsIfNeeded({
 	account,
 }) {
 	const needed = bigNumberify(amountInMainTokenNeeded)
-	const { identity, wallet } = account
-	const { address } = identity
-	const { authType } = wallet
+	const {
+		balances,
+		mainTokenBalance,
+	} = account.stats.raw.identityWithdrawTokensBalancesBalances
 
-	const { balances, mainTokenBalance } = await getWithdrawTokensBalances({
-		authType,
-		address,
-	})
-
-	let currentBalanceInUse = mainTokenBalance
+	let currentBalanceInUse = bigNumberify(mainTokenBalance)
 
 	const sweepData = {
 		sweepTxns: [],
@@ -536,14 +532,25 @@ export async function openChannel({
 		getToken,
 	})
 
-	const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken })
+	const { total, totalBN } = await getIdentityTxnsTotalFees({ txnsByFeeToken })
+	const bigZero = bigNumberify(0)
 	const mtBalance = bigNumberify(availableIdentityBalanceMainToken)
-	const maxAvailable = mtBalance.sub(fees.totalBN)
+	const maxAvailable = mtBalance.sub(totalBN).lt(bigZero)
+		? bigZero
+		: mtBalance.sub(totalBN)
+	const maxAvailableFormatted = formatTokenAmount(
+		maxAvailable.toString(),
+		mainToken.decimals || 18,
+		false,
+		true
+	)
 
 	if (getFeesOnly) {
 		return {
-			fees: fees.total,
+			feesFormatted: total,
+			fees: totalBN,
 			maxAvailable,
+			maxAvailableFormatted,
 		}
 	}
 

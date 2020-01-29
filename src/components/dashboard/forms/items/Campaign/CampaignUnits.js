@@ -1,73 +1,60 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import NewCampaignHoc from './NewCampaignHoc'
-import Translate from 'components/translate/Translate'
+import React from 'react'
+import { useSelector } from 'react-redux'
 import Grid from '@material-ui/core/Grid'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import { ContentBody } from 'components/common/dialog/content'
 import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems'
+import { t, selectAdUnitsArray, selectAdUnits } from 'selectors'
+import { updateNewCampaign, execute } from 'actions'
 
-class CampaignUnits extends Component {
-	handleSelect = selected => {
-		console.log(selected)
-		const { adUnits, handleChange } = this.props
+function CampaignUnits(props) {
+	const adUnits = useSelector(selectAdUnits)
+	const adUnitsArray = useSelector(selectAdUnitsArray)
+	const hasAdUnits = adUnitsArray && adUnitsArray.length
+
+	const handleSelect = selected => {
 		const units = Object.values(selected).map(value => {
 			return adUnits[value]
 		})
 
-		handleChange('adUnits', units)
+		execute(updateNewCampaign('adUnits', units))
 	}
 
-	render() {
-		const { adUnitsArray, t } = this.props
-		const hasAdUnits = adUnitsArray && adUnitsArray.length
-		return (
-			<div>
-				<Grid
-					container
-					spacing={2}
-					direction={hasAdUnits ? null : 'column'}
-					alignItems={hasAdUnits ? null : 'center'}
-				>
-					<Grid item sm={12}>
-						<ContentBody>
-							{hasAdUnits ? (
-								<AdUnitsTable
-									items={adUnitsArray}
-									validate={this.props.validate}
-									handleSelect={this.handleSelect}
-									noClone
-									noDownload
-									rowSelectable
-									noPrint
+	return (
+		<div>
+			<Grid
+				container
+				spacing={2}
+				direction={hasAdUnits ? null : 'column'}
+				alignItems={hasAdUnits ? null : 'center'}
+			>
+				<Grid item sm={12}>
+					<ContentBody>
+						{hasAdUnits ? (
+							<AdUnitsTable
+								items={adUnitsArray}
+								validate={props.validate}
+								handleSelect={handleSelect}
+								noClone
+								noDownload
+								rowSelectable
+								noPrint
+							/>
+						) : (
+							<Grid container direction='column' alignItems='center'>
+								<p>{t('ERR_CAMPAIGN_REQUIRES_UNITS')}</p>
+								<NewUnitDialog
+									variant='extended'
+									color='secondary'
+									btnLabel='NEW_UNIT'
 								/>
-							) : (
-								<Grid container direction='column' alignItems='center'>
-									<p>{t('ERR_CAMPAIGN_REQUIRES_UNITS')}</p>
-									<NewUnitDialog
-										variant='extended'
-										color='secondary'
-										btnLabel='NEW_UNIT'
-									/>
-								</Grid>
-							)}
-						</ContentBody>
-					</Grid>
+							</Grid>
+						)}
+					</ContentBody>
 				</Grid>
-			</div>
-		)
-	}
+			</Grid>
+		</div>
+	)
 }
 
-CampaignUnits.propTypes = {
-	newItem: PropTypes.object.isRequired,
-	title: PropTypes.string,
-	descriptionHelperTxt: PropTypes.string,
-	nameHelperTxt: PropTypes.string,
-	adUnits: PropTypes.object.isRequired,
-	adUnitsArray: PropTypes.array.isRequired,
-}
-
-const NewCampaignUnits = NewCampaignHoc(CampaignUnits)
-
-export default Translate(NewCampaignUnits)
+export default CampaignUnits
