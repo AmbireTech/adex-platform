@@ -267,13 +267,7 @@ function txnsByTokenWithSaiToDaiSwap({
 	return { txnsByFeeToken, saiWithdrawAmount }
 }
 
-export async function addIdentityENS({ username, account, getFeesOnly }) {
-	const fees = bigNumberify(feeAmountSetENS)
-	if (getFeesOnly) {
-		return {
-			fees: formatTokenAmount(fees.toString(), 18),
-		}
-	}
+export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 	const { wallet, identity } = account
 	const {
 		provider,
@@ -283,7 +277,6 @@ export async function addIdentityENS({ username, account, getFeesOnly }) {
 		AdExENSManager,
 		ReverseRegistrar,
 	} = await getEthers(wallet.authType)
-	const signer = await getSigner({ wallet, provider })
 	const identityAddr = identity.address
 	const AdExENSManagerInterface = new Interface(AdExENSManager.abi)
 	const ReverseRegistrarInterface = new Interface(ReverseRegistrar.abi)
@@ -293,7 +286,7 @@ export async function addIdentityENS({ username, account, getFeesOnly }) {
 		feeTokenAddr: MainToken.address,
 		to: AdExENSManager.address,
 		data: AdExENSManagerInterface.functions.registerAndSetup.encode([
-			publicResolver,
+			AdExENSManager.publicResolver,
 			id(username),
 			identityAddr,
 		]),
@@ -318,6 +311,17 @@ export async function addIdentityENS({ username, account, getFeesOnly }) {
 		account,
 		getToken,
 	})
+
+	const { mainToken } = selectRelayerConfig()
+	const { total } = await getIdentityTxnsTotalFees({
+		txnsByFeeToken,
+		mainToken,
+	})
+	if (getFeesOnly) {
+		return {
+			fees: total,
+		}
+	}
 
 	const result = await processExecuteByFeeTokens({
 		identityAddr,

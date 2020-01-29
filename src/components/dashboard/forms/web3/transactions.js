@@ -211,8 +211,9 @@ export const SetAccountENS = props => (
 				})
 			)
 		}}
-		getFeesFn={() => {
+		getFeesFn={({ account } = {}) => {
 			return addIdentityENS({
+				account,
 				getFeesOnly: true,
 			})
 		}}
