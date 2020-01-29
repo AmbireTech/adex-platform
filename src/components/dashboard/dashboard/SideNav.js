@@ -91,6 +91,9 @@ const useStyles = makeStyles(theme => {
 				color: theme.palette.text.secondary,
 			},
 		},
+		sideSwitch: {
+			marginBottom: `${theme.spacing(2)}px`,
+		},
 	}
 })
 
@@ -152,7 +155,7 @@ function SideNav(props) {
 						</ListItem>
 					</div>
 					<ListDivider />
-					<SideSwitch side={side} t={t} />
+					<SideSwitch className={classes.sideSwitch} side={side} t={t} />
 					<ListDivider />
 					<RRListItem
 						button
@@ -195,10 +198,7 @@ function SideNav(props) {
 					<ListDivider />
 				</div>
 				<div>
-					<Anchor
-						target='_blank'
-						href='https://medium.com/adex-network-tips-and-tricks'
-					>
+					<Anchor target='_blank' href={`${process.env.ADEX_HELP_URL}`}>
 						<ListItem button>
 							<ListItemIcon>
 								<HelpOutlineIcon />

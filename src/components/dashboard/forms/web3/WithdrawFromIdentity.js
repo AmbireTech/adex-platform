@@ -112,9 +112,7 @@ class WithdrawFromIdentity extends Component {
 					onFocus={() => this.validateAmount(withdrawAmount, false)}
 					error={errAmount && !!errAmount.dirty}
 					helperText={
-						errAmount && !!errAmount.dirty ? (
-							errAmount.errMsg
-						) : (
+						<span>
 							<Button
 								size='small'
 								onClick={() => {
@@ -126,7 +124,10 @@ class WithdrawFromIdentity extends Component {
 									args: [identityAvailable, token],
 								})}
 							</Button>
-						)
+							<span>
+								{errAmount && !!errAmount.dirty ? errAmount.errMsg : ''}
+							</span>
+						</span>
 					}
 				/>
 			</div>

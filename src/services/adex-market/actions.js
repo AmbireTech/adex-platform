@@ -1,26 +1,21 @@
-import Requester from 'services/requester'
+import Requester, { handleRequesterErrorRes } from 'services/requester'
 import { logOut } from 'services/store-data/auth'
 import moment from 'moment'
-import { translate } from 'services/translations/translations'
 
 const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
 const requester = new Requester({ baseUrl: ADEX_MARKET_HOST })
 
-const processResponse = (res, dontThrow) => {
+const processResponse = (res, dontThrow, skipRedirect) => {
 	if (res.status >= 200 && res.status < 400) {
 		return res.json()
 	}
 
 	return res.text().then(text => {
 		if (res.status === 401 || res.status === 403) {
-			logOut()
+			logOut(skipRedirect)
 		}
 		if (!dontThrow) {
-			throw new Error(
-				translate('SERVICE_ERROR_MSG', {
-					args: [res.url, res.status, res.statusText, text],
-				})
-			)
+			handleRequesterErrorRes({ res, text })
 		}
 	})
 }
@@ -60,7 +55,7 @@ export const checkSession = ({ authSig, skipErrToast }) => {
 			authSig,
 			skipErrToast,
 		})
-		.then(res => processResponse(res, true))
+		.then(res => processResponse(res, true, true))
 }
 
 export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {

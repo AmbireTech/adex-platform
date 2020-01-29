@@ -118,7 +118,8 @@ export default function EnhancedTable(props) {
 	} = props
 	const [order, setOrder] = React.useState('desc')
 	const [orderBy, setOrderBy] = React.useState('created')
-	const [orderIsNumeric, setOrderisNumeric] = React.useState(true)
+	const [orderIsNumeric, setOrderisNumeric] = React.useState(false)
+	const [orderIsDate, setOrderisDate] = React.useState(true)
 	const [selected, setSelected] = React.useState([])
 	const [page, setPage] = React.useState(0)
 	const [rowsPerPage, setRowsPerPage] = React.useState(5)
@@ -130,7 +131,7 @@ export default function EnhancedTable(props) {
 		if (validate && handleSelect) {
 			validate('adUnits', {
 				isValid: isValid,
-				err: { msg: 'ERR_ADUNITS_REQIURED' },
+				err: { msg: 'ERR_ADUNITS_REQUIRED' },
 				dirty: true,
 			})
 			isValid && handleSelect(selected)
@@ -143,11 +144,12 @@ export default function EnhancedTable(props) {
 		setPage(0)
 	}, [search, filters])
 
-	const handleRequestSort = (event, property, numeric) => {
+	const handleRequestSort = (event, property, numeric, isDate) => {
 		const isDesc = orderBy === property && order === 'desc'
 		setOrder(isDesc ? 'asc' : 'desc')
 		setOrderBy(property)
 		setOrderisNumeric(numeric)
+		setOrderisDate(isDate)
 	}
 
 	const handleSelectAllClick = event => {
@@ -196,12 +198,12 @@ export default function EnhancedTable(props) {
 
 	const sortedItems = stableSort(
 		filteredItems,
-		getSorting(order, orderBy, orderIsNumeric)
+		getSorting(order, orderBy, orderIsNumeric, orderIsDate)
 	)
 
 	const emptyRows =
 		rowsPerPage -
-		Math.min(rowsPerPage, filteredItems.length - 1 - page * rowsPerPage)
+		Math.min(rowsPerPage, filteredItems.length - page * rowsPerPage)
 
 	return (
 		<div className={classes.root}>
@@ -250,6 +252,7 @@ export default function EnhancedTable(props) {
 									const mediaMime = firstUnit.mediaMime || item.mediaMime || ''
 									return (
 										<TableRow
+											style={{ height: 90 }}
 											hover
 											role='checkbox'
 											aria-checked={isItemSelected}
@@ -266,7 +269,7 @@ export default function EnhancedTable(props) {
 													/>
 												</TableCell>
 											)}
-											<TableCell>
+											<TableCell padding={'none'}>
 												<Img
 													fullScreenOnClick={true}
 													className={classnames(classes.cellImg)}
@@ -336,7 +339,7 @@ export default function EnhancedTable(props) {
 									)
 								})}
 							{emptyRows > 0 && (
-								<TableRow style={{ height: 33 * emptyRows }}>
+								<TableRow style={{ height: 90 * emptyRows }}>
 									{items.length > 0 ? (
 										<TableCell
 											colSpan={
