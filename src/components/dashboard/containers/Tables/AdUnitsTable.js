@@ -111,7 +111,7 @@ function AdUnitsTable(props) {
 		},
 		{
 			name: 'actions',
-			label: t('PROP_ACTIONS'),
+			label: t('ACTIONS'),
 			options: {
 				filter: false,
 				display: !noActions,

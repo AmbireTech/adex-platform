@@ -132,7 +132,7 @@ function CampaignsTable(props) {
 		},
 		{
 			name: 'impressions',
-			label: t('PROP_IMPRESSIONS'),
+			label: t('LABEL_IMPRESSIONS'),
 			options: {
 				sort: true,
 				customBodyRender: impressions =>
@@ -214,7 +214,7 @@ function CampaignsTable(props) {
 		},
 		{
 			name: 'actions',
-			label: t('PROP_ACTIONS'),
+			label: t('ACTIONS'),
 			options: {
 				filter: false,
 				sort: true,

@@ -2,6 +2,7 @@ import React from 'react'
 import MUIDataTable from 'mui-datatables'
 import { theme } from 'components/App/themeMUi'
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles'
+import { t } from 'selectors'
 
 export default function MUIDataTableEnchanced(props) {
 	const { title, data, columns, options } = props
@@ -56,36 +57,39 @@ export default function MUIDataTableEnchanced(props) {
 		},
 		textLabels: {
 			body: {
-				noMatch: 'Sorry, no matching records found',
-				toolTip: 'Sort',
-				columnHeaderTooltip: column => `Sort for ${column.label}`,
+				noMatch: t('TABLE_NO_MATCH'),
+				toolTip: t('TABLE_TOOLTIP'),
+				columnHeaderTooltip: column =>
+					`${t('TABLE_HEADER_TOOLTIP', {
+						args: [column.label],
+					})}`,
 			},
 			pagination: {
-				next: 'Next Page',
-				previous: 'Previous Page',
-				rowsPerPage: 'Rows per page:',
-				displayRows: 'of',
+				next: t('TABLE_NEXT'),
+				previous: t('TABLE_PREV'),
+				rowsPerPage: t('TABLE_ROWS_PER_PAGE'),
+				displayRows: t('TABLE_DISPLAY_ROWS'),
 			},
 			toolbar: {
-				search: 'Search',
-				downloadCsv: 'Download CSV',
-				print: 'Print',
-				viewColumns: 'View Columns',
-				filterTable: 'Filter Table',
+				search: t('TABLE_SEARCH'),
+				downloadCsv: t('TABLE_DL_CSV'),
+				print: t('TABLE_PRINT'),
+				viewColumns: t('TABLE_VIEW_COLS'),
+				filterTable: t('TABLE_FILTER'),
 			},
 			filter: {
-				all: 'All',
-				title: 'FILTERS',
-				reset: 'RESET',
+				all: t('TABLE_FILTER_ALL'),
+				title: t('TABLE_FILTER_TITLE'),
+				reset: t('TABLE_FILTER_RESET'),
 			},
 			viewColumns: {
-				title: 'Show Columns',
-				titleAria: 'Show/Hide Table Columns',
+				title: t('TABLE_SHOW_COLS'),
+				titleAria: t('TABLE_SHOW_HIDE_COLS'),
 			},
 			selectedRows: {
-				text: 'row(s) selected',
-				delete: 'Delete',
-				deleteAria: 'Delete Selected Rows',
+				text: t('TABLE_SELECTED_ROWS'),
+				delete: t('TABLE_DELETE'),
+				deleteAria: t('TABLE_DELETE_SELECTED'),
 			},
 		},
 	}

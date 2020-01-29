@@ -81,7 +81,7 @@ function AdSlotsTable(props) {
 		},
 		{
 			name: 'actions',
-			label: t('PROP_ACTIONS'),
+			label: t('ACTIONS'),
 			options: {
 				filter: false,
 				sort: true,
