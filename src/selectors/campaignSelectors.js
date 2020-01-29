@@ -8,14 +8,14 @@ export const selectCampaignsTableData = createSelector(
 	[selectCampaignsArray, (_, side) => side],
 	(campaigns, side) =>
 		campaigns.map(item => ({
-			// media: {
-			// 	id: item.id,
-			// 	adUnits: item.adUnits,
-			// },
-			// status: {
-			// 	humanFriendlyName: item.status.humanFriendlyName,
-			// 	originalName: item.status.name,
-			// },
+			media: {
+				id: item.id,
+				adUnits: item.adUnits,
+			},
+			status: {
+				humanFriendlyName: item.status.humanFriendlyName,
+				originalName: item.status.name,
+			},
 			depositAmount: item.depositAmount || 0,
 			fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
 			impressions: item.impressions || 0,
@@ -24,9 +24,9 @@ export const selectCampaignsTableData = createSelector(
 			created: item.created,
 			activeFrom: item.spec.withdrawPeriodStart,
 			withdrawPeriodStart: item.spec.withdrawPeriodStart,
-			// actions: {
-			// 	to: `/dashboard/${side}/Campaign/${item.id}`,
-			// },
+			actions: {
+				to: `/dashboard/${side}/Campaign/${item.id}`,
+			},
 		}))
 )
 
