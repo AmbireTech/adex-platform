@@ -74,7 +74,7 @@ function CampaignsTable(props) {
 			label: t('PROP_STATUS'),
 			options: {
 				filter: true,
-				sort: true,
+				sort: false,
 				filterOptions: {
 					names: ['Active', 'Closed', 'Completed'],
 					logic: (status, filters) => {
