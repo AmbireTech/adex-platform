@@ -294,6 +294,20 @@ const validateAmounts = ({
 	return { error }
 }
 
+export function validateNumberString({ validateId, prop, value, dirty }) {
+	return async function(dispatch, getState) {
+		const isValid = isNumberString(value)
+
+		validate(validateId, prop, {
+			isValid,
+			err: { msg: 'ERR_INVALID_AMOUNT' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
 export function validateCampaignAmount({
 	validateId,
 	prop,
