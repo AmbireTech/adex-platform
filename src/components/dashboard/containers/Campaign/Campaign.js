@@ -6,7 +6,6 @@ import actions from 'actions'
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
-import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import Translate from 'components/translate/Translate'
 import Button from '@material-ui/core/Button'
@@ -133,7 +132,7 @@ export class Campaign extends Component {
 							</Grid>
 						)}
 						{tabIndex === 1 && (
-							<AdUnitsTable items={units} campaignUnits noActions />
+							<AdUnitsTable items={units} campaignUnits noClone />
 						)}
 						{tabIndex === 2 && (
 							<List>

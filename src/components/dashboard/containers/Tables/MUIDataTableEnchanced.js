@@ -98,6 +98,7 @@ export default function MUIDataTableEnchanced(props) {
 				options={{
 					...generalTableOptions,
 					...options,
+					search: !props.noSearch,
 					download: !props.noDownload,
 					print: !props.noPrint,
 					selectableRows: props.rowSelectable ? 'multiple' : 'none',
