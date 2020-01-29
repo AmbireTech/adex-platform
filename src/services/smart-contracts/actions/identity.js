@@ -26,8 +26,6 @@ import solc from 'solcBrowser'
 import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 import ScdMcdMigrationABI from 'services/smart-contracts/abi/ScdMcdMigration'
-const publicResolver = '0x226159d592E2b063810a10Ebf6dcbADA94Ed68b8'
-const feeAmountSetENS = '300000000000000000'
 
 const ERC20 = new Interface(ERC20TokenABI)
 const ScdMcdMigration = new Interface(ScdMcdMigrationABI)
