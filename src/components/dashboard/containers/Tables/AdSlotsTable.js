@@ -117,4 +117,4 @@ AdSlotsTable.propTypes = {
 	campaignId: PropTypes.string.isRequired,
 }
 
-export default AdSlotsTable
+export default React.memo(AdSlotsTable)

@@ -88,7 +88,6 @@ function CampaignStatsDoughnut(props) {
 }
 
 CampaignStatsDoughnut.propTypes = {
-	campaingAnalytics: PropTypes.object.isRequired,
 	campaignId: PropTypes.string.isRequired,
 }
 

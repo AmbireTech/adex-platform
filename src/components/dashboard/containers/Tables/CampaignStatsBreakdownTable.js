@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { t, selectCampaignAnalytics, selectMainToken } from 'selectors'
 import MUIDataTableEnchanced from 'components/dashboard/containers/Tables/MUIDataTableEnchanced'
-import { useSelector } from 'react-redux'
+import { useSelector, shallowEqual } from 'react-redux'
 import { sliderFilterOptions } from './commonFilters'
 import { formatNumberWithCommas } from 'helpers/formatters'
 
@@ -106,4 +106,4 @@ CampaignStatsBreakdownTable.propTypes = {
 	campaignId: PropTypes.string.isRequired,
 }
 
-export default CampaignStatsBreakdownTable
+export default React.memo(CampaignStatsBreakdownTable)

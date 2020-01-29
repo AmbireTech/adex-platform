@@ -182,4 +182,4 @@ AdUnitsTable.propTypes = {
 	campaignId: PropTypes.string.isRequired,
 }
 
-export default AdUnitsTable
+export default React.memo(AdUnitsTable)
