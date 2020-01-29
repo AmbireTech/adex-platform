@@ -18,7 +18,6 @@ import {
 	selectSpinnerById,
 	selectMainToken,
 	selectNewCampaign,
-	selectAccountStatsFormatted,
 	selectValidationsById,
 	t,
 } from 'selectors'
@@ -60,11 +59,7 @@ function CampaignFinance({ validateId }) {
 		temp = {},
 	} = campaign
 
-	const { maxChannelFees } = temp
-
-	const { availableIdentityBalanceMainToken = 0 } = useSelector(
-		selectAccountStatsFormatted
-	)
+	const { maxChannelFees, maxDepositFormatted } = temp
 
 	const spinner = useSelector(state =>
 		selectSpinnerById(state, GETTING_CAMPAIGNS_FEES)
@@ -139,14 +134,7 @@ function CampaignFinance({ validateId }) {
 							type='text'
 							required
 							label={t('DEPOSIT_AMOUNT_LABEL', {
-								args: [
-									parseFloat(
-										availableIdentityBalanceMainToken - maxChannelFees
-									).toFixed(2),
-									symbol,
-									maxChannelFees,
-									symbol,
-								],
+								args: [maxDepositFormatted, symbol, maxChannelFees, symbol],
 							})}
 							name='depositAmount'
 							value={depositAmount}
@@ -192,7 +180,7 @@ function CampaignFinance({ validateId }) {
 							minDate={now}
 							maxDate={to}
 							onChange={val => {
-								execute(updateNewCampaign('activeFrom', val.valueOf(), true))
+								execute(updateNewCampaign('activeFrom', val.valueOf()))
 							}}
 							value={from || null}
 							error={errFrom && !!errFrom.dirty}
@@ -212,9 +200,7 @@ function CampaignFinance({ validateId }) {
 							label={t('CAMPAIGN_ENDS')}
 							minDate={from || now}
 							onChange={val =>
-								execute(
-									updateNewCampaign('withdrawPeriodStart', val.valueOf(), true)
-								)
+								execute(updateNewCampaign('withdrawPeriodStart', val.valueOf()))
 							}
 							value={to || null}
 							error={errTo && !!errTo.dirty}
