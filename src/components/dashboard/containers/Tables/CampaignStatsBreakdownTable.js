@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { t, selectCampaignAnalytics, selectMainToken } from 'selectors'
-import MUIDataTableEnchanced from 'components/dashboard/containers/Tables/MUIDataTableEnchanced'
+import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { useSelector, shallowEqual } from 'react-redux'
 import { sliderFilterOptions } from './commonFilters'
 import { formatNumberWithCommas } from 'helpers/formatters'
@@ -89,7 +89,7 @@ function CampaignStatsBreakdownTable(props) {
 		},
 	]
 	return (
-		<MUIDataTableEnchanced
+		<MUIDataTableEnhanced
 			title={t('CAMPAIGN_STATS_BREAKDOWN')}
 			data={data}
 			columns={columns}

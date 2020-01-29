@@ -4,7 +4,7 @@ import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
-import MUIDataTableEnchanced from 'components/dashboard/containers/Tables/MUIDataTableEnchanced'
+import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { t, selectAdSlots, selectSide } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
@@ -100,7 +100,7 @@ function AdSlotsTable(props) {
 		},
 	]
 	return (
-		<MUIDataTableEnchanced
+		<MUIDataTableEnhanced
 			title={t('ALL_UNITS')}
 			data={data}
 			columns={columns}
