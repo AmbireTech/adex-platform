@@ -13,7 +13,6 @@ import {
 	processExecuteByFeeTokens,
 	getApproveTxns,
 } from 'services/smart-contracts/actions/identity'
-import { getWithdrawTokensBalances } from 'services/smart-contracts/actions/stats'
 import { contracts } from '../contractsCfg'
 import { closeCampaign } from 'services/adex-validator/actions'
 import { Campaign, AdUnit } from 'adex-models'
@@ -236,13 +235,8 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 	return eligible
 }
 
-async function getChannelsToSweepFrom({ amountToSweep, identityAddr, wallet }) {
-	const allChannels = await getChannelsWithOutstanding({
-		identityAddr,
-		wallet,
-	})
-
-	const { eligible } = allChannels
+async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
+	const { eligible } = withBalance
 		.sort((c1, c2) => {
 			return c2.outstandingAvailable.gt(c1.outstandingAvailable)
 		})
@@ -336,13 +330,14 @@ function hasValidExecuteRoutines(routineAuthTuple) {
 }
 
 export async function getSweepChannelsTxns({ account, amountToSweep }) {
-	const { wallet, identity } = account
+	const { wallet, identity, stats } = account
+	const { withBalance } = stats
 	const { AdExCore } = await getEthers(wallet.authType)
 	const identityAddr = identity.address
 	const channelsToSweep = await getChannelsToSweepFrom({
 		amountToSweep,
 		identityAddr,
-		wallet,
+		withBalance,
 	})
 
 	const txns = channelsToSweep.map((c, i) => {
@@ -431,16 +426,12 @@ export async function getSweepingTxnsIfNeeded({
 	account,
 }) {
 	const needed = bigNumberify(amountInMainTokenNeeded)
-	const { identity, wallet } = account
-	const { address } = identity
-	const { authType } = wallet
+	const {
+		balances,
+		mainTokenBalance,
+	} = account.stats.raw.identityWithdrawTokensBalancesBalances
 
-	const { balances, mainTokenBalance } = await getWithdrawTokensBalances({
-		authType,
-		address,
-	})
-
-	let currentBalanceInUse = mainTokenBalance
+	let currentBalanceInUse = bigNumberify(mainTokenBalance)
 
 	const sweepData = {
 		sweepTxns: [],
