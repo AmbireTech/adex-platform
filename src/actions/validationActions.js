@@ -407,20 +407,10 @@ export function validateCampaignDates({
 			created,
 		})
 
-		// validate(validateId, prop, {
-		// 	isValid: !(result.error && result.error.prop === prop),
-		// 	err: {
-		// 		msg: result.error ? result.error.message : '',
-		// 		args: result.args ? result.error.args : [],
-		// 	},
-		// 	dirty: dirty,
-		// })(dispatch)
-
 		validate(validateId, 'activeFrom', {
-			isValid: !(result.error && result.error.prop === 'activeFrom'),
+			isValid: !!from,
 			err: {
-				msg: result.error ? result.error.message : '',
-				args: result.args ? result.error.args : [],
+				msg: 'ERR_NO_DATE_SET',
 			},
 			dirty: dirty,
 		})(dispatch)
