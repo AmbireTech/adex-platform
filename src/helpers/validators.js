@@ -116,7 +116,7 @@ export const freeAdExENS = async ({ ens = '', authType }) => {
 		if (ens === '') {
 			msg = 'ERR_ENS_REQUIRED'
 		} else {
-			const provider = ethers.getDefaultProvider()
+			const { provider } = await getEthers(authType)
 			const ensAddress = await provider.resolveName(
 				`${ens}.${process.env.REVERSE_REGISTRAR_PARENT}`
 			)
