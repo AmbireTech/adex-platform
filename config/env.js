@@ -5,7 +5,7 @@ const paths = require('./paths')
 // Make sure that including paths.js after env.js will read .env variables.
 delete require.cache[require.resolve('./paths')]
 
-const NODE_ENV = process.env.NODE_ENV
+const NODE_ENV = 'production' //process.env.NODE_ENV
 if (!NODE_ENV) {
 	throw new Error(
 		'The NODE_ENV environment variable is required but was not specified.'
@@ -97,6 +97,8 @@ function getClientEnvironment(publicUrl) {
 				ADVIEW_URL: process.env.ADVIEW_URL,
 				REVERSE_REGISTRAR_ADDR: process.env.REVERSE_REGISTRAR_ADDR,
 				REVERSE_REGISTRAR_PARENT: process.env.REVERSE_REGISTRAR_PARENT,
+				REVERSE_REGISTRAR_PUBLIC_RESOLVER:
+					process.env.REVERSE_REGISTRAR_PUBLIC_RESOLVER,
 				SCD_MCD_MIGRATION_ADDR: process.env.SCD_MCD_MIGRATION_ADDR,
 				REGISTRATION_OPEN: process.env.REGISTRATION_OPEN,
 			}
