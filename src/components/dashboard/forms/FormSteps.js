@@ -35,7 +35,9 @@ class FormSteps extends Component {
 			pages.push({
 				title: t(page.title),
 				cancelBtn: cancelButton,
-				component: ValidItemHoc(page.page || page),
+				component: !page.pageValidation
+					? ValidItemHoc(page.page || page)
+					: page.page || page,
 				pageValidation: page.pageValidation,
 				goToNextPageIfValid: page.goToNextPageIfValid,
 				props: { ...this.props, stepsId, validateId: validateId + '-' + index },
