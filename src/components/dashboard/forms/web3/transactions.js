@@ -2,18 +2,26 @@ import React from 'react'
 import WithdrawFromExchangePage from './WithdrawFromIdentity'
 import WithdrawAnyTokenFromIdentityPage from './WithdrawAnyTokenFromIdentity'
 import SeAddressPrivilege from './SeAddressPrivilege'
+import SetAccountENSPage from './SetAccountENSPage'
 import TransactionPreview from './TransactionPreview'
 import Button from '@material-ui/core/Button'
 import TransactionHoc from './TransactionHoc'
 import FormSteps from 'components/dashboard/forms/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
+import { t } from 'selectors'
 // import SaveIcon from '@material-ui/icons/Save'
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 import {
 	withdrawFromIdentity,
 	setIdentityPrivilege,
+	addIdentityENS,
 } from 'services/smart-contracts/actions/identity'
-import { addrIdentityPrivilege, identityWithdraw, execute } from 'actions'
+import {
+	addrIdentityPrivilege,
+	identityWithdraw,
+	setIdentityENS,
+	execute,
+} from 'actions'
 
 const FormStepsWithDialog = WithDialog(FormSteps)
 
@@ -172,6 +180,41 @@ export const WithdrawAnyTokenFromIdentity = props => (
 				getFeesOnly: true,
 				tokenDecimals: transaction.tokenDecimals,
 				account,
+			})
+		}}
+	/>
+)
+
+export const SetAccountENS = props => (
+	<FormStepsWithDialog
+		{...props}
+		btnLabel='ACCOUNT_SET_ENS_BTN'
+		saveBtnLabel='ACCOUNT_SET_ENS_SAVE_BTN'
+		title='ACCOUNT_SET_ENS_TITLE'
+		stepsId='setENS'
+		{...txCommon}
+		stepsPages={[
+			{
+				title: 'ACCOUNT_SET_ENS_STEP',
+				page: SetAccountENSPage,
+			},
+		]}
+		stepsPreviewPage={{
+			title: 'PREVIEW_AND_MAKE_TR',
+			page: TransactionPreview,
+		}}
+		saveFn={({ transaction } = {}) => {
+			props.setIdentityEnsName(t('WAITING_FOR_TRANSACTION'))
+			return execute(
+				setIdentityENS({
+					username: transaction.setEns,
+				})
+			)
+		}}
+		getFeesFn={({ account } = {}) => {
+			return addIdentityENS({
+				account,
+				getFeesOnly: true,
 			})
 		}}
 	/>

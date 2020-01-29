@@ -11,6 +11,7 @@ import {
 	getAddress,
 	Interface,
 	keccak256,
+	id,
 } from 'ethers/utils'
 import { generateAddress2 } from 'ethereumjs-util'
 import { executeTx } from 'services/adex-relayer'
@@ -23,7 +24,6 @@ import { formatTokenAmount } from 'helpers/formatters'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
 import solc from 'solcBrowser'
 import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
-
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 import ScdMcdMigrationABI from 'services/smart-contracts/abi/ScdMcdMigration'
 
@@ -263,6 +263,74 @@ function txnsByTokenWithSaiToDaiSwap({
 	)
 
 	return { txnsByFeeToken, saiWithdrawAmount }
+}
+
+export async function addIdentityENS({ username = '', account, getFeesOnly }) {
+	const { wallet, identity } = account
+	const {
+		provider,
+		MainToken,
+		getToken,
+		Identity,
+		AdExENSManager,
+		ReverseRegistrar,
+	} = await getEthers(wallet.authType)
+	const identityAddr = identity.address
+	const AdExENSManagerInterface = new Interface(AdExENSManager.abi)
+	const ReverseRegistrarInterface = new Interface(ReverseRegistrar.abi)
+
+	const tx1 = {
+		identityContract: identityAddr,
+		feeTokenAddr: MainToken.address,
+		to: AdExENSManager.address,
+		data: AdExENSManagerInterface.functions.registerAndSetup.encode([
+			AdExENSManager.publicResolver,
+			id(username),
+			identityAddr,
+		]),
+	}
+
+	const tx2 = {
+		identityContract: identityAddr,
+		feeTokenAddr: MainToken.address,
+		to: ReverseRegistrar.address,
+		data: ReverseRegistrarInterface.functions.setName.encode([
+			`${username}.${ReverseRegistrar.parentDomain}`,
+		]),
+	}
+
+	const txns = [tx1, tx2]
+
+	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
+		txns,
+		identityAddr,
+		provider,
+		Identity,
+		account,
+		getToken,
+	})
+
+	const { mainToken } = selectRelayerConfig()
+	const { total } = await getIdentityTxnsTotalFees({
+		txnsByFeeToken,
+		mainToken,
+	})
+	if (getFeesOnly) {
+		return {
+			fees: total,
+		}
+	}
+
+	const result = await processExecuteByFeeTokens({
+		identityAddr,
+		txnsByFeeToken,
+		wallet,
+		provider,
+	})
+
+	return {
+		result,
+	}
 }
 
 export async function getIdentityTxnsWithNoncesAndFees({

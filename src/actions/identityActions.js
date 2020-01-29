@@ -12,6 +12,7 @@ import { createSession } from './accountActions'
 import {
 	getIdentityDeployData,
 	withdrawFromIdentity,
+	addIdentityENS,
 	setIdentityPrivilege,
 } from 'services/smart-contracts/actions/identity'
 import {
@@ -163,6 +164,33 @@ export function onUploadLocalWallet(event) {
 		}
 
 		reader.readAsText(file)
+	}
+}
+
+export function setIdentityENS({ username }) {
+	return async function(dispatch, getState) {
+		try {
+			const account = selectAccount(getState())
+			const result = await addIdentityENS({
+				username,
+				account,
+			})
+
+			addToast({
+				type: 'accept',
+				label: translate('ENS_SETUP_NOTIFICATION', { args: [username] }),
+				timeout: 20000,
+			})(dispatch)
+		} catch (err) {
+			console.error('ERR_SETTING_ENS', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_SETTING_ENS', {
+					args: [err],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
 	}
 }
 
