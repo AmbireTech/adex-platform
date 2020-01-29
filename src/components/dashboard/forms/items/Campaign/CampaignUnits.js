@@ -5,11 +5,11 @@ import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import { ContentBody } from 'components/common/dialog/content'
-import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
 import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems'
 
 class CampaignUnits extends Component {
 	handleSelect = selected => {
+		console.log(selected)
 		const { adUnits, handleChange } = this.props
 		const units = Object.values(selected).map(value => {
 			return adUnits[value]
@@ -35,19 +35,13 @@ class CampaignUnits extends Component {
 								<AdUnitsTable
 									items={adUnitsArray}
 									validate={this.props.validate}
-									noActions
+									handleSelect={this.handleSelect}
+									noClone
 									noDownload
 									rowSelectable
 									noPrint
 								/>
 							) : (
-								// <EnhancedTable
-								// 	itemType={'AdUnit'}
-								// 	items={adUnitsArray}
-								// 	validate={this.props.validate}
-								// 	handleSelect={this.handleSelect}
-								// 	noActions
-								// />
 								<Grid container direction='column' alignItems='center'>
 									<p>{t('ERR_CAMPAIGN_REQUIRES_UNITS')}</p>
 									<NewUnitDialog

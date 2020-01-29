@@ -2,15 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
-import {
-	Visibility,
-	DoneAll,
-	Warning,
-	HourglassFull,
-	MonetizationOn,
-} from '@material-ui/icons'
+import { Visibility } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnchanced from 'components/dashboard/containers/Tables/MUIDataTableEnchanced'
+import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { t, selectCampaigns, selectMainToken, selectSide } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
@@ -276,38 +271,6 @@ function CampaignsTable(props) {
 			{...props}
 		/>
 	)
-}
-
-const mapStatusIcons = (humanFriendlyStatus, status, size) => {
-	const icon = {
-		xs: { fontSize: 10 },
-		md: { fontSize: 15 },
-		ls: { fontSize: 20 },
-	}
-	const waitIcon = <HourglassFull style={icon[size]} color={'secondary'} />
-	const doneIcon = <DoneAll style={icon[size]} color={'primary'} />
-	const warningIcon = <Warning style={icon[size]} color={'error'} />
-	const cashIcon = <MonetizationOn style={icon[size]} color={'accentTwo'} />
-	if (humanFriendlyStatus === 'Closed' && status.toLowerCase() !== 'exhausted')
-		return waitIcon
-	switch (status.toLowerCase()) {
-		case 'active':
-		case 'ready':
-			return doneIcon
-		case 'pending':
-		case 'initializing':
-		case 'waiting':
-			return waitIcon
-		case 'offline':
-		case 'disconnected':
-		case 'unhealthy':
-		case 'invalid':
-			return warningIcon
-		case 'withdraw':
-			return cashIcon
-		default:
-			return ''
-	}
 }
 
 CampaignsTable.propTypes = {

@@ -22,7 +22,7 @@ import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 import { validations } from 'adex-models'
 import { utils } from 'ethers'
-import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableConfig'
+import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import { selectMainToken } from 'selectors'
 
 const FallbackAdData = ({
