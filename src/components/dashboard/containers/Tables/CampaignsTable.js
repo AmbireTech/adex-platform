@@ -4,7 +4,7 @@ import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
-import MUIDataTableEnchanced from 'components/dashboard/containers/Tables/MUIDataTableEnchanced'
+import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import {
@@ -276,7 +276,7 @@ function CampaignsTable(props) {
 	])
 
 	return (
-		<MUIDataTableEnchanced
+		<MUIDataTableEnhanced
 			title={t('ALL_CAMPAIGNS')}
 			data={data}
 			columns={cols}
