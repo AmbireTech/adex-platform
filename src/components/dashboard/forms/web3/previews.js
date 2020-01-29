@@ -65,6 +65,40 @@ export const SetPrivilegePreview = ({
 	</div>
 )
 
+export const SetENSPreview = ({
+	t,
+	setEns,
+	address,
+	classes,
+	feesData,
+	symbol,
+}) => (
+	<div>
+		<PropRow
+			key='addr'
+			left={t('ENS_ADDR_TO_BE_SET')}
+			right={(address || '').toString()}
+		/>
+		<PropRow
+			key='setEns'
+			left={t('setEns', { isProp: true })}
+			right={
+				<ListItemText
+					className={classes.address}
+					secondary={t('ENS_INFO_AND_FEES', {
+						args: [
+							feesData.fees,
+							symbol,
+							`${setEns}.${process.env.REVERSE_REGISTRAR_PARENT}`,
+						],
+					})}
+					primary={`${setEns}.${process.env.REVERSE_REGISTRAR_PARENT}`}
+				/>
+			}
+		/>
+	</div>
+)
+
 export const IdentityWithdrawAnyPreview = ({
 	t,
 	withdrawTo,
