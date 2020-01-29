@@ -66,7 +66,35 @@ export const theme = createMuiTheme({
 		//     active: {
 		//         color: 'yellow'
 		//     }
-		// }
+		// },
+		MuiTableFooter: {
+			root: {
+				display: 'flex',
+				flex: 0,
+				padding: 0,
+			},
+		},
+		MUIDataTablePagination: {
+			toolbar: {
+				padding: 0,
+			},
+		},
+		MUIDataTableFilter: {
+			root: {
+				maxWidth: '400px',
+			},
+		},
+		// Think of accessing an element not a class
+		MuiGridListTile: {
+			root: {
+				width: '100% !important',
+			},
+		},
+		MUIDataTableBodyCell: {
+			stackedCommon: {
+				height: '80px !important',
+			},
+		},
 	},
 })
 
