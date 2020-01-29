@@ -18,8 +18,10 @@ import { styles } from './styles'
 import {
 	IdentityWithdrawPreview,
 	SetPrivilegePreview,
+	SetENSPreview,
 	IdentityWithdrawAnyPreview,
 } from './previews'
+
 import {
 	selectMainToken,
 	t,
@@ -40,9 +42,9 @@ function TransactionPreview(props) {
 		previewWarnMsgs,
 		stepsId,
 	} = props
-
 	const txId = stepsId
 	const account = useSelector(selectAccount)
+	const { address } = account.identity
 	const { symbol } = useSelector(selectMainToken)
 	const transaction = useSelector(state =>
 		selectNewTransactionById(state, txId)
@@ -81,6 +83,7 @@ function TransactionPreview(props) {
 		withdrawTo,
 		withdrawAmount,
 		setAddr,
+		setEns,
 		privLevel,
 		tokenAddress,
 		feesData = {},
@@ -154,6 +157,18 @@ function TransactionPreview(props) {
 								withdrawAmount={withdrawAmount}
 								tokenAddress={tokenAddress}
 								symbol={symbol}
+							/>
+						)}
+
+						{stepsId === 'setENS' && (
+							<SetENSPreview
+								t={t}
+								setAddr={setAddr}
+								classes={classes}
+								feesData={feesData}
+								address={address}
+								symbol={symbol}
+								setEns={setEns}
 							/>
 						)}
 					</ContentBody>

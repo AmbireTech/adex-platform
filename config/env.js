@@ -78,6 +78,7 @@ function getClientEnvironment(publicUrl) {
 				IPFS_GATEWAY: process.env.IPFS_GATEWAY,
 				WEB3_NODE_ADDR: process.env.WEB3_NODE_ADDR, // set in .env.(production/development).local
 				ADEX_CORE_ADDR: process.env.ADEX_CORE_ADDR,
+				ADEX_ENS_ADDR: process.env.ADEX_ENS_ADDR,
 				ADX_TOKEN_ADDR: process.env.ADX_TOKEN_ADDR,
 				ETH_SCAN_ADDR_HOST: process.env.ETH_SCAN_ADDR_HOST,
 				ETH_SCAN_TX_HOST: process.env.ETH_SCAN_ADDR_HOST,
@@ -94,6 +95,10 @@ function getClientEnvironment(publicUrl) {
 				DAI_TOKEN_ADDR: process.env.DAI_TOKEN_ADDR,
 				ACCESS_CODE_CHECK: process.env.ACCESS_CODE_CHECK,
 				ADVIEW_URL: process.env.ADVIEW_URL,
+				REVERSE_REGISTRAR_ADDR: process.env.REVERSE_REGISTRAR_ADDR,
+				REVERSE_REGISTRAR_PARENT: process.env.REVERSE_REGISTRAR_PARENT,
+				REVERSE_REGISTRAR_PUBLIC_RESOLVER:
+					process.env.REVERSE_REGISTRAR_PUBLIC_RESOLVER,
 				SCD_MCD_MIGRATION_ADDR: process.env.SCD_MCD_MIGRATION_ADDR,
 				REGISTRATION_OPEN: process.env.REGISTRATION_OPEN,
 				ADEX_TOS_URL: process.env.ADEX_TOS_URL,

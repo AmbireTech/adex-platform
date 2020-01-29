@@ -1,0 +1,39 @@
+{
+	"contractName": "AdExENSManager",
+	"abi": [
+		{
+			"constant": false,
+			"inputs": [
+				{ "name": "label", "type": "bytes32" },
+				{ "name": "owner", "type": "address" }
+			],
+			"name": "register",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{ "name": "resolver", "type": "address" },
+				{ "name": "label", "type": "bytes32" },
+				{ "name": "identity", "type": "address" }
+			],
+			"name": "registerAndSetup",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{ "name": "ensAddr", "type": "address" },
+				{ "name": "node", "type": "bytes32" }
+			],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "constructor"
+		}
+	]
+}
