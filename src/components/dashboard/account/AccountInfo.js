@@ -42,6 +42,35 @@ const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
 const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 
+const AccountItem = props => (
+	<ListItem>
+		<Box
+			display='flex'
+			flexWrap={'wrap'}
+			flex='1'
+			justifyContent='space-between'
+			alignItems='center'
+		>
+			<Box
+				flexGrow='8'
+				flexBasis='700px'
+				mr={1}
+				flexWrap={'nowrap'}
+				display='flex'
+				alignItems='center'
+				justifyContent='space-between'
+			>
+				<Box flex='1'>{props.left}</Box>
+			</Box>
+			<Box flexGrow='1' flexBasis='20em'>
+				{props.right}
+			</Box>
+		</Box>
+	</ListItem>
+)
+
+const useStyles = makeStyles(styles)
+
 function AccountInfo() {
 	const { authType = '', email, password } = useSelector(selectWallet)
 	const identity = useSelector(selectAccountIdentity)
@@ -72,7 +101,6 @@ function AccountInfo() {
 	const [expanded, setExpanded] = useState(false)
 	const [ensSearching, setEnsSearching] = useState(true)
 	const [identityEnsName, setIdentityEnsName] = useState()
-	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 	const canSetENS = privileges >= 2 && !ensSearching && !identityEnsName
 
@@ -105,33 +133,6 @@ function AccountInfo() {
 	const handleExpandChange = () => {
 		setExpanded(!expanded)
 	}
-
-	const AccountItem = props => (
-		<ListItem>
-			<Box
-				display='flex'
-				flexWrap={'wrap'}
-				flex='1'
-				justifyContent='space-between'
-				alignItems='center'
-			>
-				<Box
-					flexGrow='8'
-					flexBasis='700px'
-					mr={1}
-					flexWrap={'nowrap'}
-					display='flex'
-					alignItems='center'
-					justifyContent='space-between'
-				>
-					<Box flex='1'>{props.left}</Box>
-				</Box>
-				<Box flexGrow='1' flexBasis='20em'>
-					{props.right}
-				</Box>
-			</Box>
-		</ListItem>
-	)
 
 	return (
 		<div>
