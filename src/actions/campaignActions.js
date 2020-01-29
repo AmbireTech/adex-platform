@@ -235,107 +235,117 @@ export function validateNewCampaignFinance({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
-		const state = getState()
-		const campaign = selectNewCampaign(state)
-		const {
-			validators,
-			depositAmount,
-			minPerImpression,
-			title,
-			activeFrom,
-			withdrawPeriodStart,
-			created,
-			temp = {},
-		} = campaign
-
-		const { maxChannelFees, maxDeposit } = temp
-
-		const newCampaign = { ...campaign }
-
-		if (!validators || !validators.length) {
-			// TODO: temp - will need dropdown selector for the follower validator
-			newCampaign.validators = tempValidators
-			await updateNewCampaign('validators', newCampaign.validators)(
-				dispatch,
-				getState
-			)
-		}
-
-		const validations = await Promise.all([
-			validateCampaignValidators({ validateId, validators, dirty })(dispatch),
-			validateCampaignAmount({
-				validateId,
-				prop: 'depositAmount',
-				value: depositAmount,
-				dirty,
-				depositAmount,
-				minPerImpression,
-				errMsg: !dirty && 'REQUIRED_FIELD',
-				maxDeposit,
-			})(dispatch),
-			validateCampaignAmount({
-				validateId,
-				prop: 'minPerImpression',
-				value: minPerImpression,
-				dirty,
-				depositAmount,
-				minPerImpression,
-				errMsg: !dirty && 'REQUIRED_FIELD',
-				maxDeposit,
-			})(dispatch),
-			validateCampaignTitle({
-				validateId,
-				title,
-				dirty,
-			})(dispatch),
-			validateCampaignDates({
-				validateId,
-				prop: 'activeFrom',
-				value: activeFrom,
-				dirty,
-				activeFrom,
-				withdrawPeriodStart,
-				created,
-			})(dispatch),
-			validateCampaignDates({
-				validateId,
-				prop: 'withdrawPeriodStart',
-				value: withdrawPeriodStart,
-				dirty,
-				activeFrom,
-				withdrawPeriodStart,
-				created,
-			})(dispatch),
-		])
-
-		const isValid = validations.every(v => v === true)
-
-		if (typeof maxChannelFees !== 'string') {
-			await updateSpinner(GETTING_CAMPAIGNS_FEES, true)(dispatch)
-
-			const account = selectAccount(state)
-
+		try {
+			const state = getState()
+			const campaign = selectNewCampaign(state)
 			const {
-				feesFormatted,
-				maxAvailable,
-				maxAvailableFormatted,
-			} = await openChannel({
-				campaign: { ...newCampaign },
-				account,
-				getFeesOnly: true,
-				getMaxFees: true,
+				validators,
+				depositAmount,
+				minPerImpression,
+				title,
+				activeFrom,
+				withdrawPeriodStart,
+				created,
+				temp = {},
+			} = campaign
+
+			const { maxChannelFees, maxDeposit } = temp
+
+			const newCampaign = { ...campaign }
+
+			if (!validators || !validators.length) {
+				// TODO: temp - will need dropdown selector for the follower validator
+				newCampaign.validators = tempValidators
+				await updateNewCampaign('validators', newCampaign.validators)(
+					dispatch,
+					getState
+				)
+			}
+
+			const validations = await Promise.all([
+				validateCampaignValidators({ validateId, validators, dirty })(dispatch),
+				validateCampaignAmount({
+					validateId,
+					prop: 'depositAmount',
+					value: depositAmount,
+					dirty,
+					depositAmount,
+					minPerImpression,
+					errMsg: !dirty && 'REQUIRED_FIELD',
+					maxDeposit,
+				})(dispatch),
+				validateCampaignAmount({
+					validateId,
+					prop: 'minPerImpression',
+					value: minPerImpression,
+					dirty,
+					depositAmount,
+					minPerImpression,
+					errMsg: !dirty && 'REQUIRED_FIELD',
+					maxDeposit,
+				})(dispatch),
+				validateCampaignTitle({
+					validateId,
+					title,
+					dirty,
+				})(dispatch),
+				validateCampaignDates({
+					validateId,
+					prop: 'activeFrom',
+					value: activeFrom,
+					dirty,
+					activeFrom,
+					withdrawPeriodStart,
+					created,
+				})(dispatch),
+				validateCampaignDates({
+					validateId,
+					prop: 'withdrawPeriodStart',
+					value: withdrawPeriodStart,
+					dirty,
+					activeFrom,
+					withdrawPeriodStart,
+					created,
+				})(dispatch),
+			])
+
+			const isValid = validations.every(v => v === true)
+
+			if (typeof maxChannelFees !== 'string') {
+				await updateSpinner(GETTING_CAMPAIGNS_FEES, true)(dispatch)
+
+				const account = selectAccount(state)
+
+				const {
+					feesFormatted,
+					maxAvailable,
+					maxAvailableFormatted,
+				} = await openChannel({
+					campaign: { ...newCampaign },
+					account,
+					getFeesOnly: true,
+					getMaxFees: true,
+				})
+
+				const newTemp = { ...temp }
+				newTemp.maxChannelFees = feesFormatted
+				newTemp.maxDeposit = maxAvailable
+				newTemp.maxDepositFormatted = maxAvailableFormatted
+
+				await updateNewCampaign('temp', newTemp)(dispatch, getState)
+				await updateSpinner(GETTING_CAMPAIGNS_FEES, false)(dispatch)
+			}
+
+			await handleAfterValidation({ isValid, onValid, onInvalid })
+		} catch (err) {
+			console.error('ERR_VALIDATING_CAMPAIGN_FINANCE', err)
+			addToast({
+				dispatch,
+				type: 'cancel',
+				toastStr: 'ERR_VALIDATING_CAMPAIGN_FINANCE',
+				args: [getErrorMsg(err)],
 			})
-
-			const newTemp = { ...temp }
-			newTemp.maxChannelFees = feesFormatted
-			newTemp.maxDeposit = maxAvailable
-			newTemp.maxDepositFormatted = maxAvailableFormatted
-
-			await updateNewCampaign('temp', newTemp)(dispatch, getState)
-			await updateSpinner(GETTING_CAMPAIGNS_FEES, false)(dispatch)
 		}
-
-		await handleAfterValidation({ isValid, onValid, onInvalid })
 
 		await updateSpinner(validateId, false)(dispatch)
 	}
