@@ -1,7 +1,6 @@
 import crypto from 'crypto'
 import {
 	Channel,
-	// MerkleTree,
 	splitSig,
 	ChannelState,
 	RoutineOps,
@@ -24,13 +23,13 @@ import {
 	randomBytes,
 	parseUnits,
 	Interface,
-	// formatUnits,
 	getAddress,
 } from 'ethers/utils'
 import {
 	selectFeeTokenWhitelist,
 	selectRoutineWithdrawTokens,
 	selectMainFeeToken,
+	selectMainToken,
 	selectSaiToken,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
@@ -399,11 +398,16 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 }
 
 function getSwapAmountsByToken({ balances }) {
+	const mainToken = selectMainToken()
 	const saiToken = selectSaiToken()
 	const { swapsByToken, swapsSumInMainToken } = balances.reduce(
 		(swaps, balance) => {
 			// TODO: currently work only for SAI to DAI swap
-			if (balance.token.address === saiToken.address) {
+			if (
+				balance.token.address !== mainToken.address &&
+				// TEMP: remove that check when all tokens swaps are available
+				balance.token.address === saiToken.address
+			) {
 				swaps.swapsSumInMainToken = swaps.swapsSumInMainToken.add(
 					balance.balanceMainToken
 				)
