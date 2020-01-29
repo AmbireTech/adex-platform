@@ -3,9 +3,7 @@ import { updateUserCampaigns, execute } from 'actions'
 import { MOON_GRAVITY_ACCELERATION, MOON_TO_EARTH_WEIGHT } from 'constants/misc'
 
 const LOOP_TIMEOUT =
-	(69 - Math.floor(MOON_GRAVITY_ACCELERATION / MOON_TO_EARTH_WEIGHT)) *
-	500 *
-	100
+	(69 - Math.floor(MOON_GRAVITY_ACCELERATION / MOON_TO_EARTH_WEIGHT)) * 500
 // It might be 30 seconds or so
 
 const syncCampaigns = async updateStats => {
