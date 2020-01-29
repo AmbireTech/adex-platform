@@ -21,21 +21,27 @@ import {
 	selectValidationsById,
 	t,
 } from 'selectors'
-import { execute, updateNewCampaign } from 'actions'
+import { execute, updateNewCampaign, validateNumberString } from 'actions'
 import { GETTING_CAMPAIGNS_FEES } from 'constants/spinners'
+import { validations } from 'adex-models'
+const { isNumberString } = validations
 
 const moment = new MomentUtils()
 
-const getTotalImpressions = ({ depositAmount, minPerImpression, t }) => {
-	const dep = parseFloat(depositAmount)
-	const min = parseFloat(minPerImpression)
-	if (!dep) {
-		return t('DEPOSIT_NOT_SET')
-	} else if (!min) {
-		return t('CPM_NOT_SET')
-	} else {
-		const impressions = utils.commify(Math.floor((dep / min) * 1000))
-		return t('TOTAL_IMPRESSIONS', { args: [impressions] })
+const getTotalImpressions = ({ depositAmount, minPerImpression }) => {
+	try {
+		const dep = isNumberString(depositAmount) && parseFloat(depositAmount)
+		const min = isNumberString(minPerImpression) && parseFloat(minPerImpression)
+		if (!dep) {
+			return t('DEPOSIT_NOT_SET')
+		} else if (!min) {
+			return t('CPM_NOT_SET')
+		} else {
+			const impressions = utils.commify(Math.floor((dep / min) * 1000))
+			return t('TOTAL_IMPRESSIONS', { args: [impressions] })
+		}
+	} catch (err) {
+		return 'N/A'
 	}
 }
 
@@ -75,9 +81,10 @@ function CampaignFinance({ validateId }) {
 	const errFrom = invalidFields['activeFrom']
 	const errTo = invalidFields['withdrawPeriodStart']
 
-	const impressions = !(errDepAmnt || errMin)
-		? getTotalImpressions({ depositAmount, minPerImpression, t })
-		: ''
+	const impressions = getTotalImpressions({
+		depositAmount,
+		minPerImpression,
+	})
 
 	const leader = validators[0] || {}
 	const follower = validators[1] || {}
@@ -139,7 +146,16 @@ function CampaignFinance({ validateId }) {
 							name='depositAmount'
 							value={depositAmount}
 							onChange={ev => {
-								execute(updateNewCampaign('depositAmount', ev.target.value))
+								const value = ev.target.value
+								execute(updateNewCampaign('depositAmount', value))
+								execute(
+									validateNumberString({
+										validateId,
+										prop: 'depositAmount',
+										value,
+										dirty: true,
+									})
+								)
 							}}
 							error={errDepAmnt && !!errDepAmnt.dirty}
 							maxLength={120}
@@ -161,7 +177,16 @@ function CampaignFinance({ validateId }) {
 							name='minPerImpression'
 							value={minPerImpression}
 							onChange={ev => {
-								execute(updateNewCampaign('minPerImpression', ev.target.value))
+								const value = ev.target.value
+								execute(updateNewCampaign('minPerImpression', value))
+								execute(
+									validateNumberString({
+										validateId,
+										prop: 'minPerImpression',
+										value,
+										dirty: true,
+									})
+								)
 							}}
 							error={errMin && !!errMin.dirty}
 							maxLength={120}
