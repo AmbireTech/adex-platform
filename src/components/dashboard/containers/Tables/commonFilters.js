@@ -42,10 +42,20 @@ export const sliderFilterOptions = ({
 						<Typography id={`range-slider-${column.name}`} gutterBottom>
 							{filterTitle}
 						</Typography>
-						<Box pl={2} pr={2} pt={2}>
+						<Box pl={2} pr={3} pt={2}>
 							<Slider
 								min={initial[0]}
 								max={initial[1]}
+								marks={[
+									{
+										value: initial[0],
+										label: formatAbbrNum(initial[0], 2),
+									},
+									{
+										value: initial[1],
+										label: formatAbbrNum(initial[1], 2),
+									},
+								]}
 								step={stepSetting}
 								value={
 									filterList[index].length > 0 ? filterList[index] : initial
