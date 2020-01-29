@@ -353,6 +353,8 @@ export function validateCampaignAmount({
 	}
 }
 
+const MIN_CAMPAIGN_PERIOD = 1 * 60 * 60 * 1000 // 1 hour
+
 const getCampaignDatesValidation = ({
 	created = Date.now(),
 	withdrawPeriodStart,
@@ -362,10 +364,20 @@ const getCampaignDatesValidation = ({
 
 	if (withdrawPeriodStart && activeFrom && withdrawPeriodStart <= activeFrom) {
 		error = { message: 'ERR_END_BEFORE_START', prop: 'withdrawPeriodStart' }
+	} else if (
+		withdrawPeriodStart &&
+		activeFrom &&
+		withdrawPeriodStart - activeFrom < MIN_CAMPAIGN_PERIOD
+	) {
+		error = {
+			message: 'ERR_MIN_CAMPAIGN_PERIOD',
+			args: ['1', 'HOURS'],
+			prop: 'withdrawPeriodStart',
+		}
 	} else if (withdrawPeriodStart && withdrawPeriodStart < created) {
 		error = { message: 'ERR_END_BEFORE_NOW', prop: 'withdrawPeriodStart' }
 	} else if (activeFrom && activeFrom < created) {
-		error = { message: 'ERR_START_BEFORE_NOW', prop: 'activeFrom' }
+		error = { message: 'ERR_START_BEFORE_NOW' }
 	} else if (activeFrom && !withdrawPeriodStart) {
 		error = { message: 'ERR_NO_END', prop: 'withdrawPeriodStart' }
 	} else if (!(withdrawPeriodStart || activeFrom)) {
