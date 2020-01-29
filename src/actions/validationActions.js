@@ -11,6 +11,7 @@ import { t } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
 
 const { campaignPut } = schemas
+const { isNumberString } = validations
 
 export function validateAddress({ addr, dirty, validate, name, setBalance }) {
 	return async function(dispatch, getState) {
@@ -269,28 +270,24 @@ export function validateCampaignValidators({ validateId, validators, dirty }) {
 }
 
 const validateAmounts = ({
-	maxDeposit = 0,
+	maxDeposit = bigNumberify(0),
 	depositAmount,
 	minPerImpression,
 }) => {
-	const maxDep = parseFloat(maxDeposit)
-	const dep = parseFloat(depositAmount)
-	const min = parseFloat(minPerImpression)
-
 	let error = null
-	if (dep && dep > maxDep) {
+	if (!depositAmount.isZero() && depositAmount.gt(maxDeposit)) {
 		error = {
 			message: 'ERR_INSUFFICIENT_IDENTITY_BALANCE',
 			prop: 'depositAmount',
 		}
 	}
-	if (dep && dep < min) {
+	if (!depositAmount.isZero() && depositAmount.lt(minPerImpression)) {
 		error = { message: 'ERR_CPM_OVER_DEPOSIT', prop: 'minPerImpression' }
 	}
-	if (dep <= 0) {
+	if (depositAmount.lte(bigNumberify(0))) {
 		error = { message: 'ERR_ZERO_DEPOSIT', prop: 'depositAmount' }
 	}
-	if (min <= 0) {
+	if (minPerImpression.lte(bigNumberify(0))) {
 		error = { message: 'ERR_ZERO_CPM', prop: 'minPerImpression' }
 	}
 
@@ -305,27 +302,31 @@ export function validateCampaignAmount({
 	errMsg,
 	depositAmount,
 	minPerImpression,
-	availableIdentityBalanceMainToken,
+	maxDeposit,
+	decimals,
 }) {
 	return async function(dispatch, getState) {
-		const isValidNumber = validations.isNumberString(value)
-		let isValid = isValidNumber && parseUnits(value, 18)
+		const isValidNumber = isNumberString(value)
+		let isValid = isValidNumber && parseUnits(value, decimals)
 		let msg = errMsg || 'ERR_INVALID_AMOUNT'
 
 		if (isValid) {
 			const deposit = prop === 'depositAmount' ? value : depositAmount
 			const min = prop === 'minPerImpression' ? value : minPerImpression
-			const maxDeposit =
-				parseFloat(availableIdentityBalanceMainToken) -
-				this.state.maxChannelFees
-			const result = validateAmounts({
-				maxDeposit,
-				depositAmount: deposit,
-				minPerImpression: min,
-			})
 
-			isValid = !result.error
-			msg = result.error ? result.error.message : ''
+			const isValidDeposit = isNumberString(deposit)
+			const isValidMin = isNumberString(min)
+
+			if (isValidDeposit && isValidMin) {
+				const result = validateAmounts({
+					maxDeposit,
+					depositAmount: parseUnits(deposit, decimals),
+					minPerImpression: parseUnits(min, decimals),
+				})
+
+				isValid = !result.error
+				msg = result.error ? result.error.message : ''
+			}
 		}
 
 		validate(validateId, prop, {
@@ -380,8 +381,17 @@ export function validateCampaignDates({
 			created,
 		})
 
-		validate(validateId, prop, {
-			isValid: !(result.error && result.error.prop === prop),
+		// validate(validateId, prop, {
+		// 	isValid: !(result.error && result.error.prop === prop),
+		// 	err: {
+		// 		msg: result.error ? result.error.message : '',
+		// 		args: result.args ? result.error.args : [],
+		// 	},
+		// 	dirty: dirty,
+		// })(dispatch)
+
+		validate(validateId, 'activeFrom', {
+			isValid: !(result.error && result.error.prop === 'activeFrom'),
 			err: {
 				msg: result.error ? result.error.message : '',
 				args: result.args ? result.error.args : [],
@@ -389,23 +399,14 @@ export function validateCampaignDates({
 			dirty: dirty,
 		})(dispatch)
 
-		// validate(validateId, 'activeFrom', {
-		// 	isValid: !(result.error && result.error.prop === 'activeFrom'),
-		// 	err: {
-		// 		msg: result.error ? result.error.message : '',
-		// 		args: result.args ? result.error.args : [],
-		// 	},
-		// 	dirty: dirty,
-		// })(dispatch)
-
-		// validate(validateId, 'withdrawPeriodStart', {
-		// 	isValid: !(result.error && result.error.prop === 'withdrawPeriodStart'),
-		// 	err: {
-		// 		msg: result.error ? result.error.message : '',
-		// 		args: result.args ? result.error.args : [],
-		// 	},
-		// 	dirty: dirty,
-		// })(dispatch)
+		validate(validateId, 'withdrawPeriodStart', {
+			isValid: !(result.error && result.error.prop === 'withdrawPeriodStart'),
+			err: {
+				msg: result.error ? result.error.message : '',
+				args: result.args ? result.error.args : [],
+			},
+			dirty: dirty,
+		})(dispatch)
 
 		const isValid = !result.error
 
