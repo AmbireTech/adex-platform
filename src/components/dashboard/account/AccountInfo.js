@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { updateNav, addToast, execute, setIdentityENS } from 'actions'
-import copy from 'copy-to-clipboard'
+import { updateNav, execute } from 'actions'
 import {
 	WithdrawTokenFromIdentity,
 	// WithdrawAnyTokenFromIdentity,
@@ -13,10 +12,8 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
-import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
 import Box from '@material-ui/core/Box'
-import CopyIcon from '@material-ui/icons/FileCopy'
 import DownloadIcon from '@material-ui/icons/SaveAlt'
 import ExpansionPanel from '@material-ui/core/ExpansionPanel'
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
@@ -28,7 +25,6 @@ import { getRecoveryWalletData } from 'services/wallet/wallet'
 import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
-import { selectAccount } from 'selectors'
 import EnsAddressResolver from 'components/common/ens/EnsAddressResolver'
 import {
 	t,
@@ -79,7 +75,7 @@ function AccountInfo() {
 	const [identityEnsName, setIdentityEnsName] = useState()
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
-	const canSetENS = privileges >= 2 && !ensSearching // && !identityEnsName
+	const canSetENS = privileges >= 2 && !ensSearching && !identityEnsName
 
 	useEffect(() => {
 		execute(updateNav('navTitle', t('ACCOUNT')))
