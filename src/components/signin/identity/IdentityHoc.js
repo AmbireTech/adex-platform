@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions, { execute, login } from 'actions'
 import { push } from 'connected-react-router'
+import { CREATING_SESSION, UPLOADING_ACCOUNT_DATA } from 'constants/spinners'
 
 export default function IdentityHoc(Decorated) {
 	class IdentityForm extends Component {
@@ -66,9 +67,8 @@ export default function IdentityHoc(Decorated) {
 		return {
 			account: persist.account,
 			identity: memory.identity,
-			spinner: memory.spinners['creating-session'],
-			waitingExpected: memory.spinners['getting-expected-identity'],
-			waitingUpload: memory.spinners['uploading-account-data'],
+			spinner: memory.spinners[CREATING_SESSION],
+			waitingUpload: memory.spinners[UPLOADING_ACCOUNT_DATA],
 		}
 	}
 

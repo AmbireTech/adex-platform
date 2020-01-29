@@ -50,7 +50,7 @@ function configureStoreProd(initialState) {
 		// https://github.com/gaearon/redux-thunk#injecting-a-custom-argument
 		thunk,
 		reduxRouterMiddleware,
-		// logger
+		logger,
 	]
 
 	let store = createStore(

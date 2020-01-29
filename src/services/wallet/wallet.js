@@ -14,11 +14,32 @@ import {
 } from 'helpers/localStorageHelpers'
 import { AUTH_TYPES } from 'constants/misc'
 
-function getCipherKey({ email, password }) {
+function pbkdf2Async(pass, salt, iterations, keylen, digiset, encoding) {
+	return new Promise((resolve, reject) => {
+		pbkdf2.pbkdf2(
+			pass,
+			salt,
+			iterations,
+			keylen,
+			digiset,
+			(err, derivedKey) => {
+				if (err) {
+					return reject(err)
+				}
+
+				const res = derivedKey.toString(encoding)
+
+				return resolve(res)
+			}
+		)
+	})
+}
+
+async function getCipherKey({ email, password }) {
 	const pass = generateSalt(password)
 	const salt = generateSalt(email)
 
-	const key = pbkdf2.pbkdf2Sync(pass, salt, 10000, 64, 'sha512').toString('hex')
+	const key = await pbkdf2Async(pass, salt, 10000, 64, 'sha512', 'hex')
 
 	return key
 }
@@ -35,7 +56,7 @@ export function getRandomMnemonic() {
 	return mnemonic
 }
 
-export function generateWallet(mnemonic) {
+export async function generateWallet(mnemonic) {
 	const seed = mnemonic || getRandomMnemonic()
 	const wallet = ethers.Wallet.fromMnemonic(seed)
 
@@ -47,9 +68,9 @@ export function generateWallet(mnemonic) {
 	}
 }
 
-function encrKey({ email, password, authType }) {
+async function encrKey({ email, password, authType }) {
 	if (!authType) {
-		return encryptLegacy(email, password)
+		return await encryptLegacy(email, password)
 	} else if (typeof authType === 'string') {
 		return `adex-${authType}-wallet-${email.toLowerCase()}`
 	} else {
@@ -57,29 +78,31 @@ function encrKey({ email, password, authType }) {
 	}
 }
 
-export function encrData({ email = '', password, data, authType }) {
+export async function encrData({ email = '', password, data, authType }) {
 	const isLegacy = isLegacyCrypto(authType)
 	const jsonData = JSON.stringify(data)
 	if (isLegacy) {
-		return encryptLegacy(jsonData, email + password)
+		const legacyEncrypted = await encryptLegacy(jsonData, email + password)
+		return legacyEncrypted
 	} else {
-		return encrypt(
+		const encrypted = await encrypt(
 			jsonData,
-			getCipherKey({ email: email.toLowerCase(), password })
+			await getCipherKey({ email: email.toLowerCase(), password })
 		)
+		return encrypted
 	}
 }
 
-export function decrData({ email = '', password, data, authType }) {
+export async function decrData({ email = '', password, data, authType }) {
 	let decryptedStr = ''
 	const isLegacy = isLegacyCrypto(authType)
 
 	if (isLegacy) {
-		decryptedStr = decryptLegacy(data, email + password)
+		decryptedStr = await decryptLegacy(data, email + password)
 	} else {
-		decryptedStr = decrypt(
+		decryptedStr = await decrypt(
 			data,
-			getCipherKey({ email: email.toLowerCase(), password })
+			await getCipherKey({ email: email.toLowerCase(), password })
 		)
 	}
 
@@ -91,40 +114,44 @@ export function decrData({ email = '', password, data, authType }) {
 	}
 }
 
-export function createLocalWallet({
+export async function createLocalWallet({
 	email = '',
 	password = '',
 	mnemonic,
 	authType = '',
 }) {
-	const walletData = generateWallet(mnemonic)
-	const key = encrKey({ email, password, authType })
-	const data = encrData({ data: walletData, email, password, authType })
-	saveToLocalStorage({ data }, key)
+	const walletData = await generateWallet(mnemonic)
+	const key = await encrKey({ email, password, authType })
+	const data = await encrData({ data: walletData, email, password, authType })
+	await saveToLocalStorage({ data }, key)
 
 	walletData.authType = authType
 	return walletData
 }
 
-export function migrateLegacyWallet({ email = '', password = '' }) {
-	const wallet = getLocalWallet({
+export async function migrateLegacyWallet({ email = '', password = '' }) {
+	const wallet = await getLocalWallet({
 		email,
 		password,
 		getEncrypted: true,
 	})
 
 	if (wallet && wallet.data) {
-		const newKey = encrKey({ email, password, authType: AUTH_TYPES.GRANT.name })
+		const newKey = await encrKey({
+			email,
+			password,
+			authType: AUTH_TYPES.GRANT.name,
+		})
 		saveToLocalStorage(wallet, newKey)
 	}
 }
 
-export function removeLegacyKey({ email = '', password = '' }) {
-	const key = encrKey({ email, password })
+export async function removeLegacyKey({ email = '', password = '' }) {
+	const key = await encrKey({ email, password })
 	removeFromLocalStorage(key)
 }
 
-export function addDataToWallet({
+export async function addDataToWallet({
 	email = '',
 	password = '',
 	dataKey = '',
@@ -135,24 +162,24 @@ export function addDataToWallet({
 		throw new Error('INVALID_DATA_KEY')
 	}
 
-	const key = encrKey({ email, password, authType })
+	const key = await encrKey({ email, password, authType })
 	const wallet = loadFromLocalStorage(key)
 
 	if (!wallet) {
 		throw new Error('WALLET_NOT_FOUND')
 	}
 
-	const data = encrData({ data: dataValue, email, password, authType })
+	const data = await encrData({ data: dataValue, email, password, authType })
 	wallet[dataKey] = data
 	saveToLocalStorage(wallet, key)
 }
 
-export function getRecoveryWalletData({ email, password, authType }) {
+export async function getRecoveryWalletData({ email, password, authType }) {
 	if (!email || !password) {
 		return null
 	}
 
-	const key = encrKey({ email, password, authType })
+	const key = await encrKey({ email, password, authType })
 	const wallet = loadFromLocalStorage(key)
 
 	return {
@@ -161,12 +188,17 @@ export function getRecoveryWalletData({ email, password, authType }) {
 	}
 }
 
-export function getLocalWallet({ email, password, authType, getEncrypted }) {
+export async function getLocalWallet({
+	email,
+	password,
+	authType,
+	getEncrypted,
+}) {
 	if (!email || !password) {
 		throw new Error('REQUIRED_EMAIL_AND_PASSWORD')
 	}
 
-	const key = encrKey({ email, password, authType })
+	const key = await encrKey({ email, password, authType })
 	const wallet = loadFromLocalStorage(key)
 
 	if (wallet) {
@@ -174,18 +206,34 @@ export function getLocalWallet({ email, password, authType, getEncrypted }) {
 			return wallet
 		}
 
-		const data = Object.keys(wallet).reduce((props, key) => {
-			props[key] = decrData({
+		const walletKeys = Object.keys(wallet)
+
+		const decrypts = walletKeys.map(async key => {
+			// props[key] = await decrData({
+			// 	data: wallet[key],
+			// 	email,
+			// 	password,
+			// 	authType,
+			// })
+
+			const decryptedData = await decrData({
 				data: wallet[key],
 				email,
 				password,
 				authType,
 			})
 
+			return decryptedData
+		})
+
+		const decryptedData = await Promise.all(decrypts)
+
+		const decryptedWallet = walletKeys.reduce((props, key, index) => {
+			props[key] = decryptedData[index]
 			return props
 		}, {})
 
-		return data
+		return decryptedWallet
 	} else {
 		return null
 	}
@@ -225,12 +273,10 @@ export function getAllWallets() {
 	return walletKeys
 }
 
-export function getWalletHash({ salt, password }) {
+export async function getWalletHash({ salt, password }) {
 	const passwordId = utils.id(password)
 
-	const hash = pbkdf2
-		.pbkdf2Sync(passwordId, salt, 10000, 64, 'sha512')
-		.toString('hex')
+	const hash = await pbkdf2Async(passwordId, salt, 10000, 64, 'sha512', 'hex')
 
 	return hash
 }
