@@ -30,7 +30,6 @@ import {
 	selectNewCampaign,
 	selectAuthSig,
 	selectAuth,
-	selectAccountStatsFormatted,
 } from 'selectors'
 import { Campaign } from 'adex-models'
 import { OPENING_CAMPAIGN, GETTING_CAMPAIGNS_FEES } from 'constants/spinners'
@@ -249,9 +248,7 @@ export function validateNewCampaignFinance({
 			temp = {},
 		} = campaign
 
-		const { availableIdentityBalanceMainToken } = selectAccountStatsFormatted(
-			state
-		)
+		const { maxChannelFees, maxDeposit } = temp
 
 		const newCampaign = { ...campaign }
 
@@ -264,27 +261,8 @@ export function validateNewCampaignFinance({
 			)
 		}
 
-		if (typeof temp.maxChannelFees !== 'number') {
-			await updateSpinner(GETTING_CAMPAIGNS_FEES, true)(dispatch)
-
-			const account = selectAccount(state)
-
-			const feesData = await openChannel({
-				campaign: { ...newCampaign },
-				account,
-				getFeesOnly: true,
-				getMaxFees: true,
-			})
-
-			const newTemp = { ...temp }
-			newTemp.maxChannelFees = feesData.fees
-
-			await updateNewCampaign('temp', newTemp)(dispatch, getState)
-			await updateSpinner(GETTING_CAMPAIGNS_FEES, false)(dispatch)
-		}
-
 		const validations = await Promise.all([
-			validateCampaignValidators({ validateId, validators, dirty }),
+			validateCampaignValidators({ validateId, validators, dirty })(dispatch),
 			validateCampaignAmount({
 				validateId,
 				prop: 'depositAmount',
@@ -292,9 +270,9 @@ export function validateNewCampaignFinance({
 				dirty,
 				depositAmount,
 				minPerImpression,
-				availableIdentityBalanceMainToken,
 				errMsg: !dirty && 'REQUIRED_FIELD',
-			}),
+				maxDeposit,
+			})(dispatch),
 			validateCampaignAmount({
 				validateId,
 				prop: 'minPerImpression',
@@ -302,14 +280,14 @@ export function validateNewCampaignFinance({
 				dirty,
 				depositAmount,
 				minPerImpression,
-				availableIdentityBalanceMainToken,
 				errMsg: !dirty && 'REQUIRED_FIELD',
-			}),
+				maxDeposit,
+			})(dispatch),
 			validateCampaignTitle({
 				validateId,
 				title,
 				dirty,
-			}),
+			})(dispatch),
 			validateCampaignDates({
 				validateId,
 				prop: 'activeFrom',
@@ -318,7 +296,7 @@ export function validateNewCampaignFinance({
 				activeFrom,
 				withdrawPeriodStart,
 				created,
-			}),
+			})(dispatch),
 			validateCampaignDates({
 				validateId,
 				prop: 'withdrawPeriodStart',
@@ -327,10 +305,35 @@ export function validateNewCampaignFinance({
 				activeFrom,
 				withdrawPeriodStart,
 				created,
-			}),
+			})(dispatch),
 		])
 
 		const isValid = validations.every(v => v === true)
+
+		if (typeof maxChannelFees !== 'string') {
+			await updateSpinner(GETTING_CAMPAIGNS_FEES, true)(dispatch)
+
+			const account = selectAccount(state)
+
+			const {
+				feesFormatted,
+				maxAvailable,
+				maxAvailableFormatted,
+			} = await openChannel({
+				campaign: { ...newCampaign },
+				account,
+				getFeesOnly: true,
+				getMaxFees: true,
+			})
+
+			const newTemp = { ...temp }
+			newTemp.maxChannelFees = feesFormatted
+			newTemp.maxDeposit = maxAvailable
+			newTemp.maxDepositFormatted = maxAvailableFormatted
+
+			await updateNewCampaign('temp', newTemp)(dispatch, getState)
+			await updateSpinner(GETTING_CAMPAIGNS_FEES, false)(dispatch)
+		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
 
