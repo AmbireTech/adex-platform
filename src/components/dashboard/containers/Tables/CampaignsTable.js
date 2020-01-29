@@ -26,6 +26,7 @@ function CampaignsTable(props) {
 	const campaigns = useSelector(selectCampaigns)
 	const { symbol, decimals } = useSelector(selectMainToken)
 	const side = useSelector(selectSide)
+	console.log('CAMP', campaigns)
 	const data = Object.values(campaigns).map(item => ({
 		media: {
 			id: item.id,
@@ -277,4 +278,4 @@ CampaignsTable.propTypes = {
 	campaignId: PropTypes.string.isRequired,
 }
 
-export default CampaignsTable
+export default React.memo(CampaignsTable)
