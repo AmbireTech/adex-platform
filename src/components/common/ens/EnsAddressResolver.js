@@ -13,12 +13,12 @@ import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles.js'
 import { fetchName } from 'helpers/ensHelper'
 import { LoadingSection } from 'components/common/spinners'
+const useStyles = makeStyles(styles)
 
 const EnsAddressResolver = memo(props => {
 	const { address, name } = props
 	const [ensName, setEnsName] = useState(name)
 	const [searching, setSearching] = useState()
-	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 
 	useEffect(() => {
