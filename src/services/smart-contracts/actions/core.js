@@ -31,16 +31,17 @@ import {
 	selectFeeTokenWhitelist,
 	selectRoutineWithdrawTokens,
 	selectMainFeeToken,
+	selectSaiToken,
 } from 'selectors'
 import IdentityABI from 'adex-protocol-eth/abi/Identity'
 
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
-const Identity = new Interface(IdentityABI)
+const IdentityInterface = new Interface(IdentityABI)
 
 const timeframe = 15 * 1000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 0.5
-const VALID_UNTIL_MIN_PERIOD = 7 * 24 * 60 * 60 * 1000 // 7 days in ms
+const VALID_UNTIL_MIN_PERIOD = 15 * 24 * 60 * 60 * 1000 // 15 days in ms
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
@@ -189,7 +190,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 			})
 			.filter(({ channel, bTree }) => {
 				if (!!channel.status && channel.status.name === 'Expired') {
-					return channel.creator === identityAddr
+					return channel.creator.toLowerCase() === identityAddr.toLowerCase()
 				}
 
 				return bTree && !bTree.getBalance(identityAddr).isZero()
@@ -292,7 +293,7 @@ function getSweepExecuteRoutineTx({ txns, identityAddr, routineAuthTuple }) {
 		{ routineOpts: [], withdrawAmountByToken: {} }
 	)
 
-	const data = Identity.functions.executeRoutines.encode([
+	const data = IdentityInterface.functions.executeRoutines.encode([
 		routineAuthTuple,
 		routineOpts,
 	])
@@ -319,10 +320,15 @@ function getIdentityRoutineAuthTuple(identity) {
 		: null
 }
 
+function is41identity(routineAuthTuple) {
+	const is41 = routineAuthTuple && routineAuthTuple.length === 5
+
+	return is41
+}
+
 function hasValidExecuteRoutines(routineAuthTuple) {
 	const hasValidRoutines =
-		routineAuthTuple &&
-		routineAuthTuple.length === 5 &&
+		is41identity(routineAuthTuple) &&
 		// TODO: get relayer config for giveUpResubmitAfter
 		parseInt(routineAuthTuple[2], 16) * 1000 > Date.now() + 12 * 60 * 60 * 1000
 
@@ -392,12 +398,16 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 }
 
 function getSwapAmountsByToken({ balances }) {
+	const saiToken = selectSaiToken()
 	const { swapsByToken, swapsSumInMainToken } = balances.reduce(
 		(swaps, balance) => {
-			swaps.swapsSumInMainToken = swaps.swapsSumInMainToken.add(
-				balance.balanceMainToken
-			)
-			swaps.swapsByToken[balance.token.address] = balance.balance
+			// TODO: currently work only for SAI to DAI swap
+			if (balance.token.address === saiToken.address) {
+				swaps.swapsSumInMainToken = swaps.swapsSumInMainToken.add(
+					balance.balanceMainToken
+				)
+				swaps.swapsByToken[balance.token.address] = balance.balance
+			}
 			return swaps
 		},
 		{
@@ -433,7 +443,7 @@ export async function getSweepingTxnsIfNeeded({
 	}
 
 	if (needed.gt(currentBalanceInUse)) {
-		// Swaps all balances
+		// Swaps
 		const { swapsByToken, swapsSumInMainToken } = getSwapAmountsByToken({
 			balances,
 			amountToSwapInMainToken: needed.sub(currentBalanceInUse),
@@ -478,25 +488,44 @@ export async function openChannel({
 		id: ethChannel.hashHex(AdExCore.address),
 	}
 	const identityAddr = openReady.creator
-
 	const feeTokenAddr = mainToken.address
 
-	const approveTxns = await getApproveTxns({
-		getToken,
-		token: mainToken,
-		identityAddr,
-		feeTokenAddr: mainToken.address,
-		approveForAddress: AdExCore.address,
-		approveAmount: depositAmount,
-	})
+	const routineAuthTuple = getIdentityRoutineAuthTuple(identity)
+	const hasIdentityChannelOpen = is41identity(routineAuthTuple)
 
-	const channelOpenTx = {
-		identityContract: identityAddr,
-		feeTokenAddr: feeTokenAddr,
-		to: AdExCore.address,
-		data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
+	const txns = []
+
+	if (hasIdentityChannelOpen) {
+		const identityChannelOpenTx = {
+			identityContract: identityAddr,
+			feeTokenAddr: feeTokenAddr,
+			to: identityAddr,
+			data: IdentityInterface.functions.channelOpen.encode([
+				AdExCore.address,
+				ethChannel.toSolidityTuple(),
+			]),
+			extraTxFeesCount: 1,
+		}
+		txns.push(identityChannelOpenTx)
+	} else {
+		const approveTxns = await getApproveTxns({
+			getToken,
+			token: mainToken,
+			identityAddr,
+			feeTokenAddr: mainToken.address,
+			approveForAddress: AdExCore.address,
+			approveAmount: depositAmount,
+		})
+
+		const channelOpenTx = {
+			identityContract: identityAddr,
+			feeTokenAddr: feeTokenAddr,
+			to: AdExCore.address,
+			data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
+		}
+		txns.push(...approveTxns, channelOpenTx)
 	}
-	const txns = [...approveTxns, channelOpenTx]
+
 	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
 		amountInMainTokenNeeded: depositAmount,
 		txns,

@@ -5,14 +5,14 @@ import moment from 'moment'
 const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
 const requester = new Requester({ baseUrl: ADEX_MARKET_HOST })
 
-const processResponse = (res, dontThrow) => {
+const processResponse = (res, dontThrow, skipRedirect) => {
 	if (res.status >= 200 && res.status < 400) {
 		return res.json()
 	}
 
 	return res.text().then(text => {
 		if (res.status === 401 || res.status === 403) {
-			logOut()
+			logOut(skipRedirect)
 		}
 		if (!dontThrow) {
 			handleRequesterErrorRes({ res, text })
@@ -55,7 +55,7 @@ export const checkSession = ({ authSig, skipErrToast }) => {
 			authSig,
 			skipErrToast,
 		})
-		.then(res => processResponse(res, true))
+		.then(res => processResponse(res, true, true))
 }
 
 export const uploadImage = ({ imageBlob, imageName = '', authSig }) => {

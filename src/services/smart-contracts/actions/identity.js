@@ -274,16 +274,10 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	account,
 	getToken,
 }) {
-	const {
-		sweepTxns = [],
-		swapAmountsByToken = {},
-	} = await getSweepingTxnsIfNeeded({
-		amountInMainTokenNeeded,
-		account,
-	})
 	const feeTokenWhitelist = selectFeeTokenWhitelist()
 	const saiToken = selectSaiToken()
 	const { mainToken, daiAddr, saiAddr } = selectRelayerConfig()
+	const mainTokenWithFees = feeTokenWhitelist[mainToken.address]
 
 	let isDeployed = (await provider.getCode(identityAddr)) !== '0x'
 	let identityContract = null
@@ -295,6 +289,24 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	const initialNonce = isDeployed
 		? (await identityContract.nonce()).toNumber()
 		: 0
+
+	const feesForMainTxns = txns.length
+		? bigNumberify(
+				!initialNonce ? mainTokenWithFees.minDeploy : mainTokenWithFees.min
+		  ).add(
+				bigNumberify(mainTokenWithFees.min).mul(bigNumberify(txns.length - 1))
+		  )
+		: bigNumberify(0)
+
+	const {
+		sweepTxns = [],
+		swapAmountsByToken = {},
+	} = await getSweepingTxnsIfNeeded({
+		amountInMainTokenNeeded: feesForMainTxns.add(
+			bigNumberify(amountInMainTokenNeeded)
+		),
+		account,
+	})
 
 	// { txnsByFeeToken, saiWithdrawAmount }
 	const sweepTxnsByToken = txnsByTokenWithSaiToDaiSwap({
@@ -319,6 +331,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	// 3rd - make other txns with the main token only
 
 	// TODO: make it work with other tokens
+	// TODO: change getSwapAmountsByToken if more swaps are supported
 	const saiSwapAmount = sweepTxnsByToken.saiWithdrawAmount
 		.add(otherTxnsByToken.saiWithdrawAmount)
 		.add(bigNumberify(swapAmountsByToken[saiAddr] || 0))
@@ -356,7 +369,12 @@ export async function getIdentityTxnsWithNoncesAndFees({
 
 	Object.keys(txnsByFeeToken).forEach(key => {
 		txnsByFeeToken[key] = txnsByFeeToken[key].map(tx => {
-			const { routinesTxCount = 0, routinesSweepTxCount = 0, isSweepTx } = tx
+			const {
+				routinesTxCount = 0,
+				routinesSweepTxCount = 0,
+				extraTxFeesCount = 0,
+				isSweepTx,
+			} = tx
 			const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
 			const minFeeAmount = bigNumberify(
 				currentNonce === 0 ? feeToken.minDeploy : feeToken.min
@@ -366,8 +384,15 @@ export async function getIdentityTxnsWithNoncesAndFees({
 				bigNumberify(feeToken.min)
 			)
 
+			const extraFeesAmount = bigNumberify(extraTxFeesCount).mul(
+				bigNumberify(feeToken.min)
+			)
+
 			// Total relayer fees for the transaction
-			const feeAmount = minFeeAmount.add(routinesFeeAmount).toString()
+			const feeAmount = minFeeAmount
+				.add(routinesFeeAmount)
+				.add(extraFeesAmount)
+				.toString()
 
 			// fees that are not pre calculated with in the total identity balance
 			const nonIdentityBalanceFeeAmount = bigNumberify(feeAmount)

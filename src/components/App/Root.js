@@ -8,6 +8,8 @@ import {
 	execute,
 	ensureQuickWalletBackup,
 	updateRegistrationAllowed,
+	handleRedirectParams,
+	handleSignupLink,
 } from 'actions'
 import { Route, Switch, Redirect } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
@@ -15,6 +17,7 @@ import ConnectHoc from 'components/signin/ConnectHoc'
 import {
 	CreateQuickIdentity,
 	LoginStandardIdentity,
+	CreateStandardIdentity,
 	LoginQuickIdentity,
 } from 'components/signin/identity/Identity'
 import SideSelect from 'components/signin/side-select/SideSelect'
@@ -29,6 +32,9 @@ const ConnectedCreateQuickIdentity = ConnectHoc(JustDialog(CreateQuickIdentity))
 const ConnectedQuickLogin = ConnectHoc(JustDialog(LoginQuickIdentity))
 const ConnectedLoginStandardIdentity = ConnectHoc(
 	JustDialog(LoginStandardIdentity)
+)
+const ConnectedCreateStandardIdentity = ConnectHoc(
+	JustDialog(CreateStandardIdentity)
 )
 const ConnectedRoot = ConnectHoc(Home)
 
@@ -47,12 +53,12 @@ const PrivateRoute = ({ component: Component, auth, ...other }) => {
 	)
 }
 
-const handleLegacyWallet = wallet => {
+const handleLegacyWallet = async wallet => {
 	const { type, email, password, authType } = wallet || {}
 
 	if (!type && email && password && authType === 'grant') {
-		migrateLegacyWallet({ email, password })
-		removeLegacyKey({ email, password })
+		await migrateLegacyWallet({ email, password })
+		await removeLegacyKey({ email, password })
 	}
 
 	if (email && password && authType) {
@@ -68,6 +74,9 @@ const Root = () => {
 	useEffect(() => {
 		execute(getRelayerConfig())
 		execute(metamaskChecks())
+		execute(handleRedirectParams(location.search))
+		execute(handleSignupLink(location.search))
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	useEffect(() => {
@@ -98,6 +107,11 @@ const Root = () => {
 					exact
 					path='/login/full'
 					component={ConnectedLoginStandardIdentity}
+				/>
+				<Route
+					exact
+					path='/signup/full'
+					component={ConnectedCreateStandardIdentity}
 				/>
 				<Route exact path='/login/quick' component={ConnectedQuickLogin} />
 				<Route>

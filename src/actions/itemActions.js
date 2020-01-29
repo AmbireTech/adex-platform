@@ -40,6 +40,7 @@ import {
 	selectAuthSig,
 	selectAuth,
 } from 'selectors'
+import { OPENING_CAMPAIGN } from 'constants/spinners'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -242,7 +243,7 @@ export function getAllItems() {
 
 export function openCampaign({ campaign }) {
 	return async function(dispatch, getState) {
-		updateSpinner('opening-campaign', true)(dispatch)
+		updateSpinner(OPENING_CAMPAIGN, true)(dispatch)
 		const account = selectAccount(getState())
 		try {
 			await getAllValidatorsAuthForIdentity({
@@ -275,7 +276,7 @@ export function openCampaign({ campaign }) {
 				args: [getErrorMsg(err)],
 			})
 		}
-		updateSpinner('opening-campaign', false)(dispatch)
+		updateSpinner(OPENING_CAMPAIGN, false)(dispatch)
 		return true
 	}
 }
