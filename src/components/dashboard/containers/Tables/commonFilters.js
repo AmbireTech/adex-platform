@@ -20,6 +20,10 @@ export const sliderFilterOptions = ({
 		customFilterListOptions: {
 			render: v =>
 				`${filterTitle}: ${formatAbbrNum(v[0], 2)} - ${formatAbbrNum(v[1], 2)}`,
+			update: (filterList, filterPos, index) => {
+				filterList[index] = []
+				return filterList
+			},
 		},
 
 		filterOptions: {

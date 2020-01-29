@@ -40,7 +40,6 @@ export default function MUIDataTableEnchanced(props) {
 				},
 				...theme.overrides,
 			},
-			//TODO: mobile version fixes
 		})
 	const generalTableOptions = {
 		rowsPerPage: 5,

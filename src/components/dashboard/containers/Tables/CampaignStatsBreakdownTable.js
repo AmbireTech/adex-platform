@@ -41,7 +41,7 @@ function CampaignStatsBreakdownTable(props) {
 		},
 		{
 			name: 'impressions',
-			label: t('CHART_LABEL_IMPRESSIONS'),
+			label: t('LABEL_IMPRESSIONS'),
 			options: {
 				sortDirection: 'desc',
 				customBodyRender: impressions =>
