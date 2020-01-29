@@ -107,10 +107,11 @@ export function updateAccountStats() {
 		try {
 			const { identity, wallet } = account
 			const { address } = identity
-			const withBalance = await getChannelsWithOutstanding({
-				identityAddr: address,
-				wallet,
-			})
+			const withBalance =
+				(await getChannelsWithOutstanding({
+					identityAddr: address,
+					wallet,
+				})) || account.stats.withBalance
 
 			const outstandingBalanceMainToken = await getOutstandingBalance({
 				wallet,
@@ -126,7 +127,7 @@ export function updateAccountStats() {
 			})
 
 			updateAccount({
-				newValues: { stats: { formatted, raw } },
+				newValues: { stats: { formatted, raw, withBalance } },
 			})(dispatch)
 		} catch (err) {
 			console.error('ERR_STATS', err)
