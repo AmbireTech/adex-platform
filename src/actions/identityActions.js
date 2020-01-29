@@ -1,6 +1,6 @@
 import * as types from 'constants/actionTypes'
 import { getQuickWallet } from 'services/adex-relayer/actions'
-import { updateSpinner, addToast } from './uiActions'
+import { updateSpinner, addToast, handleAfterValidation } from 'actions'
 import {
 	getOwnerIdentities,
 	regAccount,
@@ -429,15 +429,6 @@ export function validateQuickLogin({ validateId, dirty }) {
 			await login()(dispatch, getState)
 		}
 		updateSpinner(validateId, false)(dispatch)
-	}
-}
-
-const handleAfterValidation = async ({ isValid, onValid, onInvalid }) => {
-	if (isValid && typeof onValid === 'function') {
-		await onValid()
-	}
-	if (!isValid && typeof onInvalid === 'function') {
-		await onInvalid()
 	}
 }
 

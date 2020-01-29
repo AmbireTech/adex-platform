@@ -587,9 +587,12 @@ export async function getIdentityTxnsTotalFees({
 	})
 
 	const fees = {
+		// TODO: change to return total as BN and add totalFormatted
 		total: formatTokenAmount(
 			feesData.total.toString(),
-			mainToken.decimals || 18
+			mainToken.decimals || 18,
+			false,
+			2
 		),
 		totalBN: feesData.total,
 		byToken,
