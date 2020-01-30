@@ -3,6 +3,7 @@ import {
 	selectCampaignsArray,
 	selectRoutineWithdrawTokens,
 	selectAdSlotsArray,
+	selectAdUnits,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 
@@ -79,4 +80,24 @@ export const selectAdSlotsTableData = createSelector(
 				},
 			}
 		})
+)
+
+export const selectAdUnitsTableData = createSelector(
+	[selectAdUnits, (_, side, items) => ({ side, items })],
+	(units, { side, items }) =>
+		Object.values(items || units).map(item => ({
+			id: item.id,
+			media: {
+				id: item.id,
+				mediaUrl: item.mediaUrl,
+				mediaMime: item.mediaMime,
+			},
+			title: item.title || units[item.ipfs].title,
+			type: item.type,
+			created: item.created,
+			actions: {
+				to: `/dashboard/${side}/AdUnit/${item.id || item.ipfs}`,
+				item,
+			},
+		}))
 )
