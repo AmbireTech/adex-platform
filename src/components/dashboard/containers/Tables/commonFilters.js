@@ -1,16 +1,11 @@
 import React from 'react'
 import { Typography, Slider, Box } from '@material-ui/core'
-import {
-	formatTokenAmount,
-	formatAbbrNum,
-	formatNumberWithoutCommas,
-} from 'helpers/formatters'
+import { formatAbbrNum, formatNumberWithoutCommas } from 'helpers/formatters'
 
 export const sliderFilterOptions = ({
 	initial,
 	filterTitle,
 	stepSetting = 1,
-	isToken = false,
 	decimals = 18,
 }) => {
 	return {
@@ -29,9 +24,7 @@ export const sliderFilterOptions = ({
 		filterOptions: {
 			names: [],
 			logic: (rowNumber, filters) => {
-				const formated = isToken
-					? formatTokenAmount(rowNumber, decimals)
-					: rowNumber
+				const formated = rowNumber
 				if (filters.length > 0) {
 					return (
 						Number(formatNumberWithoutCommas(formated)) < filters[0] ||
