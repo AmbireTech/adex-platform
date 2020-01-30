@@ -6,3 +6,8 @@ export const createDeepEqualSelector = createSelectorCreator(
 	defaultMemoize,
 	isEqual
 )
+
+export const creatArrayOnlyLengthChangeSelector = createSelectorCreator(
+	defaultMemoize,
+	(a = [], b = []) => a.length === b.length
+)
