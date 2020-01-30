@@ -43,7 +43,7 @@ function TopNav({ handleDrawerToggle, side, t }) {
 			  t('NOT_LOGGED')
 
 	return (
-		<AppBar className={classes.appBar} position='sticky'>
+		<AppBar className={classes.appBar} color='default' position='sticky'>
 			<Toolbar className={classes.toolbar}>
 				<div className={classes.flexRow}>
 					<IconButton
