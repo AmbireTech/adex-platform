@@ -83,7 +83,7 @@ export const selectAdSlotsTableData = createSelector(
 				created: item.created,
 				actions: {
 					to: `/dashboard/${side}/AdSlot/${item.id}`,
-					id: item.id,
+					item,
 				},
 			}
 		})
