@@ -1,11 +1,7 @@
-import React, { Component } from 'react'
+import React, { Component, forwardRef } from 'react'
 import PropTypes from 'prop-types'
-// import { connect } from 'react-redux'
-// import { bindActionCreators } from 'redux'
-// import actions from 'actions'
 import MaterialStepper from 'components/common/stepper/MaterialUiStepper'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
-import Translate from 'components/translate/Translate'
 
 class FormSteps extends Component {
 	shouldComponentUpdate(nextProps) {
@@ -72,4 +68,6 @@ FormSteps.propTypes = {
 	stepsPages: PropTypes.arrayOf(PropTypes.object),
 }
 
-export default Translate(FormSteps)
+export default forwardRef((props, ref) => (
+	<FormSteps {...props} forwardedRef={ref} />
+))
