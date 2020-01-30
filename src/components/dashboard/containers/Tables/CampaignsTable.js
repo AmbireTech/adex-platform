@@ -17,14 +17,10 @@ import {
 	selectCampaignsMaxDeposit,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
-import { bigNumberify } from 'ethers/utils'
+import { bigNumberify, commify } from 'ethers/utils'
 import { useSelector, useStore } from 'react-redux'
 import { styles } from './styles'
-import {
-	formatNumberWithCommas,
-	formatDateTime,
-	formatTokenAmount,
-} from 'helpers/formatters'
+import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 const RRIconButton = withReactRouterLink(IconButton)
 
@@ -85,11 +81,11 @@ const getCols = ({
 		name: 'depositAmount',
 		label: t('PROP_DEPOSIT'),
 		options: {
+			sort: true,
 			customBodyRender: depositAmount => (
-				<React.Fragment>
-					{formatTokenAmount(depositAmount, decimals, true)}
-					{` ${symbol}`}
-				</React.Fragment>
+				<React.Fragment>{`${depositAmount.toFixed(
+					2
+				)} ${symbol}`}</React.Fragment>
 			),
 			...sliderFilterOptions({
 				initial: [0, maxDeposit],
@@ -105,7 +101,7 @@ const getCols = ({
 		options: {
 			sort: true,
 			customBodyRender: fundsDistributedRatio =>
-				((fundsDistributedRatio || 0) / 10).toFixed(2),
+				`${((fundsDistributedRatio || 0) / 10).toFixed(2)}%`,
 			...sliderFilterOptions({
 				initial: [0, 100],
 				filterTitle: t('DISTRIBUTED_FILTER'),
@@ -117,7 +113,7 @@ const getCols = ({
 		label: t('LABEL_IMPRESSIONS'),
 		options: {
 			sort: true,
-			customBodyRender: impressions => formatNumberWithCommas(impressions || 0),
+			customBodyRender: impressions => commify(impressions || 0),
 			...sliderFilterOptions({
 				initial: [0, maxImpressions],
 				filterTitle: t('IMPRESSIONS_FILTER'),
@@ -129,7 +125,7 @@ const getCols = ({
 		label: t('CHART_LABEL_CLICKS'),
 		options: {
 			sort: true,
-			customBodyRender: clicks => formatNumberWithCommas(clicks || 0),
+			customBodyRender: clicks => commify(clicks || 0),
 			...sliderFilterOptions({
 				initial: [0, maxClicks],
 				filterTitle: t('CLICKS_FILTER'),
@@ -143,14 +139,9 @@ const getCols = ({
 			filter: false,
 			sort: true,
 			customBodyRender: minPerImpression => (
-				<React.Fragment>
-					{formatTokenAmount(
-						bigNumberify(minPerImpression).mul(1000),
-						decimals,
-						true
-					)}
-					{` ${symbol}`}
-				</React.Fragment>
+				<React.Fragment>{`${minPerImpression.toFixed(
+					2
+				)} ${symbol}`}</React.Fragment>
 			),
 		},
 	},
@@ -232,6 +223,14 @@ const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
 }
 
+const getOptions = ({ decimals, symbol }) => ({
+	filterType: 'multiselect',
+	selectableRows: 'none',
+	// customSort,
+	onDownload: (buildHead, buildBody, columns, data) =>
+		onDownload(buildHead, buildBody, columns, data, decimals, symbol),
+})
+
 function CampaignsTable(props) {
 	const classes = useStyles()
 	const { getState } = useStore()
@@ -244,6 +243,7 @@ function CampaignsTable(props) {
 	const maxClicks = useSelector(selectCampaignsMaxClicks)
 	const maxDeposit = useSelector(selectCampaignsMaxDeposit)
 	const { symbol, decimals } = useSelector(selectMainToken)
+	const options = getOptions({ decimals, symbol })
 
 	useEffect(() => {
 		// NOTE: mui-datatables is rerendered allways by itself if data, columns (maybe options too) are changed
@@ -280,12 +280,7 @@ function CampaignsTable(props) {
 			title={t('ALL_CAMPAIGNS')}
 			data={data}
 			columns={cols}
-			options={{
-				filterType: 'multiselect',
-				selectableRows: 'none',
-				onDownload: (buildHead, buildBody, columns, data) =>
-					onDownload(buildHead, buildBody, columns, data, decimals, symbol),
-			}}
+			options={options}
 			{...props}
 		/>
 	)
