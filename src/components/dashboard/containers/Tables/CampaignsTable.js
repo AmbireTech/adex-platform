@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility } from '@material-ui/icons'
@@ -17,16 +17,16 @@ import {
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { bigNumberify, commify } from 'ethers/utils'
-import { useSelector, useStore } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { styles } from './styles'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
+import { useTableData } from './tableHooks'
 const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(styles)
 
 const getCols = ({
-	decimals,
 	classes,
 	symbol,
 	maxImpressions,
@@ -89,8 +89,6 @@ const getCols = ({
 			...sliderFilterOptions({
 				initial: [0, maxDeposit],
 				filterTitle: t('DEPOSIT_FILTER'),
-				isToken: true,
-				decimals,
 			}),
 		},
 	},
@@ -232,25 +230,17 @@ const getOptions = ({ decimals, symbol }) => ({
 
 function CampaignsTable(props) {
 	const classes = useStyles()
-	const { getState } = useStore()
 	const side = useSelector(selectSide)
-	const [cols, setCols] = useState([])
-	const [data, setData] = useState([])
-
 	const maxImpressions = useSelector(selectCampaignsMaxImpressions)
 	const maxClicks = useSelector(selectCampaignsMaxClicks)
 	const maxDeposit = useSelector(selectCampaignsMaxDeposit)
 	const { symbol, decimals } = useSelector(selectMainToken)
 	const options = getOptions({ decimals, symbol })
 
-	useEffect(() => {
-		// NOTE: mui-datatables is rerendered allways by itself if data, columns (maybe options too) are changed
-		// in order to prevent that data and columns are selected once on component mount and until page is changed
-		// the data ill not be updated
-		// TODO: think of better way to select from the state ones. This solution works but it is not as elegant as Ikea box.. :(
-		const state = getState()
-		setData(selectCampaignsTableData(state, side))
-		setCols(
+	const { data, columns } = useTableData({
+		selector: selectCampaignsTableData,
+		selectorArgs: side,
+		getColumns: () =>
 			getCols({
 				decimals,
 				classes,
@@ -258,16 +248,14 @@ function CampaignsTable(props) {
 				maxImpressions,
 				maxClicks,
 				maxDeposit,
-			})
-		)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+			}),
+	})
 
 	return (
 		<MUIDataTableEnhanced
 			title={t('ALL_CAMPAIGNS')}
 			data={data}
-			columns={cols}
+			columns={columns}
 			options={options}
 			{...props}
 		/>
