@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
 import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility } from '@material-ui/icons'
@@ -236,7 +235,6 @@ function CampaignsTable(props) {
 	const { getState } = useStore()
 	const side = useSelector(selectSide)
 	const [cols, setCols] = useState([])
-
 	const [data, setData] = useState([])
 
 	const maxImpressions = useSelector(selectCampaignsMaxImpressions)
@@ -262,18 +260,8 @@ function CampaignsTable(props) {
 				maxDeposit,
 			})
 		)
-	}, [
-		classes,
-		decimals,
-		getState,
-		maxClicks,
-		maxDeposit,
-		maxImpressions,
-		setCols,
-		setData,
-		side,
-		symbol,
-	])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	return (
 		<MUIDataTableEnhanced
@@ -286,8 +274,4 @@ function CampaignsTable(props) {
 	)
 }
 
-CampaignsTable.propTypes = {
-	campaignId: PropTypes.string.isRequired,
-}
-
-export default React.memo(CampaignsTable)
+export default CampaignsTable
