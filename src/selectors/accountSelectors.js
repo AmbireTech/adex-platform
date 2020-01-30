@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-import { createDeepEqualSelector } from './selectors'
+import { createDeepEqualSelector } from 'selectors'
 
 export const selectAccount = state => state.persist.account
 
