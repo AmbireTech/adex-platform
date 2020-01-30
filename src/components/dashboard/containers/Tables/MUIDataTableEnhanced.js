@@ -9,10 +9,8 @@ const generalTableOptions = {
 		return {
 			padding: 'default',
 			size: 'small',
-			tableLayout: 'auto',
 			width: '100%',
 			align: 'center',
-			whiteSpace: 'wrap',
 		}
 	},
 	textLabels: {
