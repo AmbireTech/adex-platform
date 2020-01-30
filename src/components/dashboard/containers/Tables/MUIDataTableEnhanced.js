@@ -4,7 +4,7 @@ import { t } from 'selectors'
 
 const generalTableOptions = {
 	rowsPerPage: 5,
-	rowsPerPageOptions: [5, 10, 25, 50, 100, 500],
+	rowsPerPageOptions: [5, 10, 25, 50, 100],
 	setTableProps: () => {
 		return {
 			padding: 'default',
