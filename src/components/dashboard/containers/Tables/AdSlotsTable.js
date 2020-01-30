@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import classnames from 'classnames'
-import { Tooltip, IconButton } from '@material-ui/core'
+import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
 import { Visibility } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { t, selectSide, selectAdSlotsTableData } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
-import { useSelector, useStore } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { styles } from './styles'
 import { formatDateTime } from 'helpers/formatters'
+import { useTableData } from './tableHooks'
+
 const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(styles)
@@ -72,8 +75,9 @@ const getCols = ({ classes }) => [
 					title={t('LABEL_VIEW')}
 					// placement='top'
 					enterDelay={1000}
+					aria-label='view'
 				>
-					<RRIconButton to={to} variant='contained' aria-label='preview'>
+					<RRIconButton to={to} variant='contained'>
 						<Visibility color='primary' />
 					</RRIconButton>
 				</Tooltip>
@@ -89,28 +93,22 @@ const options = {
 
 function AdSlotsTable(props) {
 	const classes = useStyles()
-	const { getState } = useStore()
 	const side = useSelector(selectSide)
 
-	const [cols, setCols] = useState([])
-	const [data, setData] = useState([])
-
-	useEffect(() => {
-		const state = getState()
-		setData(selectAdSlotsTableData(state, side))
-		setCols(
+	const { data, columns } = useTableData({
+		selector: selectAdSlotsTableData,
+		selectorArgs: side,
+		getColumns: () =>
 			getCols({
 				classes,
-			})
-		)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+			}),
+	})
 
 	return (
 		<MUIDataTableEnhanced
 			title={t('ALL_SLOTS')}
 			data={data}
-			columns={cols}
+			columns={columns}
 			options={options}
 			{...props}
 		/>
