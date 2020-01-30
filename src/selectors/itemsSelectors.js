@@ -43,6 +43,6 @@ export const selectAdSlots = createSelector(
 )
 
 export const selectAdSlotsArray = createSelector(
-	state => selectItemsArrayByType(state, 'AdUnit'),
+	state => selectItemsArrayByType(state, 'AdSot'),
 	adUnits => adUnits
 )

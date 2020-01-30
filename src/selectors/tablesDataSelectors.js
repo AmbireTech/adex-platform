@@ -82,7 +82,7 @@ export const selectAdSlotsTableData = createSelector(
 				type: item.type.replace('legacy_', ''),
 				created: item.created,
 				actions: {
-					to: `/dashboard/${side}/AdSlot/${item.id}`,
+					to: `/dashboard/${side}/AdSlot/${item.id || item.ipfs}`,
 					item,
 				},
 			}
