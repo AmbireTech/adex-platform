@@ -17,6 +17,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard'
 import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
+import Box from '@material-ui/core/Box'
 import ListIcon from '@material-ui/icons/List'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
@@ -126,7 +127,8 @@ function SideNav(props) {
 				component='nav'
 			>
 				<div>
-					<div
+					<Box
+						bgcolor='background.paper'
 						className={classnames(
 							commonClasses.toolbar,
 							classes.sideNavToolbar
@@ -153,7 +155,7 @@ function SideNav(props) {
 								</ListItemText>
 							</LoadingSection>
 						</ListItem>
-					</div>
+					</Box>
 					<ListDivider />
 					<SideSwitch className={classes.sideSwitch} side={side} t={t} />
 					<ListDivider />

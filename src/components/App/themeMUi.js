@@ -17,6 +17,7 @@ const palette = {
 	accentOne: { main: ACCENT_ONE, contrastText: WHITE },
 	accentTwo: { main: ACCENT_TWO, contrastText: WHITE },
 	grey: { main: ALEX_GREY, contrastText: WHITE },
+	appBar: { main: grey[200], contrastText: grey[900] },
 	error: deepOrange,
 	warning: amber,
 	first: lime,
@@ -72,6 +73,12 @@ export const theme = createMuiTheme({
 				display: 'flex',
 				flex: 0,
 				padding: 0,
+			},
+		},
+		MuiAppBar: {
+			colorDefault: {
+				backgroundColor: palette.appBar.main,
+				color: palette.appBar.contrastText,
 			},
 		},
 		MUIDataTablePagination: {
