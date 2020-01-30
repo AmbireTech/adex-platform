@@ -77,3 +77,9 @@ export const formatAbbrNum = (number, decPlaces) => {
 
 	return number
 }
+
+export const truncateString = (string, maxLength = 50) => {
+	if (!string) return ''
+	if (string.length <= maxLength) return string
+	return `${string.substring(0, maxLength).trim()}...`
+}
