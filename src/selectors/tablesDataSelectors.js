@@ -1,9 +1,10 @@
 import { createSelector } from 'reselect'
-import { selectCampaignsArray, selectRoutineWithdrawTokens } from 'selectors'
-import { formatTokenAmount } from 'helpers/formatters'
+import {
+	selectCampaignsArray,
+	selectRoutineWithdrawTokens,
+	selectAdSlotsArray,
+} from 'selectors'
 import { formatUnits } from 'ethers/utils'
-
-export const selectItems = state => state.persist.items
 
 export const selectCampaignsTableData = createSelector(
 	[selectCampaignsArray, selectRoutineWithdrawTokens, (_, side) => side],
@@ -54,7 +55,28 @@ export const selectCampaignsMaxDeposit = createSelector(
 			null,
 			campaigns.map(i => {
 				const { decimals } = tokens[i.depositAsset] || 18
-				return Number(formatTokenAmount(i.depositAmount, decimals) || 0)
+				return Number(formatUnits(i.depositAmount, decimals) || 0)
 			})
 		)
+)
+
+export const selectAdSlotsTableData = createSelector(
+	[selectAdSlotsArray, (_, side) => side],
+	(slots, side) =>
+		slots.map(item => {
+			return {
+				media: {
+					id: item.id,
+					mediaUrl: item.fallbackUnit ? `ipfs://${item.fallbackUnit}` : '', //TODO: provide fallback image to slot
+					mediaMime: 'image/jpeg',
+				},
+				title: item.title,
+				type: item.type.replace('legacy_', ''),
+				created: item.created,
+				actions: {
+					to: `/dashboard/${side}/AdSlot/${item.id}`,
+					id: item.id,
+				},
+			}
+		})
 )
