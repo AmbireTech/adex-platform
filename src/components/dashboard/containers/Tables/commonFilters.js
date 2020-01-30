@@ -2,12 +2,7 @@ import React from 'react'
 import { Typography, Slider, Box } from '@material-ui/core'
 import { formatAbbrNum, formatNumberWithoutCommas } from 'helpers/formatters'
 
-export const sliderFilterOptions = ({
-	initial,
-	filterTitle,
-	stepSetting = 1,
-	decimals = 18,
-}) => {
+export const sliderFilterOptions = ({ initial, filterTitle, stepSetting }) => {
 	return {
 		filter: true,
 		display: 'true',
@@ -41,19 +36,20 @@ export const sliderFilterOptions = ({
 						</Typography>
 						<Box pl={2} pr={3} pt={2}>
 							<Slider
-								min={initial[0]}
-								max={initial[1]}
+								min={initial[0] || 0}
+								max={initial[1] || 100}
 								marks={[
 									{
-										value: initial[0],
+										value: initial[0] || 0,
 										label: formatAbbrNum(initial[0], 2),
 									},
 									{
-										value: initial[1],
+										value: initial[1] || 100,
 										label: formatAbbrNum(initial[1], 2),
 									},
 								]}
-								step={stepSetting}
+								// Max 20 steps (5,000,000 impressions step 1 ...)
+								step={stepSetting || Math.floor((initial[1] || 100) / 20)}
 								value={
 									filterList[index].length > 0 ? filterList[index] : initial
 								}
