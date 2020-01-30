@@ -90,7 +90,7 @@ export const selectAdSlotsTableData = createSelector(
 )
 
 export const selectAdUnitsTableData = createSelector(
-	[selectAdUnits, (_, side, items) => ({ side, items })],
+	[selectAdUnits, (_, { side, items }) => ({ side, items })],
 	(units, { side, items }) =>
 		Object.values(items || units).map(item => ({
 			id: item.id,

@@ -13,6 +13,7 @@ import { formatDateTime, truncateString } from 'helpers/formatters'
 import { NewCloneUnitDialog } from '../../forms/items/NewItems'
 import { AdUnit } from 'adex-models'
 import { execute, cloneItem } from 'actions'
+import { useTableData } from './tableHooks'
 const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(styles)
@@ -115,12 +116,8 @@ const getCols = ({ classes, noActions, noClone }) => [
 
 function AdUnitsTable(props) {
 	const classes = useStyles()
-	const { getState } = useStore()
 	const side = useSelector(selectSide)
-
-	const [cols, setCols] = useState([])
-	const [data, setData] = useState([])
-	const [selected, setSelected] = React.useState([])
+	const [selected, setSelected] = useState([])
 	const {
 		items, //
 		noActions,
@@ -130,18 +127,16 @@ function AdUnitsTable(props) {
 		handleSelect,
 	} = props
 
-	useEffect(() => {
-		const state = getState()
-		setData(selectAdUnitsTableData(state, side, items))
-		setCols(
+	const { data, columns } = useTableData({
+		selector: selectAdUnitsTableData,
+		selectorArgs: { side, items },
+		getColumns: () =>
 			getCols({
 				classes,
 				noActions,
 				noClone,
-			})
-		)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+			}),
+	})
 
 	useEffect(() => {
 		const selectedItems = selected.map(i => data[i].id)
@@ -162,7 +157,7 @@ function AdUnitsTable(props) {
 		<MUIDataTableEnhanced
 			title={campaignUnits ? t('CAMPAIGN_AD_UNITS') : t('ALL_UNITS')}
 			data={data}
-			columns={cols}
+			columns={columns}
 			options={{
 				filterType: 'multiselect',
 				rowsSelected: selected,
