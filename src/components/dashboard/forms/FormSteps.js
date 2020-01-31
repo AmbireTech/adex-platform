@@ -2,6 +2,7 @@ import React, { Component, forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import MaterialStepper from 'components/common/stepper/MaterialUiStepper'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
+import { t } from 'selectors'
 
 class FormSteps extends Component {
 	shouldComponentUpdate(nextProps) {
@@ -11,7 +12,6 @@ class FormSteps extends Component {
 	render() {
 		const pages = []
 		const {
-			t,
 			SaveBtn,
 			CancelBtn,
 			cancelFunction,
