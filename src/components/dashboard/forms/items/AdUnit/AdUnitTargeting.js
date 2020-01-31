@@ -174,6 +174,7 @@ class AdUnitTargeting extends Component {
 						suggestionMatch='anywhere'
 						showSuggestionsWhenValueIsSet={true}
 						allowCreate={!source.length}
+						variant='outlined'
 					/>
 				</Grid>
 				<Grid item xs={11} md={5}>
