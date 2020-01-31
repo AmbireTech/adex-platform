@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux'
 import { styles } from './styles'
 import { formatDateTime } from 'helpers/formatters'
 import { useTableData } from './tableHooks'
+import { ReloadData } from './toolbars'
 
 const RRIconButton = withReactRouterLink(IconButton)
 
@@ -86,16 +87,17 @@ const getCols = ({ classes }) => [
 	},
 ]
 
-const options = {
+const getOptions = ({ reloadData }) => ({
 	filterType: 'multiselect',
 	selectableRows: 'none',
-}
+	customToolbar: () => <ReloadData handleReload={reloadData} />,
+})
 
 function AdSlotsTable(props) {
 	const classes = useStyles()
 	const side = useSelector(selectSide)
 
-	const { data, columns } = useTableData({
+	const { data, columns, reloadData } = useTableData({
 		selector: selectAdSlotsTableData,
 		selectorArgs: side,
 		getColumns: () =>
@@ -103,6 +105,8 @@ function AdSlotsTable(props) {
 				classes,
 			}),
 	})
+
+	const options = getOptions({ reloadData })
 
 	return (
 		<MUIDataTableEnhanced
