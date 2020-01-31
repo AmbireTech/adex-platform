@@ -5,6 +5,7 @@ import {
 	selectAdSlotsArray,
 	selectAdUnits,
 	creatArrayOnlyLengthChangeSelector,
+	selectCampaignAnalyticsByChannelStats,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 
@@ -107,4 +108,50 @@ export const selectAdUnitsTableData = createSelector(
 				item,
 			},
 		}))
+)
+
+export const selectCampaignStatsTableData = createSelector(
+	(state, campaignId) => {
+		return {
+			impressions: selectCampaignAnalyticsByChannelStats(state, {
+				type: 'IMPRESION',
+				campaignId,
+			}),
+			clicks: selectCampaignAnalyticsByChannelStats(state, {
+				type: 'CLICK',
+				campaignId,
+			}),
+		}
+	},
+	({ impressions, clicks }) => {
+		const imprStats = impressions.reportChannelToHostname
+		const clickStats = clicks.reportChannelToHostname
+		const earnStats = impressions.reportChannelToHostnamePay
+
+		return Object.keys(imprStats).map(key => ({
+			website: key,
+			impressions: imprStats[key] || 0,
+			earnings: Number((earnStats[key] || 0).toFixed(2)),
+			clicks: clickStats[key] || 0,
+		}))
+	}
+)
+
+export const selectCampaignStatsMaxValues = createSelector(
+	(state, channelId) => selectCampaignStatsTableData(state, channelId),
+	data =>
+		data.reduce(
+			(result, current) => {
+				const newResult = { ...result }
+
+				newResult.maxClicks = Math.max(current.clicks, newResult.maxClicks)
+				newResult.maxImpressions = Math.max(
+					current.impressions,
+					newResult.impressions
+				)
+				newResult.maxEarnings = Math.max(current.earnings, newResult.earnings)
+				return newResult
+			},
+			{ maxClicks: 0, maxImpressions: 0, maxEarnings: 0 }
+		)
 )
