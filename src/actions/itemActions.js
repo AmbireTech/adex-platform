@@ -7,36 +7,18 @@ import {
 	updateAdUnit,
 	updateCampaign,
 } from 'services/adex-market/actions'
-import { execute } from 'actions'
-import { push } from 'connected-react-router'
 import { parseUnits, bigNumberify } from 'ethers/utils'
 import { Base, AdSlot, AdUnit, helpers, Campaign } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
-import { updateValidatorAuthTokens } from './accountActions'
+
 import { translate } from 'services/translations/translations'
-import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
-import {
-	getAdUnits,
-	getAdSlots,
-	getCampaigns,
-} from 'services/adex-market/actions'
-import {
-	openChannel,
-	closeChannel,
-} from 'services/smart-contracts/actions/core'
-import { lastApprovedState } from 'services/adex-validator/actions'
-import { closeCampaignMarket } from 'services/adex-market/actions'
+import { getAdUnits, getAdSlots } from 'services/adex-market/actions'
+
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
 import { getErrorMsg } from 'helpers/errors'
 import { SOURCES } from 'constants/targeting'
-import {
-	selectAccount,
-	selectRelayerConfig,
-	selectAuthSig,
-	selectAuth,
-} from 'selectors'
-import { OPENING_CAMPAIGN } from 'constants/spinners'
+import { selectRelayerConfig, selectAuthSig } from 'selectors'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({

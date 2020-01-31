@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
@@ -31,15 +31,16 @@ const textBtn = ({ label, className, classes, style, onClick, ...rest }) => {
 
 const TextBtn = withStyles(styles)(textBtn)
 
-const Transition = props => {
-	return <Slide direction='up' {...props} />
-}
+const Transition = React.forwardRef(function Transition(props, ref) {
+	return <Slide direction='up' ref={ref} {...props} />
+})
 
 const useStyles = makeStyles(styles)
 
 export default function ItemHoc(Decorated) {
 	function WithDialog(props) {
 		const {
+			forwardedRef,
 			iconButton,
 			textButton,
 			fabButton,
@@ -65,7 +66,6 @@ export default function ItemHoc(Decorated) {
 			size,
 			mini,
 			variant,
-			fullWidth,
 		}
 
 		const classes = useStyles()
@@ -84,7 +84,7 @@ export default function ItemHoc(Decorated) {
 			setOpen(false)
 		}
 
-		let ButtonComponent = Button
+		let ButtonComponent = null
 
 		if (iconButton) {
 			ButtonComponent = IconButton
@@ -92,9 +92,14 @@ export default function ItemHoc(Decorated) {
 			ButtonComponent = TextBtn
 		} else if (fabButton) {
 			ButtonComponent = Fab
+		} else {
+			ButtonComponent = Button
+			btnProps.fullWidth = fullWidth
 		}
 
-		const btnLabelTranslated = t(btnLabel, { args: btnLabelArgs || [''] })
+		const btnLabelTranslated = btnLabel
+			? t(btnLabel, { args: btnLabelArgs || [''] })
+			: ''
 
 		return (
 			<Fragment>
@@ -141,9 +146,9 @@ export default function ItemHoc(Decorated) {
 								<CancelIcon />
 							</IconButton>
 						</Typography>
-					</DialogTitle>
+					</DialogTitle>{' '}
 					<DialogContent classes={{ root: classes.content }}>
-						<Decorated {...rest} closeDialog={closeDialog} />
+						<Decorated ref={forwardedRef} {...rest} closeDialog={closeDialog} />
 					</DialogContent>
 					{dialogActions && <DialogActions>{dialogActions}</DialogActions>}
 				</Dialog>
@@ -152,11 +157,13 @@ export default function ItemHoc(Decorated) {
 	}
 
 	WithDialog.propTypes = {
-		btnLabel: PropTypes.string.isRequired,
+		btnLabel: PropTypes.string,
 		title: PropTypes.string.isRequired,
 		floating: PropTypes.bool,
 		onBeforeOpen: PropTypes.func,
 	}
 
-	return WithDialog
+	return forwardRef((props, ref) => (
+		<WithDialog {...props} forwardedRef={ref} />
+	))
 }

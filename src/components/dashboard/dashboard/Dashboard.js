@@ -6,16 +6,26 @@ import Campaign from 'components/dashboard/containers/Campaign'
 import DashboardStats from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
-import Items from 'components/dashboard/containers/Items'
 import Account from 'components/dashboard/account/AccountInfo'
 import {
 	NewUnitDialog,
 	NewCampaignDialog,
 	NewSlotDialog,
 } from 'components/dashboard/forms/items/NewItems'
-import campaignsLoop from 'services/store-data/campaigns'
+import {
+	CampaignsTable,
+	AdSlotsTable,
+	AdUnitsTable,
+} from 'components/dashboard/containers/Tables'
+import {
+	campaignsLoop,
+	campaignsLoopStats,
+} from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
-import analyticsLoop from 'services/store-data/analytics'
+import {
+	analyticsLoop,
+	analyticsCampaignsLoop,
+} from 'services/store-data/analytics'
 import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
 import PageNotFound from 'components/page_not_found/PageNotFound'
@@ -33,7 +43,7 @@ const Campaigns = () => (
 			color='secondary'
 			btnLabel='NEW_CAMPAIGN'
 		/>
-		<Items header={t('ALL_CAMPAIGNS')} itemType={'Campaign'} />
+		<CampaignsTable />
 	</>
 )
 
@@ -45,7 +55,7 @@ const AdUnits = () => (
 			color='secondary'
 			btnLabel='NEW_UNIT'
 		/>
-		<Items header={t('ALL_UNITS')} itemType={'AdUnit'} />
+		<AdUnitsTable />
 	</>
 )
 
@@ -58,7 +68,7 @@ const AdSlots = () => (
 			color='secondary'
 			btnLabel='NEW_SLOT'
 		/>
-		<Items header={t('ALL_SLOTS')} itemType={'AdSlot'} />
+		<AdSlotsTable />
 	</>
 )
 
@@ -75,11 +85,16 @@ function Dashboard(props) {
 		execute(updateNav('side', side))
 		execute(getAllItems())
 		analyticsLoop.start()
+		analyticsCampaignsLoop.start()
 		campaignsLoop.start()
+		campaignsLoopStats.start()
 		statsLoop.start()
 
 		return () => {
+			analyticsLoop.stop()
+			analyticsCampaignsLoop.stop()
 			campaignsLoop.stop()
+			campaignsLoopStats.stop()
 			statsLoop.stop()
 		}
 	}, [side])

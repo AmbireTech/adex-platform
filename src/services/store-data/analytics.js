@@ -1,5 +1,9 @@
 import Loop from './loop'
-import { execute, updateAccountAnalytics } from 'actions'
+import {
+	execute,
+	updateAccountAnalytics,
+	updateAccountCampaingsAnalytics,
+} from 'actions'
 
 const LOOP_TIMEOUT = 120 * 1000
 
@@ -9,4 +13,10 @@ const analyticsLoop = new Loop({
 	loopName: '_ANALYTICS',
 })
 
-export default analyticsLoop
+const analyticsCampaignsLoop = new Loop({
+	timeout: LOOP_TIMEOUT,
+	syncAction: () => execute(updateAccountCampaingsAnalytics()),
+	loopName: '_ANALYTICS_CAMPAIGNS_ADVANCED',
+})
+
+export { analyticsLoop, analyticsCampaignsLoop }

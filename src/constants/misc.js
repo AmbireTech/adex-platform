@@ -116,7 +116,10 @@ export const VALIDATOR_ANALYTICS_SIDES = [
 	'advertiser',
 	'publisher', //
 ]
-export const VALIDATOR_ANALYTICS_EVENT_TYPES = ['IMPRESSION']
+export const VALIDATOR_ANALYTICS_EVENT_TYPES = [
+	'IMPRESSION', //
+	'CLICK',
+]
 
 // TEMP: disable long periods
 export const VALIDATOR_ANALYTICS_TIMEFRAMES = [

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 // import PropTypes from 'prop-types'
 import { withRouter } from 'react-router'
 
@@ -31,6 +31,7 @@ export const withReactRouterLink = Component => {
 
 		render() {
 			const {
+				forwardedRef,
 				to,
 				match,
 				location,
@@ -42,10 +43,19 @@ export const withReactRouterLink = Component => {
 			const toLocation = this.resolveToLocation(to)
 
 			return (
-				<Component {...rest} href={toLocation} onClick={this.handleClick} />
+				<Component
+					ref={forwardedRef}
+					{...rest}
+					href={toLocation}
+					onClick={this.handleClick}
+				/>
 			)
 		}
 	}
 
-	return withRouter(Decorated)
+	const WithRouter = withRouter(Decorated)
+
+	return forwardRef((props, ref) => (
+		<WithRouter {...props} forwardedRef={ref} />
+	))
 }

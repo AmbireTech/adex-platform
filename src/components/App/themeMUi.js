@@ -17,6 +17,7 @@ const palette = {
 	accentOne: { main: ACCENT_ONE, contrastText: WHITE },
 	accentTwo: { main: ACCENT_TWO, contrastText: WHITE },
 	grey: { main: ALEX_GREY, contrastText: WHITE },
+	appBar: { main: grey[200], contrastText: grey[900] },
 	error: deepOrange,
 	warning: amber,
 	first: lime,
@@ -25,7 +26,7 @@ const palette = {
 	text: grey,
 }
 
-const theme = createMuiTheme({
+export const theme = createMuiTheme({
 	typography: {
 		fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
 		fontSize: 13,
@@ -66,7 +67,41 @@ const theme = createMuiTheme({
 		//     active: {
 		//         color: 'yellow'
 		//     }
-		// }
+		// },
+		MuiTableFooter: {
+			root: {
+				display: 'flex',
+				flex: 0,
+				padding: 0,
+			},
+		},
+		MuiAppBar: {
+			colorDefault: {
+				backgroundColor: palette.appBar.main,
+				color: palette.appBar.contrastText,
+			},
+		},
+		MUIDataTablePagination: {
+			toolbar: {
+				padding: 0,
+			},
+		},
+		MUIDataTableFilter: {
+			root: {
+				maxWidth: '400px',
+			},
+		},
+		// Think of accessing an element not a class
+		MuiGridListTile: {
+			root: {
+				width: '100% !important',
+			},
+		},
+		MUIDataTableBodyCell: {
+			stackedCommon: {
+				height: '80px !important',
+			},
+		},
 	},
 })
 
