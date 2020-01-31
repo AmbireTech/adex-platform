@@ -148,10 +148,10 @@ function AccountInfo() {
 										: t('IDENTITY_ETH_ADDR')
 								}
 							/>
-							{/* <EnsAddressResolver
+							<EnsAddressResolver
 								address={identityAddress}
 								name={identityEnsName}
-							/> */}
+							/>
 						</React.Fragment>
 					}
 					// right={
