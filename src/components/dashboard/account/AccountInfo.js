@@ -154,19 +154,19 @@ function AccountInfo() {
 							/>
 						</React.Fragment>
 					}
-					right={
-						canSetENS && (
-							<SetAccountENS
-								fullWidth
-								variant='contained'
-								color='primary'
-								token='DAI'
-								size='small'
-								identityAvailable={availableIdentityBalanceMainToken}
-								setIdentityEnsName={setIdentityEnsName}
-							/>
-						)
-					}
+					// right={
+					// 	canSetENS && (
+					// 		<SetAccountENS
+					// 			fullWidth
+					// 			variant='contained'
+					// 			color='primary'
+					// 			token='DAI'
+					// 			size='small'
+					// 			identityAvailable={availableIdentityBalanceMainToken}
+					// 			setIdentityEnsName={setIdentityEnsName}
+					// 		/>
+					// 	)
+					// }
 				/>
 				<ListDivider />
 				<AccountItem
