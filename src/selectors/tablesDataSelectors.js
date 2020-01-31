@@ -114,7 +114,7 @@ export const selectCampaignStatsTableData = createSelector(
 	(state, campaignId) => {
 		return {
 			impressions: selectCampaignAnalyticsByChannelStats(state, {
-				type: 'IMPRESION',
+				type: 'IMPRESSION',
 				campaignId,
 			}),
 			clicks: selectCampaignAnalyticsByChannelStats(state, {
@@ -124,9 +124,9 @@ export const selectCampaignStatsTableData = createSelector(
 		}
 	},
 	({ impressions, clicks }) => {
-		const imprStats = impressions.reportChannelToHostname
-		const clickStats = clicks.reportChannelToHostname
-		const earnStats = impressions.reportChannelToHostnamePay
+		const imprStats = impressions.reportChannelToHostname || {}
+		const clickStats = clicks.reportChannelToHostname || {}
+		const earnStats = impressions.reportChannelToHostnamePay || {}
 
 		return Object.keys(imprStats).map(key => ({
 			website: key,
