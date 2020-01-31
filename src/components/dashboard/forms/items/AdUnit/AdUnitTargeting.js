@@ -6,6 +6,7 @@ import Grid from '@material-ui/core/Grid'
 import Slider from '@material-ui/core/Slider'
 import IconButton from '@material-ui/core/IconButton'
 import CancelIcon from '@material-ui/icons/Cancel'
+import AddIcon from '@material-ui/icons/Add'
 import Autocomplete from 'components/common/autocomplete'
 import Typography from '@material-ui/core/Typography'
 import Dropdown from 'components/common/dropdown'
@@ -244,7 +245,7 @@ class AdUnitTargeting extends Component {
 					</Grid>
 					<Grid item sm={12}>
 						<Dropdown
-							variant='filled'
+							variant='outlined'
 							fullWidth
 							onChange={target => {
 								this.newTarget({ ...target })
@@ -254,6 +255,7 @@ class AdUnitTargeting extends Component {
 							label={t('NEW_TARGET')}
 							htmlId='ad-type-dd'
 							name='adType'
+							IconComponent={AddIcon}
 						/>
 					</Grid>
 				</Grid>
