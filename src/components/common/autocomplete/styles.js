@@ -9,7 +9,8 @@ export const styles = theme => ({
 	},
 	paper: {
 		position: 'absolute',
-		zIndex: 1,
+		// TODO: fix the component and do nou use z-index
+		zIndex: 1000,
 		marginTop: theme.spacing(1),
 		left: 0,
 		right: 0,
