@@ -7,6 +7,7 @@ import {
 	resetIdentity,
 	resetAccount,
 	resetAnalytics,
+	resetChannelsWithBalance,
 } from 'actions'
 
 import {
@@ -36,6 +37,7 @@ export const logOut = skipRedirect => {
 	execute(resetAllBids())
 	execute(resetAccount())
 	execute(resetAnalytics())
+	execute(resetChannelsWithBalance())
 }
 
 export const isDemoMode = () => {
