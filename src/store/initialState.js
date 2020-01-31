@@ -77,6 +77,9 @@ let initialState = {
 		validators: {},
 	},
 	analytics: getValidatorAnalyticsInitialState(),
+	channels: {
+		withBalance: [],
+	},
 }
 
 export default initialState
