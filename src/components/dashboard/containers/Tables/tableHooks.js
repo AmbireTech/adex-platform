@@ -15,7 +15,7 @@ export function useTableData({ selector, selectorArgs, getColumns }) {
 	useEffect(() => {
 		reloadData()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedData.length])
+	}, [selectedData.length, selector, selectorArgs])
 
 	return { data, columns, reloadData }
 }
