@@ -239,9 +239,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
 	const { eligible } = withBalance
 		.sort((c1, c2) => {
-			return bigNumberify(c2.outstandingAvailable).gt(
-				bigNumberify(c1.outstandingAvailable)
-			)
+			return c2.outstandingAvailable.gt(c1.outstandingAvailable)
 		})
 		.reduce(
 			(data, c) => {
@@ -250,7 +248,7 @@ async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
 					current.eligible.push(c)
 				}
 
-				current.sum = current.sum.add(bigNumberify(c.outstandingAvailable))
+				current.sum = current.sum.add(c.outstandingAvailable)
 
 				return current
 			},
