@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux'
 import { sliderFilterOptions } from './commonFilters'
 import { formatNumberWithCommas } from 'helpers/formatters'
 import { useTableData } from './tableHooks'
+import { ReloadData } from './toolbars'
 
 const getCols = ({ symbol, maxClicks, maxImpressions, maxEarnings }) => [
 	{
@@ -59,6 +60,13 @@ const getCols = ({ symbol, maxClicks, maxImpressions, maxEarnings }) => [
 	},
 ]
 
+const getOptions = ({ reloadData }) => ({
+	filterType: 'multiselect',
+	selectableRows: 'none',
+	customToolbar: () => <ReloadData handleReload={reloadData} />,
+	rowsPerPage: 20,
+})
+
 function CampaignStatsBreakdownTable({ campaignId }) {
 	const { symbol } = useSelector(selectMainToken)
 
@@ -66,23 +74,21 @@ function CampaignStatsBreakdownTable({ campaignId }) {
 		selectCampaignStatsMaxValues(state, campaignId)
 	)
 
-	const { data, columns } = useTableData({
+	const { data, columns, reloadData } = useTableData({
 		selector: selectCampaignStatsTableData,
 		selectorArgs: campaignId,
 		getColumns: () =>
 			getCols({ symbol, maxClicks, maxImpressions, maxEarnings }),
 	})
 
+	const options = getOptions({ reloadData })
+
 	return (
 		<MUIDataTableEnhanced
 			title={t('CAMPAIGN_STATS_BREAKDOWN')}
 			data={data}
 			columns={columns}
-			options={{
-				filterType: 'multiselect',
-				selectableRows: 'none',
-				rowsPerPage: 25,
-			}}
+			options={options}
 		/>
 	)
 }

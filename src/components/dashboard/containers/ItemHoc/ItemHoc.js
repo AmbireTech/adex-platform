@@ -28,6 +28,7 @@ import { styles } from './styles'
 import { validName } from 'helpers/validators'
 import ValidItemHoc from 'components/dashboard/forms/ValidItemHoc'
 import PageNotFound from 'components/page_not_found/PageNotFound'
+import { selectSide } from 'selectors'
 
 const { adSlotPut, adUnitPut, campaignPut } = schemas
 const { AdSizesByValue } = ItemsConstants
@@ -245,9 +246,10 @@ export default function ItemHoc(Decorated) {
 					<PageNotFound
 						title={t('ITEM_NOT_FOUND_TITLE')}
 						subtitle={t('ITEM_NOT_FOUND_SUBTITLE', {
-							args: [itemType, matchId],
+							args: [itemType.toUpperCase(), matchId],
 						})}
-						skipGoToButton
+						goToPath={`/dashboard/${side}`}
+						goToTxt='GO_TO_DASHBOARD'
 					/>
 				)
 			}
@@ -536,6 +538,7 @@ export default function ItemHoc(Decorated) {
 			item: item,
 			validateId: 'update-' + (item ? item.id || item.ipfs : 'notfound'),
 			matchId: id,
+			side: selectSide(state),
 		}
 	}
 

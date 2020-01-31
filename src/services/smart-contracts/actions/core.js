@@ -33,6 +33,7 @@ import {
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import IdentityABI from 'adex-protocol-eth/abi/Identity'
+import { selectChannelsWithUserBalances } from 'selectors'
 
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
@@ -330,8 +331,9 @@ function hasValidExecuteRoutines(routineAuthTuple) {
 }
 
 export async function getSweepChannelsTxns({ account, amountToSweep }) {
-	const { wallet, identity, stats } = account
-	const { withBalance } = stats
+	const { wallet, identity } = account
+	// TODO: pass withBalance as prop
+	const withBalance = selectChannelsWithUserBalances()
 	const { AdExCore } = await getEthers(wallet.authType)
 	const identityAddr = identity.address
 	const channelsToSweep = await getChannelsToSweepFrom({

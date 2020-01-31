@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility } from '@material-ui/icons'
@@ -14,6 +14,7 @@ import { NewCloneUnitDialog } from '../../forms/items/NewItems'
 import { AdUnit } from 'adex-models'
 import { execute, cloneItem } from 'actions'
 import { useTableData } from './tableHooks'
+import { ReloadData } from './toolbars'
 const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(styles)
@@ -114,6 +115,13 @@ const getCols = ({ classes, noActions, noClone }) => [
 	},
 ]
 
+const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
+	filterType: 'multiselect',
+	rowsSelected: selected,
+	customToolbar: () => <ReloadData handleReload={reloadData} />,
+	onRowsSelect,
+})
+
 function AdUnitsTable(props) {
 	const classes = useStyles()
 	const side = useSelector(selectSide)
@@ -127,9 +135,11 @@ function AdUnitsTable(props) {
 		handleSelect,
 	} = props
 
-	const { data, columns } = useTableData({
+	const [selectorArgs, setSelectorArgs] = useState({})
+
+	const { data, columns, reloadData } = useTableData({
 		selector: selectAdUnitsTableData,
-		selectorArgs: { side, items },
+		selectorArgs,
 		getColumns: () =>
 			getCols({
 				classes,
@@ -137,6 +147,15 @@ function AdUnitsTable(props) {
 				noClone,
 			}),
 	})
+
+	// NOTE: despite useTableData hook the component is updating.
+	// 'selectorArgs' are object and they have new reference on each update
+	// that causes useTableData to update the data on selectorArgs change.
+	// If selectorArgs are reference type we need to use useState fot them
+	// TODO: find why useTableData causing this update
+	useEffect(() => {
+		setSelectorArgs({ side, items })
+	}, [side, items])
 
 	useEffect(() => {
 		const selectedItems = selected.map(i => data[i].id)
@@ -153,18 +172,17 @@ function AdUnitsTable(props) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selected])
 
+	const onRowsSelect = useCallback((_, allRowsSelected) => {
+		setSelected(allRowsSelected.map(row => row.dataIndex))
+	}, [])
+
+	const options = getOptions({ onRowsSelect, selected, reloadData })
 	return (
 		<MUIDataTableEnhanced
 			title={campaignUnits ? t('CAMPAIGN_AD_UNITS') : t('ALL_UNITS')}
 			data={data}
 			columns={columns}
-			options={{
-				filterType: 'multiselect',
-				rowsSelected: selected,
-				onRowsSelect: (_, allRowsSelected) => {
-					setSelected(allRowsSelected.map(row => row.dataIndex))
-				},
-			}}
+			options={options}
 			{...props}
 		/>
 	)

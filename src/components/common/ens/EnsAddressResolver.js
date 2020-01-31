@@ -44,7 +44,8 @@ const EnsAddressResolver = memo(props => {
 					<Box pr={1}>
 						<Jazzicon diameter={30} seed={jsNumberForAddress(address)} />
 					</Box>
-					<Box>
+					{address}
+					{/* <Box>
 						<ListItemText
 							className={classes.address}
 							primary={ensName ? ensName : address}
@@ -56,7 +57,7 @@ const EnsAddressResolver = memo(props => {
 									: t('ENS_NOT_SET')
 							}
 						/>
-					</Box>
+					</Box> */}
 					<Box pl={2}>
 						<IconButton
 							color='primary'

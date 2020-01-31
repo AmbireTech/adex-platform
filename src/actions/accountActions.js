@@ -92,6 +92,23 @@ export function updateAccount({ meta, newValues }) {
 	}
 }
 
+export function updateChannelsWithBalance({ withBalance }) {
+	return function(dispatch) {
+		return dispatch({
+			type: types.UPDATE_CHANNELS_WITH_BALANCE,
+			withBalance,
+		})
+	}
+}
+
+export function resetChannelsWithBalance() {
+	return function(dispatch) {
+		return dispatch({
+			type: types.RESET_CHANNELS_WITH_BALANCE,
+		})
+	}
+}
+
 export function updateGasData({ gasData }) {
 	return function(dispatch) {
 		return dispatch({
@@ -125,9 +142,9 @@ export function updateAccountStats() {
 				account,
 				outstandingBalanceMainToken,
 			})
-
+			updateChannelsWithBalance({ withBalance })(dispatch)
 			updateAccount({
-				newValues: { stats: { formatted, raw, withBalance } },
+				newValues: { stats: { formatted, raw } },
 			})(dispatch)
 		} catch (err) {
 			console.error('ERR_STATS', err)
