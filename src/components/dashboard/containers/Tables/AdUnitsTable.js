@@ -135,9 +135,11 @@ function AdUnitsTable(props) {
 		handleSelect,
 	} = props
 
+	const [selectorArgs, setSelectorArgs] = useState({})
+
 	const { data, columns, reloadData } = useTableData({
 		selector: selectAdUnitsTableData,
-		selectorArgs: { side, items },
+		selectorArgs,
 		getColumns: () =>
 			getCols({
 				classes,
@@ -145,6 +147,15 @@ function AdUnitsTable(props) {
 				noClone,
 			}),
 	})
+
+	// NOTE: despite useTableData hook the component is updating.
+	// 'selectorArgs' are object and they have new reference on each update
+	// that causes useTableData to update the data on selectorArgs change.
+	// If selectorArgs are reference type we need to use useState fot them
+	// TODO: find why useTableData causing this update
+	useEffect(() => {
+		setSelectorArgs({ side, items })
+	}, [side, items])
 
 	useEffect(() => {
 		const selectedItems = selected.map(i => data[i].id)
