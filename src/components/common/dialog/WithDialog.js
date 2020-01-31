@@ -31,9 +31,9 @@ const textBtn = ({ label, className, classes, style, onClick, ...rest }) => {
 
 const TextBtn = withStyles(styles)(textBtn)
 
-const Transition = props => {
-	return <Slide direction='up' {...props} />
-}
+const Transition = React.forwardRef(function Transition(props, ref) {
+	return <Slide direction='up' ref={ref} {...props} />
+})
 
 const useStyles = makeStyles(styles)
 
@@ -97,7 +97,9 @@ export default function ItemHoc(Decorated) {
 			btnProps.fullWidth = fullWidth
 		}
 
-		const btnLabelTranslated = t(btnLabel, { args: btnLabelArgs || [''] })
+		const btnLabelTranslated = btnLabel
+			? t(btnLabel, { args: btnLabelArgs || [''] })
+			: ''
 
 		return (
 			<Fragment>
@@ -144,7 +146,7 @@ export default function ItemHoc(Decorated) {
 								<CancelIcon />
 							</IconButton>
 						</Typography>
-					</DialogTitle>
+					</DialogTitle>{' '}
 					<DialogContent classes={{ root: classes.content }}>
 						<Decorated ref={forwardedRef} {...rest} closeDialog={closeDialog} />
 					</DialogContent>
@@ -155,7 +157,7 @@ export default function ItemHoc(Decorated) {
 	}
 
 	WithDialog.propTypes = {
-		btnLabel: PropTypes.string.isRequired,
+		btnLabel: PropTypes.string,
 		title: PropTypes.string.isRequired,
 		floating: PropTypes.bool,
 		onBeforeOpen: PropTypes.func,
