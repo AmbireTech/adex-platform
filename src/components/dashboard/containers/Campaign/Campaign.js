@@ -4,8 +4,9 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Grid from '@material-ui/core/Grid'
+import Box from '@material-ui/core/Box'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
-import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
+import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import Translate from 'components/translate/Translate'
 import Button from '@material-ui/core/Button'
 import { AdUnit as AdUnitModel, Campaign as CampaignModel } from 'adex-models'
@@ -18,10 +19,9 @@ import AppBar from '@material-ui/core/AppBar'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import ListSubheader from '@material-ui/core/ListSubheader'
 import Anchor from 'components/common/anchor/anchor'
-import { formatTokenAmount } from 'helpers/formatters'
-import { selectMainToken } from 'selectors'
+import CampaignStatsDoughnut from 'components/dashboard/charts/campaigns/CampaignStatsDoughnut'
+import CampaignStatsBreakdownTable from 'components/dashboard/containers/Tables/CampaignStatsBreakdownTable'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
@@ -68,19 +68,11 @@ export class Campaign extends Component {
 			// isDemo,
 			actions,
 			history,
-			mainTokenSymbol,
 			// ...rest
 		} = this.props
 		const { tabIndex } = this.state
-
 		const units = item.spec.adUnits
 		const campaign = new CampaignModel(item)
-
-		const balances =
-			campaign.status && campaign.status.lastApprovedBalances
-				? campaign.status.lastApprovedBalances
-				: {}
-
 		const status = (campaign.status || {}).name
 		const leader = campaign.spec.validators[0]
 		const follower = campaign.spec.validators[1]
@@ -126,25 +118,21 @@ export class Campaign extends Component {
 					</AppBar>
 					<div style={{ marginTop: 10 }}>
 						{tabIndex === 0 && (
-							<List
-								subheader={
-									<ListSubheader component='div'>{t('BALANCES')}</ListSubheader>
-								}
-							>
-								{Object.keys(balances).map(key => (
-									<ListItem key={key}>
-										<ListItemText
-											primary={
-												formatTokenAmount(balances[key]) + ' ' + mainTokenSymbol
-											}
-											secondary={key}
-										/>
-									</ListItem>
-								))}
-							</List>
+							<Grid container spacing={2}>
+								<Box clone order={{ xs: 2, md: 2, lg: 1 }}>
+									<Grid item lg={8} md={12} xs={12}>
+										<CampaignStatsBreakdownTable campaignId={item.id} />
+									</Grid>
+								</Box>
+								<Box clone order={{ xs: 1, md: 1, lg: 2 }}>
+									<Grid item lg={4} md={12} xs={12}>
+										<CampaignStatsDoughnut campaignId={item.id} />
+									</Grid>
+								</Box>
+							</Grid>
 						)}
 						{tabIndex === 1 && (
-							<EnhancedTable itemType={'AdUnit'} items={units} noActions />
+							<AdUnitsTable items={units} campaignUnits noClone />
 						)}
 						{tabIndex === 2 && (
 							<List>
@@ -196,7 +184,7 @@ Campaign.propTypes = {
 	item: PropTypes.object.isRequired,
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
 	const { persist } = state
 	// let memory = state.memory
 	return {
@@ -204,7 +192,6 @@ function mapStateToProps(state) {
 		rowsView: !!persist.ui[VIEW_MODE],
 		objModel: CampaignModel,
 		itemType: 'Campaign',
-		mainTokenSymbol: selectMainToken(state).symbol,
 	}
 }
 

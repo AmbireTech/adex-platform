@@ -1,8 +1,8 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import Grid from '@material-ui/core/Grid'
+import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import { ContentBody } from 'components/common/dialog/content'
-import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
 import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems'
 import { t, selectAdUnitsArray, selectAdUnits } from 'selectors'
 import { updateNewCampaign, execute } from 'actions'
@@ -31,12 +31,14 @@ function CampaignUnits(props) {
 				<Grid item sm={12}>
 					<ContentBody>
 						{hasAdUnits ? (
-							<EnhancedTable
-								itemType={'AdUnit'}
+							<AdUnitsTable
 								items={adUnitsArray}
 								validate={props.validate}
 								handleSelect={handleSelect}
-								noActions
+								noClone
+								noDownload
+								rowSelectable
+								noPrint
 							/>
 						) : (
 							<Grid container direction='column' alignItems='center'>

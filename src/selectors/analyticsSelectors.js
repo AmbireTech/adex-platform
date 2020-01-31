@@ -1,13 +1,35 @@
+import { getState } from 'store'
 import { createSelector } from 'reselect'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
 
-export const selectAnalytics = state => state.persist.analytics
+export const selectAnalytics = state => (state || getState()).persist.analytics
 
 export const selectAnalyticsData = createSelector(
 	[selectAnalytics, (_, side) => side],
 	(analytics, side) => {
 		return analytics[side] || {}
 	}
+)
+
+export const selectCampaignAnalytics = createSelector(
+	[selectAnalytics],
+	analytics => {
+		return analytics.campaigns
+	}
+)
+
+export const selectCampaignAnalyticsByType = createSelector(
+	[selectCampaignAnalytics, (_, type) => type],
+	(campaignAnalytics, type) => campaignAnalytics[type] || {}
+)
+
+export const selectCampaignAnalyticsByChannelStats = createSelector(
+	(state, { type, campaignId } = {}) => [
+		selectCampaignAnalyticsByType(state, type),
+		campaignId,
+	],
+	([analyticsByType, campaignId]) =>
+		(analyticsByType.byChannelStats || {})[campaignId] || {}
 )
 
 export const selectAnalyticsDataAggr = createSelector(
@@ -23,6 +45,20 @@ export const selectTotalImpressions = createSelector(
 			side,
 			timeframe,
 			eventType: 'IMPRESSION',
+			metric: 'eventCounts',
+		}),
+	eventCounts =>
+		eventCounts
+			? eventCounts.reduce((a, { value }) => a + Number(value) || 0, 0)
+			: null
+)
+
+export const selectTotalClicks = createSelector(
+	(state, { side, timeframe } = {}) =>
+		selectAnalyticsDataAggr(state, {
+			side,
+			timeframe,
+			eventType: 'CLICK',
 			metric: 'eventCounts',
 		}),
 	eventCounts =>

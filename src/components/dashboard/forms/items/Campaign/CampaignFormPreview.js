@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import NewCampaignHoc from './NewCampaignHoc'
 import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
-import EnhancedTable from 'components/dashboard/containers/Tables/EnhancedTable'
+import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import { WalletAction } from 'components/dashboard/forms/FormsCommon'
 import {
 	PropRow,
@@ -31,7 +31,7 @@ class CampaignFormPreview extends Component {
 		return (
 			<Grid item sm={12}>
 				<ContentBody>
-					<EnhancedTable itemType={'AdUnit'} items={items} noActions listMode />
+					<AdUnitsTable items={items} noSearch noActions noDownload noPrint />
 				</ContentBody>
 			</Grid>
 		)

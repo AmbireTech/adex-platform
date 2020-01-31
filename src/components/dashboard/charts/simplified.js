@@ -17,34 +17,20 @@ export const SimpleStatistics = ({
 	side,
 	timeframe = '',
 	eventType,
+	payouts,
+	impressions,
+	clicks,
 	options = {},
 	t,
 	xLabel = 'TIMEFRAME',
 	y1Label = 'DATA1',
 	y2Label = 'DATA2',
+	y3Label = 'DATA3',
 	y1Color = CHARTS_COLORS[1],
 	y2Color = CHARTS_COLORS[2],
+	y3Color = CHARTS_COLORS[3],
 }) => {
 	const { symbol } = useSelector(selectMainToken)
-	const payouts = useSelector(state =>
-		selectStatsChartData(state, {
-			side,
-			timeframe,
-			eventType,
-			metric: 'eventPayouts',
-			noLastOne: true,
-		})
-	)
-
-	const counts = useSelector(state =>
-		selectStatsChartData(state, {
-			side,
-			timeframe,
-			eventType,
-			metric: 'eventCounts',
-			noLastOne: true,
-		})
-	)
 
 	// Vertical line / crosshair
 	useEffect(() => {
@@ -54,17 +40,20 @@ export const SimpleStatistics = ({
 					const activePoint = chart.controller.tooltip._active[0]
 					const ctx = chart.ctx
 					const x = activePoint.tooltipPosition().x
-					const topY = chart.scales['y-axis-1'].top
-					const bottomY = chart.scales['y-axis-1'].bottom
-					ctx.save()
-					ctx.beginPath()
-					ctx.moveTo(x, topY)
-					ctx.lineTo(x, bottomY)
-					ctx.lineWidth = 1 // line width
-					ctx.setLineDash([1, 5])
-					ctx.strokeStyle = '#C0C0C0' // color of the vertical line
-					ctx.stroke()
-					ctx.restore()
+					const chartScalesy1 = chart.scales['y-axis-1']
+					if (chartScalesy1) {
+						const topY = chartScalesy1.top
+						const bottomY = chartScalesy1.bottom
+						ctx.save()
+						ctx.beginPath()
+						ctx.moveTo(x, topY)
+						ctx.lineTo(x, bottomY)
+						ctx.lineWidth = 1 // line width
+						ctx.setLineDash([1, 5])
+						ctx.strokeStyle = '#C0C0C0' // color of the vertical line
+						ctx.stroke()
+						ctx.restore()
+					}
 				}
 			},
 		})
@@ -87,13 +76,22 @@ export const SimpleStatistics = ({
 				backgroundColor: Helper.hexToRgbaColorString(y2Color, 0.5),
 				borderColor: Helper.hexToRgbaColorString(y2Color, 1),
 				label: y2Label,
-				data: counts.datasets,
+				data: impressions.datasets,
 				yAxisID: 'y-axis-2',
+			},
+			{
+				...commonDsProps,
+				backgroundColor: Helper.hexToRgbaColorString(y3Color, 0.5),
+				borderColor: Helper.hexToRgbaColorString(y3Color, 1),
+				label: y3Label,
+				data: clicks.datasets,
+				yAxisID: 'y-axis-3',
 			},
 		],
 	}
 
 	const linesOptions = {
+		animation: false,
 		responsive: true,
 		// This and fixed height are used for proper mobile display of the chart
 		maintainAspectRatio: false,
@@ -154,6 +152,24 @@ export const SimpleStatistics = ({
 						labelString: y2Label,
 					},
 					id: 'y-axis-2',
+					ticks: {
+						beginAtZero: true,
+						precision: 0,
+					},
+					// grid line settings
+					gridLines: {
+						drawOnChartArea: false, // only want the grid lines for one axis to show up
+					},
+				},
+				{
+					type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+					display: true,
+					position: 'right',
+					scaleLabel: {
+						display: true,
+						labelString: y3Label,
+					},
+					id: 'y-axis-3',
 					ticks: {
 						beginAtZero: true,
 						precision: 0,

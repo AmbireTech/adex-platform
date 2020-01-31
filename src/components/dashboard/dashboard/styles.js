@@ -22,8 +22,6 @@ export const styles = theme => {
 				// width: `calc(100% - ${drawerWidth}px)`,
 				left: drawerWidth,
 			},
-			backgroundColor: '#eee',
-			color: '#000',
 		},
 		flex: {
 			flex: 1,
