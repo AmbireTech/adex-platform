@@ -1,7 +1,6 @@
 import React from 'react'
 import MUIDataTable from 'mui-datatables'
 import { t } from 'selectors'
-import { ReloadData } from './toolbars'
 
 const generalTableOptions = {
 	rowsPerPage: 5,
@@ -51,13 +50,9 @@ const generalTableOptions = {
 			deleteAria: t('TABLE_DELETE_SELECTED'),
 		},
 	},
-	customToolbar: () => {
-		return <ReloadData />
-	},
 }
-
 export default function MUIDataTableEnhanced(props) {
-	const { title, data, columns, options, reloadData } = props
+	const { title, data, columns, options } = props
 
 	return (
 		<MUIDataTable
