@@ -57,6 +57,26 @@ export const theme = createMuiTheme({
 		MuiTooltip: {
 			tooltip: { borderRadius: 0 },
 		},
+		MuiFormControl: {
+			outlined: {
+				borderRadius: 0,
+			},
+		},
+		MuiSelect: {
+			outlined: {
+				borderRadius: 0,
+			},
+		},
+		MuiInputLabel: {
+			outlined: {
+				borderRadius: 0,
+			},
+		},
+		MuiOutlinedInput: {
+			root: {
+				borderRadius: 0,
+			},
+		},
 		// MuiStepIcon: {
 		//     root: {
 		//         color: 'yellow',
