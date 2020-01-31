@@ -30,7 +30,7 @@ export const selectAuthType = createSelector(
 	({ authType }) => authType
 )
 
-export const selectAccountIdentity = createDeepEqualSelector(
+export const selectAccountIdentity = createSelector(
 	selectAccount,
 	({ identity }) => identity
 )
@@ -40,12 +40,12 @@ export const selectAccountIdentityAddr = createSelector(
 	({ address }) => address
 )
 
-export const selectAccountStats = createDeepEqualSelector(
+export const selectAccountStats = createSelector(
 	selectAccount,
 	({ stats }) => stats || {}
 )
 
-export const selectAccountSettings = createDeepEqualSelector(
+export const selectAccountSettings = createSelector(
 	selectAccount,
 	({ settings }) => settings || {}
 )
