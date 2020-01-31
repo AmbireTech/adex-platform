@@ -1,6 +1,7 @@
 import { getState } from 'store'
 import { createSelector } from 'reselect'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
+import { types } from 'babel-core'
 
 export const selectAnalytics = state => (state || getState()).persist.analytics
 
@@ -16,6 +17,19 @@ export const selectCampaignAnalytics = createSelector(
 	analytics => {
 		return analytics.campaigns
 	}
+)
+
+export const selectCampaignAnalyticsByType = createSelector(
+	[selectCampaignAnalytics, (_, type) => type],
+	(campaignAnalytics, type) => campaignAnalytics[type]
+)
+
+export const selectCampaignAnalyticsByChannelStats = createSelector(
+	(state, { type, campaignId } = {}) => [
+		selectCampaignAnalyticsByType(state, type),
+		campaignId,
+	],
+	([analyticsByType, campaignId]) => analyticsByType[campaignId]
 )
 
 export const selectAnalyticsDataAggr = createSelector(
