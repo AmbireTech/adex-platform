@@ -18,6 +18,7 @@ import tags from './tagsReducer'
 import ethNetwork from './ethNetworkReducer'
 import config from './configReducer'
 import analytics from './analyticsReducer'
+import channels from './channelsReducer'
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
 
@@ -31,6 +32,7 @@ export const persistReducers = {
 	ethNetwork,
 	config,
 	analytics,
+	channels,
 }
 
 export const memoryReducers = {
