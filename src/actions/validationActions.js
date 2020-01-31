@@ -371,7 +371,7 @@ const getCampaignDatesValidation = ({
 	) {
 		error = {
 			message: 'ERR_MIN_CAMPAIGN_PERIOD',
-			args: ['1', 'HOURS'],
+			args: ['1', 'HOUR'],
 			prop: 'withdrawPeriodStart',
 		}
 	} else if (withdrawPeriodStart && withdrawPeriodStart < created) {
@@ -419,7 +419,7 @@ export function validateCampaignDates({
 			isValid: !(result.error && result.error.prop === 'withdrawPeriodStart'),
 			err: {
 				msg: result.error ? result.error.message : '',
-				args: result.args ? result.error.args : [],
+				args: result.error.args ? result.error.args : [],
 			},
 			dirty: dirty,
 		})(dispatch)
