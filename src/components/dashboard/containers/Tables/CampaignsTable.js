@@ -22,6 +22,7 @@ import { styles } from './styles'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 import { useTableData } from './tableHooks'
+import { ReloadData } from './toolbars'
 const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(styles)
@@ -220,12 +221,12 @@ const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
 }
 
-const getOptions = ({ decimals, symbol }) => ({
+const getOptions = ({ decimals, symbol, reloadData }) => ({
 	filterType: 'multiselect',
 	selectableRows: 'none',
-	// customSort,
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data, decimals, symbol),
+	customToolbar: () => <ReloadData handleReload={reloadData} />,
 })
 
 function CampaignsTable(props) {
@@ -235,9 +236,8 @@ function CampaignsTable(props) {
 	const maxClicks = useSelector(selectCampaignsMaxClicks)
 	const maxDeposit = useSelector(selectCampaignsMaxDeposit)
 	const { symbol, decimals } = useSelector(selectMainToken)
-	const options = getOptions({ decimals, symbol })
 
-	const { data, columns } = useTableData({
+	const { data, columns, reloadData } = useTableData({
 		selector: selectCampaignsTableData,
 		selectorArgs: side,
 		getColumns: () =>
@@ -250,6 +250,8 @@ function CampaignsTable(props) {
 				maxDeposit,
 			}),
 	})
+
+	const options = getOptions({ decimals, symbol, reloadData })
 
 	return (
 		<MUIDataTableEnhanced
