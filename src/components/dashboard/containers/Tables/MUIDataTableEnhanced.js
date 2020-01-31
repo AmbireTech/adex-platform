@@ -51,7 +51,6 @@ const generalTableOptions = {
 		},
 	},
 }
-
 export default function MUIDataTableEnhanced(props) {
 	const { title, data, columns, options } = props
 

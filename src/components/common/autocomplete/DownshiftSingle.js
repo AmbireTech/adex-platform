@@ -39,6 +39,7 @@ class DownshiftSingle extends React.Component {
 			openOnClick,
 			allowCreate,
 			validateCreation,
+			variant,
 		} = this.props
 		const allValues = source //Object.keys(source).map(key => { return { value: key, label: source[key] } })
 		const suggestions = getSuggestions(
@@ -72,6 +73,7 @@ class DownshiftSingle extends React.Component {
 								fullWidth: true,
 								classes,
 								helperText,
+								variant,
 								InputProps: getInputProps({
 									id,
 									onClick: () => {
