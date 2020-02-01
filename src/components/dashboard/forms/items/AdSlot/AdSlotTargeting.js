@@ -140,7 +140,7 @@ class AdSlotTargeting extends Component {
 	}
 
 	targetTag = ({
-		source,
+		source = [],
 		collection,
 		placeholder,
 		label,
@@ -240,7 +240,13 @@ class AdSlotTargeting extends Component {
 					<Grid item sm={12}>
 						{[...targets].map(
 							(
-								{ source, collection, label, placeholder, target = {} } = {},
+								{
+									source = '',
+									collection,
+									label,
+									placeholder,
+									target = {},
+								} = {},
 								index
 							) => (
 								<this.targetTag
@@ -248,7 +254,7 @@ class AdSlotTargeting extends Component {
 									label={t(label)}
 									placeholder={t(placeholder)}
 									index={index}
-									source={SOURCES[source].src}
+									source={(SOURCES[source] || {}).src || []}
 									collection={collection}
 									target={target}
 									t={t}
