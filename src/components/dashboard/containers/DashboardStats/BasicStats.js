@@ -4,7 +4,6 @@ import { execute, updateAnalyticsTimeframe } from 'actions'
 import { SimpleStatistics } from 'components/dashboard/charts/simplified'
 import Dropdown from 'components/common/dropdown'
 import Grid from '@material-ui/core/Grid'
-import { translate } from 'services/translations/translations'
 import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
 import StatsCard from './StatsCard'
 import { makeStyles } from '@material-ui/core/styles'
@@ -29,41 +28,41 @@ import {
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
 	const translated = { ...tf }
-	translated.label = translate(tf.label)
+	translated.label = t(tf.label)
 	return translated
 })
 
 const metrics = {
 	publisher: [
 		{
-			label: translate('LABEL_REVENUE'),
+			label: t('LABEL_REVENUE'),
 			value: 'eventPayouts',
 			color: ACCENT_TWO,
 		},
 		{
-			label: translate('LABEL_IMPRESSIONS'),
+			label: t('LABEL_IMPRESSIONS'),
 			value: 'eventCounts',
 			color: PRIMARY,
 		},
 		{
-			label: translate('LABEL_CLICKS'),
+			label: t('LABEL_CLICKS'),
 			value: 'eventCounts',
 			color: SECONDARY,
 		},
 	],
 	advertiser: [
 		{
-			label: translate('LABEL_SPEND'),
+			label: t('LABEL_SPEND'),
 			value: 'eventPayouts',
 			color: ACCENT_ONE,
 		},
 		{
-			label: translate('LABEL_IMPRESSIONS'),
+			label: t('LABEL_IMPRESSIONS'),
 			value: 'eventCounts',
 			color: PRIMARY,
 		},
 		{
-			label: translate('LABEL_CLICKS'),
+			label: t('LABEL_CLICKS'),
 			value: 'eventCounts',
 			color: SECONDARY,
 		},
@@ -223,7 +222,8 @@ export function BasicStats({ side }) {
 					side={side}
 					timeframe={timeframe}
 					options={{
-						title: t(timeFrames.find(a => a.value === timeframe).label),
+						title:
+							(timeFrames.find(a => a.value === timeframe) || {}).label || '',
 					}}
 					payouts={payouts}
 					impressions={impressions}
