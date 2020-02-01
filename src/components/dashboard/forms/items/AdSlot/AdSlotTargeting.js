@@ -6,6 +6,7 @@ import Grid from '@material-ui/core/Grid'
 import Slider from '@material-ui/core/Slider'
 import IconButton from '@material-ui/core/IconButton'
 import CancelIcon from '@material-ui/icons/Cancel'
+import AddIcon from '@material-ui/icons/Add'
 import Autocomplete from 'components/common/autocomplete'
 import Typography from '@material-ui/core/Typography'
 import Dropdown from 'components/common/dropdown'
@@ -139,7 +140,7 @@ class AdSlotTargeting extends Component {
 	}
 
 	targetTag = ({
-		source,
+		source = [],
 		collection,
 		placeholder,
 		label,
@@ -239,7 +240,13 @@ class AdSlotTargeting extends Component {
 					<Grid item sm={12}>
 						{[...targets].map(
 							(
-								{ source, collection, label, placeholder, target = {} } = {},
+								{
+									source = '',
+									collection,
+									label,
+									placeholder,
+									target = {},
+								} = {},
 								index
 							) => (
 								<this.targetTag
@@ -247,7 +254,7 @@ class AdSlotTargeting extends Component {
 									label={t(label)}
 									placeholder={t(placeholder)}
 									index={index}
-									source={SOURCES[source].src}
+									source={(SOURCES[source] || {}).src || []}
 									collection={collection}
 									target={target}
 									t={t}
@@ -259,7 +266,7 @@ class AdSlotTargeting extends Component {
 					</Grid>
 					<Grid item sm={12}>
 						<Dropdown
-							variant='filled'
+							variant='outlined'
 							fullWidth
 							onChange={target => {
 								this.newTarget({ ...target })
@@ -269,6 +276,7 @@ class AdSlotTargeting extends Component {
 							label={t('NEW_TARGET')}
 							htmlId='ad-type-dd'
 							name='adType'
+							IconComponent={AddIcon}
 						/>
 					</Grid>
 				</Grid>
