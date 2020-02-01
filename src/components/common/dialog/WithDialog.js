@@ -58,6 +58,7 @@ export default function ItemHoc(Decorated) {
 			dialogActions,
 			onClick,
 			fullWidth,
+			onBeforeOpen,
 			...rest
 		} = props
 
@@ -72,12 +73,18 @@ export default function ItemHoc(Decorated) {
 		const [open, setOpen] = useState(false)
 
 		const handleToggle = async () => {
-			const { onBeforeOpen } = props
 			if (typeof onBeforeOpen === 'function' && !open) {
 				await onBeforeOpen()
 			}
 
 			setOpen(!open)
+		}
+
+		const handleClick = async ev => {
+			ev && ev.stopPropagation && ev.stopPropagation()
+			ev && ev.preventDefault && ev.preventDefault()
+			await handleToggle()
+			if (onClick) onClick()
 		}
 
 		const closeDialog = () => {
@@ -107,10 +114,7 @@ export default function ItemHoc(Decorated) {
 					disabled={disabled}
 					aria-label={btnLabelTranslated}
 					label={btnLabelTranslated}
-					onClick={() => {
-						handleToggle()
-						if (onClick) onClick()
-					}}
+					onClick={ev => handleClick(ev)}
 					{...btnProps}
 					className={classnames(
 						className,
