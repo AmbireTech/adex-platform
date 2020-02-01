@@ -43,27 +43,37 @@ class AdSlotMedia extends Component {
 	}
 
 	validateImage = useFallback => {
-		const { newItem, validate } = this.props
+		const { newItem, validate, validateMedia } = this.props
 		const { type, temp } = newItem
-		const { tempUrl } = temp
+		const { tempUrl, mime } = temp
 
 		const { width, height } = getWidAndHightFromType(type)
 
-		const isValidMediaSize =
-			!useFallback ||
-			(tempUrl &&
-				// TODO: validate ration not exact
-				temp.width === width &&
-				temp.height === height)
-
-		validate('temp', {
-			isValid: isValidMediaSize,
-			err: {
-				msg: 'ERR_IMG_SIZE_EXACT',
-				args: [width, height, 'px'],
-			},
-			dirty: true,
-		})
+		if (!useFallback) {
+			validate('temp', {
+				isValid: true,
+				err: {
+					msg: 'ERR_IMG_SIZE_EXACT',
+					args: [width, height, 'px'],
+				},
+				dirty: true,
+			})
+		} else if (tempUrl) {
+			validateMedia(
+				{
+					propsName: 'temp',
+					widthTarget: width,
+					heightTarget: height,
+					msg: 'ERR_IMG_SIZE_EXACT',
+					exact: true,
+					required: true,
+				},
+				{
+					tempUrl,
+					mime,
+				}
+			)
+		}
 	}
 
 	validateFallbackUrl = (targetUrl, dirty, useFallback) => {
