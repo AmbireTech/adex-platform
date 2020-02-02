@@ -13,7 +13,8 @@ export const selectCampaignsTableData = createSelector(
 	[selectCampaignsArray, selectRoutineWithdrawTokens, (_, side) => side],
 	(campaigns, tokens, side) =>
 		campaigns.map(item => {
-			const { decimals } = tokens[item.depositAsset] || 18
+			const { decimals = 18 } = tokens[item.depositAsset] || {}
+			const spec = item.spec || {}
 			return {
 				media: {
 					id: item.id,
@@ -28,11 +29,16 @@ export const selectCampaignsTableData = createSelector(
 				impressions: Number(item.impressions || '0'),
 				clicks: Number(item.clicks || '0'),
 				minPerImpression:
-					Number(formatUnits(item.spec.minPerImpression || '0', decimals)) *
-					1000,
+					Number(
+						formatUnits(
+							spec.minPerImpression || item.minPerImpression || '0',
+							decimals
+						)
+					) * 1000,
 				created: item.created,
-				activeFrom: item.spec.activeFrom,
-				withdrawPeriodStart: item.spec.withdrawPeriodStart,
+				activeFrom: spec.activeFrom || item.activeFrom,
+				withdrawPeriodStart:
+					spec.withdrawPeriodStart || item.withdrawPeriodStart,
 				actions: {
 					to: `/dashboard/${side}/Campaign/${item.id}`,
 				},
@@ -63,7 +69,7 @@ export const selectCampaignsMaxDeposit = createSelector(
 		Math.max.apply(
 			null,
 			campaigns.map(i => {
-				const { decimals } = tokens[i.depositAsset] || 18
+				const { decimals = 18 } = tokens[i.depositAsset] || {}
 				return Number(formatUnits(i.depositAmount, decimals) || 0)
 			})
 		)

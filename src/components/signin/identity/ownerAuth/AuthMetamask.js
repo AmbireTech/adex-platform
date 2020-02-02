@@ -120,9 +120,7 @@ function AuthMetamask(props) {
 				<TopLoading msg={t('METAMASK_WAITING_ADDR_INFO')} />
 			) : null}
 			<ContentBody>
-				<Typography paragraph variant='subheading'>
-					{t('METAMASK_INFO')}
-				</Typography>
+				<Typography variant='subheading'>{t('METAMASK_INFO')}</Typography>
 				<Box
 					display='flex'
 					flexDirection='column'
@@ -132,7 +130,7 @@ function AuthMetamask(props) {
 				>
 					{!isMetamaskEthereumProvider ? (
 						<React.Fragment>
-							<Typography paragraph>
+							<Typography>
 								<span
 									dangerouslySetInnerHTML={{
 										__html: t('METAMASK_BASIC_USAGE_INFO', {
@@ -156,7 +154,7 @@ function AuthMetamask(props) {
 									}}
 								/>
 							</Typography>
-							<Typography paragraph>
+							<Typography>
 								<Anchor
 									href={
 										isOpera
@@ -175,7 +173,7 @@ function AuthMetamask(props) {
 							</Typography>
 						</React.Fragment>
 					) : (
-						<Typography paragraph>
+						<Typography>
 							<Img
 								src={METAMASK_IMG}
 								alt={'Downlad metamask'}
@@ -188,7 +186,7 @@ function AuthMetamask(props) {
 						<div className={classes.metamaskLAbel}>
 							{stats ? (
 								<div>
-									<Typography paragraph variant='subheading' color='primary'>
+									<Typography variant='subheading' color='primary'>
 										{t('METAMASK_CONTINUE_TO_NEXT_STEP')}
 									</Typography>
 									<AddrItem stats={stats} addr={address} />

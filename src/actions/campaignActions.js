@@ -40,10 +40,15 @@ import { OPENING_CAMPAIGN, GETTING_CAMPAIGNS_FEES } from 'constants/spinners'
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
-const VALIDATOR_LEADER_FEE = '0'
+const VALIDATOR_LEADER_FEE_NUM = process.env.VALIDATOR_LEADER_FEE_NUM
+const VALIDATOR_LEADER_FEE_DEN = process.env.VALIDATOR_LEADER_FEE_DEN
+const VALIDATOR_LEADER_FEE_ADDR = process.env.VALIDATOR_LEADER_FEE_ADDR
+
 const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
 const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
-const VALIDATOR_FOLLOWER_FEE = '0'
+const VALIDATOR_FOLLOWER_FEE_NUM = process.env.VALIDATOR_FOLLOWER_FEE_NUM
+const VALIDATOR_FOLLOWER_FEE_DEN = process.env.VALIDATOR_FOLLOWER_FEE_DEN
+const VALIDATOR_FOLLOWER_FEE_ADDR = process.env.VALIDATOR_FOLLOWER_FEE_ADDR
 
 export function openCampaign({ campaign }) {
 	return async function(dispatch, getState) {
@@ -55,20 +60,20 @@ export function openCampaign({ campaign }) {
 				account,
 			})
 
-			const { readyCampaign } = await openChannel({
+			const { storeCampaign } = await openChannel({
 				campaign,
 				account,
 			})
 
 			dispatch({
 				type: types.ADD_ITEM,
-				item: readyCampaign,
+				item: storeCampaign,
 				itemType: 'Campaign',
 			})
 			addToast({
 				type: 'accept',
 				label: t('OPENING_CAMPAIGN_SENT_TO_RELAYER', {
-					args: [readyCampaign.id],
+					args: [storeCampaign.id],
 				}),
 				timeout: 20000,
 			})(dispatch)
@@ -248,11 +253,12 @@ export function closeCampaign({ campaign }) {
 		} catch (err) {
 			console.error('ERR_CLOSING_CAMPAIGN', err)
 			addToast({
-				dispatch,
 				type: 'cancel',
-				toastStr: 'ERR_CLOSING_CAMPAIGN',
-				args: [getErrorMsg(err)],
-			})
+				label: t('ERR_CLOSING_CAMPAIGN', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
 		}
 		updateSpinner('closing-campaign', false)(dispatch)
 	}
@@ -274,12 +280,16 @@ const tempValidators = [
 	{
 		id: VALIDATOR_LEADER_ID,
 		url: VALIDATOR_LEADER_URL,
-		fee: VALIDATOR_LEADER_FEE,
+		feeNum: VALIDATOR_LEADER_FEE_NUM,
+		feeDen: VALIDATOR_LEADER_FEE_DEN,
+		feeAddr: VALIDATOR_LEADER_FEE_ADDR,
 	},
 	{
 		id: VALIDATOR_FOLLOWER_ID,
 		url: VALIDATOR_FOLLOWER_URL,
-		fee: VALIDATOR_FOLLOWER_FEE,
+		feeNum: VALIDATOR_FOLLOWER_FEE_NUM,
+		feeDen: VALIDATOR_FOLLOWER_FEE_DEN,
+		feeAddr: VALIDATOR_FOLLOWER_FEE_ADDR,
 	},
 ]
 
@@ -389,20 +399,21 @@ export function validateNewCampaignFinance({
 				newTemp.maxDepositFormatted = maxAvailableFormatted
 
 				await updateNewCampaign('temp', newTemp)(dispatch, getState)
-				await updateSpinner(GETTING_CAMPAIGNS_FEES, false)(dispatch)
 			}
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
 		} catch (err) {
 			console.error('ERR_VALIDATING_CAMPAIGN_FINANCE', err)
 			addToast({
-				dispatch,
 				type: 'cancel',
-				toastStr: 'ERR_VALIDATING_CAMPAIGN_FINANCE',
-				args: [getErrorMsg(err)],
-			})
+				label: t('ERR_VALIDATING_CAMPAIGN_FINANCE', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
 		}
 
+		await updateSpinner(GETTING_CAMPAIGNS_FEES, false)(dispatch)
 		await updateSpinner(validateId, false)(dispatch)
 	}
 }
