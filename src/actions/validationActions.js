@@ -423,7 +423,7 @@ export function validateCampaignDates({
 			isValid: !(result.error && result.error.prop === 'withdrawPeriodStart'),
 			err: {
 				msg: result.error ? result.error.message : '',
-				args: result.error.args ? result.error.args : [],
+				args: result.error && (result.error.args || []),
 			},
 			dirty: dirty,
 		})(dispatch)
