@@ -337,7 +337,6 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 	const { wallet, identity } = account
 	// TODO: pass withBalance as prop
 	const withBalance = selectChannelsWithUserBalances()
-	console.log('withBalance', withBalance)
 
 	const { AdExCore } = await getEthers(wallet.authType)
 	const identityAddr = identity.address
@@ -346,8 +345,6 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 		identityAddr,
 		withBalance,
 	})
-
-	console.log('channelsToSweep', channelsToSweep)
 
 	const txns = channelsToSweep.map((c, i) => {
 		const {
