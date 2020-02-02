@@ -5,12 +5,12 @@ import { persistReducers, memoryReducers } from 'reducers'
 import history from './history'
 import { routerMiddleware, connectRouter } from 'connected-react-router'
 import { persistStore, persistCombineReducers } from 'redux-persist'
-import localStorage from 'redux-persist/es/storage'
+import localStorage from 'redux-persist/lib/storage'
 // import session from 'redux-persist/lib/storage/session'
 
 const reduxRouterMiddleware = routerMiddleware(history)
 
-const configStorage = {
+const persistConfig = {
 	key: 'persist',
 	storage: localStorage,
 }
@@ -24,7 +24,7 @@ const configStorage = {
 
 // TODO: make session reducer(signin) - RAM reducer (no persist)
 const rootReducer = combineReducers({
-	persist: persistCombineReducers(configStorage, persistReducers),
+	persist: persistCombineReducers(persistConfig, persistReducers),
 	memory: combineReducers(memoryReducers), // persistCombineReducers(configSession, sessionReducers), //
 	router: connectRouter(history),
 })

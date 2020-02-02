@@ -71,6 +71,7 @@ function getValidUntil(activeFrom, withdrawPeriodStart) {
 
 function getReadyCampaign(campaign, identity, mainToken) {
 	const newCampaign = new Campaign(campaign)
+
 	newCampaign.creator = identity.address
 	newCampaign.created = Date.now()
 	newCampaign.validUntil = getValidUntil(
@@ -83,6 +84,28 @@ function getReadyCampaign(campaign, identity, mainToken) {
 		newCampaign.depositAmount || '0',
 		mainToken.decimals
 	).toString()
+
+	const validators = newCampaign.validators.map(v => {
+		const deposit = bigNumberify(newCampaign.depositAmount || 0)
+		const fee = deposit
+			.div(bigNumberify(v.feeDen || 1))
+			.mul(bigNumberify(v.feeNum || 0))
+			.toString()
+
+		const validator = {
+			id: v.id,
+			url: v.url,
+			fee,
+		}
+
+		if (v.feeAddr) {
+			validator.feeAddr = v.feeAddr
+		}
+
+		return validator
+	})
+
+	newCampaign.validators = validators
 
 	// NOTE: TEMP in UI its set per 1000 impressions (CPM)
 	newCampaign.minPerImpression = parseUnits(
@@ -114,19 +137,6 @@ function getReadyCampaign(campaign, identity, mainToken) {
 	}
 
 	return newCampaign
-}
-
-const getExpiredWithdrawnOutstanding = async ({ channel, AdExCore }) => {
-	const [withdrawn, state] = await Promise.all([
-		AdExCore.functions.withdrawn(channel.id),
-		AdExCore.functions.states(channel.id),
-	])
-
-	if (state === ChannelState.Active) {
-		return bigNumberify(channel.depositAmount).sub(withdrawn)
-	} else {
-		return bigNumberify('0')
-	}
 }
 
 const getWithdrawnPerUserOutstanding = async ({
@@ -188,26 +198,19 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 					channel,
 				}
 			})
-			.filter(({ channel, bTree }) => {
-				if (!!channel.status && channel.status.name === 'Expired') {
-					return channel.creator.toLowerCase() === identityAddr.toLowerCase()
-				}
-
+			.filter(({ bTree }) => {
 				return bTree && !bTree.getBalance(identityAddr).isZero()
 			})
 			.map(async ({ channel, lastApprovedSigs, bTree }) => {
 				//  mTree,
 				const balance = bTree.getBalance(identityAddr).toString()
 
-				const outstanding =
-					channel.status.name === 'Expired'
-						? await getExpiredWithdrawnOutstanding({ channel, AdExCore })
-						: await getWithdrawnPerUserOutstanding({
-								AdExCore,
-								channel,
-								balance,
-								identityAddr,
-						  })
+				const outstanding = await getWithdrawnPerUserOutstanding({
+					AdExCore,
+					channel,
+					balance,
+					identityAddr,
+				})
 
 				const outstandingAvailable = outstanding.sub(
 					feeTokenWhitelist[channel.depositAsset].min
@@ -334,6 +337,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 	const { wallet, identity } = account
 	// TODO: pass withBalance as prop
 	const withBalance = selectChannelsWithUserBalances()
+
 	const { AdExCore } = await getEthers(wallet.authType)
 	const identityAddr = identity.address
 	const channelsToSweep = await getChannelsToSweepFrom({
@@ -565,9 +569,11 @@ export async function openChannel({
 	})
 
 	readyCampaign.id = channel.id
+	const storeCampaign = { ...readyCampaign }
+	storeCampaign.spec = { ...openReady.spec }
 	return {
 		result,
-		readyCampaign,
+		storeCampaign,
 	}
 }
 

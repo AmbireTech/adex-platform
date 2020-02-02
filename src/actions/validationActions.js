@@ -254,10 +254,14 @@ export function validateCampaignValidators({ validateId, validators, dirty }) {
 			!!validators[1] &&
 			!!validators[0].id &&
 			!!validators[0].url &&
-			!!validators[0].fee &&
+			validators[0].feeNum !== undefined &&
+			validators[0].feeDen !== undefined &&
+			validators[0].feeAddr !== undefined &&
 			!!validators[1].id &&
 			!!validators[1].url &&
-			!!validators[1].fee
+			validators[1].feeNum !== undefined &&
+			validators[1].feeDen !== undefined &&
+			validators[0].feeAddr !== undefined
 
 		validate(validateId, 'validators', {
 			isValid,
@@ -419,7 +423,7 @@ export function validateCampaignDates({
 			isValid: !(result.error && result.error.prop === 'withdrawPeriodStart'),
 			err: {
 				msg: result.error ? result.error.message : '',
-				args: result.error.args ? result.error.args : [],
+				args: result.error && (result.error.args || []),
 			},
 			dirty: dirty,
 		})(dispatch)

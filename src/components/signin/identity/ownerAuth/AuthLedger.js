@@ -146,10 +146,8 @@ class AuthLedger extends Component {
 						) : null}
 
 						<ContentBody>
-							<Typography paragraph variant='subheading'>
-								{t('LEDGER_INFO')}
-							</Typography>
-							<Typography paragraph>
+							<Typography variant='subheading'>{t('LEDGER_INFO')}</Typography>
+							<Typography>
 								<span
 									dangerouslySetInnerHTML={{
 										__html: t('LEDGER_BASIC_USAGE_INFO', {
@@ -169,7 +167,7 @@ class AuthLedger extends Component {
 									}}
 								/>
 							</Typography>
-							<Typography paragraph>
+							<Typography>
 								<Anchor href='https://www.ledgerwallet.com/' target='_blank'>
 									<Img
 										src={LEDGER_DL_IMG}
