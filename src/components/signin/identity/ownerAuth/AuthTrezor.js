@@ -147,10 +147,8 @@ class AuthTrezor extends Component {
 						) : null}
 
 						<ContentBody>
-							<Typography paragraph variant='subheading'>
-								{t('TREZOR_INFO')}
-							</Typography>
-							<Typography paragraph>
+							<Typography variant='subheading'>{t('TREZOR_INFO')}</Typography>
+							<Typography>
 								<span
 									dangerouslySetInnerHTML={{
 										__html: t('TREZOR_BASIC_USAGE_INFO', {
@@ -177,7 +175,7 @@ class AuthTrezor extends Component {
 									}}
 								/>
 							</Typography>
-							<Typography paragraph>
+							<Typography>
 								<Anchor href='https://trezor.io' target='_blank'>
 									<Img
 										src={TREZOR_DL_IMG}
