@@ -13,9 +13,7 @@ export const selectAnalyticsData = createSelector(
 
 export const selectCampaignAnalytics = createSelector(
 	[selectAnalytics],
-	analytics => {
-		return analytics.campaigns
-	}
+	analytics => analytics.campaigns || {}
 )
 
 export const selectCampaignAnalyticsByType = createSelector(
