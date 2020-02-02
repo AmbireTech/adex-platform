@@ -139,19 +139,6 @@ function getReadyCampaign(campaign, identity, mainToken) {
 	return newCampaign
 }
 
-const getExpiredWithdrawnOutstanding = async ({ channel, AdExCore }) => {
-	const [withdrawn, state] = await Promise.all([
-		AdExCore.functions.withdrawn(channel.id),
-		AdExCore.functions.states(channel.id),
-	])
-
-	if (state === ChannelState.Active) {
-		return bigNumberify(channel.depositAmount).sub(withdrawn)
-	} else {
-		return bigNumberify('0')
-	}
-}
-
 const getWithdrawnPerUserOutstanding = async ({
 	AdExCore,
 	channel,
@@ -211,26 +198,19 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 					channel,
 				}
 			})
-			.filter(({ channel, bTree }) => {
-				if (!!channel.status && channel.status.name === 'Expired') {
-					return channel.creator.toLowerCase() === identityAddr.toLowerCase()
-				}
-
+			.filter(({ bTree }) => {
 				return bTree && !bTree.getBalance(identityAddr).isZero()
 			})
 			.map(async ({ channel, lastApprovedSigs, bTree }) => {
 				//  mTree,
 				const balance = bTree.getBalance(identityAddr).toString()
 
-				const outstanding =
-					channel.status.name === 'Expired'
-						? await getExpiredWithdrawnOutstanding({ channel, AdExCore })
-						: await getWithdrawnPerUserOutstanding({
-								AdExCore,
-								channel,
-								balance,
-								identityAddr,
-						  })
+				const outstanding = await getWithdrawnPerUserOutstanding({
+					AdExCore,
+					channel,
+					balance,
+					identityAddr,
+				})
 
 				const outstandingAvailable = outstanding.sub(
 					feeTokenWhitelist[channel.depositAsset].min
@@ -357,6 +337,8 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 	const { wallet, identity } = account
 	// TODO: pass withBalance as prop
 	const withBalance = selectChannelsWithUserBalances()
+	console.log('withBalance', withBalance)
+
 	const { AdExCore } = await getEthers(wallet.authType)
 	const identityAddr = identity.address
 	const channelsToSweep = await getChannelsToSweepFrom({
@@ -364,6 +346,8 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 		identityAddr,
 		withBalance,
 	})
+
+	console.log('channelsToSweep', channelsToSweep)
 
 	const txns = channelsToSweep.map((c, i) => {
 		const {
@@ -588,10 +572,11 @@ export async function openChannel({
 	})
 
 	readyCampaign.id = channel.id
-	readyCampaign.spec = { ...openReady.spec }
+	const storeCampaign = { ...readyCampaign }
+	storeCampaign.spec = { ...openReady.spec }
 	return {
 		result,
-		readyCampaign,
+		storeCampaign,
 	}
 }
 
