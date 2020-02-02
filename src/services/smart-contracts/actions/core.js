@@ -588,6 +588,7 @@ export async function openChannel({
 	})
 
 	readyCampaign.id = channel.id
+	readyCampaign.spec = { ...openReady.spec }
 	return {
 		result,
 		readyCampaign,
