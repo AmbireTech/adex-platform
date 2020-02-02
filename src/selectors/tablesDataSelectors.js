@@ -13,7 +13,7 @@ export const selectCampaignsTableData = createSelector(
 	[selectCampaignsArray, selectRoutineWithdrawTokens, (_, side) => side],
 	(campaigns, tokens, side) =>
 		campaigns.map(item => {
-			const { decimals } = tokens[item.depositAsset] || 18
+			const { decimals = 18 } = tokens[item.depositAsset] || {}
 			const spec = item.spec || {}
 			return {
 				media: {
@@ -69,7 +69,7 @@ export const selectCampaignsMaxDeposit = createSelector(
 		Math.max.apply(
 			null,
 			campaigns.map(i => {
-				const { decimals } = tokens[i.depositAsset] || 18
+				const { decimals = 18 } = tokens[i.depositAsset] || {}
 				return Number(formatUnits(i.depositAmount, decimals) || 0)
 			})
 		)
