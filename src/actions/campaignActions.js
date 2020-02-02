@@ -60,20 +60,20 @@ export function openCampaign({ campaign }) {
 				account,
 			})
 
-			const { readyCampaign } = await openChannel({
+			const { storeCampaign } = await openChannel({
 				campaign,
 				account,
 			})
 
 			dispatch({
 				type: types.ADD_ITEM,
-				item: readyCampaign,
+				item: storeCampaign,
 				itemType: 'Campaign',
 			})
 			addToast({
 				type: 'accept',
 				label: t('OPENING_CAMPAIGN_SENT_TO_RELAYER', {
-					args: [readyCampaign.id],
+					args: [storeCampaign.id],
 				}),
 				timeout: 20000,
 			})(dispatch)
@@ -253,11 +253,12 @@ export function closeCampaign({ campaign }) {
 		} catch (err) {
 			console.error('ERR_CLOSING_CAMPAIGN', err)
 			addToast({
-				dispatch,
 				type: 'cancel',
-				toastStr: 'ERR_CLOSING_CAMPAIGN',
-				args: [getErrorMsg(err)],
-			})
+				label: t('ERR_CLOSING_CAMPAIGN', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
 		}
 		updateSpinner('closing-campaign', false)(dispatch)
 	}
@@ -398,20 +399,21 @@ export function validateNewCampaignFinance({
 				newTemp.maxDepositFormatted = maxAvailableFormatted
 
 				await updateNewCampaign('temp', newTemp)(dispatch, getState)
-				await updateSpinner(GETTING_CAMPAIGNS_FEES, false)(dispatch)
 			}
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
 		} catch (err) {
 			console.error('ERR_VALIDATING_CAMPAIGN_FINANCE', err)
 			addToast({
-				dispatch,
 				type: 'cancel',
-				toastStr: 'ERR_VALIDATING_CAMPAIGN_FINANCE',
-				args: [getErrorMsg(err)],
-			})
+				label: t('ERR_VALIDATING_CAMPAIGN_FINANCE', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
 		}
 
+		await updateSpinner(GETTING_CAMPAIGNS_FEES, false)(dispatch)
 		await updateSpinner(validateId, false)(dispatch)
 	}
 }
