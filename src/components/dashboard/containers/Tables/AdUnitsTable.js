@@ -7,7 +7,7 @@ import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIData
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { t, selectAdUnitsTableData, selectSide } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
-import { useSelector, useStore } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { styles } from './styles'
 import { formatDateTime, truncateString } from 'helpers/formatters'
 import { NewCloneUnitDialog } from '../../forms/items/NewItems'
@@ -125,14 +125,13 @@ const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
 function AdUnitsTable(props) {
 	const classes = useStyles()
 	const side = useSelector(selectSide)
-	const [selected, setSelected] = useState([])
 	const {
 		items, //
 		noActions,
 		noClone,
 		campaignUnits,
-		validate,
 		handleSelect,
+		selected = [],
 	} = props
 
 	const [selectorArgs, setSelectorArgs] = useState({})
@@ -157,24 +156,15 @@ function AdUnitsTable(props) {
 		setSelectorArgs({ side, items })
 	}, [side, items])
 
-	useEffect(() => {
-		const selectedItems = selected.map(i => data[i].id)
-		const isValid = !!selectedItems.length
-		if (validate && handleSelect) {
-			validate('adUnits', {
-				isValid: isValid,
-				err: { msg: 'ERR_ADUNITS_REQUIRED' },
-				dirty: true,
-			})
-			isValid && handleSelect(selectedItems)
-		}
-		// TODO: temp fix - need to redesign the table again
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selected])
+	const onRowsSelect = useCallback(
+		(_, allRowsSelected) => {
+			const selectedIndexes = allRowsSelected.map(row => row.dataIndex)
+			const selectedItemsIds = selectedIndexes.map(i => data[i].id)
 
-	const onRowsSelect = useCallback((_, allRowsSelected) => {
-		setSelected(allRowsSelected.map(row => row.dataIndex))
-	}, [])
+			handleSelect && handleSelect({ selectedIndexes, selectedItemsIds })
+		},
+		[data, handleSelect]
+	)
 
 	const options = getOptions({ onRowsSelect, selected, reloadData })
 	return (
