@@ -153,9 +153,12 @@ export const selectCampaignStatsMaxValues = createSelector(
 				newResult.maxClicks = Math.max(current.clicks, newResult.maxClicks)
 				newResult.maxImpressions = Math.max(
 					current.impressions,
-					newResult.impressions
+					newResult.maxImpressions
 				)
-				newResult.maxEarnings = Math.max(current.earnings, newResult.earnings)
+				newResult.maxEarnings = Math.max(
+					current.earnings,
+					newResult.maxEarnings
+				)
 				return newResult
 			},
 			{ maxClicks: 0, maxImpressions: 0, maxEarnings: 0 }
