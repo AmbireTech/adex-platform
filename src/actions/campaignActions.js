@@ -11,6 +11,7 @@ import {
 	validateCampaignAmount,
 	validateCampaignTitle,
 	validateCampaignDates,
+	validateCampaignUnits,
 } from 'actions'
 import { push } from 'connected-react-router'
 import { parseUnits, bigNumberify } from 'ethers/utils'
@@ -292,6 +293,27 @@ const tempValidators = [
 		feeAddr: VALIDATOR_FOLLOWER_FEE_ADDR,
 	},
 ]
+
+export function validateNewCampaignAdUnits({
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+
+		const state = getState()
+		const campaign = selectNewCampaign(state)
+		const { adUnits } = campaign
+
+		const isValid = await validateCampaignUnits({ validateId, adUnits, dirty })
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
+
+		await updateSpinner(validateId, false)(dispatch)
+	}
+}
 
 export function validateNewCampaignFinance({
 	validateId,
