@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 import NewCampaignHoc from './NewCampaignHoc'
@@ -10,15 +10,18 @@ import {
 	ContentBox,
 	ContentBody,
 	ContentStickyTop,
+	FullContentSpinner,
 } from 'components/common/dialog/content'
-
 import { formatDateTime } from 'helpers/formatters'
 import {
 	selectAccountIdentityAddr,
 	selectAuthType,
 	selectMainToken,
+	selectSpinnerById,
 	t,
 } from 'selectors'
+import { execute, getCampaignActualFees } from 'actions'
+import { GETTING_CAMPAIGNS_FEES } from 'constants/spinners'
 
 const UnitsTable = ({ items }) => {
 	return (
@@ -35,6 +38,9 @@ function CampaignFormPreview({ newItem } = {}) {
 	const authType = useSelector(selectAuthType)
 	const mainToken = useSelector(selectMainToken)
 	const { symbol } = mainToken
+	const spinner = useSelector(state =>
+		selectSpinnerById(state, GETTING_CAMPAIGNS_FEES)
+	)
 
 	const {
 		title,
@@ -52,7 +58,13 @@ function CampaignFormPreview({ newItem } = {}) {
 		temp = {},
 	} = newItem
 
-	return (
+	useEffect(() => {
+		execute(getCampaignActualFees())
+	}, [])
+
+	return spinner ? (
+		<FullContentSpinner />
+	) : (
 		<ContentBox>
 			{temp.waitingAction ? (
 				<ContentStickyTop>
@@ -88,17 +100,20 @@ function CampaignFormPreview({ newItem } = {}) {
 					}
 				/>
 				<PropRow
-					left={t('depositAmount', { isProp: true })}
-					right={`${depositAmount} ${symbol}`}
-				/>
-				{/* <PropRow
-					left={t('FEES', { isProp: true })}
-					right={`${minPerImpression} ${symbol}`}
-				/> */}
-				<PropRow
 					left={t('CPM', { isProp: true })}
 					right={`${minPerImpression} ${symbol}`}
 				/>
+				<PropRow
+					left={t('depositAmount', { isProp: true })}
+					right={`${depositAmount} ${symbol}`}
+				/>
+
+				<PropRow left={t('FEES')} right={`${temp.feesFormatted} ${symbol}`} />
+				<PropRow
+					left={t('CAMPAIGN_FEES_AND_BUDGET')}
+					right={`${temp.totalSpendFormatted} ${symbol}`}
+				/>
+
 				{/* <PropRow
 						left={t('maxPerImpression', { isProp: true })}
 						right={maxPerImpression}
