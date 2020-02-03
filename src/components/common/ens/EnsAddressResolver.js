@@ -1,6 +1,5 @@
 import React, { useState, useEffect, memo } from 'react'
 import PropTypes from 'prop-types'
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import Box from '@material-ui/core/Box'
 import ListItemText from '@material-ui/core/ListItemText'
 import { isEthAddress } from 'helpers/validators'
@@ -41,9 +40,6 @@ const EnsAddressResolver = memo(props => {
 		<LoadingSection loading={!address}>
 			{address && (
 				<Box display='flex' flexWrap={'nowrap'} alignItems='center'>
-					<Box pr={1}>
-						<Jazzicon diameter={30} seed={jsNumberForAddress(address)} />
-					</Box>
 					{address}
 					{/* <Box>
 						<ListItemText
