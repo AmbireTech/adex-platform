@@ -51,6 +51,7 @@ function CampaignUnits(props) {
 								noDownload
 								rowSelectable
 								noPrint
+								noActions
 							/>
 						) : (
 							<Grid container direction='column' alignItems='center'>
