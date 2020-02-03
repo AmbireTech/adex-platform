@@ -27,7 +27,7 @@ const AuthSelect = () => {
 	const showRegistration = useSelector(selectRegistrationAllowed)
 	const auth = useSelector(selectAuth)
 	const account = useSelector(selectAccount)
-	const { wallet } = account || {}
+	const { wallet, identity } = account || {}
 
 	useEffect(() => {
 		const allWallets = getAllWallets()
@@ -51,8 +51,11 @@ const AuthSelect = () => {
 					confirmLabel: t('CONTINUE_NEW_AUTH'),
 					cancelLabel: t('KEEP_MY_SESSION'),
 					title: t('CONFIRM_DIALOG_NEW_AUTH_TITLE'),
-					text: t('CONFIRM_DIALOG_NEW_AUTH_TITLE', {
-						args: [wallet.authType, wallet.address],
+					text: t('CONFIRM_DIALOG_NEW_AUTH_TEXT', {
+						args: [
+							(wallet.email || (wallet.authType || '')).toUpperCase(),
+							identity.address,
+						],
 					}),
 				})
 			)
@@ -85,7 +88,7 @@ const AuthSelect = () => {
 					>
 						{t('CONTINUE_AS', {
 							args: [
-								wallet.email || formatAddress(wallet.address),
+								wallet.email || formatAddress(identity.address),
 								wallet.authType,
 							],
 						})}
