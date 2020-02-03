@@ -23,7 +23,11 @@ import AdSlotTargeting from './AdSlot/AdSlotTargeting'
 import AdSlotPreview from './AdSlot/AdSlotPreview'
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 
-import { execute, validateNewCampaignFinance } from 'actions'
+import {
+	execute,
+	validateNewCampaignFinance,
+	validateNewCampaignAdUnits,
+} from 'actions'
 
 const SaveBtn = ({ newItem, t, save, ...rest }) => {
 	return (
@@ -123,7 +127,19 @@ export const NewCampaignSteps = props => (
 		itemType={'Campaign'}
 		stepsId={'new-campaign-'}
 		stepsPages={[
-			{ title: 'CAMPAIGN_UNITS_STEP', page: CampaignUnits },
+			{
+				title: 'CAMPAIGN_UNITS_STEP',
+				page: CampaignUnits,
+				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
+					execute(
+						validateNewCampaignAdUnits({
+							validateId,
+							dirty,
+							onValid,
+							onInvalid,
+						})
+					),
+			},
 			// NOTE: Only at ad units at the moment
 			// { title: 'CAMPAIGN_TARGETING_STEP', page: CampaignTargeting },
 			{
