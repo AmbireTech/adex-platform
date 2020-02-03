@@ -19,12 +19,9 @@ export const sliderFilterOptions = ({ initial, filterTitle, stepSetting }) => {
 		filterOptions: {
 			names: [],
 			logic: (rowNumber, filters) => {
-				const formated = rowNumber
+				const formated = Number(rowNumber.toString().replace(/[^0-9.]/g, ''))
 				if (filters.length > 0) {
-					return (
-						Number(formatNumberWithoutCommas(formated)) < filters[0] ||
-						Number(formatNumberWithoutCommas(formated)) > filters[1]
-					)
+					return formated < filters[0] || formated > filters[1]
 				}
 				return false
 			},
