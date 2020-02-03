@@ -4,20 +4,31 @@ import Grid from '@material-ui/core/Grid'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import { ContentBody } from 'components/common/dialog/content'
 import { NewUnitDialog } from 'components/dashboard/forms/items/NewItems'
-import { t, selectAdUnitsArray, selectAdUnits } from 'selectors'
+import {
+	t,
+	selectAdUnitsArray,
+	selectAdUnits,
+	selectNewCampaign,
+} from 'selectors'
 import { updateNewCampaign, execute } from 'actions'
 
 function CampaignUnits(props) {
-	const adUnits = useSelector(selectAdUnits)
-	const adUnitsArray = useSelector(selectAdUnitsArray)
-	const hasAdUnits = adUnitsArray && adUnitsArray.length
+	const { temp } = useSelector(selectNewCampaign)
+	const { selectedUnits } = temp
+	const allAdUnits = useSelector(selectAdUnits)
+	const allAdUnitsArray = useSelector(selectAdUnitsArray)
+	const hasAdUnits = allAdUnitsArray && allAdUnitsArray.length
 
-	const handleSelect = selected => {
-		const units = Object.values(selected).map(value => {
-			return adUnits[value]
+	const handleSelect = ({ selectedIndexes, selectedItemsIds } = {}) => {
+		const units = Object.values(selectedItemsIds).map(value => {
+			return allAdUnits[value]
 		})
 
+		const newTemp = { ...temp }
+		newTemp.selectedUnits = selectedIndexes
+
 		execute(updateNewCampaign('adUnits', units))
+		execute(updateNewCampaign('temp', newTemp))
 	}
 
 	return (
@@ -32,13 +43,15 @@ function CampaignUnits(props) {
 					<ContentBody>
 						{hasAdUnits ? (
 							<AdUnitsTable
-								items={adUnitsArray}
+								selected={selectedUnits}
+								items={allAdUnitsArray}
 								validate={props.validate}
 								handleSelect={handleSelect}
 								noClone
 								noDownload
 								rowSelectable
 								noPrint
+								noActions
 							/>
 						) : (
 							<Grid container direction='column' alignItems='center'>

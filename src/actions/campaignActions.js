@@ -11,6 +11,7 @@ import {
 	validateCampaignAmount,
 	validateCampaignTitle,
 	validateCampaignDates,
+	validateCampaignUnits,
 } from 'actions'
 import { push } from 'connected-react-router'
 import { parseUnits, bigNumberify } from 'ethers/utils'
@@ -34,7 +35,9 @@ import {
 	selectNewCampaign,
 	selectAuthSig,
 	selectAuth,
+	selectMainToken,
 } from 'selectors'
+import { formatTokenAmount } from 'helpers/formatters'
 import { Campaign } from 'adex-models'
 import { OPENING_CAMPAIGN, GETTING_CAMPAIGNS_FEES } from 'constants/spinners'
 
@@ -293,6 +296,27 @@ const tempValidators = [
 	},
 ]
 
+export function validateNewCampaignAdUnits({
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+
+		const state = getState()
+		const campaign = selectNewCampaign(state)
+		const { adUnits } = campaign
+
+		const isValid = await validateCampaignUnits({ validateId, adUnits, dirty })
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
+
+		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
 export function validateNewCampaignFinance({
 	validateId,
 	dirty,
@@ -415,5 +439,51 @@ export function validateNewCampaignFinance({
 
 		await updateSpinner(GETTING_CAMPAIGNS_FEES, false)(dispatch)
 		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function getCampaignActualFees() {
+	return async function(dispatch, getState) {
+		await updateSpinner(GETTING_CAMPAIGNS_FEES, true)(dispatch)
+		try {
+			const state = getState()
+			const campaign = selectNewCampaign(state)
+			const mainToken = selectMainToken(state)
+			const { temp = {}, depositAmount } = campaign
+
+			const account = selectAccount(state)
+
+			const { feesFormatted, fees } = await openChannel({
+				campaign: { ...campaign },
+				account,
+				getFeesOnly: true,
+			})
+
+			const totalSpend = parseUnits(depositAmount, mainToken.decimals).add(fees)
+
+			const totalSpendFormatted = formatTokenAmount(
+				totalSpend.toString(),
+				mainToken.decimals || 18,
+				false,
+				true
+			)
+
+			const newTemp = { ...temp }
+			newTemp.feesFormatted = feesFormatted
+			newTemp.totalSpendFormatted = totalSpendFormatted
+
+			await updateNewCampaign('temp', newTemp)(dispatch, getState)
+		} catch (err) {
+			console.error('ERR_GETTING_CAMPAIGN_FEES', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_GETTING_CAMPAIGN_FEES', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+
+		await updateSpinner(GETTING_CAMPAIGNS_FEES, false)(dispatch)
 	}
 }

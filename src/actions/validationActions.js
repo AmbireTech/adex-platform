@@ -245,6 +245,19 @@ export function validateAccessWarning(validateId, accepted, dirty) {
 	}
 }
 
+export function validateCampaignUnits(validateId, adUnits, dirty) {
+	return async function(dispatch, getState) {
+		const isValid = !!adUnits && adUnits.length
+		validate(validateId, 'adUnits', {
+			isValid: isValid,
+			err: { msg: 'ERR_ADUNITS_REQUIRED' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
 export function validateCampaignValidators({ validateId, validators, dirty }) {
 	return async function(dispatch, getState) {
 		const isValid =
