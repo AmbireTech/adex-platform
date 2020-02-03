@@ -366,7 +366,7 @@ const basicProps = ({
 									fullWidth
 								/>
 							</Grid>
-							{Array.isArray(item.tags) && (
+							{Array.isArray(item.tags) && itemType === 'AdSlot' && (
 								<Grid item xs={12}>
 									<TextField
 										value={item.tags
