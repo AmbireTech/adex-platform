@@ -74,3 +74,8 @@ export const selectChannelsWithUserBalances = createSelector(
 	selectChannels,
 	({ withBalance }) => withBalance
 )
+
+export const selectAccountIdentityCurrentPrivileges = createSelector(
+	selectAccountIdentity,
+	({ relayerData: { currentPrivileges } }) => currentPrivileges || {}
+)

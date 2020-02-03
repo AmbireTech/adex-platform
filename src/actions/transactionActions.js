@@ -1,4 +1,14 @@
 import * as types from 'constants/actionTypes'
+import {
+	updateSpinner,
+	addToast,
+	handleAfterValidation,
+	validate,
+} from 'actions'
+import {
+	selectNewTransactionById,
+	selectAccountIdentityCurrentPrivileges,
+} from 'selectors'
 
 // MEMORY STORAGE
 export function updateNewTransaction({ tx, key, value }) {
@@ -55,5 +65,38 @@ export function resetWeb3Transaction({ tx, addr }) {
 			tx: tx,
 			addr: addr,
 		})
+	}
+}
+
+export function validateNewCampaignAdUnits({
+	validateId,
+	txId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+
+		const state = getState()
+		const { setAddr } = selectNewTransactionById(state, txId)
+		const {
+			currentPrivileges,
+			privLevel,
+		} = selectAccountIdentityCurrentPrivileges(state)
+
+		const isValid = true // TODO:
+
+		validate({
+			validateId,
+			addr: setAddr,
+			dirty,
+			validate,
+			name: 'setAddr',
+		})(dispatch)
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
+
+		await updateSpinner(validateId, false)(dispatch)
 	}
 }

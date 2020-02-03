@@ -22,7 +22,7 @@ const PRIV_LEVELS_SRC = Object.keys(IdentityPrivilegeLevel).map(key => {
 class SeAddressPrivilege extends Component {
 	componentDidMount() {
 		const { transaction, validate } = this.props
-		if (!transaction.withdrawAmount) {
+		if (!transaction.setAddr) {
 			validate('setAddr', {
 				isValid: false,
 				err: { msg: 'ERR_REQUIRED_FIELD' },
