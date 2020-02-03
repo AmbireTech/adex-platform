@@ -63,7 +63,7 @@ export const selectConfig = createSelector(
 
 export const selectMainToken = createSelector(
 	[selectRelayerConfig],
-	({ mainToken }) => mainToken
+	({ mainToken }) => mainToken || {}
 )
 
 export const selectSaiToken = createSelector(
