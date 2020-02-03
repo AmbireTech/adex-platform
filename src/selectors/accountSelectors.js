@@ -2,7 +2,7 @@ import { createSelector } from 'reselect'
 import { createDeepEqualSelector } from 'selectors'
 import { getState } from 'store'
 
-export const selectAccount = state => state.persist.account
+export const selectAccount = state => state.persist.account || {}
 export const selectChannels = state => (state || getState()).persist.channels
 
 export const selectAuth = createSelector(
@@ -17,7 +17,7 @@ export const selectAuth = createSelector(
 
 export const selectWallet = createDeepEqualSelector(
 	selectAccount,
-	({ wallet }) => wallet
+	({ wallet }) => wallet || {}
 )
 
 export const selectAuthSig = createSelector(
@@ -32,7 +32,7 @@ export const selectAuthType = createSelector(
 
 export const selectAccountIdentity = createSelector(
 	selectAccount,
-	({ identity }) => identity
+	({ identity }) => identity || {}
 )
 
 export const selectAccountIdentityAddr = createSelector(
