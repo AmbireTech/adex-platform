@@ -13,7 +13,13 @@ import { formatNumberWithCommas } from 'helpers/formatters'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
 
-const getCols = ({ symbol, maxClicks, maxImpressions, maxEarnings }) => [
+const getCols = ({
+	symbol,
+	maxClicks,
+	maxImpressions,
+	maxEarnings,
+	maxCTR,
+}) => [
 	{
 		name: 'website',
 		label: t('WEBSITE'),
@@ -65,8 +71,9 @@ const getCols = ({ symbol, maxClicks, maxImpressions, maxEarnings }) => [
 			sort: true,
 			customBodyRender: ctr => `${ctr}%`,
 			...sliderFilterOptions({
-				initial: [0, maxClicks],
-				filterTitle: t('CLICKS_FILTER'),
+				initial: [0, maxCTR],
+				filterTitle: t('CTR_FILTER'),
+				stepSetting: parseFloat((maxCTR / 20).toFixed(2)),
 			}),
 		},
 	},
@@ -82,15 +89,15 @@ const getOptions = ({ reloadData }) => ({
 function CampaignStatsBreakdownTable({ campaignId }) {
 	const { symbol } = useSelector(selectMainToken)
 
-	const { maxClicks, maxImpressions, maxEarnings } = useSelector(state =>
-		selectCampaignStatsMaxValues(state, campaignId)
+	const { maxClicks, maxImpressions, maxEarnings, maxCTR } = useSelector(
+		state => selectCampaignStatsMaxValues(state, campaignId)
 	)
 
 	const { data, columns, reloadData } = useTableData({
 		selector: selectCampaignStatsTableData,
 		selectorArgs: campaignId,
 		getColumns: () =>
-			getCols({ symbol, maxClicks, maxImpressions, maxEarnings }),
+			getCols({ symbol, maxClicks, maxImpressions, maxEarnings, maxCTR }),
 	})
 
 	const options = getOptions({ reloadData })
