@@ -75,7 +75,7 @@ const MaterialStepper = props => {
 	const pageProps = page.props || {}
 	const { validateId } = pageProps
 	const Comp = page.component || null
-	const pageValidation = page.pageValidation || null
+	const { pageValidation = null, onValid, stepsId } = page
 
 	const validations = useSelector(state =>
 		selectValidationsById(state, validateId)
@@ -112,20 +112,29 @@ const MaterialStepper = props => {
 	const goToNextPage = useCallback(async () => {
 		if (pageValidation) {
 			pageValidation({
+				stepsId,
 				validateId,
 				dirty: true,
-				onValid: () => goToPage(currentPage + 1),
+				onValid: onValid || (() => goToPage(currentPage + 1)),
 			})
 		} else if (isValidPage()) {
 			goToPage(currentPage + 1)
 		}
-	}, [currentPage, goToPage, isValidPage, pageValidation, validateId])
+	}, [
+		currentPage,
+		goToPage,
+		isValidPage,
+		onValid,
+		pageValidation,
+		stepsId,
+		validateId,
+	])
 
 	useEffect(() => {
 		if (pageValidation) {
-			pageValidation({ validateId, dirty: false })
+			pageValidation({ stepsId, validateId, dirty: false })
 		}
-	}, [currentPage, pageValidation, validateId])
+	}, [currentPage, pageValidation, stepsId, validateId])
 
 	const onKeyPressed = useCallback(
 		async ev => {
