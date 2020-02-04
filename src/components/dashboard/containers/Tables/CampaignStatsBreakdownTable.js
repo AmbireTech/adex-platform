@@ -58,6 +58,18 @@ const getCols = ({ symbol, maxClicks, maxImpressions, maxEarnings }) => [
 			}),
 		},
 	},
+	{
+		name: 'ctr',
+		label: t('CTR'),
+		options: {
+			sort: true,
+			customBodyRender: ctr => `${ctr}%`,
+			...sliderFilterOptions({
+				initial: [0, maxClicks],
+				filterTitle: t('CLICKS_FILTER'),
+			}),
+		},
+	},
 ]
 
 const getOptions = ({ reloadData }) => ({
