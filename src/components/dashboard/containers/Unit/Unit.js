@@ -37,7 +37,7 @@ export class Unit extends Component {
 							{...rest}
 							targets={item.targeting}
 							t={t}
-							subHeader={true}
+							subHeader={'PROP_TARGETING'}
 						/>
 					}
 				/>
