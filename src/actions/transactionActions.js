@@ -87,12 +87,10 @@ export function validatePrivilegesChange({
 		await updateAccountIdentityData()
 
 		const state = getState()
-		const {
-			setAddr,
-			warningAccepted,
-			showSetAddrWarning,
-			privLevel,
-		} = selectNewTransactionById(state, stepsId)
+		const { setAddr, warningAccepted, privLevel } = selectNewTransactionById(
+			state,
+			stepsId
+		)
 		const walletAddr = selectWalletAddress(state)
 		const { currentPrivileges } = selectAccountIdentityCurrentPrivileges(state)
 		const authType = selectAuthType(state)
@@ -114,10 +112,10 @@ export function validatePrivilegesChange({
 			})(dispatch),
 		])
 
-		const isValid = inputValidations.every(v => v === true)
+		let isValid = inputValidations.every(v => v === true)
 
 		if (isValid) {
-			const setAddrWarning = await validatePrivilegesAddress({
+			const validation = await validatePrivilegesAddress({
 				validateId,
 				setAddr,
 				walletAddr,
@@ -127,10 +125,12 @@ export function validatePrivilegesChange({
 				dirty,
 			})(dispatch)
 
-			updateNewTransaction({
+			isValid = validation.isValid
+
+			await updateNewTransaction({
 				tx: stepsId,
-				key: 'showSetAddrWarning',
-				value: !!setAddrWarning,
+				key: 'warningMsg',
+				value: validation.msg,
 			})(dispatch)
 		}
 
