@@ -46,7 +46,9 @@ class UnitTargets extends Component {
 	TargetsList = ({ targets = [], subHeader, t, ...rest }) => (
 		<List
 			dense
-			subheader={subHeader ? <ListSubheader caption={t(subHeader)} /> : null}
+			subheader={
+				subHeader ? <ListSubheader>{t(subHeader)}</ListSubheader> : null
+			}
 		>
 			{targets.map(target => {
 				const type = getTargetType(target.tag)
