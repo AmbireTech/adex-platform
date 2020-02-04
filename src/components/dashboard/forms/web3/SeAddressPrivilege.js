@@ -3,6 +3,10 @@ import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormHelperText from '@material-ui/core/FormHelperText'
+import FormControl from '@material-ui/core/FormControl'
+import Checkbox from '@material-ui/core/Checkbox'
 import { constants } from 'adex-models'
 import { t, selectValidationsById, selectNewTransactionById } from 'selectors'
 import { execute, updateNewTransaction } from 'actions'
@@ -18,8 +22,8 @@ const PRIV_LEVELS_SRC = Object.keys(IdentityPrivilegeLevel).map(key => {
 
 function SeAddressPrivilege(props) {
 	const { stepsId, validateId } = props
-	const { setAddr, privLevel } = useSelector(state =>
-		selectNewTransactionById(state, stepsId)
+	const { setAddr, privLevel, warningAccepted, warningMsg } = useSelector(
+		state => selectNewTransactionById(state, stepsId)
 	)
 
 	const validations = useSelector(
@@ -76,6 +80,32 @@ function SeAddressPrivilege(props) {
 						: t('SELECT_PRIV_LEVEL_HELPER_TXT')
 				}
 			/>
+			{(warning || warningAccepted || warningMsg) && (
+				<FormControl error={warning && warning.dirty} component='fieldset'>
+					<FormControlLabel
+						control={
+							<Checkbox
+								checked={!!warningAccepted}
+								onChange={ev =>
+									execute(
+										updateNewTransaction({
+											tx: stepsId,
+											key: 'warningAccepted',
+											value: ev.target.checked,
+										})
+									)
+								}
+								value='warningAccepted'
+								color='primary'
+							/>
+						}
+						label={t((warning || {}).errMsg || warningMsg)}
+					/>
+					{/* {accessWarningCheck && !!accessWarningCheck.dirty && (
+							<FormHelperText>{accessWarningCheck.errMsg}</FormHelperText>
+						)} */}
+				</FormControl>
+			)}
 		</div>
 	)
 }
