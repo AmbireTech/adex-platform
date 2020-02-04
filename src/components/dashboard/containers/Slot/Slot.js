@@ -156,7 +156,8 @@ export class Slot extends Component {
 							textColor='primary'
 						>
 							<Tab label={t('INTEGRATION')} />
-							<Tab label={t('STATISTICS')} />
+							{/* There are no stats displayed currently so I will just comment this out */}
+							{/* <Tab label={t('STATISTICS')} /> */}
 						</Tabs>
 					</AppBar>
 					<div style={{ marginTop: 10 }}>
@@ -175,7 +176,7 @@ export class Slot extends Component {
 								}
 							/>
 						)}
-						{tabIndex === 0 && null}
+						{/* {tabIndex === 0 && null} */}
 					</div>
 				</div>
 			</div>
