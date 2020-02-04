@@ -513,19 +513,19 @@ export function validatePrivilegesAddress({
 			msg = 'ERR_PRIV_LVL_CURRENT_0'
 		} else if (isCurrentAddress && privLevel === 1) {
 			msg = 'ERR_PRIV_LVL_CURRENT_1'
-		} else if (isCurrentAddress || privLevel >= 2) {
+		} else if (isCurrentAddress && privLevel >= 2) {
 			isValid = true
 		} else if (!isCurrentAddress) {
 			isValid = true
 		}
 
-		validate(validateId, 'setAddrWarning', {
+		await validate(validateId, 'setAddrWarning', {
 			isValid,
-			err: { msg: msg },
-			dirty: dirty,
+			err: { msg },
+			dirty,
 		})(dispatch)
 
-		return isValid
+		return { isValid, msg }
 	}
 }
 
@@ -533,7 +533,7 @@ export function validatePrivLevel({ validateId, privLevel, dirty }) {
 	return async function(dispatch, getState) {
 		const isValid =
 			Object.values(IdentityPrivilegeLevel).indexOf(privLevel) > -1
-		validate(validateId, 'privLevel', {
+		await validate(validateId, 'privLevel', {
 			isValid,
 			err: { msg: 'ERR_PRIV_LEVEL_NOT_SELECTED' },
 			dirty,
