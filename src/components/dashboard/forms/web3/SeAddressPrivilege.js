@@ -1,14 +1,11 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
-// import Translate from 'components/translate/Translate'
-import NewTransactionHoc from './TransactionHoc'
+import { useSelector } from 'react-redux'
 import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
 import { constants } from 'adex-models'
-import { InputLoading } from 'components/common/spinners/'
+import { t, selectValidationsById, selectNewTransactionById } from 'selectors'
+import { execute, updateNewTransaction } from 'actions'
 
 const { IdentityPrivilegeLevel } = constants
 
@@ -19,109 +16,72 @@ const PRIV_LEVELS_SRC = Object.keys(IdentityPrivilegeLevel).map(key => {
 	}
 })
 
-class SeAddressPrivilege extends Component {
-	componentDidMount() {
-		const { transaction, validate } = this.props
-		if (!transaction.setAddr) {
-			validate('setAddr', {
-				isValid: false,
-				err: { msg: 'ERR_REQUIRED_FIELD' },
-				dirty: false,
-			})
-		}
-	}
+function SeAddressPrivilege(props) {
+	const { stepsId, validateId } = props
+	const { setAddr, privLevel } = useSelector(state =>
+		selectNewTransactionById(state, stepsId)
+	)
 
-	render() {
-		const {
-			actions,
-			transaction,
-			t,
-			invalidFields,
-			identityAvailable,
-			handleChange,
-			setAddrSpinner,
-			validate,
-		} = this.props
-		const { setAddr, privLevel } = transaction || {}
-		// const errAmount = invalidFields['withdrawAmount']
-		const errAddr = invalidFields['setAddr']
+	const validations = useSelector(
+		state => selectValidationsById(state, validateId) || {}
+	)
 
-		return (
-			<div>
-				<div>
-					{' '}
-					{t('SET_IDENTITY_PRIVILEGE_MAIN_INFO')} {identityAvailable}{' '}
-				</div>
-				<TextField
-					type='text'
-					required
-					fullWidth
-					label={t('ADDR_TO_SET_PRIV_LEVEL')}
-					name='setAddr'
-					value={setAddr || ''}
-					onChange={ev => handleChange('setAddr', ev.target.value)}
-					onBlur={() =>
-						actions.validateAddress({
-							addr: setAddr,
-							dirty: true,
-							validate,
-							name: 'setAddr',
+	const errAddr = validations['setAddr']
+	const warning = validations['setAddrWarning']
+	const errPrivLvl = validations['privLevel']
+
+	return (
+		<div>
+			<div> {t('SET_IDENTITY_PRIVILEGE_MAIN_INFO')}</div>
+			<TextField
+				type='text'
+				required
+				fullWidth
+				label={t('ADDR_TO_SET_PRIV_LEVEL')}
+				name='setAddr'
+				value={setAddr || ''}
+				onChange={ev =>
+					execute(
+						updateNewTransaction({
+							tx: stepsId,
+							key: 'setAddr',
+							value: ev.target.value,
 						})
-					}
-					onFocus={() =>
-						actions.validateAddress({
-							addr: setAddr,
-							dirty: false,
-							validate,
-							name: 'setAddr',
+					)
+				}
+				error={errAddr && !!errAddr.dirty}
+				helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
+			/>
+			<Dropdown
+				required
+				label={t('SELECT_PRIV_LEVEL')}
+				// helperText={t('SELECT_PRIV_LEVEL_HELPER_TXT')}
+				onChange={val =>
+					execute(
+						updateNewTransaction({
+							tx: stepsId,
+							key: 'privLevel',
+							value: val,
 						})
-					}
-					error={errAddr && !!errAddr.dirty}
-					helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
-				/>
-				{setAddrSpinner ? <InputLoading /> : null}
-				<Dropdown
-					required
-					label={t('SELECT_PRIV_LEVEL')}
-					helperText={t('SELECT_PRIV_LEVEL_HELPER_TXT')}
-					onChange={val => handleChange('privLevel', val)}
-					source={PRIV_LEVELS_SRC}
-					value={typeof privLevel === 'number' ? privLevel : ''}
-					htmlId='label-privLevel'
-					fullWidth
-				/>
-			</div>
-		)
-	}
+					)
+				}
+				source={PRIV_LEVELS_SRC}
+				value={typeof privLevel === 'number' ? privLevel : ''}
+				htmlId='label-privLevel'
+				fullWidth
+				error={errPrivLvl && !!errPrivLvl.dirty}
+				helperText={
+					errPrivLvl && !!errPrivLvl.dirty
+						? errPrivLvl.errMsg
+						: t('SELECT_PRIV_LEVEL_HELPER_TXT')
+				}
+			/>
+		</div>
+	)
 }
 
 SeAddressPrivilege.propTypes = {
-	actions: PropTypes.object.isRequired,
-	label: PropTypes.string,
-	txId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	transaction: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
 }
 
-function mapStateToProps(state, props) {
-	// const persist = state.persist
-	const memory = state.memory
-	const txId = props.stepsId
-	return {
-		txId: txId,
-		setAddrSpinner: memory.spinners['setAddr'],
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch),
-	}
-}
-
-const SeAddressPrivilegeForm = NewTransactionHoc(SeAddressPrivilege)
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(SeAddressPrivilegeForm)
+export default SeAddressPrivilege
