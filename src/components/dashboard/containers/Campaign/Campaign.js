@@ -111,7 +111,7 @@ export class Campaign extends Component {
 							indicatorColor='primary'
 							textColor='primary'
 						>
-							<Tab label={t('STATE')} />
+							<Tab label={t('STATISTICS')} />
 							<Tab label={t('CAMPAIGN_UNITS')} />
 							<Tab label={t('VALIDATORS')} />
 						</Tabs>

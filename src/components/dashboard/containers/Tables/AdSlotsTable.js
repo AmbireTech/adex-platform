@@ -25,6 +25,7 @@ const getCols = ({ classes }) => [
 		options: {
 			filter: false,
 			sort: false,
+			download: false,
 			customBodyRender: ({ id, mediaUrl, mediaMime }) => {
 				return (
 					<Img
@@ -71,6 +72,7 @@ const getCols = ({ classes }) => [
 		options: {
 			filter: false,
 			sort: true,
+			download: false,
 			customBodyRender: ({ to }) => (
 				<Tooltip
 					title={t('LABEL_VIEW')}
@@ -87,10 +89,25 @@ const getCols = ({ classes }) => [
 	},
 ]
 
+const onDownload = (buildHead, buildBody, columns, data) => {
+	const mappedData = data.map(i => ({
+		index: i.index,
+		data: [
+			i.data[0].id,
+			i.data[1],
+			i.data[2].replace('legacy_', ''),
+			formatDateTime(i.data[3]),
+		],
+	}))
+	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
+}
+
 const getOptions = ({ reloadData }) => ({
 	filterType: 'multiselect',
 	selectableRows: 'none',
 	customToolbar: () => <ReloadData handleReload={reloadData} />,
+	onDownload: (buildHead, buildBody, columns, data) =>
+		onDownload(buildHead, buildBody, columns, data),
 })
 
 function AdSlotsTable(props) {
