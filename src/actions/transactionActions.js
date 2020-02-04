@@ -4,10 +4,16 @@ import {
 	addToast,
 	handleAfterValidation,
 	validate,
+	updateAccountIdentityData,
+	validateEthAddress,
+	validatePrivilegesAddress,
+	validatePrivLevel,
 } from 'actions'
 import {
 	selectNewTransactionById,
 	selectAccountIdentityCurrentPrivileges,
+	selectWalletAddress,
+	selectAuthType,
 } from 'selectors'
 
 // MEMORY STORAGE
@@ -68,7 +74,8 @@ export function resetWeb3Transaction({ tx, addr }) {
 	}
 }
 
-export function validateNewCampaignAdUnits({
+export function validatePrivilegesChange({
+	stepsId,
 	validateId,
 	txId,
 	dirty,
@@ -77,23 +84,55 @@ export function validateNewCampaignAdUnits({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
+		await updateAccountIdentityData()
 
 		const state = getState()
-		const { setAddr } = selectNewTransactionById(state, txId)
 		const {
-			currentPrivileges,
+			setAddr,
+			warningAccepted,
+			showSetAddrWarning,
 			privLevel,
-		} = selectAccountIdentityCurrentPrivileges(state)
+		} = selectNewTransactionById(state, stepsId)
+		const walletAddr = selectWalletAddress(state)
+		const { currentPrivileges } = selectAccountIdentityCurrentPrivileges(state)
+		const authType = selectAuthType(state)
 
-		const isValid = true // TODO:
+		const inputValidations = await Promise.all([
+			validateEthAddress({
+				validateId,
+				addr: setAddr,
+				prop: 'setAddr',
+				nonERC20: true,
+				nonZeroAddr: true,
+				authType,
+				dirty,
+			})(dispatch),
+			validatePrivLevel({
+				validateId,
+				privLevel,
+				dirty,
+			})(dispatch),
+		])
 
-		validate({
-			validateId,
-			addr: setAddr,
-			dirty,
-			validate,
-			name: 'setAddr',
-		})(dispatch)
+		const isValid = inputValidations.every(v => v === true)
+
+		if (isValid) {
+			const setAddrWarning = await validatePrivilegesAddress({
+				validateId,
+				setAddr,
+				walletAddr,
+				currentPrivileges,
+				warningAccepted,
+				privLevel,
+				dirty,
+			})(dispatch)
+
+			updateNewTransaction({
+				tx: stepsId,
+				key: 'showSetAddrWarning',
+				value: !!setAddrWarning,
+			})(dispatch)
+		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
 
