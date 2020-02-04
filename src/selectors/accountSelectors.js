@@ -25,6 +25,11 @@ export const selectAuthSig = createSelector(
 	({ authSig }) => authSig
 )
 
+export const selectWalletAddress = createSelector(
+	selectWallet,
+	({ address }) => address
+)
+
 export const selectAuthType = createSelector(
 	selectWallet,
 	({ authType }) => authType
