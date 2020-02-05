@@ -110,7 +110,7 @@ export const NewUnitDialog = props => (
 
 const copyProps = {
 	darkerBackground: true,
-	icon: <FileCopyIcon />,
+	icon: <FileCopyIcon color='primary' />,
 }
 
 export const NewCloneUnitDialog = props => (
