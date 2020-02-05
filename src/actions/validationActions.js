@@ -5,10 +5,11 @@ import { translate } from 'services/translations/translations'
 import { addToast } from './uiActions'
 import { getERC20Balance } from 'services/smart-contracts/actions/erc20'
 import { formatUnits, bigNumberify, parseUnits } from 'ethers/utils'
-import { validations, Joi, schemas } from 'adex-models'
+import { validations, Joi, schemas, constants } from 'adex-models'
 import { validEmail, validPassword } from 'helpers/validators'
 import { t } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
+const { IdentityPrivilegeLevel } = constants
 
 const { campaignPut } = schemas
 const { isNumberString } = validations
@@ -17,6 +18,7 @@ export function validateAddress({ addr, dirty, validate, name, setBalance }) {
 	return async function(dispatch, getState) {
 		const { wallet, identity } = getState().persist.account
 		const { authType } = wallet
+		const isValid = false
 		try {
 			if (validate) validate(name, { isValid: false })
 			updateSpinner(name, dirty)(dispatch)
@@ -457,6 +459,86 @@ export function validateCampaignTitle({ validateId, title, dirty }) {
 			isValid,
 			err: { msg: result.error ? result.error.message : '' },
 			dirty: dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateEthAddress({
+	validateId,
+	prop,
+	addr,
+	nonZeroAddr = true,
+	nonERC20 = true,
+	dirty,
+	authType,
+}) {
+	return async function(dispatch, getState) {
+		const { msg } = await validEthAddress({
+			addr,
+			nonZeroAddr,
+			nonERC20,
+			authType,
+		})
+
+		const isValid = !msg
+
+		await validate(validateId, prop, {
+			isValid,
+			err: { msg },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validatePrivilegesAddress({
+	validateId,
+	setAddr = '',
+	walletAddr = '',
+	currentPrivileges,
+	privLevel,
+	authType,
+	warningAccepted,
+	dirty,
+}) {
+	return async function(dispatch, getState) {
+		const isCurrentAddress =
+			setAddr && setAddr.toLowerCase() === walletAddr.toLowerCase()
+		let isValid = warningAccepted || !isCurrentAddress
+
+		let msg = ''
+		const args = [`PRIV_${privLevel}_LABEL`, authType.toUpperCase()]
+		if (isCurrentAddress && privLevel === 0) {
+			msg = 'ERR_PRIV_LVL_CURRENT_0'
+		} else if (isCurrentAddress && privLevel === 1) {
+			msg = 'ERR_PRIV_LVL_CURRENT_1'
+		} else if (isCurrentAddress && privLevel >= 2) {
+			isValid = true
+		} else if (!isCurrentAddress) {
+			isValid = true
+		}
+
+		await validate(validateId, 'setAddrWarning', {
+			isValid,
+			err: { msg, args },
+			dirty,
+		})(dispatch)
+
+		return { isValid, msg }
+	}
+}
+
+export function validatePrivLevel({ validateId, privLevel, dirty }) {
+	return async function(dispatch, getState) {
+		const isValid =
+			Object.values(IdentityPrivilegeLevel).indexOf(privLevel) > -1
+		await validate(validateId, 'privLevel', {
+			isValid,
+			err: { msg: 'ERR_PRIV_LEVEL_NOT_SELECTED' },
+			dirty,
 		})(dispatch)
 
 		return isValid

@@ -36,6 +36,7 @@ class FormSteps extends Component {
 					: page.page || page,
 				pageValidation: page.pageValidation,
 				goToNextPageIfValid: page.goToNextPageIfValid,
+				stepsId,
 				props: { ...this.props, stepsId, validateId: validateId + '-' + index },
 			})
 		})
@@ -47,6 +48,7 @@ class FormSteps extends Component {
 			),
 			cancelBtn: cancelButton,
 			component: ValidItemHoc(stepsPreviewPage.page || stepsPreviewPage),
+			stepsId,
 			props: {
 				...this.props,
 				validateId: validateId + '-' + stepsPages.length,

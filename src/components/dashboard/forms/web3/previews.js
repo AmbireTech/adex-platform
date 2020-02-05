@@ -58,7 +58,7 @@ export const SetPrivilegePreview = ({
 					secondary={t('PRIV_LEVEL_INFO_AND_FEES', {
 						args: [feesData.fees, symbol],
 					})}
-					primary={privilegesNames[privLevel]}
+					primary={`PRIV_${privLevel}_LABEL`}
 				/>
 			}
 		/>
