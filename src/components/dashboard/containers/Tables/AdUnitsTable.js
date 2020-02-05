@@ -26,6 +26,7 @@ const getCols = ({ classes, noActions, noClone }) => [
 		options: {
 			filter: false,
 			sort: false,
+			download: false,
 			customBodyRender: ({ id, mediaUrl, mediaMime }) => {
 				return (
 					<Img
@@ -76,6 +77,7 @@ const getCols = ({ classes, noActions, noClone }) => [
 			filter: false,
 			display: !noActions,
 			sort: true,
+			download: false,
 			customBodyRender: ({ to, item }) => (
 				<React.Fragment>
 					<Tooltip
@@ -115,10 +117,25 @@ const getCols = ({ classes, noActions, noClone }) => [
 	},
 ]
 
+const onDownload = (buildHead, buildBody, columns, data) => {
+	const mappedData = data.map(i => ({
+		index: i.index,
+		data: [
+			i.data[0].id,
+			i.data[1],
+			i.data[2].replace('legacy_', ''),
+			formatDateTime(i.data[3]),
+		],
+	}))
+	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
+}
+
 const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
 	filterType: 'multiselect',
 	rowsSelected: selected,
 	customToolbar: () => <ReloadData handleReload={reloadData} />,
+	onDownload: (buildHead, buildBody, columns, data) =>
+		onDownload(buildHead, buildBody, columns, data),
 	onRowsSelect,
 })
 
