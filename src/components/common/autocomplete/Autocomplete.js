@@ -60,6 +60,7 @@ function Autocomplete(props) {
 								label={label}
 								variant={variant}
 								fullWidth
+								error={error}
 							/>
 						)
 					}}
