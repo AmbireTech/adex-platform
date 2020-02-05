@@ -9,6 +9,7 @@ import { getSuggestions } from './common'
 
 function Autocomplete(props) {
 	const {
+		id,
 		classes,
 		source,
 		multiple,
@@ -17,10 +18,12 @@ function Autocomplete(props) {
 		variant,
 		allowCreate,
 		validateCreation,
+		validateAutocomplete,
 		error,
 		errorText,
 		onInit,
 		onChange,
+		...rest
 	} = props
 	const [inputValue, setInputValue] = useState('')
 
@@ -47,10 +50,9 @@ function Autocomplete(props) {
 					multiple={multiple}
 					options={suggestions}
 					getOptionLabel={option => option.label}
-					onChange={(event, newValue) => handleChange(newValue)}
-					style={{ width: 300 }}
+					onChange={(_, newValue) => handleChange(newValue)}
 					value={suggestions[0].label}
-					onInputChange={(event, value) => setInputValue(value)}
+					onInputChange={(_, newValue) => setInputValue(newValue)}
 					renderInput={params => {
 						params.inputProps.value = value ? value : params.inputProps.value
 						return (
