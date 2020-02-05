@@ -54,7 +54,7 @@ function Autocomplete(props) {
 					value={suggestions[0].label}
 					onInputChange={(_, newValue) => setInputValue(newValue)}
 					renderInput={params => {
-						params.inputProps.value = value ? value : params.inputProps.value
+						if (value) params.inputProps.value = value
 						return (
 							<TextField
 								{...params}
@@ -64,6 +64,7 @@ function Autocomplete(props) {
 							/>
 						)
 					}}
+					fullWidth
 				/>
 				{error && (
 					<FormHelperText error id='component-error-text'>

@@ -250,21 +250,21 @@ class AdUnitTargeting extends Component {
 							)
 						)}
 					</Grid>
-					<Grid item sm={12}>
-						<Dropdown
-							variant='outlined'
-							fullWidth
-							onChange={target => {
-								this.newTarget({ ...target })
-							}}
-							source={[...SourcesSelect]}
-							value={''}
-							label={t('NEW_TARGET')}
-							htmlId='ad-type-dd'
-							name='adType'
-							IconComponent={AddIcon}
-						/>
-					</Grid>
+				</Grid>
+				<Grid item sm={12}>
+					<Dropdown
+						variant='outlined'
+						fullWidth
+						onChange={target => {
+							this.newTarget({ ...target })
+						}}
+						source={[...SourcesSelect]}
+						value={''}
+						label={t('NEW_TARGET')}
+						htmlId='ad-type-dd'
+						name='adType'
+						IconComponent={AddIcon}
+					/>
 				</Grid>
 			</div>
 		)
