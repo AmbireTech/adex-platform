@@ -500,6 +500,7 @@ export function validatePrivilegesAddress({
 	walletAddr = '',
 	currentPrivileges,
 	privLevel,
+	authType,
 	warningAccepted,
 	dirty,
 }) {
@@ -509,6 +510,7 @@ export function validatePrivilegesAddress({
 		let isValid = warningAccepted || !isCurrentAddress
 
 		let msg = ''
+		const args = [`PRIV_${privLevel}_LABEL`, authType.toUpperCase()]
 		if (isCurrentAddress && privLevel === 0) {
 			msg = 'ERR_PRIV_LVL_CURRENT_0'
 		} else if (isCurrentAddress && privLevel === 1) {
@@ -521,7 +523,7 @@ export function validatePrivilegesAddress({
 
 		await validate(validateId, 'setAddrWarning', {
 			isValid,
-			err: { msg },
+			err: { msg, args },
 			dirty,
 		})(dispatch)
 
