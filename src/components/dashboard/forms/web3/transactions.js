@@ -20,6 +20,7 @@ import {
 	addrIdentityPrivilege,
 	identityWithdraw,
 	setIdentityENS,
+	validatePrivilegesChange,
 	execute,
 } from 'actions'
 
@@ -119,6 +120,16 @@ export const SetIdentityPrivilege = props => (
 			{
 				title: 'ACCOUNT_SET_IDENTITY_PRIVILEGE_STEP',
 				page: SeAddressPrivilege,
+				pageValidation: ({ stepsId, validateId, dirty, onValid, onInvalid }) =>
+					execute(
+						validatePrivilegesChange({
+							stepsId,
+							validateId,
+							dirty,
+							onValid,
+							onInvalid,
+						})
+					),
 			},
 		]}
 		stepsPreviewPage={{

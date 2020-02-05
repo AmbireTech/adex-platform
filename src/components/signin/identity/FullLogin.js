@@ -30,7 +30,7 @@ const getIdentitiesForDropdown = (ownerIdentities = [], t) =>
 		return {
 			value: id.identity + '-' + id.privLevel,
 			label: t('IDENTITY_OPTION_DATA', {
-				args: [id.identity, id.privLevel, id.data.email || '-'],
+				args: [id.identity, `PRIV_${id.privLevel}_LABEL`, id.data.email || '-'],
 			}),
 		}
 	})

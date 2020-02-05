@@ -1,4 +1,20 @@
 import * as types from 'constants/actionTypes'
+import {
+	updateSpinner,
+	addToast,
+	handleAfterValidation,
+	validate,
+	updateAccountIdentityData,
+	validateEthAddress,
+	validatePrivilegesAddress,
+	validatePrivLevel,
+} from 'actions'
+import {
+	selectNewTransactionById,
+	selectAccountIdentityCurrentPrivileges,
+	selectWalletAddress,
+	selectAuthType,
+} from 'selectors'
 
 // MEMORY STORAGE
 export function updateNewTransaction({ tx, key, value }) {
@@ -55,5 +71,72 @@ export function resetWeb3Transaction({ tx, addr }) {
 			tx: tx,
 			addr: addr,
 		})
+	}
+}
+
+export function validatePrivilegesChange({
+	stepsId,
+	validateId,
+	txId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		await updateAccountIdentityData()
+
+		const state = getState()
+		const { setAddr, warningAccepted, privLevel } = selectNewTransactionById(
+			state,
+			stepsId
+		)
+		const walletAddr = selectWalletAddress(state)
+		const { currentPrivileges } = selectAccountIdentityCurrentPrivileges(state)
+		const authType = selectAuthType(state)
+
+		const inputValidations = await Promise.all([
+			validateEthAddress({
+				validateId,
+				addr: setAddr,
+				prop: 'setAddr',
+				nonERC20: true,
+				nonZeroAddr: true,
+				authType,
+				dirty,
+			})(dispatch),
+			validatePrivLevel({
+				validateId,
+				privLevel,
+				dirty,
+			})(dispatch),
+		])
+
+		let isValid = inputValidations.every(v => v === true)
+
+		if (isValid) {
+			const validation = await validatePrivilegesAddress({
+				validateId,
+				setAddr,
+				walletAddr,
+				currentPrivileges,
+				warningAccepted,
+				privLevel,
+				dirty,
+				authType,
+			})(dispatch)
+
+			isValid = validation.isValid
+
+			await updateNewTransaction({
+				tx: stepsId,
+				key: 'warningMsg',
+				value: validation.msg,
+			})(dispatch)
+		}
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
+
+		await updateSpinner(validateId, false)(dispatch)
 	}
 }

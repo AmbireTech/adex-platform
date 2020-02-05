@@ -177,7 +177,7 @@ function AccountInfo() {
 							secondary={t('WALLET_INFO_LABEL', {
 								args: [
 									`AUTH_${authType.toUpperCase()}`,
-									walletPrivileges || ' - ',
+									`PRIV_${privileges}_LABEL`,
 									authType,
 								],
 							})}

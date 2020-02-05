@@ -90,7 +90,6 @@ function Dropdown(props) {
 }
 
 Dropdown.propTypes = {
-	classes: PropTypes.object.isRequired,
 	label: PropTypes.string,
 	onChange: PropTypes.func.isRequired,
 	value: PropTypes.oneOfType([
