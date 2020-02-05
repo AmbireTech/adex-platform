@@ -116,7 +116,7 @@ export function updateAccountAnalytics() {
 	}
 }
 
-export function updateAccountCampaingsAnalytics() {
+export function updateAccountCampaignsAnalytics() {
 	return async function(dispatch, getState) {
 		const { account } = getState().persist
 		try {
@@ -197,6 +197,14 @@ export function updateAnalyticsTimeframe(timeframe) {
 }
 
 export function resetAnalytics() {
+	return async function(dispatch, getState) {
+		return dispatch({
+			type: types.RESET_ANALYTICS,
+		})
+	}
+}
+
+export function updateDemand() {
 	return async function(dispatch, getState) {
 		return dispatch({
 			type: types.RESET_ANALYTICS,
