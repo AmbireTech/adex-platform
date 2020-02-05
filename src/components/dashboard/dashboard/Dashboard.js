@@ -25,6 +25,7 @@ import statsLoop from 'services/store-data/account'
 import {
 	analyticsLoop,
 	analyticsCampaignsLoop,
+	slotsDemandLoop,
 } from 'services/store-data/analytics'
 import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
@@ -89,6 +90,7 @@ function Dashboard(props) {
 		campaignsLoop.start()
 		campaignsLoopStats.start()
 		statsLoop.start()
+		slotsDemandLoop.start()
 
 		return () => {
 			analyticsLoop.stop()
@@ -96,6 +98,7 @@ function Dashboard(props) {
 			campaignsLoop.stop()
 			campaignsLoopStats.stop()
 			statsLoop.stop()
+			slotsDemandLoop.stop()
 		}
 	}, [side])
 
