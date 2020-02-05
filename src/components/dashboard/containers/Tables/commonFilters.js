@@ -2,7 +2,23 @@ import React from 'react'
 import { Typography, Slider, Box } from '@material-ui/core'
 import { formatAbbrNum, formatNumberWithoutCommas } from 'helpers/formatters'
 
-export const sliderFilterOptions = ({ initial, filterTitle, stepSetting }) => {
+const getSliderStep = (min, max, steps, precision = 2) => {
+	const diff = max - min
+	const step = diff / steps
+	const fixed = parseFloat(step.toFixed(precision))
+
+	return fixed
+}
+
+export const sliderFilterOptions = ({
+	initial = [],
+	filterTitle = '',
+	stepsCount = 20,
+	stepsPrecision = 2,
+}) => {
+	const min = initial[0] || 0
+	const max = initial[1] || 100
+	const step = getSliderStep(min, max, stepsCount, stepsPrecision)
 	return {
 		filter: true,
 		display: 'true',
@@ -33,20 +49,20 @@ export const sliderFilterOptions = ({ initial, filterTitle, stepSetting }) => {
 						</Typography>
 						<Box pl={2} pr={3} pt={2}>
 							<Slider
-								min={initial[0] || 0}
-								max={initial[1] || 100}
+								min={min}
+								max={max}
 								marks={[
 									{
-										value: initial[0] || 0,
-										label: formatAbbrNum(initial[0], 2),
+										value: min,
+										label: formatAbbrNum(min, 2),
 									},
 									{
-										value: initial[1] || 100,
-										label: formatAbbrNum(initial[1], 2),
+										value: max,
+										label: formatAbbrNum(max, 2),
 									},
 								]}
 								// Max 20 steps (5,000,000 impressions step 1 ...)
-								step={stepSetting || Math.floor((initial[1] || 100) / 20)}
+								step={step}
 								value={
 									filterList[index].length > 0 ? filterList[index] : initial
 								}

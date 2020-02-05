@@ -73,7 +73,8 @@ const getCols = ({
 			...sliderFilterOptions({
 				initial: [0, maxCTR],
 				filterTitle: t('CTR_FILTER'),
-				stepSetting: parseFloat((maxCTR / 20).toFixed(2)),
+				stepsCount: 20,
+				stepsPrecision: 4,
 			}),
 		},
 	},
