@@ -25,6 +25,11 @@ export const selectAuthSig = createSelector(
 	({ authSig }) => authSig
 )
 
+export const selectWalletAddress = createSelector(
+	selectWallet,
+	({ address }) => address
+)
+
 export const selectAuthType = createSelector(
 	selectWallet,
 	({ authType }) => authType
@@ -73,4 +78,9 @@ export const selectAccountIdentityRoutineAuthTuple = createSelector(
 export const selectChannelsWithUserBalances = createSelector(
 	selectChannels,
 	({ withBalance }) => withBalance
+)
+
+export const selectAccountIdentityCurrentPrivileges = createSelector(
+	selectAccountIdentity,
+	({ relayerData: { currentPrivileges } }) => currentPrivileges || {}
 )

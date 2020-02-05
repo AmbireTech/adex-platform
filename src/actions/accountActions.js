@@ -5,6 +5,7 @@ import {
 	getRelayerConfigData,
 	getQuickWallet,
 	backupWallet,
+	getIdentityData,
 } from 'services/adex-relayer/actions'
 import { updateSpinner } from './uiActions'
 import { translate } from 'services/translations/translations'
@@ -40,7 +41,11 @@ import {
 import { logOut } from 'services/store-data/auth'
 import { getErrorMsg } from 'helpers/errors'
 import { push } from 'connected-react-router'
-import { CREATING_SESSION, QUICK_WALLET_BACKUP } from 'constants/spinners'
+import {
+	CREATING_SESSION,
+	QUICK_WALLET_BACKUP,
+	UPDATING_ACCOUNT_IDENTITY,
+} from 'constants/spinners'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
@@ -154,6 +159,38 @@ export function updateAccountStats() {
 				timeout: 20000,
 			})(dispatch)
 		}
+	}
+}
+
+export function updateAccountIdentityData() {
+	return async function(dispatch, getState) {
+		updateSpinner(UPDATING_ACCOUNT_IDENTITY, true)(dispatch)
+		const identity = selectIdentity(getState())
+
+		try {
+			const relayerData = await getIdentityData({
+				identityAddr: identity.address,
+			})
+
+			const updatedIdentity = { ...identity }
+
+			updatedIdentity.currentPrivileges = relayerData.currentPrivileges
+			updatedIdentity.isLimitedVolume = relayerData.isLimitedVolume
+			updatedIdentity.relayerData = relayerData
+
+			updateAccount({
+				newValues: { identity: updatedIdentity },
+			})(dispatch)
+		} catch (err) {
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_UPDATING_ACCOUNT_IDENTITY', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+		updateSpinner(UPDATING_ACCOUNT_IDENTITY, true)(dispatch)
 	}
 }
 
