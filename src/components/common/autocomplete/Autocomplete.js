@@ -51,7 +51,6 @@ function Autocomplete(props) {
 					options={suggestions}
 					getOptionLabel={option => option.label}
 					onChange={(_, newValue) => handleChange(newValue)}
-					value={suggestions[0].label}
 					onInputChange={(_, newValue) => setInputValue(newValue)}
 					renderInput={params => {
 						if (value) params.inputProps.value = value
