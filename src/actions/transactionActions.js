@@ -123,6 +123,7 @@ export function validatePrivilegesChange({
 				warningAccepted,
 				privLevel,
 				dirty,
+				authType,
 			})(dispatch)
 
 			isValid = validation.isValid

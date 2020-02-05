@@ -1,10 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
+import Box from '@material-ui/core/Box'
 import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
+import Typography from '@material-ui/core/Typography'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
 import Checkbox from '@material-ui/core/Checkbox'
 import { constants } from 'adex-models'
@@ -13,10 +14,11 @@ import { execute, updateNewTransaction } from 'actions'
 
 const { IdentityPrivilegeLevel } = constants
 
-const PRIV_LEVELS_SRC = Object.keys(IdentityPrivilegeLevel).map(key => {
+const PRIV_LEVELS_SRC = Object.values(IdentityPrivilegeLevel).map(value => {
 	return {
-		value: IdentityPrivilegeLevel[key],
-		label: key,
+		value,
+		label: t(`PRIV_${value}_LABEL`),
+		info: t(`PRIV_${value}_INFO`),
 	}
 })
 
@@ -80,6 +82,24 @@ function SeAddressPrivilege(props) {
 						: t('SELECT_PRIV_LEVEL_HELPER_TXT')
 				}
 			/>
+			<Box marginTop={2}>
+				<Typography variant='caption' display='block' gutterBottom>
+					{t('PRIV_LEVEL_INFO_LABEL')}:
+				</Typography>
+				{PRIV_LEVELS_SRC.map(x => (
+					<Typography
+						key={x.value}
+						variant='caption'
+						display='block'
+						gutterBottom
+					>
+						<strong>{x.label}:</strong> {x.info}
+					</Typography>
+				))}
+				<Typography variant='caption' display='block' gutterBottom>
+					* {t('PRIV_LEVEL_INFO')}
+				</Typography>
+			</Box>
 			{(warning || warningAccepted || warningMsg) && (
 				<FormControl error={warning && warning.dirty} component='fieldset'>
 					<FormControlLabel
@@ -101,9 +121,6 @@ function SeAddressPrivilege(props) {
 						}
 						label={t((warning || {}).errMsg || warningMsg)}
 					/>
-					{/* {accessWarningCheck && !!accessWarningCheck.dirty && (
-							<FormHelperText>{accessWarningCheck.errMsg}</FormHelperText>
-						)} */}
 				</FormControl>
 			)}
 		</div>
