@@ -308,7 +308,7 @@ export async function getAllValidatorsAuthForIdentity({
 	return validatorsAuth
 }
 
-const saiDaiConversion = ({ token, balance }) => balance
+const saiDaiConversion = async ({ token, balance }) => balance
 
 const valueInMainTokenConversions = {
 	// SAI
@@ -323,16 +323,16 @@ const valueInMainTokenConversions = {
 	},
 }
 
-async function tokenInMainTokenValue({ token, balance }) {
+export async function tokenInMainTokenValue({ token, balance }) {
 	const { address } = selectMainToken()
 
 	if (address === token.address) {
 		return balance
 	}
 
-	const valueInMainToken = valueInMainTokenConversions[address.toLowerCase()][
-		token.address.toLowerCase()
-	]({
+	const valueInMainToken = await valueInMainTokenConversions[
+		address.toLowerCase()
+	][token.address.toLowerCase()]({
 		token,
 		balance,
 	})
