@@ -13,6 +13,7 @@ import {
 } from 'constants/misc'
 import { getErrorMsg } from 'helpers/errors'
 import { fillEmptyTime } from 'helpers/timeHelpers'
+import { getUnitsStatsByType } from 'services/adex-market/aggregates'
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
 const analyticsParams = (timeframe, side) => {
@@ -204,10 +205,13 @@ export function resetAnalytics() {
 	}
 }
 
-export function updateDemand() {
+export function updateSlotsDemand() {
 	return async function(dispatch, getState) {
+		const demandAnalytics = await getUnitsStatsByType()
+
 		return dispatch({
-			type: types.RESET_ANALYTICS,
+			type: types.UPDATE_DEMAND_ANALYTICS,
+			value: demandAnalytics,
 		})
 	}
 }

@@ -3,6 +3,7 @@ import {
 	RESET_ANALYTICS,
 	UPDATE_ANALYTICS_TIMEFRAME,
 	UPDATE_ADVANCED_CAMPAIGN_ANALYTICS,
+	UPDATE_DEMAND_ANALYTICS,
 } from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
@@ -36,6 +37,10 @@ export default function analyticsReducer(
 			newState.campaigns[action.eventType] = {
 				...action.value,
 			}
+			return newState
+		case UPDATE_DEMAND_ANALYTICS:
+			newState = { ...state }
+			newState.demandAnalytics = action.value
 			return newState
 		case RESET_ANALYTICS:
 			newState = { ...initialState.analytics }
