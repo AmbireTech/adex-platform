@@ -166,6 +166,7 @@ class AdUnitTargeting extends Component {
 								dirty: false,
 							})
 						}
+						validateAutocomplete={this.validateAutocomplete}
 						// validate={validate}
 						label={label}
 						placeholder={placeholder}
