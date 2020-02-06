@@ -5,13 +5,13 @@ import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
 import { FullContentSpinner } from 'components/common/dialog/content'
-import { constants } from 'adex-models'
 import {
 	t,
 	selectMainToken,
 	selectNewAdSlot,
 	selectValidationsById,
 	selectSpinnerById,
+	selectSlotTypesSourceWithDemands,
 } from 'selectors'
 import { UPDATING_SLOTS_DEMAND } from 'constants/spinners'
 import {
@@ -21,15 +21,9 @@ import {
 	execute,
 } from 'actions'
 
-const AdTypes = constants.AdUnitsTypes.map(type => {
-	return {
-		value: type,
-		label: type.split('_')[1],
-	}
-})
-
 function AdSlotBasic({ validateId }) {
 	const newItem = useSelector(selectNewAdSlot)
+	const adTypesSource = useSelector(selectSlotTypesSourceWithDemands)
 	const { title, description, type, minPerImpression } = newItem
 
 	const spinner = useSelector(state =>
@@ -100,7 +94,7 @@ function AdSlotBasic({ validateId }) {
 							fullWidth
 							required
 							onChange={value => execute(updateNewSlot('type', value))}
-							source={AdTypes}
+							source={adTypesSource}
 							value={type + ''}
 							label={t('adType', { isProp: true })}
 							htmlId='ad-type-dd'
