@@ -40,7 +40,6 @@
     "debounce": "^1.0.2",
     "dotenv": "6.2.0",
     "dotenv-expand": "4.2.0",
-    "downshift": "^2.0.10",
     "ethereumjs-util": "^6.1.0",
     "ethers": "^4.0.27",
     "file-loader": "3.0.1",
