@@ -84,7 +84,10 @@ function CampaignReceipt() {
 								<Typography variant='h5'>{`Account ID: ${formatAddress(
 									identityAddr
 								)}`}</Typography>
-								<Typography variant='body2'>{`Invoice ID: ${itemId}`}</Typography>
+								<Typography variant='body2'>{`Invoice ID: ${formatAddress(
+									itemId,
+									'-'
+								)}`}</Typography>
 							</Box>
 							<Box>
 								<AdexIconTxt className={classnames(classes.icon)} />
