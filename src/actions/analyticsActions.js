@@ -214,7 +214,7 @@ export const updateSlotsDemand = throttle(
 		try {
 			const demandAnalytics = await getUnitsStatsByType()
 
-			return dispatch({
+			dispatch({
 				type: types.UPDATE_DEMAND_ANALYTICS,
 				value: demandAnalytics,
 			})
@@ -228,7 +228,7 @@ export const updateSlotsDemand = throttle(
 				timeout: 20000,
 			})(dispatch)
 		}
-		await updateSpinner(UPDATING_SLOTS_DEMAND, true)(dispatch)
+		await updateSpinner(UPDATING_SLOTS_DEMAND, false)(dispatch)
 	},
 	5 * 60 * 1000,
 	{ leading: true, trailing: false }
