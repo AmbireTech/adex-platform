@@ -69,7 +69,7 @@ export async function getUnitsStatsByType() {
 					false,
 					2
 				),
-				avgCPM: formatTokenAmount(avgCPM, decimals, false, 2),
+				avgCPM: formatTokenAmount(avgCPM, decimals, false, 4),
 			}
 
 			return statsByType
