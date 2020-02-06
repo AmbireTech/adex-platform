@@ -28,8 +28,8 @@ export const formatTokenAmount = (
 	}
 }
 
-export const formatAddress = (address = '') => {
-	return `${address.substring(0, 8)}...${address.substring(36, 42)}`
+export const formatAddress = (address = '', joinSymbol = '...') => {
+	return `${address.substring(0, 8)}${joinSymbol}${address.substring(36, 42)}`
 }
 
 export const formatNumberWithCommas = x => {
