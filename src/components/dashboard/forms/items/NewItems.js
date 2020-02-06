@@ -27,6 +27,7 @@ import {
 	execute,
 	validateNewCampaignFinance,
 	validateNewCampaignAdUnits,
+	validateNewSlotBasics,
 } from 'actions'
 
 const SaveBtn = ({ newItem, t, save, ...rest }) => {
@@ -186,7 +187,19 @@ export const NewSlotSteps = props => (
 		itemType={'AdSlot'}
 		stepsId={'new-slot-'}
 		stepsPages={[
-			{ title: 'SLOT_BASIC_STEP', page: AdSlotBasic },
+			{
+				title: 'SLOT_BASIC_STEP',
+				page: AdSlotBasic,
+				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
+					execute(
+						validateNewSlotBasics({
+							validateId,
+							dirty,
+							onValid,
+							onInvalid,
+						})
+					),
+			},
 			{ title: 'SLOT_PASSBACK_STEP', page: AdSlotMedia },
 			{ title: 'SLOT_TAGS_STEP', page: AdSlotTargeting },
 		]}

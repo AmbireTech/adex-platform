@@ -1,99 +1,55 @@
-import React, { Component } from 'react'
+import React, { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
-import NewAdSlotHoc from './NewAdSlotHoc'
-import Translate from 'components/translate/Translate'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
-import { utils } from 'ethers'
-import { validations, constants, schemas, Joi } from 'adex-models'
-import { selectMainToken } from 'selectors'
+import { FullContentSpinner } from 'components/common/dialog/content'
+import {
+	t,
+	selectMainToken,
+	selectNewAdSlot,
+	selectValidationsById,
+	selectSpinnerById,
+	selectSlotTypesSourceWithDemands,
+} from 'selectors'
+import { UPDATING_SLOTS_DEMAND } from 'constants/spinners'
+import {
+	updateSlotsDemandThrottled,
+	validateNumberString,
+	updateNewSlot,
+	execute,
+} from 'actions'
 
-const { adSlotPost } = schemas
+function AdSlotBasic({ validateId }) {
+	const newItem = useSelector(selectNewAdSlot)
+	const adTypesSource = useSelector(selectSlotTypesSourceWithDemands)
+	const { title, description, type, minPerImpression } = newItem
 
-const AdTypes = constants.AdUnitsTypes.map(type => {
-	return {
-		value: type,
-		label: type.split('_')[1],
-	}
-})
+	const spinner = useSelector(state =>
+		selectSpinnerById(state, UPDATING_SLOTS_DEMAND)
+	)
 
-class AdSlotBasic extends Component {
-	componentDidMount() {
-		const { newItem } = this.props
-		this.validateTitle(newItem.title, false)
-		this.validateDescription(newItem.description, false)
-		this.validateAndUpdateType(false, newItem.type)
-	}
+	const invalidFields = useSelector(
+		state => selectValidationsById(state, validateId) || {}
+	)
 
-	validateTitle(name, dirty, errMsg) {
-		const result = Joi.validate(name, adSlotPost.title)
+	useEffect(() => {
+		execute(updateSlotsDemandThrottled())
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
-		this.props.validate('title', {
-			isValid: !result.error,
-			err: { msg: result.error ? result.error.message : '' },
-			dirty: dirty,
-		})
-	}
+	const errTitle = invalidFields['title']
+	const errDescription = invalidFields['description']
+	const errMin = invalidFields['minPerImpression']
+	const errType = invalidFields['type']
+	const { symbol } = selectMainToken
 
-	validateDescription(name, dirty, errMsg) {
-		const result = Joi.validate(name, adSlotPost.description)
-
-		this.props.validate('description', {
-			isValid: !result.error,
-			err: { msg: result.error ? result.error.message : '' },
-			dirty: dirty,
-		})
-	}
-
-	validateAndUpdateType = (dirty, value) => {
-		const result = Joi.validate(value, adSlotPost.type)
-
-		this.props.handleChange('type', value)
-		this.props.validate('type', {
-			isValid: !result.error,
-			err: { msg: result.error ? result.error.message : '' },
-			dirty: dirty,
-		})
-	}
-
-	validateAmount(value = '', prop, dirty, errMsg) {
-		const isValidNumber = validations.isNumberString(value)
-		const isValid = isValidNumber && utils.parseUnits(value, 18)
-
-		this.props.validate(prop, {
-			isValid: isValid,
-			err: { msg: errMsg || 'ERR_INVALID_AMOUNT' },
-			dirty: dirty,
-		})
-	}
-
-	updateMinPerImpression(value = '') {
-		const { temp } = this.props.newItem
-		const newTemp = { ...temp }
-		newTemp.minPerImpression = value
-
-		this.props.handleChange('temp', newTemp)
-	}
-
-	render() {
-		const {
-			t,
-			newItem,
-			invalidFields,
-			handleChange,
-			// nameHelperTxt,
-			// descriptionHelperTxt
-		} = this.props
-		const { type, title, description, temp } = newItem
-		const { minPerImpression } = temp
-		const errTitle = invalidFields['title']
-		const errDescription = invalidFields['description']
-		const errMin = invalidFields['minPerImpression']
-		const { symbol } = selectMainToken
-
-		return (
-			<div>
+	return (
+		<div>
+			{spinner ? (
+				<FullContentSpinner />
+			) : (
 				<Grid container spacing={2}>
 					<Grid item sm={12}>
 						<TextField
@@ -103,9 +59,7 @@ class AdSlotBasic extends Component {
 							label={'Ad Slot ' + t('title', { isProp: true })}
 							name='name'
 							value={title}
-							onChange={ev => handleChange('title', ev.target.value)}
-							onBlur={() => this.validateTitle(title, true)}
-							onFocus={() => this.validateTitle(title, false)}
+							onChange={ev => execute(updateNewSlot('title', ev.target.value))}
 							error={errTitle && !!errTitle.dirty}
 							maxLength={120}
 							helperText={
@@ -123,9 +77,9 @@ class AdSlotBasic extends Component {
 							rows={3}
 							label={t('description', { isProp: true })}
 							value={description}
-							onChange={ev => handleChange('description', ev.target.value)}
-							onBlur={() => this.validateDescription(description, true)}
-							onFocus={() => this.validateDescription(description, false)}
+							onChange={ev =>
+								execute(updateNewSlot('description', ev.target.value))
+							}
 							error={errDescription && !!errDescription.dirty}
 							maxLength={300}
 							helperText={
@@ -139,12 +93,19 @@ class AdSlotBasic extends Component {
 						<Dropdown
 							fullWidth
 							required
-							onChange={this.validateAndUpdateType.bind(this, true)}
-							source={AdTypes}
+							onChange={value => execute(updateNewSlot('type', value))}
+							source={adTypesSource}
 							value={type + ''}
 							label={t('adType', { isProp: true })}
 							htmlId='ad-type-dd'
 							name='adType'
+							error={errType && !!errType.dirty}
+							maxLength={300}
+							helperText={
+								errType && !!errType.dirty
+									? errType.errMsg
+									: t('SLOT_TYPE_HELPER')
+							}
 						/>
 					</Grid>
 					<Grid item sm={12} md={12}>
@@ -156,8 +117,16 @@ class AdSlotBasic extends Component {
 							name='minPerImpression'
 							value={minPerImpression}
 							onChange={ev => {
-								this.validateAmount(ev.target.value, 'minPerImpression', true)
-								this.updateMinPerImpression(ev.target.value)
+								const value = ev.target.value
+								execute(updateNewSlot('minPerImpression', value))
+								execute(
+									validateNumberString({
+										validateId,
+										prop: 'minPerImpression',
+										value,
+										dirty: true,
+									})
+								)
 							}}
 							error={errMin && !!errMin.dirty}
 							maxLength={120}
@@ -169,18 +138,13 @@ class AdSlotBasic extends Component {
 						/>
 					</Grid>
 				</Grid>
-			</div>
-		)
-	}
+			)}
+		</div>
+	)
 }
 
 AdSlotBasic.propTypes = {
-	newItem: PropTypes.object.isRequired,
-	title: PropTypes.string,
-	descriptionHelperTxt: PropTypes.string,
-	nameHelperTxt: PropTypes.string,
+	validateId: PropTypes.string.isRequired,
 }
 
-const NewAdSlotBasic = NewAdSlotHoc(AdSlotBasic)
-
-export default Translate(NewAdSlotBasic)
+export default AdSlotBasic

@@ -166,6 +166,7 @@ class AdUnitTargeting extends Component {
 								dirty: false,
 							})
 						}
+						validateAutocomplete={this.validateAutocomplete}
 						// validate={validate}
 						label={label}
 						placeholder={placeholder}
@@ -223,7 +224,7 @@ class AdUnitTargeting extends Component {
 		return (
 			<div>
 				<Grid container spacing={1}>
-					<Grid item sm={12}>
+					<Grid item xs={12}>
 						{[...targets].map(
 							(
 								{
@@ -250,7 +251,8 @@ class AdUnitTargeting extends Component {
 							)
 						)}
 					</Grid>
-					<Grid item sm={12}>
+
+					<Grid item xs={12}>
 						<Dropdown
 							variant='outlined'
 							fullWidth

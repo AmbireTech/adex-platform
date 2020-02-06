@@ -544,3 +544,18 @@ export function validatePrivLevel({ validateId, privLevel, dirty }) {
 		return isValid
 	}
 }
+export function validateSchemaProp({ validateId, value, prop, schema, dirty }) {
+	return async function(dispatch, getState) {
+		const result = Joi.validate(value, schema)
+
+		const isValid = !result.error
+
+		validate(validateId, prop, {
+			isValid,
+			err: { msg: result.error ? result.error.message : '' },
+			dirty: dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}

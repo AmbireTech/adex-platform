@@ -17,8 +17,9 @@ import { getAdUnits, getAdSlots } from 'services/adex-market/actions'
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
 import { getErrorMsg } from 'helpers/errors'
+import { numStringCPMtoImpression } from 'helpers/numbers'
 import { SOURCES } from 'constants/targeting'
-import { selectRelayerConfig, selectAuthSig } from 'selectors'
+import { selectRelayerConfig, selectAuthSig, selectMainToken } from 'selectors'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -123,7 +124,7 @@ export function addSlot(item) {
 		try {
 			const state = getState()
 			const authSig = selectAuthSig(state)
-			const { mainToken } = selectRelayerConfig()
+			const mainToken = selectMainToken()
 			let fallbackUnit = null
 			if (newItem.temp.useFallback) {
 				const imageIpfs = (await getImgsIpfsFromBlob({
@@ -155,14 +156,12 @@ export function addSlot(item) {
 			newItem.fallbackUnit = fallbackUnit
 			newItem.created = Date.now()
 
-			if (newItem.temp.minPerImpression) {
+			if (newItem.minPerImpression) {
 				newItem.minPerImpression = {
-					[mainToken.address]: parseUnits(
-						newItem.temp.minPerImpression,
-						mainToken.decimals
-					)
-						.div(bigNumberify(1000))
-						.toString(),
+					[mainToken.address]: numStringCPMtoImpression({
+						numStr: newItem.minPerImpression,
+						decimals: mainToken.decimals,
+					}),
 				}
 			}
 

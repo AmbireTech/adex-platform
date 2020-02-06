@@ -1,5 +1,6 @@
 import * as types from 'constants/actionTypes'
-import { addToast, removeToast, confirmAction } from './uiActions'
+import throttle from 'lodash.throttle'
+import { addToast, removeToast, updateSpinner } from 'actions'
 import { translate } from 'services/translations/translations'
 import {
 	getValidatorAuthToken,
@@ -11,8 +12,11 @@ import {
 	VALIDATOR_ANALYTICS_EVENT_TYPES,
 	VALIDATOR_ANALYTICS_METRICS,
 } from 'constants/misc'
+import { UPDATING_SLOTS_DEMAND } from 'constants/spinners'
 import { getErrorMsg } from 'helpers/errors'
 import { fillEmptyTime } from 'helpers/timeHelpers'
+import { getUnitsStatsByType } from 'services/adex-market/aggregates'
+
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
 const analyticsParams = (timeframe, side) => {
@@ -116,7 +120,7 @@ export function updateAccountAnalytics() {
 	}
 }
 
-export function updateAccountCampaingsAnalytics() {
+export function updateAccountCampaignsAnalytics() {
 	return async function(dispatch, getState) {
 		const { account } = getState().persist
 		try {
@@ -202,4 +206,34 @@ export function resetAnalytics() {
 			type: types.RESET_ANALYTICS,
 		})
 	}
+}
+
+export const updateSlotsDemand = throttle(
+	async function(dispatch) {
+		await updateSpinner(UPDATING_SLOTS_DEMAND, true)(dispatch)
+		try {
+			const demandAnalytics = await getUnitsStatsByType()
+
+			dispatch({
+				type: types.UPDATE_DEMAND_ANALYTICS,
+				value: demandAnalytics,
+			})
+		} catch (err) {
+			console.error('ERR_SLOTS_DEMAND_ANALYTICS', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_SLOTS_DEMAND_ANALYTICS', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+		await updateSpinner(UPDATING_SLOTS_DEMAND, false)(dispatch)
+	},
+	5 * 60 * 1000,
+	{ leading: true, trailing: false }
+)
+
+export const updateSlotsDemandThrottled = () => dispatch => {
+	return updateSlotsDemand(dispatch)
 }
