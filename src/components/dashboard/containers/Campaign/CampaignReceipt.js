@@ -26,10 +26,10 @@ import classnames from 'classnames'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import { formatAddress, formatNumberWithCommas } from 'helpers/formatters'
 
-const useStyles = makeStyles(TableCelleme => {
+const useStyles = makeStyles(theme => {
 	return {
 		a4: {
-			widTableCell: '210mm',
+			width: '210mm',
 			minHeight: '297mm',
 			padding: '8mm',
 		},
@@ -38,10 +38,10 @@ const useStyles = makeStyles(TableCelleme => {
 			width: 'auto',
 		},
 		dottedDivider: {
-			borderBottom: `0.5px dotted ${TableCelleme.palette.grey.main}`,
+			borderBottom: `0.5px dotted ${theme.palette.grey.main}`,
 		},
 		solidDevider: {
-			borderBottom: `0.5px solid ${TableCelleme.palette.grey.main}`,
+			borderBottom: `0.5px solid ${theme.palette.grey.main}`,
 		},
 		breakdownTable: {
 			width: '100%',
@@ -61,7 +61,6 @@ function CampaignReceipt() {
 	const { maxClicks, maxImpressions, maxEarnings } = useSelector(state =>
 		selectCampaignStatsMaxValues(state, itemId)
 	)
-	console.log('CB', campaignBreakdown)
 	return (
 		<Box display='flex' justifyContent='center' alignContent='center'>
 			<Box
@@ -80,11 +79,11 @@ function CampaignReceipt() {
 					<Box ref={invoice} className={classnames(classes.a4)}>
 						<Box mb={2} display='flex' justifyContent='space-between'>
 							<Box>
-								<Typography variant='h4'>{`Invoice for XXX`}</Typography>
+								<Typography variant='h4'>{`Receipt for XXX`}</Typography>
 								<Typography variant='h5'>{`Account ID: ${formatAddress(
 									identityAddr
 								)}`}</Typography>
-								<Typography variant='body2'>{`Invoice ID: ${formatAddress(
+								<Typography variant='body2'>{`Receipt ID: ${formatAddress(
 									itemId,
 									'-'
 								)}`}</Typography>
@@ -105,13 +104,13 @@ function CampaignReceipt() {
 									<Typography variant='subtitle2'>
 										<strong>{`Company Details`}</strong>
 									</Typography>
-									<Typography variant='body2'>{`My Cool Company LTableCell .`}</Typography>
+									<Typography variant='body2'>{`My Cool Company Ltd.`}</Typography>
 									<Typography variant='body2'>{`First Last Name`}</Typography>
 									<Typography variant='body2'>{`Address`}</Typography>
 									<Typography variant='body2'>{`Country`}</Typography>
 								</Box>
 								<Box mb={2}>
-									<Typography variant='body2'>{`Invoice/payment date`}</Typography>
+									<Typography variant='body2'>{`Receipt/payment date`}</Typography>
 									<Typography variant='subtitle2'>
 										<strong>{`31 Aug 2017, 11:12`}</strong>
 									</Typography>
