@@ -73,10 +73,12 @@ export function validateNewSlotBasics({
 		if (isValid) {
 			isValid = await validateSchemaProp({
 				validateId,
-				value: numStringCPMtoImpression({
-					numStr: minPerImpression,
-					decimals: mainToken.decimals,
-				}),
+				value: {
+					[mainToken.address]: numStringCPMtoImpression({
+						numStr: minPerImpression,
+						decimals: mainToken.decimals,
+					}),
+				},
 				prop: 'minPerImpression',
 				schema: adSlotPost.minPerImpression,
 				dirty,
