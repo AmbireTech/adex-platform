@@ -15,9 +15,16 @@ import {
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import ReactToPrint from 'react-to-print'
-import { t, selectCampaignStatsTableData, selectMainToken } from 'selectors'
+import {
+	t,
+	selectCampaignStatsTableData,
+	selectMainToken,
+	selectCampaignStatsMaxValues,
+	selectAccountIdentityAddr,
+} from 'selectors'
 import classnames from 'classnames'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
+import { formatAddress, formatNumberWithCommas } from 'helpers/formatters'
 
 const useStyles = makeStyles(TableCelleme => {
 	return {
@@ -28,7 +35,7 @@ const useStyles = makeStyles(TableCelleme => {
 		},
 		icon: {
 			height: '3rem',
-			widTableCell: 'auto',
+			width: 'auto',
 		},
 		dottedDivider: {
 			borderBottom: `0.5px dotted ${TableCelleme.palette.grey.main}`,
@@ -37,7 +44,7 @@ const useStyles = makeStyles(TableCelleme => {
 			borderBottom: `0.5px solid ${TableCelleme.palette.grey.main}`,
 		},
 		breakdownTable: {
-			widTableCell: '100%',
+			width: '100%',
 			textAlign: 'left',
 		},
 	}
@@ -47,8 +54,12 @@ function CampaignReceipt() {
 	const { itemId } = useParams()
 	const invoice = useRef()
 	const { symbol } = useSelector(selectMainToken)
+	const identityAddr = useSelector(selectAccountIdentityAddr)
 	const campaignBreakdown = useSelector(state =>
 		selectCampaignStatsTableData(state, itemId)
+	)
+	const { maxClicks, maxImpressions, maxEarnings } = useSelector(state =>
+		selectCampaignStatsMaxValues(state, itemId)
 	)
 	console.log('CB', campaignBreakdown)
 	return (
@@ -70,8 +81,10 @@ function CampaignReceipt() {
 						<Box mb={2} display='flex' justifyContent='space-between'>
 							<Box>
 								<Typography variant='h4'>{`Invoice for XXX`}</Typography>
-								<Typography variant='h5'>{`Account ID: XXX`}</Typography>
-								<Typography variant='body2'>{`Invoice ID: XXX`}</Typography>
+								<Typography variant='h5'>{`Account ID: ${formatAddress(
+									identityAddr
+								)}`}</Typography>
+								<Typography variant='body2'>{`Invoice ID: ${itemId}`}</Typography>
 							</Box>
 							<Box>
 								<AdexIconTxt className={classnames(classes.icon)} />
@@ -110,7 +123,9 @@ function CampaignReceipt() {
 							<Box display='flex' flexDirection='column' alignItems='flex-end'>
 								<Typography variant='h6'>{`Paid`}</Typography>
 								<Typography variant='h4'>
-									<strong>{`ETH XXX`}</strong>
+									<strong>{`${formatNumberWithCommas(
+										maxEarnings
+									)} ${symbol}`}</strong>
 								</Typography>
 								<Typography variant='p'>{`Total cost in USD ($XXX)`}</Typography>
 							</Box>
@@ -129,7 +144,9 @@ function CampaignReceipt() {
 							</Box>
 							<Box>
 								<Typography variant='subtitle2'>
-									<strong>{'XXX ETH'}</strong>
+									<strong>{`${formatNumberWithCommas(
+										maxEarnings
+									)} ${symbol}`}</strong>
 								</Typography>
 							</Box>
 						</Box>
@@ -142,7 +159,7 @@ function CampaignReceipt() {
 							</Box>
 							<Box>
 								<Typography variant='subtitle2'>
-									<strong>{'XXX'}</strong>
+									<strong>{formatNumberWithCommas(maxImpressions)}</strong>
 								</Typography>
 							</Box>
 						</Box>
@@ -153,7 +170,7 @@ function CampaignReceipt() {
 							</Box>
 							<Box>
 								<Typography variant='subtitle2'>
-									<strong>{'XXX'}</strong>
+									<strong>{formatNumberWithCommas(maxClicks)}</strong>
 								</Typography>
 							</Box>
 						</Box>
@@ -204,18 +221,22 @@ function CampaignReceipt() {
 											</TableCell>
 											<TableCell>
 												<Typography variant='body2'>
-													{stats.impressions}
+													{formatNumberWithCommas(stats.impressions)}
 												</Typography>
 											</TableCell>
 											<TableCell>
-												<Typography variant='body2'>{stats.clicks}</Typography>
+												<Typography variant='body2'>
+													{formatNumberWithCommas(stats.clicks)}
+												</Typography>
 											</TableCell>
 											<TableCell>
-												<Typography variant='body2'>{stats.ctr}</Typography>
+												<Typography variant='body2'>{`${stats.ctr}%`}</Typography>
 											</TableCell>
 											<TableCell>
 												<Typography variant='body2'>
-													{stats.earnings}
+													{`${formatNumberWithCommas(
+														stats.earnings
+													)} ${symbol}`}
 												</Typography>
 											</TableCell>
 										</TableRow>
