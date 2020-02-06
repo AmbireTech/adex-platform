@@ -40,7 +40,7 @@ export default function analyticsReducer(
 			return newState
 		case UPDATE_DEMAND_ANALYTICS:
 			newState = { ...state }
-			newState.demandAnalytics = action.value
+			newState.demand = action.value
 			return newState
 		case RESET_ANALYTICS:
 			newState = { ...initialState.analytics }
