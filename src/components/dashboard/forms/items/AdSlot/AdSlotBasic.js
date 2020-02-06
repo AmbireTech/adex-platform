@@ -20,7 +20,8 @@ const AdTypes = constants.AdUnitsTypes.map(type => {
 
 class AdSlotBasic extends Component {
 	componentDidMount() {
-		const { newItem } = this.props
+		const { newItem, actions } = this.props
+		actions.updateSlotsDemandThrottled()
 		this.validateTitle(newItem.title, false)
 		this.validateDescription(newItem.description, false)
 		this.validateAndUpdateType(false, newItem.type)
