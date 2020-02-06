@@ -1,4 +1,5 @@
 import * as types from 'constants/actionTypes'
+import throttle from 'lodash.throttle'
 import { addToast, removeToast, confirmAction } from './uiActions'
 import { translate } from 'services/translations/translations'
 import {
@@ -14,6 +15,7 @@ import {
 import { getErrorMsg } from 'helpers/errors'
 import { fillEmptyTime } from 'helpers/timeHelpers'
 import { getUnitsStatsByType } from 'services/adex-market/aggregates'
+
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
 const analyticsParams = (timeframe, side) => {
@@ -205,13 +207,19 @@ export function resetAnalytics() {
 	}
 }
 
-export function updateSlotsDemand() {
-	return async function(dispatch, getState) {
+export const updateSlotsDemand = throttle(
+	async function(dispatch) {
 		const demandAnalytics = await getUnitsStatsByType()
 
 		return dispatch({
 			type: types.UPDATE_DEMAND_ANALYTICS,
 			value: demandAnalytics,
 		})
-	}
+	},
+	5 * 60 * 1000,
+	{ leading: true, trailing: false }
+)
+
+export const updateSlotsDemandThrottled = () => dispatch => {
+	return updateSlotsDemand(dispatch)
 }
