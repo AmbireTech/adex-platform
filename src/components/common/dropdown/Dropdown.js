@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
+import ListSubheader from '@material-ui/core/ListSubheader'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
@@ -66,7 +67,11 @@ function Dropdown(props) {
 					IconComponent={IconComponent}
 				>
 					{[...source].map(src => {
-						return (
+						return src.group ? (
+							<ListSubheader key={src.group.name || src.group}>
+								{src.group.name || src.group}
+							</ListSubheader>
+						) : (
 							<MenuItem
 								key={src.value.key || src.value.id || src.value}
 								value={src.value.id || src.value}
