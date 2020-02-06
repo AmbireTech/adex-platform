@@ -16,6 +16,11 @@ export const selectCampaignAnalytics = createSelector(
 	analytics => analytics.campaigns || {}
 )
 
+export const selectDemandAnalytics = createSelector(
+	[selectAnalytics],
+	analytics => analytics.demand || {}
+)
+
 export const selectCampaignAnalyticsByType = createSelector(
 	[selectCampaignAnalytics, (_, type) => type],
 	(campaignAnalytics, type) => campaignAnalytics[type] || {}
