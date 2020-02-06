@@ -224,7 +224,7 @@ class AdUnitTargeting extends Component {
 		return (
 			<div>
 				<Grid container spacing={1}>
-					<Grid item sm={12}>
+					<Grid item xs={12}>
 						{[...targets].map(
 							(
 								{
@@ -251,21 +251,22 @@ class AdUnitTargeting extends Component {
 							)
 						)}
 					</Grid>
-				</Grid>
-				<Grid item sm={12}>
-					<Dropdown
-						variant='outlined'
-						fullWidth
-						onChange={target => {
-							this.newTarget({ ...target })
-						}}
-						source={[...SourcesSelect]}
-						value={''}
-						label={t('NEW_TARGET')}
-						htmlId='ad-type-dd'
-						name='adType'
-						IconComponent={AddIcon}
-					/>
+
+					<Grid item xs={12}>
+						<Dropdown
+							variant='outlined'
+							fullWidth
+							onChange={target => {
+								this.newTarget({ ...target })
+							}}
+							source={[...SourcesSelect]}
+							value={''}
+							label={t('NEW_TARGET')}
+							htmlId='ad-type-dd'
+							name='adType'
+							IconComponent={AddIcon}
+						/>
+					</Grid>
 				</Grid>
 			</div>
 		)
