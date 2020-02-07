@@ -23,12 +23,14 @@ import {
 	selectMainToken,
 	selectAccountIdentityAddr,
 	selectCampaignTotalValues,
+	selectCampaignById,
 	selectCompanyData,
 } from 'selectors'
 import classnames from 'classnames'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import TextFieldDebounced from 'components/common/fields/TextFieldDebounced'
 import { formatAddress, formatNumberWithCommas } from 'helpers/formatters'
+import { formatUnits } from 'ethers/utils'
 
 const useStyles = makeStyles(theme => {
 	return {
@@ -57,14 +59,12 @@ function CampaignReceipt() {
 	const classes = useStyles()
 	const { itemId } = useParams()
 	const invoice = useRef()
-	const { symbol } = useSelector(selectMainToken)
+	const { symbol, decimals } = useSelector(selectMainToken)
 	const identityAddr = useSelector(selectAccountIdentityAddr)
 	const campaignBreakdown = useSelector(state =>
 		selectCampaignStatsTableData(state, itemId)
 	)
-	const { totalClicks, totalImpressions, totalEarnings } = useSelector(state =>
-		selectCampaignTotalValues(state, itemId)
-	)
+	const campaign = useSelector(state => selectCampaignById(state, itemId))
 	const { companyName, firstLastName, address, country } = useSelector(state =>
 		selectCompanyData(state)
 	)
@@ -167,7 +167,10 @@ function CampaignReceipt() {
 								<Typography variant='h6'>{`Paid`}</Typography>
 								<Typography variant='h4'>
 									<strong>{`${formatNumberWithCommas(
-										totalEarnings
+										Number(
+											formatUnits(campaign.depositAmount || '0', decimals)
+										) *
+											(campaign.status.fundsDistributedRatio / 1000)
 									)} ${symbol}`}</strong>
 								</Typography>
 								{/* <Typography variant='p'>{`Total cost in USD ($XXX)`}</Typography> */}
@@ -188,7 +191,10 @@ function CampaignReceipt() {
 							<Box>
 								<Typography variant='subtitle2'>
 									<strong>{`${formatNumberWithCommas(
-										totalEarnings
+										Number(
+											formatUnits(campaign.depositAmount || '0', decimals)
+										) *
+											(campaign.status.fundsDistributedRatio / 1000)
 									)} ${symbol}`}</strong>
 								</Typography>
 							</Box>
@@ -202,7 +208,9 @@ function CampaignReceipt() {
 							</Box>
 							<Box>
 								<Typography variant='subtitle2'>
-									<strong>{formatNumberWithCommas(totalImpressions)}</strong>
+									<strong>
+										{formatNumberWithCommas(campaign.impressions)}
+									</strong>
 								</Typography>
 							</Box>
 						</Box>
@@ -213,7 +221,7 @@ function CampaignReceipt() {
 							</Box>
 							<Box>
 								<Typography variant='subtitle2'>
-									<strong>{formatNumberWithCommas(totalClicks)}</strong>
+									<strong>{formatNumberWithCommas(campaign.clicks)}</strong>
 								</Typography>
 							</Box>
 						</Box>
