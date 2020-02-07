@@ -145,6 +145,21 @@ export const selectCampaignStatsTableData = createSelector(
 	}
 )
 
+export const selectCampaignTotalValues = createSelector(
+	(state, channelId) => selectCampaignStatsTableData(state, channelId),
+	data =>
+		data.reduce(
+			(result, current) => {
+				const newResult = { ...result }
+				newResult.totalClicks += current.clicks
+				newResult.totalImpressions += current.impressions
+				newResult.totalEarnings += current.earnings
+				return newResult
+			},
+			{ totalClicks: 0, totalImpressions: 0, totalEarnings: 0 }
+		)
+)
+
 export const selectCampaignStatsMaxValues = createSelector(
 	(state, channelId) => selectCampaignStatsTableData(state, channelId),
 	data =>
