@@ -11,7 +11,6 @@ import {
 } from 'actions'
 import {
 	selectNewTransactionById,
-	selectAccountIdentityCurrentPrivileges,
 	selectWalletAddress,
 	selectAuthType,
 } from 'selectors'
@@ -92,7 +91,6 @@ export function validatePrivilegesChange({
 			stepsId
 		)
 		const walletAddr = selectWalletAddress(state)
-		const { currentPrivileges } = selectAccountIdentityCurrentPrivileges(state)
 		const authType = selectAuthType(state)
 
 		const inputValidations = await Promise.all([
@@ -119,7 +117,6 @@ export function validatePrivilegesChange({
 				validateId,
 				setAddr,
 				walletAddr,
-				currentPrivileges,
 				warningAccepted,
 				privLevel,
 				dirty,

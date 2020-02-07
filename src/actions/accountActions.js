@@ -168,9 +168,10 @@ export function updateAccountIdentityData() {
 		const identity = selectIdentity(getState())
 
 		try {
-			const relayerData = await getIdentityData({
-				identityAddr: identity.address,
-			})
+			const relayerData =
+				(await getIdentityData({
+					identityAddr: identity.address,
+				})) || {}
 
 			const updatedIdentity = { ...identity }
 
