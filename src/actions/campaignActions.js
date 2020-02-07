@@ -161,6 +161,9 @@ export function updateUserCampaigns(updateStats = true) {
 					)
 					.map(c => {
 						if (updateStats) {
+							// TODO: investigate - this is wrong
+							// there are diffecences b/w total clicks from advanced stats
+							// and doing it like this
 							const impressions = campaignAnalytics({
 								campaign: c,
 								eventType: 'IMPRESSION',
