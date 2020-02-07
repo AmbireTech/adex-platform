@@ -77,10 +77,10 @@ export const selectAccountIdentityRoutineAuthTuple = createSelector(
 
 export const selectChannelsWithUserBalances = createSelector(
 	selectChannels,
-	({ withBalance }) => withBalance
+	({ withBalance }) => withBalance || []
 )
 
 export const selectAccountIdentityCurrentPrivileges = createSelector(
 	selectAccountIdentity,
-	({ relayerData: { currentPrivileges } }) => currentPrivileges || {}
+	({ relayerData: { currentPrivileges } = {} }) => currentPrivileges || {}
 )

@@ -313,9 +313,10 @@ export function login() {
 				})
 			}
 
-			const relayerData = await getIdentityData({
-				identityAddr: identityData.address,
-			})
+			const relayerData =
+				(await getIdentityData({
+					identityAddr: identityData.address,
+				})) || {}
 
 			const identity = {
 				...identityData,
