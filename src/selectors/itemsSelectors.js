@@ -17,6 +17,11 @@ export const selectCampaigns = createSelector(
 	campaigns => campaigns
 )
 
+export const selectCampaignById = createSelector(
+	[selectCampaigns, (_, id) => id],
+	(campaigns, id) => campaigns[id]
+)
+
 export const selectCampaignsArray = createSelector(
 	state => selectItemsArrayByType(state, 'Campaign'),
 	campaigns => campaigns
