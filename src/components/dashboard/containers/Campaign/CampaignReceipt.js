@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { useParams } from 'react-router'
 import { useSelector } from 'react-redux'
 import {
@@ -12,6 +12,7 @@ import {
 	TableBody,
 	TableRow,
 	TableCell,
+	TextField,
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import ReactToPrint from 'react-to-print'
@@ -19,8 +20,8 @@ import {
 	t,
 	selectCampaignStatsTableData,
 	selectMainToken,
-	selectCampaignStatsMaxValues,
 	selectAccountIdentityAddr,
+	selectCampaignTotalValues,
 } from 'selectors'
 import classnames from 'classnames'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
@@ -58,9 +59,14 @@ function CampaignReceipt() {
 	const campaignBreakdown = useSelector(state =>
 		selectCampaignStatsTableData(state, itemId)
 	)
-	const { maxClicks, maxImpressions, maxEarnings } = useSelector(state =>
-		selectCampaignStatsMaxValues(state, itemId)
+	const { totalClicks, totalImpressions, totalEarnings } = useSelector(state =>
+		selectCampaignTotalValues(state, itemId)
 	)
+	const [companyName, setCompanyName] = useState('')
+	const [address, setAddress] = useState('')
+	const [firstLastName, setFirstLastName] = useState('')
+	const [country, setCountry] = useState('')
+
 	return (
 		<Box display='flex' justifyContent='center' alignContent='center'>
 			<Box
@@ -69,6 +75,32 @@ function CampaignReceipt() {
 				alignContent='center'
 				flexDirection='column'
 			>
+				<Box>
+					<TextField
+						label={'Company Name'}
+						value={companyName}
+						onChange={e => setCompanyName(e.target.value)}
+						fullWidth
+					/>
+					<TextField
+						label={'First And Last Name'}
+						value={firstLastName}
+						onChange={e => setFirstLastName(e.target.value)}
+						fullWidth
+					/>
+					<TextField
+						label={'Address'}
+						value={address}
+						onChange={e => setAddress(e.target.value)}
+						fullWidth
+					/>
+					<TextField
+						label={'Country'}
+						value={country}
+						onChange={e => setCountry(e.target.value)}
+						fullWidth
+					/>
+				</Box>
 				<Box>
 					<ReactToPrint
 						trigger={() => <Button>Print</Button>}
@@ -104,10 +136,10 @@ function CampaignReceipt() {
 									<Typography variant='subtitle2'>
 										<strong>{`Company Details`}</strong>
 									</Typography>
-									<Typography variant='body2'>{`My Cool Company Ltd.`}</Typography>
-									<Typography variant='body2'>{`First Last Name`}</Typography>
-									<Typography variant='body2'>{`Address`}</Typography>
-									<Typography variant='body2'>{`Country`}</Typography>
+									<Typography variant='body2'>{companyName}</Typography>
+									<Typography variant='body2'>{firstLastName}</Typography>
+									<Typography variant='body2'>{address}</Typography>
+									<Typography variant='body2'>{country}</Typography>
 								</Box>
 								<Box mb={2}>
 									<Typography variant='body2'>{`Receipt/payment date`}</Typography>
@@ -126,10 +158,10 @@ function CampaignReceipt() {
 								<Typography variant='h6'>{`Paid`}</Typography>
 								<Typography variant='h4'>
 									<strong>{`${formatNumberWithCommas(
-										maxEarnings
+										totalEarnings
 									)} ${symbol}`}</strong>
 								</Typography>
-								<Typography variant='p'>{`Total cost in USD ($XXX)`}</Typography>
+								{/* <Typography variant='p'>{`Total cost in USD ($XXX)`}</Typography> */}
 							</Box>
 						</Box>
 						<Box display='flex' justifyContent='space-between'>
@@ -147,7 +179,7 @@ function CampaignReceipt() {
 							<Box>
 								<Typography variant='subtitle2'>
 									<strong>{`${formatNumberWithCommas(
-										maxEarnings
+										totalEarnings
 									)} ${symbol}`}</strong>
 								</Typography>
 							</Box>
@@ -161,7 +193,7 @@ function CampaignReceipt() {
 							</Box>
 							<Box>
 								<Typography variant='subtitle2'>
-									<strong>{formatNumberWithCommas(maxImpressions)}</strong>
+									<strong>{formatNumberWithCommas(totalImpressions)}</strong>
 								</Typography>
 							</Box>
 						</Box>
@@ -172,7 +204,7 @@ function CampaignReceipt() {
 							</Box>
 							<Box>
 								<Typography variant='subtitle2'>
-									<strong>{formatNumberWithCommas(maxClicks)}</strong>
+									<strong>{formatNumberWithCommas(totalClicks)}</strong>
 								</Typography>
 							</Box>
 						</Box>
