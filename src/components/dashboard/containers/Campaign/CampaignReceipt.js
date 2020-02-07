@@ -80,29 +80,33 @@ function CampaignReceipt() {
 					<TextFieldDebounced
 						label={'Company Name'}
 						value={companyName || ''}
-						item={'companyName'}
-						action={updateCompanyData}
+						debounceChange={value =>
+							execute(updateCompanyData({ companyName: value }))
+						}
 						fullWidth
 					/>
 					<TextFieldDebounced
 						label={'First And Last Name'}
 						value={firstLastName || ''}
-						item={'firstLastName'}
-						action={updateCompanyData}
+						debounceChange={value =>
+							execute(updateCompanyData({ firstLastName: value }))
+						}
 						fullWidth
 					/>
 					<TextFieldDebounced
 						label={'Address'}
 						value={address || ''}
-						item={'address'}
-						action={updateCompanyData}
+						debounceChange={value =>
+							execute(updateCompanyData({ address: value }))
+						}
 						fullWidth
 					/>
 					<TextFieldDebounced
 						label={'Country'}
 						value={country || ''}
-						item={'country'}
-						action={updateCompanyData}
+						debounceChange={value =>
+							execute(updateCompanyData({ country: value }))
+						}
 						fullWidth
 					/>
 				</Box>
