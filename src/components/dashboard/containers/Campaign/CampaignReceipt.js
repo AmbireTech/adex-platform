@@ -39,6 +39,11 @@ const useStyles = makeStyles(theme => {
 			minHeight: '297mm',
 			padding: '8mm',
 		},
+		hideOnMobile: {
+			[theme.breakpoints.down('sm')]: {
+				display: 'none',
+			},
+		},
 		icon: {
 			height: '3rem',
 			width: 'auto',
@@ -116,11 +121,11 @@ function CampaignReceipt() {
 						content={() => invoice.current}
 					/>
 				</Box>
-				<Card>
+				<Card className={classnames(classes.hideOnMobile)}>
 					<Box ref={invoice} className={classnames(classes.a4)}>
 						<Box mb={2} display='flex' justifyContent='space-between'>
 							<Box>
-								<Typography variant='h4'>{`Receipt for XXX`}</Typography>
+								<Typography variant='h4'>{`Receipt for ${companyName}`}</Typography>
 								<Typography variant='h5'>{`Account ID: ${formatAddress(
 									identityAddr
 								)}`}</Typography>
@@ -159,7 +164,7 @@ function CampaignReceipt() {
 								<Box mb={2}>
 									<Typography variant='body2'>{`Campaign ID`}</Typography>
 									<Typography variant='subtitle2'>
-										<strong>{itemId}</strong>
+										<strong>{formatAddress(itemId)}</strong>
 									</Typography>
 								</Box>
 							</Box>
