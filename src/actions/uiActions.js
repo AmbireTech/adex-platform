@@ -2,6 +2,7 @@ import React from 'react'
 import Button from '@material-ui/core/Button'
 import * as types from 'constants/actionTypes'
 import Helper from 'helpers/miscHelpers'
+import { selectCompanyData } from 'selectors'
 import { translate } from 'services/translations/translations'
 
 export function updateSpinner(item, value) {
@@ -114,6 +115,23 @@ export function updateRegistrationAllowed(search) {
 
 		if (searchParams.get('eddie') === 'themoonicorn') {
 			updateUi('allowRegistration', true)(dispatch)
+		}
+	}
+}
+
+export function updateCompanyData(newData) {
+	return async function(dispatch, getState) {
+		try {
+			const companyData = selectCompanyData(getState())
+			const newCompanyData = { ...companyData, ...newData }
+			updateUi('companyData', newCompanyData)(dispatch)
+		} catch (err) {
+			console.error('ERR_UPDATING_COMPANY_DATA', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_UPDATING_COMPANY_DATA'),
+				timeout: 20000,
+			})(dispatch)
 		}
 	}
 }

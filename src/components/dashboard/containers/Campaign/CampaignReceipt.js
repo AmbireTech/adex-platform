@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { useParams } from 'react-router'
 import { useSelector } from 'react-redux'
+import { execute, updateCompanyData } from 'actions'
 import {
 	Box,
 	Card,
@@ -22,9 +23,11 @@ import {
 	selectMainToken,
 	selectAccountIdentityAddr,
 	selectCampaignTotalValues,
+	selectCompanyData,
 } from 'selectors'
 import classnames from 'classnames'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
+import TextFieldDebounced from 'components/common/fields/TextFieldDebounced'
 import { formatAddress, formatNumberWithCommas } from 'helpers/formatters'
 
 const useStyles = makeStyles(theme => {
@@ -62,11 +65,9 @@ function CampaignReceipt() {
 	const { totalClicks, totalImpressions, totalEarnings } = useSelector(state =>
 		selectCampaignTotalValues(state, itemId)
 	)
-	const [companyName, setCompanyName] = useState('')
-	const [address, setAddress] = useState('')
-	const [firstLastName, setFirstLastName] = useState('')
-	const [country, setCountry] = useState('')
-
+	const { companyName, firstLastName, address, country } = useSelector(state =>
+		selectCompanyData(state)
+	)
 	return (
 		<Box display='flex' justifyContent='center' alignContent='center'>
 			<Box
@@ -76,28 +77,32 @@ function CampaignReceipt() {
 				flexDirection='column'
 			>
 				<Box>
-					<TextField
+					<TextFieldDebounced
 						label={'Company Name'}
-						value={companyName}
-						onChange={e => setCompanyName(e.target.value)}
+						value={companyName || ''}
+						item={'companyName'}
+						action={updateCompanyData}
 						fullWidth
 					/>
-					<TextField
+					<TextFieldDebounced
 						label={'First And Last Name'}
-						value={firstLastName}
-						onChange={e => setFirstLastName(e.target.value)}
+						value={firstLastName || ''}
+						item={'firstLastName'}
+						action={updateCompanyData}
 						fullWidth
 					/>
-					<TextField
+					<TextFieldDebounced
 						label={'Address'}
-						value={address}
-						onChange={e => setAddress(e.target.value)}
+						value={address || ''}
+						item={'address'}
+						action={updateCompanyData}
 						fullWidth
 					/>
-					<TextField
+					<TextFieldDebounced
 						label={'Country'}
-						value={country}
-						onChange={e => setCountry(e.target.value)}
+						value={country || ''}
+						item={'country'}
+						action={updateCompanyData}
 						fullWidth
 					/>
 				</Box>
