@@ -74,6 +74,7 @@ export class Campaign extends Component {
 		const units = item.spec.adUnits
 		const campaign = new CampaignModel(item)
 		const status = (campaign.status || {}).name
+		const humanFriendlyName = campaign.status.humanFriendlyName
 		const leader = campaign.spec.validators[0]
 		const follower = campaign.spec.validators[1]
 		return (
@@ -114,6 +115,10 @@ export class Campaign extends Component {
 							<Tab label={t('STATISTICS')} />
 							<Tab label={t('CAMPAIGN_UNITS')} />
 							<Tab label={t('VALIDATORS')} />
+							{humanFriendlyName === 'Closed' ||
+								(humanFriendlyName === 'Completed' && (
+									<Tab label={t('RECEIPT')} />
+								))}
 						</Tabs>
 					</AppBar>
 					<div style={{ marginTop: 10 }}>
@@ -170,6 +175,7 @@ export class Campaign extends Component {
 								</Anchor>
 							</List>
 						)}
+						{tabIndex === 3 && 'Receipt'}
 					</div>
 				</div>
 			</div>

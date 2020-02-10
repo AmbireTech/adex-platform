@@ -11,11 +11,14 @@ import CompanyDetails from './CompanyDetails'
 const useStyles = makeStyles(theme => {
 	return {}
 })
-function CampaignReceipt() {
+function CampaignReceipt(props) {
 	const classes = useStyles()
 	const invoice = useRef()
 	const { itemId } = useParams()
+	//TODO: check if campaings are finished
+	// maybe in Receipt component
 
+	const receipts = props.items || [props.itemId || itemId]
 	return (
 		<Box display='flex' justifyContent='center' alignContent='center'>
 			<Box
@@ -43,8 +46,9 @@ function CampaignReceipt() {
 				</CompanyDetails>
 				<Card className={classnames(classes.hideOnMobile)}>
 					<Box ref={invoice}>
-						{/* TODO: render multiple receipts */}
-						<Receipt campaignId={itemId} />
+						{receipts.map(campaignId => (
+							<Receipt campaignId={campaignId} />
+						))}
 					</Box>
 				</Card>
 			</Box>
