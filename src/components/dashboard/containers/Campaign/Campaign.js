@@ -22,8 +22,8 @@ import ListItemText from '@material-ui/core/ListItemText'
 import Anchor from 'components/common/anchor/anchor'
 import CampaignStatsDoughnut from 'components/dashboard/charts/campaigns/CampaignStatsDoughnut'
 import CampaignStatsBreakdownTable from 'components/dashboard/containers/Tables/CampaignStatsBreakdownTable'
+import { CampaignReceipt } from 'components/dashboard/containers/Receipt/CampaignReceipt'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
-
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 const VIEW_MODE = 'campaignRowsView'
 
@@ -175,7 +175,7 @@ export class Campaign extends Component {
 								</Anchor>
 							</List>
 						)}
-						{tabIndex === 3 && 'Receipt'}
+						{tabIndex === 3 && <CampaignReceipt itemId={campaign.id} />}
 					</div>
 				</div>
 			</div>
