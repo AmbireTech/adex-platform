@@ -61,6 +61,10 @@ function Receipt(props) {
 	const { companyName, firstLastName, address, country } = useSelector(state =>
 		selectCompanyData(state)
 	)
+	const humanFriendlyName = campaign.status.humanFriendlyName
+	const receiptReady =
+		humanFriendlyName === 'Closed' || humanFriendlyName === 'Completed'
+	if (!receiptReady) return null
 	return (
 		//TODO: Translate everything
 		//TODO: Render receipt height based on pages

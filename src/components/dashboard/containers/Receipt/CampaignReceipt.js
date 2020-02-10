@@ -37,7 +37,7 @@ function CampaignReceipt(props) {
 									color='primary'
 									fullWidth
 								>
-									{props.items ? 'Print Receipts' : 'Print Receipt'}
+									{props.items ? 'Print All Receipts' : 'Print Receipt'}
 								</Button>
 							)}
 							content={() => invoice.current}
