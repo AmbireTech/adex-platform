@@ -174,6 +174,11 @@ function Dashboard(props) {
 						/>
 						<Route
 							exact
+							path='/dashboard/advertiser/receipts'
+							component={CampaignReceipt}
+						/>
+						<Route
+							exact
 							path='/dashboard/advertiser/Campaign/receipt/:itemId'
 							component={CampaignReceipt}
 						/>

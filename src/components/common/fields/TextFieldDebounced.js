@@ -4,9 +4,10 @@ import { TextField } from '@material-ui/core'
 import debounce from 'lodash.debounce'
 
 function TextFieldDebounced(props) {
+	const { debounceChange: dChange, ...rest } = props
 	const [value, setValue] = useState(props.value)
 	const debounceChange = useCallback(
-		debounce(newValue => props.debounceChange(newValue), 1000),
+		debounce(newValue => dChange(newValue), 1000),
 		[]
 	)
 
@@ -15,7 +16,7 @@ function TextFieldDebounced(props) {
 		setValue(val)
 		debounceChange(val)
 	}
-	return <TextField {...props} value={value} onChange={handleChange} />
+	return <TextField value={value} onChange={handleChange} {...rest} />
 }
 
 TextFieldDebounced.propTypes = {

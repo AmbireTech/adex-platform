@@ -18,6 +18,7 @@ let initialState = {
 		AdSlot: new AdSlot().plainObj(),
 	},
 	currentItem: {},
+	selectedItems: [],
 	items: {
 		Campaign: {},
 		AdUnit: {},

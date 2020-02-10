@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
-import { Tooltip, IconButton, Button, Box } from '@material-ui/core'
-import { Visibility, Receipt, Print } from '@material-ui/icons'
+import { Tooltip, IconButton } from '@material-ui/core'
+import { Visibility, Receipt } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
@@ -17,12 +17,14 @@ import {
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { bigNumberify, commify } from 'ethers/utils'
+import { push } from 'connected-react-router'
+import { execute, confirmAction, updateSelectedItems } from 'actions'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 import { useTableData } from './tableHooks'
-import { ReloadData } from './toolbars'
+import { ReloadData, PrintAllReceipts } from './toolbars'
 const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(styles)
@@ -34,6 +36,13 @@ const getCols = ({
 	maxDeposit,
 	maxClicks,
 }) => [
+	{
+		name: 'id',
+		options: {
+			display: 'excluded',
+			download: false,
+		},
+	},
 	{
 		name: 'media',
 		label: t('PROP_MEDIA'),
@@ -250,12 +259,30 @@ const getOptions = ({ decimals, symbol, reloadData }) => ({
 		onDownload(buildHead, buildBody, columns, data, decimals, symbol),
 	customToolbar: () => <ReloadData handleReload={reloadData} />,
 	customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
-		//TODO: translation
-		<Box ml={2} mr={2}>
-			<Button startIcon={<Print />} variant='contained' color='primary'>
-				{'Print All Receipts'}
-			</Button>
-		</Box>
+		<PrintAllReceipts
+			handlePrintAllReceipts={() =>
+				execute(
+					confirmAction(
+						() => {
+							const selectedIndexes = selectedRows.data.map(i => i.dataIndex)
+							const selectedItems = displayData
+								.filter((item, index) => {
+									// TODO: Test if campaigns are able to receive receipt ("Closed" or "Completed")
+									if (selectedIndexes.includes(item.dataIndex)) return true
+								})
+								.map(item => item.data[0])
+							execute(updateSelectedItems(selectedItems))
+							execute(push('/dashboard/advertiser/receipts'))
+						},
+						null,
+						{
+							title: t('CONFIRM_DIALOG_PRINT_ALL_RECEIPTS_TITLE'),
+							text: t('CONFIRM_DIALOG_PRINT_ALL_RECEIPTS_TEXT'),
+						}
+					)
+				)
+			}
+		/>
 	),
 })
 
