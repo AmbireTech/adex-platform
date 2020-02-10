@@ -3,20 +3,19 @@ import PropTypes from 'prop-types'
 import { TextField } from '@material-ui/core'
 import debounce from 'lodash.debounce'
 
-function TextFieldDebounced(props) {
-	const { debounceChange: dChange, ...rest } = props
-	const [value, setValue] = useState(props.value)
-	const debounceChange = useCallback(
-		debounce(newValue => dChange(newValue), 1000),
+function TextFieldDebounced({ debounceChange, value, ...rest }) {
+	const [innerValue, setInnerValue] = useState(value)
+	const dChange = useCallback(
+		debounce(newValue => debounceChange(newValue), 1000),
 		[]
 	)
 
 	const handleChange = e => {
 		const val = e.target.value
-		setValue(val)
-		debounceChange(val)
+		setInnerValue(val)
+		dChange(val)
 	}
-	return <TextField value={value} onChange={handleChange} {...rest} />
+	return <TextField value={innerValue} onChange={handleChange} {...rest} />
 }
 
 TextFieldDebounced.propTypes = {
