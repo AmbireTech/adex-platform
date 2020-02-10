@@ -1,2 +1,2 @@
 export { default } from './Campaign'
-export { CampaignReceipt } from './CampaignReceipt'
+export { CampaignReceipt } from '../Receipt/CampaignReceipt'
