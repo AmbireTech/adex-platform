@@ -8,7 +8,7 @@ import { Print, Visibility } from '@material-ui/icons'
 import Receipt from './Receipt'
 import CompanyDetails from './CompanyDetails'
 import { useSelector } from 'react-redux'
-import { selectCampaignsForReceipt } from 'selectors'
+import { selectSelectedItems } from 'selectors'
 
 const useStyles = makeStyles(theme => {
 	return {
@@ -33,11 +33,9 @@ function CampaignReceipt(props) {
 	const classes = useStyles()
 	const invoice = useRef()
 	const { itemId } = useParams()
-	const items = useSelector(state => selectCampaignsForReceipt(state))
+	const items = useSelector(state => selectSelectedItems(state))
 	console.log('ITEMS TO CHECK: ', items)
-	//TODO: check if campaings are finished | maybe in Receipt component
 	// TODO: render back button when habing itemId
-	// TODO: redirect to campaigns if no items present
 	const selectedByPropsOrParams = props.itemId || itemId
 	const receipts = selectedByPropsOrParams ? [selectedByPropsOrParams] : items
 	if (receipts.length === 0)

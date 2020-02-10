@@ -45,6 +45,9 @@ export const selectCampaignsTableData = createSelector(
 					humanFriendlyName: item.status.humanFriendlyName,
 				},
 				id: item.id,
+				receiptAvailable:
+					item.status.humanFriendlyName === 'Closed' ||
+					item.status.humanFriendlyName === 'Completed',
 			}
 		})
 )
