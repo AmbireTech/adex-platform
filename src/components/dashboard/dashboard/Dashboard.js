@@ -17,10 +17,7 @@ import {
 	AdSlotsTable,
 	AdUnitsTable,
 } from 'components/dashboard/containers/Tables'
-import {
-	campaignsLoop,
-	campaignsLoopStats,
-} from 'services/store-data/campaigns'
+import { campaignsLoop } from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
 import {
 	analyticsLoop,
@@ -93,14 +90,12 @@ function Dashboard(props) {
 		analyticsLoop.start()
 		analyticsCampaignsLoop.start()
 		campaignsLoop.start()
-		campaignsLoopStats.start()
 		statsLoop.start()
 
 		return () => {
 			analyticsLoop.stop()
 			analyticsCampaignsLoop.stop()
 			campaignsLoop.stop()
-			campaignsLoopStats.stop()
 			statsLoop.stop()
 		}
 	}, [side])
