@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import {
@@ -45,6 +45,9 @@ const useStyles = makeStyles(theme => {
 			whiteSpace: 'normal',
 			wordBreak: 'break-all',
 		},
+		pageBreak: {
+			pageBreakAfter: 'always',
+		},
 	}
 })
 
@@ -67,7 +70,7 @@ function Receipt(props) {
 	return (
 		//TODO: Translate everything
 		//TODO: Render receipt height based on pages
-		<Fragment>
+		<Box mb={5} className={classnames(classes.pageBreak)}>
 			<Box mb={2} display='flex' justifyContent='space-between'>
 				<Box>
 					<Typography variant='h4'>{`Receipt for ${companyName ||
@@ -237,7 +240,7 @@ function Receipt(props) {
 					</TableBody>
 				</Table>
 			</Box>
-		</Fragment>
+		</Box>
 	)
 }
 
