@@ -14,6 +14,7 @@ import {
 	withdrawFromIdentity,
 	addIdentityENS,
 	setIdentityPrivilege,
+	withdrawOtherTokensFromIdentity,
 } from 'services/smart-contracts/actions/identity'
 import {
 	addDataToWallet,
@@ -207,6 +208,41 @@ export function identityWithdraw({
 				amountToWithdraw,
 				withdrawTo,
 				tokenAddress,
+			})
+
+			addToast({
+				type: 'accept',
+				label: translate('IDENTITY_WITHDRAW_NOTIFICATION', { args: [result] }),
+				timeout: 20000,
+			})(dispatch)
+		} catch (err) {
+			console.error('ERR_IDENTITY_WITHDRAW_NOTIFICATION', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_IDENTITY_WITHDRAW_NOTIFICATION', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function identityWithdrawAny({
+	amountToWithdraw,
+	withdrawTo,
+	tokenAddress,
+	tokenDecimals,
+}) {
+	return async function(dispatch, getState) {
+		try {
+			const account = selectAccount(getState())
+			const result = await withdrawOtherTokensFromIdentity({
+				account,
+				amountToWithdraw,
+				withdrawTo,
+				tokenAddress,
+				tokenDecimals,
 			})
 
 			addToast({

@@ -626,3 +626,59 @@ export async function processExecuteByFeeTokens({
 
 	return results
 }
+
+export async function withdrawOtherTokensFromIdentity({
+	account,
+	amountToWithdraw,
+	tokenAddress,
+	tokenDecimals,
+	withdrawTo,
+	getFeesOnly,
+}) {
+	const { mainToken } = selectRelayerConfig()
+	const { wallet, identity } = account
+	const { authType } = wallet
+	const { provider, Identity, getToken } = await getEthers(authType)
+	const decimals = parseInt(tokenDecimals, 10)
+
+	const identityAddr = identity.address
+
+	const toWithdraw = parseUnits(amountToWithdraw, decimals)
+
+	const withdrawTx = {
+		identityContract: identityAddr,
+		feeTokenAddr: mainToken.address,
+		to: tokenAddress,
+		data: ERC20.functions.transfer.encode([withdrawTo, toWithdraw]),
+	}
+	const txns = [withdrawTx]
+
+	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
+		txns,
+		identityAddr,
+		provider,
+		Identity,
+		account,
+		getToken,
+	})
+
+	const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken, mainToken })
+
+	if (getFeesOnly) {
+		return {
+			fees: fees.total,
+			toGet: formatTokenAmount(toWithdraw, decimals),
+		}
+	}
+
+	const result = await processExecuteByFeeTokens({
+		identityAddr,
+		txnsByFeeToken,
+		wallet,
+		provider,
+	})
+
+	return {
+		result,
+	}
+}

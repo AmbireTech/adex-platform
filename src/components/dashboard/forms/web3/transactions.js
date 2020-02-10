@@ -15,12 +15,14 @@ import {
 	withdrawFromIdentity,
 	setIdentityPrivilege,
 	addIdentityENS,
+	withdrawOtherTokensFromIdentity,
 } from 'services/smart-contracts/actions/identity'
 import {
 	addrIdentityPrivilege,
 	identityWithdraw,
 	setIdentityENS,
 	validatePrivilegesChange,
+	identityWithdrawAny,
 	execute,
 } from 'actions'
 
@@ -170,26 +172,16 @@ export const WithdrawAnyTokenFromIdentity = props => (
 			},
 		]}
 		stepsPreviewPage={{
-			title: 'PREVIEW_AND_MAKE_TR',
+			title: 'PREVIEW_AND_MAKE_TX',
 			page: TransactionPreview,
 		}}
 		saveFn={({ transaction } = {}) => {
-			return execute(
-				identityWithdraw({
-					amountToWithdraw: transaction.withdrawAmount,
-					tokenAddress: transaction.tokenAddress,
-					withdrawTo: transaction.withdrawTo,
-					tokenDecimals: transaction.tokenDecimals,
-				})
-			)
+			return execute(identityWithdrawAny(transaction))
 		}}
-		getFeesFn={({ transaction, account } = {}) => {
-			return withdrawFromIdentity({
-				amountToWithdraw: transaction.withdrawAmount,
-				tokenAddress: transaction.tokenAddress,
-				withdrawTo: transaction.withdrawTo,
+		getFeesFn={({ transaction = {}, account } = {}) => {
+			return withdrawOtherTokensFromIdentity({
+				...transaction,
 				getFeesOnly: true,
-				tokenDecimals: transaction.tokenDecimals,
 				account,
 			})
 		}}

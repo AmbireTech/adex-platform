@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { updateNav, execute } from 'actions'
 import {
 	WithdrawTokenFromIdentity,
-	// WithdrawAnyTokenFromIdentity,
+	WithdrawAnyTokenFromIdentity,
 	SetIdentityPrivilege,
 	SetAccountENS,
 } from 'components/dashboard/forms/web3/transactions'
@@ -32,6 +32,7 @@ import {
 	selectAccountStatsFormatted,
 	selectAccountIdentity,
 	selectMainToken,
+	selectEasterEggsAllowed,
 } from 'selectors'
 import { formatAddress } from 'helpers/formatters'
 import { fetchName } from 'helpers/ensHelper'
@@ -78,12 +79,12 @@ function AccountInfo() {
 	const { symbol } = useSelector(selectMainToken)
 	const {
 		walletAddress,
-		walletPrivileges = '',
 		identityAddress,
 		identityBalanceMainToken,
 		availableIdentityBalanceMainToken,
-		outstandingBalanceMainToken,
 	} = useSelector(selectAccountStatsFormatted)
+
+	const allowEasterEggs = useSelector(selectEasterEggsAllowed)
 
 	const [localWalletDownloadHref, setLocalWalletDownloadHref] = useState('')
 
@@ -301,26 +302,28 @@ function AccountInfo() {
 								/>
 							</ListItem>
 							<ListDivider />
-							{/* <ListItem>
-								<Box
-									display='flex'
-									flexWrap={'wrap'}
-									flex='1'
-									justifyContent='space-between'
-									alignItems='center'
-								>
-									<Box flexGrow='1'>
-										<Box py={1}>
-											<WithdrawAnyTokenFromIdentity
-												fullWidth
-												variant='contained'
-												color='primary'
-												size='small'
-											/>
+							{allowEasterEggs && (
+								<ListItem>
+									<Box
+										display='flex'
+										flexWrap={'wrap'}
+										flex='1'
+										justifyContent='space-between'
+										alignItems='center'
+									>
+										<Box flexGrow='1'>
+											<Box py={1}>
+												<WithdrawAnyTokenFromIdentity
+													fullWidth
+													variant='contained'
+													color='primary'
+													size='small'
+												/>
+											</Box>
 										</Box>
 									</Box>
-								</Box>
-							</ListItem> */}
+								</ListItem>
+							)}
 						</List>
 					</ExpansionPanelDetails>
 				</ExpansionPanel>
