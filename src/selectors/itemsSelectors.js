@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect'
 
 export const selectItems = state => state.persist.items
+export const selectSelectedItems = state => state.memory.selectedItems
 
 export const selectItemsByType = createSelector(
 	[selectItems, (_, itemType) => itemType],
@@ -15,6 +16,19 @@ export const selectItemsArrayByType = createSelector(
 export const selectCampaigns = createSelector(
 	state => selectItemsByType(state, 'Campaign'),
 	campaigns => campaigns
+)
+
+export const selectCampaignsForReceipt = createSelector(
+	[selectCampaigns, selectSelectedItems],
+	(campaigns, selectedItems) =>
+		Object.values(campaigns)
+			.filter(
+				c =>
+					selectedItems.includes(c.id) &&
+					(c.status.humanFriendlyName === 'Closed' ||
+						c.status.humanFriendlyName === 'Completed')
+			)
+			.map(c => c.id)
 )
 
 export const selectCampaignById = createSelector(

@@ -212,8 +212,8 @@ function Receipt(props) {
 					<TableBody>
 						{campaignBreakdown
 							.sort((a, b) => b.earnings - a.earnings)
-							.map(stats => (
-								<TableRow>
+							.map((stats, i) => (
+								<TableRow key={i}>
 									<TableCell className={classnames(classes.breakAll)}>
 										<Typography variant='body2'>{stats.website}</Typography>
 									</TableCell>
