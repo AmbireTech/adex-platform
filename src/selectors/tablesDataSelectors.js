@@ -44,6 +44,7 @@ export const selectCampaignsTableData = createSelector(
 					id: item.id,
 					humanFriendlyName: item.status.humanFriendlyName,
 				},
+				id: item.id,
 			}
 		})
 )

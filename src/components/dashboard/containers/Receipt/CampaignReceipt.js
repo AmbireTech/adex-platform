@@ -1,12 +1,14 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { useParams } from 'react-router'
-import { Box, Card, Button, Typography } from '@material-ui/core'
+import { Box, Card, Button } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import ReactToPrint from 'react-to-print'
 import classnames from 'classnames'
 import { Print } from '@material-ui/icons'
 import Receipt from './Receipt'
 import CompanyDetails from './CompanyDetails'
+import { useSelector } from 'react-redux'
+import { selectSelectedItems } from 'selectors'
 
 const useStyles = makeStyles(theme => {
 	return {}
@@ -15,10 +17,12 @@ function CampaignReceipt(props) {
 	const classes = useStyles()
 	const invoice = useRef()
 	const { itemId } = useParams()
+	const items = useSelector(state => selectSelectedItems(state))
 	//TODO: check if campaings are finished | maybe in Receipt component
 	// TODO: render back button when habing itemId
 	// TODO: hide receipts on smaller screens
-	const receipts = props.items || [props.itemId || itemId]
+	const selectedByPropsOrParams = props.itemId || itemId
+	const receipts = selectedByPropsOrParams ? [selectedByPropsOrParams] : items
 	return (
 		<Box display='flex' justifyContent='center' alignContent='center'>
 			<Box

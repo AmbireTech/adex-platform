@@ -136,6 +136,15 @@ export function updateCompanyData(newData) {
 	}
 }
 
+export function updateSelectedItems(selectedItems) {
+	return function(dispatch) {
+		return dispatch({
+			type: types.UPDATE_SELECTED_ITEMS,
+			selectedItems: selectedItems,
+		})
+	}
+}
+
 export function refreshCacheAndReload({ version, notification = false }) {
 	return function(dispatch) {
 		try {

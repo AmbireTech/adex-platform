@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react'
-import IconButton from '@material-ui/core/IconButton'
-import Tooltip from '@material-ui/core/Tooltip'
-import RefreshIcon from '@material-ui/icons/Refresh'
+import { IconButton, Tooltip, Box, Button } from '@material-ui/core'
+import { Refresh, Receipt, Print } from '@material-ui/icons'
 import { t } from 'selectors'
 
 export function ReloadData({ handleReload }) {
@@ -9,8 +8,39 @@ export function ReloadData({ handleReload }) {
 		<Fragment>
 			<Tooltip title={t('RELOAD_DATA')}>
 				<IconButton onClick={handleReload}>
-					<RefreshIcon />
+					<Refresh />
 				</IconButton>
+			</Tooltip>
+		</Fragment>
+	)
+}
+
+export function ViewAllReceipts({ handleViewAllReceipts }) {
+	return (
+		<Fragment>
+			<Tooltip title={t('VIEW_ALL_RECEIPTS_DATA')}>
+				<IconButton onClick={handleViewAllReceipts}>
+					<Receipt />
+				</IconButton>
+			</Tooltip>
+		</Fragment>
+	)
+}
+
+export function PrintAllReceipts({ handlePrintAllReceipts }) {
+	return (
+		<Fragment>
+			<Tooltip title={t('PRINT_ALL_RECEIPTS_DATA')}>
+				<Box ml={2} mr={2}>
+					<Button
+						startIcon={<Print />}
+						onClick={handlePrintAllReceipts}
+						variant='contained'
+						color='primary'
+					>
+						{t('PRINT_ALL_RECEIPTS_DATA')}
+					</Button>
+				</Box>
 			</Tooltip>
 		</Fragment>
 	)
