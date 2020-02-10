@@ -437,28 +437,25 @@ export async function getIdentityTxnsWithNoncesAndFees({
 
 	Object.keys(txnsByFeeToken).forEach(key => {
 		txnsByFeeToken[key] = txnsByFeeToken[key].map(tx => {
-			const {
-				routinesTxCount = 0,
-				routinesSweepTxCount = 0,
-				extraTxFeesCount = 0,
-				isSweepTx,
-			} = tx
+			const { routinesSweepTxCount = 0, extraTxFeesCount = 0, isSweepTx } = tx
 			const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
+			const txFeeAmount = isSweepTx ? feeToken.min : feeToken.minRecommended
+
 			const minFeeAmount = bigNumberify(
-				currentNonce === 0 ? feeToken.minDeploy : feeToken.min
+				currentNonce === 0 ? feeToken.minDeploy : txFeeAmount
 			)
 
-			const routinesFeeAmount = bigNumberify(routinesTxCount).mul(
+			const sweepRoutinesFeeAmount = bigNumberify(routinesSweepTxCount).mul(
 				bigNumberify(feeToken.min)
 			)
 
 			const extraFeesAmount = bigNumberify(extraTxFeesCount).mul(
-				bigNumberify(feeToken.min)
+				bigNumberify(feeToken.minRecommended)
 			)
 
 			// Total relayer fees for the transaction
 			const feeAmount = minFeeAmount
-				.add(routinesFeeAmount)
+				.add(sweepRoutinesFeeAmount)
 				.add(extraFeesAmount)
 				.toString()
 
