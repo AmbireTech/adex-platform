@@ -63,10 +63,12 @@ function Receipt(props) {
 	)
 	return (
 		//TODO: Translate everything
+		//TODO: Render receipt height based on pages
 		<Box className={classnames(classes.a4)}>
 			<Box mb={2} display='flex' justifyContent='space-between'>
 				<Box>
-					<Typography variant='h4'>{`Receipt for ${companyName}`}</Typography>
+					<Typography variant='h4'>{`Receipt for ${companyName ||
+						'...'}`}</Typography>
 					<Typography variant='h5'>{`Account ID: ${formatAddress(
 						identityAddr
 					)}`}</Typography>

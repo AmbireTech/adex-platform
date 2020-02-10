@@ -40,7 +40,9 @@ export const selectCampaignsTableData = createSelector(
 				withdrawPeriodStart:
 					spec.withdrawPeriodStart || item.withdrawPeriodStart,
 				actions: {
-					to: `/dashboard/${side}/Campaign/${item.id}`,
+					side: side,
+					id: item.id,
+					humanFriendlyName: item.status.humanFriendlyName,
 				},
 			}
 		})

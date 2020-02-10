@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
-import { Visibility } from '@material-ui/icons'
+import { Visibility, Receipt } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
@@ -179,16 +179,38 @@ const getCols = ({
 			filter: false,
 			sort: true,
 			download: false,
-			customBodyRender: ({ to }) => (
-				<Tooltip
-					title={t('LABEL_VIEW')}
-					// placement='top'
-					enterDelay={1000}
-				>
-					<RRIconButton to={to} variant='contained' aria-label='preview'>
-						<Visibility color='primary' />
-					</RRIconButton>
-				</Tooltip>
+			customBodyRender: ({ side, id, humanFriendlyName }) => (
+				<React.Fragment>
+					<Tooltip
+						title={t('LABEL_VIEW')}
+						// placement='top'
+						enterDelay={1000}
+					>
+						<RRIconButton
+							to={`/dashboard/${side}/Campaign/${id}`}
+							variant='contained'
+							aria-label='preview'
+						>
+							<Visibility color='primary' />
+						</RRIconButton>
+					</Tooltip>
+					{humanFriendlyName === 'Closed' ||
+						(humanFriendlyName === 'Completed' && (
+							<Tooltip
+								title={t('RECEIPT_VIEW')}
+								// placement='top'
+								enterDelay={1000}
+							>
+								<RRIconButton
+									to={`/dashboard/${side}/Campaign/receipt/${id}`}
+									variant='contained'
+									aria-label='receip'
+								>
+									<Receipt color='primary' />
+								</RRIconButton>
+							</Tooltip>
+						))}
+				</React.Fragment>
 			),
 		},
 	},
