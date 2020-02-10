@@ -213,7 +213,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 				})
 
 				const outstandingAvailable = outstanding.sub(
-					feeTokenWhitelist[channel.depositAsset].min
+					bigNumberify(feeTokenWhitelist[channel.depositAsset].min)
 				)
 
 				return {
@@ -231,7 +231,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 	const eligible = all.filter(x => {
 		return (
 			x.outstanding.gt(
-				bigNumberify(routineWithdrawTokens[x.channel.depositAsset].minWeekly)
+				bigNumberify(routineWithdrawTokens[x.channel.depositAsset].minPlatform)
 			) && x.outstandingAvailable.gt(bigNumberify('0'))
 		)
 	})
@@ -301,7 +301,6 @@ function getSweepExecuteRoutineTx({ txns, identityAddr, routineAuthTuple }) {
 		to: identityAddr,
 		data,
 		withdrawAmountByToken,
-		routinesTxCount: routineOpts.length,
 		routinesSweepTxCount: routineOpts.length,
 	}
 
