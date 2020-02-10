@@ -5,6 +5,7 @@ const REGISTRATION_OPEN = process.env.REGISTRATION_OPEN === 'true'
 export const selectNavTitle = state => state.memory.nav.navTitle
 export const selectSide = state => state.memory.nav.side
 export const selectUi = state => state.persist.ui
+export const selectSelectedItems = state => state.memory.selectedItems
 export const selectSpinners = state => state.memory.spinners
 
 export const selectCompanyData = createSelector(

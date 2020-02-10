@@ -27,7 +27,7 @@ export function ViewAllReceipts({ handleViewAllReceipts }) {
 	)
 }
 
-export function PrintAllReceipts({ handlePrintAllReceipts }) {
+export function PrintAllReceipts({ handlePrintAllReceipts, disabled }) {
 	return (
 		<Fragment>
 			<Tooltip title={t('PRINT_ALL_RECEIPTS_DATA')}>
@@ -37,6 +37,7 @@ export function PrintAllReceipts({ handlePrintAllReceipts }) {
 						onClick={handlePrintAllReceipts}
 						variant='contained'
 						color='primary'
+						disabled={disabled}
 					>
 						{t('PRINT_ALL_RECEIPTS_DATA')}
 					</Button>

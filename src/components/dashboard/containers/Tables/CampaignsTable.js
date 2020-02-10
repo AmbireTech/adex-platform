@@ -44,6 +44,13 @@ const getCols = ({
 		},
 	},
 	{
+		name: 'receiptAvailable',
+		options: {
+			display: 'excluded',
+			download: false,
+		},
+	},
+	{
 		name: 'media',
 		label: t('PROP_MEDIA'),
 		options: {
@@ -258,32 +265,35 @@ const getOptions = ({ decimals, symbol, reloadData }) => ({
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data, decimals, symbol),
 	customToolbar: () => <ReloadData handleReload={reloadData} />,
-	customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
-		<PrintAllReceipts
-			handlePrintAllReceipts={() =>
-				execute(
-					confirmAction(
-						() => {
-							const selectedIndexes = selectedRows.data.map(i => i.dataIndex)
-							const selectedItems = displayData
-								.filter((item, index) => {
-									// TODO: Test if campaigns are able to receive receipt ("Closed" or "Completed")
-									if (selectedIndexes.includes(item.dataIndex)) return true
-								})
-								.map(item => item.data[0])
-							execute(updateSelectedItems(selectedItems))
-							execute(push('/dashboard/advertiser/receipts'))
-						},
-						null,
-						{
-							title: t('CONFIRM_DIALOG_PRINT_ALL_RECEIPTS_TITLE'),
-							text: t('CONFIRM_DIALOG_PRINT_ALL_RECEIPTS_TEXT'),
-						}
+	customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
+		const selectedIndexes = selectedRows.data.map(i => i.dataIndex)
+		const selectedItems = displayData
+			.filter(item => {
+				if (selectedIndexes.includes(item.dataIndex) && item.data[1])
+					return true
+			})
+			.map(item => item.data[0])
+		return (
+			<PrintAllReceipts
+				handlePrintAllReceipts={() =>
+					execute(
+						confirmAction(
+							() => {
+								execute(updateSelectedItems(selectedItems))
+								execute(push('/dashboard/advertiser/receipts'))
+							},
+							null,
+							{
+								title: t('CONFIRM_DIALOG_PRINT_ALL_RECEIPTS_TITLE'),
+								text: t('CONFIRM_DIALOG_PRINT_ALL_RECEIPTS_TEXT'),
+							}
+						)
 					)
-				)
-			}
-		/>
-	),
+				}
+				disabled={selectedItems.length === 0}
+			/>
+		)
+	},
 })
 
 function CampaignsTable(props) {
