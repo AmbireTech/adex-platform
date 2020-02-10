@@ -15,9 +15,9 @@ function CampaignReceipt(props) {
 	const classes = useStyles()
 	const invoice = useRef()
 	const { itemId } = useParams()
-	//TODO: check if campaings are finished
-	// maybe in Receipt component
-
+	//TODO: check if campaings are finished | maybe in Receipt component
+	// TODO: render back button when habing itemId
+	// TODO: hide receipts on smaller screens
 	const receipts = props.items || [props.itemId || itemId]
 	return (
 		<Box display='flex' justifyContent='center' alignContent='center'>
@@ -37,7 +37,7 @@ function CampaignReceipt(props) {
 									color='primary'
 									fullWidth
 								>
-									Print Receipts
+									{props.items ? 'Print Receipts' : 'Print Receipt'}
 								</Button>
 							)}
 							content={() => invoice.current}

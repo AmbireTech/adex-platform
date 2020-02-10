@@ -11,7 +11,7 @@ function CompanyDetails(props) {
 	)
 	return (
 		// TODO: Translate everything
-		<Box mb={3}>
+		<Box mb={3} mt={3}>
 			<Box mb={1}>
 				<Typography variant='h4'>{'Company Details'}</Typography>
 			</Box>
