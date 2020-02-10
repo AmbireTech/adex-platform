@@ -4,7 +4,6 @@ import { MOON_GRAVITY_ACCELERATION, MOON_TO_EARTH_WEIGHT } from 'constants/misc'
 
 // 30 seconds = market statusLoopTick
 const LOOP_TIMEOUT =
-	2000 ||
 	(69 - Math.floor(MOON_GRAVITY_ACCELERATION / MOON_TO_EARTH_WEIGHT)) * 500
 
 let updates = 0
