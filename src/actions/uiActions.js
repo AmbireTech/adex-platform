@@ -188,3 +188,16 @@ export function handleRedirectParams(search) {
 		}
 	}
 }
+
+export function updateEasterEggsAllowed(search) {
+	return function(dispatch) {
+		const searchParams = new URLSearchParams(search)
+
+		if (
+			searchParams.get(process.env.EASTER_EGGS_PARAM) ===
+			process.env.EASTER_EGGS_VALUE
+		) {
+			updateUi('allowEasterEggs', true)(dispatch)
+		}
+	}
+}
