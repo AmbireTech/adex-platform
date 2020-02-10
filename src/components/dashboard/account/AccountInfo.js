@@ -213,9 +213,7 @@ function AccountInfo() {
 							<ListItemText
 								className={classes.address}
 								primary={`${availableIdentityBalanceMainToken || 0} ${symbol}`}
-								secondary={t('IDENTITY_MAIN_TOKEN_BALANCE_AVAILABLE_INFO', {
-									args: [outstandingBalanceMainToken || 0, symbol],
-								})}
+								secondary={t('IDENTITY_MAIN_TOKEN_BALANCE_AVAILABLE_INFO')}
 							/>
 						</LoadingSection>
 					}
