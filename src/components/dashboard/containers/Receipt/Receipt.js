@@ -22,7 +22,11 @@ import {
 	selectCampaignById,
 	selectCompanyData,
 } from 'selectors'
-import { formatAddress, formatNumberWithCommas } from 'helpers/formatters'
+import {
+	formatAddress,
+	formatDateTime,
+	formatNumberWithCommas,
+} from 'helpers/formatters'
 import { formatUnits } from 'ethers/utils'
 
 const useStyles = makeStyles(theme => {
@@ -107,7 +111,8 @@ function Receipt(props) {
 					<Box mb={2}>
 						<Typography variant='body2'>{`Receipt/payment date`}</Typography>
 						<Typography variant='subtitle2'>
-							<strong>{`31 Aug 2017, 11:12`}</strong>
+							{/* TODO: Need a date when the campaign has beeen completed */}
+							<strong>{formatDateTime(campaign.withdrawPeriodStart)}</strong>
 						</Typography>
 					</Box>
 					<Box mb={2}>
@@ -137,7 +142,9 @@ function Receipt(props) {
 			<Box mt={2} display='flex' justifyContent='space-between'>
 				<Box>
 					<Typography variant='body2'>
-						{'From 2020-02-02 19:28, to 2020-03-31 19:28'}
+						{`From ${formatDateTime(campaign.activeFrom)}, to ${formatDateTime(
+							campaign.withdrawPeriodStart
+						)}`}
 					</Typography>
 				</Box>
 				<Box>
