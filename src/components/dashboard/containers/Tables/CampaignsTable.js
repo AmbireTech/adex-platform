@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
-import { Tooltip, IconButton } from '@material-ui/core'
-import { Visibility, Receipt } from '@material-ui/icons'
+import { Tooltip, IconButton, Button, Box } from '@material-ui/core'
+import { Visibility, Receipt, Print } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
@@ -249,6 +249,14 @@ const getOptions = ({ decimals, symbol, reloadData }) => ({
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data, decimals, symbol),
 	customToolbar: () => <ReloadData handleReload={reloadData} />,
+	customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
+		//TODO: translation
+		<Box ml={2} mr={2}>
+			<Button startIcon={<Print />} variant='contained' color='primary'>
+				{'Print All Receipts'}
+			</Button>
+		</Box>
+	),
 })
 
 function CampaignsTable(props) {
@@ -281,6 +289,8 @@ function CampaignsTable(props) {
 			data={data}
 			columns={columns}
 			options={options}
+			rowSelectable
+			toolbarEnabled
 			{...props}
 		/>
 	)
