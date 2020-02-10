@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import {
@@ -27,11 +27,6 @@ import { formatUnits } from 'ethers/utils'
 
 const useStyles = makeStyles(theme => {
 	return {
-		a4: {
-			width: '210mm',
-			minHeight: '297mm',
-			padding: '8mm',
-		},
 		icon: {
 			height: '3rem',
 			width: 'auto',
@@ -45,6 +40,10 @@ const useStyles = makeStyles(theme => {
 		breakdownTable: {
 			width: '100%',
 			textAlign: 'left',
+		},
+		breakAll: {
+			whiteSpace: 'normal',
+			wordBreak: 'break-all',
 		},
 	}
 })
@@ -68,7 +67,7 @@ function Receipt(props) {
 	return (
 		//TODO: Translate everything
 		//TODO: Render receipt height based on pages
-		<Box className={classnames(classes.a4)}>
+		<Fragment>
 			<Box mb={2} display='flex' justifyContent='space-between'>
 				<Box>
 					<Typography variant='h4'>{`Receipt for ${companyName ||
@@ -176,67 +175,69 @@ function Receipt(props) {
 				</Box>
 			</Box>
 			<Divider className={classnames(classes.dottedDivider)} />
-			<Table size='small'>
-				<TableHead>
-					<TableRow className={classnames(classes.dottedDivider)}>
-						<TableCell>
-							<Typography variant='subtitle2'>
-								<strong>{t('WEBSITE')}</strong>
-							</Typography>
-						</TableCell>
-						<TableCell>
-							<Typography variant='subtitle2'>
-								<strong>{t('LABEL_IMPRESSIONS')}</strong>
-							</Typography>
-						</TableCell>
-						<TableCell>
-							<Typography variant='subtitle2'>
-								<strong>{t('CHART_LABEL_CLICKS')}</strong>
-							</Typography>
-						</TableCell>
-						<TableCell>
-							<Typography variant='subtitle2'>
-								<strong>{t('CTR')}</strong>
-							</Typography>
-						</TableCell>
-						<TableCell>
-							<Typography variant='subtitle2'>
-								<strong>{t('WEBSITE_EARNINGS')}</strong>
-							</Typography>
-						</TableCell>
-					</TableRow>
-				</TableHead>
-				<TableBody>
-					{campaignBreakdown
-						.sort((a, b) => b.earnings - a.earnings)
-						.map(stats => (
-							<TableRow>
-								<TableCell>
-									<Typography variant='body2'>{stats.website}</Typography>
-								</TableCell>
-								<TableCell>
-									<Typography variant='body2'>
-										{formatNumberWithCommas(stats.impressions)}
-									</Typography>
-								</TableCell>
-								<TableCell>
-									<Typography variant='body2'>
-										{formatNumberWithCommas(stats.clicks)}
-									</Typography>
-								</TableCell>
-								<TableCell>
-									<Typography variant='body2'>{`${stats.ctr}%`}</Typography>
-								</TableCell>
-								<TableCell>
-									<Typography variant='body2'>
-										{`${formatNumberWithCommas(stats.earnings)} ${symbol}`}
-									</Typography>
-								</TableCell>
-							</TableRow>
-						))}
-				</TableBody>
-			</Table>
-		</Box>
+			<Box>
+				<Table size='small'>
+					<TableHead>
+						<TableRow className={classnames(classes.dottedDivider)}>
+							<TableCell>
+								<Typography variant='subtitle2'>
+									<strong>{t('WEBSITE')}</strong>
+								</Typography>
+							</TableCell>
+							<TableCell>
+								<Typography variant='subtitle2'>
+									<strong>{t('LABEL_IMPRESSIONS')}</strong>
+								</Typography>
+							</TableCell>
+							<TableCell>
+								<Typography variant='subtitle2'>
+									<strong>{t('CHART_LABEL_CLICKS')}</strong>
+								</Typography>
+							</TableCell>
+							<TableCell>
+								<Typography variant='subtitle2'>
+									<strong>{t('CTR')}</strong>
+								</Typography>
+							</TableCell>
+							<TableCell>
+								<Typography variant='subtitle2'>
+									<strong>{t('WEBSITE_EARNINGS')}</strong>
+								</Typography>
+							</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{campaignBreakdown
+							.sort((a, b) => b.earnings - a.earnings)
+							.map(stats => (
+								<TableRow>
+									<TableCell className={classnames(classes.breakAll)}>
+										<Typography variant='body2'>{stats.website}</Typography>
+									</TableCell>
+									<TableCell>
+										<Typography variant='body2'>
+											{formatNumberWithCommas(stats.impressions)}
+										</Typography>
+									</TableCell>
+									<TableCell>
+										<Typography variant='body2'>
+											{formatNumberWithCommas(stats.clicks)}
+										</Typography>
+									</TableCell>
+									<TableCell>
+										<Typography variant='body2'>{`${stats.ctr}%`}</Typography>
+									</TableCell>
+									<TableCell>
+										<Typography variant='body2'>
+											{`${formatNumberWithCommas(stats.earnings)} ${symbol}`}
+										</Typography>
+									</TableCell>
+								</TableRow>
+							))}
+					</TableBody>
+				</Table>
+			</Box>
+		</Fragment>
 	)
 }
 

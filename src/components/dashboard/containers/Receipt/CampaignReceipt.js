@@ -11,7 +11,13 @@ import { useSelector } from 'react-redux'
 import { selectSelectedItems } from 'selectors'
 
 const useStyles = makeStyles(theme => {
-	return {}
+	return {
+		a4: {
+			width: '210mm',
+			minHeight: '297mm',
+			padding: '8mm',
+		},
+	}
 })
 function CampaignReceipt(props) {
 	const classes = useStyles()
@@ -21,6 +27,7 @@ function CampaignReceipt(props) {
 	//TODO: check if campaings are finished | maybe in Receipt component
 	// TODO: render back button when habing itemId
 	// TODO: hide receipts on smaller screens
+	// TODO: redirect to campaigns if no items present
 	const selectedByPropsOrParams = props.itemId || itemId
 	const receipts = selectedByPropsOrParams ? [selectedByPropsOrParams] : items
 	return (
@@ -49,11 +56,13 @@ function CampaignReceipt(props) {
 					</Box>
 				</CompanyDetails>
 				<Card className={classnames(classes.hideOnMobile)}>
-					<Box ref={invoice}>
-						{receipts.map(campaignId => (
-							<Receipt campaignId={campaignId} />
-						))}
-					</Box>
+					{receipts.length > 0 && (
+						<Box ref={invoice} className={classnames(classes.a4)}>
+							{receipts.map(campaignId => (
+								<Receipt campaignId={campaignId} />
+							))}
+						</Box>
+					)}
 				</Card>
 			</Box>
 		</Box>
