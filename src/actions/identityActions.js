@@ -26,7 +26,7 @@ import {
 	generateSalt,
 } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
-import { selectAccount, selectIdentity } from 'selectors'
+import { selectAccount, selectIdentity, selectAuthType } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
 import {
 	validate,
@@ -44,6 +44,7 @@ import {
 	GETTING_OWNER_IDENTITIES,
 	UPLOADING_ACCOUNT_DATA,
 } from 'constants/spinners'
+import { getEthers } from 'services/smart-contracts/ethers'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -788,5 +789,33 @@ export function handleSignupLink(search) {
 			updateIdentity('email', email)(dispatch)
 			updateIdentity('emailCheck', email)(dispatch)
 		}
+	}
+}
+
+export function resolveEnsAddress({ address }) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const authType = selectAuthType(state)
+		updateSpinner(`ens-${address}`, true)(dispatch)
+
+		try {
+			const { provider } = await getEthers(authType)
+			const name = await provider.lookupAddress(address)
+			return dispatch({
+				type: types.UPDATE_RESOLVE_ENS_ADDRESS,
+				item: address,
+				value: name,
+			})
+		} catch (err) {
+			console.error('ERR_RESOLVING_ENS_ADDRESS', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_RESOLVING_ENS_ADDRESS', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+		updateSpinner(`ens-${address}`, false)(dispatch)
 	}
 }
