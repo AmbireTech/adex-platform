@@ -84,3 +84,8 @@ export const selectAccountIdentityCurrentPrivileges = createSelector(
 	selectAccountIdentity,
 	({ relayerData: { currentPrivileges } = {} }) => currentPrivileges || {}
 )
+
+export const selectWalletPrivileges = createSelector(
+	[selectAccountIdentityCurrentPrivileges, selectWalletAddress],
+	(privileges = {}, address) => privileges[address] || 0
+)
