@@ -8,7 +8,7 @@ import { Print, Visibility } from '@material-ui/icons'
 import Receipt from './Receipt'
 import CompanyDetails from './CompanyDetails'
 import { useSelector } from 'react-redux'
-import { selectSelectedItems } from 'selectors'
+import { t, selectSelectedItems } from 'selectors'
 
 const useStyles = makeStyles(theme => {
 	return {
@@ -34,8 +34,7 @@ function CampaignReceipt(props) {
 	const invoice = useRef()
 	const { itemId } = useParams()
 	const items = useSelector(state => selectSelectedItems(state))
-	console.log('ITEMS TO CHECK: ', items)
-	// TODO: render back button when habing itemId
+	// TODO: render back button
 	const selectedByPropsOrParams = props.itemId || itemId
 	const receipts = selectedByPropsOrParams ? [selectedByPropsOrParams] : items
 	if (receipts.length === 0)
@@ -59,8 +58,8 @@ function CampaignReceipt(props) {
 									fullWidth
 								>
 									{!selectedByPropsOrParams
-										? 'Print All Receipts'
-										: 'Print Receipt'}
+										? `${t('RECEIPTS_PRINT_ALL')}`
+										: `${t('RECEIPT_PRINT')}`}
 								</Button>
 							)}
 							content={() => invoice.current}
@@ -78,7 +77,7 @@ function CampaignReceipt(props) {
 						>
 							<Visibility />
 							<Typography variant='overline' display='block' gutterBottom>
-								Preview available only on desktop
+								{t('RECEIPT_PREVIEW_ONLY_DESKTOP')}
 							</Typography>
 						</Box>
 					</Box>
