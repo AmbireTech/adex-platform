@@ -82,7 +82,7 @@ function Receipt(props) {
 						args: [formatAddress(identityAddr)],
 					})}`}</Typography>
 					<Typography variant='body2'>{`${t('RECEIPT_ID', {
-						args: formatAddress(campaignId, '-'),
+						args: [formatAddress(campaignId, '-')],
 					})}`}</Typography>
 				</Box>
 				<Box>
