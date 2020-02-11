@@ -21,7 +21,6 @@
 			type="text/javascript"
 			src="https://solc-bin.ethereum.org/bin/soljson-v0.5.13+commit.5b0b510c.js"
 		></script>
-		<script src="//code.tidio.co/uunorh3olmaxanihmpkqj6owuntbei4n.js"></script>
 		<!-- Hotjar Tracking Code for www.adex.network -->
 		<script>
 			;(function(h, o, t, j, a, r) {
@@ -64,15 +63,27 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+		<!-- Load Facebook SDK for JavaScript -->
+		<div id="fb-root"></div>
 		<script>
-			const moveChatToBack = setInterval(function() {
-				const chat = document.querySelector('#tidio-chat iframe')
-				if (chat) {
-					chat.style.zIndex = 1
-					chat.style.userSelect = 'none'
-					clearInterval(moveChatToBack)
-				}
-			}, 100)
-		</script>
+		  window.fbAsyncInit = function() {
+			FB.init({
+			  xfbml            : true,
+			  version          : 'v6.0'
+			});
+		  };
+		  (function(d, s, id) {
+		  var js, fjs = d.getElementsByTagName(s)[0];
+		  if (d.getElementById(id)) return;
+		  js = d.createElement(s); js.id = id;
+		  js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
+		  fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));</script>
+		<!-- Your customer chat code -->
+		<div class="fb-customerchat"
+		  attribution=setup_tool
+		  page_id="756186427900381"
+		  theme_color="#1B75BC">
+		</div>
 	</body>
 </html>
