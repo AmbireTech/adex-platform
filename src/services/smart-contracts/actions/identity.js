@@ -250,9 +250,10 @@ function txnsByTokenWithSaiToDaiSwap({
 			tx.feeTokenAddr = feeTokenAddr
 			tx.identityContract = (tx.identityContract || identityAddr).toLowerCase()
 
-			current.txnsByFeeToken[feeTokenAddr] = (
-				current.txnsByFeeToken[feeTokenAddr] || []
-			).concat([tx])
+			current.txnsByFeeToken[feeTokenAddr] = [
+				...(current.txnsByFeeToken[feeTokenAddr] || []),
+				tx,
+			]
 
 			return current
 		},
@@ -613,6 +614,10 @@ export async function processExecuteByFeeTokens({
 			signatures,
 			identityAddr,
 			...extraData,
+		}
+
+		if (process.env.BUILD_TYPE === 'staging') {
+			console.log('data', JSON.stringify(data, null, 2))
 		}
 
 		const result = await executeTx(data)

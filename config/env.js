@@ -111,6 +111,7 @@ function getClientEnvironment(publicUrl) {
 				ADEX_HELP_URL: process.env.ADEX_HELP_URL,
 				EASTER_EGGS_PARAM: process.env.EASTER_EGGS_PARAM,
 				EASTER_EGGS_VALUE: process.env.EASTER_EGGS_VALUE,
+				BUILD_TYPE: process.env.BUILD_TYPE,
 			}
 		)
 
