@@ -72,20 +72,18 @@ function Receipt(props) {
 		humanFriendlyName === 'Closed' || humanFriendlyName === 'Completed'
 	if (!receiptReady) return null
 	return (
-		//TODO: Translate everything
-		//TODO: Render receipt height based on pages
 		<Box mb={5} className={classnames(classes.pageBreak)}>
 			<Box mb={2} display='flex' justifyContent='space-between'>
 				<Box>
-					<Typography variant='h4'>{`Receipt for ${companyName ||
-						'...'}`}</Typography>
-					<Typography variant='h5'>{`Account ID: ${formatAddress(
-						identityAddr
-					)}`}</Typography>
-					<Typography variant='body2'>{`Receipt ID: ${formatAddress(
-						campaignId,
-						'-'
-					)}`}</Typography>
+					<Typography variant='h4'>{`${t('RECEIPT_FOR', {
+						args: [companyName || '...'],
+					})}`}</Typography>
+					<Typography variant='h5'>{`${t('RECEIPT_ACCOUNT_ID', {
+						args: [formatAddress(identityAddr)],
+					})}`}</Typography>
+					<Typography variant='body2'>{`${t('RECEIPT_ID', {
+						args: formatAddress(campaignId, '-'),
+					})}`}</Typography>
 				</Box>
 				<Box>
 					<AdexIconTxt className={classnames(classes.icon)} />
@@ -101,7 +99,7 @@ function Receipt(props) {
 				<Box display='flex' flexDirection='column'>
 					<Box mb={2}>
 						<Typography variant='subtitle2'>
-							<strong>{`Company Details`}</strong>
+							<strong>{t('RECEIPT_COMPANY_DETAILS')}</strong>
 						</Typography>
 						<Typography variant='body2'>{companyName}</Typography>
 						<Typography variant='body2'>{firstLastName}</Typography>
@@ -109,25 +107,27 @@ function Receipt(props) {
 						<Typography variant='body2'>{country}</Typography>
 					</Box>
 					<Box mb={2}>
-						<Typography variant='body2'>{`Receipt/payment date`}</Typography>
+						<Typography variant='body2'>{t('RECEIPT_PAYMENT_DATE')}</Typography>
 						<Typography variant='subtitle2'>
 							{/* TODO: Need a date when the campaign has beeen completed */}
 							<strong>{formatDateTime(campaign.withdrawPeriodStart)}</strong>
 						</Typography>
 					</Box>
 					<Box mb={2}>
-						<Typography variant='body2'>{`Campaign ID`}</Typography>
+						<Typography variant='body2'>{t('RECEIPT_CAMPAIGN_ID')}</Typography>
 						<Typography variant='subtitle2'>
 							<strong>{formatAddress(campaignId)}</strong>
 						</Typography>
 					</Box>
 				</Box>
 				<Box display='flex' flexDirection='column' alignItems='flex-end'>
-					<Typography variant='h6'>{`Paid`}</Typography>
+					<Typography variant='h6'>{t('RECEIPT_PAID')}</Typography>
 					<Typography variant='h4'>
 						<strong>{`${formatNumberWithCommas(
-							Number(formatUnits(campaign.depositAmount || '0', decimals)) *
+							(
+								Number(formatUnits(campaign.depositAmount || '0', decimals)) *
 								(campaign.status.fundsDistributedRatio / 1000)
+							).toFixed(2)
 						)} ${symbol}`}</strong>
 					</Typography>
 					{/* <Typography variant='p'>{`Total cost in USD ($XXX)`}</Typography> */}
@@ -135,16 +135,19 @@ function Receipt(props) {
 			</Box>
 			<Box display='flex' justifyContent='space-between'>
 				<Box>
-					<Typography variant='h6'>{`Campaign Overview`}</Typography>
+					<Typography variant='h6'>{t('RECEIPT_CAMPAIGN_OVERVIEW')}</Typography>
 				</Box>
 			</Box>
 			<Divider className={classnames(classes.dottedDivider)} />
 			<Box mt={2} display='flex' justifyContent='space-between'>
 				<Box>
 					<Typography variant='body2'>
-						{`From ${formatDateTime(campaign.activeFrom)}, to ${formatDateTime(
-							campaign.withdrawPeriodStart
-						)}`}
+						{t('RECEIPT_FROM_TO', {
+							args: [
+								formatDateTime(campaign.activeFrom),
+								formatDateTime(campaign.withdrawPeriodStart),
+							],
+						})}
 					</Typography>
 				</Box>
 				<Box>
@@ -181,7 +184,9 @@ function Receipt(props) {
 			<Divider />
 			<Box mt={2} display='flex' justifyContent='space-between'>
 				<Box>
-					<Typography variant='h6'>{`Campaign Breakdown`}</Typography>
+					<Typography variant='h6'>
+						{t('RECEIPT_CAMPAIGN_BREAKDOWN')}
+					</Typography>
 				</Box>
 			</Box>
 			<Divider className={classnames(classes.dottedDivider)} />
