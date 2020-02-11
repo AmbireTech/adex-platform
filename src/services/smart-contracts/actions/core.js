@@ -547,7 +547,7 @@ export async function openChannel({
 		maxAvailable.toString(),
 		mainToken.decimals || 18,
 		false,
-		true
+		2
 	)
 
 	if (getFeesOnly) {
