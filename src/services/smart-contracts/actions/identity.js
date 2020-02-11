@@ -26,9 +26,13 @@ import solc from 'solcBrowser'
 import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 import ScdMcdMigrationABI from 'services/smart-contracts/abi/ScdMcdMigration'
+import { contracts } from 'services/smart-contracts/contractsCfg'
+const { AdExENSManager, ReverseRegistrar } = contracts
 
 const ERC20 = new Interface(ERC20TokenABI)
 const ScdMcdMigration = new Interface(ScdMcdMigrationABI)
+const AdExENSManagerInterface = new Interface(AdExENSManager.abi)
+const ReverseRegistrarInterface = new Interface(ReverseRegistrar.abi)
 const { SCD_MCD_MIGRATION_ADDR } = process.env
 
 export async function getIdentityDeployData({
@@ -268,17 +272,10 @@ function txnsByTokenWithSaiToDaiSwap({
 
 export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 	const { wallet, identity } = account
-	const {
-		provider,
-		MainToken,
-		getToken,
-		Identity,
-		AdExENSManager,
-		ReverseRegistrar,
-	} = await getEthers(wallet.authType)
+	const { provider, MainToken, getToken, Identity } = await getEthers(
+		wallet.authType
+	)
 	const identityAddr = identity.address
-	const AdExENSManagerInterface = new Interface(AdExENSManager.abi)
-	const ReverseRegistrarInterface = new Interface(ReverseRegistrar.abi)
 
 	const tx1 = {
 		identityContract: identityAddr,
