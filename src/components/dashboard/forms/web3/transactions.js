@@ -207,7 +207,6 @@ export const SetAccountENS = props => (
 			page: TransactionPreview,
 		}}
 		saveFn={({ transaction } = {}) => {
-			props.setIdentityEnsName(t('WAITING_FOR_TRANSACTION'))
 			return execute(
 				setIdentityENS({
 					username: transaction.setEns,
