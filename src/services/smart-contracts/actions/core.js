@@ -249,9 +249,8 @@ async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
 				const current = { ...data }
 				if (current.sum.lt(amountToSweep)) {
 					current.eligible.push(c)
+					current.sum = current.sum.add(c.outstandingAvailable)
 				}
-
-				current.sum = current.sum.add(c.outstandingAvailable)
 
 				return current
 			},
