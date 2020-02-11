@@ -33,8 +33,10 @@ import {
 	getAllItems,
 	updateSlotsDemandThrottled,
 	execute,
+	resolveEnsAddress,
 } from 'actions'
-import { t } from 'selectors'
+import { t, selectAccountIdentityAddr } from 'selectors'
+import { useSelector } from 'react-redux'
 
 const Campaigns = () => (
 	<>
@@ -78,10 +80,15 @@ const useStyles = makeStyles(styles)
 
 function Dashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
+	const address = useSelector(selectAccountIdentityAddr)
 
 	const { match } = props
 	const { side } = match.params
 	const classes = useStyles()
+
+	useEffect(() => {
+		execute(resolveEnsAddress({ address }))
+	})
 
 	useEffect(() => {
 		execute(updateSlotsDemandThrottled())
