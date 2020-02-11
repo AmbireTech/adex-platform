@@ -40,7 +40,6 @@ const getCols = ({
 		name: 'id',
 		options: {
 			display: 'excluded',
-			download: false,
 		},
 	},
 	{
@@ -56,6 +55,7 @@ const getCols = ({
 		options: {
 			filter: false,
 			sort: false,
+			download: false,
 			customBodyRender: ({ id, adUnits }) => {
 				return (
 					// TODO: Images issue some stop displaying
@@ -236,24 +236,18 @@ const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
 	const mappedData = data.map(i => ({
 		index: i.index,
 		data: [
-			i.data[0].id,
-			i.data[1].humanFriendlyName,
-			`${formatTokenAmount(
-				bigNumberify(i.data[2]).mul(1000),
-				decimals,
-				true
-			)} ${symbol}`,
-			`${((i.data[3] || 0) / 10).toFixed(2)}%`,
-			i.data[4],
-			i.data[5],
-			`${formatTokenAmount(
-				bigNumberify(i.data[6]).mul(1000),
-				decimals,
-				true
-			)} ${symbol}`,
-			formatDateTime(i.data[7]),
-			formatDateTime(i.data[8]),
+			i.data[0],
+			i.data[1],
+			i.data[2],
+			i.data[3].humanFriendlyName,
+			`${i.data[4]} ${symbol}`,
+			`${((i.data[5] || 0) / 10).toFixed(2)}%`,
+			i.data[6],
+			i.data[7],
+			i.data[8],
 			formatDateTime(i.data[9]),
+			formatDateTime(i.data[10]),
+			formatDateTime(i.data[11]),
 		],
 	}))
 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
