@@ -30,7 +30,7 @@ export function ViewAllReceipts({ handleViewAllReceipts }) {
 export function PrintAllReceipts({ handlePrintAllReceipts, disabled }) {
 	return (
 		<Fragment>
-			<Tooltip title={t('PRINT_ALL_RECEIPTS_DATA')}>
+			<Tooltip title={t('RECEIPTS_PRINT_ALL')}>
 				<Box ml={2} mr={2}>
 					<Button
 						startIcon={<Print />}
@@ -39,7 +39,7 @@ export function PrintAllReceipts({ handlePrintAllReceipts, disabled }) {
 						color='primary'
 						disabled={disabled}
 					>
-						{t('PRINT_ALL_RECEIPTS_DATA')}
+						{t('RECEIPTS_PRINT_ALL')}
 					</Button>
 				</Box>
 			</Tooltip>
