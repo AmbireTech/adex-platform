@@ -498,7 +498,6 @@ export function validatePrivilegesAddress({
 	validateId,
 	setAddr = '',
 	walletAddr = '',
-	currentPrivileges,
 	privLevel,
 	authType,
 	warningAccepted,
