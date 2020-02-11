@@ -214,11 +214,6 @@ function Receipt(props) {
 									</TableCell>
 									<TableCell>
 										<Typography variant='subtitle2'>
-											<strong>{t('CTR')}</strong>
-										</Typography>
-									</TableCell>
-									<TableCell>
-										<Typography variant='subtitle2'>
 											<strong>{t('WEBSITE_EARNINGS')}</strong>
 										</Typography>
 									</TableCell>
@@ -241,9 +236,6 @@ function Receipt(props) {
 												<Typography variant='body2'>
 													{formatNumberWithCommas(stats.clicks)}
 												</Typography>
-											</TableCell>
-											<TableCell>
-												<Typography variant='body2'>{`${stats.ctr}%`}</Typography>
 											</TableCell>
 											<TableCell>
 												<Typography variant='body2'>
