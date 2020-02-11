@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import SideNav from './SideNav'
 import TopBar from './TopBar'
 import { Route, Switch } from 'react-router'
@@ -35,21 +35,26 @@ import {
 	execute,
 	resolveEnsAddress,
 } from 'actions'
-import { t, selectAccountIdentityAddr } from 'selectors'
+import { t, selectAccountIdentityAddr, selectWalletPrivileges } from 'selectors'
 import { useSelector } from 'react-redux'
 
-const Campaigns = () => (
-	<>
-		<NewCampaignDialog
-			fabButton
-			variant='extended'
-			accent
-			color='secondary'
-			btnLabel='NEW_CAMPAIGN'
-		/>
-		<CampaignsTable />
-	</>
-)
+const Campaigns = () => {
+	const privileges = useSelector(selectWalletPrivileges)
+	const disabled = privileges <= 1
+	return (
+		<Fragment>
+			<NewCampaignDialog
+				disabled={disabled}
+				fabButton
+				variant='extended'
+				accent
+				color='secondary'
+				btnLabel='NEW_CAMPAIGN'
+			/>
+			<CampaignsTable />
+		</Fragment>
+	)
+}
 
 const AdUnits = () => (
 	<>

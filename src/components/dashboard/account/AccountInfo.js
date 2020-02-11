@@ -79,6 +79,7 @@ function AccountInfo() {
 	const { authType = '', email, password } = useSelector(selectWallet)
 	const identityAddress = useSelector(selectAccountIdentityAddr)
 	const privileges = useSelector(selectWalletPrivileges)
+	const canMakeTx = privileges > 1
 	const { symbol } = useSelector(selectMainToken)
 	const {
 		walletAddress,
@@ -165,6 +166,7 @@ function AccountInfo() {
 					right={
 						!!identityAddress && (
 							<SetAccountENS
+								disabled={!canMakeTx}
 								fullWidth
 								variant='contained'
 								color='primary'
@@ -241,6 +243,7 @@ function AccountInfo() {
 							</Box>
 							<Box py={1}>
 								<WithdrawTokenFromIdentity
+									disabled={!canMakeTx}
 									fullWidth
 									variant='contained'
 									color='primary'
@@ -276,6 +279,7 @@ function AccountInfo() {
 								}
 								right={
 									<SetIdentityPrivilege
+										disabled={!canMakeTx}
 										fullWidth
 										variant='contained'
 										color='secondary'
