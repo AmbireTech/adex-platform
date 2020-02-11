@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import { useSelector } from 'react-redux'
-import { updateNav, execute } from 'actions'
 import {
 	WithdrawTokenFromIdentity,
 	WithdrawAnyTokenFromIdentity,
@@ -25,17 +24,21 @@ import { getRecoveryWalletData } from 'services/wallet/wallet'
 import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
-import EnsAddressResolver from 'components/common/ens/EnsAddressResolver'
+import CopyIcon from '@material-ui/icons/FileCopy'
+import IconButton from '@material-ui/core/IconButton'
+import copy from 'copy-to-clipboard'
 import {
 	t,
 	selectWallet,
 	selectAccountStatsFormatted,
-	selectAccountIdentity,
+	selectAccountIdentityAddr,
+	selectWalletPrivileges,
 	selectMainToken,
 	selectEasterEggsAllowed,
+	selectEnsAddressByAddr,
 } from 'selectors'
+import { updateNav, execute, addToast } from 'actions'
 import { formatAddress } from 'helpers/formatters'
-import { fetchName } from 'helpers/ensHelper'
 // const RRButton = withReactRouterLink(Button)
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
@@ -74,15 +77,18 @@ const useStyles = makeStyles(styles)
 
 function AccountInfo() {
 	const { authType = '', email, password } = useSelector(selectWallet)
-	const identity = useSelector(selectAccountIdentity)
-	const { privileges } = identity
+	const identityAddress = useSelector(selectAccountIdentityAddr)
+	const privileges = useSelector(selectWalletPrivileges)
 	const { symbol } = useSelector(selectMainToken)
 	const {
 		walletAddress,
-		identityAddress,
 		identityBalanceMainToken,
 		availableIdentityBalanceMainToken,
 	} = useSelector(selectAccountStatsFormatted)
+
+	const identityEnsName = useSelector(state =>
+		selectEnsAddressByAddr(state, identityAddress)
+	)
 
 	const allowEasterEggs = useSelector(selectEasterEggsAllowed)
 
@@ -100,18 +106,11 @@ function AccountInfo() {
 	}
 
 	const [expanded, setExpanded] = useState(false)
-	const [ensSearching, setEnsSearching] = useState(true)
-	const [identityEnsName, setIdentityEnsName] = useState()
+
 	const classes = useStyles()
-	const canSetENS = privileges >= 2 && !ensSearching && !identityEnsName
 
 	useEffect(() => {
 		execute(updateNav('navTitle', t('ACCOUNT')))
-		async function resolveENS() {
-			setIdentityEnsName(await fetchName(identityAddress))
-			setEnsSearching(false)
-		}
-		resolveENS()
 	}, [identityAddress])
 
 	useEffect(() => {
@@ -125,7 +124,7 @@ function AccountInfo() {
 			hostLogoUrl: 'https://www.adex.network/img/Adex-logo@2x.png',
 			variant: 'auto',
 			swapAsset: symbol,
-			userAddress: identity.address,
+			userAddress: identityAddress,
 		})
 		widget.domNodes.overlay.style.zIndex = 1000
 		widget.show()
@@ -140,34 +139,41 @@ function AccountInfo() {
 			<List>
 				<AccountItem
 					left={
-						<React.Fragment>
+						<Fragment>
 							<ListItemText
 								className={classes.address}
-								secondary={
-									authType === 'demo'
-										? t('DEMO_ACCOUNT_IDENTITY_ADDRESS')
-										: t('IDENTITY_ETH_ADDR')
-								}
+								primary={identityAddress}
+								secondary={identityEnsName}
 							/>
-							<EnsAddressResolver
-								address={identityAddress}
-								name={identityEnsName}
-							/>
-						</React.Fragment>
+							<IconButton
+								color='primary'
+								onClick={() => {
+									copy(identityAddress)
+									execute(
+										addToast({
+											type: 'accept',
+											label: t('COPIED_TO_CLIPBOARD'),
+											timeout: 5000,
+										})
+									)
+								}}
+							>
+								<CopyIcon />
+							</IconButton>
+						</Fragment>
 					}
-					// right={
-					// 	canSetENS && (
-					// 		<SetAccountENS
-					// 			fullWidth
-					// 			variant='contained'
-					// 			color='primary'
-					// 			token='DAI'
-					// 			size='small'
-					// 			identityAvailable={availableIdentityBalanceMainToken}
-					// 			setIdentityEnsName={setIdentityEnsName}
-					// 		/>
-					// 	)
-					// }
+					right={
+						!!identityAddress && (
+							<SetAccountENS
+								fullWidth
+								variant='contained'
+								color='primary'
+								token='DAI'
+								size='small'
+								identityAvailable={availableIdentityBalanceMainToken}
+							/>
+						)
+					}
 				/>
 				<ListDivider />
 				<AccountItem
