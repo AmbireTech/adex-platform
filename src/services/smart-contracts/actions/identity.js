@@ -26,9 +26,13 @@ import solc from 'solcBrowser'
 import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 import ScdMcdMigrationABI from 'services/smart-contracts/abi/ScdMcdMigration'
+import { contracts } from 'services/smart-contracts/contractsCfg'
+const { AdExENSManager, ReverseRegistrar } = contracts
 
 const ERC20 = new Interface(ERC20TokenABI)
 const ScdMcdMigration = new Interface(ScdMcdMigrationABI)
+const AdExENSManagerInterface = new Interface(AdExENSManager.abi)
+const ReverseRegistrarInterface = new Interface(ReverseRegistrar.abi)
 const { SCD_MCD_MIGRATION_ADDR } = process.env
 
 export async function getIdentityDeployData({
@@ -250,9 +254,10 @@ function txnsByTokenWithSaiToDaiSwap({
 			tx.feeTokenAddr = feeTokenAddr
 			tx.identityContract = (tx.identityContract || identityAddr).toLowerCase()
 
-			current.txnsByFeeToken[feeTokenAddr] = (
-				current.txnsByFeeToken[feeTokenAddr] || []
-			).concat([tx])
+			current.txnsByFeeToken[feeTokenAddr] = [
+				...(current.txnsByFeeToken[feeTokenAddr] || []),
+				tx,
+			]
 
 			return current
 		},
@@ -267,17 +272,10 @@ function txnsByTokenWithSaiToDaiSwap({
 
 export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 	const { wallet, identity } = account
-	const {
-		provider,
-		MainToken,
-		getToken,
-		Identity,
-		AdExENSManager,
-		ReverseRegistrar,
-	} = await getEthers(wallet.authType)
+	const { provider, MainToken, getToken, Identity } = await getEthers(
+		wallet.authType
+	)
 	const identityAddr = identity.address
-	const AdExENSManagerInterface = new Interface(AdExENSManager.abi)
-	const ReverseRegistrarInterface = new Interface(ReverseRegistrar.abi)
 
 	const tx1 = {
 		identityContract: identityAddr,
@@ -437,28 +435,25 @@ export async function getIdentityTxnsWithNoncesAndFees({
 
 	Object.keys(txnsByFeeToken).forEach(key => {
 		txnsByFeeToken[key] = txnsByFeeToken[key].map(tx => {
-			const {
-				routinesTxCount = 0,
-				routinesSweepTxCount = 0,
-				extraTxFeesCount = 0,
-				isSweepTx,
-			} = tx
+			const { routinesSweepTxCount = 0, extraTxFeesCount = 0, isSweepTx } = tx
 			const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
+			const txFeeAmount = isSweepTx ? feeToken.min : feeToken.minRecommended
+
 			const minFeeAmount = bigNumberify(
-				currentNonce === 0 ? feeToken.minDeploy : feeToken.min
+				currentNonce === 0 ? feeToken.minDeploy : txFeeAmount
 			)
 
-			const routinesFeeAmount = bigNumberify(routinesTxCount).mul(
+			const sweepRoutinesFeeAmount = bigNumberify(routinesSweepTxCount).mul(
 				bigNumberify(feeToken.min)
 			)
 
 			const extraFeesAmount = bigNumberify(extraTxFeesCount).mul(
-				bigNumberify(feeToken.min)
+				bigNumberify(feeToken.minRecommended)
 			)
 
 			// Total relayer fees for the transaction
 			const feeAmount = minFeeAmount
-				.add(routinesFeeAmount)
+				.add(sweepRoutinesFeeAmount)
 				.add(extraFeesAmount)
 				.toString()
 
@@ -618,6 +613,10 @@ export async function processExecuteByFeeTokens({
 			...extraData,
 		}
 
+		if (process.env.BUILD_TYPE === 'staging') {
+			console.log('data', JSON.stringify(data, null, 2))
+		}
+
 		const result = await executeTx(data)
 
 		return {
@@ -628,4 +627,60 @@ export async function processExecuteByFeeTokens({
 	const results = await Promise.all(all)
 
 	return results
+}
+
+export async function withdrawOtherTokensFromIdentity({
+	account,
+	amountToWithdraw,
+	tokenAddress,
+	tokenDecimals,
+	withdrawTo,
+	getFeesOnly,
+}) {
+	const { mainToken } = selectRelayerConfig()
+	const { wallet, identity } = account
+	const { authType } = wallet
+	const { provider, Identity, getToken } = await getEthers(authType)
+	const decimals = parseInt(tokenDecimals, 10)
+
+	const identityAddr = identity.address
+
+	const toWithdraw = parseUnits(amountToWithdraw, decimals)
+
+	const withdrawTx = {
+		identityContract: identityAddr,
+		feeTokenAddr: mainToken.address,
+		to: tokenAddress,
+		data: ERC20.functions.transfer.encode([withdrawTo, toWithdraw]),
+	}
+	const txns = [withdrawTx]
+
+	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
+		txns,
+		identityAddr,
+		provider,
+		Identity,
+		account,
+		getToken,
+	})
+
+	const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken, mainToken })
+
+	if (getFeesOnly) {
+		return {
+			fees: fees.total,
+			toGet: formatTokenAmount(toWithdraw, decimals),
+		}
+	}
+
+	const result = await processExecuteByFeeTokens({
+		identityAddr,
+		txnsByFeeToken,
+		wallet,
+		provider,
+	})
+
+	return {
+		result,
+	}
 }

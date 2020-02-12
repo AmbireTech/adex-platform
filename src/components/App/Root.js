@@ -8,6 +8,7 @@ import {
 	execute,
 	ensureQuickWalletBackup,
 	updateRegistrationAllowed,
+	updateEasterEggsAllowed,
 	handleRedirectParams,
 	handleSignupLink,
 } from 'actions'
@@ -86,6 +87,7 @@ const Root = () => {
 	useEffect(() => {
 		execute(metamaskNetworkCheck())
 		execute(updateRegistrationAllowed(location.search))
+		execute(updateEasterEggsAllowed(location.search))
 	}, [location])
 
 	return (

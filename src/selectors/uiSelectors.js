@@ -22,3 +22,8 @@ export const selectRegistrationAllowed = createSelector(
 	selectUi,
 	({ allowRegistration }) => REGISTRATION_OPEN || !!allowRegistration
 )
+
+export const selectEasterEggsAllowed = createSelector(
+	selectUi,
+	({ allowEasterEggs }) => allowEasterEggs
+)

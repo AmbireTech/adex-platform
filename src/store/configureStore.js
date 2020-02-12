@@ -50,8 +50,11 @@ function configureStoreProd(initialState) {
 		// https://github.com/gaearon/redux-thunk#injecting-a-custom-argument
 		thunk,
 		reduxRouterMiddleware,
-		// logger,
 	]
+
+	if (process.env.BUILD_TYPE === 'staging') {
+		middlewares.push(logger)
+	}
 
 	let store = createStore(
 		rootReducer,

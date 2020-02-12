@@ -144,13 +144,15 @@ function getHumanFriendlyName(campaign) {
 	}
 }
 
-export function updateUserCampaigns(updateStats = true) {
+export function updateUserCampaigns(doUpdate) {
 	return async function(dispatch, getState) {
-		const hasAuth = selectAuth(getState())
-		const { wallet, identity } = selectAccount(getState())
+		const state = getState()
+		const hasAuth = selectAuth(state)
+		const { wallet, identity } = selectAccount(state)
 		const { authSig } = wallet
 		const { address } = identity
-		const campaignsFromStore = selectCampaigns(getState())
+		const campaignsFromStore = selectCampaigns(state)
+		const updateStats = doUpdate || !Object.keys(campaignsFromStore).length
 		const campaignPromises = []
 		if (hasAuth && authSig && address) {
 			try {

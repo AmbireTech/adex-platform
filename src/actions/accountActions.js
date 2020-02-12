@@ -129,11 +129,10 @@ export function updateAccountStats() {
 		try {
 			const { identity, wallet } = account
 			const { address } = identity
-			const withBalance =
-				(await getChannelsWithOutstanding({
-					identityAddr: address,
-					wallet,
-				})) || account.stats.withBalance
+			const withBalance = await getChannelsWithOutstanding({
+				identityAddr: address,
+				wallet,
+			})
 
 			const outstandingBalanceMainToken = await getOutstandingBalance({
 				wallet,

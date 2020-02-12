@@ -82,6 +82,7 @@ function TransactionPreview(props) {
 	const {
 		withdrawTo,
 		withdrawAmount,
+		amountToWithdraw,
 		setAddr,
 		setEns,
 		privLevel,
@@ -154,7 +155,7 @@ function TransactionPreview(props) {
 								withdrawTo={withdrawTo}
 								classes={classes}
 								feesData={feesData}
-								withdrawAmount={withdrawAmount}
+								withdrawAmount={withdrawAmount || amountToWithdraw}
 								tokenAddress={tokenAddress}
 								symbol={symbol}
 							/>

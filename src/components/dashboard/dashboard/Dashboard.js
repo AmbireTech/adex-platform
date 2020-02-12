@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import SideNav from './SideNav'
 import TopBar from './TopBar'
 import { Route, Switch } from 'react-router'
@@ -17,10 +17,7 @@ import {
 	AdSlotsTable,
 	AdUnitsTable,
 } from 'components/dashboard/containers/Tables'
-import {
-	campaignsLoop,
-	campaignsLoopStats,
-} from 'services/store-data/campaigns'
+import { campaignsLoop } from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
 import {
 	analyticsLoop,
@@ -36,21 +33,28 @@ import {
 	getAllItems,
 	updateSlotsDemandThrottled,
 	execute,
+	resolveEnsAddress,
 } from 'actions'
-import { t } from 'selectors'
+import { t, selectAccountIdentityAddr, selectWalletPrivileges } from 'selectors'
+import { useSelector } from 'react-redux'
 
-const Campaigns = () => (
-	<>
-		<NewCampaignDialog
-			fabButton
-			variant='extended'
-			accent
-			color='secondary'
-			btnLabel='NEW_CAMPAIGN'
-		/>
-		<CampaignsTable />
-	</>
-)
+const Campaigns = () => {
+	const privileges = useSelector(selectWalletPrivileges)
+	const disabled = privileges <= 1
+	return (
+		<Fragment>
+			<NewCampaignDialog
+				disabled={disabled}
+				fabButton
+				variant='extended'
+				accent
+				color='secondary'
+				btnLabel='NEW_CAMPAIGN'
+			/>
+			<CampaignsTable />
+		</Fragment>
+	)
+}
 
 const AdUnits = () => (
 	<>
@@ -81,10 +85,15 @@ const useStyles = makeStyles(styles)
 
 function Dashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
+	const address = useSelector(selectAccountIdentityAddr)
 
 	const { match } = props
 	const { side } = match.params
 	const classes = useStyles()
+
+	useEffect(() => {
+		execute(resolveEnsAddress({ address }))
+	})
 
 	useEffect(() => {
 		execute(updateSlotsDemandThrottled())
@@ -93,14 +102,12 @@ function Dashboard(props) {
 		analyticsLoop.start()
 		analyticsCampaignsLoop.start()
 		campaignsLoop.start()
-		campaignsLoopStats.start()
 		statsLoop.start()
 
 		return () => {
 			analyticsLoop.stop()
 			analyticsCampaignsLoop.stop()
 			campaignsLoop.stop()
-			campaignsLoopStats.stop()
 			statsLoop.stop()
 		}
 	}, [side])
