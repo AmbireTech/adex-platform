@@ -264,19 +264,20 @@ export function identityWithdrawAny({
 	}
 }
 
-export function ownerIdentities({ owner }) {
+export function ownerIdentities({ owner, authType }) {
 	return async function(dispatch, getState) {
 		updateSpinner(GETTING_OWNER_IDENTITIES, true)(dispatch)
 		try {
+			const { provider } = await getEthers(authType)
 			const identityData = await getOwnerIdentities({ owner })
 			const data = Object.entries(identityData).map(
 				async ([identityAddr, privLevel]) => {
 					try {
-						const data = await getIdentityData({ identityAddr })
+						const ens = await provider.lookupAddress(identityAddr)
 						return {
 							identity: identityAddr,
 							privLevel,
-							data,
+							ens,
 						}
 					} catch {
 						return null
