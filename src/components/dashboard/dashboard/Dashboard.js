@@ -24,6 +24,8 @@ import {
 	analyticsCampaignsLoop,
 } from 'services/store-data/analytics'
 import Drawer from '@material-ui/core/Drawer'
+import Box from '@material-ui/core/Box'
+import Alert from '@material-ui/lab/Alert'
 import Hidden from '@material-ui/core/Hidden'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import { makeStyles } from '@material-ui/core/styles'
@@ -34,8 +36,14 @@ import {
 	updateSlotsDemandThrottled,
 	execute,
 	resolveEnsAddress,
+	updatePrivilegesWarningAccepted,
 } from 'actions'
-import { t, selectAccountIdentityAddr, selectWalletPrivileges } from 'selectors'
+import {
+	t,
+	selectAccountIdentityAddr,
+	selectWalletPrivileges,
+	selectPrivilegesWarningAccepted,
+} from 'selectors'
 import { useSelector } from 'react-redux'
 
 const Campaigns = () => {
@@ -86,6 +94,9 @@ const useStyles = makeStyles(styles)
 function Dashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
 	const address = useSelector(selectAccountIdentityAddr)
+	const privileges = useSelector(selectWalletPrivileges)
+	const privilegesWarningAccepted = useSelector(selectPrivilegesWarningAccepted)
+	const showTxPrivLevelWarning = privileges <= 1 && !privilegesWarningAccepted
 
 	const { match } = props
 	const { side } = match.params
@@ -161,6 +172,20 @@ function Dashboard(props) {
 			<main className={classes.content}>
 				<div className={classes.contentInner}>
 					<div className={classes.toolbar} />
+					{showTxPrivLevelWarning && (
+						<Box mb={2} p={1}>
+							<Alert
+								variant='outlined'
+								severity='info'
+								onClose={() => {
+									execute(updatePrivilegesWarningAccepted(true))
+								}}
+							>
+								{t('PRIVILEGES_LEVEL_WARNING_MSG')}
+							</Alert>
+						</Box>
+					)}
+
 					<Switch>
 						<Route
 							exact
