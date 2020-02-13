@@ -11,6 +11,7 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
+import ListSubheader from '@material-ui/core/ListSubheader'
 import Button from '@material-ui/core/Button'
 import Box from '@material-ui/core/Box'
 import DownloadIcon from '@material-ui/icons/SaveAlt'
@@ -137,14 +138,21 @@ function AccountInfo() {
 
 	return (
 		<div>
-			<List>
+			<List className={classes.root}>
+				<ListSubheader>{t('ADEX_ACCOUNT')}</ListSubheader>
 				<AccountItem
 					left={
-						<Fragment>
+						<Box display='flex' flexDirection='row' flexWrap='wrap'>
 							<ListItemText
 								className={classes.address}
-								primary={identityAddress}
-								secondary={identityEnsName}
+								{...(identityEnsName && {
+									primary: identityEnsName,
+									secondary: identityAddress,
+								})}
+								{...(!identityEnsName && {
+									primary: identityAddress,
+									secondary: t('ENS_NOT_SET'),
+								})}
 							/>
 							<IconButton
 								color='primary'
@@ -161,7 +169,7 @@ function AccountInfo() {
 							>
 								<CopyIcon />
 							</IconButton>
-						</Fragment>
+						</Box>
 					}
 					right={
 						!!identityAddress && (
