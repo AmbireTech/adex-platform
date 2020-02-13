@@ -7,6 +7,7 @@ export const styles = theme => {
 		address: {
 			wordWrap: 'break-word',
 			wordBreak: 'break-all',
+			flexGrow: 0,
 		},
 		advancedList: {
 			width: '100%',
