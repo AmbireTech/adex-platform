@@ -104,7 +104,6 @@ function Dashboard(props) {
 
 	useEffect(() => {
 		execute(resolveEnsAddress({ address }))
-		execute(updatePrivilegesWarningAccepted(false))
 	})
 
 	useEffect(() => {
