@@ -120,7 +120,7 @@ function AuthMetamask(props) {
 				<TopLoading msg={t('METAMASK_WAITING_ADDR_INFO')} />
 			) : null}
 			<ContentBody>
-				<Typography variant='subheading'>{t('METAMASK_INFO')}</Typography>
+				<Typography variant='subtitle1'>{t('METAMASK_INFO')}</Typography>
 				<Box
 					display='flex'
 					flexDirection='column'
@@ -129,32 +129,34 @@ function AuthMetamask(props) {
 					width={1}
 				>
 					{!isMetamaskEthereumProvider ? (
-						<React.Fragment>
-							<Typography>
-								<span
-									dangerouslySetInnerHTML={{
-										__html: t('METAMASK_BASIC_USAGE_INFO', {
-											args: [
-												{
-													component: (
-														<Anchor
-															href={
-																isOpera
-																	? 'https://chrome.google.com/webstore/detail/nkbihfbeogaeaoehlefnkodbefgpgknn'
-																	: 'https://metamask.io/'
-															}
-															target='_blank'
-														>
-															https://metamask.io/
-														</Anchor>
-													),
-												},
-											],
-										}),
-									}}
-								/>
-							</Typography>
-							<Typography>
+						<Box mb={2}>
+							<Box>
+								<Typography>
+									<span
+										dangerouslySetInnerHTML={{
+											__html: t('METAMASK_BASIC_USAGE_INFO', {
+												args: [
+													{
+														component: (
+															<Anchor
+																href={
+																	isOpera
+																		? 'https://chrome.google.com/webstore/detail/nkbihfbeogaeaoehlefnkodbefgpgknn'
+																		: 'https://metamask.io/'
+																}
+																target='_blank'
+															>
+																https://metamask.io/
+															</Anchor>
+														),
+													},
+												],
+											}),
+										}}
+									/>
+								</Typography>
+							</Box>
+							<Box mt={1}>
 								<Anchor
 									href={
 										isOpera
@@ -170,27 +172,27 @@ function AuthMetamask(props) {
 										className={classes.dlBtnImg}
 									/>
 								</Anchor>
-							</Typography>
-						</React.Fragment>
+							</Box>
+						</Box>
 					) : (
-						<Typography>
+						<Box mb={2}>
 							<Img
 								src={METAMASK_IMG}
-								alt={'Downlad metamask'}
+								alt={'metamask logo'}
 								className={classes.dlBtnImg}
 							/>
-						</Typography>
+						</Box>
 					)}
 
 					{address ? (
 						<div className={classes.metamaskLAbel}>
 							{stats ? (
-								<div>
-									<Typography variant='subheading' color='primary'>
+								<>
+									<Typography variant='subtitle1' color='primary'>
 										{t('METAMASK_CONTINUE_TO_NEXT_STEP')}
 									</Typography>
 									<AddrItem stats={stats} addr={address} />
-								</div>
+								</>
 							) : (
 								t('AUTH_WITH_METAMASK_LABEL', { args: [address] })
 							)}

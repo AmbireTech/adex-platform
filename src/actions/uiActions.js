@@ -201,3 +201,9 @@ export function updateEasterEggsAllowed(search) {
 		}
 	}
 }
+
+export function updatePrivilegesWarningAccepted(accepted) {
+	return function(dispatch) {
+		updateUi('privilegesWarningAccepted', accepted)(dispatch)
+	}
+}

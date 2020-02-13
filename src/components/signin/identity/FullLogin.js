@@ -25,13 +25,17 @@ import {
 } from 'components/common/dialog/content'
 import { WALLET_ACTIONS_MSGS } from 'constants/misc'
 
-const getIdentitiesForDropdown = (ownerIdentities = [], t) =>
+const getIdentitiesForDropdown = (ownerIdentities = []) =>
 	ownerIdentities.map(id => {
 		return {
 			value: id.identity + '-' + id.privLevel,
-			label: t('IDENTITY_OPTION_DATA', {
-				args: [id.identity, `PRIV_${id.privLevel}_LABEL`, id.data.email || '-'],
-			}),
+			label: id.ens
+				? t('IDENTITY_OPTION_DATA_ENS', {
+						args: [`PRIV_${id.privLevel}_LABEL`, id.ens, id.identity],
+				  })
+				: t('IDENTITY_OPTION_DATA', {
+						args: [`PRIV_${id.privLevel}_LABEL`, id.identity],
+				  }),
 		}
 	})
 
@@ -61,7 +65,9 @@ function FullLogin(props) {
 	const showRegistration = useSelector(selectRegistrationAllowed)
 
 	useEffect(() => {
-		execute(updateOwnerIdentities({ owner: walletAddress }))
+		execute(
+			updateOwnerIdentities({ owner: walletAddress, authType: wallet.authType })
+		)
 		// We need it just once on mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
@@ -96,7 +102,7 @@ function FullLogin(props) {
 										onChange={val =>
 											execute(updateIdentity('identityContractAddress', val))
 										}
-										source={getIdentitiesForDropdown(ownerIdentities, t)}
+										source={getIdentitiesForDropdown(ownerIdentities)}
 										value={identityContractAddress || ''}
 										htmlId='label-identityContractAddress'
 										fullWidth

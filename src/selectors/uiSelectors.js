@@ -27,3 +27,8 @@ export const selectEasterEggsAllowed = createSelector(
 	selectUi,
 	({ allowEasterEggs }) => allowEasterEggs
 )
+
+export const selectPrivilegesWarningAccepted = createSelector(
+	selectUi,
+	({ privilegesWarningAccepted }) => !!privilegesWarningAccepted
+)

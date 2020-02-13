@@ -4,6 +4,7 @@ import Translate from 'components/translate/Translate'
 import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
 import Button from '@material-ui/core/Button'
+import Box from '@material-ui/core/Box'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import Typography from '@material-ui/core/Typography'
@@ -147,53 +148,64 @@ class AuthTrezor extends Component {
 						) : null}
 
 						<ContentBody>
-							<Typography variant='subheading'>{t('TREZOR_INFO')}</Typography>
-							<Typography>
-								<span
-									dangerouslySetInnerHTML={{
-										__html: t('TREZOR_BASIC_USAGE_INFO', {
-											args: [
-												{
-													component: (
-														<Anchor href='https://trezor.io/' target='_blank'>
-															TREZOR Wallet
-														</Anchor>
-													),
-												},
-												{
-													component: (
-														<Anchor
-															href='https://wallet.trezor.io/#/bridge'
-															target='_blank'
-														>
-															TREZOR Bridge
-														</Anchor>
-													),
-												},
-											],
-										}),
-									}}
-								/>
-							</Typography>
-							<Typography>
-								<Anchor href='https://trezor.io' target='_blank'>
-									<Img
-										src={TREZOR_DL_IMG}
-										alt={'https://trezor.io'}
-										className={classes.dlBtnImg}
-									/>
-								</Anchor>
-							</Typography>
+							<Box
+								display='flex'
+								flexDirection='column'
+								alignItems='center'
+								justifyContent='center'
+								width={1}
+							>
+								<Typography variant='subtitle1' gutterBottom>
+									{t('TREZOR_INFO')}
+								</Typography>
 
-							{!this.state.waitingAddrsData && !this.state.waitingTrezorAction && (
-								<Button
-									onClick={this.connectTrezor}
-									variant='contained'
-									color='primary'
-								>
-									{t('CONNECT_WITH_TREZOR')}
-								</Button>
-							)}
+								<Typography gutterBottom>
+									<span
+										dangerouslySetInnerHTML={{
+											__html: t('TREZOR_BASIC_USAGE_INFO', {
+												args: [
+													{
+														component: (
+															<Anchor href='https://trezor.io/' target='_blank'>
+																TREZOR Wallet
+															</Anchor>
+														),
+													},
+													{
+														component: (
+															<Anchor
+																href='https://wallet.trezor.io/#/bridge'
+																target='_blank'
+															>
+																TREZOR Bridge
+															</Anchor>
+														),
+													},
+												],
+											}),
+										}}
+									/>
+								</Typography>
+								<Box mb={2}>
+									<Anchor href='https://trezor.io' target='_blank'>
+										<Img
+											src={TREZOR_DL_IMG}
+											alt={'https://trezor.io'}
+											className={classes.dlBtnImg}
+										/>
+									</Anchor>
+								</Box>
+								{!this.state.waitingAddrsData &&
+									!this.state.waitingTrezorAction && (
+										<Button
+											onClick={this.connectTrezor}
+											variant='contained'
+											color='primary'
+										>
+											{t('CONNECT_WITH_TREZOR')}
+										</Button>
+									)}
+							</Box>
 						</ContentBody>
 					</ContentBox>
 				)}

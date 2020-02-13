@@ -146,7 +146,7 @@ class AuthLedger extends Component {
 						) : null}
 
 						<ContentBody>
-							<Typography variant='subheading'>{t('LEDGER_INFO')}</Typography>
+							<Typography variant='subtitle1'>{t('LEDGER_INFO')}</Typography>
 							<Typography>
 								<span
 									dangerouslySetInnerHTML={{
@@ -167,15 +167,13 @@ class AuthLedger extends Component {
 									}}
 								/>
 							</Typography>
-							<Typography>
-								<Anchor href='https://www.ledgerwallet.com/' target='_blank'>
-									<Img
-										src={LEDGER_DL_IMG}
-										alt={'https://www.ledgerwallet.com/'}
-										className={classes.dlBtnImg}
-									/>
-								</Anchor>
-							</Typography>
+							<Anchor href='https://www.ledgerwallet.com/' target='_blank'>
+								<Img
+									src={LEDGER_DL_IMG}
+									alt={'https://www.ledgerwallet.com/'}
+									className={classes.dlBtnImg}
+								/>
+							</Anchor>
 
 							{!this.state.waitingAddrsData && !this.state.waitingLedgerAction && (
 								<Button
