@@ -81,6 +81,14 @@ export const theme = createMuiTheme({
 				borderRadius: 0,
 			},
 		},
+		MuiAlert: {
+			root: {
+				borderRadius: 0,
+			},
+			outlined: {
+				borderRadius: 0,
+			},
+		},
 		// MuiStepIcon: {
 		//     root: {
 		//         color: 'yellow',
