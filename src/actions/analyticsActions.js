@@ -16,6 +16,8 @@ import { UPDATING_SLOTS_DEMAND } from 'constants/spinners'
 import { getErrorMsg } from 'helpers/errors'
 import { fillEmptyTime } from 'helpers/timeHelpers'
 import { getUnitsStatsByType } from 'services/adex-market/aggregates'
+import { selectChannelsWithUserBalances } from 'selectors'
+import { bigNumberify } from 'ethers/utils'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
@@ -29,6 +31,8 @@ const analyticsParams = (timeframe, side) => {
 				timeframe,
 				side,
 				eventType,
+				...(side === 'publisher' &&
+					metric === 'eventPayouts' && { segmentByChannel: true }),
 			})
 		)
 	)
@@ -58,11 +62,43 @@ function checkAccountChanged(getState, account) {
 	return accountChanged
 }
 
+function aggrByChannelsSegments(aggr, channels) {
+	return Object.values(
+		aggr.reduce((data, a) => {
+			const c = channels[a.channelId] || {}
+			const value = bigNumberify(a.value || 1)
+				.div(c.balNum || 1)
+				.mul(bigNumberify(c.depositAmount || 1))
+
+			data[a.time] = data[a.time] || { time: a.time }
+			data[a.time].value = value.add(bigNumberify(data[a.time].value || 1))
+
+			return data
+		}, {})
+	)
+}
+
+function withBalanceById(withBalance) {
+	return {
+		...withBalance.map(c => {
+			const balNum = bigNumberify(c.channel.depositAmount)
+				// TODO: get from relayer cfg
+				.sub(bigNumberify('69000000000000000'))
+				.sub(bigNumberify(c.channel.spec.validators[1].fee))
+
+			return { [c.channel.id.toLowerCase()]: { ...c.channel, balNum } }
+		}),
+	}
+}
+
 export function updateAccountAnalytics() {
 	return async function(dispatch, getState) {
 		const { account, analytics } = getState().persist
 		const { side } = getState().memory.nav
 		const { timeframe } = analytics
+		// TODO: get channels that are needed
+		const withBalance = selectChannelsWithUserBalances()
+		const byId = withBalanceById(withBalance)
 		try {
 			const toastId = addToast({
 				type: 'warning',
@@ -90,8 +126,16 @@ export function updateAccountAnalytics() {
 					...opts,
 					leaderAuth,
 				})
-					.then(res => {
-						res.aggr = fillEmptyTime(res.aggr, timeframe)
+					.then(({ aggregates, metric }) => {
+						const aggrByChannelSegments =
+							side === 'publisher' && metric === 'eventPayouts'
+						let aggr = aggrByChannelSegments
+							? aggrByChannelsSegments(aggregates.aggr, byId)
+							: aggregates.aggr
+
+						aggrByChannelSegments && console.log('aggr', aggr)
+
+						aggregates.aggr = fillEmptyTime(aggr, timeframe)
 						accountChanged =
 							accountChanged || checkAccountChanged(getState, account)
 
@@ -99,7 +143,7 @@ export function updateAccountAnalytics() {
 							dispatch({
 								type: types.UPDATE_ANALYTICS,
 								...opts,
-								value: { ...res },
+								value: { ...aggregates },
 							})
 						}
 					})
