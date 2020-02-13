@@ -24,6 +24,10 @@ const palette = {
 	contrastThreshold: 3,
 	tonalOffset: 0.2,
 	text: grey,
+	action: {
+		disabledBackground: grey[300],
+		disabled: grey[600],
+	},
 }
 
 export const theme = createMuiTheme({
