@@ -42,6 +42,16 @@ const IdentityInterface = new Interface(IdentityABI)
 const timeframe = 15 * 1000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 0.5
 const VALID_UNTIL_MIN_PERIOD = 15 * 24 * 60 * 60 * 1000 // 15 days in ms
+const OUTSTANDING_STATUSES = [
+	'Active',
+	'Ready',
+	'Exhausted',
+	'Offline',
+	'Unhealthy',
+	'Withdraw',
+]
+
+const EXTRA_PROCESS_TIME = 69 * 60 // 69 min in seconds
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
@@ -152,7 +162,7 @@ const getWithdrawnPerUserOutstanding = async ({
 
 export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 	const { authType } = wallet
-	const channels = await getAllCampaigns(true)
+	const channels = await getAllCampaigns({ statuses: OUTSTANDING_STATUSES })
 	const { AdExCore } = await getEthers(authType)
 	const feeTokenWhitelist = selectFeeTokenWhitelist()
 	const routineWithdrawTokens = selectRoutineWithdrawTokens()
@@ -165,7 +175,9 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 					channel.status &&
 					channel.status.lastApprovedBalances &&
 					channel.status.lastApprovedSigs &&
-					routineWithdrawTokens[channel.depositAsset]
+					routineWithdrawTokens[channel.depositAsset] &&
+					new Date((channel.validUntil - EXTRA_PROCESS_TIME) * 1000) >
+						Date.now()
 			)
 			.map(channel => {
 				const { lastApprovedBalances } = channel.status
@@ -213,7 +225,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 				})
 
 				const outstandingAvailable = outstanding.sub(
-					feeTokenWhitelist[channel.depositAsset].min
+					bigNumberify(feeTokenWhitelist[channel.depositAsset].min)
 				)
 
 				return {
@@ -231,7 +243,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 	const eligible = all.filter(x => {
 		return (
 			x.outstanding.gt(
-				bigNumberify(routineWithdrawTokens[x.channel.depositAsset].minWeekly)
+				bigNumberify(routineWithdrawTokens[x.channel.depositAsset].minPlatform)
 			) && x.outstandingAvailable.gt(bigNumberify('0'))
 		)
 	})
@@ -249,9 +261,8 @@ async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
 				const current = { ...data }
 				if (current.sum.lt(amountToSweep)) {
 					current.eligible.push(c)
+					current.sum = current.sum.add(c.outstandingAvailable)
 				}
-
-				current.sum = current.sum.add(c.outstandingAvailable)
 
 				return current
 			},
@@ -301,7 +312,6 @@ function getSweepExecuteRoutineTx({ txns, identityAddr, routineAuthTuple }) {
 		to: identityAddr,
 		data,
 		withdrawAmountByToken,
-		routinesTxCount: routineOpts.length,
 		routinesSweepTxCount: routineOpts.length,
 	}
 
@@ -327,8 +337,7 @@ function is41identity(routineAuthTuple) {
 function hasValidExecuteRoutines(routineAuthTuple) {
 	const hasValidRoutines =
 		is41identity(routineAuthTuple) &&
-		// TODO: get relayer config for giveUpResubmitAfter
-		parseInt(routineAuthTuple[2], 16) * 1000 > Date.now() + 12 * 60 * 60 * 1000
+		parseInt((routineAuthTuple[2], 16) - EXTRA_PROCESS_TIME) * 1000 > Date.now()
 
 	return hasValidRoutines
 }
@@ -548,7 +557,7 @@ export async function openChannel({
 		maxAvailable.toString(),
 		mainToken.decimals || 18,
 		false,
-		true
+		2
 	)
 
 	if (getFeesOnly) {

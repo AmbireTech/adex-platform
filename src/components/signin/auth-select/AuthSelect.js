@@ -113,6 +113,35 @@ const AuthSelect = () => {
 					</Button>
 				</Box>
 			))}
+			{showRegistration && (
+				<Box m={1}>
+					<Button
+						variant='contained'
+						size='large'
+						color='secondary'
+						fullWidth
+						className={classes.limitedWidthBtn}
+						onClick={() => {
+							goTo('/signup/quick', true)
+						}}
+					>
+						{t('CREATE_QUICK_ACCOUNT')}
+					</Button>
+				</Box>
+			)}
+			<Box m={1}>
+				<Button
+					variant='contained'
+					size='large'
+					color='primary'
+					fullWidth
+					className={classes.limitedWidthBtn}
+					onClick={() => goTo('/login/quick', true)}
+				>
+					{t('LOGIN_QUICK_ACCOUNT')}
+				</Button>
+			</Box>
+
 			<Box m={1}>
 				<Button
 					variant='contained'
@@ -151,34 +180,6 @@ const AuthSelect = () => {
 					{/* {t('TREZOR')} */}
 				</Button>
 			</Box>
-			<Box m={1}>
-				<Button
-					variant='contained'
-					size='large'
-					color='primary'
-					fullWidth
-					className={classes.limitedWidthBtn}
-					onClick={() => goTo('/login/quick', true)}
-				>
-					{t('LOGIN_QUICK_ACCOUNT')}
-				</Button>
-			</Box>
-			{showRegistration && (
-				<Box m={1}>
-					<Button
-						variant='contained'
-						size='large'
-						color='secondary'
-						fullWidth
-						className={classes.limitedWidthBtn}
-						onClick={() => {
-							goTo('/signup/quick', true)
-						}}
-					>
-						{t('CREATE_QUICK_ACCOUNT')}
-					</Button>
-				</Box>
-			)}
 		</Box>
 	)
 }

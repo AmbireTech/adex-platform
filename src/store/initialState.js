@@ -55,6 +55,7 @@ let initialState = {
 	channels: {
 		withBalance: [],
 	},
+	ensAddresses: {},
 }
 
 export default initialState

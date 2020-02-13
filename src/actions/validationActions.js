@@ -3,44 +3,33 @@ import { updateSpinner } from './uiActions'
 import { validEthAddress, freeAdExENS } from '../helpers/validators'
 import { translate } from 'services/translations/translations'
 import { addToast } from './uiActions'
-import { getERC20Balance } from 'services/smart-contracts/actions/erc20'
-import { formatUnits, bigNumberify, parseUnits } from 'ethers/utils'
+import { bigNumberify, parseUnits } from 'ethers/utils'
 import { validations, Joi, schemas, constants } from 'adex-models'
 import { validEmail, validPassword } from 'helpers/validators'
-import { t } from 'selectors'
+import { t, selectAuthType } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
 const { IdentityPrivilegeLevel } = constants
 
 const { campaignPut } = schemas
 const { isNumberString } = validations
 
-export function validateAddress({ addr, dirty, validate, name, setBalance }) {
+export function validateAddress({ addr, dirty, validate, name, nonERC20 }) {
 	return async function(dispatch, getState) {
-		const { wallet, identity } = getState().persist.account
-		const { authType } = wallet
-		const isValid = false
+		const authType = selectAuthType(getState())
 		try {
 			if (validate) validate(name, { isValid: false })
 			updateSpinner(name, dirty)(dispatch)
 			const { msg } = await validEthAddress({
 				addr,
 				nonZeroAddr: true,
-				nonERC20: !setBalance,
+				nonERC20,
 				authType,
 			})
 			const isValid = !msg
 
-			if (typeof setBalance === 'function') {
-				const balance =
-					(await getERC20Balance({
-						addr,
-						authType,
-						balanceFor: identity.address,
-					})) || bigNumberify('0')
-				setBalance(formatUnits(balance, 18))
-			}
-			if (validate)
+			if (validate) {
 				validate(name, { isValid: isValid, err: { msg: msg }, dirty: dirty })
+			}
 		} catch (err) {
 			console.error('ERR_VALIDATING_ETH_ADDRESS', err)
 			addToast({

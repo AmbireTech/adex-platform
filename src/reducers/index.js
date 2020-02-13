@@ -20,6 +20,7 @@ import config from './configReducer'
 import analytics from './analyticsReducer'
 import channels from './channelsReducer'
 import selectedItems from './selectedItemsReducer'
+import ensAddresses from './ensReducer'
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
 
@@ -34,6 +35,7 @@ export const persistReducers = {
 	config,
 	analytics,
 	channels,
+	ensAddresses,
 }
 
 export const memoryReducers = {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import SideNav from './SideNav'
 import TopBar from './TopBar'
 import { Route, Switch } from 'react-router'
@@ -19,16 +19,15 @@ import {
 	AdSlotsTable,
 	AdUnitsTable,
 } from 'components/dashboard/containers/Tables'
-import {
-	campaignsLoop,
-	campaignsLoopStats,
-} from 'services/store-data/campaigns'
+import { campaignsLoop } from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
 import {
 	analyticsLoop,
 	analyticsCampaignsLoop,
 } from 'services/store-data/analytics'
 import Drawer from '@material-ui/core/Drawer'
+import Box from '@material-ui/core/Box'
+import Alert from '@material-ui/lab/Alert'
 import Hidden from '@material-ui/core/Hidden'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import { makeStyles } from '@material-ui/core/styles'
@@ -38,21 +37,34 @@ import {
 	getAllItems,
 	updateSlotsDemandThrottled,
 	execute,
+	resolveEnsAddress,
+	updatePrivilegesWarningAccepted,
 } from 'actions'
-import { t } from 'selectors'
+import {
+	t,
+	selectAccountIdentityAddr,
+	selectWalletPrivileges,
+	selectPrivilegesWarningAccepted,
+} from 'selectors'
+import { useSelector } from 'react-redux'
 
-const Campaigns = () => (
-	<>
-		<NewCampaignDialog
-			fabButton
-			variant='extended'
-			accent
-			color='secondary'
-			btnLabel='NEW_CAMPAIGN'
-		/>
-		<CampaignsTable />
-	</>
-)
+const Campaigns = () => {
+	const privileges = useSelector(selectWalletPrivileges)
+	const disabled = privileges <= 1
+	return (
+		<Fragment>
+			<NewCampaignDialog
+				disabled={disabled}
+				fabButton
+				variant='extended'
+				accent
+				color='secondary'
+				btnLabel='NEW_CAMPAIGN'
+			/>
+			<CampaignsTable />
+		</Fragment>
+	)
+}
 
 const AdUnits = () => (
 	<>
@@ -83,10 +95,18 @@ const useStyles = makeStyles(styles)
 
 function Dashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
+	const address = useSelector(selectAccountIdentityAddr)
+	const privileges = useSelector(selectWalletPrivileges)
+	const privilegesWarningAccepted = useSelector(selectPrivilegesWarningAccepted)
+	const showTxPrivLevelWarning = privileges <= 1 && !privilegesWarningAccepted
 
 	const { match } = props
 	const { side } = match.params
 	const classes = useStyles()
+
+	useEffect(() => {
+		execute(resolveEnsAddress({ address }))
+	})
 
 	useEffect(() => {
 		execute(updateSlotsDemandThrottled())
@@ -95,14 +115,12 @@ function Dashboard(props) {
 		analyticsLoop.start()
 		analyticsCampaignsLoop.start()
 		campaignsLoop.start()
-		campaignsLoopStats.start()
 		statsLoop.start()
 
 		return () => {
 			analyticsLoop.stop()
 			analyticsCampaignsLoop.stop()
 			campaignsLoop.stop()
-			campaignsLoopStats.stop()
 			statsLoop.stop()
 		}
 	}, [side])
@@ -156,6 +174,20 @@ function Dashboard(props) {
 			<main className={classes.content}>
 				<div className={classes.contentInner}>
 					<div className={classes.toolbar} />
+					{showTxPrivLevelWarning && (
+						<Box mb={2} p={1}>
+							<Alert
+								variant='outlined'
+								severity='info'
+								onClose={() => {
+									execute(updatePrivilegesWarningAccepted(true))
+								}}
+							>
+								{t('PRIVILEGES_LEVEL_WARNING_MSG')}
+							</Alert>
+						</Box>
+					)}
+
 					<Switch>
 						<Route
 							exact

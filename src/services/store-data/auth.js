@@ -10,10 +10,7 @@ import {
 	resetChannelsWithBalance,
 } from 'actions'
 
-import {
-	campaignsLoop,
-	campaignsLoopStats,
-} from 'services/store-data/campaigns'
+import { campaignsLoop } from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
 import {
 	analyticsLoop,
@@ -26,7 +23,6 @@ export const logOut = skipRedirect => {
 	analyticsLoop.stop()
 	analyticsCampaignsLoop.stop()
 	campaignsLoop.stop()
-	campaignsLoopStats.stop()
 	statsLoop.stop()
 	if (!skipRedirect) {
 		execute(push('/'))
