@@ -337,8 +337,7 @@ function is41identity(routineAuthTuple) {
 function hasValidExecuteRoutines(routineAuthTuple) {
 	const hasValidRoutines =
 		is41identity(routineAuthTuple) &&
-		// TODO: get relayer config for giveUpResubmitAfter
-		parseInt(routineAuthTuple[2], 16) * 1000 > Date.now() + 12 * 60 * 60 * 1000
+		parseInt((routineAuthTuple[2], 16) - EXTRA_PROCESS_TIME) * 1000 > Date.now()
 
 	return hasValidRoutines
 }
