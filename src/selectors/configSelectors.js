@@ -8,8 +8,8 @@ export const selectRelayerConfig = state => {
 
 // - relayer cfg
 // network,
-// feeTokenWhitelist, // [{ address, symbol, decimals, standard, min, minDeploy }],
-// routineWithdrawTokens, // [{ address, symbol, decimals, standard, minWeekly, minFinal }],
+// feeTokenWhitelist, // [{ address, symbol, decimals, standard, min, minDeploy, minRecommended }],
+// routineWithdrawTokens, // [{ address, symbol, decimals, standard, minWeekly, minFinal, minPlatform }],
 // coreAddr,
 // baseIdentityAddr,
 // identityFactoryAddr,

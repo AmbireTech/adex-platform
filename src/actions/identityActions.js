@@ -14,6 +14,7 @@ import {
 	withdrawFromIdentity,
 	addIdentityENS,
 	setIdentityPrivilege,
+	withdrawOtherTokensFromIdentity,
 } from 'services/smart-contracts/actions/identity'
 import {
 	addDataToWallet,
@@ -25,7 +26,7 @@ import {
 	generateSalt,
 } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
-import { selectAccount, selectIdentity } from 'selectors'
+import { selectAccount, selectIdentity, selectAuthType } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
 import {
 	validate,
@@ -43,6 +44,7 @@ import {
 	GETTING_OWNER_IDENTITIES,
 	UPLOADING_ACCOUNT_DATA,
 } from 'constants/spinners'
+import { getEthers } from 'services/smart-contracts/ethers'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -227,19 +229,55 @@ export function identityWithdraw({
 	}
 }
 
-export function ownerIdentities({ owner }) {
+export function identityWithdrawAny({
+	amountToWithdraw,
+	withdrawTo,
+	tokenAddress,
+	tokenDecimals,
+}) {
+	return async function(dispatch, getState) {
+		try {
+			const account = selectAccount(getState())
+			const result = await withdrawOtherTokensFromIdentity({
+				account,
+				amountToWithdraw,
+				withdrawTo,
+				tokenAddress,
+				tokenDecimals,
+			})
+
+			addToast({
+				type: 'accept',
+				label: translate('IDENTITY_WITHDRAW_NOTIFICATION', { args: [result] }),
+				timeout: 20000,
+			})(dispatch)
+		} catch (err) {
+			console.error('ERR_IDENTITY_WITHDRAW_NOTIFICATION', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_IDENTITY_WITHDRAW_NOTIFICATION', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function ownerIdentities({ owner, authType }) {
 	return async function(dispatch, getState) {
 		updateSpinner(GETTING_OWNER_IDENTITIES, true)(dispatch)
 		try {
+			const { provider } = await getEthers(authType)
 			const identityData = await getOwnerIdentities({ owner })
 			const data = Object.entries(identityData).map(
 				async ([identityAddr, privLevel]) => {
 					try {
-						const data = await getIdentityData({ identityAddr })
+						const ens = await provider.lookupAddress(identityAddr)
 						return {
 							identity: identityAddr,
 							privLevel,
-							data,
+							ens,
 						}
 					} catch {
 						return null
@@ -752,5 +790,33 @@ export function handleSignupLink(search) {
 			updateIdentity('email', email)(dispatch)
 			updateIdentity('emailCheck', email)(dispatch)
 		}
+	}
+}
+
+export function resolveEnsAddress({ address }) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const authType = selectAuthType(state)
+		updateSpinner(`ens-${address}`, true)(dispatch)
+
+		try {
+			const { provider } = await getEthers(authType)
+			const name = await provider.lookupAddress(address)
+			return dispatch({
+				type: types.UPDATE_RESOLVE_ENS_ADDRESS,
+				item: address,
+				value: name,
+			})
+		} catch (err) {
+			console.error('ERR_RESOLVING_ENS_ADDRESS', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_RESOLVING_ENS_ADDRESS', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+		updateSpinner(`ens-${address}`, false)(dispatch)
 	}
 }

@@ -13,8 +13,8 @@ class WithdrawAnyTokenFromIdentity extends Component {
 	componentDidMount() {
 		const { validate, transaction } = this.props
 		// If nothing entered will validate
-		if (!transaction.withdrawAmount) {
-			validate('withdrawAmount', {
+		if (!transaction.amountToWithdraw) {
+			validate('amountToWithdraw', {
 				isValid: true,
 				dirty: false,
 			})
@@ -26,23 +26,22 @@ class WithdrawAnyTokenFromIdentity extends Component {
 				dirty: false,
 			})
 		}
+		if (!transaction.tokenAddress) {
+			validate('tokenAddress', {
+				isValid: false,
+				err: { msg: 'ERR_REQUIRED_FIELD' },
+				dirty: false,
+			})
+		}
 	}
 
 	validateAmount = (numStr, dirty) => {
-		const { token, identityAvailable } = this.props
 		let isValid = validateNumber(numStr)
 		let msg = 'ERR_INVALID_AMOUNT_VALUE'
-		let errMsgArgs = []
-		let amount = parseFloat(numStr)
-		if (isValid && amount > parseFloat(identityAvailable)) {
-			isValid = false
-			msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'
-			errMsgArgs = [identityAvailable, token]
-		}
 
-		this.props.validate('withdrawAmount', {
+		this.props.validate('amountToWithdraw', {
 			isValid: isValid,
-			err: { msg: msg, args: errMsgArgs },
+			err: { msg: msg },
 			dirty: dirty,
 		})
 	}
@@ -58,17 +57,18 @@ class WithdrawAnyTokenFromIdentity extends Component {
 			withdrawToSpinner,
 			balanceAnySpinner,
 		} = this.props
-		const { withdrawTo, withdrawAmount, tokenAddress, tokenBalance } =
-			transaction || {}
-		const errAmount = invalidFields['withdrawAmount']
+		const {
+			withdrawTo,
+			amountToWithdraw,
+			tokenAddress,
+			tokenBalance,
+			tokenDecimals,
+		} = transaction || {}
+		const errAmount = invalidFields['amountToWithdraw']
 		const errAddr = invalidFields['withdrawTo']
 		const errToken = invalidFields['tokenAddress']
 		return (
 			<div>
-				<div>
-					{' '}
-					{t('TOKENS_BALANCE_AVAILABLE_ON_IDENTITY')} {tokenBalance}{' '}
-				</div>
 				<TextField
 					disabled={balanceAnySpinner}
 					type='text'
@@ -84,7 +84,6 @@ class WithdrawAnyTokenFromIdentity extends Component {
 							dirty: true,
 							validate,
 							name: 'tokenAddress',
-							setBalance: bal => handleChange('tokenBalance', bal),
 						})
 					}
 					onFocus={() =>
@@ -93,13 +92,21 @@ class WithdrawAnyTokenFromIdentity extends Component {
 							dirty: false,
 							validate,
 							name: 'tokenAddress',
-							setBalance: bal => handleChange('tokenBalance', bal),
 						})
 					}
 					error={errToken && !!errToken.dirty}
 					helperText={errToken && !!errToken.dirty ? errToken.errMsg : ''}
 				/>
-				{balanceAnySpinner ? <InputLoading /> : null}
+
+				<TextField
+					type='text'
+					fullWidth
+					required
+					label={t('TOKENS_TO_WITHDRAW_DECIMALS')}
+					name='tokenDecimals'
+					value={tokenDecimals || ''}
+					onChange={ev => handleChange('tokenDecimals', ev.target.value)}
+				/>
 				<TextField
 					disabled={withdrawToSpinner}
 					type='text'
@@ -115,6 +122,7 @@ class WithdrawAnyTokenFromIdentity extends Component {
 							dirty: true,
 							validate,
 							name: 'withdrawTo',
+							nonERC20: true,
 						})
 					}
 					onFocus={() =>
@@ -123,6 +131,7 @@ class WithdrawAnyTokenFromIdentity extends Component {
 							dirty: false,
 							validate,
 							name: 'withdrawTo',
+							nonERC20: true,
 						})
 					}
 					error={errAddr && !!errAddr.dirty}
@@ -133,12 +142,12 @@ class WithdrawAnyTokenFromIdentity extends Component {
 					type='text'
 					fullWidth
 					required
-					label={t('TOKENS_TO_WITHDRAW')}
-					name='withdrawAmount'
-					value={withdrawAmount || ''}
-					onChange={ev => handleChange('withdrawAmount', ev.target.value)}
-					onBlur={() => this.validateAmount(withdrawAmount, true)}
-					onFocus={() => this.validateAmount(withdrawAmount, false)}
+					label={t('TOKENS_AMOUNT_TO_WITHDRAW')}
+					name='amountToWithdraw'
+					value={amountToWithdraw || ''}
+					onChange={ev => handleChange('amountToWithdraw', ev.target.value)}
+					onBlur={() => this.validateAmount(amountToWithdraw, true)}
+					onFocus={() => this.validateAmount(amountToWithdraw, false)}
 					error={errAmount && !!errAmount.dirty}
 					helperText={
 						errAmount && !!errAmount.dirty

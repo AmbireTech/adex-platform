@@ -5,13 +5,7 @@ import { selectRelayerConfig } from 'selectors'
 
 ethers.errors.setLogLevel('error')
 
-const {
-	AdExCore,
-	Identity,
-	IdentityFactory,
-	AdExENSManager,
-	ReverseRegistrar,
-} = contracts
+const { AdExCore, Identity, IdentityFactory } = contracts
 
 const getAdexCore = provider => {
 	const { coreAddr } = selectRelayerConfig()
@@ -54,8 +48,6 @@ const getEthersResult = provider => {
 		Dai: mainToken,
 		MainToken: mainToken,
 		IdentityFactory: identityFactory,
-		AdExENSManager,
-		ReverseRegistrar,
 		getToken: ({ standard, address }) =>
 			getToken({ provider, standard, address }),
 		getIdentity: ({ address }) => getIdentity({ provider, address }),

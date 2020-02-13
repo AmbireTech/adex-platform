@@ -86,6 +86,7 @@ class WithdrawFromIdentity extends Component {
 							dirty: true,
 							validate,
 							name: 'withdrawTo',
+							nonERC20: true,
 						})
 					}
 					onFocus={() =>
@@ -94,6 +95,7 @@ class WithdrawFromIdentity extends Component {
 							dirty: false,
 							validate,
 							name: 'withdrawTo',
+							nonERC20: true,
 						})
 					}
 					error={errAddr && !!errAddr.dirty}
