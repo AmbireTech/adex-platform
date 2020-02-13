@@ -174,12 +174,11 @@ export const closeCampaignMarket = ({ campaign, authSig }) => {
 		.then(processResponse)
 }
 
-export const getAllCampaigns = all => {
-	const queryParams = all
-		? {
-				all: true,
-		  }
-		: {}
+export const getAllCampaigns = ({ all, statuses } = {}) => {
+	const queryParams = {
+		...(all && { all: true }),
+		...(statuses && { status: statuses.join(',') }),
+	}
 
 	return requester
 		.fetch({
