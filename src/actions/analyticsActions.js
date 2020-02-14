@@ -73,50 +73,57 @@ function aggrByChannelsSegments({
 	withdrawTokens,
 }) {
 	return Object.values(
-		aggr.reverse().reduce(
-			(data, a) => {
-				const { aggregations, channels } = data
-				const channelId = a.channelId.toLowerCase()
+		// NOTE: No need to sort them again because fillEmptyTime
+		// is sorting by time after adding the empty time values
+		aggr
+			.sort((a, b) => b.time - a.time)
+			.reduce(
+				(data, a) => {
+					const { aggregations, channels } = data
+					const channelId = a.channelId.toLowerCase()
 
-				const { depositAmount, balanceNum, depositAsset } =
-					allChannels[channelId] || {}
+					const { depositAmount, balanceNum, depositAsset } =
+						allChannels[channelId] || {}
 
-				const { minPlatform } = withdrawTokens[depositAsset]
-				const { min } = feeTokens[depositAsset]
+					const { minPlatform } = withdrawTokens[depositAsset]
+					const { min } = feeTokens[depositAsset]
 
-				const current = channels[channelId] || {}
+					const current = channels[channelId] || {}
 
-				const value = bigNumberify(a.value || 0)
-					.mul(bigNumberify(balanceNum || 1))
-					.div(bigNumberify(depositAmount || 1))
+					const value = bigNumberify(a.value || 0)
+						.mul(bigNumberify(balanceNum || 1))
+						.div(bigNumberify(depositAmount || 1))
 
-				const currentAggr = aggregations[a.time] || { time: a.time }
-				const currentChannelValue = bigNumberify(current.value || 0).add(value)
-				const currentTimeValue = bigNumberify(currentAggr.value || 0)
+					const currentAggr = aggregations[a.time] || { time: a.time }
+					const currentChannelValue = bigNumberify(current.value || 0).add(
+						value
+					)
+					const currentTimeValue = bigNumberify(currentAggr.value || 0)
 
-				if (
-					currentChannelValue.gt(bigNumberify(minPlatform)) &&
-					!current.feeSubtracted
-				) {
-					current.feeSubtracted = true
-					const currentAvailable = currentChannelValue.sub(bigNumberify(min))
-					currentAggr.value = currentAvailable.add(currentTimeValue)
-				} else if (
-					currentChannelValue.gt(bigNumberify(minPlatform)) &&
-					current.feeSubtracted
-				) {
-					currentAggr.value = value.add(currentTimeValue)
-				}
+					if (
+						currentChannelValue.gt(bigNumberify(minPlatform)) &&
+						!current.feeSubtracted
+					) {
+						// TODO: its not correct - should spread this to previous time points
+						current.feeSubtracted = true
+						const currentAvailable = currentChannelValue.sub(bigNumberify(min))
+						currentAggr.value = currentAvailable.add(currentTimeValue)
+					} else if (
+						currentChannelValue.gt(bigNumberify(minPlatform)) &&
+						current.feeSubtracted
+					) {
+						currentAggr.value = value.add(currentTimeValue)
+					}
 
-				current.value = currentChannelValue
+					current.value = currentChannelValue
 
-				channels[channelId] = current
-				aggregations[currentAggr.time] = currentAggr
+					channels[channelId] = current
+					aggregations[currentAggr.time] = currentAggr
 
-				return { aggregations, channels }
-			},
-			{ aggregations: {}, channels: {} }
-		).aggregations
+					return { aggregations, channels }
+				},
+				{ aggregations: {}, channels: {} }
+			).aggregations
 	)
 }
 
