@@ -470,6 +470,16 @@ const campaignProps = ({
 														fullWidth
 													/>
 												</Grid>
+												<Grid item xs={12}>
+													<TextField
+														// type='text'
+														value={item.minTargetingScore > 0}
+														label={t('CAMPAIGN_MIN_TARGETING')}
+														disabled
+														margin='dense'
+														fullWidth
+													/>
+												</Grid>
 											</Grid>
 										</Grid>
 										<Grid item xs={12} sm={12} md={6}>
