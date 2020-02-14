@@ -3,7 +3,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [2.2.1] - 2018-19-12
+## [4.10.26] - 2020-02-14
+- update identity data from relayer on dashboard load
+- change `ENS` to `username`
+- changed help link #338
+- show only targeting matches on campaign details #339
+- remove facebook chat
+
+## [2.2.1] - 2018-12-19
 ### Fixed
 - Service worker
 - Adding build to ipfs
@@ -246,31 +253,32 @@ All notable changes to this project will be documented in this file.
 
 ## 2.0.0 - 2018-02-26
 
-[Unreleased]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.2.1...HEAD
-[2.1.9]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.2.0...v2.2.1
-[2.1.9]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.9...v2.2.0
-[2.1.9]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.8...v2.1.9
-[2.1.8]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.7...v2.1.8
-[2.1.7]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.6...v2.1.7
-[2.1.6]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.5...v2.1.6
-[2.1.5]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.4...v2.1.5
-[2.1.4]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.3...v2.1.4
-[2.1.3]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.2...v2.1.3
-[2.1.2]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.1...v2.1.2
-[2.1.1]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.1.0...v2.1.1
-[2.1.0]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.13...v2.1.0
-[2.0.13]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.12...v2.0.13
-[2.0.12]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.11...v2.0.12
-[2.0.11]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.10...v2.0.11
-[2.0.10]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.9...v2.0.10
-[2.0.9]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.8...v2.0.9
-[2.0.8]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.7...v2.0.8
-[2.0.7]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.6...v2.0.7
-[2.0.6]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.5...v2.0.6
-[2.0.5]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.4...v2.0.5
-[2.0.4]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.3...v2.0.4
-[2.0.3]: https://github.com/AdExBlockchain/adex-dapp/compare/v2.0.2...v2.0.3
-[2.0.2]: https://github.com/AdExBlockchain/adex-dapp/compare/7a8ba665907351a99290ef77e1f0ffbee080dd95...v2.0.2
-[2.0.1]: https://github.com/AdExBlockchain/adex-dapp/compare/20bc85bcf3797d86c951aa63cd5c568d3c5b5e6d...7a8ba665907351a99290ef77e1f0ffbee080dd95
+[Unreleased]: https://github.com/AdExBlockchain/adex-platform/compare/v4.10.26...HEAD
+[4.10.26]: https://github.com/AdExBlockchain/adex-platform/compare/v4.10.26...4.10.25
+[2.1.9]: https://github.com/AdExBlockchain/adex-platform/compare/v2.2.0...v2.2.1
+[2.1.9]: https://github.com/AdExBlockchain/adex-platform/compare/v2.1.9...v2.2.0
+[2.1.9]: https://github.com/AdExBlockchain/adex-platform/compare/v2.1.8...v2.1.9
+[2.1.8]: https://github.com/AdExBlockchain/adex-platform/compare/v2.1.7...v2.1.8
+[2.1.7]: https://github.com/AdExBlockchain/adex-platform/compare/v2.1.6...v2.1.7
+[2.1.6]: https://github.com/AdExBlockchain/adex-platform/compare/v2.1.5...v2.1.6
+[2.1.5]: https://github.com/AdExBlockchain/adex-platform/compare/v2.1.4...v2.1.5
+[2.1.4]: https://github.com/AdExBlockchain/adex-platform/compare/v2.1.3...v2.1.4
+[2.1.3]: https://github.com/AdExBlockchain/adex-platform/compare/v2.1.2...v2.1.3
+[2.1.2]: https://github.com/AdExBlockchain/adex-platform/compare/v2.1.1...v2.1.2
+[2.1.1]: https://github.com/AdExBlockchain/adex-platform/compare/v2.1.0...v2.1.1
+[2.1.0]: https://github.com/AdExBlockchain/adex-platform/compare/v2.0.13...v2.1.0
+[2.0.13]: https://github.com/AdExBlockchain/adex-platform/compare/v2.0.12...v2.0.13
+[2.0.12]: https://github.com/AdExBlockchain/adex-platform/compare/v2.0.11...v2.0.12
+[2.0.11]: https://github.com/AdExBlockchain/adex-platform/compare/v2.0.10...v2.0.11
+[2.0.10]: https://github.com/AdExBlockchain/adex-platform/compare/v2.0.9...v2.0.10
+[2.0.9]: https://github.com/AdExBlockchain/adex-platform/compare/v2.0.8...v2.0.9
+[2.0.8]: https://github.com/AdExBlockchain/adex-platform/compare/v2.0.7...v2.0.8
+[2.0.7]: https://github.com/AdExBlockchain/adex-platform/compare/v2.0.6...v2.0.7
+[2.0.6]: https://github.com/AdExBlockchain/adex-platform/compare/v2.0.5...v2.0.6
+[2.0.5]: https://github.com/AdExBlockchain/adex-platform/compare/v2.0.4...v2.0.5
+[2.0.4]: https://github.com/AdExBlockchain/adex-platform/compare/v2.0.3...v2.0.4
+[2.0.3]: https://github.com/AdExBlockchain/adex-platform/compare/v2.0.2...v2.0.3
+[2.0.2]: https://github.com/AdExBlockchain/adex-platform/compare/7a8ba665907351a99290ef77e1f0ffbee080dd95...v2.0.2
+[2.0.1]: https://github.com/AdExBlockchain/adex-platform/compare/20bc85bcf3797d86c951aa63cd5c568d3c5b5e6d...7a8ba665907351a99290ef77e1f0ffbee080dd95
 
 [ethgasstation.info]: https://ethgasstation.info/
