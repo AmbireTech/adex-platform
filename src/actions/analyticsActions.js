@@ -79,6 +79,7 @@ function aggrByChannelsSegments({
 			.sort((a, b) => b.time - a.time)
 			.reduce(
 				(data, a) => {
+					const { time } = a
 					const { aggregations, channels } = data
 					const channelId = a.channelId.toLowerCase()
 
@@ -88,13 +89,15 @@ function aggrByChannelsSegments({
 					const { minPlatform } = withdrawTokens[depositAsset]
 					const { min } = feeTokens[depositAsset]
 
-					const current = channels[channelId] || {}
+					const current = channels[channelId] || { aggr: [] }
 
 					const value = bigNumberify(a.value || 0)
 						.mul(bigNumberify(balanceNum || 1))
 						.div(bigNumberify(depositAmount || 1))
 
-					const currentAggr = aggregations[a.time] || { time: a.time }
+					current.aggr.push({ value, time })
+
+					const currentAggr = aggregations[time] || { time }
 					const currentChannelValue = bigNumberify(current.value || 0).add(
 						value
 					)
@@ -104,10 +107,30 @@ function aggrByChannelsSegments({
 						currentChannelValue.gt(bigNumberify(minPlatform)) &&
 						!current.feeSubtracted
 					) {
-						// TODO: its not correct - should spread this to previous time points
 						current.feeSubtracted = true
 						const currentAvailable = currentChannelValue.sub(bigNumberify(min))
-						currentAggr.value = currentAvailable.add(currentTimeValue)
+						const currentAdded = bigNumberify(0)
+						const points = current.aggr
+
+						for (let index = points.length - 1; index >= 0; index--) {
+							const point = points[index]
+							currentAdded.add(point.value)
+
+							const curInnerAggr = aggregations[point.time] || {
+								time,
+								value: bigNumberify(0),
+							}
+
+							if (currentAdded.lt(currentAvailable)) {
+								curInnerAggr.value = curInnerAggr.value.add(point.value)
+								aggregations[point.time] = curInnerAggr
+							} else
+								curInnerAggr.value = curInnerAggr.value.add(
+									currentAdded.sub(currentAvailable)
+								)
+							aggregations[point.time] = curInnerAggr
+							break
+						}
 					} else if (
 						currentChannelValue.gt(bigNumberify(minPlatform)) &&
 						current.feeSubtracted
@@ -118,7 +141,7 @@ function aggrByChannelsSegments({
 					current.value = currentChannelValue
 
 					channels[channelId] = current
-					aggregations[currentAggr.time] = currentAggr
+					aggregations[time] = currentAggr
 
 					return { aggregations, channels }
 				},
