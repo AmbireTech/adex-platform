@@ -16,7 +16,7 @@ import { UPDATING_SLOTS_DEMAND } from 'constants/spinners'
 import { getErrorMsg } from 'helpers/errors'
 import { fillEmptyTime } from 'helpers/timeHelpers'
 import { getUnitsStatsByType } from 'services/adex-market/aggregates'
-import { selectChannelsWithUserBalances } from 'selectors'
+import { selectChannelsWithUserBalancesAll } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -65,30 +65,17 @@ function checkAccountChanged(getState, account) {
 function aggrByChannelsSegments(aggr, channels) {
 	return Object.values(
 		aggr.reduce((data, a) => {
-			const c = channels[a.channelId] || {}
-			const value = bigNumberify(a.value || 1)
-				.div(c.balNum || 1)
-				.mul(bigNumberify(c.depositAmount || 1))
+			const c = channels[a.channelId.toLowerCase()] || {}
+			const value = bigNumberify(a.value || 0)
+				.div(bigNumberify(c.depositAmount || 1))
+				.mul(bigNumberify(c.balanceNum || 1))
 
 			data[a.time] = data[a.time] || { time: a.time }
-			data[a.time].value = value.add(bigNumberify(data[a.time].value || 1))
+			data[a.time].value = value.add(bigNumberify(data[a.time].value || 0))
 
 			return data
 		}, {})
 	)
-}
-
-function withBalanceById(withBalance) {
-	return {
-		...withBalance.map(c => {
-			const balNum = bigNumberify(c.channel.depositAmount)
-				// TODO: get from relayer cfg
-				.sub(bigNumberify('69000000000000000'))
-				.sub(bigNumberify(c.channel.spec.validators[1].fee))
-
-			return { [c.channel.id.toLowerCase()]: { ...c.channel, balNum } }
-		}),
-	}
 }
 
 export function updateAccountAnalytics() {
@@ -97,8 +84,7 @@ export function updateAccountAnalytics() {
 		const { side } = getState().memory.nav
 		const { timeframe } = analytics
 		// TODO: get channels that are needed
-		const withBalance = selectChannelsWithUserBalances()
-		const byId = withBalanceById(withBalance)
+		const byId = selectChannelsWithUserBalancesAll()
 		try {
 			const toastId = addToast({
 				type: 'warning',
@@ -132,8 +118,6 @@ export function updateAccountAnalytics() {
 						let aggr = aggrByChannelSegments
 							? aggrByChannelsSegments(aggregates.aggr, byId)
 							: aggregates.aggr
-
-						aggrByChannelSegments && console.log('aggr', aggr)
 
 						aggregates.aggr = fillEmptyTime(aggr, timeframe)
 						accountChanged =
