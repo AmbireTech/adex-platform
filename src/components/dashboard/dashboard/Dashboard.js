@@ -37,6 +37,7 @@ import {
 	execute,
 	resolveEnsAddress,
 	updatePrivilegesWarningAccepted,
+	updateAccountIdentityData,
 } from 'actions'
 import {
 	t,
@@ -107,6 +108,7 @@ function Dashboard(props) {
 	})
 
 	useEffect(() => {
+		execute(updateAccountIdentityData())
 		execute(updateSlotsDemandThrottled())
 		execute(updateNav('side', side))
 		execute(getAllItems())
