@@ -9,7 +9,7 @@ export default function channelsReducer(state = initialState.channels, action) {
 
 	switch (action.type) {
 		case UPDATE_CHANNELS_WITH_BALANCE:
-			newState.withBalance = [...action.withBalance]
+			newState.withBalance = { ...action.withBalance }
 			return newState
 		case RESET_CHANNELS_WITH_BALANCE:
 			newState.withBalance = initialState.channels.withBalance
