@@ -16,7 +16,11 @@ import { UPDATING_SLOTS_DEMAND } from 'constants/spinners'
 import { getErrorMsg } from 'helpers/errors'
 import { fillEmptyTime } from 'helpers/timeHelpers'
 import { getUnitsStatsByType } from 'services/adex-market/aggregates'
-import { selectChannelsWithUserBalancesAll } from 'selectors'
+import {
+	selectChannelsWithUserBalancesAll,
+	selectFeeTokenWhitelist,
+	selectRoutineWithdrawTokens,
+} from 'selectors'
 import { bigNumberify } from 'ethers/utils'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -62,19 +66,57 @@ function checkAccountChanged(getState, account) {
 	return accountChanged
 }
 
-function aggrByChannelsSegments(aggr, channels) {
+function aggrByChannelsSegments({
+	aggr,
+	allChannels,
+	feeTokens,
+	withdrawTokens,
+}) {
 	return Object.values(
-		aggr.reduce((data, a) => {
-			const c = channels[a.channelId.toLowerCase()] || {}
-			const value = bigNumberify(a.value || 0)
-				.div(bigNumberify(c.depositAmount || 1))
-				.mul(bigNumberify(c.balanceNum || 1))
+		aggr.reverse().reduce(
+			(data, a) => {
+				const { aggregations, channels } = data
+				const channelId = a.channelId.toLowerCase()
 
-			data[a.time] = data[a.time] || { time: a.time }
-			data[a.time].value = value.add(bigNumberify(data[a.time].value || 0))
+				const { depositAmount, balanceNum, depositAsset } =
+					allChannels[channelId] || {}
 
-			return data
-		}, {})
+				const { minPlatform } = withdrawTokens[depositAsset]
+				const { min } = feeTokens[depositAsset]
+
+				const current = channels[channelId] || {}
+
+				const value = bigNumberify(a.value || 0)
+					.mul(bigNumberify(balanceNum || 1))
+					.div(bigNumberify(depositAmount || 1))
+
+				const currentAggr = aggregations[a.time] || { time: a.time }
+				const currentChannelValue = bigNumberify(current.value || 0).add(value)
+				const currentTimeValue = bigNumberify(currentAggr.value || 0)
+
+				if (
+					currentChannelValue.gt(bigNumberify(minPlatform)) &&
+					!current.feeSubtracted
+				) {
+					current.feeSubtracted = true
+					const currentAvailable = currentChannelValue.sub(bigNumberify(min))
+					currentAggr.value = currentAvailable.add(currentTimeValue)
+				} else if (
+					currentChannelValue.gt(bigNumberify(minPlatform)) &&
+					current.feeSubtracted
+				) {
+					currentAggr.value = value.add(currentTimeValue)
+				}
+
+				current.value = currentChannelValue
+
+				channels[channelId] = current
+				aggregations[currentAggr.time] = currentAggr
+
+				return { aggregations, channels }
+			},
+			{ aggregations: {}, channels: {} }
+		).aggregations
 	)
 }
 
@@ -83,8 +125,9 @@ export function updateAccountAnalytics() {
 		const { account, analytics } = getState().persist
 		const { side } = getState().memory.nav
 		const { timeframe } = analytics
-		// TODO: get channels that are needed
-		const byId = selectChannelsWithUserBalancesAll()
+		const allChannels = selectChannelsWithUserBalancesAll()
+		const feeTokens = selectFeeTokenWhitelist()
+		const withdrawTokens = selectRoutineWithdrawTokens()
 		try {
 			const toastId = addToast({
 				type: 'warning',
@@ -116,7 +159,12 @@ export function updateAccountAnalytics() {
 						const aggrByChannelSegments =
 							side === 'publisher' && metric === 'eventPayouts'
 						let aggr = aggrByChannelSegments
-							? aggrByChannelsSegments(aggregates.aggr, byId)
+							? aggrByChannelsSegments({
+									aggr: aggregates.aggr,
+									allChannels,
+									feeTokens,
+									withdrawTokens,
+							  })
 							: aggregates.aggr
 
 						aggregates.aggr = fillEmptyTime(aggr, timeframe)
