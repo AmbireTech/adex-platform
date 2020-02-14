@@ -77,7 +77,17 @@ export const selectAccountIdentityRoutineAuthTuple = createSelector(
 
 export const selectChannelsWithUserBalances = createSelector(
 	selectChannels,
-	({ withBalance }) => withBalance || []
+	({ withBalance }) => withBalance || {}
+)
+
+export const selectChannelsWithUserBalancesEligible = createSelector(
+	selectChannelsWithUserBalances,
+	({ eligible }) => eligible || []
+)
+
+export const selectChannelsWithUserBalancesAll = createSelector(
+	selectChannelsWithUserBalances,
+	({ all }) => all || {}
 )
 
 export const selectAccountIdentityCurrentPrivileges = createSelector(
