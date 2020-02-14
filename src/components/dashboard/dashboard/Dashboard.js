@@ -183,7 +183,9 @@ function Dashboard(props) {
 									execute(updatePrivilegesWarningAccepted(true))
 								}}
 							>
-								{t('PRIVILEGES_LEVEL_WARNING_MSG')}
+								{t('PRIVILEGES_LEVEL_WARNING_MSG', {
+									args: [`PRIV_${privileges}_LABEL`],
+								})}
 							</Alert>
 						</Box>
 					)}
