@@ -93,8 +93,8 @@ function getReadyCampaign(campaign, identity, mainToken) {
 	const validators = newCampaign.validators.map(v => {
 		const deposit = bigNumberify(newCampaign.depositAmount || 0)
 		const fee = deposit
+			.mul(bigNumberify(v.feeNum || 1))
 			.div(bigNumberify(v.feeDen || 1))
-			.mul(bigNumberify(v.feeNum || 0))
 			.toString()
 
 		const validator = {
@@ -238,18 +238,26 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 			})
 	)
 
-	const all = {
+	const all = Object.assign(
+		{},
 		...allChannels.map(c => {
 			const { channel } = c
-			const { id, depositAmount } = channel
+			const { id, depositAmount, depositAsset } = channel
 			const balanceNum = bigNumberify(depositAmount)
 				.sub(bigNumberify(c.channel.spec.validators[0].fee))
 				.sub(bigNumberify(c.channel.spec.validators[1].fee))
 				.toString()
 
-			return { [c.channel.id.toLowerCase()]: { id, depositAmount, balanceNum } }
-		}),
-	}
+			return {
+				[c.channel.id.toLowerCase()]: {
+					id,
+					depositAmount,
+					depositAsset,
+					balanceNum,
+				},
+			}
+		})
+	)
 
 	const eligible = allChannels.filter(x => {
 		return (
