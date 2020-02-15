@@ -75,6 +75,7 @@ function aggrByChannelsSegments({
 	return Object.values(
 		// NOTE: No need to sort them again because fillEmptyTime
 		// is sorting by time after adding the empty time values
+		// TODO: Do not check `minPlatform` for Expired channels
 		aggr
 			.sort((a, b) => b.time - a.time)
 			.reduce(
@@ -97,11 +98,16 @@ function aggrByChannelsSegments({
 
 					current.aggr.push({ value, time })
 
-					const currentAggr = aggregations[time] || { time }
+					const currentAggr = aggregations[time] || {
+						time,
+						value: bigNumberify(0),
+					}
 					const currentChannelValue = bigNumberify(current.value || 0).add(
 						value
 					)
-					const currentTimeValue = bigNumberify(currentAggr.value || 0)
+					const currentTimeValue = currentAggr.value
+
+					current.value = currentChannelValue
 
 					if (
 						currentChannelValue.gt(bigNumberify(minPlatform)) &&
@@ -137,8 +143,6 @@ function aggrByChannelsSegments({
 					) {
 						currentAggr.value = value.add(currentTimeValue)
 					}
-
-					current.value = currentChannelValue
 
 					channels[channelId] = current
 					aggregations[time] = currentAggr
