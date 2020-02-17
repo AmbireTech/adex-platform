@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.27
+##### *2020-02-17*
+
+- sync outstanding balances with analytics `eventsPayouts` #317
+- safe calculation of validator fees
+- use advanced analytics for channels clicks and impressions #335
+- make data loop start method `async`
+
 ## 4.10.26
 ##### *2020-02-14*
 
