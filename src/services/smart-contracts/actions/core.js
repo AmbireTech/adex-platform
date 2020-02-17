@@ -198,7 +198,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 				const bTree = new BalanceTree(lastApprovedBalances)
 				return {
 					lastApprovedSigs,
-					// mTree,
+					lastApprovedBalances,
 					bTree,
 					channel,
 				}
@@ -206,36 +206,37 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 			.filter(({ bTree }) => {
 				return bTree && !bTree.getBalance(identityAddr).isZero()
 			})
-			.map(async ({ channel, lastApprovedSigs, bTree }) => {
-				//  mTree,
-				const balance = bTree.getBalance(identityAddr).toString()
+			.map(
+				async ({ channel, lastApprovedSigs, lastApprovedBalances, bTree }) => {
+					//  mTree,
+					const balance = bTree.getBalance(identityAddr).toString()
 
-				const outstanding = await getWithdrawnPerUserOutstanding({
-					AdExCore,
-					channel,
-					balance,
-					identityAddr,
-				})
+					const outstanding = await getWithdrawnPerUserOutstanding({
+						AdExCore,
+						channel,
+						balance,
+						identityAddr,
+					})
 
-				const outstandingAvailable = outstanding.sub(
-					bigNumberify(feeTokenWhitelist[channel.depositAsset].min)
-				)
+					const outstandingAvailable = outstanding.sub(
+						bigNumberify(feeTokenWhitelist[channel.depositAsset].min)
+					)
 
-				const balanceNum = bigNumberify(channel.depositAmount)
-					.sub(bigNumberify(channel.spec.validators[0].fee || 0))
-					.sub(bigNumberify(channel.spec.validators[1].fee || 0))
+					const balanceNum = bigNumberify(channel.depositAmount)
+						.sub(bigNumberify(channel.spec.validators[0].fee || 0))
+						.sub(bigNumberify(channel.spec.validators[1].fee || 0))
 
-				return {
-					channel,
-					balance,
-					lastApprovedSigs,
-					outstanding,
-					outstandingAvailable,
-					// mTree,
-					bTree,
-					balanceNum,
+					return {
+						channel,
+						balance,
+						lastApprovedSigs,
+						outstanding,
+						outstandingAvailable,
+						lastApprovedBalances,
+						balanceNum,
+					}
 				}
-			})
+			)
 	)
 
 	const all = Object.assign(
@@ -298,11 +299,11 @@ async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
 const getChannelWithdrawData = ({
 	identityAddr,
 	balance,
-	// mTree,
-	bTree,
+	lastApprovedBalances,
 	lastApprovedSigs,
 	ethChannelTuple,
 }) => {
+	const bTree = new BalanceTree(lastApprovedBalances)
 	const proof = bTree.getProof(identityAddr)
 	const vsig1 = splitSig(lastApprovedSigs[0])
 	const vsig2 = splitSig(lastApprovedSigs[1])
@@ -380,8 +381,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 
 	const txns = channelsToSweep.map((c, i) => {
 		const {
-			bTree,
-			//  mTree,
+			lastApprovedBalances,
 			channel,
 			lastApprovedSigs,
 			outstanding,
@@ -393,8 +393,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 		const data = getChannelWithdrawData({
 			identityAddr,
 			balance,
-			// mTree,
-			bTree,
+			lastApprovedBalances,
 			lastApprovedSigs,
 			ethChannelTuple,
 		})
