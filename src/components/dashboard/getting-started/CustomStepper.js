@@ -159,10 +159,7 @@ function ColorlibStepIcon(props) {
 				backgroundImage: `url(${icons[String(props.icon)]})`,
 				backgroundSize: 'cover',
 			}}
-		>
-			{/* {icons[String(props.icon)]} */}
-			{/* <GettingStartedImg src={EmailEddie}></GettingStartedImg> */}
-		</div>
+		/>
 	)
 }
 
