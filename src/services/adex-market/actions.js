@@ -154,10 +154,6 @@ export const getCampaigns = ({ authSig, creator }) => {
 			route: 'campaigns/by-owner',
 			method: 'GET',
 			noCache: true,
-			queryParams: {
-				byCreator: creator, //
-				t: Date.now(),
-			},
 			authSig,
 		})
 		.then(processResponse)
