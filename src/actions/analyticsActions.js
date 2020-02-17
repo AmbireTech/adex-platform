@@ -256,28 +256,35 @@ export function updateAccountCampaignsAnalytics() {
 			const params = analyticsCampaignsParams()
 			let accountChanged = false
 			const allAnalytics = params.map(async opts => {
-				identityCampaignsAnalytics({
-					...opts,
-					leaderAuth,
-				})
-					.then(res => {
-						accountChanged =
-							accountChanged || checkAccountChanged(getState, account)
+				try {
+					const value = await identityCampaignsAnalytics({
+						...opts,
+						leaderAuth,
+					})
 
-						if (!accountChanged) {
-							dispatch({
-								type: types.UPDATE_ADVANCED_CAMPAIGN_ANALYTICS,
-								...opts,
-								value: { ...res },
-							})
-						}
-					})
-					.catch(err => {
-						console.error('ERR_CAMPAIGN_ANALYTICS_SINGLE', err)
-					})
+					accountChanged =
+						accountChanged || checkAccountChanged(getState, account)
+
+					return { opts, value }
+				} catch (err) {
+					console.error('ERR_CAMPAIGN_ANALYTICS_SINGLE', err)
+					return null
+				}
 			})
 
-			await Promise.all(allAnalytics)
+			const data = await Promise.all(allAnalytics)
+
+			if (!accountChanged) {
+				data
+					.filter(x => !!x)
+					.forEach(({ opts, value }) =>
+						dispatch({
+							type: types.UPDATE_ADVANCED_CAMPAIGN_ANALYTICS,
+							...opts,
+							value,
+						})
+					)
+			}
 		} catch (err) {
 			console.error('ERR_CAMPAIGN_ANALYTICS', err)
 			addToast({
