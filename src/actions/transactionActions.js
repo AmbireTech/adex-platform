@@ -83,7 +83,7 @@ export function validatePrivilegesChange({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
-		await updateAccountIdentityData()
+		await updateAccountIdentityData()(dispatch, getState)
 
 		const state = getState()
 		const { setAddr, warningAccepted, privLevel } = selectNewTransactionById(
