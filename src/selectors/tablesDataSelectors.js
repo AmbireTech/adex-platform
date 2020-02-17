@@ -11,12 +11,12 @@ import {
 import { formatUnits } from 'ethers/utils'
 
 function selectCampaignEventsCount(type, campaignId) {
-	Object.values(
+	return Object.values(
 		selectCampaignAnalyticsByChannelToAdUnit(null, {
 			type,
 			campaignId,
 		})
-	).reduce((a, b) => a + b)
+	).reduce((a, b) => a + b, 0)
 }
 
 export const selectCampaignsTableData = createSelector(
@@ -36,8 +36,8 @@ export const selectCampaignsTableData = createSelector(
 				},
 				depositAmount: Number(formatUnits(item.depositAmount || '0', decimals)),
 				fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
-				impressions: selectCampaignEventsCount('IMPRESSION, item.id'),
-				clicks: selectCampaignEventsCount('CLICK, item.id'),
+				impressions: selectCampaignEventsCount('IMPRESSION', item.id),
+				clicks: selectCampaignEventsCount('CLICK', item.id),
 				minPerImpression:
 					Number(
 						formatUnits(
