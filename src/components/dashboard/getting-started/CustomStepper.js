@@ -16,6 +16,11 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import GettingStartedImg from './GettingStartedImg'
 import EmailEddie from 'resources/getting-started/GS-email-ic.png'
+import FundEddie from 'resources/getting-started/GS-fund-ic.png'
+import CreateEddie from 'resources/getting-started/GS-create-ic.png'
+import LaunchEddie from 'resources/getting-started/GS-launch-ic.png'
+import PlaceEddie from 'resources/getting-started/GS-place-ic.png'
+import BonusEddie from 'resources/getting-started/GS-bonus-ic.png'
 
 const QontoConnector = withStyles({
 	alternativeLabel: {
@@ -133,28 +138,15 @@ const useColorlibStepIconStyles = makeStyles(theme => ({
 	},
 }))
 
-const ImgIcon = ({ src, className }) => {
-	return (
-		<img
-			src={src}
-			height={80}
-			width='auto'
-			alt='logo'
-			style={{ marginRight: 5 }}
-			className={className}
-		/>
-	)
-}
-
 function ColorlibStepIcon(props) {
 	const classes = useColorlibStepIconStyles()
 	const { active, completed } = props
 	const icons = {
-		1: <ImgIcon src={EmailEddie} />,
-		2: <GroupAddIcon />,
-		3: <VideoLabelIcon />,
-		4: <GroupAddIcon />,
-		5: <VideoLabelIcon />,
+		1: EmailEddie,
+		2: CreateEddie,
+		3: FundEddie,
+		4: LaunchEddie,
+		5: BonusEddie,
 	}
 
 	return (
@@ -163,8 +155,12 @@ function ColorlibStepIcon(props) {
 				[classes.active]: active,
 				[classes.completed]: completed,
 			})}
+			style={{
+				backgroundImage: `url(${icons[String(props.icon)]})`,
+				backgroundSize: 'cover',
+			}}
 		>
-			{icons[String(props.icon)]}
+			{/* {icons[String(props.icon)]} */}
 			{/* <GettingStartedImg src={EmailEddie}></GettingStartedImg> */}
 		</div>
 	)
