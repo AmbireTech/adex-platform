@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.28
+##### *2020-02-17*
+
+### Fixed
+- Withdraw with sweeping bug
+
 ## 4.10.27
 ##### *2020-02-17*
 
