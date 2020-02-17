@@ -35,6 +35,15 @@ export const selectCampaignAnalyticsByChannelStats = createSelector(
 		(analyticsByType.byChannelStats || {})[campaignId] || {}
 )
 
+export const selectCampaignAnalyticsByChannelToAdUnit = createSelector(
+	(state, { type, campaignId } = {}) => [
+		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
+	],
+	([{ reportChannelToAdUnit }]) => {
+		return reportChannelToAdUnit || {}
+	}
+)
+
 export const selectAnalyticsDataAggr = createSelector(
 	[selectAnalytics, (_, opts = {}) => opts],
 	(analytics = {}, { side, eventType, metric, timeframe }) => {

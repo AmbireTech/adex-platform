@@ -108,14 +108,20 @@ function Dashboard(props) {
 	})
 
 	useEffect(() => {
-		execute(updateAccountIdentityData())
-		execute(updateSlotsDemandThrottled())
-		execute(updateNav('side', side))
-		execute(getAllItems())
-		analyticsLoop.start()
-		analyticsCampaignsLoop.start()
-		campaignsLoop.start()
-		statsLoop.start()
+		async function updateInitialData() {
+			execute(updateAccountIdentityData())
+			execute(updateSlotsDemandThrottled())
+			execute(updateNav('side', side))
+			execute(getAllItems())
+			analyticsLoop.start()
+			statsLoop.start()
+			//NOTE: await fo campaign analytics first
+			// because of the campaigns table data update fix
+			await analyticsCampaignsLoop.start()
+			campaignsLoop.start()
+		}
+
+		updateInitialData()
 
 		return () => {
 			analyticsLoop.stop()

@@ -138,7 +138,7 @@ export function updateAccountStats() {
 			const outstandingBalanceMainToken = await getOutstandingBalance({
 				wallet,
 				address,
-				withBalance,
+				withBalance: withBalance.eligible,
 			}).catch(err => {
 				console.error('ERR_OUTSTANDING_BALANCES', err)
 			})

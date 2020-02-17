@@ -154,10 +154,6 @@ export const getCampaigns = ({ authSig, creator }) => {
 			route: 'campaigns/by-owner',
 			method: 'GET',
 			noCache: true,
-			queryParams: {
-				byCreator: creator, //
-				t: Date.now(),
-			},
 			authSig,
 		})
 		.then(processResponse)
@@ -174,10 +170,11 @@ export const closeCampaignMarket = ({ campaign, authSig }) => {
 		.then(processResponse)
 }
 
-export const getAllCampaigns = ({ all, statuses } = {}) => {
+export const getAllCampaigns = ({ all, statuses, byEarner } = {}) => {
 	const queryParams = {
 		...(all && { all: true }),
 		...(statuses && { status: statuses.join(',') }),
+		byEarner,
 	}
 
 	return requester
