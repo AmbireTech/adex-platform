@@ -37,6 +37,7 @@ import {
 	selectWallet,
 	selectSearchParams,
 	selectAuthType,
+	selectAccountIdentity,
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { getErrorMsg } from 'helpers/errors'
@@ -164,7 +165,7 @@ export function updateAccountStats() {
 export function updateAccountIdentityData() {
 	return async function(dispatch, getState) {
 		updateSpinner(UPDATING_ACCOUNT_IDENTITY, true)(dispatch)
-		const identity = selectIdentity(getState())
+		const identity = selectAccountIdentity(getState())
 
 		try {
 			const relayerData =

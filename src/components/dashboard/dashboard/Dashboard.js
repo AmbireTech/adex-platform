@@ -37,6 +37,7 @@ import {
 	execute,
 	resolveEnsAddress,
 	updatePrivilegesWarningAccepted,
+	updateAccountIdentityData,
 } from 'actions'
 import {
 	t,
@@ -108,6 +109,7 @@ function Dashboard(props) {
 
 	useEffect(() => {
 		async function updateInitialData() {
+			execute(updateAccountIdentityData())
 			execute(updateSlotsDemandThrottled())
 			execute(updateNav('side', side))
 			execute(getAllItems())
@@ -187,7 +189,9 @@ function Dashboard(props) {
 									execute(updatePrivilegesWarningAccepted(true))
 								}}
 							>
-								{t('PRIVILEGES_LEVEL_WARNING_MSG')}
+								{t('PRIVILEGES_LEVEL_WARNING_MSG', {
+									args: [`PRIV_${privileges}_LABEL`],
+								})}
 							</Alert>
 						</Box>
 					)}
