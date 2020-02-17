@@ -15,7 +15,7 @@ const analyticsLoop = new Loop({
 
 const analyticsCampaignsLoop = new Loop({
 	timeout: LOOP_TIMEOUT,
-	syncAction: () => execute(updateAccountCampaignsAnalytics()),
+	syncAction: async () => await execute(updateAccountCampaignsAnalytics()),
 	loopName: '_ANALYTICS_CAMPAIGNS_ADVANCED',
 })
 
