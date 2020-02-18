@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.29
+##### *2020-02-19*
+
+### Added
+- Print/Export campaigns receipts #332
+- Global and by account ui states
+
+### Fixed
+- Payout analytics - more accurate calculation of Expired campaigns
+and removed data points whit zero available earnings
+- Campaign details z-index bug with tabs and app bar
+
 ## 4.10.28
 ##### *2020-02-17*
 
