@@ -25,7 +25,10 @@ let initialState = {
 		AdSlot: {},
 	},
 	spinners: {},
-	ui: {},
+	ui: {
+		global: {},
+		byIdentity: {},
+	},
 	toasts: [],
 	confirm: {
 		data: {},

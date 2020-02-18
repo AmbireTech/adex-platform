@@ -27,7 +27,7 @@ import * as types from 'constants/actionTypes'
 export const persistReducers = {
 	account,
 	items: filterActions(items, action => action.type.match(/_ITEM/)),
-	ui: filterActions(ui, [types.UPDATE_UI]),
+	ui, //: filterActions(ui, [types.UPDATE_UI]),
 	language,
 	web3Transactions,
 	tags,

@@ -2,7 +2,7 @@ import React from 'react'
 import Button from '@material-ui/core/Button'
 import * as types from 'constants/actionTypes'
 import Helper from 'helpers/miscHelpers'
-import { selectCompanyData } from 'selectors'
+import { selectCompanyData, selectAccountIdentityAddr } from 'selectors'
 import { translate } from 'services/translations/translations'
 
 export function updateSpinner(item, value) {
@@ -15,10 +15,22 @@ export function updateSpinner(item, value) {
 	}
 }
 
-export function updateUi(item, value, category) {
+export function updateGlobalUi(item, value, category) {
 	return function(dispatch) {
 		return dispatch({
-			type: types.UPDATE_UI,
+			type: types.UPDATE_GLOBAL_UI,
+			item: item,
+			value: value,
+			category: category,
+		})
+	}
+}
+
+export function updateUiByIdentity(identity, item, value, category) {
+	return function(dispatch) {
+		return dispatch({
+			type: types.UPDATE_UI_BY_IDENTITY,
+			identity: identity,
 			item: item,
 			value: value,
 			category: category,
@@ -112,9 +124,8 @@ export function changeLanguage(lang) {
 export function updateRegistrationAllowed(search) {
 	return function(dispatch) {
 		const searchParams = new URLSearchParams(search)
-
 		if (searchParams.get('eddie') === 'themoonicorn') {
-			updateUi('allowRegistration', true)(dispatch)
+			updateGlobalUi('allowRegistration', true)(dispatch)
 		}
 	}
 }
@@ -123,8 +134,9 @@ export function updateCompanyData(newData) {
 	return async function(dispatch, getState) {
 		try {
 			const companyData = selectCompanyData(getState())
+			const identityAddr = selectAccountIdentityAddr(getState())
 			const newCompanyData = { ...companyData, ...newData }
-			updateUi('companyData', newCompanyData)(dispatch)
+			updateUiByIdentity(identityAddr, 'companyData', newCompanyData)(dispatch)
 		} catch (err) {
 			console.error('ERR_UPDATING_COMPANY_DATA', err)
 			addToast({
@@ -224,13 +236,13 @@ export function updateEasterEggsAllowed(search) {
 			searchParams.get(process.env.EASTER_EGGS_PARAM) ===
 			process.env.EASTER_EGGS_VALUE
 		) {
-			updateUi('allowEasterEggs', true)(dispatch)
+			updateGlobalUi('allowEasterEggs', true)(dispatch)
 		}
 	}
 }
 
 export function updatePrivilegesWarningAccepted(accepted) {
 	return function(dispatch) {
-		updateUi('privilegesWarningAccepted', accepted)(dispatch)
+		updateGlobalUi('privilegesWarningAccepted', accepted)(dispatch)
 	}
 }
