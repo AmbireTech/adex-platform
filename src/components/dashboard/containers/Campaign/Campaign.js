@@ -115,9 +115,10 @@ export class Campaign extends Component {
 							<Tab label={t('STATISTICS')} />
 							<Tab label={t('CAMPAIGN_UNITS')} />
 							<Tab label={t('VALIDATORS')} />
-							{(humanFriendlyName === 'Closed' || humanFriendlyName === 'Completed') && (
-									<Tab label={t('RECEIPT')} />
-								))}
+							{(humanFriendlyName === 'Closed' ||
+								humanFriendlyName === 'Completed') && (
+								<Tab label={t('RECEIPT')} />
+							)}
 						</Tabs>
 					</AppBar>
 					<div style={{ marginTop: 10 }}>
