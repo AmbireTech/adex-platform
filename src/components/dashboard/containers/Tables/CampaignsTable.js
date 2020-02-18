@@ -210,22 +210,22 @@ const getCols = ({
 							<Visibility color='primary' />
 						</RRIconButton>
 					</Tooltip>
-					{humanFriendlyName === 'Closed' ||
-						(humanFriendlyName === 'Completed' && (
-							<Tooltip
-								title={t('RECEIPT_VIEW')}
-								// placement='top'
-								enterDelay={1000}
+					{(humanFriendlyName === 'Closed' ||
+						humanFriendlyName === 'Completed') && (
+						<Tooltip
+							title={t('RECEIPT_VIEW')}
+							// placement='top'
+							enterDelay={1000}
+						>
+							<RRIconButton
+								to={`/dashboard/${side}/Campaign/receipt/${id}`}
+								variant='contained'
+								aria-label='receip'
 							>
-								<RRIconButton
-									to={`/dashboard/${side}/Campaign/receipt/${id}`}
-									variant='contained'
-									aria-label='receip'
-								>
-									<Receipt color='primary' />
-								</RRIconButton>
-							</Tooltip>
-						))}
+								<Receipt color='primary' />
+							</RRIconButton>
+						</Tooltip>
+					)}
 				</React.Fragment>
 			),
 		},
