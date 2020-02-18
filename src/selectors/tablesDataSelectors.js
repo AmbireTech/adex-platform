@@ -6,8 +6,18 @@ import {
 	selectAdUnits,
 	creatArrayOnlyLengthChangeSelector,
 	selectCampaignAnalyticsByChannelStats,
+	selectCampaignAnalyticsByChannelToAdUnit,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
+
+function selectCampaignEventsCount(type, campaignId) {
+	return Object.values(
+		selectCampaignAnalyticsByChannelToAdUnit(null, {
+			type,
+			campaignId,
+		})
+	).reduce((a, b) => a + b, 0)
+}
 
 export const selectCampaignsTableData = createSelector(
 	[selectCampaignsArray, selectRoutineWithdrawTokens, (_, side) => side],
@@ -26,8 +36,8 @@ export const selectCampaignsTableData = createSelector(
 				},
 				depositAmount: Number(formatUnits(item.depositAmount || '0', decimals)),
 				fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
-				impressions: Number(item.impressions || '0'),
-				clicks: Number(item.clicks || '0'),
+				impressions: selectCampaignEventsCount('IMPRESSION', item.id),
+				clicks: selectCampaignEventsCount('CLICK', item.id),
 				minPerImpression:
 					Number(
 						formatUnits(

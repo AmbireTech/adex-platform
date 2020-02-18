@@ -40,9 +40,9 @@ export default class Looper {
 		this.loopTimeout = setTimeout(this.startLoop, this.timeout)
 	}
 
-	start = () => {
+	start = async () => {
 		this.clearLoopTimeout()
-		this.startLoop()
+		await this.startLoop()
 	}
 
 	stop = () => {
