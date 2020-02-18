@@ -1,7 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Box, Card, Typography } from '@material-ui/core'
-import TextFieldDebounced from 'components/common/fields/TextFieldDebounced'
+import { Box, Card, Typography, TextField } from '@material-ui/core'
 import { execute, updateCompanyData } from 'actions'
 import { t, selectCompanyData } from 'selectors'
 
@@ -9,6 +8,7 @@ function CompanyDetails(props) {
 	const { companyName, firstLastName, address, country } = useSelector(state =>
 		selectCompanyData(state)
 	)
+
 	return (
 		<Box mb={3} mt={3}>
 			<Box mb={1}>
@@ -16,35 +16,35 @@ function CompanyDetails(props) {
 			</Box>
 			<Card>
 				<Box p={3}>
-					<TextFieldDebounced
+					<TextField
 						label={t('COMPANY_NAME')}
 						value={companyName || ''}
-						debounceChange={value =>
-							execute(updateCompanyData({ companyName: value }))
+						onChange={ev =>
+							execute(updateCompanyData({ companyName: ev.target.value }))
 						}
 						fullWidth
 					/>
-					<TextFieldDebounced
+					<TextField
 						label={t('FIRST_LAST_NAME')}
 						value={firstLastName || ''}
-						debounceChange={value =>
-							execute(updateCompanyData({ firstLastName: value }))
+						onChange={ev =>
+							execute(updateCompanyData({ firstLastName: ev.target.value }))
 						}
 						fullWidth
 					/>
-					<TextFieldDebounced
+					<TextField
 						label={t('ADDRESS')}
 						value={address || ''}
-						debounceChange={value =>
-							execute(updateCompanyData({ address: value }))
+						onChange={ev =>
+							execute(updateCompanyData({ address: ev.target.value }))
 						}
 						fullWidth
 					/>
-					<TextFieldDebounced
+					<TextField
 						label={t('COUNTRY')}
 						value={country || ''}
-						debounceChange={value =>
-							execute(updateCompanyData({ country: value }))
+						onChange={ev =>
+							execute(updateCompanyData({ country: ev.target.value }))
 						}
 						fullWidth
 					/>
