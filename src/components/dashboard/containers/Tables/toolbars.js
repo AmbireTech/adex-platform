@@ -1,7 +1,30 @@
 import React, { Fragment } from 'react'
-import { IconButton, Tooltip, Box, Button } from '@material-ui/core'
+import { useSelector } from 'react-redux'
+import {
+	IconButton,
+	Tooltip,
+	Box,
+	Button,
+	CircularProgress,
+} from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
 import { Refresh, Receipt, Print } from '@material-ui/icons'
-import { t } from 'selectors'
+import { t, selectSpinnerById } from 'selectors'
+import { PRINTING_CAMPAIGNS_RECEIPTS } from 'constants/spinners'
+
+const useStyles = makeStyles(theme => ({
+	wrapper: {
+		margin: theme.spacing(1),
+		position: 'relative',
+	},
+	buttonProgress: {
+		position: 'absolute',
+		top: '50%',
+		left: '50%',
+		marginTop: -12,
+		marginLeft: -12,
+	},
+}))
 
 export function ReloadData({ handleReload }) {
 	return (
@@ -28,19 +51,29 @@ export function ViewAllReceipts({ handleViewAllReceipts }) {
 }
 
 export function PrintAllReceipts({ handlePrintAllReceipts, disabled }) {
+	const classes = useStyles()
+	const receiptsSpinner = useSelector(state =>
+		selectSpinnerById(state, PRINTING_CAMPAIGNS_RECEIPTS)
+	)
+
 	return (
 		<Fragment>
 			<Tooltip title={t('RECEIPTS_PRINT_ALL')}>
 				<Box ml={2} mr={2}>
-					<Button
-						startIcon={<Print />}
-						onClick={handlePrintAllReceipts}
-						variant='contained'
-						color='primary'
-						disabled={disabled}
-					>
-						{t('RECEIPTS_PRINT_ALL')}
-					</Button>
+					<div className={classes.wrapper}>
+						<Button
+							startIcon={<Print />}
+							onClick={handlePrintAllReceipts}
+							variant='contained'
+							color='primary'
+							disabled={disabled || receiptsSpinner}
+						>
+							{t('RECEIPTS_PRINT_ALL')}
+						</Button>
+						{receiptsSpinner && (
+							<CircularProgress size={24} className={classes.buttonProgress} />
+						)}
+					</div>
 				</Box>
 			</Tooltip>
 		</Fragment>
