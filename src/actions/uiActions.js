@@ -148,7 +148,7 @@ export function updateCompanyData(newData) {
 	}
 }
 
-export function updateSelectedCampaings(selectedItems) {
+export function updateSelectedCampaigns(selectedItems) {
 	return function(dispatch) {
 		return dispatch({
 			type: types.UPDATE_SELECTED_CAMPAINGS,
