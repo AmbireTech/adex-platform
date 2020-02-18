@@ -21,6 +21,7 @@ import CreateEddie from 'resources/getting-started/GS-create-ic.png'
 import LaunchEddie from 'resources/getting-started/GS-launch-ic.png'
 import PlaceEddie from 'resources/getting-started/GS-place-ic.png'
 import BonusEddie from 'resources/getting-started/GS-bonus-ic.png'
+import { PRIMARY, SECONDARY } from 'components/App/themeMUi'
 
 const QontoConnector = withStyles({
 	alternativeLabel: {
@@ -92,29 +93,31 @@ QontoStepIcon.propTypes = {
 	completed: PropTypes.bool,
 }
 
-const ColorlibConnector = withStyles({
+const ColorlibConnector = withStyles(theme => ({
 	alternativeLabel: {
 		top: 50,
 	},
 	active: {
-		'& $line': {
-			backgroundImage:
-				'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
-		},
+		// '& $line': {
+		// 	backgroundImage:
+		// 		'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+		// },
 	},
 	completed: {
-		'& $line': {
-			backgroundImage:
-				'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
-		},
+		// '& $line': {
+		// 	backgroundImage:
+		// 		'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+		// },
 	},
 	line: {
 		height: 3,
 		border: 0,
-		backgroundColor: '#eaeaf0',
-		borderRadius: 1,
+		background: `linear-gradient(to right, transparent 50%, #fff 50%), ${
+			theme.palette.grey[300]
+		}`,
+		backgroundSize: `16px 2px, 100% 2px`,
 	},
-})(StepConnector)
+}))(StepConnector)
 
 const useColorlibStepIconStyles = makeStyles(theme => ({
 	root: {
@@ -126,15 +129,18 @@ const useColorlibStepIconStyles = makeStyles(theme => ({
 		borderRadius: '50%',
 		justifyContent: 'center',
 		alignItems: 'center',
+		border: `3px solid ${theme.palette.grey[300]}`,
+		transition: '0.5s',
+		'&:hover': {
+			boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
+			transform: 'translateY(-5px)',
+		},
 	},
 	active: {
-		// backgroundImage:
-		// 	'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
-		boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
+		border: `3px solid ${PRIMARY}`,
 	},
 	completed: {
-		// backgroundImage:
-		// 	'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+		border: `3px solid ${SECONDARY}`,
 	},
 }))
 
