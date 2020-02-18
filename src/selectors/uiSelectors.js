@@ -42,7 +42,7 @@ export const selectEasterEggsAllowed = createSelector(
 )
 
 export const selectPrivilegesWarningAccepted = createSelector(
-	selectGlobalUi,
+	selectIdentityUi,
 	({ privilegesWarningAccepted }) => !!privilegesWarningAccepted
 )
 

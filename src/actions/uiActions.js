@@ -26,11 +26,12 @@ export function updateGlobalUi(item, value, category) {
 	}
 }
 
-export function updateUiByIdentity(identity, item, value, category) {
-	return function(dispatch) {
+export function updateUiByIdentity(item, value, category) {
+	return function(dispatch, getState) {
+		const identity = selectAccountIdentityAddr(getState())
 		return dispatch({
 			type: types.UPDATE_UI_BY_IDENTITY,
-			identity: identity,
+			identity,
 			item: item,
 			value: value,
 			category: category,
@@ -134,9 +135,8 @@ export function updateCompanyData(newData) {
 	return async function(dispatch, getState) {
 		try {
 			const companyData = selectCompanyData(getState())
-			const identityAddr = selectAccountIdentityAddr(getState())
 			const newCompanyData = { ...companyData, ...newData }
-			updateUiByIdentity(identityAddr, 'companyData', newCompanyData)(dispatch)
+			updateUiByIdentity('companyData', newCompanyData)(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_UPDATING_COMPANY_DATA', err)
 			addToast({
@@ -250,6 +250,6 @@ export function updateEasterEggsAllowed(search) {
 
 export function updatePrivilegesWarningAccepted(accepted) {
 	return function(dispatch) {
-		updateGlobalUi('privilegesWarningAccepted', accepted)(dispatch)
+		updateUiByIdentity('privilegesWarningAccepted', accepted)(dispatch)
 	}
 }
