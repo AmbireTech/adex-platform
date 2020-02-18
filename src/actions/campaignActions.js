@@ -12,6 +12,8 @@ import {
 	validateCampaignTitle,
 	validateCampaignDates,
 	validateCampaignUnits,
+	confirmAction,
+	updateSelectedCampaigns,
 } from 'actions'
 import { push } from 'connected-react-router'
 import { parseUnits, bigNumberify } from 'ethers/utils'
@@ -34,7 +36,11 @@ import {
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import { Campaign } from 'adex-models'
-import { OPENING_CAMPAIGN, GETTING_CAMPAIGNS_FEES } from 'constants/spinners'
+import {
+	OPENING_CAMPAIGN,
+	GETTING_CAMPAIGNS_FEES,
+	PRINTING_CAMPAIGNS_RECEIPTS,
+} from 'constants/spinners'
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -433,5 +439,25 @@ export function getCampaignActualFees() {
 		}
 
 		await updateSpinner(GETTING_CAMPAIGNS_FEES, false)(dispatch)
+	}
+}
+
+export function handlePrintSelectedReceipts(selected) {
+	return async function(dispatch, getState) {
+		await updateSpinner(PRINTING_CAMPAIGNS_RECEIPTS, true)(dispatch)
+		confirmAction(
+			async () => {
+				await updateSelectedCampaigns(selected)(dispatch, getState)
+				await dispatch(push('/dashboard/advertiser/receipts'))
+				await updateSpinner(PRINTING_CAMPAIGNS_RECEIPTS, false)(dispatch)
+			},
+			async () => {
+				await updateSpinner(PRINTING_CAMPAIGNS_RECEIPTS, false)(dispatch)
+			},
+			{
+				title: t('CONFIRM_DIALOG_PRINT_ALL_RECEIPTS_TITLE'),
+				text: t('CONFIRM_DIALOG_PRINT_ALL_RECEIPTS_TEXT'),
+			}
+		)(dispatch, getState)
 	}
 }

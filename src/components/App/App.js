@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import 'react-image-crop/dist/ReactCrop.css'
-// import './App.css'
+import './App.css'
 import { Provider } from 'react-redux'
 import { persistor, store } from 'store'
 import history from 'store/history'

@@ -2,6 +2,7 @@ import React from 'react'
 import Button from '@material-ui/core/Button'
 import * as types from 'constants/actionTypes'
 import Helper from 'helpers/miscHelpers'
+import { selectCompanyData, selectAccountIdentityAddr } from 'selectors'
 import { translate } from 'services/translations/translations'
 
 export function updateSpinner(item, value) {
@@ -14,10 +15,23 @@ export function updateSpinner(item, value) {
 	}
 }
 
-export function updateUi(item, value, category) {
+export function updateGlobalUi(item, value, category) {
 	return function(dispatch) {
 		return dispatch({
-			type: types.UPDATE_UI,
+			type: types.UPDATE_GLOBAL_UI,
+			item: item,
+			value: value,
+			category: category,
+		})
+	}
+}
+
+export function updateUiByIdentity(item, value, category) {
+	return function(dispatch, getState) {
+		const identity = selectAccountIdentityAddr(getState())
+		return dispatch({
+			type: types.UPDATE_UI_BY_IDENTITY,
+			identity,
 			item: item,
 			value: value,
 			category: category,
@@ -70,8 +84,8 @@ export function confirmAction(
 	noActionBtns,
 	active
 ) {
-	return function(dispatch) {
-		return dispatch({
+	return async function(dispatch) {
+		return await dispatch({
 			type: types.CONFIRM_ACTION,
 			confirm: {
 				onConfirm: onConfirm,
@@ -111,10 +125,42 @@ export function changeLanguage(lang) {
 export function updateRegistrationAllowed(search) {
 	return function(dispatch) {
 		const searchParams = new URLSearchParams(search)
-
 		if (searchParams.get('eddie') === 'themoonicorn') {
-			updateUi('allowRegistration', true)(dispatch)
+			updateGlobalUi('allowRegistration', true)(dispatch)
 		}
+	}
+}
+
+export function updateCompanyData(newData) {
+	return async function(dispatch, getState) {
+		try {
+			const companyData = selectCompanyData(getState())
+			const newCompanyData = { ...companyData, ...newData }
+			updateUiByIdentity('companyData', newCompanyData)(dispatch, getState)
+		} catch (err) {
+			console.error('ERR_UPDATING_COMPANY_DATA', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_UPDATING_COMPANY_DATA'),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function updateSelectedItems(collection, selectedItems) {
+	return function(dispatch) {
+		return dispatch({
+			type: types.UPDATE_SELECTED_ITEMS,
+			selectedItems,
+			collection,
+		})
+	}
+}
+
+export function updateSelectedCampaigns(selectedItems) {
+	return function(dispatch) {
+		return updateSelectedItems('campaigns', selectedItems)(dispatch)
 	}
 }
 
@@ -197,13 +243,13 @@ export function updateEasterEggsAllowed(search) {
 			searchParams.get(process.env.EASTER_EGGS_PARAM) ===
 			process.env.EASTER_EGGS_VALUE
 		) {
-			updateUi('allowEasterEggs', true)(dispatch)
+			updateGlobalUi('allowEasterEggs', true)(dispatch)
 		}
 	}
 }
 
 export function updatePrivilegesWarningAccepted(accepted) {
 	return function(dispatch) {
-		updateUi('privilegesWarningAccepted', accepted)(dispatch)
+		updateUiByIdentity('privilegesWarningAccepted', accepted)(dispatch)
 	}
 }

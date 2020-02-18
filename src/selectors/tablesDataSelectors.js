@@ -6,18 +6,9 @@ import {
 	selectAdUnits,
 	creatArrayOnlyLengthChangeSelector,
 	selectCampaignAnalyticsByChannelStats,
-	selectCampaignAnalyticsByChannelToAdUnit,
+	selectCampaignEventsCount,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
-
-function selectCampaignEventsCount(type, campaignId) {
-	return Object.values(
-		selectCampaignAnalyticsByChannelToAdUnit(null, {
-			type,
-			campaignId,
-		})
-	).reduce((a, b) => a + b, 0)
-}
 
 export const selectCampaignsTableData = createSelector(
 	[selectCampaignsArray, selectRoutineWithdrawTokens, (_, side) => side],
@@ -50,8 +41,14 @@ export const selectCampaignsTableData = createSelector(
 				withdrawPeriodStart:
 					spec.withdrawPeriodStart || item.withdrawPeriodStart,
 				actions: {
-					to: `/dashboard/${side}/Campaign/${item.id}`,
+					side: side,
+					id: item.id,
+					humanFriendlyName: item.status.humanFriendlyName,
 				},
+				id: item.id,
+				receiptAvailable:
+					item.status.humanFriendlyName === 'Closed' ||
+					item.status.humanFriendlyName === 'Completed',
 			}
 		})
 )
@@ -153,6 +150,21 @@ export const selectCampaignStatsTableData = createSelector(
 			clicks: clickStats[key] || 0,
 		}))
 	}
+)
+
+export const selectCampaignTotalValues = createSelector(
+	(state, channelId) => selectCampaignStatsTableData(state, channelId),
+	data =>
+		data.reduce(
+			(result, current) => {
+				const newResult = { ...result }
+				newResult.totalClicks += current.clicks
+				newResult.totalImpressions += current.impressions
+				newResult.totalEarnings += current.earnings
+				return newResult
+			},
+			{ totalClicks: 0, totalImpressions: 0, totalEarnings: 0 }
+		)
 )
 
 export const selectCampaignStatsMaxValues = createSelector(

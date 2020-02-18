@@ -66,9 +66,7 @@ export default function MUIDataTableEnhanced(props) {
 				download: !props.noDownload,
 				print: !props.noPrint,
 				selectableRows: props.rowSelectable ? 'multiple' : 'none',
-				customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
-					//This disables toolbar when selected elements on all tables
-				},
+				disableToolbarSelect: props.toolbarEnabled ? false : true,
 			}}
 		/>
 	)

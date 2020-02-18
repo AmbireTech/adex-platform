@@ -22,8 +22,8 @@ import ListItemText from '@material-ui/core/ListItemText'
 import Anchor from 'components/common/anchor/anchor'
 import CampaignStatsDoughnut from 'components/dashboard/charts/campaigns/CampaignStatsDoughnut'
 import CampaignStatsBreakdownTable from 'components/dashboard/containers/Tables/CampaignStatsBreakdownTable'
+import { CampaignReceipt } from 'components/dashboard/containers/Receipt/CampaignReceipt'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
-
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 const VIEW_MODE = 'campaignRowsView'
 
@@ -61,7 +61,7 @@ export class Campaign extends Component {
 	render() {
 		const {
 			t,
-			// classes,
+			classes,
 			item,
 			// handleChange,
 			// activeFields,
@@ -74,6 +74,7 @@ export class Campaign extends Component {
 		const units = item.spec.adUnits
 		const campaign = new CampaignModel(item)
 		const status = (campaign.status || {}).name
+		const humanFriendlyName = campaign.status.humanFriendlyName
 		const leader = campaign.spec.validators[0]
 		const follower = campaign.spec.validators[1]
 		return (
@@ -102,7 +103,7 @@ export class Campaign extends Component {
 					}
 				/>
 				<div>
-					<AppBar position='static' color='default'>
+					<AppBar position='static' color='default' className={classes.appBar}>
 						<Tabs
 							value={tabIndex}
 							onChange={this.handleTabChange}
@@ -114,6 +115,10 @@ export class Campaign extends Component {
 							<Tab label={t('STATISTICS')} />
 							<Tab label={t('CAMPAIGN_UNITS')} />
 							<Tab label={t('VALIDATORS')} />
+							{(humanFriendlyName === 'Closed' ||
+								humanFriendlyName === 'Completed') && (
+								<Tab label={t('RECEIPT')} />
+							)}
 						</Tabs>
 					</AppBar>
 					<div style={{ marginTop: 10 }}>
@@ -170,6 +175,7 @@ export class Campaign extends Component {
 								</Anchor>
 							</List>
 						)}
+						{tabIndex === 3 && <CampaignReceipt itemId={campaign.id} />}
 					</div>
 				</div>
 			</div>
@@ -189,7 +195,7 @@ function mapStateToProps(state, ownProps) {
 	// let memory = state.memory
 	return {
 		units: persist.items['AdUnit'],
-		rowsView: !!persist.ui[VIEW_MODE],
+		rowsView: !!persist.ui.global[VIEW_MODE],
 		objModel: CampaignModel,
 		itemType: 'Campaign',
 	}
