@@ -66,8 +66,8 @@ function Receipt(props) {
 	const campaign = useSelector(state =>
 		selectCampaignWithAnalyticsById(state, campaignId)
 	)
-	const { companyName, firstLastName, address, country } = useSelector(state =>
-		selectCompanyData(state)
+	const { companyName, firstLastName, address, country } = useSelector(
+		selectCompanyData
 	)
 	const humanFriendlyName = campaign.status.humanFriendlyName
 	const receiptReady =
