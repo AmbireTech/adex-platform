@@ -16,6 +16,12 @@ import { UPDATING_SLOTS_DEMAND } from 'constants/spinners'
 import { getErrorMsg } from 'helpers/errors'
 import { fillEmptyTime } from 'helpers/timeHelpers'
 import { getUnitsStatsByType } from 'services/adex-market/aggregates'
+import {
+	selectChannelsWithUserBalancesAll,
+	selectFeeTokenWhitelist,
+	selectRoutineWithdrawTokens,
+} from 'selectors'
+import { bigNumberify } from 'ethers/utils'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
@@ -29,6 +35,8 @@ const analyticsParams = (timeframe, side) => {
 				timeframe,
 				side,
 				eventType,
+				...(side === 'publisher' &&
+					metric === 'eventPayouts' && { segmentByChannel: true }),
 			})
 		)
 	)
@@ -58,11 +66,108 @@ function checkAccountChanged(getState, account) {
 	return accountChanged
 }
 
+function aggrByChannelsSegments({
+	aggr,
+	allChannels,
+	feeTokens,
+	withdrawTokens,
+}) {
+	// NOTE: No need to sort them again because fillEmptyTime
+	// is sorting by time after adding the empty time values
+	const { aggregations, all } = aggr
+		.sort((a, b) => b.time - a.time)
+		.reduce(
+			(data, a) => {
+				const { time } = a
+				const { aggregations, channels, all } = data
+				const channelId = a.channelId.toLowerCase()
+
+				const { depositAmount, balanceNum, depositAsset, status } =
+					allChannels[channelId] || {}
+
+				const { minPlatform, minFinal } = withdrawTokens[depositAsset]
+				const { min } = feeTokens[depositAsset]
+				const isExpired = status === 'Expired'
+				const minBalance = isExpired ? minFinal : minPlatform
+
+				const current = channels[channelId] || { aggr: [] }
+
+				const value = bigNumberify(a.value || 0)
+					.mul(bigNumberify(balanceNum || 1))
+					.div(bigNumberify(depositAmount || 1))
+
+				current.aggr.push({ value, time })
+
+				const currentAggr = aggregations[time] || {
+					time,
+					value: bigNumberify(0),
+				}
+				const currentChannelValue = bigNumberify(current.value || 0).add(value)
+
+				const hasMinBalance = currentChannelValue.gt(bigNumberify(minBalance))
+				const currentTimeValue = currentAggr.value
+
+				current.value = currentChannelValue
+
+				if (hasMinBalance && !current.feeSubtracted) {
+					current.feeSubtracted = true
+					const currentAvailable = currentChannelValue.sub(bigNumberify(min))
+					const currentAdded = bigNumberify(0)
+					const points = current.aggr
+
+					for (let index = points.length - 1; index >= 0; index--) {
+						const point = points[index]
+						currentAdded.add(point.value)
+
+						const curInnerAggr = aggregations[point.time] || {
+							time,
+							value: bigNumberify(0),
+						}
+
+						if (currentAdded.lt(currentAvailable)) {
+							curInnerAggr.value = curInnerAggr.value.add(point.value)
+							aggregations[point.time] = curInnerAggr
+						} else
+							curInnerAggr.value = curInnerAggr.value.add(
+								currentAdded.sub(currentAvailable)
+							)
+						aggregations[point.time] = curInnerAggr
+						break
+					}
+				} else if (hasMinBalance && current.feeSubtracted) {
+					currentAggr.value = value.add(currentTimeValue)
+				}
+
+				channels[channelId] = current
+				aggregations[time] = currentAggr
+				all[time] = a.value || all[time]
+
+				return { aggregations, channels, all }
+			},
+			{ aggregations: {}, channels: {}, all: {} }
+		)
+
+	// NOTE: force to null values when value under limits but not naturally 0
+	const aggrWithNullValues = Object.values(aggregations).map(
+		({ time, value }) => {
+			const isNull =
+				all[time] === undefined ||
+				(bigNumberify(value).isZero() && all[time] !== '0')
+			return { time, value: isNull ? null : value }
+		}
+	)
+
+	return aggrWithNullValues
+}
+
 export function updateAccountAnalytics() {
 	return async function(dispatch, getState) {
 		const { account, analytics } = getState().persist
 		const { side } = getState().memory.nav
 		const { timeframe } = analytics
+		const allChannels = selectChannelsWithUserBalancesAll()
+		const feeTokens = selectFeeTokenWhitelist()
+		const withdrawTokens = selectRoutineWithdrawTokens()
 		try {
 			const toastId = addToast({
 				type: 'warning',
@@ -90,8 +195,21 @@ export function updateAccountAnalytics() {
 					...opts,
 					leaderAuth,
 				})
-					.then(res => {
-						res.aggr = fillEmptyTime(res.aggr, timeframe)
+					.then(({ aggregates, metric }) => {
+						const aggrByChannelSegments =
+							side === 'publisher' && metric === 'eventPayouts'
+						let aggr = aggrByChannelSegments
+							? aggrByChannelsSegments({
+									aggr: aggregates.aggr,
+									allChannels,
+									feeTokens,
+									withdrawTokens,
+							  })
+							: aggregates.aggr
+
+						const defaultValue = aggrByChannelSegments ? null : 0
+
+						aggregates.aggr = fillEmptyTime(aggr, timeframe, defaultValue)
 						accountChanged =
 							accountChanged || checkAccountChanged(getState, account)
 
@@ -99,7 +217,7 @@ export function updateAccountAnalytics() {
 							dispatch({
 								type: types.UPDATE_ANALYTICS,
 								...opts,
-								value: { ...res },
+								value: { ...aggregates },
 							})
 						}
 					})
@@ -146,28 +264,35 @@ export function updateAccountCampaignsAnalytics() {
 			const params = analyticsCampaignsParams()
 			let accountChanged = false
 			const allAnalytics = params.map(async opts => {
-				identityCampaignsAnalytics({
-					...opts,
-					leaderAuth,
-				})
-					.then(res => {
-						accountChanged =
-							accountChanged || checkAccountChanged(getState, account)
+				try {
+					const value = await identityCampaignsAnalytics({
+						...opts,
+						leaderAuth,
+					})
 
-						if (!accountChanged) {
-							dispatch({
-								type: types.UPDATE_ADVANCED_CAMPAIGN_ANALYTICS,
-								...opts,
-								value: { ...res },
-							})
-						}
-					})
-					.catch(err => {
-						console.error('ERR_CAMPAIGN_ANALYTICS_SINGLE', err)
-					})
+					accountChanged =
+						accountChanged || checkAccountChanged(getState, account)
+
+					return { opts, value }
+				} catch (err) {
+					console.error('ERR_CAMPAIGN_ANALYTICS_SINGLE', err)
+					return null
+				}
 			})
 
-			await Promise.all(allAnalytics)
+			const data = await Promise.all(allAnalytics)
+
+			if (!accountChanged) {
+				data
+					.filter(x => !!x)
+					.forEach(({ opts, value }) =>
+						dispatch({
+							type: types.UPDATE_ADVANCED_CAMPAIGN_ANALYTICS,
+							...opts,
+							value,
+						})
+					)
+			}
 		} catch (err) {
 			console.error('ERR_CAMPAIGN_ANALYTICS', err)
 			addToast({
