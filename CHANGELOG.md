@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Payout analytics - more accurate calculation of Expired campaigns
-and removed data points whit zero available earnings
+and removed data points whit zero available earnings #345
 - Campaign details z-index bug with tabs and app bar
 
 ## 4.10.28
