@@ -79,7 +79,7 @@ export const intervalsMs = () => {
 	}
 }
 
-export const fillEmptyTime = (prevAggr, timeframe) => {
+export const fillEmptyTime = (prevAggr, timeframe, defaultValue) => {
 	const intervals = intervalsMs()
 	const time = {
 		interval: intervals.lastHour,
@@ -107,12 +107,12 @@ export const fillEmptyTime = (prevAggr, timeframe) => {
 		m.diff(time.interval.end, time.step.unit) <= 0;
 		m.add(time.step.ammount, time.step.unit)
 	) {
-		newAggr.push({ value: '0', time: m.unix() * 1000 })
+		newAggr.push({ value: defaultValue, time: m.unix() * 1000 })
 	}
 
 	const data = [...prevAggr, ...newAggr].reduce((data, a) => {
 		const newData = { ...data }
-		const value = (+data[a.time] || +a.value || 0).toString()
+		const value = data[a.time] || a.value || defaultValue
 		newData[a.time] = value
 
 		return newData

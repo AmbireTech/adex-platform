@@ -72,86 +72,92 @@ function aggrByChannelsSegments({
 	feeTokens,
 	withdrawTokens,
 }) {
-	return Object.values(
-		// NOTE: No need to sort them again because fillEmptyTime
-		// is sorting by time after adding the empty time values
-		// TODO: Do not check `minPlatform` for Expired channels
-		aggr
-			.sort((a, b) => b.time - a.time)
-			.reduce(
-				(data, a) => {
-					const { time } = a
-					const { aggregations, channels } = data
-					const channelId = a.channelId.toLowerCase()
+	// NOTE: No need to sort them again because fillEmptyTime
+	// is sorting by time after adding the empty time values
+	const { aggregations, all } = aggr
+		.sort((a, b) => b.time - a.time)
+		.reduce(
+			(data, a) => {
+				const { time } = a
+				const { aggregations, channels, all } = data
+				const channelId = a.channelId.toLowerCase()
 
-					const { depositAmount, balanceNum, depositAsset } =
-						allChannels[channelId] || {}
+				const { depositAmount, balanceNum, depositAsset, status } =
+					allChannels[channelId] || {}
 
-					const { minPlatform } = withdrawTokens[depositAsset]
-					const { min } = feeTokens[depositAsset]
+				const { minPlatform, minFinal } = withdrawTokens[depositAsset]
+				const { min } = feeTokens[depositAsset]
+				const isExpired = status === 'Expired'
+				const minBalance = isExpired ? minFinal : minPlatform
 
-					const current = channels[channelId] || { aggr: [] }
+				const current = channels[channelId] || { aggr: [] }
 
-					const value = bigNumberify(a.value || 0)
-						.mul(bigNumberify(balanceNum || 1))
-						.div(bigNumberify(depositAmount || 1))
+				const value = bigNumberify(a.value || 0)
+					.mul(bigNumberify(balanceNum || 1))
+					.div(bigNumberify(depositAmount || 1))
 
-					current.aggr.push({ value, time })
+				current.aggr.push({ value, time })
 
-					const currentAggr = aggregations[time] || {
-						time,
-						value: bigNumberify(0),
-					}
-					const currentChannelValue = bigNumberify(current.value || 0).add(
-						value
-					)
-					const currentTimeValue = currentAggr.value
+				const currentAggr = aggregations[time] || {
+					time,
+					value: bigNumberify(0),
+				}
+				const currentChannelValue = bigNumberify(current.value || 0).add(value)
 
-					current.value = currentChannelValue
+				const hasMinBalance = currentChannelValue.gt(bigNumberify(minBalance))
+				const currentTimeValue = currentAggr.value
 
-					if (
-						currentChannelValue.gt(bigNumberify(minPlatform)) &&
-						!current.feeSubtracted
-					) {
-						current.feeSubtracted = true
-						const currentAvailable = currentChannelValue.sub(bigNumberify(min))
-						const currentAdded = bigNumberify(0)
-						const points = current.aggr
+				current.value = currentChannelValue
 
-						for (let index = points.length - 1; index >= 0; index--) {
-							const point = points[index]
-							currentAdded.add(point.value)
+				if (hasMinBalance && !current.feeSubtracted) {
+					current.feeSubtracted = true
+					const currentAvailable = currentChannelValue.sub(bigNumberify(min))
+					const currentAdded = bigNumberify(0)
+					const points = current.aggr
 
-							const curInnerAggr = aggregations[point.time] || {
-								time,
-								value: bigNumberify(0),
-							}
+					for (let index = points.length - 1; index >= 0; index--) {
+						const point = points[index]
+						currentAdded.add(point.value)
 
-							if (currentAdded.lt(currentAvailable)) {
-								curInnerAggr.value = curInnerAggr.value.add(point.value)
-								aggregations[point.time] = curInnerAggr
-							} else
-								curInnerAggr.value = curInnerAggr.value.add(
-									currentAdded.sub(currentAvailable)
-								)
-							aggregations[point.time] = curInnerAggr
-							break
+						const curInnerAggr = aggregations[point.time] || {
+							time,
+							value: bigNumberify(0),
 						}
-					} else if (
-						currentChannelValue.gt(bigNumberify(minPlatform)) &&
-						current.feeSubtracted
-					) {
-						currentAggr.value = value.add(currentTimeValue)
+
+						if (currentAdded.lt(currentAvailable)) {
+							curInnerAggr.value = curInnerAggr.value.add(point.value)
+							aggregations[point.time] = curInnerAggr
+						} else
+							curInnerAggr.value = curInnerAggr.value.add(
+								currentAdded.sub(currentAvailable)
+							)
+						aggregations[point.time] = curInnerAggr
+						break
 					}
+				} else if (hasMinBalance && current.feeSubtracted) {
+					currentAggr.value = value.add(currentTimeValue)
+				}
 
-					channels[channelId] = current
-					aggregations[time] = currentAggr
+				channels[channelId] = current
+				aggregations[time] = currentAggr
+				all[time] = a.value || all[time]
 
-					return { aggregations, channels }
-				},
-				{ aggregations: {}, channels: {} }
-			).aggregations
+				return { aggregations, channels, all }
+			},
+			{ aggregations: {}, channels: {}, all: {} }
+		)
+
+	// NOTE: force to null values when value under limits but not naturally 0
+	const aggrWithNullValues = Object.values(aggregations).map(
+		({ time, value }) => {
+			const isNull =
+				all[time] === undefined ||
+				(bigNumberify(value).isZero() && all[time] !== '0')
+			return { time, value: isNull ? null : value }
+		}
 	)
+
+	return aggrWithNullValues
 }
 
 export function updateAccountAnalytics() {
@@ -201,7 +207,9 @@ export function updateAccountAnalytics() {
 							  })
 							: aggregates.aggr
 
-						aggregates.aggr = fillEmptyTime(aggr, timeframe)
+						const defaultValue = aggrByChannelSegments ? null : 0
+
+						aggregates.aggr = fillEmptyTime(aggr, timeframe, defaultValue)
 						accountChanged =
 							accountChanged || checkAccountChanged(getState, account)
 
