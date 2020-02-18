@@ -5,8 +5,8 @@ import { execute, updateCompanyData } from 'actions'
 import { t, selectCompanyData } from 'selectors'
 
 function CompanyDetails(props) {
-	const { companyName, firstLastName, address, country } = useSelector(state =>
-		selectCompanyData(state)
+	const { companyName, firstLastName, address, country } = useSelector(
+		selectCompanyData
 	)
 
 	return (
