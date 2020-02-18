@@ -75,7 +75,6 @@ function aggrByChannelsSegments({
 	return Object.values(
 		// NOTE: No need to sort them again because fillEmptyTime
 		// is sorting by time after adding the empty time values
-		// TODO: Do not check `minPlatform` for Expired channels
 		aggr
 			.sort((a, b) => b.time - a.time)
 			.reduce(
@@ -84,11 +83,13 @@ function aggrByChannelsSegments({
 					const { aggregations, channels } = data
 					const channelId = a.channelId.toLowerCase()
 
-					const { depositAmount, balanceNum, depositAsset } =
+					const { depositAmount, balanceNum, depositAsset, status } =
 						allChannels[channelId] || {}
 
-					const { minPlatform } = withdrawTokens[depositAsset]
+					const { minPlatform, minFinal } = withdrawTokens[depositAsset]
 					const { min } = feeTokens[depositAsset]
+					const isExpired = status === 'Expired'
+					const minBalance = isExpired ? minFinal : minPlatform
 
 					const current = channels[channelId] || { aggr: [] }
 
@@ -105,14 +106,13 @@ function aggrByChannelsSegments({
 					const currentChannelValue = bigNumberify(current.value || 0).add(
 						value
 					)
+
+					const hasMinBalance = currentChannelValue.gt(bigNumberify(minBalance))
 					const currentTimeValue = currentAggr.value
 
 					current.value = currentChannelValue
 
-					if (
-						currentChannelValue.gt(bigNumberify(minPlatform)) &&
-						!current.feeSubtracted
-					) {
+					if (hasMinBalance && !current.feeSubtracted) {
 						current.feeSubtracted = true
 						const currentAvailable = currentChannelValue.sub(bigNumberify(min))
 						const currentAdded = bigNumberify(0)
@@ -137,10 +137,7 @@ function aggrByChannelsSegments({
 							aggregations[point.time] = curInnerAggr
 							break
 						}
-					} else if (
-						currentChannelValue.gt(bigNumberify(minPlatform)) &&
-						current.feeSubtracted
-					) {
+					} else if (hasMinBalance && current.feeSubtracted) {
 						currentAggr.value = value.add(currentTimeValue)
 					}
 
