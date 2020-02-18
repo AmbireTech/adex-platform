@@ -103,7 +103,7 @@ export const selectTotalMoney = createSelector(
 	eventPayouts =>
 		eventPayouts
 			? eventPayouts.reduce(
-					(a, { value }) => a + Number(formatTokenAmount(value, 18)) || 0,
+					(a, { value }) => a + Number(formatTokenAmount(value || 0, 18)) || 0,
 					0
 			  )
 			: null
@@ -145,7 +145,9 @@ export const selectStatsChartData = createSelector(
 			(memo, item) => {
 				const { time, value } = item
 				memo.labels.push(formatDateTime(time))
-				memo.datasets.push(parseValueByMetric({ value, metric }))
+				memo.datasets.push(
+					value !== null ? parseValueByMetric({ value, metric }) : value
+				)
 				return memo
 			},
 			{
