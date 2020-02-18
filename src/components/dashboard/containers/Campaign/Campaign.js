@@ -61,7 +61,7 @@ export class Campaign extends Component {
 	render() {
 		const {
 			t,
-			// classes,
+			classes,
 			item,
 			// handleChange,
 			// activeFields,
@@ -103,7 +103,7 @@ export class Campaign extends Component {
 					}
 				/>
 				<div>
-					<AppBar position='static' color='default'>
+					<AppBar position='static' color='default' className={classes.appBar}>
 						<Tabs
 							value={tabIndex}
 							onChange={this.handleTabChange}
