@@ -64,6 +64,15 @@ export const selectAnalyticsDataAggr = createSelector(
 	}
 )
 
+export function selectCampaignEventsCount(type, campaignId) {
+	return Object.values(
+		selectCampaignAnalyticsByChannelToAdUnit(null, {
+			type,
+			campaignId,
+		})
+	).reduce((a, b) => a + b, 0)
+}
+
 export const selectTotalImpressions = createSelector(
 	(state, { side, timeframe } = {}) =>
 		selectAnalyticsDataAggr(state, {

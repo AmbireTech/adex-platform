@@ -184,9 +184,39 @@
   "babel": {
     "presets": [
       "react-app"
+    ],   
+    "plugins": [
+      [
+        "babel-plugin-import",
+        {
+          "libraryName": "@material-ui/core",
+          "libraryDirectory": "esm",
+          "camel2DashComponentName": false
+        },
+        "core"
+      ],
+      [
+        "babel-plugin-import",
+        {
+          "libraryName": "@material-ui/icons",
+          "libraryDirectory": "esm",
+          "camel2DashComponentName": false
+        },
+        "icons"
+      ],
+      [
+        "babel-plugin-import",
+        {
+          "libraryName": "@material-ui/lab",
+          "libraryDirectory": "esm",
+          "camel2DashComponentName": false
+        },
+        "lab"
+      ]
     ]
   },
   "devDependencies": {
+    "babel-plugin-import": "^1.13.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^6.0.0",
     "eslint-config-prettier-react": "0.0.24",

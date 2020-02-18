@@ -1,12 +1,25 @@
 import { createSelector } from 'reselect'
+import { selectAccountIdentityAddr } from './accountSelectors'
 
 const REGISTRATION_OPEN = process.env.REGISTRATION_OPEN === 'true'
 
 export const selectNavTitle = state => state.memory.nav.navTitle
 export const selectSide = state => state.memory.nav.side
-export const selectUi = state => state.persist.ui
+export const selectGlobalUi = state => state.persist.ui.global
+export const selectIdentitiesUi = state => state.persist.ui.byIdentity
+export const selectSelectedItems = state => state.memory.selectedItems
 
 export const selectSpinners = state => state.memory.spinners
+
+export const selectIdentityUi = createSelector(
+	[selectAccountIdentityAddr, selectIdentitiesUi],
+	(identityAddr, identitiesUi) => identitiesUi[identityAddr] || {}
+)
+
+export const selectCompanyData = createSelector(
+	[selectIdentityUi],
+	({ companyData }) => companyData || {}
+)
 
 export const selectSpinnerById = createSelector(
 	[selectSpinners, (_, id) => id],
@@ -19,16 +32,21 @@ export const selectMultipleSpinnersByIds = createSelector(
 )
 
 export const selectRegistrationAllowed = createSelector(
-	selectUi,
+	selectGlobalUi,
 	({ allowRegistration }) => REGISTRATION_OPEN || !!allowRegistration
 )
 
 export const selectEasterEggsAllowed = createSelector(
-	selectUi,
+	selectGlobalUi,
 	({ allowEasterEggs }) => allowEasterEggs
 )
 
 export const selectPrivilegesWarningAccepted = createSelector(
-	selectUi,
+	selectIdentityUi,
 	({ privilegesWarningAccepted }) => !!privilegesWarningAccepted
+)
+
+export const selectSelectedCampaigns = createSelector(
+	selectSelectedItems,
+	({ campaigns }) => campaigns || []
 )
