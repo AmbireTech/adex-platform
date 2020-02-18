@@ -16,12 +16,11 @@ import {
 	selectCampaignsMaxDeposit,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
-import { bigNumberify, commify } from 'ethers/utils'
-import { push } from 'connected-react-router'
-import { execute, confirmAction, updateSelectedCampaigns } from 'actions'
+import { commify } from 'ethers/utils'
+import { execute, handlePrintSelectedReceipts } from 'actions'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
-import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
+import { formatDateTime } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 import { useTableData } from './tableHooks'
 import { ReloadData, PrintAllReceipts } from './toolbars'
@@ -262,27 +261,12 @@ const getOptions = ({ decimals, symbol, reloadData }) => ({
 	customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
 		const selectedIndexes = selectedRows.data.map(i => i.dataIndex)
 		const selectedItems = displayData
-			.filter(item => {
-				if (selectedIndexes.includes(item.dataIndex) && item.data[1])
-					return true
-			})
+			.filter(item => selectedIndexes.includes(item.dataIndex) && item.data[1])
 			.map(item => item.data[0])
 		return (
 			<PrintAllReceipts
 				handlePrintAllReceipts={() =>
-					execute(
-						confirmAction(
-							() => {
-								execute(updateSelectedCampaigns(selectedItems))
-								execute(push('/dashboard/advertiser/receipts'))
-							},
-							null,
-							{
-								title: t('CONFIRM_DIALOG_PRINT_ALL_RECEIPTS_TITLE'),
-								text: t('CONFIRM_DIALOG_PRINT_ALL_RECEIPTS_TEXT'),
-							}
-						)
-					)
+					execute(handlePrintSelectedReceipts(selectedItems))
 				}
 				disabled={selectedItems.length === 0}
 			/>
