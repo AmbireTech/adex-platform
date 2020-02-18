@@ -84,8 +84,8 @@ export function confirmAction(
 	noActionBtns,
 	active
 ) {
-	return function(dispatch) {
-		return dispatch({
+	return async function(dispatch) {
+		return await dispatch({
 			type: types.CONFIRM_ACTION,
 			confirm: {
 				onConfirm: onConfirm,
