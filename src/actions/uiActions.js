@@ -148,12 +148,19 @@ export function updateCompanyData(newData) {
 	}
 }
 
-export function updateSelectedCampaigns(selectedItems) {
+export function updateSelectedItems(collection, selectedItems) {
 	return function(dispatch) {
 		return dispatch({
-			type: types.UPDATE_SELECTED_CAMPAINGS,
-			selectedItems: selectedItems,
+			type: types.UPDATE_SELECTED_ITEMS,
+			selectedItems,
+			collection,
 		})
+	}
+}
+
+export function updateSelectedCampaigns(selectedItems) {
+	return function(dispatch) {
+		return updateSelectedItems('campaigns', selectedItems)(dispatch)
 	}
 }
 
