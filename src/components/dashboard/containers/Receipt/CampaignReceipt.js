@@ -8,7 +8,7 @@ import { Print, Visibility } from '@material-ui/icons'
 import Receipt from './Receipt'
 import CompanyDetails from './CompanyDetails'
 import { useSelector } from 'react-redux'
-import { t, selectSelectedItems } from 'selectors'
+import { t, selectSelectedCampaigns } from 'selectors'
 
 const useStyles = makeStyles(theme => {
 	return {
@@ -33,7 +33,7 @@ function CampaignReceipt(props) {
 	const classes = useStyles()
 	const invoice = useRef()
 	const { itemId } = useParams()
-	const items = useSelector(state => selectSelectedItems(state))
+	const items = useSelector(state => selectSelectedCampaigns(state))
 	// TODO: render back button
 	const selectedByPropsOrParams = props.itemId || itemId
 	const receipts = selectedByPropsOrParams ? [selectedByPropsOrParams] : items

@@ -148,10 +148,10 @@ export function updateCompanyData(newData) {
 	}
 }
 
-export function updateSelectedItems(selectedItems) {
+export function updateSelectedCampaings(selectedItems) {
 	return function(dispatch) {
 		return dispatch({
-			type: types.UPDATE_SELECTED_ITEMS,
+			type: types.UPDATE_SELECTED_CAMPAINGS,
 			selectedItems: selectedItems,
 		})
 	}

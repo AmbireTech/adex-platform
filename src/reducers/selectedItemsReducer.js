@@ -1,4 +1,4 @@
-import { UPDATE_SELECTED_ITEMS } from 'constants/actionTypes'
+import { UPDATE_SELECTED_CAMPAINGS } from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
 export default function selectedItemsReducer(
@@ -8,9 +8,9 @@ export default function selectedItemsReducer(
 	let newState
 
 	switch (action.type) {
-		case UPDATE_SELECTED_ITEMS:
+		case UPDATE_SELECTED_CAMPAINGS:
 			newState = { ...state }
-			newState = action.selectedItems
+			newState.campaings = action.selectedItems
 			return newState
 		default:
 			return state

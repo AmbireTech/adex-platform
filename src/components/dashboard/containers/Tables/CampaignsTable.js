@@ -18,7 +18,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 import { bigNumberify, commify } from 'ethers/utils'
 import { push } from 'connected-react-router'
-import { execute, confirmAction, updateSelectedItems } from 'actions'
+import { execute, confirmAction, updateSelectedCampaings } from 'actions'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
@@ -273,7 +273,7 @@ const getOptions = ({ decimals, symbol, reloadData }) => ({
 					execute(
 						confirmAction(
 							() => {
-								execute(updateSelectedItems(selectedItems))
+								execute(updateSelectedCampaings(selectedItems))
 								execute(push('/dashboard/advertiser/receipts'))
 							},
 							null,
