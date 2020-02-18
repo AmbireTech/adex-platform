@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.30
+##### *2020-02-19*
+
+### Fixed
+- MetaMask network cfg
+
 ## 4.10.29
 ##### *2020-02-19*
 
