@@ -19,7 +19,7 @@ import {
 	selectCampaignStatsTableData,
 	selectMainToken,
 	selectAccountIdentityAddr,
-	selectCampaignById,
+	selectCampaignWithAnalyticsById,
 	selectCompanyData,
 } from 'selectors'
 import {
@@ -63,7 +63,9 @@ function Receipt(props) {
 	const campaignBreakdown = useSelector(state =>
 		selectCampaignStatsTableData(state, campaignId)
 	)
-	const campaign = useSelector(state => selectCampaignById(state, campaignId))
+	const campaign = useSelector(state =>
+		selectCampaignWithAnalyticsById(state, campaignId)
+	)
 	const { companyName, firstLastName, address, country } = useSelector(state =>
 		selectCompanyData(state)
 	)
