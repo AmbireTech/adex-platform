@@ -6,18 +6,9 @@ import {
 	selectAdUnits,
 	creatArrayOnlyLengthChangeSelector,
 	selectCampaignAnalyticsByChannelStats,
-	selectCampaignAnalyticsByChannelToAdUnit,
+	selectCampaignEventsCount,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
-
-function selectCampaignEventsCount(type, campaignId) {
-	return Object.values(
-		selectCampaignAnalyticsByChannelToAdUnit(null, {
-			type,
-			campaignId,
-		})
-	).reduce((a, b) => a + b, 0)
-}
 
 export const selectCampaignsTableData = createSelector(
 	[selectCampaignsArray, selectRoutineWithdrawTokens, (_, side) => side],
