@@ -195,7 +195,7 @@ function mapStateToProps(state, ownProps) {
 	// let memory = state.memory
 	return {
 		units: persist.items['AdUnit'],
-		rowsView: !!persist.ui[VIEW_MODE],
+		rowsView: !!persist.ui.global[VIEW_MODE],
 		objModel: CampaignModel,
 		itemType: 'Campaign',
 	}
