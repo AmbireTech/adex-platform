@@ -7,8 +7,8 @@ export const selectNavTitle = state => state.memory.nav.navTitle
 export const selectSide = state => state.memory.nav.side
 export const selectGlobalUi = state => state.persist.ui.global
 export const selectIdentitiesUi = state => state.persist.ui.byIdentity
-export const selectSelectedCampaigns = state =>
-	state.memory.selectedItems.campaigns
+export const selectSelectedItems = state => state.memory.selectedItems
+
 export const selectSpinners = state => state.memory.spinners
 
 export const selectIdentityUi = createSelector(
@@ -44,4 +44,9 @@ export const selectEasterEggsAllowed = createSelector(
 export const selectPrivilegesWarningAccepted = createSelector(
 	selectGlobalUi,
 	({ privilegesWarningAccepted }) => !!privilegesWarningAccepted
+)
+
+export const selectSelectedCampaigns = createSelector(
+	selectSelectedItems,
+	({ campaigns }) => campaigns || []
 )
