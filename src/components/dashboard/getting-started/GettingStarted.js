@@ -8,13 +8,9 @@ import Stepper from '@material-ui/core/Stepper'
 import Step from '@material-ui/core/Step'
 import StepLabel from '@material-ui/core/StepLabel'
 import Check from '@material-ui/icons/Check'
-import SettingsIcon from '@material-ui/icons/Settings'
-import GroupAddIcon from '@material-ui/icons/GroupAdd'
-import VideoLabelIcon from '@material-ui/icons/VideoLabel'
 import StepConnector from '@material-ui/core/StepConnector'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
-import GettingStartedImg from './GettingStartedImg'
 import EmailEddie from 'resources/getting-started/GS-email-ic.png'
 import FundEddie from 'resources/getting-started/GS-fund-ic.png'
 import CreateEddie from 'resources/getting-started/GS-create-ic.png'
@@ -216,7 +212,7 @@ function getStepContent(step) {
 	}
 }
 
-export default function CustomizedSteppers() {
+export default function GettingStarted() {
 	const classes = useStyles()
 	const [activeStep, setActiveStep] = React.useState(0)
 	const [completed, setCompleted] = React.useState({})

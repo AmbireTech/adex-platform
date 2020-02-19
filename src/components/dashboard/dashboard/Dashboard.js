@@ -48,7 +48,7 @@ import {
 	selectPrivilegesWarningAccepted,
 } from 'selectors'
 import { useSelector } from 'react-redux'
-import CustomizedSteppers from '../getting-started/CustomStepper'
+import GetttingStarted from '../getting-started/GettingStarted'
 
 const Campaigns = () => {
 	const privileges = useSelector(selectWalletPrivileges)
@@ -198,7 +198,7 @@ function Dashboard(props) {
 							</Alert>
 						</Box>
 					)}
-					<CustomizedSteppers />
+					<GetttingStarted />
 					<Switch>
 						<Route
 							exact
