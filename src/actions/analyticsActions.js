@@ -72,6 +72,9 @@ function aggrByChannelsSegments({
 	feeTokens,
 	withdrawTokens,
 }) {
+	if (!Object.keys(allChannels).length) {
+		return []
+	}
 	// NOTE: No need to sort them again because fillEmptyTime
 	// is sorting by time after adding the empty time values
 	const { aggregations, all } = aggr
