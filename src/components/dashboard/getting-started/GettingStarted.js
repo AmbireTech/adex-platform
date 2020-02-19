@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Box, StepButton, Link } from '@material-ui/core'
 import Stepper from '@material-ui/core/Stepper'
@@ -12,7 +12,7 @@ import CreateEddie from 'resources/getting-started/GS-create-ic.png'
 import LaunchEddie from 'resources/getting-started/GS-launch-ic.png'
 import PlaceEddie from 'resources/getting-started/GS-place-ic.png'
 import BonusEddie from 'resources/getting-started/GS-bonus-ic.png'
-import { t, selectSide, selectHasCreatedAdUnit } from 'selectors'
+import { t, selectHasCreatedAdUnit } from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
 
@@ -29,10 +29,10 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
-export default function GettingStarted() {
+export default function GettingStarted(props) {
 	const classes = useStyles()
+	const { side } = props
 	const [activeStep, setActiveStep] = React.useState(0)
-	const side = useSelector(selectSide)
 	//TODO: see why side selector and side in general is not saved
 	const hasCreatedAdUnit = useSelector(selectHasCreatedAdUnit)
 	const steps = {
@@ -81,58 +81,61 @@ export default function GettingStarted() {
 	}
 
 	return (
-		<Box className={classes.root} m={1}>
-			{/* TODO: add mobile version */}
-			{/* https://material-ui.com/components/steppers/#mobile-stepper */}
-			<Stepper
-				nonLinear
-				alternativeLabel
-				activeStep={activeStep}
-				connector={<ColorlibConnector />}
-			>
-				{steps['advertiser'].map(({ label, icon, check }, index) => (
-					<Step key={label}>
-						<StepButton onClick={handleStep(index)}>
-							<StepLabel
-								StepIconComponent={ColorlibStepIcon}
-								StepIconProps={{ icon, completed: check }}
-							>
-								{label}
-							</StepLabel>
-						</StepButton>
-					</Step>
-				))}
-			</Stepper>
-			<Box p={2} pl={[1, 2, 5]} pt={1}>
-				{activeStep === steps.length ? (
-					<Box>
-						<Typography className={classes.instructions}>
-							All steps completed - you&apos;re finished
-						</Typography>
-						<Button onClick={handleReset} className={classes.button}>
-							Hide
-						</Button>
+		<Fragment>
+			{steps[side] && (
+				<Box className={classes.root} m={1}>
+					{/* TODO: add mobile version */}
+					{/* https://material-ui.com/components/steppers/#mobile-stepper */}
+					<Stepper
+						nonLinear
+						alternativeLabel
+						activeStep={activeStep}
+						connector={<ColorlibConnector />}
+					>
+						{steps[side].map(({ label, icon, check }, index) => (
+							<Step key={label}>
+								<StepButton onClick={handleStep(index)}>
+									<StepLabel
+										StepIconComponent={ColorlibStepIcon}
+										StepIconProps={{ icon, completed: check }}
+									>
+										{label}
+									</StepLabel>
+								</StepButton>
+							</Step>
+						))}
+					</Stepper>
+					<Box p={2} pl={[1, 2, 5]} pt={1}>
+						{activeStep === steps.length ? (
+							<Box>
+								<Typography className={classes.instructions}>
+									All steps completed - you&apos;re finished
+								</Typography>
+								<Button onClick={handleReset} className={classes.button}>
+									Hide
+								</Button>
+							</Box>
+						) : (
+							<Box>
+								<Typography variant={'body1'} className={classes.instructions}>
+									<strong>{`STEP ${activeStep + 1}: ${steps[side][activeStep]
+										.label || ''}`}</strong>
+								</Typography>
+								<Typography className={classes.instructions}>
+									{steps[side][activeStep].content} {'Not sure how? See '}
+									<Link
+										href='#'
+										onClick={ev => ev.preventDefault()}
+										className={classes.instructions}
+									>
+										{'our tutorial.'}
+									</Link>
+								</Typography>
+							</Box>
+						)}
 					</Box>
-				) : (
-					<Box>
-						<Typography variant={'body1'} className={classes.instructions}>
-							<strong>{`STEP ${activeStep + 1}: ${steps['advertiser'][
-								activeStep
-							].label || ''}`}</strong>
-						</Typography>
-						<Typography className={classes.instructions}>
-							{steps['advertiser'][activeStep].content} {'Not sure how? See '}
-							<Link
-								href='#'
-								onClick={ev => ev.preventDefault()}
-								className={classes.instructions}
-							>
-								{'our tutorial.'}
-							</Link>
-						</Typography>
-					</Box>
-				)}
-			</Box>
-		</Box>
+				</Box>
+			)}
+		</Fragment>
 	)
 }
