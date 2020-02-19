@@ -121,8 +121,6 @@ export const closeCampaign = ({ campaign, account }) => {
 }
 
 export const identityAnalytics = async ({
-	idenityAddr,
-	campaign,
 	campaignId,
 	leaderAuth,
 	eventType,
@@ -130,6 +128,7 @@ export const identityAnalytics = async ({
 	timeframe,
 	limit,
 	side,
+	segmentByChannel,
 }) => {
 	const baseUrl = VALIDATOR_LEADER_URL
 	const requester = getValidatorRequester({ baseUrl })
@@ -138,14 +137,14 @@ export const identityAnalytics = async ({
 		.fetch({
 			route: `/analytics/for-${side}${campaignId || ''}`,
 			method: 'GET',
-			queryParams: { eventType, metric, timeframe, limit },
+			queryParams: { eventType, metric, timeframe, limit, segmentByChannel },
 			headers: {
 				authorization: BEARER_PREFIX + leaderAuth,
 			},
 		})
 		.then(processResponse)
 
-	return aggregates
+	return { aggregates, metric }
 }
 
 export const identityCampaignsAnalytics = async ({ leaderAuth, eventType }) => {

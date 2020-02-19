@@ -1,16 +1,7 @@
 export const styles = theme => {
-	const spacing = theme.spacing(1)
 	return {
-		flex: {
-			flex: 1,
-		},
 		appBar: {
-			marginTop: spacing * 2,
-			marginBottom: spacing,
-		},
-		datepicker: {
-			margin: spacing,
-			marginLeft: 0,
+			zIndex: theme.zIndex.appBar - 1,
 		},
 	}
 }

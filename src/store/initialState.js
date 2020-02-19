@@ -18,13 +18,21 @@ let initialState = {
 		AdSlot: new AdSlot().plainObj(),
 	},
 	currentItem: {},
+	selectedItems: {
+		campaings: [],
+		adUnits: [],
+		slots: [],
+	},
 	items: {
 		Campaign: {},
 		AdUnit: {},
 		AdSlot: {},
 	},
 	spinners: {},
-	ui: {},
+	ui: {
+		global: {},
+		byIdentity: {},
+	},
 	toasts: [],
 	confirm: {
 		data: {},

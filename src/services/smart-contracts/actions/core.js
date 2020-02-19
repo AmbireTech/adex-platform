@@ -1,10 +1,5 @@
 import crypto from 'crypto'
-import {
-	Channel,
-	splitSig,
-	ChannelState,
-	RoutineOps,
-} from 'adex-protocol-eth/js'
+import { Channel, splitSig, RoutineOps } from 'adex-protocol-eth/js'
 import BalanceTree from 'adex-protocol-eth/js/BalanceTree'
 import { getEthers } from 'services/smart-contracts/ethers'
 import {
@@ -33,7 +28,7 @@ import {
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import IdentityABI from 'adex-protocol-eth/abi/Identity'
-import { selectChannelsWithUserBalances } from 'selectors'
+import { selectChannelsWithUserBalancesEligible } from 'selectors'
 
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
@@ -42,14 +37,14 @@ const IdentityInterface = new Interface(IdentityABI)
 const timeframe = 15 * 1000 // 1 event per 15 seconds
 const VALID_UNTIL_COEFFICIENT = 0.5
 const VALID_UNTIL_MIN_PERIOD = 15 * 24 * 60 * 60 * 1000 // 15 days in ms
-const OUTSTANDING_STATUSES = [
-	'Active',
-	'Ready',
-	'Exhausted',
-	'Offline',
-	'Unhealthy',
-	'Withdraw',
-]
+const OUTSTANDING_STATUSES = {
+	Active: true,
+	Ready: true,
+	Exhausted: true,
+	Offline: true,
+	Unhealthy: true,
+	Withdraw: true,
+}
 
 const EXTRA_PROCESS_TIME = 69 * 60 // 69 min in seconds
 
@@ -98,8 +93,8 @@ function getReadyCampaign(campaign, identity, mainToken) {
 	const validators = newCampaign.validators.map(v => {
 		const deposit = bigNumberify(newCampaign.depositAmount || 0)
 		const fee = deposit
+			.mul(bigNumberify(v.feeNum || 1))
 			.div(bigNumberify(v.feeDen || 1))
-			.mul(bigNumberify(v.feeNum || 0))
 			.toString()
 
 		const validator = {
@@ -162,12 +157,12 @@ const getWithdrawnPerUserOutstanding = async ({
 
 export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 	const { authType } = wallet
-	const channels = await getAllCampaigns({ statuses: OUTSTANDING_STATUSES })
+	const channels = await getAllCampaigns({ all: true, byEarner: identityAddr })
 	const { AdExCore } = await getEthers(authType)
 	const feeTokenWhitelist = selectFeeTokenWhitelist()
 	const routineWithdrawTokens = selectRoutineWithdrawTokens()
 
-	const all = await Promise.all(
+	const allChannels = await Promise.all(
 		channels
 			.filter(
 				channel =>
@@ -175,9 +170,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 					channel.status &&
 					channel.status.lastApprovedBalances &&
 					channel.status.lastApprovedSigs &&
-					routineWithdrawTokens[channel.depositAsset] &&
-					new Date((channel.validUntil - EXTRA_PROCESS_TIME) * 1000) >
-						Date.now()
+					routineWithdrawTokens[channel.depositAsset]
 			)
 			.map(channel => {
 				const { lastApprovedBalances } = channel.status
@@ -205,7 +198,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 				const bTree = new BalanceTree(lastApprovedBalances)
 				return {
 					lastApprovedSigs,
-					// mTree,
+					lastApprovedBalances,
 					bTree,
 					channel,
 				}
@@ -213,42 +206,74 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 			.filter(({ bTree }) => {
 				return bTree && !bTree.getBalance(identityAddr).isZero()
 			})
-			.map(async ({ channel, lastApprovedSigs, bTree }) => {
-				//  mTree,
-				const balance = bTree.getBalance(identityAddr).toString()
+			.map(
+				async ({ channel, lastApprovedSigs, lastApprovedBalances, bTree }) => {
+					//  mTree,
+					const balance = bTree.getBalance(identityAddr).toString()
 
-				const outstanding = await getWithdrawnPerUserOutstanding({
-					AdExCore,
-					channel,
-					balance,
-					identityAddr,
-				})
+					const outstanding = await getWithdrawnPerUserOutstanding({
+						AdExCore,
+						channel,
+						balance,
+						identityAddr,
+					})
 
-				const outstandingAvailable = outstanding.sub(
-					bigNumberify(feeTokenWhitelist[channel.depositAsset].min)
-				)
+					const outstandingAvailable = outstanding.sub(
+						bigNumberify(feeTokenWhitelist[channel.depositAsset].min)
+					)
 
-				return {
-					channel,
-					balance,
-					lastApprovedSigs,
-					outstanding,
-					outstandingAvailable,
-					// mTree,
-					bTree,
+					const balanceNum = bigNumberify(channel.depositAmount)
+						.sub(bigNumberify(channel.spec.validators[0].fee || 0))
+						.sub(bigNumberify(channel.spec.validators[1].fee || 0))
+
+					return {
+						channel,
+						balance,
+						lastApprovedSigs,
+						outstanding,
+						outstandingAvailable,
+						lastApprovedBalances,
+						balanceNum,
+					}
 				}
-			})
+			)
 	)
 
-	const eligible = all.filter(x => {
+	const all = Object.assign(
+		{},
+		...allChannels.map(c => {
+			const { channel } = c
+			const { id, depositAmount, depositAsset, status } = channel
+			const balanceNum = bigNumberify(depositAmount)
+				.sub(bigNumberify(c.channel.spec.validators[0].fee))
+				.sub(bigNumberify(c.channel.spec.validators[1].fee))
+				.toString()
+
+			return {
+				[c.channel.id.toLowerCase()]: {
+					id,
+					depositAmount,
+					depositAsset,
+					balanceNum,
+					status: status.name,
+				},
+			}
+		})
+	)
+
+	const eligible = allChannels.filter(x => {
 		return (
+			OUTSTANDING_STATUSES[x.channel.status.name] &&
+			new Date((x.channel.validUntil - EXTRA_PROCESS_TIME) * 1000) >
+				Date.now() &&
 			x.outstanding.gt(
 				bigNumberify(routineWithdrawTokens[x.channel.depositAsset].minPlatform)
-			) && x.outstandingAvailable.gt(bigNumberify('0'))
+			) &&
+			x.outstandingAvailable.gt(bigNumberify('0'))
 		)
 	})
 
-	return eligible
+	return { all, eligible }
 }
 
 async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
@@ -275,11 +300,11 @@ async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
 const getChannelWithdrawData = ({
 	identityAddr,
 	balance,
-	// mTree,
-	bTree,
+	lastApprovedBalances,
 	lastApprovedSigs,
 	ethChannelTuple,
 }) => {
+	const bTree = new BalanceTree(lastApprovedBalances)
 	const proof = bTree.getProof(identityAddr)
 	const vsig1 = splitSig(lastApprovedSigs[0])
 	const vsig2 = splitSig(lastApprovedSigs[1])
@@ -345,7 +370,7 @@ function hasValidExecuteRoutines(routineAuthTuple) {
 export async function getSweepChannelsTxns({ account, amountToSweep }) {
 	const { wallet, identity } = account
 	// TODO: pass withBalance as prop
-	const withBalance = selectChannelsWithUserBalances()
+	const withBalance = selectChannelsWithUserBalancesEligible()
 
 	const { AdExCore } = await getEthers(wallet.authType)
 	const identityAddr = identity.address
@@ -357,8 +382,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 
 	const txns = channelsToSweep.map((c, i) => {
 		const {
-			bTree,
-			//  mTree,
+			lastApprovedBalances,
 			channel,
 			lastApprovedSigs,
 			outstanding,
@@ -370,8 +394,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 		const data = getChannelWithdrawData({
 			identityAddr,
 			balance,
-			// mTree,
-			bTree,
+			lastApprovedBalances,
 			lastApprovedSigs,
 			ethChannelTuple,
 		})

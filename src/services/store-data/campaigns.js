@@ -6,12 +6,8 @@ import { MOON_GRAVITY_ACCELERATION, MOON_TO_EARTH_WEIGHT } from 'constants/misc'
 const LOOP_TIMEOUT =
 	(69 - Math.floor(MOON_GRAVITY_ACCELERATION / MOON_TO_EARTH_WEIGHT)) * 500
 
-let updates = 0
 const syncCampaigns = () => {
-	//TEMP
-	const updateStats = updates % 3 === 0
-	updates++
-	execute(updateUserCampaigns(updateStats))
+	execute(updateUserCampaigns())
 }
 
 const campaignsLoop = new Loop({

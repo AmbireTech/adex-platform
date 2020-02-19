@@ -6,6 +6,7 @@ import {
 	selectAdUnits,
 	creatArrayOnlyLengthChangeSelector,
 	selectCampaignAnalyticsByChannelStats,
+	selectCampaignEventsCount,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 
@@ -26,8 +27,8 @@ export const selectCampaignsTableData = createSelector(
 				},
 				depositAmount: Number(formatUnits(item.depositAmount || '0', decimals)),
 				fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
-				impressions: Number(item.impressions || '0'),
-				clicks: Number(item.clicks || '0'),
+				impressions: selectCampaignEventsCount('IMPRESSION', item.id),
+				clicks: selectCampaignEventsCount('CLICK', item.id),
 				minPerImpression:
 					Number(
 						formatUnits(
@@ -40,8 +41,14 @@ export const selectCampaignsTableData = createSelector(
 				withdrawPeriodStart:
 					spec.withdrawPeriodStart || item.withdrawPeriodStart,
 				actions: {
-					to: `/dashboard/${side}/Campaign/${item.id}`,
+					side: side,
+					id: item.id,
+					humanFriendlyName: item.status.humanFriendlyName,
 				},
+				id: item.id,
+				receiptAvailable:
+					item.status.humanFriendlyName === 'Closed' ||
+					item.status.humanFriendlyName === 'Completed',
 			}
 		})
 )
@@ -143,6 +150,21 @@ export const selectCampaignStatsTableData = createSelector(
 			clicks: clickStats[key] || 0,
 		}))
 	}
+)
+
+export const selectCampaignTotalValues = createSelector(
+	(state, channelId) => selectCampaignStatsTableData(state, channelId),
+	data =>
+		data.reduce(
+			(result, current) => {
+				const newResult = { ...result }
+				newResult.totalClicks += current.clicks
+				newResult.totalImpressions += current.impressions
+				newResult.totalEarnings += current.earnings
+				return newResult
+			},
+			{ totalClicks: 0, totalImpressions: 0, totalEarnings: 0 }
+		)
 )
 
 export const selectCampaignStatsMaxValues = createSelector(

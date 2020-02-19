@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-
+import { selectCampaignEventsCount } from 'selectors'
 export const selectItems = state => state.persist.items
 
 export const selectItemsByType = createSelector(
@@ -15,6 +15,21 @@ export const selectItemsArrayByType = createSelector(
 export const selectCampaigns = createSelector(
 	state => selectItemsByType(state, 'Campaign'),
 	campaigns => campaigns
+)
+
+export const selectCampaignById = createSelector(
+	[selectCampaigns, (_, id) => id],
+	(campaigns, id) => campaigns[id]
+)
+
+export const selectCampaignWithAnalyticsById = createSelector(
+	[selectCampaigns, (_, id) => id],
+	(campaigns, id) => {
+		const campaign = { ...(campaigns[id] || {}) }
+		campaign.clicks = selectCampaignEventsCount('CLICK', id)
+		campaign.impressions = selectCampaignEventsCount('IMPRESSION', id)
+		return campaign
+	}
 )
 
 export const selectCampaignsArray = createSelector(

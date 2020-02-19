@@ -19,6 +19,7 @@ import ethNetwork from './ethNetworkReducer'
 import config from './configReducer'
 import analytics from './analyticsReducer'
 import channels from './channelsReducer'
+import selectedItems from './selectedItemsReducer'
 import ensAddresses from './ensReducer'
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
@@ -26,7 +27,7 @@ import * as types from 'constants/actionTypes'
 export const persistReducers = {
 	account,
 	items: filterActions(items, action => action.type.match(/_ITEM/)),
-	ui: filterActions(ui, [types.UPDATE_UI]),
+	ui, //: filterActions(ui, [types.UPDATE_UI]),
 	language,
 	web3Transactions,
 	tags,
@@ -47,5 +48,6 @@ export const memoryReducers = {
 	confirm: filterActions(confirm, [types.CONFIRM_ACTION]),
 	nav: filterActions(nav, [types.UPDATE_NAV]),
 	validations,
+	selectedItems,
 	newTransactions,
 }

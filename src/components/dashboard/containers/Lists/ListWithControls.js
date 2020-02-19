@@ -102,7 +102,7 @@ class ListWithControls extends Component {
 
 	// For changing redux state
 	handleChangeRxState = (name, value) => {
-		this.props.actions.updateUi(name, value, this.state.uiStateId)
+		this.props.actions.updateGlobalUi(name, value, this.state.uiStateId)
 	}
 
 	changePageSize = (
@@ -116,7 +116,11 @@ class ListWithControls extends Component {
     	let currentFirstIndex = page * currentPageSize // To have at least the first item on current page on the next page
 		let nextPage = Math.floor(currentFirstIndex / newPageSize)
 		*/
-		this.props.actions.updateUi('pageSize', newPageSize, this.state.uiStateId)
+		this.props.actions.updateGlobalUi(
+			'pageSize',
+			newPageSize,
+			this.state.uiStateId
+		)
 	}
 
 	search = ({ item, search, searchMatch }) => {
@@ -402,18 +406,18 @@ function mapStateToProps(state, props) {
 	// Gets the last path in URL. ex: https://localhost:3000/dashboard/publisher/slots -> slots
 	const uiStateId = props.uiStateId || 'default'
 	return {
-		rowsView: !!persist.ui[props.viewModeId],
-		pageSize: persist.ui[uiStateId]
-			? persist.ui[uiStateId]['pageSize'] || 10
+		rowsView: !!persist.ui.global[props.viewModeId],
+		pageSize: persist.ui.global[uiStateId]
+			? persist.ui.global[uiStateId]['pageSize'] || 10
 			: 10,
-		sortProperty: persist.ui[uiStateId]
-			? persist.ui[uiStateId]['sortProperty']
+		sortProperty: persist.ui.global[uiStateId]
+			? persist.ui.global[uiStateId]['sortProperty']
 			: null,
-		sortOrder: persist.ui[uiStateId]
-			? persist.ui[uiStateId]['sortOrder'] || -1
+		sortOrder: persist.ui.global[uiStateId]
+			? persist.ui.global[uiStateId]['sortOrder'] || -1
 			: -1,
-		filterArchived: persist.ui[uiStateId]
-			? persist.ui[uiStateId]['filterArchived'] || false
+		filterArchived: persist.ui.global[uiStateId]
+			? persist.ui.global[uiStateId]['filterArchived'] || false
 			: false,
 		side: memory.nav.side,
 		sortProperties: props.sortProperties || [],
