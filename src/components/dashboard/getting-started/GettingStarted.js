@@ -12,7 +12,12 @@ import CreateEddie from 'resources/getting-started/GS-create-ic.png'
 import LaunchEddie from 'resources/getting-started/GS-launch-ic.png'
 import PlaceEddie from 'resources/getting-started/GS-place-ic.png'
 import BonusEddie from 'resources/getting-started/GS-bonus-ic.png'
-import { t, selectHasCreatedAdUnit } from 'selectors'
+import {
+	t,
+	selectHasCreatedAdUnit,
+	selectHasCreatedCampaign,
+	selectHasConfirmedEmail,
+} from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
 
@@ -35,13 +40,16 @@ export default function GettingStarted(props) {
 	const [activeStep, setActiveStep] = React.useState(0)
 	//TODO: see why side selector and side in general is not saved
 	const hasCreatedAdUnit = useSelector(selectHasCreatedAdUnit)
+	const hasCreatedCampaign = useSelector(selectHasCreatedCampaign)
+	const hasConfirmedEmail = useSelector(selectHasConfirmedEmail)
+
 	const steps = {
 		advertiser: [
 			{
 				label: 'Confirm your email address',
 				content: "Welcome to  the platform. Let's first confirm your email!",
 				icon: EmailEddie,
-				check: false,
+				check: hasConfirmedEmail,
 			},
 			{
 				label: 'Create an ad unit',
@@ -61,7 +69,7 @@ export default function GettingStarted(props) {
 				content:
 					"Now that you have money in your account, let's launch your first campaign!",
 				icon: LaunchEddie,
-				check: false,
+				check: hasCreatedCampaign,
 			},
 			{
 				label: 'Receive your bonus',

@@ -75,6 +75,11 @@ export const selectAccountIdentityRoutineAuthTuple = createSelector(
 			: null
 )
 
+export const selectAccountIdentityDeployData = createSelector(
+	selectAccountIdentity,
+	({ relayerData }) => relayerData.deployData
+)
+
 export const selectChannelsWithUserBalances = createSelector(
 	selectChannels,
 	({ withBalance }) => withBalance || {}
