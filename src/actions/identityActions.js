@@ -369,7 +369,7 @@ export function login() {
 				wallet,
 				email,
 				deleteLegacyKey,
-			})(dispatch)
+			})(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_LOGIN', err)
 			addToast({
