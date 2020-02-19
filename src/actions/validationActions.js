@@ -8,6 +8,7 @@ import { validations, Joi, schemas, constants } from 'adex-models'
 import { validEmail, validPassword } from 'helpers/validators'
 import { t, selectAuthType } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
+import { getEmail } from 'services/adex-relayer/actions'
 const { IdentityPrivilegeLevel } = constants
 
 const { campaignPut } = schemas
@@ -118,6 +119,20 @@ export function validateEmailCheck(validateId, emailCheck, email, dirty) {
 		validate(validateId, 'emailCheck', {
 			isValid,
 			err: { msg: 'ERR_EMAIL_CHECK' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateNotExistingEmail(validateId, email, dirty) {
+	return async function(dispatch, getState) {
+		const { existing } = (await getEmail({ email })) || {}
+		const isValid = existing === false
+		validate(validateId, 'email', {
+			isValid,
+			err: { msg: 'EMAIL_ALREADY_USED' },
 			dirty,
 		})(dispatch)
 

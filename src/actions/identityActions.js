@@ -38,6 +38,7 @@ import {
 	validateWallet,
 	validateIdentityContractOwner,
 	validateAccessWarning,
+	validateNotExistingEmail,
 } from './validationActions'
 import { getErrorMsg } from 'helpers/errors'
 import {
@@ -369,7 +370,7 @@ export function login() {
 				wallet,
 				email,
 				deleteLegacyKey,
-			})(dispatch)
+			})(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_LOGIN', err)
 			addToast({
@@ -667,6 +668,7 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 			),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
 			validateAccessWarning(validateId, accessWarningCheck, dirty)(dispatch),
+			validateNotExistingEmail(validateId, email, dirty)(dispatch),
 		])
 
 		const isValid = validations.every(v => v === true)
@@ -709,6 +711,7 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 			validateEmailCheck(validateId, emailCheck, email, dirty)(dispatch),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
 			validateAccessWarning(validateId, accessWarningCheck, dirty)(dispatch),
+			validateNotExistingEmail(validateId, email, dirty)(dispatch),
 		])
 
 		const isValid = validations.every(v => v === true)

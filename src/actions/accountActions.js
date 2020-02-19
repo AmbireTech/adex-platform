@@ -7,7 +7,7 @@ import {
 	backupWallet,
 	getIdentityData,
 } from 'services/adex-relayer/actions'
-import { updateSpinner } from './uiActions'
+import { updateSpinner, updateGlobalUi } from './uiActions'
 import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
 import {
@@ -38,6 +38,7 @@ import {
 	selectSearchParams,
 	selectAuthType,
 	selectAccountIdentity,
+	selectLoginDirectSide,
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { getErrorMsg } from 'helpers/errors'
@@ -219,7 +220,7 @@ export function createSession({
 	email,
 	deleteLegacyKey,
 }) {
-	return async function(dispatch) {
+	return async function(dispatch, getState) {
 		updateSpinner(CREATING_SESSION, true)(dispatch)
 		try {
 			const newWallet = { ...wallet }
@@ -295,7 +296,15 @@ export function createSession({
 					password: wallet.password,
 				})
 			}
-			dispatch(push('/side-select'))
+
+			const side = selectLoginDirectSide(getState())
+
+			if (['advertiser', 'publisher'].includes(side)) {
+				dispatch(push(`/dashboard/${side}`))
+				updateGlobalUi('goToSide', '')(dispatch)
+			} else {
+				dispatch(push('/side-select'))
+			}
 		} catch (err) {
 			console.error('ERR_GETTING_SESSION', err)
 			addToast({
