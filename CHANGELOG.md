@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.31
+##### *2020-02-19*
+
+### Added
+- Direct redirect to sides when account created `go-to-side=advertiser/publisher` #77
+
+### Fixed
+- Email validation on account creation - checking for existing emails before registration attempt
+- Hide 'hidden' filters for data export
+
+
 ## 4.10.30
 ##### *2020-02-19*
 
