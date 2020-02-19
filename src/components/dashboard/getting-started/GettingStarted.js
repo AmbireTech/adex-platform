@@ -173,7 +173,6 @@ ColorlibStepIcon.propTypes = {
 
 const useStyles = makeStyles(theme => ({
 	root: {
-		width: '100%',
 		backgroundColor: theme.palette.background.paper,
 	},
 	button: {
@@ -238,7 +237,7 @@ export default function GettingStarted() {
 	}
 
 	return (
-		<div className={classes.root}>
+		<Box className={classes.root} m={1}>
 			<Stepper
 				nonLinear
 				alternativeLabel
@@ -260,16 +259,16 @@ export default function GettingStarted() {
 			</Stepper>
 			<Box p={2} pl={[1, 2, 5]} pt={1}>
 				{activeStep === steps.length ? (
-					<div>
+					<Box>
 						<Typography className={classes.instructions}>
 							All steps completed - you&apos;re finished
 						</Typography>
 						<Button onClick={handleReset} className={classes.button}>
 							Hide
 						</Button>
-					</div>
+					</Box>
 				) : (
-					<div>
+					<Box>
 						<Typography variant={'body1'} className={classes.instructions}>
 							<strong>{`STEP ${activeStep + 1}:`}</strong>
 						</Typography>
@@ -283,9 +282,9 @@ export default function GettingStarted() {
 								{'our tutorial.'}
 							</Link>
 						</Typography>
-					</div>
+					</Box>
 				)}
 			</Box>
-		</div>
+		</Box>
 	)
 }
