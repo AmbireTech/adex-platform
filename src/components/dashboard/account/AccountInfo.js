@@ -185,40 +185,7 @@ function AccountInfo() {
 						)
 					}
 				/>
-				<ListDivider />
-				<AccountItem
-					left={
-						<ListItemText
-							className={classes.address}
-							primary={formatAddress(walletAddress)}
-							secondary={t('WALLET_INFO_LABEL', {
-								args: [
-									`AUTH_${authType.toUpperCase()}`,
-									`PRIV_${privileges}_LABEL`,
-									authType,
-								],
-							})}
-						/>
-					}
-					right={
-						localWalletDownloadHref && (
-							<Box py={1} flexGrow='1'>
-								<label htmlFor='download-wallet-json'>
-									<a
-										id='download-wallet-json'
-										href={localWalletDownloadHref}
-										download={`adex-account-data-${email}.json`}
-									>
-										<Button size='small' variant='contained' fullWidth>
-											<DownloadIcon className={classes.iconBtnLeft} />
-											{t('BACKUP_LOCAL_WALLET')}
-										</Button>
-									</a>
-								</label>
-							</Box>
-						)
-					}
-				/>
+
 				<ListDivider />
 				<AccountItem
 					left={
@@ -265,7 +232,11 @@ function AccountInfo() {
 					}
 				/>
 				<ListDivider />
-				<ExpansionPanel expanded={expanded} onChange={handleExpandChange}>
+				<ExpansionPanel
+					expanded={expanded}
+					onChange={handleExpandChange}
+					square={true}
+				>
 					<ExpansionPanelSummary
 						expandIcon={<ExpandMoreIcon />}
 						aria-controls='panel1bh-content'
@@ -277,6 +248,40 @@ function AccountInfo() {
 					</ExpansionPanelSummary>
 					<ExpansionPanelDetails>
 						<List classes={{ root: classes.advancedList }}>
+							<AccountItem
+								left={
+									<ListItemText
+										className={classes.address}
+										primary={formatAddress(walletAddress)}
+										secondary={t('WALLET_INFO_LABEL', {
+											args: [
+												`AUTH_${authType.toUpperCase()}`,
+												`PRIV_${privileges}_LABEL`,
+												authType,
+											],
+										})}
+									/>
+								}
+								right={
+									localWalletDownloadHref && (
+										<Box py={1} flexGrow='1'>
+											<label htmlFor='download-wallet-json'>
+												<a
+													id='download-wallet-json'
+													href={localWalletDownloadHref}
+													download={`adex-account-data-${email}.json`}
+												>
+													<Button size='small' variant='contained' fullWidth>
+														<DownloadIcon className={classes.iconBtnLeft} />
+														{t('BACKUP_LOCAL_WALLET')}
+													</Button>
+												</a>
+											</label>
+										</Box>
+									)
+								}
+							/>
+							<ListDivider />
 							<AccountItem
 								left={
 									<ListItemText
