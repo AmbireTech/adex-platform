@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.32
+##### *2020-02-19*
+
+### Fixed
+- Withdraw bug
+- Closing account type alert
+- Publisher analytics race condition bug
+
 ## 4.10.31
 ##### *2020-02-19*
 
