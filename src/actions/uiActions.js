@@ -254,7 +254,10 @@ export function updateEasterEggsAllowed(search) {
 }
 
 export function updatePrivilegesWarningAccepted(accepted) {
-	return function(dispatch) {
-		updateUiByIdentity('privilegesWarningAccepted', accepted)(dispatch)
+	return function(dispatch, getState) {
+		updateUiByIdentity('privilegesWarningAccepted', accepted)(
+			dispatch,
+			getState
+		)
 	}
 }
