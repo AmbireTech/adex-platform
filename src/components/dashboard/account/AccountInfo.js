@@ -232,7 +232,11 @@ function AccountInfo() {
 					}
 				/>
 				<ListDivider />
-				<ExpansionPanel expanded={expanded} onChange={handleExpandChange}>
+				<ExpansionPanel
+					expanded={expanded}
+					onChange={handleExpandChange}
+					square={true}
+				>
 					<ExpansionPanelSummary
 						expandIcon={<ExpandMoreIcon />}
 						aria-controls='panel1bh-content'
