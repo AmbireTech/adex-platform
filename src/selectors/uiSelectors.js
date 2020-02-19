@@ -50,3 +50,8 @@ export const selectSelectedCampaigns = createSelector(
 	selectSelectedItems,
 	({ campaigns }) => campaigns || []
 )
+
+export const selectLoginDirectSide = createSelector(
+	selectGlobalUi,
+	({ goToSide }) => goToSide || ''
+)
