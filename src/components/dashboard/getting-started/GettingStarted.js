@@ -18,6 +18,8 @@ import LaunchEddie from 'resources/getting-started/GS-launch-ic.png'
 import PlaceEddie from 'resources/getting-started/GS-place-ic.png'
 import BonusEddie from 'resources/getting-started/GS-bonus-ic.png'
 import { PRIMARY, SECONDARY } from 'components/App/themeMUi'
+import { t, selectSide, selectHasCreatedAdUnit } from 'selectors'
+import { useSelector } from 'react-redux'
 
 const QontoConnector = withStyles({
 	alternativeLabel: {
@@ -142,14 +144,7 @@ const useColorlibStepIconStyles = makeStyles(theme => ({
 
 function ColorlibStepIcon(props) {
 	const classes = useColorlibStepIconStyles()
-	const { active, completed } = props
-	const icons = {
-		1: EmailEddie,
-		2: CreateEddie,
-		3: FundEddie,
-		4: LaunchEddie,
-		5: BonusEddie,
-	}
+	const { active, completed, icon } = props
 
 	return (
 		<Box
@@ -158,7 +153,7 @@ function ColorlibStepIcon(props) {
 				[classes.completed]: completed,
 			})}
 			style={{
-				backgroundImage: `url(${icons[String(props.icon)]})`,
+				backgroundImage: `url(${icon})`,
 				backgroundSize: 'cover',
 			}}
 		/>
@@ -184,39 +179,48 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
-function getSteps() {
-	return [
-		'Confirm your email address',
-		'Create an ad unit',
-		'Fund your account',
-		'Launch your first campaign',
-		'Receive your bonus',
-	]
-}
-
-function getStepContent(step) {
-	switch (step) {
-		case 0:
-			return "Welcome to  the platform. Let's first confirm your email!"
-		case 1:
-			return "Your account is ready. Let's create your first ad!"
-		case 2:
-			return "Now that you have your first ad unit, let's fund your account!"
-		case 3:
-			return "Now that you have money in your account, let's launch your first campaign!"
-		case 4:
-			return "Your account is ready. Let's create your first ad!"
-		default:
-			return 'Unknown step'
-	}
-}
-
 export default function GettingStarted() {
 	const classes = useStyles()
 	const [activeStep, setActiveStep] = React.useState(0)
 	const [completed, setCompleted] = React.useState({})
-	const steps = getSteps()
-
+	const side = useSelector(selectSide)
+	const hasCreatedAdUnit = useSelector(selectHasCreatedAdUnit)
+	const steps = {
+		advertiser: [
+			{
+				label: 'Confirm your email address',
+				content: "Welcome to  the platform. Let's first confirm your email!",
+				icon: EmailEddie,
+				check: false,
+			},
+			{
+				label: 'Create an ad unit',
+				content: "Your account is ready. Let's create your first ad!",
+				icon: CreateEddie,
+				check: hasCreatedAdUnit,
+			},
+			{
+				label: 'Fund your account',
+				content:
+					"Now that you have your first ad unit, let's fund your account!",
+				icon: FundEddie,
+				check: false,
+			},
+			{
+				label: 'Launch your first campaign',
+				content:
+					"Now that you have money in your account, let's launch your first campaign!",
+				icon: LaunchEddie,
+				check: false,
+			},
+			{
+				label: 'Receive your bonus',
+				content: "Your account is ready. Let's create your first ad!",
+				icon: BonusEddie,
+				check: false,
+			},
+		],
+	}
 	const handleBack = () => {
 		setActiveStep(prevActiveStep => prevActiveStep - 1)
 	}
@@ -244,13 +248,16 @@ export default function GettingStarted() {
 				activeStep={activeStep}
 				connector={<ColorlibConnector />}
 			>
-				{steps.map((label, index) => (
+				{steps['advertiser'].map(({ label, icon }, index) => (
 					<Step key={label}>
 						<StepButton
 							onClick={handleStep(index)}
 							completed={completed[index]}
 						>
-							<StepLabel StepIconComponent={ColorlibStepIcon}>
+							<StepLabel
+								StepIconComponent={ColorlibStepIcon}
+								StepIconProps={{ icon }}
+							>
 								{label}
 							</StepLabel>
 						</StepButton>
@@ -270,11 +277,12 @@ export default function GettingStarted() {
 				) : (
 					<Box>
 						<Typography variant={'body1'} className={classes.instructions}>
-							<strong>{`STEP ${activeStep + 1}: ${getSteps()[activeStep] ||
-								''}`}</strong>
+							<strong>{`STEP ${activeStep + 1}: ${steps['advertiser'][
+								activeStep
+							].label || ''}`}</strong>
 						</Typography>
 						<Typography className={classes.instructions}>
-							{getStepContent(activeStep)} {'Not sure how? See '}
+							{steps['advertiser'][activeStep].content} {'Not sure how? See '}
 							<Link
 								href='#'
 								onClick={ev => ev.preventDefault()}
