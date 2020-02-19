@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { makeStyles, withStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 import classnames from 'classnames'
-import { Box, StepButton } from '@material-ui/core'
+import { Box, StepButton, Link } from '@material-ui/core'
 import Stepper from '@material-ui/core/Stepper'
 import Step from '@material-ui/core/Step'
 import StepLabel from '@material-ui/core/StepLabel'
@@ -198,15 +198,15 @@ function getSteps() {
 function getStepContent(step) {
 	switch (step) {
 		case 0:
-			return "Your account is ready. Let's create your first ad! Not sure how? Read our tutorial >"
+			return "Your account is ready. Let's create your first ad! Not sure how?"
 		case 1:
-			return "Your account is ready. Let's create your first ad! Not sure how? Read our tutorial >"
+			return "Your account is ready. Let's create your first ad! Not sure how?"
 		case 2:
-			return "Your account is ready. Let's create your first ad! Not sure how? Read our tutorial >"
+			return "Your account is ready. Let's create your first ad! Not sure how?"
 		case 3:
-			return "Your account is ready. Let's create your first ad! Not sure how? Read our tutorial >"
+			return "Your account is ready. Let's create your first ad! Not sure how?"
 		case 4:
-			return "Your account is ready. Let's create your first ad! Not sure how? Read our tutorial >"
+			return "Your account is ready. Let's create your first ad! Not sure how?"
 		default:
 			return 'Unknown step'
 	}
@@ -258,7 +258,7 @@ export default function GettingStarted() {
 					</Step>
 				))}
 			</Stepper>
-			<Box p={2} pl={[1, 2, 5]}>
+			<Box p={2} pl={[1, 2, 5]} pt={1}>
 				{activeStep === steps.length ? (
 					<div>
 						<Typography className={classes.instructions}>
@@ -270,8 +270,18 @@ export default function GettingStarted() {
 					</div>
 				) : (
 					<div>
+						<Typography variant={'body1'} className={classes.instructions}>
+							<strong>{`STEP ${activeStep + 1}:`}</strong>
+						</Typography>
 						<Typography className={classes.instructions}>
-							{getStepContent(activeStep)}
+							{getStepContent(activeStep)} {'See '}
+							<Link
+								href='#'
+								onClick={ev => ev.preventDefault()}
+								className={classes.instructions}
+							>
+								{'our tutorial.'}
+							</Link>
 						</Typography>
 					</div>
 				)}
