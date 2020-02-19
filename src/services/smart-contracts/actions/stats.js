@@ -225,7 +225,9 @@ export async function getOutstandingBalance({ withBalance }) {
 		const { outstanding, outstandingAvailable } = ch
 		const current = { ...amounts }
 		current.total = current.total.add(outstanding)
-		current.available = current.available.add(outstandingAvailable)
+		current.available = current.available.add(
+			bigNumberify(outstandingAvailable)
+		)
 
 		return current
 	}, initial)
