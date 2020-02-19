@@ -2,7 +2,9 @@ import React, { useState, useEffect, Fragment } from 'react'
 import SideNav from './SideNav'
 import TopBar from './TopBar'
 import { Route, Switch } from 'react-router'
-import Campaign from 'components/dashboard/containers/Campaign'
+import Campaign, {
+	CampaignReceipt,
+} from 'components/dashboard/containers/Campaign'
 import DashboardStats from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
@@ -109,14 +111,20 @@ function Dashboard(props) {
 	})
 
 	useEffect(() => {
-		execute(updateAccountIdentityData())
-		execute(updateSlotsDemandThrottled())
-		execute(updateNav('side', side))
-		execute(getAllItems())
-		analyticsLoop.start()
-		analyticsCampaignsLoop.start()
-		campaignsLoop.start()
-		statsLoop.start()
+		async function updateInitialData() {
+			execute(updateAccountIdentityData())
+			execute(updateSlotsDemandThrottled())
+			execute(updateNav('side', side))
+			execute(getAllItems())
+			analyticsLoop.start()
+			statsLoop.start()
+			//NOTE: await fo campaign analytics first
+			// because of the campaigns table data update fix
+			await analyticsCampaignsLoop.start()
+			campaignsLoop.start()
+		}
+
+		updateInitialData()
 
 		return () => {
 			analyticsLoop.stop()
@@ -206,6 +214,16 @@ function Dashboard(props) {
 							exact
 							path='/dashboard/advertiser/Campaign/:itemId'
 							component={Campaign}
+						/>
+						<Route
+							exact
+							path='/dashboard/advertiser/receipts'
+							component={CampaignReceipt}
+						/>
+						<Route
+							exact
+							path='/dashboard/advertiser/Campaign/receipt/:itemId'
+							component={CampaignReceipt}
 						/>
 						<Route
 							exact

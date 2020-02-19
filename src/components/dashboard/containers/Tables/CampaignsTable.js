@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
-import { Visibility } from '@material-ui/icons'
+import { Visibility, Receipt } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
@@ -16,13 +16,14 @@ import {
 	selectCampaignsMaxDeposit,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
-import { bigNumberify, commify } from 'ethers/utils'
+import { commify } from 'ethers/utils'
+import { execute, handlePrintSelectedReceipts } from 'actions'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
-import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
+import { formatDateTime } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 import { useTableData } from './tableHooks'
-import { ReloadData } from './toolbars'
+import { ReloadData, PrintAllReceipts } from './toolbars'
 const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(styles)
@@ -35,11 +36,25 @@ const getCols = ({
 	maxClicks,
 }) => [
 	{
+		name: 'id',
+		options: {
+			display: 'excluded',
+		},
+	},
+	{
+		name: 'receiptAvailable',
+		options: {
+			display: 'excluded',
+			download: false,
+		},
+	},
+	{
 		name: 'media',
 		label: t('PROP_MEDIA'),
 		options: {
 			filter: false,
 			sort: false,
+			download: false,
 			customBodyRender: ({ id, adUnits }) => {
 				return (
 					// TODO: Images issue some stop displaying
@@ -179,16 +194,38 @@ const getCols = ({
 			filter: false,
 			sort: true,
 			download: false,
-			customBodyRender: ({ to }) => (
-				<Tooltip
-					title={t('LABEL_VIEW')}
-					// placement='top'
-					enterDelay={1000}
-				>
-					<RRIconButton to={to} variant='contained' aria-label='preview'>
-						<Visibility color='primary' />
-					</RRIconButton>
-				</Tooltip>
+			customBodyRender: ({ side, id, humanFriendlyName }) => (
+				<React.Fragment>
+					<Tooltip
+						title={t('LABEL_VIEW')}
+						// placement='top'
+						enterDelay={1000}
+					>
+						<RRIconButton
+							to={`/dashboard/${side}/Campaign/${id}`}
+							variant='contained'
+							aria-label='preview'
+						>
+							<Visibility color='primary' />
+						</RRIconButton>
+					</Tooltip>
+					{(humanFriendlyName === 'Closed' ||
+						humanFriendlyName === 'Completed') && (
+						<Tooltip
+							title={t('RECEIPT_VIEW')}
+							// placement='top'
+							enterDelay={1000}
+						>
+							<RRIconButton
+								to={`/dashboard/${side}/Campaign/receipt/${id}`}
+								variant='contained'
+								aria-label='receip'
+							>
+								<Receipt color='primary' />
+							</RRIconButton>
+						</Tooltip>
+					)}
+				</React.Fragment>
 			),
 		},
 	},
@@ -198,24 +235,18 @@ const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
 	const mappedData = data.map(i => ({
 		index: i.index,
 		data: [
-			i.data[0].id,
-			i.data[1].humanFriendlyName,
-			`${formatTokenAmount(
-				bigNumberify(i.data[2]).mul(1000),
-				decimals,
-				true
-			)} ${symbol}`,
-			`${((i.data[3] || 0) / 10).toFixed(2)}%`,
-			i.data[4],
-			i.data[5],
-			`${formatTokenAmount(
-				bigNumberify(i.data[6]).mul(1000),
-				decimals,
-				true
-			)} ${symbol}`,
-			formatDateTime(i.data[7]),
-			formatDateTime(i.data[8]),
+			i.data[0],
+			i.data[1],
+			i.data[2],
+			i.data[3].humanFriendlyName,
+			`${i.data[4]} ${symbol}`,
+			`${((i.data[5] || 0) / 10).toFixed(2)}%`,
+			i.data[6],
+			i.data[7],
+			i.data[8],
 			formatDateTime(i.data[9]),
+			formatDateTime(i.data[10]),
+			formatDateTime(i.data[11]),
 		],
 	}))
 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
@@ -227,6 +258,20 @@ const getOptions = ({ decimals, symbol, reloadData }) => ({
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data, decimals, symbol),
 	customToolbar: () => <ReloadData handleReload={reloadData} />,
+	customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
+		const selectedIndexes = selectedRows.data.map(i => i.dataIndex)
+		const selectedItems = displayData
+			.filter(item => selectedIndexes.includes(item.dataIndex) && item.data[1])
+			.map(item => item.data[0])
+		return (
+			<PrintAllReceipts
+				handlePrintAllReceipts={() =>
+					execute(handlePrintSelectedReceipts(selectedItems))
+				}
+				disabled={selectedItems.length === 0}
+			/>
+		)
+	},
 })
 
 function CampaignsTable(props) {
@@ -259,6 +304,8 @@ function CampaignsTable(props) {
 			data={data}
 			columns={columns}
 			options={options}
+			rowSelectable
+			toolbarEnabled
 			{...props}
 		/>
 	)
