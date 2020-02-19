@@ -4,6 +4,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 import classnames from 'classnames'
 import { Box, StepButton, Link } from '@material-ui/core'
+import { Stars } from '@material-ui/icons'
 import Stepper from '@material-ui/core/Stepper'
 import Step from '@material-ui/core/Step'
 import StepLabel from '@material-ui/core/StepLabel'
@@ -135,10 +136,17 @@ const useColorlibStepIconStyles = makeStyles(theme => ({
 		},
 	},
 	active: {
-		border: `3px solid ${PRIMARY}`,
+		border: `3px solid ${PRIMARY} !important`,
 	},
 	completed: {
 		border: `3px solid ${SECONDARY}`,
+	},
+	star: {
+		position: 'relative',
+		backgroundColor: theme.palette.common.white,
+		top: '-40%',
+		right: '-35%',
+		borderRadius: '50%',
 	},
 }))
 
@@ -149,14 +157,18 @@ function ColorlibStepIcon(props) {
 	return (
 		<Box
 			className={clsx(classes.root, {
-				[classes.active]: active,
 				[classes.completed]: completed,
+				[classes.active]: active,
 			})}
 			style={{
 				backgroundImage: `url(${icon})`,
 				backgroundSize: 'cover',
 			}}
-		/>
+		>
+			{completed && (
+				<Stars className={classnames(classes.star)} color='secondary' />
+			)}
+		</Box>
 	)
 }
 
@@ -221,6 +233,7 @@ export default function GettingStarted() {
 			},
 		],
 	}
+
 	const handleBack = () => {
 		setActiveStep(prevActiveStep => prevActiveStep - 1)
 	}
@@ -248,15 +261,12 @@ export default function GettingStarted() {
 				activeStep={activeStep}
 				connector={<ColorlibConnector />}
 			>
-				{steps['advertiser'].map(({ label, icon }, index) => (
+				{steps['advertiser'].map(({ label, icon, check }, index) => (
 					<Step key={label}>
-						<StepButton
-							onClick={handleStep(index)}
-							completed={completed[index]}
-						>
+						<StepButton onClick={handleStep(index)}>
 							<StepLabel
 								StepIconComponent={ColorlibStepIcon}
-								StepIconProps={{ icon }}
+								StepIconProps={{ icon, completed: check }}
 							>
 								{label}
 							</StepLabel>
