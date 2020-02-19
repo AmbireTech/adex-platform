@@ -198,7 +198,7 @@ function Dashboard(props) {
 							</Alert>
 						</Box>
 					)}
-					<GetttingStarted />
+					<GetttingStarted side={side} />
 					<Switch>
 						<Route
 							exact
