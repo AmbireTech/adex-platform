@@ -152,7 +152,7 @@ function ColorlibStepIcon(props) {
 	}
 
 	return (
-		<div
+		<Box
 			className={clsx(classes.root, {
 				[classes.active]: active,
 				[classes.completed]: completed,
@@ -197,15 +197,15 @@ function getSteps() {
 function getStepContent(step) {
 	switch (step) {
 		case 0:
-			return "Your account is ready. Let's create your first ad! Not sure how?"
+			return "Welcome to  the platform. Let's first confirm your email!"
 		case 1:
-			return "Your account is ready. Let's create your first ad! Not sure how?"
+			return "Your account is ready. Let's create your first ad!"
 		case 2:
-			return "Your account is ready. Let's create your first ad! Not sure how?"
+			return "Now that you have your first ad unit, let's fund your account!"
 		case 3:
-			return "Your account is ready. Let's create your first ad! Not sure how?"
+			return "Now that you have money in your account, let's launch your first campaign!"
 		case 4:
-			return "Your account is ready. Let's create your first ad! Not sure how?"
+			return "Your account is ready. Let's create your first ad!"
 		default:
 			return 'Unknown step'
 	}
@@ -270,10 +270,11 @@ export default function GettingStarted() {
 				) : (
 					<Box>
 						<Typography variant={'body1'} className={classes.instructions}>
-							<strong>{`STEP ${activeStep + 1}:`}</strong>
+							<strong>{`STEP ${activeStep + 1}: ${getSteps()[activeStep] ||
+								''}`}</strong>
 						</Typography>
 						<Typography className={classes.instructions}>
-							{getStepContent(activeStep)} {'See '}
+							{getStepContent(activeStep)} {'Not sure how? See '}
 							<Link
 								href='#'
 								onClick={ev => ev.preventDefault()}
