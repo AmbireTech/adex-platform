@@ -115,8 +115,12 @@ function Dashboard(props) {
 			execute(updateSlotsDemandThrottled())
 			execute(updateNav('side', side))
 			execute(getAllItems())
+
+			// NOTE: await for stats (withBalance.all)
+			// needed for publisher analytics
+			await statsLoop.start()
 			analyticsLoop.start()
-			statsLoop.start()
+
 			//NOTE: await fo campaign analytics first
 			// because of the campaigns table data update fix
 			await analyticsCampaignsLoop.start()
