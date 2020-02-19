@@ -39,6 +39,7 @@ const getCols = ({
 		name: 'id',
 		options: {
 			display: 'excluded',
+			filter: false,
 		},
 	},
 	{
@@ -46,6 +47,7 @@ const getCols = ({
 		options: {
 			display: 'excluded',
 			download: false,
+			filter: false,
 		},
 	},
 	{
