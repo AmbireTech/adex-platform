@@ -118,12 +118,39 @@ export const selectTotalMoney = createSelector(
 			: null
 )
 
+export const selectTotalImpressionsWithPayouts = createSelector(
+	(state, { side, timeframe } = {}) => [
+		selectAnalyticsDataAggr(state, {
+			side,
+			timeframe,
+			eventType: 'IMPRESSION',
+			metric: 'eventCounts',
+		}),
+		selectAnalyticsDataAggr(state, {
+			side,
+			timeframe,
+			eventType: 'IMPRESSION',
+			metric: 'eventPayouts',
+		}),
+	],
+	([eventCounts, eventPayouts]) =>
+		eventCounts
+			? eventCounts
+					.filter(
+						c =>
+							(eventPayouts.find(e => e.time === c.time) || { value: null })
+								.value !== null
+					)
+					.reduce((a, { time, value }) => a + Number(value) || 0, 0)
+			: null
+)
+
 export const selectAverageCPM = createSelector(
 	[
 		(state, { side, timeframe } = {}) =>
 			selectTotalMoney(state, { side, timeframe }),
 		(state, { side, timeframe } = {}) =>
-			selectTotalImpressions(state, { side, timeframe }),
+			selectTotalImpressionsWithPayouts(state, { side, timeframe }),
 	],
 	(totalMoney, totalImpressions) =>
 		totalMoney !== null && totalImpressions !== null
