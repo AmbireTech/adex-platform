@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.33
+##### *2020-02-19*
+
+### Fixed
+- Average CPM calculation
+
 ## 4.10.32
 ##### *2020-02-19*
 
