@@ -1,169 +1,116 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
-// import Translate from 'components/translate/Translate'
-import NewTransactionHoc from './TransactionHoc'
+import { useSelector } from 'react-redux'
+
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
-import { validateNumber } from 'helpers/validators'
+
 import { InputLoading } from 'components/common/spinners/'
+import {
+	t,
+	selectValidationsById,
+	selectNewTransactionById,
+	selectMainToken,
+	selectSpinnerById,
+	selectAccountStatsFormatted,
+} from 'selectors'
+import { execute, updateNewTransaction } from 'actions'
 
-class WithdrawFromIdentity extends Component {
-	componentDidMount() {
-		const { validate, transaction } = this.props
-		// If nothing entered will validate
-		if (!transaction.withdrawAmount) {
-			validate('withdrawAmount', {
-				isValid: true,
-				dirty: false,
-			})
-		}
-		if (!transaction.withdrawTo) {
-			validate('withdrawTo', {
-				isValid: false,
-				err: { msg: 'ERR_REQUIRED_FIELD' },
-				dirty: false,
-			})
-		}
-	}
+const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
+	const { symbol } = useSelector(selectMainToken)
+	const { availableIdentityBalanceMainToken } = useSelector(
+		selectAccountStatsFormatted
+	)
 
-	validateAmount = (numStr, dirty) => {
-		const { token, identityAvailable } = this.props
-		let isValid = validateNumber(numStr)
-		let msg = 'ERR_INVALID_AMOUNT_VALUE'
-		let errMsgArgs = []
-		let amount = parseFloat(numStr)
-		if (isValid && amount > parseFloat(identityAvailable)) {
-			isValid = false
-			msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'
-			errMsgArgs = [identityAvailable, token]
-		}
+	const { amountToWithdraw, withdrawTo } = useSelector(state =>
+		selectNewTransactionById(state, stepsId)
+	)
 
-		this.props.validate('withdrawAmount', {
-			isValid: isValid,
-			err: { msg: msg, args: errMsgArgs },
-			dirty: dirty,
-		})
-	}
+	const spinner = useSelector(state => selectSpinnerById(state, validateId))
 
-	render() {
-		const {
-			actions,
-			validate,
-			transaction,
-			t,
-			invalidFields,
-			identityAvailable,
-			handleChange,
-			withdrawToSpinner,
-			token,
-		} = this.props
-		const { withdrawTo, withdrawAmount } = transaction || {}
-		const errAmount = invalidFields['withdrawAmount']
-		const errAddr = invalidFields['withdrawTo']
-		return (
+	const { amountToWithdraw: errAmount, withdrawTo: errAddr } = useSelector(
+		state => selectValidationsById(state, validateId) || {}
+	)
+
+	return (
+		<div>
 			<div>
-				<div>
-					{' '}
-					{t('EXCHANGE_CURRENT_MAIN_TOKEN_BALANCE_AVAILABLE_ON_IDENTITY', {
-						args: [identityAvailable, token],
-					})}
-				</div>
-				<TextField
-					disabled={withdrawToSpinner}
-					type='text'
-					required
-					fullWidth
-					label={t('WITHDRAW_TO')}
-					name='withdrawTo'
-					value={withdrawTo || ''}
-					onChange={ev => handleChange('withdrawTo', ev.target.value)}
-					onBlur={() =>
-						actions.validateAddress({
-							addr: withdrawTo,
-							dirty: true,
-							validate,
-							name: 'withdrawTo',
-							nonERC20: true,
-						})
-					}
-					onFocus={() =>
-						actions.validateAddress({
-							addr: withdrawTo,
-							dirty: false,
-							validate,
-							name: 'withdrawTo',
-							nonERC20: true,
-						})
-					}
-					error={errAddr && !!errAddr.dirty}
-					helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
-				/>
-				{withdrawToSpinner ? <InputLoading /> : null}
-				<TextField
-					type='text'
-					fullWidth
-					required
-					label={t('TOKENS_TO_WITHDRAW')}
-					name='withdrawAmount'
-					value={withdrawAmount || ''}
-					onChange={ev => handleChange('withdrawAmount', ev.target.value)}
-					onBlur={() => this.validateAmount(withdrawAmount, true)}
-					onFocus={() => this.validateAmount(withdrawAmount, false)}
-					error={errAmount && !!errAmount.dirty}
-					helperText={
-						<span>
-							<Button
-								size='small'
-								onClick={() => {
-									handleChange('withdrawAmount', identityAvailable)
-									this.validateAmount(identityAvailable, true)
-								}}
-							>
-								{t('MAX_AMOUNT_TO_WITHDRAW', {
-									args: [identityAvailable, token],
-								})}
-							</Button>
-							<span>
-								{errAmount && !!errAmount.dirty ? errAmount.errMsg : ''}
-							</span>
-						</span>
-					}
-				/>
+				{' '}
+				{t('EXCHANGE_CURRENT_MAIN_TOKEN_BALANCE_AVAILABLE_ON_IDENTITY', {
+					args: [availableIdentityBalanceMainToken, symbol],
+				})}
 			</div>
-		)
-	}
+			<TextField
+				disabled={spinner}
+				type='text'
+				required
+				fullWidth
+				label={t('WITHDRAW_TO')}
+				name='withdrawTo'
+				value={withdrawTo || ''}
+				// onChange={ev => handleChange('withdrawTo', ev.target.value)}
+				onChange={ev =>
+					execute(
+						updateNewTransaction({
+							tx: stepsId,
+							key: 'withdrawTo',
+							value: ev.target.value,
+						})
+					)
+				}
+				error={errAddr && !!errAddr.dirty}
+				helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
+			/>
+			{spinner ? <InputLoading /> : null}
+			<TextField
+				type='text'
+				fullWidth
+				required
+				label={t('TOKENS_TO_WITHDRAW')}
+				name='amountToWithdraw'
+				value={amountToWithdraw || ''}
+				onChange={ev =>
+					execute(
+						updateNewTransaction({
+							tx: stepsId,
+							key: 'amountToWithdraw',
+							value: ev.target.value,
+						})
+					)
+				}
+				error={errAmount && !!errAmount.dirty}
+				helperText={
+					<span>
+						<Button
+							size='small'
+							onClick={() => {
+								execute(
+									updateNewTransaction({
+										tx: stepsId,
+										key: 'amountToWithdraw',
+										value: availableIdentityBalanceMainToken,
+									})
+								)
+							}}
+						>
+							{t('MAX_AMOUNT_TO_WITHDRAW', {
+								args: [availableIdentityBalanceMainToken, symbol],
+							})}
+						</Button>
+						<span>
+							{errAmount && !!errAmount.dirty ? errAmount.errMsg : ''}
+						</span>
+					</span>
+				}
+			/>
+		</div>
+	)
 }
 
 WithdrawFromIdentity.propTypes = {
-	actions: PropTypes.object.isRequired,
-	label: PropTypes.string,
-	txId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	transaction: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
+	validateId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+		.isRequired,
 }
 
-function mapStateToProps(state, props) {
-	// const persist = state.persist
-	const memory = state.memory
-	const txId = props.stepsId
-	return {
-		txId: txId,
-		withdrawToSpinner: memory.spinners['withdrawTo'],
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch),
-	}
-}
-
-const WithdrawFromIdentityForm = NewTransactionHoc(WithdrawFromIdentity)
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(WithdrawFromIdentityForm)
+export default WithdrawFromIdentity
