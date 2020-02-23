@@ -148,7 +148,7 @@ export function updateAccountStats() {
 		try {
 			const { identity, wallet } = account
 			const { address } = identity
-			const withBalance = await getChannelsWithOutstanding({
+			const { all, withOutstandingBalance } = await getChannelsWithOutstanding({
 				identityAddr: address,
 				wallet,
 			})
@@ -156,7 +156,7 @@ export function updateAccountStats() {
 			const outstandingBalanceMainToken = await getOutstandingBalance({
 				wallet,
 				address,
-				withBalance: withBalance.eligible,
+				withBalance: withOutstandingBalance,
 			}).catch(err => {
 				console.error('ERR_OUTSTANDING_BALANCES', err)
 			})
@@ -165,9 +165,11 @@ export function updateAccountStats() {
 				account,
 				outstandingBalanceMainToken,
 			})
-			updateChannelsWithBalanceAll(withBalance.all)(dispatch)
-			updateChannelsWithOutstandingBalance(withBalance.eligible)(dispatch)
-			updateAccount({
+			await updateChannelsWithBalanceAll(all)(dispatch)
+			await updateChannelsWithOutstandingBalance(withOutstandingBalance)(
+				dispatch
+			)
+			await updateAccount({
 				newValues: { stats: { formatted, raw } },
 			})(dispatch)
 		} catch (err) {
