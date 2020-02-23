@@ -101,22 +101,13 @@ export const WithdrawTokenFromIdentity = props => (
 			title: 'PREVIEW_AND_MAKE_TR',
 			page: TransactionPreview,
 		}}
-		saveFn={({ transaction, account } = {}) => {
+		saveFn={({ transaction: { amountToWithdraw, withdrawTo } } = {}) => {
 			return execute(
 				identityWithdraw({
-					amountToWithdraw: transaction.withdrawAmount,
-					withdrawTo: transaction.withdrawTo,
-					account,
+					amountToWithdraw,
+					withdrawTo,
 				})
 			)
-		}}
-		getFeesFn={({ transaction, account } = {}) => {
-			return withdrawFromIdentity({
-				amountToWithdraw: transaction.withdrawAmount,
-				withdrawTo: transaction.withdrawTo,
-				getFeesOnly: true,
-				account,
-			})
 		}}
 	/>
 )
