@@ -261,7 +261,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 		})
 	)
 
-	const eligible = allChannels.filter(x => {
+	const withOutstandingBalance = allChannels.filter(x => {
 		return (
 			OUTSTANDING_STATUSES[x.channel.status.name] &&
 			new Date((x.channel.validUntil - EXTRA_PROCESS_TIME) * 1000) >
@@ -273,7 +273,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 		)
 	})
 
-	return { all, eligible }
+	return { all, withOutstandingBalance }
 }
 
 async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
