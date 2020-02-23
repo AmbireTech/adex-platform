@@ -14,10 +14,13 @@ import {
 	selectNewTransactionById,
 	selectWalletAddress,
 	selectAuthType,
+	selectAccount,
 	selectAccountStatsFormatted,
 	selectAccountStatsRaw,
 	selectMainToken,
 } from 'selectors'
+
+import { withdrawFromIdentity } from 'services/smart-contracts/actions/identity'
 
 // MEMORY STORAGE
 export function updateNewTransaction({ tx, key, value }) {
@@ -154,6 +157,7 @@ export function validateIdentityWithdraw({
 		await updateAccountIdentityData()(dispatch, getState)
 
 		const state = getState()
+		const account = selectAccount(state)
 		const { symbol, decimals } = selectMainToken(state)
 		const { amountToWithdraw, withdrawTo } = selectNewTransactionById(
 			state,
@@ -191,6 +195,21 @@ export function validateIdentityWithdraw({
 		])
 
 		const isValid = inputValidations.every(v => v === true)
+
+		if (isValid) {
+			const feesData = await withdrawFromIdentity({
+				account,
+				amountToWithdraw,
+				withdrawTo,
+				getFeesOnly: true,
+			})
+
+			await updateNewTransaction({
+				tx: stepsId,
+				key: 'feesData',
+				value: feesData,
+			})(dispatch, getState)
+		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
 
