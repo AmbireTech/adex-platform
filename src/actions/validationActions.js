@@ -332,7 +332,10 @@ export function validateWithdrawAmount({
 		let msg = 'ERR_INVALID_AMOUNT_VALUE'
 		let args = []
 		let amount = isValid ? parseUnits(amountToWithdraw, decimals) : null
-		if (isValid && amount.gt(availableIdentityBalanceMainTokenRaw)) {
+		if (
+			isValid &&
+			amount.gt(bigNumberify(availableIdentityBalanceMainTokenRaw))
+		) {
 			isValid = false
 			msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'
 			args = [availableIdentityBalanceMainTokenFormatted, symbol]
