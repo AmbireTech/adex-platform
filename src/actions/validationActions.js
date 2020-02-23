@@ -317,6 +317,37 @@ const validateAmounts = ({
 	return { error }
 }
 
+export function validateWithdrawAmount({
+	validateId,
+	amountToWithdraw,
+	availableIdentityBalanceMainTokenRaw,
+	availableIdentityBalanceMainTokenFormatted,
+	decimals,
+	symbol,
+	dirty,
+}) {
+	return async function(dispatch, getState) {
+		let isValid = isNumberString(amountToWithdraw)
+
+		let msg = 'ERR_INVALID_AMOUNT_VALUE'
+		let args = []
+		let amount = isValid ? parseUnits(amountToWithdraw, decimals) : null
+		if (isValid && amount.gt(availableIdentityBalanceMainTokenRaw)) {
+			isValid = false
+			msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'
+			args = [availableIdentityBalanceMainTokenFormatted, symbol]
+		}
+
+		validate(validateId, 'amountToWithdraw', {
+			isValid,
+			err: { msg, args },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
 export function validateNumberString({ validateId, prop, value, dirty }) {
 	return async function(dispatch, getState) {
 		const isValid = isNumberString(value)

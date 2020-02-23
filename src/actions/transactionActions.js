@@ -8,11 +8,15 @@ import {
 	validateEthAddress,
 	validatePrivilegesAddress,
 	validatePrivLevel,
+	validateWithdrawAmount,
 } from 'actions'
 import {
 	selectNewTransactionById,
 	selectWalletAddress,
 	selectAuthType,
+	selectAccountStatsFormatted,
+	selectAccountStatsRaw,
+	selectMainToken,
 } from 'selectors'
 
 // MEMORY STORAGE
@@ -131,6 +135,62 @@ export function validatePrivilegesChange({
 				value: validation.msg,
 			})(dispatch)
 		}
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
+
+		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function validateIdentityWithdraw({
+	stepsId,
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		await updateAccountIdentityData()(dispatch, getState)
+
+		const state = getState()
+		const { symbol, decimals } = selectMainToken(state)
+		const { amountToWithdraw, withdrawTo } = selectNewTransactionById(
+			state,
+			stepsId
+		)
+		const {
+			availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenRaw,
+		} = selectAccountStatsRaw(state)
+		const {
+			availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenFormatted,
+		} = selectAccountStatsFormatted(state)
+
+		// const walletAddr = selectWalletAddress(state)
+		const authType = selectAuthType(state)
+
+		const inputValidations = await Promise.all([
+			validateEthAddress({
+				validateId,
+				addr: withdrawTo,
+				prop: 'withdrawTo',
+				nonERC20: true,
+				nonZeroAddr: true,
+				authType,
+				dirty,
+			})(dispatch),
+			validateWithdrawAmount({
+				validateId,
+				amountToWithdraw,
+				availableIdentityBalanceMainTokenRaw,
+				availableIdentityBalanceMainTokenFormatted,
+				decimals,
+				symbol,
+				dirty,
+			})(dispatch),
+		])
+
+		const isValid = inputValidations.every(v => v === true)
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
 
