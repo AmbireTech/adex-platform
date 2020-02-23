@@ -120,7 +120,7 @@ export function updateChannelsWithOutstandingBalance(channels) {
 	return function(dispatch) {
 		return dispatch({
 			type: types.UPDATE_CHANNELS_WITH_OUTSTANDING_BALANCE,
-			channels: [],
+			channels,
 		})
 	}
 }
