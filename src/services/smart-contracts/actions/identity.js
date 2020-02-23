@@ -333,6 +333,7 @@ export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 
 export async function getIdentityTxnsWithNoncesAndFees({
 	amountInMainTokenNeeded = '0',
+	availableIdentityBalanceMainToken = '0',
 	txns = [],
 	identityAddr,
 	provider,
@@ -364,13 +365,16 @@ export async function getIdentityTxnsWithNoncesAndFees({
 		  )
 		: bigNumberify(0)
 
+	const totalAmountInMainTokenNeeded = feesForMainTxns.add(
+		bigNumberify(amountInMainTokenNeeded)
+	)
+
 	const {
 		sweepTxns = [],
 		swapAmountsByToken = {},
 	} = await getSweepingTxnsIfNeeded({
-		amountInMainTokenNeeded: feesForMainTxns.add(
-			bigNumberify(amountInMainTokenNeeded)
-		),
+		amountInMainTokenNeeded: totalAmountInMainTokenNeeded,
+
 		account,
 	})
 
@@ -382,6 +386,19 @@ export async function getIdentityTxnsWithNoncesAndFees({
 		saiAddr,
 		identityAddr,
 	})
+
+	const totalSweepAmount = sweepTxnsByToken.reduce(
+		(sum, tx) => sum.add(Object.values(tx.withdrawAmountByToken)[0]),
+		bigNumberify(0)
+	)
+
+	const totalAvailable = totalSweepAmount.add(
+		bigNumberify(availableIdentityBalanceMainToken)
+	)
+
+	if (totalAvailable.lt(totalAmountInMainTokenNeeded)) {
+		throw new Error('INSUFFICIENT_BALANCE_FOR_TX_EXECUTION')
+	}
 
 	// { txnsByFeeToken, saiWithdrawAmount }
 	const otherTxnsByToken = txnsByTokenWithSaiToDaiSwap({
@@ -613,7 +630,10 @@ export async function processExecuteByFeeTokens({
 			...extraData,
 		}
 
-		if (process.env.BUILD_TYPE === 'staging') {
+		if (
+			process.env.BUILD_TYPE === 'staging' ||
+			process.env.NODE_ENV === 'development'
+		) {
 			console.log('data', JSON.stringify(data, null, 2))
 		}
 
