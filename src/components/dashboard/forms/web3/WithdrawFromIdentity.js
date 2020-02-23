@@ -1,10 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
-
 import { InputLoading } from 'components/common/spinners/'
 import {
 	t,
@@ -18,7 +16,7 @@ import { execute, updateNewTransaction } from 'actions'
 
 const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 	const { symbol } = useSelector(selectMainToken)
-	const { availableIdentityBalanceMainToken } = useSelector(
+	const { availableIdentityBalanceMainToken: max } = useSelector(
 		selectAccountStatsFormatted
 	)
 
@@ -37,7 +35,7 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 			<div>
 				{' '}
 				{t('EXCHANGE_CURRENT_MAIN_TOKEN_BALANCE_AVAILABLE_ON_IDENTITY', {
-					args: [availableIdentityBalanceMainToken, symbol],
+					args: [max, symbol],
 				})}
 			</div>
 			<TextField
@@ -88,13 +86,13 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 									updateNewTransaction({
 										tx: stepsId,
 										key: 'amountToWithdraw',
-										value: availableIdentityBalanceMainToken,
+										value: max,
 									})
 								)
 							}}
 						>
 							{t('MAX_AMOUNT_TO_WITHDRAW', {
-								args: [availableIdentityBalanceMainToken, symbol],
+								args: [max, symbol],
 							})}
 						</Button>
 						<span>
