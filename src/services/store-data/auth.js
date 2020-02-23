@@ -7,7 +7,8 @@ import {
 	resetIdentity,
 	resetAccount,
 	resetAnalytics,
-	resetChannelsWithBalance,
+	resetChannelsWithBalanceAll,
+	resetChannelsWithOutstandingBalance,
 } from 'actions'
 
 import { campaignsLoop } from 'services/store-data/campaigns'
@@ -33,7 +34,8 @@ export const logOut = skipRedirect => {
 	execute(resetAllBids())
 	execute(resetAccount())
 	execute(resetAnalytics())
-	execute(resetChannelsWithBalance())
+	execute(resetChannelsWithBalanceAll())
+	execute(resetChannelsWithOutstandingBalance())
 }
 
 export const isDemoMode = () => {
