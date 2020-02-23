@@ -81,13 +81,13 @@ export const selectChannelsWithUserBalances = createSelector(
 )
 
 export const selectChannelsWithUserBalancesEligible = createSelector(
-	selectChannelsWithUserBalances,
-	({ eligible }) => eligible || []
+	selectChannels,
+	({ withOutstandingBalance }) => [...(withOutstandingBalance || [])]
 )
 
 export const selectChannelsWithUserBalancesAll = createSelector(
-	selectChannelsWithUserBalances,
-	({ all }) => all || {}
+	selectChannels,
+	({ withBalanceAll }) => ({ ...(withBalanceAll || {}) })
 )
 
 export const selectAccountIdentityCurrentPrivileges = createSelector(

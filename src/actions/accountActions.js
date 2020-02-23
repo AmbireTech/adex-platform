@@ -99,19 +99,36 @@ export function updateAccount({ meta, newValues }) {
 	}
 }
 
-export function updateChannelsWithBalance({ withBalance }) {
+export function updateChannelsWithBalanceAll(channels) {
 	return function(dispatch) {
 		return dispatch({
-			type: types.UPDATE_CHANNELS_WITH_BALANCE,
-			withBalance,
+			type: types.UPDATE_CHANNELS_WITH_BALANCE_ALL,
+			channels,
 		})
 	}
 }
 
-export function resetChannelsWithBalance() {
+export function resetChannelsWithBalanceAll() {
 	return function(dispatch) {
 		return dispatch({
-			type: types.RESET_CHANNELS_WITH_BALANCE,
+			type: types.RESET_CHANNELS_WITH_BALANCE_ALL,
+		})
+	}
+}
+
+export function updateChannelsWithOutstandingBalance(channels) {
+	return function(dispatch) {
+		return dispatch({
+			type: types.UPDATE_CHANNELS_WITH_BALANCE_ALL,
+			channels,
+		})
+	}
+}
+
+export function resetChannelsWithOutstandingBalance() {
+	return function(dispatch) {
+		return dispatch({
+			type: types.RESET_CHANNELS_WITH_OUTSTANDING_BALANCE,
 		})
 	}
 }
@@ -148,7 +165,8 @@ export function updateAccountStats() {
 				account,
 				outstandingBalanceMainToken,
 			})
-			updateChannelsWithBalance({ withBalance })(dispatch)
+			updateChannelsWithBalanceAll(withBalance.all)(dispatch)
+			updateChannelsWithOutstandingBalance(withBalance.eligible)(dispatch)
 			updateAccount({
 				newValues: { stats: { formatted, raw } },
 			})(dispatch)

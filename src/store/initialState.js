@@ -60,7 +60,8 @@ let initialState = {
 	},
 	analytics: { timeframe: 'day' },
 	channels: {
-		withBalance: [],
+		withBalanceAll: {},
+		withOutstandingBalance: [],
 	},
 	ensAddresses: {},
 }
