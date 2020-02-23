@@ -75,11 +75,6 @@ export const selectAccountIdentityRoutineAuthTuple = createSelector(
 			: null
 )
 
-export const selectChannelsWithUserBalances = createSelector(
-	selectChannels,
-	({ withBalance }) => withBalance || {}
-)
-
 export const selectChannelsWithUserBalancesEligible = createSelector(
 	selectChannels,
 	({ withOutstandingBalance }) => [...(withOutstandingBalance || [])]
