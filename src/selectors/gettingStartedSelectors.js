@@ -5,6 +5,7 @@ import {
 	selectAdSlotsArray,
 	selectAccountIdentityDeployData,
 	selectAccountStatsFormatted,
+	selectPublisherMaxImpressions,
 } from 'selectors'
 
 export const selectHasCreatedAdUnit = createSelector(
@@ -31,4 +32,13 @@ export const selectHasFundedAccount = createSelector(
 export const selectHasCreatedAdSlot = createSelector(
 	[selectAdSlotsArray],
 	adSlotsArray => adSlotsArray.length > 0
+)
+
+export const selectHasAdSlotImpressions = createSelector(
+	[selectPublisherMaxImpressions],
+	maxImpressions => maxImpressions > 0
+)
+export const selectHas5000Impressions = createSelector(
+	[selectPublisherMaxImpressions],
+	maxImpressions => maxImpressions > 5000
 )
