@@ -17,8 +17,10 @@ import { generateAddress2 } from 'ethereumjs-util'
 import { executeTx } from 'services/adex-relayer'
 import {
 	selectRelayerConfig,
+	selectMainToken,
 	selectFeeTokenWhitelist,
 	selectSaiToken,
+	t,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
@@ -96,7 +98,8 @@ export async function withdrawFromIdentity({
 	withdrawTo,
 	getFeesOnly,
 }) {
-	const { mainToken } = selectRelayerConfig()
+	const mainToken = selectMainToken()
+	const { decimals, symbol, address: tokenAddr } = mainToken
 	const { wallet, identity, stats } = account
 	const { authType } = wallet
 	const { availableIdentityBalanceMainToken } = stats.raw
@@ -104,9 +107,7 @@ export async function withdrawFromIdentity({
 
 	const identityAddr = identity.address
 
-	const toWithdraw = parseUnits(amountToWithdraw, mainToken.decimals)
-
-	const tokenAddr = mainToken.address
+	const toWithdraw = parseUnits(amountToWithdraw, decimals)
 
 	const withdrawTx = {
 		identityContract: identityAddr,
@@ -130,6 +131,23 @@ export async function withdrawFromIdentity({
 	const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken, mainToken })
 	const mtBalance = bigNumberify(availableIdentityBalanceMainToken)
 
+	if (fees.totalBN.gt(mtBalance)) {
+		throw new Error(
+			t('ERR_INSUFFICIENT_BALANCE_WITHDRAW', {
+				args: [
+					`${formatTokenAmount(
+						mtBalance.toString(),
+						decimals,
+						false,
+						2
+					)} ${symbol}`,
+					`${fees.total} ${symbol}`,
+					`${formatTokenAmount(toWithdraw.toString(), decimals)} ${symbol}`,
+				],
+			})
+		)
+	}
+
 	const maxWithdraw = mtBalance.sub(fees.totalBN)
 
 	let actualWithdrawAmount = toWithdraw
@@ -151,7 +169,7 @@ export async function withdrawFromIdentity({
 	if (getFeesOnly) {
 		return {
 			fees: fees.total,
-			toGet: formatTokenAmount(actualWithdrawAmount, mainToken.decimals),
+			toGet: formatTokenAmount(actualWithdrawAmount, decimals),
 		}
 	}
 
@@ -358,9 +376,13 @@ export async function getIdentityTxnsWithNoncesAndFees({
 
 	const feesForMainTxns = txns.length
 		? bigNumberify(
-				!initialNonce ? mainTokenWithFees.minDeploy : mainTokenWithFees.min
+				!initialNonce
+					? mainTokenWithFees.minDeploy
+					: mainTokenWithFees.minRecommended
 		  ).add(
-				bigNumberify(mainTokenWithFees.min).mul(bigNumberify(txns.length - 1))
+				bigNumberify(mainTokenWithFees.minRecommended).mul(
+					bigNumberify(txns.length - 1)
+				)
 		  )
 		: bigNumberify(0)
 
