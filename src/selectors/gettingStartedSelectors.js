@@ -3,6 +3,7 @@ import {
 	selectAdUnitsArray,
 	selectCampaignsArray,
 	selectAccountIdentityDeployData,
+	selectAccountStatsFormatted,
 } from 'selectors'
 
 export const selectHasCreatedAdUnit = createSelector(
@@ -18,4 +19,10 @@ export const selectHasCreatedCampaign = createSelector(
 export const selectHasConfirmedEmail = createSelector(
 	[selectAccountIdentityDeployData],
 	({ meta }) => !!meta.emailConfirmed
+)
+
+export const selectHasFundedAccount = createSelector(
+	[selectAccountStatsFormatted, selectHasCreatedCampaign],
+	({ identityBalanceMainToken }, hasCampaign) =>
+		hasCampaign || Number(identityBalanceMainToken) > 0
 )
