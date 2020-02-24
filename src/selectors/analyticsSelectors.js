@@ -11,13 +11,13 @@ export const selectAnalyticsData = createSelector(
 	}
 )
 
-export const selectCampaignAnalytics = createSelector(
+export const selectAdvancedAnalytics = createSelector(
 	[selectAnalytics],
-	analytics => analytics.campaigns || {}
+	analytics => analytics.advanced || {}
 )
 
 export const selectPublisherImpressionsStats = createSelector(
-	[selectCampaignAnalytics],
+	[selectAdvancedAnalytics],
 	campaigns => campaigns.IMPRESSIONS.publisherStats || {}
 )
 
@@ -27,7 +27,7 @@ export const selectDemandAnalytics = createSelector(
 )
 
 export const selectCampaignAnalyticsByType = createSelector(
-	[selectCampaignAnalytics, (_, type) => type],
+	[selectAdvancedAnalytics, (_, type) => type],
 	(campaignAnalytics, type) => campaignAnalytics[type] || {}
 )
 
