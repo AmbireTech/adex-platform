@@ -16,6 +16,11 @@ export const selectCampaignAnalytics = createSelector(
 	analytics => analytics.campaigns || {}
 )
 
+export const selectPublisherImpressionsStats = createSelector(
+	[selectCampaignAnalytics],
+	campaigns => campaigns.IMPRESSIONS.publisherStats || {}
+)
+
 export const selectDemandAnalytics = createSelector(
 	[selectAnalytics],
 	analytics => analytics.demand || {}
