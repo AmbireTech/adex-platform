@@ -2,6 +2,7 @@ import { createSelector } from 'reselect'
 import {
 	selectAdUnitsArray,
 	selectCampaignsArray,
+	selectAdSlotsArray,
 	selectAccountIdentityDeployData,
 	selectAccountStatsFormatted,
 } from 'selectors'
@@ -25,4 +26,9 @@ export const selectHasFundedAccount = createSelector(
 	[selectAccountStatsFormatted, selectHasCreatedCampaign],
 	({ identityBalanceMainToken }, hasCampaign) =>
 		hasCampaign || Number(identityBalanceMainToken) > 0
+)
+
+export const selectHasCreatedAdSlot = createSelector(
+	[selectAdSlotsArray],
+	adSlotsArray => adSlotsArray.length > 0
 )
