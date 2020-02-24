@@ -160,11 +160,7 @@ function CampaignFinance({ validateId }) {
 							error={errDepAmnt && !!errDepAmnt.dirty}
 							maxLength={120}
 							helperText={
-								errDepAmnt && !!errDepAmnt.dirty
-									? errDepAmnt.errMsg
-									: t('DEPOSIT_AMOUNT_HELPER_TXT', {
-											args: [maxChannelFees, symbol],
-									  })
+								errDepAmnt && !!errDepAmnt.dirty ? errDepAmnt.errMsg : ''
 							}
 						/>
 					</Grid>

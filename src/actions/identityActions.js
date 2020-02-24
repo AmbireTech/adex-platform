@@ -197,11 +197,7 @@ export function setIdentityENS({ username }) {
 	}
 }
 
-export function identityWithdraw({
-	amountToWithdraw,
-	withdrawTo,
-	tokenAddress,
-}) {
+export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 	return async function(dispatch, getState) {
 		try {
 			const account = selectAccount(getState())
@@ -209,12 +205,12 @@ export function identityWithdraw({
 				account,
 				amountToWithdraw,
 				withdrawTo,
-				tokenAddress,
 			})
-
 			addToast({
 				type: 'accept',
-				label: translate('IDENTITY_WITHDRAW_NOTIFICATION', { args: [result] }),
+				label: translate('IDENTITY_WITHDRAW_NOTIFICATION', {
+					args: [result],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		} catch (err) {

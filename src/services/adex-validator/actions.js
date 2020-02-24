@@ -4,7 +4,7 @@ import { getSigner } from 'services/smart-contracts/actions/ethers'
 import ewt from './ewt'
 
 const BEARER_PREFIX = 'Bearer '
-const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
+const ANALYTICS_DATA_VALIDATOR_URL = process.env.ANALYTICS_DATA_VALIDATOR_URL
 
 const getValidatorRequester = ({ baseUrl }) => {
 	return new Requester({ baseUrl })
@@ -130,14 +130,20 @@ export const identityAnalytics = async ({
 	side,
 	segmentByChannel,
 }) => {
-	const baseUrl = VALIDATOR_LEADER_URL
+	const baseUrl = ANALYTICS_DATA_VALIDATOR_URL
 	const requester = getValidatorRequester({ baseUrl })
 
 	const aggregates = await requester
 		.fetch({
 			route: `/analytics/for-${side}${campaignId || ''}`,
 			method: 'GET',
-			queryParams: { eventType, metric, timeframe, limit, segmentByChannel },
+			queryParams: {
+				metric,
+				timeframe,
+				limit,
+				segmentByChannel,
+				eventType,
+			},
 			headers: {
 				authorization: BEARER_PREFIX + leaderAuth,
 			},
@@ -148,7 +154,7 @@ export const identityAnalytics = async ({
 }
 
 export const identityCampaignsAnalytics = async ({ leaderAuth, eventType }) => {
-	const baseUrl = VALIDATOR_LEADER_URL
+	const baseUrl = ANALYTICS_DATA_VALIDATOR_URL
 	const requester = getValidatorRequester({ baseUrl })
 
 	const aggregates = await requester
