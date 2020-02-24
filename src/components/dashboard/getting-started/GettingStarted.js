@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Box, StepButton, Link } from '@material-ui/core'
+import { Box, StepButton } from '@material-ui/core'
 import Stepper from '@material-ui/core/Stepper'
 import Step from '@material-ui/core/Step'
 import StepLabel from '@material-ui/core/StepLabel'
@@ -24,6 +24,7 @@ import {
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
+import Anchor from 'components/common/anchor/anchor'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -63,6 +64,8 @@ export default function GettingStarted(props) {
 				content: "Your account is ready. Let's create your first ad!",
 				icon: CreateEddie,
 				check: hasCreatedAdUnit,
+				tutorial:
+					'https://help.adex.network/hc/en-us/articles/360011565260-How-to-Create-a-New-Ad-Unit',
 			},
 			{
 				label: 'Fund your account',
@@ -70,6 +73,8 @@ export default function GettingStarted(props) {
 					"Now that you have your first ad unit, let's fund your account!",
 				icon: FundEddie,
 				check: hasFundedAccount,
+				tutorial:
+					'https://help.adex.network/hc/en-us/articles/360011563580-How-to-send-DAI-to-your-AdEx-account',
 			},
 			{
 				label: 'Launch your first campaign',
@@ -77,6 +82,8 @@ export default function GettingStarted(props) {
 					"Now that you have money in your account, let's launch your first campaign!",
 				icon: LaunchEddie,
 				check: hasCreatedCampaign,
+				tutorial:
+					'https://help.adex.network/hc/en-us/articles/360011565180-How-to-Create-a-New-Advertising-Campaign',
 			},
 			// {
 			// 	label: 'Receive your bonus',
@@ -97,6 +104,8 @@ export default function GettingStarted(props) {
 				content: "Your account is ready. Let's create your first ad slot!",
 				icon: CreateEddie,
 				check: hasCreatedAdSlot,
+				tutorial:
+					'https://help.adex.network/hc/en-us/articles/360011670479-How-to-Create-Publisher-Ad-Slots',
 			},
 			{
 				label: 'Place an ad slot on your site',
@@ -177,18 +186,28 @@ export default function GettingStarted(props) {
 						) : (
 							<Box>
 								<Typography variant={'body1'} className={classes.instructions}>
-									<strong>{`STEP ${activeStep + 1}: ${steps[side][activeStep]
-										.label || ''}`}</strong>
+									<strong>
+										{`STEP ${activeStep + 1}: ${steps[side][activeStep].label ||
+											''} `}
+										{steps[side][activeStep].check ? '(COMPLETED)' : ''}
+									</strong>
 								</Typography>
 								<Typography className={classes.instructions}>
-									{steps[side][activeStep].content} {'Not sure how? See '}
-									<Link
-										href='#'
-										onClick={ev => ev.preventDefault()}
-										className={classes.instructions}
-									>
-										{'our tutorial.'}
-									</Link>
+									{steps[side][activeStep].content}{' '}
+									{steps[side][activeStep].tutorial && (
+										<React.Fragment>
+											{'Not sure how? See '}
+											<Anchor
+												href={steps[side][activeStep].tutorial}
+												target={'_blank'}
+												className={classes.instructions}
+												color={'primary'}
+												underline={'hover'}
+											>
+												{'our tutorial.'}
+											</Anchor>
+										</React.Fragment>
+									)}
 								</Typography>
 							</Box>
 						)}

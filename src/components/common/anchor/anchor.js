@@ -10,12 +10,20 @@ const getUrl = url => {
 	return url
 }
 
-const Anchor = ({ href, target, children, label, ...rest }) => {
+const Anchor = ({
+	href,
+	target,
+	children,
+	label,
+	underline,
+	color,
+	...rest
+}) => {
 	let url = target && target === '_blank' ? getUrl(href) : href
 	return (
 		<Link
-			underline='none'
-			color='inherit'
+			underline={underline || 'none'}
+			color={color || 'inherit'}
 			draggable='false'
 			rel='noopener noreferrer'
 			{...rest}
