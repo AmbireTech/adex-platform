@@ -17,6 +17,7 @@ import {
 	selectHasCreatedAdUnit,
 	selectHasCreatedCampaign,
 	selectHasConfirmedEmail,
+	selectHasFundedAccount,
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
@@ -37,12 +38,11 @@ const useStyles = makeStyles(theme => ({
 export default function GettingStarted(props) {
 	const classes = useStyles()
 	const { side } = props
-	const [activeStep, setActiveStep] = React.useState(0)
 	//TODO: see why side selector and side in general is not saved
 	const hasCreatedAdUnit = useSelector(selectHasCreatedAdUnit)
 	const hasCreatedCampaign = useSelector(selectHasCreatedCampaign)
 	const hasConfirmedEmail = useSelector(selectHasConfirmedEmail)
-
+	const hasFundedAccount = useSelector(selectHasFundedAccount)
 	const steps = {
 		advertiser: [
 			{
@@ -62,7 +62,7 @@ export default function GettingStarted(props) {
 				content:
 					"Now that you have your first ad unit, let's fund your account!",
 				icon: FundEddie,
-				check: false,
+				check: hasFundedAccount,
 			},
 			{
 				label: 'Launch your first campaign',
@@ -78,7 +78,45 @@ export default function GettingStarted(props) {
 				check: false,
 			},
 		],
+		publisher: [
+			{
+				label: 'Confirm your email address',
+				content: "Welcome to  the platform. Let's first confirm your email!",
+				icon: EmailEddie,
+				check: hasConfirmedEmail,
+			},
+			{
+				label: 'Create an ad slot',
+				content: "Your account is ready. Let's create your first ad slot!",
+				icon: CreateEddie,
+				check: hasCreatedAdUnit,
+			},
+			{
+				label: 'Place an ad slot on your site',
+				content:
+					"Now that you have your first ad slit, let's place it in your website!",
+				icon: FundEddie,
+				check: hasFundedAccount,
+			},
+			{
+				label: 'Reach 5,000 impressions for your ad slot(s)',
+				content:
+					"Now that you have your ad slot added, let's reach your first 5,000 impressions!",
+				icon: LaunchEddie,
+				check: hasCreatedCampaign,
+			},
+			{
+				label: 'Receive your bonus',
+				content: "Your account is ready. Let's create your first ad!",
+				icon: BonusEddie,
+				check: false,
+			},
+		],
 	}
+
+	const [activeStep, setActiveStep] = React.useState(
+		steps[side].findIndex(step => !step.check)
+	)
 
 	const handleStep = step => () => {
 		setActiveStep(step)
@@ -88,6 +126,7 @@ export default function GettingStarted(props) {
 		setActiveStep(0)
 	}
 
+	// TODO: wait for the data to be loaded before displaying the getting started
 	return (
 		<Fragment>
 			{steps[side] && (
