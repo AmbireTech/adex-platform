@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Box, StepButton, Link } from '@material-ui/core'
 import Stepper from '@material-ui/core/Stepper'
@@ -120,10 +120,8 @@ export default function GettingStarted(props) {
 			// },
 		],
 	}
-
-	const [activeStep, setActiveStep] = React.useState(
-		steps[side].findIndex(step => !step.check)
-	)
+	const indexOfFirstIncompleteStep = steps[side].findIndex(step => !step.check)
+	const [activeStep, setActiveStep] = React.useState(0)
 
 	const handleStep = step => () => {
 		setActiveStep(step)
@@ -132,7 +130,14 @@ export default function GettingStarted(props) {
 	const handleReset = () => {
 		setActiveStep(0)
 	}
-
+	useEffect(() => {
+		setActiveStep(
+			indexOfFirstIncompleteStep !== -1
+				? indexOfFirstIncompleteStep
+				: steps[side].length - 1
+		)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [indexOfFirstIncompleteStep])
 	// TODO: wait for the data to be loaded before displaying the getting started
 	return (
 		<Fragment>
