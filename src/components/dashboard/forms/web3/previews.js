@@ -10,7 +10,7 @@ export const IdentityWithdrawPreview = ({
 	withdrawTo,
 	classes,
 	feesData,
-	withdrawAmount,
+	amountToWithdraw,
 	symbol,
 }) => (
 	<div>
@@ -20,15 +20,15 @@ export const IdentityWithdrawPreview = ({
 			right={(withdrawTo || '').toString()}
 		/>
 		<PropRow
-			key='withdrawAmount'
-			left={t('withdrawAmount', { isProp: true })}
+			key='amountToWithdraw'
+			left={t('amountToWithdraw', { isProp: true })}
 			right={
 				<ListItemText
 					className={classes.address}
 					secondary={t('AMOUNT_WITHDRAW_INFO', {
 						args: [feesData.fees, symbol, feesData.toGet, symbol],
 					})}
-					primary={`${withdrawAmount} ${symbol}`}
+					primary={`${amountToWithdraw} ${symbol}`}
 				/>
 			}
 		/>
@@ -105,7 +105,7 @@ export const IdentityWithdrawAnyPreview = ({
 	tokenAddress,
 	classes,
 	feesData,
-	withdrawAmount,
+	amountToWithdraw,
 }) => (
 	<div>
 		<PropRow
@@ -119,15 +119,15 @@ export const IdentityWithdrawAnyPreview = ({
 			right={(tokenAddress || '').toString()}
 		/>
 		<PropRow
-			key='withdrawAmount'
-			left={t('withdrawAmount', { isProp: true })}
+			key='amountToWithdraw'
+			left={t('amountToWithdraw', { isProp: true })}
 			right={
 				<ListItemText
 					className={classes.address}
 					secondary={t('AMOUNT_WITHDRAW_INFO', {
 						args: [feesData.fees, '', feesData.toGet, ''],
 					})}
-					primary={withdrawAmount + ' '}
+					primary={amountToWithdraw + ' '}
 				/>
 			}
 		/>

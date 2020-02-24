@@ -99,19 +99,36 @@ export function updateAccount({ meta, newValues }) {
 	}
 }
 
-export function updateChannelsWithBalance({ withBalance }) {
+export function updateChannelsWithBalanceAll(channels) {
 	return function(dispatch) {
 		return dispatch({
-			type: types.UPDATE_CHANNELS_WITH_BALANCE,
-			withBalance,
+			type: types.UPDATE_CHANNELS_WITH_BALANCE_ALL,
+			channels,
 		})
 	}
 }
 
-export function resetChannelsWithBalance() {
+export function resetChannelsWithBalanceAll() {
 	return function(dispatch) {
 		return dispatch({
-			type: types.RESET_CHANNELS_WITH_BALANCE,
+			type: types.RESET_CHANNELS_WITH_BALANCE_ALL,
+		})
+	}
+}
+
+export function updateChannelsWithOutstandingBalance(channels) {
+	return function(dispatch) {
+		return dispatch({
+			type: types.UPDATE_CHANNELS_WITH_OUTSTANDING_BALANCE,
+			channels,
+		})
+	}
+}
+
+export function resetChannelsWithOutstandingBalance() {
+	return function(dispatch) {
+		return dispatch({
+			type: types.RESET_CHANNELS_WITH_OUTSTANDING_BALANCE,
 		})
 	}
 }
@@ -131,7 +148,7 @@ export function updateAccountStats() {
 		try {
 			const { identity, wallet } = account
 			const { address } = identity
-			const withBalance = await getChannelsWithOutstanding({
+			const { all, withOutstandingBalance } = await getChannelsWithOutstanding({
 				identityAddr: address,
 				wallet,
 			})
@@ -139,7 +156,7 @@ export function updateAccountStats() {
 			const outstandingBalanceMainToken = await getOutstandingBalance({
 				wallet,
 				address,
-				withBalance: withBalance.eligible,
+				withBalance: withOutstandingBalance,
 			}).catch(err => {
 				console.error('ERR_OUTSTANDING_BALANCES', err)
 			})
@@ -148,8 +165,11 @@ export function updateAccountStats() {
 				account,
 				outstandingBalanceMainToken,
 			})
-			updateChannelsWithBalance({ withBalance })(dispatch)
-			updateAccount({
+			await updateChannelsWithBalanceAll(all)(dispatch)
+			await updateChannelsWithOutstandingBalance(withOutstandingBalance)(
+				dispatch
+			)
+			await updateAccount({
 				newValues: { stats: { formatted, raw } },
 			})(dispatch)
 		} catch (err) {

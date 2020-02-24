@@ -29,6 +29,7 @@ import {
 import { formatTokenAmount } from 'helpers/formatters'
 import IdentityABI from 'adex-protocol-eth/abi/Identity'
 import { selectChannelsWithUserBalancesEligible } from 'selectors'
+import { getState } from 'store'
 
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
@@ -261,7 +262,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 		})
 	)
 
-	const eligible = allChannels.filter(x => {
+	const withOutstandingBalance = allChannels.filter(x => {
 		return (
 			OUTSTANDING_STATUSES[x.channel.status.name] &&
 			new Date((x.channel.validUntil - EXTRA_PROCESS_TIME) * 1000) >
@@ -273,7 +274,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 		)
 	})
 
-	return { all, eligible }
+	return { all, withOutstandingBalance }
 }
 
 async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
@@ -372,7 +373,7 @@ function hasValidExecuteRoutines(routineAuthTuple) {
 export async function getSweepChannelsTxns({ account, amountToSweep }) {
 	const { wallet, identity } = account
 	// TODO: pass withBalance as prop
-	const withBalance = selectChannelsWithUserBalancesEligible()
+	const withBalance = selectChannelsWithUserBalancesEligible(getState())
 
 	const { AdExCore } = await getEthers(wallet.authType)
 	const identityAddr = identity.address

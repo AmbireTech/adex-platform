@@ -8,12 +8,20 @@ import {
 	validateEthAddress,
 	validatePrivilegesAddress,
 	validatePrivLevel,
+	validateWithdrawAmount,
 } from 'actions'
 import {
 	selectNewTransactionById,
 	selectWalletAddress,
 	selectAuthType,
+	selectAccount,
+	selectAccountStatsFormatted,
+	selectAccountStatsRaw,
+	selectMainToken,
 } from 'selectors'
+import { getErrorMsg } from 'helpers/errors'
+
+import { withdrawFromIdentity } from 'services/smart-contracts/actions/identity'
 
 // MEMORY STORAGE
 export function updateNewTransaction({ tx, key, value }) {
@@ -23,6 +31,14 @@ export function updateNewTransaction({ tx, key, value }) {
 			tx: tx,
 			key: key,
 			value: value,
+		})
+	}
+}
+
+export function resetAllNewTransaction() {
+	return function(dispatch) {
+		return dispatch({
+			type: types.RESET_ALL_NEW_TRANSACTIONS,
 		})
 	}
 }
@@ -130,6 +146,93 @@ export function validatePrivilegesChange({
 				key: 'warningMsg',
 				value: validation.msg,
 			})(dispatch)
+		}
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
+
+		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function validateIdentityWithdraw({
+	stepsId,
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		await updateAccountIdentityData()(dispatch, getState)
+
+		const state = getState()
+		const account = selectAccount(state)
+		const { symbol, decimals } = selectMainToken(state)
+		const { amountToWithdraw, withdrawTo } = selectNewTransactionById(
+			state,
+			stepsId
+		)
+		const {
+			availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenRaw,
+		} = selectAccountStatsRaw(state)
+		const {
+			availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenFormatted,
+		} = selectAccountStatsFormatted(state)
+
+		// const walletAddr = selectWalletAddress(state)
+		const authType = selectAuthType(state)
+
+		const inputValidations = await Promise.all([
+			validateEthAddress({
+				validateId,
+				addr: withdrawTo,
+				prop: 'withdrawTo',
+				nonERC20: true,
+				nonZeroAddr: true,
+				authType,
+				dirty,
+			})(dispatch),
+			validateWithdrawAmount({
+				validateId,
+				amountToWithdraw,
+				availableIdentityBalanceMainTokenRaw,
+				availableIdentityBalanceMainTokenFormatted,
+				decimals,
+				symbol,
+				dirty,
+			})(dispatch),
+		])
+
+		let isValid = inputValidations.every(v => v === true)
+
+		if (isValid) {
+			try {
+				const feesData = await withdrawFromIdentity({
+					account,
+					amountToWithdraw,
+					withdrawTo,
+					getFeesOnly: true,
+				})
+
+				await updateNewTransaction({
+					tx: stepsId,
+					key: 'feesData',
+					value: feesData,
+				})(dispatch, getState)
+			} catch (err) {
+				isValid = false
+
+				await validateWithdrawAmount({
+					validateId,
+					amountToWithdraw,
+					availableIdentityBalanceMainTokenRaw,
+					availableIdentityBalanceMainTokenFormatted,
+					decimals,
+					symbol,
+					errorMsg: getErrorMsg(err),
+					dirty,
+				})(dispatch)
+			}
 		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })

@@ -133,7 +133,7 @@ function TransactionPreview(props) {
 								withdrawTo={withdrawTo}
 								classes={classes}
 								feesData={feesData}
-								withdrawAmount={withdrawAmount}
+								amountToWithdraw={amountToWithdraw}
 								symbol={symbol}
 							/>
 						)}
@@ -155,7 +155,7 @@ function TransactionPreview(props) {
 								withdrawTo={withdrawTo}
 								classes={classes}
 								feesData={feesData}
-								withdrawAmount={withdrawAmount || amountToWithdraw}
+								amountToWithdraw={amountToWithdraw}
 								tokenAddress={tokenAddress}
 								symbol={symbol}
 							/>

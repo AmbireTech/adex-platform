@@ -2,7 +2,7 @@ import { getState } from 'store'
 import { createSelector } from 'reselect'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
 
-export const selectAnalytics = state => (state || getState()).persist.analytics
+export const selectAnalytics = state => state.persist.analytics
 
 export const selectAnalyticsData = createSelector(
 	[selectAnalytics, (_, side) => side],
@@ -11,14 +11,21 @@ export const selectAnalyticsData = createSelector(
 	}
 )
 
+export const selectAnalyticsTimeframe = createSelector(
+	selectAnalytics,
+	({ timeframe }) => {
+		return timeframe
+	}
+)
+
 export const selectCampaignAnalytics = createSelector(
 	[selectAnalytics],
-	analytics => analytics.campaigns || {}
+	({ campaigns }) => campaigns || {}
 )
 
 export const selectDemandAnalytics = createSelector(
 	[selectAnalytics],
-	analytics => analytics.demand || {}
+	({ demand }) => demand || {}
 )
 
 export const selectCampaignAnalyticsByType = createSelector(
@@ -66,7 +73,8 @@ export const selectAnalyticsDataAggr = createSelector(
 
 export function selectCampaignEventsCount(type, campaignId) {
 	return Object.values(
-		selectCampaignAnalyticsByChannelToAdUnit(null, {
+		// TODO: fix this selector w/o using getState
+		selectCampaignAnalyticsByChannelToAdUnit(getState(), {
 			type,
 			campaignId,
 		})

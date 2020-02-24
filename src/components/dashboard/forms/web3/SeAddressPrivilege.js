@@ -22,19 +22,16 @@ const PRIV_LEVELS_SRC = Object.values(IdentityPrivilegeLevel).map(value => {
 	}
 })
 
-function SeAddressPrivilege(props) {
-	const { stepsId, validateId } = props
+function SeAddressPrivilege({ stepsId, validateId } = {}) {
 	const { setAddr, privLevel, warningAccepted, warningMsg } = useSelector(
 		state => selectNewTransactionById(state, stepsId)
 	)
 
-	const validations = useSelector(
-		state => selectValidationsById(state, validateId) || {}
-	)
-
-	const errAddr = validations['setAddr']
-	const warning = validations['setAddrWarning']
-	const errPrivLvl = validations['privLevel']
+	const {
+		setAddr: errAddr,
+		setAddrWarning: warning,
+		privLevel: errPrivLvl,
+	} = useSelector(state => selectValidationsById(state, validateId) || {})
 
 	return (
 		<div>
@@ -129,6 +126,8 @@ function SeAddressPrivilege(props) {
 
 SeAddressPrivilege.propTypes = {
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+	validateId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+		.isRequired,
 }
 
 export default SeAddressPrivilege

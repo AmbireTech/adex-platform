@@ -1,5 +1,5 @@
 import React from 'react'
-import WithdrawFromExchangePage from './WithdrawFromIdentity'
+import WithdrawFromIdentity from './WithdrawFromIdentity'
 import WithdrawAnyTokenFromIdentityPage from './WithdrawAnyTokenFromIdentity'
 import SeAddressPrivilege from './SeAddressPrivilege'
 import SetAccountENSPage from './SetAccountENSPage'
@@ -23,6 +23,7 @@ import {
 	setIdentityENS,
 	validatePrivilegesChange,
 	identityWithdrawAny,
+	validateIdentityWithdraw,
 	execute,
 } from 'actions'
 
@@ -83,29 +84,30 @@ export const WithdrawTokenFromIdentity = props => (
 		stepsPages={[
 			{
 				title: 'ACCOUNT_WITHDRAW_FROM_IDENTITY_STEP',
-				page: WithdrawFromExchangePage,
+				page: WithdrawFromIdentity,
+				pageValidation: ({ stepsId, validateId, dirty, onValid, onInvalid }) =>
+					execute(
+						validateIdentityWithdraw({
+							stepsId,
+							validateId,
+							dirty,
+							onValid,
+							onInvalid,
+						})
+					),
 			},
 		]}
 		stepsPreviewPage={{
 			title: 'PREVIEW_AND_MAKE_TR',
 			page: TransactionPreview,
 		}}
-		saveFn={({ transaction, account } = {}) => {
+		saveFn={({ transaction: { amountToWithdraw, withdrawTo } } = {}) => {
 			return execute(
 				identityWithdraw({
-					amountToWithdraw: transaction.withdrawAmount,
-					withdrawTo: transaction.withdrawTo,
-					account,
+					amountToWithdraw,
+					withdrawTo,
 				})
 			)
-		}}
-		getFeesFn={({ transaction, account } = {}) => {
-			return withdrawFromIdentity({
-				amountToWithdraw: transaction.withdrawAmount,
-				withdrawTo: transaction.withdrawTo,
-				getFeesOnly: true,
-				account,
-			})
 		}}
 	/>
 )
