@@ -67,6 +67,61 @@ and removed data points whit zero available earnings #345
 - show only targeting matches on campaign details #339
 - remove facebook chat
 
+## 4.0.0
+##### *2019-17-04*
+
+### Added
+- Metamask address verification
+- Networks and tokes configuration
+- Contracts configuration
+- Styles to identity step
+- Fee token amount field
+- Toast when metmask is not on mainnet 
+- Possibility to select acount type
+- Adex Identity support
+- Coupon code validator
+- Set targeting added to adunit view
+- Toast on error with error message
+- Grant account Login
+- Adunit preview 
+- Campaign preview
+- IPFS images handling
+- Camapign max deposit validation
+- Date time picker for campaign creation
+
+### Fixed
+- Identity owner state
+- Trezor signin 
+- Image uploading
+- Top bar
+
+### Changed
+- Account page view changed
+- Dashboard view 
+
+### Removed
+- AirSwap
+- Ledger signin
+
+## 2.2.3
+##### *2019-01-16*
+
+### Added 
+- Sentry
+
+### Fixed
+- Legacy dapp browsers bug
+
+## 2.2.2
+##### *2019-01-07*
+
+### Changed
+- we3 node changed to infura
+
+### Fixed
+- Getting address balance
+- Random Seed Generator
+
 ## 2.2.1
 ##### *2018-12-19*
 
