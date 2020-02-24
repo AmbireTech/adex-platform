@@ -24,8 +24,8 @@ export const formatTokenAmount = (
 	} else if (typeof toFixed === 'number') {
 		// We want truncated not rounded
 		return parseFloat(formatted)
-			.toFixed(toFixed + 1)
-			.slice(0, -1)
+			.toFixed(toFixed + 4)
+			.slice(0, -4)
 	} else {
 		return formatted
 	}
