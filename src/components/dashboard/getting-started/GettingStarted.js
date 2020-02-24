@@ -20,6 +20,7 @@ import {
 	selectHasFundedAccount,
 	selectHasAdSlotImpressions,
 	selectHas5000Impressions,
+	selectHasCreatedAdSlot,
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
@@ -40,13 +41,15 @@ const useStyles = makeStyles(theme => ({
 export default function GettingStarted(props) {
 	const classes = useStyles()
 	const { side } = props
-	//TODO: see why side selector and side in general is not saved
+
 	const hasCreatedAdUnit = useSelector(selectHasCreatedAdUnit)
 	const hasCreatedCampaign = useSelector(selectHasCreatedCampaign)
+	const hasCreatedAdSlot = useSelector(selectHasCreatedAdSlot)
 	const hasConfirmedEmail = useSelector(selectHasConfirmedEmail)
 	const hasFundedAccount = useSelector(selectHasFundedAccount)
 	const hasImpressions = useSelector(selectHasAdSlotImpressions)
 	const has5000Impressions = useSelector(selectHas5000Impressions)
+
 	const steps = {
 		advertiser: [
 			{
@@ -93,7 +96,7 @@ export default function GettingStarted(props) {
 				label: 'Create an ad slot',
 				content: "Your account is ready. Let's create your first ad slot!",
 				icon: CreateEddie,
-				check: hasCreatedAdUnit,
+				check: hasCreatedAdSlot,
 			},
 			{
 				label: 'Place an ad slot on your site',
