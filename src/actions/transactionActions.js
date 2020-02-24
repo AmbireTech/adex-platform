@@ -35,6 +35,14 @@ export function updateNewTransaction({ tx, key, value }) {
 	}
 }
 
+export function resetAllNewTransaction() {
+	return function(dispatch) {
+		return dispatch({
+			type: types.RESET_ALL_NEW_TRANSACTIONS,
+		})
+	}
+}
+
 export function resetNewTransaction({ tx }) {
 	return function(dispatch) {
 		return dispatch({
