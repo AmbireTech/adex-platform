@@ -287,7 +287,7 @@ export function updateAccountCampaignsAnalytics() {
 					.filter(x => !!x)
 					.forEach(({ opts, value }) =>
 						dispatch({
-							type: types.UPDATE_ADVANCED_CAMPAIGN_ANALYTICS,
+							type: types.UPDATE_ADVANCED_ANALYTICS,
 							...opts,
 							value,
 						})
