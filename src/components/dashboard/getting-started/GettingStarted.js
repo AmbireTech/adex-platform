@@ -18,6 +18,8 @@ import {
 	selectHasCreatedCampaign,
 	selectHasConfirmedEmail,
 	selectHasFundedAccount,
+	selectHasAdSlotImpressions,
+	selectHas5000Impressions,
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
@@ -43,6 +45,8 @@ export default function GettingStarted(props) {
 	const hasCreatedCampaign = useSelector(selectHasCreatedCampaign)
 	const hasConfirmedEmail = useSelector(selectHasConfirmedEmail)
 	const hasFundedAccount = useSelector(selectHasFundedAccount)
+	const hasImpressions = useSelector(selectHasAdSlotImpressions)
+	const has5000Impressions = useSelector(selectHas5000Impressions)
 	const steps = {
 		advertiser: [
 			{
@@ -96,14 +100,14 @@ export default function GettingStarted(props) {
 				content:
 					"Now that you have your first ad slit, let's place it in your website!",
 				icon: PlaceEddie,
-				check: hasFundedAccount,
+				check: hasImpressions,
 			},
 			{
 				label: 'Reach 5,000 impressions for your ad slot(s)',
 				content:
 					"Now that you have your ad slot added, let's reach your first 5,000 impressions!",
 				icon: LaunchEddie,
-				check: hasCreatedCampaign,
+				check: has5000Impressions,
 			},
 			{
 				label: 'Receive your bonus',
