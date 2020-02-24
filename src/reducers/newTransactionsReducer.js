@@ -1,6 +1,7 @@
 import {
 	UPDATE_NEW_TRANSACTION,
 	RESET_NEW_TRANSACTION,
+	RESET_ALL_NEW_TRANSACTIONS,
 } from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
@@ -34,6 +35,9 @@ export default function newTransactionsReducer(
 		case RESET_NEW_TRANSACTION:
 			newTx = { ...initialState.newTransactions.default }
 			newState[action.tx] = newTx
+			return newState
+		case RESET_ALL_NEW_TRANSACTIONS:
+			newState = initialState.newTransactions
 			return newState
 		default:
 			return state
