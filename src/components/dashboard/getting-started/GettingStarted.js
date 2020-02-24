@@ -95,7 +95,7 @@ export default function GettingStarted(props) {
 				label: 'Place an ad slot on your site',
 				content:
 					"Now that you have your first ad slit, let's place it in your website!",
-				icon: FundEddie,
+				icon: PlaceEddie,
 				check: hasFundedAccount,
 			},
 			{
