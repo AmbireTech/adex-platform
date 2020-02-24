@@ -324,15 +324,22 @@ export function validateWithdrawAmount({
 	availableIdentityBalanceMainTokenFormatted,
 	decimals,
 	symbol,
+	errorMsg,
 	dirty,
 }) {
 	return async function(dispatch, getState) {
 		let isValid = isNumberString(amountToWithdraw)
 
-		let msg = 'ERR_INVALID_AMOUNT_VALUE'
+		let msg = errorMsg || 'ERR_INVALID_AMOUNT_VALUE'
 		let args = []
 		let amount = isValid ? parseUnits(amountToWithdraw, decimals) : null
-		if (
+		if (errorMsg) {
+			isValid = false
+			msg = errorMsg
+		} else if (isValid && amount.isZero()) {
+			isValid = false
+			msg = 'ERR_ZERO_WITHDRAW_AMOUNT'
+		} else if (
 			isValid &&
 			amount.gt(bigNumberify(availableIdentityBalanceMainTokenRaw))
 		) {
@@ -341,7 +348,7 @@ export function validateWithdrawAmount({
 			args = [availableIdentityBalanceMainTokenFormatted, symbol]
 		}
 
-		validate(validateId, 'amountToWithdraw', {
+		await validate(validateId, 'amountToWithdraw', {
 			isValid,
 			err: { msg, args },
 			dirty,
