@@ -137,7 +137,13 @@ export const identityAnalytics = async ({
 		.fetch({
 			route: `/analytics/for-${side}${campaignId || ''}`,
 			method: 'GET',
-			queryParams: { eventType, metric, timeframe, limit, segmentByChannel },
+			queryParams: {
+				metric,
+				timeframe,
+				limit,
+				segmentByChannel,
+				eventType,
+			},
 			headers: {
 				authorization: BEARER_PREFIX + leaderAuth,
 			},
