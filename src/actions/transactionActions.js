@@ -19,6 +19,7 @@ import {
 	selectAccountStatsRaw,
 	selectMainToken,
 } from 'selectors'
+import { getErrorMsg } from 'helpers/errors'
 
 import { withdrawFromIdentity } from 'services/smart-contracts/actions/identity'
 
@@ -194,21 +195,36 @@ export function validateIdentityWithdraw({
 			})(dispatch),
 		])
 
-		const isValid = inputValidations.every(v => v === true)
+		let isValid = inputValidations.every(v => v === true)
 
 		if (isValid) {
-			const feesData = await withdrawFromIdentity({
-				account,
-				amountToWithdraw,
-				withdrawTo,
-				getFeesOnly: true,
-			})
+			try {
+				const feesData = await withdrawFromIdentity({
+					account,
+					amountToWithdraw,
+					withdrawTo,
+					getFeesOnly: true,
+				})
 
-			await updateNewTransaction({
-				tx: stepsId,
-				key: 'feesData',
-				value: feesData,
-			})(dispatch, getState)
+				await updateNewTransaction({
+					tx: stepsId,
+					key: 'feesData',
+					value: feesData,
+				})(dispatch, getState)
+			} catch (err) {
+				isValid = false
+
+				await validateWithdrawAmount({
+					validateId,
+					amountToWithdraw,
+					availableIdentityBalanceMainTokenRaw,
+					availableIdentityBalanceMainTokenFormatted,
+					decimals,
+					symbol,
+					errorMsg: getErrorMsg(err),
+					dirty,
+				})(dispatch)
+			}
 		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
