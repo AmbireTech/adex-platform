@@ -20,6 +20,9 @@ import {
 	selectChannelsWithUserBalancesAll,
 	selectFeeTokenWhitelist,
 	selectRoutineWithdrawTokens,
+	selectSide,
+	selectAccount,
+	selectAnalyticsTimeframe,
 } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
 
@@ -165,12 +168,14 @@ function aggrByChannelsSegments({
 
 export function updateAccountAnalytics() {
 	return async function(dispatch, getState) {
-		const { account, analytics } = getState().persist
-		const { side } = getState().memory.nav
-		const { timeframe } = analytics
-		const allChannels = selectChannelsWithUserBalancesAll()
-		const feeTokens = selectFeeTokenWhitelist()
-		const withdrawTokens = selectRoutineWithdrawTokens()
+		const state = getState()
+		const account = selectAccount(state)
+
+		const side = selectSide(state)
+		const timeframe = selectAnalyticsTimeframe(state)
+		const allChannels = selectChannelsWithUserBalancesAll(state)
+		const feeTokens = selectFeeTokenWhitelist(state)
+		const withdrawTokens = selectRoutineWithdrawTokens(state)
 		try {
 			const toastId = addToast({
 				type: 'warning',
