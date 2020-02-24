@@ -78,12 +78,12 @@ export default function GettingStarted(props) {
 				icon: LaunchEddie,
 				check: hasCreatedCampaign,
 			},
-			{
-				label: 'Receive your bonus',
-				content: "Your account is ready. Let's create your first ad!",
-				icon: BonusEddie,
-				check: false,
-			},
+			// {
+			// 	label: 'Receive your bonus',
+			// 	content: "Your account is ready. Let's create your first ad!",
+			// 	icon: BonusEddie,
+			// 	check: false,
+			// },
 		],
 		publisher: [
 			{
@@ -112,12 +112,12 @@ export default function GettingStarted(props) {
 				icon: LaunchEddie,
 				check: has5000Impressions,
 			},
-			{
-				label: 'Receive your bonus',
-				content: "Your account is ready. Let's create your first ad!",
-				icon: BonusEddie,
-				check: false,
-			},
+			// {
+			// 	label: 'Receive your bonus',
+			// 	content: "Your account is ready. Let's create your first ad!",
+			// 	icon: BonusEddie,
+			// 	check: false,
+			// },
 		],
 	}
 
