@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.34
+##### *2020-02-24*
+
+### Added
+- Better validation on withdraw
+- Reset transactions on logout
+
+### Changed
+- Domains configuration (blocked by ad blockers)
+- Refactored withdraw step
+- Channels selectors and reducers
+- Formatting amounts truncated to fixed instead rounded
+
+### Fixed
+- Fixed bug with withdraw funds from account
+- Label with fees on campaign params page #350 
+
 ## 4.10.33
 ##### *2020-02-19*
 
