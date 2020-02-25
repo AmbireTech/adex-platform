@@ -46,6 +46,11 @@ export const selectPrivilegesWarningAccepted = createSelector(
 	({ privilegesWarningAccepted }) => !!privilegesWarningAccepted
 )
 
+export const selectHideGettingStarted = createSelector(
+	selectIdentityUi,
+	({ hideGettingStarted }) => hideGettingStarted
+)
+
 export const selectSelectedCampaigns = createSelector(
 	selectSelectedItems,
 	({ campaigns }) => campaigns || []
