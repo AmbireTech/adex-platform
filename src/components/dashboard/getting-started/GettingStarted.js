@@ -32,9 +32,11 @@ import {
 	selectHasAdSlotImpressions,
 	selectHas5000Impressions,
 	selectHasCreatedAdSlot,
+	selectHideGettingStarted,
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
+import { hideGettingStarted, execute } from 'actions'
 import Anchor from 'components/common/anchor/anchor'
 
 const useStyles = makeStyles(theme => ({
@@ -61,6 +63,7 @@ export default function GettingStarted(props) {
 	const hasFundedAccount = useSelector(selectHasFundedAccount)
 	const hasImpressions = useSelector(selectHasAdSlotImpressions)
 	const has5000Impressions = useSelector(selectHas5000Impressions)
+	const isGettingStartedHidden = useSelector(selectHideGettingStarted)
 
 	const steps = {
 		advertiser: [
@@ -154,8 +157,9 @@ export default function GettingStarted(props) {
 		setActiveStep(activeStep - 1)
 	}
 
-	const handleReset = () => {
+	const handleDismiss = () => {
 		setActiveStep(0)
+		execute(hideGettingStarted())
 	}
 	useEffect(() => {
 		setActiveStep(
@@ -167,117 +171,122 @@ export default function GettingStarted(props) {
 	}, [indexOfFirstIncompleteStep])
 	// TODO: wait for the data to be loaded before displaying the getting started
 	return (
-		<Collapse in>
-			{steps[side] && (
-				<Box className={classes.root} m={1} p={2}>
-					<Typography variant={'h6'}>{`Getting Started`}</Typography>
-					<Hidden mdUp>
-						<Box p={2} justifyContent={'center'} display='flex'>
-							<ColorlibStepIcon
-								icon={steps[side][activeStep].icon}
-								completed={steps[side][activeStep].check}
-								size='35vw'
+		!isGettingStartedHidden && (
+			<Collapse in>
+				{steps[side] && (
+					<Box className={classes.root} m={1} p={2}>
+						<Typography variant={'h6'}>{`Getting Started`}</Typography>
+						<Hidden mdUp>
+							<Box p={2} justifyContent={'center'} display='flex'>
+								<ColorlibStepIcon
+									icon={steps[side][activeStep].icon}
+									completed={steps[side][activeStep].check}
+									size='35vw'
+								/>
+							</Box>
+							<MobileStepper
+								className={classes.root}
+								steps={steps[side].length}
+								position='static'
+								variant='progress'
+								activeStep={activeStep}
+								nextButton={
+									<Button
+										size='small'
+										onClick={handleNext}
+										disabled={activeStep === steps[side].length - 1}
+									>
+										Next
+										<KeyboardArrowRight />
+									</Button>
+								}
+								backButton={
+									<Button
+										size='small'
+										onClick={handleBack}
+										disabled={activeStep === 0}
+									>
+										<KeyboardArrowLeft />
+										Back
+									</Button>
+								}
 							/>
-						</Box>
-						<MobileStepper
-							className={classes.root}
-							steps={steps[side].length}
-							position='static'
-							variant='progress'
-							activeStep={activeStep}
-							nextButton={
-								<Button
-									size='small'
-									onClick={handleNext}
-									disabled={activeStep === steps[side].length - 1}
-								>
-									Next
-									<KeyboardArrowRight />
-								</Button>
-							}
-							backButton={
-								<Button
-									size='small'
-									onClick={handleBack}
-									disabled={activeStep === 0}
-								>
-									<KeyboardArrowLeft />
-									Back
-								</Button>
-							}
-						/>
-					</Hidden>
-					<Hidden smDown>
-						<Stepper
-							nonLinear
-							alternativeLabel
-							activeStep={activeStep}
-							connector={<ColorlibConnector />}
-						>
-							{steps[side].map(({ label, icon, check }, index) => (
-								<Step key={label}>
-									<StepButton onClick={handleStep(index)}>
-										<StepLabel
-											StepIconComponent={ColorlibStepIcon}
-											StepIconProps={{ icon, completed: check }}
-										>
-											{label}
-										</StepLabel>
-									</StepButton>
-								</Step>
-							))}
-						</Stepper>
-					</Hidden>
-					<Box>
-						{indexOfFirstIncompleteStep === -1 ? (
-							<Box
-								display='flex'
-								justifyContent={'space-between'}
-								flexWrap='wrap'
+						</Hidden>
+						<Hidden smDown>
+							<Stepper
+								nonLinear
+								alternativeLabel
+								activeStep={activeStep}
+								connector={<ColorlibConnector />}
 							>
-								<Typography className={classes.instructions}>
-									<strong>{`All steps completed - you're finished`}</strong>
-								</Typography>
-								<Button
-									color='primary'
-									onClick={handleReset}
-									className={classes.button}
-									startIcon={<Close />}
-								>
-									{`Dismiss`}
-								</Button>
-							</Box>
-						) : (
-							<Box>
-								<Typography variant={'body1'} className={classes.instructions}>
-									<strong>
-										{`STEP ${activeStep + 1}: ${steps[side][activeStep].label ||
-											''} `}
-										{steps[side][activeStep].check ? '(COMPLETED)' : ''}
-									</strong>
-								</Typography>
-								<Typography className={classes.instructions}>
-									{steps[side][activeStep].content}{' '}
-									{steps[side][activeStep].tutorial && (
-										<Fragment>
-											{'Not sure how? See '}
-											<Anchor
-												href={steps[side][activeStep].tutorial}
-												target={'_blank'}
-												className={classes.instructions}
-												color={'primary'}
-												underline={'hover'}
+								{steps[side].map(({ label, icon, check }, index) => (
+									<Step key={label}>
+										<StepButton onClick={handleStep(index)}>
+											<StepLabel
+												StepIconComponent={ColorlibStepIcon}
+												StepIconProps={{ icon, completed: check }}
 											>
-												{'our tutorial.'}
-											</Anchor>
-										</Fragment>
-									)}
-								</Typography>
-							</Box>
-						)}
+												{label}
+											</StepLabel>
+										</StepButton>
+									</Step>
+								))}
+							</Stepper>
+						</Hidden>
+						<Box>
+							{indexOfFirstIncompleteStep === -1 ? (
+								<Box
+									display='flex'
+									justifyContent={'space-between'}
+									flexWrap='wrap'
+								>
+									<Typography className={classes.instructions}>
+										<strong>{`All steps completed - you're finished`}</strong>
+									</Typography>
+									<Button
+										color='primary'
+										onClick={handleDismiss}
+										className={classes.button}
+										startIcon={<Close />}
+									>
+										{`Dismiss`}
+									</Button>
+								</Box>
+							) : (
+								<Box>
+									<Typography
+										variant={'body1'}
+										className={classes.instructions}
+									>
+										<strong>
+											{`STEP ${activeStep + 1}: ${steps[side][activeStep]
+												.label || ''} `}
+											{steps[side][activeStep].check ? '(COMPLETED)' : ''}
+										</strong>
+									</Typography>
+									<Typography className={classes.instructions}>
+										{steps[side][activeStep].content}{' '}
+										{steps[side][activeStep].tutorial && (
+											<Fragment>
+												{'Not sure how? See '}
+												<Anchor
+													href={steps[side][activeStep].tutorial}
+													target={'_blank'}
+													className={classes.instructions}
+													color={'primary'}
+													underline={'hover'}
+												>
+													{'our tutorial.'}
+												</Anchor>
+											</Fragment>
+										)}
+									</Typography>
+								</Box>
+							)}
+						</Box>
 					</Box>
-				</Box>
-			)}
-		</Collapse>
+				)}
+			</Collapse>
+		)
 	)
 }
