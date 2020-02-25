@@ -1,11 +1,17 @@
 import React, { Fragment, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Box, StepButton } from '@material-ui/core'
-import Stepper from '@material-ui/core/Stepper'
-import Step from '@material-ui/core/Step'
-import StepLabel from '@material-ui/core/StepLabel'
-import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
+import {
+	Box,
+	StepButton,
+	MobileStepper,
+	Stepper,
+	Step,
+	StepLabel,
+	Button,
+	Typography,
+	Hidden,
+} from '@material-ui/core'
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons'
 import EmailEddie from 'resources/getting-started/GS-email-ic.png'
 import FundEddie from 'resources/getting-started/GS-fund-ic.png'
 import CreateEddie from 'resources/getting-started/GS-create-ic.png'
@@ -136,6 +142,13 @@ export default function GettingStarted(props) {
 		setActiveStep(step)
 	}
 
+	const handleNext = () => {
+		setActiveStep(activeStep + 1)
+	}
+	const handleBack = () => {
+		setActiveStep(activeStep - 1)
+	}
+
 	const handleReset = () => {
 		setActiveStep(0)
 	}
@@ -152,27 +165,63 @@ export default function GettingStarted(props) {
 		<Fragment>
 			{steps[side] && (
 				<Box className={classes.root} m={1}>
-					{/* TODO: add mobile version */}
-					{/* https://material-ui.com/components/steppers/#mobile-stepper */}
-					<Stepper
-						nonLinear
-						alternativeLabel
-						activeStep={activeStep}
-						connector={<ColorlibConnector />}
-					>
-						{steps[side].map(({ label, icon, check }, index) => (
-							<Step key={label}>
-								<StepButton onClick={handleStep(index)}>
-									<StepLabel
-										StepIconComponent={ColorlibStepIcon}
-										StepIconProps={{ icon, completed: check }}
-									>
-										{label}
-									</StepLabel>
-								</StepButton>
-							</Step>
-						))}
-					</Stepper>
+					<Hidden mdUp>
+						<Box p={2} justifyContent={'center'} display='flex'>
+							<ColorlibStepIcon
+								icon={steps[side][activeStep].icon}
+								completed={steps[side][activeStep].check}
+								size={200}
+							/>
+						</Box>
+						<MobileStepper
+							className={classes.root}
+							steps={steps[side].length}
+							position='static'
+							variant='progress'
+							activeStep={activeStep}
+							nextButton={
+								<Button
+									size='small'
+									onClick={handleNext}
+									disabled={activeStep === steps[side].length - 1}
+								>
+									Next
+									<KeyboardArrowRight />
+								</Button>
+							}
+							backButton={
+								<Button
+									size='small'
+									onClick={handleBack}
+									disabled={activeStep === 0}
+								>
+									<KeyboardArrowLeft />
+									Back
+								</Button>
+							}
+						/>
+					</Hidden>
+					<Hidden smDown>
+						<Stepper
+							nonLinear
+							alternativeLabel
+							activeStep={activeStep}
+							connector={<ColorlibConnector />}
+						>
+							{steps[side].map(({ label, icon, check }, index) => (
+								<Step key={label}>
+									<StepButton onClick={handleStep(index)}>
+										<StepLabel
+											StepIconComponent={ColorlibStepIcon}
+											StepIconProps={{ icon, completed: check }}
+										>
+											{label}
+										</StepLabel>
+									</StepButton>
+								</Step>
+							))}
+						</Stepper>
+					</Hidden>
 					<Box p={2} pl={[1, 2, 5]} pt={1}>
 						{activeStep === steps.length ? (
 							<Box>
