@@ -9,13 +9,15 @@ export const PRIMARY = '#1B75BC'
 export const SECONDARY = '#FFAC00'
 export const ALEX_GREY = '#3f3e3e'
 export const ACCENT_ONE = '#57467B'
+export const ACCENT_ONE_LIGHT = '#ceccde'
 export const ACCENT_TWO = '#7CB4B8'
+export const ACCENT_TWO_LIGHT = '#dfecee'
 
 const palette = {
 	primary: { main: PRIMARY, contrastText: WHITE },
 	secondary: { main: SECONDARY, contrastText: WHITE },
-	accentOne: { main: ACCENT_ONE, contrastText: WHITE },
-	accentTwo: { main: ACCENT_TWO, contrastText: WHITE },
+	accentOne: { main: ACCENT_ONE, light: ACCENT_ONE_LIGHT, contrastText: WHITE },
+	accentTwo: { main: ACCENT_TWO, light: ACCENT_TWO_LIGHT, contrastText: WHITE },
 	grey: { main: ALEX_GREY, contrastText: WHITE },
 	appBar: { main: grey[200], contrastText: grey[900] },
 	error: deepOrange,
