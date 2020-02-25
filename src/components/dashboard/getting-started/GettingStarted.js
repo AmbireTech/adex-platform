@@ -11,7 +11,11 @@ import {
 	Typography,
 	Hidden,
 } from '@material-ui/core'
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons'
+import {
+	KeyboardArrowLeft,
+	KeyboardArrowRight,
+	Close,
+} from '@material-ui/icons'
 import EmailEddie from 'resources/getting-started/GS-email-ic.png'
 import FundEddie from 'resources/getting-started/GS-fund-ic.png'
 import CreateEddie from 'resources/getting-started/GS-create-ic.png'
@@ -170,7 +174,7 @@ export default function GettingStarted(props) {
 							<ColorlibStepIcon
 								icon={steps[side][activeStep].icon}
 								completed={steps[side][activeStep].check}
-								size={200}
+								size='35vw'
 							/>
 						</Box>
 						<MobileStepper
@@ -223,13 +227,22 @@ export default function GettingStarted(props) {
 						</Stepper>
 					</Hidden>
 					<Box p={2} pl={[1, 2, 5]} pt={1}>
-						{activeStep === steps.length ? (
-							<Box>
+						{indexOfFirstIncompleteStep === -1 ? (
+							<Box
+								display='flex'
+								justifyContent={'space-between'}
+								flexWrap='wrap'
+							>
 								<Typography className={classes.instructions}>
 									All steps completed - you&apos;re finished
 								</Typography>
-								<Button onClick={handleReset} className={classes.button}>
-									Hide
+								<Button
+									color='primary'
+									onClick={handleReset}
+									className={classes.button}
+									startIcon={<Close />}
+								>
+									Dismiss
 								</Button>
 							</Box>
 						) : (
@@ -244,7 +257,7 @@ export default function GettingStarted(props) {
 								<Typography className={classes.instructions}>
 									{steps[side][activeStep].content}{' '}
 									{steps[side][activeStep].tutorial && (
-										<React.Fragment>
+										<Fragment>
 											{'Not sure how? See '}
 											<Anchor
 												href={steps[side][activeStep].tutorial}
@@ -255,7 +268,7 @@ export default function GettingStarted(props) {
 											>
 												{'our tutorial.'}
 											</Anchor>
-										</React.Fragment>
+										</Fragment>
 									)}
 								</Typography>
 							</Box>
