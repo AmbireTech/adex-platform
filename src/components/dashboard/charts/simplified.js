@@ -7,7 +7,7 @@ import { selectStatsChartData, selectMainToken } from 'selectors'
 
 const commonDsProps = {
 	fill: false,
-	lineTension: 0.3,
+	lineTension: 0,
 	borderWidth: 0,
 	pointRadius: 3,
 	pointHitRadius: 10,
