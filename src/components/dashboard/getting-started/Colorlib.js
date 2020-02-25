@@ -11,8 +11,8 @@ const useColorlibStepIconStyles = makeStyles(theme => ({
 	root: {
 		backgroundColor: theme.palette.common.white,
 		zIndex: 1,
-		width: 100,
-		height: 100,
+		width: props => props.size || 100,
+		height: props => props.size || 100,
 		display: 'flex',
 		borderRadius: '50%',
 		justifyContent: 'center',
@@ -54,7 +54,7 @@ export const ColorlibConnector = withStyles(theme => ({
 }))(StepConnector)
 
 export function ColorlibStepIcon(props) {
-	const classes = useColorlibStepIconStyles()
+	const classes = useColorlibStepIconStyles(props)
 	const { active, completed, icon } = props
 
 	return (
