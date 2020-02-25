@@ -61,9 +61,7 @@ export const selectAnalyticsDataAggr = createSelector(
 
 		const {
 			[side]: {
-				[eventType]: {
-					[metric]: { [timeframe]: { aggr = [] } = {} } = {},
-				} = {},
+				[eventType]: { [metric]: { [timeframe]: { aggr } = {} } = {} } = {},
 			} = {},
 		} = analytics
 
@@ -142,7 +140,7 @@ export const selectTotalImpressionsWithPayouts = createSelector(
 		}),
 	],
 	([eventCounts, eventPayouts]) =>
-		eventCounts
+		eventCounts && eventPayouts
 			? eventCounts
 					.filter(
 						c =>
