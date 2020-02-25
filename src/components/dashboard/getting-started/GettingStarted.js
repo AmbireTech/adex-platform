@@ -168,7 +168,8 @@ export default function GettingStarted(props) {
 	return (
 		<Fragment>
 			{steps[side] && (
-				<Box className={classes.root} m={1}>
+				<Box className={classes.root} m={1} p={2}>
+					<Typography variant={'h6'}>{`Getting Started`}</Typography>
 					<Hidden mdUp>
 						<Box p={2} justifyContent={'center'} display='flex'>
 							<ColorlibStepIcon
@@ -226,7 +227,7 @@ export default function GettingStarted(props) {
 							))}
 						</Stepper>
 					</Hidden>
-					<Box p={2} pl={[1, 2, 5]} pt={1}>
+					<Box>
 						{indexOfFirstIncompleteStep === -1 ? (
 							<Box
 								display='flex'
@@ -234,7 +235,7 @@ export default function GettingStarted(props) {
 								flexWrap='wrap'
 							>
 								<Typography className={classes.instructions}>
-									All steps completed - you&apos;re finished
+									<strong>{`All steps completed - you're finished`}</strong>
 								</Typography>
 								<Button
 									color='primary'
@@ -242,7 +243,7 @@ export default function GettingStarted(props) {
 									className={classes.button}
 									startIcon={<Close />}
 								>
-									Dismiss
+									{`Dismiss`}
 								</Button>
 							</Box>
 						) : (
