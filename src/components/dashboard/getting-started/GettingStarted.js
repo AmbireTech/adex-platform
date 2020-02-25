@@ -10,6 +10,7 @@ import {
 	Button,
 	Typography,
 	Hidden,
+	Collapse,
 } from '@material-ui/core'
 import {
 	KeyboardArrowLeft,
@@ -166,7 +167,7 @@ export default function GettingStarted(props) {
 	}, [indexOfFirstIncompleteStep])
 	// TODO: wait for the data to be loaded before displaying the getting started
 	return (
-		<Fragment>
+		<Collapse in>
 			{steps[side] && (
 				<Box className={classes.root} m={1} p={2}>
 					<Typography variant={'h6'}>{`Getting Started`}</Typography>
@@ -277,6 +278,6 @@ export default function GettingStarted(props) {
 					</Box>
 				</Box>
 			)}
-		</Fragment>
+		</Collapse>
 	)
 }

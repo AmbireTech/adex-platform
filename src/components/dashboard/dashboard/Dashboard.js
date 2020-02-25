@@ -97,6 +97,7 @@ const useStyles = makeStyles(styles)
 
 function Dashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
+	const [dataLoaded, setDataLoaded] = useState(false)
 	const address = useSelector(selectAccountIdentityAddr)
 	const privileges = useSelector(selectWalletPrivileges)
 	const privilegesWarningAccepted = useSelector(selectPrivilegesWarningAccepted)
@@ -122,6 +123,7 @@ function Dashboard(props) {
 			// because of the campaigns table data update fix
 			await analyticsCampaignsLoop.start()
 			campaignsLoop.start()
+			setDataLoaded(true)
 		}
 
 		updateInitialData()
@@ -198,7 +200,7 @@ function Dashboard(props) {
 							</Alert>
 						</Box>
 					)}
-					<GetttingStarted side={side} />
+					{dataLoaded && <GetttingStarted side={side} />}
 					<Switch>
 						<Route
 							exact
