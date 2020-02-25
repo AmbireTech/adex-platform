@@ -34,7 +34,7 @@ const useColorlibStepIconStyles = makeStyles(theme => ({
 		position: 'relative',
 		backgroundColor: theme.palette.common.white,
 		top: '-40%',
-		right: '-35%',
+		right: '-32%',
 		borderRadius: '50%',
 	},
 }))
