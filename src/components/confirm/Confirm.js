@@ -81,7 +81,7 @@ Confirm.propTypes = {
 	cancelLabel: PropTypes.string,
 	confirmLabel: PropTypes.string,
 	title: PropTypes.string.isRequired,
-	text: PropTypes.string,
+	text: PropTypes.object,
 	confirm: PropTypes.func,
 	cancel: PropTypes.func,
 	visible: PropTypes.bool,
