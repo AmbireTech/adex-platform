@@ -24,10 +24,11 @@ const interpolate = (tpl, args) => {
 
 const addComponents = (tpl, components) => {
 	for (let i = 0; i < components.length; i++) {
-		var replace = `<${i}>(.*?)</${i}>`
+		const replace = `<${i}>(.*?)</${i}>`
 		const regex = new RegExp(replace, 'g')
 		const parts = tpl.split(regex)
-		for (var j = 1; j < parts.length; j += 2) {
+		//TODO: Find in already split parst
+		for (let j = 1; j < parts.length; j += 2) {
 			parts[j] = React.cloneElement(
 				components[i],
 				components[i].props,
