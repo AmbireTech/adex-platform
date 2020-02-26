@@ -1,3 +1,4 @@
+import React from 'react'
 import adexTranslations from 'adex-translations'
 import { renderToString } from 'react-dom/server'
 
@@ -21,9 +22,25 @@ const interpolate = (tpl, args) => {
 	})
 }
 
+const addComponents = (tpl, components) => {
+	for (let i = 0; i < components.length; i++) {
+		var replace = `<${i}>(.*?)</${i}>`
+		const regex = new RegExp(replace, 'g')
+		const parts = tpl.split(regex)
+		for (var j = 1; j < parts.length; j += 2) {
+			parts[j] = React.cloneElement(
+				components[i],
+				components[i].props,
+				parts[j]
+			)
+		}
+		return <div>{parts}</div>
+	}
+}
+
 export const translate = (
 	val = '',
-	{ isProp = false, args = [''] } = {},
+	{ isProp = false, args = [''], components = [] } = {},
 	language = lang
 ) => {
 	let key = val + ''
@@ -45,6 +62,10 @@ export const translate = (
 		})
 
 		translation = interpolate(translation, translatedArgs)
+	}
+
+	if (components.length && Array.isArray(components)) {
+		translation = addComponents(translation, components)
 	}
 
 	return translation
