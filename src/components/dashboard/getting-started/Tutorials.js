@@ -19,10 +19,12 @@ export const createAdUnitTutorial = () => {
 				<Fragment>
 					<ol>
 						{steps.map(step => (
-							<li>{t(step)}</li>
+							<li>{t(step, { components: [<strong></strong>] })}</li>
 						))}
 					</ol>
-					{t('TUTORIAL_CREATE_AD_UNIT_END')}
+					{t('TUTORIAL_CREATE_AD_UNIT_END', {
+						components: [<strong></strong>],
+					})}
 				</Fragment>
 			),
 		})
@@ -45,16 +47,20 @@ export const fundAccountTutorial = () => {
 					<Typography>{t('TUTORIAL_FUND_ACC_START')}</Typography>
 					<ol>
 						{steps.map(step => (
-							<li>{t(step)}</li>
+							<li>{t(step, { components: [<strong></strong>] })}</li>
 						))}
 					</ol>
 					<Typography gutterBottom>
 						{t('TUTORIAL_FUND_ACC_MORE_INFO', {
 							components: [
 								<Anchor
+									style={{ fontWeight: 'bold' }}
 									underline='always'
+									target='_blank'
 									color='primary'
-									href={'http://google.com'}
+									href={
+										'https://www.adex.network/blog/adex-integrates-ramp-networks-fiat-onramp-advertisers-can-now-pay-in-fiat/'
+									}
 								></Anchor>,
 							],
 						})}
