@@ -17,6 +17,7 @@ const Anchor = ({
 	label,
 	underline,
 	color,
+	style,
 	...rest
 }) => {
 	let url = target && target === '_blank' ? getUrl(href) : href
@@ -29,7 +30,7 @@ const Anchor = ({
 			{...rest}
 			target={target}
 			href={url}
-			style={{ wordBreak: 'break-all' }} // TODO: add it where needed only
+			style={{ wordBreak: 'break-all', ...style }} // TODO: add it where needed only
 		>
 			{children || label}
 		</Link>
