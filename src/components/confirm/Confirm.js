@@ -55,9 +55,10 @@ export class Confirm extends Component {
 			<Dialog open={this.state.active}>
 				<DialogTitle id='alert-dialog-title'>{title}</DialogTitle>
 				<DialogContent>
-					<DialogContentText id='alert-dialog-description'>
-						{text}
-					</DialogContentText>
+					{/* NOTE: With component wrapping translations this wraps them in <p> tag and gives errors */}
+					{/* <DialogContentText id='alert-dialog-description'> */}
+					{text}
+					{/* </DialogContentText> */}
 					{children}
 				</DialogContent>
 				{!noActionBtns && (
