@@ -71,3 +71,36 @@ export const fundAccountTutorial = () => {
 		})
 	)
 }
+
+export const launchFirstCampaign = () => {
+	const steps = []
+
+	for (let i = 1; i <= 5; i++) {
+		steps.push(`TUTORIAL_LAUNCH_CAMPAIGN_STEP_${i}`)
+	}
+	return execute(
+		confirmAction(null, null, {
+			confirmLabel: t('OK'),
+			cancelLabel: t('CANCEL'),
+			title: t('TUTORIAL_LAUNCH_CAMPAIGN_TITLE'),
+			text: (
+				<Fragment>
+					<Typography>{t('TUTORIAL_LAUNCH_CAMPAIGN_START')}</Typography>
+					<ol>
+						{steps.map(step => (
+							<li>
+								{t(step, {
+									components: [
+										<strong></strong>, //
+										<strong></strong>,
+									],
+								})}
+							</li>
+						))}
+					</ol>
+					<Typography>{t('TUTORIAL_LAUNCH_CAMPAIGN_END')}</Typography>
+				</Fragment>
+			),
+		})
+	)
+}

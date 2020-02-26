@@ -39,7 +39,11 @@ import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
 import { hideGettingStarted, confirmAction, execute } from 'actions'
 import Anchor from 'components/common/anchor/anchor'
-import { createAdUnitTutorial, fundAccountTutorial } from './Tutorials'
+import {
+	createAdUnitTutorial,
+	fundAccountTutorial,
+	launchFirstCampaign,
+} from './Tutorials'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -95,6 +99,7 @@ export default function GettingStarted(props) {
 					"Now that you have money in your account, let's launch your first campaign!",
 				icon: LaunchEddie,
 				check: hasCreatedCampaign,
+				tutorial: launchFirstCampaign,
 			},
 			// {
 			// 	label: 'Receive your bonus',
