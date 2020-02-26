@@ -11,6 +11,7 @@ import {
 	Typography,
 	Hidden,
 	Collapse,
+	Link,
 } from '@material-ui/core'
 import {
 	KeyboardArrowLeft,
@@ -36,8 +37,9 @@ import {
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
-import { hideGettingStarted, execute } from 'actions'
+import { hideGettingStarted, confirmAction, execute } from 'actions'
 import Anchor from 'components/common/anchor/anchor'
+import { createAdUnitTutorial, fundAccountTutorial } from './Tutorials'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -78,8 +80,6 @@ export default function GettingStarted(props) {
 				content: "Your account is ready. Let's create your first ad!",
 				icon: CreateEddie,
 				check: hasCreatedAdUnit,
-				tutorial:
-					'https://help.adex.network/hc/en-us/articles/360011565260-How-to-Create-a-New-Ad-Unit',
 			},
 			{
 				label: 'Fund your account',
@@ -87,8 +87,7 @@ export default function GettingStarted(props) {
 					"Now that you have your first ad unit, let's fund your account!",
 				icon: FundEddie,
 				check: hasFundedAccount,
-				tutorial:
-					'https://help.adex.network/hc/en-us/articles/360011563580-How-to-send-DAI-to-your-AdEx-account',
+				tutorial: fundAccountTutorial,
 			},
 			{
 				label: 'Launch your first campaign',
@@ -96,8 +95,6 @@ export default function GettingStarted(props) {
 					"Now that you have money in your account, let's launch your first campaign!",
 				icon: LaunchEddie,
 				check: hasCreatedCampaign,
-				tutorial:
-					'https://help.adex.network/hc/en-us/articles/360011565180-How-to-Create-a-New-Advertising-Campaign',
 			},
 			// {
 			// 	label: 'Receive your bonus',
@@ -118,8 +115,6 @@ export default function GettingStarted(props) {
 				content: "Your account is ready. Let's create your first ad slot!",
 				icon: CreateEddie,
 				check: hasCreatedAdSlot,
-				tutorial:
-					'https://help.adex.network/hc/en-us/articles/360011670479-How-to-Create-Publisher-Ad-Slots',
 			},
 			{
 				label: 'Place an ad slot on your site',
@@ -127,6 +122,7 @@ export default function GettingStarted(props) {
 					"Now that you have your first ad slit, let's place it in your website!",
 				icon: PlaceEddie,
 				check: hasImpressions,
+				tutorial: createAdUnitTutorial,
 			},
 			{
 				label: 'Reach 5,000 impressions for your ad slot(s)',
@@ -269,15 +265,18 @@ export default function GettingStarted(props) {
 										{steps[side][activeStep].tutorial && (
 											<Fragment>
 												{'Not sure how? See '}
-												<Anchor
-													href={steps[side][activeStep].tutorial}
-													target={'_blank'}
+												<Link
+													href='#'
+													onClick={e => {
+														e.preventDefault()
+														steps[side][activeStep].tutorial()
+													}}
 													className={classes.instructions}
 													color={'primary'}
 													underline={'hover'}
 												>
 													{'our tutorial.'}
-												</Anchor>
+												</Link>
 											</Fragment>
 										)}
 									</Typography>
