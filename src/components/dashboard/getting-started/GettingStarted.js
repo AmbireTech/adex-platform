@@ -34,6 +34,7 @@ import {
 	selectHas5000Impressions,
 	selectHasCreatedAdSlot,
 	selectHideGettingStarted,
+	selectEmailProvider,
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
@@ -45,6 +46,7 @@ import {
 	createAdSlot,
 	placeAdSlot,
 } from './Tutorials'
+import { ExternalAnchor } from 'components/common/anchor/'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -71,34 +73,36 @@ export default function GettingStarted(props) {
 	const hasImpressions = useSelector(selectHasAdSlotImpressions)
 	const has5000Impressions = useSelector(selectHas5000Impressions)
 	const isGettingStartedHidden = useSelector(selectHideGettingStarted)
+	const emailProvider = useSelector(selectEmailProvider)
 
 	const steps = {
 		advertiser: [
 			{
-				label: 'Confirm your email address',
-				content: "Welcome to  the platform. Let's first confirm your email!",
+				label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
+				content: t('TUTORIAL_CONFIRM_EMAIL_CONTENT', {
+					args: [emailProvider],
+					components: [<ExternalAnchor href={`https://${emailProvider}`} />],
+				}),
 				icon: EmailEddie,
 				check: hasConfirmedEmail,
 			},
 			{
-				label: 'Create an ad unit',
-				content: "Your account is ready. Let's create your first ad!",
+				label: t('TUTORIAL_ADD_UNIT_LABEL'),
+				content: t('TUTORIAL_ADD_UNIT_CONTENT'),
 				icon: CreateEddie,
 				check: hasCreatedAdUnit,
 				tutorial: createAdUnitTutorial,
 			},
 			{
-				label: 'Fund your account',
-				content:
-					"Now that you have your first ad unit, let's fund your account!",
+				label: t('TUTORIAL_FUND_ACCOUNT_LABEL'),
+				content: t('TUTORIAL_FUND_ACCOUNT_CONTENT'),
 				icon: FundEddie,
 				check: hasFundedAccount,
 				tutorial: fundAccountTutorial,
 			},
 			{
-				label: 'Launch your first campaign',
-				content:
-					"Now that you have money in your account, let's launch your first campaign!",
+				label: t('TUTORIAL_FIRST_CAMPAIGN_LABEL'),
+				content: t('TUTORIAL_FIRST_CAMPAIGN_CONTENT'),
 				icon: LaunchEddie,
 				check: hasCreatedCampaign,
 				tutorial: launchFirstCampaign,
@@ -112,30 +116,28 @@ export default function GettingStarted(props) {
 		],
 		publisher: [
 			{
-				label: 'Confirm your email address',
-				content: "Welcome to  the platform. Let's first confirm your email!",
+				label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
+				content: t('TUTORIAL_CONFIRM_EMAIL_CONTENT'),
 				icon: EmailEddie,
 				check: hasConfirmedEmail,
 			},
 			{
-				label: 'Create an ad slot',
-				content: "Your account is ready. Let's create your first ad slot!",
+				label: t('TUTORIAL_ADD_SLOT_LABEL'),
+				content: t('TUTORIAL_ADD_SLOT_CONTENT'),
 				icon: CreateEddie,
 				check: hasCreatedAdSlot,
 				tutorial: createAdSlot,
 			},
 			{
-				label: 'Place an ad slot on your site',
-				content:
-					"Now that you have your first ad slit, let's place it in your website!",
+				label: t('TUTORIAL_PLACE_SLOT_LABEL'),
+				content: t('TUTORIAL_ADD_SLOT_CONTENT'),
 				icon: PlaceEddie,
 				check: hasImpressions,
 				tutorial: placeAdSlot,
 			},
 			{
-				label: 'Reach 5,000 impressions for your ad slot(s)',
-				content:
-					"Now that you have your ad slot added, let's reach your first 5,000 impressions!",
+				label: t('TUTORIAL_REACH_5000_LABEL'),
+				content: t('TUTORIAL_REACH_5000_CONTENT'),
 				icon: LaunchEddie,
 				check: has5000Impressions,
 			},
@@ -179,7 +181,9 @@ export default function GettingStarted(props) {
 			<Collapse in>
 				{steps[side] && (
 					<Box className={classes.root} m={1} p={2}>
-						<Typography variant={'h6'}>{`Getting Started`}</Typography>
+						<Typography variant={'h6'}>
+							{t('GETTING_STARTED_HEADING')}
+						</Typography>
 						<Hidden mdUp>
 							<Box p={2} justifyContent={'center'} display='flex'>
 								<ColorlibStepIcon
@@ -200,7 +204,7 @@ export default function GettingStarted(props) {
 										onClick={handleNext}
 										disabled={activeStep === steps[side].length - 1}
 									>
-										Next
+										{t('NEXT')}
 										<KeyboardArrowRight />
 									</Button>
 								}
@@ -211,7 +215,7 @@ export default function GettingStarted(props) {
 										disabled={activeStep === 0}
 									>
 										<KeyboardArrowLeft />
-										Back
+										{t('BACK')}
 									</Button>
 								}
 							/>
@@ -245,7 +249,7 @@ export default function GettingStarted(props) {
 									flexWrap='wrap'
 								>
 									<Typography className={classes.instructions}>
-										<strong>{`All steps completed - you're finished`}</strong>
+										<strong>{t('GETTING_STARTED_FINISHED')}</strong>
 									</Typography>
 									<Button
 										color='primary'
@@ -253,7 +257,7 @@ export default function GettingStarted(props) {
 										className={classes.button}
 										startIcon={<Close />}
 									>
-										{`Dismiss`}
+										{t('DISMISS')}
 									</Button>
 								</Box>
 							) : (
@@ -263,30 +267,32 @@ export default function GettingStarted(props) {
 										className={classes.instructions}
 									>
 										<strong>
-											{`STEP ${activeStep + 1}: ${steps[side][activeStep]
-												.label || ''} `}
-											{steps[side][activeStep].check ? '(COMPLETED)' : ''}
+											{t('GETTING_STARTED_STEPS', {
+												args: [
+													activeStep + 1,
+													steps[side][activeStep].label || '',
+												],
+											})}{' '}
+											{steps[side][activeStep].check ? t('COMPLETED') : ''}
 										</strong>
 									</Typography>
 									<Typography className={classes.instructions}>
 										{steps[side][activeStep].content}{' '}
-										{steps[side][activeStep].tutorial && (
-											<Fragment>
-												{'Not sure how? See '}
-												<Link
-													href='#'
-													onClick={e => {
-														e.preventDefault()
-														steps[side][activeStep].tutorial()
-													}}
-													className={classes.instructions}
-													color={'primary'}
-													underline={'hover'}
-												>
-													{'our tutorial.'}
-												</Link>
-											</Fragment>
-										)}
+										{steps[side][activeStep].tutorial &&
+											t('GETTING_STARTED_NOT_SURE_SEE_TUTORIAL', {
+												components: [
+													<Link
+														href='#'
+														onClick={e => {
+															e.preventDefault()
+															steps[side][activeStep].tutorial()
+														}}
+														className={classes.instructions}
+														color={'primary'}
+														underline={'hover'}
+													/>,
+												],
+											})}
 									</Typography>
 								</Box>
 							)}
