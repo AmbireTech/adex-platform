@@ -19,11 +19,11 @@ export const createAdUnitTutorial = () => {
 				<Fragment>
 					<ol>
 						{steps.map(step => (
-							<li>{t(step, { components: [<strong></strong>] })}</li>
+							<li>{t(step, { components: [<strong />] })}</li>
 						))}
 					</ol>
 					{t('TUTORIAL_CREATE_AD_UNIT_END', {
-						components: [<strong></strong>],
+						components: [<strong />],
 					})}
 				</Fragment>
 			),
@@ -47,7 +47,7 @@ export const fundAccountTutorial = () => {
 					<Typography>{t('TUTORIAL_FUND_ACC_START')}</Typography>
 					<ol>
 						{steps.map(step => (
-							<li>{t(step, { components: [<strong></strong>] })}</li>
+							<li>{t(step, { components: [<strong />] })}</li>
 						))}
 					</ol>
 					<Typography gutterBottom>
@@ -61,7 +61,7 @@ export const fundAccountTutorial = () => {
 									href={
 										'https://www.adex.network/blog/adex-integrates-ramp-networks-fiat-onramp-advertisers-can-now-pay-in-fiat/'
 									}
-								></Anchor>,
+								/>,
 							],
 						})}
 					</Typography>
@@ -91,14 +91,16 @@ export const launchFirstCampaign = () => {
 							<li>
 								{t(step, {
 									components: [
-										<strong></strong>, //
-										<strong></strong>,
+										<strong />, //
+										<stron />,
 									],
 								})}
 							</li>
 						))}
 					</ol>
-					<Typography>{t('TUTORIAL_LAUNCH_CAMPAIGN_END')}</Typography>
+					<Typography>
+						{t('TUTORIAL_LAUNCH_CAMPAIGN_END', { components: [<strong />] })}
+					</Typography>
 				</Fragment>
 			),
 		})
