@@ -83,12 +83,14 @@ export default function GettingStarted(props) {
 					args: [emailProvider],
 					components: [<ExternalAnchor href={`https://${emailProvider}`} />],
 				}),
+				contentCompleted: t('TUTORIAL_CONFIRM_EMAIL_COMPLETE'),
 				icon: EmailEddie,
 				check: hasConfirmedEmail,
 			},
 			{
 				label: t('TUTORIAL_ADD_UNIT_LABEL'),
 				content: t('TUTORIAL_ADD_UNIT_CONTENT'),
+				contentCompleted: t('TUTORIAL_CREATE_UNIT_COMPLETE'),
 				icon: CreateEddie,
 				check: hasCreatedAdUnit,
 				tutorial: createAdUnitTutorial,
@@ -96,6 +98,7 @@ export default function GettingStarted(props) {
 			{
 				label: t('TUTORIAL_FUND_ACCOUNT_LABEL'),
 				content: t('TUTORIAL_FUND_ACCOUNT_CONTENT'),
+				contentCompleted: t('TUTORIAL_FUND_ACC_COMPLETE'),
 				icon: FundEddie,
 				check: hasFundedAccount,
 				tutorial: fundAccountTutorial,
@@ -103,6 +106,7 @@ export default function GettingStarted(props) {
 			{
 				label: t('TUTORIAL_FIRST_CAMPAIGN_LABEL'),
 				content: t('TUTORIAL_FIRST_CAMPAIGN_CONTENT'),
+				contentCompleted: t('TUTORIAL_LAUNCH_CAMPAIGN_COMPLETE'),
 				icon: LaunchEddie,
 				check: hasCreatedCampaign,
 				tutorial: launchFirstCampaign,
@@ -117,13 +121,18 @@ export default function GettingStarted(props) {
 		publisher: [
 			{
 				label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
-				content: t('TUTORIAL_CONFIRM_EMAIL_CONTENT'),
+				content: t('TUTORIAL_CONFIRM_EMAIL_CONTENT', {
+					args: [emailProvider],
+					components: [<ExternalAnchor href={`https://${emailProvider}`} />],
+				}),
+				contentCompleted: t('TUTORIAL_CONFIRM_EMAIL_COMPLETE'),
 				icon: EmailEddie,
 				check: hasConfirmedEmail,
 			},
 			{
 				label: t('TUTORIAL_ADD_SLOT_LABEL'),
 				content: t('TUTORIAL_ADD_SLOT_CONTENT'),
+				contentCompleted: t('TUTORIAL_CREATE_AD_SLOT_COMPLETE'),
 				icon: CreateEddie,
 				check: hasCreatedAdSlot,
 				tutorial: createAdSlot,
@@ -131,6 +140,7 @@ export default function GettingStarted(props) {
 			{
 				label: t('TUTORIAL_PLACE_SLOT_LABEL'),
 				content: t('TUTORIAL_ADD_SLOT_CONTENT'),
+				contentCompleted: t('TUTORIAL_PLACE_AD_SLOT_COMPLETE'),
 				icon: PlaceEddie,
 				check: hasImpressions,
 				tutorial: placeAdSlot,
@@ -138,6 +148,7 @@ export default function GettingStarted(props) {
 			{
 				label: t('TUTORIAL_REACH_5000_LABEL'),
 				content: t('TUTORIAL_REACH_5000_CONTENT'),
+				contentCompleted: t('TUTORIAL_5000_IMPRESSIONS_COMPLETE'),
 				icon: LaunchEddie,
 				check: has5000Impressions,
 			},
@@ -276,24 +287,30 @@ export default function GettingStarted(props) {
 											{steps[side][activeStep].check ? t('COMPLETED') : ''}
 										</strong>
 									</Typography>
-									<Typography className={classes.instructions}>
-										{steps[side][activeStep].content}{' '}
-										{steps[side][activeStep].tutorial &&
-											t('GETTING_STARTED_NOT_SURE_SEE_TUTORIAL', {
-												components: [
-													<Link
-														href='#'
-														onClick={e => {
-															e.preventDefault()
-															steps[side][activeStep].tutorial()
-														}}
-														className={classes.instructions}
-														color={'primary'}
-														underline={'hover'}
-													/>,
-												],
-											})}
-									</Typography>
+									{steps[side][activeStep].check ? (
+										<Typography className={classes.instructions}>
+											{steps[side][activeStep].contentCompleted}
+										</Typography>
+									) : (
+										<Typography className={classes.instructions}>
+											{steps[side][activeStep].content}{' '}
+											{steps[side][activeStep].tutorial &&
+												t('GETTING_STARTED_NOT_SURE_SEE_TUTORIAL', {
+													components: [
+														<Link
+															href='#'
+															onClick={e => {
+																e.preventDefault()
+																steps[side][activeStep].tutorial()
+															}}
+															className={classes.instructions}
+															color={'primary'}
+															underline={'hover'}
+														/>,
+													],
+												})}
+										</Typography>
+									)}
 								</Box>
 							)}
 						</Box>
