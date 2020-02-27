@@ -1,6 +1,48 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.34
+##### *2020-02-24*
+
+### Added
+- Better validation on withdraw
+- Reset transactions on logout
+
+### Changed
+- Domains configuration (blocked by ad blockers)
+- Refactored withdraw step
+- Channels selectors and reducers
+- Formatting amounts truncated to fixed instead rounded
+
+### Fixed
+- Fixed bug with withdraw funds from account
+- Label with fees on campaign params page #350 
+
+## 4.10.33
+##### *2020-02-19*
+
+### Fixed
+- Average CPM calculation
+
+## 4.10.32
+##### *2020-02-19*
+
+### Fixed
+- Withdraw bug
+- Closing account type alert
+- Publisher analytics race condition bug
+
+## 4.10.31
+##### *2020-02-19*
+
+### Added
+- Direct redirect to sides when account created `go-to-side=advertiser/publisher` #77
+
+### Fixed
+- Email validation on account creation - checking for existing emails before registration attempt
+- Hide 'hidden' filters for data export
+
+
 ## 4.10.30
 ##### *2020-02-19*
 

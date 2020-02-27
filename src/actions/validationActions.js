@@ -8,6 +8,7 @@ import { validations, Joi, schemas, constants } from 'adex-models'
 import { validEmail, validPassword } from 'helpers/validators'
 import { t, selectAuthType } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
+import { getEmail } from 'services/adex-relayer/actions'
 const { IdentityPrivilegeLevel } = constants
 
 const { campaignPut } = schemas
@@ -118,6 +119,20 @@ export function validateEmailCheck(validateId, emailCheck, email, dirty) {
 		validate(validateId, 'emailCheck', {
 			isValid,
 			err: { msg: 'ERR_EMAIL_CHECK' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateNotExistingEmail(validateId, email, dirty) {
+	return async function(dispatch, getState) {
+		const { existing } = (await getEmail({ email })) || {}
+		const isValid = existing === false
+		validate(validateId, 'email', {
+			isValid,
+			err: { msg: 'EMAIL_ALREADY_USED' },
 			dirty,
 		})(dispatch)
 
@@ -300,6 +315,47 @@ const validateAmounts = ({
 	}
 
 	return { error }
+}
+
+export function validateWithdrawAmount({
+	validateId,
+	amountToWithdraw,
+	availableIdentityBalanceMainTokenRaw,
+	availableIdentityBalanceMainTokenFormatted,
+	decimals,
+	symbol,
+	errorMsg,
+	dirty,
+}) {
+	return async function(dispatch, getState) {
+		let isValid = isNumberString(amountToWithdraw)
+
+		let msg = errorMsg || 'ERR_INVALID_AMOUNT_VALUE'
+		let args = []
+		let amount = isValid ? parseUnits(amountToWithdraw, decimals) : null
+		if (errorMsg) {
+			isValid = false
+			msg = errorMsg
+		} else if (isValid && amount.isZero()) {
+			isValid = false
+			msg = 'ERR_ZERO_WITHDRAW_AMOUNT'
+		} else if (
+			isValid &&
+			amount.gt(bigNumberify(availableIdentityBalanceMainTokenRaw))
+		) {
+			isValid = false
+			msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'
+			args = [availableIdentityBalanceMainTokenFormatted, symbol]
+		}
+
+		await validate(validateId, 'amountToWithdraw', {
+			isValid,
+			err: { msg, args },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
 }
 
 export function validateNumberString({ validateId, prop, value, dirty }) {

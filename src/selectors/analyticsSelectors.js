@@ -2,7 +2,7 @@ import { getState } from 'store'
 import { createSelector } from 'reselect'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
 
-export const selectAnalytics = state => (state || getState()).persist.analytics
+export const selectAnalytics = state => state.persist.analytics
 
 export const selectAnalyticsData = createSelector(
 	[selectAnalytics, (_, side) => side],
@@ -16,9 +16,21 @@ export const selectAdvancedAnalytics = createSelector(
 	analytics => analytics.advanced || {}
 )
 
+export const selectAnalyticsTimeframe = createSelector(
+	selectAnalytics,
+	({ timeframe }) => {
+		return timeframe
+	}
+)
+
+export const selectCampaignAnalytics = createSelector(
+	[selectAnalytics],
+	({ campaigns }) => campaigns || {}
+)
+
 export const selectDemandAnalytics = createSelector(
 	[selectAnalytics],
-	analytics => analytics.demand || {}
+	({ demand }) => demand || {}
 )
 
 export const selectAdvancedAnalyticsByType = createSelector(
@@ -78,7 +90,8 @@ export const selectAnalyticsDataAggr = createSelector(
 
 export function selectCampaignEventsCount(type, campaignId) {
 	return Object.values(
-		selectCampaignAnalyticsByChannelToAdUnit(null, {
+		// TODO: fix this selector w/o using getState
+		selectCampaignAnalyticsByChannelToAdUnit(getState(), {
 			type,
 			campaignId,
 		})
@@ -130,12 +143,39 @@ export const selectTotalMoney = createSelector(
 			: null
 )
 
+export const selectTotalImpressionsWithPayouts = createSelector(
+	(state, { side, timeframe } = {}) => [
+		selectAnalyticsDataAggr(state, {
+			side,
+			timeframe,
+			eventType: 'IMPRESSION',
+			metric: 'eventCounts',
+		}),
+		selectAnalyticsDataAggr(state, {
+			side,
+			timeframe,
+			eventType: 'IMPRESSION',
+			metric: 'eventPayouts',
+		}),
+	],
+	([eventCounts, eventPayouts]) =>
+		eventCounts
+			? eventCounts
+					.filter(
+						c =>
+							(eventPayouts.find(e => e.time === c.time) || { value: null })
+								.value !== null
+					)
+					.reduce((a, { time, value }) => a + Number(value) || 0, 0)
+			: null
+)
+
 export const selectAverageCPM = createSelector(
 	[
 		(state, { side, timeframe } = {}) =>
 			selectTotalMoney(state, { side, timeframe }),
 		(state, { side, timeframe } = {}) =>
-			selectTotalImpressions(state, { side, timeframe }),
+			selectTotalImpressionsWithPayouts(state, { side, timeframe }),
 	],
 	(totalMoney, totalImpressions) =>
 		totalMoney !== null && totalImpressions !== null
