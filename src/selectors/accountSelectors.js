@@ -21,13 +21,13 @@ export const selectWallet = createDeepEqualSelector(
 )
 
 export const selectEmail = createSelector(
-	selectWallet,
-	({ email }) => email || {}
+	selectAccount,
+	({ email }) => email
 )
 
 export const selectEmailProvider = createSelector(
 	selectEmail,
-	email => email.split('@')[1]
+	email => (!!email ? email.split('@')[1] : null)
 )
 
 export const selectAuthSig = createSelector(
