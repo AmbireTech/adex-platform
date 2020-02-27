@@ -3,6 +3,19 @@ import { Typography } from '@material-ui/core'
 import { confirmAction, execute } from 'actions'
 import { t } from 'selectors'
 import Anchor from 'components/common/anchor/anchor'
+import { OpenInNew } from '@material-ui/icons'
+
+const ExternalAnchor = ({ href, children }) => (
+	<Anchor
+		style={{ fontWeight: 'bold' }}
+		underline='always'
+		target='_blank'
+		color='primary'
+		href={href}
+	>
+		{children} <OpenInNew fontSizeAdjust fontSize='inherit' />
+	</Anchor>
+)
 
 export const createAdUnitTutorial = () => {
 	const steps = []
@@ -53,11 +66,7 @@ export const fundAccountTutorial = () => {
 					<Typography gutterBottom>
 						{t('TUTORIAL_FUND_ACC_MORE_INFO', {
 							components: [
-								<Anchor
-									style={{ fontWeight: 'bold' }}
-									underline='always'
-									target='_blank'
-									color='primary'
+								<ExternalAnchor
 									href={
 										'https://www.adex.network/blog/adex-integrates-ramp-networks-fiat-onramp-advertisers-can-now-pay-in-fiat/'
 									}
@@ -172,24 +181,14 @@ export const placeAdSlot = () => {
 					<Typography>
 						{t('TUTORIAL_PLACE_AD_SLOT_INFO_LINK_1', {
 							components: [
-								<Anchor
-									style={{ fontWeight: 'bold' }}
-									underline='always'
-									target='_blank'
-									color='primary'
-									href={'https://html.com/tags/iframe/'}
-								/>,
+								<ExternalAnchor href={'https://html.com/tags/iframe/'} />,
 							],
 						})}
 					</Typography>
 					<Typography>
 						{t('TUTORIAL_PLACE_AD_SLOT_INFO_LINK_2', {
 							components: [
-								<Anchor
-									style={{ fontWeight: 'bold' }}
-									underline='always'
-									target='_blank'
-									color='primary'
+								<ExternalAnchor
 									href={
 										'https://webcusp.com/iframe-wordpress-plugins-and-tutorials/'
 									}
