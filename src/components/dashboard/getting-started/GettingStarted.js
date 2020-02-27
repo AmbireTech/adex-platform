@@ -79,10 +79,19 @@ export default function GettingStarted(props) {
 		advertiser: [
 			{
 				label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
-				content: t('TUTORIAL_CONFIRM_EMAIL_CONTENT', {
-					args: [emailProvider],
-					components: [<ExternalAnchor href={`https://${emailProvider}`} />],
-				}),
+				content: (
+					<Fragment>
+						{t('TUTORIAL_CONFIRM_EMAIL_CONTENT')}
+						{emailProvider
+							? t('TUTORIAL_CONFIRM_EMAIL_CONTENT_GO_TO', {
+									args: [emailProvider],
+									components: [
+										<ExternalAnchor href={`https://${emailProvider}`} />,
+									],
+							  })
+							: ''}
+					</Fragment>
+				),
 				contentCompleted: t('TUTORIAL_CONFIRM_EMAIL_COMPLETE'),
 				icon: EmailEddie,
 				check: hasConfirmedEmail,
@@ -121,10 +130,19 @@ export default function GettingStarted(props) {
 		publisher: [
 			{
 				label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
-				content: t('TUTORIAL_CONFIRM_EMAIL_CONTENT', {
-					args: [emailProvider],
-					components: [<ExternalAnchor href={`https://${emailProvider}`} />],
-				}),
+				content: (
+					<Fragment>
+						{t('TUTORIAL_CONFIRM_EMAIL_CONTENT')}
+						{emailProvider
+							? t('TUTORIAL_CONFIRM_EMAIL_CONTENT_GO_TO', {
+									args: [emailProvider],
+									components: [
+										<ExternalAnchor href={`https://${emailProvider}`} />,
+									],
+							  })
+							: ''}
+					</Fragment>
+				),
 				contentCompleted: t('TUTORIAL_CONFIRM_EMAIL_COMPLETE'),
 				icon: EmailEddie,
 				check: hasConfirmedEmail,
