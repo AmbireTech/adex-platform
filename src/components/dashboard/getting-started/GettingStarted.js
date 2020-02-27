@@ -37,12 +37,13 @@ import {
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
-import { hideGettingStarted, confirmAction, execute } from 'actions'
-import Anchor from 'components/common/anchor/anchor'
+import { hideGettingStarted, execute } from 'actions'
 import {
 	createAdUnitTutorial,
 	fundAccountTutorial,
 	launchFirstCampaign,
+	createAdSlot,
+	placeAdSlot,
 } from './Tutorials'
 
 const useStyles = makeStyles(theme => ({
@@ -84,6 +85,7 @@ export default function GettingStarted(props) {
 				content: "Your account is ready. Let's create your first ad!",
 				icon: CreateEddie,
 				check: hasCreatedAdUnit,
+				tutorial: createAdUnitTutorial,
 			},
 			{
 				label: 'Fund your account',
@@ -120,6 +122,7 @@ export default function GettingStarted(props) {
 				content: "Your account is ready. Let's create your first ad slot!",
 				icon: CreateEddie,
 				check: hasCreatedAdSlot,
+				tutorial: createAdSlot,
 			},
 			{
 				label: 'Place an ad slot on your site',
@@ -127,7 +130,7 @@ export default function GettingStarted(props) {
 					"Now that you have your first ad slit, let's place it in your website!",
 				icon: PlaceEddie,
 				check: hasImpressions,
-				tutorial: createAdUnitTutorial,
+				tutorial: placeAdSlot,
 			},
 			{
 				label: 'Reach 5,000 impressions for your ad slot(s)',

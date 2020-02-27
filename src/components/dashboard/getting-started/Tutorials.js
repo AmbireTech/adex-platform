@@ -106,3 +106,99 @@ export const launchFirstCampaign = () => {
 		})
 	)
 }
+
+export const createAdSlot = () => {
+	const steps = []
+
+	for (let i = 1; i <= 7; i++) {
+		steps.push(`TUTORIAL_CREATE_AD_SLOT_STEP_${i}`)
+	}
+	return execute(
+		confirmAction(null, null, {
+			confirmLabel: t('OK'),
+			cancelLabel: t('CANCEL'),
+			title: t('TUTORIAL_CREATE_AD_SLOT_TTILE'),
+			text: (
+				<Fragment>
+					<ol>
+						{steps.map(step => (
+							<li>
+								{t(step, {
+									components: [
+										<strong />, //
+										<strong />,
+									],
+								})}
+							</li>
+						))}
+					</ol>
+					<Typography>
+						{t('TUTORIAL_CREATE_AD_SLOT_END', { components: [<strong />] })}
+					</Typography>
+				</Fragment>
+			),
+		})
+	)
+}
+
+export const placeAdSlot = () => {
+	const steps = []
+
+	for (let i = 1; i <= 2; i++) {
+		steps.push(`TUTORIAL_PLACE_AD_SLOT_STEP_${i}`)
+	}
+	return execute(
+		confirmAction(null, null, {
+			confirmLabel: t('OK'),
+			cancelLabel: t('CANCEL'),
+			title: t('TUTORIAL_PLACE_AD_SLOT_TITLE'),
+			text: (
+				<Fragment>
+					<ol>
+						{steps.map(step => (
+							<li>
+								{t(step, {
+									components: [
+										<strong />, //
+										<strong />,
+									],
+								})}
+							</li>
+						))}
+					</ol>
+					<Typography gutterBottom>
+						{t('TUTORIAL_PLACE_AD_SLOT_MORE_INFO')}
+					</Typography>
+					<Typography>
+						{t('TUTORIAL_PLACE_AD_SLOT_INFO_LINK_1', {
+							components: [
+								<Anchor
+									style={{ fontWeight: 'bold' }}
+									underline='always'
+									target='_blank'
+									color='primary'
+									href={'https://html.com/tags/iframe/'}
+								/>,
+							],
+						})}
+					</Typography>
+					<Typography>
+						{t('TUTORIAL_PLACE_AD_SLOT_INFO_LINK_2', {
+							components: [
+								<Anchor
+									style={{ fontWeight: 'bold' }}
+									underline='always'
+									target='_blank'
+									color='primary'
+									href={
+										'https://webcusp.com/iframe-wordpress-plugins-and-tutorials/'
+									}
+								/>,
+							],
+						})}
+					</Typography>
+				</Fragment>
+			),
+		})
+	)
+}
