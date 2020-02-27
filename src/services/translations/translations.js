@@ -48,7 +48,7 @@ const addComponents = (tpl, components) => {
 			result = newResult
 		}
 	}
-	return <div>{result}</div>
+	return result
 }
 
 export const translate = (
