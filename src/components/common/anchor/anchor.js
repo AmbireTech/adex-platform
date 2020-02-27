@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from '@material-ui/core/Link'
+import { OpenInNew } from '@material-ui/icons'
 
 const getUrl = url => {
 	url = (url || '').replace(/^(https?:)?\/\//i, '')
@@ -36,5 +37,17 @@ const Anchor = ({
 		</Link>
 	)
 }
+
+export const ExternalAnchor = ({ href, children, style }) => (
+	<Anchor
+		style={{ fontWeight: 'bold' }}
+		underline='always'
+		target='_blank'
+		color='primary'
+		href={href}
+	>
+		{children} <OpenInNew style={{ fontSize: 'small' }} />
+	</Anchor>
+)
 
 export default Anchor
