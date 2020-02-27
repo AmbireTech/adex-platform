@@ -23,20 +23,32 @@ const interpolate = (tpl, args) => {
 }
 
 const addComponents = (tpl, components) => {
+	let result = [tpl]
 	for (let i = 0; i < components.length; i++) {
 		const replace = `<${i}>(.*?)</${i}>`
 		const regex = new RegExp(replace, 'g')
-		const parts = tpl.split(regex)
-		//TODO: Find in already split parst
-		for (let j = 1; j < parts.length; j += 2) {
-			parts[j] = React.cloneElement(
-				components[i],
-				components[i].props,
-				parts[j]
-			)
+		while (true) {
+			let newResult = []
+			for (let r = 0; r < result.length; r++) {
+				if (typeof result[r] !== 'string') {
+					newResult = [...newResult, result[r]]
+					continue
+				}
+				const parts = result[r].split(regex)
+				for (let j = 1; j < parts.length; j += 2) {
+					parts[j] = React.cloneElement(
+						components[i],
+						components[i].props,
+						parts[j]
+					)
+				}
+				newResult = [...newResult, ...parts]
+			}
+			if (result.length === newResult.length) break
+			result = newResult
 		}
-		return <div>{parts}</div>
 	}
+	return <div>{result}</div>
 }
 
 export const translate = (
