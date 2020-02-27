@@ -29,6 +29,7 @@ import {
 import { formatTokenAmount } from 'helpers/formatters'
 import IdentityABI from 'adex-protocol-eth/abi/Identity'
 import { selectChannelsWithUserBalancesEligible } from 'selectors'
+import { getState } from 'store'
 
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
@@ -261,7 +262,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 		})
 	)
 
-	const eligible = allChannels.filter(x => {
+	const withOutstandingBalance = allChannels.filter(x => {
 		return (
 			OUTSTANDING_STATUSES[x.channel.status.name] &&
 			new Date((x.channel.validUntil - EXTRA_PROCESS_TIME) * 1000) >
@@ -273,20 +274,22 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 		)
 	})
 
-	return { all, eligible }
+	return { all, withOutstandingBalance }
 }
 
 async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
 	const { eligible } = withBalance
 		.sort((c1, c2) => {
-			return c2.outstandingAvailable.gt(c1.outstandingAvailable)
+			return bigNumberify(c2.outstandingAvailable).gt(
+				bigNumberify(c1.outstandingAvailable)
+			)
 		})
 		.reduce(
 			(data, c) => {
 				const current = { ...data }
 				if (current.sum.lt(amountToSweep)) {
 					current.eligible.push(c)
-					current.sum = current.sum.add(c.outstandingAvailable)
+					current.sum = current.sum.add(bigNumberify(c.outstandingAvailable))
 				}
 
 				return current
@@ -370,7 +373,7 @@ function hasValidExecuteRoutines(routineAuthTuple) {
 export async function getSweepChannelsTxns({ account, amountToSweep }) {
 	const { wallet, identity } = account
 	// TODO: pass withBalance as prop
-	const withBalance = selectChannelsWithUserBalancesEligible()
+	const withBalance = selectChannelsWithUserBalancesEligible(getState())
 
 	const { AdExCore } = await getEthers(wallet.authType)
 	const identityAddr = identity.address

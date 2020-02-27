@@ -38,6 +38,7 @@ import {
 	validateWallet,
 	validateIdentityContractOwner,
 	validateAccessWarning,
+	validateNotExistingEmail,
 } from './validationActions'
 import { getErrorMsg } from 'helpers/errors'
 import {
@@ -196,11 +197,7 @@ export function setIdentityENS({ username }) {
 	}
 }
 
-export function identityWithdraw({
-	amountToWithdraw,
-	withdrawTo,
-	tokenAddress,
-}) {
+export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 	return async function(dispatch, getState) {
 		try {
 			const account = selectAccount(getState())
@@ -208,12 +205,12 @@ export function identityWithdraw({
 				account,
 				amountToWithdraw,
 				withdrawTo,
-				tokenAddress,
 			})
-
 			addToast({
 				type: 'accept',
-				label: translate('IDENTITY_WITHDRAW_NOTIFICATION', { args: [result] }),
+				label: translate('IDENTITY_WITHDRAW_NOTIFICATION', {
+					args: [result],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		} catch (err) {
@@ -369,7 +366,7 @@ export function login() {
 				wallet,
 				email,
 				deleteLegacyKey,
-			})(dispatch)
+			})(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_LOGIN', err)
 			addToast({
@@ -667,6 +664,7 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 			),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
 			validateAccessWarning(validateId, accessWarningCheck, dirty)(dispatch),
+			validateNotExistingEmail(validateId, email, dirty)(dispatch),
 		])
 
 		const isValid = validations.every(v => v === true)
@@ -709,6 +707,7 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 			validateEmailCheck(validateId, emailCheck, email, dirty)(dispatch),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
 			validateAccessWarning(validateId, accessWarningCheck, dirty)(dispatch),
+			validateNotExistingEmail(validateId, email, dirty)(dispatch),
 		])
 
 		const isValid = validations.every(v => v === true)

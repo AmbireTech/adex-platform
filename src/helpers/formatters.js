@@ -22,7 +22,10 @@ export const formatTokenAmount = (
 	if (pretty) {
 		return commify(formatted)
 	} else if (typeof toFixed === 'number') {
-		return parseFloat(formatted).toFixed(toFixed)
+		// We want truncated not rounded
+		return parseFloat(formatted)
+			.toFixed(toFixed + 4)
+			.slice(0, -4)
 	} else {
 		return formatted
 	}

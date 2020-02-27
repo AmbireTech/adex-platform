@@ -111,3 +111,12 @@ export const backupWallet = ({ email, salt, hash, encryptedWallet }) => {
 		})
 		.then(processResponse)
 }
+
+export const getEmail = ({ email }) => {
+	return requester
+		.fetch({
+			route: `identity/email/${encodeURIComponent(email)}`,
+			method: 'GET',
+		})
+		.then(processResponse)
+}
