@@ -92,7 +92,7 @@ export const launchFirstCampaign = () => {
 								{t(step, {
 									components: [
 										<strong />, //
-										<stron />,
+										<strong />,
 									],
 								})}
 							</li>
