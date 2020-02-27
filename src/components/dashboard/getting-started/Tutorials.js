@@ -2,20 +2,7 @@ import React, { Fragment } from 'react'
 import { Typography } from '@material-ui/core'
 import { confirmAction, execute } from 'actions'
 import { t } from 'selectors'
-import Anchor from 'components/common/anchor/anchor'
-import { OpenInNew } from '@material-ui/icons'
-
-const ExternalAnchor = ({ href, children }) => (
-	<Anchor
-		style={{ fontWeight: 'bold' }}
-		underline='always'
-		target='_blank'
-		color='primary'
-		href={href}
-	>
-		{children} <OpenInNew fontSizeAdjust fontSize='inherit' />
-	</Anchor>
-)
+import { ExternalAnchor } from 'components/common/anchor/'
 
 export const createAdUnitTutorial = () => {
 	const steps = []
