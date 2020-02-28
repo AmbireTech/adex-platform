@@ -24,8 +24,10 @@ import {
 	selectMainToken,
 	selectAnalytics,
 	selectTotalClicks,
-	selectStatsChartData,
 	selectChartDatapointsCPM,
+	selectChartDatapointsImpressions,
+	selectChartDatapointsClicks,
+	selectChartDatapointsPayouts,
 } from 'selectors'
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
@@ -125,33 +127,15 @@ export function BasicStats({ side }) {
 	const loadingClicks = totalClicks === null
 
 	const payouts = useSelector(state =>
-		selectStatsChartData(state, {
-			side,
-			timeframe,
-			eventType: 'IMPRESSION',
-			metric: 'eventPayouts',
-			noLastOne: true,
-		})
+		selectChartDatapointsPayouts(state, { side, timeframe })
 	)
 
 	const impressions = useSelector(state =>
-		selectStatsChartData(state, {
-			side,
-			timeframe,
-			eventType: 'IMPRESSION',
-			metric: 'eventCounts',
-			noLastOne: true,
-		})
+		selectChartDatapointsImpressions(state, { side, timeframe })
 	)
 
 	const clicks = useSelector(state =>
-		selectStatsChartData(state, {
-			side,
-			timeframe,
-			eventType: 'CLICK',
-			metric: 'eventCounts',
-			noLastOne: true,
-		})
+		selectChartDatapointsClicks(state, { side, timeframe })
 	)
 
 	const cpm = useSelector(state =>
