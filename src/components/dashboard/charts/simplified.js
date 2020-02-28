@@ -4,6 +4,7 @@ import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
 import { selectStatsChartData, selectMainToken } from 'selectors'
+import { formatFloatNumberWithCommas } from 'helpers/formatters'
 
 const commonDsProps = {
 	fill: false,
@@ -118,7 +119,10 @@ export const SimpleStatistics = ({
 				label: function(t, d) {
 					// This adds currency MainToken (DAI) to y1Label in the tooltips
 					var xLabel = d.datasets[t.datasetIndex].label
-					var yLabel = xLabel === y1Label ? `${t.yLabel} ${symbol}` : t.yLabel
+					var yLabel =
+						xLabel === y1Label
+							? `${formatFloatNumberWithCommas(t.yLabel)} ${symbol}`
+							: formatFloatNumberWithCommas(t.yLabel)
 					return `${xLabel}: ${yLabel}`
 				},
 			},
