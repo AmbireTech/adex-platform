@@ -12,6 +12,7 @@ import {
 	SECONDARY,
 	ACCENT_ONE,
 	ACCENT_TWO,
+	ALEX_GREY,
 } from 'components/App/themeMUi'
 import { styles } from './styles'
 import { formatNumberWithCommas } from 'helpers/formatters'
@@ -24,6 +25,7 @@ import {
 	selectAnalytics,
 	selectTotalClicks,
 	selectStatsChartData,
+	selectChartDatapointsCPM,
 } from 'selectors'
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
@@ -49,6 +51,10 @@ const metrics = {
 			value: 'eventCounts',
 			color: SECONDARY,
 		},
+		{
+			label: t('LABEL_CTR'),
+			color: ALEX_GREY,
+		},
 	],
 	advertiser: [
 		{
@@ -65,6 +71,10 @@ const metrics = {
 			label: t('LABEL_CLICKS'),
 			value: 'eventCounts',
 			color: SECONDARY,
+		},
+		{
+			label: t('LABEL_CPM'),
+			color: ALEX_GREY,
 		},
 	],
 }
@@ -143,6 +153,11 @@ export function BasicStats({ side }) {
 			noLastOne: true,
 		})
 	)
+
+	const cpm = useSelector(state =>
+		selectChartDatapointsCPM(state, { side, timeframe })
+	)
+
 	const dataInSync =
 		(clicks.labels[clicks.labels.length - 1] ===
 			impressions[impressions.labels.length - 1]) ===
@@ -228,12 +243,15 @@ export function BasicStats({ side }) {
 					payouts={payouts}
 					impressions={impressions}
 					clicks={clicks}
+					cpm={cpm}
 					y1Label={metrics[side][0].label}
 					y1Color={metrics[side][0].color}
 					y2Label={metrics[side][1].label}
 					y2Color={metrics[side][1].color}
 					y3Label={metrics[side][2].label}
 					y3Color={metrics[side][2].color}
+					y4Label={metrics[side][3].label}
+					y4Color={metrics[side][3].color}
 					t={t}
 				/>
 			</Grid>
