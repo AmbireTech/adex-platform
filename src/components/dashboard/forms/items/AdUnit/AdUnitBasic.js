@@ -60,13 +60,14 @@ class AdUnitBasic extends Component {
 	}
 
 	validateTargetUrl(targetUrl, dirty) {
-		const result = Joi.validate(targetUrl, adUnitPost.targetUrl)
+		const withHttp = url => (!/^https?:\/\//i.test(url) ? `http://${url}` : url)
+		const result = Joi.validate(withHttp(targetUrl), adUnitPost.targetUrl)
 		this.props.validate('targetUrl', {
 			isValid: !result.error,
 			err: { msg: result.error ? result.error.message : '' },
 			dirty: dirty,
 		})
-		if (!result.error) this.addUtmParameters(targetUrl)
+		if (!result.error) this.addUtmParameters(withHttp(targetUrl))
 	}
 
 	validateAndUpdateType = (dirty, value) => {
