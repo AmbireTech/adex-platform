@@ -199,3 +199,62 @@ export const selectStatsChartData = createSelector(
 		)
 	}
 )
+
+export const selectChartDatapointsImpressions = createSelector(
+	(state, { side, timeframe } = {}) => [
+		selectStatsChartData(state, {
+			side,
+			timeframe,
+			eventType: 'IMPRESSION',
+			metric: 'eventCounts',
+			noLastOne: true,
+		}),
+	],
+	([impressions]) => impressions
+)
+
+export const selectChartDatapointsClicks = createSelector(
+	(state, { side, timeframe } = {}) => [
+		selectStatsChartData(state, {
+			side,
+			timeframe,
+			eventType: 'CLICK',
+			metric: 'eventCounts',
+			noLastOne: true,
+		}),
+	],
+	([clicks]) => clicks
+)
+
+export const selectChartDatapointsPayouts = createSelector(
+	(state, { side, timeframe } = {}) => [
+		selectStatsChartData(state, {
+			side,
+			timeframe,
+			eventType: 'IMPRESSION',
+			metric: 'eventPayouts',
+			noLastOne: true,
+		}),
+	],
+	([payouts]) => payouts
+)
+
+export const selectChartDatapointsCPM = createSelector(
+	(state, { side, timeframe } = {}) => [
+		selectChartDatapointsPayouts(state, { side, timeframe }),
+		selectChartDatapointsImpressions(state, { side, timeframe }),
+	],
+	([payouts, impressions]) => {
+		const result = {
+			labels: [],
+			datasets: [],
+		}
+		result.labels = payouts.labels
+		result.datasets = payouts.datasets.map((n, i) => {
+			return impressions.datasets[i] !== 0
+				? ((n / impressions.datasets[i]) * 1000).toFixed(6)
+				: n
+		})
+		return result
+	}
+)
