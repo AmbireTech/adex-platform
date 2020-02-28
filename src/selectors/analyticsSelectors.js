@@ -188,7 +188,7 @@ export const selectStatsChartData = createSelector(
 				const { time, value } = item
 				memo.labels.push(formatDateTime(time))
 				memo.datasets.push(
-					value !== null ? parseValueByMetric({ value, metric }) : value
+					value !== null ? parseValueByMetric({ value, metric }) : 0
 				)
 				return memo
 			},
