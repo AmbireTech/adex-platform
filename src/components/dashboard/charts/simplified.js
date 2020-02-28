@@ -7,7 +7,7 @@ import { selectStatsChartData, selectMainToken } from 'selectors'
 
 const commonDsProps = {
 	fill: false,
-	lineTension: 0,
+	lineTension: 0.15,
 	borderWidth: 0,
 	pointRadius: 3,
 	pointHitRadius: 10,
@@ -67,7 +67,7 @@ export const SimpleStatistics = ({
 		datasets: [
 			{
 				...commonDsProps,
-				backgroundColor: Helper.hexToRgbaColorString(y1Color, 0.5),
+				backgroundColor: Helper.hexToRgbaColorString(y1Color, 1),
 				borderColor: Helper.hexToRgbaColorString(y1Color, 1),
 				label: y1Label,
 				data: payouts.datasets,
@@ -76,7 +76,7 @@ export const SimpleStatistics = ({
 			},
 			{
 				...commonDsProps,
-				backgroundColor: Helper.hexToRgbaColorString(y2Color, 0.5),
+				backgroundColor: Helper.hexToRgbaColorString(y2Color, 1),
 				borderColor: Helper.hexToRgbaColorString(y2Color, 1),
 				label: y2Label,
 				data: impressions.datasets,
@@ -84,7 +84,7 @@ export const SimpleStatistics = ({
 			},
 			{
 				...commonDsProps,
-				backgroundColor: Helper.hexToRgbaColorString(y3Color, 0.5),
+				backgroundColor: Helper.hexToRgbaColorString(y3Color, 1),
 				borderColor: Helper.hexToRgbaColorString(y3Color, 1),
 				label: y3Label,
 				data: clicks.datasets,
@@ -92,7 +92,7 @@ export const SimpleStatistics = ({
 			},
 			{
 				...commonDsProps,
-				backgroundColor: Helper.hexToRgbaColorString(y4Color, 0.5),
+				backgroundColor: Helper.hexToRgbaColorString(y4Color, 1),
 				borderColor: Helper.hexToRgbaColorString(y4Color, 1),
 				pointBackgroundColor: y4Color,
 				label: y4Label,
