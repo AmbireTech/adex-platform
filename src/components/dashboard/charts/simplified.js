@@ -72,7 +72,6 @@ export const SimpleStatistics = ({
 				label: y1Label,
 				data: payouts.datasets,
 				yAxisID: 'y-axis-1',
-				pointBackgroundColor: 'transparent',
 			},
 			{
 				...commonDsProps,
