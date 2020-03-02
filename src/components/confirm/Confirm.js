@@ -55,10 +55,9 @@ export class Confirm extends Component {
 			<Dialog open={this.state.active}>
 				<DialogTitle id='alert-dialog-title'>{title}</DialogTitle>
 				<DialogContent>
-					{/* NOTE: With component wrapping translations this wraps them in <p> tag and gives errors */}
-					{/* <DialogContentText id='alert-dialog-description'> */}
-					{text}
-					{/* </DialogContentText> */}
+					<DialogContentText id='alert-dialog-description'>
+						{text}
+					</DialogContentText>
 					{children}
 				</DialogContent>
 				{!noActionBtns && (
@@ -81,7 +80,7 @@ Confirm.propTypes = {
 	cancelLabel: PropTypes.string,
 	confirmLabel: PropTypes.string,
 	title: PropTypes.string.isRequired,
-	text: PropTypes.object,
+	text: PropTypes.string,
 	confirm: PropTypes.func,
 	cancel: PropTypes.func,
 	visible: PropTypes.bool,
