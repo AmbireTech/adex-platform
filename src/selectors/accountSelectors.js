@@ -1,5 +1,8 @@
 import { createSelector } from 'reselect'
-import { createDeepEqualSelector } from 'selectors'
+import { createDeepEqualSelector, selectMainToken } from 'selectors'
+import { bigNumberify, parseUnits } from 'ethers/utils'
+
+const MIN_PUBLISHER_REVENUE = '30'
 
 export const selectAccount = state => state.persist.account || {}
 export const selectChannels = state => state.persist.channels
@@ -112,4 +115,10 @@ export const selectAccountIdentityCurrentPrivileges = createSelector(
 export const selectWalletPrivileges = createSelector(
 	[selectAccountIdentityCurrentPrivileges, selectWalletAddress],
 	(privileges = {}, address) => privileges[address] || 0
+)
+
+export const selectPublisherMinRevenueReached = createSelector(
+	[selectAccountStatsRaw, selectMainToken],
+	({ totalRevenue }, { decimals }) =>
+		bigNumberify(totalRevenue).gt(parseUnits(MIN_PUBLISHER_REVENUE, decimals))
 )

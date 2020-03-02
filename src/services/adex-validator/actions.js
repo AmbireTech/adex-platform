@@ -121,7 +121,6 @@ export const closeCampaign = ({ campaign, account }) => {
 }
 
 export const identityAnalytics = async ({
-	campaignId,
 	leaderAuth,
 	eventType,
 	metric,
@@ -135,7 +134,7 @@ export const identityAnalytics = async ({
 
 	const aggregates = await requester
 		.fetch({
-			route: `/analytics/for-${side}${campaignId || ''}`,
+			route: `/analytics/for-${side}`,
 			method: 'GET',
 			queryParams: {
 				metric,
