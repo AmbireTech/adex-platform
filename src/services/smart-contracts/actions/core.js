@@ -243,7 +243,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 	const all = Object.assign(
 		{},
 		...allChannels.map(c => {
-			const { channel } = c
+			const { channel, balance } = c
 			const { id, depositAmount, depositAsset, status } = channel
 			const balanceNum = bigNumberify(depositAmount)
 				.sub(bigNumberify(c.channel.spec.validators[0].fee))
@@ -253,6 +253,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 			return {
 				[c.channel.id.toLowerCase()]: {
 					id,
+					balance,
 					depositAmount,
 					depositAsset,
 					balanceNum,
