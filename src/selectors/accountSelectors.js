@@ -22,6 +22,16 @@ export const selectWallet = createDeepEqualSelector(
 	({ wallet }) => wallet || {}
 )
 
+export const selectEmail = createSelector(
+	selectAccount,
+	({ email }) => email
+)
+
+export const selectEmailProvider = createSelector(
+	selectEmail,
+	email => (!!email ? email.split('@')[1] : null)
+)
+
 export const selectAuthSig = createSelector(
 	selectWallet,
 	({ authSig }) => authSig
@@ -77,6 +87,11 @@ export const selectAccountIdentityRoutineAuthTuple = createSelector(
 			: null
 )
 
+export const selectAccountIdentityDeployData = createSelector(
+	selectAccountIdentity,
+	({ relayerData }) => relayerData.deployData
+)
+
 export const selectChannelsWithUserBalancesEligible = createSelector(
 	selectChannels,
 	({ withOutstandingBalance }) => [...(withOutstandingBalance || [])]
@@ -100,5 +115,7 @@ export const selectWalletPrivileges = createSelector(
 export const selectPublisherMinRevenueReached = createSelector(
 	[selectAccountStatsRaw, selectMainToken],
 	({ totalRevenue }, { decimals }) =>
-		bigNumberify(totalRevenue).gt(parseUnits(MIN_PUBLISHER_REVENUE, decimals))
+		bigNumberify(totalRevenue || 0).gt(
+			parseUnits(MIN_PUBLISHER_REVENUE, decimals)
+		)
 )
