@@ -1,5 +1,5 @@
 export const removeTags = dirty => {
-	if (!dirty) return ''
+	if (!dirty || typeof dirty !== 'string') return ''
 
 	return (
 		dirty
