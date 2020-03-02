@@ -26,6 +26,33 @@ const tokenAvailableBalance = ({ token, balance, mainToken }) => {
 	return isAvailable ? balance : bigNumberify(0)
 }
 
+export const getTotalAccountRevenue = async ({ all }) => {
+	const withdrawTokens = selectRoutineWithdrawTokens()
+	const totalRevenue = await Object.values(all).reduce(
+		async (revenuePr, { balance, depositAsset } = {}) => {
+			const revenue = await revenuePr
+
+			const token = withdrawTokens[depositAsset]
+
+			const hasMinBalance = bigNumberify(balance).gt(
+				bigNumberify(token.minFinal)
+			)
+
+			const balanceMainToken = hasMinBalance
+				? await tokenInMainTokenValue({
+						token,
+						balance,
+				  })
+				: bigNumberify(0)
+
+			return revenue.add(balanceMainToken)
+		},
+		Promise.resolve(bigNumberify(0))
+	)
+
+	return totalRevenue
+}
+
 export const getWithdrawTokensBalances = async ({
 	authType,
 	address,
@@ -118,6 +145,7 @@ export async function getAccountStats({
 		total: bigNumberify('0'),
 		available: bigNumberify('0'),
 	},
+	all,
 }) {
 	const { wallet, identity } = account
 	const { authType } = wallet
@@ -138,11 +166,13 @@ export async function getAccountStats({
 	const calls = [
 		getWithdrawTokensBalances({ authType, address }),
 		privilegesAction,
+		getTotalAccountRevenue({ all }),
 	]
 
 	const [
 		identityWithdrawTokensBalancesBalances = {},
 		walletPrivileges,
+		totalRevenue,
 	] = await Promise.all(
 		calls.map(c =>
 			c
@@ -169,6 +199,7 @@ export async function getAccountStats({
 		totalIdentityBalanceMainToken: identityBalanceMainToken.add(
 			outstandingBalanceMainToken.total
 		),
+		totalRevenue,
 	}
 
 	const formatted = {
@@ -202,6 +233,12 @@ export async function getAccountStats({
 		),
 		totalIdentityBalanceMainToken: formatTokenAmount(
 			raw.totalIdentityBalanceMainToken,
+			decimals,
+			false,
+			2
+		),
+		totalRevenue: formatTokenAmount(
+			raw.totalRevenue || '0',
 			decimals,
 			false,
 			2

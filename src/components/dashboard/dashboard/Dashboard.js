@@ -32,6 +32,7 @@ import Hidden from '@material-ui/core/Hidden'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import Anchor from 'components/common/anchor/anchor'
 import {
 	updateNav,
 	getAllItems,
@@ -46,8 +47,10 @@ import {
 	selectAccountIdentityAddr,
 	selectWalletPrivileges,
 	selectPrivilegesWarningAccepted,
+	selectPublisherMinRevenueReached,
 } from 'selectors'
 import { useSelector } from 'react-redux'
+import GetttingStarted from '../getting-started/GettingStarted'
 
 const Campaigns = () => {
 	const privileges = useSelector(selectWalletPrivileges)
@@ -96,7 +99,11 @@ const useStyles = makeStyles(styles)
 
 function Dashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
+	const [dataLoaded, setDataLoaded] = useState(false)
 	const address = useSelector(selectAccountIdentityAddr)
+	const minPublisherRevenueReached = useSelector(
+		selectPublisherMinRevenueReached
+	)
 	const privileges = useSelector(selectWalletPrivileges)
 	const privilegesWarningAccepted = useSelector(selectPrivilegesWarningAccepted)
 	const showTxPrivLevelWarning = privileges <= 1 && !privilegesWarningAccepted
@@ -119,12 +126,13 @@ function Dashboard(props) {
 			// NOTE: await for stats (withBalance.all)
 			// needed for publisher analytics
 			await statsLoop.start()
-			analyticsLoop.start()
+			await analyticsLoop.start()
 
 			//NOTE: await fo campaign analytics first
 			// because of the campaigns table data update fix
 			await analyticsCampaignsLoop.start()
-			campaignsLoop.start()
+			await campaignsLoop.start()
+			setDataLoaded(true)
 		}
 
 		updateInitialData()
@@ -201,6 +209,33 @@ function Dashboard(props) {
 							</Alert>
 						</Box>
 					)}
+
+					{side === 'publisher' && !minPublisherRevenueReached && (
+						<Box mb={2} p={1}>
+							<Alert
+								variant='outlined'
+								severity='warning'
+								onClose={() => {
+									execute(updatePrivilegesWarningAccepted(true))
+								}}
+							>
+								{t('PUBLISHER_REVENUE_NOTICE', {
+									args: [
+										<Anchor
+											color='primary'
+											underline='always'
+											target='_blank'
+											href={process.env.ADEX_SUPPORT_URL}
+										>
+											{<strong>{t('SUPPORT')}</strong>}
+										</Anchor>,
+									],
+								})}
+							</Alert>
+						</Box>
+					)}
+
+					{dataLoaded && <GetttingStarted side={side} />}
 
 					<Switch>
 						<Route
