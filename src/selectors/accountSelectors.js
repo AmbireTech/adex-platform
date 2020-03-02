@@ -92,11 +92,6 @@ export const selectAccountIdentityDeployData = createSelector(
 	({ relayerData }) => relayerData.deployData
 )
 
-export const selectChannelsWithUserBalances = createSelector(
-	selectChannels,
-	({ withBalance }) => withBalance || {}
-)
-
 export const selectChannelsWithUserBalancesEligible = createSelector(
 	selectChannels,
 	({ withOutstandingBalance }) => [...(withOutstandingBalance || [])]
