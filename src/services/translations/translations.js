@@ -1,24 +1,21 @@
 import adexTranslations from 'adex-translations'
-import { renderToString } from 'react-dom/server'
+import { removeTags } from 'helpers/sanitizer'
 
 const translations = adexTranslations()
 
 let lang = 'en-US'
 
-// TODO: sanitization
 const interpolate = (tpl, args) => {
 	if (typeof tpl !== 'string') {
 		return ''
 	}
 
-	return tpl.replace(/\${(\w+)}/g, (_, v) => {
-		let arg = args[v]
-		if (typeof arg === 'object' && !!arg && arg.component) {
-			return renderToString(arg.component)
-		} else {
-			return arg || ''
-		}
-	})
+	const pattern = new RegExp(/\${(\w+)}/, 'gi')
+	const parts = tpl.split(pattern)
+
+	const interpolated = parts.map(p => args[p] || p)
+
+	return interpolated
 }
 
 export const translate = (
@@ -33,7 +30,7 @@ export const translate = (
 
 	key = key.toUpperCase()
 
-	let translation = translations[language][key] || val
+	let translation = removeTags(translations[language][key] || val)
 
 	if (args.length && Array.isArray(args)) {
 		const translatedArgs = args.map(a => {
