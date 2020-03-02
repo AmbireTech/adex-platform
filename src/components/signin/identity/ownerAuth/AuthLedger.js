@@ -148,24 +148,16 @@ class AuthLedger extends Component {
 						<ContentBody>
 							<Typography variant='subtitle1'>{t('LEDGER_INFO')}</Typography>
 							<Typography>
-								<span
-									dangerouslySetInnerHTML={{
-										__html: t('LEDGER_BASIC_USAGE_INFO', {
-											args: [
-												{
-													component: (
-														<Anchor
-															href='https://www.ledgerwallet.com/'
-															target='_blank'
-														>
-															LEDGER
-														</Anchor>
-													),
-												},
-											],
-										}),
-									}}
-								/>
+								{t('LEDGER_BASIC_USAGE_INFO', {
+									args: [
+										<Anchor
+											href='https://www.ledgerwallet.com/'
+											target='_blank'
+										>
+											LEDGER
+										</Anchor>,
+									],
+								})}
 							</Typography>
 							<Anchor href='https://www.ledgerwallet.com/' target='_blank'>
 								<Img

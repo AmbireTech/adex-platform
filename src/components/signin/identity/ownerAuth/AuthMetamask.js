@@ -132,28 +132,20 @@ function AuthMetamask(props) {
 						<Box mb={2}>
 							<Box>
 								<Typography>
-									<span
-										dangerouslySetInnerHTML={{
-											__html: t('METAMASK_BASIC_USAGE_INFO', {
-												args: [
-													{
-														component: (
-															<Anchor
-																href={
-																	isOpera
-																		? 'https://chrome.google.com/webstore/detail/nkbihfbeogaeaoehlefnkodbefgpgknn'
-																		: 'https://metamask.io/'
-																}
-																target='_blank'
-															>
-																https://metamask.io/
-															</Anchor>
-														),
-													},
-												],
-											}),
-										}}
-									/>
+									{t('METAMASK_BASIC_USAGE_INFO', {
+										args: [
+											<Anchor
+												href={
+													isOpera
+														? 'https://chrome.google.com/webstore/detail/nkbihfbeogaeaoehlefnkodbefgpgknn'
+														: 'https://metamask.io/'
+												}
+												target='_blank'
+											>
+												https://metamask.io/
+											</Anchor>,
+										],
+									})}
 								</Typography>
 							</Box>
 							<Box mt={1}>

@@ -142,6 +142,12 @@ export const SimpleStatistics = ({
 						display: true,
 						labelString: t(xLabel || 'TIMEFRAME'),
 					},
+					ticks: {
+						autoSkip: false,
+						callback: function(tick, index, array) {
+							return index % Math.floor(array.length / 12) ? '' : tick
+						},
+					},
 				},
 			],
 			yAxes: [
