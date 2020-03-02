@@ -15,6 +15,10 @@ const interpolate = (tpl, args) => {
 
 	const interpolated = parts.map(p => args[p] || p)
 
+	if (interpolated.every(i => typeof i === 'string')) {
+		return interpolated.join('')
+	}
+
 	return interpolated
 }
 
