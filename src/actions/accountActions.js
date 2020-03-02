@@ -164,6 +164,7 @@ export function updateAccountStats() {
 			const { formatted, raw } = await getAccountStats({
 				account,
 				outstandingBalanceMainToken,
+				all,
 			})
 			await updateChannelsWithBalanceAll(all)(dispatch)
 			await updateChannelsWithOutstandingBalance(withOutstandingBalance)(

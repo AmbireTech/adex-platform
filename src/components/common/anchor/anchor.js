@@ -10,22 +10,29 @@ const getUrl = url => {
 	return url
 }
 
-const Anchor = ({ href, target, children, label, ...rest }) => {
-	let url = target && target === '_blank' ? getUrl(href) : href
-	return (
-		<Link
-			underline='none'
-			color='inherit'
-			draggable='false'
-			rel='noopener noreferrer'
-			{...rest}
-			target={target}
-			href={url}
-			style={{ wordBreak: 'break-all' }} // TODO: add it where needed only
-		>
-			{children || label}
-		</Link>
-	)
+const Anchor = ({
+	href,
+	target,
+	children,
+	label,
+	underline,
+	color,
+	...rest
+}) => {
+	const isExternal = target && target === '_blank'
+	const url = isExternal ? getUrl(href) : href
+
+	const linkProps = {
+		underline: underline || 'none',
+		color: color || 'inherit',
+		draggable: 'false',
+		...(isExternal && { rel: 'noopener noreferrer' }),
+		target,
+		href: url,
+		style: { wordBreak: 'break-all' }, // TODO: add it where needed only
+		...rest,
+	}
+	return <Link {...linkProps}>{children || label}</Link>
 }
 
 export default Anchor
