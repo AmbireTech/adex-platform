@@ -19,12 +19,10 @@ export const createAdUnitTutorial = () => {
 				<Fragment>
 					<ol>
 						{steps.map(step => (
-							<li>{t(step, { components: [<strong />] })}</li>
+							<li dangerouslySetInnerHTML={{ __html: t(step) }}></li>
 						))}
 					</ol>
-					{t('TUTORIAL_CREATE_AD_UNIT_END', {
-						components: [<strong />],
-					})}
+					{t('TUTORIAL_CREATE_AD_UNIT_END')}
 				</Fragment>
 			),
 		})
@@ -47,17 +45,19 @@ export const fundAccountTutorial = () => {
 					<Typography>{t('TUTORIAL_FUND_ACC_START')}</Typography>
 					<ol>
 						{steps.map(step => (
-							<li>{t(step, { components: [<strong />] })}</li>
+							<li dangerouslySetInnerHTML={{ __html: t(step) }}></li>
 						))}
 					</ol>
 					<Typography gutterBottom>
 						{t('TUTORIAL_FUND_ACC_MORE_INFO', {
-							components: [
+							args: [
 								<ExternalAnchor
 									href={
 										'https://www.adex.network/blog/adex-integrates-ramp-networks-fiat-onramp-advertisers-can-now-pay-in-fiat/'
 									}
-								/>,
+								>
+									{t('HERE')}
+								</ExternalAnchor>,
 							],
 						})}
 					</Typography>
@@ -84,19 +84,10 @@ export const launchFirstCampaign = () => {
 					<Typography>{t('TUTORIAL_LAUNCH_CAMPAIGN_START')}</Typography>
 					<ol>
 						{steps.map(step => (
-							<li>
-								{t(step, {
-									components: [
-										<strong />, //
-										<strong />,
-									],
-								})}
-							</li>
+							<li dangerouslySetInnerHTML={{ __html: t(step) }}></li>
 						))}
 					</ol>
-					<Typography>
-						{t('TUTORIAL_LAUNCH_CAMPAIGN_END', { components: [<strong />] })}
-					</Typography>
+					<Typography>{t('TUTORIAL_LAUNCH_CAMPAIGN_END')}</Typography>
 				</Fragment>
 			),
 		})
@@ -118,19 +109,10 @@ export const createAdSlot = () => {
 				<Fragment>
 					<ol>
 						{steps.map(step => (
-							<li>
-								{t(step, {
-									components: [
-										<strong />, //
-										<strong />,
-									],
-								})}
-							</li>
+							<li dangerouslySetInnerHTML={{ __html: t(step) }}></li>
 						))}
 					</ol>
-					<Typography>
-						{t('TUTORIAL_CREATE_AD_SLOT_END', { components: [<strong />] })}
-					</Typography>
+					<Typography>{t('TUTORIAL_CREATE_AD_SLOT_END')}</Typography>
 				</Fragment>
 			),
 		})
@@ -152,36 +134,26 @@ export const placeAdSlot = () => {
 				<Fragment>
 					<ol>
 						{steps.map(step => (
-							<li>
-								{t(step, {
-									components: [
-										<strong />, //
-										<strong />,
-									],
-								})}
-							</li>
+							<li dangerouslySetInnerHTML={{ __html: t(step) }}></li>
 						))}
 					</ol>
 					<Typography gutterBottom>
 						{t('TUTORIAL_PLACE_AD_SLOT_MORE_INFO')}
 					</Typography>
 					<Typography>
-						{t('TUTORIAL_PLACE_AD_SLOT_INFO_LINK_1', {
-							components: [
-								<ExternalAnchor href={'https://html.com/tags/iframe/'} />,
-							],
-						})}
+						<ExternalAnchor href={'https://html.com/tags/iframe/'}>
+							{t('TUTORIAL_PLACE_AD_SLOT_INFO_LINK_1')}
+						</ExternalAnchor>
 					</Typography>
 					<Typography>
-						{t('TUTORIAL_PLACE_AD_SLOT_INFO_LINK_2', {
-							components: [
-								<ExternalAnchor
-									href={
-										'https://webcusp.com/iframe-wordpress-plugins-and-tutorials/'
-									}
-								/>,
-							],
-						})}
+						<ExternalAnchor
+							href={
+								'https://webcusp.com/iframe-wordpress-plugins-and-tutorials/'
+							}
+						>
+							{t('TUTORIAL_PLACE_AD_SLOT_INFO_LINK_2')}
+						</ExternalAnchor>
+						,
 					</Typography>
 				</Fragment>
 			),
