@@ -17,6 +17,7 @@ const Anchor = ({
 	children,
 	label,
 	underline,
+	externalIcon,
 	color,
 	...rest
 }) => {
@@ -33,7 +34,12 @@ const Anchor = ({
 		style: { wordBreak: 'break-all' }, // TODO: add it where needed only
 		...rest,
 	}
-	return <Link {...linkProps}>{children || label}</Link>
+	return (
+		<Link {...linkProps}>
+			{children || label}{' '}
+			{externalIcon && <OpenInNew style={{ fontSize: 'small' }} />}
+		</Link>
+	)
 }
 
 export const ExternalAnchor = ({ href, children, style }) => (
@@ -42,9 +48,10 @@ export const ExternalAnchor = ({ href, children, style }) => (
 		underline='always'
 		target='_blank'
 		color='primary'
+		externalIcon
 		href={href}
 	>
-		{children} <OpenInNew style={{ fontSize: 'small' }} />
+		{children}
 	</Anchor>
 )
 
