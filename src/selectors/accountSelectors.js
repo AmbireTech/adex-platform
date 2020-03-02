@@ -120,5 +120,7 @@ export const selectWalletPrivileges = createSelector(
 export const selectPublisherMinRevenueReached = createSelector(
 	[selectAccountStatsRaw, selectMainToken],
 	({ totalRevenue }, { decimals }) =>
-		bigNumberify(totalRevenue).gt(parseUnits(MIN_PUBLISHER_REVENUE, decimals))
+		bigNumberify(totalRevenue || 0).gt(
+			parseUnits(MIN_PUBLISHER_REVENUE, decimals)
+		)
 )
