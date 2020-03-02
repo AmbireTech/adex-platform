@@ -24,6 +24,10 @@ const useStyles = makeStyles(theme => {
 			? theme.palette.accentOne.main
 			: theme.palette.accentTwo.main
 
+	const activeBgColor = ({ side }) =>
+		side === 'advertiser'
+			? theme.palette.accentOne.light
+			: theme.palette.accentTwo.light
 	return {
 		// TODO: keep it everywhere in case of components update
 		root: {
@@ -34,6 +38,7 @@ const useStyles = makeStyles(theme => {
 		},
 		selected: {
 			color: activeColor,
+			backgroundColor: activeBgColor,
 			'&$selected': {
 				color: activeColor,
 			},

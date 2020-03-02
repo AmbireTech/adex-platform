@@ -151,6 +151,7 @@ class AuthLedger extends Component {
 								{t('LEDGER_BASIC_USAGE_INFO', {
 									args: [
 										<Anchor
+											key='auth-ledger'
 											href='https://www.ledgerwallet.com/'
 											target='_blank'
 										>
