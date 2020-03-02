@@ -84,9 +84,10 @@ export default function GettingStarted(props) {
 						{t('TUTORIAL_CONFIRM_EMAIL_CONTENT')}
 						{emailProvider
 							? t('TUTORIAL_CONFIRM_EMAIL_CONTENT_GO_TO', {
-									args: [emailProvider],
-									components: [
-										<ExternalAnchor href={`https://${emailProvider}`} />,
+									args: [
+										<ExternalAnchor href={`https://${emailProvider}`}>
+											{emailProvider}
+										</ExternalAnchor>,
 									],
 							  })
 							: ''}
@@ -135,9 +136,10 @@ export default function GettingStarted(props) {
 						{t('TUTORIAL_CONFIRM_EMAIL_CONTENT')}
 						{emailProvider
 							? t('TUTORIAL_CONFIRM_EMAIL_CONTENT_GO_TO', {
-									args: [emailProvider],
-									components: [
-										<ExternalAnchor href={`https://${emailProvider}`} />,
+									args: [
+										<ExternalAnchor href={`https://${emailProvider}`}>
+											{emailProvider}
+										</ExternalAnchor>,
 									],
 							  })
 							: ''}
@@ -314,7 +316,7 @@ export default function GettingStarted(props) {
 											{steps[side][activeStep].content}{' '}
 											{steps[side][activeStep].tutorial &&
 												t('GETTING_STARTED_NOT_SURE_SEE_TUTORIAL', {
-													components: [
+													args: [
 														<Link
 															href='#'
 															onClick={e => {
@@ -324,7 +326,9 @@ export default function GettingStarted(props) {
 															className={classes.instructions}
 															color={'primary'}
 															underline={'hover'}
-														/>,
+														>
+															{t('OUR_TUTORIAL')}
+														</Link>,
 													],
 												})}
 										</Typography>

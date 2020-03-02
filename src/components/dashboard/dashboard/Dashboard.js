@@ -219,26 +219,18 @@ function Dashboard(props) {
 									execute(updatePrivilegesWarningAccepted(true))
 								}}
 							>
-								<span
-									dangerouslySetInnerHTML={{
-										__html: t('PUBLISHER_REVENUE_NOTICE', {
-											args: [
-												{
-													component: (
-														<Anchor
-															color='primary'
-															underline='always'
-															target='_blank'
-															href={process.env.ADEX_SUPPORT_URL}
-														>
-															{<strong>{t('SUPPORT')}</strong>}
-														</Anchor>
-													),
-												},
-											],
-										}),
-									}}
-								/>
+								{t('PUBLISHER_REVENUE_NOTICE', {
+									args: [
+										<Anchor
+											color='primary'
+											underline='always'
+											target='_blank'
+											href={process.env.ADEX_SUPPORT_URL}
+										>
+											{<strong>{t('SUPPORT')}</strong>}
+										</Anchor>,
+									],
+								})}
 							</Alert>
 						</Box>
 					)}
