@@ -162,10 +162,15 @@ class AuthTrezor extends Component {
 								<Typography gutterBottom>
 									{t('TREZOR_BASIC_USAGE_INFO', {
 										args: [
-											<Anchor href='https://trezor.io/' target='_blank'>
+											<Anchor
+												key='trezor-wallet'
+												href='https://trezor.io/'
+												target='_blank'
+											>
 												TREZOR Wallet
 											</Anchor>,
 											<Anchor
+												key='trezor-bridge'
 												href='https://wallet.trezor.io/#/bridge'
 												target='_blank'
 											>
