@@ -85,7 +85,10 @@ export default function GettingStarted(props) {
 						{emailProvider
 							? t('TUTORIAL_CONFIRM_EMAIL_CONTENT_GO_TO', {
 									args: [
-										<ExternalAnchor href={`https://${emailProvider}`}>
+										<ExternalAnchor
+											key='confirm-email-go-to'
+											href={`https://${emailProvider}`}
+										>
 											{emailProvider}
 										</ExternalAnchor>,
 									],
@@ -137,7 +140,10 @@ export default function GettingStarted(props) {
 						{emailProvider
 							? t('TUTORIAL_CONFIRM_EMAIL_CONTENT_GO_TO', {
 									args: [
-										<ExternalAnchor href={`https://${emailProvider}`}>
+										<ExternalAnchor
+											key='confirm-mail-link'
+											href={`https://${emailProvider}`}
+										>
 											{emailProvider}
 										</ExternalAnchor>,
 									],
@@ -318,6 +324,7 @@ export default function GettingStarted(props) {
 												t('GETTING_STARTED_NOT_SURE_SEE_TUTORIAL', {
 													args: [
 														<Link
+															key='see-tutorial-link'
 															href='#'
 															onClick={e => {
 																e.preventDefault()
