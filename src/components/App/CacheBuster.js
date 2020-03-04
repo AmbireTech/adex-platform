@@ -34,11 +34,9 @@ export default function CacheBuster(props) {
 			.then(response => response.json())
 			.then(meta => {
 				const { latestVersion, latestTOS } = meta
-				const { currentVersion, currentTOS } = global.meta
-				const shouldForceRefresh = semverGreaterThan(
-					latestVersion,
-					currentVersion
-				)
+				const { currentVersion, currentTOS } = global.meta || {}
+				const shouldForceRefresh =
+					!global.meta || semverGreaterThan(latestVersion, currentVersion)
 				if (shouldForceRefresh) {
 					execute(
 						refreshCacheAndReload({
@@ -46,7 +44,8 @@ export default function CacheBuster(props) {
 						})
 					)
 				}
-				const shouldNotifyNewTOS = semverGreaterThan(latestTOS, currentTOS)
+				const shouldNotifyNewTOS =
+					!global.meta || semverGreaterThan(latestTOS, currentTOS)
 				if (shouldNotifyNewTOS) {
 					execute(notifyNewTOS())
 				}
