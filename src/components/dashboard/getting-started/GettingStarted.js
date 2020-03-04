@@ -217,7 +217,7 @@ export default function GettingStarted(props) {
 		!isGettingStartedHidden && (
 			<Collapse in>
 				{steps[side] && (
-					<Box className={classes.root} m={1} p={2}>
+					<Box className={classes.root} mb={1} p={2} boxShadow={2}>
 						<Typography variant={'h6'}>
 							{t('GETTING_STARTED_HEADING')}
 						</Typography>
