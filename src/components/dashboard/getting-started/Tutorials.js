@@ -22,7 +22,11 @@ export const createAdUnitTutorial = () => {
 							<li dangerouslySetInnerHTML={{ __html: t(step) }}></li>
 						))}
 					</ol>
-					{t('TUTORIAL_CREATE_AD_UNIT_END')}
+					<div
+						dangerouslySetInnerHTML={{
+							__html: t('TUTORIAL_CREATE_AD_UNIT_END'),
+						}}
+					></div>
 				</Fragment>
 			),
 		})
@@ -87,7 +91,11 @@ export const launchFirstCampaign = () => {
 							<li dangerouslySetInnerHTML={{ __html: t(step) }}></li>
 						))}
 					</ol>
-					<Typography>{t('TUTORIAL_LAUNCH_CAMPAIGN_END')}</Typography>
+					<Typography
+						dangerouslySetInnerHTML={{
+							__html: t('TUTORIAL_LAUNCH_CAMPAIGN_END'),
+						}}
+					/>
 				</Fragment>
 			),
 		})
@@ -112,7 +120,11 @@ export const createAdSlot = () => {
 							<li dangerouslySetInnerHTML={{ __html: t(step) }}></li>
 						))}
 					</ol>
-					<Typography>{t('TUTORIAL_CREATE_AD_SLOT_END')}</Typography>
+					<Typography
+						dangerouslySetInnerHTML={{
+							__html: t('TUTORIAL_CREATE_AD_SLOT_END'),
+						}}
+					/>
 				</Fragment>
 			),
 		})
