@@ -62,6 +62,7 @@ export default function MUIDataTableEnhanced(props) {
 			options={{
 				...generalTableOptions,
 				...options,
+				elevation: 2,
 				search: !props.noSearch,
 				download: !props.noDownload,
 				print: !props.noPrint,
