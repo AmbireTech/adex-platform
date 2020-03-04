@@ -22,11 +22,11 @@ export const createAdUnitTutorial = () => {
 							<li dangerouslySetInnerHTML={{ __html: t(step) }}></li>
 						))}
 					</ol>
-					<div
+					<Typography
 						dangerouslySetInnerHTML={{
 							__html: t('TUTORIAL_CREATE_AD_UNIT_END'),
 						}}
-					></div>
+					/>
 				</Fragment>
 			),
 		})
