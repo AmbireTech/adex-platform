@@ -2,8 +2,11 @@ import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { selectLocation } from 'selectors'
 import packageJson from '../../../package.json'
-import { refreshCacheAndReload, execute } from 'actions'
-global.appVersion = packageJson.version
+import { refreshCacheAndReload, execute, notifyNewTOS } from 'actions'
+global.meta = {
+	currentVersion: packageJson.version,
+	currentTOS: packageJson.tosVersion,
+}
 
 export default function CacheBuster(props) {
 	const location = useSelector(selectLocation) || {}
@@ -30,8 +33,8 @@ export default function CacheBuster(props) {
 		fetch(`/meta.json?r=${r}`, { cache: 'no-cache' })
 			.then(response => response.json())
 			.then(meta => {
-				const latestVersion = meta.version
-				const currentVersion = global.appVersion
+				const { latestVersion, latestTOS } = meta
+				const { currentVersion, currentTOS } = global.meta
 				const shouldForceRefresh = semverGreaterThan(
 					latestVersion,
 					currentVersion
@@ -42,6 +45,10 @@ export default function CacheBuster(props) {
 							version: latestVersion,
 						})
 					)
+				}
+				const shouldNotifyNewTOS = semverGreaterThan(latestTOS, currentTOS)
+				if (shouldNotifyNewTOS) {
+					execute(notifyNewTOS())
 				}
 			})
 	}, [location])
