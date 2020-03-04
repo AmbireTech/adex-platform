@@ -256,6 +256,87 @@ const SlotMinCPM = ({
 
 const ValidatedSlotMinCPM = ValidItemHoc(SlotMinCPM)
 
+const SlotWebsite = ({
+	item,
+	t,
+	rightComponent,
+	url,
+	classes,
+	canEditImg,
+	isDemo,
+	activeFields,
+	setActiveFields,
+	validate,
+	invalidFields,
+	handleChange,
+	...rest
+}) => {
+	const errWebsite = invalidFields['website']
+
+	const website = item.temp.website
+
+	return (
+		<FormControl
+			fullWidth
+			className={classes.textField}
+			margin='dense'
+			error={!!errWebsite}
+		>
+			<InputLabel>{t('SLOT_WEBSITE')}</InputLabel>
+			<Input
+				fullWidth
+				autoFocus
+				type='text'
+				name={'website'}
+				value={website || ''}
+				onChange={ev => {
+					handleChange(
+						'temp',
+						updateItemTemp({
+							prop: 'website',
+							value: ev.target.value,
+							item,
+						})
+					)
+				}}
+				maxLength={1024}
+				onBlur={ev => {
+					setActiveFields('website', false)
+				}}
+				disabled={!!item.website}
+				endAdornment={
+					!item.website && (
+						<InputAdornment position='end'>
+							<IconButton
+								disabled={activeFields['website'] || isDemo}
+								color='secondary'
+								className={classes.buttonRight}
+								onClick={ev => setActiveFields('website', true)}
+							>
+								<EditIcon />
+							</IconButton>
+						</InputAdornment>
+					)
+				}
+			/>
+
+			<FormHelperText>
+				{errWebsite && !!errWebsite.errMsg ? (
+					t(errWebsite.errMsg, { args: errWebsite.errMsgArgs })
+				) : (
+					<span
+						dangerouslySetInnerHTML={{
+							__html: t('SLOT_WEBSITE_CODE_WARNING'),
+						}}
+					/>
+				)}
+			</FormHelperText>
+		</FormControl>
+	)
+}
+
+const ValidatedSlotWebsite = ValidItemHoc(SlotWebsite)
+
 const MediaCard = ({
 	classes,
 	mediaUrl,
@@ -353,6 +434,22 @@ const basicProps = ({
 										canEditImg={canEditImg}
 										activeFields={activeFields}
 										{...rest}
+									/>
+								</Grid>
+							)}
+							{itemType === 'AdSlot' && (
+								<Grid item xs={12}>
+									<ValidatedSlotWebsite
+										validateId={item._id}
+										item={item}
+										t={t}
+										url={url}
+										classes={classes}
+										canEditImg={canEditImg}
+										activeFields={activeFields}
+										{...rest}
+										margin='dense'
+										fullWidth
 									/>
 								</Grid>
 							)}
