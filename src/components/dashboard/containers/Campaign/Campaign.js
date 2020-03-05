@@ -53,7 +53,7 @@ export class Campaign extends Component {
 						onClick={() => {
 							actions.closeCampaign({ campaign })
 						}}
-						disabled={humanFriendlyName !== 'Closed'}
+						disabled={humanFriendlyName === 'Closed'}
 					>
 						{t('BTN_CLOSE_CAMPAIGN')}
 					</Button>
