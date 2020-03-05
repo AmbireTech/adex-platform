@@ -18,6 +18,7 @@ export const selectCampaignsTableData = createSelector(
 			const spec = item.spec || {}
 			return {
 				media: {
+					side: side,
 					id: item.id,
 					adUnits: item.adUnits,
 				},

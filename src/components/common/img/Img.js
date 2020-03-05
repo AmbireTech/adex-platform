@@ -233,6 +233,7 @@ class Img extends Component {
 			className,
 			classes,
 			fullScreenOnClick,
+			onClick,
 		} = this.props
 		const { imgSrc, videoSrc } = this.state
 		return imgSrc || videoSrc ? (
@@ -246,7 +247,7 @@ class Img extends Component {
 						draggable='false'
 						className={classnames(classes.imgLoading, className, classes.img)}
 						onDragStart={event => event.preventDefault() /*Firefox*/}
-						onClick={fullScreenOnClick && this.handleToggle}
+						onClick={onClick || (fullScreenOnClick && this.handleToggle)}
 					/>
 				) : (
 					<video
@@ -255,7 +256,7 @@ class Img extends Component {
 						autoPlay
 						muted
 						loop
-						onClick={fullScreenOnClick && this.handleToggle}
+						onClick={onClick || (fullScreenOnClick && this.handleToggle)}
 					></video>
 				)}
 				{allowFullscreen && this.fullScreenBtn()}
