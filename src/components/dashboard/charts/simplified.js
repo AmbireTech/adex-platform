@@ -4,10 +4,11 @@ import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
 import { selectStatsChartData, selectMainToken } from 'selectors'
+import { formatFloatNumberWithCommas } from 'helpers/formatters'
 
 const commonDsProps = {
 	fill: false,
-	lineTension: 0.3,
+	lineTension: 0.1,
 	borderWidth: 0,
 	pointRadius: 3,
 	pointHitRadius: 10,
@@ -20,15 +21,18 @@ export const SimpleStatistics = ({
 	payouts,
 	impressions,
 	clicks,
+	cpm,
 	options = {},
 	t,
 	xLabel = 'TIMEFRAME',
 	y1Label = 'DATA1',
 	y2Label = 'DATA2',
 	y3Label = 'DATA3',
+	y4Label = 'DATA4',
 	y1Color = CHARTS_COLORS[1],
 	y2Color = CHARTS_COLORS[2],
 	y3Color = CHARTS_COLORS[3],
+	y4Color = CHARTS_COLORS[4],
 }) => {
 	const { symbol } = useSelector(selectMainToken)
 
@@ -64,16 +68,15 @@ export const SimpleStatistics = ({
 		datasets: [
 			{
 				...commonDsProps,
-				backgroundColor: Helper.hexToRgbaColorString(y1Color, 0.5),
+				backgroundColor: Helper.hexToRgbaColorString(y1Color, 1),
 				borderColor: Helper.hexToRgbaColorString(y1Color, 1),
 				label: y1Label,
 				data: payouts.datasets,
 				yAxisID: 'y-axis-1',
-				pointBackgroundColor: 'transparent',
 			},
 			{
 				...commonDsProps,
-				backgroundColor: Helper.hexToRgbaColorString(y2Color, 0.5),
+				backgroundColor: Helper.hexToRgbaColorString(y2Color, 1),
 				borderColor: Helper.hexToRgbaColorString(y2Color, 1),
 				label: y2Label,
 				data: impressions.datasets,
@@ -81,11 +84,20 @@ export const SimpleStatistics = ({
 			},
 			{
 				...commonDsProps,
-				backgroundColor: Helper.hexToRgbaColorString(y3Color, 0.5),
+				backgroundColor: Helper.hexToRgbaColorString(y3Color, 1),
 				borderColor: Helper.hexToRgbaColorString(y3Color, 1),
 				label: y3Label,
 				data: clicks.datasets,
 				yAxisID: 'y-axis-3',
+			},
+			{
+				...commonDsProps,
+				backgroundColor: Helper.hexToRgbaColorString(y4Color, 1),
+				borderColor: Helper.hexToRgbaColorString(y4Color, 1),
+				pointBackgroundColor: y4Color,
+				label: y4Label,
+				data: cpm.datasets,
+				yAxisID: 'y-axis-4',
 			},
 		],
 	}
@@ -107,7 +119,10 @@ export const SimpleStatistics = ({
 				label: function(t, d) {
 					// This adds currency MainToken (DAI) to y1Label in the tooltips
 					var xLabel = d.datasets[t.datasetIndex].label
-					var yLabel = xLabel === y1Label ? `${t.yLabel} ${symbol}` : t.yLabel
+					var yLabel =
+						xLabel === y1Label
+							? `${formatFloatNumberWithCommas(t.yLabel)} ${symbol}`
+							: formatFloatNumberWithCommas(t.yLabel)
 					return `${xLabel}: ${yLabel}`
 				},
 			},
@@ -184,6 +199,18 @@ export const SimpleStatistics = ({
 					gridLines: {
 						drawOnChartArea: false, // only want the grid lines for one axis to show up
 					},
+				},
+				{
+					type: 'linear',
+					display: false,
+					gridLines: {
+						drawOnChartArea: false, // only want the grid lines for one axis to show up
+					},
+					scaleLabel: {
+						display: false,
+						labelString: y4Label,
+					},
+					id: 'y-axis-4',
 				},
 			],
 		},

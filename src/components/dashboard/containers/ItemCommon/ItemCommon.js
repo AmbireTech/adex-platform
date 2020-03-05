@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
@@ -20,7 +20,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
-import { validations } from 'adex-models'
+import { validations, schemas, Joi } from 'adex-models'
 import { utils } from 'ethers'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import { selectMainToken } from 'selectors'
@@ -164,6 +164,18 @@ const validateAmount = (value = '', prop, dirty, errMsg, validate) => {
 	})
 }
 
+const validateWebsite = (value = '', prop, dirty, errMsg, validate) => {
+	const result = Joi.validate(value, schemas.adSlotPut.website)
+
+	const isValid = !result.error
+
+	validate(prop, {
+		isValid: isValid,
+		err: { msg: errMsg || 'SLOT_WEBSITE_ERR' },
+		dirty: dirty,
+	})
+}
+
 const SlotMinCPM = ({
 	item,
 	t,
@@ -255,6 +267,97 @@ const SlotMinCPM = ({
 }
 
 const ValidatedSlotMinCPM = ValidItemHoc(SlotMinCPM)
+
+const SlotWebsite = ({
+	item,
+	t,
+	rightComponent,
+	url,
+	classes,
+	canEditImg,
+	isDemo,
+	activeFields,
+	setActiveFields,
+	validate,
+	invalidFields,
+	handleChange,
+	...rest
+}) => {
+	const errWebsite = invalidFields['website']
+
+	const website = item.temp.website
+
+	return (
+		<FormControl
+			fullWidth
+			className={classes.textField}
+			margin='dense'
+			error={!!errWebsite && activeFields.website}
+		>
+			<InputLabel>{t('SLOT_WEBSITE')}</InputLabel>
+			<Input
+				fullWidth
+				autoFocus
+				type='text'
+				name={'website'}
+				value={website || item.website || ''}
+				onChange={ev => {
+					validateWebsite(ev.target.value, 'website', true, '', validate)
+					handleChange(
+						'temp',
+						updateItemTemp({
+							prop: 'website',
+							value: ev.target.value,
+							item,
+						})
+					)
+				}}
+				maxLength={1024}
+				onBlur={ev => {
+					setActiveFields('website', false)
+				}}
+				disabled={!!item.website || !activeFields.website}
+				endAdornment={
+					!item.website && (
+						<InputAdornment position='end'>
+							<IconButton
+								disabled={activeFields.website || isDemo}
+								color='secondary'
+								className={classes.buttonRight}
+								onClick={ev => setActiveFields('website', true)}
+							>
+								<EditIcon />
+							</IconButton>
+						</InputAdornment>
+					)
+				}
+			/>
+
+			<FormHelperText>
+				{errWebsite && !!errWebsite.errMsg && activeFields.website ? (
+					t(errWebsite.errMsg, { args: errWebsite.errMsgArgs })
+				) : (
+					<Fragment>
+						{activeFields.website && (
+							<div
+								dangerouslySetInnerHTML={{
+									__html: t('SLOT_MIN_CPM_HELPER'),
+								}}
+							/>
+						)}
+						<div
+							dangerouslySetInnerHTML={{
+								__html: t('SLOT_WEBSITE_CODE_WARNING'),
+							}}
+						/>
+					</Fragment>
+				)}
+			</FormHelperText>
+		</FormControl>
+	)
+}
+
+const ValidatedSlotWebsite = ValidItemHoc(SlotWebsite)
 
 const MediaCard = ({
 	classes,
@@ -353,6 +456,22 @@ const basicProps = ({
 										canEditImg={canEditImg}
 										activeFields={activeFields}
 										{...rest}
+									/>
+								</Grid>
+							)}
+							{itemType === 'AdSlot' && (
+								<Grid item xs={12}>
+									<ValidatedSlotWebsite
+										validateId={item._id}
+										item={item}
+										t={t}
+										url={url}
+										classes={classes}
+										canEditImg={canEditImg}
+										activeFields={activeFields}
+										{...rest}
+										margin='dense'
+										fullWidth
 									/>
 								</Grid>
 							)}
