@@ -656,7 +656,7 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 		} = identity
 
 		const validations = await Promise.all([
-			validateEmail(validateId, email, dirty)(dispatch),
+			validateEmail(validateId, email, dirty, true)(dispatch),
 			validateEmailCheck(validateId, emailCheck, email, dirty)(dispatch),
 			validatePassword(validateId, password, dirty)(dispatch),
 			validatePasswordCheck(validateId, passwordCheck, password, dirty)(
@@ -664,7 +664,7 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 			),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
 			validateAccessWarning(validateId, accessWarningCheck, dirty)(dispatch),
-			validateNotExistingEmail(validateId, email, dirty)(dispatch),
+			// validateNotExistingEmail(validateId, email, dirty)(dispatch),
 		])
 
 		const isValid = validations.every(v => v === true)
@@ -703,11 +703,11 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 			),
 
 			// validate step fields
-			validateEmail(validateId, email, dirty)(dispatch),
+			validateEmail(validateId, email, dirty, true)(dispatch),
 			validateEmailCheck(validateId, emailCheck, email, dirty)(dispatch),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
 			validateAccessWarning(validateId, accessWarningCheck, dirty)(dispatch),
-			validateNotExistingEmail(validateId, email, dirty)(dispatch),
+			// validateNotExistingEmail(validateId, email, dirty)(dispatch),
 		])
 
 		const isValid = validations.every(v => v === true)
