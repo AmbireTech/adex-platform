@@ -9,7 +9,7 @@ export const selectItemsByType = createSelector(
 
 export const selectItemsArrayByType = createSelector(
 	[selectItemsByType, (_, itemType) => itemType],
-	items => Object.values(items)
+	(items = {}) => Object.values(items)
 )
 
 export const selectCampaigns = createSelector(
