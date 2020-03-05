@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { Typography } from '@material-ui/core'
 import NewAdSlotHoc from './NewAdSlotHoc'
 import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
@@ -55,8 +56,16 @@ class AdSlotPreview extends Component {
 	render() {
 		const { classes, account, mainTokenSymbol, ...rest } = this.props
 		const { newItem, t } = rest
-		const { type, title, description, temp, tags, targetUrl } = newItem
-		const { minPerImpression } = temp
+		const {
+			type,
+			title,
+			description,
+			website,
+			temp,
+			tags,
+			targetUrl,
+			minPerImpression,
+		} = newItem
 
 		return (
 			<ContentBox>
@@ -71,6 +80,24 @@ class AdSlotPreview extends Component {
 						left={t('description', { isProp: true })}
 						right={description}
 					/>
+					<PropRow left={t('website', { isProp: true })} right={website} />
+					<PropRow
+						right={
+							<Typography>
+								<div
+									dangerouslySetInnerHTML={{
+										__html: t('SLOT_WEBSITE_WARNING'),
+									}}
+								/>
+								<div
+									dangerouslySetInnerHTML={{
+										__html: t('SLOT_WEBSITE_CODE_WARNING'),
+									}}
+								/>
+							</Typography>
+						}
+					/>
+
 					<PropRow
 						left={t('MIN_CPM_SLOT_LABEL')}
 						right={`${minPerImpression} ${mainTokenSymbol}`}

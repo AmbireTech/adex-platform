@@ -7,7 +7,6 @@ import {
 	updateAdUnit,
 	updateCampaign,
 } from 'services/adex-market/actions'
-import { parseUnits, bigNumberify } from 'ethers/utils'
 import { Base, AdSlot, AdUnit, helpers, Campaign } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
 
@@ -221,40 +220,43 @@ export function getAllItems() {
 // Accepts the entire new item and replace so be careful!
 export function updateItem({ item, itemType } = {}) {
 	return async function(dispatch, getState) {
-		updateSpinner('update' + item.id, true)(dispatch)
+		const { id } = item
+		updateSpinner('update' + id, true)(dispatch)
 		try {
 			const { account } = getState().persist
 			const { authSig } = account.wallet
 			const { mainToken } = selectRelayerConfig()
 
+			const newItem = { ...item }
 			let updatedItem = null
 			let objModel = null
 
-			const { id } = item
-
 			switch (itemType) {
 				case 'AdSlot':
-					if (item.temp.minPerImpression) {
-						item.minPerImpression = {
-							[mainToken.address]: parseUnits(
-								item.temp.minPerImpression,
-								mainToken.decimals
-							)
-								.div(bigNumberify(1000))
-								.toString(),
+					if (typeof newItem.temp.minPerImpression === 'string') {
+						newItem.minPerImpression = {
+							[mainToken.address]: numStringCPMtoImpression({
+								numStr: newItem.temp.minPerImpression,
+								decimals: mainToken.decimals,
+							}),
 						}
 					}
-					const slot = new AdSlot(item).marketUpdate
+					if (typeof newItem.temp.website === 'string') {
+						newItem.website = newItem.temp.website
+					} else {
+						newItem.website = null
+					}
+					const slot = new AdSlot(newItem).marketUpdate
 					updatedItem = (await updateAdSlot({ slot, id, authSig })).slot
 					objModel = AdSlot
 					break
 				case 'AdUnit':
-					const unit = new AdUnit(item).marketUpdate
+					const unit = new AdUnit(newItem).marketUpdate
 					updatedItem = (await updateAdUnit({ unit, id, authSig })).unit
 					objModel = AdUnit
 					break
 				case 'Campaign':
-					const campaign = new Campaign(item).marketUpdate
+					const campaign = new Campaign(newItem).marketUpdate
 					updatedItem = (await updateCampaign({ campaign, id, authSig }))
 						.campaign
 					objModel = Campaign

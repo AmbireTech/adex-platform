@@ -2,12 +2,15 @@ import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { selectLocation } from 'selectors'
 import packageJson from '../../../package.json'
-import { refreshCacheAndReload, execute } from 'actions'
-global.appVersion = packageJson.version
+import { refreshCacheAndReload, execute, notifyNewTOS } from 'actions'
+global.meta = {
+	currentVersion: packageJson.version,
+	currentTOS: packageJson.tosVersion,
+}
 
 export default function CacheBuster(props) {
 	const location = useSelector(selectLocation) || {}
-	const semverGreaterThan = (versionA, versionB) => {
+	const semverGreaterThan = (versionA = '', versionB = '') => {
 		const versionsA = versionA.split(/\./g)
 
 		const versionsB = versionB.split(/\./g)
@@ -30,18 +33,21 @@ export default function CacheBuster(props) {
 		fetch(`/meta.json?r=${r}`, { cache: 'no-cache' })
 			.then(response => response.json())
 			.then(meta => {
-				const latestVersion = meta.version
-				const currentVersion = global.appVersion
-				const shouldForceRefresh = semverGreaterThan(
-					latestVersion,
-					currentVersion
-				)
+				const { latestVersion, latestTOS } = meta
+				const { currentVersion, currentTOS } = global.meta || {}
+				const shouldForceRefresh =
+					!global.meta || semverGreaterThan(latestVersion, currentVersion)
 				if (shouldForceRefresh) {
 					execute(
 						refreshCacheAndReload({
 							version: latestVersion,
 						})
 					)
+				}
+				const shouldNotifyNewTOS =
+					!global.meta || semverGreaterThan(latestTOS, currentTOS)
+				if (shouldNotifyNewTOS) {
+					execute(notifyNewTOS())
 				}
 			})
 	}, [location])

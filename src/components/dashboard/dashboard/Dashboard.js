@@ -219,18 +219,23 @@ function Dashboard(props) {
 									execute(updatePrivilegesWarningAccepted(true))
 								}}
 							>
-								{t('PUBLISHER_REVENUE_NOTICE', {
-									args: [
-										<Anchor
-											color='primary'
-											underline='always'
-											target='_blank'
-											href={process.env.ADEX_SUPPORT_URL}
-										>
-											{<strong>{t('SUPPORT')}</strong>}
-										</Anchor>,
-									],
-								})}
+								<div>
+									{t('PUBLISHER_REVENUE_NOTICE', {
+										args: [
+											<Anchor
+												key='publisher-revenue-notice'
+												color='primary'
+												underline='always'
+												target='_blank'
+												href={
+													'https://help.adex.network/hc/en-us/articles/360012285459-Mandatory-verification-for-publishers'
+												}
+											>
+												{<strong>{t('HERE')}</strong>}
+											</Anchor>,
+										],
+									})}
+								</div>
 							</Alert>
 						</Box>
 					)}
