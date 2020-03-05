@@ -10,7 +10,7 @@ global.meta = {
 
 export default function CacheBuster(props) {
 	const location = useSelector(selectLocation) || {}
-	const semverGreaterThan = (versionA, versionB) => {
+	const semverGreaterThan = (versionA = '', versionB = '') => {
 		const versionsA = versionA.split(/\./g)
 
 		const versionsB = versionB.split(/\./g)
