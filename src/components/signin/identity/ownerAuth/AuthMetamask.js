@@ -135,6 +135,7 @@ function AuthMetamask(props) {
 									{t('METAMASK_BASIC_USAGE_INFO', {
 										args: [
 											<Anchor
+												key={'metamask-anchor'}
 												href={
 													isOpera
 														? 'https://chrome.google.com/webstore/detail/nkbihfbeogaeaoehlefnkodbefgpgknn'

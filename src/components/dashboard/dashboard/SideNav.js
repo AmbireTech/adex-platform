@@ -45,6 +45,11 @@ const useStyles = makeStyles(theme => {
 			? theme.palette.accentOne.main
 			: theme.palette.accentTwo.main
 
+	const hoverActiveBgColor = ({ side }) =>
+		side === 'advertiser'
+			? theme.palette.accentOne.light
+			: theme.palette.accentTwo.light
+
 	return {
 		navigation: {
 			backgroundColor: theme.palette.background.paper,
@@ -84,6 +89,10 @@ const useStyles = makeStyles(theme => {
 			backgroundColor: activeBgColor,
 			'&:focus': {
 				backgroundColor: activeBgColor,
+			},
+			'&:hover': {
+				backgroundColor: hoverActiveBgColor,
+				color: theme.palette.text.secondary,
 			},
 		},
 		adxLink: {

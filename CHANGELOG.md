@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.35
+##### *2020-03-02*
+
+### Added
+- Getting started guide
+- Publishers revenue warning alert
+- Translations sanitization
+
+### Changed
+- Translations interpolations (updated components args usage)
+- Ui styles
+
+### Fixed
+- Email validation
+- Misc bugs and styles
+
 ## 4.10.34
 ##### *2020-02-24*
 

@@ -1,5 +1,6 @@
 import adexTranslations from 'adex-translations'
 import { removeTags } from 'helpers/sanitizer'
+import { isValidElement, cloneElement } from 'react'
 
 const translations = adexTranslations()
 
@@ -13,7 +14,20 @@ const interpolate = (tpl, args) => {
 	const pattern = new RegExp(/\${(\w+)}/, 'gi')
 	const parts = tpl.split(pattern)
 
-	const interpolated = parts.map(p => args[p] || p)
+	const interpolated = parts.map((p, i) => {
+		const element = args[p] || p
+		if (isValidElement(element) && !element.key) {
+			const withKey = cloneElement(element, { key: i })
+
+			return withKey
+		}
+
+		return element
+	})
+
+	if (interpolated.every(i => typeof i === 'string')) {
+		return interpolated.join('')
+	}
 
 	return interpolated
 }
