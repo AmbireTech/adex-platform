@@ -227,9 +227,11 @@ function Dashboard(props) {
 												color='primary'
 												underline='always'
 												target='_blank'
-												href={process.env.ADEX_SUPPORT_URL}
+												href={
+													'https://help.adex.network/hc/en-us/articles/360012285459-Mandatory-verification-for-publishers'
+												}
 											>
-												{<strong>{t('SUPPORT')}</strong>}
+												{<strong>{t('HERE')}</strong>}
 											</Anchor>,
 										],
 									})}
