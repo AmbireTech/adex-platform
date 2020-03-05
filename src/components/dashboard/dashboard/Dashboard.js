@@ -212,13 +212,7 @@ function Dashboard(props) {
 
 					{side === 'publisher' && !minPublisherRevenueReached && (
 						<Box mb={2}>
-							<Alert
-								variant='outlined'
-								severity='warning'
-								onClose={() => {
-									execute(updatePrivilegesWarningAccepted(true))
-								}}
-							>
+							<Alert variant='outlined' severity='warning'>
 								<div>
 									{t('PUBLISHER_REVENUE_NOTICE', {
 										args: [
