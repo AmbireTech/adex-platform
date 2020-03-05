@@ -292,7 +292,7 @@ function SideNav(props) {
 						<Anchor
 							className={classes.adxLink}
 							target='_blank'
-							href='https://github.com/AdExBlockchain/adex-dapp/blob/master/CHANGELOG.md'
+							href='https://github.com/AdExNetwork/adex-platform/blob/development/CHANGELOG.md.'
 						>
 							v.{packageJson.version}-beta
 						</Anchor>
