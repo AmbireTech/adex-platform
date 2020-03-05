@@ -68,7 +68,7 @@ const useStyles = makeStyles(theme => {
 			top: 0,
 			left: 0,
 			right: 0,
-			bottom: 80,
+			bottom: 100,
 			overflowY: 'auto',
 			overflowX: 'hidden',
 		},
