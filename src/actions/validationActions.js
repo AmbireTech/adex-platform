@@ -113,20 +113,6 @@ export function validateEmailCheck(validateId, emailCheck, email, dirty) {
 	}
 }
 
-export function validateNotExistingEmail(validateId, email, dirty) {
-	return async function(dispatch, getState) {
-		const { existing } = (await getEmail({ email })) || {}
-		const isValid = existing === false
-		validate(validateId, 'email', {
-			isValid,
-			err: { msg: 'EMAIL_ALREADY_USED' },
-			dirty,
-		})(dispatch)
-
-		return isValid
-	}
-}
-
 export function validatePassword(validateId, password, dirty) {
 	return async function(dispatch, getState) {
 		const isValid = validPassword(password)
@@ -592,24 +578,22 @@ export function validateSchemaProp({ validateId, value, prop, schema, dirty }) {
 
 export function validateEmail(validateId, email, dirty, validateNotExisting) {
 	return async function(dispatch) {
-		let isValid = await validateSchemaProp({
-			validateId,
-			value: email || '',
-			prop: 'email',
-			dirty,
-			schema: account.email,
-		})(dispatch)
+		const result = Joi.validate(email, account.email)
+		let isValid = !result.error
+		let msg = result.error ? result.error.message : ''
 
 		if (validateNotExisting && isValid) {
 			const { existing } = (await getEmail({ email })) || {}
 			isValid = existing === false
-			await validate(validateId, 'email', {
-				isValid,
-				err: { msg: 'EMAIL_ALREADY_USED' },
-				dirty,
-			})(dispatch)
-
-			return isValid
+			msg = 'EMAIL_ALREADY_USED'
 		}
+
+		await validate(validateId, 'email', {
+			isValid,
+			err: { msg },
+			dirty,
+		})(dispatch)
+
+		return isValid
 	}
 }
