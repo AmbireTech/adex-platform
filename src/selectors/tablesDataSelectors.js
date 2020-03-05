@@ -26,6 +26,7 @@ export const selectCampaignsTableData = createSelector(
 					mediaUrl: firstUnit.mediaUrl || '',
 					mediaMime: firstUnit.mediaMime || '',
 				},
+				title: item.title,
 				status: {
 					humanFriendlyName: item.status.humanFriendlyName,
 					originalName: item.status.name,
@@ -34,6 +35,10 @@ export const selectCampaignsTableData = createSelector(
 				fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
 				impressions: selectCampaignEventsCount('IMPRESSION', item.id),
 				clicks: selectCampaignEventsCount('CLICK', item.id),
+				ctr:
+					(selectCampaignEventsCount('CLICK', item.id) /
+						selectCampaignEventsCount('IMPRESSION', item.id)) *
+						100 || 0,
 				minPerImpression:
 					Number(
 						formatUnits(

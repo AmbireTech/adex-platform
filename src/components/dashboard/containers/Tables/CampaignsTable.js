@@ -20,7 +20,7 @@ import { commify } from 'ethers/utils'
 import { execute, handlePrintSelectedReceipts } from 'actions'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
-import { formatDateTime } from 'helpers/formatters'
+import { formatDateTime, truncateString } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 import { useTableData } from './tableHooks'
 import { ReloadData, PrintAllReceipts } from './toolbars'
@@ -98,6 +98,15 @@ const getCols = ({
 		},
 	},
 	{
+		name: 'title',
+		label: t('PROP_TITLE'),
+		options: {
+			filter: false,
+			sort: true,
+			customBodyRender: (title = '') => truncateString(title, 20),
+		},
+	},
+	{
 		name: 'depositAmount',
 		label: t('PROP_DEPOSIT'),
 		options: {
@@ -151,6 +160,18 @@ const getCols = ({
 		},
 	},
 	{
+		name: 'ctr',
+		label: t('CHART_LABEL_CTR'),
+		options: {
+			sort: true,
+			customBodyRender: ctr => `${(ctr || 0).toFixed(2)}%`,
+			...sliderFilterOptions({
+				initial: [0, 100],
+				filterTitle: t('DISTRIBUTED_CTR'),
+			}),
+		},
+	},
+	{
 		name: 'minPerImpression',
 		label: t('PROP_CPM'),
 		options: {
@@ -178,6 +199,7 @@ const getCols = ({
 		label: t('PROP_STARTS'),
 		options: {
 			filter: false,
+			display: false,
 			sort: true,
 			customBodyRender: activeFrom => formatDateTime(activeFrom),
 		},
@@ -187,6 +209,7 @@ const getCols = ({
 		label: t('PROP_ENDS'),
 		options: {
 			filter: false,
+			display: false,
 			sort: true,
 			customBodyRender: withdrawPeriodStart =>
 				formatDateTime(withdrawPeriodStart),
