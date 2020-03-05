@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
@@ -20,7 +20,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
-import { validations } from 'adex-models'
+import { validations, schemas, Joi } from 'adex-models'
 import { utils } from 'ethers'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import { selectMainToken } from 'selectors'
@@ -164,6 +164,18 @@ const validateAmount = (value = '', prop, dirty, errMsg, validate) => {
 	})
 }
 
+const validateWebsite = (value = '', prop, dirty, errMsg, validate) => {
+	const result = Joi.validate(value, schemas.adSlotPut.website)
+
+	const isValid = !result.error
+
+	validate(prop, {
+		isValid: isValid,
+		err: { msg: errMsg || 'SLOT_WEBSITE_ERR' },
+		dirty: dirty,
+	})
+}
+
 const SlotMinCPM = ({
 	item,
 	t,
@@ -280,7 +292,7 @@ const SlotWebsite = ({
 			fullWidth
 			className={classes.textField}
 			margin='dense'
-			error={!!errWebsite}
+			error={!!errWebsite && activeFields.website}
 		>
 			<InputLabel>{t('SLOT_WEBSITE')}</InputLabel>
 			<Input
@@ -288,8 +300,9 @@ const SlotWebsite = ({
 				autoFocus
 				type='text'
 				name={'website'}
-				value={website || ''}
+				value={website || item.website || ''}
 				onChange={ev => {
+					validateWebsite(ev.target.value, 'website', true, '', validate)
 					handleChange(
 						'temp',
 						updateItemTemp({
@@ -303,12 +316,12 @@ const SlotWebsite = ({
 				onBlur={ev => {
 					setActiveFields('website', false)
 				}}
-				disabled={!!item.website}
+				disabled={!!item.website || !activeFields.website}
 				endAdornment={
 					!item.website && (
 						<InputAdornment position='end'>
 							<IconButton
-								disabled={activeFields['website'] || isDemo}
+								disabled={activeFields.website || isDemo}
 								color='secondary'
 								className={classes.buttonRight}
 								onClick={ev => setActiveFields('website', true)}
@@ -321,14 +334,23 @@ const SlotWebsite = ({
 			/>
 
 			<FormHelperText>
-				{errWebsite && !!errWebsite.errMsg ? (
+				{errWebsite && !!errWebsite.errMsg && activeFields.website ? (
 					t(errWebsite.errMsg, { args: errWebsite.errMsgArgs })
 				) : (
-					<span
-						dangerouslySetInnerHTML={{
-							__html: t('SLOT_WEBSITE_CODE_WARNING'),
-						}}
-					/>
+					<Fragment>
+						{activeFields.website && (
+							<div
+								dangerouslySetInnerHTML={{
+									__html: t('SLOT_MIN_CPM_HELPER'),
+								}}
+							/>
+						)}
+						<div
+							dangerouslySetInnerHTML={{
+								__html: t('SLOT_WEBSITE_CODE_WARNING'),
+							}}
+						/>
+					</Fragment>
 				)}
 			</FormHelperText>
 		</FormControl>
