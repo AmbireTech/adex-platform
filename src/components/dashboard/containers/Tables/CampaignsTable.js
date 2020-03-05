@@ -24,6 +24,8 @@ import { formatDateTime } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 import { useTableData } from './tableHooks'
 import { ReloadData, PrintAllReceipts } from './toolbars'
+import { push } from 'connected-react-router'
+
 const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(styles)
@@ -57,7 +59,7 @@ const getCols = ({
 			filter: false,
 			sort: false,
 			download: false,
-			customBodyRender: ({ id, adUnits }) => {
+			customBodyRender: ({ side, id, adUnits }) => {
 				return (
 					// TODO: Images issue some stop displaying
 					<Img
@@ -67,6 +69,7 @@ const getCols = ({
 						alt={id}
 						mediaMime={adUnits[0].mediaMime}
 						allowVideo
+						onClick={() => execute(push(`/dashboard/${side}/Campaign/${id}`))}
 					/>
 				)
 			},
