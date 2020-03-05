@@ -199,7 +199,7 @@ const getCols = ({
 			filter: false,
 			sort: true,
 			download: false,
-			customBodyRender: ({ side, id, humanFriendlyName }) => (
+			customBodyRender: ({ side, id, receiptReady }) => (
 				<React.Fragment>
 					<Tooltip
 						title={t('LABEL_VIEW')}
@@ -214,22 +214,29 @@ const getCols = ({
 							<Visibility color='primary' />
 						</RRIconButton>
 					</Tooltip>
-					{(humanFriendlyName === 'Closed' ||
-						humanFriendlyName === 'Completed') && (
-						<Tooltip
-							title={t('RECEIPT_VIEW')}
-							// placement='top'
-							enterDelay={1000}
-						>
+					<Tooltip
+						title={
+							receiptReady
+								? t('RECEIPT_VIEW')
+								: 'Report not available until the campaign is completed'
+						}
+						// placement='top'
+						enterDelay={1000}
+					>
+						{/* SPAN needed to enable tooltip on hover of disabled element
+						 https://material-ui.com/components/tooltips/#disabled-elements
+						*/}
+						<span>
 							<RRIconButton
 								to={`/dashboard/${side}/Campaign/receipt/${id}`}
 								variant='contained'
 								aria-label='receip'
+								disabled={!receiptReady}
 							>
-								<Receipt color='primary' />
+								<Receipt color={receiptReady ? 'primary' : 'grey'} />
 							</RRIconButton>
-						</Tooltip>
-					)}
+						</span>
+					</Tooltip>
 				</React.Fragment>
 			),
 		},
