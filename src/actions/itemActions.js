@@ -227,30 +227,36 @@ export function updateItem({ item, itemType } = {}) {
 			const { authSig } = account.wallet
 			const { mainToken } = selectRelayerConfig()
 
+			const newItem = { ...item }
 			let updatedItem = null
 			let objModel = null
 
 			switch (itemType) {
 				case 'AdSlot':
-					if (typeof item.temp.minPerImpression === 'string') {
-						updatedItem.minPerImpression = {
+					if (typeof newItem.temp.minPerImpression === 'string') {
+						newItem.minPerImpression = {
 							[mainToken.address]: numStringCPMtoImpression({
-								numStr: item.temp.minPerImpression,
+								numStr: newItem.temp.minPerImpression,
 								decimals: mainToken.decimals,
 							}),
 						}
 					}
-					const slot = new AdSlot(item).marketUpdate
+					if (typeof newItem.temp.website === 'string') {
+						newItem.website = newItem.temp.website
+					} else {
+						newItem.website = null
+					}
+					const slot = new AdSlot(newItem).marketUpdate
 					updatedItem = (await updateAdSlot({ slot, id, authSig })).slot
 					objModel = AdSlot
 					break
 				case 'AdUnit':
-					const unit = new AdUnit(item).marketUpdate
+					const unit = new AdUnit(newItem).marketUpdate
 					updatedItem = (await updateAdUnit({ unit, id, authSig })).unit
 					objModel = AdUnit
 					break
 				case 'Campaign':
-					const campaign = new Campaign(item).marketUpdate
+					const campaign = new Campaign(newItem).marketUpdate
 					updatedItem = (await updateCampaign({ campaign, id, authSig }))
 						.campaign
 					objModel = Campaign
