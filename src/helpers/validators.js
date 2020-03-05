@@ -2,10 +2,8 @@ import { utils } from 'ethers'
 import { isEthAddressERC20 } from 'services/smart-contracts/actions/erc20'
 import { isConnectionLost } from 'services/smart-contracts/actions/common'
 import { getEthers } from 'services/smart-contracts/ethers'
-import { ethers } from 'ethers'
 /*eslint-disable */
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
-const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/i
 const onlyDigitsRegex = /^([1-9]+\d*)$/
 // Min 8 chars - at least 1 uppercase, 1 lowercase, 1 digit
 const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/
@@ -14,12 +12,6 @@ const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/
 export const validUrl = url => {
 	url = url || ''
 	const isValid = urlRegex.test(url)
-	return isValid
-}
-
-export const validEmail = email => {
-	email = email || ''
-	const isValid = emailRegex.test(email)
 	return isValid
 }
 
