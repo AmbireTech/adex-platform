@@ -42,14 +42,18 @@ export class Campaign extends Component {
 	}
 
 	CampaignActions = ({ campaign, actions, t }) => {
+		const humanFriendlyName = campaign.status.humanFriendlyName
 		return (
 			<Grid container spacing={2}>
 				<Grid item xs={12}>
 					<Button
+						variant='contained'
 						color='secondary'
+						size='large'
 						onClick={() => {
 							actions.closeCampaign({ campaign })
 						}}
+						disabled={humanFriendlyName !== 'Closed'}
 					>
 						{t('BTN_CLOSE_CAMPAIGN')}
 					</Button>
