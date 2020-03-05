@@ -7,7 +7,6 @@ import {
 	updateAdUnit,
 	updateCampaign,
 } from 'services/adex-market/actions'
-import { parseUnits, bigNumberify } from 'ethers/utils'
 import { Base, AdSlot, AdUnit, helpers, Campaign } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
 
@@ -221,7 +220,8 @@ export function getAllItems() {
 // Accepts the entire new item and replace so be careful!
 export function updateItem({ item, itemType } = {}) {
 	return async function(dispatch, getState) {
-		updateSpinner('update' + item.id, true)(dispatch)
+		const { id } = item
+		updateSpinner('update' + id, true)(dispatch)
 		try {
 			const { account } = getState().persist
 			const { authSig } = account.wallet
@@ -230,18 +230,14 @@ export function updateItem({ item, itemType } = {}) {
 			let updatedItem = null
 			let objModel = null
 
-			const { id } = item
-
 			switch (itemType) {
 				case 'AdSlot':
-					if (item.temp.minPerImpression) {
-						item.minPerImpression = {
-							[mainToken.address]: parseUnits(
-								item.temp.minPerImpression,
-								mainToken.decimals
-							)
-								.div(bigNumberify(1000))
-								.toString(),
+					if (typeof item.temp.minPerImpression === 'string') {
+						updatedItem.minPerImpression = {
+							[mainToken.address]: numStringCPMtoImpression({
+								numStr: item.temp.minPerImpression,
+								decimals: mainToken.decimals,
+							}),
 						}
 					}
 					const slot = new AdSlot(item).marketUpdate
