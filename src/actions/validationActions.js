@@ -5,13 +5,13 @@ import { translate } from 'services/translations/translations'
 import { addToast } from './uiActions'
 import { bigNumberify, parseUnits } from 'ethers/utils'
 import { validations, Joi, schemas, constants } from 'adex-models'
-import { validEmail, validPassword } from 'helpers/validators'
+import { validPassword } from 'helpers/validators'
 import { t, selectAuthType } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
 import { getEmail } from 'services/adex-relayer/actions'
 const { IdentityPrivilegeLevel } = constants
 
-const { campaignPut } = schemas
+const { campaignPut, account } = schemas
 const { isNumberString } = validations
 
 export function validateAddress({ addr, dirty, validate, name, nonERC20 }) {
@@ -100,39 +100,12 @@ export const handleAfterValidation = async ({
 	}
 }
 
-export function validateEmail(validateId, email, dirty) {
-	return async function(dispatch, getState) {
-		const isValid = validEmail(email)
-		validate(validateId, 'email', {
-			isValid,
-			err: { msg: 'ERR_EMAIL' },
-			dirty,
-		})(dispatch)
-
-		return isValid
-	}
-}
-
 export function validateEmailCheck(validateId, emailCheck, email, dirty) {
 	return async function(dispatch, getState) {
 		const isValid = !!emailCheck && !!email && emailCheck === email
 		validate(validateId, 'emailCheck', {
 			isValid,
 			err: { msg: 'ERR_EMAIL_CHECK' },
-			dirty,
-		})(dispatch)
-
-		return isValid
-	}
-}
-
-export function validateNotExistingEmail(validateId, email, dirty) {
-	return async function(dispatch, getState) {
-		const { existing } = (await getEmail({ email })) || {}
-		const isValid = existing === false
-		validate(validateId, 'email', {
-			isValid,
-			err: { msg: 'EMAIL_ALREADY_USED' },
 			dirty,
 		})(dispatch)
 
@@ -589,15 +562,36 @@ export function validatePrivLevel({ validateId, privLevel, dirty }) {
 	}
 }
 export function validateSchemaProp({ validateId, value, prop, schema, dirty }) {
-	return async function(dispatch, getState) {
+	return async function(dispatch) {
 		const result = Joi.validate(value, schema)
-
 		const isValid = !result.error
 
-		validate(validateId, prop, {
+		await validate(validateId, prop, {
 			isValid,
 			err: { msg: result.error ? result.error.message : '' },
 			dirty: dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateEmail(validateId, email, dirty, validateNotExisting) {
+	return async function(dispatch) {
+		const result = Joi.validate(email, account.email)
+		let isValid = !result.error
+		let msg = result.error ? result.error.message : ''
+
+		if (validateNotExisting && isValid) {
+			const { existing } = (await getEmail({ email })) || {}
+			isValid = existing === false
+			msg = 'EMAIL_ALREADY_USED'
+		}
+
+		await validate(validateId, 'email', {
+			isValid,
+			err: { msg },
+			dirty,
 		})(dispatch)
 
 		return isValid
