@@ -255,6 +255,17 @@ function SideNav(props) {
 						</Anchor>
 					</small>
 				</div>
+				<div className={classes.adxLink}>
+					<small>
+						<Anchor
+							className={classes.adxLink}
+							target='_blank'
+							href={process.env.ADEX_SITE_HOST}
+						>
+							{t('TOS_CHECK')}
+						</Anchor>
+					</small>
+				</div>
 				<div>
 					<small>
 						<Anchor
