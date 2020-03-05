@@ -219,18 +219,21 @@ function Dashboard(props) {
 									execute(updatePrivilegesWarningAccepted(true))
 								}}
 							>
-								{t('PUBLISHER_REVENUE_NOTICE', {
-									args: [
-										<Anchor
-											color='primary'
-											underline='always'
-											target='_blank'
-											href={process.env.ADEX_SUPPORT_URL}
-										>
-											{<strong>{t('SUPPORT')}</strong>}
-										</Anchor>,
-									],
-								})}
+								<div>
+									{t('PUBLISHER_REVENUE_NOTICE', {
+										args: [
+											<Anchor
+												key='publisher-revenue-notice'
+												color='primary'
+												underline='always'
+												target='_blank'
+												href={process.env.ADEX_SUPPORT_URL}
+											>
+												{<strong>{t('SUPPORT')}</strong>}
+											</Anchor>,
+										],
+									})}
+								</div>
 							</Alert>
 						</Box>
 					)}
