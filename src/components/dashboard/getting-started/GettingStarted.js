@@ -55,9 +55,6 @@ import {
 import { ExternalAnchor } from 'components/common/anchor/'
 
 const useStyles = makeStyles(theme => ({
-	panel: {
-		marginBottom: theme.spacing(2),
-	},
 	root: {
 		backgroundColor: theme.palette.background.paper,
 		flex: 1,
@@ -227,170 +224,171 @@ export default function GettingStarted(props) {
 	return (
 		!isGettingStartedHidden &&
 		(steps[side] && (
-			<ExpansionPanel
-				className={classes.panel}
-				expanded={expanded}
-				onChange={() => setExpanded(!expanded)}
-				square={true}
-			>
-				<ExpansionPanelSummary
-					expandIcon={<ExpandMore />}
-					aria-controls='expand-getting-started'
-					id='getting-started-header'
+			<Box mb={2}>
+				<ExpansionPanel
+					expanded={expanded}
+					onChange={() => setExpanded(!expanded)}
+					square={true}
 				>
-					<Box
-						width={1}
-						display='flex'
-						flexDirection='row'
-						alignItems='center'
-						justifyContent='space-between'
+					<ExpansionPanelSummary
+						expandIcon={<ExpandMore />}
+						aria-controls='expand-getting-started'
+						id='getting-started-header'
 					>
-						<Typography variant={'h6'}>
-							{t('GETTING_STARTED_HEADING')}
-						</Typography>
+						<Box
+							width={1}
+							display='flex'
+							flexDirection='row'
+							alignItems='center'
+							justifyContent='space-between'
+						>
+							<Typography variant={'h6'}>
+								{t('GETTING_STARTED_HEADING')}
+							</Typography>
 
-						<div>
-							{steps[side].map(({ label, icon, check }, index) => {
-								const Icon = check ? Star : StarBorder
-								const color = check ? 'secondary' : 'inherit'
+							<div>
+								{steps[side].map(({ label, icon, check }, index) => {
+									const Icon = check ? Star : StarBorder
+									const color = check ? 'secondary' : 'inherit'
 
-								return (
-									<Tooltip title={label}>
-										<Icon color={color} key={index} />
-									</Tooltip>
-								)
-							})}
-						</div>
-					</Box>
-				</ExpansionPanelSummary>
-
-				<ExpansionPanelDetails>
-					<Box width={1}>
-						<Hidden mdUp>
-							<Box p={2} justifyContent={'center'} display='flex'>
-								<ColorlibStepIcon
-									icon={steps[side][activeStep].icon}
-									completed={steps[side][activeStep].check}
-									size='35vw'
-								/>
-							</Box>
-							<MobileStepper
-								className={classes.root}
-								steps={steps[side].length}
-								position='static'
-								variant='progress'
-								activeStep={activeStep}
-								nextButton={
-									<Button
-										size='small'
-										onClick={handleNext}
-										disabled={activeStep === steps[side].length - 1}
-									>
-										{t('NEXT')}
-										<KeyboardArrowRight />
-									</Button>
-								}
-								backButton={
-									<Button
-										size='small'
-										onClick={handleBack}
-										disabled={activeStep === 0}
-									>
-										<KeyboardArrowLeft />
-										{t('BACK')}
-									</Button>
-								}
-							/>
-						</Hidden>
-						<Hidden smDown>
-							<Stepper
-								nonLinear
-								alternativeLabel
-								activeStep={activeStep}
-								connector={<ColorlibConnector />}
-							>
-								{steps[side].map(({ label, icon, check }, index) => (
-									<Step key={label}>
-										<StepButton onClick={handleStep(index)}>
-											<StepLabel
-												StepIconComponent={ColorlibStepIcon}
-												StepIconProps={{ icon, completed: check }}
-											>
-												{label}
-											</StepLabel>
-										</StepButton>
-									</Step>
-								))}
-							</Stepper>
-						</Hidden>
-						<Box>
-							{indexOfFirstIncompleteStep === -1 ? (
-								<Box
-									display='flex'
-									justifyContent={'space-between'}
-									flexWrap='wrap'
-								>
-									<Typography className={classes.instructions}>
-										<strong>{t('GETTING_STARTED_FINISHED')}</strong>
-									</Typography>
-									<Button
-										color='primary'
-										onClick={handleDismiss}
-										className={classes.button}
-										startIcon={<Close />}
-									>
-										{t('DISMISS')}
-									</Button>
-								</Box>
-							) : (
-								<Box>
-									<Typography
-										variant={'body1'}
-										className={classes.instructions}
-									>
-										<strong>
-											{t('GETTING_STARTED_STEPS', {
-												args: [
-													activeStep + 1,
-													steps[side][activeStep].label || '',
-												],
-											})}{' '}
-											{steps[side][activeStep].check ? t('COMPLETED') : ''}
-										</strong>
-									</Typography>
-									{steps[side][activeStep].check ? (
-										<Typography className={classes.instructions}>
-											{steps[side][activeStep].contentCompleted}
-										</Typography>
-									) : (
-										<Typography className={classes.instructions}>
-											{steps[side][activeStep].content}{' '}
-											{steps[side][activeStep].tutorial &&
-												t('GETTING_STARTED_NOT_SURE_SEE_TUTORIAL', {
-													args: [
-														<Link
-															key='see-tutorial-link'
-															href='#'
-															onClick={e => {
-																e.preventDefault()
-																steps[side][activeStep].tutorial()
-															}}
-															className={classes.instructions}
-															color={'primary'}
-															underline={'hover'}
-														>
-															{t('OUR_TUTORIAL')}
-														</Link>,
-													],
-												})}
-										</Typography>
-									)}
-								</Box>
-							)}
+									return (
+										<Tooltip title={label}>
+											<Icon color={color} key={index} />
+										</Tooltip>
+									)
+								})}
+							</div>
 						</Box>
-					</Box>
-				</ExpansionPanelDetails>
-			</ExpansionPanel>
+					</ExpansionPanelSummary>
+
+					<ExpansionPanelDetails>
+						<Box width={1}>
+							<Hidden mdUp>
+								<Box p={2} justifyContent={'center'} display='flex'>
+									<ColorlibStepIcon
+										icon={steps[side][activeStep].icon}
+										completed={steps[side][activeStep].check}
+										size='35vw'
+									/>
+								</Box>
+								<MobileStepper
+									className={classes.root}
+									steps={steps[side].length}
+									position='static'
+									variant='progress'
+									activeStep={activeStep}
+									nextButton={
+										<Button
+											size='small'
+											onClick={handleNext}
+											disabled={activeStep === steps[side].length - 1}
+										>
+											{t('NEXT')}
+											<KeyboardArrowRight />
+										</Button>
+									}
+									backButton={
+										<Button
+											size='small'
+											onClick={handleBack}
+											disabled={activeStep === 0}
+										>
+											<KeyboardArrowLeft />
+											{t('BACK')}
+										</Button>
+									}
+								/>
+							</Hidden>
+							<Hidden smDown>
+								<Stepper
+									nonLinear
+									alternativeLabel
+									activeStep={activeStep}
+									connector={<ColorlibConnector />}
+								>
+									{steps[side].map(({ label, icon, check }, index) => (
+										<Step key={label}>
+											<StepButton onClick={handleStep(index)}>
+												<StepLabel
+													StepIconComponent={ColorlibStepIcon}
+													StepIconProps={{ icon, completed: check }}
+												>
+													{label}
+												</StepLabel>
+											</StepButton>
+										</Step>
+									))}
+								</Stepper>
+							</Hidden>
+							<Box>
+								{indexOfFirstIncompleteStep === -1 ? (
+									<Box
+										display='flex'
+										justifyContent={'space-between'}
+										flexWrap='wrap'
+									>
+										<Typography className={classes.instructions}>
+											<strong>{t('GETTING_STARTED_FINISHED')}</strong>
+										</Typography>
+										<Button
+											color='primary'
+											onClick={handleDismiss}
+											className={classes.button}
+											startIcon={<Close />}
+										>
+											{t('DISMISS')}
+										</Button>
+									</Box>
+								) : (
+									<Box>
+										<Typography
+											variant={'body1'}
+											className={classes.instructions}
+										>
+											<strong>
+												{t('GETTING_STARTED_STEPS', {
+													args: [
+														activeStep + 1,
+														steps[side][activeStep].label || '',
+													],
+												})}{' '}
+												{steps[side][activeStep].check ? t('COMPLETED') : ''}
+											</strong>
+										</Typography>
+										{steps[side][activeStep].check ? (
+											<Typography className={classes.instructions}>
+												{steps[side][activeStep].contentCompleted}
+											</Typography>
+										) : (
+											<Typography className={classes.instructions}>
+												{steps[side][activeStep].content}{' '}
+												{steps[side][activeStep].tutorial &&
+													t('GETTING_STARTED_NOT_SURE_SEE_TUTORIAL', {
+														args: [
+															<Link
+																key='see-tutorial-link'
+																href='#'
+																onClick={e => {
+																	e.preventDefault()
+																	steps[side][activeStep].tutorial()
+																}}
+																className={classes.instructions}
+																color={'primary'}
+																underline={'hover'}
+															>
+																{t('OUR_TUTORIAL')}
+															</Link>,
+														],
+													})}
+											</Typography>
+										)}
+									</Box>
+								)}
+							</Box>
+						</Box>
+					</ExpansionPanelDetails>
+				</ExpansionPanel>
+			</Box>
 		))
 	)
 }
