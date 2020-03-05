@@ -222,6 +222,7 @@ function Dashboard(props) {
 								{t('PUBLISHER_REVENUE_NOTICE', {
 									args: [
 										<Anchor
+											key='publisher-revenue-notice'
 											color='primary'
 											underline='always'
 											target='_blank'
