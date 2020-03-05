@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.36
+##### *2020-03-05*
+
+### Added
+- Website filed on slot creation #378
+- TOS change notification
+
+### Fixed
+- Email validation #354
+- Campaigns blank page #373
+- Styles
+- Code cleanup
+- Missing keys for translations components args
+- Components translations with tags
+- Publishers revenue notice
+
 ## 4.10.35
 ##### *2020-03-02*
 
