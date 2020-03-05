@@ -39,15 +39,21 @@ export const selectAdvancedAnalyticsByType = createSelector(
 )
 
 export const selectPublisherStatsByType = createSelector(
-	(state, type) => [selectAdvancedAnalyticsByType(state, type)],
-	([advancedByType]) => advancedByType.publisherStats || {}
+	(state, type) => selectAdvancedAnalyticsByType(state, type),
+	advancedByType => advancedByType.publisherStats || {}
 )
-export const selectPublisherMaxImpressions = createSelector(
-	state => [selectPublisherStatsByType(state, 'IMPRESSION')],
-	([{ reportPublisherToAdSlot }]) =>
-		reportPublisherToAdSlot
-			? Math.max.apply(null, Object.values(reportPublisherToAdSlot))
+export const selectPublisherTotalImpressions = createSelector(
+	state => selectPublisherStatsByType(state, 'IMPRESSION'),
+	({ reportPublisherToAdUnit }) => {
+		const totalImpressions = reportPublisherToAdUnit
+			? Object.values(reportPublisherToAdUnit).reduce(
+					(a, value) => a + Number(value) || 0,
+					0
+			  )
 			: 0
+
+		return totalImpressions
+	}
 )
 
 export const selectCampaignAnalyticsByChannelStats = createSelector(
