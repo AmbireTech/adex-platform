@@ -208,15 +208,14 @@ export function closeCampaign({ campaign }) {
 				item: newCampaign,
 				itemType: 'Campaign',
 			})
-			addToast({
-				dispatch,
-				type: 'accept',
-				toastStr: 'SUCCESS_CLOSING_CAMPAIGN',
-				args: [campaign.id],
-			})
 			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch, getState)
 			updateUserCampaigns(dispatch, getState)
 			execute(push('/dashboard/advertiser/campaigns'))
+			addToast({
+				type: 'accept',
+				label: t('SUCCESS_CLOSING_CAMPAIGN'),
+				timeout: 20000,
+			})(dispatch)
 		} catch (err) {
 			console.error('ERR_CLOSING_CAMPAIGN', err)
 			addToast({
