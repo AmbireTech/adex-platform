@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import {
 	Box,
@@ -10,13 +10,19 @@ import {
 	Button,
 	Typography,
 	Hidden,
-	Collapse,
 	Link,
+	ExpansionPanel,
+	ExpansionPanelDetails,
+	ExpansionPanelSummary,
+	Tooltip,
 } from '@material-ui/core'
 import {
 	KeyboardArrowLeft,
 	KeyboardArrowRight,
+	ExpandMore,
 	Close,
+	Star,
+	StarBorder,
 } from '@material-ui/icons'
 import EmailEddie from 'resources/getting-started/GS-email-ic.png'
 import FundEddie from 'resources/getting-started/GS-fund-ic.png'
@@ -49,8 +55,12 @@ import {
 import { ExternalAnchor } from 'components/common/anchor/'
 
 const useStyles = makeStyles(theme => ({
+	panel: {
+		marginBottom: theme.spacing(2),
+	},
 	root: {
 		backgroundColor: theme.palette.background.paper,
+		flex: 1,
 	},
 	button: {
 		marginRight: theme.spacing(1),
@@ -74,6 +84,7 @@ export default function GettingStarted(props) {
 	const has5000Impressions = useSelector(selectHas5000Impressions)
 	const isGettingStartedHidden = useSelector(selectHideGettingStarted)
 	const emailProvider = useSelector(selectEmailProvider)
+	const [expanded, setExpanded] = useState(true)
 
 	const steps = {
 		advertiser: [
@@ -214,13 +225,47 @@ export default function GettingStarted(props) {
 	}, [indexOfFirstIncompleteStep])
 	// TODO: wait for the data to be loaded before displaying the getting started
 	return (
-		!isGettingStartedHidden && (
-			<Collapse in>
-				{steps[side] && (
-					<Box className={classes.root} mb={1} p={2} boxShadow={2}>
+		!isGettingStartedHidden &&
+		(steps[side] && (
+			<ExpansionPanel
+				className={classes.panel}
+				expanded={expanded}
+				onChange={() => setExpanded(!expanded)}
+				square={true}
+			>
+				<ExpansionPanelSummary
+					expandIcon={<ExpandMore />}
+					aria-controls='expand-getting-started'
+					id='getting-started-header'
+				>
+					<Box
+						width={1}
+						display='flex'
+						flexDirection='row'
+						alignItems='center'
+						justifyContent='space-between'
+					>
 						<Typography variant={'h6'}>
 							{t('GETTING_STARTED_HEADING')}
 						</Typography>
+
+						<div>
+							{steps[side].map(({ label, icon, check }, index) => {
+								const Icon = check ? Star : StarBorder
+								const color = check ? 'secondary' : 'inherit'
+
+								return (
+									<Tooltip title={label}>
+										<Icon color={color} key={index} />
+									</Tooltip>
+								)
+							})}
+						</div>
+					</Box>
+				</ExpansionPanelSummary>
+
+				<ExpansionPanelDetails>
+					<Box width={1}>
 						<Hidden mdUp>
 							<Box p={2} justifyContent={'center'} display='flex'>
 								<ColorlibStepIcon
@@ -344,8 +389,8 @@ export default function GettingStarted(props) {
 							)}
 						</Box>
 					</Box>
-				)}
-			</Collapse>
-		)
+				</ExpansionPanelDetails>
+			</ExpansionPanel>
+		))
 	)
 }
