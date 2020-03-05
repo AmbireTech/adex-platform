@@ -50,7 +50,7 @@ import {
 	selectPublisherMinRevenueReached,
 } from 'selectors'
 import { useSelector } from 'react-redux'
-import GetttingStarted from '../getting-started/GettingStarted'
+import GettingStarted from '../getting-started/GettingStarted'
 
 const Campaigns = () => {
 	const privileges = useSelector(selectWalletPrivileges)
@@ -234,7 +234,7 @@ function Dashboard(props) {
 						</Box>
 					)}
 
-					{dataLoaded && <GetttingStarted side={side} />}
+					{dataLoaded && <GettingStarted side={side} />}
 
 					<Switch>
 						<Route
