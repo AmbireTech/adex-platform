@@ -164,38 +164,71 @@ export function updateSelectedCampaigns(selectedItems) {
 	}
 }
 
-export function refreshCacheAndReload({ version, notification = false }) {
+export function refreshCacheAndReload({ version }) {
 	return function(dispatch) {
 		try {
-			if (notification) {
-			} else {
-				addToast({
-					type: 'accept',
-					action: (
-						// eslint-disable-next-line react/react-in-jsx-scope
-						<Button
-							color='primary'
-							size='small'
-							variant='contained'
-							onClick={() => {
-								if (caches) {
-									// Service worker cache should be cleared with caches.delete()
-									caches.keys().then(async function(names) {
-										await Promise.all(names.map(name => caches.delete(name)))
-									})
-								}
-								window.location.reload(true)
-							}}
-						>
-							{translate('REFRESH')}
-						</Button>
-					),
-					label: translate('SUCCESS_UPDATING_NEW_APP_VERSION', {
-						args: [version],
-					}),
-					timeout: 5000,
-				})(dispatch)
-			}
+			addToast({
+				type: 'accept',
+				action: (
+					// eslint-disable-next-line react/react-in-jsx-scope
+					<Button
+						color='primary'
+						size='small'
+						variant='contained'
+						onClick={() => {
+							if (caches) {
+								// Service worker cache should be cleared with caches.delete()
+								caches.keys().then(async function(names) {
+									await Promise.all(names.map(name => caches.delete(name)))
+								})
+							}
+							window.location.reload(true)
+						}}
+					>
+						{translate('REFRESH')}
+					</Button>
+				),
+				label: translate('SUCCESS_UPDATING_NEW_APP_VERSION', {
+					args: [version],
+				}),
+				timeout: 5000,
+			})(dispatch)
+		} catch (err) {
+			console.error('ERR_UPDATING_APP', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_UPDATING_APP'),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function notifyNewTOS() {
+	return function(dispatch) {
+		try {
+			addToast({
+				type: 'accept',
+				unclosable: true,
+				action: (
+					// eslint-disable-next-line react/react-in-jsx-scope
+					<Button
+						color='primary'
+						size='small'
+						variant='contained'
+						onClick={() => {
+							window.open('https://www.adex.network/tos', '_blank')
+							window.location.reload(true)
+						}}
+					>
+						{translate('TOS_CHECK')}
+					</Button>
+				),
+				label: translate('NOTIFICATION_NEW_TOS', {
+					args: [translate('TOS_CHECK')],
+				}),
+				timeout: 5000,
+			})(dispatch)
 		} catch (err) {
 			console.error('ERR_UPDATING_APP', err)
 			addToast({
