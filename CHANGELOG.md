@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.37
+##### *2020-03-05*
+
+### Changed
+- Getting started guide can be collapsed/expanded
+- Removed revenue alert close button
+
+### Fixed
+- Getting started steps for publisher slots and impressions
+- Dashboard alerts and content styles
+
 ## 4.10.36
 ##### *2020-03-05*
 
