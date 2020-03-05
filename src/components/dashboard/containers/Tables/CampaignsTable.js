@@ -57,15 +57,15 @@ const getCols = ({
 			filter: false,
 			sort: false,
 			download: false,
-			customBodyRender: ({ id, adUnits }) => {
+			customBodyRender: ({ id, mediaUrl, mediaMime }) => {
 				return (
 					// TODO: Images issue some stop displaying
 					<Img
 						fullScreenOnClick={true}
 						className={classnames(classes.cellImg)}
-						src={adUnits[0].mediaUrl}
+						src={mediaUrl}
 						alt={id}
-						mediaMime={adUnits[0].mediaMime}
+						mediaMime={mediaMime}
 						allowVideo
 					/>
 				)

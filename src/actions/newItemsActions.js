@@ -36,7 +36,7 @@ export function validateNewSlotBasics({
 		const mainToken = selectMainToken()
 		const state = getState()
 		const slot = selectNewAdSlot(state)
-		const { title, description, type, minPerImpression = null } = slot
+		const { title, description, type, website, minPerImpression = null } = slot
 
 		const validations = await Promise.all([
 			validateSchemaProp({
@@ -58,6 +58,13 @@ export function validateNewSlotBasics({
 				value: type,
 				prop: 'type',
 				schema: adSlotPost.type,
+				dirty,
+			})(dispatch),
+			validateSchemaProp({
+				validateId,
+				value: website,
+				prop: 'website',
+				schema: adSlotPost.website,
 				dirty,
 			})(dispatch),
 			validateNumberString({
