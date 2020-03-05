@@ -195,7 +195,7 @@ function Dashboard(props) {
 				<div className={classes.contentInner}>
 					<div className={classes.toolbar} />
 					{showTxPrivLevelWarning && (
-						<Box mb={2} p={1}>
+						<Box mb={2}>
 							<Alert
 								variant='outlined'
 								severity='info'
@@ -211,7 +211,7 @@ function Dashboard(props) {
 					)}
 
 					{side === 'publisher' && !minPublisherRevenueReached && (
-						<Box mb={2} p={1}>
+						<Box mb={2}>
 							<Alert
 								variant='outlined'
 								severity='warning'
