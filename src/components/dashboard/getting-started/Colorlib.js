@@ -11,8 +11,8 @@ const useColorlibStepIconStyles = makeStyles(theme => ({
 	root: {
 		backgroundColor: theme.palette.common.white,
 		zIndex: 1,
-		width: props => props.size || 100,
-		height: props => props.size || 100,
+		width: props => props.size || 80,
+		height: props => props.size || 80,
 		display: 'flex',
 		borderRadius: '50%',
 		justifyContent: 'center',
@@ -41,7 +41,7 @@ const useColorlibStepIconStyles = makeStyles(theme => ({
 
 export const ColorlibConnector = withStyles(theme => ({
 	alternativeLabel: {
-		top: 50,
+		top: 40,
 	},
 	line: {
 		height: 3,

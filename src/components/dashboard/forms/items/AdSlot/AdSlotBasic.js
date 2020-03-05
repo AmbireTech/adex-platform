@@ -24,7 +24,7 @@ import {
 function AdSlotBasic({ validateId }) {
 	const newItem = useSelector(selectNewAdSlot)
 	const adTypesSource = useSelector(selectSlotTypesSourceWithDemands)
-	const { title, description, type, minPerImpression } = newItem
+	const { title, description, website, type, minPerImpression } = newItem
 
 	const spinner = useSelector(state =>
 		selectSpinnerById(state, UPDATING_SLOTS_DEMAND)
@@ -39,10 +39,14 @@ function AdSlotBasic({ validateId }) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	const errTitle = invalidFields['title']
-	const errDescription = invalidFields['description']
-	const errMin = invalidFields['minPerImpression']
-	const errType = invalidFields['type']
+	const {
+		title: errTitle,
+		description: errDescription,
+		website: errWebsite,
+		type: errType,
+		minPerImpression: errMin,
+	} = invalidFields
+
 	const { symbol } = selectMainToken
 
 	return (
@@ -86,6 +90,32 @@ function AdSlotBasic({ validateId }) {
 								errDescription && !!errDescription.dirty
 									? errDescription.errMsg
 									: t('DESCRIPTION_HELPER')
+							}
+						/>
+					</Grid>
+					<Grid item sm={12}>
+						<TextField
+							fullWidth
+							type='text'
+							required
+							label={t('SLOT_WEBSITE')}
+							name='website'
+							value={website}
+							onChange={ev =>
+								execute(updateNewSlot('website', ev.target.value))
+							}
+							error={errWebsite && !!errWebsite.dirty}
+							maxLength={120}
+							helperText={
+								errWebsite && !!errWebsite.dirty ? (
+									errWebsite.errMsg
+								) : (
+									<span
+										dangerouslySetInnerHTML={{
+											__html: t('SLOT_WEBSITE_CODE_WARNING'),
+										}}
+									/>
+								)
 							}
 						/>
 					</Grid>

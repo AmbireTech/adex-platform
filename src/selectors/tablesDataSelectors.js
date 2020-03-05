@@ -15,12 +15,16 @@ export const selectCampaignsTableData = createSelector(
 	(campaigns, tokens, side) =>
 		campaigns.map(item => {
 			const { decimals = 18 } = tokens[item.depositAsset] || {}
-			const spec = item.spec || {}
+			const { spec = {}, adUnits = [] } = item
+
+			const firstUnit = adUnits[0] || {}
+
 			return {
 				media: {
 					side: side,
 					id: item.id,
-					adUnits: item.adUnits,
+					mediaUrl: firstUnit.mediaUrl || '',
+					mediaMime: firstUnit.mediaMime || '',
 				},
 				status: {
 					humanFriendlyName: item.status.humanFriendlyName,
