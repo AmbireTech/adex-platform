@@ -3,7 +3,7 @@ import { getState } from 'store'
 import { selectAuth } from 'selectors'
 import { execute, updateAccountStats } from 'actions'
 
-const LOOP_TIMEOUT = 10 * 1000
+const LOOP_TIMEOUT = 60 * 1000
 
 const accountStatsLoop = new Loop({
 	timeout: LOOP_TIMEOUT,
