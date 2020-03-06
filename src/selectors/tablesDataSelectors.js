@@ -54,8 +54,10 @@ export const selectCampaignsTableData = createSelector(
 					side: side,
 					id: item.id,
 					receiptReady:
-						item.status.humanFriendlyName === 'Closed' &&
-						item.status.name === 'Exhausted',
+						(item.status.humanFriendlyName === 'Closed' ||
+							item.status.humanFriendlyName === 'Completed') &&
+						(item.status.name === 'Exhausted' ||
+							item.status.name === 'Expired'),
 				},
 				id: item.id,
 				receiptAvailable:
