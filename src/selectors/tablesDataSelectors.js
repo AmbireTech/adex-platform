@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect'
+import { getState } from 'store'
 import {
 	selectCampaignsArray,
 	selectRoutineWithdrawTokens,
@@ -7,8 +8,10 @@ import {
 	creatArrayOnlyLengthChangeSelector,
 	selectCampaignAnalyticsByChannelStats,
 	selectCampaignEventsCount,
+	selectCampaignAnalyticsByChannelToAdUnit,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
+import { useSelector } from 'react-redux'
 
 export const selectCampaignsTableData = createSelector(
 	[selectCampaignsArray, selectRoutineWithdrawTokens, (_, side) => side],
@@ -118,15 +121,32 @@ export const selectAdSlotsTableData = createSelector(
 )
 
 export const selectAdUnitsTableData = createSelector(
-	[selectAdUnits, (_, { side, items }) => ({ side, items })],
-	(units, { side, items }) =>
+	[
+		selectAdUnits,
+		(_, { side, items, campaignId }) => ({
+			side,
+			items,
+			impressionsByAdUnit: selectCampaignAnalyticsByChannelToAdUnit(_, {
+				type: 'IMPRESSION',
+				campaignId,
+			}),
+			clicksByAdUnit: selectCampaignAnalyticsByChannelToAdUnit(_, {
+				type: 'CLICK',
+				campaignId,
+			}),
+		}),
+	],
+	(units, { side, items, impressionsByAdUnit, clicksByAdUnit }) =>
 		Object.values(items || units).map(item => ({
-			id: item.id,
+			id: item.id || item.ipfs,
 			media: {
-				id: item.id,
+				id: item.id || item.ipfs,
 				mediaUrl: item.mediaUrl,
 				mediaMime: item.mediaMime,
 			},
+			impressions: impressionsByAdUnit[item.ipfs] || 0,
+			clicks: clicksByAdUnit[item.ipfs] || 0,
+			ctr: (clicksByAdUnit[item.ipfs] / impressionsByAdUnit[item.ipfs]) * 100,
 			title: item.title || units[item.ipfs].title,
 			type: item.type,
 			created: item.created,
