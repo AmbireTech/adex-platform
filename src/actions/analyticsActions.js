@@ -1,6 +1,11 @@
 import * as types from 'constants/actionTypes'
 import throttle from 'lodash.throttle'
-import { addToast, removeToast, updateSpinner } from 'actions'
+import {
+	addToast,
+	removeToast,
+	updateSpinner,
+	checkAccountChanged,
+} from 'actions'
 import { translate } from 'services/translations/translations'
 import {
 	getValidatorAuthToken,
@@ -53,20 +58,6 @@ const analyticsCampaignsParams = () => {
 		callsParams.push({ eventType })
 	)
 	return callsParams
-}
-
-// getIdentityStatistics tooks to long some times
-// if the account is change we do not update the account
-// TODO: we can use something for abortable tasks
-function checkAccountChanged(getState, account) {
-	const accountCheck = getState().persist.account
-	const accountChanged =
-		!accountCheck.wallet.address ||
-		accountCheck.wallet.address !== account.wallet.address ||
-		!accountCheck.identity.address ||
-		!accountCheck.identity.address !== !account.identity.address
-
-	return accountChanged
 }
 
 function aggrByChannelsSegments({
