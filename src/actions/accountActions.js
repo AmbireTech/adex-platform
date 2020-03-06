@@ -152,7 +152,7 @@ export function updateGasData({ gasData }) {
 // getIdentityStatistics tooks to long some times
 // if the account is change we do not update the account
 // TODO: we can use something for abortable tasks
-export function checkAccountChanged(getState, account) {
+export function isAccountChanged(getState, account) {
 	const hasAuth = selectAuth(getState())
 	const accountCheck = selectAccount(getState())
 	const accountChanged =
@@ -190,7 +190,7 @@ export function updateAccountStats() {
 				all,
 			})
 
-			if (checkAccountChanged(getState, account)) {
+			if (!isAccountChanged(getState, account)) {
 				await updateChannelsWithBalanceAll(all)(dispatch)
 				await updateChannelsWithOutstandingBalance(withOutstandingBalance)(
 					dispatch
@@ -526,16 +526,16 @@ export function ensureQuickWalletBackup() {
 export function loadAccountData() {
 	return async function(dispatch, getState) {
 		const account = selectAccount(getState())
-		checkAccountChanged(getState, account) &&
+		!isAccountChanged(getState, account) &&
 			(await updateAccountIdentityData()(dispatch, getState))
-		checkAccountChanged(getState, account) &&
+		!isAccountChanged(getState, account) &&
 			(await getAllItems()(dispatch, getState))
 
-		checkAccountChanged(getState, account) && (await statsLoop.start())
-		checkAccountChanged(getState, account) && (await analyticsLoop.start())
-		checkAccountChanged(getState, account) &&
+		!isAccountChanged(getState, account) && (await statsLoop.start())
+		!isAccountChanged(getState, account) && (await analyticsLoop.start())
+		!isAccountChanged(getState, account) &&
 			(await analyticsCampaignsLoop.start())
-		checkAccountChanged(getState, account) && (await campaignsLoop.start())
+		!isAccountChanged(getState, account) && (await campaignsLoop.start())
 
 		updateSlotsDemandThrottled()(dispatch, getState)
 	}
