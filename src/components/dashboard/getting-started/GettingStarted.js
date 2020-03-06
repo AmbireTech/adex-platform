@@ -252,8 +252,8 @@ export default function GettingStarted(props) {
 									const color = check ? 'secondary' : 'inherit'
 
 									return (
-										<Tooltip title={label}>
-											<Icon color={color} key={index} />
+										<Tooltip title={label} key={index}>
+											<Icon color={color} />
 										</Tooltip>
 									)
 								})}

@@ -35,12 +35,11 @@ import { styles } from './styles'
 import Anchor from 'components/common/anchor/anchor'
 import {
 	updateNav,
-	getAllItems,
-	updateSlotsDemandThrottled,
 	execute,
 	resolveEnsAddress,
 	updatePrivilegesWarningAccepted,
-	updateAccountIdentityData,
+	loadAccountData,
+	stopAccountDataUpdate,
 } from 'actions'
 import {
 	t,
@@ -113,39 +112,22 @@ function Dashboard(props) {
 	const classes = useStyles()
 
 	useEffect(() => {
-		execute(resolveEnsAddress({ address }))
-	})
-
-	useEffect(() => {
 		async function updateInitialData() {
-			execute(updateAccountIdentityData())
-			execute(updateSlotsDemandThrottled())
-			execute(updateNav('side', side))
-			execute(getAllItems())
-
-			// NOTE: await for stats (withBalance.all)
-			// needed for publisher analytics
-			await statsLoop.start()
-			await analyticsLoop.start()
-
-			//NOTE: await fo campaign analytics first
-			// because of the campaigns table data update fix
-			await analyticsCampaignsLoop.start()
-			await campaignsLoop.start()
+			await execute(loadAccountData())
 			setDataLoaded(true)
 		}
 
 		updateInitialData()
 
 		return () => {
-			analyticsLoop.stop()
-			analyticsCampaignsLoop.stop()
-			campaignsLoop.stop()
-			statsLoop.stop()
+			execute(stopAccountDataUpdate())
 		}
-	}, [side])
+	}, [])
 
-	useEffect(() => {}, [match, mobileOpen])
+	useEffect(() => {
+		execute(resolveEnsAddress({ address }))
+	}, [address])
+
 	useEffect(() => {
 		execute(updateNav('side', side))
 	}, [side])

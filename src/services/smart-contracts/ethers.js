@@ -75,7 +75,7 @@ const loadInjectedWeb3 = new Promise((resolve, reject) => {
 })
 
 const injectedWeb3 = async () => {
-	const { web3, ethereum } = await loadInjectedWeb3.then()
+	const { web3, ethereum } = await loadInjectedWeb3
 	let provider = null
 
 	if (ethereum) {
@@ -120,17 +120,8 @@ const getEthers = mode => {
 	}
 }
 
-const ethereumSelectedAddress = async () => {
-	const { ethereum } = await loadInjectedWeb3.then()
-	if (ethereum && ethereum.selectedAddress) {
-		return utils.getAddress(ethereum.selectedAddress)
-	} else {
-		return null
-	}
-}
-
 const ethereumNetworkId = async () => {
-	const { ethereum } = await loadInjectedWeb3.then()
+	const { ethereum } = await loadInjectedWeb3
 	if (ethereum) {
 		const id = parseInt(ethereum.networkVersion, 10)
 		return id
@@ -140,7 +131,7 @@ const ethereumNetworkId = async () => {
 }
 
 const getEthereumProvider = async () => {
-	const { ethereum } = await loadInjectedWeb3.then()
+	const { ethereum } = await loadInjectedWeb3
 	if (!ethereum) {
 		return null
 	}
@@ -152,9 +143,4 @@ const getEthereumProvider = async () => {
 	return null
 }
 
-export {
-	getEthers,
-	ethereumSelectedAddress,
-	ethereumNetworkId,
-	getEthereumProvider,
-}
+export { getEthers, ethereumNetworkId, getEthereumProvider }
