@@ -5,7 +5,13 @@ import { Visibility } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
-import { t, selectAdUnitsTableData, selectSide } from 'selectors'
+import {
+	t,
+	selectAdUnitsTableData,
+	selectSide,
+	selectCampaignById,
+	selectAdUnits,
+} from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
@@ -142,14 +148,12 @@ const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
 function AdUnitsTable(props) {
 	const classes = useStyles()
 	const side = useSelector(selectSide)
-	const {
-		items, //
-		noActions,
-		noClone,
-		campaignUnits,
-		handleSelect,
-		selected = [],
-	} = props
+	const { noActions, noClone, campaignId, handleSelect, selected = [] } = props
+	const campaign = useSelector(state => selectCampaignById(state, campaignId))
+	const campaingAdUnits = campaign ? campaign.adUnits : false
+	const allItems = useSelector(selectAdUnits)
+	const items = campaingAdUnits ? campaingAdUnits : allItems
+	console.log('ITEMS', items)
 
 	const [selectorArgs, setSelectorArgs] = useState({})
 
@@ -170,8 +174,8 @@ function AdUnitsTable(props) {
 	// If selectorArgs are reference type we need to use useState fot them
 	// TODO: find why useTableData causing this update
 	useEffect(() => {
-		setSelectorArgs({ side, items })
-	}, [side, items])
+		setSelectorArgs({ side, items, campaignId })
+	}, [side, items, campaignId])
 
 	const onRowsSelect = useCallback(
 		(_, allRowsSelected) => {
@@ -186,7 +190,7 @@ function AdUnitsTable(props) {
 	const options = getOptions({ onRowsSelect, selected, reloadData })
 	return (
 		<MUIDataTableEnhanced
-			title={campaignUnits ? t('CAMPAIGN_AD_UNITS') : t('ALL_UNITS')}
+			title={campaignId ? t('CAMPAIGN_AD_UNITS') : t('ALL_UNITS')}
 			data={data}
 			columns={columns}
 			options={options}
