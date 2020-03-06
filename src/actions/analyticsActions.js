@@ -1,11 +1,6 @@
 import * as types from 'constants/actionTypes'
 import throttle from 'lodash.throttle'
-import {
-	addToast,
-	removeToast,
-	updateSpinner,
-	checkAccountChanged,
-} from 'actions'
+import { addToast, removeToast, updateSpinner, isAccountChanged } from 'actions'
 import { translate } from 'services/translations/translations'
 import {
 	getValidatorAuthToken,
@@ -210,7 +205,7 @@ export function updateAccountAnalytics() {
 
 						aggregates.aggr = fillEmptyTime(aggr, timeframe, defaultValue)
 						accountChanged =
-							accountChanged || checkAccountChanged(getState, account)
+							accountChanged || isAccountChanged(getState, account)
 
 						if (!accountChanged) {
 							dispatch({
@@ -269,8 +264,7 @@ export function updateAccountCampaignsAnalytics() {
 						leaderAuth,
 					})
 
-					accountChanged =
-						accountChanged || checkAccountChanged(getState, account)
+					accountChanged = accountChanged || isAccountChanged(getState, account)
 
 					return { opts, value }
 				} catch (err) {
