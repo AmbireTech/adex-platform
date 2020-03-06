@@ -395,17 +395,18 @@ export function onMetamaskNetworkChange({ id } = {}) {
 	}
 }
 
-export const onMetamaskAccountChange = accountAddress => {
+export const onMetamaskAccountChange = (accountAddress = '') => {
 	return async function(_, getState) {
 		const state = getState()
 		const hasAuth = selectAuth(state)
 		const account = selectAccount(state)
-		const { authType, address } = account.wallet
+		const { authType, address = '' } = account.wallet
 
 		if (
 			hasAuth &&
 			authType === AUTH_TYPES.METAMASK.name &&
-			(!accountAddress || address !== accountAddress)
+			(!accountAddress ||
+				address.toLowerCase() !== accountAddress.toLowerCase())
 		) {
 			logOut()
 		} else if (!hasAuth) {
@@ -418,8 +419,10 @@ export const onMetamaskAccountChange = accountAddress => {
 
 export function metamaskAccountCheck() {
 	return async function(_, getState) {
-		const address = await ethereumSelectedAddress()
-		onMetamaskAccountChange(address)(_, getState)
+		const { provider } = await getEthers(AUTH_TYPES.METAMASK.name)
+
+		// NOTE: using provider with ethereum.enable() seems to work
+		onMetamaskAccountChange(provider.provider.selectedAddress)(_, getState)
 	}
 }
 
