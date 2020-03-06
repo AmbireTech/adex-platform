@@ -363,19 +363,24 @@ async function getNetworkData({ id }) {
 	return network
 }
 
+async function isMetamaskMatters(getState) {
+	const state = getState()
+	const searchParams = selectSearchParams(state)
+	const authType = selectAuthType(state)
+
+	const doesItMatter =
+		authType === AUTH_TYPES.METAMASK.name ||
+		(!authType &&
+			searchParams.get('external') === 'metamask' &&
+			(await getEthereumProvider()) === AUTH_TYPES.METAMASK.name)
+
+	return doesItMatter
+}
+
 export function onMetamaskNetworkChange({ id } = {}) {
 	return async function(dispatch, getState) {
-		const state = getState()
-		const searchParams = selectSearchParams(state)
-		const authType = selectAuthType(state)
-
-		const isMetamaskMatters =
-			(authType === AUTH_TYPES.METAMASK.name ||
-				(!authType && searchParams.get('external') === 'metamask')) &&
-			(await getEthereumProvider()) === AUTH_TYPES.METAMASK.name
-
 		if (
-			isMetamaskMatters &&
+			(await isMetamaskMatters(getState)) &&
 			process.env.NODE_ENV !== (await getNetworkData({ id })).for
 		) {
 			confirmAction(
@@ -419,10 +424,12 @@ export const onMetamaskAccountChange = (accountAddress = '') => {
 
 export function metamaskAccountCheck() {
 	return async function(_, getState) {
-		const { provider } = await getEthers(AUTH_TYPES.METAMASK.name)
+		if (await isMetamaskMatters(getState)) {
+			const { provider } = await getEthers(AUTH_TYPES.METAMASK.name)
 
-		// NOTE: using provider with ethereum.enable() seems to work
-		onMetamaskAccountChange(provider.provider.selectedAddress)(_, getState)
+			// NOTE: using provider with ethereum.enable() seems to work
+			onMetamaskAccountChange(provider.provider.selectedAddress)(_, getState)
+		}
 	}
 }
 
