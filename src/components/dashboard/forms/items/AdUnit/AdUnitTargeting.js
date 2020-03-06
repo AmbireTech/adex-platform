@@ -171,7 +171,7 @@ class AdUnitTargeting extends Component {
 						label={label}
 						placeholder={placeholder}
 						source={source}
-						value={target.tag}
+						defaultValue={target.tag || null}
 						suggestionMatch='anywhere'
 						showSuggestionsWhenValueIsSet={true}
 						allowCreate={!source.length}
