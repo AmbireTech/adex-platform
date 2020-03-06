@@ -22,6 +22,7 @@ import {
 import { push } from 'connected-react-router'
 
 export const logOut = skipRedirect => {
+	execute(resetAccount())
 	analyticsLoop.stop()
 	analyticsCampaignsLoop.stop()
 	campaignsLoop.stop()
@@ -33,7 +34,6 @@ export const logOut = skipRedirect => {
 	execute(resetAllItems())
 	execute(resetAllNewItems())
 	execute(resetAllBids())
-	execute(resetAccount())
 	execute(resetAnalytics())
 	execute(resetChannelsWithBalanceAll())
 	execute(resetChannelsWithOutstandingBalance())
