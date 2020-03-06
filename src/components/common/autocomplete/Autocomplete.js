@@ -23,6 +23,7 @@ function Autocomplete(props) {
 		errorText,
 		onInit,
 		onChange,
+		defaultValue,
 		...rest
 	} = props
 	const [inputValue, setInputValue] = useState('')
@@ -52,8 +53,9 @@ function Autocomplete(props) {
 					getOptionLabel={option => option.label}
 					onChange={(_, newValue) => handleChange(newValue)}
 					onInputChange={(_, newValue) => setInputValue(newValue)}
+					defaultValue={defaultValue}
 					renderInput={params => {
-						if (value) params.inputProps.value = value
+						if (defaultValue) params.inputProps.value = defaultValue
 						return (
 							<TextField
 								{...params}
