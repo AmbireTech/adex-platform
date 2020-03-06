@@ -23,10 +23,11 @@ import {
 } from 'services/smart-contracts/actions/stats'
 import { getChannelsWithOutstanding } from 'services/smart-contracts/actions/core'
 import { addToast, confirmAction } from './uiActions'
+import { getAllItems } from './itemActions'
+import { updateSlotsDemandThrottled } from './analyticsActions'
 import {
 	getEthers,
 	getEthereumProvider,
-	ethereumSelectedAddress,
 	ethereumNetworkId,
 } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES, ETHEREUM_NETWORKS } from 'constants/misc'
@@ -48,6 +49,12 @@ import {
 	QUICK_WALLET_BACKUP,
 	UPDATING_ACCOUNT_IDENTITY,
 } from 'constants/spinners'
+import { campaignsLoop } from 'services/store-data/campaigns'
+import statsLoop from 'services/store-data/account'
+import {
+	analyticsLoop,
+	analyticsCampaignsLoop,
+} from 'services/store-data/analytics'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
@@ -142,9 +149,25 @@ export function updateGasData({ gasData }) {
 	}
 }
 
+// getIdentityStatistics tooks to long some times
+// if the account is change we do not update the account
+// TODO: we can use something for abortable tasks
+export function checkAccountChanged(getState, account) {
+	const hasAuth = selectAuth(getState())
+	const accountCheck = selectAccount(getState())
+	const accountChanged =
+		!hasAuth ||
+		!accountCheck.wallet.address ||
+		accountCheck.wallet.address !== account.wallet.address ||
+		!accountCheck.identity.address ||
+		!accountCheck.identity.address !== !account.identity.address
+
+	return accountChanged
+}
+
 export function updateAccountStats() {
 	return async function(dispatch, getState) {
-		const { account } = getState().persist
+		const account = selectAccount(getState())
 		try {
 			const { identity, wallet } = account
 			const { address } = identity
@@ -166,13 +189,16 @@ export function updateAccountStats() {
 				outstandingBalanceMainToken,
 				all,
 			})
-			await updateChannelsWithBalanceAll(all)(dispatch)
-			await updateChannelsWithOutstandingBalance(withOutstandingBalance)(
-				dispatch
-			)
-			await updateAccount({
-				newValues: { stats: { formatted, raw } },
-			})(dispatch)
+
+			if (checkAccountChanged(getState, account)) {
+				await updateChannelsWithBalanceAll(all)(dispatch)
+				await updateChannelsWithOutstandingBalance(withOutstandingBalance)(
+					dispatch
+				)
+				await updateAccount({
+					newValues: { stats: { formatted, raw } },
+				})(dispatch)
+			}
 		} catch (err) {
 			console.error('ERR_STATS', err)
 			addToast({
@@ -494,5 +520,32 @@ export function ensureQuickWalletBackup() {
 			}
 		} catch (err) {}
 		updateSpinner(QUICK_WALLET_BACKUP, false)(dispatch)
+	}
+}
+
+export function loadAccountData() {
+	return async function(dispatch, getState) {
+		const account = selectAccount(getState())
+		checkAccountChanged(getState, account) &&
+			(await updateAccountIdentityData()(dispatch, getState))
+		checkAccountChanged(getState, account) &&
+			(await getAllItems()(dispatch, getState))
+
+		checkAccountChanged(getState, account) && (await statsLoop.start())
+		checkAccountChanged(getState, account) && (await analyticsLoop.start())
+		checkAccountChanged(getState, account) &&
+			(await analyticsCampaignsLoop.start())
+		checkAccountChanged(getState, account) && (await campaignsLoop.start())
+
+		updateSlotsDemandThrottled()(dispatch, getState)
+	}
+}
+
+export function stopAccountDataUpdate() {
+	return async function(dispatch, getState) {
+		analyticsLoop.stop()
+		analyticsCampaignsLoop.stop()
+		campaignsLoop.stop()
+		statsLoop.stop()
 	}
 }
