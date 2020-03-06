@@ -1,5 +1,5 @@
 export default class Looper {
-	constructor({ timeout, syncAction, loopName = '' }) {
+	constructor({ timeout, syncAction, loopName = '', stopOn }) {
 		if (!timeout) {
 			throw new Error('LOOPER timeout prop is required')
 		}
@@ -11,6 +11,8 @@ export default class Looper {
 		this.loopTimeout = null
 		this.timeout = timeout
 		this.syncAction = syncAction
+		this.loopName = loopName
+		this.stopOn = stopOn
 	}
 
 	clearLoopTimeout = () => {
@@ -21,7 +23,9 @@ export default class Looper {
 	}
 
 	syncData = async opts => {
+		this.makeStopCheck()
 		await this.syncAction()
+		this.makeStopCheck()
 	}
 
 	startLoop = async opts => {
@@ -40,9 +44,16 @@ export default class Looper {
 		this.loopTimeout = setTimeout(this.startLoop, this.timeout)
 	}
 
+	makeStopCheck = () => {
+		if (typeof this.stopOn === 'function' && this.stopOn()) {
+			this.stop()
+		}
+	}
+
 	start = async () => {
 		this.clearLoopTimeout()
 		await this.startLoop()
+		this.makeStopCheck()
 	}
 
 	stop = () => {

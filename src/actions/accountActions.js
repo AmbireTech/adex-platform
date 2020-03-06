@@ -23,10 +23,11 @@ import {
 } from 'services/smart-contracts/actions/stats'
 import { getChannelsWithOutstanding } from 'services/smart-contracts/actions/core'
 import { addToast, confirmAction } from './uiActions'
+import { getAllItems } from './itemActions'
+import { updateSlotsDemandThrottled } from './analyticsActions'
 import {
 	getEthers,
 	getEthereumProvider,
-	ethereumSelectedAddress,
 	ethereumNetworkId,
 } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES, ETHEREUM_NETWORKS } from 'constants/misc'
@@ -48,6 +49,12 @@ import {
 	QUICK_WALLET_BACKUP,
 	UPDATING_ACCOUNT_IDENTITY,
 } from 'constants/spinners'
+import { campaignsLoop } from 'services/store-data/campaigns'
+import statsLoop from 'services/store-data/account'
+import {
+	analyticsLoop,
+	analyticsCampaignsLoop,
+} from 'services/store-data/analytics'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
@@ -142,9 +149,25 @@ export function updateGasData({ gasData }) {
 	}
 }
 
+// getIdentityStatistics tooks to long some times
+// if the account is change we do not update the account
+// TODO: we can use something for abortable tasks
+export function isAccountChanged(getState, account) {
+	const hasAuth = selectAuth(getState())
+	const accountCheck = selectAccount(getState())
+	const accountChanged =
+		!hasAuth ||
+		!accountCheck.wallet.address ||
+		accountCheck.wallet.address !== account.wallet.address ||
+		!accountCheck.identity.address ||
+		!accountCheck.identity.address !== !account.identity.address
+
+	return accountChanged
+}
+
 export function updateAccountStats() {
 	return async function(dispatch, getState) {
-		const { account } = getState().persist
+		const account = selectAccount(getState())
 		try {
 			const { identity, wallet } = account
 			const { address } = identity
@@ -166,13 +189,16 @@ export function updateAccountStats() {
 				outstandingBalanceMainToken,
 				all,
 			})
-			await updateChannelsWithBalanceAll(all)(dispatch)
-			await updateChannelsWithOutstandingBalance(withOutstandingBalance)(
-				dispatch
-			)
-			await updateAccount({
-				newValues: { stats: { formatted, raw } },
-			})(dispatch)
+
+			if (!isAccountChanged(getState, account)) {
+				await updateChannelsWithBalanceAll(all)(dispatch)
+				await updateChannelsWithOutstandingBalance(withOutstandingBalance)(
+					dispatch
+				)
+				await updateAccount({
+					newValues: { stats: { formatted, raw } },
+				})(dispatch)
+			}
 		} catch (err) {
 			console.error('ERR_STATS', err)
 			addToast({
@@ -363,19 +389,24 @@ async function getNetworkData({ id }) {
 	return network
 }
 
+async function isMetamaskMatters(getState) {
+	const state = getState()
+	const searchParams = selectSearchParams(state)
+	const authType = selectAuthType(state)
+
+	const doesItMatter =
+		authType === AUTH_TYPES.METAMASK.name ||
+		(!authType &&
+			searchParams.get('external') === 'metamask' &&
+			(await getEthereumProvider()) === AUTH_TYPES.METAMASK.name)
+
+	return doesItMatter
+}
+
 export function onMetamaskNetworkChange({ id } = {}) {
 	return async function(dispatch, getState) {
-		const state = getState()
-		const searchParams = selectSearchParams(state)
-		const authType = selectAuthType(state)
-
-		const isMetamaskMatters =
-			(authType === AUTH_TYPES.METAMASK.name ||
-				(!authType && searchParams.get('external') === 'metamask')) &&
-			(await getEthereumProvider()) === AUTH_TYPES.METAMASK.name
-
 		if (
-			isMetamaskMatters &&
+			(await isMetamaskMatters(getState)) &&
 			process.env.NODE_ENV !== (await getNetworkData({ id })).for
 		) {
 			confirmAction(
@@ -395,17 +426,18 @@ export function onMetamaskNetworkChange({ id } = {}) {
 	}
 }
 
-export const onMetamaskAccountChange = accountAddress => {
+export const onMetamaskAccountChange = (accountAddress = '') => {
 	return async function(_, getState) {
 		const state = getState()
 		const hasAuth = selectAuth(state)
 		const account = selectAccount(state)
-		const { authType, address } = account.wallet
+		const { authType, address = '' } = account.wallet
 
 		if (
 			hasAuth &&
 			authType === AUTH_TYPES.METAMASK.name &&
-			(!accountAddress || address !== accountAddress)
+			(!accountAddress ||
+				address.toLowerCase() !== accountAddress.toLowerCase())
 		) {
 			logOut()
 		} else if (!hasAuth) {
@@ -418,8 +450,12 @@ export const onMetamaskAccountChange = accountAddress => {
 
 export function metamaskAccountCheck() {
 	return async function(_, getState) {
-		const address = await ethereumSelectedAddress()
-		onMetamaskAccountChange(address)(_, getState)
+		if (await isMetamaskMatters(getState)) {
+			const { provider } = await getEthers(AUTH_TYPES.METAMASK.name)
+
+			// NOTE: using provider with ethereum.enable() seems to work
+			onMetamaskAccountChange(provider.provider.selectedAddress)(_, getState)
+		}
 	}
 }
 
@@ -484,5 +520,32 @@ export function ensureQuickWalletBackup() {
 			}
 		} catch (err) {}
 		updateSpinner(QUICK_WALLET_BACKUP, false)(dispatch)
+	}
+}
+
+export function loadAccountData() {
+	return async function(dispatch, getState) {
+		const account = selectAccount(getState())
+		!isAccountChanged(getState, account) &&
+			(await updateAccountIdentityData()(dispatch, getState))
+		!isAccountChanged(getState, account) &&
+			(await getAllItems()(dispatch, getState))
+
+		!isAccountChanged(getState, account) && (await statsLoop.start())
+		!isAccountChanged(getState, account) && (await analyticsLoop.start())
+		!isAccountChanged(getState, account) &&
+			(await analyticsCampaignsLoop.start())
+		!isAccountChanged(getState, account) && (await campaignsLoop.start())
+
+		updateSlotsDemandThrottled()(dispatch, getState)
+	}
+}
+
+export function stopAccountDataUpdate() {
+	return async function(dispatch, getState) {
+		analyticsLoop.stop()
+		analyticsCampaignsLoop.stop()
+		campaignsLoop.stop()
+		statsLoop.stop()
 	}
 }
