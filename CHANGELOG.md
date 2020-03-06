@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.38
+##### *2020-03-06*
+
+### Added
+- Data loops auto stop check functions
+
+### Fixed
+- Possible logout on page refresh
+- MetaMask account change check
+- Missing data points with hour timeframe analytics chart
+- Switch speed and animation between advertiser and publisher
+
+
 ## 4.10.37
 ##### *2020-03-05*
 
