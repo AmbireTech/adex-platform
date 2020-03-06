@@ -80,7 +80,7 @@ const injectedWeb3 = async () => {
 
 	if (ethereum) {
 		try {
-			// await ethereum.enable()
+			await ethereum.enable()
 
 			provider = new ethers.providers.Web3Provider(ethereum)
 
