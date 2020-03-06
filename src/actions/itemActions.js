@@ -18,7 +18,13 @@ import { getMediaSize } from 'helpers/mediaHelpers'
 import { getErrorMsg } from 'helpers/errors'
 import { numStringCPMtoImpression } from 'helpers/numbers'
 import { SOURCES } from 'constants/targeting'
-import { selectRelayerConfig, selectAuthSig, selectMainToken } from 'selectors'
+import {
+	selectRelayerConfig,
+	selectAuthSig,
+	selectMainToken,
+	selectAccount,
+	selectAuth,
+} from 'selectors'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -196,15 +202,17 @@ export function addSlot(item) {
 export function getAllItems() {
 	return async function(dispatch, getState) {
 		try {
-			const { account } = getState().persist
+			const account = selectAccount(getState())
 			const { address } = account.identity
 			const units = getAdUnits({ identity: address })
 			const slots = getAdSlots({ identity: address })
 
 			const [resUnits, resSlots] = await Promise.all([units, slots])
 
-			updateItems({ items: resUnits, itemType: 'AdUnit' })(dispatch)
-			updateItems({ items: resSlots, itemType: 'AdSlot' })(dispatch)
+			if (selectAuth(getState())) {
+				updateItems({ items: resUnits, itemType: 'AdUnit' })(dispatch)
+				updateItems({ items: resSlots, itemType: 'AdSlot' })(dispatch)
+			}
 		} catch (err) {
 			console.error('ERR_GETTING_ITEMS', err)
 			addToast({
