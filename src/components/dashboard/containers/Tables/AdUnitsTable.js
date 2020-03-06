@@ -25,7 +25,7 @@ const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(styles)
 
-const getCols = ({ classes, noActions, noClone }) => [
+const getCols = ({ classes, noActions, noClone, campaignAdUnits }) => [
 	{
 		name: 'media',
 		label: t('PROP_MEDIA'),
@@ -57,6 +57,7 @@ const getCols = ({ classes, noActions, noClone }) => [
 			customBodyRender: (title = '') => truncateString(title, 20),
 		},
 	},
+	...getCampaignAdUnitsCols(campaignAdUnits),
 	{
 		name: 'type',
 		label: t('PROP_TYPE'),
@@ -123,6 +124,48 @@ const getCols = ({ classes, noActions, noClone }) => [
 	},
 ]
 
+const getCampaignAdUnitsCols = display =>
+	!display
+		? []
+		: [
+				{
+					name: 'impressions',
+					label: t('LABEL_IMPRESSIONS'),
+					options: {
+						sort: true,
+						// customBodyRender: impressions => commify(impressions || 0),
+						// ...sliderFilterOptions({
+						// 	initial: [0, maxImpressions],
+						// 	filterTitle: t('IMPRESSIONS_FILTER'),
+						// }),
+					},
+				},
+				{
+					name: 'clicks',
+					label: t('CHART_LABEL_CLICKS'),
+					options: {
+						sort: true,
+						// customBodyRender: clicks => commify(clicks || 0),
+						// ...sliderFilterOptions({
+						// 	initial: [0, maxClicks],
+						// 	filterTitle: t('CLICKS_FILTER'),
+						// }),
+					},
+				},
+				{
+					name: 'ctr',
+					label: t('CHART_LABEL_CTR'),
+					options: {
+						sort: true,
+						// customBodyRender: ctr => `${(ctr || 0).toFixed(2)}%`,
+						// ...sliderFilterOptions({
+						// 	initial: [0, 100],
+						// 	filterTitle: t('DISTRIBUTED_CTR'),
+						// }),
+					},
+				},
+		  ]
+
 const onDownload = (buildHead, buildBody, columns, data) => {
 	const mappedData = data.map(i => ({
 		index: i.index,
@@ -165,6 +208,7 @@ function AdUnitsTable(props) {
 				classes,
 				noActions,
 				noClone,
+				campaignAdUnits: !!campaignId,
 			}),
 	})
 
