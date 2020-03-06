@@ -141,7 +141,7 @@ export class Campaign extends Component {
 							</Grid>
 						)}
 						{tabIndex === 1 && (
-							<AdUnitsTable items={units} campaignUnits noClone />
+							<AdUnitsTable campaignId={campaign.id} noClone />
 						)}
 						{tabIndex === 2 && (
 							<List>
