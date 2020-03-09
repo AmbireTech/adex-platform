@@ -75,7 +75,6 @@ export class Campaign extends Component {
 			// ...rest
 		} = this.props
 		const { tabIndex } = this.state
-		const units = item.spec.adUnits
 		const campaign = new CampaignModel(item)
 		const status = (campaign.status || {}).name
 		const humanFriendlyName = campaign.status.humanFriendlyName
