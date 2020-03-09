@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.39
+##### *2020-03-09*
+
+### Added
+- Progress indication for fees in new campaign preview
+
+### Changed
+- Campaigns increased ip limit `timeframe`
+- `material-ui-pickers` with `@material-ui/pickers`
+- Hotjar is removed
+- Bumped `prop-types`
+
+### Fixed
+- Images sometimes are missing or wrong (fixed tables custom render functions)
+- New campaigns disappear while initializing if page is refreshed 
+
 ## 4.10.38
 ##### *2020-03-06*
 
