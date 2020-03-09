@@ -80,7 +80,7 @@ export default function GettingStarted(props) {
 	const hasImpressions = useSelector(selectHasAdSlotImpressions)
 	const has5000Impressions = useSelector(selectHas5000Impressions)
 	const isGettingStartedHidden = useSelector(selectHideGettingStarted)
-	const emailProvider = useSelector(selectEmailProvider)
+	// const emailProvider = useSelector(selectEmailProvider)
 	const [expanded, setExpanded] = useState(true)
 
 	const steps = {
@@ -88,21 +88,11 @@ export default function GettingStarted(props) {
 			{
 				label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
 				content: (
-					<Fragment>
-						{t('TUTORIAL_CONFIRM_EMAIL_CONTENT')}
-						{emailProvider
-							? t('TUTORIAL_CONFIRM_EMAIL_CONTENT_GO_TO', {
-									args: [
-										<ExternalAnchor
-											key='confirm-email-go-to'
-											href={`https://${emailProvider}`}
-										>
-											{emailProvider}
-										</ExternalAnchor>,
-									],
-							  })
-							: ''}
-					</Fragment>
+					<Typography
+						dangerouslySetInnerHTML={{
+							__html: t('TUTORIAL_CONFIRM_EMAIL_CONTENT'),
+						}}
+					/>
 				),
 				contentCompleted: t('TUTORIAL_CONFIRM_EMAIL_COMPLETE'),
 				icon: EmailEddie,
@@ -143,21 +133,11 @@ export default function GettingStarted(props) {
 			{
 				label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
 				content: (
-					<Fragment>
-						{t('TUTORIAL_CONFIRM_EMAIL_CONTENT')}
-						{emailProvider
-							? t('TUTORIAL_CONFIRM_EMAIL_CONTENT_GO_TO', {
-									args: [
-										<ExternalAnchor
-											key='confirm-mail-link'
-											href={`https://${emailProvider}`}
-										>
-											{emailProvider}
-										</ExternalAnchor>,
-									],
-							  })
-							: ''}
-					</Fragment>
+					<Typography
+						dangerouslySetInnerHTML={{
+							__html: t('TUTORIAL_CONFIRM_EMAIL_CONTENT'),
+						}}
+					/>
 				),
 				contentCompleted: t('TUTORIAL_CONFIRM_EMAIL_COMPLETE'),
 				icon: EmailEddie,
