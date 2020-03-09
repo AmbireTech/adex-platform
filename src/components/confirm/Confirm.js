@@ -48,6 +48,8 @@ export class Confirm extends Component {
 			children,
 			cancelLabel,
 			confirmLabel,
+			noCancel,
+			noConfirm,
 			t,
 			noActionBtns,
 		} = this.props
@@ -62,12 +64,16 @@ export class Confirm extends Component {
 				</DialogContent>
 				{!noActionBtns && (
 					<DialogActions>
-						<Button onClick={this.cancel} color='primary'>
-							{cancelLabel || t('CANCEL')}
-						</Button>
-						<Button onClick={this.confirm} color='primary' autoFocus>
-							{confirmLabel || t('OK')}
-						</Button>
+						{!noCancel && (
+							<Button onClick={this.cancel} color='primary'>
+								{cancelLabel || t('CANCEL')}
+							</Button>
+						)}
+						{!noConfirm && (
+							<Button onClick={this.confirm} color='primary' autoFocus>
+								{confirmLabel || t('OK')}
+							</Button>
+						)}
 					</DialogActions>
 				)}
 			</Dialog>
@@ -100,6 +106,8 @@ function mapStateToProps(state) {
 		visible: state.confirm.active || false,
 		calledOn: state.confirm.calledOn,
 		noActionBtns: state.confirm.noActionBtns,
+		noCancel: state.confirm.data.noCancel,
+		noConfirm: state.confirm.data.noConfirm,
 	}
 }
 
