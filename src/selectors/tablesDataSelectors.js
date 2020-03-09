@@ -9,6 +9,7 @@ import {
 	selectCampaignAnalyticsByChannelStats,
 	selectCampaignEventsCount,
 	selectCampaignAnalyticsByChannelToAdUnit,
+	selectTotalStatsByAdUnits,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 
@@ -125,14 +126,26 @@ export const selectAdUnitsTableData = createSelector(
 		(_, { side, items, campaignId }) => ({
 			side,
 			items,
-			impressionsByAdUnit: selectCampaignAnalyticsByChannelToAdUnit(_, {
-				type: 'IMPRESSION',
-				campaignId,
-			}),
-			clicksByAdUnit: selectCampaignAnalyticsByChannelToAdUnit(_, {
-				type: 'CLICK',
-				campaignId,
-			}),
+			impressionsByAdUnit: id =>
+				campaignId
+					? selectCampaignAnalyticsByChannelToAdUnit(_, {
+							type: 'IMPRESSION',
+							campaignId,
+					  })[id]
+					: selectTotalStatsByAdUnits(_, {
+							type: 'IMPRESSION',
+							adUnitId: id,
+					  }),
+			clicksByAdUnit: id =>
+				campaignId
+					? selectCampaignAnalyticsByChannelToAdUnit(_, {
+							type: 'CLICK',
+							campaignId,
+					  })[id]
+					: selectTotalStatsByAdUnits(_, {
+							type: 'CLICK',
+							adUnitId: id,
+					  }),
 		}),
 	],
 	(units, { side, items, impressionsByAdUnit, clicksByAdUnit }) =>
@@ -143,10 +156,10 @@ export const selectAdUnitsTableData = createSelector(
 				mediaUrl: item.mediaUrl,
 				mediaMime: item.mediaMime,
 			},
-			impressions: impressionsByAdUnit[item.ipfs] || 0,
-			clicks: clicksByAdUnit[item.ipfs] || 0,
+			impressions: impressionsByAdUnit(item.ipfs) || 0,
+			clicks: clicksByAdUnit(item.ipfs) || 0,
 			ctr:
-				(clicksByAdUnit[item.ipfs] / impressionsByAdUnit[item.ipfs]) * 100 || 0,
+				(clicksByAdUnit(item.ipfs) / impressionsByAdUnit(item.ipfs)) * 100 || 0,
 			title: item.title || units[item.ipfs].title,
 			type: item.type,
 			created: item.created,
@@ -221,5 +234,25 @@ export const selectCampaignStatsMaxValues = createSelector(
 				return newResult
 			},
 			{ maxClicks: 0, maxImpressions: 0, maxEarnings: 0, maxCTR: 0 }
+		)
+)
+
+export const selectAdUnitsStatsMaxValues = createSelector(
+	(state, { side, items, campaignId }) =>
+		selectAdUnitsTableData(state, { side, items, campaignId }),
+	data =>
+		data.reduce(
+			(result, current) => {
+				const newResult = { ...result }
+
+				newResult.maxClicks = Math.max(current.clicks, newResult.maxClicks)
+				newResult.maxCTR = Math.max(current.ctr, newResult.maxCTR)
+				newResult.maxImpressions = Math.max(
+					current.impressions,
+					newResult.maxImpressions
+				)
+				return newResult
+			},
+			{ maxClicks: 0, maxImpressions: 0, maxCTR: 0 }
 		)
 )

@@ -38,6 +38,18 @@ export const selectAdvancedAnalyticsByType = createSelector(
 	(campaignAnalytics, type) => campaignAnalytics[type] || {}
 )
 
+export const selectTotalStatsByAdUnits = createSelector(
+	(state, { type, adUnitId }) => [
+		selectAdvancedAnalyticsByType(state, type),
+		{ adUnitId },
+	],
+	([analyticsByChannel, { adUnitId }]) =>
+		Object.values(analyticsByChannel.byChannelStats || {}).reduce(
+			(acc, curr) => acc + curr.reportChannelToAdUnit[adUnitId] || 0,
+			0
+		)
+)
+
 export const selectPublisherStatsByType = createSelector(
 	(state, type) => selectAdvancedAnalyticsByType(state, type),
 	advancedByType => advancedByType.publisherStats || {}
