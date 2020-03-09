@@ -108,7 +108,7 @@ Dropdown.propTypes = {
 	htmlId: PropTypes.string.isRequired,
 	displayEmpty: PropTypes.bool,
 	helperText: PropTypes.string,
-	IconComponent: PropTypes.element,
+	IconComponent: PropTypes.elementType,
 }
 
 export default Dropdown
