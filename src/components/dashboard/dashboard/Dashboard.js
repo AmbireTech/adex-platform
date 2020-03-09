@@ -35,12 +35,11 @@ import { styles } from './styles'
 import Anchor from 'components/common/anchor/anchor'
 import {
 	updateNav,
-	getAllItems,
-	updateSlotsDemandThrottled,
 	execute,
 	resolveEnsAddress,
 	updatePrivilegesWarningAccepted,
-	updateAccountIdentityData,
+	loadAccountData,
+	stopAccountDataUpdate,
 } from 'actions'
 import {
 	t,
@@ -50,7 +49,7 @@ import {
 	selectPublisherMinRevenueReached,
 } from 'selectors'
 import { useSelector } from 'react-redux'
-import GetttingStarted from '../getting-started/GettingStarted'
+import GettingStarted from '../getting-started/GettingStarted'
 
 const Campaigns = () => {
 	const privileges = useSelector(selectWalletPrivileges)
@@ -113,39 +112,22 @@ function Dashboard(props) {
 	const classes = useStyles()
 
 	useEffect(() => {
-		execute(resolveEnsAddress({ address }))
-	})
-
-	useEffect(() => {
 		async function updateInitialData() {
-			execute(updateAccountIdentityData())
-			execute(updateSlotsDemandThrottled())
-			execute(updateNav('side', side))
-			execute(getAllItems())
-
-			// NOTE: await for stats (withBalance.all)
-			// needed for publisher analytics
-			await statsLoop.start()
-			await analyticsLoop.start()
-
-			//NOTE: await fo campaign analytics first
-			// because of the campaigns table data update fix
-			await analyticsCampaignsLoop.start()
-			await campaignsLoop.start()
+			await execute(loadAccountData())
 			setDataLoaded(true)
 		}
 
 		updateInitialData()
 
 		return () => {
-			analyticsLoop.stop()
-			analyticsCampaignsLoop.stop()
-			campaignsLoop.stop()
-			statsLoop.stop()
+			execute(stopAccountDataUpdate())
 		}
-	}, [side])
+	}, [])
 
-	useEffect(() => {}, [match, mobileOpen])
+	useEffect(() => {
+		execute(resolveEnsAddress({ address }))
+	}, [address])
+
 	useEffect(() => {
 		execute(updateNav('side', side))
 	}, [side])
@@ -195,7 +177,7 @@ function Dashboard(props) {
 				<div className={classes.contentInner}>
 					<div className={classes.toolbar} />
 					{showTxPrivLevelWarning && (
-						<Box mb={2} p={1}>
+						<Box mb={2}>
 							<Alert
 								variant='outlined'
 								severity='info'
@@ -211,14 +193,8 @@ function Dashboard(props) {
 					)}
 
 					{side === 'publisher' && !minPublisherRevenueReached && (
-						<Box mb={2} p={1}>
-							<Alert
-								variant='outlined'
-								severity='warning'
-								onClose={() => {
-									execute(updatePrivilegesWarningAccepted(true))
-								}}
-							>
+						<Box mb={2}>
+							<Alert variant='outlined' severity='warning'>
 								<div>
 									{t('PUBLISHER_REVENUE_NOTICE', {
 										args: [
@@ -240,7 +216,7 @@ function Dashboard(props) {
 						</Box>
 					)}
 
-					{dataLoaded && <GetttingStarted side={side} />}
+					{dataLoaded && <GettingStarted side={side} />}
 
 					<Switch>
 						<Route
