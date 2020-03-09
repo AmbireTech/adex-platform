@@ -167,7 +167,7 @@ const getCampaignAdUnitsCols = (campaignAdUnits, maxImpressions, maxClicks) =>
 					label: t('CHART_LABEL_CTR'),
 					options: {
 						sort: true,
-						// customBodyRender: ctr => `${(ctr || 0).toFixed(2)}%`,
+						customBodyRender: ctr => `${Number(ctr).toFixed(2)} %`,
 						// ...sliderFilterOptions({
 						// 	initial: [0, 100],
 						// 	filterTitle: t('DISTRIBUTED_CTR'),
