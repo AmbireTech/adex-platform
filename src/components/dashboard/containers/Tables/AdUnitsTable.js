@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, Fragment } from 'react'
 import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility } from '@material-ui/icons'
@@ -30,6 +30,7 @@ const getCols = ({ classes, noActions, noClone }) => [
 			customBodyRender: ({ id, mediaUrl, mediaMime }) => {
 				return (
 					<Img
+						key={id}
 						fullScreenOnClick={true}
 						className={classnames(classes.cellImg)}
 						src={mediaUrl}
@@ -79,7 +80,7 @@ const getCols = ({ classes, noActions, noClone }) => [
 			sort: true,
 			download: false,
 			customBodyRender: ({ to, item }) => (
-				<React.Fragment>
+				<Fragment key={item.id}>
 					<Tooltip
 						title={t('LABEL_VIEW')}
 						// placement='top'
@@ -111,7 +112,7 @@ const getCols = ({ classes, noActions, noClone }) => [
 							</span>
 						</Tooltip>
 					)}
-				</React.Fragment>
+				</Fragment>
 			),
 		},
 	},
