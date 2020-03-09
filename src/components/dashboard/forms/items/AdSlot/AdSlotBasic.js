@@ -24,7 +24,13 @@ import {
 function AdSlotBasic({ validateId }) {
 	const newItem = useSelector(selectNewAdSlot)
 	const adTypesSource = useSelector(selectSlotTypesSourceWithDemands)
-	const { title, description, website, type, minPerImpression } = newItem
+	const {
+		title = '',
+		description = '',
+		website = '',
+		type = '',
+		minPerImpression = '',
+	} = newItem
 
 	const spinner = useSelector(state =>
 		selectSpinnerById(state, UPDATING_SLOTS_DEMAND)
@@ -145,7 +151,7 @@ function AdSlotBasic({ validateId }) {
 							required
 							label={t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}
 							name='minPerImpression'
-							value={minPerImpression}
+							value={minPerImpression || ''}
 							onChange={ev => {
 								const value = ev.target.value
 								execute(updateNewSlot('minPerImpression', value))

@@ -65,7 +65,6 @@ export default function ItemHoc(Decorated) {
 		const btnProps = {
 			color,
 			size,
-			mini,
 			variant,
 		}
 

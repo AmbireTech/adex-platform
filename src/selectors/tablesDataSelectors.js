@@ -15,13 +15,13 @@ export const selectCampaignsTableData = createSelector(
 	(campaigns, tokens, side) =>
 		campaigns.map(item => {
 			const { decimals = 18 } = tokens[item.depositAsset] || {}
-			const { spec = {}, adUnits = [] } = item
+			const { id, spec = {}, adUnits = [] } = item
 
 			const firstUnit = adUnits[0] || {}
 
 			return {
 				media: {
-					id: item.id,
+					id,
 					mediaUrl: firstUnit.mediaUrl || '',
 					mediaMime: firstUnit.mediaMime || '',
 				},
@@ -33,23 +33,26 @@ export const selectCampaignsTableData = createSelector(
 				fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
 				impressions: selectCampaignEventsCount('IMPRESSION', item.id),
 				clicks: selectCampaignEventsCount('CLICK', item.id),
-				minPerImpression:
-					Number(
-						formatUnits(
-							spec.minPerImpression || item.minPerImpression || '0',
-							decimals
-						)
-					) * 1000,
+				minPerImpression: {
+					id,
+					minPerImpression:
+						Number(
+							formatUnits(
+								spec.minPerImpression || item.minPerImpression || '0',
+								decimals
+							)
+						) * 1000,
+				},
 				created: item.created,
 				activeFrom: spec.activeFrom || item.activeFrom,
 				withdrawPeriodStart:
 					spec.withdrawPeriodStart || item.withdrawPeriodStart,
 				actions: {
 					side: side,
-					id: item.id,
+					id,
 					humanFriendlyName: item.status.humanFriendlyName,
 				},
-				id: item.id,
+				id,
 				receiptAvailable:
 					item.status.humanFriendlyName === 'Closed' ||
 					item.status.humanFriendlyName === 'Completed',
