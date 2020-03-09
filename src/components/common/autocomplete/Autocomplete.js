@@ -64,7 +64,6 @@ function Autocomplete(props) {
 							/>
 						)
 					}}
-					fullWidth
 				/>
 				{error && (
 					<FormHelperText error id='component-error-text'>
