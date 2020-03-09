@@ -74,6 +74,16 @@ export const selectCampaignAnalyticsByChannelToAdUnit = createSelector(
 	}
 )
 
+export const selectMaxAdUnitStatByChannel = createSelector(
+	(state, { type, campaignId } = {}) =>
+		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
+	({ reportChannelToAdUnit }) => {
+		return reportChannelToAdUnit
+			? Math.max.apply(null, Object.values(reportChannelToAdUnit))
+			: 0
+	}
+)
+
 export const selectAnalyticsDataAggr = createSelector(
 	[selectAnalytics, (_, opts = {}) => opts],
 	(analytics = {}, { side, eventType, metric, timeframe }) => {

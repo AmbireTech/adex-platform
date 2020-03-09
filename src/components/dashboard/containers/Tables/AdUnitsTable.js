@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react'
 import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility } from '@material-ui/icons'
+import { commify } from 'ethers/utils'
+import { sliderFilterOptions } from './commonFilters'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
@@ -11,6 +13,7 @@ import {
 	selectSide,
 	selectCampaignById,
 	selectAdUnits,
+	selectMaxAdUnitStatByChannel,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
@@ -25,7 +28,14 @@ const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(styles)
 
-const getCols = ({ classes, noActions, noClone, campaignAdUnits }) => [
+const getCols = ({
+	classes,
+	noActions,
+	noClone,
+	campaignAdUnits,
+	maxImpressions,
+	maxClicks,
+}) => [
 	{
 		name: 'media',
 		label: t('PROP_MEDIA'),
@@ -57,7 +67,7 @@ const getCols = ({ classes, noActions, noClone, campaignAdUnits }) => [
 			customBodyRender: (title = '') => truncateString(title, 20),
 		},
 	},
-	...getCampaignAdUnitsCols(campaignAdUnits),
+	...getCampaignAdUnitsCols(campaignAdUnits, maxImpressions, maxClicks),
 	{
 		name: 'type',
 		label: t('PROP_TYPE'),
@@ -124,8 +134,8 @@ const getCols = ({ classes, noActions, noClone, campaignAdUnits }) => [
 	},
 ]
 
-const getCampaignAdUnitsCols = display =>
-	!display
+const getCampaignAdUnitsCols = (campaignAdUnits, maxImpressions, maxClicks) =>
+	!campaignAdUnits
 		? []
 		: [
 				{
@@ -133,11 +143,11 @@ const getCampaignAdUnitsCols = display =>
 					label: t('LABEL_IMPRESSIONS'),
 					options: {
 						sort: true,
-						// customBodyRender: impressions => commify(impressions || 0),
-						// ...sliderFilterOptions({
-						// 	initial: [0, maxImpressions],
-						// 	filterTitle: t('IMPRESSIONS_FILTER'),
-						// }),
+						customBodyRender: impressions => commify(impressions || 0),
+						...sliderFilterOptions({
+							initial: [0, maxImpressions],
+							filterTitle: t('IMPRESSIONS_FILTER'),
+						}),
 					},
 				},
 				{
@@ -145,11 +155,11 @@ const getCampaignAdUnitsCols = display =>
 					label: t('CHART_LABEL_CLICKS'),
 					options: {
 						sort: true,
-						// customBodyRender: clicks => commify(clicks || 0),
-						// ...sliderFilterOptions({
-						// 	initial: [0, maxClicks],
-						// 	filterTitle: t('CLICKS_FILTER'),
-						// }),
+						customBodyRender: clicks => commify(clicks || 0),
+						...sliderFilterOptions({
+							initial: [0, maxClicks],
+							filterTitle: t('CLICKS_FILTER'),
+						}),
 					},
 				},
 				{
@@ -196,7 +206,12 @@ function AdUnitsTable(props) {
 	const campaingAdUnits = campaign ? campaign.adUnits : false
 	const allItems = useSelector(selectAdUnits)
 	const items = campaingAdUnits ? campaingAdUnits : allItems
-	console.log('ITEMS', items)
+	const maxImpressions = useSelector(state =>
+		selectMaxAdUnitStatByChannel(state, { type: 'IMPRESSION', campaignId })
+	)
+	const maxClicks = useSelector(state =>
+		selectMaxAdUnitStatByChannel(state, { type: 'CLICK', campaignId })
+	)
 
 	const [selectorArgs, setSelectorArgs] = useState({})
 
@@ -209,6 +224,8 @@ function AdUnitsTable(props) {
 				noActions,
 				noClone,
 				campaignAdUnits: !!campaignId,
+				maxImpressions,
+				maxClicks,
 			}),
 	})
 
