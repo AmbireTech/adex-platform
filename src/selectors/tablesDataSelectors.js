@@ -11,7 +11,6 @@ import {
 	selectCampaignAnalyticsByChannelToAdUnit,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
-import { useSelector } from 'react-redux'
 
 export const selectCampaignsTableData = createSelector(
 	[selectCampaignsArray, selectRoutineWithdrawTokens, (_, side) => side],
@@ -146,7 +145,9 @@ export const selectAdUnitsTableData = createSelector(
 			},
 			impressions: impressionsByAdUnit[item.ipfs] || 0,
 			clicks: clicksByAdUnit[item.ipfs] || 0,
-			ctr: (clicksByAdUnit[item.ipfs] / impressionsByAdUnit[item.ipfs]) * 100,
+			ctr: Number(
+				(clicksByAdUnit[item.ipfs] / impressionsByAdUnit[item.ipfs]) * 100 || 0
+			).toFixed(6),
 			title: item.title || units[item.ipfs].title,
 			type: item.type,
 			created: item.created,
