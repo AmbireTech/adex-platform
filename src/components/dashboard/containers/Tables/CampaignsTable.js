@@ -161,13 +161,13 @@ const getCols = ({
 	},
 	{
 		name: 'ctr',
-		label: t('CHART_LABEL_CTR'),
+		label: t('LABEL_CTR'),
 		options: {
 			sort: true,
 			customBodyRender: ctr => `${(ctr || 0).toFixed(2)}%`,
 			...sliderFilterOptions({
 				initial: [0, 100],
-				filterTitle: t('DISTRIBUTED_CTR'),
+				filterTitle: t('CTR_FILTER'),
 			}),
 		},
 	},
