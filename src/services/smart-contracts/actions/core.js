@@ -35,7 +35,7 @@ const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
 const IdentityInterface = new Interface(IdentityABI)
 
-const timeframe = 15 * 1000 // 1 event per 15 seconds
+const timeframe = 5 * 60 * 1000 // 1 event per 5 minutes
 const VALID_UNTIL_COEFFICIENT = 0.5
 const VALID_UNTIL_MIN_PERIOD = 15 * 24 * 60 * 60 * 1000 // 15 days in ms
 const OUTSTANDING_STATUSES = {

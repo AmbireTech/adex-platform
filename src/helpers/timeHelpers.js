@@ -12,6 +12,7 @@ export const intervalsMs = () => {
 		lastHour: {
 			start: moment()
 				.startOf('minute')
+				.add(1, 'minute')
 				.subtract(1, 'hours'),
 			end: moment().startOf('minute'),
 		},
@@ -79,7 +80,7 @@ export const intervalsMs = () => {
 	}
 }
 
-export const fillEmptyTime = (prevAggr, timeframe, defaultValue) => {
+export const fillEmptyTime = (prevAggr, timeframe, defaultValue = 0) => {
 	const intervals = intervalsMs()
 	const time = {
 		interval: intervals.lastHour,
@@ -104,13 +105,18 @@ export const fillEmptyTime = (prevAggr, timeframe, defaultValue) => {
 	const newAggr = []
 	for (
 		var m = moment(time.interval.start);
-		m.diff(time.interval.end, time.step.unit) <= 0;
+		m.diff(time.interval.end) <= 0;
 		m.add(time.step.ammount, time.step.unit)
 	) {
 		newAggr.push({ value: defaultValue, time: m.unix() * 1000 })
 	}
 
-	const data = [...prevAggr, ...newAggr].reduce((data, a) => {
+	const prevAggrInInterval = prevAggr.filter(a => {
+		const m = moment(a.time)
+		return m.diff(time.interval.start) >= 0 && m.diff(time.interval.end) <= 0
+	})
+
+	const data = [...prevAggrInInterval, ...newAggr].reduce((data, a) => {
 		const newData = { ...data }
 		const value = data[a.time] || a.value || defaultValue
 		newData[a.time] = value

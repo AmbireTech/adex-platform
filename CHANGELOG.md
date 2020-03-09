@@ -1,6 +1,46 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.38
+##### *2020-03-06*
+
+### Added
+- Data loops auto stop check functions
+
+### Fixed
+- Possible logout on page refresh
+- MetaMask account change check
+- Missing data points with hour timeframe analytics chart
+- Switch speed and animation between advertiser and publisher
+
+
+## 4.10.37
+##### *2020-03-05*
+
+### Changed
+- Getting started guide can be collapsed/expanded
+- Removed revenue alert close button
+
+### Fixed
+- Getting started steps for publisher slots and impressions
+- Dashboard alerts and content styles
+
+## 4.10.36
+##### *2020-03-05*
+
+### Added
+- Website filed on slot creation #378
+- TOS change notification
+
+### Fixed
+- Email validation #354
+- Campaigns blank page #373
+- Styles
+- Code cleanup
+- Missing keys for translations components args
+- Components translations with tags
+- Publishers revenue notice
+
 ## 4.10.35
 ##### *2020-03-02*
 
