@@ -124,7 +124,7 @@ const getCols = ({
 	},
 	{
 		name: 'fundsDistributedRatio',
-		label: t('PROP_DISTRIBUTED'),
+		label: t('PROP_DISTRIBUTED', { args: ['%'] }),
 		options: {
 			sort: true,
 			customBodyRender: fundsDistributedRatio =>
