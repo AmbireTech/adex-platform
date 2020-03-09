@@ -145,9 +145,8 @@ export const selectAdUnitsTableData = createSelector(
 			},
 			impressions: impressionsByAdUnit[item.ipfs] || 0,
 			clicks: clicksByAdUnit[item.ipfs] || 0,
-			ctr: Number(
-				(clicksByAdUnit[item.ipfs] / impressionsByAdUnit[item.ipfs]) * 100 || 0
-			).toFixed(6),
+			ctr:
+				(clicksByAdUnit[item.ipfs] / impressionsByAdUnit[item.ipfs]) * 100 || 0,
 			title: item.title || units[item.ipfs].title,
 			type: item.type,
 			created: item.created,
