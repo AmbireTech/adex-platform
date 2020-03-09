@@ -13,7 +13,7 @@ import {
 	selectSide,
 	selectCampaignById,
 	selectAdUnits,
-	selectMaxAdUnitStatByChannel,
+	selectAdUnitsStatsMaxValues,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
@@ -35,6 +35,7 @@ const getCols = ({
 	campaignAdUnits,
 	maxImpressions,
 	maxClicks,
+	maxCTR,
 }) => [
 	{
 		name: 'media',
@@ -67,7 +68,42 @@ const getCols = ({
 			customBodyRender: (title = '') => truncateString(title, 20),
 		},
 	},
-	...getCampaignAdUnitsCols(campaignAdUnits, maxImpressions, maxClicks),
+	{
+		name: 'impressions',
+		label: t('LABEL_IMPRESSIONS'),
+		options: {
+			sort: true,
+			customBodyRender: impressions => commify(impressions || 0),
+			...sliderFilterOptions({
+				initial: [0, maxImpressions],
+				filterTitle: t('IMPRESSIONS_FILTER'),
+			}),
+		},
+	},
+	{
+		name: 'clicks',
+		label: t('CHART_LABEL_CLICKS'),
+		options: {
+			sort: true,
+			customBodyRender: clicks => commify(clicks || 0),
+			...sliderFilterOptions({
+				initial: [0, maxClicks],
+				filterTitle: t('CLICKS_FILTER'),
+			}),
+		},
+	},
+	{
+		name: 'ctr',
+		label: t('CHART_LABEL_CTR'),
+		options: {
+			sort: true,
+			customBodyRender: ctr => `${Number(ctr).toFixed(2)} %`,
+			...sliderFilterOptions({
+				initial: [0, maxCTR.toFixed(2)],
+				filterTitle: t('DISTRIBUTED_CTR'),
+			}),
+		},
+	},
 	{
 		name: 'type',
 		label: t('PROP_TYPE'),
@@ -134,48 +170,6 @@ const getCols = ({
 	},
 ]
 
-const getCampaignAdUnitsCols = (campaignAdUnits, maxImpressions, maxClicks) =>
-	!campaignAdUnits
-		? []
-		: [
-				{
-					name: 'impressions',
-					label: t('LABEL_IMPRESSIONS'),
-					options: {
-						sort: true,
-						customBodyRender: impressions => commify(impressions || 0),
-						...sliderFilterOptions({
-							initial: [0, maxImpressions],
-							filterTitle: t('IMPRESSIONS_FILTER'),
-						}),
-					},
-				},
-				{
-					name: 'clicks',
-					label: t('CHART_LABEL_CLICKS'),
-					options: {
-						sort: true,
-						customBodyRender: clicks => commify(clicks || 0),
-						...sliderFilterOptions({
-							initial: [0, maxClicks],
-							filterTitle: t('CLICKS_FILTER'),
-						}),
-					},
-				},
-				{
-					name: 'ctr',
-					label: t('CHART_LABEL_CTR'),
-					options: {
-						sort: true,
-						customBodyRender: ctr => `${Number(ctr).toFixed(2)} %`,
-						// ...sliderFilterOptions({
-						// 	initial: [0, 100],
-						// 	filterTitle: t('DISTRIBUTED_CTR'),
-						// }),
-					},
-				},
-		  ]
-
 const onDownload = (buildHead, buildBody, columns, data) => {
 	const mappedData = data.map(i => ({
 		index: i.index,
@@ -206,11 +200,8 @@ function AdUnitsTable(props) {
 	const campaingAdUnits = campaign ? campaign.adUnits : false
 	const allItems = useSelector(selectAdUnits)
 	const items = campaingAdUnits ? campaingAdUnits : allItems
-	const maxImpressions = useSelector(state =>
-		selectMaxAdUnitStatByChannel(state, { type: 'IMPRESSION', campaignId })
-	)
-	const maxClicks = useSelector(state =>
-		selectMaxAdUnitStatByChannel(state, { type: 'CLICK', campaignId })
+	const { maxClicks, maxImpressions, maxCTR } = useSelector(state =>
+		selectAdUnitsStatsMaxValues(state, { side, items, campaignId })
 	)
 
 	const [selectorArgs, setSelectorArgs] = useState({})
@@ -226,6 +217,7 @@ function AdUnitsTable(props) {
 				campaignAdUnits: !!campaignId,
 				maxImpressions,
 				maxClicks,
+				maxCTR,
 			}),
 	})
 
