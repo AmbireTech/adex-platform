@@ -29,6 +29,7 @@ const getCols = ({ classes }) => [
 			customBodyRender: ({ id, mediaUrl, mediaMime }) => {
 				return (
 					<Img
+						key={id}
 						fullScreenOnClick={true}
 						className={classnames(classes.cellImg)}
 						src={mediaUrl}
@@ -73,8 +74,9 @@ const getCols = ({ classes }) => [
 			filter: false,
 			sort: true,
 			download: false,
-			customBodyRender: ({ to }) => (
+			customBodyRender: ({ to, item }) => (
 				<Tooltip
+					key={item.id}
 					title={t('LABEL_VIEW')}
 					// placement='top'
 					enterDelay={1000}
