@@ -171,7 +171,7 @@ class Img extends Component {
 		return (
 			<span>
 				<Fab
-					mini
+					size='small'
 					color='default'
 					className={classnames(classes.fullscreenIcon)}
 					onClick={() => {

@@ -107,8 +107,7 @@ export class Campaign extends Component {
 						<Tabs
 							value={tabIndex}
 							onChange={this.handleTabChange}
-							scrollable
-							scrollButtons='off'
+							scrollButtons='auto'
 							indicatorColor='primary'
 							textColor='primary'
 						>
