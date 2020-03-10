@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, Fragment } from 'react'
 import { useSelector } from 'react-redux'
 import { execute, updateNav } from 'actions'
 import { Box, Paper } from '@material-ui/core'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import { BasicStats } from './BasicStats'
 import { t, selectSide } from 'selectors'
+import BestEarnersTable from '../Tables/BestEarnersTable'
 
 export function DashboardStats(props) {
 	const side = useSelector(selectSide)
@@ -16,11 +17,16 @@ export function DashboardStats(props) {
 	return side !== 'advertiser' && side !== 'publisher' ? (
 		<SideSelect active={true} />
 	) : (
-		<Paper elevation={2}>
+		<Fragment>
+			<Paper elevation={2}>
+				<Box p={1}>
+					<BasicStats side={side} />
+				</Box>
+			</Paper>
 			<Box p={1}>
-				<BasicStats side={side} />
+				<BestEarnersTable />
 			</Box>
-		</Paper>
+		</Fragment>
 	)
 }
 
