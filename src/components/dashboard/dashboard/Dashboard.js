@@ -231,7 +231,7 @@ function Dashboard(props) {
 						/>
 						<Route
 							exact
-							path='/dashboard/advertiser/Campaign/:itemId'
+							path='/dashboard/advertiser/campaigns/:itemId'
 							component={Campaign}
 						/>
 						<Route
@@ -241,12 +241,12 @@ function Dashboard(props) {
 						/>
 						<Route
 							exact
-							path='/dashboard/advertiser/Campaign/receipt/:itemId'
+							path='/dashboard/advertiser/campaigns/receipt/:itemId'
 							component={CampaignReceipt}
 						/>
 						<Route
 							exact
-							path='/dashboard/advertiser/AdUnit/:itemId'
+							path='/dashboard/advertiser/units/:itemId'
 							component={Unit}
 						/>
 						<Route
@@ -256,7 +256,7 @@ function Dashboard(props) {
 						/>
 						<Route
 							exact
-							path='/dashboard/publisher/AdSlot/:itemId'
+							path='/dashboard/publisher/slots/:itemId'
 							component={Slot}
 						/>
 						<Route
