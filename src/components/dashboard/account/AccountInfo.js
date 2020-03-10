@@ -198,7 +198,7 @@ function AccountInfo() {
 						</LoadingSection>
 					}
 					right={
-						<React.Fragment>
+						<Fragment>
 							<Box py={1}>
 								<Button
 									fullWidth
@@ -224,7 +224,7 @@ function AccountInfo() {
 									size='small'
 								/>
 							</Box>
-						</React.Fragment>
+						</Fragment>
 					}
 				/>
 				<ListDivider />
