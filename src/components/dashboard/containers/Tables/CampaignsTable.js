@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility, Receipt } from '@material-ui/icons'
@@ -20,10 +20,12 @@ import { commify } from 'ethers/utils'
 import { execute, handlePrintSelectedReceipts } from 'actions'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
-import { formatDateTime } from 'helpers/formatters'
+import { formatDateTime, truncateString } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 import { useTableData } from './tableHooks'
 import { ReloadData, PrintAllReceipts } from './toolbars'
+import { push } from 'connected-react-router'
+
 const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(styles)
@@ -57,16 +59,18 @@ const getCols = ({
 			filter: false,
 			sort: false,
 			download: false,
-			customBodyRender: ({ id, mediaUrl, mediaMime }) => {
+			customBodyRender: ({ side, id, mediaUrl, mediaMime }) => {
 				return (
 					// TODO: Images issue some stop displaying
 					<Img
+						key={id}
 						fullScreenOnClick={true}
 						className={classnames(classes.cellImg)}
 						src={mediaUrl}
 						alt={id}
 						mediaMime={mediaMime}
 						allowVideo
+						onClick={() => execute(push(`/dashboard/${side}/Campaign/${id}`))}
 					/>
 				)
 			},
@@ -85,13 +89,22 @@ const getCols = ({
 					return false
 				},
 			},
-			customBodyRender: ({ humanFriendlyName, originalName }) => (
-				<React.Fragment>
+			customBodyRender: ({ humanFriendlyName, originalName, id }) => (
+				<Fragment key={id}>
 					{humanFriendlyName}{' '}
 					{mapStatusIcons(humanFriendlyName, originalName, 'xs')}
-				</React.Fragment>
+				</Fragment>
 			),
 			// TODO: Sorting issue
+		},
+	},
+	{
+		name: 'title',
+		label: t('PROP_TITLE'),
+		options: {
+			filter: false,
+			sort: true,
+			customBodyRender: (title = '') => truncateString(title, 20),
 		},
 	},
 	{
@@ -100,9 +113,7 @@ const getCols = ({
 		options: {
 			sort: true,
 			customBodyRender: depositAmount => (
-				<React.Fragment>{`${depositAmount.toFixed(
-					2
-				)} ${symbol}`}</React.Fragment>
+				<Fragment>{`${depositAmount.toFixed(2)} ${symbol}`}</Fragment>
 			),
 			...sliderFilterOptions({
 				initial: [0, maxDeposit],
@@ -112,11 +123,11 @@ const getCols = ({
 	},
 	{
 		name: 'fundsDistributedRatio',
-		label: t('PROP_DISTRIBUTED'),
+		label: t('PROP_SERVED'),
 		options: {
 			sort: true,
 			customBodyRender: fundsDistributedRatio =>
-				`${((fundsDistributedRatio || 0) / 10).toFixed(2)}%`,
+				`${((fundsDistributedRatio || 0) / 10).toFixed(2)} %`,
 			...sliderFilterOptions({
 				initial: [0, 100],
 				filterTitle: t('DISTRIBUTED_FILTER'),
@@ -148,15 +159,27 @@ const getCols = ({
 		},
 	},
 	{
+		name: 'ctr',
+		label: t('LABEL_CTR'),
+		options: {
+			sort: true,
+			customBodyRender: ctr => `${(ctr || 0).toFixed(2)} %`,
+			...sliderFilterOptions({
+				initial: [0, 100],
+				filterTitle: t('CTR_FILTER'),
+			}),
+		},
+	},
+	{
 		name: 'minPerImpression',
 		label: t('PROP_CPM'),
 		options: {
 			filter: false,
 			sort: true,
-			customBodyRender: minPerImpression => (
-				<React.Fragment>{`${minPerImpression.toFixed(
+			customBodyRender: ({ minPerImpression, id }) => (
+				<Fragment key={id}>{`${minPerImpression.toFixed(
 					2
-				)} ${symbol}`}</React.Fragment>
+				)} ${symbol}`}</Fragment>
 			),
 		},
 	},
@@ -175,6 +198,7 @@ const getCols = ({
 		label: t('PROP_STARTS'),
 		options: {
 			filter: false,
+			display: false,
 			sort: true,
 			customBodyRender: activeFrom => formatDateTime(activeFrom),
 		},
@@ -184,6 +208,7 @@ const getCols = ({
 		label: t('PROP_ENDS'),
 		options: {
 			filter: false,
+			display: false,
 			sort: true,
 			customBodyRender: withdrawPeriodStart =>
 				formatDateTime(withdrawPeriodStart),
@@ -196,8 +221,8 @@ const getCols = ({
 			filter: false,
 			sort: true,
 			download: false,
-			customBodyRender: ({ side, id, humanFriendlyName }) => (
-				<React.Fragment>
+			customBodyRender: ({ side, id, receiptReady }) => (
+				<Fragment key={id}>
 					<Tooltip
 						title={t('LABEL_VIEW')}
 						// placement='top'
@@ -211,23 +236,31 @@ const getCols = ({
 							<Visibility color='primary' />
 						</RRIconButton>
 					</Tooltip>
-					{(humanFriendlyName === 'Closed' ||
-						humanFriendlyName === 'Completed') && (
-						<Tooltip
-							title={t('RECEIPT_VIEW')}
-							// placement='top'
-							enterDelay={1000}
-						>
+					<Tooltip
+						title={
+							receiptReady
+								? t('RECEIPT_VIEW')
+								: 'Report not available until the campaign is completed'
+						}
+						// placement='top'
+						enterDelay={1000}
+					>
+						{/* SPAN needed to enable tooltip on hover of disabled element
+						 https://material-ui.com/components/tooltips/#disabled-elements
+						*/}
+						<span>
 							<RRIconButton
 								to={`/dashboard/${side}/Campaign/receipt/${id}`}
 								variant='contained'
 								aria-label='receip'
+								disabled={!receiptReady}
 							>
-								<Receipt color='primary' />
+								<Receipt color={receiptReady ? 'primary' : 'grey'} />
 							</RRIconButton>
-						</Tooltip>
+						</span>
+					</Tooltip>
 					)}
-				</React.Fragment>
+				</Fragment>
 			),
 		},
 	},
@@ -242,7 +275,7 @@ const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
 			i.data[2],
 			i.data[3].humanFriendlyName,
 			`${i.data[4]} ${symbol}`,
-			`${((i.data[5] || 0) / 10).toFixed(2)}%`,
+			`${((i.data[5] || 0) / 10).toFixed(2)} %`,
 			i.data[6],
 			i.data[7],
 			i.data[8],

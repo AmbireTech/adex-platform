@@ -68,7 +68,7 @@ const useStyles = makeStyles(theme => {
 			top: 0,
 			left: 0,
 			right: 0,
-			bottom: 80,
+			bottom: 100,
 			overflowY: 'auto',
 			overflowX: 'hidden',
 		},
@@ -255,6 +255,17 @@ function SideNav(props) {
 						</Anchor>
 					</small>
 				</div>
+				<div className={classes.adxLink}>
+					<small>
+						<Anchor
+							className={classes.adxLink}
+							target='_blank'
+							href={`${process.env.ADEX_SITE_HOST}/tos`}
+						>
+							{t('TOS_CHECK')}
+						</Anchor>
+					</small>
+				</div>
 				<div>
 					<small>
 						<Anchor
@@ -281,7 +292,7 @@ function SideNav(props) {
 						<Anchor
 							className={classes.adxLink}
 							target='_blank'
-							href='https://github.com/AdExBlockchain/adex-dapp/blob/master/CHANGELOG.md'
+							href='https://github.com/AdExNetwork/adex-platform/blob/development/CHANGELOG.md.'
 						>
 							v.{packageJson.version}-beta
 						</Anchor>

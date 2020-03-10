@@ -80,9 +80,9 @@ class AdUnitBasic extends Component {
 		})
 	}
 
-	addUtmParameters() {
+	addUtmParameters(targetUrl) {
 		const { handleChange, newItem } = this.props
-		const { targetUrl, title, type, temp } = newItem
+		const { title, type, temp } = newItem
 		const { addUtmLink } = temp
 		if (!!targetUrl) {
 			const newTargetUrl = addUrlUtmTracking({

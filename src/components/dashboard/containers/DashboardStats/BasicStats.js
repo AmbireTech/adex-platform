@@ -180,7 +180,7 @@ export function BasicStats({ side }) {
 						}
 						title={`${formatNumberWithCommas(totalClicks || 0)} (${parseFloat(
 							(totalClicks / totalImpressions) * 100 || 0
-						).toFixed(2)}% ${t('LABEL_CTR')})`}
+						).toFixed(2)} % ${t('LABEL_CTR')})`}
 					></StatsCard>
 					{side === 'advertiser' && (
 						<StatsCard

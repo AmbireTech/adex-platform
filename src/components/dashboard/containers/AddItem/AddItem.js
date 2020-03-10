@@ -34,8 +34,7 @@ export class AddItem extends Component {
 							className={''}
 							value={tabIndex}
 							onChange={this.handleTabChange}
-							scrollable
-							scrollButtons='off'
+							scrollButtons='auto'
 						>
 							<Tab label={this.props.tabNewLabel} />
 							<Tab label={this.props.tabExsLabel} />

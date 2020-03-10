@@ -12,7 +12,7 @@ import Root from './Root'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import { themeMUI } from './themeMUi'
 import MomentUtils from '@date-io/moment'
-import { MuiPickersUtilsProvider } from 'material-ui-pickers'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import CacheBuster from './CacheBuster'
 
