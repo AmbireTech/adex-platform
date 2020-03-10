@@ -333,7 +333,7 @@ const SlotWebsite = ({
 				}
 			/>
 
-			<FormHelperText>
+			<FormHelperText component='div'>
 				{errWebsite && !!errWebsite.errMsg && activeFields.website ? (
 					t(errWebsite.errMsg, { args: errWebsite.errMsgArgs })
 				) : (
