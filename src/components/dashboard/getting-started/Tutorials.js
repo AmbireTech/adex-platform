@@ -13,7 +13,6 @@ export const createAdUnitTutorial = () => {
 	return execute(
 		confirmAction(null, null, {
 			confirmLabel: t('OK'),
-			cancelLabel: t('CANCEL'),
 			title: t('TUTORIAL_CREATE_AD_UNIT_TITLE'),
 			text: (
 				<Fragment>
@@ -42,7 +41,6 @@ export const fundAccountTutorial = () => {
 	return execute(
 		confirmAction(null, null, {
 			confirmLabel: t('OK'),
-			cancelLabel: t('CANCEL'),
 			title: t('TUTORIAL_FUND_ACC_TITLE'),
 			text: (
 				<Fragment>
@@ -81,7 +79,6 @@ export const launchFirstCampaign = () => {
 	return execute(
 		confirmAction(null, null, {
 			confirmLabel: t('OK'),
-			cancelLabel: t('CANCEL'),
 			title: t('TUTORIAL_LAUNCH_CAMPAIGN_TITLE'),
 			text: (
 				<Fragment>
@@ -111,7 +108,6 @@ export const createAdSlot = () => {
 	return execute(
 		confirmAction(null, null, {
 			confirmLabel: t('OK'),
-			cancelLabel: t('CANCEL'),
 			title: t('TUTORIAL_CREATE_AD_SLOT_TTILE'),
 			text: (
 				<Fragment>
@@ -140,7 +136,6 @@ export const placeAdSlot = () => {
 	return execute(
 		confirmAction(null, null, {
 			confirmLabel: t('OK'),
-			cancelLabel: t('CANCEL'),
 			title: t('TUTORIAL_PLACE_AD_SLOT_TITLE'),
 			text: (
 				<Fragment>

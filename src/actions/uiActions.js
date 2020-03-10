@@ -80,7 +80,14 @@ export function removeToast(toastId) {
 export function confirmAction(
 	onConfirm,
 	onCancel,
-	{ confirmLabel = '', cancelLabel = '', title = '', text = '' } = {},
+	{
+		confirmLabel = '',
+		cancelLabel = '',
+		title = '',
+		text = '',
+		noCancel = false,
+		noConfirm = false,
+	} = {},
 	noActionBtns,
 	active
 ) {
@@ -95,6 +102,8 @@ export function confirmAction(
 					cancelLabel: cancelLabel,
 					title: title,
 					text: text,
+					noCancel: noCancel,
+					noConfirm: noConfirm,
 				},
 				noActionBtns,
 				active,
