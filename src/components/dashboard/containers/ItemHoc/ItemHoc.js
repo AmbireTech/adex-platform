@@ -5,22 +5,16 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Grid from '@material-ui/core/Grid'
 import IconButton from '@material-ui/core/IconButton'
-import Button from '@material-ui/core/Button'
 import EditIcon from '@material-ui/icons/Edit'
-import ImgDialog from 'components/dashboard/containers/ImgDialog'
 import { schemas, Joi } from 'adex-models'
-import classnames from 'classnames'
 import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
-import { items as ItemsConstants } from 'adex-constants'
-import Img from 'components/common/img/Img'
 import SaveBtn from 'components/dashboard/containers/SaveBtn'
 import { withStyles } from '@material-ui/core/styles'
 import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import FormControl from '@material-ui/core/FormControl'
-import Paper from '@material-ui/core/Paper'
 import InfoOutlineIcon from '@material-ui/icons/Info'
 import Chip from '@material-ui/core/Chip'
 import FormHelperText from '@material-ui/core/FormHelperText'
@@ -31,7 +25,6 @@ import PageNotFound from 'components/page_not_found/PageNotFound'
 import { selectSide } from 'selectors'
 
 const { adSlotPut, adUnitPut, campaignPut } = schemas
-const { AdSizesByValue } = ItemsConstants
 
 export default function ItemHoc(Decorated) {
 	class Item extends Component {
@@ -261,7 +254,6 @@ export default function ItemHoc(Decorated) {
 			const isDemo = account._authType === 'demo'
 			const item = new objModel(this.state.item || {})
 			let canEdit = itemType === 'AdSlot'
-			let imgSrc = item.temp.tempUrl || item.mediaUrl || item.fallbackMediaUrl
 
 			const titleErr = invalidFields['title']
 			const descriptionErr = invalidFields['description']
@@ -436,6 +428,7 @@ export default function ItemHoc(Decorated) {
 							canEdit={canEdit}
 							itemType={itemType}
 							isDemo={isDemo}
+							validateId={validateId}
 						/>
 					</div>
 				</div>
