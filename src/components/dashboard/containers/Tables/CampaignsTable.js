@@ -127,7 +127,7 @@ const getCols = ({
 		options: {
 			sort: true,
 			customBodyRender: fundsDistributedRatio =>
-				`${((fundsDistributedRatio || 0) / 10).toFixed(2)}%`,
+				`${((fundsDistributedRatio || 0) / 10).toFixed(2)} %`,
 			...sliderFilterOptions({
 				initial: [0, 100],
 				filterTitle: t('DISTRIBUTED_FILTER'),
@@ -163,7 +163,7 @@ const getCols = ({
 		label: t('LABEL_CTR'),
 		options: {
 			sort: true,
-			customBodyRender: ctr => `${(ctr || 0).toFixed(2)}%`,
+			customBodyRender: ctr => `${(ctr || 0).toFixed(2)} %`,
 			...sliderFilterOptions({
 				initial: [0, 100],
 				filterTitle: t('CTR_FILTER'),
@@ -275,7 +275,7 @@ const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
 			i.data[2],
 			i.data[3].humanFriendlyName,
 			`${i.data[4]} ${symbol}`,
-			`${((i.data[5] || 0) / 10).toFixed(2)}%`,
+			`${((i.data[5] || 0) / 10).toFixed(2)} %`,
 			i.data[6],
 			i.data[7],
 			i.data[8],
