@@ -23,7 +23,7 @@ export const selectCampaignsTableData = createSelector(
 			const firstUnit = adUnits[0] || {}
 
 			const to = `/dashboard/${side}/campaigns/${id}`
-			const toReceipt = `/dashboard/${side}/campaigns/receipt/${id}`
+			const toReceipt = `/dashboard/${side}/receipt/${id}`
 
 			return {
 				media: {
