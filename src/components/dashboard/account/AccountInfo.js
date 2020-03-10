@@ -38,7 +38,7 @@ import {
 	selectEasterEggsAllowed,
 	selectEnsAddressByAddr,
 } from 'selectors'
-import { updateNav, execute, addToast } from 'actions'
+import { execute, addToast } from 'actions'
 import { formatAddress } from 'helpers/formatters'
 // const RRButton = withReactRouterLink(Button)
 
@@ -110,10 +110,6 @@ function AccountInfo() {
 	const [expanded, setExpanded] = useState(false)
 
 	const classes = useStyles()
-
-	useEffect(() => {
-		execute(updateNav('navTitle', t('ACCOUNT')))
-	}, [identityAddress])
 
 	useEffect(() => {
 		loadBackupHref()

@@ -34,7 +34,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import Anchor from 'components/common/anchor/anchor'
 import {
-	updateNav,
 	execute,
 	resolveEnsAddress,
 	updatePrivilegesWarningAccepted,
@@ -127,10 +126,6 @@ function Dashboard(props) {
 	useEffect(() => {
 		execute(resolveEnsAddress({ address }))
 	}, [address])
-
-	useEffect(() => {
-		execute(updateNav('side', side))
-	}, [side])
 
 	const handleDrawerToggle = () => {
 		setMobileOpen(!mobileOpen)

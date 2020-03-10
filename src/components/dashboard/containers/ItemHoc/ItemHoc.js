@@ -78,8 +78,6 @@ export default function ItemHoc(Decorated) {
 					dirtyProps: [],
 				})
 			}
-
-			this.updateNav(nexItemInst)
 		}
 
 		componentWillUnmount() {
