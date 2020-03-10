@@ -29,13 +29,22 @@ const ITEMS_SELECTORS = {
 	slots: selectAdSlotById,
 }
 
+const SIDES = {
+	advertiser: true,
+	publisher: true,
+}
+
 export const selectDashboardBreadcrumbs = createSelector(
 	[selectLocation, state => state],
 	({ pathname = '' }, state) => {
 		const paths = pathname.split('/').filter(x => !!x)
-
-		// TODO: validate it starts from dashboard
 		const sideDashboard = paths.slice(0, 2)
+
+		// NOTE: no breadcrumbs if no side dashboard
+		if (sideDashboard[0] !== 'dashboard' || !SIDES[sideDashboard[1]]) {
+			return []
+		}
+
 		const sideDashboardBC = {
 			to: `/${sideDashboard.join('/')}`,
 			label: 'dashboard',
