@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { DateTimePicker as MuiDateTimePicker } from 'material-ui-pickers'
+import { DateTimePicker as MuiDateTimePicker } from '@material-ui/pickers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import IconButton from '@material-ui/core/IconButton'

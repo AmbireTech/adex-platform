@@ -29,7 +29,6 @@ class SaveBtn extends Component {
 			<div className={classes.position}>
 				<div className={classes.wrapper}>
 					<Fab
-						fabButton
 						color='primary'
 						// className={buttonClassname}
 						onClick={() => save()}
