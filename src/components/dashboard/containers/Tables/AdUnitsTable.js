@@ -32,7 +32,6 @@ const getCols = ({
 	classes,
 	noActions,
 	noClone,
-	campaignAdUnits,
 	maxImpressions,
 	maxClicks,
 	maxCTR,
@@ -198,9 +197,9 @@ function AdUnitsTable(props) {
 	const side = useSelector(selectSide)
 	const { noActions, noClone, campaignId, handleSelect, selected = [] } = props
 	const campaign = useSelector(state => selectCampaignById(state, campaignId))
-	const campaingAdUnits = campaign ? campaign.adUnits : false
+	const campaignAdUnits = campaign ? campaign.adUnits : false
 	const allItems = useSelector(selectAdUnits)
-	const items = campaingAdUnits ? campaingAdUnits : allItems
+	const items = campaignAdUnits ? campaignAdUnits : allItems
 	const { maxClicks, maxImpressions, maxCTR } = useSelector(state =>
 		selectAdUnitsStatsMaxValues(state, { side, items, campaignId })
 	)
