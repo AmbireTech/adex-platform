@@ -22,12 +22,16 @@ export const selectCampaignsTableData = createSelector(
 
 			const firstUnit = adUnits[0] || {}
 
+			const to = `/dashboard/${side}/Campaign/${id}`
+			const toReceipt = `/dashboard/${side}/Campaign/receipt/${id}`
+
 			return {
 				media: {
-					side: side,
-					id: item.id,
+					side,
+					id,
 					mediaUrl: firstUnit.mediaUrl || '',
 					mediaMime: firstUnit.mediaMime || '',
+					to,
 				},
 				title: item.title,
 				status: {
@@ -36,12 +40,12 @@ export const selectCampaignsTableData = createSelector(
 				},
 				depositAmount: Number(formatUnits(item.depositAmount || '0', decimals)),
 				fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
-				impressions: selectCampaignEventsCount('IMPRESSION', item.id),
-				clicks: selectCampaignEventsCount('CLICK', item.id),
+				impressions: selectCampaignEventsCount('IMPRESSION', id),
+				clicks: selectCampaignEventsCount('CLICK', id),
 
 				ctr:
-					(selectCampaignEventsCount('CLICK', item.id) /
-						selectCampaignEventsCount('IMPRESSION', item.id)) *
+					(selectCampaignEventsCount('CLICK', id) /
+						selectCampaignEventsCount('IMPRESSION', id)) *
 						100 || 0,
 
 				minPerImpression: {
@@ -59,9 +63,11 @@ export const selectCampaignsTableData = createSelector(
 				withdrawPeriodStart:
 					spec.withdrawPeriodStart || item.withdrawPeriodStart,
 				actions: {
-					side: side,
+					side,
 
 					id,
+					to,
+					toReceipt,
 					receiptReady:
 						(item.status.humanFriendlyName === 'Closed' ||
 							item.status.humanFriendlyName === 'Completed') &&
@@ -110,17 +116,19 @@ export const selectAdSlotsTableData = createSelector(
 	(slots, side) =>
 		slots.map(item => {
 			const id = item.id || item.ipfs
+			const to = `/dashboard/${side}/AdSlot/${id}`
 			return {
 				media: {
 					id,
 					mediaUrl: item.fallbackUnit ? `ipfs://${item.fallbackUnit}` : '', //TODO: provide fallback image to slot
 					mediaMime: 'image/jpeg',
+					to,
 				},
 				title: item.title,
 				type: item.type.replace('legacy_', ''),
 				created: item.created,
 				actions: {
-					to: `/dashboard/${side}/AdSlot/${id}`,
+					to,
 					item,
 				},
 			}
@@ -159,12 +167,14 @@ export const selectAdUnitsTableData = createSelector(
 	({ side, items, impressionsByAdUnit, clicksByAdUnit }) =>
 		Object.values(items).map(item => {
 			const id = item.id || item.ipfs
+			const to = `/dashboard/${side}/AdUnit/${id}`
 			return {
 				id,
 				media: {
 					id,
 					mediaUrl: item.mediaUrl,
 					mediaMime: item.mediaMime,
+					to,
 				},
 				impressions: impressionsByAdUnit(id) || 0,
 				clicks: clicksByAdUnit(id) || 0,
@@ -173,7 +183,7 @@ export const selectAdUnitsTableData = createSelector(
 				type: item.type,
 				created: item.created,
 				actions: {
-					to: `/dashboard/${side}/AdUnit/${id}`,
+					to,
 					item,
 				},
 			}
