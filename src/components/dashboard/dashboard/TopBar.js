@@ -113,12 +113,12 @@ function TopNav({ handleDrawerToggle, side, t }) {
 					<div className={classnames(classes.flex, classes.toolbarTitle)}>
 						<Breadcrumbs aria-label='breadcrumb'>
 							{breadcrumbs.map(({ to, label }, index) =>
-								index !== breadcrumbs.length - 1 ? (
+								to ? (
 									<RRLink key={`${index}-${to}`} to={to}>
 										{label}
 									</RRLink>
 								) : (
-									<Typography key={`${index}-${to}`} color='textPrimary'>
+									<Typography key={`${index}-${label}`} color='textPrimary'>
 										{label}
 									</Typography>
 								)
