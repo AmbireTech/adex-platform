@@ -321,29 +321,6 @@ export default function ItemHoc(Decorated) {
 					{itemType !== 'Campaign' && (
 						<div>
 							<div>
-								<ImgDialog
-									{...rest}
-									imgSrc={imgSrc}
-									handleToggle={this.handleToggle}
-									active={this.state.editImg}
-									onChangeReady={this.handleChange}
-									validateId={item._id}
-									width={
-										this.props.updateImgWidth ||
-										(AdSizesByValue[item.size] || {}).width
-									}
-									height={
-										this.props.updateImgHeight ||
-										(AdSizesByValue[item.size] || {}).height
-									}
-									title={t(this.props.updateImgLabel)}
-									additionalInfo={t(this.props.updateImgInfoLabel)}
-									exact={this.props.updateImgExact}
-									errMsg={this.props.updateImgErrMsg}
-									imgPropName='img'
-								/>
-							</div>
-							<div>
 								<Grid container spacing={2}>
 									<Grid item xs={12} sm={12} md={12} lg={7}>
 										<div>
@@ -407,38 +384,6 @@ export default function ItemHoc(Decorated) {
 												)}
 											</FormControl>
 										</div>
-									</Grid>
-									<Grid item xs={12} sm={12} md={12} lg={5}>
-										{this.props.showLogo && (
-											<div style={{ width: 270 }}>
-												<Paper
-													className={classnames(
-														classes.mediaRoot,
-														classes.imgContainer
-													)}
-												>
-													<Img
-														allowFullscreen={true}
-														src={imgSrc}
-														alt={item.fullName}
-														className={classnames(classes.img, {
-															[classes.pointer]:
-																this.props.canEditImg && !isDemo,
-														})}
-													/>
-													<Button
-														fabButton
-														size='small'
-														color='secondary'
-														className={classes.editIcon}
-														onClick={!isDemo ? this.handleToggle : null}
-														disabled={isDemo}
-													>
-														<EditIcon />
-													</Button>
-												</Paper>
-											</div>
-										)}
 									</Grid>
 								</Grid>
 							</div>
