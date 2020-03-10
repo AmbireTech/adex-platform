@@ -61,8 +61,8 @@ function TopNav({ handleDrawerToggle, side, t }) {
 					</IconButton>
 
 					{/* <AdexIconTxt
-              className={classes.icon}
-            /> */}
+					className={classes.icon}
+					/> */}
 					<div className={classnames(classes.flex, classes.toolbarControls)}>
 						{/* <Navigation type='horizontal' className={theme.rightNavigation}> */}
 						{/* At the moment we use translations only for proper items properties display names */}
@@ -118,7 +118,13 @@ function TopNav({ handleDrawerToggle, side, t }) {
 										{label}
 									</RRLink>
 								) : (
-									<Typography key={`${index}-${label}`} color='textPrimary'>
+									<Typography
+										classes={{ root: classes.breadcrumbElement }}
+										noWrap
+										component='div'
+										key={`${index}-${label}`}
+										color='textPrimary'
+									>
 										{label}
 									</Typography>
 								)
