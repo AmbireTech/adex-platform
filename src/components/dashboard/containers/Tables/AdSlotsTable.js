@@ -15,6 +15,7 @@ import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
 
 const RRIconButton = withReactRouterLink(IconButton)
+const RRImg = withReactRouterLink(Img)
 
 const useStyles = makeStyles(styles)
 
@@ -26,9 +27,9 @@ const getCols = ({ classes }) => [
 			filter: false,
 			sort: false,
 			download: false,
-			customBodyRender: ({ id, mediaUrl, mediaMime }) => {
+			customBodyRender: ({ id, mediaUrl, mediaMime, to }) => {
 				return (
-					<Img
+					<RRImg
 						key={id}
 						fullScreenOnClick={true}
 						className={classnames(classes.cellImg)}
@@ -36,6 +37,7 @@ const getCols = ({ classes }) => [
 						alt={id}
 						mediaMime={mediaMime}
 						allowVideo
+						to={to}
 					/>
 				)
 			},

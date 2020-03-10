@@ -14,6 +14,7 @@ import {
 import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
+import PageNotFound from 'components/page_not_found/PageNotFound'
 import {
 	t,
 	selectCampaignStatsTableData,
@@ -55,9 +56,8 @@ const useStyles = makeStyles(theme => {
 	}
 })
 
-function Receipt(props) {
+function Receipt({ campaignId } = {}) {
 	const classes = useStyles()
-	const campaignId = props.campaignId
 	const { symbol, decimals } = useSelector(selectMainToken)
 	const identityAddr = useSelector(selectAccountIdentityAddr)
 	const campaignBreakdown = useSelector(state =>
@@ -69,9 +69,21 @@ function Receipt(props) {
 	const { companyName, firstLastName, address, country } = useSelector(
 		selectCompanyData
 	)
-	const humanFriendlyName = campaign.status.humanFriendlyName
+	const humanFriendlyName = (campaign.status || {}).humanFriendlyName
 	const receiptReady =
 		humanFriendlyName === 'Closed' || humanFriendlyName === 'Completed'
+	if (!campaign.spec || !campaign.creator) {
+		return (
+			<PageNotFound
+				title={t('ITEM_NOT_FOUND_TITLE')}
+				subtitle={t('ITEM_NOT_FOUND_SUBTITLE', {
+					args: ['CAMPAIGN', campaignId],
+				})}
+				goToPath={`/dashboard/advertiser`}
+				goToTxt='GO_TO_DASHBOARD'
+			/>
+		)
+	}
 	if (!receiptReady) return null
 	return (
 		<Box mb={5} className={classnames(classes.pageBreak)}>

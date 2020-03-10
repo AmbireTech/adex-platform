@@ -9,32 +9,37 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import { getAuthLogo } from 'helpers/logosHelpers'
 import { logOut } from 'services/store-data/auth'
 
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
+import {
+	AppBar,
+	Toolbar,
+	Typography,
+	Breadcrumbs,
+	IconButton,
+	ListItemIcon,
+	ListItemText,
+	Link,
+	MenuItem,
+} from '@material-ui/core'
+
 import classnames from 'classnames'
-import Typography from '@material-ui/core/Typography'
-import IconButton from '@material-ui/core/IconButton'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import MenuIcon from '@material-ui/icons/Menu'
-
 import { makeStyles } from '@material-ui/core/styles'
-import MenuItem from '@material-ui/core/MenuItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { selectNavTitle, selectAccount } from 'selectors'
+import { selectAccount, selectDashboardBreadcrumbs } from 'selectors'
 import { styles } from './styles'
 import { formatAddress } from 'helpers/formatters'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
+const RRLink = withReactRouterLink(Link)
 const useStyles = makeStyles(styles)
 
 function TopNav({ handleDrawerToggle, side, t }) {
 	const classes = useStyles()
-	const navTitle = useSelector(selectNavTitle)
 	const account = useSelector(selectAccount)
 	const imgSrc = getAuthLogo(account.wallet.authType)
+	const breadcrumbs = useSelector(selectDashboardBreadcrumbs)
 	const btnMenuLabel =
 		account.wallet.authType === 'demo'
 			? t('DEMO_MODE')
@@ -56,8 +61,8 @@ function TopNav({ handleDrawerToggle, side, t }) {
 					</IconButton>
 
 					{/* <AdexIconTxt
-              className={classes.icon}
-            /> */}
+					className={classes.icon}
+					/> */}
 					<div className={classnames(classes.flex, classes.toolbarControls)}>
 						{/* <Navigation type='horizontal' className={theme.rightNavigation}> */}
 						{/* At the moment we use translations only for proper items properties display names */}
@@ -106,14 +111,25 @@ function TopNav({ handleDrawerToggle, side, t }) {
 				</div>
 				<div className={classes.flexRow}>
 					<div className={classnames(classes.flex, classes.toolbarTitle)}>
-						<Typography
-							variant='subtitle1'
-							color='inherit'
-							className={classes.flex}
-							noWrap
-						>
-							{t(navTitle)}
-						</Typography>
+						<Breadcrumbs aria-label='breadcrumb'>
+							{breadcrumbs.map(({ to, label }, index) =>
+								to ? (
+									<RRLink key={`${index}-${to}`} to={to}>
+										{label}
+									</RRLink>
+								) : (
+									<Typography
+										classes={{ root: classes.breadcrumbElement }}
+										noWrap
+										component='div'
+										key={`${index}-${label}`}
+										color='textPrimary'
+									>
+										{label}
+									</Typography>
+								)
+							)}
+						</Breadcrumbs>
 					</div>
 				</div>
 			</Toolbar>
