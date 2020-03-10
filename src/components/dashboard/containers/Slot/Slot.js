@@ -150,8 +150,7 @@ export class Slot extends Component {
 							value={tabIndex}
 							onChange={this.handleTabChange.bind(this)}
 							ref={this.tabsFocus}
-							scrollable
-							scrollButtons='off'
+							scrollButtons='auto'
 							indicatorColor='primary'
 							textColor='primary'
 						>

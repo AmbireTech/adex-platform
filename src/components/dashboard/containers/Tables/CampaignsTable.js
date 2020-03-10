@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility, Receipt } from '@material-ui/icons'
@@ -63,6 +63,7 @@ const getCols = ({
 				return (
 					// TODO: Images issue some stop displaying
 					<Img
+						key={id}
 						fullScreenOnClick={true}
 						className={classnames(classes.cellImg)}
 						src={mediaUrl}
@@ -88,11 +89,11 @@ const getCols = ({
 					return false
 				},
 			},
-			customBodyRender: ({ humanFriendlyName, originalName }) => (
-				<React.Fragment>
+			customBodyRender: ({ humanFriendlyName, originalName, id }) => (
+				<Fragment key={id}>
 					{humanFriendlyName}{' '}
 					{mapStatusIcons(humanFriendlyName, originalName, 'xs')}
-				</React.Fragment>
+				</Fragment>
 			),
 			// TODO: Sorting issue
 		},
@@ -112,9 +113,7 @@ const getCols = ({
 		options: {
 			sort: true,
 			customBodyRender: depositAmount => (
-				<React.Fragment>{`${depositAmount.toFixed(
-					2
-				)} ${symbol}`}</React.Fragment>
+				<Fragment>{`${depositAmount.toFixed(2)} ${symbol}`}</Fragment>
 			),
 			...sliderFilterOptions({
 				initial: [0, maxDeposit],
@@ -177,10 +176,10 @@ const getCols = ({
 		options: {
 			filter: false,
 			sort: true,
-			customBodyRender: minPerImpression => (
-				<React.Fragment>{`${minPerImpression.toFixed(
+			customBodyRender: ({ minPerImpression, id }) => (
+				<Fragment key={id}>{`${minPerImpression.toFixed(
 					2
-				)} ${symbol}`}</React.Fragment>
+				)} ${symbol}`}</Fragment>
 			),
 		},
 	},
@@ -223,7 +222,7 @@ const getCols = ({
 			sort: true,
 			download: false,
 			customBodyRender: ({ side, id, receiptReady }) => (
-				<React.Fragment>
+				<Fragment key={id}>
 					<Tooltip
 						title={t('LABEL_VIEW')}
 						// placement='top'
@@ -260,7 +259,8 @@ const getCols = ({
 							</RRIconButton>
 						</span>
 					</Tooltip>
-				</React.Fragment>
+					)}
+				</Fragment>
 			),
 		},
 	},

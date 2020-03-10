@@ -18,7 +18,7 @@ export const selectCampaignsTableData = createSelector(
 	(campaigns, tokens, side) =>
 		campaigns.map(item => {
 			const { decimals = 18 } = tokens[item.depositAsset] || {}
-			const { spec = {}, adUnits = [] } = item
+			const { id, spec = {}, adUnits = [] } = item
 
 			const firstUnit = adUnits[0] || {}
 
@@ -38,31 +38,37 @@ export const selectCampaignsTableData = createSelector(
 				fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
 				impressions: selectCampaignEventsCount('IMPRESSION', item.id),
 				clicks: selectCampaignEventsCount('CLICK', item.id),
+
 				ctr:
 					(selectCampaignEventsCount('CLICK', item.id) /
 						selectCampaignEventsCount('IMPRESSION', item.id)) *
 						100 || 0,
-				minPerImpression:
-					Number(
-						formatUnits(
-							spec.minPerImpression || item.minPerImpression || '0',
-							decimals
-						)
-					) * 1000,
+
+				minPerImpression: {
+					id,
+					minPerImpression:
+						Number(
+							formatUnits(
+								spec.minPerImpression || item.minPerImpression || '0',
+								decimals
+							)
+						) * 1000,
+				},
 				created: item.created,
 				activeFrom: spec.activeFrom || item.activeFrom,
 				withdrawPeriodStart:
 					spec.withdrawPeriodStart || item.withdrawPeriodStart,
 				actions: {
 					side: side,
-					id: item.id,
+
+					id,
 					receiptReady:
 						(item.status.humanFriendlyName === 'Closed' ||
 							item.status.humanFriendlyName === 'Completed') &&
 						(item.status.name === 'Exhausted' ||
 							item.status.name === 'Expired'),
 				},
-				id: item.id,
+				id,
 				receiptAvailable:
 					item.status.humanFriendlyName === 'Closed' ||
 					item.status.humanFriendlyName === 'Completed',

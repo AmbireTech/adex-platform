@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 import NewCampaignHoc from './NewCampaignHoc'
-import Grid from '@material-ui/core/Grid'
+import { Grid, CircularProgress } from '@material-ui/core'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import { WalletAction } from 'components/dashboard/forms/FormsCommon'
 import {
@@ -58,6 +58,8 @@ function CampaignFormPreview({ newItem } = {}) {
 		temp = {},
 	} = newItem
 
+	const { feesFormatted, totalSpendFormatted } = temp
+
 	useEffect(() => {
 		execute(getCampaignActualFees())
 	}, [])
@@ -108,10 +110,25 @@ function CampaignFormPreview({ newItem } = {}) {
 					right={`${depositAmount} ${symbol}`}
 				/>
 
-				<PropRow left={t('FEES')} right={`${temp.feesFormatted} ${symbol}`} />
+				<PropRow
+					left={t('FEES')}
+					right={
+						feesFormatted !== undefined ? (
+							`${feesFormatted} ${symbol}`
+						) : (
+							<CircularProgress size={42} />
+						)
+					}
+				/>
 				<PropRow
 					left={t('CAMPAIGN_FEES_AND_BUDGET')}
-					right={`${temp.totalSpendFormatted} ${symbol}`}
+					right={
+						totalSpendFormatted !== undefined ? (
+							`${totalSpendFormatted} ${symbol}`
+						) : (
+							<CircularProgress size={42} />
+						)
+					}
 				/>
 
 				{/* <PropRow
