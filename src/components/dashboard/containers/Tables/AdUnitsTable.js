@@ -11,8 +11,6 @@ import {
 	t,
 	selectAdUnitsTableData,
 	selectSide,
-	selectCampaignById,
-	selectAdUnits,
 	selectAdUnitsStatsMaxValues,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
@@ -196,12 +194,9 @@ function AdUnitsTable(props) {
 	const classes = useStyles()
 	const side = useSelector(selectSide)
 	const { noActions, noClone, campaignId, handleSelect, selected = [] } = props
-	const campaign = useSelector(state => selectCampaignById(state, campaignId))
-	const campaignAdUnits = campaign ? campaign.adUnits : false
-	const allItems = useSelector(selectAdUnits)
-	const items = campaignAdUnits ? campaignAdUnits : allItems
+
 	const { maxClicks, maxImpressions, maxCTR } = useSelector(state =>
-		selectAdUnitsStatsMaxValues(state, { side, items, campaignId })
+		selectAdUnitsStatsMaxValues(state, { side, campaignId })
 	)
 
 	const [selectorArgs, setSelectorArgs] = useState({})
@@ -214,7 +209,6 @@ function AdUnitsTable(props) {
 				classes,
 				noActions,
 				noClone,
-				campaignAdUnits: !!campaignId,
 				maxImpressions,
 				maxClicks,
 				maxCTR,
@@ -227,8 +221,8 @@ function AdUnitsTable(props) {
 	// If selectorArgs are reference type we need to use useState fot them
 	// TODO: find why useTableData causing this update
 	useEffect(() => {
-		setSelectorArgs({ side, items, campaignId })
-	}, [side, items, campaignId])
+		setSelectorArgs({ side, campaignId })
+	}, [side, campaignId])
 
 	const onRowsSelect = useCallback(
 		(_, allRowsSelected) => {
