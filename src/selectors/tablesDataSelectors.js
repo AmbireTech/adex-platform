@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect'
-import { getState } from 'store'
 import {
 	selectCampaignsArray,
 	selectRoutineWithdrawTokens,
@@ -10,6 +9,7 @@ import {
 	selectCampaignEventsCount,
 	selectCampaignAnalyticsByChannelToAdUnit,
 	selectTotalStatsByAdUnits,
+	selectCampaignUnitsById,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 
@@ -128,34 +128,35 @@ export const selectAdSlotsTableData = createSelector(
 
 export const selectAdUnitsTableData = createSelector(
 	[
-		selectAdUnits,
-		(_, { side, items, campaignId }) => ({
+		(state, { side, campaignId }) => ({
 			side,
-			items,
+			items: campaignId
+				? selectCampaignUnitsById(state, campaignId)
+				: selectAdUnits(state),
 			impressionsByAdUnit: id =>
 				campaignId
-					? selectCampaignAnalyticsByChannelToAdUnit(_, {
+					? selectCampaignAnalyticsByChannelToAdUnit(state, {
 							type: 'IMPRESSION',
 							campaignId,
 					  })[id]
-					: selectTotalStatsByAdUnits(_, {
+					: selectTotalStatsByAdUnits(state, {
 							type: 'IMPRESSION',
 							adUnitId: id,
 					  }),
 			clicksByAdUnit: id =>
 				campaignId
-					? selectCampaignAnalyticsByChannelToAdUnit(_, {
+					? selectCampaignAnalyticsByChannelToAdUnit(state, {
 							type: 'CLICK',
 							campaignId,
 					  })[id]
-					: selectTotalStatsByAdUnits(_, {
+					: selectTotalStatsByAdUnits(state, {
 							type: 'CLICK',
 							adUnitId: id,
 					  }),
 		}),
 	],
-	(units, { side, items, impressionsByAdUnit, clicksByAdUnit }) =>
-		Object.values(items || units).map(item => ({
+	({ side, items, impressionsByAdUnit, clicksByAdUnit }) =>
+		Object.values(items).map(item => ({
 			id: item.id || item.ipfs,
 			media: {
 				id: item.id || item.ipfs,
@@ -166,7 +167,7 @@ export const selectAdUnitsTableData = createSelector(
 			clicks: clicksByAdUnit(item.ipfs) || 0,
 			ctr:
 				(clicksByAdUnit(item.ipfs) / impressionsByAdUnit(item.ipfs)) * 100 || 0,
-			title: item.title || units[item.ipfs].title,
+			title: item.title,
 			type: item.type,
 			created: item.created,
 			actions: {
