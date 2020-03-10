@@ -1,4 +1,9 @@
 import { createSelector } from 'reselect'
+import {
+	selectCampaignById,
+	selectAdUnitById,
+	selectAdSlotById,
+} from 'selectors'
 
 export const selectLocation = state => state.router.location
 
@@ -17,12 +22,19 @@ export const selectSearchParams = createSelector(
 	({ search }) => new URLSearchParams(search)
 )
 
+const ITEMS_SELECTORS = {
+	campaigns: selectCampaignById,
+	receipt: selectCampaignById,
+	units: selectAdUnitById,
+	slots: selectAdSlotById,
+}
+
 export const selectDashboardBreadcrumbs = createSelector(
-	selectLocation,
-	({ pathname = '' }) => {
+	[selectLocation, state => state],
+	({ pathname = '' }, state) => {
 		const paths = pathname.split('/').filter(x => !!x)
 
-		// TODO: validate and use item titles
+		// TODO: validate it starts from dashboard
 		const sideDashboard = paths.slice(0, 2)
 		const sideDashboardBC = {
 			to: `/${sideDashboard.join('/')}`,
@@ -31,10 +43,23 @@ export const selectDashboardBreadcrumbs = createSelector(
 
 		const rest = paths.slice(2)
 
-		const restBC = rest.map((x, index) => ({
-			to: `${sideDashboardBC.to}/${rest.slice(0, index + 1).join('/')}`,
-			label: x,
-		}))
+		const restBC = rest.map((x, index) => {
+			const prev = rest[index - 1]
+			const selector = ITEMS_SELECTORS[prev]
+
+			let label = x
+
+			if (selector) {
+				const { title } = selector(state, x) || {}
+				label = title || label
+			}
+
+			const bc = {
+				to: `${sideDashboardBC.to}/${rest.slice(0, index + 1).join('/')}`,
+				label,
+			}
+			return bc
+		})
 
 		const breadcrumbs = [sideDashboardBC, ...restBC]
 
