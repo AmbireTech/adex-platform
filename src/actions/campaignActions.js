@@ -464,6 +464,8 @@ export function handlePrintSelectedReceipts(selected) {
 				await updateSpinner(PRINTING_CAMPAIGNS_RECEIPTS, false)(dispatch)
 			},
 			{
+				cancelLabel: t('CANCEL'),
+				confirmLabel: t('OK'),
 				title: t('CONFIRM_DIALOG_PRINT_ALL_RECEIPTS_TITLE'),
 				text: t('CONFIRM_DIALOG_PRINT_ALL_RECEIPTS_TEXT'),
 			}
