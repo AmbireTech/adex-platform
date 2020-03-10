@@ -19,12 +19,6 @@ import {
 	AdSlotsTable,
 	AdUnitsTable,
 } from 'components/dashboard/containers/Tables'
-import { campaignsLoop } from 'services/store-data/campaigns'
-import statsLoop from 'services/store-data/account'
-import {
-	analyticsLoop,
-	analyticsCampaignsLoop,
-} from 'services/store-data/analytics'
 import Drawer from '@material-ui/core/Drawer'
 import Box from '@material-ui/core/Box'
 import Alert from '@material-ui/lab/Alert'
