@@ -7,6 +7,9 @@ import {
 	creatArrayOnlyLengthChangeSelector,
 	selectCampaignAnalyticsByChannelStats,
 	selectCampaignEventsCount,
+	selectCampaignAnalyticsByChannelToAdUnit,
+	selectTotalStatsByAdUnits,
+	selectCampaignUnitsById,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 
@@ -21,10 +24,12 @@ export const selectCampaignsTableData = createSelector(
 
 			return {
 				media: {
-					id,
+					side: side,
+					id: item.id,
 					mediaUrl: firstUnit.mediaUrl || '',
 					mediaMime: firstUnit.mediaMime || '',
 				},
+				title: item.title,
 				status: {
 					humanFriendlyName: item.status.humanFriendlyName,
 					originalName: item.status.name,
@@ -33,6 +38,12 @@ export const selectCampaignsTableData = createSelector(
 				fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
 				impressions: selectCampaignEventsCount('IMPRESSION', item.id),
 				clicks: selectCampaignEventsCount('CLICK', item.id),
+
+				ctr:
+					(selectCampaignEventsCount('CLICK', item.id) /
+						selectCampaignEventsCount('IMPRESSION', item.id)) *
+						100 || 0,
+
 				minPerImpression: {
 					id,
 					minPerImpression:
@@ -49,8 +60,13 @@ export const selectCampaignsTableData = createSelector(
 					spec.withdrawPeriodStart || item.withdrawPeriodStart,
 				actions: {
 					side: side,
+
 					id,
-					humanFriendlyName: item.status.humanFriendlyName,
+					receiptReady:
+						(item.status.humanFriendlyName === 'Closed' ||
+							item.status.humanFriendlyName === 'Completed') &&
+						(item.status.name === 'Exhausted' ||
+							item.status.name === 'Expired'),
 				},
 				id,
 				receiptAvailable:
@@ -93,9 +109,10 @@ export const selectAdSlotsTableData = createSelector(
 	[selectAdSlotsArray, (_, side) => side],
 	(slots, side) =>
 		slots.map(item => {
+			const id = item.id || item.ipfs
 			return {
 				media: {
-					id: item.id,
+					id,
 					mediaUrl: item.fallbackUnit ? `ipfs://${item.fallbackUnit}` : '', //TODO: provide fallback image to slot
 					mediaMime: 'image/jpeg',
 				},
@@ -103,7 +120,7 @@ export const selectAdSlotsTableData = createSelector(
 				type: item.type.replace('legacy_', ''),
 				created: item.created,
 				actions: {
-					to: `/dashboard/${side}/AdSlot/${item.id || item.ipfs}`,
+					to: `/dashboard/${side}/AdSlot/${id}`,
 					item,
 				},
 			}
@@ -111,23 +128,56 @@ export const selectAdSlotsTableData = createSelector(
 )
 
 export const selectAdUnitsTableData = createSelector(
-	[selectAdUnits, (_, { side, items }) => ({ side, items })],
-	(units, { side, items }) =>
-		Object.values(items || units).map(item => ({
-			id: item.id,
-			media: {
-				id: item.id,
-				mediaUrl: item.mediaUrl,
-				mediaMime: item.mediaMime,
-			},
-			title: item.title || units[item.ipfs].title,
-			type: item.type,
-			created: item.created,
-			actions: {
-				to: `/dashboard/${side}/AdUnit/${item.id || item.ipfs}`,
-				item,
-			},
-		}))
+	[
+		(state, { side, campaignId }) => ({
+			side,
+			items: campaignId
+				? selectCampaignUnitsById(state, campaignId)
+				: selectAdUnits(state),
+			impressionsByAdUnit: id =>
+				campaignId
+					? selectCampaignAnalyticsByChannelToAdUnit(state, {
+							type: 'IMPRESSION',
+							campaignId,
+					  })[id]
+					: selectTotalStatsByAdUnits(state, {
+							type: 'IMPRESSION',
+							adUnitId: id,
+					  }),
+			clicksByAdUnit: id =>
+				campaignId
+					? selectCampaignAnalyticsByChannelToAdUnit(state, {
+							type: 'CLICK',
+							campaignId,
+					  })[id]
+					: selectTotalStatsByAdUnits(state, {
+							type: 'CLICK',
+							adUnitId: id,
+					  }),
+		}),
+	],
+	({ side, items, impressionsByAdUnit, clicksByAdUnit }) =>
+		Object.values(items).map(item => {
+			const id = item.id || item.ipfs
+			return {
+				id,
+				media: {
+					id,
+					mediaUrl: item.mediaUrl,
+					mediaMime: item.mediaMime,
+				},
+				impressions: impressionsByAdUnit(id) || 0,
+				clicks: clicksByAdUnit(id) || 0,
+				ctr: (clicksByAdUnit(id) / impressionsByAdUnit(id)) * 100 || 0,
+				title: item.title,
+				type: item.type,
+				created: item.created,
+				actions: {
+					to: `/dashboard/${side}/AdUnit/${id}`,
+					item,
+				},
+			}
+		})
 )
 
 export const selectCampaignStatsTableData = createSelector(
@@ -194,5 +244,25 @@ export const selectCampaignStatsMaxValues = createSelector(
 				return newResult
 			},
 			{ maxClicks: 0, maxImpressions: 0, maxEarnings: 0, maxCTR: 0 }
+		)
+)
+
+export const selectAdUnitsStatsMaxValues = createSelector(
+	(state, { side, items, campaignId }) =>
+		selectAdUnitsTableData(state, { side, items, campaignId }),
+	data =>
+		data.reduce(
+			(result, current) => {
+				const newResult = { ...result }
+
+				newResult.maxClicks = Math.max(current.clicks, newResult.maxClicks)
+				newResult.maxCTR = Math.max(current.ctr, newResult.maxCTR)
+				newResult.maxImpressions = Math.max(
+					current.impressions,
+					newResult.maxImpressions
+				)
+				return newResult
+			},
+			{ maxClicks: 0, maxImpressions: 0, maxCTR: 0 }
 		)
 )

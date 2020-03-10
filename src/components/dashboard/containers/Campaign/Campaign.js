@@ -42,14 +42,18 @@ export class Campaign extends Component {
 	}
 
 	CampaignActions = ({ campaign, actions, t }) => {
+		const humanFriendlyName = campaign.status.humanFriendlyName
 		return (
 			<Grid container spacing={2}>
 				<Grid item xs={12}>
 					<Button
+						variant='contained'
 						color='secondary'
+						size='large'
 						onClick={() => {
 							actions.closeCampaign({ campaign })
 						}}
+						disabled={humanFriendlyName === 'Closed'}
 					>
 						{t('BTN_CLOSE_CAMPAIGN')}
 					</Button>
@@ -71,7 +75,6 @@ export class Campaign extends Component {
 			// ...rest
 		} = this.props
 		const { tabIndex } = this.state
-		const units = item.spec.adUnits
 		const campaign = new CampaignModel(item)
 		const status = (campaign.status || {}).name
 		const humanFriendlyName = campaign.status.humanFriendlyName
@@ -136,7 +139,7 @@ export class Campaign extends Component {
 							</Grid>
 						)}
 						{tabIndex === 1 && (
-							<AdUnitsTable items={units} campaignUnits noClone />
+							<AdUnitsTable campaignId={campaign.id} noClone />
 						)}
 						{tabIndex === 2 && (
 							<List>

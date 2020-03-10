@@ -2,10 +2,17 @@ import React, { useEffect, useState, useCallback, Fragment } from 'react'
 import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility } from '@material-ui/icons'
+import { commify } from 'ethers/utils'
+import { sliderFilterOptions } from './commonFilters'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
-import { t, selectAdUnitsTableData, selectSide } from 'selectors'
+import {
+	t,
+	selectAdUnitsTableData,
+	selectSide,
+	selectAdUnitsStatsMaxValues,
+} from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
@@ -19,7 +26,14 @@ const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(styles)
 
-const getCols = ({ classes, noActions, noClone }) => [
+const getCols = ({
+	classes,
+	noActions,
+	noClone,
+	maxImpressions,
+	maxClicks,
+	maxCTR,
+}) => [
 	{
 		name: 'media',
 		label: t('PROP_MEDIA'),
@@ -50,6 +64,42 @@ const getCols = ({ classes, noActions, noClone }) => [
 			sort: true,
 			// TODO: fix it with css
 			customBodyRender: (title = '') => truncateString(title, 20),
+		},
+	},
+	{
+		name: 'impressions',
+		label: t('LABEL_IMPRESSIONS'),
+		options: {
+			sort: true,
+			customBodyRender: impressions => commify(impressions || 0),
+			...sliderFilterOptions({
+				initial: [0, maxImpressions],
+				filterTitle: t('IMPRESSIONS_FILTER'),
+			}),
+		},
+	},
+	{
+		name: 'clicks',
+		label: t('CHART_LABEL_CLICKS'),
+		options: {
+			sort: true,
+			customBodyRender: clicks => commify(clicks || 0),
+			...sliderFilterOptions({
+				initial: [0, maxClicks],
+				filterTitle: t('CLICKS_FILTER'),
+			}),
+		},
+	},
+	{
+		name: 'ctr',
+		label: t('LABEL_CTR'),
+		options: {
+			sort: true,
+			customBodyRender: ctr => `${Number(ctr).toFixed(2)} %`,
+			...sliderFilterOptions({
+				initial: [0, maxCTR.toFixed(2)],
+				filterTitle: t('CTR_FILTER'),
+			}),
 		},
 	},
 	{
@@ -143,14 +193,11 @@ const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
 function AdUnitsTable(props) {
 	const classes = useStyles()
 	const side = useSelector(selectSide)
-	const {
-		items, //
-		noActions,
-		noClone,
-		campaignUnits,
-		handleSelect,
-		selected = [],
-	} = props
+	const { noActions, noClone, campaignId, handleSelect, selected = [] } = props
+
+	const { maxClicks, maxImpressions, maxCTR } = useSelector(state =>
+		selectAdUnitsStatsMaxValues(state, { side, campaignId })
+	)
 
 	const [selectorArgs, setSelectorArgs] = useState({})
 
@@ -162,6 +209,9 @@ function AdUnitsTable(props) {
 				classes,
 				noActions,
 				noClone,
+				maxImpressions,
+				maxClicks,
+				maxCTR,
 			}),
 	})
 
@@ -171,8 +221,8 @@ function AdUnitsTable(props) {
 	// If selectorArgs are reference type we need to use useState fot them
 	// TODO: find why useTableData causing this update
 	useEffect(() => {
-		setSelectorArgs({ side, items })
-	}, [side, items])
+		setSelectorArgs({ side, campaignId })
+	}, [side, campaignId])
 
 	const onRowsSelect = useCallback(
 		(_, allRowsSelected) => {
@@ -187,7 +237,7 @@ function AdUnitsTable(props) {
 	const options = getOptions({ onRowsSelect, selected, reloadData })
 	return (
 		<MUIDataTableEnhanced
-			title={campaignUnits ? t('CAMPAIGN_AD_UNITS') : t('ALL_UNITS')}
+			title={campaignId ? t('CAMPAIGN_AD_UNITS') : t('ALL_UNITS')}
 			data={data}
 			columns={columns}
 			options={options}

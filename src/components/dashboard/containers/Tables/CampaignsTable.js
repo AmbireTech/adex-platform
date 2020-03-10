@@ -20,10 +20,12 @@ import { commify } from 'ethers/utils'
 import { execute, handlePrintSelectedReceipts } from 'actions'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
-import { formatDateTime } from 'helpers/formatters'
+import { formatDateTime, truncateString } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 import { useTableData } from './tableHooks'
 import { ReloadData, PrintAllReceipts } from './toolbars'
+import { push } from 'connected-react-router'
+
 const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(styles)
@@ -57,7 +59,7 @@ const getCols = ({
 			filter: false,
 			sort: false,
 			download: false,
-			customBodyRender: ({ id, mediaUrl, mediaMime }) => {
+			customBodyRender: ({ side, id, mediaUrl, mediaMime }) => {
 				return (
 					// TODO: Images issue some stop displaying
 					<Img
@@ -68,6 +70,7 @@ const getCols = ({
 						alt={id}
 						mediaMime={mediaMime}
 						allowVideo
+						onClick={() => execute(push(`/dashboard/${side}/Campaign/${id}`))}
 					/>
 				)
 			},
@@ -96,6 +99,15 @@ const getCols = ({
 		},
 	},
 	{
+		name: 'title',
+		label: t('PROP_TITLE'),
+		options: {
+			filter: false,
+			sort: true,
+			customBodyRender: (title = '') => truncateString(title, 20),
+		},
+	},
+	{
 		name: 'depositAmount',
 		label: t('PROP_DEPOSIT'),
 		options: {
@@ -111,11 +123,11 @@ const getCols = ({
 	},
 	{
 		name: 'fundsDistributedRatio',
-		label: t('PROP_DISTRIBUTED'),
+		label: t('PROP_SERVED'),
 		options: {
 			sort: true,
 			customBodyRender: fundsDistributedRatio =>
-				`${((fundsDistributedRatio || 0) / 10).toFixed(2)}%`,
+				`${((fundsDistributedRatio || 0) / 10).toFixed(2)} %`,
 			...sliderFilterOptions({
 				initial: [0, 100],
 				filterTitle: t('DISTRIBUTED_FILTER'),
@@ -147,6 +159,18 @@ const getCols = ({
 		},
 	},
 	{
+		name: 'ctr',
+		label: t('LABEL_CTR'),
+		options: {
+			sort: true,
+			customBodyRender: ctr => `${(ctr || 0).toFixed(2)} %`,
+			...sliderFilterOptions({
+				initial: [0, 100],
+				filterTitle: t('CTR_FILTER'),
+			}),
+		},
+	},
+	{
 		name: 'minPerImpression',
 		label: t('PROP_CPM'),
 		options: {
@@ -174,6 +198,7 @@ const getCols = ({
 		label: t('PROP_STARTS'),
 		options: {
 			filter: false,
+			display: false,
 			sort: true,
 			customBodyRender: activeFrom => formatDateTime(activeFrom),
 		},
@@ -183,6 +208,7 @@ const getCols = ({
 		label: t('PROP_ENDS'),
 		options: {
 			filter: false,
+			display: false,
 			sort: true,
 			customBodyRender: withdrawPeriodStart =>
 				formatDateTime(withdrawPeriodStart),
@@ -195,7 +221,7 @@ const getCols = ({
 			filter: false,
 			sort: true,
 			download: false,
-			customBodyRender: ({ side, id, humanFriendlyName }) => (
+			customBodyRender: ({ side, id, receiptReady }) => (
 				<Fragment key={id}>
 					<Tooltip
 						title={t('LABEL_VIEW')}
@@ -210,21 +236,29 @@ const getCols = ({
 							<Visibility color='primary' />
 						</RRIconButton>
 					</Tooltip>
-					{(humanFriendlyName === 'Closed' ||
-						humanFriendlyName === 'Completed') && (
-						<Tooltip
-							title={t('RECEIPT_VIEW')}
-							// placement='top'
-							enterDelay={1000}
-						>
+					<Tooltip
+						title={
+							receiptReady
+								? t('RECEIPT_VIEW')
+								: 'Report not available until the campaign is completed'
+						}
+						// placement='top'
+						enterDelay={1000}
+					>
+						{/* SPAN needed to enable tooltip on hover of disabled element
+						 https://material-ui.com/components/tooltips/#disabled-elements
+						*/}
+						<span>
 							<RRIconButton
 								to={`/dashboard/${side}/Campaign/receipt/${id}`}
 								variant='contained'
-								aria-label='receipt'
+								aria-label='receip'
+								disabled={!receiptReady}
 							>
-								<Receipt color='primary' />
+								<Receipt color={receiptReady ? 'primary' : 'grey'} />
 							</RRIconButton>
-						</Tooltip>
+						</span>
+					</Tooltip>
 					)}
 				</Fragment>
 			),
@@ -241,7 +275,7 @@ const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
 			i.data[2],
 			i.data[3].humanFriendlyName,
 			`${i.data[4]} ${symbol}`,
-			`${((i.data[5] || 0) / 10).toFixed(2)}%`,
+			`${((i.data[5] || 0) / 10).toFixed(2)} %`,
 			i.data[6],
 			i.data[7],
 			i.data[8],
