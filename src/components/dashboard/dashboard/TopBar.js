@@ -114,9 +114,13 @@ function TopNav({ handleDrawerToggle, side, t }) {
 						<Breadcrumbs aria-label='breadcrumb'>
 							{breadcrumbs.map(({ to, label }, index) =>
 								index !== breadcrumbs.length - 1 ? (
-									<RRLink to={to}>{label}</RRLink>
+									<RRLink key={`${index}-${to}`} to={to}>
+										{label}
+									</RRLink>
 								) : (
-									<Typography color='textPrimary'>{label}</Typography>
+									<Typography key={`${index}-${to}`} color='textPrimary'>
+										{label}
+									</Typography>
 								)
 							)}
 						</Breadcrumbs>
