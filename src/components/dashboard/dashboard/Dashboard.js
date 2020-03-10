@@ -33,6 +33,7 @@ import {
 	updatePrivilegesWarningAccepted,
 	loadAccountData,
 	stopAccountDataUpdate,
+	updateNav,
 } from 'actions'
 import {
 	t,
@@ -120,6 +121,10 @@ function Dashboard(props) {
 	useEffect(() => {
 		execute(resolveEnsAddress({ address }))
 	}, [address])
+
+	useEffect(() => {
+		execute(updateNav('side', side))
+	}, [side])
 
 	const handleDrawerToggle = () => {
 		setMobileOpen(!mobileOpen)
