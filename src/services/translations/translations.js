@@ -25,7 +25,7 @@ const interpolate = (tpl, args) => {
 		return element
 	})
 
-	if (interpolated.every(i => typeof i === 'string')) {
+	if (interpolated.every(i => typeof i === 'string' || typeof i === 'number')) {
 		return interpolated.join('')
 	}
 

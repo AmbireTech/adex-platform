@@ -3,26 +3,22 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import Grid from '@material-ui/core/Grid'
-import IconButton from '@material-ui/core/IconButton'
-import Button from '@material-ui/core/Button'
+import {
+	Grid,
+	IconButton,
+	Input,
+	InputLabel,
+	InputAdornment,
+	FormControl,
+	Chip,
+} from '@material-ui/core'
 import EditIcon from '@material-ui/icons/Edit'
-import ImgDialog from 'components/dashboard/containers/ImgDialog'
 import { schemas, Joi } from 'adex-models'
-import classnames from 'classnames'
 import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
-import { items as ItemsConstants } from 'adex-constants'
-import Img from 'components/common/img/Img'
 import SaveBtn from 'components/dashboard/containers/SaveBtn'
 import { withStyles } from '@material-ui/core/styles'
-import Input from '@material-ui/core/Input'
-import InputLabel from '@material-ui/core/InputLabel'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import FormControl from '@material-ui/core/FormControl'
-import Paper from '@material-ui/core/Paper'
 import InfoOutlineIcon from '@material-ui/icons/Info'
-import Chip from '@material-ui/core/Chip'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import { styles } from './styles'
 import { validName } from 'helpers/validators'
@@ -31,7 +27,6 @@ import PageNotFound from 'components/page_not_found/PageNotFound'
 import { selectSide } from 'selectors'
 
 const { adSlotPut, adUnitPut, campaignPut } = schemas
-const { AdSizesByValue } = ItemsConstants
 
 export default function ItemHoc(Decorated) {
 	class Item extends Component {
@@ -48,26 +43,12 @@ export default function ItemHoc(Decorated) {
 			}
 		}
 
-		updateNav = (item = {}) => {
-			const { actions, t, itemType } = this.props
-			actions.updateNav(
-				'navTitle',
-				t(itemType, { isProp: true }) + ' > ' + item.title || ''
-			)
-		}
-
 		componentWillMount() {
-			const { item, matchId, objModel } = this.props
-
-			if (!item) {
-				this.updateNav({ title: matchId })
-				return
-			}
+			const { item, objModel } = this.props
 
 			const initialItemState = new objModel(item)
 
 			this.setState({ item: { ...item }, initialItemState: initialItemState })
-			this.updateNav(initialItemState)
 		}
 
 		// shouldComponentUpdate(nextProps, nextState) {
@@ -97,8 +78,6 @@ export default function ItemHoc(Decorated) {
 					dirtyProps: [],
 				})
 			}
-
-			this.updateNav(nexItemInst)
 		}
 
 		componentWillUnmount() {
@@ -261,7 +240,6 @@ export default function ItemHoc(Decorated) {
 			const isDemo = account._authType === 'demo'
 			const item = new objModel(this.state.item || {})
 			let canEdit = itemType === 'AdSlot'
-			let imgSrc = item.temp.tempUrl || item.mediaUrl || item.fallbackMediaUrl
 
 			const titleErr = invalidFields['title']
 			const descriptionErr = invalidFields['description']
@@ -320,29 +298,6 @@ export default function ItemHoc(Decorated) {
 
 					{itemType !== 'Campaign' && (
 						<div>
-							<div>
-								<ImgDialog
-									{...rest}
-									imgSrc={imgSrc}
-									handleToggle={this.handleToggle}
-									active={this.state.editImg}
-									onChangeReady={this.handleChange}
-									validateId={item._id}
-									width={
-										this.props.updateImgWidth ||
-										(AdSizesByValue[item.size] || {}).width
-									}
-									height={
-										this.props.updateImgHeight ||
-										(AdSizesByValue[item.size] || {}).height
-									}
-									title={t(this.props.updateImgLabel)}
-									additionalInfo={t(this.props.updateImgInfoLabel)}
-									exact={this.props.updateImgExact}
-									errMsg={this.props.updateImgErrMsg}
-									imgPropName='img'
-								/>
-							</div>
 							<div>
 								<Grid container spacing={2}>
 									<Grid item xs={12} sm={12} md={12} lg={7}>
@@ -408,38 +363,6 @@ export default function ItemHoc(Decorated) {
 											</FormControl>
 										</div>
 									</Grid>
-									<Grid item xs={12} sm={12} md={12} lg={5}>
-										{this.props.showLogo && (
-											<div style={{ width: 270 }}>
-												<Paper
-													className={classnames(
-														classes.mediaRoot,
-														classes.imgContainer
-													)}
-												>
-													<Img
-														allowFullscreen={true}
-														src={imgSrc}
-														alt={item.fullName}
-														className={classnames(classes.img, {
-															[classes.pointer]:
-																this.props.canEditImg && !isDemo,
-														})}
-													/>
-													<Button
-														fabButton
-														size='small'
-														color='secondary'
-														className={classes.editIcon}
-														onClick={!isDemo ? this.handleToggle : null}
-														disabled={isDemo}
-													>
-														<EditIcon />
-													</Button>
-												</Paper>
-											</div>
-										)}
-									</Grid>
 								</Grid>
 							</div>
 						</div>
@@ -491,6 +414,7 @@ export default function ItemHoc(Decorated) {
 							canEdit={canEdit}
 							itemType={itemType}
 							isDemo={isDemo}
+							validateId={validateId}
 						/>
 					</div>
 				</div>

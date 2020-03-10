@@ -333,7 +333,7 @@ const SlotWebsite = ({
 				}
 			/>
 
-			<FormHelperText>
+			<FormHelperText component='div'>
 				{errWebsite && !!errWebsite.errMsg && activeFields.website ? (
 					t(errWebsite.errMsg, { args: errWebsite.errMsgArgs })
 				) : (
@@ -410,6 +410,7 @@ const basicProps = ({
 	canEditImg,
 	itemType,
 	activeFields,
+	validateId,
 	...rest
 }) => {
 	const mediaUrl = item.mediaUrl
@@ -422,7 +423,7 @@ const basicProps = ({
 					<Grid item xs={12} sm={5} md={5} lg={5}>
 						{itemType === 'AdSlot' ? (
 							<ValidatedFallbackAdData
-								validateId={item._id}
+								validateId={validateId}
 								item={item}
 								t={t}
 								url={url}
@@ -448,7 +449,7 @@ const basicProps = ({
 							{itemType === 'AdSlot' && (
 								<Grid item xs={12}>
 									<ValidatedSlotMinCPM
-										validateId={item._id}
+										validateId={validateId}
 										item={item}
 										t={t}
 										url={url}
@@ -462,7 +463,7 @@ const basicProps = ({
 							{itemType === 'AdSlot' && (
 								<Grid item xs={12}>
 									<ValidatedSlotWebsite
-										validateId={item._id}
+										validateId={validateId}
 										item={item}
 										t={t}
 										url={url}
