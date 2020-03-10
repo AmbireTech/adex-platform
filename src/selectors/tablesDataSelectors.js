@@ -22,8 +22,8 @@ export const selectCampaignsTableData = createSelector(
 
 			const firstUnit = adUnits[0] || {}
 
-			const to = `/dashboard/${side}/Campaign/${id}`
-			const toReceipt = `/dashboard/${side}/Campaign/receipt/${id}`
+			const to = `/dashboard/${side}/campaigns/${id}`
+			const toReceipt = `/dashboard/${side}/campaigns/receipt/${id}`
 
 			return {
 				media: {
@@ -116,7 +116,7 @@ export const selectAdSlotsTableData = createSelector(
 	(slots, side) =>
 		slots.map(item => {
 			const id = item.id || item.ipfs
-			const to = `/dashboard/${side}/AdSlot/${id}`
+			const to = `/dashboard/${side}/slots/${id}`
 			return {
 				media: {
 					id,
@@ -167,7 +167,7 @@ export const selectAdUnitsTableData = createSelector(
 	({ side, items, impressionsByAdUnit, clicksByAdUnit }) =>
 		Object.values(items).map(item => {
 			const id = item.id || item.ipfs
-			const to = `/dashboard/${side}/AdUnit/${id}`
+			const to = `/dashboard/${side}/units/${id}`
 			return {
 				id,
 				media: {
