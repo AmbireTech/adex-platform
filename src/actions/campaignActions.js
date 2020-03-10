@@ -198,15 +198,24 @@ export function closeCampaign({ campaign }) {
 			const { account } = state.persist
 			const { authTokens } = await closeChannel({ account, campaign })
 			await closeCampaignMarket({ campaign, authSig })
+			const newCampaign = { ...campaign }
+			newCampaign.status = {
+				...newCampaign.status,
+				humanFriendlyName: 'Closed',
+			}
+			dispatch({
+				type: types.UPDATE_ITEM,
+				item: newCampaign,
+				itemType: 'Campaign',
+			})
 			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch, getState)
+			updateUserCampaigns(dispatch, getState)
 			execute(push('/dashboard/advertiser/campaigns'))
 			addToast({
-				dispatch,
 				type: 'accept',
-				toastStr: 'SUCCESS_CLOSING_CAMPAIGN',
-				args: [campaign.id],
-			})
-			updateUserCampaigns(dispatch, getState)
+				label: t('SUCCESS_CLOSING_CAMPAIGN'),
+				timeout: 20000,
+			})(dispatch)
 		} catch (err) {
 			console.error('ERR_CLOSING_CAMPAIGN', err)
 			addToast({

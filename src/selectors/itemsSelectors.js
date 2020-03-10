@@ -22,6 +22,11 @@ export const selectCampaignById = createSelector(
 	(campaigns, id) => campaigns[id]
 )
 
+export const selectCampaignUnitsById = createSelector(
+	[selectCampaignById, (_, id) => id],
+	({ adUnits } = {}) => adUnits || []
+)
+
 export const selectCampaignWithAnalyticsById = createSelector(
 	[selectCampaigns, (_, id) => id],
 	(campaigns, id) => {

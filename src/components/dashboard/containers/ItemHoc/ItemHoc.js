@@ -428,7 +428,7 @@ export default function ItemHoc(Decorated) {
 													/>
 													<Button
 														fabButton
-														mini
+														size='small'
 														color='secondary'
 														className={classes.editIcon}
 														onClick={!isDemo ? this.handleToggle : null}
