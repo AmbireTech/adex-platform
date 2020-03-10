@@ -109,9 +109,10 @@ export const selectAdSlotsTableData = createSelector(
 	[selectAdSlotsArray, (_, side) => side],
 	(slots, side) =>
 		slots.map(item => {
+			const id = item.id || item.ipfs
 			return {
 				media: {
-					id: item.id,
+					id,
 					mediaUrl: item.fallbackUnit ? `ipfs://${item.fallbackUnit}` : '', //TODO: provide fallback image to slot
 					mediaMime: 'image/jpeg',
 				},
@@ -119,7 +120,7 @@ export const selectAdSlotsTableData = createSelector(
 				type: item.type.replace('legacy_', ''),
 				created: item.created,
 				actions: {
-					to: `/dashboard/${side}/AdSlot/${item.id || item.ipfs}`,
+					to: `/dashboard/${side}/AdSlot/${id}`,
 					item,
 				},
 			}
@@ -156,25 +157,27 @@ export const selectAdUnitsTableData = createSelector(
 		}),
 	],
 	({ side, items, impressionsByAdUnit, clicksByAdUnit }) =>
-		Object.values(items).map(item => ({
-			id: item.id || item.ipfs,
-			media: {
-				id: item.id || item.ipfs,
-				mediaUrl: item.mediaUrl,
-				mediaMime: item.mediaMime,
-			},
-			impressions: impressionsByAdUnit(item.ipfs) || 0,
-			clicks: clicksByAdUnit(item.ipfs) || 0,
-			ctr:
-				(clicksByAdUnit(item.ipfs) / impressionsByAdUnit(item.ipfs)) * 100 || 0,
-			title: item.title,
-			type: item.type,
-			created: item.created,
-			actions: {
-				to: `/dashboard/${side}/AdUnit/${item.id || item.ipfs}`,
-				item,
-			},
-		}))
+		Object.values(items).map(item => {
+			const id = item.id || item.ipfs
+			return {
+				id,
+				media: {
+					id,
+					mediaUrl: item.mediaUrl,
+					mediaMime: item.mediaMime,
+				},
+				impressions: impressionsByAdUnit(id) || 0,
+				clicks: clicksByAdUnit(id) || 0,
+				ctr: (clicksByAdUnit(id) / impressionsByAdUnit(id)) * 100 || 0,
+				title: item.title,
+				type: item.type,
+				created: item.created,
+				actions: {
+					to: `/dashboard/${side}/AdUnit/${id}`,
+					item,
+				},
+			}
+		})
 )
 
 export const selectCampaignStatsTableData = createSelector(
