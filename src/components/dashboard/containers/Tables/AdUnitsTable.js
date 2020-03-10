@@ -95,7 +95,7 @@ const getCols = ({
 		label: t('LABEL_CTR'),
 		options: {
 			sort: true,
-			customBodyRender: ctr => `${Number(ctr).toFixed(2)}%`,
+			customBodyRender: ctr => `${Number(ctr).toFixed(2)} %`,
 			...sliderFilterOptions({
 				initial: [0, maxCTR.toFixed(2)],
 				filterTitle: t('CTR_FILTER'),
