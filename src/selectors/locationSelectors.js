@@ -55,9 +55,23 @@ export const selectDashboardBreadcrumbs = createSelector(
 			}
 
 			const bc = {
-				to: `${sideDashboardBC.to}/${rest.slice(0, index + 1).join('/')}`,
 				label,
 			}
+
+			if (index < rest.length - 1) {
+				const restCopy = [...rest]
+
+				const receiptAt = restCopy.indexOf('receipt')
+				// NOTE: go to campaign on receipt breadcrumb
+				if (receiptAt >= 0) {
+					restCopy[receiptAt] = 'campaigns'
+				}
+
+				bc.to = `${sideDashboardBC.to}/${restCopy
+					.slice(0, index + 1)
+					.join('/')}`
+			}
+
 			return bc
 		})
 
