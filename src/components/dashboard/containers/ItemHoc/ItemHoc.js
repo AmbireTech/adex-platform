@@ -3,20 +3,22 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import Grid from '@material-ui/core/Grid'
-import IconButton from '@material-ui/core/IconButton'
+import {
+	Grid,
+	IconButton,
+	Input,
+	InputLabel,
+	InputAdornment,
+	FormControl,
+	Chip,
+} from '@material-ui/core'
 import EditIcon from '@material-ui/icons/Edit'
 import { schemas, Joi } from 'adex-models'
 import { Prompt } from 'react-router'
 import Translate from 'components/translate/Translate'
 import SaveBtn from 'components/dashboard/containers/SaveBtn'
 import { withStyles } from '@material-ui/core/styles'
-import Input from '@material-ui/core/Input'
-import InputLabel from '@material-ui/core/InputLabel'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import FormControl from '@material-ui/core/FormControl'
 import InfoOutlineIcon from '@material-ui/icons/Info'
-import Chip from '@material-ui/core/Chip'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import { styles } from './styles'
 import { validName } from 'helpers/validators'
@@ -41,26 +43,12 @@ export default function ItemHoc(Decorated) {
 			}
 		}
 
-		updateNav = (item = {}) => {
-			const { actions, t, itemType } = this.props
-			actions.updateNav(
-				'navTitle',
-				t(itemType, { isProp: true }) + ' > ' + item.title || ''
-			)
-		}
-
 		componentWillMount() {
-			const { item, matchId, objModel } = this.props
-
-			if (!item) {
-				this.updateNav({ title: matchId })
-				return
-			}
+			const { item, objModel } = this.props
 
 			const initialItemState = new objModel(item)
 
 			this.setState({ item: { ...item }, initialItemState: initialItemState })
-			this.updateNav(initialItemState)
 		}
 
 		// shouldComponentUpdate(nextProps, nextState) {
