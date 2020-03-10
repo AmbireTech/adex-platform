@@ -40,7 +40,6 @@ import {
 	selectHas5000Impressions,
 	selectHasCreatedAdSlot,
 	selectHideGettingStarted,
-	selectEmailProvider,
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
@@ -52,7 +51,6 @@ import {
 	createAdSlot,
 	placeAdSlot,
 } from './Tutorials'
-import { ExternalAnchor } from 'components/common/anchor/'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -88,7 +86,7 @@ export default function GettingStarted(props) {
 			{
 				label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
 				content: (
-					<Typography
+					<span
 						dangerouslySetInnerHTML={{
 							__html: t('TUTORIAL_CONFIRM_EMAIL_CONTENT'),
 						}}
@@ -133,7 +131,7 @@ export default function GettingStarted(props) {
 			{
 				label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
 				content: (
-					<Typography
+					<span
 						dangerouslySetInnerHTML={{
 							__html: t('TUTORIAL_CONFIRM_EMAIL_CONTENT'),
 						}}
