@@ -29,6 +29,8 @@ export const styles = theme => {
 			flexDirection: 'row',
 			display: 'flex',
 			alignItems: 'center',
+			paddingRight: theme.spacing(2),
+			paddingLeft: theme.spacing(2),
 		},
 
 		flexRow: {
@@ -51,12 +53,12 @@ export const styles = theme => {
 			[theme.breakpoints.up('md')]: {
 				display: 'none',
 			},
-			marginLeft: -theme.spacing(2),
 		},
 		toolbar: {
 			flexFlow: 'wrap',
 			height: 114,
-			...theme.mixins.toolbar,
+			paddingRight: 0,
+			paddingLeft: 0,
 		},
 		drawerPaper: {
 			width: drawerWidth,
