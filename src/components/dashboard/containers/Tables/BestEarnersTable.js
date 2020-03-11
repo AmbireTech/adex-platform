@@ -72,6 +72,7 @@ const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data),
 	onRowsSelect,
+	rowsPerPage: 10,
 })
 
 function BestEarnersTable(props) {
