@@ -6,6 +6,8 @@ import grey from '@material-ui/core/colors/grey'
 
 const WHITE = '#fff'
 export const PRIMARY = '#1B75BC'
+export const PRIMARY_LIGHT = '#5fa3ef'
+export const PRIMARY_DARK = '#004a8b'
 export const SECONDARY = '#FFAC00'
 export const ALEX_GREY = '#3f3e3e'
 export const ACCENT_ONE = '#57467B'
