@@ -1,7 +1,7 @@
 import React, { useEffect, Fragment } from 'react'
 import { useSelector } from 'react-redux'
 import { execute, updateNav } from 'actions'
-import { Box, Paper } from '@material-ui/core'
+import { Box, Paper, Grid } from '@material-ui/core'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import { BasicStats } from './BasicStats'
 import { t, selectSide } from 'selectors'
@@ -23,11 +23,15 @@ export function DashboardStats(props) {
 					<BasicStats side={side} />
 				</Box>
 			</Paper>
-			{side === 'publisher' && (
-				<Box pt={1}>
-					<BestEarnersTable />
-				</Box>
-			)}
+			<Grid container>
+				{side === 'publisher' && (
+					<Grid item xs={12} md={12} lg={6}>
+						<Box pt={1}>
+							<BestEarnersTable />
+						</Box>
+					</Grid>
+				)}
+			</Grid>
 		</Fragment>
 	)
 }
