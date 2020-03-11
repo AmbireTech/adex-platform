@@ -47,19 +47,32 @@ import {
 	placeAdSlot,
 } from './Tutorials'
 
-const useStyles = makeStyles(theme => ({
-	root: {
-		backgroundColor: theme.palette.background.paper,
-		flex: 1,
-	},
-	button: {
-		marginRight: theme.spacing(1),
-	},
-	instructions: {
-		marginTop: theme.spacing(1),
-		marginBottom: theme.spacing(1),
-	},
-}))
+const useStyles = makeStyles(theme => {
+	const stepperBackgroundColor = ({ side }) =>
+		side === 'advertiser'
+			? theme.palette.accentOne.light
+			: theme.palette.accentTwo.light
+
+	return {
+		mobile: {
+			backgroundColor: 'transparent',
+			flex: 1,
+		},
+		stepper: {
+			backgroundColor: 'transparent',
+		},
+		button: {
+			marginRight: theme.spacing(1),
+		},
+		instructions: {
+			marginTop: theme.spacing(1),
+			marginBottom: theme.spacing(1),
+		},
+		expansionPanel: {
+			backgroundColor: stepperBackgroundColor,
+		},
+	}
+})
 
 const getSteps = ({
 	hasCreatedAdUnit,
@@ -162,20 +175,21 @@ const getSteps = ({
 })
 
 export default function GettingStarted(props) {
-	const classes = useStyles()
 	const { side } = props
+	const classes = useStyles({ side })
 
 	const stepsData = useSelector(sectStepsData)
 
 	const isGettingStartedHidden = useSelector(selectHideGettingStarted)
 	const expanded = useSelector(selectGettingStartedExpanded)
-	const [steps, setSteps] = useState({ advertiser: [], publisher: [] })
+	const [steps, setSteps] = useState({})
 
-	const indexOfFirstIncompleteStep = steps[side].findIndex(step => !step.check)
 	const [activeStep, setActiveStep] = React.useState(0)
 
 	const sideSteps = steps[side] || []
 	const currentStep = sideSteps[activeStep] || {}
+
+	const indexOfFirstIncompleteStep = sideSteps.findIndex(step => !step.check)
 
 	const handleStep = step => () => {
 		setActiveStep(step)
@@ -200,16 +214,17 @@ export default function GettingStarted(props) {
 		setActiveStep(
 			indexOfFirstIncompleteStep !== -1
 				? indexOfFirstIncompleteStep
-				: steps[side].length - 1
+				: sideSteps.length - 1
 		)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [indexOfFirstIncompleteStep])
 	// TODO: wait for the data to be loaded before displaying the getting started
 	return (
 		!isGettingStartedHidden &&
-		(steps[side] && (
+		sideSteps.length && (
 			<Box mb={2}>
 				<ExpansionPanel
+					classes={{ root: classes.expansionPanel }}
 					expanded={expanded}
 					onChange={() => execute(setGettingStartedExpanded(!expanded))}
 					square={true}
@@ -230,8 +245,8 @@ export default function GettingStarted(props) {
 								{t('GETTING_STARTED_HEADING')}
 							</Typography>
 
-							<div>
-								{steps[side].map(({ label, icon, check }, index) => {
+							<Box display='flex' flexDirection='row' alignItems='center'>
+								{sideSteps.map(({ label, icon, check }, index) => {
 									const Icon = check ? Star : StarBorder
 									const color = check ? 'secondary' : 'inherit'
 
@@ -241,7 +256,7 @@ export default function GettingStarted(props) {
 										</Tooltip>
 									)
 								})}
-							</div>
+							</Box>
 						</Box>
 					</ExpansionPanelSummary>
 
@@ -256,8 +271,8 @@ export default function GettingStarted(props) {
 									/>
 								</Box>
 								<MobileStepper
-									className={classes.root}
-									steps={steps[side].length}
+									className={classes.mobile}
+									steps={sideSteps.length}
 									position='static'
 									variant='progress'
 									activeStep={activeStep}
@@ -265,7 +280,7 @@ export default function GettingStarted(props) {
 										<Button
 											size='small'
 											onClick={handleNext}
-											disabled={activeStep === steps[side].length - 1}
+											disabled={activeStep === sideSteps.length - 1}
 										>
 											{t('NEXT')}
 											<KeyboardArrowRight />
@@ -285,6 +300,7 @@ export default function GettingStarted(props) {
 							</Hidden>
 							<Hidden smDown>
 								<Stepper
+									classes={{ root: classes.stepper }}
 									nonLinear
 									alternativeLabel
 									activeStep={activeStep}
@@ -370,6 +386,6 @@ export default function GettingStarted(props) {
 					</ExpansionPanelDetails>
 				</ExpansionPanel>
 			</Box>
-		))
+		)
 	)
 }
