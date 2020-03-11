@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.41
+##### *2020-03-11*
+
+### Changed
+- Getting started styles
+- Publisher revenue warning condition (show only if no impressions)
+- Removed wallet backup button
+
+### Fixed
+- Top/Bide bars styles
+- Campaign preview units table
+- Misc styles, bugs, error and warnings
+
 ## 4.10.40
 ##### *2020-03-10*
 
