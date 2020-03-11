@@ -82,9 +82,6 @@ export const theme = createMuiTheme({
 			root: {
 				borderRadius: 0,
 			},
-			outlined: {
-				borderRadius: 0,
-			},
 		},
 		// MuiStepIcon: {
 		//     root: {
