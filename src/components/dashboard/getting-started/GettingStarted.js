@@ -30,17 +30,7 @@ import CreateEddie from 'resources/getting-started/GS-create-ic.png'
 import LaunchEddie from 'resources/getting-started/GS-launch-ic.png'
 import PlaceEddie from 'resources/getting-started/GS-place-ic.png'
 import BonusEddie from 'resources/getting-started/GS-bonus-ic.png'
-import {
-	t,
-	selectHasCreatedAdUnit,
-	selectHasCreatedCampaign,
-	selectHasConfirmedEmail,
-	selectHasFundedAccount,
-	selectHasAdSlotImpressions,
-	selectHas5000Impressions,
-	selectHasCreatedAdSlot,
-	selectHideGettingStarted,
-} from 'selectors'
+import { t, sectStepsData, selectHideGettingStarted } from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
 import { hideGettingStarted, execute } from 'actions'
@@ -66,114 +56,122 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
+const getSteps = ({
+	hasCreatedAdUnit,
+	hasCreatedCampaign,
+	hasCreatedAdSlot,
+	hasConfirmedEmail,
+	hasFundedAccount,
+	hasImpressions,
+	has5000Impressions,
+}) => ({
+	advertiser: [
+		{
+			label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
+			content: (
+				<span
+					dangerouslySetInnerHTML={{
+						__html: t('TUTORIAL_CONFIRM_EMAIL_CONTENT'),
+					}}
+				/>
+			),
+			contentCompleted: t('TUTORIAL_CONFIRM_EMAIL_COMPLETE'),
+			icon: EmailEddie,
+			check: hasConfirmedEmail,
+		},
+		{
+			label: t('TUTORIAL_ADD_UNIT_LABEL'),
+			content: t('TUTORIAL_ADD_UNIT_CONTENT'),
+			contentCompleted: t('TUTORIAL_CREATE_UNIT_COMPLETE'),
+			icon: CreateEddie,
+			check: hasCreatedAdUnit,
+			tutorial: createAdUnitTutorial,
+		},
+		{
+			label: t('TUTORIAL_FUND_ACCOUNT_LABEL'),
+			content: t('TUTORIAL_FUND_ACCOUNT_CONTENT'),
+			contentCompleted: t('TUTORIAL_FUND_ACC_COMPLETE'),
+			icon: FundEddie,
+			check: hasFundedAccount,
+			tutorial: fundAccountTutorial,
+		},
+		{
+			label: t('TUTORIAL_FIRST_CAMPAIGN_LABEL'),
+			content: t('TUTORIAL_FIRST_CAMPAIGN_CONTENT'),
+			contentCompleted: t('TUTORIAL_LAUNCH_CAMPAIGN_COMPLETE'),
+			icon: LaunchEddie,
+			check: hasCreatedCampaign,
+			tutorial: launchFirstCampaign,
+		},
+		// {
+		// 	label: 'Receive your bonus',
+		// 	content: "Your account is ready. Let's create your first ad!",
+		// 	icon: BonusEddie,
+		// 	check: false,
+		// },
+	],
+	publisher: [
+		{
+			label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
+			content: (
+				<span
+					dangerouslySetInnerHTML={{
+						__html: t('TUTORIAL_CONFIRM_EMAIL_CONTENT'),
+					}}
+				/>
+			),
+			contentCompleted: t('TUTORIAL_CONFIRM_EMAIL_COMPLETE'),
+			icon: EmailEddie,
+			check: hasConfirmedEmail,
+		},
+		{
+			label: t('TUTORIAL_ADD_SLOT_LABEL'),
+			content: t('TUTORIAL_ADD_SLOT_CONTENT'),
+			contentCompleted: t('TUTORIAL_CREATE_AD_SLOT_COMPLETE'),
+			icon: CreateEddie,
+			check: hasCreatedAdSlot,
+			tutorial: createAdSlot,
+		},
+		{
+			label: t('TUTORIAL_PLACE_SLOT_LABEL'),
+			content: t('TUTORIAL_ADD_SLOT_CONTENT'),
+			contentCompleted: t('TUTORIAL_PLACE_AD_SLOT_COMPLETE'),
+			icon: PlaceEddie,
+			check: hasImpressions,
+			tutorial: placeAdSlot,
+		},
+		{
+			label: t('TUTORIAL_REACH_5000_LABEL'),
+			content: t('TUTORIAL_REACH_5000_CONTENT'),
+			contentCompleted: t('TUTORIAL_5000_IMPRESSIONS_COMPLETE'),
+			icon: LaunchEddie,
+			check: has5000Impressions,
+		},
+		// {
+		// 	label: 'Receive your bonus',
+		// 	content: "Your account is ready. Let's create your first ad!",
+		// 	icon: BonusEddie,
+		// 	check: false,
+		// },
+	],
+})
+
 export default function GettingStarted(props) {
 	const classes = useStyles()
 	const { side } = props
 
-	const hasCreatedAdUnit = useSelector(selectHasCreatedAdUnit)
-	const hasCreatedCampaign = useSelector(selectHasCreatedCampaign)
-	const hasCreatedAdSlot = useSelector(selectHasCreatedAdSlot)
-	const hasConfirmedEmail = useSelector(selectHasConfirmedEmail)
-	const hasFundedAccount = useSelector(selectHasFundedAccount)
-	const hasImpressions = useSelector(selectHasAdSlotImpressions)
-	const has5000Impressions = useSelector(selectHas5000Impressions)
+	const stepsData = useSelector(sectStepsData)
+
 	const isGettingStartedHidden = useSelector(selectHideGettingStarted)
 	// const emailProvider = useSelector(selectEmailProvider)
 	const [expanded, setExpanded] = useState(true)
+	const [steps, setSteps] = useState({ advertiser: [], publisher: [] })
 
-	const steps = {
-		advertiser: [
-			{
-				label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
-				content: (
-					<span
-						dangerouslySetInnerHTML={{
-							__html: t('TUTORIAL_CONFIRM_EMAIL_CONTENT'),
-						}}
-					/>
-				),
-				contentCompleted: t('TUTORIAL_CONFIRM_EMAIL_COMPLETE'),
-				icon: EmailEddie,
-				check: hasConfirmedEmail,
-			},
-			{
-				label: t('TUTORIAL_ADD_UNIT_LABEL'),
-				content: t('TUTORIAL_ADD_UNIT_CONTENT'),
-				contentCompleted: t('TUTORIAL_CREATE_UNIT_COMPLETE'),
-				icon: CreateEddie,
-				check: hasCreatedAdUnit,
-				tutorial: createAdUnitTutorial,
-			},
-			{
-				label: t('TUTORIAL_FUND_ACCOUNT_LABEL'),
-				content: t('TUTORIAL_FUND_ACCOUNT_CONTENT'),
-				contentCompleted: t('TUTORIAL_FUND_ACC_COMPLETE'),
-				icon: FundEddie,
-				check: hasFundedAccount,
-				tutorial: fundAccountTutorial,
-			},
-			{
-				label: t('TUTORIAL_FIRST_CAMPAIGN_LABEL'),
-				content: t('TUTORIAL_FIRST_CAMPAIGN_CONTENT'),
-				contentCompleted: t('TUTORIAL_LAUNCH_CAMPAIGN_COMPLETE'),
-				icon: LaunchEddie,
-				check: hasCreatedCampaign,
-				tutorial: launchFirstCampaign,
-			},
-			// {
-			// 	label: 'Receive your bonus',
-			// 	content: "Your account is ready. Let's create your first ad!",
-			// 	icon: BonusEddie,
-			// 	check: false,
-			// },
-		],
-		publisher: [
-			{
-				label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
-				content: (
-					<span
-						dangerouslySetInnerHTML={{
-							__html: t('TUTORIAL_CONFIRM_EMAIL_CONTENT'),
-						}}
-					/>
-				),
-				contentCompleted: t('TUTORIAL_CONFIRM_EMAIL_COMPLETE'),
-				icon: EmailEddie,
-				check: hasConfirmedEmail,
-			},
-			{
-				label: t('TUTORIAL_ADD_SLOT_LABEL'),
-				content: t('TUTORIAL_ADD_SLOT_CONTENT'),
-				contentCompleted: t('TUTORIAL_CREATE_AD_SLOT_COMPLETE'),
-				icon: CreateEddie,
-				check: hasCreatedAdSlot,
-				tutorial: createAdSlot,
-			},
-			{
-				label: t('TUTORIAL_PLACE_SLOT_LABEL'),
-				content: t('TUTORIAL_ADD_SLOT_CONTENT'),
-				contentCompleted: t('TUTORIAL_PLACE_AD_SLOT_COMPLETE'),
-				icon: PlaceEddie,
-				check: hasImpressions,
-				tutorial: placeAdSlot,
-			},
-			{
-				label: t('TUTORIAL_REACH_5000_LABEL'),
-				content: t('TUTORIAL_REACH_5000_CONTENT'),
-				contentCompleted: t('TUTORIAL_5000_IMPRESSIONS_COMPLETE'),
-				icon: LaunchEddie,
-				check: has5000Impressions,
-			},
-			// {
-			// 	label: 'Receive your bonus',
-			// 	content: "Your account is ready. Let's create your first ad!",
-			// 	icon: BonusEddie,
-			// 	check: false,
-			// },
-		],
-	}
 	const indexOfFirstIncompleteStep = steps[side].findIndex(step => !step.check)
 	const [activeStep, setActiveStep] = React.useState(0)
+
+	const sideSteps = steps[side] || []
+	const currentStep = sideSteps[activeStep] || {}
 
 	const handleStep = step => () => {
 		setActiveStep(step)
@@ -190,6 +188,10 @@ export default function GettingStarted(props) {
 		setActiveStep(0)
 		execute(hideGettingStarted())
 	}
+
+	useEffect(() => {
+		setSteps(getSteps(stepsData))
+	}, [stepsData])
 	useEffect(() => {
 		setActiveStep(
 			indexOfFirstIncompleteStep !== -1
@@ -244,8 +246,8 @@ export default function GettingStarted(props) {
 							<Hidden mdUp>
 								<Box p={2} justifyContent={'center'} display='flex'>
 									<ColorlibStepIcon
-										icon={steps[side][activeStep].icon}
-										completed={steps[side][activeStep].check}
+										icon={currentStep.icon}
+										completed={currentStep.check}
 										size='35vw'
 									/>
 								</Box>
@@ -284,7 +286,7 @@ export default function GettingStarted(props) {
 									activeStep={activeStep}
 									connector={<ColorlibConnector />}
 								>
-									{steps[side].map(({ label, icon, check }, index) => (
+									{sideSteps.map(({ label, icon, check }, index) => (
 										<Step key={label}>
 											<StepButton onClick={handleStep(index)}>
 												<StepLabel
@@ -325,22 +327,19 @@ export default function GettingStarted(props) {
 										>
 											<strong>
 												{t('GETTING_STARTED_STEPS', {
-													args: [
-														activeStep + 1,
-														steps[side][activeStep].label || '',
-													],
+													args: [activeStep + 1, currentStep.label || ''],
 												})}{' '}
-												{steps[side][activeStep].check ? t('COMPLETED') : ''}
+												{currentStep.check ? t('COMPLETED') : ''}
 											</strong>
 										</Typography>
-										{steps[side][activeStep].check ? (
+										{currentStep.check ? (
 											<Typography className={classes.instructions}>
-												{steps[side][activeStep].contentCompleted}
+												{currentStep.contentCompleted}
 											</Typography>
 										) : (
 											<Typography className={classes.instructions}>
-												{steps[side][activeStep].content}{' '}
-												{steps[side][activeStep].tutorial &&
+												{currentStep.content}{' '}
+												{currentStep.tutorial &&
 													t('GETTING_STARTED_NOT_SURE_SEE_TUTORIAL', {
 														args: [
 															<Link
@@ -348,7 +347,7 @@ export default function GettingStarted(props) {
 																href='#'
 																onClick={e => {
 																	e.preventDefault()
-																	steps[side][activeStep].tutorial()
+																	currentStep.tutorial()
 																}}
 																className={classes.instructions}
 																color={'primary'}
