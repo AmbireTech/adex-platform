@@ -303,3 +303,8 @@ export const selectChartDatapointsCPM = createSelector(
 		return result
 	}
 )
+
+export const selectPublisherRevenueNoticeActive = createSelector(
+	selectPublisherTotalImpressions,
+	totalImpressions => !totalImpressions
+)

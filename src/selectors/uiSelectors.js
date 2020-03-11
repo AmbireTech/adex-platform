@@ -52,6 +52,13 @@ export const selectHideGettingStarted = createSelector(
 	({ hideGettingStarted }) => hideGettingStarted
 )
 
+export const selectGettingStartedExpanded = createSelector(
+	selectIdentityUi,
+	({ gettingStartedExpanded }) =>
+		// NOTE: default is open but cant set initial state
+		gettingStartedExpanded === undefined ? true : !!gettingStartedExpanded
+)
+
 export const selectSelectedCampaigns = createSelector(
 	selectSelectedItems,
 	({ campaigns }) => campaigns || []

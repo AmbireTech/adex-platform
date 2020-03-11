@@ -7,17 +7,20 @@ import { Stars } from '@material-ui/icons'
 import { PRIMARY, SECONDARY } from 'components/App/themeMUi'
 import StepConnector from '@material-ui/core/StepConnector'
 
+const LINES_WIDTH = 3
+const DEFAULT_SIZE = 80
+
 const useColorlibStepIconStyles = makeStyles(theme => ({
 	root: {
-		backgroundColor: theme.palette.common.white,
+		backgroundColor: 'transparent',
 		zIndex: 1,
-		width: props => props.size || 80,
-		height: props => props.size || 80,
+		width: props => DEFAULT_SIZE,
+		height: props => DEFAULT_SIZE,
 		display: 'flex',
 		borderRadius: '50%',
 		justifyContent: 'center',
 		alignItems: 'center',
-		border: `3px solid ${theme.palette.grey[300]}`,
+		border: `${LINES_WIDTH}px solid ${theme.palette.common.white}`,
 		transition: '0.5s',
 		'&:hover': {
 			boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
@@ -25,10 +28,10 @@ const useColorlibStepIconStyles = makeStyles(theme => ({
 		},
 	},
 	active: {
-		border: `3px solid ${PRIMARY} !important`,
+		border: `${LINES_WIDTH}px solid ${PRIMARY} !important`,
 	},
 	completed: {
-		border: `3px solid ${SECONDARY}`,
+		border: `${LINES_WIDTH}px solid ${SECONDARY}`,
 	},
 	star: {
 		position: 'relative',
@@ -41,15 +44,15 @@ const useColorlibStepIconStyles = makeStyles(theme => ({
 
 export const ColorlibConnector = withStyles(theme => ({
 	alternativeLabel: {
-		top: 40,
+		top: DEFAULT_SIZE / 2,
+		left: `calc(-50% + ${DEFAULT_SIZE / 2}px)`,
+		right: `calc(50% + ${DEFAULT_SIZE / 2}px)`,
 	},
 	line: {
-		height: 3,
+		height: LINES_WIDTH,
 		border: 0,
-		background: `linear-gradient(to right, transparent 50%, #fff 50%), ${
-			theme.palette.grey[300]
-		}`,
-		backgroundSize: `16px 2px, 100% 2px`,
+		background: `linear-gradient(to right, transparent 50%, #fff 50%), ${'transparent'}`,
+		backgroundSize: `${LINES_WIDTH * 6}px`,
 	},
 }))(StepConnector)
 

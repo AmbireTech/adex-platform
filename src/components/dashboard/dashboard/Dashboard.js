@@ -40,7 +40,7 @@ import {
 	selectAccountIdentityAddr,
 	selectWalletPrivileges,
 	selectPrivilegesWarningAccepted,
-	selectPublisherMinRevenueReached,
+	selectPublisherRevenueNoticeActive,
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import GettingStarted from '../getting-started/GettingStarted'
@@ -94,8 +94,8 @@ function Dashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
 	const [dataLoaded, setDataLoaded] = useState(false)
 	const address = useSelector(selectAccountIdentityAddr)
-	const minPublisherRevenueReached = useSelector(
-		selectPublisherMinRevenueReached
+	const showPublisherRevenueNotice = useSelector(
+		selectPublisherRevenueNoticeActive
 	)
 	const privileges = useSelector(selectWalletPrivileges)
 	const privilegesWarningAccepted = useSelector(selectPrivilegesWarningAccepted)
@@ -186,7 +186,7 @@ function Dashboard(props) {
 						</Box>
 					)}
 
-					{side === 'publisher' && !minPublisherRevenueReached && (
+					{side === 'publisher' && showPublisherRevenueNotice && (
 						<Box mb={2}>
 							<Alert variant='outlined' severity='warning'>
 								<div>

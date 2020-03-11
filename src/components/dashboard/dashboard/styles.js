@@ -29,6 +29,8 @@ export const styles = theme => {
 			flexDirection: 'row',
 			display: 'flex',
 			alignItems: 'center',
+			paddingRight: theme.spacing(2),
+			paddingLeft: theme.spacing(2),
 		},
 
 		flexRow: {
@@ -51,14 +53,12 @@ export const styles = theme => {
 			[theme.breakpoints.up('md')]: {
 				display: 'none',
 			},
-			marginLeft: -theme.spacing(2),
 		},
 		toolbar: {
 			flexFlow: 'wrap',
 			height: 114,
-			...theme.mixins.toolbar,
-			paddingLeft: theme.spacing(2),
-			paddingRight: theme.spacing(2),
+			paddingRight: 0,
+			paddingLeft: 0,
 		},
 		drawerPaper: {
 			width: drawerWidth,
@@ -80,10 +80,6 @@ export const styles = theme => {
 		contentInner: {
 			maxWidth: 1600,
 			margin: 'auto',
-		},
-		icon: {
-			height: 36,
-			width: 'auto',
 		},
 		breadcrumbElement: {
 			maxWidth: `calc(100vw - ${theme.spacing(5)}px)`,

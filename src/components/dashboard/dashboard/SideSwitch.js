@@ -18,7 +18,20 @@ const handleChange = (ev, index) => {
 	execute(push(`/dashboard/${sideIndex[index + '']}`))
 }
 
-const useStyles = makeStyles(theme => {
+const useTabsStyles = makeStyles(theme => {
+	const activeColor = ({ side }) =>
+		side === 'advertiser'
+			? theme.palette.accentOne.main
+			: theme.palette.accentTwo.main
+
+	return {
+		indicator: {
+			backgroundColor: activeColor,
+		},
+	}
+})
+
+const useTabStyles = makeStyles(theme => {
 	const activeColor = ({ side }) =>
 		side === 'advertiser'
 			? theme.palette.accentOne.main
@@ -29,7 +42,6 @@ const useStyles = makeStyles(theme => {
 			? theme.palette.accentOne.light
 			: theme.palette.accentTwo.light
 	return {
-		// TODO: keep it everywhere in case of components update
 		root: {
 			minWidth: 30,
 			'&$selected': {
@@ -39,32 +51,26 @@ const useStyles = makeStyles(theme => {
 		selected: {
 			color: activeColor,
 			backgroundColor: activeBgColor,
-			'&$selected': {
-				color: activeColor,
-			},
-		},
-		indicator: {
-			backgroundColor: activeColor,
 		},
 	}
 })
 
 const SideSwitch = ({ side, className }) => {
-	const classes = useStyles({ side })
+	const tabsClasses = useTabsStyles({ side })
+	const tabClasses = useTabStyles({ side })
 	return (
 		<div className={className}>
 			<Box bgcolor='background.paper' boxShadow={2}>
 				<Tabs
-					classes={classes}
+					classes={tabsClasses}
 					value={sideIndex[side]}
 					onChange={handleChange}
-					indicatorColor='primary'
 					textColor='primary'
 					variant='fullWidth'
 					aria-label='side select'
 				>
-					<Tab classes={classes} label={t('ADVERTISER')} />
-					<Tab classes={classes} label={t('PUBLISHER')} />
+					<Tab classes={tabClasses} label={t('ADVERTISER')} />
+					<Tab classes={tabClasses} label={t('PUBLISHER')} />
 				</Tabs>
 			</Box>
 		</div>
