@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import {
 	Box,
@@ -29,11 +29,16 @@ import FundEddie from 'resources/getting-started/GS-fund-ic.png'
 import CreateEddie from 'resources/getting-started/GS-create-ic.png'
 import LaunchEddie from 'resources/getting-started/GS-launch-ic.png'
 import PlaceEddie from 'resources/getting-started/GS-place-ic.png'
-import BonusEddie from 'resources/getting-started/GS-bonus-ic.png'
-import { t, sectStepsData, selectHideGettingStarted } from 'selectors'
+// import BonusEddie from 'resources/getting-started/GS-bonus-ic.png'
+import {
+	t,
+	sectStepsData,
+	selectHideGettingStarted,
+	selectGettingStartedExpanded,
+} from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
-import { hideGettingStarted, execute } from 'actions'
+import { hideGettingStarted, setGettingStartedExpanded, execute } from 'actions'
 import {
 	createAdUnitTutorial,
 	fundAccountTutorial,
@@ -163,8 +168,7 @@ export default function GettingStarted(props) {
 	const stepsData = useSelector(sectStepsData)
 
 	const isGettingStartedHidden = useSelector(selectHideGettingStarted)
-	// const emailProvider = useSelector(selectEmailProvider)
-	const [expanded, setExpanded] = useState(true)
+	const expanded = useSelector(selectGettingStartedExpanded)
 	const [steps, setSteps] = useState({ advertiser: [], publisher: [] })
 
 	const indexOfFirstIncompleteStep = steps[side].findIndex(step => !step.check)
@@ -207,7 +211,7 @@ export default function GettingStarted(props) {
 			<Box mb={2}>
 				<ExpansionPanel
 					expanded={expanded}
-					onChange={() => setExpanded(!expanded)}
+					onChange={() => execute(setGettingStartedExpanded(!expanded))}
 					square={true}
 				>
 					<ExpansionPanelSummary
