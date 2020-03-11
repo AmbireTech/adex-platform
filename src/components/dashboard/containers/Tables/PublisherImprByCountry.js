@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux'
 import { styles } from './styles'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
+import ChartGeo from 'components/dashboard/charts/map/ChartGeo'
 
 const useStyles = makeStyles(styles)
 
@@ -60,6 +61,7 @@ function PublisherImprByCountry(props) {
 			}),
 	})
 
+	const geoChartData = data.map(item => [item.countryName, item.impressions])
 	// NOTE: despite useTableData hook the component is updating.
 	// 'selectorArgs' are object and they have new reference on each update
 	// that causes useTableData to update the data on selectorArgs change.
@@ -71,16 +73,19 @@ function PublisherImprByCountry(props) {
 
 	const options = getOptions({ selected, reloadData })
 	return (
-		<MUIDataTableEnhanced
-			title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
-			data={data}
-			columns={columns}
-			options={options}
-			noSearch
-			noPrint
-			noViewColumns
-			{...props}
-		/>
+		<Fragment>
+			<ChartGeo data={[['Country', 'Popularity'], ...geoChartData]} />
+			<MUIDataTableEnhanced
+				title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
+				data={data}
+				columns={columns}
+				options={options}
+				noSearch
+				noPrint
+				noViewColumns
+				{...props}
+			/>
+		</Fragment>
 	)
 }
 
