@@ -6,6 +6,7 @@ import SideSelect from 'components/signin/side-select/SideSelect'
 import { BasicStats } from './BasicStats'
 import { t, selectSide } from 'selectors'
 import BestEarnersTable from '../Tables/BestEarnersTable'
+import PublisherImprByCountry from '../Tables/PublisherImprByCountry'
 
 export function DashboardStats(props) {
 	const side = useSelector(selectSide)
@@ -25,11 +26,18 @@ export function DashboardStats(props) {
 			</Paper>
 			<Grid container>
 				{side === 'publisher' && (
-					<Grid item xs={12} md={12} lg={6}>
-						<Box pt={1}>
-							<BestEarnersTable />
-						</Box>
-					</Grid>
+					<Fragment>
+						<Grid item xs={12} md={12} lg={6}>
+							<Box p={1} pl={0}>
+								<BestEarnersTable />
+							</Box>
+						</Grid>
+						<Grid item xs={12} md={12} lg={6}>
+							<Box p={1} pr={0}>
+								<PublisherImprByCountry />
+							</Box>
+						</Grid>
+					</Fragment>
 				)}
 			</Grid>
 		</Fragment>
