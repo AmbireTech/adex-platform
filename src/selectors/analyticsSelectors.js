@@ -306,5 +306,5 @@ export const selectChartDatapointsCPM = createSelector(
 
 export const selectPublisherRevenueNoticeActive = createSelector(
 	selectPublisherTotalImpressions,
-	totalImpressions => !!totalImpressions
+	totalImpressions => !totalImpressions
 )
