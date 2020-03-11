@@ -137,11 +137,13 @@ export const selectAdSlotsTableData = createSelector(
 
 export const selectAdUnitsTableData = createSelector(
 	[
-		(state, { side, campaignId }) => ({
+		(state, { side, campaignId, items }) => ({
 			side,
-			items: campaignId
-				? selectCampaignUnitsById(state, campaignId)
-				: selectAdUnits(state),
+			items:
+				items ||
+				(campaignId
+					? selectCampaignUnitsById(state, campaignId)
+					: selectAdUnits(state)),
 			impressionsByAdUnit: id =>
 				campaignId
 					? selectCampaignAnalyticsByChannelToAdUnit(state, {
