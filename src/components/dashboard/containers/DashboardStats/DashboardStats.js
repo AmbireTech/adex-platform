@@ -23,9 +23,11 @@ export function DashboardStats(props) {
 					<BasicStats side={side} />
 				</Box>
 			</Paper>
-			<Box p={1}>
-				<BestEarnersTable />
-			</Box>
+			{side === 'publisher' && (
+				<Box pt={1}>
+					<BestEarnersTable />
+				</Box>
+			)}
 		</Fragment>
 	)
 }
