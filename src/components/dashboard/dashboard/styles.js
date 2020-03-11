@@ -57,8 +57,6 @@ export const styles = theme => {
 			flexFlow: 'wrap',
 			height: 114,
 			...theme.mixins.toolbar,
-			paddingLeft: theme.spacing(2),
-			paddingRight: theme.spacing(2),
 		},
 		drawerPaper: {
 			width: drawerWidth,
@@ -80,10 +78,6 @@ export const styles = theme => {
 		contentInner: {
 			maxWidth: 1600,
 			margin: 'auto',
-		},
-		icon: {
-			height: 36,
-			width: 'auto',
 		},
 		breadcrumbElement: {
 			maxWidth: `calc(100vw - ${theme.spacing(5)}px)`,
