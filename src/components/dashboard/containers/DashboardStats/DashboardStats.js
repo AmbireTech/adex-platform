@@ -24,22 +24,20 @@ export function DashboardStats(props) {
 					<BasicStats side={side} />
 				</Box>
 			</Paper>
-			<Grid container>
-				{side === 'publisher' && (
-					<Fragment>
-						<Grid item xs={12} md={12} lg={6}>
-							<Box p={1} pl={0}>
+			<Box pt={2}>
+				<Grid container spacing={2}>
+					{side === 'publisher' && (
+						<Fragment>
+							<Grid item xs={12} md={12} lg={6}>
 								<BestEarnersTable />
-							</Box>
-						</Grid>
-						<Grid item xs={12} md={12} lg={6}>
-							<Box p={1} pr={0}>
+							</Grid>
+							<Grid item xs={12} md={12} lg={6}>
 								<PublisherImprByCountry />
-							</Box>
-						</Grid>
-					</Fragment>
-				)}
-			</Grid>
+							</Grid>
+						</Fragment>
+					)}
+				</Grid>
+			</Box>
 		</Fragment>
 	)
 }
