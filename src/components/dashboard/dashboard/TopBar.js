@@ -76,7 +76,6 @@ function TopNav({ handleDrawerToggle, side, t }) {
 							leftIconSrc={imgSrc}
 							rightIcon={<ExpandMoreIcon />}
 							label={btnMenuLabel}
-							active={true}
 						>
 							<RRMenuItem
 								value='account'

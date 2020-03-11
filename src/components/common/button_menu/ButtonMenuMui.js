@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import Menu from '@material-ui/core/Menu'
-import Button from '@material-ui/core/Button'
+import { Menu, Button } from '@material-ui/core'
 
 const ImgIcon = ({ src }) => {
 	return (
@@ -39,8 +38,8 @@ function ButtonMenu({ children, btnStyle, label, rightIcon, leftIconSrc, id }) {
 			<Button
 				style={btnStyle}
 				onClick={handleMenu}
-				aria-owns={id}
 				aria-haspopup='true'
+				aria-controls={id}
 			>
 				{leftIcon}
 				<span
@@ -58,14 +57,15 @@ function ButtonMenu({ children, btnStyle, label, rightIcon, leftIconSrc, id }) {
 				id={id}
 				open={open}
 				anchorEl={anchorEl}
-				// anchorOrigin={{
-				// 	vertical: 'top',
-				// 	horizontal: 'right',
-				// }}
-				// transformOrigin={{
-				// 	vertical: 'top',
-				// 	horizontal: 'right',
-				// }}
+				getContentAnchorEl={null}
+				anchorOrigin={{
+					vertical: 'bottom',
+					horizontal: 'right',
+				}}
+				transformOrigin={{
+					vertical: 'top',
+					horizontal: 'right',
+				}}
 				onClick={handleButtonClick}
 				onClose={handleClose}
 			>
