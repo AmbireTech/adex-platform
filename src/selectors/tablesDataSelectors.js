@@ -10,6 +10,7 @@ import {
 	selectCampaignAnalyticsByChannelToAdUnit,
 	selectTotalStatsByAdUnits,
 	selectCampaignUnitsById,
+	selectPublisherAdvanceStatsToAdUnit,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 
@@ -181,25 +182,19 @@ export const selectAdUnitsTableData = createSelector(
 )
 
 export const selectBestEarnersTableData = createSelector(
-	[
-		state => ({
-			items: [1], //TODO: select all items ,
-		}),
-	],
-	({ items }) =>
-		Object.values(items).map(item => {
+	selectPublisherAdvanceStatsToAdUnit,
+	([items]) =>
+		items.map(item => {
 			const id = item.id || item.ipfs
 			return {
 				id,
 				media: {
 					id,
-					mediaUrl: item.mediaUrl, //TODO: get media url??
-					mediaMime: item.mediaMime, //TODO: get media mime ??
+					mediaUrl: item.mediaUrl,
+					mediaMime: item.mediaMime,
 				},
-				earnings: 1, //TODO: get stats here and below
-				impressions: 0,
-				clicks: 0,
-				ctr: 0,
+				type: item.type,
+				impressions: item.impressions,
 			}
 		})
 )
