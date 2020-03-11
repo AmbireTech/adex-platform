@@ -55,14 +55,36 @@ export const selectPublisherStatsByType = createSelector(
 	(state, type) => selectAdvancedAnalyticsByType(state, type),
 	advancedByType => advancedByType.publisherStats || {}
 )
+export const selectPublisherStatsByCountry = createSelector(
+	state => selectAdvancedAnalyticsByType(state, 'IMPRESSION'),
+	({ reportPublisherToCountry }) => reportPublisherToCountry || {}
+)
 
 export const selectAllAdUnitsInChannels = createSelector(
 	state => selectChannelsWithUserBalancesAll(state),
 	withBalanceAll => {
 		const adUnits = []
 		Object.values(withBalanceAll).map(item => adUnits.push(...item.adUnits))
-		return adUnits
+		//TODO: find a better way for unique values
+		const uniq = new Set(adUnits.map(e => JSON.stringify(e)))
+		const res = Array.from(uniq).map(e => JSON.parse(e))
+		return res
 	}
+)
+
+export const selectPublisherAdvanceStatsToAdUnit = createSelector(
+	state => [
+		selectAllAdUnitsInChannels(state),
+		selectPublisherStatsByType(state, 'IMPRESSION'),
+	],
+	([adUnits, { reportPublisherToAdUnit }]) => [
+		adUnits
+			.filter(i => Object.keys(reportPublisherToAdUnit).includes(i.ipfs))
+			.map(item => ({
+				...item,
+				impressions: reportPublisherToAdUnit[item.ipfs],
+			})),
+	]
 )
 
 export const selectPublisherTotalImpressions = createSelector(
