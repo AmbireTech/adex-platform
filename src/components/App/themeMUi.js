@@ -9,9 +9,9 @@ export const PRIMARY = '#1B75BC'
 export const SECONDARY = '#FFAC00'
 export const ALEX_GREY = '#3f3e3e'
 export const ACCENT_ONE = '#57467B'
-export const ACCENT_ONE_LIGHT = '#ceccde'
+export const ACCENT_ONE_LIGHT = '#dedded'
 export const ACCENT_TWO = '#7CB4B8'
-export const ACCENT_TWO_LIGHT = '#dfecee'
+export const ACCENT_TWO_LIGHT = '#e4f3f5'
 
 const palette = {
 	primary: { main: PRIMARY, contrastText: WHITE },
