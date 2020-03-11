@@ -104,6 +104,13 @@ const useStyles = makeStyles(theme => {
 		sideSwitch: {
 			marginBottom: `${theme.spacing(2)}px`,
 		},
+		icon: {
+			height: 32,
+			width: 'auto',
+		},
+		amount: {
+			fontSize: theme.typography.pxToRem(18),
+		},
 	}
 })
 
@@ -144,7 +151,7 @@ function SideNav(props) {
 						)}
 					>
 						<ListItem>
-							<AdexIconTxt className={commonClasses.icon} />
+							<AdexIconTxt className={classes.icon} />
 						</ListItem>
 						<ListItem>
 							<LoadingSection
@@ -153,15 +160,19 @@ function SideNav(props) {
 									availableIdentityBalanceMainToken !== 0
 								}
 							>
-								<ListItemText>
-									<Typography variant='h6' component='div' color='textPrimary'>
-										<strong>{`${availableIdentityBalanceMainToken ||
-											0} ${symbol}`}</strong>
-									</Typography>
-									<Typography variant='button' display='block' gutterBottom>
-										{t('IDENTITY_BALANCE')}
-									</Typography>
-								</ListItemText>
+								<Typography
+									variant='button'
+									display='block'
+									component='div'
+									color='textPrimary'
+									classes={{ button: classes.amount }}
+								>
+									<strong>{`${availableIdentityBalanceMainToken ||
+										0} ${symbol}`}</strong>
+								</Typography>
+								<Typography variant='button' component='div' display='block'>
+									{t('IDENTITY_BALANCE')}
+								</Typography>
 							</LoadingSection>
 						</ListItem>
 					</Box>

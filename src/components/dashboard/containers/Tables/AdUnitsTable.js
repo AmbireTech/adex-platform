@@ -195,7 +195,14 @@ const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
 function AdUnitsTable(props) {
 	const classes = useStyles()
 	const side = useSelector(selectSide)
-	const { noActions, noClone, campaignId, handleSelect, selected = [] } = props
+	const {
+		noActions,
+		noClone,
+		campaignId,
+		handleSelect,
+		selected = [],
+		items,
+	} = props
 
 	const { maxClicks, maxImpressions, maxCTR } = useSelector(state =>
 		selectAdUnitsStatsMaxValues(state, { side, campaignId })
@@ -223,8 +230,8 @@ function AdUnitsTable(props) {
 	// If selectorArgs are reference type we need to use useState fot them
 	// TODO: find why useTableData causing this update
 	useEffect(() => {
-		setSelectorArgs({ side, campaignId })
-	}, [side, campaignId])
+		setSelectorArgs({ side, campaignId, items })
+	}, [side, campaignId, items])
 
 	const onRowsSelect = useCallback(
 		(_, allRowsSelected) => {

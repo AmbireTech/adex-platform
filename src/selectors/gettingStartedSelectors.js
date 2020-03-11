@@ -1,3 +1,4 @@
+import { t } from 'selectors'
 import { createSelector } from 'reselect'
 import {
 	selectAdUnitsArray,
@@ -41,4 +42,33 @@ export const selectHasAdSlotImpressions = createSelector(
 export const selectHas5000Impressions = createSelector(
 	selectPublisherTotalImpressions,
 	totalImpressions => totalImpressions > 5000
+)
+
+export const sectStepsData = createSelector(
+	[
+		selectHasCreatedAdUnit,
+		selectHasCreatedCampaign,
+		selectHasCreatedAdSlot,
+		selectHasConfirmedEmail,
+		selectHasFundedAccount,
+		selectHasAdSlotImpressions,
+		selectHas5000Impressions,
+	],
+	(
+		hasCreatedAdUnit,
+		hasCreatedCampaign,
+		hasCreatedAdSlot,
+		hasConfirmedEmail,
+		hasFundedAccount,
+		hasImpressions,
+		has5000Impressions
+	) => ({
+		hasCreatedAdUnit,
+		hasCreatedCampaign,
+		hasCreatedAdSlot,
+		hasConfirmedEmail,
+		hasFundedAccount,
+		hasImpressions,
+		has5000Impressions,
+	})
 )
