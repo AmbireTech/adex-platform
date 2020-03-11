@@ -56,7 +56,7 @@ export const selectPublisherStatsByType = createSelector(
 	advancedByType => advancedByType.publisherStats || {}
 )
 export const selectPublisherStatsByCountry = createSelector(
-	state => selectAdvancedAnalyticsByType(state, 'IMPRESSION'),
+	state => selectPublisherStatsByType(state, 'IMPRESSION'),
 	({ reportPublisherToCountry }) => reportPublisherToCountry || {}
 )
 
