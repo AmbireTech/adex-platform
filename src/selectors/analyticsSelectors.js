@@ -1,5 +1,6 @@
 import { getState } from 'store'
 import { createSelector } from 'reselect'
+import { selectChannelsWithUserBalancesAll } from 'selectors'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
 
 export const selectAnalytics = state => state.persist.analytics
@@ -54,6 +55,16 @@ export const selectPublisherStatsByType = createSelector(
 	(state, type) => selectAdvancedAnalyticsByType(state, type),
 	advancedByType => advancedByType.publisherStats || {}
 )
+
+export const selectAllAdUnitsInChannels = createSelector(
+	state => selectChannelsWithUserBalancesAll(state),
+	withBalanceAll => {
+		const adUnits = []
+		Object.values(withBalanceAll).map(item => adUnits.push(...item.adUnits))
+		return adUnits
+	}
+)
+
 export const selectPublisherTotalImpressions = createSelector(
 	state => selectPublisherStatsByType(state, 'IMPRESSION'),
 	({ reportPublisherToAdUnit }) => {
