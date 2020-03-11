@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect'
+import ISOCountries from 'i18n-iso-countries'
 import {
 	selectCampaignsArray,
 	selectRoutineWithdrawTokens,
@@ -11,6 +12,7 @@ import {
 	selectTotalStatsByAdUnits,
 	selectCampaignUnitsById,
 	selectPublisherAdvanceStatsToAdUnit,
+	selectPublisherStatsByCountry,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 
@@ -177,6 +179,19 @@ export const selectAdUnitsTableData = createSelector(
 					to: `/dashboard/${side}/AdUnit/${id}`,
 					item,
 				},
+			}
+		})
+)
+
+export const selectPublisherStatsByCountryTableData = createSelector(
+	selectPublisherStatsByCountry,
+	countries =>
+		Object.keys(countries).map(key => {
+			const countryNames = ISOCountries.getNames('en')
+			return {
+				countryCode: key,
+				countryName: countryNames[key],
+				impressions: countries[key],
 			}
 		})
 )
