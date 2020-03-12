@@ -1,6 +1,12 @@
 import React, { useEffect, useState, Fragment } from 'react'
 import { commify } from 'ethers/utils'
-import { lighten, makeStyles, withStyles } from '@material-ui/core/styles'
+import {
+	lighten,
+	makeStyles,
+	withStyles,
+	createMuiTheme,
+	MuiThemeProvider,
+} from '@material-ui/core/styles'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { LinearProgress, Chip, Box } from '@material-ui/core'
 import { Timeline } from '@material-ui/icons'
@@ -46,6 +52,20 @@ const useStyles = makeStyles(theme => ({
 			width: '100%',
 		},
 	},
+	MUIDataTableHeadCell: {
+		table: {
+			'&:nth-child(1)': {
+				width: 200,
+			},
+			'&:nth-child(2)': {
+				width: 70,
+			},
+		},
+	},
+	chip: {
+		background: 'transparent',
+		color: PRIMARY,
+	},
 }))
 
 const getCols = ({ classes, maxImpressions, totalImpressions }) => [
@@ -75,35 +95,49 @@ const getCols = ({ classes, maxImpressions, totalImpressions }) => [
 			filter: false,
 			sort: true,
 			sortDirection: 'desc',
-			customBodyRender: impressions => (
-				<Chip
-					color='primary'
-					size='small'
-					icon={<Timeline />}
-					label={`${((impressions / totalImpressions) * 100 || 0).toFixed(
-						2
-					)} %`}
-				/>
-			),
+			customBodyRender: impressions => {
+				const percentage = (
+					(impressions / totalImpressions) * 100 || 0
+				).toFixed(2)
+				return (
+					<Box display='flex' flexDirection='column' flex={1}>
+						<Box pl={1} pr={1} display='flex' flexDirection='column'>
+							<Chip
+								color='primary'
+								size='small'
+								icon={<Timeline />}
+								label={`${percentage} %`}
+								className={classes.chip}
+							/>
+						</Box>
+
+						<BorderLinearProgress
+							className={classes.margin}
+							variant='determinate'
+							value={percentage}
+						/>
+					</Box>
+				)
+			},
 		},
 	},
-	{
-		name: 'impressions',
-		label: t('LABEL_PERC'),
-		options: {
-			filter: false,
-			sort: false,
-			sortDirection: 'desc',
-			customBodyRender: impressions => (
-				<BorderLinearProgress
-					className={classes.margin}
-					variant='determinate'
-					color='secondary'
-					value={((impressions / totalImpressions) * 100 || 0).toFixed(2)}
-				/>
-			),
-		},
-	},
+	// {
+	// 	name: 'impressions',
+	// 	label: t('LABEL_PERC'),
+	// 	options: {
+	// 		filter: false,
+	// 		sort: false,
+	// 		sortDirection: 'desc',
+	// 		customBodyRender: impressions => (
+	// 			<BorderLinearProgress
+	// 				className={classes.margin}
+	// 				variant='determinate'
+	// 				color='secondary'
+	// 				value={((impressions / totalImpressions) * 100 || 0).toFixed(2)}
+	// 			/>
+	// 		),
+	// 	},
+	// },
 ]
 
 const getOptions = ({ reloadData, selected }) => ({
@@ -111,6 +145,22 @@ const getOptions = ({ reloadData, selected }) => ({
 	rowsSelected: selected,
 	customToolbar: () => <ReloadData handleReload={reloadData} />,
 })
+
+const getMuiTheme = () =>
+	createMuiTheme({
+		overrides: {
+			MUIDataTableHeadCell: {
+				root: {
+					'&:nth-child(1)': {
+						width: 200,
+					},
+					'&:nth-child(2)': {
+						width: 70,
+					},
+				},
+			},
+		},
+	})
 
 function PublisherImprByCountry(props) {
 	const classes = useStyles()
@@ -150,16 +200,18 @@ function PublisherImprByCountry(props) {
 			<ChartGeo
 				data={[[t('MAP_COUNTRY'), t('MAP_POPULARITY')], ...geoChartData]}
 			/>
-			<MUIDataTableEnhanced
-				title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
-				data={data}
-				columns={columns}
-				options={options}
-				noSearch
-				noPrint
-				noViewColumns
-				{...props}
-			/>
+			<MuiThemeProvider theme={getMuiTheme()}>
+				<MUIDataTableEnhanced
+					title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
+					data={data}
+					columns={columns}
+					options={options}
+					noSearch
+					noPrint
+					noViewColumns
+					{...props}
+				/>
+			</MuiThemeProvider>
 		</Fragment>
 	)
 }
