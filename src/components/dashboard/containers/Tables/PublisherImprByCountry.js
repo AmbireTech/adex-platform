@@ -1,21 +1,54 @@
-import React, { useEffect, useState, useCallback, Fragment } from 'react'
+import React, { useEffect, useState, Fragment } from 'react'
 import { commify } from 'ethers/utils'
+import { lighten, makeStyles, withStyles } from '@material-ui/core/styles'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
+import { LinearProgress, Chip, Box } from '@material-ui/core'
+import { Timeline } from '@material-ui/icons'
 import {
 	t,
 	selectSide,
 	selectPublisherStatsByCountryTableData,
+	selectCountryStatsMaxValues,
 } from 'selectors'
-import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
-import { styles } from './styles'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
 import ChartGeo from 'components/dashboard/charts/map/ChartGeo'
+import { PRIMARY } from 'components/App/themeMUi'
 
-const useStyles = makeStyles(styles)
+const BorderLinearProgress = withStyles({
+	root: {
+		height: 10,
+		backgroundColor: lighten(PRIMARY, 0.9),
+	},
+	bar: {
+		backgroundColor: PRIMARY,
+	},
+})(LinearProgress)
 
-const getCols = ({ classes }) => [
+const useStyles = makeStyles(theme => ({
+	root: {
+		flexGrow: 1,
+	},
+	margin: {
+		margin: theme.spacing(1),
+	},
+	progressLabel: {
+		position: 'absolute',
+		width: '100%',
+		height: '100%',
+		zIndex: 1,
+		maxHeight: '75px', // borderlinearprogress root.height
+		textAlign: 'center',
+		display: 'flex',
+		alignItems: 'center',
+		'& span': {
+			width: '100%',
+		},
+	},
+}))
+
+const getCols = ({ classes, maxImpressions, totalImpressions }) => [
 	{
 		name: 'countryName',
 		label: t('PROP_COUNTRY'),
@@ -35,6 +68,42 @@ const getCols = ({ classes }) => [
 			customBodyRender: impressions => commify(impressions || 0),
 		},
 	},
+	{
+		name: 'impressions',
+		label: t('LABEL_IMPRESSIONS'),
+		options: {
+			filter: false,
+			sort: true,
+			sortDirection: 'desc',
+			customBodyRender: impressions => (
+				<Chip
+					color='primary'
+					size='small'
+					icon={<Timeline />}
+					label={`${((impressions / totalImpressions) * 100 || 0).toFixed(
+						2
+					)} %`}
+				/>
+			),
+		},
+	},
+	{
+		name: 'impressions',
+		label: t('LABEL_PERC'),
+		options: {
+			filter: false,
+			sort: true,
+			sortDirection: 'desc',
+			customBodyRender: impressions => (
+				<BorderLinearProgress
+					className={classes.margin}
+					variant='determinate'
+					color='secondary'
+					value={((impressions / totalImpressions) * 100 || 0).toFixed(2)}
+				/>
+			),
+		},
+	},
 ]
 
 const getOptions = ({ reloadData, selected }) => ({
@@ -49,7 +118,9 @@ function PublisherImprByCountry(props) {
 	const { noActions, noClone, campaignId, selected = [] } = props
 
 	const [selectorArgs, setSelectorArgs] = useState({})
-
+	const { maxImpressions, totalImpressions } = useSelector(
+		selectCountryStatsMaxValues
+	)
 	const { data, columns, reloadData } = useTableData({
 		selector: selectPublisherStatsByCountryTableData,
 		selectorArgs,
@@ -58,6 +129,8 @@ function PublisherImprByCountry(props) {
 				classes,
 				noActions,
 				noClone,
+				maxImpressions,
+				totalImpressions,
 			}),
 	})
 
