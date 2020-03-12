@@ -68,7 +68,7 @@ export const selectAllAdUnitsInChannels = createSelector(
 		//TODO: find a better way for unique values
 		const uniq = new Set(adUnits.map(e => JSON.stringify(e)))
 		const res = Array.from(uniq).map(e => JSON.parse(e))
-		return res
+		return res || []
 	}
 )
 
