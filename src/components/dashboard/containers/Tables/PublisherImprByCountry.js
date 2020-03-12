@@ -70,7 +70,7 @@ const getCols = ({ classes, maxImpressions, totalImpressions }) => [
 	},
 	{
 		name: 'impressions',
-		label: t('LABEL_IMPRESSIONS'),
+		label: t('LABEL_PERC'),
 		options: {
 			filter: false,
 			sort: true,
@@ -92,7 +92,7 @@ const getCols = ({ classes, maxImpressions, totalImpressions }) => [
 		label: t('LABEL_PERC'),
 		options: {
 			filter: false,
-			sort: true,
+			sort: false,
 			sortDirection: 'desc',
 			customBodyRender: impressions => (
 				<BorderLinearProgress
@@ -147,7 +147,9 @@ function PublisherImprByCountry(props) {
 	const options = getOptions({ selected, reloadData })
 	return (
 		<Fragment>
-			<ChartGeo data={[['Country', 'Popularity'], ...geoChartData]} />
+			<ChartGeo
+				data={[[t('MAP_COUNTRY'), t('MAP_POPULARITY')], ...geoChartData]}
+			/>
 			<MUIDataTableEnhanced
 				title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
 				data={data}
