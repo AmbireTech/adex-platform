@@ -300,3 +300,20 @@ export const selectAdUnitsStatsMaxValues = createSelector(
 			{ maxClicks: 0, maxImpressions: 0, maxCTR: 0 }
 		)
 )
+
+export const selectCountryStatsMaxValues = createSelector(
+	selectPublisherStatsByCountryTableData,
+	data =>
+		data.reduce(
+			(result, current) => {
+				const newResult = { ...result }
+				newResult.totalImpressions += current.impressions
+				newResult.maxImpressions = Math.max(
+					current.impressions,
+					newResult.maxImpressions
+				)
+				return newResult
+			},
+			{ maxImpressions: 0, totalImpressions: 0 }
+		)
+)
