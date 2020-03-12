@@ -20,7 +20,7 @@ import { useSelector } from 'react-redux'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
 import ChartGeo from 'components/dashboard/charts/map/ChartGeo'
-import { PRIMARY } from 'components/App/themeMUi'
+import { PRIMARY, theme } from 'components/App/themeMUi'
 
 const BorderLinearProgress = withStyles({
 	root: {
@@ -50,16 +50,6 @@ const useStyles = makeStyles(theme => ({
 		alignItems: 'center',
 		'& span': {
 			width: '100%',
-		},
-	},
-	MUIDataTableHeadCell: {
-		table: {
-			'&:nth-child(1)': {
-				width: 200,
-			},
-			'&:nth-child(2)': {
-				width: 70,
-			},
 		},
 	},
 	chip: {
@@ -121,23 +111,6 @@ const getCols = ({ classes, maxImpressions, totalImpressions }) => [
 			},
 		},
 	},
-	// {
-	// 	name: 'impressions',
-	// 	label: t('LABEL_PERC'),
-	// 	options: {
-	// 		filter: false,
-	// 		sort: false,
-	// 		sortDirection: 'desc',
-	// 		customBodyRender: impressions => (
-	// 			<BorderLinearProgress
-	// 				className={classes.margin}
-	// 				variant='determinate'
-	// 				color='secondary'
-	// 				value={((impressions / totalImpressions) * 100 || 0).toFixed(2)}
-	// 			/>
-	// 		),
-	// 	},
-	// },
 ]
 
 const getOptions = ({ reloadData, selected }) => ({
@@ -148,6 +121,7 @@ const getOptions = ({ reloadData, selected }) => ({
 
 const getMuiTheme = () =>
 	createMuiTheme({
+		...theme,
 		overrides: {
 			MUIDataTableHeadCell: {
 				root: {
