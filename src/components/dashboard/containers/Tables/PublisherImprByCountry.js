@@ -158,7 +158,11 @@ function PublisherImprByCountry(props) {
 			}),
 	})
 
-	const geoChartData = data.map(item => [item.countryName, item.impressions])
+	const geoChartData = data.map(item => [
+		item.countryCode,
+		item.countryName,
+		item.impressions,
+	])
 	// NOTE: despite useTableData hook the component is updating.
 	// 'selectorArgs' are object and they have new reference on each update
 	// that causes useTableData to update the data on selectorArgs change.
@@ -172,7 +176,10 @@ function PublisherImprByCountry(props) {
 	return (
 		<Fragment>
 			<ChartGeo
-				data={[[t('MAP_COUNTRY'), t('MAP_POPULARITY')], ...geoChartData]}
+				data={[
+					[t('MAP_COUNTRY_CODE'), t('MAP_COUNTRY'), t('MAP_POPULARITY')],
+					...geoChartData,
+				]}
 			/>
 			<MuiThemeProvider theme={getMuiTheme()}>
 				<MUIDataTableEnhanced
