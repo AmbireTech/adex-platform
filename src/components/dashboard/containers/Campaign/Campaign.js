@@ -23,6 +23,9 @@ import Anchor from 'components/common/anchor/anchor'
 import CampaignStatsDoughnut from 'components/dashboard/charts/campaigns/CampaignStatsDoughnut'
 import CampaignStatsBreakdownTable from 'components/dashboard/containers/Tables/CampaignStatsBreakdownTable'
 import { CampaignReceipt } from 'components/dashboard/containers/Receipt/CampaignReceipt'
+import { selectPublisherStatsByCountryTableData } from 'selectors'
+import ImpressionsByCountryTableMap from 'components/dashboard/containers/Tables/ImpressionsByCountryTableMap'
+
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 const VIEW_MODE = 'campaignRowsView'
@@ -46,17 +49,19 @@ export class Campaign extends Component {
 		return (
 			<Grid container spacing={2}>
 				<Grid item xs={12}>
-					<Button
-						variant='contained'
-						color='secondary'
-						size='large'
-						onClick={() => {
-							actions.closeCampaign({ campaign })
-						}}
-						disabled={humanFriendlyName === 'Closed'}
-					>
-						{t('BTN_CLOSE_CAMPAIGN')}
-					</Button>
+					<Box display='flex' justifyContent='center' mb={4}>
+						<Button
+							variant='contained'
+							color='secondary'
+							size='large'
+							onClick={() => {
+								actions.closeCampaign({ campaign })
+							}}
+							disabled={humanFriendlyName === 'Closed'}
+						>
+							{t('BTN_CLOSE_CAMPAIGN')}
+						</Button>
+					</Box>
 				</Grid>
 			</Grid>
 		)
@@ -115,6 +120,7 @@ export class Campaign extends Component {
 							textColor='primary'
 						>
 							<Tab label={t('STATISTICS')} />
+							<Tab label={t('MAP_STATISTICS')} />
 							<Tab label={t('CAMPAIGN_UNITS')} />
 							<Tab label={t('VALIDATORS')} />
 							{(humanFriendlyName === 'Closed' ||
@@ -139,9 +145,14 @@ export class Campaign extends Component {
 							</Grid>
 						)}
 						{tabIndex === 1 && (
-							<AdUnitsTable campaignId={campaign.id} noClone />
+							<ImpressionsByCountryTableMap
+								selector={selectPublisherStatsByCountryTableData}
+							/>
 						)}
 						{tabIndex === 2 && (
+							<AdUnitsTable campaignId={campaign.id} noClone />
+						)}
+						{tabIndex === 3 && (
 							<List>
 								<Anchor
 									target='_blank'
@@ -177,7 +188,7 @@ export class Campaign extends Component {
 								</Anchor>
 							</List>
 						)}
-						{tabIndex === 3 && <CampaignReceipt itemId={campaign.id} />}
+						{tabIndex === 4 && <CampaignReceipt itemId={campaign.id} />}
 					</div>
 				</div>
 			</div>
