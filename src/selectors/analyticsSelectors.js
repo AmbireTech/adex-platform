@@ -78,12 +78,14 @@ export const selectPublisherAdvanceStatsToAdUnit = createSelector(
 		selectPublisherStatsByType(state, 'IMPRESSION'),
 	],
 	([adUnits, { reportPublisherToAdUnit }]) => [
-		adUnits
-			.filter(i => Object.keys(reportPublisherToAdUnit).includes(i.ipfs))
-			.map(item => ({
-				...item,
-				impressions: reportPublisherToAdUnit[item.ipfs],
-			})),
+		adUnits &&
+			reportPublisherToAdUnit &&
+			adUnits
+				.filter(i => Object.keys(reportPublisherToAdUnit).includes(i.ipfs))
+				.map(item => ({
+					...item,
+					impressions: reportPublisherToAdUnit[item.ipfs],
+				})),
 	]
 )
 
