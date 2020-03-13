@@ -259,7 +259,6 @@ const getCols = ({
 							</RRIconButton>
 						</span>
 					</Tooltip>
-					)}
 				</Fragment>
 			),
 		},
