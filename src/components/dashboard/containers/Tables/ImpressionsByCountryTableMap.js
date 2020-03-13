@@ -1,5 +1,6 @@
 import React, { useEffect, useState, Fragment } from 'react'
 import { commify } from 'ethers/utils'
+import PropTypes from 'prop-types'
 import {
 	lighten,
 	makeStyles,
@@ -10,12 +11,7 @@ import {
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { LinearProgress, Chip, Box } from '@material-ui/core'
 import { Timeline } from '@material-ui/icons'
-import {
-	t,
-	selectSide,
-	selectPublisherStatsByCountryTableData,
-	selectCountryStatsMaxValues,
-} from 'selectors'
+import { t, selectSide, selectCountryStatsMaxValues } from 'selectors'
 import { useSelector } from 'react-redux'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
@@ -136,7 +132,8 @@ const getMuiTheme = () =>
 		},
 	})
 
-function PublisherImprByCountry(props) {
+function ImpressionsByCountryTableMap(props) {
+	const { selector } = props
 	const classes = useStyles()
 	const side = useSelector(selectSide)
 	const { noActions, noClone, campaignId, selected = [] } = props
@@ -146,7 +143,7 @@ function PublisherImprByCountry(props) {
 		selectCountryStatsMaxValues
 	)
 	const { data, columns, reloadData } = useTableData({
-		selector: selectPublisherStatsByCountryTableData,
+		selector,
 		selectorArgs,
 		getColumns: () =>
 			getCols({
@@ -158,11 +155,6 @@ function PublisherImprByCountry(props) {
 			}),
 	})
 
-	const geoChartData = data.map(item => [
-		item.countryCode,
-		item.countryName,
-		item.impressions,
-	])
 	// NOTE: despite useTableData hook the component is updating.
 	// 'selectorArgs' are object and they have new reference on each update
 	// that causes useTableData to update the data on selectorArgs change.
@@ -171,6 +163,12 @@ function PublisherImprByCountry(props) {
 	useEffect(() => {
 		setSelectorArgs({ side, campaignId })
 	}, [side, campaignId])
+
+	const geoChartData = data.map(item => [
+		item.countryCode,
+		item.countryName,
+		item.impressions,
+	])
 
 	const options = getOptions({ selected, reloadData })
 	return (
@@ -197,4 +195,8 @@ function PublisherImprByCountry(props) {
 	)
 }
 
-export default PublisherImprByCountry
+ImpressionsByCountryTableMap.propTypes = {
+	selector: PropTypes.func.isRequired,
+}
+
+export default ImpressionsByCountryTableMap
