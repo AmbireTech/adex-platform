@@ -23,24 +23,19 @@ const useStyles = makeStyles(theme => {
 		side === 'advertiser'
 			? theme.palette.accentOne.main
 			: theme.palette.accentTwo.main
-
-	const activeBgColor = ({ side }) =>
-		side === 'advertiser'
-			? theme.palette.accentOne.light
-			: theme.palette.accentTwo.light
 	return {
 		// TODO: keep it everywhere in case of components update
 		root: {
 			minWidth: 30,
 			'&$selected': {
-				color: activeColor,
+				color: theme.palette.common.white,
 			},
 		},
 		selected: {
-			color: activeColor,
-			backgroundColor: activeBgColor,
+			color: theme.palette.common.white,
+			backgroundColor: activeColor,
 			'&$selected': {
-				color: activeColor,
+				color: theme.palette.common.white,
 			},
 		},
 		indicator: {
