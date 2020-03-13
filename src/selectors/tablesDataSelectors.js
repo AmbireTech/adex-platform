@@ -189,7 +189,7 @@ export const selectPublisherStatsByCountryTableData = createSelector(
 		Object.keys(countries).map(key => {
 			const countryNames = ISOCountries.getNames('en')
 			return {
-				countryCode: key,
+				countryCode: key.toUpperCase(), //Need uppercase for GeoChart
 				countryName: countryNames[key],
 				impressions: countries[key],
 			}
