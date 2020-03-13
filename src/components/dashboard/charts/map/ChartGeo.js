@@ -10,7 +10,7 @@ function ChartGeo({ data }) {
 				<Chart
 					chartType='GeoChart'
 					width='100%'
-					height='468px'
+					height='384px'
 					data={data}
 					options={{
 						colorAxis: { colors: [PRIMARY_LIGHT, PRIMARY_DARK] },

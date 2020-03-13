@@ -1,13 +1,7 @@
 import React, { useEffect, useState, Fragment } from 'react'
 import { commify } from 'ethers/utils'
 import PropTypes from 'prop-types'
-import {
-	lighten,
-	makeStyles,
-	withStyles,
-	createMuiTheme,
-	MuiThemeProvider,
-} from '@material-ui/core/styles'
+import { lighten, makeStyles, withStyles } from '@material-ui/core/styles'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { LinearProgress, Chip, Box } from '@material-ui/core'
 import { Timeline } from '@material-ui/icons'
@@ -16,7 +10,7 @@ import { useSelector } from 'react-redux'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
 import ChartGeo from 'components/dashboard/charts/map/ChartGeo'
-import { PRIMARY, theme } from 'components/App/themeMUi'
+import { PRIMARY } from 'components/App/themeMUi'
 
 const BorderLinearProgress = withStyles({
 	root: {
@@ -115,23 +109,6 @@ const getOptions = ({ reloadData, selected }) => ({
 	customToolbar: () => <ReloadData handleReload={reloadData} />,
 })
 
-const getMuiTheme = () =>
-	createMuiTheme({
-		...theme,
-		overrides: {
-			MUIDataTableHeadCell: {
-				root: {
-					'&:nth-child(1)': {
-						width: 200,
-					},
-					'&:nth-child(2)': {
-						width: 70,
-					},
-				},
-			},
-		},
-	})
-
 function ImpressionsByCountryTableMap(props) {
 	const { selector } = props
 	const classes = useStyles()
@@ -179,18 +156,16 @@ function ImpressionsByCountryTableMap(props) {
 					...geoChartData,
 				]}
 			/>
-			<MuiThemeProvider theme={getMuiTheme()}>
-				<MUIDataTableEnhanced
-					title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
-					data={data}
-					columns={columns}
-					options={options}
-					noSearch
-					noPrint
-					noViewColumns
-					{...props}
-				/>
-			</MuiThemeProvider>
+			<MUIDataTableEnhanced
+				title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
+				data={data}
+				columns={columns}
+				options={options}
+				noSearch
+				noPrint
+				noViewColumns
+				{...props}
+			/>
 		</Fragment>
 	)
 }
