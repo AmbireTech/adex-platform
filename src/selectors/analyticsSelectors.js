@@ -112,6 +112,15 @@ export const selectCampaignAnalyticsByChannelStats = createSelector(
 		(analyticsByType.byChannelStats || {})[campaignId] || {}
 )
 
+export const selectCampaignAnalyticsByChannelToCountry = createSelector(
+	(state, { type, campaignId } = {}) => [
+		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
+	],
+	([{ reportChannelToCountry }]) => {
+		return reportChannelToCountry || {}
+	}
+)
+
 export const selectCampaignAnalyticsByChannelToAdUnit = createSelector(
 	(state, { type, campaignId } = {}) => [
 		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),

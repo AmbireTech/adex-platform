@@ -13,6 +13,7 @@ import {
 	selectCampaignUnitsById,
 	selectPublisherAdvanceStatsToAdUnit,
 	selectPublisherStatsByCountry,
+	selectCampaignAnalyticsByChannelToCountry,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 
@@ -185,6 +186,23 @@ export const selectAdUnitsTableData = createSelector(
 
 export const selectPublisherStatsByCountryTableData = createSelector(
 	selectPublisherStatsByCountry,
+	countries =>
+		Object.keys(countries).map(key => {
+			const countryNames = ISOCountries.getNames('en')
+			return {
+				countryCode: key.toUpperCase(), //Need uppercase for GeoChart
+				countryName: countryNames[key],
+				impressions: countries[key],
+			}
+		})
+)
+
+export const selectCampaignAnalyticsToCountryTableData = createSelector(
+	(state, { campaignId }) =>
+		selectCampaignAnalyticsByChannelToCountry(state, {
+			type: 'IMPRESSION',
+			campaignId,
+		}),
 	countries =>
 		Object.keys(countries).map(key => {
 			const countryNames = ISOCountries.getNames('en')

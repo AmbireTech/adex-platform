@@ -23,7 +23,7 @@ import Anchor from 'components/common/anchor/anchor'
 import CampaignStatsDoughnut from 'components/dashboard/charts/campaigns/CampaignStatsDoughnut'
 import CampaignStatsBreakdownTable from 'components/dashboard/containers/Tables/CampaignStatsBreakdownTable'
 import { CampaignReceipt } from 'components/dashboard/containers/Receipt/CampaignReceipt'
-import { selectPublisherStatsByCountryTableData } from 'selectors'
+import { selectCampaignAnalyticsToCountryTableData } from 'selectors'
 import ImpressionsByCountryTableMap from 'components/dashboard/containers/Tables/ImpressionsByCountryTableMap'
 
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
@@ -146,7 +146,8 @@ export class Campaign extends Component {
 						)}
 						{tabIndex === 1 && (
 							<ImpressionsByCountryTableMap
-								selector={selectPublisherStatsByCountryTableData}
+								selector={selectCampaignAnalyticsToCountryTableData}
+								campaignId={campaign.id}
 							/>
 						)}
 						{tabIndex === 2 && (
