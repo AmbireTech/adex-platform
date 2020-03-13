@@ -4,9 +4,13 @@ import { execute, updateNav } from 'actions'
 import { Box, Paper, Grid } from '@material-ui/core'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import { BasicStats } from './BasicStats'
-import { t, selectSide } from 'selectors'
+import {
+	t,
+	selectSide,
+	selectPublisherStatsByCountryTableData,
+} from 'selectors'
 import BestEarnersTable from '../Tables/BestEarnersTable'
-import PublisherImprByCountry from '../Tables/PublisherImprByCountry'
+import ImpressionsByCountryTableMap from '../Tables/ImpressionsByCountryTableMap'
 
 export function DashboardStats(props) {
 	const side = useSelector(selectSide)
@@ -32,7 +36,9 @@ export function DashboardStats(props) {
 								<BestEarnersTable />
 							</Grid>
 							<Grid item xs={12} md={12} lg={6}>
-								<PublisherImprByCountry />
+								<ImpressionsByCountryTableMap
+									selector={selectPublisherStatsByCountryTableData}
+								/>
 							</Grid>
 						</Fragment>
 					)}
