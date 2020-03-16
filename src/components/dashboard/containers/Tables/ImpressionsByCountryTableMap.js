@@ -150,7 +150,7 @@ function ImpressionsByCountryTableMap(props) {
 	return (
 		<Fragment>
 			<ChartGeo
-				data={[[t('MAP_COUNTRY_CODE'), t('MAP_POPULARITY')], ...geoChartData]}
+				data={[[t('MAP_COUNTRY'), t('LABEL_IMPRESSIONS')], ...geoChartData]}
 			/>
 			<MUIDataTableEnhanced
 				title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
