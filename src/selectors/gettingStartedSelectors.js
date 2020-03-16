@@ -1,4 +1,3 @@
-import { t } from 'selectors'
 import { createSelector } from 'reselect'
 import {
 	selectAdUnitsArray,
