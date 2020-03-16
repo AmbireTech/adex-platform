@@ -38,7 +38,7 @@ const getIssue = issue => {
 
 export function WebsiteIssues({ issues, website }) {
 	const site = useSelector(state => selectWebsiteByWebsite(state, website))
-	const data = issues || site.issues
+	const data = issues || site.issues || []
 
 	return (
 		<Fragment>
