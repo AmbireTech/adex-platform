@@ -6,7 +6,7 @@ import NewAdSlotHoc from './NewAdSlotHoc'
 import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
-import Anchor from 'components/common/anchor/anchor'
+import Anchor, { ExternalAnchor } from 'components/common/anchor/anchor'
 import {
 	PropRow,
 	ContentBox,
@@ -84,14 +84,14 @@ class AdSlotPreview extends Component {
 					<PropRow
 						right={
 							<Fragment>
-								<Typography component='div'>
+								<Typography component='div' color='primary'>
 									<div
 										dangerouslySetInnerHTML={{
 											__html: t('SLOT_WEBSITE_WARNING'),
 										}}
 									/>
 								</Typography>
-								<Typography component='div'>
+								<Typography component='div' color='primary'>
 									<div
 										dangerouslySetInnerHTML={{
 											__html: t('SLOT_WEBSITE_CODE_WARNING'),
@@ -105,11 +105,29 @@ class AdSlotPreview extends Component {
 						<PropRow
 							right={
 								<Fragment>
-									{temp.issues.map(x => (
-										<Typography key={x} component='div'>
-											{t(x)}
-										</Typography>
-									))}
+									{temp.issues.map((x = {}) => {
+										const label = x.label || x
+										const args = x.args || []
+										return (
+											<Typography
+												key={x.label || x}
+												component='div'
+												color='secondary'
+											>
+												{t(label, {
+													args: args.map(a =>
+														a.type === 'anchor' ? (
+															<ExternalAnchor href={a.href}>
+																{t(a.label)}
+															</ExternalAnchor>
+														) : (
+															a.label || a
+														)
+													),
+												})}
+											</Typography>
+										)
+									})}
 								</Fragment>
 							}
 						/>
