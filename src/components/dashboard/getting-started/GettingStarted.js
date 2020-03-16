@@ -50,8 +50,8 @@ import {
 const useStyles = makeStyles(theme => {
 	const stepperBackgroundColor = ({ side }) =>
 		side === 'advertiser'
-			? theme.palette.accentOne.light
-			: theme.palette.accentTwo.light
+			? theme.palette.accentOne.main
+			: theme.palette.accentTwo.main
 
 	return {
 		mobile: {
@@ -69,7 +69,7 @@ const useStyles = makeStyles(theme => {
 			marginBottom: theme.spacing(1),
 		},
 		expansionPanel: {
-			backgroundColor: stepperBackgroundColor,
+			color: stepperBackgroundColor,
 		},
 	}
 })

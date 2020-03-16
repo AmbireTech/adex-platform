@@ -197,3 +197,14 @@ export const updateCampaign = ({ campaign, id, authSig }) => {
 		})
 		.then(processResponse)
 }
+
+export const verifyWebsite = ({ websiteUrl }) => {
+	return requester
+		.fetch({
+			route: 'slots/verify-website',
+			method: 'POST',
+			body: convertItemToJSON({ websiteUrl }),
+			headers: { 'Content-Type': 'application/json' },
+		})
+		.then(processResponse)
+}

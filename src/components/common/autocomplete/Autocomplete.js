@@ -9,22 +9,18 @@ import { getSuggestions } from './common'
 
 function Autocomplete(props) {
 	const {
-		id,
 		classes,
 		source,
 		multiple,
-		value,
 		label,
 		variant,
 		allowCreate,
 		validateCreation,
-		validateAutocomplete,
 		error,
 		errorText,
 		onInit,
 		onChange,
 		defaultValue,
-		...rest
 	} = props
 	const [inputValue, setInputValue] = useState('')
 

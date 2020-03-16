@@ -27,6 +27,7 @@ let initialState = {
 		Campaign: {},
 		AdUnit: {},
 		AdSlot: {},
+		Website: {},
 	},
 	spinners: {},
 	ui: {

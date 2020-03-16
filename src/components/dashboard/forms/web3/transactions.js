@@ -8,11 +8,8 @@ import Button from '@material-ui/core/Button'
 import TransactionHoc from './TransactionHoc'
 import FormSteps from 'components/dashboard/forms/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
-import { t } from 'selectors'
-// import SaveIcon from '@material-ui/icons/Save'
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 import {
-	withdrawFromIdentity,
 	setIdentityPrivilege,
 	addIdentityENS,
 	withdrawOtherTokensFromIdentity,
