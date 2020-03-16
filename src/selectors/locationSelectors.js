@@ -88,7 +88,7 @@ export const selectDashboardBreadcrumbs = createSelector(
 		const breadcrumbs = [sideDashboardBC, ...restBC].map(b => ({
 			...b,
 			label:
-				t(b.label.toUpperCase()) !== b.label
+				t(b.label.toUpperCase()) !== b.label.toUpperCase()
 					? t(b.label.toUpperCase())
 					: b.label,
 		}))
