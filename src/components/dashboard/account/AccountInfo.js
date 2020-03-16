@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react'
+import React, { useState, Fragment } from 'react'
 import { useSelector } from 'react-redux'
 import {
 	WithdrawTokenFromIdentity,
@@ -14,14 +14,12 @@ import ListDivider from '@material-ui/core/Divider'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import Button from '@material-ui/core/Button'
 import Box from '@material-ui/core/Box'
-import DownloadIcon from '@material-ui/icons/SaveAlt'
 import ExpansionPanel from '@material-ui/core/ExpansionPanel'
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
-import { getRecoveryWalletData } from 'services/wallet/wallet'
 import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
@@ -38,7 +36,7 @@ import {
 	selectEasterEggsAllowed,
 	selectEnsAddressByAddr,
 } from 'selectors'
-import { updateNav, execute, addToast } from 'actions'
+import { execute, addToast } from 'actions'
 import { formatAddress } from 'helpers/formatters'
 // const RRButton = withReactRouterLink(Button)
 
@@ -77,7 +75,7 @@ const AccountItem = props => (
 const useStyles = makeStyles(styles)
 
 function AccountInfo() {
-	const { authType = '', email, password } = useSelector(selectWallet)
+	const { authType = '' } = useSelector(selectWallet)
 	const identityAddress = useSelector(selectAccountIdentityAddr)
 	const privileges = useSelector(selectWalletPrivileges)
 	const canMakeTx = privileges > 1
@@ -94,31 +92,9 @@ function AccountInfo() {
 
 	const allowEasterEggs = useSelector(selectEasterEggsAllowed)
 
-	const [localWalletDownloadHref, setLocalWalletDownloadHref] = useState('')
-
-	const loadBackupHref = async () => {
-		const obj = await getRecoveryWalletData({ email, password, authType })
-		if (obj && obj.wallet) {
-			const data =
-				'data:text/json;charset=utf-8,' +
-				encodeURIComponent(JSON.stringify(obj))
-
-			setLocalWalletDownloadHref(data)
-		}
-	}
-
 	const [expanded, setExpanded] = useState(false)
 
 	const classes = useStyles()
-
-	useEffect(() => {
-		execute(updateNav('navTitle', t('ACCOUNT')))
-	}, [identityAddress])
-
-	useEffect(() => {
-		loadBackupHref()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
 
 	const displayRampWidget = () => {
 		const widget = new RampInstantSDK({
@@ -202,7 +178,7 @@ function AccountInfo() {
 						</LoadingSection>
 					}
 					right={
-						<React.Fragment>
+						<Fragment>
 							<Box py={1}>
 								<Button
 									fullWidth
@@ -228,7 +204,7 @@ function AccountInfo() {
 									size='small'
 								/>
 							</Box>
-						</React.Fragment>
+						</Fragment>
 					}
 				/>
 				<ListDivider />
@@ -262,24 +238,6 @@ function AccountInfo() {
 										})}
 									/>
 								}
-								right={
-									localWalletDownloadHref && (
-										<Box py={1} flexGrow='1'>
-											<label htmlFor='download-wallet-json'>
-												<a
-													id='download-wallet-json'
-													href={localWalletDownloadHref}
-													download={`adex-account-data-${email}.json`}
-												>
-													<Button size='small' variant='contained' fullWidth>
-														<DownloadIcon className={classes.iconBtnLeft} />
-														{t('BACKUP_LOCAL_WALLET')}
-													</Button>
-												</a>
-											</label>
-										</Box>
-									)
-								}
 							/>
 							<ListDivider />
 							<AccountItem
@@ -306,7 +264,7 @@ function AccountInfo() {
 								<ListItemText
 									className={classes.address}
 									primary={t('VALIDATOR_LEADER_ID', {
-										args: [VALIDATOR_LEADER_ID],
+										args: [formatAddress(VALIDATOR_LEADER_ID)],
 									})}
 									secondary={t('VALIDATOR_LEADER_URL', {
 										args: [VALIDATOR_LEADER_URL],
@@ -317,7 +275,7 @@ function AccountInfo() {
 								<ListItemText
 									className={classes.address}
 									primary={t('VALIDATOR_FOLLOWER_ID', {
-										args: [VALIDATOR_FOLLOWER_ID],
+										args: [formatAddress(VALIDATOR_FOLLOWER_ID)],
 									})}
 									secondary={t('VALIDATOR_FOLLOWER_URL', {
 										args: [VALIDATOR_FOLLOWER_URL],

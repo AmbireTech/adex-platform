@@ -24,9 +24,9 @@ import { formatDateTime, truncateString } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 import { useTableData } from './tableHooks'
 import { ReloadData, PrintAllReceipts } from './toolbars'
-import { push } from 'connected-react-router'
 
 const RRIconButton = withReactRouterLink(IconButton)
+const RRImg = withReactRouterLink(Img)
 
 const useStyles = makeStyles(styles)
 
@@ -59,10 +59,10 @@ const getCols = ({
 			filter: false,
 			sort: false,
 			download: false,
-			customBodyRender: ({ side, id, mediaUrl, mediaMime }) => {
+			customBodyRender: ({ side, id, mediaUrl, mediaMime, to }) => {
 				return (
 					// TODO: Images issue some stop displaying
-					<Img
+					<RRImg
 						key={id}
 						fullScreenOnClick={true}
 						className={classnames(classes.cellImg)}
@@ -70,7 +70,7 @@ const getCols = ({
 						alt={id}
 						mediaMime={mediaMime}
 						allowVideo
-						onClick={() => execute(push(`/dashboard/${side}/Campaign/${id}`))}
+						to={to}
 					/>
 				)
 			},
@@ -221,18 +221,14 @@ const getCols = ({
 			filter: false,
 			sort: true,
 			download: false,
-			customBodyRender: ({ side, id, receiptReady }) => (
+			customBodyRender: ({ side, id, receiptReady, to, toReceipt }) => (
 				<Fragment key={id}>
 					<Tooltip
 						title={t('LABEL_VIEW')}
 						// placement='top'
 						enterDelay={1000}
 					>
-						<RRIconButton
-							to={`/dashboard/${side}/Campaign/${id}`}
-							variant='contained'
-							aria-label='preview'
-						>
+						<RRIconButton to={to} variant='contained' aria-label='preview'>
 							<Visibility color='primary' />
 						</RRIconButton>
 					</Tooltip>
@@ -250,7 +246,7 @@ const getCols = ({
 						*/}
 						<span>
 							<RRIconButton
-								to={`/dashboard/${side}/Campaign/receipt/${id}`}
+								to={toReceipt}
 								variant='contained'
 								aria-label='receip'
 								disabled={!receiptReady}

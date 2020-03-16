@@ -28,10 +28,6 @@ const TableCell = ({ children, ...rest }) => (
 )
 
 class Transactions extends Component {
-	componentWillMount() {
-		this.props.actions.updateNav('navTitle', this.props.t('TRANSACTIONS'))
-	}
-
 	renderTableHead() {
 		let t = this.props.t
 		return (

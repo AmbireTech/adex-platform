@@ -1,4 +1,5 @@
 const drawerWidth = 250
+const lastRowRightReserved = 240
 
 export const styles = theme => {
 	return {
@@ -28,19 +29,17 @@ export const styles = theme => {
 			flexDirection: 'row',
 			display: 'flex',
 			alignItems: 'center',
+			paddingRight: theme.spacing(2),
+			paddingLeft: theme.spacing(2),
 		},
 
 		flexRow: {
 			display: 'flex',
 			alignItems: 'center',
 			flexBasis: '100%',
-			paddingTop: theme.spacing(1),
 			paddingBottom: theme.spacing(1),
 			'&:last-child': {
-				paddingRight: 240,
-				paddingTop: theme.spacing(1),
-				paddingBottom: theme.spacing(1),
-				paddingLeft: theme.spacing(1),
+				paddingRight: lastRowRightReserved,
 			},
 		},
 		toolbarControls: {
@@ -58,7 +57,8 @@ export const styles = theme => {
 		toolbar: {
 			flexFlow: 'wrap',
 			height: 114,
-			...theme.mixins.toolbar,
+			paddingRight: 0,
+			paddingLeft: 0,
 		},
 		drawerPaper: {
 			width: drawerWidth,
@@ -81,9 +81,13 @@ export const styles = theme => {
 			maxWidth: 1600,
 			margin: 'auto',
 		},
-		icon: {
-			height: 36,
-			width: 'auto',
+		breadcrumbElement: {
+			maxWidth: `calc(100vw - ${theme.spacing(5)}px)`,
+			[theme.breakpoints.up('md')]: {
+				maxWidth: `calc(100vw - ${theme.spacing(5) +
+					drawerWidth +
+					lastRowRightReserved}px)`,
+			},
 		},
 	}
 }

@@ -23,6 +23,7 @@ import { execute, cloneItem } from 'actions'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
 const RRIconButton = withReactRouterLink(IconButton)
+const RRImg = withReactRouterLink(Img)
 
 const useStyles = makeStyles(styles)
 
@@ -41,9 +42,9 @@ const getCols = ({
 			filter: false,
 			sort: false,
 			download: false,
-			customBodyRender: ({ id, mediaUrl, mediaMime }) => {
+			customBodyRender: ({ id, mediaUrl, mediaMime, to }) => {
 				return (
-					<Img
+					<RRImg
 						key={id}
 						fullScreenOnClick={true}
 						className={classnames(classes.cellImg)}
@@ -51,6 +52,7 @@ const getCols = ({
 						alt={id}
 						mediaMime={mediaMime}
 						allowVideo
+						to={to}
 					/>
 				)
 			},
@@ -193,7 +195,14 @@ const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
 function AdUnitsTable(props) {
 	const classes = useStyles()
 	const side = useSelector(selectSide)
-	const { noActions, noClone, campaignId, handleSelect, selected = [] } = props
+	const {
+		noActions,
+		noClone,
+		campaignId,
+		handleSelect,
+		selected = [],
+		items,
+	} = props
 
 	const { maxClicks, maxImpressions, maxCTR } = useSelector(state =>
 		selectAdUnitsStatsMaxValues(state, { side, campaignId })
@@ -221,8 +230,8 @@ function AdUnitsTable(props) {
 	// If selectorArgs are reference type we need to use useState fot them
 	// TODO: find why useTableData causing this update
 	useEffect(() => {
-		setSelectorArgs({ side, campaignId })
-	}, [side, campaignId])
+		setSelectorArgs({ side, campaignId, items })
+	}, [side, campaignId, items])
 
 	const onRowsSelect = useCallback(
 		(_, allRowsSelected) => {

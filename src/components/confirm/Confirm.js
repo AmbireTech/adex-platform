@@ -24,7 +24,7 @@ export function Confirm({ children }) {
 	} = useSelector(selectConfirm)
 
 	useEffect(() => {
-		setOpen(active)
+		setOpen(!!active)
 	}, [active])
 
 	const confirm = () => {
