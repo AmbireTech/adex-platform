@@ -14,7 +14,8 @@ const getIssue = issue => {
 			data.args = [
 				{
 					type: 'anchor',
-					href: '',
+					href:
+						'https://help.adex.network/hc/en-us/articles/360012022820-How-to-implement-an-ad-slot-to-your-website',
 					label: 'HERE',
 				},
 			]
@@ -23,7 +24,8 @@ const getIssue = issue => {
 			data.args = [
 				{
 					type: 'anchor',
-					href: '',
+					href:
+						'https://help.adex.network/hc/en-us/articles/360012481519-How-to-add-DNS-TXT-record-for-your-publisher-domain',
 					label: 'HERE',
 				},
 			]
