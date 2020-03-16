@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Box, Paper } from '@material-ui/core'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import { BasicStats } from './BasicStats'
-import { t, selectSide } from 'selectors'
+import { selectSide } from 'selectors'
 
 export function DashboardStats(props) {
 	const side = useSelector(selectSide)
