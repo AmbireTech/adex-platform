@@ -3,6 +3,7 @@ import {
 	selectCampaignById,
 	selectAdUnitById,
 	selectAdSlotById,
+	t,
 } from 'selectors'
 
 export const selectLocation = state => state.router.location
@@ -84,7 +85,13 @@ export const selectDashboardBreadcrumbs = createSelector(
 			return bc
 		})
 
-		const breadcrumbs = [sideDashboardBC, ...restBC]
+		const breadcrumbs = [sideDashboardBC, ...restBC].map(b => ({
+			...b,
+			label:
+				t(b.label.toUpperCase()) !== b.label
+					? t(b.label.toUpperCase())
+					: b.label,
+		}))
 
 		return breadcrumbs || []
 	}
