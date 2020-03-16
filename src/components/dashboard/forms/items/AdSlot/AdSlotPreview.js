@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Typography } from '@material-ui/core'
@@ -7,6 +7,7 @@ import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
 import Anchor from 'components/common/anchor/anchor'
+import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
 import {
 	PropRow,
 	ContentBox,
@@ -83,20 +84,27 @@ class AdSlotPreview extends Component {
 					<PropRow left={t('website', { isProp: true })} right={website} />
 					<PropRow
 						right={
-							<Typography>
-								<div
-									dangerouslySetInnerHTML={{
-										__html: t('SLOT_WEBSITE_WARNING'),
-									}}
-								/>
-								<div
-									dangerouslySetInnerHTML={{
-										__html: t('SLOT_WEBSITE_CODE_WARNING'),
-									}}
-								/>
-							</Typography>
+							<Fragment>
+								<Typography component='div' color='primary' gutterBottom>
+									<div
+										dangerouslySetInnerHTML={{
+											__html: t('SLOT_WEBSITE_WARNING'),
+										}}
+									/>
+								</Typography>
+								<Typography component='div' color='primary' gutterBottom>
+									<div
+										dangerouslySetInnerHTML={{
+											__html: t('SLOT_WEBSITE_CODE_WARNING'),
+										}}
+									/>
+								</Typography>
+							</Fragment>
 						}
 					/>
+					{temp.hostname && temp.issues && temp.issues.length && (
+						<PropRow right={<WebsiteIssues issues={temp.issues} />} />
+					)}
 
 					<PropRow
 						left={t('MIN_CPM_SLOT_LABEL')}

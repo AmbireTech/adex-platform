@@ -1,4 +1,4 @@
-import { ethers, utils, Contract } from 'ethers'
+import { ethers, Contract } from 'ethers'
 import { contracts } from './contractsCfg'
 import { AUTH_TYPES } from 'constants/misc'
 import { selectRelayerConfig } from 'selectors'

@@ -81,7 +81,6 @@ function TransactionPreview(props) {
 
 	const {
 		withdrawTo,
-		withdrawAmount,
 		amountToWithdraw,
 		setAddr,
 		setEns,

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
-import { selectStatsChartData, selectMainToken } from 'selectors'
+import { selectMainToken } from 'selectors'
 import { formatFloatNumberWithCommas } from 'helpers/formatters'
 
 const commonDsProps = {
@@ -15,9 +15,6 @@ const commonDsProps = {
 }
 
 export const SimpleStatistics = ({
-	side,
-	timeframe = '',
-	eventType,
 	payouts,
 	impressions,
 	clicks,

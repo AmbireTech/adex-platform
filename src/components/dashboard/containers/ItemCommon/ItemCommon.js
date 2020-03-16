@@ -24,6 +24,7 @@ import { validations, schemas, Joi } from 'adex-models'
 import { utils } from 'ethers'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import { selectMainToken } from 'selectors'
+import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
 
 const FallbackAdData = ({
 	item,
@@ -422,16 +423,19 @@ const basicProps = ({
 				<Grid container spacing={2}>
 					<Grid item xs={12} sm={5} md={5} lg={5}>
 						{itemType === 'AdSlot' ? (
-							<ValidatedFallbackAdData
-								validateId={validateId}
-								item={item}
-								t={t}
-								url={url}
-								classes={classes}
-								canEditImg={canEditImg}
-								activeFields={activeFields}
-								{...rest}
-							/>
+							<Fragment>
+								<ValidatedFallbackAdData
+									validateId={validateId}
+									item={item}
+									t={t}
+									url={url}
+									classes={classes}
+									canEditImg={canEditImg}
+									activeFields={activeFields}
+									{...rest}
+								/>
+								<WebsiteIssues website={item.website} />
+							</Fragment>
 						) : (
 							<MediaCard
 								classes={classes}
