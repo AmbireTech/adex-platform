@@ -14,9 +14,9 @@ function ChartGeo({ data }) {
 					data={data}
 					options={{
 						colorAxis: { colors: [PRIMARY_LIGHT, PRIMARY_DARK] },
-						// backgroundColor: '#81d4fa',
-						// datalessRegionColor: '#ffffff',
-						// defaultColor: '#f5f5f5',
+						sizeAxis: { minValue: 0, maxValue: 100 },
+						keepAspectRatio: true,
+						tooltip: { isHtml: true }, //Fixes flickering issue when you move the mouse between countries
 					}}
 				/>
 			</Box>

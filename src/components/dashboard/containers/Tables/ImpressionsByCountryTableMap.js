@@ -142,8 +142,7 @@ function ImpressionsByCountryTableMap(props) {
 	}, [side, campaignId])
 
 	const geoChartData = data.map(item => [
-		item.countryCode,
-		item.countryName,
+		{ v: item.countryCode, f: item.countryName },
 		item.impressions,
 	])
 
@@ -151,10 +150,7 @@ function ImpressionsByCountryTableMap(props) {
 	return (
 		<Fragment>
 			<ChartGeo
-				data={[
-					[t('MAP_COUNTRY_CODE'), t('MAP_COUNTRY'), t('MAP_POPULARITY')],
-					...geoChartData,
-				]}
+				data={[[t('MAP_COUNTRY_CODE'), t('MAP_POPULARITY')], ...geoChartData]}
 			/>
 			<MUIDataTableEnhanced
 				title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
