@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.43
+##### *2020-03-16*
+
+### Fixed
+- Slot websites issues
+
 ## 4.10.42
 ##### *2020-03-16*
 
