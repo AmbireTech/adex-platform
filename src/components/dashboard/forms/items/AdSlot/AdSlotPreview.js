@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Typography } from '@material-ui/core'
@@ -83,20 +83,37 @@ class AdSlotPreview extends Component {
 					<PropRow left={t('website', { isProp: true })} right={website} />
 					<PropRow
 						right={
-							<Typography>
-								<div
-									dangerouslySetInnerHTML={{
-										__html: t('SLOT_WEBSITE_WARNING'),
-									}}
-								/>
-								<div
-									dangerouslySetInnerHTML={{
-										__html: t('SLOT_WEBSITE_CODE_WARNING'),
-									}}
-								/>
-							</Typography>
+							<Fragment>
+								<Typography component='div'>
+									<div
+										dangerouslySetInnerHTML={{
+											__html: t('SLOT_WEBSITE_WARNING'),
+										}}
+									/>
+								</Typography>
+								<Typography component='div'>
+									<div
+										dangerouslySetInnerHTML={{
+											__html: t('SLOT_WEBSITE_CODE_WARNING'),
+										}}
+									/>
+								</Typography>
+							</Fragment>
 						}
 					/>
+					{temp.hostname && temp.issues && temp.issues.length && (
+						<PropRow
+							right={
+								<Fragment>
+									{temp.issues.map(x => (
+										<Typography key={x} component='div'>
+											{t(x)}
+										</Typography>
+									))}
+								</Fragment>
+							}
+						/>
+					)}
 
 					<PropRow
 						left={t('MIN_CPM_SLOT_LABEL')}
