@@ -1,6 +1,46 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.41
+##### *2020-03-11*
+
+### Changed
+- Getting started styles
+- Publisher revenue warning condition (show only if no impressions)
+- Removed wallet backup button
+
+### Fixed
+- Top/Bide bars styles
+- Campaign preview units table
+- Misc styles, bugs, error and warnings
+
+## 4.10.40
+##### *2020-03-10*
+
+### Added
+- Clickable breadcrumbs in top bar (better than #307)
+- CTR and name on campaigns table #371
+- Campaigns statistics - ad unit breakdown by impressions/clicks/CTR #362
+- Link to TOS #383
+
+
+### Changed
+- Changelog link
+- Broken Navbar title replaced with breadcrumbs
+- Confirm component - show cancel/confirm buttons only if labels provided
+- Translations are joined when all parts are string or numbers
+
+### Fixed
+- Tutorials #390
+- Table data selectors
+- Item update validation
+- Updating slots (rare case)
+- App crash on receipt with invalid campaign id
+- Page not found style
+- Top bar styles
+- Code cleanup
+
+
 ## 4.10.39
 ##### *2020-03-09*
 

@@ -251,9 +251,9 @@ export function updateItem({ item, itemType } = {}) {
 					}
 					if (typeof newItem.temp.website === 'string') {
 						newItem.website = newItem.temp.website
-					} else {
-						newItem.website = null
 					}
+					// In case newItem.website is null (very few slots)
+					newItem.website = newItem.website || ''
 					const slot = new AdSlot(newItem).marketUpdate
 					updatedItem = (await updateAdSlot({ slot, id, authSig })).slot
 					objModel = AdSlot

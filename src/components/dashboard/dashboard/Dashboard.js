@@ -19,12 +19,6 @@ import {
 	AdSlotsTable,
 	AdUnitsTable,
 } from 'components/dashboard/containers/Tables'
-import { campaignsLoop } from 'services/store-data/campaigns'
-import statsLoop from 'services/store-data/account'
-import {
-	analyticsLoop,
-	analyticsCampaignsLoop,
-} from 'services/store-data/analytics'
 import Drawer from '@material-ui/core/Drawer'
 import Box from '@material-ui/core/Box'
 import Alert from '@material-ui/lab/Alert'
@@ -34,19 +28,19 @@ import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import Anchor from 'components/common/anchor/anchor'
 import {
-	updateNav,
 	execute,
 	resolveEnsAddress,
 	updatePrivilegesWarningAccepted,
 	loadAccountData,
 	stopAccountDataUpdate,
+	updateNav,
 } from 'actions'
 import {
 	t,
 	selectAccountIdentityAddr,
 	selectWalletPrivileges,
 	selectPrivilegesWarningAccepted,
-	selectPublisherMinRevenueReached,
+	selectPublisherRevenueNoticeActive,
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import GettingStarted from '../getting-started/GettingStarted'
@@ -100,8 +94,8 @@ function Dashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
 	const [dataLoaded, setDataLoaded] = useState(false)
 	const address = useSelector(selectAccountIdentityAddr)
-	const minPublisherRevenueReached = useSelector(
-		selectPublisherMinRevenueReached
+	const showPublisherRevenueNotice = useSelector(
+		selectPublisherRevenueNoticeActive
 	)
 	const privileges = useSelector(selectWalletPrivileges)
 	const privilegesWarningAccepted = useSelector(selectPrivilegesWarningAccepted)
@@ -192,7 +186,7 @@ function Dashboard(props) {
 						</Box>
 					)}
 
-					{side === 'publisher' && !minPublisherRevenueReached && (
+					{side === 'publisher' && showPublisherRevenueNotice && (
 						<Box mb={2}>
 							<Alert variant='outlined' severity='warning'>
 								<div>
@@ -231,7 +225,7 @@ function Dashboard(props) {
 						/>
 						<Route
 							exact
-							path='/dashboard/advertiser/Campaign/:itemId'
+							path='/dashboard/advertiser/campaigns/:itemId'
 							component={Campaign}
 						/>
 						<Route
@@ -241,12 +235,12 @@ function Dashboard(props) {
 						/>
 						<Route
 							exact
-							path='/dashboard/advertiser/Campaign/receipt/:itemId'
+							path='/dashboard/advertiser/receipt/:itemId'
 							component={CampaignReceipt}
 						/>
 						<Route
 							exact
-							path='/dashboard/advertiser/AdUnit/:itemId'
+							path='/dashboard/advertiser/units/:itemId'
 							component={Unit}
 						/>
 						<Route
@@ -256,7 +250,7 @@ function Dashboard(props) {
 						/>
 						<Route
 							exact
-							path='/dashboard/publisher/AdSlot/:itemId'
+							path='/dashboard/publisher/slots/:itemId'
 							component={Slot}
 						/>
 						<Route

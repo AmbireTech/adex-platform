@@ -16,11 +16,7 @@ const RRButton = withReactRouterLink(Button)
 
 const G404 = ({ size }) => (
 	<Grid item xs={size}>
-		<Typography
-			inline
-			variant={`h${size}`}
-			style={{ textTransform: 'uppercase' }}
-		>
+		<Typography variant={`h${6 - size}`} style={{ textTransform: 'uppercase' }}>
 			{t('404')}
 		</Typography>
 	</Grid>
@@ -63,16 +59,16 @@ class PageNotFound extends React.Component {
 						<Img src={IMG_404_1} alt={'no'} className={classes.img} />
 					</Grid>
 					<Grid item xs={7} sm={9}>
-						<Typography inline className={classes.text} variant='body1'>
+						<Typography noWrap className={classes.text} variant='body1'>
 							{window.location.href}
 						</Typography>
-						<Typography inline className={classes.text} variant='body1'>
+						<Typography noWrap className={classes.text} variant='body1'>
 							{window.location.href}
 						</Typography>
-						<Typography inline className={classes.text} variant='body1'>
+						<Typography noWrap className={classes.text} variant='body1'>
 							{window.location.href}
 						</Typography>
-						<Typography inline className={classes.text} variant='body1'>
+						<Typography noWrap className={classes.text} variant='body1'>
 							{window.location.href}
 						</Typography>
 					</Grid>

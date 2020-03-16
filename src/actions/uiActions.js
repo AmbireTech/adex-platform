@@ -309,3 +309,9 @@ export function hideGettingStarted() {
 		updateUiByIdentity('hideGettingStarted', true)(dispatch, getState)
 	}
 }
+
+export function setGettingStartedExpanded(expanded) {
+	return function(dispatch, getState) {
+		updateUiByIdentity('gettingStartedExpanded', expanded)(dispatch, getState)
+	}
+}

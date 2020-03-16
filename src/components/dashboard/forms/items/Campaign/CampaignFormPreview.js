@@ -87,10 +87,7 @@ function CampaignFormPreview({ newItem } = {}) {
 							/>
 						}
 					/> */}
-				<PropRow
-					left={t('adUnits', { isProp: true })}
-					right={<UnitsTable items={adUnits} />}
-				/>
+
 				<PropRow
 					left={t('validators', { isProp: true })}
 					right={
@@ -144,6 +141,10 @@ function CampaignFormPreview({ newItem } = {}) {
 					right={formatDateTime(withdrawPeriodStart)}
 				/>
 				{minTargetingScore && <PropRow right={t('CAMPAIGN_MIN_TARGETING')} />}
+				<PropRow
+					left={t('adUnits', { isProp: true })}
+					right={<UnitsTable items={adUnits} />}
+				/>
 				{/* <PropRow
 						left={t('created', { isProp: true })}
 						right={formatDateTime(created)}

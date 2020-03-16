@@ -1,23 +1,14 @@
-import React, { useEffect, Fragment } from 'react'
+import React, { Fragment } from 'react'
 import { useSelector } from 'react-redux'
-import { execute, updateNav } from 'actions'
 import { Box, Paper, Grid } from '@material-ui/core'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import { BasicStats } from './BasicStats'
-import {
-	t,
-	selectSide,
-	selectPublisherStatsByCountryTableData,
-} from 'selectors'
+import { selectSide, selectPublisherStatsByCountryTableData } from 'selectors'
 import BestEarnersTable from '../Tables/BestEarnersTable'
 import ImpressionsByCountryTableMap from '../Tables/ImpressionsByCountryTableMap'
 
 export function DashboardStats(props) {
 	const side = useSelector(selectSide)
-
-	useEffect(() => {
-		execute(updateNav('navTitle', t('DASHBOARD')))
-	}, [])
 
 	return side !== 'advertiser' && side !== 'publisher' ? (
 		<SideSelect active={true} />
