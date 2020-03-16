@@ -27,7 +27,7 @@ let initialState = {
 		Campaign: {},
 		AdUnit: {},
 		AdSlot: {},
-		Website: {}, // TEMP - need separate reducer
+		Website: {},
 	},
 	spinners: {},
 	ui: {
