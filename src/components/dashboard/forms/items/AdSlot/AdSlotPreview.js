@@ -6,7 +6,8 @@ import NewAdSlotHoc from './NewAdSlotHoc'
 import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
-import Anchor, { ExternalAnchor } from 'components/common/anchor/anchor'
+import Anchor from 'components/common/anchor/anchor'
+import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
 import {
 	PropRow,
 	ContentBox,
@@ -102,35 +103,7 @@ class AdSlotPreview extends Component {
 						}
 					/>
 					{temp.hostname && temp.issues && temp.issues.length && (
-						<PropRow
-							right={
-								<Fragment>
-									{temp.issues.map((x = {}) => {
-										const label = x.label || x
-										const args = x.args || []
-										return (
-											<Typography
-												key={x.label || x}
-												component='div'
-												color='secondary'
-											>
-												{t(label, {
-													args: args.map(a =>
-														a.type === 'anchor' ? (
-															<ExternalAnchor href={a.href}>
-																{t(a.label)}
-															</ExternalAnchor>
-														) : (
-															a.label || a
-														)
-													),
-												})}
-											</Typography>
-										)
-									})}
-								</Fragment>
-							}
-						/>
+						<PropRow right={<WebsiteIssues issues={temp.issues} />} />
 					)}
 
 					<PropRow
