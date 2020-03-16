@@ -85,14 +85,14 @@ class AdSlotPreview extends Component {
 					<PropRow
 						right={
 							<Fragment>
-								<Typography component='div' color='primary'>
+								<Typography component='div' color='primary' gutterBottom>
 									<div
 										dangerouslySetInnerHTML={{
 											__html: t('SLOT_WEBSITE_WARNING'),
 										}}
 									/>
 								</Typography>
-								<Typography component='div' color='primary'>
+								<Typography component='div' color='primary' gutterBottom>
 									<div
 										dangerouslySetInnerHTML={{
 											__html: t('SLOT_WEBSITE_CODE_WARNING'),
