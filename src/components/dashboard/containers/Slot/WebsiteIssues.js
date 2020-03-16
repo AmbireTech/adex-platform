@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react'
 import { Typography } from '@material-ui/core'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
-import { t } from 'selectors'
+import { useSelector } from 'react-redux'
+import { selectWebsiteByWebsite, t } from 'selectors'
 
 const getIssue = issue => {
 	const data = {
@@ -33,13 +34,16 @@ const getIssue = issue => {
 	}
 }
 
-export function WebsiteIssues({ issues }) {
+export function WebsiteIssues({ issues, website }) {
+	const site = useSelector(state => selectWebsiteByWebsite(state, website))
+	const data = issues || site.issues
+
 	return (
 		<Fragment>
-			{issues.map((x = {}) => {
+			{data.map((x = {}) => {
 				const { label, args } = getIssue(x)
 				return (
-					<Typography key={x.label} component='div' color='secondary'>
+					<Typography key={label} component='div' color='primary' gutterBottom>
 						{t(label, {
 							args: args.map((a, index) =>
 								a.type === 'anchor' ? (
