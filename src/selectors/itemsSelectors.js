@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect'
 import { selectCampaignEventsCount } from 'selectors'
+import url from 'url'
 export const selectItems = state => state.persist.items
 
 export const selectItemsByType = createSelector(
@@ -80,4 +81,9 @@ export const selectWebsites = createSelector(
 export const selectWebsiteById = createSelector(
 	[selectWebsites, (_, id) => id],
 	(items, id) => items[id]
+)
+
+export const selectWebsiteByWebsite = createSelector(
+	[selectWebsites, (_, ws) => ws],
+	(items, ws) => items[url.parse(ws).hostname] || {}
 )
