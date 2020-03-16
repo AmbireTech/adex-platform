@@ -71,3 +71,13 @@ export const selectAdSlotById = createSelector(
 	[selectAdSlots, (_, id) => id],
 	(items, id) => items[id]
 )
+
+export const selectWebsites = createSelector(
+	state => selectItemsByType(state, 'Website'),
+	websites => websites
+)
+
+export const selectWebsiteById = createSelector(
+	[selectWebsites, (_, id) => id],
+	(items, id) => items[id]
+)
