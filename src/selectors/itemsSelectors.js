@@ -85,5 +85,5 @@ export const selectWebsiteById = createSelector(
 
 export const selectWebsiteByWebsite = createSelector(
 	[selectWebsites, (_, ws) => ws],
-	(items, ws = '') => items[url.parse(ws).hostname] || {}
+	(items, ws) => (ws ? items[url.parse(ws).hostname] || {} : {})
 )
