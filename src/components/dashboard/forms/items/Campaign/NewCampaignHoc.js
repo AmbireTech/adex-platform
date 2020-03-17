@@ -47,6 +47,7 @@ export default function NewCampaignHoc(Decorated) {
 			this.handleChange('temp', newTemp)
 			this.onSave()
 			actions.resetNewItem('Campaign')
+			actions.checkNetworkCongestion()
 		}
 
 		cancel = () => {

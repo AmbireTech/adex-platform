@@ -41,6 +41,7 @@ export default function NewAdUnitHoc(Decorated) {
 
 			this.onSave()
 			actions.resetNewItem('AdSlot')
+			actions.checkNetworkCongestion()
 		}
 
 		cancel = () => {
