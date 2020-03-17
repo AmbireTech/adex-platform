@@ -130,6 +130,16 @@ export const VALIDATOR_ANALYTICS_TIMEFRAMES = [
 	// { label: 'LABEL_YEAR', value: 'year' },
 ]
 
+export const WHERE_YOU_KNOW_US = [
+	{ label: 'LALBEL_GOOGLE', value: 'search_engine' },
+	{ label: 'LABEL_TWITTER', value: 'twitter' },
+	{ label: 'LABEL_FACEBOOK', value: 'facebook' },
+	{ label: 'LABEL_REDDIT', value: 'reddit' },
+	{ label: 'LABEL_EVENT', value: 'event' },
+	{ label: 'LABEL_FRIEND', value: 'friend' },
+	{ label: 'LABEL_OTHER', value: 'other' },
+]
+
 export const MOON_GRAVITY_ACCELERATION = 1.625
 export const MOON_TO_EARTH_WEIGHT = 0.166
 
