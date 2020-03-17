@@ -59,6 +59,7 @@ export default function NewTransactionHoc(Decorated) {
 		}
 
 		save = () => {
+			const { actions } = this.props
 			this.handleChange('waitingForWalletAction', true)
 			this.props
 				.saveFn({
@@ -80,6 +81,7 @@ export default function NewTransactionHoc(Decorated) {
 
 					this.handleSaveRes({ err: err, res: res })
 				})
+			actions.checkNetworkCongestion()
 		}
 
 		cancel = () => {

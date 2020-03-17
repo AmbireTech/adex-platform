@@ -40,6 +40,7 @@ export default function NewAdUnitHoc(Decorated) {
 
 			this.onSave()
 			actions.resetNewItem('AdUnit')
+			actions.checkNetworkCongestion()
 		}
 
 		cancel = () => {
