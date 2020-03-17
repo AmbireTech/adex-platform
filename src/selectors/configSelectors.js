@@ -21,6 +21,7 @@ export const selectRelayerConfig = state => {
 // mainToken, // { address, symbol, decimals, standard },
 // advertiserMinGrantAmount
 // relayerAddr
+// gasPriceCap
 
 export const selectFeeTokenWhitelist = createSelector(
 	[selectRelayerConfig],
@@ -64,6 +65,11 @@ export const selectConfig = createSelector(
 export const selectMainToken = createSelector(
 	[selectRelayerConfig],
 	({ mainToken }) => mainToken || {}
+)
+
+export const selectGasPriceCap = createSelector(
+	[selectRelayerConfig],
+	({ gasPriceCap }) => gasPriceCap
 )
 
 export const selectSaiToken = createSelector(
