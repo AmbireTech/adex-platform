@@ -7,11 +7,13 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
 import Anchor from 'components/common/anchor/anchor'
+import { WHERE_YOU_KNOW_US } from 'constants/misc'
 import {
 	ContentBox,
 	ContentBody,
 	FullContentMessage,
 } from 'components/common/dialog/content'
+import Dropdown from 'components/common/dropdown'
 import {
 	t,
 	selectIdentity,
@@ -21,6 +23,12 @@ import {
 import { execute, updateIdentity } from 'actions'
 
 import { CREATING_SESSION } from 'constants/spinners'
+
+const knowFrom = WHERE_YOU_KNOW_US.map(knowFrom => {
+	const translated = { ...knowFrom }
+	translated.label = t(knowFrom.label)
+	return translated
+})
 
 const QuickInfo = props => {
 	const { validateId } = props
@@ -126,6 +134,17 @@ const QuickInfo = props => {
 										? passwordCheck.errMsg
 										: t('PASSWORD_CHECK_RULES')
 								}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<Dropdown
+								fullWidth
+								label={t('SELECT_WHERE_YOU_KNOW_US')}
+								helperText={t('HELPER_WHERE_YOU_KNOW_US')}
+								onChange={val => execute(updateIdentity('knowFrom', val))}
+								source={knowFrom}
+								value={identity.knowFrom || ''}
+								htmlId='timeframe-select'
 							/>
 						</Grid>
 						<Grid item xs={12}>
