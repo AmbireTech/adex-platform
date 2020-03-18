@@ -210,6 +210,32 @@ export function validateIdentityContractOwner(
 		return isValid
 	}
 }
+export function validateKnowFrom(validateId, knowFrom, dirty) {
+	return async function(dispatch, getState) {
+		const isValid = !!knowFrom
+		validate(validateId, 'knowFrom', {
+			isValid: isValid,
+			err: { msg: 'ERR_WHERE_YOU_KNOW_US_DROPDOWN_CHECK' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateMoreInfo(validateId, knowFrom, moreInfo, dirty) {
+	return async function(dispatch, getState) {
+		const isValid =
+			knowFrom === 'other' || knowFrom === 'event' ? !!moreInfo : true
+		validate(validateId, 'moreInfo', {
+			isValid: isValid,
+			err: { msg: 'ERR_WHERE_YOU_KNOW_US_MOREINFO_CHECK' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
 
 export function validateAccessWarning(validateId, accepted, dirty) {
 	return async function(dispatch, getState) {
