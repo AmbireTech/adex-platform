@@ -38,6 +38,8 @@ import {
 	validateWallet,
 	validateIdentityContractOwner,
 	validateAccessWarning,
+	validateKnowFrom,
+	validateMoreInfo,
 } from './validationActions'
 import { getErrorMsg } from 'helpers/errors'
 import {
@@ -333,6 +335,8 @@ export function login() {
 			const {
 				wallet,
 				email,
+				knowFrom,
+				moreInfo,
 				identityData,
 				identityTxData,
 				deleteLegacyKey,
@@ -343,6 +347,8 @@ export function login() {
 				await regAccount({
 					owner: wallet.address,
 					email: email.toLowerCase(),
+					knowFrom,
+					moreInfo,
 					...identityTxData,
 				})
 			}
@@ -645,7 +651,15 @@ export function validateQuickDeploy({ validateId, dirty }) {
 export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 	return async function(dispatch, getState) {
 		const identity = selectIdentity(getState())
-		const { email, emailCheck, password, passwordCheck, tosCheck } = identity
+		const {
+			email,
+			emailCheck,
+			password,
+			passwordCheck,
+			tosCheck,
+			knowFrom,
+			moreInfo,
+		} = identity
 
 		const validations = await Promise.all([
 			validateEmail(validateId, email, dirty, true)(dispatch),
@@ -654,6 +668,8 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 			validatePasswordCheck(validateId, passwordCheck, password, dirty)(
 				dispatch
 			),
+			validateKnowFrom(validateId, knowFrom, dirty)(dispatch),
+			validateMoreInfo(validateId, knowFrom, moreInfo, dirty)(dispatch),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
 		])
 
