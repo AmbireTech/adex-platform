@@ -698,6 +698,8 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 			email,
 			emailCheck,
 			tosCheck,
+			knowFrom,
+			moreInfo,
 			accessWarningCheck,
 		} = identity
 
@@ -711,6 +713,8 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 			// validate step fields
 			validateEmail(validateId, email, dirty, true)(dispatch),
 			validateEmailCheck(validateId, emailCheck, email, dirty)(dispatch),
+			validateKnowFrom(validateId, knowFrom, dirty)(dispatch),
+			validateMoreInfo(validateId, knowFrom, moreInfo, dirty)(dispatch),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
 			validateAccessWarning(validateId, accessWarningCheck, dirty)(dispatch),
 		])
