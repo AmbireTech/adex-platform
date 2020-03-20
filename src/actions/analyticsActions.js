@@ -6,6 +6,7 @@ import {
 	getValidatorAuthToken,
 	identityAnalytics,
 	identityCampaignsAnalytics,
+	timeBasedAnalytics,
 } from 'services/adex-validator/actions'
 import { updateValidatorAuthTokens } from './accountActions'
 import {
@@ -23,6 +24,7 @@ import {
 	selectSide,
 	selectAccount,
 	selectAnalyticsTimeframe,
+	selectAccountIdentityDeployData,
 } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
 
@@ -295,6 +297,62 @@ export function updateAccountCampaignsAnalytics() {
 				}),
 				timeout: 20000,
 			})(dispatch)
+		}
+	}
+}
+
+export function getReceiptData() {
+	return async function(dispatch, getState) {
+		const { account } = getState().persist
+		try {
+			const leaderAuth = await getValidatorAuthToken({
+				validatorId: VALIDATOR_LEADER_ID,
+				account,
+			})
+
+			updateValidatorAuthTokens({
+				newAuth: { [VALIDATOR_LEADER_ID]: leaderAuth },
+			})(dispatch, getState)
+			const { created } = selectAccountIdentityDeployData(getState())
+			const timeframe = 'month'
+			const limit = 500 // would only get 500 days. must extend if startDate - endDate > 500 days
+			const start = +new Date(created)
+			const end = +Date.now()
+			const impressionsPromise = timeBasedAnalytics({
+				leaderAuth,
+				timeframe,
+				limit,
+				eventType: 'IMPRESSION',
+				metric: 'eventCounts',
+				start,
+				end,
+			})
+			const payoutsPromise = timeBasedAnalytics({
+				leaderAuth,
+				timeframe,
+				limit,
+				eventType: 'IMPRESSION',
+				metric: 'eventPayouts',
+				start,
+				end,
+			})
+			const [impressions, payouts] = await Promise.all([
+				impressionsPromise,
+				payoutsPromise,
+			])
+			const result = impressions.aggr.map((item, i) => ({
+				impressions: item.value,
+				payouts: payouts.aggr[i].value,
+				time: item.time,
+			}))
+			dispatch({
+				type: types.UPDATE_PUBLISHER_RECEIPTS,
+				value: {
+					...result,
+				},
+			})
+		} catch (err) {
+			console.log(err)
 		}
 	}
 }
