@@ -1,7 +1,8 @@
 import { getState } from 'store'
 import { createSelector } from 'reselect'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
-import { selectWebsites } from 'selectors'
+import { selectWebsites, selectAccountIdentityDeployData } from 'selectors'
+import moment from 'moment'
 
 export const selectAnalytics = state => state.persist.analytics
 
@@ -310,4 +311,31 @@ export const selectPublisherRevenueNoticeActive = createSelector(
 	(totalImpressions, websites) =>
 		(websites.length && websites.some(w => w.issuss.length === 0)) ||
 		!totalImpressions
+)
+
+export const selectPublisherReceiptStats = createSelector(
+	[selectAnalytics, selectAccountIdentityDeployData],
+	({ receipts }, { created }) => {
+		const result = []
+		for (var m = moment(created); m.diff(Date.now()) <= 0; m.add(1, 'month')) {
+			const startOfMonth = m.startOf('month')
+			const endOfMonth = m.endOf('month')
+			const filteredForMonth = receipts
+				.filter(item => moment(item.time).isBetween(startOfMonth, endOfMonth))
+				.reduce(
+					(acc, currValue) => {
+						acc.impressions += currValue.impressions
+						acc.payouts += currValue.payouts
+						return acc
+					},
+					{
+						impressions: 0,
+						payouts: 0,
+						startOfMonth: startOfMonth.unix() * 1000,
+						endOfMonth: endOfMonth.unix() * 1000,
+					}
+				)
+			result.push(filteredForMonth)
+		}
+	}
 )
