@@ -18,6 +18,7 @@ import {
 	CampaignsTable,
 	AdSlotsTable,
 	AdUnitsTable,
+	PublisherReceiptsTable,
 } from 'components/dashboard/containers/Tables'
 import Drawer from '@material-ui/core/Drawer'
 import Box from '@material-ui/core/Box'
@@ -87,6 +88,8 @@ const AdSlots = () => (
 		<AdSlotsTable />
 	</>
 )
+
+const Receipts = () => <PublisherReceiptsTable />
 
 const useStyles = makeStyles(styles)
 
@@ -252,6 +255,11 @@ function Dashboard(props) {
 							exact
 							path='/dashboard/publisher/slots/:itemId'
 							component={Slot}
+						/>
+						<Route
+							exact
+							path='/dashboard/publisher/receipts'
+							component={Receipts}
 						/>
 						<Route
 							exact
