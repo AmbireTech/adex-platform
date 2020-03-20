@@ -10,6 +10,8 @@ import {
 	selectCampaignAnalyticsByChannelToAdUnit,
 	selectTotalStatsByAdUnits,
 	selectCampaignUnitsById,
+	selectPublisherReceiptStats,
+	selectMainToken,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 
@@ -277,4 +279,18 @@ export const selectAdUnitsStatsMaxValues = createSelector(
 			},
 			{ maxClicks: 0, maxImpressions: 0, maxCTR: 0 }
 		)
+)
+
+export const selectPublisherReceiptsStatsTableData = createSelector(
+	[selectPublisherReceiptStats, selectMainToken],
+	(stats, token) =>
+		stats.map(item => {
+			const { decimals = 18 } = token || {}
+			return {
+				impressions: item.impressions,
+				payouts: Number(formatUnits(item.payouts || '0', decimals)),
+				startOfMonth: item.startOfMonth,
+				endOfMonth: item.startOfMonth,
+			}
+		})
 )
