@@ -158,7 +158,7 @@ export function updateAccountAnalytics() {
 	return async function(dispatch, getState) {
 		const state = getState()
 		const account = selectAccount(state)
-
+		getReceiptData()(dispatch, getState)
 		const side = selectSide(state)
 		const timeframe = selectAnalyticsTimeframe(state)
 		const allChannels = selectChannelsWithUserBalancesAll(state)
