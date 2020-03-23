@@ -63,7 +63,7 @@ const getCols = ({
 	},
 	{
 		name: 'startOfMonth',
-		label: t('RECEIPT_DATE'),
+		label: t('RECEIPT_MONTH'),
 		options: {
 			filter: false,
 			sort: true,
