@@ -332,8 +332,8 @@ export const selectPublisherReceiptStats = createSelector(
 					{
 						impressions: 0,
 						payouts: 0,
-						startOfMonth: moment(startOfMonth).unix * 1000,
-						endOfMonth: moment(endOfMonth).unix * 1000,
+						startOfMonth: moment(startOfMonth).unix() * 1000,
+						endOfMonth: moment(endOfMonth).unix() * 1000,
 					}
 				)
 			result.push(filteredForMonth)
