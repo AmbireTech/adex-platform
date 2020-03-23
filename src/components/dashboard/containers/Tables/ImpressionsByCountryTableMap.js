@@ -9,8 +9,9 @@ import { t, selectSide, selectCountryStatsMaxValues } from 'selectors'
 import { useSelector } from 'react-redux'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
-import ChartGeo from 'components/dashboard/charts/map/ChartGeo'
+import MapChart from 'components/dashboard/charts/map/MapChart'
 import { PRIMARY } from 'components/App/themeMUi'
+import ReactTooltip from 'react-tooltip' // TEMP: use material-ui tooltip if possible
 
 const BorderLinearProgress = withStyles({
 	root: {
@@ -110,11 +111,18 @@ const getOptions = ({ reloadData, selected }) => ({
 })
 
 function ImpressionsByCountryTableMap(props) {
-	const { selector } = props
 	const classes = useStyles()
 	const side = useSelector(selectSide)
-	const { noActions, noClone, campaignId, selected = [] } = props
 
+	const {
+		selector,
+		mapChartSelector,
+		noActions,
+		noClone,
+		campaignId,
+		selected = [],
+	} = props
+	const { chartData, colorScale } = useSelector(mapChartSelector)
 	const [selectorArgs, setSelectorArgs] = useState({})
 	const { maxImpressions, totalImpressions } = useSelector(
 		selectCountryStatsMaxValues
@@ -141,17 +149,19 @@ function ImpressionsByCountryTableMap(props) {
 		setSelectorArgs({ side, campaignId })
 	}, [side, campaignId])
 
-	const geoChartData = data.map(item => [
-		{ v: item.countryCode, f: item.countryName },
-		item.impressions,
-	])
+	const [content, setContent] = useState('')
 
 	const options = getOptions({ selected, reloadData })
 	return (
 		<Fragment>
-			<ChartGeo
-				data={[[t('MAP_COUNTRY'), t('LABEL_IMPRESSIONS')], ...geoChartData]}
-			/>
+			<div>
+				<MapChart
+					setTooltipContent={setContent}
+					chartData={chartData}
+					colorScale={colorScale}
+				/>
+				<ReactTooltip>{content}</ReactTooltip>
+			</div>
 			<MUIDataTableEnhanced
 				title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
 				data={data}
