@@ -3,7 +3,11 @@ import { useSelector } from 'react-redux'
 import { Box, Paper, Grid } from '@material-ui/core'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import { BasicStats } from './BasicStats'
-import { selectSide, selectPublisherStatsByCountryTableData } from 'selectors'
+import {
+	selectSide,
+	selectPublisherStatsByCountryTableData,
+	selectPublisherStatsByCountryMapChartData,
+} from 'selectors'
 import BestEarnersTable from '../Tables/BestEarnersTable'
 import ImpressionsByCountryTableMap from '../Tables/ImpressionsByCountryTableMap'
 
@@ -24,12 +28,13 @@ export function DashboardStats(props) {
 					{side === 'publisher' && (
 						<Fragment>
 							<Grid item xs={12} md={12} lg={6}>
-								<BestEarnersTable />
-							</Grid>
-							<Grid item xs={12} md={12} lg={6}>
 								<ImpressionsByCountryTableMap
 									selector={selectPublisherStatsByCountryTableData}
+									mapChartSelector={selectPublisherStatsByCountryMapChartData}
 								/>
+							</Grid>
+							<Grid item xs={12} md={12} lg={6}>
+								<BestEarnersTable />
 							</Grid>
 						</Fragment>
 					)}
