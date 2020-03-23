@@ -16,6 +16,9 @@ import {
 	selectCampaignAnalyticsByChannelToCountry,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
+import chartCountriesData from 'world-atlas/countries-50m.json'
+import { scaleLinear } from 'd3-scale'
+const COUNTRY_NAMES = ISOCountries.getNames('en')
 
 export const selectCampaignsTableData = createSelector(
 	[selectCampaignsArray, selectRoutineWithdrawTokens, (_, side) => side],
@@ -200,13 +203,44 @@ export const selectPublisherStatsByCountryTableData = createSelector(
 	selectPublisherStatsByCountry,
 	countries =>
 		Object.keys(countries).map(key => {
-			const countryNames = ISOCountries.getNames('en')
 			return {
 				countryCode: key.toUpperCase(), //Need uppercase for GeoChart
-				countryName: countryNames[key],
+				countryName: COUNTRY_NAMES[key],
 				impressions: countries[key],
+				countryId: ISOCountries.alpha2ToNumeric(key),
 			}
 		})
+)
+
+export const selectPublisherStatsByCountryMapChartData = createSelector(
+	selectPublisherStatsByCountry,
+	countries => {
+		const chartData = { ...chartCountriesData }
+		let maxImpressions = 0
+		chartData.objects.countries.geometries = chartCountriesData.objects.countries.geometries.map(
+			data => {
+				const id = ISOCountries.numericToAlpha2(data.id)
+				const impressions = countries[id] || 0
+				const name = COUNTRY_NAMES[id] || data.name
+
+				maxImpressions = Math.max(maxImpressions, impressions)
+
+				const properties = {
+					impressions,
+					name,
+				}
+
+				return { ...data, properties }
+			}
+		)
+
+		const colorScale = scaleLinear()
+			.domain([0, maxImpressions])
+			// TODO: set colors
+			.range(['lightblue', 'blue'])
+
+		return { chartData, colorScale }
+	}
 )
 
 export const selectCampaignAnalyticsToCountryTableData = createSelector(
