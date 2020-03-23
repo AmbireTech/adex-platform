@@ -1,6 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.43
+##### *2020-03-16*
+
+### Fixed
+- Slot websites issues
+
+## 4.10.42
+##### *2020-03-16*
+
+### Added
+- Showing slot website host issues on slot create preview and slot details
+
+### Changes
+- Slots request returns slots and websites
+- Getting started styles
+- Publisher revenue alert condition - hidden if there is website with no issues or any impressions
+
+### Fixed
+- Breadcrumbs casing (Added translations)
+- Breadcrumbs - no link if only one element
+- Removed misc unused variables
+
 ## 4.10.41
 ##### *2020-03-11*
 

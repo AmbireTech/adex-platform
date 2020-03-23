@@ -1,6 +1,6 @@
 import React from 'react'
 import { Typography, Slider, Box } from '@material-ui/core'
-import { formatAbbrNum, formatNumberWithoutCommas } from 'helpers/formatters'
+import { formatAbbrNum } from 'helpers/formatters'
 
 const getSliderStep = (min, max, steps, precision = 2) => {
 	const diff = max - min

@@ -13,12 +13,7 @@ import {
 	selectSpinnerById,
 } from 'selectors'
 import Anchor from 'components/common/anchor/anchor'
-import {
-	execute,
-	validateEmail,
-	validateEmailCheck,
-	updateIdentity,
-} from 'actions'
+import { execute, updateIdentity } from 'actions'
 import {
 	ContentBox,
 	ContentBody,

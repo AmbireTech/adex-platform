@@ -16,7 +16,7 @@ import {
 	updateSelectedCampaigns,
 } from 'actions'
 import { push } from 'connected-react-router'
-import { parseUnits, bigNumberify } from 'ethers/utils'
+import { parseUnits } from 'ethers/utils'
 import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
 import { getCampaigns } from 'services/adex-market/actions'
 import {
