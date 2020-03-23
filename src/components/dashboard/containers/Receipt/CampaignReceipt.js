@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import ReactToPrint from 'react-to-print'
 import classnames from 'classnames'
 import { Print, Visibility } from '@material-ui/icons'
-import Receipt from './Receipt'
+import { CampaignReceiptTpl } from './ReceiptTemplates'
 import CompanyDetails from './CompanyDetails'
 import { useSelector } from 'react-redux'
 import { t, selectSelectedCampaigns } from 'selectors'
@@ -85,7 +85,10 @@ function CampaignReceipt(props) {
 						{receipts.length > 0 && (
 							<Box ref={invoice} className={classnames(classes.a4)}>
 								{receipts.map(campaignId => (
-									<Receipt campaignId={campaignId} key={campaignId} />
+									<CampaignReceiptTpl
+										campaignId={campaignId}
+										key={campaignId}
+									/>
 								))}
 							</Box>
 						)}
