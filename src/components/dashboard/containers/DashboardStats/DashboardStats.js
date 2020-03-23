@@ -3,9 +3,7 @@ import { useSelector } from 'react-redux'
 import { Box, Paper, Grid } from '@material-ui/core'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import { BasicStats } from './BasicStats'
-import { selectSide, selectPublisherStatsByCountryTableData } from 'selectors'
-import BestEarnersTable from '../Tables/BestEarnersTable'
-import ImpressionsByCountryTableMap from '../Tables/ImpressionsByCountryTableMap'
+import { selectSide } from 'selectors'
 
 export function DashboardStats(props) {
 	const side = useSelector(selectSide)

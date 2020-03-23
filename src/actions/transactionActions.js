@@ -1,9 +1,7 @@
 import * as types from 'constants/actionTypes'
 import {
 	updateSpinner,
-	addToast,
 	handleAfterValidation,
-	validate,
 	updateAccountIdentityData,
 	validateEthAddress,
 	validatePrivilegesAddress,

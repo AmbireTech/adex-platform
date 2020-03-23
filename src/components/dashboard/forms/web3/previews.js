@@ -1,9 +1,6 @@
 import React from 'react'
 import ListItemText from '@material-ui/core/ListItemText'
 import { PropRow } from 'components/common/dialog/content'
-import { constants } from 'adex-models'
-
-const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
 
 export const IdentityWithdrawPreview = ({
 	t,

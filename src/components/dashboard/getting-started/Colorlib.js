@@ -20,7 +20,7 @@ const useColorlibStepIconStyles = makeStyles(theme => ({
 		borderRadius: '50%',
 		justifyContent: 'center',
 		alignItems: 'center',
-		border: `${LINES_WIDTH}px solid ${theme.palette.common.white}`,
+		border: `${LINES_WIDTH}px solid ${theme.palette.text[500]}`,
 		transition: '0.5s',
 		'&:hover': {
 			boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
@@ -51,7 +51,9 @@ export const ColorlibConnector = withStyles(theme => ({
 	line: {
 		height: LINES_WIDTH,
 		border: 0,
-		background: `linear-gradient(to right, transparent 50%, #fff 50%), ${'transparent'}`,
+		background: `linear-gradient(to right, transparent 50%, #fff 50%), ${
+			theme.palette.text[500]
+		}`,
 		backgroundSize: `${LINES_WIDTH * 6}px`,
 	},
 }))(StepConnector)
