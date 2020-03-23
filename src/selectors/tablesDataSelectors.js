@@ -12,7 +12,9 @@ import {
 	selectCampaignUnitsById,
 	selectPublisherReceiptStats,
 	selectMainToken,
+	selectAnalytics,
 } from 'selectors'
+import moment from 'moment'
 import { formatUnits } from 'ethers/utils'
 
 export const selectCampaignsTableData = createSelector(
@@ -284,13 +286,50 @@ export const selectAdUnitsStatsMaxValues = createSelector(
 export const selectPublisherReceiptsStatsTableData = createSelector(
 	[selectPublisherReceiptStats, selectMainToken],
 	(stats, token) =>
-		stats.map(item => {
-			const { decimals = 18 } = token || {}
-			return {
-				impressions: item.impressions,
-				payouts: Number(formatUnits(item.payouts || '0', decimals)),
-				startOfMonth: item.startOfMonth,
-				endOfMonth: item.startOfMonth,
-			}
-		})
+		stats.length > 0
+			? stats
+					.map(item => {
+						const { decimals = 18 } = token || {}
+						return {
+							impressions: item.impressions,
+							payouts: Number(formatUnits(item.payouts || '0', decimals)),
+							startOfMonth: item.startOfMonth,
+							endOfMonth: item.startOfMonth,
+						}
+					})
+					.filter(i => i.payouts !== 0)
+			: []
+)
+
+export const selectPublisherReceiptsStatsByMonthTableData = createSelector(
+	[selectAnalytics, selectMainToken, (_, date) => date],
+	({ receipts }, token, date) => {
+		const m = moment(date)
+		const startOfMonth = m.startOf('month').format('YYYY-MM-DD')
+		const endOfMonth = m.endOf('month').format('YYYY-MM-DD')
+		return Object.values(receipts)
+			.filter(item => moment(item.time).isBetween(startOfMonth, endOfMonth))
+			.map(item => {
+				const { decimals = 18 } = token || {}
+				return {
+					impressions: item.impressions,
+					payouts: Number(formatUnits(item.payouts || '0', decimals)),
+					date: item.time,
+				}
+			})
+	}
+)
+
+export const selectPublisherReceiptsStatsByMonthTotalValues = createSelector(
+	[selectPublisherReceiptsStatsByMonthTableData],
+	data =>
+		data.reduce(
+			(result, current) => {
+				const newResult = { ...result }
+				newResult.totalPayouts += +current.payouts
+				newResult.totalImpressions += +current.impressions
+				return newResult
+			},
+			{ totalPayouts: 0, totalImpressions: 0 }
+		)
 )
