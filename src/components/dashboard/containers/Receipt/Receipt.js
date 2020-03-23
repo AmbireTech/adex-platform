@@ -5,10 +5,10 @@ import { makeStyles } from '@material-ui/core/styles'
 import ReactToPrint from 'react-to-print'
 import classnames from 'classnames'
 import { Print, Visibility } from '@material-ui/icons'
-import { CampaignReceiptTpl } from './ReceiptTemplates'
+import { CampaignReceiptTpl, PublisherReceiptTpl } from './ReceiptTemplates'
 import CompanyDetails from './CompanyDetails'
 import { useSelector } from 'react-redux'
-import { t, selectSelectedCampaigns } from 'selectors'
+import { t, selectSelectedCampaigns, selectSide } from 'selectors'
 
 const useStyles = makeStyles(theme => {
 	return {
@@ -29,16 +29,28 @@ const useStyles = makeStyles(theme => {
 		},
 	}
 })
-function CampaignReceipt(props) {
+function Receipt(props) {
 	const classes = useStyles()
 	const invoice = useRef()
-	const { itemId } = useParams()
-	const items = useSelector(state => selectSelectedCampaigns(state))
+	const { itemId, date } = useParams()
+	const side = useSelector(selectSide)
+	const selectedCampaigns = useSelector(state => selectSelectedCampaigns(state))
 	// TODO: render back button
-	const selectedByPropsOrParams = props.itemId || itemId
-	const receipts = selectedByPropsOrParams ? [selectedByPropsOrParams] : items
+	const selectedByPropsOrParams = props.itemId || itemId || date
+	const receipts = selectedByPropsOrParams
+		? [selectedByPropsOrParams]
+		: selectedCampaigns
+
 	if (receipts.length === 0)
-		return <Redirect to={'/dashboard/advertiser/campaigns'} />
+		return (
+			<Redirect
+				to={
+					side === 'advertiser'
+						? '/dashboard/advertiser/campaigns'
+						: '/dashboard/publisher/receipts'
+				}
+			/>
+		)
 	return (
 		<Box display='flex' justifyContent='center' alignContent='center'>
 			<Box
@@ -84,12 +96,13 @@ function CampaignReceipt(props) {
 					<Box className={classnames(classes.hideOnMobile)}>
 						{receipts.length > 0 && (
 							<Box ref={invoice} className={classnames(classes.a4)}>
-								{receipts.map(campaignId => (
-									<CampaignReceiptTpl
-										campaignId={campaignId}
-										key={campaignId}
-									/>
-								))}
+								{receipts.map(item =>
+									itemId ? (
+										<CampaignReceiptTpl campaignId={item} key={item} />
+									) : (
+										date && <PublisherReceiptTpl date={date} key={item} />
+									)
+								)}
 							</Box>
 						)}
 					</Box>
@@ -98,4 +111,4 @@ function CampaignReceipt(props) {
 		</Box>
 	)
 }
-export { CampaignReceipt }
+export { Receipt }

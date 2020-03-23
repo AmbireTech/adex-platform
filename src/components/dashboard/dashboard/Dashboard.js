@@ -3,10 +3,7 @@ import SideNav from './SideNav'
 import TopBar from './TopBar'
 import { Route, Switch } from 'react-router'
 import Campaign from 'components/dashboard/containers/Campaign'
-import {
-	CampaignReceipt,
-	PublisherReceipt,
-} from 'components/dashboard/containers/Receipt'
+import { Receipt } from 'components/dashboard/containers/Receipt'
 import DashboardStats from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
@@ -236,12 +233,12 @@ function Dashboard(props) {
 						<Route
 							exact
 							path='/dashboard/advertiser/receipts'
-							component={CampaignReceipt}
+							component={Receipt}
 						/>
 						<Route
 							exact
 							path='/dashboard/advertiser/receipt/:itemId'
-							component={CampaignReceipt}
+							component={Receipt}
 						/>
 						<Route
 							exact
@@ -266,7 +263,7 @@ function Dashboard(props) {
 						<Route
 							exact
 							path='/dashboard/publisher/receipt/:date'
-							component={PublisherReceipt}
+							component={Receipt}
 						/>
 						<Route
 							exact

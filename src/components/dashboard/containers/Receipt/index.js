@@ -1,4 +1,3 @@
-import { CampaignReceipt } from './CampaignReceipt'
-import { PublisherReceipt } from './PublisherReceipt'
+import { Receipt } from './Receipt'
 
-export { CampaignReceipt, PublisherReceipt }
+export { Receipt }
