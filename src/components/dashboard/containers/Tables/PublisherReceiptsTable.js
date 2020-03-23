@@ -42,7 +42,7 @@ const getCols = ({
 		name: 'impressions',
 		options: {
 			filter: false,
-			customBodyRender: impressions => impressions,
+			customBodyRender: impressions => commify(impressions || 0),
 		},
 	},
 	{
@@ -57,8 +57,48 @@ const getCols = ({
 			// 		return false
 			// 	},
 			// },
-			customBodyRender: payouts => payouts,
+			customBodyRender: payouts => commify(payouts.toFixed(2) || 0),
 			// TODO: Sorting issue
+		},
+	},
+	{
+		name: 'startOfMonth',
+		label: t('RECEIPT_DATE'),
+		options: {
+			filter: false,
+			sort: true,
+			sortDirection: 'desc',
+			customBodyRender: startOfMonth =>
+				formatDateTime(startOfMonth, 'MMMM, YYYY'),
+		},
+	},
+	{
+		name: 'endOfMonth',
+		label: t('ACTIONS'),
+		options: {
+			filter: false,
+			sort: true,
+			download: false,
+			customBodyRender: endOfMonth => (
+				<Fragment key={endOfMonth}>
+					<Tooltip
+						title={t('LABEL_VIEW')}
+						// placement='top'
+						enterDelay={1000}
+					>
+						<RRIconButton
+							to={`/dashboard/publisher/receipt/${formatDateTime(
+								endOfMonth,
+								'YYYY-MM'
+							)}`}
+							variant='contained'
+							aria-label='preview'
+						>
+							<Receipt color='primary' />
+						</RRIconButton>
+					</Tooltip>
+				</Fragment>
+			),
 		},
 	},
 ]
