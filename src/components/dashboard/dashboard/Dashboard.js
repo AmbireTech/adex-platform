@@ -2,9 +2,11 @@ import React, { useState, useEffect, Fragment } from 'react'
 import SideNav from './SideNav'
 import TopBar from './TopBar'
 import { Route, Switch } from 'react-router'
-import Campaign, {
+import Campaign from 'components/dashboard/containers/Campaign'
+import {
 	CampaignReceipt,
-} from 'components/dashboard/containers/Campaign'
+	PublisherReceipt,
+} from 'components/dashboard/containers/Receipt'
 import DashboardStats from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
@@ -260,6 +262,11 @@ function Dashboard(props) {
 							exact
 							path='/dashboard/publisher/receipts'
 							component={Receipts}
+						/>
+						<Route
+							exact
+							path='/dashboard/publisher/receipt/:date'
+							component={PublisherReceipt}
 						/>
 						<Route
 							exact
