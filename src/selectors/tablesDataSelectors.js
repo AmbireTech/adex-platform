@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect'
 import ISOCountries from 'i18n-iso-countries'
 import {
+	t,
 	selectCampaignsArray,
 	selectRoutineWithdrawTokens,
 	selectAdSlotsArray,
@@ -14,10 +15,20 @@ import {
 	selectPublisherAdvanceStatsToAdUnit,
 	selectPublisherStatsByCountry,
 	selectCampaignAnalyticsByChannelToCountry,
+	selectPublisherAggrStatsByCountry,
+	selectCampaignAggrStatsByCountry,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 import chartCountriesData from 'world-atlas/countries-50m.json'
 import { scaleLinear } from 'd3-scale'
+import { formatAbbrNum } from 'helpers/formatters'
+import {
+	PRIMARY_DARKEST,
+	PRIMARY_LIGHTEST,
+	SECONDARY,
+	SECONDARY_LIGHT,
+} from 'components/App/themeMUi'
+import { grey } from '@material-ui/core/colors'
 const COUNTRY_NAMES = ISOCountries.getNames('en')
 
 export const selectCampaignsTableData = createSelector(
@@ -199,65 +210,136 @@ export const selectAdUnitsTableData = createSelector(
 		})
 )
 
-export const selectPublisherStatsByCountryTableData = createSelector(
-	selectPublisherStatsByCountry,
-	countries =>
-		Object.keys(countries).map(key => {
-			return {
-				countryCode: key.toUpperCase(), //Need uppercase for GeoChart
-				countryName: COUNTRY_NAMES[key],
-				impressions: countries[key],
-				countryId: ISOCountries.alpha2ToNumeric(key),
-			}
-		})
+const mapByCountryTableData = ({
+	impressionsByCountry,
+	clicksByCountry,
+	impressionsAggrByCountry,
+} = {}) => {
+	// NOTE: assume that there are no click without impressions
+	return Object.keys(impressionsByCountry).map(key => {
+		return {
+			countryName: COUNTRY_NAMES[key],
+			impressions: impressionsByCountry[key] || 0,
+			percentImpressions:
+				((impressionsByCountry[key] || 0) / impressionsAggrByCountry.total) *
+					100 || 0,
+			clicks: clicksByCountry[key] || 0,
+			ctr:
+				((clicksByCountry[key] || 0) / (impressionsByCountry[key] || 1)) *
+					100 || 0,
+		}
+	})
+}
+
+export const selectPublisherStatsByCountryData = createSelector(
+	[
+		state => selectPublisherStatsByCountry(state, 'IMPRESSION'),
+		state => selectPublisherStatsByCountry(state, 'CLICK'),
+		state => selectPublisherAggrStatsByCountry(state, 'IMPRESSION'),
+	],
+	(impressionsByCountry, clicksByCountry, impressionsAggrByCountry) => ({
+		impressionsByCountry,
+		clicksByCountry,
+		impressionsAggrByCountry,
+	})
 )
 
-export const selectPublisherStatsByCountryMapChartData = createSelector(
-	selectPublisherStatsByCountry,
-	countries => {
-		const chartData = { ...chartCountriesData }
-		let maxImpressions = 0
-		chartData.objects.countries.geometries = chartCountriesData.objects.countries.geometries.map(
-			data => {
-				const id = ISOCountries.numericToAlpha2(data.id)
-				const impressions = countries[id] || 0
-				const name = COUNTRY_NAMES[id] || data.name
-
-				maxImpressions = Math.max(maxImpressions, impressions)
-
-				const properties = {
-					impressions,
-					name,
-				}
-
-				return { ...data, properties }
-			}
-		)
-
-		const colorScale = scaleLinear()
-			.domain([0, maxImpressions])
-			// TODO: set colors
-			.range(['lightblue', 'blue'])
-
-		return { chartData, colorScale }
+export const selectCampaignAnalyticsToCountryData = createSelector(
+	(state, { campaignId }) => {
+		return [
+			selectCampaignAnalyticsByChannelToCountry(state, {
+				type: 'IMPRESSION',
+				campaignId,
+			}),
+			selectCampaignAnalyticsByChannelToCountry(state, {
+				type: 'CLICK',
+				campaignId,
+			}),
+			selectCampaignAggrStatsByCountry(state, {
+				campaignId,
+				type: 'IMPRESSION',
+			}),
+		]
+	},
+	([impressionsByCountry, clicksByCountry, impressionsAggrByCountry]) => {
+		return {
+			impressionsByCountry,
+			clicksByCountry,
+			impressionsAggrByCountry,
+		}
 	}
 )
 
+export const selectPublisherStatsByCountryTableData = createSelector(
+	selectPublisherStatsByCountryData,
+	data => mapByCountryTableData(data)
+)
+
 export const selectCampaignAnalyticsToCountryTableData = createSelector(
-	(state, { campaignId }) =>
-		selectCampaignAnalyticsByChannelToCountry(state, {
-			type: 'IMPRESSION',
-			campaignId,
-		}),
-	countries =>
-		Object.keys(countries).map(key => {
-			const countryNames = ISOCountries.getNames('en')
-			return {
-				countryCode: key.toUpperCase(), //Need uppercase for GeoChart
-				countryName: countryNames[key],
-				impressions: countries[key],
+	[
+		(state, { campaignId }) => {
+			return selectCampaignAnalyticsToCountryData(state, { campaignId })
+		},
+	],
+	data => mapByCountryTableData(data)
+)
+
+const mapByCountryMapChartData = ({
+	impressionsByCountry,
+	clicksByCountry,
+	impressionsAggrByCountry,
+} = {}) => {
+	const colorScale = scaleLinear()
+		.domain([0, impressionsAggrByCountry.max])
+		.range([PRIMARY_LIGHTEST, PRIMARY_DARKEST])
+
+	const hoverColor = SECONDARY
+	const pressedColor = SECONDARY_LIGHT
+	const chartData = { ...chartCountriesData }
+
+	chartData.objects.countries.geometries = chartCountriesData.objects.countries.geometries.map(
+		data => {
+			const id = ISOCountries.numericToAlpha2(data.id)
+			const impressions = impressionsByCountry[id] || 0
+			const clicks = clicksByCountry[id] || 0
+			const name = COUNTRY_NAMES[id] || data.name
+			const percentImpressions =
+				((impressions || 0) / impressionsAggrByCountry.total) * 100 || 0
+			const ctr = ((clicks || 0) / (impressions || 1)) * 100 || 0
+			const tooltipText = `${name}
+				(
+				${t('LABEL_IMPRESSIONS')}: ${formatAbbrNum(impressions, 2)},
+				${t('LABEL_CLICKS')}: ${formatAbbrNum(clicks, 2)},
+				${t('LABEL_PERC')}: ${percentImpressions.toFixed(2)} %,
+				${t('LABEL_CTR')}: ${ctr.toFixed(4)} %,
+				)
+				`
+			const fillColor = impressions > 0 ? colorScale(impressions) : grey[400]
+
+			const properties = {
+				name,
+				fillColor,
+				tooltipText,
 			}
-		})
+
+			return { ...data, properties }
+		}
+	)
+
+	return { chartData, hoverColor, pressedColor }
+}
+
+export const selectPublisherStatsByCountryMapChartData = createSelector(
+	[selectPublisherStatsByCountryData],
+	data => mapByCountryMapChartData(data)
+)
+
+export const selectCampaignAnalyticsToCountryMapChartData = createSelector(
+	[
+		(state, { campaignId }) =>
+			selectCampaignAnalyticsToCountryData(state, { campaignId }),
+	],
+	data => mapByCountryMapChartData(data)
 )
 
 export const selectBestEarnersTableData = createSelector(
@@ -364,22 +446,5 @@ export const selectAdUnitsStatsMaxValues = createSelector(
 				return newResult
 			},
 			{ maxClicks: 0, maxImpressions: 0, maxCTR: 0 }
-		)
-)
-
-export const selectCountryStatsMaxValues = createSelector(
-	selectPublisherStatsByCountryTableData,
-	data =>
-		data.reduce(
-			(result, current) => {
-				const newResult = { ...result }
-				newResult.totalImpressions += current.impressions
-				newResult.maxImpressions = Math.max(
-					current.impressions,
-					newResult.maxImpressions
-				)
-				return newResult
-			},
-			{ maxImpressions: 0, totalImpressions: 0 }
 		)
 )
