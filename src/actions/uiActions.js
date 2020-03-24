@@ -167,6 +167,14 @@ export function updateSelectedItems(collection, selectedItems) {
 	}
 }
 
+export function resetSelectedItems() {
+	return function(dispatch) {
+		return dispatch({
+			type: types.RESET_SELECTED_ITEMS,
+		})
+	}
+}
+
 export function updateSelectedCampaigns(selectedItems) {
 	return function(dispatch) {
 		return updateSelectedItems('campaigns', selectedItems)(dispatch)
