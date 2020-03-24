@@ -301,6 +301,23 @@ export const selectPublisherReceiptsStatsTableData = createSelector(
 			: []
 )
 
+export const selectPublisherReceiptsMaxValues = createSelector(
+	[selectPublisherReceiptsStatsTableData],
+	data =>
+		data.reduce(
+			(result, current) => {
+				const newResult = { ...result }
+				newResult.maxPayouts = Math.max(current.payouts, newResult.maxPayouts)
+				newResult.maxImpressions = Math.max(
+					current.impressions,
+					newResult.maxImpressions
+				)
+				return newResult
+			},
+			{ maxImpressions: 0, maxPayouts: 0 }
+		)
+)
+
 export const selectPublisherReceiptsStatsByMonthTableData = createSelector(
 	[selectAnalytics, selectMainToken, (_, date) => date],
 	({ receipts }, token, date) => {
