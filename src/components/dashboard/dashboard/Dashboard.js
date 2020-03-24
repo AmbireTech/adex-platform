@@ -88,7 +88,7 @@ const AdSlots = () => (
 	</>
 )
 
-const Receipts = () => <PublisherReceiptsTable />
+const PublisherReceipts = () => <PublisherReceiptsTable />
 
 const useStyles = makeStyles(styles)
 
@@ -258,7 +258,12 @@ function Dashboard(props) {
 						<Route
 							exact
 							path='/dashboard/publisher/receipts'
-							component={Receipts}
+							component={PublisherReceipts}
+						/>
+						<Route
+							exact
+							path='/dashboard/publisher/selectedReceipts'
+							component={Receipt}
 						/>
 						<Route
 							exact
