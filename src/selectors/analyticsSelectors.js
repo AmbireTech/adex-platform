@@ -57,8 +57,19 @@ export const selectPublisherStatsByType = createSelector(
 	advancedByType => advancedByType.publisherStats || {}
 )
 export const selectPublisherStatsByCountry = createSelector(
-	state => selectPublisherStatsByType(state, 'IMPRESSION'),
+	(state, type) => selectPublisherStatsByType(state, type),
 	({ reportPublisherToCountry }) => reportPublisherToCountry || {}
+)
+
+export const selectPublisherAggrStatsByCountry = createSelector(
+	(state, type) => selectPublisherStatsByCountry(state, type),
+	(byCountry = {}) => ({
+		max: Math.max.apply(null, Object.values(byCountry)),
+		total: Object.values(byCountry).reduce(
+			(a, value) => a + (Number(value) || 0),
+			0
+		),
+	})
 )
 
 export const selectAllAdUnitsInChannels = createSelector(
@@ -114,12 +125,23 @@ export const selectCampaignAnalyticsByChannelStats = createSelector(
 )
 
 export const selectCampaignAnalyticsByChannelToCountry = createSelector(
-	(state, { type, campaignId } = {}) => [
+	(state, { type, campaignId } = {}) =>
 		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
-	],
-	([{ reportChannelToCountry }]) => {
+	({ reportChannelToCountry }) => {
 		return reportChannelToCountry || {}
 	}
+)
+
+export const selectCampaignAggrStatsByCountry = createSelector(
+	(state, { type, campaignId } = {}) =>
+		selectCampaignAnalyticsByChannelToCountry(state, { type, campaignId }),
+	(byCountry = {}) => ({
+		max: Math.max.apply(null, Object.values(byCountry)),
+		total: Object.values(byCountry).reduce(
+			(a, value) => a + (Number(value) || 0),
+			0
+		),
+	})
 )
 
 export const selectCampaignAnalyticsByChannelToAdUnit = createSelector(
