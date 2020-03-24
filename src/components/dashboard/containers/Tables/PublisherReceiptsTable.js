@@ -1,19 +1,13 @@
 import React, { Fragment } from 'react'
-import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
-import { Visibility, Receipt } from '@material-ui/icons'
-import Img from 'components/common/img/Img'
+import { Receipt } from '@material-ui/icons'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
-import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import {
 	t,
-	selectCampaignsTableData,
 	selectMainToken,
 	selectSide,
-	selectCampaignsMaxImpressions,
-	selectCampaignsMaxClicks,
-	selectCampaignsMaxDeposit,
+	selectPublisherReceiptsMaxValues,
 	selectPublisherReceiptsStatsTableData,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
@@ -21,23 +15,16 @@ import { commify } from 'ethers/utils'
 import { execute, handlePrintSelectedReceiptsPublisher } from 'actions'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
-import { formatDateTime, truncateString } from 'helpers/formatters'
+import { formatDateTime } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 import { useTableData } from './tableHooks'
 import { ReloadData, PrintAllReceipts } from './toolbars'
 
 const RRIconButton = withReactRouterLink(IconButton)
-const RRImg = withReactRouterLink(Img)
 
 const useStyles = makeStyles(styles)
 
-const getCols = ({
-	classes,
-	symbol,
-	maxImpressions,
-	maxDeposit,
-	maxClicks,
-}) => [
+const getCols = ({ classes, symbol, maxImpressions, maxPayouts }) => [
 	{
 		name: 'startOfMonth',
 		label: 'ID',
@@ -52,6 +39,10 @@ const getCols = ({
 		options: {
 			filter: false,
 			customBodyRender: impressions => commify(impressions || 0),
+			...sliderFilterOptions({
+				initial: [0, maxImpressions],
+				filterTitle: t('IMPRESSIONS_FILTER'),
+			}),
 		},
 	},
 	{
@@ -59,15 +50,12 @@ const getCols = ({
 		label: t('LABEL_TOTAL_PAYOUTS'),
 		options: {
 			filter: true,
-			// filterOptions: {
-			// 	names: ['Active', 'Closed', 'Completed'],
-			// 	logic: (status, filters) => {
-			// 		if (filters.length) return !filters.includes(status.humanFriendlyName)
-			// 		return false
-			// 	},
-			// },
 			customBodyRender: payouts =>
 				`${commify(payouts.toFixed(2) || 0)} ${symbol}`,
+			...sliderFilterOptions({
+				initial: [0, maxPayouts],
+				filterTitle: t('PAYOUTS_FILTER'),
+			}),
 		},
 	},
 	{
@@ -149,14 +137,11 @@ const getOptions = ({ decimals, symbol, reloadData }) => ({
 
 function PublisherReceiptsTable(props) {
 	const classes = useStyles()
-	// const data = useSelector(selectPublisherReceiptStats)
-	// console.log(data)
 	const side = useSelector(selectSide)
-	const maxImpressions = useSelector(selectCampaignsMaxImpressions)
-	const maxClicks = useSelector(selectCampaignsMaxClicks)
-	const maxDeposit = useSelector(selectCampaignsMaxDeposit)
+	const { maxImpressions, maxPayouts } = useSelector(
+		selectPublisherReceiptsMaxValues
+	)
 	const { symbol, decimals } = useSelector(selectMainToken)
-
 	const { data, columns, reloadData } = useTableData({
 		selector: selectPublisherReceiptsStatsTableData,
 		selectorArgs: side,
@@ -166,8 +151,7 @@ function PublisherReceiptsTable(props) {
 				classes,
 				symbol,
 				maxImpressions,
-				maxClicks,
-				maxDeposit,
+				maxPayouts,
 			}),
 	})
 	console.log('data', data)
