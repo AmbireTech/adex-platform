@@ -30,7 +30,7 @@ import {
 	formatDateTime,
 	formatNumberWithCommas,
 } from 'helpers/formatters'
-import { formatUnits, bigNumberify } from 'ethers/utils'
+import { formatUnits, bigNumberify, commify } from 'ethers/utils'
 import moment from 'moment'
 
 const useStyles = makeStyles(theme => {
@@ -169,7 +169,7 @@ function CampaignReceiptTpl({ campaignId } = {}) {
 				</Box>
 				<Box>
 					<Typography variant='subtitle2'>
-						<strong>{`${formatNumberWithCommas(
+						<strong>{`${commify(
 							Number(formatUnits(campaign.depositAmount || '0', decimals)) *
 								(campaign.status.fundsDistributedRatio / 1000)
 						)} ${symbol}`}</strong>
@@ -448,7 +448,7 @@ function PublisherReceiptTpl({ date } = {}) {
 									</TableCell>
 									<TableCell>
 										<Typography variant='subtitle2'>
-											<strong>{t('LALBEL_EARNED')}</strong>
+											<strong>{t('RECEIPT_EARNED')}</strong>
 										</Typography>
 									</TableCell>
 									<TableCell>
