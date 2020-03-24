@@ -125,7 +125,7 @@ const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
 }
 
-const getOptions = ({ columns, data, decimals, symbol, reloadData }) => ({
+const getOptions = ({ decimals, symbol, reloadData }) => ({
 	filterType: 'multiselect',
 	selectableRows: 'none',
 	onDownload: (buildHead, buildBody, columns, data) =>
@@ -171,7 +171,7 @@ function PublisherReceiptsTable(props) {
 			}),
 	})
 	console.log('data', data)
-	const options = getOptions({ columns, data, decimals, symbol, reloadData })
+	const options = getOptions({ decimals, symbol, reloadData })
 
 	return (
 		<MUIDataTableEnhanced
