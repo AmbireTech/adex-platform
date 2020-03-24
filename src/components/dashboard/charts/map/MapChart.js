@@ -5,43 +5,54 @@ import {
 	Geographies,
 	Geography,
 } from 'react-simple-maps'
-import { formatAbbrNum } from 'helpers/formatters'
+import { Paper, Typography } from '@material-ui/core'
 
-const MapChart = ({ setTooltipContent, chartData, colorScale }) => {
+const MapChart = ({
+	setTooltipContent,
+	chartData,
+	hoverColor,
+	pressedColor,
+	title,
+}) => {
 	return (
-		<>
+		<Paper elevation={2} square>
+			{title && <Typography variant='h6'>{title}</Typography>}
 			<ComposableMap
 				data-tip=''
-				projectionConfig={{ scale: 170, parallels: true }}
+				projection='geoMercator'
+				projectionConfig={{
+					scale: 100,
+				}}
+				width={666}
+				height={420}
 			>
 				<ZoomableGroup maxZoom={3}>
 					<Geographies geography={chartData}>
 						{({ geographies = [] }) => {
 							return geographies.map(geo => {
-								const { name, impressions } = geo.properties
+								const { tooltipText, fillColor } = geo.properties
 								return (
 									<Geography
 										key={geo.rsmKey}
 										geography={geo}
 										onMouseEnter={() => {
-											setTooltipContent(
-												`${name} — ${formatAbbrNum(impressions, 2)}`
-											)
+											setTooltipContent(tooltipText)
 										}}
 										onMouseLeave={() => {
 											setTooltipContent('')
 										}}
-										fill={geo.id ? colorScale(impressions) : '#F5F4F6'}
+										fill={fillColor}
 										style={{
 											default: {
 												stroke: 'white',
 												outline: 'none',
 											},
 											hover: {
-												fill: 'orange',
+												fill: hoverColor,
 												outline: 'none',
 											},
 											pressed: {
+												fill: pressedColor,
 												outline: 'none',
 											},
 										}}
@@ -52,8 +63,8 @@ const MapChart = ({ setTooltipContent, chartData, colorScale }) => {
 					</Geographies>
 				</ZoomableGroup>
 			</ComposableMap>
-		</>
+		</Paper>
 	)
 }
 
-export default memo(MapChart)
+export default MapChart
