@@ -492,7 +492,7 @@ function PublisherReceiptTpl({ date } = {}) {
 }
 
 PublisherReceiptTpl.propTypes = {
-	campaignId: PropTypes.string.isRequired,
+	date: PropTypes.any.isRequired,
 }
 
 export { CampaignReceiptTpl, PublisherReceiptTpl }
