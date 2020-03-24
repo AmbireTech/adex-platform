@@ -46,12 +46,6 @@ const useTabStyles = makeStyles(theme => {
 		selected: {
 			color: theme.palette.common.white,
 			backgroundColor: activeColor,
-			'&$selected': {
-				color: theme.palette.common.white,
-			},
-		},
-		indicator: {
-			backgroundColor: activeColor,
 		},
 	}
 })
