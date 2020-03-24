@@ -25,10 +25,10 @@ import CampaignStatsBreakdownTable from 'components/dashboard/containers/Tables/
 import { CampaignReceipt } from 'components/dashboard/containers/Receipt/CampaignReceipt'
 import {
 	selectCampaignAnalyticsToCountryTableData,
-	// TODO: selector this is not for here
-	selectPublisherStatsByCountryMapChartData,
+	selectCampaignAnalyticsToCountryMapChartData,
 } from 'selectors'
-import ImpressionsByCountryTableMap from 'components/dashboard/containers/Tables/ImpressionsByCountryTableMap'
+import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
+import StatsByCountryMapChart from 'components/dashboard/charts/StatsByCountryMapChart'
 
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
@@ -149,11 +149,27 @@ export class Campaign extends Component {
 							</Grid>
 						)}
 						{tabIndex === 1 && (
-							<ImpressionsByCountryTableMap
-								selector={selectCampaignAnalyticsToCountryTableData}
-								mapChartSelector={selectPublisherStatsByCountryMapChartData}
-								campaignId={campaign.id}
-							/>
+							<Grid container spacing={2}>
+								<Grid item xs={12} md={12} lg={6}>
+									<StatsByCountryMapChart
+										selector={state =>
+											selectCampaignAnalyticsToCountryMapChartData(state, {
+												campaignId: campaign.id,
+											})
+										}
+									/>
+								</Grid>
+								<Grid item xs={12} md={12} lg={6}>
+									<StatsByCountryTable
+										selector={state =>
+											selectCampaignAnalyticsToCountryTableData(state, {
+												campaignId: campaign.id,
+											})
+										}
+										title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
+									/>
+								</Grid>
+							</Grid>
 						)}
 						{tabIndex === 2 && (
 							<AdUnitsTable campaignId={campaign.id} noClone />
