@@ -40,6 +40,7 @@ const getCols = ({
 }) => [
 	{
 		name: 'startOfMonth',
+		label: 'ID',
 		options: {
 			display: 'excluded',
 			filter: false,
@@ -47,6 +48,7 @@ const getCols = ({
 	},
 	{
 		name: 'impressions',
+		label: t('LABEL_IMPRESSIONS'),
 		options: {
 			filter: false,
 			customBodyRender: impressions => commify(impressions || 0),
@@ -54,9 +56,9 @@ const getCols = ({
 	},
 	{
 		name: 'payouts',
+		label: t('LABEL_TOTAL_PAYOUTS'),
 		options: {
 			filter: true,
-			sort: false,
 			// filterOptions: {
 			// 	names: ['Active', 'Closed', 'Completed'],
 			// 	logic: (status, filters) => {
@@ -64,15 +66,15 @@ const getCols = ({
 			// 		return false
 			// 	},
 			// },
-			customBodyRender: payouts => commify(payouts.toFixed(2) || 0),
-			// TODO: Sorting issue
+			customBodyRender: payouts =>
+				`${commify(payouts.toFixed(2) || 0)} ${symbol}`,
 		},
 	},
 	{
 		name: 'startOfMonth',
 		label: t('RECEIPT_MONTH'),
 		options: {
-			filter: false,
+			filter: true,
 			sort: true,
 			sortDirection: 'desc',
 			customBodyRender: startOfMonth =>
@@ -110,32 +112,24 @@ const getCols = ({
 	},
 ]
 
-// const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
-// 	const mappedData = data.map(i => ({
-// 		index: i.index,
-// 		data: [
-// 			i.data[0],
-// 			i.data[1],
-// 			i.data[2],
-// 			i.data[3].humanFriendlyName,
-// 			`${i.data[4]} ${symbol}`,
-// 			`${((i.data[5] || 0) / 10).toFixed(2)} %`,
-// 			i.data[6],
-// 			i.data[7],
-// 			i.data[8],
-// 			formatDateTime(i.data[9]),
-// 			formatDateTime(i.data[10]),
-// 			formatDateTime(i.data[11]),
-// 		],
-// 	}))
-// 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
-// }
+const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
+	const mappedData = data.map(i => ({
+		index: i.index,
+		data: [
+			i.data[0],
+			i.data[1],
+			i.data[2],
+			formatDateTime(i.data[3], 'MMMM, YYYY'),
+		],
+	}))
+	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
+}
 
-const getOptions = ({ decimals, symbol, reloadData }) => ({
+const getOptions = ({ columns, data, decimals, symbol, reloadData }) => ({
 	filterType: 'multiselect',
 	selectableRows: 'none',
-	// onDownload: (buildHead, buildBody, columns, data) =>
-	// 	onDownload(buildHead, buildBody, columns, data, decimals, symbol),
+	onDownload: (buildHead, buildBody, columns, data) =>
+		onDownload(buildHead, buildBody, columns, data, decimals, symbol),
 	customToolbar: () => <ReloadData handleReload={reloadData} />,
 	customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
 		const selectedIndexes = selectedRows.data.map(i => i.dataIndex)
@@ -177,7 +171,7 @@ function PublisherReceiptsTable(props) {
 			}),
 	})
 	console.log('data', data)
-	const options = getOptions({ decimals, symbol, reloadData })
+	const options = getOptions({ columns, data, decimals, symbol, reloadData })
 
 	return (
 		<MUIDataTableEnhanced
