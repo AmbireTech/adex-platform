@@ -19,9 +19,10 @@ let initialState = {
 	},
 	currentItem: {},
 	selectedItems: {
-		campaings: [],
+		campaigns: [],
 		adUnits: [],
 		slots: [],
+		publisherReceipts: [],
 	},
 	items: {
 		Campaign: {},
