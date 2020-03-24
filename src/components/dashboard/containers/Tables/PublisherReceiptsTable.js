@@ -18,7 +18,7 @@ import {
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { commify } from 'ethers/utils'
-import { execute, handlePrintSelectedReceipts, getReceiptData } from 'actions'
+import { execute, handlePrintSelectedReceiptsPublisher } from 'actions'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
 import { formatDateTime, truncateString } from 'helpers/formatters'
@@ -38,6 +38,13 @@ const getCols = ({
 	maxDeposit,
 	maxClicks,
 }) => [
+	{
+		name: 'startOfMonth',
+		options: {
+			display: 'excluded',
+			filter: false,
+		},
+	},
 	{
 		name: 'impressions',
 		options: {
@@ -103,32 +110,32 @@ const getCols = ({
 	},
 ]
 
-const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
-	const mappedData = data.map(i => ({
-		index: i.index,
-		data: [
-			i.data[0],
-			i.data[1],
-			i.data[2],
-			i.data[3].humanFriendlyName,
-			`${i.data[4]} ${symbol}`,
-			`${((i.data[5] || 0) / 10).toFixed(2)} %`,
-			i.data[6],
-			i.data[7],
-			i.data[8],
-			formatDateTime(i.data[9]),
-			formatDateTime(i.data[10]),
-			formatDateTime(i.data[11]),
-		],
-	}))
-	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
-}
+// const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
+// 	const mappedData = data.map(i => ({
+// 		index: i.index,
+// 		data: [
+// 			i.data[0],
+// 			i.data[1],
+// 			i.data[2],
+// 			i.data[3].humanFriendlyName,
+// 			`${i.data[4]} ${symbol}`,
+// 			`${((i.data[5] || 0) / 10).toFixed(2)} %`,
+// 			i.data[6],
+// 			i.data[7],
+// 			i.data[8],
+// 			formatDateTime(i.data[9]),
+// 			formatDateTime(i.data[10]),
+// 			formatDateTime(i.data[11]),
+// 		],
+// 	}))
+// 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
+// }
 
 const getOptions = ({ decimals, symbol, reloadData }) => ({
 	filterType: 'multiselect',
 	selectableRows: 'none',
-	onDownload: (buildHead, buildBody, columns, data) =>
-		onDownload(buildHead, buildBody, columns, data, decimals, symbol),
+	// onDownload: (buildHead, buildBody, columns, data) =>
+	// 	onDownload(buildHead, buildBody, columns, data, decimals, symbol),
 	customToolbar: () => <ReloadData handleReload={reloadData} />,
 	customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
 		const selectedIndexes = selectedRows.data.map(i => i.dataIndex)
@@ -138,7 +145,7 @@ const getOptions = ({ decimals, symbol, reloadData }) => ({
 		return (
 			<PrintAllReceipts
 				handlePrintAllReceipts={() =>
-					execute(handlePrintSelectedReceipts(selectedItems))
+					execute(handlePrintSelectedReceiptsPublisher(selectedItems))
 				}
 				disabled={selectedItems.length === 0}
 			/>
