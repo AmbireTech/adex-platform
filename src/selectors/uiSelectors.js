@@ -64,6 +64,11 @@ export const selectSelectedCampaigns = createSelector(
 	({ campaigns }) => campaigns || []
 )
 
+export const selectSelectedPublisherReceipts = createSelector(
+	selectSelectedItems,
+	({ publisherReceipts }) => publisherReceipts || []
+)
+
 export const selectLoginDirectSide = createSelector(
 	selectGlobalUi,
 	({ goToSide }) => goToSide || ''
