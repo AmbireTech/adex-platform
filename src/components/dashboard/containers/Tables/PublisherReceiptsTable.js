@@ -159,7 +159,7 @@ function PublisherReceiptsTable(props) {
 
 	return (
 		<MUIDataTableEnhanced
-			title={t('ALL_CAMPAIGNS')}
+			title={t('RECEIPTS')}
 			data={data}
 			columns={columns}
 			options={options}
