@@ -17,7 +17,7 @@ import {
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { commify } from 'ethers/utils'
-import { execute, handlePrintSelectedReceipts } from 'actions'
+import { execute, handlePrintSelectedReceiptsAdvertiser } from 'actions'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
 import { formatDateTime, truncateString } from 'helpers/formatters'
@@ -296,7 +296,7 @@ const getOptions = ({ decimals, symbol, reloadData }) => ({
 		return (
 			<PrintAllReceipts
 				handlePrintAllReceipts={() =>
-					execute(handlePrintSelectedReceipts(selectedItems))
+					execute(handlePrintSelectedReceiptsAdvertiser(selectedItems))
 				}
 				disabled={selectedItems.length === 0}
 			/>
