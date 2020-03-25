@@ -54,6 +54,24 @@ const getCols = ({ classes }) => [
 			customBodyRender: impressions => commify(impressions || 0),
 		},
 	},
+	{
+		name: 'clicks',
+		label: t('LABEL_CLICKS'),
+		options: {
+			filter: false,
+			sort: true,
+			customBodyRender: clicks => commify(clicks || 0),
+		},
+	},
+	{
+		name: 'ctr',
+		label: t('LABEL_CTR'),
+		options: {
+			filter: false,
+			sort: true,
+			customBodyRender: ctr => `${ctr.toFixed(4)} %`,
+		},
+	},
 ]
 
 const onDownload = (buildHead, buildBody, columns, data) => {
