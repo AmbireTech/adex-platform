@@ -278,7 +278,7 @@ CampaignReceiptTpl.propTypes = {
 
 function PublisherReceiptTpl({ date } = {}) {
 	const classes = useStyles()
-	const { symbol, decimals } = useSelector(selectMainToken)
+	const { symbol } = useSelector(selectMainToken)
 	const identityAddr = useSelector(selectAccountIdentityAddr)
 
 	const monthBreakdown = useSelector(state =>
@@ -288,28 +288,10 @@ function PublisherReceiptTpl({ date } = {}) {
 	const { totalPayouts, totalImpressions } = useSelector(state =>
 		selectPublisherReceiptsStatsByMonthTotalValues(state, date)
 	)
-	// const campaign = useSelector(state =>
-	// 	selectCampaignWithAnalyticsById(state, campaignId)
-	// )
+
 	const { companyName, firstLastName, address, country } = useSelector(
 		selectCompanyData
 	)
-	// const humanFriendlyName = (campaign.status || {}).humanFriendlyName
-	// const receiptReady =
-	// 	humanFriendlyName === 'Closed' || humanFriendlyName === 'Completed'
-	// if (!campaign.spec || !campaign.creator) {
-	// 	return (
-	// 		<PageNotFound
-	// 			title={t('ITEM_NOT_FOUND_TITLE')}
-	// 			subtitle={t('ITEM_NOT_FOUND_SUBTITLE', {
-	// 				args: ['CAMPAIGN', campaignId],
-	// 			})}
-	// 			goToPath={`/dashboard/advertiser`}
-	// 			goToTxt='GO_TO_DASHBOARD'
-	// 		/>
-	// 	)
-	// }
-	// if (!receiptReady) return null
 	return (
 		<Box mb={5} className={classnames(classes.pageBreak)}>
 			<Box mb={2} display='flex' justifyContent='space-between'>
@@ -358,7 +340,6 @@ function PublisherReceiptTpl({ date } = {}) {
 					<Box mb={2}>
 						<Typography variant='body2'>{t('RECEIPT_PAYMENT_DATE')}</Typography>
 						<Typography variant='subtitle2'>
-							{/* TODO: Need a date when the campaign has beeen completed */}
 							<strong>
 								{formatDateTime(
 									moment(date)
@@ -369,12 +350,6 @@ function PublisherReceiptTpl({ date } = {}) {
 							</strong>
 						</Typography>
 					</Box>
-					{/* <Box mb={2}>
-						<Typography variant='body2'>{t('RECEIPT_CAMPAIGN_ID')}</Typography>
-						<Typography variant='subtitle2'>
-							<strong>{1111}</strong>
-						</Typography>
-					</Box> */}
 				</Box>
 				<Box display='flex' flexDirection='column' alignItems='flex-end'>
 					<Typography variant='h6'>{t('RECEIPT_EARNED')}</Typography>
