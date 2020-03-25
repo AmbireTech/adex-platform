@@ -382,10 +382,8 @@ export const selectCampaignStatsTableData = createSelector(
 		return Object.keys(imprStats).map(key => ({
 			website: key,
 			impressions: imprStats[key] || 0,
-			ctr:
-				(((clickStats[key] || 0) / (imprStats[key] || 0)) * 100).toFixed(2) ||
-				0,
-			earnings: Number((earnStats[key] || 0).toFixed(2)),
+			ctr: ((clickStats[key] || 0) / (imprStats[key] || 1)) * 100,
+			earnings: Number(earnStats[key] || 0),
 			clicks: clickStats[key] || 0,
 		}))
 	}
