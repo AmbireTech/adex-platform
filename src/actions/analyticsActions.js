@@ -27,6 +27,7 @@ import {
 	selectAccountIdentityDeployData,
 } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
+import moment from 'moment'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
@@ -302,46 +303,57 @@ export function updateAccountCampaignsAnalytics() {
 
 export function getReceiptData() {
 	return async function(dispatch, getState) {
-		const { account } = getState().persist
+		const state = getState()
+		const { account } = state.persist
 		try {
 			const leaderAuth = await getValidatorAuthToken({
 				validatorId: VALIDATOR_LEADER_ID,
 				account,
 			})
-
 			updateValidatorAuthTokens({
 				newAuth: { [VALIDATOR_LEADER_ID]: leaderAuth },
 			})(dispatch, getState)
-			const { created } = selectAccountIdentityDeployData(getState())
+			const { created } = selectAccountIdentityDeployData(state)
 			const timeframe = 'month'
-			const limit = 500 // would only get 500 days. must extend if startDate - endDate > 500 days
-			const start = +new Date(created)
-			const end = +Date.now()
-			const impressionsPromise = timeBasedAnalytics({
-				leaderAuth,
-				timeframe,
-				limit,
-				eventType: 'IMPRESSION',
-				metric: 'eventCounts',
-				start,
-				end,
-			})
-			const payoutsPromise = timeBasedAnalytics({
-				leaderAuth,
-				timeframe,
-				limit,
-				eventType: 'IMPRESSION',
-				metric: 'eventPayouts',
-				start,
-				end,
-			})
-			const [impressions, payouts] = await Promise.all([
-				impressionsPromise,
-				payoutsPromise,
-			])
-			const result = impressions.aggr.map((item, i) => ({
+			const limit = 500
+			const promises = []
+			//limit of request is 500 days
+			for (
+				var m = moment(created);
+				m.diff(Date.now()) <= 0;
+				m.add(limit, 'day')
+			) {
+				promises.push(
+					timeBasedAnalytics({
+						leaderAuth,
+						timeframe,
+						limit,
+						eventType: 'IMPRESSION',
+						metric: 'eventCounts',
+						start: +m,
+						end: +m.clone().add(limit, 'day'),
+					}),
+					timeBasedAnalytics({
+						leaderAuth,
+						timeframe,
+						limit,
+						eventType: 'IMPRESSION',
+						metric: 'eventPayouts',
+						start: +m,
+						end: +m.clone().add(limit, 'day'),
+					})
+				)
+			}
+			const resolvedPromises = await Promise.all(promises)
+			let impressions = []
+			let payouts = []
+			for (let i = 0; i < resolvedPromises.length; i += 2) {
+				impressions = [...impressions, ...resolvedPromises[i].aggr]
+				payouts = [...payouts, ...resolvedPromises[i + 1].aggr]
+			}
+			const result = impressions.map((item, i) => ({
 				impressions: item.value,
-				payouts: payouts.aggr[i].value,
+				payouts: payouts[i].value,
 				time: item.time,
 			}))
 			dispatch({
