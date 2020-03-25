@@ -153,9 +153,13 @@ export const selectCampaignAnalyticsByChannelStats = createSelector(
 export const selectCampaignAnalyticsByChannelToCountry = createSelector(
 	(state, { type, campaignId } = {}) =>
 		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
-	({ reportChannelToCountry }) => {
-		return reportChannelToCountry || {}
-	}
+	({ reportChannelToCountry }) => reportChannelToCountry || {}
+)
+
+export const selectCampaignAnalyticsByChannelToCountryPay = createSelector(
+	(state, { type, campaignId } = {}) =>
+		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
+	({ reportChannelToCountryPay }) => reportChannelToCountryPay || {}
 )
 
 export const selectCampaignAggrStatsByCountry = createSelector(
@@ -180,11 +184,10 @@ export const selectCampaignAnalyticsByChannelToAdUnit = createSelector(
 export const selectMaxAdUnitStatByChannel = createSelector(
 	(state, { type, campaignId } = {}) =>
 		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
-	({ reportChannelToAdUnit }) => {
-		return reportChannelToAdUnit
+	({ reportChannelToAdUnit }) =>
+		reportChannelToAdUnit
 			? Math.max.apply(null, Object.values(reportChannelToAdUnit))
 			: 0
-	}
 )
 
 export const selectAnalyticsDataAggr = createSelector(
