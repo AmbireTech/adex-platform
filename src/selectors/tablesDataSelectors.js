@@ -344,22 +344,20 @@ export const selectCampaignAnalyticsToCountryMapChartData = createSelector(
 
 export const selectBestEarnersTableData = createSelector(
 	selectPublisherAdvanceStatsToAdUnit,
-	([items]) =>
-		items
-			? items.map(item => {
-					const id = item.id || item.ipfs
-					return {
-						id,
-						media: {
-							id,
-							mediaUrl: item.mediaUrl,
-							mediaMime: item.mediaMime,
-						},
-						type: item.type,
-						impressions: item.impressions,
-					}
-			  })
-			: []
+	items =>
+		items.map(item => {
+			const id = item.id || item.ipfs
+			return {
+				id,
+				media: {
+					id,
+					mediaUrl: item.mediaUrl,
+					mediaMime: item.mediaMime,
+				},
+				type: item.type,
+				impressions: item.impressions,
+			}
+		})
 )
 
 export const selectCampaignStatsTableData = createSelector(
