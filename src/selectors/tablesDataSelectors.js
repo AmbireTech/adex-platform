@@ -341,20 +341,20 @@ const mapByCountryMapChartData = ({
 			const percentImpressions =
 				((impressions || 0) / impressionsAggrByCountry.total) * 100 || 0
 			const ctr = ((clicks || 0) / (impressions || 1)) * 100 || 0
-			const tooltipText = `${name}
-				(
-				${t('LABEL_IMPRESSIONS')}: ${formatAbbrNum(impressions, 2)},
-				${t('LABEL_CLICKS')}: ${formatAbbrNum(clicks, 2)},
-				${t('LABEL_PERC')}: ${percentImpressions.toFixed(2)} %,
-				${t('LABEL_CTR')}: ${ctr.toFixed(4)} %,
-				)
-				`
+			const tooltipElements = [
+				`${name}:`,
+				`${t('LABEL_IMPRESSIONS')}: ${formatAbbrNum(impressions, 2)}`,
+				`${t('LABEL_CLICKS')}: ${formatAbbrNum(clicks, 2)}`,
+				`${t('LABEL_PERC')}: ${percentImpressions.toFixed(2)} %`,
+				`${t('LABEL_CTR')}: ${ctr.toFixed(4)} %`,
+			]
+
 			const fillColor = impressions > 0 ? colorScale(impressions) : grey[400]
 
 			const properties = {
 				name,
 				fillColor,
-				tooltipText,
+				tooltipElements,
 			}
 
 			return { ...data, properties }
