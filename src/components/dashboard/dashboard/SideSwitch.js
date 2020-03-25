@@ -19,14 +19,12 @@ const handleChange = (ev, index) => {
 }
 
 const useTabsStyles = makeStyles(theme => {
-	const activeColor = ({ side }) =>
-		side === 'advertiser'
-			? theme.palette.accentOne.main
-			: theme.palette.accentTwo.main
-
 	return {
 		indicator: {
-			backgroundColor: activeColor,
+			// NOTE: we use Tab background color as indicator
+			// There is an animation for the Tabs indicator that looks out of
+			// sync with Tab background change
+			background: '0',
 		},
 	}
 })
@@ -36,21 +34,16 @@ const useTabStyles = makeStyles(theme => {
 		side === 'advertiser'
 			? theme.palette.accentOne.main
 			: theme.palette.accentTwo.main
-
-	const activeBgColor = ({ side }) =>
-		side === 'advertiser'
-			? theme.palette.accentOne.light
-			: theme.palette.accentTwo.light
 	return {
 		root: {
 			minWidth: 30,
 			'&$selected': {
-				color: activeColor,
+				color: theme.palette.common.white,
 			},
 		},
 		selected: {
-			color: activeColor,
-			backgroundColor: activeBgColor,
+			color: theme.palette.common.white,
+			backgroundColor: activeColor,
 		},
 	}
 })

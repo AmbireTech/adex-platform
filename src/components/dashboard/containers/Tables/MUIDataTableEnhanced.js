@@ -66,6 +66,7 @@ export default function MUIDataTableEnhanced(props) {
 				search: !props.noSearch,
 				download: !props.noDownload,
 				print: !props.noPrint,
+				viewColumns: !props.noViewColumns,
 				selectableRows: props.rowSelectable ? 'multiple' : 'none',
 				disableToolbarSelect: props.toolbarEnabled ? false : true,
 			}}
