@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useCallback, Fragment } from 'react'
+import React, { useCallback } from 'react'
 import classnames from 'classnames'
 import { commify } from 'ethers/utils'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
-import { t, selectSide, selectBestEarnersTableData } from 'selectors'
+import { t, selectBestEarnersTableData } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
-import { useSelector } from 'react-redux'
 import { styles } from './styles'
 
 import { useTableData } from './tableHooks'
@@ -77,14 +76,10 @@ const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
 
 function BestEarnersTable(props) {
 	const classes = useStyles()
-	const side = useSelector(selectSide)
-	const { noActions, noClone, campaignId, handleSelect, selected = [] } = props
-
-	const [selectorArgs, setSelectorArgs] = useState({})
+	const { noActions, noClone, handleSelect, selected = [] } = props
 
 	const { data, columns, reloadData } = useTableData({
 		selector: selectBestEarnersTableData,
-		selectorArgs,
 		getColumns: () =>
 			getCols({
 				classes,
@@ -92,15 +87,6 @@ function BestEarnersTable(props) {
 				noClone,
 			}),
 	})
-
-	// NOTE: despite useTableData hook the component is updating.
-	// 'selectorArgs' are object and they have new reference on each update
-	// that causes useTableData to update the data on selectorArgs change.
-	// If selectorArgs are reference type we need to use useState fot them
-	// TODO: find why useTableData causing this update
-	useEffect(() => {
-		setSelectorArgs({ side, campaignId })
-	}, [side, campaignId])
 
 	const onRowsSelect = useCallback(
 		(_, allRowsSelected) => {
