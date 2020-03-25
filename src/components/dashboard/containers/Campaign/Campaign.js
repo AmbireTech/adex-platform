@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
+import Paper from '@material-ui/core/Paper'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import Translate from 'components/translate/Translate'
@@ -19,10 +20,18 @@ import AppBar from '@material-ui/core/AppBar'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
+import Typography from '@material-ui/core/Typography'
 import Anchor from 'components/common/anchor/anchor'
 import CampaignStatsDoughnut from 'components/dashboard/charts/campaigns/CampaignStatsDoughnut'
 import CampaignStatsBreakdownTable from 'components/dashboard/containers/Tables/CampaignStatsBreakdownTable'
 import { Receipt } from 'components/dashboard/containers/Receipt'
+import {
+	selectCampaignAnalyticsToCountryTableData,
+	selectCampaignAnalyticsToCountryMapChartData,
+} from 'selectors'
+import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
+import MapChart from 'components/dashboard/charts/map/MapChart'
+
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 const VIEW_MODE = 'campaignRowsView'
@@ -46,17 +55,19 @@ export class Campaign extends Component {
 		return (
 			<Grid container spacing={2}>
 				<Grid item xs={12}>
-					<Button
-						variant='contained'
-						color='secondary'
-						size='large'
-						onClick={() => {
-							actions.closeCampaign({ campaign })
-						}}
-						disabled={humanFriendlyName === 'Closed'}
-					>
-						{t('BTN_CLOSE_CAMPAIGN')}
-					</Button>
+					<Box display='flex' justifyContent='center' mb={4}>
+						<Button
+							variant='contained'
+							color='secondary'
+							size='large'
+							onClick={() => {
+								actions.closeCampaign({ campaign })
+							}}
+							disabled={humanFriendlyName === 'Closed'}
+						>
+							{t('BTN_CLOSE_CAMPAIGN')}
+						</Button>
+					</Box>
 				</Grid>
 			</Grid>
 		)
@@ -115,6 +126,7 @@ export class Campaign extends Component {
 							textColor='primary'
 						>
 							<Tab label={t('STATISTICS')} />
+							<Tab label={t('COUNTRY_STATS')} />
 							<Tab label={t('CAMPAIGN_UNITS')} />
 							<Tab label={t('VALIDATORS')} />
 							{(humanFriendlyName === 'Closed' ||
@@ -139,9 +151,41 @@ export class Campaign extends Component {
 							</Grid>
 						)}
 						{tabIndex === 1 && (
-							<AdUnitsTable campaignId={campaign.id} noClone />
+							<Grid container spacing={2}>
+								<Grid item xs={12} alignItems='center'>
+									<Paper>
+										<Box p={2}>
+											<Typography variant='button' align='center'>
+												{t('COUNTRY_STATS_PERIOD', { args: ['30', 'DAYS'] })}
+											</Typography>
+										</Box>
+									</Paper>
+								</Grid>
+								<Grid item xs={12} md={12} lg={6}>
+									<MapChart
+										selector={state =>
+											selectCampaignAnalyticsToCountryMapChartData(state, {
+												campaignId: campaign.id,
+											})
+										}
+									/>
+								</Grid>
+								<Grid item xs={12} md={12} lg={6}>
+									<StatsByCountryTable
+										selector={state =>
+											selectCampaignAnalyticsToCountryTableData(state, {
+												campaignId: campaign.id,
+											})
+										}
+										showEarnings
+									/>
+								</Grid>
+							</Grid>
 						)}
 						{tabIndex === 2 && (
+							<AdUnitsTable campaignId={campaign.id} noClone />
+						)}
+						{tabIndex === 3 && (
 							<List>
 								<Anchor
 									target='_blank'
