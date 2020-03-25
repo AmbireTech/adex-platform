@@ -6,14 +6,21 @@ import grey from '@material-ui/core/colors/grey'
 
 const WHITE = '#fff'
 export const PRIMARY = '#1B75BC'
+export const PRIMARY_LIGHT = '#5fa3ef'
+export const PRIMARY_LIGHTEST = '#96d4ff'
+export const PRIMARY_DARK = '#004a8b'
+export const PRIMARY_DARKEST = '#00235d'
 export const SECONDARY = '#FFAC00'
+export const SECONDARY_LIGHT = '#ffde4b'
+export const SECONDARY_DARK = '#c67d00'
+
 export const ALEX_GREY = '#3f3e3e'
 export const ACCENT_ONE = '#57467B'
 export const ACCENT_ONE_LIGHT = '#dedded'
-export const ACCENT_TWO = '#7CB4B8'
+export const ACCENT_TWO = '#699FA2'
 export const ACCENT_TWO_LIGHT = '#e4f3f5'
 
-const palette = {
+export const palette = {
 	primary: { main: PRIMARY, contrastText: WHITE },
 	secondary: { main: SECONDARY, contrastText: WHITE },
 	accentOne: { main: ACCENT_ONE, light: ACCENT_ONE_LIGHT, contrastText: WHITE },
