@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import MUIDataTable from 'mui-datatables'
+import { LinearProgress } from '@material-ui/core'
 import { t } from 'selectors'
+import { makeStyles } from '@material-ui/core/styles'
 
 const generalTableOptions = {
 	rowsPerPage: 5,
@@ -51,24 +53,36 @@ const generalTableOptions = {
 		},
 	},
 }
-export default function MUIDataTableEnhanced(props) {
-	const { title, data, columns, options } = props
 
+const useStyles = makeStyles(theme => {
+	return {
+		progress: {
+			width: '100%',
+		},
+	}
+})
+
+export default function MUIDataTableEnhanced(props) {
+	const { title, data, columns, options, loading } = props
+	const classes = useStyles()
 	return (
-		<MUIDataTable
-			title={title}
-			data={data}
-			columns={columns}
-			options={{
-				...generalTableOptions,
-				...options,
-				elevation: 2,
-				search: !props.noSearch,
-				download: !props.noDownload,
-				print: !props.noPrint,
-				selectableRows: props.rowSelectable ? 'multiple' : 'none',
-				disableToolbarSelect: props.toolbarEnabled ? false : true,
-			}}
-		/>
+		<Fragment>
+			<MUIDataTable
+				title={title}
+				data={data}
+				columns={columns}
+				options={{
+					...generalTableOptions,
+					...options,
+					elevation: 2,
+					search: !props.noSearch,
+					download: !props.noDownload,
+					print: !props.noPrint,
+					selectableRows: props.rowSelectable ? 'multiple' : 'none',
+					disableToolbarSelect: props.toolbarEnabled ? false : true,
+				}}
+			/>
+			{loading && <LinearProgress className={classes.progress} />}
+		</Fragment>
 	)
 }
