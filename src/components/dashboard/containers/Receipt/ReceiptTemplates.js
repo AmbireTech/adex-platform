@@ -427,6 +427,19 @@ function PublisherReceiptTpl({ date } = {}) {
 				</Box>
 			</Box>
 			<Divider />
+			<Box mt={2} display='flex' justifyContent='space-between'>
+				<Box>
+					<Typography variant='body2'>{t('LABEL_AVG_CPM')}</Typography>
+				</Box>
+				<Box>
+					<Typography variant='subtitle2'>
+						<strong>
+							{`${((totalPayouts / totalImpressions) * 1000).toFixed(2)}`}
+						</strong>
+					</Typography>
+				</Box>
+			</Box>
+			<Divider />
 			{monthBreakdown.length > 0 && (
 				<Fragment>
 					<Box mt={2} display='flex' justifyContent='space-between'>
