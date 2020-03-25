@@ -286,21 +286,19 @@ export const selectAdUnitsStatsMaxValues = createSelector(
 export const selectPublisherReceiptsStatsTableData = createSelector(
 	[selectPublisherReceiptStats, selectMainToken],
 	(stats, token) =>
-		stats.length > 0
-			? stats
-					.map(item => {
-						const { decimals = 18 } = token || {}
-						const payouts = Number(formatUnits(item.payouts || '0', decimals))
-						return {
-							impressions: item.impressions,
-							payouts,
-							cpm: (payouts / item.impressions) * 1000,
-							startOfMonth: item.startOfMonth,
-							endOfMonth: item.startOfMonth,
-						}
-					})
-					.filter(i => i.payouts !== 0)
-			: []
+		stats
+			.map(item => {
+				const { decimals = 18 } = token || {}
+				const payouts = Number(formatUnits(item.payouts || '0', decimals))
+				return {
+					impressions: item.impressions,
+					payouts,
+					cpm: (payouts / item.impressions) * 1000,
+					startOfMonth: item.startOfMonth,
+					endOfMonth: item.startOfMonth,
+				}
+			})
+			.filter(i => i.payouts !== 0)
 )
 
 export const selectPublisherReceiptsMaxValues = createSelector(
