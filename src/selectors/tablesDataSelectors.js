@@ -290,9 +290,11 @@ export const selectPublisherReceiptsStatsTableData = createSelector(
 			? stats
 					.map(item => {
 						const { decimals = 18 } = token || {}
+						const payouts = Number(formatUnits(item.payouts || '0', decimals))
 						return {
 							impressions: item.impressions,
-							payouts: Number(formatUnits(item.payouts || '0', decimals)),
+							payouts,
+							cpm: (payouts / item.impressions) * 1000,
 							startOfMonth: item.startOfMonth,
 							endOfMonth: item.startOfMonth,
 						}
@@ -307,6 +309,7 @@ export const selectPublisherReceiptsMaxValues = createSelector(
 		data.reduce(
 			(result, current) => {
 				const newResult = { ...result }
+				newResult.maxCPM = Math.max(current.cpm, newResult.maxCPM)
 				newResult.maxPayouts = Math.max(current.payouts, newResult.maxPayouts)
 				newResult.maxImpressions = Math.max(
 					current.impressions,
@@ -314,7 +317,7 @@ export const selectPublisherReceiptsMaxValues = createSelector(
 				)
 				return newResult
 			},
-			{ maxImpressions: 0, maxPayouts: 0 }
+			{ maxImpressions: 0, maxPayouts: 0, maxCPM: 0 }
 		)
 )
 
