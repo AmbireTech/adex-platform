@@ -17,6 +17,7 @@ import {
 	selectCampaignAnalyticsByChannelToCountry,
 	selectPublisherAggrStatsByCountry,
 	selectCampaignAggrStatsByCountry,
+	selectPublisherPayStatsByCountry,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 import chartCountriesData from 'world-atlas/countries-50m.json'
@@ -214,19 +215,26 @@ const mapByCountryTableData = ({
 	impressionsByCountry,
 	clicksByCountry,
 	impressionsAggrByCountry,
+	impressionsPayByCountry,
+	clicksPayByCountry,
 } = {}) => {
+	const addEarnings = impressionsPayByCountry && clicksPayByCountry
 	// NOTE: assume that there are no click without impressions
 	return Object.keys(impressionsByCountry).map(key => {
 		return {
 			countryName: COUNTRY_NAMES[key],
 			impressions: impressionsByCountry[key] || 0,
 			percentImpressions:
-				((impressionsByCountry[key] || 0) / impressionsAggrByCountry.total) *
-					100 || 0,
+				((impressionsByCountry[key] || 0) /
+					(impressionsAggrByCountry.total || 1)) *
+				100,
 			clicks: clicksByCountry[key] || 0,
 			ctr:
-				((clicksByCountry[key] || 0) / (impressionsByCountry[key] || 1)) *
-					100 || 0,
+				((clicksByCountry[key] || 0) / (impressionsByCountry[key] || 1)) * 100,
+			...(addEarnings && {
+				earnings:
+					(impressionsPayByCountry[key] || 0) + (clicksPayByCountry[key] || 0),
+			}),
 		}
 	})
 }
@@ -236,11 +244,21 @@ export const selectPublisherStatsByCountryData = createSelector(
 		state => selectPublisherStatsByCountry(state, 'IMPRESSION'),
 		state => selectPublisherStatsByCountry(state, 'CLICK'),
 		state => selectPublisherAggrStatsByCountry(state, 'IMPRESSION'),
+		state => selectPublisherPayStatsByCountry(state, 'IMPRESSION'),
+		state => selectPublisherPayStatsByCountry(state, 'CLICK'),
 	],
-	(impressionsByCountry, clicksByCountry, impressionsAggrByCountry) => ({
+	(
 		impressionsByCountry,
 		clicksByCountry,
 		impressionsAggrByCountry,
+		impressionsPayByCountry,
+		clicksPayByCountry
+	) => ({
+		impressionsByCountry,
+		clicksByCountry,
+		impressionsAggrByCountry,
+		impressionsPayByCountry,
+		clicksPayByCountry,
 	})
 )
 
