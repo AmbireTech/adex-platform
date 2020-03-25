@@ -95,13 +95,15 @@ export const selectPublisherAdvanceStatsToAdUnit = createSelector(
 	state => [
 		selectAllAdUnitsInChannels(state),
 		selectPublisherStatsAdUnit(state, 'IMPRESSION'),
+		selectPublisherStatsAdUnit(state, 'CLICK'),
 	],
-	([adUnits, impressionsByAdUnit]) =>
+	([adUnits, impressionsByAdUnit, clicksByAdUnit]) =>
 		Object.values(adUnits)
 			.filter(i => impressionsByAdUnit[i.id] !== undefined)
 			.map(item => ({
 				...item,
 				impressions: impressionsByAdUnit[item.id],
+				clicks: clicksByAdUnit[item.id],
 			}))
 )
 
