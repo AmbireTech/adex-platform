@@ -11,7 +11,7 @@ import {
 } from 'selectors'
 import BestEarnersTable from 'components/dashboard/containers/Tables/BestEarnersTable'
 import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
-import StatsByCountryMapChart from 'components/dashboard/charts/StatsByCountryMapChart'
+import MapChart from 'components/dashboard/charts/map/MapChart'
 
 export function DashboardStats(props) {
 	const side = useSelector(selectSide)
@@ -37,9 +37,7 @@ export function DashboardStats(props) {
 								</Box>
 							</Paper>
 
-							<StatsByCountryMapChart
-								selector={selectPublisherStatsByCountryMapChartData}
-							/>
+							<MapChart selector={selectPublisherStatsByCountryMapChartData} />
 							<StatsByCountryTable
 								selector={selectPublisherStatsByCountryTableData}
 								// TODO: uncomment after 26.04.2020

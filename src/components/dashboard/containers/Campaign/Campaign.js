@@ -30,7 +30,7 @@ import {
 	selectCampaignAnalyticsToCountryMapChartData,
 } from 'selectors'
 import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
-import StatsByCountryMapChart from 'components/dashboard/charts/StatsByCountryMapChart'
+import MapChart from 'components/dashboard/charts/map/MapChart'
 
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
 // import UnitTargets from 'components/dashboard/containers/UnitTargets'
@@ -162,7 +162,7 @@ export class Campaign extends Component {
 									</Paper>
 								</Grid>
 								<Grid item xs={12} md={12} lg={6}>
-									<StatsByCountryMapChart
+									<MapChart
 										selector={state =>
 											selectCampaignAnalyticsToCountryMapChartData(state, {
 												campaignId: campaign.id,
