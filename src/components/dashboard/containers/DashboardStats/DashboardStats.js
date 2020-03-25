@@ -34,6 +34,8 @@ export function DashboardStats(props) {
 							/>
 							<StatsByCountryTable
 								selector={selectPublisherStatsByCountryTableData}
+								// TODO: uncomment after 27.04.2020
+								// showEarnings
 								title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
 							/>
 						</Grid>
