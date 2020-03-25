@@ -324,9 +324,14 @@ export const selectPublisherReceiptsStatsByMonthTableData = createSelector(
 	({ receipts }, token, date) => {
 		const m = moment(date)
 		const startOfMonth = m.startOf('month').format('YYYY-MM-DD')
-		const endOfMonth = m.endOf('month').format('YYYY-MM-DD')
+		const startOfNewMonth = m
+			.clone()
+			.add(1, 'month')
+			.format('YYYY-MM-DD')
 		return Object.values(receipts)
-			.filter(item => moment(item.time).isBetween(startOfMonth, endOfMonth))
+			.filter(item =>
+				moment(item.time).isBetween(startOfMonth, startOfNewMonth)
+			)
 			.map(item => {
 				const { decimals = 18 } = token || {}
 				return {
