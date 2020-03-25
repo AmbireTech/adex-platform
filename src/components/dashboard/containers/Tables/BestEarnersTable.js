@@ -51,7 +51,6 @@ const getCols = ({ classes, symbol }) => [
 		options: {
 			filter: false,
 			sort: true,
-			sortDirection: 'desc',
 			customBodyRender: impressions => commify(impressions || 0),
 		},
 	},
@@ -70,6 +69,7 @@ const getCols = ({ classes, symbol }) => [
 		options: {
 			filter: false,
 			sort: true,
+			sortDirection: 'desc',
 			customBodyRender: ctr => `${ctr.toFixed(4)} %`,
 		},
 	},
