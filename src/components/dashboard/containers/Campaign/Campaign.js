@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
+import Paper from '@material-ui/core/Paper'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import Translate from 'components/translate/Translate'
@@ -19,6 +20,7 @@ import AppBar from '@material-ui/core/AppBar'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
+import Typography from '@material-ui/core/Typography'
 import Anchor from 'components/common/anchor/anchor'
 import CampaignStatsDoughnut from 'components/dashboard/charts/campaigns/CampaignStatsDoughnut'
 import CampaignStatsBreakdownTable from 'components/dashboard/containers/Tables/CampaignStatsBreakdownTable'
@@ -124,7 +126,7 @@ export class Campaign extends Component {
 							textColor='primary'
 						>
 							<Tab label={t('STATISTICS')} />
-							<Tab label={t('MAP_STATISTICS')} />
+							<Tab label={t('COUNTRY_STATS')} />
 							<Tab label={t('CAMPAIGN_UNITS')} />
 							<Tab label={t('VALIDATORS')} />
 							{(humanFriendlyName === 'Closed' ||
@@ -150,6 +152,15 @@ export class Campaign extends Component {
 						)}
 						{tabIndex === 1 && (
 							<Grid container spacing={2}>
+								<Grid item xs={12} alignItems='center'>
+									<Paper>
+										<Box p={2}>
+											<Typography variant='button' align='center'>
+												{t('COUNTRY_STATS_PERIOD', { args: ['30', 'DAYS'] })}
+											</Typography>
+										</Box>
+									</Paper>
+								</Grid>
 								<Grid item xs={12} md={12} lg={6}>
 									<StatsByCountryMapChart
 										selector={state =>
@@ -167,7 +178,6 @@ export class Campaign extends Component {
 											})
 										}
 										showEarnings
-										title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
 									/>
 								</Grid>
 							</Grid>

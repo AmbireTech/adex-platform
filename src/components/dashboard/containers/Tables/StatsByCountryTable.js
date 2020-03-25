@@ -95,7 +95,6 @@ function StatsByCountryTable(props) {
 	return (
 		<Box>
 			<MUIDataTableEnhanced
-				title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
 				data={data}
 				columns={columns}
 				options={options}

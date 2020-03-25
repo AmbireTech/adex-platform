@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { useSelector } from 'react-redux'
-import { Box, Paper, Grid } from '@material-ui/core'
+import { Box, Paper, Grid, Typography } from '@material-ui/core'
 import SideSelect from 'components/signin/side-select/SideSelect'
 import { BasicStats } from './BasicStats'
 import {
@@ -29,14 +29,21 @@ export function DashboardStats(props) {
 				<Box pt={2}>
 					<Grid container spacing={2}>
 						<Grid item xs={12} md={12} lg={6}>
+							<Paper>
+								<Box p={2} mb={2}>
+									<Typography variant='button' align='center'>
+										{t('COUNTRY_STATS_PERIOD', { args: ['30', 'DAYS'] })}
+									</Typography>
+								</Box>
+							</Paper>
+
 							<StatsByCountryMapChart
 								selector={selectPublisherStatsByCountryMapChartData}
 							/>
 							<StatsByCountryTable
 								selector={selectPublisherStatsByCountryTableData}
-								// TODO: uncomment after 27.04.2020
+								// TODO: uncomment after 26.04.2020
 								// showEarnings
-								title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
 							/>
 						</Grid>
 						<Grid item xs={12} md={12} lg={6}>
