@@ -61,6 +61,11 @@ export const selectPublisherStatsByCountry = createSelector(
 	({ reportPublisherToCountry }) => reportPublisherToCountry || {}
 )
 
+export const selectPublisherPayStatsByCountry = createSelector(
+	(state, type) => selectPublisherStatsByType(state, type),
+	({ reportPublisherToCountryPay }) => reportPublisherToCountryPay || {}
+)
+
 export const selectPublisherStatsAdUnit = createSelector(
 	(state, type) => selectPublisherStatsByType(state, type),
 	({ reportPublisherToAdUnit }) => reportPublisherToAdUnit || {}
@@ -166,12 +171,10 @@ export const selectCampaignAggrStatsByCountry = createSelector(
 )
 
 export const selectCampaignAnalyticsByChannelToAdUnit = createSelector(
-	(state, { type, campaignId } = {}) => [
+	(state, { type, campaignId } = {}) =>
 		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
-	],
-	([{ reportChannelToAdUnit }]) => {
-		return reportChannelToAdUnit || {}
-	}
+
+	({ reportChannelToAdUnit }) => reportChannelToAdUnit || {}
 )
 
 export const selectMaxAdUnitStatByChannel = createSelector(
