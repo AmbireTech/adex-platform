@@ -166,6 +166,7 @@ export class Campaign extends Component {
 												campaignId: campaign.id,
 											})
 										}
+										showEarnings
 										title={t('TABLE_COUNTRY_STATS_THIS_MONTH')}
 									/>
 								</Grid>

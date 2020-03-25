@@ -15,6 +15,7 @@ import {
 	selectPublisherAdvanceStatsToAdUnit,
 	selectPublisherStatsByCountry,
 	selectCampaignAnalyticsByChannelToCountry,
+	selectCampaignAnalyticsByChannelToCountryPay,
 	selectPublisherAggrStatsByCountry,
 	selectCampaignAggrStatsByCountry,
 	selectPublisherPayStatsByCountry,
@@ -277,13 +278,29 @@ export const selectCampaignAnalyticsToCountryData = createSelector(
 				campaignId,
 				type: 'IMPRESSION',
 			}),
+			selectCampaignAnalyticsByChannelToCountryPay(state, {
+				type: 'IMPRESSION',
+				campaignId,
+			}),
+			selectCampaignAnalyticsByChannelToCountryPay(state, {
+				type: 'CLICK',
+				campaignId,
+			}),
 		]
 	},
-	([impressionsByCountry, clicksByCountry, impressionsAggrByCountry]) => {
+	([
+		impressionsByCountry,
+		clicksByCountry,
+		impressionsAggrByCountry,
+		impressionsPayByCountry,
+		clicksPayByCountry,
+	]) => {
 		return {
 			impressionsByCountry,
 			clicksByCountry,
 			impressionsAggrByCountry,
+			impressionsPayByCountry,
+			clicksPayByCountry,
 		}
 	}
 )
