@@ -2,8 +2,9 @@ import React, { useCallback } from 'react'
 import classnames from 'classnames'
 import { commify } from 'ethers/utils'
 import Img from 'components/common/img/Img'
+import { useSelector } from 'react-redux'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
-import { t, selectBestEarnersTableData } from 'selectors'
+import { t, selectBestEarnersTableData, selectMainToken } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 
@@ -12,7 +13,7 @@ import { ReloadData } from './toolbars'
 
 const useStyles = makeStyles(styles)
 
-const getCols = ({ classes }) => [
+const getCols = ({ classes, symbol }) => [
 	{
 		name: 'media',
 		label: t('PROP_MEDIA'),
@@ -72,6 +73,15 @@ const getCols = ({ classes }) => [
 			customBodyRender: ctr => `${ctr.toFixed(4)} %`,
 		},
 	},
+	{
+		name: 'earnings',
+		label: t('LABEL_EARNINGS'),
+		options: {
+			filter: false,
+			sort: true,
+			customBodyRender: earnings => `${earnings.toFixed(2)} ${symbol}`,
+		},
+	},
 ]
 
 const onDownload = (buildHead, buildBody, columns, data) => {
@@ -93,8 +103,9 @@ const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
 })
 
 function BestEarnersTable(props) {
-	const classes = useStyles()
 	const { noActions, noClone, handleSelect, selected = [] } = props
+	const classes = useStyles()
+	const { symbol } = useSelector(selectMainToken)
 
 	const { data, columns, reloadData } = useTableData({
 		selector: selectBestEarnersTableData,
@@ -103,6 +114,7 @@ function BestEarnersTable(props) {
 				classes,
 				noActions,
 				noClone,
+				symbol,
 			}),
 	})
 

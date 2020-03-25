@@ -346,7 +346,16 @@ export const selectBestEarnersTableData = createSelector(
 	selectPublisherAdvanceStatsToAdUnit,
 	items =>
 		items.map(item => {
-			const { id, mediaUrl, mediaMime, type, impressions, clicks } = item
+			const {
+				id,
+				mediaUrl,
+				mediaMime,
+				type,
+				impressions,
+				clicks,
+				impressionsPay,
+				clicksPay,
+			} = item
 			return {
 				id,
 				media: {
@@ -358,6 +367,7 @@ export const selectBestEarnersTableData = createSelector(
 				impressions,
 				clicks,
 				ctr: ((clicks || 0) / (impressions || 1)) * 100,
+				earnings: impressionsPay + clicksPay,
 			}
 		})
 )

@@ -54,7 +54,7 @@ export const selectTotalStatsByAdUnits = createSelector(
 
 export const selectPublisherStatsByType = createSelector(
 	(state, type) => selectAdvancedAnalyticsByType(state, type),
-	advancedByType => advancedByType.publisherStats || {}
+	({ publisherStats }) => publisherStats || {}
 )
 export const selectPublisherStatsByCountry = createSelector(
 	(state, type) => selectPublisherStatsByType(state, type),
@@ -64,6 +64,11 @@ export const selectPublisherStatsByCountry = createSelector(
 export const selectPublisherStatsAdUnit = createSelector(
 	(state, type) => selectPublisherStatsByType(state, type),
 	({ reportPublisherToAdUnit }) => reportPublisherToAdUnit || {}
+)
+
+export const selectPublisherStatsAdUnitPay = createSelector(
+	(state, type) => selectPublisherStatsByType(state, type),
+	({ reportPublisherToAdUnitPay }) => reportPublisherToAdUnitPay || {}
 )
 
 export const selectPublisherAggrStatsByCountry = createSelector(
@@ -96,14 +101,24 @@ export const selectPublisherAdvanceStatsToAdUnit = createSelector(
 		selectAllAdUnitsInChannels(state),
 		selectPublisherStatsAdUnit(state, 'IMPRESSION'),
 		selectPublisherStatsAdUnit(state, 'CLICK'),
+		selectPublisherStatsAdUnitPay(state, 'IMPRESSION'),
+		selectPublisherStatsAdUnitPay(state, 'CLICK'),
 	],
-	([adUnits, impressionsByAdUnit, clicksByAdUnit]) =>
+	([
+		adUnits,
+		impressionsByAdUnit,
+		clicksByAdUnit,
+		impressionsPayByAdUnit,
+		clicksPayByAdUnit,
+	]) =>
 		Object.values(adUnits)
 			.filter(i => impressionsByAdUnit[i.id] !== undefined)
 			.map(item => ({
 				...item,
 				impressions: impressionsByAdUnit[item.id],
 				clicks: clicksByAdUnit[item.id],
+				impressionsPay: Number(impressionsPayByAdUnit[item.id] || 0),
+				clicksPay: Number(clicksPayByAdUnit[item.id] || 0),
 			}))
 )
 
