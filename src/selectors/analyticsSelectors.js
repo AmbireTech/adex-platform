@@ -321,13 +321,22 @@ export const selectPublisherReceiptStats = createSelector(
 		if (receipts)
 			for (
 				var m = moment(created);
-				m.diff(Date.now()) <= 0;
+				m.diff(
+					moment(Date.now())
+						.subtract(1, 'month')
+						.endOf('month')
+				) <= 0;
 				m.add(1, 'month')
 			) {
 				const startOfMonth = m.startOf('month').format('YYYY-MM-DD')
-				const endOfMonth = m.endOf('month').format('YYYY-MM-DD')
+				const startOfNewMonth = m
+					.clone()
+					.add(1, 'month')
+					.format('YYYY-MM-DD')
 				const filteredForMonth = Object.values(receipts)
-					.filter(item => moment(item.time).isBetween(startOfMonth, endOfMonth))
+					.filter(item =>
+						moment(item.time).isBetween(startOfMonth, startOfNewMonth)
+					)
 					.reduce(
 						(acc, currValue) => {
 							acc.impressions += +currValue.impressions
@@ -340,7 +349,7 @@ export const selectPublisherReceiptStats = createSelector(
 							impressions: 0,
 							payouts: 0,
 							startOfMonth: moment(startOfMonth).unix() * 1000,
-							endOfMonth: moment(endOfMonth).unix() * 1000,
+							endOfMonth: moment(startOfNewMonth).unix() * 1000,
 						}
 					)
 				result.push(filteredForMonth)
