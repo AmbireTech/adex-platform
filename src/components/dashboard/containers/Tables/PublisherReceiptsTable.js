@@ -7,6 +7,7 @@ import {
 	t,
 	selectMainToken,
 	selectSide,
+	selectAnalytics,
 	selectPublisherReceiptsMaxValues,
 	selectPublisherReceiptsStatsTableData,
 } from 'selectors'
@@ -24,7 +25,7 @@ const RRIconButton = withReactRouterLink(IconButton)
 
 const useStyles = makeStyles(styles)
 
-const getCols = ({ classes, symbol, maxImpressions, maxPayouts }) => [
+const getCols = ({ classes, symbol, maxImpressions, maxPayouts, maxCPM }) => [
 	{
 		name: 'startOfMonth',
 		label: 'ID',
@@ -55,6 +56,19 @@ const getCols = ({ classes, symbol, maxImpressions, maxPayouts }) => [
 			...sliderFilterOptions({
 				initial: [0, maxPayouts],
 				filterTitle: t('PAYOUTS_FILTER'),
+			}),
+		},
+	},
+	{
+		name: 'cpm',
+		label: t('LABEL_AVG_CPM'),
+		options: {
+			filter: true,
+			customBodyRender: payouts =>
+				`${commify(payouts.toFixed(2) || 0)} ${symbol}`,
+			...sliderFilterOptions({
+				initial: [0, maxCPM.toFixed(2)],
+				filterTitle: t('CPM_FILTER'),
 			}),
 		},
 	},
@@ -138,9 +152,10 @@ const getOptions = ({ decimals, symbol, reloadData }) => ({
 function PublisherReceiptsTable(props) {
 	const classes = useStyles()
 	const side = useSelector(selectSide)
-	const { maxImpressions, maxPayouts } = useSelector(
+	const { maxImpressions, maxPayouts, maxCPM } = useSelector(
 		selectPublisherReceiptsMaxValues
 	)
+	const { receipts } = useSelector(selectAnalytics)
 	const { symbol, decimals } = useSelector(selectMainToken)
 	const { data, columns, reloadData } = useTableData({
 		selector: selectPublisherReceiptsStatsTableData,
@@ -152,6 +167,7 @@ function PublisherReceiptsTable(props) {
 				symbol,
 				maxImpressions,
 				maxPayouts,
+				maxCPM,
 			}),
 	})
 	console.log('data', data)
@@ -165,6 +181,7 @@ function PublisherReceiptsTable(props) {
 			options={options}
 			rowSelectable
 			toolbarEnabled
+			loading={!receipts}
 			{...props}
 		/>
 	)
