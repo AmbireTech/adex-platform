@@ -1,24 +1,24 @@
-import React, { memo } from 'react'
+import React, { memo, useState } from 'react'
+import { useSelector } from 'react-redux'
 import {
 	ZoomableGroup,
 	ComposableMap,
 	Geographies,
 	Geography,
 } from 'react-simple-maps'
-import { Paper, Typography } from '@material-ui/core'
+import { Paper } from '@material-ui/core'
+import ReactTooltip from 'react-tooltip'
+import { ALEX_GREY } from 'components/App/themeMUi'
 
-const MapChart = ({
-	setTooltipContent,
-	chartData,
-	hoverColor,
-	pressedColor,
-	title,
-}) => {
+const MapChart = ({ selector }) => {
+	const { chartData, hoverColor, pressedColor } = useSelector(selector)
+
+	const [content, setContent] = useState('')
+
 	return (
 		<Paper elevation={2} square>
-			{title && <Typography variant='h6'>{title}</Typography>}
 			<ComposableMap
-				data-tip=''
+				data-tip='chart-map'
 				projection='geoMercator'
 				projectionConfig={{
 					scale: 100,
@@ -30,16 +30,16 @@ const MapChart = ({
 					<Geographies geography={chartData}>
 						{({ geographies = [] }) => {
 							return geographies.map(geo => {
-								const { tooltipText, fillColor } = geo.properties
+								const { tooltipElements, fillColor } = geo.properties
 								return (
 									<Geography
 										key={geo.rsmKey}
 										geography={geo}
 										onMouseEnter={() => {
-											setTooltipContent(tooltipText)
+											setContent(tooltipElements)
 										}}
 										onMouseLeave={() => {
-											setTooltipContent('')
+											setContent('')
 										}}
 										fill={fillColor}
 										style={{
@@ -63,6 +63,12 @@ const MapChart = ({
 					</Geographies>
 				</ZoomableGroup>
 			</ComposableMap>
+			{/* TODO: use material-ui tooltip ot popover */}
+			<ReactTooltip border={false} backgroundColor={ALEX_GREY}>
+				{Array.isArray(content)
+					? content.map((x, i) => <div key={i}>{x}</div>)
+					: content}
+			</ReactTooltip>
 		</Paper>
 	)
 }
