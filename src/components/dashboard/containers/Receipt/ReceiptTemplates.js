@@ -257,7 +257,7 @@ function CampaignReceiptTpl({ campaignId } = {}) {
 											<TableCell>
 												<Typography variant='body2'>
 													{`${formatNumberWithCommas(
-														stats.earnings
+														stats.earnings.toFixed(2)
 													)} ${symbol}`}
 												</Typography>
 											</TableCell>
