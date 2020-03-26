@@ -45,7 +45,7 @@ const getCols = ({
 		label: t('WEBSITE_EARNINGS'),
 		options: {
 			customBodyRender: earnings =>
-				`${formatNumberWithCommas(earnings || 0)} ${symbol}`,
+				`${formatNumberWithCommas((earnings || 0).toFixed(2))} ${symbol}`,
 			...sliderFilterOptions({
 				initial: [0, maxEarnings],
 				filterTitle: t('EARNINGS_FILTER'),
@@ -69,7 +69,7 @@ const getCols = ({
 		label: t('CTR'),
 		options: {
 			sort: true,
-			customBodyRender: ctr => `${ctr} %`,
+			customBodyRender: ctr => `${ctr.toFixed(4)} %`,
 			...sliderFilterOptions({
 				initial: [0, maxCTR],
 				filterTitle: t('CTR_FILTER'),

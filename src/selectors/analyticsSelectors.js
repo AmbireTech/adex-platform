@@ -1,5 +1,6 @@
 import { getState } from 'store'
 import { createSelector } from 'reselect'
+import { selectChannelsWithUserBalancesAll } from 'selectors'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
 import { selectWebsites } from 'selectors'
 
@@ -53,8 +54,79 @@ export const selectTotalStatsByAdUnits = createSelector(
 
 export const selectPublisherStatsByType = createSelector(
 	(state, type) => selectAdvancedAnalyticsByType(state, type),
-	advancedByType => advancedByType.publisherStats || {}
+	({ publisherStats }) => publisherStats || {}
 )
+export const selectPublisherStatsByCountry = createSelector(
+	(state, type) => selectPublisherStatsByType(state, type),
+	({ reportPublisherToCountry }) => reportPublisherToCountry || {}
+)
+
+export const selectPublisherPayStatsByCountry = createSelector(
+	(state, type) => selectPublisherStatsByType(state, type),
+	({ reportPublisherToCountryPay }) => reportPublisherToCountryPay || {}
+)
+
+export const selectPublisherStatsAdUnit = createSelector(
+	(state, type) => selectPublisherStatsByType(state, type),
+	({ reportPublisherToAdUnit }) => reportPublisherToAdUnit || {}
+)
+
+export const selectPublisherStatsAdUnitPay = createSelector(
+	(state, type) => selectPublisherStatsByType(state, type),
+	({ reportPublisherToAdUnitPay }) => reportPublisherToAdUnitPay || {}
+)
+
+export const selectPublisherAggrStatsByCountry = createSelector(
+	(state, type) => selectPublisherStatsByCountry(state, type),
+	(byCountry = {}) => ({
+		max: Math.max.apply(null, Object.values(byCountry)),
+		total: Object.values(byCountry).reduce(
+			(a, value) => a + (Number(value) || 0),
+			0
+		),
+	})
+)
+
+export const selectAllAdUnitsInChannels = createSelector(
+	state => selectChannelsWithUserBalancesAll(state),
+	withBalanceAll =>
+		Object.values(withBalanceAll).reduce((units, channel) => {
+			channel.adUnits.forEach(u => {
+				const id = u.id || u.ipfs
+				if (id && !units[id]) {
+					units[id] = { ...u, id }
+				}
+			})
+			return units
+		}, {})
+)
+
+export const selectPublisherAdvanceStatsToAdUnit = createSelector(
+	state => [
+		selectAllAdUnitsInChannels(state),
+		selectPublisherStatsAdUnit(state, 'IMPRESSION'),
+		selectPublisherStatsAdUnit(state, 'CLICK'),
+		selectPublisherStatsAdUnitPay(state, 'IMPRESSION'),
+		selectPublisherStatsAdUnitPay(state, 'CLICK'),
+	],
+	([
+		adUnits,
+		impressionsByAdUnit,
+		clicksByAdUnit,
+		impressionsPayByAdUnit,
+		clicksPayByAdUnit,
+	]) =>
+		Object.values(adUnits)
+			.filter(i => impressionsByAdUnit[i.id] !== undefined)
+			.map(item => ({
+				...item,
+				impressions: impressionsByAdUnit[item.id],
+				clicks: clicksByAdUnit[item.id],
+				impressionsPay: Number(impressionsPayByAdUnit[item.id] || 0),
+				clicksPay: Number(clicksPayByAdUnit[item.id] || 0),
+			}))
+)
+
 export const selectPublisherTotalImpressions = createSelector(
 	state => selectPublisherStatsByType(state, 'IMPRESSION'),
 	({ reportPublisherToAdUnit }) => {
@@ -78,23 +150,44 @@ export const selectCampaignAnalyticsByChannelStats = createSelector(
 		(analyticsByType.byChannelStats || {})[campaignId] || {}
 )
 
-export const selectCampaignAnalyticsByChannelToAdUnit = createSelector(
-	(state, { type, campaignId } = {}) => [
+export const selectCampaignAnalyticsByChannelToCountry = createSelector(
+	(state, { type, campaignId } = {}) =>
 		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
-	],
-	([{ reportChannelToAdUnit }]) => {
-		return reportChannelToAdUnit || {}
-	}
+	({ reportChannelToCountry }) => reportChannelToCountry || {}
+)
+
+export const selectCampaignAnalyticsByChannelToCountryPay = createSelector(
+	(state, { type, campaignId } = {}) =>
+		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
+	({ reportChannelToCountryPay }) => reportChannelToCountryPay || {}
+)
+
+export const selectCampaignAggrStatsByCountry = createSelector(
+	(state, { type, campaignId } = {}) =>
+		selectCampaignAnalyticsByChannelToCountry(state, { type, campaignId }),
+	(byCountry = {}) => ({
+		max: Math.max.apply(null, Object.values(byCountry)),
+		total: Object.values(byCountry).reduce(
+			(a, value) => a + (Number(value) || 0),
+			0
+		),
+	})
+)
+
+export const selectCampaignAnalyticsByChannelToAdUnit = createSelector(
+	(state, { type, campaignId } = {}) =>
+		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
+
+	({ reportChannelToAdUnit }) => reportChannelToAdUnit || {}
 )
 
 export const selectMaxAdUnitStatByChannel = createSelector(
 	(state, { type, campaignId } = {}) =>
 		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
-	({ reportChannelToAdUnit }) => {
-		return reportChannelToAdUnit
+	({ reportChannelToAdUnit }) =>
+		reportChannelToAdUnit
 			? Math.max.apply(null, Object.values(reportChannelToAdUnit))
 			: 0
-	}
 )
 
 export const selectAnalyticsDataAggr = createSelector(
