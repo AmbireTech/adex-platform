@@ -11,6 +11,7 @@ import {
 	selectIdentity,
 	selectValidationsById,
 	selectSpinnerById,
+	selectFromSource,
 } from 'selectors'
 import Anchor from 'components/common/anchor/anchor'
 import { execute, updateIdentity } from 'actions'
@@ -24,15 +25,10 @@ import { CREATING_SESSION } from 'constants/spinners'
 import { WALLET_ACTIONS_MSGS } from 'constants/misc'
 import { WHERE_YOU_KNOW_US } from 'constants/misc'
 
-const knowFromSource = WHERE_YOU_KNOW_US.map(knowFrom => {
-	const translated = { ...knowFrom }
-	translated.label = t(knowFrom.label)
-	return translated
-})
-
 const FulInfo = props => {
 	const { validateId } = props
 	const identity = useSelector(selectIdentity)
+	const knowFromSource = useSelector(() => selectFromSource(WHERE_YOU_KNOW_US))
 	const { wallet = {} } = identity
 	const validations = useSelector(
 		state => selectValidationsById(state, validateId) || {}

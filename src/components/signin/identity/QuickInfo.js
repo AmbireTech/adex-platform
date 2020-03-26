@@ -19,20 +19,16 @@ import {
 	selectIdentity,
 	selectValidationsById,
 	selectSpinnerById,
+	selectFromSource,
 } from 'selectors'
 import { execute, updateIdentity } from 'actions'
 
 import { CREATING_SESSION } from 'constants/spinners'
 
-const knowFromSource = WHERE_YOU_KNOW_US.map(knowFrom => {
-	const translated = { ...knowFrom }
-	translated.label = t(knowFrom.label)
-	return translated
-})
-
 const QuickInfo = props => {
 	const { validateId } = props
 	const identity = useSelector(selectIdentity)
+	const knowFromSource = useSelector(() => selectFromSource(WHERE_YOU_KNOW_US))
 	const validations = useSelector(
 		state => selectValidationsById(state, validateId) || {}
 	)
