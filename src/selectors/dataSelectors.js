@@ -60,3 +60,13 @@ export const selectSlotTypesSourceWithDemands = createSelector(
 		return source
 	}
 )
+
+export const selectFromSource = createSelector(
+	[labelValueMapping => labelValueMapping],
+	source =>
+		source.map(data => {
+			const translated = { ...data }
+			translated.label = t(data.label)
+			return translated
+		})
+)
