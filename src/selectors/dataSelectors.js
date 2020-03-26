@@ -2,6 +2,7 @@ import { bigNumberify } from 'ethers/utils'
 import { t, selectDemandAnalytics, selectMainToken } from 'selectors'
 import { createSelector } from 'reselect'
 import { constants } from 'adex-models'
+import moment from 'moment'
 
 export const selectSlotTypesSourceWithDemands = createSelector(
 	[selectDemandAnalytics, selectMainToken],
@@ -59,4 +60,37 @@ export const selectSlotTypesSourceWithDemands = createSelector(
 			)
 		return source
 	}
+)
+
+export const selectMonthsRange = createSelector(
+	[
+		(startDate, endDate) => ({
+			startDate,
+			endDate,
+		}),
+	],
+	({ startDate, endDate }) => {
+		const months = []
+		for (
+			var m = moment(startDate);
+			m.diff(
+				moment(endDate)
+					.subtract(1, 'month')
+					.endOf('month')
+			) <= 0;
+			m.add(1, 'month')
+		) {
+			months.push(+m)
+		}
+		return months
+	}
+)
+
+export const selectReceiptMonths = createSelector(
+	[selectMonthsRange],
+	months =>
+		months.map(monthTimestamp => ({
+			value: monthTimestamp,
+			label: moment(monthTimestamp).format('MMMM, YYYY'),
+		}))
 )
