@@ -81,7 +81,6 @@ export default function NewTransactionHoc(Decorated) {
 
 					this.handleSaveRes({ err: err, res: res })
 				})
-			actions.checkNetworkCongestion()
 		}
 
 		cancel = () => {
