@@ -190,7 +190,11 @@ export class Slot extends Component {
 									<AlertTitle>
 										{t('EMAIL_NOT_CONFIRMED_WARNING_TITLE')}
 									</AlertTitle>
-									{t('EMAIL_WARNING_SLOT_INTEGRATION')}
+									<div
+										dangerouslySetInnerHTML={{
+											__html: t('EMAIL_WARNING_SLOT_INTEGRATION'),
+										}}
+									/>
 								</Alert>
 							))}
 						{/* {tabIndex === 0 && null} */}
