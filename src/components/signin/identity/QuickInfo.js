@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
@@ -7,16 +7,19 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
 import Anchor from 'components/common/anchor/anchor'
+import { WHERE_YOU_KNOW_US } from 'constants/misc'
 import {
 	ContentBox,
 	ContentBody,
 	FullContentMessage,
 } from 'components/common/dialog/content'
+import Dropdown from 'components/common/dropdown'
 import {
 	t,
 	selectIdentity,
 	selectValidationsById,
 	selectSpinnerById,
+	selectFromSource,
 } from 'selectors'
 import { execute, updateIdentity } from 'actions'
 
@@ -25,7 +28,7 @@ import { CREATING_SESSION } from 'constants/spinners'
 const QuickInfo = props => {
 	const { validateId } = props
 	const identity = useSelector(selectIdentity)
-
+	const knowFromSource = useSelector(() => selectFromSource(WHERE_YOU_KNOW_US))
 	const validations = useSelector(
 		state => selectValidationsById(state, validateId) || {}
 	)
@@ -39,7 +42,15 @@ const QuickInfo = props => {
 	]
 
 	// Errors
-	const { email, emailCheck, password, passwordCheck, tosCheck } = validations
+	const {
+		email,
+		emailCheck,
+		password,
+		passwordCheck,
+		tosCheck,
+		knowFrom,
+		moreInfo,
+	} = validations
 	return (
 		<ContentBox>
 			{spinner || sessionSpinner ? (
@@ -128,6 +139,46 @@ const QuickInfo = props => {
 								}
 							/>
 						</Grid>
+						<Grid item xs={12}>
+							<Dropdown
+								required
+								fullWidth
+								name='knowFrom'
+								label={t('knowFrom', { isProp: true })}
+								onChange={val => execute(updateIdentity('knowFrom', val))}
+								source={knowFromSource}
+								value={identity.knowFrom || ''}
+								htmlId='timeframe-select'
+								error={knowFrom && !!knowFrom.dirty}
+								helperText={
+									knowFrom && !!knowFrom.dirty
+										? knowFrom.errMsg
+										: t('KNOW_FROM_CHECK_RULES')
+								}
+							/>
+						</Grid>
+						{(identity.knowFrom === 'event' ||
+							identity.knowFrom === 'other') && (
+							<Grid item xs={12}>
+								<TextField
+									fullWidth
+									required
+									label={t('moreInfo', { isProp: true })}
+									name='moreInfo'
+									value={identity.moreInfo || ''}
+									onChange={ev =>
+										execute(updateIdentity('moreInfo', ev.target.value))
+									}
+									error={moreInfo && !!moreInfo.dirty}
+									maxLength={128}
+									helperText={
+										moreInfo && !!moreInfo.dirty
+											? moreInfo.errMsg
+											: t('MORE_INFO_CHECK_RULES')
+									}
+								/>
+							</Grid>
+						)}
 						<Grid item xs={12}>
 							<FormControl
 								required

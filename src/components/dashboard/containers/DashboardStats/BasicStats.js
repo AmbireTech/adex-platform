@@ -54,7 +54,7 @@ const metrics = {
 			color: SECONDARY,
 		},
 		{
-			label: t('LABEL_CTR'),
+			label: t('PROP_CPM'),
 			color: ALEX_GREY,
 		},
 	],
