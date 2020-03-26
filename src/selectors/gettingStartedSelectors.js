@@ -20,7 +20,7 @@ export const selectHasCreatedCampaign = createSelector(
 
 export const selectHasConfirmedEmail = createSelector(
 	[selectAccountIdentityDeployData],
-	({ meta }) => !!meta.emailConfirmed
+	({ meta = {} }) => !!meta.emailConfirmed
 )
 
 export const selectHasFundedAccount = createSelector(
