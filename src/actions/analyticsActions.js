@@ -301,7 +301,7 @@ export function updateAccountCampaignsAnalytics() {
 	}
 }
 
-export function getReceiptData() {
+export function getReceiptData(startDate, endDate) {
 	return async function(dispatch, getState) {
 		const state = getState()
 		const { account } = state.persist
@@ -313,14 +313,13 @@ export function getReceiptData() {
 			updateValidatorAuthTokens({
 				newAuth: { [VALIDATOR_LEADER_ID]: leaderAuth },
 			})(dispatch, getState)
-			const { created } = selectAccountIdentityDeployData(state)
 			const timeframe = 'month'
 			const limit = 500
 			const promises = []
 			//limit of request is 500 days
 			for (
-				var m = moment(created);
-				m.diff(Date.now()) <= 0;
+				var m = moment(startDate);
+				m.diff(endDate) <= 0;
 				m.add(limit, 'day')
 			) {
 				promises.push(

@@ -536,8 +536,8 @@ export function loadAccountData() {
 		!isAccountChanged(getState, account) &&
 			(await analyticsCampaignsLoop.start())
 		!isAccountChanged(getState, account) && (await campaignsLoop.start())
-		!isAccountChanged(getState, account) &&
-			(await getReceiptData()(dispatch, getState))
+		// !isAccountChanged(getState, account) &&
+		// 	(await getReceiptData()(dispatch, getState))
 		updateSlotsDemandThrottled()(dispatch, getState)
 	}
 }
