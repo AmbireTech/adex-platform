@@ -90,8 +90,8 @@ export const selectPublisherAggrStatsByCountry = createSelector(
 export const selectAllAdUnitsInChannels = createSelector(
 	state => selectChannelsWithUserBalancesAll(state),
 	withBalanceAll =>
-		Object.values(withBalanceAll).reduce((units, channel) => {
-			channel.adUnits.forEach(u => {
+		Object.values(withBalanceAll).reduce((units, { adUnits = [] } = {}) => {
+			adUnits.forEach(u => {
 				const id = u.id || u.ipfs
 				if (id && !units[id]) {
 					units[id] = { ...u, id }
