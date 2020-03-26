@@ -37,7 +37,12 @@ export function DashboardStats(props) {
 								</Box>
 							</Paper>
 
-							<MapChart selector={selectPublisherStatsByCountryMapChartData} />
+							<Box mb={2}>
+								<MapChart
+									selector={selectPublisherStatsByCountryMapChartData}
+								/>
+							</Box>
+
 							<StatsByCountryTable
 								selector={selectPublisherStatsByCountryTableData}
 								// TODO: uncomment after 26.04.2020

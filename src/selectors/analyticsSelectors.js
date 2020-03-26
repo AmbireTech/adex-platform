@@ -2,7 +2,7 @@ import { getState } from 'store'
 import { createSelector } from 'reselect'
 import { selectChannelsWithUserBalancesAll } from 'selectors'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
-import { selectWebsites } from 'selectors'
+import { selectWebsitesArray } from 'selectors'
 
 export const selectAnalytics = state => state.persist.analytics
 
@@ -399,8 +399,9 @@ export const selectChartDatapointsCPM = createSelector(
 )
 
 export const selectPublisherRevenueNoticeActive = createSelector(
-	[selectPublisherTotalImpressions, selectWebsites],
+	[selectPublisherTotalImpressions, selectWebsitesArray],
 	(totalImpressions, websites) =>
-		(websites.length && websites.some(w => w.issuss.length === 0)) ||
+		!websites.length ||
+		websites.some(w => w.issues.length > 0) ||
 		!totalImpressions
 )
