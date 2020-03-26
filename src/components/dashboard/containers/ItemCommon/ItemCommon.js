@@ -24,7 +24,6 @@ import { validations, schemas, Joi } from 'adex-models'
 import { utils } from 'ethers'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import { selectMainToken } from 'selectors'
-import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
 
 const FallbackAdData = ({
 	item,
@@ -434,7 +433,6 @@ const basicProps = ({
 									activeFields={activeFields}
 									{...rest}
 								/>
-								<WebsiteIssues website={item.website} />
 							</Fragment>
 						) : (
 							<MediaCard
