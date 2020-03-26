@@ -1,6 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.44
+##### *2020-03-26*
+
+### Added
+- Country-based statistics: publisher & advertiser
+- Statistic about which campaigns/units you are earning the most from
+- How did you hear about AdEx field on sign up
+- Notification if the Ethereum network is clogged
+- Warning instead integration code in slot details when email is not confirmed
+
+### Changed
+- Side switch colors
+- Slot website issues - displayed with warning alerts
+
+### Fixed
+- Top right menu misbehavior
+- Misc selectors, styles and minor bugs
+
 ## 4.10.43
 ##### *2020-03-16*
 
