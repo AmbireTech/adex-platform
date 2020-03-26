@@ -131,7 +131,7 @@ export const VALIDATOR_ANALYTICS_TIMEFRAMES = [
 ]
 
 export const WHERE_YOU_KNOW_US = [
-	{ label: 'LALBEL_GOOGLE', value: 'search_engine' },
+	{ label: 'LABEL_GOOGLE', value: 'search_engine' },
 	{ label: 'LABEL_TWITTER', value: 'twitter' },
 	{ label: 'LABEL_FACEBOOK', value: 'facebook' },
 	{ label: 'LABEL_REDDIT', value: 'reddit' },
