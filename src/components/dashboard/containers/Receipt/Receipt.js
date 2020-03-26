@@ -1,10 +1,10 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { useParams, Redirect } from 'react-router'
-import { Box, Card, Button, Typography } from '@material-ui/core'
+import { Box, Card, Button, Typography, Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import ReactToPrint from 'react-to-print'
 import classnames from 'classnames'
-import { Print, Visibility } from '@material-ui/icons'
+import { Print, Visibility, CalendarToday } from '@material-ui/icons'
 import { CampaignReceiptTpl, PublisherReceiptTpl } from './ReceiptTemplates'
 import CompanyDetails from './CompanyDetails'
 import { useSelector } from 'react-redux'
@@ -13,8 +13,11 @@ import {
 	selectSelectedCampaigns,
 	selectSide,
 	selectSelectedPublisherReceipts,
+	selectAccountIdentityDeployData,
+	selectReceiptMonths,
 } from 'selectors'
 import { execute, resetSelectedItems } from 'actions'
+import Dropdown from 'components/common/dropdown'
 
 const useStyles = makeStyles(theme => {
 	return {
@@ -36,6 +39,9 @@ const useStyles = makeStyles(theme => {
 	}
 })
 function Receipt(props) {
+	const [startDate, setStartDate] = useState('')
+	const [endDate, setEndDate] = useState('')
+
 	const classes = useStyles()
 	const invoice = useRef()
 	const { itemId, date } = useParams()
@@ -44,30 +50,32 @@ function Receipt(props) {
 	const selectedPublisherReceipts = useSelector(state =>
 		selectSelectedPublisherReceipts(state)
 	)
-	// TODO: render back button
+
 	const selectedByPropsOrParams = props.itemId || itemId || date
 	const selectedItems =
 		selectedCampaigns.length > 0 ? selectedCampaigns : selectedPublisherReceipts
-	const receipts = selectedByPropsOrParams
+	const dates = useSelector(() => selectReceiptMonths(startDate, endDate))
+	const receiptsAdvertiser = selectedByPropsOrParams
 		? [selectedByPropsOrParams]
 		: selectedItems
+
+	const receipts = side === 'publisher' ? dates : receiptsAdvertiser
+	const { created } = useSelector(state =>
+		selectAccountIdentityDeployData(state)
+	)
+	const monthMapping = useSelector(() =>
+		selectReceiptMonths(created, Date.now())
+	)
 
 	useEffect(() => {
 		return () => {
 			execute(resetSelectedItems())
 		}
-	})
+	}, [])
 
-	if (receipts.length === 0)
-		return (
-			<Redirect
-				to={
-					side === 'advertiser'
-						? '/dashboard/advertiser/campaigns'
-						: '/dashboard/publisher/receipts'
-				}
-			/>
-		)
+	if (side === 'advertiser' && receipts.length === 0)
+		return <Redirect to={'/dashboard/advertiser/campaigns'} />
+
 	return (
 		<Box display='flex' justifyContent='center' alignContent='center'>
 			<Box
@@ -95,6 +103,36 @@ function Receipt(props) {
 						/>
 					</Box>
 				</CompanyDetails>
+				{side === 'publisher' && (
+					<Paper>
+						<Box p={2} display='flex' justifyContent='space-between'>
+							<Box m={1} display='flex' flex={1}>
+								<Dropdown
+									fullWidth
+									source={[...monthMapping]}
+									onChange={val => setStartDate(val)}
+									value={startDate}
+									label={t('START_DATE')}
+									name='startDate'
+									htmlId='start-date-select'
+									IconComponent={CalendarToday}
+								/>
+							</Box>
+							<Box m={1} display='flex' flex={1}>
+								<Dropdown
+									fullWidth
+									source={[...monthMapping]}
+									onChange={val => setEndDate(val)}
+									value={endDate}
+									label={t('END_DATE')}
+									name='endDate'
+									htmlId='end-date-select'
+									IconComponent={CalendarToday}
+								/>
+							</Box>
+						</Box>
+					</Paper>
+				)}
 				<Card>
 					<Box className={classnames(classes.hideOnDesktop)}>
 						<Box
