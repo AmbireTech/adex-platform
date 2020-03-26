@@ -39,7 +39,8 @@ const getIssue = issue => {
 
 export function WebsiteIssues({ issues, website }) {
 	const site = useSelector(state => selectWebsiteByWebsite(state, website))
-	const data = issues || site.issues || []
+	const defaultIssues = !website ? ['SLOT_ISSUE_NO_WEBSITE'] : []
+	const data = issues || site.issues || defaultIssues
 
 	return (
 		<Fragment>
