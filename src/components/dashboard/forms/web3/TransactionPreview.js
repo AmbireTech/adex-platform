@@ -29,7 +29,7 @@ import {
 	selectAccount,
 	selectNewTransactionById,
 } from 'selectors'
-import { execute, updateSpinner } from 'actions'
+import { execute, updateSpinner, checkNetworkCongestion } from 'actions'
 
 const useStyles = makeStyles(styles)
 
@@ -76,6 +76,7 @@ function TransactionPreview(props) {
 					handleChange('errors', [Helper.getErrMsg(err)])
 				})
 		}
+		execute(checkNetworkCongestion())
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 

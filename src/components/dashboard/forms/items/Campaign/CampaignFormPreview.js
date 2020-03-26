@@ -20,7 +20,7 @@ import {
 	selectSpinnerById,
 	t,
 } from 'selectors'
-import { execute, getCampaignActualFees } from 'actions'
+import { execute, getCampaignActualFees, checkNetworkCongestion } from 'actions'
 import { GETTING_CAMPAIGNS_FEES } from 'constants/spinners'
 
 const UnitsTable = ({ items }) => {
@@ -62,6 +62,7 @@ function CampaignFormPreview({ newItem } = {}) {
 
 	useEffect(() => {
 		execute(getCampaignActualFees())
+		execute(checkNetworkCongestion())
 	}, [])
 
 	return spinner ? (
