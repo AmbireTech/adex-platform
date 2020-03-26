@@ -57,7 +57,7 @@ function CampaignUnits(props) {
 							<Grid container direction='column' alignItems='center'>
 								<p>{t('ERR_CAMPAIGN_REQUIRES_UNITS')}</p>
 								<NewUnitDialog
-									variant='extended'
+									variant='contained'
 									color='secondary'
 									btnLabel='NEW_UNIT'
 								/>
