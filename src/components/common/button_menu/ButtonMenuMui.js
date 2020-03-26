@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, Children, cloneElement } from 'react'
 import { Menu, Button } from '@material-ui/core'
 
 const ImgIcon = ({ src }) => {
@@ -14,14 +14,7 @@ const ImgIcon = ({ src }) => {
 }
 
 function ButtonMenu({ children, btnStyle, label, rightIcon, leftIconSrc, id }) {
-	const [active, setActive] = useState(false)
 	const [anchorEl, setAnchorEl] = useState(null)
-	const open = Boolean(anchorEl)
-
-	const handleButtonClick = () => {
-		setActive(!active)
-		setAnchorEl(null)
-	}
 
 	const handleMenu = event => {
 		setAnchorEl(event.currentTarget)
@@ -55,7 +48,7 @@ function ButtonMenu({ children, btnStyle, label, rightIcon, leftIconSrc, id }) {
 			</Button>
 			<Menu
 				id={id}
-				open={open}
+				open={Boolean(anchorEl)}
 				anchorEl={anchorEl}
 				getContentAnchorEl={null}
 				anchorOrigin={{
@@ -66,10 +59,17 @@ function ButtonMenu({ children, btnStyle, label, rightIcon, leftIconSrc, id }) {
 					vertical: 'top',
 					horizontal: 'right',
 				}}
-				onClick={handleButtonClick}
+				onClick={handleClose}
 				onClose={handleClose}
 			>
-				{children}
+				{Children.map(children, child =>
+					cloneElement(child, {
+						onClick: () => {
+							typeof child.props.onClick === 'function' && child.props.onClick()
+							handleClose()
+						},
+					})
+				)}
 			</Menu>
 		</>
 	)
