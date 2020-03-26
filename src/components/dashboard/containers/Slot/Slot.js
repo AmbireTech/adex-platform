@@ -7,16 +7,18 @@ import { AdSlot } from 'adex-models'
 import copy from 'copy-to-clipboard'
 import ItemHoc from 'components/dashboard/containers/ItemHoc'
 import { BasicProps } from 'components/dashboard/containers/ItemCommon'
-import Paper from '@material-ui/core/Paper'
-import IconButton from '@material-ui/core/IconButton'
 import CopyIcon from '@material-ui/icons/FileCopy'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
-import AppBar from '@material-ui/core/AppBar'
+import { Tab, Tabs, AppBar, Paper, IconButton } from '@material-ui/core'
+import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
+
+import { Alert, AlertTitle } from '@material-ui/lab'
 import url from 'url'
-import { selectRoutineWithdrawTokensAddresses } from 'selectors'
+import {
+	selectRoutineWithdrawTokensAddresses,
+	selectHasConfirmedEmail,
+} from 'selectors'
 
 const ADVIEW_URL = process.env.ADVIEW_URL
 const adviewUrl = url.parse(ADVIEW_URL)
@@ -130,7 +132,16 @@ export class Slot extends Component {
 	}
 
 	render() {
-		const { t, classes, isDemo, item, account, itemType, ...rest } = this.props
+		const {
+			t,
+			classes,
+			isDemo,
+			item,
+			account,
+			itemType,
+			isEmailConfirmed,
+			...rest
+		} = this.props
 		const { tabIndex } = this.state
 
 		return (
@@ -141,7 +152,7 @@ export class Slot extends Component {
 					t={t}
 					url={item.adUrl}
 					canEditImg={!isDemo}
-					rightComponent={null}
+					rightComponent={<WebsiteIssues website={item.website} />}
 					{...rest}
 				/>
 				<div>
@@ -160,21 +171,33 @@ export class Slot extends Component {
 						</Tabs>
 					</AppBar>
 					<div style={{ marginTop: 10 }}>
-						{tabIndex === 0 && (
-							<IntegrationCode
-								classes={classes}
-								t={t}
-								account={account}
-								slot={item}
-								onCopy={() =>
-									this.props.actions.addToast({
-										type: 'accept',
-										label: t('COPIED_TO_CLIPBOARD'),
-										timeout: 5000,
-									})
-								}
-							/>
-						)}
+						{tabIndex === 0 &&
+							(isEmailConfirmed ? (
+								<IntegrationCode
+									classes={classes}
+									t={t}
+									account={account}
+									slot={item}
+									onCopy={() =>
+										this.props.actions.addToast({
+											type: 'accept',
+											label: t('COPIED_TO_CLIPBOARD'),
+											timeout: 5000,
+										})
+									}
+								/>
+							) : (
+								<Alert severity='warning' variant='outlined'>
+									<AlertTitle>
+										{t('EMAIL_NOT_CONFIRMED_WARNING_TITLE')}
+									</AlertTitle>
+									<div
+										dangerouslySetInnerHTML={{
+											__html: t('EMAIL_WARNING_SLOT_INTEGRATION'),
+										}}
+									/>
+								</Alert>
+							))}
 						{/* {tabIndex === 0 && null} */}
 					</div>
 				</div>
@@ -201,6 +224,7 @@ function mapStateToProps(state) {
 		updateImgLabel: 'SLOT_AVATAR_IMG_LABEL',
 		updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
 		updateImgExact: true,
+		isEmailConfirmed: selectHasConfirmedEmail(state),
 	}
 }
 

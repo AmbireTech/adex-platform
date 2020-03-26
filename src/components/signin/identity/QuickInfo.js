@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
@@ -7,7 +7,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
 import Anchor from 'components/common/anchor/anchor'
-import { WHERE_YOU_KNOW_US } from 'constants/misc'
 import {
 	ContentBox,
 	ContentBody,
@@ -19,16 +18,17 @@ import {
 	selectIdentity,
 	selectValidationsById,
 	selectSpinnerById,
-	selectFromSource,
+	selectKnowUsFromSource,
 } from 'selectors'
 import { execute, updateIdentity } from 'actions'
 
 import { CREATING_SESSION } from 'constants/spinners'
 
+const knowFromSource = selectKnowUsFromSource()
+
 const QuickInfo = props => {
 	const { validateId } = props
 	const identity = useSelector(selectIdentity)
-	const knowFromSource = useSelector(() => selectFromSource(WHERE_YOU_KNOW_US))
 	const validations = useSelector(
 		state => selectValidationsById(state, validateId) || {}
 	)
