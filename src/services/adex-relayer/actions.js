@@ -59,6 +59,8 @@ export const executeTx = ({ txnsRaw, signatures, identityAddr, channel }) => {
 export const regAccount = ({
 	owner,
 	email,
+	knowFrom,
+	moreInfo,
 	bytecode,
 	identityFactoryAddr,
 	baseIdentityAddr,
@@ -74,6 +76,8 @@ export const regAccount = ({
 			body: JSON.stringify({
 				owner,
 				email,
+				knowFrom,
+				moreInfo,
 				bytecode,
 				identityFactoryAddr,
 				baseIdentityAddr,
