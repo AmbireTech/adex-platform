@@ -21,7 +21,7 @@ import {
 	t,
 } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
-import { getGasStationStatus } from 'services/ethgasstation/actions'
+import { getGasPrice } from 'services/gas/actions'
 import { formatUnits } from 'ethers/utils'
 import { withdrawFromIdentity } from 'services/smart-contracts/actions/identity'
 
@@ -59,8 +59,9 @@ export function checkNetworkCongestion() {
 		const state = getState()
 		const gasPriceCap = selectGasPriceCap(state)
 		const gasPriceCapGwei = formatUnits(gasPriceCap, 'gwei')
-		const { average } = await getGasStationStatus()
-		if (+gasPriceCapGwei < +average) {
+		const authType = selectAuthType(state)
+		const gasPrice = await getGasPrice(authType, 'gwei')
+		if (+gasPriceCapGwei < +gasPrice) {
 			addToast({
 				type: 'warning',
 				label: t('WARNING_NETWORK_CONGESTED'),
