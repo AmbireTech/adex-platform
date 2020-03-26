@@ -11,6 +11,7 @@ import CopyIcon from '@material-ui/icons/FileCopy'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { Tab, Tabs, AppBar, Paper, IconButton } from '@material-ui/core'
+import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
 
 import { Alert, AlertTitle } from '@material-ui/lab'
 import url from 'url'
@@ -151,7 +152,7 @@ export class Slot extends Component {
 					t={t}
 					url={item.adUrl}
 					canEditImg={!isDemo}
-					rightComponent={null}
+					rightComponent={<WebsiteIssues website={item.website} />}
 					{...rest}
 				/>
 				<div>
