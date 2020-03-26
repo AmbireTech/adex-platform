@@ -115,7 +115,6 @@ function getClientEnvironment(publicUrl) {
 				BUILD_TYPE: process.env.BUILD_TYPE,
 				ADEX_SUPPORT_URL: process.env.ADEX_SUPPORT_URL,
 				GA_CODE: process.env.GA_CODE,
-				ETH_GAS_STATION: process.env.ETH_GAS_STATION,
 			}
 		)
 
