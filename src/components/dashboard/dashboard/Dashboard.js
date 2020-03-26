@@ -256,16 +256,6 @@ function Dashboard(props) {
 						<Route
 							exact
 							path='/dashboard/publisher/receipts'
-							component={PublisherReceiptsTable}
-						/>
-						<Route
-							exact
-							path='/dashboard/publisher/selectedReceipts'
-							component={Receipt}
-						/>
-						<Route
-							exact
-							path='/dashboard/publisher/receipt/:date'
 							component={Receipt}
 						/>
 						<Route
