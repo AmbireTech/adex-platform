@@ -401,6 +401,6 @@ export const selectChartDatapointsCPM = createSelector(
 export const selectPublisherRevenueNoticeActive = createSelector(
 	[selectPublisherTotalImpressions, selectWebsites],
 	(totalImpressions, websites) =>
-		(websites.length && websites.some(w => w.issuss.length === 0)) ||
+		(websites.length && websites.some(w => w.issues.length === 0)) ||
 		!totalImpressions
 )
