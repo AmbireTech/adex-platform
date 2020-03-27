@@ -307,18 +307,14 @@ export function getReceiptData(startDate, endDate) {
 	return async function(dispatch, getState) {
 		const state = getState()
 		const { account } = state.persist
-		console.log('GETTING DATA')
 		try {
 			await updateSpinner(FETCHING_PUBLISHER_RECEIPTS, true)(dispatch)
 			const presentMonths = selectPublisherReceiptsPresentMonths(state)
 			const monthsWanted = selectMonthsRange(startDate, endDate)
-			console.log('monthsWanted', monthsWanted)
 			const monthsNeeded = monthsWanted
 				.filter(val => !presentMonths.includes(val))
 				.sort()
-			const startDateNeeded = monthsNeeded[0]
-			const endDateNeeded = monthsNeeded[monthsNeeded.length - 1]
-			console.log('monthsNeeded', monthsNeeded)
+
 			const leaderAuth = await getValidatorAuthToken({
 				validatorId: VALIDATOR_LEADER_ID,
 				account,
@@ -327,69 +323,71 @@ export function getReceiptData(startDate, endDate) {
 				newAuth: { [VALIDATOR_LEADER_ID]: leaderAuth },
 			})(dispatch, getState)
 
-			const timeframe = 'month'
-			const limit = 500
-			const promises = []
-			//limit of request is 500 days
-			for (
-				var m = moment(startDateNeeded);
-				m.diff(endDateNeeded) <= 0;
-				m.add(limit, 'day')
-			) {
-				promises.push(
-					timeBasedAnalytics({
-						leaderAuth,
-						timeframe,
-						limit,
-						eventType: 'IMPRESSION',
-						metric: 'eventCounts',
-						start: +moment(startDateNeeded),
-						end: +moment(endDateNeeded),
-					}),
-					timeBasedAnalytics({
-						leaderAuth,
-						timeframe,
-						limit,
-						eventType: 'IMPRESSION',
-						metric: 'eventPayouts',
-						start: +moment(startDateNeeded),
-						end: +moment(endDateNeeded),
-					})
-				)
-			}
-			const resolvedPromises = await Promise.all(promises)
-			console.log(resolvedPromises)
-			let impressions = []
-			let payouts = []
-			for (let i = 0; i < resolvedPromises.length; i += 2) {
-				impressions = [...impressions, ...resolvedPromises[i].aggr]
-				payouts = [...payouts, ...resolvedPromises[i + 1].aggr]
-			}
-			const result = {}
-			// add wanted dates
-			const getMonthTimeStamp = date => +moment(date).startOf('month')
-			monthsWanted.forEach(date => {
-				const month = getMonthTimeStamp(date)
-				if (!result[month]) {
-					result[month] = {}
+			if (monthsNeeded.length > 0) {
+				const timeframe = 'month'
+				const limit = 500
+				const promises = []
+				const startDateNeeded = monthsNeeded[0]
+				const endDateNeeded = monthsNeeded[monthsNeeded.length - 1]
+				//limit of request is 500 days
+				for (
+					var m = moment(startDateNeeded);
+					m.diff(endDateNeeded) <= 0;
+					m.add(limit, 'day')
+				) {
+					promises.push(
+						timeBasedAnalytics({
+							leaderAuth,
+							timeframe,
+							limit,
+							eventType: 'IMPRESSION',
+							metric: 'eventCounts',
+							start: +moment(startDateNeeded),
+							end: +moment(endDateNeeded),
+						}),
+						timeBasedAnalytics({
+							leaderAuth,
+							timeframe,
+							limit,
+							eventType: 'IMPRESSION',
+							metric: 'eventPayouts',
+							start: +moment(startDateNeeded),
+							end: +moment(endDateNeeded),
+						})
+					)
 				}
-			})
-			impressions.forEach((item, i) => {
-				const month = getMonthTimeStamp(item.time)
-				if (result[month]) {
-					result[month][item.time] = {
-						impressions: item.value,
-						payouts: payouts[i].value,
+				const resolvedPromises = await Promise.all(promises)
+				let impressions = []
+				let payouts = []
+				for (let i = 0; i < resolvedPromises.length; i += 2) {
+					impressions = [...impressions, ...resolvedPromises[i].aggr]
+					payouts = [...payouts, ...resolvedPromises[i + 1].aggr]
+				}
+				const result = {}
+				// add wanted dates
+				const getMonthTimeStamp = date => +moment(date).startOf('month')
+				monthsNeeded.forEach(date => {
+					const month = getMonthTimeStamp(date)
+					if (!result[month]) {
+						result[month] = {}
 					}
-				}
-			})
-			console.log(result)
-			dispatch({
-				type: types.UPDATE_PUBLISHER_RECEIPTS,
-				value: {
-					...result,
-				},
-			})
+				})
+				impressions.forEach((item, i) => {
+					const month = getMonthTimeStamp(item.time)
+					if (result[month]) {
+						result[month][item.time] = {
+							impressions: item.value,
+							payouts: payouts[i].value,
+						}
+					}
+				})
+				dispatch({
+					type: types.UPDATE_PUBLISHER_RECEIPTS,
+					value: {
+						...result,
+					},
+				})
+			}
 			await updateSpinner(FETCHING_PUBLISHER_RECEIPTS, false)(dispatch)
 		} catch (err) {
 			console.log(err)
