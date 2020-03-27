@@ -288,6 +288,7 @@ function PublisherReceiptTpl({ date } = {}) {
 	const { totalPayouts, totalImpressions } = useSelector(state =>
 		selectPublisherReceiptsStatsByMonthTotalValues(state, date)
 	)
+	const cpm = ((totalPayouts / totalImpressions) * 1000).toFixed(2)
 
 	const { companyName, firstLastName, address, country } = useSelector(
 		selectCompanyData
@@ -408,9 +409,7 @@ function PublisherReceiptTpl({ date } = {}) {
 				</Box>
 				<Box>
 					<Typography variant='subtitle2'>
-						<strong>
-							{`${((totalPayouts / totalImpressions) * 1000).toFixed(2)}`}
-						</strong>
+						<strong>{`${isFinite(cpm) ? cpm : Number(0).toFixed(2)}`}</strong>
 					</Typography>
 				</Box>
 			</Box>
