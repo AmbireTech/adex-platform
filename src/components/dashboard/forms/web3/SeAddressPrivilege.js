@@ -11,6 +11,7 @@ import Checkbox from '@material-ui/core/Checkbox'
 import { constants } from 'adex-models'
 import { t, selectValidationsById, selectNewTransactionById } from 'selectors'
 import { execute, updateNewTransaction } from 'actions'
+import { Alert } from '@material-ui/lab'
 
 const { IdentityPrivilegeLevel } = constants
 
@@ -31,6 +32,7 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 		setAddr: errAddr,
 		setAddrWarning: warning,
 		privLevel: errPrivLvl,
+		fees: errFees,
 	} = useSelector(state => selectValidationsById(state, validateId) || {})
 
 	return (
@@ -79,7 +81,7 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 						: t('SELECT_PRIV_LEVEL_HELPER_TXT')
 				}
 			/>
-			<Box marginTop={2}>
+			<Box m={2}>
 				<Typography variant='caption' display='block' gutterBottom>
 					{t('PRIV_LEVEL_INFO_LABEL')}:
 				</Typography>
@@ -98,27 +100,34 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 				</Typography>
 			</Box>
 			{(warning || warningAccepted || warningMsg) && (
-				<FormControl error={warning && warning.dirty} component='fieldset'>
-					<FormControlLabel
-						control={
-							<Checkbox
-								checked={!!warningAccepted}
-								onChange={ev =>
-									execute(
-										updateNewTransaction({
-											tx: stepsId,
-											key: 'warningAccepted',
-											value: ev.target.checked,
-										})
-									)
-								}
-								value='warningAccepted'
-								color='primary'
-							/>
-						}
-						label={t((warning || {}).errMsg || warningMsg)}
-					/>
-				</FormControl>
+				<Box m={2}>
+					<FormControl error={warning && warning.dirty} component='fieldset'>
+						<FormControlLabel
+							control={
+								<Checkbox
+									checked={!!warningAccepted}
+									onChange={ev =>
+										execute(
+											updateNewTransaction({
+												tx: stepsId,
+												key: 'warningAccepted',
+												value: ev.target.checked,
+											})
+										)
+									}
+									value='warningAccepted'
+									color='primary'
+								/>
+							}
+							label={t((warning || {}).errMsg || warningMsg)}
+						/>
+					</FormControl>
+				</Box>
+			)}
+			{errFees && errFees.dirty && errFees.errMsg && (
+				<Alert variant='outlined' severity='error'>
+					{errFees.errMsg}
+				</Alert>
 			)}
 		</div>
 	)
