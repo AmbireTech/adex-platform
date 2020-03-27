@@ -45,7 +45,7 @@ export default function analyticsReducer(
 			return newState
 		case UPDATE_PUBLISHER_RECEIPTS:
 			newState = { ...state }
-			newState.receipts = action.value
+			newState.receipts = { ...newState.receipts, ...action.value }
 			return newState
 		case RESET_ANALYTICS:
 			newState = { ...initialState.analytics }
