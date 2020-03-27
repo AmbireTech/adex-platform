@@ -12,7 +12,6 @@ import {
 	t,
 	selectSelectedCampaigns,
 	selectSide,
-	selectSelectedPublisherReceipts,
 	selectSpinnerById,
 	selectAccountIdentityDeployData,
 	selectReceiptMonths,
@@ -74,8 +73,8 @@ function Receipt(props) {
 
 	const receipts = side === 'publisher' ? dates : receiptsAdvertiser
 
-	const monthMapping = useSelector(() =>
-		selectReceiptMonths(created, Date.now())
+	const monthMapping = useSelector(
+		() => selectReceiptMonths(created, new Date().setDate(0)) // last day of prev month
 	)
 
 	const fetchingPublisherReceiptsSpinner = useSelector(state =>
@@ -89,13 +88,6 @@ function Receipt(props) {
 	}, [])
 
 	useEffect(() => {
-		console.log(
-			'fetchingPublisherReceiptsSpinner',
-			fetchingPublisherReceiptsSpinner
-		)
-	}, [fetchingPublisherReceiptsSpinner])
-
-	useEffect(() => {
 		if (validateStartDate && validateEndDate) {
 			execute(getReceiptData(startDate, endDate))
 		}
@@ -103,7 +95,6 @@ function Receipt(props) {
 
 	if (side === 'advertiser' && receipts.length === 0)
 		return <Redirect to={'/dashboard/advertiser/campaigns'} />
-	console.log('receipts', receipts)
 	return (
 		<Box display='flex' justifyContent='center' alignContent='center'>
 			<Box
