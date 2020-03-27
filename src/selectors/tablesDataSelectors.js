@@ -535,24 +535,19 @@ export const selectPublisherReceiptsMaxValues = createSelector(
 export const selectPublisherReceiptsStatsByMonthTableData = createSelector(
 	[selectAnalytics, selectMainToken, (_, date) => date],
 	({ receipts }, token, date) => {
-		const m = moment(date)
-		const startOfMonth = m.startOf('month').format('YYYY-MM-DD')
-		const startOfNewMonth = m
-			.clone()
-			.add(1, 'month')
-			.format('YYYY-MM-DD')
-		return Object.values(receipts)
-			.filter(item =>
-				moment(item.time).isBetween(startOfMonth, startOfNewMonth)
-			)
-			.map(item => {
-				const { decimals = 18 } = token || {}
-				return {
-					impressions: item.impressions,
-					payouts: Number(formatUnits(item.payouts || '0', decimals)),
-					date: item.time,
-				}
-			})
+		const result = []
+		if (receipts[date]) {
+			const { decimals = 18 } = token || {}
+			for (let [key, value] of Object.entries(receipts[date])) {
+				result.push({
+					impressions: value.impressions,
+					payouts: Number(formatUnits(value.payouts || '0', decimals)),
+					date: +key,
+				})
+			}
+		}
+		console.log('DEBUG', result, receipts[date], date)
+		return result
 	}
 )
 
