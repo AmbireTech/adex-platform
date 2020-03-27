@@ -78,7 +78,6 @@ export const selectMonthsRange = createSelector(
 		) {
 			months.push(+m)
 		}
-		console.log(months)
 		return months
 	}
 )

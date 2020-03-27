@@ -536,7 +536,7 @@ export const selectPublisherReceiptsStatsByMonthTableData = createSelector(
 	[selectAnalytics, selectMainToken, (_, date) => date],
 	({ receipts }, token, date) => {
 		const result = []
-		if (receipts[date]) {
+		if (receipts && receipts[date]) {
 			const { decimals = 18 } = token || {}
 			for (let [key, value] of Object.entries(receipts[date])) {
 				result.push({
@@ -546,7 +546,6 @@ export const selectPublisherReceiptsStatsByMonthTableData = createSelector(
 				})
 			}
 		}
-		console.log('DEBUG', result, receipts[date], date)
 		return result
 	}
 )
