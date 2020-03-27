@@ -407,6 +407,16 @@ export const selectPublisherRevenueNoticeActive = createSelector(
 		!totalImpressions
 )
 
+export const selectPublisherReceipts = createSelector(
+	[selectAnalytics],
+	({ receipts }) => receipts || {}
+)
+
+export const selectPublisherReceiptsPresentMonths = createSelector(
+	[selectPublisherReceipts],
+	receipts => Object.keys(receipts)
+)
+
 export const selectPublisherReceiptStats = createSelector(
 	[selectAnalytics, selectAccountIdentityDeployData],
 	({ receipts }, { created }) => {
