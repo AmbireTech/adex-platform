@@ -220,8 +220,10 @@ export async function setIdentityPrivilege({
 	})
 
 	if (getFeesOnly) {
+		const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken })
 		return {
-			fees: (await getIdentityTxnsTotalFees({ txnsByFeeToken })).total,
+			fees: fees.total,
+			feesBn: fees.totalBN,
 		}
 	}
 
