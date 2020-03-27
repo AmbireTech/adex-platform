@@ -7,7 +7,7 @@ import {
 	backupWallet,
 	getIdentityData,
 } from 'services/adex-relayer/actions'
-import { updateSpinner, updateGlobalUi, getReceiptData } from 'actions'
+import { updateSpinner, updateGlobalUi } from 'actions'
 import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
 import {
