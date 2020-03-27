@@ -9,6 +9,7 @@ import { validPassword } from 'helpers/validators'
 import { t, selectAuthType } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
 import { getEmail } from 'services/adex-relayer/actions'
+import { formatTokenAmount } from 'helpers/formatters'
 const { IdentityPrivilegeLevel } = constants
 
 const { campaignPut, account } = schemas
@@ -316,6 +317,52 @@ const validateAmounts = ({
 	return { error }
 }
 
+export function validateFees({
+	validateId,
+	feesAmountBN,
+	availableIdentityBalanceMainTokenRaw,
+	amountToSpendBN,
+	availableIdentityBalanceMainTokenFormatted,
+	decimals,
+	symbol,
+	errorMsg = '',
+	dirty,
+}) {
+	return async function(dispatch, getState) {
+		let isValid = true
+		let msg = errorMsg
+		let args = []
+		const amountNeeded = bigNumberify(feesAmountBN).add(
+			bigNumberify(amountToSpendBN)
+		)
+
+		if (amountNeeded.gt(bigNumberify(availableIdentityBalanceMainTokenRaw))) {
+			const amountNeededFormatted = formatTokenAmount(
+				amountNeeded,
+				decimals,
+				null,
+				2
+			)
+			isValid = false
+			msg = 'ERR_TX_INSUFFICIENT_BALANCE'
+			args = [
+				amountNeededFormatted,
+				symbol,
+				availableIdentityBalanceMainTokenFormatted,
+				symbol,
+			]
+		}
+
+		await validate(validateId, 'fees', {
+			isValid,
+			err: { msg, args },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
 export function validateWithdrawAmount({
 	validateId,
 	amountToWithdraw,
@@ -331,7 +378,7 @@ export function validateWithdrawAmount({
 
 		let msg = errorMsg || 'ERR_INVALID_AMOUNT_VALUE'
 		let args = []
-		let amount = isValid ? parseUnits(amountToWithdraw, decimals) : null
+		const amount = isValid ? parseUnits(amountToWithdraw, decimals) : null
 		if (errorMsg) {
 			isValid = false
 			msg = errorMsg
