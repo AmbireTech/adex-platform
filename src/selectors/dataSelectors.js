@@ -72,16 +72,13 @@ export const selectMonthsRange = createSelector(
 	({ startDate, endDate }) => {
 		const months = []
 		for (
-			var m = moment(startDate);
-			m.diff(
-				moment(endDate)
-					.subtract(1, 'month')
-					.endOf('month')
-			) <= 0;
+			var m = moment(startDate).startOf('month');
+			m.diff(moment(endDate).startOf('month')) <= 0;
 			m.add(1, 'month')
 		) {
 			months.push(+m)
 		}
+		console.log(months)
 		return months
 	}
 )
