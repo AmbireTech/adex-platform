@@ -13,11 +13,14 @@ import {
 	selectSelectedCampaigns,
 	selectSide,
 	selectSelectedPublisherReceipts,
+	selectSpinnerById,
 	selectAccountIdentityDeployData,
 	selectReceiptMonths,
 } from 'selectors'
-import { execute, resetSelectedItems } from 'actions'
+import { execute, resetSelectedItems, getReceiptData } from 'actions'
 import Dropdown from 'components/common/dropdown'
+import { FETCHING_PUBLISHER_RECEIPTS } from 'constants/spinners'
+import { LinearProgress } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => {
 	return {
@@ -36,35 +39,47 @@ const useStyles = makeStyles(theme => {
 				display: 'none',
 			},
 		},
+		progress: {
+			width: '100%',
+		},
 	}
 })
-function Receipt(props) {
-	const [startDate, setStartDate] = useState('')
-	const [endDate, setEndDate] = useState('')
 
+function Receipt(props) {
 	const classes = useStyles()
 	const invoice = useRef()
 	const { itemId, date } = useParams()
 	const side = useSelector(selectSide)
 	const selectedCampaigns = useSelector(state => selectSelectedCampaigns(state))
-	const selectedPublisherReceipts = useSelector(state =>
-		selectSelectedPublisherReceipts(state)
-	)
+	// const selectedPublisherReceipts = useSelector(state =>
+	// 	selectSelectedPublisherReceipts(state)
+	// )
 
 	const selectedByPropsOrParams = props.itemId || itemId || date
-	const selectedItems =
-		selectedCampaigns.length > 0 ? selectedCampaigns : selectedPublisherReceipts
-	const dates = useSelector(() => selectReceiptMonths(startDate, endDate))
-	const receiptsAdvertiser = selectedByPropsOrParams
-		? [selectedByPropsOrParams]
-		: selectedItems
 
-	const receipts = side === 'publisher' ? dates : receiptsAdvertiser
 	const { created } = useSelector(state =>
 		selectAccountIdentityDeployData(state)
 	)
+	const [startDate, setStartDate] = useState('')
+	const [endDate, setEndDate] = useState('')
+	const dates = useSelector(() => selectReceiptMonths(startDate, endDate))
+	const validateStartDate =
+		startDate <= endDate && startDate !== '' && endDate !== ''
+	const validateEndDate =
+		endDate >= startDate && startDate !== '' && endDate !== ''
+
+	const receiptsAdvertiser = selectedByPropsOrParams
+		? [selectedByPropsOrParams]
+		: selectedCampaigns
+
+	const receipts = side === 'publisher' ? dates : receiptsAdvertiser
+
 	const monthMapping = useSelector(() =>
 		selectReceiptMonths(created, Date.now())
+	)
+
+	const fetchingPublisherReceiptsSpinner = useSelector(state =>
+		selectSpinnerById(state, FETCHING_PUBLISHER_RECEIPTS)
 	)
 
 	useEffect(() => {
@@ -73,9 +88,22 @@ function Receipt(props) {
 		}
 	}, [])
 
+	useEffect(() => {
+		console.log(
+			'fetchingPublisherReceiptsSpinner',
+			fetchingPublisherReceiptsSpinner
+		)
+	}, [fetchingPublisherReceiptsSpinner])
+
+	useEffect(() => {
+		if (validateStartDate && validateEndDate) {
+			execute(getReceiptData(startDate, endDate))
+		}
+	}, [startDate, endDate, validateStartDate, validateEndDate])
+
 	if (side === 'advertiser' && receipts.length === 0)
 		return <Redirect to={'/dashboard/advertiser/campaigns'} />
-
+	console.log('receipts', receipts)
 	return (
 		<Box display='flex' justifyContent='center' alignContent='center'>
 			<Box
@@ -111,6 +139,7 @@ function Receipt(props) {
 									fullWidth
 									source={[...monthMapping]}
 									onChange={val => setStartDate(val)}
+									error={!validateStartDate}
 									value={startDate}
 									label={t('START_DATE')}
 									name='startDate'
@@ -123,6 +152,7 @@ function Receipt(props) {
 									fullWidth
 									source={[...monthMapping]}
 									onChange={val => setEndDate(val)}
+									error={!validateEndDate}
 									value={endDate}
 									label={t('END_DATE')}
 									name='endDate'
@@ -131,6 +161,9 @@ function Receipt(props) {
 								/>
 							</Box>
 						</Box>
+						{fetchingPublisherReceiptsSpinner && (
+							<LinearProgress className={classes.progress} />
+						)}
 					</Paper>
 				)}
 				<Card>
@@ -155,7 +188,9 @@ function Receipt(props) {
 									side === 'advertiser' ? (
 										<CampaignReceiptTpl campaignId={item} key={item} />
 									) : (
-										<PublisherReceiptTpl date={item} key={item} />
+										fetchingPublisherReceiptsSpinner === false && (
+											<PublisherReceiptTpl date={item.value} key={item.value} />
+										)
 									)
 								)}
 							</Box>
