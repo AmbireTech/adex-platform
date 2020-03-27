@@ -8,6 +8,7 @@ import {
 	validatePrivLevel,
 	validateWithdrawAmount,
 	addToast,
+	validateFees,
 } from 'actions'
 import {
 	selectNewTransactionById,
@@ -27,6 +28,7 @@ import {
 	withdrawFromIdentity,
 	setIdentityPrivilege,
 } from 'services/smart-contracts/actions/identity'
+import Helper from 'helpers/miscHelpers'
 
 // MEMORY STORAGE
 export function updateNewTransaction({ tx, key, value }) {
@@ -184,6 +186,27 @@ export function validatePrivilegesChange({
 				key: 'feesData',
 				value: feesData,
 			})(dispatch, getState)
+
+			const { symbol, decimals } = selectMainToken(state)
+			const {
+				availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenRaw,
+			} = selectAccountStatsRaw(state)
+			const {
+				availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenFormatted,
+			} = selectAccountStatsFormatted(state)
+
+			const feesValidation = await validateFees({
+				validateId,
+				feesAmountBN: feesData.feesBn,
+				availableIdentityBalanceMainTokenRaw,
+				amountToSpendBN: '0',
+				availableIdentityBalanceMainTokenFormatted,
+				decimals,
+				symbol,
+				dirty,
+			})(dispatch)
+
+			isValid = feesValidation.isValid
 		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
@@ -276,5 +299,52 @@ export function validateIdentityWithdraw({
 		await handleAfterValidation({ isValid, onValid, onInvalid })
 
 		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function completeTx({
+	stepsId,
+	saveFn,
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		await updateNewTransaction({
+			tx: stepsId,
+			key: 'waitingForWalletAction',
+			value: true,
+		})(dispatch)
+
+		let isValid = false
+
+		try {
+			const state = getState()
+
+			const account = selectAccount(state)
+			const transaction = selectNewTransactionById(state, stepsId)(
+				dispatch,
+				getState
+			)
+
+			await saveFn({ ...transaction, account })
+			isValid = true
+		} catch (err) {
+			addToast({
+				type: 'cancel',
+				label: t('ERR_TRANSACTION', { args: [Helper.getErrMsg(err)] }),
+				timeout: 50000,
+			})(dispatch)
+		}
+
+		await updateSpinner(validateId, false)(dispatch)
+		await updateNewTransaction({
+			tx: stepsId,
+			key: 'waitingForWalletAction',
+			value: false,
+		})(dispatch)
+		await handleAfterValidation({ isValid, onValid, onInvalid })
 	}
 }
