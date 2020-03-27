@@ -23,7 +23,10 @@ import {
 import { getErrorMsg } from 'helpers/errors'
 import { getGasPrice } from 'services/gas/actions'
 import { formatUnits } from 'ethers/utils'
-import { withdrawFromIdentity } from 'services/smart-contracts/actions/identity'
+import {
+	withdrawFromIdentity,
+	setIdentityPrivilege,
+} from 'services/smart-contracts/actions/identity'
 
 // MEMORY STORAGE
 export function updateNewTransaction({ tx, key, value }) {
@@ -165,6 +168,22 @@ export function validatePrivilegesChange({
 				key: 'warningMsg',
 				value: validation.msg,
 			})(dispatch)
+		}
+
+		if (isValid) {
+			const account = selectAccount(state)
+			const feesData = await setIdentityPrivilege({
+				privLevel,
+				setAddr,
+				getFeesOnly: true,
+				account,
+			})
+
+			await updateNewTransaction({
+				tx: stepsId,
+				key: 'feesData',
+				value: feesData,
+			})(dispatch, getState)
 		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
