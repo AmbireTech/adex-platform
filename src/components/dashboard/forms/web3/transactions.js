@@ -145,14 +145,6 @@ export const SetIdentityPrivilege = props => (
 				})
 			)
 		}}
-		getFeesFn={({ transaction, account } = {}) => {
-			return setIdentityPrivilege({
-				privLevel: transaction.privLevel,
-				setAddr: transaction.setAddr,
-				getFeesOnly: true,
-				account,
-			})
-		}}
 	/>
 )
 
