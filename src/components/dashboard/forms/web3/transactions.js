@@ -10,7 +10,6 @@ import FormSteps from 'components/dashboard/forms/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 import {
-	setIdentityPrivilege,
 	addIdentityENS,
 	withdrawOtherTokensFromIdentity,
 } from 'services/smart-contracts/actions/identity'
@@ -21,10 +20,16 @@ import {
 	validatePrivilegesChange,
 	identityWithdrawAny,
 	validateIdentityWithdraw,
+	completeTx,
 	execute,
+	resetNewTransaction,
 } from 'actions'
 
 const FormStepsWithDialog = WithDialog(FormSteps)
+
+const cancelFunction = stepsId => {
+	execute(resetNewTransaction({ tx: stepsId }))
+}
 
 const SaveBtn = ({
 	save,
@@ -56,16 +61,11 @@ const SaveBtn = ({
 	)
 }
 
-const CancelBtn = ({ cancel, cancelBtnLabel, t, ...other }) => {
-	return <Button onClick={cancel}>{t(cancelBtnLabel || 'CANCEL')}</Button>
-}
-
 const SaveBtnWithTransaction = TransactionHoc(SaveBtn)
-const CancelBtnWithTransaction = TransactionHoc(CancelBtn)
 
 const txCommon = {
 	SaveBtn: SaveBtnWithTransaction,
-	CancelBtn: CancelBtnWithTransaction,
+	cancelFunction,
 	validateIdBase: 'tx-',
 	darkerBackground: true,
 }
@@ -109,21 +109,49 @@ export const WithdrawTokenFromIdentity = props => (
 	/>
 )
 
-export const SetIdentityPrivilege = props => (
-	<FormStepsWithDialog
-		{...props}
-		btnLabel='ACCOUNT_SET_IDENTITY_PRIVILEGE_BTN'
-		saveBtnLabel='ACCOUNT_SET_IDENTITY_PRIVILEGE_SAVE_BTN'
-		title='ACCOUNT_SET_IDENTITY_PRIVILEGE_TITLE'
-		stepsId='setIdentityPrivilege'
-		{...txCommon}
-		stepsPages={[
-			{
-				title: 'ACCOUNT_SET_IDENTITY_PRIVILEGE_STEP',
-				page: SeAddressPrivilege,
-				pageValidation: ({ stepsId, validateId, dirty, onValid, onInvalid }) =>
+export const SetIdentityPrivilege = ({ SaveBtn, ...props }) => {
+	return (
+		<FormStepsWithDialog
+			{...props}
+			btnLabel='ACCOUNT_SET_IDENTITY_PRIVILEGE_BTN'
+			saveBtnLabel='ACCOUNT_SET_IDENTITY_PRIVILEGE_SAVE_BTN'
+			title='ACCOUNT_SET_IDENTITY_PRIVILEGE_TITLE'
+			stepsId='setIdentityPrivilege'
+			{...txCommon}
+			stepsPages={[
+				{
+					title: 'ACCOUNT_SET_IDENTITY_PRIVILEGE_STEP',
+					page: SeAddressPrivilege,
+					pageValidation: ({
+						stepsId,
+						validateId,
+						dirty,
+						onValid,
+						onInvalid,
+					}) =>
+						execute(
+							validatePrivilegesChange({
+								stepsId,
+								validateId,
+								dirty,
+								onValid,
+								onInvalid,
+							})
+						),
+				},
+			]}
+			stepsPreviewPage={{
+				title: 'PREVIEW_AND_MAKE_TR',
+				page: TransactionPreview,
+				completeFunction: ({
+					stepsId,
+					validateId,
+					dirty,
+					onValid,
+					onInvalid,
+				}) =>
 					execute(
-						validatePrivilegesChange({
+						completeTx({
 							stepsId,
 							validateId,
 							dirty,
@@ -131,22 +159,10 @@ export const SetIdentityPrivilege = props => (
 							onInvalid,
 						})
 					),
-			},
-		]}
-		stepsPreviewPage={{
-			title: 'PREVIEW_AND_MAKE_TR',
-			page: TransactionPreview,
-		}}
-		saveFn={({ transaction } = {}) => {
-			return execute(
-				addrIdentityPrivilege({
-					privLevel: transaction.privLevel,
-					setAddr: transaction.setAddr,
-				})
-			)
-		}}
-	/>
-)
+			}}
+		/>
+	)
+}
 
 export const WithdrawAnyTokenFromIdentity = props => (
 	<FormStepsWithDialog
