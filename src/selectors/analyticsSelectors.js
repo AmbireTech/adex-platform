@@ -414,7 +414,7 @@ export const selectPublisherReceipts = createSelector(
 
 export const selectPublisherReceiptsPresentMonths = createSelector(
 	[selectPublisherReceipts],
-	receipts => Object.keys(receipts)
+	receipts => Object.keys(receipts).map(r => +r)
 )
 
 export const selectPublisherReceiptStats = createSelector(
