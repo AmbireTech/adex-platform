@@ -170,7 +170,6 @@ function PublisherReceiptsTable(props) {
 				maxCPM,
 			}),
 	})
-	console.log('data', data)
 	const options = getOptions({ decimals, symbol, reloadData })
 
 	return (
