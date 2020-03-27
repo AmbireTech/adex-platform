@@ -64,6 +64,7 @@ const MaterialStepper = props => {
 	const {
 		initialPage = 0,
 		pages = [],
+		closeDialog,
 		// ...props
 	} = props
 	const classes = useStyles()
@@ -205,7 +206,14 @@ const MaterialStepper = props => {
 
 						{typeof page.cancelFunction === 'function' &&
 						!(page.disableBtnsIfValid && isValidPage()) ? (
-							<Button onClick={page.cancelFunction}>{t('CANCEL')}</Button>
+							<Button
+								onClick={() => {
+									typeof closeDialog === 'function' && closeDialog()
+									page.cancelFunction(stepsId)
+								}}
+							>
+								{t('CANCEL')}
+							</Button>
 						) : null}
 						{/* {ValidationBtn && <ValidationBtn {...page.props} />} */}
 
