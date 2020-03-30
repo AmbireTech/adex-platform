@@ -30,16 +30,16 @@ const getDirtyValidationErrors = (validations = {}) => {
 const useStyles = makeStyles(styles)
 
 // const MyStep = ({ page, active, index, children, theme, canAdvance, canFinish, canReverse, setPageIndex, canAdvanceToPage, currentPage, goToPage, ...other }) => {}
-const StepperNav = ({ pages, currentPage, classes, ...other }) => {
+const StepperNav = ({ steps, currentPage, classes, ...other }) => {
 	if (window.innerWidth <= 768) {
 		return (
 			<div>
 				<StepLabel className={classes.mobileStepLabel}>
-					({currentPage + 1}/{pages.length}) {pages[currentPage].title}
+					({currentPage + 1}/{steps.length}) {steps[currentPage].title}
 				</StepLabel>
 				<MobileStepper
 					activeStep={currentPage}
-					steps={pages.length}
+					steps={steps.length}
 					position={'static'}
 					variant='progress'
 					className={classes.mobileStepper}
@@ -49,7 +49,7 @@ const StepperNav = ({ pages, currentPage, classes, ...other }) => {
 	}
 	return (
 		<StepperMUI alternativeLabel activeStep={currentPage}>
-			{pages.map((page, i) => {
+			{steps.map((page, i) => {
 				return (
 					<Step key={page.title}>
 						<StepLabel>{page.title}</StepLabel>
@@ -63,20 +63,20 @@ const StepperNav = ({ pages, currentPage, classes, ...other }) => {
 const MaterialStepper = props => {
 	const {
 		initialPage = 0,
-		pages = [],
+		steps = [],
 		closeDialog,
-		// ...props
+		// ...rest
 	} = props
 	const classes = useStyles()
 
 	const [currentPage, setCurrentPage] = useState(+initialPage)
-	const canReverse = pages.length > currentPage && currentPage > 0
+	const canReverse = steps.length > currentPage && currentPage > 0
 
-	const page = pages[currentPage] || {}
+	const page = steps[currentPage] || {}
 	const pageProps = page.props || {}
 	const { validateId } = pageProps
 	const Comp = page.component || null
-	const { pageValidation = null, onValid, stepsId } = page
+	const { validationFn = null, onValid, stepsId } = page
 
 	const validations = useSelector(state =>
 		selectValidationsById(state, validateId)
@@ -111,8 +111,8 @@ const MaterialStepper = props => {
 	}, [canReverse, currentPage, goToPage])
 
 	const goToNextPage = useCallback(async () => {
-		if (pageValidation) {
-			pageValidation({
+		if (validationFn) {
+			validationFn({
 				stepsId,
 				validateId,
 				dirty: true,
@@ -126,16 +126,16 @@ const MaterialStepper = props => {
 		goToPage,
 		isValidPage,
 		onValid,
-		pageValidation,
+		validationFn,
 		stepsId,
 		validateId,
 	])
 
 	useEffect(() => {
-		if (pageValidation) {
-			pageValidation({ stepsId, validateId, dirty: false })
+		if (validationFn) {
+			validationFn({ stepsId, validateId, dirty: false })
 		}
-	}, [currentPage, pageValidation, stepsId, validateId])
+	}, [currentPage, validationFn, stepsId, validateId])
 
 	const onKeyPressed = useCallback(
 		async ev => {
@@ -156,7 +156,7 @@ const MaterialStepper = props => {
 			>
 				<StepperNav
 					{...props}
-					pages={pages}
+					steps={steps}
 					classes={classes}
 					currentPage={currentPage}
 					goToPage={goToPage}
@@ -217,10 +217,10 @@ const MaterialStepper = props => {
 						) : null}
 						{/* {ValidationBtn && <ValidationBtn {...page.props} />} */}
 
-						{!page.completeBtn || !!pageValidation ? (
+						{!page.completeBtn || !!validationFn ? (
 							<span className={classes.buttonProgressWrapper}>
 								<Button
-									disabled={spinner || (!isValidPage() && !pageValidation)}
+									disabled={spinner || (!isValidPage() && !validationFn)}
 									variant='contained'
 									color='primary'
 									onClick={goToNextPage}
@@ -235,7 +235,7 @@ const MaterialStepper = props => {
 								)}
 							</span>
 						) : null}
-						{page.completeBtn && !pageValidation && isValidPage() ? (
+						{page.completeBtn && !validationFn && isValidPage() ? (
 							<page.completeBtn />
 						) : (
 							''
@@ -248,7 +248,7 @@ const MaterialStepper = props => {
 }
 
 MaterialStepper.propTypes = {
-	pages: PropTypes.array.isRequired,
+	steps: PropTypes.array.isRequired,
 }
 
 export default MaterialStepper
