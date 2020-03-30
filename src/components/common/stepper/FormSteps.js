@@ -1,10 +1,12 @@
 import React, { forwardRef, useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import { useSelector } from 'react-redux'
 import MaterialStepper from 'components/common/stepper/MaterialUiStepper'
-import { t } from 'selectors'
+import { t, selectLocationQuery } from 'selectors'
 
 function FormSteps({ cancelFunction, stepsId, steps, closeDialog, ...rest }) {
 	const [stepperSteps, setSteps] = useState([])
+	const { step = 0 } = useSelector(selectLocationQuery)
 
 	useEffect(() => {
 		const updatedSteps = steps.map((s, index) => ({
@@ -18,7 +20,13 @@ function FormSteps({ cancelFunction, stepsId, steps, closeDialog, ...rest }) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [stepsId])
 
-	return <MaterialStepper steps={stepperSteps} closeDialog={closeDialog} />
+	return (
+		<MaterialStepper
+			initialPage={step}
+			steps={stepperSteps}
+			closeDialog={closeDialog}
+		/>
+	)
 }
 
 FormSteps.propTypes = {
