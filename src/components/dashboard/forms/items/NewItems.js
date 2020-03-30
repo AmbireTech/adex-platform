@@ -83,15 +83,16 @@ export const NewUnitSteps = props => (
 		validateIdBase={'new-AdUnit-'}
 		itemType={'AdUnit'}
 		stepsId={'new-adunit-'}
-		stepsPages={[
+		steps={[
 			{ title: 'UNIT_BASIC_STEP', page: AdUnitBasic },
 			{ title: 'UNIT_MEDIA_STEP', page: AdUnitMedia },
 			{ title: 'UNIT_TARGETS_STEP', page: AdUnitTargeting },
+			{
+				title: 'PREVIEW_AND_SAVE_ITEM',
+				page: AdUnitFormPreview,
+				final: true,
+			},
 		]}
-		stepsPreviewPage={{
-			title: 'PREVIEW_AND_SAVE_ITEM',
-			page: AdUnitFormPreview,
-		}}
 		imgLabel='UNIT_BANNER_IMG_LABEL'
 		noDefaultImg
 		itemModel={AdUnit}
@@ -127,7 +128,7 @@ export const NewCampaignSteps = props => (
 		validateIdBase={'new-Campaign-'}
 		itemType={'Campaign'}
 		stepsId={'new-campaign-'}
-		stepsPages={[
+		steps={[
 			{
 				title: 'CAMPAIGN_UNITS_STEP',
 				page: CampaignUnits,
@@ -156,11 +157,12 @@ export const NewCampaignSteps = props => (
 						})
 					),
 			},
+			{
+				title: 'PREVIEW_AND_SAVE_ITEM',
+				page: CampaignFormPreview,
+				final: true,
+			},
 		]}
-		stepsPreviewPage={{
-			title: 'PREVIEW_AND_SAVE_ITEM',
-			page: CampaignFormPreview,
-		}}
 		itemModel={Campaign}
 		imgAdditionalInfo='CAMPAIGN_IMG_ADDITIONAL_INFO'
 	/>
@@ -186,7 +188,7 @@ export const NewSlotSteps = props => (
 		validateIdBase={'new-AdUnit-'}
 		itemType={'AdSlot'}
 		stepsId={'new-slot-'}
-		stepsPages={[
+		steps={[
 			{
 				title: 'SLOT_BASIC_STEP',
 				page: AdSlotBasic,
@@ -202,8 +204,8 @@ export const NewSlotSteps = props => (
 			},
 			{ title: 'SLOT_PASSBACK_STEP', page: AdSlotMedia },
 			{ title: 'SLOT_TAGS_STEP', page: AdSlotTargeting },
+			{ title: 'PREVIEW_AND_SAVE_ITEM', page: AdSlotPreview, final: true },
 		]}
-		stepsPreviewPage={{ title: 'PREVIEW_AND_SAVE_ITEM', page: AdSlotPreview }}
 		imgLabel='SLOT_AVATAR_IMG_LABEL'
 		imgAdditionalInfo='SLOT_AVATAR_IMG_INFO'
 		descriptionHelperTxt='SLOT_DESCRIPTION_HELPER'
