@@ -5,7 +5,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import ReactToPrint from 'react-to-print'
 import classnames from 'classnames'
 import { Print, Visibility, CalendarToday, GetApp } from '@material-ui/icons'
-import { CampaignReceiptTpl, PublisherReceiptTpl } from './ReceiptTemplates'
+import { PublisherReceiptTpl } from './PublisherReceiptTpl'
+import { CampaignReceiptTpl } from './CampaignReceiptTpl'
 import CompanyDetails from './CompanyDetails'
 import { useSelector } from 'react-redux'
 import {
@@ -20,29 +21,8 @@ import { execute, resetSelectedItems, getReceiptData } from 'actions'
 import Dropdown from 'components/common/dropdown'
 import { FETCHING_PUBLISHER_RECEIPTS } from 'constants/spinners'
 import { LinearProgress } from '@material-ui/core'
-
-const useStyles = makeStyles(theme => {
-	return {
-		a4: {
-			width: '210mm',
-			minHeight: '297mm',
-			padding: '8mm',
-		},
-		hideOnMobile: {
-			[theme.breakpoints.down('sm')]: {
-				display: 'none',
-			},
-		},
-		hideOnDesktop: {
-			[theme.breakpoints.up('md')]: {
-				display: 'none',
-			},
-		},
-		progress: {
-			width: '100%',
-		},
-	}
-})
+import { styles } from './styles'
+const useStyles = makeStyles(styles)
 
 function Receipt(props) {
 	const classes = useStyles()
