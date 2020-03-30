@@ -414,7 +414,7 @@ function PublisherReceiptTpl({ date } = {}) {
 				</Box>
 			</Box>
 			<Divider />
-			{monthBreakdown.length > 0 && (
+			{monthBreakdown.length > 0 ? (
 				<Fragment>
 					<Box mt={2} display='flex' justifyContent='space-between'>
 						<Box>
@@ -473,6 +473,15 @@ function PublisherReceiptTpl({ date } = {}) {
 						</Table>
 					</Box>
 				</Fragment>
+			) : (
+				<Box
+					mt={2}
+					display='flex'
+					justifyContent='space-around'
+					alignContent='center'
+				>
+					<Typography>{t('NO_REVENUE_THIS_MONTH')}</Typography>
+				</Box>
 			)}
 		</Box>
 	)
