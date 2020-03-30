@@ -45,7 +45,6 @@ export default function ItemHoc(Decorated) {
 			textButton,
 			fabButton,
 			variant,
-			fabVariant,
 			color,
 			size,
 			mini,

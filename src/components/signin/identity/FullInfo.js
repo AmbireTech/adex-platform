@@ -11,6 +11,7 @@ import {
 	selectIdentity,
 	selectValidationsById,
 	selectSpinnerById,
+	selectKnowUsFromSource,
 } from 'selectors'
 import Anchor from 'components/common/anchor/anchor'
 import { execute, updateIdentity } from 'actions'
@@ -19,8 +20,11 @@ import {
 	ContentBody,
 	FullContentMessage,
 } from 'components/common/dialog/content'
+import Dropdown from 'components/common/dropdown'
 import { CREATING_SESSION } from 'constants/spinners'
 import { WALLET_ACTIONS_MSGS } from 'constants/misc'
+
+const knowFromSource = selectKnowUsFromSource()
 
 const FulInfo = props => {
 	const { validateId } = props
@@ -38,7 +42,14 @@ const FulInfo = props => {
 
 	const walletMsgs = WALLET_ACTIONS_MSGS[wallet.authType || 'default']
 	// Errors
-	const { email, emailCheck, tosCheck, accessWarningCheck } = validations
+	const {
+		email,
+		emailCheck,
+		tosCheck,
+		accessWarningCheck,
+		knowFrom,
+		moreInfo,
+	} = validations
 	return (
 		<ContentBox>
 			{sessionSpinner ? (
@@ -90,6 +101,46 @@ const FulInfo = props => {
 								}
 							/>
 						</Grid>
+						<Grid item xs={12}>
+							<Dropdown
+								required
+								fullWidth
+								name='knowFrom'
+								label={t('knowFrom', { isProp: true })}
+								onChange={val => execute(updateIdentity('knowFrom', val))}
+								source={knowFromSource}
+								value={identity.knowFrom || ''}
+								htmlId='timeframe-select'
+								error={knowFrom && !!knowFrom.dirty}
+								helperText={
+									knowFrom && !!knowFrom.dirty
+										? knowFrom.errMsg
+										: t('KNOW_FROM_CHECK_RULES')
+								}
+							/>
+						</Grid>
+						{(identity.knowFrom === 'event' ||
+							identity.knowFrom === 'other') && (
+							<Grid item xs={12}>
+								<TextField
+									fullWidth
+									required
+									label={t('moreInfo', { isProp: true })}
+									name='moreInfo'
+									value={identity.moreInfo || ''}
+									onChange={ev =>
+										execute(updateIdentity('moreInfo', ev.target.value))
+									}
+									error={moreInfo && !!moreInfo.dirty}
+									maxLength={128}
+									helperText={
+										moreInfo && !!moreInfo.dirty
+											? moreInfo.errMsg
+											: t('MORE_INFO_CHECK_RULES')
+									}
+								/>
+							</Grid>
+						)}
 						<Grid item xs={12}>
 							<FormControl
 								required

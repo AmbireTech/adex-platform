@@ -78,6 +78,11 @@ export const selectWebsites = createSelector(
 	websites => websites
 )
 
+export const selectWebsitesArray = createSelector(
+	state => selectItemsArrayByType(state, 'Website'),
+	websites => websites
+)
+
 export const selectWebsiteById = createSelector(
 	[selectWebsites, (_, id) => id],
 	(items, id) => items[id]

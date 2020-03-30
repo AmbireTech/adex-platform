@@ -2,9 +2,10 @@ import { getState } from 'store'
 import { createSelector } from 'reselect'
 import { selectChannelsWithUserBalancesAll } from 'selectors'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
-import { selectWebsites, selectAccountIdentityDeployData } from 'selectors'
-import moment from 'moment'
+import { selectAccountIdentityDeployData } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
+import { selectWebsitesArray } from 'selectors'
+import moment from 'moment'
 
 export const selectAnalytics = state => state.persist.analytics
 
@@ -92,8 +93,8 @@ export const selectPublisherAggrStatsByCountry = createSelector(
 export const selectAllAdUnitsInChannels = createSelector(
 	state => selectChannelsWithUserBalancesAll(state),
 	withBalanceAll =>
-		Object.values(withBalanceAll).reduce((units, channel) => {
-			channel.adUnits.forEach(u => {
+		Object.values(withBalanceAll).reduce((units, { adUnits = [] } = {}) => {
+			adUnits.forEach(u => {
 				const id = u.id || u.ipfs
 				if (id && !units[id]) {
 					units[id] = { ...u, id }
@@ -401,9 +402,10 @@ export const selectChartDatapointsCPM = createSelector(
 )
 
 export const selectPublisherRevenueNoticeActive = createSelector(
-	[selectPublisherTotalImpressions, selectWebsites],
+	[selectPublisherTotalImpressions, selectWebsitesArray],
 	(totalImpressions, websites) =>
-		(websites.length && websites.some(w => w.issuss.length === 0)) ||
+		!websites.length ||
+		websites.some(w => w.issues.length > 0) ||
 		!totalImpressions
 )
 

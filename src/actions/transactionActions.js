@@ -7,6 +7,7 @@ import {
 	validatePrivilegesAddress,
 	validatePrivLevel,
 	validateWithdrawAmount,
+	addToast,
 } from 'actions'
 import {
 	selectNewTransactionById,
@@ -16,9 +17,12 @@ import {
 	selectAccountStatsFormatted,
 	selectAccountStatsRaw,
 	selectMainToken,
+	selectGasPriceCap,
+	t,
 } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
-
+import { getGasPrice } from 'services/gas/actions'
+import { formatUnits } from 'ethers/utils'
 import { withdrawFromIdentity } from 'services/smart-contracts/actions/identity'
 
 // MEMORY STORAGE
@@ -47,6 +51,23 @@ export function resetNewTransaction({ tx }) {
 			type: types.RESET_NEW_TRANSACTION,
 			tx: tx,
 		})
+	}
+}
+
+export function checkNetworkCongestion() {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const gasPriceCap = selectGasPriceCap(state)
+		const gasPriceCapGwei = formatUnits(gasPriceCap, 'gwei')
+		const authType = selectAuthType(state)
+		const gasPrice = await getGasPrice(authType, 'gwei')
+		if (+gasPriceCapGwei < +gasPrice) {
+			addToast({
+				type: 'warning',
+				label: t('WARNING_NETWORK_CONGESTED'),
+				timeout: 20000,
+			})(dispatch)
+		}
 	}
 }
 

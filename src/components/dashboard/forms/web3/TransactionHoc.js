@@ -59,6 +59,7 @@ export default function NewTransactionHoc(Decorated) {
 		}
 
 		save = () => {
+			const { actions } = this.props
 			this.handleChange('waitingForWalletAction', true)
 			this.props
 				.saveFn({
