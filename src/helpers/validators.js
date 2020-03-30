@@ -77,11 +77,11 @@ export const validEthAddress = async ({
 }) => {
 	let msg = ''
 	try {
-		const ethAddressZero = isEthAddressZero(addr)
-		const notEthAddress = !isEthAddress(addr)
+		const notEthAddress = !addr || !isEthAddress(addr)
 		if (notEthAddress) {
 			msg = 'ERR_INVALID_ETH_ADDRESS'
 		} else {
+			const ethAddressZero = isEthAddressZero(addr)
 			if (nonZeroAddr && ethAddressZero) {
 				msg = 'ERR_INVALID_ETH_ADDRESS_ZERO'
 			} else {
