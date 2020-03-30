@@ -13,6 +13,7 @@ function FormSteps({ cancelFunction, stepsId, steps, closeDialog, ...rest }) {
 			...s,
 			stepsId,
 			title: t(s.title),
+			cancelFunction,
 			props: { ...rest, stepsId, validateId: stepsId + '-' + index },
 		}))
 
