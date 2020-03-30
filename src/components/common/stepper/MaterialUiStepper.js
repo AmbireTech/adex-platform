@@ -191,21 +191,13 @@ const MaterialStepper = props => {
 
 				<div className={classes.controls}>
 					<div className={classes.left}>
-						{canReverse && !(page.disableBtnsIfValid && isValidPage()) ? (
+						{canReverse && (
 							<Button onClick={goToPreviousPage}>{t('BACK')}</Button>
-						) : (
-							''
 						)}
 					</div>
 
 					<div className={classes.right}>
-						{/* <Button label='Cancel' onClick={this.cancel}/> */}
-						{page.cancelBtn && !(page.disableBtnsIfValid && isValidPage()) ? (
-							<page.cancelBtn />
-						) : null}
-
-						{typeof page.cancelFunction === 'function' &&
-						!(page.disableBtnsIfValid && isValidPage()) ? (
+						{typeof page.cancelFunction === 'function' && (
 							<Button
 								onClick={() => {
 									typeof closeDialog === 'function' && closeDialog()
@@ -214,8 +206,7 @@ const MaterialStepper = props => {
 							>
 								{t('CANCEL')}
 							</Button>
-						) : null}
-						{/* {ValidationBtn && <ValidationBtn {...page.props} />} */}
+						)}
 
 						{!page.completeBtn || !!validationFn ? (
 							<span className={classes.buttonProgressWrapper}>
