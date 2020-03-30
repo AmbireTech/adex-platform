@@ -112,7 +112,11 @@ function Receipt(props) {
 									startIcon={<Print />}
 									variant='contained'
 									color='primary'
-									disabled={side === 'publisher' && dates.length === 0}
+									disabled={
+										side === 'publisher' &&
+										dates.length === 0 &&
+										!fetchingPublisherReceiptsSpinner
+									}
 									fullWidth
 								>
 									{!selectedByPropsOrParams
