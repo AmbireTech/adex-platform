@@ -42,16 +42,16 @@ export const LoginStandardIdentity = props => {
 			{...props}
 			{...common}
 			stepsId='full-identity-login'
-			stepsPages={[
+			steps={[
 				{
 					title: 'SET_IDENTITY_OWNER_ADDRESS',
-					page: AuthMethod,
-					pageValidation: validateOwner,
+					component: AuthMethod,
+					validationFn: validateOwner,
 				},
 				{
 					title: 'CONNECT_STANDARD_IDENTITY',
-					page: FullLogin,
-					pageValidation: finalValidationStandard,
+					component: FullLogin,
+					validationFn: finalValidationStandard,
 					final: true,
 				},
 			]}
@@ -65,16 +65,16 @@ export const CreateStandardIdentity = props => {
 			{...props}
 			{...common}
 			stepsId='full-identity-create'
-			stepsPages={[
+			steps={[
 				{
 					title: 'SET_IDENTITY_OWNER_ADDRESS',
-					page: AuthMethod,
-					pageValidation: validateOwner,
+					component: AuthMethod,
+					validationFn: validateOwner,
 				},
 				{
 					title: 'FULL_INFO',
-					page: FullInfo,
-					pageValidation: ({ validateId, dirty }) =>
+					component: FullInfo,
+					validationFn: ({ validateId, dirty }) =>
 						execute(validateFullInfo({ validateId, dirty })),
 					final: true,
 				},
@@ -88,11 +88,11 @@ export const CreateQuickIdentity = props => (
 		{...props}
 		{...common}
 		stepsId='quick-identity-create'
-		stepsPages={[
+		steps={[
 			{
 				title: 'QUICK_INFO',
-				page: QuickInfo,
-				pageValidation: ({ validateId, dirty }) =>
+				component: QuickInfo,
+				validationFn: ({ validateId, dirty }) =>
 					execute(validateQuickInfo({ validateId, dirty })),
 				final: true,
 			},
@@ -105,11 +105,11 @@ export const LoginQuickIdentity = props => (
 		{...props}
 		{...common}
 		stepsId='quick-identity-login'
-		stepsPages={[
+		steps={[
 			{
 				title: 'QUICK_LOGIN',
-				page: QuickLogin,
-				pageValidation: finalValidationQuick,
+				component: QuickLogin,
+				validationFn: finalValidationQuick,
 				final: true,
 			},
 		]}
@@ -117,5 +117,5 @@ export const LoginQuickIdentity = props => (
 )
 
 export const DemoIdentity = props => (
-	<IdentitySteps {...props} {...common} stepsPages={[]} />
+	<IdentitySteps {...props} {...common} steps={[]} />
 )
