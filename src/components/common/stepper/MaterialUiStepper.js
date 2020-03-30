@@ -77,10 +77,10 @@ const MaterialStepper = props => {
 	const { validateId } = pageProps
 	const Comp = page.component || null
 	const {
-		validationFn = null,
+		validationFn,
 		onValid,
 		stepsId,
-		completeFn = null,
+		completeFn,
 		completeBtnTitle = '',
 	} = page
 
@@ -90,7 +90,13 @@ const MaterialStepper = props => {
 
 	const dirtyErrors = getDirtyValidationErrors(validations)
 
-	const spinner = useSelector(state => selectSpinnerById(state, validateId))
+	const validationSpinner = useSelector(state =>
+		selectSpinnerById(state, validateId)
+	)
+
+	const stepsSpinner = useSelector(state => selectSpinnerById(state, stepsId))
+
+	const spinner = validationSpinner || stepsSpinner
 
 	const isValidPage = useCallback(() => {
 		return !Object.keys(validations || {}).length
@@ -136,6 +142,14 @@ const MaterialStepper = props => {
 		stepsId,
 		validateId,
 	])
+
+	const handleComplete = useCallback(async () => {
+		await completeFn({
+			stepsId,
+			validateId,
+			onValid: () => typeof closeDialog === 'function' && closeDialog(),
+		})
+	}, [closeDialog, completeFn, stepsId, validateId])
 
 	useEffect(() => {
 		if (validationFn) {
@@ -216,12 +230,12 @@ const MaterialStepper = props => {
 					)}
 
 					<span className={classes.buttonProgressWrapper}>
-						{completeFn ? (
+						{typeof completeFn === 'function' ? (
 							<Button
 								disabled={spinner}
 								variant='contained'
 								color='primary'
-								onClick={completeFn}
+								onClick={handleComplete}
 							>
 								{t(completeBtnTitle || 'DO_IT_NOW')}
 							</Button>
