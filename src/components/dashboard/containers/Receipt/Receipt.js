@@ -4,7 +4,7 @@ import { Box, Card, Button, Typography, Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import ReactToPrint from 'react-to-print'
 import classnames from 'classnames'
-import { Print, Visibility, CalendarToday } from '@material-ui/icons'
+import { Print, Visibility, CalendarToday, GetApp } from '@material-ui/icons'
 import { CampaignReceiptTpl, PublisherReceiptTpl } from './ReceiptTemplates'
 import CompanyDetails from './CompanyDetails'
 import { useSelector } from 'react-redux'
@@ -48,7 +48,6 @@ function Receipt(props) {
 	const classes = useStyles()
 	const invoice = useRef()
 	const side = useSelector(selectSide)
-
 	// Advertiser Receipt variables
 	const { itemId } = useParams()
 	const selectedCampaigns = useSelector(state => selectSelectedCampaigns(state))
@@ -71,8 +70,11 @@ function Receipt(props) {
 		endDate >= startDate && startDate !== '' && endDate !== ''
 	const startDateError = !validateStartDate && dirty
 	const endDateError = !validateEndDate && dirty
-	const monthMapping = useSelector(
-		() => selectReceiptMonths(created, new Date().setDate(0)) // last day of prev month
+	const monthMappingStartPeriod = useSelector(() =>
+		selectReceiptMonths(created, new Date().setDate(0), false)
+	)
+	const monthMappingEndPeriod = useSelector(() =>
+		selectReceiptMonths(created, new Date().setDate(0), true)
 	)
 
 	const fetchingPublisherReceiptsSpinner = useSelector(state =>
@@ -80,7 +82,7 @@ function Receipt(props) {
 	)
 
 	// Receipts
-	const receipts = side === 'publisher' ? dates : receiptsAdvertiser
+	const [receipts, setReceipts] = useState(receiptsAdvertiser || [])
 
 	useEffect(() => {
 		return () => {
@@ -88,11 +90,13 @@ function Receipt(props) {
 		}
 	}, [])
 
-	useEffect(() => {
+	const getReceipts = () => {
+		setDirty(true)
 		if (validateStartDate && validateEndDate) {
 			execute(getReceiptData(startDate, endDate))
+			setReceipts(dates.map(item => item.value))
 		}
-	}, [startDate, endDate, validateStartDate, validateEndDate])
+	}
 
 	if (side === 'advertiser' && receipts.length === 0)
 		return <Redirect to={'/dashboard/advertiser/campaigns'} />
@@ -129,11 +133,16 @@ function Receipt(props) {
 				</CompanyDetails>
 				{side === 'publisher' && (
 					<Paper>
-						<Box p={2} display='flex' justifyContent='space-between'>
-							<Box m={1} display='flex' flex={1}>
+						<Box
+							p={3}
+							display='flex'
+							justifyContent='space-between'
+							alignItems='center'
+						>
+							<Box mr={2} display='flex' flex={1}>
 								<Dropdown
 									fullWidth
-									source={[...monthMapping]}
+									source={[...monthMappingStartPeriod]}
 									onChange={val => {
 										setDirty(true)
 										setStartDate(val)
@@ -151,10 +160,10 @@ function Receipt(props) {
 									IconComponent={CalendarToday}
 								/>
 							</Box>
-							<Box m={1} display='flex' flex={1}>
+							<Box mr={2} display='flex' flex={1}>
 								<Dropdown
 									fullWidth
-									source={[...monthMapping]}
+									source={[...monthMappingEndPeriod]}
 									onChange={val => {
 										setDirty(true)
 										setEndDate(val)
@@ -171,6 +180,16 @@ function Receipt(props) {
 									htmlId='end-date-select'
 									IconComponent={CalendarToday}
 								/>
+							</Box>
+							<Box>
+								<Button
+									startIcon={<GetApp />}
+									variant='contained'
+									color='primary'
+									onClick={() => getReceipts()}
+								>
+									{t('GET_RECEIPTS')}
+								</Button>
 							</Box>
 						</Box>
 						{fetchingPublisherReceiptsSpinner && (
@@ -201,7 +220,7 @@ function Receipt(props) {
 										<CampaignReceiptTpl campaignId={item} key={item} />
 									) : (
 										fetchingPublisherReceiptsSpinner === false && (
-											<PublisherReceiptTpl date={item.value} key={item.value} />
+											<PublisherReceiptTpl date={item} key={item} />
 										)
 									)
 								)}
