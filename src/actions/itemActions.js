@@ -211,8 +211,13 @@ export function getAllItems() {
 
 			if (selectAuth(getState())) {
 				updateItems({ items: resUnits, itemType: 'AdUnit' })(dispatch)
-				updateItems({ items: resSlots.slots, itemType: 'AdSlot' })(dispatch)
-				updateItems({ items: resSlots.websites, itemType: 'Website' })(dispatch)
+				updateItems({
+					items: resSlots.slots || resSlots || [],
+					itemType: 'AdSlot',
+				})(dispatch)
+				updateItems({ items: resSlots.websites || [], itemType: 'Website' })(
+					dispatch
+				)
 			}
 		} catch (err) {
 			console.error('ERR_GETTING_ITEMS', err)
