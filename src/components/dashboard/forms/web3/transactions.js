@@ -14,7 +14,6 @@ import {
 	withdrawOtherTokensFromIdentity,
 } from 'services/smart-contracts/actions/identity'
 import {
-	addrIdentityPrivilege,
 	identityWithdraw,
 	setIdentityENS,
 	validatePrivilegesChange,
@@ -66,7 +65,6 @@ const SaveBtnWithTransaction = TransactionHoc(SaveBtn)
 const txCommon = {
 	SaveBtn: SaveBtnWithTransaction,
 	cancelFunction,
-	validateIdBase: 'tx-',
 	darkerBackground: true,
 }
 
@@ -78,11 +76,11 @@ export const WithdrawTokenFromIdentity = props => (
 		title='ACCOUNT_WITHDRAW_FROM_IDENTITY_TITLE'
 		stepsId='withdrawFromIdentity'
 		{...txCommon}
-		stepsPages={[
+		steps={[
 			{
 				title: 'ACCOUNT_WITHDRAW_FROM_IDENTITY_STEP',
-				page: WithdrawFromIdentity,
-				pageValidation: ({ stepsId, validateId, dirty, onValid, onInvalid }) =>
+				component: WithdrawFromIdentity,
+				validationFn: ({ stepsId, validateId, dirty, onValid, onInvalid }) =>
 					execute(
 						validateIdentityWithdraw({
 							stepsId,
@@ -118,17 +116,11 @@ export const SetIdentityPrivilege = ({ SaveBtn, ...props }) => {
 			title='ACCOUNT_SET_IDENTITY_PRIVILEGE_TITLE'
 			stepsId='setIdentityPrivilege'
 			{...txCommon}
-			stepsPages={[
+			steps={[
 				{
 					title: 'ACCOUNT_SET_IDENTITY_PRIVILEGE_STEP',
-					page: SeAddressPrivilege,
-					pageValidation: ({
-						stepsId,
-						validateId,
-						dirty,
-						onValid,
-						onInvalid,
-					}) =>
+					component: SeAddressPrivilege,
+					validationFn: ({ stepsId, validateId, dirty, onValid, onInvalid }) =>
 						execute(
 							validatePrivilegesChange({
 								stepsId,
@@ -139,27 +131,27 @@ export const SetIdentityPrivilege = ({ SaveBtn, ...props }) => {
 							})
 						),
 				},
+				{
+					title: 'PREVIEW_AND_MAKE_TR',
+					component: TransactionPreview,
+					completeFunction: ({
+						stepsId,
+						validateId,
+						dirty,
+						onValid,
+						onInvalid,
+					}) =>
+						execute(
+							completeTx({
+								stepsId,
+								validateId,
+								dirty,
+								onValid,
+								onInvalid,
+							})
+						),
+				},
 			]}
-			stepsPreviewPage={{
-				title: 'PREVIEW_AND_MAKE_TR',
-				page: TransactionPreview,
-				completeFunction: ({
-					stepsId,
-					validateId,
-					dirty,
-					onValid,
-					onInvalid,
-				}) =>
-					execute(
-						completeTx({
-							stepsId,
-							validateId,
-							dirty,
-							onValid,
-							onInvalid,
-						})
-					),
-			}}
 		/>
 	)
 }
@@ -172,15 +164,15 @@ export const WithdrawAnyTokenFromIdentity = props => (
 		title='ACCOUNT_WITHDRAW_FROM_IDENTITY_TITLE'
 		stepsId='withdrawAnyFromIdentity'
 		{...txCommon}
-		stepsPages={[
+		steps={[
 			{
 				title: 'ACCOUNT_WITHDRAW_FROM_IDENTITY_STEP',
-				page: WithdrawAnyTokenFromIdentityPage,
+				component: WithdrawAnyTokenFromIdentityPage,
 			},
 		]}
 		stepsPreviewPage={{
 			title: 'PREVIEW_AND_MAKE_TX',
-			page: TransactionPreview,
+			component: TransactionPreview,
 		}}
 		saveFn={({ transaction } = {}) => {
 			return execute(identityWithdrawAny(transaction))
@@ -203,15 +195,15 @@ export const SetAccountENS = props => (
 		title='ACCOUNT_SET_ENS_TITLE'
 		stepsId='setENS'
 		{...txCommon}
-		stepsPages={[
+		steps={[
 			{
 				title: 'ACCOUNT_SET_ENS_STEP',
-				page: SetAccountENSPage,
+				component: SetAccountENSPage,
 			},
 		]}
 		stepsPreviewPage={{
 			title: 'PREVIEW_AND_MAKE_TR',
-			page: TransactionPreview,
+			component: TransactionPreview,
 		}}
 		saveFn={({ transaction } = {}) => {
 			return execute(
