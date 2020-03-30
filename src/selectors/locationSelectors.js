@@ -3,6 +3,7 @@ import {
 	selectCampaignById,
 	selectAdUnitById,
 	selectAdSlotById,
+	selectSide,
 	t,
 } from 'selectors'
 
@@ -36,8 +37,8 @@ const SIDES = {
 }
 
 export const selectDashboardBreadcrumbs = createSelector(
-	[selectLocation, state => state],
-	({ pathname = '' }, state) => {
+	[selectLocation, state => state, selectSide],
+	({ pathname = '' }, state, side) => {
 		const paths = pathname.split('/').filter(x => !!x)
 		const sideDashboard = paths.slice(0, 2)
 
@@ -73,8 +74,9 @@ export const selectDashboardBreadcrumbs = createSelector(
 
 				const receiptAt = restCopy.indexOf('receipt')
 				// NOTE: go to campaign on receipt breadcrumb
+				// We need a better way
 				if (receiptAt >= 0) {
-					restCopy[receiptAt] = 'campaigns'
+					restCopy[receiptAt] = side === 'advertiser' ? 'campaigns' : 'receipts'
 				}
 
 				bc.to = `${sideDashboardBC.to}/${restCopy

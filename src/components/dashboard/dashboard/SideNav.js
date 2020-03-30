@@ -15,6 +15,7 @@ import SideSwitch from './SideSwitch'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
+import { Receipt } from '@material-ui/icons'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import Box from '@material-ui/core/Box'
@@ -190,6 +191,17 @@ function SideNav(props) {
 						<ListItemText primary={t('DASHBOARD')} />
 					</RRListItem>
 					<ListDivider />
+					<RRListItem
+						button
+						to={{ pathname: '/dashboard/' + side + '/' + items }}
+						className={classnames({ [classes.active]: location === items })}
+					>
+						<ListItemIcon>
+							<ListIcon />
+						</ListItemIcon>
+						<ListItemText primary={t(items.toUpperCase())} />
+					</RRListItem>
+					<ListDivider />
 					{side === 'advertiser' && (
 						<>
 							<RRListItem
@@ -207,17 +219,23 @@ function SideNav(props) {
 							<ListDivider />
 						</>
 					)}
-					<RRListItem
-						button
-						to={{ pathname: '/dashboard/' + side + '/' + items }}
-						className={classnames({ [classes.active]: location === items })}
-					>
-						<ListItemIcon>
-							<ListIcon />
-						</ListItemIcon>
-						<ListItemText primary={t(items.toUpperCase())} />
-					</RRListItem>
-					<ListDivider />
+					{side === 'publisher' && (
+						<>
+							<RRListItem
+								button
+								to={{ pathname: '/dashboard/publisher/receipts' }}
+								className={classnames({
+									[classes.active]: location === 'receipts',
+								})}
+							>
+								<ListItemIcon>
+									<Receipt />
+								</ListItemIcon>
+								<ListItemText primary={t('RECEIPTS')} />
+							</RRListItem>
+							<ListDivider />
+						</>
+					)}
 				</div>
 				<div>
 					<Anchor target='_blank' href={`${process.env.ADEX_HELP_URL}`}>

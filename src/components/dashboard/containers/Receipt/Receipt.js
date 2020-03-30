@@ -1,276 +1,215 @@
-import React, { Fragment } from 'react'
-import PropTypes from 'prop-types'
+import React, { useRef, useEffect, useState } from 'react'
+import { useParams, Redirect } from 'react-router'
+import { Box, Card, Button, Typography, Paper } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import ReactToPrint from 'react-to-print'
+import classnames from 'classnames'
+import { Print, Visibility, CalendarToday, GetApp } from '@material-ui/icons'
+import { PublisherReceiptTpl } from './PublisherReceiptTpl'
+import { CampaignReceiptTpl } from './CampaignReceiptTpl'
+import CompanyDetails from './CompanyDetails'
 import { useSelector } from 'react-redux'
 import {
-	Box,
-	Typography,
-	Divider,
-	Table,
-	TableHead,
-	TableBody,
-	TableRow,
-	TableCell,
-} from '@material-ui/core'
-import classnames from 'classnames'
-import { makeStyles } from '@material-ui/core/styles'
-import AdexIconTxt from 'components/common/icons/AdexIconTxt'
-import PageNotFound from 'components/page_not_found/PageNotFound'
-import {
 	t,
-	selectCampaignStatsTableData,
-	selectMainToken,
-	selectAccountIdentityAddr,
-	selectCampaignWithAnalyticsById,
-	selectCompanyData,
+	selectSelectedCampaigns,
+	selectSide,
+	selectSpinnerById,
+	selectAccountIdentityDeployData,
+	selectReceiptMonths,
 } from 'selectors'
-import {
-	formatAddress,
-	formatDateTime,
-	formatNumberWithCommas,
-} from 'helpers/formatters'
-import { formatUnits } from 'ethers/utils'
+import { execute, resetSelectedItems, getReceiptData } from 'actions'
+import Dropdown from 'components/common/dropdown'
+import { FETCHING_PUBLISHER_RECEIPTS } from 'constants/spinners'
+import { LinearProgress } from '@material-ui/core'
+import { styles } from './styles'
+const useStyles = makeStyles(styles)
 
-const useStyles = makeStyles(theme => {
-	return {
-		icon: {
-			height: '3rem',
-			width: 'auto',
-		},
-		dottedDivider: {
-			borderBottom: `0.5px dotted ${theme.palette.grey.main}`,
-		},
-		solidDevider: {
-			borderBottom: `0.5px solid ${theme.palette.grey.main}`,
-		},
-		breakdownTable: {
-			width: '100%',
-			textAlign: 'left',
-		},
-		breakAll: {
-			whiteSpace: 'normal',
-			wordBreak: 'break-all',
-		},
-		pageBreak: {
-			pageBreakAfter: 'always',
-		},
-	}
-})
-
-function Receipt({ campaignId } = {}) {
+function Receipt(props) {
 	const classes = useStyles()
-	const { symbol, decimals } = useSelector(selectMainToken)
-	const identityAddr = useSelector(selectAccountIdentityAddr)
-	const campaignBreakdown = useSelector(state =>
-		selectCampaignStatsTableData(state, campaignId)
-	)
-	const campaign = useSelector(state =>
-		selectCampaignWithAnalyticsById(state, campaignId)
-	)
-	const { companyName, firstLastName, address, country } = useSelector(
-		selectCompanyData
-	)
-	const humanFriendlyName = (campaign.status || {}).humanFriendlyName
-	const receiptReady =
-		humanFriendlyName === 'Closed' || humanFriendlyName === 'Completed'
-	if (!campaign.spec || !campaign.creator) {
-		return (
-			<PageNotFound
-				title={t('ITEM_NOT_FOUND_TITLE')}
-				subtitle={t('ITEM_NOT_FOUND_SUBTITLE', {
-					args: ['CAMPAIGN', campaignId],
-				})}
-				goToPath={`/dashboard/advertiser`}
-				goToTxt='GO_TO_DASHBOARD'
-			/>
-		)
-	}
-	if (!receiptReady) return null
-	return (
-		<Box mb={5} className={classnames(classes.pageBreak)}>
-			<Box mb={2} display='flex' justifyContent='space-between'>
-				<Box>
-					<Typography variant='h4'>{`${t('RECEIPT_FOR', {
-						args: [companyName || '...'],
-					})}`}</Typography>
-					<Typography variant='h5'>{`${t('RECEIPT_ACCOUNT_ID', {
-						args: [formatAddress(identityAddr)],
-					})}`}</Typography>
-					<Typography variant='body2'>{`${t('RECEIPT_ID', {
-						args: [formatAddress(campaignId, '-')],
-					})}`}</Typography>
-				</Box>
-				<Box>
-					<AdexIconTxt className={classnames(classes.icon)} />
-				</Box>
-			</Box>
-			<Divider />
-			<Box
-				mt={5}
-				display='flex'
-				justifyContent='space-between'
-				alignContent='center'
-			>
-				<Box display='flex' flexDirection='column'>
-					<Box mb={2}>
-						<Typography variant='subtitle2'>
-							<strong>{t('RECEIPT_COMPANY_DETAILS')}</strong>
-						</Typography>
-						<Typography variant='body2'>{companyName}</Typography>
-						<Typography variant='body2'>{firstLastName}</Typography>
-						<Typography variant='body2'>{address}</Typography>
-						<Typography variant='body2'>{country}</Typography>
-					</Box>
-					<Box mb={2}>
-						<Typography variant='body2'>{t('RECEIPT_PAYMENT_DATE')}</Typography>
-						<Typography variant='subtitle2'>
-							{/* TODO: Need a date when the campaign has beeen completed */}
-							<strong>{formatDateTime(campaign.withdrawPeriodStart)}</strong>
-						</Typography>
-					</Box>
-					<Box mb={2}>
-						<Typography variant='body2'>{t('RECEIPT_CAMPAIGN_ID')}</Typography>
-						<Typography variant='subtitle2'>
-							<strong>{formatAddress(campaignId)}</strong>
-						</Typography>
-					</Box>
-				</Box>
-				<Box display='flex' flexDirection='column' alignItems='flex-end'>
-					<Typography variant='h6'>{t('RECEIPT_PAID')}</Typography>
-					<Typography variant='h4'>
-						<strong>{`${formatNumberWithCommas(
-							(
-								Number(formatUnits(campaign.depositAmount || '0', decimals)) *
-								(campaign.status.fundsDistributedRatio / 1000)
-							).toFixed(2)
-						)} ${symbol}`}</strong>
-					</Typography>
-					{/* <Typography variant='p'>{`Total cost in USD ($XXX)`}</Typography> */}
-				</Box>
-			</Box>
-			<Box display='flex' justifyContent='space-between'>
-				<Box>
-					<Typography variant='h6'>{t('RECEIPT_CAMPAIGN_OVERVIEW')}</Typography>
-				</Box>
-			</Box>
-			<Divider className={classnames(classes.dottedDivider)} />
-			<Box mt={2} display='flex' justifyContent='space-between'>
-				<Box>
-					<Typography variant='body2'>
-						{t('RECEIPT_FROM_TO', {
-							args: [
-								formatDateTime(campaign.activeFrom),
-								formatDateTime(campaign.withdrawPeriodStart),
-							],
-						})}
-					</Typography>
-				</Box>
-				<Box>
-					<Typography variant='subtitle2'>
-						<strong>{`${formatNumberWithCommas(
-							Number(formatUnits(campaign.depositAmount || '0', decimals)) *
-								(campaign.status.fundsDistributedRatio / 1000)
-						)} ${symbol}`}</strong>
-					</Typography>
-				</Box>
-			</Box>
-			<Divider />
-			<Box mt={2} display='flex' justifyContent='space-between'>
-				<Box>
-					<Typography variant='body2'>{t('LABEL_IMPRESSIONS')}</Typography>
-				</Box>
-				<Box>
-					<Typography variant='subtitle2'>
-						<strong>{formatNumberWithCommas(campaign.impressions)}</strong>
-					</Typography>
-				</Box>
-			</Box>
-			<Divider />
-			<Box mt={2} display='flex' justifyContent='space-between'>
-				<Box>
-					<Typography variant='body2'>{t('LABEL_CLICKS')}</Typography>
-				</Box>
-				<Box>
-					<Typography variant='subtitle2'>
-						<strong>{formatNumberWithCommas(campaign.clicks)}</strong>
-					</Typography>
-				</Box>
-			</Box>
-			<Divider />
+	const invoice = useRef()
+	const side = useSelector(selectSide)
+	// Advertiser Receipt variables
+	const { itemId } = useParams()
+	const selectedCampaigns = useSelector(state => selectSelectedCampaigns(state))
+	const selectedByPropsOrParams = props.itemId || itemId
+	const receiptsAdvertiser = selectedByPropsOrParams
+		? [selectedByPropsOrParams]
+		: selectedCampaigns
 
-			{campaignBreakdown.length > 0 && (
-				<Fragment>
-					<Box mt={2} display='flex' justifyContent='space-between'>
-						<Box>
-							<Typography variant='h6'>
-								{t('RECEIPT_CAMPAIGN_BREAKDOWN')}
+	// Publisher Receipt variables
+	const { created } = useSelector(state =>
+		selectAccountIdentityDeployData(state)
+	)
+	const [startDate, setStartDate] = useState('')
+	const [endDate, setEndDate] = useState('')
+	const [dirty, setDirty] = useState(false)
+	const dates = useSelector(() => selectReceiptMonths(startDate, endDate))
+	const validateStartDate =
+		startDate <= endDate && startDate !== '' && endDate !== ''
+	const validateEndDate =
+		endDate >= startDate && startDate !== '' && endDate !== ''
+	const startDateError = !validateStartDate && dirty
+	const endDateError = !validateEndDate && dirty
+	const monthMappingStartPeriod = useSelector(() =>
+		selectReceiptMonths(created, new Date().setDate(0), false)
+	)
+	const monthMappingEndPeriod = useSelector(() =>
+		selectReceiptMonths(created, new Date().setDate(0), true)
+	)
+
+	const fetchingPublisherReceiptsSpinner = useSelector(state =>
+		selectSpinnerById(state, FETCHING_PUBLISHER_RECEIPTS)
+	)
+
+	// Receipts
+	const [receipts, setReceipts] = useState(receiptsAdvertiser || [])
+
+	useEffect(() => {
+		return () => {
+			execute(resetSelectedItems())
+		}
+	}, [])
+
+	const getReceipts = () => {
+		setDirty(true)
+		if (validateStartDate && validateEndDate) {
+			execute(getReceiptData(startDate, endDate))
+			setReceipts(dates.map(item => item.value))
+		}
+	}
+
+	if (side === 'advertiser' && receipts.length === 0)
+		return <Redirect to={'/dashboard/advertiser/campaigns'} />
+	return (
+		<Box display='flex' justifyContent='center' alignContent='center'>
+			<Box
+				display='flex'
+				justifyContent='center'
+				alignContent='center'
+				flexDirection='column'
+			>
+				<CompanyDetails>
+					<Box mt={2}>
+						<ReactToPrint
+							trigger={() => (
+								<Button
+									startIcon={<Print />}
+									variant='contained'
+									color='primary'
+									disabled={
+										side === 'publisher' &&
+										(receipts.length === 0 || fetchingPublisherReceiptsSpinner)
+									}
+									fullWidth
+								>
+									{!selectedByPropsOrParams
+										? `${t('RECEIPTS_PRINT_ALL')}`
+										: `${t('RECEIPT_PRINT')}`}
+								</Button>
+							)}
+							content={() => invoice.current}
+						/>
+					</Box>
+				</CompanyDetails>
+				{side === 'publisher' && (
+					<Paper>
+						<Box
+							p={3}
+							display='flex'
+							justifyContent='space-between'
+							alignItems='center'
+						>
+							<Box mr={2} display='flex' flex={1}>
+								<Dropdown
+									fullWidth
+									source={[...monthMappingStartPeriod]}
+									onChange={val => {
+										setDirty(true)
+										setStartDate(val)
+									}}
+									error={startDateError}
+									helperText={
+										startDateError && startDate !== ''
+											? t('START_DATE_ERROR')
+											: t('HELPER_START_DATE')
+									}
+									value={startDate}
+									label={t('START_PERIOD')}
+									name='startDate'
+									htmlId='start-date-select'
+									IconComponent={CalendarToday}
+								/>
+							</Box>
+							<Box mr={2} display='flex' flex={1}>
+								<Dropdown
+									fullWidth
+									source={[...monthMappingEndPeriod]}
+									onChange={val => {
+										setDirty(true)
+										setEndDate(val)
+									}}
+									error={endDateError}
+									helperText={
+										endDateError && endDate !== ''
+											? t('END_DATE_ERROR')
+											: t('HELPER_END_DATE')
+									}
+									value={endDate}
+									label={t('END_PERIOD')}
+									name='endDate'
+									htmlId='end-date-select'
+									IconComponent={CalendarToday}
+								/>
+							</Box>
+							<Box>
+								<Button
+									startIcon={<GetApp />}
+									variant='contained'
+									color='primary'
+									onClick={() => getReceipts()}
+								>
+									{t('GET_RECEIPTS')}
+								</Button>
+							</Box>
+						</Box>
+						{fetchingPublisherReceiptsSpinner && (
+							<LinearProgress className={classes.progress} />
+						)}
+					</Paper>
+				)}
+				<Card>
+					<Box className={classnames(classes.hideOnDesktop)}>
+						<Box
+							p={5}
+							display='flex'
+							justifyContent='center'
+							alignItems='center'
+							flexDirection='column'
+						>
+							<Visibility />
+							<Typography variant='overline' display='block' gutterBottom>
+								{t('RECEIPT_PREVIEW_ONLY_DESKTOP')}
 							</Typography>
 						</Box>
 					</Box>
-					<Divider className={classnames(classes.dottedDivider)} />
-					<Box>
-						<Table size='small'>
-							<TableHead>
-								<TableRow className={classnames(classes.dottedDivider)}>
-									<TableCell>
-										<Typography variant='subtitle2'>
-											<strong>{t('WEBSITE')}</strong>
-										</Typography>
-									</TableCell>
-									<TableCell>
-										<Typography variant='subtitle2'>
-											<strong>{t('LABEL_IMPRESSIONS')}</strong>
-										</Typography>
-									</TableCell>
-									<TableCell>
-										<Typography variant='subtitle2'>
-											<strong>{t('CHART_LABEL_CLICKS')}</strong>
-										</Typography>
-									</TableCell>
-									<TableCell>
-										<Typography variant='subtitle2'>
-											<strong>{t('WEBSITE_EARNINGS')}</strong>
-										</Typography>
-									</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{campaignBreakdown
-									.sort((a, b) => b.earnings - a.earnings)
-									.map((stats, i) => (
-										<TableRow key={i}>
-											<TableCell className={classnames(classes.breakAll)}>
-												<Typography variant='body2'>{stats.website}</Typography>
-											</TableCell>
-											<TableCell>
-												<Typography variant='body2'>
-													{formatNumberWithCommas(stats.impressions)}
-												</Typography>
-											</TableCell>
-											<TableCell>
-												<Typography variant='body2'>
-													{formatNumberWithCommas(stats.clicks)}
-												</Typography>
-											</TableCell>
-											<TableCell>
-												<Typography variant='body2'>
-													{`${formatNumberWithCommas(
-														stats.earnings
-													)} ${symbol}`}
-												</Typography>
-											</TableCell>
-										</TableRow>
-									))}
-							</TableBody>
-						</Table>
+					<Box className={classnames(classes.hideOnMobile)}>
+						{receipts.length > 0 && (
+							<Box ref={invoice} className={classnames(classes.a4)}>
+								{receipts.map(item =>
+									side === 'advertiser' ? (
+										<CampaignReceiptTpl campaignId={item} key={item} />
+									) : (
+										fetchingPublisherReceiptsSpinner === false && (
+											<PublisherReceiptTpl date={item} key={item} />
+										)
+									)
+								)}
+							</Box>
+						)}
 					</Box>
-				</Fragment>
-			)}
+				</Card>
+			</Box>
 		</Box>
 	)
 }
-
-Receipt.propTypes = {
-	campaignId: PropTypes.string.isRequired,
-}
-
-export default Receipt
+export { Receipt }
