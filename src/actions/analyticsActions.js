@@ -343,7 +343,7 @@ export function getReceiptData(startDate, endDate) {
 							eventType: 'IMPRESSION',
 							metric: 'eventCounts',
 							start: +moment(startDateNeeded),
-							end: +moment(endDateNeeded),
+							end: +moment(endDateNeeded).endOf('month'),
 						}),
 						timeBasedAnalytics({
 							leaderAuth,
@@ -352,7 +352,7 @@ export function getReceiptData(startDate, endDate) {
 							eventType: 'IMPRESSION',
 							metric: 'eventPayouts',
 							start: +moment(startDateNeeded),
-							end: +moment(endDateNeeded),
+							end: +moment(endDateNeeded).endOf('month'),
 						})
 					)
 				}
