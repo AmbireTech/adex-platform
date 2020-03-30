@@ -154,7 +154,7 @@ function Receipt(props) {
 											: t('HELPER_START_DATE')
 									}
 									value={startDate}
-									label={t('PROP_FROM')}
+									label={t('START_PERIOD')}
 									name='startDate'
 									htmlId='start-date-select'
 									IconComponent={CalendarToday}
@@ -175,7 +175,7 @@ function Receipt(props) {
 											: t('HELPER_END_DATE')
 									}
 									value={endDate}
-									label={t('PROP_TO')}
+									label={t('END_PERIOD')}
 									name='endDate'
 									htmlId='end-date-select'
 									IconComponent={CalendarToday}
