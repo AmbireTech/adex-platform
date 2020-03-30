@@ -6,7 +6,7 @@ import SetAccountENSPage from './SetAccountENSPage'
 import TransactionPreview from './TransactionPreview'
 import Button from '@material-ui/core/Button'
 import TransactionHoc from './TransactionHoc'
-import FormSteps from 'components/dashboard/forms/FormSteps'
+import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 import {

@@ -1,6 +1,6 @@
 import React from 'react'
 import Button from '@material-ui/core/Button'
-import FormSteps from 'components/dashboard/forms/FormSteps'
+import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
 import { AdUnit, AdSlot, Campaign } from 'adex-models'
 import FileCopyIcon from '@material-ui/icons/FileCopy'
