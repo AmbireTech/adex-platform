@@ -300,35 +300,6 @@ export function ownerIdentities({ owner, authType }) {
 	}
 }
 
-export function addrIdentityPrivilege({ setAddr, privLevel }) {
-	return async function(dispatch, getState) {
-		try {
-			const account = selectAccount(getState())
-			const result = await setIdentityPrivilege({
-				account,
-				setAddr,
-				privLevel,
-			})
-			addToast({
-				type: 'accept',
-				label: translate('IDENTITY_SET_ADDR_PRIV_NOTIFICATION', {
-					args: [result],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		} catch (err) {
-			console.error('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-	}
-}
-
 export function login() {
 	return async function(dispatch, getState) {
 		try {
