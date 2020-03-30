@@ -47,32 +47,30 @@ const useStyles = makeStyles(theme => {
 function Receipt(props) {
 	const classes = useStyles()
 	const invoice = useRef()
-	const { itemId, date } = useParams()
 	const side = useSelector(selectSide)
+
+	// Advertiser Receipt variables
+	const { itemId } = useParams()
 	const selectedCampaigns = useSelector(state => selectSelectedCampaigns(state))
-	// const selectedPublisherReceipts = useSelector(state =>
-	// 	selectSelectedPublisherReceipts(state)
-	// )
+	const selectedByPropsOrParams = props.itemId || itemId
+	const receiptsAdvertiser = selectedByPropsOrParams
+		? [selectedByPropsOrParams]
+		: selectedCampaigns
 
-	const selectedByPropsOrParams = props.itemId || itemId || date
-
+	// Publisher Receipt variables
 	const { created } = useSelector(state =>
 		selectAccountIdentityDeployData(state)
 	)
 	const [startDate, setStartDate] = useState('')
 	const [endDate, setEndDate] = useState('')
+	const [dirty, setDirty] = useState(false)
 	const dates = useSelector(() => selectReceiptMonths(startDate, endDate))
 	const validateStartDate =
 		startDate <= endDate && startDate !== '' && endDate !== ''
 	const validateEndDate =
 		endDate >= startDate && startDate !== '' && endDate !== ''
-
-	const receiptsAdvertiser = selectedByPropsOrParams
-		? [selectedByPropsOrParams]
-		: selectedCampaigns
-
-	const receipts = side === 'publisher' ? dates : receiptsAdvertiser
-
+	const startDateError = !validateStartDate && dirty
+	const endDateError = !validateEndDate && dirty
 	const monthMapping = useSelector(
 		() => selectReceiptMonths(created, new Date().setDate(0)) // last day of prev month
 	)
@@ -80,6 +78,9 @@ function Receipt(props) {
 	const fetchingPublisherReceiptsSpinner = useSelector(state =>
 		selectSpinnerById(state, FETCHING_PUBLISHER_RECEIPTS)
 	)
+
+	// Receipts
+	const receipts = side === 'publisher' ? dates : receiptsAdvertiser
 
 	useEffect(() => {
 		return () => {
@@ -129,8 +130,16 @@ function Receipt(props) {
 								<Dropdown
 									fullWidth
 									source={[...monthMapping]}
-									onChange={val => setStartDate(val)}
-									error={!validateStartDate}
+									onChange={val => {
+										setDirty(true)
+										setStartDate(val)
+									}}
+									error={startDateError}
+									helperText={
+										startDateError
+											? t('START_DATE_ERROR')
+											: t('HELPER_START_DATE')
+									}
 									value={startDate}
 									label={t('START_DATE')}
 									name='startDate'
@@ -142,8 +151,14 @@ function Receipt(props) {
 								<Dropdown
 									fullWidth
 									source={[...monthMapping]}
-									onChange={val => setEndDate(val)}
-									error={!validateEndDate}
+									onChange={val => {
+										setDirty(true)
+										setEndDate(val)
+									}}
+									error={endDateError}
+									helperText={
+										endDateError ? t('END_DATE_ERROR') : t('HELPER_END_DATE')
+									}
 									value={endDate}
 									label={t('END_DATE')}
 									name='endDate'
