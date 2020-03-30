@@ -12,6 +12,8 @@ import {
 	selectCampaignAnalyticsByChannelToAdUnit,
 	selectTotalStatsByAdUnits,
 	selectCampaignUnitsById,
+	selectMainToken,
+	selectAnalytics,
 	selectPublisherAdvanceStatsToAdUnit,
 	selectPublisherStatsByCountry,
 	selectCampaignAnalyticsByChannelToCountry,
@@ -20,6 +22,7 @@ import {
 	selectCampaignAggrStatsByCountry,
 	selectPublisherPayStatsByCountry,
 } from 'selectors'
+import moment from 'moment'
 import { formatUnits } from 'ethers/utils'
 import chartCountriesData from 'world-atlas/countries-50m.json'
 import { scaleLinear } from 'd3-scale'
@@ -489,5 +492,37 @@ export const selectAdUnitsStatsMaxValues = createSelector(
 				return newResult
 			},
 			{ maxClicks: 0, maxImpressions: 0, maxCTR: 0 }
+		)
+)
+
+export const selectPublisherReceiptsStatsByMonthTableData = createSelector(
+	[selectAnalytics, selectMainToken, (_, date) => date],
+	({ receipts }, token, date) => {
+		const result = []
+		if (receipts && receipts[date]) {
+			const { decimals = 18 } = token || {}
+			for (let [key, value] of Object.entries(receipts[date])) {
+				result.push({
+					impressions: value.impressions,
+					payouts: Number(formatUnits(value.payouts || '0', decimals)),
+					date: +key,
+				})
+			}
+		}
+		return result
+	}
+)
+
+export const selectPublisherReceiptsStatsByMonthTotalValues = createSelector(
+	[selectPublisherReceiptsStatsByMonthTableData],
+	data =>
+		data.reduce(
+			(result, current) => {
+				const newResult = { ...result }
+				newResult.totalPayouts += +current.payouts
+				newResult.totalImpressions += +current.impressions
+				return newResult
+			},
+			{ totalPayouts: 0, totalImpressions: 0 }
 		)
 )

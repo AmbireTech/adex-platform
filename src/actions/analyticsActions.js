@@ -6,6 +6,7 @@ import {
 	getValidatorAuthToken,
 	identityAnalytics,
 	identityCampaignsAnalytics,
+	timeBasedAnalytics,
 } from 'services/adex-validator/actions'
 import { updateValidatorAuthTokens } from './accountActions'
 import {
@@ -23,8 +24,12 @@ import {
 	selectSide,
 	selectAccount,
 	selectAnalyticsTimeframe,
+	selectPublisherReceiptsPresentMonths,
+	selectMonthsRange,
 } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
+import moment from 'moment'
+import { FETCHING_PUBLISHER_RECEIPTS } from 'constants/spinners'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
@@ -156,7 +161,6 @@ export function updateAccountAnalytics() {
 	return async function(dispatch, getState) {
 		const state = getState()
 		const account = selectAccount(state)
-
 		const side = selectSide(state)
 		const timeframe = selectAnalyticsTimeframe(state)
 		const allChannels = selectChannelsWithUserBalancesAll(state)
@@ -295,6 +299,98 @@ export function updateAccountCampaignsAnalytics() {
 				}),
 				timeout: 20000,
 			})(dispatch)
+		}
+	}
+}
+
+export function getReceiptData(startDate, endDate) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const { account } = state.persist
+		try {
+			await updateSpinner(FETCHING_PUBLISHER_RECEIPTS, true)(dispatch)
+			const presentMonths = selectPublisherReceiptsPresentMonths(state)
+			const monthsWanted = selectMonthsRange(startDate, endDate)
+			const monthsNeeded = monthsWanted
+				.filter(val => !presentMonths.includes(val))
+				.sort()
+
+			const leaderAuth = await getValidatorAuthToken({
+				validatorId: VALIDATOR_LEADER_ID,
+				account,
+			})
+			updateValidatorAuthTokens({
+				newAuth: { [VALIDATOR_LEADER_ID]: leaderAuth },
+			})(dispatch, getState)
+
+			if (monthsNeeded.length > 0) {
+				const timeframe = 'month'
+				const limit = 500
+				const promises = []
+				const startDateNeeded = monthsNeeded[0]
+				const endDateNeeded = monthsNeeded[monthsNeeded.length - 1]
+				//limit of request is 500 days
+				for (
+					var m = moment(startDateNeeded);
+					m.diff(endDateNeeded) <= 0;
+					m.add(limit, 'day')
+				) {
+					promises.push(
+						timeBasedAnalytics({
+							leaderAuth,
+							timeframe,
+							limit,
+							eventType: 'IMPRESSION',
+							metric: 'eventCounts',
+							start: +moment(startDateNeeded),
+							end: +moment(endDateNeeded).endOf('month'),
+						}),
+						timeBasedAnalytics({
+							leaderAuth,
+							timeframe,
+							limit,
+							eventType: 'IMPRESSION',
+							metric: 'eventPayouts',
+							start: +moment(startDateNeeded),
+							end: +moment(endDateNeeded).endOf('month'),
+						})
+					)
+				}
+				const resolvedPromises = await Promise.all(promises)
+				let impressions = []
+				let payouts = []
+				for (let i = 0; i < resolvedPromises.length; i += 2) {
+					impressions = [...impressions, ...resolvedPromises[i].aggr]
+					payouts = [...payouts, ...resolvedPromises[i + 1].aggr]
+				}
+				const result = {}
+				// add wanted dates
+				const getMonthTimeStamp = date => +moment(date).startOf('month')
+				monthsNeeded.forEach(date => {
+					const month = getMonthTimeStamp(date)
+					if (!result[month]) {
+						result[month] = {}
+					}
+				})
+				impressions.forEach((item, i) => {
+					const month = getMonthTimeStamp(item.time)
+					if (result[month]) {
+						result[month][item.time] = {
+							impressions: item.value,
+							payouts: payouts[i].value,
+						}
+					}
+				})
+				dispatch({
+					type: types.UPDATE_PUBLISHER_RECEIPTS,
+					value: {
+						...result,
+					},
+				})
+			}
+			await updateSpinner(FETCHING_PUBLISHER_RECEIPTS, false)(dispatch)
+		} catch (err) {
+			console.log(err)
 		}
 	}
 }
