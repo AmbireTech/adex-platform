@@ -114,8 +114,7 @@ function Receipt(props) {
 									color='primary'
 									disabled={
 										side === 'publisher' &&
-										dates.length === 0 &&
-										!fetchingPublisherReceiptsSpinner
+										(dates.length === 0 || fetchingPublisherReceiptsSpinner)
 									}
 									fullWidth
 								>
