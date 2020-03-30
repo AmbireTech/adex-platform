@@ -84,11 +84,15 @@ export const selectMonthsRange = createSelector(
 )
 
 export const selectReceiptMonths = createSelector(
-	[selectMonthsRange],
-	months =>
+	[selectMonthsRange, (_, __, monthsEnd) => monthsEnd],
+	(months, monthsEnd) =>
 		months.map(monthTimestamp => ({
 			value: monthTimestamp,
-			label: moment(monthTimestamp).format('MMMM, YYYY'),
+			label: !!monthsEnd
+				? moment(monthTimestamp)
+						.endOf('month')
+						.format('Do MMMM, YYYY')
+				: moment(monthTimestamp).format('Do MMMM, YYYY'),
 		}))
 )
 
