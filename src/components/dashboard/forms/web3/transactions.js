@@ -22,6 +22,7 @@ import {
 	completeTx,
 	execute,
 	resetNewTransaction,
+	updateIdentityPrivilege,
 } from 'actions'
 
 const FormStepsWithDialog = WithDialog(FormSteps)
@@ -134,18 +135,13 @@ export const SetIdentityPrivilege = ({ SaveBtn, ...props }) => {
 				{
 					title: 'PREVIEW_AND_MAKE_TR',
 					component: TransactionPreview,
-					completeFunction: ({
-						stepsId,
-						validateId,
-						dirty,
-						onValid,
-						onInvalid,
-					}) =>
+					completeBtnTitle: 'SIGN_TX',
+					completeFn: ({ stepsId, validateId, onValid, onInvalid }) =>
 						execute(
 							completeTx({
 								stepsId,
 								validateId,
-								dirty,
+								competeAction: updateIdentityPrivilege,
 								onValid,
 								onInvalid,
 							})
