@@ -123,7 +123,10 @@ export function validatePrivilegesChange({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
-		await updateAccountIdentityData()(dispatch, getState)
+		const identityData = updateAccountIdentityData()(dispatch, getState)
+		if (dirty) {
+			await identityData
+		}
 
 		const state = getState()
 		const { setAddr, warningAccepted, privLevel } = selectNewTransactionById(
@@ -304,7 +307,7 @@ export function validateIdentityWithdraw({
 
 export function completeTx({
 	stepsId,
-	saveFn,
+	competeFn,
 	validateId,
 	dirty,
 	onValid,
@@ -329,7 +332,7 @@ export function completeTx({
 				getState
 			)
 
-			await saveFn({ ...transaction, account })
+			await competeFn({ ...transaction, account })
 			isValid = true
 		} catch (err) {
 			addToast({
