@@ -198,7 +198,7 @@ export function validatePrivilegesChange({
 				availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenFormatted,
 			} = selectAccountStatsFormatted(state)
 
-			const feesValidation = await validateFees({
+			isValid = await validateFees({
 				validateId,
 				feesAmountBN: feesData.feesBn,
 				availableIdentityBalanceMainTokenRaw,
@@ -208,8 +208,6 @@ export function validatePrivilegesChange({
 				symbol,
 				dirty,
 			})(dispatch)
-
-			isValid = feesValidation.isValid
 		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
