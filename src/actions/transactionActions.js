@@ -303,11 +303,39 @@ export function validateIdentityWithdraw({
 	}
 }
 
+export function updateIdentityPrivilege({ setAddr, privLevel }) {
+	return async function(dispatch, getState) {
+		try {
+			const account = selectAccount(getState())
+			const result = await setIdentityPrivilege({
+				account,
+				setAddr,
+				privLevel,
+			})
+			addToast({
+				type: 'accept',
+				label: t('IDENTITY_SET_ADDR_PRIV_NOTIFICATION', {
+					args: [result],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		} catch (err) {
+			console.error('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
 export function completeTx({
 	stepsId,
-	competeFn,
+	competeAction,
 	validateId,
-	dirty,
 	onValid,
 	onInvalid,
 }) {
@@ -324,13 +352,9 @@ export function completeTx({
 		try {
 			const state = getState()
 
-			const account = selectAccount(state)
-			const transaction = selectNewTransactionById(state, stepsId)(
-				dispatch,
-				getState
-			)
+			const transaction = selectNewTransactionById(state, stepsId)
 
-			await competeFn({ ...transaction, account })
+			await competeAction({ ...transaction })(dispatch, getState)
 			isValid = true
 		} catch (err) {
 			addToast({
