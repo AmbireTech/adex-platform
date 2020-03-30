@@ -93,6 +93,12 @@ const useStyles = makeStyles(theme => {
 			'&:hover': {
 				backgroundColor: hoverActiveBgColor,
 				color: theme.palette.text.secondary,
+				'& .MuiListItemIcon-root': {
+					color: theme.palette.text.secondary,
+				},
+			},
+			'& .MuiListItemIcon-root': {
+				color: theme.palette.common.white,
 			},
 		},
 		adxLink: {
