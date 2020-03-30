@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
-import { Typography } from '@material-ui/core'
+import { Box } from '@material-ui/core'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
+import { Alert } from '@material-ui/lab'
 import { useSelector } from 'react-redux'
 import { selectWebsiteByWebsite, t } from 'selectors'
 
@@ -38,26 +39,34 @@ const getIssue = issue => {
 
 export function WebsiteIssues({ issues, website }) {
 	const site = useSelector(state => selectWebsiteByWebsite(state, website))
-	const data = issues || site.issues || []
+	const defaultIssues = !website ? ['SLOT_ISSUE_NO_WEBSITE'] : []
+	const data = issues || site.issues || defaultIssues
 
 	return (
 		<Fragment>
-			{data.map((x = {}) => {
+			{data.map((x = {}, index) => {
 				const { label, args } = getIssue(x)
 				return (
-					<Typography key={label} component='div' color='primary' gutterBottom>
-						{t(label, {
-							args: args.map((a, index) =>
-								a.type === 'anchor' ? (
-									<ExternalAnchor key={index} href={a.href}>
-										{t(a.label)}
-									</ExternalAnchor>
-								) : (
-									t(a)
-								)
-							),
-						})}
-					</Typography>
+					<Box my={index !== 0 && index < data.length - 1 ? 2 : 0}>
+						<Alert
+							key={label}
+							severity='warning'
+							variant='outlined'
+							gutterBottom
+						>
+							{t(label, {
+								args: args.map((a, index) =>
+									a.type === 'anchor' ? (
+										<ExternalAnchor key={index} href={a.href}>
+											{t(a.label)}
+										</ExternalAnchor>
+									) : (
+										t(a)
+									)
+								),
+							})}
+						</Alert>
+					</Box>
 				)
 			})}
 		</Fragment>

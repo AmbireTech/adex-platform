@@ -2,6 +2,7 @@ import { bigNumberify } from 'ethers/utils'
 import { t, selectDemandAnalytics, selectMainToken } from 'selectors'
 import { createSelector } from 'reselect'
 import { constants } from 'adex-models'
+import { WHERE_YOU_KNOW_US } from 'constants/misc'
 import moment from 'moment'
 
 export const selectSlotTypesSourceWithDemands = createSelector(
@@ -89,4 +90,19 @@ export const selectReceiptMonths = createSelector(
 			value: monthTimestamp,
 			label: moment(monthTimestamp).format('MMMM, YYYY'),
 		}))
+)
+
+export const selectFromSource = createSelector(
+	labelValueMapping => labelValueMapping,
+	source =>
+		source.map(data => {
+			const translated = { ...data }
+			translated.label = t(data.label)
+			return translated
+		})
+)
+
+export const selectKnowUsFromSource = createSelector(
+	() => selectFromSource(WHERE_YOU_KNOW_US),
+	source => source
 )
