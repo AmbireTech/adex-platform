@@ -112,6 +112,7 @@ function Receipt(props) {
 									startIcon={<Print />}
 									variant='contained'
 									color='primary'
+									disabled={side === 'publisher' && dates.length === 0}
 									fullWidth
 								>
 									{!selectedByPropsOrParams
@@ -136,12 +137,12 @@ function Receipt(props) {
 									}}
 									error={startDateError}
 									helperText={
-										startDateError
+										startDateError && startDate !== ''
 											? t('START_DATE_ERROR')
 											: t('HELPER_START_DATE')
 									}
 									value={startDate}
-									label={t('START_DATE')}
+									label={t('PROP_FROM')}
 									name='startDate'
 									htmlId='start-date-select'
 									IconComponent={CalendarToday}
@@ -157,10 +158,12 @@ function Receipt(props) {
 									}}
 									error={endDateError}
 									helperText={
-										endDateError ? t('END_DATE_ERROR') : t('HELPER_END_DATE')
+										endDateError && endDate !== ''
+											? t('END_DATE_ERROR')
+											: t('HELPER_END_DATE')
 									}
 									value={endDate}
-									label={t('END_DATE')}
+									label={t('PROP_TO')}
 									name='endDate'
 									htmlId='end-date-select'
 									IconComponent={CalendarToday}
