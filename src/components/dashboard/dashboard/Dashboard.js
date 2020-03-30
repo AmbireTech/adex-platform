@@ -17,7 +17,6 @@ import {
 	CampaignsTable,
 	AdSlotsTable,
 	AdUnitsTable,
-	PublisherReceiptsTable,
 } from 'components/dashboard/containers/Tables'
 import Drawer from '@material-ui/core/Drawer'
 import Box from '@material-ui/core/Box'

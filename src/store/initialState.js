@@ -22,7 +22,6 @@ let initialState = {
 		campaigns: [],
 		adUnits: [],
 		slots: [],
-		publisherReceipts: [],
 	},
 	items: {
 		Campaign: {},

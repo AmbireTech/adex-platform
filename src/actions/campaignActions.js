@@ -472,10 +472,3 @@ export function handlePrintSelectedReceiptsAdvertiser(selected) {
 		)(dispatch, getState)
 	}
 }
-
-export function handlePrintSelectedReceiptsPublisher(selected) {
-	return async function(dispatch, getState) {
-		await updateSelectedItems('publisherReceipts', selected)(dispatch)
-		await dispatch(push('/dashboard/publisher/selectedReceipts/'))
-	}
-}

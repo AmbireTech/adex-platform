@@ -12,7 +12,6 @@ import {
 	selectCampaignAnalyticsByChannelToAdUnit,
 	selectTotalStatsByAdUnits,
 	selectCampaignUnitsById,
-	selectPublisherReceiptStats,
 	selectMainToken,
 	selectAnalytics,
 	selectPublisherAdvanceStatsToAdUnit,
@@ -493,42 +492,6 @@ export const selectAdUnitsStatsMaxValues = createSelector(
 				return newResult
 			},
 			{ maxClicks: 0, maxImpressions: 0, maxCTR: 0 }
-		)
-)
-
-export const selectPublisherReceiptsStatsTableData = createSelector(
-	[selectPublisherReceiptStats, selectMainToken],
-	(stats, token) =>
-		stats
-			.map(item => {
-				const { decimals = 18 } = token || {}
-				const payouts = Number(formatUnits(item.payouts || '0', decimals))
-				return {
-					impressions: item.impressions,
-					payouts,
-					cpm: (payouts / item.impressions) * 1000,
-					startOfMonth: item.startOfMonth,
-					endOfMonth: item.startOfMonth,
-				}
-			})
-			.filter(i => i.payouts !== 0)
-)
-
-export const selectPublisherReceiptsMaxValues = createSelector(
-	[selectPublisherReceiptsStatsTableData],
-	data =>
-		data.reduce(
-			(result, current) => {
-				const newResult = { ...result }
-				newResult.maxCPM = Math.max(current.cpm, newResult.maxCPM)
-				newResult.maxPayouts = Math.max(current.payouts, newResult.maxPayouts)
-				newResult.maxImpressions = Math.max(
-					current.impressions,
-					newResult.maxImpressions
-				)
-				return newResult
-			},
-			{ maxImpressions: 0, maxPayouts: 0, maxCPM: 0 }
 		)
 )
 

@@ -2,10 +2,7 @@ import { getState } from 'store'
 import { createSelector } from 'reselect'
 import { selectChannelsWithUserBalancesAll } from 'selectors'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
-import { selectAccountIdentityDeployData } from 'selectors'
-import { bigNumberify } from 'ethers/utils'
 import { selectWebsitesArray } from 'selectors'
-import moment from 'moment'
 
 export const selectAnalytics = state => state.persist.analytics
 
@@ -417,48 +414,4 @@ export const selectPublisherReceipts = createSelector(
 export const selectPublisherReceiptsPresentMonths = createSelector(
 	[selectPublisherReceipts],
 	receipts => Object.keys(receipts).map(r => +r)
-)
-
-export const selectPublisherReceiptStats = createSelector(
-	[selectAnalytics, selectAccountIdentityDeployData],
-	({ receipts }, { created }) => {
-		const result = []
-		if (receipts)
-			for (
-				var m = moment(created);
-				m.diff(
-					moment(Date.now())
-						.subtract(1, 'month')
-						.endOf('month')
-				) <= 0;
-				m.add(1, 'month')
-			) {
-				const startOfMonth = m.startOf('month').format('YYYY-MM-DD')
-				const startOfNewMonth = m
-					.clone()
-					.add(1, 'month')
-					.format('YYYY-MM-DD')
-				const filteredForMonth = Object.values(receipts)
-					.filter(item =>
-						moment(item.time).isBetween(startOfMonth, startOfNewMonth)
-					)
-					.reduce(
-						(acc, currValue) => {
-							acc.impressions += +currValue.impressions
-							acc.payouts = bigNumberify(acc.payouts || 0).add(
-								currValue.payouts
-							)
-							return acc
-						},
-						{
-							impressions: 0,
-							payouts: 0,
-							startOfMonth: moment(startOfMonth).unix() * 1000,
-							endOfMonth: moment(startOfNewMonth).unix() * 1000,
-						}
-					)
-				result.push(filteredForMonth)
-			}
-		return result
-	}
 )
