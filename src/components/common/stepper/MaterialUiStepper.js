@@ -76,7 +76,13 @@ const MaterialStepper = props => {
 	const pageProps = page.props || {}
 	const { validateId } = pageProps
 	const Comp = page.component || null
-	const { validationFn = null, onValid, stepsId } = page
+	const {
+		validationFn = null,
+		onValid,
+		stepsId,
+		completeFn = null,
+		completeBtnTitle = '',
+	} = page
 
 	const validations = useSelector(state =>
 		selectValidationsById(state, validateId)
@@ -188,52 +194,53 @@ const MaterialStepper = props => {
 						</Box>
 					)}
 				</div>
+			</Paper>
 
-				<div className={classes.controls}>
-					<div className={classes.left}>
-						{canReverse && (
-							<Button onClick={goToPreviousPage}>{t('BACK')}</Button>
-						)}
-					</div>
+			<div className={classes.controls}>
+				<div className={classes.left}>
+					{canReverse && (
+						<Button onClick={goToPreviousPage}>{t('BACK')}</Button>
+					)}
+				</div>
 
-					<div className={classes.right}>
-						{typeof page.cancelFunction === 'function' && (
+				<div className={classes.right}>
+					{typeof page.cancelFunction === 'function' && (
+						<Button
+							onClick={() => {
+								typeof closeDialog === 'function' && closeDialog()
+								page.cancelFunction(stepsId)
+							}}
+						>
+							{t('CANCEL')}
+						</Button>
+					)}
+
+					<span className={classes.buttonProgressWrapper}>
+						{completeFn ? (
 							<Button
-								onClick={() => {
-									typeof closeDialog === 'function' && closeDialog()
-									page.cancelFunction(stepsId)
-								}}
+								disabled={spinner}
+								variant='contained'
+								color='primary'
+								onClick={completeFn}
 							>
-								{t('CANCEL')}
+								{t(completeBtnTitle || 'DO_IT_NOW')}
+							</Button>
+						) : (
+							<Button
+								disabled={spinner}
+								variant='contained'
+								color='primary'
+								onClick={goToNextPage}
+							>
+								{t('CONTINUE')}
 							</Button>
 						)}
-
-						{!page.completeBtn || !!validationFn ? (
-							<span className={classes.buttonProgressWrapper}>
-								<Button
-									disabled={spinner || (!isValidPage() && !validationFn)}
-									variant='contained'
-									color='primary'
-									onClick={goToNextPage}
-								>
-									{t('CONTINUE')}
-								</Button>
-								{spinner && (
-									<CircularProgress
-										size={24}
-										className={classes.buttonProgress}
-									/>
-								)}
-							</span>
-						) : null}
-						{page.completeBtn && !validationFn && isValidPage() ? (
-							<page.completeBtn />
-						) : (
-							''
+						{spinner && (
+							<CircularProgress size={24} className={classes.buttonProgress} />
 						)}
-					</div>
+					</span>
 				</div>
-			</Paper>
+			</div>
 		</div>
 	)
 }
