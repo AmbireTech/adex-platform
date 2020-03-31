@@ -1,115 +1,66 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
-// import Translate from 'components/translate/Translate'
-import NewTransactionHoc from './TransactionHoc'
-import TextField from '@material-ui/core/TextField'
-import { InputLoading } from 'components/common/spinners/'
-import InputAdornment from '@material-ui/core/InputAdornment'
+import { useSelector } from 'react-redux'
+import { execute, updateNewTransaction } from 'actions'
+import { TextField, InputAdornment } from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
+import { t, selectValidationsById, selectNewTransactionById } from 'selectors'
 
-class SetAccountENSPage extends Component {
-	componentDidMount() {
-		const { transaction, validate } = this.props
-		if (!transaction.withdrawAmount) {
-			validate('setEns', {
-				isValid: false,
-				err: { msg: 'ERR_REQUIRED_FIELD' },
-				dirty: false,
-			})
-		}
-	}
+function SetAccountENSPage({ stepsId, validateId } = {}) {
+	const { username } = useSelector(state =>
+		selectNewTransactionById(state, stepsId)
+	)
 
-	handleValidate = () => {
-		if (this._timeout) {
-			//if there is already a timeout in process cancel it
-			clearTimeout(this._timeout)
-		}
-		this._timeout = setTimeout(() => {
-			this._timeout = null
-			const { actions, transaction, validate } = this.props
-			const { setEns } = transaction || {}
-			actions.validateENS({
-				ens: setEns,
-				dirty: true,
-				validate,
-				name: 'setEns',
-			})
-		}, 500)
-	}
+	const { username: errUsername, fees: errFees } = useSelector(
+		state => selectValidationsById(state, validateId) || {}
+	)
 
-	render() {
-		const {
-			transaction,
-			t,
-			invalidFields,
-			handleChange,
-			setEnsSpinner,
-		} = this.props
-		const { setEns } = transaction || {}
-		// const errAmount = invalidFields['withdrawAmount']
-		const errAddr = invalidFields['setEns']
-		return (
-			<div>
-				<div> {t('SET_ENS_MAIN_INFO')}</div>
-				<form noValidate>
-					<TextField
-						autoFocus
-						type='text'
-						required
-						fullWidth
-						label={t('ENS_TO_SET_TO_ADDR')}
-						name='setEns'
-						value={setEns || ''}
-						onChange={ev => {
-							handleChange('setEns', ev.target.value.toLowerCase())
-							this.handleValidate()
-						}}
-						InputProps={{
-							endAdornment: (
-								<InputAdornment position='end'>
-									{`.${process.env.REVERSE_REGISTRAR_PARENT}`}
-								</InputAdornment>
-							),
-						}}
-						error={errAddr && !!errAddr.dirty}
-						helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
-					/>
-					{setEnsSpinner ? <InputLoading /> : null}
-				</form>
-			</div>
-		)
-	}
+	return (
+		<div>
+			<div> {t('SET_ENS_MAIN_INFO')}</div>
+
+			<TextField
+				autoFocus
+				type='text'
+				required
+				fullWidth
+				label={t('ENS_TO_SET_TO_ADDR')}
+				name='username'
+				value={username || ''}
+				onChange={ev =>
+					execute(
+						updateNewTransaction({
+							tx: stepsId,
+							key: 'username',
+							value: ev.target.value,
+						})
+					)
+				}
+				InputProps={{
+					endAdornment: (
+						<InputAdornment position='end'>
+							{`.${process.env.REVERSE_REGISTRAR_PARENT}`}
+						</InputAdornment>
+					),
+				}}
+				error={errUsername && !!errUsername.dirty}
+				helperText={
+					errUsername && !!errUsername.dirty ? errUsername.errMsg : ''
+				}
+			/>
+			{errFees && errFees.dirty && errFees.errMsg && (
+				<Alert variant='outlined' severity='error'>
+					{errFees.errMsg}
+				</Alert>
+			)}
+		</div>
+	)
 }
 
 SetAccountENSPage.propTypes = {
-	actions: PropTypes.object.isRequired,
-	label: PropTypes.string,
-	txId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	transaction: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
+	validateId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+		.isRequired,
 }
 
-function mapStateToProps(state, props) {
-	// const persist = state.persist
-	const memory = state.memory
-	const txId = props.stepsId
-	return {
-		txId: txId,
-		setEnsSpinner: memory.spinners['setEns'],
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch),
-	}
-}
-
-const SetAccountENSPageForm = NewTransactionHoc(SetAccountENSPage)
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(SetAccountENSPageForm)
+export default SetAccountENSPage
