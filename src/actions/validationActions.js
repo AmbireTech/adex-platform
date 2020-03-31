@@ -404,13 +404,28 @@ export function validateWithdrawAmount({
 	}
 }
 
-export function validateNumberString({ validateId, prop, value, dirty }) {
+export function validateNumberString({
+	validateId,
+	prop,
+	value,
+	dirty,
+	integerOnly,
+}) {
 	return async function(dispatch, getState) {
-		const isValid = isNumberString(value)
+		let isValid = isNumberString(value)
+		let msg = 'ERR_INVALID_AMOUNT'
+
+		if (isValid && integerOnly) {
+			const int = parseInt(value, 10)
+			if (int.toString() !== value.toString()) {
+				isValid = false
+				msg = 'ERR_INVALID_INTEGER_NUMBER'
+			}
+		}
 
 		validate(validateId, prop, {
 			isValid,
-			err: { msg: 'ERR_INVALID_AMOUNT' },
+			err: { msg },
 			dirty,
 		})(dispatch)
 
