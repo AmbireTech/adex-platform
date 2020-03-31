@@ -171,33 +171,6 @@ export function onUploadLocalWallet(event) {
 	}
 }
 
-export function setIdentityENS({ username }) {
-	return async function(dispatch, getState) {
-		try {
-			const account = selectAccount(getState())
-			await addIdentityENS({
-				username,
-				account,
-			})
-
-			addToast({
-				type: 'accept',
-				label: translate('ENS_SETUP_NOTIFICATION', { args: [username] }),
-				timeout: 20000,
-			})(dispatch)
-		} catch (err) {
-			console.error('ERR_SETTING_ENS', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_SETTING_ENS', {
-					args: [err],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-	}
-}
-
 export function identityWithdrawAny({
 	amountToWithdraw,
 	withdrawTo,

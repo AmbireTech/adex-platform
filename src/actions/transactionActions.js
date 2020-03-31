@@ -407,6 +407,33 @@ export function validateENSChange({
 	}
 }
 
+export function setIdentityENS({ username }) {
+	return async function(dispatch, getState) {
+		try {
+			const account = selectAccount(getState())
+			await addIdentityENS({
+				username,
+				account,
+			})
+
+			addToast({
+				type: 'accept',
+				label: t('ENS_SETUP_NOTIFICATION', { args: [username] }),
+				timeout: 20000,
+			})(dispatch)
+		} catch (err) {
+			console.error('ERR_SETTING_ENS', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_SETTING_ENS', {
+					args: [err],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
 export function completeTx({
 	stepsId,
 	competeAction,

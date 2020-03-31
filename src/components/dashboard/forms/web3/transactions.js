@@ -6,10 +6,7 @@ import SetAccountENSPage from './SetAccountENSPage'
 import TransactionPreview from './TransactionPreview'
 import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
-import {
-	addIdentityENS,
-	withdrawOtherTokensFromIdentity,
-} from 'services/smart-contracts/actions/identity'
+import { withdrawOtherTokensFromIdentity } from 'services/smart-contracts/actions/identity'
 import {
 	identityWithdraw,
 	setIdentityENS,
@@ -20,6 +17,7 @@ import {
 	execute,
 	resetNewTransaction,
 	updateIdentityPrivilege,
+	validateENSChange,
 } from 'actions'
 
 const FormStepsWithDialog = WithDialog(FormSteps)
@@ -45,28 +43,16 @@ export const WithdrawTokenFromIdentity = props => (
 			{
 				title: 'ACCOUNT_WITHDRAW_FROM_IDENTITY_STEP',
 				component: WithdrawFromIdentity,
-				validationFn: ({ stepsId, validateId, dirty, onValid, onInvalid }) =>
-					execute(
-						validateIdentityWithdraw({
-							stepsId,
-							validateId,
-							dirty,
-							onValid,
-							onInvalid,
-						})
-					),
+				validationFn: props => execute(validateIdentityWithdraw(props)),
 			},
 			{
 				title: 'PREVIEW_AND_MAKE_TR',
 				component: TransactionPreview,
-				completeFn: ({ stepsId, validateId, onValid, onInvalid }) =>
+				completeFn: props =>
 					execute(
 						completeTx({
-							stepsId,
-							validateId,
+							...props,
 							competeAction: identityWithdraw,
-							onValid,
-							onInvalid,
 						})
 					),
 			},
@@ -87,29 +73,17 @@ export const SetIdentityPrivilege = ({ SaveBtn, ...props }) => {
 				{
 					title: 'ACCOUNT_SET_IDENTITY_PRIVILEGE_STEP',
 					component: SeAddressPrivilege,
-					validationFn: ({ stepsId, validateId, dirty, onValid, onInvalid }) =>
-						execute(
-							validatePrivilegesChange({
-								stepsId,
-								validateId,
-								dirty,
-								onValid,
-								onInvalid,
-							})
-						),
+					validationFn: props => execute(validatePrivilegesChange(props)),
 				},
 				{
 					title: 'PREVIEW_AND_MAKE_TR',
 					component: TransactionPreview,
 					completeBtnTitle: 'SIGN_TX',
-					completeFn: ({ stepsId, validateId, onValid, onInvalid }) =>
+					completeFn: props =>
 						execute(
 							completeTx({
-								stepsId,
-								validateId,
+								...props,
 								competeAction: updateIdentityPrivilege,
-								onValid,
-								onInvalid,
 							})
 						),
 				},
@@ -161,24 +135,19 @@ export const SetAccountENS = props => (
 			{
 				title: 'ACCOUNT_SET_ENS_STEP',
 				component: SetAccountENSPage,
+				validationFn: props => execute(validateENSChange(props)),
+			},
+			{
+				title: 'PREVIEW_AND_MAKE_TR',
+				component: TransactionPreview,
+				completeFn: props =>
+					execute(
+						completeTx({
+							...props,
+							competeAction: setIdentityENS,
+						})
+					),
 			},
 		]}
-		stepsPreviewPage={{
-			title: 'PREVIEW_AND_MAKE_TR',
-			component: TransactionPreview,
-		}}
-		saveFn={({ transaction } = {}) => {
-			return execute(
-				setIdentityENS({
-					username: transaction.setEns,
-				})
-			)
-		}}
-		getFeesFn={({ account } = {}) => {
-			return addIdentityENS({
-				account,
-				getFeesOnly: true,
-			})
-		}}
 	/>
 )
