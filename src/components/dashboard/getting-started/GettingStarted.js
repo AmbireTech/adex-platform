@@ -208,7 +208,7 @@ export default function GettingStarted(props) {
 
 	const handleDismiss = () => {
 		setActiveStep(0)
-		execute(hideGettingStarted())
+		execute(hideGettingStarted(side))
 	}
 
 	useEffect(() => {
@@ -224,7 +224,7 @@ export default function GettingStarted(props) {
 	}, [indexOfFirstIncompleteStep])
 	// TODO: wait for the data to be loaded before displaying the getting started
 	return (
-		!isGettingStartedHidden &&
+		!isGettingStartedHidden[side] &&
 		sideSteps.length && (
 			<Box mb={2}>
 				<ExpansionPanel
