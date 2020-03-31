@@ -7,6 +7,14 @@ import Grid from '@material-ui/core/Grid'
 import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
 import StatsCard from './StatsCard'
 import { makeStyles } from '@material-ui/core/styles'
+import DateTimePicker from 'components/common/DateTimePicker'
+import {
+	Visibility,
+	MonetizationOn,
+	Mouse,
+	Equalizer,
+} from '@material-ui/icons'
+import { Box } from '@material-ui/core'
 import {
 	PRIMARY,
 	SECONDARY,
@@ -151,15 +159,38 @@ export function BasicStats({ side }) {
 			<Grid item xs={12}>
 				<div className={classes.infoStatsContainer}>
 					<StatsCard>
-						<Dropdown
-							fullWidth
-							label={t('SELECT_TIMEFRAME')}
-							helperText={t(timeHints[timeframe])}
-							onChange={val => execute(updateAnalyticsTimeframe(val))}
-							source={timeFrames}
-							value={timeframe}
-							htmlId='timeframe-select'
-						/>
+						<Box mb={1}>
+							<Dropdown
+								fullWidth
+								label={t('SELECT_TIMEFRAME')}
+								// helperText={t(timeHints[timeframe])}
+								onChange={val => execute(updateAnalyticsTimeframe(val))}
+								source={timeFrames}
+								value={timeframe}
+								htmlId='timeframe-select'
+							/>
+						</Box>
+						<Box>
+							<DateTimePicker
+								emptyLabel={t('SET_CAMPAIGN_START')}
+								disablePast
+								fullWidth
+								calendarIcon
+								label={t('ANALYTICS_RANGE')}
+								// minDate={now}
+								// maxDate={to}
+								// onChange={val => {
+								// execute(updateNewCampaign('activeFrom', val.valueOf()))
+								// }}
+								// value={from || null}
+								// error={errFrom && !!errFrom.dirty}
+								// helperText={
+								// 	errFrom && !!errFrom.dirty
+								// 		? errFrom.errMsg
+								// 		: t('CAMPAIGN_STARTS_FROM_HELPER_TXT')
+								// }
+							/>
+						</Box>
 					</StatsCard>
 					<StatsCard
 						bgColor='primary'
@@ -167,7 +198,9 @@ export function BasicStats({ side }) {
 						loading={loadingImpressions && !dataInSync}
 						title={`${formatNumberWithCommas(totalImpressions || 0)}`}
 						explain={t('EXPLAIN_TOTAL_IMPRESSIONS')}
-					></StatsCard>
+					>
+						<Visibility className={classes.cardIcon} />
+					</StatsCard>
 					<StatsCard
 						bgColor='secondary'
 						subtitle={t('LABEL_TOTAL_CLICKS')}
@@ -181,7 +214,9 @@ export function BasicStats({ side }) {
 						title={`${formatNumberWithCommas(totalClicks || 0)} (${parseFloat(
 							(totalClicks / totalImpressions) * 100 || 0
 						).toFixed(2)} % ${t('LABEL_CTR')})`}
-					></StatsCard>
+					>
+						<Mouse className={classes.cardIcon} />
+					</StatsCard>
 					{side === 'advertiser' && (
 						<StatsCard
 							bgColor='accentOne'
@@ -191,7 +226,9 @@ export function BasicStats({ side }) {
 								parseFloat(totalMoney || 0).toFixed(2)
 							)} ${symbol}`}
 							loading={loadingMoney && !dataInSync}
-						></StatsCard>
+						>
+							<MonetizationOn className={classes.cardIcon} />
+						</StatsCard>
 					)}
 
 					{side === 'publisher' && (
@@ -203,7 +240,9 @@ export function BasicStats({ side }) {
 								parseFloat(totalMoney || 0).toFixed(2)
 							)} ${symbol}`}
 							loading={loadingMoney && !dataInSync}
-						></StatsCard>
+						>
+							<MonetizationOn className={classes.cardIcon} />
+						</StatsCard>
 					)}
 					<StatsCard
 						bgColor='grey'
@@ -213,7 +252,9 @@ export function BasicStats({ side }) {
 						title={`~ ${formatNumberWithCommas(
 							parseFloat(averageCPM || 0).toFixed(2)
 						)} ${symbol} / CPM`}
-					></StatsCard>
+					>
+						<Equalizer className={classes.cardIcon} />
+					</StatsCard>
 				</div>
 			</Grid>
 			<Grid item xs={12}>
