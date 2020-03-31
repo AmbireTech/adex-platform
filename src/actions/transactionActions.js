@@ -194,7 +194,7 @@ export function validatePrivilegesChange({
 
 			isValid = await validateFees({
 				validateId,
-				feesAmountBN: feesData.feesBn,
+				feesAmountBN: feesData.totalBN,
 				amountToSpendBN: '0',
 				dirty,
 			})(dispatch, getState)
@@ -257,9 +257,11 @@ export function validateIdentityWithdraw({
 
 		let isValid = inputValidations.every(v => v === true)
 
+		let feesData = null
+
 		if (isValid) {
 			try {
-				const feesData = await withdrawFromIdentity({
+				feesData = await withdrawFromIdentity({
 					account,
 					amountToWithdraw,
 					withdrawTo,
@@ -271,19 +273,15 @@ export function validateIdentityWithdraw({
 					key: 'feesData',
 					value: feesData,
 				})(dispatch, getState)
+
+				isValid = await validateFees({
+					validateId,
+					feesAmountBN: feesData.totalBN,
+					amountToSpendBN: feesData.actualWithdrawAmount,
+					dirty,
+				})(dispatch, getState)
 			} catch (err) {
 				isValid = false
-
-				await validateWithdrawAmount({
-					validateId,
-					amountToWithdraw,
-					availableIdentityBalanceMainTokenRaw,
-					availableIdentityBalanceMainTokenFormatted,
-					decimals,
-					symbol,
-					errorMsg: getErrorMsg(err),
-					dirty,
-				})(dispatch)
 			}
 		}
 
@@ -395,7 +393,7 @@ export function validateENSChange({
 
 			isValid = await validateFees({
 				validateId,
-				feesAmountBN: feesData.feesBn,
+				feesAmountBN: feesData.totalBN,
 				amountToSpendBN: '0',
 				dirty,
 			})(dispatch, getState)
