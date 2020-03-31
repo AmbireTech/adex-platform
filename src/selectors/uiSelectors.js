@@ -49,7 +49,7 @@ export const selectPrivilegesWarningAccepted = createSelector(
 
 export const selectHideGettingStarted = createSelector(
 	selectIdentityUi,
-	({ hideGettingStarted }) => hideGettingStarted
+	({ hideGettingStarted }) => hideGettingStarted || {}
 )
 
 export const selectGettingStartedExpanded = createSelector(
