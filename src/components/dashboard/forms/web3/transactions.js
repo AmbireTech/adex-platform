@@ -6,7 +6,6 @@ import SetAccountENSPage from './SetAccountENSPage'
 import TransactionPreview from './TransactionPreview'
 import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
-import { withdrawOtherTokensFromIdentity } from 'services/smart-contracts/actions/identity'
 import {
 	identityWithdraw,
 	setIdentityENS,
@@ -18,6 +17,7 @@ import {
 	resetNewTransaction,
 	updateIdentityPrivilege,
 	validateENSChange,
+	validateIdentityWithdrawAny,
 } from 'actions'
 
 const FormStepsWithDialog = WithDialog(FormSteps)
@@ -46,7 +46,7 @@ export const WithdrawTokenFromIdentity = props => (
 				validationFn: props => execute(validateIdentityWithdraw(props)),
 			},
 			{
-				title: 'PREVIEW_AND_MAKE_TR',
+				title: 'PREVIEW_AND_MAKE_TX',
 				component: TransactionPreview,
 				completeFn: props =>
 					execute(
@@ -76,7 +76,7 @@ export const SetIdentityPrivilege = ({ SaveBtn, ...props }) => {
 					validationFn: props => execute(validatePrivilegesChange(props)),
 				},
 				{
-					title: 'PREVIEW_AND_MAKE_TR',
+					title: 'PREVIEW_AND_MAKE_TX',
 					component: TransactionPreview,
 					completeBtnTitle: 'SIGN_TX',
 					completeFn: props =>
@@ -104,22 +104,20 @@ export const WithdrawAnyTokenFromIdentity = props => (
 			{
 				title: 'ACCOUNT_WITHDRAW_FROM_IDENTITY_STEP',
 				component: WithdrawAnyTokenFromIdentityPage,
+				validationFn: props => execute(validateIdentityWithdrawAny(props)),
+			},
+			{
+				title: 'PREVIEW_AND_MAKE_TX',
+				component: TransactionPreview,
+				completeFn: props =>
+					execute(
+						completeTx({
+							...props,
+							competeAction: identityWithdrawAny,
+						})
+					),
 			},
 		]}
-		stepsPreviewPage={{
-			title: 'PREVIEW_AND_MAKE_TX',
-			component: TransactionPreview,
-		}}
-		saveFn={({ transaction } = {}) => {
-			return execute(identityWithdrawAny(transaction))
-		}}
-		getFeesFn={({ transaction = {}, account } = {}) => {
-			return withdrawOtherTokensFromIdentity({
-				...transaction,
-				getFeesOnly: true,
-				account,
-			})
-		}}
 	/>
 )
 
@@ -138,7 +136,7 @@ export const SetAccountENS = props => (
 				validationFn: props => execute(validateENSChange(props)),
 			},
 			{
-				title: 'PREVIEW_AND_MAKE_TR',
+				title: 'PREVIEW_AND_MAKE_TX',
 				component: TransactionPreview,
 				completeFn: props =>
 					execute(
