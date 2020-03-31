@@ -9,6 +9,7 @@ import {
 	validateWithdrawAmount,
 	addToast,
 	validateFees,
+	validateENS,
 } from 'actions'
 import {
 	selectNewTransactionById,
@@ -27,6 +28,7 @@ import { formatUnits } from 'ethers/utils'
 import {
 	withdrawFromIdentity,
 	setIdentityPrivilege,
+	addIdentityENS,
 } from 'services/smart-contracts/actions/identity'
 import Helper from 'helpers/miscHelpers'
 
@@ -190,24 +192,12 @@ export function validatePrivilegesChange({
 				value: feesData,
 			})(dispatch, getState)
 
-			const { symbol, decimals } = selectMainToken(state)
-			const {
-				availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenRaw,
-			} = selectAccountStatsRaw(state)
-			const {
-				availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenFormatted,
-			} = selectAccountStatsFormatted(state)
-
 			isValid = await validateFees({
 				validateId,
 				feesAmountBN: feesData.feesBn,
-				availableIdentityBalanceMainTokenRaw,
 				amountToSpendBN: '0',
-				availableIdentityBalanceMainTokenFormatted,
-				decimals,
-				symbol,
 				dirty,
-			})(dispatch)
+			})(dispatch, getState)
 		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
@@ -358,6 +348,62 @@ export function updateIdentityPrivilege({ setAddr, privLevel }) {
 				timeout: 20000,
 			})(dispatch)
 		}
+	}
+}
+
+export function validateENSChange({
+	stepsId,
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		const identityData = updateAccountIdentityData()(dispatch, getState)
+		if (dirty) {
+			await identityData
+		}
+
+		const state = getState()
+		const { username } = selectNewTransactionById(state, stepsId)
+		const authType = selectAuthType(state)
+
+		const inputValidations = await Promise.all([
+			validateENS({
+				validateId,
+				authType,
+				username,
+				dirty,
+			})(dispatch),
+		])
+
+		let isValid = inputValidations.every(v => v === true)
+
+		if (isValid) {
+			const account = selectAccount(state)
+			const feesData = await addIdentityENS({
+				getFeesOnly: true,
+				account,
+			})
+
+			await updateNewTransaction({
+				tx: stepsId,
+				key: 'feesData',
+				value: feesData,
+			})(dispatch, getState)
+
+			isValid = await validateFees({
+				validateId,
+				feesAmountBN: feesData.feesBn,
+				amountToSpendBN: '0',
+				dirty,
+			})(dispatch, getState)
+		}
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
+
+		await updateSpinner(validateId, false)(dispatch)
 	}
 }
 
