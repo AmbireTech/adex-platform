@@ -13,6 +13,7 @@ import {
 	selectAccountStatsFormatted,
 } from 'selectors'
 import { execute, updateNewTransaction } from 'actions'
+import { Alert } from '@material-ui/lab'
 
 const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 	const { symbol } = useSelector(selectMainToken)
@@ -26,9 +27,11 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 
 	const spinner = useSelector(state => selectSpinnerById(state, validateId))
 
-	const { amountToWithdraw: errAmount, withdrawTo: errAddr } = useSelector(
-		state => selectValidationsById(state, validateId) || {}
-	)
+	const {
+		amountToWithdraw: errAmount,
+		withdrawTo: errAddr,
+		fees: errFees,
+	} = useSelector(state => selectValidationsById(state, validateId) || {})
 
 	return (
 		<div>
@@ -101,6 +104,11 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 					</span>
 				}
 			/>
+			{errFees && errFees.dirty && errFees.errMsg && (
+				<Alert variant='outlined' severity='error'>
+					{errFees.errMsg}
+				</Alert>
+			)}
 		</div>
 	)
 }
